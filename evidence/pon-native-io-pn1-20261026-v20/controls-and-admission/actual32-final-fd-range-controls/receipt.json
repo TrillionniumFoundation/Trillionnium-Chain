@@ -1,0 +1,43 @@
+{
+  "utc": "2026-10-26T12:44:12.696743+00:00",
+  "returncode": 0,
+  "error": null,
+  "elapsed_seconds_before_result_publication": 7.046779293988948,
+  "expected32_and_OK_summary_verified": true,
+  "previous_mechanism_seconds_spent": 7.10513603000436,
+  "new_max_seconds": 50,
+  "maximum_cumulative_seconds": 57.10513603000436,
+  "actual_cumulative_seconds_before_publication": 14.151915323993308,
+  "source_before_after_equal": true,
+  "source_after": [
+    {
+      "path": "scripts/run_pon_native_io_component.py",
+      "bytes": 62912,
+      "sha256": "c5e8d582d2b53411b15114c6c7fd03b618f5ce3c79ee25bc198dd372857bbc65"
+    },
+    {
+      "path": "scripts/ci/test_pon_native_io_abi_admission.py",
+      "bytes": 6422,
+      "sha256": "c1ed7e49a5ce8c86518752411bb7fa34ab786977d75a1e274821daec9c7f6733"
+    },
+    {
+      "path": "scripts/ci/test_pon_native_io_build_monitor.py",
+      "bytes": 22237,
+      "sha256": "96e8bf043e1c9b3fb813f4b026248806b3f7e3e1f79b10f52800774191ad4703"
+    },
+    {
+      "path": "scripts/ci/test_pon_native_io_component.py",
+      "bytes": 19033,
+      "sha256": "37e502eec0f2b4717d37f8be4aa6f11cb78b1a193596fa00df4d240ceabb5527"
+    },
+    {
+      "path": "scripts/ci/test_pon_native_io_component_reader.py",
+      "bytes": 11336,
+      "sha256": "a451ba6da350a9bd34da39c45448d1b499fcb14f57b17b1281816501928f43b9"
+    }
+  ],
+  "stdout_sha256": "4d77f2975a9ef4a415df420d351ff733d7ec8004b94ade8a296cbecab1a5f779",
+  "stderr_sha256": "02f263a3d303809673b2108a36165b8c891d7790cac8e30975bb6a2445ca07c8",
+  "whole_native_or_CPP_qualification": false,
+  "merge_ready": false
+}

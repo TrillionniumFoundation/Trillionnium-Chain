@@ -1,0 +1,328 @@
+{
+  "binary": {
+    "bytes": 10582144,
+    "compiler_profile": {
+      "debug_assertions": false,
+      "debuginfo": 0,
+      "opt_level": "3",
+      "overflow_checks": false,
+      "test": true
+    },
+    "file": "public_v3_identity_campaign.bin",
+    "sha256": "38f34d7464fd808ceae92699d0dbaaba0b928c34d9498819e10f477cf8628a51"
+  },
+  "build_artifact_capture": {
+    "bytes": 10582144,
+    "relative_path": "release/deps/public_v3_identity_campaign-19bfac7fcfb49be1",
+    "sha256": "38f34d7464fd808ceae92699d0dbaaba0b928c34d9498819e10f477cf8628a51",
+    "source_identity": {
+      "device": 2050,
+      "inode": 55500323
+    },
+    "target_identity": {
+      "device": 2050,
+      "inode": 54057931
+    }
+  },
+  "build_command": [
+    "taskset",
+    "--cpu-list",
+    "0,1,2,3",
+    "prlimit",
+    "--as=3221225472",
+    "--",
+    "/home/qian-qi/.cargo/bin/cargo",
+    "+1.95.0",
+    "test",
+    "--locked",
+    "--offline",
+    "--release",
+    "--jobs",
+    "2",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--test",
+    "public_v3_identity_campaign",
+    "--no-run",
+    "--message-format=json"
+  ],
+  "build_monitor_is_not_instantaneous_or_physical_peak_proof": true,
+  "build_monitor_observation": {
+    "actual_last_wait": {
+      "pid": 2848787,
+      "returncode": 0
+    },
+    "child_active": false,
+    "first_monitor_errno": null,
+    "first_monitor_error": null,
+    "first_monitor_error_type": null,
+    "kill_attempts": 0,
+    "kill_delivered": 0,
+    "last_child_pid": 2848787,
+    "last_member_vanish": {
+      "errno": 2,
+      "error": "[Errno 2] No such file or directory: 'rmetaK6FHv8'",
+      "truncated": false
+    },
+    "last_scan_entries": 1044,
+    "member_vanish_events": 2,
+    "monitor_error_truncated": false,
+    "observed_logical_peak_bytes": 303659178,
+    "pending_stop": false,
+    "physical_or_instantaneous_quota_claimed": false,
+    "reserve_bytes": 536870912,
+    "sample_entries": 200000,
+    "sample_seconds": 5,
+    "scan_retries": 2,
+    "schema": "pon-native-io-component-build-monitor-v1",
+    "successful_scans": 965,
+    "target_cap_bytes": 6442450944,
+    "target_identity": {
+      "device": 2050,
+      "inode": 54057931
+    },
+    "watch_interval_seconds": 0.25,
+    "watch_thread_alive": false
+  },
+  "build_seconds": 1200,
+  "build_target_binding": {
+    "actual_target": "/proc/self/fd/6",
+    "declared_path": "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/pn1-v3-clean-source-public-qualification-20261026-001/target",
+    "identity": {
+      "device": 2050,
+      "inode": 54057931
+    },
+    "passed_fd": 6
+  },
+  "build_target_observed_logical_peak_bytes": 303659178,
+  "capture_complete": true,
+  "collector_seconds": 180,
+  "completed_utc": "2026-10-26T13:10:15.864802+00:00",
+  "created_utc": "2026-10-26T13:05:41.336114+00:00",
+  "evidence_caps": {
+    "actor_file_bytes": 8388608,
+    "actor_fresh_pressure_bytes": 100663296,
+    "actor_log_bytes_each": 65536,
+    "actor_log_total_bytes": 4718592,
+    "actor_metadata_bytes_each": 524288,
+    "actor_metadata_total_bytes": 37748736,
+    "actor_prefix_bytes": 67108864,
+    "actor_replay_pressure_bytes": 8388608,
+    "actor_vm_bytes": 536870912,
+    "actor_working_data_bytes": 33554432,
+    "all_cap_hits": "FAIL; preserve partial and terminal; never increase caps or retry as qualification",
+    "artifact_total_bytes": 8589934592,
+    "bucket_members": {
+      "actor_log": "actor.log only; combined stdout/stderr must be bounded by its owner",
+      "actor_metadata": "actor-root job, ready, prefix-finished, report, process-limits and stage-terminal JSON, including partials",
+      "actor_stage": "started, construction, call and retained partial files under prefix/pressure",
+      "honest_only_pressure": "must remain empty",
+      "outer": "all other frozen/source/resource/native streams/results; excludes the single frozen binary",
+      "partial_policy": "retain and charge the matching bucket; any partial or initializing marker prevents qualification",
+      "phase": "phase report, prefix-start, pressure-start and terminal JSON, including partials",
+      "root": "artifact-files.json and raw top-level plan, report, process-limits and node-files JSON",
+      "samples": "only the exact report sample_files chunks; summed sample_count preserves every row"
+    },
+    "construction_bytes": 8388608,
+    "frozen_binary_bytes": 201326592,
+    "inventory_bytes": 32505856,
+    "namespace_rules": {
+      "actor_metadata_json": [
+        "job.json",
+        "ready.json",
+        "prefix-finished.json",
+        "report.json",
+        "process-limits.json",
+        "stage-terminal.json"
+      ],
+      "phase_metadata_json": [
+        "report.json",
+        "prefix-start.json",
+        "pressure-start.json",
+        "terminal.json"
+      ],
+      "raw_root_json": [
+        "plan.json",
+        "report.json",
+        "process-limits.json",
+        "node-files.json",
+        "cap-terminal.json"
+      ],
+      "sample_indices": "00..11",
+      "sample_name_pattern": "samples-[0-9][0-9].jsonl",
+      "strict_success_forbidden": [
+        "*.partial.json",
+        "*.tmp.json",
+        "initializing.json",
+        "cap-terminal.json",
+        "stage-terminal.json",
+        "terminal.json"
+      ]
+    },
+    "node_database_bytes_each": 16777216,
+    "node_database_total_bytes": 352321536,
+    "node_file_names": {
+      "initializing.json": 1024,
+      "native.sqlite": 16777216,
+      "native.sqlite-shm": 16777216,
+      "native.sqlite-wal": 16777216,
+      "owner.lock": 0
+    },
+    "node_metadata_total_bytes": 1048576,
+    "node_roots": [
+      "honest-miner",
+      "honest-only/receiver",
+      "honest-only/independent-client",
+      "replay-only/receiver",
+      "replay-only/independent-client",
+      "fresh-identities/receiver",
+      "fresh-identities/independent-client"
+    ],
+    "outer_outputs_total_bytes": 134217728,
+    "parent_file_bytes": 16777216,
+    "parent_vm_bytes": 3221225472,
+    "phase_report_bytes_each": 16777216,
+    "phase_report_total_bytes": 50331648,
+    "preparation_bytes": 8388608,
+    "raw_root_outputs_bytes": 1048576,
+    "reserved_total_bytes": 8574730240,
+    "root_outputs_total_bytes": 33554432,
+    "sample_chunk_bytes": 8388608,
+    "sample_chunks_per_phase": 12,
+    "sample_total_bytes": 301989888,
+    "schema": "native-public-v3-identity-evidence-limits-v2",
+    "scope": "stricter local evidence limits; original 4CPU/16GiB cgroup and workload limits remain",
+    "unassigned_bytes": 15204352
+  },
+  "failure": null,
+  "files": {
+    "build.stderr.log": {
+      "bytes": 4803,
+      "sha256": "92e3b781cacd0d2290a2180672b0c9b88c8e442279d984f1ceb599c81d821323"
+    },
+    "build.stdout.log": {
+      "bytes": 91780,
+      "sha256": "7a7937e70dfd42b1e4d65eddc3698ba68f4e5677626b6769195fe29141897cac"
+    },
+    "build.step.json": {
+      "bytes": 1517,
+      "sha256": "4927809a7b73df1dcdc0fb750745c02c356d7ed0bc54906ea5f9b8d062a33a1e"
+    },
+    "public_v3_identity_campaign.bin": {
+      "bytes": 10582144,
+      "sha256": "38f34d7464fd808ceae92699d0dbaaba0b928c34d9498819e10f477cf8628a51"
+    },
+    "resource-after.json": {
+      "bytes": 3259,
+      "sha256": "323a7e6f3e0281d5f6c2490887298763947221d4d5f258cdb32ca8027f160cfe"
+    },
+    "resource-before.json": {
+      "bytes": 3244,
+      "sha256": "9269ec54dff97c22dd9621122bfb5bf1419d05b4009ef7559e23dbf0f3e9ea84"
+    },
+    "source-after.json": {
+      "bytes": 421,
+      "sha256": "bbc0bff4fea4f2f4a541e31948fbe9f176554f4b033c17bb4841726d82b49477"
+    },
+    "source-after.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source-after.stdout.log": {
+      "bytes": 421,
+      "sha256": "bbc0bff4fea4f2f4a541e31948fbe9f176554f4b033c17bb4841726d82b49477"
+    },
+    "source-after.step.json": {
+      "bytes": 902,
+      "sha256": "1c628f281855038f1096d90342a882224db63aacd5a26e4ef8435c4bfe45fc78"
+    },
+    "source-before.json": {
+      "bytes": 421,
+      "sha256": "bbc0bff4fea4f2f4a541e31948fbe9f176554f4b033c17bb4841726d82b49477"
+    },
+    "source-before.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source-before.stdout.log": {
+      "bytes": 421,
+      "sha256": "bbc0bff4fea4f2f4a541e31948fbe9f176554f4b033c17bb4841726d82b49477"
+    },
+    "source-before.step.json": {
+      "bytes": 907,
+      "sha256": "e3b697f66bb25beed0537525c2b37f4a0d2d8979d0d0676451d3e4d058df188f"
+    }
+  },
+  "full_W1_4097_qualified": false,
+  "full_guard_enabled": false,
+  "head": "399dd82608df72c71c502b8bda0aa95898794080",
+  "independent_reader_qualified": false,
+  "merge_ready": false,
+  "native_abi_build": {
+    "cargo_event": {
+      "cfgs": [
+        "trnm_sqlite_layout_witness"
+      ],
+      "env": [
+        [
+          "TRNM_SQLITE3_BUILD_FENCE",
+          "sqlite-3.51.3-normal-native-linux-layout-v3"
+        ],
+        [
+          "TRNM_SQLITE3_AMALGAMATION_SHA256",
+          "9512509b1bccb7461f79bea8aad6280ae4699e925fa4804381b71f59e7efb0c5"
+        ]
+      ],
+      "linked_libs": [
+        "static=trnm_sqlite_layout_witness"
+      ],
+      "linked_paths": [
+        "native=/proc/self/fd/6/release/build/trnm-sqlite-io-boundary-c5a2d961f0916f84/out"
+      ],
+      "out_dir": "/proc/self/fd/6/release/build/trnm-sqlite-io-boundary-c5a2d961f0916f84/out",
+      "package_id": "path+file:///home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/pn1-v3-clean-source-public-qualification-20261026-001/ownedsource/trillionnium/crates/trnm-sqlite-io-boundary#0.1.0",
+      "reason": "build-script-executed"
+    },
+    "native_runtime_qualification": false,
+    "schema": "pon-native-io-component-native-abi-build-v1"
+  },
+  "origin": {
+    "leaf": "prepared",
+    "parent_identity": {
+      "device": 2050,
+      "inode": 51567180
+    },
+    "root": "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/pn1-v3-clean-source-public-qualification-20261026-001/prepared",
+    "root_identity": {
+      "device": 2050,
+      "inode": 53533633
+    }
+  },
+  "original_three_FD_caller_qualified": false,
+  "physical_build_quota_claimed": false,
+  "plan": {
+    "actor_total_call_cap": 480,
+    "actors": 2,
+    "call_seconds": 2,
+    "cleanup_seconds": 5,
+    "honest_history_cap": 64,
+    "honest_submission_cap": 128,
+    "prefix_calls_per_actor": 1,
+    "prefix_seconds": 30,
+    "pressure_calls_per_actor": 2,
+    "pressure_schedule": "closed-loop-one-in-flight-per-actor",
+    "pressure_seconds": 2,
+    "qualification": false,
+    "readiness_seconds": 180,
+    "rounds": 0
+  },
+  "profile": "pn1-native-io-three-fd-component-v1",
+  "runner_sha256": "c5e8d582d2b53411b15114c6c7fd03b618f5ce3c79ee25bc198dd372857bbc65",
+  "schema": "pon-native-io-three-fd-component-prepared-v3",
+  "selector": "two_process_real_w1_prefix_and_pressure_native_io_component_v1",
+  "selector_executed": false,
+  "tree": "66ceec03cd2b67ae88a5662cf75e4ba80292cd2b",
+  "whole_writer_qualified": false
+}

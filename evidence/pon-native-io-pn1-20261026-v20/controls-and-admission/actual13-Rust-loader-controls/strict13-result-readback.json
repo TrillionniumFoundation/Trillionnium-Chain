@@ -1,0 +1,10 @@
+{
+  "utc": "2026-10-26T12:46:55.320427+00:00",
+  "actual13_unique_tests_all_pass_0failed_0ignored": true,
+  "source_before_after_equal": true,
+  "stdout_sha256": "ab3acd05c838ad5d006cf24c7deb1372051095142a714d7c48b05b79ef5665f9",
+  "binary_sha256": "e50c2a7ff400fb6f93b6de6695b470039545bd1fc902de4c1d2a333ad4add9b5",
+  "binary_bytes": 7158352,
+  "scope": "standalone Rust/helper real tmpfs capability controls; not Cargo, exact-C witness or public component",
+  "normal_C_and_native_qualified": false
+}

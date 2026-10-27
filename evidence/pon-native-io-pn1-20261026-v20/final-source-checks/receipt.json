@@ -1,0 +1,34 @@
+{
+  "utc": "2026-10-26T12:56:40.691341+00:00",
+  "steps": [
+    {
+      "name": "preflight",
+      "returncode": 0,
+      "error": null,
+      "elapsed_seconds": 0.09456241100269835,
+      "stdout_sha256": "63a5bf3b9fc8975dac9742c8f5f7f77a05a0ea5bf4d40403dcdb791778eb44a3",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "graph",
+      "returncode": 0,
+      "error": null,
+      "elapsed_seconds": 0.26251781299652066,
+      "stdout_sha256": "ec31ec7cac2d58bb9c5603923814ce580c81aae27ff8f6e930286512c65ae99a",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "workspace_members": 26,
+      "resolved_nodes": 155
+    },
+    {
+      "name": "fmt",
+      "returncode": 0,
+      "error": null,
+      "elapsed_seconds": 17.6349196509982,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "all_requested_passed": true,
+  "actual_C_build_or_native_qualified": false,
+  "merge_ready": false
+}

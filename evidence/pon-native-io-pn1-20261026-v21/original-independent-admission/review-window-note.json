@@ -1,0 +1,9 @@
+{
+  "scope": "read-only review artifact race, not product failure",
+  "prelaunch_checks_claim_and_out_absent": true,
+  "parent_started_single_authorized_execute_while_review_receipt_was_sealing": true,
+  "one_review_assert_absence_stopped_archive_script_after_parent_launch": true,
+  "no_prepared_source_target_or_hash_failure": true,
+  "raw_copies_preserved_equal_on_resume": true,
+  "no_second_execute_authority": true
+}

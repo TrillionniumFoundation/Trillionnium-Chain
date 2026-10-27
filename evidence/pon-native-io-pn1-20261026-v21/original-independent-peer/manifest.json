@@ -1,0 +1,10 @@
+{
+  "files": [
+    {
+      "path": "work/ci-follow/pn1-checkpoint64-independent-source-review-20261026-001/independent-source-review.json",
+      "bytes": 9334,
+      "sha256": "05f5541126c3cc6f29f4b6522af671f2fef0374e60943b638ef49efbf0953ae1"
+    }
+  ],
+  "source_before_after_clean": true
+}

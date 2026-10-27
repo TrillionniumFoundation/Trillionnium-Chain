@@ -1,0 +1,62 @@
+{
+  "utc": "2026-10-26T12:30:04.375245+00:00",
+  "argv": [
+    "taskset",
+    "--cpu-list",
+    "0,1,2,3",
+    "nice",
+    "-n",
+    "19",
+    "prlimit",
+    "--as=1073741824",
+    "--fsize=16777216",
+    "--",
+    "python3",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/ci",
+    "-p",
+    "test_pon_native_io_*.py",
+    "-v"
+  ],
+  "expected_test_count": 32,
+  "returncode": 0,
+  "error": null,
+  "elapsed_seconds": 7.10513603000436,
+  "before_after_pins_equal": true,
+  "source_pins": [
+    {
+      "path": "scripts/run_pon_native_io_component.py",
+      "bytes": 62890,
+      "sha256": "e5d507c9c91b4b7000ffd9ab994f264516e539b0c55c0b90e3c3a54f1e6799df"
+    },
+    {
+      "path": "scripts/ci/test_pon_native_io_abi_admission.py",
+      "bytes": 5861,
+      "sha256": "493f6e33b15e5e50eeacdbc3ff3db91def1eae5155e0613b4eeff71c1da5b795"
+    },
+    {
+      "path": "scripts/ci/test_pon_native_io_build_monitor.py",
+      "bytes": 22237,
+      "sha256": "96e8bf043e1c9b3fb813f4b026248806b3f7e3e1f79b10f52800774191ad4703"
+    },
+    {
+      "path": "scripts/ci/test_pon_native_io_component.py",
+      "bytes": 19033,
+      "sha256": "37e502eec0f2b4717d37f8be4aa6f11cb78b1a193596fa00df4d240ceabb5527"
+    },
+    {
+      "path": "scripts/ci/test_pon_native_io_component_reader.py",
+      "bytes": 11336,
+      "sha256": "a451ba6da350a9bd34da39c45448d1b499fcb14f57b17b1281816501928f43b9"
+    }
+  ],
+  "old26_tests_and_both_readers_unchanged": true,
+  "stdout_sha256": "fb4505099d42b11ea2c405d03c579b46a0f3e4475b89f4adb6b3c47b813452a0",
+  "stderr_sha256": "5c4e9ef751a0acaf881f734ef4498cb1e2ac1f57a71d2fe4cf51e7bdf4063475",
+  "actual_Rust_build_native_or_claim_qualification": false,
+  "merge_ready": false
+}

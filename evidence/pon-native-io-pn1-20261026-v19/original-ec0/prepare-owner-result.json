@@ -1,0 +1,17 @@
+{
+  "utc": "2026-10-26T08:43:13.686265+00:00",
+  "returncode": 1,
+  "owner_error": null,
+  "elapsed_seconds": 88.91997036199609,
+  "stdout_sha256": "d3afda67a323e5164bc9a67185bb1df5c73f6ae76a1bf9b3cf2ea066db2a4762",
+  "stderr_sha256": "e113fe119e405b43c7556c65ad019c67c911620a17b8ec0d3af0911be69bbeef",
+  "source_after": {
+    "H": "ec0acdff5717b8f584b26f30f1162bd9bf1cc888",
+    "tree": "49de9450a7738b15f3dc63b808f957ce49804df2",
+    "status": ""
+  },
+  "prepared_json_exists": false,
+  "inventory_exists": false,
+  "public_execute_or_reader_run": false,
+  "current_PR_or_fullscope_qualified": false
+}

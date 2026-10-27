@@ -1,0 +1,336 @@
+{
+  "schema": "readonly-original-hosted-runtime-cancellation-v1",
+  "recorded_utc": "2026-10-26T19:02:20.408444+00:00",
+  "task_scope": "Only newly terminal actual-head runtime121574328675; no other CI/runtime/source mutation",
+  "source": {
+    "repo": "TrillionniumFoundation/Trillionnium-Chain",
+    "PR": 328,
+    "head": "53fb654b532ed8e737e0dea635a31dce3b73b3cc",
+    "tree": "d82ba0c7bbaea04200f11d38f6e9c4dccac81f78",
+    "run_id": 40310512277,
+    "run_attempt": 1,
+    "job_id": 121574328675,
+    "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40310512277/job/121574328675",
+    "source_postcheck": {
+      "base": null,
+      "candidate": "53fb654b532ed8e737e0dea635a31dce3b73b3cc",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "53fb654b532ed8e737e0dea635a31dce3b73b3cc",
+      "tested_tree": "d82ba0c7bbaea04200f11d38f6e9c4dccac81f78",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 695988869,
+      "tracked_entries": 4921,
+      "tracked_worktree_verified": true
+    }
+  },
+  "actual_terminal": {
+    "status": "completed",
+    "conclusion": "cancelled",
+    "started_at": "2026-10-26T15:21:00Z",
+    "completed_at": "2026-10-26T18:22:25Z",
+    "job_start_to_completion_seconds": 10885.0,
+    "retained_rust_step": {
+      "name": "Run retained Rust shard",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "number": 8,
+      "started_at": "2026-10-26T15:23:57Z",
+      "completed_at": "2026-10-26T18:22:15Z"
+    }
+  },
+  "cause": {
+    "classification": "Official platform maximum original3h execution timeout",
+    "official_annotation": "The job has exceeded the maximum execution time of 3h0m0s",
+    "annotation_has_more": false,
+    "raw_cancellation_line": 7098,
+    "raw_cancellation_utc": "2026-10-26T18:22:15.1975889Z",
+    "cause_actor": "Platform timeout reported; no additional user/new-push cancellation cause inferred",
+    "is_new_source_push_failure": false,
+    "is_transient_transport_proven": false,
+    "is_original_qualification_half_second_marker_failure": false
+  },
+  "actual_progress": {
+    "test": "store::growth_reference::tests::native_growth_reference_65537_signed_accounts_and_cold_reopen",
+    "command_profile": "--offline --locked --release --lib --exact --ignored --nocapture --test-threads=1",
+    "test_start_utc": "2026-10-26T17:10:41.2175097Z",
+    "test_start_to_cancel_seconds": 4293.980079,
+    "events": [
+      {
+        "original_full_log_line": 7083,
+        "timestamp_utc": "2026-10-26T17:10:59.3143565Z",
+        "active_accounts": 4100,
+        "height": 16,
+        "tip": "d17f3c711883d0809a263ed014ad1a60511b748d67fed74d44d8e6fdebe24860"
+      },
+      {
+        "original_full_log_line": 7084,
+        "timestamp_utc": "2026-10-26T17:11:51.6648264Z",
+        "active_accounts": 8196,
+        "height": 32,
+        "tip": "914512224fce7cd14e51729f1b1caefd7515cc892e90d7e16708709d4aa74129"
+      },
+      {
+        "original_full_log_line": 7085,
+        "timestamp_utc": "2026-10-26T17:13:18.0057316Z",
+        "active_accounts": 12292,
+        "height": 48,
+        "tip": "86c7319b2fd151204d4fc5e25e6fd2d137ecfe20471ef43613f83cc7e8e82241"
+      },
+      {
+        "original_full_log_line": 7086,
+        "timestamp_utc": "2026-10-26T17:15:18.4404042Z",
+        "active_accounts": 16388,
+        "height": 64,
+        "tip": "7413d1178112b4f66b71ffb7b8f1dfa59a7dee7c5e423c95720012ad1075a8c3"
+      },
+      {
+        "original_full_log_line": 7087,
+        "timestamp_utc": "2026-10-26T17:17:53.1840509Z",
+        "active_accounts": 20484,
+        "height": 80,
+        "tip": "d936980ad31b6045a1010e0e811bc332df7170197d7667c5f78d8731ebf8102d"
+      },
+      {
+        "original_full_log_line": 7088,
+        "timestamp_utc": "2026-10-26T17:21:02.4323377Z",
+        "active_accounts": 24580,
+        "height": 96,
+        "tip": "344ffa80e433737262a343e1cf3dba618433ef8855d04c011decc954be5cb48b"
+      },
+      {
+        "original_full_log_line": 7089,
+        "timestamp_utc": "2026-10-26T17:24:45.6596859Z",
+        "active_accounts": 28676,
+        "height": 112,
+        "tip": "e3382505edccf2d048e7db70f2550a6e7d9c28f2494ce207f273b9a92873d74b"
+      },
+      {
+        "original_full_log_line": 7090,
+        "timestamp_utc": "2026-10-26T17:29:02.9955760Z",
+        "active_accounts": 32772,
+        "height": 128,
+        "tip": "b49330c1f5904de8e5a088057e8ee28eba7188130745de68facc94cfd8677ce6"
+      },
+      {
+        "original_full_log_line": 7091,
+        "timestamp_utc": "2026-10-26T17:33:53.9118412Z",
+        "active_accounts": 36868,
+        "height": 144,
+        "tip": "a6dd1d82d0144a40e7ddeb82f899b2c301003950d4835d535609d4729e8ee0b1"
+      },
+      {
+        "original_full_log_line": 7092,
+        "timestamp_utc": "2026-10-26T17:39:18.8159430Z",
+        "active_accounts": 40964,
+        "height": 160,
+        "tip": "bcc5d35707ee4ba6233643c13366908720f07d2424b7e8637539355518b85530"
+      },
+      {
+        "original_full_log_line": 7093,
+        "timestamp_utc": "2026-10-26T17:45:17.9969395Z",
+        "active_accounts": 45060,
+        "height": 176,
+        "tip": "99050a9985fe1c60f697bb2e74b286d57e1aee87ec0db0525288f26f7d90e2a5"
+      },
+      {
+        "original_full_log_line": 7094,
+        "timestamp_utc": "2026-10-26T17:51:51.3518538Z",
+        "active_accounts": 49156,
+        "height": 192,
+        "tip": "c43f9de16b49365869682df9c99efaeb412348164ce5a4db96653b29a7e410ff"
+      },
+      {
+        "original_full_log_line": 7095,
+        "timestamp_utc": "2026-10-26T17:58:59.5435650Z",
+        "active_accounts": 53252,
+        "height": 208,
+        "tip": "dc3aa0308a2f1c6a7ac290f3a98056a1c33d55f983ac09b1f8226767694102b7"
+      },
+      {
+        "original_full_log_line": 7096,
+        "timestamp_utc": "2026-10-26T18:06:41.0243795Z",
+        "active_accounts": 57348,
+        "height": 224,
+        "tip": "0ee86e67fdd05a344af26c90a6800fcfdb060e325d46928cc44d1c7679d835cd"
+      },
+      {
+        "original_full_log_line": 7097,
+        "timestamp_utc": "2026-10-26T18:14:55.4499201Z",
+        "active_accounts": 61444,
+        "height": 240,
+        "tip": "a9a52efbeb2f8b32ce1dd177a1956517a9ae20f5c28e7fb702c3840c05523167"
+      }
+    ],
+    "completed_65537_proven": false,
+    "test_success_proven": false,
+    "cold_reopen_completion_proven": false,
+    "downstream_reference_readback_v2_growth_and_verification_cost_execution_proven": false
+  },
+  "official_artifacts": {
+    "light": {
+      "id": 12674439882,
+      "bytes": 2164,
+      "sha256": "4040af620e7bd5da3ed823bbed730ddcaa19ffa96c17db8e3424da7e29313734",
+      "official_digest_verified": true
+    },
+    "observations": {
+      "id": 12674439876,
+      "bytes": 4465869,
+      "sha256": "bb5a008825b056cc67caa484fef8f4bb4d5f431b5f558c182aef305ab9cd4643",
+      "official_digest_verified": true,
+      "zip_members": 192,
+      "uncompressed_total_bytes": 52518896,
+      "extracted_only_selected_members": 6,
+      "partial_original_preserved": true,
+      "exact_HTTP206_tail_recovery": true
+    },
+    "retained_receipt": {
+      "schema": "trnm-rust-baseline-shard-v1",
+      "shard": "runtime",
+      "status": "running",
+      "exit_code": null,
+      "command_sha256": "d2862f4fc7477983a3b6877e4f310a8bfeb6d663d419b577da210d3ea62e55ea",
+      "run": {
+        "GITHUB_RUN_ID": "40310512277",
+        "GITHUB_RUN_ATTEMPT": "1"
+      }
+    },
+    "retained_receipt_running_not_completed": true,
+    "command_sha256_matches_both_archives": true
+  },
+  "raw_log": {
+    "bytes": 781638,
+    "sha256": "f3e3ee7c62acf848d2bc6b5bf5fdd82b65f65c018bf27825a83c181ce9bc9129",
+    "preservation": "Connector full original decoded UTF8 body including BOM; no line filtering applied"
+  },
+  "readonly_transport": {
+    "extra_connections_not_original_CI_execution": true,
+    "initial_large_transfer45s_deadline_reached": true,
+    "original_partial_bytes": 4078516,
+    "original_partial_sha256": "e14e02be6187d2d6c4919fc9d059c27c75f6e987cc1ceb1626330b320fda2b3c",
+    "initial_owned_process_actual_reaped_exit": -9,
+    "exact_immutable_tail_transfer_actual_reaped_exit": 0,
+    "no_CI_rerun": true
+  },
+  "disposition": {
+    "runtime_qualification": "NOT_PASS",
+    "merge_ready": false,
+    "publication_gate": "No new CI polling here; prior current18:55 closing receipt had two retained fan-ins queued =>WAIT until fresh parent-authorized gate",
+    "changes_to_workflow_assertions_limits_source_CI_run": false
+  },
+  "manifest": [
+    {
+      "path": "job121574328675.annotations.original.json",
+      "bytes": 1311,
+      "sha256": "d6d26514007a23bda03abd65251d19b69e9aae842c56c912beb08c7e2a44b356"
+    },
+    {
+      "path": "job121574328675.full-original.log",
+      "bytes": 781638,
+      "sha256": "f3e3ee7c62acf848d2bc6b5bf5fdd82b65f65c018bf27825a83c181ce9bc9129"
+    },
+    {
+      "path": "job121574328675.original-metadata.json",
+      "bytes": 4174,
+      "sha256": "185c9183839eeb70b341dddb86b811b89336b0c4dbf2611d755a07fdbccad5f1"
+    },
+    {
+      "path": "observations-official-zip-members.json",
+      "bytes": 32800,
+      "sha256": "654d11f28fc6518e663e88796f8525446adc9fe37519d506ae8a35a584d62996"
+    },
+    {
+      "path": "run40310512277.artifacts-page1.original.json",
+      "bytes": 16262,
+      "sha256": "58aaa083599821a38fca36416096e279074c3508e6c3fe2172d9dc1403fec00d"
+    },
+    {
+      "path": "selected-official-members/native-capacity-release.log",
+      "bytes": 28781,
+      "sha256": "a62adc88ed84b022a001dbb98107181a0407bf6876ef84b4c3f7c5c93c8fffd3"
+    },
+    {
+      "path": "selected-official-members/native-growth-reference-release.log",
+      "bytes": 2330,
+      "sha256": "368118051b8ad8da0f4beac05a871c24fbdccdfeab6d846bfae343147ad4c470"
+    },
+    {
+      "path": "selected-official-members/rust-shard.json",
+      "bytes": 255,
+      "sha256": "8a374fd366a34e718c4cab1b18c3f7c0f405ad161b3dd540fb61d61cfa78e594"
+    },
+    {
+      "path": "selected-official-members/rust-shard.sh",
+      "bytes": 9325,
+      "sha256": "d2862f4fc7477983a3b6877e4f310a8bfeb6d663d419b577da210d3ea62e55ea"
+    },
+    {
+      "path": "selected-official-members/source.json",
+      "bytes": 421,
+      "sha256": "3d630f996b821d60bb1768dfc1b748cf156b81fd1ee5bc877fb3687e3cc337f0"
+    },
+    {
+      "path": "selected-official-members/workspace-tests.log",
+      "bytes": 447256,
+      "sha256": "af87d50b2ffae9ea66a8b93e43c014bda80d2454aafdece5fbc0d012432171e9"
+    },
+    {
+      "path": "two-relevant-official-artifacts/12674439876.complete-original.zip",
+      "bytes": 4465869,
+      "sha256": "bb5a008825b056cc67caa484fef8f4bb4d5f431b5f558c182aef305ab9cd4643"
+    },
+    {
+      "path": "two-relevant-official-artifacts/12674439876.original.zip",
+      "bytes": 4078516,
+      "sha256": "e14e02be6187d2d6c4919fc9d059c27c75f6e987cc1ceb1626330b320fda2b3c"
+    },
+    {
+      "path": "two-relevant-official-artifacts/12674439876.range-recovery.receipt.json",
+      "bytes": 874,
+      "sha256": "fea2506000c519ee831e32350789b05d2861699f7d4ae14f995b33ee2f82a813"
+    },
+    {
+      "path": "two-relevant-official-artifacts/12674439876.receipt.json",
+      "bytes": 577,
+      "sha256": "4ec711724e8d10fb1350c74bc8369b139bf2dec460a21c6a58544843f17d2d31"
+    },
+    {
+      "path": "two-relevant-official-artifacts/12674439876.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "two-relevant-official-artifacts/12674439876.tail-response.private.bin",
+      "bytes": 388510,
+      "sha256": "2ad4c9a144a112f127cd116f90c1189debd6f68b25e1db171afeb1dc97f34e54"
+    },
+    {
+      "path": "two-relevant-official-artifacts/12674439876.tail.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "two-relevant-official-artifacts/12674439882.original.zip",
+      "bytes": 2164,
+      "sha256": "4040af620e7bd5da3ed823bbed730ddcaa19ffa96c17db8e3424da7e29313734"
+    },
+    {
+      "path": "two-relevant-official-artifacts/12674439882.receipt.json",
+      "bytes": 569,
+      "sha256": "edb3688419171163f5f7d4baf4c01a35446ec49d86b85545f01315fdbf214bc1"
+    },
+    {
+      "path": "two-relevant-official-artifacts/12674439882.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "two-relevant-official-artifacts/receipt.json",
+      "bytes": 1215,
+      "sha256": "1663732057139bf9bf9bdf6f01cb9d9e24cea3ff01d4017e244954305fa478ee"
+    }
+  ],
+  "manifest_sha256": "c13c780fa99e12300f3b517e3f7601af32bf2afa85388adf643dba2bbcd5775d"
+}

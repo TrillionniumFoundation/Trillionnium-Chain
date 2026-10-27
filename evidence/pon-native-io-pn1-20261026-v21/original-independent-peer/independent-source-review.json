@@ -1,0 +1,146 @@
+{
+  "schema": "pn1-checkpoint64-independent-source-review-v1",
+  "recorded_utc": "2026-10-26T13:41:15.149131+00:00",
+  "reviewer": "/root/pn1_checkpoint64_peer",
+  "scope": "Read-only exact-source, original raw-ledger, original forensic receipt and primary SQLite/source review. No build/test/native execution or source mutation.",
+  "base_head": "399dd82608df72c71c502b8bda0aa95898794080",
+  "base_tree": "66ceec03cd2b67ae88a5662cf75e4ba80292cd2b",
+  "candidate_patch": {
+    "path": "work/ci-follow/pn1-native-checkpoint64-source-candidate-20261026-001/candidate.patch",
+    "bytes": 1435,
+    "sha256": "1e1e12cf74bdb313d9feda51839b25b529b77d8309bc54be4202e6955dc3291f"
+  },
+  "implementation_receipt": {
+    "path": "work/ci-follow/pn1-native-checkpoint64-source-candidate-20261026-001/implementation-receipt.json",
+    "bytes": 6459,
+    "sha256": "7fa59551442738ff9580e799f9b7936cc48eb778e013d477a63b34e9b6ad9d43"
+  },
+  "original_raw_preparation": {
+    "path": "work/ci-follow/pn1-v3-clean-source-public-qualification-20261026-001/execution/raw/preparation.json",
+    "bytes": 243831,
+    "sha256": "b669bd4ca685e9665bbdfefacd8d6901aac17b588e2b31e6038a5c6da406ee97"
+  },
+  "original_raw_plan": {
+    "path": "work/ci-follow/pn1-v3-clean-source-public-qualification-20261026-001/execution/raw/plan.json",
+    "bytes": 6277,
+    "sha256": "8133f1cd7a8bd8a9126727389916fc59944b840c56a7bd73cfd40ab132af6a4e"
+  },
+  "original_forensic_receipt": {
+    "path": "work/ci-follow/pn1-sqlite13-storage-forensic-readonly-20261026-001/forensic-receipt.json",
+    "bytes": 6133,
+    "sha256": "566335d7150e1b5934bdb7980e26e80a06368bde230e6b49a36222a9c6372d89"
+  },
+  "confirmed_original_failure": {
+    "role": "honest-miner",
+    "first_failure": "bounded lifecycle evidence capacity",
+    "first_failure_sqlite_code": 13,
+    "lifecycle_count": 1017,
+    "callback_operations": 1018,
+    "lifecycle_serialized_bytes": 240729,
+    "lifecycle_serialized_cap": 655360,
+    "high_water_sum": 2088680,
+    "logical_bytes_limit": 50331648,
+    "lifecycle_actions": "1002reserve-growth +15other; firstthree seedadmit+activate committed; fourthadmit failed; no transaction contained duplicate WAL page frame according to checksummed original forensic evidence",
+    "physical_disk_full_is_not_evidenced": true
+  },
+  "positive_source_checks": [
+    "Only write branch of Node::open_selected_with_io, further guarded native_io.is_some(); legacy DB path and growth-observation-only read path unchanged.",
+    "Generic lease.open VFS setup and original 4096-page tests unchanged; no schema/DDL/metadata/receipt/signed-domain/page-geometry conversion or new namespace necessary.",
+    "Sets existing SQLite connection-local wal_autocheckpoint API to64 and strictly reads it back; unknown/missing pragma cannot silently qualify. Failure returns through existing error paths, mismatched readback classified local_integrity.",
+    "SQLite3.51.3 standard default WAL hook is the only callback found for this Node connection; no repository wal_hook dependency is overwritten. Separate Cell cache wal_autocheckpoint0 path is untouched.",
+    "Existing authorizer permits wal_autocheckpoint, and original VFS file_control NOTFOUND fallback lets SQLite implement built-in PRAGMA; no unsafe pointer/callback changes.",
+    "Original ledger high-water accounting remains monotone; reusing WAL offsets below existing high-water emits no new-growth event by the original reserve_growth policy. No lifecycle records dropped, coalesced, overwritten or moved out of the existing budget.",
+    "All original 1024/256/655360 event limits, original seed4x256, 4KiB/FULL/WAL, same lease, file/cgroup/VM/time/deadline controls and original readers are byte-preserved.",
+    "Original native terminal_error and independent reader root_terminal reject failed/denied/poisoned/incomplete roots; PRAGMA readback or COMMIT0 alone cannot pass finite qualification."
+  ],
+  "checkpoint_semantics": {
+    "official_primary": [
+      "https://www.sqlite.org/pragma.html#pragma_wal_autocheckpoint",
+      "https://www.sqlite.org/c3ref/wal_autocheckpoint.html"
+    ],
+    "facts": "Auto-checkpoint is connection-local after commit at threshold; default1000 pages; all such checkpoints PASSIVE. It is not a WAL physical-size hard bound. Readers can prevent reset, a large transaction can exceed threshold, and checkpoints add real main-file growth/I/O/CPU charged to original limits.",
+    "inference": "Smaller threshold may reduce original monotonic WAL high-water growth; this is unproven until unchanged original finite native path succeeds and strict reader verifies actual healthy/closed receipts."
+  },
+  "conditional_error_propagation_risk": {
+    "id": "CHECKPOINT_ERROR_SWALLOWED_BY_DEFAULT_HOOK",
+    "actual_source_file": "/home/qian-qi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libsqlite3-sys-0.37.0/sqlite3/sqlite3.c",
+    "actual_source_sha256": "9512509b1bccb7461f79bea8aad6280ae4699e925fa4804381b71f59e7efb0c5",
+    "source_location": "sqlite3.c:187375 sqlite3WalDefaultHook",
+    "source_fact": "Calls sqlite3_wal_checkpoint and unconditionally returns SQLITE_OK; checkpoint result is not propagated from this hook.",
+    "Node_source_locations": [
+      "trillionnium/crates/trnm-pon-node/src/store.rs:4094",
+      "trillionnium/crates/trnm-pon-node/src/store.rs:4671"
+    ],
+    "Node_fact": "admission and atomic wrappers return factual durable result directly after tx.commit, with no immediate NativeIoLease check; next namespace() calls lease.check.",
+    "inference_only_not_reproduced": "If earlier checkpoint crosses a VFS limit, same COMMIT may return a factual durable result while the lease is already poisoned. This candidate does not close synchronous owner-health propagation. No evidence of cap bypass or false finite qualification is claimed.",
+    "effect_on_current_validation": "Not a reason to drop healthy/closed guards. Original terminal/reader guards remain mandatory and prevent acceptance of poisoned receipts. Do not characterize candidate as a complete production safety repair."
+  },
+  "unchanged_exact_pin_checks": [
+    {
+      "path": "work/root-chain-integration-20261026/trillionnium/crates/trnm-sqlite-io-boundary/src/ledger.rs",
+      "bytes": 14272,
+      "sha256": "e9205f1493694058cea5d84053e66518d78b424957c089c72babf4f2f0412a6a"
+    },
+    {
+      "path": "work/root-chain-integration-20261026/trillionnium/crates/trnm-sqlite-io-boundary/src/vfs.rs",
+      "bytes": 49986,
+      "sha256": "d26305c2bbdae0c93bf5fea7ce697df5967847e2d254d29eb720119620387e99"
+    },
+    {
+      "path": "work/root-chain-integration-20261026/trillionnium/crates/trnm-sqlite-io-boundary/src/sql.rs",
+      "bytes": 6598,
+      "sha256": "418aa0c046cb9b281e2db808995d8ca42324361fe6a8f9412621d965a3dfadfe"
+    },
+    {
+      "path": "work/root-chain-integration-20261026/trillionnium/crates/trnm-sqlite-io-boundary/tests/native_held_directory_v1.rs",
+      "bytes": 37979,
+      "sha256": "6e746d2f9c1497cda7dddf05bf87aaf6b97403ef846eaef6dad6f8f3146cb86d"
+    },
+    {
+      "path": "work/root-chain-integration-20261026/trillionnium/crates/trnm-sqlite-io-boundary/tests/native_public_api_v2.rs",
+      "bytes": 39668,
+      "sha256": "0459a4e7184a5d2912c8e19295c354e3c46be7e612b918a9a37fbce1a3bd79b5"
+    },
+    {
+      "path": "work/root-chain-integration-20261026/scripts/ci/check_pon_native_io_component.py",
+      "bytes": 30045,
+      "sha256": "83f26a7906eee8a2b0c8f05a8a4b5537249413b6399d773e19e3373c33e8324c"
+    },
+    {
+      "path": "work/root-chain-integration-20261026/scripts/ci/check_pon_identity_churn.py",
+      "bytes": 109906,
+      "sha256": "7000380737367657292f2e7cc6f779dde8ce64eaaebf5c196de733caf9ffbe71"
+    },
+    {
+      "path": "work/root-chain-integration-20261026/trillionnium/crates/trnm-pon-node/tests/native_io_authenticated_v1.rs",
+      "bytes": 26340,
+      "sha256": "411379e845cd1b8440c35d4db8f329c166287fdf1a2911d125391c6585dc6695"
+    },
+    {
+      "path": "work/root-chain-integration-20261026/trillionnium/crates/trnm-pon-node/tests/support/identity_churn_work.rs",
+      "bytes": 12390,
+      "sha256": "278914d65929f7a56da66bf6fbe1708f252218f9335e5db8337e854e948e30f8"
+    },
+    {
+      "path": "work/root-chain-integration-20261026/trillionnium/crates/trnm-pon-node/tests/support/identity_churn_native_io_v1.rs",
+      "bytes": 11264,
+      "sha256": "97decde477d3908ed3a1aed25bcc21098bc13581575cfe8b42b31eca8ee4a0a8"
+    },
+    {
+      "path": "work/root-chain-integration-20261026/docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "bytes": 360182,
+      "sha256": "19702d375a0a5c983e2db53f783dc82afb40bb4e195cc4536e0b888ea20baf9f"
+    }
+  ],
+  "blocking_source_findings_for_entering_unchanged_native_validation": [],
+  "decision": "May enter one properly budgeted new-source/fresh-claim original native validation with unchanged original guards/readers; not an effectiveness or production qualification. Preserve original consumed claim and failure.",
+  "build_or_test_run": false,
+  "source_modified": false,
+  "source_fix_effectiveness_qualified": false,
+  "whole_writer_qualified": false,
+  "original_three_FD_caller_qualified": false,
+  "independent_reader_qualified": false,
+  "full_W1_4097_qualified": false,
+  "task_complete": false,
+  "merge_ready": false
+}

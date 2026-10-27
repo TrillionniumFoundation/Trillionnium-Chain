@@ -4206,6 +4206,330 @@ execution and readback, whole writer/strict reader, seven actual roots, the orig
 A clean committed corrected source and all original required executions remain due.
 
 
+2026-10-26 PN1/I02 first real public preparation failure and bounded monitor correction (V19):
+The first actual clean-source public prepare on ec0acdff5717b8f584b26f30f1162bd9bf1cc888
+(tree 49de9450a7738b15f3dc63b808f957ce49804df2) failed. The real Cargo child
+PID 1404396 / birth 8179665 / parent 1379349 was reaped with wait -9 after
+62.971600613 seconds; the complete owner used 88.91997036199609 seconds.
+The original 1200-second build bound did not expire. Actual source and Nice10,
+400% CPU, 16GiB and four-CPU observations were retained. No prepared document,
+execution or independent readback was produced. Original stdout/stderr, step and
+terminal records remain failures. The sender and cause of SIGKILL are UNKNOWN:
+normal compiler-progress logs and the limited journal/kernel lookup do not prove
+or exclude OOM, an external stop, or a monitor stop.
+
+An independent controlled reproduction against immutable ec0 source found that
+real unlink and rmdir between enumeration and stat/descent abort the original
+monitor with ENOENT; the same watch fault kills a real owned child. Those three
+original RED observations establish a defect, not the cause of the earlier build.
+The correction restarts the entire held-tree scan only for internal ENOENT, under
+the same single five-second deadline and cumulative 200,000-entry bound, retaining
+partial observed logical peaks. It does not skip a disappeared entry and accept
+an incomplete scan. Missing or replaced top roots, permission errors, symlinks,
+FIFOs, other unknown objects, persistent churn and cap overruns remain refusals.
+The original 6GiB target / 512MiB reserve and watch interval are unchanged.
+
+The monitor retains its first bounded typed error, observed retries, actual owned
+child wait and kill attempts alongside the original first writer error. A later
+NONZERO or terminal-publication refusal cannot promote success or erase these
+observations. The mandatory prepared monitor record uses fresh stored schema
+`pon-native-io-three-fd-component-prepared-v2`; build-specific failure diagnostics
+use `pon-native-io-component-owned-build-step-failure-v2`. The profile, claim domain,
+original execution failure schema, selector, native/full acceptance and all caps
+remain unchanged. Logical sampling is not a physical or instantaneous quota.
+New tests exercise actual filesystem changes and owned child termination; they
+cannot qualify Cargo preparation, one-shot execution, complete-bundle readback,
+full-writer/strict-reader, seven roots, 4096+fresh, Windows or model/WAN acceptance.
+A new clean committed source and the actual public prepare → execute → independent
+readback remain required. Any new-source attempt must retain the first failed
+owner's spent budget; no unchanged-head retry, fake prepared record, old binary,
+fresh budget reset or discarded failed target is allowed. Full guards and merge
+readiness remain false, and the existing PN0–PN6 acceptance stays in force.
+
+On the fixed V19 source, all seven added controls passed in 6.050 seconds.
+The final combined five-module run passed all twenty-six tests in 6.578 seconds
+(owner 7.094219090 seconds); the two original test files and all original nineteen
+test bodies remained byte-for-byte unchanged. All five actual ec0 helper sources
+and every current candidate Python pin were checked before and after. These are
+bounded Nice19/AS1GiB controls, not a successful public build or any full acceptance.
+
+
+### PN3 / I09–I10 cold release contract clarification — 2026-10-26 (OPEN)
+
+This refines the existing PN3/I09–I10 and PN5 implementation order. It creates no
+new roadmap, budget, authority or passing gate. The pinned cold-release audit
+below supersedes any inference that unlike capacity measurements, by themselves,
+prove a universal runtime contradiction. All historical failed runs remain failed.
+
+| Original observation or cap | Exact scope retained | Required accounting |
+| --- | --- | --- |
+| 922,881,591 B installed-runtime observation | Sum of existing RECORD pathname lengths in the old 29-distribution venv; not a complete interpreter root, wheel archive size, physical peak or new admission | Complete the missing dependency closure and meter the actual retained representation; do not grant fit from this sum |
+| 432,269,632 B `libtorch_cpu.so` | Already included in that runtime sum | Do not add it a second time or treat it as an admitted I09 base role |
+| 512 MiB Cell cache | Original logical chunk/manifest accounting and separate main-DB image bound, both enforced; WAL/SHM are not free | Each cache must satisfy both constraints; simultaneously retained caches and destinations also enter the host total |
+| 300 MiB fixed I09 base role | Per-file bound for the unchanged eight base roles; adapter files remain 2MiB each and sidecar 64KiB | Reject an extra or oversized role under that old version; do not redefine it as a general runtime/VM limit or silently enlarge it |
+| 2 GiB per original LAN data-host root | Original cooperative controlled-root forecast/accounting, including both slots, cache DB/WAL/SHM, binaries, output and metadata | Count every overlapping staging/install/archive/old-version/held object; metadata64MiB remains inside the total. This is not a filesystem hardquota |
+| Pocket4 provider-0133 UNKNOWN 1GiB | Original NETWORK response reservation | Keep the charge and original failed outcome. Do not subtract it as measured disk use, refund it from SSH255/path absence, restart it or probe a replacement |
+
+The original frozen LAN forecast is 1,964,390,944B; its 183,092,704B margin cannot
+admit another 269,060,552B weight file. That historical additional-weight NO_GO is
+preserved. It is neither a current free-space measurement nor proof that the old
+run exceeded its limit. A new cold root cannot borrow or reset that frozen plan.
+Single-cache capacity also does not establish impossibility of bounded chunk
+consumption into an independently admitted destination within the same host root.
+Every overlapping representation still counts; an area called “outside cache” is
+not an accounting exemption. No new root or complete cold run has been admitted.
+
+Implement these interfaces through the existing owners, in this dependency order:
+
+1. **PN3/I09 release declaration → runtime identity.** Add a reviewed, explicitly
+   versioned `runtime_root` contract alongside the existing release/profile owner.
+   The interface must bind platform/ABI and marker/extras selection, interpreter
+   and stdlib/base-image identity, actual original wheel bytes/lengths/provenance,
+   installed-file hashes/modes, native/system-loader dependency closure and the
+   import/`.pth`/pyc/generated-file policy. Match the exact source and inference
+   arithmetic profile. A requirements file or six project-source hashes alone
+   cannot satisfy this contract. New stored/signed contracts need fresh namespaces;
+   the old eleven-role version and its digests continue to reject extra roles.
+2. **M09 fetch/materialize → admitted private namespace.** Consume that manifest
+   and existing model/adapter materials through bounded verified chunks. Return
+   only an owner-constructed runtime/material capability tied to the actual held
+   namespace and release identity, rather than a caller-supplied ready flag or
+   unchecked path. Connect it to the same owner's cache/destination/DB/WAL/SHM,
+   extraction scratch, archive, old/new version, metadata and UNKNOWN ledger.
+   Reserve the complete peak before effects, then charge actual overlap. Retirement
+   requires proven release of readers/held handles and custody responsibility;
+   a hash, unlink or expired connection alone cannot refund retained/unknown work.
+3. **Existing Hepta loader → original execution authority.** Bind the admitted root
+   to `SmolLmNeuralReadConfigV1`, execution-profile identity and the namespace used
+   by the actual interpreter, imports and HF material opens. Preserve existing
+   offline/local-files-only/trust-remote-code refusal and reject unknown ambient
+   site/user/`.pth`/library-path or online fallback. Continue original ResourceGrant,
+   CURRENT/selector window, FinalUse, parameter, Ready and forward checks. Verified
+   Cell bytes do not grant installation, CURRENT, a new key or execution authority.
+   A completed forward is separate from shutdown and actual OS-child terminal.
+4. **PN3/I10 selection/artifact/TaskFlow → ordinary next-task readback.** Use the
+   original resource/effect owners and installation path; join actual evaluated
+   parent identity, cross-node download, authorization, local selected generation
+   and the next ordinary task's actual loaded bytes. Keep revocation, reorg, denial,
+   late cancellation and terminal/funding reconciliation. Report mechanical closure
+   and measured benefit separately; a no-benefit candidate remains rejected.
+   Three denials cannot replace the required three successful installation/readback
+   rounds, and three successful transfers cannot replace them either.
+5. **PN5 custody/repair → original WAN acceptance.** After the complete loader and
+   release close, retain the existing three independent complete replicas,
+   renewal/repair and version-retention requirements. The union of node files is
+   useful only while all referenced versions have the required custody and a
+   recoverable manifest. Discovery or a signed advertisement does not prove bytes,
+   persistence or repair. Keep the preregistered at-least-72-hour experiment across
+   three independent administrators/failure domains, every original fault/load
+   cohort, confirmed goodput, cold loading, repair and recovery objectives.
+   Same-administrator LAN and loopback observations cannot satisfy this WAN gate.
+
+Acceptance remains fail-closed and evidence-based. A fresh destination must have no
+preinstalled model/runtime cache; offline acquisition, installation and first actual
+forward must use only the declared release. Capture exact source/runtime/parent and
+manifest identities, actual bytes/time/overlapping peak, custody and actual child
+terminal. Missing wheel/library, incomplete dependency, replaced ancestor, cache
+retirement while still needed, full disk, permission failure, crash and unknown
+termination must refuse without a new dispatch, hidden allowance or early refund.
+Keep all applicable original fetch/call/owner/cleanup/resource bounds. The old
+35-second eleven-material cohort retains its original scope; complete cold success
+cannot exclude runtime acquisition or inherit the preinstalled-environment PASS.
+If the complete work has no admitted budget under the original envelope, keep
+NO_GO rather than inventing a timer, resetting phases or omitting dependencies.
+
+Current proof remains partial: original SQLite3.51.3 I09 run002 fetched eleven
+materials (272,190,131payload B /269chunks) in4.257682651s and its original signed
+native load/query/terminal-unload case passed in10.357s using the existing runtime.
+The controller still failed (exit1,180.167288273s) at I10 selected installation
+UNAVAILABLE. Its native receipt stays UNVERIFIED; full cold release, ordinary
+installation/next task, three model rounds/benefit, Windows and WAN remain OPEN.
+The 71a selected-initial API is not registered into an ordinary initial Agentd route
+in the reviewed source, and its three real-model tests remain ignored/NOT_RUN.
+The separate two-field fixture source patch is not compiler or model qualification.
+
+Pinned audit: [cold-release evidence](../../evidence/pon-upgrade-implementation-20261018/native-rounds/cold-release-contract-20261026/REPORT.md). Audit receipt SHA256
+`4e6cdcf05bdd58b897c529de67af03ae1dc8453f11953956ab3dcfe7c378022b`;
+report SHA256 `8ca0b29590fa53c0a3e9ae94ea30915fdd9e0b409c7b7a305c28bf47d221bcd6`.
+This contract and its interfaces are pending implementation/native verification.
+`task_complete=false`, `merge_ready=false`; PN0–PN6 and every original acceptance
+criterion, limit and failure observation remain in force.
+
+Retained V19 [original failed preparation and integrated bounded controls](../../evidence/pon-native-io-pn1-20261026-v19/README.md)
+include the additional source-check diagnostic timeouts; none closes public or full qualification.
+
+### PN1 / I02 real-Header fixed-dispatcher 64-reuse candidate (OPEN)
+
+The opt-in component-v2 source adds signed controlled development registration,
+ordinary Node parent/template acquisition, one pre-Header fixed dispatcher setup,
+and 64 disjoint nonce-window sibling searches under that same parent. Every miss
+and winner carries a complete work proof; ordinary admission and cold packet/state
+readback are followed by independent Python attempt reconstruction. This is not
+64 successive parents, a public paid-identity campaign, an all-13-kernel minimum,
+or a hardware-fairness or throughput result. PNH1/PNW1 and existing profiles stay
+unchanged. The original two-second parent RPC and120-second owner/oracle/seal
+bounds remain; incomplete EOF or remaining descendants remain UNKNOWN.
+
+Original real RED, revision002's remaining finally error path and Clippy101 are
+retained. Revision003 preserves first_error across event-file flush/fsync/close
+refusal and removes two redundant Result wrappers. Strict release Clippy passed
+for the exact Rust slice, while the final Python finally correction has only its
+injected partial control; no whole-source/native64 execution is claimed.
+The original600-second W1 build envelope is retained; conservative maxima for the
+two diagnostics are300+20=320 seconds, with no reset of historical failures.
+[Source, partial controls and diagnostic history](../../evidence/pon-w1-real-header-64reuse-source-20261026/README.md)
+remain below the existing PN1 acceptance. Source-to-binary/held caller/whole writer
+and reader, minimum cost, hardware and original4096+fresh work remain OPEN.
+
+### PN1 / I02 actual held-target ABI refusal and v3 admission (OPEN)
+
+Original be785 Cargo0 captured a release ELF but emitted no SQLite C witness cfg
+or links and an explicit UNQUALIFIED_REASON. The corrected absolute-Nice10
+launcher then reached the original native selector and failed PRIVATE_ABI_UNSUPPORTED.
+Its claim is consumed; the earlier capture-only admission inference is corrected,
+and all original failure/partial/terminal bytes remain. No old prepared/claim
+replay, numeric limit change, generic symlink admission or full-guard promotion
+is permitted. The Linux v3 path source retains an exact private inherited target
+FD and each ancestor; original/dup/canonical identity, compiler/toolchain and
+three-required-plus-one-optional loader allowlists stay mandatory.
+
+Prepared-v3 requires and replays the actual unique correct-package Cargo event,
+normal witness cfg, exact v3 fence/amalgamation SHA, static witness link and
+same held-target OUT_DIR. Cargo success alone is insufficient. Final32 Python
+controls (old26 unchanged) and13 real tmpfs path controls passed; actual new
+normal-C/nm/public prepare/execute/independent reader remain due. Conservative
+400 prior owner +60 diagnostics +730 next owner stays1190 under the original
+1200 build limit; failure history and original180-second execution contract stay.
+[Original failures, correction and bounded controls](../../evidence/pon-native-io-pn1-20261026-v20/README.md)
+are mechanism/source evidence only; full W1/Windows/model/WAN/merge gates remain OPEN.
+
+### PN1/I02 — original399 native SQLite13 and checkpoint-policy candidate (2026-10-26)
+
+The [retained original run and forensic evidence](../../evidence/pon-native-io-pn1-20261026-v21/README.md) records real normal-C v3 support followed by a nativeFAIL101: the fourth unchanged256-transfer seed exhausted the original1024-event ledger. Original source, assertion, failure, single consumed claim and all limits remain. A native-IO writer-only `wal_autocheckpoint=64` policy is a candidate for real WAL-offset reuse, with strict readback; it changes no schema, page geometry, fixture, caller, lifetime or evidence capacity. PASSIVE is not a hard WAL bound. The conditional default-hook checkpoint-error/lease-health propagation risk remains open. Acceptance requires the original fresh-claim native terminal and unchanged reader to succeed within all original budgets; no global W1 cost, full4097, Windows, three-round model, release or WAN result follows from source review or pragma configuration.
+
+### PN1/I02 — explicit W1 lifecycle correction after retained v2 RED (2026-10-26)
+
+The [original real v2 run and source](../../evidence/pon-w1-real-header-64reuse-v2-original-20261026/README.md) remainFAIL:64 same-parent admissions/126trials completed, but ordinarycoldrecover correctly chose heavier durable work and violated the auditfixture frozen-parent expectation. ProductionSTATE_RECOVERY and its original tests remain authoritative. The explicitv3 component keeps the originalhotparent/gen1 and fullcoldtuple equality assertions, adds ordinaryhotrecover with independently computedwork/height/id selection, then checks all64 coldpackets/states. Only receipt domains advance; no originalRPC2s/whole120/bytes/AS/FS policy changes. Exact-source v3 build/native/oracle are NOT_RUN; it cannot turn oldv2 red into PASS or qualify currentpair/full4097/hardware/globalminimum.
+
+
+### PN1 shared authenticated snapshot source successor (2026-10-26, NOT QUALIFIED)
+
+The existing I02/PN1 capacity item now has a reviewed source successor in `store/shared_snapshot.rs`: a fresh held-native-IO physical schema stores the complete working partition with an actual persistent account-root record. Public readers materialize every account and retain full State/root/history/continuity checks. The original independent receipt-reader and harness scripts, 4 KiB/FULL/WAL policy, 64-row public limit, original tests and all resource/time caps remain fixed. The private 65-row allowance is only the same-transaction insert-before-prune verification. Ordinary JSON and deployed/old formats are not migrated.
+
+[Retained source revisions and independent findings](../../evidence/pon-native-io-pn1-20261026-v22-shared-layout-source/README.md) distinguish original failures, source admission and execution. Revision004 fixes the prior unknown/genesis-key and ATTACH-control findings; source checks pass, but compilation, strict Clippy and original native/reader performance remain NOT_RUN. Known-but-pruned key relocation, unselected-payload binding, arbitrary COMMIT/BEGIN continuity and post-COMMIT health semantics remain security OPEN. A component PASS cannot close these gates.
+
+Conservative preparation charge is 1,035.743 of the original 1,200 seconds, leaving 164.257, based on actual durable terminal rather than the earlier pre-publication snapshot. The existing preparation requires a fresh target and fixes its child timeout at 1,200; wrapping that collector in a shorter external cutoff is not a valid deadline chain. No expired-window reset, reused/prewarmed target, new profile, larger allowance or substituted fixture is authorized by this source change. Keep original native preparation NOT_RUN until the ownership/deadline path is valid; full4097 and all PN0-PN6 acceptance remain open, `merge_ready=false`.
+
+
+### PN0 bounded Worker procfs cleanup race (2026-10-26, LOCAL VERIFIED)
+
+[Retained original CI and local repair](../../evidence/pon-worker-process-cleanup-esrch-20261026/README.md) bind runtime job 121574328486 to source53fb/actualpreviewbd609. The original concurrent-groups test failed with ESRCH (370 passed, 1 failed, zero skipped). A real live-open proc descriptor returns std::io ESRCH after its owned child is actually reaped; the new regression first failed before the production change. The narrow fix restarts a complete scan for that typed procfs race within the same deadline, while raw Rustix wait/pidfd, permissions and identity errors remain refusals. ESRCH never proves terminality or ownership.
+
+All original 371 tests, 8 MiB output, 1-second cleanup and 3-second call assertions remain; 373 local tests now pass with zero skips, and strict Clippy passes. Original logs, official ZIPs and the initial new-control compilation failure are retained. This is local Worker verification only: exact historical syscall causality and new published-head/actual-merge CI are unproven; earlier qualification timeout, native storage, Windows, model and WAN gates remain open. Keep merge_ready=false and the existing PN0-PN6 acceptance criteria.
+
+
+### PN1 retained snapshot binding successor (2026-10-26, SOURCE ONLY)
+
+The existing shared-layout capacity/security item now streams every retained canonical record through SQL-key, embedded-block, context/native-record and complete working-partition root/count binding. The known-but-pruned-key relocation counterexample is rejected on the optional-None path after progress, as well as the final public cache/empty-read-set/no-anchor windows. The actual selected State still requires all original account materialization, COW, root, continuity and history checks. Snapshot format/signed domains, public64/private pending65 bounds and all original tests/assertions remain unchanged.
+
+[Retained revision005 and exact independent review](../../evidence/pon-native-io-pn1-20261026-v23-retained-binding-source/README.md) distinguish this codec-binding improvement from authentication of all unread states: coordinated resealed unread records, arbitrary transaction continuity, post-COMMIT health, independent decoder/migration and original latency/resource/native execution remain OPEN. Preflight/format/diff and26-member/155-node locked graph pass; no new compiler/test/native qualification is claimed. The original preparation debt and limits remain, with no new budget or restarted attempt. Keep fullguard/full4097/merge_ready=false and the existing PN0-PN6 acceptance unchanged.
+
+
+#### PN1 R6 executed transaction scope and W1 cost audit — 2026-10-26 (SOURCE ONLY / OPEN)
+
+[Executed transaction-scope source and retained review](../../evidence/pon-native-io-pn1-20261026-v24-transaction-scope-source/README.md) refines the existing R5 storage boundary without a new roadmap or changed stored/signed namespace. `TransactionScope::capture(&Connection)` produces an opaque connection-borrowed observer; `unchanged()` requires the same private SQLite clientdata owner, live executed tracer and unchanged explicit-control epoch. Actual STMT execution covers cached/read-only COMMIT/BEGIN/END/ROLLBACK/SAVEPOINT/RELEASE. Held factories install the observer; borrowed/owned snapshot and Some/None/final-read paths carry the scope. No caller Boolean, epoch reset or cross-connection substitution is accepted. COMMIT effects are not undone; implicit engine rollback and unread resealing remain OPEN.
+
+All 477 original boundary pins, 467 original Rust test files, the 79,958-byte inline store test tail, existing R5 assertions, Snapshot format, settings and limits remain preserved. Fourteen new controls are uncompiled/unexecuted. Preflight, format/parser, locked 26-member/155-node metadata and diff checks pass only at source level. Original fresh prepare/native/caller/three-FD/whole-writer/strict-reader/full4097 gates remain required; the original 1,200 s build budget has only 164.257 s left, without a safe admitted hierarchy. No deadline reset, target reuse, fake prepared result or production activation is permitted.
+
+[W1 minimum-known-cost source audit](../../evidence/pon-w1-minimum-cost-source-audit-20261026/README.md) adds winning-only proof assembly, fixed 318-byte header-prefix reuse, and unregistered-zero-task completed-W1 scheduling promotion before task refusal to the existing PN1 adversarial measurement set. Mandatory transcript work remains; local promotion is not block admission or a proved capacity attack. The historical399 one-setup/126-attempt/64-admission registered-zero sample and its cold failure stay intact. These are unmeasured source findings, not lowest-cost or hardware-fairness certificates. Preserve the original 4096 paid identities plus fresh4097 sustained24-actor/three30-second/original2-second confirmation acceptance. `task_complete=false`, `merge_ready=false`, **NO_GO**.
+
+
+PN1 R6 first actual development typecheck retained an E0282 failure for the SQLite observer's raw pointer. [Original failure and narrow correction](../../evidence/pon-native-io-pn1-20261026-v25-pointer-typecheck-red/README.md) explicitly bind that pointer to the already required private `Observer` type. No original assertion, schema, authority or limit changes. The14 new controls were not fully compiled or executed in that failed attempt. Any corrected development check stays inside its original inherited560/620s window without refund; this is separate from public preparation, the unchanged1200s/164.257s balance and all native/release/3FD/whole-writer/strict-reader/full4097 gates. **NO_GO**.
+
+
+#### PN1 retained hosted 3-hour runtime qualification failure — 2026-10-26 (OPEN)
+
+[Original source-bound failure and complete evidence](../../evidence/pon-runtime-head-3h-timeout-20261026/README.md)
+retain the first actual head-runtime 3-hour qualification observation in run
+`40310512277`, attempt1, job`121574328675`, on source
+`53fb654b532ed8e737e0dea635a31dce3b73b3cc` / tree
+`d82ba0c7bbaea04200f11d38f6e9c4dccac81f78`. It did not qualify:
+the official conclusion is `cancelled`, with the explicit maximum-execution
+annotation `3h0m0s`. The release 65,537-account growth test ran
+4,293.980079 seconds before cancellation; its last observed state was
+61,444 accounts / height240. Completion, cold reopen and subsequent growth-v2
+and account-verification-cost execution remain unproved.
+
+The complete original log, annotation, exact source/attempt, two official ZIPs
+and partial-transfer history are preserved with member hashes. This is not the
+earlier 0.5-second timeout or procfs ESRCH finding, and establishes no performance
+cause, minimum-cost or hardware claim. No rerun or increased limit was used.
+The original 3-hour maximum, assertions and resources remain fixed; R4/R5/R6
+and all original PN1 native/release/three-FD/whole-writer/strict-reader/full4097
+gates remain unqualified. `task_complete=false`, `merge_ready=false`, **NO_GO**.
+
+#### PN1/I02 original-writer public IO handoff — 2026-10-27 (SOURCE ONLY / OPEN)
+
+The existing [outer writer](../../scripts/pon_identity_outer_owner.py) now contains
+the mechanically moved original `require`, `held_directory`, `publish_new`,
+`json_chunks` and `V2Writer` implementations. The existing collectors import and
+re-export that implementation. `CollectorIO(output, 'v2', writer=owner)` and
+`ComponentIO(output, writer=owner)` retain the exact live owner, held directory,
+version, used bytes and reservations. The public identity
+`prepare(args, output, io=io)` accepts that same IO; its ordinary CLI remains
+unchanged. Component `prepare(args, io)` and the original claim, execution,
+inventory and error paths are preserved.
+
+The required startup order remains: independently pin the bootstrap owner;
+construct the original writer; reserve capsule and record costs; retain the
+approved capsule in the original preparation; verify and load P/T; attach the
+same live writer to the collector; then use the existing public prepare and
+readback paths. A capsule loader must preserve the same verified owner module
+and class identity across this handoff. The trusted P0/T loader, actual capsule,
+record emission and all eleven admission cutpoints are still unimplemented.
+This source refactor grants no prepared, claim, installation or native authority.
+
+[Preserved raw results and correction](../../evidence/pon-original-writer-handoff-20261027/receipt.json)
+record the finite validation as **FAIL_INCOMPLETE**. The original-source phase
+failed during import because its exported baseline lacked
+`config/pon/ledger-v1.json`: zero tests ran, so its three intended counterexamples
+remain NOT_RUN. Two old mock receivers genuinely failed after implementation
+movement; only their receivers were migrated to the actual publisher. The
+candidate then passed nineteen finite controls, comprising nine new and ten
+original cases. All eighty-nine original test names and assertion ASTs remain.
+The original controller's zero exit and incomplete success accounting are
+retained alongside the explicit correction. The single 90-second ceiling,
+original 164.257-second remaining preparation balance and native gates are not
+reset or reclassified.
+
+The original source-inventory generator was actually run on the integrated
+source, followed by its unchanged `--check` and pinned Rust formatter check.
+Its observed 1,061 entries include ten previously missing Rust paths; this count
+is an observation, not a new limit or native result. New script bytes require
+new committed-source observations. Existing stale blob guards still require
+reviewed source bindings and the original eight-lane execution.
+
+The preceding published Chain source `bd81849bb47b10e912cfea84f7532ccc1175e4ee`
+and its actual PR preview `985dd37f4dc6f1859b57ffcaed8f0cd75da3a032` separately
+passed the original release 65,537-account/cold-reopen test, in jobs
+`121824408173` and `121824408381`, within the unchanged 10,800-second job limit.
+That complete-State reference result leaves the historical `53fb` failure
+intact. It does not qualify the later local root-reuse optimization, bounded
+witnesses, paid 4,096/fresh-4,097 W1 campaign or full native IO boundary.
+The existing PN0–PN6 exits remain **NO_GO**.
+
+The two stale workflow blob guards were subsequently reviewed against their
+actual old and current Git objects and synchronised only to those exact source
+identities. The [material review and preserved diffs](../../evidence/pon-source-binding-material-review-20261027/receipt.json)
+record the existing full-graph account materialisation and versioned shared
+snapshot, read-scope, final-read and lease-health changes. The 64-page WAL
+checkpoint policy applies to every opening with native IO, including openings
+outside the shared layout; it does not guarantee physical WAL size. All twenty
+guards, eight original lanes, assertions and resource limits remain. Source
+identity agreement grants no SQL, C ABI, layout, two-second service or native
+qualification; the original lane executions and fullT/Layout003 remain open.
+
+
 ## Isolated lease-continuity and DAA research continuation (no activation)
 
 The additive [lease/DAA research acceptance contract](specs/pon/LEASE_DAA_RESEARCH_V1.md)
