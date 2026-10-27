@@ -1,0 +1,88 @@
+{
+  "schema": "pon-w1-actual-process-v2",
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-c",
+    "import subprocess,sys,json\np=subprocess.Popen([sys.executable,'-c','import time\\nend=time.process_time()+0.1\\nwhile time.process_time()<end: pass\\ntime.sleep(60)'])\nprint(json.dumps({'owned_test_child_pid':p.pid}),flush=True)\np.wait()"
+  ],
+  "started_utc": "2026-10-27T12:03:57.011709+00:00",
+  "timeout_seconds": 16,
+  "source_sha": null,
+  "timed_out": true,
+  "consensus_authority": false,
+  "child_pid": 14,
+  "child_returncode": -15,
+  "child_reaped": true,
+  "cleanup_actions": [
+    "SIGTERM"
+  ],
+  "cleanup_errors": [],
+  "subreaper_enabled": true,
+  "leader_exited_before_group": false,
+  "adopted_child_terminals": [
+    {
+      "pid": 15,
+      "returncode": -15
+    }
+  ],
+  "owned_process_group_empty": true,
+  "returncode": 124,
+  "proc_group_sampling": {
+    "schema": "pon-w1-proc-group-summary-v1",
+    "interval_seconds": 15.0,
+    "process_group_id": 14,
+    "leader_start_ticks": null,
+    "proc_self_identity_verified": false,
+    "namespace_unavailable_reason": "proc_self_identity_mismatch",
+    "leader_identity_available": false,
+    "clock_ticks_per_second": 100,
+    "page_bytes": 4096,
+    "samples_written": 4,
+    "observed_process_identities": 0,
+    "observed_self_user_cpu_seconds_lower_bound": null,
+    "observed_self_system_cpu_seconds_lower_bound": null,
+    "maximum_sampled_sum_rss_bytes": null,
+    "last_observed_processes": [],
+    "last_sample": {
+      "schema": "pon-w1-proc-group-sample-v1",
+      "event": "terminated_timeout",
+      "sequence": 3,
+      "sampled_utc": "2026-10-27T12:04:13.045080+00:00",
+      "elapsed_seconds": 16.027484823000123,
+      "process_group_id": 14,
+      "leader_start_ticks": null,
+      "proc_self_identity_verified": false,
+      "namespace_unavailable_reason": "proc_self_identity_mismatch",
+      "observations": [],
+      "sampled_sum_rss_bytes": null,
+      "partial_read_errors_so_far": 0,
+      "tracking_was_truncated": false
+    },
+    "partial_read_errors": 0,
+    "tracking_was_truncated": false,
+    "cpu_scope": "sum of maximum observed SELF ticks for distinct PID/start-time identities, never child ticks; a sampling lower bound, not complete accounting",
+    "memory_scope": "sum RSS can double-count shared pages and miss between-sample peaks; it is not physical memory usage or a group peak. Per-process VmHWM values are not summed.",
+    "coverage_scope": "only this new process group/session, after /proc/self/stat PID/group/session match os identity; numeric PIDs are filtered by getpgid/getsid before resource files are read. New identities require the original leader PID/start time to remain live. Short-lived, unseen-after-leader-exit or escaped descendants can be missed. Final records retain last actual observations, not synthetic zero/completion.",
+    "consensus_authority": false,
+    "jsonl_file": "timeout.proc-group.jsonl",
+    "sampled_after_owned_group_cleanup": true
+  },
+  "wall_seconds": 16.033868999000333,
+  "user_cpu_seconds": 0.191382,
+  "system_cpu_seconds": 0.086794,
+  "max_waited_descendant_rss_kib": 14216,
+  "rss_scope": "maximum reported for the waited child family; not total cgroup peak",
+  "finished_utc": "2026-10-27T12:04:13.045619+00:00",
+  "raw_logs": {
+    "stdout": {
+      "path": "timeout.stdout.log",
+      "bytes": 29,
+      "sha256": "8ed378438ae14f2d2237611891ebbda5d6f266c3151fd44050e470ca84eb6b6c"
+    },
+    "stderr": {
+      "path": "timeout.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

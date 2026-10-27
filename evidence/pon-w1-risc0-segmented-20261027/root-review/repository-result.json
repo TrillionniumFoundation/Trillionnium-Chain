@@ -1,0 +1,11 @@
+{
+  "command": [
+    "python3",
+    "scripts/ci/check_repository.py"
+  ],
+  "exit_code": 2,
+  "wall_seconds": 2.338956939001946,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "e9d6779920685ac8631f9cfe3fc344fa5a64886cd36ed304305284c108a90361",
+  "not_a_proof_or_native_build": true
+}

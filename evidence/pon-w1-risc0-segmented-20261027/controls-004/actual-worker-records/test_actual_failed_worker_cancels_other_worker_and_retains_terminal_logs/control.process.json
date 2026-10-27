@@ -1,0 +1,40 @@
+{
+  "schema": "pon-w1-actual-process-v2",
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "/tmp/pon-segment-control-83hk0tfn/controller.py"
+  ],
+  "started_utc": "2026-10-27T12:05:39.387084+00:00",
+  "timeout_seconds": 10,
+  "source_sha": null,
+  "timed_out": false,
+  "consensus_authority": false,
+  "child_pid": 10,
+  "child_returncode": 0,
+  "child_reaped": true,
+  "cleanup_actions": [],
+  "cleanup_errors": [],
+  "subreaper_enabled": true,
+  "leader_exited_before_group": false,
+  "adopted_child_terminals": [],
+  "owned_process_group_empty": true,
+  "returncode": 0,
+  "wall_seconds": 0.46788404299877584,
+  "user_cpu_seconds": 0.328162,
+  "system_cpu_seconds": 0.054202999999999994,
+  "max_waited_descendant_rss_kib": 14156,
+  "rss_scope": "maximum reported for the waited child family; not total cgroup peak",
+  "finished_utc": "2026-10-27T12:05:39.855011+00:00",
+  "raw_logs": {
+    "stdout": {
+      "path": "control.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "control.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

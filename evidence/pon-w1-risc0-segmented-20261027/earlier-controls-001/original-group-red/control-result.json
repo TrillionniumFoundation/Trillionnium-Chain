@@ -1,0 +1,52 @@
+{
+  "schema": "pon-w1-original-owned-group-control-v1",
+  "source_commit": "d96138532b656d767d1ef46f6db86e7effae485e",
+  "source_path": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/measure_step.py",
+  "source_sha256": "254b4473a2c9469d028f7185ddfae36643df388df63d443fe874d78e3b0201de",
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "/workspace/scratch/301262829a43/pon-work-impl/evidence/risc0-followup-controls-001/original-group-red/original_measure_step.py",
+    "--out",
+    "/workspace/scratch/301262829a43/pon-work-impl/evidence/risc0-followup-controls-001/original-group-red",
+    "--name",
+    "original",
+    "--timeout",
+    "5",
+    "--",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-u",
+    "/workspace/scratch/301262829a43/pon-work-impl/evidence/risc0-followup-controls-001/original-group-red/fixture.py"
+  ],
+  "actual_w1_guest_or_proof_executed": false,
+  "qualification": false,
+  "cleanup_terminals": [
+    {
+      "pid": 11,
+      "returncode": 31
+    }
+  ],
+  "original_wrapper_returncode": 0,
+  "original_report": {
+    "schema": "pon-w1-actual-process-v1",
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-u",
+      "/workspace/scratch/301262829a43/pon-work-impl/evidence/risc0-followup-controls-001/original-group-red/fixture.py"
+    ],
+    "started_utc": "2026-10-27T10:56:48.727498+00:00",
+    "timeout_seconds": 5,
+    "source_sha": null,
+    "timed_out": false,
+    "consensus_authority": false,
+    "returncode": 0,
+    "wall_seconds": 0.06468022899935022,
+    "user_cpu_seconds": 0.031484,
+    "system_cpu_seconds": 0.0056549999999999994,
+    "max_waited_descendant_rss_kib": 11760,
+    "rss_scope": "maximum reported for the waited child family; not total cgroup peak",
+    "finished_utc": "2026-10-27T10:56:48.792247+00:00"
+  },
+  "group_still_present_after_wrapper_finished": true,
+  "reproduced_unbounded_leader_success": true,
+  "owned_group_empty_after_control_cleanup": true
+}

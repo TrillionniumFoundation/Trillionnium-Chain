@@ -1,0 +1,45 @@
+{
+  "schema": "pon-w1-local-current-controls-v1",
+  "base_commit": "d96138532b656d767d1ef46f6db86e7effae485e",
+  "source_is_uncommitted_snapshot": true,
+  "files": {
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/measure_step.py": {
+      "bytes": 7229,
+      "sha256": "282051bffd119099b2680e6c73bc73e936b591295a278ecbd320657030155cb9"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_measure_step.py": {
+      "bytes": 5576,
+      "sha256": "ce5295c695c192467a824d2fab154e325325f091bcbca977e57a13b116d4df9e"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/receipt_reuse.py": {
+      "bytes": 8474,
+      "sha256": "4914d512fe58f5ac997c50f609e74fde7e63ce9fdebc38a103cf147a9b3f760f"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_receipt_reuse.py": {
+      "bytes": 5278,
+      "sha256": "f531bc6b9520f300c197f24a7e7540efb7199af5ba28dbe0a98f6a060f940756"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/prove_segments.py": {
+      "bytes": 12251,
+      "sha256": "ac3a47f1f5636fbf5f9d5534cc209b6fb8def693bf930979dabc4d854f5f346c"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/proof_resources.py": {
+      "bytes": 4984,
+      "sha256": "93022bdbce188b5e70e4d95b45c69c8264b600b3783aecf60ca1e9af7e2226e4"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/process_samples.py": {
+      "bytes": 4674,
+      "sha256": "2ca992235a63fedd80e3540a5f54228e84420f5107869096afa35d9ec6707cae"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_segment_scheduler.py": {
+      "bytes": 7908,
+      "sha256": "08cf3dc60509eb0d0e3f09e4e6e8b0e3766299fe0624583723ab30747cbea59b"
+    }
+  },
+  "tests": {
+    "process-controls": 5,
+    "reuse-controls": 6,
+    "scheduler-controls": 6
+  },
+  "real_guest_or_proof_executed": false
+}

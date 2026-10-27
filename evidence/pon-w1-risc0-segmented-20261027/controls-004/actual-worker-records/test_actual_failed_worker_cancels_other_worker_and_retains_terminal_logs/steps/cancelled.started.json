@@ -1,0 +1,18 @@
+{
+  "schema": "pon-w1-segment-worker-process-v1",
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-c",
+    "import signal,time,sys; signal.signal(signal.SIGTERM,lambda *_: (print('worker-b-tail',file=sys.stderr,flush=True),sys.exit(23))); print('ready',flush=True); time.sleep(20)"
+  ],
+  "name": "cancelled",
+  "pid": 12,
+  "process_group": 10,
+  "timeout_seconds": 2,
+  "source_sha": null,
+  "started_monotonic": 15801.648147346,
+  "child_reaped": false,
+  "returncode": null,
+  "complete_w1_proof_verified": false,
+  "consensus_authority": false
+}

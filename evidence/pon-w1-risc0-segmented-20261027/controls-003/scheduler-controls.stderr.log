@@ -1,0 +1,20 @@
+test_actual_failed_worker_cancels_other_worker_and_retains_terminal_logs (__main__.ActualProcesses.test_actual_failed_worker_cancels_other_worker_and_retains_terminal_logs) ... FAIL
+test_actual_per_worker_deadline_retains_sigkill_without_claiming_a_proof (__main__.ActualProcesses.test_actual_per_worker_deadline_retains_sigkill_without_claiming_a_proof) ... ok
+test_actual_membership_includes_all_visible_ancestors_and_namespace_root (__main__.Resources.test_actual_membership_includes_all_visible_ancestors_and_namespace_root) ... ok
+test_missing_limits_never_mean_unlimited_or_a_smaller_profile (__main__.Resources.test_missing_limits_never_mean_unlimited_or_a_smaller_profile) ... ok
+
+======================================================================
+FAIL: test_actual_failed_worker_cancels_other_worker_and_retains_terminal_logs (__main__.ActualProcesses.test_actual_failed_worker_cancels_other_worker_and_retains_terminal_logs)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/301262829a43/pon-work-impl/integration/w1-transparent9e05/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_segment_scheduler.py", line 85, in test_actual_failed_worker_cancels_other_worker_and_retains_terminal_logs
+    phase, files = self.controller(
+                   ^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/301262829a43/pon-work-impl/integration/w1-transparent9e05/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_segment_scheduler.py", line 78, in controller
+    self.assertEqual(wrapper.returncode, 0, wrapper.stderr)
+AssertionError: 1 != 0 : b''
+
+----------------------------------------------------------------------
+Ran 4 tests in 6.534s
+
+FAILED (failures=1)

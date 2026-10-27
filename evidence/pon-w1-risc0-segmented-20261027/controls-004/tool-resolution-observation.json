@@ -1,0 +1,20 @@
+{
+  "schema": "pon-w1-observed-tool-resolution-failure-v1",
+  "observation_kind": "retained exact tool result from the preceding read-only invocation; timestamp was not recorded",
+  "command": [
+    "env",
+    "RUSTFMT=/workspace/scratch/301262829a43/pon-build-inputs/unpacked/toolchain/bin/rustfmt",
+    "/workspace/scratch/301262829a43/pon-build-inputs/unpacked/toolchain/bin/cargo",
+    "fmt",
+    "--manifest-path",
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/Cargo.toml",
+    "--all",
+    "--",
+    "--check"
+  ],
+  "returncode": 101,
+  "output": "error: no such command: `fmt`\n\nhelp: a command with a similar name exists: `fix`\n\nhelp: view all installed commands with `cargo --list`\nhelp: find a package to install `fmt` with `cargo search cargo-fmt`\n",
+  "rust_compilation_attempted": false,
+  "followup": "backend-format.process.json",
+  "consensus_authority": false
+}

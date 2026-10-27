@@ -152,3 +152,54 @@ fn unsupported_receipt_kinds_never_enter_generic_deserialization() {
         );
     }
 }
+
+#[test]
+fn independent_segment_and_claim_bounds_do_not_authenticate_partial_data() {
+    // Reuse an explicitly false SDK-shape control. Passing either preflight
+    // only permits bounded decoding, and never qualifies any STARK or W1.
+    let receipt: risc0_zkvm::Receipt = bincode::DefaultOptions::new()
+        .with_fixint_encoding()
+        .reject_trailing_bytes()
+        .deserialize(&skeleton(1, 18, true).0)
+        .unwrap();
+    let risc0_zkvm::InnerReceipt::Composite(composite) = receipt.inner else {
+        unreachable!()
+    };
+    let fields = bincode::serialize(&(
+        &composite.segments,
+        &composite.assumption_receipts,
+        composite.verifier_parameters,
+    ))
+    .unwrap();
+    assert_eq!(fields, bincode::serialize(&composite).unwrap());
+    let reconstructed: risc0_zkvm::CompositeReceipt = bincode::DefaultOptions::new()
+        .with_fixint_encoding()
+        .with_limit(MAX_RECEIPT_BYTES as u64)
+        .reject_trailing_bytes()
+        .deserialize(&fields)
+        .unwrap();
+    assert!(reconstructed
+        .verify_integrity_with_context(&risc0_zkvm::VerifierContext::default().with_dev_mode(false))
+        .is_err());
+    let segment = &composite.segments[0];
+    assert!(segment
+        .verify_integrity_with_context(&risc0_zkvm::VerifierContext::default().with_dev_mode(false))
+        .is_err());
+    let encoded = bincode::serialize(segment).unwrap();
+    assert_eq!(preflight_segment(&encoded, 0).unwrap(), 1 << 18);
+    assert!(preflight_segment(&encoded, 1).is_err());
+    for length in 0..encoded.len() {
+        assert!(preflight_segment(&encoded[..length], 0).is_err());
+    }
+    let mut trailing = encoded;
+    trailing.push(0);
+    assert!(preflight_segment(&trailing, 0).is_err());
+    let encoded = bincode::serialize(&segment.claim).unwrap();
+    assert!(preflight_claim(&encoded).is_ok());
+    for length in 0..encoded.len() {
+        assert!(preflight_claim(&encoded[..length]).is_err());
+    }
+    let mut trailing = encoded;
+    trailing.push(0);
+    assert!(preflight_claim(&trailing).is_err());
+}

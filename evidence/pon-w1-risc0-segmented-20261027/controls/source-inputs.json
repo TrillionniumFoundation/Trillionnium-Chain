@@ -1,0 +1,30 @@
+{
+  "schema": "pon-w1-local-scheduler-control-source-v1",
+  "base_commit": "d96138532b656d767d1ef46f6db86e7effae485e",
+  "working_tree_was_uncommitted": true,
+  "files": {
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/measure_step.py": {
+      "sha256": "282051bffd119099b2680e6c73bc73e936b591295a278ecbd320657030155cb9",
+      "bytes": 7229
+    },
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/prove_segments.py": {
+      "sha256": "ac3a47f1f5636fbf5f9d5534cc209b6fb8def693bf930979dabc4d854f5f346c",
+      "bytes": 12251
+    },
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/proof_resources.py": {
+      "sha256": "93022bdbce188b5e70e4d95b45c69c8264b600b3783aecf60ca1e9af7e2226e4",
+      "bytes": 4984
+    },
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/process_samples.py": {
+      "sha256": "83e104287d551343b03d51d6c765f11106b609f3fb87b3075609c43983cc909d",
+      "bytes": 2395
+    },
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_segment_scheduler.py": {
+      "sha256": "5f1103b34f6b945c4f008c5865a5a94c938d4555a70607c01a2647ea2f92506f",
+      "bytes": 6554
+    }
+  },
+  "real_backend_compiled": false,
+  "real_proof_generated": false,
+  "consensus_authority": false
+}

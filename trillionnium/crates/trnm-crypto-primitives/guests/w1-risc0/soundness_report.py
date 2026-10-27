@@ -211,7 +211,7 @@ def main():
     assert 'super::soundness::toy_model_security::<H>(self.taps, final_poly_coeffs.size())' in prover
     bounds = Path(__file__).resolve().parent / "host/src/receipt_bounds.rs"
     bounds_sha256 = hashlib.sha256(bounds.read_bytes()).hexdigest()
-    if bounds_sha256 != "e4b5bea658dc06649e0b0c69f09bf3407d4eb64b73f382aac3be2a24da8d2d37":
+    if bounds_sha256 != "790e52ea29e543682aeae31dae90c85107d8b853ce5b99a4b295226c3725a340":
         raise ValueError("research receipt budgets changed; review the allowed-dimension report")
     calculator = out / "upstream/risc0/zkp/src/prove/soundness.rs"
     harness = '''// Numerical descriptor harness only; not a cryptographic HAL or proof system.

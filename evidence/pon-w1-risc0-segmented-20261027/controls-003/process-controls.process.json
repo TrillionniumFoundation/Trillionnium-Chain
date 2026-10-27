@@ -1,0 +1,40 @@
+{
+  "schema": "pon-w1-actual-process-v2",
+  "command": [
+    "python3",
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_measure_step.py"
+  ],
+  "started_utc": "2026-10-27T12:03:56.202291+00:00",
+  "timeout_seconds": 60,
+  "source_sha": null,
+  "timed_out": false,
+  "consensus_authority": false,
+  "child_pid": 8,
+  "child_returncode": 0,
+  "child_reaped": true,
+  "cleanup_actions": [],
+  "cleanup_errors": [],
+  "subreaper_enabled": true,
+  "leader_exited_before_group": false,
+  "adopted_child_terminals": [],
+  "owned_process_group_empty": true,
+  "returncode": 0,
+  "wall_seconds": 9.255338236998796,
+  "user_cpu_seconds": 1.6822810000000001,
+  "system_cpu_seconds": 0.507733,
+  "max_waited_descendant_rss_kib": 15076,
+  "rss_scope": "maximum reported for the waited child family; not total cgroup peak",
+  "finished_utc": "2026-10-27T12:04:05.457668+00:00",
+  "raw_logs": {
+    "stdout": {
+      "path": "process-controls.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "process-controls.stderr.log",
+      "bytes": 884,
+      "sha256": "dbbd59513ae8c5a25e496bad8ffc2cd237ad97781c4d9b7ed36b640761633e66"
+    }
+  }
+}

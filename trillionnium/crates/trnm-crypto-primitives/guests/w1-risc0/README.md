@@ -79,8 +79,16 @@ make the rest of the Chain post-quantum.
 
 The reviewed core/prover/verifier paths contain no independent hashcash grinding
 requirement. That observation has the limited source-review scope recorded in
-the manifest; it is not an independent cryptographic audit. PoVW attribution
-nonces are not introduced into this W1 statement or lottery.
+the [exact extra-grinding review](no-extra-grinding-review.json); it is not an
+independent cryptographic audit or inferred from the separate PoVW flag. That
+review pins every inspected Git blob and SHA-256, searches nonce/difficulty and
+grinding terms, and follows the actual transcript/FRI calls. Final coefficients
+are committed and followed directly by 50 query openings and matching verifier
+queries; there is no protocol nonce or hash-threshold search. The Poseidon2 RNG's
+fixed sampling loop is not Hashcash. PoVW attribution nonces are a different
+mechanism and are not introduced into this W1 statement or lottery. This does
+not claim that a malicious Fiat-Shamir prover cannot retry different commitment
+or blinding choices; those security losses remain outside the measured proof.
 
 ## Untrusted receipt bounds
 
@@ -103,6 +111,143 @@ falls back to complete native W1 verification. The standalone verifier does not
 implement Node-wide concurrency, network byte budgets, peer scheduling or
 honest-service guarantees; existing native-ingress stress results do not qualify
 this new path.
+
+### Separate guest failures, receipt failures and measured CPU
+
+`make-invalid` creates two exact-size, publicly committed negative inputs from
+the original valid native fixture. One retains the correct product while
+changing the trace; the other retains the correct trace while changing one
+canonical product word. Both rebind the complete witness commitment and must
+reach their exact native late failure. `reject-input` then sends these inputs
+to the unchanged real guest without a native replay on that measured path.
+Only the original guest's exact `Work(Transcript)` or `Work(Product)` panic is
+a successful negative control. Unavailable IPC, timeout, another error or
+successful guest completion fails the control. This is guest execution
+evidence, distinct from rejecting a corrupted cryptographic receipt.
+
+The receipt verifier and each adversarial receipt case now record Linux
+process CPU time over all verifier threads as well as wall time. The external
+prover's child-family CPU and waited-descendant RSS stay in `measure_step.py`'s
+separate process record; the verifier-process clock does not count child r0vm
+work. Version 2 process records keep the wrapper's timeout status, actual child
+return code, reap state, cleanup actions, raw output sizes and SHA-256 digests.
+The fresh Linux wrapper is the subreaper for its one child family and checks
+the original process group even if the host exits before r0vm. A leader that
+leaves a live descendant cannot make the observation succeed; bounded TERM/KILL
+cleanup and adopted child terminal states are retained before hashing raw logs.
+The real subprocess controls exercise nonzero exits, SIGTERM tail output,
+SIGKILL, failure before spawn, and both a successful and killed leader leaving
+its child alive. They simulate no proof result.
+
+`analyze_costs.py` compares the actual receipt verifier and slowest tested
+receipt rejection with all four original native kernels' 31 fresh wall-time
+samples for the same input on the current runner. `last_seal_tamper` measures
+the decoded-object verification component;
+`last_seal_tamper_wire` additionally parses the actual mutated bincode bytes
+under the unchanged allocation and cycle bounds. Attack construction is outside
+both timers. Neither includes public network admission, which is not integrated.
+The readback reports complete raw proof bytes and payload serialization lower
+bounds at explicit modeled bitrates.
+Those lower bounds are not measured P2P/WAN propagation, account for no packet
+overhead or gossip fanout, and authorize no receipt format in the current Node.
+The original Node still expects its existing PNW1 work encoding.
+
+The same readback binds the actual cryptographically verified segment profile
+and receipt SHA-256 to the existing `soundness_report.py` output. That is the
+single pinned upstream Rust f32 calculator, executed verbatim for all three
+conditional models; there is no second float64 formula implementation. Its
+103-column tap set and hardcoded degree 5 remain assumptions of that upstream
+calculator. Conditional segment union estimates are neither a complete composed
+soundness proof nor quantum-bit estimates. Source-specific 96/97/98-bit
+descriptions remain separate in `backend-source-review.json`; no headline is
+promoted to an acceptance level. Hash security, quantum Fiat-Shamir and work
+hardness remain outside that numerical readback.
+
+### Explicit reuse for an unchanged rebuilt guest
+
+If no `receipt-reuse.json` is present, the research workflow makes one new
+complete segmented attempt under a 3,600-second cap. The first monolithic
+5,400-second attempt timed out without a receipt; it is retained as a failure
+and is not eligible for reuse. A reviewed reuse
+declaration instead pins one successful original GitHub run, source commit,
+attempt, artifact ID/digest, and every required receipt/input/source/prover
+observation file by exact SHA-256 and size. GitHub metadata is checked with the
+workflow's temporary read-only Actions token; it uses no user secret or signing
+key. An expired, absent, failed or mismatching declared artifact fails; there
+is no silent proof generation fallback.
+
+Every reuse run still builds the locked guest and host from the current exact
+head, then checks the new raw ELF, program image, image ID and freshly generated
+PWG1 input against the original proof's reviewed bytes. It independently
+verifies the real receipt, runs the current receipt attacks and real guest
+negatives, and repeats the native benchmark on the current runner. The old
+prover outputs stay under `prior-proof/`; their source and runner are separate
+from new verification costs. Observation schema v2 explicitly records whether
+a proof was generated in the current run. Preparation/hash agreement alone
+never authenticates a receipt. This optional research reuse rule changes no
+required acceptance gate, consensus parameter or production-readiness flag.
+
+### Same-image segmented attempt after the original timeout
+
+The [original observation](../../../../../evidence/pon-w1-risc0-segmented-20261027/original-attempt.json)
+pins run 40482711995, attempt 1, source d96138532b656d767d1ef46f6db86e7effae485e
+and its complete retained artifact. Actual unchanged-guest execution used
+13,364,385 user cycles over 62 segments at po2 limit 18. The subsequent actual
+prover reached the 5,400-second cap without a receipt or a verified proof.
+Its original process wrapper did not reliably reap an orphaned r0vm at timeout;
+its tiny recorded CPU/RSS values are **not** a measurement of the real prover.
+The root cause of that run's failure is unknown. The official SHA-256 syscall
+accelerator and the relation's bounded pseudo-Mersenne reduction were already
+present, so neither missing optimization is established as its cause.
+
+The successor retains the exact guest source relation, N64/R8/q, compiler,
+Cargo graph, raw ELF, image ID, SHA accelerator, Poseidon2/FRI parameters and
+public PWG1/PWJ1 encoding. `export-segments` executes the complete original
+guest through the pinned SDK and saves every actual serialized Segment with
+its order, dimensions, byte count and SHA-256. Execution remains distinct from
+proof. The local trace export is limited to 32 MiB per segment and 512 MiB total;
+a larger real export fails with its partial files retained.
+
+`prove_segments.py` owns exactly two independent local host/r0vm workers, each
+with RAYON_NUM_THREADS=2 and a 300-second per-worker deadline. It first requires
+at least four effective CPUs and eight GiB observed available memory, reading
+the actual cgroup-v2 membership, mounted hierarchy and all visible ancestors.
+Unknown controller limits fail the resource precondition. This precondition
+is not a proof that peak usage will fit. There is no smaller-profile fallback,
+detached worker, new proof nonce, PoVW job or extra grinding search.
+
+Each worker produces and cryptographically checks its actual segment receipt.
+A retained successful segment is explicitly **not a complete W1 proof**.
+Assembly requires every original index, exact session/image/input identities,
+bounded receipt shapes and the expected complete session claim. It discloses
+the final output only after equality of its cryptographic digest, following
+the pinned SDK's claim construction. The original `strict_verify` then checks
+the complete Composite receipt, including every STARK, ordered pre/post-state
+continuation, Halted(0), pinned initial image, exact full journal, commitment
+parameters and empty assumptions. Only that successful check can create the
+final receipt file. Independent verification and all receipt attacks still run.
+The [primary-source inventory](backend-source-review.json) records the exact
+SDK APIs and claim-chain sources underlying this assembly.
+
+One outer 3,600-second cap covers export, every proof worker, assembly and its
+complete verification; work scheduling also stops at 3,500 seconds. This is
+less than the original cap, not a rerun under a larger allowance. All subprocesses
+inherit the wrapper-owned group. Real per-stage exit statuses, waited-family
+CPU and RSS, raw backend progress, partial assets/receipts and terminal failures
+remain in the artifact. The existing upstream `proc_group_sampler.py` is the
+single active resource observer. The outer wrapper samples its fresh group at
+15-second intervals and before/after cleanup, reads no environment or command
+line, and checks `/proc/self/stat` against local PID/group/session identity
+before reading numeric resource entries. A namespace mismatch or unavailable
+sample is UNKNOWN with null RSS, never an invented zero. Original local PIDs
+continue to own signals and waits. RSS sums may include shared pages and samples
+miss possible peaks; these are not physical group memory or a cgroup peak.
+The phase subreaper additionally accounts for descendants orphaned by a failed
+host, with final file hashes taken only after group cleanup. Earlier sampler
+RED/GREEN evidence is retained under its original source hashes and does not
+represent a measurement by this merged observer.
+No claim of faster proving or a complete receipt follows from this scheduling
+change until the real bounded CI attempt finishes.
 
 ## Reproduction
 
@@ -129,7 +274,8 @@ cargo +1.95.0 test --release --locked --manifest-path "$backend/Cargo.toml" \
   -p trnm-w1-risc0-host
 ```
 
-The host supports `bake`, `execute`, `prove`, `verify` and `audit`. `bake` wraps the raw ELF in the official v3
+The host supports `bake`, `execute`, `prove`, `verify`, `audit`, `export-segments`,
+`prove-segment` and `assemble-segments`. `bake` wraps the raw ELF in the official v3
 program container and compatibility kernel. All later commands require the
 manifest's actual image ID. A different compilation must be reviewed and pinned
 before acceptance. The example fixture uses an all-`ff` research target and

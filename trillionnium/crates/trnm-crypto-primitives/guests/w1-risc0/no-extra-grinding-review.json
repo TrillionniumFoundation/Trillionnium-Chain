@@ -1,0 +1,291 @@
+{
+  "schema": "pon-w1-pinned-extra-grinding-source-review-v1",
+  "repository": "risc0/risc0",
+  "commit": "1cc70cf05033a79ebc90f07c679cb4bd1cd301b9",
+  "backend_version": "3.0.6",
+  "searched_regex": "(?i)grind|hashcash|leading[_ -]?zeros?|difficulty|nonce",
+  "files": [
+    {
+      "path": "risc0/zkp/src/lib.rs",
+      "git_blob_sha1": "de0ffeb566be8ec5a85ef9e68b9376cdd8e85907",
+      "sha256": "107521d2426442fbc9358b7b9ae5650be92d670ea85e9a34aec7b9e9cc27dc6d",
+      "bytes": 1762,
+      "url": "https://github.com/risc0/risc0/blob/1cc70cf05033a79ebc90f07c679cb4bd1cd301b9/risc0/zkp/src/lib.rs",
+      "keyword_matches": []
+    },
+    {
+      "path": "risc0/zkp/src/prove/prover.rs",
+      "git_blob_sha1": "1fbf29dc8d730fc2db4f762d6b2d991a9d5da053",
+      "sha256": "bf63f227fe515dfa8b1edce90b6475a33369fb44fe66c5784a1d70d5947c4368",
+      "bytes": 14828,
+      "url": "https://github.com/risc0/risc0/blob/1cc70cf05033a79ebc90f07c679cb4bd1cd301b9/risc0/zkp/src/prove/prover.rs",
+      "keyword_matches": []
+    },
+    {
+      "path": "risc0/zkp/src/prove/fri.rs",
+      "git_blob_sha1": "c48b3de90d47b78d140fa379a33e91c24a752090",
+      "sha256": "4a892cf3faac96b727063d1a4a29c5da5bde4241c34cabd28f747801d38a5760",
+      "bytes": 4775,
+      "url": "https://github.com/risc0/risc0/blob/1cc70cf05033a79ebc90f07c679cb4bd1cd301b9/risc0/zkp/src/prove/fri.rs",
+      "keyword_matches": []
+    },
+    {
+      "path": "risc0/zkp/src/prove/write_iop.rs",
+      "git_blob_sha1": "18b52d5f044d9b4c3eee3d9de69645bb7c6bbb93",
+      "sha256": "4a5401c8fad3aa61adb3b59dbd03c04de8640747389f37f4c388be1c7d351cdc",
+      "bytes": 2317,
+      "url": "https://github.com/risc0/risc0/blob/1cc70cf05033a79ebc90f07c679cb4bd1cd301b9/risc0/zkp/src/prove/write_iop.rs",
+      "keyword_matches": []
+    },
+    {
+      "path": "risc0/zkp/src/prove/soundness.rs",
+      "git_blob_sha1": "ab38c13f6f9c5eb77fdb942916c81c8640d544fd",
+      "sha256": "6d814ec839d0f4b33f275cdfa2d382f4ce455957b1ec7932d9bc717ccf732921",
+      "bytes": 11127,
+      "url": "https://github.com/risc0/risc0/blob/1cc70cf05033a79ebc90f07c679cb4bd1cd301b9/risc0/zkp/src/prove/soundness.rs",
+      "keyword_matches": []
+    },
+    {
+      "path": "risc0/zkp/src/verify/mod.rs",
+      "git_blob_sha1": "e7ddb1a285d85c1bb74e45540cf5f827eb89faff",
+      "sha256": "003a67af89a7cfaeac9ff23808225cdc4d81c41d64956f20243574531b166c4f",
+      "bytes": 21753,
+      "url": "https://github.com/risc0/risc0/blob/1cc70cf05033a79ebc90f07c679cb4bd1cd301b9/risc0/zkp/src/verify/mod.rs",
+      "keyword_matches": []
+    },
+    {
+      "path": "risc0/zkp/src/verify/fri.rs",
+      "git_blob_sha1": "2eefff59b74e92586b1e0a314dbf4f2930d675e5",
+      "sha256": "a601cfad5d01b294f934d697d6d832c57662e4778eac20ac549b1da53d11e377",
+      "bytes": 5802,
+      "url": "https://github.com/risc0/risc0/blob/1cc70cf05033a79ebc90f07c679cb4bd1cd301b9/risc0/zkp/src/verify/fri.rs",
+      "keyword_matches": []
+    },
+    {
+      "path": "risc0/zkp/src/verify/read_iop.rs",
+      "git_blob_sha1": "762afe44b9665f1b6ae32ba588b985620791b8a8",
+      "sha256": "40a7027486fbce5979bd045860e3014ebc1d40f242c4b71ce2adf5722b6d81bc",
+      "bytes": 3473,
+      "url": "https://github.com/risc0/risc0/blob/1cc70cf05033a79ebc90f07c679cb4bd1cd301b9/risc0/zkp/src/verify/read_iop.rs",
+      "keyword_matches": []
+    },
+    {
+      "path": "risc0/zkp/src/core/hash/poseidon2/rng.rs",
+      "git_blob_sha1": "de17a70ab81f2e4661f877e13455a88974f4ac2c",
+      "sha256": "8c5868a8b258896835e2c3c93a84cfe01167f1a446e4d74a3b7be94ae1bf8017",
+      "bytes": 2509,
+      "url": "https://github.com/risc0/risc0/blob/1cc70cf05033a79ebc90f07c679cb4bd1cd301b9/risc0/zkp/src/core/hash/poseidon2/rng.rs",
+      "keyword_matches": []
+    },
+    {
+      "path": "risc0/zkp/src/core/hash/poseidon2/mod.rs",
+      "git_blob_sha1": "d5bd9ebd899c3847c57aa11c58c8a287600f08e8",
+      "sha256": "a2993a2e29fa33345a6a9ce0b4f192efe7412746b92b172b0eed8ce78ee8471f",
+      "bytes": 13790,
+      "url": "https://github.com/risc0/risc0/blob/1cc70cf05033a79ebc90f07c679cb4bd1cd301b9/risc0/zkp/src/core/hash/poseidon2/mod.rs",
+      "keyword_matches": []
+    },
+    {
+      "path": "risc0/zkp/src/taps.rs",
+      "git_blob_sha1": "e3fb2bc82dac618808124d5299f6958fbdcf6f46",
+      "sha256": "f5f69bcbed730cc8acd43da89dd4e37ca7560b9eb991a37238482f3655f7e402",
+      "bytes": 8222,
+      "url": "https://github.com/risc0/risc0/blob/1cc70cf05033a79ebc90f07c679cb4bd1cd301b9/risc0/zkp/src/taps.rs",
+      "keyword_matches": []
+    },
+    {
+      "path": "risc0/circuit/rv32im/src/prove/hal/mod.rs",
+      "git_blob_sha1": "957fa7df829fae97bb0632cb419ad85c027f1d76",
+      "sha256": "0774d48229e450417b03afd757c381c1fb292f11916786596e6a7bce175b4dbd",
+      "bytes": 6948,
+      "url": "https://github.com/risc0/risc0/blob/1cc70cf05033a79ebc90f07c679cb4bd1cd301b9/risc0/circuit/rv32im/src/prove/hal/mod.rs",
+      "keyword_matches": []
+    },
+    {
+      "path": "risc0/circuit/rv32im/src/prove/hal/cpu.rs",
+      "git_blob_sha1": "073d0f26511d6b556896ebc4560a653af7884e78",
+      "sha256": "8cb7a4e7e538fbbc71e73b37e06fd03d7657d658df4e626add6a9eebeecce479",
+      "bytes": 8114,
+      "url": "https://github.com/risc0/risc0/blob/1cc70cf05033a79ebc90f07c679cb4bd1cd301b9/risc0/circuit/rv32im/src/prove/hal/cpu.rs",
+      "keyword_matches": []
+    },
+    {
+      "path": "risc0/circuit/rv32im/src/zirgen/taps.rs",
+      "git_blob_sha1": "94612132b37e792b9c3a33420c9fa7442059bd64",
+      "sha256": "b423f7bd396cd4a7ea25c326ba077dca7f96dd144fd8e44d9474bfb2489818d2",
+      "bytes": 111221,
+      "url": "https://github.com/risc0/risc0/blob/1cc70cf05033a79ebc90f07c679cb4bd1cd301b9/risc0/circuit/rv32im/src/zirgen/taps.rs",
+      "keyword_matches": []
+    },
+    {
+      "path": "risc0/circuit/rv32im/src/zirgen/info.rs",
+      "git_blob_sha1": "7933ba3f245da082788f166cae10864409a641f1",
+      "sha256": "4d7b76bc2843e55a4a0429c52542b94a2cd30120e7f6ca4ecad10a16494ddb30",
+      "bytes": 3411,
+      "url": "https://github.com/risc0/risc0/blob/1cc70cf05033a79ebc90f07c679cb4bd1cd301b9/risc0/circuit/rv32im/src/zirgen/info.rs",
+      "keyword_matches": []
+    },
+    {
+      "path": "risc0/zkvm/src/host/server/prove/prover_impl.rs",
+      "git_blob_sha1": "43198e72b392399c44e2a2e63f76a9bae3618317",
+      "sha256": "2b3e6e61cfaf07d78cb935d5db6a7c0053c3581cfdf1347705b39844e15209a5",
+      "bytes": 14000,
+      "url": "https://github.com/risc0/risc0/blob/1cc70cf05033a79ebc90f07c679cb4bd1cd301b9/risc0/zkvm/src/host/server/prove/prover_impl.rs",
+      "keyword_matches": []
+    },
+    {
+      "path": "risc0/zkvm/src/host/server/exec/syscall/panic.rs",
+      "git_blob_sha1": "3a48a4ab3b4eaec368d2d25248130e47dc14b888",
+      "sha256": "a31a35adc00e772ba17221d794b32e1753cbe440327bb033b9590c068d8e599f",
+      "bytes": 1518,
+      "url": "https://github.com/risc0/risc0/blob/1cc70cf05033a79ebc90f07c679cb4bd1cd301b9/risc0/zkvm/src/host/server/exec/syscall/panic.rs",
+      "keyword_matches": []
+    },
+    {
+      "path": "risc0/zkp/src/prove/merkle.rs",
+      "git_blob_sha1": "7c5a52bf6ef17dbd4b721a5345b8a4307095f7ad",
+      "sha256": "2e8b3a2368720df8a27d475efb9c6e30158539397707d879449e5a0608d5bbc1",
+      "bytes": 13647,
+      "url": "https://github.com/risc0/risc0/blob/1cc70cf05033a79ebc90f07c679cb4bd1cd301b9/risc0/zkp/src/prove/merkle.rs",
+      "keyword_matches": []
+    },
+    {
+      "path": "risc0/zkp/src/core/hash/mod.rs",
+      "git_blob_sha1": "c75165452fa1115d977fa86876cb5da2a27d0439",
+      "sha256": "c4cb4bcd5077bf65c3bb8cc148bb26e41cb4ca317e05325156e8cd5a090d99d9",
+      "bytes": 4275,
+      "url": "https://github.com/risc0/risc0/blob/1cc70cf05033a79ebc90f07c679cb4bd1cd301b9/risc0/zkp/src/core/hash/mod.rs",
+      "keyword_matches": []
+    },
+    {
+      "path": "risc0/circuit/rv32im/src/prove/mod.rs",
+      "git_blob_sha1": "29b9e1694fc4b435ecb534252099b1ddd1063c09",
+      "sha256": "bc52e7d40036c5e1a47692cea0dc8249df87f224b3dbde66474544ea91e5ec3f",
+      "bytes": 1609,
+      "url": "https://github.com/risc0/risc0/blob/1cc70cf05033a79ebc90f07c679cb4bd1cd301b9/risc0/circuit/rv32im/src/prove/mod.rs",
+      "keyword_matches": []
+    },
+    {
+      "path": "risc0/circuit/rv32im/src/lib.rs",
+      "git_blob_sha1": "bc7b5919f40a55a281bb468caee87590f9803e38",
+      "sha256": "e817d0e97004aeb922f2c53c1beab4dc7db00a8f1683e6c1cd0d485a52e6ddff",
+      "bytes": 5651,
+      "url": "https://github.com/risc0/risc0/blob/1cc70cf05033a79ebc90f07c679cb4bd1cd301b9/risc0/circuit/rv32im/src/lib.rs",
+      "keyword_matches": [
+        {
+          "line": 28,
+          "text": "use risc0_binfmt::PovwNonce;"
+        },
+        {
+          "line": 152,
+          "text": "/// Decodes a PoVW nonce from a segment seal."
+        },
+        {
+          "line": 153,
+          "text": "pub fn decode_povw_nonce(segment_seal: &[u32]) -> Result<PovwNonce> {"
+        },
+        {
+          "line": 163,
+          "text": "    let povw_nonce_shorts_vec = global.map(|c| c.povw_nonce).get_shorts()?;"
+        },
+        {
+          "line": 164,
+          "text": "    let povw_nonce_shorts_arr = povw_nonce_shorts_vec"
+        },
+        {
+          "line": 166,
+          "text": "        .map_err(|_| anyhow!(\"povw nonce global has unexpected length\"))?;"
+        },
+        {
+          "line": 167,
+          "text": "    Ok(PovwNonce::from_u16s(povw_nonce_shorts_arr))"
+        }
+      ]
+    }
+  ],
+  "semantic_anchors": [
+    {
+      "path": "risc0/zkvm/src/host/server/prove/prover_impl.rs",
+      "lines": [
+        246,
+        282
+      ],
+      "meaning": "prove_segment_core calls RV32IM prove_core once and verifies the actual returned seal; no threshold retry"
+    },
+    {
+      "path": "risc0/circuit/rv32im/src/prove/hal/mod.rs",
+      "lines": [
+        166,
+        222
+      ],
+      "meaning": "Commit protocol, circuit, header, code/data/accum roots and call finalize; random witness sampling is distinct from a hash-difficulty search"
+    },
+    {
+      "path": "risc0/zkp/src/prove/prover.rs",
+      "lines": [
+        111,
+        392
+      ],
+      "meaning": "Draw transcript challenges for DEEP-ALI/batching, call fri_prove and return the proof"
+    },
+    {
+      "path": "risc0/zkp/src/prove/fri.rs",
+      "lines": [
+        86,
+        127
+      ],
+      "meaning": "Fold to fixed final degree, commit final coefficients, then immediately sample/open QUERIES positions; no nonce or difficulty gate in between"
+    },
+    {
+      "path": "risc0/zkp/src/verify/fri.rs",
+      "lines": [
+        100,
+        160
+      ],
+      "meaning": "Matching fixed folding/query verification; no proof-of-work threshold check"
+    },
+    {
+      "path": "risc0/zkp/src/prove/write_iop.rs",
+      "lines": [
+        57,
+        75
+      ],
+      "meaning": "Commit absorbs the digest and challenge methods squeeze the pinned RNG"
+    },
+    {
+      "path": "risc0/zkp/src/core/hash/poseidon2/rng.rs",
+      "lines": [
+        50,
+        88
+      ],
+      "meaning": "Deterministic absorb/squeeze; random_bits consumes one plus three fixed field draws, not a hash search"
+    },
+    {
+      "path": "risc0/circuit/rv32im/src/lib.rs",
+      "lines": [
+        50,
+        64
+      ],
+      "meaning": "Actual segment verifier selects Poseidon2 and the ordinary ZKP verifier"
+    },
+    {
+      "path": "risc0/circuit/rv32im/src/lib.rs",
+      "lines": [
+        155,
+        174
+      ],
+      "meaning": "Separate PoVW nonce decoder is provenance attribution, not a required FRI/Fiat-Shamir threshold; it is not the reasoning for the no-grinding finding"
+    }
+  ],
+  "protocol_required_additional_hash_grinding_bits": 0,
+  "additional_grinding_check_derived_from_povw_flag": false,
+  "scope": "Pinned Composite RV32IM -> ZKP proving/transcript/FRI/verification paths and listed helpers; source review, not an independently reproduced release binary or a cryptographic audit. Keywords alone are not the conclusion.",
+  "povw_nonce_matches": "PoVW fields/extraction are retained explicitly in keyword hits and are separate from any protocol hash-difficulty search. No PoVW job is requested by this host.",
+  "not_claimed": [
+    "No assertion that a malicious Fiat-Shamir prover cannot try different blinding randomness or commitments; soundness and multi-target/retry losses remain separate.",
+    "No statement that correctness proof is a lower bound on useful work cost.",
+    "No 128-bit or PQ128 qualification.",
+    "No independent Hashcash lottery or nonce is added to the semantic W1 block ID."
+  ],
+  "consensus_authority": false
+}

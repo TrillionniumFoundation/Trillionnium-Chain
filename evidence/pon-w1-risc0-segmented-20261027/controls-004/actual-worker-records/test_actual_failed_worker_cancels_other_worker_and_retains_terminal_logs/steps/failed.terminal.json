@@ -1,0 +1,24 @@
+{
+  "schema": "pon-w1-segment-worker-process-v1",
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-c",
+    "print('worker-a'); raise SystemExit(7)"
+  ],
+  "name": "failed",
+  "pid": 11,
+  "process_group": 10,
+  "timeout_seconds": 2,
+  "source_sha": null,
+  "started_monotonic": 15801.640228,
+  "child_reaped": true,
+  "returncode": 7,
+  "complete_w1_proof_verified": false,
+  "consensus_authority": false,
+  "wall_seconds": 0.21702542300045025,
+  "user_cpu_seconds": 0.182746,
+  "system_cpu_seconds": 0.027704,
+  "max_waited_descendant_rss_kib": 12904,
+  "cpu_rss_scope": "this independently waited host and descendants it waited for; orphan cleanup belongs to the outer phase record",
+  "raw_logs_hashed_after_phase_cleanup": false
+}

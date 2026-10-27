@@ -1,0 +1,47 @@
+{
+  "source_sha256": "2ca992235a63fedd80e3540a5f54228e84420f5107869096afa35d9ec6707cae",
+  "source_stable": true,
+  "returncode": 0,
+  "stdout": "{\"monotonic_seconds\": 14418.5504366, \"mapping\": {\"local_pid\": 10, \"local_process_group\": 10, \"requested_local_process_group\": 10, \"verified\": true, \"proc_pid\": 207070, \"proc_process_group\": 207070, \"namespace_ids\": {\"NSpid\": [207070, 10], \"NSpgid\": [207070, 10]}, \"pid_namespace\": \"pid:[4026532346]\"}, \"process_ids_scope\": \"visible from the mounted proc filesystem\", \"processes\": [{\"pid\": 207070, \"state\": \"R\", \"parent_pid\": 207068, \"user_cpu_ticks\": 4, \"system_cpu_ticks\": 1, \"threads\": 1, \"resident_bytes\": 10797056}], \"self_observed\": true, \"status\": \"observed\", \"clock_ticks_per_second\": 100, \"live_rss_sum_bytes\": 10797056, \"process_read_races\": 0}\n",
+  "stderr": "",
+  "sample": {
+    "monotonic_seconds": 14418.5504366,
+    "mapping": {
+      "local_pid": 10,
+      "local_process_group": 10,
+      "requested_local_process_group": 10,
+      "verified": true,
+      "proc_pid": 207070,
+      "proc_process_group": 207070,
+      "namespace_ids": {
+        "NSpid": [
+          207070,
+          10
+        ],
+        "NSpgid": [
+          207070,
+          10
+        ]
+      },
+      "pid_namespace": "pid:[4026532346]"
+    },
+    "process_ids_scope": "visible from the mounted proc filesystem",
+    "processes": [
+      {
+        "pid": 207070,
+        "state": "R",
+        "parent_pid": 207068,
+        "user_cpu_ticks": 4,
+        "system_cpu_ticks": 1,
+        "threads": 1,
+        "resident_bytes": 10797056
+      }
+    ],
+    "self_observed": true,
+    "status": "observed",
+    "clock_ticks_per_second": 100,
+    "live_rss_sum_bytes": 10797056,
+    "process_read_races": 0
+  },
+  "real_proof_generated": false
+}

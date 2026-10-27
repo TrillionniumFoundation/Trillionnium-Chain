@@ -4582,3 +4582,41 @@ outside the shared layout; it does not guarantee physical WAL size. All twenty
 guards, eight original lanes, assertions and resource limits remain. Source
 identity agreement grants no SQL, C ABI, layout, two-second service or native
 qualification; the original lane executions and fullT/Layout003 remain open.
+
+### P0 complete W1 — actual four-thread timeout and same-image segmented successor (2026-10-27)
+
+The [original 9e05 observation](../../evidence/pon-w1-risc0-segmented-20261027/upstream-9e05/README.md)
+retains exact run `40492528095`: complete guest execution matches native W1,
+but the real prover timed out after 5,400.004265402 seconds without a receipt.
+Its 362 process samples observed at least 21,349.52 user plus 8.55 system CPU
+seconds; this is a lower bound, not complete settlement. The small separately
+waited host CPU/RSS does not represent the orphan prover. Both original d961
+and 9e05 failures, including skipped verification/attack phases, remain visible.
+The complete proof, verification, invalid-input and propagation-cost exits are
+still **OPEN**.
+
+The successor [research host](../../trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/README.md)
+keeps the exact original full relation, fixed guest image, N64/R8/q semantics,
+all 512 transcript prefixes, po2 18, no development receipts, no assumptions,
+and no extra PoW or grinding. It exports the actual complete execution's
+segments and uses exactly two independently waited workers, each with two
+Rayon threads and a 300-second worker ceiling. The full attempt is bounded at
+3,600 seconds and refuses unknown or insufficient resources: at least four
+effective CPUs and eight GiB of observed available memory are required. Actual
+controller ancestry is observed; missing limits never become unlimited. There
+is no automatic weaker guest, lower semantic workload or repeated success run.
+
+Every successful segment is independently verified and retained. Only final
+Composite assembly passing the unchanged image/journal/claim/pre-state/post-state
+and empty-assumption checks counts as a complete proof. Bounded cleanup and
+actual owned-child/subreaper settlement preserve failed and timed-out work.
+The upstream 9e05 run is already terminal before this successor is triggered.
+The immutable local `66cce560` merge retains the earlier unpublished `c86d6e50`
+prototype; publication uses the true 9e05 parent and exact reviewed successor
+bytes, without inventing a public parent for that local prototype.
+
+At this source freeze, 27 actual Python controls and Rust 1.95 formatting passed
+on the retained frozen helper source; the new segmented Rust host build, strict
+Clippy, real segment proofs, final receipt, hostile inputs and propagation
+measurement are **NOT_RUN**. The pinned upstream numerical soundness report
+remains a conditional model, not a proof verifier or whole-chain PQ guarantee.

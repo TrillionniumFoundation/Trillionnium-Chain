@@ -512,6 +512,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-source-review.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-source-review.json"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/guest/Cargo.toml",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -533,10 +540,24 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/guest_negative.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/guest_negative.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/main.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/main.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/process_cpu.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/process_cpu.rs"
         )),
     ),
     (
@@ -551,6 +572,34 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/receipt_bounds_tests.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/segment_assemble.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/segment_assemble.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/segment_export.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/segment_export.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/segments.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/segments.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/no-extra-grinding-review.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/no-extra-grinding-review.json"
         )),
     ),
     (

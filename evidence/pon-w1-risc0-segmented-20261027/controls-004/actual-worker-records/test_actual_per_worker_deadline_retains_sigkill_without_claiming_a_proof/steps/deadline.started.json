@@ -1,0 +1,18 @@
+{
+  "schema": "pon-w1-segment-worker-process-v1",
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-c",
+    "import signal,time; signal.signal(signal.SIGTERM,signal.SIG_IGN); print('ready',flush=True); time.sleep(20)"
+  ],
+  "name": "deadline",
+  "pid": 15,
+  "process_group": 14,
+  "timeout_seconds": 0.05,
+  "source_sha": null,
+  "started_monotonic": 15802.206668297,
+  "child_reaped": false,
+  "returncode": null,
+  "complete_w1_proof_verified": false,
+  "consensus_authority": false
+}

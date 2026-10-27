@@ -1,0 +1,394 @@
+{
+  "schema": "pon-w1-upstream-real-prove-failure-v1",
+  "run_id": 40492528095,
+  "job_id": 122149746292,
+  "artifact_id": 12734952555,
+  "source_commit": "9e05ad5d237660fb0ea8b40dd5c29af4225551d3",
+  "source_tree": "952666bff72a49d8bc7693b27ff747f56a56b240",
+  "original_zip": "original-attempt1.zip",
+  "zip_bytes": 281153,
+  "zip_sha256": "34e745c52311ed632b61cab65f8adcc4e365d4592aa4e0c625a3d0dbb1cae690",
+  "files": [
+    {
+      "path": "SCOPE.txt",
+      "bytes": 233,
+      "sha256": "5484b018dc5f910f06073654bc44f0d377e62b1870c87cadf5340fbaf17a94de"
+    },
+    {
+      "path": "backend-clippy.stderr.log",
+      "bytes": 6512,
+      "sha256": "b8ca1ebdcabc789403fe4a6a8877021eb38033d234ebd2c0836d5a78543150b7"
+    },
+    {
+      "path": "backend-clippy.process.json",
+      "bytes": 962,
+      "sha256": "64db0e7441d36b9cdab86eaebcadd6fe93738e6c8157edba163d52f6f5df0f1f"
+    },
+    {
+      "path": "backend-clippy.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "backend-manifest.json",
+      "bytes": 4349,
+      "sha256": "d7447807ea540d8c1d3c80934561bba955e73f251c0e7b31354fe86282cdfb76"
+    },
+    {
+      "path": "bake.process.json",
+      "bytes": 837,
+      "sha256": "94ebe1a5230be675420dc1ef03db35b4fe425fa4d7a44bd270f14dd37c4ac99d"
+    },
+    {
+      "path": "bake.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "bake.stdout.log",
+      "bytes": 223,
+      "sha256": "d5f9ced076c1a6cd5238b90676b2b90dac0172460b3d6ad54b9d4fa3720d1ebe"
+    },
+    {
+      "path": "cgroup-observations.json",
+      "bytes": 962,
+      "sha256": "051c62b9e3cc5d338518960b8afb64f643604d872d38ca685de99d888cfb3eed"
+    },
+    {
+      "path": "execute.process.json",
+      "bytes": 915,
+      "sha256": "fe3408f70772f61a5a902f6d5ea32d52119b2da2b6049b0ff1a007fbfcc36f26"
+    },
+    {
+      "path": "execute.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "execute.stdout.log",
+      "bytes": 833,
+      "sha256": "c152e997a502483ce34e339ab3d5bec1e5dd381b9bb0a257667e3563ecea58f1"
+    },
+    {
+      "path": "guest-build.process.json",
+      "bytes": 1299,
+      "sha256": "2ec6bd920f55c6c8a4d11aa9a707e6239e3453dbf7e04eac3b4b9b230236a272"
+    },
+    {
+      "path": "guest-build.stderr.log",
+      "bytes": 8178,
+      "sha256": "83369c944eb78fe9acc75f3e718ebc8ccdc15031e68c2b275abaf300a0337a94"
+    },
+    {
+      "path": "guest-build.stdout.log",
+      "bytes": 122,
+      "sha256": "51aac0d5794dba9f8504e213983a66921c6236ef779be064af85c9495fa198de"
+    },
+    {
+      "path": "guest.bin",
+      "bytes": 291592,
+      "sha256": "b8f32cd9c1b1edbb0cde04acf9aab146b7ff1aeeeaee0188e4d6e80d077b0c0a"
+    },
+    {
+      "path": "guest.raw.elf",
+      "bytes": 259168,
+      "sha256": "651d8efabd091811fbf11b78e80793a4acb02b3c2eec95260373c58636d774b5"
+    },
+    {
+      "path": "host-boundary-tests.process.json",
+      "bytes": 882,
+      "sha256": "e7e843c98768a877f8a37d297aa052011315b850b1bc2c4fce8755cedb639cbb"
+    },
+    {
+      "path": "host-boundary-tests.stderr.log",
+      "bytes": 4925,
+      "sha256": "14412108daeb4bdc1b8e667971b6df5f3e7297953bb5b39087c71581ad52eedc"
+    },
+    {
+      "path": "host-boundary-tests.stdout.log",
+      "bytes": 673,
+      "sha256": "4f79763041acac535c0980ee25f80d9cbd55be79370da8f1d023b257cb81f9bb"
+    },
+    {
+      "path": "host-build.process.json",
+      "bytes": 883,
+      "sha256": "d972e02abdc1dc78a4c319306afb45b4d3fc9c4c58fb5d49e0bf8d910f6db4e4"
+    },
+    {
+      "path": "host-build.stderr.log",
+      "bytes": 9353,
+      "sha256": "4075b519b7e0bf2a04e9b4b8be79613827656a55f96faf389b814c1b4ebef39d"
+    },
+    {
+      "path": "host-build.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "input.bin",
+      "bytes": 49640,
+      "sha256": "4babd290b10f7a68be27c2adf3b97448bb7bef04dba8bcb97f914acf4ac69020"
+    },
+    {
+      "path": "install.process.json",
+      "bytes": 794,
+      "sha256": "b0ce5992973d7779561c9f33fe14b36a72851426e22573e4180c197eb7b039f0"
+    },
+    {
+      "path": "install.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "install.stdout.log",
+      "bytes": 722,
+      "sha256": "3385565e5ff2ed44a345eb9f3a3f91da3f92acc57d714a000fe96b245ba4b6bc"
+    },
+    {
+      "path": "log-result-controls.process.json",
+      "bytes": 809,
+      "sha256": "8a44a0451380c51baab99d2ef0752387659f6707a422d4e3e06a833ab09f62d1"
+    },
+    {
+      "path": "log-result-controls.stderr.log",
+      "bytes": 909,
+      "sha256": "a37d693fe769efee9a48b6e6d3c22515c87027246b1d9a32b91415e5ce640c67"
+    },
+    {
+      "path": "log-result-controls.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "meminfo.txt",
+      "bytes": 1615,
+      "sha256": "97c8ab91bfc97d04f57bef2ceb765344c08a499b459e34ab503a14725990e6fb"
+    },
+    {
+      "path": "native-benchmark.process.json",
+      "bytes": 780,
+      "sha256": "7546c9c47cdf07cfa5030657a90669b145960078cb03e29e01262c957b6c5026"
+    },
+    {
+      "path": "native-benchmark.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "native-benchmark.stdout.log",
+      "bytes": 1835,
+      "sha256": "fd634206a75458ed18f484b9d491d99d9677576f5051f31098ad857a6ff7a1e5"
+    },
+    {
+      "path": "native-execute.process.json",
+      "bytes": 767,
+      "sha256": "c6d96979fd5f8124d178e3c56e05b743e427ecb43fc1a00a9020fcdc8d12c31a"
+    },
+    {
+      "path": "native-execute.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "native-execute.stdout.log",
+      "bytes": 903,
+      "sha256": "1cb7e89545f4ae9168e53eaffa148209c8ad78b0276a50a32e7a7ec108629ae1"
+    },
+    {
+      "path": "native-fixture.process.json",
+      "bytes": 923,
+      "sha256": "fd596ef5a0b02e08e81fe35af5d38c9fa3df151914f4b6482be09f2956de3f27"
+    },
+    {
+      "path": "native-fixture.stderr.log",
+      "bytes": 1940,
+      "sha256": "fb94b89851fd719f739f24c72c7154f16f4848aeb7bbbae76f9e3e0e11bfcb3b"
+    },
+    {
+      "path": "native-fixture.stdout.log",
+      "bytes": 171,
+      "sha256": "5132edcfd8c3dfbf2601e0c160308ddd2a6eb7cf7667ac75b6c01d420001ce96"
+    },
+    {
+      "path": "native-rustc.txt",
+      "bytes": 196,
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+    },
+    {
+      "path": "native-tests.process.json",
+      "bytes": 786,
+      "sha256": "d9f63b2213b3c1b4c4b9b37bea1b320a86108fa3f5566532b3c3c7b98456e148"
+    },
+    {
+      "path": "native-tests.stderr.log",
+      "bytes": 4023,
+      "sha256": "0d9111466904548edba1a657e912e52aa5322ea1fc0705be6e0080dafe71628a"
+    },
+    {
+      "path": "native-tests.stdout.log",
+      "bytes": 1557,
+      "sha256": "6bce6b222b08d356c5b93f83ccece5625eb4e694846011b0f41ca4f4d21f522a"
+    },
+    {
+      "path": "preflight.log",
+      "bytes": 133,
+      "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0"
+    },
+    {
+      "path": "proc-group-controls.process.json",
+      "bytes": 814,
+      "sha256": "c070f04d4aa9f49544e335065a94441d61ded2e76e66f857cc1f2e8d54f7ca34"
+    },
+    {
+      "path": "proc-group-controls.stderr.log",
+      "bytes": 1460,
+      "sha256": "3a6de2f585a6300473b71964228066f8cf992a6d99183d3c3b26ce2aa494e339"
+    },
+    {
+      "path": "proc-group-controls.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "prove.proc-group.jsonl",
+      "bytes": 380973,
+      "sha256": "4767896758afde178c0a11871ba726df4d2d77aa8036aa99dfe41794939d3770"
+    },
+    {
+      "path": "prove.process.json",
+      "bytes": 4364,
+      "sha256": "77221574eda7278559572e93c6cd80d7fe7cfd10462a38f9045eecd921ea012c"
+    },
+    {
+      "path": "prove.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "prove.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "source-after.json",
+      "bytes": 421,
+      "sha256": "da77453c37bf712ed11add2ad9ef0caad584d51cec4b94b001a1dabfac6b99aa"
+    },
+    {
+      "path": "source-before.json",
+      "bytes": 421,
+      "sha256": "da77453c37bf712ed11add2ad9ef0caad584d51cec4b94b001a1dabfac6b99aa"
+    }
+  ],
+  "exact_source_before_after_verified": true,
+  "prove_returncode": 124,
+  "timed_out": true,
+  "actual_prove_wall_seconds": 5400.004265402,
+  "process_observation": {
+    "schema": "pon-w1-proc-group-summary-v1",
+    "interval_seconds": 15.0,
+    "process_group_id": 14500,
+    "leader_start_ticks": 42193,
+    "proc_self_identity_verified": true,
+    "namespace_unavailable_reason": null,
+    "leader_identity_available": true,
+    "clock_ticks_per_second": 100,
+    "page_bytes": 4096,
+    "samples_written": 362,
+    "observed_process_identities": 2,
+    "observed_self_user_cpu_seconds_lower_bound": 21349.52,
+    "observed_self_system_cpu_seconds_lower_bound": 8.55,
+    "maximum_sampled_sum_rss_bytes": 2471399424,
+    "last_observed_processes": [
+      {
+        "pid": 14500,
+        "process_group_id": 14500,
+        "session_id": 14500,
+        "user_ticks": 2,
+        "system_ticks": 0,
+        "start_ticks": 42193,
+        "rss_bytes": 7356416,
+        "vm_hwm_bytes": 7716864,
+        "last_seen_sample": 360,
+        "maximum_observed_user_ticks": 2,
+        "maximum_observed_system_ticks": 0,
+        "maximum_observed_vm_hwm_bytes": 7716864
+      },
+      {
+        "pid": 14502,
+        "process_group_id": 14500,
+        "session_id": 14500,
+        "user_ticks": 2134950,
+        "system_ticks": 855,
+        "start_ticks": 42196,
+        "rss_bytes": 0,
+        "vm_hwm_bytes": null,
+        "last_seen_sample": 361,
+        "maximum_observed_user_ticks": 2134950,
+        "maximum_observed_system_ticks": 855,
+        "maximum_observed_vm_hwm_bytes": 2493833216
+      }
+    ],
+    "last_sample": {
+      "schema": "pon-w1-proc-group-sample-v1",
+      "event": "terminated_timeout",
+      "sequence": 361,
+      "sampled_utc": "2026-10-27T12:46:25.567709+00:00",
+      "elapsed_seconds": 5400.003650073,
+      "process_group_id": 14500,
+      "leader_start_ticks": 42193,
+      "proc_self_identity_verified": true,
+      "namespace_unavailable_reason": null,
+      "observations": [
+        {
+          "pid": 14502,
+          "process_group_id": 14500,
+          "session_id": 14500,
+          "user_ticks": 2134950,
+          "system_ticks": 855,
+          "start_ticks": 42196,
+          "rss_bytes": 0,
+          "vm_hwm_bytes": null,
+          "last_seen_sample": 361,
+          "maximum_observed_user_ticks": 2134950,
+          "maximum_observed_system_ticks": 855,
+          "maximum_observed_vm_hwm_bytes": 2493833216
+        }
+      ],
+      "sampled_sum_rss_bytes": 0,
+      "partial_read_errors_so_far": 2,
+      "tracking_was_truncated": false
+    },
+    "partial_read_errors": 2,
+    "tracking_was_truncated": false,
+    "cpu_scope": "sum of maximum observed SELF ticks for distinct PID/start-time identities, never child ticks; a sampling lower bound, not complete accounting",
+    "memory_scope": "sum RSS can double-count shared pages and miss between-sample peaks; it is not physical memory usage or a group peak. Per-process VmHWM values are not summed.",
+    "coverage_scope": "only this new process group/session, after /proc/self/stat PID/group/session match os identity; numeric PIDs are filtered by getpgid/getsid before resource files are read. New identities require the original leader PID/start time to remain live. Short-lived, unseen-after-leader-exit or escaped descendants can be missed. Final records retain last actual observations, not synthetic zero/completion.",
+    "consensus_authority": false,
+    "jsonl_file": "prove.proc-group.jsonl"
+  },
+  "waited_child_usage_is_not_complete_prover_cost": true,
+  "receipt_produced": false,
+  "independent_verification_executed": false,
+  "attack_test_executed": false,
+  "actual_guest_execution": {
+    "actual_segment_po2_histogram": {
+      "18": 62
+    },
+    "consensus_authority": false,
+    "cryptographic_proof_verified": false,
+    "execute_wall_ns": 353069164,
+    "guest_matches_native": true,
+    "image_id": "3ea1bcbf7900a32be73d7e78102de085562893732473667e1f3af07e585696b4",
+    "journal_hex": "50574a31412e233a4d2ca6e660dd50ff468e52476a69b78a8992f61f97da66b1590a728bc00507dd229e4920ed0a7a9c2536e6839f4344ba992508f63e0525ab02850c9dc982eea0545c228d0bf48d6d06e623020b4031f2ba79da56cc6bdccde2c63496add78510fb5ef0f62188fef2d00be6336adef91cebee983e4a883e632c225200ae2801f16dea0004888313a6b283c13ec03c0ffa117cf0f01d6d8bb739976b19cb35821c92fa659bcb645c964829f4d3d3c68d1295b703993155fe93b9621da5654ec6ac33163baff4f3350cbac7653ff78cfbcb0e46edeaa2ba55380c909d37",
+    "operation": "execute",
+    "schema": "pon-w1-risc0-research-v1",
+    "segment_po2_limit": 18,
+    "segments": 62,
+    "user_cycles": 13364385
+  },
+  "physical_resource_qualification": false,
+  "quantum_security_qualification": false,
+  "new_segmented_attempt_started": false,
+  "failure_root_cause": "UNKNOWN; actual sampling records substantial CPU use but no segment progress"
+}

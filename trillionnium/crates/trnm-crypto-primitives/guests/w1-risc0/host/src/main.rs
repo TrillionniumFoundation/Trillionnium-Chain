@@ -13,7 +13,10 @@ use std::path::Path;
 use std::time::Instant;
 use trnm_w1_guest_relation::full_relation;
 
+mod guest_negative;
+mod process_cpu;
 mod receipt_bounds;
+mod segments;
 use receipt_bounds::{BoundaryError, MAX_RECEIPT_BYTES};
 
 const MAX_ELF_BYTES: usize = 16 * 1024 * 1024;
@@ -113,9 +116,13 @@ fn deserialize_receipt(bytes: &[u8]) -> Result<Receipt> {
 }
 
 fn rejection(label: &str, check: impl FnOnce() -> Result<()>) -> Result<serde_json::Value> {
+    let cpu_started = process_cpu::nanoseconds()?;
     let started = Instant::now();
     let result = check();
     let elapsed_ns = started.elapsed().as_nanos();
+    let cpu_ns = process_cpu::nanoseconds()?
+        .checked_sub(cpu_started)
+        .context("process CPU clock went backwards")?;
     ensure!(
         result.is_err(),
         "adversarial control unexpectedly accepted: {label}"
@@ -128,7 +135,9 @@ fn rejection(label: &str, check: impl FnOnce() -> Result<()>) -> Result<serde_js
     };
     Ok(
         serde_json::json!({"case":label,"rejected":true,"outcome":outcome,
-        "reject_wall_ns":elapsed_ns,"reason":format!("{error}")}),
+        "reject_wall_ns":elapsed_ns,"reject_process_cpu_ns":cpu_ns,
+        "cpu_scope":"current verifier process, all its threads; no child prover",
+        "reason":format!("{error}")}),
     )
 }
 
@@ -215,6 +224,16 @@ fn audit_receipt(receipt: &Receipt, elf: &[u8], input: &[u8], encoded: &[u8]) ->
             composite.segments[0].verifier_parameters = [0u32; 8].into();
         }
         cases.push(rejection(label, || strict_verify(&changed, elf, &journal))?);
+        if label == "last_seal_tamper" {
+            // A real attacker can mutate an available proof and submit bytes.
+            // Include bounded parsing/allocation as well as the late verifier
+            // failure, separately from the object-only component above.
+            let changed_wire = bincode::serialize(&changed)?;
+            cases.push(rejection("last_seal_tamper_wire", || {
+                let decoded = deserialize_receipt(&changed_wire)?;
+                strict_verify(&decoded, elf, &journal)
+            })?);
+        }
     }
     let fake = Receipt::new(
         InnerReceipt::Fake(risc0_zkvm::FakeReceipt::new(receipt.claim()?)),
@@ -261,6 +280,18 @@ fn main() -> Result<()> {
     );
     let args: Vec<_> = std::env::args().collect();
     ensure!(args.len() >= 2, "expected execute, prove or verify");
+    match args[1].as_str() {
+        "export-segments" => return segments::export_segments(&args),
+        "prove-segment" => return segments::prove_segment(&args),
+        "assemble-segments" => return segments::assemble_segments(&args),
+        _ => {}
+    }
+    if args[1] == "make-invalid" {
+        return guest_negative::make_invalid(&args);
+    }
+    if args[1] == "reject-input" {
+        return guest_negative::reject_input(&args);
+    }
     if args[1] == "bake" {
         ensure!(args.len() == 4, "bake <raw-guest-elf> <new-program-binary>");
         let raw_elf = bounded_read(Path::new(&args[2]), MAX_ELF_BYTES)?;
@@ -287,13 +318,44 @@ fn main() -> Result<()> {
             full_relation::PublicStatement::decode(&input[..full_relation::STATEMENT_BYTES])
                 .map_err(|e| anyhow!("{e:?}"))?;
         let encoded = bounded_read(Path::new(&args[4]), MAX_RECEIPT_BYTES)?;
+        let cpu_started = process_cpu::nanoseconds()?;
         let started = Instant::now();
         let receipt = deserialize_receipt(&encoded)?;
         if args[1] == "audit" {
             return audit_receipt(&receipt, &elf, &input, &encoded);
         }
         strict_verify(&receipt, &elf, &expected_journal)?;
-        println!("{{\"schema\":\"pon-w1-risc0-research-v1\",\"operation\":\"verify\",\"real_composite_stark_verified\":true,\"receipt_bytes\":{},\"verify_wall_ns\":{},\"image_id\":\"{}\",\"statement_id\":\"{}\",\"native_w1_recomputed\":false,\"consensus_authority\":false}}", encoded.len(), started.elapsed().as_nanos(), compute_image_id(&elf)?, hex::encode(statement.statement_id()));
+        let verify_wall_ns = started.elapsed().as_nanos();
+        let verify_cpu_ns = process_cpu::nanoseconds()?
+            .checked_sub(cpu_started)
+            .context("process CPU clock went backwards")?;
+        let InnerReceipt::Composite(composite) = &receipt.inner else {
+            unreachable!("strict verifier accepts only Composite receipts")
+        };
+        let profile: Vec<_> = composite
+            .segments
+            .iter()
+            .map(|segment| {
+                let cycles = receipt_bounds::check_seal(&segment.seal)?;
+                Ok(
+                    serde_json::json!({"index":segment.index,"po2":cycles.ilog2(),
+                "padded_cycles":cycles,"seal_words":segment.seal.len(),
+                "hashfn":segment.hashfn}),
+                )
+            })
+            .collect::<Result<_>>()?;
+        println!(
+            "{}",
+            serde_json::json!({"schema":"pon-w1-risc0-research-v1",
+            "operation":"verify","real_composite_stark_verified":true,
+            "receipt_bytes":encoded.len(),"verify_wall_ns":verify_wall_ns,
+            "verify_process_cpu_ns":verify_cpu_ns,
+            "cpu_scope":"current verifier process, all its threads; no child prover",
+            "image_id":compute_image_id(&elf)?.to_string(),
+            "statement_id":hex::encode(statement.statement_id()),
+            "verified_segment_profile":profile,
+            "native_w1_recomputed":false,"consensus_authority":false})
+        );
         return Ok(());
     }
     let prove = args[1] == "prove";
@@ -340,6 +402,10 @@ fn main() -> Result<()> {
         .with_receipt_kind(ReceiptKind::Composite);
     let context = VerifierContext::default().with_dev_mode(false);
     let info = prover.prove_with_ctx(environment(&input, po2)?, &context, &elf, &options)?;
+    ensure!(
+        info.work_receipt.is_none(),
+        "PoVW work receipts are outside this W1 profile"
+    );
     let prove_ns = started.elapsed().as_nanos();
     let encoded = bincode::serialize(&info.receipt)?;
     ensure!(
