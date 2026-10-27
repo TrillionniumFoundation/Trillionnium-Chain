@@ -12,6 +12,7 @@ from unittest.mock import patch
 
 import check_pon_identity_churn as reader
 import run_pon_identity_churn as collector
+import pon_identity_outer_owner as outer_owner
 
 ACTUAL_CONTROL = None
 ACTUAL_SMALL_CAMPAIGN = None
@@ -723,7 +724,7 @@ class OuterWriterV2Tests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory); owner = self.owner(root)
             try:
-                with patch.object(collector, 'publish_new', side_effect=OSError(22, 'unsupported flags')) as publish:
+                with patch.object(outer_owner, 'publish_new', side_effect=OSError(22, 'unsupported flags')) as publish:
                     with self.assertRaises(OSError): owner.json('entry.json', {'actual':True})
                     with self.assertRaises(OSError): owner.terminal('negative', 'second')
                     self.assertEqual(publish.call_count, 2)
@@ -832,7 +833,7 @@ class OuterWriterV2Tests(unittest.TestCase):
             def inject(fd, temporary, destination):
                 if destination == 'probe.stdout.log': raise OSError(5, 'injected stdout publication failure')
                 return publish(fd, temporary, destination)
-            with patch.object(collector, 'publish_new', side_effect=inject), \
+            with patch.object(outer_owner, 'publish_new', side_effect=inject), \
                  patch.object(collector, 'run_bounded', return_value=SimpleNamespace(returncode=-9, stdout=b'out', stderr=b'err')), \
                  self.assertRaises(OSError):
                 owner.step('probe', ['synthetic-child-result'], {}, timeout=2, stdout_limit=8, stderr_limit=8)
@@ -1004,7 +1005,7 @@ class OneShotClaimOwnerV1Tests(unittest.TestCase):
                     if destination=='claim.json': raise OSError(5,'injected claim publish failure')
                     return publish(fd,temporary,destination)
                 patcher=(patch.object(io.writer,'copy',side_effect=OSError(5,'injected frozen copy failure'))
-                         if mode=='copy' else patch.object(collector,'publish_new',side_effect=inject))
+                         if mode=='copy' else patch.object(outer_owner,'publish_new',side_effect=inject))
                 try:
                     before=len(collector.os.listdir('/proc/self/fd'))
                     with patcher,self.assertRaises(OSError): collector.ClaimOwner(io,source)

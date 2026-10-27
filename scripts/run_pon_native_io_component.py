@@ -492,8 +492,8 @@ def observed_step_exit_code(value):
 
 
 class ComponentIO(CollectorIO):
-    def __init__(self, output):
-        super().__init__(output, 'v2')
+    def __init__(self, output, *, writer=None):
+        super().__init__(output, 'v2', writer=writer)
 
     def native_step(self, command, env, dispatch):
         typed(dispatch['schema'], DISPATCH)
