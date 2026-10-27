@@ -56,7 +56,11 @@
     "evidence/pon-pq-tpq1-native-v1/native-sanitizer-test.log",
     "formal/pon-nakamoto-v1/test_pq_tpq1_canonical_pem.py",
     "docs/security/PQ_TPQ1_CANONICAL_PEM_RESEARCH_V1.md",
-    "evidence/pon-pq-pql10-pem-source-v1/local-qualification.json"
+    "evidence/pon-pq-pql10-pem-source-v1/local-qualification.json",
+    "scripts/ci/check_pq_research_integration.py",
+    "scripts/ci/test_pq_research_integration.py",
+    "docs/security/PQ_PQL11_RECURSIVE_SOURCE_GUARD_V1.md",
+    "evidence/pon-pq-pql11-source-guard-v1/local-qualification.json"
   ],
   "pinned_blobs": {
     "config/consensus-mainline.json": "969ddfec9ead64bc3eb7e0cc9997a0950947e09e",
@@ -160,7 +164,11 @@
     "evidence/pon-pq-pql10-pem-source-v1/normal-test.log": "4768863acadbe03d793e615763cf2fe006a3332a",
     "evidence/pon-pq-pql10-pem-source-v1/sanitizer-test.log": "2ada9806d35604801ab9a01d289d8a60867a0cac",
     "evidence/pon-pq-pql10-pem-source-v1/combined-test.log": "1d8cd4234d1ae143434d024c8629aaf81014c62a",
-    "evidence/pon-pq-pql10-pem-source-v1/local-qualification.json": "596aa94783e6b029c73a05696fb8bdfc32b25c74"
+    "evidence/pon-pq-pql10-pem-source-v1/local-qualification.json": "596aa94783e6b029c73a05696fb8bdfc32b25c74",
+    "scripts/ci/check_pq_research_integration.py": "fc0f0b2501e8134a7088468ebb4bdeb51816fe85",
+    "scripts/ci/test_pq_research_integration.py": "fe5bcf78fbb62cbdb1d4295e11aceb029cf60510",
+    "docs/security/PQ_PQL11_RECURSIVE_SOURCE_GUARD_V1.md": "087d6befc85658f793ba8eac2150d608e77928a2",
+    "evidence/pon-pq-pql11-source-guard-v1/local-qualification.json": "634987b02e9a698144f8ed580b0d484729e52e45"
   },
   "assertions": {
     "production_activation": false,
@@ -221,6 +229,22 @@
     "full_research_corpus_test": "NOT_RUN",
     "rust_cargo": "NOT_RUN",
     "signer_authority_minted": false,
+    "independent_accepted": false,
+    "production_activation": false
+  },
+  "pql11_recursive_source_gate": {
+    "stage": "PQL11 research-only exact-source checker hardening",
+    "parent_pql10b": "668c41cead73ebef83212094d0c077ee788f1570",
+    "original_duplicate_fixture_reproduced": true,
+    "original_test_methods": 13,
+    "original_failures": 13,
+    "original_errors": 1,
+    "nested_unpinned_bypass_reproduced": true,
+    "targeted_prepatch_negative_failures": 4,
+    "exact_source_isolated_tests_passed": 18,
+    "entire_stacked_checkout": "NOT_RUN",
+    "rust_cargo": "NOT_RUN",
+    "verified_chain_authority": false,
     "independent_accepted": false,
     "production_activation": false
   }

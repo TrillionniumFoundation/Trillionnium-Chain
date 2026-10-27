@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 from pathlib import Path
 import re
 import stat
@@ -83,13 +84,30 @@ def _check_pq_source_coverage(root: Path, pins: dict[str, str]) -> None:
         parent = root / directory
         if parent.is_symlink() or not parent.is_dir():
             raise IntegrityError("missing or symlink PQ source directory: " + directory)
-        for source in parent.iterdir():
-            if (source.suffix not in (".py", ".c", ".rs")
-                    or not source.name.startswith(("pq_", "pqg_", "pql"))):
-                continue
-            relative = source.relative_to(root).as_posix()
-            if relative not in pins:
-                raise IntegrityError("unpinned PQ source: " + relative)
+        # Recursive coverage matters: Rust `mod pq_verifier` may live at
+        # src/pq_verifier/native.rs. A one-level iterdir() silently misses it.
+        # Never follow an intervening symlink to a second, unpinned corpus.
+        def fail_walk_error(exc: OSError) -> None:
+            raise IntegrityError("unreadable PQ source directory: " + str(exc)) from exc
+        for current, dirs, files in os.walk(parent, followlinks=False, onerror=fail_walk_error):
+            here = Path(current)
+            for name in dirs:
+                if (here / name).is_symlink():
+                    raise IntegrityError("symlink PQ source directory: " + (here / name).relative_to(root).as_posix())
+            for name in files:
+                source = here / name
+                # Any code under a PQ-named module directory is itself PQ
+                # implementation, even if called native.rs or mod.rs.
+                module_parts = source.relative_to(parent).parts
+                pq_named = any(part.startswith(("pq_", "pqg_", "pql"))
+                               for part in module_parts)
+                if source.suffix not in (".py", ".c", ".rs") or not pq_named:
+                    continue
+                relative = source.relative_to(root).as_posix()
+                if source.is_symlink():
+                    raise IntegrityError("symlink PQ source: " + relative)
+                if relative not in pins:
+                    raise IntegrityError("unpinned PQ source: " + relative)
 
 def check(root: Path) -> dict:
     root = Path(root).resolve(strict=True)
