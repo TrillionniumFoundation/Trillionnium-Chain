@@ -118,3 +118,45 @@ full local W1 data, **not a second independently implemented cryptographic
 verifier**; it calls the same original scalar oracle. Independently authored
 third verifier, native exact-head tests, paid public network fairness and real
 operator evidence remain open.
+
+## Separate Go W1 mathematical verifier (local research execution)
+
+A second language **independently coded** full PNW1 verifier now lives at
+`formal/pon-nakamoto-v1/w1_reference_go/main.go`. It does not call the Python
+oracle or translate an accepted/rejected Boolean. The Go code independently
+implements the exact tagged SHA-256 domains, 64×64 finite-field matrices, four
+512-value challenge expansions, three-dimensional tile transcript update order,
+final decoded `C=AB` identity, original Ticket threshold, PNH1 block identifier,
+MTP11, original 16-block target arithmetic, and branch cumulative work.
+
+From the repository's `formal/pon-nakamoto-v1` directory, with Go available:
+
+```sh
+go run w1_reference_go/main.go \
+  --report /new/path/w1-daa-report.json \
+  --artifact-dir /new/path/w1-pnw1-raw
+
+GO111MODULE=off \
+TRNM_W1_REAL_REPORT=/new/path/w1-daa-report.json \
+TRNM_W1_REAL_ARTIFACT_DIR=/new/path/w1-pnw1-raw \
+  go test -v ./w1_reference_go
+```
+
+The Go reader performs strict raw-file length and type checks, verifies all 31
+mathematical W1 proofs, reconstructs their original time-valid branches and
+cumulative work, and requires the independent forged Ticket precheck to pass
+before a full Transcript rejection. Its result explicitly grants **no native
+Node authority**. Without the optional raw corpus environment, the corpus
+integration test reports an explicit skip, not a qualified PASS.
+
+**Local observed Go result:** Go compiled and replayed all 31 original raw
+PNW1 packets; the honest branch remained heavier than the manipulated endpoint
+branch, and the fabricated Ticket-qualified transcript was refused. Four
+Go tests passed with the actual raw corpus environment. These include a
+cross-language fixed `TaskId` vector, strict malformed wire rejection, full
+independent 31-proof replay and changed-work rejection, and hostile length or
+symlinked-file denial. The Go/Python math implementations have different source
+but were created inside the same engineering effort; **there is no independent
+third-party security review**. This improves executable byte-level parity, not
+the cheapest possible legal proof cost, production Sybil safety, hardware
+asymmetry, independently administered fleet, or full native consensus acceptance.
