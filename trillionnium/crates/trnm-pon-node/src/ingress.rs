@@ -2210,20 +2210,28 @@ fn receive_page(
         page.packets.iter().map(String::len).sum::<usize>() <= MAX_FRAME - 1024,
         "PAGE_LIMIT",
     )?;
-    let packets = page
-        .packets
-        .iter()
-        .map(|s| hex_packet(s))
-        .collect::<Result<Vec<_>>>()?;
-    let mut next = after;
-    for packet in &packets {
-        ensure(packet.header.parent == next, "PAGE_PARENT")?;
-        next = packet.id()?;
-    }
-    ensure(
-        page.next == hex::encode(next) && page.complete == (next == tip),
-        "PAGE_COMPLETE",
-    )?;
+    // Charge canonical proof decoding, packet IDs and parent-chain checks
+    // separately from the later full W1/M06 intervals. No nested operation:
+    // actual decoder CPU must not be double-billed or run at no cost.
+    let (packets, next) = metered_history_operation(node, domain, |_owner, operation| {
+        operation.checkpoint()?;
+        let packets = page
+            .packets
+            .iter()
+            .map(|s| hex_packet(s))
+            .collect::<Result<Vec<_>>>()?;
+        let mut next = after;
+        for packet in &packets {
+            ensure(packet.header.parent == next, "PAGE_PARENT")?;
+            next = packet.id()?;
+        }
+        ensure(
+            page.next == hex::encode(next) && page.complete == (next == tip),
+            "PAGE_COMPLETE",
+        )?;
+        operation.checkpoint()?;
+        Ok((packets, next))
+    })?;
     for packet in &packets {
         metered_history_packet(node, domain, packet, clock)?;
     }
