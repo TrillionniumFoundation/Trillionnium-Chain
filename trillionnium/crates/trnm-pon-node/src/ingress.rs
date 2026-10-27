@@ -2499,6 +2499,35 @@ mod tests {
 
     #[cfg(target_os = "linux")]
     #[test]
+    fn untrusted_history_cpu_import_cannot_take_an_active_honest_second_slot() {
+        // The same original V3 budget is shared by ordinary signed requests
+        // and untrusted imported History W1. With one honest operation already
+        // in flight, background History must not take its remaining slot.
+        // Ordinary work is still allowed to take that same slot.
+        let domain = public_v3::ServiceMutationCpuDomain::standalone();
+        let first_paid = domain.begin().expect("original honest start");
+        let started = Instant::now();
+        let refused = begin_history_import_cpu(&domain)
+            .err()
+            .expect("background History may not displace the remaining honest slot");
+        assert!(refused.is(crate::ErrorCode::PublicMutationCpuBudget));
+        assert!(started.elapsed() >= Duration::from_secs(1));
+        let second_paid = domain.begin().expect("remaining original slot is reserved for honest");
+        let another_history = domain.begin_untrusted_peer_sync().err()
+            .expect("a paid in-flight operation excludes low-priority History");
+        assert!(another_history.is(crate::ErrorCode::PublicMutationCpuBudget));
+        let second = second_paid.finish();
+        let first = first_paid.finish();
+        assert!(!second.accounting_unavailable);
+        assert!(!first.accounting_unavailable);
+        let observed = domain.observe().unwrap();
+        assert_eq!(observed.in_flight, 0);
+        assert!(!observed.accounting_unavailable);
+    }
+
+
+    #[cfg(target_os = "linux")]
+    #[test]
     fn malformed_remote_history_decode_pays_original_cpu_and_preserves_state() {
         let observed = now().unwrap();
         let settings = crate::Settings::development(Some(observed - 100)).unwrap();
