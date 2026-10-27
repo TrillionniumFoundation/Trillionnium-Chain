@@ -199,7 +199,35 @@ class RenewalOutbox:
         self.db.execute('ROLLBACK')
         return result
 
+    def _verify_sqlite_schema(self) -> None:
+        """Reject SQL schema rewrites before appending or trusting outbox state.
+
+        Triggers can erase or rewrite the just-inserted event after the prefix
+        audit, while missing uniqueness indexes weaken original ownership.
+        A same-name table list is not enough to defend against either case.
+        """
+        tables = {name for (name,) in self.db.execute(
+            "SELECT name FROM sqlite_master WHERE type='table'"
+        )}
+        if tables != {'q4_outbox_meta_v1', 'q4_outbox_intents_v1',
+                      'q4_outbox_events_v1'}:
+            raise OutboxError('SCHEMA_DRIFT')
+        if self.db.execute(
+            "SELECT 1 FROM sqlite_master WHERE type IN ('trigger','view') LIMIT 1"
+        ).fetchone() is not None:
+            raise OutboxError('SCHEMA_DRIFT')
+        indexes = dict(self.db.execute(
+            "SELECT name,sql FROM sqlite_master WHERE type='index' "
+            "AND sql IS NOT NULL"
+        ))
+        required = ("CREATE UNIQUE INDEX q4_outbox_once_v1 "
+                    "ON q4_outbox_events_v1(intent_id) "
+                    "WHERE kind='DISPATCH_UNKNOWN'")
+        if indexes != {'q4_outbox_once_v1': required}:
+            raise OutboxError('SCHEMA_DRIFT')
+
     def _audit_snapshot(self) -> int:
+        self._verify_sqlite_schema()
         pinned = dict([('schema',SCHEMA),('network',self.context[0]),
                        ('parameters',self.context[1]),('genesis',self.context[2])])
         actual = dict(self.db.execute('SELECT key,value FROM q4_outbox_meta_v1'))

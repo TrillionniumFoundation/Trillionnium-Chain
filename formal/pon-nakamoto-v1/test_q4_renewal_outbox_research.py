@@ -29,6 +29,51 @@ class RenewalOutboxTests(unittest.TestCase):
     def tearDown(self): self.tmp.cleanup()
     def open(self,**kw): return RenewalOutbox(self.file,N,P,G,**kw)
 
+    def test_untrusted_sql_triggers_and_missing_dispatch_index_refuse(self):
+        # Neither a hostile trigger nor a removed uniqueness guard can be
+        # trusted even when every original table and row digest is unchanged.
+        with self.open() as db:
+            key = db.prepare(intent())
+        with sqlite3.connect(self.file) as raw:
+            raw.execute(
+                "CREATE TRIGGER rewrite_dispatch AFTER INSERT ON q4_outbox_events_v1 "
+                "BEGIN DELETE FROM q4_outbox_events_v1 WHERE ordinal=NEW.ordinal; END"
+            )
+        with self.assertRaisesRegex(OutboxError, 'SCHEMA_DRIFT'):
+            self.open()
+        with sqlite3.connect(self.file) as raw:
+            raw.execute("DROP TRIGGER rewrite_dispatch")
+            raw.execute("DROP INDEX q4_outbox_once_v1")
+        with self.assertRaisesRegex(OutboxError, 'SCHEMA_DRIFT'):
+            self.open()
+        with sqlite3.connect(self.file) as raw:
+            raw.execute(
+                "CREATE UNIQUE INDEX q4_outbox_once_v1 "
+                "ON q4_outbox_events_v1(intent_id) "
+                "WHERE kind='DISPATCH_UNKNOWN'"
+            )
+        with self.open() as db:
+            self.assertTrue(db.status(key)['has_no_durable_dispatch_fence'])
+            db.dispatch_unknown(key)
+            self.assertEqual(db.audit(), 1)
+
+    def test_live_schema_trigger_injection_is_fenced_before_event_write(self):
+        with self.open() as db:
+            key = db.prepare(intent())
+            with sqlite3.connect(self.file) as raw:
+                raw.execute(
+                    "CREATE TRIGGER rewrite_dispatch AFTER INSERT ON q4_outbox_events_v1 "
+                    "BEGIN DELETE FROM q4_outbox_events_v1 WHERE ordinal=NEW.ordinal; END"
+                )
+            with self.assertRaisesRegex(OutboxError, 'SCHEMA_DRIFT'):
+                db.dispatch_unknown(key)
+            self.assertEqual(
+                db.db.execute('SELECT COUNT(*) FROM q4_outbox_events_v1').fetchone()[0],
+                0,
+            )
+            with self.assertRaisesRegex(OutboxError, 'SCHEMA_DRIFT'):
+                db.status(key)
+
     def test_prepared_is_not_dispatched_ownership_or_signing(self):
         with self.open() as db:
             key=db.prepare(intent())
