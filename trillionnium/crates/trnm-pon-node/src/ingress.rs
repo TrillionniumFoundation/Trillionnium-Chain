@@ -2492,6 +2492,196 @@ pub fn sync_from_authenticated_durable(
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn malformed_remote_history_decode_pays_original_cpu_and_preserves_state() {
+        let observed = now().unwrap();
+        let settings = crate::Settings::development(Some(observed - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let start = node.stats().unwrap();
+        let source: SocketAddr = "127.0.0.1:1".parse().unwrap();
+        let page = Page {
+            schema: "pon-native-history-v1".into(),
+            network: hex::encode(settings.network()),
+            parameters: hex::encode(settings.parameters()),
+            genesis: hex::encode(settings.genesis()),
+            tip: hex::encode([9; 32]),
+            after: hex::encode(settings.genesis()),
+            packets: vec!["00".into()],
+            next: hex::encode([9; 32]),
+            complete: true,
+        };
+        assert!(receive_page_from(
+            &mut node, source, page, [9; 32], settings.genesis(), observed,
+        ).is_err());
+        let account = node.public_service_cpu_domain().unwrap().observe().unwrap();
+        assert_eq!(account.in_flight, 0);
+        assert!(!account.accounting_unavailable);
+        assert_eq!(node.stats().unwrap(), start);
+        assert_eq!(node.read_active().unwrap().0, settings.genesis());
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn mixed_false_then_valid_history_across_source_ports_reuses_one_cpu_owner() {
+        let observed = now().unwrap();
+        let settings = crate::Settings::development(Some(observed - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let good = node.make(
+            settings.genesis(),
+            vec![],
+            crate::development_public(0).unwrap(),
+            settings.genesis_time() + 10,
+            4096,
+        ).unwrap();
+        let id = good.id().unwrap();
+        let mut bad = good.clone();
+        let cell = 4 + 2 * trnm_crypto_primitives::pon_work::CELLS * 4;
+        let prior = u32::from_le_bytes(bad.proof[cell..cell + 4].try_into().unwrap());
+        let altered = ((u128::from(prior) + 1)
+            % trnm_crypto_primitives::pon_work::Q) as u32;
+        bad.proof[cell..cell + 4].copy_from_slice(&altered.to_le_bytes());
+        assert_eq!(bad.id().unwrap(), id);
+        let make_page = |packet: &Packet| Page {
+            schema: "pon-native-history-v1".into(),
+            network: hex::encode(settings.network()),
+            parameters: hex::encode(settings.parameters()),
+            genesis: hex::encode(settings.genesis()),
+            tip: hex::encode(id),
+            after: hex::encode(settings.genesis()),
+            packets: vec![hex::encode(packet.encode().unwrap())],
+            next: hex::encode(id),
+            complete: true,
+        };
+        let first: SocketAddr = "127.0.0.1:1".parse().unwrap();
+        let second: SocketAddr = "127.0.0.1:2".parse().unwrap();
+        let initial = node.stats().unwrap();
+        assert_eq!(
+            receive_page_from(
+                &mut node, first, make_page(&bad), id, settings.genesis(), observed,
+            ).unwrap_err().to_string(),
+            "WORK:Product"
+        );
+        assert_eq!(node.stats().unwrap(), initial);
+        let original_domain = node.public_service_cpu_domain().unwrap();
+        assert_eq!(
+            receive_page_from(
+                &mut node, second, make_page(&good), id, settings.genesis(), observed,
+            ).unwrap(),
+            id
+        );
+        assert!(node.public_service_cpu_domain().unwrap().shares_domain_with(&original_domain));
+        assert_eq!(node.read_active().unwrap().0, id);
+        assert_eq!(original_domain.observe().unwrap().in_flight, 0);
+        let success_state = node.stats().unwrap();
+        // The exact block ID's stored byte identity is authoritative; the
+        // previously invalid C cannot overwrite the now accepted legal proof.
+        let repeated = receive_page_from(
+            &mut node, first, make_page(&bad), id, settings.genesis(), observed,
+        ).unwrap_err();
+        assert_eq!(repeated.to_string(), "DUPLICATE_CONTENT");
+        assert_eq!(node.stats().unwrap(), success_state);
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn four_distinct_ticket_valid_false_history_traces_never_obtain_work() {
+        let observed = now().unwrap();
+        let settings = crate::Settings::development(Some(observed - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        // The legal packet is the honest control only. Attacker proofs below
+        // are synthesized by hashing arbitrary trace claims without replay.
+        let honest = node.make(
+            settings.genesis(),
+            vec![],
+            crate::development_public(0).unwrap(),
+            settings.genesis_time() + 10,
+            4096,
+        ).unwrap();
+        let challenge = honest.header.challenge();
+        let task = honest.header.work_task;
+        let target = honest.header.target;
+        let initial = node.stats().unwrap();
+        let mut accepted_tickets = 0;
+        let mut original_budget = None;
+        for nonce in 0..128_u64 {
+            let trace = hash(
+                b"history-four-false-transcripts-v1",
+                &[&challenge, &nonce.to_le_bytes()],
+            );
+            let ticket = hash(b"ticket", &[&challenge, &trace]);
+            if target == [0; 32] || ticket > target {
+                continue;
+            }
+            let mut fake = honest.clone();
+            let product = 4 + 2 * trnm_crypto_primitives::pon_work::CELLS * 4;
+            fake.proof[product..product + trnm_crypto_primitives::pon_work::CELLS * 4]
+                .fill(0);
+            fake.proof[trnm_crypto_primitives::pon_work::PROOF_BYTES - 32..]
+                .copy_from_slice(&trace);
+            assert_eq!(
+                trnm_crypto_primitives::pon_work::precheck_proof_statement(
+                    challenge, task, target, &fake.proof,
+                ),
+                Ok(())
+            );
+            let id = fake.id().unwrap();
+            let page = Page {
+                schema: "pon-native-history-v1".into(),
+                network: hex::encode(settings.network()),
+                parameters: hex::encode(settings.parameters()),
+                genesis: hex::encode(settings.genesis()),
+                tip: hex::encode(id),
+                after: hex::encode(settings.genesis()),
+                packets: vec![hex::encode(fake.encode().unwrap())],
+                next: hex::encode(id),
+                complete: true,
+            };
+            let source: SocketAddr = format!("127.0.0.1:{}", nonce + 1).parse().unwrap();
+            let error = receive_page_from(
+                &mut node, source, page, id, settings.genesis(), observed,
+            ).unwrap_err();
+            assert_eq!(error.to_string(), "WORK:Transcript");
+            let domain = node.public_service_cpu_domain().unwrap();
+            if let Some(previous) = &original_budget {
+                assert!(domain.shares_domain_with(previous));
+            } else {
+                original_budget = Some(domain.clone());
+            }
+            assert_eq!(domain.observe().unwrap().in_flight, 0);
+            assert_eq!(node.stats().unwrap(), initial);
+            assert_eq!(node.read_active().unwrap().0, settings.genesis());
+            accepted_tickets += 1;
+            if accepted_tickets == 4 {
+                break;
+            }
+        }
+        assert_eq!(accepted_tickets, 4, "the fixed target must yield four false claims");
+        let id = honest.id().unwrap();
+        let legal_page = Page {
+            schema: "pon-native-history-v1".into(),
+            network: hex::encode(settings.network()),
+            parameters: hex::encode(settings.parameters()),
+            genesis: hex::encode(settings.genesis()),
+            tip: hex::encode(id),
+            after: hex::encode(settings.genesis()),
+            packets: vec![hex::encode(honest.encode().unwrap())],
+            next: hex::encode(id),
+            complete: true,
+        };
+        assert_eq!(
+            receive_page_from(
+                &mut node, "127.0.0.1:999".parse().unwrap(), legal_page,
+                id, settings.genesis(), observed,
+            ).unwrap(),
+            id
+        );
+        assert_eq!(node.read_active().unwrap().0, id);
+        assert_eq!(node.public_service_cpu_domain().unwrap().observe().unwrap().in_flight, 0);
+    }
+
 
     #[cfg(target_os = "linux")]
     #[test]
