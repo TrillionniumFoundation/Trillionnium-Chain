@@ -2246,6 +2246,13 @@ fn receive_page(
         page.packets.iter().map(String::len).sum::<usize>() <= MAX_FRAME - 1024,
         "PAGE_LIMIT",
     )?;
+    // The independent History CPU epoch must survive a crash DURING
+    // expensive replay or M06, not merely detect an older V3 listener.
+    // The original metadata marker is durable before the first paid unit.
+    // The bounded canonical Page shape checks above remain cheap; malformed
+    // top-level input must not acquire an unclean persistent epoch.
+    let owned_epoch = node.begin_remote_history_cpu_epoch()?;
+    let native = (|| -> Result<Hash> {
     // Charge canonical proof decoding, packet IDs and parent-chain checks
     // separately from the later full W1/M06 intervals. No nested operation:
     // actual decoder CPU must not be double-billed or run at no cost.
@@ -2287,6 +2294,25 @@ fn receive_page(
         })?;
     }
     Ok(next)
+    })();
+    if owned_epoch {
+        // Finish only this standalone History epoch. A concurrent V3 listener
+        // already holds and eventually settles its OWN original marker; it
+        // never yields last-close authority to a History importer.
+        let clean = domain.observe().ok().is_some_and(|state| {
+            state.in_flight == 0
+                && !state.accounting_unavailable
+                && state.stored_credit_ns >= 0
+        }) && domain.observe_actual_flow().ok().flatten().is_some();
+        node.finish_ordinary_public_service_epoch(clean)?;
+        if !clean {
+            // The original active metadata marker intentionally remains.
+            // Native success may already be durable; refuse only to qualify
+            // this sync completion, not the mathematical work or stored rows.
+            return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+        }
+    }
+    native
 }
 
 /// Public untrusted History import. Unlike the private local parser, this
