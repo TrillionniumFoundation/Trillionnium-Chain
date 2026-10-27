@@ -89,12 +89,14 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("binary", type=Path)
     parser.add_argument("new_output", type=Path)
+    parser.add_argument("--r0vm", type=Path, required=True)
     parser.add_argument("--trials", type=int, default=3)
     parser.add_argument("--timeout-seconds", type=float, default=3600)
     args = parser.parse_args()
     if not 1 <= args.trials <= 100 or not 1 <= args.timeout_seconds <= 24 * 3600:
         parser.error("bounded trials and timeout required")
     binary, output = args.binary.resolve(strict=True), args.new_output.resolve()
+    r0vm = args.r0vm.resolve(strict=True)
     output.mkdir()
     root = Path(__file__).resolve().parents[3]
     head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=root, text=True).strip()
@@ -103,11 +105,12 @@ def main() -> int:
         "source_commit": head, "tracked_dirty": bool(tracked_delta),
         "tracked_delta_sha256": hashlib.sha256(tracked_delta).hexdigest(),
         "binary_path": str(binary), "binary_sha256": sha(binary),
+        "local_r0vm_path": str(r0vm), "local_r0vm_sha256": sha(r0vm),
         "runner_sha256": sha(Path(__file__)), "planned_proof_trials": args.trials,
         "environment": {name: os.environ.get(name) for name in ("CARGO_BUILD_JOBS", "RAYON_NUM_THREADS", "RISC0_HOME")},
         "machine": dict(zip(("sysname", "nodename", "release", "version", "machine"), os.uname())),
     })
-    proof = execute([str(binary), str(output / "proof"), str(args.trials)], output / "proof-process", args.timeout_seconds)
+    proof = execute([str(binary), "--r0vm", str(r0vm), str(output / "proof"), str(args.trials)], output / "proof-process", args.timeout_seconds)
     observations = output / "proof" / "observations.jsonl"
     rows = []
     unreadable_rows = []
