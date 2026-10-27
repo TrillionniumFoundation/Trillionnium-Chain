@@ -13,11 +13,13 @@ use trnm_mempool::{
 use trnm_mvcc_fee::pon_commitment::{
     CacheLimits, CheckedExecutionParent, CheckedTransactionPrefix, CommitmentObservation,
 };
+use trnm_mvcc_fee::pon_executor::pq_native_v1 as pq;
 use trnm_mvcc_fee::pon_executor::{
     self, Config, ExecutionControl, ExecutionError, ExecutionProgress, ExecutionWorkerAccounting,
     PrefixContext, State,
 };
 use trnm_protocol::pon_wire::{hash, Envelope, Hash};
+use trnm_protocol::pq_native_transfer_v1 as pq_wire;
 
 pub const LOCAL_POOL_PROFILE: &str = "native-local-queued-pnx1-v2";
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -145,37 +147,101 @@ pub(super) struct ContinuousPoolGroupSnapshot {
 }
 /// Private immutable adapter: resources are derived from the existing command and
 /// byte fee, never a fabricated signed gas field or arbitrary-program cost claim.
-struct PnxView<'raw> {
+struct NativePoolView<'raw> {
     raw: &'raw [u8],
-    envelope: Envelope,
+    // The PQ branch never constructs a legacy Ed25519 envelope.
+    legacy: Option<Envelope>,
     digest: CanonicalTxDigest,
     signer: CanonicalSignerId,
     fee: u64,
+    sender: Hash,
+    nonce: u64,
+    expiry: u64,
+    fee_limit: u64,
+    tag: u8,
+    statement: Option<[u8; 48]>,
 }
-fn minimum_fee(tx: &Envelope, bytes: usize, cfg: &Config) -> Result<u64> {
-    let base = *cfg.fees.get(usize::from(tx.tag)).ok_or("POOL_TAG")?;
+fn max_body_bytes(cfg: &Config) -> usize {
+    if pq::enabled(cfg) {
+        pq_wire::MAX_BYTES
+    } else {
+        2048
+    }
+}
+fn pool_profile(cfg: &Config) -> &'static str {
+    if pq::enabled(cfg) {
+        "native-local-queued-npq1-v1"
+    } else {
+        LOCAL_POOL_PROFILE
+    }
+}
+fn minimum_fee(tag: u8, bytes: usize, cfg: &Config) -> Result<u64> {
+    let base = *cfg.fees.get(usize::from(tag)).ok_or("POOL_TAG")?;
     let byte = cfg.params["byte_fee_units"].as_u64().ok_or("CONFIG")?;
     base.checked_add((bytes as u64).checked_mul(byte).ok_or("POOL_FEE")?)
         .ok_or_else(|| "POOL_FEE".into())
 }
-impl<'raw> PnxView<'raw> {
+impl<'raw> NativePoolView<'raw> {
     fn new(raw: &'raw [u8], cfg: &Config) -> Result<Self> {
-        ensure(!raw.is_empty() && raw.len() <= 2048, "POOL_BODY_LIMIT")?;
-        let envelope = Envelope::decode(raw).map_err(|_| "POOL_ENCODING")?;
-        let digest = CanonicalTxDigest::from_bytes(envelope.id().map_err(|_| "POOL_ENCODING")?)
-            .map_err(|_| "POOL_ENCODING")?;
-        let signer = CanonicalSignerId::from_bytes(envelope.sender).map_err(|_| "POOL_SIGNER")?;
-        let fee = minimum_fee(&envelope, raw.len(), cfg)?;
+        ensure(
+            !raw.is_empty() && raw.len() <= max_body_bytes(cfg),
+            "POOL_BODY_LIMIT",
+        )?;
+        let (legacy, digest, sender, nonce, expiry, fee_limit, tag, statement) = if pq::enabled(cfg)
+        {
+            let envelope =
+                pq_wire::UnverifiedEnvelope::decode(raw).map_err(|_| "POOL_PQ_ENCODING")?;
+            let tx = envelope.transfer();
+            let statement = envelope
+                .statement_id(pq::context(cfg)?)
+                .map_err(|_| "POOL_PQ_CONTEXT")?;
+            (
+                None,
+                envelope.wire_id(),
+                tx.sender,
+                tx.nonce,
+                tx.expires_at,
+                tx.max_fee,
+                1,
+                Some(statement),
+            )
+        } else {
+            let tx = Envelope::decode(raw).map_err(|_| "POOL_ENCODING")?;
+            let facts = (
+                tx.id().map_err(|_| "POOL_ENCODING")?,
+                tx.sender,
+                tx.nonce,
+                tx.expiry,
+                tx.fee_limit,
+                tx.tag,
+            );
+            (
+                Some(tx),
+                facts.0,
+                facts.1,
+                facts.2,
+                facts.3,
+                facts.4,
+                facts.5,
+                None,
+            )
+        };
         Ok(Self {
             raw,
-            envelope,
-            digest,
-            signer,
-            fee,
+            legacy,
+            digest: CanonicalTxDigest::from_bytes(digest).map_err(|_| "POOL_ENCODING")?,
+            signer: CanonicalSignerId::from_bytes(sender).map_err(|_| "POOL_SIGNER")?,
+            fee: minimum_fee(tag, raw.len(), cfg)?,
+            sender,
+            nonce,
+            expiry,
+            fee_limit,
+            tag,
+            statement,
         })
     }
 }
-impl SignedEnvelopeView for PnxView<'_> {
+impl SignedEnvelopeView for NativePoolView<'_> {
     fn canonical_digest(&self) -> CanonicalTxDigest {
         self.digest
     }
@@ -186,10 +252,10 @@ impl SignedEnvelopeView for PnxView<'_> {
         self.raw
     }
     fn nonce(&self) -> u64 {
-        self.envelope.nonce
+        self.nonce
     }
     fn fee_limit(&self) -> u128 {
-        u128::from(self.envelope.fee_limit)
+        u128::from(self.fee_limit)
     }
     fn resource_limits(&self) -> ResourceLimits {
         ResourceLimits {
@@ -198,19 +264,33 @@ impl SignedEnvelopeView for PnxView<'_> {
         }
     }
     fn validate_canonical(&self) -> std::result::Result<(), AdmissionReject> {
-        if self.envelope.encode().ok().as_deref() != Some(self.raw)
-            || self.envelope.id().ok() != Some(self.digest.as_bytes())
-            || self.envelope.sender != self.signer.as_bytes()
-        {
-            return Err(AdmissionReject::CanonicalValidationFailed);
+        let valid = match &self.legacy {
+            Some(tx) => {
+                tx.encode().ok().as_deref() == Some(self.raw)
+                    && tx.id().ok() == Some(self.digest.as_bytes())
+                    && tx.sender == self.signer.as_bytes()
+            }
+            None => pq_wire::UnverifiedEnvelope::decode(self.raw).is_ok_and(|envelope| {
+                let tx = envelope.transfer();
+                envelope.wire_id() == self.digest.as_bytes()
+                    && tx.sender == self.signer.as_bytes()
+                    && tx.nonce == self.nonce
+                    && tx.expires_at == self.expiry
+                    && tx.max_fee == self.fee_limit
+            }),
+        };
+        if valid {
+            Ok(())
+        } else {
+            Err(AdmissionReject::CanonicalValidationFailed)
         }
-        Ok(())
     }
 }
 /// Borrowed identities keep the actual parent and complete configuration immutable.
 /// A different allocation, even with equal bytes, requires a fresh native check.
 #[derive(Clone, Copy)]
 struct SignatureContext<'a> {
+    timestamp: Option<u64>,
     height: u64,
     parent: Hash,
     state: &'a State,
@@ -219,13 +299,14 @@ struct SignatureContext<'a> {
 /// Minted only by a successful native main-envelope check in the real M05 hook.
 /// It proves no replay, lane, fee, funds, M06 or persistence decision. These private
 /// facts are retained only after the entire candidate's M05/M06 preview succeeds.
-struct CheckedPnxSignature<'a> {
+struct CheckedNativeSignature<'a> {
     context: SignatureContext<'a>,
     raw: Vec<u8>,
 }
-impl CheckedPnxSignature<'_> {
+impl CheckedNativeSignature<'_> {
     fn matches(&self, context: SignatureContext<'_>, raw: &[u8]) -> bool {
-        self.context.height == context.height
+        self.context.timestamp == context.timestamp
+            && self.context.height == context.height
             && self.context.parent == context.parent
             && std::ptr::eq(self.context.state, context.state)
             && std::ptr::eq(self.context.cfg, context.cfg)
@@ -239,14 +320,14 @@ thread_local! {
 }
 struct Hooks<'a, 'reuse> {
     context: SignatureContext<'a>,
-    reused: Option<&'reuse CheckedPnxSignature<'a>>,
-    checked: Option<CheckedPnxSignature<'a>>,
+    reused: Option<&'reuse CheckedNativeSignature<'a>>,
+    checked: Option<CheckedNativeSignature<'a>>,
     expected_nonce: u64,
 }
-impl SignedAdmissionHooks<PnxView<'_>> for Hooks<'_, '_> {
+impl SignedAdmissionHooks<NativePoolView<'_>> for Hooks<'_, '_> {
     fn verify_signature(
         &mut self,
-        view: &PnxView<'_>,
+        view: &NativePoolView<'_>,
         metadata: &SignedEnvelopeMetadata,
     ) -> std::result::Result<(), AdmissionReject> {
         let reused = self
@@ -255,14 +336,31 @@ impl SignedAdmissionHooks<PnxView<'_>> for Hooks<'_, '_> {
         if !reused {
             #[cfg(test)]
             M05_MAIN_VALIDATIONS.with(|count| count.set(count.get() + 1));
-            let checked = pon_executor::validate_main_envelope(
-                view.raw,
-                self.context.height,
-                self.context.cfg,
-            )
-            .map_err(|_| AdmissionReject::SignatureRejected)?;
-            if checked != view.envelope {
-                return Err(AdmissionReject::CanonicalValidationFailed);
+            if let Some(legacy) = &view.legacy {
+                let checked = pon_executor::validate_main_envelope(
+                    view.raw,
+                    self.context.height,
+                    self.context.cfg,
+                )
+                .map_err(|_| AdmissionReject::SignatureRejected)?;
+                if &checked != legacy {
+                    return Err(AdmissionReject::CanonicalValidationFailed);
+                }
+            } else {
+                let timestamp = self
+                    .context
+                    .timestamp
+                    .ok_or(AdmissionReject::SignatureRejected)?;
+                let checked = pq::prepare_signature(view.raw, timestamp, self.context.cfg)
+                    .map_err(|_| AdmissionReject::SignatureRejected)?;
+                pq::validate_current_authority(self.context.state, view.raw, self.context.cfg)
+                    .map_err(|_| AdmissionReject::SignatureRejected)?;
+                if checked.wire_id() != view.digest.as_bytes()
+                    || checked.sender() != view.sender
+                    || Some(checked.statement_id()) != view.statement
+                {
+                    return Err(AdmissionReject::CanonicalValidationFailed);
+                }
             }
         }
         if metadata.body() != view.raw
@@ -272,7 +370,7 @@ impl SignedAdmissionHooks<PnxView<'_>> for Hooks<'_, '_> {
             return Err(AdmissionReject::CanonicalValidationFailed);
         }
         if !reused {
-            self.checked = Some(CheckedPnxSignature {
+            self.checked = Some(CheckedNativeSignature {
                 context: self.context,
                 raw: view.raw.to_vec(),
             });
@@ -293,7 +391,7 @@ impl SignedAdmissionHooks<PnxView<'_>> for Hooks<'_, '_> {
         metadata: &SignedEnvelopeMetadata,
     ) -> std::result::Result<(), AdmissionReject> {
         if metadata.fee_limit() < u128::from(metadata.resource_limits().max_gas)
-            || metadata.resource_limits().max_bytes > 2048
+            || metadata.resource_limits().max_bytes > max_body_bytes(self.context.cfg) as u64
         {
             return Err(AdmissionReject::RecheckFailed);
         }
@@ -357,6 +455,7 @@ fn validate_pending(
     };
     let control = ExecutionControl::new(&progress, &());
     PendingPreview {
+        timestamp: node.pool_preview_timestamp(parent)?,
         height,
         state,
         parent,
@@ -403,6 +502,7 @@ impl PoolPreviewError {
     }
 }
 struct PendingPreview<'state, 'operation> {
+    timestamp: Option<u64>,
     height: u64,
     state: &'state State,
     parent: Hash,
@@ -411,7 +511,7 @@ struct PendingPreview<'state, 'operation> {
     node: &'operation Node,
     checked: Option<CheckedExecutionParent<'state>>,
     prefix: Option<CheckedTransactionPrefix<'state>>,
-    signatures: Vec<CheckedPnxSignature<'state>>,
+    signatures: Vec<CheckedNativeSignature<'state>>,
     parent_observation: Option<CommitmentObservation>,
     control: &'operation ExecutionControl<'operation, crate::Error>,
     owner_permit: Option<&'operation super::OwnerPoolPermit>,
@@ -427,6 +527,7 @@ impl PendingPreview<'_, '_> {
                 .map_err(PoolPreviewError::Cancelled)?;
         }
         let Self {
+            timestamp,
             height,
             state,
             parent,
@@ -436,6 +537,7 @@ impl PendingPreview<'_, '_> {
             ..
         } = *self;
         let signature_context = SignatureContext {
+            timestamp,
             height,
             parent,
             state,
@@ -457,19 +559,32 @@ impl PendingPreview<'_, '_> {
             0
         };
         let mut appended_signatures = Vec::with_capacity(raws.len() - reuse);
-        let mut gate = TypedAdmissionGate::new(limits.max_records, limits.critical_reserve, 2048);
+        if pq::enabled(cfg) {
+            let total = raws.iter().try_fold(0_usize, |sum, raw| {
+                sum.checked_add(raw.len()).ok_or("POOL_BYTE_LIMIT")
+            })?;
+            ensure(
+                total <= limits.max_bytes && total <= pq_wire::MAX_TRANSACTION_BYTES,
+                "POOL_BYTE_LIMIT",
+            )?;
+        }
+        let mut gate = TypedAdmissionGate::new(
+            limits.max_records,
+            limits.critical_reserve,
+            max_body_bytes(cfg) as u64,
+        );
         let mut next = BTreeMap::new();
         let mut exhausted = BTreeSet::new();
         let mut bindings = RawBindings::new(limits.max_records);
         for (index, raw) in raws.iter().enumerate() {
             (self.control.progress)(ExecutionProgress::BeforePrepare { index })
                 .map_err(PoolPreviewError::Cancelled)?;
-            let view = PnxView::new(raw, cfg)?;
+            let view = NativePoolView::new(raw, cfg)?;
             bindings.insert(view.digest.as_bytes(), raw)?;
-            ensure(!exhausted.contains(&view.envelope.sender), "NONCE_OVERFLOW")?;
-            let expected = match next.get(&view.envelope.sender) {
+            ensure(!exhausted.contains(&view.sender), "NONCE_OVERFLOW")?;
+            let expected = match next.get(&view.sender) {
                 Some(value) => *value,
-                None => chain_nonce(state, view.envelope.sender)?
+                None => chain_nonce(state, view.sender)?
                     .checked_add(1)
                     .ok_or("NONCE_OVERFLOW")?,
             };
@@ -479,7 +594,7 @@ impl PendingPreview<'_, '_> {
                 checked: None,
                 expected_nonce: expected,
             };
-            let class = if (14..=22).contains(&view.envelope.tag) {
+            let class = if (14..=22).contains(&view.tag) {
                 IngressClass::Critical
             } else {
                 IngressClass::Normal
@@ -496,9 +611,9 @@ impl PendingPreview<'_, '_> {
                 appended_signatures.push(hooks.checked.take().ok_or("POOL_TYPED_BINDING")?);
             }
             if let Some(successor) = expected.checked_add(1) {
-                next.insert(view.envelope.sender, successor);
+                next.insert(view.sender, successor);
             } else {
-                exhausted.insert(view.envelope.sender);
+                exhausted.insert(view.sender);
             }
             (self.control.progress)(ExecutionProgress::AfterPrepare { index })
                 .map_err(PoolPreviewError::Cancelled)?;
@@ -553,6 +668,7 @@ impl PendingPreview<'_, '_> {
                     .ok_or("POOL_PARENT_BINDING")?
                     .into_prefix_with_control(
                         PrefixContext {
+                            timestamp,
                             height,
                             miner: limits.preview_miner,
                             parent_id: parent,
@@ -587,6 +703,7 @@ impl PendingPreview<'_, '_> {
 /// Actual parent reconstructed for this one pool owner call. Pool writes do not
 /// change this State. A new owner call must reconstruct and verify it again.
 struct PoolParent {
+    timestamp: Option<u64>,
     id: Hash,
     generation: u64,
     height: u64,
@@ -599,7 +716,7 @@ struct PoolParent {
 struct PreviewBinding<'a> {
     checked: Option<CheckedExecutionParent<'a>>,
     prefix: Option<CheckedTransactionPrefix<'a>>,
-    signatures: Vec<CheckedPnxSignature<'a>>,
+    signatures: Vec<CheckedNativeSignature<'a>>,
     observation: Option<CommitmentObservation>,
 }
 
@@ -612,9 +729,20 @@ impl Node {
         )?;
         self.namespace()?;
         limits.validate()?;
+        if self.settings.is_native_pq_v1() {
+            self.storage_context()?;
+            let parent = self.active()?.0;
+            pq::validate_block(
+                &self.state_at(parent)?,
+                &[],
+                limits.preview_miner,
+                self.pool_preview_timestamp(parent)?,
+                &self.settings.app,
+            )?;
+        }
         let raw = serde_json::to_vec(&limits)?;
         let context = hash(
-            b"native-local-queued-pnx1-v2",
+            pool_profile(&self.settings.app).as_bytes(),
             &[
                 &self.settings.network(),
                 &self.settings.parameters(),
@@ -678,6 +806,9 @@ impl Node {
             "GROWTH_REFERENCE_POOL_UNSUPPORTED",
         )?;
         self.namespace()?;
+        if self.settings.is_native_pq_v1() {
+            self.storage_context()?;
+        }
         let (context, raw): (Vec<u8>, Vec<u8>) = self
             .db
             .query_row(
@@ -691,7 +822,7 @@ impl Node {
         limits.validate()?;
         ensure(serde_json::to_vec(&limits)? == raw, "POOL_POLICY")?;
         let expected = hash(
-            b"native-local-queued-pnx1-v2",
+            pool_profile(&self.settings.app).as_bytes(),
             &[
                 &self.settings.network(),
                 &self.settings.parameters(),
@@ -807,6 +938,29 @@ impl Node {
             })?
             .collect::<std::result::Result<Vec<_>, _>>()?;
         ensure(groups.len() <= limits.max_records, "POOL_STORAGE_LIMIT")?;
+        if self.settings.is_native_pq_v1() {
+            let mapped: usize =
+                self.db
+                    .query_row("SELECT COUNT(*) FROM local_pq_statements_v1", [], |r| {
+                        r.get(0)
+                    })?;
+            let removed: usize =
+                self.db
+                    .query_row("SELECT COUNT(*) FROM local_pool_removals", [], |r| r.get(0))?;
+            let removed_mapped: usize = self.db.query_row(
+                "SELECT COUNT(*) FROM local_pq_removed_statements_v1",
+                [],
+                |r| r.get(0),
+            )?;
+            let orphaned:bool=self.db.query_row("SELECT EXISTS(SELECT 1 FROM local_pq_removed_statements_v1 s LEFT JOIN local_pool_removals r ON r.ordinal=s.removal_ordinal WHERE r.ordinal IS NULL)",[],|r|r.get(0))?;
+            ensure(
+                mapped == total
+                    && removed_mapped == removed
+                    && !orphaned
+                    && removed <= limits.max_removals,
+                "POOL_PQ_STATEMENT_BINDING",
+            )?;
+        }
         let mut out = Vec::new();
         let mut count = 0;
         let mut bytes = 0;
@@ -839,15 +993,21 @@ impl Node {
                     position as usize == expected_position,
                     "POOL_GROUP_POSITION",
                 )?;
-                let view = PnxView::new(&raw, &self.settings.app)?;
+                let view = NativePoolView::new(&raw, &self.settings.app)?;
                 ensure(
                     digest == view.digest.as_bytes()
-                        && sender == view.envelope.sender
-                        && nonce == view.envelope.nonce.to_le_bytes()
-                        && expiry == view.envelope.expiry.to_le_bytes()
-                        && fee_limit == view.envelope.fee_limit.to_le_bytes(),
+                        && sender == view.sender
+                        && nonce == view.nonce.to_le_bytes()
+                        && expiry == view.expiry.to_le_bytes()
+                        && fee_limit == view.fee_limit.to_le_bytes(),
                     "POOL_STORAGE_BINDING",
                 )?;
+                if let Some(statement) = view.statement {
+                    let retained:Vec<u8>=self.db.query_row(
+                        "SELECT statement FROM local_pq_statements_v1 WHERE group_id=? AND position=? AND length(statement)=48",
+                        params![id.as_slice(),position],|r|r.get(0))?;
+                    ensure(retained == statement, "POOL_PQ_STATEMENT_BINDING")?;
+                }
                 count += 1;
                 bytes += raw.len();
                 ensure(
@@ -858,8 +1018,8 @@ impl Node {
                 decoded.push(Row {
                     digest: bytes32(digest)?,
                     sender: bytes32(sender)?,
-                    nonce: view.envelope.nonce,
-                    expiry: view.envelope.expiry,
+                    nonce: view.nonce,
+                    expiry: view.expiry,
                     raw,
                 });
             }
@@ -900,12 +1060,31 @@ impl Node {
         )?;
         self.pool_status_snapshot()
     }
+    fn pool_preview_timestamp(&self, parent: Hash) -> Result<Option<u64>> {
+        if !self.settings.is_native_pq_v1() {
+            return Ok(None);
+        }
+        let mut times: Vec<_> = self
+            .recent(parent)?
+            .into_iter()
+            .take(11)
+            .map(|pair| pair.0)
+            .collect();
+        ensure(!times.is_empty(), "UNKNOWN_PARENT")?;
+        times.sort_unstable();
+        Ok(Some(
+            times[times.len() / 2]
+                .checked_add(1)
+                .ok_or("PQ_PREVIEW_TIME_OVERFLOW")?,
+        ))
+    }
     fn pool_parent(&self) -> Result<PoolParent> {
         let (parent, generation) = self.active()?;
         let height = self.parent_height(parent)?.checked_add(1).ok_or("HEIGHT")?;
         let state = self.state_at(parent)?;
         let root = self.record(parent)?.root;
         Ok(PoolParent {
+            timestamp: self.pool_preview_timestamp(parent)?,
             id: parent,
             generation,
             height,
@@ -939,6 +1118,7 @@ impl Node {
         }
         let mut accepted = Vec::new();
         let mut preview = PendingPreview {
+            timestamp: actual.timestamp,
             height,
             state,
             parent,
@@ -954,7 +1134,11 @@ impl Node {
         };
         let mut updates = Vec::new();
         for group in groups {
-            let (status, reason) = if group.rows.iter().any(|row| height > row.expiry) {
+            let (status, reason) = if group
+                .rows
+                .iter()
+                .any(|row| actual.timestamp.unwrap_or(height) > row.expiry)
+            {
                 (PoolState::Expired, "EXPIRED".to_owned())
             } else if group
                 .rows
@@ -1062,7 +1246,7 @@ impl Node {
         let checked_parent = checked.map(bytes32).transpose()?;
         let classification_current =
             checked_parent == Some(parent) && checked_generation == Some(generation);
-        Ok(PoolStatus{profile:LOCAL_POOL_PROFILE,context:hex::encode(context),parent:hex::encode(parent),generation,
+        Ok(PoolStatus{profile:pool_profile(&self.settings.app),context:hex::encode(context),parent:hex::encode(parent),generation,
             checked_parent:checked_parent.map(hex::encode),checked_generation,classification_current,
             retained_records:count,retained_bytes:bytes,local_removals:removals,gc:self.pool_gc_snapshot()?,groups:statuses,
             scope:"bounded local snapshot; classification belongs to checked_parent/generation and can be stale; no exact inclusion, confirmation, work or external effect authority"})
@@ -1097,7 +1281,8 @@ impl Node {
             "POOL_GROUP_LIMIT",
         )?;
         ensure(
-            raws.iter().all(|raw| !raw.is_empty() && raw.len() <= 2048),
+            raws.iter()
+                .all(|raw| !raw.is_empty() && raw.len() <= max_body_bytes(&self.settings.app)),
             "POOL_BODY_LIMIT",
         )?;
         let total: usize = raws.iter().map(Vec::len).sum();
@@ -1124,8 +1309,64 @@ impl Node {
         let groups = self.pool_groups(&limits)?;
         let views = raws
             .iter()
-            .map(|raw| PnxView::new(raw, &self.settings.app))
+            .map(|raw| NativePoolView::new(raw, &self.settings.app))
             .collect::<Result<Vec<_>>>()?;
+        // Authenticate every incoming signature before any duplicate result. A
+        // retained semantic duplicate is only a local receipt, not current queue
+        // eligibility; signature possession uses time 0 here, while the actual
+        // M05/M06 admission below enforces the branch preview Header timestamp.
+        if self.settings.is_native_pq_v1() {
+            let mut statements = BTreeSet::new();
+            let mut retained_statements = Vec::new();
+            for (index, view) in views.iter().enumerate() {
+                (control.progress)(ExecutionProgress::BeforePrepare { index })?;
+                let signed = pq::prepare_signature(view.raw, 0, &actual.cfg)?;
+                pq::validate_current_authority(&actual.state, view.raw, &actual.cfg)?;
+                let statement = view.statement.ok_or("POOL_PQ_STATEMENT")?;
+                ensure(
+                    signed.statement_id() == statement
+                        && signed.wire_id() == view.digest.as_bytes(),
+                    "POOL_PQ_BINDING",
+                )?;
+                ensure(statements.insert(statement), "POOL_PQ_DUPLICATE_STATEMENT")?;
+                let removed: bool = self.db.query_row(
+                    "SELECT EXISTS(SELECT 1 FROM local_pq_removed_statements_v1 WHERE statement=?)",
+                    [statement.as_slice()],
+                    |r| r.get(0),
+                )?;
+                ensure(!removed, "POOL_REMOVED")?;
+                let retained: Option<(Vec<u8>, usize)> = self
+                    .db
+                    .query_row(
+                        "SELECT group_id,position FROM local_pq_statements_v1 WHERE statement=?",
+                        [statement.as_slice()],
+                        |r| Ok((r.get(0)?, r.get(1)?)),
+                    )
+                    .optional()?;
+                retained_statements.push(retained);
+                (control.progress)(ExecutionProgress::AfterPrepare { index })?;
+            }
+            if retained_statements.iter().any(Option::is_some) {
+                let (saved, _) = retained_statements[0]
+                    .as_ref()
+                    .ok_or("POOL_PQ_STATEMENT_ALREADY_RETAINED")?;
+                let group = groups
+                    .iter()
+                    .find(|group| group.id.as_slice() == saved)
+                    .ok_or("POOL_PQ_STATEMENT_BINDING")?;
+                ensure(
+                    group.rows.len() == views.len()
+                        && retained_statements.iter().enumerate().all(|(index, row)| {
+                            row.as_ref()
+                                .is_some_and(|(id, position)| id == saved && *position == index)
+                        }),
+                    "POOL_PQ_STATEMENT_ALREADY_RETAINED",
+                )?;
+                return Ok(PoolReceipt {group:hex::encode(group.id),duplicate:true,state:group.status.clone(),
+                    typed_gate_admissions:0,typed_gate_ready_metadata:0,
+                    scope:"actual incoming ML-DSA verified; same retained semantic group, no new M05 admission or current inclusion authority"});
+            }
+        }
         let mut ids = Vec::new();
         let mut unique = BTreeSet::new();
         for view in &views {
@@ -1165,9 +1406,9 @@ impl Node {
                 )?;
                 if group.status == PoolState::Queued {
                     ensure(
-                        !views.iter().any(|view| {
-                            view.envelope.sender == row.sender && view.envelope.nonce == row.nonce
-                        }),
+                        !views
+                            .iter()
+                            .any(|view| view.sender == row.sender && view.nonce == row.nonce),
                         "POOL_NONCE_CONFLICT",
                     )?;
                 }
@@ -1204,7 +1445,10 @@ impl Node {
             let wholly_terminal = group
                 .rows
                 .iter()
-                .map(|row| Ok(height > row.expiry || row.nonce <= chain_nonce(state, row.sender)?))
+                .map(|row| {
+                    Ok(actual.timestamp.unwrap_or(height) > row.expiry
+                        || row.nonce <= chain_nonce(state, row.sender)?)
+                })
                 .collect::<Result<Vec<bool>>>()?
                 .into_iter()
                 .all(|terminal| terminal);
@@ -1259,6 +1503,7 @@ impl Node {
             .collect();
         candidate.extend(raws.clone());
         let admitted = PendingPreview {
+            timestamp: actual.timestamp,
             height,
             state,
             parent,
@@ -1299,13 +1544,31 @@ impl Node {
                     id.as_slice(),
                     position as u32,
                     view.digest.as_bytes().as_slice(),
-                    view.envelope.sender.as_slice(),
-                    view.envelope.nonce.to_le_bytes().as_slice(),
-                    view.envelope.expiry.to_le_bytes().as_slice(),
-                    view.envelope.fee_limit.to_le_bytes().as_slice(),
+                    view.sender.as_slice(),
+                    view.nonce.to_le_bytes().as_slice(),
+                    view.expiry.to_le_bytes().as_slice(),
+                    view.fee_limit.to_le_bytes().as_slice(),
                     view.raw
                 ],
             )?;
+            if let Some(statement) = view.statement {
+                ensure(
+                    tx.execute(
+                        "INSERT INTO local_pq_statements_v1 VALUES(?,?,?)",
+                        params![id.as_slice(), position as u32, statement.as_slice()],
+                    )? == 1,
+                    "POOL_PQ_STORAGE_WRITE",
+                )?;
+                let retained:(Vec<u8>,Vec<u8>,Vec<u8>)=tx.query_row(
+                    "SELECT r.digest,r.raw,s.statement FROM local_pool_rows r JOIN local_pq_statements_v1 s USING(group_id,position) WHERE r.group_id=? AND r.position=?",
+                    params![id.as_slice(),position as u32],|r|Ok((r.get(0)?,r.get(1)?,r.get(2)?)))?;
+                ensure(
+                    retained.0 == view.digest.as_bytes()
+                        && retained.1 == view.raw
+                        && retained.2 == statement,
+                    "POOL_PQ_STORAGE_WRITE",
+                )?;
+            }
         }
         (control.progress)(ExecutionProgress::BeforeDurableCommit)?;
         tx.commit()?;
@@ -1446,6 +1709,22 @@ impl Node {
                 checkpoint.check()?;
             }
             tx.execute("INSERT INTO local_pool_removals(id,group_id,reason) VALUES(?,?,'explicit-terminal-prune')",params![row.digest.as_slice(),id.as_slice()])?;
+            if self.settings.is_native_pq_v1() {
+                let view = NativePoolView::new(&row.raw, &self.settings.app)?;
+                let statement = view.statement.ok_or("POOL_PQ_STATEMENT")?;
+                let ordinal: u64 = tx.query_row(
+                    "SELECT ordinal FROM local_pool_removals WHERE id=?",
+                    [row.digest.as_slice()],
+                    |r| r.get(0),
+                )?;
+                ensure(
+                    tx.execute(
+                        "INSERT INTO local_pq_removed_statements_v1 VALUES(?,?)",
+                        params![statement.as_slice(), ordinal],
+                    )? == 1,
+                    "POOL_PQ_STORAGE_WRITE",
+                )?;
+            }
         }
         tx.execute("DELETE FROM local_pool_groups WHERE id=?", [id.as_slice()])?;
         if let Some(checkpoint) = &continuous {
@@ -1654,6 +1933,7 @@ mod incremental_prefix_tests {
         control: &'operation ExecutionControl<'operation, crate::Error>,
     ) -> PendingPreview<'a, 'operation> {
         PendingPreview {
+            timestamp: actual.timestamp,
             height: actual.height,
             state: &actual.state,
             parent: actual.id,
@@ -1827,9 +2107,10 @@ mod incremental_prefix_tests {
         .unwrap();
         let actual = node.pool_parent().unwrap();
         let raw = transfer(&node, 1, 1);
-        let view = PnxView::new(&raw, &actual.cfg).unwrap();
+        let view = NativePoolView::new(&raw, &actual.cfg).unwrap();
         assert_eq!(view.raw.as_ptr(), raw.as_ptr());
         let context = SignatureContext {
+            timestamp: actual.timestamp,
             height: actual.height,
             parent: actual.id,
             state: &actual.state,
@@ -2247,7 +2528,7 @@ mod binding_tests {
             let stage = Instant::now();
             let digests = raws
                 .iter()
-                .map(|raw| PnxView::new(raw, &cfg).unwrap().digest.as_bytes())
+                .map(|raw| NativePoolView::new(raw, &cfg).unwrap().digest.as_bytes())
                 .collect::<Vec<_>>();
             let mut remaining = BTreeSet::new();
             for digest in &digests {
@@ -2270,7 +2551,7 @@ mod binding_tests {
             let digests = raws
                 .iter()
                 .map(|raw| {
-                    let view = PnxView::new(raw, &cfg).unwrap();
+                    let view = NativePoolView::new(raw, &cfg).unwrap();
                     bindings.insert(view.digest.as_bytes(), raw).unwrap();
                     view.digest.as_bytes()
                 })

@@ -22,6 +22,7 @@ pub const LEGACY_TASK_PROFILE: &str = "legacy-task-v1";
 pub const QUALIFIED_DEMANDS: u64 = 16;
 
 pub mod growth;
+pub mod pq_native_v1;
 pub mod pq_transfer;
 
 pub type State = BTreeMap<String, Value>;
@@ -252,6 +253,7 @@ pub fn root(state: &State) -> Result<Hash> {
 /// Consensus-profile selected root. The historical root function and every old
 /// profile retain their complete grammar, error order and 65,536-key boundary.
 pub fn root_for_config(state: &State, cfg: &Config) -> Result<Hash> {
+    pq_native_v1::validate_state(state, cfg)?;
     if crate::growth_profile_v2::enabled(cfg) {
         Ok(crate::growth_profile_v2::commitment(state, cfg)?.id())
     } else {
@@ -261,6 +263,7 @@ pub fn root_for_config(state: &State, cfg: &Config) -> Result<Hash> {
 
 #[derive(Clone)]
 pub struct Config {
+    pub(crate) native_pq: Option<std::sync::Arc<pq_native_v1::Profile>>,
     pub network: Hash,
     pub parameters: Hash,
     pub family: Hash,
@@ -846,6 +849,7 @@ impl Config {
             evaluators.insert(trnm_crypto_primitives::public_key_hex(&key));
         }
         Ok(Self {
+            native_pq: None,
             network,
             parameters,
             family,
@@ -1183,17 +1187,41 @@ fn active_candidate(v: &Value, current: &str, height: u64, cfg: &Config) -> Resu
 // This carrier is private and tied to the exact immutable input and installed context.
 // Main-envelope verification is independent of branch state and is done only once.
 // Consumer-use signatures still depend on the actual quota state and are checked there.
+enum PreparedEnvelope {
+    Pnx(Envelope),
+    Pq(pq_native_v1::PreparedTransfer),
+}
 struct Prepared {
-    envelope: Envelope,
+    envelope: PreparedEnvelope,
     sender: String,
     encoded_len: usize,
 }
 /// Read-only native admission check for exact PNX1 canonical context, selected tag,
 /// expiry and strict main signature. This grants no nonce, funds or execution fact.
 pub fn validate_main_envelope(raw: &[u8], height: u64, cfg: &Config) -> Result<Envelope> {
-    Ok(prepare(raw, height, cfg, &AtomicUsize::new(0))?.envelope)
+    match prepare(raw, height, None, cfg, &AtomicUsize::new(0))?.envelope {
+        PreparedEnvelope::Pnx(envelope) => Ok(envelope),
+        PreparedEnvelope::Pq(_) => Err("PQ_EXPLICIT_ENTRY_REQUIRED"),
+    }
 }
-fn prepare(raw: &[u8], height: u64, cfg: &Config, signatures: &AtomicUsize) -> Result<Prepared> {
+fn prepare(
+    raw: &[u8],
+    height: u64,
+    timestamp: Option<u64>,
+    cfg: &Config,
+    signatures: &AtomicUsize,
+) -> Result<Prepared> {
+    if pq_native_v1::enabled(cfg) {
+        let timestamp = timestamp.ok_or("PQ_HEADER_TIMESTAMP_REQUIRED")?;
+        signatures.fetch_add(1, Ordering::Relaxed);
+        let tx = pq_native_v1::prepare_signature(raw, timestamp, cfg)?;
+        let sender = hex::encode(tx.sender());
+        return Ok(Prepared {
+            envelope: PreparedEnvelope::Pq(tx),
+            sender,
+            encoded_len: raw.len(),
+        });
+    }
     let tx = Envelope::decode(raw).map_err(|_| "ENCODING")?;
     require(
         !(18..=21).contains(&tx.tag) || qualified_task_lifecycle::enabled(cfg),
@@ -1256,7 +1284,7 @@ fn prepare(raw: &[u8], height: u64, cfg: &Config, signatures: &AtomicUsize) -> R
     )
     .map_err(|_| "SIGNATURE")?;
     Ok(Prepared {
-        envelope: tx,
+        envelope: PreparedEnvelope::Pnx(tx),
         sender,
         encoded_len: raw.len(),
     })
@@ -1304,7 +1332,10 @@ fn apply_prepared_with_account_access(
     cfg: &Config,
     account_access: Option<&AccountPointAccess<'_>>,
 ) -> Result<Patch> {
-    let tx = &prepared.envelope;
+    let tx = match &prepared.envelope {
+        PreparedEnvelope::Pnx(tx) => tx,
+        PreparedEnvelope::Pq(tx) => return pq_native_v1::apply(base, tx, cfg, account_access),
+    };
     let sender = prepared.sender.clone();
     let mut s = View::new(base, account_access);
     let fee = debit_authorized_fee(
@@ -2233,6 +2264,7 @@ pub fn execute(
     execute_with_commitment(
         parent,
         BlockExecution {
+            timestamp: None,
             transactions,
             height,
             miner,
@@ -2380,6 +2412,8 @@ pub fn execute_with_authenticated_obligation_input<E: Send>(
 }
 /// Ordinary caller-supplied facts, not prepared execution or admission authority.
 pub struct BlockExecution<'a> {
+    /// Exact header timestamp for the explicit PQ profile; legacy callers use None.
+    pub timestamp: Option<u64>,
     pub transactions: &'a [Vec<u8>],
     pub height: u64,
     pub miner: Hash,
@@ -2450,12 +2484,14 @@ fn execute_with_state_inputs<E: Send>(
     } = inputs;
     let progress = control.progress;
     let BlockExecution {
+        timestamp,
         transactions,
         height,
         miner,
         parent_id,
         workers,
     } = block;
+    pq_native_v1::validate_block(parent, transactions, miner, timestamp, cfg)?;
     require([1, 2, 4, 8].contains(&workers), "WORKERS")?;
     require(
         transactions.len() as u64 <= cfg.limit("max_transactions")?,
@@ -2484,7 +2520,8 @@ fn execute_with_state_inputs<E: Send>(
     let signatures = AtomicUsize::new(0);
     // Same sender means every transaction writes the same nonce. Preserve a serial
     // state path, while independent cryptographic checks may still use the bounded pool.
-    let serial_state = workers == 1
+    let serial_state = pq_native_v1::enabled(cfg)
+        || workers == 1
         || (transactions.len() > 1
             && transactions[0].len() >= 68
             && transactions
@@ -2512,11 +2549,11 @@ fn execute_with_state_inputs<E: Send>(
     }
     let predict = |index: usize, raw: &[u8]| -> ControlledResult<Predicted, E> {
         progress(ExecutionProgress::BeforePrepare { index }).map_err(ExecutionError::Cancelled)?;
-        let prepared = prepare(raw, height, cfg, &signatures);
+        let prepared = prepare(raw, height, timestamp, cfg, &signatures);
         progress(ExecutionProgress::AfterPrepare { index }).map_err(ExecutionError::Cancelled)?;
         let range_command = prepared
             .as_ref()
-            .is_ok_and(|p| matches!(p.envelope.tag, 2 | 6 | 8 | 10 | 23));
+            .is_ok_and(|p| matches!(&p.envelope, PreparedEnvelope::Pnx(tx) if matches!(tx.tag, 2 | 6 | 8 | 10 | 23)));
         // Prefix-capacity operations remain canonical: do not retain one full
         // prefix snapshot per transaction merely to parallelize shared budgets.
         #[cfg(test)]
@@ -2649,14 +2686,17 @@ fn execute_with_state_inputs<E: Send>(
             }
         };
         if let Some(observer) = observer {
-            observer.transaction(
-                index,
-                &prepared.envelope,
-                &state,
-                &patch.writes,
-                patch.fee,
-                &patch.receipt,
-            )?;
+            match &prepared.envelope {
+                PreparedEnvelope::Pnx(envelope) => observer.transaction(
+                    index,
+                    envelope,
+                    &state,
+                    &patch.writes,
+                    patch.fee,
+                    &patch.receipt,
+                )?,
+                PreparedEnvelope::Pq(_) => return Err("PQ_OBSERVER_UNSUPPORTED".into()),
+            }
         }
         fees = add(fees, patch.fee)?;
         receipts.push(patch.receipt.clone());
@@ -2802,6 +2842,7 @@ fn check_completed_block_state_with_account_access(
     cfg: &Config,
     account_access: Option<&AccountPointAccess<'_>>,
 ) -> Result<()> {
+    pq_native_v1::validate_state(state, cfg)?;
     require(
         funds(state)? == num(state.get("meta:issued").ok_or("STATE")?)?,
         "CONSERVATION",
@@ -2813,6 +2854,8 @@ fn check_completed_block_state_with_account_access(
 /// This is computation input only; no consensus, Pool or owner permission.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct PrefixContext {
+    /// Part of this one-candidate binding; never a wall-clock query.
+    pub timestamp: Option<u64>,
     pub height: u64,
     pub miner: Hash,
     pub parent_id: Hash,
@@ -2873,6 +2916,7 @@ impl TransactionPrefix {
     ) -> ControlledResult<Self, E> {
         (control.progress)(ExecutionProgress::BeforeStateClone)
             .map_err(ExecutionError::Cancelled)?;
+        pq_native_v1::validate_block(parent, &[], context.miner, context.timestamp, config)?;
         let (state, receipts) = prepare_block_state(parent, context.height, config)?;
         (control.progress)(ExecutionProgress::AfterMandatory).map_err(ExecutionError::Cancelled)?;
         Ok(Self {
@@ -2907,6 +2951,13 @@ impl TransactionPrefix {
             transactions.starts_with(&self.transactions),
             "PREFIX_BINDING",
         )?;
+        pq_native_v1::validate_block(
+            &self.state,
+            transactions,
+            self.context.miner,
+            self.context.timestamp,
+            &self.config,
+        )?;
         let progress = control.progress;
         let first = self.transactions.len();
         let suffix = &transactions[first..];
@@ -2917,7 +2968,13 @@ impl TransactionPrefix {
             let index = first + offset;
             progress(ExecutionProgress::BeforePrepare { index })
                 .map_err(ExecutionError::Cancelled)?;
-            prepared.push(prepare(raw, self.context.height, &self.config, &signatures));
+            prepared.push(prepare(
+                raw,
+                self.context.height,
+                self.context.timestamp,
+                &self.config,
+                &signatures,
+            ));
             progress(ExecutionProgress::AfterPrepare { index })
                 .map_err(ExecutionError::Cancelled)?;
         }
@@ -3054,6 +3111,7 @@ impl ExecutionSession {
         let output = execute_with_commitment(
             &self.state,
             BlockExecution {
+                timestamp: None,
                 transactions,
                 height,
                 miner,

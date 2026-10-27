@@ -335,6 +335,7 @@ fn read_only_archive(directory: &Path, settings: Settings, backend: StateBackend
         state_backend: backend,
         storage_layout: crate::store::shared_snapshot::Layout::CanonicalJson,
         shared_storage_schema: None,
+        pq_storage_schema: None,
         growth_epoch: None,
         #[cfg(test)]
         expected_schema,

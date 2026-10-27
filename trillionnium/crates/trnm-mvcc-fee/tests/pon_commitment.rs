@@ -56,6 +56,7 @@ fn transfer(cfg: &Config, who: u64, account_sequence: u64, destination: u64) -> 
 }
 fn request<'a>(raws: &'a [Vec<u8>], height: u64, workers: usize) -> ExecutionRequest<'a> {
     ExecutionRequest {
+        timestamp: None,
         transactions: raws,
         height,
         miner: public(3),

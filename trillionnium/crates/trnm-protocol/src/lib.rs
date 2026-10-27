@@ -500,4 +500,5 @@ pub mod pon_state;
 pub mod qualified_work_task;
 
 pub mod pq_frame;
+pub mod pq_native_transfer_v1;
 pub mod pq_transfer;

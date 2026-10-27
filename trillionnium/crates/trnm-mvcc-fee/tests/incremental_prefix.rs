@@ -64,6 +64,7 @@ fn transfer(cfg: &Config, who: u64, account_sequence: u64, to: u64, amount: u64)
 }
 fn context(height: u64) -> PrefixContext {
     PrefixContext {
+        timestamp: None,
         height,
         miner: public(0),
         parent_id: [5; 32],
@@ -237,6 +238,7 @@ fn authenticated_mandatory_partition_executes_full_cleanup_refunds_and_maturity(
     let output = pon_executor::execute_with_authenticated_state_input(
         &parent,
         pon_executor::BlockExecution {
+            timestamp: None,
             transactions: &transactions,
             height: 300,
             miner: public(0),
@@ -275,6 +277,7 @@ fn authenticated_mandatory_refusal_prevents_transaction_preparation_and_missing_
     let result = pon_executor::execute_with_authenticated_state_input(
         &parent,
         pon_executor::BlockExecution {
+            timestamp: None,
             transactions: &transactions,
             height: 300,
             miner: public(0),
@@ -306,6 +309,7 @@ fn authenticated_mandatory_refusal_prevents_transaction_preparation_and_missing_
     let result = pon_executor::execute_with_authenticated_state_input(
         &parent,
         pon_executor::BlockExecution {
+            timestamp: None,
             transactions: &transactions,
             height: 300,
             miner: public(0),

@@ -581,6 +581,7 @@ fn execute_observed(
     let result = limits::execute_with_commitment_observed(
         &view,
         pon_executor::BlockExecution {
+            timestamp: None,
             transactions: &packet.transactions,
             height: h.height,
             miner: h.miner,

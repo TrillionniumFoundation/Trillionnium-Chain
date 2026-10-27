@@ -17,6 +17,7 @@ pub mod native_budget;
 mod operator_continuous_owner;
 mod operator_mining_owner;
 pub mod pinned_account_query;
+pub(crate) mod pq_native_v1;
 #[cfg(test)]
 pub(crate) mod public_reader;
 mod root_rejection_cache;
@@ -64,7 +65,7 @@ use trnm_mvcc_fee::pon_executor::root;
 use trnm_mvcc_fee::pon_executor::SIGNED_TASK_PROFILE;
 use trnm_mvcc_fee::pon_executor::{ExecutionControl, ExecutionError, ExecutionProgress, State};
 use trnm_mvcc_fee::qualified_task_lifecycle;
-use trnm_protocol::pon_wire::{hash, Hash, Header, HEADER_BYTES};
+use trnm_protocol::pon_wire::{hash, Hash, Header};
 use trnm_protocol::qualified_work_task::lifecycle_v2::PROFILE as LIFECYCLE_TASK_PROFILE;
 use trnm_protocol::qualified_work_task::lifecycle_v3::PROFILE as ATOMIC_TASK_PROFILE;
 use trnm_protocol::qualified_work_task::lifecycle_v4::PROFILE as OVERLAP_TASK_PROFILE;
@@ -646,6 +647,8 @@ pub struct Node {
     // Source-derived DDL grammar only; actual SQL/schema is re-read on use.
     // Ordinary full-JSON owners retain no additional schema cache.
     shared_storage_schema: Option<BTreeMap<String, String>>,
+    // Frozen source grammar, not an on-disk authorization verdict.
+    pq_storage_schema: Option<BTreeMap<String, String>>,
     growth_epoch: Option<growth::Epoch>,
     #[cfg(test)]
     // Research reader's immutable source DDL, never a cached on-disk verdict.
@@ -695,7 +698,20 @@ impl StateBackend {
             Self::PermanentAccountGrowthV2 => format!("{}{}", ddl(), growth::DDL),
         }
     }
+    fn selected_ddl(self, settings: &Settings) -> String {
+        if settings.is_native_pq_v1() {
+            pq_native_v1::ddl(self.ddl())
+        } else {
+            self.ddl()
+        }
+    }
     fn selected_schema_id(self, settings: &Settings) -> Hash {
+        if settings.is_native_pq_v1() {
+            return hash(
+                b"native-pq-transfer-branch-schema-v1",
+                &[self.selected_ddl(settings).as_bytes()],
+            );
+        }
         if growth_profile_v2::enabled(&settings.app) {
             hash(
                 b"native-growth-reference-branch-schema-v2",
@@ -715,6 +731,7 @@ impl StateBackend {
     }
 }
 struct NativeStoreOpening {
+    pq_explicit: bool,
     state_backend: StateBackend,
     growth_observation_only: bool,
     native_io: Option<NativeIoLease>,
@@ -931,6 +948,7 @@ impl Node {
                 continuous: None,
             },
             NativeStoreOpening {
+                pq_explicit: false,
                 state_backend: StateBackend::Legacy,
                 growth_observation_only: false,
                 native_io: Some(native_io),
@@ -979,6 +997,7 @@ impl Node {
                 continuous: None,
             },
             NativeStoreOpening {
+                pq_explicit: false,
                 state_backend: StateBackend::AuthenticatedV1,
                 growth_observation_only: false,
                 native_io: Some(native_io),
@@ -1176,6 +1195,7 @@ impl Node {
             hook,
             owners,
             NativeStoreOpening {
+                pq_explicit: false,
                 state_backend,
                 growth_observation_only,
                 native_io: None,
@@ -1191,10 +1211,25 @@ impl Node {
         opening: NativeStoreOpening,
     ) -> Result<Self> {
         let NativeStoreOpening {
+            pq_explicit,
             state_backend,
             growth_observation_only,
             native_io,
         } = opening;
+        ensure(
+            settings.is_native_pq_v1() == pq_explicit,
+            "PQ_EXPLICIT_CONSTRUCTOR_REQUIRED",
+        )?;
+        ensure(
+            !pq_explicit
+                || (state_backend == StateBackend::AuthenticatedV1
+                    && native_io.is_none()
+                    && !growth_observation_only
+                    && owners.policy.is_none()
+                    && owners.mining.is_none()
+                    && owners.continuous.is_none()),
+            "PQ_OPEN_PROFILE",
+        )?;
         if let Some(io) = &native_io {
             io.check().map_err(|e| Error::from(e.to_string()))?;
             ensure(path == io.directory(), "NATIVE_IO_HELD_ROOT")?;
@@ -1292,7 +1327,7 @@ impl Node {
             .map_err(|_| Error::from("WRITER_BUSY"))?;
         let storage_layout =
             shared_snapshot::Layout::for_opening(state_backend, native_io.as_ref());
-        let ddl = storage_layout.ddl(state_backend.ddl());
+        let ddl = storage_layout.ddl(state_backend.selected_ddl(&settings));
         let schema_id = storage_layout.schema_id(state_backend.selected_schema_id(&settings));
         let expected = canonical(
             &serde_json::json!({"schema":hex::encode(schema_id),"parameters":hex::encode(settings.parameters()),"genesis":hex::encode(settings.genesis())}),
@@ -1499,6 +1534,7 @@ impl Node {
             state_backend,
             storage_layout,
             shared_storage_schema: storage_layout.is_shared().then(|| expected_schema.clone()),
+            pq_storage_schema: pq_explicit.then(|| expected_schema.clone()),
             growth_epoch: None,
             #[cfg(test)]
             expected_schema,
@@ -1552,6 +1588,7 @@ impl Node {
     }
     fn ancestry_context(&self) -> crate::ancestry_index::Context {
         crate::ancestry_index::Context {
+            pq_packet: self.settings.is_native_pq_v1(),
             network: self.settings.network(),
             parameters: self.settings.parameters(),
             genesis: self.settings.genesis(),
@@ -2179,6 +2216,18 @@ impl Node {
         )
     }
     fn storage_context(&self) -> Result<()> {
+        if let Some(expected) = &self.pq_storage_schema {
+            let temp_objects: u64 =
+                self.db
+                    .query_row("SELECT COUNT(*) FROM sqlite_temp_master", [], |row| {
+                        row.get(0)
+                    })?;
+            ensure(
+                temp_objects == 0 && schema(&self.db)? == *expected,
+                "PQ_SCHEMA",
+            )
+            .map_err(Error::local_integrity)?;
+        }
         if self.storage_layout.is_shared() {
             shared_snapshot::check_authoritative_namespace(&self.db)?;
         }
@@ -2241,6 +2290,8 @@ impl Node {
     ) -> Result<()> {
         let record = self.record(id).map_err(Error::local_integrity)?;
         continuity_v1::check_state(state, record.height, &self.settings.app)
+            .map_err(|error| Error::from(error).local_integrity())?;
+        trnm_mvcc_fee::pon_executor::pq_native_v1::validate_state(state, &self.settings.app)
             .map_err(|error| Error::from(error).local_integrity())?;
         // The native complete-state commitment may already contain this exact
         // full root. Compare all current State bytes before arithmetic reuse;
@@ -2463,6 +2514,10 @@ impl Node {
         expected: Hash,
         prior: Option<&CheckedCommitment>,
     ) -> Result<PreparedCommitment> {
+        if self.settings.is_native_pq_v1() {
+            trnm_mvcc_fee::pon_executor::pq_native_v1::validate_state(actual, &self.settings.app)
+                .map_err(|error| Error::from(error).local_integrity())?;
+        }
         let result = if growth_profile_v2::enabled(&self.settings.app) {
             pon_commitment::growth_reference_snapshot(actual, Some(expected), &self.settings.app)
         } else {
@@ -2514,6 +2569,7 @@ impl Node {
             snapshot,
         });
     }
+    #[cfg(test)]
     fn execute_derived(
         &self,
         actual: &State,
@@ -2526,6 +2582,7 @@ impl Node {
         self.execute_derived_with_progress(
             actual,
             ExecutionRequest {
+                timestamp: None,
                 transactions,
                 height,
                 miner,
@@ -2665,6 +2722,7 @@ impl Node {
         drop(parent_measurement);
         *self.commitment_observation.borrow_mut() = Some(observation);
         let request = || ExecutionRequest {
+            timestamp: block.timestamp,
             transactions: block.transactions,
             height: block.height,
             miner: block.miner,
@@ -2845,7 +2903,10 @@ impl Node {
                 error.local_integrity()
             }
         })?;
-        let packet = Packet::decode(&raw).map_err(Error::local_integrity)?;
+        let packet = self
+            .settings
+            .decode_packet(&raw)
+            .map_err(Error::local_integrity)?;
         ensure(
             packet.id()? == id
                 && Some(packet.header.parent) == row.parent
@@ -2865,7 +2926,13 @@ impl Node {
         )?;
         self.count_header_query();
         let projection = statement
-            .query_row(params![HEADER_BYTES, id.as_slice()], HeaderProjection::read)
+            .query_row(
+                params![
+                    crate::pq_native_v1::header_prefix_bytes(self.settings.is_native_pq_v1()),
+                    id.as_slice()
+                ],
+                HeaderProjection::read,
+            )
             .optional()?
             .ok_or("UNKNOWN_PARENT")?;
         self.check_header_projection(id, projection)
@@ -2890,7 +2957,9 @@ impl Node {
                 root: bytes32(projection.root)?,
             };
             ensure(
-                (HEADER_BYTES + 2 + pon_work::PROOF_BYTES..=1_048_576)
+                (crate::pq_native_v1::header_prefix_bytes(self.settings.is_native_pq_v1())
+                    + 2
+                    + pon_work::PROOF_BYTES..=1_048_576)
                     .contains(&projection.length.ok_or("GENESIS_HAS_NO_PACKET")?),
                 "PACKET_LIMIT",
             )?;
@@ -2901,7 +2970,10 @@ impl Node {
                 .header_trace_bytes
                 .saturating_add((prefix.len() + trace.len()) as u64);
             self.history_read_counters.set(counters);
-            let header = Header::decode(&prefix).map_err(|_| Error::from("HEADER_CODEC"))?;
+            let header = crate::pq_native_v1::decode_header_projection(
+                &prefix,
+                self.settings.is_native_pq_v1(),
+            )?;
             let trace = bytes32(trace)?;
             ensure(
                 header.block_id(trace) == id
@@ -2977,7 +3049,7 @@ impl Node {
             start.as_slice(),
             self.settings.genesis().as_slice(),
             maximum,
-            HEADER_BYTES,
+            crate::pq_native_v1::header_prefix_bytes(self.settings.is_native_pq_v1()),
         ])?;
         let mut current = start;
         let mut checked = 0_u64;
@@ -3310,7 +3382,9 @@ impl Node {
             "NETWORK",
         )?;
         ensure(
-            self.packet(id).map_err(Error::local_integrity)?.encode()? == packet.encode()?,
+            self.settings
+                .encode_packet(&self.packet(id).map_err(Error::local_integrity)?)?
+                == self.settings.encode_packet(packet)?,
             "DUPLICATE_CONTENT",
         )?;
         ensure(
@@ -3379,7 +3453,7 @@ impl Node {
         // Bounded full-packet identity precedes State/lease/context/Work work.
         self.precheck_owner_packet(packet)?;
         self.ready()?;
-        let bytes = packet.encode()?;
+        let bytes = self.settings.encode_packet(packet)?;
         let h = &packet.header;
         let id = packet.id()?;
         ensure(
@@ -3535,7 +3609,7 @@ impl Node {
             owner
                 .policy
                 .check_packet(&crate::operator_task_policy::digest_bytes(
-                    &packet.encode()?,
+                    &self.settings.encode_packet(packet)?,
                 ))
                 .map_err(owner_error)?;
         }
@@ -3546,7 +3620,8 @@ impl Node {
             return Ok(None);
         };
         self.precheck_owner_packet(packet)?;
-        let packet_sha256 = crate::operator_task_policy::digest_bytes(&packet.encode()?);
+        let packet_sha256 =
+            crate::operator_task_policy::digest_bytes(&self.settings.encode_packet(packet)?);
         owner
             .policy
             .check_packet(&packet_sha256)
@@ -3623,7 +3698,9 @@ impl Node {
         if let Some(permit) = &permit {
             ensure(
                 permit.facts.packet_sha256
-                    == crate::operator_task_policy::digest_bytes(&checked.packet.encode()?),
+                    == crate::operator_task_policy::digest_bytes(
+                        &self.settings.encode_packet(&checked.packet)?,
+                    ),
                 "OWNER_TASK_PACKET_CHANGED",
             )?;
             permit.progress()?;
@@ -4011,7 +4088,9 @@ impl Node {
             )?;
             ensure(
                 permit.facts.packet_sha256
-                    == crate::operator_task_policy::digest_bytes(&packet.encode()?),
+                    == crate::operator_task_policy::digest_bytes(
+                        &self.settings.encode_packet(&packet)?,
+                    ),
                 "OWNER_TASK_PACKET_CHANGED",
             )?;
             owner
@@ -4045,7 +4124,7 @@ impl Node {
         let guarded_control = ExecutionControl::new(&guarded_progress, control.worker_accounting);
         let control = &guarded_control;
         let progress = control.progress;
-        let bytes = packet.encode()?;
+        let bytes = self.settings.encode_packet(&packet)?;
         let h = &packet.header;
         let id = packet.id()?;
         let parent = self.record(h.parent)?;
@@ -4070,6 +4149,7 @@ impl Node {
         let (executed, rejection_scope) = self.execute_derived_core_with_rejection(
             &prior,
             ExecutionRequest {
+                timestamp: Some(h.timestamp),
                 transactions: &packet.transactions,
                 height: h.height,
                 miner: h.miner,
@@ -4226,7 +4306,7 @@ impl Node {
             self.delta_rows_with_progress(id, &mut || {
                 progress(ExecutionProgress::BeforeDurableCommit)
             })? == expected_deltas
-                && self.packet(id)?.encode()? == bytes,
+                && self.settings.encode_packet(&self.packet(id)?)? == bytes,
             "STORAGE_WRITE",
         )
         .map_err(Error::local_integrity)?;
@@ -4662,8 +4742,18 @@ impl Node {
         self.ready()?;
         let height = self.record(parent)?.height.checked_add(1).ok_or("HEIGHT")?;
         let task = pon_work::task_id(a, b).map_err(|_| Error::from("WORK_TASK"))?;
-        let executed =
-            self.execute_derived(actual, parent, &transactions, height, miner, self.workers)?;
+        let executed = self.execute_derived_with_progress(
+            actual,
+            ExecutionRequest {
+                timestamp: Some(timestamp),
+                transactions: &transactions,
+                height,
+                miner,
+                parent_id: parent,
+                workers: self.workers,
+            },
+            &|_| Ok(()),
+        )?;
         let mut output = executed.output;
         let commitment = executed.commitment;
         let prepared =
@@ -4719,6 +4809,7 @@ impl Node {
         let executed = self.execute_derived_with_control(
             actual,
             ExecutionRequest {
+                timestamp: Some(timestamp),
                 transactions: &transactions,
                 height,
                 miner,
@@ -5509,7 +5600,10 @@ impl Node {
             params![id.as_slice(), maximum],
             |r| r.get(0),
         )?;
-        let packet = Packet::decode(&raw).map_err(Error::local_integrity)?;
+        let packet = self
+            .settings
+            .decode_packet(&raw)
+            .map_err(Error::local_integrity)?;
         ensure(
             packet.id()? == id
                 && packet.header.parent == after
@@ -5531,7 +5625,7 @@ impl Node {
             "NETWORK",
         )?;
         let id = packet.id()?;
-        let expected = packet.encode()?;
+        let expected = self.settings.encode_packet(packet)?;
         let stored: Option<Vec<u8>> = self
             .db
             .query_row(
@@ -5557,7 +5651,10 @@ impl Node {
             Some(raw) => {
                 ensure(raw == expected, "DUPLICATE_CONTENT")?;
                 let retained = self.packet(id)?;
-                ensure(retained.encode()? == expected, "STORAGE_PACKET")?;
+                ensure(
+                    self.settings.encode_packet(&retained)? == expected,
+                    "STORAGE_PACKET",
+                )?;
                 let block_record = self.record(id)?;
                 let block_height = block_record.height;
                 let mut active_membership_sql_lookups = 0_u64;
@@ -6976,6 +7073,7 @@ mod native_ancestry_tests {
                 .execute_derived_with_progress(
                     &before.2,
                     ExecutionRequest {
+                        timestamp: None,
                         transactions: &[],
                         height: 1,
                         miner: development_public(0).unwrap(),
@@ -7004,6 +7102,7 @@ mod native_ancestry_tests {
             .execute_derived_with_progress(
                 &before.2,
                 ExecutionRequest {
+                    timestamp: None,
                     transactions: &[],
                     height: 1,
                     miner: development_public(0).unwrap(),
@@ -7035,6 +7134,7 @@ mod native_ancestry_tests {
             .execute_derived_with_progress(
                 &before.2,
                 ExecutionRequest {
+                    timestamp: None,
                     transactions: &[],
                     height: 1,
                     miner: development_public(0).unwrap(),

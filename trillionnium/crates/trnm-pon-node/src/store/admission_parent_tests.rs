@@ -297,6 +297,7 @@ fn admission_parent_reuse_matches_reference_execution_on_inactive_parent_and_reo
         .execute_derived_with_progress(
             &actual,
             ExecutionRequest {
+                timestamp: None,
                 transactions: &packet.transactions,
                 height: packet.header.height,
                 miner: packet.header.miner,

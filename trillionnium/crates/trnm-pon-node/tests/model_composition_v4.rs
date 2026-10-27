@@ -654,6 +654,7 @@ fn prefix<'a>(
     .unwrap()
     .into_prefix_with_control(
         PrefixContext {
+            timestamp: None,
             height,
             miner: development_public(3).unwrap(),
             parent_id,

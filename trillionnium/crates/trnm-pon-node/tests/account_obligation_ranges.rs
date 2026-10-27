@@ -232,6 +232,7 @@ impl Fixture {
         let reference = pon_executor::execute_with_authenticated_state_input(
             &parent,
             pon_executor::BlockExecution {
+                timestamp: None,
                 transactions: &txs,
                 height: block.height,
                 miner: block.miner,
@@ -654,6 +655,7 @@ fn monetary_ranges_preserve_nonmonetary_cleanup_and_refuse_raw_m06_projection_om
     let raw = pon_executor::execute_with_authenticated_obligation_input(
         &next_parent,
         pon_executor::BlockExecution {
+            timestamp: None,
             transactions: &[],
             height: 2,
             miner: public(0),
