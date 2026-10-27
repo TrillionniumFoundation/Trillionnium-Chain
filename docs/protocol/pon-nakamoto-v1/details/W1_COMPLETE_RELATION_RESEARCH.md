@@ -14,6 +14,20 @@ target, all four bounded noise streams, every one of the 512 ordered cumulative
 tiles, the entire SHA-256 trace and the complete product corrections. It does not
 call the existing native `verify`, `evaluate` or producer kernels.
 
+The guest arithmetic uses the exact identity `2^32 = 5 (mod q)` to reduce each
+bounded accumulator with two folds and one subtraction. All dot products have
+at most 64 canonical terms, so their sums are below `2^70`. This bound is an
+assertion in release builds as well: an internal range regression cannot silently
+truncate high words. Tests compare the result with integer `% q` at the maximum
+legal dot product, the complete 70-bit boundary, 4,096 deterministic samples and
+out-of-range controls. The original scalar native kernel retains its separate
+integer remainder implementation as an oracle.
+
+Each tile's 64 little-endian words are passed to SHA-256 as one 256-byte update,
+in exactly the previous order. All 512 tiles and 131,072 intermediate-value bytes
+remain in the trace. This changes API call boundaries, not the public relation,
+header, ticket, trace format or any hashed byte.
+
 `LocalExecution` records actual full local recomputation. Its fields are private
 and there is no conversion to `VerifiedWork`. No node or transport entry point
 uses this research module. Recomputing the relation alone does not repair the

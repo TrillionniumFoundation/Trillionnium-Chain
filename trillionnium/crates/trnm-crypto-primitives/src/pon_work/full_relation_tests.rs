@@ -2,6 +2,61 @@ use super::*;
 use crate::pon_work as native;
 use trnm_protocol::pon_wire::Header;
 
+#[path = "../../guests/w1-risc0/relation/src/parameters.rs"]
+mod guest_parameters;
+
+#[test]
+fn standalone_guest_parameters_match_the_real_native_work_profile() {
+    assert_eq!(guest_parameters::N, native::N);
+    assert_eq!(guest_parameters::R, native::R);
+    assert_eq!(guest_parameters::Q, native::Q);
+    assert_eq!(guest_parameters::CELLS, native::CELLS);
+    assert_eq!(guest_parameters::PROOF_BYTES, native::PROOF_BYTES);
+    let hash: guest_parameters::Hash = [3; 32];
+    let native_hash: native::Hash = hash;
+    assert_eq!(hash, native_hash);
+}
+
+#[test]
+fn bounded_reduction_matches_integer_modulo_through_the_full_70_bit_range() {
+    let maximum_dot_product = (N as u128) * (Q - 1) * (Q - 1);
+    assert!(maximum_dot_product < (1u128 << 70));
+    for value in [
+        0,
+        1,
+        Q - 1,
+        Q,
+        Q + 1,
+        2 * Q - 1,
+        2 * Q,
+        (1u128 << 32) - 1,
+        1u128 << 32,
+        (1u128 << 32) + 1,
+        (1u128 << 64) - 1,
+        1u128 << 64,
+        maximum_dot_product,
+        (1u128 << 70) - 2,
+        (1u128 << 70) - 1,
+    ] {
+        assert_eq!(reduce_bounded(value), (value % Q) as u32, "{value}");
+    }
+    let mut state = 0xd71c_a137_9a55_024bu64;
+    for _ in 0..4096 {
+        state ^= state << 13;
+        state ^= state >> 7;
+        state ^= state << 17;
+        let value = u128::from(state) | (u128::from(state.rotate_left(19) & 63) << 64);
+        assert_eq!(reduce_bounded(value), (value % Q) as u32, "{value}");
+    }
+}
+
+#[test]
+fn bounded_reduction_never_silently_truncates_an_out_of_range_accumulator() {
+    for value in [1u128 << 70, (1u128 << 70) + 1, u128::MAX] {
+        assert!(std::panic::catch_unwind(|| reduce_bounded(value)).is_err());
+    }
+}
+
 fn header(a: &[u32], b: &[u32], nonce: u64) -> Header {
     Header {
         network: [1; 32],
