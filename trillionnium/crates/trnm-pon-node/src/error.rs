@@ -224,6 +224,14 @@ impl Error {
                         | ErrorCode::DatabaseReplaced
                         | ErrorCode::OwnerReplaced
                         | ErrorCode::AncestryIndexBudget
+                        // The original paid CPU owner becoming unavailable is
+                        // NOT a transient remote peer refusal or budget debit.
+                        // A pinned poller must stop instead of silently trying
+                        // fresh unowned work in its next cycle.
+                        | ErrorCode::PublicMutationCpuUnavailable
+                        | ErrorCode::OwnerPublicServiceCpuDomain
+                        | ErrorCode::OwnerPublicServiceDomainUnbound
+                        | ErrorCode::OwnerPublicServiceUncleanEpoch
                 )
             )
     }
@@ -399,6 +407,25 @@ mod tests {
         let mut eof = Error::new(ErrorCode::FrameEof);
         eof.message = "peer closed the socket".into();
         assert!(eof.is(ErrorCode::FrameEof));
+    }
+
+    #[test]
+    fn unavailable_original_cpu_owner_is_fatal_but_budget_and_remote_refusals_are_not() {
+        for code in [
+            ErrorCode::PublicMutationCpuUnavailable,
+            ErrorCode::OwnerPublicServiceCpuDomain,
+            ErrorCode::OwnerPublicServiceDomainUnbound,
+            ErrorCode::OwnerPublicServiceUncleanEpoch,
+        ] {
+            let local = Error::new(code);
+            assert!(local.requires_owner_stop(), "{code:?}");
+            // Never allow an attacker-controlled remote error string to
+            // disable a healthy local receiver, even if its wire text
+            // matches a local CPU owner diagnostic.
+            let remote = Error::remote(local.to_string());
+            assert!(!remote.requires_owner_stop(), "{code:?}");
+        }
+        assert!(!Error::new(ErrorCode::PublicMutationCpuBudget).requires_owner_stop());
     }
 
     #[test]
