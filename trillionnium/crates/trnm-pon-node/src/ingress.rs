@@ -2703,6 +2703,46 @@ mod tests {
 
     #[cfg(target_os = "linux")]
     #[test]
+    fn cold_reopen_with_durable_active_v3_epoch_cannot_mint_history_cpu() {
+        let observed = now().unwrap();
+        let settings = crate::Settings::development(Some(observed - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        assert!(node.begin_ordinary_public_service_epoch().unwrap());
+        // Emulate a service disappearing before its original clean epoch
+        // closure; the SQLite active marker is durable, not a test-only bool.
+        drop(node);
+        let mut reopened = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let stats = reopened.stats().unwrap();
+        assert_eq!(
+            reopened.remote_history_cpu_domain().err().unwrap().to_string(),
+            "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH"
+        );
+        assert!(reopened.public_service_cpu_domain().is_err());
+        assert_eq!(reopened.stats().unwrap(), stats);
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn clean_v3_epoch_close_permits_only_one_cold_history_owner() {
+        let observed = now().unwrap();
+        let settings = crate::Settings::development(Some(observed - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        assert!(node.begin_ordinary_public_service_epoch().unwrap());
+        node.finish_ordinary_public_service_epoch(true).unwrap();
+        drop(node);
+        let mut reopened = Node::open(dir.path(), settings, 2).unwrap();
+        let first = reopened.remote_history_cpu_domain().unwrap();
+        let next = reopened.remote_history_cpu_domain().unwrap();
+        assert!(first.shares_domain_with(&next));
+        let initial = first.observe().unwrap();
+        assert_eq!(initial.stored_credit_ns, 0);
+        assert_eq!(initial.in_flight, 0);
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
     fn unclean_public_epoch_cannot_mint_fresh_remote_history_credit() {
         let observed = now().unwrap();
         let settings = crate::Settings::development(Some(observed - 100)).unwrap();
