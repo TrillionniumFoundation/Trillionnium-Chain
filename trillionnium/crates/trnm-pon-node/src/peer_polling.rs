@@ -1006,6 +1006,36 @@ mod tests {
         }
     }
     #[test]
+    fn nonloopback_pinned_peer_cannot_bypass_host_limit_via_loopback_listener() {
+        let local: SocketAddr = "127.0.0.1:19999".parse().unwrap();
+        assert!(require_peer_host_budget(local).unwrap().is_none());
+        let remote: SocketAddr = "192.0.2.10:19999".parse().unwrap();
+        let probe = require_peer_host_budget(remote);
+        assert!(!matches!(probe, Ok(None)), "remote W1 must have a Host owner");
+        if let Err(expected) = probe {
+            let now = ingress::now().unwrap();
+            let settings = Settings::development(Some(now - 100)).unwrap();
+            let cfg = {
+                let mut candidate = config(&settings);
+                candidate.peers[0].address = remote;
+                candidate
+            };
+            let dir = tempfile::tempdir().unwrap();
+            let node = Arc::new(Mutex::new(
+                Node::open(dir.path(), settings.clone(), 2).unwrap(),
+            ));
+            let initial = node.lock().unwrap().stats().unwrap();
+            let stop = Arc::new(AtomicBool::new(false));
+            let denied = run_pinned_peer_polling(
+                node.clone(), cfg, identity(72), stop.clone(), |_| Ok(())
+            ).unwrap_err();
+            assert_eq!(denied.to_string(), expected.to_string());
+            assert!(stop.load(Ordering::Acquire));
+            assert_eq!(node.lock().unwrap().stats().unwrap(), initial);
+        }
+    }
+
+    #[test]
     fn pinned_peer_requires_the_existing_service_domain_before_full_work() {
         let now = ingress::now().unwrap();
         let settings = Settings::development(Some(now - 100)).unwrap();
