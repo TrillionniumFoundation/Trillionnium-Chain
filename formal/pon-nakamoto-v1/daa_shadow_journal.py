@@ -156,12 +156,37 @@ class ShadowJournal:
                 'SELECT 1 FROM daa_shadow_headers_v1 WHERE block_id=?', (tip,)).fetchone() is None:
             raise JournalError('ACTIVE_TIP_UNAVAILABLE')
 
-    def _check_context_snapshot(self) -> None:
+    def _check_schema_snapshot(self) -> None:
+        """Reject altered table DDL and foreign SQL triggers before mutation.
+
+        This is a local research schema check, not a W1 or packet proof.
+        """
+        expected = {
+            ('table', 'daa_shadow_meta_v1', 'daa_shadow_meta_v1'):
+                'CREATE TABLE daa_shadow_meta_v1 (key TEXT PRIMARY KEY, value BLOB NOT NULL) WITHOUT ROWID',
+            ('table', 'daa_shadow_headers_v1', 'daa_shadow_headers_v1'):
+                'CREATE TABLE daa_shadow_headers_v1 (block_id BLOB PRIMARY KEY CHECK(length(block_id)=32), '
+                'parent_id BLOB NOT NULL CHECK(length(parent_id)=32), '
+                'height BLOB NOT NULL CHECK(length(height)=8), '
+                'canonical BLOB NOT NULL CHECK(length(canonical)=176), '
+                'digest BLOB NOT NULL CHECK(length(digest)=32)) WITHOUT ROWID',
+        }
+        actual = {
+            (kind, name, table): sql
+            for kind, name, table, sql in self.db.execute(
+                'SELECT type,name,tbl_name,sql FROM sqlite_master WHERE sql IS NOT NULL'
+            )
+        }
+        if actual != expected:
+            raise JournalError('DATABASE_SCHEMA')
+
+    def _check_context_snapshot(self) -> bytes:
         """Read the COMPLETE immutable namespace before any hot mutation.
 
         This detects foreign/corrupt metadata in the caller's current SQLite
         snapshot. It authenticates neither a remote packet nor native W1 work.
         """
+        self._check_schema_snapshot()
         expected = {'schema': SCHEMA, 'context': self.context,
                     'genesis': self.genesis}
         actual = dict(self.db.execute(
@@ -169,14 +194,13 @@ class ShadowJournal:
         if (set(actual) != {*expected, 'active_tip'}
                 or any(actual[k] != value for k, value in expected.items())):
             raise JournalError('DATABASE_CONTEXT')
+        # Context and active tip come from the same metadata row snapshot.
+        return actual['active_tip']
 
     def active(self) -> bytes:
-        self._check_context_snapshot()
-        value = self.db.execute("SELECT value FROM daa_shadow_meta_v1 WHERE key='active_tip'").fetchone()
-        if value is None:
-            raise JournalError('ACTIVE_TIP_MISSING')
-        self._valid_tip(value[0])
-        return value[0]
+        tip = self._check_context_snapshot()
+        self._valid_tip(tip)
+        return tip
 
     def get(self, block_id: bytes) -> ShadowHeader:
         _id(block_id, 'block_id')
@@ -306,6 +330,7 @@ class ShadowJournal:
         An attacker able to rewrite the entire local database may recompute all
         checks. Native trusted packet/state replay remains required at startup.
         """
+        self._check_schema_snapshot()
         rows = self.db.execute('SELECT block_id,parent_id,height,canonical,digest '
                                'FROM daa_shadow_headers_v1 ORDER BY height,block_id')
         seen = {self.genesis: 0}
