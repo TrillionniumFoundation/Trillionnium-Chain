@@ -63,3 +63,37 @@ W2-B full replay or unpriced W2-C); P6 requires actual independent
 cryptographic authorship, verification and signed source-bound review.
 The sender cannot certify independent reviewers or run physical WAN
 experiments merely by adding source tests. No protocol activation is authorized.
+
+## Follow-up: same Host owner through valid-W1 M06 and SQLite
+
+The prior public History import covered the 512 transcript tiles, precheck,
+before/after each native packet, and after activation. It called
+`Node::admit_with_work_progress` which then entered the ordinary no-progress
+`admit_work_checked` after W1 succeeded. A peer with **valid W1** and a costly
+or hostile M06 application could cross a Host member/quota change while the
+root/state/delta/commit phases ran without any original Host recheck.
+
+The candidate now extends the same caller-supplied Host checkpoint from the
+W1 progress callback into the original
+`Node::admit_work_checked_with_progress` ExecutionProgress callback, including
+BeforeParentBinding, BeforeStateClone, M06 preparation/application,
+BeforeCommitment, PersistenceDelta and BeforeDurableCommit. The original
+owner/parent/task, full W1 replay and SQLite transaction are retained.
+A failed Host check prior to `tx.commit()` must roll back the entire tentative
+packet. No progress callback after `tx.commit()` may pretend to undo an
+admitted durable fact. The callback conveys **no mathematical Work validity**,
+mining right, ticket, payment or Node authority.
+
+Native regression:
+`ingress::tests::history_valid_w1_cannot_commit_after_m06_host_owner_rejection`
+forces a local Host limit-change refusal at M06 BeforeDurableCommit *after*
+all 512 legitimate transcript tiles, checks no blocks/deltas/active change,
+and retries the identical valid W1 through the unmodified Node verifier.
+This is an asserted test requirement, not an executed test/CI receipt.
+
+Remaining: per-operation actual CPU ownership for publicly reachable History
+imports; physical Host membership and cross-process measurements; failed
+reopen/disk fault evidence; read/submit fairness under mixed pressure; P2
+CPU/GPU/ASIC cost pricing; P3 honest/hostile multi-node races; P4 original
+A03 3 × 3 × 3 qualifying confirmations; a truly sound/economical W2 proof
+(P5); and external independent cryptanalysis (P6). Keep HOLD_NO_GO.
