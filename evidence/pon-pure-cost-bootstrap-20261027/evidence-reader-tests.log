@@ -1,0 +1,20 @@
+test_complete_finite_fixture_and_unknown_cpu_propagation (test_check_pure_pon_cost_campaign.EvidenceReaderTests.test_complete_finite_fixture_and_unknown_cpu_propagation) ... ok
+test_dropped_failed_attempts_cannot_reduce_denominator (test_check_pure_pon_cost_campaign.EvidenceReaderTests.test_dropped_failed_attempts_cannot_reduce_denominator) ... ok
+test_false_winner_or_incomplete_terminal_never_qualifies (test_check_pure_pon_cost_campaign.EvidenceReaderTests.test_false_winner_or_incomplete_terminal_never_qualifies) ... ok
+test_mismatched_stream_is_not_a_paired_comparison (test_check_pure_pon_cost_campaign.EvidenceReaderTests.test_mismatched_stream_is_not_a_paired_comparison) ... ok
+test_missing_offered_arm_is_not_tolerated (test_check_pure_pon_cost_campaign.EvidenceReaderTests.test_missing_offered_arm_is_not_tolerated) ... ok
+test_primitive_target_wins_cannot_be_promoted_to_native_acceptance (test_check_pure_pon_cost_campaign.EvidenceReaderTests.test_primitive_target_wins_cannot_be_promoted_to_native_acceptance) ... ok
+test_unknown_cpu_cannot_be_forged_to_zero (test_check_pure_pon_cost_campaign.EvidenceReaderTests.test_unknown_cpu_cannot_be_forged_to_zero) ... ok
+test_complete_original_smoke_remains_unqualified (test_check_pure_pon_ingress_campaign.IngressEvidenceTests.test_complete_original_smoke_remains_unqualified) ... ok
+test_dropped_receiver_call_is_rejected (test_check_pure_pon_ingress_campaign.IngressEvidenceTests.test_dropped_receiver_call_is_rejected) ... ok
+test_hidden_settlement_tail_is_rejected (test_check_pure_pon_ingress_campaign.IngressEvidenceTests.test_hidden_settlement_tail_is_rejected) ... ok
+test_invalid_acceptance_and_improved_tail_are_rejected (test_check_pure_pon_ingress_campaign.IngressEvidenceTests.test_invalid_acceptance_and_improved_tail_are_rejected) ... ok
+test_restart_cannot_mint_cpu_credit (test_check_pure_pon_ingress_campaign.IngressEvidenceTests.test_restart_cannot_mint_cpu_credit) ... ok
+test_reused_packet_cannot_claim_cache_miss_flood (test_check_pure_pon_ingress_campaign.IngressEvidenceTests.test_reused_packet_cannot_claim_cache_miss_flood) ... ok
+test_shortened_runtime_or_promoted_qualification_is_rejected (test_check_pure_pon_ingress_campaign.IngressEvidenceTests.test_shortened_runtime_or_promoted_qualification_is_rejected) ... ok
+test_unknown_sender_cpu_cannot_be_silently_zeroed (test_check_pure_pon_ingress_campaign.IngressEvidenceTests.test_unknown_sender_cpu_cannot_be_silently_zeroed) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 0.095s
+
+OK
