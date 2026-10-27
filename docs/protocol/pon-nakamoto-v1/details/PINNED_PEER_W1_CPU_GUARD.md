@@ -120,3 +120,46 @@ Exact Rust selectors added:
 and `peer_polling::tests::pinned_polling_stops_on_local_cpu_account_failure_but_not_remote_error_text`.
 This is a **source-level fix pending exact native compilation and
 physical resource failure injection**, not a new P1 pass.
+
+
+## Integration P1 extension: one peer worker plus original honest-start headroom
+
+An additional integrated-branch candidate uses
+'ServiceMutationCpuDomain::begin_untrusted_peer_sync' **only** at
+'peer_polling.rs::admit_page'. It is the same original
+'PaidMutationCpuBudget' lock, live CPU owner, refill, charge, worker accounting,
+cancellation and settlement as 'begin()'. No caller key, peer roster entry or
+newly allocated per-node budget grants credit.
+
+The extra synchronous gate requires:
+
+- no other W1 mutation is currently in flight (one peer job maximum);
+- at least **3 × the original 100ms start reservation** available at that
+  same lock after actual time refill, *before* reserving the peer's own 100ms;
+- all original budget, completion-priority, worker, clock and ownership checks.
+
+An ordinary V3 paid Submit keeps its original reserve and starts through
+'begin()' or 'PaidMutationCpuPermit', not the peer-only gate. In the absence
+of a deliberate scheduler admission failure, a peer cannot occupy both
+workers and prevents itself from consuming the last available paid-start
+reservation at dispatch. When no peer progress is affordable the original
+typed 'PUBLIC_MUTATION_CPU_BUDGET' is returned; this never becomes a
+consensus INVALID or permanent negative work verdict.
+
+The original-domain native regression
+'background_peer_cpu_start_keeps_honest_original_slot'
+checks the second peer start is refused while an honest operation on a
+different thread can still reserve and complete. The separate
+'background_peer_must_leave_two_original_start_quanta_available' test
+exercises finite stored credit at two start quanta (peer denied; honest
+permitted). Existing late Product / bad transcript replays retain their
+actual CPU debits and ledger invariants.
+
+**Important:** this policy is not a hard guarantee of honest completion or
+network QoS. Existing valid W1+bad M06, nonpreemptive deep State/SQLite steps,
+signature/body/socket stages, another identity entering ordinary public V3,
+and CPU overshoot can still exhaust the one domain or monopolize the fixed
+Host cgroup. The original 250ms CPU/second aggregate rate, 2s burst,
+100ms start charge and two-worker count have NOT been changed. The peer
+extra headroom is a local priority rule and must receive exact-source
+real-process adversarial testing before any P1/P3 gate is marked closed.
