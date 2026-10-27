@@ -151,6 +151,65 @@ fn active_limit_drops_overload_without_queue_or_extra_bytes() {
     assert_eq!(report.sent_response_bytes, 0);
 }
 
+fn transient_capacity_refusal(cached_manifest: bool) {
+    let (dir, path, manifest) = fixture();
+    let server = Server::start(&path, limits());
+    let a = TcpStream::connect(server.address).unwrap();
+    server.accepted(1);
+    let b = TcpStream::connect(server.address).unwrap();
+    server.accepted(2);
+    let client_path = dir.path().join("retry-consumer.sqlite");
+    let expected = manifest.clone();
+    let address = server.address;
+    let maximum = if cached_manifest { 2 } else { 3 };
+    let client = thread::spawn(move || {
+        let cache = CellStoreV1::open(&client_path, cache_config()).unwrap();
+        if cached_manifest {
+            cache
+                .put_manifest(expected.id(), &expected.encode())
+                .unwrap();
+        }
+        fetch_cell(
+            &cache,
+            expected.id(),
+            &[address],
+            CellPeerLimitsV1 {
+                request_timeout: Duration::from_millis(300),
+                overall_timeout: Duration::from_secs(1),
+                max_cell_bytes: 16_384,
+                parallelism: 1,
+                max_connections: maximum,
+                max_response_bytes: 20_000,
+            },
+        )
+    });
+    // Both actual workers are occupied. This first honest request is really
+    // refused by the existing bounded server; no success result is substituted.
+    let overload = server.accepted(3);
+    assert_eq!(overload.overloaded_connections, 1);
+    drop((a, b));
+    let result = client.join().unwrap();
+    let served = server.finish();
+    let (actual, fetched) = result.expect("one transient refusal must allow one bounded retry");
+    assert_eq!(actual, manifest);
+    assert_eq!(fetched.downloaded_bytes, 16_384);
+    assert_eq!(fetched.connection_attempts, maximum);
+    assert_eq!(fetched.rejected_responses, 1);
+    assert_eq!(served.peak_active_workers, 2);
+    assert_eq!(served.overloaded_connections, 1);
+    assert_eq!(served.accepted_connections, maximum + 2);
+}
+
+#[test]
+fn transient_manifest_capacity_refusal_uses_one_bounded_retry() {
+    transient_capacity_refusal(false);
+}
+
+#[test]
+fn transient_chunk_capacity_refusal_uses_one_bounded_retry() {
+    transient_capacity_refusal(true);
+}
+
 #[test]
 fn concurrent_responses_share_exact_byte_budget_and_one_byte_short_cutoff() {
     for short in [0, 1] {

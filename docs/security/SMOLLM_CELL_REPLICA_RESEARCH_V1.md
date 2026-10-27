@@ -94,6 +94,11 @@ and the client's single-attempt behavior need a focused admission/backpressure
 repair before this optimized path can be called reliable. No worker, connection,
 byte or time limit was raised to hide the failure.
 
+The subsequent [bounded transport retry refinement](CELL_TRANSIENT_CAPACITY_RETRY_V1.md)
+retains this original failure and records a focused repair, its negative controls
+and a successful native optimized replay. The no-update model result and all
+original Hepta authority boundaries remain unchanged.
+
 ## Reproduction and source boundaries
 
 The [evidence directory](../../evidence/smollm-cell-replica-research-v1/README.md)

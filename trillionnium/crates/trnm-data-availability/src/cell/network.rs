@@ -104,6 +104,8 @@ pub struct CellFetchReportV1 {
     /// Excludes requests, TCP/IP overhead, retransmissions and unread socket data.
     pub received_response_bytes: u64,
     pub connection_attempts: u64,
+    /// Failed attempts, including transient transport refusals. This is not a
+    /// cryptographic fraud finding or a custody/reward decision.
     pub rejected_responses: usize,
     pub supplying_peers: BTreeSet<SocketAddr>,
 }
@@ -319,16 +321,18 @@ pub(super) fn fetch_manifest_observed(
             let mut received = None;
             let mut last_io = None;
             for peer in peers {
-                let candidate =
-                    request(*peer, 1, pinned, MAX_MANIFEST_BYTES, transport).and_then(|wire| {
-                        let manifest = CellManifestV1::decode(&wire)?;
-                        require(manifest.id() == pinned, "manifest digest")?;
-                        require(
-                            manifest.size() <= limits.max_cell_bytes,
-                            "cell exceeds byte budget",
-                        )?;
-                        Ok(wire)
-                    });
+                let (candidate, attempts) =
+                    request_with_retry(*peer, 1, pinned, MAX_MANIFEST_BYTES, transport);
+                rejected += attempts - 1;
+                let candidate = candidate.and_then(|wire| {
+                    let manifest = CellManifestV1::decode(&wire)?;
+                    require(manifest.id() == pinned, "manifest digest")?;
+                    require(
+                        manifest.size() <= limits.max_cell_bytes,
+                        "cell exceeds byte budget",
+                    )?;
+                    Ok(wire)
+                });
                 match candidate {
                     Ok(wire) => {
                         // A valid response cannot turn a local persistence
@@ -364,26 +368,30 @@ fn download_chunk(
     transport: &RequestContext<'_>,
 ) -> CellResultV1<(Vec<u8>, SocketAddr, usize)> {
     let mut last_io = None;
+    let mut rejected = 0;
     for offset in 0..peers.len() {
         let peer = peers[(order + offset) % peers.len()];
-        let candidate =
-            request(peer, 2, chunk.sha256, chunk.size as usize, transport).and_then(|bytes| {
-                verify_chunk(chunk, &bytes)?;
-                Ok(bytes)
-            });
+        let (candidate, attempts) =
+            request_with_retry(peer, 2, chunk.sha256, chunk.size as usize, transport);
+        rejected += attempts - 1;
+        let candidate = candidate.and_then(|bytes| {
+            verify_chunk(chunk, &bytes)?;
+            Ok(bytes)
+        });
         match candidate {
-            Ok(bytes) => return Ok((bytes, peer, offset)),
+            Ok(bytes) => return Ok((bytes, peer, rejected)),
             Err(CellErrorV1::Io(error)) => last_io = Some(error),
             Err(_) => (),
         }
+        rejected += 1;
     }
     Err(unavailable_with_transport_cause(transport, last_io))
 }
 
 // Keep the existing unavailable/byte-budget semantics for absent or malformed
 // bytes. When all configured peers fail, retain the last real transport cause
-// instead of hiding a timeout/reset behind generic unavailability. This adds no
-// retries, telemetry API, peer list, or unbounded error history.
+// instead of hiding a timeout/reset behind generic unavailability. The one
+// bounded transport retry adds no telemetry API, peer list or error history.
 fn unavailable_with_transport_cause(
     transport: &RequestContext<'_>,
     last_io: Option<io::Error>,
@@ -594,6 +602,41 @@ impl ResponseBudget {
     }
 }
 
+/// A bounded server may finish its last write before its worker is reaped. A
+/// fast client can therefore encounter a transient reset at the next request
+/// even when its parallelism does not exceed the server's worker count.
+///
+/// Retry that transport failure once, after a finite pause, using the SAME
+/// original deadline, connection allowance and response-byte accounting. No
+/// complete malformed frame, unavailable response, digest failure, response-body
+/// failure or timeout is retried. Partial headers still spend actual byte budget.
+/// Persistent overload still fails closed; this is not an availability promise.
+fn request_with_retry(
+    peer: SocketAddr,
+    kind: u8,
+    digest: CellDigestV1,
+    maximum: usize,
+    transport: &RequestContext<'_>,
+) -> (CellResultV1<Vec<u8>>, usize) {
+    const BACKOFF: Duration = Duration::from_millis(20);
+    let mut phase = "budget";
+    let first = request_with_phase(peer, kind, digest, maximum, transport, &mut phase);
+    let transient = phase != "response-body"
+        && matches!(&first, Err(CellErrorV1::Io(error)) if matches!(error.kind(),
+        io::ErrorKind::ConnectionReset | io::ErrorKind::ConnectionAborted
+        | io::ErrorKind::BrokenPipe | io::ErrorKind::UnexpectedEof));
+    if !transient
+        || transport.requests_left.load(Ordering::Relaxed) == 0
+        || transport.overall.saturating_duration_since(Instant::now()) <= BACKOFF
+    {
+        return (first, 1);
+    }
+    thread::sleep(BACKOFF);
+    // request independently rechecks the shared atomic allowance and absolute
+    // deadline after the pause; another worker cannot grant extra capacity.
+    (request(peer, kind, digest, maximum, transport), 2)
+}
+
 fn request(
     peer: SocketAddr,
     kind: u8,
@@ -601,9 +644,20 @@ fn request(
     maximum: usize,
     transport: &RequestContext<'_>,
 ) -> CellResultV1<Vec<u8>> {
-    let started = Instant::now();
     let mut phase = "budget";
-    request_in_phase(peer, kind, digest, maximum, transport, &mut phase).map_err(|error| {
+    request_with_phase(peer, kind, digest, maximum, transport, &mut phase)
+}
+
+fn request_with_phase(
+    peer: SocketAddr,
+    kind: u8,
+    digest: CellDigestV1,
+    maximum: usize,
+    transport: &RequestContext<'_>,
+    phase: &mut &'static str,
+) -> CellResultV1<Vec<u8>> {
+    let started = Instant::now();
+    request_in_phase(peer, kind, digest, maximum, transport, phase).map_err(|error| {
         if let CellErrorV1::Io(error) = error {
             let detail: String = error.to_string().chars().take(192).collect();
             CellErrorV1::Io(io::Error::new(
@@ -732,6 +786,161 @@ pub(super) fn write_deadline(
 #[cfg(test)]
 mod budget_tests {
     use super::*;
+
+    fn accept_before_test_deadline(listener: &TcpListener) -> TcpStream {
+        listener.set_nonblocking(true).unwrap();
+        let deadline = Instant::now() + Duration::from_secs(2);
+        loop {
+            match listener.accept() {
+                Ok((stream, _)) => return stream,
+                Err(error)
+                    if error.kind() == io::ErrorKind::WouldBlock && Instant::now() < deadline =>
+                {
+                    thread::sleep(Duration::from_millis(1));
+                }
+                result => panic!("expected bounded actual TCP request: {result:?}"),
+            }
+        }
+    }
+
+    #[test]
+    fn transient_retry_keeps_original_connection_and_deadline_limits() {
+        for (connections, window) in [(1, Duration::from_secs(1)), (2, Duration::from_millis(20))] {
+            let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+            let address = listener.local_addr().unwrap();
+            let server = thread::spawn(move || {
+                let mut stream = accept_before_test_deadline(&listener);
+                stream
+                    .set_read_timeout(Some(Duration::from_secs(1)))
+                    .unwrap();
+                let mut query = [0; 37];
+                stream.read_exact(&mut query).unwrap();
+                // Actual early EOF, not a synthetic success or error result.
+            });
+            let responses = ResponseBudget::new(64);
+            let requests_left = AtomicU64::new(connections);
+            let transport = RequestContext {
+                timeout: Duration::from_secs(1),
+                overall: Instant::now() + window,
+                requests_left: &requests_left,
+                responses: &responses,
+            };
+            let (result, attempts) = request_with_retry(address, 2, [0; 32], 64, &transport);
+            server.join().unwrap();
+            assert!(result.is_err());
+            assert_eq!(attempts, 1);
+            assert_eq!(requests_left.load(Ordering::Relaxed), connections - 1);
+            assert_eq!(responses.received().unwrap(), 0);
+        }
+    }
+
+    #[test]
+    fn transient_retry_counts_partial_bytes_and_one_byte_short_cutoff() {
+        for maximum in [14, 13] {
+            let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+            let address = listener.local_addr().unwrap();
+            let server = thread::spawn(move || {
+                for attempt in 0..2 {
+                    let mut stream = accept_before_test_deadline(&listener);
+                    stream
+                        .set_read_timeout(Some(Duration::from_secs(1)))
+                        .unwrap();
+                    let mut query = [0; 37];
+                    stream.read_exact(&mut query).unwrap();
+                    let bytes: &[u8] = if attempt == 0 {
+                        b"TCS1"
+                    } else {
+                        b"TCS1\0\0\0\0\x01x"
+                    };
+                    stream.write_all(bytes).unwrap();
+                }
+            });
+            let responses = ResponseBudget::new(maximum);
+            let requests_left = AtomicU64::new(2);
+            let transport = RequestContext {
+                timeout: Duration::from_secs(1),
+                overall: Instant::now() + Duration::from_secs(2),
+                requests_left: &requests_left,
+                responses: &responses,
+            };
+            let (result, attempts) = request_with_retry(address, 2, [0; 32], 1, &transport);
+            server.join().unwrap();
+            assert_eq!(attempts, 2);
+            assert_eq!(requests_left.load(Ordering::Relaxed), 0);
+            assert_eq!(responses.received().unwrap(), maximum);
+            if maximum == 14 {
+                assert_eq!(result.unwrap(), b"x");
+            } else {
+                assert!(result.is_err());
+            }
+        }
+    }
+
+    #[test]
+    fn transient_retry_does_not_repeat_invalid_frame_or_bad_chunk_digest() {
+        for malformed_frame in [true, false] {
+            let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+            let address = listener.local_addr().unwrap();
+            let server = thread::spawn(move || {
+                let mut stream = accept_before_test_deadline(&listener);
+                stream
+                    .set_read_timeout(Some(Duration::from_secs(1)))
+                    .unwrap();
+                let mut query = [0; 37];
+                stream.read_exact(&mut query).unwrap();
+                let bytes: &[u8] = if malformed_frame {
+                    b"BAD1\0\0\0\0\x01x"
+                } else {
+                    b"TCS1\0\0\0\0\x01x"
+                };
+                stream.write_all(bytes).unwrap();
+            });
+            let responses = ResponseBudget::new(64);
+            let requests_left = AtomicU64::new(2);
+            let transport = RequestContext {
+                timeout: Duration::from_secs(1),
+                overall: Instant::now() + Duration::from_secs(2),
+                requests_left: &requests_left,
+                responses: &responses,
+            };
+            let expected = CellChunkV1 {
+                size: 1,
+                sha256: [0; 32],
+            };
+            assert!(download_chunk(&expected, 0, &[address], &transport).is_err());
+            server.join().unwrap();
+            assert_eq!(requests_left.load(Ordering::Relaxed), 1);
+        }
+    }
+
+    #[test]
+    fn transient_retry_stops_after_two_real_early_closes() {
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let address = listener.local_addr().unwrap();
+        let server = thread::spawn(move || {
+            for _ in 0..2 {
+                let mut stream = accept_before_test_deadline(&listener);
+                stream
+                    .set_read_timeout(Some(Duration::from_secs(1)))
+                    .unwrap();
+                let mut query = [0; 37];
+                stream.read_exact(&mut query).unwrap();
+            }
+        });
+        let responses = ResponseBudget::new(64);
+        let requests_left = AtomicU64::new(10);
+        let transport = RequestContext {
+            timeout: Duration::from_secs(1),
+            overall: Instant::now() + Duration::from_secs(2),
+            requests_left: &requests_left,
+            responses: &responses,
+        };
+        let (result, attempts) = request_with_retry(address, 2, [0; 32], 64, &transport);
+        server.join().unwrap();
+        assert!(result.is_err());
+        assert_eq!(attempts, 2);
+        assert_eq!(requests_left.load(Ordering::Relaxed), 8);
+    }
 
     #[test]
     fn concurrent_socket_reads_never_exceed_shared_budget() {
