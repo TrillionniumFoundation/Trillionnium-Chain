@@ -166,6 +166,10 @@ class DurableReceiverAdmission(StatelessReceiverAdmission):
                 return 'GRANT_MAC'
             if not grant.issued_ms <= now_ms < grant.expires_ms:
                 return 'EXPIRED_OR_FUTURE'
+            # SQLite stores signed 64-bit integer timestamps. Reject a valid
+            # u64 grant outside that persistence domain, never overflow INSERT.
+            if grant.expires_ms > SQL_MAX_TIME:
+                return 'CLOCK_RANGE'
             if not qualifies(ticket(grant, nonce), grant.bits):
                 return 'TARGET'
             key = H('w2c-stateless-paid-grant-v1', payload, mac)
