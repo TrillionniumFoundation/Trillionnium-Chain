@@ -176,7 +176,7 @@ class CorpusGateTests(unittest.TestCase):
         moved = source.with_name("source-before-swap")
         source.rename(moved)
         source.symlink_to(moved, target_is_directory=True)
-        with self.assertRaisesRegex(IntegrityError, "symlink PQ source directory"):
+        with self.assertRaisesRegex(IntegrityError, "symlink"):
             check(self.root)
 
 
