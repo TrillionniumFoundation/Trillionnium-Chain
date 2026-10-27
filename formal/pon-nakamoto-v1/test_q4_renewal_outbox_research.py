@@ -450,4 +450,63 @@ class RenewalOutboxTests(unittest.TestCase):
             self.assertEqual(db.audit(), 0)
             db.dispatch_unknown(key)
             self.assertEqual(db.audit(), 1)
+
+    def test_local_trigger_cannot_eat_new_intent_and_claim_prepared(self):
+        with self.open() as db:
+            # Local schema mutation, not remote packet or real source authority.
+            db.db.execute(
+                'CREATE TRIGGER eat_intent AFTER INSERT ON q4_outbox_intents_v1 '
+                'BEGIN DELETE FROM q4_outbox_intents_v1 WHERE id=NEW.id; END'
+            )
+            with self.assertRaisesRegex(OutboxError, 'INTENT_POSTWRITE'):
+                db.prepare(intent())
+            self.assertFalse(db.db.in_transaction)
+            self.assertEqual(db.audit(), 0)
+            self.assertEqual(
+                db.db.execute('SELECT COUNT(*) FROM q4_outbox_intents_v1').fetchone()[0], 0
+            )
+            db.db.execute('DROP TRIGGER eat_intent')
+            original = db.prepare(intent())
+            self.assertEqual(db.prepare(intent()), original)
+            self.assertEqual(db.audit(), 0)
+
+    def test_local_trigger_cannot_eat_dispatch_event_and_claim_fenced(self):
+        with self.open() as db:
+            original = db.prepare(intent())
+            db.db.execute(
+                'CREATE TRIGGER eat_event AFTER INSERT ON q4_outbox_events_v1 '
+                'BEGIN DELETE FROM q4_outbox_events_v1 WHERE ordinal=NEW.ordinal; END'
+            )
+            with self.assertRaisesRegex(OutboxError, 'EVENT_POSTWRITE'):
+                db.dispatch_unknown(original)
+            self.assertFalse(db.db.in_transaction)
+            self.assertEqual(db.audit(), 0)
+            self.assertTrue(db.status(original)['has_no_durable_dispatch_fence'])
+            db.db.execute('DROP TRIGGER eat_event')
+            db.dispatch_unknown(original)
+            self.assertTrue(db.status(original)['dispatch_unknown'])
+            with self.assertRaisesRegex(OutboxError, 'RECONCILE_ORIGINAL_NO_REDISPATCH'):
+                db.dispatch_unknown(original)
+            self.assertEqual(db.audit(), 1)
+
+    def test_local_trigger_corruption_of_observation_is_rolled_back(self):
+        with self.open() as db:
+            original = db.prepare(intent())
+            db.dispatch_unknown(original)
+            db.db.execute(
+                'CREATE TRIGGER corrupt_observation AFTER INSERT ON q4_outbox_events_v1 '
+                "WHEN NEW.kind LIKE 'OBSERVED_%' BEGIN "
+                "UPDATE q4_outbox_events_v1 SET observation=X'00' "
+                'WHERE ordinal=NEW.ordinal; END'
+            )
+            with self.assertRaisesRegex(OutboxError, 'EVENT_DIGEST'):
+                db.observe(original, observation('included', 2))
+            self.assertFalse(db.db.in_transaction)
+            self.assertEqual(db.audit(), 1)
+            self.assertEqual(db.status(original)['observations'], 0)
+            db.db.execute('DROP TRIGGER corrupt_observation')
+            db.observe(original, observation('included', 2))
+            self.assertEqual(db.status(original)['observations'], 1)
+            self.assertEqual(db.audit(), 2)
+
 if __name__ == '__main__': unittest.main()
