@@ -533,7 +533,13 @@ impl WorkCheckedPacket {
     ) -> Result<Self> {
         let h = &packet.header;
         let work = cache
-            .verify_with_progress(h.challenge(), h.work_task, h.target, &packet.proof, progress)
+            .verify_with_progress(
+                h.challenge(),
+                h.work_task,
+                h.target,
+                &packet.proof,
+                progress,
+            )
             .map_err(|error| match error {
                 pon_work::VerificationError::Relation(error) => {
                     Error::from(format!("WORK:{error:?}"))
@@ -3254,6 +3260,9 @@ impl Node {
     /// Only the original Node checks current parent/task/permit/state/clock.
     /// The caller may refuse LOCAL resource continuation at mathematical W1
     /// checkpoints; cancellation must never masquerade as invalid work.
+    /// Production History uses the metered owner path; this helper remains
+    /// only for the original native resource-cancellation regressions.
+    #[cfg(test)]
     pub(crate) fn admit_with_work_progress(
         &mut self,
         packet: &Packet,

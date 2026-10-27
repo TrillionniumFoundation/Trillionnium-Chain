@@ -3790,3 +3790,9 @@ the three changed workflows' actionlint checks, all twenty source-blob guards
 and the exact twenty-five-package locked Cargo graph also passed. Source digests
 before and after the native tests and Clippy are retained. These checks do not
 grant production, model-efficacy, independent-security or release acceptance.
+
+## 2026-10-27: scoped History internal cancellation and durable child settlement
+
+The original #498 continuation now carries the existing CPU/Host/permit checkpoints inside History activation and continuous admission context. Actual two-worker settlement (including a joined failed child) survives cold journal reopen; a cancelled three-block History completion can retry and activate with its original owner. Nine distinct selected native regressions and strict all-target Clippy for M01/Node passed on source/binary-bound Rust 1.95 output. Baseline API/constructor, inventory, formatter and CI-order failures and their repairs are retained in [the complete increment evidence](../../evidence/pon-history-continuity-20261027/README.md).
+
+The P0 continuous History acceptance remains **OPEN**: generic import still lacks an authorized durable per-operation scope. Keeping that path closed prevents unjournaled work but cannot count as completion. Successful durable decode/W1/M06/activation, internal cancellation, actual crash restart and every child settlement must be demonstrated together without resetting debt or disabling import. This increment grants no public-network, whole-workspace, performance or production qualification.

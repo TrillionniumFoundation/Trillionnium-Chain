@@ -245,25 +245,15 @@ fn m05_plain_w1_metered_dispatch_debits_invalid_and_valid_work_in_one_owner_doma
     assert!(domain.shares_domain_with(&cloned));
     let initial = node.lock().unwrap().read_active().unwrap();
     let bad = bad_product(&packet, 0);
-    let failed = dispatch_shared_with_metered_w1(
-        &node,
-        request(&bad),
-        &domain,
-        &|| Ok(()),
-    )
-    .unwrap();
+    let failed =
+        dispatch_shared_with_metered_w1(&node, request(&bad), &domain, &|| Ok(())).unwrap();
     assert_eq!(failed.native.unwrap_err().to_string(), "WORK:Product");
     assert!(!failed.cpu.accounting_unavailable);
     assert!(failed.cpu.total_cpu_ns.is_some_and(|v| v > 0));
     assert_eq!(node.lock().unwrap().read_active().unwrap(), initial);
 
-    let accepted = dispatch_shared_with_metered_w1(
-        &node,
-        request(&packet),
-        &cloned,
-        &|| Ok(()),
-    )
-    .unwrap();
+    let accepted =
+        dispatch_shared_with_metered_w1(&node, request(&packet), &cloned, &|| Ok(())).unwrap();
     assert!(!accepted.cpu.accounting_unavailable);
     assert!(accepted.cpu.total_cpu_ns.is_some_and(|v| v > 0));
     assert_eq!(
@@ -282,31 +272,17 @@ fn m05_metered_w1_rejects_fresh_cpu_domain_after_binding() {
     assert!(!original.shares_domain_with(&another));
     let invalid = bad_product(&packet, 0);
     let before = node.lock().unwrap().read_active().unwrap();
-    let first = dispatch_shared_with_metered_w1(
-        &node,
-        request(&invalid),
-        &original,
-        &|| Ok(()),
-    )
-    .unwrap();
+    let first =
+        dispatch_shared_with_metered_w1(&node, request(&invalid), &original, &|| Ok(())).unwrap();
     assert_eq!(first.native.unwrap_err().to_string(), "WORK:Product");
     assert!(!first.cpu.accounting_unavailable);
-    assert!(dispatch_shared_with_metered_w1(
-        &node,
-        request(&packet),
-        &another,
-        &|| Ok(()),
-    )
-    .is_err());
+    assert!(
+        dispatch_shared_with_metered_w1(&node, request(&packet), &another, &|| Ok(()),).is_err()
+    );
     assert_eq!(node.lock().unwrap().read_active().unwrap(), before);
     // Reusing the original domain must still admit an honest statement.
-    let valid = dispatch_shared_with_metered_w1(
-        &node,
-        request(&packet),
-        &original,
-        &|| Ok(()),
-    )
-    .unwrap();
+    let valid =
+        dispatch_shared_with_metered_w1(&node, request(&packet), &original, &|| Ok(())).unwrap();
     assert!(!valid.cpu.accounting_unavailable);
     assert!(valid.native.is_ok());
 }

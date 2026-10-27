@@ -727,10 +727,18 @@ fn four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged() {
         let full_wall_ns = ns(full_started);
         assert!(matches!(
             checked,
-            Err(pon_work::VerificationError::Relation(pon_work::WorkError::Transcript))
+            Err(pon_work::VerificationError::Relation(
+                pon_work::WorkError::Transcript
+            ))
         ));
-        assert_eq!(tiles, 512, "reject only after full scalar transcript replay");
-        assert_eq!(post_replay, 0, "forgery must not reach product/VerifiedWork");
+        assert_eq!(
+            tiles, 512,
+            "reject only after full scalar transcript replay"
+        );
+        assert_eq!(
+            post_replay, 0,
+            "forgery must not reach product/VerifiedWork"
+        );
         assert!(matches!(
             pon_work::verify(challenge, task, target, &proof),
             Err(pon_work::WorkError::Transcript)
@@ -1411,8 +1419,9 @@ fn signed_confirmation_phase(
                 serde_json::from_value::<ingress::Page>(row["response"]["value"].clone())
                     .map_err(|error| error.to_string())
                     .and_then(|page| {
-                        ingress::receive_page(
+                        ingress::receive_public_page_from(
                             &mut verifier,
+                            address,
                             page,
                             tip,
                             after,

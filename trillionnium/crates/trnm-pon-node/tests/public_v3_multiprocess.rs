@@ -994,8 +994,9 @@ fn phase(
                         serde_json::from_value::<ingress::Page>(row["response"]["value"].clone())
                             .map_err(|e| e.to_string())
                             .and_then(|page| {
-                                ingress::receive_page(
+                                ingress::receive_public_page_from(
                                     &mut verifier,
+                                    address,
                                     page,
                                     tip,
                                     after,
@@ -1005,7 +1006,7 @@ fn phase(
                             });
                     row["client_import"] = import_stamp.finish(epoch);
                     row["client_import"]["operation"] = json!(
-                        "deserialize Page and ordinary receive_page, including activation only on the original complete page"
+                        "deserialize Page and source-aware receive_public_page_from, including activation only on the original complete page"
                     );
                     row["client_import"]["succeeded"] = json!(imported.is_ok());
                     match imported {

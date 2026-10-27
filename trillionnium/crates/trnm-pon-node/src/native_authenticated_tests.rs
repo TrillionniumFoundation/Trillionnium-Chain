@@ -746,7 +746,18 @@ fn native_inactive_page_parents_use_checked_material_without_early_activation() 
             next: hex::encode(next),
             complete: index == 6,
         };
-        after = crate::ingress::receive_page(&mut client, page, tip, after, 100_000).unwrap();
+        // This is a local native fixture. Keep the source-aware compatibility
+        // entry and its original Node-owned CPU account; do not expose the
+        // private parser to make the old call compile.
+        after = crate::ingress::receive_page_from(
+            &mut client,
+            ([127, 0, 0, 1], 1).into(),
+            page,
+            tip,
+            after,
+            100_000,
+        )
+        .unwrap();
         assert_eq!(after, next);
         assert_eq!(
             client.active().unwrap().0,

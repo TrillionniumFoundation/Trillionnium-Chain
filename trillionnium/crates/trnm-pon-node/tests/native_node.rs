@@ -1395,7 +1395,9 @@ fn test_full_transaction_pages_use_byte_limits_and_recover_all_native_state() {
                 assert!(!page.complete);
                 assert!(page.packets.len() < 12);
             }
-            after = ingress::receive_page(&mut receiver, page, tip, after, clock).unwrap();
+            after =
+                ingress::receive_public_page_from(&mut receiver, address, page, tip, after, clock)
+                    .unwrap();
             page_count += 1;
             assert!(page_count <= 12);
         }
