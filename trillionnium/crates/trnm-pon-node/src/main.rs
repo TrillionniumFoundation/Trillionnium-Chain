@@ -2257,9 +2257,21 @@ fn run() -> Result<Value> {
                     // Existing root-provisioned cgroup v2 parent: the actual
                     // kernel, not another local counter, enforces aggregate
                     // CPU/memory/task ceilings across independent processes.
+                    // Outbound pinned History from a real WAN peer is
+                    // untrusted W1 work even when this listener is loopback.
+                    // Demand the SAME immutable root-provisioned Host parent
+                    // at CLI startup rather than starting an unbudgeted server.
+                    let polling_wan = polling.as_ref().is_some_and(|p| {
+                        p.peers.iter().any(|peer| !peer.address.ip().is_loopback())
+                    });
+                    let host_parent = if polling_wan {
+                        Some(trnm_pon_node::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT)
+                    } else {
+                        args.get("--host-kernel-parent").map(String::as_str)
+                    };
                     let host_kernel = host_public_guard::require_host_kernel_budget(
                         listener.local_addr()?,
-                        args.get("--host-kernel-parent").map(String::as_str),
+                        host_parent,
                     )?;
                     // Host counters aggregate ALL child processes of this same
                     // parent; never interpret them as one client's paid CPU.
