@@ -125,12 +125,18 @@ class OwnedMigrationJournalTests(unittest.TestCase):
         def attempt(_):
             journal = OfflineMigrationJournal(self.path)
             try:
-                return self.consume(journal)[0]
+                return journal.consume(
+                    PROOF, new_public_pem=b"", expected_network=N,
+                    expected_old_pub=O, expected_authority_head=H,
+                    expected_generation=3, expected_sequence=5, now=1)[0]
             finally:
                 journal.close()
 
-        with ThreadPoolExecutor(max_workers=8) as pool:
-            results = list(pool.map(attempt, range(8)))
+        # Patch the crypto verdict ONCE for all threads, not individually
+        # per call: overlapping mock.patch scopes can restore each other.
+        with patch("pq_account_migration.verify_migration", return_value=RECEIPT):
+            with ThreadPoolExecutor(max_workers=8) as pool:
+                results = list(pool.map(attempt, range(8)))
         self.assertEqual(results.count("FIRST_RECORD"), 1)
         self.assertEqual(results.count("ALREADY_RECORDED"), 7)
         self.assertEqual(self.rows(), 1)
