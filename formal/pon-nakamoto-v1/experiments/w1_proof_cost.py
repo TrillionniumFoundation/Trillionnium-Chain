@@ -2,7 +2,10 @@
 """Measure the actual W1 proof process, retaining killed and failed attempts.
 
 This Linux experiment runner is not a resource authorization owner. wait4
-reports kernel-accounted child CPU and peak RSS; it grants no runtime credit.
+reports the direct child's rusage, including descendants only when reaped
+before that child's exit. Timeout group termination can leave the prover's
+cost absent from this rusage. It is not aggregate process-tree peak memory.
+Separate original process samples are required for descendant cost bounds.
 The native host performs the cryptographic checks, including a fresh-process
 saved-receipt verification. An exit code alone never qualifies consensus.
 """
@@ -78,7 +81,8 @@ def execute(command: list[str], directory: Path, seconds: float) -> dict:
         "sigkill_after_timeout": escalated, "elapsed_wall_seconds": time.monotonic() - start,
         "child_user_cpu_seconds": usage.ru_utime, "child_system_cpu_seconds": usage.ru_stime,
         "child_peak_rss_bytes": usage.ru_maxrss * 1024,
-        "resource_source": "Linux wait4 rusage; peak RSS is not a production budget authority",
+        "resource_source": "Linux wait4 of direct host; descendant costs may be absent after group termination; peak RSS is not aggregate process-tree memory or a production budget authority",
+        "prover_resource_completeness_established": False,
         "stdout_sha256": sha(directory / "stdout.log"), "stderr_sha256": sha(directory / "stderr.log"),
     }
     write(directory / "process.json", result)

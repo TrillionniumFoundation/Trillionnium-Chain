@@ -63,8 +63,13 @@ runner must record killed/timeout processes and peak RSS, since SIGKILL
 cannot write its own terminal observation. Do not infer omitted failures
 from the completed summary.
 The committed `../experiments/w1_proof_cost.py` runner records actual kernel
-child CPU/RSS, timeout and process exit, retains incomplete trials, and runs
+direct-child CPU/RSS, timeout and process exit, retains incomplete trials, and runs
 the saved-receipt verifier in a fresh process for every successful trial.
+After process-group termination, unreaped prover descendants can be missing
+from the direct host's `wait4` rusage. Do not use that small direct-host number
+as total proving cost. Preserve separate `/proc` process observations as
+explicit lower bounds; neither source supplies an aggregate lifetime peak
+for an arbitrary process tree or a production resource authority.
 
 The separate `w1-native-cost` binary replays the exact saved full input 1,000
 times and records every native-verifier duration independently of the prover's
