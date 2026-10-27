@@ -56,7 +56,10 @@
     "evidence/pon-pq-tpq1-native-v1/native-sanitizer-test.log",
     "formal/pon-nakamoto-v1/test_pq_tpq1_canonical_pem.py",
     "docs/security/PQ_TPQ1_CANONICAL_PEM_RESEARCH_V1.md",
-    "evidence/pon-pq-pql10-pem-source-v1/local-qualification.json"
+    "evidence/pon-pq-pql10-pem-source-v1/local-qualification.json",
+    "scripts/ci/check_pq_research_integration.py",
+    "scripts/ci/test_pq_research_integration.py",
+    "docs/security/PQ_PQL11_RECURSIVE_SOURCE_COVERAGE_V1.md"
   ],
   "pinned_blobs": {
     "config/consensus-mainline.json": "969ddfec9ead64bc3eb7e0cc9997a0950947e09e",
@@ -160,7 +163,10 @@
     "evidence/pon-pq-pql10-pem-source-v1/normal-test.log": "4768863acadbe03d793e615763cf2fe006a3332a",
     "evidence/pon-pq-pql10-pem-source-v1/sanitizer-test.log": "2ada9806d35604801ab9a01d289d8a60867a0cac",
     "evidence/pon-pq-pql10-pem-source-v1/combined-test.log": "1d8cd4234d1ae143434d024c8629aaf81014c62a",
-    "evidence/pon-pq-pql10-pem-source-v1/local-qualification.json": "596aa94783e6b029c73a05696fb8bdfc32b25c74"
+    "evidence/pon-pq-pql10-pem-source-v1/local-qualification.json": "596aa94783e6b029c73a05696fb8bdfc32b25c74",
+    "scripts/ci/check_pq_research_integration.py": "ab7aa05706d06959c6c727a6c61e212faabc59de",
+    "scripts/ci/test_pq_research_integration.py": "9c69007966b7a0dc02361c1913fbf16f65ddeb77",
+    "docs/security/PQ_PQL11_RECURSIVE_SOURCE_COVERAGE_V1.md": "8f4a5f43abdf92c729c9d39e60f6ea4a3801ce2d"
   },
   "assertions": {
     "production_activation": false,
