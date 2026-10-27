@@ -102,130 +102,32 @@ class StatelessAdmissionControls(unittest.TestCase):
         self.assertEqual(clone.consume(grant, self.proposal, self.alice,
                                        nonce, 120), 'READY_RESOURCE_ONLY')
 
-    def test_receiver_policy_cannot_be_lowered_by_untrusted_caller(self):
-        # Original research accepted 8..24 from the offer caller even when a
-        # server wanted to charge a higher price. The immutable issuer policy
-        # must reject any unrequested difficulty before generating a token.
+    def test_server_owned_difficulty_disallows_unpriced_offers(self):
         strict = Receiver(self.receiver, self.secret, self.epoch,
-                          required_bits=12, capacity=2)
-        for underpriced in (8, 9, 11, 13, 24):
-            with self.assertRaisesRegex(ValueError, '^REQUIRED_BITS
-        grant, nonce = self.grant()
-        bad = next(n for n in range(100) if not qualifies(ticket(grant, n), 8))
-        self.assertEqual(self.issuer.consume(grant, self.proposal, self.alice,
-                                             bad, 120), 'TARGET')
-        self.assertEqual(self.issuer.consume(
-            replace(grant, bits=9), self.proposal, self.alice, nonce, 120),
-            'GRANT_MAC')
-        self.assertEqual(self.issuer.consume(
-            replace(grant, mac=bytes(32)), self.proposal, self.alice, nonce, 120),
-            'GRANT_MAC')
-        self.assertEqual(self.issuer.consume(grant, self.proposal, self.alice,
-                                             -1, 120), 'GRANT_ENCODING')
-        self.assertEqual(self.issuer.consume(grant, self.proposal, self.alice,
-                                             nonce, 120), 'READY_RESOURCE_ONLY')
-        with self.assertRaisesRegex(ValueError, 'CALLER'):
-            self.issuer.offer(self.proposal, bytes(1), 8, 130)
-
-    def test_expiration_and_clock_regression_fail_closed(self):
-        grant, nonce = self.grant()
-        self.assertEqual(self.issuer.consume(grant, self.proposal, self.alice,
-                                             nonce, 2100), 'EXPIRED_OR_FUTURE')
-        self.assertEqual(self.issuer.pending_paid(), 0)
-        with self.assertRaisesRegex(ValueError, 'CLOCK_REGRESSION'):
-            self.issuer.offer(self.proposal, self.alice, 8, 2000)
-
-    def test_paid_research_ticket_still_rejects_false_w1_transcript(self):
-        import work_oracle as W
-        zeros = [0] * W.CELLS
-        header = H('stateless-w2c-header') * 9 + bytes(30)
-        self.assertEqual(len(header), 318)
-        challenge = H('challenge', header)
-        false = b'PNW1' + W.field_bytes(zeros)*3 + H('fake-transcript', challenge)
-        proposal = H('w2c-proposal', b'w2c-research-security-v0', header, false)
-        grant = self.issuer.offer(proposal, self.alice, 8, 100)
-        nonce, _ = solve(grant, 65536)
-        self.assertIsNotNone(nonce)
-        self.assertEqual(self.issuer.consume(grant, proposal, self.alice, nonce, 120),
-                         'READY_RESOURCE_ONLY')
-        with self.assertRaisesRegex(ValueError, '^TRANSCRIPT$'):
-            W.verify(challenge, W.task_id(zeros, zeros), bytes([255])*32, false)
-        self.assertEqual(self.issuer.pending_paid(), 1)
-
-
-if __name__ == '__main__':
-    unittest.main(verbosity=2)
-):
-                strict.offer(self.proposal, self.alice, underpriced, 100)
-        grant = strict.offer(self.proposal, self.alice, 12, 100)
-        self.assertEqual(grant.bits, 12)
+                          capacity=2, required_bits=12)
+        for bits in (8, 9, 11, 13, 24):
+            with self.assertRaisesRegex(ValueError, "REQUIRED_BITS"):
+                strict.offer(self.proposal, self.alice, bits, 100)
+        correct = strict.offer(self.proposal, self.alice, 12, 100)
+        self.assertEqual(correct.bits, 12)
         self.assertEqual(strict.pending_paid(), 0)
-        for invalid in (7, 25, 0):
-            with self.assertRaisesRegex(ValueError, '^REQUIRED_BITS
-        grant, nonce = self.grant()
-        bad = next(n for n in range(100) if not qualifies(ticket(grant, n), 8))
-        self.assertEqual(self.issuer.consume(grant, self.proposal, self.alice,
-                                             bad, 120), 'TARGET')
-        self.assertEqual(self.issuer.consume(
-            replace(grant, bits=9), self.proposal, self.alice, nonce, 120),
-            'GRANT_MAC')
-        self.assertEqual(self.issuer.consume(
-            replace(grant, mac=bytes(32)), self.proposal, self.alice, nonce, 120),
-            'GRANT_MAC')
-        self.assertEqual(self.issuer.consume(grant, self.proposal, self.alice,
-                                             -1, 120), 'GRANT_ENCODING')
-        self.assertEqual(self.issuer.consume(grant, self.proposal, self.alice,
-                                             nonce, 120), 'READY_RESOURCE_ONLY')
-        with self.assertRaisesRegex(ValueError, 'CALLER'):
-            self.issuer.offer(self.proposal, bytes(1), 8, 130)
-
-    def test_expiration_and_clock_regression_fail_closed(self):
-        grant, nonce = self.grant()
-        self.assertEqual(self.issuer.consume(grant, self.proposal, self.alice,
-                                             nonce, 2100), 'EXPIRED_OR_FUTURE')
-        self.assertEqual(self.issuer.pending_paid(), 0)
-        with self.assertRaisesRegex(ValueError, 'CLOCK_REGRESSION'):
-            self.issuer.offer(self.proposal, self.alice, 8, 2000)
-
-    def test_paid_research_ticket_still_rejects_false_w1_transcript(self):
-        import work_oracle as W
-        zeros = [0] * W.CELLS
-        header = H('stateless-w2c-header') * 9 + bytes(30)
-        self.assertEqual(len(header), 318)
-        challenge = H('challenge', header)
-        false = b'PNW1' + W.field_bytes(zeros)*3 + H('fake-transcript', challenge)
-        proposal = H('w2c-proposal', b'w2c-research-security-v0', header, false)
-        grant = self.issuer.offer(proposal, self.alice, 8, 100)
-        nonce, _ = solve(grant, 65536)
-        self.assertIsNotNone(nonce)
-        self.assertEqual(self.issuer.consume(grant, proposal, self.alice, nonce, 120),
-                         'READY_RESOURCE_ONLY')
-        with self.assertRaisesRegex(ValueError, '^TRANSCRIPT$'):
-            W.verify(challenge, W.task_id(zeros, zeros), bytes([255])*32, false)
-        self.assertEqual(self.issuer.pending_paid(), 1)
-
-
-if __name__ == '__main__':
-    unittest.main(verbosity=2)
-):
+        for invalid in (0, 7, 25):
+            with self.assertRaisesRegex(ValueError, "REQUIRED_BITS"):
                 Receiver(self.receiver, self.secret, self.epoch,
                          required_bits=invalid)
 
-    def test_old_authentic_cheap_ticket_cannot_cross_policy_upgrade(self):
-        # Old MAC is genuinely issued by identical receiver credentials;
-        # a new issuer policy cannot accept a valid old lower-price nonce.
+    def test_authentic_old_policy_ticket_cannot_buy_new_policy_replay(self):
         old_grant, nonce = self.grant()
-        strict = Receiver(self.receiver, self.secret, self.epoch,
-                          required_bits=12)
-        self.assertEqual(strict.consume(
+        upgraded = Receiver(self.receiver, self.secret, self.epoch,
+                            required_bits=12)
+        self.assertEqual(upgraded.consume(
             old_grant, self.proposal, self.alice, nonce, 120),
-            'REQUIRED_BITS')
-        self.assertEqual(strict.pending_paid(), 0)
-        # The original issuer still can consume the original grant; the test
-        # verifies the stricter policy, not a global operator revocation.
+            "REQUIRED_BITS")
+        self.assertEqual(upgraded.pending_paid(), 0)
+        # A different receiver configuration cannot change old W1 rules.
         self.assertEqual(self.issuer.consume(
             old_grant, self.proposal, self.alice, nonce, 120),
-            'READY_RESOURCE_ONLY')
+            "READY_RESOURCE_ONLY")
 
     def test_tamper_bad_nonce_and_strict_types(self):
         grant, nonce = self.grant()
