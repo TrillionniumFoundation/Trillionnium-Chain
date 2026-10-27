@@ -112,9 +112,12 @@ class SQLiteSpentOwner:
                 self.db.execute('COMMIT')
                 return 'READY_RESOURCE_ONLY'
             except (sqlite3.Error, ValueError):
-                if self.db.in_transaction:
-                    try:
+                # Connection.in_transaction itself raises ProgrammingError
+                # after a real close/disk fault. No error path may convert
+                # unavailable storage into a free work authorization.
+                try:
+                    if self.db.in_transaction:
                         self.db.execute('ROLLBACK')
-                    except sqlite3.Error:
-                        pass
+                except sqlite3.Error:
+                    pass
                 return 'SPEND_UNAVAILABLE'
