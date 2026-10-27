@@ -179,7 +179,14 @@ class DurablePaidSpendTests(unittest.TestCase):
         self.assertIsNotNone(nonce)
         self.assertEqual(owner.consume(grant, proposal, self.caller, nonce, 130),
                          'READY_RESOURCE_ONLY')
-        with self.assertRaisesRegex(ValueError, '^TRANSCRIPT
+        with self.assertRaisesRegex(ValueError, '^TRANSCRIPT$'):
+            W.verify(challenge, W.task_id(zeros, zeros),
+                     bytes([255]) * 32, false_proof)
+        self.assertEqual(owner.consume(grant, proposal, self.caller, nonce, 140),
+                         'REPLAY')
+        self.assertEqual(owner.pending_paid(), 1)
+
+    def test_existing_mismatched_epoch_or_key_fails_closed(self):
         original = self.owner(create=True)
         original.close()
         with self.assertRaisesRegex(ValueError, 'OWNER_CONTEXT'):
@@ -188,6 +195,25 @@ class DurablePaidSpendTests(unittest.TestCase):
             self.owner(directory=self.directory / 'missing')
         with self.assertRaises(FileExistsError):
             self.owner(create=True)
+
+    def test_two_real_os_processes_share_one_paid_spend(self):
+        original = self.owner(create=True)
+        grant, nonce = self.ticket(original)
+        original.close()
+        # Both children are separate Python processes opening the same SQLite.
+        with ThreadPoolExecutor(max_workers=2) as executor:
+            children = list(executor.map(
+                lambda _: self.child(grant, nonce), range(2)
+            ))
+        for child in children:
+            self.assertEqual(child.returncode, 0, child.stderr)
+        outcomes = sorted(child.stdout.strip() for child in children)
+        self.assertEqual(outcomes, ['READY_RESOURCE_ONLY', 'REPLAY'])
+        reopened = self.owner()
+        self.addCleanup(reopened.close)
+        self.assertEqual(reopened.pending_paid(), 1)
+        self.assertEqual(reopened.consume(
+            grant, self.proposal, self.caller, nonce, 140), 'REPLAY')
 
     def test_local_file_replace_refuses_new_paid_replay(self):
         owner = self.owner(create=True)
@@ -249,68 +275,6 @@ class DurablePaidSpendTests(unittest.TestCase):
         (self.directory / DB_NAME).unlink()
         with self.assertRaises(FileNotFoundError):
             self.owner(create=False)
-
-    def test_copying_database_before_spend_is_not_global_replay_protection(self):
-        # This deliberate negative control must CONTINUE to show two READYs.
-        # A host can copy the DB, secret and epoch; no local SQLite algorithm
-        # can prove unique global custody of those cloned physical owners.
-        original = self.owner(create=True)
-        grant, nonce = self.ticket(original)
-        other_dir = self.directory / 'clone'
-        other_dir.mkdir(mode=0o700)
-        shutil.copy2(self.directory / DB_NAME, other_dir / DB_NAME)
-        clone = self.owner(directory=other_dir)
-        self.addCleanup(clone.close)
-        self.addCleanup(original.close)
-        self.assertEqual(original.consume(grant, self.proposal, self.caller, nonce, 130),
-                         'READY_RESOURCE_ONLY')
-        self.assertEqual(clone.consume(grant, self.proposal, self.caller, nonce, 130),
-                         'READY_RESOURCE_ONLY')
-
-
-if __name__ == '__main__':
-    unittest.main(verbosity=2)
-):
-            W.verify(challenge, W.task_id(zeros, zeros),
-                     bytes([255]) * 32, false_proof)
-        self.assertEqual(owner.consume(grant, proposal, self.caller, nonce, 140),
-                         'REPLAY')
-        self.assertEqual(owner.pending_paid(), 1)
-
-    def test_existing_mismatched_epoch_or_key_fails_closed(self):
-        original = self.owner(create=True)
-        original.close()
-        with self.assertRaisesRegex(ValueError, 'OWNER_CONTEXT'):
-            self.owner(epoch=bytes([6])*32)
-        with self.assertRaises(FileNotFoundError):
-            self.owner(directory=self.directory / 'missing')
-        with self.assertRaises(FileExistsError):
-            self.owner(create=True)
-
-    def test_local_file_replace_refuses_new_paid_replay(self):
-        owner = self.owner(create=True)
-        self.addCleanup(owner.close)
-        grant, nonce = self.ticket(owner)
-        store = self.directory / DB_NAME
-        held = self.directory / 'held.sqlite'
-        os.rename(store, held)
-        store.write_bytes(b'not a valid spent store')
-        os.chmod(store, 0o600)
-        self.assertEqual(owner.consume(grant, self.proposal, self.caller, nonce, 120),
-                         'DURABLE_UNAVAILABLE')
-
-    def test_directory_symlink_and_world_readable_policy_refuse(self):
-        first = self.owner(create=True)
-        first.close()
-        link = self.directory.parent / (self.directory.name + '-link')
-        os.symlink(self.directory, link)
-        self.addCleanup(link.unlink)
-        with self.assertRaisesRegex(ValueError, 'OWNER_DIRECTORY'):
-            self.owner(directory=link)
-        os.chmod(self.directory, 0o755)
-        self.addCleanup(os.chmod, self.directory, 0o700)
-        with self.assertRaisesRegex(ValueError, 'OWNER_DIRECTORY'):
-            self.owner()
 
     def test_copying_database_before_spend_is_not_global_replay_protection(self):
         # This deliberate negative control must CONTINUE to show two READYs.
