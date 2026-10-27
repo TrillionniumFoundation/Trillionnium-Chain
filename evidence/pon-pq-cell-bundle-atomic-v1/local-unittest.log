@@ -3,6 +3,8 @@ test_concurrent_eight_publishers_only_one_no_clobber_index (test_pq_cell_bundle_
 test_cross_release_catalog_identity_rejects_before_fetch (test_pq_cell_bundle_atomic.BundleAtomicTests.test_cross_release_catalog_identity_rejects_before_fetch) ... ok
 test_duplicate_or_missing_cell_selector_rejected (test_pq_cell_bundle_atomic.BundleAtomicTests.test_duplicate_or_missing_cell_selector_rejected) ... ok
 test_existing_published_identity_cannot_be_replaced (test_pq_cell_bundle_atomic.BundleAtomicTests.test_existing_published_identity_cannot_be_replaced) ... ok
+test_fifo_from_untrusted_fetcher_rejected_without_hang (test_pq_cell_bundle_atomic.BundleAtomicTests.test_fifo_from_untrusted_fetcher_rejected_without_hang) ... ok
+test_fifo_published_index_rejected_without_hang (test_pq_cell_bundle_atomic.BundleAtomicTests.test_fifo_published_index_rejected_without_hang) ... ok
 test_fsync_failure_after_publish_does_not_falsely_rollback (test_pq_cell_bundle_atomic.BundleAtomicTests.test_fsync_failure_after_publish_does_not_falsely_rollback) ... ok
 test_full_base_and_two_cells_publish_together_and_cold_reverify (test_pq_cell_bundle_atomic.BundleAtomicTests.test_full_base_and_two_cells_publish_together_and_cold_reverify) ... ok
 test_modified_published_weight_refused_on_cold_read (test_pq_cell_bundle_atomic.BundleAtomicTests.test_modified_published_weight_refused_on_cold_read) ... ok
@@ -18,6 +20,6 @@ test_trusted_digest_is_required_before_any_download (test_pq_cell_bundle_atomic.
 test_unpublished_orphan_stage_has_no_readable_release (test_pq_cell_bundle_atomic.BundleAtomicTests.test_unpublished_orphan_stage_has_no_readable_release) ... ok
 
 ----------------------------------------------------------------------
-Ran 18 tests in 0.045s
+Ran 20 tests in 0.059s
 
 OK

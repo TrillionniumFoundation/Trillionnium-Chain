@@ -139,11 +139,18 @@ def _subdir(root, name):
     _private_dir(p)
     return p
 
+def _safe_read_flags():
+    # Missing OS anti-symlink / non-blocking flags are a hard research refusal.
+    # O_NONBLOCK prevents an attacker-controlled FIFO from hanging before fstat.
+    for name in ('O_NOFOLLOW', 'O_NONBLOCK', 'O_CLOEXEC'):
+        if not hasattr(os, name):
+            raise BundleReject('safe file-open flags unavailable')
+    return os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK | os.O_CLOEXEC
+
 def _content_readback(path: Path, e: Entry):
     if path.is_symlink():
         raise BundleReject('symlink object')
-    flags = os.O_RDONLY | getattr(os, 'O_NOFOLLOW', 0)
-    fd = os.open(path, flags)
+    fd = os.open(path, _safe_read_flags())
     try:
         before = os.fstat(fd)
         if not stat.S_ISREG(before.st_mode) or before.st_size != e.length or before.st_nlink != 1:
@@ -171,7 +178,9 @@ def _pointer(m: Manifest, token: bytes):
             b''.join(e.encoded() for e in m.entries))
 
 def _fsync_dir(path):
-    fd = os.open(path, os.O_RDONLY | getattr(os, 'O_DIRECTORY', 0))
+    if not hasattr(os, 'O_NOFOLLOW') or not hasattr(os, 'O_DIRECTORY'):
+        raise BundleReject('safe directory-open flags unavailable')
+    fd = os.open(path, _safe_read_flags() | os.O_DIRECTORY)
     try: os.fsync(fd)
     finally: os.close(fd)
 
@@ -271,7 +280,7 @@ def read_published(*, manifest_bytes, expected_manifest_digest, expected_network
     _private_dir(pending); _private_dir(published)
     pointer = published / (m.digest.hex() + '.pab1')
     # Open no-follow; only a published hardlink to the sealed staged index counts.
-    flags = os.O_RDONLY | getattr(os, 'O_NOFOLLOW', 0)
+    flags = _safe_read_flags()
     fd = os.open(pointer, flags)
     try:
         pst = os.fstat(fd)

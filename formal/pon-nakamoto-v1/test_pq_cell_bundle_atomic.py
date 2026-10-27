@@ -209,6 +209,24 @@ class BundleAtomicTests(unittest.TestCase):
         self.assertLess(order.index('pending'), order.index('published'))
         self.assertEqual(read_published(**self.kw).objects_checked, 3)
 
+    def test_fifo_from_untrusted_fetcher_rejected_without_hang(self):
+        if not hasattr(os, 'mkfifo'):
+            self.skipTest('FIFO unavailable')
+        def fifo(**kwargs):
+            os.mkfifo(kwargs['destination'], 0o600)
+        with self.assertRaisesRegex(BundleReject, 'object metadata'):
+            self.publish(fetcher=fifo)
+        self.assertEqual(tuple((self.root/'published').iterdir()), ())
+
+    def test_fifo_published_index_rejected_without_hang(self):
+        if not hasattr(os, 'mkfifo'):
+            self.skipTest('FIFO unavailable')
+        observed = self.publish()
+        observed.index_path.unlink()
+        os.mkfifo(observed.index_path, 0o600)
+        with self.assertRaisesRegex(BundleReject, 'published index link ownership'):
+            read_published(**self.kw)
+
     def test_pending_fsync_fail_never_exposes_dangling_ready_pointer(self):
         import pq_cell_bundle_atomic as b
         real = b._fsync_dir
