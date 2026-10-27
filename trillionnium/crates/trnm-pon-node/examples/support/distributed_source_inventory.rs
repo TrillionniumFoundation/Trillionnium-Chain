@@ -428,6 +428,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-crypto-primitives/examples/pon_pure_rejection_tail_campaign.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/examples/pon_pure_rejection_tail_campaign.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-crypto-primitives/examples/pon_rejection_cost.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -488,6 +495,83 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-crypto-primitives/examples/support/w1_material.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/Cargo.toml",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/Cargo.toml"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/guest/Cargo.toml",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/guest/Cargo.toml"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/guest/src/main.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/guest/src/main.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/Cargo.toml",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/Cargo.toml"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/main.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/main.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/receipt_bounds.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/receipt_bounds.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/receipt_bounds_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/receipt_bounds_tests.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/relation/Cargo.toml",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/relation/Cargo.toml"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/relation/src/lib.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/relation/src/lib.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/relation/src/parameters.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/relation/src/parameters.rs"
         )),
     ),
     (

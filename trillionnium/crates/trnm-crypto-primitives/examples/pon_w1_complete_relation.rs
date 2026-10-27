@@ -71,14 +71,82 @@ fn execute(path: &Path) -> Result<()> {
     Ok(())
 }
 
+fn benchmark(path: &Path) -> Result<()> {
+    let mut input = Vec::new();
+    File::open(path)?
+        .take((full_relation::INPUT_BYTES + 1) as u64)
+        .read_to_end(&mut input)?;
+    if input.len() != full_relation::INPUT_BYTES {
+        bail!("incorrect fixed input length");
+    }
+    let statement =
+        full_relation::PublicStatement::decode(&input[..full_relation::STATEMENT_BYTES])
+            .map_err(|error| anyhow!("{error:?}"))?;
+    let header = Header::decode(statement.header_bytes()).map_err(|error| anyhow!("{error:?}"))?;
+    let witness = &input[full_relation::STATEMENT_BYTES..];
+    let expected = full_relation::execute_input(&input).map_err(|error| anyhow!("{error:?}"))?;
+    let mut observations = Vec::new();
+    for (kernel, label) in [
+        "native_production",
+        "native_scalar_reference",
+        "native_limb",
+        "complete_relation",
+    ]
+    .into_iter()
+    .enumerate()
+    {
+        let mut samples = Vec::new();
+        for _ in 0..31 {
+            let started = Instant::now();
+            if kernel == 3 {
+                std::hint::black_box(
+                    full_relation::execute_input(&input).map_err(|error| anyhow!("{error:?}"))?,
+                );
+            } else {
+                let verified = match kernel {
+                    0 => pon_work::verify(
+                        header.challenge(),
+                        header.work_task,
+                        header.target,
+                        witness,
+                    ),
+                    1 => pon_work::verify_reference(
+                        header.challenge(),
+                        header.work_task,
+                        header.target,
+                        witness,
+                    ),
+                    _ => pon_work::verify_limb(
+                        header.challenge(),
+                        header.work_task,
+                        header.target,
+                        witness,
+                    ),
+                }
+                .map_err(|error| anyhow!("{error:?}"))?;
+                // Consume actual output; this is a real verifier invocation.
+                std::hint::black_box(verified);
+            }
+            samples.push(started.elapsed().as_nanos());
+        }
+        let mut sorted = samples.clone();
+        sorted.sort_unstable();
+        observations.push(format!("\"{label}\":{{\"samples_wall_ns\":{samples:?},\"min_wall_ns\":{},\"median_wall_ns\":{},\"max_wall_ns\":{}}}", sorted[0], sorted[15], sorted[30]));
+    }
+    println!("{{\"schema\":\"pon-w1-native-fixed-input-cost-v1\",\"samples_per_kernel\":31,\"debug_assertions\":{},\"statement_id\":\"{}\",\"block_id\":\"{}\",\"kernels\":{{{}}},\"measurement_scope\":\"same fixed research input, local wall samples under shared-host load; not a throughput guarantee\",\"consensus_authority\":false}}",
+        cfg!(debug_assertions), hex::encode(expected.statement_id()), hex::encode(expected.block_id()), observations.join(","));
+    Ok(())
+}
+
 fn main() -> Result<()> {
     let args: Vec<_> = std::env::args_os().collect();
     if args.len() != 3 {
-        bail!("usage: pon_w1_complete_relation <fixture|execute> <file>");
+        bail!("usage: pon_w1_complete_relation <fixture|execute|benchmark> <file>");
     }
     match args[1].to_str() {
         Some("fixture") => fixture(Path::new(&args[2])),
         Some("execute") => execute(Path::new(&args[2])),
-        _ => bail!("expected fixture or execute"),
+        Some("benchmark") => benchmark(Path::new(&args[2])),
+        _ => bail!("expected fixture, execute or benchmark"),
     }
 }

@@ -10,6 +10,9 @@ on:
       - scripts/ci/test_check_pure_pon_cost_campaign.py
       - scripts/ci/check_pure_pon_ingress_campaign.py
       - scripts/ci/test_check_pure_pon_ingress_campaign.py
+      - scripts/ci/capture_pure_pon_rejection_tail.py
+      - scripts/ci/check_pure_pon_rejection_tail.py
+      - scripts/ci/test_check_pure_pon_rejection_tail.py
       - scripts/refresh_distributed_source_inventory.py
 permissions:
   contents: read
@@ -57,6 +60,7 @@ jobs:
           python3 scripts/ci/test_ci_source_integrity.py 2>&1 | tee "$OUT/source-negatives.log"
           python3 scripts/ci/test_check_pure_pon_cost_campaign.py 2>&1 | tee "$OUT/cost-reader-negatives.log"
           python3 scripts/ci/test_check_pure_pon_ingress_campaign.py 2>&1 | tee "$OUT/ingress-reader-negatives.log"
+          python3 scripts/ci/test_check_pure_pon_rejection_tail.py 2>&1 | tee "$OUT/rejection-tail-reader-negatives.log"
       - name: Verify locked graph and formatting
         run: |
           set -euo pipefail
@@ -77,12 +81,19 @@ jobs:
         run: |
           set -euo pipefail
           cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives -p trnm-protocol -p trnm-pon-node --all-targets --all-features -- -D warnings 2>&1 | tee "$OUT/clippy.log"
-      - name: Build both actual campaigns before timing either
+      - name: Build all three actual campaigns before timing any
         id: campaign_build
         run: |
           set -euo pipefail
           cargo +1.95.0 build --locked --profile test --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example pon_pure_cost_campaign --example pon_pure_ingress_campaign 2>&1 | tee "$OUT/campaign-build.log"
+          cargo +1.95.0 build --locked --profile test --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives --example pon_pure_rejection_tail_campaign 2>&1 | tee "$OUT/rejection-tail-build.log"
+      - name: Retain endpoint mutations and paired finite rejection tails
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/capture_pure_pon_rejection_tail.py --binary "$CARGO_TARGET_DIR/debug/examples/pon_pure_rejection_tail_campaign" --output "$OUT/rejection-tail" --concurrency-note "Sequential measurements in this GitHub job; hosted-machine scheduling and external contention are not controlled."
+          python3 scripts/ci/check_pure_pon_rejection_tail.py "$OUT/rejection-tail/stdout.jsonl.gz" --output "$OUT/rejection-tail/consistency.json"
       - name: Retain all fixed producer cohorts and failed searches
+        if: ${{ !cancelled() && steps.campaign_build.outcome == 'success' }}
         run: |
           set -euo pipefail
           python3 scripts/ci/capture_pure_pon_campaign.py --binary "$CARGO_TARGET_DIR/debug/examples/pon_pure_cost_campaign" --output "$OUT/cost" --timeout 960 -- --searches 256 --attempts 8 --rounds 2 --seed 1 --seconds 900
