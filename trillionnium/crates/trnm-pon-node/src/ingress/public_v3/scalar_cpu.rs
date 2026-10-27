@@ -1047,6 +1047,15 @@ impl ServiceMutationCpuDomain {
     pub fn accounting_available(&self) -> bool {
         self.budget.lock().is_ok_and(|budget| !budget.unavailable)
     }
+
+    /// A History scope could not publish its original durable epoch close.
+    /// Keep the same account unavailable; never substitute a fresh domain or
+    /// infer that an abandoned reservation cost zero. Its marker remains.
+    pub(crate) fn abandon_history_epoch(&self) {
+        if let Ok(mut budget) = self.budget.lock() {
+            budget.unavailable = true;
+        }
+    }
 }
 
 /// Consume an outside-pinned known clean cold-close token. This never starts a

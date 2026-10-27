@@ -873,6 +873,14 @@ fn public_call(
     request: &ingress::Request,
     settings: &Settings,
 ) -> Result<ingress::public_v2::PublicReply> {
+    public_call_before(args, request, settings, None)
+}
+fn public_call_before(
+    args: &BTreeMap<String, String>,
+    request: &ingress::Request,
+    settings: &Settings,
+    deadline: Option<Instant>,
+) -> Result<ingress::public_v2::PublicReply> {
     if public_pool_profile(args) {
         let request = match request {
             ingress::Request::Submit { packet } => ingress::public_v3::Request::Submit {
@@ -885,7 +893,7 @@ fn public_call(
             },
             _ => return Err("PUBLIC_OPERATION".into()),
         };
-        let reply = public_pool_call(args, &request, settings)?;
+        let reply = public_pool_call_before(args, &request, settings, deadline)?;
         return Ok(ingress::public_v2::PublicReply {
             ok: reply.ok,
             value: reply.value,
@@ -896,7 +904,7 @@ fn public_call(
             identity_authority: reply.identity_authority,
         });
     }
-    ingress::public_v2::call_public_protected_v2(
+    ingress::public_v2::call_public_protected_v2_with_deadline(
         need(args, "--peer")?
             .parse()
             .map_err(|_| Error::from("PEER_ADDRESS"))?,
@@ -905,6 +913,7 @@ fn public_call(
         need(args, "--server-public")?,
         &public_identity(args)?,
         public_policy(args)?,
+        deadline,
     )
 }
 
@@ -913,10 +922,18 @@ fn public_pool_call(
     request: &ingress::public_v3::Request,
     settings: &Settings,
 ) -> Result<ingress::public_v3::PublicReply> {
+    public_pool_call_before(args, request, settings, None)
+}
+fn public_pool_call_before(
+    args: &BTreeMap<String, String>,
+    request: &ingress::public_v3::Request,
+    settings: &Settings,
+    deadline: Option<Instant>,
+) -> Result<ingress::public_v3::PublicReply> {
     if !public_pool_profile(args) {
         return Err("PUBLIC_V3_REQUIRED".into());
     }
-    let (reply, observations) = ingress::public_v3::call_public_protected_v3_with_metrics(
+    let (reply, observations) = ingress::public_v3::call_public_protected_v3_with_deadline(
         need(args, "--peer")?.parse().map_err(|_| "PEER_ADDRESS")?,
         request,
         settings,
@@ -926,6 +943,7 @@ fn public_pool_call(
             u8::try_from(number(args, "--admission-bits", 16)?).map_err(|_| "PUBLIC_POLICY")?,
             Duration::from_millis(number(args, "--admission-ttl-ms", 2000)?),
         )?,
+        deadline,
     );
     if args.contains_key("--client-observations") {
         eprintln!(
@@ -2129,6 +2147,9 @@ fn run() -> Result<Value> {
             )?
         }
         "sync" => {
+            // One business deadline for every page's transport and native
+            // import. Per-packet CPU refill/W1 never renew this allowance.
+            let sync_deadline = Instant::now() + Duration::from_secs(300);
             let address = need(&args, "--peer")?
                 .parse()
                 .map_err(|_| Error::from("PEER_ADDRESS"))?;
@@ -2161,13 +2182,14 @@ fn run() -> Result<Value> {
                     if let Some(kernel) = &host_kernel {
                         kernel.verify()?;
                     }
-                    let reply = public_call(
+                    let reply = public_call_before(
                         &args,
                         &ingress::Request::History {
                             tip: hex::encode(tip),
                             after: hex::encode(cursor),
                         },
                         node.settings(),
+                        Some(sync_deadline),
                     )?;
                     trials = trials
                         .checked_add(reply.solve_trials)
@@ -2177,7 +2199,15 @@ fn run() -> Result<Value> {
                     }
                     let page: ingress::Page = serde_json::from_value(reply.value)?;
                     complete = page.complete;
-                    cursor = ingress::receive_public_page_from(&mut node, address, page, tip, cursor, ingress::now()?)?;
+                    cursor = ingress::receive_public_page_from_before(
+                        &mut node,
+                        address,
+                        page,
+                        tip,
+                        cursor,
+                        ingress::now()?,
+                        sync_deadline,
+                    )?;
                     if let Some(kernel) = &host_kernel {
                         kernel.verify()?;
                     }

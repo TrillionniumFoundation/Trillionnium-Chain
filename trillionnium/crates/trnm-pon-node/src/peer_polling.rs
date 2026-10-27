@@ -8,7 +8,6 @@ use crate::{
         public_v3::{self, PublicPolicy, PublicReply, Request},
         DevelopmentIdentity, Page,
     },
-    store::WorkCheckedPacket,
     Error, ErrorCode, Node, Packet, Result, Settings,
 };
 use serde::{Deserialize, Serialize};
@@ -28,7 +27,6 @@ use std::{
     time::{Duration, Instant},
 };
 use trnm_crypto_primitives::verifying_key_from_hex;
-use trnm_mvcc_fee::pon_executor::{ExecutionControl, ExecutionProgress};
 use trnm_protocol::pon_wire::{hash, Hash};
 const MAX_CONFIG_BYTES: u64 = 16384;
 const MAX_PACKET_BYTES: usize = 1_048_576;
@@ -338,61 +336,19 @@ fn page(
 /// Native task/parent/clock checks bracket the immutable owned full proof replay.
 /// A repeated already-admitted exact packet uses the existing durable admission fact.
 fn admit_page(node: &Mutex<Node>, packet: Packet, end: Instant, stop: &AtomicBool) -> Result<bool> {
-    let cpu = {
+    {
         let owner = lock(node, end, stop)?;
-        // The original persistent continuous owner requires a durable
-        // operation-ID/journal claim; this peer poller only holds a volatile
-        // scalar CPU operation. Refuse before full W1 or an accepted packet.
         ensure(
             !owner.is_continuous(),
             "OWNER_CONTINUOUS_HISTORY_DURABLE_REQUIRED",
         )?;
-        // The peer is authenticated, not CPU-funded. A pinned peer must
-        // never mint its own allowance or bypass the public service budget.
-        let cpu = owner.public_service_cpu_domain()?;
-        if owner
-            .check_admission_context(&packet, ingress::now()?)?
-            .is_some()
-        {
-            return Ok(false);
-        }
-        cpu
-    };
-    progress(end, stop)?;
-    // Exactly the original service bucket, across identities/listeners and
-    // inbound V3 and outbound peer polling. No new budget or chain authority.
-    let operation = cpu.begin()?;
-    let checkpoint = operation.checkpoint_handle();
-    let native = (|| -> Result<bool> {
-        progress(end, stop)?;
-        checkpoint.checkpoint()?;
-        let checked = WorkCheckedPacket::verify_with_progress(packet, &mut |_| {
-            progress(end, stop)?;
-            checkpoint.checkpoint()
-        })?;
-        progress(end, stop)?;
-        checkpoint.checkpoint()?;
-        let mut owner = lock(node, end, stop)?;
-        let check_execution = |_stage: ExecutionProgress| {
-            progress(end, stop)?;
-            checkpoint.checkpoint()
-        };
-        let control = ExecutionControl::new(&check_execution, operation.worker_accounting());
-        owner.admit_work_checked_with_control(checked, ingress::now()?, &control)?;
-        Ok(true)
-    })();
-    // Success, false transcript, cancellation, M06 failures and panics cannot
-    // invent a refund. The operation owns all actual scoped workers and
-    // settles even after a native rejection. Post-commit accounting cannot
-    // retroactively invalidate an already admitted fact.
-    let settlement = operation.finish();
-    if settlement.accounting_unavailable {
-        // Preserve any durable native block, but an outbound poller cannot
-        // report complete historical synchronization with UNKNOWN CPU.
-        return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+        // Pinned transport identity does not fund a new account. The serving
+        // owner must already have bound this original CPU domain.
+        owner.public_service_cpu_domain()?;
     }
-    native
+    ingress::history_import::admit_shared_packet(node, packet, end, &|| progress(end, stop))
 }
+
 struct PollContext<'a> {
     node: &'a Mutex<Node>,
     cfg: &'a PeerPollingConfig,
@@ -813,8 +769,9 @@ where
             let bound = lock(&node, startup_end, &stop)?.public_service_cpu_domain();
             match bound {
                 Ok(_) => break,
-                Err(error) if error.is(ErrorCode::OwnerPublicServiceDomainUnbound)
-                    && Instant::now() < startup_end =>
+                Err(error)
+                    if error.is(ErrorCode::OwnerPublicServiceDomainUnbound)
+                        && Instant::now() < startup_end =>
                 {
                     thread::sleep(Duration::from_millis(2));
                 }
@@ -956,8 +913,7 @@ mod tests {
         {
             let mut owner = node.lock().unwrap();
             if owner.public_service_cpu_domain().is_err() {
-                let original =
-                    crate::ingress::public_v3::ServiceMutationCpuDomain::standalone();
+                let original = crate::ingress::public_v3::ServiceMutationCpuDomain::standalone();
                 owner.bind_public_service_cpu_domain(&original).unwrap();
             }
         }
@@ -975,13 +931,15 @@ mod tests {
         let settings = Settings::development(Some(now - 100)).unwrap();
         let dir = tempfile::tempdir().unwrap();
         let node = Node::open(dir.path(), settings.clone(), 2).unwrap();
-        let packet = node.make(
-            settings.genesis(),
-            vec![],
-            development_public(0).unwrap(),
-            settings.genesis_time() + 10,
-            4096,
-        ).unwrap();
+        let packet = node
+            .make(
+                settings.genesis(),
+                vec![],
+                development_public(0).unwrap(),
+                settings.genesis_time() + 10,
+                4096,
+            )
+            .unwrap();
         let before = node.stats().unwrap();
         let guarded = Mutex::new(node);
         let stop = AtomicBool::new(false);
@@ -990,10 +948,14 @@ mod tests {
             packet,
             Instant::now() + Duration::from_secs(10),
             &stop,
-        ).unwrap_err();
+        )
+        .unwrap_err();
         assert_eq!(refused.to_string(), "OWNER_PUBLIC_SERVICE_DOMAIN_UNBOUND");
         assert_eq!(guarded.lock().unwrap().stats().unwrap(), before);
-        assert_eq!(guarded.lock().unwrap().read_active().unwrap().0, settings.genesis());
+        assert_eq!(
+            guarded.lock().unwrap().read_active().unwrap().0,
+            settings.genesis()
+        );
     }
 
     #[test]
@@ -1002,13 +964,15 @@ mod tests {
         let settings = Settings::development(Some(now - 100)).unwrap();
         let dir = tempfile::tempdir().unwrap();
         let node = Node::open(dir.path(), settings.clone(), 2).unwrap();
-        let mut packet = node.make(
-            settings.genesis(),
-            vec![],
-            development_public(0).unwrap(),
-            settings.genesis_time() + 10,
-            4096,
-        ).unwrap();
+        let mut packet = node
+            .make(
+                settings.genesis(),
+                vec![],
+                development_public(0).unwrap(),
+                settings.genesis_time() + 10,
+                4096,
+            )
+            .unwrap();
         // Corrupt only C; keep the canonical challenge, A/B, task and winning
         // W1 transcript unchanged so this forces a full late Product refusal.
         let offset = 4 + 2 * pon_work::CELLS * 4;
@@ -1021,15 +985,24 @@ mod tests {
                 packet.header.work_task,
                 packet.header.target,
                 &packet.proof
-            ).unwrap_err(),
+            )
+            .unwrap_err(),
             pon_work::WorkError::Product
         );
         let before = node.stats().unwrap();
         let guarded = Mutex::new(node);
         let cpu = crate::ingress::public_v3::ServiceMutationCpuDomain::standalone();
-        guarded.lock().unwrap().bind_public_service_cpu_domain(&cpu).unwrap();
-        assert!(guarded.lock().unwrap().public_service_cpu_domain()
-            .unwrap().shares_domain_with(&cpu));
+        guarded
+            .lock()
+            .unwrap()
+            .bind_public_service_cpu_domain(&cpu)
+            .unwrap();
+        assert!(guarded
+            .lock()
+            .unwrap()
+            .public_service_cpu_domain()
+            .unwrap()
+            .shares_domain_with(&cpu));
         let initial = cpu.observe().unwrap();
         let stop = AtomicBool::new(false);
         let refused = admit_page(
@@ -1037,7 +1010,8 @@ mod tests {
             packet,
             Instant::now() + Duration::from_secs(10),
             &stop,
-        ).unwrap_err();
+        )
+        .unwrap_err();
         assert_eq!(refused.to_string(), "WORK:Product");
         let final_state = cpu.observe().unwrap();
         assert_eq!(final_state.in_flight, 0);
@@ -1047,7 +1021,10 @@ mod tests {
         // service epoch. Dedicated hardware cost campaigns measure CPU ns.
         assert!(final_state.stored_credit_ns <= initial.stored_credit_ns);
         assert_eq!(guarded.lock().unwrap().stats().unwrap(), before);
-        assert_eq!(guarded.lock().unwrap().read_active().unwrap().0, settings.genesis());
+        assert_eq!(
+            guarded.lock().unwrap().read_active().unwrap().0,
+            settings.genesis()
+        );
     }
 
     #[test]
@@ -1377,7 +1354,7 @@ mod tests {
             }
         }
         assert!(found);
-        WorkCheckedPacket::verify(p.clone()).unwrap();
+        crate::store::WorkCheckedPacket::verify(p.clone()).unwrap();
         let node = Mutex::new(Node::open(local_dir.path(), settings.clone(), 1).unwrap());
         let before = node.lock().unwrap().read_active().unwrap();
         let cfg = config(&settings);
@@ -1579,18 +1556,20 @@ mod tests {
         assert_eq!(observed, 1);
         // A malicious signed peer cannot force the entire local runtime to
         // stop by returning the same text as a LOCAL failure.
-        engine.reject(
-            0,
-            "history",
-            Error::remote("PUBLIC_MUTATION_CPU_UNAVAILABLE"),
-            43,
-            None,
-            &mut |event| {
-                observed += 1;
-                assert_eq!(event.kind, "failure_cursor_retained");
-                Ok(())
-            },
-        ).unwrap();
+        engine
+            .reject(
+                0,
+                "history",
+                Error::remote("PUBLIC_MUTATION_CPU_UNAVAILABLE"),
+                43,
+                None,
+                &mut |event| {
+                    observed += 1;
+                    assert_eq!(event.kind, "failure_cursor_retained");
+                    Ok(())
+                },
+            )
+            .unwrap();
         assert_eq!(engine.states[0].failures, 2);
         assert_eq!(observed, 2);
     }
@@ -1606,8 +1585,7 @@ mod tests {
         // domain that a real V3 listener binds before it polls.
         {
             let mut owner = node.lock().unwrap();
-            let original =
-                crate::ingress::public_v3::ServiceMutationCpuDomain::standalone();
+            let original = crate::ingress::public_v3::ServiceMutationCpuDomain::standalone();
             owner.bind_public_service_cpu_domain(&original).unwrap();
         }
         let mut cfg = config(&settings);

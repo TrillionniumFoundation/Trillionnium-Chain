@@ -182,8 +182,9 @@ fn unknown_caller_cannot_override_ledger_and_full_sync_independently_verifies_ac
     let page: Page = serde_json::from_value(reply.value).unwrap();
     assert_eq!(page.packets.len(), 1);
     let mut confirmer = Node::open(confirmer_dir.path(), settings.clone(), 2).unwrap();
-    let tip = ingress::receive_page(
+    let tip = ingress::receive_public_page_from(
         &mut confirmer,
+        address,
         page,
         packet.id().unwrap(),
         settings.genesis(),
@@ -295,7 +296,8 @@ fn one_packet_history_preserves_partial_progress_and_independent_validation() {
         assert_eq!(page.packets.len(), 1);
         assert_eq!(page.complete, index == 2);
         assert_eq!(page.next, hex::encode(id));
-        after = ingress::receive_page(&mut confirmer, page, tip, after, clock).unwrap();
+        after = ingress::receive_public_page_from(&mut confirmer, address, page, tip, after, clock)
+            .unwrap();
         assert_eq!(after, *id);
         if index < 2 {
             assert_eq!(confirmer.active().unwrap().0, settings.genesis());

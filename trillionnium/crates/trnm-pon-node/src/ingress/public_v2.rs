@@ -1340,6 +1340,34 @@ pub fn call_public_protected_v2(
     caller: &DevelopmentIdentity,
     policy: PublicPolicy,
 ) -> Result<PublicReply> {
+    call_public_protected_v2_with_deadline(
+        address,
+        request,
+        settings,
+        pinned_server,
+        caller,
+        policy,
+        None,
+    )
+}
+
+/// The original caller deadline only shortens local phases. Signed domains,
+/// admission policy and response semantics remain unchanged.
+pub fn call_public_protected_v2_with_deadline(
+    address: SocketAddr,
+    request: &Request,
+    settings: &Settings,
+    pinned_server: &str,
+    caller: &DevelopmentIdentity,
+    policy: PublicPolicy,
+    outer_deadline: Option<Instant>,
+) -> Result<PublicReply> {
+    let started_call = Instant::now();
+    let total_deadline = outer_deadline
+        .map_or(started_call + Duration::from_millis(OVERALL_MS), |outer| {
+            outer.min(started_call + Duration::from_millis(OVERALL_MS))
+        });
+    ensure(Instant::now() < total_deadline, "PUBLIC_CLIENT_DEADLINE")?;
     PublicPolicy::new(policy.bits, Duration::from_millis(policy.lifetime_ms))?;
     let raw = serde_json::to_vec(request)?;
     let op = request_op(request)?;
@@ -1351,8 +1379,11 @@ pub fn call_public_protected_v2(
         client_nonce: entropy()?,
     };
     Hello::parse(&hello.encode())?;
-    let total_deadline = Instant::now() + Duration::from_millis(OVERALL_MS);
-    let mut stream = TcpStream::connect_timeout(&address, Duration::from_secs(2))?;
+    let remaining = total_deadline
+        .checked_duration_since(Instant::now())
+        .filter(|duration| !duration.is_zero())
+        .ok_or("PUBLIC_CLIENT_DEADLINE")?;
+    let mut stream = TcpStream::connect_timeout(&address, remaining.min(Duration::from_secs(2)))?;
     stream.set_read_timeout(Some(Duration::from_secs(5)))?;
     stream.set_write_timeout(Some(Duration::from_secs(5)))?;
     client_write(
@@ -1392,6 +1423,7 @@ pub fn call_public_protected_v2(
     let mut solved = None;
     for nonce in 0..1_048_576u64 {
         if nonce % 256 == 0 {
+            ensure(Instant::now() < total_deadline, "PUBLIC_CLIENT_DEADLINE")?;
             ensure(
                 started.elapsed() < Duration::from_millis(policy.lifetime_ms),
                 "PUBLIC_SOLVE_EXPIRED",

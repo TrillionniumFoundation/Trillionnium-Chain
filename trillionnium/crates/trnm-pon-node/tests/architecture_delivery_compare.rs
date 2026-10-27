@@ -583,8 +583,9 @@ fn trial(
                 let result = serde_json::from_value::<ingress::Page>(row["reply"]["value"].clone())
                     .map_err(|error| error.to_string())
                     .and_then(|page| {
-                        ingress::receive_page(
+                        ingress::receive_public_page_from(
                             &mut verifier,
+                            address,
                             page,
                             tip,
                             after,

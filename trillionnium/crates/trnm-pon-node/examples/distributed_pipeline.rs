@@ -916,7 +916,14 @@ fn sync_checked(
         let value = read_call(c, node, auth, &request, receipts)?;
         let page: ingress::Page = serde_json::from_value(value)?;
         let complete = page.complete;
-        after = ingress::receive_page(node, page, tip, after, ingress::now()?)?;
+        after = ingress::receive_public_page_from(
+            node,
+            c.peer.ok_or("PEER")?,
+            page,
+            tip,
+            after,
+            ingress::now()?,
+        )?;
         if complete {
             return Ok(());
         }
@@ -948,7 +955,14 @@ fn confirmer(c: &Config, receipts: &mut Receipts, secret: &str, resume: bool) ->
                     let after = digest(&after)?;
                     let page: ingress::Page = serde_json::from_value(value)?;
                     let complete = page.complete;
-                    let next = ingress::receive_page(&mut node, page, tip, after, ingress::now()?)?;
+                    let next = ingress::receive_public_page_from(
+                        &mut node,
+                        c.peer.ok_or("PEER")?,
+                        page,
+                        tip,
+                        after,
+                        ingress::now()?,
+                    )?;
                     if !complete {
                         sync_checked(c, &mut node, &auth, tip, next, receipts)?;
                     }
