@@ -785,3 +785,7 @@ stale. No operation/outbox may treat it as a NotDispatched certificate.
 Exact-source Rust compilation and real independent network acceptance are
 NOT_RUN here. P0-B and P2 remain strictly OPEN.
 
+
+### Actual new-task work following zero-lease maintenance reentry
+
+The existing `maintenance_reentry_registers_signed_task_and_independent_client_confirms` development regression now extends its nine original Maintenance blocks with an actual signed `make_with_task` PNW1 candidate for the registered new source/task at height 10. Both real SQLite-backed nodes must verify and activate identical bytes/state, the new task's output meter must become one, and a fresh independent Node must replay all ten blocks and confirm the originally signed revoke/open/registration operations before cold reopen. This closes a previously missing *test-path step*, not work hardness, independent administrators, signed production key custody or public release qualification. No historical Revision12/Q4/DAA bytes or activation flags change.

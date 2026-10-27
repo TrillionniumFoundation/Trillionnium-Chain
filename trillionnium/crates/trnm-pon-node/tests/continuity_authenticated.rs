@@ -231,7 +231,9 @@ fn revoked_optional_work_keeps_maintenance_maturity_and_interrupted_native_recov
 /// This does not grant source/operator independence or W1 hardness qualification.
 #[test]
 fn maintenance_reentry_registers_signed_task_and_independent_client_confirms() {
-    use trnm_crypto_primitives::qualified_work_task::derive_matrices;
+    use trnm_crypto_primitives::qualified_work_task::{
+        derive_matrices, lifecycle_v2::verify_lifecycle_admission, TaskMaterial,
+    };
     use trnm_protocol::qualified_work_task::{
         lifecycle_v2::SignedLifecycleTaskV2, QualifiedWorkTask, TaskPurpose,
     };
@@ -396,6 +398,36 @@ fn maintenance_reentry_registers_signed_task_and_independent_client_confirms() {
         parent = id;
     }
 
+    // Registration is not sufficient to close P0-A: actually produce the first
+    // qualified W1 block under the NEW signed task after Maintenance reentry.
+    let checked = verify_lifecycle_admission(
+        &statement.encode().unwrap(),
+        TaskMaterial { model: &model, input: &input, a: &a, b: &b },
+        &lease,
+        10,
+    ).unwrap();
+    let new_work = reference.make_with_task(
+        parent,
+        vec![],
+        public(0),
+        101,
+        4096,
+        &checked,
+        TaskMaterial { model: &model, input: &input, a: &a, b: &b },
+    ).unwrap();
+    assert_eq!(new_work.header.work_task, new_task);
+    let new_id = reference.admit(&new_work, 100_000).unwrap();
+    assert_eq!(native.admit(&new_work, 100_000).unwrap(), new_id);
+    reference.activate(new_id).unwrap();
+    native.activate(new_id).unwrap();
+    assert_eq!(native.read_active().unwrap(), reference.read_active().unwrap());
+    assert_eq!(
+        native.read_active().unwrap().2[&qualified_task_lifecycle::slot_key(1).unwrap()]
+            ["output_count"], 1
+    );
+    admitted.push(new_id);
+    parent = new_id;
+
     // A freshly opened independent consumer independently checks each actual
     // signed PNX1 / full PNW1 packet, not producer status or a hand-entered
     // confirmation Boolean. All accepted bytes remain bound to Revision12.
@@ -415,10 +447,10 @@ fn maintenance_reentry_registers_signed_task_and_independent_client_confirms() {
         native.read_active().unwrap()
     );
     assert!(consumer
-        .lifecycle_task_lease(parent, revoked_task, 10)
+        .lifecycle_task_lease(parent, revoked_task, 11)
         .is_err());
     let admitted_lease = consumer
-        .lifecycle_task_lease(parent, new_task, 10)
+        .lifecycle_task_lease(parent, new_task, 11)
         .unwrap();
     assert_eq!(admitted_lease.slot, 1);
     assert_eq!(admitted_lease.generation, 2);
@@ -446,7 +478,7 @@ fn maintenance_reentry_registers_signed_task_and_independent_client_confirms() {
     .unwrap();
     assert_eq!(cold.read_active().unwrap(), native.read_active().unwrap());
     assert!(cold
-        .lifecycle_task_lease(parent, new_task, 10)
+        .lifecycle_task_lease(parent, new_task, 11)
         .is_ok());
 }
 
