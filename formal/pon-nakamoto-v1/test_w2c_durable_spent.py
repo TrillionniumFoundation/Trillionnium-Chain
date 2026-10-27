@@ -12,7 +12,6 @@ import subprocess
 import sys
 import tempfile
 import unittest
-from unittest.mock import patch
 
 from contract_wire import H
 from w2c_durable_spent import DurableReceiverAdmission as Receiver, DB_NAME
@@ -145,7 +144,7 @@ class DurablePaidSpendTests(unittest.TestCase):
                          'READY_RESOURCE_ONLY')
         self.assertEqual(next_owner.pending_paid(), 1)
 
-    def test_bad_target_tamper_and_w1_failure_do_not_refund(self):
+    def test_bad_target_and_mac_do_not_spend(self):
         from dataclasses import replace
         from w2c_receiver_admission import qualifies, ticket
         owner = self.owner(create=True)
@@ -162,6 +161,85 @@ class DurablePaidSpendTests(unittest.TestCase):
                          'READY_RESOURCE_ONLY')
         self.assertEqual(owner.consume(grant, self.proposal, self.caller, nonce, 120),
                          'REPLAY')
+
+    def test_a_paid_ticket_still_rejects_false_w1_without_refund(self):
+        import work_oracle as W
+        zeros = [0] * W.CELLS
+        header = H('w2c-durable-false-W1-header') * 9 + bytes(30)
+        self.assertEqual(len(header), 318)
+        challenge = H('challenge', header)
+        false_proof = (b'PNW1' + W.field_bytes(zeros) * 3
+                       + H('durable-false-transcript', challenge))
+        proposal = H('w2c-proposal', b'w2c-research-security-v0',
+                     header, false_proof)
+        owner = self.owner(create=True)
+        self.addCleanup(owner.close)
+        grant = owner.offer(proposal, self.caller, 8, 100)
+        nonce, _ = solve(grant, 65536)
+        self.assertIsNotNone(nonce)
+        self.assertEqual(owner.consume(grant, proposal, self.caller, nonce, 130),
+                         'READY_RESOURCE_ONLY')
+        with self.assertRaisesRegex(ValueError, '^TRANSCRIPT
+        original = self.owner(create=True)
+        original.close()
+        with self.assertRaisesRegex(ValueError, 'OWNER_CONTEXT'):
+            self.owner(epoch=bytes([6])*32)
+        with self.assertRaises(FileNotFoundError):
+            self.owner(directory=self.directory / 'missing')
+        with self.assertRaises(FileExistsError):
+            self.owner(create=True)
+
+    def test_local_file_replace_refuses_new_paid_replay(self):
+        owner = self.owner(create=True)
+        self.addCleanup(owner.close)
+        grant, nonce = self.ticket(owner)
+        store = self.directory / DB_NAME
+        held = self.directory / 'held.sqlite'
+        os.rename(store, held)
+        store.write_bytes(b'not a valid spent store')
+        os.chmod(store, 0o600)
+        self.assertEqual(owner.consume(grant, self.proposal, self.caller, nonce, 120),
+                         'DURABLE_UNAVAILABLE')
+
+    def test_directory_symlink_and_world_readable_policy_refuse(self):
+        first = self.owner(create=True)
+        first.close()
+        link = self.directory.parent / (self.directory.name + '-link')
+        os.symlink(self.directory, link)
+        self.addCleanup(link.unlink)
+        with self.assertRaisesRegex(ValueError, 'OWNER_DIRECTORY'):
+            self.owner(directory=link)
+        os.chmod(self.directory, 0o755)
+        self.addCleanup(os.chmod, self.directory, 0o700)
+        with self.assertRaisesRegex(ValueError, 'OWNER_DIRECTORY'):
+            self.owner()
+
+    def test_copying_database_before_spend_is_not_global_replay_protection(self):
+        # This deliberate negative control must CONTINUE to show two READYs.
+        # A host can copy the DB, secret and epoch; no local SQLite algorithm
+        # can prove unique global custody of those cloned physical owners.
+        original = self.owner(create=True)
+        grant, nonce = self.ticket(original)
+        other_dir = self.directory / 'clone'
+        other_dir.mkdir(mode=0o700)
+        shutil.copy2(self.directory / DB_NAME, other_dir / DB_NAME)
+        clone = self.owner(directory=other_dir)
+        self.addCleanup(clone.close)
+        self.addCleanup(original.close)
+        self.assertEqual(original.consume(grant, self.proposal, self.caller, nonce, 130),
+                         'READY_RESOURCE_ONLY')
+        self.assertEqual(clone.consume(grant, self.proposal, self.caller, nonce, 130),
+                         'READY_RESOURCE_ONLY')
+
+
+if __name__ == '__main__':
+    unittest.main(verbosity=2)
+):
+            W.verify(challenge, W.task_id(zeros, zeros),
+                     bytes([255]) * 32, false_proof)
+        self.assertEqual(owner.consume(grant, proposal, self.caller, nonce, 140),
+                         'REPLAY')
+        self.assertEqual(owner.pending_paid(), 1)
 
     def test_existing_mismatched_epoch_or_key_fails_closed(self):
         original = self.owner(create=True)
