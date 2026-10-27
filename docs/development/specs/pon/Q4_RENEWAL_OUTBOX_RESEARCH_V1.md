@@ -169,3 +169,30 @@ their current GitHub-source Rust/Python execution is not claimed here.
 ### Strict-schema and durable-path boundary
 
 The bounded Q4 research outbox now rejects special SQLite in-memory/URI targets and checks full canonical table DDL on every writer/audit/status snapshot. Same-name tables with weakened uniqueness/nullability constraints cannot support a lost-ACK dispatch fence, even if original row bytes and digest-chain values look unchanged. This does not grant signed renewal or an external NotDispatched certificate.
+
+## Same-generation observation consistency (2026-10-27, research only)
+
+A native active generation identifies one selected tip and its height. The
+previously bounded Q4 outbox enforced nondecreasing generations but could
+persist contradictory *same-generation* observations, including two different
+tip/height snapshots or Included/Confirmed followed by Reorged with no native
+generation advance. Even a correctly recomputed local event hash chain does
+not make such contradictions valid client readbacks.
+
+The original SQLite writer now checks these relationships before appending,
+inside the same BEGIN IMMEDIATE transaction after its full prefix audit.
+Cold replay rejects the same conflict. Included and Confirmed may coexist for
+one generation only when the named included block remains identical.
+Unavailable or Expired is not evidence of transaction removal and cannot
+erase an earlier membership fact. A later genuine reorg is permitted under a
+new native generation; the original DISPATCH_UNKNOWN fence survives it.
+
+The exact regression selectors are
+`test_same_native_generation_cannot_change_tip_height_or_membership`
+and `test_rehashed_same_generation_membership_conflict_refuses_cold_open`.
+A separate seven-case Python semantic model passed locally, while the current
+repository's exact-head Python suites, full source preflight, Rust build,
+real W1 client/proofs, and independently owned hosts were NOT_RUN in this
+environment. The journal still trusts its caller for observations; it does
+not verify membership, authorize a second submission, issue a NotDispatched
+certificate, or close P0-B. No Q4/W1/Revision12/DAA or production flag changes.
