@@ -4588,3 +4588,24 @@ GPU and energy measurements remain **OPEN**; older architecture results cannot
 close them. Correct-product/false-trace native replay, full transparent W1 proof,
 permissionless public-service security and all PN0–PN6 production exits remain
 **OPEN / NO_GO**. The additional complete readback performs no new benchmark run.
+
+### P0 work cost — current-v2 native ARM64 execution lane (2026-10-27)
+
+The separate `pon-pure-cost-arm64-v2.yml` research lane schedules the unchanged
+fourteen-arm producer on an actual `ubuntu-24.04-arm` runner and refuses a
+non-`aarch64` process architecture. It binds the complete tested commit/tree,
+Rust 1.95.0, locked Cargo graph, original test-profile package overrides, source
+inventory, before/after executable hashes, complete raw cost log, source-aware
+reader and all 4,032 cohorts. The original grid, seed, two rounds, eight attempts
+and 256-search horizon are unchanged. The explicit native wall ceiling is 1,800
+seconds, with a 1,860-second outer capture, instead of the earlier x64 run's
+900/960 ceilings. It does not turn a timed-out or partial grid into success.
+
+This lane retains the actual executable as well as public `lscpu`, affinity,
+cgroup and process-architecture observations. These are shared hosted-machine
+observations, not hardware authentication, a reserved CPU frequency, energy
+measurement or a GPU result. Native verification/admission remains outside the
+producer timing denominator. Existing x64 evidence and all failed trials remain
+intact; no native miner, W1 semantics, task eligibility or consensus target is
+changed. At source freeze this new ARM64 execution is **NOT_RUN**. Its actual
+terminal artifact must be read before any architecture comparison is claimed.
