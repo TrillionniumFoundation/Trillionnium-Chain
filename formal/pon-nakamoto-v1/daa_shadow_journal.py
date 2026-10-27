@@ -274,9 +274,13 @@ class ShadowJournal:
             committed = True
             if fail_at == 'after_commit':
                 raise UnknownEffect('INJECTED_AFTER_COMMIT_RECONCILE_ORIGINAL_ID')
-            # Read-after-write: a caller never receives an unverified success.
-            if self.get(header.block_id) != header:
-                raise JournalError('HEADER_READBACK')
+            # The INSERT already COMMITted. A failed readback is UNKNOWN,
+            # never an absent write or authority for a replacement identity.
+            try:
+                if self.get(header.block_id) != header:
+                    raise JournalError('HEADER_READBACK')
+            except Exception as error:
+                raise UnknownEffect('POST_COMMIT_HEADER_READBACK_UNKNOWN') from error
             return header
         except BaseException:
             if not committed:
@@ -303,8 +307,13 @@ class ShadowJournal:
             committed = True
             if fail_at == 'after_commit':
                 raise UnknownEffect('INJECTED_AFTER_COMMIT_RECONCILE_ORIGINAL_ID')
-            if self.active() != tip:
-                raise JournalError('ACTIVE_TIP_READBACK')
+            # The CAS already COMMITted. An unreadable tip must be reconciled
+            # by its original identity rather than repeated as a fresh effect.
+            try:
+                if self.active() != tip:
+                    raise JournalError('ACTIVE_TIP_READBACK')
+            except Exception as error:
+                raise UnknownEffect('POST_COMMIT_ACTIVE_READBACK_UNKNOWN') from error
             return tip
         except BaseException:
             if not committed:

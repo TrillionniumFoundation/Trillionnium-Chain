@@ -6,6 +6,7 @@ from pathlib import Path
 import sqlite3
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from daa_shadow_journal import ShadowHeader, ShadowJournal, JournalError, UnknownEffect, ZERO
 
@@ -66,6 +67,43 @@ class ShadowJournalTests(unittest.TestCase):
             with self.subTest(target=target):
                 with self.assertRaisesRegex(JournalError, 'DATABASE_PATH'):
                     ShadowJournal(Path(target), CTX, GEN)
+
+
+    def test_post_commit_header_readback_error_remains_unknown_and_durable(self):
+        with ShadowJournal(self.path, CTX, GEN) as journal:
+            first, packet = candidate(GEN, 1)
+            with patch.object(journal, 'get', side_effect=JournalError('INJECTED_READBACK')):
+                with self.assertRaisesRegex(UnknownEffect, 'POST_COMMIT_HEADER_READBACK_UNKNOWN'):
+                    journal.append(first, packet)
+            self.assertFalse(journal.db.in_transaction)
+            self.assertEqual(journal.get(first.block_id), first)
+            self.assertEqual(journal.audit(), 1)
+        with ShadowJournal(self.path, CTX, GEN) as cold:
+            self.assertEqual(cold.get(first.block_id), first)
+            self.assertEqual(cold.audit(), 1)
+
+    def test_post_commit_cas_readback_error_remains_unknown_and_durable(self):
+        with ShadowJournal(self.path, CTX, GEN) as journal:
+            first, packet = candidate(GEN, 1)
+            journal.append(first, packet)
+            original = journal.active
+            calls = 0
+            def fail_only_after_commit():
+                nonlocal calls
+                calls += 1
+                if calls == 2:
+                    raise JournalError('INJECTED_ACTIVE_READBACK')
+                return original()
+            with patch.object(journal, 'active', side_effect=fail_only_after_commit):
+                with self.assertRaisesRegex(UnknownEffect, 'POST_COMMIT_ACTIVE_READBACK_UNKNOWN'):
+                    journal.activate(first.block_id, GEN)
+            self.assertFalse(journal.db.in_transaction)
+            self.assertEqual(journal.active(), first.block_id)
+            with self.assertRaisesRegex(JournalError, 'ACTIVE_GENERATION_CONFLICT'):
+                journal.activate(GEN, GEN)
+        with ShadowJournal(self.path, CTX, GEN) as cold:
+            self.assertEqual(cold.active(), first.block_id)
+            self.assertEqual(cold.audit(), 1)
 
     def test_reboot_exact_identity_replay_cas_and_branch_retention(self):
         with ShadowJournal(self.path, CTX, GEN) as journal:

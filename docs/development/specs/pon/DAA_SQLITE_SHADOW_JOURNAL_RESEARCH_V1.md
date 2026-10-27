@@ -127,3 +127,7 @@ versioned consensus ASERT acceptance and activation remain **OPEN**.
 ### Strict-schema readback boundary
 
 The research `ShadowJournal.get` read API now performs the same immutable context and canonical table-DDL check as the native-independent writer/audit boundary before returning a locally hash-matching header. A foreign schema or changed context invalidates even an unchanged row's research readback. This is not independent W1, target or fork-choice authority.
+
+### Committed-but-unreadable effects remain Unknown
+
+After an `append` or research active-tip CAS has COMMITted, any failed row/context/schema readback now produces `UnknownEffect` rather than a precommit `JournalError`. Injection regressions confirm that original header/tip bytes survive cold reopening when the immediate readback failed. The caller must reconcile the original operation identity and cannot assume the write was absent. This change grants no actual native chain, release or execution authority.
