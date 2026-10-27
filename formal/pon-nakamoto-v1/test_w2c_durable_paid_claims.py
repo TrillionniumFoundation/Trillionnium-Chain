@@ -132,39 +132,7 @@ class DurableReceiverTests(unittest.TestCase):
         self.assertIsNotNone(nonce)
         self.assertEqual(self.server.consume(grant, proposal, A, nonce, 120),
                          'READY_RESOURCE_ONLY')
-        with self.assertRaisesRegex(ValueError, '^TRANSCRIPT        with self.assertRaisesRegex(ValueError, 'SPEND_OWNER_POLICY'):
-            DurableStatelessReceiver(R, S, E, db_path=self.file, capacity=1024)
-        with self.assertRaisesRegex(ValueError, 'SPEND_OWNER_POLICY'):
-            DurableStatelessReceiver(R, S, bytes([6])*32, db_path=self.file, capacity=4)
-
-    def test_live_database_policy_change_fails_before_w1(self):
-        grant, nonce = self.grant()
-        db = sqlite3.connect(self.file)
-        db.execute('UPDATE policy SET capacity=1024 WHERE singleton=1')
-        db.commit()
-        db.close()
-        self.assertEqual(self.server.consume(grant, P, A, nonce, 120), 'SPEND_OWNER_POLICY')
-
-    def test_modified_schema_cannot_be_restarted_as_free_epoch(self):
-        db = sqlite3.connect(self.file)
-        db.execute('PRAGMA user_version=2')
-        db.commit()
-        db.close()
-        with self.assertRaisesRegex(ValueError, 'SPEND_OWNER_SCHEMA'):
-            DurableStatelessReceiver(R, S, E, db_path=self.file, capacity=4)
-
-    def test_bad_unowned_paths_and_missing_schema_fail_closed(self):
-        with self.assertRaisesRegex(ValueError, 'ABSOLUTE_PATH'):
-            provision('relative-paid.db', R, E, capacity=4)
-        link = str(Path(self.tmp.name) / 'link.db')
-        os.symlink(self.file, link)
-        with self.assertRaisesRegex(ValueError, 'SPEND_OWNER_FILE'):
-            DurableStatelessReceiver(R, S, E, db_path=link)
-
-
-if __name__ == '__main__':
-    unittest.main(verbosity=2)
-):
+        with self.assertRaisesRegex(ValueError, '^TRANSCRIPT$'):
             W.verify(challenge, W.task_id(zeros, zeros), bytes([255]) * 32, forged)
         clone = DurableStatelessReceiver(R, S, E, db_path=self.file, capacity=4)
         self.assertEqual(clone.consume(grant, proposal, A, nonce, 121), 'REPLAY')
