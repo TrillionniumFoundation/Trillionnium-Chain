@@ -16,9 +16,9 @@ from dataclasses import dataclass
 import hashlib
 import os
 from pathlib import Path
-import subprocess
 import tempfile
 
+from pq_openssl_backend import BackendError, run as run_pinned_openssl
 from strict_signature import verify as verify_ed25519_strict
 
 SOURCE_MAGIC = b"PQG1"
@@ -62,14 +62,12 @@ def sha384(domain: bytes, raw: bytes) -> bytes:
 
 
 def _openssl(argv: list[str], *, input_data: bytes | None = None) -> bytes:
+    if not argv or argv[0] != 'openssl':
+        raise Reject('PQ OpenSSL command shape')
     try:
-        child = subprocess.run(argv, input=input_data, stdout=subprocess.PIPE,
-                               stderr=subprocess.PIPE, check=False, timeout=20)
-    except (OSError, subprocess.TimeoutExpired) as exc:
-        raise Reject('OpenSSL unavailable') from exc
-    if child.returncode:
-        raise Reject('ML-DSA-65 cryptographic operation rejected')
-    return child.stdout
+        return run_pinned_openssl(argv[1:], input_data=input_data)
+    except BackendError as exc:
+        raise Reject(str(exc)) from exc
 
 
 def _der_len(raw: bytes, offset: int) -> tuple[int, int]:

@@ -209,8 +209,8 @@ def native_durable_schema(root):
     """Extract the legacy evidence schema from one explicitly supported contract.
 
     Historical literal V1, inline composed V2 and the explicitly selected V2
-    backend are supported. Authenticated and permanent-account growth storage
-    are different evidence scopes; recognizing their exact backend mappings
+    backend are supported. Authenticated, permanent-account growth and PQ
+    network storage are different evidence scopes; recognizing their exact mappings
     must never append their tables or return their domains in this legacy result.
     This is not a Rust evaluator. Unknown bodies/literals fail closed. The shared
     Rust lexical mask excludes comment/string decoys without changing literals
@@ -262,7 +262,7 @@ def native_durable_schema(root):
     def legacy(ddl, domain):
         # Source binding does not authorize widening this evidence contract.
         # These tables have their own full-state/commitment/node verification.
-        require(not re.search(r'\b(?:archive_nodes|native_state_commitments|growth_states)\b',ddl,re.I),
+        require(not re.search(r'\b(?:archive_nodes|native_state_commitments|growth_states|pq_network_peer_v1|pq_network_request_v1)\b',ddl,re.I),
                 'authenticated tables in legacy durable schema')
         return ddl,domain
     code = rust_code(source)
@@ -275,7 +275,13 @@ def native_durable_schema(root):
         if re.search(r'\bStateBackend\b',code):
             # Select this branch first. A bad current mapping cannot fall back
             # to a historical inline hash elsewhere in the same source file.
-            layout(body(source,'enum','StateBackend'),'Legacy, AuthenticatedV1, PermanentAccountGrowthV2,',
+            # These are two closed source contracts, not a retry after failure.
+            # Scan all code tokens (without evaluating cfg) so a removed enum
+            # arm cannot hide a remaining PQ implementation, module or owner.
+            has_pq = re.search(r'\b(?:PqNetworkV1|pq_network)\b',code) is not None
+            variants = body(source,'enum','StateBackend')
+            layout(variants,'Legacy, AuthenticatedV1, PermanentAccountGrowthV2,'+
+                   ('#[cfg(feature = "pq-native-openssl")] PqNetworkV1,' if has_pq else ''),
                    'durable backend variants')
             implementation = body(source,'impl','StateBackend')
             layout(implementation, '''
@@ -284,6 +290,10 @@ def native_durable_schema(root):
                         Self::Legacy => ddl(),
                         Self::AuthenticatedV1 => format!("{}{}", ddl(), native_authenticated::DDL),
                         Self::PermanentAccountGrowthV2 => format!("{}{}", ddl(), growth::DDL),
+            '''+('''
+                        #[cfg(feature = "pq-native-openssl")]
+                        Self::PqNetworkV1 => format!("{}{}", ddl(), pq_network::DDL),
+            ''' if has_pq else '')+'''
                     }
                 }
                 fn selected_schema_id(self, settings: &Settings) -> Hash {
@@ -301,6 +311,10 @@ def native_durable_schema(root):
                         Self::Legacy => b"native-branch-schema-v2",
                         Self::AuthenticatedV1 => b"native-authenticated-branch-schema-v1",
                         Self::PermanentAccountGrowthV2 => b"native-permanent-account-growth-schema-v2",
+            '''+('''
+                        #[cfg(feature = "pq-native-openssl")]
+                        Self::PqNetworkV1 => b"native-pq-network-owner-schema-v1",
+            ''' if has_pq else '')+'''
                     };
                     hash(domain, &[self.ddl().as_bytes()])
                 }
@@ -308,14 +322,21 @@ def native_durable_schema(root):
             backend_ddl = body(implementation,'fn','ddl')
             selected_domain = body(implementation,'fn','selected_schema_id')
             domain = body(implementation,'fn','schema_id')
-            for variant in ('AuthenticatedV1', 'PermanentAccountGrowthV2'):
+            # rust_code masks literal payloads. Layout alone therefore cannot
+            # authenticate which feature guards each optional PQ item.
+            if has_pq:
+                for name, section in [('variants',variants), ('ddl',backend_ddl), ('domain',domain)]:
+                    require(value(section,r'#\s*\[\s*cfg\s*\(\s*feature\s*=') == 'pq-native-openssl',
+                            'durable backend feature '+name)
+            for variant in ('AuthenticatedV1', 'PermanentAccountGrowthV2')+(('PqNetworkV1',) if has_pq else ()):
                 require(value(backend_ddl,r'\bSelf::'+variant+r'\s*=>\s*format!\s*\(') == '{}{}',
                         'durable backend composition '+variant)
             require(value(selected_domain,r'\bhash\s*\(\s*b') == 'native-growth-reference-branch-schema-v2',
                     'durable growth schema domain')
             for variant, expected in [('Legacy','native-branch-schema-v2'),
                                       ('AuthenticatedV1','native-authenticated-branch-schema-v1'),
-                                      ('PermanentAccountGrowthV2','native-permanent-account-growth-schema-v2')]:
+                                      ('PermanentAccountGrowthV2','native-permanent-account-growth-schema-v2')]+(
+                                      [('PqNetworkV1','native-pq-network-owner-schema-v1')] if has_pq else []):
                 require(value(domain,r'\bSelf::'+variant+r'\s*=>\s*b') == expected,
                         'durable backend domain '+variant)
             node = body(source,'impl','Node')
@@ -324,14 +345,18 @@ def native_durable_schema(root):
                 'open_with_fault':'''ensure(!owner_marker_present(path)?, "OWNER_TASK_POLICY_REQUIRED")?;
                     Self::open_inner(path, settings, workers, hook, None, None, None)''',
                 'open_inner':'''Self::open_selected(path, settings, workers, hook,
-                    NativeOwners { policy: owner_policy, mining: mining_owner, continuous: continuous_owner, },
+                    NativeOwners { policy: owner_policy, mining: mining_owner, continuous: continuous_owner, pq_network: None, },
                     StateBackend::Legacy, false,)''',
                 'open_with_authenticated_state':'''Self::open_with_authenticated_state_and_fault(path, settings, workers, None)''',
                 'open_with_authenticated_state_and_fault':'''ensure(!owner_marker_present(path)?, "OWNER_TASK_POLICY_REQUIRED")?;
                     Self::open_selected(path, settings, workers, hook,
-                        NativeOwners { policy: None, mining: None, continuous: None, }, StateBackend::AuthenticatedV1, false,)''',
+                        NativeOwners { policy: None, mining: None, continuous: None, pq_network: None, }, StateBackend::AuthenticatedV1, false,)''',
             }
             for name, expected in selections.items():
+                if not has_pq:
+                    # Only the trusted expected template changes. Source bytes
+                    # must match the complete pre-PQ owner contract verbatim.
+                    expected = expected.replace('pq_network: None,','')
                 layout(body(node,'fn',name),expected,'durable backend opener '+name)
             selected = rust_code(body(node,'fn','open_selected'))
             bindings = list(re.finditer(r'\blet\s+ddl\s*=\s*state_backend\.ddl\(\)\s*;\s*let\s+schema_id\s*=\s*state_backend\.selected_schema_id\(\s*&\s*settings\s*\)\s*;',selected))

@@ -21,20 +21,25 @@ pub enum ErrorKind {
 }
 
 macro_rules! error_codes {
-    ($($variant:ident => ($wire:literal, $kind:ident)),+ $(,)?) => {
+    (
+        $($variant:ident => ($wire:literal, $kind:ident)),+ $(,)?
+        ; local_only { $($local:ident => ($local_wire:literal, $local_kind:ident)),+ $(,)? }
+    ) => {
         /// Exact identities needed by current admission, accounting and recovery paths.
         /// Unknown strings are never recognized by a prefix or by an OS error message.
         #[derive(Clone, Copy, Debug, Eq, PartialEq)]
         #[non_exhaustive]
-        pub enum ErrorCode { $($variant),+ }
+        pub enum ErrorCode { $($variant,)+ $($local),+ }
         impl ErrorCode {
             pub fn as_str(self) -> &'static str {
-                match self { $(Self::$variant => $wire),+ }
+                match self { $(Self::$variant => $wire,)+ $(Self::$local => $local_wire),+ }
             }
             fn kind(self) -> ErrorKind {
-                match self { $(Self::$variant => ErrorKind::$kind),+ }
+                match self { $(Self::$variant => ErrorKind::$kind,)+ $(Self::$local => ErrorKind::$local_kind),+ }
             }
             pub(crate) fn parse(message: &str) -> Option<Self> {
+                // The local_only group deliberately has no string-parser arm.
+                // Quoting its diagnostic cannot grant local cleanup authority.
                 match message { $($wire => Some(Self::$variant)),+, _ => None }
             }
         }
@@ -181,6 +186,11 @@ error_codes! {
     AuthReplayAudit => ("AUTH_REPLAY_AUDIT", ProtocolInvalid),
     RemoteTerminal => ("REMOTE_TERMINAL", RemoteRefusal),
     RemoteRetryable => ("REMOTE_RETRYABLE", RemoteRefusal),
+    ; local_only {
+        PqNetworkDeadline => ("PQ_NETWORK_DEADLINE", Cancelled),
+        PqNetworkExpired => ("PQ_NETWORK_EXPIRED", Cancelled),
+        PqNetworkRevoked => ("PQ_NETWORK_REVOKED", Cancelled),
+    }
 }
 
 #[derive(Debug)]
@@ -411,6 +421,52 @@ impl From<serde_json::Error> for Error {
 mod tests {
     use super::*;
     use std::error::Error as _;
+
+    #[test]
+    fn pq_control_codes_require_explicit_local_origin() {
+        for (code, wire) in [
+            (ErrorCode::PqNetworkDeadline, "PQ_NETWORK_DEADLINE"),
+            (ErrorCode::PqNetworkExpired, "PQ_NETWORK_EXPIRED"),
+            (ErrorCode::PqNetworkRevoked, "PQ_NETWORK_REVOKED"),
+        ] {
+            let local = Error::new(code);
+            assert_eq!(local.to_string(), wire);
+            assert_eq!(local.kind(), ErrorKind::Cancelled);
+            assert!(local.is(code));
+            assert!(!local.requires_owner_stop());
+            assert_eq!(ErrorCode::parse(wire), None);
+            for quoted in [
+                Error::from(wire),
+                Error::from(wire.to_owned()),
+                Error::from(format!(" {wire}")),
+                Error::from(format!("{wire}: quoted remote diagnostic")),
+            ] {
+                assert_eq!(quoted.kind(), ErrorKind::Unclassified);
+                assert_eq!(quoted.code(), None);
+                assert!(!quoted.requires_owner_stop());
+            }
+            let transport = Error::from(std::io::Error::other(wire));
+            assert_eq!(transport.kind(), ErrorKind::Transport);
+            assert_eq!(transport.code(), None);
+            let remote = Error::remote(wire);
+            assert_eq!(remote.to_string(), wire);
+            assert_eq!(remote.kind(), ErrorKind::RemoteRefusal);
+            assert_eq!(remote.code(), None);
+            for terminal in [false, true] {
+                let remote = Error::authenticated_remote(terminal, wire);
+                let expected = if terminal {
+                    ErrorCode::RemoteTerminal
+                } else {
+                    ErrorCode::RemoteRetryable
+                };
+                assert_eq!(remote.kind(), ErrorKind::RemoteRefusal);
+                assert!(remote.is(expected));
+                assert!(!remote.is(code));
+                assert!(!remote.requires_owner_stop());
+                assert_eq!(remote.to_string(), format!("{}:{wire}", expected.as_str()));
+            }
+        }
+    }
 
     #[test]
     fn legacy_request_controls_keep_original_wire_and_typed_local_cancellation() {

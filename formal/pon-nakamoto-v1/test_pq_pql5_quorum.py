@@ -7,10 +7,11 @@ from pathlib import Path
 import os
 import shutil
 import sqlite3
-import subprocess
 import tempfile
 import unittest
 from unittest.mock import patch
+
+from pq_openssl_backend import run as run_pinned_openssl
 
 from pq_pql5_quorum import (LocalWitness, Reject, PQL4_SIGN, PQL4_ID, PQL4_SIGNED,
     PQL4_UNSIGNED, RESP_SIGNED, ZERO48, key_id, parse_pql4,
@@ -39,10 +40,8 @@ class PQL5ActualTests(unittest.TestCase):
             secret=root/(name+".private.pem")
             public=root/(name+".public.pem")
             kind="ED25519" if name=="ed25519" else "ML-DSA-65"
-            subprocess.run(["openssl","genpkey","-algorithm",kind,"-out",str(secret)],
-                           check=True,capture_output=True,timeout=15)
-            subprocess.run(["openssl","pkey","-in",str(secret),"-pubout","-out",str(public)],
-                           check=True,capture_output=True,timeout=15)
+            run_pinned_openssl(["genpkey","-algorithm",kind,"-out",str(secret)])
+            run_pinned_openssl(["pkey","-in",str(secret),"-pubout","-out",str(public)])
             cls.keys[name]=(secret,public.read_bytes())
         cls.network=bytes(range(1,33))
         cls.root=bytes([0x22])*48

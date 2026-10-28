@@ -1,0 +1,175 @@
+{
+  "benefit_gate": "UNMEASURED_BATCH_EXISTING_SINGLE_WORK_FAIL",
+  "broken_local_markdown_links": [],
+  "commands": [
+    {
+      "command": [
+        "python3",
+        "formal/pon-nakamoto-v1/w1_batch/contract_controls.py"
+      ],
+      "name": "public-controls",
+      "returncode": 0,
+      "stderr_sha256": "6d1959f000fcfd88e6e72c54c4ef53b06ad629a11547d2ee1178bb2f4b17058a",
+      "stdout_sha256": "8ae81642cab98f435d930e07e8d690f98140fcbd10aa935d78801bd09cbe05e1",
+      "timed_out": false,
+      "wall_seconds": 0.18391205399530008
+    },
+    {
+      "command": [
+        "/tmp/pure-pon-toolchain-20261027/bin/rustfmt",
+        "--check",
+        "--edition",
+        "2021",
+        "formal/pon-nakamoto-v1/w1_batch/host/src/main.rs",
+        "formal/pon-nakamoto-v1/w1_batch/methods/build.rs",
+        "formal/pon-nakamoto-v1/w1_batch/methods/guest/src/main.rs",
+        "formal/pon-nakamoto-v1/w1_batch/methods/src/lib.rs",
+        "formal/pon-nakamoto-v1/w1_batch/statement/src/lib.rs"
+      ],
+      "name": "rustfmt",
+      "returncode": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false,
+      "wall_seconds": 0.029864205003832467
+    },
+    {
+      "command": [
+        "/tmp/pure-pon-toolchain-20261027/bin/cargo",
+        "metadata",
+        "--offline",
+        "--locked",
+        "--no-deps",
+        "--format-version",
+        "1",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_batch/Cargo.toml"
+      ],
+      "name": "host-metadata",
+      "returncode": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "29ec4e7f8a178b25d1c2b1e83b144be828f750f40959df678f0a380c5330c416",
+      "timed_out": false,
+      "wall_seconds": 0.007482151995645836
+    },
+    {
+      "command": [
+        "/tmp/pure-pon-toolchain-20261027/bin/cargo",
+        "metadata",
+        "--offline",
+        "--locked",
+        "--no-deps",
+        "--format-version",
+        "1",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_batch/methods/guest/Cargo.toml"
+      ],
+      "name": "guest-metadata",
+      "returncode": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "13be5035f30cb628ab20ef8d14d267ab3ecb8e09b04085bb87ac0f97d34b9409",
+      "timed_out": false,
+      "wall_seconds": 0.00967272800335195
+    }
+  ],
+  "created_utc": "2026-10-28T03:40:23.868211+00:00",
+  "existing_unique_complete_leaf_proofs": 1,
+  "guest_execution_executed": false,
+  "locks": [
+    {
+      "packages": 279,
+      "path": "formal/pon-nakamoto-v1/w1_batch/Cargo.lock",
+      "sha256": "32953cbb86bb56186137507ee9e9bf59827bd8325c6e28c12b40d5c166fbfa4d",
+      "uncached_registry_archives": [
+        "risc0-build@3.0.6"
+      ]
+    },
+    {
+      "packages": 155,
+      "path": "formal/pon-nakamoto-v1/w1_batch/methods/guest/Cargo.lock",
+      "sha256": "018423c898d09d0be7a7fbe207e4a1672c5b6f36202dda765a81da852c044d18",
+      "uncached_registry_archives": []
+    }
+  ],
+  "new_leaf_proofs": 0,
+  "production_activation": false,
+  "prover_executed": false,
+  "receipt_verification_executed": false,
+  "rust_compilation_executed": false,
+  "schema": "TRNM-W1-BATCH-SOURCE-REVIEW1",
+  "source_checks_pass": true,
+  "source_files": [
+    {
+      "path": "formal/pon-nakamoto-v1/w1_batch/Cargo.lock",
+      "sha256": "32953cbb86bb56186137507ee9e9bf59827bd8325c6e28c12b40d5c166fbfa4d"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_batch/Cargo.toml",
+      "sha256": "c15cabe3c3e3ab00a34b3c9ddee47713a661fdf1501c6046f0f1fd36f5e17dce"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_batch/EXPERIMENT_CONTRACT.md",
+      "sha256": "d2a0b861138dfbaab0aa0489d8c1f4df26209e9eb2acde8ae5e97566868fcab3"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_batch/EXTERNAL_GATES_REVIEW.md",
+      "sha256": "e05c77443621a794a27eb9fca0c93151a5a084789746ae6fb7e873fabdda840d"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_batch/README.md",
+      "sha256": "61ebecf1a59db96461b5f9bcc09225d59b54b0495c5e426d5ffc0f06499374d2"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_batch/contract_controls.py",
+      "sha256": "070ed44c581bbd50db43fc5ada8464949e55ca7287095a62b2997c82da82f07b"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_batch/examples/one-leaf.json",
+      "sha256": "2d1abd1cac1a0f9db8178192cae5cb71b7c501dd3ddca1e73cff7eb84ef07c95"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_batch/host/Cargo.toml",
+      "sha256": "779f89393d90366e44544da865df32ff0481c91e1ada63a2052a1a916688bfd2"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_batch/host/src/main.rs",
+      "sha256": "65ab554b1c817604938a0183e6292f634298aa6c24ad7afd06d866ea75687960"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_batch/methods/Cargo.toml",
+      "sha256": "85337345d2cc451c56ca36d5faca64fb8a5bb1b179920390658d663ac7a6401b"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_batch/methods/build.rs",
+      "sha256": "ba4fd35cbf2fe1df1887f667d0d727efaba0ab2cc194d969bd123073252226fa"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_batch/methods/guest/Cargo.lock",
+      "sha256": "018423c898d09d0be7a7fbe207e4a1672c5b6f36202dda765a81da852c044d18"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_batch/methods/guest/Cargo.toml",
+      "sha256": "19b7da62cddb1516974e63541f44c3f56f5f8333f292c8f1f1de9865803fc3ec"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_batch/methods/guest/src/main.rs",
+      "sha256": "5b7e65a3f1173604951a2fe23fc76ad31d63e5b57e9cdc1cede6ce55fd26f80b"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_batch/methods/src/lib.rs",
+      "sha256": "902d56d952004dd42e65c148a4b537710f869054556528b25ed3e67d050bb255"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_batch/statement/Cargo.toml",
+      "sha256": "d2b446bb7b111178d40dc1bedaf36c308bfc16b9c7d50025a80aa3e1644905ac"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_batch/statement/src/lib.rs",
+      "sha256": "308f61f9496d9fd34c953bff8f6573f53b1136e8a5b356fe2da83e507ea288a6"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_batch/static_review.py",
+      "sha256": "a1844e4220b6877772997c3a3ffb64a52c6c7fb4b57a395987afcafc86816363"
+    }
+  ]
+}

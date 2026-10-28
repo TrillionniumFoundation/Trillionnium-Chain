@@ -1,0 +1,41 @@
+{
+  "argv": [
+    "nice",
+    "-n",
+    "19",
+    "python3",
+    "-B",
+    "/workspace/scratch/56818e4fba76/chain-history-next/evidence/pon-hepta-682-pair-host-readback-r8-20261028/analyze.py",
+    "--artifact-dir",
+    "/workspace/scratch/56818e4fba76/recovery/round8/hepta-682-pair-artifacts",
+    "--log-dir",
+    "/workspace/scratch/56818e4fba76/recovery/round8",
+    "--out",
+    "/tmp/hepta-682-pair-readback-r8-attempt2/output"
+  ],
+  "source_head": "41087c1f4a8e6bab863dbbde9d93084d892035c0",
+  "source_status": "?? evidence/pon-hepta-682-pair-host-readback-r8-20261028/\n",
+  "analyzer_sha256": "3b0876af4dfbc18ca08072273e3dfc05e8ec385207584ae142e273c3f96a8450",
+  "wall_seconds": 1.1682307009905344,
+  "cpu_seconds": 1.126349,
+  "peak_child_rss_kib": 97272,
+  "exit_code": 0,
+  "timed_out": false,
+  "declared_limits": {
+    "wall_seconds": 30,
+    "cpu_seconds": [
+      20,
+      25
+    ],
+    "address_space_bytes": 402653184
+  },
+  "native_executed": false,
+  "stdout": {
+    "bytes": 2236,
+    "sha256": "40b8881e34f64ef8486c8c64471bbc5510ada111d4ec27d7e8c60e286d3e2489"
+  },
+  "stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

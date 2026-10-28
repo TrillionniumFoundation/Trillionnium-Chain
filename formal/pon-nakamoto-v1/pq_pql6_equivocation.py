@@ -11,8 +11,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 import hashlib
 from pathlib import Path
-import subprocess
 import tempfile
+
+from pq_openssl_backend import BackendError, run as run_pinned_openssl
 
 PQL5_PREFIX = b"TRNM/PQ/PQL5Witness/v1\x00"
 PQL6_PREFIX = b"TRNM/PQ/PQL6Equivocation/v1\x00"
@@ -69,14 +70,12 @@ def _strict_spki(der: bytes) -> None:
 
 
 def _run(argv: list[str]) -> bytes:
+    if not argv or argv[0] != "openssl":
+        raise Reject("PQ OpenSSL command shape")
     try:
-        p = subprocess.run(argv, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                           timeout=15, check=False)
-    except (OSError, subprocess.TimeoutExpired) as exc:
-        raise Reject("OpenSSL unavailable") from exc
-    if p.returncode:
-        raise Reject("cryptographic operation failed")
-    return p.stdout
+        return run_pinned_openssl(argv[1:])
+    except BackendError as exc:
+        raise Reject(str(exc)) from exc
 
 
 def _public_key(public_pem: bytes) -> tuple[bytes, bytes]:

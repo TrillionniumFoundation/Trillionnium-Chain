@@ -2,9 +2,9 @@
 from __future__ import annotations
 
 from pathlib import Path
-import subprocess
 import tempfile
 import unittest
+from pq_openssl_backend import run as run_pinned_openssl
 from pq_pql6_equivocation import (
     Reject, PQL5_PREFIX, PQL5_UNSIGNED, PQL6_LEN,
     _public_key, build_evidence, verify_evidence,
@@ -12,10 +12,9 @@ from pq_pql6_equivocation import (
 
 
 def run(*argv):
-    p = subprocess.run([str(a) for a in argv], capture_output=True, timeout=15, check=False)
-    if p.returncode != 0:
-        raise AssertionError(p.stderr.decode(errors="replace"))
-    return p.stdout
+    if not argv or argv[0] != "openssl":
+        raise AssertionError("fixture must use the declared OpenSSL backend")
+    return run_pinned_openssl([str(arg) for arg in argv[1:]])
 
 
 class PQL6EquivocationTests(unittest.TestCase):

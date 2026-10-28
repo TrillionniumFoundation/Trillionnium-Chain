@@ -1,0 +1,51 @@
+{
+  "clock_ticks_per_second": 100,
+  "command": [
+    "timeout",
+    "--signal=TERM",
+    "--kill-after=3s",
+    "4s",
+    "python3",
+    "-c",
+    "import time; time.sleep(0.7)"
+  ],
+  "cpu_accounting": "wait4 reaped subtrees plus live inclusive /proc ticks; monotone max",
+  "cwd": "/workspace/scratch/56818e4fba76/chain-w1-next",
+  "disk_accounting": "allocated st_blocks, unique inodes, no intentional symlink following",
+  "disk_probe_path": "/tmp/trnm-w1-r2-target",
+  "guarantee": "sampled detection and stop; not kernel CPU/RSS/disk hard limits",
+  "initial_free_bytes": 3105894400,
+  "interval_seconds": 0.5,
+  "kill_reap_grace_seconds": 3.0,
+  "limits": {
+    "cpu_seconds": 3.0,
+    "min_free_bytes": 1073741824,
+    "rss_bytes": 134217728,
+    "target_growth_bytes": 1048576,
+    "wall_seconds": 5.0
+  },
+  "ownership": "one new session, tracked descendants, process-local subreaper, pidfds",
+  "page_bytes": 4096,
+  "pid_fields": "pid/ppid/pgid/sid are procfs-visible; local_pid is signal namespace PID",
+  "root_birth": 7317226,
+  "root_pgid": 955913,
+  "root_pid": 5,
+  "root_proc_pid": 955913,
+  "root_sid": 955913,
+  "rss_accounting": "sum of sampled process RSS; shared pages may be counted repeatedly",
+  "schema": 1,
+  "source_commit_freeze": "caller responsibility; this file records only source hash",
+  "source_path": "/tmp/w1-batch-phase0-guard-20261028-r8.py",
+  "source_sha256": "9981c3a138c4aefb6c4662f1e2c4c05cf5ef26e302c46763a42a2366a6334217",
+  "started_monotonic": 73172.265238663,
+  "supervisor_nspids": [
+    955910,
+    2
+  ],
+  "supervisor_pid": 2,
+  "supervisor_pid_namespace": "pid:[4026532347]",
+  "supervisor_proc_pid": 955910,
+  "target": "/tmp/trnm-w1-r2-target",
+  "target_baseline_bytes": 2103021568,
+  "term_grace_seconds": 3.0
+}

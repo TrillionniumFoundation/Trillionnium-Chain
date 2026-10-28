@@ -12,8 +12,9 @@ import os
 from pathlib import Path
 import sqlite3
 import stat
-import subprocess
 import tempfile
+
+from pq_openssl_backend import BackendError, run as run_pinned_openssl
 
 PREFIX = b"TRNM/PQ/PQL5Witness/v1\0"
 PQL4_SIGN = b"TRNM/PQ/PQL4SignedFrontier/v1\0"
@@ -49,13 +50,12 @@ def u64(v, label, nonzero=False):
 
 
 def run(argv):
+    if not argv or argv[0] != "openssl":
+        raise Reject("PQ OpenSSL command shape")
     try:
-        r = subprocess.run(argv, capture_output=True, timeout=15, check=False)
-    except (OSError, subprocess.TimeoutExpired) as e:
-        raise Reject("OpenSSL unavailable") from e
-    if r.returncode:
-        raise Reject("real ML-DSA-65 operation refused")
-    return r.stdout
+        return run_pinned_openssl(argv[1:])
+    except BackendError as exc:
+        raise Reject(str(exc)) from exc
 
 
 def der_length(b, i):

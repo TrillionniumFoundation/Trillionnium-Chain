@@ -6,7 +6,6 @@ consensus activation, source ledger verifier, trusted snapshot exporter or HSM t
 from dataclasses import replace
 import hashlib
 from pathlib import Path
-import subprocess
 import tempfile
 import unittest
 
@@ -20,6 +19,7 @@ from pq_genesis_handoff import (
     sign_migration_fixture, sha384, verify_handoff, verify_pq,
     sign_pq_fixture,
 )
+from pq_openssl_backend import run as run_pinned_openssl
 
 
 class PQGenesisHandoffTests(unittest.TestCase):
@@ -34,10 +34,8 @@ class PQGenesisHandoffTests(unittest.TestCase):
             public=secret.public_key().public_bytes(Encoding.Raw, PublicFormat.Raw)
             cls.old.append((secret,public))
             p=root/f'pq{i}.pem'; pub=root/f'pq{i}.pub.pem'
-            subprocess.run(['openssl','genpkey','-algorithm','ML-DSA-65','-out',str(p)],
-                           check=True,capture_output=True,timeout=15)
-            subprocess.run(['openssl','pkey','-in',str(p),'-pubout','-out',str(pub)],
-                           check=True,capture_output=True,timeout=15)
+            run_pinned_openssl(['genpkey','-algorithm','ML-DSA-65','-out',str(p)])
+            run_pinned_openssl(['pkey','-in',str(p),'-pubout','-out',str(pub)])
             cls.pq.append((p,pub.read_bytes()))
         cls.old.sort(key=lambda x:x[1])
         cls.accounts=tuple(LegacyAccount(pub,(i+2)*1000,i+3,i+2)
@@ -221,10 +219,10 @@ class PQGenesisHandoffTests(unittest.TestCase):
     def test_classical_ed25519_pem_rejects_as_mldsa_public_key(self):
         with tempfile.TemporaryDirectory() as tmp:
             p=Path(tmp)/'legacy.pem'
-            subprocess.run(['openssl','genpkey','-algorithm','ED25519','-out',str(p)],check=True,capture_output=True)
-            result=subprocess.run(['openssl','pkey','-in',str(p),'-pubout'],check=True,capture_output=True)
-            with self.assertRaises(Reject):pq_key_id(result.stdout)
-            with self.assertRaises(Reject):self.check(proofs=(replace(self.migrations[0],new_pq_public_pem=result.stdout),))
+            run_pinned_openssl(['genpkey','-algorithm','ED25519','-out',str(p)])
+            result=run_pinned_openssl(['pkey','-in',str(p),'-pubout'])
+            with self.assertRaises(Reject):pq_key_id(result)
+            with self.assertRaises(Reject):self.check(proofs=(replace(self.migrations[0],new_pq_public_pem=result),))
 
     def test_external_spki_prefix_is_strict_and_no_fake_crypto_result(self):
         with self.assertRaises(Reject):pq_key_id(b'fake public key')

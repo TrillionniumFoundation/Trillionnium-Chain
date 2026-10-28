@@ -1,0 +1,7 @@
+{
+  "archive_bytes": 490849318,
+  "archive_sha256": "222651797ba58f0bafd959191a48d23b35b3266d9e082fc49fb4d84733064fce",
+  "destination": "/tmp/pure-pon-risc0-toolchain-1.88.0",
+  "seconds": 7.571248061998631,
+  "origin": "surviving earlier official guest-toolchain archive; hash recorded, prior reference to be matched"
+}

@@ -15,6 +15,125 @@ from pathlib import Path
 
 import check_public_readiness_evidence as check
 
+# Frozen pre-lifecycle V2 bytes from fc23fa6de10380dd9ce9cae6cddd1db4d87551ce:
+# store blob 97cb5b57e5dd4ad6572f9a619c4df125e7d8d024, ancestry blob
+# ba54ff267db24e7dc1dbbaddf3561ca4b40f58ac. These are independent of the reader.
+# The sole 629-byte extension was introduced by 8a35529679c3d176fd7586ab1ecf4e004f25af79;
+# its distinct current schema identity must never accept the preserved old ID.
+PRE_LIFECYCLE_BASE_DDL = "CREATE TABLE metadata(key TEXT PRIMARY KEY,value BLOB NOT NULL);\nCREATE TABLE blocks(id BLOB PRIMARY KEY,parent BLOB,height INTEGER NOT NULL,chainwork BLOB NOT NULL,packet BLOB,state_root BLOB NOT NULL);\nCREATE INDEX work_order ON blocks(chainwork DESC,height,id);\nCREATE TABLE deltas(block BLOB NOT NULL,key TEXT NOT NULL,before BLOB,after BLOB,PRIMARY KEY(block,key));\nCREATE TABLE active(singleton INTEGER PRIMARY KEY CHECK(singleton=1),tip BLOB NOT NULL,generation INTEGER NOT NULL,state_slot INTEGER NOT NULL);\nCREATE TABLE kv(slot INTEGER NOT NULL,key TEXT NOT NULL,value BLOB NOT NULL,PRIMARY KEY(slot,key));\nCREATE TABLE reorg(singleton INTEGER PRIMARY KEY CHECK(singleton=1),old_tip BLOB NOT NULL,new_tip BLOB NOT NULL,generation INTEGER NOT NULL,cursor INTEGER NOT NULL,done INTEGER NOT NULL);\nCREATE TABLE steps(ordinal INTEGER PRIMARY KEY,kind INTEGER NOT NULL,block BLOB NOT NULL);\nCREATE TABLE events(generation INTEGER NOT NULL,ordinal INTEGER NOT NULL,kind INTEGER NOT NULL,block BLOB NOT NULL,PRIMARY KEY(generation,ordinal));\nCREATE TABLE snapshots(block BLOB PRIMARY KEY,state BLOB NOT NULL);\nCREATE TABLE local_pool_metadata(singleton INTEGER PRIMARY KEY CHECK(singleton=1),context BLOB NOT NULL CHECK(length(context)=32),limits BLOB NOT NULL,gc_groups BLOB NOT NULL DEFAULT X'0000000000000000' CHECK(length(gc_groups)=8),gc_records BLOB NOT NULL DEFAULT X'0000000000000000' CHECK(length(gc_records)=8),gc_bytes BLOB NOT NULL DEFAULT X'0000000000000000' CHECK(length(gc_bytes)=8),gc_head BLOB NOT NULL DEFAULT X'0000000000000000000000000000000000000000000000000000000000000000' CHECK(length(gc_head)=32),checked_parent BLOB,checked_generation INTEGER,CHECK((checked_parent IS NULL AND checked_generation IS NULL) OR (length(checked_parent)=32 AND checked_generation>=0)));\nCREATE TABLE local_pool_groups(ordinal INTEGER PRIMARY KEY AUTOINCREMENT,id BLOB UNIQUE NOT NULL CHECK(length(id)=32),status INTEGER NOT NULL CHECK(status IN (0,1,2,3)),reason TEXT NOT NULL);\nCREATE TABLE local_pool_rows(group_id BLOB NOT NULL,position INTEGER NOT NULL CHECK(position>=0 AND position<16),digest BLOB UNIQUE NOT NULL CHECK(length(digest)=32),sender BLOB NOT NULL CHECK(length(sender)=32),nonce BLOB NOT NULL CHECK(length(nonce)=8),expiry BLOB NOT NULL CHECK(length(expiry)=8),fee_limit BLOB NOT NULL CHECK(length(fee_limit)=8),raw BLOB NOT NULL CHECK(length(raw)>0 AND length(raw)<=2048),PRIMARY KEY(group_id,position),FOREIGN KEY(group_id) REFERENCES local_pool_groups(id) ON DELETE CASCADE);\nCREATE TABLE local_pool_removals(ordinal INTEGER PRIMARY KEY AUTOINCREMENT,id BLOB UNIQUE NOT NULL CHECK(length(id)=32),group_id BLOB NOT NULL CHECK(length(group_id)=32),reason TEXT NOT NULL);\nCREATE TABLE peer_replay(session_id BLOB PRIMARY KEY,chain_id BLOB NOT NULL,protocol_digest BLOB NOT NULL,peer_id BLOB NOT NULL,profile_digest BLOB NOT NULL,generation INTEGER NOT NULL CHECK(generation>0),highest_ack INTEGER NOT NULL CHECK(highest_ack>=0),pending_nonce INTEGER,pending_digest BLOB,pending_bytes INTEGER, CHECK((pending_nonce IS NULL AND pending_digest IS NULL AND pending_bytes IS NULL) OR (pending_nonce IS NOT NULL AND pending_nonce>0 AND pending_digest IS NOT NULL AND pending_bytes>0)));\nCREATE TABLE peer_request_audit(session_id BLOB NOT NULL,nonce INTEGER NOT NULL CHECK(nonce>0),payload_digest BLOB NOT NULL,payload BLOB,response_digest BLOB,response BLOB,status INTEGER NOT NULL CHECK(status IN (0,1,2)),PRIMARY KEY(session_id,nonce),FOREIGN KEY(session_id) REFERENCES peer_replay(session_id));\nCREATE TABLE peer_outbox(session_id BLOB PRIMARY KEY,chain_id BLOB NOT NULL,protocol_digest BLOB NOT NULL,peer_id BLOB NOT NULL,profile_digest BLOB NOT NULL,generation INTEGER NOT NULL CHECK(generation>0),highest_ack INTEGER NOT NULL CHECK(highest_ack>=0),pending_nonce INTEGER,pending_digest BLOB,pending_bytes INTEGER,pending_payload BLOB,pending_wire BLOB,pending_wire_digest BLOB,CHECK((pending_nonce IS NULL AND pending_digest IS NULL AND pending_bytes IS NULL AND pending_payload IS NULL AND pending_wire IS NULL AND pending_wire_digest IS NULL) OR (pending_nonce IS NOT NULL AND pending_nonce>0 AND pending_digest IS NOT NULL AND pending_bytes>0 AND pending_payload IS NOT NULL AND pending_wire IS NOT NULL AND pending_wire_digest IS NOT NULL)));"
+PRE_LIFECYCLE_INDEX_DDL = 'CREATE TABLE ancestry_jump(block BLOB NOT NULL CHECK(length(block)=32),level INTEGER NOT NULL CHECK(level>=0 AND level<63),ancestor BLOB NOT NULL CHECK(length(ancestor)=32),ancestor_height INTEGER NOT NULL CHECK(ancestor_height>=0),left_seal BLOB NOT NULL CHECK(length(left_seal)=32),right_seal BLOB NOT NULL CHECK(length(right_seal)=32),seal BLOB NOT NULL CHECK(length(seal)=32),PRIMARY KEY(block,level),FOREIGN KEY(block) REFERENCES blocks(id),FOREIGN KEY(ancestor) REFERENCES blocks(id)) WITHOUT ROWID;'
+REORG_LIFECYCLE_DDL = "CREATE TABLE reorg_lifecycle_v1(operation INTEGER PRIMARY KEY AUTOINCREMENT,old_tip BLOB NOT NULL CHECK(length(old_tip)=32),new_tip BLOB NOT NULL CHECK(length(new_tip)=32),generation INTEGER NOT NULL CHECK(generation>0),old_slot INTEGER NOT NULL CHECK(old_slot>=0),old_root BLOB NOT NULL CHECK(length(old_root)=32),owner_context BLOB NOT NULL CHECK(length(owner_context)=32),outcome INTEGER NOT NULL CHECK(outcome IN (0,1,2)),cancelled_cursor INTEGER,reason TEXT NOT NULL CHECK(length(reason)<=96),CHECK((outcome IN (0,1) AND cancelled_cursor IS NULL AND reason='') OR (outcome=2 AND cancelled_cursor>=0 AND length(reason)>0)));\n"
+
+# Source-contract excerpts copied from the same fc23 store blob, not derived
+# by deleting PQ arms from current source. open_selected retains its exact
+# schema-selection pair; the full original source is also checked in evidence.
+PRE_PQ_BACKEND = '''
+enum StateBackend {
+    Legacy,
+    AuthenticatedV1,
+    PermanentAccountGrowthV2,
+}
+impl StateBackend {
+    fn ddl(self) -> String {
+        match self {
+            Self::Legacy => ddl(),
+            Self::AuthenticatedV1 => format!("{}{}", ddl(), native_authenticated::DDL),
+            Self::PermanentAccountGrowthV2 => format!("{}{}", ddl(), growth::DDL),
+        }
+    }
+    fn selected_schema_id(self, settings: &Settings) -> Hash {
+        if growth_profile_v2::enabled(&settings.app) {
+            hash(
+                b"native-growth-reference-branch-schema-v2",
+                &[self.ddl().as_bytes()],
+            )
+        } else {
+            self.schema_id()
+        }
+    }
+    fn schema_id(self) -> Hash {
+        let domain: &[u8] = match self {
+            Self::Legacy => b"native-branch-schema-v2",
+            Self::AuthenticatedV1 => b"native-authenticated-branch-schema-v1",
+            Self::PermanentAccountGrowthV2 => b"native-permanent-account-growth-schema-v2",
+        };
+        hash(domain, &[self.ddl().as_bytes()])
+    }
+}
+'''
+PRE_PQ_OPENERS = '''
+impl Node {
+fn open(path: &Path, settings: Settings, workers: usize) -> Result<Self> {
+        Self::open_with_fault(path, settings, workers, None)
+    }
+fn open_with_fault(
+        path: &Path,
+        settings: Settings,
+        workers: usize,
+        hook: Option<&mut Hook<'_>>,
+    ) -> Result<Self> {
+        // The legacy opener is never a fallback for a required-policy namespace.
+        ensure(!owner_marker_present(path)?, "OWNER_TASK_POLICY_REQUIRED")?;
+        Self::open_inner(path, settings, workers, hook, None, None, None)
+    }
+fn open_inner(
+        path: &Path,
+        settings: Settings,
+        workers: usize,
+        hook: Option<&mut Hook<'_>>,
+        owner_policy: Option<OwnerPolicy>,
+        mining_owner: Option<operator_mining_owner::MiningOwner>,
+        continuous_owner: Option<operator_continuous_owner::ContinuousOwner>,
+    ) -> Result<Self> {
+        Self::open_selected(
+            path,
+            settings,
+            workers,
+            hook,
+            NativeOwners {
+                policy: owner_policy,
+                mining: mining_owner,
+                continuous: continuous_owner,
+            },
+            StateBackend::Legacy,
+            false,
+        )
+    }
+fn open_with_authenticated_state(
+        path: &Path,
+        settings: Settings,
+        workers: usize,
+    ) -> Result<Self> {
+        Self::open_with_authenticated_state_and_fault(path, settings, workers, None)
+    }
+fn open_with_authenticated_state_and_fault(
+        path: &Path,
+        settings: Settings,
+        workers: usize,
+        hook: Option<&mut Hook<'_>>,
+    ) -> Result<Self> {
+        ensure(!owner_marker_present(path)?, "OWNER_TASK_POLICY_REQUIRED")?;
+        Self::open_selected(
+            path,
+            settings,
+            workers,
+            hook,
+            NativeOwners {
+                policy: None,
+                mining: None,
+                continuous: None,
+            },
+            StateBackend::AuthenticatedV1,
+            false,
+        )
+    }
+fn open_selected() {
+        let ddl = state_backend.ddl();
+        let schema_id = state_backend.selected_schema_id(&settings);
+    }
+}
+'''
+
 
 class SourceAndArtifactTests(unittest.TestCase):
     def setUp(self):
@@ -480,6 +599,20 @@ class DurableStoreTests(unittest.TestCase):
                              (self.H('native-branch-schema-v1',ddl.encode()),))
         with self.assertRaisesRegex(ValueError,'durable metadata/context'): self.verify()
 
+    def test_current_lifecycle_store_cannot_use_preserved_pre_lifecycle_identity(self):
+        old = bytes.fromhex('8c2627fa0b06e51742e7e6d40662c61d4b4727e810abc02b24634a8a817dc0e0')
+        current = bytes.fromhex('9cfc36489e0ae98abd0110a9974d5c4f388cab91ebd701f93fba401830fb6658')
+        self.verify()
+        for owner in ('producer','validator'):
+            with self.subTest(owner=owner):
+                with sqlite3.connect(self.folder/owner/'native.sqlite') as database:
+                    self.assertEqual(database.execute("SELECT value FROM metadata WHERE key='schema'").fetchone()[0],current)
+                    database.execute("UPDATE metadata SET value=? WHERE key='schema'",(old,))
+                with self.assertRaisesRegex(ValueError,'durable metadata/context'): self.verify()
+                with sqlite3.connect(self.folder/owner/'native.sqlite') as database:
+                    database.execute("UPDATE metadata SET value=? WHERE key='schema'",(current,))
+                self.verify()
+
     def test_authenticated_domain_cannot_relabel_legacy_tables(self):
         ddl,_ = check.native_durable_schema(check.ROOT)
         with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
@@ -602,6 +735,62 @@ class NativeDurableSchemaTests(unittest.TestCase):
         self.assertEqual(source.count(before),1,'source control must target exactly one occurrence: '+before)
         return source.replace(before,after,1)
 
+    def historical_backend(self):
+        return ('const BASE_DDL: &str = "'+PRE_LIFECYCLE_BASE_DDL+'";\n'
+                'fn ddl() -> String { format!("{}{}", BASE_DDL, crate::ancestry_index::DDL) }\n'+
+                PRE_PQ_BACKEND+PRE_PQ_OPENERS)
+
+    def test_historical_three_variant_backend_keeps_exact_contract_and_bytes(self):
+        sys.path.insert(0,str(check.ROOT/'formal/pon-nakamoto-v1'))
+        from contract_wire import H
+        source = self.historical_backend()
+        index = 'const DDL: &str = "'+PRE_LIFECYCLE_INDEX_DDL+'";'
+        ddl,domain = self.extract(source,index)
+        self.assertEqual(ddl,PRE_LIFECYCLE_BASE_DDL+PRE_LIFECYCLE_INDEX_DDL)
+        self.assertEqual(len(ddl.encode()),4775)
+        self.assertEqual(H(domain,ddl.encode()).hex(),
+                         '8c2627fa0b06e51742e7e6d40662c61d4b4727e810abc02b24634a8a817dc0e0')
+        for noncode in ('\n// PqNetworkV1 pq_network\n',
+                        '\nconst NOTE: &str = "PqNetworkV1 pq_network";\n',
+                        '\nconst NOTE: &str = r##"PqNetworkV1 pq_network"##;\n'):
+            with self.subTest(noncode=noncode):
+                self.assertEqual(self.extract(source+noncode,index),(ddl,domain))
+        for before,after in [
+            ('b"native-branch-schema-v2"','b"native-authenticated-branch-schema-v1"'),
+            ('Self::Legacy => ddl(),','Self::Legacy => format!("{}{}", ddl(), growth::DDL),'),
+            ('StateBackend::Legacy,','StateBackend::AuthenticatedV1,'),
+            ('let ddl = state_backend.ddl();','let ddl = ddl();'),
+        ]:
+            with self.subTest(mutation=before),self.assertRaisesRegex(ValueError,'durable backend'):
+                self.extract(self.replace_once(source,before,after),index)
+
+    def test_backend_generations_cannot_mix_or_downgrade(self):
+        source = self.historical_backend()
+        index = 'const DDL: &str = "'+PRE_LIFECYCLE_INDEX_DDL+'";'
+        guard = '#[cfg(feature = "pq-native-openssl")]'
+        variant = guard+'\n    PqNetworkV1,'
+        ddl = guard+'\n            Self::PqNetworkV1 => format!("{}{}", ddl(), pq_network::DDL),'
+        domain = guard+'\n            Self::PqNetworkV1 => b"native-pq-network-owner-schema-v1",'
+        # A remaining implementation, owner field or module keeps selection on
+        # the complete PQ contract; malformed PQ cannot retry the old template.
+        for removed in [(variant,), (ddl,), (domain,), (variant,ddl,domain)]:
+            changed = self.current
+            for arm in removed:
+                changed = self.replace_once(changed,arm,'')
+            with self.subTest(removed=removed),self.assertRaisesRegex(ValueError,'durable backend'):
+                self.extract(changed)
+        for added in ('\nmod pq_network {}\n', '\nfn retain(_: PqNetworkV1) {}\n',
+                      '\nstruct Owners { pq_network: Option<Vec<u8>> }\n'):
+            with self.subTest(added=added),self.assertRaisesRegex(ValueError,'durable backend variants'):
+                self.extract(source+added,index)
+        for before,after in [
+            ('PermanentAccountGrowthV2,\n}', 'PermanentAccountGrowthV2,\n'+variant+'\n}'),
+            ('Self::Legacy => ddl(),','Self::Legacy => ddl(),\n'+ddl),
+            ('continuous: continuous_owner,','continuous: continuous_owner, pq_network: None,'),
+        ]:
+            with self.subTest(mixed=before),self.assertRaisesRegex(ValueError,'durable backend'):
+                self.extract(self.replace_once(source,before,after),index)
+
     def test_historical_literal_v1_and_inline_composed_v2_stay_supported(self):
         ddl = 'CREATE TABLE exact(key BLOB);'
         v1 = 'const DDL : &str = "'+ddl+'";fn open(){let id=hash(b"native-branch-schema-v1", &[ DDL.as_bytes() ]);}'
@@ -636,11 +825,25 @@ class NativeDurableSchemaTests(unittest.TestCase):
         from contract_wire import H
         ddl,domain = self.extract(self.current)
         self.assertEqual(domain,'native-branch-schema-v2')
-        # Pinned to the independently recomputed pre-backend V2 bytes, not to
-        # another call through this extractor or to a resealed fixture.
-        self.assertEqual(len(ddl.encode()),4775)
-        self.assertEqual(H(domain,ddl.encode()).hex(),
+        # Preserve the independent 4775-byte pre-lifecycle vector exactly.
+        # Current native storage added one explicit lifecycle table; its old
+        # identity remains historical and cannot authorize the current store.
+        historical_source = ('const BASE_DDL: &str = "'+PRE_LIFECYCLE_BASE_DDL+'";'
+            'fn ddl() -> String { format!("{}{}", BASE_DDL, crate::ancestry_index::DDL) }'
+            'fn open(){ let ddl = ddl(); hash(b"native-branch-schema-v2", &[ddl.as_bytes()]); }')
+        historical_index = 'const DDL: &str = "'+PRE_LIFECYCLE_INDEX_DDL+'";'
+        preserved,preserved_domain = self.extract(historical_source,historical_index)
+        self.assertEqual(preserved_domain,'native-branch-schema-v2')
+        self.assertEqual(preserved,PRE_LIFECYCLE_BASE_DDL+PRE_LIFECYCLE_INDEX_DDL)
+        self.assertEqual(len(preserved.encode()),4775)
+        self.assertEqual(H(preserved_domain,preserved.encode()).hex(),
                          '8c2627fa0b06e51742e7e6d40662c61d4b4727e810abc02b24634a8a817dc0e0')
+        expected = self.replace_once(preserved,'CREATE TABLE steps(',REORG_LIFECYCLE_DDL+'CREATE TABLE steps(')
+        self.assertEqual(len(REORG_LIFECYCLE_DDL.encode()),629)
+        self.assertEqual(ddl,expected)
+        self.assertEqual(len(ddl.encode()),5404)
+        self.assertEqual(H(domain,ddl.encode()).hex(),
+                         '9cfc36489e0ae98abd0110a9974d5c4f388cab91ebd701f93fba401830fb6658')
         self.assertNotRegex(ddl,r'archive_nodes|native_state_commitments')
         changed = self.replace_once(self.current,'format!("{}{}", BASE_DDL, crate::ancestry_index::DDL)',
                                     'format!("{}", BASE_DDL)')
@@ -697,6 +900,71 @@ class NativeDurableSchemaTests(unittest.TestCase):
         for label,before,after in mutations:
             with self.subTest(label=label),self.assertRaisesRegex(ValueError,'durable backend'):
                 self.extract(self.replace_once(self.current,before,after))
+
+    def test_pq_mapping_is_exact_without_qualifying_its_storage(self):
+        ddl,domain = self.extract(self.current)
+        self.assertEqual(domain,'native-branch-schema-v2')
+        self.assertEqual(len(ddl.encode()),5404)
+        self.assertNotRegex(ddl,r'pq_network_peer_v1|pq_network_request_v1')
+        pq = 'b"native-pq-network-owner-schema-v1"'
+        arm = 'Self::PqNetworkV1 => format!("{}{}", ddl(), pq_network::DDL),'
+        mutations = [
+            ('domain-legacy',pq,'b"native-branch-schema-v2"'),
+            ('domain-authenticated',pq,'b"native-authenticated-branch-schema-v1"'),
+            ('domain-growth',pq,'b"native-permanent-account-growth-schema-v2"'),
+            ('domain-unknown',pq,'b"native-pq-network-owner-schema-unknown"'),
+            ('domain-literal-space',pq,'b"native-pq-network-owner- schema-v1"'),
+            ('pq-omitted',arm,'Self::PqNetworkV1 => ddl(),'),
+            ('pq-authenticated',arm,'Self::PqNetworkV1 => format!("{}{}", ddl(), native_authenticated::DDL),'),
+            ('pq-reversed',arm,'Self::PqNetworkV1 => format!("{}{}", pq_network::DDL, ddl()),'),
+            ('pq-format',arm,'Self::PqNetworkV1 => format!("{} {}", ddl(), pq_network::DDL),'),
+            ('pq-format-arity',arm,'Self::PqNetworkV1 => format!("{}", ddl(), pq_network::DDL),'),
+            ('pq-wildcard',arm,'_ => format!("{}{}", ddl(), pq_network::DDL),'),
+            ('legacy-pq','Self::Legacy => ddl(),','Self::Legacy => format!("{}{}", ddl(), pq_network::DDL),'),
+        ]
+        for label,before,after in mutations:
+            with self.subTest(label=label),self.assertRaisesRegex(ValueError,'durable backend'):
+                self.extract(self.replace_once(self.current,before,after))
+
+    def test_pq_feature_guards_and_ordinary_owner_inputs_are_exact(self):
+        guard = '#[cfg(feature = "pq-native-openssl")]'
+        arms = [
+            ('variant',guard+'\n    PqNetworkV1,'),
+            ('ddl',guard+'\n            Self::PqNetworkV1 => format!("{}{}", ddl(), pq_network::DDL),'),
+            ('domain',guard+'\n            Self::PqNetworkV1 => b"native-pq-network-owner-schema-v1",'),
+        ]
+        for label,arm in arms:
+            for mutation,replacement in [
+                ('wrong-feature',arm.replace('pq-native-openssl','unapproved-native-feature')),
+                ('missing-guard',arm.replace(guard,'')),
+                ('inverted-guard',arm.replace(guard,'#[cfg(not(feature = "pq-native-openssl"))]')),
+                ('broadened-guard',arm.replace(guard,'#[cfg(any(feature = "pq-native-openssl", test))]')),
+            ]:
+                with self.subTest(arm=label,mutation=mutation),self.assertRaisesRegex(ValueError,'durable backend'):
+                    self.extract(self.replace_once(self.current,arm,replacement))
+        for name,end_marker in [('open_inner','    fn open_selected('),
+                                 ('open_with_authenticated_state_and_fault','    /// Explicit local operator policy')]:
+            start = self.current.index('fn '+name+'(')
+            end = self.current.index(end_marker,start)
+            opener = self.current[start:end]
+            for replacement in ('pq_network: Some(Vec::new()),','pq_network: other_owner,',''):
+                with self.subTest(opener=name,replacement=replacement),self.assertRaisesRegex(ValueError,'durable backend opener'):
+                    changed = self.replace_once(opener,'pq_network: None,',replacement)
+                    self.extract(self.replace_once(self.current,opener,changed))
+
+    def test_pq_tables_cannot_be_inserted_into_legacy_literals(self):
+        for name in ('pq_network_peer_v1','pq_network_request_v1','Pq_NeTwOrK_PeEr_V1','Pq_NeTwOrK_ReQuEsT_V1'):
+            extension = 'CREATE TABLE '+name+'(id BLOB PRIMARY KEY,data BLOB NOT NULL);'
+            literal = 'const DDL: &str = "'+extension+'";'
+            v1 = literal+'fn open() { hash(b"native-branch-schema-v1", &[DDL.as_bytes()]); }'
+            sources = [
+                (v1,None),
+                (self.replace_once(self.current,'CREATE TABLE metadata',extension+'CREATE TABLE metadata'),None),
+                (self.current,self.replace_once(self.current_index,'CREATE TABLE ancestry_jump',extension+'CREATE TABLE ancestry_jump')),
+            ]
+            for source,index in sources:
+                with self.subTest(name=name,index=index is not None),self.assertRaisesRegex(ValueError,'authenticated tables in legacy durable schema'):
+                    self.extract(source,index)
 
     def test_permanent_growth_table_cannot_be_inserted_into_legacy_literals(self):
         for name in ('growth_states','GrOwTh_StAtEs'):

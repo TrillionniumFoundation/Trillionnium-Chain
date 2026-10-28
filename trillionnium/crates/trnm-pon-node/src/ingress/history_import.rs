@@ -203,10 +203,11 @@ fn admit_packet(
     let owns_node_mutex = matches!(owner, Owner::Shared(_));
     metered(cpu, control, |operation| {
         let progress = operation.checkpoint_handle();
-        let check = || {
-            control.check()?;
-            progress.history_checkpoint(owns_node_mutex, &|| control.check())
-        };
+        // history_checkpoint checks the original deadline and actual Host
+        // before its CPU observation, then again throughout every refill wait.
+        // Keep that check at every native progress boundary; a second adjacent
+        // control.check() performed no ledger work and duplicated Host reads.
+        let check = || progress.history_checkpoint(owns_node_mutex, &|| control.check());
         check()?;
         let (existing, permit) = owner.with(control, |node| {
             let existing =
@@ -308,14 +309,12 @@ fn activate_packet(
             clock,
             &mut || {
                 cut("activation_progress");
-                control.check()?;
                 checkpoint()
             },
             Some(&operation.checkpoint_handle()),
         )
     })?;
     cut("activated");
-    control.check()?;
     checkpoint()
 }
 

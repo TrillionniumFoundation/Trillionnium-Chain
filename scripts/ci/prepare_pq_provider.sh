@@ -36,6 +36,9 @@ pq_script_sha256="$(sha256sum "${BASH_SOURCE[0]}" | cut -d ' ' -f 1)"
 pq_stage='download'
 pq_source_transport='download'
 pq_smoke_passed=false
+pq_backend_exported=false
+pq_cli_sha256=''
+pq_version=''
 pq_started="$SECONDS"
 
 pq_record_exit() {
@@ -44,12 +47,20 @@ pq_record_exit() {
   set +e
   python3 - "$pq_observations/provider.json" "$pq_exit" "$pq_stage" \
     "$openssl_version" "$openssl_sha256" "$openssl_url" "$pq_build" "$pq_prefix" \
-    "$pq_script_sha256" "$pq_smoke_passed" "$((SECONDS - pq_started))" "$pq_source_transport" <<'PY'
-import json, os, pathlib, sys
-path, code, stage, version, archive_sha, url, build, prefix, script_sha, smoke, elapsed, transport = sys.argv[1:]
+    "$pq_script_sha256" "$pq_smoke_passed" "$((SECONDS - pq_started))" "$pq_source_transport" \
+    "$pq_backend_exported" "$pq_cli_sha256" "$pq_version" <<'PY'
+import hashlib, json, os, pathlib, sys
+path, code, stage, version, archive_sha, url, build, prefix, script_sha, smoke, elapsed, transport, exported, cli_sha, cli_version = sys.argv[1:]
+root = pathlib.Path(prefix)
+identities = []
+for relative in ('bin/openssl', 'include/openssl/opensslv.h', 'include/openssl/configuration.h', 'lib/libcrypto.a', 'lib/libssl.a'):
+    item = root / relative
+    identities.append(dict(path=str(item), bytes=item.stat().st_size,
+                           sha256=hashlib.sha256(item.read_bytes()).hexdigest())
+                      if item.is_file() else dict(path=str(item), available=False))
 payload = {
-    "schema": "trnm-ci-pq-provider-v2",
-    "result": "PREPARED_AND_SMOKE_VERIFIED" if code == "0" and smoke == "true" else "FAILED",
+    "schema": "trnm-ci-pq-provider-v3",
+    "result": "PREPARED_AND_SMOKE_VERIFIED" if code == "0" and smoke == "true" and exported == "true" else "FAILED",
     "exit_code": int(code), "last_stage": stage,
     "version": version, "source_url": url, "source_archive_sha256_expected": archive_sha,
     "source_transport": transport,
@@ -61,6 +72,14 @@ payload = {
     "github_actions_reported": os.environ.get("GITHUB_ACTIONS") == "true",
     "runner_environment_reported": os.environ.get("RUNNER_ENVIRONMENT"),
     "native_rust_pq_tests_run_by_preparation": False,
+    "backend_exported": exported == "true",
+    "cli_executable": str(root / 'bin/openssl'),
+    "cli_sha256": cli_sha or None,
+    "cli_version_output": cli_version or None,
+    "openssl_conf": '/dev/null',
+    "openssl_modules": str(root / 'lib/ossl-modules'),
+    "native_backend_inputs": identities,
+    "independent_cryptographic_implementation_claim": False,
     "whole_chain_quantum_security_qualified": False,
     "production_activation": False,
 }
@@ -118,6 +137,7 @@ pq_openssl() {
 pq_version="$(pq_openssl version)"
 printf '%s\n' "$pq_version" >> "$pq_log"
 case "$pq_version" in "OpenSSL $openssl_version "*) ;; *) exit 1 ;; esac
+pq_cli_sha256="$(sha256sum "$pq_prefix/bin/openssl" | cut -d ' ' -f 1)"
 printf '%s\n' 'Trillionnium CI ML-DSA-65 provider smoke v1' > "$pq_smoke/message"
 printf '%s\n' 'Changed Trillionnium CI provider smoke message' > "$pq_smoke/wrong-message"
 pq_openssl genpkey -provider default -algorithm ML-DSA-65 -out "$pq_smoke/private.pem" >> "$pq_log" 2>&1
@@ -135,6 +155,9 @@ pq_smoke_passed=true
 
 # Export only after real key generation, signing, verification and rejection.
 pq_stage='export'
-printf 'OPENSSL_DIR=%s\nOPENSSL_STATIC=1\n' "$pq_prefix" >> "$GITHUB_ENV"
+printf 'OPENSSL_DIR=%s\nOPENSSL_STATIC=1\nTRNM_PQ_OPENSSL=%s\nTRNM_PQ_OPENSSL_SHA256=%s\nTRNM_PQ_OPENSSL_VERSION=%s\nOPENSSL_CONF=/dev/null\nOPENSSL_MODULES=%s\n' \
+  "$pq_prefix" "$pq_prefix/bin/openssl" "$pq_cli_sha256" "$openssl_version" \
+  "$pq_prefix/lib/ossl-modules" >> "$GITHUB_ENV"
+pq_backend_exported=true
 pq_stage='complete'
 printf '%s\n' "Prepared isolated static OpenSSL $openssl_version with verified ML-DSA-65"

@@ -7,9 +7,10 @@ from pathlib import Path
 import os
 import shutil
 import sqlite3
-import subprocess
 import tempfile
 import unittest
+
+from pq_openssl_backend import run as run_pinned_openssl
 
 from pq_pql4_signed_frontier import (
     DOMAIN, Frontier, FrontierObservation, LocalSnapshot, Reject, SIGNED_BYTES,
@@ -43,17 +44,13 @@ class PQL4ActualTests(unittest.TestCase):
         for label in ("observer", "attacker"):
             private = cls.keyroot / (label + ".private.pem")
             public = cls.keyroot / (label + ".public.pem")
-            subprocess.run(["openssl", "genpkey", "-algorithm", "ML-DSA-65",
-                            "-out", str(private)], capture_output=True, check=True, timeout=15)
-            subprocess.run(["openssl", "pkey", "-in", str(private), "-pubout",
-                            "-out", str(public)], capture_output=True, check=True, timeout=15)
+            run_pinned_openssl(["genpkey", "-algorithm", "ML-DSA-65", "-out", str(private)])
+            run_pinned_openssl(["pkey", "-in", str(private), "-pubout", "-out", str(public)])
             cls.keys[label] = (private, public.read_bytes())
         old_private = cls.keyroot / "ed25519.private.pem"
         old_public = cls.keyroot / "ed25519.public.pem"
-        subprocess.run(["openssl", "genpkey", "-algorithm", "ED25519", "-out", str(old_private)],
-                       capture_output=True, check=True, timeout=15)
-        subprocess.run(["openssl", "pkey", "-in", str(old_private), "-pubout", "-out", str(old_public)],
-                       capture_output=True, check=True, timeout=15)
+        run_pinned_openssl(["genpkey", "-algorithm", "ED25519", "-out", str(old_private)])
+        run_pinned_openssl(["pkey", "-in", str(old_private), "-pubout", "-out", str(old_public)])
         cls.classical_key = old_public.read_bytes()
         cls.network = bytes(range(1, 33))
         cls.import_root = bytes([0x22])*48

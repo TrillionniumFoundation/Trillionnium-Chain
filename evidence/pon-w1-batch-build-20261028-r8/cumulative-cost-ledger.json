@@ -1,0 +1,39 @@
+{
+  "schema": "TRNM-W1-BATCH-PHASE0-COST-AFTER-ATTEMPT5-LEDGER1",
+  "prior_ledger": "evidence/pon-w1-rust1911-acquisition-20261028-r8/cumulative-cost-ledger.json",
+  "prior_ledger_sha256": "b616a949c76f23d07e476fe13f27161f8f1d24ad88de4c69b0dcea268c75eaf3",
+  "prior_named_wall_sum_seconds": 58.59139955198043,
+  "prior_known_named_cpu_sum_seconds": 36.349681,
+  "additional_observations": [
+    {
+      "stage": "attempt5-admission",
+      "wall_seconds": 0.019246593001298606,
+      "known_cpu_seconds": 0.018401999999999998,
+      "cpu_scope": "admission self + children before final receipt write",
+      "receipt": "attempt5-start-admission.json"
+    },
+    {
+      "stage": "attempt5-complete-build-and-boundary-checks",
+      "wall_seconds": 140.6670017610013,
+      "known_cpu_seconds": 138.300131,
+      "cpu_scope": "supervisor child tree; excludes supervisor own CPU",
+      "receipt": "attempt5/result.json"
+    },
+    {
+      "stage": "lossless-host-preservation",
+      "wall_seconds": 0.5424146370060043,
+      "known_cpu_seconds": 0.530349,
+      "cpu_scope": "Python process; no native binary/guest execution",
+      "receipt": "attempt5/compiled-host-preservation.json"
+    }
+  ],
+  "measured_named_wall_sum_seconds": 199.82006254298904,
+  "known_named_cpu_sum_seconds": 175.19856299999998,
+  "all_three_earlier_failed_builds_and_rejected_lock_path_retained": true,
+  "attempt4_not_executed": true,
+  "known_accounting_limits": "Retains all three actual failed Phase0 attempts, resolver downgrade and reversal, dependency download, compiler adoption, metadata reads and own compiler reclaim. Guard own CPU, reclaimed-tree CPU, uninstrumented source inspections/control CPU are not captured and are not represented as zero. Guard development controls and original complete leaf proof costs remain separate raw evidence; no compiler acquisition or build costs are treated as proof speed measurements.",
+  "current_stage_limit": "Build and artifact retention only. No batch guest execution, actual receipt verification or proof occurred. This cost ledger does not evaluate proof benefit.",
+  "budget_reused_or_deadline_extended": false,
+  "unix_ns": 1793163705028855926,
+  "free_bytes_at_packet_copy": 1900531712
+}

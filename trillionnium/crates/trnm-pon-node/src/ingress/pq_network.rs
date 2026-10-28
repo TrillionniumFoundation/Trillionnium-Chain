@@ -3,7 +3,7 @@
 //! The loopback-only profile retains a bounded durable replay ledger. It has no
 //! confidentiality, public saturation, account migration or WAN qualification.
 use super::{Request, WorkCheckedPacket};
-use crate::{ensure, Error, Node, Result, Settings};
+use crate::{ensure, Error, ErrorCode, Node, Result, Settings};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use std::{
@@ -461,12 +461,16 @@ impl PqServer {
             crate::store::pq_network::PqReplay::Execute(epoch, expected) => (epoch, expected),
         };
         let check = || {
-            ensure(Instant::now() < deadline, "PQ_NETWORK_DEADLINE")?;
-            ensure(super::now()? <= verified.expiry, "PQ_NETWORK_EXPIRED")?;
-            ensure(
-                epoch.load(Ordering::Acquire) == expected_epoch,
-                "PQ_NETWORK_REVOKED",
-            )
+            if Instant::now() >= deadline {
+                return Err(Error::new(ErrorCode::PqNetworkDeadline));
+            }
+            if super::now()? > verified.expiry {
+                return Err(Error::new(ErrorCode::PqNetworkExpired));
+            }
+            if epoch.load(Ordering::Acquire) != expected_epoch {
+                return Err(Error::new(ErrorCode::PqNetworkRevoked));
+            }
+            Ok(())
         };
         let result = super::dispatch_shared_with_execution_progress(
             node,

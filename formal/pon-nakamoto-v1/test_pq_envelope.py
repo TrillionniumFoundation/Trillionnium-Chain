@@ -1,10 +1,10 @@
 """Real OpenSSL 3.5+ ML-DSA-65 negative/positive tests; no mock signatures."""
 import hashlib
 from pathlib import Path
-import shutil
-import subprocess
 import tempfile
 import unittest
+
+from pq_openssl_backend import run as run_pinned_openssl
 
 from pq_envelope import (
     MAX_PAYLOAD_BYTES, ML_DSA_65_SIGNATURE_BYTES, Reject, SIGNED_BYTES,
@@ -16,16 +16,12 @@ from pq_envelope import (
 class PureMLDSA65WireTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        if shutil.which("openssl") is None:
-            raise RuntimeError("PQC conformance cannot be accepted: OpenSSL unavailable")
         cls.temp = tempfile.TemporaryDirectory(prefix="trnm-pq-vectors-")
         cls.addClassCleanup(cls.temp.cleanup)
         d = Path(cls.temp.name)
         cls.secret, cls.public = d / "secret.pem", d / "public.pem"
-        subprocess.run(["openssl", "genpkey", "-algorithm", "ML-DSA-65", "-out", str(cls.secret)],
-                       check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        subprocess.run(["openssl", "pkey", "-in", str(cls.secret), "-pubout", "-out", str(cls.public)],
-                       check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        run_pinned_openssl(["genpkey", "-algorithm", "ML-DSA-65", "-out", str(cls.secret)])
+        run_pinned_openssl(["pkey", "-in", str(cls.secret), "-pubout", "-out", str(cls.public)])
         cls.pem = cls.public.read_bytes()
         cls.network = bytes(range(32))
         cls.context = bytes(range(32, 64))
@@ -103,10 +99,8 @@ class PureMLDSA65WireTests(unittest.TestCase):
     def test_wrong_key_rejects_signature(self):
         with tempfile.TemporaryDirectory(prefix="trnm-other-") as root:
             secret, public = Path(root) / "key", Path(root) / "pub"
-            subprocess.run(["openssl", "genpkey", "-algorithm", "ML-DSA-65", "-out", str(secret)],
-                           check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            subprocess.run(["openssl", "pkey", "-in", str(secret), "-pubout", "-out", str(public)],
-                           check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            run_pinned_openssl(["genpkey", "-algorithm", "ML-DSA-65", "-out", str(secret)])
+            run_pinned_openssl(["pkey", "-in", str(secret), "-pubout", "-out", str(public)])
             with self.assertRaises(Reject):
                 verify_reference(**self.arguments(public_pem=public.read_bytes()))
 
@@ -117,10 +111,8 @@ class PureMLDSA65WireTests(unittest.TestCase):
             parse_signed(bytes(wrong))
         with tempfile.TemporaryDirectory(prefix="trnm-ed-") as root:
             k, p = Path(root) / "key", Path(root) / "pub"
-            subprocess.run(["openssl", "genpkey", "-algorithm", "Ed25519", "-out", str(k)],
-                           check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            subprocess.run(["openssl", "pkey", "-in", str(k), "-pubout", "-out", str(p)],
-                           check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            run_pinned_openssl(["genpkey", "-algorithm", "Ed25519", "-out", str(k)])
+            run_pinned_openssl(["pkey", "-in", str(k), "-pubout", "-out", str(p)])
             with self.assertRaises(Reject):
                 public_key_id(p.read_bytes())
 

@@ -26,6 +26,47 @@ READ = """      - name: Check PQ provider CI wiring and failure controls
 """
 MERGE_READ = READ.replace(
     "        run:", "        if: matrix.lane == 'repository-truth'\n        run:")
+EXPORT = r'''printf 'OPENSSL_DIR=%s\nOPENSSL_STATIC=1\nTRNM_PQ_OPENSSL=%s\nTRNM_PQ_OPENSSL_SHA256=%s\nTRNM_PQ_OPENSSL_VERSION=%s\nOPENSSL_CONF=/dev/null\nOPENSSL_MODULES=%s\n' \
+  "$pq_prefix" "$pq_prefix/bin/openssl" "$pq_cli_sha256" "$openssl_version" \
+  "$pq_prefix/lib/ossl-modules" >> "$GITHUB_ENV"'''
+AUXILIARY = {
+    'pon-recent-batch-acceptance.yml': ('recent', '$OUT'),
+    'pon-branch-encoding-acceptance.yml': ('branch', '$OUT'),
+    'pon-baseline-diagnostic-readback.yml': ('native-boundary', '$TRNM_CI_RECEIPT_DIR'),
+}
+
+
+def auxiliary_prepare(receipts: str) -> str:
+    return '''      - name: Prepare pinned OpenSSL 3.5.9 PQ provider
+        id: pq_provider
+        shell: bash
+        run: |
+          set -euo pipefail
+          export TRNM_CI_RECEIPT_DIR="''' + receipts + '''"
+          bash scripts/ci/prepare_pq_provider.sh
+'''
+
+
+def validate_auxiliary(workflows: dict[str, str]) -> None:
+    require(set(workflows) == set(AUXILIARY), 'complete optional-PQ workflow set')
+    for filename, (job_name, receipts) in AUXILIARY.items():
+        jobs = job_blocks(workflows[filename])
+        require(job_name in jobs, 'optional-PQ job missing')
+        expected = auxiliary_prepare(receipts)
+        for name, block in jobs.items():
+            found = [step for step in step_blocks(block) if PROVIDER in step]
+            require(found == ([expected] if name == job_name else []),
+                    'optional-PQ provider missing, weakened, duplicated, or wrong job')
+        block = jobs[job_name]
+        require(block.index('python3 scripts/ci/verify_ci_source.py') < block.index(expected),
+                'optional-PQ provider must follow exact source verification')
+        for step in step_blocks(block):
+            if 'clippy ' not in step or '--all-features' not in step:
+                continue
+            require(block.index(expected) < block.index(step), 'provider must precede PQ compilation')
+            if '\n        if:' in step:
+                require("steps.pq_provider.outcome == 'success'" in step,
+                        'explicit Clippy condition must require prepared backend')
 
 
 def require(condition: bool, message: str) -> None:
@@ -85,9 +126,11 @@ def validate_script(script: str) -> None:
         'test -f "$pq_prefix/lib/libcrypto.a"',
         'test -f "$pq_prefix/lib/libssl.a"',
         '"$pq_prefix/bin/openssl" "$@"',
-        'OPENSSL_CONF=/dev/null',
         'mkdir "$pq_observations"',
         'cp -- "$TRNM_PQ_SOURCE_ARCHIVE" "$pq_archive"',
+        '"schema": "trnm-ci-pq-provider-v3"',
+        '"backend_exported": exported == "true"',
+        '"native_backend_inputs": identities',
     ):
         require(script.count(literal) == 1, "provider pin or isolation missing")
     ordered = [
@@ -105,13 +148,16 @@ def validate_script(script: str) -> None:
         "if pq_openssl pkeyutl -provider default -verify -rawin",
         '  -in "$pq_smoke/wrong-message" -sigfile "$pq_smoke/signature.bin"',
         "pq_smoke_passed=true",
-        """printf 'OPENSSL_DIR=%s\\nOPENSSL_STATIC=1\\n' "$pq_prefix" >> "$GITHUB_ENV" """.rstrip(),
+        EXPORT,
+        'pq_backend_exported=true',
     ]
     positions = []
     for literal in ordered:
         require(literal in script, "provider verification or export missing")
         positions.append(script.index(literal))
     require(positions == sorted(set(positions)), "provider must verify before exporting")
+    require(script.count('OPENSSL_CONF=/dev/null') == 2,
+            'smoke and exported configuration must agree')
     require("|| true" not in script and "|| :" not in script and "sudo " not in script,
             "provider failure fallback or system install")
     require(not re.search(r"(?m)^\s*(?:exit|return)\s+0\s*(?:#.*)?$", script),
@@ -127,6 +173,22 @@ class ProviderWiringTests(unittest.TestCase):
         validate_workflow(self.workflow)
         validate_script(self.script)
         subprocess.run(["bash", "-n", str(SCRIPT)], check=True)
+
+    def test_every_allfeatures_workflow_has_same_backend_contract(self):
+        validate_auxiliary({name: (ROOT / '.github/workflows' / name).read_text()
+                            for name in AUXILIARY})
+
+    def test_auxiliary_backend_cannot_be_removed_or_ignored(self):
+        workflows = {name: (ROOT / '.github/workflows' / name).read_text()
+                     for name in AUXILIARY}
+        for name, (_, receipts) in AUXILIARY.items():
+            expected = auxiliary_prepare(receipts)
+            for replacement in ('', expected * 2,
+                                expected.replace('        shell:', '        continue-on-error: true\n        shell:')):
+                changed = dict(workflows)
+                changed[name] = changed[name].replace(expected, replacement)
+                with self.subTest(file=name), self.assertRaises(ValueError):
+                    validate_auxiliary(changed)
 
     def test_each_provider_cannot_be_removed_weakened_duplicated_or_moved(self):
         blocks = job_blocks(self.workflow)
@@ -165,8 +227,7 @@ class ProviderWiringTests(unittest.TestCase):
                 validate_workflow(self.workflow.replace(reader, "", 1))
 
     def test_changed_pins_removed_smoke_and_premature_export_are_rejected(self):
-        export = """printf 'OPENSSL_DIR=%s\\nOPENSSL_STATIC=1\\n' "$pq_prefix" >> "$GITHUB_ENV" """
-        export = export.rstrip()
+        export = EXPORT
         changes = [
             self.script.replace("readonly openssl_version='3.5.9'", "readonly openssl_version='3.4.0'"),
             self.script.replace("603f5602e2eef00d", "003f5602e2eef00d"),
@@ -178,6 +239,8 @@ class ProviderWiringTests(unittest.TestCase):
             self.script.replace("make install_sw", "make install_sw || true"),
             self.script.replace("make install_sw", "sudo make install_sw"),
             self.script.replace('cp -- "$TRNM_PQ_SOURCE_ARCHIVE" "$pq_archive"', "true"),
+            self.script.replace('TRNM_PQ_OPENSSL_SHA256=%s', 'TRNM_PQ_OPENSSL_SHA256='),
+            self.script.replace('pq_backend_exported=true', ''),
         ]
         for changed in changes:
             with self.assertRaises(ValueError):

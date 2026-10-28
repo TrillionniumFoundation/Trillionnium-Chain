@@ -1,0 +1,76 @@
+{
+  "jobs": 4,
+  "original_native_selectors_planned": 20,
+  "original_native_selectors_observed_passed": 20,
+  "strict_drivers_passed": 0,
+  "confirmation_windows_planned": 8,
+  "confirmations_before_original_window_end": 3,
+  "pressure_windows_planned": 4,
+  "pressure_confirmations_before_original_window_end": 0,
+  "confirmation_call_groups": {
+    "honest_submit": {
+      "planned_or_observed_calls": 56,
+      "status_counts": {
+        "ok": 56
+      },
+      "error_counts": {},
+      "signed_refusal_codes": {},
+      "timely_successes": 56,
+      "returned_after_call_deadline": 0,
+      "returned_after_original_window": 0
+    },
+    "honest_history": {
+      "planned_or_observed_calls": 35,
+      "status_counts": {
+        "ok": 34,
+        "error": 1
+      },
+      "error_counts": {
+        "IO: Resource temporarily unavailable (os error 11)": 1
+      },
+      "signed_refusal_codes": {},
+      "timely_successes": 34,
+      "returned_after_call_deadline": 0,
+      "returned_after_original_window": 1
+    },
+    "honest_head": {
+      "planned_or_observed_calls": 313,
+      "status_counts": {
+        "ok": 308,
+        "error": 5
+      },
+      "error_counts": {
+        "IO: Resource temporarily unavailable (os error 11)": 5
+      },
+      "signed_refusal_codes": {},
+      "timely_successes": 308,
+      "returned_after_call_deadline": 0,
+      "returned_after_original_window": 5
+    },
+    "attack": {
+      "planned_or_observed_calls": 909,
+      "status_counts": {
+        "refused": 845,
+        "error": 64
+      },
+      "error_counts": {
+        "IO: Resource temporarily unavailable (os error 11)": 54,
+        "FRAME_DEADLINE": 10
+      },
+      "signed_refusal_codes": {
+        "WORK:Transcript": 845
+      },
+      "timely_successes": 0,
+      "returned_after_call_deadline": 0,
+      "returned_after_original_window": 64
+    }
+  },
+  "sustained_phases_observed": 8,
+  "sustained_phases_with_reported_budget_depletion": 0,
+  "sustained_minimum_sampled_stored_credit_ns": 1786092414,
+  "all_original_calls_indexed": 3769,
+  "all_receiver_observer_records_indexed": 3633,
+  "all_complete_job_json_objects_indexed": 3524,
+  "no_new_native_execution": true,
+  "whole_chain_or_wan_qualification": false
+}

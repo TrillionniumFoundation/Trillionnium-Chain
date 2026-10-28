@@ -1,0 +1,5 @@
+   Compiling trnm-w1-batch-methods v0.1.0 (/workspace/scratch/56818e4fba76/chain-w1-next/formal/pon-nakamoto-v1/w1_batch/methods)
+   Compiling risc0-zkvm v3.0.6
+   Compiling trnm-w1-batch-statement v0.1.0 (/workspace/scratch/56818e4fba76/chain-w1-next/formal/pon-nakamoto-v1/w1_batch/statement)
+   Compiling trnm-w1-batch-host v0.1.0 (/workspace/scratch/56818e4fba76/chain-w1-next/formal/pon-nakamoto-v1/w1_batch/host)
+    Finished `release` profile [optimized + debuginfo] target(s) in 2m 14s

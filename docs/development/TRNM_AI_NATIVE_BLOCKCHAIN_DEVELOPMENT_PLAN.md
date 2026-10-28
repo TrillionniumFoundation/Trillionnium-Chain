@@ -4023,3 +4023,116 @@ The observed account-graph verification intervals dominate native verify-state c
 The hosted PQ compile failures expose an unbound backend contract; runtime fixture failures occur at the independent CLI call before strict DER decoding. Local explicit-3.5.9 Clippy success does not qualify the hosted backend. Original runtime failures, missing diagnostics and the earlier automatic interruption of native validation remain open. No optional feature was skipped or classic fallback introduced.
 
 The [fuzz lock consistency repair](../../evidence/pon-fuzz-lock-consistency-20261028/README.md) adds only two existing path dependencies' zeroize edges. Locked metadata and public dependency download now succeed locally; the original offline missing-source failure is retained. This is no native/fuzz/advisory acceptance claim. The full project remains HOLD/NO_GO pending the original work-package gates.
+
+### 2026-10-28 UTC — r8 History boundaries and explicit PQ provider
+
+The [History checkpoint candidate](../../evidence/pon-history-checkpoint-r8-20261028/README.md)
+removes three adjacent duplicate checks while retaining every original full
+state/account/root validation and resource-first checkpoint. Its original native
+groups record 72 passes, no failures and four original ignored cases; a separate
+explicit slow depletion run executes actual W1 and preserves the debt/reopen
+fence. The seven-page private comparison retains identical packet identities
+and tips but is not a fixed-Host service or throughput acceptance result.
+The [exact historical reader repair](../../evidence/pon-legacy-reader-pq-layout-r8-20261028/README.md)
+retains both the original three-variant store contract and current cfg-gated
+four-variant PQ contract with exact schema vectors, 50 passing reader controls
+and 34 source-integrity controls. Neither result erases the original 0/27
+confirmation or 0/6 attack-depletion outcomes.
+
+The [explicit PQ provider contract](../../evidence/pon-pq-backend-contract-20261028-r8/README.md)
+binds five protocol oracles and their original fixtures to the same declared
+OpenSSL installation as native Rust, without system-PATH selection. Bounded
+offline runs pass eight original synthetic M06 account tests and 72 original
+real-crypto protocol tests. Dirty source digests, original budgets, full logs
+and process results are retained. Thirteen backend controls include 48 provider
+alias refusals. The authorization inventory and whole-chain acceptance flags
+remain unchanged. These observations neither qualify an unexecuted successor
+nor complete Cell/task/Operator/Hepta authorization migration.
+
+The [isolated W1 batch source](../../evidence/pon-w1-batch-source-20261028-r8/README.md)
+requires every complete leaf proof and original work identity, rejects duplicate
+work and verifies the exact aggregate image and empty assumptions. It supplies
+no extra tickets or production acceptance. The measured single complete W1
+proof still fails byte and verifier-cost benefit gates. A new batch guest,
+actual aggregate proofs, total-cost measurements and enough distinct paid leaf
+proofs remain separately required observations.
+
+### 2026-10-28 UTC — actual PQ post-intent counterexample and secure compiler acquisition
+
+The [exact native PQ readback](../../evidence/pon-pq-native-readback-20261028-r8/README.md)
+retains the original eleven Node/M06 tests passing on `e7ab8cce` and strict full
+workspace/all-targets/all-features Clippy, locked metadata and formatting passing
+on `e3afbbf4`. Those source-specific results do not cover the later scheduling
+regression. The first new test attempt failed macro compilation; its complete
+cost and error remain recorded. The corrected test on clean
+`6762be6bad760d17c6cbb50ff7f8b1928c6284df` then genuinely failed at runtime.
+
+All five predeclared real signed socket calls were observed. The original
+production PQ listener's ten-second deadline elapsed after a genuine durable
+reorg intent. A valid native ML-DSA signed failure was retained, but the intent
+remained pending and all three honest followups failed. Cold reopen activated
+the retained valid target; peer operation records and sequence/revocation
+ledgers remained equal to the live observation. This is a local scheduling-cut
+liveness/recovery counterexample, not a signature forgery or physical kill.
+The repair must retain every original request, State and nonce check, use local
+typed cancellation identities that cannot be parsed from remote strings, and
+obtain separate actual before/after results. Full migration and public/WAN
+qualification remain false.
+
+The [official RISC0 compiler acquisition](../../evidence/pon-w1-rust1911-acquisition-20261028-r8/README.md)
+preserves the original patched guest dependency graph after rejecting an unsafe
+MSRV-only downgrade. Official Rust 1.91.1 was downloaded once, authenticated by
+its exact release size/SHA, fully inventoried and installed in an isolated
+explicitly selected toolchain. Its actual RV32IM target metadata matches the
+expected target. Acquisition and compiler metadata checks are complete; SDK
+build/runtime compatibility, real batch proofs, soundness assumptions and
+measured benefit remain separate gates. No work relation, weight or fallback
+was added by this toolchain change.
+
+### 2026-10-28 UTC — actual local PQ cancellation repair and full paired readback
+
+The [local cancellation source review](../../evidence/pon-pq-local-origin-source-review-20261028-r8/README.md)
+adds three local-only typed error identities. Generic parsing of remote error
+strings cannot construct those identities. The existing deadline, expiry and
+revocation order, every original wire/state/nonce check and all 138 previous
+wire error mappings remain unchanged. This limits pending-intent cleanup to
+locally established cancellation authority.
+
+The [actual repaired native observation](../../evidence/pon-pq-local-origin-runtime-20261028-r8/README.md)
+is bound to source `990aeb651f793ca44bf94b074356be06e58e75c1` and tree
+`91b8178b05d867f063ce21264043c2a49fcc6e41`. All ten PQ network and ten error
+origin tests pass, with no failures or ignored tests and every original test
+retained. Both the unchanged ten-second deadline test and the genuine signed
+expiry test retain all five scheduled socket calls and succeed on all three
+honest followups. Fifteen injected local/remote-origin controls and six actual
+signed/forged socket calls also pass. The injected cases do not establish a
+concurrent durable operator revocation, which the current serialized production
+listener does not expose. The original baseline failure remains retained.
+
+The bounded qualification consumes 525.349589 seconds wall and 508.373779
+captured child CPU seconds, including compilation, strict workspace/all-targets/
+all-features Clippy and the original tests. Its 41 observed PID/birth identities
+are all terminal. The three regression attempts together retain 960.152845
+seconds wall and 933.875773 captured CPU seconds; this does not erase earlier
+PQ experiments or source/evidence costs. Full production authorization migration,
+paid hostile public service, physical power loss and WAN acceptance remain open.
+
+The [complete paired Hepta 682 readback](../../evidence/pon-hepta-682-pair-host-readback-r8-20261028/README.md)
+contains 3,769 client calls, 3,633 receiver records and all 256 original wrapper
+records across four Linux jobs. The exact source remains Chain `131f673d` and
+its original merge `66634191`, not this later integrated candidate. All five
+original named native selectors pass in each lane, while every pressure service
+gate fails. Only 3/8 scheduled confirmations meet the unchanged four-second
+deadline, including 0/4 pressure confirmations; all 56 business submissions
+receive timely signed acknowledgements. Eight sustained phases reach 0/8 real
+credit-depletion outcomes. Their full-W1 refusals never reach M06 admission.
+These results require a separately identified late-root/controller-placement
+experiment; they do not authorize changing the original profile or its outcome.
+
+The [batch guest/host build](../../evidence/pon-w1-batch-build-20261028-r8/README.md)
+uses the actual official compiler and unchanged independent locks. Its real
+308,184-byte guest and original build costs are retained. The [staged batch
+source](../../evidence/pon-w1-staged-source-20261028-r8/README.md) requires an
+actual conditional receipt, real final-verifier rejection, and real typed
+resolution of the same already-verified original leaf. Build and source checks
+do not replace those cryptographic observations or establish proof benefit.

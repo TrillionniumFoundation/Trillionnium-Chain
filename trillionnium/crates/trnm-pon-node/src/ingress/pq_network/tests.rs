@@ -2,6 +2,10 @@ use super::*;
 use openssl::pkey::{KeyType, PKey};
 use std::{io::Write, thread};
 
+mod post_intent_cancellation {
+    include!("post_intent_cancel_tests.rs");
+}
+
 fn signer(seed: u8) -> PqNativeSigningKey {
     // Disposable published test seeds, never a key-custody or entropy claim.
     let key = PKey::private_key_from_seed(None, KeyType::ML_DSA_65, None, &[seed; 32]).unwrap();

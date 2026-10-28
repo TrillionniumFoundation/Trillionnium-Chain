@@ -97,6 +97,13 @@ jobs:
           grep -x 'OK' "$OUT/cache-receipt-tests.log"
       - name: Install original pinned native compiler and lint tools
         run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+      - name: Prepare pinned OpenSSL 3.5.9 PQ provider
+        id: pq_provider
+        shell: bash
+        run: |
+          set -euo pipefail
+          export TRNM_CI_RECEIPT_DIR="$OUT"
+          bash scripts/ci/prepare_pq_provider.sh
       - name: Check committed formatting without rewriting source
         shell: bash
         run: |

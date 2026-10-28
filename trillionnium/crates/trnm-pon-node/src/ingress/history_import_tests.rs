@@ -596,3 +596,343 @@ fn real_sigkill_history_cuts_preserve_debt_fence_and_committed_blocks() {
         );
     }
 }
+
+// Fault injection through the real History resource boundary. These controls
+// execute native W1, M06, SQL publication and CPU settlement; they do not claim
+// that this test process provisioned or revoked a real fixed Host cgroup.
+#[test]
+fn first_history_resource_failure_preserves_cold_account_and_clean_restart() {
+    for shared in [false, true] {
+        let (directory, settings, mut node, packet, clock) = fixture();
+        let original = node.remote_history_cpu_domain().unwrap();
+        let before = node.read_active().unwrap();
+        let calls = AtomicUsize::new(0);
+        let resource = || {
+            calls.fetch_add(1, Ordering::SeqCst);
+            Err(crate::Error::from("PUBLIC_HOST_KERNEL_LIMITS_CHANGED"))
+        };
+        let owner = Mutex::new(node);
+        let control = Control {
+            deadline: Instant::now() + Duration::from_secs(10),
+            resource: &resource,
+        };
+        let result = if shared {
+            receive(
+                Owner::Shared(&owner),
+                page(&settings, &packet),
+                packet.id().unwrap(),
+                settings.genesis(),
+                clock,
+                control,
+            )
+        } else {
+            receive(
+                Owner::Exclusive(&mut owner.lock().unwrap()),
+                page(&settings, &packet),
+                packet.id().unwrap(),
+                settings.genesis(),
+                clock,
+                control,
+            )
+        };
+        assert_eq!(
+            result.unwrap_err().to_string(),
+            "PUBLIC_HOST_KERNEL_LIMITS_CHANGED"
+        );
+        assert_eq!(calls.load(Ordering::SeqCst), 1);
+        assert_eq!(owner.lock().unwrap().read_active().unwrap(), before);
+        let observed = original.observe().unwrap();
+        assert_eq!(observed.in_flight, 0);
+        assert_eq!(observed.stored_credit_ns, 0);
+        assert!(!observed.accounting_unavailable);
+        let flow = original.observe_actual_flow().unwrap().unwrap();
+        assert_eq!(flow.paid_cpu_debit_ns, 0);
+        assert_eq!(flow.booked_reservation_ns, 0);
+        assert!(flow.balance_identity_verified);
+        drop(owner);
+        let mut reopened = Node::open(directory.path(), settings, 2).unwrap();
+        let cold = reopened
+            .remote_history_cpu_domain()
+            .unwrap()
+            .observe()
+            .unwrap();
+        assert_eq!(cold.stored_credit_ns, 0);
+        assert!(!cold.accounting_unavailable);
+        assert_eq!(reopened.read_active().unwrap(), before);
+    }
+}
+
+fn history_checkpoint_transfer(settings: &Settings) -> Vec<u8> {
+    use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
+    use trnm_protocol::pon_wire::{hash, Envelope};
+    let key =
+        signing_key_from_hex(&hex::encode(hash(b"DEV-ONLY-KEY", &[&0_u64.to_le_bytes()]))).unwrap();
+    let mut payload = crate::development_public(1).unwrap().to_vec();
+    payload.extend(1_u64.to_le_bytes());
+    let mut envelope = Envelope {
+        network: settings.network(),
+        sender: crate::development_public(0).unwrap(),
+        nonce: 1,
+        expiry: 10_000,
+        fee_limit: 1_000_000,
+        tag: 1,
+        payload,
+        signature: [0; 64],
+    };
+    envelope.signature = hex::decode(sign_hex(&key, &envelope.signing_digest().unwrap()))
+        .unwrap()
+        .try_into()
+        .unwrap();
+    envelope.encode().unwrap()
+}
+
+#[test]
+fn history_host_rejection_keeps_native_boundaries_nonce_and_original_paid_account() {
+    use std::sync::atomic::AtomicBool;
+    for shared in [false, true] {
+        for stage in ["w1", "m06", "admitted", "activation_progress"] {
+            let clock = now().unwrap();
+            let settings = Settings::development(Some(clock - 100)).unwrap();
+            let directory = tempfile::tempdir().unwrap();
+            let mut node =
+                Node::open_with_authenticated_state(directory.path(), settings.clone(), 1).unwrap();
+            let before = node.read_active().unwrap();
+            let original = node.remote_history_cpu_domain().unwrap();
+            let packet = node
+                .make(
+                    settings.genesis(),
+                    vec![history_checkpoint_transfer(&settings)],
+                    crate::development_public(0).unwrap(),
+                    settings.genesis_time() + 10,
+                    4096,
+                )
+                .unwrap();
+            let id = packet.id().unwrap();
+            let revoked = Arc::new(AtomicBool::new(false));
+            let observed = revoked.clone();
+            OBSERVER.with(|hook| {
+                *hook.borrow_mut() = Some(Box::new(move |point| {
+                    if point == stage {
+                        observed.store(true, Ordering::SeqCst);
+                    }
+                }));
+            });
+            let resource = || {
+                ensure(
+                    !revoked.load(Ordering::SeqCst),
+                    "PUBLIC_HOST_KERNEL_LIMITS_CHANGED",
+                )
+            };
+            let owner = Mutex::new(node);
+            let control = Control {
+                deadline: Instant::now() + Duration::from_secs(10),
+                resource: &resource,
+            };
+            let outcome = if shared {
+                receive(
+                    Owner::Shared(&owner),
+                    page(&settings, &packet),
+                    id,
+                    settings.genesis(),
+                    clock,
+                    control,
+                )
+            } else {
+                receive(
+                    Owner::Exclusive(&mut owner.lock().unwrap()),
+                    page(&settings, &packet),
+                    id,
+                    settings.genesis(),
+                    clock,
+                    control,
+                )
+            };
+            OBSERVER.with(|hook| *hook.borrow_mut() = None);
+            assert!(
+                revoked.load(Ordering::SeqCst),
+                "unreached original cut {stage}"
+            );
+            assert_eq!(
+                outcome.unwrap_err().to_string(),
+                "PUBLIC_HOST_KERNEL_LIMITS_CHANGED"
+            );
+            let committed = matches!(stage, "admitted" | "activation_progress");
+            {
+                let node = owner.lock().unwrap();
+                assert_eq!(node.packet(id).is_ok(), committed, "{shared}/{stage}");
+                assert_eq!(node.read_active().unwrap(), before, "{shared}/{stage}");
+                assert!(node
+                    .public_service_cpu_domain()
+                    .unwrap()
+                    .shares_domain_with(&original));
+            }
+            let observation = original.observe().unwrap();
+            assert_eq!(observation.in_flight, 0);
+            assert!(!observation.accounting_unavailable);
+            let flow = original.observe_actual_flow().unwrap().unwrap();
+            assert!(flow.paid_cpu_debit_ns > 0);
+            assert_eq!(flow.paid_cpu_debit_ns, flow.settled_full_cpu_ns);
+            assert_eq!(flow.unsettled_known_live_cpu_ns, 0);
+            assert_eq!(flow.booked_reservation_ns, 0);
+            assert_eq!(flow.initial_credit_ns, 0);
+            assert!(flow.balance_identity_verified);
+            println!(
+                "{}",
+                serde_json::json!({"schema":"history-native-resource-failure-v1",
+                "shared":shared,"cut":stage,"committed":committed,"flow":flow,
+                "real_host_revocation":false})
+            );
+            // A separate request may retry after the resource owner is restored;
+            // the same Node and original CPU domain retain all already paid work.
+            let control = Control {
+                deadline: Instant::now() + Duration::from_secs(10),
+                resource: &|| Ok(()),
+            };
+            let outcome = if shared {
+                receive(
+                    Owner::Shared(&owner),
+                    page(&settings, &packet),
+                    id,
+                    settings.genesis(),
+                    clock,
+                    control,
+                )
+            } else {
+                receive(
+                    Owner::Exclusive(&mut owner.lock().unwrap()),
+                    page(&settings, &packet),
+                    id,
+                    settings.genesis(),
+                    clock,
+                    control,
+                )
+            };
+            assert_eq!(outcome.unwrap(), id);
+            let active = owner.lock().unwrap().read_active().unwrap();
+            assert_eq!(active.0, id);
+            let sender = format!(
+                "account:{}",
+                hex::encode(crate::development_public(0).unwrap())
+            );
+            assert_eq!(before.2[&sender]["nonce"], 0);
+            assert_eq!(active.2[&sender]["nonce"], 1);
+            assert_eq!(original.observe().unwrap().in_flight, 0);
+            drop(owner);
+            let mut reopened =
+                Node::open_with_authenticated_state(directory.path(), settings, 1).unwrap();
+            assert_eq!(reopened.read_active().unwrap(), active);
+            let cold = reopened
+                .remote_history_cpu_domain()
+                .unwrap()
+                .observe()
+                .unwrap();
+            assert_eq!(cold.stored_credit_ns, 0);
+            assert!(!cold.accounting_unavailable);
+        }
+    }
+}
+
+#[test]
+fn shared_history_paid_deficit_refuses_without_waiting_under_original_writer() {
+    let (directory, settings, mut node, packet, _clock) = fixture();
+    let domain = node.remote_history_cpu_domain().unwrap();
+    let before = node.read_active().unwrap();
+    let writer = Mutex::new(node);
+    let control = Control {
+        deadline: Instant::now() + Duration::from_secs(5),
+        resource: &|| Ok(()),
+    };
+    let observed = Mutex::new(None);
+    // Use the same epoch guard and close path as a real import. A last scope
+    // with actual remaining debt must retain its marker, even with known CPU.
+    let close = scoped(&mut Owner::Shared(&writer), &control, |_owner, cpu| {
+        assert!(cpu.shares_domain_with(&domain));
+        let operation = begin_cpu(cpu, &control)?;
+        operation.bind_history_request(control.deadline)?;
+        let checked = WorkCheckedPacket::verify_with_progress(packet.clone(), &mut |_| {
+            operation.history_checkpoint(false, &|| control.check())
+        })?;
+        operation.history_work_verified(&checked)?;
+        let held = writer.lock().unwrap();
+        let mut boundaries = 0;
+        // Real W1 CPU depletes the original cold account; no synthetic meter
+        // debit or new account replaces the original writer's checkpoints.
+        loop {
+            let result = WorkCheckedPacket::verify_with_progress(packet.clone(), &mut |_| {
+                boundaries += 1;
+                assert!(matches!(writer.try_lock(), Err(TryLockError::WouldBlock)));
+                operation.history_checkpoint(true, &|| control.check())
+            });
+            match result {
+                Ok(_) => assert!(Instant::now() < control.deadline),
+                Err(error) => {
+                    assert!(
+                        error.is(crate::ErrorCode::PublicMutationCpuBudget),
+                        "{error}"
+                    );
+                    break;
+                }
+            }
+        }
+        assert!(boundaries > 0);
+        assert!(cpu.observe()?.stored_credit_ns < 0);
+        drop(held);
+        let receipt = operation.finish();
+        assert!(!receipt.accounting_unavailable);
+        let flow = cpu.observe_actual_flow()?.unwrap();
+        assert_eq!(flow.initial_credit_ns, 0);
+        assert_eq!(flow.booked_reservation_ns, 0);
+        assert_eq!(flow.paid_cpu_debit_ns, receipt.total_cpu_ns.unwrap());
+        assert_eq!(flow.live_owners, 0);
+        assert!(flow.balance_identity_verified);
+        *observed.lock().unwrap() = Some((boundaries, receipt, flow));
+        Ok(())
+    });
+    let (boundaries, receipt, flow) = observed.into_inner().unwrap().unwrap();
+    // Settlement uses actual elapsed refill. Whether that final refill has
+    // covered the small measured overshoot is observed, never manufactured.
+    let debt_remains = flow.stored_credit_ns < 0;
+    if debt_remains {
+        assert!(close
+            .unwrap_err()
+            .is(crate::ErrorCode::PublicMutationCpuUnavailable));
+        assert!(!domain.accounting_available());
+        assert!(writer
+            .lock()
+            .unwrap()
+            .remote_history_cpu_domain()
+            .err()
+            .unwrap()
+            .is(crate::ErrorCode::OwnerPublicServiceUncleanEpoch));
+    } else {
+        close.unwrap();
+        assert!(domain.accounting_available());
+    }
+    assert_eq!(writer.lock().unwrap().read_active().unwrap(), before);
+    drop(writer);
+    let mut reopened = Node::open(directory.path(), settings, 2).unwrap();
+    assert_eq!(reopened.read_active().unwrap(), before);
+    if debt_remains {
+        assert!(reopened
+            .remote_history_cpu_domain()
+            .err()
+            .unwrap()
+            .is(crate::ErrorCode::OwnerPublicServiceUncleanEpoch));
+    } else {
+        assert_eq!(
+            reopened
+                .remote_history_cpu_domain()
+                .unwrap()
+                .observe()
+                .unwrap()
+                .stored_credit_ns,
+            0
+        );
+    }
+    println!(
+        "{}",
+        serde_json::json!({"schema":"history-shared-real-paid-deficit-v1",
+        "boundaries":boundaries,"receipt":receipt,"flow":flow,"debt_remains":debt_remains,
+        "scope":"bounded full native W1 CPU control, not a network saturation attack"})
+    );
+}

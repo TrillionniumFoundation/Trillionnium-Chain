@@ -1,0 +1,41 @@
+{
+  "schema": "TRNM-W1-BATCH-PHASE0-ATTEMPT2-PREREG1",
+  "declared_unix_ns": 1793160561830515149,
+  "new_attempt_explicitly_authorized": true,
+  "reason": "Only repair sandbox-blocked transport by reviewed exact checksum-bound official archive download; build source and work relation unchanged",
+  "source_commit": "b3f3fa57a4ed928a1eae61a97aecc4a9d90df467",
+  "source_tree": "ffe37b67fa03820053214879c619b730d518d6c7",
+  "worktree_clean": true,
+  "locks": {
+    "formal/pon-nakamoto-v1/w1_batch/Cargo.lock": "32953cbb86bb56186137507ee9e9bf59827bd8325c6e28c12b40d5c166fbfa4d",
+    "formal/pon-nakamoto-v1/w1_batch/methods/guest/Cargo.lock": "018423c898d09d0be7a7fbe207e4a1672c5b6f36202dda765a81da852c044d18"
+  },
+  "free_disk_before_bytes": 2994614272,
+  "guard_sha256": "9981c3a138c4aefb6c4662f1e2c4c05cf5ef26e302c46763a42a2366a6334217",
+  "pipeline_sha256": "6bec26b7309e31ba4e96738d72ebfcf50f87631b5468ed1c7104abddf401fa03",
+  "prior_attempt": {
+    "result_sha256": "a3df8f28c13dc78a369289ad9eae672abb07dc046ab13d8c0dba4f324539d09d",
+    "status": "command_failed",
+    "wall_seconds": 1.564829599999939,
+    "wait4_cpu_seconds": 1.2378079999999998
+  },
+  "download": {
+    "result_sha256": "7342d528fbb96de7c1703b7982005cd1c34d85195878dfeb9896fad4cc13f2c9",
+    "wall_seconds": 0.10843739499978255,
+    "process_cpu_seconds": 0.045628999999999996,
+    "archive_sha256": "bd8216cdd9f573808a94769767480b06ad1e74ae60841c9582fdf51b8e29ba53",
+    "bytes": 27207
+  },
+  "new_compile_attempt_limits": {
+    "wall_seconds": 900,
+    "cpu_seconds": 3600,
+    "sampled_rss_bytes": 2684354560,
+    "target_growth_bytes": 805306368,
+    "minimum_free_bytes": 1073741824
+  },
+  "output": "/tmp/w1-batch-phase0-attempt2-20261028-r8",
+  "old_absolute_deadline_extended": false,
+  "original_failure_overwritten": false,
+  "cumulative_costs_must_include_all_attempts": true,
+  "guest_execution_or_proving_authorized": false
+}

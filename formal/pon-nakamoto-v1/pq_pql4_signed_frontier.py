@@ -13,9 +13,10 @@ import os
 from pathlib import Path
 import sqlite3
 import stat
-import subprocess
 import tempfile
 from urllib.parse import quote
+
+from pq_openssl_backend import BackendError, run as run_pinned_openssl
 
 DOMAIN = b"TRNM/PQ/PQL4SignedFrontier/v1\x00"
 SNAPSHOT_DOMAIN = b"TRNM/PQ/PQL4StorageSnapshot/v1\x00"
@@ -90,14 +91,12 @@ def _read_length(data: bytes, at: int) -> tuple[int, int]:
 
 
 def _run(argv: list[str]) -> bytes:
+    if not argv or argv[0] != "openssl":
+        raise Reject("PQ OpenSSL command shape")
     try:
-        done = subprocess.run(argv, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                              timeout=15, check=False)
-    except (OSError, subprocess.TimeoutExpired) as exc:
-        raise Reject("OpenSSL unavailable") from exc
-    if done.returncode:
-        raise Reject("cryptographic verification failed")
-    return done.stdout
+        return run_pinned_openssl(argv[1:])
+    except BackendError as exc:
+        raise Reject(str(exc)) from exc
 
 
 def signer_key_id(public_pem: bytes) -> bytes:

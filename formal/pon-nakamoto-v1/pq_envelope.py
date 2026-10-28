@@ -11,11 +11,10 @@ from dataclasses import dataclass
 import hashlib
 import os
 from pathlib import Path
-import subprocess
 import tempfile
-import time
 
-from pq_operation_budget import BudgetExpired, OperationBudget
+from pq_operation_budget import OperationBudget
+from pq_openssl_backend import BackendError, run as run_pinned_openssl
 
 MAGIC = b"TPQ1"
 VERSION = 1
@@ -55,29 +54,13 @@ def _digest_payload(payload: bytes) -> bytes:
 
 def _run(argv: list[str], *, stdin: bytes | None = None,
          budget: OperationBudget | None = None) -> bytes:
-    # Separate argument vector; never launch a shell. Bounded input and offline only.
-    # One caller budget crosses ALL commands; retrying/decoding never resets it.
-    operation = budget if budget is not None else OperationBudget(time.monotonic() + 15)
+    # The same absolute budget includes backend binding, version and crypto.
+    if not argv or argv[0] != "openssl":
+        raise Reject("PQ OpenSSL command shape")
     try:
-        operation.check()
-        with subprocess.Popen(argv, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                              stderr=subprocess.PIPE) as child:
-            try:
-                with operation.abort_on_cancel(child.kill):
-                    stdout, _ = child.communicate(input=stdin, timeout=operation.remaining(15))
-                    operation.check()
-            except BaseException:
-                if child.poll() is None:
-                    child.kill()
-                # Reap the actual child before the worker can terminate.
-                child.communicate()
-                raise
-            returncode = child.returncode
-    except (OSError, subprocess.TimeoutExpired, BudgetExpired) as exc:
-        raise Reject("OpenSSL unavailable") from exc
-    if returncode != 0:
-        raise Reject("OpenSSL refused cryptographic operation")
-    return stdout
+        return run_pinned_openssl(argv[1:], input_data=stdin, budget=budget)
+    except BackendError as exc:
+        raise Reject(str(exc)) from exc
 
 
 def _der_length(data: bytes, start: int) -> tuple[int, int]:

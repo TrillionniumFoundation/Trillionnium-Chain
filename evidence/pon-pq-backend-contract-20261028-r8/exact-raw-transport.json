@@ -1,0 +1,103 @@
+{
+  "schema": "pon-r8-exact-raw-transport-v1",
+  "original_commit": "d36b4cbaef7153f0a02fc7fd3f1938a790f76655",
+  "original_diff_check_returncode": 2,
+  "reason": "Raw unified-diff context and original native stdout have significant whitespace. Archive exact bytes rather than trim evidence or disable whitespace checks.",
+  "archive": "exact-raw-whitespace-records.zip",
+  "archive_sha256": "165a3e19a86ff34a2760fe014d7f6661592d733f4156f48e61f23097d8afe501",
+  "archive_bytes": 27327,
+  "entries": [
+    {
+      "original_path": "source-pin-deltas/00.diff",
+      "bytes": 1250,
+      "sha256": "5bdabf70aca7af8a62d3921565cbceb91b68cf2d1fb64ff708a6c93dff47a8af"
+    },
+    {
+      "original_path": "source-pin-deltas/01.diff",
+      "bytes": 2140,
+      "sha256": "5e578be4db980d9d13f2852dcce4f9faacd95b006246f2681fbe5d047f6385e4"
+    },
+    {
+      "original_path": "source-pin-deltas/02.diff",
+      "bytes": 1162,
+      "sha256": "3dc7fcf9d58233b13e3ef6c30c6ad4b8382ba23e695b502d25c69b57f3d7e07d"
+    },
+    {
+      "original_path": "source-pin-deltas/03.diff",
+      "bytes": 1115,
+      "sha256": "9b4e7093306fb62e1190dd5ed68e7417c23dcd3c366fd121ec63a5b741da3477"
+    },
+    {
+      "original_path": "source-pin-deltas/04.diff",
+      "bytes": 937,
+      "sha256": "14414cae6f40b234904c13f8863ad80b0316690594da45877680954d881335d1"
+    },
+    {
+      "original_path": "source-pin-deltas/05.diff",
+      "bytes": 1089,
+      "sha256": "219587f8ef42b277932936941c10ce72a879a64d2079ee9167b4f34f889a30fd"
+    },
+    {
+      "original_path": "source-pin-deltas/06.diff",
+      "bytes": 2987,
+      "sha256": "0a650c4e8d4c1f1df66255a49996ea241a2aa8b4c0945776c052583734db71dc"
+    },
+    {
+      "original_path": "source-pin-deltas/07.diff",
+      "bytes": 3345,
+      "sha256": "5ca8fee800d2ecc5f8bde49d93231d3e136887b8e3eb73479e736afebae72ecf"
+    },
+    {
+      "original_path": "source-pin-deltas/08.diff",
+      "bytes": 2403,
+      "sha256": "4fea82641bc8c7f45f6d39c7a64db906305351709a98b8fd3bfbbe6fc277bf17"
+    },
+    {
+      "original_path": "source-pin-deltas/09.diff",
+      "bytes": 1980,
+      "sha256": "de4fcf7101015553e4bc3388c23cad97ee215a2ea839068faf02e961c285aa28"
+    },
+    {
+      "original_path": "source-pin-deltas/10.diff",
+      "bytes": 1252,
+      "sha256": "73a1de752dfec93ff38a0af3a128106f83292b7a43a09c62339012d91c0925aa"
+    },
+    {
+      "original_path": "source-pin-deltas/11.diff",
+      "bytes": 914,
+      "sha256": "800363709a175b40ae13f1cc5a13d2b6018f8b8b4ec2137e3ed1bc50e7ce5125"
+    },
+    {
+      "original_path": "source-pin-deltas/12.diff",
+      "bytes": 409,
+      "sha256": "23a704b02c61209534dcec0eb7259a9f39dd672ab27484ecab951aa11a284f1b"
+    },
+    {
+      "original_path": "source-pin-deltas/13.diff",
+      "bytes": 17211,
+      "sha256": "402b1b7118ddfa7bdf1df6f0b4f0257ed7200c497da5baddd63168e95e239ecb"
+    },
+    {
+      "original_path": "source-pin-deltas/14.diff",
+      "bytes": 12721,
+      "sha256": "97646b7b244c574ad7ae946bd8ecae082a9523eb8c6c2417f5d19e247dc5244b"
+    },
+    {
+      "original_path": "source-pin-deltas/15.diff",
+      "bytes": 19348,
+      "sha256": "72141a1f31a224f8046f04a819de39fe6cff97348fa1d077d714339d693a49ae"
+    },
+    {
+      "original_path": "source-pin-deltas/16.diff",
+      "bytes": 585,
+      "sha256": "709c4946914a1b73e26af7c7753c28bf89d5df22414c127d74dea23beb2afb77"
+    },
+    {
+      "original_path": "pq-m06-bounded-native/stdout.txt",
+      "bytes": 1751,
+      "sha256": "4aab9b1a5de350ceb1281745d40e4e0e4ab3f08683e758bc9cf1acd501ba886a"
+    }
+  ],
+  "original_bytes_equal_after_archive_readback": true,
+  "acceptance_gate_changed": false
+}

@@ -1,0 +1,11 @@
+{
+  "source": "Exact exec_command return copied from this session; not a replay",
+  "command": "env CARGO_HOME=/tmp/pure-pon-cargo-20261027 /tmp/pure-pon-toolchain-20261027/bin/cargo generate-lockfile --offline --manifest-path formal/pon-nakamoto-v1/w1_batch/Cargo.toml",
+  "builder_pin_at_attempt": "=3.0.3",
+  "host_sdk_pin_at_attempt": "=3.0.6",
+  "chunk_id": "b95179",
+  "wall_time_seconds": 2.2183e-05,
+  "exit_code": 101,
+  "original_token_count": 230,
+  "output": "error: failed to select a version for `risc0-build`.\n    ... required by package `risc0-zkvm v3.0.6`\n    ... which satisfies dependency `risc0-zkvm = \"=3.0.6\"` of package `trnm-w1-batch-host v0.1.0 (/workspace/scratch/56818e4fba76/chain-w1-next/formal/pon-nakamoto-v1/w1_batch/host)`\nversions that meet the requirements `^3.0.6` are: 3.0.6\n\nall possible versions conflict with previously selected packages.\n\n  previously selected package `risc0-build v3.0.3`\n    ... which satisfies dependency `risc0-build = \"=3.0.3\"` of package `trnm-w1-batch-methods v0.1.0 (/workspace/scratch/56818e4fba76/chain-w1-next/formal/pon-nakamoto-v1/w1_batch/methods)`\n    ... which satisfies path dependency `trnm-w1-batch-methods` of package `trnm-w1-batch-host v0.1.0 (/workspace/scratch/56818e4fba76/chain-w1-next/formal/pon-nakamoto-v1/w1_batch/host)`\n\nfailed to select a version for `risc0-build` which could resolve this conflict\n"
+}

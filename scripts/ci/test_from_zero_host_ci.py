@@ -156,6 +156,11 @@ class OriginalHostControls(unittest.TestCase):
                                     command, 1001, 1002, {'PATH': '/original/bin',
                                     'CARGO_BUILD_JOBS': '2', 'RUSTUP_TOOLCHAIN': '1.95.0',
                                     'OPENSSL_DIR': '/original/pinned-provider', 'OPENSSL_STATIC': '1',
+                                    'OPENSSL_CONF': '/dev/null',
+                                    'OPENSSL_MODULES': '/original/pinned-provider/lib/ossl-modules',
+                                    'TRNM_PQ_OPENSSL': '/original/pinned-provider/bin/openssl',
+                                    'TRNM_PQ_OPENSSL_SHA256': 'a' * 64,
+                                    'TRNM_PQ_OPENSSL_VERSION': '3.5.9',
                                     'GITHUB_TOKEN': 'synthetic-not-a-token'})
         self.assertEqual(argv[-4:], command)
         for item in ('--slice=trnmponpublic.slice', '--uid=1001', '--gid=1002',
@@ -163,7 +168,12 @@ class OriginalHostControls(unittest.TestCase):
                      '--property=CapabilityBoundingSet=', '--property=KillMode=control-group',
                      '--setenv=PATH=/original/bin', '--setenv=CARGO_BUILD_JOBS=2',
                      '--setenv=RUSTUP_TOOLCHAIN=1.95.0',
-                     '--setenv=OPENSSL_DIR=/original/pinned-provider', '--setenv=OPENSSL_STATIC=1'):
+                     '--setenv=OPENSSL_DIR=/original/pinned-provider', '--setenv=OPENSSL_STATIC=1',
+                     '--setenv=OPENSSL_CONF=/dev/null',
+                     '--setenv=OPENSSL_MODULES=/original/pinned-provider/lib/ossl-modules',
+                     '--setenv=TRNM_PQ_OPENSSL=/original/pinned-provider/bin/openssl',
+                     '--setenv=TRNM_PQ_OPENSSL_SHA256=' + 'a' * 64,
+                     '--setenv=TRNM_PQ_OPENSSL_VERSION=3.5.9'):
             self.assertIn(item, argv)
         self.assertFalse(any('GITHUB_TOKEN' in item for item in argv))
         self.assertFalse(any('CPUQuota=' in item or 'MemoryMax=' in item for item in argv))

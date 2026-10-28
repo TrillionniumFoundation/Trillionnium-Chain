@@ -1,0 +1,70 @@
+{
+  "schema": "pon-r8-native-pq-readback-v1",
+  "existing_node_m06_suite": {
+    "commit": "e7ab8cce80a2133325d033ffef043d80a494b070",
+    "passed": 11,
+    "failed": 0,
+    "ignored": 0,
+    "wall_seconds": 239.24145202500222,
+    "test_wall_seconds_from_original_stdout": 2.55,
+    "scope": "actual synthetic QTX1 account and loopback transport tests; not the later post-intent scheduling regression"
+  },
+  "source_gates": {
+    "commit": "e3afbbf4703946fb15c1e216c9173efcbf6dc8ea",
+    "all_passed": true,
+    "wall_seconds": 62.575062178002554,
+    "scope": "format, full locked all-features metadata and strict full-workspace all-targets all-features Clippy; earlier exact source only"
+  },
+  "post_intent_baseline": {
+    "commit": "6762be6bad760d17c6cbb50ff7f8b1928c6284df",
+    "selected_tests": 1,
+    "passed": 0,
+    "failed": 1,
+    "ignored": 0,
+    "planned_calls": 5,
+    "observed_calls": 5,
+    "honest_followups_planned": 3,
+    "honest_followups_succeeded": 0,
+    "first_failure_real_signature_verified": true,
+    "pending_reorg_done": 0,
+    "cold_opened": true,
+    "failed_checks": [
+      "real_intent_for_original_target_was_terminated",
+      "lifecycle_records_actual_pq_deadline",
+      "same_peer_new_sequence_head_succeeds",
+      "same_peer_sequences_consumed_once",
+      "other_authorized_peer_head_succeeds",
+      "other_head_consumes_exact_first_sequence",
+      "other_authorized_peer_honest_submit_succeeds",
+      "honest_submit_activates_its_original_valid_branch",
+      "both_peers_finish_at_sequence_two",
+      "exact_replay_returns_same_failed_receipt",
+      "four_distinct_signed_operations_retained",
+      "cold_reopen_preserves_live_active_and_peer_ledger"
+    ],
+    "wall_seconds_including_build": 433.21138507599244,
+    "settled_child_cpu_seconds": 424.179358,
+    "sampled_peak_rss_bytes": 2613161984,
+    "sampled_peak_target_growth_bytes": 471113728,
+    "guard_errors": [],
+    "remaining_owned_processes": [],
+    "scope": "real original 10-second production PQ loopback listener plus injected scheduling pause after a genuine durable intent; full W1/M06; peer operation sequences; not account migration or physical kill",
+    "cold_difference": {
+      "active_state_equal_live": false,
+      "peer_operation_records_equal_live": true,
+      "peer_sequence_revocation_ledger_equal_live": true,
+      "interpretation": "Cold recovery activates the retained valid target; no loss of peer sequence/response records is observed."
+    },
+    "first_call_elapsed_ns": 10005566867
+  },
+  "retained_prior_failures": {
+    "node_attempt1": "clean-source precheck refused 18 untracked raw archive members; origin unknown; zero native starts",
+    "node_attempt2": "disk-floor SIGKILL; original direct wait4 CPU is incomplete descendant settlement",
+    "post_intent_attempt1": "actual test-only JSON macro compilation failure; no test execution or runtime counterexample"
+  },
+  "production_repair_qualified_by_this_packet": false,
+  "full_pq_migration": false,
+  "paid_host_saturation_qualified": false,
+  "independent_wan_qualified": false,
+  "whole_chain_quantum_security": false
+}

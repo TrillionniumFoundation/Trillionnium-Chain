@@ -19,7 +19,8 @@ import threading
 import time
 import unittest
 
-from pq_envelope import Reject, SIGNED_BYTES, _run, public_key_id
+from pq_envelope import Reject, SIGNED_BYTES, public_key_id
+from pq_openssl_backend import _bounded_child, run as run_pinned_openssl
 from pq_cell_custody import catalog_from_chunks, catalog_id
 from pq_cell_swarm import Peer, _fetch_one, fetch_to_immutable_file, content_id
 from pq_operation_budget import OperationBudget
@@ -124,6 +125,10 @@ class PQCryptoChildBudgetTests(unittest.TestCase):
                 "pathlib.Path(sys.argv[1]).write_text(str(os.getpid())); time.sleep(60)",
                 str(pid_path)]
 
+    def bounded_child(self, path, budget):
+        return _bounded_child(self.child_args(path), input_data=None,
+                              environment=dict(os.environ), budget=budget, timeout=15)
+
     def assert_reaped(self, path):
         self.assertTrue(path.exists(), "child must really have started")
         with self.assertRaises(ProcessLookupError):
@@ -133,8 +138,8 @@ class PQCryptoChildBudgetTests(unittest.TestCase):
         with tempfile.TemporaryDirectory(prefix="pcs1-child-") as root:
             path = Path(root) / "pid"
             started = time.monotonic()
-            with self.assertRaises(Reject):
-                _run(self.child_args(path), budget=OperationBudget(started + 0.3))
+            with self.assertRaises((TimeoutError, subprocess.TimeoutExpired)):
+                self.bounded_child(path, OperationBudget(started + 0.3))
             self.assertLess(time.monotonic() - started, 1)
             self.assert_reaped(path)
 
@@ -143,14 +148,14 @@ class PQCryptoChildBudgetTests(unittest.TestCase):
             path = Path(root) / "pid"
             budget = OperationBudget(time.monotonic() + 10)
             with ThreadPoolExecutor(max_workers=1) as pool:
-                future = pool.submit(_run, self.child_args(path), budget=budget)
+                future = pool.submit(self.bounded_child, path, budget)
                 until = time.monotonic() + 2
                 while not path.exists() and time.monotonic() < until:
                     time.sleep(0.01)
                 self.assertTrue(path.exists())
                 started = time.monotonic()
                 budget.cancel()
-                with self.assertRaises(Reject):
+                with self.assertRaises((TimeoutError, subprocess.TimeoutExpired)):
                     future.result(timeout=1)
                 self.assertLess(time.monotonic() - started, 0.6)
             self.assert_reaped(path)
@@ -165,7 +170,7 @@ class PQWholeFetchDeadlineTests(unittest.TestCase):
         public = Path(cls.temp.name) / "public.pem"
         for cmd in (["openssl", "genpkey", "-algorithm", "ML-DSA-65", "-out", str(secret)],
                     ["openssl", "pkey", "-in", str(secret), "-pubout", "-out", str(public)]):
-            subprocess.run(cmd, check=True, capture_output=True, timeout=15)
+            run_pinned_openssl(cmd[1:])
         cls.public = public.read_bytes()
         cls.key_id = public_key_id(cls.public)
 

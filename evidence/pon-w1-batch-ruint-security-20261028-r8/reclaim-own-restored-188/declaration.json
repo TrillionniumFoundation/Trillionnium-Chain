@@ -1,0 +1,1665 @@
+{
+  "schema": "TRNM-W1-OWN-RESTORED-COMPILER-RECLAIM1",
+  "authorized_scope": "Only exact guest1.88 compiler directory restored by this W1 Phase0 attempt2; preserve official archive, all source, proofs, targets, caches and evidence.",
+  "path": "/tmp/pure-pon-risc0-home-20261027/toolchains/v1.88.0-rust-x86_64-unknown-linux-gnu",
+  "realpath": "/tmp/pure-pon-risc0-home-20261027/toolchains/v1.88.0-rust-x86_64-unknown-linux-gnu",
+  "archive_path": "/tmp/trnm-risc0-rust-1.88.0.tar.gz",
+  "archive_bytes": 490849318,
+  "archive_sha256": "222651797ba58f0bafd959191a48d23b35b3266d9e082fc49fb4d84733064fce",
+  "guest_rustc_sha256": "895b46e3d37c2265aa6069dd0976918b7dbc55279fbcb397f12e790f56ea959c",
+  "free_before_bytes": 1072054272,
+  "allocated_regular_bytes": 1518985216,
+  "logical_regular_bytes": 1518201915,
+  "regular_file_count": 327,
+  "symlinks": [],
+  "known_owned_live_identities": [],
+  "observed_process_executables_in_compiler": [],
+  "symlink_attack_resistant_rmtree": true,
+  "version_records_preserved": {
+    "native-version.stdout": {
+      "text": "rustc 1.95.0 (59807616e 2026-04-14)\n",
+      "sha256": "f4d034f5660bb49f22bfcba3f3445be67e25b704c193ff421b53863b4faee148"
+    },
+    "guest-version.stdout": {
+      "text": "rustc 1.88.0-dev (de85b1d3d 2025-06-26)\n",
+      "sha256": "67c5b543691f8e248c6574220e01758b60f67af4e4822e88b1453ef218811aaa"
+    }
+  },
+  "file_inventory": [
+    {
+      "path": "lib/librustc_driver-f3e8517e98b1ce90.so",
+      "bytes": 278231040,
+      "allocated_bytes": 278237184
+    },
+    {
+      "path": "bin/cargo-clippy",
+      "bytes": 2242160,
+      "allocated_bytes": 2244608
+    },
+    {
+      "path": "bin/cargo",
+      "bytes": 43374224,
+      "allocated_bytes": 43380736
+    },
+    {
+      "path": "bin/rustdoc_tool_binary",
+      "bytes": 16090128,
+      "allocated_bytes": 16093184
+    },
+    {
+      "path": "bin/clippy-driver",
+      "bytes": 18226144,
+      "allocated_bytes": 18227200
+    },
+    {
+      "path": "bin/rustc",
+      "bytes": 7952,
+      "allocated_bytes": 8192
+    },
+    {
+      "path": "bin/rustfmt",
+      "bytes": 8546160,
+      "allocated_bytes": 8548352
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libunicode_xid-5bf34f59db42b41c.rmeta",
+      "bytes": 23060,
+      "allocated_bytes": 24576
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libtracing_log-1e0aa0958c419c24.rmeta",
+      "bytes": 73137,
+      "allocated_bytes": 73728
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_stable_hash-e995d5ade71f5a60.rmeta",
+      "bytes": 104994,
+      "allocated_bytes": 106496
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libzerofrom-827327d687cd4dd6.rmeta",
+      "bytes": 90621,
+      "allocated_bytes": 94208
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/liblinux_raw_sys-cfccbe8fb16b351a.rmeta",
+      "bytes": 1636150,
+      "allocated_bytes": 1638400
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libzerovec_derive-8dc60e3f6c1afa2a.so",
+      "bytes": 3701416,
+      "allocated_bytes": 3702784
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libitertools-ca6b3b800d76a9df.rmeta",
+      "bytes": 2947657,
+      "allocated_bytes": 2949120
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_middle-2033dd804c9a15f3.rmeta",
+      "bytes": 26454072,
+      "allocated_bytes": 26460160
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-c84d2d03ee7dae6e.rlib",
+      "bytes": 4014290,
+      "allocated_bytes": 4022272
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libpanic_abort-71d84fcfa733baae.rlib",
+      "bytes": 10008,
+      "allocated_bytes": 12288
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libsmallvec-d8f64c9b0784a0ab.rmeta",
+      "bytes": 251391,
+      "allocated_bytes": 253952
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_mir_build-5dd64418e921a45f.rmeta",
+      "bytes": 1965038,
+      "allocated_bytes": 1966080
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libderive_setters-f86073a362de9272.so",
+      "bytes": 3566464,
+      "allocated_bytes": 3567616
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libindexmap-098ba97a97cd750d.rmeta",
+      "bytes": 1520562,
+      "allocated_bytes": 1523712
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libthorin-b5bfa38cf32b2b4a.rmeta",
+      "bytes": 774495,
+      "allocated_bytes": 778240
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libdigest-c2b7e48da5160f7e.rmeta",
+      "bytes": 188440,
+      "allocated_bytes": 192512
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libminiz_oxide-2d775c088f1873e3.rlib",
+      "bytes": 234782,
+      "allocated_bytes": 237568
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libwriteable-c9b78c2b8a862977.rmeta",
+      "bytes": 235453,
+      "allocated_bytes": 237568
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/liblibc-b9b878942fc3a9b7.rlib",
+      "bytes": 3657962,
+      "allocated_bytes": 3661824
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_apfloat-ea3fdc01e768cbac.rmeta",
+      "bytes": 776178,
+      "allocated_bytes": 778240
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libfluent_syntax-f02c77eb15399979.rmeta",
+      "bytes": 493369,
+      "allocated_bytes": 495616
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libcore-3c56af0658f49bd3.rlib",
+      "bytes": 56625434,
+      "allocated_bytes": 56631296
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_trait_selection-946bfac9f32cea2e.rmeta",
+      "bytes": 5905066,
+      "allocated_bytes": 5910528
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_transmute-555437829f8f7e11.rmeta",
+      "bytes": 323213,
+      "allocated_bytes": 323584
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libtracing_core-191df1552b573b4c.rmeta",
+      "bytes": 626516,
+      "allocated_bytes": 626688
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libyoke-ae1177ea9932d39f.rmeta",
+      "bytes": 274597,
+      "allocated_bytes": 278528
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libpolonius_engine-874259e26cf54ec4.rmeta",
+      "bytes": 420525,
+      "allocated_bytes": 421888
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_error_codes-3de4d31ff64a9106.rmeta",
+      "bytes": 26814,
+      "allocated_bytes": 28672
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libunicase-efd850745adae42a.rmeta",
+      "bytes": 119039,
+      "allocated_bytes": 122880
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_builtin_macros-d5095cadb076f148.rmeta",
+      "bytes": 1302605,
+      "allocated_bytes": 1306624
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_type_ir_macros-bd966e0f537ee3b2.so",
+      "bytes": 3869816,
+      "allocated_bytes": 3870720
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libdisplaydoc-e1014c8504a0868f.so",
+      "bytes": 3329400,
+      "allocated_bytes": 3330048
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libtype_map-94d5e979c6b07b83.rmeta",
+      "bytes": 137070,
+      "allocated_bytes": 139264
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_std_workspace_alloc-5e0c33ef4064c4ae.rlib",
+      "bytes": 5724,
+      "allocated_bytes": 8192
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/liblazy_static-69d3cbd9f163a6e6.rmeta",
+      "bytes": 20232,
+      "allocated_bytes": 20480
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libflate2-2a52ce411b0a33ee.rmeta",
+      "bytes": 615180,
+      "allocated_bytes": 618496
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libtinyvec-fa6845cbb2bc0653.rmeta",
+      "bytes": 1692954,
+      "allocated_bytes": 1695744
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_graphviz-7b66ad8dc460d0fe.rmeta",
+      "bytes": 118108,
+      "allocated_bytes": 118784
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_hir_analysis-38c71461bc687abf.rmeta",
+      "bytes": 3631353,
+      "allocated_bytes": 3633152
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libgimli-3713c51f8ee1ec89.rlib",
+      "bytes": 5832844,
+      "allocated_bytes": 5836800
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libnu_ansi_term-1ece02dfa3919c61.rmeta",
+      "bytes": 244043,
+      "allocated_bytes": 245760
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libstd_detect-c2d4bedab3844948.rlib",
+      "bytes": 534928,
+      "allocated_bytes": 536576
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libaho_corasick-ca1b36464f13f9ca.rmeta",
+      "bytes": 2027617,
+      "allocated_bytes": 2031616
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libperf_event_open_sys-12d4c9886367b833.rmeta",
+      "bytes": 469803,
+      "allocated_bytes": 471040
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_data_structures-88176bc6736340d4.rmeta",
+      "bytes": 2846357,
+      "allocated_bytes": 2846720
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librand-9af1f53fd82f5e86.rmeta",
+      "bytes": 1120294,
+      "allocated_bytes": 1122304
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/liballoc-6111b20b602035f2.rlib",
+      "bytes": 6753118,
+      "allocated_bytes": 6754304
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libtermize-5eb413f987597952.rmeta",
+      "bytes": 9347,
+      "allocated_bytes": 12288
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libmemchr-e3b01a4f75cd300d.rlib",
+      "bytes": 1490654,
+      "allocated_bytes": 1490944
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_ast-e6fcf245cc7c2db6.rmeta",
+      "bytes": 4205081,
+      "allocated_bytes": 4206592
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libonce_cell-ca2545dd1a7d1f5a.rmeta",
+      "bytes": 229638,
+      "allocated_bytes": 233472
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libsysroot-2917d1b1eb84a1e0.rlib",
+      "bytes": 5736,
+      "allocated_bytes": 8192
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libodht-813169426f9d2737.rmeta",
+      "bytes": 291849,
+      "allocated_bytes": 294912
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libicu_provider-0b7fe8dcc17e3720.rmeta",
+      "bytes": 637563,
+      "allocated_bytes": 638976
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libregex_automata-a96cde6948f6d3a5.rmeta",
+      "bytes": 1136699,
+      "allocated_bytes": 1138688
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libthin_vec-fa7eb13364ee4926.rmeta",
+      "bytes": 402964,
+      "allocated_bytes": 405504
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_monomorphize-fa2ccc7589630d21.rmeta",
+      "bytes": 433049,
+      "allocated_bytes": 434176
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_errors-a838cde77dd9385a.rmeta",
+      "bytes": 2124065,
+      "allocated_bytes": 2125824
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libunicode_width-71ad609e36df339a.rmeta",
+      "bytes": 814362,
+      "allocated_bytes": 815104
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libtinystr-cd9944efc5e1991a.rmeta",
+      "bytes": 335298,
+      "allocated_bytes": 335872
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libunicode_security-8347bfc75c2dd363.rmeta",
+      "bytes": 1824059,
+      "allocated_bytes": 1826816
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libdarling_macro-558b65b2f09374d5.so",
+      "bytes": 4647512,
+      "allocated_bytes": 4648960
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libmeasureme-c080e18d3448ab96.rmeta",
+      "bytes": 330091,
+      "allocated_bytes": 331776
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libregex_syntax-774b7a0c9f6d73d6.rmeta",
+      "bytes": 4371727,
+      "allocated_bytes": 4374528
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_ast_passes-9e87ae1cb5a98e64.rmeta",
+      "bytes": 529545,
+      "allocated_bytes": 532480
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/liblitemap-f209d2db14fd737c.rmeta",
+      "bytes": 319025,
+      "allocated_bytes": 319488
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libhashbrown-1b7d682f83e4f611.rlib",
+      "bytes": 1432580,
+      "allocated_bytes": 1433600
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_next_trait_solver-a160604c78becbaa.rmeta",
+      "bytes": 2255557,
+      "allocated_bytes": 2256896
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libintl_pluralrules-fd8b38c499cb9b60.rmeta",
+      "bytes": 433264,
+      "allocated_bytes": 434176
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_hash-e981e45ce746eb55.rmeta",
+      "bytes": 20869,
+      "allocated_bytes": 24576
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libsha2-29f8496eb483a851.rmeta",
+      "bytes": 664008,
+      "allocated_bytes": 667648
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libblock_buffer-6e8a1566a15b53b1.rmeta",
+      "bytes": 62957,
+      "allocated_bytes": 65536
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librand_xoshiro-9ea84a7d48eb435c.rmeta",
+      "bytes": 240256,
+      "allocated_bytes": 241664
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libgetrandom-329f994a3bf9ba34.rmeta",
+      "bytes": 69050,
+      "allocated_bytes": 69632
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libunic_langid-54db560d55a2348f.rmeta",
+      "bytes": 9478,
+      "allocated_bytes": 12288
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libproc_macro-cfffd06b84014231.rlib",
+      "bytes": 2547170,
+      "allocated_bytes": 2547712
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libruzstd-f8abbb1a1a0b0e0d.rmeta",
+      "bytes": 506108,
+      "allocated_bytes": 507904
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libserde_derive-158ebf43b2dcfba2.so",
+      "bytes": 4742432,
+      "allocated_bytes": 4747264
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libconstant_time_eq-6ac3438439c59239.rmeta",
+      "bytes": 10637,
+      "allocated_bytes": 12288
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libarrayvec-66c721a8d6f7050e.rmeta",
+      "bytes": 328654,
+      "allocated_bytes": 331776
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libnu_ansi_term-dc4f93f011e64559.rmeta",
+      "bytes": 224846,
+      "allocated_bytes": 225280
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_mir_dataflow-8e8fb0b962b60b20.rmeta",
+      "bytes": 1629214,
+      "allocated_bytes": 1630208
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libblake3-e99e7b2ed5f33eb7.rmeta",
+      "bytes": 349308,
+      "allocated_bytes": 352256
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libstable_mir-49e8da34d2b0bc0a.rlib",
+      "bytes": 14182,
+      "allocated_bytes": 16384
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_parse_format-92c329e302a5c62c.rmeta",
+      "bytes": 87193,
+      "allocated_bytes": 90112
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libwasm_encoder-34f2e60708d557d2.rmeta",
+      "bytes": 1609989,
+      "allocated_bytes": 1613824
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libmatchers-6f698e2a3c72aba0.rmeta",
+      "bytes": 51108,
+      "allocated_bytes": 53248
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_smir-020acb5d2fe33421.rlib",
+      "bytes": 7525464,
+      "allocated_bytes": 7532544
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_query_impl-ea960a7c078dc2eb.rmeta",
+      "bytes": 7981481,
+      "allocated_bytes": 7983104
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/liblibc-fe1a95d14e3a8d86.rmeta",
+      "bytes": 5625315,
+      "allocated_bytes": 5632000
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_baked_icu_data-613102e48a44ef3b.rmeta",
+      "bytes": 192627,
+      "allocated_bytes": 196608
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/liballocator_api2-bbd3afbc0a04cb85.rmeta",
+      "bytes": 797980,
+      "allocated_bytes": 798720
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libunicode_width-22a698b835b87969.rlib",
+      "bytes": 857924,
+      "allocated_bytes": 860160
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_hash-82973ea922268df0.rmeta",
+      "bytes": 35125,
+      "allocated_bytes": 36864
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libzerofrom_derive-9759977bf9aa25c3.so",
+      "bytes": 4327744,
+      "allocated_bytes": 4333568
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_incremental-e09921dd51dbae73.rmeta",
+      "bytes": 489438,
+      "allocated_bytes": 491520
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libminiz_oxide-67e7c2b54245dc4f.rmeta",
+      "bytes": 403716,
+      "allocated_bytes": 405504
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libscopeguard-f5836e1a566716d4.rmeta",
+      "bytes": 25855,
+      "allocated_bytes": 28672
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_span-e34d1ab12ac23036.rmeta",
+      "bytes": 2340691,
+      "allocated_bytes": 2342912
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_abi-7038f4bfa0474a27.rmeta",
+      "bytes": 1335539,
+      "allocated_bytes": 1339392
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_expand-537d10c0cb5015c7.rmeta",
+      "bytes": 1429144,
+      "allocated_bytes": 1429504
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librand_core-03669530611ba9da.rmeta",
+      "bytes": 145316,
+      "allocated_bytes": 147456
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libleb128-e4ad783ce0df1c37.rmeta",
+      "bytes": 23111,
+      "allocated_bytes": 24576
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_demangle-8dfa313e743c0b22.rmeta",
+      "bytes": 86733,
+      "allocated_bytes": 90112
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libcrc32fast-7cc6e7fc5a9220b4.rmeta",
+      "bytes": 50899,
+      "allocated_bytes": 53248
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libshlex-ee4cb232586f9d41.rmeta",
+      "bytes": 57459,
+      "allocated_bytes": 61440
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libmemmap2-073e745e2f67f7e9.rmeta",
+      "bytes": 54781,
+      "allocated_bytes": 57344
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libdatafrog-c6ba871f9d842aeb.rmeta",
+      "bytes": 367266,
+      "allocated_bytes": 368640
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_ast_ir-bfe0db2569cc36e6.rmeta",
+      "bytes": 55766,
+      "allocated_bytes": 57344
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_serialize-13835f4c96e15006.rmeta",
+      "bytes": 419774,
+      "allocated_bytes": 421888
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_macros-e10a8b1ae29ca022.so",
+      "bytes": 5035784,
+      "allocated_bytes": 5042176
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libregex-fb34cbc0a2ddcdbd.rmeta",
+      "bytes": 740034,
+      "allocated_bytes": 741376
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libgetopts-e7bb5bc47e418f24.rmeta",
+      "bytes": 158169,
+      "allocated_bytes": 159744
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_ty_utils-c6faf0593f19b09b.rmeta",
+      "bytes": 838897,
+      "allocated_bytes": 839680
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libbitflags-e453b60d946d4eff.rmeta",
+      "bytes": 218641,
+      "allocated_bytes": 221184
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libobject-9625060c34b99261.rlib",
+      "bytes": 8335180,
+      "allocated_bytes": 8339456
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libunic_langid_macros_impl-91dc76934925a0ba.so",
+      "bytes": 1405224,
+      "allocated_bytes": 1409024
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libunic_langid_impl-d933526648e8527f.rmeta",
+      "bytes": 166541,
+      "allocated_bytes": 167936
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_ast_lowering-c05b7ba65227e69f.rmeta",
+      "bytes": 922190,
+      "allocated_bytes": 925696
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libregex_automata-e8fd14fb43ac0ee6.rmeta",
+      "bytes": 4546083,
+      "allocated_bytes": 4546560
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libunwind-6e3e3293bce1463c.rlib",
+      "bytes": 26374,
+      "allocated_bytes": 28672
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_hir_typeck-fd2c8deaa34591c4.rmeta",
+      "bytes": 3838419,
+      "allocated_bytes": 3842048
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libadler2-ca535c7ef8c77412.rlib",
+      "bytes": 28782,
+      "allocated_bytes": 32768
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libcrossbeam_deque-2ec474c01969bf51.rmeta",
+      "bytes": 228193,
+      "allocated_bytes": 229376
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_session-312efbce2d2b184c.rmeta",
+      "bytes": 2301109,
+      "allocated_bytes": 2301952
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librand_chacha-f4a0638247bdd966.rmeta",
+      "bytes": 156796,
+      "allocated_bytes": 159744
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libtracing_tree-07696e52b1200984.rmeta",
+      "bytes": 179344,
+      "allocated_bytes": 180224
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libcompiler_builtins-f0dfc6d88a7191df.rlib",
+      "bytes": 3534814,
+      "allocated_bytes": 3534848
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libtwox_hash-4c92f8fbf875f55a.rmeta",
+      "bytes": 808194,
+      "allocated_bytes": 811008
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libanstyle-8e5166bfd8aebace.rmeta",
+      "bytes": 230134,
+      "allocated_bytes": 233472
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libthiserror-3f7c14c2c541d67c.rmeta",
+      "bytes": 26546,
+      "allocated_bytes": 28672
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_lexer-a859a443ccee241b.rmeta",
+      "bytes": 137124,
+      "allocated_bytes": 139264
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libsharded_slab-80fcf327be801904.rmeta",
+      "bytes": 1038915,
+      "allocated_bytes": 1040384
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libwasmparser-7735a586c4dc2b86.rmeta",
+      "bytes": 3709328,
+      "allocated_bytes": 3710976
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libstd-3a70f77b1cf6c5d1.rlib",
+      "bytes": 12593778,
+      "allocated_bytes": 12595200
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libicu_list_data-a1ef2de1833f073f.rmeta",
+      "bytes": 1334783,
+      "allocated_bytes": 1335296
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libunicode_properties-12e4b419652be602.rmeta",
+      "bytes": 94689,
+      "allocated_bytes": 98304
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libunicode_normalization-8c91f764f5d60bee.rmeta",
+      "bytes": 1717713,
+      "allocated_bytes": 1720320
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libjiff-721876f08181bc00.rmeta",
+      "bytes": 7834634,
+      "allocated_bytes": 7835648
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_resolve-6de60b67db9618b7.rmeta",
+      "bytes": 2429016,
+      "allocated_bytes": 2433024
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_hir_pretty-44136007949a9414.rmeta",
+      "bytes": 119154,
+      "allocated_bytes": 122880
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libgetopts-0f3e7c3d5d419b0b.rlib",
+      "bytes": 453328,
+      "allocated_bytes": 454656
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libthiserror_impl-ec31dd625f819515.so",
+      "bytes": 3758608,
+      "allocated_bytes": 3760128
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libgsgdt-cb8c6e0492f697d6.rmeta",
+      "bytes": 303842,
+      "allocated_bytes": 307200
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_codegen_llvm-b8b6f452eb63f66f.rmeta",
+      "bytes": 3007412,
+      "allocated_bytes": 3010560
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libtracing_attributes-e280222e1f3b9c9f.so",
+      "bytes": 4126672,
+      "allocated_bytes": 4128768
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libself_cell-8c5bd8c4f7f8b846.rmeta",
+      "bytes": 8820,
+      "allocated_bytes": 12288
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/liblog-033268fe4e52c1ce.rmeta",
+      "bytes": 216042,
+      "allocated_bytes": 217088
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libfluent_langneg-8d1b4f5228ca2ded.rmeta",
+      "bytes": 44844,
+      "allocated_bytes": 45056
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libunicode_script-c564f78f80a7d637.rmeta",
+      "bytes": 637501,
+      "allocated_bytes": 638976
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libelsa-7794c7776cb30c79.rmeta",
+      "bytes": 273487,
+      "allocated_bytes": 274432
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_feature-e090379f586a340d.rmeta",
+      "bytes": 288268,
+      "allocated_bytes": 290816
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_fs_util-ef61aacef9d49239.rmeta",
+      "bytes": 16999,
+      "allocated_bytes": 20480
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libpathdiff-99c9bbc758c90924.rmeta",
+      "bytes": 13275,
+      "allocated_bytes": 16384
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libena-3c6102ce0ad42159.rmeta",
+      "bytes": 233567,
+      "allocated_bytes": 237568
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libpulldown_cmark-880f408a5181cd07.rmeta",
+      "bytes": 1620629,
+      "allocated_bytes": 1622016
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libar_archive_writer-16c9bb50f6c4fd19.rmeta",
+      "bytes": 373283,
+      "allocated_bytes": 376832
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libzerovec-5d8ff24c4c926762.rmeta",
+      "bytes": 1809596,
+      "allocated_bytes": 1810432
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libstatic_assertions-5d0af088aa276357.rmeta",
+      "bytes": 50232,
+      "allocated_bytes": 53248
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libfastrand-b07ef97cb782f8ce.rmeta",
+      "bytes": 189985,
+      "allocated_bytes": 192512
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_attr_data_structures-d0e7522b6a36fbb6.rmeta",
+      "bytes": 406918,
+      "allocated_bytes": 409600
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libhashbrown-3e34dd2808461c9c.rmeta",
+      "bytes": 1411807,
+      "allocated_bytes": 1413120
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libpunycode-55a8011c39600b64.rmeta",
+      "bytes": 6986,
+      "allocated_bytes": 8192
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_passes-9c7ace21ea781a8c.rmeta",
+      "bytes": 1701354,
+      "allocated_bytes": 1703936
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_std_workspace_core-decfb33a22fa8102.rlib",
+      "bytes": 8898,
+      "allocated_bytes": 12288
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libaddr2line-78f995fc553dd433.rlib",
+      "bytes": 472892,
+      "allocated_bytes": 475136
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libpin_project_lite-4f9e96b568e76ec3.rmeta",
+      "bytes": 94433,
+      "allocated_bytes": 98304
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libnix-fe00f4460440090f.rmeta",
+      "bytes": 2931750,
+      "allocated_bytes": 2932736
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libitoa-aadf97694dcc7831.rmeta",
+      "bytes": 86326,
+      "allocated_bytes": 90112
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libjobserver-e48cf43a8d4c2496.rmeta",
+      "bytes": 95149,
+      "allocated_bytes": 98304
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libcrossbeam_utils-8d7051ac383fcbc0.rmeta",
+      "bytes": 675434,
+      "allocated_bytes": 675840
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libserde_json-4abc30e6aeeb0b0a.rmeta",
+      "bytes": 1629669,
+      "allocated_bytes": 1630208
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_driver_impl-5a293442855348f1.rmeta",
+      "bytes": 666834,
+      "allocated_bytes": 667648
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libderive_where-78e234a64fa3e6d1.so",
+      "bytes": 4020312,
+      "allocated_bytes": 4022272
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_hashes-387a363cc93b5d80.rmeta",
+      "bytes": 22296,
+      "allocated_bytes": 24576
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libfoldhash-f8188f2b0872e19e.rmeta",
+      "bytes": 96374,
+      "allocated_bytes": 98304
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libzerocopy-4a63105434f77f44.rmeta",
+      "bytes": 4679716,
+      "allocated_bytes": 4681728
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libicu_locid-fe0e25bc6276cfc2.rmeta",
+      "bytes": 1098825,
+      "allocated_bytes": 1101824
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libthread_local-faede70618593949.rmeta",
+      "bytes": 121875,
+      "allocated_bytes": 122880
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libintl_memoizer-0933f9e728e057cd.rmeta",
+      "bytes": 44284,
+      "allocated_bytes": 45056
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libstacker-2e1b341614e0d2eb.rmeta",
+      "bytes": 20092,
+      "allocated_bytes": 20480
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_parse-ee317861e5f96cd9.rmeta",
+      "bytes": 3144342,
+      "allocated_bytes": 3145728
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libmemchr-66b9381c57877a89.rmeta",
+      "bytes": 1352507,
+      "allocated_bytes": 1355776
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libobject-d4ba5cf65a9e3f00.rmeta",
+      "bytes": 8723035,
+      "allocated_bytes": 8724480
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libgeneric_array-763b6e32864010f0.rmeta",
+      "bytes": 994450,
+      "allocated_bytes": 995328
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libunic_langid_macros-3d1af74c9cf135ef.rmeta",
+      "bytes": 12958,
+      "allocated_bytes": 16384
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_lint_defs-f267fe30f06ca6f8.rmeta",
+      "bytes": 586379,
+      "allocated_bytes": 589824
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_symbol_mangling-7c79ef5a62097e28.rmeta",
+      "bytes": 232979,
+      "allocated_bytes": 233472
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_metadata-d5ca5a2e99d430e9.rmeta",
+      "bytes": 1952280,
+      "allocated_bytes": 1953792
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_driver-f3e8517e98b1ce90.so",
+      "bytes": 278231040,
+      "allocated_bytes": 278237184
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_std_workspace_std-85ec700b8171dd13.rlib",
+      "bytes": 10320,
+      "allocated_bytes": 12288
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libtracing-ecd5f55fd0ff3479.rmeta",
+      "bytes": 451947,
+      "allocated_bytes": 454656
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libfluent_bundle-777ba99c58c6bdb8.rmeta",
+      "bytes": 519152,
+      "allocated_bytes": 520192
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libeither-37be33a41a1ad5c0.rmeta",
+      "bytes": 244711,
+      "allocated_bytes": 245760
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_ast_pretty-299004431da217b3.rmeta",
+      "bytes": 353371,
+      "allocated_bytes": 356352
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libcrossbeam_epoch-e15d984b411492c1.rmeta",
+      "bytes": 359975,
+      "allocated_bytes": 360448
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_llvm-2e6e30159ccf63e7.rmeta",
+      "bytes": 34825,
+      "allocated_bytes": 36864
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libppv_lite86-8e37c75731044982.rmeta",
+      "bytes": 1149746,
+      "allocated_bytes": 1150976
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustix-886e253a593a0a94.rmeta",
+      "bytes": 4252622,
+      "allocated_bytes": 4259840
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librand_chacha-c8907258d59af016.rmeta",
+      "bytes": 161387,
+      "allocated_bytes": 163840
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_mir_transform-af254a682ad1db3c.rmeta",
+      "bytes": 3258159,
+      "allocated_bytes": 3260416
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_fluent_macro-1071c64e2ef934f2.so",
+      "bytes": 2084288,
+      "allocated_bytes": 2084864
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libicu_locid_transform_data-810620d19237edea.rmeta",
+      "bytes": 153571,
+      "allocated_bytes": 155648
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libicu_provider_adapters-9d195aebe6bd562b.rmeta",
+      "bytes": 190085,
+      "allocated_bytes": 192512
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_query_system-1d37cee8d8a8fa16.rmeta",
+      "bytes": 1421912,
+      "allocated_bytes": 1425408
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/liblibloading-bff2a757bc6692b6.rmeta",
+      "bytes": 147860,
+      "allocated_bytes": 151552
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_lint-795fc62a3d62a418.rmeta",
+      "bytes": 3579268,
+      "allocated_bytes": 3579904
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libicu_locid_transform-c7e3f265208b2526.rmeta",
+      "bytes": 673491,
+      "allocated_bytes": 675840
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libtinyvec_macros-04d14a9e6c779486.rmeta",
+      "bytes": 2809,
+      "allocated_bytes": 4096
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_literal_escaper-3396ddc6e4bb5206.rlib",
+      "bytes": 92984,
+      "allocated_bytes": 94208
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_error_messages-798453e1a41ec33a.rmeta",
+      "bytes": 147621,
+      "allocated_bytes": 151552
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_index_macros-b83ca53ef31d3957.so",
+      "bytes": 2879848,
+      "allocated_bytes": 2883584
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libparking_lot_core-09231c51af85c014.rmeta",
+      "bytes": 190826,
+      "allocated_bytes": 192512
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libctrlc-56a7e9a6b431e170.rmeta",
+      "bytes": 46412,
+      "allocated_bytes": 49152
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_log-1d6af8fb7862de65.rmeta",
+      "bytes": 23946,
+      "allocated_bytes": 24576
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librand-9c5c93b16f8952d6.rmeta",
+      "bytes": 1357415,
+      "allocated_bytes": 1359872
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libyoke_derive-f01c9f0414d6277d.so",
+      "bytes": 3929408,
+      "allocated_bytes": 3932160
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libcc-2408a4cb80bb994d.rmeta",
+      "bytes": 641434,
+      "allocated_bytes": 643072
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_attr_parsing-89e95b6e2e65d359.rmeta",
+      "bytes": 636829,
+      "allocated_bytes": 638976
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libarrayref-47e8a233fbee3c0e.rmeta",
+      "bytes": 17000,
+      "allocated_bytes": 20480
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libtermcolor-40781d4ab54a9340.rmeta",
+      "bytes": 288976,
+      "allocated_bytes": 290816
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libregex_syntax-58aca886346e0c85.rmeta",
+      "bytes": 4805905,
+      "allocated_bytes": 4812800
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_pattern_analysis-d10543abd52035be.rmeta",
+      "bytes": 1072519,
+      "allocated_bytes": 1073152
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libproc_macro_hack-5380779f235c46e2.so",
+      "bytes": 813464,
+      "allocated_bytes": 815104
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_codegen_ssa-7d7e8a0d48d72ce7.rmeta",
+      "bytes": 4763244,
+      "allocated_bytes": 4767744
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libsha1-50e205eb8b31ab30.rmeta",
+      "bytes": 346037,
+      "allocated_bytes": 348160
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libserde-5b2366a443ec3f45.rmeta",
+      "bytes": 5780540,
+      "allocated_bytes": 5787648
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libpsm-5fd3d0eb0f702259.rmeta",
+      "bytes": 24351,
+      "allocated_bytes": 24576
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_privacy-6ecf9a8a779ad7d7.rmeta",
+      "bytes": 279478,
+      "allocated_bytes": 282624
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_sanitizers-dd2f3296bcb8c7f8.rmeta",
+      "bytes": 208876,
+      "allocated_bytes": 208896
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libgimli-fc1aeef0834aae4a.rmeta",
+      "bytes": 6849779,
+      "allocated_bytes": 6852608
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libunicode_width-6f712c44e9f5e5b1.rmeta",
+      "bytes": 814351,
+      "allocated_bytes": 815104
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_demangle-384a1d5cb8cba35c.rlib",
+      "bytes": 346216,
+      "allocated_bytes": 348160
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libtracing_subscriber-5681db432f944935.rmeta",
+      "bytes": 2311167,
+      "allocated_bytes": 2314240
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libself_cell-2acdb3f9c0cc327d.rmeta",
+      "bytes": 71448,
+      "allocated_bytes": 73728
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libcfg_if-2dc8527c40725077.rlib",
+      "bytes": 9286,
+      "allocated_bytes": 12288
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libbstr-fed6d62e0364b42b.rmeta",
+      "bytes": 1701312,
+      "allocated_bytes": 1703936
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_hir-8e191c980181f785.rmeta",
+      "bytes": 3277652,
+      "allocated_bytes": 3280896
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_type_ir-2ddbafe325bc291b.rmeta",
+      "bytes": 4893548,
+      "allocated_bytes": 4894720
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libicu_provider_macros-7b821d8a15eca0da.so",
+      "bytes": 2926960,
+      "allocated_bytes": 2928640
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libtempfile-75b39f89de222dff.rmeta",
+      "bytes": 245475,
+      "allocated_bytes": 245760
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libtypenum-d254c01f83d2048e.rmeta",
+      "bytes": 2228358,
+      "allocated_bytes": 2232320
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librand_core-64eee0fa21ee6dfb.rmeta",
+      "bytes": 168415,
+      "allocated_bytes": 172032
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libequivalent-bfdefbb8e52236eb.rmeta",
+      "bytes": 8070,
+      "allocated_bytes": 8192
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libfallible_iterator-87e12936e0fd8240.rmeta",
+      "bytes": 501416,
+      "allocated_bytes": 503808
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_index-dc3618a90f6713d9.rmeta",
+      "bytes": 632297,
+      "allocated_bytes": 634880
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libstd-3a70f77b1cf6c5d1.so",
+      "bytes": 9944976,
+      "allocated_bytes": 9945088
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_literal_escaper-ae32ba7e35303fd6.rmeta",
+      "bytes": 67966,
+      "allocated_bytes": 69632
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_borrowck-bbde2d226fd85463.rmeta",
+      "bytes": 4156716,
+      "allocated_bytes": 4157440
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libannotate_snippets-f8c8064c7ac32c4d.rmeta",
+      "bytes": 210072,
+      "allocated_bytes": 212992
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_arena-08474a7a541c1abe.rmeta",
+      "bytes": 86945,
+      "allocated_bytes": 90112
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libpulldown_cmark_escape-880a30eed586cb2d.rmeta",
+      "bytes": 37401,
+      "allocated_bytes": 40960
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libcrypto_common-08d1de036e3053ce.rmeta",
+      "bytes": 31326,
+      "allocated_bytes": 32768
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libgetrandom-dc8c541472c395eb.rmeta",
+      "bytes": 103235,
+      "allocated_bytes": 106496
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_infer-4182da60441e14ba.rmeta",
+      "bytes": 2418557,
+      "allocated_bytes": 2424832
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/liboverload-76c56ce31680bcda.rmeta",
+      "bytes": 26420,
+      "allocated_bytes": 28672
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libcfg_if-bec9f5de0bed0f42.rmeta",
+      "bytes": 5512,
+      "allocated_bytes": 8192
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libcpufeatures-1c9efdb658c9adf6.rmeta",
+      "bytes": 39163,
+      "allocated_bytes": 40960
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libparking_lot-53b81d0b9ad6758a.rmeta",
+      "bytes": 206833,
+      "allocated_bytes": 208896
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libmd5-458c6295e6697917.rmeta",
+      "bytes": 81056,
+      "allocated_bytes": 81920
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_target-cea724e42b5135c9.rmeta",
+      "bytes": 4340976,
+      "allocated_bytes": 4345856
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libicu_list-828ed6becb8c2726.rmeta",
+      "bytes": 854703,
+      "allocated_bytes": 856064
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libpanic_unwind-4338553979c581ee.rlib",
+      "bytes": 20882,
+      "allocated_bytes": 24576
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_const_eval-4d7bc3ca9e981910.rmeta",
+      "bytes": 5561112,
+      "allocated_bytes": 5566464
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/liblock_api-db79c0ea2e04a556.rmeta",
+      "bytes": 375915,
+      "allocated_bytes": 376832
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librayon_core-4c0bb7e6ecea2ddb.rmeta",
+      "bytes": 577243,
+      "allocated_bytes": 577536
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libstable_deref_trait-78182dc09396532a.rmeta",
+      "bytes": 15585,
+      "allocated_bytes": 16384
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libadler2-1cdd5baf3d20e894.rmeta",
+      "bytes": 19711,
+      "allocated_bytes": 20480
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libryu-32a5fb8ebf2831b7.rmeta",
+      "bytes": 57972,
+      "allocated_bytes": 61440
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_interface-eb977e686cbbb030.rmeta",
+      "bytes": 599443,
+      "allocated_bytes": 602112
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/librustc_traits-ad9d4fd710097fb1.rmeta",
+      "bytes": 204211,
+      "allocated_bytes": 204800
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libscoped_tls-86446e5eb1fb93c7.rmeta",
+      "bytes": 14942,
+      "allocated_bytes": 16384
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/lib/libregex_automata-9a5d9679a3eb837a.rmeta",
+      "bytes": 1141855,
+      "allocated_bytes": 1142784
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/bin/llvm-cov",
+      "bytes": 6996976,
+      "allocated_bytes": 7000064
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/bin/llvm-ar",
+      "bytes": 42300952,
+      "allocated_bytes": 42307584
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/bin/llvm-dis",
+      "bytes": 3973856,
+      "allocated_bytes": 3977216
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/bin/llvm-objcopy",
+      "bytes": 6839064,
+      "allocated_bytes": 6840320
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/bin/llvm-size",
+      "bytes": 5690936,
+      "allocated_bytes": 5693440
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/bin/llvm-profdata",
+      "bytes": 8424792,
+      "allocated_bytes": 8425472
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/bin/llvm-readobj",
+      "bytes": 9939648,
+      "allocated_bytes": 9940992
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/bin/llvm-strip",
+      "bytes": 6839064,
+      "allocated_bytes": 6840320
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/bin/llvm-nm",
+      "bytes": 43640768,
+      "allocated_bytes": 43646976
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/bin/llvm-link",
+      "bytes": 6307232,
+      "allocated_bytes": 6307840
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/bin/opt",
+      "bytes": 145743544,
+      "allocated_bytes": 145747968
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/bin/llc",
+      "bytes": 142127112,
+      "allocated_bytes": 142135296
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/bin/llvm-objdump",
+      "bytes": 40652728,
+      "allocated_bytes": 40656896
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/bin/rust-lld",
+      "bytes": 150336472,
+      "allocated_bytes": 150343680
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/bin/llvm-as",
+      "bytes": 5332392,
+      "allocated_bytes": 5332992
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/bin/rust-objcopy",
+      "bytes": 6839064,
+      "allocated_bytes": 6840320
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/bin/gcc-ld/wasm-ld",
+      "bytes": 419640,
+      "allocated_bytes": 421888
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/bin/gcc-ld/ld64.lld",
+      "bytes": 419640,
+      "allocated_bytes": 421888
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/bin/gcc-ld/lld-link",
+      "bytes": 419640,
+      "allocated_bytes": 421888
+    },
+    {
+      "path": "lib/rustlib/x86_64-unknown-linux-gnu/bin/gcc-ld/ld.lld",
+      "bytes": 419640,
+      "allocated_bytes": 421888
+    },
+    {
+      "path": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libpanic_unwind-12c5ddd254e810a0.rlib",
+      "bytes": 9650,
+      "allocated_bytes": 12288
+    },
+    {
+      "path": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libgetopts-329c20452631d1f1.rlib",
+      "bytes": 414770,
+      "allocated_bytes": 417792
+    },
+    {
+      "path": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/librustc_demangle-91a2e8b83ab1f97d.rlib",
+      "bytes": 338382,
+      "allocated_bytes": 339968
+    },
+    {
+      "path": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/librustc_literal_escaper-9b9d1d6cb8bbc894.rlib",
+      "bytes": 92268,
+      "allocated_bytes": 94208
+    },
+    {
+      "path": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/librustc_std_workspace_alloc-64a48515a0af35b4.rlib",
+      "bytes": 5268,
+      "allocated_bytes": 8192
+    },
+    {
+      "path": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libobject-592d77f5819ebda2.rlib",
+      "bytes": 8386500,
+      "allocated_bytes": 8388608
+    },
+    {
+      "path": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libsysroot-4d2ed30de2a0d264.rlib",
+      "bytes": 5052,
+      "allocated_bytes": 8192
+    },
+    {
+      "path": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libunicode_width-41655a63c9552810.rlib",
+      "bytes": 860168,
+      "allocated_bytes": 864256
+    },
+    {
+      "path": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libgimli-b36c3a2629950a4a.rlib",
+      "bytes": 5819894,
+      "allocated_bytes": 5824512
+    },
+    {
+      "path": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/liblibc-946e79d6f9d74c52.rlib",
+      "bytes": 33566,
+      "allocated_bytes": 36864
+    },
+    {
+      "path": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libpanic_abort-ac27ddeb3870ef15.rlib",
+      "bytes": 11768,
+      "allocated_bytes": 12288
+    },
+    {
+      "path": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/librustc_std_workspace_core-47bd547d85ffb28a.rlib",
+      "bytes": 8438,
+      "allocated_bytes": 12288
+    },
+    {
+      "path": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libproc_macro-f8e3cdbe9ffeba18.rlib",
+      "bytes": 2273326,
+      "allocated_bytes": 2277376
+    },
+    {
+      "path": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libcompiler_builtins-8e24b4c745cdec68.rlib",
+      "bytes": 4173106,
+      "allocated_bytes": 4173824
+    },
+    {
+      "path": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libcore-99ec45688452b6db.rlib",
+      "bytes": 36893162,
+      "allocated_bytes": 36900864
+    },
+    {
+      "path": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/liballoc-1b2dbcaa9f376967.rlib",
+      "bytes": 6701186,
+      "allocated_bytes": 6709248
+    },
+    {
+      "path": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libunwind-c42105156a9ec584.rlib",
+      "bytes": 4862,
+      "allocated_bytes": 8192
+    },
+    {
+      "path": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libtest-99894aa4ddd80016.rlib",
+      "bytes": 2853114,
+      "allocated_bytes": 2854912
+    },
+    {
+      "path": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libadler2-2a796f163548a2db.rlib",
+      "bytes": 28014,
+      "allocated_bytes": 28672
+    },
+    {
+      "path": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libhashbrown-ee1321e7d9fed345.rlib",
+      "bytes": 1423520,
+      "allocated_bytes": 1425408
+    },
+    {
+      "path": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/librustc_std_workspace_std-9a342175660ecdb3.rlib",
+      "bytes": 9644,
+      "allocated_bytes": 12288
+    },
+    {
+      "path": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libstd_detect-edfc5cf536b364f3.rlib",
+      "bytes": 243330,
+      "allocated_bytes": 245760
+    },
+    {
+      "path": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libminiz_oxide-514e80e225a51439.rlib",
+      "bytes": 222522,
+      "allocated_bytes": 225280
+    },
+    {
+      "path": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libstd-1ac65f5883ab6d1a.rlib",
+      "bytes": 8110284,
+      "allocated_bytes": 8118272
+    },
+    {
+      "path": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libaddr2line-786b7d84d9451424.rlib",
+      "bytes": 493216,
+      "allocated_bytes": 495616
+    },
+    {
+      "path": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libmemchr-5582d6fa936b642d.rlib",
+      "bytes": 650474,
+      "allocated_bytes": 651264
+    },
+    {
+      "path": "lib/rustlib/riscv32im-risc0-zkvm-elf/lib/libcfg_if-41897a36a4f00810.rlib",
+      "bytes": 8834,
+      "allocated_bytes": 12288
+    }
+  ]
+}

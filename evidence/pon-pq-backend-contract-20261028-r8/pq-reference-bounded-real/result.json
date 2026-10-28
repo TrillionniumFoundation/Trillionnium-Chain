@@ -1,0 +1,52 @@
+{
+  "schema": "pon-r8-offline-real-pq-reference-v1",
+  "started_utc": "2026-10-28T04:14:05.163020+00:00",
+  "argv": [
+    "python3",
+    "-m",
+    "unittest",
+    "-v",
+    "test_pq_genesis_handoff",
+    "test_pq_envelope",
+    "test_pq_pql4_signed_frontier",
+    "test_pq_pql5_quorum",
+    "test_pq_pql6_equivocation"
+  ],
+  "cwd": "/workspace/scratch/56818e4fba76/chain-recovered/formal/pon-nakamoto-v1",
+  "wall_limit_seconds": 120,
+  "disk_free_floor_bytes": 1073741824,
+  "cargo_build_jobs": 1,
+  "deployed_keys_or_state": false,
+  "network_requested": false,
+  "earlier_interruption_preserved": true,
+  "qualification_scope": "dirty combined candidate, five original offline PQ suites with ephemeral test keys",
+  "backend": {
+    "OPENSSL_DIR": "/tmp/pure-pon-openssl-3.5.9",
+    "OPENSSL_STATIC": "1",
+    "TRNM_PQ_OPENSSL": "/tmp/pure-pon-openssl-3.5.9/bin/openssl",
+    "TRNM_PQ_OPENSSL_SHA256": "0f9db29e103b1c7da08c7fe45ae47f84a0e9c388775520114598646a9041867f",
+    "TRNM_PQ_OPENSSL_VERSION": "3.5.9",
+    "OPENSSL_CONF": "/dev/null",
+    "OPENSSL_MODULES": "/tmp/pure-pon-openssl-3.5.9/lib/ossl-modules"
+  },
+  "whole_chain_pq_accepted": false,
+  "interrupted": false,
+  "stop_reason": null,
+  "returncode": 0,
+  "wall_seconds": 59.824178951996146,
+  "user_cpu_seconds": 46.438719,
+  "system_cpu_seconds": 15.158151,
+  "max_rss_kib": 90776,
+  "completed_utc": "2026-10-28T04:15:04.987197+00:00",
+  "source_unchanged": true,
+  "logs": {
+    "stdout.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr.txt": {
+      "bytes": 11788,
+      "sha256": "d2db8ca5f33c79c40778a9b190469398be5c9b5ea2372818a4ca43b2df81da6f"
+    }
+  }
+}

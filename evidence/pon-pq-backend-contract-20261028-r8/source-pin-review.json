@@ -1,0 +1,185 @@
+{
+  "activation_flags_and_native_contracts_unchanged": true,
+  "added_required_pins": {
+    "formal/pon-nakamoto-v1/pq_openssl_backend.py": "46e0b12384d9576bb3defbbd24a25a8a70b83066",
+    "formal/pon-nakamoto-v1/test_pq_openssl_backend.py": "f55db627b3f018ce043bef24d5925a20543cc7ba"
+  },
+  "after_manifest_sha256": "d9477c62b6eff58bb1a83f82b992a5f1198bdb02fd16bfcddf0842ef41ffddc3",
+  "base_commit": "189ba3adfd9a22c7cfc1537eab535e9eb7c442df",
+  "before_manifest_sha256": "a9b33a65a88a0fafc0e367f344e3979958764854752aaca74446798d098c5416",
+  "original_required_paths_retained": true,
+  "schema": "pon-r8-pq-source-pin-review-v1",
+  "source_binding_is_runtime_acceptance": false,
+  "updated_existing_pins": [
+    {
+      "diff": "source-pin-deltas/00.diff",
+      "new_git_blob": "0f3d2d469f47357b6c9380cbb8e65526cfb2d008",
+      "new_sha256": "6ff3ce6bffca543c3cee58a04edb4abb2db142c796ceef350268d7f788801476",
+      "old_git_blob": "3b5b1ffad5034c8f80c27870b314a2cc4030bd8e",
+      "old_sha256": "bfc17040e19cefd5142274e44e6c048483ec1d9da95912097bc069699fb366ce",
+      "path": "docs/security/PQ_NATIVE_ACCOUNT_OWNER_V1.md",
+      "review_scope": "Preserve the earlier unqualified-e642 observation; new r8 runtime records are separate.",
+      "unchanged_from_published_189": true
+    },
+    {
+      "diff": "source-pin-deltas/01.diff",
+      "new_git_blob": "51c33dd19510c689af5accf2ea8045c3e5226bae",
+      "new_sha256": "f2619f45b0bb569349e133cff2b81fdd156241bedb657f00ad401331d023cbbc",
+      "old_git_blob": "777930873ae3d0d64db03ffa2e4c8861dc44f698",
+      "old_sha256": "06ff9628850700c3c3a847ed849e809f306fb929671cc47bf63228215dcc19b7",
+      "path": "formal/pon-nakamoto-v1/pq_envelope.py",
+      "review_scope": "Explicit pinned CLI/provider and unchanged protocol/test assertions; actual r8 runtime recorded separately.",
+      "unchanged_from_published_189": false
+    },
+    {
+      "diff": "source-pin-deltas/02.diff",
+      "new_git_blob": "647e49b2a3fc159bf35ff72045124be070b4b0d5",
+      "new_sha256": "5256cb6024f34999efd6221a2c3bd6681d7887e8f6df0f01c9e14910c3cff7be",
+      "old_git_blob": "717e62713238e19d36f4554d6ff592552821c69d",
+      "old_sha256": "59535bccd1b1b91bfe27a990c4c338726f36509f4b4a50825d8cff38edf81844",
+      "path": "formal/pon-nakamoto-v1/pq_genesis_handoff.py",
+      "review_scope": "Explicit pinned CLI/provider and unchanged protocol/test assertions; actual r8 runtime recorded separately.",
+      "unchanged_from_published_189": false
+    },
+    {
+      "diff": "source-pin-deltas/03.diff",
+      "new_git_blob": "0f9b2200b8885b1abb412755afa2c0bcfc0b148a",
+      "new_sha256": "2e4d63ddfe3a5e1ee377eb98da00faac578f4c24c7723fb7a8d4f25c19244031",
+      "old_git_blob": "16186129dbe6a660dea1e646d27a484e037caa2b",
+      "old_sha256": "60d67a2cc4ec2620739aa2edae0bcf79e9e73db346bf5cd9b356f869634c1d8b",
+      "path": "formal/pon-nakamoto-v1/pq_pql4_signed_frontier.py",
+      "review_scope": "Explicit pinned CLI/provider and unchanged protocol/test assertions; actual r8 runtime recorded separately.",
+      "unchanged_from_published_189": false
+    },
+    {
+      "diff": "source-pin-deltas/04.diff",
+      "new_git_blob": "17ded5ececbc27150b675528ce26bf6e3bc64917",
+      "new_sha256": "ac1515c89a02b5174701ed255e65b0a0ba6dbe340a009dc5d9d5cb053f9ce7f5",
+      "old_git_blob": "fdb25eac3133868529e444a56d178724d9a0779a",
+      "old_sha256": "f6fe784dfd27305b9e2113b302483d1550b9400be635b45f8ae1f42f04348a62",
+      "path": "formal/pon-nakamoto-v1/pq_pql5_quorum.py",
+      "review_scope": "Explicit pinned CLI/provider and unchanged protocol/test assertions; actual r8 runtime recorded separately.",
+      "unchanged_from_published_189": false
+    },
+    {
+      "diff": "source-pin-deltas/05.diff",
+      "new_git_blob": "8a36f98c464d926c7feba1b0dd342e03b177c6e7",
+      "new_sha256": "edcc8028bd349dd6d3368726dfdfbc622ec3c97b52fac42cec71edae29eac29e",
+      "old_git_blob": "455584aa307aaf4f945dc7837bc85b420266e2b3",
+      "old_sha256": "ff6a6e8a61f22751924088116b4231a184bbe638f023539b8ad70bea22b2d8c7",
+      "path": "formal/pon-nakamoto-v1/pq_pql6_equivocation.py",
+      "review_scope": "Explicit pinned CLI/provider and unchanged protocol/test assertions; actual r8 runtime recorded separately.",
+      "unchanged_from_published_189": false
+    },
+    {
+      "diff": "source-pin-deltas/06.diff",
+      "new_git_blob": "9284550ca111d2e8608c0d4cc076747face0d56c",
+      "new_sha256": "12ac61e62df02140e4eeacc210b6c6173124aaf5fb164cc5a7a4a80e25faf26b",
+      "old_git_blob": "e97a7c1149941d8206cb273641be53e95794ffd2",
+      "old_sha256": "8a426036c82f2bd28d6416465a102a6347dad60c7a5cecc79ceee25ffb79775c",
+      "path": "formal/pon-nakamoto-v1/test_pq_cell_swarm_deadline.py",
+      "review_scope": "Explicit pinned CLI/provider and unchanged protocol/test assertions; actual r8 runtime recorded separately.",
+      "unchanged_from_published_189": false
+    },
+    {
+      "diff": "source-pin-deltas/07.diff",
+      "new_git_blob": "1eff699fb69641cd20f9747c32a2fb890ae6cbd3",
+      "new_sha256": "5cac6bf097f091c4f6e42f0141e44846e5c09d0f07c13bfaf79a4a4458934e32",
+      "old_git_blob": "249febc677d04f3e4b37330fdcd22934a606c079",
+      "old_sha256": "21348603a4ea5d669bc25b27fa614297ff22b53d0f91c554f17507acc3e2416c",
+      "path": "formal/pon-nakamoto-v1/test_pq_envelope.py",
+      "review_scope": "Explicit pinned CLI/provider and unchanged protocol/test assertions; actual r8 runtime recorded separately.",
+      "unchanged_from_published_189": false
+    },
+    {
+      "diff": "source-pin-deltas/08.diff",
+      "new_git_blob": "dfb2a49524f85f31c63700e4374d3e1303467ae4",
+      "new_sha256": "1ebdc72e2db4fde40cc0d34485468682bc8faa34a815776f255cb48fac3b7d9a",
+      "old_git_blob": "059c4447308e08ca33e841738ac1a0fd1d2711bd",
+      "old_sha256": "31b49bc2602940926ae5e99559afa6fadce47af9c85dbdfe55383c99f62963e6",
+      "path": "formal/pon-nakamoto-v1/test_pq_genesis_handoff.py",
+      "review_scope": "Explicit pinned CLI/provider and unchanged protocol/test assertions; actual r8 runtime recorded separately.",
+      "unchanged_from_published_189": false
+    },
+    {
+      "diff": "source-pin-deltas/09.diff",
+      "new_git_blob": "c78228d8dd75843b67e11cac2f293dde98e7d531",
+      "new_sha256": "9105e48b5258d030a5f74e8fbbc2f7ca33e4e323ac9e0ebef9ccbc6987b30c23",
+      "old_git_blob": "a12fd9fb148cfd42e22d48d37f23ac45a535f7da",
+      "old_sha256": "cf8a6558955fada727d53b48fdcf7ef224f45b4b537890262b240d6a5620248d",
+      "path": "formal/pon-nakamoto-v1/test_pq_pql4_signed_frontier.py",
+      "review_scope": "Explicit pinned CLI/provider and unchanged protocol/test assertions; actual r8 runtime recorded separately.",
+      "unchanged_from_published_189": false
+    },
+    {
+      "diff": "source-pin-deltas/10.diff",
+      "new_git_blob": "e7e4792c13518faece29823eb861e7baccc5d0e6",
+      "new_sha256": "1eef2346e16e58ab34aea2cceb7071d3d5e3e8ed629f454da1aa77f89ac5e475",
+      "old_git_blob": "ac412f217fdc93b9485f10244afe063109cefc3b",
+      "old_sha256": "3eac8a393496113799192dc42cd2b956b4d2880d5841bf0e0af136fcb5e1d331",
+      "path": "formal/pon-nakamoto-v1/test_pq_pql5_quorum.py",
+      "review_scope": "Explicit pinned CLI/provider and unchanged protocol/test assertions; actual r8 runtime recorded separately.",
+      "unchanged_from_published_189": false
+    },
+    {
+      "diff": "source-pin-deltas/11.diff",
+      "new_git_blob": "b6131f5efa09909cec09e3ee269d72da46b52506",
+      "new_sha256": "4e5aee373f20c6d4fc8b17193fb8fa7fbaa68512dfc9fa68e54f2e6fabe319b1",
+      "old_git_blob": "8db125534145fab394fc267780b2eecab78a2609",
+      "old_sha256": "23f8b2030008f0541eaabb7738c9d94aea8b1a0a58333d3728e119c38fade2f2",
+      "path": "formal/pon-nakamoto-v1/test_pq_pql6_equivocation.py",
+      "review_scope": "Explicit pinned CLI/provider and unchanged protocol/test assertions; actual r8 runtime recorded separately.",
+      "unchanged_from_published_189": false
+    },
+    {
+      "diff": "source-pin-deltas/12.diff",
+      "new_git_blob": "cca16dc5d7b8e5783cd2e1477a6bdf2298431567",
+      "new_sha256": "821ae0c7a798a97c3194d60f3217ec7d04f908f1e88a01a555834f460b3424c4",
+      "old_git_blob": "2724399d47cbe03a74c27fde1661beefb8de75e4",
+      "old_sha256": "83982b53429819c2298112dca4366ab271ef479ac4f002014e305e606a611d64",
+      "path": "trillionnium/crates/trnm-pon-node/Cargo.toml",
+      "review_scope": "Existing rusqlite hooks feature for bounded paid reorg termination; no dependency/version removal.",
+      "unchanged_from_published_189": true
+    },
+    {
+      "diff": "source-pin-deltas/13.diff",
+      "new_git_blob": "8b07b468b8b79b51f49583f9da3ea122231db9fb",
+      "new_sha256": "19c8310ae5247294702bb9c31f294fa1d13071ac3f00aa28f9d136546ec63a61",
+      "old_git_blob": "e880e9ba05cea8c753b0bdff71037dd6fb95d950",
+      "old_sha256": "db7f37150fa927bb58e85adebc7f90ee4acbb0e2081df5ffbb862d9147cd74a7",
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+      "review_scope": "Existing detached M06 admission, exact pending activation retry, typed cancellation and original budget owner.",
+      "unchanged_from_published_189": true
+    },
+    {
+      "diff": "source-pin-deltas/14.diff",
+      "new_git_blob": "59f51dcadb5a0a575eaa14734edbce74accade09",
+      "new_sha256": "488981844f2d3728c59785d43bdd8f7ea9defbda167c58490cc653421b9049a0",
+      "old_git_blob": "66f2e543cf2172d9b3a38bd11c25b4916eb4fcbb",
+      "old_sha256": "637bcf9568f6be3db071254953fdfc195ccc6e267565056a55835d6aa5161a55",
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "review_scope": "Existing r14 signed resource commitment and same-account termination checkpoint; original resource numbers remain.",
+      "unchanged_from_published_189": true
+    },
+    {
+      "diff": "source-pin-deltas/15.diff",
+      "new_git_blob": "51f73baed12ba839c965a2e3cb2ffbbd9c6fc131",
+      "new_sha256": "94ea1964fee65b392f3e3551f9a7bc2bec4e33b91a9f7cba5912f3961d30099b",
+      "old_git_blob": "7a0b5048a1099e8a2b3bf8c90354e0b2a370d66b",
+      "old_sha256": "15613c0313719ec2109e1aa230b6d287d7af8319f096bf065d2cbdc5500cf624",
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "review_scope": "Existing single-use detached state/fence and reorg_lifecycle_v1 schema; full PQ/default-profile migration remains unaccepted.",
+      "unchanged_from_published_189": true
+    },
+    {
+      "diff": "source-pin-deltas/16.diff",
+      "new_git_blob": "17c7059a5fe4933d2554ab71ec9669fc063f0638",
+      "new_sha256": "90f068d94a52621c6ac313f5a161ae4ffd5a42ac41b6459afd676c0c6c47d12b",
+      "old_git_blob": "ffc562b9ce111c9df9bcae378a4bef1672537170",
+      "old_sha256": "2df838b79ac3e6409b5f15c477cd97102286c96f07c6715c393e00386c4e6331",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs",
+      "review_scope": "Existing Node initializer fields for detached capacity and test-only activation cut.",
+      "unchanged_from_published_189": true
+    }
+  ]
+}

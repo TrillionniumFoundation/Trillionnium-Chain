@@ -1,0 +1,68 @@
+{
+  "scope": "Read-only API source review; no binary compatibility claim",
+  "files": [
+    {
+      "package": "risc0-zkvm",
+      "version": "3.0.6",
+      "path": "src/host/api/client.rs",
+      "sha256": "f69c1e4b95e1f6c896b9f5dfe6c71e7a8abd6792ba921effd6d3e2db8961823a",
+      "bytes": 37966
+    },
+    {
+      "package": "risc0-zkvm",
+      "version": "3.0.6",
+      "path": "src/host/api/convert.rs",
+      "sha256": "165ad0f6343505aa280fa17f589db846b39ea211e4f0fe388131386d7f92f367",
+      "bytes": 46243
+    },
+    {
+      "package": "risc0-zkvm",
+      "version": "3.0.6",
+      "path": "src/host/api/server.rs",
+      "sha256": "cb396ae88d2e15c093b0d82b81a72b1f6b2ca35ee5db452124d7d6db097201d0",
+      "bytes": 43739
+    },
+    {
+      "package": "risc0-zkvm",
+      "version": "3.0.6",
+      "path": "src/host/server/prove/mod.rs",
+      "sha256": "a3e5fdccbd4719820274c8b466fe7c211941b3fa24979f6eeddf5d1da4a347c9",
+      "bytes": 15717
+    },
+    {
+      "package": "risc0-zkvm",
+      "version": "3.0.6",
+      "path": "src/receipt.rs",
+      "sha256": "ec445670befb0fad19bfe46eede73e551de03d9f91fa1fb81c9149dc04912fed",
+      "bytes": 45343
+    },
+    {
+      "package": "risc0-zkvm",
+      "version": "3.0.6",
+      "path": "src/receipt/composite.rs",
+      "sha256": "ad4e54397353f69851bf7bd80193b248b462dd32581b3fcca953413d80589d0f",
+      "bytes": 13337
+    },
+    {
+      "package": "risc0-zkvm",
+      "version": "3.0.6",
+      "path": "src/receipt/succinct.rs",
+      "sha256": "8e0165b3210e30e77074763d71d85fd0595e4190b96725182f33665b7df90d60",
+      "bytes": 16709
+    },
+    {
+      "package": "risc0-zkvm",
+      "version": "3.0.6",
+      "path": "src/claim/receipt.rs",
+      "sha256": "7c8dafb73bbf96394ebd1a0e651c4e7bcf7b3a166438444e35615bb397223ba1",
+      "bytes": 22131
+    },
+    {
+      "package": "risc0-zkvm",
+      "version": "3.0.6",
+      "path": "src/host/prove_info.rs",
+      "sha256": "85f0f8e3fe1e2c3cfe44caead7ba1c42b94e8dac3e10100b41883cecb3bbea31",
+      "bytes": 2538
+    }
+  ]
+}

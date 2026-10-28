@@ -110,13 +110,20 @@ jobs:
       - name: Install source-pinned compiler and lint tools
         id: tools
         run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+      - name: Prepare pinned OpenSSL 3.5.9 PQ provider
+        id: pq_provider
+        shell: bash
+        run: |
+          set -euo pipefail
+          export TRNM_CI_RECEIPT_DIR="$TRNM_CI_RECEIPT_DIR"
+          bash scripts/ci/prepare_pq_provider.sh
       - name: Preserve exact formatter diagnostics without changing source
         if: ${{ !cancelled() && steps.source.outcome == 'success' && steps.tools.outcome == 'success' }}
         run: |
           set -euo pipefail
           cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee "$TRNM_CI_RECEIPT_DIR/format.log"
       - name: Execute strict native all-target Clippy before long campaigns
-        if: ${{ !cancelled() && steps.source.outcome == 'success' && steps.tools.outcome == 'success' }}
+        if: ${{ !cancelled() && steps.source.outcome == 'success' && steps.tools.outcome == 'success' && steps.pq_provider.outcome == 'success' }}
         run: |
           set -euo pipefail
           cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --all-targets --all-features -- -D warnings 2>&1 | tee "$TRNM_CI_RECEIPT_DIR/clippy.log"

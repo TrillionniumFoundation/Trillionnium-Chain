@@ -1,0 +1,30 @@
+{
+  "baseline_commit": "5a7b8e24ab638f443695880e475b35cb40706af4",
+  "candidate_sources": [
+    {
+      "path": "formal/pon-nakamoto-v1/w1_batch/host/src/main.rs",
+      "sha256": "ae9b5fcc59fe1a01b02d9df08e7de4160ff89b7d47e6c5f5ea7b2f9266c959ad",
+      "bytes": 20192
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_batch/host/src/staged.rs",
+      "sha256": "ec976c5b28891ec1287e69fc62e119baf2f5e928babacbbb2215b6dea4ca9a3f",
+      "bytes": 13262
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_batch/README.md",
+      "sha256": "a45eb2b346ac0e4e8abf87df7e554ae0f6d1ef2a5194104ec19a8f570643a24d",
+      "bytes": 7604
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_batch/EXPERIMENT_CONTRACT.md",
+      "sha256": "1d7f32da3800fec2c2ed3a583288a4462a84d0323f6340ca0b8e64ea8639c8d2",
+      "bytes": 11366
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_batch/STAGED_PILOT_CONTRACT.md",
+      "sha256": "5cbd02641e822251ca9d621bb7968a30e57df65fcd6efcc41b42674380fea23e",
+      "bytes": 8740
+    }
+  ]
+}

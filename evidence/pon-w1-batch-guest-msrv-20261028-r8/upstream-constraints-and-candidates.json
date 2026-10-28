@@ -1,0 +1,103 @@
+{
+  "schema": "TRNM-W1-BATCH-ATTEMPT3-MSRV-DIAGNOSIS1",
+  "constraints": [
+    {
+      "package": "educe",
+      "version": "0.6.0",
+      "group": "dependencies",
+      "name": "enum-ordinalize",
+      "requirement": {
+        "version": "4.2",
+        "features": [
+          "derive"
+        ],
+        "default-features": false
+      }
+    },
+    {
+      "package": "enum-ordinalize",
+      "version": "4.4.2",
+      "group": "dependencies",
+      "name": "enum-ordinalize-derive",
+      "requirement": {
+        "version": "4.4.1",
+        "optional": true,
+        "default-features": false
+      }
+    },
+    {
+      "package": "risc0-binfmt",
+      "version": "3.0.5",
+      "group": "dependencies",
+      "name": "ruint",
+      "requirement": {
+        "version": "1.15.0",
+        "features": [
+          "serde",
+          "borsh"
+        ],
+        "default-features": false
+      }
+    }
+  ],
+  "declared_higher_msrv_packages": [
+    {
+      "name": "enum-ordinalize",
+      "version": "4.4.2",
+      "declared_rust_version": "1.89",
+      "scope": "lock package; may be optional or not selected for guest"
+    },
+    {
+      "name": "enum-ordinalize-derive",
+      "version": "4.4.2",
+      "declared_rust_version": "1.89",
+      "scope": "lock package; may be optional or not selected for guest"
+    },
+    {
+      "name": "ruint",
+      "version": "1.21.1",
+      "declared_rust_version": "1.90",
+      "scope": "lock package; may be optional or not selected for guest"
+    }
+  ],
+  "cached_compatible_candidates": [
+    {
+      "name": "ruint",
+      "version": "1.15.0",
+      "rust_version": "1.65",
+      "archive_sha256": "11256b5fe8c68f56ac6f39ef0720e592f33d2367a4782740d9c9142e889c7fb4",
+      "already_in_original_complete_w1_guest_lock": true,
+      "dependencies": {}
+    },
+    {
+      "name": "enum-ordinalize",
+      "version": "4.3.0",
+      "rust_version": "1.60",
+      "archive_sha256": "fea0dcfa4e54eeb516fe454635a95753ddd39acda650ce703031c6973e315dd5",
+      "already_in_original_complete_w1_guest_lock": true,
+      "dependencies": {
+        "enum-ordinalize-derive": {
+          "version": "4.3",
+          "optional": true,
+          "default-features": false
+        }
+      }
+    },
+    {
+      "name": "enum-ordinalize-derive",
+      "version": "4.3.0",
+      "rust_version": "1.60",
+      "archive_sha256": "e12d6d72b0a748af4d006a06f6dc14b040225dafdbbe057a472dca7571ed4d05",
+      "already_in_original_complete_w1_guest_lock": true,
+      "dependencies": {
+        "syn": {
+          "version": "2"
+        }
+      }
+    }
+  ],
+  "read_only": true,
+  "locks_changed": false,
+  "cargo_resolver_executed": false,
+  "next_minimal_candidate": "guest-only Cargo.lock updates: ruint 1.15.0, enum-ordinalize 4.3.0, enum-ordinalize-derive 4.3.0, retain SDK3.0.6; native workspace lock may remain unchanged because native rustc1.95 supports it. Resolver output and real compiler still must validate candidate. No version bypass."
+}
