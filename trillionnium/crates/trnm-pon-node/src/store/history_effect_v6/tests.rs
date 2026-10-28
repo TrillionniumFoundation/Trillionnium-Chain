@@ -6,17 +6,17 @@ use policy::{Anchor, Identity, Operation, Usage};
 use serde_json::json;
 use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
 
-mod process;
+pub(super) mod process;
 pub(super) mod publication;
 mod settled_epoch;
 mod startup;
 mod startup_no_native;
 mod wait;
 
-fn deadline() -> Instant {
+pub(super) fn deadline() -> Instant {
     Instant::now() + Duration::from_secs(50)
 }
-fn signed<T: serde::Serialize>(tag: u8, body: &T) -> Vec<u8> {
+pub(super) fn signed<T: serde::Serialize>(tag: u8, body: &T) -> Vec<u8> {
     let registry = signing_key_from_hex(&"11".repeat(32)).unwrap();
     let task = signing_key_from_hex(&"22".repeat(32)).unwrap();
     policy::encoded(&policy::Envelope {
@@ -26,7 +26,7 @@ fn signed<T: serde::Serialize>(tag: u8, body: &T) -> Vec<u8> {
     })
     .unwrap()
 }
-fn write(path: &Path, raw: &[u8]) -> String {
+pub(super) fn write(path: &Path, raw: &[u8]) -> String {
     assert!(!path.exists());
     let pending = path.with_extension("pending");
     let mut file = OpenOptions::new()
@@ -42,19 +42,19 @@ fn write(path: &Path, raw: &[u8]) -> String {
     sync_dir(path.parent().unwrap()).unwrap();
     policy::digest(raw)
 }
-fn write_value(path: &Path, value: &Value) -> String {
+pub(super) fn write_value(path: &Path, value: &Value) -> String {
     write(path, &policy::encoded(value).unwrap())
 }
-fn read(path: &Path) -> Value {
+pub(super) fn read(path: &Path) -> Value {
     serde_json::from_slice(&fs::read(path).unwrap()).unwrap()
 }
-fn anchor(owner: &HistoryEffectV6) -> Anchor {
+pub(super) fn anchor(owner: &HistoryEffectV6) -> Anchor {
     owner.owner.journal().unwrap().anchor()
 }
-fn actual(owner: &HistoryEffectV6) -> Frontier {
+pub(super) fn actual(owner: &HistoryEffectV6) -> Frontier {
     storage::frontier(&owner.node.db).unwrap()
 }
-fn checked(result: &HistoryEffectV6Result, workers: u64) {
+pub(super) fn checked(result: &HistoryEffectV6Result, workers: u64) {
     assert!(
         result.accounting_record_persisted,
         "{}",
@@ -78,35 +78,51 @@ fn checked(result: &HistoryEffectV6Result, workers: u64) {
         assert!(cpu.scoped_worker_cpu_ns.unwrap() > 0);
     }
 }
-struct Grant<'a> {
-    purpose: Purpose,
-    nonce: u64,
-    epoch: u64,
-    frontier: Frontier,
-    anchor: Anchor,
-    packet: Option<&'a Packet>,
-    pair: Option<(u64, u64)>,
+pub(super) struct Grant<'a> {
+    pub(super) purpose: Purpose,
+    pub(super) nonce: u64,
+    pub(super) epoch: u64,
+    pub(super) frontier: Frontier,
+    pub(super) anchor: Anchor,
+    pub(super) packet: Option<&'a Packet>,
+    pub(super) pair: Option<(u64, u64)>,
 }
-struct TestAuthority {
-    f: Fixture,
-    identity: Identity,
-    journal: PathBuf,
-    store: PathBuf,
-    budget: Vec<u8>,
-    installed: Anchor,
-    materials: Value,
+pub(super) struct TestAuthority {
+    pub(super) f: Fixture,
+    pub(super) identity: Identity,
+    pub(super) journal: PathBuf,
+    pub(super) store: PathBuf,
+    pub(super) budget: Vec<u8>,
+    pub(super) installed: Anchor,
+    pub(super) materials: Value,
 }
 impl TestAuthority {
-    fn new() -> Self {
+    pub(super) fn new() -> Self {
         Self::with_budget_lifetime(3_600_000_000_000)
     }
-    fn with_budget_lifetime(lifetime_ns: u64) -> Self {
+    pub(super) fn with_budget_lifetime(lifetime_ns: u64) -> Self {
         Self::with_source_and_budget_lifetime(
             "1116ae390e4ed408ab0899e13aec5d1f90f2192c",
             lifetime_ns,
         )
     }
-    fn with_source_and_budget_lifetime(source_commit: &str, lifetime_ns: u64) -> Self {
+    pub(super) fn with_source_and_budget_lifetime(source_commit: &str, lifetime_ns: u64) -> Self {
+        Self::with_source_and_budget_limits(
+            source_commit,
+            lifetime_ns,
+            Usage {
+                cpu_ns: 128_000_000_000,
+                material_bytes: 128 << 20,
+                received_bytes: 128 << 20,
+                operations: 32,
+            },
+        )
+    }
+    pub(super) fn with_source_and_budget_limits(
+        source_commit: &str,
+        lifetime_ns: u64,
+        lifetime_ceiling: Usage,
+    ) -> Self {
         let f = Fixture::new();
         let identity = Identity {
             schema: "restricted-history-effect-identity-v6".into(),
@@ -128,12 +144,7 @@ impl TestAuthority {
             budget_id: policy::digest(b"v6-test-budget"),
             sequence: 1,
             outside_anchor: Anchor::empty(),
-            lifetime_ceiling: Usage {
-                cpu_ns: 128_000_000_000,
-                material_bytes: 128 << 20,
-                received_bytes: 128 << 20,
-                operations: 32,
-            },
+            lifetime_ceiling,
             nonce_first: 1,
             nonce_last: 4096,
             work_nonce_first: 1,
@@ -168,13 +179,13 @@ impl TestAuthority {
             materials,
         }
     }
-    fn id(&self, nonce: u64) -> String {
+    pub(super) fn id(&self, nonce: u64) -> String {
         policy::digest(format!("{}:{nonce}", self.identity.store).as_bytes())
     }
-    fn epoch(&self, nonce: u64) -> String {
+    pub(super) fn epoch(&self, nonce: u64) -> String {
         policy::digest(format!("epoch:{}:{nonce}", self.identity.store).as_bytes())
     }
-    fn genesis(&self) -> Frontier {
+    pub(super) fn genesis(&self) -> Frontier {
         Frontier {
             block: self.identity.genesis.clone(),
             root: hex::encode(
@@ -186,7 +197,7 @@ impl TestAuthority {
             generation: 0,
         }
     }
-    fn grant(&self, g: Grant<'_>) -> Vec<u8> {
+    pub(super) fn grant(&self, g: Grant<'_>) -> Vec<u8> {
         let now = policy::now().unwrap();
         let parent = g.packet.map(|p| policy::ExecutionParent {
             block: hex::encode(p.header.parent),
@@ -201,7 +212,10 @@ impl TestAuthority {
         let op = Operation {
             schema: "restricted-history-effect-operation-v6".into(),
             identity: self.identity.clone(),
-            budget_id: policy::digest(b"v6-test-budget"),
+            budget_id: serde_json::from_slice::<policy::Envelope<policy::Budget>>(&self.budget)
+                .unwrap()
+                .body
+                .budget_id,
             operation_id: self.id(g.nonce),
             request_nonce: g.nonce,
             epoch: self.epoch(g.epoch),
@@ -230,7 +244,7 @@ impl TestAuthority {
         };
         signed(b'O', &op)
     }
-    fn launch(
+    pub(super) fn launch(
         &self,
         label: &str,
         nonce: u64,
@@ -255,7 +269,7 @@ impl TestAuthority {
         );
         (path, digest)
     }
-    fn open(
+    pub(super) fn open(
         &self,
         label: &str,
         nonce: u64,

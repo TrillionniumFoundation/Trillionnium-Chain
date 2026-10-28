@@ -8,8 +8,9 @@ use std::process::{Command, Stdio};
 
 const SOURCE_ENV: &str = "TRNM_HISTORY_STARTUP_NO_NATIVE_SOURCE_COMMIT";
 fn compiled_source() -> &'static str {
-    let source = option_env!("TRNM_HISTORY_STARTUP_NO_NATIVE_SOURCE_COMMIT")
-        .expect("exact-source History runner must pin the actual compile source");
+    let Some(source) = option_env!("TRNM_HISTORY_STARTUP_NO_NATIVE_SOURCE_COMMIT") else {
+        panic!("exact-source History runner must pin the actual compile source");
+    };
     policy::id(source, 20).unwrap();
     assert_eq!(std::env::var(SOURCE_ENV).unwrap(), source);
     source
@@ -119,12 +120,14 @@ pub(super) fn child(store: &Path, control: &Path, launch: &Path, sha: &str) -> !
 }
 
 struct Observed {
+    // Fields drop in declaration order. Retain the real fixture before the
+    // authority's TempDir removes its source, including on assertion failure.
+    _retain: process::Retain,
     authority: TestAuthority,
     closed_raw: Vec<u8>,
     closed: ClosedProcess,
     pins: Pins,
     original_records: BTreeMap<String, String>,
-    _retain: process::Retain,
 }
 fn records(path: &Path) -> BTreeMap<String, String> {
     fs::read_dir(path)
@@ -253,12 +256,12 @@ fn observe(label: &str, lifetime: u64) -> Observed {
     assert_eq!(process::sha_file(&binary), pins.executable_sha256);
     let original_records = records(&a.journal);
     Observed {
+        _retain: retain,
         authority: a,
         closed_raw,
         closed,
         pins,
         original_records,
-        _retain: retain,
     }
 }
 

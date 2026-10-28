@@ -4007,3 +4007,63 @@ The document specifies separate persistent stages needed for partial
 initialization; the old generic initializing marker is not upgraded into History
 or material authority. Whole History P0, pending Startup/Close, partial/torn
 records, SQLite cuts and signed multi-step reorg remain open.
+
+
+### Paid multistep reorg continuation and lifecycle closure candidate (2026-10-28 UTC)
+
+The new `TRNM-HISTORY-REORG-CONTINUATION-V1` domain authorizes a fresh paid
+attempt against one sealed partial Native reorganization. It binds the original
+intent, prior attempt, old frontier, target, cursor, step and staging digests,
+source, executable, actual closed process and outside journal anchor. Preparation
+consumes a fresh nonce and management allowance before further work. Each permit
+admits only its specified fresh epoch and Startup/Validation/Activation operation
+IDs; known cancellation, unknown death and no-progress retries require distinct
+signed attempts. Cursor progress does not refund old reservations or permit reuse.
+A fresh validation marker remains required, and the final activation retains the
+original reorganization intent. Streaming staging inspection preserves the
+original 65,536-key and 4,096-byte-value limits without introducing a smaller
+aggregate-state refusal.
+
+The separate `TRNM-HISTORY-LIFECYCLE-RECOVERY-V1` domain closes a dead pending
+Startup/Close or a known failed Startup after reading the actual retained Native
+prefix. It preserves absent, empty, committed-genesis and ready database states;
+ordinary paid Startup completes initialization. A missing owner marker is accepted
+only through the separately signed proof of an exclusively created empty birth
+namespace, original Startup envelope/time, actual death, complete unchanged
+namespace identities and an independently pinned held lease. Directory absence
+alone supplies no nonexecution authority. Existing first-Startup closure limits
+remain unchanged. Neither management event fabricates a successful operation,
+rewrites a receipt, resets a database nor grants work authority.
+
+Both domains preserve all prior spent balances and original operation allowances.
+Unknown operation debt requires the conservative whole-process upper bound to fit
+the original allowance. Known operation debt retains its exact original CPU
+receipt; the fresh management allowance additionally covers the whole dead process.
+An expired budget can authorize administrative closure but cannot start work. If
+pending debt exhausts the current lifetime ceiling, an explicit original-domain,
+doubly signed replacement Budget can be bound inside the new management envelope.
+Its identity, anchor, sequence, nonce range, unused ID and nondecreasing ceilings
+are verified before one atomic journal append. It cannot absorb an old operation
+overrun. Specialized publication repair revalidates the exact original event at
+its original frame time and holds the same Native or birth-namespace fences;
+current publication authority remains independently required.
+
+The unchanged original native lane still requires exactly 22 passed methods and
+one ignored process helper under 600 seconds. Two additional mandatory lanes use
+that exact retained binary and same-source original terminal: seven reorg methods
+and twelve lifecycle methods, each under a separate 900-second limit with no
+ignored cases. They cover real committed cursor cuts, cancellation and fresh
+attempts, Startup/Validation deaths, final-marker recovery, all five publication
+cuts, repair interruption, expired/exhausted budgets, partial initialization,
+pending Close and repeated empty-birth recovery. Their reader controls reject
+missing, duplicate, substituted or ignored methods. The recent-batch four-lane
+acceptance remains separate; its live Store source pin follows the independently
+reviewed initialization checkpoint hooks.
+
+This entry describes the implemented candidate and its mandatory execution gates.
+Typechecks, formatter checks and observer controls are not native execution
+receipts. The original frozen baseline's passing results do not qualify this new
+source. Whole History P0 remains OPEN until this same-source original-plus-new
+execution and independent adjacent gates pass with actual journals, process
+receipts, binaries and cold readback retained. Public deployment, arbitrary
+process adoption and physical-host cost qualification remain outside this scope.

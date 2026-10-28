@@ -5,6 +5,7 @@ use policy::{Anchor, Budget, EffectMarker, Frontier, Identity, Operation, Purpos
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeSet;
 
+pub(super) mod lifecycle_recovery_v1;
 pub(super) mod publication;
 
 const MAX_RECORD: u64 = 256 * 1024;
@@ -100,12 +101,22 @@ pub(super) enum Event {
         signed: Vec<u8>,
         closed_process: Vec<u8>,
     },
+    ReorgContinuationPreparedV1 {
+        signed: Vec<u8>,
+        closed_process: Vec<u8>,
+    },
+    LifecycleReconciledV1 {
+        signed: Vec<u8>,
+        closed_process: Vec<u8>,
+    },
 }
 impl Event {
     fn record_schema(&self) -> &'static str {
         match self {
             Self::SettledEpochReconciledV1 { .. } => epoch_recovery_v1::RECORD_SCHEMA,
             Self::StartupNoNativeClosedV1 { .. } => startup_no_native_v1::RECORD_SCHEMA,
+            Self::ReorgContinuationPreparedV1 { .. } => reorg_continuation_v1::RECORD_SCHEMA,
+            Self::LifecycleReconciledV1 { .. } => lifecycle_recovery_v1::RECORD_SCHEMA,
             _ => "restricted-history-effect-record-v6",
         }
     }
@@ -145,6 +156,10 @@ struct State {
     anchor: Anchor,
     budget: Option<Budget>,
     budget_envelope: Option<String>,
+    // Historical IDs are reconstructed from every original Budget event.
+    // Ordinary V6 renewal keeps its existing semantics; only the new atomic
+    // management renewal requires an identity never used for an earlier grant.
+    budget_ids: BTreeSet<String>,
     spent: Usage,
     nonces: u64,
     used: BTreeSet<String>,
@@ -158,6 +173,9 @@ struct State {
     reconciled_unknown: u64,
     reconciled_settled_epochs: u64,
     closed_no_native_startups: u64,
+    reorg_continuations: u64,
+    reorg_continuation: Option<reorg_continuation_v1::Authorization>,
+    reorg_not_started: Option<reorg_continuation_v1::Original>,
     last_settled: Option<LastSettled>,
     markers: BTreeMap<String, EffectMarker>,
 }
@@ -167,6 +185,7 @@ impl Default for State {
             anchor: Anchor::empty(),
             budget: None,
             budget_envelope: None,
+            budget_ids: BTreeSet::new(),
             spent: Usage::default(),
             nonces: 0,
             used: BTreeSet::new(),
@@ -178,6 +197,9 @@ impl Default for State {
             reconciled_unknown: 0,
             reconciled_settled_epochs: 0,
             closed_no_native_startups: 0,
+            reorg_continuations: 0,
+            reorg_continuation: None,
+            reorg_not_started: None,
             last_settled: None,
             markers: BTreeMap::new(),
         }
@@ -201,6 +223,7 @@ impl State {
                         && self.spent.fits(budget.body.lifetime_ceiling),
                     "HISTORY_V6_BUDGET_ROLLBACK",
                 )?;
+                self.budget_ids.insert(budget.body.budget_id.clone());
                 self.budget = Some(budget.body);
                 self.budget_envelope = Some(budget.envelope_sha256);
             }
@@ -223,6 +246,10 @@ impl State {
                         && (budget.nonce_first..=budget.nonce_last).contains(&op.request_nonce),
                     "HISTORY_V6_REPLAY",
                 )?;
+                if let Some(continuation) = &self.reorg_continuation {
+                    continuation.check_operation(&op)?;
+                }
+                self.reorg_not_started = None;
                 let spent = self.spent.add(op.allowance)?;
                 ensure(
                     spent.fits(budget.lifetime_ceiling),
@@ -309,6 +336,13 @@ impl State {
                         native_id: native_id.clone(),
                         native_error: native_error.clone(),
                     });
+                    if marker.as_deref().is_some_and(|marker| {
+                        self.reorg_continuation
+                            .as_ref()
+                            .is_some_and(|permit| permit.completes(marker))
+                    }) {
+                        self.reorg_continuation = None;
+                    }
                     self.pending = None;
                     self.known += 1;
                 } else {
@@ -327,6 +361,14 @@ impl State {
                         && pending.observed_receipt.is_none(),
                     "HISTORY_V6_REPLAY",
                 )?;
+                if self.reorg_continuation.is_some() {
+                    self.reorg_not_started = Some(reorg_continuation_v1::Original {
+                        operation: pending.operation.clone(),
+                        intent_sha256: pending.intent_sha256.clone(),
+                        envelope_sha256: pending.envelope_sha256.clone(),
+                        intent_at_ns: pending.intent_at_ns,
+                    });
+                }
                 // This is a refusal before the original CPU interval exists;
                 // no synthetic zero-valued receipt is emitted and no refund.
                 if pending.operation.purpose == Purpose::Startup {
@@ -350,6 +392,13 @@ impl State {
                         ensure(previous == *marker, "HISTORY_V6_SQL_MARKER_BINDING")?;
                     }
                 }
+                if recovery.closed.marker.as_ref().is_some_and(|marker| {
+                    self.reorg_continuation
+                        .as_ref()
+                        .is_some_and(|permit| permit.completes(marker))
+                }) {
+                    self.reorg_continuation = None;
+                }
                 self.nonces = recovery.body.request_nonce;
                 self.pending = None;
                 self.epoch = None;
@@ -359,6 +408,10 @@ impl State {
             }
             Event::CleanClose { frontier } => {
                 frontier.validate()?;
+                ensure(
+                    self.reorg_continuation.is_none(),
+                    "HISTORY_REORG_V1_UNFINISHED",
+                )?;
                 ensure(
                     self.pending.is_none() && self.epoch.is_some(),
                     "HISTORY_V6_PENDING_DEBT",
@@ -397,8 +450,253 @@ impl State {
                 self.last_settled = None;
                 self.closed_no_native_startups += 1;
             }
+            Event::LifecycleReconciledV1 {
+                signed,
+                closed_process,
+            } => {
+                self.apply_lifecycle(signed, closed_process, identity, at)?;
+            }
+            Event::ReorgContinuationPreparedV1 {
+                signed,
+                closed_process,
+            } => {
+                let verified =
+                    reorg_continuation_v1::authenticate(signed, closed_process, identity, at)?;
+                self.check_reorg_continuation(&verified, at)?;
+                let (selected_budget, selected_envelope) = self.select_management_budget(
+                    verified.body.renewal_budget.as_deref(),
+                    identity,
+                    at,
+                )?;
+                if let Some(marker) = &verified.closed.marker {
+                    if let Some(previous) = self
+                        .markers
+                        .insert(marker.operation_id.clone(), marker.clone())
+                    {
+                        ensure(previous == *marker, "HISTORY_V6_SQL_MARKER_BINDING")?;
+                    }
+                }
+                self.budget_ids.insert(selected_budget.budget_id.clone());
+                self.budget = Some(selected_budget);
+                self.budget_envelope = Some(selected_envelope);
+                self.spent = self.spent.add(verified.body.allowance)?;
+                self.nonces = verified.body.request_nonce;
+                self.used.insert(verified.body.continuation_id.clone());
+                // Closure is a retained authority/accounting event, never a
+                // measurement or revival of the old execution interval.
+                match verified.body.closure {
+                    reorg_continuation_v1::Closure::PendingUnknown => self.reconciled_unknown += 1,
+                    reorg_continuation_v1::Closure::SettledKnown => {
+                        self.reconciled_settled_epochs += 1
+                    }
+                    reorg_continuation_v1::Closure::NotStarted => {}
+                }
+                self.pending = None;
+                self.epoch = None;
+                self.epoch_frontier = None;
+                self.last_settled = None;
+                self.reorg_not_started = None;
+                self.reorg_continuations += 1;
+                self.reorg_continuation = Some(verified.body);
+            }
         }
         Ok(())
+    }
+    /// Select authority only for this new, explicitly signed administrative
+    /// closure. This function grants no work permission and changes no state.
+    /// The old process must separately remain within its original operation
+    /// allowance; a larger new ceiling can never cover an old overrun.
+    fn select_management_budget(
+        &self,
+        signed: Option<&[u8]>,
+        identity: &Identity,
+        at: u64,
+    ) -> Result<(Budget, String)> {
+        let previous = self.budget.as_ref().ok_or("HISTORY_V6_BUDGET_REQUIRED")?;
+        ensure(
+            previous.identity == *identity,
+            "HISTORY_MANAGEMENT_V1_BUDGET_IDENTITY",
+        )?;
+        let Some(signed) = signed else {
+            // As with existing settled-epoch closure, expiry does not revoke
+            // administrative settlement authority or revive old work.
+            ensure(
+                previous.issued_ns <= at,
+                "HISTORY_MANAGEMENT_V1_BUDGET_TIME",
+            )?;
+            return Ok((
+                previous.clone(),
+                self.budget_envelope
+                    .clone()
+                    .ok_or("HISTORY_V6_BUDGET_ENVELOPE_REQUIRED")?,
+            ));
+        };
+        let renewal = policy::budget(signed, identity, at)?;
+        ensure(
+            renewal.body.outside_anchor == self.anchor,
+            "HISTORY_MANAGEMENT_V1_BUDGET_ANCHOR",
+        )?;
+        ensure(
+            previous.sequence.checked_add(1) == Some(renewal.body.sequence),
+            "HISTORY_MANAGEMENT_V1_BUDGET_SEQUENCE",
+        )?;
+        ensure(
+            previous
+                .lifetime_ceiling
+                .fits(renewal.body.lifetime_ceiling)
+                && self.spent.fits(renewal.body.lifetime_ceiling),
+            "HISTORY_MANAGEMENT_V1_BUDGET_ROLLBACK",
+        )?;
+        ensure(
+            renewal.body.budget_id != previous.budget_id
+                && !self.budget_ids.contains(&renewal.body.budget_id)
+                && !self.used.contains(&renewal.body.budget_id),
+            "HISTORY_MANAGEMENT_V1_BUDGET_ID_REPLAY",
+        )?;
+        Ok((renewal.body, renewal.envelope_sha256))
+    }
+    fn check_reorg_continuation(
+        &self,
+        verified: &reorg_continuation_v1::Verified,
+        at: u64,
+    ) -> Result<()> {
+        use reorg_continuation_v1::{Closure, Original};
+        let body = &verified.body;
+        let closed = &verified.closed;
+        ensure(
+            body.outside_anchor == self.anchor,
+            "HISTORY_REORG_V1_OUTSIDE_ANCHOR",
+        )?;
+        let current = match body.closure {
+            Closure::PendingUnknown => {
+                let pending = self
+                    .pending
+                    .as_ref()
+                    .ok_or("HISTORY_REORG_V1_PENDING_REQUIRED")?;
+                ensure(
+                    closed.reported_cpu_upper_bound_ns <= pending.operation.allowance.cpu_ns,
+                    "HISTORY_V6_UNCOVERED_PROCESS_CPU",
+                )?;
+                if let Some(marker) = &closed.marker {
+                    check_marker(pending, marker)?;
+                    ensure(
+                        marker.after == body.snapshot.old_frontier,
+                        "HISTORY_REORG_V1_UNPUBLISHED",
+                    )?;
+                }
+                Original {
+                    operation: pending.operation.clone(),
+                    intent_sha256: pending.intent_sha256.clone(),
+                    envelope_sha256: pending.envelope_sha256.clone(),
+                    intent_at_ns: pending.intent_at_ns,
+                }
+            }
+            Closure::SettledKnown => {
+                ensure(
+                    self.pending.is_none() && self.reorg_not_started.is_none(),
+                    "HISTORY_REORG_V1_PENDING_DEBT",
+                )?;
+                let last = self
+                    .last_settled
+                    .as_ref()
+                    .ok_or("HISTORY_REORG_V1_KNOWN_REQUIRED")?;
+                ensure(
+                    last.cpu.known()
+                        && last.cpu.total_cpu_ns.is_some_and(|v| {
+                            v <= last.operation.allowance.cpu_ns
+                                && v <= closed.reported_cpu_upper_bound_ns
+                        })
+                        && last.marker == closed.marker,
+                    "HISTORY_REORG_V1_KNOWN_RECEIPT",
+                )?;
+                Original {
+                    operation: last.operation.clone(),
+                    intent_sha256: last.intent_sha256.clone(),
+                    envelope_sha256: last.envelope_sha256.clone(),
+                    intent_at_ns: last.intent_at_ns,
+                }
+            }
+            Closure::NotStarted => {
+                ensure(
+                    self.pending.is_none() && closed.marker.is_none(),
+                    "HISTORY_REORG_V1_NOT_STARTED",
+                )?;
+                self.reorg_not_started
+                    .clone()
+                    .ok_or("HISTORY_REORG_V1_NOT_STARTED")?
+            }
+        };
+        ensure(
+            current.operation.operation_id == body.closed_operation_id
+                && current.intent_sha256 == body.closed_intent_sha256
+                && current.operation.epoch == body.closed_epoch
+                && (body.closure == Closure::NotStarted
+                    || (self.epoch.as_ref() == Some(&body.closed_epoch)
+                        && self.epoch_frontier.as_ref() == Some(&body.snapshot.old_frontier))),
+            "HISTORY_REORG_V1_CLOSED_OPERATION",
+        )?;
+        if let Some(prior) = &self.reorg_continuation {
+            ensure(
+                body.previous_continuation_id.as_ref() == Some(&prior.continuation_id)
+                    && policy::encoded(&body.original)? == policy::encoded(&prior.original)?
+                    && body.snapshot.same_plan(&prior.snapshot),
+                "HISTORY_REORG_V1_ATTEMPT_CHAIN",
+            )?;
+            prior.check_operation(&current.operation)?;
+            // Even an unused prospective phase ID belongs to that one attempt.
+            // A new closed-process authority cannot recycle any phase name.
+            let previous_ids = [
+                &prior.continuation_id,
+                &prior.startup_operation_id,
+                &prior.validation_operation_id,
+                &prior.activation_operation_id,
+            ];
+            ensure(
+                [
+                    &body.continuation_id,
+                    &body.startup_operation_id,
+                    &body.validation_operation_id,
+                    &body.activation_operation_id,
+                ]
+                .iter()
+                .all(|id| !previous_ids.contains(id)),
+                "HISTORY_REORG_V1_FRESH_ATTEMPT_IDS",
+            )?;
+        } else {
+            ensure(
+                body.previous_continuation_id.is_none()
+                    && current.operation.purpose == Purpose::Activation
+                    && closed.marker.is_none()
+                    && policy::encoded(&body.original)? == policy::encoded(&current)?,
+                "HISTORY_REORG_V1_ORIGINAL_OPERATION",
+            )?;
+        }
+        let (budget, _) =
+            self.select_management_budget(body.renewal_budget.as_deref(), &body.identity, at)?;
+        ensure(
+            // This fresh administrative signature can close an expired
+            // epoch, but grants no work authority. Normal Budget renewal is
+            // available after this record clears pending/epoch; every fresh
+            // Intent still enforces the current work budget's expiry.
+            body.budget_id == budget.budget_id
+                && budget.issued_ns <= at
+                && body.request_nonce > self.nonces
+                && (budget.nonce_first..=budget.nonce_last).contains(&body.request_nonce)
+                && !self.epochs.contains(&body.next_epoch)
+                && [
+                    &body.continuation_id,
+                    &body.startup_operation_id,
+                    &body.validation_operation_id,
+                    &body.activation_operation_id,
+                ]
+                .into_iter()
+                .all(|id| !self.used.contains(id))
+                && self
+                    .spent
+                    .add(body.allowance)?
+                    .fits(budget.lifetime_ceiling),
+            "HISTORY_REORG_V1_FRESH_ALLOWANCE",
+        )
     }
     fn check_recovery(&self, recovery: &policy::VerifiedRecovery) -> Result<()> {
         let pending = self.pending.as_ref().ok_or("HISTORY_V6_NO_PENDING")?;
@@ -875,6 +1173,26 @@ impl Journal {
             closed_process: closed_process.to_vec(),
         })
     }
+    pub fn check_reorg_continuation(
+        &self,
+        verified: &reorg_continuation_v1::Verified,
+        at: u64,
+    ) -> Result<()> {
+        self.state.check_reorg_continuation(verified, at)
+    }
+    pub fn prepare_reorg_continuation(
+        &mut self,
+        signed: &[u8],
+        closed_process: &[u8],
+    ) -> Result<()> {
+        self.append(Event::ReorgContinuationPreparedV1 {
+            signed: signed.to_vec(),
+            closed_process: closed_process.to_vec(),
+        })
+    }
+    pub fn reorg_continuation(&self) -> Option<&reorg_continuation_v1::Authorization> {
+        self.state.reorg_continuation.as_ref()
+    }
     pub fn close(&mut self, frontier: Frontier) -> Result<()> {
         self.append(Event::CleanClose { frontier })
     }
@@ -910,6 +1228,8 @@ impl Journal {
             "pending":self.state.pending.as_ref().map(|p|&p.operation.operation_id), "epoch":self.state.epoch,
             "known_settlements":self.state.known,"unknown_prepaid_reconciliations":self.state.reconciled_unknown,
             "settled_epoch_reconciliations_v1":self.state.reconciled_settled_epochs,
-            "startup_no_native_closures_v1":self.state.closed_no_native_startups})
+            "startup_no_native_closures_v1":self.state.closed_no_native_startups,
+            "reorg_continuations_v1":self.state.reorg_continuations,
+            "reorg_continuation_v1":self.state.reorg_continuation.as_ref().map(|p| &p.continuation_id)})
     }
 }

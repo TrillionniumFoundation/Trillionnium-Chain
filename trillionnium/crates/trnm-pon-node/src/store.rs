@@ -1177,6 +1177,19 @@ impl Node {
             )?;
             settings.replay_checkpoint_tile_material()?;
         }
+        let history_owner = history_effect_owner.clone();
+        let startup_check = |stage| -> Result<()> {
+            if let Some(owner) = &history_owner {
+                owner.checkpoint()?;
+            }
+            if let Some(progress) = startup_progress {
+                progress(stage)?;
+            }
+            if let Some(owner) = &history_owner {
+                owner.checkpoint()?;
+            }
+            Ok(())
+        };
         if !path.exists() {
             fs::create_dir_all(path)?;
             fs::set_permissions(path, fs::Permissions::from_mode(0o700))?;
@@ -1214,6 +1227,9 @@ impl Node {
         owner
             .try_lock_exclusive()
             .map_err(|_| Error::from("WRITER_BUSY"))?;
+        startup_check(history_effect_v6::StartupProgress::NativeInitialization(
+            "init-locked",
+        ))?;
         let ddl = state_backend.ddl();
         let schema_id = state_backend.selected_schema_id(&settings);
         let expected = canonical(
@@ -1239,6 +1255,9 @@ impl Node {
             intent.sync_all()?;
             sync_dir(&directory)?;
             cut(&mut hook, "init-intent")?;
+            startup_check(history_effect_v6::StartupProgress::NativeInitialization(
+                "init-intent",
+            ))?;
         }
         let intent = marker.exists();
         if intent {
@@ -1356,11 +1375,17 @@ impl Node {
             let tx = db.transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
             tx.execute_batch(&ddl)?;
             cut(&mut hook, "init-schema")?;
+            startup_check(history_effect_v6::StartupProgress::NativeInitialization(
+                "init-schema",
+            ))?;
             for (key, value) in [
                 ("schema", schema_id),
                 ("parameters", settings.parameters()),
                 ("genesis", settings.genesis()),
             ] {
+                startup_check(history_effect_v6::StartupProgress::NativeInitialization(
+                    "init-metadata",
+                ))?;
                 tx.execute(
                     "INSERT INTO metadata VALUES(?,?)",
                     params![key, value.as_slice()],
@@ -1391,6 +1416,9 @@ impl Node {
             )?;
             if state_backend != StateBackend::PermanentAccountGrowthV2 {
                 for (key, value) in &settings.initial {
+                    startup_check(history_effect_v6::StartupProgress::NativeInitialization(
+                        "init-kv",
+                    ))?;
                     tx.execute(
                         "INSERT INTO kv VALUES(0,?,?)",
                         params![key, canonical(value)?],
@@ -1407,12 +1435,21 @@ impl Node {
                 native_authenticated::seed(&tx, &settings)?;
             }
             cut(&mut hook, "init-before-commit")?;
+            startup_check(history_effect_v6::StartupProgress::NativeInitialization(
+                "init-before-commit",
+            ))?;
             tx.commit()?;
             cut(&mut hook, "init-committed")?;
+            startup_check(history_effect_v6::StartupProgress::NativeInitialization(
+                "init-committed",
+            ))?;
         }
         if intent {
             fs::remove_file(marker)?;
             sync_dir(&directory)?;
+            startup_check(history_effect_v6::StartupProgress::NativeInitialization(
+                "init-published",
+            ))?;
         }
         let mut node = Self {
             db,
@@ -1455,19 +1492,6 @@ impl Node {
             // execution never clones this bootstrap State or the full account set.
             return Ok(node);
         }
-        let history_owner = node.history_effect_owner.clone();
-        let startup_check = |stage| -> Result<()> {
-            if let Some(owner) = &history_owner {
-                owner.checkpoint()?;
-            }
-            if let Some(progress) = startup_progress {
-                progress(stage)?;
-            }
-            if let Some(owner) = &history_owner {
-                owner.checkpoint()?;
-            }
-            Ok(())
-        };
         node.read_active_with_progress(&mut || {
             startup_check(history_effect_v6::StartupProgress::FirstState)
         })?;

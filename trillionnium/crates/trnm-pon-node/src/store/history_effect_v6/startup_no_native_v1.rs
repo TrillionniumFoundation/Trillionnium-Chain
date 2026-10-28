@@ -26,7 +26,7 @@ pub(super) struct Pins {
     pub preparation_sha256: String,
 }
 impl Pins {
-    fn validate(&self) -> Result<()> {
+    pub(super) fn validate(&self) -> Result<()> {
         policy::id(&self.source_commit, 20)?;
         for value in [
             &self.executable_sha256,
@@ -107,7 +107,7 @@ pub(super) struct NamespaceSnapshot {
     pub lease_sha256: String,
 }
 impl NamespaceSnapshot {
-    fn validate(&self, uid: u32) -> Result<()> {
+    pub(super) fn validate(&self, uid: u32) -> Result<()> {
         self.parent.validate(uid, true)?;
         self.native.validate(uid, true)?;
         self.lease.validate(uid, false)?;
@@ -416,7 +416,7 @@ fn visible(file: &File, name: &Path, expected: &FileIdentity) -> Result<()> {
         "HISTORY_NO_NATIVE_NAMESPACE_CHANGED",
     )
 }
-struct HeldNamespace {
+pub(super) struct HeldNamespace {
     parent: File,
     native: File,
     lease: File,
@@ -437,7 +437,7 @@ struct NamespaceLease {
     reservation_id: String,
 }
 impl HeldNamespace {
-    fn check(&self) -> Result<()> {
+    pub(super) fn check(&self) -> Result<()> {
         visible(&self.parent, &self.path, &self.expected.parent)?;
         visible(
             &self.native,
@@ -474,7 +474,27 @@ impl HeldNamespace {
 }
 fn hold_namespace(config: &Configuration, uid: u32, verified: &Verified) -> Result<HeldNamespace> {
     outside(config, uid, verified)?;
-    let expected = verified.closed.before.clone();
+    hold_bound_namespace(
+        &config.namespace_parent,
+        &config.journal_path,
+        &config.identity,
+        &config.expected_pins.preparation_sha256,
+        verified.closed.before.clone(),
+        uid,
+    )
+}
+
+// Reuse the same descriptor, namespace and lease checks for separately signed
+// lifecycle closure. The caller must authenticate its own proof and outside
+// pins; this holder grants no work authority and never creates a file.
+pub(super) fn hold_bound_namespace(
+    namespace_parent: &Path,
+    journal_path: &Path,
+    identity: &Identity,
+    preparation_sha256: &str,
+    expected: NamespaceSnapshot,
+    uid: u32,
+) -> Result<HeldNamespace> {
     expected.validate(uid)?;
     let directory = |path: &Path| -> Result<File> {
         Ok(OpenOptions::new()
@@ -482,8 +502,8 @@ fn hold_namespace(config: &Configuration, uid: u32, verified: &Verified) -> Resu
             .custom_flags(libc::O_DIRECTORY | libc::O_NOFOLLOW | libc::O_CLOEXEC)
             .open(path)?)
     };
-    let parent = directory(&config.namespace_parent)?;
-    visible(&parent, &config.namespace_parent, &expected.parent)?;
+    let parent = directory(namespace_parent)?;
+    visible(&parent, namespace_parent, &expected.parent)?;
     let lease = OpenOptions::new()
         .read(true)
         .write(true)
@@ -500,11 +520,11 @@ fn hold_namespace(config: &Configuration, uid: u32, verified: &Verified) -> Resu
         parent,
         native,
         lease,
-        path: config.namespace_parent.clone(),
+        path: namespace_parent.to_path_buf(),
         expected,
-        identity_sha256: config.identity.digest()?,
-        preparation_sha256: config.expected_pins.preparation_sha256.clone(),
-        journal_path: config.journal_path.clone(),
+        identity_sha256: identity.digest()?,
+        preparation_sha256: preparation_sha256.to_owned(),
+        journal_path: journal_path.to_path_buf(),
     };
     held.check()?;
     Ok(held)

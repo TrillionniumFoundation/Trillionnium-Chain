@@ -20,9 +20,9 @@ struct ChildConfig {
     #[serde(default)]
     publication_sha256: Option<String>,
 }
-pub(super) struct Process {
-    pub(super) child: Child,
-    pub(super) guardian: bool,
+pub(in crate::store::history_effect_v6) struct Process {
+    pub(in crate::store::history_effect_v6) child: Child,
+    pub(in crate::store::history_effect_v6) guardian: bool,
 }
 impl Drop for Process {
     fn drop(&mut self) {
@@ -36,7 +36,7 @@ impl Drop for Process {
         }
     }
 }
-pub(super) fn wait(path: &Path, process: &mut Process) -> Value {
+pub(in crate::store::history_effect_v6) fn wait(path: &Path, process: &mut Process) -> Value {
     let end = Instant::now() + Duration::from_secs(85);
     loop {
         if path.exists() {
@@ -81,7 +81,7 @@ fn barrier(owner: &Owner, path: &Path, cutpoint: &str, worker: bool) -> ! {
         std::thread::park_timeout(Duration::from_secs(5));
     }
 }
-pub(super) fn child() {
+pub(in crate::store::history_effect_v6) fn child() {
     let path = PathBuf::from(std::env::var("TRNM_HISTORY_V6_CHILD_CONFIG").unwrap());
     let raw = fs::read(&path).unwrap();
     assert_eq!(
@@ -91,6 +91,14 @@ pub(super) fn child() {
     let config: ChildConfig = serde_json::from_slice(&raw).unwrap();
     assert_eq!(config.schema, "actual-history-effect-child-fixture-v6");
     let uid = rustix::process::geteuid().as_raw();
+    if config.mode.starts_with("reorg-") {
+        super::super::reorg_continuation_tests_v1::child(&serde_json::from_slice(&raw).unwrap());
+        return;
+    }
+    if config.mode.starts_with("lifecycle-") {
+        super::super::lifecycle_native_tests_v1::child(&serde_json::from_slice(&raw).unwrap());
+        return;
+    }
     if config.mode == "startup-no-native" {
         startup_no_native::child(
             &config.store,
@@ -313,7 +321,7 @@ pub(super) fn child() {
     );
 }
 
-pub(super) fn sha_file(path: &Path) -> String {
+pub(in crate::store::history_effect_v6) fn sha_file(path: &Path) -> String {
     use sha2::{Digest, Sha256};
     let mut hash = Sha256::new();
     let mut file = File::open(path).unwrap();
@@ -341,7 +349,7 @@ fn copy_tree(from: &Path, to: &Path) {
         }
     }
 }
-pub(super) struct Retain {
+pub(in crate::store::history_effect_v6) struct Retain {
     source: PathBuf,
     target: Option<PathBuf>,
 }
@@ -354,7 +362,7 @@ impl Drop for Retain {
         }
     }
 }
-pub(super) fn retain_fixture(source: &Path, label: &str) -> Retain {
+pub(in crate::store::history_effect_v6) fn retain_fixture(source: &Path, label: &str) -> Retain {
     Retain {
         source: source.to_path_buf(),
         target: std::env::var_os("TRNM_HISTORY_V6_ARTIFACT_DIR").map(|base| {
@@ -372,7 +380,7 @@ fn snapshot(path: &Path) -> BTreeMap<String, String> {
         .map(|r| (r.file_name().into_string().unwrap(), sha_file(&r.path())))
         .collect()
 }
-fn next_packet(a: &TestAuthority) -> Packet {
+pub(in crate::store::history_effect_v6) fn next_packet(a: &TestAuthority) -> Packet {
     let mut producer =
         Node::open(&a.f.dir.path().join("producer"), a.f.settings.clone(), 2).unwrap();
     let mut rows = a.f.material_inputs();
@@ -450,7 +458,7 @@ fn next_packet(a: &TestAuthority) -> Packet {
     .unwrap();
     packet
 }
-pub(super) fn page(a: &TestAuthority, packet: &Packet) -> Vec<u8> {
+pub(in crate::store::history_effect_v6) fn page(a: &TestAuthority, packet: &Packet) -> Vec<u8> {
     policy::encoded(&crate::ingress::Page {
         schema: "pon-native-history-v1".into(),
         network: a.identity.network.clone(),
@@ -520,7 +528,7 @@ fn rejects(a: &TestAuthority, path: &Path, sha: &str) -> String {
     error
 }
 
-pub(super) fn run(cutpoint: &str) {
+pub(in crate::store::history_effect_v6) fn run(cutpoint: &str) {
     let epoch_cut = cutpoint.starts_with("settled-epoch");
     let wrong_frontier = cutpoint == "settled-epoch-wrong-frontier";
     let recovery_stage = cutpoint.strip_prefix("settled-epoch-record-");
@@ -933,7 +941,7 @@ pub(super) fn run(cutpoint: &str) {
 
 /// A fresh administrative repair process is actually killed at its selected
 /// syscall. Its wait4 observation is NOT an original-operation CPU closure.
-pub(super) fn repair_crash(
+pub(in crate::store::history_effect_v6) fn repair_crash(
     a: &TestAuthority,
     stage: &str,
     input: &Path,
@@ -988,7 +996,7 @@ pub(super) fn repair_crash(
     assert_eq!(sha_file(&binary), binary_sha);
 }
 
-pub(super) fn epoch_recovery_crash(
+pub(in crate::store::history_effect_v6) fn epoch_recovery_crash(
     a: &TestAuthority,
     stage: &str,
     input: &Path,
