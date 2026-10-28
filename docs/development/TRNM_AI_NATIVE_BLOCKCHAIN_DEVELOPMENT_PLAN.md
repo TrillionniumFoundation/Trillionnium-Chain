@@ -3915,3 +3915,19 @@ was used. Raw attempts, fixtures, source snapshots and byte-verified archives ar
 retained in [the increment evidence](../../evidence/pon-history-effect-v6-20261027/README.md).
 **Whole History P0 remains OPEN**, including separately authorized bounded reorg
 continuation and unqualified journal-publication and crash cut points.
+
+
+## 2026-10-27: explicit journal publication repair candidate
+
+A separate [publication repair signature domain](../protocol/pon-nakamoto-v1/details/HISTORY_JOURNAL_PUBLICATION_REPAIR_V1.md)
+selects exactly one complete existing V6 frame and externally pins its prefix and
+published anchors. It replays original signatures, nonces and prepaid budgets,
+repairs only the same physical file's temporary/final publication names, and
+leaves unknown CPU and native effects to the original independently authorized
+V6 recovery. Ordinary V6 open, stored events and production gates are unchanged.
+The source defines five actual publication SIGKILL cuts, idempotent repair and
+fresh-process continuation, plus original-event and physical-tail refusals.
+Execution status, exact source/binary identities and all failed observations must
+be read from the [increment evidence](../../evidence/pon-history-publication-repair-20261027/README.md).
+This design entry is not an execution verdict or closure of startup, partial
+frames, signed multi-step reorg, arbitrary process adoption or whole History P0.

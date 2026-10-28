@@ -628,7 +628,7 @@ impl ProtectedHistoryV6RecoveryInput {
         })
     }
 }
-fn protected_file(
+pub(super) fn protected_file(
     path: &Path,
     expected_uid: u32,
     expected_sha256: &str,

@@ -1,0 +1,24 @@
+{
+  "action": "explicitly add only these two already-measured logs, plus this observation, in a new successor commit",
+  "amended_prior_commit": false,
+  "git_add_exit_code": 1,
+  "logs": [
+    {
+      "bytes": 5509,
+      "path": "evidence/pon-history-publication-repair-20261027/ci-successor-source-integrity.log",
+      "sha256": "d00a0671ea475944fc9e1fd7ce3c1c66795c8e02cd02cd3550509d7602700138"
+    },
+    {
+      "bytes": 2426,
+      "path": "evidence/pon-history-publication-repair-20261027/ci-successor-project-boundary.log",
+      "sha256": "1ee07d65adddc39cc36851d5d5a53829c8d0a35a823db8e3b8d11caa59765638"
+    }
+  ],
+  "native_or_workflow_source_changed_by_repair": false,
+  "outer_shell_continued_and_returned_zero": true,
+  "partial_commit_files": 5,
+  "partial_successor_commit": "ae6e363ec8aa424b4fb2b53c851c010507afb7d0",
+  "reason": "two explicitly selected raw .log files matched repository ignore rules",
+  "schema": "history-publication-ci-log-packaging-observation-v1",
+  "tool_chunk_id": "fb6107"
+}

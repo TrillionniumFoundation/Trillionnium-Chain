@@ -1,0 +1,47 @@
+{
+  "actual_native_inventory_membership": true,
+  "actual_python_observer_count": 5,
+  "all_compiled_rust_and_guardian_bytes_equal": true,
+  "all_other_non_evidence_source_bytes_equal": true,
+  "changed_non_evidence_since_native_snapshot": [
+    ".github/workflows/pon-recent-batch-acceptance.yml"
+  ],
+  "local_native_rerun_on_yaml_successor": false,
+  "native_binary_sha256": "73a4ae3107888b7997ce2de62a8b1ca6c5492f532e5bdeb6db77ffc8aff49e9b",
+  "native_snapshot_commit": "25e6e6e71c6856962348a892835f176a38beb4ed",
+  "native_snapshot_tree": "c223ed4a7b5d19adc4fde9b3e0c533efdd9b7458",
+  "native_source_map_sha256": "d4352313c0ffc013167519fdfbaaf3ef649434c1078002c0813ca8fec5446840",
+  "new_selectors": [
+    "store::history_effect_v6::tests::history_publication_pending_file_fsync_crash_repairs_and_resumes",
+    "store::history_effect_v6::tests::history_publication_two_hardlinks_crash_repairs_and_resumes",
+    "store::history_effect_v6::tests::history_publication_final_directory_fsync_crash_repairs_and_resumes",
+    "store::history_effect_v6::tests::history_publication_pending_unlink_crash_repairs_and_resumes",
+    "store::history_effect_v6::tests::history_publication_durable_unacknowledged_crash_repairs_and_resumes",
+    "store::history_effect_v6::tests::publication::original_frame_and_physical_tail_refusals_preserve_every_byte"
+  ],
+  "new_step_bash_syntax_exit_code": 0,
+  "original_ci_budgets_profiles_and_assertions_preserved": true,
+  "original_six_v6_selectors_preserved": true,
+  "parsed_workflow_diff_exactly_new_step_and_observer_count": true,
+  "production_qualified": false,
+  "remote_exact_head_ci_pass_claimed": false,
+  "schema": "history-publication-ci-successor-source-map-v1",
+  "successor_source_only_checks": {
+    "project-boundary": {
+      "elapsed_seconds": 10.228057902000728,
+      "exit_code": 0,
+      "log_sha256": "1ee07d65adddc39cc36851d5d5a53829c8d0a35a823db8e3b8d11caa59765638",
+      "test_count": 16
+    },
+    "source-integrity": {
+      "elapsed_seconds": 5.570097184005135,
+      "exit_code": 0,
+      "log_sha256": "d00a0671ea475944fc9e1fd7ce3c1c66795c8e02cd02cd3550509d7602700138",
+      "test_count": 34
+    }
+  },
+  "whole_history_p0_closed": false,
+  "workflow_after_sha256": "edfd64dea4ddf60edb012b6fedd48dfbcab166a09acca402282c44eb325a457d",
+  "workflow_before_sha256": "3b6d2c64c9e020d73190ccfc370c5cf92d8b3af2c7ae60f7d95930e747176c11",
+  "yaml_parser": "PyYAML 6.0.3"
+}

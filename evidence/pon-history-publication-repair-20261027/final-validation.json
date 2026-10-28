@@ -1,0 +1,48 @@
+{
+  "actual_cargo_test_profile": {
+    "debug_assertions": true,
+    "debuginfo": 0,
+    "opt_level": "3",
+    "overflow_checks": true,
+    "test": true
+  },
+  "all_source_maps_equal": true,
+  "base_commit": "2e325e78e508bfe72d342d210a27b17ed53e2d24",
+  "binary_sha256": "73a4ae3107888b7997ce2de62a8b1ca6c5492f532e5bdeb6db77ffc8aff49e9b",
+  "binary_stable": true,
+  "branch": "fix/chain-history-publication-repair-20261027",
+  "build_attempt": "build-03",
+  "build_budget_seconds": 1800,
+  "build_elapsed_seconds": 813.1477297790043,
+  "cargo_lock_sha256": "6efe75ea2f9293e3f0d003d6896e89e795c1ef021b9e15179db4d2e37317b864",
+  "ci_workflow_successor_applied_at_native_execution": false,
+  "clippy_attempt": "clippy-02",
+  "clippy_budget_seconds": 900,
+  "clippy_elapsed_seconds": 58.85733572200115,
+  "format_exit_code": 0,
+  "full_node_suite_executed_this_increment": false,
+  "full_repository_check": "NOT_PASS: inherited missing evidence/pon-v1/README.md; raw failure retained",
+  "local_controls": {
+    "guardian_components": 5,
+    "project_boundary": 16,
+    "source_integrity": 34
+  },
+  "native_attempt": "native-03",
+  "native_budget_seconds": 600,
+  "native_elapsed_seconds": 171.21901893799804,
+  "native_terminal_summary": [
+    "test result: ok. 12 passed; 0 failed; 1 ignored; 0 measured; 734 filtered out; finished in 170.73s"
+  ],
+  "non_evidence_source_files": 1611,
+  "original_cargo_package_count": 25,
+  "production_qualified": false,
+  "remote_ci_executed_by_this_agent": false,
+  "retained_native_failures": [
+    "native-01",
+    "native-02"
+  ],
+  "schema": "history-publication-final-local-validation-v1",
+  "source_map_sha256": "d4352313c0ffc013167519fdfbaaf3ef649434c1078002c0813ca8fec5446840",
+  "source_stable": true,
+  "whole_history_p0_closed": false
+}

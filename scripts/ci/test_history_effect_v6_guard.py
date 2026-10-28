@@ -7,8 +7,10 @@ import selectors
 import signal
 import subprocess
 import sys
+import tempfile
 import time
 import unittest
+from unittest.mock import patch
 
 import history_effect_v6_process_guard as guard
 
@@ -24,6 +26,39 @@ print('READY', flush=True)
 while True:
     time.sleep(0.05)
 """
+
+
+class CompleteObservationPublication(unittest.TestCase):
+    def test_final_name_is_absent_during_json_write_and_contains_complete_record(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'guardian-result.json'
+            value = {'actual_wait4': True, 'wait_status': 9, 'passed': True}
+
+            def checked_dump(record, output, **options):
+                self.assertEqual(record, value)
+                output.write('{"actual_wait4":')
+                output.flush()
+                self.assertFalse(path.exists())
+                self.assertEqual(Path(output.name).stat().st_mode & 0o777, 0o600)
+                output.write('true,"passed":true,"wait_status":9}')
+
+            with patch.object(guard.json, 'dump', side_effect=checked_dump):
+                guard.write(path, value)
+            self.assertEqual(json.loads(path.read_bytes()), value)
+            self.assertEqual(path.stat().st_nlink, 1)
+            self.assertEqual(path.stat().st_mode & 0o777, 0o600)
+            self.assertEqual(list(Path(directory).iterdir()), [path])
+
+    def test_existing_final_observation_is_never_replaced(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'guardian-result.json'
+            original = b'{"passed":false,"reason":"earlier observation"}\n'
+            path.write_bytes(original)
+            with self.assertRaises(FileExistsError):
+                guard.write(path, {'passed': True})
+            self.assertEqual(path.read_bytes(), original)
+            self.assertEqual(json.loads(path.with_name(path.name + '.pending').read_bytes()),
+                             {'passed': True})
 
 
 class ActualOwnedObserver(unittest.TestCase):

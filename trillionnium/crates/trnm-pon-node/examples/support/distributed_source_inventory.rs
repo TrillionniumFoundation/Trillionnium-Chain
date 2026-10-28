@@ -4040,6 +4040,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/journal/publication.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/journal/publication.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/policy.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -4072,6 +4079,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/tests/process.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/tests/publication.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/tests/publication.rs"
         )),
     ),
     (

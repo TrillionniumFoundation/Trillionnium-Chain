@@ -15,6 +15,10 @@ struct ChildConfig {
     launch_sha256: Option<String>,
     recovery: Option<PathBuf>,
     recovery_sha256: Option<String>,
+    #[serde(default)]
+    publication: Option<PathBuf>,
+    #[serde(default)]
+    publication_sha256: Option<String>,
 }
 struct Process {
     child: Child,
@@ -87,6 +91,15 @@ pub(super) fn child() {
     let config: ChildConfig = serde_json::from_slice(&raw).unwrap();
     assert_eq!(config.schema, "actual-history-effect-child-fixture-v6");
     let uid = rustix::process::geteuid().as_raw();
+    if config.mode.starts_with("publication-repair-") {
+        publication::repair_child(
+            &config.mode,
+            &config.control,
+            config.publication.as_ref().unwrap(),
+            config.publication_sha256.as_deref().unwrap(),
+        );
+        return;
+    }
     let (launch, sha) = if config.mode == "resume" {
         let recovery = ProtectedHistoryV6RecoveryInput::load(
             config.recovery.as_ref().unwrap(),
@@ -121,6 +134,7 @@ pub(super) fn child() {
         &config.control.join("startup-ready.json"),
         &owner.observation().unwrap(),
     );
+    publication::install_hook(&config.mode, &config.control);
     let validation = child_wait(&config.control.join("outside-validation.json"));
     let owner_thread = std::thread::current().id();
     let validated = {
@@ -391,6 +405,8 @@ fn rejects(a: &TestAuthority, path: &Path, sha: &str) -> String {
 }
 
 pub(super) fn run(cutpoint: &str) {
+    let validation_cut =
+        cutpoint == "validation-worker" || cutpoint.starts_with("publication-intent-");
     let a = TestAuthority::new();
     let _retain = Retain {
         source: a.f.dir.path().to_path_buf(),
@@ -445,13 +461,14 @@ pub(super) fn run(cutpoint: &str) {
         guardian: true,
     };
     let started = wait(&first.join("startup-ready.json"), &mut guard);
-    let start_anchor = serde_json::from_value(started["journal"]["anchor"].clone()).unwrap();
+    let start_anchor: Anchor =
+        serde_json::from_value(started["journal"]["anchor"].clone()).unwrap();
     let validation = a.grant(Grant {
         purpose: Purpose::Validation,
         nonce: 2,
         epoch: 1,
         frontier: a.genesis(),
-        anchor: start_anchor,
+        anchor: start_anchor.clone(),
         packet: Some(&a.f.packet),
         pair: Some((2, 3)),
     });
@@ -475,6 +492,16 @@ pub(super) fn run(cutpoint: &str) {
     assert_eq!(observed["passed"], true);
     let barrier = read(&first.join("crash-ready.json"));
     let pending = barrier["pending_operation"].as_str().unwrap();
+    let publication_repair = if cutpoint.starts_with("publication-intent-") {
+        Some(publication::after_crash(
+            &a,
+            &first,
+            &barrier,
+            &start_anchor,
+        ))
+    } else {
+        None
+    };
     let original_records = snapshot(&a.journal);
     let closed_raw = fs::read(first.join("closed-process.json")).unwrap();
     let closed: policy::ClosedProcess = serde_json::from_slice(&closed_raw).unwrap();
@@ -549,7 +576,7 @@ pub(super) fn run(cutpoint: &str) {
         "original_ceiling_not_covered":over_error,"wrong_frontier":wrong_error,"wrong_outside_anchor":rollback_error,"journal_unchanged":true}),
     );
     let (recovery_path, recovery_sha) = recovery_input(&a, "actual", &closed_raw, pending);
-    let next = if cutpoint == "validation-worker" {
+    let next = if validation_cut {
         Packet::decode(&a.f.packet.encode().unwrap()).unwrap()
     } else {
         next_packet(&a)
@@ -635,11 +662,7 @@ pub(super) fn run(cutpoint: &str) {
     let finished = wait(&second.join("finished.json"), &mut resumed);
     assert!(resumed.child.wait().unwrap().success());
     assert_ne!(finished["pid"], json!(closed.owned_namespace_pid));
-    let count = if cutpoint == "validation-worker" {
-        6
-    } else {
-        7
-    };
+    let count = if validation_cut { 6 } else { 7 };
     assert_eq!(finished["cold_journal"]["used_operations"], count);
     assert_eq!(finished["cold_journal"]["known_settlements"], count - 1);
     assert_eq!(
@@ -650,25 +673,14 @@ pub(super) fn run(cutpoint: &str) {
         finished["cold_journal"]["unknown_prepaid_reconciliations"],
         1
     );
-    assert_eq!(
-        finished["marker_count"],
-        if cutpoint == "validation-worker" {
-            2
-        } else {
-            4
-        }
-    );
+    assert_eq!(finished["marker_count"], if validation_cut { 2 } else { 4 });
     assert_eq!(
         finished["frontier"]["block"],
         hex::encode(next.id().unwrap())
     );
     assert_eq!(
         finished["frontier"]["generation"],
-        if cutpoint == "validation-worker" {
-            1
-        } else {
-            2
-        }
+        if validation_cut { 1 } else { 2 }
     );
     let final_records = snapshot(&a.journal);
     for (name, digest) in &original_records {
@@ -676,6 +688,9 @@ pub(super) fn run(cutpoint: &str) {
     }
     let replay_error = rejects(&a, &recovery_path, &recovery_sha);
     assert!(replay_error.contains("ROLLBACK"));
+    if let Some((path, digest)) = publication_repair {
+        publication::rejects_after_advance(&a, &path, &digest);
+    }
     assert_eq!(sha_file(&binary), binary_sha);
     write_value(
         &a.f.dir.path().join("process-result.json"),
@@ -688,4 +703,54 @@ pub(super) fn run(cutpoint: &str) {
         "HISTORY_V6_ACTUAL_PROCESS {}",
         serde_json::to_string(&finished).unwrap()
     );
+}
+
+/// A fresh administrative repair process is actually killed at its selected
+/// syscall. Its wait4 observation is NOT an original-operation CPU closure.
+pub(super) fn repair_crash(a: &TestAuthority, stage: &str, input: &Path, input_sha: &str) {
+    let binary = std::env::current_exe().unwrap();
+    let binary_sha = sha_file(&binary);
+    let mode = format!("publication-repair-{stage}");
+    let control = a.f.dir.path().join(&mode);
+    fs::create_dir(&control).unwrap();
+    fs::set_permissions(&control, fs::Permissions::from_mode(0o700)).unwrap();
+    let config = json!({"schema":"actual-history-effect-child-fixture-v6","mode":mode,
+        "store":a.store,"control":control,"page":[],"launch":null,"launch_sha256":null,
+        "recovery":null,"recovery_sha256":null,"publication":input,"publication_sha256":input_sha});
+    let path = a.f.dir.path().join(format!("{mode}.json"));
+    let digest = write_value(&path, &config);
+    let guardian = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../../../scripts/ci/history_effect_v6_process_guard.py");
+    assert_eq!(
+        sha_file(&guardian),
+        policy::digest(include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../scripts/ci/history_effect_v6_process_guard.py"
+        )))
+    );
+    let log = File::create(control.join("guardian.stdout.log")).unwrap();
+    let mut guard = Process {
+        child: Command::new("python3")
+            .arg(&guardian)
+            .arg("--binary")
+            .arg(&binary)
+            .args(["--binary-sha256", &binary_sha, "--configuration"])
+            .arg(&path)
+            .args(["--configuration-sha256", &digest, "--directory"])
+            .arg(&control)
+            .stdin(Stdio::null())
+            .stdout(log.try_clone().unwrap())
+            .stderr(log)
+            .spawn()
+            .unwrap(),
+        guardian: true,
+    };
+    let observed = wait(&control.join("guardian-result.json"), &mut guard);
+    assert!(guard.child.wait().unwrap().success(), "{observed}");
+    assert_eq!(observed["passed"], true);
+    assert_eq!(observed["actual_wait4"], true);
+    assert_eq!(observed["native_operation_started"], false);
+    assert_eq!(observed["v6_closed_process_receipt_created"], false);
+    assert!(!control.join("closed-process.json").exists());
+    assert_eq!(sha_file(&binary), binary_sha);
 }

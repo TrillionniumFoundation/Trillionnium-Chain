@@ -408,3 +408,44 @@ fn a_foreign_cpu_domain_is_refused_before_m05_work_and_any_reservation() {
     assert_paid(&owner_domain, &real.cpu);
     println!("METERED_NODE_BIND rejected_foreign=true foreign_cpu_reservations=0 valid_paid=true");
 }
+
+#[test]
+fn a_foreign_cpu_domain_cannot_mask_unavailable_bound_owner_accounting() {
+    let (_dir, node, packet) = fixture(2);
+    let facts = WorkFactCache::new(1).unwrap();
+    let owner_domain = ServiceMutationCpuDomain::standalone();
+    let foreign = ServiceMutationCpuDomain::standalone();
+    node.lock()
+        .unwrap()
+        .bind_public_service_cpu_domain(&owner_domain)
+        .unwrap();
+    let before = node.lock().unwrap().read_active().unwrap();
+    let foreign_before = foreign.observe().unwrap();
+    // An actual abandoned original operation makes accounting unavailable;
+    // a caller with another domain must not downgrade that fatal condition.
+    drop(owner_domain.begin().unwrap());
+    assert!(!owner_domain.accounting_available());
+    let error = ingress::dispatch_shared_with_metered_work_facts(
+        &node,
+        request(&packet),
+        &facts,
+        &foreign,
+        &|| Ok(()),
+    )
+    .err()
+    .unwrap();
+    assert!(error.is(crate::error::ErrorCode::PublicMutationCpuUnavailable));
+    assert!(error.requires_owner_stop());
+    assert_eq!(
+        foreign.observe().unwrap().stored_credit_ns,
+        foreign_before.stored_credit_ns
+    );
+    assert_eq!(foreign.observe().unwrap().in_flight, 0);
+    assert_eq!(facts.counters().full_replays, 0);
+    assert_eq!(node.lock().unwrap().read_active().unwrap(), before);
+    assert!(node
+        .lock()
+        .unwrap()
+        .continuous_domain_matches(&owner_domain));
+    assert!(!owner_domain.accounting_available());
+}
