@@ -713,6 +713,7 @@ dependencies = [
  "hex",
  "sha2",
  "trnm-protocol",
+ "zeroize",
 ]
 
 [[package]]
@@ -779,6 +780,7 @@ dependencies = [
  "trnm-protocol",
  "trnm-service-settlement",
  "trnm-transport",
+ "zeroize",
 ]
 
 [[package]]

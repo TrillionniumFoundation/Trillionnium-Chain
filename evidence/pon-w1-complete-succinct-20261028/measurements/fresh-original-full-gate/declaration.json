@@ -1,0 +1,23 @@
+{
+  "schema": "TRNM-W1-STAGE-MEASUREMENT1",
+  "command": [
+    "/tmp/trnm-w1-r2-target/release/trnm-w1-zk-host",
+    "verify",
+    "/tmp/w1-staged-full-20261028-r3/header.bin",
+    "/tmp/w1-staged-full-20261028-r3/succinct.bin"
+  ],
+  "cwd": "/workspace/scratch/56818e4fba76/chain-w1-next",
+  "wall_limit_seconds": 30.0,
+  "termination_grace_seconds": 5,
+  "started_unix_ns": 1793154545172094003,
+  "environment": {
+    "RAYON_NUM_THREADS": null,
+    "RUST_LOG": null,
+    "RISC0_HOME": null
+  },
+  "resource_scope": "wait4 direct child including descendants it has reaped; killed-stage CPU can be a lower bound; maxrss is largest single process, not summed peak",
+  "shared_cgroup": {
+    "cpu.max": "800000 100000",
+    "memory.max": "8589934592"
+  }
+}

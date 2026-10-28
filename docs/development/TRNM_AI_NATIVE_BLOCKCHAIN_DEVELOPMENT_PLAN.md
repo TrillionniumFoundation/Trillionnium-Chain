@@ -3988,3 +3988,38 @@ selector/count remain. New native execution is still required. The
 [frozen W1 source bundles](../../evidence/pon-w1-source-closure-20261028/README.md)
 are now included as actual bytes with a publicly reachable prerequisite; the
 earlier e25 observation that they were not yet present remains retained.
+
+
+### 2026-10-28 UTC — exact denominator maintenance and source qualification
+
+The original e25 workflow failures are retained. Reviewed Linux-only owned-reserve selectors increased from seven to nine, and migration selectors from 35 to 36; CI now requires the exact new counts while retaining every selector, zero-failure/zero-ignore condition, resource budget and confirmation denominator. The source/old/new selector review is in [the count evidence](../../evidence/pon-ci-exact-count-review-20261028/README.md). No new runtime acceptance is inferred from changing the literals.
+
+The clean committed startup repair 4370f250 and published tree-equivalent 131f673d passed strict full-workspace Clippy, 11 phase-host controls, 34 source-integrity controls and the 25-package/971-Rust-file/1,342-link repository check. These exact-source records and actual merge-parent checks are in [the source qualification evidence](../../evidence/pon-integrated-source-qualification-20261028/README.md). W1, sustained paid-depletion service, full PQ authorization, real model efficacy and independent WAN remain separately gated.
+
+## 2026-10-28 complete W1 Succinct observation — benefit gate remains failed
+
+Frozen guest/prover source `64be7c4ad51d432e7736ad135476262e23e968f5` now has an actual full 59-segment Succinct receipt, independently accepted by the original SDK 3.0.3 and hardened SDK 3.0.6 (`dd4fb0a65a734bdccac23a061dc0d6c72b69188f`) full gates. The exact original W1 relation, task/target/ordered transcript/product and original work ID remain bound; proof randomness adds zero tickets. The 318-byte PNH1 header, 49,188-byte PNW1 witness and 16,818-byte journal are retained.
+
+The final receipt is 256,886 bytes, 5.2225 times the native witness. On the same frozen input, 1,000 native full-replay measurements have median 0.5543925 ms and sample p99 0.841684 ms. The hardened verifier's 100 decode-and-verify measurements have median 16.660953 ms and sample p99 21.576132 ms, 30.0526 times the native median. Exactly 24 controls (one positive, 23 negatives) matched the expected outcomes with zero PANIC. This is one independent proof, not a prover-p99 or production-tail measurement. The full-relation prototype is completed; work package 2A still FAILS the actual-benefit gate. No production proof path, consensus weight or fallback is added.
+
+Original 90-minute timeout return124 is retained. The independently declared continuation's outer supervisor was interrupted; its exit status and wait4 terminal receipt remain UNKNOWN. The same existing prover continued, observed by a newly declared observer after a 282.650989-second sampling gap, with zero new time budget and the original compression/total deadlines. Fresh gates completed 1,318.132983 seconds after the original continuation start. The combined actual CPU lower bound is 41,887.285978 seconds; recorded controller/prior/continuation wall accounting is 6,712.315070 seconds including 700.173346 seconds of coordinated pause. This is not isolated prover latency or exact interrupted-process CPU settlement. Post-gate source verification checked 5,502 tracked entries / 706,320,655 bytes on the original clean source.
+
+See `evidence/pon-w1-complete-succinct-20261028/README.md` and `final-readback.json`. The independently hash-checked complete raw archive has 923 payload members / 925 total members, 65,349,319 bytes, SHA-256 `5a888ab56f0a656ac26df5caf79a6c46c71b1e53110d189ca1a951591ddb5ac4`. Full source recovery bundles are separately published. Transparent-STARK wording, component soundness calculators and these real proofs do not establish full post-quantum chain security, complete QROM soundness, useful-work hardness or independent WAN acceptance.
+
+
+### 2026-10-28 UTC — Host/refill reachability and remaining acceptance
+
+The published fixed Host has 0.25 core total CPU while the paid mutation bucket refills at 0.25 CPU seconds per wall second. The [cross-work-package review](../../evidence/pon-workpackage-cross-review-20261028/README.md) retains exact source, timely-accounting assumptions and delayed-settlement counterexamples. This is a reason to inspect real debit/refill/discard and confirmation overlap; it is not a native attack or a proof that depletion cannot occur. No original profile, budget, work identity or passing threshold was changed. The actual 131f native campaign remains its own required observation.
+
+The [W1 packaging process correction](../../evidence/pon-w1-packaging-audit-20261028/README.md) preserves an evidence-branch preflight failure and the subsequent allowed-branch successful preflight. Runtime proof evidence is not relabelled as evidence-commit execution.
+
+
+### 2026-10-28 UTC — original 131f service outcome and remaining backend contract
+
+The [original 131f campaign and read-only backend review](../../evidence/pon-131f-native-and-pq-readback-20261028/README.md) now contain all three native repetitions. The startup repair worked: all nine Host receipts pass, with no startup errors. All nine service phases fail, including the baselines. There are 0/27 scheduled confirmations, nine observed failed rounds, and 18 unobserved rounds. Sixty-three of 189 planned business packets were issued and timely acknowledged. History network acknowledgements are 24/24, but local imports are 15/24 successful; all nine failures are PUBLIC_REQUEST_DEADLINE. Six attack phases paid real CPU but none reached paid-credit depletion. This is not sustained-overlap service acceptance or a restart test.
+
+The observed account-graph verification intervals dominate native verify-state cost, while receiver and client ledgers remain distinct. This supports a bounded incremental-state/snapshot design investigation; it does not yet establish a particular lock or a safe consensus-preserving optimization. No budget, deadline, work relation or original denominator was weakened.
+
+The hosted PQ compile failures expose an unbound backend contract; runtime fixture failures occur at the independent CLI call before strict DER decoding. Local explicit-3.5.9 Clippy success does not qualify the hosted backend. Original runtime failures, missing diagnostics and the earlier automatic interruption of native validation remain open. No optional feature was skipped or classic fallback introduced.
+
+The [fuzz lock consistency repair](../../evidence/pon-fuzz-lock-consistency-20261028/README.md) adds only two existing path dependencies' zeroize edges. Locked metadata and public dependency download now succeed locally; the original offline missing-source failure is retained. This is no native/fuzz/advisory acceptance claim. The full project remains HOLD/NO_GO pending the original work-package gates.

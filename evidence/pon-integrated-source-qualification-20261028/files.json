@@ -1,0 +1,77 @@
+[
+  {
+    "path": "README.md",
+    "bytes": 1719,
+    "sha256": "5b3348fadb83070f566464b8b8d183778cb5aeab71767903bfd23c12bee4b1bc"
+  },
+  {
+    "path": "native-merge-verification.json",
+    "bytes": 554,
+    "sha256": "fa7e328c24e3bcb3d7610077cedc5a4101f80f3ebbab9c99a373d2606361d9d9"
+  },
+  {
+    "path": "qualified-0.stderr.txt",
+    "bytes": 1855,
+    "sha256": "d61d1275f5492e9e33d8ef3a672272631d97d2e3f3bf1c313769b883efea2fe5"
+  },
+  {
+    "path": "qualified-0.stdout.txt",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "qualified-1.stderr.txt",
+    "bytes": 5569,
+    "sha256": "31366e1685a9796c706f4f4410fa1d3b4970bbf0c23f371a4a0ce909d900706c"
+  },
+  {
+    "path": "qualified-1.stdout.txt",
+    "bytes": 484,
+    "sha256": "3a3c9ecc53d3f9a602f005590b04ef3a3a3122d9548f2f752788ccbb547dee7b"
+  },
+  {
+    "path": "qualified-tests.json",
+    "bytes": 615,
+    "sha256": "1cfbeb963fe868caf16ca0cc6ddf638a3e5eab81e6159431c6ddd3890de35037"
+  },
+  {
+    "path": "repository-4370/record.json",
+    "bytes": 590,
+    "sha256": "2979ea43f2496bc78e61194f24fe42991305cf571c142dd2f7fc2cdf932eb141"
+  },
+  {
+    "path": "repository-4370/stderr.txt",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "repository-4370/stdout.txt",
+    "bytes": 306,
+    "sha256": "05bc496ce566e473ebbab5043471a049189b50aa5a32077ddd01e959ce39cd38"
+  },
+  {
+    "path": "strict-clippy-4370/record.json",
+    "bytes": 1198,
+    "sha256": "8e2c76865681a6d9f19d95869a1da0bb755800078efd80cd0293e6e5df9b1b24"
+  },
+  {
+    "path": "strict-clippy-4370/source-after.json",
+    "bytes": 421,
+    "sha256": "1d5adf42b0888a640e8bdf25197f803c50bedce598d257833828151d4085e5e2"
+  },
+  {
+    "path": "strict-clippy-4370/source-before.json",
+    "bytes": 421,
+    "sha256": "1d5adf42b0888a640e8bdf25197f803c50bedce598d257833828151d4085e5e2"
+  },
+  {
+    "path": "strict-clippy-4370/stderr.txt",
+    "bytes": 190,
+    "sha256": "15a464d751599fb8ba386d94621ecc03f3238220039f8a620e19641b9cd7d97f"
+  },
+  {
+    "path": "strict-clippy-4370/stdout.txt",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

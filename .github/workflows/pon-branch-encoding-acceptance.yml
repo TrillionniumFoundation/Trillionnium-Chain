@@ -123,7 +123,7 @@ jobs:
           cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib account_archive_prototype::native_store::batch_tests -- --show-output --test-threads=1 2>&1 | tee "$OUT/batch.log"
           grep -E '^test result: ok\. [1-9][0-9]* passed; 0 failed;' "$OUT/batch.log"
           cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib authenticated_migration -- --show-output --test-threads=1 2>&1 | tee "$OUT/migration.log"
-          grep -E '^test result: ok\. 35 passed; 0 failed; 0 ignored;' "$OUT/migration.log"
+          grep -E '^test result: ok\. 36 passed; 0 failed; 0 ignored;' "$OUT/migration.log"
       - name: Require exact work arithmetic and unchanged full-profile public service
         shell: bash
         run: |
@@ -136,7 +136,7 @@ jobs:
             python3 scripts/ci/check_required_native_test.py "$OUT/$test.log" --test "$selector"
           done
           cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib ingress::public_v3::scalar_cpu::request_owned_reserve_tests -- --show-output --test-threads=1 2>&1 | tee "$OUT/owned-cpu.log"
-          grep -E '^test result: ok\. 7 passed; 0 failed; 0 ignored;' "$OUT/owned-cpu.log"
+          grep -E '^test result: ok\. 9 passed; 0 failed; 0 ignored;' "$OUT/owned-cpu.log"
           for test in owned_quantum_remains_credited_when_request_crosses_its_first_quantum extended_request_cannot_spend_the_other_owned_quantum actual_cpu_extension_uses_its_own_reserve_and_settles_exact_total; do
             selector="ingress::public_v3::scalar_cpu::request_owned_reserve_tests::$test"
             cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$OUT/$test.log"

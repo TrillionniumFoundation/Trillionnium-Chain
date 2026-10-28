@@ -1,0 +1,37 @@
+[
+  {
+    "path": "README.md",
+    "bytes": 1777,
+    "sha256": "447fa373bd275db55820d9fcbae19b0a6a3efc3f49c0ccfe4ef1a6a6c7e94546"
+  },
+  {
+    "path": "history-budget-feasibility-r7.json",
+    "bytes": 14304,
+    "sha256": "9362f32a6892fe9b70582048c97ac6c938039bd4317fdf6b437a87281bee04f0"
+  },
+  {
+    "path": "history-budget-feasibility-r7.txt",
+    "bytes": 11515,
+    "sha256": "206866e35ae453c633e6cec63bfb6fbddb470e8810cc5a908aaa3837de46d6d5"
+  },
+  {
+    "path": "integrated-history-pq-review.json",
+    "bytes": 16046,
+    "sha256": "60a6f4588930a677d61f55faecbac9b8bd7d3a6a742197f6c581a84a85042715"
+  },
+  {
+    "path": "integrated-history-pq-review.txt",
+    "bytes": 12207,
+    "sha256": "611b4fd6f1dbcf3be7046ee3b33c9a911d07d2e558d4a344ae3df6033b6dbe1d"
+  },
+  {
+    "path": "pq-quantum-assumption-review-20261028.txt",
+    "bytes": 11068,
+    "sha256": "c886efc88865fd2f8e78ed70592360d9d4103e6bebc3c2f959e518f603b24f9e"
+  },
+  {
+    "path": "pure-pon-throughput-research-20261028.txt",
+    "bytes": 13028,
+    "sha256": "972ac12f8ced9f6146b2960e2bc13d89d30f1b553d5892d388aad08474bc9292"
+  }
+]
