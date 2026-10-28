@@ -102,6 +102,45 @@ class RenewalOutboxTests(unittest.TestCase):
             with self.assertRaisesRegex(OutboxError, 'SCHEMA_DRIFT'):
                 db.status(key)
 
+    def test_large_persisted_intent_refuses_hot_reads_and_cold_open(self):
+        with self.open() as db:
+            key = db.prepare(intent())
+            with sqlite3.connect(self.file) as external:
+                external.execute('UPDATE q4_outbox_intents_v1 '
+                                 'SET wire=zeroblob(65536) WHERE id=?', (key,))
+            for action in (lambda: db.audit(), lambda: db.status(key),
+                           lambda: db.dispatch_unknown(key),
+                           lambda: db.prepare(replace(
+                               intent(tx=b'H'*1187),
+                               operation_id=h(b'new-after-huge-wire')))):
+                with self.assertRaisesRegex(OutboxError, 'STORAGE_BLOB_BUDGET'):
+                    action()
+                self.assertFalse(db.db.in_transaction)
+            self.assertEqual(db.db.execute(
+                'SELECT COUNT(*) FROM q4_outbox_events_v1').fetchone()[0], 0)
+        with self.assertRaisesRegex(OutboxError, 'STORAGE_BLOB_BUDGET'):
+            self.open()
+
+    def test_large_event_and_metadata_refuse_before_durable_replay(self):
+        with self.open() as db:
+            key = db.prepare(intent())
+            db.dispatch_unknown(key)
+            with sqlite3.connect(self.file) as external:
+                external.execute('UPDATE q4_outbox_events_v1 '
+                                 'SET observation=zeroblob(65536) WHERE ordinal=1')
+            with self.assertRaisesRegex(OutboxError, 'STORAGE_BLOB_BUDGET'):
+                db.status(key)
+            with sqlite3.connect(self.file) as external:
+                external.execute('UPDATE q4_outbox_events_v1 '
+                                 'SET observation=? WHERE ordinal=1', (b'',))
+                external.execute("UPDATE q4_outbox_meta_v1 "
+                                 "SET value=zeroblob(65536) WHERE key='network'")
+            with self.assertRaisesRegex(OutboxError, 'STORAGE_BLOB_BUDGET'):
+                db.audit()
+            self.assertFalse(db.db.in_transaction)
+        with self.assertRaisesRegex(OutboxError, 'STORAGE_BLOB_BUDGET'):
+            self.open()
+
     def test_prepared_is_not_dispatched_ownership_or_signing(self):
         with self.open() as db:
             key=db.prepare(intent())

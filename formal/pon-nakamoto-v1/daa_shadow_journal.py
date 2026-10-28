@@ -147,6 +147,7 @@ class ShadowJournal:
         except BaseException:
             self.db.execute('ROLLBACK')
             raise
+        self._check_metadata_budget()
         expected = {'schema': SCHEMA, 'context': self.context, 'genesis': self.genesis}
         actual = dict(self.db.execute('SELECT key, value FROM daa_shadow_meta_v1'))
         if set(actual) != {*expected, 'active_tip'} or any(actual[k] != v for k, v in expected.items()):
@@ -158,6 +159,19 @@ class ShadowJournal:
         if tip != self.genesis and self.db.execute(
                 'SELECT 1 FROM daa_shadow_headers_v1 WHERE block_id=?', (tip,)).fetchone() is None:
             raise JournalError('ACTIVE_TIP_UNAVAILABLE')
+
+    def _check_metadata_budget(self) -> None:
+        """Reject oversized research metadata before loading SQLite BLOBs.
+
+        Header row width is guaranteed by the original table's canonical
+        CHECK constraints after validating its schema, but metadata has no
+        such constraint. This is not a native consensus or OS-level limit.
+        """
+        if self.db.execute(
+            'SELECT 1 FROM daa_shadow_meta_v1 '
+            'WHERE length(key) > 4096 OR length(value) > 4096 LIMIT 1'
+        ).fetchone() is not None:
+            raise JournalError('DATABASE_BLOB_BUDGET')
 
     def _check_context_snapshot(self) -> None:
         """Read the COMPLETE immutable namespace before any hot mutation.
@@ -186,6 +200,7 @@ class ShadowJournal:
              'digest BLOB NOT NULL CHECK(length(digest)=32)) WITHOUT ROWID'),
         }:
             raise JournalError('DATABASE_SCHEMA_DRIFT')
+        self._check_metadata_budget()
         expected = {'schema': SCHEMA, 'context': self.context,
                     'genesis': self.genesis}
         actual = dict(self.db.execute(
@@ -342,6 +357,11 @@ class ShadowJournal:
         An attacker able to rewrite the entire local database may recompute all
         checks. Native trusted packet/state replay remains required at startup.
         """
+        # Prove the original fixed-width table schema and finite row count
+        # before the local audit materializes any untrusted header BLOB.
+        self._check_context_snapshot()
+        if self.db.execute('SELECT COUNT(*) FROM daa_shadow_headers_v1').fetchone()[0] > self.max_headers:
+            raise JournalError('HEADER_BUDGET')
         rows = self.db.execute('SELECT block_id,parent_id,height,canonical,digest '
                                'FROM daa_shadow_headers_v1 ORDER BY height,block_id')
         seen = {self.genesis: 0}
