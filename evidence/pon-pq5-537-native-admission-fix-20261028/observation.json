@@ -1,0 +1,109 @@
+{
+  "schema": "native-pq5-native-admission-failure-v1",
+  "original_source": "c974a4ccfb2ed76b77c654e11899519a9b95d38f",
+  "original_tree": "2f7dd3bc4a8426ff1e5312ba5a5d7bb9485c8c2d",
+  "source_consistent": true,
+  "original_gate_result": "FAIL",
+  "native_group": {
+    "passed": 1,
+    "failed": 6,
+    "ignored": 0,
+    "elapsed_seconds": 236.59
+  },
+  "previous_native_passes": 153,
+  "original_failures": {
+    "TASK_ADMISSION_CONTEXT": 5,
+    "PQ5_TASK_RENEWAL": 1
+  },
+  "independent_review": {
+    "reviewer": "root",
+    "production_statement_selection": "both ordinary and controlled paths must select the verified PqTaskV5 statement_id; all existing equality, signature, current-parent, material, matrix, revocation and attempt-budget checks retained",
+    "prefix_original_parent": "root identified and reviewed immutable original-parent complete-prefix validation; current staged suffix and final State checks preserved",
+    "new_regression": {
+      "author": "root",
+      "reviewer": "history_pq_continue",
+      "conclusion": "real dual-signature full-execute oracle, exact rejection codes and internal-cancellation rollback; original 16 cases retained"
+    }
+  },
+  "original_gate_budget_seconds": 2400,
+  "artifacts": {
+    "original-native-task.log": {
+      "bytes": 12317,
+      "sha256": "27a52cfb357043b95007469207b8ca93062cb658d98c5e993b7625dc49e6b538"
+    },
+    "original-gate-manifest.json": {
+      "bytes": 45153,
+      "sha256": "a02834f53caf4039edac87743b3e0781ae2efd006d080ef3ed33645ec6a51c1e"
+    },
+    "first-failure-diagnostic.log": {
+      "bytes": 2433,
+      "sha256": "1bdd9d55cb2632305e506e340968ff3387f89db2df553a62294e6981a7e76faa"
+    },
+    "first-failure-diagnostic.json": {
+      "bytes": 422,
+      "sha256": "823d5c823227a8154abddcf04b3d197dc298b2476264056a873df4043d16f56f"
+    },
+    "pq-prefix-regression-red.log": {
+      "bytes": 1179,
+      "sha256": "3919d4bcad520fcbab0df3f7b869e0430ea7fb3a33d380adeb819d927aee4ae0"
+    },
+    "pq-prefix-regression-red.json": {
+      "bytes": 1235,
+      "sha256": "f9449d242e13e9e715cb613f977a85c00ab0889661d1e35246de20aca43416d2"
+    },
+    "pq-prefix-regression-green.log": {
+      "bytes": 652,
+      "sha256": "ca429f76b7996b90e63e52af8dfc9672bcc652aa74b154c4aca2685f5df32b3d"
+    },
+    "pq-prefix-regression-green.json": {
+      "bytes": 2138,
+      "sha256": "fd13aaee583a84f5f9f56d211a17b48a0538a9cac5fc230bd077387b501903c9"
+    }
+  },
+  "production_activation": false,
+  "whole_chain_p1_complete": false,
+  "observation_stage": "pre-commit preparation",
+  "complete_fixed_candidate_native_gate_executed": false,
+  "prefix_fix_focused_red_green": {
+    "red": {
+      "record": "pq-prefix-regression-red.json",
+      "passed": 0,
+      "failed": 1,
+      "seconds": 0.7
+    },
+    "green": {
+      "record": "pq-prefix-regression-green.json",
+      "passed": 1,
+      "failed": 0,
+      "seconds": 0.82
+    },
+    "identical_test_and_fixture_verified": true,
+    "current_source_equals_green_hashes": true,
+    "does_not_qualify_complete_gate": true
+  },
+  "precommit_checks": {
+    "reader_tests_passed": 12,
+    "reader_tests_seconds": 0.016,
+    "distributed_source_inventory": "PASS_UNCHANGED",
+    "source_and_document_diff_check": {
+      "exit_code": 0,
+      "command": [
+        "git",
+        "diff",
+        "--check",
+        "c974a4ccfb2ed76b77c654e11899519a9b95d38f",
+        "--",
+        ".",
+        ":(exclude)*.log"
+      ]
+    },
+    "original_stdout_whitespace": {
+      "unfiltered_staged_diff_check_exit": 2,
+      "notices": [
+        "first-failure-diagnostic.log:20: new blank line at EOF",
+        "pq-prefix-regression-green.log:14: new blank line at EOF"
+      ],
+      "action": "retained original stdout bytes and recorded hashes unchanged; no code whitespace failures"
+    }
+  }
+}

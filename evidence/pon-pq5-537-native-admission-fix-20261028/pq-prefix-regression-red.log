@@ -1,0 +1,26 @@
+   Compiling trnm-mvcc-fee v0.1.0 (/workspace/scratch/121c7d6beede/history_pq_task/pq/trillionnium/crates/trnm-mvcc-fee)
+    Finished `test` profile [unoptimized] target(s) in 55.89s
+     Running tests/pq5_task_renewal.rs (/workspace/scratch/121c7d6beede/history_pq_task/pq-target/debug/deps/pq5_task_renewal-467784b2d835bccf)
+
+running 1 test
+test incremental_atomic_renewal_prefix_uses_original_parent_and_rolls_back_rejected_suffix ... FAILED
+
+successes:
+
+successes:
+
+failures:
+
+---- incremental_atomic_renewal_prefix_uses_original_parent_and_rolls_back_rejected_suffix stdout ----
+
+thread 'incremental_atomic_renewal_prefix_uses_original_parent_and_rolls_back_rejected_suffix' (937230) panicked at crates/trnm-mvcc-fee/tests/pq5_task_renewal.rs:1318:47:
+called `Result::unwrap()` on an `Err` value: "PQ5_TASK_RENEWAL"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    incremental_atomic_renewal_prefix_uses_original_parent_and_rolls_back_rejected_suffix
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 16 filtered out; finished in 0.70s
+
+error: test failed, to rerun pass `-p trnm-mvcc-fee --test pq5_task_renewal`

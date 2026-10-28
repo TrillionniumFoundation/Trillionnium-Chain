@@ -4533,6 +4533,7 @@ impl Node {
         let statement_id = match &eligible {
             ParentTaskEligibility::Lifecycle(task) => task.statement_id(),
             ParentTaskEligibility::PqTask(task) => task.statement_id(),
+            ParentTaskEligibility::PqTaskV5(task) => task.statement_id(),
             _ => signed.id().map_err(|_| Error::from("TASK_MANIFEST"))?,
         };
         ensure(
@@ -4599,6 +4600,7 @@ impl Node {
         let statement_id = match &eligible {
             ParentTaskEligibility::Lifecycle(task) => task.statement_id(),
             ParentTaskEligibility::PqTask(task) => task.statement_id(),
+            ParentTaskEligibility::PqTaskV5(task) => task.statement_id(),
             _ => signed.id().map_err(|_| Error::from("TASK_MANIFEST"))?,
         };
         ensure(

@@ -32,6 +32,7 @@ TASK_CASES = {
     'renewal_rejects_expired_gap_wrong_revision_changed_scope_and_changed_material_atomically',
     'renew_rotate_revoke_and_register_pairs_refuse_both_orders_then_use_current_authority',
     'atomic_all_five_fragment_boundaries_and_mixed_statement_bytes_fail_cold_authorization',
+    'incremental_atomic_renewal_prefix_uses_original_parent_and_rolls_back_rejected_suffix',
 }
 NATIVE_TASK_CASES = {
     'dual_pq_task_pool_ordinary_material_actual_w1_output_and_cold_read_form_one_namespace',
@@ -168,6 +169,8 @@ def main() -> None:
             'trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tasks_v4.rs',
             'trillionnium/crates/trnm-pon-node/src/store/pq_tasks_v4.rs',
             'scripts/ci/run_native_pq_tasks_v5.py','scripts/ci/test_native_pq_tasks_v5_research.py',
+            'trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs',
+            'trillionnium/crates/trnm-pon-node/src/store.rs',
             'trillionnium/crates/trnm-mvcc-fee/tests/pq5_task_renewal.rs',
             'trillionnium/crates/trnm-pon-node/tests/native_pq_v5.rs',
             'trillionnium/crates/trnm-protocol/src/qualified_work_task/pq_lifecycle_v5.rs',

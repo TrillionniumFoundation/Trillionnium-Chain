@@ -3072,8 +3072,10 @@ impl TransactionPrefix {
             self.context.timestamp,
             &self.config,
         )?;
+        // Recheck the complete prefix against its original block parent.
+        // Suffix application below still checks the current staged authority.
         pq_accounts_v2::validate_block(
-            &self.state,
+            self.pq2_signature_parent.as_deref().unwrap_or(&self.state),
             transactions,
             self.context.miner,
             self.context.timestamp,

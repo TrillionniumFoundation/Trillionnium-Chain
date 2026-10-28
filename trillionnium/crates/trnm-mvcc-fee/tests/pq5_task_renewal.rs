@@ -849,6 +849,9 @@ fn requester_only_renewal_is_cold_valid_but_awaits_new_source_and_preserves_past
         274
     );
     let eligible = tasks::eligible_task(&state, task(), 4, &cfg).unwrap();
+    // Advance the ordinary block/reward owner before recording its verified
+    // output; a direct task-meter update cannot manufacture block 4's reward.
+    state = execute(&state, &cfg, 4, &[], 1).unwrap().state;
     assert!(tasks::consume_output(&mut state, &eligible, [81; 32], 4, &cfg).unwrap());
     let next = fixture::successor(&signed, 5, signed.expires + 50);
     let renewal = sign(
@@ -1222,4 +1225,133 @@ fn atomic_all_five_fragment_boundaries_and_mixed_statement_bytes_fail_cold_autho
         out[&format!("{}00:0", tasks::WITNESS_PREFIX)].clone(),
     );
     assert!(tasks::eligible_task(&reordered, task(), 4, &cfg).is_err());
+}
+
+#[test]
+fn incremental_atomic_renewal_prefix_uses_original_parent_and_rolls_back_rejected_suffix() {
+    use trnm_crypto_primitives::qualified_work_task::pq_lifecycle_v5 as crypto;
+    use trnm_mvcc_fee::pon_commitment::{CacheLimits, CheckedExecutionParent};
+    use trnm_mvcc_fee::pon_executor::{ExecutionError, ExecutionProgress, PrefixContext};
+
+    let (cfg, initial, keys) = setup();
+    let first = fixture::lease(pq::context(&cfg).unwrap(), keys[0].id, keys[1].id);
+    let mut second = first.clone();
+    second.slot = 1;
+    second.generation = 2;
+    second.demand_id = second.derived_demand_id();
+    let leases = [first, second];
+    let tasks = [task(), [42; 32]];
+    let opens: Vec<_> = leases
+        .iter()
+        .enumerate()
+        .map(|(index, lease)| open(&cfg, lease, &keys[0], index as u64 + 1))
+        .collect();
+    let opened = execute(&initial, &cfg, 1, &opens, 1).unwrap().state;
+    let registrations: Vec<_> = leases
+        .iter()
+        .enumerate()
+        .map(|(index, lease)| {
+            sign(
+                &cfg,
+                keys[0].id,
+                index as u64 + 3,
+                1,
+                21,
+                &fixture::registration(lease, tasks[index], 1, [0; 32])
+                    .encode()
+                    .unwrap(),
+                &[fixture::primary(&keys[0], 1), fixture::source(&keys[1], 1)],
+            )
+        })
+        .collect();
+    let parent = execute(&opened, &cfg, 2, &registrations, 1).unwrap().state;
+    let original_parent = parent.clone();
+    let renew = |index: usize, nonce, prior| {
+        let lease = &leases[index];
+        let next = fixture::successor(lease, 3, lease.expires + 50);
+        sign(
+            &cfg,
+            keys[0].id,
+            nonce,
+            1,
+            22,
+            &fixture::atomic(lease, &next, tasks[index], 2, prior)
+                .encode()
+                .unwrap(),
+            &[fixture::primary(&keys[0], 1), fixture::source(&keys[1], 1)],
+        )
+    };
+    let priors = registrations
+        .iter()
+        .map(|raw| crypto::statement_id(raw).unwrap())
+        .collect::<Vec<_>>();
+    let raws = [renew(0, 5, priors[0]), renew(1, 6, priors[1])];
+    let first_expected = execute(&parent, &cfg, 3, &raws[..1], 1).unwrap();
+    let full_expected = execute(&parent, &cfg, 3, &raws, 4).unwrap();
+    let progress = |_| Ok::<(), &'static str>(());
+    let mut prefix = CheckedExecutionParent::bind(
+        &parent,
+        exec::root(&parent).unwrap(),
+        None,
+        CacheLimits::default(),
+    )
+    .unwrap()
+    .into_prefix_with_control(
+        PrefixContext {
+            timestamp: Some(1003),
+            height: 3,
+            miner: [221; 32],
+            parent_id: [3; 32],
+        },
+        &cfg,
+        &ExecutionControl::new(&progress, &()),
+    )
+    .unwrap();
+    let compare = |actual: &exec::Output, expected: &exec::Output| {
+        assert_eq!(actual.state, expected.state);
+        assert_eq!(actual.receipts, expected.receipts);
+        assert_eq!(actual.root, expected.root);
+    };
+    compare(&prefix.execute(&raws[..1]).unwrap().output, &first_expected);
+    // Revalidating the identical complete prefix must not interpret its already
+    // applied renewal as a request against the successor lease.
+    let repeated = prefix.execute(&raws[..1]).unwrap();
+    compare(&repeated.output, &first_expected);
+    assert_eq!(repeated.output.metrics.signature_verifications, 0);
+
+    for (suffix, error) in [
+        (renew(0, 6, priors[0]), "PQ5_TASK_BLOCK_MUTEX"),
+        (renew(1, 6, [99; 32]), "PQ5_TASK_RENEWAL"),
+        (
+            rotate(&cfg, &parent, &keys[1], &Key::public_test_seed(204)),
+            "PQ2_AUTHORITY_BLOCK_MUTEX",
+        ),
+    ] {
+        let rejected = [raws[0].clone(), suffix];
+        assert_eq!(execute(&parent, &cfg, 3, &rejected, 1).err(), Some(error));
+        assert_eq!(prefix.execute(&rejected).err(), Some(error));
+        assert_eq!(prefix.len(), 1);
+        compare(&prefix.execute(&raws[..1]).unwrap().output, &first_expected);
+    }
+
+    let cancel = |point| {
+        if point == (ExecutionProgress::AfterApply { index: 1 }) {
+            Err("renewal-suffix-cancelled")
+        } else {
+            Ok(())
+        }
+    };
+    assert!(matches!(
+        prefix.execute_with_control(&raws, &ExecutionControl::new(&cancel, &())),
+        Err(ExecutionError::Cancelled("renewal-suffix-cancelled"))
+    ));
+    assert_eq!(prefix.len(), 1);
+    compare(&prefix.execute(&raws[..1]).unwrap().output, &first_expected);
+    let completed = prefix.execute(&raws).unwrap();
+    compare(&completed.output, &full_expected);
+    assert_eq!(completed.output.metrics.signature_verifications, 2);
+    assert_eq!(prefix.len(), 2);
+    assert_eq!(account(&completed.output.state, keys[0].id)["nonce"], 6);
+    compare(&prefix.execute(&raws).unwrap().output, &full_expected);
+    assert_eq!(parent, original_parent);
 }
