@@ -261,14 +261,25 @@ fn hostile_snapshot(
 }
 
 fn is_depleted(sample: &Value) -> bool {
-    let f = &sample["flow"];
+    let freshness = &sample["credit_freshness"];
+    let f = &freshness["actual_flow"];
+    // The original owner may not have booked time-based refill yet. Its
+    // same-lock projection plus the entire sampling interval is a conservative
+    // upper bound at sample end; observing it does not credit or consume CPU.
+    let credit_upper_bound = sample["ended_ns"]
+        .as_u64()
+        .zip(sample["started_ns"].as_u64())
+        .and_then(|(end, start)| end.checked_sub(start))
+        .zip(freshness["projected_paid_credit_ns"].as_i64())
+        .map(|(elapsed, paid)| {
+            let refill = (u128::from(elapsed) * 250_000_000).div_ceil(1_000_000_000);
+            i128::from(paid) + i128::try_from(refill).unwrap()
+        });
     sample["clock_failures"] == 0
         && sample["budget"]["accounting_unavailable"] == false
         && f["balance_identity_verified"] == true
         && f["initial_credit_ns"] == 0
-        && f["remaining_paid_credit_ns"]
-            .as_i64()
-            .is_some_and(|n| n < 100_000_000)
+        && credit_upper_bound.is_some_and(|n| n < 100_000_000)
         && f["paid_cpu_debit_ns"]
             .as_u64()
             .is_some_and(|n| n > 1_900_000_000)
@@ -386,13 +397,15 @@ fn phase(
             let started = support::monotonic().saturating_sub(epoch);
             let budget = sampler_domain.observe().unwrap();
             let flow = sampler_domain.observe_actual_flow().unwrap();
+            let credit_freshness = sampler_domain.observe_credit_freshness().unwrap();
             let admission = sampler_domain.observe_pure_admission().unwrap();
             let clock_failures: u64 = sampler_metrics
                 .iter()
                 .map(|m| m.lock().unwrap().mutation_cpu_clock_failures)
                 .sum();
             let mut sample = json!({"started_ns":started,"ended_ns":support::monotonic().saturating_sub(epoch),
-                "budget":budget,"flow":flow,"admission":admission,"clock_failures":clock_failures});
+                "budget":budget,"flow":flow,"credit_freshness":credit_freshness,
+                "admission":admission,"clock_failures":clock_failures});
             sample["depleted"] = json!(is_depleted(&sample));
             sample_out.lock().unwrap().push(sample);
             thread::sleep(Duration::from_millis(50));
@@ -538,7 +551,9 @@ fn phase(
     }
     let receiver_active = owner.lock().unwrap().read_active().unwrap();
     let client_active = verifier.read_active().unwrap();
-    json!({"schema":SCHEMA,"phase":mode,"epoch_monotonic_ns":epoch,"window_ns":WINDOW_NS,
+    let receiver_height: u64 = receiver_active.1;
+    let client_height: u64 = client_active.1;
+    let report = json!({"schema":SCHEMA,"phase":mode,"epoch_monotonic_ns":epoch,"window_ns":WINDOW_NS,
         "policy":support::policy_observation(),"listeners":2,"shared_cpu_domain":shared,
         "ready_actors":if mode=="baseline" {0}else{ATTACKERS},
         "initial_budget":initial_budget,"initial_flow":initial_flow,"initial_admission":initial_admission,
@@ -546,9 +561,12 @@ fn phase(
         "final_admission":domain.observe_pure_admission().unwrap(),"services":services,
         "actors":actors,"submissions":submissions,"history":histories,"rounds":rounds,
         "samples":samples,"observations":capture,"receiver_tip":hex::encode(receiver_active.0),
-        "client_tip":hex::encode(client_active.0),"receiver_height":receiver_active.2,"client_height":client_active.2,
+        "client_tip":hex::encode(client_active.0),"receiver_height":receiver_height,"client_height":client_height,
         "errors":errors,"public_fairness_qualified":false,"production_qualified":false,
-        "work_hardness_qualified":false,"installation_authorized":false})
+        "work_hardness_qualified":false,"installation_authorized":false});
+    // read_active() is (tip, height, State); a State must never be emitted as a height.
+    assert!(report["receiver_height"].is_u64() && report["client_height"].is_u64());
+    report
 }
 
 #[test]

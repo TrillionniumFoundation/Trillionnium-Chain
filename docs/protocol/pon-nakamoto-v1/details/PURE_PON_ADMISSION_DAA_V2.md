@@ -155,6 +155,24 @@ failure evidence from finite service qualification; `--require-qualified`
 fails unless the frozen conditions hold. Native failure, timeout and incomplete
 coverage are retained; there is no automatic retry for green.
 
+Stored credit can be stale while unbooked time-based refill would already let a
+new request start. The sampler therefore also records the existing read-only
+`observe_credit_freshness()` snapshot: its actual flow and original refill
+watermark age are captured under the same account lock. The reader independently
+recomputes full-age refill, the reservation-adjusted ceiling and signed debt.
+It adds a conservative, upward-rounded refill allowance for the entire sampling
+interval. Only an end-of-sample paid-credit upper bound strictly below 100 ms,
+with more than 1.9 s of actual paid CPU and the original clock/account checks,
+can count as depletion. Neither worker saturation nor a stale low balance is
+enough. This observes an instant inside the honest round, not continuous
+exhaustion for the whole round; the observation never calls actual refill or
+changes the resource supply.
+
+The [retained local observations](../../../../evidence/pon-pure-admission-daa-v2-local/README.md)
+include the initial failed workload and its telemetry defects. A subsequent
+measurement of corrected telemetry cannot replace the original failure or turn
+shared local hardware into the declared CI or receiver-kernel envelope.
+
 ## PoN-specific DAA and confirmation experiment
 
 The [conditional risk model](../../../../formal/pon-nakamoto-v1/pon_risk_model_v1.py)

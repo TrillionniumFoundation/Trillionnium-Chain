@@ -24,6 +24,8 @@ BURST, RESERVE, REFILL = 2_000_000_000, 100_000_000, 250_000_000
 ATTACKERS, CALL_CAP, ROUNDS = 24, 480, 3
 PROOF_BYTES, PREFIX_BYTES = 4 + 3 * 4096 * 4 + 32, 4 + 3 * 4096 * 4
 MAX_FILE_BYTES = 64 * 1024 * 1024
+U64_MAX = (1 << 64) - 1
+I128_MIN, I128_MAX = -(1 << 127), (1 << 127) - 1
 
 
 def require(condition, message):
@@ -142,7 +144,8 @@ def flow(value, *, settled=False):
     for key in ("credited_refill_ns", "discarded_refill_ns", "booked_reservation_ns",
                 "live_debited_cpu_ns", "settlement_residual_cpu_ns", "settled_full_cpu_ns",
                 "unsettled_known_live_cpu_ns", "paid_cpu_debit_ns", "settlement_discard_ns", "live_owners"):
-        require(natural(value[key]), "unknown or negative actual CPU counter")
+        require(natural(value[key]) and value[key] <= U64_MAX,
+                "unknown, negative or overflowing actual CPU counter")
     require(value["live_owners"] <= 2
             and value["booked_reservation_ns"] == value["live_owners"] * RESERVE, "reservation identity")
     paid = value["live_debited_cpu_ns"] + value["settlement_residual_cpu_ns"]
@@ -151,6 +154,8 @@ def flow(value, *, settled=False):
     remaining = value["credited_refill_ns"] - paid - value["settlement_discard_ns"]
     require(type(value["remaining_paid_credit_ns"]) is int
             and type(value["stored_credit_ns"]) is int
+            and I128_MIN <= value["remaining_paid_credit_ns"] <= I128_MAX
+            and I128_MIN <= value["stored_credit_ns"] <= I128_MAX
             and remaining == value["remaining_paid_credit_ns"]
             and remaining - value["booked_reservation_ns"] == value["stored_credit_ns"], "actual credit conservation")
     if settled:
@@ -172,11 +177,53 @@ def admission(value, expected_bytes):
             "FIFO accounting")
 
 
+def freshness_upper_bound(sample):
+    value = sample["credit_freshness"]
+    if value is None:
+        return None
+    require(type(value) is dict
+            and value["schema"] == "public-v3-local-cpu-credit-freshness-v1", "freshness schema")
+    f = value["actual_flow"]
+    require(flow(f), "unknown freshness flow")
+    for key in ("watermark_age_ns", "projected_credited_refill_ns", "projected_discarded_refill_ns"):
+        require(natural(value[key]) and value[key] <= U64_MAX, "integer freshness refill counter")
+    for key in ("projected_stored_credit_ns", "projected_paid_credit_ns"):
+        require(type(value[key]) is int and I128_MIN <= value[key] <= I128_MAX,
+                "signed freshness credit")
+    require(type(value["projected_scalar_start_eligible"]) is bool, "freshness eligibility type")
+    stored, booked = f["stored_credit_ns"], f["booked_reservation_ns"]
+    ceiling = BURST - booked
+    require(stored <= ceiling, "freshness reservation ceiling")
+    # Age is the entire original watermark age, not a clamped sampling interval.
+    # These projected refill fields are increments, not cumulative flow totals.
+    offered = value["watermark_age_ns"] * REFILL // 1_000_000_000
+    projected = min(stored + offered, ceiling)
+    credited, discarded = projected - stored, stored + offered - projected
+    require(value["projected_stored_credit_ns"] == projected
+            and value["projected_credited_refill_ns"] == credited
+            and value["projected_discarded_refill_ns"] == discarded
+            and value["projected_paid_credit_ns"] == projected + booked,
+            "freshness original refill projection")
+    require(f["credited_refill_ns"] + credited <= U64_MAX
+            and f["discarded_refill_ns"] + discarded <= U64_MAX, "freshness cumulative refill overflow")
+    require(value["projected_scalar_start_eligible"] is
+            (f["live_owners"] < 2 and projected >= RESERVE), "freshness scalar eligibility")
+    require(all(natural(sample[k]) and sample[k] <= U64_MAX for k in ("started_ns", "ended_ns"))
+            and sample["started_ns"] <= sample["ended_ns"], "freshness sample interval")
+    # The read happened inside the entire interval. Allowing its full refill
+    # duration gives an upper bound at sample end, even if the lock read was
+    # early. Independent raw budget/flow reads may legitimately differ.
+    elapsed = sample["ended_ns"] - sample["started_ns"]
+    tail_refill = (elapsed * REFILL + 999_999_999) // 1_000_000_000
+    return value["projected_paid_credit_ns"] + tail_refill
+
+
 def depleted(sample):
-    f = sample["flow"]
+    upper_bound = freshness_upper_bound(sample)
+    f = sample["credit_freshness"]["actual_flow"] if upper_bound is not None else None
     return (f is not None and sample["clock_failures"] == 0
             and sample["budget"]["accounting_unavailable"] is False
-            and f["remaining_paid_credit_ns"] < RESERVE and f["paid_cpu_debit_ns"] > BURST - RESERVE)
+            and upper_bound < RESERVE and f["paid_cpu_debit_ns"] > BURST - RESERVE)
 
 
 def call(row):
@@ -348,7 +395,8 @@ def check_phase(report, business):
         flow(sample["flow"])
         admission(sample["admission"], memory)
         require(natural(sample["clock_failures"]), "CPU clock failure counter")
-        require(sample["depleted"] is depleted(sample), "reservation-only or invented depletion")
+        require(sample["depleted"] is depleted(sample),
+                "reservation-only, stale-refill or invented depletion")
     attacks, attack_bodies, actors_healthy = attack_calls(report, business)
     honest_bodies = {p["body"] for p in business}
     records, coverage = observation_index(report, attack_bodies, honest_bodies)
@@ -487,6 +535,7 @@ def check_phase(report, business):
             "fixed_64_slot_churn_required": churn_required,
             "fixed_64_slot_churn_qualified": churn_observed,
             "actual_paid_cpu_ns": report["final_flow"]["paid_cpu_debit_ns"] if settled else None,
+            "depletion_basis": "same-lock flow with original refill projection and full-sample-interval upper bound; not continuous whole-round exhaustion",
             "depletion_samples": sum(depleted(s) for s in samples)}
 
 

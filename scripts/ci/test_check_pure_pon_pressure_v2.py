@@ -30,6 +30,18 @@ def budget(flow):
             "worker_limit": 2}
 
 
+def credit_freshness(flow, age=0):
+    offered = age * reader.REFILL // 1_000_000_000
+    stored = min(flow["stored_credit_ns"] + offered, reader.BURST - flow["booked_reservation_ns"])
+    return {"schema": "public-v3-local-cpu-credit-freshness-v1", "watermark_age_ns": age,
+            "actual_flow": copy.deepcopy(flow),
+            "projected_credited_refill_ns": stored - flow["stored_credit_ns"],
+            "projected_discarded_refill_ns": flow["stored_credit_ns"] + offered - stored,
+            "projected_stored_credit_ns": stored,
+            "projected_paid_credit_ns": stored + flow["booked_reservation_ns"],
+            "projected_scalar_start_eligible": flow["live_owners"] < 2 and stored >= reader.RESERVE}
+
+
 def admission():
     return {"schema": "public-pure-pon-admission-observation-v2", "waiting": 0,
             "registered": 0, "started": 0, "cancelled": 0,
@@ -140,6 +152,7 @@ def phase(name, business):
         sample_flow = cpu_flow(2_300_000_000, 2_350_000_000) if index == 2 else cpu_flow(100_000_000, 200_000_000)
         sample = {"started_ns": start + 500_000_000, "ended_ns": start + 501_000_000,
                   "budget": budget(sample_flow), "flow": sample_flow, "admission": admission(),
+                  "credit_freshness": credit_freshness(sample_flow),
                   "clock_failures": 0, "depleted": index == 2}
         result["samples"].append(sample)
         before = {"started_ns": start, "ended_ns": start + 1, "rejections": cumulative.copy()}
@@ -193,9 +206,130 @@ class QualificationControls(unittest.TestCase):
     def test_reservations_are_not_paid_exhaustion(self):
         value = copy.deepcopy(self.base)
         f = cpu_flow(2_000_000_000, 2_150_000_000, 2)
-        value["samples"][2].update(flow=f, budget=budget(f))
+        value["samples"][2].update(flow=f, budget=budget(f), credit_freshness=credit_freshness(f))
         with self.assertRaisesRegex(ValueError, "reservation-only"):
             reader.check_phase(value, self.business)
+
+    def test_unbooked_refill_disqualifies_a_stale_low_balance(self):
+        value = copy.deepcopy(self.base)
+        sample = value["samples"][2]
+        sample["credit_freshness"] = credit_freshness(sample["flow"], 200_000_000)
+        self.assertEqual(sample["flow"]["remaining_paid_credit_ns"], 50_000_000)
+        self.assertEqual(reader.freshness_upper_bound(sample), 100_250_000)
+        with self.assertRaisesRegex(ValueError, "stale-refill"):
+            reader.check_phase(value, self.business)
+        sample["depleted"] = False
+        value["rounds"][2]["depletion_observed_during_round"] = False
+        result = reader.check_phase(value, self.business)
+        self.assertTrue(result["service_qualified"])
+        self.assertFalse(result["finite_qualification"])
+        # The complete watermark age remains relevant even after an idle gap.
+        sample["credit_freshness"] = credit_freshness(sample["flow"], 4_000_000_000)
+        self.assertEqual(reader.freshness_upper_bound(sample), 1_050_250_000)
+
+    def test_refill_projection_keeps_reservation_aware_cap_and_discard(self):
+        sample = copy.deepcopy(self.base["samples"][2])
+        f = cpu_flow(2_300_000_000, 4_100_000_000, 2)
+        sample.update(flow=f, budget=budget(f), credit_freshness=credit_freshness(f, 2_000_000_000))
+        fresh = sample["credit_freshness"]
+        self.assertEqual(fresh["projected_stored_credit_ns"], 1_800_000_000)
+        self.assertEqual(fresh["projected_credited_refill_ns"], 200_000_000)
+        self.assertEqual(fresh["projected_discarded_refill_ns"], 300_000_000)
+        self.assertEqual(reader.freshness_upper_bound(sample), 2_000_250_000)
+        self.assertFalse(fresh["projected_scalar_start_eligible"])
+        self.assertFalse(reader.depleted(sample))
+        fresh.update(projected_stored_credit_ns=2_000_000_000,
+                     projected_credited_refill_ns=400_000_000,
+                     projected_discarded_refill_ns=100_000_000,
+                     projected_paid_credit_ns=2_200_000_000)
+        with self.assertRaisesRegex(ValueError, "refill projection"):
+            reader.freshness_upper_bound(sample)
+
+    def test_negative_debt_is_not_clamped_and_two_owners_do_not_prove_depletion(self):
+        sample = copy.deepcopy(self.base["samples"][2])
+        f = cpu_flow(2_300_000_000, 2_250_000_000, 1)
+        sample.update(flow=f, budget=budget(f), credit_freshness=credit_freshness(f, 200_000_000))
+        self.assertEqual(sample["credit_freshness"]["projected_stored_credit_ns"], -100_000_000)
+        self.assertEqual(reader.freshness_upper_bound(sample), 250_000)
+        self.assertTrue(reader.depleted(sample))
+        sample["credit_freshness"].update(projected_stored_credit_ns=0,
+                                          projected_paid_credit_ns=100_000_000)
+        with self.assertRaisesRegex(ValueError, "refill projection"):
+            reader.freshness_upper_bound(sample)
+        f = cpu_flow(2_300_000_000, 2_450_000_000, 2)
+        sample.update(flow=f, budget=budget(f), credit_freshness=credit_freshness(f))
+        self.assertFalse(sample["credit_freshness"]["projected_scalar_start_eligible"])
+        self.assertFalse(reader.depleted(sample))
+
+    def test_full_sample_interval_and_strict_reserve_boundary(self):
+        sample = copy.deepcopy(self.base["samples"][2])
+        f = cpu_flow(2_300_000_000, 2_399_999_999)
+        sample.update(flow=f, budget=budget(f), credit_freshness=credit_freshness(f))
+        sample["ended_ns"] = sample["started_ns"]
+        self.assertTrue(reader.depleted(sample))
+        sample["ended_ns"] += 1
+        self.assertEqual(reader.freshness_upper_bound(sample), 100_000_000)
+        self.assertFalse(reader.depleted(sample))
+        sample["ended_ns"] = sample["started_ns"] - 1
+        with self.assertRaisesRegex(ValueError, "sample interval"):
+            reader.freshness_upper_bound(sample)
+
+    def test_unknown_freshness_stays_visible_and_cannot_qualify(self):
+        value = copy.deepcopy(self.base)
+        value["samples"][2]["credit_freshness"] = None
+        with self.assertRaisesRegex(ValueError, "invented depletion"):
+            reader.check_phase(value, self.business)
+        value["samples"][2]["depleted"] = False
+        value["rounds"][2]["depletion_observed_during_round"] = False
+        result = reader.check_phase(value, self.business)
+        self.assertTrue(result["service_qualified"])
+        self.assertFalse(result["finite_qualification"])
+        self.assertIsNone(value["samples"][2]["credit_freshness"])
+
+    def test_independent_raw_flow_can_differ_but_same_lock_flow_must_balance(self):
+        value = copy.deepcopy(self.base)
+        f = cpu_flow(2_299_999_999, 2_350_000_000)
+        value["samples"][2].update(flow=f, budget=budget(f))
+        self.assertTrue(reader.check_phase(value, self.business)["finite_qualification"])
+        value["samples"][2]["credit_freshness"]["actual_flow"]["paid_cpu_debit_ns"] -= 1
+        with self.assertRaisesRegex(ValueError, "paid CPU double count"):
+            reader.check_phase(value, self.business)
+
+    def test_freshness_types_schema_and_exact_fields_cannot_be_forged(self):
+        controls = [("watermark_age_ns", False), ("watermark_age_ns", 0.0),
+                    ("watermark_age_ns", 1 << 64), ("projected_credited_refill_ns", False),
+                    ("projected_discarded_refill_ns", 0.0), ("projected_paid_credit_ns", 50_000_000.0),
+                    ("projected_stored_credit_ns", False), ("projected_paid_credit_ns", 1 << 127),
+                    ("projected_scalar_start_eligible", 0), ("projected_scalar_start_eligible", True),
+                    ("schema", "other"), ("projected_paid_credit_ns", 49_999_999)]
+        for key, changed in controls:
+            with self.subTest(key=key, changed=changed):
+                sample = copy.deepcopy(self.base["samples"][2])
+                sample["credit_freshness"][key] = changed
+                with self.assertRaises(ValueError):
+                    reader.freshness_upper_bound(sample)
+
+    def test_freshness_projection_cannot_overflow_original_cumulative_counters(self):
+        sample = copy.deepcopy(self.base["samples"][2])
+        f = cpu_flow(reader.U64_MAX, reader.U64_MAX)
+        sample["credit_freshness"] = credit_freshness(f, 4)
+        with self.assertRaisesRegex(ValueError, "cumulative refill overflow"):
+            reader.freshness_upper_bound(sample)
+        f = cpu_flow(0, reader.BURST)
+        f["discarded_refill_ns"] = reader.U64_MAX
+        sample["credit_freshness"] = credit_freshness(f, 4)
+        with self.assertRaisesRegex(ValueError, "cumulative refill overflow"):
+            reader.freshness_upper_bound(sample)
+
+    def test_fresh_depletion_sample_must_be_wholly_inside_honest_round(self):
+        value = copy.deepcopy(self.base)
+        end = value["rounds"][2]["ended_ns"]
+        value["samples"][2].update(started_ns=end - 1, ended_ns=end + 1)
+        self.assertTrue(reader.depleted(value["samples"][2]))
+        value["rounds"][2]["depletion_observed_during_round"] = False
+        result = reader.check_phase(value, self.business)
+        self.assertTrue(result["service_qualified"])
+        self.assertFalse(result["finite_qualification"])
 
     def test_depletion_after_honest_work_does_not_qualify(self):
         value = copy.deepcopy(self.base)
