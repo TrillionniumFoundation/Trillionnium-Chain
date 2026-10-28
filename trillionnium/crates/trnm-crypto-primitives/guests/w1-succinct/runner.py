@@ -344,7 +344,15 @@ def loopback(args):
     finally:
         report["observed_total_wall_ns"]=time.monotonic_ns()-started
         write(d/"result.json",report)
-    print(json.dumps({"schema":report["schema"],"outcome":report["outcome"]}))
+    # Every child is already reaped by its supervisor. Anchor the full byte
+    # inventory in the outer wrapper's subsequently hashed stdout, then
+    # independently recheck it after that wrapper closes the entire family.
+    material={"schema":"pon-w1-succinct-loopback-output-material-v1",
+              "files":loopback_inventory(args.out),"complete_proof_authority":False}
+    require(set(material["files"])==LOOPBACK_FILES,"unexpected complete loopback file set")
+    write(args.out/"loopback-output-material.json",material)
+    print(json.dumps({"schema":report["schema"],"outcome":report["outcome"],
+        "output_material":digest(args.out/"loopback-output-material.json"),"output_files":16}))
 
 PHASE_TIMEOUTS = {"native-toolchain-install":900,"fetch":900,"install":900,
     "original-host-build":1800,"succinct-build":1800,"succinct-tests":1800,
@@ -391,6 +399,146 @@ def closed_phase(out,name,source):
                 digest(out/logged["path"],16*1024**2)=={k:logged[k] for k in ("bytes","sha256")},
                 "phase raw log changed")
     return row
+
+LOOPBACK_FILES = frozenset(["result.json"]
+    + [f"{which}/{file}" for which in ("before","after") for file in ("supervisor.json","process.log")]
+    + ["transport/"+file for file in ("transport.json","ready.json","sender-config.json",
+                                    "receiver-config.json","received.bin")]
+    + [f"transport/{role}/{file}" for role in ("sender","receiver")
+       for file in ("supervisor.json","process.log","worker.json")])
+
+def loopback_inventory(out):
+    return frozen.bounded_file_index(out/"loopback")
+
+def nanosecond_costs(row, *keys):
+    for key in keys:
+        require(type(row.get(key)) is int and row[key]>=0,"missing or invalid measured nanoseconds: "+key)
+
+def inner_process(row, rss, wall, exact):
+    _closed_success(row,rss)
+    nanosecond_costs(row,"observed_wall_ns","observer_cpu_ns","child_cpu_ns")
+    budget=row["budget"]
+    require(set(budget)=={"rss_bytes","wall_seconds"} and budget["rss_bytes"]==rss,
+            "inner supervisor budget profile differs")
+    seconds=budget["wall_seconds"]
+    require(type(seconds) in (int,float) and math.isfinite(seconds) and 0<seconds<=wall,
+            "inner supervisor deadline unavailable")
+    require(not exact or seconds==wall,"native verification deadline differs")
+
+def check_transport(out, record, expected):
+    directory=out/"loopback/transport"
+    require(read_json(directory/"transport.json")==record,"transport JSON changed")
+    require(record["schema"]=="pon-w1-loopback-transport-v1" and record["outcome"]=="complete"
+            and record["application_payload_bytes"]==expected["bytes"]
+            and record["application_framing_bytes"]==160 and record["wall_cap_seconds"]==30
+            and record["rss_cap_per_role_bytes"]==128*1024**2
+            and record["wan_measured"] is False and record["tcp_ip_bytes_measured"] is False,
+            "actual complete-certificate transport profile differs")
+    nanosecond_costs(record,"observed_wall_ns","parent_observer_cpu_ns","deadline_ns")
+    require({k:record["received"][k] for k in ("bytes","sha256")}==expected
+            and digest(directory/"received.bin",3*1024**2)==expected,"received certificate bytes changed")
+    ready=read_json(directory/"ready.json")
+    require(record["ready"]==ready and ready["schema"]=="pon-w1-loopback-ready-v1"
+            and ready["address"][0]=="127.0.0.1" and type(ready["address"][1]) is int
+            and 0<ready["address"][1]<65536,"actual local TCP endpoint differs")
+    require(set(record["roles"])=={"sender","receiver"},"transport role set differs")
+    for role, item in record["roles"].items():
+        process=read_json(directory/role/"supervisor.json")
+        require(item["process"]==process,"transport supervisor changed")
+        inner_process(process,128*1024**2,30,False)
+        worker=read_json(directory/role/"worker.json")
+        # The pinned byte worker writes worker.json in finally and deliberately
+        # prints no success JSON. Its raw (normally empty) process.log is part
+        # of the phase-anchored sixteen-file inventory, not a result source.
+        require(item["worker"]==worker and worker["schema"]=="pon-w1-loopback-worker-observation-v1",
+                "actual transport worker record changed")
+        require(worker["role"]==role and worker["outcome"]=="complete"
+                and worker["nonce_sha256"]==ready["nonce_sha256"]
+                and worker["address_space_limit_bytes"]==128*1024**2
+                and worker["cryptographic_proof_verified"] is False,"transport worker profile differs")
+        nanosecond_costs(worker,"observed_wall_ns")
+        require(worker["observed_wall_ns"]<=process["observed_wall_ns"]
+                and process["observed_wall_ns"]<=record["observed_wall_ns"],"inconsistent transport durations")
+    sender=record["roles"]["sender"]["worker"]
+    receiver=record["roles"]["receiver"]["worker"]
+    require(sender["pid"]!=receiver["pid"]==ready["pid"]
+            and sender["peer"]==receiver["local"]==ready["address"]
+            and sender["local"]==receiver["peer"],"transport processes/endpoints differ")
+    require(sender["payload_bytes_sendall_completed"]==receiver["payload_bytes_received"]==expected["bytes"]
+            and receiver["payload_sha256"]==expected["sha256"] and sender["partial_send_unknown"] is False
+            and sender["header_bytes_sent"]==receiver["header_bytes_received"]==80
+            and sender["ack_bytes_received"]==receiver["ack_bytes_sent"]==80
+            and receiver["file_fsync_completed"] is True and receiver["directory_fsync_completed"] is True,
+            "actual complete transfer bytes or durable receive differ")
+
+def check_loopback(out):
+    p=check_inputs(out/"original")
+    paths={"helper":out/"native/trnm-w1-succinct-research","elf":out/"original/guest.bin",
+           "input":out/"original/input.bin","receipt":out/"succinct.bin","certificate":out/"certificate.bin"}
+    current={k:digest(path,64*1024**2 if k=="helper" else 3*1024**2) for k,path in paths.items()}
+    row=read_json(out/"loopback/result.json")
+    require(row["schema"]=="pon-w1-succinct-loopback-v1" and row["outcome"]=="complete"
+            and row["material_before"]==row["material_after"]
+            and set(row["material_before"])==set(paths),"loopback material closure differs")
+    for key, expected in current.items():
+        require({k:row["material_before"][key][k] for k in ("bytes","sha256")}==expected,
+                "loopback source material changed")
+    nanosecond_costs(row,"observed_total_wall_ns")
+    require(set(row["verification"])=={"before","after"},"native verification role set differs")
+    for which,item in row["verification"].items():
+        directory=out/"loopback"/which
+        process=read_json(directory/"supervisor.json")
+        require(process==item["process"],"native supervisor changed")
+        inner_process(process,8*1024**3,900,True)
+        result=read_single_result(directory/"process.log","pon-w1-succinct-certificate-verify-v1")
+        require(result==item["result"] and result["real_succinct_stark_verified"] is True
+                and result["verification_uses_received_input_and_receipt"] is True
+                and result["certificate_bytes"]==current["certificate"]["bytes"]
+                and result["certificate_sha256"]==current["certificate"]["sha256"]
+                and result["receipt_bytes"]==current["receipt"]["bytes"]
+                and result["receipt_sha256"]==current["receipt"]["sha256"]
+                and result["public_input_bytes"]==49640 and result["public_input_sha256"]==current["input"]["sha256"]
+                and result["image_id"]==p["image_id"] and result["claim_digest"]==p["claim_digest"]
+                and result["consensus_authority"] is False and result["native_w1_recomputed"] is False,
+                "actual received-certificate official verification changed")
+        nanosecond_costs(result,"verify_certificate_wall_ns","verify_certificate_process_cpu_ns")
+    check_transport(out,row["transport"],current["certificate"])
+    require(frozen.checked_bytes(out/"loopback/transport/received.bin",3*1024**2)
+            ==frozen.checked_bytes(paths["certificate"],3*1024**2),"received certificate differs byte for byte")
+    require(row["observed_total_wall_ns"]>=row["transport"]["observed_wall_ns"]
+            +sum(x["process"]["observed_wall_ns"] for x in row["verification"].values()),
+            "total loopback duration undercounts actual sequential observations")
+    return row
+
+def check_loopback_anchor(out, phase):
+    printed=read_single_result(out/"loopback.stdout.log","pon-w1-succinct-loopback-v1")
+    material=read_json(out/"loopback-output-material.json")
+    require(printed["outcome"]=="complete" and printed["output_files"]==16
+            and printed["output_material"]==digest(out/"loopback-output-material.json")
+            and material["schema"]=="pon-w1-succinct-loopback-output-material-v1"
+            and set(material["files"])==LOOPBACK_FILES
+            and material["files"]==loopback_inventory(out),"loopback output material changed after actual phase")
+    # The outer raw stdout hash is checked only after the whole owned family
+    # has closed. It anchors the material record, which anchors all 16 files.
+    require(phase["owned_process_group_empty"] is True,"loopback family not closed")
+    return material
+
+def finalize_loopback(out):
+    record={"schema":"pon-w1-succinct-loopback-after-cleanup-v1","complete":False,
+            "new_work_started":False,"known_files":{},"outer_phase":None}
+    try:
+        if (out/"loopback").exists():record["known_files"]=loopback_inventory(out)
+        if (out/"loopback.process.json").exists():record["outer_phase"]=read_json(out/"loopback.process.json")
+        phase=closed_phase(out,"loopback",identity()["source_sha"])
+        material=check_loopback_anchor(out,phase)
+        check_loopback(out)
+        record.update(complete=True,output_material=digest(out/"loopback-output-material.json"),
+                      known_files=material["files"])
+    except (OSError,ValueError,KeyError,TypeError) as error:
+        record["error"]=repr(error)
+    write(out/"loopback-after-cleanup.json",record)
+    print(json.dumps({"schema":record["schema"],"complete":record["complete"],
+                      "new_work_started":False,"record":digest(out/"loopback-after-cleanup.json")}))
 
 def finalize(out):
     # Pure readback after the outer wrapper has settled its exact family. It
@@ -488,18 +636,14 @@ def report(out):
                 all(type(v) is int and v>=0 for v in sample.values()),"invalid measured verifier sample")
     audit=read_single_result(out/"audit.stdout.log","pon-w1-succinct-audit-v1")
     cases=checked_audit(audit)
-    loop=read_json(out/"loopback/result.json")
-    require(loop["outcome"]=="complete" and loop["material_before"]==loop["material_after"]
-            and loop["transport"]["outcome"]=="complete","real complete loopback unavailable")
-    for which in ("before","after"):
-        row=loop["verification"][which]["result"]
-        require(row["real_succinct_stark_verified"] is True and row["receipt_sha256"]==expected["sha256"],
-                "loopback proof verification not bound")
-        require(row["certificate_sha256"]==finished["certificate_wire_sha256"]
-                and row["certificate_bytes"]==finished["certificate_wire_bytes"]
-                and row["public_input_sha256"]==p["input_files"]["input.bin"]["sha256"]
-                and row["verification_uses_received_input_and_receipt"] is True,
-                "loopback did not verify the actual received full certificate")
+    loop_settled=read_json(out/"loopback-after-cleanup.json")
+    material=check_loopback_anchor(out,phases["loopback"])
+    require(loop_settled["complete"] is True and loop_settled["new_work_started"] is False
+            and loop_settled["outer_phase"]==phases["loopback"]
+            and loop_settled["known_files"]==material["files"]
+            and loop_settled["output_material"]==digest(out/"loopback-output-material.json"),
+            "actual after-cleanup loopback material is not closed")
+    loop=check_loopback(out)
     baseline=read_single_result(out/"original-verify.stdout.log","pon-w1-risc0-research-v1","verify")
     require(baseline["real_composite_stark_verified"] is True and baseline["receipt_bytes"]==15862780,
             "same-host original Composite baseline unavailable")
@@ -510,7 +654,7 @@ def report(out):
         "phase_cpu_seconds":sum(v["user_cpu_seconds"]+v["system_cpu_seconds"] for v in phases.values()),
         "phase_wall_seconds_sum":sum(v["wall_seconds"] for v in phases.values()),
         "cpu_accounting":"outer phase totals only; stage costs are included in compress and must not be added again",
-        "phase_cost_exclusions":["GitHub checkout and runner provisioning","preflight and source-identity readers",
+        "phase_cost_exclusions":["GitHub checkout and runner provisioning","preflight, source-identity readers and after-cleanup byte readers",
                                  "record copies and final report writing","artifact upload"],
         "finish":finished,"verification":verified,"benchmark":benchmark,
         "verify_median_wall_ns":median,"same_host_original_verification":baseline,
@@ -525,7 +669,7 @@ def report(out):
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("command",choices=("fetch","install","prove","loopback","report","finalize"))
+    parser.add_argument("command",choices=("fetch","install","prove","loopback","report","finalize","finalize-loopback"))
     parser.add_argument("--out",type=Path,required=True);parser.add_argument("--helper",type=Path)
     parser.add_argument("--r0vm",type=Path);parser.add_argument("--dest",type=Path)
     args=parser.parse_args();policy()
@@ -534,6 +678,7 @@ def main():
     elif args.command=="prove":prove(args)
     elif args.command=="loopback":loopback(args)
     elif args.command=="finalize":finalize(args.out)
+    elif args.command=="finalize-loopback":finalize_loopback(args.out)
     else:report(args.out)
 
 if __name__=="__main__":

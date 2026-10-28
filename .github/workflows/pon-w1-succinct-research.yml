@@ -96,6 +96,9 @@ jobs:
           python3 "$LEGACY/measure_step.py" --out "$OUT" --name benchmark --timeout 900 -- "$OUT/native/trnm-w1-succinct-research" benchmark "$OUT/original/guest.bin" "$OUT/original/input.bin" "$OUT/succinct.bin"
           python3 "$LEGACY/measure_step.py" --out "$OUT" --name audit --timeout 900 -- "$OUT/native/trnm-w1-succinct-research" audit "$OUT/original/guest.bin" "$OUT/original/input.bin" "$OUT/succinct.bin"
           python3 "$LEGACY/measure_step.py" --out "$OUT" --name loopback --timeout 1900 -- python3 "$SUCCINCT/runner.py" loopback --out "$OUT" --helper "$OUT/native/trnm-w1-succinct-research"
+      - name: Close full certificate transport material after actual family cleanup
+        if: always()
+        run: python3 "$SUCCINCT/runner.py" finalize-loopback --out "$OUT"
       - name: Verify exact source after every success or failure
         if: always()
         run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$OUT/source-after.json"

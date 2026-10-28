@@ -1,0 +1,30 @@
+test_actual_tcp_component_records_refuse_cost_and_terminal_substitution (__main__.Controls.test_actual_tcp_component_records_refuse_cost_and_terminal_substitution) ... ERROR
+test_after_cleanup_file_anchor_refuses_changed_missing_and_extra_bytes (__main__.Controls.test_after_cleanup_file_anchor_refuses_changed_missing_and_extra_bytes) ... ok
+test_audit_reader_rejects_substituted_cases_and_unmeasured_costs (__main__.Controls.test_audit_reader_rejects_substituted_cases_and_unmeasured_costs) ... ok
+test_duplicate_json_is_not_last_key_wins (__main__.Controls.test_duplicate_json_is_not_last_key_wins) ... ok
+test_exact_original_leaf_and_contiguous_join_graph (__main__.Controls.test_exact_original_leaf_and_contiguous_join_graph) ... ok
+test_invalid_terminal_cannot_close_stage (__main__.Controls.test_invalid_terminal_cannot_close_stage) ... ok
+test_measured_nanoseconds_refuse_negative_boolean_and_nonfinite (__main__.Controls.test_measured_nanoseconds_refuse_negative_boolean_and_nonfinite) ... ok
+test_native_log_duplicates_and_overflow_refuse (__main__.Controls.test_native_log_duplicates_and_overflow_refuse) ... ok
+test_nonfinite_json_and_nonregular_inputs_refused (__main__.Controls.test_nonfinite_json_and_nonregular_inputs_refused) ... ok
+test_original_policy_and_unchanged_budget (__main__.Controls.test_original_policy_and_unchanged_budget) ... ok
+
+======================================================================
+ERROR: test_actual_tcp_component_records_refuse_cost_and_terminal_substitution (__main__.Controls.test_actual_tcp_component_records_refuse_cost_and_terminal_substitution)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/bb9b841c1d43/w1-succinct-report-closure/trillionnium/crates/trnm-crypto-primitives/guests/w1-succinct/test_runner.py", line 82, in test_actual_tcp_component_records_refuse_cost_and_terminal_substitution
+    runner.check_transport(out,record,expected)
+  File "/workspace/scratch/bb9b841c1d43/w1-succinct-report-closure/trillionnium/crates/trnm-crypto-primitives/guests/w1-succinct/runner.py", line 450, in check_transport
+    require(item["worker"]==worker and worker==read_single_result(directory/role/"process.log",
+                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/bb9b841c1d43/w1-succinct-report-closure/trillionnium/crates/trnm-crypto-primitives/guests/w1-succinct/runner.py", line 61, in read_single_result
+    require(len(matches) == 1, "exactly one bounded native result required: " + schema)
+  File "/workspace/scratch/bb9b841c1d43/w1-succinct-report-closure/trillionnium/crates/trnm-crypto-primitives/guests/w1-succinct/runner.py", line 30, in require
+    raise ValueError(message)
+ValueError: exactly one bounded native result required: pon-w1-loopback-worker-observation-v1
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.176s
+
+FAILED (errors=1)

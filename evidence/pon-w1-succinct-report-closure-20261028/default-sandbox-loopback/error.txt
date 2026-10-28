@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "<stdin>", line 9, in <module>
+  File "/workspace/scratch/bb9b841c1d43/w1-succinct-report-closure/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/measure_loopback.py", line 155, in _transfer
+    if error is not None: raise error
+                          ^^^^^^^^^^^
+  File "/workspace/scratch/bb9b841c1d43/w1-succinct-report-closure/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/measure_loopback.py", line 125, in _transfer
+    require(not futures['receiver'].done(),'loopback-receiver-exited-before-ready')
+  File "/workspace/scratch/bb9b841c1d43/w1-succinct-report-closure/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/_loopback_tcp.py", line 21, in require
+    raise ValueError(reason)
+ValueError: loopback-receiver-exited-before-ready

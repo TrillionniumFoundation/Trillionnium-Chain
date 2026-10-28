@@ -4810,3 +4810,18 @@ budget or change the existing 49,188-byte PNW1 codec. All additional costs
 remain separate from the original proof and failed windows; WAN, global
 worst-case invalid input, recursive QROM/PQ-128 qualification and a complete
 from-zero W1 cost are not established by this candidate.
+
+
+### P0 W1 — close full-certificate transport evidence before research publication (2026-10-28)
+
+Independent review of the first transparent-recursion source found that its
+final reader did not bind detailed loopback costs and child terminals to the
+actual underlying files. The [independent repair and retained failures](../../evidence/pon-w1-succinct-report-closure-20261028/README.md)
+anchor all sixteen loopback files in the measured phase stdout, recheck them
+after actual outer-family cleanup, and revalidate native/transport supervisors,
+received certificate bytes, exact input/claim hashes and finite nonnegative
+costs. Ten controls passed, including actual bounded localhost TCP; the first
+sandbox socket refusal and an initial worker-log schema mistake remain
+recorded. Native code, locks, the 123-stage proof graph and all budgets remain
+unchanged. No local native proof or complete Succinct acceptance is claimed;
+the exact published head still requires its original hosted native gates.
