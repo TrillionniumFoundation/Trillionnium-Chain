@@ -1,0 +1,7 @@
+{
+  "source_commit": "8d7741028eb650f0600e61fcab46ff3d14b50767",
+  "source_changed_for_retry": false,
+  "binary_changed_for_retry": false,
+  "failure": "strict guardian could not obtain two complete matching parent graphs within its four original attempts; missing exited PID status rows were not promoted to no descendants",
+  "retry_condition_change": "own Cargo and Clippy subprocesses now terminal; standalone guardian group passes with same source; no observer retry policy relaxed"
+}

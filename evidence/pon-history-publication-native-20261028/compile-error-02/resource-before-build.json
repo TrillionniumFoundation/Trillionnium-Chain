@@ -1,0 +1,17 @@
+{
+  "cgroup": {
+    "memory.current": "6539812864\n",
+    "memory.events": "low 0\nhigh 0\nmax 1412312\noom 1\noom_kill 1\noom_group_kill 0\n",
+    "memory.max": "8589934592\n"
+  },
+  "disk": {
+    "available_bytes": 1762533376,
+    "free_bytes": 3497295872
+  },
+  "exclusive_build_owner_lock_acquired": true,
+  "jobs": 1,
+  "profile_changes": {
+    "CARGO_PROFILE_TEST_DEBUG": "0"
+  },
+  "target_reused": "/tmp/pon-history-epoch-v1-20261028"
+}

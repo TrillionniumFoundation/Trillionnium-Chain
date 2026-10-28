@@ -5,6 +5,8 @@ use policy::{Anchor, Budget, EffectMarker, Frontier, Identity, Operation, Purpos
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeSet;
 
+pub(super) mod publication;
+
 const MAX_RECORD: u64 = 256 * 1024;
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
@@ -64,7 +66,7 @@ impl From<&ServiceMutationCpuSettlement> for CpuReceipt {
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "kebab-case", deny_unknown_fields)]
-enum Event {
+pub(super) enum Event {
     Budget {
         signed: Vec<u8>,
     },
@@ -90,16 +92,28 @@ enum Event {
     CleanClose {
         frontier: Frontier,
     },
+    SettledEpochReconciledV1 {
+        signed: Vec<u8>,
+        closed_process: Vec<u8>,
+    },
+}
+impl Event {
+    fn record_schema(&self) -> &'static str {
+        match self {
+            Self::SettledEpochReconciledV1 { .. } => epoch_recovery_v1::RECORD_SCHEMA,
+            _ => "restricted-history-effect-record-v6",
+        }
+    }
 }
 #[derive(Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
-struct Frame {
-    schema: String,
-    identity_sha256: String,
-    sequence: u64,
-    previous: String,
-    at_ns: u64,
-    event: Event,
+pub(super) struct Frame {
+    pub(super) schema: String,
+    pub(super) identity_sha256: String,
+    pub(super) sequence: u64,
+    pub(super) previous: String,
+    pub(super) at_ns: u64,
+    pub(super) event: Event,
 }
 #[derive(Clone)]
 pub(super) struct Pending {
@@ -107,6 +121,12 @@ pub(super) struct Pending {
     pub intent_sha256: String,
     pub observed_receipt: Option<CpuReceipt>,
     pub budget_expires_ns: u64,
+}
+#[derive(Clone)]
+struct LastSettled {
+    operation: Operation,
+    intent_sha256: String,
+    marker: Option<EffectMarker>,
 }
 #[derive(Clone)]
 struct State {
@@ -121,6 +141,8 @@ struct State {
     pending: Option<Pending>,
     known: u64,
     reconciled_unknown: u64,
+    reconciled_settled_epochs: u64,
+    last_settled: Option<LastSettled>,
     markers: BTreeMap<String, EffectMarker>,
 }
 impl Default for State {
@@ -137,6 +159,8 @@ impl Default for State {
             pending: None,
             known: 0,
             reconciled_unknown: 0,
+            reconciled_settled_epochs: 0,
+            last_settled: None,
             markers: BTreeMap::new(),
         }
     }
@@ -193,6 +217,7 @@ impl State {
                     )?;
                     self.epoch = Some(op.epoch.clone());
                     self.epochs.insert(op.epoch.clone());
+                    self.last_settled = None;
                 } else {
                     ensure(self.epoch.as_ref() == Some(&op.epoch), "HISTORY_V6_EPOCH")?;
                 }
@@ -250,6 +275,11 @@ impl State {
                         .total_cpu_ns
                         .is_some_and(|v| v <= pending.operation.allowance.cpu_ns)
                 {
+                    self.last_settled = Some(LastSettled {
+                        operation: pending.operation.clone(),
+                        intent_sha256: pending.intent_sha256.clone(),
+                        marker: marker.as_deref().cloned(),
+                    });
                     self.pending = None;
                     self.known += 1;
                 } else {
@@ -272,6 +302,7 @@ impl State {
                 // no synthetic zero-valued receipt is emitted and no refund.
                 if pending.operation.purpose == Purpose::Startup {
                     self.epoch = None;
+                    self.last_settled = None;
                 }
                 self.pending = None;
             }
@@ -292,6 +323,7 @@ impl State {
                 self.nonces = recovery.body.request_nonce;
                 self.pending = None;
                 self.epoch = None;
+                self.last_settled = None;
                 self.reconciled_unknown += 1;
             }
             Event::CleanClose { frontier } => {
@@ -301,6 +333,21 @@ impl State {
                     "HISTORY_V6_PENDING_DEBT",
                 )?;
                 self.epoch = None;
+                self.last_settled = None;
+            }
+            Event::SettledEpochReconciledV1 {
+                signed,
+                closed_process,
+            } => {
+                let verified =
+                    epoch_recovery_v1::authenticate(signed, closed_process, identity, at)?;
+                self.check_settled_epoch(&verified, at)?;
+                self.spent = self.spent.add(verified.body.allowance)?;
+                self.nonces = verified.body.request_nonce;
+                self.used.insert(verified.body.reconciliation_id);
+                self.epoch = None;
+                self.last_settled = None;
+                self.reconciled_settled_epochs += 1;
             }
         }
         Ok(())
@@ -344,6 +391,44 @@ impl State {
             )?;
         }
         Ok(())
+    }
+    fn check_settled_epoch(&self, verified: &epoch_recovery_v1::Verified, at: u64) -> Result<()> {
+        ensure(self.pending.is_none(), "HISTORY_EPOCH_V1_PENDING_DEBT")?;
+        let body = &verified.body;
+        let last = self
+            .last_settled
+            .as_ref()
+            .ok_or("HISTORY_EPOCH_V1_NO_SETTLEMENT")?;
+        let frontier = last
+            .marker
+            .as_ref()
+            .map_or(&last.operation.owner_frontier, |m| &m.after);
+        ensure(
+            self.epoch.as_ref() == Some(&body.epoch)
+                && last.operation.epoch == body.epoch
+                && last.operation.operation_id == body.last_operation_id
+                && last.intent_sha256 == body.last_intent_sha256
+                && last.marker == verified.closed.marker
+                && *frontier == body.actual_frontier
+                && self.anchor == body.outside_anchor,
+            "HISTORY_EPOCH_V1_SETTLED_BINDING",
+        )?;
+        let budget = self.budget.as_ref().ok_or("HISTORY_V6_BUDGET_REQUIRED")?;
+        ensure(
+            // This NEW domain permits only post-exit accounting/epoch closure
+            // after the old budget expires. It does not revive that budget's
+            // Startup or effect authority; those old expiry checks stay intact.
+            body.budget_id == budget.budget_id
+                && budget.issued_ns <= at
+                && body.request_nonce > self.nonces
+                && (budget.nonce_first..=budget.nonce_last).contains(&body.request_nonce)
+                && !self.used.contains(&body.reconciliation_id)
+                && self
+                    .spent
+                    .add(body.allowance)?
+                    .fits(budget.lifetime_ceiling),
+            "HISTORY_EPOCH_V1_FRESH_ALLOWANCE",
+        )
     }
 }
 pub(super) fn check_marker(pending: &Pending, marker: &EffectMarker) -> Result<()> {
@@ -405,35 +490,22 @@ impl Journal {
             fs::set_permissions(path, fs::Permissions::from_mode(0o700))?;
             sync_dir(path.parent().ok_or("HISTORY_V6_JOURNAL_PATH")?)?;
         }
-        let dir = OpenOptions::new()
-            .read(true)
-            .custom_flags(libc::O_DIRECTORY | libc::O_NOFOLLOW | libc::O_CLOEXEC)
-            .open(path)?;
-        let metadata = dir.metadata()?;
-        ensure(
-            metadata.is_dir() && metadata.uid() == expected_uid && metadata.mode() & 0o077 == 0,
-            "HISTORY_V6_JOURNAL_MODE",
-        )?;
-        let lock = OpenOptions::new()
-            .read(true)
-            .write(true)
-            .create(true)
-            .truncate(false)
-            .mode(0o600)
-            .custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC)
-            .open(path.join("owner.lock"))?;
-        lock.try_lock_exclusive()?;
-        let mut journal = Self {
-            path: path.to_path_buf(),
-            dir,
-            lock,
-            identity: identity.clone(),
-            expected_uid,
-            state: State::default(),
-        };
-        journal.ready()?;
+        let journal = Self::lock_directory(path, expected_uid, identity, true)?;
+        Self::replay(journal, outside)
+    }
+    pub fn open_existing(
+        path: &Path,
+        expected_uid: u32,
+        identity: &Identity,
+        outside: &Anchor,
+    ) -> Result<Self> {
+        outside.validate()?;
+        let journal = Self::lock_directory(path, expected_uid, identity, false)?;
+        Self::replay(journal, outside)
+    }
+    fn replay(mut journal: Self, outside: &Anchor) -> Result<Self> {
         let mut records = Vec::new();
-        for entry in fs::read_dir(path)? {
+        for entry in fs::read_dir(&journal.path)? {
             let entry = entry?;
             let name = entry
                 .file_name()
@@ -448,6 +520,7 @@ impl Journal {
                 name.len() == 90 && name.ends_with(".json") && name.as_bytes()[20] == b'-',
                 "HISTORY_V6_JOURNAL_TAIL_UNKNOWN",
             )?;
+            ensure(records.len() < 4096, "HISTORY_V6_JOURNAL_CAPACITY")?;
             records.push((name, entry.path()));
         }
         ensure(records.len() <= 4096, "HISTORY_V6_JOURNAL_CAPACITY")?;
@@ -466,6 +539,43 @@ impl Journal {
             journal.state.anchor == *outside,
             "HISTORY_V6_JOURNAL_ROLLBACK",
         )?;
+        journal.ready()?;
+        Ok(journal)
+    }
+    fn lock_directory(
+        path: &Path,
+        expected_uid: u32,
+        identity: &Identity,
+        create_lock: bool,
+    ) -> Result<Self> {
+        identity.validate()?;
+        ensure(path.is_absolute(), "HISTORY_V6_JOURNAL_PATH")?;
+        let dir = OpenOptions::new()
+            .read(true)
+            .custom_flags(libc::O_DIRECTORY | libc::O_NOFOLLOW | libc::O_CLOEXEC)
+            .open(path)?;
+        let metadata = dir.metadata()?;
+        ensure(
+            metadata.is_dir() && metadata.uid() == expected_uid && metadata.mode() & 0o077 == 0,
+            "HISTORY_V6_JOURNAL_MODE",
+        )?;
+        let lock = OpenOptions::new()
+            .read(true)
+            .write(true)
+            .create(create_lock)
+            .truncate(false)
+            .mode(0o600)
+            .custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC)
+            .open(path.join("owner.lock"))?;
+        lock.try_lock_exclusive()?;
+        let journal = Self {
+            path: path.to_path_buf(),
+            dir,
+            lock,
+            identity: identity.clone(),
+            expected_uid,
+            state: State::default(),
+        };
         journal.ready()?;
         Ok(journal)
     }
@@ -513,7 +623,7 @@ impl Journal {
     }
     fn apply_frame(&mut self, frame: Frame, digest: String) -> Result<()> {
         ensure(
-            frame.schema == "restricted-history-effect-record-v6"
+            frame.schema == frame.event.record_schema()
                 && frame.identity_sha256 == self.identity.digest()?
                 && frame.sequence == self.state.anchor.sequence + 1
                 && frame.sequence <= 4096
@@ -531,7 +641,7 @@ impl Journal {
     fn append(&mut self, event: Event) -> Result<()> {
         self.ready()?;
         let frame = Frame {
-            schema: "restricted-history-effect-record-v6".into(),
+            schema: event.record_schema().into(),
             identity_sha256: self.identity.digest()?,
             sequence: self.state.anchor.sequence + 1,
             previous: self.state.anchor.digest.clone(),
@@ -559,10 +669,20 @@ impl Journal {
             .open(&temporary)?;
         file.write_all(&raw)?;
         file.sync_all()?;
+        #[cfg(all(test, target_os = "linux"))]
+        super::tests::publication::append_cut(self, &frame, &raw, "file-synced");
         fs::hard_link(&temporary, &final_path)?;
+        #[cfg(all(test, target_os = "linux"))]
+        super::tests::publication::append_cut(self, &frame, &raw, "linked");
         self.dir.sync_all()?;
+        #[cfg(all(test, target_os = "linux"))]
+        super::tests::publication::append_cut(self, &frame, &raw, "final-synced");
         fs::remove_file(&temporary)?;
+        #[cfg(all(test, target_os = "linux"))]
+        super::tests::publication::append_cut(self, &frame, &raw, "unlinked");
         self.dir.sync_all()?;
+        #[cfg(all(test, target_os = "linux"))]
+        super::tests::publication::append_cut(self, &frame, &raw, "published");
         self.apply_frame(frame, digest)?;
         self.ready()
     }
@@ -615,6 +735,19 @@ impl Journal {
     pub fn check_recovery(&self, recovery: &policy::VerifiedRecovery) -> Result<()> {
         self.state.check_recovery(recovery)
     }
+    pub fn check_settled_epoch(
+        &self,
+        verified: &epoch_recovery_v1::Verified,
+        at: u64,
+    ) -> Result<()> {
+        self.state.check_settled_epoch(verified, at)
+    }
+    pub fn reconcile_settled_epoch(&mut self, signed: &[u8], closed_process: &[u8]) -> Result<()> {
+        self.append(Event::SettledEpochReconciledV1 {
+            signed: signed.to_vec(),
+            closed_process: closed_process.to_vec(),
+        })
+    }
     pub fn close(&mut self, frontier: Frontier) -> Result<()> {
         self.append(Event::CleanClose { frontier })
     }
@@ -629,6 +762,9 @@ impl Journal {
     }
     pub fn identity(&self) -> &Identity {
         &self.identity
+    }
+    pub fn path(&self) -> &Path {
+        &self.path
     }
     pub fn work_nonce(&self, nonce: u64) -> Result<()> {
         let budget = self
@@ -645,6 +781,7 @@ impl Journal {
         serde_json::json!({"schema":"restricted-history-effect-journal-observation-v6", "anchor":self.anchor(),
             "spent":self.state.spent,"used_operations":self.state.used.len(),"request_nonce":self.state.nonces,
             "pending":self.state.pending.as_ref().map(|p|&p.operation.operation_id), "epoch":self.state.epoch,
-            "known_settlements":self.state.known,"unknown_prepaid_reconciliations":self.state.reconciled_unknown})
+            "known_settlements":self.state.known,"unknown_prepaid_reconciliations":self.state.reconciled_unknown,
+            "settled_epoch_reconciliations_v1":self.state.reconciled_settled_epochs})
     }
 }

@@ -1,0 +1,16 @@
+{
+  "schema": "history-publication-parts-readback-v1",
+  "status": "PASS",
+  "frozen_source_commit": "1521ae83831a060e2e8afeabeb130591dc783823",
+  "runtime_tested_commit": "8d7741028eb650f0600e61fcab46ff3d14b50767",
+  "chunks": 5,
+  "chunk_sha256_all_match": true,
+  "concatenation_byte_identical": true,
+  "original_bytes": 20052436,
+  "original_sha256": "5357206a6a8d607166fa83ccd3962d38c2dbe6f78842476829104226677a6222",
+  "decompressed_bytes": 96678560,
+  "decompressed_sha256": "136bbeb0b474dc9d0bcb3c254ab3bf21d47666f4fb4e04957752f69ea905729b",
+  "runtime_execution": false,
+  "full_native_suite_passed": false,
+  "original_failure_records_unchanged": true
+}

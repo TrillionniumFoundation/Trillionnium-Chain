@@ -1,0 +1,70 @@
+{
+  "binary_sha256": "9d7cd5eaa3e4439c6fce7a99ef4c571c023a20e2bac80e3aa9cff64062220492",
+  "clippy": {
+    "base_commit": "44601b92f786613194a6098158abe663296d4f3e",
+    "cargo_lock_sha256": "6efe75ea2f9293e3f0d003d6896e89e795c1ef021b9e15179db4d2e37317b864",
+    "command": [
+      "cargo",
+      "clippy",
+      "--offline",
+      "--locked",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-crypto-primitives",
+      "-p",
+      "trnm-pon-node",
+      "--all-targets",
+      "--all-features",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "environment": {
+      "CARGO_BUILD_JOBS": "1",
+      "CARGO_HOME": "/workspace/scratch/3d4ec372c488/history-cargo-home",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_TARGET_DIR": "/tmp/pon-history-final-20261027"
+    },
+    "finished_unix": 1793128120.6490257,
+    "log_sha256": "b9d1ff2c769de7508f1c9f9f3fafb9ced7ab96ac50041442f3b7bfdae2ccf092",
+    "passed": true,
+    "returncode": 0,
+    "schema": "history-error-provenance-clippy-v1",
+    "source_stable": true,
+    "started_unix": 1793127986.5069163
+  },
+  "full_node": {
+    "complete_terminal_observed": false,
+    "failed": null,
+    "ignored": null,
+    "inventory": 741,
+    "outcome": "TIMEOUT",
+    "outer_returncode": 124,
+    "passed": null,
+    "post_timeout_binary_stable": true,
+    "post_timeout_runner_stable": true,
+    "post_timeout_source_stable": true,
+    "receipt_passed": false,
+    "timeout_seconds": 1200
+  },
+  "full_repository_check": "FAIL: inherited sparse historical evidence link",
+  "non_evidence_source_files_verified": 1608,
+  "non_evidence_source_map_sha256": "1433d1538dd5d3dde42671a35a13e5afb00e7ed023008a1324799becdc2abe92",
+  "original_full_node_01_terminal_observed": false,
+  "parent": "44601b92f786613194a6098158abe663296d4f3e",
+  "production_qualified": false,
+  "schema": "history-error-provenance-final-validation-v1",
+  "targeted_tests": {
+    "failed": 0,
+    "ignored": 0,
+    "passed": 13
+  },
+  "v6_controls": {
+    "failed": 0,
+    "ignored_helpers": 1,
+    "passed": 6
+  },
+  "whole_history_p0_closed": false
+}

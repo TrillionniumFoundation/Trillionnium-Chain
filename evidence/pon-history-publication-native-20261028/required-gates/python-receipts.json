@@ -1,0 +1,50 @@
+[
+  {
+    "name": "guardian",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/ci",
+      "-p",
+      "test_history_effect_v6_guard.py"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.6211080150023918,
+    "log_sha256": "545cf4d518d84d7b2fd457f9ed68fe5cf800587c2608aa41983b77a13011a702"
+  },
+  {
+    "name": "source-integrity-negatives",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/ci",
+      "-p",
+      "test_ci_source_integrity.py"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 16.689232511002047,
+    "log_sha256": "74b2527c62d07db8214081faeb81f2385e3ead8ad23d33ad36441e0561cba1fb"
+  },
+  {
+    "name": "evidence-source-negatives",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/ci",
+      "-p",
+      "test_evidence_sources.py"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 5.084272078995127,
+    "log_sha256": "5623acf290e653a6fd212294ffa06415900c10533b1e6610df40e04a03338938"
+  }
+]

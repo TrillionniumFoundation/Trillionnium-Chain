@@ -7,8 +7,11 @@ import selectors
 import signal
 import subprocess
 import sys
+import tempfile
+import threading
 import time
 import unittest
+from unittest.mock import patch
 
 import history_effect_v6_process_guard as guard
 
@@ -24,6 +27,62 @@ print('READY', flush=True)
 while True:
     time.sleep(0.05)
 """
+
+
+class CompleteObservationPublication(unittest.TestCase):
+    def test_final_name_is_absent_until_complete_bytes_are_synced_and_never_overwritten(self):
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / 'guardian-result.json'
+            before_publish, release = threading.Event(), threading.Event()
+            published, release_published = threading.Event(), threading.Event()
+            original_fsync = os.fsync
+            original_link = os.link
+            errors = []
+
+            def held_sync(fd):
+                if not before_publish.is_set():
+                    before_publish.set()
+                    if not release.wait(5):
+                        raise TimeoutError('publication regression did not release writer')
+                original_fsync(fd)
+
+            def held_link(source, target):
+                original_link(source, target)
+                published.set()
+                if not release_published.wait(5):
+                    raise TimeoutError('publication regression did not release final link')
+
+            def writer():
+                try:
+                    guard.write(path, {'passed': True, 'actual_observation': 1})
+                except BaseException as error:
+                    errors.append(error)
+
+            with patch.object(guard.os, 'fsync', held_sync), patch.object(guard.os, 'link', held_link):
+                thread = threading.Thread(target=writer)
+                thread.start()
+                try:
+                    self.assertTrue(before_publish.wait(5))
+                    self.assertFalse(path.exists(), 'partially published final report became visible')
+                    release.set()
+                    self.assertTrue(published.wait(5))
+                    self.assertEqual(json.loads(path.read_text()), {'passed': True, 'actual_observation': 1})
+                    self.assertEqual(path.stat().st_nlink, 2)
+                finally:
+                    release.set()
+                    release_published.set()
+                    thread.join(5)
+            self.assertFalse(thread.is_alive())
+            self.assertEqual(errors, [])
+            self.assertEqual(json.loads(path.read_text()), {'passed': True, 'actual_observation': 1})
+            self.assertEqual(path.stat().st_mode & 0o777, 0o600)
+            self.assertEqual(path.stat().st_nlink, 1)
+            original = path.read_bytes()
+            with self.assertRaises(FileExistsError):
+                guard.write(path, {'replacement': True})
+            self.assertEqual(path.read_bytes(), original)
+            pending = path.with_name(path.name + '.pending')
+            self.assertEqual(json.loads(pending.read_text()), {'replacement': True})
 
 
 class ActualOwnedObserver(unittest.TestCase):

@@ -2,7 +2,7 @@
 //! Work verifier, CPU epoch, active-state setter or automatic best-tip choice.
 use super::*;
 
-fn private_file(path: &Path, uid: u32) -> Result<File> {
+pub(super) fn private_file(path: &Path, uid: u32) -> Result<File> {
     let file = OpenOptions::new()
         .read(true)
         .write(true)

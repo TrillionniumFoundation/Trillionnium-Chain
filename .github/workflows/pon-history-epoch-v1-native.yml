@@ -1,0 +1,103 @@
+name: History V6 exact-source native recovery
+on:
+  pull_request:
+    paths:
+      - trillionnium/crates/trnm-pon-node/src/store/history_effect_v6.rs
+      - trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/**
+      - trillionnium/crates/trnm-pon-node/src/store.rs
+      - trillionnium/crates/trnm-pon-node/src/operator_checkpoint_tile.rs
+      - trillionnium/crates/trnm-pon-node/src/service_cpu_budget*
+      - trillionnium/Cargo.toml
+      - trillionnium/Cargo.lock
+      - scripts/ci/history_effect_v6_process_guard.py
+      - scripts/ci/test_history_effect_v6_guard.py
+      - scripts/ci/run_history_effect_v6_native.py
+      - scripts/ci/test_history_effect_v6_native_runner.py
+      - .github/workflows/pon-history-epoch-v1-native.yml
+  workflow_dispatch:
+    inputs:
+      source_sha:
+        description: Exact 40-character candidate commit from this repository
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: history-native-${{ github.event.pull_request.head.sha || inputs.source_sha }}
+  cancel-in-progress: false
+jobs:
+  history-native:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 75
+    env:
+      EXPECTED_SOURCE: ${{ github.event.pull_request.head.sha || inputs.source_sha }}
+      PYTHONDONTWRITEBYTECODE: "1"
+      CARGO_BUILD_JOBS: "1"
+      CARGO_INCREMENTAL: "0"
+      RUST_TEST_THREADS: "1"
+    steps:
+      - name: Allocate isolated output and Cargo paths
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/history-native"
+          echo "OUT=$RUNNER_TEMP/history-native" >> "$GITHUB_ENV"
+          echo "CARGO_HOME=$RUNNER_TEMP/history-cargo" >> "$GITHUB_ENV"
+          echo "CARGO_TARGET_DIR=$RUNNER_TEMP/history-target" >> "$GITHUB_ENV"
+          [[ "$EXPECTED_SOURCE" =~ ^[0-9a-f]{40}$ ]]
+      - name: Checkout the exact candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.EXPECTED_SOURCE }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify every tracked byte and original project boundary
+        id: source
+        run: |
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$EXPECTED_SOURCE" --output "$OUT/checkout-source.json"
+          bash scripts/project-preflight.sh --audit
+      - name: Install the pinned release compiler
+        timeout-minutes: 10
+        run: rustup toolchain install 1.95.0 --profile minimal
+      - name: Reject missing or substituted mandatory tests
+        run: python3 -m unittest discover -s scripts/ci -p test_history_effect_v6_native_runner.py -v
+      - name: Build one exact release binary and execute all 15 native tests
+        id: native
+        run: python3 scripts/ci/run_history_effect_v6_native.py --expected-source "$EXPECTED_SOURCE" --out "$OUT/execution"
+      - name: Collect actual terminal state and unchanged source
+        if: always()
+        env:
+          SOURCE_OUTCOME: ${{ steps.source.outcome }}
+          NATIVE_OUTCOME: ${{ steps.native.outcome }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          out = Path(os.environ['OUT'])
+          execution = out / 'execution/terminal.json'
+          result = {'schema': 'history-native-workflow-terminal-v1',
+                    'expected_source': os.environ['EXPECTED_SOURCE'],
+                    'source_step': os.environ['SOURCE_OUTCOME'],
+                    'native_step': os.environ['NATIVE_OUTCOME'],
+                    'actual_execution_terminal_present': execution.is_file(),
+                    'passed': False,
+                    'whole_history_p0_closed': False, 'production_qualified': False}
+          if execution.is_file():
+              result['execution'] = json.loads(execution.read_text())
+              result['passed'] = (result['source_step'] == 'success'
+                                  and result['native_step'] == 'success'
+                                  and result['execution'].get('passed') is True)
+          (out / 'workflow-terminal.json').write_text(json.dumps(result, indent=2) + '\n')
+          PY
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$EXPECTED_SOURCE" --output "$OUT/final-source.json"
+      - name: Retain complete source, logs, process receipts and native fixtures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: history-native-${{ env.EXPECTED_SOURCE }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/history-native/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 30

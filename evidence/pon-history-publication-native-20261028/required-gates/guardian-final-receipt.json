@@ -1,0 +1,16 @@
+{
+  "source_commit": "8d7741028eb650f0600e61fcab46ff3d14b50767",
+  "command": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/ci",
+    "-p",
+    "test_history_effect_v6_guard.py"
+  ],
+  "exit_code": 1,
+  "elapsed_seconds": 3.7399889480002457,
+  "log_sha256": "c077ef269ee9f269b0178f8e906e746659e542c626d38f9c940d9d7bdec74775"
+}

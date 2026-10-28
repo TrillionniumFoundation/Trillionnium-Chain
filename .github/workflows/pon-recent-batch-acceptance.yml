@@ -141,7 +141,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 scripts/ci/test_history_effect_v6_guard.py -v 2>&1 | tee "$OUT/history-v6-observer.log"
-          grep -E '^Ran 3 tests in ' "$OUT/history-v6-observer.log"
+          grep -E '^Ran 4 tests in ' "$OUT/history-v6-observer.log"
           grep -x 'OK' "$OUT/history-v6-observer.log"
       - name: Require V6 prepaid effects, actual unknown-window crash recovery and validation facts
         shell: bash

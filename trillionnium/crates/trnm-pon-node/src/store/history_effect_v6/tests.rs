@@ -7,6 +7,8 @@ use serde_json::json;
 use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
 
 mod process;
+pub(super) mod publication;
+mod settled_epoch;
 
 fn deadline() -> Instant {
     Instant::now() + Duration::from_secs(50)
@@ -93,6 +95,9 @@ struct TestAuthority {
 }
 impl TestAuthority {
     fn new() -> Self {
+        Self::with_budget_lifetime(3_600_000_000_000)
+    }
+    fn with_budget_lifetime(lifetime_ns: u64) -> Self {
         let f = Fixture::new();
         let identity = Identity {
             schema: "restricted-history-effect-identity-v6".into(),
@@ -125,7 +130,7 @@ impl TestAuthority {
             work_nonce_first: 1,
             work_nonce_last: 4096,
             issued_ns: now,
-            expires_ns: now + 3_600_000_000_000,
+            expires_ns: now + lifetime_ns,
         };
         let budget = signed(b'B', &budget_body);
         let input = json!({"schema":"restricted-history-effect-budget-input-v6", "identity":identity,
@@ -701,4 +706,25 @@ fn v6_actual_sigkill_after_activation_commit_recovers_and_advances_again() {
 #[ignore = "mandatory process tests invoke this exact source-bound helper with pinned protected inputs"]
 fn history_effect_v6_process_child_helper() {
     process::child();
+}
+
+#[test]
+fn history_publication_pending_file_fsync_crash_repairs_and_resumes() {
+    process::run("publication-intent-file-synced");
+}
+#[test]
+fn history_publication_two_hardlinks_crash_repairs_and_resumes() {
+    process::run("publication-intent-linked");
+}
+#[test]
+fn history_publication_final_directory_fsync_crash_repairs_and_resumes() {
+    process::run("publication-intent-final-synced");
+}
+#[test]
+fn history_publication_pending_unlink_crash_repairs_and_resumes() {
+    process::run("publication-intent-unlinked");
+}
+#[test]
+fn history_publication_durable_unacknowledged_crash_repairs_and_resumes() {
+    process::run("publication-intent-published");
 }

@@ -438,10 +438,16 @@ impl Node {
             "OWNER_CONTINUOUS_SERVICE_CPU_DOMAIN",
         )?;
         match &self.public_service_cpu {
-            Some(existing) => ensure(
-                existing.shares_domain_with(cpu),
-                "OWNER_PUBLIC_SERVICE_CPU_DOMAIN",
-            ),
+            Some(existing) => {
+                if existing.shares_domain_with(cpu) {
+                    return Ok(());
+                }
+                ensure(
+                    existing.accounting_available(),
+                    "PUBLIC_MUTATION_CPU_UNAVAILABLE",
+                )?;
+                Err(Error::public_service_domain_refusal())
+            }
             None => {
                 self.public_service_cpu = Some(cpu.clone());
                 Ok(())
