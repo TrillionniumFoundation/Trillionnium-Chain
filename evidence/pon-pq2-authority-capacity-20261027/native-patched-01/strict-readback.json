@@ -1,0 +1,34 @@
+{
+  "tests": {
+    "passed": 9,
+    "failed": 0,
+    "ignored": 0,
+    "measured": 0,
+    "filtered_out": 0,
+    "required_executed": [
+      "actual_pq_pool_m06_pon_sql_cold_open_and_heavier_fork_requeue",
+      "dual_key_rotation_preserves_actual_task_permissions_and_reorg_reauthorizes_original_pool",
+      "expiry_equal_header_time_mtp_preview_future_skew_and_overflow_are_explicit",
+      "explicit_namespace_old_codec_context_and_sql_schema_cannot_fall_back",
+      "full_4263_byte_rows_and_packet_have_actual_122_transfer_limit",
+      "interrupted_heavier_reorg_preserves_original_atomic_state_and_recovers_cold",
+      "prior_pq_commitment_actual_legacy_pon_checkpoint_claim_cold_reorg_and_permission_conserve",
+      "randomized_resign_duplicate_requires_real_signature_and_keeps_removal_history",
+      "unregistered_pure_pon_miner_matures_actual_rewards_then_registers_without_whitelist"
+    ],
+    "test_outcomes": {
+      "actual_pq_pool_m06_pon_sql_cold_open_and_heavier_fork_requeue": "ok",
+      "dual_key_rotation_preserves_actual_task_permissions_and_reorg_reauthorizes_original_pool": "ok",
+      "expiry_equal_header_time_mtp_preview_future_skew_and_overflow_are_explicit": "ok",
+      "explicit_namespace_old_codec_context_and_sql_schema_cannot_fall_back": "ok",
+      "full_4263_byte_rows_and_packet_have_actual_122_transfer_limit": "ok",
+      "interrupted_heavier_reorg_preserves_original_atomic_state_and_recovers_cold": "ok",
+      "prior_pq_commitment_actual_legacy_pon_checkpoint_claim_cold_reorg_and_permission_conserve": "ok",
+      "randomized_resign_duplicate_requires_real_signature_and_keeps_removal_history": "ok",
+      "unregistered_pure_pon_miner_matures_actual_rewards_then_registers_without_whitelist": "ok"
+    }
+  },
+  "phase_count": 196,
+  "phase_scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+  "full_original_command_reclassified": false
+}

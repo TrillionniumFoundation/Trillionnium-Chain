@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "python3",
+    "scripts/refresh_distributed_source_inventory.py",
+    "--check"
+  ],
+  "returncode": 0,
+  "wall_seconds": 0.1646824830022524,
+  "source": "3be3d15d6bfb721f3c96848c235f17051eafbd51",
+  "scope": "isolated sparse source, execution of named Python checks only"
+}

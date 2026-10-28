@@ -1,0 +1,241 @@
+test_actual_bytes_are_checked_even_if_status_reports_clean (__main__.TrackedSourceTests.test_actual_bytes_are_checked_even_if_status_reports_clean) ... ok
+test_assume_unchanged_cannot_hide_modified_source (__main__.TrackedSourceTests.test_assume_unchanged_cannot_hide_modified_source) ... ok
+test_executable_mode_checked_even_when_git_ignores_filemode (__main__.TrackedSourceTests.test_executable_mode_checked_even_when_git_ignores_filemode) ... ok
+test_graft_file_is_rejected (__main__.TrackedSourceTests.test_graft_file_is_rejected) ... ok
+test_hidden_index_flag_is_rejected_even_without_changes (__main__.TrackedSourceTests.test_hidden_index_flag_is_rejected_even_without_changes) ... ok
+test_intermediate_directory_symlink_rejected (__main__.TrackedSourceTests.test_intermediate_directory_symlink_rejected) ... ok
+test_new_native_c_bytes_are_verified_without_an_extension_allowlist (__main__.TrackedSourceTests.test_new_native_c_bytes_are_verified_without_an_extension_allowlist) ... ok
+test_nonregular_file_rejected_without_waiting_for_fifo (__main__.TrackedSourceTests.test_nonregular_file_rejected_without_waiting_for_fifo) ... ok
+test_receipt_reuses_raw_source_guard (__main__.TrackedSourceTests.test_receipt_reuses_raw_source_guard) ... ERROR
+test_regular_file_symlink_substitution_rejected (__main__.TrackedSourceTests.test_regular_file_symlink_substitution_rejected) ... ok
+test_replacement_commit_cannot_relabel_different_source (__main__.TrackedSourceTests.test_replacement_commit_cannot_relabel_different_source) ... ok
+test_same_size_stat_cached_change_is_rejected (__main__.TrackedSourceTests.test_same_size_stat_cached_change_is_rejected) ... ok
+test_skip_worktree_cannot_hide_modified_source (__main__.TrackedSourceTests.test_skip_worktree_cannot_hide_modified_source) ... ok
+test_source_fence_checked_retains_actual_failed_observation (__main__.TrackedSourceTests.test_source_fence_checked_retains_actual_failed_observation) ... ERROR
+test_source_fence_clean_child_keeps_actual_success_and_bytes (__main__.TrackedSourceTests.test_source_fence_clean_child_keeps_actual_success_and_bytes) ... ERROR
+test_source_fence_clean_commit_switch_during_command_is_rejected (__main__.TrackedSourceTests.test_source_fence_clean_commit_switch_during_command_is_rejected) ... ERROR
+test_source_fence_clean_wrong_head_cannot_start_child (__main__.TrackedSourceTests.test_source_fence_clean_wrong_head_cannot_start_child) ... ERROR
+test_source_fence_dirty_before_command_cannot_start_child (__main__.TrackedSourceTests.test_source_fence_dirty_before_command_cannot_start_child) ... ERROR
+test_source_fence_dirty_source_preserves_primary_failure (__main__.TrackedSourceTests.test_source_fence_dirty_source_preserves_primary_failure) ... ERROR
+test_source_fence_existing_fuzz_and_supply_callers_pin_every_command (__main__.TrackedSourceTests.test_source_fence_existing_fuzz_and_supply_callers_pin_every_command) ... ok
+test_source_fence_finish_clean_other_commit_cannot_borrow_pass (__main__.TrackedSourceTests.test_source_fence_finish_clean_other_commit_cannot_borrow_pass) ... ERROR
+test_source_fence_finish_dirty_source_cannot_write_pass (__main__.TrackedSourceTests.test_source_fence_finish_dirty_source_cannot_write_pass) ... ERROR
+test_source_fence_finish_requires_initial_pin (__main__.TrackedSourceTests.test_source_fence_finish_requires_initial_pin) ... ERROR
+test_source_fence_finish_valid_source_never_upgrades_existing_failure (__main__.TrackedSourceTests.test_source_fence_finish_valid_source_never_upgrades_existing_failure) ... ERROR
+test_source_fence_index_hidden_child_mutation_still_refuses (__main__.TrackedSourceTests.test_source_fence_index_hidden_child_mutation_still_refuses) ... ERROR
+test_source_fence_keeps_nonzero_primary_error_and_drift (__main__.TrackedSourceTests.test_source_fence_keeps_nonzero_primary_error_and_drift) ... ERROR
+test_source_fence_pin_is_clean_and_does_not_follow_later_changes (__main__.TrackedSourceTests.test_source_fence_pin_is_clean_and_does_not_follow_later_changes) ... ERROR
+test_source_fence_timeout_and_source_failure_preserve_both (__main__.TrackedSourceTests.test_source_fence_timeout_and_source_failure_preserve_both) ... ERROR
+test_source_fence_zero_exit_with_real_dirty_source_is_not_success (__main__.TrackedSourceTests.test_source_fence_zero_exit_with_real_dirty_source_is_not_success) ... ERROR
+test_staged_change_is_rejected (__main__.TrackedSourceTests.test_staged_change_is_rejected) ... ok
+test_subdirectory_is_not_a_complete_source_root (__main__.TrackedSourceTests.test_subdirectory_is_not_a_complete_source_root) ... ok
+test_tracked_symlink_target_change_rejected (__main__.TrackedSourceTests.test_tracked_symlink_target_change_rejected) ... ok
+test_untracked_configuration_cannot_hide_new_source (__main__.TrackedSourceTests.test_untracked_configuration_cannot_hide_new_source) ... ok
+test_valid_raw_files_modes_and_symlink (__main__.TrackedSourceTests.test_valid_raw_files_modes_and_symlink) ... ok
+
+======================================================================
+ERROR: test_receipt_reuses_raw_source_guard (__main__.TrackedSourceTests.test_receipt_reuses_raw_source_guard)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3d4ec372c488/pq-accounts-audit/scripts/ci/test_ci_source_integrity.py", line 167, in test_receipt_reuses_raw_source_guard
+    import ci_observation
+  File "/workspace/scratch/3d4ec372c488/pq-accounts-audit/scripts/ci/ci_observation.py", line 20, in <module>
+    from bounded_process import _darwin_only_exited_leader, _wait_without_reaping
+ModuleNotFoundError: No module named 'bounded_process'
+
+======================================================================
+ERROR: test_source_fence_checked_retains_actual_failed_observation (__main__.TrackedSourceTests.test_source_fence_checked_retains_actual_failed_observation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3d4ec372c488/pq-accounts-audit/scripts/ci/test_ci_source_integrity.py", line 277, in test_source_fence_checked_retains_actual_failed_observation
+    result, _, marker = self._fenced_child(
+                        ^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/3d4ec372c488/pq-accounts-audit/scripts/ci/test_ci_source_integrity.py", line 194, in _fenced_child
+    import ci_observation
+  File "/workspace/scratch/3d4ec372c488/pq-accounts-audit/scripts/ci/ci_observation.py", line 20, in <module>
+    from bounded_process import _darwin_only_exited_leader, _wait_without_reaping
+ModuleNotFoundError: No module named 'bounded_process'
+
+======================================================================
+ERROR: test_source_fence_clean_child_keeps_actual_success_and_bytes (__main__.TrackedSourceTests.test_source_fence_clean_child_keeps_actual_success_and_bytes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3d4ec372c488/pq-accounts-audit/scripts/ci/test_ci_source_integrity.py", line 225, in test_source_fence_clean_child_keeps_actual_success_and_bytes
+    result, log, marker = self._fenced_child('')
+                          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/3d4ec372c488/pq-accounts-audit/scripts/ci/test_ci_source_integrity.py", line 194, in _fenced_child
+    import ci_observation
+  File "/workspace/scratch/3d4ec372c488/pq-accounts-audit/scripts/ci/ci_observation.py", line 20, in <module>
+    from bounded_process import _darwin_only_exited_leader, _wait_without_reaping
+ModuleNotFoundError: No module named 'bounded_process'
+
+======================================================================
+ERROR: test_source_fence_clean_commit_switch_during_command_is_rejected (__main__.TrackedSourceTests.test_source_fence_clean_commit_switch_during_command_is_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3d4ec372c488/pq-accounts-audit/scripts/ci/test_ci_source_integrity.py", line 284, in test_source_fence_clean_commit_switch_during_command_is_rejected
+    result, _, _ = self._fenced_child(
+                   ^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/3d4ec372c488/pq-accounts-audit/scripts/ci/test_ci_source_integrity.py", line 194, in _fenced_child
+    import ci_observation
+  File "/workspace/scratch/3d4ec372c488/pq-accounts-audit/scripts/ci/ci_observation.py", line 20, in <module>
+    from bounded_process import _darwin_only_exited_leader, _wait_without_reaping
+ModuleNotFoundError: No module named 'bounded_process'
+
+======================================================================
+ERROR: test_source_fence_clean_wrong_head_cannot_start_child (__main__.TrackedSourceTests.test_source_fence_clean_wrong_head_cannot_start_child)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3d4ec372c488/pq-accounts-audit/scripts/ci/test_ci_source_integrity.py", line 252, in test_source_fence_clean_wrong_head_cannot_start_child
+    result, _, marker = self._fenced_child('')
+                        ^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/3d4ec372c488/pq-accounts-audit/scripts/ci/test_ci_source_integrity.py", line 194, in _fenced_child
+    import ci_observation
+  File "/workspace/scratch/3d4ec372c488/pq-accounts-audit/scripts/ci/ci_observation.py", line 20, in <module>
+    from bounded_process import _darwin_only_exited_leader, _wait_without_reaping
+ModuleNotFoundError: No module named 'bounded_process'
+
+======================================================================
+ERROR: test_source_fence_dirty_before_command_cannot_start_child (__main__.TrackedSourceTests.test_source_fence_dirty_before_command_cannot_start_child)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3d4ec372c488/pq-accounts-audit/scripts/ci/test_ci_source_integrity.py", line 238, in test_source_fence_dirty_before_command_cannot_start_child
+    result, log, marker = self._fenced_child('raise SystemExit(0)')
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/3d4ec372c488/pq-accounts-audit/scripts/ci/test_ci_source_integrity.py", line 194, in _fenced_child
+    import ci_observation
+  File "/workspace/scratch/3d4ec372c488/pq-accounts-audit/scripts/ci/ci_observation.py", line 20, in <module>
+    from bounded_process import _darwin_only_exited_leader, _wait_without_reaping
+ModuleNotFoundError: No module named 'bounded_process'
+
+======================================================================
+ERROR: test_source_fence_dirty_source_preserves_primary_failure (__main__.TrackedSourceTests.test_source_fence_dirty_source_preserves_primary_failure)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3d4ec372c488/pq-accounts-audit/scripts/ci/test_ci_source_integrity.py", line 360, in test_source_fence_dirty_source_preserves_primary_failure
+    result = self._finish_report(dict(result='FAIL', source_expected=self.head,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/3d4ec372c488/pq-accounts-audit/scripts/ci/test_ci_source_integrity.py", line 215, in _finish_report
+    import ci_observation
+  File "/workspace/scratch/3d4ec372c488/pq-accounts-audit/scripts/ci/ci_observation.py", line 20, in <module>
+    from bounded_process import _darwin_only_exited_leader, _wait_without_reaping
+ModuleNotFoundError: No module named 'bounded_process'
+
+======================================================================
+ERROR: test_source_fence_finish_clean_other_commit_cannot_borrow_pass (__main__.TrackedSourceTests.test_source_fence_finish_clean_other_commit_cannot_borrow_pass)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3d4ec372c488/pq-accounts-audit/scripts/ci/test_ci_source_integrity.py", line 336, in test_source_fence_finish_clean_other_commit_cannot_borrow_pass
+    result = self._finish_report(dict(result='PASS', source_expected=self.head))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/3d4ec372c488/pq-accounts-audit/scripts/ci/test_ci_source_integrity.py", line 215, in _finish_report
+    import ci_observation
+  File "/workspace/scratch/3d4ec372c488/pq-accounts-audit/scripts/ci/ci_observation.py", line 20, in <module>
+    from bounded_process import _darwin_only_exited_leader, _wait_without_reaping
+ModuleNotFoundError: No module named 'bounded_process'
+
+======================================================================
+ERROR: test_source_fence_finish_dirty_source_cannot_write_pass (__main__.TrackedSourceTests.test_source_fence_finish_dirty_source_cannot_write_pass)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3d4ec372c488/pq-accounts-audit/scripts/ci/test_ci_source_integrity.py", line 325, in test_source_fence_finish_dirty_source_cannot_write_pass
+    result = self._finish_report(dict(result='PASS', source_expected=self.head,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/3d4ec372c488/pq-accounts-audit/scripts/ci/test_ci_source_integrity.py", line 215, in _finish_report
+    import ci_observation
+  File "/workspace/scratch/3d4ec372c488/pq-accounts-audit/scripts/ci/ci_observation.py", line 20, in <module>
+    from bounded_process import _darwin_only_exited_leader, _wait_without_reaping
+ModuleNotFoundError: No module named 'bounded_process'
+
+======================================================================
+ERROR: test_source_fence_finish_requires_initial_pin (__main__.TrackedSourceTests.test_source_fence_finish_requires_initial_pin)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3d4ec372c488/pq-accounts-audit/scripts/ci/test_ci_source_integrity.py", line 343, in test_source_fence_finish_requires_initial_pin
+    result = self._finish_report(dict(result='PASS'))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/3d4ec372c488/pq-accounts-audit/scripts/ci/test_ci_source_integrity.py", line 215, in _finish_report
+    import ci_observation
+  File "/workspace/scratch/3d4ec372c488/pq-accounts-audit/scripts/ci/ci_observation.py", line 20, in <module>
+    from bounded_process import _darwin_only_exited_leader, _wait_without_reaping
+ModuleNotFoundError: No module named 'bounded_process'
+
+======================================================================
+ERROR: test_source_fence_finish_valid_source_never_upgrades_existing_failure (__main__.TrackedSourceTests.test_source_fence_finish_valid_source_never_upgrades_existing_failure)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3d4ec372c488/pq-accounts-audit/scripts/ci/test_ci_source_integrity.py", line 349, in test_source_fence_finish_valid_source_never_upgrades_existing_failure
+    result = self._finish_report(dict(result=status, source_expected=self.head,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/3d4ec372c488/pq-accounts-audit/scripts/ci/test_ci_source_integrity.py", line 215, in _finish_report
+    import ci_observation
+  File "/workspace/scratch/3d4ec372c488/pq-accounts-audit/scripts/ci/ci_observation.py", line 20, in <module>
+    from bounded_process import _darwin_only_exited_leader, _wait_without_reaping
+ModuleNotFoundError: No module named 'bounded_process'
+
+======================================================================
+ERROR: test_source_fence_index_hidden_child_mutation_still_refuses (__main__.TrackedSourceTests.test_source_fence_index_hidden_child_mutation_still_refuses)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3d4ec372c488/pq-accounts-audit/scripts/ci/test_ci_source_integrity.py", line 295, in test_source_fence_index_hidden_child_mutation_still_refuses
+    result, _, _ = self._fenced_child(
+                   ^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/3d4ec372c488/pq-accounts-audit/scripts/ci/test_ci_source_integrity.py", line 194, in _fenced_child
+    import ci_observation
+  File "/workspace/scratch/3d4ec372c488/pq-accounts-audit/scripts/ci/ci_observation.py", line 20, in <module>
+    from bounded_process import _darwin_only_exited_leader, _wait_without_reaping
+ModuleNotFoundError: No module named 'bounded_process'
+
+======================================================================
+ERROR: test_source_fence_keeps_nonzero_primary_error_and_drift (__main__.TrackedSourceTests.test_source_fence_keeps_nonzero_primary_error_and_drift)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3d4ec372c488/pq-accounts-audit/scripts/ci/test_ci_source_integrity.py", line 269, in test_source_fence_keeps_nonzero_primary_error_and_drift
+    result, log, _ = self._fenced_child(
+                     ^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/3d4ec372c488/pq-accounts-audit/scripts/ci/test_ci_source_integrity.py", line 194, in _fenced_child
+    import ci_observation
+  File "/workspace/scratch/3d4ec372c488/pq-accounts-audit/scripts/ci/ci_observation.py", line 20, in <module>
+    from bounded_process import _darwin_only_exited_leader, _wait_without_reaping
+ModuleNotFoundError: No module named 'bounded_process'
+
+======================================================================
+ERROR: test_source_fence_pin_is_clean_and_does_not_follow_later_changes (__main__.TrackedSourceTests.test_source_fence_pin_is_clean_and_does_not_follow_later_changes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3d4ec372c488/pq-accounts-audit/scripts/ci/test_ci_source_integrity.py", line 314, in test_source_fence_pin_is_clean_and_does_not_follow_later_changes
+    import ci_observation
+  File "/workspace/scratch/3d4ec372c488/pq-accounts-audit/scripts/ci/ci_observation.py", line 20, in <module>
+    from bounded_process import _darwin_only_exited_leader, _wait_without_reaping
+ModuleNotFoundError: No module named 'bounded_process'
+
+======================================================================
+ERROR: test_source_fence_timeout_and_source_failure_preserve_both (__main__.TrackedSourceTests.test_source_fence_timeout_and_source_failure_preserve_both)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3d4ec372c488/pq-accounts-audit/scripts/ci/test_ci_source_integrity.py", line 304, in test_source_fence_timeout_and_source_failure_preserve_both
+    result, _, marker = self._fenced_child(
+                        ^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/3d4ec372c488/pq-accounts-audit/scripts/ci/test_ci_source_integrity.py", line 194, in _fenced_child
+    import ci_observation
+  File "/workspace/scratch/3d4ec372c488/pq-accounts-audit/scripts/ci/ci_observation.py", line 20, in <module>
+    from bounded_process import _darwin_only_exited_leader, _wait_without_reaping
+ModuleNotFoundError: No module named 'bounded_process'
+
+======================================================================
+ERROR: test_source_fence_zero_exit_with_real_dirty_source_is_not_success (__main__.TrackedSourceTests.test_source_fence_zero_exit_with_real_dirty_source_is_not_success)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3d4ec372c488/pq-accounts-audit/scripts/ci/test_ci_source_integrity.py", line 258, in test_source_fence_zero_exit_with_real_dirty_source_is_not_success
+    result, log, marker = self._fenced_child(
+                          ^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/3d4ec372c488/pq-accounts-audit/scripts/ci/test_ci_source_integrity.py", line 194, in _fenced_child
+    import ci_observation
+  File "/workspace/scratch/3d4ec372c488/pq-accounts-audit/scripts/ci/ci_observation.py", line 20, in <module>
+    from bounded_process import _darwin_only_exited_leader, _wait_without_reaping
+ModuleNotFoundError: No module named 'bounded_process'
+
+----------------------------------------------------------------------
+Ran 34 tests in 6.979s
+
+FAILED (errors=16)

@@ -31,3 +31,6 @@ evidence/pon-client-confirmation-v1/**/*.log -text -whitespace
 
 # New successor qualification retains raw successful and failed output unchanged.
 /evidence/pon-closed-round-v1/**/*.log -text -whitespace
+
+# Raw PQ2 process observations retain exact failure/progress whitespace.
+/evidence/pon-pq2-authority-capacity-20261027/**/*.log -text -whitespace

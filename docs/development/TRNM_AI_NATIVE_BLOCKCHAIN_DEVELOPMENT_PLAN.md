@@ -4631,3 +4631,140 @@ migration. Shor-compromised old Ed authorization cannot be repaired into a
 unique original identity merely by adding a second signature. Neither this
 transfer path nor the existing PQ component closes quantum W1/proof security,
 physical rollback, physical I/O or production activation. **P1 / NO_GO**.
+
+#### P1 native PQ accounts v2 — implementation in progress, 2026-10-27
+
+The approved successor is a fresh `pon-native-pq-accounts-v2` / NPQ2 / PQP2
+namespace. The original NPQ1 and PNX1 profiles stay distinct. M00's actual
+four-case syntax run passed on a recorded 1,156-input working increment;
+this was unverified framing/signing-core validation, not native authentication.
+Exact NPQ2 sizes are 3,751–4,263 for ordinary transfers, 9,272 for dual-key
+rotation and 9,432 for a separately anchored two-PQ-proof migration claim.
+The unchanged 524,288-byte budget therefore has serialization ceilings of
+122 full-memo transfers, 56 rotations or 55 claims, not measured throughput.
+
+The implementation now connects actual current State key resolution to the
+original M06 prepared carrier and reuses the original tags 2–5 task owner.
+Positive transfers or mature PoN rewards can fund pending nonzero accounts;
+registration consumes a real proof and a fee, without a runtime key whitelist.
+Stable account identity survives generation changes; current and retired key
+leaves remain actual State/root inputs. All signature roles bind the complete
+new-domain statement. An authority-changing sender is exclusive within one
+block in either ordering. Ordinary signatures omit repeated SPKI; registration
+and new-key possession carry it. Chain nonces and branch key State can reorg;
+independent local operation/removal history must not rewind.
+
+This is under construction. Original Node constructors currently refuse this
+new profile until its separate opaque wrapper and selected packet/store/pool
+path are complete. Fresh genesis supplies no migration anchor; role 5 refuses
+instead of granting claim authority. The protected trusted-PQ-checkpoint
+constructor, complete conserved account/task/reward import, conditional claim,
+real pool/full-W1/SQLite/cold/reorg tests and the remaining inner signatures
+are required later work in this same slice. Its migration assumption must be
+explicitly independent of the old repository; a copied checkpoint or successful
+Boolean does not supply trust, and Shor-forgeable Ed signatures cannot repair
+original ownership. Registration base fee 200 and rotation/claim 400 plus full
+byte fees are research parameters, not a proven CPU/storage price. Other
+permissions, transport, W1 security and production remain **P1 / NO_GO**.
+
+The first M06 v2 composition gate then actually passed two real-ML-DSA tests
+(90 existing cases filtered, no ignored new cases): funding/registration/current
+State transfer/zero credits and dual-key rotation with original task permissions
+and both-order authority-change exclusion. Its 1,159 input files were unchanged
+before and after. The prior compile failure in a retained Config test initializer
+is preserved; only explicit absence of the new profile was added there. These
+are M06 tests, not full PoN Node admission, cold/reorg, migration or CI acceptance.
+
+The migration implementation now pins an independently selected prior PQ registry
+and a source checkpoint through a protected, non-wire constructor. The source
+account/task/reward projection is complete and conserved; positive unsupported
+liabilities, missing/extra registry entries, ID collisions and untranslatable
+windows refuse. Actual M06 attempt 04 compiled and ran: two existing cases
+passed, two new migration cases failed at the original continuity reward-queue
+check. That failure and its exact 1,160-input source remain retained. The new
+profile now accounts for byte-identical anchored pre-genesis reward rows within
+the original 20-block maturity window, using the original mandatory reward
+payment and original root. Old profiles still require the original exact queue.
+No test result after that correction is claimed here; native source-checkpoint,
+PQP2/store/pool/cold/reorg composition and all production qualification remain open.
+
+M06 attempt 05 then actually passed all four selected PQ2 cases (90 existing
+cases filtered, no ignored new cases), including two genuine-proof migration
+cases and the original funding/rotation cases. The imported reward is paid at
+its translated height by the unchanged mandatory owner, with conservation and
+queue reservations checked before and after. The source Header in these unit
+cases is expressly synthetic and unverified: this result does not qualify
+native source-chain work, Node admission, cold replay or reorganization.
+
+The separate PQP2 packet projection, opaque `PqNodeV2`, selected authenticated
+SQLite schema and original M05 pool adapters now pass an actual locked/offline
+`cargo check -p trnm-pon-node --lib` (1,163 stable inputs). This is compilation,
+not native execution. The raw NPQ2 digest and semantic statement use distinct
+SQL tables; original PNX1/PQP1 constructors and schema IDs remain explicit.
+Real Node cases for open mining/registration, two-key rotation, permissions and
+conditional source migration are next; no successful block or reorg is inferred
+from this metadata check.
+
+The first nine-case native integration metadata gate then failed before execution
+because the fixture accessed private `Settings` fields. Its complete source and
+compiler diagnostics are retained. The corrected source keeps those fields
+private, exposes only read-only signing inputs and adds an original-Node source
+checkpoint exporter that rechecks actual full W1, State/root and the pinned active
+tuple while refusing controlled owner/service paths. The new test target includes
+real reward-funded registration, dual-key task permissions and actual source-chain
+checkpoint/claim/cold/heavier-fork composition. It has not yet executed. Shared-host
+phase timing records are observations, not worst-case CPU or throughput bounds.
+The implementation boundary, exact frame sizes, independent migration trust and
+remaining gates are recorded in
+[Native PQ accounts v2 research](../protocol/pon-nakamoto-v1/details/NATIVE_PQ_ACCOUNTS_V2_RESEARCH.md).
+All prior failed observations and the original acceptance gates remain required.
+
+An independent [authority-command capacity continuation](../../evidence/pon-pq2-authority-capacity-20261027/README.md)
+now executes the distinct 56/57 dual-key-rotation and 55/56 anchored-claim byte
+boundaries through the actual public M06 entry with genuine ML-DSA proofs.
+The final formatted integration source passed both cases, with 112/110 actual
+signature verifications on the accepted cohorts, exact account/nonce/claim
+checks and no imported-supply reissuance. It was compiled as an isolated native
+probe linked to the original frozen compiled PQ2 libraries; this is not a full
+Cargo workspace or Node run. The migration checkpoint in these two component
+controls remains an explicit synthetic trust fixture. The dedicated runner now
+requires both exact integration names, and retains the original compilation,
+sparse-dependency and inventory failures. No protocol, monetary or activation
+rule changed; the original native/reorg/physical/migration-trust exits remain.
+
+That continuation also independently reproduced a native capacity-test failure:
+the fixture compared the original pool's cumulative pending-prefix count to the
+latest group size. The correction now checks both cumulative admission and ready
+metadata counts, retaining the original 122/123 byte-limit and complete Node path.
+The patched full nine-case target then actually passed with zero filtered or
+ignored cases in 64.03s, with 196 valid phase observations and stable test/source
+and 102-library hashes. This includes actual registration, rotation/task
+permissions, source-Node checkpoint migration, cold reopen and heavier-fork
+recovery. It reuses the immutable original compiled libraries and is distinct
+from the incomplete prior Cargo command, whose terminal remains unavailable.
+The two changed Rust targets pass direct warnings-denied Clippy; full workspace,
+physical I/O, other permission paths and independent migration trust remain open.
+
+#### P1 explicit NPQ3 quota continuation — 2026-10-27 (implementation / OPEN)
+
+The [fresh NPQ3 quota profile](../protocol/pon-nakamoto-v1/details/NATIVE_PQ_QUOTA_V3_RESEARCH.md)
+addresses the original quota consumer's inner Ed25519 authorization separately
+from the provider envelope. Both actual ML-DSA proofs now resolve current keys
+from the selected parent State; the consumer comes from the actual quota row.
+The original M06 quota reserve/fee/settlement owner is shared, while original
+NPQ2 codecs, settings and stores retain their exact explicit selection. Fresh
+NPQ3/PQP3 signing, network and SQL namespaces never negotiate a fallback.
+Both participants are included in authority-change exclusion in either block
+order. The provider nonce remains the replay owner; original chain reorganization
+may restore nonce/generation, with actual pool reauthorization required.
+The full dual-proof frame is 7,314 bytes; six M06 controls and four native Node
+controls require the actual 71/72 byte boundary, dual cryptography, rotation,
+replay/fees, complete W1, SQL, detach-cut cold recovery and heavier-fork recheck.
+A separate explicit NPQ3 trusted-migration constructor composes the original
+anchor projection with a same-profile real-source checkpoint/claim/quota-consumer
+case; independent prior trust and source retirement remain external premises.
+Source wiring is not runtime acceptance; the [retained observations](../../evidence/pon-pq-quota-v3-20261027/README.md)
+and exact-head workflow must record actual execution, including failures.
+Remaining tags 6–9/12–24, independent migration/retirement, custody, transport,
+History and Hepta Final-use authority remain open. P1/whole-chain PQ and production
+activation remain false.

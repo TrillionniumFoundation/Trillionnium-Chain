@@ -17,7 +17,9 @@ pub mod native_budget;
 mod operator_continuous_owner;
 mod operator_mining_owner;
 pub mod pinned_account_query;
+pub(crate) mod pq_accounts_v2;
 pub(crate) mod pq_native_v1;
+pub(crate) mod pq_quota_v3;
 #[cfg(test)]
 pub(crate) mod public_reader;
 mod root_rejection_cache;
@@ -699,13 +701,29 @@ impl StateBackend {
         }
     }
     fn selected_ddl(self, settings: &Settings) -> String {
-        if settings.is_native_pq_v1() {
+        if settings.is_native_pq_v3() {
+            pq_quota_v3::ddl(self.ddl())
+        } else if settings.is_native_pq_v2() {
+            pq_accounts_v2::ddl(self.ddl())
+        } else if settings.is_native_pq_v1() {
             pq_native_v1::ddl(self.ddl())
         } else {
             self.ddl()
         }
     }
     fn selected_schema_id(self, settings: &Settings) -> Hash {
+        if settings.is_native_pq_v3() {
+            return hash(
+                b"native-pq-quota-branch-schema-v3",
+                &[self.selected_ddl(settings).as_bytes()],
+            );
+        }
+        if settings.is_native_pq_v2() {
+            return hash(
+                b"native-pq-accounts-branch-schema-v2",
+                &[self.selected_ddl(settings).as_bytes()],
+            );
+        }
         if settings.is_native_pq_v1() {
             return hash(
                 b"native-pq-transfer-branch-schema-v1",
@@ -731,7 +749,7 @@ impl StateBackend {
     }
 }
 struct NativeStoreOpening {
-    pq_explicit: bool,
+    pq_explicit: Option<crate::native_packet::Profile>,
     state_backend: StateBackend,
     growth_observation_only: bool,
     native_io: Option<NativeIoLease>,
@@ -948,7 +966,7 @@ impl Node {
                 continuous: None,
             },
             NativeStoreOpening {
-                pq_explicit: false,
+                pq_explicit: None,
                 state_backend: StateBackend::Legacy,
                 growth_observation_only: false,
                 native_io: Some(native_io),
@@ -997,7 +1015,7 @@ impl Node {
                 continuous: None,
             },
             NativeStoreOpening {
-                pq_explicit: false,
+                pq_explicit: None,
                 state_backend: StateBackend::AuthenticatedV1,
                 growth_observation_only: false,
                 native_io: Some(native_io),
@@ -1195,7 +1213,7 @@ impl Node {
             hook,
             owners,
             NativeStoreOpening {
-                pq_explicit: false,
+                pq_explicit: None,
                 state_backend,
                 growth_observation_only,
                 native_io: None,
@@ -1217,11 +1235,12 @@ impl Node {
             native_io,
         } = opening;
         ensure(
-            settings.is_native_pq_v1() == pq_explicit,
+            settings.packet_profile()
+                == pq_explicit.unwrap_or(crate::native_packet::Profile::Legacy),
             "PQ_EXPLICIT_CONSTRUCTOR_REQUIRED",
         )?;
         ensure(
-            !pq_explicit
+            pq_explicit.is_none()
                 || (state_backend == StateBackend::AuthenticatedV1
                     && native_io.is_none()
                     && !growth_observation_only
@@ -1534,7 +1553,7 @@ impl Node {
             state_backend,
             storage_layout,
             shared_storage_schema: storage_layout.is_shared().then(|| expected_schema.clone()),
-            pq_storage_schema: pq_explicit.then(|| expected_schema.clone()),
+            pq_storage_schema: pq_explicit.map(|_| expected_schema.clone()),
             growth_epoch: None,
             #[cfg(test)]
             expected_schema,
@@ -1588,7 +1607,7 @@ impl Node {
     }
     fn ancestry_context(&self) -> crate::ancestry_index::Context {
         crate::ancestry_index::Context {
-            pq_packet: self.settings.is_native_pq_v1(),
+            pq_packet: self.settings.packet_profile(),
             network: self.settings.network(),
             parameters: self.settings.parameters(),
             genesis: self.settings.genesis(),
@@ -2518,6 +2537,10 @@ impl Node {
             trnm_mvcc_fee::pon_executor::pq_native_v1::validate_state(actual, &self.settings.app)
                 .map_err(|error| Error::from(error).local_integrity())?;
         }
+        if self.settings.is_native_pq_v2() || self.settings.is_native_pq_v3() {
+            trnm_mvcc_fee::pon_executor::pq_accounts_v2::validate_state(actual, &self.settings.app)
+                .map_err(|error| Error::from(error).local_integrity())?;
+        }
         let result = if growth_profile_v2::enabled(&self.settings.app) {
             pon_commitment::growth_reference_snapshot(actual, Some(expected), &self.settings.app)
         } else {
@@ -2928,7 +2951,7 @@ impl Node {
         let projection = statement
             .query_row(
                 params![
-                    crate::pq_native_v1::header_prefix_bytes(self.settings.is_native_pq_v1()),
+                    crate::native_packet::header_prefix_bytes(self.settings.packet_profile()),
                     id.as_slice()
                 ],
                 HeaderProjection::read,
@@ -2957,7 +2980,7 @@ impl Node {
                 root: bytes32(projection.root)?,
             };
             ensure(
-                (crate::pq_native_v1::header_prefix_bytes(self.settings.is_native_pq_v1())
+                (crate::native_packet::header_prefix_bytes(self.settings.packet_profile())
                     + 2
                     + pon_work::PROOF_BYTES..=1_048_576)
                     .contains(&projection.length.ok_or("GENESIS_HAS_NO_PACKET")?),
@@ -2970,9 +2993,9 @@ impl Node {
                 .header_trace_bytes
                 .saturating_add((prefix.len() + trace.len()) as u64);
             self.history_read_counters.set(counters);
-            let header = crate::pq_native_v1::decode_header_projection(
+            let header = crate::native_packet::decode_header_projection(
                 &prefix,
-                self.settings.is_native_pq_v1(),
+                self.settings.packet_profile(),
             )?;
             let trace = bytes32(trace)?;
             ensure(
@@ -3049,7 +3072,7 @@ impl Node {
             start.as_slice(),
             self.settings.genesis().as_slice(),
             maximum,
-            crate::pq_native_v1::header_prefix_bytes(self.settings.is_native_pq_v1()),
+            crate::native_packet::header_prefix_bytes(self.settings.packet_profile()),
         ])?;
         let mut current = start;
         let mut checked = 0_u64;
