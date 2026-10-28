@@ -3950,3 +3950,22 @@ The combined candidate retains the pure-PoN work relation and weight. It does
 not activate a network or complete the independent 72-hour, multi-administrator
 WAN gate. Each combined-source build, runtime and service result must be recorded
 under its own identity before any of those gates can change.
+
+### 2026-10-28: preserve r14 startup failure and repair exact historical readback
+
+Integrated head `8a35529679c3d176fd7586ab1ecf4e004f25af79` reached the
+original hosted campaign, but `load_profiles()` still required r13 while the
+native resource configuration had advanced to r14. Run `40614503458` failed
+before compilation or any native phase. The [retained startup failure and reader
+repair](../../evidence/pon-r14-reader-repair-20261028/README.md) preserves its
+original artifact, log and exact source. It grants zero service or pressure
+acceptance credit.
+
+The Python reader now validates exact r10–r14 raw history, current r14 arithmetic
+and separate historical r13 arithmetic against their respective hashes and
+bases. It does not change resource numbers, phase lengths, confirmations,
+depletion predicates or Rust behavior. The related 31 Python controls pass,
+including historical relabeling and mixed-generation rejection. The workflow
+executes these checks before native preparation. New native results remain
+required; old failed, skipped and unavailable observations remain failures or
+unknowns under their original source identities.

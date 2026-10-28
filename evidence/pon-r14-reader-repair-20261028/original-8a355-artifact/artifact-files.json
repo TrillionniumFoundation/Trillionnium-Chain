@@ -1,0 +1,70 @@
+{
+  "files": [
+    {
+      "bytes": 303,
+      "path": "SCOPE.txt",
+      "sha256": "ce6e78baf98f002f35edf9e67a9c04614f5ba357365acff42313d8dc18542ab9"
+    },
+    {
+      "bytes": 336,
+      "path": "cargo-version.txt",
+      "sha256": "bfd735e736b354adabe72cea24bc1b393488223889b6ab95e974fd8fb963552e"
+    },
+    {
+      "bytes": 3051,
+      "path": "dependency-fetch.log",
+      "sha256": "aa52b5b7028bff560cdae62a7fae3aa043dae3bebc846fe8daacaa19ef60fcfa"
+    },
+    {
+      "bytes": 133,
+      "path": "preflight.log",
+      "sha256": "0b44c512357b1923d3676127e495b65140c8e6b6c037b9e15d099196803ebcf7"
+    },
+    {
+      "bytes": 11327,
+      "path": "run-native-campaign.py",
+      "sha256": "83a0852c183d42250364f5f49bb9f11d33bcb09aba41a8c407d083038d4163f4"
+    },
+    {
+      "bytes": 196,
+      "path": "rustc-version.txt",
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+    },
+    {
+      "bytes": 421,
+      "path": "source-after.json",
+      "sha256": "bb1debeaae4638719748b1ac34ec754d892e7f0a079f279190b4bdb00ae9dfb4"
+    },
+    {
+      "bytes": 421,
+      "path": "source-after.log",
+      "sha256": "bb1debeaae4638719748b1ac34ec754d892e7f0a079f279190b4bdb00ae9dfb4"
+    },
+    {
+      "bytes": 421,
+      "path": "source-before.json",
+      "sha256": "bb1debeaae4638719748b1ac34ec754d892e7f0a079f279190b4bdb00ae9dfb4"
+    },
+    {
+      "bytes": 883,
+      "path": "systemd-run.log",
+      "sha256": "1e5d49448a17e4a138d2f82ba2748bf07bbc01d6bac4e429cfacec256494fa25"
+    },
+    {
+      "bytes": 330,
+      "path": "systemd-version.txt",
+      "sha256": "24e682030f54829600ce9c96ef9d8be4297eb4cd1b11eca8fa7f83c5c4595fc7"
+    },
+    {
+      "bytes": 257,
+      "path": "toolchain-install.log",
+      "sha256": "5f75ffd1584354e30e6c4ead246d2a4807422b220697104064d8a7c296b79d22"
+    },
+    {
+      "bytes": 150,
+      "path": "unit-cleanup.log",
+      "sha256": "9252ad66f07158bfed86469c55e8c28b15af873392e098ffe31128f8ae0ff378"
+    }
+  ],
+  "scope": "retained files including failed or partial runs; not a PASS verdict"
+}

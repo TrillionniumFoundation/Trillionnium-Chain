@@ -19,7 +19,7 @@ from pathlib import Path
 import re
 import sys
 
-from pon_public_v3_policy_read import ARITHMETIC_PROFILE, ARITHMETIC_REVISION, identify_observation
+from pon_public_v3_policy_read import ARITHMETIC_PROFILE, ARITHMETIC_REVISIONS, identify_observation
 
 PHASES = ('decode', 'context_owner_wait', 'context', 'work',
           'admission_owner_wait', 'admission', 'submit_result')
@@ -231,7 +231,7 @@ def phase_summary(phase):
     if 'public_resource_policy' in phase:
         policy = identify_observation(phase['public_resource_policy'])
         base['public_resource_policy'] = policy
-    arithmetic_profile = policy is not None and policy['resource_revision'] == ARITHMETIC_REVISION
+    arithmetic_profile = policy is not None and policy['resource_revision'] in ARITHMETIC_REVISIONS
     require((phase.get('work_profile') == ARITHMETIC_PROFILE if arithmetic_profile
              else 'work_profile' not in phase and 'work_arithmetic_owner' not in phase),
             'explicit matching arithmetic phase profile required')
@@ -242,12 +242,12 @@ def phase_summary(phase):
     if base['startup_or_campaign_error'] is not None:
         base.update(observations_available=False, confirmed_rounds=None)
         return base
-    if policy is not None and policy['resource_revision'] in ('r13', ARITHMETIC_REVISION):
+    if policy is not None and policy.get('base_resource_revision', policy['resource_revision']) in ('r13', 'r14'):
         base['completion_work_observation'] = completion_work_observation(
             phase.get('completion_work_observation'))
     else:
         require('completion_work_observation' not in phase,
-                'completion-work observation requires explicit r13 policy')
+                'completion-work observation requires explicit r13 or r14 policy')
     if arithmetic_profile:
         owner = phase.get('work_arithmetic_owner')
         require(type(owner) is dict and set(owner) == {'schema', 'initial_state', 'slots',
@@ -282,7 +282,8 @@ def phase_summary(phase):
                        'public-v3-local-request-resource-observation-v3'), 'unknown observer schema')
     instrumented = schema.endswith(('-v2', '-v3'))
     if policy is not None:
-        require(schema.endswith('-v3') is (policy['resource_revision'] in ('r11', 'r12', 'r13', ARITHMETIC_REVISION)),
+        require(schema.endswith('-v3') is (policy.get('base_resource_revision', policy['resource_revision'])
+                                         in ('r11', 'r12', 'r13', 'r14')),
                 'public policy and observed CPU scope disagree')
     if schema.endswith('-v3'):
         require(observer.get('cpu_includes_reactor_authentication_or_response_signing') is True
@@ -356,7 +357,7 @@ def analyze(report):
             'mixed backend observations')
     if 'public_resource_policy' in report:
         policy = identify_observation(report['public_resource_policy'])
-        require(arithmetic_profile is (policy['resource_revision'] == ARITHMETIC_REVISION),
+        require(arithmetic_profile is (policy['resource_revision'] in ARITHMETIC_REVISIONS),
                 'campaign schema and arithmetic policy disagree')
         require(all(row.get('public_resource_policy') == report['public_resource_policy']
                     for row in report['phases'] if row.get('startup_or_campaign_error') is None),

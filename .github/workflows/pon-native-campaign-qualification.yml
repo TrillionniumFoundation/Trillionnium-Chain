@@ -11,6 +11,7 @@ on:
       - scripts/pon_public_v3_phase_read.py
       - scripts/pon_public_v3_policy_read.py
       - scripts/ci/test_pon_public_v3_policy_read.py
+      - scripts/ci/test_pon_public_v3_phase_read.py
       - scripts/project-preflight.sh
       - scripts/ci/verify_ci_source.py
       - scripts/ci/run_native_phase_host.py
@@ -68,6 +69,7 @@ jobs:
           from run_pon_w1_native_campaign import validate_build_environment
           validate_build_environment(os.environ)
           PY
+          python3 -m unittest discover -s scripts/ci -p 'test_pon_public_v3*.py' -v 2>&1 | tee "$OUT/policy-reader-controls.log"
       - name: Install the source-pinned compiler and fetch locked dependencies
         id: toolchain
         shell: bash

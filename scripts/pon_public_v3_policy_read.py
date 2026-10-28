@@ -2,7 +2,7 @@
 """Exact signed-policy identifiers, not signature/host/native execution evidence.
 
 Retained observation schemas do not imply a resource revision. In particular,
-r11, r12 and r13 all use the paid-envelope v3 observer. Missing policy stays unknown.
+r11 through r14 use the paid-envelope v3 observer. Missing policy stays unknown.
 """
 from __future__ import annotations
 
@@ -15,7 +15,8 @@ import struct
 CONFIG = Path(__file__).resolve().parents[1] / 'config/pon/public-resource-profile-vectors-v1.json'
 OBSERVATION_SCHEMA = 'public-protected-resource-policy-observation-v1'
 ARITHMETIC_PROFILE = 'arithmetic-facts-v1'
-ARITHMETIC_REVISION = 'r13-arithmetic-facts-v1'
+ARITHMETIC_REVISION = 'r14-arithmetic-facts-v1'
+ARITHMETIC_REVISIONS = frozenset(('r13-arithmetic-facts-v1', ARITHMETIC_REVISION))
 
 
 def require(value, message):
@@ -46,8 +47,14 @@ def policy_id(config, revision, ticket_bits, lifetime_ms):
     return domain_hash(config['hash_domain'], parts)
 
 
-def arithmetic_policy_id(config, ticket_bits, lifetime_ms):
-    entry = config['arithmetic_profile']
+def arithmetic_policy_id(config, ticket_bits, lifetime_ms, *, base_revision=None):
+    current = config['arithmetic_profile']
+    if base_revision is None or base_revision == current['base_revision']:
+        entry = current
+    else:
+        require(base_revision in config['historical_arithmetic_profiles'],
+                'unknown historical arithmetic base revision')
+        entry = config['historical_arithmetic_profiles'][base_revision]
     return domain_hash(entry['hash_domain'], [
         bytes.fromhex(policy_id(config, entry['base_revision'], ticket_bits, lifetime_ms)),
         entry['resource_contract'].encode('ascii'), struct.pack('<Q', entry['slots']),
@@ -67,13 +74,13 @@ def load_profiles(path=CONFIG):
 
     config = json.loads(raw, object_pairs_hook=unique)
     require(config['schema'] == 'pon-public-resource-profile-vectors-v1'
-            and config['current_revision'] == 'r13'
+            and config['current_revision'] == 'r14'
             and config['transport_profile'] == 'public-protected-development-v3'
             and config['hash_domain'] == 'public-protected-profile-v3'
             and [config[key] for key in ('burst_ns', 'refill_ns_per_second',
                                         'start_reserve_ns', 'worker_limit')]
                 == [2_000_000_000, 250_000_000, 100_000_000, 2]
-            and set(config['revisions']) == {'r10', 'r11', 'r12', 'r13'}
+            and set(config['revisions']) == {'r10', 'r11', 'r12', 'r13', 'r14'}
             and config['source_vectors_are_native_acceptance'] is False,
             'original resource numbers and explicit profile history required')
     for revision, entry in config['revisions'].items():
@@ -84,12 +91,16 @@ def load_profiles(path=CONFIG):
         for row in entry['vectors']:
             require(policy_id(config, revision, row['ticket_bits'], row['lifetime_ms'])
                     == row['policy_id'], 'public policy vector hash mismatch')
-    entry = config['arithmetic_profile']
-    require(set(entry) == {'work_profile', 'resource_revision', 'base_revision', 'hash_domain',
+    require(set(config['historical_arithmetic_profiles']) == {'r13'},
+            'exact historical arithmetic profile set required')
+    arithmetic_profiles = [('r14', config['arithmetic_profile']),
+                           *config['historical_arithmetic_profiles'].items()]
+    for revision, entry in arithmetic_profiles:
+        require(set(entry) == {'work_profile', 'resource_revision', 'base_revision', 'hash_domain',
             'source', 'resource_contract', 'slots', 'maximum_software_bytes', 'vectors'}
             and entry['work_profile'] == ARITHMETIC_PROFILE
-            and entry['resource_revision'] == ARITHMETIC_REVISION
-            and entry['base_revision'] == 'r13'
+            and entry['resource_revision'] == revision + '-arithmetic-facts-v1'
+            and entry['base_revision'] == revision
             and entry['hash_domain'] == 'public-protected-profile-v3-arithmetic-facts-v1'
             and entry['source'] == 'trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_arithmetic.rs'
             and type(entry['slots']) is int and entry['slots'] == 64
@@ -97,10 +108,11 @@ def load_profiles(path=CONFIG):
             and entry['maximum_software_bytes'] == 4 * 1024 * 1024
             and [(row['ticket_bits'], row['lifetime_ms']) for row in entry['vectors']]
                 == [(8, 2000), (12, 2000), (16, 2000)],
-            'explicit separate arithmetic profile and original r13 bounds required')
-    for row in entry['vectors']:
-        require(arithmetic_policy_id(config, row['ticket_bits'], row['lifetime_ms']) == row['policy_id'],
-                'arithmetic policy vector hash mismatch')
+            'explicit separate arithmetic profile and original bounds required')
+        for row in entry['vectors']:
+            require(arithmetic_policy_id(config, row['ticket_bits'], row['lifetime_ms'],
+                                         base_revision=revision) == row['policy_id'],
+                    'arithmetic policy vector hash mismatch')
     return config
 
 
@@ -113,12 +125,14 @@ def identify_observation(value):
             and type(value['policy_id']) is str
             and re.fullmatch('[0-9a-f]{64}', value['policy_id']),
             'canonical public policy observation required')
-    matches = [revision for revision in config['revisions']
+    matches = [{'resource_revision': revision} for revision in config['revisions']
                if policy_id(config, revision, value['ticket_bits'], value['lifetime_ms'])
                    == value['policy_id']]
-    if arithmetic_policy_id(config, value['ticket_bits'], value['lifetime_ms']) == value['policy_id']:
-        require(not matches, 'ambiguous public policy identifier')
-        return {**value, 'resource_revision': ARITHMETIC_REVISION,
-                'base_resource_revision': 'r13', 'work_profile': ARITHMETIC_PROFILE}
+    for entry in (config['arithmetic_profile'], *config['historical_arithmetic_profiles'].values()):
+        if arithmetic_policy_id(config, value['ticket_bits'], value['lifetime_ms'],
+                                base_revision=entry['base_revision']) == value['policy_id']:
+            matches.append({'resource_revision': entry['resource_revision'],
+                            'base_resource_revision': entry['base_revision'],
+                            'work_profile': ARITHMETIC_PROFILE})
     require(len(matches) == 1, 'unrecognized or mismatched public policy identifier')
-    return {**value, 'resource_revision': matches[0]}
+    return {**value, **matches[0]}
