@@ -1,0 +1,23 @@
+{
+  "returncode": -15,
+  "wall_seconds": 451.17927630199847,
+  "stop_reason": "disk_floor",
+  "minimum_free_bytes": 734003200,
+  "final_free_bytes": 719753216,
+  "command": [
+    "/workspace/scratch/301262829a43/pon-build-inputs/unpacked/toolchain/bin/cargo",
+    "build",
+    "--offline",
+    "--locked",
+    "--release",
+    "--manifest-path",
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/Cargo.toml",
+    "-p",
+    "trnm-w1-risc0-host",
+    "--bin",
+    "check_frozen_receipts",
+    "-j",
+    "1"
+  ],
+  "prover_started": false
+}

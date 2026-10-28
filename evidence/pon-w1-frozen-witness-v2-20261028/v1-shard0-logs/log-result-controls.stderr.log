@@ -1,0 +1,10 @@
+test_duplicate_identical_results_are_rejected_not_last_line_wins (test_observations.ResultLogControls.test_duplicate_identical_results_are_rejected_not_last_line_wins) ... ok
+test_no_result_cannot_become_a_successful_observation (test_observations.ResultLogControls.test_no_result_cannot_become_a_successful_observation) ... ok
+test_one_result_with_information_preserves_the_entire_raw_log (test_observations.ResultLogControls.test_one_result_with_information_preserves_the_entire_raw_log) ... ok
+test_same_schema_different_operation_is_still_ambiguous (test_observations.ResultLogControls.test_same_schema_different_operation_is_still_ambiguous) ... ok
+test_wrong_operation_or_truncated_result_is_not_a_proof (test_observations.ResultLogControls.test_wrong_operation_or_truncated_result_is_not_a_proof) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.002s
+
+OK

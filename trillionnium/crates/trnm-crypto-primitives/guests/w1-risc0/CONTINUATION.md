@@ -1,5 +1,9 @@
 # Frozen full-W1 session continuation
 
+Historical v1: actual run `40606062524` refused a different runtime entropy
+trace in both shards. This exact-byte guard remains unchanged. The explicit
+[version 2 successor](CONTINUATION_V2.md) proves the retained original witnesses.
+
 This research successor retains the complete failed source-5d9578 artifact and
 continues its missing segment proofs. It changes neither the full W1 relation
 nor the pinned native assembler/verifier. The original attempt remains failed;

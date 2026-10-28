@@ -1,0 +1,82 @@
+{
+  "additional_pow": false,
+  "cargo_check": {
+    "final_helper_after_nofollow_metadata_and_povw_hardening_checked": false,
+    "first_compile_error_retained": true,
+    "passed_on_prior_helper_revision": true
+  },
+  "complete_proof_verified": false,
+  "isolated_draft_scope": "CI must build and pass actual original26 SDK STARK plus native negative controls before starting either frozen36 proving shard",
+  "local_controls": {
+    "ci_contract_passed": true,
+    "exact_selector_commands_passed": true,
+    "frozen_witness": 16,
+    "legacy": 37,
+    "source_integrity_negatives": 34,
+    "whole_backend_fmt_passed": true
+  },
+  "native_26_verification": "NOT_RUN_LOCAL_BINARY_BUILD_STOPPED",
+  "native_negative_controls": "NOT_RUN_LOCAL_BINARY_BUILD_STOPPED",
+  "original_archive_members_checked": 315,
+  "original_source_pins_unchanged": 30,
+  "original_witnesses_checked": 62,
+  "prover_started_local": false,
+  "release_build": {
+    "command": [
+      "/workspace/scratch/301262829a43/pon-build-inputs/unpacked/toolchain/bin/cargo",
+      "build",
+      "--offline",
+      "--locked",
+      "--release",
+      "--manifest-path",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/Cargo.toml",
+      "-p",
+      "trnm-w1-risc0-host",
+      "--bin",
+      "check_frozen_receipts",
+      "-j",
+      "1"
+    ],
+    "final_free_bytes": 719753216,
+    "minimum_free_bytes": 734003200,
+    "prover_started": false,
+    "returncode": -15,
+    "stop_reason": "disk_floor",
+    "wall_seconds": 451.17927630199847
+  },
+  "remote_base": "8a99968115d76069dc4cc49607929f42d183ad1b",
+  "repository_check": "historical missing docs/README.md -> ../evidence/pon-v1/README.md in sparse local checkout",
+  "retained_original_receipts": 26,
+  "schema": "pon-w1-frozen-witness-source-scope-v2",
+  "source_files": {
+    ".github/workflows/pon-complete-w1-proof-research.yml": {
+      "bytes": 38437,
+      "sha256": "e75e2255dd60ebd8519369cd4c5e20cb2700149a091cc59895e9166dbe106af5"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/bin/check_frozen_receipts.rs": {
+      "bytes": 9788,
+      "sha256": "830de1d59d9839a5e4c24da3f77253bc94ebbabded665d06e3df2da24f8adfed"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/segment_continue_v2.py": {
+      "bytes": 27580,
+      "sha256": "012029ae04afc7d9e726e8627fceffe92d121f780c59301e79e9c77559a87b5c"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/segment_frozen_v2.py": {
+      "bytes": 3968,
+      "sha256": "341c7bba421a1368ed3eb5f735e4b52b2deefdf0e7530128552cf3fd1a5b5315"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/segment_witness.py": {
+      "bytes": 6044,
+      "sha256": "92c9dc7550f189bf428e3ba0c4de7185083e4e19190224662242d8ea36af958b"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_frozen_native.py": {
+      "bytes": 3620,
+      "sha256": "6edbcea6e0d95e91e29c25b22340da761e3262d325a74f6444d81800e681b7c1"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_frozen_witness.py": {
+      "bytes": 10579,
+      "sha256": "d829df1588a0b445afcb2e9382619ef0bae01b726197f711d28338b9a2628319"
+    }
+  },
+  "strict_clippy": "NOT_RUN_LOCAL"
+}

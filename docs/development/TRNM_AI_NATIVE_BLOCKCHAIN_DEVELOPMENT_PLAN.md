@@ -4688,3 +4688,26 @@ loopback byte/process controls, not additional independent totals. All original
 failed controls and the historical 26/62-segment failed proof are retained.
 The new heavy continuation, complete receipt and real-proof propagation have
 not executed locally, and GitHub publication has not been confirmed.
+
+### P0 W1 — frozen witness v2 after an actual fresh-trace refusal (2026-10-28)
+
+Actual v1 run `40606062524` at `8a99968115d76069dc4cc49607929f42d183ad1b`
+failed both continuation shards before any missing segment proof. The original
+26 receipts and all 62 original witnesses remain intact. Complete byte decoding
+and the fixed ELF symbol table identify the difference as the SDK's 16-byte
+`MEMORY_IMAGE_ENTROPY` at `0x223b00`, initialized through `SYS_RANDOM` before
+main; the changed segment roots prevent mixing the fresh trace with old receipts.
+
+The [explicit v2 successor](../../trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/CONTINUATION_V2.md)
+continues only exact archived witnesses and retains v1's refusal and logs. The
+30 original source pins, image/input/complete W1 relation, lockfile, disabled
+extra PoW and proof resource/time budgets remain unchanged. Fresh execution is
+an independent complete-statement control. A new native SDK helper binds and
+verifies original and new receipts against frozen per-segment claims, and
+assembly repeats that verification for all 62 before the unchanged Composite
+verifier. [Evidence](../../evidence/pon-w1-frozen-witness-v2-20261028/README.md)
+retains the full original/fresh field comparison and strict provenance controls.
+The original timeout remains spent, and successful continuation would not be a
+from-zero complete-proof cost measurement. Full proof, real hostile-proof costs
+and real proof propagation require a completed new run; they are not closed by
+source changes or local controls.

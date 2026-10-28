@@ -1,0 +1,26 @@
+
+running 11 tests
+test pon_work::full_relation::tests::bounded_reduction_matches_integer_modulo_through_the_full_70_bit_range ... ok
+test pon_work::full_relation::tests::bounded_reduction_never_silently_truncates_an_out_of_range_accumulator ... ok
+test pon_work::full_relation::tests::a_witness_hash_is_only_a_commitment_and_never_complete_work ... ok
+test pon_work::full_relation::tests::malformed_wrong_product_wrong_task_and_missed_ticket_match_native_errors ... ok
+test pon_work::full_relation::tests::public_task_and_target_must_match_the_bound_header ... ok
+test pon_work::full_relation::tests::standalone_guest_parameters_match_the_real_native_work_profile ... ok
+test pon_work::full_relation::tests::committed_first_middle_and_last_prefix_fraud_rejects_even_with_correct_product ... ok
+test pon_work::full_relation::tests::task_and_challenge_hashes_match_the_existing_canonical_domains ... ok
+test pon_work::full_relation::tests::statement_and_input_are_exact_versioned_encodings_with_no_proof_nonce ... ok
+test pon_work::full_relation::tests::every_header_field_is_bound_to_the_full_work_attempt ... ok
+test pon_work::full_relation::tests::complete_guest_relation_matches_all_native_kernels_and_structural_materials ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 105 filtered out; finished in 0.07s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+

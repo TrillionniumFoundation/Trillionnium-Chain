@@ -1,0 +1,60 @@
+    Checking option-ext v0.2.0
+    Checking dirs-sys v0.5.0
+    Checking yaml-rust2 v0.10.4
+   Compiling itertools v0.14.0
+    Checking tempfile v3.27.0
+    Checking ark-crypto-primitives v0.5.0
+    Checking rsa v0.9.10
+   Compiling derive_builder_macro v0.20.2
+    Checking serde_with v3.24.0
+   Compiling regex v1.13.1
+    Checking strum v0.27.2
+    Checking toml v0.8.23
+    Checking cargo-platform v0.1.9
+    Checking include_bytes_aligned v0.1.4
+    Checking no_std_strings v0.1.3
+   Compiling risc0-circuit-keccak v4.0.6
+    Checking risc0-zkos-v1compat v2.2.3
+    Checking cargo_metadata v0.19.2
+   Compiling prost-derive v0.13.5
+    Checking rzup v0.5.2
+   Compiling lazy-regex-proc_macros v3.6.2
+    Checking derive_builder v0.20.2
+    Checking ark-groth16 v0.5.0
+    Checking dirs v6.0.0
+    Checking ark-bn254 v0.5.0
+    Checking bytes v1.12.1
+    Checking downcast-rs v1.2.1
+    Checking docker-generate v0.1.3
+    Checking bit-vec v0.8.0
+    Checking risc0-circuit-rv32im v4.0.5
+    Checking risc0-build v3.0.6
+    Checking rrs-lib v0.1.0
+    Checking prost v0.13.5
+    Checking risc0-groth16 v3.0.5
+    Checking lazy-regex v3.6.2
+    Checking bincode v1.3.3
+    Checking risc0-zkvm v3.0.6
+    Checking trnm-w1-guest-relation v0.1.0 (/workspace/scratch/bb9b841c1d43/w1-followup/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/relation)
+    Checking trnm-w1-risc0-host v0.1.0 (/workspace/scratch/bb9b841c1d43/w1-followup/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host)
+error[E0277]: the trait bound `risc0_zkvm::Digest: FromStr` is not satisfied
+  --> host/src/bin/check_frozen_receipts.rs:43:22
+   |
+43 |     Ok(text(v, key)?.parse()?)
+   |                      ^^^^^ the trait `FromStr` is not implemented for `risc0_zkvm::Digest`
+   |
+   = help: the following other types implement trait `FromStr`:
+             ByteString
+             CString
+             IpAddr
+             Ipv4Addr
+             Ipv6Addr
+             NonZero<i128>
+             NonZero<i16>
+             NonZero<i32>
+           and 100 others
+note: required by a bound in `core::str::<impl str>::parse`
+  --> /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library/core/src/str/mod.rs:2765:4
+
+For more information about this error, try `rustc --explain E0277`.
+error: could not compile `trnm-w1-risc0-host` (bin "check_frozen_receipts") due to 1 previous error
