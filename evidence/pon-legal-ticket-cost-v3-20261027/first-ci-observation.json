@@ -1,0 +1,29 @@
+{
+  "schema": "pon-legal-ticket-first-ci-failure-v1",
+  "source_sha": "409cc73ac01d74e0ca14c010df40a154b926e2e4",
+  "run_id": 40609116618,
+  "both_architectures_failed_before_native_compilation": true,
+  "cause": "Three documentation links climbed one parent directory too far. Original full repository checker refused them.",
+  "jobs": [
+    {
+      "machine": "x86_64",
+      "job_id": 122556016674,
+      "log_bytes": 89645,
+      "log_sha256": "bb2ba0d29aefa40cb17ac2800d65aee04edf1a87205fb450842f20df3dcfd00b"
+    },
+    {
+      "machine": "aarch64",
+      "job_id": 122556016310,
+      "log_bytes": 88191,
+      "log_sha256": "01a4bdd69df5cd4a932c1cf5d29233e13e01dfe9deefffb0621014ec9f30c5ab"
+    }
+  ],
+  "unchanged_executable_source_sha256": {
+    "trillionnium/crates/trnm-pon-node/examples/pon_legal_ticket_cost_v3.rs": "2a97dc25567191aac520a01940d0d6fc3fb5f783bc9af771fdfd140d0b585dad",
+    "scripts/ci/check_legal_ticket_cost_v3.py": "b6953b2157845d3ff319ee9e8d37687de5777ae78fc825d0dca39044959ccf8d",
+    "scripts/ci/test_legal_ticket_cost_v3.py": "5bfb24cb91718da2fbdacc561cf08134f8b6bf9cbaef6bdf5040f16497ce0c7e",
+    ".github/workflows/pon-legal-ticket-cost-v3.yml": "1ccaa72a098d90ece33c55d7473d4230c86a581afc600fe36eadc3def0356c27",
+    "trillionnium/Cargo.lock": "3707ed772a9fd851638dca36e5b2472ac0657de65754480c448d3078107d9ff9"
+  },
+  "native_cost_advantage_observed": false
+}
