@@ -23,11 +23,19 @@ EXPECTED = {
             '56f683ca9a56a872747f58899c2734763303ad547cabf88d24a18c3994517d15',
             '0b32dc1c5cb3cd32f127792c2437a7e06afdee24dfd145e6c147ae9effc93973'],
     'r13': ['c110c3ccb1e229c3a85f4819b1e087fa819c865b50f8bd3ab78d3b8f45206cb2', 'af74a97fd543741369cf58b5e58a16f33ea74d71bb4d4641ab4700827bac1607', 'e171d2942b8abfd95351036464b5451b4562f0854f4b43b2de59c4e486bda176'],
+    'r14': ['6d04725d8e7a84560baf69440b1becd79f47c9f1fb5e63b85f1447400c85d43f',
+            'ffdf6e0653a4c1cb89fd92414ddc75052a100c75423b51b4cf86fed6d9c39258',
+            '82033cc655921f7217f7dba8f844aa5d06a455cceda851af530e91f7672f9ec8'],
 }
 ARITHMETIC_EXPECTED = [
     '14ada27ef062b1e510b7d7ab470e83157e58e7752b8f27a754f64dac614146e3',
     '05ace470c6c6d89dabe506e4fa96555847f34e72ae28255b8eb80c9f9c2dfe5b',
     '8af03f5efd2dc465f6180faddd36561c6f4d42f996ab0f901594c2b460c3d1bd',
+]
+CURRENT_ARITHMETIC_EXPECTED = [
+    'c6d64d3f924ddc6b621e6a7faec04b4a835add3a90c8e3835a7718f77cf95825',
+    '0d462bce59800e8a2e4cfe348d0db06bf9771caa4f9a56df36a7d8b59fe3b507',
+    '4b04f3da433221f69055cc4e78268e0a4f2393ae66b43a849fc58e3c14ca485f',
 ]
 
 
@@ -37,8 +45,9 @@ def observation(revision='r13'):
                 policy_id=EXPECTED[revision][0], ticket_bits=8, lifetime_ms=2000)
 
 
-def arithmetic_observation():
-    return {**observation(), 'policy_id': ARITHMETIC_EXPECTED[0]}
+def arithmetic_observation(revision='r13'):
+    expected = {'r13': ARITHMETIC_EXPECTED, 'r14': CURRENT_ARITHMETIC_EXPECTED}[revision]
+    return {**observation(revision), 'policy_id': expected[0]}
 
 
 class PolicyReaderTests(unittest.TestCase):
@@ -46,12 +55,17 @@ class PolicyReaderTests(unittest.TestCase):
         config = reader.load_profiles()
         entry = config['arithmetic_profile']
         self.assertEqual([reader.arithmetic_policy_id(config, bits, 2000)
-                          for bits in (8, 12, 16)], ARITHMETIC_EXPECTED)
-        value = reader.identify_observation(arithmetic_observation())
-        self.assertEqual((value['resource_revision'], value['base_resource_revision'],
-                          value['work_profile']),
-                         ('r13-arithmetic-facts-v1', 'r13', 'arithmetic-facts-v1'))
-        self.assertNotEqual(value['policy_id'], observation()['policy_id'])
+                          for bits in (8, 12, 16)], CURRENT_ARITHMETIC_EXPECTED)
+        for revision, expected in (('r13', ARITHMETIC_EXPECTED),
+                                   ('r14', CURRENT_ARITHMETIC_EXPECTED)):
+            self.assertEqual([reader.arithmetic_policy_id(config, bits, 2000,
+                                                         base_revision=revision)
+                              for bits in (8, 12, 16)], expected)
+            value = reader.identify_observation(arithmetic_observation(revision))
+            self.assertEqual((value['resource_revision'], value['base_resource_revision'],
+                              value['work_profile']),
+                             (revision + '-arithmetic-facts-v1', revision, 'arithmetic-facts-v1'))
+            self.assertNotEqual(value['policy_id'], observation(revision)['policy_id'])
         source = (reader.CONFIG.parents[2] / entry['source']).read_text()
         self.assertIn('b"' + entry['hash_domain'] + '"', source)
         self.assertEqual(re.findall(r'b"(fresh-empty-server-local-owner/[^\"]+)"', source),
@@ -89,20 +103,40 @@ class PolicyReaderTests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     reader.load_profiles(path)
 
-    def test_independent_r10_r11_r12_r13_vectors_recompute_exactly(self):
+    def test_independent_r10_through_r14_vectors_recompute_exactly(self):
         config = reader.load_profiles()
         for revision, expected in EXPECTED.items():
             self.assertEqual([reader.policy_id(config, revision, bits, 2000)
                               for bits in (8, 12, 16)], expected)
             self.assertEqual(reader.identify_observation(observation(revision))['resource_revision'],
                              revision)
-        self.assertEqual(config['current_revision'], 'r13')
+        self.assertEqual(config['current_revision'], 'r14')
 
     def test_current_rust_contract_and_independent_config_are_byte_identical(self):
         config = reader.load_profiles()
         source = reader.CONFIG.parents[2] / 'trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs'
-        contracts = re.findall(r'b"(resource-revision-r13/[^\"]+)"', source.read_text())
-        self.assertEqual(contracts, [config['revisions']['r13']['resource_contract']])
+        contracts = re.findall(r'b"(resource-revision-r14/[^\"]+)"', source.read_text())
+        self.assertEqual(contracts, [config['revisions']['r14']['resource_contract']])
+
+    def test_historical_arithmetic_cannot_be_omitted_or_relabelled(self):
+        config = reader.load_profiles()
+        for edit in (
+            lambda c: c.update(historical_arithmetic_profiles={}),
+            lambda c: c['historical_arithmetic_profiles'].update(r14=c['arithmetic_profile']),
+            lambda c: c['historical_arithmetic_profiles']['r13'].update(base_revision='r14'),
+            lambda c: c['historical_arithmetic_profiles']['r13'].update(resource_revision='r14-arithmetic-facts-v1'),
+            lambda c: c['historical_arithmetic_profiles']['r13']['vectors'][0].update(policy_id=CURRENT_ARITHMETIC_EXPECTED[0]),
+            lambda c: c['revisions'].pop('r13'),
+        ):
+            changed = copy.deepcopy(config)
+            edit(changed)
+            with tempfile.TemporaryDirectory() as directory:
+                path = Path(directory) / 'profiles.json'
+                path.write_text(json.dumps(changed))
+                with self.subTest(edit=edit), self.assertRaises(ValueError):
+                    reader.load_profiles(path)
+        with self.assertRaisesRegex(ValueError, 'unknown historical'):
+            reader.arithmetic_policy_id(config, 8, 2000, base_revision='r12')
 
     def test_wrong_parameters_unknown_digest_and_claimed_revision_refuse(self):
         for fields in ({'ticket_bits': 12}, {'lifetime_ms': 1999}, {'ticket_bits': True},

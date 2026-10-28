@@ -1,7 +1,7 @@
 //! Mandatory shared-domain metering for the explicit local W1 fact path.
 //! Reuses the existing owner/M06 worker accounting and never allocates a budget.
 use super::public_v3::{ServiceMutationCpuDomain, ServiceMutationCpuSettlement};
-use super::{dispatch_shared_with_execution_control, Request};
+use super::{dispatch_shared_with_execution_observation, Request, SubmitDispatchContext};
 use crate::{ensure, Node, Result};
 use serde_json::Value;
 use std::sync::Mutex;
@@ -40,24 +40,76 @@ pub fn dispatch_shared_with_metered_work_facts(
     // Reject a foreign domain at the original Node owner BEFORE reserving or
     // carrying out any W1/M06 work. This is one checked in-memory identity,
     // not another operation journal or permission granted by the CPU meter.
-    {
+    let operation = {
         let mut owner = super::lock_owner(node, &mut |_| checkpoint())?;
         owner.bind_public_service_cpu_domain(domain)?;
-    }
-    let operation = domain.begin()?;
+        // Bind and reserve under the same original Node lock. A listener's
+        // unknown/close transition cannot slip between these two decisions.
+        domain.begin()?
+    };
     let live = operation.checkpoint_handle();
     let checked = || {
         checkpoint()?;
         live.checkpoint()
     };
-    let native = dispatch_shared_with_execution_control(
+    let native = dispatch_shared_with_execution_observation(
         node,
         request,
         &mut |_| checked(),
         |packet| super::WorkCheckedPacket::verify_with_facts(packet, facts, &mut |_| checked()),
         &ExecutionControl::new(&|_| checked(), operation.worker_accounting()),
+        SubmitDispatchContext {
+            public_proof_before_unowned_task: true,
+            termination_cpu: Some(&live),
+            ..SubmitDispatchContext::default()
+        },
     );
     // No `?` on native: even a failed/cancelled call owes its actual CPU tail.
+    let cpu = operation.finish();
+    Ok(MeteredWorkFactOutcome { native, cpu })
+}
+
+/// Plain W1 analogue of the existing metered fact path: external owner supplies
+/// the ORIGINAL shared CPU domain. No W1 cache, second node or minted allowance.
+/// Both full proof verification and subsequent M06/scoped workers are measured
+/// inside the one operation; a failed native result still pays its CPU tail.
+/// This is an opt-in native integration seam, not a new public protocol/profile
+/// and not a proof that unmetered legacy WAN callers have been eliminated.
+pub fn dispatch_shared_with_metered_w1(
+    node: &Mutex<Node>,
+    request: Request,
+    domain: &ServiceMutationCpuDomain,
+    checkpoint: &(impl Fn() -> Result<()> + Sync),
+) -> Result<MeteredWorkFactOutcome> {
+    ensure(
+        matches!(&request, Request::Submit { .. }),
+        "METERED_W1_SUBMIT_ONLY",
+    )?;
+    checkpoint()?;
+    let operation = {
+        let mut owner = super::lock_owner(node, &mut |_| checkpoint())?;
+        owner.bind_public_service_cpu_domain(domain)?;
+        domain.begin()?
+    };
+    let live = operation.checkpoint_handle();
+    let checked = || {
+        checkpoint()?;
+        live.checkpoint()
+    };
+    let native = dispatch_shared_with_execution_observation(
+        node,
+        request,
+        &mut |_| checked(),
+        |packet| super::WorkCheckedPacket::verify_with_progress(packet, &mut |_| checked()),
+        &ExecutionControl::new(&|_| checked(), operation.worker_accounting()),
+        SubmitDispatchContext {
+            public_proof_before_unowned_task: true,
+            termination_cpu: Some(&live),
+            ..SubmitDispatchContext::default()
+        },
+    );
+    // A local refusal is separate from arithmetic invalidity. Never invent
+    // a successful WorkCheckedPacket after an unmetered cancellation or panic.
     let cpu = operation.finish();
     Ok(MeteredWorkFactOutcome { native, cpu })
 }

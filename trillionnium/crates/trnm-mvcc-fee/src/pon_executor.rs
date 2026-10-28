@@ -22,6 +22,8 @@ pub const LEGACY_TASK_PROFILE: &str = "legacy-task-v1";
 pub const QUALIFIED_DEMANDS: u64 = 16;
 
 pub mod growth;
+#[cfg(feature = "pq-native-openssl")]
+pub mod pq_accounts;
 
 pub type State = BTreeMap<String, Value>;
 pub type Result<T> = std::result::Result<T, &'static str>;
@@ -269,6 +271,8 @@ pub struct Config {
     pub params: Value,
     pub model_registry: Value,
     pub task_windows: Option<std::sync::Arc<crate::model_task_windows_v1::TaskWindows>>,
+    #[cfg(feature = "pq-native-openssl")]
+    pub(crate) pq_accounts: Option<std::sync::Arc<pq_accounts::AccountPolicy>>,
 }
 impl Config {
     /// Installed experimental genesis context, not caller-supplied authority booleans.
@@ -854,6 +858,8 @@ impl Config {
             params,
             model_registry: model,
             task_windows: None,
+            #[cfg(feature = "pq-native-openssl")]
+            pq_accounts: None,
         })
     }
     /// Optional complete owner-pinned data is installed before genesis. A different
@@ -877,6 +883,23 @@ impl Config {
         self.params["work_task_profile"]
             .as_str()
             .unwrap_or(LEGACY_TASK_PROFILE)
+    }
+    pub fn is_pq_account_profile(&self) -> bool {
+        #[cfg(feature = "pq-native-openssl")]
+        if self.pq_accounts.is_some() {
+            return true;
+        }
+        false
+    }
+    fn check_account_profile(&self) -> Result<()> {
+        #[cfg(feature = "pq-native-openssl")]
+        if let Some(policy) = &self.pq_accounts {
+            return policy.check_config(self);
+        }
+        require(
+            self.params["account_authorization_profile"].is_null(),
+            "PQ_ACCOUNT_PROFILE_UNAVAILABLE",
+        )
     }
     pub fn qualified_demand_id(&self, index: u64) -> Result<Hash> {
         require(
@@ -1182,17 +1205,37 @@ fn active_candidate(v: &Value, current: &str, height: u64, cfg: &Config) -> Resu
 // This carrier is private and tied to the exact immutable input and installed context.
 // Main-envelope verification is independent of branch state and is done only once.
 // Consumer-use signatures still depend on the actual quota state and are checked there.
+struct ApplicationCommand {
+    sender: Hash,
+    nonce: u64,
+    fee_limit: u64,
+    tag: u8,
+    payload: Vec<u8>,
+}
 struct Prepared {
-    envelope: Envelope,
+    command: ApplicationCommand,
+    legacy: Option<Envelope>,
     sender: String,
     encoded_len: usize,
+    transaction_id: Vec<u8>,
 }
 /// Read-only native admission check for exact PNX1 canonical context, selected tag,
 /// expiry and strict main signature. This grants no nonce, funds or execution fact.
 pub fn validate_main_envelope(raw: &[u8], height: u64, cfg: &Config) -> Result<Envelope> {
-    Ok(prepare(raw, height, cfg, &AtomicUsize::new(0))?.envelope)
+    require(
+        !cfg.is_pq_account_profile(),
+        "PQ_ACCOUNT_NATIVE_API_REQUIRED",
+    )?;
+    prepare(raw, height, cfg, &AtomicUsize::new(0))?
+        .legacy
+        .ok_or("PQ_ACCOUNT_NATIVE_API_REQUIRED")
 }
 fn prepare(raw: &[u8], height: u64, cfg: &Config, signatures: &AtomicUsize) -> Result<Prepared> {
+    cfg.check_account_profile()?;
+    #[cfg(feature = "pq-native-openssl")]
+    if let Some(policy) = &cfg.pq_accounts {
+        return pq_accounts::prepare(raw, height, cfg, signatures, policy);
+    }
     let tx = Envelope::decode(raw).map_err(|_| "ENCODING")?;
     require(
         !(18..=21).contains(&tx.tag) || qualified_task_lifecycle::enabled(cfg),
@@ -1254,10 +1297,20 @@ fn prepare(raw: &[u8], height: u64, cfg: &Config, signatures: &AtomicUsize) -> R
         &hex::encode(tx.signature),
     )
     .map_err(|_| "SIGNATURE")?;
+    let transaction_id = tx.id().map_err(|_| "ENCODING")?.to_vec();
+    let command = ApplicationCommand {
+        sender: tx.sender,
+        nonce: tx.nonce,
+        fee_limit: tx.fee_limit,
+        tag: tx.tag,
+        payload: tx.payload.clone(),
+    };
     Ok(Prepared {
-        envelope: tx,
+        command,
+        legacy: Some(tx),
         sender,
         encoded_len: raw.len(),
+        transaction_id,
     })
 }
 fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) -> Result<Patch> {
@@ -1270,7 +1323,7 @@ fn apply_prepared_with_account_access(
     cfg: &Config,
     account_access: Option<&AccountPointAccess<'_>>,
 ) -> Result<Patch> {
-    let tx = &prepared.envelope;
+    let tx = &prepared.command;
     let sender = prepared.sender.clone();
     let mut s = View::new(base, account_access);
     let acct = s.account(&sender)?;
@@ -1874,7 +1927,13 @@ fn apply_prepared_with_account_access(
             p.pos = p.bytes.len();
         }
         18..=22 => {
-            qualified_task_lifecycle::apply_verified_command(&mut s, tx, height, cfg)?;
+            // This lifecycle consumes the original authenticated PNX1 statement.
+            // A transfer-only QTX1 command cannot enter its classical owner.
+            let legacy = prepared
+                .legacy
+                .as_ref()
+                .ok_or("PQ_ACCOUNT_OPERATION_UNSUPPORTED")?;
+            qualified_task_lifecycle::apply_verified_command(&mut s, legacy, height, cfg)?;
             p.pos = tx.payload.len();
         }
         14..=17 => {
@@ -1968,7 +2027,7 @@ fn apply_prepared_with_account_access(
     a["nonce"] = json!(tx.nonce);
     s.put(format!("account:{sender}"), a);
     let receipt = canonical(
-        &json!({"tx":hex::encode(tx.id().map_err(|_|"ENCODING")?),"fee":fee,"status":"applied"}),
+        &json!({"tx":hex::encode(&prepared.transaction_id),"fee":fee,"status":"applied"}),
     )?;
     Ok(Patch {
         writes: s.writes,
@@ -2421,6 +2480,11 @@ fn execute_with_state_inputs<E: Send>(
         experimental_skip_repeated_senders,
     } = inputs;
     let progress = control.progress;
+    cfg.check_account_profile()?;
+    require(
+        !cfg.is_pq_account_profile() || observer.is_none(),
+        "PQ_ACCOUNT_OBSERVER_UNSUPPORTED",
+    )?;
     let BlockExecution {
         transactions,
         height,
@@ -2488,7 +2552,7 @@ fn execute_with_state_inputs<E: Send>(
         progress(ExecutionProgress::AfterPrepare { index }).map_err(ExecutionError::Cancelled)?;
         let range_command = prepared
             .as_ref()
-            .is_ok_and(|p| matches!(p.envelope.tag, 2 | 6 | 8 | 10 | 23));
+            .is_ok_and(|p| matches!(p.command.tag, 2 | 6 | 8 | 10 | 23));
         // Prefix-capacity operations remain canonical: do not retain one full
         // prefix snapshot per transaction merely to parallelize shared budgets.
         #[cfg(test)]
@@ -2623,7 +2687,10 @@ fn execute_with_state_inputs<E: Send>(
         if let Some(observer) = observer {
             observer.transaction(
                 index,
-                &prepared.envelope,
+                prepared
+                    .legacy
+                    .as_ref()
+                    .ok_or("PQ_ACCOUNT_OBSERVER_UNSUPPORTED")?,
                 &state,
                 &patch.writes,
                 patch.fee,
@@ -2685,6 +2752,11 @@ fn prepare_block_state_with_inputs(
     monetary_input: Option<&MonetaryObligationInput<'_>>,
     growth: Option<&growth::AccountPartition>,
 ) -> Result<(State, Vec<Vec<u8>>)> {
+    cfg.check_account_profile()?;
+    #[cfg(feature = "pq-native-openssl")]
+    if let Some(policy) = &cfg.pq_accounts {
+        policy.check_state(parent, cfg)?;
+    }
     if let Some(input) = monetary_input {
         require(
             parent
@@ -2774,8 +2846,16 @@ fn check_completed_block_state_with_account_access(
     cfg: &Config,
     account_access: Option<&AccountPointAccess<'_>>,
 ) -> Result<()> {
+    let total = funds(state)?;
+    #[cfg(feature = "pq-native-openssl")]
+    let total = if let Some(policy) = &cfg.pq_accounts {
+        policy.check_state(state, cfg)?;
+        add(total, policy.locked())?
+    } else {
+        total
+    };
     require(
-        funds(state)? == num(state.get("meta:issued").ok_or("STATE")?)?,
+        total == num(state.get("meta:issued").ok_or("STATE")?)?,
         "CONSERVATION",
     )?;
     continuity_v1::check_state_with_account_access(state, height, cfg, account_access)

@@ -1,0 +1,75 @@
+{
+  "schema": "trnm-evidence-file-manifest-v1",
+  "files": [
+    {
+      "path": "0.stderr.txt",
+      "bytes": 124,
+      "sha256": "faeceae7562dab95d104fd88f08549a6045564ea738a46dab3d8dd7fe7aa962a"
+    },
+    {
+      "path": "0.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "1.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "1.stdout.txt",
+      "bytes": 3553,
+      "sha256": "cf83ed50c0602853c3ff4465f0f693339673dae51aecbf81d2a6accb933db63a"
+    },
+    {
+      "path": "2.stderr.txt",
+      "bytes": 124,
+      "sha256": "b28ece4ff112dadcc089d2decaf9ac9b4f24bcecf7ffedfa70cad9481b9c2a1e"
+    },
+    {
+      "path": "2.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "3.result.json",
+      "bytes": 411,
+      "sha256": "dc30ed0f777cd4b1b9fd980f1db1d1023659d7edd0323f92700b50b91a158882"
+    },
+    {
+      "path": "3.stderr.txt",
+      "bytes": 120,
+      "sha256": "7479ccf4017b3e26f2db3b05d0d38e33f6e16fbafa9f738dcb76f747cd27ec99"
+    },
+    {
+      "path": "3.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "README.md",
+      "bytes": 1190,
+      "sha256": "dc043dc82f1edbae61921141abaf697055e87ac66b88dc173eb080dcbfce3794"
+    },
+    {
+      "path": "after-Cargo.lock.txt",
+      "bytes": 26452,
+      "sha256": "1af7193519b236d0f771b53a447ce43414944bc6f14318e15db0692c3df9e173"
+    },
+    {
+      "path": "before-Cargo.lock.txt",
+      "bytes": 26428,
+      "sha256": "8c66c431d35a78b2ec64092728fb0366a4c638f1c3261ebf2fe98a82a3fda64f"
+    },
+    {
+      "path": "lock.diff.txt",
+      "bytes": 391,
+      "sha256": "8ac946af306a7832692f7832d93fe84e5bcf84f8237826aeceb74ad50e8775e7"
+    },
+    {
+      "path": "results.json",
+      "bytes": 1366,
+      "sha256": "c57e42f6541125387e322534235507396658fb114e1033d0f3266b547eca3b17"
+    }
+  ]
+}

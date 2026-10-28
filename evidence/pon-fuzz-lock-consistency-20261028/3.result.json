@@ -1,0 +1,16 @@
+{
+  "schema": "trnm-fuzz-locked-download-r7",
+  "command": [
+    "cargo",
+    "fetch",
+    "--manifest-path",
+    "tests/fuzz/Cargo.toml",
+    "--locked"
+  ],
+  "exit_code": 0,
+  "wall_seconds": 0.31566385700716637,
+  "lock_unchanged": true,
+  "lock_sha256": "1af7193519b236d0f771b53a447ce43414944bc6f14318e15db0692c3df9e173",
+  "native_builds_or_tests_executed": false,
+  "crypto_operations_executed": false
+}

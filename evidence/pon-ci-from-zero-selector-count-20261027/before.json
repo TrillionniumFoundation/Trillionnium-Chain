@@ -1,0 +1,14 @@
+{
+  "command": [
+    "python3",
+    "scripts/ci/test_run_from_zero_native.py"
+  ],
+  "exit_code": 1,
+  "elapsed_seconds": 6.506326265000098,
+  "source_commit": "176822ae27692aefb288f62d751695501da5c0f0",
+  "source_tree": "51ea48ea522aaf5f001b1845ca195a81d6845b47",
+  "log": "/workspace/scratch/56818e4fba76/publication/from-zero-selector-count-20261027/before-176822ae.log",
+  "log_bytes": 15120,
+  "log_sha256": "a9ef6ad5e4c4702deec69b6534113b61c0e6be5acad7d53d42a0bc7bcaf5ba17",
+  "scope": "Original complete Python mock/refusal unit suite; no native Rust or Hepta execution"
+}

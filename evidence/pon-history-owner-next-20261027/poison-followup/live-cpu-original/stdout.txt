@@ -1,0 +1,9 @@
+
+running 4 tests
+test ingress::public_v3::tests::live_cpu_cancels_real_scoped_preparation_and_joins_all_started_threads ... ok
+test ingress::public_v3::tests::live_cpu_partial_debits_and_residual_settlement_do_not_charge_twice ... ok
+test ingress::public_v3::tests::live_cpu_poisoned_request_registry_disables_global_starts_without_deadlock ... ok
+test ingress::public_v3::tests::live_cpu_unknown_sample_and_overflow_disable_future_without_zero_refund ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 765 filtered out; finished in 0.02s
+

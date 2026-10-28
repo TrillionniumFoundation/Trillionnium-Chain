@@ -1,6 +1,6 @@
 {
   "schema": "pon-public-resource-profile-vectors-v1",
-  "current_revision": "r13",
+  "current_revision": "r14",
   "transport_profile": "public-protected-development-v3",
   "hash_domain": "public-protected-profile-v3",
   "burst_ns": 2000000000,
@@ -87,13 +87,33 @@
           "policy_id": "e171d2942b8abfd95351036464b5451b4562f0854f4b43b2de59c4e486bda176"
         }
       ]
+    },
+    "r14": {
+      "resource_contract": "resource-revision-r14/reorg-lifecycle-v1-reserve25ms-same-original-account-before-intent/cancel-only-unpublished-staging-two-metadata-updates-no-active-state-audit-nonce-write/zero-busy-wait-sql-authorizer-and20000-vdbe-ops/cleanup-paid-original-scope-no-new-deadline/continuous-four-ceilings-headroom/same-live-operation-mining-continuous/no-resume-unpermitted-target/reclaim-unused-staging-only-next-original-native-intent/max-one-inactive-copy/shared64-unpaid-input-idle250ms-pressure-cancel-no-slot-refund/hello-and-incomplete-solution-only/server-owed-and-paid-protected/no-deadline-renewal/connection-local-ready-fifo-challenge-and-grant-split-read-mutation/pending64-no-extra-queue-or-worker/hello-wait-original-accept2s/paid-grant-wait-original-cookie-expiry-no-renewal/spent-reserve-once/lane-and-body-together-rollback-on-full/bounded-paid-enqueue-fifo-by-connection-with-unchanged-absolute-work-and-total-deadlines/hello108/solution108/conn64/paid-raw-json-canonical8MiB-factor3/read-body-reserve131072/output-conservative32MiB/control-output-reserve524288/grants-mutation8-read8-held-until-connection-and-task-release/queueproof2-read2/workers2-read1/spent1024-no-live-eviction/packet1048576/body2097216/read512/response2101248/history1/error2KiB/hello2s/challenge2s/solution-policy/body5s/work10s/output5s/overall30s/quantum64KiB/derived-jump-v1-levels63-sql1024-local-integrity-only/challenge128-burst32-read-reserve8-exact-nanosecond-fraction-full-bucket-discards-surplus/await-write-half-close-cancels-request-operation-stage-fences/ops1-block-2-head-3-history-4-poolbundle-5-poolsnapshot/poolraw159..2048-members1..16-sum32768-body66048-contextpin64hex/scalarstatus16KiB-no-reconcile-cachegc4scalars-localdiagnostic/no-guest-policy-prune-reset/shared-node-miner-operatorenabled/service72h-m05-cooperative-noise-row-tile-final-m06-envelope-prepare-canonical-apply-precommit-deadline-cancel-deep-state-root-history-sqlite-nonpreemptive/no-durable-guest-rows/global-paid-mutation-thread-cpu-bucket-reserve-before-paid-body-digest-and-canonical-decode-through-signed-response-charge-outer-plus-all-scoped-worker-thread-intervals-once-work-body-response-nested-no-double-debit/scoped-start-end-same-thread-all-started-joined-exact-counts-panic-cancel-partial-spawn/unknown-scoped-clock-disables-future-mutations/sequential-pool-preview-no-scoped-workers/read-not-charged/clock-unavailable-disables-future-mutations/native-success-preserved/two-inflight-m05-m06-boundary-cooperative-deep-stages-nonpreemptive-debt-no-caller-reset/available-plus-outstanding-start-reserves-ceiling/live-same-thread-owner-and-scoped-progress-increments/global-immediate-debit/original-full-outer-plus-children-minus-paid-residual-once/unverified-sticky-request-budget-cancel/full-native-W1-completion-priority-within-original-shared-bucket/no-new-probe-starts-until-verified-request-settles/existing-probes-own-original-start-quantum-only/verified-owner-scoped-checkpoints-await-original-refill-original-absolute-task-deadline-stop-cancel/no-added-credit-or-worker-or-identity-preference/complete-work-key-domain-public-v3-complete-work-identity-v1-canonical-whole-packet-sha256/fixed4096-digests131072bytes-per-shared-live-cpu-owner-epoch/atomic-claim-and-promotion-paid-hash-max4096-exact-probes/monotone-no-ttl-no-eviction-unknown-cancel-failure-success-retain/listener-clones-share-epoch/process-restart-clears-keys-original-zero-credit-no-permanent-once/repeat-or-capacity-full-only-denies-extra-priority-ordinary-paid-validation-and-recovery-continue/no-general-distinct-valid-W1-fairness/existing-packet-no-promotion-cooperative-history-each-row-reorg-steps-delta-rows-precommit/exact-stored-pending-intent-target-can-resume-original-time-owner-state-checks/committed-partial-staging-termination-by-original-reserved-owner-no-active-state-rewrite/unknown-live-clock-denies-future/deep-root-and-sql-no-preemption/native-durable-outcome-preserved/controlled-pool-full-prefix-cancel-propagation-reconcile-relation-only-blocking/precommit-only-fences",
+      "vectors": [
+        {
+          "ticket_bits": 8,
+          "lifetime_ms": 2000,
+          "policy_id": "6d04725d8e7a84560baf69440b1becd79f47c9f1fb5e63b85f1447400c85d43f"
+        },
+        {
+          "ticket_bits": 12,
+          "lifetime_ms": 2000,
+          "policy_id": "ffdf6e0653a4c1cb89fd92414ddc75052a100c75423b51b4cf86fed6d9c39258"
+        },
+        {
+          "ticket_bits": 16,
+          "lifetime_ms": 2000,
+          "policy_id": "82033cc655921f7217f7dba8f844aa5d06a455cceda851af530e91f7672f9ec8"
+        }
+      ]
     }
   },
   "source_vectors_are_native_acceptance": false,
   "arithmetic_profile": {
     "work_profile": "arithmetic-facts-v1",
-    "resource_revision": "r13-arithmetic-facts-v1",
-    "base_revision": "r13",
+    "resource_revision": "r14-arithmetic-facts-v1",
+    "base_revision": "r14",
     "hash_domain": "public-protected-profile-v3-arithmetic-facts-v1",
     "source": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_arithmetic.rs",
     "resource_contract": "fresh-empty-server-local-owner/exact-challenge-and-canonical-whole-A-B-bytes/completed-trace-and-optional-completed-product-only/no-verdict-task-target-state-or-authorization-cache/current-grammar-field-task-target-and-trace-product-claims-every-call/original-cooperative-cancellation/no-publish-on-returned-cancel/bounded-final-compare-publish-tail/try-lock-no-wait-contention-does-actual-raw-math/fixed64-slots-round-robin-no-growth/software-objects-not-RSS/original-actual-thread-CPU-owner-includes-all-math-cache-work/no-added-credit-deadline-or-completion-identity/independent-per-request-arithmetic-observation",
@@ -103,18 +123,47 @@
       {
         "ticket_bits": 8,
         "lifetime_ms": 2000,
-        "policy_id": "14ada27ef062b1e510b7d7ab470e83157e58e7752b8f27a754f64dac614146e3"
+        "policy_id": "c6d64d3f924ddc6b621e6a7faec04b4a835add3a90c8e3835a7718f77cf95825"
       },
       {
         "ticket_bits": 12,
         "lifetime_ms": 2000,
-        "policy_id": "05ace470c6c6d89dabe506e4fa96555847f34e72ae28255b8eb80c9f9c2dfe5b"
+        "policy_id": "0d462bce59800e8a2e4cfe348d0db06bf9771caa4f9a56df36a7d8b59fe3b507"
       },
       {
         "ticket_bits": 16,
         "lifetime_ms": 2000,
-        "policy_id": "8af03f5efd2dc465f6180faddd36561c6f4d42f996ab0f901594c2b460c3d1bd"
+        "policy_id": "4b04f3da433221f69055cc4e78268e0a4f2393ae66b43a849fc58e3c14ca485f"
       }
     ]
+  },
+  "historical_arithmetic_profiles": {
+    "r13": {
+      "work_profile": "arithmetic-facts-v1",
+      "resource_revision": "r13-arithmetic-facts-v1",
+      "base_revision": "r13",
+      "hash_domain": "public-protected-profile-v3-arithmetic-facts-v1",
+      "source": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_arithmetic.rs",
+      "resource_contract": "fresh-empty-server-local-owner/exact-challenge-and-canonical-whole-A-B-bytes/completed-trace-and-optional-completed-product-only/no-verdict-task-target-state-or-authorization-cache/current-grammar-field-task-target-and-trace-product-claims-every-call/original-cooperative-cancellation/no-publish-on-returned-cancel/bounded-final-compare-publish-tail/try-lock-no-wait-contention-does-actual-raw-math/fixed64-slots-round-robin-no-growth/software-objects-not-RSS/original-actual-thread-CPU-owner-includes-all-math-cache-work/no-added-credit-deadline-or-completion-identity/independent-per-request-arithmetic-observation",
+      "slots": 64,
+      "maximum_software_bytes": 4194304,
+      "vectors": [
+        {
+          "ticket_bits": 8,
+          "lifetime_ms": 2000,
+          "policy_id": "14ada27ef062b1e510b7d7ab470e83157e58e7752b8f27a754f64dac614146e3"
+        },
+        {
+          "ticket_bits": 12,
+          "lifetime_ms": 2000,
+          "policy_id": "05ace470c6c6d89dabe506e4fa96555847f34e72ae28255b8eb80c9f9c2dfe5b"
+        },
+        {
+          "ticket_bits": 16,
+          "lifetime_ms": 2000,
+          "policy_id": "8af03f5efd2dc465f6180faddd36561c6f4d42f996ab0f901594c2b460c3d1bd"
+        }
+      ]
+    }
   }
 }

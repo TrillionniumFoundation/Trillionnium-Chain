@@ -1,0 +1,9 @@
+[package]
+name = "trnm-w1-batch-statement"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+publish = false
+
+[dependencies]
+sha2 = { version = "0.10", default-features = false }

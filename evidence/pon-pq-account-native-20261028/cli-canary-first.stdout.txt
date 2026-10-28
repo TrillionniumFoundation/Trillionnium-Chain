@@ -1,0 +1,7 @@
+
+running 1 test
+test actual_cli_owned_keys_do_not_flow_to_normal_or_error_output ... {"all_codeql_paths_proven":false,"case":"actual_cli_owned_secret_canary","codeql_alert_dismissed":false,"error_paths":2,"normal_client_paths":2,"normal_server_paths":2,"private_hex_raw_or_half_hex_in_stdout_stderr":false,"secret_source_relation_ids":[9,10,11]}
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.09s
+

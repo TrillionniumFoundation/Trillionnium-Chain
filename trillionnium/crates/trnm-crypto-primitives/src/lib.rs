@@ -5,6 +5,7 @@ use ed25519_dalek::{Signature, Signer, SigningKey, VerifyingKey};
 use sha2::{Digest, Sha256};
 
 pub type Hash32 = [u8; 32];
+pub mod owned_ed25519;
 
 pub fn hash_domain(domain: &str, parts: &[&[u8]]) -> Hash32 {
     let mut hasher = Sha256::new();
@@ -221,3 +222,6 @@ mod tests {
 pub mod pon_work;
 
 pub mod qualified_work_task;
+
+#[cfg(feature = "pq-native-openssl")]
+pub mod pq_auth;

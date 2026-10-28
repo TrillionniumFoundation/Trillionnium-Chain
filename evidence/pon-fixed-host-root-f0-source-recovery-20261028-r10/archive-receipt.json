@@ -1,0 +1,14 @@
+{
+  "schema": "fixed-host-root-f0-static-archive-receipt-v1",
+  "archive": "source-and-static-readback.zip",
+  "bytes": 355233,
+  "sha256": "659a606da33cba2326c0b8ce7a2354a8fcb935230250021037f84b3e88afc8a6",
+  "payload_manifest_sha256": "5292853cd82bade7d8482ba17276edb8e4d2eb02bd907e00255a7ca979da9b90",
+  "payload_files": 91,
+  "total_zip_members": 92,
+  "all_members_crc_and_payload_sha256_verified": true,
+  "source_commit": "65ad46dfb1f6eb5e64ab4436e5bc127acebe8a4d",
+  "source_tree": "dbb27f59e0572e2b368e1158e6d4e2c46a367fb7",
+  "source_control_result": "61/61 Python (11 unchanged original launcher + 50 F0); five native controls NOT_RUN",
+  "native_or_host_executed": false
+}

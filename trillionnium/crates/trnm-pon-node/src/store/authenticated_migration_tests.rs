@@ -446,7 +446,9 @@ fn authenticated_migration_retains_partial_reorganization_then_target_recovers_o
         let mut fixture = Fixture::new();
         let mut stop = |point: &str| {
             if point == cut {
-                Err(Error::new(ErrorCode::PeerPollCancelled))
+                // A genuine non-control failure leaves unfinished staging;
+                // ordinary cancellation now has its own terminal lifecycle.
+                Err(Error::new(ErrorCode::StoragePacket))
             } else {
                 Ok(())
             }
@@ -455,7 +457,7 @@ fn authenticated_migration_retains_partial_reorganization_then_target_recovers_o
             .node
             .activate_with_fault(fixture.branch_tip, Some(&mut stop))
             .unwrap_err()
-            .is(ErrorCode::PeerPollCancelled));
+            .is(ErrorCode::StoragePacket));
         let prior = fixture.node.active().unwrap();
         let before = logical_rows(&fixture.node.db);
         let files = durable_bytes(&fixture.node.directory);

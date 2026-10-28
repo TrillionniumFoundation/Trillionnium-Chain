@@ -1,0 +1,6 @@
+
+running 1 test
+test ingress::tests::authenticated_activation_recovery::withheld_original_frame_must_not_stall_a_different_honest_signed_mutation ... ignored, actual original ten-second deadline and signed-socket honest-service gate; run explicitly
+
+test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 768 filtered out; finished in 0.00s
+

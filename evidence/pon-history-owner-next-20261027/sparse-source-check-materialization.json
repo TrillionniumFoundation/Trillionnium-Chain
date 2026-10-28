@@ -1,0 +1,17 @@
+{
+  "schema": "sparse-readonly-evidence-materialization-v1",
+  "total_bytes": 117845,
+  "paths": [
+    {
+      "path": "evidence/pon-v1/manifest.json",
+      "bytes": 109837,
+      "sha256": "b0d8d0e3ffdd9a11b554384380e1b337e3caf463abd121b4531555d63ade3eeb"
+    },
+    {
+      "path": "evidence/pon-v3/manifest.json",
+      "bytes": 8008,
+      "sha256": "ae24a1be50ee493bcaa438ee1561f9321d996cae3912bb1ecc60c41aaaba6357"
+    }
+  ],
+  "applicability_returncode": 1
+}

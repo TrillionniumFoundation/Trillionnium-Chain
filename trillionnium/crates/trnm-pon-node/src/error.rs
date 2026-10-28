@@ -21,20 +21,25 @@ pub enum ErrorKind {
 }
 
 macro_rules! error_codes {
-    ($($variant:ident => ($wire:literal, $kind:ident)),+ $(,)?) => {
+    (
+        $($variant:ident => ($wire:literal, $kind:ident)),+ $(,)?
+        ; local_only { $($local:ident => ($local_wire:literal, $local_kind:ident)),+ $(,)? }
+    ) => {
         /// Exact identities needed by current admission, accounting and recovery paths.
         /// Unknown strings are never recognized by a prefix or by an OS error message.
         #[derive(Clone, Copy, Debug, Eq, PartialEq)]
         #[non_exhaustive]
-        pub enum ErrorCode { $($variant),+ }
+        pub enum ErrorCode { $($variant,)+ $($local),+ }
         impl ErrorCode {
             pub fn as_str(self) -> &'static str {
-                match self { $(Self::$variant => $wire),+ }
+                match self { $(Self::$variant => $wire,)+ $(Self::$local => $local_wire),+ }
             }
             fn kind(self) -> ErrorKind {
-                match self { $(Self::$variant => ErrorKind::$kind),+ }
+                match self { $(Self::$variant => ErrorKind::$kind,)+ $(Self::$local => ErrorKind::$local_kind),+ }
             }
             pub(crate) fn parse(message: &str) -> Option<Self> {
+                // The local_only group deliberately has no string-parser arm.
+                // Quoting its diagnostic cannot grant local cleanup authority.
                 match message { $($wire => Some(Self::$variant)),+, _ => None }
             }
         }
@@ -102,6 +107,8 @@ error_codes! {
     PublicEof => ("PUBLIC_EOF", Transport),
     PublicClientDeadline => ("PUBLIC_CLIENT_DEADLINE", Cancelled),
     PeerPollCancelled => ("PEER_POLL_CANCELLED", Cancelled),
+    LegacyRequestCancelled => ("CANCELLED", Cancelled),
+    LegacyRequestDeadline => ("REQUEST_DEADLINE", Cancelled),
     PublicRequestCancelled => ("PUBLIC_REQUEST_CANCELLED", Cancelled),
     PublicRequestDeadline => ("PUBLIC_REQUEST_DEADLINE", Cancelled),
     SubmitRecoveryDeadline => ("SUBMIT_RECOVERY_DEADLINE", Cancelled),
@@ -110,10 +117,17 @@ error_codes! {
     PublicSpentCapacity => ("PUBLIC_SPENT_CAPACITY", Capacity),
     PublicBufferCapacity => ("PUBLIC_BUFFER_CAPACITY", Capacity),
     PublicQueueBusy => ("PUBLIC_QUEUE_BUSY", Capacity),
+    PublicExecutionSnapshotCapacity => ("PUBLIC_EXECUTION_SNAPSHOT_CAPACITY", Capacity),
+    OwnerDetachedExecutionContext => ("OWNER_DETACHED_EXECUTION_CONTEXT", LocalStructure),
+    OwnerDetachedExecutionUnsupported => ("OWNER_DETACHED_EXECUTION_UNSUPPORTED", DependencyUnavailable),
     // Local service/Node budget binding, never invalid consensus Work.
     OwnerPublicServiceCpuDomain => ("OWNER_PUBLIC_SERVICE_CPU_DOMAIN", PolicyRefusal),
     OwnerPublicServiceDomainUnbound => ("OWNER_PUBLIC_SERVICE_DOMAIN_UNBOUND", DependencyUnavailable),
+    OwnerReorgTerminationCpuRequired => ("OWNER_REORG_TERMINATION_CPU_REQUIRED", DependencyUnavailable),
+    ReorgLifecycle => ("REORG_LIFECYCLE", LocalStructure),
     OwnerPublicServiceUncleanEpoch => ("OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH", DependencyUnavailable),
+    OwnerContinuousHistoryDurableRequired => ("OWNER_CONTINUOUS_HISTORY_DURABLE_REQUIRED", DependencyUnavailable),
+    OwnerContinuousCpuBudget => ("OWNER_CONTINUOUS_CPU_BUDGET", Capacity),
     OwnerPublicServiceEpochCorrupt => ("OWNER_PUBLIC_SERVICE_EPOCH_CORRUPT", LocalStructure),
     PublicListenerDomainCapacity => ("PUBLIC_LISTENER_DOMAIN_CAPACITY", Capacity),
     PublicHostProcessCapacity => ("PUBLIC_HOST_PROCESS_CAPACITY", Capacity),
@@ -172,6 +186,11 @@ error_codes! {
     AuthReplayAudit => ("AUTH_REPLAY_AUDIT", ProtocolInvalid),
     RemoteTerminal => ("REMOTE_TERMINAL", RemoteRefusal),
     RemoteRetryable => ("REMOTE_RETRYABLE", RemoteRefusal),
+    ; local_only {
+        PqNetworkDeadline => ("PQ_NETWORK_DEADLINE", Cancelled),
+        PqNetworkExpired => ("PQ_NETWORK_EXPIRED", Cancelled),
+        PqNetworkRevoked => ("PQ_NETWORK_REVOKED", Cancelled),
+    }
 }
 
 #[derive(Debug)]
@@ -224,6 +243,17 @@ impl Error {
                         | ErrorCode::DatabaseReplaced
                         | ErrorCode::OwnerReplaced
                         | ErrorCode::AncestryIndexBudget
+                        // The original paid CPU owner becoming unavailable is
+                        // NOT a transient remote peer refusal or budget debit.
+                        // A pinned poller must stop instead of silently trying
+                        // fresh unowned work in its next cycle.
+                        | ErrorCode::PublicMutationCpuUnavailable
+                        | ErrorCode::OwnerPublicServiceCpuDomain
+                        | ErrorCode::OwnerPublicServiceDomainUnbound
+                        | ErrorCode::OwnerReorgTerminationCpuRequired
+                        | ErrorCode::OwnerPublicServiceUncleanEpoch
+                        | ErrorCode::OwnerDetachedExecutionUnsupported
+                        | ErrorCode::OwnerContinuousHistoryDurableRequired
                 )
             )
     }
@@ -307,9 +337,16 @@ impl Error {
     /// Parse only after the caller has established its required reply authentication.
     /// Construction itself authenticates nothing and gives no local failure authority.
     pub(crate) fn remote(message: impl Into<String>) -> Self {
-        let mut error = Self::from(message.into());
-        error.kind = ErrorKind::RemoteRefusal;
-        error
+        // A peer can quote every local diagnostic. Keep that text for the
+        // caller, but never manufacture a typed local code from it. Controlled
+        // authenticated terminal/retryable status has its own constructor.
+        Self {
+            code: None,
+            kind: ErrorKind::RemoteRefusal,
+            message: message.into(),
+            source: None,
+            request_history_budget: false,
+        }
     }
     pub(crate) fn authenticated_remote(terminal: bool, message: &str) -> Self {
         let code = if terminal {
@@ -386,6 +423,83 @@ mod tests {
     use std::error::Error as _;
 
     #[test]
+    fn pq_control_codes_require_explicit_local_origin() {
+        for (code, wire) in [
+            (ErrorCode::PqNetworkDeadline, "PQ_NETWORK_DEADLINE"),
+            (ErrorCode::PqNetworkExpired, "PQ_NETWORK_EXPIRED"),
+            (ErrorCode::PqNetworkRevoked, "PQ_NETWORK_REVOKED"),
+        ] {
+            let local = Error::new(code);
+            assert_eq!(local.to_string(), wire);
+            assert_eq!(local.kind(), ErrorKind::Cancelled);
+            assert!(local.is(code));
+            assert!(!local.requires_owner_stop());
+            assert_eq!(ErrorCode::parse(wire), None);
+            for quoted in [
+                Error::from(wire),
+                Error::from(wire.to_owned()),
+                Error::from(format!(" {wire}")),
+                Error::from(format!("{wire}: quoted remote diagnostic")),
+            ] {
+                assert_eq!(quoted.kind(), ErrorKind::Unclassified);
+                assert_eq!(quoted.code(), None);
+                assert!(!quoted.requires_owner_stop());
+            }
+            let transport = Error::from(std::io::Error::other(wire));
+            assert_eq!(transport.kind(), ErrorKind::Transport);
+            assert_eq!(transport.code(), None);
+            let remote = Error::remote(wire);
+            assert_eq!(remote.to_string(), wire);
+            assert_eq!(remote.kind(), ErrorKind::RemoteRefusal);
+            assert_eq!(remote.code(), None);
+            for terminal in [false, true] {
+                let remote = Error::authenticated_remote(terminal, wire);
+                let expected = if terminal {
+                    ErrorCode::RemoteTerminal
+                } else {
+                    ErrorCode::RemoteRetryable
+                };
+                assert_eq!(remote.kind(), ErrorKind::RemoteRefusal);
+                assert!(remote.is(expected));
+                assert!(!remote.is(code));
+                assert!(!remote.requires_owner_stop());
+                assert_eq!(remote.to_string(), format!("{}:{wire}", expected.as_str()));
+            }
+        }
+    }
+
+    #[test]
+    fn legacy_request_controls_keep_original_wire_and_typed_local_cancellation() {
+        for (code, wire) in [
+            (ErrorCode::LegacyRequestCancelled, "CANCELLED"),
+            (ErrorCode::LegacyRequestDeadline, "REQUEST_DEADLINE"),
+        ] {
+            let local = Error::new(code);
+            assert_eq!(local.to_string(), wire);
+            assert_eq!(local.kind(), ErrorKind::Cancelled);
+            assert!(!local.requires_owner_stop());
+            assert!(Error::from(wire).is(code));
+            let remote = Error::remote(wire);
+            assert_eq!(remote.kind(), ErrorKind::RemoteRefusal);
+            assert_eq!(remote.code(), None);
+            assert!(!remote.is(code));
+        }
+    }
+
+    #[test]
+    fn continuous_history_without_a_durable_claim_is_a_local_owner_stop() {
+        let message = "OWNER_CONTINUOUS_HISTORY_DURABLE_REQUIRED";
+        let local = Error::from(message);
+        assert!(local.is(ErrorCode::OwnerContinuousHistoryDurableRequired));
+        assert_eq!(local.kind(), ErrorKind::DependencyUnavailable);
+        assert!(local.requires_owner_stop());
+        // A remote peer's arbitrary string is not local resource authority.
+        let remote = Error::remote(message);
+        assert!(!remote.requires_owner_stop());
+        assert!(!remote.is(ErrorCode::OwnerContinuousHistoryDurableRequired));
+    }
+
+    #[test]
     fn display_changes_cannot_change_typed_retry_or_owner_stop_identity() {
         let mut budget = Error::new(ErrorCode::PublicMutationCpuBudget);
         assert_eq!(budget.to_string(), "PUBLIC_MUTATION_CPU_BUDGET");
@@ -399,6 +513,28 @@ mod tests {
         let mut eof = Error::new(ErrorCode::FrameEof);
         eof.message = "peer closed the socket".into();
         assert!(eof.is(ErrorCode::FrameEof));
+    }
+
+    #[test]
+    fn unavailable_original_cpu_owner_is_fatal_but_budget_and_remote_refusals_are_not() {
+        for code in [
+            ErrorCode::PublicMutationCpuUnavailable,
+            ErrorCode::OwnerPublicServiceCpuDomain,
+            ErrorCode::OwnerPublicServiceDomainUnbound,
+            ErrorCode::OwnerReorgTerminationCpuRequired,
+            ErrorCode::OwnerPublicServiceUncleanEpoch,
+        ] {
+            let local = Error::new(code);
+            assert!(local.requires_owner_stop(), "{code:?}");
+            // Never allow an attacker-controlled remote error string to
+            // disable a healthy local receiver, even if its wire text
+            // matches a local CPU owner diagnostic.
+            let remote = Error::remote(local.to_string());
+            assert!(!remote.requires_owner_stop(), "{code:?}");
+            assert!(!remote.is(code), "{code:?}");
+            assert_eq!(remote.code(), None);
+        }
+        assert!(!Error::new(ErrorCode::PublicMutationCpuBudget).requires_owner_stop());
     }
 
     #[test]
@@ -508,7 +644,8 @@ mod tests {
             let local = Error::from(message);
             assert!(local.requires_owner_stop());
             let remote = Error::remote(message);
-            assert_eq!(remote.code(), local.code());
+            assert_eq!(remote.code(), None);
+            assert!(!remote.is(local.code().unwrap()));
             assert_eq!(remote.kind(), ErrorKind::RemoteRefusal);
             assert!(!remote.requires_owner_stop());
             assert_eq!(remote.to_string(), message);

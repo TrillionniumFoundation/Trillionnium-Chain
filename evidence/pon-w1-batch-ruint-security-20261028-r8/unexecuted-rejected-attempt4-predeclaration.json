@@ -1,0 +1,207 @@
+{
+  "schema": "TRNM-W1-BATCH-PHASE0-ATTEMPT4-PREREG1",
+  "declared_unix_ns": 1793161313770811333,
+  "attempt": 4,
+  "execution_authorization_at_predeclaration": "AWAITING_PARENT_REVIEW",
+  "source_commit": "3a3191748f79675f18670163afe6c50e8fe43858",
+  "source_tree": "bf94974f9050755eb67550782b9ce88387e082db",
+  "reason": "Minimal actual offline resolver fix of three guest-only transitive dependency MSRVs. Keep all prior failures, SDK3.0.6, native lock, complete W1 leaf image/work relation, genuine version checks, authenticated restored compiler, exact offline/cache/jobs wrapper. No compiler extraction or new download.",
+  "source_and_lock_fix_receipt": "/tmp/w1-batch-guest-lock-fix-20261028-r8/result.json",
+  "source_and_lock_fix_receipt_sha256": "a407f23ab58594563be41a3e0b158105ce9846b350021fc8186599a0efd101e9",
+  "native_lock_sha256": "32953cbb86bb56186137507ee9e9bf59827bd8325c6e28c12b40d5c166fbfa4d",
+  "guest_lock_sha256": "6de3cb567deb89569bdabe5c224e44b6fd5232ae9a91d9074e55bd4f9b43a993",
+  "guard_sha256": "9981c3a138c4aefb6c4662f1e2c4c05cf5ef26e302c46763a42a2366a6334217",
+  "pipeline_sha256": "d32d8d83515690674c00d9926ff70c692d24f0fbb8129025b573039fe9a9e4cc",
+  "wrapper_sha256": "1eb9fda0a97ec717832445ebb8f0006d213e72abcd002e3b89b44bff09e60fd4",
+  "review_receipt_sha256": "80de262be803ba47eff221b617d92631b5afac0b3ebd2c977e4b2416936f13d8",
+  "free_disk_before_bytes": 1819447296,
+  "prior_attempts": [
+    {
+      "component": "attempt1",
+      "receipt": "/tmp/w1-batch-phase0-20261028-r8/result.json",
+      "sha256": "a3df8f28c13dc78a369289ad9eae672abb07dc046ab13d8c0dba4f324539d09d",
+      "status": "command_failed",
+      "wall_seconds": 1.564829599999939,
+      "child_cpu_seconds": 1.2378079999999998
+    },
+    {
+      "component": "attempt2",
+      "receipt": "/tmp/w1-batch-phase0-attempt2-20261028-r8/result.json",
+      "sha256": "ba2feb7a95295994feb272fdc8f534a7d207de1623b2d22f25f37f52b2ca1a19",
+      "status": "command_failed",
+      "wall_seconds": 27.56534154500696,
+      "child_cpu_seconds": 16.077483
+    },
+    {
+      "component": "attempt3",
+      "receipt": "/tmp/w1-batch-phase0-attempt3-20261028-r8/result.json",
+      "sha256": "9d63f3070f7f83ed4f232623db016f37b705b8cbfd041edaad20a10b636655b4",
+      "status": "command_failed",
+      "wall_seconds": 2.567530654996517,
+      "child_cpu_seconds": 1.9205599999999998
+    }
+  ],
+  "other_measured_setup": [
+    {
+      "component": "exact-approved-dependency-download",
+      "receipt": "/tmp/w1-batch-phase0-attempt2-download-20261028-r8/result.json",
+      "sha256": "7342d528fbb96de7c1703b7982005cd1c34d85195878dfeb9896fad4cc13f2c9",
+      "wall_seconds": 0.10843739499978255,
+      "process_cpu_seconds": 0.045628999999999996
+    },
+    {
+      "component": "read-only-compiler-adoption",
+      "receipt": "/tmp/w1-batch-attempt3-toolchain-adoption-20261028-r8.json",
+      "sha256": "ac0380e20b04dae80ba784ea6e36ad70e8750ee8705569020ac7473f8d816778",
+      "wall_seconds": 0.6570035709883086,
+      "process_cpu_seconds": 0.609292
+    },
+    {
+      "component": "three-exact-offline-resolver-commands",
+      "receipt": "/tmp/w1-batch-guest-lock-fix-20261028-r8/result.json",
+      "sha256": "a407f23ab58594563be41a3e0b158105ce9846b350021fc8186599a0efd101e9",
+      "wall_seconds": 0.4937706549972063,
+      "child_cpu_seconds": 0.405463
+    }
+  ],
+  "measured_prior_build_and_named_setup_wall_sum_seconds": 32.95691342098871,
+  "measured_prior_build_and_named_setup_cpu_sum_seconds": 20.296235,
+  "source_reviews_with_partial_cost_accounting": [
+    {
+      "receipt": "/workspace/scratch/56818e4fba76/chain-w1-next/evidence/pon-w1-batch-source-20261028-r8/static-review/result.json",
+      "sha256": "34912169492b0d20b32f02322e7109bf19711b9b20700e19efcf38aae318810f",
+      "command_wall_sum_seconds": 0.23093113899813034,
+      "command_cpu_seconds": null,
+      "notes": "Source-only review includes formatting/public controls/locked metadata; CPU was not captured."
+    },
+    {
+      "receipt": "/workspace/scratch/56818e4fba76/chain-w1-next/evidence/pon-w1-batch-guest-msrv-20261028-r8/static-review/result.json",
+      "sha256": "378b0804286e17b16f4aeee3eef88eb9efd46fdb17da584032fd2844af9ceabb",
+      "command_wall_sum_seconds": 0.20807498900103383,
+      "command_cpu_seconds": null,
+      "notes": "Source-only review includes formatting/public controls/locked metadata; CPU was not captured."
+    }
+  ],
+  "guard_development_controls": [
+    {
+      "receipt": "/workspace/scratch/56818e4fba76/chain-w1-next/evidence/pon-w1-batch-phase0-20261028-r8/guard-controls/actual-target/result.json",
+      "sha256": "9de5fa7e00430cbc23a1e8b0a0140c25831d63e31c8b48cf3721af4973c435b3",
+      "status": "completed",
+      "wall_seconds": 1.0607567809929606,
+      "child_cpu_seconds": 0.015279999999999998,
+      "notes": "Small supervision development control; no Rust compile or proof."
+    },
+    {
+      "receipt": "/workspace/scratch/56818e4fba76/chain-w1-next/evidence/pon-w1-batch-phase0-20261028-r8/guard-controls/final9981c3/orphan_term_resistant/result.json",
+      "sha256": "fa88e1422b4fba4be4d1177f98a69502faea30b2890fab4ec090190cd0993b53",
+      "status": "stopped",
+      "wall_seconds": 4.0027739069919335,
+      "child_cpu_seconds": 0.03418,
+      "notes": "Small supervision development control; no Rust compile or proof."
+    },
+    {
+      "receipt": "/workspace/scratch/56818e4fba76/chain-w1-next/evidence/pon-w1-batch-phase0-20261028-r8/guard-controls/final9981c3/success/result.json",
+      "sha256": "08ab52e9acf4218ad441c9ad90973abdb72ab0bb287a907b4b094fca1792d31e",
+      "status": "completed",
+      "wall_seconds": 0.5017039860103978,
+      "child_cpu_seconds": 0.010164,
+      "notes": "Small supervision development control; no Rust compile or proof."
+    },
+    {
+      "receipt": "/workspace/scratch/56818e4fba76/chain-w1-next/evidence/pon-w1-batch-phase0-20261028-r8/guard-controls/final9981c3/wait4_short_rss_peak/result.json",
+      "sha256": "07b2f0c5e1451508a2731ee6a5c11ad01d24022e0b0e6e238ced2eae4eedb9e3",
+      "status": "stopped",
+      "wall_seconds": 0.5018872069922509,
+      "child_cpu_seconds": 0.031653,
+      "notes": "Small supervision development control; no Rust compile or proof."
+    },
+    {
+      "receipt": "/workspace/scratch/56818e4fba76/chain-w1-next/evidence/pon-w1-batch-phase0-20261028-r8/guard-controls/original-namespace-failure/success/result.json",
+      "sha256": "ad0acc10818b2ad1dc6ae6c5661bfa45e15f191c83b8c42c0652836434669dac",
+      "status": "cleanup_incomplete",
+      "wall_seconds": 5.503044222001336,
+      "child_cpu_seconds": 53.751316,
+      "notes": "Small supervision development control; no Rust compile or proof."
+    },
+    {
+      "receipt": "/workspace/scratch/56818e4fba76/chain-w1-next/evidence/pon-w1-batch-phase0-20261028-r8/guard-controls/prior-mapped/orphan_term_resistant/result.json",
+      "sha256": "8d41956123eb9617814df0ccf30dd73f9cf0dcb051138e08cc022c63f89d1062",
+      "status": "stopped",
+      "wall_seconds": 4.0026360470074,
+      "child_cpu_seconds": 0.033188,
+      "notes": "Small supervision development control; no Rust compile or proof."
+    },
+    {
+      "receipt": "/workspace/scratch/56818e4fba76/chain-w1-next/evidence/pon-w1-batch-phase0-20261028-r8/guard-controls/prior-mapped/success/result.json",
+      "sha256": "727a7f05211c3c7b7024ad039488456dfcfa72a6a9f06eccce29d38deaa6e45d",
+      "status": "completed",
+      "wall_seconds": 0.5016231469926424,
+      "child_cpu_seconds": 0.010713,
+      "notes": "Small supervision development control; no Rust compile or proof."
+    },
+    {
+      "receipt": "/workspace/scratch/56818e4fba76/chain-w1-next/evidence/pon-w1-batch-phase0-20261028-r8/guard-controls/prior344e48/orphan_term_resistant/result.json",
+      "sha256": "8a1fbcd84fd2af7482be57d75b23277f64a57b6191c233476f4971bb7fd53f1a",
+      "status": "stopped",
+      "wall_seconds": 4.002725585000007,
+      "child_cpu_seconds": 0.035174,
+      "notes": "Small supervision development control; no Rust compile or proof."
+    },
+    {
+      "receipt": "/workspace/scratch/56818e4fba76/chain-w1-next/evidence/pon-w1-batch-phase0-20261028-r8/guard-controls/prior344e48/success/result.json",
+      "sha256": "2560b4c2d1c70e7c5403c65017fd1ef023d9a985fa90ed21d76495e3d04e822a",
+      "status": "completed",
+      "wall_seconds": 0.5017889559967443,
+      "child_cpu_seconds": 0.014287999999999999,
+      "notes": "Small supervision development control; no Rust compile or proof."
+    },
+    {
+      "receipt": "/workspace/scratch/56818e4fba76/chain-w1-next/evidence/pon-w1-batch-phase0-20261028-r8/guard-controls/prior344e48/wait4_short_rss_peak/result.json",
+      "sha256": "28b7039f9f69b06eaaa405751e6e38bbd13f6bc63d7ef8c7f0ad04366a51ae93",
+      "status": "stopped",
+      "wall_seconds": 0.5018647379911272,
+      "child_cpu_seconds": 0.034212,
+      "notes": "Small supervision development control; no Rust compile or proof."
+    }
+  ],
+  "guard_self_cpu_measured": false,
+  "cost_accounting_limit": "All retained prior attempts, download, adoption and resolver costs listed. Supervisor own CPU, human/source-inspection time and complete original leaf proof cost are not included in the build/setup sum. Review/control costs shown separately; missing CPU is explicit, never zero.",
+  "new_compile_attempt_limits": {
+    "wall_seconds": 900,
+    "child_cpu_seconds": 3600,
+    "sampled_rss_bytes": 2684354560,
+    "target_growth_bytes": 805306368,
+    "minimum_free_bytes": 1073741824
+  },
+  "command": [
+    "python3",
+    "/tmp/w1-batch-phase0-guard-20261028-r8.py",
+    "--out",
+    "/tmp/w1-batch-phase0-attempt4-20261028-r8",
+    "--wall-seconds",
+    "900",
+    "--cpu-seconds",
+    "3600",
+    "--rss-bytes",
+    "2684354560",
+    "--target",
+    "/tmp/trnm-w1-r2-target",
+    "--target-growth-bytes",
+    "805306368",
+    "--min-free-bytes",
+    "1073741824",
+    "--",
+    "timeout",
+    "--signal=TERM",
+    "--kill-after=3s",
+    "900s",
+    "python3",
+    "/tmp/w1-batch-phase0-attempt4-pipeline-20261028-r8.py",
+    "/tmp/w1-batch-phase0-attempt4-20261028-r8"
+  ],
+  "old_absolute_deadline_extended": false,
+  "compiler_restored_again": false,
+  "network_download_permitted": false,
+  "original_failures_overwritten": false,
+  "guest_execution_or_proving_authorized": false
+}

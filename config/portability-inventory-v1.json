@@ -202,7 +202,7 @@
       "package": "trnm-pon-node",
       "module": "M15",
       "path": "trillionnium/crates/trnm-pon-node",
-      "role": "Native development composition with a single branch/replay/outbox SQLite owner, explicit maintenance choice, bounded public entrypoints, typed local error identity, checked history projections and explicit revision16 model/task-window CLI context binding; not a publicly qualified deployment.",
+      "role": "Native development composition with a single branch/replay/outbox SQLite owner, explicit maintenance choice, bounded public entrypoints, typed local error identity, checked history projections, explicit revision16 model/task-window CLI context binding, and optional fresh PQ transport-only ownership; account/task/install authorization is not PQ-migrated and no publicly qualified deployment is claimed.",
       "consensus_authority": false,
       "production_activation": false
     }
@@ -607,6 +607,18 @@
       "decision": "retain-controlled-linux-in-process-spawn-primitive",
       "supporting_sources": [
         "scripts/llm_runtime_pilot.py",
+        "scripts/llm_runtime_host_scope.py",
+        "scripts/llm_runtime_host_controller.py",
+        "scripts/test_llm_runtime_host_controller.py",
+        "scripts/llm_runtime_host_aggregate.py",
+        "scripts/test_llm_runtime_host_aggregate.py",
+        "scripts/llm_runtime_retirement_slot.c",
+        "scripts/test_llm_runtime_retirement_slot.py",
+        "scripts/test_llm_runtime_retirement_publication.py",
+        "scripts/test_llm_runtime_retirement_activation.py",
+        "scripts/test_llm_runtime_retirement_steps.py",
+        "scripts/test_llm_runtime_host_retirement.py",
+        "scripts/test_llm_runtime_host_u_readback.py",
         "scripts/test_llm_runtime_decode.py",
         "scripts/llm_runtime_exit_observation.py",
         "scripts/test_llm_runtime_kernel_owned.py",

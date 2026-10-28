@@ -1,7 +1,7 @@
 use std::{
     fs::{self, File, OpenOptions},
     io::{Read, Write},
-    path::Path,
+    path::{Path, PathBuf},
     sync::atomic::{AtomicU64, Ordering},
     time::Instant,
 };
@@ -14,8 +14,11 @@ use super::{
     CellManifestV1, CellReleaseManifestV1, CellResultV1, MAX_CELL_BYTES, MAX_CHUNK_BYTES,
 };
 
-const APPLICATION_ID: i64 = 0x5443_4c31;
 static OUTPUT_SEQUENCE: AtomicU64 = AtomicU64::new(0);
+
+#[cfg(test)]
+#[path = "cache_wal_tests.rs"]
+mod wal_tests;
 // One short FULL transaction retains at most 32 MiB of already received bytes.
 // The caller must collect the batch before taking the SQLite writer lock.
 pub(super) const MAX_CHUNK_COMMIT_BATCH: usize = 8;
@@ -34,75 +37,128 @@ pub struct CellReleaseLimitsV1 {
 pub struct CellStoreV1 {
     connection: Connection,
     read_only: bool,
+    config: super::CellCacheConfigV4,
+    path: PathBuf,
+    writer_identity: Option<File>,
 }
 
 impl CellStoreV1 {
-    pub fn open(path: &Path) -> CellResultV1<Self> {
-        let connection = Connection::open(path)?;
-        connection.busy_timeout(std::time::Duration::from_secs(5))?;
+    pub fn open(path: &Path, config: super::CellCacheConfigV4) -> CellResultV1<Self> {
+        config.validate()?;
+        let deadline = Instant::now() + super::cache_wal::WRITER_BUDGET;
+        let (path, identity) = super::cache_wal::writer_identity(path)?;
+        let permit = super::cache_wal::acquire(&identity, deadline)?;
+        super::cache_wal::check_sidecars(&path, config)?;
+        let connection = Connection::open_with_flags(
+            &path,
+            OpenFlags::SQLITE_OPEN_READ_WRITE
+                | OpenFlags::SQLITE_OPEN_CREATE
+                | OpenFlags::SQLITE_OPEN_NOFOLLOW,
+        )?;
+        connection.busy_timeout(super::cache_wal::remaining(deadline)?)?;
         connection.pragma_update(None, "trusted_schema", false)?;
+        super::cache_wal::configure(&connection)?;
         let application: i64 =
             connection.pragma_query_value(None, "application_id", |r| r.get(0))?;
         let version: i64 = connection.pragma_query_value(None, "user_version", |r| r.get(0))?;
-        if application == 0 && version == 0 {
-            let tables: i64 = connection.query_row(
-                "SELECT count(*) FROM sqlite_master WHERE name NOT LIKE 'sqlite_%'",
-                [],
-                |r| r.get(0),
-            )?;
-            require(tables == 0, "foreign cache database")?;
-            connection.execute_batch(
-                "BEGIN IMMEDIATE;
-                 CREATE TABLE cell_manifests_v1 (
-                     id BLOB PRIMARY KEY CHECK(length(id) = 32),
-                     wire BLOB NOT NULL CHECK(length(wire) <= 1048576));
-                 CREATE TABLE cell_chunks_v1 (
-                     hash BLOB PRIMARY KEY CHECK(length(hash) = 32),
-                     bytes BLOB NOT NULL CHECK(length(bytes) BETWEEN 1 AND 4194304));
-                 PRAGMA application_id = 1413696561;
-                 PRAGMA user_version = 1;
-                 COMMIT;",
-            )?;
-        } else {
+        let fresh = application == 0 && version == 0;
+        if !fresh {
             require(
-                application == APPLICATION_ID && version == 1,
+                application == super::cache_budget::APPLICATION_ID && version == 4,
                 "cache namespace",
             )?;
+            // Reject changed schema/configuration/counters before a checkpoint
+            // could copy externally corrupted WAL pages into the main image.
+            super::cache_budget::open(&connection, Some(config), false)?;
+            super::cache_wal::checkpoint_zero(&connection, &path)?;
+            connection.busy_timeout(super::cache_wal::remaining(deadline)?)?;
         }
+        super::cache_budget::open(&connection, Some(config), true)?;
         connection.pragma_update(None, "journal_mode", "WAL")?;
-        connection.pragma_update(None, "synchronous", "FULL")?;
+        super::cache_wal::checkpoint_zero(&connection, &path)?;
+        super::cache_wal::check_sidecars(&path, config)?;
+        drop(permit);
         Ok(Self {
             connection,
             read_only: false,
+            config,
+            path,
+            writer_identity: Some(identity),
         })
     }
 
     /// Existing disposable cache only; serving never creates or repairs a DB.
-    pub(super) fn open_read_only(path: &Path) -> CellResultV1<Self> {
-        let connection = Connection::open_with_flags(path, OpenFlags::SQLITE_OPEN_READ_ONLY)?;
+    pub fn open_read_only(path: &Path) -> CellResultV1<Self> {
+        super::cache_wal::check_path(path)?;
+        let connection = Connection::open_with_flags(
+            path,
+            OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NOFOLLOW,
+        )?;
+        require(
+            connection.set_db_config(
+                rusqlite::config::DbConfig::SQLITE_DBCONFIG_NO_CKPT_ON_CLOSE,
+                true,
+            )?,
+            "cache close checkpoint policy",
+        )?;
         connection.busy_timeout(std::time::Duration::ZERO)?;
         connection.pragma_update(None, "trusted_schema", false)?;
-        let application: i64 =
-            connection.pragma_query_value(None, "application_id", |r| r.get(0))?;
-        let version: i64 = connection.pragma_query_value(None, "user_version", |r| r.get(0))?;
-        require(
-            application == APPLICATION_ID && version == 1,
-            "cache namespace",
-        )?;
+        super::cache_budget::open(&connection, None, false)?;
+        let config = super::cache_budget::config(&connection)?;
+        super::cache_wal::check_sidecars(path, config)?;
         Ok(Self {
             connection,
             read_only: true,
+            config,
+            path: path.to_owned(),
+            writer_identity: None,
         })
+    }
+
+    fn write<T>(&self, operation: impl FnOnce(&Connection) -> CellResultV1<T>) -> CellResultV1<T> {
+        let identity = self
+            .writer_identity
+            .as_ref()
+            .ok_or(CellErrorV1::Invalid("read-only cache"))?;
+        let deadline = Instant::now() + super::cache_wal::WRITER_BUDGET;
+        let _permit = super::cache_wal::acquire(identity, deadline)?;
+        super::cache_wal::check_path(&self.path)?;
+        super::cache_wal::check_sidecars(&self.path, self.config)?;
+        super::cache_wal::configure(&self.connection)?;
+        super::cache_wal::checkpoint_zero(&self.connection, &self.path)?;
+        self.connection
+            .busy_timeout(super::cache_wal::remaining(deadline)?)?;
+        let transaction = rusqlite::Transaction::new_unchecked(
+            &self.connection,
+            rusqlite::TransactionBehavior::Immediate,
+        )?;
+        let value = operation(&transaction)?;
+        transaction.commit()?;
+        super::cache_wal::check_sidecars(&self.path, self.config)?;
+        Ok(value)
+    }
+
+    pub fn cache_usage(&self) -> CellResultV1<super::CellCacheUsageV2> {
+        let transaction = rusqlite::Transaction::new_unchecked(
+            &self.connection,
+            rusqlite::TransactionBehavior::Deferred,
+        )?;
+        let usage = super::cache_budget::audit(&transaction, None)?;
+        transaction.commit()?;
+        Ok(usage)
     }
 
     pub fn put_manifest(&self, pinned: CellDigestV1, wire: &[u8]) -> CellResultV1<CellManifestV1> {
         let manifest = CellManifestV1::decode(wire)?;
         require(manifest.id() == pinned, "manifest digest")?;
-        self.connection.execute(
-            "INSERT INTO cell_manifests_v1(id, wire) VALUES (?1, ?2)
+        self.write(|connection| {
+            connection.execute(
+                "INSERT INTO cell_manifests_v1(id, wire) VALUES (?1, ?2)
              ON CONFLICT(id) DO UPDATE SET wire = excluded.wire",
-            params![pinned.as_slice(), wire],
-        )?;
+                params![pinned.as_slice(), wire],
+            )?;
+            Ok(())
+        })?;
         Ok(manifest)
     }
 
@@ -129,12 +185,14 @@ impl CellStoreV1 {
 
     pub fn put_chunk(&self, expected: &CellChunkV1, bytes: &[u8]) -> CellResultV1<()> {
         verify_chunk(expected, bytes)?;
-        self.connection.execute(
-            "INSERT INTO cell_chunks_v1(hash, bytes) VALUES (?1, ?2)
+        self.write(|connection| {
+            connection.execute(
+                "INSERT INTO cell_chunks_v1(hash, bytes) VALUES (?1, ?2)
              ON CONFLICT(hash) DO UPDATE SET bytes = excluded.bytes",
-            params![expected.sha256.as_slice(), bytes],
-        )?;
-        Ok(())
+                params![expected.sha256.as_slice(), bytes],
+            )?;
+            Ok(())
+        })
     }
 
     pub(super) fn put_chunk_batch(&self, chunks: &[(&CellChunkV1, &[u8])]) -> CellResultV1<()> {
@@ -147,26 +205,23 @@ impl CellStoreV1 {
         for (expected, bytes) in chunks {
             verify_chunk(expected, bytes)?;
         }
-        let transaction = rusqlite::Transaction::new_unchecked(
-            &self.connection,
-            rusqlite::TransactionBehavior::Immediate,
-        )?;
-        {
-            let mut statement = transaction.prepare_cached(
-                "INSERT INTO cell_chunks_v1(hash, bytes) VALUES (?1, ?2)
+        self.write(|transaction| {
+            {
+                let mut statement = transaction.prepare_cached(
+                    "INSERT INTO cell_chunks_v1(hash, bytes) VALUES (?1, ?2)
                  ON CONFLICT(hash) DO UPDATE SET bytes = excluded.bytes",
-            )?;
-            for (expected, bytes) in chunks {
-                require(
-                    statement.execute(params![expected.sha256.as_slice(), bytes])? == 1,
-                    "cache chunk write",
                 )?;
+                for (expected, bytes) in chunks {
+                    require(
+                        statement.execute(params![expected.sha256.as_slice(), bytes])? == 1,
+                        "cache chunk write",
+                    )?;
+                }
             }
-        }
-        // synchronous=FULL is unchanged. No network operation or wait occurs
-        // inside this transaction; a failure rolls back this batch only.
-        transaction.commit()?;
-        Ok(())
+            // synchronous=FULL is unchanged. No network operation or wait occurs
+            // inside this transaction; a failure rolls back this batch only.
+            Ok(())
+        })
     }
 
     /// Every read hashes the actual bytes. A corrupt disposable chunk is removed
@@ -190,10 +245,17 @@ impl CellStoreV1 {
             }
         }
         if !self.read_only {
-            self.connection.execute(
-                "DELETE FROM cell_chunks_v1 WHERE hash = ?1",
-                [hash.as_slice()],
-            )?;
+            return self.write(|connection| {
+                let current: Option<Vec<u8>> = connection.query_row(
+                    "SELECT CASE WHEN length(bytes) BETWEEN 1 AND ?2 THEN bytes ELSE NULL END FROM cell_chunks_v1 WHERE hash=?1",
+                    params![hash.as_slice(), i64::from(MAX_CHUNK_BYTES)], |r| r.get::<_, Option<Vec<u8>>>(0),
+                ).optional()?.flatten();
+                if let Some(bytes) = current {
+                    if <[u8; 32]>::from(Sha256::digest(&bytes)) == hash { return Ok(Some(bytes)); }
+                }
+                connection.execute("DELETE FROM cell_chunks_v1 WHERE hash = ?1", [hash.as_slice()])?;
+                Ok(None)
+            });
         }
         Ok(None)
     }

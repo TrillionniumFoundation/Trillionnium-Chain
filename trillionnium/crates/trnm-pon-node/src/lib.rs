@@ -151,6 +151,18 @@ pub struct Packet {
     pub proof: Vec<u8>,
 }
 impl Packet {
+    fn transaction_wire(raw: &[u8]) -> Result<()> {
+        if raw.starts_with(b"QTX1") {
+            // Parsing supplies no authorization. The selected M06 profile must
+            // still perform real PQ verification; every legacy profile refuses.
+            trnm_protocol::pq_transaction::decode_signed(raw)
+                .map_err(|_| Error::from("TRANSACTION_CODEC"))?;
+        } else {
+            ensure((159..=2048).contains(&raw.len()), "TRANSACTION_LIMIT")?;
+            Envelope::decode(raw).map_err(|_| Error::from("TRANSACTION_CODEC"))?;
+        }
+        Ok(())
+    }
     /// Exact length after the complete original count/proof/envelope grammar.
     /// This is computation only, never packet, work or durable-state authority.
     pub(crate) fn checked_wire_length(&self) -> Result<usize> {
@@ -163,8 +175,7 @@ impl Packet {
         // merely because later caller-supplied transactions have large lengths.
         let mut length = HEADER_BYTES + 2 + self.proof.len();
         for tx in &self.transactions {
-            ensure((159..=2048).contains(&tx.len()), "TRANSACTION_LIMIT")?;
-            Envelope::decode(tx).map_err(|_| Error::from("TRANSACTION_CODEC"))?;
+            Self::transaction_wire(tx)?;
             length += 2 + tx.len();
         }
         ensure(length <= 1_048_576, "PACKET_LIMIT")?;
@@ -201,9 +212,13 @@ impl Packet {
             let len = bytes.get(pos..pos + 2).ok_or("PACKET_LENGTH")?;
             let n = u16::from_le_bytes([len[0], len[1]]) as usize;
             pos += 2;
-            ensure((159..=2048).contains(&n), "TRANSACTION_LIMIT")?;
+            let qtx = bytes.get(pos..pos + 4) == Some(b"QTX1".as_slice());
+            ensure(
+                (159..=if qtx { 8192 } else { 2048 }).contains(&n),
+                "TRANSACTION_LIMIT",
+            )?;
             let tx = bytes.get(pos..pos + n).ok_or("PACKET_LENGTH")?;
-            Envelope::decode(tx).map_err(|_| Error::from("TRANSACTION_CODEC"))?;
+            Self::transaction_wire(tx)?;
             transactions.push(tx.to_vec());
             pos += n;
         }
@@ -232,6 +247,38 @@ pub struct Settings {
     pub(crate) checkpoint_tile_paths: Option<operator_checkpoint_tile::CheckpointTileRuntimePaths>,
 }
 impl Settings {
+    /// Explicit fresh transfer-only PQ account genesis. PQG1 dual-signature
+    /// import preserves all source nonce floors and locked liability records.
+    /// The source/export and revocation pins still need independent M13 authority;
+    /// this library API does not activate a network or release deployed assets.
+    #[cfg(feature = "pq-native-openssl")]
+    pub fn from_pq_account_import(
+        imported: pon_executor::pq_accounts::VerifiedPqGenesis,
+    ) -> Result<Self> {
+        let (app, mut initial) = imported.into_execution_parts();
+        ensure(app.is_pq_account_profile(), "PQ_ACCOUNT_PROFILE")?;
+        let (a, b) = maintenance();
+        let task = pon_work::task_id(&a, &b).map_err(|_| Error::from("WORK_TASK"))?;
+        initial.insert(format!("work:{}", hex::encode(task)), json!(true));
+        let time = app.params["genesis_timestamp"].as_u64().ok_or("CONFIG")?;
+        let genesis = hash(
+            b"native-pq-account-genesis-v1",
+            &[
+                &app.network,
+                &app.parameters,
+                &pon_executor::root_for_config(&initial, &app)?,
+                &time.to_le_bytes(),
+            ],
+        );
+        Ok(Self {
+            app,
+            genesis,
+            initial,
+            operator_bootstrap: None,
+            operator_material: None,
+            checkpoint_tile_paths: None,
+        })
+    }
     /// An explicit new timestamp selects a distinct valueless devnet, not a hot upgrade.
     pub fn development(genesis_timestamp: Option<u64>) -> Result<Self> {
         Self::development_with_evaluation_policy(genesis_timestamp, "legacy-first-two-v3")

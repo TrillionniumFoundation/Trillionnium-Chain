@@ -1,0 +1,15 @@
+test_changed_binary_is_not_the_original_test_program (test_native_phase_host.PhaseHostControls.test_changed_binary_is_not_the_original_test_program) ... ok
+test_exact_job_and_raw_bytes_are_bound (test_native_phase_host.PhaseHostControls.test_exact_job_and_raw_bytes_are_bound) ... ok
+test_matching_non_native_program_is_rejected (test_native_phase_host.PhaseHostControls.test_matching_non_native_program_is_rejected) ... ok
+test_missing_unknown_and_duplicate_fields_fail (test_native_phase_host.PhaseHostControls.test_missing_unknown_and_duplicate_fields_fail) ... ok
+test_no_local_provision_or_command_when_hosted_context_is_missing (test_native_phase_host.PhaseHostControls.test_no_local_provision_or_command_when_hosted_context_is_missing) ... ok
+test_original_denominators_modes_and_profiles_are_required (test_native_phase_host.PhaseHostControls.test_original_denominators_modes_and_profiles_are_required) ... ok
+test_output_and_binary_symlinks_fail (test_native_phase_host.PhaseHostControls.test_output_and_binary_symlinks_fail) ... ok
+test_phase_cannot_escape_its_owned_control_directory (test_native_phase_host.PhaseHostControls.test_phase_cannot_escape_its_owned_control_directory) ... ok
+test_service_command_inherits_only_fixed_parent_and_original_program (test_native_phase_host.PhaseHostControls.test_service_command_inherits_only_fixed_parent_and_original_program) ... ok
+test_unconfigured_optional_systemd_slice_is_not_a_provisioned_parent (test_native_phase_host.PhaseHostControls.test_unconfigured_optional_systemd_slice_is_not_a_provisioned_parent) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.029s
+
+OK

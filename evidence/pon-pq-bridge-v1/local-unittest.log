@@ -1,0 +1,23 @@
+test_cannot_infer_cryptographic_or_authority_status_from_projection (test_pq_genesis_state_bridge.ProjectionTests.test_cannot_infer_cryptographic_or_authority_status_from_projection) ... ok
+test_changed_hash_pins_fail_closed (test_pq_genesis_state_bridge.ProjectionTests.test_changed_hash_pins_fail_closed) ... ok
+test_dropped_liability_refuses_even_when_attacker_reanchors_state (test_pq_genesis_state_bridge.ProjectionTests.test_dropped_liability_refuses_even_when_attacker_reanchors_state) ... ok
+test_duplicate_unsorted_unknown_source_and_supply_rejected (test_pq_genesis_state_bridge.ProjectionTests.test_duplicate_unsorted_unknown_source_and_supply_rejected) ... ok
+test_even_attacker_reanchors_corrupt_state_rejected_semantically (test_pq_genesis_state_bridge.ProjectionTests.test_even_attacker_reanchors_corrupt_state_rejected_semantically) ... ok
+test_every_pqs1_byte_corruption_refused_by_independent_pin (test_pq_genesis_state_bridge.ProjectionTests.test_every_pqs1_byte_corruption_refused_by_independent_pin) ... ok
+test_every_source_header_byte_corruption_refused (test_pq_genesis_state_bridge.ProjectionTests.test_every_source_header_byte_corruption_refused) ... ok
+test_liability_perturbation_and_reordering_refused (test_pq_genesis_state_bridge.ProjectionTests.test_liability_perturbation_and_reordering_refused) ... ok
+test_matches_upstream_pqg1_bytes_and_domain_exactly (test_pq_genesis_state_bridge.ProjectionTests.test_matches_upstream_pqg1_bytes_and_domain_exactly) ... ok
+test_new_target_supply_must_not_absorb_escrow_into_balance (test_pq_genesis_state_bridge.ProjectionTests.test_new_target_supply_must_not_absorb_escrow_into_balance) ... ok
+test_no_silent_nonce_rewind_under_reanchored_projection (test_pq_genesis_state_bridge.ProjectionTests.test_no_silent_nonce_rewind_under_reanchored_projection) ... ok
+test_old_generation_overflow_refuses_target_state (test_pq_genesis_state_bridge.ProjectionTests.test_old_generation_overflow_refuses_target_state) ... ok
+test_preserves_inherited_nonce_and_generation_and_all_four_liabilities (test_pq_genesis_state_bridge.ProjectionTests.test_preserves_inherited_nonce_and_generation_and_all_four_liabilities) ... ok
+test_quarantine_cannot_silently_become_active_even_with_reanchoring (test_pq_genesis_state_bridge.ProjectionTests.test_quarantine_cannot_silently_become_active_even_with_reanchoring) ... ok
+test_quarantine_must_not_receive_any_pq_key (test_pq_genesis_state_bridge.ProjectionTests.test_quarantine_must_not_receive_any_pq_key) ... ok
+test_reject_duplicate_pq_id_even_if_new_address_hash_recomputed (test_pq_genesis_state_bridge.ProjectionTests.test_reject_duplicate_pq_id_even_if_new_address_hash_recomputed) ... ok
+test_reject_truncated_trailing_and_wrong_types (test_pq_genesis_state_bridge.ProjectionTests.test_reject_truncated_trailing_and_wrong_types) ... ok
+test_strict_balance_and_counter_bounds (test_pq_genesis_state_bridge.ProjectionTests.test_strict_balance_and_counter_bounds) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 0.044s
+
+OK

@@ -1,0 +1,70 @@
+131f 实际 History/CPU 验收独立补充 r7
+====================================
+
+结论：131f 原始三次 campaign 都进入了规定 Host 资源域，但 9 个阶段均未通过服务验收；6 个攻击阶段没有观察到真实 paid-credit 耗尽，27 个预定确认中 0 个完成。它与旧 e25 的 PUBLIC_HOST_KERNEL_PARENT 启动失败是不同结果。本补充基于新下载的真实记录，不覆盖 02:31 时点的只读预算可达性分析。
+
+原始证据与范围
+----------------
+Chain head 131f673d9563e72aca7139f3239856957d118d49；tree b8bdd87dca3cd6288c38f63848b24b1a2df6a09d。
+run 40620917256；job 122594446727；artifact 12787328109。
+https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40620917256/job/122594446727
+原 ZIP 50,535,162 B；SHA-256 2882b94bb4edc617ecee45b65fe4e3ad9607a8330505e1ccc38ec13933e680f5。
+ci_readback_r7 已核 1765/1765 内部清单 bytes+hash，本补充独立核 ZIP hash，直接读取三份原 run-N-raw/report.json 和 9 组 Host 原记录，并把关键值与其派生 readback 逐项比对。未运行 ZIP 内任何文件；没有新构建、原生执行、profile 调整或 CI。
+每次原窗口 30 秒；baseline、from-zero、late-product 三模式；后两模式各 24 个外部攻击进程，三次共 144 个。单机受控 loopback 的三次重复不能充当多管理方 WAN 证据。
+
+一、Host 已有实证通过，不能再用旧配置失败解释这一轮
+--------------------------------------------
+9/9 controller result passed、9/9 child exit=0，phase startup_errors 为空。inside-before/after 真实 cgroup 记录为 receiver+本地 History verifier 共用 cpu.max=25000 100000（0.25 core）、memory.max=2147483648，cpu.max.burst=0；外部 actors/controller 的 cpu.max=400000 100000。边界前后均已观察，字段 hash 与原路径在 JSON。
+这只关闭本轮“没进入 Host 就退出”的解释。Host controller 自己标明 host_readiness_only，不承诺服务或耗尽通过。本轮保留 CPU throttling 等 cgroup 计数；这些聚合计数也不能单独定位某次 import 内的等待原因。
+
+二、攻击确实支付 CPU，但没有达到真实耗尽判据
+------------------------------------------
+原预算仍为 burst=2,000,000,000 ns、wall-clock refill=250,000,000 CPU ns/s、start reserve=100,000,000 ns、2 workers。六阶段真实结算如下，单位均为 CPU 秒：
+
+run 1 from-zero: paid=4.111180881s; credited refill=4.110748806s; discarded refill=3.434449962s; final credit=1.999567925s; minimum sampled paid credit=1.981460057s
+run 1 late-product: paid=4.242366695s; credited refill=4.239613881s; discarded refill=3.304032769s; final credit=1.997247186s; minimum sampled paid credit=1.981917432s
+run 2 from-zero: paid=4.141152923s; credited refill=4.139819962s; discarded refill=3.406991614s; final credit=1.998667039s; minimum sampled paid credit=1.982883493s
+run 2 late-product: paid=4.188798636s; credited refill=4.182598955s; discarded refill=3.344401967s; final credit=1.993800319s; minimum sampled paid credit=1.981996478s
+run 3 from-zero: paid=4.065892561s; credited refill=4.063987372s; discarded refill=3.460006501s; final credit=1.998094811s; minimum sampled paid credit=1.982391165s
+run 3 late-product: paid=4.220796110s; credited refill=4.220176928s; discarded refill=3.303977376s; final credit=1.999380818s; minimum sampled paid credit=1.981390664s
+
+全部 final balance 由原字段独立复算成立：initial + credited_refill − paid_cpu_debit − settlement_discard = remaining_paid_credit。这里 credited_refill 已经是实际入账量，discarded_refill 是因桶上限等未入账量，不能再从 credited_refill 中减一次。六阶段 settlement_discard=0，最终没有 outstanding reservation 或 live owner。
+“总 paid CPU 超过初始 2 秒”不等于耗尽：六阶段补入约 4.064–4.240 秒，抵消了约 4.066–4.242 秒的实际扣费；最终仍有约 1.994–2.000 秒信用。全部原采样余额恒等式成立，6/6 genuine_budget_depletion_observed=false，terminal mutation CPU refusals 最大值为 0。
+原离散采样最小 paid credit 范围为 1.981390664–1.982883493 秒；stored credit 较低时含两份 0.1 秒预留，不能把它当已付工作消耗。50 ms 是预期采样间隔；这些最小值不是连续时间全局下界，更不是“任何攻击绝不可能耗尽”的证明。
+本轮提供的是明确失败反例：真实负载持续收费且诚实服务未达标，但耗尽前提尚未满足；不能据此宣布“已在耗尽预算时保护诚实服务”，也不能把原可达性条件分析替换成无条件不可能定理。
+
+三、网络 24/24 返回成功，随后本地 import 失败；确认分母保留 27
+-----------------------------------------------------------
+63/63 实际 Submit 请求在窗口内得到应答，属于原计划 189 business packets 中的 63 个；未发送的 126 个仍在总计划分母中。24/24 History 网络响应及时且 status=ok；它们不代表客户端验证、状态激活或确认完成。
+客户端普通 History import 共尝试 24 次：baseline 9/12 成功、压力 6/12 成功，总计 15/24 成功、9/24 失败。每阶段最后一次 import 的错误均为 PUBLIC_REQUEST_DEADLINE，baseline 无攻击时同样发生。
+27 个预声明 round 中只有每阶段第一轮留下 observation，9 个已观察 round 全失败；后 18 个因原程序第一轮未确认即 break 而未观察。总体应写 0/27，不能只给 0/9，也不能删除未观察分母。
+24 个收到的原 History Page 均只含一个 packet、complete=false。每个阶段客户端 activation 分阶段计数增量为 0，client_confirmation 调用记录为空。源码只有 after==tip 才做 confirmation；这轮尚未到达完整页激活与真实本地确认步骤。原先导入成功的页并不证明该 round 已确认。
+
+四、已有记录能定位本地热路径，但不能指认某锁
+----------------------------------------
+不必仅从整阶段 CPU 猜测：原测试已经把 network call 与 client_import 分开记录，后者包括 Page 反序列化、receive_public_page_from_before 和按原完整页规则的激活。调用线程 ThreadCPUTime 不包含 scoped execution worker。
+成功的 baseline import：单次壁钟约 6.909–7.398 秒、调用线程 CPU 约 1.603–1.664 秒；成功的压力 import：单次约 18.700–19.696 秒、调用线程 CPU 约 1.818–1.859 秒。每阶段最后的失败 import 接近原 30 秒端点结束。原窗口在 epoch 前一次性确定，所有页共享，未给每页重新延长。
+
+对同一 verifier 的 native_history_arithmetic before/after 做差值，已能定位明显的 account_graph / verify_state 聚合成本：
+- 三个 baseline 分别新增 30 次 account_graph 检查，累计调用线程 CPU 约 5.359–5.397 秒、累计壁钟约 23.002–23.418 秒。
+- 六个压力阶段分别新增 10 次 account_graph 检查，累计调用线程 CPU 约 1.901–2.028 秒、累计壁钟约 19.696–20.298 秒。
+- 对应 verify_state 的 CPU 与壁钟仅略高，说明这个实测子区间是进一步调查的重点。所有本次差值的未知 CPU 次数与 stage observation failure 为 0。
+
+native_authenticated.rs 的 AccountGraph 计时实际包住 native_store::verify_with_lifts；后者读取整个账户图，检查所有节点/叶及独立完整 State，并在节点遍历中调用 progress。该区间同时包含 SQL 读取、当前字节解码/哈希/关系检查、资源/截止回调与期间调度等待。因此可以说“普通本地 History import 的 account graph 路径占有很大的已测区间”，不能说“已证明某一锁导致超时”或“全部时间就是 W1”。
+这些 stage 是嵌套累计区间，account_graph 在 verify_state 内，后者又可能位于 admission/state_at/publish 内。不可把它们相加；不应把 4 秒 receiver paid 总量除以请求数当某次 import 的成本。before/after 也包括被取消的调用，缺乏逐请求 stage 关联，无法判断每个成功/失败页各占哪些子阶段。
+
+具体缺失的证据更窄：该区间还没有 SQL/Host resource checks/哈希/线程节流/锁等待的细分，以及 scoped workers 的同口径 CPU；PUBLIC_REQUEST_DEADLINE 是通用取消错误，现存记录没有标明在 decode、W1、admission 或某个 progress checkpoint 中的确切触发点。入口实际走 Owner::Exclusive，不能单凭错误码归因 Shared owner 的 try_lock 等待。对更深根因必须保留这些未知项。
+
+五、账本与资源口径
+-----------------
+server.mutation_cpu_domain 是原报告 final_actual_flow 的 owner；独立客户端 verifier 的 History 使用自己的 Node CPU 域。两者在同一固定 cgroup 下争用 0.25 core，并不成为同一余额账户。
+whole_parent_phase_cpu_ns 同时覆盖 receiver、client verifier、setup/reactor 等，不能全部扣入 receiver budget，也不能用它减 receiver paid 就称“存在未计费漏洞”。CPU 时间、壁钟、嵌套区间与 OS cgroup 计数也不可混加。
+144 个外部攻击进程最终正常退出、0 forced kill、0 attempt-cap 命中；本次不含可作为 crash/restart 证明的真实 kill cut。每阶段新建 2 秒 initial credit 是独立实验初始化，不是崩溃恢复后允许重置信用的验证。
+
+后续判断范围
+------------
+现有实测已足以保持 2B OPEN，并把接下来只读设计评审的重点放在“本地完整 History 关系校验的实际成本”与“receiver paid debit 对实际入账 refill 的可达性”两项。应保留现有固定窗口、完整验证关系、所有失败/超时与预定分母；不能靠放宽 deadline、减少原关系、忽略未观察 round 或预置耗尽报告来变绿。
+如未来获准进一步做性能改进，应先保留本次逐页与阶段基线，再用同一关系的优化和更细分的测量说明收益。账户图缓存必须验证当前真实字节/上下文，不得把先前成功 verdict 变成免验证权限；该建议仅是约束，未在本补充中实施。
+独立 WAN、重启不增发信用、真正耗尽时的诚实服务、PQ 路径均未因这次 Host 通过而获验收。
+
+配套 history-131f-observation-r7.json 保留独立读回的各原成员 hash、9 个 phase 原 JSON pointer、全部 final flow、24 个 import 时间、16 个 stage 的逐项前后差值和未知范围，支持复核本补充而不覆盖旧 review。

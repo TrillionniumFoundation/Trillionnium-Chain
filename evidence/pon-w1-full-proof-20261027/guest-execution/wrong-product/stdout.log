@@ -1,0 +1,1 @@
+{"consensus_admission":false,"cryptographic_proof_generated":false,"executor_error":"Guest panicked: full native PNH1/PNW1 relation: Work(Product)","guest_rejection_established":false,"input_sha256":"e6c61a99893f46b0ac50a2aee2175a41801a1ae01f8fbf9b24fb2831f4420062","mode":"wrong-product","schema":"trnm-w1-real-guest-execution-control-v1"}

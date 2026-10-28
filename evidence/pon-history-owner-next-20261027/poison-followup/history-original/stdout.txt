@@ -1,0 +1,20 @@
+
+running 10 tests
+test ingress::history_import::tests::actual_detached_m06_cannot_continue_after_original_cpu_account_is_fenced ... ok
+test ingress::history_import::tests::committed_history_keeps_original_deadline_inside_native_activation ... ok
+test ingress::history_import::tests::concurrent_false_product_wrong_root_and_honest_history_share_one_account ... ok
+test ingress::history_import::tests::expired_history_never_starts_an_epoch_or_a_cpu_account ... ok
+test ingress::history_import::tests::history_decode_cannot_renew_the_original_w1_deadline ... ok
+test ingress::history_import::tests::history_kill_cut_child ... ignored, subprocess fixture: parent selects a real SIGKILL cut
+test ingress::history_import::tests::one_history_close_cannot_clear_another_imports_live_epoch ... ok
+test ingress::history_import::tests::real_sigkill_history_cuts_preserve_debt_fence_and_committed_blocks ... {"cut":"epoch","cut_active_tip":"5c208b182ac2f8a1b40fc36bd483f271f871bf96ff175b40cfa18ba1b1c2d46f","debt_reconciliation_complete":false,"durable_epoch_marker":"active-v1","new_cpu_account_available":false,"observed_signal":9,"physical_power_loss":false,"reopened_active_tip":"5c208b182ac2f8a1b40fc36bd483f271f871bf96ff175b40cfa18ba1b1c2d46f","schema":"native-history-real-kill-cut-v1","stored_block_after_reopen":false}
+{"cut":"w1","cut_active_tip":"5c208b182ac2f8a1b40fc36bd483f271f871bf96ff175b40cfa18ba1b1c2d46f","debt_reconciliation_complete":false,"durable_epoch_marker":"active-v1","new_cpu_account_available":false,"observed_signal":9,"physical_power_loss":false,"reopened_active_tip":"5c208b182ac2f8a1b40fc36bd483f271f871bf96ff175b40cfa18ba1b1c2d46f","schema":"native-history-real-kill-cut-v1","stored_block_after_reopen":false}
+{"cut":"m06","cut_active_tip":"7005655726974ad5812fbc9a82cf734fecf3ae6f58e4cf388453ea4f4f5ebf57","debt_reconciliation_complete":false,"durable_epoch_marker":"active-v1","new_cpu_account_available":false,"observed_signal":9,"physical_power_loss":false,"reopened_active_tip":"7005655726974ad5812fbc9a82cf734fecf3ae6f58e4cf388453ea4f4f5ebf57","schema":"native-history-real-kill-cut-v1","stored_block_after_reopen":false}
+{"cut":"admitted","cut_active_tip":"7005655726974ad5812fbc9a82cf734fecf3ae6f58e4cf388453ea4f4f5ebf57","debt_reconciliation_complete":false,"durable_epoch_marker":"active-v1","new_cpu_account_available":false,"observed_signal":9,"physical_power_loss":false,"reopened_active_tip":"2854d6dde6d43cc5aba816089597e57f82d1f5b116e573dfbb643c437f410ec2","schema":"native-history-real-kill-cut-v1","stored_block_after_reopen":true}
+{"cut":"activated","cut_active_tip":"2854d6dde6d43cc5aba816089597e57f82d1f5b116e573dfbb643c437f410ec2","debt_reconciliation_complete":false,"durable_epoch_marker":"active-v1","new_cpu_account_available":false,"observed_signal":9,"physical_power_loss":false,"reopened_active_tip":"2854d6dde6d43cc5aba816089597e57f82d1f5b116e573dfbb643c437f410ec2","schema":"native-history-real-kill-cut-v1","stored_block_after_reopen":true}
+ok
+test ingress::history_import::tests::shared_admission_owner_wait_observes_control_deadline_and_original_two_second_limit ... ok
+test ingress::history_import::tests::shared_history_refill_full_w1_and_actual_m06_release_the_original_writer ... ok
+
+test result: ok. 9 passed; 0 failed; 1 ignored; 0 measured; 759 filtered out; finished in 6.91s
+

@@ -1,0 +1,37 @@
+{
+  "schema": "pq-native-exact-source-run-v1",
+  "argv": [
+    "cargo",
+    "test",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "-p",
+    "trnm-pon-node",
+    "--features",
+    "pq-native-openssl",
+    "--lib",
+    "ingress::pq_network::tests::",
+    "--",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "started_utc": "2026-10-27T23:53:52.821188+00:00",
+  "base_commit": "c584028b1622fb9b5f5ee0581d097f3e527909c8",
+  "working_tree_candidate": true,
+  "openssl_source_sha256": "603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a",
+  "rustc": "rustc 1.95.0 (59807616e 2026-04-14)",
+  "openssl": "OpenSSL 3.5.9 29 Sep 2026 (Library: OpenSSL 3.5.9 29 Sep 2026)",
+  "source_manifest_sha256": "41ecb6b2ea8094c02a5ba9473b80663ae6aa8ef313ecf8f0920bc8e306fa7381",
+  "exit_code": 101,
+  "elapsed_seconds": 368.9570561040018,
+  "completed_utc": "2026-10-28T00:00:01.843050+00:00",
+  "stdout": {
+    "bytes": 1462,
+    "sha256": "e88836dc72758405610d8e889f4ee2cbd2904b018930eac17bbbf5a42262c72b"
+  },
+  "stderr": {
+    "bytes": 4460,
+    "sha256": "70732b36309f06c19d2abd625e42722cecca0f8d1f7005eafacf97853248edc5"
+  }
+}

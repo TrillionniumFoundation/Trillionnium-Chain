@@ -1,0 +1,166 @@
+{
+  "schema": "f0-first-host-attempt-independent-diagnosis-v1",
+  "run_id": 40741611297,
+  "run_attempt": 1,
+  "job_id": 123004393839,
+  "remote_head": "439681f324482c0d5a7fb6f7cc9190f60dd16e2a",
+  "tree": "ea2cca3c0bbf8e3b65db2f3be96ccc31b256964f",
+  "local_source_equivalent_commit": "6eaf5f8d6f9b12546878bc8286b1fcac219a0d4a",
+  "source_files": [
+    {
+      "path": "scripts/run_fixed_host_root_f0.py",
+      "bytes": 37307,
+      "sha256": "bf1853ba3a08dbf032e7ccfbca8ca5eb92815ae5b2c90b2993c0ce8dbcefe194",
+      "git_oid": "0f1bd7709591b647f8c59a121fc91bf9b136a977"
+    },
+    {
+      "path": "scripts/project-preflight.sh",
+      "bytes": 242,
+      "sha256": "08645a9c6c8ab5cd9a92aa24e1c19fb71e7330d28e379b805d8e3f81ce8ede1f",
+      "git_oid": "cfd4f58405ca7620ad267f6aa42b240be038797c"
+    },
+    {
+      "path": "scripts/ci/project_boundary.py",
+      "bytes": 4485,
+      "sha256": "5845b10022c1ce625e864c38a9c69ba1982a1d1efad1dc934cc06f3d8dafda47",
+      "git_oid": "3dbc60fd89e2e6417e04648fb433fbbcfaabf878"
+    },
+    {
+      "path": "scripts/ci/test_project_boundary.py",
+      "bytes": 11723,
+      "sha256": "7ab3556cec8d9ce709581711c4601776449eac91724d50a2211d7aa1024c0da1",
+      "git_oid": "44b17183a00205ec8c2ee48395d3f9376949ac52"
+    },
+    {
+      "path": "scripts/ci/test_fixed_root_f0.py",
+      "bytes": 25390,
+      "sha256": "303007ea60b9b8c1d461d33ddd1c9a0f004ea4e730e7ec65cea60b21162f6e0f",
+      "git_oid": "b42fe952fdf085eb0f1717eb132850207787d558"
+    },
+    {
+      "path": "scripts/ci/finalize_fixed_root_f0.py",
+      "bytes": 17304,
+      "sha256": "608ba877822f706b82427398c5f90d5811be47ab02f37f7ae09a59b8c1771866",
+      "git_oid": "c5deebcd734b57e5ef63b1e51797328db6551a1f"
+    },
+    {
+      "path": ".github/workflows/pon-fixed-host-root-f0.yml",
+      "bytes": 17173,
+      "sha256": "89e5058056006cee4d24dcfe1afa52e991bd40959bfa19463878b0a7ad168093",
+      "git_oid": "733184b54aba30ab56c5a076bcfefdea31e1e2b1"
+    }
+  ],
+  "artifact": {
+    "id": 12839802698,
+    "bytes": 19973,
+    "sha256": "812a7ce4fdf332aa4a1e728c1783f6d866d14030c94444ded6acf1ad7c3dbf6b",
+    "zip_members": 34,
+    "manifest_payloads": 33,
+    "all_hashes_and_crc_match": true
+  },
+  "job_list_total_count": 1,
+  "artifact_list_total_count": 1,
+  "pagination_complete_at_page_one": true,
+  "first_failure": {
+    "stage": "prepare/preflight",
+    "command": [
+      "/bin/bash",
+      "scripts/project-preflight.sh"
+    ],
+    "returncode": 2,
+    "elapsed_seconds": 0.0398877,
+    "stderr": "project boundary failed: not an allowed development branch\n",
+    "prepared_failure": "PREFLIGHT_FAILED"
+  },
+  "cause": "F0 prepare omits --audit; project-preflight.sh defaults to --dev and project_boundary.check rejects the exact-SHA detached checkout as not an allowed development branch. The earlier workflow preflight explicitly uses --audit and succeeds.",
+  "minimal_fix": {
+    "file": "scripts/run_fixed_host_root_f0.py",
+    "scope": "prepare command list only",
+    "before": [
+      "/bin/bash",
+      "scripts/project-preflight.sh"
+    ],
+    "after": [
+      "/bin/bash",
+      "scripts/project-preflight.sh",
+      "--audit"
+    ]
+  },
+  "preserved_gates": [
+    "preceding source_snapshot/validate_source and verify_ci_source exact head/tree/clean",
+    "all project boundary checks except the intentionally inapplicable developer branch-name check in audit mode",
+    "original --dev/--staged/--push protected branch and non-fast-forward rules unchanged",
+    "all native format/Clippy/build/source-control selectors unchanged",
+    "original controller/Host ownership, ceilings and original per-request/SLO limits unchanged",
+    "all 6 confirmations, 42 business exposures, failures, unknown services and always-finalization unchanged"
+  ],
+  "regression_plan": [
+    "retain existing test_project_boundary.test_detached_source_is_audit_only and test_checkout_https_without_suffix_audits_detached_head",
+    "add a prepare-level control covering the actual selected audit argv in detached checkout, with native launches forbidden/mocked",
+    "retain negative wrong-head/tree/dirty-source controls before preparation",
+    "rerun original Python source/launcher/boundary controls and hosted exact-source preparation; no local native execution for this diagnosis"
+  ],
+  "not_reached": [
+    "prepare rustc-version",
+    "prepare cargo-version",
+    "prepare format",
+    "prepare clippy",
+    "prepare build",
+    "7 source-control binary selectors",
+    "controller arm",
+    "baseline and valid-work-root Host execution"
+  ],
+  "finalizer_secondary": {
+    "all_services_known_empty": false,
+    "complete_success": false,
+    "services": [
+      {
+        "cleanup_attempted": false,
+        "failure": "FROZEN_PREPARATION_REQUIRED",
+        "known_empty": false,
+        "observed_empty_at_readback": false,
+        "ownership_validated": false,
+        "phase": "controller",
+        "remaining": "unknown",
+        "service": null
+      },
+      {
+        "cleanup_attempted": false,
+        "controller_terminal_before_phase_observation": false,
+        "failure": "FROZEN_PREPARATION_REQUIRED",
+        "known_empty": false,
+        "observed_empty_at_readback": false,
+        "ownership_validated": false,
+        "phase": "baseline",
+        "remaining": "unknown",
+        "service": null
+      },
+      {
+        "cleanup_attempted": false,
+        "controller_terminal_before_phase_observation": false,
+        "failure": "FROZEN_PREPARATION_REQUIRED",
+        "known_empty": false,
+        "observed_empty_at_readback": false,
+        "ownership_validated": false,
+        "phase": "valid-work-root",
+        "remaining": "unknown",
+        "service": null
+      }
+    ],
+    "planned_confirmations": 6,
+    "observed_confirmations": 0,
+    "planned_business_packet_exposures": 42,
+    "report_observed": false,
+    "native_result_observed": false,
+    "interpretation": "Correct fail-closed consequence of incomplete preparation; do not turn missing ownership into an empty-service or successful result."
+  },
+  "source_before_after_equal": true,
+  "native_executed_by_this_diagnosis": false,
+  "source_modified_by_this_diagnosis": false,
+  "remote_mutation": false,
+  "retrieval_notes": [
+    "Direct generic /actions/jobs/{id} fetch rejected by connector endpoint allowlist; complete run jobs list retrieved instead.",
+    "Initial artifact materialization was blocked by default socket permissions; approved read-only download succeeded and exact size/digest validated.",
+    "artifact-download.private.json contains the tool-provided temporary URL and must be excluded from any shared bundle."
+  ]
+}

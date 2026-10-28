@@ -1,0 +1,20 @@
+{
+  "schema": "host378-single-native-freeze-v1",
+  "utc": "2026-10-23T21:42:47.769650+00:00",
+  "source": "37808e86dc1ae753b02f11658e9e2fd6c365e083",
+  "namespace_observation": "UNKNOWN",
+  "actual_exit_status": "UNKNOWN",
+  "probe_completion": "NOT_PROVEN",
+  "material_count": 71,
+  "exports_count": 12,
+  "launch_count": 1,
+  "pins": {
+    "candidate.json": "23384fd4301a0d5072f5483b2a56a84cfcbc67fec910c253a0273b215b2efb54",
+    "go-decision.json": "bfcdd3c257ca0af5f2332323d53b5ffe4ba5d91e2709bfa47ac290f691e47717",
+    "execute_once.py": "6983f2612d0660a8373e0b65b460bd9b5e794c85fd6f4331cd7f25f7f644d6fe",
+    "native-outcome.json": "d6321c1f568b9a77792997dfc7d5cc9aa0ef403d6444e2de67fb4377814963c5",
+    "raw-evidence-index.json": "1307f6cada67576fa0d8bb501a98ddb72f0d4bdf8b15241a551765e4b312eca3",
+    "11-finite-sampling-summary.json": "1422196c7e4b5796c558bd2f8559cc88f737f178fe0d4cc19d34c3f7fe64937d",
+    "material-manifest.json": "9dbed183c648f421848bce20fc974a0025159c0c865ce26fb0db33740b505154"
+  }
+}

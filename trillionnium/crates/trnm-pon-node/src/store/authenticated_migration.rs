@@ -789,9 +789,10 @@ fn table_names(db: &Connection) -> Result<Vec<String>> {
         .query_map([], |row| row.get(0))?
         .collect::<std::result::Result<Vec<String>, _>>()?;
     ensure(
-        names
-            .iter()
-            .all(|name| name.bytes().all(|b| b.is_ascii_lowercase() || b == b'_')),
+        names.iter().all(|name| {
+            name == "reorg_lifecycle_v1"
+                || name.bytes().all(|b| b.is_ascii_lowercase() || b == b'_')
+        }),
         "AUTHENTICATED_MIGRATION_TABLE",
     )?;
     Ok(names)
@@ -1227,7 +1228,7 @@ fn check_local_history(node: &Node) -> Result<bool> {
         let target = bytes32(target)?;
         let count = node.check_steps(old, target, cursor)?;
         ensure(
-            count > 0 && next > 0 && done <= 1,
+            count > 0 && next > 0 && done <= 2,
             "AUTHENTICATED_MIGRATION_REORG",
         )?;
         if done == 0 {
@@ -1265,6 +1266,12 @@ fn check_local_history(node: &Node) -> Result<bool> {
             )?;
             allowed_slots.push(next);
             pending = true;
+        } else if done == 2 {
+            // Terminated staging is never an active State or unfinished
+            // operation. Copy its original immutable owner record and unused
+            // bytes; the destination's existing Native recovery chooses anew.
+            node.check_cancelled_reorg_lifecycle()?;
+            allowed_slots.push(next);
         } else {
             ensure(
                 next <= generation && cursor == count,

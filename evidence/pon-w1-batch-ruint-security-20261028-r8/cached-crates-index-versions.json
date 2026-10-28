@@ -1,0 +1,82 @@
+{
+  "schema": "TRNM-RUINT-CACHED-REGISTRY-VERSIONS1",
+  "source_path": "/tmp/pure-pon-cargo-20261027/registry/index/index.crates.io-1949cf8c6b5b557f/.cache/ru/in/ruint",
+  "source_sha256": "7e2c18a23f6b570c6129e3498fa03fb63be10afd4f54b791d68c3d8c5044b203",
+  "versions": [
+    {
+      "name": "ruint",
+      "vers": "1.15.0",
+      "cksum": "11256b5fe8c68f56ac6f39ef0720e592f33d2367a4782740d9c9142e889c7fb4",
+      "rust_version": "1.65",
+      "yanked": false,
+      "pubtime": "2025-05-22T18:41:22Z"
+    },
+    {
+      "name": "ruint",
+      "vers": "1.17.0",
+      "cksum": "a68df0380e5c9d20ce49534f292a36a7514ae21350726efe1865bdb1fa91d278",
+      "rust_version": "1.85",
+      "yanked": false,
+      "pubtime": "2025-09-24T13:48:36Z"
+    },
+    {
+      "name": "ruint",
+      "vers": "1.17.1",
+      "cksum": "7f5befb5191be3584a4edaf63435e8ff92ffff622e711ca7e77f8f8f365a9df8",
+      "rust_version": "1.85",
+      "yanked": false,
+      "pubtime": "2025-12-26T16:58:21Z"
+    },
+    {
+      "name": "ruint",
+      "vers": "1.17.2",
+      "cksum": "c141e807189ad38a07276942c6623032d3753c8859c146104ac2e4d68865945a",
+      "rust_version": "1.85",
+      "yanked": false,
+      "pubtime": "2025-12-28T14:42:51Z"
+    },
+    {
+      "name": "ruint",
+      "vers": "1.18.0",
+      "cksum": "0298da754d1395046b0afdc2f20ee76d29a8ae310cd30ffa84ed42acba9cb12a",
+      "rust_version": "1.90",
+      "yanked": false,
+      "pubtime": "2026-04-22T13:11:44Z"
+    },
+    {
+      "name": "ruint",
+      "vers": "1.19.0",
+      "cksum": "45caf26f647c19115bf9c453c70ffe4a4a3a6390dceebd942610584f99b8ddce",
+      "rust_version": "1.90",
+      "yanked": false,
+      "pubtime": "2026-07-03T13:14:42Z"
+    },
+    {
+      "name": "ruint",
+      "vers": "1.20.0",
+      "cksum": "f5e99bff0393163bb25029a6af25d3d8d202ba5b5438a74d1bd8789f5c822970",
+      "rust_version": "1.90",
+      "yanked": false,
+      "pubtime": "2026-07-30T16:00:21Z"
+    },
+    {
+      "name": "ruint",
+      "vers": "1.21.0",
+      "cksum": "a3fd047ac072f7d50e8374d249f1e407b53aed2a8af8cff67f1aa7ed669087c5",
+      "rust_version": "1.90",
+      "yanked": true,
+      "pubtime": "2026-10-20T10:49:55Z"
+    },
+    {
+      "name": "ruint",
+      "vers": "1.21.1",
+      "cksum": "a0de3fa9b4dac39cc2bd65679bacf9f531899d933605e2963b40c2129cdb55f2",
+      "rust_version": "1.90",
+      "yanked": false,
+      "pubtime": "2026-10-23T18:48:24Z"
+    }
+  ],
+  "upstream_public_index": "https://index.crates.io/ru/in/ruint",
+  "read_only_cached_metadata": true,
+  "network_refresh_performed": false
+}

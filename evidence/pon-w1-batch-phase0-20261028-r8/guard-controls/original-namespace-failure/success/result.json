@@ -1,0 +1,65 @@
+{
+  "assessment": "supervision result only; no build, cryptographic, or proof validity claim",
+  "command_returncode": -15,
+  "cpu_peak_seconds": 53.751316,
+  "declaration_file": "declaration.json",
+  "elapsed_seconds": 5.503044222001336,
+  "errors": [],
+  "kill_monotonic": 72854.68520336,
+  "last_sample": {
+    "cpu_peak_seconds": 53.751316,
+    "cpu_seconds": 53.751316,
+    "elapsed_seconds": 5.502941548009403,
+    "free_bytes": 3144200192,
+    "processes": [
+      {
+        "birth": 148,
+        "cpu_ticks": 5375,
+        "pgid": 7,
+        "pid": 7,
+        "ppid": 1,
+        "rss_bytes": 131072,
+        "sid": 1,
+        "state": "S"
+      }
+    ],
+    "reaped_cpu_seconds": 0.001316,
+    "rss_bytes": 131072,
+    "scan_seconds": 0.0009302670077886432,
+    "target_bytes": 0,
+    "target_growth_bytes": 0
+  },
+  "remaining_owned_processes": [
+    {
+      "birth": 148,
+      "cpu_ticks": 5375,
+      "pgid": 7,
+      "pid": 7,
+      "ppid": 1,
+      "rss_bytes": 131072,
+      "sid": 1,
+      "state": "S"
+    }
+  ],
+  "sampled_peak_rss_bytes": 131072,
+  "sampled_peak_target_growth_bytes": 0,
+  "seen_identities": [
+    {
+      "birth": 148,
+      "pid": 7
+    }
+  ],
+  "source_sha256": "97f965df9bd0f53c4e85351db3881863a497107d9bc62b4e06c64c0be3bba7b4",
+  "status": "cleanup_incomplete",
+  "stop_reason": "cpu",
+  "term_monotonic": 72852.184455712,
+  "wait4_records": [
+    {
+      "maxrss_kib": 12544,
+      "pid": 7,
+      "returncode": -15,
+      "system_seconds": 0.001316,
+      "user_seconds": 0.0
+    }
+  ]
+}

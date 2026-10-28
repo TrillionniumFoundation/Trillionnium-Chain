@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/workspace/scratch/56818e4fba76/chain-history-next/scripts/ci/check_applicability.py", line 337, in <module>
+    result = validate()
+             ^^^^^^^^^^
+  File "/workspace/scratch/56818e4fba76/chain-history-next/scripts/ci/check_applicability.py", line 258, in validate
+    validate_contract(root)
+  File "/workspace/scratch/56818e4fba76/chain-history-next/scripts/ci/report_module_evidence.py", line 225, in validate_contract
+    manifest_path = safe(root, package['manifest'])
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/56818e4fba76/chain-history-next/scripts/ci/check_invariant_evidence.py", line 22, in safe
+    path=(root/item).resolve();require(path.is_relative_to(root.resolve())and path.is_file(),'missing evidence '+relative)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/56818e4fba76/chain-history-next/scripts/ci/check_invariant_evidence.py", line 9, in require
+    if not condition:raise ValueError(message)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: missing evidence evidence/pon-v1/manifest.json

@@ -1,0 +1,18 @@
+
+running 6 tests
+test ingress::pq_network::tests::actual_large_signed_invalid_requests_exhaust_durable_ledger_budget_without_restart_credit ... {"accepted_native_errors":13,"case":"pq_native_durable_ledger_exhaustion","cold_reopen_no_credit":true,"cpu_exhaustion_claim":false,"next_request_refused":true,"status":{"account_migration":false,"byte_limit":16777216,"policy":"d412664d729fcc3126635c6baa9097da290cdd67cc3e19c994d238bf771db0ab","production_activation":false,"profile":"native-pq-network-owner-v1","record_limit":4096,"records":13,"reserved_bytes":13724854,"revoked_peers":0}}
+ok
+test ingress::pq_network::tests::expired_pending_operation_retires_without_refreshing_sequence_or_authorization ... ok
+test ingress::pq_network::tests::interrupted_owner_revocation_and_retained_ledger_corruption_fail_closed ... ok
+test ingress::pq_network::tests::pins_context_canonical_wire_sequence_and_classical_downgrade_refuse ... FAILED
+test ingress::pq_network::tests::real_tcp_node_submit_lost_ack_signature_randomness_and_cold_reopen ... FAILED
+test ingress::pq_network::tests::revocation_survives_actual_branch_reorg_and_cold_reopen ... ok
+
+failures:
+
+failures:
+    ingress::pq_network::tests::pins_context_canonical_wire_sequence_and_classical_downgrade_refuse
+    ingress::pq_network::tests::real_tcp_node_submit_lost_ack_signature_randomness_and_cold_reopen
+
+test result: FAILED. 4 passed; 2 failed; 0 ignored; 0 measured; 729 filtered out; finished in 3.18s
+

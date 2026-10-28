@@ -74,7 +74,7 @@ pub fn policy_observation() -> Value {
 /// variable. The original selector and every original helper remain raw.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum WorkProfile {
-    RawR13,
+    RawR14,
     ArithmeticFactsV1,
 }
 impl WorkProfile {
@@ -99,7 +99,7 @@ impl WorkProfile {
 
     pub fn from_actor_job(job: &Value) -> Result<Self, &'static str> {
         match (job.get("work_profile"), job.get("public_resource_policy")) {
-            (None, None) => Ok(Self::RawR13),
+            (None, None) => Ok(Self::RawR14),
             (Some(profile), Some(policy))
                 if profile.as_str() == Some("arithmetic-facts-v1")
                     && policy == &Self::ArithmeticFactsV1.policy_observation() =>
@@ -236,7 +236,7 @@ pub fn call(
         who,
         epoch,
         window_end,
-        WorkProfile::RawR13,
+        WorkProfile::RawR14,
     )
 }
 
@@ -256,7 +256,7 @@ pub fn call_with_work_profile(
     let remaining = window_end.saturating_sub(monotonic());
     let deadline = Instant::now() + Duration::from_nanos(remaining).min(Duration::from_secs(2));
     let (reply, metrics) = match work_profile {
-        WorkProfile::RawR13 => public_v3::call_public_protected_v3_with_deadline(
+        WorkProfile::RawR14 => public_v3::call_public_protected_v3_with_deadline(
             address,
             &request,
             settings,

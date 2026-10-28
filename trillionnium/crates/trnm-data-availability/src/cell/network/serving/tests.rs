@@ -17,7 +17,7 @@ fn fixture() -> (tempfile::TempDir, std::path::PathBuf, CellManifestV1) {
     let input = dir.path().join("weights");
     fs::write(&input, [7_u8; 16_384]).unwrap();
     let path = dir.path().join("cache.sqlite");
-    let store = CellStoreV1::open(&path).unwrap();
+    let store = CellStoreV1::open(&path, cache_config()).unwrap();
     let manifest = store
         .pack_file(
             &input,
@@ -93,7 +93,7 @@ fn half_request_does_not_block_honest_pinned_fetch() {
     let mut slow = TcpStream::connect(server.address).unwrap();
     slow.write_all(b"T").unwrap();
     server.accepted(1);
-    let cache = CellStoreV1::open(&dir.path().join("consumer.sqlite")).unwrap();
+    let cache = CellStoreV1::open(&dir.path().join("consumer.sqlite"), cache_config()).unwrap();
     let (actual, report) = fetch_cell(
         &cache,
         manifest.id(),
@@ -149,6 +149,65 @@ fn active_limit_drops_overload_without_queue_or_extra_bytes() {
     assert_eq!(report.peak_active_workers, 2);
     assert_eq!(report.completed_requests, 0);
     assert_eq!(report.sent_response_bytes, 0);
+}
+
+fn transient_capacity_refusal(cached_manifest: bool) {
+    let (dir, path, manifest) = fixture();
+    let server = Server::start(&path, limits());
+    let a = TcpStream::connect(server.address).unwrap();
+    server.accepted(1);
+    let b = TcpStream::connect(server.address).unwrap();
+    server.accepted(2);
+    let client_path = dir.path().join("retry-consumer.sqlite");
+    let expected = manifest.clone();
+    let address = server.address;
+    let maximum = if cached_manifest { 2 } else { 3 };
+    let client = thread::spawn(move || {
+        let cache = CellStoreV1::open(&client_path, cache_config()).unwrap();
+        if cached_manifest {
+            cache
+                .put_manifest(expected.id(), &expected.encode())
+                .unwrap();
+        }
+        fetch_cell(
+            &cache,
+            expected.id(),
+            &[address],
+            CellPeerLimitsV1 {
+                request_timeout: Duration::from_millis(300),
+                overall_timeout: Duration::from_secs(1),
+                max_cell_bytes: 16_384,
+                parallelism: 1,
+                max_connections: maximum,
+                max_response_bytes: 20_000,
+            },
+        )
+    });
+    // Both actual workers are occupied. This first honest request is really
+    // refused by the existing bounded server; no success result is substituted.
+    let overload = server.accepted(3);
+    assert_eq!(overload.overloaded_connections, 1);
+    drop((a, b));
+    let result = client.join().unwrap();
+    let served = server.finish();
+    let (actual, fetched) = result.expect("one transient refusal must allow one bounded retry");
+    assert_eq!(actual, manifest);
+    assert_eq!(fetched.downloaded_bytes, 16_384);
+    assert_eq!(fetched.connection_attempts, maximum);
+    assert_eq!(fetched.rejected_responses, 1);
+    assert_eq!(served.peak_active_workers, 2);
+    assert_eq!(served.overloaded_connections, 1);
+    assert_eq!(served.accepted_connections, maximum + 2);
+}
+
+#[test]
+fn transient_manifest_capacity_refusal_uses_one_bounded_retry() {
+    transient_capacity_refusal(false);
+}
+
+#[test]
+fn transient_chunk_capacity_refusal_uses_one_bounded_retry() {
+    transient_capacity_refusal(true);
 }
 
 #[test]
@@ -343,7 +402,7 @@ fn unread_large_response_keeps_absolute_deadline_and_exact_partial_write_charge(
     let (dir, path, manifest) = fixture();
     let input = dir.path().join("large");
     fs::write(&input, vec![7_u8; MAX_CHUNK_BYTES as usize]).unwrap();
-    let source = CellStoreV1::open(&path).unwrap();
+    let source = CellStoreV1::open(&path, cache_config()).unwrap();
     let manifest = source
         .pack_file(&input, manifest.context().clone(), MAX_CHUNK_BYTES)
         .unwrap();
@@ -477,7 +536,7 @@ fn bounded_corrupt_chunk_read_keeps_row_then_writable_fetch_repairs_exact_pin() 
         .unwrap();
     assert_eq!(readback, bad); // Read-only serving cannot repair/delete corruption.
     let healthy_path = dir.path().join("healthy.sqlite");
-    let healthy = CellStoreV1::open(&healthy_path).unwrap();
+    let healthy = CellStoreV1::open(&healthy_path, cache_config()).unwrap();
     assert_eq!(
         healthy
             .pack_file(
@@ -496,7 +555,7 @@ fn bounded_corrupt_chunk_read_keeps_row_then_writable_fetch_repairs_exact_pin() 
             ..limits()
         },
     );
-    let receiver = CellStoreV1::open(&path).unwrap();
+    let receiver = CellStoreV1::open(&path, cache_config()).unwrap();
     let (received, report) = fetch_cell(
         &receiver,
         manifest.id(),
@@ -518,4 +577,14 @@ fn bounded_corrupt_chunk_read_keeps_row_then_writable_fetch_repairs_exact_pin() 
         vec![7_u8; chunk.size as usize]
     );
     assert_eq!(server.finish().completed_requests, 1);
+}
+
+// Explicit finite fixture quota; covers the existing <=32MiB commit fixtures.
+fn cache_config() -> crate::cell::CellCacheConfigV4 {
+    crate::cell::CellCacheConfigV4 {
+        max_database_bytes: 128 * 1024 * 1024,
+        max_logical_bytes: 64 * 1024 * 1024,
+        max_chunk_rows: 4096,
+        max_manifest_rows: 256,
+    }
 }

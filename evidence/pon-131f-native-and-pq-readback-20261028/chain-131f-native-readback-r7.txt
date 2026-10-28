@@ -1,0 +1,75 @@
+CHAIN 131f ORIGINAL NATIVE CAMPAIGN READBACK R7
+Observed UTC: 2026-10-28T02:43:05.017508+00:00
+Source head: 131f673d9563e72aca7139f3239856957d118d49
+Tree: b8bdd87dca3cd6288c38f63848b24b1a2df6a09d
+Run 40620917256 / job 122594446727 / attempt 1 / artifact 12787328109
+https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40620917256/job/122594446727
+Archive: {'path': '/workspace/scratch/56818e4fba76/recovery/next-publication/ci-final-readback-r7-raw/chain-131f-native-12787328109.zip', 'bytes': 50535162, 'sha256': '2882b94bb4edc617ecee45b65fe4e3ad9607a8330505e1ccc38ec13933e680f5'}
+Internal manifest: 1765/1765 exact bytes and SHA256 verified; 1766 unique canonical members.
+TOTALS
+{
+  "runs": 3,
+  "runs_successful": 0,
+  "phase_startup_errors": 0,
+  "phases": 9,
+  "host_controller_passed": 9,
+  "host_child_exit_zero": 9,
+  "native_phase_criteria_met": 0,
+  "genuine_budget_depletion_observed": 0,
+  "attack_phases": 6,
+  "scheduled_confirmations": 27,
+  "observed_confirmations": 9,
+  "confirmed_rounds": 0,
+  "unobserved_scheduled_rounds": 18,
+  "planned_business_blocks": 189,
+  "business_blocks_acknowledged": 63,
+  "submissions_attempts": 63,
+  "submissions_acknowledged_on_time": 63,
+  "history_attempts": 24,
+  "history_acknowledged_on_time": 24,
+  "history_import_attempts": 24,
+  "history_import_success": 15,
+  "history_import_failure": 9,
+  "attack_attempts": 11216,
+  "attack_status_counts": {
+    "error": 144,
+    "refused": 11072
+  },
+  "attack_errors": {
+    "FRAME_DEADLINE": 18,
+    "IO: Resource temporarily unavailable (os error 11)": 125,
+    "PUBLIC_CLIENT_DEADLINE": 1
+  },
+  "attack_refusals": {
+    "WORK:Transcript": 5846,
+    "WORK:Product": 5226
+  },
+  "attack_calls_returned_after_window": 144,
+  "actors": 144,
+  "actors_exit_success": 144,
+  "actors_parent_forced_kill": 0,
+  "actors_attempt_cap_reached": 0,
+  "all_calls_ledger_rows": 11312,
+  "receiver_record_rows": 11302,
+  "receiver_retention_dropped": 0,
+  "receiver_measurement_failures": 0
+}
+PHASES
+run=1 mode=baseline host=True childexit=0 phase_pass=False duration=30s confirm=0/3 observed=1 absent=2 submit=7/7; planned=21 history_transport=4/4 import=3/4 verifier_errors=['PUBLIC_REQUEST_DEADLINE'] attack=0 status={} late=0 depletion=False paid_ns=444377506 credited_ns=440112098 discarded_ns=280506247 final_credit_ns=1995734592 min_sample_credit_ns=1978955320 parent_cpu_ns=8054256619 parent_wall_ns=33394274900
+run=1 mode=from-zero host=True childexit=0 phase_pass=False duration=30s confirm=0/3 observed=1 absent=2 submit=7/7; planned=21 history_transport=2/2 import=1/2 verifier_errors=['PUBLIC_REQUEST_DEADLINE'] attack=1958 status={'error': 24, 'refused': 1934} late=24 depletion=False paid_ns=4111180881 credited_ns=4110748806 discarded_ns=3434449962 final_credit_ns=1999567925 min_sample_credit_ns=1981460057 parent_cpu_ns=8384639810 parent_wall_ns=33687385691
+run=1 mode=late-product host=True childexit=0 phase_pass=False duration=30s confirm=0/3 observed=1 absent=2 submit=7/7; planned=21 history_transport=2/2 import=1/2 verifier_errors=['PUBLIC_REQUEST_DEADLINE'] attack=1796 status={'error': 24, 'refused': 1772} late=24 depletion=False paid_ns=4242366695 credited_ns=4239613881 discarded_ns=3304032769 final_credit_ns=1997247186 min_sample_credit_ns=1981917432 parent_cpu_ns=8382788589 parent_wall_ns=33686780471
+run=2 mode=baseline host=True childexit=0 phase_pass=False duration=30s confirm=0/3 observed=1 absent=2 submit=7/7; planned=21 history_transport=4/4 import=3/4 verifier_errors=['PUBLIC_REQUEST_DEADLINE'] attack=0 status={} late=0 depletion=False paid_ns=448951566 credited_ns=439760429 discarded_ns=286007656 final_credit_ns=1990808863 min_sample_credit_ns=1979160184 parent_cpu_ns=8040802216 parent_wall_ns=33384821880
+run=2 mode=from-zero host=True childexit=0 phase_pass=False duration=30s confirm=0/3 observed=1 absent=2 submit=7/7; planned=21 history_transport=2/2 import=1/2 verifier_errors=['PUBLIC_REQUEST_DEADLINE'] attack=1992 status={'error': 24, 'refused': 1968} late=24 depletion=False paid_ns=4141152923 credited_ns=4139819962 discarded_ns=3406991614 final_credit_ns=1998667039 min_sample_credit_ns=1982883493 parent_cpu_ns=8403811059 parent_wall_ns=33786136317
+run=2 mode=late-product host=True childexit=0 phase_pass=False duration=30s confirm=0/3 observed=1 absent=2 submit=7/7; planned=21 history_transport=2/2 import=1/2 verifier_errors=['PUBLIC_REQUEST_DEADLINE'] attack=1738 status={'error': 24, 'refused': 1714} late=24 depletion=False paid_ns=4188798636 credited_ns=4182598955 discarded_ns=3344401967 final_credit_ns=1993800319 min_sample_credit_ns=1981996478 parent_cpu_ns=8375344454 parent_wall_ns=33687168518
+run=3 mode=baseline host=True childexit=0 phase_pass=False duration=30s confirm=0/3 observed=1 absent=2 submit=7/7; planned=21 history_transport=4/4 import=3/4 verifier_errors=['PUBLIC_REQUEST_DEADLINE'] attack=0 status={} late=0 depletion=False paid_ns=433056883 credited_ns=419105844 discarded_ns=282269368 final_credit_ns=1986048961 min_sample_credit_ns=1977812460 parent_cpu_ns=8027497824 parent_wall_ns=33286294606
+run=3 mode=from-zero host=True childexit=0 phase_pass=False duration=30s confirm=0/3 observed=1 absent=2 submit=7/7; planned=21 history_transport=2/2 import=1/2 verifier_errors=['PUBLIC_REQUEST_DEADLINE'] attack=1968 status={'error': 24, 'refused': 1944} late=24 depletion=False paid_ns=4065892561 credited_ns=4063987372 discarded_ns=3460006501 final_credit_ns=1998094811 min_sample_credit_ns=1982391165 parent_cpu_ns=8383442574 parent_wall_ns=33691547298
+run=3 mode=late-product host=True childexit=0 phase_pass=False duration=30s confirm=0/3 observed=1 absent=2 submit=7/7; planned=21 history_transport=2/2 import=1/2 verifier_errors=['PUBLIC_REQUEST_DEADLINE'] attack=1764 status={'error': 24, 'refused': 1740} late=24 depletion=False paid_ns=4220796110 credited_ns=4220176928 discarded_ns=3303977376 final_credit_ns=1999380818 min_sample_credit_ns=1981390664 parent_cpu_ns=8371168213 parent_wall_ns=33681491873
+QUALIFICATION
+host_readiness: PASS 9/9 original fixed-host inside and outside records; not service or depletion acceptance.
+campaign: FAIL all 3 original repetitions and all 9 measured phases.
+confirmation: 0/27 predeclared rounds, including 18 unobserved rounds; 63/189 planned business packets actually acknowledged.
+history: Transport acknowledgement is distinct from local ordinary History import and signed confirmation.
+depletion: No real paid-credit depletion in any of the six attack phases; fresh 2s epoch per phase is experiment initialization, not restart-credit acceptance.
+cpu: Receiver paid CPU, whole parent receiver+verifier CPU, and nested work intervals have different scopes and must not be added.
+source: Only Chain131f/treeb8bd, exact head campaign. Cannot attribute to later heads or claim prospective merge campaign.
+restrictions: This audit parsed original downloaded bytes only; did not execute any archived program or local native PQ path.

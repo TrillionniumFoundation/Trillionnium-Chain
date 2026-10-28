@@ -397,7 +397,7 @@ impl PublicPolicy {
         }
     }
     pub fn id(self) -> Hash {
-        hash(b"public-protected-profile-v3",&[PROFILE.as_bytes(),b"resource-revision-r13/shared64-unpaid-input-idle250ms-pressure-cancel-no-slot-refund/hello-and-incomplete-solution-only/server-owed-and-paid-protected/no-deadline-renewal/connection-local-ready-fifo-challenge-and-grant-split-read-mutation/pending64-no-extra-queue-or-worker/hello-wait-original-accept2s/paid-grant-wait-original-cookie-expiry-no-renewal/spent-reserve-once/lane-and-body-together-rollback-on-full/bounded-paid-enqueue-fifo-by-connection-with-unchanged-absolute-work-and-total-deadlines/hello108/solution108/conn64/paid-raw-json-canonical8MiB-factor3/read-body-reserve131072/output-conservative32MiB/control-output-reserve524288/grants-mutation8-read8-held-until-connection-and-task-release/queueproof2-read2/workers2-read1/spent1024-no-live-eviction/packet1048576/body2097216/read512/response2101248/history1/error2KiB/hello2s/challenge2s/solution-policy/body5s/work10s/output5s/overall30s/quantum64KiB/derived-jump-v1-levels63-sql1024-local-integrity-only/challenge128-burst32-read-reserve8-exact-nanosecond-fraction-full-bucket-discards-surplus/await-write-half-close-cancels-request-operation-stage-fences/ops1-block-2-head-3-history-4-poolbundle-5-poolsnapshot/poolraw159..2048-members1..16-sum32768-body66048-contextpin64hex/scalarstatus16KiB-no-reconcile-cachegc4scalars-localdiagnostic/no-guest-policy-prune-reset/shared-node-miner-operatorenabled/service72h-m05-cooperative-noise-row-tile-final-m06-envelope-prepare-canonical-apply-precommit-deadline-cancel-deep-state-root-history-sqlite-nonpreemptive/no-durable-guest-rows/global-paid-mutation-thread-cpu-bucket-reserve-before-paid-body-digest-and-canonical-decode-through-signed-response-charge-outer-plus-all-scoped-worker-thread-intervals-once-work-body-response-nested-no-double-debit/scoped-start-end-same-thread-all-started-joined-exact-counts-panic-cancel-partial-spawn/unknown-scoped-clock-disables-future-mutations/sequential-pool-preview-no-scoped-workers/read-not-charged/clock-unavailable-disables-future-mutations/native-success-preserved/two-inflight-m05-m06-boundary-cooperative-deep-stages-nonpreemptive-debt-no-caller-reset/available-plus-outstanding-start-reserves-ceiling/live-same-thread-owner-and-scoped-progress-increments/global-immediate-debit/original-full-outer-plus-children-minus-paid-residual-once/unverified-sticky-request-budget-cancel/full-native-W1-completion-priority-within-original-shared-bucket/no-new-probe-starts-until-verified-request-settles/existing-probes-own-original-start-quantum-only/verified-owner-scoped-checkpoints-await-original-refill-original-absolute-task-deadline-stop-cancel/no-added-credit-or-worker-or-identity-preference/complete-work-key-domain-public-v3-complete-work-identity-v1-canonical-whole-packet-sha256/fixed4096-digests131072bytes-per-shared-live-cpu-owner-epoch/atomic-claim-and-promotion-paid-hash-max4096-exact-probes/monotone-no-ttl-no-eviction-unknown-cancel-failure-success-retain/listener-clones-share-epoch/process-restart-clears-keys-original-zero-credit-no-permanent-once/repeat-or-capacity-full-only-denies-extra-priority-ordinary-paid-validation-and-recovery-continue/no-general-distinct-valid-W1-fairness/existing-packet-no-promotion-cooperative-history-each-row-reorg-steps-delta-rows-precommit/exact-stored-pending-intent-target-can-resume-original-time-owner-state-checks/committed-partial-intent-retained-no-post-commit-cancel/unknown-live-clock-denies-future/deep-root-and-sql-no-preemption/native-durable-outcome-preserved/controlled-pool-full-prefix-cancel-propagation-reconcile-relation-only-blocking/precommit-only-fences",&[self.bits],&self.lifetime_ms.to_le_bytes(),&MUTATION_CPU_BURST_NS.to_le_bytes(),&MUTATION_CPU_REFILL_NS_PER_SECOND.to_le_bytes(),&MUTATION_CPU_START_RESERVE_NS.to_le_bytes(),&(MUTATION_CPU_WORKERS as u32).to_le_bytes()])
+        hash(b"public-protected-profile-v3",&[PROFILE.as_bytes(),b"resource-revision-r14/reorg-lifecycle-v1-reserve25ms-same-original-account-before-intent/cancel-only-unpublished-staging-two-metadata-updates-no-active-state-audit-nonce-write/zero-busy-wait-sql-authorizer-and20000-vdbe-ops/cleanup-paid-original-scope-no-new-deadline/continuous-four-ceilings-headroom/same-live-operation-mining-continuous/no-resume-unpermitted-target/reclaim-unused-staging-only-next-original-native-intent/max-one-inactive-copy/shared64-unpaid-input-idle250ms-pressure-cancel-no-slot-refund/hello-and-incomplete-solution-only/server-owed-and-paid-protected/no-deadline-renewal/connection-local-ready-fifo-challenge-and-grant-split-read-mutation/pending64-no-extra-queue-or-worker/hello-wait-original-accept2s/paid-grant-wait-original-cookie-expiry-no-renewal/spent-reserve-once/lane-and-body-together-rollback-on-full/bounded-paid-enqueue-fifo-by-connection-with-unchanged-absolute-work-and-total-deadlines/hello108/solution108/conn64/paid-raw-json-canonical8MiB-factor3/read-body-reserve131072/output-conservative32MiB/control-output-reserve524288/grants-mutation8-read8-held-until-connection-and-task-release/queueproof2-read2/workers2-read1/spent1024-no-live-eviction/packet1048576/body2097216/read512/response2101248/history1/error2KiB/hello2s/challenge2s/solution-policy/body5s/work10s/output5s/overall30s/quantum64KiB/derived-jump-v1-levels63-sql1024-local-integrity-only/challenge128-burst32-read-reserve8-exact-nanosecond-fraction-full-bucket-discards-surplus/await-write-half-close-cancels-request-operation-stage-fences/ops1-block-2-head-3-history-4-poolbundle-5-poolsnapshot/poolraw159..2048-members1..16-sum32768-body66048-contextpin64hex/scalarstatus16KiB-no-reconcile-cachegc4scalars-localdiagnostic/no-guest-policy-prune-reset/shared-node-miner-operatorenabled/service72h-m05-cooperative-noise-row-tile-final-m06-envelope-prepare-canonical-apply-precommit-deadline-cancel-deep-state-root-history-sqlite-nonpreemptive/no-durable-guest-rows/global-paid-mutation-thread-cpu-bucket-reserve-before-paid-body-digest-and-canonical-decode-through-signed-response-charge-outer-plus-all-scoped-worker-thread-intervals-once-work-body-response-nested-no-double-debit/scoped-start-end-same-thread-all-started-joined-exact-counts-panic-cancel-partial-spawn/unknown-scoped-clock-disables-future-mutations/sequential-pool-preview-no-scoped-workers/read-not-charged/clock-unavailable-disables-future-mutations/native-success-preserved/two-inflight-m05-m06-boundary-cooperative-deep-stages-nonpreemptive-debt-no-caller-reset/available-plus-outstanding-start-reserves-ceiling/live-same-thread-owner-and-scoped-progress-increments/global-immediate-debit/original-full-outer-plus-children-minus-paid-residual-once/unverified-sticky-request-budget-cancel/full-native-W1-completion-priority-within-original-shared-bucket/no-new-probe-starts-until-verified-request-settles/existing-probes-own-original-start-quantum-only/verified-owner-scoped-checkpoints-await-original-refill-original-absolute-task-deadline-stop-cancel/no-added-credit-or-worker-or-identity-preference/complete-work-key-domain-public-v3-complete-work-identity-v1-canonical-whole-packet-sha256/fixed4096-digests131072bytes-per-shared-live-cpu-owner-epoch/atomic-claim-and-promotion-paid-hash-max4096-exact-probes/monotone-no-ttl-no-eviction-unknown-cancel-failure-success-retain/listener-clones-share-epoch/process-restart-clears-keys-original-zero-credit-no-permanent-once/repeat-or-capacity-full-only-denies-extra-priority-ordinary-paid-validation-and-recovery-continue/no-general-distinct-valid-W1-fairness/existing-packet-no-promotion-cooperative-history-each-row-reorg-steps-delta-rows-precommit/exact-stored-pending-intent-target-can-resume-original-time-owner-state-checks/committed-partial-staging-termination-by-original-reserved-owner-no-active-state-rewrite/unknown-live-clock-denies-future/deep-root-and-sql-no-preemption/native-durable-outcome-preserved/controlled-pool-full-prefix-cancel-propagation-reconcile-relation-only-blocking/precommit-only-fences",&[self.bits],&self.lifetime_ms.to_le_bytes(),&MUTATION_CPU_BURST_NS.to_le_bytes(),&MUTATION_CPU_REFILL_NS_PER_SECOND.to_le_bytes(),&MUTATION_CPU_START_RESERVE_NS.to_le_bytes(),&(MUTATION_CPU_WORKERS as u32).to_le_bytes()])
     }
 }
 #[derive(Default, Clone, Debug, Serialize)]
@@ -688,6 +688,7 @@ pub struct PublicServer {
     mutation_cpu: Arc<Mutex<PaidMutationCpuBudget>>,
     arithmetic_facts:
         Option<trnm_crypto_primitives::pon_work::arithmetic_facts::ArithmeticFactCache>,
+    w1_rejection_cache: Option<trnm_crypto_primitives::pon_work::rejection_cache::RejectionCache>,
     #[cfg(test)]
     fail_next_output: AtomicBool,
     #[cfg(test)]
@@ -711,6 +712,7 @@ impl PublicServer {
             started: Instant::now(),
             mutation_cpu: Arc::new(Mutex::new(PaidMutationCpuBudget::new())),
             arithmetic_facts: None,
+            w1_rejection_cache: None,
             #[cfg(test)]
             fail_next_output: AtomicBool::new(false),
             #[cfg(test)]
@@ -722,6 +724,18 @@ impl PublicServer {
             #[cfg(test)]
             fail_next_live_cpu_finish: AtomicBool::new(false),
         })
+    }
+    /// Opt-in exact invalid-math suppression for a single bounded V3 service.
+    /// Does not alter W1 validity, signed profile, caller admission budgets or
+    /// the complete verifier; NEW bogus traces still consume one full replay.
+    /// Future public rollout requires a separately reviewed resource profile.
+    pub fn with_w1_rejection_cache(mut self, slots: usize, ttl: Duration) -> Result<Self> {
+        ensure(self.arithmetic_facts.is_none(), "PUBLIC_W1_CACHE_MODE")?;
+        self.w1_rejection_cache = Some(
+            trnm_crypto_primitives::pon_work::rejection_cache::RejectionCache::new(slots, ttl)
+                .ok_or("PUBLIC_W1_CACHE_LIMIT")?,
+        );
+        Ok(self)
     }
     /// Actual fresh native CLI process: zero initial CPU and challenge credit.
     /// It remains a development-unqualified service, not a host CPU proof.
@@ -1393,6 +1407,8 @@ struct PublicDispatchObservation<'a> {
     mutation_cpu: Option<&'a MutationCpuMeasurement>,
     arithmetic_facts:
         Option<&'a trnm_crypto_primitives::pon_work::arithmetic_facts::ArithmeticFactCache>,
+    w1_rejection_cache:
+        Option<&'a trnm_crypto_primitives::pon_work::rejection_cache::RejectionCache>,
 }
 fn public_dispatch(
     node: &Mutex<Node>,
@@ -1407,6 +1423,7 @@ fn public_dispatch(
         observation,
         mutation_cpu,
         arithmetic_facts,
+        w1_rejection_cache,
     } = observation;
     if matches!(
         &request,
@@ -1498,7 +1515,16 @@ fn public_dispatch(
                         live_cpu.map_or(Ok(()), ScopedWorkerCpu::checkpoint)
                     };
                     let result = match arithmetic_facts {
-                        None => WorkCheckedPacket::verify_with_progress(packet, &mut checkpoint),
+                        None => match w1_rejection_cache {
+                            Some(cache) => WorkCheckedPacket::verify_with_rejection_cache(
+                                packet,
+                                cache,
+                                &mut checkpoint,
+                            ),
+                            None => {
+                                WorkCheckedPacket::verify_with_progress(packet, &mut checkpoint)
+                            }
+                        },
                         Some(facts) => {
                             if let Some(record) = observation {
                                 record.work_arithmetic(PublicArithmeticWorkObservation::started(
@@ -1556,8 +1582,14 @@ fn public_dispatch(
                     },
                     mutation_cpu.map_or(&() as &dyn ExecutionWorkerAccounting, |cpu| &cpu.workers),
                 ),
-                observation,
-                true,
+                super::SubmitDispatchContext {
+                    observation,
+                    public_proof_before_unowned_task: true,
+                    termination_cpu: live_cpu
+                        .and_then(|cpu| cpu.live.as_ref())
+                        .map(|live| ServiceMutationCpuCheckpoint::from_actual_live(live.clone()))
+                        .as_ref(),
+                },
             )
         }
         Request::GrowthSubmitV1 { .. }
@@ -1840,6 +1872,7 @@ fn serve_public_protected_v3_inner(
             )
         };
         let mut owner = lock_owner(&node, &mut progress)?;
+        owner.require_classical_network_profile()?;
         if server.native_growth {
             owner.growth_head_observation_with_progress(&|_| Ok(()))?;
             ensure(!owner.is_continuous(), "PUBLIC_GROWTH_OWNER")?;
@@ -2024,6 +2057,9 @@ fn serve_public_protected_v3_inner(
                                                         mutation_cpu,
                                                         arithmetic_facts: server
                                                             .arithmetic_facts
+                                                            .as_ref(),
+                                                        w1_rejection_cache: server
+                                                            .w1_rejection_cache
                                                             .as_ref(),
                                                     },
                                                 )
@@ -3376,6 +3412,31 @@ mod tests {
     use super::*;
 
     #[test]
+    fn w1_negative_cache_is_explicit_bounded_and_never_activated_by_default() {
+        let make = || {
+            PublicServer::new(
+                DevelopmentIdentity::from_secret_hex(&hex::encode([71; 32])).unwrap(),
+                PublicPolicy::new(8, Duration::from_secs(2)).unwrap(),
+            )
+            .unwrap()
+        };
+        assert!(make().w1_rejection_cache.is_none());
+        let selected = make()
+            .with_w1_rejection_cache(8, Duration::from_secs(1))
+            .unwrap();
+        assert!(selected.w1_rejection_cache.is_some());
+        assert!(make()
+            .with_w1_rejection_cache(0, Duration::from_secs(1))
+            .is_err());
+        assert!(make()
+            .with_w1_rejection_cache(8, Duration::from_secs(60))
+            .is_err());
+        // Signed policy identity remains the original V3 identity. This is
+        // strictly optional/local and is not an activated protocol migration.
+        assert_eq!(selected.policy.id(), make().policy.id());
+    }
+
+    #[test]
     fn client_stage_identity_preserves_observation_labels_and_exact_failed_phase_accounting() {
         let initial = || PublicClientMetrics {
             construction_ns: 11,
@@ -4226,11 +4287,11 @@ mod tests {
     }
     #[test]
     fn paid_envelope_resource_profile_has_fresh_exact_signed_commitment() {
-        // Fixed independent r13 SHA-256/length-framing vector for development
+        // Fixed independent r14 SHA-256/length-framing vector for development
         // bits=16 and lifetime=2000 ms; the policy numbers themselves did not change.
         assert_eq!(
             hex::encode(PublicPolicy::development().id()),
-            "e171d2942b8abfd95351036464b5451b4562f0854f4b43b2de59c4e486bda176"
+            "82033cc655921f7217f7dba8f844aa5d06a455cceda851af530e91f7672f9ec8"
         );
         assert_ne!(
             hex::encode(PublicPolicy::development().id()),
@@ -4429,6 +4490,7 @@ mod tests {
                     observation: None,
                     mutation_cpu: None,
                     arithmetic_facts: None,
+                    w1_rejection_cache: None,
                 },
             )
             .unwrap_err();
@@ -5502,7 +5564,7 @@ mod tests {
         assert!(m.mutation_cpu_unavailable_after_shutdown);
     }
     #[test]
-    fn resource_revision_r13_rejects_signed_old_cookies_and_preserves_control_output_reserve() {
+    fn resource_revision_r14_rejects_signed_old_cookies_and_preserves_control_output_reserve() {
         let s = Settings::development(Some(1)).unwrap();
         let server = server();
         assert_eq!(
@@ -5510,14 +5572,15 @@ mod tests {
             PublicPolicy::new(8, Duration::from_secs(2)).unwrap()
         );
         assert_eq!((server.policy.bits, server.policy.lifetime_ms), (8, 2000));
-        // Preserve exact r10, r11 AND r12 as validly signed predecessor inputs;
-        // r13 must reject them even with a correct current server MAC/signature.
+        // Preserve exact r10, r11, r12 AND r13 as validly signed predecessor inputs;
+        // r14 must reject them even with a correct current server MAC/signature.
         assert_eq!(scalar_cpu::COMPLETION_WORK_CAPACITY, 4096);
         for (bits, current_profile, predecessor_profiles) in [
             (
                 8,
-                "c110c3ccb1e229c3a85f4819b1e087fa819c865b50f8bd3ab78d3b8f45206cb2",
+                "6d04725d8e7a84560baf69440b1becd79f47c9f1fb5e63b85f1447400c85d43f",
                 [
+                    "c110c3ccb1e229c3a85f4819b1e087fa819c865b50f8bd3ab78d3b8f45206cb2",
                     "98db0a0a3cf84367cc62b293ace125ecfed37798b45c74e1382c9e625d3955b0",
                     "0d262ab290e74fa827b89bf11b581053eff9c347d54f511899315d4362febadc",
                     "099c63fdd9a5feedd83dea1e681bcf35fa4ce219338df81a46c621ee5f5c028a",
@@ -5525,8 +5588,9 @@ mod tests {
             ),
             (
                 16,
-                "e171d2942b8abfd95351036464b5451b4562f0854f4b43b2de59c4e486bda176",
+                "82033cc655921f7217f7dba8f844aa5d06a455cceda851af530e91f7672f9ec8",
                 [
+                    "e171d2942b8abfd95351036464b5451b4562f0854f4b43b2de59c4e486bda176",
                     "0b32dc1c5cb3cd32f127792c2437a7e06afdee24dfd145e6c147ae9effc93973",
                     "1141ff9f730ab723f9499215ae7396ef3c26020973c8ab345179bd78b31da9e7",
                     "fbd012278826496785fbd166d2d920ffa70a3491e52ddf2c9211d782357f9c35",
@@ -5534,8 +5598,9 @@ mod tests {
             ),
             (
                 12,
-                "af74a97fd543741369cf58b5e58a16f33ea74d71bb4d4641ab4700827bac1607",
+                "ffdf6e0653a4c1cb89fd92414ddc75052a100c75423b51b4cf86fed6d9c39258",
                 [
+                    "af74a97fd543741369cf58b5e58a16f33ea74d71bb4d4641ab4700827bac1607",
                     "56f683ca9a56a872747f58899c2734763303ad547cabf88d24a18c3994517d15",
                     "dfdba7a8bfc98ff3019425222a7d66d1e7d75dd164fad5eda3d9a54d61e5e5ce",
                     "a589532b416e0d35273235ec692cf47040edf182df2121702c1b237c8cff52e7",
@@ -6889,6 +6954,7 @@ mod paid_settlement_consistency_tests {
                     observation: None,
                     mutation_cpu: Some(&measurement),
                     arithmetic_facts: None,
+                    w1_rejection_cache: None,
                 },
             )
             .unwrap_err();

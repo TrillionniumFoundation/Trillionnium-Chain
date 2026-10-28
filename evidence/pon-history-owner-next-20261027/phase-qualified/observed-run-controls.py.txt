@@ -1,0 +1,80 @@
+import datetime
+import hashlib
+import json
+import os
+from pathlib import Path
+import re
+import signal
+import subprocess
+import sys
+import time
+
+ROOT = Path('/workspace/scratch/56818e4fba76/chain-history-next')
+OUT = Path('/tmp/history-phase-qualified-20261028')
+BUILD = json.loads((OUT / 'nice-build.json').read_text())
+BINARIES = {row['name']: row for row in BUILD['binaries']}
+sys.path.insert(0, str(ROOT / 'scripts/ci'))
+from verify_ci_source import verify
+
+verify('head', BUILD['source_commit'], root=ROOT)
+results = []
+
+
+def run(name, selector, *, binary='trnm_pon_node', exact=False, ignored=False, skip=(), limit=180):
+    value = BINARIES[binary]
+    exe = Path(value['path'])
+    assert hashlib.sha256(exe.read_bytes()).hexdigest() == value['sha256']
+    folder = OUT / name
+    folder.mkdir(exist_ok=False)
+    args = [str(exe), selector, *(['--exact'] if exact else []), *(['--ignored'] if ignored else []),
+            '--nocapture', '--test-threads=1']
+    for item in skip:
+        args.extend(['--skip', item])
+    row = {'schema': 'history-frozen-native-control-v2', 'source_commit': BUILD['source_commit'],
+           'binary_sha256': value['sha256'], 'argv': args, 'outer_observer_timeout_seconds': limit,
+           'started_utc': datetime.datetime.now(datetime.timezone.utc).isoformat()}
+    start = time.monotonic()
+    with (folder / 'stdout.txt').open('xb') as stdout, (folder / 'stderr.txt').open('xb') as stderr:
+        child = subprocess.Popen(args, cwd=ROOT, stdout=stdout, stderr=stderr, start_new_session=True)
+        try:
+            code = child.wait(timeout=limit)
+            timed_out = False
+        except subprocess.TimeoutExpired:
+            os.killpg(child.pid, signal.SIGKILL)
+            code = child.wait()
+            timed_out = True
+    row.update(exit_code=code, elapsed_seconds=time.monotonic() - start, timed_out=timed_out)
+    for stream in ('stdout.txt', 'stderr.txt'):
+        b = (folder / stream).read_bytes()
+        row[stream] = {'bytes': len(b), 'sha256': hashlib.sha256(b).hexdigest()}
+    text = (folder / 'stdout.txt').read_text()
+    row['harness_results'] = [{'outcome': m[0], 'passed': int(m[1]), 'failed': int(m[2]), 'ignored': int(m[3])}
+                              for m in re.findall(r'test result: (\w+)\. (\d+) passed; (\d+) failed; (\d+) ignored;', text)]
+    (folder / 'receipt.json').write_text(json.dumps(row, indent=2) + '\n')
+    results.append({'group': name, **row})
+    (OUT / 'native-controls.json').write_text(json.dumps(results, indent=2) + '\n')
+    print(json.dumps({'group': name, 'exit_code': code, 'elapsed_seconds': row['elapsed_seconds'],
+                      'harness_results': row['harness_results']}), flush=True)
+    return text
+
+
+run('phase-protocol-controls', 'phase_host::', binary='public_v3_multiprocess', limit=30)
+run('history-original', 'ingress::history_import::tests::', limit=120)
+run('scalar-original', 'ingress::public_v3::scalar_cpu::', limit=120)
+run('poison-original', 'ingress::public_v3::tests::live_cpu_poisoned_request_registry_disables_global_starts_without_deadlock', exact=True, limit=30)
+run('inactive-original', 'store::native_authenticated_tests::native_inactive_page_parents_use_checked_material_without_early_activation', exact=True, limit=90)
+run('detached-original-integrity', 'store::detached_admission::tests::', skip=(
+    'admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner',
+    'authenticated_large_parent_original_schedule_supplementary_denominator'), limit=90)
+large = run('large-original', 'store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner', exact=True, limit=180)
+# Predeclared supplemental selection: observe Authenticated independently only
+# if the original first-failing loop has not reached it. Never hide a backend.
+if '"authenticated_backend":true' not in large:
+    run('large-authenticated-independent', 'store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator', exact=True, limit=180)
+else:
+    (OUT / 'large-supplement-not-needed.json').write_text(json.dumps({
+        'reason': 'original unchanged loop actually observed Authenticated; no additional duplicate sample',
+        'gate_changed': False, 'previous_failed_observations_retained': True}, indent=2) + '\n')
+run('actual-w1-depletion', 'ingress::public_v3::shared_cpu_domain_source_tests::process_cold_real_w1_cpu_depletion_preserves_read_and_recovers_honest_admission', exact=True, limit=60)
+run('withheld-original-explicit', 'ingress::tests::authenticated_activation_recovery::withheld_original_frame_must_not_stall_a_different_honest_signed_mutation', exact=True, ignored=True, limit=90)
+(OUT / 'source-after-controls.json').write_text(json.dumps(verify('head', BUILD['source_commit'], root=ROOT), indent=2) + '\n')

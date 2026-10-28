@@ -1,0 +1,71 @@
+{
+  "original_macos_failure_reclassified": false,
+  "purpose": "Demonstrate original 0.2 second owner preserves only bytes observed before its actual deadline. Delayed-output control is constructed, not proof of macOS incident root cause.",
+  "results": [
+    {
+      "actual_process_receipt": {
+        "commands": [
+          {
+            "command": [
+              "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+              "-c",
+              "import os,time;open('/tmp/tmpbmvo6wop/pid','w').write(str(os.getpid()));time.sleep(0);os.write(1,b'OUT');os.write(2,b'ERR');time.sleep(5)"
+            ],
+            "elapsed_ns": 201477647,
+            "error": "NATIVE_EXECUTOR_TIMEOUT",
+            "log_order": "stdout-then-stderr; exact streams retained separately",
+            "name": "timeout",
+            "returncode": -9,
+            "stderr_bytes": 3,
+            "stderr_truncated": false,
+            "stdout_bytes": 3,
+            "stdout_truncated": false,
+            "timed_out": true
+          }
+        ],
+        "timed_out": true
+      },
+      "actual_stdout_stderr_concatenation": "OUTERR",
+      "child_marker_written": true,
+      "child_still_live": false,
+      "delay_before_output_seconds": 0,
+      "error": "NATIVE_EXECUTOR_TIMEOUT",
+      "observed_wall_seconds": 0.2017107869978645,
+      "timeout_seconds": 0.2
+    },
+    {
+      "actual_process_receipt": {
+        "commands": [
+          {
+            "command": [
+              "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+              "-c",
+              "import os,time;open('/tmp/tmpyanj2pel/pid','w').write(str(os.getpid()));time.sleep(0.3);os.write(1,b'OUT');os.write(2,b'ERR');time.sleep(5)"
+            ],
+            "elapsed_ns": 200822312,
+            "error": "NATIVE_EXECUTOR_TIMEOUT",
+            "log_order": "stdout-then-stderr; exact streams retained separately",
+            "name": "timeout",
+            "returncode": -9,
+            "stderr_bytes": 0,
+            "stderr_truncated": false,
+            "stdout_bytes": 0,
+            "stdout_truncated": false,
+            "timed_out": true
+          }
+        ],
+        "timed_out": true
+      },
+      "actual_stdout_stderr_concatenation": "",
+      "child_marker_written": true,
+      "child_still_live": false,
+      "delay_before_output_seconds": 0.3,
+      "error": "NATIVE_EXECUTOR_TIMEOUT",
+      "observed_wall_seconds": 0.20102802100154804,
+      "timeout_seconds": 0.2
+    }
+  ],
+  "schema": "fc23-original-python-owner-timeout-prefix-controls-v1",
+  "source_local": "5f435cbe3e6d0120c6fdb78bb98b692f557763ec",
+  "source_tree_same_as_remote_fc23": true
+}

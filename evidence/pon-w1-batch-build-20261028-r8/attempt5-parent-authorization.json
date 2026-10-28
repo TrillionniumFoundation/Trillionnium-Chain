@@ -1,0 +1,17 @@
+{
+  "schema": "TRNM-W1-BATCH-PHASE0-PARENT-AUTHORIZATION-RECORD1",
+  "unix_ns": 1793163056204638992,
+  "attempt": 5,
+  "declaration_sha256": "0c96c9a912d8adbe37d661c58e5bc264f30fba54b9fc3fc89e9f69cbb7bab927",
+  "pipeline_sha256": "763df6547166b7a865358a2fd7e9f5b5933ff2e9697bb65778605aba5b1a97b5",
+  "parent_directive": "Root reviewed and approved this separately declared compile-only attempt under original limits. Do not start until explicit native CPU slot release. Fresh free space must meet original1GiB floor; on failure preserve NOT_STARTED or actual failure, never delete data or lower limits. No retry, download or proving.",
+  "native_cpu_slot_released": false,
+  "execution_started": false,
+  "limits": {
+    "wall_seconds": 900,
+    "child_cpu_seconds": 3600,
+    "rss_bytes": 2684354560,
+    "target_growth_bytes": 805306368,
+    "minimum_free_bytes": 1073741824
+  }
+}

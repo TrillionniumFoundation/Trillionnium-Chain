@@ -1,0 +1,24 @@
+{
+  "command": [
+    "/workspace/scratch/56818e4fba76/target-history/debug/deps/trnm_pon_node-f341fe9d562b1811",
+    "signed_socket_exact_pending_frame_resumes_only_its_original_committed_intent",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "exit_code": 0,
+  "timed_out": false,
+  "wall_ns": 10107102659,
+  "user_cpu_ns": 145023000,
+  "system_cpu_ns": 280750000,
+  "cpu_ns": 425773000,
+  "max_rss_kib": 18168,
+  "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+  "minor_faults": 1853,
+  "major_faults": 0,
+  "voluntary_switches": 14250,
+  "involuntary_switches": 5,
+  "cpu_scope": "entire child, not apportioned to nested wall intervals",
+  "wait4_cpu_resolution_ns": 1000,
+  "stdout_sha256": "432ea6e157d7bbe2e2864395b45364b3e71174cafbb669ae8c3b7e8bd48d203a",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

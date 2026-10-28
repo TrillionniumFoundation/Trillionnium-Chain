@@ -1,0 +1,74 @@
+纯 PoN History/CPU 验收配置可达性：独立只读审查
+审查基线：Chain 131f673d9563e72aca7139f3239856957d118d49 / tree b8bdd87dca3cd6288c38f63848b24b1a2df6a09d。时间：2026-10-28 02:31 UTC 后。只读源码与原始日志，未执行 Rust/Cargo/Bazel/native、攻击流量、密码重放、Host 配置变更或测试参数修改。11 份相关源文件与固定提交逐字节相同，路径/blob/SHA-256 在同名 JSON。root 的未提交修改只涉及另外的 CI literal/计划/证据，未混入本审查的 runtime 源码。
+
+结论
+
+当前配置有一个必须写进验收设计的速率关系：固定 public Host 总 CPU 配额为 0.25 核，接收端付费 CPU 桶的补充速率也为每墙钟秒 0.25 CPU 秒。正确受限且及时计量时，仅增加外部攻击并发不会让付费消耗的长期速率超过补充速率。它很可能先耗尽实际 Host 能力、造成诚实延迟，却没有耗尽付费余额。不能将这种结果说成“耗尽期间仍达标”。
+
+但这也不构成“当前程序绝对不可能耗尽”的证明。真实实现先执行有上限的 refill，再扣除刚观测的 CPU；长非抢占区间、延迟结算和满桶时丢弃 refill 可以让付费余额真实下降。必须观察实际 ledger、时间线和 kernel CPU，才能判断这次原始攻击是否达到门槛。这里没有生成真实攻击或给出原生 PASS。
+
+一、真实的资源边界与计量范围
+
+config/systemd/trnmponpublic.slice 明确 CPUQuota=25%、周期 100ms、MemoryMax=2G、swap=0、TasksMax=256。public_host_ci_observation.py 固定核验 cpu.max=25000 100000、cpu.max.burst=0 及其他限额。native phase launcher 以 systemd 子 service 放入这个固定父 slice；receiver、public service 工作线程、M06 scoped worker、独立 History client、采样与 phase 主线程按启动源码应继承这个 public 进程域；本审查不把它当作131f运行时已观察事实。new worker 不能因为并行而再获得一份 0.25 核配额。
+
+原 controller/producer 和 24 个外部 attacker child 在另一个 400000 100000 / 16GiB 域；它们通过原 broker 发送请求，攻击端 CPU 和构造工作没有进入 receiver 的 mutation CPU ledger。因此“24 个攻击者共 4 核”不能作为“接收端可扣 4 CPU 秒/墙钟秒”的依据。public Host 内的 reactor 认证、socket I/O、等待/观测等不是付费 mutation ledger 的同一类扣款；独立 History client 用其原 Node owner，消耗相同物理 Host 配额但不自动成为 receiver 的 paid CPU。
+
+CPU 消耗读实际当前线程的 ThreadCPUTime。outer owner 和已 join 的 scoped worker 各自记完整区间，已实时扣除部分在结算中减掉，不能把嵌套 W1/dispatch 指标再加一次。未知 clock、计数不一致、未归还 owner 等会 fence 后续开始，不制造零 CPU。不能把这类未知状态当作符合 depleted 条件。
+
+Linux 官方文档说明 cpu.max 是 quota/period 带宽约束，父级约束对下层继承；它针对相应 scheduler class。CFS 文档还说明 period 边界和保留的每 CPU 局部 runtime 可能造成短暂超额，所以不能从配置推导每个任意区间严格 CPU <= .25*wall 的等式。必须核验实际 scheduler、membership、cpu.stat、限额与线程数。原 host_kernel_parent.rs 的一条注释把带宽写成“250,000 ns per second”，与实际 .25 核单位不符；执行代码的 quota*4<=period 检查正确，这只是应单独修正的单位文案，不是运行数据。
+
+二、余额与原通过门槛
+
+scalar_cpu.rs 常量：burst 2,000,000,000 ns，refill 250,000,000 ns/秒，start reserve 100,000,000 ns，最多 2 live owners；每个 reorg termination reserve 为同一已购 owner 内分出的 25ms。refill 用 std::time::Instant 的经过墙钟时间，借锁时不倒退 watermark。new PublicServer 创建满 2 秒桶；真正冷启动/remote History epoch 的初始余额为零，不能用冷启动结果假充本 campaign 的满桶压力样本。
+
+实际恒等式是：
+  paid_remaining = initial_credit + credited_refill - paid_cpu_debit - settlement_discard
+  stored_credit = paid_remaining - booked_start_reserves - termination_reserves
+
+原 paid_depletion 要求 known flow、恒等式成立、initial_credit==2 秒、paid_remaining<0.1 秒、累计真实 paid_cpu_debit>1.9 秒、clock failures==0 且 accounting_available。只出现 stored_credit<0（可能只是预留主本金）不够；只出现 Budget refusal、队列满、两 worker 忙或者累计 CPU>1.9 秒也不够。
+
+30 秒 phase 每约 50ms采样；诚实 3 轮预定 t=1/5/9 秒开始，整个原压力窗内完成。原严格 gate 还要求至少一轮的完整观测区间内出现真正 depleted 样本，三轮均有真实恶意 Work rejection 重叠、完整确认和独立 client 状态一致。不能先耗尽、等 refill 后恢复，再把后续服务成功写作耗尽期间成功。
+
+三、哪些推断成立，哪些不成立
+
+在所有 paid 线程留在 fixed Host、计量无重叠、没有大额迟扣/丢弃的条件下，paid CPU 长期速率不超过整个父 slice 的约 .25 CPU 秒/秒，而 r=.25；unpaid/reactor/History client 还会占掉配额。因此短且频繁 checkpoint 的请求没有可靠的持续净耗尽驱动力。把攻击进程从 24 增到更多、把同一配置运行更久，不能自动解决这个问题。
+
+反例（仅精确结算算术，不是真实攻击）：初始2秒，某 owner 预留0.1后 stored=1.9、cap=1.9。假设一个合法路径在8秒墙钟内消费2秒真实 CPU，却没有中间 live debit。在t=8的 checkpoint，refill先提供2秒但因 cap全数丢弃；随后扣实际2秒，stored=-0.1，而含已购预留的 paid_remaining=0。两条数值耗尽门槛均满足，虽长期消耗并未超过 .25。该反例需要真实存在并能在原 deadline 进入的长非抢占区间；当前 from-zero/late-product W1 有多处 cooperative callbacks，本审查没有证明这种路径实际可达。
+
+满桶丢弃并不意味着周期性小额采样会无限累积亏损；每次的 credited/discarded refill、待报实际 CPU 和结算时刻必须完整追踪。refill 的整数纳秒舍入小于每次1ns，只有记录实际调用数量后才能纳入严格误差界；不能当作可用的大额耗尽来源。
+
+还要区分 stored paid depletion 与下一次原 reserve 的可用性。observe()/observe_actual_flow() 不执行 refill；source 已提供 observe_credit_freshness()，可只读报告 watermark age 和投影 refill。旧 stored 样本可能低于0.1，但下一次真实 reserve 重新 refill 后已够开始。这不是伪造 debit，却不能据此声称信用在整个诚实服务期间持续不足。原条件和只读投影都应保留，不能偷偷改原 gate。
+
+四、必须收集的可观测证据
+
+1. fixed parent 的实际 cpu.max、burst、memory/swap/pids、scheduler/membership、boot/inode 和开始/结束 cpu.stat；若要证明重叠，补齐 phase 内相同时基的 cpu.stat 采样，而非用整个setup+run总和代替30秒窗。
+2. 原一组瞬时 flow 字段：initial、credited_refill、discarded_refill、live_debit、settlement_residual、settled_full、booked、termination、settlement_discard、remaining、watermark age，以及每份观测开始/结束时间。分别保留 unknown，不以0补齐。
+3. paid ledger 总额对照同域总 CPU；History client、reactor/认证、采样器和controller各自的 scope 不能相加或漏归。结算后所有 actual scoped handles 必须已 join，剩余 owner 为零。
+4. 最大未采样 CPU 区间和 late residual 的真实分布，特别是 snapshot、State clone/root、SQLite 和签名响应尾部。最大区间约2秒CPU的假设需要原生证据，源码常量或模型不能替代。
+5. 原全部请求及确认 round 区间；使用确切流量体摘要证明 attacker 的请求确实进入 paid/native 阶段，逐个核对耗尽样本与诚实完成交集。预算拒绝和未知 accounting 两种错误必须分开。
+
+五、最小后续方案（仅建议；没有实施或放宽门槛）
+
+优先原样跑完131f这一轮，先把 Host 启动与账本观察做实。若所有实际样本的 paid_remaining 始终高于0.1，明确记录“未达到付费耗尽”，即使其他服务测试成功也不能通过工作包2B。
+
+当前固定 profile 可以保留为总 Host 饱和/无偿入口公平性验收，它衡量“实际 CPU 被占满时服务如何”，但此结果不能取代用户要求的真实 paid depletion。若要新增专门的耗尽验收，必须预先声明独立 profile，并做实际可达性预检，而不是临时篡改余额、停止refill、伪造clock、删掉depletion条件或扩大原public配额。
+
+一种研究候选是在相同.25 Host上设置更低且显式版本化的 paid refill，为认证、读取与调度保留物理CPU余量；原2秒burst/0.1秒门槛和全部原服务标准仍保留。理想及时计量下，耗尽时间至少大于1.9/(c-r)；例如c=.25、r=.125时超过15.2秒，可能晚于原t=1/5/9的确认轮。因此还必须预声明额外负载预置与实际重叠时窗，并继续报告原30秒原实验结果。不能把改profile后的结果倒填旧profile PASS。
+
+另一候选是原budget完全不变，专门寻找真实合法且恶意可触发的长非抢占路径；必须提交真实输入、全部CPU尾部、原deadline行为和诚实重叠。如果这样的路径不存在，给出已测最大区间/净消耗界与不可达条件，不把未耗尽说成保护有效。冷启动零余额是独立恢复行为，不满足本实验initial==burst，另行验收。
+
+架构上应分别预算总 Host 与 paid mutation；当前r等于物理上限，不能同时把整个refill速率当作可交付的付费吞吐，并假设reactor/History/认证完全免费。任何新配比或调度策略均应是显式候选配置，保留纯PoN的工作身份/链权重、原权限与不可回退操作历史；本审查没有实施生产策略变化。
+
+六、旧错误与当前运行不能混淆
+
+e25 original native campaign 的三次尝试共有九个 launcher拒绝，实际 phase_started=0、service_requests_observed=0。原错误名ORIGINAL_UNPRIVILEGED_CONTROLLER同时检查cwd和uid；不能只凭名称断言以root运行。4370/131f只为Python子进程固定cwd，并将两个拒绝原因分开，未证明之后Host或服务通过。
+
+另一个e25 priority long-sync实验的四个原job122586300668/741/857/903，在生成至约4000条PNW1后都 PUBLIC_HOST_KERNEL_PARENT、单项0/1失败。这个错误在原KernelBudget::open的绝对路径、canonicalize、固定parent路径、root-owned目录或写权限检查处产生；日志没给足字段以判定是哪条。它不是refill/预算余额错误，也不能用4core外部controller代替正确parent。
+
+131f run40620917256/job122594446727在02:31 UTC API显示正在“Run three original campaigns under verified actual limits”步骤；本审查尚未获得其上传的原Host/phase结果。步骤名称或in_progress状态不构成Host设置通过、depletion或honest-service成功。这一轮必须独立读回。
+
+官方资料：
+https://docs.kernel.org/admin-guide/cgroup-v2.html
+https://docs.kernel.org/scheduler/sched-bwc.html
+
+最终判定：配置速率关系需要明确纳入实验与服务预算设计；本只读审查既不宣布原攻击不可达，也不授予2B任何新的PASS。新run真实证据仍待收回。

@@ -1,0 +1,9 @@
+{
+  "all_members_readback_verified": true,
+  "archive": "legacy-reader-counterexample.zip",
+  "bytes": 50071,
+  "fixture_sha256": "d0494d73cd52eadc414290b01543ecb4cecbca686f4a0531f080a3f5aef04c6a",
+  "old_source_head": "ca4fcb2564c9747a9bd81df4e67bffd1a210634a",
+  "payload_files": 9,
+  "sha256": "8144b42d985fab3d16c42e21fbc19dfe32961b1747a959cf0cb4296a8eaccaf8"
+}

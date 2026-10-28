@@ -11,8 +11,12 @@ on:
       - scripts/pon_public_v3_phase_read.py
       - scripts/pon_public_v3_policy_read.py
       - scripts/ci/test_pon_public_v3_policy_read.py
+      - scripts/ci/test_pon_public_v3_phase_read.py
       - scripts/project-preflight.sh
       - scripts/ci/verify_ci_source.py
+      - scripts/ci/run_native_phase_host.py
+      - scripts/ci/test_native_phase_host.py
+      - scripts/ci/public_host_ci_observation.py
       - .github/workflows/pon-native-campaign-qualification.yml
   workflow_dispatch:
 permissions:
@@ -65,6 +69,7 @@ jobs:
           from run_pon_w1_native_campaign import validate_build_environment
           validate_build_environment(os.environ)
           PY
+          python3 -m unittest discover -s scripts/ci -p 'test_pon_public_v3*.py' -v 2>&1 | tee "$OUT/policy-reader-controls.log"
       - name: Install the source-pinned compiler and fetch locked dependencies
         id: toolchain
         shell: bash
@@ -118,6 +123,14 @@ jobs:
                                   'attacker_processes': [0, 24, 24]},
               'expected_resources': {'cpu_max': '400000 100000',
                                      'memory_max': '17179869184', 'nice': 10},
+              'public_phase_placement': {
+                  'profile': 'fixed-public-phase-external-actors-v1',
+                  'receiver_and_verifier_cpu_max': '25000 100000',
+                  'receiver_and_verifier_memory_max': '2147483648',
+                  'fixed_parent': '/sys/fs/cgroup/trnmponpublic.slice',
+                  'attacker_processes_remain_in_original_controller_domain': True,
+                  'original_3x3_workload_and_depletion_predicates_changed': False,
+              },
               'binary': None, 'source_after': None, 'complete_success': False,
               'failure': None, 'finalization_failures': [],
               'runner_sha256': bounds.sha(__file__),
@@ -211,7 +224,8 @@ jobs:
                   resources(f'{name}-resource-before.json')
                   bounds.require(bounds.sha(binary) == digest, 'TEST_BINARY_CHANGED')
                   run_env = dict(env, TRNM_MULTIPROCESS_STATE_BACKEND='authenticated-v1',
-                                 TRNM_MULTIPROCESS_REPORT_DIR=str(report_dir))
+                                 TRNM_MULTIPROCESS_REPORT_DIR=str(report_dir),
+                                 TRNM_MULTIPROCESS_PHASE_HOST='fixed-public-phase-external-actors-v1')
                   step = bounds.run_step(
                       out, name,
                       [*command, selector, '--', '--exact', '--ignored',
@@ -230,6 +244,11 @@ jobs:
                       raw = json.loads(raw_path.read_bytes())
                       preparation = raw['preparation']
                       phases = raw['phases']
+                      attempt['phase_startup_errors'] = [
+                          {'mode': phase.get('mode'), 'error': phase['startup_or_campaign_error']}
+                          for phase in phases if phase.get('startup_or_campaign_error') is not None]
+                      bounds.require(not attempt['phase_startup_errors'],
+                                     'ORIGINAL_NATIVE_PHASE_STARTUP_FAILED')
                       bounds.require(
                           raw['state_backend'] == 'authenticated-v1'
                           and preparation['actual_signed_seed_transfers'] == 1024
@@ -332,6 +351,10 @@ jobs:
             --property=RuntimeMaxSec=4200s \
             --setenv="PATH=$PATH" --setenv="CARGO_HOME=$CARGO_HOME" \
             --setenv="RUSTUP_HOME=$rustup_home" --setenv=PYTHONDONTWRITEBYTECODE=1 \
+            --setenv=CI=true --setenv=GITHUB_ACTIONS=true \
+            --setenv="GITHUB_WORKSPACE=$GITHUB_WORKSPACE" \
+            --setenv="GITHUB_RUN_ID=$GITHUB_RUN_ID" --setenv="GITHUB_RUN_ATTEMPT=$GITHUB_RUN_ATTEMPT" \
+            --setenv="GITHUB_JOB=$GITHUB_JOB" \
             /usr/bin/python3 "$OUT/run-native-campaign.py" \
             "$GITHUB_WORKSPACE" "$OUT" "$CARGO_TARGET_DIR" "$cargo_path" \
             "$EXPECTED_HEAD" "$EXPECTED_TREE" 2>&1 | tee "$OUT/systemd-run.log"

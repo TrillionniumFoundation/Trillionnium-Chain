@@ -1,0 +1,12 @@
+{
+  "verified_materials": {
+    "host-child-groups-native-probe-preparation-20261024": 168,
+    "host-child-groups-native-executor-preparation-20261024": 10
+  },
+  "unchanged_transport_environment_functions": 5,
+  "new_executor_sha256": "79bb5838e72215b21f0eef2ee637dc3dd66df03de97c2e8d8586edf5c1115b5f",
+  "independent_driver_review_sha256": "bbcdd6f096f63178f9f841ad63eb437111b8477d11d1cf133bd16b21a30f60ab",
+  "source_package_root_review": "PASS_LIMITED_CONTROLLED_DIAGNOSTIC_ONLY",
+  "native_not_yet_run": true,
+  "no_terminal_or_funding_claim": true
+}

@@ -113,7 +113,7 @@ jobs:
           grep -E '^Ran 8 tests in ' "$TRNM_CI_RECEIPT_DIR/model-generation-context.log"
       - name: Execute original release from-zero controls
         if: ${{ !cancelled() && steps.source.outcome == 'success' && steps.toolchain.outcome == 'success' && matrix.campaign == 'service-model' }}
-        run: python3 scripts/ci/run_from_zero_native.py --out "$TRNM_CI_RECEIPT_DIR/from-zero-native"
+        run: python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_from_zero_native.py --out "$TRNM_CI_RECEIPT_DIR/from-zero-native"
       - name: Execute actual CLI observation boundaries and retain every child result
         if: ${{ !cancelled() && steps.source.outcome == 'success' && steps.toolchain.outcome == 'success' && matrix.campaign == 'service-model' }}
         shell: bash
@@ -156,7 +156,7 @@ jobs:
           set -euo pipefail
           cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib 'ingress::public_v3::' -- --show-output 2>&1 | tee "$TRNM_CI_RECEIPT_DIR/resource-controls.log"
           grep -E '^test ingress::public_v3::scalar_cpu::request_owned_reserve_tests::.* \.\.\. ok$' "$TRNM_CI_RECEIPT_DIR/resource-controls.log" > "$TRNM_CI_RECEIPT_DIR/reserve-selectors.log"
-          test "$(wc -l < "$TRNM_CI_RECEIPT_DIR/reserve-selectors.log")" -eq 7
+          test "$(wc -l < "$TRNM_CI_RECEIPT_DIR/reserve-selectors.log")" -eq 9
           grep -E '^test ingress::public_v3::scalar_cpu::final_samples_tests::.* \.\.\. ok$' "$TRNM_CI_RECEIPT_DIR/resource-controls.log" > "$TRNM_CI_RECEIPT_DIR/final-sample-selectors.log"
           test "$(wc -l < "$TRNM_CI_RECEIPT_DIR/final-sample-selectors.log")" -eq 4
           grep -E '^test result: ok\. [1-9][0-9]* passed; 0 failed;' "$TRNM_CI_RECEIPT_DIR/resource-controls.log"

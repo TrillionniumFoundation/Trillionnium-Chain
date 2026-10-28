@@ -129,5 +129,17 @@ class CounterTests(unittest.TestCase):
         self.assertEqual(cleanup.__context__.counter_diagnostic,
             ('aggregate/cpu.stat', 'bad.key 0\n', 'aggregate-counter-format'))
 
+    def test_freshness_diagnostic_cannot_name_an_unrelated_counter(self):
+        allowed = ('memory.peak', 'cpu.stat', 'memory.events')
+        for name in aggregate._RAW:
+            filename = 'aggregate/'+name
+            with self.subTest(name=name):
+                if name in allowed:
+                    error = aggregate.AggregateCounterError('aggregate-not-fresh', filename, '0\n')
+                    self.assertEqual(error.counter_diagnostic, (filename, '0\n', 'aggregate-not-fresh'))
+                else:
+                    with self.assertRaisesRegex(aggregate.kernel.KernelBudgetError, 'aggregate-freshness-filename'):
+                        aggregate.AggregateCounterError('aggregate-not-fresh', filename, '0\n')
+
 
 if __name__ == '__main__': unittest.main()

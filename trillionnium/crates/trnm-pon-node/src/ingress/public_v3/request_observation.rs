@@ -700,8 +700,11 @@ mod tests {
             &mut |_| Ok(()),
             |_| panic!("invalid encoding cannot start work"),
             &control,
-            Some(&task),
-            true,
+            crate::ingress::SubmitDispatchContext {
+                observation: Some(&task),
+                public_proof_before_unowned_task: true,
+                ..crate::ingress::SubmitDispatchContext::default()
+            },
         )
         .unwrap_err();
         assert!(!error.requires_owner_stop());
@@ -718,8 +721,11 @@ mod tests {
             &mut |_| Ok(()),
             WorkCheckedPacket::verify,
             &control,
-            Some(&task),
-            true,
+            crate::ingress::SubmitDispatchContext {
+                observation: Some(&task),
+                public_proof_before_unowned_task: true,
+                ..crate::ingress::SubmitDispatchContext::default()
+            },
         )
         .unwrap();
         drop(task);
@@ -732,8 +738,11 @@ mod tests {
             &mut |_| Ok(()),
             |_| panic!("durable duplicate must not replay work"),
             &control,
-            Some(&task),
-            true,
+            crate::ingress::SubmitDispatchContext {
+                observation: Some(&task),
+                public_proof_before_unowned_task: true,
+                ..crate::ingress::SubmitDispatchContext::default()
+            },
         )
         .unwrap();
         assert_eq!(reply["block"], repeated["block"]);

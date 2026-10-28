@@ -1,0 +1,98 @@
+{
+  "schema": "pq-openssl-options-fixture-controls-v1",
+  "observed_at_utc": "2026-10-28T04:09:09.765091+00:00",
+  "command": [
+    "python3",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-v",
+    "-s",
+    "formal/pon-nakamoto-v1",
+    "-p",
+    "test_pq_openssl_backend.py"
+  ],
+  "exit_code": 0,
+  "wall_seconds": 0.5132213580072857,
+  "source_head": "189ba3adfd9a22c7cfc1537eab535e9eb7c442df",
+  "files": [
+    {
+      "path": "formal/pon-nakamoto-v1/pq_openssl_backend.py",
+      "before_sha256": "e4ece6589ef5fe8956ed146c78b0bfc70e4484c39e9c0cf3855bb88d5c3002d9",
+      "after_sha256": "ac9217a8238ecb5ade4e877670b8f01243b20fe1f231c0eba7fbc1832a8c05c3",
+      "syntax_pass": true,
+      "old_test_count": 0,
+      "new_test_count": 0
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_pq_openssl_backend.py",
+      "before_sha256": "ddd405e07dcad2eee3264a30d3fd20dc472c5b554a7360b1f52b1cb23e35ccbb",
+      "after_sha256": "cf874ae5973e20306a04d8ed1f99035d74476f035cb1f2b8c3c6edacd2cc41e9",
+      "syntax_pass": true,
+      "old_test_count": 12,
+      "new_test_count": 13
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_pq_envelope.py",
+      "before_sha256": "21348603a4ea5d669bc25b27fa614297ff22b53d0f91c554f17507acc3e2416c",
+      "after_sha256": "5cac6bf097f091c4f6e42f0141e44846e5c09d0f07c13bfaf79a4a4458934e32",
+      "syntax_pass": true,
+      "old_test_count": 9,
+      "new_test_count": 9,
+      "test_names_unchanged": true,
+      "assertion_asts_unchanged": true,
+      "raw_subprocess_import_absent": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_pq_pql4_signed_frontier.py",
+      "before_sha256": "cf8a6558955fada727d53b48fdcf7ef224f45b4b537890262b240d6a5620248d",
+      "after_sha256": "9105e48b5258d030a5f74e8fbbc2f7ca33e4e323ac9e0ebef9ccbc6987b30c23",
+      "syntax_pass": true,
+      "old_test_count": 12,
+      "new_test_count": 12,
+      "test_names_unchanged": true,
+      "assertion_asts_unchanged": true,
+      "raw_subprocess_import_absent": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_pq_pql5_quorum.py",
+      "before_sha256": "3eac8a393496113799192dc42cd2b956b4d2880d5841bf0e0af136fcb5e1d331",
+      "after_sha256": "1eef2346e16e58ab34aea2cceb7071d3d5e3e8ed629f454da1aa77f89ac5e475",
+      "syntax_pass": true,
+      "old_test_count": 18,
+      "new_test_count": 18,
+      "test_names_unchanged": true,
+      "assertion_asts_unchanged": true,
+      "raw_subprocess_import_absent": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_pq_pql6_equivocation.py",
+      "before_sha256": "23f8b2030008f0541eaabb7738c9d94aea8b1a0a58333d3728e119c38fade2f2",
+      "after_sha256": "4e5aee373f20c6d4fc8b17193fb8fa7fbaa68512dfc9fa68e54f2e6fabe319b1",
+      "syntax_pass": true,
+      "old_test_count": 10,
+      "new_test_count": 10,
+      "test_names_unchanged": true,
+      "assertion_asts_unchanged": true,
+      "raw_subprocess_import_absent": true
+    }
+  ],
+  "logs": {
+    "stdout": {
+      "path": "/tmp/chain-pq-helper-fix-r8/backend-controls.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "/tmp/chain-pq-helper-fix-r8/backend-controls.stderr.txt",
+      "bytes": 2234,
+      "sha256": "f03cc83b8179b0bd5da8dcc17e550e26da33a0d9c32ede780992365d06a006a1"
+    }
+  },
+  "native_crypto_executed": false,
+  "successful_crypto_substituted": false,
+  "configuration_alias_cases": 48,
+  "whole_oracle_budget_claim": false,
+  "scope": "Only Envelope/Cell currently share an operation budget; other oracle wrappers retain per-command 15s budgets. Direct trusted child owner, not descendant or output memory sandbox. Real complete suites pending root bounded verification."
+}

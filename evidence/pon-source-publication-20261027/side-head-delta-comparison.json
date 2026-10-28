@@ -1,0 +1,97 @@
+[
+  {
+    "side_head": "414efebbd8a2cd7d339a1dab1eb02ca2a3cf96ec",
+    "already_ancestor": false,
+    "non_main_original_commits": [
+      {
+        "original": "a3f82bb6ceff5cdcc1b8cc86d6da75143ead5c84",
+        "message": "test(cell): exercise real SmolLM replica retrieval with no-update result",
+        "delta_entries": 138,
+        "exact_resulting_path_mode_type_blob_delta_matches": [
+          "37203880dfaaf6f555a6c46ebdd2de667f262655"
+        ]
+      },
+      {
+        "original": "414efebbd8a2cd7d339a1dab1eb02ca2a3cf96ec",
+        "message": "fix(cell): bound transient capacity retries and replay real model transfer",
+        "delta_entries": 80,
+        "exact_resulting_path_mode_type_blob_delta_matches": [
+          "7c697640084d77410439fe895de57d5daaf11ce3"
+        ]
+      }
+    ]
+  },
+  {
+    "side_head": "bf1f4b1044a6fbcf47e0a51d6a72535996dbd928",
+    "already_ancestor": false,
+    "non_main_original_commits": [
+      {
+        "original": "c9bec058eed88708944b29e7b9332c9617849015",
+        "message": "Add conditional quantum PoN difficulty research model",
+        "delta_entries": 5,
+        "exact_resulting_path_mode_type_blob_delta_matches": [
+          "24d94c1b4015f4b6d50b1301ba73a88fdbbbb4f3"
+        ]
+      },
+      {
+        "original": "e92d3ac72663a3e77f1b45a76d991018d34583c4",
+        "message": "Retain source-bound quantum DAA model observations",
+        "delta_entries": 19,
+        "exact_resulting_path_mode_type_blob_delta_matches": [
+          "fee9da23d95235a0e0552133bab815cc91dd7e5c"
+        ]
+      },
+      {
+        "original": "f1829c8fa8550a1665bc2da34cbd8b6e6a8b2714",
+        "message": "Prepare pinned static OpenSSL PQ provider in feature CI lanes",
+        "delta_entries": 3,
+        "exact_resulting_path_mode_type_blob_delta_matches": [
+          "9419359c6e58a3f3313a15f4ad7db70421c21121"
+        ]
+      },
+      {
+        "original": "0915e5ab19f4489618b9c7cfa25fe65644bfa010",
+        "message": "Allow explicit checksum-pinned OpenSSL source archive input",
+        "delta_entries": 2,
+        "exact_resulting_path_mode_type_blob_delta_matches": [
+          "966d3bd06af3785c2af24ad59afa94dd673f97dd"
+        ]
+      },
+      {
+        "original": "bf1f4b1044a6fbcf47e0a51d6a72535996dbd928",
+        "message": "Retain real PQ provider observations and native authority migration audit",
+        "delta_entries": 10,
+        "exact_resulting_path_mode_type_blob_delta_matches": [
+          "065414299a6605ea5c151ad6e0cadca4895d44c2"
+        ]
+      }
+    ]
+  },
+  {
+    "side_head": "375ea483fbf73044e9737fa13114fe050183bfc5",
+    "already_ancestor": false,
+    "non_main_original_commits": [
+      {
+        "original": "bb2d444a3f5fe24b0077c1f01ed1d0953c2b6ff1",
+        "message": "fix(chain): fence shared History replay and retain original CPU deadline",
+        "delta_entries": 20,
+        "exact_resulting_path_mode_type_blob_delta_matches": [
+          "83e90cb2b4b2c3ac17b000280b976ddbe607ebb1"
+        ]
+      },
+      {
+        "original": "375ea483fbf73044e9737fa13114fe050183bfc5",
+        "message": "test(chain): retain History failure and native campaign evidence",
+        "delta_entries": 4,
+        "exact_resulting_path_mode_type_blob_delta_matches": [
+          "31fc8a0ecada2c04927daee998fd0ba106da872a"
+        ]
+      }
+    ]
+  },
+  {
+    "side_head": "4e0d71007ab6ed633a4f90ad237f15dbd8a2a5cc",
+    "already_ancestor": true,
+    "non_main_original_commits": []
+  }
+]

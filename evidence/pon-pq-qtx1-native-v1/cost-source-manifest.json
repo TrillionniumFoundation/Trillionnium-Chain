@@ -1,0 +1,60 @@
+{
+  "schema": "trnm-pqn1-process-cost-local-qualification-v1",
+  "upstream_pr": 424,
+  "source_commit": "a1fb0e3df819fb74d871df301d86603d882f5f22",
+  "measured_host": "Linux-6.18.55-x86_64-with-glibc2.41",
+  "python": "3.13.5",
+  "compiler": "cc (Debian 14.2.0-19) 14.2.0",
+  "openssl": "OpenSSL 3.5.5 27 Jan 2026 (Library: OpenSSL 3.5.5 27 Jan 2026)",
+  "command": "python3 pq_qtx1_cost.py cost-report-v2.json",
+  "cases": 5,
+  "samples_per_case": 64,
+  "observations": 320,
+  "full_chain_tps_measured": false,
+  "independent_acceptance": false,
+  "production_activation": false,
+  "files": [
+    {
+      "name": "pq_qtx1_cost.py",
+      "bytes": 5379,
+      "git_blob_sha1": "87a088d7f2a8fab36c1b57fa198b073072ea8fb5",
+      "sha256": "158ba3286ed25420dcc7e88cff18af31a810dfd89c58842d9d7cf535a1c83a72"
+    },
+    {
+      "name": "pq_qtx1_verify.c",
+      "bytes": 9675,
+      "git_blob_sha1": "b0744709bf866d7d15e3de5c83bf49c7f14c940a",
+      "sha256": "f3ec2f83fb9db6f6de11ba3e7b988e82341c12c87be42c902b9f780659e5cc56"
+    },
+    {
+      "name": "test_pq_native_qtx1.py",
+      "bytes": 9995,
+      "git_blob_sha1": "cb7a196465280c1088ea77bee08b481e8efaadd2",
+      "sha256": "e11c95335297f283beb81f3f8c83cfee1dc8dd9d4a46150600f54551f4085a8f"
+    },
+    {
+      "name": "pq_envelope.py",
+      "bytes": 9442,
+      "git_blob_sha1": "27e40b04ac8eaa381ad4dc017f23f226f99f3f41",
+      "sha256": "d3fdc1faef02d7911f8e073c73fb82e2236093a0bd98395805cba22dde7bfbbb"
+    },
+    {
+      "name": "PQ_QTX1_COST_V1.md",
+      "bytes": 2491,
+      "git_blob_sha1": "e0cc79991d60be69ae26bb1010572001a7e0df05",
+      "sha256": "51710714feea799154b03dd9ffc562ff83bc05d194884dc64cfe6ecd68727b25"
+    },
+    {
+      "name": "cost-report-v2.json",
+      "bytes": 2111,
+      "git_blob_sha1": "249065f1c79a8f6b28894888f05a35be1fc10cd1",
+      "sha256": "45555c63c291a09924d19920c1bff308b32a0bb09b113425998027483a9da16f"
+    },
+    {
+      "name": "cost-run-v2.log",
+      "bytes": 204,
+      "git_blob_sha1": "dd19de21dd62016cbf4ad056b464c1c3b6e8e8c4",
+      "sha256": "423359cb3f47d463ff532805100e2217a1ba1c8350ff67ada3da2a091aa6e3ae"
+    }
+  ]
+}

@@ -31,6 +31,7 @@ SOURCE = 'trillionnium/crates/trnm-pon-node/tests/' + TARGET + '.rs'
 TESTS = (
     'caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct',
     'from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection',
+    'four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged',
     'from_zero_service_shares_cpu_with_honest_work_and_reopened_owner',
     'from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline',
 )
@@ -44,6 +45,13 @@ def source_identity() -> dict:
     return {'commit': head, 'tree': git('rev-parse', 'HEAD^{tree}'),
             'tracked_source_identity': tracked,
             'test_sha256': digest((ROOT / SOURCE).read_bytes())}
+
+
+def native_build_command() -> list[str]:
+    """One exact source-build command for CI preparation and original execution."""
+    return ['cargo', 'test', '--locked', '--release', '--manifest-path',
+            'trillionnium/Cargo.toml', '-p', 'trnm-pon-node', '--test', TARGET,
+            '--no-run', '--message-format=json']
 
 
 def select_binary(lines: list[str]) -> Path:
@@ -722,10 +730,7 @@ def run(out: Path) -> dict:
             out / 'format-check', 60)
         result['format_passed'] = result['format']['exit_code'] == 0 and not result['format']['timed_out']
         require(result['format']['timed_out'] is False, 'NATIVE_TIMEOUT_STOPS_CAMPAIGN')
-        command = ['cargo', 'test', '--locked', '--release', '--manifest-path',
-                   'trillionnium/Cargo.toml', '-p', 'trnm-pon-node', '--test', TARGET,
-                   '--no-run', '--message-format=json']
-        result['build'] = run_child(command, out / 'build', 900)
+        result['build'] = run_child(native_build_command(), out / 'build', 900)
         require(result['build']['exit_code'] == 0 and not result['build']['timed_out'], 'NATIVE_BUILD_FAILED')
         binary = select_binary((out / 'build/stdout').read_text().splitlines())
         require(binary.is_file() and not binary.is_symlink(), 'REGULAR_BINARY_REQUIRED')

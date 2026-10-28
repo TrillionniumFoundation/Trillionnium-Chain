@@ -1,0 +1,2021 @@
+{
+  "schema": "TRNM-W1-FULL-SUCCINCT-FINAL-READBACK1",
+  "readback_unix_ns": 1793154570847584589,
+  "frozen_prover_source": "64be7c4ad51d432e7736ad135476262e23e968f5",
+  "frozen_hardened_verifier_source": "dd4fb0a65a734bdccac23a061dc0d6c72b69188f",
+  "observed_post_gate_source": [
+    "64be7c4ad51d432e7736ad135476262e23e968f5",
+    "4157fb5cec32f74dc0d0fe50a4ad93ee11eafbca"
+  ],
+  "post_gate_git_clean": true,
+  "source_unchanged": true,
+  "original_90min_result": {
+    "outcome": "TIMEOUT",
+    "sha256": "e5a7a12890293656f0f14afd7126dfa8569953aa4bfcfc1c7247ce73d9e0fddf",
+    "error": "actual stage failed: complete-recursive-compression, returncode=124",
+    "complete_proof_claim": false
+  },
+  "original_continuation_controller_outcome": "UNKNOWN_INTERRUPTED_NO_TERMINAL_RECORD",
+  "original_controller_exit_code": null,
+  "original_compression_wait4_record": null,
+  "recovery_error": null,
+  "recovery_all_declared_fresh_stages_completed": true,
+  "recovery_fresh_gates": {
+    "original": true,
+    "hardened": true
+  },
+  "exact_six_fresh_stage_results_passed": true,
+  "recovery_observation_gap_seconds": 282.650989214,
+  "original_compression_deadline_unix_ns": 1793156769295086003,
+  "original_total_deadline_unix_ns": 1793156835241745437,
+  "original_total_elapsed_until_fresh_gates_seconds": 1318.132983399,
+  "new_wall_budget_granted_seconds": 0,
+  "original_prefix_checks": [
+    {
+      "path": "adopted-execution-manifest.json",
+      "bytes": 11313,
+      "sha256": "8fd338f8ec874be99b5467fcd2766e20825898147da9af15255704149d052ab3",
+      "current_bytes": 11313,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "adoption.json",
+      "bytes": 614,
+      "sha256": "7965d6d70c44b1e613c0b7cd72815e0cb09e74c96310bd37bf7af3ad7ac66553",
+      "current_bytes": 614,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "expected-journal.bin",
+      "bytes": 16818,
+      "sha256": "1d53c0d3c403492a1c52a345e64a579644c6ec77ff9a8decf18bd6a09c889b1a",
+      "current_bytes": 16818,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "guest.bin",
+      "bytes": 349800,
+      "sha256": "6b58409420f2bd3f7a733de531ce20144580b259fde8ca9362b43d9728a8772c",
+      "current_bytes": 349800,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "header.bin",
+      "bytes": 318,
+      "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "current_bytes": 318,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "import.json",
+      "bytes": 634,
+      "sha256": "3e1ce5b83347f050397b4f5a12e754d1db20d64daac1faa6469605a356bdd349",
+      "current_bytes": 634,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "imported-manifest.json",
+      "bytes": 11313,
+      "sha256": "8fd338f8ec874be99b5467fcd2766e20825898147da9af15255704149d052ab3",
+      "current_bytes": 11313,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "imported-stages.jsonl",
+      "bytes": 7837,
+      "sha256": "215e5fcb45e72b4a9a2753d614d8bd76368684e8e8e40feff64d686fed7642ff",
+      "current_bytes": 7837,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "input.bin",
+      "bytes": 49506,
+      "sha256": "67b74fa2f417c0240d974e5ecea410d2b68d97d6dde667603aeb4d7ce59036cb",
+      "current_bytes": 49506,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "intermediate-composite.bin",
+      "bytes": 15128458,
+      "sha256": "eeb2f0c122c8c61d2ae7cd3703898f07a11533ee4dc65624d0b39e6f642ff1fe",
+      "current_bytes": 15128458,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "join-through-0001.bin",
+      "bytes": 223154,
+      "sha256": "527ccc1db4ed279e135ede26105a4449e3921a5d61048e983d3b80509da11a4a",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "join-through-0002.bin",
+      "bytes": 223154,
+      "sha256": "8436ce2b625d33c120a4f3089a03f9a491cac4e06bc672c40bcf1b899f126a3b",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "join-through-0003.bin",
+      "bytes": 223154,
+      "sha256": "e6857175b6cbf4610eb5134681b848ad725de96949ea887cb4cb97d23e985ebe",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "join-through-0004.bin",
+      "bytes": 223154,
+      "sha256": "9d008888e7b22ee7d784bc129c76ee245bb413e77a066fe63a5486a26797665f",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "join-through-0005.bin",
+      "bytes": 223154,
+      "sha256": "d4849d9f43fdc0aed820765799eed2d47cd275fdd46f9ed2b6d8e790c395c9eb",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "join-through-0006.bin",
+      "bytes": 223154,
+      "sha256": "5a20a83e8f582988b75dbe8dc8359c0e35d643a930d8014c43474a4ec6a92c99",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "join-through-0007.bin",
+      "bytes": 223154,
+      "sha256": "2f23bfb4e1255913d392bf35c04daf4338a46b1af1ac93bafa39ef9c333de279",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "join-through-0008.bin",
+      "bytes": 223154,
+      "sha256": "791fa697e0e775bc4056b9b6b7374083b611e9bbe3beb83e0d80851170ce7ff5",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "join-through-0009.bin",
+      "bytes": 223154,
+      "sha256": "8fbb573ad7b8f29fd4a92284d703992cf101c4e1117b7d0a338d111496a76b73",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "join-through-0010.bin",
+      "bytes": 223154,
+      "sha256": "4c3f0b8defc2a42029e0bd76c2ba9ac09857b1484fb23e2a6e8b85e3d313160e",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "join-through-0011.bin",
+      "bytes": 223154,
+      "sha256": "6991299efb0945f832474138f2cba690fe268a0a0a156ab89ae88614c478b8eb",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "join-through-0012.bin",
+      "bytes": 223154,
+      "sha256": "4483484e01861851dfc6101b86dc15e7689ce50dcdf8a47e8ab31f5f840397d3",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "join-through-0013.bin",
+      "bytes": 223154,
+      "sha256": "c28d0ff343b0a7eec17754931011fbba5814048e0c8b058b571ec3a9e6232102",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "join-through-0014.bin",
+      "bytes": 223154,
+      "sha256": "bb940c292fbe1001b14c8e41a586242a387b29112caf419817e7f85b4165acf1",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "join-through-0015.bin",
+      "bytes": 223154,
+      "sha256": "62d28f70240a5a2ff2ae64e5ee86254c0919fc261a1381cd2c2a531c5d703ec8",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "join-through-0016.bin",
+      "bytes": 223154,
+      "sha256": "dc010976ce4f61122d9a2e4b20d08756ba24d1f2b896b45ba4b705837760641a",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "join-through-0017.bin",
+      "bytes": 223154,
+      "sha256": "f3ca56c414dea0faac9906be55ed0fd4131d034962b024c8205b2d9149e7fc62",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "join-through-0018.bin",
+      "bytes": 223154,
+      "sha256": "fdab261a1711db9886d6249175d9ce9b6ae307c86f64cf930a7978e0101b895f",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "join-through-0019.bin",
+      "bytes": 223154,
+      "sha256": "a27074a802b1a5790126fa015af68c658225e6559e8164c1b60b280e3576a625",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "join-through-0020.bin",
+      "bytes": 223154,
+      "sha256": "5bc2e8bedc12cfe211c7c31b160b8776290a3e1b4994458ebd879998552679c0",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "join-through-0021.bin",
+      "bytes": 223154,
+      "sha256": "0a7f30c9b35f4d0b21650a069b1a2a8fa347baeac0b747a44c9e29b611f8a7ec",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "join-through-0022.bin",
+      "bytes": 223154,
+      "sha256": "3d9971ebe1695b52d05cd90f2a4b0346b6ef2930426b485d3baaa4b62934a544",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "join-through-0023.bin",
+      "bytes": 223154,
+      "sha256": "e4d90d80fda4f2724668bb60260f39f08064306395a404d69f1c810d6bd06df0",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "join-through-0024.bin",
+      "bytes": 223154,
+      "sha256": "65c78fda5d18c7d58721c9ac138540fa0be3365a7dc679de1b160dcb86be927c",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "join-through-0025.bin",
+      "bytes": 223154,
+      "sha256": "67f02eda5e3f73debcf39b680f5c99d1f0fc0aab2e6110dcdcba8de3ae225070",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "join-through-0026.bin",
+      "bytes": 223154,
+      "sha256": "2d31839869dfc1f83ca5969a18bff146e0e949768713869b5f5fc5eeaea7444f",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "join-through-0027.bin",
+      "bytes": 223154,
+      "sha256": "9c5999d4abc04546b6f84c6ad3da8f1a1d0c6dd81f867a178d9f3cbc58764a40",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "lift-0000.bin",
+      "bytes": 223154,
+      "sha256": "d2b06a1feca2d15e8dc5741b43f481a82c32d7d3dab01e413d357012467093d3",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "lift-0001.bin",
+      "bytes": 223154,
+      "sha256": "3e84ee71fc1e0c7882db94b224e71f85620e13cbea3e541622c1d58d6c595718",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "lift-0002.bin",
+      "bytes": 223154,
+      "sha256": "4f6519333921a62f1addfc551c2eb3f528a2a030ae1747efb8665146f16eda39",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "lift-0003.bin",
+      "bytes": 223154,
+      "sha256": "a97c95a3c8c7ac63236f6b97a0533f4bf79e4246f2bdb96e1c0a5c35b7b4bcf6",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "lift-0004.bin",
+      "bytes": 223154,
+      "sha256": "3e265f935b4c9dd1c80c76c99899ba6ad29892d38961fe3ae9b6a05eb7c86f90",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "lift-0005.bin",
+      "bytes": 223154,
+      "sha256": "5748a2a1c13817c68352a3327a0a91d2079ea7fc1c56f69f0798f9b70adde65c",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "lift-0006.bin",
+      "bytes": 223154,
+      "sha256": "bf44ebd8a8060b3b8802f608ede88c101523f8874aa64eb06d19484d89c22241",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "lift-0007.bin",
+      "bytes": 223154,
+      "sha256": "f69e072eee4e78006f71edad0087b60a1a0438b462a5904f98c6ba6fb421ba13",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "lift-0008.bin",
+      "bytes": 223154,
+      "sha256": "fb35b15092af7ff7589f802fd72849c6c6a0766a61caa5fadcdb0a7148d9b3dc",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "lift-0009.bin",
+      "bytes": 223154,
+      "sha256": "df32d27f43248b5914dd0573564311a3c535e958e42a6390363637db13a767ee",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "lift-0010.bin",
+      "bytes": 223154,
+      "sha256": "4db3336be89b81a59e884399a528c5ba6d5e34ac365c0efee105bf0dfbff5f51",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "lift-0011.bin",
+      "bytes": 223154,
+      "sha256": "200391e2d19e3a6be1fa5c5a210dcc108b1b9d1e40fd4793cc38037b4f287d6d",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "lift-0012.bin",
+      "bytes": 223154,
+      "sha256": "f23fbd7a6f48b0bef9c2a482ea57a659be04d3348bbde59204f6e99d097cb62b",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "lift-0013.bin",
+      "bytes": 223154,
+      "sha256": "02e6b92938ce93ddca8ae4bb37e645e59303f566ff987357bc851648c6878d5b",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "lift-0014.bin",
+      "bytes": 223154,
+      "sha256": "e08aad40147490342bb61953cfaa6206b82a0924c7778bc783e032876f3f7a0e",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "lift-0015.bin",
+      "bytes": 223154,
+      "sha256": "4947f092c595b7321ff97ed8334adf3859ed62465c98bea2b323cd9fcf9ad68e",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "lift-0016.bin",
+      "bytes": 223154,
+      "sha256": "95dbf997fba5a407607ebca207d3b8cc15e8a12e4dce7ac6e83fdae9d902f842",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "lift-0017.bin",
+      "bytes": 223154,
+      "sha256": "e6942c8f11579dcd8cd8a1396e7713e0177da1d0f817890a45e269ea6100998a",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "lift-0018.bin",
+      "bytes": 223154,
+      "sha256": "0242ff3b17051362607719ab10b14beda390ccaa54a22de26f1a8d5c09e5af92",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "lift-0019.bin",
+      "bytes": 223154,
+      "sha256": "6428316b65f87250e31b7ac70a59724edeff0a3b4ef76ccf95965516c69c0605",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "lift-0020.bin",
+      "bytes": 223154,
+      "sha256": "4870bf2a8d27634b7eab01a563be957a0c95cafe0d0aa4efe3a0633b8e06e735",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "lift-0021.bin",
+      "bytes": 223154,
+      "sha256": "ab37c0f2e218a512da4dfef6cb346649b23fecb4b39c9ae74f2137bc99d761df",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "lift-0022.bin",
+      "bytes": 223154,
+      "sha256": "83ddeb899af5cb956606779f92f86a062cd745690e352b4c141d915c558e2879",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "lift-0023.bin",
+      "bytes": 223154,
+      "sha256": "39b4ab88fb828762ae194df0431904eadfd7ebef3999cc7ca6559a379caf16e1",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "lift-0024.bin",
+      "bytes": 223154,
+      "sha256": "d9daf7833e2fb417c1161f2e8d353fe3ed2156ff488120d81bfbecd91b52c083",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "lift-0025.bin",
+      "bytes": 223154,
+      "sha256": "c5043956b7d1b6b344fa430fd0af5d23d2155c206dc887e93ed687a00725b9d0",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "lift-0026.bin",
+      "bytes": 223154,
+      "sha256": "ce37587ad1882eafc73e5846a1498756f9dd70241edd1e77ca8e008d8fbb263d",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "lift-0027.bin",
+      "bytes": 223154,
+      "sha256": "f98920e8e2803842993620dc8bd48324f5a66b591a88ad20e8810d416185467f",
+      "current_bytes": 223154,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "manifest.json",
+      "bytes": 11313,
+      "sha256": "3e066aec79c5ed08a977a1f149c228b18cd006101028b36681dc1b62df1d1549",
+      "current_bytes": 11313,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0000.bin",
+      "bytes": 255842,
+      "sha256": "18a35eb24646b94f3ea4935ed20cd3072897002df5a46f62f00487c8495151ee",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0001.bin",
+      "bytes": 255842,
+      "sha256": "e8df052cecae28efcbb6e62a88ed42941e083a09b2613ac47804161e8eb75c31",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0002.bin",
+      "bytes": 255842,
+      "sha256": "59d3620618f694775e5417ac161322a4d065fccc6c070f130ba3938b39651e9a",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0003.bin",
+      "bytes": 255842,
+      "sha256": "65a4eedfbeb32197717b1a9da26d6a647303a3401d86a2f5c1cbda63236ebfe2",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0004.bin",
+      "bytes": 255842,
+      "sha256": "3e420525d8fe5f719a3bec9d401c8ad3c9faf8247df8c7c242a450f585ab2209",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0005.bin",
+      "bytes": 255842,
+      "sha256": "eff23d183c7381668cee28ac4e2723f6cf8b324814118b0b2caa435adc72c907",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0006.bin",
+      "bytes": 255842,
+      "sha256": "06bde5a209ce0464e842384cfc34d2b3fc713dd7128389dbebc922dfb9e535da",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0007.bin",
+      "bytes": 255842,
+      "sha256": "6e04c8d764917d97385a549781d7cda3d82bd3421145eb70b67371f09e6ff11e",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0008.bin",
+      "bytes": 255842,
+      "sha256": "6f30b6679fef10d9e9f15d9c466c2298d1fe7fe28838be0c7c2b1ba90f9f1c60",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0009.bin",
+      "bytes": 255842,
+      "sha256": "a975c83295fb367395a469a17467b845feacb45ca1bacfa201962691d43ce5f0",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0010.bin",
+      "bytes": 255842,
+      "sha256": "a66a084ea0e06cddeacb239a0da00182bc7f36d7ec0045004aa4d3d2382be66c",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0011.bin",
+      "bytes": 255842,
+      "sha256": "5dae7a59b474514d53228ab9ac2ff6c6d8dfcb27b6d63c888c4defd176b907c7",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0012.bin",
+      "bytes": 255842,
+      "sha256": "ffa184e0f08fcaa47810a5833ebb40295f209f769fd1429a93cb9a3ae7a74a88",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0013.bin",
+      "bytes": 255842,
+      "sha256": "384edf65920d58c9f9bf065bca6789f578add9cdb94486809f9190bcd9ce9968",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0014.bin",
+      "bytes": 255842,
+      "sha256": "8584a66e33baab94e4833b49e95cf624ef2bfb8c6196976346f67b60a0f28f62",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0015.bin",
+      "bytes": 255842,
+      "sha256": "e98d0053f5100ff2478011cf4882c3b5314936d2f9376691c6436c49684983c3",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0016.bin",
+      "bytes": 255842,
+      "sha256": "377421d19893e363aca88e524ad683d1769e543cc64ca13f0efa366e63958e27",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0017.bin",
+      "bytes": 255842,
+      "sha256": "6bb5e7144ac1c633234597acd1beb4547263cb7d2928dbd9055041dd88762611",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0018.bin",
+      "bytes": 255842,
+      "sha256": "57345a0cfccda3efdee2702a424b94073d057d9933a09a2a45811d7b3be2d4f2",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0019.bin",
+      "bytes": 255842,
+      "sha256": "8fa423cb5a684a3936be0894a1192ba237d7f57d38460a64d203c33ee8fc4e8d",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0020.bin",
+      "bytes": 255842,
+      "sha256": "f152093bf52683534a9ccb52efe15bdbaf50cb90fd75b92ea51195de8f895e84",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0021.bin",
+      "bytes": 255842,
+      "sha256": "46e2e7ea124aad99bda7e203809792103e7005fbb16a4d949f3d0b3a3f6c5d37",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0022.bin",
+      "bytes": 255842,
+      "sha256": "0e949e8786ea9cbbd98b5bd9d6b4f913d15791e074373082da4f04518fa75521",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0023.bin",
+      "bytes": 255842,
+      "sha256": "6fa2286893601666e2850b6837c9b6ac0117bd95420b7618a2289877f72e131b",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0024.bin",
+      "bytes": 255842,
+      "sha256": "55b01bafb44707e739f8d044978e9072c823e4951b5ed9aa4a55dc22da7033ce",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0025.bin",
+      "bytes": 255842,
+      "sha256": "8f95ccc18c9789cbf465500ce693ea25b8db67c70e24831d4a6501d12e779cf6",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0026.bin",
+      "bytes": 255842,
+      "sha256": "1a2ae2d82e2a2fd592fe5feb5f7013c4b82ce4ff30d64534e118ed3f198ef85a",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0027.bin",
+      "bytes": 255842,
+      "sha256": "ec5e40dcb50c95dca2904d3aa19244f7a2515cc46c0cad6c923ecc36a3902a5a",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0028.bin",
+      "bytes": 255842,
+      "sha256": "ede4ad1f32cd3e7be90ad509c5f665dab82ff4c155d9511f20fd606ad3b17bd4",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0029.bin",
+      "bytes": 255842,
+      "sha256": "870c67ebc12efe24cb8833da5e371f2f87431a70e4a79b21fbd88f9120d66c96",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0030.bin",
+      "bytes": 255842,
+      "sha256": "e22f59ab0d0764d27f6a7abdf67eb97ec13578fe574f7ec6f5dac4c7e202a665",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0031.bin",
+      "bytes": 255842,
+      "sha256": "dba8a794ca1dd7ce987164a552d6835abe8adb0dbe21c638c0cc2c35185be093",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0032.bin",
+      "bytes": 255842,
+      "sha256": "a3545c7d43492d2cf7c3c61463b2096d4a63ea662d901d1cecb00af467f422e7",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0033.bin",
+      "bytes": 255842,
+      "sha256": "4d269440fa8d95bf13dd40b23261043e933f8ae45d0ac503c68b8c55dcdff2a1",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0034.bin",
+      "bytes": 255842,
+      "sha256": "a7bf1bc7f502c2c3e8e7c1ebe8916cd2e7084b0f246471c9681a107bcb548b7f",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0035.bin",
+      "bytes": 255842,
+      "sha256": "0a1325b61909cdb27c25d621c2bf6900c6adbb08af3940d5e8a9812fc2d427df",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0036.bin",
+      "bytes": 255842,
+      "sha256": "981c8c2e170d979c307a445f63aa99608a3938794cfa1050b4005a08c773a83d",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0037.bin",
+      "bytes": 255842,
+      "sha256": "bffab25f3ab92468b36112b9afa058ab8c0f63743e77d5293ffbf8a050d826d2",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0038.bin",
+      "bytes": 255842,
+      "sha256": "b432fb9af7389ac1f03e16a38bf422be038c682752e5b6ffea9fd82fe0ada7b3",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0039.bin",
+      "bytes": 255842,
+      "sha256": "b9aac0df5af026828b7ea5c1d98318c6ea3a70eea08272333778f1f1ca449e9d",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0040.bin",
+      "bytes": 255842,
+      "sha256": "271d17cb7ca2192b8648b23b68ae9f307e75bec3aa914575c059843ccf6513f9",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0041.bin",
+      "bytes": 255842,
+      "sha256": "b479d15203767851192671073e67cfbcc74e76814ed0b1410bcc6a3978a09a48",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0042.bin",
+      "bytes": 255842,
+      "sha256": "6d7d44399d74be5f2294d3f81ca4a06c398dc19efc9a2a761dc58b51448ae650",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0043.bin",
+      "bytes": 255842,
+      "sha256": "bdf8c2584c3be8dae201c6b45d76e08cbb02a79e3724dd891b619b77401e49fd",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0044.bin",
+      "bytes": 255842,
+      "sha256": "2f3abbdf8306a4930b26ba9eada5ba671b87d503c031ba51b77315c80a986d85",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0045.bin",
+      "bytes": 255842,
+      "sha256": "ecc0c28209be383da2e7dc95157b516e11dec303357c73faff1d54602b82a6bb",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0046.bin",
+      "bytes": 255842,
+      "sha256": "8eb920ca34a6020f7bd7526bfcd28c6e8af77f9781ef97769d8fd3ea306d771e",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0047.bin",
+      "bytes": 255842,
+      "sha256": "56b3596349ced2a46ace847dd643e3ef027b139a55bac9eb3c38dbf65b0dbf90",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0048.bin",
+      "bytes": 255842,
+      "sha256": "ac14f64663b3a2f0989f744906b1d125d8e8ed89ce326930dc118e6f826676d3",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0049.bin",
+      "bytes": 255842,
+      "sha256": "89e3bf1fd68c1e45bd006e901f4b0cd96ec87d29e43118a52f08f013d7b09969",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0050.bin",
+      "bytes": 255842,
+      "sha256": "97c43b83a3521ea0fc745af80413c1c93597fe27a2e19bbf35f73d39a3229e5a",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0051.bin",
+      "bytes": 255842,
+      "sha256": "5adff6e57474933ec3ae3aec9a8feeb3bb95d3dacc01700226f5c4e1b6c84bc9",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0052.bin",
+      "bytes": 255842,
+      "sha256": "edfc76850794afac14a68971e7a0265914fa646e2de1d9fa8d298279e7820b2b",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0053.bin",
+      "bytes": 255842,
+      "sha256": "2d831bf91a2325b69ca140a2234daebc000dd63fa93352b711bf9d110c5fd9c2",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0054.bin",
+      "bytes": 255842,
+      "sha256": "b5a1aabec91b7a4bca01bf530f8650f3f53d186421524e324ead6a0b15aa8b41",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0055.bin",
+      "bytes": 255842,
+      "sha256": "e87e6bf66660bd221a7b59d5c78b842e3339b57e8c62ea02f40b69244a035289",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0056.bin",
+      "bytes": 255842,
+      "sha256": "174b7a22132aa7f44f29f7f6b569fbaadc753ee92703faeb416ae77c57944de5",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0057.bin",
+      "bytes": 255842,
+      "sha256": "4210fa8240ee3a2a1ba993a50913d341583f9423b19bb3dfbe4f0fca8897264b",
+      "current_bytes": 255842,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "receipt-0058.bin",
+      "bytes": 272688,
+      "sha256": "3798932134f88471bf3ed6c710e0d6b253c025a350f876081c0aa0d7dc457bf5",
+      "current_bytes": 272688,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0000.bin",
+      "bytes": 194293,
+      "sha256": "2d9c8615ded7d16297fa9ca6ca4fe443172d7876cbdd99c4bbd81ded425cf814",
+      "current_bytes": 194293,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0001.bin",
+      "bytes": 153805,
+      "sha256": "88d93f01247ba365fa364077328798dca14791ffca6e7ff537abd85c9d32382f",
+      "current_bytes": 153805,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0002.bin",
+      "bytes": 65093,
+      "sha256": "f24e897c5283ebf328f677385db6694604a2e9aa81afb8276fa01e57634ef63a",
+      "current_bytes": 65093,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0003.bin",
+      "bytes": 35321,
+      "sha256": "ee2895f27b0b89c9056052a9e7a433ef922370174c4c523d2d60505c47600754",
+      "current_bytes": 35321,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0004.bin",
+      "bytes": 43077,
+      "sha256": "1b33ff60e92a9a0cccd16ba3ecdde3459ef087d77e9cc8600b1ae2d26794669b",
+      "current_bytes": 43077,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0005.bin",
+      "bytes": 20037,
+      "sha256": "19bb0f5294ebfe331b45b55dfbfd3a3293dcbd6937d7451b2eb93016ecb62348",
+      "current_bytes": 20037,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0006.bin",
+      "bytes": 19145,
+      "sha256": "55e908625d84ff6fbdd0e760dbbb33907d4b1e37e3ab73894b6a70e45bd54ea6",
+      "current_bytes": 19145,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0007.bin",
+      "bytes": 20181,
+      "sha256": "0d58ba5d10157657352c105af62b46d90dc3e8da90160e3c1defc95e95ecdda3",
+      "current_bytes": 20181,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0008.bin",
+      "bytes": 28657,
+      "sha256": "77995a3c8981b535205732e5477e6acb6891bd90a273efc80849f41f0e4a8bdf",
+      "current_bytes": 28657,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0009.bin",
+      "bytes": 19965,
+      "sha256": "f7911af367fefd42ff472d853eb8e39de22a24e06855657bcc69e81d9dc0ab37",
+      "current_bytes": 19965,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0010.bin",
+      "bytes": 19289,
+      "sha256": "6dee7b6613bff0b70196e1a912e49fd0ad99dd779bf726133d6b81f9fcfb078e",
+      "current_bytes": 19289,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0011.bin",
+      "bytes": 20397,
+      "sha256": "c178352677fe76017aab205dfa2f87207152117b1b2462e5fa9a338b394f9ad7",
+      "current_bytes": 20397,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0012.bin",
+      "bytes": 69049,
+      "sha256": "34503146fe76db498a401cf7db46e89302dd41721fd94bcaf6a4510634669320",
+      "current_bytes": 69049,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0013.bin",
+      "bytes": 119961,
+      "sha256": "065f9cdded419e25285768b68713f7bc2a3221ccdcfd3c41c62a203756c43f7f",
+      "current_bytes": 119961,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0014.bin",
+      "bytes": 37565,
+      "sha256": "333d25f679fc9629767b450ab1593e81c7fd3c995e7b706a20bf4f52402c8d2a",
+      "current_bytes": 37565,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0015.bin",
+      "bytes": 37637,
+      "sha256": "2004cf71709f4fb75fdcb3be16e40498cdc3a9bd0fd6617f1cc38f452338047b",
+      "current_bytes": 37637,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0016.bin",
+      "bytes": 38529,
+      "sha256": "e95022926f5247e34f5ca9887867ecd53b7c3f61016a8e6714589c52dcd31820",
+      "current_bytes": 38529,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0017.bin",
+      "bytes": 42141,
+      "sha256": "b7d73f4385582b292c69ed926fac686f97464dd8cc71df85dd76e261647aa09a",
+      "current_bytes": 42141,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0018.bin",
+      "bytes": 39997,
+      "sha256": "4ed9fe3d5480c9031937dc4c29391bee49f5483ca290d3957aa22d4453e1ccb5",
+      "current_bytes": 39997,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0019.bin",
+      "bytes": 37637,
+      "sha256": "bfa34ca1aeaf8b5bdf9a86aba8b514b177931d9035f4de3e9c144329eeea4ca8",
+      "current_bytes": 37637,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0020.bin",
+      "bytes": 41033,
+      "sha256": "61eeb3d9bd7a4f7a74cfff4698de0a8ec2a314d6aef505320f4c66816c22d032",
+      "current_bytes": 41033,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0021.bin",
+      "bytes": 39853,
+      "sha256": "4645db0eb6eea6e2f1e9b6059f7d93aee3a554ff497ff39e7e39f394dc35a31f",
+      "current_bytes": 39853,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0022.bin",
+      "bytes": 37709,
+      "sha256": "1973a9de0d2764dc88dbefd4624ae09f6e0e32bd9f23830b4e6f4abd55e6f8ca",
+      "current_bytes": 37709,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0023.bin",
+      "bytes": 43393,
+      "sha256": "d0139c00f20c52818872842d610d74ee9293c2f82b351339d432a7c52337b271",
+      "current_bytes": 43393,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0024.bin",
+      "bytes": 38213,
+      "sha256": "d7da43a881ae794e4903268d56794a07ba44dc800e4e161236f4c2a18382932d",
+      "current_bytes": 38213,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0025.bin",
+      "bytes": 38285,
+      "sha256": "930f123e6c2670d8141a26531a8d3a4327cd15b66be5ff9eb16b43d7f6498f7f",
+      "current_bytes": 38285,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0026.bin",
+      "bytes": 40357,
+      "sha256": "3344c0d21ace7ae2856813920a88b6c95954e0a8da3965f8bc70988e9020bb56",
+      "current_bytes": 40357,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0027.bin",
+      "bytes": 43825,
+      "sha256": "3281d86061c1c5adcd82921679a1aa08556542267cec2bc82fef62bbd86ec146",
+      "current_bytes": 43825,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0028.bin",
+      "bytes": 40141,
+      "sha256": "4a273f3b527e275c51b1fb5306c45e65051a3a028993d814040e37ef342151fe",
+      "current_bytes": 40141,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0029.bin",
+      "bytes": 37781,
+      "sha256": "d23959c19263df39eba61fad0d56d31dee09e57c0767233f96564bb3cfb350d2",
+      "current_bytes": 37781,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0030.bin",
+      "bytes": 41393,
+      "sha256": "5bd497860294df1e7d63aab81ac7fbfef0544630ce32343eac39920ca02fb18d",
+      "current_bytes": 41393,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0031.bin",
+      "bytes": 40285,
+      "sha256": "ad3624e6893cb02f808c700969fb815d3a64b197efc89a1935733d203dcf8633",
+      "current_bytes": 40285,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0032.bin",
+      "bytes": 38141,
+      "sha256": "848bffebdc7837e00c9303d0663963a841943de7750b5fdf5652f283e677aa77",
+      "current_bytes": 38141,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0033.bin",
+      "bytes": 42573,
+      "sha256": "af6f168d0dd9a93ebcde37b28effed8ac18492dccd57ac01dd330613f6384f0b",
+      "current_bytes": 42573,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0034.bin",
+      "bytes": 37781,
+      "sha256": "1dfba0d4f0f9abefa3ca63056d2fc129f959eb4adf125f413265129480eed1bd",
+      "current_bytes": 37781,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0035.bin",
+      "bytes": 37925,
+      "sha256": "7513b25470a9bb169da3c9cd34e0b768d85cb4402cc6665aac7f00d08dfdb107",
+      "current_bytes": 37925,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0036.bin",
+      "bytes": 40069,
+      "sha256": "b379ec75038b1c40e9e98e99287681d2bf2dcb8f7e40796184bedb993c242794",
+      "current_bytes": 40069,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0037.bin",
+      "bytes": 43825,
+      "sha256": "996dbafdff4945d7e47f64072f7e429e7a1191383271c4750d99479320d56cb5",
+      "current_bytes": 43825,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0038.bin",
+      "bytes": 40429,
+      "sha256": "1b276f69e0df6a3ea4e514a768c0d2157fcc5ddaf90f6bc072c107e4f7c7d51c",
+      "current_bytes": 40429,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0039.bin",
+      "bytes": 38069,
+      "sha256": "9148e5e7a3c2b00939bb6b4fe0386297834669f290d553401a2bec53190ca5b6",
+      "current_bytes": 38069,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0040.bin",
+      "bytes": 57381,
+      "sha256": "8afb2fc7780bb1382e508c7204e0d5928d7935f53f9eb23328e1ac92550b438c",
+      "current_bytes": 57381,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0041.bin",
+      "bytes": 20253,
+      "sha256": "9a8694ac530d2bda44df11aea35400e690351cc9a55aa52b3171361df5a55205",
+      "current_bytes": 20253,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0042.bin",
+      "bytes": 19965,
+      "sha256": "4159cddb5d7be1b1a4a5b8251c65fd5084acb51b9fdc8a32875f43e8d168ee6d",
+      "current_bytes": 19965,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0043.bin",
+      "bytes": 20181,
+      "sha256": "82b6fb4b2d62ff7f8594970d2dc46d70bfc680b4ea7fde591a7c500eeb06f6bf",
+      "current_bytes": 20181,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0044.bin",
+      "bytes": 30413,
+      "sha256": "e4eef9fe27810258596eb103186ab381bcd5c9fde3c713e498619dcace867e1a",
+      "current_bytes": 30413,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0045.bin",
+      "bytes": 19893,
+      "sha256": "27a8bf43321cd11ae485a9365c5d046959fb7523b3a24be2b124655bd3adeeb3",
+      "current_bytes": 19893,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0046.bin",
+      "bytes": 18929,
+      "sha256": "72856cb46b411158868239635322e8ec8d4f90f243bac8c3ec5d544bee4e0b49",
+      "current_bytes": 18929,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0047.bin",
+      "bytes": 18857,
+      "sha256": "19f99611d475080cf8cc938373667328369a7a4515d1cb001adcf77b07993e70",
+      "current_bytes": 18857,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0048.bin",
+      "bytes": 58185,
+      "sha256": "e8e6b23ec14b7f23e3973a667adddfa8dbd13b049b3c1b9639e3f0b90bf32ed9",
+      "current_bytes": 58185,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0049.bin",
+      "bytes": 31189,
+      "sha256": "fa28a77a50639efdc100b750f900cf0f90f1c5cb5d29017af48487435bc567a7",
+      "current_bytes": 31189,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0050.bin",
+      "bytes": 30153,
+      "sha256": "2460c8b65057de9fb679566cd91437e0291d128eaacddceb35b280281a12b26a",
+      "current_bytes": 30153,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0051.bin",
+      "bytes": 32873,
+      "sha256": "84e402b58eef6fc8d6a5a421a6bf6dfd9aee82851a23d66e514fd251f711a498",
+      "current_bytes": 32873,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0052.bin",
+      "bytes": 29161,
+      "sha256": "c68d972a7bc61e481f851b13a7a9c339e5f54e584800eaca47e3961d207f6e45",
+      "current_bytes": 29161,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0053.bin",
+      "bytes": 20181,
+      "sha256": "4077f1cdd83ed6be2d3a99036926959d0b68415a7be0374b763d302dc79df458",
+      "current_bytes": 20181,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0054.bin",
+      "bytes": 19145,
+      "sha256": "ef298cf997e65ddc71052d23059bbf11c0b19224b389cabd529cd8d76b359d44",
+      "current_bytes": 19145,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0055.bin",
+      "bytes": 20541,
+      "sha256": "ac541f13a4c14b2323dbbb49c9bb32f28a5baff15d2b377c61e93c2097abd95c",
+      "current_bytes": 20541,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0056.bin",
+      "bytes": 74733,
+      "sha256": "61fb3219e7db2080f06dfed9e949690763e0e8f75b61d767b353b9888c1daafa",
+      "current_bytes": 74733,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0057.bin",
+      "bytes": 88145,
+      "sha256": "6e3b0ca63b448874588ad10fc04da25fd14e55fd1fe0a3a2afda0e9cb5900169",
+      "current_bytes": 88145,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "segment-0058.bin",
+      "bytes": 122035,
+      "sha256": "eb2a497d9035a4482279527f1a9ac2343d5ef06b61c105a7d8253f82ea9ce6f7",
+      "current_bytes": 122035,
+      "mode": "immutable",
+      "passed": true
+    },
+    {
+      "path": "stages.jsonl",
+      "bytes": 271729,
+      "sha256": "737a456887dbaf18b50f18e5da95d411d4b3004a494946eaf3e58cd411b99030",
+      "current_bytes": 314654,
+      "mode": "preserved-prefix",
+      "passed": true
+    }
+  ],
+  "original_record_checks": [
+    {
+      "path": "/tmp/w1-full-90min-20261028/result.json",
+      "expected": {
+        "bytes": 120252,
+        "sha256": "e5a7a12890293656f0f14afd7126dfa8569953aa4bfcfc1c7247ce73d9e0fddf"
+      },
+      "actual_bytes": 120252,
+      "actual_sha256": "e5a7a12890293656f0f14afd7126dfa8569953aa4bfcfc1c7247ce73d9e0fddf",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-full-continuation-60min-20261028/declaration.json",
+      "expected": {
+        "bytes": 2480,
+        "sha256": "1090fc0bb224be8b31ee9ede64cfcf686b9fec24f325a9203a06db8913c1648f"
+      },
+      "actual_bytes": 2480,
+      "actual_sha256": "1090fc0bb224be8b31ee9ede64cfcf686b9fec24f325a9203a06db8913c1648f",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-full-continuation-60min-20261028/original-90min-result.json",
+      "expected": {
+        "bytes": 120252,
+        "sha256": "e5a7a12890293656f0f14afd7126dfa8569953aa4bfcfc1c7247ce73d9e0fddf"
+      },
+      "actual_bytes": 120252,
+      "actual_sha256": "e5a7a12890293656f0f14afd7126dfa8569953aa4bfcfc1c7247ce73d9e0fddf",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-full-continuation-60min-20261028/frozen-prefix-before-continuation.json",
+      "expected": {
+        "bytes": 26445,
+        "sha256": "1979cd44ba79aa09b28024b5e88d8d65c66d7c529477c5d8a098725514019c9a"
+      },
+      "actual_bytes": 26445,
+      "actual_sha256": "1979cd44ba79aa09b28024b5e88d8d65c66d7c529477c5d8a098725514019c9a",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-full-continuation-60min-20261028/proof-run/declaration.json",
+      "expected": {
+        "bytes": 732,
+        "sha256": "19495a8c7aba1fe1cf81b6c99d8ebd957b6d085014ea8995218d24bc43a3156f"
+      },
+      "actual_bytes": 732,
+      "actual_sha256": "19495a8c7aba1fe1cf81b6c99d8ebd957b6d085014ea8995218d24bc43a3156f",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-full-continuation-60min-20261028/proof-run/reverify-existing-prefix/result.json",
+      "expected": {
+        "bytes": 1461,
+        "sha256": "8783cc4acd46048908ab0bf8caa5a30a5e77896d3cbb38f573024b06f8a820a2"
+      },
+      "actual_bytes": 1461,
+      "actual_sha256": "8783cc4acd46048908ab0bf8caa5a30a5e77896d3cbb38f573024b06f8a820a2",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-proc-observer-continuation-20261028/declaration.json",
+      "expected": {
+        "bytes": 590,
+        "sha256": "130dcf51b711182c27d266d1aef800859181fb519d36f33a8efacf7602955368"
+      },
+      "actual_bytes": 590,
+      "actual_sha256": "130dcf51b711182c27d266d1aef800859181fb519d36f33a8efacf7602955368",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-proc-observer-continuation-20261028/samples.jsonl",
+      "expected": {
+        "bytes": 683452,
+        "sha256": "cf7f488374a61df595f780d9a019b95b9db174a651cf112268d5bc79028152f3"
+      },
+      "actual_bytes": 683452,
+      "actual_sha256": "cf7f488374a61df595f780d9a019b95b9db174a651cf112268d5bc79028152f3",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-proc-observer-continuation-20261028/observed-maxima.json",
+      "expected": {
+        "bytes": 10664,
+        "sha256": "57ebd027bb628e025edd8ab670e19b05de394e25c6d9fc0d79018c6e1515567a"
+      },
+      "actual_bytes": 10664,
+      "actual_sha256": "57ebd027bb628e025edd8ab670e19b05de394e25c6d9fc0d79018c6e1515567a",
+      "passed": true
+    }
+  ],
+  "binary_checks": [
+    {
+      "path": "/tmp/trnm-w1-r2-target/release/w1-staged-prover",
+      "expected_sha256": "1640e4304ad09e6db494c94d0d5069b9e2c3f83e7adb401481a431d81e1f1c2c",
+      "actual_sha256": "1640e4304ad09e6db494c94d0d5069b9e2c3f83e7adb401481a431d81e1f1c2c",
+      "passed": true
+    },
+    {
+      "path": "/tmp/pure-pon-risc0-3.0.3/r0vm",
+      "expected_sha256": "2acdf550f9aca4d05b74072463e4ed307c3824309c754a5cb5f93aa84f3390e6",
+      "actual_sha256": "2acdf550f9aca4d05b74072463e4ed307c3824309c754a5cb5f93aa84f3390e6",
+      "passed": true
+    },
+    {
+      "path": "/tmp/trnm-w1-r2-target/release/trnm-w1-zk-host",
+      "expected_sha256": "f87b03adcf1d268f724150b5f39fd81c09ca4afd585c7ea239d568ed117fe1b0",
+      "actual_sha256": "f87b03adcf1d268f724150b5f39fd81c09ca4afd585c7ea239d568ed117fe1b0",
+      "passed": true
+    },
+    {
+      "path": "/tmp/trnm-w1-r2-target/release/w1-native-cost",
+      "expected_sha256": "36e3fcb4042a809a16c5cd153c26cd1059bc7a473f302061348f976c46a6b68d",
+      "actual_sha256": "36e3fcb4042a809a16c5cd153c26cd1059bc7a473f302061348f976c46a6b68d",
+      "passed": true
+    },
+    {
+      "path": "/tmp/trnm-w1-r2-target/release/trnm-w1-hardened-verifier",
+      "expected_sha256": "0a96d752c4418c35b6ff3f6912d5c6b824490dff60f83e26a6101a99c96a3274",
+      "actual_sha256": "0a96d752c4418c35b6ff3f6912d5c6b824490dff60f83e26a6101a99c96a3274",
+      "passed": true
+    }
+  ],
+  "public_statement_checks": {
+    "prefix_inventory_bound_to_original_declaration": true,
+    "manifest_is_original_prefix_manifest": true,
+    "header_equals_input_prefix": true,
+    "input_manifest": true,
+    "journal_manifest": true,
+    "guest_manifest": true,
+    "journal_domain_header": true,
+    "journal_trace": true,
+    "journal_ticket": true,
+    "journal_work_id": true,
+    "journal_product_equals_original_witness_product": true,
+    "nonzero_target_and_ticket": true
+  },
+  "fresh_cryptographic_statement_checks": {
+    "original_fresh_work_id": true,
+    "original_repeated_work_id": true,
+    "hardened_fresh_work_id": true,
+    "hardened_repeated_work_id": true,
+    "hardened_original_image": true,
+    "hardened_journal_hash": true,
+    "hardened_receipt_hash": true,
+    "native_same_full_input": true,
+    "all_controls_expected": true
+  },
+  "all_identity_checks_passed": true,
+  "complete_full_succinct_verified": true,
+  "full_proof_bytes": 256886,
+  "full_proof_sha256": "ca4d3c9f5159b7001abae7491604cadbbbfa97c0f93d90d5943e48936813ca2b",
+  "native_witness_bytes": 49188,
+  "header_bytes": 318,
+  "journal_bytes": 16818,
+  "full_input_bytes": 49506,
+  "proof_size_over_native_witness": 5.222533951370253,
+  "work_id": "ccf544056c6df13a5ab4e6c021e587ff0008d92388270e64f72a6e2168a326cd",
+  "ticket_hex": "4485548e58901d8a710ad5f434d1f3ca150905b68bab186de5af3053a3abbedf",
+  "proof_randomness_tickets": 0,
+  "full_segments": 59,
+  "final_complete_events": [
+    {
+      "event": {
+        "compression_prover_ns": 1303701906881,
+        "consensus_admission": false,
+        "fresh_process_verification_required": true,
+        "proof_randomness_tickets": 0,
+        "receipt_bytes": 256886,
+        "receipt_sha256": "ca4d3c9f5159b7001abae7491604cadbbbfa97c0f93d90d5943e48936813ca2b",
+        "stage": "FULL_SUCCINCT_STARK_SAVED_VERIFIED",
+        "work_id": "ccf544056c6df13a5ab4e6c021e587ff0008d92388270e64f72a6e2168a326cd"
+      },
+      "unix_ns": 1793154544990881274
+    }
+  ],
+  "fixed_receipt_and_input_costs": {
+    "native_full_replay": {
+      "n": 1000,
+      "min_ns": 531468,
+      "median_ns": 554392.5,
+      "p95_ns": 717368,
+      "p99_ns": 841684,
+      "max_ns": 2246435,
+      "mean_ns": 584126.15,
+      "quantile_method": "nearest rank; fixed-input samples, not population tails"
+    },
+    "sdk_3_0_3_verify_only": {
+      "n": 100,
+      "min_ns": 15523330,
+      "median_ns": 16215554.5,
+      "p95_ns": 20759946,
+      "p99_ns": 21695171,
+      "max_ns": 22356775,
+      "mean_ns": 17059102.85,
+      "quantile_method": "nearest rank; fixed-input samples, not population tails"
+    },
+    "sdk_3_0_3_decode_and_verify": {
+      "n": 100,
+      "min_ns": 15670130,
+      "median_ns": 16330476.5,
+      "p95_ns": 21117823,
+      "p99_ns": 21826558,
+      "max_ns": 22935614,
+      "mean_ns": 17229536.58,
+      "quantile_method": "nearest rank; fixed-input samples, not population tails"
+    },
+    "sdk_3_0_6_verify_only": {
+      "n": 100,
+      "min_ns": 15553374,
+      "median_ns": 16590152.5,
+      "p95_ns": 18779270,
+      "p99_ns": 21443763,
+      "max_ns": 22417586,
+      "mean_ns": 16814256.95,
+      "quantile_method": "nearest rank; fixed-input samples, not population tails"
+    },
+    "sdk_3_0_6_decode_and_verify": {
+      "n": 100,
+      "min_ns": 15667305,
+      "median_ns": 16660953.0,
+      "p95_ns": 19409246,
+      "p99_ns": 21576132,
+      "max_ns": 23988215,
+      "mean_ns": 16883879.03,
+      "quantile_method": "nearest rank; fixed-input samples, not population tails"
+    }
+  },
+  "hardened_verify_median_over_native": 29.924922324887152,
+  "hardened_decode_verify_median_over_native": 30.052630582123676,
+  "cost_comparison_scope": "Native replay includes native input decoding; the preferred comparison is receipt decode-and-verify. All timings exclude file IO, native excludes additional experimental public-journal construction.",
+  "controls": {
+    "total": 24,
+    "expected_accept": 1,
+    "expected_reject": 23,
+    "all_passed": true,
+    "panics": 0
+  },
+  "control_asset_hash_checks": [
+    {
+      "path": "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets/valid.receipt",
+      "sha256": "ca4d3c9f5159b7001abae7491604cadbbbfa97c0f93d90d5943e48936813ca2b",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets/valid.header",
+      "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets/trailing.receipt",
+      "sha256": "82740202b1365db177a3c2aca833d5b52229c5c395fafee455fbcde82a2571a6",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets/trailing.header",
+      "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets/truncated.receipt",
+      "sha256": "43ab6a037957e589d16d6ff502792bc34e1e95610232d2e1db00a127d319e1c8",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets/truncated.header",
+      "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets/declared_seal_length_overflow.receipt",
+      "sha256": "20ab8431809e5afca4a601e6d793ac86f6e0544ed63ed760336face040e365f3",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets/declared_seal_length_overflow.header",
+      "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets/composite_tag.receipt",
+      "sha256": "840fef1d7e9c0da0595d4dad6cda6ddecea7e8f154f9aed98294be947d87464e",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets/composite_tag.header",
+      "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets/groth16_tag.receipt",
+      "sha256": "a399280160276e9a9d65a4bba5666ede7010c7567f26ceebe672d3e7b353cf02",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets/groth16_tag.header",
+      "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets/fake_tag.receipt",
+      "sha256": "042ba14f91d85cc04fd8607af3b3dcf0cecf8d54e2a19258ad5e693ccfbc1074",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets/fake_tag.header",
+      "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets/wrong_header.receipt",
+      "sha256": "ca4d3c9f5159b7001abae7491604cadbbbfa97c0f93d90d5943e48936813ca2b",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets/wrong_header.header",
+      "sha256": "3d030777fddfd359577f77e93256680298ed1903c949da24df79867ddade133c",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets/journal_byte_0.receipt",
+      "sha256": "3606b05b5d2920d25026b73297aebdd8521e4fb25a3ac8b0a53b59d074cd684d",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets/journal_byte_0.header",
+      "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets/journal_byte_20.receipt",
+      "sha256": "66daf744f4dc87b7f3320950d802b67434cda6f5b49b97edc0eb4345335a9040",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets/journal_byte_20.header",
+      "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets/journal_byte_338.receipt",
+      "sha256": "dda1a87c529a1541338851ecf804aedbc75e7648646f49e60a1744d83e76bcd7",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets/journal_byte_338.header",
+      "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets/journal_byte_370.receipt",
+      "sha256": "7f98ba7c1edf91e18a589bfdf40e49adb8c113e34af9ee771980e7960df4ba4e",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets/journal_byte_370.header",
+      "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets/journal_byte_402.receipt",
+      "sha256": "ab20eff37056719dd3b1b0e5e1411da9f231417d438f30cd9a8801fe8bfefbfd",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets/journal_byte_402.header",
+      "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets/journal_byte_16817.receipt",
+      "sha256": "2b2bd63e27cf5b92e5d1b7c3fc6df00eef3c16c4444b9c9274b593d25eb54cf8",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets/journal_byte_16817.header",
+      "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets/control_id.receipt",
+      "sha256": "668757f81eeffffa4d6b5ca04f250ab02c9c28bcb5e4903701f9e256f440689c",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets/control_id.header",
+      "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets/verifier_parameters.receipt",
+      "sha256": "d7839c347d9b94af0f1cd595bc781aff296eba5119712223871511178810e912",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets/verifier_parameters.header",
+      "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets/hash_function.receipt",
+      "sha256": "21e4a4329a62b46e462e57c2bcdf5e736186254704a0ca1b80d180702fcec7f3",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets/hash_function.header",
+      "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets/claim_digest.receipt",
+      "sha256": "6ae71d08db93384e449706dd438038a69a7fea9a35ee334930586ce19c65cf6a",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets/claim_digest.header",
+      "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets/seal_first.receipt",
+      "sha256": "6271b3e9b1e3a4371581c275af85deb2767607f8e424109faeb3d118bbc0c734",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets/seal_first.header",
+      "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets/seal_body.receipt",
+      "sha256": "58c150be1fae9de449c2eff3d46cf5062353d42eed461d4bd20159b741e6bfbc",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets/seal_body.header",
+      "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets/seal_last.receipt",
+      "sha256": "9abd8978751871ff88344d7f2216ac208f51376585e8e670151abbc5672cf6aa",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets/seal_last.header",
+      "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets/seal_empty.receipt",
+      "sha256": "5bc05055a02f0d0bc95e04f62447bd3d0e1b3a5704ede191e8ffbdbc03bdda2f",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets/seal_empty.header",
+      "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets/seal_short.receipt",
+      "sha256": "aad0078cce80c8be15de37e40a84bc52fa5ee4c8603fa19231c628e812a7d8ae",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets/seal_short.header",
+      "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets/seal_invalid_field.receipt",
+      "sha256": "8858fbb1e7c94a098a0dea812d0c44bc57b1a956537905721d03ffe6a4ffb600",
+      "passed": true
+    },
+    {
+      "path": "/tmp/w1-continuation-recovery-20261028/full-negative-control-assets/seal_invalid_field.header",
+      "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f",
+      "passed": true
+    }
+  ],
+  "cpu_lower_bound_parts_seconds": {
+    "original_90min_pipeline_including_priors": 33168.416119,
+    "continuation_completed_prefix_reverification": 2.2355739999999997,
+    "continuation_interrupted_compression_lower_bound": 8708.64,
+    "fresh_gate_and_control_stages_wait4": 7.678947,
+    "known_continuation_preflight_process_cpu": 0.31533837000000003
+  },
+  "total_pipeline_cpu_lower_bound_seconds": 41887.285978370004,
+  "continuation_old_observer_compression_lower_bound_seconds": 4574.75,
+  "continuation_recovered_root_and_reaped_lower_bound_seconds": 8708.64,
+  "cpu_observations_combined_by_max_not_addition": true,
+  "prover_exact_cpu_cost_known": false,
+  "maximum_observed_single_process_rss_bytes": 2470932480,
+  "staged_controller_and_prior_plus_continuation_wall_seconds": 6712.315070293987,
+  "included_coordinated_pause_seconds": 700.1733464741046,
+  "wall_scope": "Sum of recorded original controller/prior durations and original continuation elapsed; includes declared pause and observation gap, excludes unmeasured gap between rounds. Not isolated prover latency.",
+  "resource_scope": "Shared 8 CPU / 8 GiB cgroup, one original dense maximum-target input; build/control/historical earlier failed experiment costs remain separate, not hidden as a new proof trial.",
+  "independent_proof_trials": 1,
+  "prover_p99_established": false,
+  "production_verifier_tail_established": false,
+  "single_work_benefit_gate_passed": false,
+  "full_work_package_2a_accepted": false,
+  "post_quantum_soundness_qualified": false,
+  "consensus_admission": false,
+  "production_qualification": false
+}

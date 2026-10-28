@@ -1,0 +1,13 @@
+{
+  "source": "8a35529679c3d176fd7586ab1ecf4e004f25af79",
+  "tree": "86775ecad039c09476ee3fd627c106c813209f9c",
+  "command": [
+    "python3",
+    "scripts/ci/test_pon_public_v3_policy_read.py",
+    "-v"
+  ],
+  "exit_code": 1,
+  "wall_seconds": 0.06577307899715379,
+  "stderr_sha256": "cbc3c252792b592f2d37c12e9d54368f8d7f90c241d4f17fa79eb4e72cbcf0d3",
+  "scope": "Python policy reader regression; no native service or pressure was executed"
+}

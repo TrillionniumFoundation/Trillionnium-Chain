@@ -24,6 +24,7 @@ case "${1:?required job}" in
     python3 scripts/ci/test_pon_w1_budget_readers.py --raw-dir evidence/pon-upgrade-implementation-20261018/native-rounds/chain-p0-native-54
     python3 scripts/ci/test_pon_public_v3_phase_read.py
     python3 scripts/ci/test_pon_public_v3_policy_read.py
+    python3 scripts/ci/test_pon_v3_cookie_cpu_study.py
     python3 scripts/ci/test_run_pon_w1_native_campaign.py
     python3 scripts/ci/test_pon_w1_cost_matrix_reader.py
     python3 scripts/ci/test_llm_cell_handoff_deadline.py
@@ -39,7 +40,7 @@ case "${1:?required job}" in
     python3 scripts/test_qualification_runtime.py
     ;;
   protocol-contract)
-    python3 scripts/ci/run_from_zero_native.py --out "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/from-zero-native"
+    python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_from_zero_native.py --out "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/from-zero-native"
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives -p trnm-checkpoint-types -p trnm-verification-profiles --all-targets --all-features
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-protocol --all-targets --all-features
     cargo build --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-protocol -p trnm-crypto-primitives -p trnm-mvcc-fee --examples

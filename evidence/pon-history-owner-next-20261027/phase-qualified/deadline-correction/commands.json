@@ -1,0 +1,82 @@
+[
+  {
+    "name": "build",
+    "source_commit": "fe43f7c7f8971df37cbb7eda7080dac8ae4887aa",
+    "argv": [
+      "nice",
+      "-n",
+      "19",
+      "cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "--test",
+      "public_v3_multiprocess",
+      "--no-run",
+      "--offline",
+      "--locked",
+      "--config",
+      "profile.test.package.trnm-pon-node.debug=0",
+      "--message-format=json"
+    ],
+    "started_utc": "2026-10-28T00:58:10.916682+00:00",
+    "ended_utc": "2026-10-28T00:58:30.043798+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 19.127221492002718,
+    "timed_out": false,
+    "shared_host_W1_real_prover": true,
+    "performance_claim": false,
+    "stdout": {
+      "path": "build.stdout.txt",
+      "bytes": 85348,
+      "sha256": "359167f90eba71b9e93bcf620b1de7569115c79df3874637ce61aeefcf0ddc07"
+    },
+    "stderr": {
+      "path": "build.stderr.txt",
+      "bytes": 195,
+      "sha256": "d809ef3165f204621155a5a9a2c8e150e4f3661cd1ca1b93b0a02b78cd29a01d"
+    }
+  },
+  {
+    "name": "strict-clippy-all-node-targets",
+    "source_commit": "fe43f7c7f8971df37cbb7eda7080dac8ae4887aa",
+    "argv": [
+      "nice",
+      "-n",
+      "19",
+      "cargo",
+      "clippy",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--all-targets",
+      "--all-features",
+      "--offline",
+      "--locked",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "started_utc": "2026-10-28T00:58:30.451344+00:00",
+    "ended_utc": "2026-10-28T00:59:16.599533+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 46.14819326999714,
+    "timed_out": false,
+    "shared_host_W1_real_prover": true,
+    "performance_claim": false,
+    "stdout": {
+      "path": "strict-clippy-all-node-targets.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "strict-clippy-all-node-targets.stderr.txt",
+      "bytes": 194,
+      "sha256": "85b470c863970378831c82b9937a7fff56aca08ca2fb2c5f1ab226729085e8be"
+    }
+  }
+]

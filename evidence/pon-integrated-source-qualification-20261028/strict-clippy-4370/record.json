@@ -1,0 +1,42 @@
+{
+  "schema": "integrated-native-compile-observation-v1",
+  "source": "4370f250236d89fb86dab215f862fe7e4d91c648",
+  "command": [
+    "cargo",
+    "clippy",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "--offline",
+    "--workspace",
+    "--all-targets",
+    "--all-features",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "timeout_seconds": 900,
+  "build_jobs": 1,
+  "started_at_utc": "2026-10-28T01:48:36.941158+00:00",
+  "completed": true,
+  "native_tests_executed": false,
+  "concurrent_complete_w1_proving": true,
+  "isolated_performance_claim": false,
+  "whole_work_package_accepted": false,
+  "exit_code": 0,
+  "complete_success": true,
+  "wall_seconds": 1.7077877139963675,
+  "waited_child_cpu_seconds": 1.1807779999999999,
+  "max_waited_child_rss_kib": 239448,
+  "rss_scope": "maximum waited child, not simultaneous process-group peak",
+  "stdout.txt": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr.txt": {
+    "bytes": 190,
+    "sha256": "15a464d751599fb8ba386d94621ecc03f3238220039f8a620e19641b9cd7d97f"
+  },
+  "source_unchanged": true,
+  "finished_at_utc": "2026-10-28T01:48:41.676610+00:00"
+}

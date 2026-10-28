@@ -13,14 +13,15 @@ use std::{
 
 use trnm_data_availability::cell::{
     digest_hex, fetch_cell_to_file, fetch_release_to_file, parse_digest, read_pinned_release,
-    serve_cells, serve_cells_bounded, CellContextV1, CellErrorV1, CellPeerLimitsV1,
-    CellReleaseFetchLimitsV1, CellReleaseLimitsV1, CellReleaseManifestV1, CellServeLimitsV1,
-    CellStoreV1, MAX_CELL_BYTES,
+    serve_cells, serve_cells_bounded, CellCacheConfigV4, CellContextV1, CellErrorV1,
+    CellPeerLimitsV1, CellReleaseFetchLimitsV1, CellReleaseLimitsV1, CellReleaseManifestV1,
+    CellServeLimitsV1, CellStoreV1, MAX_CELL_BYTES,
 };
 
 type Result<T> = std::result::Result<T, Box<dyn Error>>;
 
 const USAGE: &str = "trnm-cell: finite configured-peer content cache (no model authority)
+Writers (pack,fetch,verify,prepare-release,fetch-release,verify-release) also require --cache-max-bytes N --cache-max-chunks N --cache-max-manifests N --cache-max-db-bytes N. Persisted TCL4/schema4 caps must match on every reopen; the main DB image cap derives separate WAL/SHM file-length caps; held readers can refuse writes before mutation. No allocated-block reservation or journal/TEMP/output/global-disk quota is claimed.
 pack --store DB --input FILE --family FAMILY --base HEX --parent HEX --tokenizer HEX --layout HEX --runtime HEX [--chunk-bytes 1048576]
 serve --store DB --bind IP:PORT --seconds N [--request-ms 2000] [--max-connections 8192] [--bounded-workers 1..4 --max-served-bytes N]
 fetch --store DB --manifest HEX --peers IP:PORT,IP:PORT --output ABSENT_FILE --max-bytes N (--seconds N | --overall-ms N) [--parallelism 2] [--request-ms 2000] [--max-connections 32768] [--max-response-bytes N]
@@ -69,6 +70,7 @@ fn run() -> Result<()> {
 
 fn pack(args: &mut Args) -> Result<()> {
     let store = PathBuf::from(args.take("--store")?);
+    let cache_config = args.cache_config()?;
     let input = PathBuf::from(args.take("--input")?);
     let context = CellContextV1 {
         family: args.take("--family")?,
@@ -80,7 +82,8 @@ fn pack(args: &mut Args) -> Result<()> {
     };
     let chunk_bytes = args.optional("--chunk-bytes", "1048576").parse()?;
     args.finish()?;
-    let manifest = CellStoreV1::open(&store)?.pack_file(&input, context, chunk_bytes)?;
+    let manifest =
+        CellStoreV1::open(&store, cache_config)?.pack_file(&input, context, chunk_bytes)?;
     println!("{{\"schema\":\"trnm.cell.pack.v1\",\"manifest\":\"{}\",\"payload_sha256\":\"{}\",\"bytes\":{},\"chunks\":{}}}",
         digest_hex(manifest.id()), digest_hex(manifest.payload_sha256()), manifest.size(), manifest.chunks().len());
     Ok(())
@@ -126,7 +129,7 @@ fn serve(args: &mut Args) -> Result<()> {
             report.accepted_connections, report.overloaded_connections, report.completed_requests, report.peak_active_workers, report.sent_response_bytes);
         return Ok(());
     }
-    let store = CellStoreV1::open(&store)?;
+    let store = CellStoreV1::open_read_only(&store)?;
     let listener = TcpListener::bind(bind)?;
     println!(
         "{{\"schema\":\"trnm.cell.listen.v1\",\"address\":\"{}\"}}",
@@ -152,6 +155,7 @@ fn serve(args: &mut Args) -> Result<()> {
 
 fn fetch(args: &mut Args) -> Result<()> {
     let store = PathBuf::from(args.take("--store")?);
+    let cache_config = args.cache_config()?;
     let pinned = parse_digest(&args.take("--manifest")?)?;
     let peer_text = args.take("--peers")?;
     let peers = peer_text
@@ -171,7 +175,7 @@ fn fetch(args: &mut Args) -> Result<()> {
         .optional("--max-response-bytes", &default_response_bytes.to_string())
         .parse()?;
     args.finish()?;
-    let store = CellStoreV1::open(&store)?;
+    let store = CellStoreV1::open(&store, cache_config)?;
     let (_, report) = fetch_cell_to_file(
         &store,
         pinned,
@@ -195,9 +199,10 @@ fn fetch(args: &mut Args) -> Result<()> {
 
 fn verify(args: &mut Args) -> Result<()> {
     let store = PathBuf::from(args.take("--store")?);
+    let cache_config = args.cache_config()?;
     let pinned = parse_digest(&args.take("--manifest")?)?;
     args.finish()?;
-    let store = CellStoreV1::open(&store)?;
+    let store = CellStoreV1::open(&store, cache_config)?;
     let manifest = store.manifest(pinned)?.ok_or(CellErrorV1::Unavailable)?;
     store.verify_complete(&manifest)?;
     println!("{{\"schema\":\"trnm.cell.verify.v1\",\"manifest\":\"{}\",\"payload_sha256\":\"{}\",\"bytes\":{}}}",
@@ -210,7 +215,7 @@ fn manifest(args: &mut Args) -> Result<()> {
     let pinned = parse_digest(&args.take("--manifest")?)?;
     let output = PathBuf::from(args.take("--output")?);
     args.finish()?;
-    let manifest = CellStoreV1::open(&store)?
+    let manifest = CellStoreV1::open_read_only(&store)?
         .manifest(pinned)?
         .ok_or(CellErrorV1::Unavailable)?;
     let mut file = std::fs::OpenOptions::new()
@@ -249,6 +254,7 @@ fn release_limits(args: &mut Args) -> Result<(CellReleaseLimitsV1, Duration)> {
 /// create-only publication path as acquisition. No bytes are fetched from peers.
 fn prepare_release(args: &mut Args) -> Result<()> {
     let store = PathBuf::from(args.take("--store")?);
+    let cache_config = args.cache_config()?;
     let member_text = args.take("--manifests")?;
     if member_text.len() > 1_048_576 {
         return Err(CellErrorV1::Invalid("release member argument size").into());
@@ -263,7 +269,7 @@ fn prepare_release(args: &mut Args) -> Result<()> {
     let output = PathBuf::from(args.take("--output")?);
     let (release_limits, overall_timeout) = release_limits(args)?;
     args.finish()?;
-    let store = CellStoreV1::open(&store)?;
+    let store = CellStoreV1::open(&store, cache_config)?;
     let context = store
         .manifest(first)?
         .ok_or(CellErrorV1::Invalid("release member manifest unavailable"))?
@@ -297,6 +303,7 @@ fn prepare_release(args: &mut Args) -> Result<()> {
 
 fn fetch_release(args: &mut Args) -> Result<()> {
     let store = PathBuf::from(args.take("--store")?);
+    let cache_config = args.cache_config()?;
     let root = PathBuf::from(args.take("--release-file")?);
     let pinned = parse_digest(&args.take("--release")?)?;
     let peer_text = args.take("--peers")?;
@@ -313,7 +320,7 @@ fn fetch_release(args: &mut Args) -> Result<()> {
     let max_response_bytes = args.take("--max-response-bytes")?.parse()?;
     args.finish()?;
     let release = read_pinned_release(&root, pinned)?;
-    let store = CellStoreV1::open(&store)?;
+    let store = CellStoreV1::open(&store, cache_config)?;
     let report = fetch_release_to_file(
         &store,
         &release,
@@ -342,12 +349,13 @@ fn fetch_release(args: &mut Args) -> Result<()> {
 
 fn verify_release(args: &mut Args) -> Result<()> {
     let store = PathBuf::from(args.take("--store")?);
+    let cache_config = args.cache_config()?;
     let root = PathBuf::from(args.take("--release-file")?);
     let pinned = parse_digest(&args.take("--release")?)?;
     let (limits, _) = release_limits(args)?;
     args.finish()?;
     let release = read_pinned_release(&root, pinned)?;
-    CellStoreV1::open(&store)?.verify_release_complete(&release, limits)?;
+    CellStoreV1::open(&store, cache_config)?.verify_release_complete(&release, limits)?;
     println!(
         "{{\"schema\":\"trnm.cell.release.verify.v1\",\"release\":\"{}\",\"cells\":{}}}",
         digest_hex(pinned),
@@ -377,6 +385,16 @@ impl Args {
         self.0
             .remove(key)
             .ok_or_else(|| CellErrorV1::Invalid(key).into())
+    }
+    fn cache_config(&mut self) -> Result<CellCacheConfigV4> {
+        let config = CellCacheConfigV4 {
+            max_database_bytes: self.take("--cache-max-db-bytes")?.parse()?,
+            max_logical_bytes: self.take("--cache-max-bytes")?.parse()?,
+            max_chunk_rows: self.take("--cache-max-chunks")?.parse()?,
+            max_manifest_rows: self.take("--cache-max-manifests")?.parse()?,
+        };
+        config.validate()?;
+        Ok(config)
     }
     fn fetch_timeout(&mut self) -> Result<Duration> {
         match (self.0.remove("--seconds"), self.0.remove("--overall-ms")) {

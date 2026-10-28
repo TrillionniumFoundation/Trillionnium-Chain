@@ -62,6 +62,7 @@ struct Pin {
     schema: BTreeMap<String, String>,
     context: crate::ancestry_index::Context,
     schema_id: Hash,
+    reorg_owner_context: Hash,
     active: (Hash, u64),
     active_record: Record,
     slot: u64,
@@ -195,16 +196,27 @@ fn context(
 }
 fn ready(
     db: &Connection,
+    owner_context: Hash,
     budget: &mut SqlBudget,
     progress: &mut dyn FnMut(u64) -> Result<()>,
 ) -> Result<()> {
     budget.query(progress)?;
-    let done: Option<bool> = db
+    let done: Option<u64> = db
         .query_row("SELECT done FROM reorg WHERE singleton=1", [], |row| {
             row.get(0)
         })
         .optional()?;
-    ensure(done != Some(false), "REORG_IN_PROGRESS")
+    ensure(done != Some(0), "REORG_IN_PROGRESS")?;
+    ensure(done.is_none_or(|value| value <= 2), "REORG_STEPS").map_err(Error::local_integrity)?;
+    if done == Some(2) {
+        budget.query(progress)?;
+        let valid: bool = db.query_row(
+            "SELECT EXISTS(SELECT 1 FROM reorg r JOIN reorg_lifecycle_v1 l ON l.operation=(SELECT MAX(operation) FROM reorg_lifecycle_v1) JOIN blocks b ON b.id=l.old_tip WHERE r.singleton=1 AND r.done=2 AND l.outcome=2 AND r.old_tip=l.old_tip AND r.new_tip=l.new_tip AND r.generation=l.generation AND r.cursor=l.cancelled_cursor AND l.reason!='' AND l.old_root=b.state_root AND l.owner_context=?)",
+            [owner_context.as_slice()], |row|row.get(0),
+        )?;
+        ensure(valid, "REORG_LIFECYCLE").map_err(Error::local_integrity)?;
+    }
+    Ok(())
 }
 impl Pin {
     fn namespace(&self) -> Result<()> {
@@ -293,7 +305,7 @@ impl Node {
             .map_or(maximum_sql, |limit| maximum_sql.min(limit));
         let mut budget = SqlBudget::new(maximum_sql)?;
         self.namespace()?;
-        ready(&self.db, &mut budget, progress)?;
+        ready(&self.db, self.reorg_owner_context(), &mut budget, progress)?;
         context_values(
             &self.db,
             self.state_backend.schema_id(),
@@ -316,6 +328,7 @@ impl Node {
             schema: self.expected_schema.clone(),
             context: self.ancestry_context(),
             schema_id: self.state_backend.schema_id(),
+            reorg_owner_context: self.reorg_owner_context(),
             active: selected,
             active_record,
             slot,
@@ -340,12 +353,18 @@ impl Node {
     ) -> Result<Value> {
         progress(read.budget.used)?;
         self.namespace()?;
-        ready(&self.db, &mut read.budget, progress)?;
+        ready(
+            &self.db,
+            self.reorg_owner_context(),
+            &mut read.budget,
+            progress,
+        )?;
         read.pin.namespace()?;
         ensure(
             self.directory_id == read.pin.directory_id
                 && self.database_id == read.pin.database_id
                 && self.state_backend.schema_id() == read.pin.schema_id
+                && self.reorg_owner_context() == read.pin.reorg_owner_context
                 && self.settings.network() == read.pin.context.network,
             "STORAGE_CONTEXT",
         )
@@ -361,7 +380,12 @@ impl Node {
         let tx = self.db.unchecked_transaction()?;
         let changes = tx.total_changes();
         context(&tx, &read.pin, &mut read.budget, progress)?;
-        ready(&tx, &mut read.budget, progress)?;
+        ready(
+            &tx,
+            read.pin.reorg_owner_context,
+            &mut read.budget,
+            progress,
+        )?;
         read.pin.epoch(&tx, &mut read.budget, progress)?;
         let facts = read.reads.len() as u64;
         read.reads.revalidate(&tx, &mut |index| {
@@ -427,7 +451,12 @@ impl PublicHistorySnapshot {
         self.budget.query(progress)?;
         let tx = db.unchecked_transaction()?;
         context(&tx, &self.pin, &mut self.budget, progress)?;
-        ready(&tx, &mut self.budget, progress)?;
+        ready(
+            &tx,
+            self.pin.reorg_owner_context,
+            &mut self.budget,
+            progress,
+        )?;
         self.pin.epoch(&tx, &mut self.budget, progress)?;
         let mut reads = crate::ancestry_index::ReadSet::default();
         let allowance = self.budget.available();

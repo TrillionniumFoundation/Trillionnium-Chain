@@ -1,0 +1,68 @@
+
+running 57 tests
+test ingress::public_v3::scalar_cpu::completion_tests::actual_w1_cpu_completion_waits_for_original_refill_and_preserves_balance_identity ... verified completion actual W1 replays=249 cpu_ns=249685444 flow={"schema":"public-v3-local-actual-cpu-flow-v1","initial_credit_ns":0,"credited_refill_ns":251632352,"discarded_refill_ns":0,"booked_reservation_ns":0,"live_debited_cpu_ns":250692515,"settlement_residual_cpu_ns":781,"settled_full_cpu_ns":250693296,"unsettled_known_live_cpu_ns":0,"paid_cpu_debit_ns":250693296,"settlement_discard_ns":0,"remaining_paid_credit_ns":939056,"balance_identity_verified":true,"stored_credit_ns":939056,"live_owners":0}
+ok
+test ingress::public_v3::scalar_cpu::completion_tests::already_running_probe_cannot_spend_beyond_its_original_quantum_during_completion ... ok
+test ingress::public_v3::scalar_cpu::completion_tests::complete_actual_w1_blocks_new_probes_without_new_credit_and_releases_once ... ok
+test ingress::public_v3::scalar_cpu::completion_tests::completion_identity_survives_cancel_and_unknown_without_invalidating_retry ... ok
+test ingress::public_v3::scalar_cpu::completion_tests::completion_keeps_original_cancellation_deadline_and_unknown_clock_fences ... ok
+test ingress::public_v3::scalar_cpu::completion_tests::completion_work_claim_is_atomic_across_real_verifiers_and_domain_clones ... ok
+test ingress::public_v3::scalar_cpu::completion_tests::exclusive_history_refill_observes_original_resource_cancellation_without_new_credit ... {"flow":{"balance_identity_verified":true,"booked_reservation_ns":0,"credited_refill_ns":133408830,"discarded_refill_ns":0,"initial_credit_ns":0,"live_debited_cpu_ns":133412935,"live_owners":0,"paid_cpu_debit_ns":133414116,"remaining_paid_credit_ns":-5286,"schema":"public-v3-local-actual-cpu-flow-v1","settled_full_cpu_ns":133414116,"settlement_discard_ns":0,"settlement_residual_cpu_ns":1181,"stored_credit_ns":-5286,"unsettled_known_live_cpu_ns":0},"receipt":{"accounting_unavailable":false,"finished_workers":0,"known_workers":0,"live_paid_cpu_ns":133412935,"live_refused":false,"owner_cpu_ns":133414116,"residual_cpu_ns":1181,"schema":"service-owner-scoped-thread-cpu-settlement-v1","scoped_worker_cpu_ns":0,"spawned_workers":0,"started_workers":0,"total_cpu_ns":133414116},"schema":"history-resource-cancellation-real-refill-v1"}
+ok
+test ingress::public_v3::scalar_cpu::completion_tests::full_completion_registry_keeps_all_markers_and_allows_real_native_admission ... ok
+test ingress::public_v3::scalar_cpu::completion_tests::only_fresh_successful_native_w1_promotes_not_false_product_or_existing_packet ... ok
+test ingress::public_v3::scalar_cpu::completion_tests::same_valid_w1_native_invalid_packet_cannot_reacquire_completion_priority ... same genuine W1 acquisition_attempts=3 requests=2 promotions=[1, 0] paid_cpu_ns=4766830
+ok
+test ingress::public_v3::scalar_cpu::completion_tests::same_verified_w1_with_changed_transaction_body_is_rejected_before_promotion ... ok
+test ingress::public_v3::scalar_cpu::final_samples_tests::actual_final_measurement_keeps_known_components_and_closes_new_starts ... ok
+test ingress::public_v3::scalar_cpu::final_samples_tests::continuing_checkpoint_still_requires_a_live_reservation ... ok
+test ingress::public_v3::scalar_cpu::final_samples_tests::final_debit_cannot_forgive_prior_uncertainty_or_numeric_overflow ... ok
+test ingress::public_v3::scalar_cpu::final_samples_tests::lost_reservation_final_debit_fences_without_refill_repair_or_refund ... ok
+test ingress::public_v3::scalar_cpu::flow_tests::actual_cpu_flow_measures_credited_refill_and_cap_discard ... ok
+test ingress::public_v3::scalar_cpu::flow_tests::actual_cpu_flow_optional_read_preserves_old_observation_json_and_credit ... ok
+test ingress::public_v3::scalar_cpu::flow_tests::actual_cpu_flow_tracks_two_owned_reserves_extension_and_finish_once ... ok
+test ingress::public_v3::scalar_cpu::flow_tests::actual_cpu_flow_unknown_clock_and_lost_reserve_do_not_fabricate_identity ... ok
+test ingress::public_v3::scalar_cpu::flow_tests::actual_cpu_flow_unknown_overflow_does_not_modify_original_policy ... ok
+test ingress::public_v3::scalar_cpu::flow_tests::actual_cpu_flow_wrong_attribution_and_balance_stay_unknown ... ok
+test ingress::public_v3::scalar_cpu::flow_tests::freshness_matches_original_refill_with_debt_and_outstanding_reserves ... ok
+test ingress::public_v3::scalar_cpu::flow_tests::freshness_separates_paid_stored_depletion_from_later_scalar_start_eligibility ... ok
+test ingress::public_v3::scalar_cpu::flow_tests::freshness_unknown_clock_or_flow_never_fabricates_refill_or_changes_budget ... ok
+test ingress::public_v3::scalar_cpu::flow_tests::public_freshness_read_is_optional_and_preserves_original_schema_and_flow ... ok
+test ingress::public_v3::scalar_cpu::metered_fact_network_tests::two_real_listeners_confirm_signed_work_while_bad_cached_request_is_in_flight ... METERED_FACT_NETWORK listeners=2 honest_confirmed_transactions=8 native_blocks=7 downloaded_pages=7 concurrent_bad_requests=1 bad_rejected=true shared_domains=1 independent_client=true saturation_claim=false
+ok
+test ingress::public_v3::scalar_cpu::metered_fact_tests::a_foreign_cpu_domain_is_refused_before_m05_work_and_any_reservation ... METERED_NODE_BIND rejected_foreign=true foreign_cpu_reservations=0 valid_paid=true
+ok
+test ingress::public_v3::scalar_cpu::metered_fact_tests::cancellation_keeps_spent_cpu_and_retry_does_not_reset_domain ... ok
+test ingress::public_v3::scalar_cpu::metered_fact_tests::exhausted_domain_refuses_before_cold_or_warm_math_and_state ... ok
+test ingress::public_v3::scalar_cpu::metered_fact_tests::failed_product_and_warm_retry_each_pay_exact_cpu_without_poisoning ... ok
+test ingress::public_v3::scalar_cpu::metered_fact_tests::paid_cached_native_execution_registers_all_real_m06_workers ... METERED_FACT_BOUNDARY worker accounting assertions complete
+ok
+test ingress::public_v3::scalar_cpu::metered_fact_tests::panic_fences_shared_budget_without_rewriting_native_history ... ok
+test ingress::public_v3::scalar_cpu::metered_fact_tests::read_request_cannot_consume_the_mutation_budget_via_this_entry ... ok
+test ingress::public_v3::scalar_cpu::metered_fact_tests::shared_listener_reconstruction_never_refills_debt_or_replaces_domain ... ok
+test ingress::public_v3::scalar_cpu::metered_fact_tests::two_reserved_real_owners_block_a_third_cache_entry_then_release_normally ... ok
+test ingress::public_v3::scalar_cpu::request_owned_reserve_tests::a_live_quantum_cannot_forgive_unknown_or_manufacture_an_unowned_start ... ok
+test ingress::public_v3::scalar_cpu::request_owned_reserve_tests::actual_cpu_extension_uses_its_own_reserve_and_settles_exact_total ... ok
+test ingress::public_v3::scalar_cpu::request_owned_reserve_tests::both_owned_quanta_are_separate_and_one_extra_nanosecond_remains_debt ... ok
+test ingress::public_v3::scalar_cpu::request_owned_reserve_tests::extended_request_cannot_spend_the_other_owned_quantum ... ok
+test ingress::public_v3::scalar_cpu::request_owned_reserve_tests::finite_interleavings_conserve_live_and_residual_cpu_without_refill ... ok
+test ingress::public_v3::scalar_cpu::request_owned_reserve_tests::owned_quantum_remains_credited_when_request_crosses_its_first_quantum ... ok
+test ingress::public_v3::scalar_cpu::request_owned_reserve_tests::owned_start_quantum_pays_termination_without_extra_free_credit ... ok
+test ingress::public_v3::scalar_cpu::request_owned_reserve_tests::purchased_start_quantum_is_spendable_without_a_second_free_reserve ... ok
+test ingress::public_v3::scalar_cpu::request_owned_reserve_tests::termination_cannot_borrow_another_live_owners_start_quantum ... ok
+test ingress::public_v3::scalar_cpu::tests::actual_owner_thread_mismatch_preserves_unknown_without_zero_refund ... ok
+test ingress::public_v3::scalar_cpu::tests::cloned_shared_domain_preserves_two_actual_owner_start_ceiling ... ok
+test ingress::public_v3::scalar_cpu::tests::extra_settlement_cannot_return_an_unowned_reservation ... ok
+test ingress::public_v3::scalar_cpu::tests::finish_reports_shared_settlement_uncertainty_without_erasing_known_cpu ... ok
+test ingress::public_v3::scalar_cpu::tests::missing_or_impossible_reservation_preserves_credit_and_marks_unknown ... ok
+test ingress::public_v3::scalar_cpu::tests::observing_budget_never_refills_or_returns_an_outstanding_reserve ... ok
+test ingress::public_v3::scalar_cpu::tests::repeated_real_scopes_and_worker_panic_join_before_single_settlement ... ok
+test ingress::public_v3::scalar_cpu::tests::settlement_result_distinguishes_known_debt_unknown_sample_and_unowned_return ... ok
+test ingress::public_v3::scalar_cpu::tests::shared_operation_real_partial_owner_debit_settles_only_residual ... ok
+test ingress::public_v3::scalar_cpu::tests::stale_refill_keeps_watermark_and_cannot_credit_the_same_interval_twice ... ok
+test ingress::public_v3::scalar_cpu::tests::stale_reserve_and_settle_match_the_non_decreasing_clock_trace ... ok
+test ingress::public_v3::scalar_cpu::tests::two_legitimate_reservations_return_once_and_keep_live_cpu_nested ... ok
+test ingress::public_v3::scalar_cpu::tests::unknown_live_clock_and_unclosed_operation_disable_all_shared_starts ... ok
+
+test result: ok. 57 passed; 0 failed; 0 ignored; 0 measured; 712 filtered out; finished in 2.89s
+

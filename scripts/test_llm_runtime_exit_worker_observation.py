@@ -403,9 +403,14 @@ class WorkerPidfdTests(unittest.TestCase):
             signature=base._signature(descriptor)
             identity=base._proc_fields(Path(f'/proc/self/fdinfo/{descriptor}'))
             self.assertEqual(base._namespace(identity,'NSpid')[-1],tid)
-            task=os.open(f'/proc/{pid}/task/{tid}',os.O_RDONLY|os.O_DIRECTORY)
+            # pidfd_open uses our PID namespace; the mounted procfs can expose
+            # an ancestor namespace. Its fdinfo supplies the actual proc names.
+            group_identity=base._proc_fields(Path(f'/proc/self/fdinfo/{group}'))
+            self.assertEqual(base._namespace(group_identity,'NSpid')[-1],pid)
+            proc_pid=base._one(group_identity,'Pid');proc_tid=base._one(identity,'Pid')
+            task=os.open(f'/proc/{proc_pid}/task/{proc_tid}',os.O_RDONLY|os.O_DIRECTORY)
             before=base._stat(base._read(task,'stat'))
-            self.assertEqual(before['pid'],tid)
+            self.assertEqual(before['pid'],proc_tid)
             os.write(release_w,b'x');child.stdin.write(b'join\n');child.stdin.flush()
             self.assertEqual(line().strip(),b'joined')
             poller=select.poll();poller.register(descriptor,select.POLLIN)

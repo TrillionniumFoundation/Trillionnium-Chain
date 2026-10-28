@@ -1,6 +1,6 @@
 //! Separate opt-in resource profile for exact mathematical-fact reuse.
 //!
-//! Default clients and servers retain the original r13 raw verifier/profile.
+//! Default clients and servers retain the original r14 raw verifier/profile.
 //! This owner is fresh and empty, volatile and local to one explicitly configured
 //! server. Its setup allocation is not a guest CPU charge. All actual request
 //! lookup/comparison/reconstruction/publication work runs inside the original
@@ -13,7 +13,7 @@ use trnm_crypto_primitives::pon_work::arithmetic_facts::{
 };
 
 impl PublicPolicy {
-    /// This is a separate signed profile, never a replacement identity for r13.
+    /// This is a separate signed profile, never a replacement identity for r14.
     /// The original budgets, absolute deadlines and completion guard are bound
     /// through the original profile; only the explicitly named arithmetic path
     /// differs. It confers no production/WAN qualification.
@@ -66,7 +66,7 @@ impl PublicServer {
 
 /// Explicit client for the separately signed arithmetic profile. There is no
 /// fallback to raw or another profile. The original client and its optional
-/// absolute-deadline entry keep their exact expected r13 profile and behavior.
+/// absolute-deadline entry keep their exact expected r14 profile and behavior.
 pub fn call_public_protected_v3_with_arithmetic_facts(
     address: SocketAddr,
     request: &Request,

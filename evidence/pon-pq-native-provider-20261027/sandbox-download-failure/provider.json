@@ -1,0 +1,22 @@
+{
+  "build_directory": "/workspace/scratch/56818e4fba76/pq-provider-sandbox-attempt-20261027/trnm-pq-provider-3.5.9.wKlbHpmb",
+  "elapsed_wall_seconds": 0,
+  "exit_code": 7,
+  "github_actions_reported": false,
+  "install_prefix": "/workspace/scratch/56818e4fba76/pq-provider-sandbox-attempt-20261027/trnm-pq-provider-3.5.9.wKlbHpmb/install",
+  "last_stage": "download",
+  "ml_dsa_65_sign_verify_and_wrong_message_rejection": false,
+  "native_rust_pq_tests_run_by_preparation": false,
+  "preparation_script_sha256": "72310d322bb405c3a198aac3a07318af81b37293e012bda1c3b06732ec08d5bf",
+  "production_activation": false,
+  "result": "FAILED",
+  "runner_environment_reported": null,
+  "schema": "trnm-ci-pq-provider-v1",
+  "source_archive_sha256_expected": "603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a",
+  "source_digest_verified": false,
+  "source_url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+  "static_build": false,
+  "upstream_full_tests_run": false,
+  "version": "3.5.9",
+  "whole_chain_quantum_security_qualified": false
+}

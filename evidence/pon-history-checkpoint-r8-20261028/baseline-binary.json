@@ -1,0 +1,15 @@
+{
+  "source_commit": "189ba3adfd9a22c7cfc1537eab535e9eb7c442df",
+  "path": "/tmp/target-history-56818e4fba76/history-r8-baseline-189ba3-node",
+  "sha256": "74df89fe26a5fee3741bbbc24353570cc63672bc5de438067e8d8e3b8ac8aca2",
+  "features": [
+    "default"
+  ],
+  "profile": {
+    "opt_level": "3",
+    "debuginfo": 0,
+    "debug_assertions": true,
+    "overflow_checks": true,
+    "test": true
+  }
+}

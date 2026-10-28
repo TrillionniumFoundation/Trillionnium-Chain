@@ -691,9 +691,18 @@ pub fn serve_public_protected_v2(
     stop: Arc<AtomicBool>,
     server: PublicServer,
 ) -> Result<PublicMetrics> {
+    node.require_classical_network_profile()?;
     ensure(
         lifetime > Duration::ZERO && lifetime <= Duration::from_secs(3600),
         "PUBLIC_LIFETIME",
+    )?;
+    // V2 does not own V3's measured mutation-CPU account. Its legacy
+    // Hashcash and two-worker bound are not a permissionless WAN DoS defense.
+    // Fail before opening a remotely reachable listener. V3 is the selected
+    // development route for protected public ingress with CPU accounting.
+    ensure(
+        listener.local_addr()?.ip().is_loopback(),
+        "PUBLIC_V2_LOOPBACK_ONLY",
     )?;
     let settings = node.settings().clone();
     let node = Arc::new(Mutex::new(node));
@@ -711,9 +720,14 @@ fn serve_public_protected_v2_with_owner(
     server: PublicServer,
     metrics: Arc<Mutex<PublicMetrics>>,
 ) -> Result<PublicMetrics> {
+    lock_owner(&node, &mut |_| Ok(()))?.require_classical_network_profile()?;
     ensure(
         lifetime > Duration::ZERO && lifetime <= Duration::from_secs(3600),
         "PUBLIC_LIFETIME",
+    )?;
+    ensure(
+        listener.local_addr()?.ip().is_loopback(),
+        "PUBLIC_V2_LOOPBACK_ONLY",
     )?;
     listener.set_nonblocking(true)?;
     let end = Instant::now() + lifetime;
@@ -1328,6 +1342,34 @@ pub fn call_public_protected_v2(
     caller: &DevelopmentIdentity,
     policy: PublicPolicy,
 ) -> Result<PublicReply> {
+    call_public_protected_v2_with_deadline(
+        address,
+        request,
+        settings,
+        pinned_server,
+        caller,
+        policy,
+        None,
+    )
+}
+
+/// The original caller deadline only shortens local phases. Signed domains,
+/// admission policy and response semantics remain unchanged.
+pub fn call_public_protected_v2_with_deadline(
+    address: SocketAddr,
+    request: &Request,
+    settings: &Settings,
+    pinned_server: &str,
+    caller: &DevelopmentIdentity,
+    policy: PublicPolicy,
+    outer_deadline: Option<Instant>,
+) -> Result<PublicReply> {
+    let started_call = Instant::now();
+    let total_deadline = outer_deadline
+        .map_or(started_call + Duration::from_millis(OVERALL_MS), |outer| {
+            outer.min(started_call + Duration::from_millis(OVERALL_MS))
+        });
+    ensure(Instant::now() < total_deadline, "PUBLIC_CLIENT_DEADLINE")?;
     PublicPolicy::new(policy.bits, Duration::from_millis(policy.lifetime_ms))?;
     let raw = serde_json::to_vec(request)?;
     let op = request_op(request)?;
@@ -1339,8 +1381,11 @@ pub fn call_public_protected_v2(
         client_nonce: entropy()?,
     };
     Hello::parse(&hello.encode())?;
-    let total_deadline = Instant::now() + Duration::from_millis(OVERALL_MS);
-    let mut stream = TcpStream::connect_timeout(&address, Duration::from_secs(2))?;
+    let remaining = total_deadline
+        .checked_duration_since(Instant::now())
+        .filter(|duration| !duration.is_zero())
+        .ok_or("PUBLIC_CLIENT_DEADLINE")?;
+    let mut stream = TcpStream::connect_timeout(&address, remaining.min(Duration::from_secs(2)))?;
     stream.set_read_timeout(Some(Duration::from_secs(5)))?;
     stream.set_write_timeout(Some(Duration::from_secs(5)))?;
     client_write(
@@ -1380,6 +1425,7 @@ pub fn call_public_protected_v2(
     let mut solved = None;
     for nonce in 0..1_048_576u64 {
         if nonce % 256 == 0 {
+            ensure(Instant::now() < total_deadline, "PUBLIC_CLIENT_DEADLINE")?;
             ensure(
                 started.elapsed() < Duration::from_millis(policy.lifetime_ms),
                 "PUBLIC_SOLVE_EXPIRED",
@@ -1569,6 +1615,27 @@ mod tests {
             thread::sleep(Duration::from_millis(2));
         }
     }
+    #[test]
+    fn v2_refuses_non_loopback_before_starting_unmetered_full_w1() {
+        let directory = tempfile::tempdir().unwrap();
+        let now = super::super::now().unwrap();
+        let settings = Settings::development(Some(now - 100)).unwrap();
+        let node = Node::open(directory.path(), settings, 2).unwrap();
+        // Only bind an unspecified local socket: no remote connection or
+        // listener thread is started by this test.
+        let listener = TcpListener::bind("0.0.0.0:0").unwrap();
+        assert!(!listener.local_addr().unwrap().ip().is_loopback());
+        let error = serve_public_protected_v2(
+            listener,
+            node,
+            Duration::from_secs(1),
+            Arc::new(AtomicBool::new(false)),
+            server(),
+        )
+        .unwrap_err();
+        assert_eq!(error.to_string(), "PUBLIC_V2_LOOPBACK_ONLY");
+    }
+
     #[test]
     fn paid_mutation_body_budget_preserves_signed_read_service_with_rotating_callers() {
         let directory = tempfile::tempdir().unwrap();

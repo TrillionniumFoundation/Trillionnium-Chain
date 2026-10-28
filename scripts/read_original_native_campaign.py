@@ -8,6 +8,7 @@ identity, current-source applicability, cryptographic work or public-network TPS
 from __future__ import annotations
 
 import argparse
+from fractions import Fraction
 import gzip
 import hashlib
 import io
@@ -16,10 +17,15 @@ import os
 from pathlib import Path, PurePosixPath
 import re
 import stat
+import sys
 import zlib
 
 import pon_public_v3_phase_read as phase_reader
+from pon_w1_cost_matrix_reader import material as work_material
 from run_pon_w1_native_campaign import validate_resources
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'formal/pon-nakamoto-v1'))
+from contract_wire import H, header_decode, header_encode
 
 MAX_MANIFEST_BYTES = 1024 * 1024
 MAX_FILE_BYTES = 256 * 1024 * 1024
@@ -332,10 +338,104 @@ def depletion(snapshot):
     return actual
 
 
+def cost_ratio(numerator, denominator):
+    if numerator is None or denominator is None or denominator == 0:
+        return None
+    value = Fraction(numerator, denominator)
+    return {'numerator': value.numerator, 'denominator': value.denominator,
+            'value': float(value)}
+
+
+def cost_clocks(sample, *, legal):
+    """Nested phases describe the inclusive acquisition, never additional cost."""
+    for axis in ('cpu_ns', 'wall_ns'):
+        total = integer(sample['acquisition_' + axis])
+        require(total > 0, 'positive complete acquisition clock required')
+        diagnostic = sample[('independent_verification_' if legal else 'diagnostic_') + axis]
+        if diagnostic is not None:
+            integer(diagnostic)
+        if legal:
+            nested = [sample['initial_setup_' + axis]]
+            nested += [search[phase + '_' + axis] for search in sample['searches']
+                       for phase in ('setup', 'search')]
+            require(all(integer(value) <= total for value in nested if value is not None),
+                    'nested acquisition clock exceeds complete cost')
+            if all(value is not None for value in nested):
+                require(sum(nested) <= total, 'disjoint setup/search clocks exceed complete cost')
+
+
+def cost_search(search, template, transactions, sample, number, *, legal):
+    """Reconstruct original public bytes/tickets, not the W1 transcript relation."""
+    require(type(search['search']) is int and search['search'] == number,
+            'original ordered four-search cohort required')
+    attempts = search['attempts']
+    require(type(attempts) is list and 0 < len(attempts) <= 4096,
+            'complete bounded cost attempt stream required')
+    first = 1_000_000 + sample * 100_000 + number * 10_000
+    header = dict(template, nonce=first + len(attempts) - 1 if legal else first)
+    raw = header_encode(header)
+    require(search['winning_header' if legal else 'header'] == raw.hex(),
+            'same task/target/parent and original cost challenge stream required')
+    for index, attempt in enumerate(attempts):
+        require(type(attempt) is dict and set(attempt) == {'nonce', 'trace', 'ticket', 'target_hit'},
+                'exact cost attempt fields required')
+        nonce = first + index if legal else index
+        require(type(attempt['nonce']) is int and attempt['nonce'] == nonce,
+                'cost attempts cannot omit or reorder target misses')
+        challenge = H('challenge', header_encode(dict(template, nonce=nonce)) if legal else raw)
+        trace = bytes.fromhex(exact_digest(attempt['trace']))
+        if not legal:
+            require(trace == H('multiprocess-from-zero-v1', challenge, nonce.to_bytes(8, 'little')),
+                    'from-zero cost must use the original independent fake-trace recipe')
+        ticket = H('ticket', challenge, trace)
+        require(attempt['ticket'] == ticket.hex() and type(attempt['target_hit']) is bool
+                and attempt['target_hit'] is (ticket <= header['target'])
+                and attempt['target_hit'] is (index == len(attempts) - 1),
+                'cost search must retain every target miss and stop at the first hit')
+    a, b, task, prefix = work_material('continuity-maintenance-v1')
+    require(header['work_task'] == task, 'original complete maintenance material required')
+    proof = (prefix if legal else b'PNW1' + a + b + bytes(4 * 4096)) + trace
+    if legal:
+        require(search['proof_digest'] == H('multiprocess-observed-proof-v1', proof).hex(),
+                'complete cost winner proof digest mismatch')
+    # Original PNH1 packet grammar; transactions are the retained business[0]
+    # bytes, not a substitute workload. This grants no signature/state authority.
+    packet = raw + len(transactions).to_bytes(2, 'little') + b''.join(
+        len(tx).to_bytes(2, 'little') + tx for tx in transactions) + proof
+    require(integer(search['encoded_packet_bytes' if legal else 'packet_bytes']) == len(packet)
+            and search['packet_digest'] == H('multiprocess-attack-packet-v1', packet).hex(),
+            'complete cost packet bytes/digest mismatch')
+    return {'header': raw.hex(), 'attempts': attempts,
+            'proof_sha256': hashlib.sha256(proof).hexdigest(), 'packet_digest': search['packet_digest']}
+
+
+def work_share_sensitivity(baseline_cpu, alternative_cpu):
+    """A conditional budget model over valid winners, never measured network q."""
+    speed = Fraction(baseline_cpu, alternative_cpu)
+    return {'formula': 'q_effective = q * s / (1 - q + q * s); s = baseline_cost / alternative_cost',
+            'observed_fixed_cohort_cost_ratio': cost_ratio(baseline_cpu, alternative_cpu),
+            'assumed_same_hardware_cpu_budget_shares': [
+                {'budget_share': cost_ratio(q.numerator, q.denominator),
+                 'modeled_effective_valid_work_share': cost_ratio(
+                     (q * speed / (1 - q + q * speed)).numerator,
+                     (q * speed / (1 - q + q * speed)).denominator)}
+                for q in (Fraction(1, 100), Fraction(1, 10), Fraction(1, 4), Fraction(1, 3))],
+            'modeled_budget_share_at_half_valid_work': cost_ratio(alternative_cpu, baseline_cpu + alternative_cpu),
+            'invalid_from_zero_tickets_count_as_work': False,
+            'measured_network_adversary_share': None,
+            'network_effective_work_share_qualified': False}
+
+
 def economics(report):
     actors = report['economics']
     require(len(actors) == len(METHODS), 'all original cost methods required')
-    candidates = []
+    business = report['preparation']['business'][0]
+    template = header_decode(bytes.fromhex(exact_digest(business['header'], 636)))
+    require(template['target'] == bytes.fromhex('7f' + 'ff' * 31), 'original same cost target required')
+    transactions = [bytes.fromhex(value) for value in business['transactions']]
+    require(0 < len(transactions) <= 256 and all(159 <= len(tx) <= 2048 for tx in transactions),
+            'original bounded cost transaction workload required')
+    candidates, cohorts, false_cohorts, streams = [], [], [], {}
     for index, actor in enumerate(actors):
         require(actor['exit_success'] is True and actor['parent_forced_kill'] is False
                 and actor['report']['error'] is None, 'failed cost actor retained')
@@ -345,24 +445,104 @@ def economics(report):
                 and sum(m['reuse_preparation'] is False for m in value['modes']) == 1
                 and sum(m['reuse_preparation'] is True for m in value['modes']) == 1,
                 'original cost method/modes required')
+        require([mode['reuse_preparation'] for mode in value['modes']]
+                == ([False, True] if index % 2 == 0 else [True, False]),
+                'original alternating setup-mode order required')
         for mode in value['modes']:
+            reused = mode['reuse_preparation']
+            require(type(mode['setup_calls_per_sample']) is int
+                    and mode['setup_calls_per_sample'] == (1 if reused else 4),
+                    'actual cold/reused setup calls required')
             require(len(mode['samples']) == 3, 'three original cost samples required')
-            for sample in mode['samples']:
+            for number, sample in enumerate(mode['samples']):
                 require(integer(sample['acquisition_cpu_ns']) > 0 and sample['errors'] == []
                         and len(sample['verified_winners']) == len(sample['searches']) == 4
-                        and all('Ok' in row for row in sample['verified_winners']),
+                        and sample['verified_winners'] == [{'Ok': None}] * 4,
                         'original legal cost sample is incomplete')
+                require(type(sample['sample']) is int and sample['sample'] == number,
+                        'original ordered three cost samples required')
+                cost_clocks(sample, legal=True)
+                for search_index, search in enumerate(sample['searches']):
+                    observed = cost_search(search, template, transactions, number, search_index, legal=True)
+                    key = ('legal', number, search_index)
+                    require(key not in streams or streams[key] == observed,
+                            'fixed legal algorithms must retain identical complete work streams')
+                    streams[key] = observed
+            samples = mode['samples']
+            total = sum(sample['acquisition_cpu_ns'] for sample in samples)
+            cohorts.append({'method': METHODS[index], 'reuse_preparation': reused,
+                'samples': 3, 'winning_searches': 12, 'actual_setup_calls': 3 * mode['setup_calls_per_sample'],
+                'attempts': sum(len(search['attempts']) for sample in samples for search in sample['searches']),
+                'full_acquisition_process_cpu_ns': phase_reader.stats([s['acquisition_cpu_ns'] for s in samples]),
+                'full_acquisition_wall_ns': phase_reader.stats([s['acquisition_wall_ns'] for s in samples]),
+                'full_acquisition_cpu_per_winner_ns': cost_ratio(total, 12),
+                'nested_initial_setup_cpu_ns': phase_reader.stats([s['initial_setup_cpu_ns'] for s in samples]),
+                'nested_per_search_setup_cpu_ns': phase_reader.stats([x['setup_cpu_ns'] for s in samples for x in s['searches']]),
+                'nested_search_cpu_ns': phase_reader.stats([x['search_cpu_ns'] for s in samples for x in s['searches']]),
+                'separate_verification_process_cpu_ns': phase_reader.stats([s['independent_verification_cpu_ns'] for s in samples])})
         rejected = value['same_task_target_from_zero_samples']
         require(len(rejected) == 3 and all(integer(row['acquisition_cpu_ns']) > 0
                 and len(row['relation_diagnostics']) == 4
                 and all(item == {'Err': 'Transcript'} for item in row['relation_diagnostics'])
                 for row in rejected), 'original from-zero cost sample is incomplete')
+        for number, sample in enumerate(rejected):
+            require(type(sample['sample']) is int and sample['sample'] == number
+                    and len(sample['searches']) == 4, 'complete ordered from-zero cost samples required')
+            cost_clocks(sample, legal=False)
+            for search_index, search in enumerate(sample['searches']):
+                observed = cost_search(search, template, transactions, number, search_index, legal=False)
+                key = ('from-zero', number, search_index)
+                require(key not in streams or streams[key] == observed,
+                        'from-zero measurements must retain identical complete fake-trace streams')
+                streams[key] = observed
+        construction = sum(sample['acquisition_cpu_ns'] for sample in rejected)
+        rejection = phase_reader.stats([sample['diagnostic_cpu_ns'] for sample in rejected])
+        false_cohorts.append({'actor_legal_method': METHODS[index], 'samples': 3, 'false_candidates': 12,
+            'hash_trials': sum(len(search['attempts']) for sample in rejected for search in sample['searches']),
+            'full_construction_process_cpu_ns': phase_reader.stats([s['acquisition_cpu_ns'] for s in rejected]),
+            'full_construction_wall_ns': phase_reader.stats([s['acquisition_wall_ns'] for s in rejected]),
+            'full_construction_cpu_per_candidate_ns': cost_ratio(construction, 12),
+            'separate_rejection_process_cpu_ns': rejection,
+            'rejection_to_full_construction_cpu_ratio': cost_ratio(
+                rejection['sum_known_ns'] if rejection['unknown_count'] == 0 else None, construction),
+            'genuine_proof_acquisition_used': False, 'valid_work_credit': 0})
         cold = next(mode for mode in value['modes'] if mode['reuse_preparation'] is False)
         candidates.append([sorted(s['acquisition_cpu_ns'] for s in cold['samples'])[1], index])
     candidates.sort()
     require(report['selection_candidates_cpu_ns'] == candidates
             and report['best_observed_cold_legal_method'] == METHODS[candidates[0][1]]
             and report['economics_complete'] is True, 'observed cold-method selection mismatch')
+    fixed = []
+    for reused in (False, True):
+        rows = [row for row in cohorts if row['reuse_preparation'] is reused]
+        cost = lambda row: row['full_acquisition_process_cpu_ns']['sum_known_ns']
+        selected = min(rows, key=lambda row: (cost(row), METHODS.index(row['method'])))
+        baseline = next(row for row in rows if row['method'] == 'prepared-generic')
+        fixed.append({'reuse_preparation': reused, 'selected_fixed_method': selected['method'],
+            'selection': 'lowest complete fixed-method 12-winner CPU sum; never per-sample mixing',
+            'actual_searches_per_setup': 4 if reused else 1,
+            'baseline_method': baseline['method'],
+            'baseline_total_cpu_ns': cost(baseline), 'selected_total_cpu_ns': cost(selected),
+            'conditional_work_share_sensitivity': work_share_sensitivity(cost(baseline), cost(selected))})
+    return {'schema': 'pon-original-native-campaign-work-costs-v1',
+            'task': template['work_task'].hex(), 'target': template['target'].hex(),
+            'legal_cohorts': cohorts, 'from_zero_cohorts': false_cohorts,
+            'fixed_method_comparisons': fixed,
+            'original_native_cold_median_selection': report['best_observed_cold_legal_method'],
+            'distinct_legal_winner_proofs': len({v['proof_sha256'] for k, v in streams.items() if k[0] == 'legal'}),
+            'distinct_from_zero_proofs': len({v['proof_sha256'] for k, v in streams.items() if k[0] == 'from-zero'}),
+            'scope': {'actual_process_cpu_not_coordinator_thread_cpu': True,
+                'setup_and_every_failed_attempt_in_complete_acquisition': True,
+                'packet_encoding_and_diagnostic_recording_in_acquisition': True,
+                'nested_clocks_added_again_to_total': False,
+                'material_generation_in_actual_producer_setup': True,
+                'actual_reuse_searches_per_setup': 4, 'modeled_64_winner_reuse': False,
+                'w1_transcripts_independently_replayed': False,
+                'whole_block_preparation_or_public_transport_in_acquisition': False,
+                'repeated_deterministic_streams_are_independent_work_samples': False,
+                'work_share_model_assumes_linear_same_hardware_budget_same_task_target_and_availability': True,
+                'network_delay_task_choice_hardware_energy_or_optimally_fast_adversary_qualified': False,
+                'cryptographic_hardness_qualified': False, 'production_activation': False}}
 
 
 def phase(value):
@@ -588,7 +768,7 @@ def read_campaign(root, expected_manifest_sha256, expected_head, expected_tree, 
             require(all(report[key] is False for key in ('cryptographic_hardness_qualified',
                     'work_profile_qualified', 'independent_operators', 'wan_qualified',
                     'production_candidate', 'release_ready')), 'unsupported qualification claim')
-            economics(report)
+            work_costs = economics(report)
             phases = [phase(row) for row in report['phases']]
             retained = bundle.json(name + '-phase-readback.json')
             readback_input = retained.pop('input')
@@ -602,14 +782,15 @@ def read_campaign(root, expected_manifest_sha256, expected_head, expected_tree, 
                     and attempt['report_validation_failure'] is None, 'original run did not qualify')
             for value in phases:
                 value.pop('retained_phase_readback')
-            runs.append({'number': attempt['number'], 'elapsed_ns': attempt['step']['elapsed_ns'], 'phases': phases})
+            runs.append({'number': attempt['number'], 'elapsed_ns': attempt['step']['elapsed_ns'],
+                         'phases': phases, 'work_costs': work_costs})
         require(result['complete_success'] is True and result['failure'] is None
                 and result['finalization_failures'] == [], 'failed campaign remains failed')
         require(all(row == resource_policies[0] for row in resource_policies),
                 'signed public resource policy changed or missing across runs')
         hostile = [p for row in runs for p in row['phases'] if p['mode'] != 'baseline']
         overlap = sum(p['depletion_overlapping_rounds'] for p in hostile)
-        readback = {'schema': 'pon-original-native-campaign-readback-v1',
+        readback = {'schema': 'pon-original-native-campaign-readback-v2',
                 'measured_head': expected_head, 'measured_tree': expected_tree,
                 'artifact_manifest_sha256': bundle.manifest_sha256,
                 'coverage': bundle.coverage, 'original_manifest_file_count': len(bundle.files),

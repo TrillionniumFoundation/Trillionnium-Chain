@@ -1,0 +1,37 @@
+{
+  "schema": "pon-reversible-artifact-preservation-v1",
+  "tested_source_commit": "7d12655bd5cfc967c6150bba00ab349826c1bf67",
+  "files": {
+    "controls.log": {
+      "sha256": "06dd750109648b06ed89f2298c51a28cf075b65d1ce077e5ce48b5707b9f4eb8",
+      "bytes": 1122
+    },
+    "exact-observation.tar.gz": {
+      "sha256": "c30cb922a55fc0bbd483228b9c54fe58a7f83b79744f0600a7cc7a1b121bbc65",
+      "bytes": 1727386
+    },
+    "predecessor-before-strict-reopen-report.json": {
+      "sha256": "d7a86bc756e9235bf78e0572b22dc6b877406837f05749e88568e885af1b8e27",
+      "bytes": 28937
+    },
+    "report.json": {
+      "sha256": "5d4c542c1b553ab799d9a6bc0874c63a7fd2b206910f935a0d78a26aa276d048",
+      "bytes": 28989
+    },
+    "run.json": {
+      "sha256": "b5258901e8040d96e071b769307adabac5d2b310872df2145d846e52b7e6d189",
+      "bytes": 1838
+    },
+    "source-after.log": {
+      "sha256": "fdce3d3913bdce98c07f86f0ebe040479da84a16b957b8cdf3d759efa964b5ed",
+      "bytes": 421
+    },
+    "source-before.log": {
+      "sha256": "fdce3d3913bdce98c07f86f0ebe040479da84a16b957b8cdf3d759efa964b5ed",
+      "bytes": 421
+    }
+  },
+  "full_W1_oracle": false,
+  "quantum_attack": false,
+  "production_activation": false
+}

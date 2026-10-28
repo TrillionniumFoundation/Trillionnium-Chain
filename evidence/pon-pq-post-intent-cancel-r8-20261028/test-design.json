@@ -1,0 +1,162 @@
+{
+  "schema": "pq-post-intent-test-design-r8-v1",
+  "base_commit": "db33e48673ffb839fdb73ec22bfd9920e5569a43",
+  "base_tree": "963ac18527e176a9a8d393658c41e4f386f95b7b",
+  "scope": "original actual failed baseline plus minimal local-only production repair and unexecuted origin/expiry controls",
+  "selector": "ingress::pq_network::tests::post_intent_cancellation::actual_pq_deadline_after_intent_preserves_owner_nonce_and_other_peer_service",
+  "planned_calls": 5,
+  "planned_honest_followups": 3,
+  "request_deadline_seconds": 10,
+  "original_signed_expiry_refreshed": false,
+  "source_files": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/error.rs",
+      "bytes": 33545,
+      "sha256": "c645f245b52ad5008d047a1baf964364621c69048ac1a09af27cfb9d813c1904"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs",
+      "bytes": 19103,
+      "sha256": "7ae6eb96f0e1903a20249437b6e7f4caa398e9606766a1f96046916e00d9f4bb"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tests.rs",
+      "bytes": 25323,
+      "sha256": "b34ee482ef647b95144b19597ce96177b8f60a00de92f11436b2fd82e6b7588b"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/post_intent_cancel_tests.rs",
+      "bytes": 24439,
+      "sha256": "478559371dc7876e31746fddcd6fdc03ab323eac57c08d232e2f046be358502e"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/post_intent_expiry_tests.rs",
+      "bytes": 11046,
+      "sha256": "b74946d7c542f2d0442df5a6f3df80559fab18ad46ecec430e3cbb771dbc3535"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/local_control_origin_tests.rs",
+      "bytes": 14486,
+      "sha256": "691a47f70f8a965a13d63e5fd3e43c47ecc6deef535b6ab711b18a80870a1c2e"
+    }
+  ],
+  "preserved_existing_network_test_names": [
+    "real_tcp_node_submit_lost_ack_signature_randomness_and_cold_reopen",
+    "pins_context_canonical_wire_sequence_and_classical_downgrade_refuse",
+    "interrupted_owner_revocation_and_retained_ledger_corruption_fail_closed",
+    "revocation_survives_actual_branch_reorg_and_cold_reopen",
+    "expired_pending_operation_retires_without_refreshing_sequence_or_authorization",
+    "actual_large_signed_invalid_requests_exhaust_durable_ledger_budget_without_restart_credit"
+  ],
+  "new_test_ignored": false,
+  "runtime_compile_status": "BASELINE_COMPILED; REPAIRED_CANDIDATE_NOT_COMPILED",
+  "native_baseline_status": "OBSERVED_FAIL_ALL_FIVE_CALLS",
+  "production_fix_status": "IMPLEMENTED_UNEXECUTED_CANDIDATE",
+  "static_rustfmt_check": "PASS",
+  "crypto_executed": true,
+  "native_executed": true,
+  "ci_triggered": false,
+  "production_activation": false,
+  "public_paid_host_qualified": false,
+  "whole_chain_pq": false,
+  "post_timeout_observation_boundary": "verified serial successor response, plus required actual status=1/exact-operation/real-signature retained first completion in the same State snapshot; client timeout alone is not completion",
+  "portability": {
+    "core_five_requests_and_owner_lock_probe": "all supported targets; no test cfg or ignore",
+    "unix_device_inode_probe": "cfg(unix) only; unavailable probe recorded explicitly elsewhere",
+    "non_unix_not_evaluated_checks": [
+      "original_namespace_and_owner_identity_preserved"
+    ],
+    "windows_cross_compiled": false,
+    "windows_native_executed": false
+  },
+  "static_format_attempts": [
+    {
+      "argv": [
+        "rustfmt",
+        "--edition",
+        "2021",
+        "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/post_intent_cancel_tests.rs"
+      ],
+      "returncode": 127,
+      "stderr": "/bin/bash: line 1: rustfmt: command not found",
+      "source_parsed": false
+    },
+    {
+      "argv": [
+        "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustfmt",
+        "--edition",
+        "2021",
+        "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/post_intent_cancel_tests.rs"
+      ],
+      "returncode": 0,
+      "source_parsed": true,
+      "native_compiled": false
+    }
+  ],
+  "baseline_attempts": [
+    {
+      "integrated_source": "283d6e5ef8975ae66d0f4de9ced2c967b878adc2",
+      "outcome": "COMPILE_FAILURE_BEFORE_REGRESSION",
+      "native_regression_executed": false,
+      "error": "json! array literal followed by method chain requires a separate variable or parentheses",
+      "stderr_file": "baseline-attempt1-compile.stderr",
+      "stderr_bytes": 622,
+      "stderr_sha256": "6e9667b59ccc429e912fc709424707d3075c7a95724777c05b87c9151d5c5ace",
+      "root_full_guard_directory": "recovery/round8/pq-post-intent-baseline/guard"
+    },
+    {
+      "integrated_source": "6762be6bad760d17c6cbb50ff7f8b1928c6284df",
+      "outcome": "ACTUAL_NATIVE_POST_INTENT_LIVENESS_FAILURE",
+      "native_regression_executed": true,
+      "selected_tests": 1,
+      "failed_tests": 1,
+      "observation": "baseline-observation.json"
+    }
+  ],
+  "corrected_macro_value": "precomputed honest_followups_succeeded; original three followups and all five calls unchanged",
+  "original_design_source_files": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tests.rs",
+      "bytes": 25323,
+      "sha256": "b34ee482ef647b95144b19597ce96177b8f60a00de92f11436b2fd82e6b7588b"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/post_intent_cancel_tests.rs",
+      "bytes": 23505,
+      "sha256": "c82f3a2769b62d9739cca8a57ebd6d46b258a310db3be239bcc0842879d5bfe5"
+    }
+  ],
+  "candidate_parent_commit": "c01bc9378bd9e9738bfa4dca4445c850a790f159",
+  "native_execution_owner": "root",
+  "repair_native_executed": false,
+  "original_parsed_error_codes_preserved": 138,
+  "original_error_test_names_preserved": 9,
+  "original_pq_network_test_file_identical": true,
+  "current_post_intent_native_tests": 4,
+  "additional_error_unit_tests": 1,
+  "baseline_observation": "baseline-observation.json",
+  "original_deadline_function_sha256": "268dd5efa575a79a57c7572905081252e6bd6daae7fe7dd46339832246cf47a5",
+  "original_deadline_function_byte_identical_to_baseline": true,
+  "candidate_additional_selectors": [
+    "error::tests::pq_control_codes_require_explicit_local_origin",
+    "ingress::pq_network::tests::post_intent_cancellation::expiry::actual_signed_expiry_after_intent_cancels_without_renewing_live_authority",
+    "ingress::pq_network::tests::post_intent_cancellation::local_control_origin::actual_mldsa_remote_control_text_and_forgery_never_authorize_local_cancellation",
+    "ingress::pq_network::tests::post_intent_cancellation::local_control_origin::actual_durable_intent_cleanup_requires_local_origin_for_each_pq_control_code"
+  ],
+  "control_denominators": {
+    "original_deadline_signed_calls": 5,
+    "actual_expiry_signed_calls": 5,
+    "mldsa_signed_or_forged_remote_calls": 6,
+    "durable_intent_origin_cases": 15
+  },
+  "actual_post_intent_durable_revocation_qualification": false,
+  "candidate_validation_outstanding": [
+    "native macro expansion and typechecking",
+    "repaired original deadline regression",
+    "all added origin and expiry native controls",
+    "original complete PQ suite",
+    "strict all-feature Clippy"
+  ],
+  "initial_test_only_count": 1,
+  "new_test_count_including_original_deadline": 5
+}

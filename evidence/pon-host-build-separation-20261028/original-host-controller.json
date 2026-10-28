@@ -1,0 +1,20 @@
+{
+  "cleanup": "already-collected",
+  "command_argv": [
+    "python3",
+    "scripts/ci/run_from_zero_native.py",
+    "--out",
+    "/home/runner/work/_temp/ci-observations/from-zero-native"
+  ],
+  "consensus_or_model_authority": false,
+  "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+  "failure": null,
+  "final_host_errors": [],
+  "gid": 1001,
+  "host_readiness_only": true,
+  "passed": false,
+  "schema": "trnm-ci-original-public-host-controller-v1",
+  "service": "trnm-from-zero-40605070256-1-protocol-contract-13548.service",
+  "systemd_run_exit": 1,
+  "uid": 1001
+}

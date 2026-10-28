@@ -1,0 +1,39 @@
+{
+  "schema": "pq-cross-import-adversarial-run-v1",
+  "argv": [
+    "cargo",
+    "test",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "--offline",
+    "-p",
+    "trnm-mvcc-fee",
+    "--features",
+    "pq-native-openssl",
+    "--test",
+    "pq_account_owner",
+    "qtx1_from_another_import_context_refuses_even_if_declared_network_reused",
+    "--",
+    "--exact",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "base_commit": "7acad34a46f63208448b4dbdf0624548f64f6405",
+  "added_regression_patch_sha256": "c518f741c1e3412194333022ff37611c9e1cce61268fc24a59d8a8791f688920",
+  "source_manifest_sha256": "59277d246962ee191b25777f75ae9310ad332e8012acff8ecb1c0871ec7e7e6e",
+  "started_utc": "2026-10-28T00:39:14.067332+00:00",
+  "actual_quantum_attack": false,
+  "exit_code": 101,
+  "elapsed_seconds": 51.624404153000796,
+  "completed_utc": "2026-10-28T00:40:05.685637+00:00",
+  "source_unchanged": true,
+  "stdout": {
+    "bytes": 977,
+    "sha256": "dc5749d5a1dd8e45904d766e634d16cf0f388da40c5e1a1b377f7f4a2b2768eb"
+  },
+  "stderr": {
+    "bytes": 674,
+    "sha256": "29e7703e2c0348a1d3ba950139865ab441eefe01f48f2c0e933e78433f7e3562"
+  }
+}

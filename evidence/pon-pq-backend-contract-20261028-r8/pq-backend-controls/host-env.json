@@ -1,0 +1,18 @@
+{
+  "name": "host-env",
+  "argv": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/ci",
+    "-p",
+    "test_from_zero_host_ci.py"
+  ],
+  "cwd": "/workspace/scratch/56818e4fba76/chain-recovered",
+  "started_utc": "2026-10-28T03:37:09.824387+00:00",
+  "wall_seconds": 0.10658571400563233,
+  "returncode": 0,
+  "real_cryptographic_success_test": false
+}

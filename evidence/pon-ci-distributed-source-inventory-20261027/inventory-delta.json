@@ -1,0 +1,115 @@
+{
+  "schema": "trnm-generated-distributed-source-inventory-correction-v1",
+  "original_failed_source": "0c804e9f5bcf6e972bbb4524c744d4b3c8801c34",
+  "original_failed_workflow_run": 40490734526,
+  "original_failed_job": 122143728086,
+  "correction_parent": "498b4fc2c0394bc4aa9f987d991ef272e8b302a4",
+  "generator_path": "scripts/refresh_distributed_source_inventory.py",
+  "generator_sha256": "c83d9c0b84c21beec6917a86b2a3207c5f3bf6fd26cf432f2ef0990750e16a33",
+  "generator_unchanged_from_original_failed_source": true,
+  "original_inventory_unchanged_from_failed_source_until_refresh": true,
+  "inventory_path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+  "before_inventory_sha256": "134cbe417c86d6f1429f026f4a9b8ebb08fd51e7c4e70aa377cfd3db92fcb6ce",
+  "after_inventory_sha256": "38480efd1fdb77927b2c895309125d8a3cc4764a9889ec9588be7cc3d21a9dbd",
+  "before_entry_count": 1020,
+  "after_entry_count": 1028,
+  "added_entries": [
+    {
+      "path": "config/pon/post-quantum-transition-v1.json",
+      "bytes": 3462,
+      "sha256": "96758f0820cd5689d3a600a1e2cbddcebfd4bb265ab46bd3613832501f3330b3"
+    },
+    {
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "bytes": 20455,
+      "sha256": "36cc8412f010e89b3d9056f43f8a01baad31a371edaad86dcb52c488235f4106"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs",
+      "bytes": 8422,
+      "sha256": "bb0bf3efca1b8c959045f1c0cf9b24fd38c1ee356dece9029e8832303d298e59"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs",
+      "bytes": 6730,
+      "sha256": "03ccc8ca1a696ccd23ecb047c75b843ad90271664b6d1f2b13bf92885977fe0e"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/tests/pq_openssl_native.rs",
+      "bytes": 7088,
+      "sha256": "ec5635368af81c3982298d45071efbf57e74963ff3fc66a09a55c9c84d4492c3"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+      "bytes": 11529,
+      "sha256": "d2bec2928aa8130bb03d9154fec064ecd4a29870168344b82c0dcad889a70d54"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs",
+      "bytes": 15957,
+      "sha256": "d1b126e1c258dbdd3c487a226be2d28b0a5c2ae66c72a55d32d6b97997ecabaf"
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/pq_frame.rs",
+      "bytes": 13529,
+      "sha256": "e1d95756a2aad8b45349a92ef2bf834e204f456ec717177b6bac94bc1508fecd"
+    }
+  ],
+  "removed_entries": [],
+  "before_check": {
+    "command": [
+      "python3",
+      "scripts/refresh_distributed_source_inventory.py",
+      "--check"
+    ],
+    "exit_code": 1,
+    "source_commit": "498b4fc2c0394bc4aa9f987d991ef272e8b302a4",
+    "source_tree": "880753b592b9aa87b674076d73f45e8ddcfb9818",
+    "inventory_sha256": "134cbe417c86d6f1429f026f4a9b8ebb08fd51e7c4e70aa377cfd3db92fcb6ce",
+    "generator_sha256": "c83d9c0b84c21beec6917a86b2a3207c5f3bf6fd26cf432f2ef0990750e16a33",
+    "log": "/workspace/scratch/56818e4fba76/publication/distributed-inventory-20261027/before-check.log",
+    "log_sha256": "3060c11e06f46d1cbf92fbb40b0ecf6bfd5482816a73a13c7267e2efa34b28fb"
+  },
+  "before_check_message": "distributed native source inventory differs; refresh before freezing source\n",
+  "after_checks": {
+    "schema": "distributed-inventory-static-checks-v1",
+    "source_base": "498b4fc2c0394bc4aa9f987d991ef272e8b302a4",
+    "source_state": "dirty-candidate",
+    "checks": [
+      {
+        "name": "after-check",
+        "command": [
+          "python3",
+          "scripts/refresh_distributed_source_inventory.py",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.05992756099840335,
+        "log": "/workspace/scratch/56818e4fba76/publication/distributed-inventory-20261027/after-check.log",
+        "log_bytes": 35,
+        "log_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+      },
+      {
+        "name": "format",
+        "command": [
+          "cargo",
+          "fmt",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 11.910686024000825,
+        "log": "/workspace/scratch/56818e4fba76/publication/distributed-inventory-20261027/format.log",
+        "log_bytes": 0,
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "native_build_or_execution_performed": false
+  },
+  "native_build_or_execution_performed": false,
+  "generation_rules_or_gates_changed": false,
+  "scope": "Regenerated only the original embedded source-path inventory. Entries refer to native/config files already present at the failed source; no work algorithm, runtime, policy, caps or acceptance threshold change."
+}

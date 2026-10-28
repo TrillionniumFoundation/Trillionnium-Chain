@@ -1,0 +1,21 @@
+test_activation_and_preservation_policy_are_not_relaxed (__main__.ProjectBoundaryTests.test_activation_and_preservation_policy_are_not_relaxed) ... ok
+test_canonical_push_target_does_not_rescue_foreign_origin (__main__.ProjectBoundaryTests.test_canonical_push_target_does_not_rescue_foreign_origin) ... ok
+test_checker_does_not_modify_refs_config_or_tracked_files (__main__.ProjectBoundaryTests.test_checker_does_not_modify_refs_config_or_tracked_files) ... ok
+test_checkout_https_without_suffix_audits_detached_head (__main__.ProjectBoundaryTests.test_checkout_https_without_suffix_audits_detached_head) ... ok
+test_detached_source_is_audit_only (__main__.ProjectBoundaryTests.test_detached_source_is_audit_only) ... ok
+test_exact_repository_spellings_allow_audit_and_dev (__main__.ProjectBoundaryTests.test_exact_repository_spellings_allow_audit_and_dev) ... ok
+test_foreign_or_decorated_origins_are_not_normalized (__main__.ProjectBoundaryTests.test_foreign_or_decorated_origins_are_not_normalized) ... ok
+test_missing_updates_deletion_and_unchecked_sha_reject (__main__.ProjectBoundaryTests.test_missing_updates_deletion_and_unchecked_sha_reject) ... ok
+test_new_branch_must_be_the_checked_out_continuation (__main__.ProjectBoundaryTests.test_new_branch_must_be_the_checked_out_continuation) ... ok
+test_non_fast_forward_update_is_rejected (__main__.ProjectBoundaryTests.test_non_fast_forward_update_is_rejected) ... ok
+test_protected_branch_cannot_become_a_development_branch (__main__.ProjectBoundaryTests.test_protected_branch_cannot_become_a_development_branch) ... ok
+test_protected_remote_branch_and_mixed_updates_reject (__main__.ProjectBoundaryTests.test_protected_remote_branch_and_mixed_updates_reject) ... ok
+test_push_hook_accepts_only_canonical_repository_spellings (__main__.ProjectBoundaryTests.test_push_hook_accepts_only_canonical_repository_spellings) ... ok
+test_push_remote_name_and_destination_still_reject (__main__.ProjectBoundaryTests.test_push_remote_name_and_destination_still_reject) ... ok
+test_source_inventory_and_external_path_dependency_still_reject (__main__.ProjectBoundaryTests.test_source_inventory_and_external_path_dependency_still_reject) ... ok
+test_staged_and_push_modes_read_their_own_source (__main__.ProjectBoundaryTests.test_staged_and_push_modes_read_their_own_source) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 3.167s
+
+OK

@@ -17,8 +17,11 @@ pub mod native_budget;
 mod operator_continuous_owner;
 mod operator_mining_owner;
 pub mod pinned_account_query;
+#[cfg(feature = "pq-native-openssl")]
+pub(crate) mod pq_network;
 #[cfg(test)]
 pub(crate) mod public_reader;
+mod reorg_cancellation;
 mod root_rejection_cache;
 #[cfg(test)]
 mod root_rejection_cache_tests;
@@ -81,6 +84,7 @@ CREATE TABLE deltas(block BLOB NOT NULL,key TEXT NOT NULL,before BLOB,after BLOB
 CREATE TABLE active(singleton INTEGER PRIMARY KEY CHECK(singleton=1),tip BLOB NOT NULL,generation INTEGER NOT NULL,state_slot INTEGER NOT NULL);
 CREATE TABLE kv(slot INTEGER NOT NULL,key TEXT NOT NULL,value BLOB NOT NULL,PRIMARY KEY(slot,key));
 CREATE TABLE reorg(singleton INTEGER PRIMARY KEY CHECK(singleton=1),old_tip BLOB NOT NULL,new_tip BLOB NOT NULL,generation INTEGER NOT NULL,cursor INTEGER NOT NULL,done INTEGER NOT NULL);
+CREATE TABLE reorg_lifecycle_v1(operation INTEGER PRIMARY KEY AUTOINCREMENT,old_tip BLOB NOT NULL CHECK(length(old_tip)=32),new_tip BLOB NOT NULL CHECK(length(new_tip)=32),generation INTEGER NOT NULL CHECK(generation>0),old_slot INTEGER NOT NULL CHECK(old_slot>=0),old_root BLOB NOT NULL CHECK(length(old_root)=32),owner_context BLOB NOT NULL CHECK(length(owner_context)=32),outcome INTEGER NOT NULL CHECK(outcome IN (0,1,2)),cancelled_cursor INTEGER,reason TEXT NOT NULL CHECK(length(reason)<=96),CHECK((outcome IN (0,1) AND cancelled_cursor IS NULL AND reason='') OR (outcome=2 AND cancelled_cursor>=0 AND length(reason)>0)));
 CREATE TABLE steps(ordinal INTEGER PRIMARY KEY,kind INTEGER NOT NULL,block BLOB NOT NULL);
 CREATE TABLE events(generation INTEGER NOT NULL,ordinal INTEGER NOT NULL,kind INTEGER NOT NULL,block BLOB NOT NULL,PRIMARY KEY(generation,ordinal));
 CREATE TABLE snapshots(block BLOB PRIMARY KEY,state BLOB NOT NULL);
@@ -149,6 +153,9 @@ type ReplayRow = (
 const AUTH_RESPONSE_RETENTION: u64 = 16;
 #[cfg(test)]
 mod admission_parent_tests;
+mod authenticated_pending_activation;
+mod detached_admission;
+pub(crate) use detached_admission::{DetachedExecutionLease, PreparedSharedAdmission};
 #[cfg(test)]
 mod authenticated_replay_tests;
 
@@ -219,6 +226,27 @@ fn record_task_output(
     } else {
         state.insert(key,serde_json::json!({"product":digest,"arithmetic_output_count":1,"matrix_task":hex::encode(manifest.matrix_task),"scope":"source-attested-fixed-contraction-not-model-value"}));
         Ok(true)
+    }
+}
+
+fn record_eligible_output(
+    height: u64,
+    state: &mut State,
+    eligible: &ParentTaskEligibility,
+    product: &[u8],
+) -> Result<bool> {
+    match eligible {
+        ParentTaskEligibility::Lifecycle(task) => {
+            ensure(product.len() == pon_work::CELLS * 4, "TASK_OUTPUT")?;
+            Ok(qualified_task_lifecycle::consume_output(
+                state,
+                task,
+                hash(b"qualified-task-product-v1", &[product]),
+                height,
+            )?)
+        }
+        ParentTaskEligibility::Signed(manifest) => record_task_output(state, manifest, product),
+        ParentTaskEligibility::Legacy | ParentTaskEligibility::ConsensusMaintenance => Ok(false),
     }
 }
 
@@ -390,6 +418,16 @@ struct Record {
     work: Work,
     root: Hash,
 }
+// Private native output parts. External callers cannot submit this structure;
+// detached callers must return the opaque, single-use execution artifact.
+struct AdmissionPersistence {
+    packet: Packet,
+    bytes: Vec<u8>,
+    parent: Record,
+    prior: State,
+    output: trnm_mvcc_fee::pon_executor::Output,
+    commitment: PreparedCommitment,
+}
 struct StoredHeaderLink {
     header: Header,
     record: Record,
@@ -522,6 +560,37 @@ impl WorkCheckedPacket {
             owner_permit: None,
         })
     }
+    /// Optional exact invalid-mathematics cache. The current Node still
+    /// checks context, task, source, clock and owner before this verifier is
+    /// selected. Only previously fully verified Transcript/Product failures
+    /// can return early; never a VerifiedWork or a consensus-invalidity veto.
+    pub(crate) fn verify_with_rejection_cache(
+        packet: Packet,
+        cache: &pon_work::rejection_cache::RejectionCache,
+        progress: &mut impl FnMut(pon_work::VerificationProgress) -> Result<()>,
+    ) -> Result<Self> {
+        let h = &packet.header;
+        let work = cache
+            .verify_with_progress(
+                h.challenge(),
+                h.work_task,
+                h.target,
+                &packet.proof,
+                progress,
+            )
+            .map_err(|error| match error {
+                pon_work::VerificationError::Relation(error) => {
+                    Error::from(format!("WORK:{error:?}"))
+                }
+                pon_work::VerificationError::Cancelled(error) => error,
+            })?;
+        Ok(Self {
+            packet,
+            work,
+            owner_permit: None,
+        })
+    }
+
     pub(crate) fn verify_with_progress(
         packet: Packet,
         progress: &mut impl FnMut(pon_work::VerificationProgress) -> Result<()>,
@@ -658,12 +727,21 @@ pub struct Node {
     // already owner-locked Node; the durable marker survives process exit.
     public_service_epoch_listeners: usize,
     public_service_epoch_unknown: bool,
+    // A capacity/identity guard, never a second CPU account or work authority.
+    // One detached complete-State execution per original Node incarnation.
+    detached_execution: std::sync::Arc<std::sync::atomic::AtomicBool>,
+    #[cfg(test)]
+    cancel_next_activation_intent: bool,
+    #[cfg(feature = "pq-native-openssl")]
+    pq_network_epoch: std::sync::Arc<std::sync::atomic::AtomicU64>,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum StateBackend {
     Legacy,
     AuthenticatedV1,
     PermanentAccountGrowthV2,
+    #[cfg(feature = "pq-native-openssl")]
+    PqNetworkV1,
 }
 impl StateBackend {
     fn ddl(self) -> String {
@@ -671,6 +749,8 @@ impl StateBackend {
             Self::Legacy => ddl(),
             Self::AuthenticatedV1 => format!("{}{}", ddl(), native_authenticated::DDL),
             Self::PermanentAccountGrowthV2 => format!("{}{}", ddl(), growth::DDL),
+            #[cfg(feature = "pq-native-openssl")]
+            Self::PqNetworkV1 => format!("{}{}", ddl(), pq_network::DDL),
         }
     }
     fn selected_schema_id(self, settings: &Settings) -> Hash {
@@ -688,6 +768,8 @@ impl StateBackend {
             Self::Legacy => b"native-branch-schema-v2",
             Self::AuthenticatedV1 => b"native-authenticated-branch-schema-v1",
             Self::PermanentAccountGrowthV2 => b"native-permanent-account-growth-schema-v2",
+            #[cfg(feature = "pq-native-openssl")]
+            Self::PqNetworkV1 => b"native-pq-network-owner-schema-v1",
         };
         hash(domain, &[self.ddl().as_bytes()])
     }
@@ -696,6 +778,7 @@ struct NativeOwners {
     policy: Option<OwnerPolicy>,
     mining: Option<operator_mining_owner::MiningOwner>,
     continuous: Option<operator_continuous_owner::ContinuousOwner>,
+    pq_network: Option<Vec<u8>>,
 }
 struct OwnerPolicy {
     pool_policies: Vec<std::sync::Arc<crate::operator_task_policy::pool::VerifiedPoolPolicy>>,
@@ -844,6 +927,17 @@ pub struct ConfirmationBatch {
     pub distinct_bodies_checked: usize,
 }
 impl Node {
+    /// An explicitly PQ-only native namespace never serves through a classical
+    /// or unauthenticated listener. A build without the optional PQ provider
+    /// cannot open its different exact SQLite schema at all.
+    pub(crate) fn require_classical_network_profile(&self) -> Result<()> {
+        #[cfg(feature = "pq-native-openssl")]
+        ensure(
+            self.state_backend != StateBackend::PqNetworkV1,
+            "PQ_NETWORK_REQUIRED",
+        )?;
+        Ok(())
+    }
     /// Enable bounded volatile final-ROOT rejection reuse for this Node owner.
     /// Default is off; no CLI/profile/consensus or CPU-budget change is implied.
     /// Repeated calls cannot reset entries, TTL or a failed monotonic clock.
@@ -914,6 +1008,7 @@ impl Node {
                 policy: None,
                 mining: None,
                 continuous: None,
+                pq_network: None,
             },
             StateBackend::AuthenticatedV1,
             false,
@@ -1048,6 +1143,7 @@ impl Node {
                 policy: owner_policy,
                 mining: mining_owner,
                 continuous: continuous_owner,
+                pq_network: None,
             },
             StateBackend::Legacy,
             false,
@@ -1082,6 +1178,7 @@ impl Node {
             policy: owner_policy,
             mining: mining_owner,
             continuous: continuous_owner,
+            pq_network,
         } = owners;
         if growth_profile_v2::enabled(&settings.app) {
             ensure(
@@ -1093,6 +1190,21 @@ impl Node {
                 "GROWTH_REFERENCE_OWNER",
             )?;
         }
+
+        #[cfg(feature = "pq-native-openssl")]
+        let pq_selected = state_backend == StateBackend::PqNetworkV1;
+        #[cfg(not(feature = "pq-native-openssl"))]
+        let pq_selected = false;
+        ensure(pq_selected == pq_network.is_some(), "PQ_NETWORK_BACKEND")?;
+        ensure(
+            !settings.app.is_pq_account_profile() || pq_selected,
+            "PQ_ACCOUNT_REQUIRES_PQ_NETWORK_OWNER",
+        )?;
+        ensure(
+            !pq_selected
+                || (owner_policy.is_none() && mining_owner.is_none() && continuous_owner.is_none()),
+            "PQ_NETWORK_OWNER_COMBINATION",
+        )?;
 
         ensure(
             usize::from(owner_policy.is_some())
@@ -1203,6 +1315,14 @@ impl Node {
                     required.as_deref() == required_owner_marker,
                     "OWNER_TASK_POLICY_REQUIRED",
                 )?;
+                let recorded_pq: Option<Vec<u8>> = probe
+                    .query_row(
+                        "SELECT value FROM metadata WHERE key='pq_network_owner_v1'",
+                        [],
+                        |row| row.get(0),
+                    )
+                    .optional()?;
+                ensure(recorded_pq == pq_network, "PQ_NETWORK_POLICY_REQUIRED")?;
                 for (key, value) in [
                     ("schema", schema_id),
                     ("parameters", settings.parameters()),
@@ -1268,6 +1388,14 @@ impl Node {
                     "INSERT INTO metadata VALUES(?,?)",
                     params![key, value.as_slice()],
                 )?;
+            }
+            if let Some(policy) = pq_network.as_deref() {
+                tx.execute(
+                    "INSERT INTO metadata VALUES('pq_network_owner_v1',?)",
+                    [policy],
+                )?;
+                #[cfg(feature = "pq-native-openssl")]
+                pq_network::seed(&tx, policy)?;
             }
             if let Some(marker) = required_owner_marker {
                 tx.execute(
@@ -1347,6 +1475,11 @@ impl Node {
             public_service_cpu: None,
             public_service_epoch_listeners: 0,
             public_service_epoch_unknown: false,
+            detached_execution: std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false)),
+            #[cfg(test)]
+            cancel_next_activation_intent: false,
+            #[cfg(feature = "pq-native-openssl")]
+            pq_network_epoch: std::sync::Arc::new(std::sync::atomic::AtomicU64::new(1)),
         };
         if node.state_backend == StateBackend::PermanentAccountGrowthV2 {
             // Complete-State reference budget records cannot be silently ignored
@@ -2586,11 +2719,15 @@ impl Node {
     }
     fn ready(&self) -> Result<()> {
         self.namespace()?;
-        let done: Option<bool> = self
+        let done: Option<u64> = self
             .db
             .query_row("SELECT done FROM reorg WHERE singleton=1", [], |r| r.get(0))
             .optional()?;
-        ensure(done != Some(false), "REORG_IN_PROGRESS")
+        ensure(done != Some(0), "REORG_IN_PROGRESS")?;
+        if done == Some(2) {
+            self.check_cancelled_reorg_lifecycle()?;
+        }
+        ensure(done.is_none_or(|value| value <= 2), "REORG_STEPS").map_err(Error::local_integrity)
     }
     pub fn packet(&self, id: Hash) -> Result<Packet> {
         let row = self.record(id)?;
@@ -3226,6 +3363,30 @@ impl Node {
         let checked = self.attach_owner_work(WorkCheckedPacket::verify(packet.clone())?, permit)?;
         self.admit_work_checked(checked, observed_now)
     }
+    /// Only the original Node checks current parent/task/permit/state/clock.
+    /// The caller may refuse LOCAL resource continuation at mathematical W1
+    /// checkpoints; cancellation must never masquerade as invalid work.
+    #[cfg(test)]
+    pub(crate) fn admit_with_work_progress(
+        &mut self,
+        packet: &Packet,
+        observed_now: u64,
+        progress: &mut impl FnMut(pon_work::VerificationProgress) -> Result<()>,
+        execution_progress: &(impl Fn(ExecutionProgress) -> Result<()> + Sync),
+    ) -> Result<Hash> {
+        if let Some(id) = self.check_admission_context(packet, observed_now)? {
+            return Ok(id);
+        }
+        let permit = self.begin_owner_work(packet)?;
+        let checked = self.attach_owner_work(
+            WorkCheckedPacket::verify_with_progress(packet.clone(), progress)?,
+            permit,
+        )?;
+        // Keep the SAME caller-local Host owner through M06, authenticated
+        // State and SQL deltas. A resource refusal before durable commit must
+        // roll back the original Node transaction, not become invalid W1.
+        self.admit_work_checked_with_progress(checked, observed_now, execution_progress)
+    }
     fn precheck_owner_packet(&self, packet: &Packet) -> Result<()> {
         ensure(
             self.state_backend != StateBackend::PermanentAccountGrowthV2,
@@ -3691,6 +3852,16 @@ impl Node {
         observed_now: u64,
         control: &ExecutionControl<'_, Error>,
     ) -> Result<Hash> {
+        self.admit_work_checked_with_parent(checked, observed_now, control, None)
+    }
+
+    fn admit_work_checked_with_parent(
+        &mut self,
+        checked: WorkCheckedPacket,
+        observed_now: u64,
+        control: &ExecutionControl<'_, Error>,
+        prepared_parent: Option<CheckedAdmissionParent>,
+    ) -> Result<Hash> {
         let _measurement = (self.state_backend == StateBackend::AuthenticatedV1).then(|| {
             self.authenticated_arithmetic
                 .history
@@ -3701,14 +3872,18 @@ impl Node {
             work: verified_work,
             owner_permit,
         } = checked;
-        let checked_parent = match self.check_admission_context_for_permit(
-            &packet,
-            observed_now,
-            owner_permit.as_ref(),
-            &mut || (control.progress)(ExecutionProgress::BeforeParentBinding),
-        )? {
-            CheckedAdmissionContext::Existing(id) => return Ok(id),
-            CheckedAdmissionContext::Parent(parent) => parent,
+        // Recheck every header/owner predicate even when this same-owner,
+        // same-epoch private continuation can retain its validated parent.
+        if let Some(id) =
+            self.check_admission_header_context(&packet, observed_now, owner_permit.as_ref())?
+        {
+            return Ok(id);
+        }
+        let checked_parent = match prepared_parent {
+            Some(parent) if parent.epoch == Some(self.admission_state_epoch()?) => parent,
+            _ => self.check_admission_parent(&packet, &mut || {
+                (control.progress)(ExecutionProgress::BeforeParentBinding)
+            })?,
         };
         ensure(
             self.owner_policy.is_some() == owner_permit.is_some(),
@@ -3757,7 +3932,6 @@ impl Node {
         let progress = control.progress;
         let bytes = packet.encode()?;
         let h = &packet.header;
-        let id = packet.id()?;
         let parent = self.record(h.parent)?;
         // Keep the original second parent-read cancellation/CPU boundary. The
         // first full State/root/account/task/material validation was in this
@@ -3823,6 +3997,44 @@ impl Node {
             }
             return Err("ROOT".into());
         }
+        self.persist_admission_execution(
+            AdmissionPersistence {
+                packet,
+                bytes,
+                parent,
+                prior,
+                output,
+                commitment,
+            },
+            control,
+            None,
+        )
+    }
+
+    /// Both held-owner and detached execution converge on the same original
+    /// transaction, delta/packet/State readback, ancestry and active-tip fences.
+    /// This private helper is never a public StagedOutput admission interface.
+    fn persist_admission_execution(
+        &mut self,
+        admission: AdmissionPersistence,
+        control: &ExecutionControl<'_, Error>,
+        detached_fence: Option<detached_admission::CommitFence>,
+    ) -> Result<Hash> {
+        let AdmissionPersistence {
+            packet,
+            bytes,
+            parent,
+            prior,
+            output,
+            commitment,
+        } = admission;
+        let h = &packet.header;
+        let id = packet.id()?;
+        let progress = control.progress;
+        ensure(
+            h.state == output.root && h.receipts == sequence_root("receipts", &output.receipts),
+            "ROOT",
+        )?;
         if self.state_backend == StateBackend::AuthenticatedV1 {
             // Pure successor tree material is already available from M06. Offer
             // it to the existing bounded historical cache before SQL readback;
@@ -3846,6 +4058,12 @@ impl Node {
             &self.db,
             rusqlite::TransactionBehavior::Immediate,
         )?;
+        if let Some(fence) = detached_fence {
+            // BEGIN IMMEDIATE excludes foreign SQLite writers before the last
+            // epoch/context check. An out-of-lock result is never authorized by
+            // an earlier counter read followed by an unprotected write gap.
+            fence.validate(self, &packet)?;
+        }
         ensure(
             tx.execute(
                 "INSERT INTO blocks VALUES(?,?,?,?,?,?)",
@@ -3867,8 +4085,19 @@ impl Node {
             let mut insert = tx.prepare_cached("INSERT INTO deltas VALUES(?,?,?,?)")?;
             for (index, key) in keys.into_iter().enumerate() {
                 progress(ExecutionProgress::PersistenceDelta { index })?;
-                let before = prior.get(key).map(canonical).transpose()?;
-                let after = output.state.get(key).map(canonical).transpose()?;
+                let before_value = prior.get(key);
+                let after_value = output.state.get(key);
+                // Both complete States have already passed the original
+                // canonical root/execution checks. Equal JSON values have
+                // identical canonical bytes, so unchanged cells need no
+                // duplicate serialization merely to discover an empty delta.
+                // Keep each row's control checkpoint and every original
+                // transactional delta, packet and full-State readback below.
+                if before_value == after_value {
+                    continue;
+                }
+                let before = before_value.map(canonical).transpose()?;
+                let after = after_value.map(canonical).transpose()?;
                 if before != after {
                     ensure(
                         insert.execute(params![id.as_slice(), key, &before, &after])? == 1,
@@ -4467,21 +4696,7 @@ impl Node {
         eligible: &ParentTaskEligibility,
         product: &[u8],
     ) -> Result<bool> {
-        match eligible {
-            ParentTaskEligibility::Lifecycle(task) => {
-                ensure(product.len() == pon_work::CELLS * 4, "TASK_OUTPUT")?;
-                Ok(qualified_task_lifecycle::consume_output(
-                    state,
-                    task,
-                    hash(b"qualified-task-product-v1", &[product]),
-                    height,
-                )?)
-            }
-            ParentTaskEligibility::Signed(manifest) => record_task_output(state, manifest, product),
-            ParentTaskEligibility::Legacy | ParentTaskEligibility::ConsensusMaintenance => {
-                Ok(false)
-            }
-        }
+        record_eligible_output(height, state, eligible, product)
     }
     pub fn mine(
         &mut self,
@@ -4576,13 +4791,14 @@ impl Node {
         target: Hash,
         hook: Option<&mut Hook<'_>>,
     ) -> Result<Hash> {
-        self.activate_with_fault_and_progress(target, hook, &mut || Ok(()))
+        self.activate_with_fault_and_progress(target, hook, &mut || Ok(()), None)
     }
     fn activate_with_fault_and_progress(
         &mut self,
         target: Hash,
         mut hook: Option<&mut Hook<'_>>,
         progress: &mut dyn FnMut() -> Result<()>,
+        termination_cpu: Option<&crate::ingress::public_v3::ServiceMutationCpuCheckpoint>,
     ) -> Result<Hash> {
         progress()?;
         if self.state_backend == StateBackend::PermanentAccountGrowthV2 {
@@ -4593,7 +4809,7 @@ impl Node {
         self.continuous_activation_gate(target)?;
         self.mining_activation_gate(target)?;
         self.namespace()?;
-        self.resume_intent_with_progress(&mut hook, progress)?;
+        self.resume_owned_reorg(&mut hook, progress, termination_cpu)?;
         let (old, g) = self.active()?;
         if self.record(target)?.work <= self.record(old)?.work {
             return Ok(old);
@@ -4655,8 +4871,16 @@ impl Node {
         // Reorganizations retain the independent full-root path and reseed only
         // after actual durable publication/recovery, never from a stale preview.
         self.invalidate_commitment();
+        let mut cancellation =
+            self.reserve_reorg_cancellation(old, target, next, termination_cpu)?;
         self.atomic_with_progress(progress, |progress| {
-            self.db.execute("DELETE FROM kv WHERE slot=?", [next])?;
+            // Reclaim abandoned staging only inside this original paid native
+            // transaction, before any new durable intent exists. Cancellation
+            // of this transaction retains the prior terminal lifecycle. This
+            // bounds live staging to one full copy without charging a terminal
+            // metadata cleanup for an unbounded State delete.
+            self.db
+                .execute("DELETE FROM kv WHERE slot!=?", [self.slot()?])?;
             self.db.execute(
                 "INSERT INTO kv SELECT ?,key,value FROM kv WHERE slot=?",
                 params![next, self.slot()?],
@@ -4693,6 +4917,7 @@ impl Node {
                 "INSERT OR REPLACE INTO reorg VALUES(1,?,?,?,0,0)",
                 params![old.as_slice(), target.as_slice(), next],
             )?;
+            self.insert_reorg_lifecycle(&mut cancellation)?;
             ensure(
                 self.active()? == (old, g)
                     && self.check_steps_with_progress(old, target, 0, progress)? == count as u64,
@@ -4707,8 +4932,27 @@ impl Node {
             )?;
             Ok(())
         })?;
-        cut(&mut hook, "intent")?;
-        self.resume_intent_with_progress(&mut hook, progress)
+        let outcome = (|| {
+            cut(&mut hook, "intent")?;
+            #[cfg(test)]
+            if std::mem::take(&mut self.cancel_next_activation_intent) {
+                // A test-only pause AFTER the original durable intent commit.
+                // Observe the actual caller's original deadline/control: do not
+                // inject a different typed error and call it a production timeout.
+                // No production environment, socket or caller can select this cut.
+                let test_end = std::time::Instant::now() + std::time::Duration::from_secs(11);
+                loop {
+                    progress()?;
+                    assert!(
+                        std::time::Instant::now() < test_end,
+                        "test activation cut did not observe the original bounded request deadline"
+                    );
+                    std::thread::sleep(std::time::Duration::from_millis(2));
+                }
+            }
+            self.resume_intent_with_progress(&mut hook, progress)
+        })();
+        self.finish_or_cancel_reorg(&cancellation, outcome, &mut hook)
     }
     fn check_steps(&self, old: Hash, target: Hash, cursor: u64) -> Result<u64> {
         self.check_steps_with_progress(old, target, cursor, &mut || Ok(()))
@@ -4855,7 +5099,11 @@ impl Node {
         let Some((old, target, g, position, done)) = row else {
             return Ok(self.active()?.0);
         };
-        ensure(done <= 1, "REORG_STEPS").map_err(Error::local_integrity)?;
+        ensure(done <= 2, "REORG_STEPS").map_err(Error::local_integrity)?;
+        if done == 2 {
+            self.check_cancelled_reorg_lifecycle()?;
+            return Ok(self.active()?.0);
+        }
         if done == 1 {
             return Ok(self.active()?.0);
         }
@@ -4949,6 +5197,7 @@ impl Node {
                 "STORAGE_WRITE",
             )
             .map_err(Error::local_integrity)?;
+            self.finish_reorg_lifecycle(old, target, g)?;
             self.db.execute("DELETE FROM kv WHERE slot!=?", [g])?;
             ensure(
                 self.active()? == (target, g) && self.slot()? == g,
@@ -5020,6 +5269,16 @@ impl Node {
         observed_now: u64,
         progress: &mut dyn FnMut() -> Result<()>,
     ) -> Result<Hash> {
+        self.activate_observed_with_termination(tip, observed_now, progress, None)
+    }
+
+    pub(crate) fn activate_observed_with_termination(
+        &mut self,
+        tip: Hash,
+        observed_now: u64,
+        progress: &mut dyn FnMut() -> Result<()>,
+        termination_cpu: Option<&crate::ingress::public_v3::ServiceMutationCpuCheckpoint>,
+    ) -> Result<Hash> {
         progress()?;
         let _measurement = (self.state_backend == StateBackend::AuthenticatedV1).then(|| {
             self.authenticated_arithmetic
@@ -5029,7 +5288,7 @@ impl Node {
         self.continuous_activation_gate(tip)?;
         self.mining_activation_gate(tip)?;
         self.check_observed_history_with_progress(tip, observed_now, progress)?;
-        self.activate_with_fault_and_progress(tip, None, progress)
+        self.activate_with_fault_and_progress(tip, None, progress, termination_cpu)
     }
     pub fn confirmation(
         &self,
@@ -6257,6 +6516,41 @@ mod error_boundary_tests {
         assert!(!error.requires_owner_stop());
         assert_eq!(at_intent, 1);
         assert_eq!(node.active().unwrap(), original_active);
+
+        // Typed cancellation now terminates only unpublished staging. Keep
+        // that assertion, then create an actually pending native fault before
+        // exercising the original durable-corruption/recovery checks below.
+        assert_eq!(
+            node.db
+                .query_row::<u64, _, _>("SELECT done FROM reorg WHERE singleton=1", [], |row| row
+                    .get(0))
+                .unwrap(),
+            2
+        );
+        let error = node
+            .activate_with_fault(
+                target_id,
+                Some(&mut |point| {
+                    if point == "intent" {
+                        Err(Error::new(ErrorCode::StoragePacket).local_integrity())
+                    } else {
+                        Ok(())
+                    }
+                }),
+            )
+            .unwrap_err();
+        local(error, "STORAGE_PACKET");
+        assert_eq!(node.active().unwrap(), original_active);
+        assert_eq!(
+            node.db
+                .query_row::<u64, _, _>(
+                    "SELECT COUNT(*) FROM reorg_lifecycle_v1 WHERE outcome=2",
+                    [],
+                    |row| row.get(0)
+                )
+                .unwrap(),
+            1
+        );
 
         let kind: u64 = node
             .db

@@ -1,0 +1,18 @@
+{
+  "outcome": "OFFICIAL_ARCHIVE_DOWNLOADED_AND_VERIFIED",
+  "archive_sha256": "e082a1dc44abdef1d95460295a70218eb294ab999b834570ec932d05641cce5d",
+  "archive_bytes": 515330687,
+  "compiler_installed": false,
+  "compiler_executed": false,
+  "schema": "TRNM-RISC0-1911-ACQUISITION-RESULT1",
+  "mode": "fetch",
+  "wall_seconds": 8.373183521005558,
+  "self_cpu_seconds": 1.276778,
+  "child_cpu_seconds": 0.0,
+  "self_peak_rss_bytes": 20185088,
+  "child_peak_single_process_rss_bytes": 0,
+  "free_after_bytes": 2923515904,
+  "automatic_retry": false,
+  "retained_partial_archive_bytes": 0,
+  "source_sha256": "05354a8f2450572ef38b585e5eda3c1ff9a90df791638bae2bc25c9173492180"
+}

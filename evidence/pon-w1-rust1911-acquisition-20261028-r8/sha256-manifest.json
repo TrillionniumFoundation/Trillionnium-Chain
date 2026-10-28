@@ -1,0 +1,227 @@
+{
+  "schema": "TRNM-W1-RUST1911-ACQUISITION-EVIDENCE-MANIFEST1",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 10213,
+      "sha256": "6b723ef487b1a524e8a5481b77c2423ef1eafc666a0af87db101b7d23cd4d387"
+    },
+    {
+      "path": "acquisition-predeclaration.json",
+      "bytes": 8362,
+      "sha256": "035cc4de500350230f4843a18436956d7861346c09340cc7838ada7d1a979be9"
+    },
+    {
+      "path": "cumulative-cost-ledger.json",
+      "bytes": 2115,
+      "sha256": "b616a949c76f23d07e476fe13f27161f8f1d24ad88de4c69b0dcea268c75eaf3"
+    },
+    {
+      "path": "fetch/acquisition-events.jsonl",
+      "bytes": 7650,
+      "sha256": "444179080f0902bf470b34a29c33a951bebc21853444516030ba2682233f2d18"
+    },
+    {
+      "path": "fetch/acquisition-result.json",
+      "bytes": 673,
+      "sha256": "a15ab8e9543e3d1db16dcb4f3ba58c6a23ec9d810aa8a34ad31bc70d95f6325a"
+    },
+    {
+      "path": "fetch/declaration.json",
+      "bytes": 1841,
+      "sha256": "1f3a037deda67873250fda77810ef0ce6c3fd53e9e45159b43f11b4a6c122ecf"
+    },
+    {
+      "path": "fetch/events.jsonl",
+      "bytes": 165,
+      "sha256": "144827a389d611254c472ec85a20ad3b4ad878635f55657303a181d5c4c504cd"
+    },
+    {
+      "path": "fetch/result.json",
+      "bytes": 1504,
+      "sha256": "5c757d8b8bb46b1832761f0e88be79af85fdfa32785a37cec09cc3566e7d827f"
+    },
+    {
+      "path": "fetch/samples.jsonl",
+      "bytes": 10761,
+      "sha256": "b4fb332951a91600a5860197e33430318fd9834b32da6b756dfe5170dc9e219c"
+    },
+    {
+      "path": "fetch/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "fetch/stdout.log",
+      "bytes": 7650,
+      "sha256": "444179080f0902bf470b34a29c33a951bebc21853444516030ba2682233f2d18"
+    },
+    {
+      "path": "install/acquisition-events.jsonl",
+      "bytes": 4580,
+      "sha256": "c7a47d0bd75f821f329c040d814349b1bd157fdbe945a8e5f155801d27c1ce9e"
+    },
+    {
+      "path": "install/acquisition-result.json",
+      "bytes": 1290,
+      "sha256": "30beee21e1def3c0f7f24ba7db470e1c656ae68979395eff0456e958968a3335"
+    },
+    {
+      "path": "install/archive-member-inventory.json",
+      "bytes": 93671,
+      "sha256": "a463eaea835695bceb28ff685ae9ff60bba054c9eb5777bb65cda78781da4f5d"
+    },
+    {
+      "path": "install/declaration.json",
+      "bytes": 1848,
+      "sha256": "bf0db2eb924bec9dea59972ca383a46278319c0636975dac4efc70d86b315f07"
+    },
+    {
+      "path": "install/events.jsonl",
+      "bytes": 151,
+      "sha256": "d45d7b08d49bcc93c7d496878c39c32256ee3471a295906adfffb47b3e1a3f1b"
+    },
+    {
+      "path": "install/installed-tree.json",
+      "bytes": 82895,
+      "sha256": "c8a8f1170fa5d54f565e0dbeea0e33605664e5d2aaaf0851ad156dd225f877d9"
+    },
+    {
+      "path": "install/result.json",
+      "bytes": 1485,
+      "sha256": "4133aab9841a32198cba529bd96dde78496ec696e74ef5ca4fee8db1a11b591e"
+    },
+    {
+      "path": "install/rustc-target-cfg.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "install/rustc-target-cfg.stdout",
+      "bytes": 862,
+      "sha256": "f225dc618be4d6fbe8a4db275cf103016f336d8d3239b3b1e6b5a2a2bc042cd8"
+    },
+    {
+      "path": "install/rustc-target-list.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "install/rustc-target-list.stdout",
+      "bytes": 7231,
+      "sha256": "c1347cff5542196e7e23f65c588f1983b03620fffe3ef526e2761cd0936805fc"
+    },
+    {
+      "path": "install/rustc-version-verbose.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "install/rustc-version-verbose.stdout",
+      "bytes": 204,
+      "sha256": "2495a13f782bd1d023e9523bc891ed789665128c3655689c1ce26398ad25b92d"
+    },
+    {
+      "path": "install/samples.jsonl",
+      "bytes": 17965,
+      "sha256": "0bec885391e6005603dc361899b8209859a0071ce33839a93285f872b9c67fb5"
+    },
+    {
+      "path": "install/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "install/stdout.log",
+      "bytes": 4580,
+      "sha256": "c7a47d0bd75f821f329c040d814349b1bd157fdbe945a8e5f155801d27c1ce9e"
+    },
+    {
+      "path": "install-preflight.json",
+      "bytes": 722,
+      "sha256": "a2232511b1e317fae3dfbad19ac9d01dfca431a91488925f5f68af6400c4e193"
+    },
+    {
+      "path": "official-target-specs/1.88.0-riscv32im-risc0-zkvm-elf.rs",
+      "bytes": 1547,
+      "sha256": "26a5cdf1813f117cec590d529f537e916f0a39e921b872e5dd0e8c53ed8bda8e"
+    },
+    {
+      "path": "official-target-specs/1.88.0-tag.json",
+      "bytes": 331,
+      "sha256": "9363c8620f26b5f53eaf480e48a685bc9597413fb765720a7753119b0e4458f6"
+    },
+    {
+      "path": "official-target-specs/1.91.1-riscv32im-risc0-zkvm-elf.rs",
+      "bytes": 1547,
+      "sha256": "26a5cdf1813f117cec590d529f537e916f0a39e921b872e5dd0e8c53ed8bda8e"
+    },
+    {
+      "path": "official-target-specs/1.91.1-tag.json",
+      "bytes": 331,
+      "sha256": "fdd48fa98cbd35d4186e35cfdeae6e6c81419384bde171a3e599b27240bc84ba"
+    },
+    {
+      "path": "official-target-specs/result.json",
+      "bytes": 2251,
+      "sha256": "fb6c63fd3124971e3993784550e47e2f8a2ec1e32344b7ab38e9a7b57bcd9539"
+    },
+    {
+      "path": "packet-validation.json",
+      "bytes": 4278,
+      "sha256": "9d5c1f4c531b39a63de1313384b40e77828afc2d6629d0ebfb2b8ca23fe992f8"
+    },
+    {
+      "path": "scripts/official-acquire.py",
+      "bytes": 18635,
+      "sha256": "05354a8f2450572ef38b585e5eda3c1ff9a90df791638bae2bc25c9173492180"
+    },
+    {
+      "path": "scripts/official-target-source-reader.py",
+      "bytes": 3688,
+      "sha256": "ee578b3c82eaa1820cc3ff3c654799533eef34dcd1b1c51c7755330a4a82abdd"
+    },
+    {
+      "path": "source-review/controls.json",
+      "bytes": 3936,
+      "sha256": "7bc4d7af512ec3accf1fdf1063eedd620c8cf781f99cb821a8487c7287ce1369"
+    },
+    {
+      "path": "source-review/independent-review-record.json",
+      "bytes": 1899,
+      "sha256": "7474b5ed051913f2c79d44b27348b8bcd5034ec318667b269f13a4ce6bca1b95"
+    },
+    {
+      "path": "source-review/initial-acquire.py",
+      "bytes": 14875,
+      "sha256": "d2eaca0442c916aa412cb06c99bee003f51e2f753f3c4739b1afbd0ba9dd954d"
+    },
+    {
+      "path": "source-review/initial.json",
+      "bytes": 253,
+      "sha256": "804fe1b3f45d70a5c7a9a13befc46a630071b5d13baf3b00ca9d7bbdebdd97ee"
+    },
+    {
+      "path": "source-review/preflights.jsonl",
+      "bytes": 475,
+      "sha256": "e27b3105ae547e50c97c37deb89de582e4148c5e865fb54c0a6e54edf72eb622"
+    },
+    {
+      "path": "source-review/reproduce-helper-controls.py",
+      "bytes": 4119,
+      "sha256": "5097addc8580de471829f4dc48c5c7b3cda186971cbbb137855ffee87fc93069"
+    },
+    {
+      "path": "source-review/reproduced-controls.json",
+      "bytes": 3936,
+      "sha256": "7ce4e60168d75bce2ce98c729a9c65469d5b98630a098482b1cb0609f00af286"
+    },
+    {
+      "path": "source-review/sdk-selection-source-review.json",
+      "bytes": 2009,
+      "sha256": "840c26ada7eb23790d6099d4f6b43b3cde42662df9cdb7451c68ead04997829b"
+    }
+  ],
+  "bytes_without_manifest": 332528,
+  "archives_and_compiler_binaries_not_duplicated_into_git": true
+}

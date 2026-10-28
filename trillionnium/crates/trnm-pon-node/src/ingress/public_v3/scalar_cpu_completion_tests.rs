@@ -286,6 +286,7 @@ fn only_fresh_successful_native_w1_promotes_not_false_product_or_existing_packet
                 observation: None,
                 mutation_cpu: Some(&measurement),
                 arithmetic_facts: None,
+                w1_rejection_cache: None,
             },
         );
         if index == 0 {
@@ -382,6 +383,7 @@ fn same_valid_w1_native_invalid_packet_cannot_reacquire_completion_priority() {
                 observation: None,
                 mutation_cpu: Some(&measurement),
                 arithmetic_facts: None,
+                w1_rejection_cache: None,
             },
         );
         promotions.push(server.mutation_cpu.lock().unwrap().verified_completions);
@@ -569,6 +571,7 @@ fn full_completion_registry_keeps_all_markers_and_allows_real_native_admission()
             observation: None,
             mutation_cpu: Some(&measurement),
             arithmetic_facts: None,
+            w1_rejection_cache: None,
         },
     )
     .unwrap();
@@ -668,6 +671,7 @@ fn same_verified_w1_with_changed_transaction_body_is_rejected_before_promotion()
                 observation: None,
                 mutation_cpu: Some(&measurement),
                 arithmetic_facts: None,
+                w1_rejection_cache: None,
             },
         );
         permit.finish(&measurement, &server, &metrics).unwrap();
@@ -691,4 +695,63 @@ fn same_verified_w1_with_changed_transaction_body_is_rejected_before_promotion()
     assert_eq!(observed.mutation_cpu_reservations, 2);
     assert!(observed.mutation_cpu_charged_ns > 0);
     assert_eq!(node.lock().unwrap().read_active().unwrap(), before);
+}
+
+#[test]
+fn exclusive_history_refill_observes_original_resource_cancellation_without_new_credit() {
+    let (_directory, _settings, packet) = packet();
+    let domain = ServiceMutationCpuDomain::cold_remote_history_epoch();
+    let deadline = Instant::now() + Duration::from_secs(5);
+    let operation = loop {
+        match domain.begin() {
+            Ok(operation) => break operation,
+            Err(error) => {
+                assert!(error.is(crate::ErrorCode::PublicMutationCpuBudget));
+                assert!(Instant::now() < deadline);
+                thread::sleep(Duration::from_millis(2));
+            }
+        }
+    };
+    operation.bind_history_request(deadline).unwrap();
+    let checked = WorkCheckedPacket::verify_with_progress(packet.clone(), &mut |_| {
+        operation.history_checkpoint(false, &|| Ok(()))
+    })
+    .unwrap();
+    operation.history_work_verified(&checked).unwrap();
+    let saw_real_deficit = AtomicBool::new(false);
+    let resource = || {
+        ensure(Instant::now() < deadline, "PUBLIC_REQUEST_DEADLINE")?;
+        if domain.observe()?.stored_credit_ns < -i128::from(MUTATION_CPU_START_RESERVE_NS) {
+            saw_real_deficit.store(true, Ordering::Release);
+            return Err(crate::Error::new(crate::ErrorCode::PublicRequestCancelled));
+        }
+        Ok(())
+    };
+    // Actual full native W1 CPU reaches a real refill wait. This repeated
+    // arithmetic is a cancellation/meter control, not a network attack claim.
+    loop {
+        match WorkCheckedPacket::verify_with_progress(packet.clone(), &mut |_| {
+            operation.history_checkpoint(false, &resource)
+        }) {
+            Ok(_) => assert!(Instant::now() < deadline),
+            Err(error) => {
+                assert!(error.is(crate::ErrorCode::PublicRequestCancelled));
+                break;
+            }
+        }
+    }
+    assert!(saw_real_deficit.load(Ordering::Acquire));
+    assert!(Instant::now() < deadline);
+    let receipt = operation.finish();
+    assert!(!receipt.accounting_unavailable);
+    assert!(receipt.total_cpu_ns.unwrap() > MUTATION_CPU_START_RESERVE_NS);
+    let flow = domain.observe_actual_flow().unwrap().unwrap();
+    assert_eq!(flow.initial_credit_ns, 0);
+    assert_eq!(flow.booked_reservation_ns, 0);
+    assert_eq!(flow.paid_cpu_debit_ns, receipt.total_cpu_ns.unwrap());
+    assert!(flow.balance_identity_verified);
+    println!(
+        "{}",
+        serde_json::json!({"schema":"history-resource-cancellation-real-refill-v1", "receipt":receipt, "flow":flow})
+    );
 }

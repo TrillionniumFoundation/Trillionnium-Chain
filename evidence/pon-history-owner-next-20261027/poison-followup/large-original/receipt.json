@@ -1,0 +1,34 @@
+{
+  "schema": "history-exact-source-native-control-v1",
+  "argv": [
+    "/tmp/target-history-56818e4fba76/owner-next-3ca96292cc-trnm-pon-node",
+    "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+    "--exact",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "source_commit": "3ca96292ccc7815f4c7f49b34445f3d28687b5f4",
+  "source_manifest_sha256": "106a6cf428cd2b1a7b728ec5aec938d319df48e40d1abbb433f51148fb2a7f70",
+  "binary_sha256": "86d70c9cf0e6bfffbf0e8e0758433e9d2fbb8791d9a01e7f9cb6fcb7cf7b6f40",
+  "started_utc": "2026-10-28T00:31:22.664200+00:00",
+  "outer_observer_timeout_seconds": 180,
+  "exit_code": 101,
+  "elapsed_seconds": 27.51405108799372,
+  "timed_out": false,
+  "stdout.txt": {
+    "bytes": 1496,
+    "sha256": "90fd51d350151384c5d086d047bb7e2f7c0920baffdcc59579b4d4bad66b07f4"
+  },
+  "stderr.txt": {
+    "bytes": 483,
+    "sha256": "34b768c35d3232a614768b9a508f1f7d34dba397a64e762158a2d157f308fba0"
+  },
+  "harness_results": [
+    {
+      "outcome": "FAILED",
+      "passed": 0,
+      "failed": 1,
+      "ignored": 0
+    }
+  ]
+}

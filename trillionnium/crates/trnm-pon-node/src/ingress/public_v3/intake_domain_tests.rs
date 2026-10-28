@@ -356,7 +356,8 @@ fn one_plain_node_must_not_accept_independent_cpu_domains_through_two_real_liste
     );
     let error = result.unwrap_err();
     assert!(error.is(crate::error::ErrorCode::OwnerPublicServiceCpuDomain));
-    assert!(!error.requires_owner_stop());
+    // Stop the mismatched caller; the original listener/domain above stays healthy.
+    assert!(error.requires_owner_stop());
     assert_eq!(
         error.to_string(),
         "OWNER_PUBLIC_SERVICE_CPU_DOMAIN",

@@ -1,0 +1,27 @@
+{
+  "actual_benefit_established": false,
+  "completed_successful_trials": 0,
+  "consensus_admission": false,
+  "experiment_process_complete": false,
+  "fresh_verifiers": [],
+  "planned_trials": 1,
+  "production_activation": false,
+  "proof_process": {
+    "child_peak_rss_bytes": 111165440,
+    "child_system_cpu_seconds": 0.07564499999999999,
+    "child_user_cpu_seconds": 0.157014,
+    "elapsed_wall_seconds": 3600.081027159,
+    "resource_source": "Linux wait4 rusage; peak RSS is not a production budget authority",
+    "returncode": -15,
+    "sigkill_after_timeout": false,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "timed_out": true
+  },
+  "prover_p99_established": false,
+  "schema": "trnm-w1-real-proof-process-v1",
+  "terminal_host_rows": 0,
+  "uncompleted_trials": 1,
+  "unreadable_host_rows": [],
+  "whole_chain_quantum_security_qualified": false
+}

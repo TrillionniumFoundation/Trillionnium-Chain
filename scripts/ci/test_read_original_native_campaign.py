@@ -278,6 +278,118 @@ class ActualArtifactReaderTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 reader.economics(value)
 
+    def cost_input(self):
+        # Copy only the original cost observations and their actual business
+        # packet context. Mutations are counterexamples, never measured costs.
+        return copy.deepcopy({key: self.report[key] for key in (
+            'economics', 'preparation', 'selection_candidates_cpu_ns',
+            'best_observed_cold_legal_method', 'economics_complete')})
+
+    def test_cost_derivation_keeps_actual_reuse_and_complete_denominators(self):
+        value = reader.economics(self.report)
+        self.assertEqual(value['schema'], 'pon-original-native-campaign-work-costs-v1')
+        self.assertEqual(len(value['legal_cohorts']), 16)
+        self.assertEqual(len(value['from_zero_cohorts']), 8)
+        self.assertEqual(value['distinct_legal_winner_proofs'], 12)
+        self.assertEqual(value['distinct_from_zero_proofs'], 12)
+        for cohort in value['legal_cohorts']:
+            actor = self.report['economics'][reader.METHODS.index(cohort['method'])]['report']['result']
+            original = next(m for m in actor['modes']
+                            if m['reuse_preparation'] is cohort['reuse_preparation'])
+            total = sum(s['acquisition_cpu_ns'] for s in original['samples'])
+            self.assertEqual(cohort['full_acquisition_process_cpu_ns']['sum_known_ns'], total)
+            self.assertEqual(cohort['winning_searches'], 12)
+            self.assertEqual(cohort['actual_setup_calls'], 3 if cohort['reuse_preparation'] else 12)
+            ratio = cohort['full_acquisition_cpu_per_winner_ns']
+            self.assertEqual(ratio['numerator'] * 12, total * ratio['denominator'])
+        for cohort in value['from_zero_cohorts']:
+            self.assertFalse(cohort['genuine_proof_acquisition_used'])
+            self.assertEqual(cohort['valid_work_credit'], 0)
+            self.assertEqual(cohort['false_candidates'], 12)
+            ratio = cohort['rejection_to_full_construction_cpu_ratio']
+            self.assertEqual(ratio['numerator'] * cohort['full_construction_process_cpu_ns']['sum_known_ns'],
+                             ratio['denominator'] * cohort['separate_rejection_process_cpu_ns']['sum_known_ns'])
+        self.assertFalse(value['scope']['nested_clocks_added_again_to_total'])
+        self.assertFalse(value['scope']['modeled_64_winner_reuse'])
+        self.assertFalse(value['scope']['w1_transcripts_independently_replayed'])
+        self.assertFalse(value['scope']['cryptographic_hardness_qualified'])
+        self.assertFalse(value['scope']['production_activation'])
+
+    def test_cost_target_misses_packets_and_setup_counts_cannot_be_relabelled(self):
+        def legal(value):
+            return value['economics'][0]['report']['result']['modes'][0]['samples'][0]
+        def false(value):
+            return value['economics'][0]['report']['result']['same_task_target_from_zero_samples'][0]
+        mutations = (
+            lambda v: v['economics'][0]['report']['result']['modes'][0].update(setup_calls_per_sample=64),
+            lambda v: legal(v).update(sample=True),
+            lambda v: legal(v).update(initial_setup_cpu_ns=2**100),
+            lambda v: legal(v)['verified_winners'][0].update(Err='Transcript'),
+            lambda v: legal(v)['searches'][0].update(winning_header='00' * 318),
+            lambda v: legal(v)['searches'][0].update(proof_digest='00' * 32),
+            lambda v: legal(v)['searches'][0].update(packet_digest='00' * 32),
+            lambda v: legal(v)['searches'][0]['attempts'][0].update(nonce=0),
+            lambda v: legal(v)['searches'][0]['attempts'][0].update(ticket='00' * 32),
+            lambda v: next(s for s in legal(v)['searches'] if len(s['attempts']) > 1)['attempts'].pop(0),
+            lambda v: false(v)['searches'].pop(),
+            lambda v: false(v)['searches'][0]['attempts'][0].update(trace='00' * 32),
+            lambda v: false(v)['searches'][0].update(packet_bytes=1),
+            lambda v: false(v)['searches'][0].update(packet_digest=legal(v)['searches'][0]['packet_digest']),
+        )
+        for mutation in mutations:
+            with self.subTest(mutation=mutation):
+                value = self.cost_input()
+                mutation(value)
+                with self.assertRaises(ValueError):
+                    reader.economics(value)
+
+    def test_cost_unknown_subclocks_remain_unknown_not_free(self):
+        value = self.cost_input()
+        actor = value['economics'][0]['report']['result']
+        actor['modes'][0]['samples'][0]['initial_setup_cpu_ns'] = None
+        actor['same_task_target_from_zero_samples'][0]['diagnostic_cpu_ns'] = None
+        costs = reader.economics(value)
+        setup = costs['legal_cohorts'][0]['nested_initial_setup_cpu_ns']
+        self.assertEqual(setup['unknown_count'], 1)
+        rejection = costs['from_zero_cohorts'][0]
+        self.assertEqual(rejection['separate_rejection_process_cpu_ns']['unknown_count'], 1)
+        self.assertIsNone(rejection['rejection_to_full_construction_cpu_ratio'])
+        actor['modes'][0]['samples'][0]['acquisition_cpu_ns'] = None
+        with self.assertRaises(ValueError):
+            reader.economics(value)
+
+    def test_cost_selection_uses_one_complete_method_not_each_fastest_sample(self):
+        value = self.cost_input()
+        candidates = []
+        for index, actor in enumerate(value['economics']):
+            for mode in actor['report']['result']['modes']:
+                totals = ([100_000_000, 900_000_000, 100_000_000] if index == 0 else
+                          [900_000_000, 100_000_000, 900_000_000] if index == 1 else
+                          [2_000_000_000] * 3)
+                for sample, total in zip(mode['samples'], totals):
+                    sample['acquisition_cpu_ns'] = total
+                if not mode['reuse_preparation']:
+                    candidates.append([sorted(totals)[1], index])
+        value['selection_candidates_cpu_ns'] = sorted(candidates)
+        value['best_observed_cold_legal_method'] = 'prepared-generic'
+        costs = reader.economics(value)
+        for comparison in costs['fixed_method_comparisons']:
+            self.assertEqual(comparison['selected_fixed_method'], 'prepared-generic')
+            self.assertEqual(comparison['selected_total_cpu_ns'], 1_100_000_000)
+            self.assertNotEqual(comparison['selected_total_cpu_ns'], 300_000_000)
+
+    def test_effective_share_is_conditional_valid_work_not_fake_ticket_rate(self):
+        value = reader.work_share_sensitivity(2, 1)
+        rows = value['assumed_same_hardware_cpu_budget_shares']
+        self.assertEqual(rows[1]['modeled_effective_valid_work_share'],
+                         {'numerator': 2, 'denominator': 11, 'value': 2 / 11})
+        self.assertEqual(rows[2]['modeled_effective_valid_work_share'],
+                         {'numerator': 2, 'denominator': 5, 'value': 0.4})
+        self.assertEqual(value['modeled_budget_share_at_half_valid_work']['value'], 1 / 3)
+        self.assertFalse(value['invalid_from_zero_tickets_count_as_work'])
+        self.assertIsNone(value['measured_network_adversary_share'])
+        self.assertFalse(value['network_effective_work_share_qualified'])
+
     def test_subset_requires_explicit_mode_and_does_not_claim_omitted_binary(self):
         if SUBSET:
             self.assertEqual(self.valid['coverage'], 'retained-subset')

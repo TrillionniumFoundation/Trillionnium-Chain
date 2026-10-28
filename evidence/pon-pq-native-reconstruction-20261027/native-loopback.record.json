@@ -1,0 +1,26 @@
+{
+  "schema": "pq-native-exact-source-run-v1",
+  "argv": [
+    "/tmp/chain-pq-target-56818e4fba76/debug/deps/trnm_pon_node-eedd0e664b162d56",
+    "ingress::pq_network::tests::",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "started_utc": "2026-10-28T00:00:35.586363+00:00",
+  "binary_sha256": "528c76dcbf1cf2e5823345641a762f0f9fd8ab3dad27bf873821dc4b9a810662",
+  "binary_bytes": 313347528,
+  "source_manifest_sha256": "41ecb6b2ea8094c02a5ba9473b80663ae6aa8ef313ecf8f0920bc8e306fa7381",
+  "fresh_source_bytes_rechecked": true,
+  "permission_scope": "owned ephemeral loopback listeners; no external hosts",
+  "exit_code": 0,
+  "elapsed_seconds": 2.5067439490012475,
+  "completed_utc": "2026-10-28T00:00:38.451058+00:00",
+  "stdout": {
+    "bytes": 1538,
+    "sha256": "a2685897f06300095129943342e8e36b50a2e08fbb12beb465816aa7f4613ed5"
+  },
+  "stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

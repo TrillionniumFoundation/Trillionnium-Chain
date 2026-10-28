@@ -1,0 +1,76 @@
+test_arithmetic_metadata_or_vectors_cannot_be_repinned (__main__.PolicyReaderTests.test_arithmetic_metadata_or_vectors_cannot_be_repinned) ... ERROR
+test_changed_contract_vector_or_resource_limits_fail_closed (__main__.PolicyReaderTests.test_changed_contract_vector_or_resource_limits_fail_closed) ... ERROR
+test_current_rust_contract_and_independent_config_are_byte_identical (__main__.PolicyReaderTests.test_current_rust_contract_and_independent_config_are_byte_identical) ... ERROR
+test_independent_r10_r11_r12_r13_vectors_recompute_exactly (__main__.PolicyReaderTests.test_independent_r10_r11_r12_r13_vectors_recompute_exactly) ... ERROR
+test_separate_arithmetic_vectors_bind_exact_source_contract_and_base (__main__.PolicyReaderTests.test_separate_arithmetic_vectors_bind_exact_source_contract_and_base) ... ERROR
+test_wrong_parameters_unknown_digest_and_claimed_revision_refuse (__main__.PolicyReaderTests.test_wrong_parameters_unknown_digest_and_claimed_revision_refuse) ... ok
+
+======================================================================
+ERROR: test_arithmetic_metadata_or_vectors_cannot_be_repinned (__main__.PolicyReaderTests.test_arithmetic_metadata_or_vectors_cannot_be_repinned)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/56818e4fba76/chain-recovered/scripts/ci/test_pon_public_v3_policy_read.py", line 71, in test_arithmetic_metadata_or_vectors_cannot_be_repinned
+    config = reader.load_profiles()
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/56818e4fba76/chain-recovered/scripts/pon_public_v3_policy_read.py", line 69, in load_profiles
+    require(config['schema'] == 'pon-public-resource-profile-vectors-v1'
+  File "/workspace/scratch/56818e4fba76/chain-recovered/scripts/pon_public_v3_policy_read.py", line 23, in require
+    raise ValueError(message)
+ValueError: original resource numbers and explicit profile history required
+
+======================================================================
+ERROR: test_changed_contract_vector_or_resource_limits_fail_closed (__main__.PolicyReaderTests.test_changed_contract_vector_or_resource_limits_fail_closed)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/56818e4fba76/chain-recovered/scripts/ci/test_pon_public_v3_policy_read.py", line 122, in test_changed_contract_vector_or_resource_limits_fail_closed
+    config = reader.load_profiles()
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/56818e4fba76/chain-recovered/scripts/pon_public_v3_policy_read.py", line 69, in load_profiles
+    require(config['schema'] == 'pon-public-resource-profile-vectors-v1'
+  File "/workspace/scratch/56818e4fba76/chain-recovered/scripts/pon_public_v3_policy_read.py", line 23, in require
+    raise ValueError(message)
+ValueError: original resource numbers and explicit profile history required
+
+======================================================================
+ERROR: test_current_rust_contract_and_independent_config_are_byte_identical (__main__.PolicyReaderTests.test_current_rust_contract_and_independent_config_are_byte_identical)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/56818e4fba76/chain-recovered/scripts/ci/test_pon_public_v3_policy_read.py", line 102, in test_current_rust_contract_and_independent_config_are_byte_identical
+    config = reader.load_profiles()
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/56818e4fba76/chain-recovered/scripts/pon_public_v3_policy_read.py", line 69, in load_profiles
+    require(config['schema'] == 'pon-public-resource-profile-vectors-v1'
+  File "/workspace/scratch/56818e4fba76/chain-recovered/scripts/pon_public_v3_policy_read.py", line 23, in require
+    raise ValueError(message)
+ValueError: original resource numbers and explicit profile history required
+
+======================================================================
+ERROR: test_independent_r10_r11_r12_r13_vectors_recompute_exactly (__main__.PolicyReaderTests.test_independent_r10_r11_r12_r13_vectors_recompute_exactly)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/56818e4fba76/chain-recovered/scripts/ci/test_pon_public_v3_policy_read.py", line 93, in test_independent_r10_r11_r12_r13_vectors_recompute_exactly
+    config = reader.load_profiles()
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/56818e4fba76/chain-recovered/scripts/pon_public_v3_policy_read.py", line 69, in load_profiles
+    require(config['schema'] == 'pon-public-resource-profile-vectors-v1'
+  File "/workspace/scratch/56818e4fba76/chain-recovered/scripts/pon_public_v3_policy_read.py", line 23, in require
+    raise ValueError(message)
+ValueError: original resource numbers and explicit profile history required
+
+======================================================================
+ERROR: test_separate_arithmetic_vectors_bind_exact_source_contract_and_base (__main__.PolicyReaderTests.test_separate_arithmetic_vectors_bind_exact_source_contract_and_base)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/56818e4fba76/chain-recovered/scripts/ci/test_pon_public_v3_policy_read.py", line 46, in test_separate_arithmetic_vectors_bind_exact_source_contract_and_base
+    config = reader.load_profiles()
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/56818e4fba76/chain-recovered/scripts/pon_public_v3_policy_read.py", line 69, in load_profiles
+    require(config['schema'] == 'pon-public-resource-profile-vectors-v1'
+  File "/workspace/scratch/56818e4fba76/chain-recovered/scripts/pon_public_v3_policy_read.py", line 23, in require
+    raise ValueError(message)
+ValueError: original resource numbers and explicit profile history required
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.002s
+
+FAILED (errors=5)

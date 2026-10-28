@@ -1,0 +1,630 @@
+{
+  "schema": "history-exact-input-private-control-comparison-v1",
+  "scope": "one observation per build; resource callback is private no-op; not actual fixed Host or performance acceptance",
+  "runs": {
+    "baseline-native-inactive": {
+      "pages": 7,
+      "successes": 7,
+      "sum_request_elapsed_ns": 2101095565,
+      "final_paid_cpu_ns": 501564184,
+      "same_packet_ids_as_baseline": true,
+      "same_active_tips_as_baseline": true,
+      "initial_credit_zero": true,
+      "all_balance_identities_verified": true,
+      "raw_rows": [
+        {
+          "active_tip": "3bb89801146258bc0b3e13ae5c4d51dda000cbcd05e213722ef0ccff4e351451",
+          "cpu_flow": {
+            "balance_identity_verified": true,
+            "booked_reservation_ns": 0,
+            "credited_refill_ns": 112902348,
+            "discarded_refill_ns": 0,
+            "initial_credit_ns": 0,
+            "live_debited_cpu_ns": 42864428,
+            "live_owners": 0,
+            "paid_cpu_debit_ns": 42866872,
+            "remaining_paid_credit_ns": 70035476,
+            "schema": "public-v3-local-actual-cpu-flow-v1",
+            "settled_full_cpu_ns": 42866872,
+            "settlement_discard_ns": 0,
+            "settlement_residual_cpu_ns": 2444,
+            "stored_credit_ns": 70035476,
+            "unsettled_known_live_cpu_ns": 0
+          },
+          "elapsed_ns": 459116551,
+          "original_page_budget_seconds": 30,
+          "request_index": 0,
+          "requested_packets": 1,
+          "result": {
+            "Ok": "41a331516e463560383cceff9671ba86767ef42efce272b56c32b0e79853f3f8"
+          },
+          "schema": "history-original-honest-page-observation-v1"
+        },
+        {
+          "active_tip": "3bb89801146258bc0b3e13ae5c4d51dda000cbcd05e213722ef0ccff4e351451",
+          "cpu_flow": {
+            "balance_identity_verified": true,
+            "booked_reservation_ns": 0,
+            "credited_refill_ns": 156232166,
+            "discarded_refill_ns": 0,
+            "initial_credit_ns": 0,
+            "live_debited_cpu_ns": 91231257,
+            "live_owners": 0,
+            "paid_cpu_debit_ns": 91235814,
+            "remaining_paid_credit_ns": 64996352,
+            "schema": "public-v3-local-actual-cpu-flow-v1",
+            "settled_full_cpu_ns": 91235814,
+            "settlement_discard_ns": 0,
+            "settlement_residual_cpu_ns": 4557,
+            "stored_credit_ns": 64996352,
+            "unsettled_known_live_cpu_ns": 0
+          },
+          "elapsed_ns": 164831099,
+          "original_page_budget_seconds": 30,
+          "request_index": 1,
+          "requested_packets": 1,
+          "result": {
+            "Ok": "3d7c5034a6bf09688bcfd0f0f50788bb6ad4ca9dc22d4a1d497448c134713ef2"
+          },
+          "schema": "history-original-honest-page-observation-v1"
+        },
+        {
+          "active_tip": "3bb89801146258bc0b3e13ae5c4d51dda000cbcd05e213722ef0ccff4e351451",
+          "cpu_flow": {
+            "balance_identity_verified": true,
+            "booked_reservation_ns": 0,
+            "credited_refill_ns": 201595743,
+            "discarded_refill_ns": 0,
+            "initial_credit_ns": 0,
+            "live_debited_cpu_ns": 127524593,
+            "live_owners": 0,
+            "paid_cpu_debit_ns": 127530612,
+            "remaining_paid_credit_ns": 74065131,
+            "schema": "public-v3-local-actual-cpu-flow-v1",
+            "settled_full_cpu_ns": 127530612,
+            "settlement_discard_ns": 0,
+            "settlement_residual_cpu_ns": 6019,
+            "stored_credit_ns": 74065131,
+            "unsettled_known_live_cpu_ns": 0
+          },
+          "elapsed_ns": 180209792,
+          "original_page_budget_seconds": 30,
+          "request_index": 2,
+          "requested_packets": 1,
+          "result": {
+            "Ok": "1081c954a8508b0a005990b0188ce72c8b05438df15f4c02c77c1b110dca8238"
+          },
+          "schema": "history-original-honest-page-observation-v1"
+        },
+        {
+          "active_tip": "3bb89801146258bc0b3e13ae5c4d51dda000cbcd05e213722ef0ccff4e351451",
+          "cpu_flow": {
+            "balance_identity_verified": true,
+            "booked_reservation_ns": 0,
+            "credited_refill_ns": 241749789,
+            "discarded_refill_ns": 0,
+            "initial_credit_ns": 0,
+            "live_debited_cpu_ns": 177318034,
+            "live_owners": 0,
+            "paid_cpu_debit_ns": 177325585,
+            "remaining_paid_credit_ns": 64424204,
+            "schema": "public-v3-local-actual-cpu-flow-v1",
+            "settled_full_cpu_ns": 177325585,
+            "settlement_discard_ns": 0,
+            "settlement_residual_cpu_ns": 7551,
+            "stored_credit_ns": 64424204,
+            "unsettled_known_live_cpu_ns": 0
+          },
+          "elapsed_ns": 159349550,
+          "original_page_budget_seconds": 30,
+          "request_index": 3,
+          "requested_packets": 1,
+          "result": {
+            "Ok": "30f52a4139909cc0968bc7bcf185baaeb5e90e52506a04a3cf478dfc10531932"
+          },
+          "schema": "history-original-honest-page-observation-v1"
+        },
+        {
+          "active_tip": "3bb89801146258bc0b3e13ae5c4d51dda000cbcd05e213722ef0ccff4e351451",
+          "cpu_flow": {
+            "balance_identity_verified": true,
+            "booked_reservation_ns": 0,
+            "credited_refill_ns": 291731946,
+            "discarded_refill_ns": 0,
+            "initial_credit_ns": 0,
+            "live_debited_cpu_ns": 230355915,
+            "live_owners": 0,
+            "paid_cpu_debit_ns": 230365710,
+            "remaining_paid_credit_ns": 61366236,
+            "schema": "public-v3-local-actual-cpu-flow-v1",
+            "settled_full_cpu_ns": 230365710,
+            "settlement_discard_ns": 0,
+            "settlement_residual_cpu_ns": 9795,
+            "stored_credit_ns": 61366236,
+            "unsettled_known_live_cpu_ns": 0
+          },
+          "elapsed_ns": 198961189,
+          "original_page_budget_seconds": 30,
+          "request_index": 4,
+          "requested_packets": 1,
+          "result": {
+            "Ok": "21e524263c10674ff33a1e5fa2c6a3def34e49ca4adf6625643f99dc63ac7a59"
+          },
+          "schema": "history-original-honest-page-observation-v1"
+        },
+        {
+          "active_tip": "3bb89801146258bc0b3e13ae5c4d51dda000cbcd05e213722ef0ccff4e351451",
+          "cpu_flow": {
+            "balance_identity_verified": true,
+            "booked_reservation_ns": 0,
+            "credited_refill_ns": 344974684,
+            "discarded_refill_ns": 0,
+            "initial_credit_ns": 0,
+            "live_debited_cpu_ns": 284647391,
+            "live_owners": 0,
+            "paid_cpu_debit_ns": 284659178,
+            "remaining_paid_credit_ns": 60315506,
+            "schema": "public-v3-local-actual-cpu-flow-v1",
+            "settled_full_cpu_ns": 284659178,
+            "settlement_discard_ns": 0,
+            "settlement_residual_cpu_ns": 11787,
+            "stored_credit_ns": 60315506,
+            "unsettled_known_live_cpu_ns": 0
+          },
+          "elapsed_ns": 211516805,
+          "original_page_budget_seconds": 30,
+          "request_index": 5,
+          "requested_packets": 1,
+          "result": {
+            "Ok": "045c48490fad3c22e0db74621b9f5d4d206cc2736a160a45244e03f3259666bc"
+          },
+          "schema": "history-original-honest-page-observation-v1"
+        },
+        {
+          "active_tip": "f22489cecd7347edb4e33367dfe9f2f77e0872a3b24598ad1598f832086b9b05",
+          "cpu_flow": {
+            "balance_identity_verified": true,
+            "booked_reservation_ns": 0,
+            "credited_refill_ns": 527032394,
+            "discarded_refill_ns": 0,
+            "initial_credit_ns": 0,
+            "live_debited_cpu_ns": 501551256,
+            "live_owners": 0,
+            "paid_cpu_debit_ns": 501564184,
+            "remaining_paid_credit_ns": 25468210,
+            "schema": "public-v3-local-actual-cpu-flow-v1",
+            "settled_full_cpu_ns": 501564184,
+            "settlement_discard_ns": 0,
+            "settlement_residual_cpu_ns": 12928,
+            "stored_credit_ns": 25468210,
+            "unsettled_known_live_cpu_ns": 0
+          },
+          "elapsed_ns": 727110579,
+          "original_page_budget_seconds": 30,
+          "request_index": 6,
+          "requested_packets": 1,
+          "result": {
+            "Ok": "f22489cecd7347edb4e33367dfe9f2f77e0872a3b24598ad1598f832086b9b05"
+          },
+          "schema": "history-original-honest-page-observation-v1"
+        }
+      ]
+    },
+    "candidate-native-inactive": {
+      "pages": 7,
+      "successes": 7,
+      "sum_request_elapsed_ns": 2009841353,
+      "final_paid_cpu_ns": 478596564,
+      "same_packet_ids_as_baseline": true,
+      "same_active_tips_as_baseline": true,
+      "initial_credit_zero": true,
+      "all_balance_identities_verified": true,
+      "raw_rows": [
+        {
+          "active_tip": "3bb89801146258bc0b3e13ae5c4d51dda000cbcd05e213722ef0ccff4e351451",
+          "cpu_flow": {
+            "balance_identity_verified": true,
+            "booked_reservation_ns": 0,
+            "credited_refill_ns": 123819201,
+            "discarded_refill_ns": 0,
+            "initial_credit_ns": 0,
+            "live_debited_cpu_ns": 90117359,
+            "live_owners": 0,
+            "paid_cpu_debit_ns": 90118961,
+            "remaining_paid_credit_ns": 33700240,
+            "schema": "public-v3-local-actual-cpu-flow-v1",
+            "settled_full_cpu_ns": 90118961,
+            "settlement_discard_ns": 0,
+            "settlement_residual_cpu_ns": 1602,
+            "stored_credit_ns": 33700240,
+            "unsettled_known_live_cpu_ns": 0
+          },
+          "elapsed_ns": 495836802,
+          "original_page_budget_seconds": 30,
+          "request_index": 0,
+          "requested_packets": 1,
+          "result": {
+            "Ok": "41a331516e463560383cceff9671ba86767ef42efce272b56c32b0e79853f3f8"
+          },
+          "schema": "history-original-honest-page-observation-v1"
+        },
+        {
+          "active_tip": "3bb89801146258bc0b3e13ae5c4d51dda000cbcd05e213722ef0ccff4e351451",
+          "cpu_flow": {
+            "balance_identity_verified": true,
+            "booked_reservation_ns": 0,
+            "credited_refill_ns": 199870523,
+            "discarded_refill_ns": 0,
+            "initial_credit_ns": 0,
+            "live_debited_cpu_ns": 125470771,
+            "live_owners": 0,
+            "paid_cpu_debit_ns": 125474106,
+            "remaining_paid_credit_ns": 74396417,
+            "schema": "public-v3-local-actual-cpu-flow-v1",
+            "settled_full_cpu_ns": 125474106,
+            "settlement_discard_ns": 0,
+            "settlement_residual_cpu_ns": 3335,
+            "stored_credit_ns": 74396417,
+            "unsettled_known_live_cpu_ns": 0
+          },
+          "elapsed_ns": 303194106,
+          "original_page_budget_seconds": 30,
+          "request_index": 1,
+          "requested_packets": 1,
+          "result": {
+            "Ok": "3d7c5034a6bf09688bcfd0f0f50788bb6ad4ca9dc22d4a1d497448c134713ef2"
+          },
+          "schema": "history-original-honest-page-observation-v1"
+        },
+        {
+          "active_tip": "3bb89801146258bc0b3e13ae5c4d51dda000cbcd05e213722ef0ccff4e351451",
+          "cpu_flow": {
+            "balance_identity_verified": true,
+            "booked_reservation_ns": 0,
+            "credited_refill_ns": 235273965,
+            "discarded_refill_ns": 0,
+            "initial_credit_ns": 0,
+            "live_debited_cpu_ns": 160337344,
+            "live_owners": 0,
+            "paid_cpu_debit_ns": 160383412,
+            "remaining_paid_credit_ns": 74890553,
+            "schema": "public-v3-local-actual-cpu-flow-v1",
+            "settled_full_cpu_ns": 160383412,
+            "settlement_discard_ns": 0,
+            "settlement_residual_cpu_ns": 46068,
+            "stored_credit_ns": 74890553,
+            "unsettled_known_live_cpu_ns": 0
+          },
+          "elapsed_ns": 141146389,
+          "original_page_budget_seconds": 30,
+          "request_index": 2,
+          "requested_packets": 1,
+          "result": {
+            "Ok": "1081c954a8508b0a005990b0188ce72c8b05438df15f4c02c77c1b110dca8238"
+          },
+          "schema": "history-original-honest-page-observation-v1"
+        },
+        {
+          "active_tip": "3bb89801146258bc0b3e13ae5c4d51dda000cbcd05e213722ef0ccff4e351451",
+          "cpu_flow": {
+            "balance_identity_verified": true,
+            "booked_reservation_ns": 0,
+            "credited_refill_ns": 272874988,
+            "discarded_refill_ns": 0,
+            "initial_credit_ns": 0,
+            "live_debited_cpu_ns": 204433837,
+            "live_owners": 0,
+            "paid_cpu_debit_ns": 204484152,
+            "remaining_paid_credit_ns": 68390836,
+            "schema": "public-v3-local-actual-cpu-flow-v1",
+            "settled_full_cpu_ns": 204484152,
+            "settlement_discard_ns": 0,
+            "settlement_residual_cpu_ns": 50315,
+            "stored_credit_ns": 68390836,
+            "unsettled_known_live_cpu_ns": 0
+          },
+          "elapsed_ns": 149486018,
+          "original_page_budget_seconds": 30,
+          "request_index": 3,
+          "requested_packets": 1,
+          "result": {
+            "Ok": "30f52a4139909cc0968bc7bcf185baaeb5e90e52506a04a3cf478dfc10531932"
+          },
+          "schema": "history-original-honest-page-observation-v1"
+        },
+        {
+          "active_tip": "3bb89801146258bc0b3e13ae5c4d51dda000cbcd05e213722ef0ccff4e351451",
+          "cpu_flow": {
+            "balance_identity_verified": true,
+            "booked_reservation_ns": 0,
+            "credited_refill_ns": 318304592,
+            "discarded_refill_ns": 0,
+            "initial_credit_ns": 0,
+            "live_debited_cpu_ns": 254781479,
+            "live_owners": 0,
+            "paid_cpu_debit_ns": 254833537,
+            "remaining_paid_credit_ns": 63471055,
+            "schema": "public-v3-local-actual-cpu-flow-v1",
+            "settled_full_cpu_ns": 254833537,
+            "settlement_discard_ns": 0,
+            "settlement_residual_cpu_ns": 52058,
+            "stored_credit_ns": 63471055,
+            "unsettled_known_live_cpu_ns": 0
+          },
+          "elapsed_ns": 183115207,
+          "original_page_budget_seconds": 30,
+          "request_index": 4,
+          "requested_packets": 1,
+          "result": {
+            "Ok": "21e524263c10674ff33a1e5fa2c6a3def34e49ca4adf6625643f99dc63ac7a59"
+          },
+          "schema": "history-original-honest-page-observation-v1"
+        },
+        {
+          "active_tip": "3bb89801146258bc0b3e13ae5c4d51dda000cbcd05e213722ef0ccff4e351451",
+          "cpu_flow": {
+            "balance_identity_verified": true,
+            "booked_reservation_ns": 0,
+            "credited_refill_ns": 366694137,
+            "discarded_refill_ns": 0,
+            "initial_credit_ns": 0,
+            "live_debited_cpu_ns": 298732488,
+            "live_owners": 0,
+            "paid_cpu_debit_ns": 298786179,
+            "remaining_paid_credit_ns": 67907958,
+            "schema": "public-v3-local-actual-cpu-flow-v1",
+            "settled_full_cpu_ns": 298786179,
+            "settlement_discard_ns": 0,
+            "settlement_residual_cpu_ns": 53691,
+            "stored_credit_ns": 67907958,
+            "unsettled_known_live_cpu_ns": 0
+          },
+          "elapsed_ns": 188601400,
+          "original_page_budget_seconds": 30,
+          "request_index": 5,
+          "requested_packets": 1,
+          "result": {
+            "Ok": "045c48490fad3c22e0db74621b9f5d4d206cc2736a160a45244e03f3259666bc"
+          },
+          "schema": "history-original-honest-page-observation-v1"
+        },
+        {
+          "active_tip": "f22489cecd7347edb4e33367dfe9f2f77e0872a3b24598ad1598f832086b9b05",
+          "cpu_flow": {
+            "balance_identity_verified": true,
+            "booked_reservation_ns": 0,
+            "credited_refill_ns": 504058943,
+            "discarded_refill_ns": 0,
+            "initial_credit_ns": 0,
+            "live_debited_cpu_ns": 478541361,
+            "live_owners": 0,
+            "paid_cpu_debit_ns": 478596564,
+            "remaining_paid_credit_ns": 25462379,
+            "schema": "public-v3-local-actual-cpu-flow-v1",
+            "settled_full_cpu_ns": 478596564,
+            "settlement_discard_ns": 0,
+            "settlement_residual_cpu_ns": 55203,
+            "stored_credit_ns": 25462379,
+            "unsettled_known_live_cpu_ns": 0
+          },
+          "elapsed_ns": 548461431,
+          "original_page_budget_seconds": 30,
+          "request_index": 6,
+          "requested_packets": 1,
+          "result": {
+            "Ok": "f22489cecd7347edb4e33367dfe9f2f77e0872a3b24598ad1598f832086b9b05"
+          },
+          "schema": "history-original-honest-page-observation-v1"
+        }
+      ]
+    },
+    "candidate-corrected-native-inactive": {
+      "pages": 7,
+      "successes": 7,
+      "sum_request_elapsed_ns": 1730309621,
+      "final_paid_cpu_ns": 408623700,
+      "same_packet_ids_as_baseline": true,
+      "same_active_tips_as_baseline": true,
+      "initial_credit_zero": true,
+      "all_balance_identities_verified": true,
+      "raw_rows": [
+        {
+          "active_tip": "3bb89801146258bc0b3e13ae5c4d51dda000cbcd05e213722ef0ccff4e351451",
+          "cpu_flow": {
+            "balance_identity_verified": true,
+            "booked_reservation_ns": 0,
+            "credited_refill_ns": 109947966,
+            "discarded_refill_ns": 0,
+            "initial_credit_ns": 0,
+            "live_debited_cpu_ns": 36719536,
+            "live_owners": 0,
+            "paid_cpu_debit_ns": 36721359,
+            "remaining_paid_credit_ns": 73226607,
+            "schema": "public-v3-local-actual-cpu-flow-v1",
+            "settled_full_cpu_ns": 36721359,
+            "settlement_discard_ns": 0,
+            "settlement_residual_cpu_ns": 1823,
+            "stored_credit_ns": 73226607,
+            "unsettled_known_live_cpu_ns": 0
+          },
+          "elapsed_ns": 440286825,
+          "original_page_budget_seconds": 30,
+          "request_index": 0,
+          "requested_packets": 1,
+          "result": {
+            "Ok": "41a331516e463560383cceff9671ba86767ef42efce272b56c32b0e79853f3f8"
+          },
+          "schema": "history-original-honest-page-observation-v1"
+        },
+        {
+          "active_tip": "3bb89801146258bc0b3e13ae5c4d51dda000cbcd05e213722ef0ccff4e351451",
+          "cpu_flow": {
+            "balance_identity_verified": true,
+            "booked_reservation_ns": 0,
+            "credited_refill_ns": 146814081,
+            "discarded_refill_ns": 0,
+            "initial_credit_ns": 0,
+            "live_debited_cpu_ns": 73252004,
+            "live_owners": 0,
+            "paid_cpu_debit_ns": 73255659,
+            "remaining_paid_credit_ns": 73558422,
+            "schema": "public-v3-local-actual-cpu-flow-v1",
+            "settled_full_cpu_ns": 73255659,
+            "settlement_discard_ns": 0,
+            "settlement_residual_cpu_ns": 3655,
+            "stored_credit_ns": 73558422,
+            "unsettled_known_live_cpu_ns": 0
+          },
+          "elapsed_ns": 146562732,
+          "original_page_budget_seconds": 30,
+          "request_index": 1,
+          "requested_packets": 1,
+          "result": {
+            "Ok": "3d7c5034a6bf09688bcfd0f0f50788bb6ad4ca9dc22d4a1d497448c134713ef2"
+          },
+          "schema": "history-original-honest-page-observation-v1"
+        },
+        {
+          "active_tip": "3bb89801146258bc0b3e13ae5c4d51dda000cbcd05e213722ef0ccff4e351451",
+          "cpu_flow": {
+            "balance_identity_verified": true,
+            "booked_reservation_ns": 0,
+            "credited_refill_ns": 183762568,
+            "discarded_refill_ns": 0,
+            "initial_credit_ns": 0,
+            "live_debited_cpu_ns": 111880529,
+            "live_owners": 0,
+            "paid_cpu_debit_ns": 111885666,
+            "remaining_paid_credit_ns": 71876902,
+            "schema": "public-v3-local-actual-cpu-flow-v1",
+            "settled_full_cpu_ns": 111885666,
+            "settlement_discard_ns": 0,
+            "settlement_residual_cpu_ns": 5137,
+            "stored_credit_ns": 71876902,
+            "unsettled_known_live_cpu_ns": 0
+          },
+          "elapsed_ns": 146769552,
+          "original_page_budget_seconds": 30,
+          "request_index": 2,
+          "requested_packets": 1,
+          "result": {
+            "Ok": "1081c954a8508b0a005990b0188ce72c8b05438df15f4c02c77c1b110dca8238"
+          },
+          "schema": "history-original-honest-page-observation-v1"
+        },
+        {
+          "active_tip": "3bb89801146258bc0b3e13ae5c4d51dda000cbcd05e213722ef0ccff4e351451",
+          "cpu_flow": {
+            "balance_identity_verified": true,
+            "booked_reservation_ns": 0,
+            "credited_refill_ns": 224599949,
+            "discarded_refill_ns": 0,
+            "initial_credit_ns": 0,
+            "live_debited_cpu_ns": 157755185,
+            "live_owners": 0,
+            "paid_cpu_debit_ns": 157761995,
+            "remaining_paid_credit_ns": 66837954,
+            "schema": "public-v3-local-actual-cpu-flow-v1",
+            "settled_full_cpu_ns": 157761995,
+            "settlement_discard_ns": 0,
+            "settlement_residual_cpu_ns": 6810,
+            "stored_credit_ns": 66837954,
+            "unsettled_known_live_cpu_ns": 0
+          },
+          "elapsed_ns": 162572422,
+          "original_page_budget_seconds": 30,
+          "request_index": 3,
+          "requested_packets": 1,
+          "result": {
+            "Ok": "30f52a4139909cc0968bc7bcf185baaeb5e90e52506a04a3cf478dfc10531932"
+          },
+          "schema": "history-original-honest-page-observation-v1"
+        },
+        {
+          "active_tip": "3bb89801146258bc0b3e13ae5c4d51dda000cbcd05e213722ef0ccff4e351451",
+          "cpu_flow": {
+            "balance_identity_verified": true,
+            "booked_reservation_ns": 0,
+            "credited_refill_ns": 268239498,
+            "discarded_refill_ns": 0,
+            "initial_credit_ns": 0,
+            "live_debited_cpu_ns": 196121230,
+            "live_owners": 0,
+            "paid_cpu_debit_ns": 196130093,
+            "remaining_paid_credit_ns": 72109405,
+            "schema": "public-v3-local-actual-cpu-flow-v1",
+            "settled_full_cpu_ns": 196130093,
+            "settlement_discard_ns": 0,
+            "settlement_residual_cpu_ns": 8863,
+            "stored_credit_ns": 72109405,
+            "unsettled_known_live_cpu_ns": 0
+          },
+          "elapsed_ns": 173528454,
+          "original_page_budget_seconds": 30,
+          "request_index": 4,
+          "requested_packets": 1,
+          "result": {
+            "Ok": "21e524263c10674ff33a1e5fa2c6a3def34e49ca4adf6625643f99dc63ac7a59"
+          },
+          "schema": "history-original-honest-page-observation-v1"
+        },
+        {
+          "active_tip": "3bb89801146258bc0b3e13ae5c4d51dda000cbcd05e213722ef0ccff4e351451",
+          "cpu_flow": {
+            "balance_identity_verified": true,
+            "booked_reservation_ns": 0,
+            "credited_refill_ns": 306749302,
+            "discarded_refill_ns": 0,
+            "initial_credit_ns": 0,
+            "live_debited_cpu_ns": 235044019,
+            "live_owners": 0,
+            "paid_cpu_debit_ns": 235054705,
+            "remaining_paid_credit_ns": 71694597,
+            "schema": "public-v3-local-actual-cpu-flow-v1",
+            "settled_full_cpu_ns": 235054705,
+            "settlement_discard_ns": 0,
+            "settlement_residual_cpu_ns": 10686,
+            "stored_credit_ns": 71694597,
+            "unsettled_known_live_cpu_ns": 0
+          },
+          "elapsed_ns": 152870015,
+          "original_page_budget_seconds": 30,
+          "request_index": 5,
+          "requested_packets": 1,
+          "result": {
+            "Ok": "045c48490fad3c22e0db74621b9f5d4d206cc2736a160a45244e03f3259666bc"
+          },
+          "schema": "history-original-honest-page-observation-v1"
+        },
+        {
+          "active_tip": "f22489cecd7347edb4e33367dfe9f2f77e0872a3b24598ad1598f832086b9b05",
+          "cpu_flow": {
+            "balance_identity_verified": true,
+            "booked_reservation_ns": 0,
+            "credited_refill_ns": 433904283,
+            "discarded_refill_ns": 0,
+            "initial_credit_ns": 0,
+            "live_debited_cpu_ns": 408611762,
+            "live_owners": 0,
+            "paid_cpu_debit_ns": 408623700,
+            "remaining_paid_credit_ns": 25280583,
+            "schema": "public-v3-local-actual-cpu-flow-v1",
+            "settled_full_cpu_ns": 408623700,
+            "settlement_discard_ns": 0,
+            "settlement_residual_cpu_ns": 11938,
+            "stored_credit_ns": 25280583,
+            "unsettled_known_live_cpu_ns": 0
+          },
+          "elapsed_ns": 507719621,
+          "original_page_budget_seconds": 30,
+          "request_index": 6,
+          "requested_packets": 1,
+          "result": {
+            "Ok": "f22489cecd7347edb4e33367dfe9f2f77e0872a3b24598ad1598f832086b9b05"
+          },
+          "schema": "history-original-honest-page-observation-v1"
+        }
+      ]
+    }
+  }
+}

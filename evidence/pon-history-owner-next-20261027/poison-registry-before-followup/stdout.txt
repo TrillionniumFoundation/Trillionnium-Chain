@@ -1,0 +1,11 @@
+
+running 1 test
+test ingress::public_v3::tests::live_cpu_poisoned_request_registry_disables_global_starts_without_deadlock ... FAILED
+
+failures:
+
+failures:
+    ingress::public_v3::tests::live_cpu_poisoned_request_registry_disables_global_starts_without_deadlock
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 768 filtered out; finished in 0.00s
+

@@ -1,0 +1,1026 @@
+{
+  "complete_W1_quantum_oracle": false,
+  "components": {
+    "fq32-multiply": {
+      "T_count_if_each_exact_Toffoli_uses_7_T": 44898,
+      "T_count_is_conditional_decomposition_not_transpiled": true,
+      "Toffoli_dependency_depth_with_Clifford_cost_ignored": 274,
+      "checks": [
+        {
+          "a": 0,
+          "actual": 4274652166,
+          "b": 0,
+          "expected": 4274652166,
+          "passed": true,
+          "xor_output_seed": 4274652166
+        },
+        {
+          "a": 0,
+          "actual": 2151623169,
+          "b": 1,
+          "expected": 2151623169,
+          "passed": true,
+          "xor_output_seed": 2151623169
+        },
+        {
+          "a": 0,
+          "actual": 1564120445,
+          "b": 2,
+          "expected": 1564120445,
+          "passed": true,
+          "xor_output_seed": 1564120445
+        },
+        {
+          "a": 0,
+          "actual": 4148799327,
+          "b": 4294967290,
+          "expected": 4148799327,
+          "passed": true,
+          "xor_output_seed": 4148799327
+        },
+        {
+          "a": 0,
+          "actual": 4029590820,
+          "b": 4294967291,
+          "expected": 4029590820,
+          "passed": true,
+          "xor_output_seed": 4029590820
+        },
+        {
+          "a": 0,
+          "actual": 478725345,
+          "b": 4294967292,
+          "expected": 478725345,
+          "passed": true,
+          "xor_output_seed": 478725345
+        },
+        {
+          "a": 0,
+          "actual": 3553221454,
+          "b": 4294967295,
+          "expected": 3553221454,
+          "passed": true,
+          "xor_output_seed": 3553221454
+        },
+        {
+          "a": 1,
+          "actual": 484258239,
+          "b": 0,
+          "expected": 484258239,
+          "passed": true,
+          "xor_output_seed": 484258239
+        },
+        {
+          "a": 1,
+          "actual": 1332821319,
+          "b": 1,
+          "expected": 1332821319,
+          "passed": true,
+          "xor_output_seed": 1332821318
+        },
+        {
+          "a": 1,
+          "actual": 2048105721,
+          "b": 2,
+          "expected": 2048105721,
+          "passed": true,
+          "xor_output_seed": 2048105723
+        },
+        {
+          "a": 1,
+          "actual": 970743557,
+          "b": 4294967290,
+          "expected": 970743557,
+          "passed": true,
+          "xor_output_seed": 3324223743
+        },
+        {
+          "a": 1,
+          "actual": 3374125374,
+          "b": 4294967291,
+          "expected": 3374125374,
+          "passed": true,
+          "xor_output_seed": 3374125374
+        },
+        {
+          "a": 1,
+          "actual": 95046945,
+          "b": 4294967292,
+          "expected": 95046945,
+          "passed": true,
+          "xor_output_seed": 95046944
+        },
+        {
+          "a": 1,
+          "actual": 2479492602,
+          "b": 4294967295,
+          "expected": 2479492602,
+          "passed": true,
+          "xor_output_seed": 2479492606
+        },
+        {
+          "a": 2,
+          "actual": 3966090119,
+          "b": 0,
+          "expected": 3966090119,
+          "passed": true,
+          "xor_output_seed": 3966090119
+        },
+        {
+          "a": 2,
+          "actual": 2953295900,
+          "b": 1,
+          "expected": 2953295900,
+          "passed": true,
+          "xor_output_seed": 2953295902
+        },
+        {
+          "a": 2,
+          "actual": 3459058777,
+          "b": 2,
+          "expected": 3459058777,
+          "passed": true,
+          "xor_output_seed": 3459058781
+        },
+        {
+          "a": 2,
+          "actual": 3692621247,
+          "b": 4294967290,
+          "expected": 3692621247,
+          "passed": true,
+          "xor_output_seed": 602346054
+        },
+        {
+          "a": 2,
+          "actual": 1904290070,
+          "b": 4294967291,
+          "expected": 1904290070,
+          "passed": true,
+          "xor_output_seed": 1904290070
+        },
+        {
+          "a": 2,
+          "actual": 1711897716,
+          "b": 4294967292,
+          "expected": 1711897716,
+          "passed": true,
+          "xor_output_seed": 1711897718
+        },
+        {
+          "a": 2,
+          "actual": 54298470,
+          "b": 4294967295,
+          "expected": 54298470,
+          "passed": true,
+          "xor_output_seed": 54298478
+        },
+        {
+          "a": 4294967290,
+          "actual": 2646798635,
+          "b": 0,
+          "expected": 2646798635,
+          "passed": true,
+          "xor_output_seed": 2646798635
+        },
+        {
+          "a": 4294967290,
+          "actual": 264331836,
+          "b": 1,
+          "expected": 264331836,
+          "passed": true,
+          "xor_output_seed": 4030635462
+        },
+        {
+          "a": 4294967290,
+          "actual": 2695794525,
+          "b": 2,
+          "expected": 2695794525,
+          "passed": true,
+          "xor_output_seed": 1599172772
+        },
+        {
+          "a": 4294967290,
+          "actual": 3379339837,
+          "b": 4294967290,
+          "expected": 3379339837,
+          "passed": true,
+          "xor_output_seed": 3379339836
+        },
+        {
+          "a": 4294967290,
+          "actual": 1647898906,
+          "b": 4294967291,
+          "expected": 1647898906,
+          "passed": true,
+          "xor_output_seed": 1647898906
+        },
+        {
+          "a": 4294967290,
+          "actual": 1182217588,
+          "b": 4294967292,
+          "expected": 1182217588,
+          "passed": true,
+          "xor_output_seed": 3112749710
+        },
+        {
+          "a": 4294967290,
+          "actual": 3273334308,
+          "b": 4294967295,
+          "expected": 3273334308,
+          "passed": true,
+          "xor_output_seed": 1021632979
+        },
+        {
+          "a": 4294967291,
+          "actual": 114259917,
+          "b": 0,
+          "expected": 114259917,
+          "passed": true,
+          "xor_output_seed": 114259917
+        },
+        {
+          "a": 4294967291,
+          "actual": 1480293890,
+          "b": 1,
+          "expected": 1480293890,
+          "passed": true,
+          "xor_output_seed": 1480293890
+        },
+        {
+          "a": 4294967291,
+          "actual": 999485996,
+          "b": 2,
+          "expected": 999485996,
+          "passed": true,
+          "xor_output_seed": 999485996
+        },
+        {
+          "a": 4294967291,
+          "actual": 1509367230,
+          "b": 4294967290,
+          "expected": 1509367230,
+          "passed": true,
+          "xor_output_seed": 1509367230
+        },
+        {
+          "a": 4294967291,
+          "actual": 2440432485,
+          "b": 4294967291,
+          "expected": 2440432485,
+          "passed": true,
+          "xor_output_seed": 2440432485
+        },
+        {
+          "a": 4294967291,
+          "actual": 149613701,
+          "b": 4294967292,
+          "expected": 149613701,
+          "passed": true,
+          "xor_output_seed": 149613701
+        },
+        {
+          "a": 4294967291,
+          "actual": 842296237,
+          "b": 4294967295,
+          "expected": 842296237,
+          "passed": true,
+          "xor_output_seed": 842296237
+        },
+        {
+          "a": 4294967292,
+          "actual": 3933170154,
+          "b": 0,
+          "expected": 3933170154,
+          "passed": true,
+          "xor_output_seed": 3933170154
+        },
+        {
+          "a": 4294967292,
+          "actual": 1706524107,
+          "b": 1,
+          "expected": 1706524107,
+          "passed": true,
+          "xor_output_seed": 1706524106
+        },
+        {
+          "a": 4294967292,
+          "actual": 3080533040,
+          "b": 2,
+          "expected": 3080533040,
+          "passed": true,
+          "xor_output_seed": 3080533042
+        },
+        {
+          "a": 4294967292,
+          "actual": 3943796415,
+          "b": 4294967290,
+          "expected": 3943796415,
+          "passed": true,
+          "xor_output_seed": 351170885
+        },
+        {
+          "a": 4294967292,
+          "actual": 3375438765,
+          "b": 4294967291,
+          "expected": 3375438765,
+          "passed": true,
+          "xor_output_seed": 3375438765
+        },
+        {
+          "a": 4294967292,
+          "actual": 3121371395,
+          "b": 4294967292,
+          "expected": 3121371395,
+          "passed": true,
+          "xor_output_seed": 3121371394
+        },
+        {
+          "a": 4294967292,
+          "actual": 1093972267,
+          "b": 4294967295,
+          "expected": 1093972267,
+          "passed": true,
+          "xor_output_seed": 1093972271
+        },
+        {
+          "a": 4294967295,
+          "actual": 4281282096,
+          "b": 0,
+          "expected": 4281282096,
+          "passed": true,
+          "xor_output_seed": 4281282096
+        },
+        {
+          "a": 4294967295,
+          "actual": 1605171032,
+          "b": 1,
+          "expected": 1605171032,
+          "passed": true,
+          "xor_output_seed": 1605171036
+        },
+        {
+          "a": 4294967295,
+          "actual": 3643210354,
+          "b": 2,
+          "expected": 3643210354,
+          "passed": true,
+          "xor_output_seed": 3643210362
+        },
+        {
+          "a": 4294967295,
+          "actual": 1553993403,
+          "b": 4294967290,
+          "expected": 1553993403,
+          "passed": true,
+          "xor_output_seed": 2740973900
+        },
+        {
+          "a": 4294967295,
+          "actual": 1107352425,
+          "b": 4294967291,
+          "expected": 1107352425,
+          "passed": true,
+          "xor_output_seed": 1107352425
+        },
+        {
+          "a": 4294967295,
+          "actual": 95228527,
+          "b": 4294967292,
+          "expected": 95228527,
+          "passed": true,
+          "xor_output_seed": 95228523
+        },
+        {
+          "a": 4294967295,
+          "actual": 1409257794,
+          "b": 4294967295,
+          "expected": 1409257794,
+          "passed": true,
+          "xor_output_seed": 1409257810
+        },
+        {
+          "a": 3420737073,
+          "actual": 2942477479,
+          "b": 1442715519,
+          "expected": 2942477479,
+          "passed": true,
+          "xor_output_seed": 1983625193
+        },
+        {
+          "a": 4005442862,
+          "actual": 1877483279,
+          "b": 3725766876,
+          "expected": 1877483279,
+          "passed": true,
+          "xor_output_seed": 4079823538
+        },
+        {
+          "a": 3136204423,
+          "actual": 2107093942,
+          "b": 2253472923,
+          "expected": 2107093942,
+          "passed": true,
+          "xor_output_seed": 476862761
+        },
+        {
+          "a": 1495935729,
+          "actual": 179594051,
+          "b": 3191032492,
+          "expected": 179594051,
+          "passed": true,
+          "xor_output_seed": 3309908247
+        },
+        {
+          "a": 239939622,
+          "actual": 3297255360,
+          "b": 1770503739,
+          "expected": 3297255360,
+          "passed": true,
+          "xor_output_seed": 1770167526
+        },
+        {
+          "a": 4250612230,
+          "actual": 3787592471,
+          "b": 1248552805,
+          "expected": 3787592471,
+          "passed": true,
+          "xor_output_seed": 1528594161
+        },
+        {
+          "a": 4010825857,
+          "actual": 4002818250,
+          "b": 4009676518,
+          "expected": 4002818250,
+          "passed": true,
+          "xor_output_seed": 3880199746
+        },
+        {
+          "a": 1555816008,
+          "actual": 428080964,
+          "b": 1939088163,
+          "expected": 428080964,
+          "passed": true,
+          "xor_output_seed": 294288790
+        },
+        {
+          "a": 1090651134,
+          "actual": 715317237,
+          "b": 3373162835,
+          "expected": 715317237,
+          "passed": true,
+          "xor_output_seed": 1459055325
+        },
+        {
+          "a": 2403009706,
+          "actual": 2846757017,
+          "b": 3714270705,
+          "expected": 2846757017,
+          "passed": true,
+          "xor_output_seed": 273464162
+        },
+        {
+          "a": 770142079,
+          "actual": 344049873,
+          "b": 2806915259,
+          "expected": 344049873,
+          "passed": true,
+          "xor_output_seed": 3375494794
+        },
+        {
+          "a": 1429492760,
+          "actual": 118282456,
+          "b": 2775519024,
+          "expected": 118282456,
+          "passed": true,
+          "xor_output_seed": 192903655
+        },
+        {
+          "a": 3284851969,
+          "actual": 2906732530,
+          "b": 3259284150,
+          "expected": 2906732530,
+          "passed": true,
+          "xor_output_seed": 1588879968
+        },
+        {
+          "a": 391593490,
+          "actual": 2707805724,
+          "b": 1464595929,
+          "expected": 2707805724,
+          "passed": true,
+          "xor_output_seed": 487153803
+        },
+        {
+          "a": 3628279013,
+          "actual": 487867666,
+          "b": 4292938591,
+          "expected": 487867666,
+          "passed": true,
+          "xor_output_seed": 4186323703
+        },
+        {
+          "a": 2469321879,
+          "actual": 2042283442,
+          "b": 3145059198,
+          "expected": 2042283442,
+          "passed": true,
+          "xor_output_seed": 2874725281
+        },
+        {
+          "a": 1834791229,
+          "actual": 2208253541,
+          "b": 4043669907,
+          "expected": 2208253541,
+          "passed": true,
+          "xor_output_seed": 3826569792
+        },
+        {
+          "a": 1758512675,
+          "actual": 3224123920,
+          "b": 3582716817,
+          "expected": 3224123920,
+          "passed": true,
+          "xor_output_seed": 2908909114
+        },
+        {
+          "a": 2724752414,
+          "actual": 2061635253,
+          "b": 2675834275,
+          "expected": 2061635253,
+          "passed": true,
+          "xor_output_seed": 2063885525
+        },
+        {
+          "a": 2486332213,
+          "actual": 1280150230,
+          "b": 3023926517,
+          "expected": 1280150230,
+          "passed": true,
+          "xor_output_seed": 3395636118
+        },
+        {
+          "a": 3429938977,
+          "actual": 1517707264,
+          "b": 906733046,
+          "expected": 1517707264,
+          "passed": true,
+          "xor_output_seed": 2632368832
+        },
+        {
+          "a": 2223823999,
+          "actual": 814390023,
+          "b": 2208688693,
+          "expected": 814390023,
+          "passed": true,
+          "xor_output_seed": 2464692152
+        },
+        {
+          "a": 356168147,
+          "actual": 3209215220,
+          "b": 105379414,
+          "expected": 3209215220,
+          "passed": true,
+          "xor_output_seed": 1911589577
+        },
+        {
+          "a": 2956614447,
+          "actual": 312551209,
+          "b": 832200419,
+          "expected": 312551209,
+          "passed": true,
+          "xor_output_seed": 664431419
+        },
+        {
+          "a": 1445474171,
+          "actual": 1235868301,
+          "b": 2665352896,
+          "expected": 1235868301,
+          "passed": true,
+          "xor_output_seed": 3138771291
+        },
+        {
+          "a": 1429173199,
+          "actual": 482153771,
+          "b": 2489671962,
+          "expected": 482153771,
+          "passed": true,
+          "xor_output_seed": 3925417433
+        },
+        {
+          "a": 329704878,
+          "actual": 2639203062,
+          "b": 223530442,
+          "expected": 2639203062,
+          "passed": true,
+          "xor_output_seed": 154776341
+        },
+        {
+          "a": 2874974957,
+          "actual": 3088257145,
+          "b": 2719005848,
+          "expected": 3088257145,
+          "passed": true,
+          "xor_output_seed": 3052599317
+        },
+        {
+          "a": 1498924806,
+          "actual": 4153379909,
+          "b": 1677969185,
+          "expected": 4153379909,
+          "passed": true,
+          "xor_output_seed": 3960591962
+        },
+        {
+          "a": 30422874,
+          "actual": 2337831586,
+          "b": 3627870916,
+          "expected": 2337831586,
+          "passed": true,
+          "xor_output_seed": 765152280
+        },
+        {
+          "a": 1810863779,
+          "actual": 1796817185,
+          "b": 2379996544,
+          "expected": 1796817185,
+          "passed": true,
+          "xor_output_seed": 4148958779
+        },
+        {
+          "a": 3974704057,
+          "actual": 2653173951,
+          "b": 3768762458,
+          "expected": 2653173951,
+          "passed": true,
+          "xor_output_seed": 1533504140
+        },
+        {
+          "a": 3533279636,
+          "actual": 2465821712,
+          "b": 2365858709,
+          "expected": 2465821712,
+          "passed": true,
+          "xor_output_seed": 844862304
+        },
+        {
+          "a": 4256106768,
+          "actual": 867177080,
+          "b": 3956706012,
+          "expected": 867177080,
+          "passed": true,
+          "xor_output_seed": 42196082
+        },
+        {
+          "a": 873956544,
+          "actual": 1873029794,
+          "b": 1454266612,
+          "expected": 1873029794,
+          "passed": true,
+          "xor_output_seed": 2702786756
+        },
+        {
+          "a": 1480193923,
+          "actual": 2306023782,
+          "b": 3717586617,
+          "expected": 2306023782,
+          "passed": true,
+          "xor_output_seed": 602524897
+        },
+        {
+          "a": 2426026235,
+          "actual": 2347078098,
+          "b": 36765906,
+          "expected": 2347078098,
+          "passed": true,
+          "xor_output_seed": 157006805
+        },
+        {
+          "a": 3112594515,
+          "actual": 561374041,
+          "b": 3625270066,
+          "expected": 561374041,
+          "passed": true,
+          "xor_output_seed": 276214717
+        },
+        {
+          "a": 1012548771,
+          "actual": 1174025171,
+          "b": 2200151984,
+          "expected": 1174025171,
+          "passed": true,
+          "xor_output_seed": 2202644952
+        },
+        {
+          "a": 1043130031,
+          "actual": 37804029,
+          "b": 1767312963,
+          "expected": 37804029,
+          "passed": true,
+          "xor_output_seed": 1686268285
+        },
+        {
+          "a": 2698983960,
+          "actual": 3590005472,
+          "b": 1168148457,
+          "expected": 3590005472,
+          "passed": true,
+          "xor_output_seed": 292086561
+        },
+        {
+          "a": 106383830,
+          "actual": 3210626035,
+          "b": 3124629150,
+          "expected": 3210626035,
+          "passed": true,
+          "xor_output_seed": 2609925153
+        },
+        {
+          "a": 4065845592,
+          "actual": 542807349,
+          "b": 3532173189,
+          "expected": 542807349,
+          "passed": true,
+          "xor_output_seed": 3853267060
+        },
+        {
+          "a": 1316867396,
+          "actual": 3093551947,
+          "b": 986561013,
+          "expected": 3093551947,
+          "passed": true,
+          "xor_output_seed": 2436276264
+        },
+        {
+          "a": 4048401012,
+          "actual": 1772950550,
+          "b": 1568085578,
+          "expected": 1772950550,
+          "passed": true,
+          "xor_output_seed": 1469840192
+        },
+        {
+          "a": 1132038780,
+          "actual": 3765829332,
+          "b": 3773009600,
+          "expected": 3765829332,
+          "passed": true,
+          "xor_output_seed": 2587473931
+        },
+        {
+          "a": 1860033819,
+          "actual": 1989616403,
+          "b": 1091152349,
+          "expected": 1989616403,
+          "passed": true,
+          "xor_output_seed": 751921863
+        },
+        {
+          "a": 2904099214,
+          "actual": 4036647763,
+          "b": 1405966958,
+          "expected": 4036647763,
+          "passed": true,
+          "xor_output_seed": 180337448
+        },
+        {
+          "a": 1597329021,
+          "actual": 3040928528,
+          "b": 4248167595,
+          "expected": 3040928528,
+          "passed": true,
+          "xor_output_seed": 125731538
+        },
+        {
+          "a": 1770681803,
+          "actual": 3052147779,
+          "b": 3187515756,
+          "expected": 3052147779,
+          "passed": true,
+          "xor_output_seed": 3744227112
+        },
+        {
+          "a": 2585368245,
+          "actual": 4284755371,
+          "b": 1523888179,
+          "expected": 4284755371,
+          "passed": true,
+          "xor_output_seed": 882817259
+        },
+        {
+          "a": 4250608190,
+          "actual": 4293202584,
+          "b": 1336219877,
+          "expected": 4293202584,
+          "passed": true,
+          "xor_output_seed": 338368424
+        },
+        {
+          "a": 1693846082,
+          "actual": 3385351292,
+          "b": 4032777880,
+          "expected": 3385351292,
+          "passed": true,
+          "xor_output_seed": 3094949552
+        },
+        {
+          "a": 970041591,
+          "actual": 948804419,
+          "b": 1068322862,
+          "expected": 948804419,
+          "passed": true,
+          "xor_output_seed": 281060353
+        },
+        {
+          "a": 668538501,
+          "actual": 580021325,
+          "b": 3244693137,
+          "expected": 580021325,
+          "passed": true,
+          "xor_output_seed": 754293003
+        },
+        {
+          "a": 3673545335,
+          "actual": 1137165894,
+          "b": 1998888397,
+          "expected": 1137165894,
+          "passed": true,
+          "xor_output_seed": 1725638795
+        },
+        {
+          "a": 4112450432,
+          "actual": 927588776,
+          "b": 1222030590,
+          "expected": 927588776,
+          "passed": true,
+          "xor_output_seed": 2075845051
+        },
+        {
+          "a": 2922308216,
+          "actual": 1449937041,
+          "b": 563261949,
+          "expected": 1449937041,
+          "passed": true,
+          "xor_output_seed": 4160636756
+        },
+        {
+          "a": 4121479672,
+          "actual": 762426305,
+          "b": 1468887254,
+          "expected": 762426305,
+          "passed": true,
+          "xor_output_seed": 1884320894
+        },
+        {
+          "a": 2485521818,
+          "actual": 1466308273,
+          "b": 3329242916,
+          "expected": 1466308273,
+          "passed": true,
+          "xor_output_seed": 414436775
+        },
+        {
+          "a": 2500629080,
+          "actual": 574970817,
+          "b": 2006484419,
+          "expected": 574970817,
+          "passed": true,
+          "xor_output_seed": 457584681
+        },
+        {
+          "a": 298177707,
+          "actual": 2870555846,
+          "b": 3469805152,
+          "expected": 2870555846,
+          "passed": true,
+          "xor_output_seed": 1703440975
+        },
+        {
+          "a": 4100788166,
+          "actual": 3864214347,
+          "b": 4010684029,
+          "expected": 3864214347,
+          "passed": true,
+          "xor_output_seed": 4168363885
+        },
+        {
+          "a": 3731200391,
+          "actual": 677346208,
+          "b": 2373807379,
+          "expected": 677346208,
+          "passed": true,
+          "xor_output_seed": 1412759568
+        }
+      ],
+      "classical_construction_and_basis_check_wall_seconds": 0.6287013290057075,
+      "clean_scratch_qubits": 6454,
+      "compute_gates": 9701,
+      "gate_counts": {
+        "CNOT": 13014,
+        "Toffoli": 6414,
+        "X": 6
+      },
+      "input_qubits": 64,
+      "logical_qubits": 6550,
+      "netlist_bytes": 156030,
+      "netlist_sha256": "59745b99219f7205bc5c0dbf771bd64827202f581706b7e40b8219c16afeea34",
+      "output_qubits": 32,
+      "phase_oracle_complete": false,
+      "physical_resources_estimated": false,
+      "serial_dependency_depth": 884,
+      "total_gates_including_copy_and_explicit_uncomputation": 19434
+    },
+    "sha256-compression-64-rounds": {
+      "T_count_if_each_exact_Toffoli_uses_7_T": 541142,
+      "T_count_is_conditional_decomposition_not_transpiled": true,
+      "Toffoli_dependency_depth_with_Clifford_cost_ignored": 3720,
+      "checks": [
+        {
+          "actual": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "compression_calls": 1,
+          "expected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "message_hex": "",
+          "passed": true
+        },
+        {
+          "actual": "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad",
+          "compression_calls": 1,
+          "expected": "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad",
+          "message_hex": "616263",
+          "passed": true
+        },
+        {
+          "actual": "463eb28e72f82e0a96c0a4cc53690c571281131f672aa229e0d45ae59b598b59",
+          "compression_calls": 1,
+          "expected": "463eb28e72f82e0a96c0a4cc53690c571281131f672aa229e0d45ae59b598b59",
+          "message_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f30313233343536",
+          "passed": true
+        },
+        {
+          "actual": "da2ae4d6b36748f2a318f23e7ab1dfdf45acdc9d049bd80e59de82a60895f562",
+          "compression_calls": 2,
+          "expected": "da2ae4d6b36748f2a318f23e7ab1dfdf45acdc9d049bd80e59de82a60895f562",
+          "message_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f3031323334353637",
+          "passed": true
+        },
+        {
+          "actual": "fdeab9acf3710362bd2658cdc9a29e8f9c757fcf9811603a8c447cd1d9151108",
+          "compression_calls": 2,
+          "expected": "fdeab9acf3710362bd2658cdc9a29e8f9c757fcf9811603a8c447cd1d9151108",
+          "message_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f",
+          "passed": true
+        },
+        {
+          "actual": "4bfd2c8b6f1eec7a2afeb48b934ee4b2694182027e6d0fc075074f2fabb31781",
+          "compression_calls": 2,
+          "expected": "4bfd2c8b6f1eec7a2afeb48b934ee4b2694182027e6d0fc075074f2fabb31781",
+          "message_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f40",
+          "passed": true
+        },
+        {
+          "actual": "40aff2e9d2d8922e47afd4648e6967497158785fbd1da870e7110266bf944880",
+          "compression_calls": 5,
+          "expected": "40aff2e9d2d8922e47afd4648e6967497158785fbd1da870e7110266bf944880",
+          "message_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff",
+          "passed": true
+        }
+      ],
+      "classical_construction_and_basis_check_wall_seconds": 2.2010118320031324,
+      "clean_scratch_qubits": 116269,
+      "compute_gates": 193885,
+      "gate_counts": {
+        "CNOT": 308734,
+        "Toffoli": 77306,
+        "X": 1986
+      },
+      "input_qubits": 768,
+      "logical_qubits": 117293,
+      "netlist_bytes": 3109181,
+      "netlist_sha256": "5700a9b604817a89686168e8c51de8780bf892b5fde6b16da969cefb40cba5b8",
+      "output_qubits": 256,
+      "phase_oracle_complete": false,
+      "physical_resources_estimated": false,
+      "serial_dependency_depth": 13351,
+      "total_gates_including_copy_and_explicit_uncomputation": 388026
+    }
+  },
+  "consensus_activation": false,
+  "missing_complete_oracle_relations": [
+    "canonical PNH1/PNW1 parsing and task/branch eligibility",
+    "coherent bounded rejection sampling and reversible selection",
+    "all four noise factors and original tiled-prefix schedule",
+    "field addition, all matrix dataflow and clean reversible memory schedule",
+    "challenge/ticket framing, target comparison, phase marking and full inverse",
+    "cross-task/nonce/parent preprocessing and best legal algorithm comparison",
+    "error-corrected physical architecture and quantum proof-system soundness"
+  ],
+  "native_relation_sha256": "3ed29941eb0b9959bdeb0cd4e59d2565bbd4b82b70c9cc94d0cd46065c16b874",
+  "optimality_or_cost_lower_bound": false,
+  "physical_qubit_or_second_estimate": null,
+  "quantum_attack_demonstrated": false,
+  "quantum_hardware_executed": false,
+  "quantum_soundness_proved": false,
+  "schema": "pon-reversible-components-observation-v1",
+  "scope": "constructed exact reversible components with classical basis checks only",
+  "source_sha256": "c4277a4aa44d3a9046b0a82e7ced3d94218f4d9771db14fe2ef07081ae595b1c",
+  "status": "components-constructed-and-basis-checked"
+}

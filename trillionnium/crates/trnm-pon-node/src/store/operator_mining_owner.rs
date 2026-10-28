@@ -758,6 +758,20 @@ impl Node {
         }
         Ok(())
     }
+
+    pub(super) fn mining_reorg_original_cpu(
+        &self,
+    ) -> Result<Option<(ServiceMutationCpuDomain, ServiceMutationCpuCheckpoint)>> {
+        let Some(owner) = &self.mining_owner else {
+            return Ok(None);
+        };
+        let active = owner
+            .slot()?
+            .ok_or("OWNER_MINING_ACTIVATE_PURPOSE_REQUIRED")?;
+        active.permit.progress().map_err(mining_error)?;
+        active.cpu.checkpoint()?;
+        Ok(Some((owner.cpu.clone(), active.cpu)))
+    }
     fn mining_actual_task_binding(
         &self,
         permit: &Permit,

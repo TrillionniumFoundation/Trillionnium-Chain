@@ -100,7 +100,7 @@ fn assert_paid(domain: &ServiceMutationCpuDomain, receipt: &ServiceMutationCpuSe
         .flow
         .as_ref()
         .unwrap()
-        .snapshot(b.credit_ns, b.in_flight)
+        .snapshot(b.credit_ns, b.in_flight, b.termination_reserved_ns)
         .unwrap();
     assert!(flow.balance_identity_verified);
 }
@@ -387,7 +387,7 @@ fn a_foreign_cpu_domain_is_refused_before_m05_work_and_any_reservation() {
     .err()
     .unwrap();
     assert!(reject.is(crate::error::ErrorCode::OwnerPublicServiceCpuDomain));
-    assert!(!reject.requires_owner_stop());
+    assert!(reject.requires_owner_stop());
     assert_eq!(reject.to_string(), "OWNER_PUBLIC_SERVICE_CPU_DOMAIN");
     assert_eq!(
         foreign.observe().unwrap().stored_credit_ns,

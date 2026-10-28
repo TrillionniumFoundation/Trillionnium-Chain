@@ -1,0 +1,109 @@
+纯 PoN 吞吐架构研究：实现优化优先，协议改动单独证明
+研究日期：2026-10-28 UTC
+研究角色：独立资料审阅与工程判断；没有代码改动、部署、压测或新的 native measurements。
+
+结论
+
+当前最有根据的顺序是：先修复并测清 History / 状态执行 / 有界调度；再试完整 W1 的历史批量证明；只有这些路径不再主导服务延迟，才值得用 Prism++ 或 GHOSTDAG 重构排序和确认机制。纯 PoN 不妨碍借鉴并行工作链，但不允许把新 voter、DAG 权重或快速确认换成身份、质押、hash-only 凭证或可信 evaluator。任何有权重的工作单元仍需完整 W1 和被冻结规则下唯一的 work_id。
+
+研究输入由主任务提供，本文没有独立重测：完整 W1 native 约 0.7 ms，完整数据约 49,188 B；四条 25% CPU Host pressure 场景在 4 秒内 0/1 确认，提交为 28/28，失败集中在 History replay / 队列超时；大 State 约 8.6 MB，仍涉及 2.77 / 3.58 CPU 秒的执行。提交成功不等于最终确认，这些结果也不是足以估算稳态 TPS 的样本。
+
+一、原始资料实际支持什么
+
+[S1] Practical Low Latency Proof of Work Consensus，arXiv:1909.11261v3，2023-02-17 修订。
+https://arxiv.org/html/1909.11261v3
+https://arxiv.org/abs/1909.11261
+检索 refs：turn140view0；turn141view0；turn143view0/1/2；turn148view0/1；turn149view0；turn150view2。
+核查范围：§3.1、§4.2、§5.1、§5.2、Appendix A.2。
+论文事实摘要：Prism++ 将 proposer、transaction、voter 分离；所有候选内容先被 Merkle 承诺，成功工作再抽签决定角色和 voter chain。安全分析使用有界传播延迟、按算力比例的 Poisson 到达及跨链抽签性质。实现采用异步 ledger 与有依赖调度的并行执行，但状态数据库仍是瓶颈。实验挖矿用指数等待模拟，不实际计算 PoW。论文展示的吞吐不可移植为 PoN 性能；其主延迟定理还以某层仅有一个公开 proposer 为条件。
+
+[S2] Prism Removes Consensus Bottleneck for Smart Contracts，arXiv:2004.08776v2，2020-06-13 修订。
+https://arxiv.org/html/2004.08776v2
+https://github.com/wgr523/prism-smart-contracts
+检索 refs：turn140view1；turn141view1；turn143view3/4；turn148view2。
+核查范围：§IV、§V。
+论文事实摘要：将排序与 VM 执行分离后，实验中的 EVM / MoveVM 成为瓶颈。该系统允许先排序，再依次执行和清除无效交易；PoW 挖矿也以 Poisson 过程模拟。论文承认无效交易可消耗带宽，所讨论的一种 spam 防御未在该实验实现。不能把其“已排序”语义直接替换本项目的“状态已验证并可确认”。
+
+[S3] PHANTOM and GHOSTDAG: A Scalable Generalization of Nakamoto Consensus，作者 Sompolinsky / Wyborski / Zohar，2021-11-10 版本。
+https://eprint.iacr.org/2018/104
+官方研究仓库的论文副本：
+https://github.com/kaspanet/research/blob/main/ghostdag/Ghostdag.pdf
+检索 refs：turn140view2；turn150view0；turn152view0。
+核查限制：ePrint 元数据及摘要可读；PDF 下载返回 403，官方仓库 PDF 正文下载亦不可用，故未声称重新推导其完整定理。
+官方实现说明补充：Crescendo KIP-14（2025-03-04 更新）
+https://github.com/kaspanet/kips/blob/master/kip-0014.md
+检索 refs：turn149search1；turn154view1。
+资料事实摘要：GHOSTDAG 是 PHANTOM 的高效贪心方案，为并发 blockDAG 给出顺序；并发容忍参数 k 是协议参数。KIP-14 将提高出块率列为 hard fork，并联动调整 k、DAA、合并界限、最终性深度和裁剪参数。k 的设定与预设网络延迟上界及块到达模型有关，不能只提高 BPS 而保留全部旧参数。
+
+[S4] RISC Zero 官方 Proof System Overview / Key Terminology。
+https://dev.risczero.com/proof-system/
+https://dev.risczero.com/terminology
+检索 refs：turn150view1；turn151view0/2。
+官方能力摘要：succinct STARK 可聚合 segment proofs，并可继续组合多个 receipts；组合引入的 assumptions 必须由证据解除。官方同时列出 Groth16 和 fake receipts，二者不能因为体积更小或运行更快被当成本项目已通过的 PQ 完整证明。文档提供的是组合能力，不是完整 W1 批量收益的测量。
+
+二、不改变当前共识即可推进的优化
+
+以下属于工程建议，不是论文已证明适用于本项目的性能结果。每项都要求保持当前接受集合、输出顺序、状态根、费用和重启结算语义。
+
+1. 精确的增量 History 验证。
+缓存已验证的不可变对象和验证上下文，避免每个诚实请求从同一历史起点重复计算。缓存键必须包含真正影响关系的版本、任务、挑战、父上下文和内容承诺；分叉切换、任务撤销、nonce / 授权变动不能复用旧的“可接受”结果。缓存命中可省重复运算，不能豁免 state-dependent 验证。
+
+2. 有界管线与锁外执行。
+解码、静态格式、完整 W1、密码验证、History 取回可在依赖明确时分段并行；重型计算在 immutable snapshot 上完成，提交时再核对版本并按确定顺序执行。每段分别限制排队数、字节、CPU、取消行为和过期时间；攻击预算应按真实耗用/保留成本结算，崩溃恢复不能重发额度。并行化没有消除 CPU 总量要求，也不能让失效结果先进入链权重。
+
+3. State 只处理发生变化的部分。
+评估 copy-on-write、持久数据结构、按键增量更新和追加日志，目标是避免小请求触发整个 8.6 MB State 的深拷贝、序列化和回放。若能逐字节保持当前 canonical state root，此类优化可保持协议语义；若更换承诺结构、根算法或可观察迭代顺序，则已是共识迁移，必须单列审查。
+
+4. 数据面与计算面隔离。
+Cell 权重分块、内容寻址、去重、并行取回和独立传输队列可以改进带宽使用，也可以减少大对象挤压控制消息。下载成功、缓存命中和 provider 的签名都不产生 PoN 权重。必须继续以完整工作、可用性和状态规则决定接受；超时不能默认为可用。
+
+5. 基准的资源分母。
+继续分别记录 offered / admitted / started / completed / confirmed / timeout，并记录攻击进程、服务、History worker 和持久化线程的 CPU 实际使用。若“25% CPU”具体指服务只有 0.25 核，那么 4 秒窗口仅有约 1 CPU 秒预算；2.77 CPU 秒的串行路径单靠队列重排无法达到 4 秒目标。这个条件计算不是实际攻击复现，也不代替主任务的原始测量。
+
+三、候选架构与适用判断
+
+A. 保持现有排序规则，做完整 W1 批量 / 递归证明
+
+预期收益条件：大量历史工作重复验算主导 catch-up 成本；完整 batch 的验证、传输、生成和等待代价均实测低于逐个 native 完整验证；证明生成者可以无许可替换，停机后不造成不可恢复依赖。
+
+关系约束：batch 必须承诺确切、有序的输入，证明每一个 W1、target、任务/挑战绑定及唯一 work_id；重复成员不能多次计权。若没有证明 M06、账户授权或 History 状态转换，必须把这些工作保留在验证路径并计入总成本，不能把“W1 batch 通过”写成“整条历史可接受”。必须解除递归 assumptions，校验 program image、journal、控制参数和证明种类。
+
+新风险：聚合等待增加 live confirmation 延迟；高 prover 成本使服务集中化；公共输入展开及缺失数据仍可能昂贵；一个坏成员使整批失效；递归 verifier 或关系缺项会放大影响。proof 只压缩验证，不会凭空消除数据可用性、持久化、状态执行或量子安全参数。
+
+本项目判断：优先针对 History / catch-up 做研究，而非先替代单块 live native 验证。0.7 ms 的 native 基线使单块简洁证明的收益门槛很高。应测 batch size 1、8、32、128 等点的完整关系生成/验证/大小/尾延迟，并以端到端服务分母选值；这些是建议实验点，本文没有执行。
+
+协议边界：作为本地加速提示、仍按原规则验证，可不改共识；如果网络新增可替代原始 witness 的唯一接受路径，就必须版本化 wire、冻结关系与 cryptographic soundness，并证明新旧接受集合等价。它不是修改 fork-choice 的理由。
+
+B. Prism++ 风格的 proposer / transaction / voter 分离
+
+预期收益条件：在实际全 W1、PQ 授权、M06 和持久化成本下，节点仍有资源空余，而低出块率/传播与排序耦合确实成为主要约束。可以让大量数据传输与较慢的排序推进各自调参，并研究更多独立工作票对确认统计的贡献。
+
+纯 PoN 映射：每一个获得排序或确认影响力的 proposer / voter / 其他计权单元必须由完整 W1 产生。voter 指一条由工作延续的链，不是白名单 validator 或某公钥的一票。数据载体可以不单独计权，但任何获权角色都不能凭廉价 hash、身份或签名生成。
+
+必要的新证明：新增 role、chain、parent set、payload 等自由度须在昂贵工作前被绑定，或证明其不创造廉价票。必须证明成功后角色抽签不可通过轻量重编码反复选择、同一 W1 不跨角色/链重复计权，并重新分析本项目的任务异构、预处理、硬件优势、DAA 变化和量子搜索对到达过程及跨链相关性的影响。原论文的“hash power 占比”和 Poisson 独立性不能直接替换成“GPU 数量”或“节点数量”。若要借用具体确认数值，还应复核 Appendix A.2 中小 lambda*Delta 区域和到达近似，不能仅由摘要推出任意延迟下的安全参数。
+
+新风险：多链元数据、数据库更新、网络扇出、回放量和拒绝服务面增加；有状态的任务资格可能使不同角色之间相互依赖。论文的先排序后清理机制若搬进本项目，会改变“有效工作何时获得权重”和 M06 失败语义。不能以缓存/异步优化的名义悄悄采用。
+
+本项目判断：这是值得保留的纯工作长期研究分支，但现在不应成为修复 History/State 超时的第一步。它改变 fork-choice、确认和权重分配，应作为新的协议版本独立安全证明和 WAN 验收；本轮不承诺其 TPS 或确认收益。
+
+C. GHOSTDAG 风格并发块的 DAG 排序
+
+预期收益条件：实际测得大量诚实工作因网络并发成为 stale work，且节点还有验证、存储和执行余量。把更多并发有效工作纳入 DAG，可研究减少传播竞争造成的工作浪费。
+
+纯 PoN 映射：DAG 中所有被计入权重的块仍需完整 W1；同一 work_id 在一个有效 ledger 中只能按冻结规则计一次；父集合、排序上下文、挑战和任务绑定需一致。包含在 DAG 里不代表已经确认，也不代表其中状态转换有效。
+
+必要的新证明：从单父扩展到多父会改变任务/挑战派生、冲突排序、工作选择、DAA 和重组语义。要分析 withholding、不同视图的 DAG、缺失父块、宽度控制、裁剪、重放和可用性。若 PoN 的到达过程不满足原模型，不能沿用其 k 或最终性参数。
+
+新风险：高并发增加待验证工作和历史依赖，可能加剧目前的 CPU / History 超时；DAG 总序不消除账户 nonce、冲突状态和模型安装顺序上的串行依赖。k 与网络延迟假设还会把 WAN 抖动直接带入安全参数选择。
+
+本项目判断：作为第二类协议研究对照组，优先级低于现有链的增量状态执行。官方 KIP 将调高 BPS 当作涉及多个共识参数的 hard fork，也说明“改为 DAG + 减小间隔”并非一个可无条件应用的性能补丁。
+
+四、验收界线
+
+实现优化的合格证据：同一输入/历史/分叉下接受与拒绝结论、状态根、nonce、工作权重和预算结算一致；原始恶意负载确实耗尽攻击预算；全部诚实请求及超时进入分母；真实 kill cut 后额度不增加；端到端延迟达到预先声明门槛。
+
+协议研究的合格证据：先给出角色及每个自由度的绑定、唯一工作计权与有效性定义，再给攻击模型、证明或明确反例；模拟必须标为模型结果，不能替代本地完整 W1 成本或独立 WAN 证据。量子能力影响工作分布，PoW 论文的经典安全结论不自动覆盖量子 PoN。
+
+状态执行有同步依赖时，最小吞吐约束来自网络、完整验证、授权、状态、History、存储和安全确认中的最慢项。这里没有“native verifier 倒数就是全链 TPS”的推论，也没有“论文节点数/TPS 就是本链通过 WAN 验收”的推论。
+
+推荐执行顺序：现有规则下的 History/State/调度修复 → 完整 W1 单次与批量真实成本 → 判断残余瓶颈 → Prism++ / GHOSTDAG 分支模型与安全证明 → 独立多管理方 WAN 验收。

@@ -1,0 +1,69 @@
+{
+  "source_commit": "48aa81da0435e55504503b25ccaaf58db013d94f",
+  "source_tree": "9b64bb807def976edbe16aa5171492ffdc3bb7fb",
+  "original_compilation_source": "2e5240e62d450f34ee39fb3dec95bb81fd2d8288",
+  "changed_files": [
+    "scripts/ci/run_native_phase_host.py",
+    "scripts/ci/test_native_phase_host.py"
+  ],
+  "only_host_python_nice_correction": true,
+  "argv": [
+    "cargo",
+    "test",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--lib",
+    "--test",
+    "public_v3_multiprocess",
+    "--no-run",
+    "--offline",
+    "--locked",
+    "--config",
+    "profile.test.package.trnm-pon-node.debug=0",
+    "--message-format=json"
+  ],
+  "all_tracked_source_before": {
+    "schema": "trnm-ci-source-v1",
+    "kind": "head",
+    "tested_commit": "48aa81da0435e55504503b25ccaaf58db013d94f",
+    "tested_tree": "9b64bb807def976edbe16aa5171492ffdc3bb7fb",
+    "candidate": "48aa81da0435e55504503b25ccaaf58db013d94f",
+    "base": null,
+    "prospective_merge": null,
+    "tracked_worktree_verified": true,
+    "tracked_entries": 5583,
+    "tracked_bytes": 708204641,
+    "tests_executed_by_identity_check": false
+  },
+  "all_tracked_source_after": {
+    "schema": "trnm-ci-source-v1",
+    "kind": "head",
+    "tested_commit": "48aa81da0435e55504503b25ccaaf58db013d94f",
+    "tested_tree": "9b64bb807def976edbe16aa5171492ffdc3bb7fb",
+    "candidate": "48aa81da0435e55504503b25ccaaf58db013d94f",
+    "base": null,
+    "prospective_merge": null,
+    "tracked_worktree_verified": true,
+    "tracked_entries": 5583,
+    "tracked_bytes": 708204641,
+    "tests_executed_by_identity_check": false
+  },
+  "exit_code": 0,
+  "elapsed_seconds": 1.245674436999252,
+  "binaries": [
+    {
+      "name": "public_v3_multiprocess",
+      "path": "/tmp/history-phase-qualified-20261028/public_v3_multiprocess",
+      "bytes": 75283784,
+      "sha256": "ab429f029fcef972187151167528697fd01668cb979ac823edec96b083950d1c"
+    },
+    {
+      "name": "trnm_pon_node",
+      "path": "/tmp/history-phase-qualified-20261028/trnm_pon_node",
+      "bytes": 126556056,
+      "sha256": "0f82f1a43c785ac6610789df27379c3bba166036bb39b5589d75b92ef6fdc927"
+    }
+  ]
+}

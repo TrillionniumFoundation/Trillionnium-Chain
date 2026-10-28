@@ -12,6 +12,12 @@ role = "experimental-native-composition"
 production_activation = false
 consensus_authority = false
 
+[features]
+default = []
+# Explicit fresh native network-owner namespace and separately selected
+# PQG1/QTX1 transfer-only account import. This is not whole-chain PQ activation.
+pq-native-openssl = ["trnm-crypto-primitives/pq-native-openssl", "trnm-mvcc-fee/pq-native-openssl", "dep:openssl"]
+
 [dependencies]
 trnm-data-availability = { version = "=0.1.0", path = "../trnm-data-availability" }
 trnm-service-settlement = { version = "=0.1.0", path = "../trnm-service-settlement" }
@@ -27,6 +33,8 @@ fs2 = "0.4"
 libc = "0.2"
 rustix = { version = "1.1.4", features = ["fs", "process", "time"] }
 sha2 = "0.10"
-rusqlite = { version = "0.32", features = ["bundled"] }
+rusqlite = { version = "0.32", features = ["bundled", "hooks"] }
+openssl = { version = "=0.10.81", optional = true }
+zeroize = "=1.8.2"
 
 tempfile = "3"

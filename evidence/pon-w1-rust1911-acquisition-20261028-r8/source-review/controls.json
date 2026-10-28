@@ -1,0 +1,140 @@
+{
+  "schema": "TRNM-COMPILER-ACQUISITION-SOURCE-CONTROLS1",
+  "status": "PASS",
+  "source_sha256": "05354a8f2450572ef38b585e5eda3c1ff9a90df791638bae2bc25c9173492180",
+  "wall_seconds": 0.024149070988642052,
+  "controls": [
+    {
+      "label": "regular-dir-internal-symlink-hardlink",
+      "expected": "ACCEPT",
+      "observed": "ACCEPT",
+      "reason": null
+    },
+    {
+      "label": "absolute-member",
+      "expected": "REJECT",
+      "observed": "REJECT",
+      "reason": "archive member escapes declared root"
+    },
+    {
+      "label": "parent-member",
+      "expected": "REJECT",
+      "observed": "REJECT",
+      "reason": "archive member escapes declared root"
+    },
+    {
+      "label": "normalized-parent-member",
+      "expected": "REJECT",
+      "observed": "REJECT",
+      "reason": "archive member escapes declared root"
+    },
+    {
+      "label": "absolute-symlink",
+      "expected": "REJECT",
+      "observed": "REJECT",
+      "reason": "absolute archive link"
+    },
+    {
+      "label": "parent-symlink",
+      "expected": "REJECT",
+      "observed": "REJECT",
+      "reason": "archive link escapes root"
+    },
+    {
+      "label": "parent-hardlink",
+      "expected": "REJECT",
+      "observed": "REJECT",
+      "reason": "archive link escapes root"
+    },
+    {
+      "label": "special-fifo",
+      "expected": "REJECT",
+      "observed": "REJECT",
+      "reason": "archive special file is not allowed"
+    },
+    {
+      "label": "normalized-duplicate",
+      "expected": "REJECT",
+      "observed": "REJECT",
+      "reason": "duplicate archive path"
+    },
+    {
+      "label": "archive-size-cap",
+      "expected": "REJECT",
+      "observed": "REJECT",
+      "reason": "archive member size bound"
+    },
+    {
+      "label": "member-count-cap",
+      "expected": "REJECT",
+      "observed": "REJECT",
+      "reason": "archive member count cap"
+    },
+    {
+      "label": "regular-root",
+      "expected": "REJECT",
+      "observed": "REJECT",
+      "reason": "archive root entry must be a directory"
+    },
+    {
+      "label": "nul-member",
+      "expected": "REJECT",
+      "observed": "REJECT",
+      "reason": "invalid archive member name"
+    },
+    {
+      "label": "empty-member",
+      "expected": "REJECT",
+      "observed": "REJECT",
+      "reason": "invalid archive member name"
+    },
+    {
+      "label": "official-https-github.com",
+      "expected": "ACCEPT",
+      "observed": "ACCEPT",
+      "reason": null
+    },
+    {
+      "label": "official-https-release-assets.githubusercontent.com",
+      "expected": "ACCEPT",
+      "observed": "ACCEPT",
+      "reason": null
+    },
+    {
+      "label": "redirect-reject-http://github.com/asset",
+      "expected": "REJECT",
+      "observed": "REJECT",
+      "reason": "non-official or non-HTTPS download redirect"
+    },
+    {
+      "label": "redirect-reject-https://example.com/asset",
+      "expected": "REJECT",
+      "observed": "REJECT",
+      "reason": "non-official or non-HTTPS download redirect"
+    },
+    {
+      "label": "redirect-reject-https://evil.github.com/asset",
+      "expected": "REJECT",
+      "observed": "REJECT",
+      "reason": "non-official or non-HTTPS download redirect"
+    },
+    {
+      "label": "redirect-reject-https://user:pass@github.com/asset",
+      "expected": "REJECT",
+      "observed": "REJECT",
+      "reason": "non-official or non-HTTPS download redirect"
+    },
+    {
+      "label": "redirect-reject-https://github.com:444/asset",
+      "expected": "REJECT",
+      "observed": "REJECT",
+      "reason": "non-official or non-HTTPS download redirect"
+    }
+  ],
+  "source_order_check_inventory_before_capacity_refusal": true,
+  "regular_member_allocation_rounding_check": true,
+  "official_archive_downloaded": false,
+  "compiler_installed_or_executed": false,
+  "network_used": false,
+  "limits": "Pure helper/source controls only; not real archive, target ABI or prover compatibility evidence."
+}
