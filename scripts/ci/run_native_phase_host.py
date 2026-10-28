@@ -308,7 +308,11 @@ def outer(job_path, binary):
         "HOSTED_CI_ONLY_NO_LOCAL_PROVISION",
     )
     require(
-        Path.cwd().resolve() == ROOT and os.getuid() != 0,
+        Path.cwd().resolve() == ROOT,
+        "ORIGINAL_CONTROLLER_REPOSITORY_DIRECTORY",
+    )
+    require(
+        os.getuid() != 0,
         "ORIGINAL_UNPRIVILEGED_CONTROLLER",
     )
     run, attempt, job = (

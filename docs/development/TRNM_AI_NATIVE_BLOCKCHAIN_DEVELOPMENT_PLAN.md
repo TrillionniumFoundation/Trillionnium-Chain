@@ -3969,3 +3969,22 @@ including historical relabeling and mixed-generation rejection. The workflow
 executes these checks before native preparation. New native results remain
 required; old failed, skipped and unavailable observations remain failures or
 unknowns under their original source identities.
+
+### 2026-10-28: preserve e25 startup refusals and pin the launcher context
+
+The r14 repair allowed the [next original release campaign](../../evidence/pon-e25-phase-startup-20261028/README.md)
+to compile its real test ELF successfully. All three predeclared runs then
+failed at all nine phase launches, before Host setup or service measurement.
+The original error combined cwd and non-root checks; it does not establish
+which condition failed. The Rust launcher lacked an explicit repository cwd.
+The candidate pins only that Python child's directory, retains both checks and
+all resource/permission limits, and reports the two refusals distinctly.
+Eleven phase-host Python controls pass, including wrong-directory and root
+refusal before provisioning. Native fixed-Host/depletion acceptance is open.
+
+The recent-batch workflow keeps its original source and test gates while
+explicitly repinning five reviewed blobs; all 16 guards and every original
+selector/count remain. New native execution is still required. The
+[frozen W1 source bundles](../../evidence/pon-w1-source-closure-20261028/README.md)
+are now included as actual bytes with a publicly reachable prerequisite; the
+earlier e25 observation that they were not yet present remains retained.

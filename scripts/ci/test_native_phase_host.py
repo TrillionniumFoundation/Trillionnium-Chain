@@ -157,6 +157,31 @@ class PhaseHostControls(unittest.TestCase):
         with self.assertRaises(ValueError):
             host.unused_parent(raw(values) + "\nId=" + host.UNIT)
 
+    def test_wrong_working_directory_and_root_controller_cannot_provision(self):
+        repository = self.root / "source"
+        repository.mkdir()
+        environment = {
+            "GITHUB_ACTIONS": "true",
+            "CI": "true",
+            "GITHUB_WORKSPACE": str(repository),
+        }
+        for cwd, uid, error in (
+            (repository / "package", 1001, "ORIGINAL_CONTROLLER_REPOSITORY_DIRECTORY"),
+            (repository, 0, "ORIGINAL_UNPRIVILEGED_CONTROLLER"),
+        ):
+            with (
+                self.subTest(cwd=cwd, uid=uid),
+                patch.dict(os.environ, environment, clear=True),
+                patch.object(host, "ROOT", repository),
+                patch.object(host.Path, "cwd", return_value=cwd),
+                patch.object(host.os, "getuid", return_value=uid, create=True),
+                patch.object(host.subprocess, "run") as run,
+            ):
+                with self.assertRaisesRegex(ValueError, error):
+                    host.outer(self.job, self.binary)
+                run.assert_not_called()
+        self.assertFalse((self.control / "host").exists())
+
     def test_service_command_inherits_only_fixed_parent_and_original_program(self):
         command = host.command(self.job, self.binary, "exact.service", 1001, 1001)
         self.assertIn("--slice=trnmponpublic.slice", command)

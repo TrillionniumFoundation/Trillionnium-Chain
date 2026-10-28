@@ -305,6 +305,9 @@ pub(super) fn run(
         .join("../../../scripts/ci/run_native_phase_host.py")
         .canonicalize()
         .unwrap();
+    // Cargo starts this integration test in its package directory. The Host
+    // launcher requires the exact repository root, independently of caller cwd.
+    let repository_root = launcher.ancestors().nth(3).unwrap().to_path_buf();
     let stdout = fs::OpenOptions::new()
         .create_new(true)
         .write(true)
@@ -315,6 +318,7 @@ pub(super) fn run(
     let started = Instant::now();
     let mut phase_child = PhaseChild(
         Command::new("python3")
+            .current_dir(repository_root)
             .arg(launcher)
             .arg("--job")
             .arg(&job_path)

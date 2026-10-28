@@ -244,6 +244,11 @@ jobs:
                       raw = json.loads(raw_path.read_bytes())
                       preparation = raw['preparation']
                       phases = raw['phases']
+                      attempt['phase_startup_errors'] = [
+                          {'mode': phase.get('mode'), 'error': phase['startup_or_campaign_error']}
+                          for phase in phases if phase.get('startup_or_campaign_error') is not None]
+                      bounds.require(not attempt['phase_startup_errors'],
+                                     'ORIGINAL_NATIVE_PHASE_STARTUP_FAILED')
                       bounds.require(
                           raw['state_backend'] == 'authenticated-v1'
                           and preparation['actual_signed_seed_transfers'] == 1024
