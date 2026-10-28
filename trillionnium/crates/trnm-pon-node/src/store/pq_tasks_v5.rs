@@ -219,6 +219,14 @@ impl PqNodeV5 {
     pub fn settings(&self) -> &Settings {
         self.inner.settings()
     }
+    /// Signing input only; the ordinary admission path rechecks both actual
+    /// PQ proofs, the current imported lock, nonce, fees and selected context.
+    pub fn migration_claim_payload(&self, account: Hash) -> Result<Vec<u8>> {
+        Ok(pq::migration_claim_payload(
+            &self.inner.settings.app,
+            account,
+        )?)
+    }
     pub fn active(&self) -> Result<(Hash, u64)> {
         self.inner.active()
     }

@@ -11,6 +11,7 @@ use trnm_protocol::pq_frame::{ml_dsa_65_key_id_from_spki, PqFrameExpectation};
 use trnm_protocol::pq_native_accounts_v2::{self as wire, ChainContext, UnverifiedEnvelope};
 
 pub mod migration;
+pub mod task_migration_v1;
 pub mod tasks_v4;
 pub mod tasks_v5;
 pub use migration::{
@@ -186,12 +187,43 @@ pub fn genesis_tasks_v5(
 ) -> Result<(Config, State, Hash)> {
     build_genesis(accounts, timestamp, None, wire::AccountProfile::TasksV5)
 }
+
+/// The fresh constructors retain their original bytes and domains. Anchored
+/// NPQ5 import is selected only by its protected constructor, never a wire bit.
+#[derive(Clone, Copy)]
+enum GenesisProfile {
+    Existing(wire::AccountProfile),
+    AnchoredTasksV5,
+}
+
 fn build_genesis(
     accounts: &[GenesisAccount],
     timestamp: u64,
     anchor: Option<Arc<TrustedMigrationAnchor>>,
     wire_profile: wire::AccountProfile,
 ) -> Result<(Config, State, Hash)> {
+    build_genesis_profile(
+        accounts,
+        timestamp,
+        anchor,
+        GenesisProfile::Existing(wire_profile),
+    )
+}
+
+fn build_genesis_profile(
+    accounts: &[GenesisAccount],
+    timestamp: u64,
+    anchor: Option<Arc<TrustedMigrationAnchor>>,
+    profile: GenesisProfile,
+) -> Result<(Config, State, Hash)> {
+    let (wire_profile, anchored_tasks) = match profile {
+        GenesisProfile::Existing(profile) => (profile, false),
+        GenesisProfile::AnchoredTasksV5 => (wire::AccountProfile::TasksV5, true),
+    };
+    require(
+        !anchored_tasks || anchor.is_some(),
+        "PQ5_TRUSTED_MIGRATION_REQUIRED",
+    )?;
     require(
         accounts.len() <= MAX_GENESIS_ACCOUNTS
             && (!accounts.is_empty() || anchor.is_some())
@@ -215,7 +247,7 @@ fn build_genesis(
     let rows: Vec<Value> = sorted.iter().map(|(id, account)|
         json!({"account":hex::encode(id),"spki":hex::encode(&account.spki),"balance":account.balance})).collect();
     let descriptor = canonical(
-        &json!({"profile":wire_profile.name(),"timestamp":timestamp,"accounts":rows,
+        &json!({"profile":if anchored_tasks { task_migration_v1::PROFILE } else { wire_profile.name() },"timestamp":timestamp,"accounts":rows,
         "max_generations":MAX_GENERATIONS,"transaction_bytes":wire::MAX_BYTES,
         "transaction_total":wire::MAX_TRANSACTION_BYTES,"transaction_count":wire::MAX_TRANSACTIONS,
         "packet_bytes":1048576,"production_activation":false,"migration_anchor":anchor.as_ref().map(|a| hex::encode(a.id))}),
@@ -231,39 +263,57 @@ fn build_genesis(
             "commands":[18,20,21],"renewal_supported":false,"migration_supported":false});
     }
     if wire_profile == wire::AccountProfile::TasksV5 {
-        require(anchor.is_none(), "PQ5_TASK_MIGRATION_UNSUPPORTED")?;
+        require(
+            anchored_tasks || anchor.is_none(),
+            "PQ5_TASK_MIGRATION_UNSUPPORTED",
+        )?;
         cfg.params["native_pq_task_contract"] = json!({"profile":tasks_v5::PROFILE,"slots":32,
             "witness_chunks":5,"chunk_raw_bytes":2000,"local_revocation_capacity":1024,
-            "commands":[18,19,20,21,22],"renewal_supported":true,"migration_supported":false,
+            "commands":[18,19,20,21,22],"renewal_supported":true,"migration_supported":anchored_tasks,
             "pending_status":"awaiting-source","local_revocation_scope":"stable-lineage-v5"});
+    }
+    if anchored_tasks {
+        cfg.params["native_pq_task_migration_profile"] = json!(task_migration_v1::PROFILE);
     }
     cfg.params["genesis_timestamp"] = json!(timestamp);
     cfg.params["native_pq_v2_anchor"] = json!(anchor.as_ref().map(|a| hex::encode(a.id)));
     cfg.params["native_pq_v2_descriptor"] = json!(hex::encode(hash(
-        match wire_profile {
-            wire::AccountProfile::AccountsV2 => b"native-pq-genesis-descriptor-v2",
-            wire::AccountProfile::QuotaV3 => b"native-pq-quota-descriptor-v3",
-            wire::AccountProfile::TasksV4 => b"native-pq-task-descriptor-v4",
-            wire::AccountProfile::TasksV5 => b"native-pq-task-descriptor-v5",
+        if anchored_tasks {
+            b"native-pq-task-migration-descriptor-v1"
+        } else {
+            match wire_profile {
+                wire::AccountProfile::AccountsV2 => b"native-pq-genesis-descriptor-v2",
+                wire::AccountProfile::QuotaV3 => b"native-pq-quota-descriptor-v3",
+                wire::AccountProfile::TasksV4 => b"native-pq-task-descriptor-v4",
+                wire::AccountProfile::TasksV5 => b"native-pq-task-descriptor-v5",
+            }
         },
         &[&descriptor]
     )));
     cfg.params["native_pq_v2_base_fees"] = json!({"128":200,"129":400,"130":400});
     cfg.network = hash(
-        match wire_profile {
-            wire::AccountProfile::AccountsV2 => b"native-pq-network-v2",
-            wire::AccountProfile::QuotaV3 => b"native-pq-quota-network-v3",
-            wire::AccountProfile::TasksV4 => b"native-pq-task-network-v4",
-            wire::AccountProfile::TasksV5 => b"native-pq-task-network-v5",
+        if anchored_tasks {
+            b"native-pq-task-migration-network-v1"
+        } else {
+            match wire_profile {
+                wire::AccountProfile::AccountsV2 => b"native-pq-network-v2",
+                wire::AccountProfile::QuotaV3 => b"native-pq-quota-network-v3",
+                wire::AccountProfile::TasksV4 => b"native-pq-task-network-v4",
+                wire::AccountProfile::TasksV5 => b"native-pq-task-network-v5",
+            }
         },
         &[&old_network, &descriptor],
     );
     cfg.parameters = hash(
-        match wire_profile {
-            wire::AccountProfile::AccountsV2 => b"native-pq-parameters-v2",
-            wire::AccountProfile::QuotaV3 => b"native-pq-quota-parameters-v3",
-            wire::AccountProfile::TasksV4 => b"native-pq-task-parameters-v4",
-            wire::AccountProfile::TasksV5 => b"native-pq-task-parameters-v5",
+        if anchored_tasks {
+            b"native-pq-task-migration-parameters-v1"
+        } else {
+            match wire_profile {
+                wire::AccountProfile::AccountsV2 => b"native-pq-parameters-v2",
+                wire::AccountProfile::QuotaV3 => b"native-pq-quota-parameters-v3",
+                wire::AccountProfile::TasksV4 => b"native-pq-task-parameters-v4",
+                wire::AccountProfile::TasksV5 => b"native-pq-task-parameters-v5",
+            }
         },
         &[
             &old_parameters,

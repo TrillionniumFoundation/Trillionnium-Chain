@@ -1,4 +1,5 @@
-//! Explicit NPQ5 task permissions. No listener, governance, migration or production activation.
+//! Explicit NPQ5 task permissions and a separate protected anchored-import constructor.
+//! No listener, governance, old-store upgrade or production activation.
 pub use crate::pq_accounts_v2::GenesisAccount;
 pub use crate::store::pq_tasks_v5::PqNodeV5;
 use crate::{Packet, Result, Settings};
@@ -8,6 +9,24 @@ use trnm_protocol::pq_native_accounts_v2::AccountProfile;
 impl Settings {
     pub fn native_pq_tasks_v5(accounts: &[GenesisAccount], timestamp: u64) -> Result<Self> {
         let (app, initial, genesis) = pq::genesis_tasks_v5(accounts, timestamp)?;
+        Ok(Self {
+            app,
+            initial,
+            genesis,
+            operator_bootstrap: None,
+            operator_material: None,
+            checkpoint_tile_paths: None,
+        })
+    }
+    /// A new namespace with original locked import/CLAIM semantics. This does
+    /// not establish prior registry timing or retire/finalize the source chain.
+    pub fn native_pq_tasks_v5_with_anchored_migration_v1(
+        accounts: &[GenesisAccount],
+        timestamp: u64,
+        anchor: pq::TrustedMigrationAnchor,
+    ) -> Result<Self> {
+        let (app, initial, genesis) =
+            pq::task_migration_v1::genesis_with_trusted_migration(accounts, timestamp, anchor)?;
         Ok(Self {
             app,
             initial,

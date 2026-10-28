@@ -4,6 +4,9 @@ on:
     paths:
       - .github/workflows/pon-native-pq-tasks-v5-research.yml
       - scripts/ci/run_native_pq_tasks_v5.py
+      - scripts/ci/run_native_pq_tasks_v5_migration_v1.py
+      - scripts/ci/read_native_pq_tasks_v5_migration_v1.py
+      - scripts/ci/test_native_pq_tasks_v5_migration_v1.py
       - scripts/ci/run_native_pq_accounts_v2.py
       - scripts/ci/run_native_pq_quota_v3.py
       - scripts/ci/ci_observation.py
@@ -64,10 +67,15 @@ jobs:
         run: |
           set -euo pipefail
           python3 scripts/ci/test_native_pq_tasks_v5_research.py 2>&1 | tee "$OUT/reader-negatives.log"
+          python3 scripts/ci/test_native_pq_tasks_v5_migration_v1.py 2>&1 | tee "$OUT/anchored-reader-negatives.log"
       - name: Execute real requester/source permissions and all retained PQ1 PQ2 PQ3 PQ4 paths
         run: |
           set -euo pipefail
           python3 scripts/ci/run_native_pq_tasks_v5.py --expected-head "$EXPECTED_HEAD" --output "$OUT/run" 2>&1 | tee "$OUT/controller.log"
+      - name: Execute anchored CLAIM and task authority together after same-source retained 205
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/run_native_pq_tasks_v5_migration_v1.py --expected-head "$EXPECTED_HEAD" --baseline "$OUT/run" --output "$OUT/anchored-migration" 2>&1 | tee "$OUT/anchored-migration-controller.log"
       - name: Verify final exact source regardless of test outcome
         if: always()
         run: |

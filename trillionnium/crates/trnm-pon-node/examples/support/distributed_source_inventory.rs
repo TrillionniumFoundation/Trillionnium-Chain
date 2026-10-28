@@ -2892,6 +2892,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/task_migration_v1.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/task_migration_v1.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tasks_v4.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -4912,6 +4919,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/tests/native_node.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/tests/native_pq_tasks_v5_migration_v1.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/native_pq_tasks_v5_migration_v1.rs"
         )),
     ),
     (
