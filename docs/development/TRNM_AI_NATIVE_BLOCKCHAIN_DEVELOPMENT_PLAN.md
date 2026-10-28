@@ -4642,3 +4642,11 @@ tests. The fixed conditional scenario results remain unchanged except for their
 model source hash. Native W1, DAA, namespaces and timing assumptions are unchanged.
 This closes the numerical defect only; minimum oracle cost, physical quantum
 resources, complete native proof and production/security qualification remain open.
+
+The published source `c3a13bcf50a46826974681f4b837f291278bcaf5` subsequently
+completed hosted run `40607357176`: the same 39 tests passed without skips, and
+all 5,900 tracked entries retained the same source/tree identity before and
+after execution. Its original nine-member archive and complete log are retained
+with the correction evidence above. This independent execution does not add
+new test methods, complete the full Cargo workspace gate or change the research
+qualification limits.
