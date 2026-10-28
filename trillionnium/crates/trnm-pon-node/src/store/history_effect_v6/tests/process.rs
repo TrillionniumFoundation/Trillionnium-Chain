@@ -20,9 +20,9 @@ struct ChildConfig {
     #[serde(default)]
     publication_sha256: Option<String>,
 }
-struct Process {
-    child: Child,
-    guardian: bool,
+pub(super) struct Process {
+    pub(super) child: Child,
+    pub(super) guardian: bool,
 }
 impl Drop for Process {
     fn drop(&mut self) {
@@ -36,7 +36,7 @@ impl Drop for Process {
         }
     }
 }
-fn wait(path: &Path, process: &mut Process) -> Value {
+pub(super) fn wait(path: &Path, process: &mut Process) -> Value {
     let end = Instant::now() + Duration::from_secs(85);
     loop {
         if path.exists() {
@@ -53,7 +53,7 @@ fn wait(path: &Path, process: &mut Process) -> Value {
         std::thread::sleep(Duration::from_millis(10));
     }
 }
-fn child_wait(path: &Path) -> Vec<u8> {
+pub(super) fn child_wait(path: &Path) -> Vec<u8> {
     let end = Instant::now() + Duration::from_secs(60);
     while !path.exists() {
         assert!(
@@ -219,7 +219,7 @@ pub(super) fn child() {
     );
 }
 
-fn sha_file(path: &Path) -> String {
+pub(super) fn sha_file(path: &Path) -> String {
     use sha2::{Digest, Sha256};
     let mut hash = Sha256::new();
     let mut file = File::open(path).unwrap();
@@ -233,7 +233,7 @@ fn sha_file(path: &Path) -> String {
     }
     hex::encode(hash.finalize())
 }
-fn copy_tree(from: &Path, to: &Path) {
+pub(super) fn copy_tree(from: &Path, to: &Path) {
     fs::create_dir(to).unwrap();
     fs::set_permissions(to, fs::Permissions::from_mode(0o700)).unwrap();
     for row in fs::read_dir(from).unwrap() {
@@ -247,9 +247,9 @@ fn copy_tree(from: &Path, to: &Path) {
         }
     }
 }
-struct Retain {
-    source: PathBuf,
-    target: Option<PathBuf>,
+pub(super) struct Retain {
+    pub(super) source: PathBuf,
+    pub(super) target: Option<PathBuf>,
 }
 impl Drop for Retain {
     fn drop(&mut self) {
@@ -260,7 +260,7 @@ impl Drop for Retain {
         }
     }
 }
-fn snapshot(path: &Path) -> BTreeMap<String, String> {
+pub(super) fn snapshot(path: &Path) -> BTreeMap<String, String> {
     fs::read_dir(path)
         .unwrap()
         .map(|r| r.unwrap())
@@ -268,7 +268,7 @@ fn snapshot(path: &Path) -> BTreeMap<String, String> {
         .map(|r| (r.file_name().into_string().unwrap(), sha_file(&r.path())))
         .collect()
 }
-fn next_packet(a: &TestAuthority) -> Packet {
+pub(super) fn next_packet(a: &TestAuthority) -> Packet {
     let mut producer =
         Node::open(&a.f.dir.path().join("producer"), a.f.settings.clone(), 2).unwrap();
     let mut rows = a.f.material_inputs();

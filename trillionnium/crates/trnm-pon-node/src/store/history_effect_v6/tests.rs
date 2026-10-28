@@ -8,6 +8,7 @@ use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
 
 mod process;
 pub(super) mod publication;
+pub(super) mod retirement;
 
 fn deadline() -> Instant {
     Instant::now() + Duration::from_secs(50)
@@ -94,6 +95,10 @@ struct TestAuthority {
 }
 impl TestAuthority {
     fn new() -> Self {
+        Self::with_source_commit("1116ae390e4ed408ab0899e13aec5d1f90f2192c")
+    }
+    fn with_source_commit(source_commit: &str) -> Self {
+        policy::id(source_commit, 20).unwrap();
         let f = Fixture::new();
         let identity = Identity {
             schema: "restricted-history-effect-identity-v6".into(),
@@ -102,7 +107,7 @@ impl TestAuthority {
             network: hex::encode(f.settings.network()),
             parameters: hex::encode(f.settings.parameters()),
             genesis: hex::encode(f.settings.genesis()),
-            source_commit: "1116ae390e4ed408ab0899e13aec5d1f90f2192c".into(),
+            source_commit: source_commit.into(),
             registry_key: f.identity.registry_key.clone(),
             task_key: f.identity.task_key.clone(),
         };
@@ -702,6 +707,24 @@ fn v6_actual_sigkill_after_activation_commit_recovers_and_advances_again() {
 #[ignore = "mandatory process tests invoke this exact source-bound helper with pinned protected inputs"]
 fn history_effect_v6_process_child_helper() {
     process::child();
+}
+
+#[test]
+fn history_known_epoch_validation_sigkill_retire_cold_open_and_next_operation() {
+    retirement::run("known-validation");
+}
+#[test]
+fn history_known_epoch_activation_sigkill_retirement_link_crash_and_next_operation() {
+    retirement::run("known-activation");
+}
+#[test]
+fn history_known_epoch_close_sigkill_retirement_unlink_crash_and_next_operation() {
+    retirement::run("known-close");
+}
+#[test]
+#[ignore = "actual owned-process tests invoke this exact pinned one-startup helper"]
+fn history_known_epoch_process_child_helper() {
+    retirement::child();
 }
 
 #[test]
