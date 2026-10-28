@@ -175,6 +175,17 @@ independently reread with identical v3 verdicts. These are finite observations
 under the 4-CPU / 16-GiB / nice-10 experimental envelope, not evidence for the
 fixed public kernel parent or for the later timed-close correction.
 
+At exact head `75d52b6`, x64 qualified all nine rounds. ARM64 passed the six
+native gates and reported nine rounds, but the independent reader correctly
+failed a call that entered 102,720 ns after the original phase cutoff. Both
+artifacts and source-specific verdicts are retained in the evidence index.
+The forward collector checks the captured call start before invoking the API,
+conservatively anchors its absolute deadline, and uses one captured start to
+gate sampler entry. It retains every actually issued call and late result.
+The v3 schema and reader rules stay unchanged; a seventh mandatory native
+gate covers this entry boundary. The original ARM failure remains failed and
+the successor requires its own exact-source observations.
+
 The conditional PoN DAA model includes task/solver costs, witness/publication
 latency, producer rate changes, hidden branches and full-cost quantum hypotheses,
 with native integer-rule vectors and a real PNW1 confirmation/reorg/reopen test.

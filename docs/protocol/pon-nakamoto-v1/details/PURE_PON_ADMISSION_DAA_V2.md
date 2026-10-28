@@ -190,6 +190,20 @@ signed profiles, deadlines and the old TCP test conditions remain unchanged.
 The original failed connection's exact error was not captured, so a reachable
 classification gap is not presented as its proven trace or as an expiry bypass.
 
+The subsequent `75d52b6` CI passed on x64 but failed the ARM64 evidence reader:
+one attack call entered 102,720 ns after the original phase end and immediately
+returned a client construction deadline error. All nine native business rounds
+were reported complete, but that does not override the failed evidence contract.
+Both original artifacts and unchanged independent verdicts are retained in the
+same evidence index. The forward helper now checks its captured entry before
+calling the client API and stops without creating a call when the phase is
+closed. Calls that were issued keep their complete outcomes, including late
+errors. An earlier Instant anchor maps the remaining allowance conservatively;
+the sampler likewise checks and records one captured start. No old row is
+removed, no reader rule or evidence-field meaning changes, and no time or CPU
+allowance grows. The call-window regression is an additional mandatory native
+gate; any successor still needs its own exact-source pressure observation.
+
 ## PoN-specific DAA and confirmation experiment
 
 The [conditional risk model](../../../../formal/pon-nakamoto-v1/pon_risk_model_v1.py)

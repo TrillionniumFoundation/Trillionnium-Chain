@@ -104,39 +104,71 @@ pub fn body_digest(request: &public_v3::Request) -> [u8; 32] {
         &[&serde_json::to_vec(request).unwrap()],
     )
 }
+pub fn phase_entry_ns(epoch: u64, sampled: u64) -> Option<u64> {
+    sampled
+        .checked_sub(epoch)
+        .filter(|offset| *offset < WINDOW_NS)
+}
+
+/// The Instant anchor must be captured before the monotonic sample. Adding
+/// only the original remaining allowance to that earlier anchor is
+/// conservative: sampling, argument preparation and scheduling cannot buy
+/// additional time. A closed window never invokes `issue` or creates a call
+/// row; a call issued inside the window keeps its full outcome, even if late.
+pub fn within_call_window<T>(
+    epoch: u64,
+    anchor: Instant,
+    started: u64,
+    issue: impl FnOnce(Instant, u64, u64) -> T,
+) -> Option<T> {
+    let started_ns = phase_entry_ns(epoch, started)?;
+    let remaining = WINDOW_NS - started_ns;
+    let allowance = remaining.min(2_000_000_000);
+    let deadline = anchor.checked_add(Duration::from_nanos(allowance))?;
+    Some(issue(deadline, started_ns, started_ns + allowance))
+}
+
 pub fn call(
     address: SocketAddr,
     settings: &Settings,
     request: public_v3::Request,
     who: u8,
     epoch: u64,
-) -> Value {
+) -> Option<Value> {
+    // Call arguments can take time to construct after the caller's loop
+    // check. Check the original phase again here, before any client API.
+    let anchor = Instant::now();
     let started = monotonic();
-    let start_cpu = thread_cpu();
-    let remaining = epoch.saturating_add(WINDOW_NS).saturating_sub(started);
-    let deadline = Instant::now() + Duration::from_nanos(remaining.min(2_000_000_000));
-    let (reply, metrics) = public_v3::call_public_pure_pon_v2(
-        address,
-        &request,
-        settings,
-        identity(71).public_key(),
-        &identity(who),
-        policy(),
-        Some(deadline),
-    );
-    let ended = monotonic();
-    let (status, response, error) = match reply {
-        Ok(reply) => (
-            if reply.ok { "ok" } else { "refused" },
-            Some(serde_json::to_value(reply).unwrap()),
-            None,
-        ),
-        Err(error) => ("error", None, Some(error.to_string())),
-    };
-    json!({"started_ns":started.saturating_sub(epoch),"ended_ns":ended.saturating_sub(epoch),
-        "deadline_ns":started.saturating_sub(epoch).saturating_add(remaining.min(2_000_000_000)),
-        "thread_cpu_ns":cpu_delta(start_cpu),"status":status,"response":response,"error":error,
-        "body_digest":hex::encode(body_digest(&request)),"metrics":metrics})
+    within_call_window(
+        epoch,
+        anchor,
+        started,
+        |deadline, started_ns, deadline_ns| {
+            let start_cpu = thread_cpu();
+            let (reply, metrics) = public_v3::call_public_pure_pon_v2(
+                address,
+                &request,
+                settings,
+                identity(71).public_key(),
+                &identity(who),
+                policy(),
+                Some(deadline),
+            );
+            let ended = monotonic();
+            let (status, response, error) = match reply {
+                Ok(reply) => (
+                    if reply.ok { "ok" } else { "refused" },
+                    Some(serde_json::to_value(reply).unwrap()),
+                    None,
+                ),
+                Err(error) => ("error", None, Some(error.to_string())),
+            };
+            json!({"started_ns":started_ns,"ended_ns":ended.saturating_sub(epoch),
+            "deadline_ns":deadline_ns,
+            "thread_cpu_ns":cpu_delta(start_cpu),"status":status,"response":response,"error":error,
+            "body_digest":hex::encode(body_digest(&request)),"metrics":metrics})
+        },
+    )
 }
 pub fn on_time(row: &Value) -> bool {
     row["status"] == "ok"

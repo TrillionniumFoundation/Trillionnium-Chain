@@ -79,6 +79,98 @@ fn native_active_position_keeps_block_height_distinct_from_generation() {
     assert_eq!(active_position(&receiver), (tip, 3, 1));
 }
 
+#[test]
+fn native_call_window_refuses_late_entry_without_extending_deadlines() {
+    let epoch = 1_000_000_000;
+    let anchor = Instant::now();
+    let issued = std::cell::Cell::new(0);
+    // Includes the actual failed ARM observation's 102720 ns late entry.
+    for started in [
+        epoch - 1,
+        epoch + WINDOW_NS,
+        epoch + WINDOW_NS + 1,
+        epoch + WINDOW_NS + 102_720,
+    ] {
+        assert!(support::phase_entry_ns(epoch, started).is_none());
+        let outcome = support::within_call_window(epoch, anchor, started, |_, _, _| {
+            issued.set(issued.get() + 1);
+        });
+        assert!(outcome.is_none());
+    }
+    assert_eq!(
+        issued.get(),
+        0,
+        "closed windows must not issue the client call"
+    );
+    for (relative_start, allowance) in [
+        (1_000_000_000, 2_000_000_000),
+        (WINDOW_NS - 1_000_000_000, 1_000_000_000),
+        (WINDOW_NS - 1, 1),
+    ] {
+        // A later construction or scheduling observation cannot move this
+        // deadline. Late outcomes are still returned, never filtered away.
+        let later = anchor + Duration::from_secs(3);
+        let retained = support::within_call_window(
+            epoch,
+            anchor,
+            epoch + relative_start,
+            |deadline, started_ns, deadline_ns| {
+                issued.set(issued.get() + 1);
+                assert_eq!(deadline, anchor + Duration::from_nanos(allowance));
+                assert_eq!(started_ns, relative_start);
+                assert_eq!(deadline_ns, relative_start + allowance);
+                assert!(deadline < later);
+                Err::<(), _>("late client outcome retained")
+            },
+        );
+        assert_eq!(retained, Some(Err("late client outcome retained")));
+    }
+    assert_eq!(issued.get(), 3);
+    // A valid entry may be descheduled until its original allowance is gone.
+    // Exercise the real client with that elapsed absolute deadline, without
+    // sleeping or needing a peer. The issued failure must remain Some.
+    let delayed_anchor = Instant::now().checked_sub(Duration::from_secs(3)).unwrap();
+    let (reply, metrics) = support::within_call_window(
+        epoch,
+        delayed_anchor,
+        epoch + 1_000_000_000,
+        |deadline, _, _| {
+            public_v3::call_public_pure_pon_v2(
+                "127.0.0.1:0".parse().unwrap(),
+                &Request::Submit {
+                    packet: String::new(),
+                },
+                &support::settings(),
+                support::identity(71).public_key(),
+                &support::identity(73),
+                support::policy(),
+                Some(deadline),
+            )
+        },
+    )
+    .expect("an issued late error must stay visible");
+    assert_eq!(reply.unwrap_err().to_string(), "PUBLIC_CLIENT_DEADLINE");
+    assert_eq!(
+        metrics.failed_stage,
+        Some(public_v3::PublicClientStage::Construction)
+    );
+    assert_eq!(metrics.challenge_ns, 0);
+    assert_eq!(metrics.solution_trials, 0);
+    // Exercise the actual wrapper's refusal route as well. Its API is never
+    // invoked, so no socket or peer is required for an already closed phase.
+    let expired_epoch = support::monotonic().checked_sub(WINDOW_NS).unwrap();
+    assert!(support::call(
+        "127.0.0.1:0".parse().unwrap(),
+        &support::settings(),
+        Request::Submit {
+            packet: String::new()
+        },
+        73,
+        expired_epoch,
+    )
+    .is_none());
+}
+
 fn prepare(root: &Path, settings: &Settings) -> (Vec<Packet>, Vec<Packet>) {
     let started = Instant::now();
     let cpu = support::thread_cpu();
@@ -225,7 +317,7 @@ fn attack(job: &Value, path: &Path) -> Value {
         if support::monotonic() >= epoch + WINDOW_NS {
             break;
         }
-        let mut row = support::call(
+        let Some(mut row) = support::call(
             address,
             &settings,
             Request::Submit {
@@ -233,7 +325,9 @@ fn attack(job: &Value, path: &Path) -> Value {
             },
             80 + ((actor * 37 + sequence) % 150) as u8,
             epoch,
-        );
+        ) else {
+            break;
+        };
         row["sequence"] = json!(sequence);
         row["header"] = json!(hex::encode(header.encode()));
         row["trace"] = json!(trace);
@@ -433,8 +527,9 @@ fn phase(
     let sampler_metrics = metrics.clone();
     let sample_out = sampled.clone();
     let sampler = thread::spawn(move || {
-        while support::monotonic() < epoch + WINDOW_NS {
-            let started = support::monotonic().saturating_sub(epoch);
+        // Use the same captured start for the gate and the observation;
+        // a separate while-clock check can cross the original cutoff.
+        while let Some(started) = support::phase_entry_ns(epoch, support::monotonic()) {
             let budget = sampler_domain.observe().unwrap();
             let flow = sampler_domain.observe_actual_flow().unwrap();
             let credit_freshness = sampler_domain.observe_credit_freshness().unwrap();
@@ -476,13 +571,15 @@ fn phase(
             && support::monotonic() < epoch + WINDOW_NS
             && submissions.len() < 128
         {
-            let mut row = support::call(
+            let Some(mut row) = support::call(
                 addresses[next % 2],
                 settings,
                 requests[next].clone(),
                 73,
                 epoch,
-            );
+            ) else {
+                break;
+            };
             row["packet_index"] = json!(next);
             row["listener"] = json!(next % 2);
             if support::on_time(&row) {
@@ -502,7 +599,11 @@ fn phase(
                 tip: hex::encode(tip),
                 after: hex::encode(after),
             };
-            let mut row = support::call(addresses[round % 2], settings, request.clone(), 74, epoch);
+            let Some(mut row) =
+                support::call(addresses[round % 2], settings, request.clone(), 74, epoch)
+            else {
+                break;
+            };
             row["request"] = serde_json::to_value(request).unwrap();
             row["listener"] = json!(round % 2);
             if support::on_time(&row) {

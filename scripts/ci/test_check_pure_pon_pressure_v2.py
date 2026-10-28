@@ -385,6 +385,19 @@ class QualificationControls(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "late or invented"):
             reader.check_phase(value, self.business)
 
+    def test_late_call_entry_remains_invalid_even_if_it_only_returned_deadline(self):
+        # Exact offsets retained from the failed 75d52b6 ARM64 observation.
+        # The forward collector refuses before issuing a new call; this old
+        # already-issued row is never deleted, repaired or requalified.
+        row = copy.deepcopy(self.base["actors"][0]["report"]["result"]["calls"][0])
+        row.update(started_ns=30_000_102_720, ended_ns=30_000_156_365,
+                   deadline_ns=30_000_102_720, status="error", response=None,
+                   error="PUBLIC_CLIENT_DEADLINE")
+        original = copy.deepcopy(row)
+        with self.assertRaisesRegex(ValueError, "call clock"):
+            reader.call(row)
+        self.assertEqual(row, original)
+
     def test_late_successful_submit_or_history_cannot_qualify_and_tail_is_retained(self):
         for section in ("submissions", "history"):
             with self.subTest(section=section):

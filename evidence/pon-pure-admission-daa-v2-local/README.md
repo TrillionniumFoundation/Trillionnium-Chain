@@ -228,3 +228,66 @@ different shared local hardware cannot be used as a controlled throughput
 comparison. Both local pressure failures and the exact-head 180/1 regression
 remain preserved; these CI passes do not erase them or cover the later
 timed-close correction.
+
+## Exact-head CI at 75d52b6: x64 pass, ARM64 evidence failure
+
+[Run 40752790789](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40752790789)
+tested commit `75d52b60b179c7695661afb34d00be9bcdcabbf1`, tree
+`0f640c03eaa551d69f8b3a2c0d722a904beef3c0`, once per architecture. The
+[x64 manifest](ci-75d52b6-x64.json) and [raw archive](ci-75d52b6-x64.tar.gz)
+retain its pass. The [ARM64 manifest](ci-75d52b6-arm64.json) and
+[raw archive](ci-75d52b6-arm64.tar.gz) retain its **failure**. Both original
+ZIP sizes and SHA-256 digests, step stream digests, source identities and
+before/after resource envelopes were checked. Local independent reads of the
+five unmodified raw inputs exactly reproduced both recorded verdicts.
+
+The x64 reader qualified 3/3 rounds in each phase; all six hostile rounds had
+actual pressure overlap and four also contained fresh paid-depletion samples.
+Its fresh-header phase completed and published 1,903 distinct facts, with
+zero arithmetic hits. Both architectures passed the six native gates, including
+183 runtime tests, 7 transparent-proof tests, 3 CLI tests, 2 native confirmation
+tests and the height and pressure gates. The ARM native workload reported nine
+confirmed rounds, but its independent reader returned exit 1,
+`input_consistent: false`, `finite_qualification: false`, `error: "call clock"`.
+Native success cannot override this failed evidence contract.
+
+The violating row is `from-zero/actors/2/report/result/calls/135` (sequence 135):
+`started_ns=30000102720`, `ended_ns=30000156365`,
+`deadline_ns=30000102720`, status `error`, `PUBLIC_CLIENT_DEADLINE`.
+It entered the client API 102,720 ns after the original 30 s phase cutoff.
+The client failed in construction before challenge/solution work. The actor's
+preceding loop check happened before argument encoding and possible scheduling;
+it could not guarantee the captured call start remained inside the window.
+The old helper also added a remaining allowance derived from the earlier
+monotonic sample to a later `Instant::now()`, needlessly shifting the actual
+deadline. This does not establish a production transport deadline bypass.
+
+The forward collector correction refuses a closed phase at the call helper's
+captured entry, **before invoking any client API**. All three callers stop
+their loop on this no-call outcome. An issued call keeps its entire real row,
+including late errors and physical tails; no historical row is filtered or
+repaired. An Instant anchor captured before the monotonic sample conservatively
+maps the original allowance without granting time for later construction or
+scheduling. The sampler now gates and records the same captured start, closing
+the analogous between-two-clock-reads race; an already started late-ending
+sample remains visible. Existing v3 fields and meanings, reader code, 30 s
+windows, 2 s deadlines, actor counts and all resource limits are unchanged.
+
+A new mandatory native call-window gate covers exact cutoff, one nanosecond
+on either side, this actual late offset, conservative absolute deadlines and
+retention of an issued late error. A reader regression requires the old ARM
+row to remain invalid and unchanged. The seven-gate successor requires its own
+exact-source campaign; these observations do not qualify it, and the ARM run
+is never relabelled a pass.
+
+The [correction validation manifest](phase-entry-correction-validation.json)
+and [117-file raw archive](phase-entry-correction-validation.tar.gz) retain the
+first strict-Clippy failure (its required equivalent `while let` form), a later
+session that ended without a formatter terminal result, and the final complete
+release verification. The incomplete session's cause is unknown and it is not
+counted as a test pass. Final release call-window and height regressions each
+passed one actual test, including the real client construction-deadline negative.
+The 32 reader, 14 runner and 34 source-integrity controls, locked main/fuzz graphs,
+repository links/inventory, formatting and full-workspace/all-target/all-feature
+strict release Clippy passed. Included source snapshots match their original
+pre-run SHA-256 digests. No new local 90-second pressure campaign was run.
