@@ -1,0 +1,15 @@
+{
+  "utc": "2026-10-26T14:04:56.796829+00:00",
+  "owner_sha256": "b1c2630c1227b3e5f7ac246e9ba66ecb1ca7601c017fde2d6081df9567231e2f",
+  "base_actual_build_launcher_sha256": "a158046df36e901b8b0c8d8839adb69e5b720dbc79187994568190b40b7932f6",
+  "runner_sha256": "1d190fca2c2217e12ee6e2d5778703b075c2a37e0a2b71353059ab7153b9d561",
+  "actual_built_binary_sha256": "66b1b31de46da742a9c9662bd02be32b661075aa8ba1f108fa66451b84f43b21",
+  "source": "historicalclean399,notcurrent94pairqualification",
+  "original_whole_run_seconds": 120,
+  "original_per_RPC_seconds": 2,
+  "all_resource_profile_guards_unchanged": true,
+  "only_one_new_native_run_directory": true,
+  "not_run": true,
+  "assembly_original_preserved": "assembly-before-final-review",
+  "final_delta": "explicitreader/Rust/support sourcepins,waitcoversownedinnerRuntime110+stop2within115internalclock"
+}

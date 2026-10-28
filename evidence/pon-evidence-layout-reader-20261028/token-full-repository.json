@@ -1,0 +1,7 @@
+{
+  "source": "7887b2efbbed0613640b2c1be6019bd31ca5651c",
+  "returncode": 2,
+  "wall_seconds": 1.0219872970046708,
+  "stderr": "Repository check failed: broken link docs/README.md -> ../evidence/pon-v1/README.md\n",
+  "full_repository_qualified": false
+}

@@ -1,0 +1,15 @@
+{
+  "source": "4ada12abe4bbb6accb0d81ea352bd23a25dec994",
+  "command": [
+    "git",
+    "diff",
+    "--cached",
+    "--check"
+  ],
+  "returncode": 2,
+  "findings": [
+    "Original unittest RED stderr lines 1 and 5 have trailing spaces after test status."
+  ],
+  "correction": "Retain the entire original stderr byte-for-byte in deterministic gzip; do not strip or edit observed bytes. Verify decompression and hashes.",
+  "raw_log_sha256": "0e68506625574deb154423be35a3d366189a25fa24677878625de99d75120b80"
+}

@@ -1,0 +1,21 @@
+{
+  "source_reader_sha256": "dd127ef8cf0866679956e02361d84662d8dfd95f3e3e4c89a321e4e2300add28",
+  "command": [
+    "python3",
+    "-B",
+    "scripts/ci/test_public_readiness_evidence.py",
+    "NativeDurableSchemaTests.test_shared_layout_joint_operator_tokens_cannot_be_split",
+    "NativeDurableSchemaTests.test_shared_layout_byte_literal_prefix_cannot_be_split"
+  ],
+  "returncode": 1,
+  "wall_seconds": 18.896231752994936,
+  "test_methods": 2,
+  "scope": "source grammar acceptance, not a compiled runtime exploit",
+  "raw_stderr": {
+    "file": "token-red.stderr.log.gz",
+    "bytes": 4743,
+    "sha256": "0e68506625574deb154423be35a3d366189a25fa24677878625de99d75120b80",
+    "gzip_sha256": "580d08c2930ccefe84bf82b092e4ec48d86a5140fff1f4d790cca94f1bdc3ac6",
+    "byte_identical_decompression_verified": true
+  }
+}

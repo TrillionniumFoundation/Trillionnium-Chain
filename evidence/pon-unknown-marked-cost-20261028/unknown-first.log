@@ -1,0 +1,24 @@
+test_120_independent_random_iteration_terminal_path_enumerations (test_quantum_unknown_marked.UnknownMarkedPolicy.test_120_independent_random_iteration_terminal_path_enumerations) ... ok
+test_all_mandatory_costs_reconcile_without_interruptions (test_quantum_unknown_marked.UnknownMarkedPolicy.test_all_mandatory_costs_reconcile_without_interruptions) ... ok
+test_cap_one_reduces_to_costed_classical_sampling_and_existing_exact_race (test_quantum_unknown_marked.UnknownMarkedPolicy.test_cap_one_reduces_to_costed_classical_sampling_and_existing_exact_race) ... FAIL
+test_capped_policy_tail_matches_long_finite_campaign (test_quantum_unknown_marked.UnknownMarkedPolicy.test_capped_policy_tail_matches_long_finite_campaign) ... ok
+test_empty_domain_limits_and_external_tip_remain_explicit (test_quantum_unknown_marked.UnknownMarkedPolicy.test_empty_domain_limits_and_external_tip_remain_explicit) ... ok
+test_exact_quarter_fraction_and_nearly_full_64_bit_endpoint (test_quantum_unknown_marked.UnknownMarkedPolicy.test_exact_quarter_fraction_and_nearly_full_64_bit_endpoint) ... ok
+test_invalid_or_unbounded_enumeration_inputs_are_not_silently_clipped (test_quantum_unknown_marked.UnknownMarkedPolicy.test_invalid_or_unbounded_enumeration_inputs_are_not_silently_clipped) ... ok
+test_policy_has_no_marked_count_and_exact_rational_growth (test_quantum_unknown_marked.UnknownMarkedPolicy.test_policy_has_no_marked_count_and_exact_rational_growth) ... ok
+test_probabilities_against_dense_state_vectors_including_overshoot (test_quantum_unknown_marked.UnknownMarkedPolicy.test_probabilities_against_dense_state_vectors_including_overshoot) ... ok
+test_tiny_success_probability_keeps_finite_exit_and_large_expected_cost (test_quantum_unknown_marked.UnknownMarkedPolicy.test_tiny_success_probability_keeps_finite_exit_and_large_expected_cost) ... ok
+test_tips_during_setup_draw_check_and_winning_publication_are_charged (test_quantum_unknown_marked.UnknownMarkedPolicy.test_tips_during_setup_draw_check_and_winning_publication_are_charged) ... ok
+
+======================================================================
+FAIL: test_cap_one_reduces_to_costed_classical_sampling_and_existing_exact_race (test_quantum_unknown_marked.UnknownMarkedPolicy.test_cap_one_reduces_to_costed_classical_sampling_and_existing_exact_race)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/121c7d6beede/quantum_task/repo/formal/pon-nakamoto-v1/test_quantum_unknown_marked.py", line 145, in test_cap_one_reduces_to_costed_classical_sampling_and_existing_exact_race
+    self.assertEqual(actual["expected_context_seconds"], expected["expected_context_seconds"])
+AssertionError: 97.25 != 97.25000000000003
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.119s
+
+FAILED (failures=1)

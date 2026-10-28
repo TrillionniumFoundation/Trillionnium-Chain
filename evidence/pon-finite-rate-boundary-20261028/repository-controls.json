@@ -1,0 +1,39 @@
+[
+  {
+    "name": "ci-contract",
+    "argv": [
+      "python",
+      "-B",
+      "scripts/ci/check_ci_contract.py"
+    ],
+    "returncode": 0,
+    "wall_seconds": 0.45021096900018165
+  },
+  {
+    "name": "source-integrity",
+    "argv": [
+      "python",
+      "-B",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/ci",
+      "-p",
+      "test_verify_ci_source.py",
+      "-v"
+    ],
+    "returncode": 5,
+    "wall_seconds": 0.09007007900072495
+  },
+  {
+    "name": "repository",
+    "argv": [
+      "python",
+      "-B",
+      "scripts/ci/check_repository.py"
+    ],
+    "returncode": 2,
+    "wall_seconds": 1.0228037889974075
+  }
+]

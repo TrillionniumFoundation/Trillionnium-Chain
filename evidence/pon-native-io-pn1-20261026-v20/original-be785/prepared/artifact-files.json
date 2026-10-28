@@ -1,0 +1,82 @@
+{
+  "files": [
+    {
+      "bytes": 4992,
+      "path": "build.stderr.log",
+      "sha256": "ab207470f7f657ba773e19d252cd108161d349dc2bc2446bbb284af61ca1706f"
+    },
+    {
+      "bytes": 91764,
+      "path": "build.stdout.log",
+      "sha256": "27134582021dcac39341a369934b30370e2f2e750e17f61ccf7c3bd2b6a2faa9"
+    },
+    {
+      "bytes": 1522,
+      "path": "build.step.json",
+      "sha256": "ac2ed88671e0c0dbff7ae46b524f29922b827f0542e988ee92fb3257669526e4"
+    },
+    {
+      "bytes": 10196,
+      "path": "prepared.json",
+      "sha256": "f7ff49035b863098e1938803290420784114cf66a55cf701eda6bf44d1a2b65b"
+    },
+    {
+      "bytes": 10574808,
+      "path": "public_v3_identity_campaign.bin",
+      "sha256": "b8eb5c366b7d3acd811dd27bea8d10a689e8817b17419c15bf9488a6f6bf3d20"
+    },
+    {
+      "bytes": 3244,
+      "path": "resource-after.json",
+      "sha256": "cbb566b9ceb25cc5f633a37d2f00465d33ef98fb3f49895f167733178fd4b4b3"
+    },
+    {
+      "bytes": 3229,
+      "path": "resource-before.json",
+      "sha256": "d5fe28bac198ee53b39ec2ff697ae204cb107c65a7ed4f95dbedce9d7fd4ac08"
+    },
+    {
+      "bytes": 421,
+      "path": "source-after.json",
+      "sha256": "cac85a0cc61230f24db3c853e08abd4480d91847858227a90665ed488625d917"
+    },
+    {
+      "bytes": 0,
+      "path": "source-after.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 421,
+      "path": "source-after.stdout.log",
+      "sha256": "cac85a0cc61230f24db3c853e08abd4480d91847858227a90665ed488625d917"
+    },
+    {
+      "bytes": 907,
+      "path": "source-after.step.json",
+      "sha256": "0dac3111c23f11f7119d127fa703dc884448013caaac70715df1da0801de1847"
+    },
+    {
+      "bytes": 421,
+      "path": "source-before.json",
+      "sha256": "cac85a0cc61230f24db3c853e08abd4480d91847858227a90665ed488625d917"
+    },
+    {
+      "bytes": 0,
+      "path": "source-before.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 421,
+      "path": "source-before.stdout.log",
+      "sha256": "cac85a0cc61230f24db3c853e08abd4480d91847858227a90665ed488625d917"
+    },
+    {
+      "bytes": 910,
+      "path": "source-before.step.json",
+      "sha256": "268e8fede12bff42f322c2dc5876ac2a9f49536f4c019c39cf1dac2b87bab027"
+    }
+  ],
+  "kind": "prepare",
+  "profile": "pn1-native-io-three-fd-component-v1",
+  "schema": "pon-native-io-three-fd-component-inventory-v1"
+}

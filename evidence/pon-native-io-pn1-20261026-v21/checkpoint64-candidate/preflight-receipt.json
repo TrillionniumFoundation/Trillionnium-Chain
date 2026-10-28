@@ -1,0 +1,33 @@
+{
+  "utc": "2026-10-26T13:35:28.913890+00:00",
+  "source_base_head": "399dd82608df72c71c502b8bda0aa95898794080",
+  "source_base_tree": "66ceec03cd2b67ae88a5662cf75e4ba80292cd2b",
+  "steps": [
+    {
+      "name": "checkout-existing-original-branch",
+      "command": [
+        "git",
+        "checkout",
+        "docs/chain-audit-remediation-20261022"
+      ],
+      "returncode": 0,
+      "stdout_sha256": "30ff902fd2602f4f837cbbea339461af86f053d856f9e2c84dec48edb9b47dbf",
+      "stderr_sha256": "ce92a2fa5b53803c357ebe2c80dc276db4d1b04cf066ee1c49cdfd5229f843a9"
+    },
+    {
+      "name": "preflight-correct-origin-existing-branch",
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--dev"
+      ],
+      "returncode": 0,
+      "stdout_sha256": "63a5bf3b9fc8975dac9742c8f5f7f77a05a0ea5bf4d40403dcdb791778eb44a3",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "original_preflight_origin_mismatch_and_branch_rename_refusal_preserved": true,
+  "original_source_not_mutated": true,
+  "source_edit_yet": false,
+  "build_or_test_run": false
+}

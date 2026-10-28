@@ -17,14 +17,19 @@ consensus_authority = false
 default = []
 
 [dependencies]
-trnm-protocol = { path = "../trnm-protocol" }
-trnm-crypto-primitives = { path = "../trnm-crypto-primitives" }
+trnm-verification-profiles = { version = "=0.1.0", path = "../trnm-verification-profiles" }
+trnm-protocol = { version = "=0.1.0", path = "../trnm-protocol" }
+trnm-crypto-primitives = { version = "=0.1.0", path = "../trnm-crypto-primitives" }
+serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 hex = "0.4"
 borsh = { version = "1", features = ["derive"] }
-rusqlite = { version = "0.32", features = ["bundled"] }
+rusqlite = { version = "=0.39.0", features = ["bundled", "fallible_uint"] }
 sha2 = "0.10"
 
 [dev-dependencies]
 serde_json = "1"
 tempfile = "3"
+
+[target.'cfg(any(unix, windows, target_os = "wasi"))'.dev-dependencies]
+getrandom = "=0.4.2"

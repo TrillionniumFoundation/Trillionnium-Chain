@@ -1,0 +1,15 @@
+{
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-B",
+    "formal/pon-nakamoto-v1/quantum_daa.py",
+    "--output",
+    "/workspace/scratch/301262829a43/pon-quantum-circuit-impl/evidence/pon-w1-logical-circuit-20261027/conditional-daa.json"
+  ],
+  "exit_code": 0,
+  "name": "conditional-daa",
+  "observed_reaped_child_system_seconds": 0.04644200000000004,
+  "observed_reaped_child_user_seconds": 1.733035,
+  "quantum_cost_measurement": false,
+  "wall_ns": 1788680002
+}

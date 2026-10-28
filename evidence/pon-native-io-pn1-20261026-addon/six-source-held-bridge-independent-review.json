@@ -1,0 +1,169 @@
+{
+  "schema": "pn1-full4097-held-bridge-independent-read-only-review-v1",
+  "observed_utc": "2026-10-26T00:58:24.188786+00:00",
+  "reviewer": "/root/held_review_resume",
+  "author_is_another_agent": true,
+  "scope": {
+    "source_head": "630f871293e48588e0a1ceae7ceb64973d3ec31d",
+    "uncommitted_overlay": true,
+    "six_sealed_sources_and_same_six_live_only": true,
+    "input_directory": "work/ci-follow/pn1-full4097-held-bridge-local-validation-20261026-001",
+    "final_source_patch_sha256": "8608e637cc339c674318d0aaf5daf033e531f5e110f8c4eaa7af579a48d48496",
+    "final_source_patch_bytes": 67709,
+    "final_receipt_sha256": "998affb074cea85ca779de85bdba07c790c9135ee3a86d4332b9cb2b1c175e99",
+    "input_manifest_sha256": "2a1d1ae8b6fbe2d46f114ff9b86b2e1f9f2882442b6110df6e927ea3c23cde44",
+    "original_graph_only": true,
+    "future_SQLite_upgrade_not_part_of_this_result": true
+  },
+  "independent_checks": {
+    "all_86_member_hashes_and_sizes_exact": true,
+    "verified_input_bytes": 179026205,
+    "no_missing_member_or_unlisted_payload": true,
+    "manifest_itself_not_self_hashed": true,
+    "full_patch_six_outputs_reconstructed_in_memory_without_source_execution": true,
+    "six_live_sources_equal_sealed_sources": true,
+    "original_V2_campaign_controller_Plan_limits_four_way_byte_exact": true,
+    "two_original_Value_test_function_texts_exact": true,
+    "all_five_result_to_raw_stream_byte_hash_links_exact": true,
+    "normal_no_run_selected_exact_one_ELF": true,
+    "actual_source_before_after_and_final_six_pins_equal": true,
+    "actual_normal_ELF_before_after_hash_size_dev_ino_equal": true,
+    "frozen_ELF_full_stream_hash_and_size_equal": true,
+    "five_owned_systemd_job_original_request_start_child_exit_launch_records_read_and_retained": true,
+    "five_exact_owned_cgroups_absent_at_review": true
+  },
+  "static_findings": [
+    {
+      "topic": "private original three-FD output capability",
+      "conclusion": "Caller.python_output is private and populated only while classifying the actual original inherited output FD. The clone path reads this private FD/identity, requires CLOEXEC and verifies kernel dev/ino before and after duplication. Public mutable receipt JSON is not a capability source. Held owns its File and checks private-directory mode/identity/CLOEXEC; no original-path or V1/V2 fallback is introduced."
+    },
+    {
+      "topic": "seven roots and one-use phase",
+      "conclusion": "Layout creates fresh held phase directories, invokes NativeIoOwner::create_at once for the original seven role leaves, retains one owner and exact seven distinct lease identities. Phase fields are private and no Clone is derived. Layout::phase consumes its claim before returning; controller::phase takes Phase by value. The original role order and original limits are checked, not relabelled."
+    },
+    {
+      "topic": "authenticated open and actual terminal ordering",
+      "conclusion": "Exactly four source call sites use open_with_authenticated_state_and_native_io(..., settings, 1): miner, receiver, independent verifier and receiver cold reopen. Cold reuses the same receiver lease after service finish/join and owner Arc drop. Cold and verifier close before actual terminal snapshots. Root receipts validate schema/current PID/dev/ino and require complete healthy lifecycle, no denied/quarantine/failure, and zero handles/pending/shm; full roots are never drained/reset."
+    },
+    {
+      "topic": "generic two-pass serialization reservation",
+      "conclusion": "First-pass byte count is checked against the unchanged file/stage limits. The full reservation is charged before second-pass File writes. ReservedFileWriter rejects chunks beyond remaining reservation before writing and preserves the first File/write/flush error even if Serialize swallows it. Errors or a second-pass length mismatch occur before sync_all and NOREPLACE publication, retain charged partial bytes and poison subsequent Result-based Budget writes without refund. The two actual stateful controls cover both growing and shorter second passes; exhaustive arbitrary Serialize panic or I/O fault injection is not claimed."
+    },
+    {
+      "topic": "error provenance and unchanged wire",
+      "conclusion": "Original work error or panic is retained even when terminal-save also fails. The original Clippy001 failure remains exit101 with its three lints. Routine correction removes only the redundant internal mode parameter and renames Rust fields with serde(rename) preserving original wire keys; no lint suppression, removed assertion or changed limits."
+    },
+    {
+      "topic": "harness security boundary",
+      "conclusion": "This is an owned, serialized Linux test harness/capability wiring candidate. The existing external-concurrent-spawn prohibition remains; static review and finite units do not establish a hostile same-UID native-code sandbox or qualify the new caller."
+    }
+  ],
+  "actual_finite_results": {
+    "strict_clippy_001": {
+      "child_exit_code": 101,
+      "collector_owner_exit_code": 1,
+      "elapsed_seconds": 2.8666149389973725,
+      "original_fail_retained": true,
+      "actual_lints": [
+        "too_many_arguments",
+        "original_three_FD_caller_qualified non_snake_case",
+        "full_W1_4097_qualified non_snake_case"
+      ]
+    },
+    "strict_clippy_002": {
+      "exit_code": 0,
+      "elapsed_seconds": 2.5870570949991816
+    },
+    "normal_locked_offline_no_run": {
+      "exit_code": 0,
+      "elapsed_seconds": 200.29147467800067,
+      "opt_level": "3",
+      "debuginfo": 2,
+      "debug_assertions": true,
+      "overflow_checks": true
+    },
+    "same_normal_held_ELF_units": {
+      "exit_code": 0,
+      "elapsed_seconds": 0.06604165600583656,
+      "passed": 13,
+      "original_passed": 11,
+      "new_stateful_passed": 2,
+      "failed": 0,
+      "ignored": 13,
+      "ignored_counted_as_PASS": false,
+      "filtered_out": 0,
+      "actual_unit_collector_pid": 3197982,
+      "native_test_child_PID_separately_retained": false,
+      "PID_limitation": "The original collector uses a real bounded Popen child with waitid/killpg/wait and holds the actual executable FD. Raw records retain the Python collector PID/starttick and ELF dev/ino/hash continuity, but do not serialize a separate libtest child PID/starttick. The owner PID is not substituted for the native child."
+    },
+    "final_read_only_fmt": {
+      "exit_code": 0,
+      "elapsed_seconds": 16.75279044600029,
+      "last_retained_execution_stage": true,
+      "no_later_test_in_this_attempt": true
+    }
+  },
+  "resources_and_bytes": {
+    "original_operator_requests_each_cpu_percent": 400,
+    "original_operator_requests_each_memory_bytes": 17179869184,
+    "original_operator_requests_each_nice": 19,
+    "actual_build_cgroup_cpu_memory_and_cargo_rustc_AS_affinity_observed": true,
+    "actual_unit_collector_before_after_cpu_memory_AS_affinity_nice_observed": true,
+    "per_process_AS_bytes": 3221225472,
+    "cargo_jobs": 2,
+    "build_timeout_seconds": 1200,
+    "unit_timeout_seconds": 300,
+    "stdout_bytes_cap": 4194304,
+    "stderr_bytes_cap": 4194304,
+    "normal_ELF_bytes": 178353576,
+    "normal_ELF_sha256": "68cd820602f25e67a8ad81719c5b63038887e77bb7f1b603ca0676d5a88f6321",
+    "original_ELF_dev_ino": [
+      2050,
+      54714820
+    ],
+    "frozen_ELF_dev_ino": [
+      2050,
+      57987432
+    ],
+    "binary_bucket_bytes": 201326592,
+    "two_copy_bytes": 356707152,
+    "single_binary_under_bucket": true,
+    "two_copy_bucket_qualified": false,
+    "profile_stripped_or_debug_reduced": false,
+    "external_build_cache_not_charged_as_qualified_full_collection": true,
+    "historical_graph": {
+      "rusqlite": "0.32.1",
+      "libsqlite3-sys": "0.30.1",
+      "SQLite": "3.46.0",
+      "known_WAL_reset_risk_closed": false
+    }
+  },
+  "verdict": {
+    "static_candidate_review_accepted_with_closed_guards": true,
+    "finite_normal_component_regression_pass": true,
+    "original_clippy001_still_failure": true,
+    "new_native_campaign_actually_run": false,
+    "new_Python_profile_qualified": false,
+    "original_three_FD_caller_qualified": false,
+    "whole_writer_qualified": false,
+    "independent_strict_reader_qualified": false,
+    "full_W1_4097_qualified": false,
+    "future_new_SQLite_graph_qualified": false,
+    "Windows_original_failures_closed": false,
+    "model_three_round_loop_qualified": false,
+    "independent_admin_WAN_qualified": false,
+    "merge_ready": false,
+    "task_complete": false,
+    "overall_status": "NO_GO"
+  },
+  "actions": {
+    "production_sources_modified": false,
+    "original_raw_modified": false,
+    "build_or_test_or_collector_executed": false,
+    "native_executed": false,
+    "CI_polled": false,
+    "ROG_touched": false,
+    "outputs_modified": false,
+    "only_new_audit_files_written": true
+  }
+}

@@ -1,0 +1,47 @@
+[
+  {
+    "path": "formal/pon-nakamoto-v1/quantum_stopping.py",
+    "sha256": "540934502c944c4f65c7102f6329b76b7fe9aa084cdd40d0ec00031334c32fa4",
+    "unchanged_from_parent": true
+  },
+  {
+    "path": "formal/pon-nakamoto-v1/quantum_daa.py",
+    "sha256": "233c7b2d3c2421b3fb82a1d6802d1b134126c64ec833b074063e1bd161ae673c",
+    "unchanged_from_parent": true
+  },
+  {
+    "path": "formal/pon-nakamoto-v1/w1_oracle_blueprint.py",
+    "sha256": "523699b3ba76313eb2784c3a58033423960efaa2c1530e90f31a27620acacd79",
+    "unchanged_from_parent": true
+  },
+  {
+    "path": "formal/pon-nakamoto-v1/reversible_bits.py",
+    "sha256": "611b1f12ebaaf1d71db320400bac24e232380b891118d973bcb0b90b37fe9f79",
+    "unchanged_from_parent": true
+  },
+  {
+    "path": "formal/pon-nakamoto-v1/work_oracle.py",
+    "sha256": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18",
+    "unchanged_from_parent": true
+  },
+  {
+    "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+    "sha256": "9d28d64da80fd059c1619a17d24b6959a76bbdb64108600adc4dc95fe6c2636d",
+    "unchanged_from_parent": true
+  },
+  {
+    "path": "trillionnium/crates/trnm-pon-node/src/consensus.rs",
+    "sha256": "53088562316151516348ea723e03b9132b9994fee14167da18c79c2c3b3fed29",
+    "unchanged_from_parent": true
+  },
+  {
+    "path": "trillionnium/Cargo.lock",
+    "sha256": "3707ed772a9fd851638dca36e5b2472ac0657de65754480c448d3078107d9ff9",
+    "unchanged_from_parent": true
+  },
+  {
+    "path": "trillionnium/Cargo.toml",
+    "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+    "unchanged_from_parent": true
+  }
+]

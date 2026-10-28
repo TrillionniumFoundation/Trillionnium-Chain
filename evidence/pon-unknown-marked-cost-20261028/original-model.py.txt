@@ -1,0 +1,272 @@
+#!/usr/bin/env python3
+"""Cost an explicit M-blind search policy, conditional on an evaluator's M.
+
+The policy never receives M. Its random iteration windows grow by 6/5 until
+the declared cap, following the BBHT construction. An explicit smaller cap is
+permitted and reported, never silently treated as the full sqrt(N) policy.
+This is a numerical conditional model, not quantum execution or a hardness
+claim. The full clean W1 oracle plus diffusion remains a supplied timing cost.
+"""
+from __future__ import annotations
+
+import argparse
+from dataclasses import asdict
+from decimal import Decimal, localcontext
+from fractions import Fraction
+import hashlib
+import json
+import math
+from pathlib import Path
+
+import quantum_stopping as known
+
+
+MAX_WINDOW = 10000
+MAX_ATTEMPTS = 100000
+PROBABILITY_PRECISION = 80
+Reject = known.Reject
+
+
+def expanding_windows(nonce_bits: int, window_cap: int) -> tuple[int, ...]:
+    """Policy-only schedule; its interface deliberately has no marked count.
+
+    At rational m, draw an integer 0 <= j < m, i.e. from ceil(m) possibilities.
+    The final window repeats until success, interruption or the attempt limit.
+    The caller must explicitly choose a cap no larger than floor(sqrt(N)).
+    """
+    bits = known._integer(nonce_bits, "NONCE_BITS", 1, 64)
+    cap = known._integer(window_cap, "WINDOW_CAP", 1, min(MAX_WINDOW, math.isqrt(1 << bits)))
+    m, windows = Fraction(1), []
+    while m < cap:
+        windows.append(math.ceil(m))
+        m = min(Fraction(cap), m * Fraction(6, 5))
+    windows.append(cap)
+    return tuple(windows)
+
+
+def marked_probabilities(nonce_bits: int, marked: int, count: int) -> tuple[float, ...]:
+    """High-precision cosine recurrence without accumulated asin argument error.
+
+    With p=M/N, x_j=cos((4j+2)theta), cos(2theta)=1-2p. Then
+    x_(j+1)=2*cos(4theta)*x_j-x_(j-1) and P_j=(1-x_j)/2.
+    Eighty decimal digits are used for at most 10,000 terms. Values outside the
+    probability interval are rejected, not clamped. This is not interval proof.
+    """
+    bits = known._integer(nonce_bits, "NONCE_BITS", 1, 64)
+    size = 1 << bits
+    known._integer(marked, "MARKED_COUNT", 0, size)
+    known._integer(count, "PROBABILITY_COUNT", 1, MAX_WINDOW)
+    if marked in (0, size):
+        return (float(marked == size),) * count
+    with localcontext() as context:
+        context.prec = PROBABILITY_PRECISION
+        p = Decimal(marked) / Decimal(size)
+        x0 = 1 - 2 * p
+        previous, current = x0, x0
+        cosine4 = 2 * x0 * x0 - 1
+        result = []
+        for j in range(count):
+            if j == 1:
+                current = 4 * x0 * x0 * x0 - 3 * x0
+            elif j > 1:
+                previous, current = current, 2 * cosine4 * current - previous
+            probability = (1 - current) / 2
+            if not 0 <= probability <= 1:
+                raise Reject("PROBABILITY_NUMERIC_RANGE")
+            result.append(float(probability))
+        return tuple(result)
+
+
+def _stage(probabilities: tuple[float, ...], window: int, timing: known.Timing,
+           draw_seconds: float, rate: float) -> dict:
+    wins, exits, spent = [], [], []
+    tail = timing.winning_witness_publication_seconds
+    for j, p in enumerate(probabilities[:window]):
+        duration = known._real(draw_seconds + timing.attempt_seconds(j),
+                               "ATTEMPT_SECONDS", positive=True)
+        alive = math.exp(-rate * duration)
+        wins.append(p * alive * math.exp(-rate * tail) / window)
+        # 1 - E[(1-p_j) exp(-lambda*s_j)], evaluated without cancellation.
+        exits.append((p + (1 - p) * -math.expm1(-rate * duration)) / window)
+        spent.append((known._integral(rate, duration)
+                      + p * alive * known._integral(rate, tail)) / window)
+    return {"win": math.fsum(wins), "exit": math.fsum(exits),
+            "spent": math.fsum(spent), "mean_iterations": (window - 1) / 2}
+
+
+def campaign(nonce_bits: int, marked: int, timing: known.Timing, *,
+             window_cap: int, policy_draw_seconds: float,
+             attempt_limit: int | None = None, external_tip_rate: float = 0.0) -> dict:
+    """Expected outcome of the declared randomized policy in one fixed context.
+
+    Independent full resets may revisit a nonce. The actual M is available only
+    to this evaluator, not to the policy. An attempt limit is not a time budget
+    or an emptiness certificate. Tips interrupt draw, oracle, check and winning
+    publication. Draw/setup/check/tail costs are never inferred from gate counts.
+    """
+    windows = expanding_windows(nonce_bits, window_cap)
+    probabilities = marked_probabilities(nonce_bits, marked, window_cap)
+    draw = known._real(policy_draw_seconds, "POLICY_DRAW_SECONDS", positive=True)
+    rate = known._real(external_tip_rate, "EXTERNAL_TIP_RATE")
+    if not isinstance(timing, known.Timing):
+        raise Reject("TIMING")
+    if attempt_limit is not None:
+        known._integer(attempt_limit, "ATTEMPT_LIMIT", 1, MAX_ATTEMPTS)
+    moments = {window: _stage(probabilities, window, timing, draw, rate)
+               for window in set(windows)}
+    setup = timing.context_setup_seconds
+    log_survival = -rate * setup
+    win_terms, time_terms = [], [known._integral(rate, setup)]
+    query_terms, draw_terms = [], []
+    count = len(windows) - 1 if attempt_limit is None else attempt_limit
+    for index in range(count):
+        stage = moments[windows[min(index, len(windows) - 1)]]
+        survival = math.exp(log_survival)
+        win_terms.append(survival * stage["win"])
+        time_terms.append(survival * stage["spent"])
+        if rate == 0:
+            query_terms.append(survival * stage["mean_iterations"])
+            draw_terms.append(survival)
+        if stage["exit"] == 1:
+            log_survival = -math.inf
+        elif 0 <= stage["exit"] < 1:
+            log_survival += math.log1p(-stage["exit"])
+        else:
+            raise Reject("TRANSITION_NUMERIC_RANGE")
+    survival = math.exp(log_survival)
+    nontermination = 0.0
+    exhausted = survival if attempt_limit is not None else 0.0
+    if attempt_limit is None:
+        stage = moments[windows[-1]]
+        denominator = stage["exit"]
+        if denominator == 0:
+            if rate != 0 or marked != 0:
+                raise Reject("EXPECTED_TIME_NUMERIC_RANGE")
+            nontermination = survival
+        else:
+            win_terms.append(survival * (stage["win"] / denominator))
+            time_terms.append(survival * (stage["spent"] / denominator))
+            if rate == 0:
+                query_terms.append(survival * (stage["mean_iterations"] / denominator))
+                draw_terms.append(survival / denominator)
+    try:
+        elapsed = None if nontermination else math.fsum(time_terms)
+        if elapsed is not None:
+            known._real(elapsed, "EXPECTED_TIME_NUMERIC_RANGE", positive=True)
+        win = math.fsum(win_terms)
+        queries = (None if rate != 0 or nontermination else math.fsum(query_terms))
+        draws = (None if rate != 0 or nontermination else math.fsum(draw_terms))
+    except OverflowError as error:
+        raise Reject("EXPECTED_TIME_NUMERIC_RANGE") from error
+    if queries is not None:
+        known._real(queries, "EXPECTED_QUERIES_NUMERIC_RANGE")
+        known._real(draws, "EXPECTED_DRAWS_NUMERIC_RANGE", positive=True)
+    external = 0.0 if elapsed is None else rate * elapsed
+    if any(not math.isfinite(p) or not 0 <= p <= 1 + 2e-14
+           for p in (win, external, exhausted, nontermination)):
+        raise Reject("OUTCOME_NUMERIC_RANGE")
+    return {
+        "win_probability": win, "external_tip_probability": external,
+        "attempt_limit_exhaustion_probability": exhausted,
+        "nontermination_probability": nontermination,
+        "expected_context_seconds": elapsed,
+        "reward_per_expected_second": 0.0 if elapsed is None else win / elapsed,
+        "expected_grover_iterations_without_interruption": queries,
+        "expected_draws_and_measurement_checks_without_interruption": draws,
+        "policy": {"iteration_windows": list(windows), "repeats_final_window": True,
+                   "window_cap": window_cap, "attempt_limit": attempt_limit,
+                   "growth": "6/5", "policy_reads_marked_count": False,
+                   "full_floor_sqrt_domain_cap": window_cap == math.isqrt(1 << nonce_bits),
+                   "finite_exhaustion_proves_empty_domain": False},
+        "interpretation": ("conditional_iid_context_renewal_rate" if attempt_limit is None
+                           else "attempt_limited_campaign_reward_time_ratio"),
+    }
+
+
+def report() -> dict:
+    import w1_oracle_blueprint
+
+    blueprint = w1_oracle_blueprint.report()
+    phase = blueprint["clean_phase_oracle_upper_bound"]["toffoli"]
+    diffusion = blueprint["sixty_four_bit_diffusion_separate"]["toffoli"]
+    timing = known.Timing(0.01, 0.01, 0.02, 0.03)
+    scenarios = []
+    for marked in (0, 1, 4, 64, 1024, 32768, 65535, 65536):
+        for rate in (0.0, 0.1):
+            scenarios.append({"nonce_bits": 16, "actual_marked_count_assumption": marked,
+                              "external_tip_rate_assumption": rate,
+                              "result": campaign(16, marked, timing, window_cap=256,
+                                                 policy_draw_seconds=0.001, external_tip_rate=rate)})
+    full_nonce = []
+    for marked in (0, 1, 1 << 32, 1 << 56, (1 << 64) - 1, 1 << 64):
+        got = campaign(64, marked, timing, window_cap=256, policy_draw_seconds=0.001)
+        iterations = got["expected_grover_iterations_without_interruption"]
+        full_nonce.append({"actual_marked_count_assumption": marked, "nonce_bits": 64,
+                           "result": got,
+                           "conditional_expected_toffoli_for_retained_blueprint":
+                               None if iterations is None else iterations * (phase + diffusion)})
+    comparison = []
+    for multiplier in (1, 4, 16, 64, 256):
+        for candidate in ("decrease_marked_fraction", "fixed_fraction_linear_oracle",
+                          "fixed_fraction_sqrt_oracle"):
+            variable_work = candidate != "decrease_marked_fraction"
+            scale = (1.0 if not variable_work else float(multiplier)
+                     if candidate == "fixed_fraction_linear_oracle" else math.sqrt(multiplier))
+            nonoracle = float(multiplier) if variable_work else 1.0
+            marked = 65536 if variable_work else 65536 // multiplier
+            costs = known.Timing(timing.oracle_and_diffusion_seconds * scale,
+                                 timing.measure_check_restart_seconds * nonoracle,
+                                 timing.context_setup_seconds * nonoracle,
+                                 timing.winning_witness_publication_seconds * nonoracle)
+            for rate in (0.0, 0.1, 1.0):
+                result = campaign(24, marked, costs, window_cap=4096,
+                                  policy_draw_seconds=0.001 * nonoracle, external_tip_rate=rate)
+                comparison.append({"candidate": candidate, "multiplier": multiplier,
+                                   "actual_marked_count_assumption": marked,
+                                   "external_tip_rate_assumption": rate,
+                                   "relative_weight_per_second": multiplier * result["reward_per_expected_second"],
+                                   "result": result})
+    return {
+        "schema": "pon-unknown-marked-policy-cost-v1",
+        "status": "conditional_research_not_production",
+        "model_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+        "timing_seconds_assumptions": dict(asdict(timing), policy_draw_seconds=0.001),
+        "complete_W1_logical_cost_binding": {
+            "clean_phase_oracle_toffoli_upper": phase, "diffusion_toffoli": diffusion,
+            "per_iteration_toffoli_upper": phase + diffusion,
+            "native_consensus_source_binding": blueprint["native_consensus_source_binding"],
+            "counts_are_a_construction_upper_bound_not_a_lower_bound": True,
+            "logical_counts_converted_to_seconds": False},
+        "small_domain_scenarios": scenarios, "full_64_bit_nonce_declared_cap": full_nonce,
+        "difficulty_vs_work_comparison": comparison,
+        "attempt_limited_empty_domain": campaign(64, 0, timing, window_cap=256,
+                                                 policy_draw_seconds=0.001, attempt_limit=48),
+        "scope": {"policy_knows_M": False, "evaluator_conditions_on_M": True,
+                  "quantum_counting_required_by_this_policy": False,
+                  "independent_full_reset_measurements_assumed": True,
+                  "actual_W1_marked_distribution_measured": False,
+                  "oracle_physical_timing_measured": False,
+                  "empty_domain_certificate_produced": False,
+                  "adaptive_tip_measurement_or_strategy_equilibrium": False,
+                  "minimum_cost_legal_oracle_proved": False,
+                  "quantum_security_qualified": False, "production_activation": False},
+        "primary_references": ["https://arxiv.org/html/quant-ph/9605034v1",
+                               "https://arxiv.org/html/2403.08023v2",
+                               "https://arxiv.org/html/2110.00878v1"],
+    }
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--output", type=Path)
+    args = parser.parse_args()
+    raw = json.dumps(report(), sort_keys=True, indent=2, allow_nan=False) + "\n"
+    if args.output is None:
+        print(raw, end="")
+    else:
+        with args.output.open("x") as destination:
+            destination.write(raw)
+
+
+if __name__ == "__main__":
+    main()

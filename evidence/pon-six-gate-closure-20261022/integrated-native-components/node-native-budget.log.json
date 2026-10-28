@@ -1,0 +1,7 @@
+{
+  "schema": "exact-original-utf8-log-v1",
+  "original_filename": "node-native-budget.log",
+  "bytes": 1152,
+  "sha256": "8c23263108fc184af2e6c87d60570ad3b1fa79c3bcb26214746bdeead0b1c748",
+  "raw_utf8": "    Finished `release` profile [optimized] target(s) in 0.16s\n     Running unittests src/lib.rs (/workspace/scratch/b29eed737707/chain-current/trillionnium/target/release/deps/trnm_pon_node-aafb8b567cab19df)\n\nrunning 7 tests\ntest store::native_budget::tests::abrupt_exit_preserves_committed_resource_reservations_and_pending_intent ... ok\ntest store::native_budget::tests::cold_open_refuses_deleted_oversized_and_forged_funding_records ... ok\ntest store::native_budget::tests::fork_or_spent_source_denies_new_intent_but_preserves_resource_and_target_receipt ... ok\ntest store::native_budget::tests::native_budget_abrupt_exit_worker ... ignored, selected only by the abrupt-exit parent with a fresh test directory\ntest store::native_budget::tests::native_mining_funds_keep_maturity_and_do_not_create_payment_authority ... ok\ntest store::native_budget::tests::native_signed_funding_and_exact_operations_survive_both_backends_reopen ... ok\ntest store::native_budget::tests::transaction_failure_leaves_no_partial_record_head_or_double_resource_charge ... ok\n\ntest result: ok. 6 passed; 0 failed; 1 ignored; 0 measured; 571 filtered out; finished in 0.67s\n\n"
+}

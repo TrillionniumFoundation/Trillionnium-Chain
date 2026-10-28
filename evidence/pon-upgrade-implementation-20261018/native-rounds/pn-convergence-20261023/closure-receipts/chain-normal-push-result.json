@@ -1,0 +1,13 @@
+{
+  "old_head": "cc9b599515eb5a9a895174c80220c32de12c6b4f",
+  "new_head": "96a98a635def8c13b2d4f234aa1daee59c57afa0",
+  "base": "9fedf7ecbbe07177069c030592b4e03dcffebb81",
+  "remote_ref": "refs/heads/fix/chain-bulk-state-tree-20261017",
+  "command": [
+    "git",
+    "push",
+    "origin",
+    "HEAD:refs/heads/fix/chain-bulk-state-tree-20261017"
+  ],
+  "returncode": 0
+}

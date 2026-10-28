@@ -1,0 +1,16 @@
+{
+  "schema": "trnm-native-pq-interop-fixture-v1",
+  "test_key_only": true,
+  "seed_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+  "cryptography_version": "50.0.2",
+  "openssl_version": "OpenSSL 4.0.3 29 Sep 2026",
+  "signature_mode": "ML-DSA-65 pure, empty context",
+  "wycheproof_commit": "d17cc89fa5c8f4f4d378b5385ebf75da5d0926c9",
+  "wycheproof_url": "https://github.com/C2SP/wycheproof/blob/d17cc89fa5c8f4f4d378b5385ebf75da5d0926c9/testvectors_v1/mldsa_65_verify_test.json",
+  "source_pq_frame_commit": "8d29130ecf5124d21449f0f1d549aacc27de99ad",
+  "sha256": {
+    "openssl_mldsa65_spki.der": "b8b62131bfbe84433efb2273d7f5b87f7a22854a2cfd366fc2aead86d837c52d",
+    "mldsa_65_verify_test.json": "1ca235f61928421a173a171780beb00264ae9155dc33c52a11e1766cc7979034",
+    "openssl_tpq1_frame.bin": "5ca4c861e81e984163f36156a3aeda94f1b4fef720d38d2022a2f602e9c431fd"
+  }
+}

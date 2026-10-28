@@ -1,0 +1,5 @@
+{
+  "unified_exec_session_id": 59118,
+  "scope": "original-v1-Python-FD-mechanisms-only",
+  "resume_policy": "poll existing handle/read durable terminal; never repeat v1 control"
+}

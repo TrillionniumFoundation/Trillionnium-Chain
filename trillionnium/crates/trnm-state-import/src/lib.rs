@@ -961,7 +961,17 @@ where
             MigrationErrorV0::BaseStateMismatch,
         ));
     }
-    let mut output = Vec::with_capacity(delta.target_row_count as usize);
+    let max_output_len = base_rows.len().checked_add(delta.entries.len()).ok_or(
+        IncrementalDeltaErrorV0::Protocol(MigrationErrorV0::TargetStateMismatch),
+    )?;
+    if delta.target_row_count > max_output_len as u64 {
+        return Err(IncrementalDeltaErrorV0::Protocol(
+            MigrationErrorV0::TargetStateMismatch,
+        ));
+    }
+    let target_len = usize::try_from(delta.target_row_count)
+        .map_err(|_| IncrementalDeltaErrorV0::Protocol(MigrationErrorV0::TargetStateMismatch))?;
+    let mut output = Vec::with_capacity(target_len);
     let mut base_index = 0_usize;
     for entry in &delta.entries {
         while let Some(base) = base_rows.get(base_index) {

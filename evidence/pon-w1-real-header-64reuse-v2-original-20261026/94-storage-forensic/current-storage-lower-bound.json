@@ -1,0 +1,67 @@
+{
+  "utc": "2026-10-26T14:12:50.328619+00:00",
+  "scope": "conditional lower bound for unchanged current4KiB per-block uncompressed snapshot storage and remaining original21business blocks; not an execution receipt or impossibility theorem for other storage designs",
+  "observed_actual_state_geometry": [
+    {
+      "height": 4,
+      "snapshot_sha256": "c7a3cf7de7fffdad988f5932c96bc3eb05f6d91e957ff3d1c7d35133fd780b1d",
+      "snapshot_bytes": 106084,
+      "state_keys": 1037,
+      "account_count": 1028,
+      "account_key_lengths": [
+        72
+      ],
+      "account_value_key_sets": [
+        [
+          "balance",
+          "nonce"
+        ]
+      ],
+      "minimum_account_entry_serialized_bytes_without_comma": 98
+    },
+    {
+      "height": 9,
+      "snapshot_sha256": "1d28b4cba9207e61b8d6a9bd25449d49cd527735fe5662ca4cc4d252ac2a4d9d",
+      "snapshot_bytes": 106979,
+      "state_keys": 1042,
+      "account_count": 1028,
+      "account_key_lengths": [
+        72
+      ],
+      "account_value_key_sets": [
+        [
+          "balance",
+          "nonce"
+        ]
+      ],
+      "minimum_account_entry_serialized_bytes_without_comma": 98
+    }
+  ],
+  "remaining_original_business_blocks": 16,
+  "current_append_only_and_unpruned_table_payload_bytes": 2109204,
+  "selected_tables": [
+    "snapshots",
+    "blocks",
+    "archive_nodes",
+    "deltas",
+    "native_state_commitments",
+    "ancestry_jump"
+  ],
+  "future_block_proof_bytes_lower_bound_each": 49188,
+  "future_snapshot_bytes_lower_bound_each": 101377,
+  "future_payload_lower_bound_bytes": 2409040,
+  "final_retained_payload_lower_bound_bytes": 4518244,
+  "minimum_full_database4KiB_pages_ignoring_all_index_and_page_overhead": 1104,
+  "original_lifecycle_record_capacity": 1024,
+  "original_operational_reserve_threshold": 1017,
+  "excludes": "all future deltas/account nodes/commitments and index/schema/page overhead, all WAL growth/other lifecycle events",
+  "conditions": [
+    "All original21business admissions retained; currentheight9 already admitted =>16remaining",
+    "Current snapshot rows retained because maximum26genesis+seed+business below existing64non-genesis pruning limit",
+    "All State account entries persist; no account deletion in native_store apply; keys72ASCII bytes and balance/nonce nonnegative integer values",
+    "Current VFS has no delegated SIZE_HINT/CHUNK_SIZE; actual main growth observation is every4KiB page, and original producer close must preserve checked original data under samelease",
+    "No proof compression, changed canonical snapshot storage or layout changes assumed"
+  ],
+  "not_a_prediction_of_an_unexecuted_new_profile": true,
+  "all_full_qualification_flags_false": true
+}

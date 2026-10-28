@@ -1,0 +1,96 @@
+{
+  "schema": "pn1-held-target-loader-fence-v3-source-candidate-v1",
+  "sealed_utc": "2026-10-26T12:25:22.128641+00:00",
+  "status": "SOURCE_IMPLEMENTED_NOT_TYPECHECKED_NOT_CONTROLLED_NOT_NATIVE_QUALIFIED",
+  "base": {
+    "head": "be785bf8108c538879bd805219264dbdf3e9a890",
+    "tree": "9e4202eb0af632be75de78b44e9f1aa5792470d6",
+    "source": "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/pn1-V19-new-clean-source-qualification-source-20261026-001/ownedsource",
+    "files": [
+      {
+        "path": "trillionnium/crates/trnm-sqlite-io-boundary/build.rs",
+        "bytes": 19728,
+        "sha256": "f77c38efdc948892438498d68b382c2e7361214ca34863b42d5050a1a92a8a00"
+      },
+      {
+        "path": "trillionnium/crates/trnm-sqlite-io-boundary/src/unix_abi.rs",
+        "bytes": 15767,
+        "sha256": "364dc8c146a40e74e6c898c4e9e1eddbcb586bc757665c900347354fa7491ed0"
+      }
+    ]
+  },
+  "changed_source_paths": [
+    {
+      "path": "trillionnium/crates/trnm-sqlite-io-boundary/build.rs",
+      "bytes": 20590,
+      "sha256": "eeb5102f07506ef674db1cd8e104860232d800bf5db1dc4ad6b745a63cc83a81"
+    },
+    {
+      "path": "trillionnium/crates/trnm-sqlite-io-boundary/build_loader_paths.rs",
+      "bytes": 12640,
+      "sha256": "dc45172b51a80b0ca07785fd4216f77dc22f3a915455284b7b01dcbcc94c5779"
+    },
+    {
+      "path": "trillionnium/crates/trnm-sqlite-io-boundary/build_loader_paths_tests.rs",
+      "bytes": 8760,
+      "sha256": "15cc5cda245d561023367cca7033d3c816bcc4554cb0f34cd5a4985c1bcf1366"
+    },
+    {
+      "path": "trillionnium/crates/trnm-sqlite-io-boundary/src/unix_abi.rs",
+      "bytes": 15767,
+      "sha256": "3accbcf63cd96b9f28933c33520a109ea8bd1228b5a5a364872eac931d26e5b2"
+    }
+  ],
+  "patch": {
+    "path": "candidate.patch",
+    "bytes": 30198,
+    "sha256": "d5daee14476797e52cad17ca32cfcc8d27e809b43a1b2e8215f131a3bfa89be3"
+  },
+  "design": {
+    "path": "README.md",
+    "bytes": 6355,
+    "sha256": "336dfc0d4d60ad7d9a99e6985aa92eeab03e18139497bd474fd6537c2c3a7156"
+  },
+  "static_checks": {
+    "path": "static-checks.json",
+    "bytes": 1014,
+    "sha256": "c45d3c819cade0ca6cb43a51b2cf40d311d62d16bafad3a4579669842dd227a4"
+  },
+  "preflight": {
+    "path": "preflight.json",
+    "bytes": 568,
+    "sha256": "cb371362dcc76efc14f68787cb0493120fdd4cff70dff3c2edb26c0fc3958e52"
+  },
+  "original_failure_pins": {
+    "path": "original-failure-pins.json",
+    "bytes": 1087,
+    "sha256": "493e21465f2b07a2ecf849b7c03086167c898ac553a04bc473b0a015b10827c4"
+  },
+  "actual_rustfmt_exit_code": 0,
+  "new_dependency_or_Cargo_graph_change": false,
+  "normal_canonical_route_verbatim": true,
+  "held_route": "Linux exact inherited CARGO_TARGET_DIR literal only; safe procfs capture then File::try_clone, private0700/uid/devino/root+ancestor lifetime observations; exact same target/profile/build/unit/out and original3required+1optional loader whitelist",
+  "compiler_and_toolchain_paths": "canonical-only unchanged; FD alias admitted solely for profile and deps",
+  "fresh_build_fence": "sqlite-3.51.3-normal-native-linux-layout-v3",
+  "C_source_layout_flags_globals_and_bounds_changed": false,
+  "controls_authored": 13,
+  "controls_executed": false,
+  "Rust_typecheck_Clippy_Cargo_C_compile_nm_native_or_CI_executed": false,
+  "peer_static_review": {
+    "agent": "/root/supervisor_ci_resume/doc_evidence_pin_review/loader_fd_design_review",
+    "initial_nested_OUT_DIR_issue_corrected_before_freeze": true,
+    "final_narrow_read_remaining_static_findings": 0,
+    "not_a_typecheck_or_execution_result": true
+  },
+  "old_consumed_claim_reused": false,
+  "new_build_or_execution_budget_granted": false,
+  "root_checkout_ownedsource_ROG_or_outputs_changed": false,
+  "normal_C_witness_and_native_qualification": false,
+  "source_binary_attestation": false,
+  "original_three_FD_caller_qualified": false,
+  "full_guard_enabled": false,
+  "full_W1_4097_qualified": false,
+  "Windows_or_model_rounds_or_WAN_qualified": false,
+  "merge_ready": false,
+  "task_complete": false
+}

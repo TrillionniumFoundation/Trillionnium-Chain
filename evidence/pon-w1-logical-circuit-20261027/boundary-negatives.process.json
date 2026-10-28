@@ -1,0 +1,13 @@
+{
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-B",
+    "scripts/ci/test_project_boundary.py"
+  ],
+  "exit_code": 0,
+  "name": "boundary-negatives",
+  "observed_reaped_child_system_seconds": 3.470850999999999,
+  "observed_reaped_child_user_seconds": 6.590418,
+  "quantum_cost_measurement": false,
+  "wall_ns": 10080514810
+}

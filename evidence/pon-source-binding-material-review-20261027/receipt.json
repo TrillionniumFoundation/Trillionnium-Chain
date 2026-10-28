@@ -1,0 +1,38 @@
+{
+  "schema": "trnm.audit.source-binding-material-review.v1",
+  "recorded_utc": "2026-10-27T02:01:06.285586+00:00",
+  "source_base": "291d3d629a74c42d3a85335cfae9984408f8be10",
+  "scope": "two reviewed source identity literals only; allotherworkflowbytes inverseexact,20guards/8lanes retained",
+  "underlying_material_changes": "existingfullgraphmaterialize_accounts plusversioned sharedsnapshot/readscope/finalread/leasehealth; WAL64 on allnative_ioSome; not cosmetic differences",
+  "files": [
+    {
+      "path": "independent-source-review-receipt.json",
+      "bytes": 2801,
+      "sha256": "0a68f09ce75c79429b76216cbbb73e61c1798a2ffb66bbd42d5c5f8bd1b498d7"
+    },
+    {
+      "path": "independent-material-source-review.md",
+      "bytes": 8204,
+      "sha256": "9b850bfceced17466dc4d96af1b31dbb98903b0902dd47e6628301c614e69e7d"
+    },
+    {
+      "path": "native_store-old-to-current.material.patch",
+      "bytes": 2941,
+      "sha256": "b0c7b4fc87a5dc5ef5fc9910390a29bc5e5407be112ad793f08f2cd7c8638ff3"
+    },
+    {
+      "path": "store-old-to-current.material.patch",
+      "bytes": 14927,
+      "sha256": "987cb9c139e86e8583e61340b66ffc9de9fa9acb060f64d5d1cc819c62f2e903"
+    },
+    {
+      "path": "literal-pins-only.patch",
+      "bytes": 2095,
+      "sha256": "e26a2350d2859cbd2a043201e5fc2007fac884b96d92ae886ea30e5b4c6a499d"
+    }
+  ],
+  "underlying_SQL_C_ABI_layout_service_and_native_qualification": false,
+  "old_failures_assertions_resource_and_numeric_caps_preserved": true,
+  "fullT_Layout003_or_002_applied": false,
+  "merge_ready": false
+}

@@ -1,0 +1,27 @@
+{
+  "schema": "pon-quantum-ci-acquisition-v1",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "run_id": 40607357176,
+  "job_id": 122550076247,
+  "source": "c3a13bcf50a46826974681f4b837f291278bcaf5",
+  "tree": "cb0fd0babc23a5edbd4db72512ea97f2aae00b2e",
+  "artifact_id": 12780873625,
+  "artifact_bytes": 13436,
+  "artifact_sha256": "b18b1082219001ff2a96cded0e42e10225fa8da29ad9409e6a57bcfaa79f2bd0",
+  "initial_download": {
+    "result": "sandbox-network-refused",
+    "error": "PermissionError: [Errno 1] Operation not permitted"
+  },
+  "approved_readonly_download": {
+    "result": "success",
+    "sha256_matched": true
+  },
+  "source_after_scope": "recorded in original complete job.log.gz; workflow did not save a separate source-after.json",
+  "activation": false,
+  "original_log_sha256": "6bb15cd1f7353be581d2d18033df72dce680b95d6fe58b68e8e428160e514fe8",
+  "original_log_bytes": 92882,
+  "initial_staging": {
+    "exit_code": 1,
+    "reason": "new evidence paths outside the inherited sparse-checkout definition; ordinary add refused"
+  }
+}

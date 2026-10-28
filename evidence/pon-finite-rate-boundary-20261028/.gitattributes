@@ -1,0 +1,2 @@
+# Original process logs are byte-exact observations; preserve their captured whitespace.
+*.log -text -whitespace

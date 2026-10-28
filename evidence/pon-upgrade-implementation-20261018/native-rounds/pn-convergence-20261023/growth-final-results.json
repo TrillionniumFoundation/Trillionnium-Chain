@@ -1,0 +1,134 @@
+[
+  {
+    "name": "growth-final-native",
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "native_growth_v2",
+      "--",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "returncode": 0,
+    "seconds": 329.7951103349915,
+    "log": "/tmp/trnm-pn-convergence-20261023/evidence-root/growth-final-native.log",
+    "log_sha256": "c7dc6533fddf8b21c0c54d258d877f1fb32c1a6f67184f020e300bb28ecdad08"
+  },
+  {
+    "name": "growth-final-migration",
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "growth_rehearsal_",
+      "--",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "returncode": 0,
+    "seconds": 36.07690814801026,
+    "log": "/tmp/trnm-pn-convergence-20261023/evidence-root/growth-final-migration.log",
+    "log_sha256": "cee97c5a3d1a333146043300b52c48c3b50ff227316e122457e055e6ed3d6569"
+  },
+  {
+    "name": "growth-final-public-listener",
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "public_growth_v1",
+      "--",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "returncode": 0,
+    "seconds": 4.228237013099715,
+    "log": "/tmp/trnm-pn-convergence-20261023/evidence-root/growth-final-public-listener.log",
+    "log_sha256": "06583cb28310149380180ed9e60ccb632736876c6b7539810332d2ae985fded1"
+  },
+  {
+    "name": "growth-final-public-cli",
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-pon-node",
+      "--test",
+      "native_growth_public_cli",
+      "--",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "returncode": 0,
+    "seconds": 147.63537959591486,
+    "log": "/tmp/trnm-pn-convergence-20261023/evidence-root/growth-final-public-cli.log",
+    "log_sha256": "22933ccef30c83b827b890eb1931f501f7f9d5ad0bf4cfb5d374f38377e94862"
+  },
+  {
+    "name": "growth-final-cold-cli",
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-pon-node",
+      "--test",
+      "native_growth_cli",
+      "--",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "returncode": 0,
+    "seconds": 12.57992235396523,
+    "log": "/tmp/trnm-pn-convergence-20261023/evidence-root/growth-final-cold-cli.log",
+    "log_sha256": "0ff2084ccf0fa5f9d2777c3d2789efb0f4afcb17a38768aa4a2a8b1e7e9e32d4"
+  },
+  {
+    "name": "growth-final-clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "--locked",
+      "--offline",
+      "--workspace",
+      "--all-targets",
+      "--all-features",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "returncode": 0,
+    "seconds": 90.84096461697482,
+    "log": "/tmp/trnm-pn-convergence-20261023/evidence-root/growth-final-clippy.log",
+    "log_sha256": "9014988322a71bcc34daed54d2f79a2e78f7b1eb0362470a0dfa97b28e7c229c"
+  },
+  {
+    "name": "growth-final-fmt",
+    "command": [
+      "cargo",
+      "fmt",
+      "--all",
+      "--check"
+    ],
+    "returncode": 0,
+    "seconds": 17.715755350072868,
+    "log": "/tmp/trnm-pn-convergence-20261023/evidence-root/growth-final-fmt.log",
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

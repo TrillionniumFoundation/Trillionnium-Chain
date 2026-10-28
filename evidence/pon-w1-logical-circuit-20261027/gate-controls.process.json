@@ -1,0 +1,20 @@
+{
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "formal/pon-nakamoto-v1",
+    "-p",
+    "test_w1_oracle_blueprint.py",
+    "-v"
+  ],
+  "exit_code": 0,
+  "name": "gate-controls",
+  "observed_reaped_child_system_seconds": 0.12267199999999998,
+  "observed_reaped_child_user_seconds": 3.3156969999999997,
+  "quantum_cost_measurement": false,
+  "wall_ns": 3470946830
+}

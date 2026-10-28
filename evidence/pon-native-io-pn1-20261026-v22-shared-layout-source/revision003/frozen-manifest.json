@@ -1,0 +1,65 @@
+{
+  "receipt": {
+    "path": "implementation-receipt.json",
+    "bytes": 10604,
+    "sha256": "d5f2fe45798520128afb7b2ff92bf4dba56aee817e2a3dd1cb1c6c890925960f"
+  },
+  "artifacts": {
+    "candidate.patch": {
+      "bytes": 66697,
+      "sha256": "ea0e207133f824870fa7db675a02851063d62a20715f519fbdf627eef4b2fd8f"
+    },
+    "production-only.patch": {
+      "bytes": 37888,
+      "sha256": "231da5ee83e24e0d04ca64667cad315910e1c29ed91110d271a0948b7a272ad6"
+    },
+    "new-controls-only.patch": {
+      "bytes": 28809,
+      "sha256": "5bf1b46e07b28c9f875c356fddb5e61b3a0aaa03b6adf0ec561ea8c031820a4d"
+    },
+    "revision002-to003-readable.diff": {
+      "bytes": 18658,
+      "sha256": "fd70180d2cfb5f44685e5be64f29640112e6390beafe2e8920bb4178bf7f4410"
+    },
+    "unchanged-original-tests-and-boundaries.json": {
+      "bytes": 96890,
+      "sha256": "a9fa39dfa25402bb2ed5efc7706ff643385e07a69ae28eaab95b15d96c9e0dfa"
+    },
+    "revision-start.json": {
+      "bytes": 5674,
+      "sha256": "72b88e7a93aa91430ae384c11b32b5581f5ca36b8734bbf058da3842120e5331"
+    }
+  },
+  "files": {
+    "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs": {
+      "bytes": 31858,
+      "sha256": "ad9e41b68379ec9e5aade1bc2339d2710c9128e142738488dec35eee20b5979f",
+      "lines": 869
+    },
+    "trillionnium/crates/trnm-pon-node/src/store.rs": {
+      "bytes": 309281,
+      "sha256": "48e3301d9a60ed62aed976249bf7816c2df94a19ab0a72273ba275feb8448df2",
+      "lines": 7624
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/public_reader.rs": {
+      "bytes": 19088,
+      "sha256": "b8bf23dca2b77f9554c8a1b1fbe37d6e1a4580680ef3e52f077d045cd4d0f7b6",
+      "lines": 540
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs": {
+      "bytes": 36109,
+      "sha256": "8e88d29a17db73d13ec65f9be591509134338d2a903aa3330375101e6a893feb",
+      "lines": 889
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/shared_snapshot.rs": {
+      "bytes": 17835,
+      "sha256": "ad2e279ec98eb8eb71a86b7e31c9b6762d0d938c5721bd5c070f443cb14ba926",
+      "lines": 474
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/shared_snapshot_tests.rs": {
+      "bytes": 27725,
+      "sha256": "160fed913510a1984f1732eee0eac1d6c9a7c0410f9e68082b019f0590e29260",
+      "lines": 776
+    }
+  }
+}

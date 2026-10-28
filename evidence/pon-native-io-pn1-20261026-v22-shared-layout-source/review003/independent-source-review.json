@@ -1,0 +1,142 @@
+{
+  "schema": "PN1-I02-shared-snapshot-r3-independent-source-review-v1",
+  "recorded_utc": "2026-10-26T15:55:12.038896+00:00",
+  "reviewer": "/root/pn1_checkpoint64_peer",
+  "scope": "Read-only source review. Candidate not imported/applied/built/tested or executed; no SQL reproduction. Only independent review artifacts written.",
+  "candidate": {
+    "path": "work/ci-follow/pn1-shared-snapshot-real-source-candidate-20261026-003/candidate.patch",
+    "bytes": 66697,
+    "sha256": "ea0e207133f824870fa7db675a02851063d62a20715f519fbdf627eef4b2fd8f"
+  },
+  "receipt": {
+    "path": "work/ci-follow/pn1-shared-snapshot-real-source-candidate-20261026-003/implementation-receipt.json",
+    "bytes": 10604,
+    "sha256": "d5f2fe45798520128afb7b2ff92bf4dba56aee817e2a3dd1cb1c6c890925960f"
+  },
+  "manifest": {
+    "path": "work/ci-follow/pn1-shared-snapshot-real-source-candidate-20261026-003/frozen-manifest.json",
+    "bytes": 2345,
+    "sha256": "c972b568544a368745e5541bf3c673b79029602def2347eb46ab502784e345f1"
+  },
+  "production_patch": {
+    "path": "work/ci-follow/pn1-shared-snapshot-real-source-candidate-20261026-003/production-only.patch",
+    "bytes": 37888,
+    "sha256": "231da5ee83e24e0d04ca64667cad315910e1c29ed91110d271a0948b7a272ad6"
+  },
+  "sources": [
+    {
+      "path": "work/ci-follow/pn1-shared-snapshot-real-source-candidate-20261026-003/ownedsource/trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+      "bytes": 31858,
+      "sha256": "ad9e41b68379ec9e5aade1bc2339d2710c9128e142738488dec35eee20b5979f"
+    },
+    {
+      "path": "work/ci-follow/pn1-shared-snapshot-real-source-candidate-20261026-003/ownedsource/trillionnium/crates/trnm-pon-node/src/store.rs",
+      "bytes": 309281,
+      "sha256": "48e3301d9a60ed62aed976249bf7816c2df94a19ab0a72273ba275feb8448df2"
+    },
+    {
+      "path": "work/ci-follow/pn1-shared-snapshot-real-source-candidate-20261026-003/ownedsource/trillionnium/crates/trnm-pon-node/src/store/public_reader.rs",
+      "bytes": 19088,
+      "sha256": "b8bf23dca2b77f9554c8a1b1fbe37d6e1a4580680ef3e52f077d045cd4d0f7b6"
+    },
+    {
+      "path": "work/ci-follow/pn1-shared-snapshot-real-source-candidate-20261026-003/ownedsource/trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs",
+      "bytes": 36109,
+      "sha256": "8e88d29a17db73d13ec65f9be591509134338d2a903aa3330375101e6a893feb"
+    },
+    {
+      "path": "work/ci-follow/pn1-shared-snapshot-real-source-candidate-20261026-003/ownedsource/trillionnium/crates/trnm-pon-node/src/store/shared_snapshot.rs",
+      "bytes": 17835,
+      "sha256": "ad2e279ec98eb8eb71a86b7e31c9b6762d0d938c5721bd5c070f443cb14ba926"
+    },
+    {
+      "path": "work/ci-follow/pn1-shared-snapshot-real-source-candidate-20261026-003/ownedsource/trillionnium/crates/trnm-pon-node/src/store/shared_snapshot_tests.rs",
+      "bytes": 27725,
+      "sha256": "160fed913510a1984f1732eee0eac1d6c9a7c0410f9e68082b019f0590e29260"
+    }
+  ],
+  "preservation": {
+    "independently_rehashed_artifacts_and_sources": true,
+    "independently_rehashed_original_pins_against_candidate_and_clean94": 478,
+    "original_Rust_test_files": 467,
+    "original_inline_tail_bytes": 79958,
+    "original_inline_tail_sha256": "50b02979023fc2fe8b5c503190f2708229bb61df0e231dfa4de66baffdae6fd4",
+    "r2_controls_prefix_bytes": 19839,
+    "r2_controls_prefix_equal": true,
+    "errors": []
+  },
+  "r2_blocker_regressions": [
+    {
+      "id": "SHARED-TYPED-TEXT-KEY-MISS",
+      "status": "SOURCE_REMEDIATED_NOT_EXECUTED",
+      "evidence": "check_typed_rows reads all at most64 retained rows plus rejecting sentinel; typeof(block) must blob and length32, data must nonempty bounded blob. encoded_with_limit checks before BLOB lookup; final public storage_context/check_layout repeats after last caller callback. Same-byte TEXT cannot masquerade as None."
+    },
+    {
+      "id": "SHARED-TEMP-SHADOW",
+      "status": "SOURCE_REMEDIATED_NOT_EXECUTED",
+      "evidence": "check_authoritative_namespace reads schema-qualified main/temp sqlite_master, rejects case-insensitive collisions and attached schemas outside main/temp. It runs before storage_context metadata, encoded reads, layout/save and before/after final no-caller-callback phase. Main sharedrow reads and main schema_version qualified. Existing unqualified account/native verifier cannot return under an observed TEMP collision; unrelated TEMP is accepted as source policy."
+    }
+  ],
+  "blocking_findings": [
+    {
+      "id": "SHARED-UNKNOWN-OR-GENESIS-KEY-MISS",
+      "priority": 1,
+      "status": "DETERMINISTIC_SOURCE_COUNTEREXAMPLE_NOT_RUN_ROOT_CONFIRMED_STRONG_CONTRACT",
+      "locations": [
+        "shared_snapshot.rs:80-97 check_typed_rows",
+        "shared_snapshot.rs:274-276 absent optional return",
+        "shared_snapshot.rs:417-445 verify_returned_state",
+        "shared_snapshot.rs:452-468 cold audit"
+      ],
+      "problem": "Only type/size/domain count is checked. A retained target key can be changed to an unknown32B BLOB or the existing genesis32B BLOB with payload unchanged. The metadata scan accepts it; the original target lookup becomes None, and hot active/target public read can reconstruct a correct complete State from KV/COW/deltas. Cold audit then visits the damaged present row and rejects unknown block or genesis/binding. Correct State is not proof that damaged present index was rejected.",
+      "required_fix": "Bounded main-qualified key-domain check including existing non-genesis main.blocks membership, before lookup and in final no-callback phase; keep public64 and pending-save65 distinction. Add normal and actual-factory/public hot/historical controls. Do not claim metadata domain checks prove all other retained payload bindings."
+    },
+    {
+      "id": "SHARED-ACTUAL-FACTORY-ATTACH-CONTROL-CONFLICT",
+      "priority": 1,
+      "status": "DEFINITE_STATIC_CONTROL_FAILURE_NOT_RUN",
+      "locations": [
+        "shared_snapshot_tests.rs:759-766",
+        "trnm-sqlite-io-boundary/src/sql.rs:114 authorizer installation",
+        "trnm-sqlite-io-boundary/src/sql.rs:145-147 ATTACH/DETACH deny"
+      ],
+      "problem": "Actual native factory control executes ATTACH and unwraps success, then expects the new storage guard to reject the attached schema. NativeIoLease.finish always installs the original authorizer; SQLITE_ATTACH and SQLITE_DETACH are immediately denied. Thus the selected actual-native supplemental test necessarily panics before it exercises that new guard. Production guard is not demonstrated failed by this; the source control itself contradicts existing isolation.",
+      "required_fix": "Preserve003. Successor actual-factory control must assert authorizer rejection and unchanged usable State/healthy owner; separately use ordinary-codec scratch to exercise an already attached-schema guard if desired. Do not remove/disable production authorizer, weaken assertion or claim default ignored test is qualification."
+    }
+  ],
+  "pending_save_65_review": {
+    "status": "NO_STATIC_CAP_EXPANSION_FOUND",
+    "details": "RETAINED remains64. load_with_limit private, raised argument RETAINED+1 appears only once inside save after original INSERT, before original ordered prune. save begins with64-row typed check and ends original SNAPSHOT_LIMIT<=64 plus typed64; public load, encoded, ReadSet, audit and storage_context use64. Corrupt66 rows rejected. This is a transient transaction validation bound, not a retained/public/native-cap increase; actual trigger/reentrant callback/runtime behavior remains untested."
+  },
+  "actual_factory_control_source": {
+    "fresh_native_owner_factory": true,
+    "wrong_TEXT_key_public_active_historical_controls_present": true,
+    "last_callback_wrong_key_controls_present": true,
+    "uppercase_TEMP_shared_archive_native_record_controls_present": true,
+    "legal_unrelated_TEMP_control_present": true,
+    "linux_explicit_ignore": true,
+    "Unsupported_when_selected": "unwrap failure; not early PASS",
+    "all_new_controls": "NOT_RUN",
+    "ATTACH_control": "BLOCKED as above"
+  },
+  "unchanged_r1_r2_status": "Growth rehearsal initializer CanonicalJson+None preserved; actual final graph/fullState/history and used-anchor ReadSet, actual RootReceipt sticky-health checks, metadata/schema and namespace checks preserved. Source corrections only, not compiled/native qualification.",
+  "other_limits": [
+    "Known existing-but-pruned BLOB keys can still move a payload to a different known key; key-domain join alone cannot prove every unqueried retained payload binding. If the strong contract covers whole-table arbitrary payload damage on every hot read, bounded full retained record binding validation is separately required and charged to original limits.",
+    "COMMIT;BEGIN IMMEDIATE may replace a same-connection borrowed transaction without changing autocommit/total_changes/schema_version tuples. They are not transaction identity proofs; this remains explicitlyOPEN.",
+    "PostCOMMIT durable fact versus sticky checkpoint/storage failure interface remainsOPEN; no rollback/retry/refund inference.",
+    "Newformat independent decoder and explicit migration execution remainOPEN; old-format tests do not certify newlayout.",
+    "Repeated actual graph/history passes, metadata guards and RootReceipt copies remain under original2s/whole/cumulative and all file/ledger/page/FD/resource caps. No cost/cap sufficiency or throughput prediction.",
+    "No compiler/Clippy/test/native result. rusqlite0.39 usize ToSql requires fallible_uint; exact candidate trnm-pon-node Cargo enables it, so no static missing-trait issue inferred."
+  ],
+  "decision": "R3 remains blocked by unknown/genesis key-domain query-miss and definite actual-factory ATTACH control conflict. R2 exact TEXT and TEMP blockers are source-remediated only; retain original failures and do not apply/qualify this revision.",
+  "candidate_imported_or_executed": false,
+  "source_modified": false,
+  "actual_compile_or_SQL_reproduction_observed": false,
+  "mechanism_qualified": false,
+  "whole_writer_qualified": false,
+  "original_three_FD_caller_qualified": false,
+  "independent_reader_qualified": false,
+  "full_W1_4097_qualified": false,
+  "task_complete": false,
+  "merge_ready": false
+}

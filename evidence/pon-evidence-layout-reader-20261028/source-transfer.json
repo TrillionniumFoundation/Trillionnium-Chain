@@ -1,0 +1,24 @@
+{
+  "source_tree": "2fc7439e7823c406a4b57a9f7b600dbba993a446",
+  "published_integration": "9e05ad5d237660fb0ea8b40dd5c29af4225551d3",
+  "destination_base": "3b86b6d0879ee42887a28e701e6db18254fbe9b0",
+  "runtime_source_byte_identical": [
+    "trillionnium/crates/trnm-pon-node/src/store.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/shared_snapshot.rs",
+    "trillionnium/crates/trnm-pon-node/src/ancestry_index.rs"
+  ],
+  "files": [
+    {
+      "path": "scripts/ci/check_public_readiness_evidence.py",
+      "source_blob": "9315657b76cb1b04a1afdfde5ae02ee93f4cd02e",
+      "before_sha256": "01da9c348bf097bbe53a9aa90c1668bceb6ef11e79dd21ec1eb46538491fd07b",
+      "after_sha256": "dd127ef8cf0866679956e02361d84662d8dfd95f3e3e4c89a321e4e2300add28"
+    },
+    {
+      "path": "scripts/ci/test_public_readiness_evidence.py",
+      "source_blob": "84009fb43ce3a6157db795ee2bbdbea19b5236f7",
+      "before_sha256": "366cd40b562634b7cc608263d3945798d630baa8b0830c9c30c8925573e26366",
+      "after_sha256": "9495929a40dfd453d23dd97bdf7bcf57c2a77614ca5b9ab33fa140a485f3040a"
+    }
+  ]
+}

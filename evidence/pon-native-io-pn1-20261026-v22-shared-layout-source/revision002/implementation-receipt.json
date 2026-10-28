@@ -1,0 +1,135 @@
+{
+  "recorded_utc": "2026-10-26T15:19:19.357057+00:00",
+  "schema": "PN1-I02-shared-authenticated-snapshot-source-candidate-v2",
+  "revision": "002; source-only repair of independent static findings; original001 immutable",
+  "base_head": "94b3fb60b7aa32c8bf5b7c8679d3c46a980b4060",
+  "base_tree": "da71738463a4d451e0b0246985dc69c7ab1f24fe",
+  "branch": "docs/chain-audit-remediation-20261022",
+  "origin": "https://github.com/TrillionniumFoundation/Trillionnium-Chain.git",
+  "status": "M trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs\n M trillionnium/crates/trnm-pon-node/src/store.rs\n M trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs\n M trillionnium/crates/trnm-pon-node/src/store/public_reader.rs\n A trillionnium/crates/trnm-pon-node/src/store/shared_snapshot.rs\n A trillionnium/crates/trnm-pon-node/src/store/shared_snapshot_tests.rs",
+  "previous_revision_receipt_sha256": "9a6da6a8b65359d7e3ca3e0e3a252af2ae3644720b747705aa9ba748ac5986aa",
+  "previous_candidate_sha256": "e675ce21ee6167f2fd00833e17a4190d980922204e241b392379c2f5f7aecfb3",
+  "previous_revision_all_source_patch_and_receipt_bytes_preserved": true,
+  "root_ROG_sources_modified": false,
+  "commit_push_build_test_native_or_migration": false,
+  "artifacts": {
+    "candidate.patch": {
+      "bytes": 55432,
+      "sha256": "231762394a8eec4f4815ab5e16184cee588755db80ae9d8eb214e88bab9995fc"
+    },
+    "production-only.patch": {
+      "bytes": 34695,
+      "sha256": "fd2872360036f8f87500aa1c79efd17be5756aefd153deac5de750d6e4affab0"
+    },
+    "new-controls-only.patch": {
+      "bytes": 20737,
+      "sha256": "58d68e46e1953691f776bc3f5bc0e5d6878036d26d786831b79130dba9f7e2aa"
+    },
+    "revision001-to002-readable.diff": {
+      "bytes": 24372,
+      "sha256": "39ec87974d3cdcefae20248b00f960528e503de3e7ce1b71dbdb864e641be63c"
+    },
+    "unchanged-original-tests-and-boundaries.json": {
+      "bytes": 96732,
+      "sha256": "0db596a524b0bb832bc15c19459fc09e33e191abab459fcc91353f9c6bbebe90"
+    },
+    "revision-start.json": {
+      "bytes": 2787,
+      "sha256": "b29886b890ddc7bcf3acbc0f71e513243fcbfbed3ebdbfb62358c52445cd1269"
+    }
+  },
+  "files": {
+    "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs": {
+      "bytes": 31858,
+      "sha256": "ad9e41b68379ec9e5aade1bc2339d2710c9128e142738488dec35eee20b5979f",
+      "lines": 869
+    },
+    "trillionnium/crates/trnm-pon-node/src/store.rs": {
+      "bytes": 309155,
+      "sha256": "d6629cdc2056318cc232dbe498c0776c368437976184fe05faec8a469e64b13d",
+      "lines": 7621
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/public_reader.rs": {
+      "bytes": 19088,
+      "sha256": "b8bf23dca2b77f9554c8a1b1fbe37d6e1a4580680ef3e52f077d045cd4d0f7b6",
+      "lines": 540
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs": {
+      "bytes": 36109,
+      "sha256": "8e88d29a17db73d13ec65f9be591509134338d2a903aa3330375101e6a893feb",
+      "lines": 889
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/shared_snapshot.rs": {
+      "bytes": 14851,
+      "sha256": "fd329215446075bc94d06375142a5690eb8e8aea2d322661237fc38fc8059a53",
+      "lines": 406
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/shared_snapshot_tests.rs": {
+      "bytes": 19839,
+      "sha256": "495daca2d8b8e81c2a5a7e9f69ba05c389922bf212501414972139aacdeddf19",
+      "lines": 590
+    }
+  },
+  "findings_and_repairs": [
+    {
+      "finding": "Production readonly archive Node literal in growth_rehearsal omitted the two new fields; independent static forecast E0063, not an observed compiler failure",
+      "repair": "Explicit CanonicalJson+None in that old readonly constructor. Native-IO migration guards and old source/archive semantics remain unchanged; all other real Node constructors were searched."
+    },
+    {
+      "finding": "A final same-connection progress callback could delete/corrupt actual account graph while raw shared/native records stayed unchanged; SQLite read snapshot only protected against foreign-connection changes",
+      "repair": "After final user callback, private load executes original actual complete graph/full-State/history verification with internal no-op callbacks, then raw/native record/schemaVersion/autocommit fence. No digest-only or trusted-callback assumption substitutes for current node reads."
+    },
+    {
+      "finding": "Outer state_at/read_active callbacks could reopen a window after private load, and active fast path ignored a bad present shared snapshot row",
+      "repair": "Actual public read_active and original state_at wrapper run final no-user-callback verification of full returned State, current complete graph/history AND any present target shared row. Missing optional index is accepted only with full KV/COW/history validation. Historical reads keep one operation-local raw shared-anchor read set and revalidate the actual used anchor before return; malformed or changed present used anchor never falls back."
+    },
+    {
+      "finding": "SQLite cached SELECT success and NativeIoLease::check identity-only success did not establish sticky storage health",
+      "repair": "New shared production storage_context re-reads actual root receipt and rejects failed/firstfailure/denied/incomplete lifecycle/secondary/quarantine state, preserving actual firstfailure+SQLcode in owner-fatal diagnostic. Source DDL/schema/meta checked again. No VFS/ledger/cap changes."
+    }
+  ],
+  "final_phase_observations": {
+    "total_changes": "Only compares same-connection DML observations across the final internal pure-read verification phase, after the final caller callback. Does not reject earlier legitimate CPU accounting solely by count. Not cross-connection data_version and not a health/graph certificate.",
+    "autocommit": "Detects observable transaction loss/change; borrowed read scope rejects ending its transaction. Equality is not claimed to prove a unique transaction identity.",
+    "actual_verification": "All returned States still require actual full account-node traversal and original full State/root/parent/delta/history checks, raw record binding, current schema and actual NativeIo ledger-health check.",
+    "deadline_cost": "Additional real reads are charged to unchanged original owner limits; no2s/whole-execution/build deadline is expanded. Effectiveness and performance are unmeasured and unqualified."
+  },
+  "new_controls": {
+    "revision001_seven_codec_control_assertions_exact_prefix_preserved": true,
+    "new_normal_codec_control": "Same caller-owned SQLite transaction: final callback DELETE or UPDATE actual root node while raw shared/native record bytes stay unchanged must return owner-fatal error; rollback restores original State. NOT_RUN.",
+    "new_actual_factory_control": "Linux explicit native-ABI supplement creates actual fresh NativeIoOwner, invokes original Node factory/admit/activate, checks original4096/WAL, corrupts ACTIVE and historical present shared rows, injects same-connection final-callback actual-graph faults through public read_active / original state_at path, checks legitimate absent optional index and same-lease cold reopen with closed healthy references. NOT_RUN.",
+    "native_control_selection": "One new explicit opt-in #[ignore] test follows existing native control dispatch convention. Ignore, Unsupported, missing execution, or normal-codec controls do NOT count as native qualification; explicit actual execution under original owner caps is still mandatory. Unsupported is an unwrap failure if selected, never an early successful return.",
+    "not_network_or_three_FD_qualification": "The supplement exercises actual public Node methods, not a replacement for original networkRPC fixture, exact3FD caller or full identity campaign. Those original sources/readers/acceptance remain unchanged and unqualified."
+  },
+  "unchanged_proof": {
+    "old_tracked_Rust_test_files": 467,
+    "old_store_inline_test_tail_bytes": 79958,
+    "old_Cargo_AGENTS_harness_dual_readers_ledger_VFS_migration_guard_plan": "byte equal in proof artifact",
+    "old_AuthV1_fullJSON_codec_dense64_and_generic4KiB_paths": "original assertions/tests preserved, only shared-layout conditional paths added",
+    "limits": "Original4KiB/FULL/WAL,16MiB/file48MiB/root336MiBdomain,1024+256events655360bytes,originalFD/lease/CPU/AS/2s/whole/cumulative budgets unchanged"
+  },
+  "source_checks": {
+    "preflight": 0,
+    "diff_check": 0,
+    "Rust2021_source_formatter": 0,
+    "typecheck_clippy": "NOT_RUN",
+    "all_new_or_old_tests": "NOT_RUN",
+    "actual_C_or_native": "NOT_RUN; no old prepared/ELF/claim/result inherited"
+  },
+  "remaining": [
+    "Independent second source review of this exact revision required.",
+    "No compiler result; field repair is static source remediation only.",
+    "Extra complete graph passes/read-set/raw ledger receipt copies can cost time/memory; original2s/whole/cumulative budgets remain decisive, and there is no measured performance success.",
+    "PostCOMMIT durable-result versus checkpoint/storage-health interface remains a separate open issue, not fixed by this snapshot codec revision.",
+    "Actual original native factory/network/caller/readers/full4097 and other PN0-PN6 criteria remain open.",
+    "Independent new-format decoder/migration execution not implemented; old-format tests cannot certify new format."
+  ],
+  "mechanism_qualified": false,
+  "whole_writer_qualified": false,
+  "original_three_FD_caller_qualified": false,
+  "independent_reader_qualified": false,
+  "full_W1_4097_qualified": false,
+  "full_guard_enabled": false,
+  "task_complete": false,
+  "merge_ready": false
+}

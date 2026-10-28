@@ -1,0 +1,22 @@
+--- a/.github/workflows/pon-branch-encoding-acceptance.yml
++++ b/.github/workflows/pon-branch-encoding-acceptance.yml
+@@ -50,7 +50,7 @@
+           python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$out/source.json"
+           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs)" = 5daaa4461859d2dbe1f0fc91c32b03e606e0dbbf
+           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs)" = 2a4cfe2dd66692cfd27bc99948ee1d509ebb9dbf
+-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs)" = d4327221fe1af4d0479915371634bdbf6e9cf4c1
++          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs)" = 5b09b2e473dbba311a398e9ed77d2b619eaa906c
+           bash scripts/project-preflight.sh --audit
+       - name: Install pinned native compiler and lint tools
+         run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+--- a/.github/workflows/pon-recent-batch-acceptance.yml
++++ b/.github/workflows/pon-recent-batch-acceptance.yml
+@@ -64,7 +64,7 @@
+             args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
+           fi
+           python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$out/source.json"
+-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = 1377aabf81a8accb87b1b2e10c5c3f243af4acde
++          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = fadc0f4c11bbead2925102cb1b18a49156d709d5
+           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/history_page.rs)" = c8569bd62a9c374b03a8ffc0ad02c64b0365eee4
+           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs)" = fa9b0036b9f7092831ac6d73fc50fd8fe728865e
+           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs)" = d015587f5a52726fc6322efab4385d40b6e61a05

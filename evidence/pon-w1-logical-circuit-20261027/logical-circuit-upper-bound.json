@@ -1,0 +1,269 @@
+{
+  "clean_macro_result_history_alternative_upper_bound": {
+    "clifford_before_toffoli_decomposition_upper": 13418342395,
+    "construction": "each macro computes, copies all output bits, uncomputes scratch, unloads input ports; retain output history until outer adjoint",
+    "each_erasure_replaced_with_explicit_adjoint": true,
+    "logical_qubits_upper": 69637141,
+    "persistent_result_history_bits": 69514241,
+    "result_history_pebbling_or_in_place_compaction_optimized": false,
+    "reusable_scratch_qubits_upper": 122836,
+    "t_count_using_exact_7T_toffoli": 38483886084,
+    "toffoli": 5497698012
+  },
+  "clean_phase_oracle_upper_bound": {
+    "clifford_before_toffoli_decomposition_upper": 6639656957,
+    "includes_forward_phase_adjoint_and_input_loading": true,
+    "retained_logical_qubits_upper": 3080564056,
+    "serial_logical_gate_depth_upper": 9388505963,
+    "t_count_using_exact_7T_toffoli": 19241943042,
+    "toffoli": 2748849006
+  },
+  "construction": {
+    "accumulator_bits": 70,
+    "bit_permutation_mode": "logical wire naming with unrestricted connectivity",
+    "cached_AB_setup_excluded_from_queries": true,
+    "coherent_noise_candidate_words": 4096,
+    "coherent_padded_noise_calls": 512,
+    "field_reductions": 49152,
+    "fixed_material_mode": "compile public A/B and context constants; no QRAM assumption",
+    "fresh_input_ports_per_call": true,
+    "header_midstate_classical_setup_blocks": 5,
+    "logical_gate_set": [
+      "X",
+      "CNOT",
+      "Toffoli",
+      "Z"
+    ],
+    "mathematical_multiply_accumulate_terms": 327680,
+    "noise_failure_behavior": "all operations execute; failed arrays are coherently unmarked",
+    "retains_all_intermediates": true,
+    "sha256_compression_calls_per_forward": 3076,
+    "trace_prefix_field_words": 32768,
+    "trace_prefix_tiles": 512
+  },
+  "forward_schedule": [
+    {
+      "calls": 1,
+      "cnot": 149229,
+      "gates": 198203,
+      "input_bits": 768,
+      "logical_qubits": 122836,
+      "output_bits": 256,
+      "stage": "header_challenge_after_five_classical_prefix_blocks",
+      "template": "sha256_compression",
+      "toffoli": 45933,
+      "x": 3041
+    },
+    {
+      "calls": 1024,
+      "cnot": 152810496,
+      "gates": 202959872,
+      "input_bits": 786432,
+      "logical_qubits": 125784064,
+      "output_bits": 262144,
+      "stage": "all_four_noise_arrays_128_hashes_each",
+      "template": "sha256_compression",
+      "toffoli": 47035392,
+      "x": 3113984
+    },
+    {
+      "calls": 4096,
+      "cnot": 280555520,
+      "gates": 380510208,
+      "input_bits": 67280896,
+      "logical_qubits": 301699072,
+      "output_bits": 67153920,
+      "stage": "all_eight_words_of_every_noise_digest",
+      "template": "compact_step",
+      "toffoli": 88326144,
+      "x": 11628544
+    },
+    {
+      "calls": 8192,
+      "cnot": 487489536,
+      "gates": 716832768,
+      "input_bits": 4456448,
+      "logical_qubits": 476815360,
+      "output_bits": 262144,
+      "stage": "E_and_F_all_cells",
+      "template": "dot8",
+      "toffoli": 227885056,
+      "x": 1458176
+    },
+    {
+      "calls": 8192,
+      "cnot": 21520384,
+      "gates": 27451392,
+      "input_bits": 524288,
+      "logical_qubits": 16941056,
+      "output_bits": 262144,
+      "stage": "A_plus_E_and_B_plus_F",
+      "template": "field_add",
+      "toffoli": 5382144,
+      "x": 548864
+    },
+    {
+      "calls": 32768,
+      "cnot": 1949958144,
+      "gates": 2867331072,
+      "input_bits": 17825792,
+      "logical_qubits": 1907261440,
+      "output_bits": 1048576,
+      "stage": "all_512_ordered_transcript_tiles",
+      "template": "dot8",
+      "toffoli": 911540224,
+      "x": 5832704
+    },
+    {
+      "calls": 2049,
+      "cnot": 305770221,
+      "gates": 406117947,
+      "input_bits": 1573632,
+      "logical_qubits": 251690964,
+      "output_bits": 524544,
+      "stage": "one_streaming_transcript_hash",
+      "template": "sha256_compression",
+      "toffoli": 94116717,
+      "x": 6231009
+    },
+    {
+      "calls": 2,
+      "cnot": 298458,
+      "gates": 396406,
+      "input_bits": 1536,
+      "logical_qubits": 245672,
+      "output_bits": 512,
+      "stage": "ticket_hash",
+      "template": "sha256_compression",
+      "toffoli": 91866,
+      "x": 6082
+    },
+    {
+      "calls": 1,
+      "cnot": 2942,
+      "gates": 4613,
+      "input_bits": 708,
+      "logical_qubits": 3528,
+      "output_bits": 1,
+      "stage": "target_noise_and_nonce_range",
+      "template": "predicate",
+      "toffoli": 1027,
+      "x": 644
+    }
+  ],
+  "native_consensus_source_binding": [
+    {
+      "git_blob": "edc516a57cd57ecd8a80a059cc5ed98e997b745c",
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "sha256": "9d28d64da80fd059c1619a17d24b6959a76bbdb64108600adc4dc95fe6c2636d"
+    },
+    {
+      "git_blob": "9cbfccd2d50af48fc43522b967ffdfb1f45ec098",
+      "path": "formal/pon-nakamoto-v1/work_oracle.py",
+      "sha256": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/reversible_bits.py",
+      "sha256": "611b1f12ebaaf1d71db320400bac24e232380b891118d973bcb0b90b37fe9f79"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_oracle_blueprint.py",
+      "sha256": "523699b3ba76313eb2784c3a58033423960efaa2c1530e90f31a27620acacd79"
+    }
+  ],
+  "primary_references": [
+    "https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf",
+    "https://arxiv.org/abs/1210.0974",
+    "https://arxiv.org/abs/2403.08023"
+  ],
+  "production_activation": false,
+  "qualification": {
+    "gate_templates_materialized": true,
+    "hierarchical_wiring_formally_verified": false,
+    "lowest_cost_legal_oracle": false,
+    "noise_distribution_or_ticket_independence_proved": false,
+    "quantum_resource_estimate_physical": null,
+    "quantum_security_lower_bound": false,
+    "whole_chain_post_quantum": false,
+    "whole_circuit_gate_list_expanded": false,
+    "whole_circuit_quantum_state_simulated": false
+  },
+  "required_competitors": [
+    "paired multiplication",
+    "periodic maintenance prefix reuse",
+    "rank-bounded complete prefix producer",
+    "reversible pebbling and faster modular arithmetic"
+  ],
+  "schema": "pon-w1-retain-all-logical-oracle-blueprint-v1",
+  "search_model": {
+    "actual_marked_fraction": null,
+    "approximate_iterations_for_known_fraction": "pi/(4*sqrt(p)); conditional ideal amplitude amplification",
+    "isolated_rate_r_0_25_derived_from_this_construction": false,
+    "nonce_search_domain_size": "18446744073709551616",
+    "setup_and_winning_witness_and_admission_costs_separate": true
+  },
+  "sixty_four_bit_diffusion_separate": {
+    "ancilla_qubits": 62,
+    "clifford_before_toffoli_decomposition": 257,
+    "construction": "62-AND ancilla ladder, one CZ, then inverse ladder; H/X on all 64 bits",
+    "t_count_using_exact_7T_toffoli": 868,
+    "toffoli": 124
+  },
+  "templates": {
+    "compact_step": {
+      "cnot": 68495,
+      "gates": 92898,
+      "input_bits": 16426,
+      "logical_qubits": 73657,
+      "output_bits": 16395,
+      "retained_ancillas": 57231,
+      "template_sha256": "82eb549ce1a4b2be01498c6b52812ae655807cbd81a881b0d9eca3f7c721d838",
+      "toffoli": 21564,
+      "x": 2839
+    },
+    "dot8": {
+      "cnot": 59508,
+      "gates": 87504,
+      "input_bits": 544,
+      "logical_qubits": 58205,
+      "output_bits": 32,
+      "retained_ancillas": 57661,
+      "template_sha256": "2ce0211e8e7d9baf77333840b6052f5c81b5671fd9f35b9f7e57241482d847f7",
+      "toffoli": 27818,
+      "x": 178
+    },
+    "field_add": {
+      "cnot": 2627,
+      "gates": 3351,
+      "input_bits": 64,
+      "logical_qubits": 2068,
+      "output_bits": 32,
+      "retained_ancillas": 2004,
+      "template_sha256": "e1b323e055d332dddbe85e441993d221be38a524001148618385e2ccfeacf590",
+      "toffoli": 657,
+      "x": 67
+    },
+    "predicate": {
+      "cnot": 2942,
+      "gates": 4613,
+      "input_bits": 708,
+      "logical_qubits": 3528,
+      "output_bits": 1,
+      "retained_ancillas": 2820,
+      "template_sha256": "1171c3ddc98256f9c4a257bf8c974792a21c28686506280a24c4b483d0a1dec8",
+      "toffoli": 1027,
+      "x": 644
+    },
+    "sha256_compression": {
+      "cnot": 149229,
+      "gates": 198203,
+      "input_bits": 768,
+      "logical_qubits": 122836,
+      "output_bits": 256,
+      "retained_ancillas": 122068,
+      "template_sha256": "f41e72295bb61579f524f2820f63f52334233dfd8527b7a377db83d1917118a7",
+      "toffoli": 45933,
+      "x": 3041
+    }
+  }
+}

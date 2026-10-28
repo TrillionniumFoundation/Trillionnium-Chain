@@ -1,0 +1,94 @@
+{
+  "schema": "pn1-w1-v3-ordinary-recovery-independent-source-review-v1",
+  "recorded_utc": "2026-10-26T14:33:05.033493+00:00",
+  "reviewer": "/root/pn1_checkpoint64_peer",
+  "scope": "Read-only candidate diff, AST/bytes, exact existing M02/Node/recovery docs/regression contract review. No import/build/typecheck/Clippy/test/native execution or root source mutation.",
+  "candidate_patch": {
+    "path": "work/ci-follow/W1-v3-ordinary-recovery-source-successor-20261026-001/candidate.patch",
+    "bytes": 12034,
+    "sha256": "d5d88db612ab1e4abb769483f95f42977e6b05adda54eaa263ca3a8015dadee6"
+  },
+  "source_successor_receipt": {
+    "path": "work/ci-follow/W1-v3-ordinary-recovery-source-successor-20261026-001/source-successor-receipt.json",
+    "bytes": 3841,
+    "sha256": "7b552a1246371371e53224dc217909190791602ca817550247b221326c8447d8"
+  },
+  "candidate_files": [
+    {
+      "path": "work/ci-follow/W1-v3-ordinary-recovery-source-successor-20261026-001/candidate/scripts/ci/check_pon_w1_real_header_reuse_v1.py",
+      "bytes": 19325,
+      "sha256": "8cbba549285925cf82db9c9d6a8c7478e541374cb242bd8bfce2549e1348a12c"
+    },
+    {
+      "path": "work/ci-follow/W1-v3-ordinary-recovery-source-successor-20261026-001/candidate/scripts/run_pon_w1_real_header_reuse_v1.py",
+      "bytes": 24230,
+      "sha256": "f381c196651ff2da8aef1afa96eab7490f553c6021a5620fa50f46d227b21506"
+    },
+    {
+      "path": "work/ci-follow/W1-v3-ordinary-recovery-source-successor-20261026-001/candidate/trillionnium/crates/trnm-pon-node/examples/pon_w1_real_header_reuse_v1.rs",
+      "bytes": 22746,
+      "sha256": "1a9209045cf9d735a3ec7d32d4b4697ab387c13c9406950f3002212a9cb6866d"
+    },
+    {
+      "path": "work/ci-follow/W1-v3-ordinary-recovery-source-successor-20261026-001/candidate/trillionnium/crates/trnm-pon-node/examples/support/w1_real_header_reuse_v1.rs",
+      "bytes": 5686,
+      "sha256": "7b72d963501d844e3fc046f3ad6b4fd18d8112539ab76962328a0f01727aa5f0"
+    }
+  ],
+  "authoritative_source_contract_pins": [
+    {
+      "path": "work/root-chain-integration-20261026/docs/protocol/pon-nakamoto-v1/details/STATE_RECOVERY.md",
+      "bytes": 19171,
+      "sha256": "4ab96272cf46c5e6c79cfc857ab404254147e96c187dd4d20b1b983677c7fd0c"
+    },
+    {
+      "path": "work/root-chain-integration-20261026/trillionnium/crates/trnm-pon-node/tests/zero_task_preparation_lifecycle.rs",
+      "bytes": 13266,
+      "sha256": "01f1a27fd5dbaff7232a53f8b15a573737b5f68bf27a78a91f9b8d2810bff53b"
+    },
+    {
+      "path": "work/root-chain-integration-20261026/trillionnium/crates/trnm-pon-node/src/store.rs",
+      "bytes": 302714,
+      "sha256": "61953b312c62a5045b9ac87a4a97789a82177a0013140a2c93ccdf7332a88231"
+    },
+    {
+      "path": "work/root-chain-integration-20261026/trillionnium/crates/trnm-pon-node/src/consensus.rs",
+      "bytes": 13091,
+      "sha256": "53088562316151516348ea723e03b9132b9994fee14167da18c79c2c3b3fed29"
+    }
+  ],
+  "original_v2_failure": {
+    "path": "work/ci-follow/W1-clean399-real64-cold-recovery-readonly-investigation-20261026-001/failure-cause-receipt.json",
+    "bytes": 5478,
+    "sha256": "1a48dd159247cb5dbe0856610fd334e56756c409925eaf356c3cd27b40b39e5c"
+  },
+  "positive_checks": [
+    "Controller entireimplementation exactly oldbyteforbyte except two fresh v3 profile/reader receipt domains; original2sRPC/whole120/memory/file/CPU/outputcap/deadline behavior unchanged.",
+    "Native initialize/setup/search body byte-identical except freshPROFILE. Fixed beforeHeader/challenge selection, original one setup/64sameparent siblings/allattempts/ordinaryadmit unchanged. Support registry and math bytes unchanged.",
+    "Original SIBLING_SCOPE_ACTIVE_PARENT generation1 assertion remains. New explicit ordinary recover invokes existing production method, not pruning/altering/bypassing opener or forkchoice.",
+    "Original cold tuple equality expression and entire64cold packet/state loop preserved after explicit hot recovery. Complete before/after/cold State values, tip and generation recorded.",
+    "Python independently recomputes exact floor(2**256/(target+1)) with nonzero32byte bigendian target; cumulative work includes height1registration and each height2sibling, bounded below2**512.",
+    "Actual M02 Work.bytes encodes fixed64byte bigendian; SQL chainworkDESC,height,id selection equals Python negativeint/height/rawidbyte tuple. All sameparent/height2/target cohort makes native min(id) shortcut valid.",
+    "Python independently derives winner from all64 independently relation-verified headers/packetids; exact66distinct genesis/registration/sibling ids, exact64cohort and strictly heavier height2 winner required. It does not trust returned_tip alone.",
+    "Exact integer generation1->2 required, bool/float rejected. canonical lowercase64hex tips/hash checked by active_observation; complete canonicalState bytes compared cold==after.",
+    "Current State is BTreeMap<String,Value>; locked serde_json graph has no preserve_order/indexmap, canonical state validation rejects floats. Sorted UTF8 JSON/compactinteger serialization matches native ordinary fixture grammar.",
+    "Reader matches beforeStatehash to original parent observation and winnerStatehash to prior admitted observation while explicitly retaining independent_state_transition_oracle=false; no independent State-transition/signature/parentoracle/whole-tree attestation is claimed."
+  ],
+  "acceptance_versioning_boundary": "This is an explicitly versioned different lifecycle: ordinary recover is now performed while hot before testing cold stability. Keeping an expression spelling does NOT make the original v2 baseline unchanged. Oldv2 source/raw COLD_ACTIVE_STATE FAIL and unrun oracle must remain preserved; no v3 result may reclassify that old run asPASS. Existing STATE_RECOVERY and zero_task_preparation_lifecycle production contract justify a new corrected audit lifecycle without changing Node semantics.",
+  "remaining_risks": [
+    "Added hotrecover, fullState serialization, coldreopen and all64readback/oracle costs must actually complete within originalsealRPC2s and whole120; source review cannot establish cost/performance.",
+    "Actual build/typecheck/strictClippy/format and negative metadata controls are pending, including wrongwork/winner/order/parent/height/target, generationbool/float, mutatedcompleteState, missingcohort/recovery and coldtuple mismatch.",
+    "State recovery observations are native evidence, not an independent state-transition oracle. Co-mutating native State/hash observations is outside the claimed relation-only oracle, and all broader flags must stayfalse.",
+    "New v3 requires exact-clean newsource + actual normalrelease binary/build/owned-process/terminal proof, freshoriginal-sized execution window; cannot reuse expired/consumed v2window or promote its64admissions into a v3run.",
+    "No new result qualifies64successive canonical parents, all13kernels, globalminimumcost, hardwarefairness, publicpaidtransport, full4097, currentpair or productionrelease."
+  ],
+  "blocking_findings": [],
+  "decision": "No static blocker to a clearly versioned source successor and its original-resource new actual validation. It corrects an audit lifecycle expectation against unchanged normative recovery, not a production forkchoice defect or retroactive v2PASS.",
+  "read_only_self_check_cwd_error": "An initial read used workspace instead of repo cwd and got file-not-found; corrected explicit repo read. No product process ran and no evidence changed.",
+  "candidate_imported_or_executed": false,
+  "source_modified": false,
+  "native64_passed": false,
+  "oracle_passed": false,
+  "task_complete": false,
+  "merge_ready": false
+}

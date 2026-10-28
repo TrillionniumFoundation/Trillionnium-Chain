@@ -1,0 +1,84 @@
+"""Capture one strict Clippy run; sparse/extra-file limits remain explicit."""
+from pathlib import Path
+import hashlib
+import json
+import os
+import subprocess
+import sys
+import time
+
+ROOT = Path(__file__).resolve().parent.parent
+SOURCE = ROOT / "pq-base5e"
+EVIDENCE = ROOT / "evidence"
+TOOLCHAIN = ROOT.parent / "pon-build-inputs/unpacked/toolchain/bin"
+EXPECTED = sys.argv[1] if len(sys.argv) > 1 else "99be553ea80bee137b0bcc3b67d8786348547256"
+
+
+def git(*args):
+    return subprocess.check_output(["git", *args], cwd=SOURCE, text=True).strip()
+
+
+def snapshot():
+    head = git("rev-parse", "HEAD")
+    rows = []
+    for line in git("ls-tree", "-r", "HEAD").splitlines():
+        metadata, name = line.split("\t", 1)
+        if name.startswith("evidence/"):
+            continue
+        mode, kind, wanted = metadata.split()
+        path = SOURCE / name
+        assert kind == "blob" and path.is_file() and not path.is_symlink(), name
+        raw = path.read_bytes()
+        actual = hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\0" + raw).hexdigest()
+        assert actual == wanted, (name, wanted, actual)
+        assert bool(path.stat().st_mode & 0o111) == (mode == "100755"), name
+        rows.append([name, mode, actual, hashlib.sha256(raw).hexdigest()])
+    assert head == EXPECTED, head
+    extras = []
+    for name in git("ls-files", "--others", "--exclude-standard").splitlines():
+        path = SOURCE / name
+        if path.is_file():
+            raw = path.read_bytes()
+            extras.append({"path": name, "bytes": len(raw),
+                           "sha256": hashlib.sha256(raw).hexdigest()})
+    return {"head": head, "tree": git("rev-parse", "HEAD^{tree}"),
+            "tracked_non_evidence_blobs": len(rows),
+            "source_digest_sha256": hashlib.sha256(json.dumps(rows, separators=(",", ":")).encode()).hexdigest(),
+            "source_rows": rows, "untracked_files": extras,
+            "git_status": git("status", "--porcelain", "--untracked-files=all"),
+            "historical_evidence_sparse": True,
+            "full_repository_source_guard_passed": False}
+
+
+env = dict(os.environ)
+env.update(PATH=str(TOOLCHAIN) + os.pathsep + env.get("PATH", ""),
+           RUSTC=str(TOOLCHAIN / "rustc"),
+           CARGO_HOME=str(ROOT.parent / "pon-build-inputs/native-cargo-home"),
+           CARGO_TARGET_DIR=str(ROOT / "target-native"), CARGO_BUILD_JOBS="1")
+before = snapshot()
+(EVIDENCE / "final-clippy-source-before.json").write_text(json.dumps(before, indent=2) + "\n")
+command = [str(TOOLCHAIN / "cargo"), "clippy", "--locked", "--manifest-path",
+           "trillionnium/Cargo.toml", "--workspace", "--all-targets", "--all-features",
+           "--", "-D", "warnings"]
+started = time.monotonic()
+with (EVIDENCE / "final-clippy.log").open("w") as log:
+    process = subprocess.run(command, cwd=SOURCE, env=env,
+                             stdout=log, stderr=subprocess.STDOUT)
+after = snapshot()
+(EVIDENCE / "final-clippy-source-after.json").write_text(json.dumps(after, indent=2) + "\n")
+result = {"source_commit": EXPECTED, "command": command,
+          "cargo_build_jobs": 1, "exit_code": process.returncode,
+          "elapsed_seconds": time.monotonic() - started,
+          "rustc": subprocess.check_output([str(TOOLCHAIN / "rustc"), "-Vv"], text=True),
+          "same_tracked_non_evidence_source": before["source_rows"] == after["source_rows"],
+          "source_digest_sha256": before["source_digest_sha256"],
+          "source_before": "final-clippy-source-before.json",
+          "source_after": "final-clippy-source-after.json",
+          "log": "final-clippy.log",
+          "log_sha256": hashlib.sha256((EVIDENCE / "final-clippy.log").read_bytes()).hexdigest(),
+          "full_repository_source_guard_passed": False,
+          "native_pq_node_integrated": False, "production_activation": False,
+          "quantum_pon_hardness_qualified": False}
+(EVIDENCE / "final-clippy-result.json").write_text(json.dumps(result, indent=2) + "\n")
+print(json.dumps({key: value for key, value in result.items() if key not in {"rustc", "command"}}, indent=2))
+raise SystemExit(process.returncode or (0 if result["same_tracked_non_evidence_source"] else 1))

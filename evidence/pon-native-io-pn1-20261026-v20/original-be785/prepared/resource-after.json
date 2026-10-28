@@ -1,0 +1,61 @@
+{
+  "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/pn1-v19-component-prepare-bb5f7c94e941bafe96a4bd4b2ad77b4b.service",
+  "cpu_affinity": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "limits": [
+    {
+      "cpu.max": "400000 100000",
+      "cpu.stat": "usage_usec 525044942\nuser_usec 503544895\nsystem_usec 21500047\nnice_usec 503333000\ncore_sched.force_idle_usec 0\nnr_periods 2782\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+      "cpuset.cpus.effective": null,
+      "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+      "memory.max": "17179869184",
+      "path": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/pn1-v19-component-prepare-bb5f7c94e941bafe96a4bd4b2ad77b4b.service"
+    },
+    {
+      "cpu.max": "max 100000",
+      "cpu.stat": "usage_usec 717428752340\nuser_usec 644750102035\nsystem_usec 72678650304\nnice_usec 34342804000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+      "cpuset.cpus.effective": null,
+      "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 4716",
+      "memory.max": "max",
+      "path": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice"
+    },
+    {
+      "cpu.max": "max 100000",
+      "cpu.stat": "usage_usec 753799332070\nuser_usec 667694782174\nsystem_usec 86104549896\nnice_usec 34351698000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+      "cpuset.cpus.effective": null,
+      "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 4716",
+      "memory.max": "max",
+      "path": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service"
+    },
+    {
+      "cpu.max": "max 100000",
+      "cpu.stat": "usage_usec 754995459139\nuser_usec 668404604546\nsystem_usec 86590854593\nnice_usec 34351699000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+      "cpuset.cpus.effective": null,
+      "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 4716",
+      "memory.max": "max",
+      "path": "/sys/fs/cgroup/user.slice/user-1000.slice"
+    },
+    {
+      "cpu.max": "max 100000",
+      "cpu.stat": "usage_usec 755004518819\nuser_usec 668410814217\nsystem_usec 86593704602\nnice_usec 34351699000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+      "cpuset.cpus.effective": "0-47",
+      "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 4716",
+      "memory.max": "max",
+      "path": "/sys/fs/cgroup/user.slice"
+    },
+    {
+      "cpu.max": null,
+      "cpu.stat": "usage_usec 768337169000\nuser_usec 673703197000\nsystem_usec 94633972000\nnice_usec 43801502000\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+      "cpuset.cpus.effective": "0-47",
+      "memory.events": null,
+      "memory.max": null,
+      "path": "/sys/fs/cgroup"
+    }
+  ],
+  "nice": 10,
+  "schema": "trnm.resource-observation.v1"
+}

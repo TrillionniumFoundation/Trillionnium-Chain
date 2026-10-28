@@ -1,0 +1,364 @@
+{
+  "schema": "pn1-held-target-ABI-v3-failure-retention-and-controls-v1",
+  "recorded_utc": "2026-10-26T12:54:43.819626+00:00",
+  "original_be785_Cargo0_is_capture_only_not_native_ABI_admission": true,
+  "first_guard_failure_and_corrected_launcher_native101_retained": true,
+  "no_old_claim_or_prepared_reuse": true,
+  "new_CPP_fence_and_prepared_domains_v3": true,
+  "normal_C_nm_build_public_prepare_execute_reader_qualification": false,
+  "source_controls": "final32 Python with old26 unchanged,13 real tmpfs Rust helper; no actual C qualification",
+  "original_build1200_budget": "prior conservatively400+current diagnostics60+new prepare730=1190; no new prepare yet",
+  "all_original_flags_caps_profiles_and_assertions_retained": true,
+  "files": [
+    {
+      "retained_path": "original-be785/prepared-v2-native-admission-correction.json",
+      "original_path": "work/ci-follow/pn1-V19-new-clean-source-prepare-owner-preparation-20261026-001/prepared-v2-native-admission-correction.json",
+      "bytes": 1471,
+      "sha256": "83189c67fdb2047878d0aad6974d10f5fe30396f5b3b05cc5e7d233d90785eeb"
+    },
+    {
+      "retained_path": "original-be785/prepare-owner-result.json",
+      "original_path": "work/ci-follow/pn1-V19-new-clean-source-prepare-owner-preparation-20261026-001/prepare-owner-result.json",
+      "bytes": 13492,
+      "sha256": "7810a80e11be4043a8bc504c82385a488706b912d7500840b8ed9a566f71043a"
+    },
+    {
+      "retained_path": "original-be785/prepared/build.stdout.log",
+      "original_path": "work/ci-follow/pn1-V19-new-clean-source-prepare-owner-preparation-20261026-001/prepared/build.stdout.log",
+      "bytes": 91764,
+      "sha256": "27134582021dcac39341a369934b30370e2f2e750e17f61ccf7c3bd2b6a2faa9"
+    },
+    {
+      "retained_path": "original-be785/prepared/build.stderr.log",
+      "original_path": "work/ci-follow/pn1-V19-new-clean-source-prepare-owner-preparation-20261026-001/prepared/build.stderr.log",
+      "bytes": 4992,
+      "sha256": "ab207470f7f657ba773e19d252cd108161d349dc2bc2446bbb284af61ca1706f"
+    },
+    {
+      "retained_path": "original-be785/prepared/build.step.json",
+      "original_path": "work/ci-follow/pn1-V19-new-clean-source-prepare-owner-preparation-20261026-001/prepared/build.step.json",
+      "bytes": 1522,
+      "sha256": "ac2ed88671e0c0dbff7ae46b524f29922b827f0542e988ee92fb3257669526e4"
+    },
+    {
+      "retained_path": "original-be785/prepared/prepared.json",
+      "original_path": "work/ci-follow/pn1-V19-new-clean-source-prepare-owner-preparation-20261026-001/prepared/prepared.json",
+      "bytes": 10196,
+      "sha256": "f7ff49035b863098e1938803290420784114cf66a55cf701eda6bf44d1a2b65b"
+    },
+    {
+      "retained_path": "original-be785/prepared/artifact-files.json",
+      "original_path": "work/ci-follow/pn1-V19-new-clean-source-prepare-owner-preparation-20261026-001/prepared/artifact-files.json",
+      "bytes": 2477,
+      "sha256": "1b0eb1df7fb4f413f338ea0b945b2aed9269508c3565da42ee7e4e5f105c13e3"
+    },
+    {
+      "retained_path": "original-be785/prepared/resource-before.json",
+      "original_path": "work/ci-follow/pn1-V19-new-clean-source-prepare-owner-preparation-20261026-001/prepared/resource-before.json",
+      "bytes": 3229,
+      "sha256": "d5fe28bac198ee53b39ec2ff697ae204cb107c65a7ed4f95dbedce9d7fd4ac08"
+    },
+    {
+      "retained_path": "original-be785/prepared/resource-after.json",
+      "original_path": "work/ci-follow/pn1-V19-new-clean-source-prepare-owner-preparation-20261026-001/prepared/resource-after.json",
+      "bytes": 3244,
+      "sha256": "cbb566b9ceb25cc5f633a37d2f00465d33ef98fb3f49895f167733178fd4b4b3"
+    },
+    {
+      "retained_path": "original-be785/execution/component.stdout.log",
+      "original_path": "work/ci-follow/pn1-V19-new-clean-source-prepare-owner-preparation-20261026-001/execution/component.stdout.log",
+      "bytes": 285,
+      "sha256": "ba0ec26b56a1b167259c05928e5ecfd4097fbeae24a914a0e6812dd2ffdb825c"
+    },
+    {
+      "retained_path": "original-be785/execution/component.stderr.log",
+      "original_path": "work/ci-follow/pn1-V19-new-clean-source-prepare-owner-preparation-20261026-001/execution/component.stderr.log",
+      "bytes": 441,
+      "sha256": "7770ce582ed33853f61c166d970c270e04ddfd8cfc393a93eab21c6e214791ac"
+    },
+    {
+      "retained_path": "original-be785/execution/component.step.json",
+      "original_path": "work/ci-follow/pn1-V19-new-clean-source-prepare-owner-preparation-20261026-001/execution/component.step.json",
+      "bytes": 2926,
+      "sha256": "764f6532373b9dd4a5f314cf1127666d1d8545432c0354865ed631563740ec23"
+    },
+    {
+      "retained_path": "original-be785/execution/outer-terminal.json",
+      "original_path": "work/ci-follow/pn1-V19-new-clean-source-prepare-owner-preparation-20261026-001/execution/outer-terminal.json",
+      "bytes": 1058,
+      "sha256": "4b686677cb4c10ecd1655fdec3ccd3011c577531227109f5e8f1981a9f2480d1"
+    },
+    {
+      "retained_path": "original-be785/execution-fixed-launcher-001/owner.py",
+      "original_path": "work/ci-follow/pn1-V19-new-clean-source-prepare-owner-preparation-20261026-001/execution-fixed-launcher-001/owner.py",
+      "bytes": 11816,
+      "sha256": "dec7e93ef2151a240bf252a84c90d34abd603248f0fd845a0f51beb0b35fa598"
+    },
+    {
+      "retained_path": "original-be785/execution-fixed-launcher-001/execute-owner-result.json",
+      "original_path": "work/ci-follow/pn1-V19-new-clean-source-prepare-owner-preparation-20261026-001/execution-fixed-launcher-001/execute-owner-result.json",
+      "bytes": 14677,
+      "sha256": "d31e3ae8589e7d8d3caf6cf5665a50e6bf6e95c042aef44144e19b12686c4940"
+    },
+    {
+      "retained_path": "original-be785/execution-fixed-launcher-001/durable-terminal-original.json",
+      "original_path": "work/ci-follow/pn1-V19-new-clean-source-prepare-owner-preparation-20261026-001/execution-fixed-launcher-001/durable-terminal-original.json",
+      "bytes": 631,
+      "sha256": "560ecd299f3190d5eb235653a9d3c64c4b25a8253c2ed83b5837fbcfabdca973"
+    },
+    {
+      "retained_path": "original-be785/execution-first-guard-terminal-original.json",
+      "original_path": "work/ci-follow/pn1-V19-new-clean-source-prepare-owner-preparation-20261026-001/execution-first-guard-terminal-original.json",
+      "bytes": 631,
+      "sha256": "ce7432e4be324ea52b709e311db875a82b7b65ea5a8d9845372f3002c72b8846"
+    },
+    {
+      "retained_path": "original-be785/nice-control-terminal-original.json",
+      "original_path": "work/ci-follow/pn1-V19-new-clean-source-prepare-owner-preparation-20261026-001/nice-control-terminal-original.json",
+      "bytes": 634,
+      "sha256": "c4c94eac511ce8d37d857b40f19e593a69901b801af7942c26a452a0b7c0d7bd"
+    },
+    {
+      "retained_path": "original-be785/consumed-claim/claim.json",
+      "original_path": "work/ci-follow/pn1-V19-new-clean-source-prepare-owner-preparation-20261026-001/component-execution-claim-v1-2050-51960216/claim.json",
+      "bytes": 1655,
+      "sha256": "e1b534e3ca7efff688a9529fdf38e530f910c18273c4cb672a8a7aaf64b88abd"
+    },
+    {
+      "retained_path": "original-be785/consumed-claim/owner.lock",
+      "original_path": "work/ci-follow/pn1-V19-new-clean-source-prepare-owner-preparation-20261026-001/component-execution-claim-v1-2050-51960216/owner.lock",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "retained_path": "original-be785/consumed-claim/terminal.json",
+      "original_path": "work/ci-follow/pn1-V19-new-clean-source-prepare-owner-preparation-20261026-001/component-execution-claim-v1-2050-51960216/terminal.json",
+      "bytes": 1810,
+      "sha256": "b08f5a5aa3dd9a8592a46aac295ff1b01c9cb53bf56dc9233c60f9159225c434"
+    },
+    {
+      "retained_path": "original-first-Nice-guard-failure/stdout.log",
+      "original_path": "/home/qian-qi/.local/state/hepta-runtime-operator-host/jobs/1a1780bf271-96a-11b9/stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "retained_path": "original-first-Nice-guard-failure/stderr.log",
+      "original_path": "/home/qian-qi/.local/state/hepta-runtime-operator-host/jobs/1a1780bf271-96a-11b9/stderr.log",
+      "bytes": 1510,
+      "sha256": "5a8dc24cca5df9d6174e779927b657dbb410431317ec82ccad47b323a3104288"
+    },
+    {
+      "retained_path": "original-first-Nice-guard-failure/request.json",
+      "original_path": "/home/qian-qi/.local/state/hepta-runtime-operator-host/jobs/1a1780bf271-96a-11b9/request.json",
+      "bytes": 1835,
+      "sha256": "35ef1ae18c2d49d0b8fb7141b8622f5a86cd41b0ae5afc3134ad5ae4b050fcc3"
+    },
+    {
+      "retained_path": "original-first-Nice-guard-failure/started.json",
+      "original_path": "/home/qian-qi/.local/state/hepta-runtime-operator-host/jobs/1a1780bf271-96a-11b9/started.json",
+      "bytes": 329,
+      "sha256": "a97b9ef75711b4c933d48b3c8403e5479a91cac844c12b45a6b11d62b90d0e0d"
+    },
+    {
+      "retained_path": "original-first-Nice-guard-failure/child.json",
+      "original_path": "/home/qian-qi/.local/state/hepta-runtime-operator-host/jobs/1a1780bf271-96a-11b9/child.json",
+      "bytes": 116,
+      "sha256": "2ed7c1112051f7a98f5630fdc92e19e49adf71cb5896a71ff85c370e36c2832d"
+    },
+    {
+      "retained_path": "original-fixed-launcher-failure/stdout.log",
+      "original_path": "/home/qian-qi/.local/state/hepta-runtime-operator-host/jobs/1a1781842e6-96a-11d9/stdout.log",
+      "bytes": 2498,
+      "sha256": "5f9cc8b4f79b9ac1db16a11069262235ccf1c060032c8af5ac67e54e3b20fc4c"
+    },
+    {
+      "retained_path": "original-fixed-launcher-failure/stderr.log",
+      "original_path": "/home/qian-qi/.local/state/hepta-runtime-operator-host/jobs/1a1781842e6-96a-11d9/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "retained_path": "original-fixed-launcher-failure/request.json",
+      "original_path": "/home/qian-qi/.local/state/hepta-runtime-operator-host/jobs/1a1781842e6-96a-11d9/request.json",
+      "bytes": 917,
+      "sha256": "a09f7865ec40d74e19b4da712561d8bd9b0c8dc4aa88cc6b3145e23a47b3ca68"
+    },
+    {
+      "retained_path": "original-fixed-launcher-failure/started.json",
+      "original_path": "/home/qian-qi/.local/state/hepta-runtime-operator-host/jobs/1a1781842e6-96a-11d9/started.json",
+      "bytes": 329,
+      "sha256": "ad6ecb01cc3fc59f5d015362b4b717827479052ad5d200e433c6fcca9563e828"
+    },
+    {
+      "retained_path": "original-fixed-launcher-failure/child.json",
+      "original_path": "/home/qian-qi/.local/state/hepta-runtime-operator-host/jobs/1a1781842e6-96a-11d9/child.json",
+      "bytes": 116,
+      "sha256": "99cf4b43a72a7319ed2e70e635a1891a504050c979ce50391a2dd9ec4704a8bc"
+    },
+    {
+      "retained_path": "real-Nice-control/probe.py",
+      "original_path": "work/ci-follow/pn1-V19-nice-launcher-real-control-20261026-001/probe.py",
+      "bytes": 2156,
+      "sha256": "76b9246b076e9e0d7547ca71b03e6a3d3cfa649f40eb89cf5e33095af503532d"
+    },
+    {
+      "retained_path": "real-Nice-control/receipt.json",
+      "original_path": "work/ci-follow/pn1-V19-nice-launcher-real-control-20261026-001/receipt.json",
+      "bytes": 9318,
+      "sha256": "3240384610f19e1ded110d8d8a6670c08fafea8d0b416891510dbd6d8c7787f6"
+    },
+    {
+      "retained_path": "real-Nice-control/inner.stderr.log",
+      "original_path": "work/ci-follow/pn1-V19-nice-launcher-real-control-20261026-001/inner.stderr.log",
+      "bytes": 303,
+      "sha256": "47724a76e9956f6b7f98b9041fef74edcea3c95a1adcc6b9ec9d4e4d3eecb25f"
+    },
+    {
+      "retained_path": "real-Nice-control/inner.stdout.log",
+      "original_path": "work/ci-follow/pn1-V19-nice-launcher-real-control-20261026-001/inner.stdout.log",
+      "bytes": 3096,
+      "sha256": "bb08f368c20d8804b996d3b454b9207e8e394e3485637840a497913e0d7ffd0e"
+    },
+    {
+      "retained_path": "Rust-source-review/implementation-receipt.json",
+      "original_path": "work/ci-follow/pn1-held-target-loader-fence-v3-source-candidate-20261026-001/implementation-receipt.json",
+      "bytes": 4058,
+      "sha256": "b67f5588db36b3e987140ad7fdbff8752f2f579eba303c9bc125b177c3da29ef"
+    },
+    {
+      "retained_path": "Rust-source-review/README.md",
+      "original_path": "work/ci-follow/pn1-held-target-loader-fence-v3-source-candidate-20261026-001/README.md",
+      "bytes": 6355,
+      "sha256": "336dfc0d4d60ad7d9a99e6985aa92eeab03e18139497bd474fd6537c2c3a7156"
+    },
+    {
+      "retained_path": "Rust-source-review/manifest.json",
+      "original_path": "work/ci-follow/pn1-held-target-loader-fence-v3-source-candidate-20261026-001/manifest.json",
+      "bytes": 2489,
+      "sha256": "3d26d21c4ab66506602b19be6b1328b3830cea2cc9f741942a52434c1a520a7e"
+    },
+    {
+      "retained_path": "Rust-source-review/candidate.patch",
+      "original_path": "work/ci-follow/pn1-held-target-loader-fence-v3-source-candidate-20261026-001/candidate.patch",
+      "bytes": 30198,
+      "sha256": "d5daee14476797e52cad17ca32cfcc8d27e809b43a1b2e8215f131a3bfa89be3"
+    },
+    {
+      "retained_path": "Rust-source-review/static-checks.json",
+      "original_path": "work/ci-follow/pn1-held-target-loader-fence-v3-source-candidate-20261026-001/static-checks.json",
+      "bytes": 1014,
+      "sha256": "c45d3c819cade0ca6cb43a51b2cf40d311d62d16bafad3a4579669842dd227a4"
+    },
+    {
+      "retained_path": "Rust-source-review/original-failure-pins.json",
+      "original_path": "work/ci-follow/pn1-held-target-loader-fence-v3-source-candidate-20261026-001/original-failure-pins.json",
+      "bytes": 1087,
+      "sha256": "493e21465f2b07a2ecf849b7c03086167c898ac553a04bc473b0a015b10827c4"
+    },
+    {
+      "retained_path": "controls-and-admission/source-admission.json",
+      "original_path": "work/ci-follow/pn1-native-abi-build-admission-v3-20261026-001/source-admission.json",
+      "bytes": 629,
+      "sha256": "f2be8eb95fe27fc9e5a9e092be8fe8e2ad0d24813a3480497836e4103cd89d20"
+    },
+    {
+      "retained_path": "controls-and-admission/Rust-loader-review-and-real-apply.json",
+      "original_path": "work/ci-follow/pn1-native-abi-build-admission-v3-20261026-001/Rust-loader-review-and-real-apply.json",
+      "bytes": 1662,
+      "sha256": "c6c95b69e14f6bb516b792025e020abe6ed7f5a8a30265db77f28e42ce4c6cc3"
+    },
+    {
+      "retained_path": "controls-and-admission/representable-fd-guard-source-admission.json",
+      "original_path": "work/ci-follow/pn1-native-abi-build-admission-v3-20261026-001/representable-fd-guard-source-admission.json",
+      "bytes": 660,
+      "sha256": "6819ea38e7e51223df160618a60c9f8e4724cb5d7a1690f86d6278b8de81858e"
+    },
+    {
+      "retained_path": "controls-and-admission/actual32-mechanism-controls/receipt.json",
+      "original_path": "work/ci-follow/pn1-native-abi-build-admission-v3-20261026-001/actual32-mechanism-controls/receipt.json",
+      "bytes": 1732,
+      "sha256": "6ae3738c465dab83b8a3c2b3427b7caa30e188d283844bc46a6e1c799b51ec88"
+    },
+    {
+      "retained_path": "controls-and-admission/actual32-mechanism-controls/stdout.log",
+      "original_path": "work/ci-follow/pn1-native-abi-build-admission-v3-20261026-001/actual32-mechanism-controls/stdout.log",
+      "bytes": 32598,
+      "sha256": "fb4505099d42b11ea2c405d03c579b46a0f3e4475b89f4adb6b3c47b813452a0"
+    },
+    {
+      "retained_path": "controls-and-admission/actual32-mechanism-controls/stderr.log",
+      "original_path": "work/ci-follow/pn1-native-abi-build-admission-v3-20261026-001/actual32-mechanism-controls/stderr.log",
+      "bytes": 6074,
+      "sha256": "5c4e9ef751a0acaf881f734ef4498cb1e2ac1f57a71d2fe4cf51e7bdf4063475"
+    },
+    {
+      "retained_path": "controls-and-admission/actual32-final-fd-range-controls/receipt.json",
+      "original_path": "work/ci-follow/pn1-native-abi-build-admission-v3-20261026-001/actual32-final-fd-range-controls/receipt.json",
+      "bytes": 1603,
+      "sha256": "3f60d25e7e7d25b99409e660a5718fd85701181660c7ec22beb32b1b4e0a4799"
+    },
+    {
+      "retained_path": "controls-and-admission/actual32-final-fd-range-controls/stdout.log",
+      "original_path": "work/ci-follow/pn1-native-abi-build-admission-v3-20261026-001/actual32-final-fd-range-controls/stdout.log",
+      "bytes": 32598,
+      "sha256": "4d77f2975a9ef4a415df420d351ff733d7ec8004b94ade8a296cbecab1a5f779"
+    },
+    {
+      "retained_path": "controls-and-admission/actual32-final-fd-range-controls/stderr.log",
+      "original_path": "work/ci-follow/pn1-native-abi-build-admission-v3-20261026-001/actual32-final-fd-range-controls/stderr.log",
+      "bytes": 6074,
+      "sha256": "02f263a3d303809673b2108a36165b8c891d7790cac8e30975bb6a2445ca07c8"
+    },
+    {
+      "retained_path": "controls-and-admission/actual13-Rust-loader-controls/receipt.json",
+      "original_path": "work/ci-follow/pn1-native-abi-build-admission-v3-20261026-001/actual13-Rust-loader-controls/receipt.json",
+      "bytes": 2022,
+      "sha256": "834f39bda5b72f6799d398714b091d97d6544877f3f0fc9dfa68b5e3ca479bd3"
+    },
+    {
+      "retained_path": "controls-and-admission/actual13-Rust-loader-controls/strict13-result-readback.json",
+      "original_path": "work/ci-follow/pn1-native-abi-build-admission-v3-20261026-001/actual13-Rust-loader-controls/strict13-result-readback.json",
+      "bytes": 503,
+      "sha256": "b6f6b8b7a4686c93b8b8178906ec68b4d03bbf57b9a010566a74549dfc65dda4"
+    },
+    {
+      "retained_path": "controls-and-admission/actual13-Rust-loader-controls/compile.stdout.log",
+      "original_path": "work/ci-follow/pn1-native-abi-build-admission-v3-20261026-001/actual13-Rust-loader-controls/compile.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "retained_path": "controls-and-admission/actual13-Rust-loader-controls/compile.stderr.log",
+      "original_path": "work/ci-follow/pn1-native-abi-build-admission-v3-20261026-001/actual13-Rust-loader-controls/compile.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "retained_path": "controls-and-admission/actual13-Rust-loader-controls/actual13.stdout.log",
+      "original_path": "work/ci-follow/pn1-native-abi-build-admission-v3-20261026-001/actual13-Rust-loader-controls/actual13.stdout.log",
+      "bytes": 1157,
+      "sha256": "ab3acd05c838ad5d006cf24c7deb1372051095142a714d7c48b05b79ef5665f9"
+    },
+    {
+      "retained_path": "controls-and-admission/actual13-Rust-loader-controls/actual13.stderr.log",
+      "original_path": "work/ci-follow/pn1-native-abi-build-admission-v3-20261026-001/actual13-Rust-loader-controls/actual13.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "retained_path": "controls-and-admission/launcher-harness-syntax-error-before-execution.json",
+      "original_path": "work/ci-follow/pn1-native-abi-build-admission-v3-20261026-001/launcher-harness-syntax-error-before-execution.json",
+      "bytes": 192,
+      "sha256": "11084bce8963083b7b8ff90566ae521e69bc672b782e261a95d12daaf6780797"
+    },
+    {
+      "retained_path": "review/final-Python-v3-independent.json",
+      "original_path": "work/ci-follow/pn1-native-abi-build-admission-v3-independent-readonly-review-20261026-001/independent-review-receipt.json",
+      "bytes": 4429,
+      "sha256": "785135e37e3caabdaa49a19de50941961d13981419b35a01b580ae4f3a3756a0"
+    }
+  ],
+  "task_complete": false,
+  "merge_ready": false
+}
