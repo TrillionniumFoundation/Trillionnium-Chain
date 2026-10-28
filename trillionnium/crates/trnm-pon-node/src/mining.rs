@@ -362,6 +362,19 @@ impl Node {
         };
         let mut eligibility = None;
         let admission = match self.settings().task_profile() {
+            _ if self.settings().is_native_pq_v5() => {
+                let (eligible, admission) =
+                    trnm_mvcc_fee::pon_executor::pq_accounts_v2::tasks_v5::admit_material(
+                        &state,
+                        task,
+                        height,
+                        &self.settings().app,
+                        material(),
+                    )?;
+                self.pq_tasks_v5_check_local_permission(eligible.lease())?;
+                eligibility = Some(ParentTaskEligibility::PqTaskV5(Box::new(eligible)));
+                admission
+            }
             _ if self.settings().is_native_pq_v4() => {
                 let (eligible, admission) =
                     trnm_mvcc_fee::pon_executor::pq_accounts_v2::tasks_v4::admit_material(
@@ -475,6 +488,19 @@ impl Node {
         };
         let mut eligibility = None;
         let admission = match self.settings().task_profile() {
+            _ if self.settings().is_native_pq_v5() => {
+                let (eligible, admission) =
+                    trnm_mvcc_fee::pon_executor::pq_accounts_v2::tasks_v5::admit_material(
+                        &state,
+                        task,
+                        height,
+                        &self.settings().app,
+                        material(),
+                    )?;
+                self.pq_tasks_v5_check_local_permission(eligible.lease())?;
+                eligibility = Some(ParentTaskEligibility::PqTaskV5(Box::new(eligible)));
+                admission
+            }
             _ if self.settings().is_native_pq_v4() => {
                 let (eligible, admission) =
                     trnm_mvcc_fee::pon_executor::pq_accounts_v2::tasks_v4::admit_material(

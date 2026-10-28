@@ -1,0 +1,34 @@
+{
+  "schema": "pq5-prefix-regression-observation-v1",
+  "phase": "RED",
+  "source_scope": "new real-signature regression, original unchanged M06 production executor",
+  "production_base_commit": "c974a4ccfb2ed76b77c654e11899519a9b95d38f",
+  "executor_equals_original_bytes": true,
+  "cargo_exit": 101,
+  "compiled": true,
+  "native_passed": 0,
+  "native_failed": 1,
+  "ignored": 0,
+  "filtered": 16,
+  "native_wall_seconds": 0.7,
+  "failure": "PQ5_TASK_RENEWAL at repeated identical prefix",
+  "source_files": {
+    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs": {
+      "sha256": "f49d4ceecb6d3141e024bd71ef860c2a46380456d15a1112276bf10db26a6dbc",
+      "bytes": 135791
+    },
+    "trillionnium/crates/trnm-mvcc-fee/tests/pq5_task_renewal.rs": {
+      "sha256": "85e7257ce74dc33ff99e452d022f1bc8422ec4c09f535405d03a775973347db6",
+      "bytes": 47220
+    },
+    "trillionnium/crates/trnm-protocol/tests/support/native_pq_task_fixture_v5.rs": {
+      "sha256": "10965472e239a3026a4225dd060fcc27e238d24fbffe5360084d05e559b6cfaf",
+      "bytes": 7408
+    }
+  },
+  "log": {
+    "filename": "pq-prefix-regression-red.log",
+    "sha256": "3919d4bcad520fcbab0df3f7b869e0430ea7fb3a33d380adeb819d927aee4ae0",
+    "bytes": 1179
+  }
+}

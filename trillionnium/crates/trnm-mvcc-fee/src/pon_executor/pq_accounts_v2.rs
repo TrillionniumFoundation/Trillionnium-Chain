@@ -11,7 +11,9 @@ use trnm_protocol::pq_frame::{ml_dsa_65_key_id_from_spki, PqFrameExpectation};
 use trnm_protocol::pq_native_accounts_v2::{self as wire, ChainContext, UnverifiedEnvelope};
 
 pub mod migration;
+pub mod task_migration_v1;
 pub mod tasks_v4;
+pub mod tasks_v5;
 pub use migration::{
     CheckpointMaterial, PrecommittedAccount, TrustedMigrationAnchor, TrustedPqPrecommitments,
 };
@@ -80,12 +82,17 @@ pub fn quota_v3_enabled(cfg: &Config) -> bool {
         .is_some_and(|p| p.wire_profile == wire::AccountProfile::QuotaV3)
 }
 fn quota_commands_enabled(cfg: &Config) -> bool {
-    quota_v3_enabled(cfg) || tasks_v4_enabled(cfg)
+    quota_v3_enabled(cfg) || tasks_v4_enabled(cfg) || tasks_v5_enabled(cfg)
 }
 pub fn tasks_v4_enabled(cfg: &Config) -> bool {
     cfg.native_pq_v2
         .as_ref()
         .is_some_and(|p| p.wire_profile == wire::AccountProfile::TasksV4)
+}
+pub fn tasks_v5_enabled(cfg: &Config) -> bool {
+    cfg.native_pq_v2
+        .as_ref()
+        .is_some_and(|p| p.wire_profile == wire::AccountProfile::TasksV5)
 }
 pub fn decode_for_config<'a>(raw: &'a [u8], cfg: &Config) -> Result<UnverifiedEnvelope<'a>> {
     UnverifiedEnvelope::decode_for_profile(raw, account_profile(cfg)?).map_err(|_| "PQ2_ENCODING")
@@ -173,12 +180,50 @@ pub fn genesis_tasks_v4(
 ) -> Result<(Config, State, Hash)> {
     build_genesis(accounts, timestamp, None, wire::AccountProfile::TasksV4)
 }
+/// Fresh network only. No legacy task or migration payload opts into NPQ5.
+pub fn genesis_tasks_v5(
+    accounts: &[GenesisAccount],
+    timestamp: u64,
+) -> Result<(Config, State, Hash)> {
+    build_genesis(accounts, timestamp, None, wire::AccountProfile::TasksV5)
+}
+
+/// The fresh constructors retain their original bytes and domains. Anchored
+/// NPQ5 import is selected only by its protected constructor, never a wire bit.
+#[derive(Clone, Copy)]
+enum GenesisProfile {
+    Existing(wire::AccountProfile),
+    AnchoredTasksV5,
+}
+
 fn build_genesis(
     accounts: &[GenesisAccount],
     timestamp: u64,
     anchor: Option<Arc<TrustedMigrationAnchor>>,
     wire_profile: wire::AccountProfile,
 ) -> Result<(Config, State, Hash)> {
+    build_genesis_profile(
+        accounts,
+        timestamp,
+        anchor,
+        GenesisProfile::Existing(wire_profile),
+    )
+}
+
+fn build_genesis_profile(
+    accounts: &[GenesisAccount],
+    timestamp: u64,
+    anchor: Option<Arc<TrustedMigrationAnchor>>,
+    profile: GenesisProfile,
+) -> Result<(Config, State, Hash)> {
+    let (wire_profile, anchored_tasks) = match profile {
+        GenesisProfile::Existing(profile) => (profile, false),
+        GenesisProfile::AnchoredTasksV5 => (wire::AccountProfile::TasksV5, true),
+    };
+    require(
+        !anchored_tasks || anchor.is_some(),
+        "PQ5_TRUSTED_MIGRATION_REQUIRED",
+    )?;
     require(
         accounts.len() <= MAX_GENESIS_ACCOUNTS
             && (!accounts.is_empty() || anchor.is_some())
@@ -202,7 +247,7 @@ fn build_genesis(
     let rows: Vec<Value> = sorted.iter().map(|(id, account)|
         json!({"account":hex::encode(id),"spki":hex::encode(&account.spki),"balance":account.balance})).collect();
     let descriptor = canonical(
-        &json!({"profile":wire_profile.name(),"timestamp":timestamp,"accounts":rows,
+        &json!({"profile":if anchored_tasks { task_migration_v1::PROFILE } else { wire_profile.name() },"timestamp":timestamp,"accounts":rows,
         "max_generations":MAX_GENERATIONS,"transaction_bytes":wire::MAX_BYTES,
         "transaction_total":wire::MAX_TRANSACTION_BYTES,"transaction_count":wire::MAX_TRANSACTIONS,
         "packet_bytes":1048576,"production_activation":false,"migration_anchor":anchor.as_ref().map(|a| hex::encode(a.id))}),
@@ -217,30 +262,58 @@ fn build_genesis(
             "witness_chunks":4,"chunk_raw_bytes":2000,"local_revocation_capacity":1024,
             "commands":[18,20,21],"renewal_supported":false,"migration_supported":false});
     }
+    if wire_profile == wire::AccountProfile::TasksV5 {
+        require(
+            anchored_tasks || anchor.is_none(),
+            "PQ5_TASK_MIGRATION_UNSUPPORTED",
+        )?;
+        cfg.params["native_pq_task_contract"] = json!({"profile":tasks_v5::PROFILE,"slots":32,
+            "witness_chunks":5,"chunk_raw_bytes":2000,"local_revocation_capacity":1024,
+            "commands":[18,19,20,21,22],"renewal_supported":true,"migration_supported":anchored_tasks,
+            "pending_status":"awaiting-source","local_revocation_scope":"stable-lineage-v5"});
+    }
+    if anchored_tasks {
+        cfg.params["native_pq_task_migration_profile"] = json!(task_migration_v1::PROFILE);
+    }
     cfg.params["genesis_timestamp"] = json!(timestamp);
     cfg.params["native_pq_v2_anchor"] = json!(anchor.as_ref().map(|a| hex::encode(a.id)));
     cfg.params["native_pq_v2_descriptor"] = json!(hex::encode(hash(
-        match wire_profile {
-            wire::AccountProfile::AccountsV2 => b"native-pq-genesis-descriptor-v2",
-            wire::AccountProfile::QuotaV3 => b"native-pq-quota-descriptor-v3",
-            wire::AccountProfile::TasksV4 => b"native-pq-task-descriptor-v4",
+        if anchored_tasks {
+            b"native-pq-task-migration-descriptor-v1"
+        } else {
+            match wire_profile {
+                wire::AccountProfile::AccountsV2 => b"native-pq-genesis-descriptor-v2",
+                wire::AccountProfile::QuotaV3 => b"native-pq-quota-descriptor-v3",
+                wire::AccountProfile::TasksV4 => b"native-pq-task-descriptor-v4",
+                wire::AccountProfile::TasksV5 => b"native-pq-task-descriptor-v5",
+            }
         },
         &[&descriptor]
     )));
     cfg.params["native_pq_v2_base_fees"] = json!({"128":200,"129":400,"130":400});
     cfg.network = hash(
-        match wire_profile {
-            wire::AccountProfile::AccountsV2 => b"native-pq-network-v2",
-            wire::AccountProfile::QuotaV3 => b"native-pq-quota-network-v3",
-            wire::AccountProfile::TasksV4 => b"native-pq-task-network-v4",
+        if anchored_tasks {
+            b"native-pq-task-migration-network-v1"
+        } else {
+            match wire_profile {
+                wire::AccountProfile::AccountsV2 => b"native-pq-network-v2",
+                wire::AccountProfile::QuotaV3 => b"native-pq-quota-network-v3",
+                wire::AccountProfile::TasksV4 => b"native-pq-task-network-v4",
+                wire::AccountProfile::TasksV5 => b"native-pq-task-network-v5",
+            }
         },
         &[&old_network, &descriptor],
     );
     cfg.parameters = hash(
-        match wire_profile {
-            wire::AccountProfile::AccountsV2 => b"native-pq-parameters-v2",
-            wire::AccountProfile::QuotaV3 => b"native-pq-quota-parameters-v3",
-            wire::AccountProfile::TasksV4 => b"native-pq-task-parameters-v4",
+        if anchored_tasks {
+            b"native-pq-task-migration-parameters-v1"
+        } else {
+            match wire_profile {
+                wire::AccountProfile::AccountsV2 => b"native-pq-parameters-v2",
+                wire::AccountProfile::QuotaV3 => b"native-pq-quota-parameters-v3",
+                wire::AccountProfile::TasksV4 => b"native-pq-task-parameters-v4",
+                wire::AccountProfile::TasksV5 => b"native-pq-task-parameters-v5",
+            }
         },
         &[
             &old_parameters,
@@ -266,6 +339,9 @@ fn build_genesis(
     state.extend(crate::continuity_v1::bootstrap_state(&cfg)?);
     if wire_profile == wire::AccountProfile::TasksV4 {
         state.insert(tasks_v4::GENERATION_KEY.into(), json!(0));
+    }
+    if wire_profile == wire::AccountProfile::TasksV5 {
+        state.insert(tasks_v5::GENERATION_KEY.into(), json!(0));
     }
     for (id, account) in sorted {
         let name = hex::encode(id);
@@ -420,6 +496,9 @@ pub fn validate_state(state: &State, cfg: &Config) -> Result<()> {
     if tasks_v4_enabled(cfg) {
         tasks_v4::validate_state(state, cfg)?;
     }
+    if tasks_v5_enabled(cfg) {
+        tasks_v5::validate_state(state, cfg)?;
+    }
     Ok(())
 }
 
@@ -504,6 +583,12 @@ pub fn validate_block(
             let (demand, requester, source) =
                 tasks_v4::command_owners(&mut View::new(parent, None), &tx, cfg)?;
             require(task_demands.insert(demand), "PQ4_TASK_BLOCK_MUTEX")?;
+            referenced.extend([requester, source]);
+        }
+        if tasks_v5_enabled(cfg) && matches!(tx.kind, 18..=22) {
+            let (demand, requester, source) =
+                tasks_v5::command_owners(&mut View::new(parent, None), &tx, cfg)?;
+            require(task_demands.insert(demand), "PQ5_TASK_BLOCK_MUTEX")?;
             referenced.extend([requester, source]);
         }
         for account in referenced {
@@ -592,6 +677,15 @@ fn resolve(
             )?;
             Ok(current.spki)
         }
+        2 if matches!(tx.kind, 21 | 22) && tasks_v5_enabled(cfg) => {
+            let (_, _, source) = tasks_v5::command_owners(view, tx, cfg)?;
+            let current = authorize(view, source)?;
+            require(
+                current.generation == witness.generation && current.key_id == witness.key_id,
+                "PQ5_STALE_SOURCE_AUTHORITY",
+            )?;
+            Ok(current.spki)
+        }
         2 if tx.kind == 11 && quota_commands_enabled(cfg) => {
             let consumer = quota_consumer(view, tx.payload)?;
             let current = authorize(view, consumer)?;
@@ -633,6 +727,9 @@ pub fn prepare_signature(
     let mut view = View::new(parent, None);
     if tasks_v4_enabled(cfg) && matches!(tx.kind, 18 | 20 | 21) {
         tasks_v4::command_owners(&mut view, &tx, cfg)?;
+    }
+    if tasks_v5_enabled(cfg) && matches!(tx.kind, 18..=22) {
+        tasks_v5::command_owners(&mut view, &tx, cfg)?;
     }
     let mut keys = Vec::with_capacity(tx.witnesses().len());
     for (index, witness) in tx.witnesses().iter().enumerate() {
@@ -681,6 +778,9 @@ pub fn validate_current_authority(parent: &State, raw: &[u8], cfg: &Config) -> R
     if tasks_v4_enabled(cfg) && matches!(tx.kind, 18 | 20 | 21) {
         tasks_v4::command_owners(&mut view, &tx, cfg)?;
     }
+    if tasks_v5_enabled(cfg) && matches!(tx.kind, 18..=22) {
+        tasks_v5::command_owners(&mut view, &tx, cfg)?;
+    }
     for index in 0..tx.witnesses().len() {
         resolve(&mut view, &tx, index, cfg)?;
     }
@@ -702,6 +802,9 @@ pub(super) fn apply(
     let mut view = View::new(base, access);
     if tasks_v4_enabled(cfg) && matches!(tx.kind, 18 | 20 | 21) {
         tasks_v4::command_owners(&mut view, &tx, cfg)?;
+    }
+    if tasks_v5_enabled(cfg) && matches!(tx.kind, 18..=22) {
+        tasks_v5::command_owners(&mut view, &tx, cfg)?;
     }
     for (index, key) in prepared.keys.iter().enumerate() {
         require(
@@ -789,6 +892,7 @@ pub(super) fn apply(
             super::settle_verified_quota(&mut view, &sender, key, row, units, fee, cfg)?;
         }
         18 | 20 | 21 if tasks_v4_enabled(cfg) => tasks_v4::apply(&mut view, prepared, height, cfg)?,
+        18..=22 if tasks_v5_enabled(cfg) => tasks_v5::apply(&mut view, prepared, height, cfg)?,
         wire::REGISTER => {
             let mut writes = State::new();
             install_key(
@@ -859,3 +963,6 @@ mod tests;
 
 #[cfg(test)]
 mod tasks_v4_tests;
+
+#[cfg(test)]
+mod tasks_v5_tests;

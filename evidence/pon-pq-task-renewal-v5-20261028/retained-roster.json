@@ -1,0 +1,47 @@
+{
+  "additional_library_cases": {
+    "m00": {},
+    "m06": {
+      "pon_executor::pq_accounts_v2::tasks_v5_tests::prepared_pq5_atomic_renewal_rechecks_revision_prior_source_and_requester_before_fee_patch": "ok"
+    }
+  },
+  "native_executed_on_current_source": false,
+  "new_integration_ignores_allowed": 0,
+  "new_m06_integration_cases": 16,
+  "new_node_integration_cases": 7,
+  "old_exact_files": {
+    "scripts/ci/run_native_pq_tasks_v4.py": {
+      "bytes": 10907,
+      "sha256": "f0c564ef825b2ad714564953473031f5614a44a1a121a84f20cf4d6f485ec6b9"
+    },
+    "scripts/ci/test_native_pq_tasks_v4_research.py": {
+      "bytes": 5118,
+      "sha256": "c214e960f6e075dc1f3db9ed9d7897020a88faf3af70ead690d880902008fb02"
+    },
+    "trillionnium/Cargo.lock": {
+      "bytes": 37981,
+      "sha256": "ff4256f231cd531291ef02badac80cd6e7989207b8eae31ce1331d234da07417"
+    },
+    "trillionnium/Cargo.toml": {
+      "bytes": 2204,
+      "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+    },
+    "trillionnium/crates/trnm-mvcc-fee/tests/pq4_task_authority.rs": {
+      "bytes": 20862,
+      "sha256": "829abf6391ecf9f77cea9288f0be8f48bc0c4045bdcca12d1e2dfd74adb051a9"
+    },
+    "trillionnium/crates/trnm-pon-node/tests/native_pq_v4.rs": {
+      "bytes": 22475,
+      "sha256": "7f2b7b7bb5aaaff93d044a5228eb817f0df482a56d40bb1278f7972795fd25b1"
+    }
+  },
+  "original_integration_cases_required": 44,
+  "original_library_entries_unchanged": true,
+  "original_library_ignores_required": 8,
+  "original_passes_required": 180,
+  "schema": "npq5-retained-native-roster-v1",
+  "total_passes_required": 204,
+  "v4_actual_w1_phases_required": 26,
+  "v5_actual_w1_phases_required": 37,
+  "v5_material_phases_required": 10
+}

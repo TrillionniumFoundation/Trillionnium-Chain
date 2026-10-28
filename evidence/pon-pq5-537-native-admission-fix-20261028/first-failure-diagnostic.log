@@ -1,0 +1,20 @@
+
+running 1 test
+test activation_cut_recovery_and_heavier_reorg_never_rewind_local_revocation_or_change_remote_validity ... {"block":"2c27d1e9261e0deca06f4ab50d2c0de97180c5bc82fe1a991de8af2019e5636e","packet_bytes":53571,"phase":"maintenance","proof_bytes":49188,"raw_bytes":4053,"schema":"native-pq5-actual-phase-v1","scope":"actual shared-host complete W1/reference/admit/SQL; not isolated worst-case cost","transactions":1,"wall_nanoseconds":88128199}
+{"block":"b2928b3b4d98fbd40e9d0bf6760595d7faef1df88e24dde6669bce73a2ab4534","packet_bytes":57412,"phase":"maintenance","proof_bytes":49188,"raw_bytes":7894,"schema":"native-pq5-actual-phase-v1","scope":"actual shared-host complete W1/reference/admit/SQL; not isolated worst-case cost","transactions":1,"wall_nanoseconds":125020535}
+{"block":"38752368e2ed681ec67ecd49c65e7a32f8ad4879a8480b24cd9b65f5bcb6d5a9","packet_bytes":53575,"phase":"maintenance","proof_bytes":49188,"raw_bytes":4057,"schema":"native-pq5-actual-phase-v1","scope":"actual shared-host complete W1/reference/admit/SQL; not isolated worst-case cost","transactions":1,"wall_nanoseconds":100168950}
+{"block":"6a8cd7ba879f00a50a158f33fd79e906dbef56460e4cc6e9d67e7cc9ddc95b95","packet_bytes":57792,"phase":"maintenance","proof_bytes":49188,"raw_bytes":8274,"schema":"native-pq5-actual-phase-v1","scope":"actual shared-host complete W1/reference/admit/SQL; not isolated worst-case cost","transactions":1,"wall_nanoseconds":137330877}
+{"block":"cb1592cfddd96c0f93f3a534b792e751a4d5028e7104be737d92549be27137eb","packet_bytes":49516,"phase":"maintenance","proof_bytes":49188,"raw_bytes":0,"schema":"native-pq5-actual-phase-v1","scope":"actual shared-host complete W1/reference/admit/SQL; not isolated worst-case cost","transactions":0,"wall_nanoseconds":71649502}
+
+thread 'activation_cut_recovery_and_heavier_reorg_never_rewind_local_revocation_or_change_remote_validity' (929854) panicked at crates/trnm-pon-node/tests/native_pq_v5.rs:162:10:
+called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Unclassified, message: "TASK_ADMISSION_CONTEXT", source: None, request_history_budget: false }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+FAILED
+
+failures:
+
+failures:
+    activation_cut_recovery_and_heavier_reorg_never_rewind_local_revocation_or_change_remote_validity
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 6 filtered out; finished in 1.46s
+

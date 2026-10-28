@@ -1,0 +1,16 @@
+{
+  "schema": "pq5-focused-native-fixture-replay-v1",
+  "base_source": "f9df02f1c0ade1866f2e0fbc2d7a6467339c8f82",
+  "source_state": "dirty-candidate",
+  "fixture_git_blob": "18159800f5f08ab3a61bb899b22f8cd6cdb708d6",
+  "fixture_sha256": "65425890c1b9ed91956001b1945d99e94b11d0f93a86f0105ab00e0307008f05",
+  "binary_sha256": "ce44a8739ac0599befa1787a1eebd56a5b2739ec169a3a33e9256b5e628c15c1",
+  "passed": 16,
+  "failed": 0,
+  "ignored": 0,
+  "filtered": 0,
+  "test_wall_seconds": 58.62,
+  "full_npq5_gate_qualified": false,
+  "p1_complete": false,
+  "log_sha256": "953bfd4fddc6cd701f2473e785dc0481b4a407dbf8a91868ff258bfac79a1df9"
+}

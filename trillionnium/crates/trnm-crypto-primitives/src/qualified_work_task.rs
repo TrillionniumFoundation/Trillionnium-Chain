@@ -5,6 +5,7 @@ use crate::{pon_work, verify_hex_strict};
 
 pub mod lifecycle_v2;
 pub mod pq_lifecycle_v4;
+pub mod pq_lifecycle_v5;
 use trnm_protocol::{
     pon_wire::{hash, Hash},
     qualified_work_task::{

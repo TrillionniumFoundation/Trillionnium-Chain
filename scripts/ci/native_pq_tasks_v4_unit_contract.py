@@ -153,3 +153,8 @@ EXPECTED_OUTCOMES = {'m00': {'pon_growth::tests::native_growth_v2_header_fixed_v
          'tests::schema_sidecar_and_self_consistent_row_tamper_fail_closed': 'ok',
          'tests::static_access_fee_and_arithmetic_mutants_fail_before_commit': 'ok',
          'tests::vector_inventory_matches_executable_candidate_assertions': 'ok'}}
+
+# New NPQ5 apply-time authority control. All original NPQ4/retained entries and
+# their eight ignores above remain unchanged; this is an additional requirement,
+# not an observation inherited from the old hosted archive.
+EXPECTED_OUTCOMES['m06']['pon_executor::pq_accounts_v2::tasks_v5_tests::prepared_pq5_atomic_renewal_rechecks_revision_prior_source_and_requester_before_fee_patch'] = 'ok'

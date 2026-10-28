@@ -1,0 +1,13 @@
+{
+  "command": [
+    "/workspace/scratch/121c7d6beede/history_pq_task/pq-target/debug/deps/native_pq_v5-0c3549e80b0c140b",
+    "--exact",
+    "activation_cut_recovery_and_heavier_reorg_never_rewind_local_revocation_or_change_remote_validity",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "returncode": 101,
+  "elapsed_seconds": 1.4748943209997378,
+  "diagnostic_only": true,
+  "original_gate_budget_unchanged": true
+}

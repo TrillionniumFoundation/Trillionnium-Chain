@@ -4851,3 +4851,83 @@ Remaining concrete model/evaluation tags 6–9/12–17/23–24, renewal 19/22,
 independent migration/retirement, custody, transport, History and Hepta authority
 owners are listed explicitly. P1 completion, whole-chain PQ and activation remain
 false while the new native gate and those owners remain open.
+
+#### P1 NPQ5 task-renewal continuation — 2026-10-28 (candidate / native gate OPEN)
+
+The [fresh NPQ5/PQP5 continuation](../../evidence/pon-pq-task-renewal-v5-20261028/README.md)
+adds atomic requester/source command 22 and explicit requester command 19 →
+`awaiting-source` → current-source command 21. Actual State owners, current keys,
+nonce, old revision and prior statement are resolved again before the fee patch.
+Current, initial and last dual-authorized leases remain separate, so an earlier
+source proof cannot authorize an extended window. Five bounded witness leaves
+retain the complete 8,274-byte atomic proof without changing the original
+4,096-byte value, 524,288-byte transaction-sum or 1 MiB packet limits. All size
+and 32-slot capacity claims remain executable expectations pending native runs.
+
+Ordinary Node pool/material/W1/output/activation/cold paths share the fresh
+namespace. Local withdrawal uses a State-derived stable lineage across renewal
+revisions and heavier forks; cold replay binds actual first-activation packets,
+transaction roots, revisions and SQL history. Parent-authorized output in a
+renewal block is preserved without granting future work to a pending revision.
+V5 has no trusted migration constructor, and old profiles refuse its encodings.
+
+Actual local observations include metadata-only Rust/Clippy and a complete
+76-test strict legacy-reader run; they do not claim native acceptance. The
+mandatory hosted gate requires all original 180 cases/eight ignores plus
+24 new passing cases, all 37 V5 and 26 retained V4 full-W1 phases, and fresh
+locked Cargo/strict Clippy under unchanged budgets. New native execution is
+NOT_RUN locally at the shared-resource stop line. The earlier NPQ4 hosted
+success belongs to its own source. Remaining model/retired-key authority,
+independent migration/retirement, full V5 independent runtime review,
+whole-chain PQ, P1 completion and activation remain open.
+
+#### P1 NPQ5 anchored migration recovery — 2026-10-28 (new candidate / native NOT_RUN)
+
+This continuation adds an explicit
+`Settings::native_pq_tasks_v5_with_anchored_migration_v1` entry point for a new
+`pon-native-pq-tasks-v5-anchored-migration-v1` network. Its immutable protected
+configuration binds the independently supplied prior PQ registry and an actually
+admitted, selected source checkpoint. Separate descriptor, network and parameter
+domains prevent an existing fresh NPQ5 namespace from silently acquiring import
+authority. All existing fresh constructors retain their previous branches.
+Imported accounts remain locked until the ordinary complete prior-key/new-key
+ML-DSA CLAIM succeeds with the actual current nonce and fees. This is a new
+network construction; it does not upgrade an old database, prove registry
+historicity, finalize or retire the source chain.
+
+Three required native cases exercise source W1 admission and checkpoint pinning;
+ordinary pool → CLAIM → requester consent → dual task registration → registered
+material W1 → admission → activation → heavier fork → nonce/claim/task rollback
+→ fresh signed task work → cold byte/state readback; the original 55 full
+9,432-byte CLAIM acceptance / 56 refusal boundary; and incorrect checkpoint,
+anchor, signing context, prior key, old NPQ2 and old Ed25519 refusals. The
+9,432-byte signatures are counted in full. The original 524,288 transaction-byte,
+1 MiB packet, 4,096 State-value, 32 task-slot, five witness-chunk and local history
+limits remain unchanged. The same ordinary source/fee/account/task mechanisms
+must execute; hand-built trusted State or successful stubs do not qualify.
+
+The new lane has its own 900-second total budget and requires the unchanged
+2,400-second retained native gate on the very same committed head/tree first.
+Its reader reopens all original 18 command observations and artifact hashes,
+requires the exact 205 passing cases / 68 integration cases / eight original
+ignores, checks all original input pins and the actual retained binary, and
+reparses the complete original phase records. It then requires all three new
+case names, 19 actual full-W1 phases, selected parent chains, complete transaction
+bytes and matching cold readback records. Parser fixtures never count as native
+execution. The original report's historical qualification flags are not rewritten.
+
+The earlier local unified candidate `9b049f1fa25ab8a8597e4483c97a2cdc59f96d1b`
+and tree `7752537241f034e862244bfd8a5d072f3461c238` were not recoverable in full
+after workspace reset. This source is an explicitly new reconstruction from the
+exact published `d66b0daa1fb4a4c398a3d53fb50366ad5ff2d913` tree
+`7a61863cf4dc87893da501e0547f1727ed5e2956`; it does not borrow the lost
+candidate's three native results or fresh-namespace golden measurements.
+The sparse local recovery reconstructs the full Git tree but does not claim a
+full tracked-worktree source guard. New actual observations so far are the
+nine synthetic reader controls, twelve retained reader controls and selected
+Rust 1.95 syntax/format checks. Cargo type checking, strict Clippy, the complete
+retained native gate, all three new native cases, and the four recent-batch
+lanes remain NOT_RUN on this recovered candidate until exact-source hosted
+execution and raw artifact readback. User-scoped P1 shared-profile acceptance
+remains open until those gates pass. No production activation or whole-chain PQ
+claim is made.

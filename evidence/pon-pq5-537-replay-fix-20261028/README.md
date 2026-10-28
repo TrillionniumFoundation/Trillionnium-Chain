@@ -1,0 +1,9 @@
+# NPQ5 #537 reward-frontier fixture repair
+
+The original exact-source [run 40629640633](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40629640633) executed the new renewal group: fifteen passed and one failed with `CONTINUITY_REWARD_QUEUE`. Its raw log and artifact SHA-256 are preserved here.
+
+The positive requester-only renewal fixture executed block 3, directly updated its task output meter as height 4, then tried to execute block 5. The task meter does not create block 4 or its reward liability. The original complete continuity invariant correctly refused the missing height. The fixture now executes the actual empty block 4 through the existing execution owner before consuming the verified parent output and submitting renewal at height 5. All signature, consent, nonce, output-height, reorg and five-fragment assertions remain unchanged, including clearing the nonempty fifth fragment after later registration. No production state, transaction semantics or reward invariant is relaxed.
+
+The twelve gate-reader controls and complete formatting passed during preparation. The repaired source must execute its own full NPQ5 native gate with the original 204 native passes, 67 integration passes, eight existing unit ignores, original complete-W1 phases and 2,400-second budget. A later gate result must be bound to that exact successor source. This document does not claim new native success, whole-chain PQ migration or P1 completion.
+
+The subsequent local [focused replay](focused-native.json) built the corrected fixture with pinned Rust 1.95 and executed all 16 renewal tests: 16 passed, none failed or skipped, in 58.62 seconds. Its full original failure log and focused output are preserved. This result belongs to the recorded dirty candidate and fixture/binary hashes; it is not the complete source-qualified NPQ5 gate or whole-chain PQ qualification.

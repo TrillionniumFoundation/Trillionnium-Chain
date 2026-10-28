@@ -1,7 +1,7 @@
 """Closed NPQ selector contract for the original legacy evidence reader.
 
 These are fixed reviewed source contracts from 969150c1f1ad1821ee5ac3c11f0535677e9bb8e9
-with the explicit NPQ4 task selector extension. They are not templates derived
+with the explicit NPQ4 task and NPQ5 renewal selector extensions. They are not templates derived
 from evidence or the source currently being inspected.
 Recognizing these joins grants no PQ, shared-state or growth evidence authority.
 """
@@ -17,7 +17,9 @@ BACKEND_IMPLEMENTATION = r'''
         }
     }
     fn selected_ddl(self, settings: &Settings) -> String {
-        if settings.is_native_pq_v4() {
+        if settings.is_native_pq_v5() {
+            pq_tasks_v5::ddl(self.ddl())
+        } else if settings.is_native_pq_v4() {
             pq_tasks_v4::ddl(self.ddl())
         } else if settings.is_native_pq_v3() {
             pq_quota_v3::ddl(self.ddl())
@@ -30,6 +32,12 @@ BACKEND_IMPLEMENTATION = r'''
         }
     }
     fn selected_schema_id(self, settings: &Settings) -> Hash {
+        if settings.is_native_pq_v5() {
+            return hash(
+                b"native-pq-task-branch-schema-v5",
+                &[self.selected_ddl(settings).as_bytes()],
+            );
+        }
         if settings.is_native_pq_v4() {
             return hash(
                 b"native-pq-task-branch-schema-v4",
@@ -130,10 +138,13 @@ pub(crate) enum Profile {
     Pq2,
     Pq3,
     Pq4,
+    Pq5,
 }
 impl Settings {
     pub(crate) fn packet_profile(&self) -> Profile {
-        if self.is_native_pq_v4() {
+        if self.is_native_pq_v5() {
+            Profile::Pq5
+        } else if self.is_native_pq_v4() {
             Profile::Pq4
         } else if self.is_native_pq_v3() {
             Profile::Pq3
@@ -153,14 +164,14 @@ pub(crate) fn header_prefix_bytes(profile: Profile) -> usize {
     match profile {
         Profile::Legacy => crate::pq_native_v1::header_prefix_bytes(false),
         Profile::Pq1 => crate::pq_native_v1::header_prefix_bytes(true),
-        Profile::Pq2 | Profile::Pq3 | Profile::Pq4 => HEADER_BYTES + 8,
+        Profile::Pq2 | Profile::Pq3 | Profile::Pq4 | Profile::Pq5 => HEADER_BYTES + 8,
     }
 }
 pub(crate) fn decode_header_projection(bytes: &[u8], profile: Profile) -> Result<Header> {
     match profile {
         Profile::Legacy => crate::pq_native_v1::decode_header_projection(bytes, false),
         Profile::Pq1 => crate::pq_native_v1::decode_header_projection(bytes, true),
-        Profile::Pq2 | Profile::Pq3 | Profile::Pq4 => {
+        Profile::Pq2 | Profile::Pq3 | Profile::Pq4 | Profile::Pq5 => {
             ensure(
                 bytes.len() == HEADER_BYTES + 8
                     && bytes.starts_with(match profile {
@@ -174,6 +185,10 @@ pub(crate) fn decode_header_projection(bytes: &[u8], profile: Profile) -> Result
                         }
                         Profile::Pq4 => {
                             trnm_protocol::pq_native_accounts_v2::AccountProfile::TasksV4
+                                .packet_prefix()
+                        }
+                        Profile::Pq5 => {
+                            trnm_protocol::pq_native_accounts_v2::AccountProfile::TasksV5
                                 .packet_prefix()
                         }
                         _ => unreachable!(),
@@ -193,6 +208,10 @@ pub(crate) fn encode(packet: &Packet, profile: Profile) -> Result<Vec<u8>> {
             packet,
             trnm_protocol::pq_native_accounts_v2::AccountProfile::TasksV4,
         ),
+        Profile::Pq5 => crate::pq_accounts_v2::encode_packet_for_profile(
+            packet,
+            trnm_protocol::pq_native_accounts_v2::AccountProfile::TasksV5,
+        ),
         Profile::Pq3 => crate::pq_accounts_v2::encode_packet_for_profile(
             packet,
             trnm_protocol::pq_native_accounts_v2::AccountProfile::QuotaV3,
@@ -206,6 +225,7 @@ pub(crate) fn decode(raw: &[u8], profile: Profile) -> Result<Packet> {
         Profile::Pq2 => Ok(crate::pq_accounts_v2::PqPacketV2::decode(raw)?.inner),
         Profile::Pq3 => Ok(crate::pq_quota_v3::PqPacketV3::decode(raw)?.inner),
         Profile::Pq4 => Ok(crate::pq_tasks_v4::PqPacketV4::decode(raw)?.inner),
+        Profile::Pq5 => Ok(crate::pq_tasks_v5::PqPacketV5::decode(raw)?.inner),
     }
 }
 '''
@@ -304,9 +324,10 @@ PQ1_HEADER_DECODE = r'''fn decode_header_projection(bytes: &[u8], pq: bool) -> R
 
 SETTINGS_SELECTORS = {
     'pq_native_v1': ('is_native_pq_v1', 'pq_native_v1::enabled(&self.app)'),
-    'pq_accounts_v2': ('is_native_pq_v2', 'pq::enabled(&self.app) && !pq::quota_v3_enabled(&self.app) && !pq::tasks_v4_enabled(&self.app)'),
+    'pq_accounts_v2': ('is_native_pq_v2', 'pq::enabled(&self.app) && !pq::quota_v3_enabled(&self.app) && !pq::tasks_v4_enabled(&self.app) && !pq::tasks_v5_enabled(&self.app)'),
     'pq_quota_v3': ('is_native_pq_v3', 'pq::quota_v3_enabled(&self.app)'),
     'pq_tasks_v4': ('is_native_pq_v4', 'pq::tasks_v4_enabled(&self.app)'),
+    'pq_tasks_v5': ('is_native_pq_v5', 'pq::tasks_v5_enabled(&self.app)'),
 }
 
 EXECUTOR_SELECTORS = {
@@ -324,6 +345,9 @@ EXECUTOR_SELECTORS = {
         }''',
         'tasks_v4_enabled': '''pub fn tasks_v4_enabled(cfg: &Config) -> bool {
             cfg.native_pq_v2.as_ref().is_some_and(|p| p.wire_profile == wire::AccountProfile::TasksV4)
+        }''',
+        'tasks_v5_enabled': '''pub fn tasks_v5_enabled(cfg: &Config) -> bool {
+            cfg.native_pq_v2.as_ref().is_some_and(|p| p.wire_profile == wire::AccountProfile::TasksV5)
         }''',
     },
 }
@@ -355,7 +379,8 @@ def verify_packet_contract(root, source, node, *, safe, body, header, item_prefi
                            ('pq_native_v1', 'pub mod pq_native_v1'),
                            ('pq_accounts_v2', 'pub mod pq_accounts_v2'),
                            ('pq_quota_v3', 'pub mod pq_quota_v3'),
-                           ('pq_tasks_v4', 'pub mod pq_tasks_v4')]:
+                           ('pq_tasks_v4', 'pub mod pq_tasks_v4'),
+                           ('pq_tasks_v5', 'pub mod pq_tasks_v5')]:
         exact(item_prefix(lib, 'mod', name, ';'), expected, 'durable PQ packet module owner')
     packet = safe(root, folder + 'native_packet.rs').read_text()
     exact(packet, PACKET_SOURCE, 'durable PQ packet selection/legacy header contract')
