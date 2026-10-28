@@ -2,6 +2,8 @@
 //! campaign. No independent operator, WAN, hardness, energy or release claim.
 #[path = "support/multiprocess_phase_host.rs"]
 mod phase_host;
+#[path = "support/multiprocess_root_phase_host.rs"]
+mod root_phase_host;
 #[path = "support/multiprocess_support.rs"]
 mod support;
 #[path = "support/multiprocess_work.rs"]
@@ -35,6 +37,18 @@ const WINDOW_SECONDS: u64 = 30;
 const ATTACKERS: usize = 24;
 const CALL_CAP: usize = 480;
 const ROUNDS: usize = 3;
+
+#[test]
+#[ignore = "explicit fixed Host ROOT F0 entry; requires a verified external controller"]
+fn multiprocess_fixed_root_phase_owner_entry() {
+    root_phase_host::entry();
+}
+
+#[test]
+#[ignore = "one fixed Host F0 pair; use the exact hosted resource runner"]
+fn fixed_public_host_root_rejection_and_signed_confirmation_diagnostic() {
+    root_phase_host::diagnostic();
+}
 
 #[derive(Clone, Copy)]
 struct CampaignConfiguration {

@@ -4136,3 +4136,45 @@ source](../../evidence/pon-w1-staged-source-20261028-r8/README.md) requires an
 actual conditional receipt, real final-verifier rejection, and real typed
 resolution of the same already-verified original leaf. Build and source checks
 do not replace those cryptographic observations or establish proof benefit.
+
+The [separate fixed-Host ROOT F0 reconstruction](../security/PUBLIC_V3_FIXED_HOST_ROOT_EXPERIMENT_R10.md)
+recovers nine earlier Python/workflow files but identifies its missing Rust as new
+source. The old phase, ROOT supplement and launcher whitelist remain unchanged.
+The separate route requires a live private controller capability, 24 distinct
+actual child identities, the original complete W1/M06/state/depletion checks,
+six planned confirmations and 42 business exposures. Its additional four-second
+SLO starts at scheduled times 1/5/9 and includes queue and observer costs. Both
+immediate and always-finalizer cleanup require exact invocation/boot/PID-birth
+and cgroup identity; an unknown controller cannot yield a final all-empty claim.
+The original 0.25-core/2-GiB Host and paid bucket are unchanged. This source
+candidate still requires native formatting, locked graph/Clippy, five native
+source controls and a real hosted run. Source fixtures do not close service,
+restart credit or WAN. F1 is not implemented; no throughput gain or production
+activation is inferred.
+
+The [R11 controller-resource correction](../../evidence/pon-f0-controller-resources-r11-20261028/README.md)
+retains a real parser counterexample on clean `ca4fcb`: the old two F0 readers
+accepted missing controller counters with all 24 external-actor RSS values
+unknown. The five original native controls and 61 Python controls did not
+cover that condition. A separate mandatory whole-controller-cgroup gate now
+binds raw CPU/current-memory/lifetime-peak readings before launch, at actual
+actor readiness and after reaping to the original controller capability and
+complete Child-derived manifest. It preserves the old null RSS diagnostics,
+pressure samples, public Host, paid bucket, work, SLO and all denominators.
+The native total, readers and finalizer must refuse missing or drifting resource
+identities/counters. Five original native selectors remain, with two new counter
+controls; static acceptance alone cannot close the native or actual Host gate.
+
+## 2026-10-28 recovered W1 staged host: typed negative-control repair
+
+The [reconstructed typed-control source](../../evidence/pon-w1-staged-typed-source-20261028-r10/README.md)
+replaces two invalid Debug-text prefix checks with the pinned verifier's exact
+error variant and both independently bound claim digests. All existing inner
+STARK, complete-claim, metadata, one-real-assumption and actual resolve checks
+remain. The only host-lock change is a direct edge to the already pinned
+`risc0-zkp 3.0.5`; the guest lock, relation, guest and WorkID are unchanged.
+Python public-byte and graph checks do not qualify compilation or a proof run.
+The missing unpublished repair and proof artifacts are not assigned to this
+new source identity. Exact native qualification and a fresh bounded proof run
+remain required, and one-leaf calibration cannot establish the batch benefit,
+prover tail, full authorization, quantum soundness or WAN acceptance gates.

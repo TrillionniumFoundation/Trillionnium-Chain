@@ -1,6 +1,7 @@
 # One-leaf conditional receipt and real resolve pilot
 
-**Status: new host-only source, not yet compiled or executed.** The preceding
+**Status: recovered host-only source with a new typed-error repair, awaiting
+qualification on this exact source.** The preceding
 [actual build](../../../evidence/pon-w1-batch-build-20261028-r8/README.md)
 preserves a baseline host and the guest image. No proof success, cost saving,
 tail bound, quantum theorem or production acceptance is claimed by this plan.
@@ -17,7 +18,11 @@ The manifest cannot supply a claim, work identity or image override.
 The staged host also requires the actually compiled batch guest SHA-256
 `734eb42893951b0915f86e4517a231b04279ace8f8d81ca2dd79d6ed95771219` and image
 words `[1000984451,3139256748,3364805072,2363167537,26593440,771198122,3700220126,2888495343]`.
-Guest, statement, methods, both independent locks and SDK 3.0.6 remain unchanged.
+Guest, statement, methods, the guest lock and SDK 3.0.6 remain unchanged.
+The host now explicitly depends on the already locked `risc0-zkp = 3.0.5`
+with default features disabled, solely to name its verification-error enum.
+The host lock gains that direct edge; all package versions, checksums and
+other dependency edges remain unchanged.
 No full original leaf is reproved. Repeated references to this leaf remain one
 work, even if several batch/conditional/resolved proof artifacts are produced.
 
@@ -38,7 +43,8 @@ work, even if several batch/conditional/resolved proof artifacts are produced.
    one assumption equal to the verified original leaf claim with zero control
    root for self-composition. Open and inspect the actual nonempty assumption.
 4. Call the real final `Receipt::verify(compiled_batch_image)` and require
-   rejection. The expected `ClaimDigestMismatch` diagnostic is checked only
+   rejection. The typed `ClaimDigestMismatch` variant and both exact digests
+   are checked only
    after the successful proof and whole-claim checks. A damaged seal, fabricated
    claim, wrong image or malformed metadata cannot substitute for this control.
    Also retain and actually reject the valid original leaf under the wrong
@@ -79,6 +85,27 @@ These API findings were checked against cached official SDK source and
 independently reviewed read-only. Source reasoning is not a substitute for the
 planned real proof and negative-control run.
 
+### Recovered-source correction on 2026-10-28
+
+The preserved host incorrectly tested whether formatted `Debug` text began
+with the enum variant name. In pinned `risc0-zkp 3.0.5`, `Debug` delegates to
+`Display`, which emits prose. That makes the old diagnostic guard reject a
+genuine conditional receipt even after its inner STARK and whole claim pass.
+The new helper matches the typed variant and requires its `expected` field
+to equal the complete unconditional claim digest and its `received` field to
+equal the already checked conditional claim digest. The wrong-image control
+similarly binds the expected batch-image claim and actual original leaf claim.
+Other verifier failures, swapped or changed digests, equal digests and an
+unexpected successful verification remain failures of the control harness.
+Diagnostic text is retained only for observation.
+
+The prior unpublished repair and proof-run source identities were not recovered
+after the workspace interruption. This is a newly reconstructed source change;
+no historical successful run is attributed to it. The retained original
+complete W1 proof, guest and all earlier evidence remain unchanged. The new
+native error-dispatch unit test is additional to the retained tests and does
+not substitute for the actual conditional proof, resolve and 13 proof controls.
+
 ## H0: normal host rebuild and qualification
 
 Changing host code requires a new native host binary and its actual SHA-256.
@@ -100,6 +127,12 @@ if they differ. Preserve the normal Cargo/cache observations and all failures.
 Only an actual successful, source-bound H0 receipt supplies the new host hash
 for P1. A future binary hash is not invented here. The old successfully built
 host is preserved separately and is not claimed to contain this new command.
+
+That historical H0 envelope assumed a warm target directory. Recovery lost the
+target directory and tool cache. A cold recovery build requires its own explicit
+source-bound predeclaration and observed cost, without changing a prior deadline
+or claiming the warm-cache envelope was met. The recovered original guest hash
+and image remain mandatory comparison targets after the normal guest rebuild.
 
 ## P1: one 600-second attempt
 

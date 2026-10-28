@@ -457,3 +457,55 @@ fn phase_job_refuses_unknown_fields_and_broker_never_claims_actor_authority() {
     std::os::unix::fs::symlink(&p, &link).unwrap();
     assert!(std::panic::catch_unwind(|| read(&link, 4096)).is_err());
 }
+
+// Separate explicit entry only. The old entry and whitelist stay unchanged.
+pub(super) fn with_separate_broker<T>(
+    control: &Path,
+    expected_actors: usize,
+    run: impl FnOnce() -> T,
+) -> T {
+    assert!(matches!(expected_actors, 0 | ATTACKERS));
+    CLIENT.with(|slot| {
+        assert!(slot.borrow().is_none(), "one explicit broker scope");
+        *slot.borrow_mut() = Some(Client {
+            control: control.to_path_buf(),
+            next: 0,
+        });
+    });
+    struct Scope;
+    impl Drop for Scope {
+        fn drop(&mut self) {
+            CLIENT.with(|slot| {
+                slot.borrow_mut().take();
+            });
+        }
+    }
+    let scope = Scope;
+    let value = run();
+    CLIENT.with(|slot| assert_eq!(slot.borrow().as_ref().unwrap().next, expected_actors));
+    drop(scope);
+    value
+}
+
+#[test]
+fn separate_broker_scope_clears_on_unwind_and_refuses_missing_actors() {
+    let directory = tempfile::tempdir().unwrap();
+    assert_eq!(with_separate_broker(directory.path(), 0, || 7), 7);
+    assert!(std::panic::catch_unwind(|| {
+        with_separate_broker(directory.path(), ATTACKERS, || ())
+    })
+    .is_err());
+    CLIENT.with(|slot| assert!(slot.borrow().is_none()));
+    assert!(std::panic::catch_unwind(|| {
+        with_separate_broker(directory.path(), 0, || panic!("fixture unwind"));
+    })
+    .is_err());
+    CLIENT.with(|slot| assert!(slot.borrow().is_none()));
+    assert!(std::panic::catch_unwind(|| {
+        with_separate_broker(directory.path(), 0, || {
+            with_separate_broker(directory.path(), 0, || ())
+        });
+    })
+    .is_err());
+    CLIENT.with(|slot| assert!(slot.borrow().is_none()));
+}

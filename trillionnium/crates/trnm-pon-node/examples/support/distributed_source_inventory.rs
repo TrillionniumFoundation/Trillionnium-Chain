@@ -4747,6 +4747,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/tests/support/multiprocess_root_phase_host.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/support/multiprocess_root_phase_host.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/tests/support/multiprocess_root_phase_host_resources.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/support/multiprocess_root_phase_host_resources.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/tests/support/multiprocess_support.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),

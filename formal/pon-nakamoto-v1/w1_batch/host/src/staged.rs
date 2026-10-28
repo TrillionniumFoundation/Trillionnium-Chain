@@ -7,6 +7,7 @@ use super::{
     TRNM_W1_BATCH_GUEST_ID,
 };
 use anyhow::{bail, ensure, Context, Result};
+use risc0_zkp::verify::VerificationError;
 use risc0_zkvm::{
     sha::Digestible as _, ApiClient, AssetRequest, Assumption, Digest, InnerAssumptionReceipt,
     InnerReceipt, Output, ProverOpts, Receipt, ReceiptClaim, SuccinctReceipt,
@@ -84,6 +85,28 @@ fn record_inner(
     )
 }
 
+fn require_claim_mismatch(
+    result: std::result::Result<(), VerificationError>,
+    expected_digest: Digest,
+    received_digest: Digest,
+) -> Result<String> {
+    // The pinned SDK implements Debug via Display. Diagnostic text is not
+    // an enum discriminant; match the type and both independently bound fields.
+    match result {
+        Err(error @ VerificationError::ClaimDigestMismatch { expected, received })
+            if expected == expected_digest && received == received_digest =>
+        {
+            ensure!(
+                expected != received,
+                "claim mismatch must have distinct digests"
+            );
+            Ok(format!("{error:?}"))
+        }
+        Err(error) => bail!("unexpected final-verifier rejection: {error:?}"),
+        Ok(()) => bail!("final verifier accepted a required negative control"),
+    }
+}
+
 fn reject_valid_conditional(
     receipt: &Receipt,
     leaf: &LoadedLeaf,
@@ -131,17 +154,13 @@ fn reject_valid_conditional(
             && assumption.control_root == Digest::ZERO,
         "actual assumption must be the verified original leaf, self-composition"
     );
-    let error = match receipt.verify(TRNM_W1_BATCH_GUEST_ID) {
-        Ok(()) => bail!("unresolved conditional receipt was accepted by final verify"),
-        Err(error) => format!("{error:?}"),
-    };
-    // Pin the observed error category as an additional fail-closed diagnostic.
-    // It cannot replace the successful inner proof and whole-claim checks above.
-    ensure!(
-        error.starts_with("ClaimDigestMismatch"),
-        "unexpected negative error: {error}"
-    );
-    Ok(error)
+    // This typed error check cannot replace the successful inner STARK and
+    // whole-claim checks above. Neither digest comes from diagnostic text.
+    require_claim_mismatch(
+        receipt.verify(TRNM_W1_BATCH_GUEST_ID),
+        ReceiptClaim::ok(TRNM_W1_BATCH_GUEST_ID, expected_journal.to_vec()).digest(),
+        expected.digest(),
+    )
 }
 
 pub(super) fn resolve_one(
@@ -280,14 +299,11 @@ pub(super) fn resolve_one(
     // the wrong final image. This generates no new proof or work identity.
     let wrong_image_bytes = bincode::serialize(&leaf.receipt)?;
     write_new(&out.join("wrong-image-real-leaf.bin"), &wrong_image_bytes)?;
-    let wrong_image_error = match leaf.receipt.verify(TRNM_W1_BATCH_GUEST_ID) {
-        Ok(()) => bail!("original leaf was accepted as a batch image proof"),
-        Err(error) => format!("{error:?}"),
-    };
-    ensure!(
-        wrong_image_error.starts_with("ClaimDigestMismatch"),
-        "unexpected wrong-image error"
-    );
+    let wrong_image_error = require_claim_mismatch(
+        leaf.receipt.verify(TRNM_W1_BATCH_GUEST_ID),
+        ReceiptClaim::ok(TRNM_W1_BATCH_GUEST_ID, leaf.receipt.journal.bytes.clone()).digest(),
+        leaf.receipt.claim()?.digest(),
+    )?;
     event(
         out,
         json!({"stage":"VALID_LEAF_WRONG_IMAGE_REJECTED",
@@ -341,4 +357,31 @@ pub(super) fn resolve_one(
             "original_leaf_prover_costs_included":false,"production_activation":false}),
     )?;
     Ok(receipt)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn typed_negative_requires_the_exact_category_and_both_digests() {
+        let expected = Digest::from([1_u32; 8]);
+        let received = Digest::from([2_u32; 8]);
+        let other = Digest::from([3_u32; 8]);
+        let mismatch =
+            |expected, received| Err(VerificationError::ClaimDigestMismatch { expected, received });
+        assert!(require_claim_mismatch(mismatch(expected, received), expected, received).is_ok());
+        for result in [
+            Ok(()),
+            Err(VerificationError::InvalidProof),
+            Err(VerificationError::ReceiptFormatError),
+            Err(VerificationError::JournalDigestMismatch),
+            mismatch(other, received),
+            mismatch(expected, other),
+            mismatch(received, expected),
+        ] {
+            assert!(require_claim_mismatch(result, expected, received).is_err());
+        }
+        assert!(require_claim_mismatch(mismatch(expected, expected), expected, expected).is_err());
+    }
 }
