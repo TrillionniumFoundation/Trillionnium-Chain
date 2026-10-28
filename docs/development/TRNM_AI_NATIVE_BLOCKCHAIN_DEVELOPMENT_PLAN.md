@@ -54,6 +54,36 @@ release requires their own real evidence, not completion of the retired PoCO roa
 
 #### Pure PoN work-package execution — 2026-10-27
 
+The isolated History owner reconstruction continuation is recorded in
+[the exact-source candidate evidence](../../evidence/pon-history-owner-next-20261027/README.md).
+It retains the original resource/deadline/large-parent controls. Full W1 can
+protect only its original CPU operation; exclusive embedding may continue its
+same stack without a Node mutex, while shared held phases remain nonwaiting.
+The retained >8 MiB held-parent counterexample keeps WP2B on HOLD until actual
+native evidence closes it. Recovered embedded source bytes are not the lost Git
+commit objects, and local controls are not WAN acceptance.
+
+The next original campaign placement separates the receiver/History verifier
+under the fixed 25% public Host from the original 400% producer/controller and
+attacker processes. The lifecycle broker conveys only process requests and real
+reports. The original 3-by-3 workload, all honest requests and depletion
+predicates remain intact; the new Host placement still requires actual hosted
+execution. [Host/scalar applicability and delayed-debit counterexamples](../../evidence/pon-history-owner-next-20261027/HOST_BUDGET_APPLICABILITY.md)
+explain why matching nominal quota and refill does not prove either depletion
+or its impossibility. No new resource profile is activated by that analysis.
+
+The frozen continuation now has full tracked-source and executable bindings:
+original History 9/9, scalar 57/57, seven inactive pages, poisoned-registry
+fencing and five actual SIGKILL cuts pass their stated local controls. Both
+original 8,625,548-byte State backends still fail the unchanged CPU budget;
+the latest total CPU costs are 2.772 s (Legacy) and 3.581 s (Authenticated).
+Crash receipts explicitly retain unknown debt and refuse fresh credit; known
+debt recovery and restored service remain incomplete. Final source `fe43f7c7f`
+keeps the exact measured library ELF and a separately rebuilt phase broker;
+all Node targets/features pass strict Clippy. The new fixed-Host campaign and
+independent WAN gates remain unexecuted. Full original failures, streams and
+denominators are in the linked candidate evidence; WP2B remains HOLD.
+
 The user's seven work packages refine PN0–PN5, without creating another
 roadmap or activating a fallback. Freeze the exact relation and adversary
 freedoms in [pure PoN work/security model v1](../protocol/pon-nakamoto-v1/details/PURE_PON_WORK_SECURITY_MODEL_V1.md)
@@ -88,6 +118,16 @@ the native authorization owners. Real publisher-offline model retrieval and
 comparison produced a legal no-update result, while original Hepta owner CI and
 independent WAN exits remain separately unqualified. Pure PoN and all existing
 production refusal flags remain unchanged.
+
+The subsequent [native PQG1/QTX1 account owner](../security/PQ_NATIVE_ACCOUNT_OWNER_V1.md)
+is an explicit transfer-only candidate under the original M06 and M15 owners.
+It checks both migration signatures, preserves all nonce floors and all four
+liability classes as locked records, and does not authorize mining by an account
+roster. The [new source/measurement record](../../evidence/pon-pq-account-native-20261028/README.md)
+retains its first compiler failure, failed initial Node fixtures and subsequent
+exact-source observations. Public account registration/rotation, actual imported
+liability settlement, task/Cell/Hepta authorization, physical rollback and WAN
+acceptance remain separate unpassed gates; WP3 is not closed by a transfer slice.
 
 The initial 2026-10-20 audit amendment uses Chain PR #323 commit
 `9bd8b20da68f0dc199aab78c27644ed004af7411` (tree
@@ -3868,3 +3908,45 @@ build inputs are explicitly preserved across the unprivileged process boundary.
 The new controller receipt uses its own v2 schema; separate preparation and
 build-to-execution binding receipts use new v1 namespaces. Hosted execution on
 the resulting source must establish its own result.
+
+### Actual integrated-work-package evidence, 2026-10-28
+
+The [actual fc23 Host observations](../../evidence/pon-fc23-native-host-20261028/README.md)
+now establish preparation/execution source and ELF identity in four hosted
+lanes. Every original inner build and all five named native tests ran, but all
+four original pressure-confirmation gates failed. All 28 signed submissions
+were timely; incomplete History replay prevented confirmation. No actual CPU
+credit exhaustion occurred in those windows. The original raw reports, binaries,
+databases, requests, timeouts and macOS cleanup failure remain retained.
+
+The [original Cell/Hepta observations](../../evidence/pon-cell-hepta-readback-20261028/README.md)
+establish actual publisher-offline replica acquisition, original artifact-owner
+publication/recovery, controlled neural FinalUse and frozen-task comparison on
+Hepta `50f4fe80` paired with Chain `73ffdd94`, including both actual merge lanes.
+Each lane executed the same 32 controlled queries: baseline and candidate were
+both correct on 16, and every final choice was unchanged. The original runner
+returned Ineligible and the adoption decision remains no-update. Source and
+merge repetitions are not 64 independent tasks. All production-installation,
+ordinary-context, independent-efficacy and public-reward flags remain false.
+The later receipt export preserves original bytes without qualifying a new
+source or rerunning the model.
+
+The [native PQ authorization inventory](../../evidence/pon-pq-authorization-inventory-20261028/README.md)
+records the actual QTX1 and TPQ1/PNQ1/PNP1 paths, classical profiles and the still
+unmigrated owners. Exact e642 Clippy succeeded, but the interrupted post-fix
+native qualification has no completion receipt. Static binding repairs and
+newly written controls do not become runtime acceptance. The full account,
+task, Cell, Operator and Hepta migration remains open.
+
+The [independent hardened W1 verifier](../../evidence/pon-w1-verifier-hardening-20261028/README.md)
+accepts an actual saved lift receipt and rejects the identical control-ID
+mutation accepted by the older verifier. This is a specific metadata-binding
+fix, not evidence of arbitrary W1 forgery or quantum proof soundness. The full
+W1 proof experiment remains bound to its original guest/session/source and
+separate time budget. Integrating its source does not inherit the frozen
+experiment's qualification or turn a prefix into a complete succinct proof.
+
+The combined candidate retains the pure-PoN work relation and weight. It does
+not activate a network or complete the independent 72-hour, multi-administrator
+WAN gate. Each combined-source build, runtime and service result must be recorded
+under its own identity before any of those gates can change.

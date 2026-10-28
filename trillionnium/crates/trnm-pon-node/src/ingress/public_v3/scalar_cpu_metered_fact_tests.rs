@@ -100,7 +100,7 @@ fn assert_paid(domain: &ServiceMutationCpuDomain, receipt: &ServiceMutationCpuSe
         .flow
         .as_ref()
         .unwrap()
-        .snapshot(b.credit_ns, b.in_flight)
+        .snapshot(b.credit_ns, b.in_flight, b.termination_reserved_ns)
         .unwrap();
     assert!(flow.balance_identity_verified);
 }

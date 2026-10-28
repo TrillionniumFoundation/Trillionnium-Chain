@@ -1,0 +1,9 @@
+
+thread 'ingress::public_v3::scalar_cpu::metered_fact_tests::panic_fences_shared_budget_without_rewriting_native_history' (755575) panicked at crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_metered_fact_tests.rs:350:17:
+assertion `left == right` failed: injected W1 callback unwind
+  left: 1
+ right: 0
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread '<unnamed>' (755601) panicked at crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_tests.rs:83:17:
+controlled actual worker unwind

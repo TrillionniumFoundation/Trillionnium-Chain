@@ -57,6 +57,8 @@ fn make(node: &Node, parent: Hash, transactions: Vec<Vec<u8>>) -> Packet {
 }
 fn open(path: &Path, backend: StateBackend) -> Node {
     match backend {
+        #[cfg(feature = "pq-native-openssl")]
+        StateBackend::PqNetworkV1 => panic!("use the independently pinned PQ network fixture"),
         StateBackend::PermanentAccountGrowthV2 => {
             panic!("use the separately selected growth fixture")
         }
@@ -746,7 +748,21 @@ fn native_inactive_page_parents_use_checked_material_without_early_activation() 
             next: hex::encode(next),
             complete: index == 6,
         };
-        after = crate::ingress::receive_page(&mut client, page, tip, after, 100_000).unwrap();
+        let started = std::time::Instant::now();
+        let result = crate::ingress::receive_page(&mut client, page, tip, after, 100_000);
+        println!(
+            "{}",
+            serde_json::json!({
+                "schema": "history-original-honest-page-observation-v1",
+                "request_index": index, "requested_packets": 1,
+                "original_page_budget_seconds": 30,
+                "elapsed_ns": started.elapsed().as_nanos(),
+                "result": result.as_ref().map(hex::encode).map_err(ToString::to_string),
+                "cpu_flow": client.remote_history_cpu_domain().unwrap().observe_actual_flow().unwrap(),
+                "active_tip": hex::encode(client.active().unwrap().0),
+            })
+        );
+        after = result.unwrap();
         assert_eq!(after, next);
         assert_eq!(
             client.active().unwrap().0,

@@ -403,6 +403,24 @@ impl Node {
         cpu: &ServiceMutationCpuDomain,
     ) -> Result<()> {
         ensure(
+            !self.public_service_epoch_unknown,
+            "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH",
+        )?;
+        // Cold Node::open has no live epoch reference. Its volatile unknown
+        // flag alone cannot authenticate a clean prior process: the original
+        // persisted active marker must fence every binder, including trusted
+        // local metered helpers which do not start a public listener.
+        // A current listener owns its existing reference; continuous mode
+        // still has to match its original authenticated durable owner below.
+        if !self.is_continuous() && self.public_service_epoch_listeners == 0 {
+            let prior_epoch: bool = self.db.query_row(
+                "SELECT EXISTS(SELECT 1 FROM metadata WHERE key=?1)",
+                [ORDINARY_PUBLIC_EPOCH_KEY],
+                |row| row.get(0),
+            )?;
+            ensure(!prior_epoch, "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH")?;
+        }
+        ensure(
             self.continuous_owner
                 .as_ref()
                 .is_none_or(|owner| owner.cpu.shares_domain_with(cpu)),
@@ -1120,6 +1138,20 @@ impl Node {
             ContinuousScopeCheckpoint(a).check()?;
         }
         Ok(())
+    }
+
+    pub(super) fn continuous_reorg_original_cpu(
+        &self,
+    ) -> Result<Option<ServiceMutationCpuCheckpoint>> {
+        let Some(owner) = &self.continuous_owner else {
+            return Ok(None);
+        };
+        owner.ready()?;
+        let active = owner
+            .slot()?
+            .ok_or("OWNER_CONTINUOUS_ACTIVATE_PURPOSE_REQUIRED")?;
+        ContinuousScopeCheckpoint(active.clone()).check()?;
+        active.cpu.reorg_termination_checkpoint().map(Some)
     }
     pub(super) fn continuous_progress_snapshot(&self) -> Result<Option<ContinuousScopeCheckpoint>> {
         Ok(self

@@ -1,0 +1,39 @@
+{
+  "schema": "pq-native-exact-source-run-v1",
+  "argv": [
+    "/tmp/chain-pq-target-56818e4fba76/debug/deps/cli_secret_canary-0ab719f2468e0356",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "build_record": "node-build-first.record.json",
+  "source_manifest_sha256": "1107b633df15b5fe2f14dc3b21de4ac0ac6e60fb9f9a63ce17dd813b287c25ef",
+  "executable": {
+    "target": "cli_secret_canary",
+    "profile": {
+      "opt_level": "3",
+      "debuginfo": 2,
+      "debug_assertions": true,
+      "overflow_checks": true,
+      "test": true
+    },
+    "path": "/tmp/chain-pq-target-56818e4fba76/debug/deps/cli_secret_canary-0ab719f2468e0356",
+    "bytes": 169492864,
+    "sha256": "583018ae8d291346c4931c5635bdcf030edb8d116a9ce7ebfd6338efde590330"
+  },
+  "started_utc": "2026-10-28T00:30:06.658158+00:00",
+  "timeout_seconds": 120,
+  "timeout": false,
+  "exit_code": 0,
+  "elapsed_seconds": 6.137036716994771,
+  "completed_utc": "2026-10-28T00:30:12.795191+00:00",
+  "source_unchanged": true,
+  "executable_unchanged": true,
+  "stdout": {
+    "bytes": 445,
+    "sha256": "6c22b220069a8828d008cb1e7c36e172d2400c37c8958b482387ae57dfe5200b"
+  },
+  "stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

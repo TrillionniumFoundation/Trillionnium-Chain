@@ -78,7 +78,7 @@ fn main() -> Result<()> {
     let first = args.next().context(
         "usage: trnm-w1-zk-host --r0vm ABSOLUTE_PINNED_BINARY NEW_OUT_DIR [trials=3] | verify HEADER_FILE RECEIPT_FILE",
     )?;
-    if first == "verify" {
+    if first == "verify" || first == "verify-many" {
         let header_path = args.next().context("expected header path")?;
         let receipt_path = args.next().context("expected receipt path")?;
         ensure!(args.next().is_none(), "unexpected arguments");
@@ -87,7 +87,29 @@ fn main() -> Result<()> {
             .take(319)
             .read_to_end(&mut header)?;
         ensure!(header.len() == 318, "header bound");
-        let identity = verify(&header, &read_receipt(Path::new(&receipt_path))?)?;
+        let read_started = Instant::now();
+        let receipt = read_receipt(Path::new(&receipt_path))?;
+        let disk_read_and_decode_ns = read_started.elapsed().as_nanos();
+        let identity = verify(&header, &receipt)?;
+        if first == "verify-many" {
+            let bytes = bincode::serialize(&receipt)?;
+            let mut verifier_ns = Vec::new();
+            let mut decode_verify_ns = Vec::new();
+            for _ in 0..100 {
+                let started = Instant::now();
+                black_box(verify(&header, black_box(&receipt))?);
+                verifier_ns.push(started.elapsed().as_nanos());
+                let started = Instant::now();
+                let decoded = decode_receipt(black_box(&bytes))?;
+                black_box(verify(&header, &decoded)?);
+                decode_verify_ns.push(started.elapsed().as_nanos());
+            }
+            println!(
+                "{}",
+                json!({"schema":"TRNM-W1-SAVED-RECEIPT-COST1","outcome":"SAVED_FULL_SUCCINCT_STARK_REPEATEDLY_VERIFIED","work_id":hex::encode(identity),"receipt_bytes":bytes.len(),"disk_read_and_decode_ns":disk_read_and_decode_ns,"verifier_ns":verifier_ns,"decode_verify_ns":decode_verify_ns,"cryptographic_verifications":201,"independent_proof_trials":1,"production_tail_established":false,"consensus_admission":false})
+            );
+            return Ok(());
+        }
         println!(
             "{}",
             json!({"outcome":"SAVED_SUCCINCT_STARK_VERIFIED","work_id":hex::encode(identity),"consensus_admission":false})

@@ -28,7 +28,42 @@ PQ_SOURCE_DIRS = (
     "formal/pon-nakamoto-v1",
     "trillionnium/crates/trnm-protocol/src",
     "trillionnium/crates/trnm-crypto-primitives/src",
+    "trillionnium/crates/trnm-mvcc-fee/src",
+    "trillionnium/crates/trnm-mvcc-fee/tests",
+    "trillionnium/crates/trnm-pon-node/src",
+    "trillionnium/crates/trnm-pon-node/tests",
 )
+
+# This is a newly reconstructed source contract. The old, lost checker bytes
+# are not recreated by claiming their historical Git object identity. The
+# transport slice remains mandatory and separately bounded from whole-chain PQ.
+NATIVE_REQUIRED_PATHS = frozenset((
+    "docs/security/PQ_NATIVE_NETWORK_OWNER_V1.md",
+    "trillionnium/crates/trnm-pon-node/Cargo.toml",
+    "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v2.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/store.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/pq_network.rs",
+    "trillionnium/crates/trnm-pon-node/src/main.rs",
+    "trillionnium/crates/trnm-pon-node/tests/cli_secret_canary.rs",
+    "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs",
+    "trillionnium/crates/trnm-crypto-primitives/src/owned_ed25519.rs",
+    "trillionnium/crates/trnm-mvcc-fee/Cargo.toml",
+    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts.rs",
+    "trillionnium/crates/trnm-mvcc-fee/tests/pq_account_owner.rs",
+    "trillionnium/crates/trnm-pon-node/tests/pq_account_native.rs",
+    "trillionnium/crates/trnm-protocol/src/pq_transaction.rs",
+    "docs/security/PQ_NATIVE_ACCOUNT_OWNER_V1.md",
+))
+NATIVE_FALSE = frozenset((
+    "whole_native_authorization_migrated", "default_profile_migrated",
+    "allow_legacy_fallback", "production_activation", "public_wan_accepted",
+    "physical_rollback_resistant",
+))
 
 class IntegrityError(ValueError):
     pass
@@ -140,6 +175,50 @@ def check(root: Path) -> dict:
         if _git_blob(_safe_regular(root, relative)) != sha:
             raise IntegrityError("changed source: " + relative)
     _check_pq_source_coverage(root, pins)
+    native = m.get("native_network_owner_slice_v1")
+    if (not isinstance(native, dict)
+            or native.get("profile") != "native-pq-network-owner-v1"
+            or native.get("feature") != "pq-native-openssl"
+            or native.get("contract") != "docs/security/PQ_NATIVE_NETWORK_OWNER_V1.md"
+            or type(native.get("scope")) is not str
+            or not native["scope"]
+            or type(native.get("tpq1_peer_purpose")) is not int
+            or native["tpq1_peer_purpose"] != 6
+            or type(native.get("signed_frame_bytes")) is not int
+            or native["signed_frame_bytes"] != 3487
+            or native.get("signature_independent_operation_identity") is not True
+            or native.get("reorg_independent_local_revocation") is not True
+            or any(native.get(flag) is not False for flag in NATIVE_FALSE)
+            or not NATIVE_REQUIRED_PATHS.issubset(required)):
+        raise IntegrityError("native PQ transport-only contract changed")
+    evidence = native.get("evidence")
+    if (type(evidence) is not str or not evidence.startswith("evidence/")
+            or not evidence.endswith("/README.md")):
+        raise IntegrityError("native PQ evidence locator")
+    # Presence/readability is not test acceptance. The report must distinguish
+    # recovered executable measurements from newly compiled exact-source runs.
+    _safe_regular(root, evidence)
+    account = m.get("native_account_owner_slice_v1")
+    if (not isinstance(account, dict)
+            or account.get("profile") != "native-pq-qtx1-account-v1"
+            or account.get("feature") != "pq-native-openssl"
+            or account.get("contract") != "docs/security/PQ_NATIVE_ACCOUNT_OWNER_V1.md"
+            or account.get("evidence") != "evidence/pon-pq-account-native-20261028/README.md"
+            or account.get("migration_wire") != "PQG1/v1"
+            or account.get("transaction_wire") != "QTX1/v1"
+            or type(account.get("transaction_byte_limit")) is not int
+            or account["transaction_byte_limit"] != 8192
+            or type(account.get("transaction_count_limit")) is not int
+            or account["transaction_count_limit"] != 16
+            or account.get("liability_mode") != "all-source-records-locked"
+            or account.get("transfer_only") is not True
+            or account.get("original_m06_nonce_fee_owner") is not True
+            or account.get("dual_possession_signatures_required") is not True
+            or account.get("miner_roster_permission_required") is not False
+            or account.get("independent_source_history_authenticated") is not False
+            or any(account.get(flag) is not False for flag in NATIVE_FALSE)):
+        raise IntegrityError("native PQ account bounded-profile contract changed")
+    _safe_regular(root, account["evidence"])
     overwrites = m.get("overwrites")
     expected_overwrites = {
         "formal/pon-nakamoto-v1/pq_cell_custody.py": "cell",
@@ -166,6 +245,9 @@ def check(root: Path) -> dict:
         "schema": "trnm-pq-cross-branch-check-v1", "status": "HOLD_NO_GO",
         "exact_source_blobs": len(pins), "upstream_heads": len(heads),
         "cryptographic_acceptance": False, "node_activated": False,
+        "whole_native_authorization_migrated": False,
+        "native_transport_contract_checked": True,
+        "native_transfer_account_contract_checked": True,
     }
 
 

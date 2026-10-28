@@ -89,6 +89,8 @@ fn backend_name(backend: StateBackend) -> Result<&'static str> {
         StateBackend::Legacy => Ok("legacy"),
         StateBackend::AuthenticatedV1 => Ok("authenticated-v1"),
         StateBackend::PermanentAccountGrowthV2 => Err("GROWTH_REHEARSAL_SOURCE_PROFILE".into()),
+        #[cfg(feature = "pq-native-openssl")]
+        StateBackend::PqNetworkV1 => Err("GROWTH_REHEARSAL_SOURCE_PROFILE".into()),
     }
 }
 fn schema_id() -> Hash {
@@ -352,6 +354,11 @@ fn read_only_archive(directory: &Path, settings: Settings, backend: StateBackend
         public_service_cpu: None,
         public_service_epoch_listeners: 0,
         public_service_epoch_unknown: false,
+        detached_execution: std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false)),
+        #[cfg(test)]
+        cancel_next_activation_intent: false,
+        #[cfg(feature = "pq-native-openssl")]
+        pq_network_epoch: std::sync::Arc::new(std::sync::atomic::AtomicU64::new(1)),
     })
 }
 fn read_receipt(directory: &Path) -> Result<GrowthRehearsalReceiptV2> {

@@ -1,0 +1,25 @@
+{
+  "source_commit": "3ca96292ccc7815f4c7f49b34445f3d28687b5f4",
+  "source_manifest_sha256": "106a6cf428cd2b1a7b728ec5aec938d319df48e40d1abbb433f51148fb2a7f70",
+  "binary_sha256": "86d70c9cf0e6bfffbf0e8e0758433e9d2fbb8791d9a01e7f9cb6fcb7cf7b6f40",
+  "argv": [
+    "/tmp/target-history-56818e4fba76/owner-next-3ca96292cc-trnm-pon-node",
+    "ingress::tests::authenticated_activation_recovery::withheld_original_frame_must_not_stall_a_different_honest_signed_mutation",
+    "--exact",
+    "--ignored",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "started_utc": "2026-10-28T00:33:35.368229+00:00",
+  "outer_observer_timeout_seconds": 90,
+  "exit_code": 0,
+  "elapsed_seconds": 10.148806561999663,
+  "stdout.txt": {
+    "bytes": 405859,
+    "sha256": "94e5ca54726e683bd0aa1713b210c0c9900f8c3eb044892e0718795e2d057ea8"
+  },
+  "stderr.txt": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

@@ -1,0 +1,12 @@
+
+running 1 test
+test qtx1_from_another_import_context_refuses_even_if_declared_network_reused ... {"case":"cross_import_qtx1_replay","declared_network_reused":true,"foreign_transaction_applied":true,"other_genesis":"8bb99b86304822f6ade6b43c9df073197cab3cb5de62277e43fed59c42fb1685ba362c2b883c0d1a4ae1f844dde8a87d","other_network":"5252525252525252525252525252525252525252525252525252525252525252","other_parameters":"e0b43fb7f15771da6ba25df78a68138c294f451da4d6d872742ab46617c00da2","source_genesis":"1d53efeb571deb74cf3167b1cdc091b43bb173f29a472069cbc9a957a9a03e10e9010a81314006fda2025e11da099848","source_network":"5252525252525252525252525252525252525252525252525252525252525252","source_parameters":"e0d219d29d4adb5933237178d80db27890c68b6dbae16addef083921634fdb6a"}
+FAILED
+
+failures:
+
+failures:
+    qtx1_from_another_import_context_refuses_even_if_declared_network_reused
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 7 filtered out; finished in 0.27s
+

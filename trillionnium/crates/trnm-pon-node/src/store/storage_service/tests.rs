@@ -30,6 +30,8 @@ fn open_node(path: &Path, backend: StateBackend) -> Node {
     )
     .unwrap();
     match backend {
+        #[cfg(feature = "pq-native-openssl")]
+        StateBackend::PqNetworkV1 => panic!("use the independently pinned PQ network fixture"),
         StateBackend::Legacy => Node::open(path, settings, 1).unwrap(),
         StateBackend::AuthenticatedV1 => {
             Node::open_with_authenticated_state(path, settings, 1).unwrap()

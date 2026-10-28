@@ -1,8 +1,7 @@
 //! History replay under the original Node-owned CPU account and crash epoch.
-//! Shared owners are held for context, M06/commit and epoch metadata only;
-//! CPU refill, canonical packet decoding and full W1 run outside their mutex.
-//! M06 remains under the writer until a separately verified execution/commit
-//! split exists. No snapshot, clock verdict or peer statement is trusted here.
+//! Shared ordinary owners release their writer for CPU refill, decoding, W1
+//! and bounded M06 execution. The original owner checks the private execution
+//! artifact and retains the original transaction/readback publication fences.
 use super::{
     ensure, hex_packet, history_kernel_work_checkpoint, now, public_v3, Hash, Node, Packet, Page,
     Result, Settings, WorkCheckedPacket, MAX_FRAME,
@@ -156,7 +155,9 @@ fn metered<T>(
     native: impl FnOnce(&public_v3::ServiceMutationCpuOperation) -> Result<T>,
 ) -> Result<T> {
     let operation = begin_cpu(cpu, control)?;
-    let result = native(&operation);
+    let result = operation
+        .bind_history_request(control.deadline)
+        .and_then(|()| native(&operation));
     let receipt = operation.finish();
     ensure(
         !receipt.accounting_unavailable,
@@ -197,12 +198,14 @@ fn admit_packet(
     packet: Packet,
     clock: u64,
     control: &Control<'_>,
+    activate: Option<Hash>,
 ) -> Result<(Hash, bool)> {
+    let owns_node_mutex = matches!(owner, Owner::Shared(_));
     metered(cpu, control, |operation| {
         let progress = operation.checkpoint_handle();
         let check = || {
             control.check()?;
-            progress.checkpoint()
+            progress.history_checkpoint(owns_node_mutex, &|| control.check())
         };
         check()?;
         let (existing, permit) = owner.with(control, |node| {
@@ -218,11 +221,14 @@ fn admit_packet(
             Ok((existing, permit))
         })?;
         if let Some(id) = existing {
+            if let Some(tip) = activate {
+                activate_packet(owner, tip, clock, control, operation)?;
+            }
             return Ok((id, false));
         }
         let checked = WorkCheckedPacket::verify_with_progress(packet, &mut |point| {
             control.alive()?;
-            progress.checkpoint()?;
+            progress.history_checkpoint(owns_node_mutex, &|| control.check())?;
             if history_kernel_work_checkpoint(point) {
                 (control.resource)()?;
             }
@@ -240,22 +246,77 @@ fn admit_packet(
             }
             Ok(())
         })?;
+        operation.history_work_verified(&checked)?;
+        // Promotion changes only scheduling for this complete, unique W1.
+        // Shared owners retain nonwaiting checkpoints while holding Node;
+        // exclusive embedding has no Node mutex and keeps its exact stack.
         check()?;
-        let id = owner.with(control, |node| {
-            let checked = node.attach_owner_work(checked, permit)?;
-            let execution_progress = |_| check();
-            let execution = trnm_mvcc_fee::pon_executor::ExecutionControl::new(
-                &execution_progress,
-                operation.worker_accounting(),
-            );
-            // Full parent/state/clock/permit checks repeat in native admission.
-            // A valid competing branch need not be the current active tip.
-            node.admit_work_checked_with_control(checked, clock, &execution)
-        })?;
+        let execution_progress = |point| {
+            check()?;
+            if point == trnm_mvcc_fee::pon_executor::ExecutionProgress::AfterMandatory {
+                cut("m06");
+            }
+            Ok(())
+        };
+        let execution = trnm_mvcc_fee::pon_executor::ExecutionControl::new(
+            &execution_progress,
+            operation.worker_accounting(),
+        );
+        let id = match owner {
+            Owner::Shared(node) => {
+                let (guard, id, _) = super::admit_shared_checked(
+                    node,
+                    checked,
+                    permit,
+                    &mut |_| check(),
+                    &execution,
+                    || Ok(clock),
+                    None,
+                )?;
+                drop(guard);
+                id
+            }
+            Owner::Exclusive(_) => owner.with(control, |node| {
+                let checked = node.attach_owner_work(checked, permit)?;
+                node.admit_work_checked_with_control(checked, clock, &execution)
+            })?,
+        };
         // Test-only cut is after the actual native COMMIT, before CPU settle.
         cut("admitted");
+        if let Some(tip) = activate {
+            // Final activation keeps the original admission operation and
+            // deadline. It does not start a new reservation after paid W1.
+            activate_packet(owner, tip, clock, control, operation)?;
+        }
         Ok((id, true))
     })
+}
+
+fn activate_packet(
+    owner: &mut Owner<'_>,
+    tip: Hash,
+    clock: u64,
+    control: &Control<'_>,
+    operation: &public_v3::ServiceMutationCpuOperation,
+) -> Result<()> {
+    let owns_node_mutex = matches!(owner, Owner::Shared(_));
+    let checkpoint = || operation.history_checkpoint(owns_node_mutex, &|| control.check());
+    checkpoint()?;
+    owner.with(control, |node| {
+        node.activate_observed_with_termination(
+            tip,
+            clock,
+            &mut || {
+                cut("activation_progress");
+                control.check()?;
+                checkpoint()
+            },
+            Some(&operation.checkpoint_handle()),
+        )
+    })?;
+    cut("activated");
+    control.check()?;
+    checkpoint()
 }
 
 pub(super) fn receive(
@@ -290,16 +351,14 @@ pub(super) fn receive(
             Ok((packets, next))
         })?;
         cut("decoded");
-        for packet in packets {
-            admit_packet(owner, cpu, packet, clock, &control)?;
+        let count = packets.len();
+        for (index, packet) in packets.into_iter().enumerate() {
+            let activate = (page.complete && index + 1 == count).then_some(tip);
+            admit_packet(owner, cpu, packet, clock, &control, activate)?;
         }
-        if page.complete {
+        if page.complete && count == 0 {
             metered(cpu, &control, |operation| {
-                operation.checkpoint()?;
-                owner.with(&control, |node| node.activate_observed(tip, clock))?;
-                cut("activated");
-                control.check()?;
-                operation.checkpoint()
+                activate_packet(owner, tip, clock, &control, operation)
             })?;
         }
         Ok(next)
@@ -318,7 +377,7 @@ pub(crate) fn admit_shared_packet(
     let control = Control { deadline, resource };
     let mut owner = Owner::Shared(node);
     scoped(&mut owner, &control, |owner, cpu| {
-        admit_packet(owner, cpu, packet, now()?, &control).map(|(_, inserted)| inserted)
+        admit_packet(owner, cpu, packet, now()?, &control, None).map(|(_, inserted)| inserted)
     })
 }
 

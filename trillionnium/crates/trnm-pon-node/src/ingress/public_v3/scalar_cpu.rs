@@ -18,6 +18,29 @@ pub(super) const MUTATION_CPU_BURST_NS: u64 = 2_000_000_000;
 pub(super) const MUTATION_CPU_REFILL_NS_PER_SECOND: u64 = 250_000_000;
 pub(super) const MUTATION_CPU_START_RESERVE_NS: u64 = 100_000_000;
 pub(super) const MUTATION_CPU_WORKERS: usize = 2;
+// Paid from the original account before a durable multi-step reorg intent.
+// The principal is unavailable to normal execution until same-scope cleanup
+// or publication finishes. Every actual cleanup interval is still charged.
+pub(crate) const REORG_TERMINATION_RESERVE_NS: u64 = 25_000_000;
+
+/// Local SQL cleanup limiter; this observer is not a CPU account. The outer
+/// original operation still settles all cleanup CPU, including any tail.
+pub(crate) fn reorg_cleanup_interrupt() -> Result<impl FnMut() -> bool + Send + 'static> {
+    let mut stamp = ThreadCpuStamp::start().ok_or("PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+    let mut cpu_ns = 0_u64;
+    let mut instructions = 0_u64;
+    Ok(move || {
+        let Some(interval) = stamp.checkpoint() else {
+            return true;
+        };
+        let Some(total) = cpu_ns.checked_add(interval) else {
+            return true;
+        };
+        cpu_ns = total;
+        instructions = instructions.saturating_add(100);
+        instructions > 20_000 || cpu_ns >= REORG_TERMINATION_RESERVE_NS
+    })
+}
 // Exact local scheduling identities, bounded once at owner-epoch construction.
 // At capacity ordinary paid validation/recovery continues without promotion.
 // This is not a permanent work-spent ledger, a second CPU pool or a validity rule.
@@ -54,6 +77,7 @@ impl CpuFlow {
         &self,
         credit: i128,
         in_flight: usize,
+        termination_reserved_ns: u64,
     ) -> Option<ServiceMutationCpuFlowObservation> {
         let paid = self.paid()?;
         let remaining = self
@@ -61,7 +85,9 @@ impl CpuFlow {
             .checked_add(i128::from(self.credited_refill_ns))?
             .checked_sub(i128::from(paid))?
             .checked_sub(i128::from(self.settlement_discard_ns))?;
-        let expected = remaining.checked_sub(i128::from(self.booked_reservation_ns))?;
+        let expected = remaining
+            .checked_sub(i128::from(self.booked_reservation_ns))?
+            .checked_sub(i128::from(termination_reserved_ns))?;
         // Booked principal is independently recorded from actual events. The
         // count comparison detects lost/duplicate returns; it never supplies it.
         let expected_booked = u64::try_from(in_flight)
@@ -71,7 +97,12 @@ impl CpuFlow {
             return None;
         }
         Some(ServiceMutationCpuFlowObservation {
-            schema: "public-v3-local-actual-cpu-flow-v1",
+            schema: if termination_reserved_ns == 0 {
+                "public-v3-local-actual-cpu-flow-v1"
+            } else {
+                "public-v3-local-actual-cpu-flow-reorg-reserve-v2"
+            },
+            termination_reserved_ns,
             initial_credit_ns: self.initial_credit_ns,
             credited_refill_ns: self.credited_refill_ns,
             discarded_refill_ns: self.discarded_refill_ns,
@@ -92,6 +123,9 @@ impl CpuFlow {
 #[derive(Clone, Debug, PartialEq, Eq, serde::Serialize)]
 pub struct ServiceMutationCpuFlowObservation {
     pub schema: &'static str,
+    /// Additional principal, never actual CPU and never a new account.
+    #[serde(skip_serializing_if = "is_zero")]
+    pub termination_reserved_ns: u64,
     pub initial_credit_ns: i128,
     pub credited_refill_ns: u64,
     pub discarded_refill_ns: u64,
@@ -106,6 +140,9 @@ pub struct ServiceMutationCpuFlowObservation {
     pub balance_identity_verified: bool,
     pub stored_credit_ns: i128,
     pub live_owners: usize,
+}
+fn is_zero(value: &u64) -> bool {
+    *value == 0
 }
 
 /// Counterfactual original scalar refill from one unchanged owner snapshot.
@@ -133,6 +170,7 @@ pub(super) struct PaidMutationCpuBudget {
     pub(super) updated: Instant,
     pub(super) in_flight: usize,
     pub(super) unavailable: bool,
+    termination_reserved_ns: u64,
     // A full W1 success can protect only its existing public request. This is
     // scheduling state, not another bucket, start reserve or work authority.
     verified_completions: usize,
@@ -150,6 +188,7 @@ impl PaidMutationCpuBudget {
             updated: Instant::now(),
             in_flight: 0,
             unavailable: false,
+            termination_reserved_ns: 0,
             verified_completions: 0,
             completion_work: Box::new([[0; 32]; COMPLETION_WORK_CAPACITY]),
             completion_work_len: 0,
@@ -167,10 +206,11 @@ impl PaidMutationCpuBudget {
         if self.unavailable || self.in_flight > MUTATION_CPU_WORKERS {
             return None;
         }
-        let flow = self
-            .flow
-            .as_ref()?
-            .snapshot(self.credit_ns, self.in_flight)?;
+        let flow = self.flow.as_ref()?.snapshot(
+            self.credit_ns,
+            self.in_flight,
+            self.termination_reserved_ns,
+        )?;
         let elapsed = observed_at.checked_duration_since(self.updated)?.as_nanos();
         let watermark_age_ns = u64::try_from(elapsed).ok()?;
         let offered =
@@ -193,7 +233,8 @@ impl PaidMutationCpuBudget {
             projected_discarded_refill_ns: discarded,
             projected_stored_credit_ns,
             projected_paid_credit_ns: projected_stored_credit_ns
-                .checked_add(i128::from(flow.booked_reservation_ns))?,
+                .checked_add(i128::from(flow.booked_reservation_ns))?
+                .checked_add(i128::from(flow.termination_reserved_ns))?,
             projected_scalar_start_eligible: self.in_flight < MUTATION_CPU_WORKERS
                 && projected_stored_credit_ns >= i128::from(MUTATION_CPU_START_RESERVE_NS),
             actual_flow: flow,
@@ -248,6 +289,7 @@ impl PaidMutationCpuBudget {
     pub(super) fn credit_ceiling(&self) -> i128 {
         i128::from(MUTATION_CPU_BURST_NS)
             - (self.in_flight as i128) * i128::from(MUTATION_CPU_START_RESERVE_NS)
+            - i128::from(self.termination_reserved_ns)
     }
     pub(super) fn reserve(&mut self, now: Instant) -> Result<()> {
         self.refill(now);
@@ -439,6 +481,9 @@ pub(super) struct LiveRequestCpuState {
     pub(super) unavailable: bool,
     public_request: Option<PublicRequestDeadline>,
     verified_completion: bool,
+    wait_inside_checkpoint: bool,
+    owner_thread: thread::ThreadId,
+    termination_reserved: bool,
 }
 #[derive(Clone)]
 struct PublicRequestDeadline {
@@ -462,6 +507,9 @@ impl LiveRequestCpu {
                 unavailable: false,
                 public_request: None,
                 verified_completion: false,
+                wait_inside_checkpoint: true,
+                owner_thread: thread::current().id(),
+                termination_reserved: false,
             }),
             #[cfg(test)]
             fail_next_sample: AtomicBool::new(false),
@@ -621,16 +669,45 @@ impl LiveRequestCpu {
         state.threads.insert(id, stamp);
     }
     pub(super) fn observe(&self, remove: bool, enforce: bool) -> Result<()> {
+        let wait = match self.state.lock() {
+            Ok(state) => state.wait_inside_checkpoint,
+            Err(error) => {
+                // This policy read precedes observe_sample, so it must retain
+                // that sampler's fail-closed global fence. Release the poisoned
+                // guard before unknown() reacquires the request registry.
+                drop(error);
+                self.unknown();
+                return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+            }
+        };
+        self.observe_with_control(remove, enforce, wait, &|| Ok(()))
+    }
+    fn observe_with_control(
+        &self,
+        remove: bool,
+        enforce: bool,
+        may_wait: bool,
+        resource: &dyn Fn() -> Result<()>,
+    ) -> Result<()> {
         loop {
+            resource()?;
             let Some(request) = self.observe_sample(remove, enforce)? else {
                 return Ok(());
             };
-            // A complete W1 candidate keeps its original reservation and exact
-            // continuation, rather than throwing away paid native work and
-            // racing new invalid probes for every refill. No thread CPU is
-            // credited for sleeping; the next real sample also charges wait
-            // management overhead. Cancellation and the original absolute task
-            // deadline remain authoritative throughout this cooperative wait.
+            // Shared History cannot suspend while owning the Node mutex.
+            // A long indivisible phase still fails under the original budget.
+            if !may_wait {
+                self.state
+                    .lock()
+                    .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?
+                    .refused = true;
+                return Err("PUBLIC_MUTATION_CPU_BUDGET".into());
+            }
+            // An exclusive embedding has no Node mutex. Keep its exact paid
+            // continuation, original absolute deadline AND caller resource
+            // cancellation throughout every actual refill wait. No stored
+            // callback, detached lifetime or new reservation is introduced.
+            resource()?;
             request.check()?;
             thread::sleep(
                 Duration::from_millis(5)
@@ -747,7 +824,7 @@ impl LiveRequestCpu {
                 return None;
             }
         };
-        if state.unavailable || !state.threads.is_empty() {
+        if state.unavailable || !state.threads.is_empty() || state.termination_reserved {
             drop(state);
             self.unknown();
             None
@@ -963,6 +1040,40 @@ impl ServiceMutationCpuOperation {
     pub fn checkpoint(&self) -> Result<()> {
         self.live.checkpoint()
     }
+    /// Bind the History scope's original absolute deadline once. Shared
+    /// callers may never wait from a checkpoint under their Node mutex. The
+    /// exclusive native embedding owns no mutex; it may continue its exact
+    /// stack under this same operation and deadline after a complete W1.
+    pub(crate) fn bind_history_request(&self, deadline: Instant) -> Result<()> {
+        self.live.bind_public_request(
+            deadline,
+            Arc::new(AtomicBool::new(false)),
+            Arc::new(AtomicBool::new(false)),
+        )?;
+        self.live
+            .state
+            .lock()
+            .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?
+            .wait_inside_checkpoint = false;
+        Ok(())
+    }
+
+    pub(crate) fn history_checkpoint(
+        &self,
+        owns_node_mutex: bool,
+        resource: &dyn Fn() -> Result<()>,
+    ) -> Result<()> {
+        self.live
+            .observe_with_control(false, true, !owns_node_mutex, resource)
+    }
+
+    pub(crate) fn history_work_verified(
+        &self,
+        checked: &crate::store::WorkCheckedPacket,
+    ) -> Result<()> {
+        self.live.work_verified(checked)
+    }
+
     pub fn worker_accounting(&self) -> &dyn ExecutionWorkerAccounting {
         &self.workers
     }
@@ -1033,6 +1144,131 @@ impl ServiceMutationCpuCheckpoint {
     pub fn checkpoint(&self) -> Result<()> {
         self.live.checkpoint()
     }
+
+    pub(crate) fn history_checkpoint(
+        &self,
+        owns_node_mutex: bool,
+        resource: &dyn Fn() -> Result<()>,
+    ) -> Result<()> {
+        self.live
+            .observe_with_control(false, true, !owns_node_mutex, resource)
+    }
+
+    pub(crate) fn shares_domain_with(&self, domain: &ServiceMutationCpuDomain) -> bool {
+        Arc::ptr_eq(&self.live.budget, &domain.budget)
+    }
+
+    pub(crate) fn shares_operation_with(&self, original: &Self) -> bool {
+        Arc::ptr_eq(&self.live, &original.live)
+    }
+
+    pub(crate) fn reserve_reorg_termination(&self) -> Result<ReorgTerminationCpuReservation> {
+        self.checkpoint()?;
+        let mut state = self
+            .live
+            .state
+            .lock()
+            .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+        ensure(
+            !state.unavailable
+                && !state.refused
+                && !state.termination_reserved
+                && state.owner_thread == thread::current().id()
+                && state.threads.contains_key(&state.owner_thread),
+            "PUBLIC_MUTATION_CPU_UNAVAILABLE",
+        )?;
+        let mut budget = self
+            .live
+            .budget
+            .lock()
+            .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+        budget.refill(Instant::now());
+        ensure(
+            !budget.unavailable && budget.in_flight > 0 && budget.in_flight <= MUTATION_CPU_WORKERS,
+            "PUBLIC_MUTATION_CPU_UNAVAILABLE",
+        )?;
+        // reserve() already removed this operation's 100ms start principal
+        // from stored credit. Partition its remaining paid allowance instead
+        // of demanding a second free reserve from a cold/refilling account.
+        // Add back exactly this live operation's one principal, never the
+        // other owner's reservation; actual CPU remains debited in credit_ns.
+        let original_allowance = budget
+            .credit_ns
+            .checked_add(i128::from(MUTATION_CPU_START_RESERVE_NS))
+            .ok_or("PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+        ensure(
+            original_allowance >= i128::from(REORG_TERMINATION_RESERVE_NS),
+            "PUBLIC_MUTATION_CPU_BUDGET",
+        )?;
+        let reserved = budget
+            .termination_reserved_ns
+            .checked_add(REORG_TERMINATION_RESERVE_NS)
+            .ok_or("PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+        budget.credit_ns -= i128::from(REORG_TERMINATION_RESERVE_NS);
+        budget.termination_reserved_ns = reserved;
+        state.termination_reserved = true;
+        Ok(ReorgTerminationCpuReservation {
+            live: self.live.clone(),
+            owner: thread::current().id(),
+            _not_send: std::marker::PhantomData,
+        })
+    }
+}
+
+/// Same operation's prepaid termination headroom. It cannot move threads,
+/// authorize native work, change deadlines or create a refill source.
+pub(crate) struct ReorgTerminationCpuReservation {
+    live: Arc<LiveRequestCpu>,
+    owner: thread::ThreadId,
+    _not_send: std::marker::PhantomData<std::rc::Rc<()>>,
+}
+impl Drop for ReorgTerminationCpuReservation {
+    fn drop(&mut self) {
+        if thread::panicking()
+            || self.owner != thread::current().id()
+            || self.live.observe(false, false).is_err()
+        {
+            self.live.unknown();
+            return;
+        }
+        let mut state = match self.live.state.lock() {
+            Ok(state) => state,
+            Err(error) => {
+                drop(error);
+                self.live.unknown();
+                return;
+            }
+        };
+        let Ok(mut budget) = self.live.budget.lock() else {
+            state.unavailable = true;
+            return;
+        };
+        if state.unavailable
+            || !state.termination_reserved
+            || budget.unavailable
+            || budget.in_flight == 0
+            || budget.termination_reserved_ns < REORG_TERMINATION_RESERVE_NS
+        {
+            state.unavailable = true;
+            budget.unavailable = true;
+            return;
+        }
+        let Some(credit) = budget
+            .credit_ns
+            .checked_add(i128::from(REORG_TERMINATION_RESERVE_NS))
+        else {
+            state.unavailable = true;
+            budget.unavailable = true;
+            return;
+        };
+        budget.termination_reserved_ns -= REORG_TERMINATION_RESERVE_NS;
+        budget.credit_ns = credit;
+        state.termination_reserved = false;
+        if budget.credit_ns > budget.credit_ceiling() {
+            state.unavailable = true;
+            budget.unavailable = true;
+        }
+    }
 }
 impl ServiceMutationCpuOperation {
     pub fn checkpoint_handle(&self) -> ServiceMutationCpuCheckpoint {
@@ -1085,6 +1321,23 @@ impl ServiceMutationCpuCheckpoint {
             .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
         ensure(!state.unavailable, "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
         Ok(state.charged_ns)
+    }
+
+    pub(crate) fn actual_live_cpu_and_termination_headroom_ns(&self) -> Result<u64> {
+        let state = self
+            .live
+            .state
+            .lock()
+            .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+        ensure(!state.unavailable, "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+        state
+            .charged_ns
+            .checked_add(if state.termination_reserved {
+                REORG_TERMINATION_RESERVE_NS
+            } else {
+                0
+            })
+            .ok_or_else(|| "PUBLIC_MUTATION_CPU_UNAVAILABLE".into())
     }
 }
 
@@ -1172,10 +1425,13 @@ impl ServiceMutationCpuDomain {
             .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
         Ok((!budget.unavailable)
             .then(|| {
-                budget
-                    .flow
-                    .as_ref()
-                    .and_then(|flow| flow.snapshot(budget.credit_ns, budget.in_flight))
+                budget.flow.as_ref().and_then(|flow| {
+                    flow.snapshot(
+                        budget.credit_ns,
+                        budget.in_flight,
+                        budget.termination_reserved_ns,
+                    )
+                })
             })
             .flatten())
     }
@@ -1201,6 +1457,77 @@ mod request_owned_reserve_tests {
         budget.credit_ns = i128::from(credit);
         let now = budget.updated;
         (budget, now)
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn owned_start_quantum_pays_termination_without_extra_free_credit() {
+        let domain = ServiceMutationCpuDomain::standalone();
+        let operation = domain.begin().unwrap();
+        {
+            let mut budget = domain.budget.lock().unwrap();
+            // Boundary arithmetic fixture: exactly the already purchased
+            // quantum remains. This is not a measured depletion campaign.
+            budget.credit_ns = 0;
+            budget.updated = Instant::now() + Duration::from_secs(30);
+            budget.flow = None;
+        }
+        let cleanup = operation
+            .checkpoint_handle()
+            .reserve_reorg_termination()
+            .unwrap();
+        assert_eq!(
+            domain.budget.lock().unwrap().termination_reserved_ns,
+            REORG_TERMINATION_RESERVE_NS
+        );
+        assert!(domain.begin().is_err());
+        drop(cleanup);
+        let receipt = operation.finish();
+        assert!(!receipt.accounting_unavailable);
+        let budget = domain.budget.lock().unwrap();
+        assert_eq!(budget.in_flight, 0);
+        assert_eq!(budget.termination_reserved_ns, 0);
+        assert_eq!(
+            budget.credit_ns,
+            i128::from(MUTATION_CPU_START_RESERVE_NS) - i128::from(receipt.total_cpu_ns.unwrap())
+        );
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn termination_cannot_borrow_another_live_owners_start_quantum() {
+        let domain = ServiceMutationCpuDomain::standalone();
+        let first = domain.begin().unwrap();
+        let second = domain.begin().unwrap();
+        let original_credit = -i128::from(MUTATION_CPU_START_RESERVE_NS)
+            + i128::from(REORG_TERMINATION_RESERVE_NS / 2);
+        {
+            let mut budget = domain.budget.lock().unwrap();
+            // Freeze only this boundary fixture's refill. One other original
+            // principal is present, but cannot fund this owner's cleanup.
+            budget.credit_ns = original_credit;
+            budget.updated = Instant::now() + Duration::from_secs(30);
+            budget.flow = None;
+        }
+        assert!(first
+            .checkpoint_handle()
+            .reserve_reorg_termination()
+            .err()
+            .unwrap()
+            .is(crate::ErrorCode::PublicMutationCpuBudget));
+        assert_eq!(domain.budget.lock().unwrap().termination_reserved_ns, 0);
+        let first = first.finish();
+        let second = second.finish();
+        assert!(!first.accounting_unavailable && !second.accounting_unavailable);
+        let budget = domain.budget.lock().unwrap();
+        assert_eq!(budget.in_flight, 0);
+        assert_eq!(budget.termination_reserved_ns, 0);
+        assert_eq!(
+            budget.credit_ns,
+            original_credit + 2 * i128::from(MUTATION_CPU_START_RESERVE_NS)
+                - i128::from(first.total_cpu_ns.unwrap())
+                - i128::from(second.total_cpu_ns.unwrap())
+        );
     }
 
     #[test]

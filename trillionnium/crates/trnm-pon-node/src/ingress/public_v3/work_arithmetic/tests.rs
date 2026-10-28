@@ -15,11 +15,11 @@ fn arithmetic_profile_has_exact_separate_bytes_and_rejects_cross_profile_challen
     let policy = policy();
     assert_eq!(
         hex::encode(policy.id()),
-        "c110c3ccb1e229c3a85f4819b1e087fa819c865b50f8bd3ab78d3b8f45206cb2"
+        "6d04725d8e7a84560baf69440b1becd79f47c9f1fb5e63b85f1447400c85d43f"
     );
     assert_eq!(
         hex::encode(policy.arithmetic_facts_id()),
-        "14ada27ef062b1e510b7d7ab470e83157e58e7752b8f27a754f64dac614146e3"
+        "c6d64d3f924ddc6b621e6a7faec04b4a835add3a90c8e3835a7718f77cf95825"
     );
     let settings = Settings::development(Some(1)).unwrap();
     let raw = server();
@@ -40,6 +40,38 @@ fn arithmetic_profile_has_exact_separate_bytes_and_rejects_cross_profile_challen
     let peer = "127.0.0.1:1".parse().unwrap();
     let raw_cookie = raw.cookie(&settings, hello, peer).unwrap();
     let arithmetic_cookie = arithmetic.cookie(&settings, hello, peer).unwrap();
+    // Correctly signed predecessor cookies remain old namespaces. A new
+    // resource revision cannot silently accept either r13 execution profile.
+    for (owner, cookie, predecessor) in [
+        (
+            &raw,
+            &raw_cookie,
+            "c110c3ccb1e229c3a85f4819b1e087fa819c865b50f8bd3ab78d3b8f45206cb2",
+        ),
+        (
+            &arithmetic,
+            &arithmetic_cookie,
+            "14ada27ef062b1e510b7d7ab470e83157e58e7752b8f27a754f64dac614146e3",
+        ),
+    ] {
+        let mut old = (*cookie).clone();
+        old.profile = predecessor.into();
+        old.mac = hex::encode(hmac(&owner.secret, &old.unsigned().unwrap()));
+        old.signature = owner.identity.sign(&old.server_message().unwrap()).unwrap();
+        verify_hex_strict(
+            owner.identity.public_key(),
+            &old.server_message().unwrap(),
+            &old.signature,
+        )
+        .unwrap();
+        assert_eq!(
+            owner
+                .validate(&old, &settings, true)
+                .unwrap_err()
+                .to_string(),
+            "PUBLIC_COOKIE_CONTEXT"
+        );
+    }
     for (owner, own, foreign, expected) in [
         (&raw, &raw_cookie, &arithmetic_cookie, policy.id()),
         (

@@ -24,6 +24,7 @@ use trnm_pon_node::{
     PoolLimits,
 };
 use trnm_protocol::qualified_work_task::{SignedQualifiedWorkTask, TaskPurpose};
+use zeroize::Zeroizing;
 fn need<'a>(args: &'a BTreeMap<String, String>, key: &str) -> Result<&'a str> {
     args.get(key)
         .map(String::as_str)
@@ -196,14 +197,15 @@ fn read_owned_configuration(
     {
         return Err(file_error.into());
     }
-    let mut bytes = Vec::new();
+    // Partial reads and length errors must also clear an owned secret buffer.
+    let mut bytes = Zeroizing::new(Vec::new());
     file.take(limit + 1)
         .read_to_end(&mut bytes)
         .map_err(|_| Error::from(file_error))?;
     if bytes.len() as u64 > limit {
         return Err(length_error.into());
     }
-    Ok(bytes)
+    Ok(std::mem::take(&mut *bytes))
 }
 
 const OWNER_CONFIG_OPTIONS: [&str; 5] = [
@@ -484,13 +486,23 @@ impl RequestObservationExport {
 }
 
 fn secret_identity(path: &str) -> Result<ingress::DevelopmentIdentity> {
-    let bytes = read_owned_configuration(path, 65, true, "AUTH_SECRET_FILE", "AUTH_SECRET_LENGTH")?;
+    let bytes = Zeroizing::new(read_owned_configuration(
+        path,
+        65,
+        true,
+        "AUTH_SECRET_FILE",
+        "AUTH_SECRET_LENGTH",
+    )?);
     let text = std::str::from_utf8(&bytes).map_err(|_| Error::from("AUTH_SECRET_ENCODING"))?;
     let secret = text.strip_suffix('\n').unwrap_or(text);
     if secret.len() != 64 || secret.contains(char::is_whitespace) {
         return Err("AUTH_SECRET_LENGTH".into());
     }
+    // Never let a provider/parser's formatted diagnostic carry secret input to
+    // the CLI error sink. Public identity output is separately derived from the
+    // opaque signing key; no secret string is retained in DevelopmentIdentity.
     ingress::DevelopmentIdentity::from_secret_hex(secret)
+        .map_err(|_| Error::from("AUTH_KEY_INVALID"))
 }
 
 fn peer_roster(path: &str) -> Result<Vec<String>> {

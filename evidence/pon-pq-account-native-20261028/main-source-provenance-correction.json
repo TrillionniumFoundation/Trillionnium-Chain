@@ -1,0 +1,21 @@
+{
+  "schema": "pq-main-provenance-correction-v1",
+  "observed_utc": "2026-10-28T00:26:41.867421+00:00",
+  "executable": "/tmp/chain-pq-target-56818e4fba76/debug/deps/trnm_pon_node-44a98fb17ab76c15",
+  "executable_bytes": 134090512,
+  "executable_sha256": "d86b3d685d9ccddf7cecaa305a2c2f15bd494fc95770fe3d7796c545bf453a79",
+  "source": {
+    "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+    "bytes": 124046,
+    "file_offset": 10704803,
+    "virtual_address": 10704803,
+    "sha256": "4a790ce3f4cefaa11bc59165845da17bdf3a83269b7d32681db1a9a8135f8d5c",
+    "git_blob_sha1": "13eaca34f2fe3b46b25d387836f978a38168e40f"
+  },
+  "equals_committed_baseline": "48aaeddb1ab5115169cb1bc8d80647888bba3d2d",
+  "new_cli_changed_bytes_recovered": false,
+  "old_assertion": "main.rs was outside embedded inventory",
+  "corrected_assertion": "baseline main.rs is embedded; newer CLI changed main.rs source remains unrecovered",
+  "old_reconstruction_readme_sha256": "5d1e88056759a575c67f922356e00b34c4727bc089bf373d2e6d3e32009339bf",
+  "old_recovery_readme_sha256": "f102fc37cb369602864d557f0478228209b2997a208552eecb5217f28f780285"
+}

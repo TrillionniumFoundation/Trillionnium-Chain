@@ -1,0 +1,18 @@
+
+running 7 tests
+test account_cases::account_forks_keep_the_original_state_nonce_owner_without_shared_credits ... ok
+test account_cases::dual_migration_native_verification_rejects_either_signature_revocation_or_target_substitution ... ok
+test account_cases::native_parent_rejects_nonce_reset_liability_omission_and_rebound_parameters ... ok
+test account_cases::pqg1_native_import_preserves_nonces_all_four_liabilities_and_original_m06_transfers ... ok
+test account_cases::real_wrong_signatures_context_nonce_quarantine_and_classical_fallback_refuse ... ok
+test real_node_pq_account_packets_work_forks_reorg_and_cold_replay ... FAILED
+test real_pq_transport_dispatch_consumes_qtx1_through_w1_and_native_account_owner ... FAILED
+
+failures:
+
+failures:
+    real_node_pq_account_packets_work_forks_reorg_and_cold_replay
+    real_pq_transport_dispatch_consumes_qtx1_through_w1_and_native_account_owner
+
+test result: FAILED. 5 passed; 2 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.83s
+

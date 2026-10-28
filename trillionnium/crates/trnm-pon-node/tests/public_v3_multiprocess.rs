@@ -1,5 +1,7 @@
 //! Finite same-host, separate-process W1 economics and original public service
 //! campaign. No independent operator, WAN, hardness, energy or release claim.
+#[path = "support/multiprocess_phase_host.rs"]
+mod phase_host;
 #[path = "support/multiprocess_support.rs"]
 mod support;
 #[path = "support/multiprocess_work.rs"]
@@ -58,7 +60,7 @@ impl CampaignConfiguration {
 
 fn campaign_server(work_profile: support::WorkProfile) -> (PublicServer, Option<Value>) {
     let server = PublicServer::new(support::identity(71), support::policy()).unwrap();
-    if work_profile == support::WorkProfile::RawR13 {
+    if work_profile == support::WorkProfile::RawR14 {
         assert_eq!(server.resource_profile(), support::policy().id());
         assert!(server.arithmetic_facts_software_bytes().is_none());
         return (server, None);
@@ -178,7 +180,8 @@ impl Drop for Service {
 }
 
 struct Actor {
-    child: Child,
+    child: Option<Child>,
+    remote: Option<phase_host::RemoteActor>,
     report: PathBuf,
     ready: PathBuf,
     log: PathBuf,
@@ -186,6 +189,19 @@ struct Actor {
 }
 impl Actor {
     fn spawn(path: &Path, job: Value) -> Self {
+        if let Some(remote) = phase_host::RemoteActor::spawn(path, &job) {
+            return Self {
+                child: None,
+                remote: Some(remote),
+                report: path.join("report.json"),
+                ready: path.join("ready.json"),
+                log: path.join("actor.log"),
+                spawned: Instant::now(),
+            };
+        }
+        Self::spawn_local(path, job)
+    }
+    fn spawn_local(path: &Path, job: Value) -> Self {
         fs::create_dir(path).unwrap();
         let job_path = path.join("job.json");
         support::write_new(&job_path, &job);
@@ -211,38 +227,52 @@ impl Actor {
             .spawn()
             .unwrap();
         Self {
-            child,
+            child: Some(child),
+            remote: None,
             report: path.join("report.json"),
             ready: path.join("ready.json"),
             log,
             spawned,
         }
     }
+    fn pid(&self) -> u32 {
+        match (&self.child, &self.remote) {
+            (Some(child), None) => child.id(),
+            (None, Some(remote)) => remote.pid,
+            _ => panic!("one actual actor process owner required"),
+        }
+    }
     fn finish(mut self, deadline: Instant) -> Value {
+        if let Some(remote) = self.remote.take() {
+            return remote.finish(deadline);
+        }
+        let child = self.child.as_mut().unwrap();
         let mut forced = false;
         let status = loop {
-            if let Some(status) = self.child.try_wait().unwrap() {
+            if let Some(status) = child.try_wait().unwrap() {
                 break status;
             }
             if Instant::now() >= deadline {
-                self.child.kill().unwrap();
+                child.kill().unwrap();
                 forced = true;
-                break self.child.wait().unwrap();
+                break child.wait().unwrap();
             }
             support::ready_sleep();
         };
         let retained = fs::read(&self.report)
             .ok()
             .and_then(|raw| serde_json::from_slice::<Value>(&raw).ok());
-        json!({"pid":self.child.id(),"spawn_to_reap_wall_ns":self.spawned.elapsed().as_nanos(),"exit_success":status.success(),"exit_status":status.to_string(),
+        json!({"pid":child.id(),"spawn_to_reap_wall_ns":self.spawned.elapsed().as_nanos(),"exit_success":status.success(),"exit_status":status.to_string(),
             "parent_forced_kill":forced,"report":retained,"log":self.log,"report_path":self.report})
     }
 }
 impl Drop for Actor {
     fn drop(&mut self) {
-        if self.child.try_wait().ok().flatten().is_none() {
-            let _ = self.child.kill();
-            let _ = self.child.wait();
+        if let Some(child) = &mut self.child {
+            if child.try_wait().ok().flatten().is_none() {
+                let _ = child.kill();
+                let _ = child.wait();
+            }
         }
     }
 }
@@ -750,6 +780,12 @@ fn multiprocess_actor_entry() {
     );
 }
 
+#[test]
+#[ignore = "only the declared fixed-Host phase launcher supplies this immutable job"]
+fn multiprocess_phase_owner_entry() {
+    phase_host::entry();
+}
+
 fn replay(node: &mut Node, packets: &[Packet]) {
     for packet in packets {
         let id = node.admit(packet, support::now()).unwrap();
@@ -901,7 +937,7 @@ fn phase(
     let sampling = samples.clone();
     let sample_domain = domain.clone();
     let sample_metrics = live_metrics.clone();
-    let pids: Vec<_> = actors.iter().map(|actor| actor.child.id()).collect();
+    let pids: Vec<_> = actors.iter().map(Actor::pid).collect();
     let sampler = thread::spawn(move || {
         while support::monotonic() < end {
             let observation_started_ns = support::monotonic().saturating_sub(epoch);
@@ -1352,17 +1388,17 @@ fn phase(
 
 #[test]
 fn arithmetic_campaign_profile_binding_preserves_raw_and_rejects_partial_actor_jobs() {
-    use support::WorkProfile::{ArithmeticFactsV1, RawR13};
+    use support::WorkProfile::{ArithmeticFactsV1, RawR14};
     let original = json!({"kind":"attack","mode":"from-zero","worker":0});
     let original_bytes = serde_json::to_vec(&original).unwrap();
     let mut raw = original.clone();
-    RawR13.bind_actor_job(&mut raw);
+    RawR14.bind_actor_job(&mut raw);
     assert_eq!(serde_json::to_vec(&raw).unwrap(), original_bytes);
-    assert_eq!(support::WorkProfile::from_actor_job(&raw), Ok(RawR13));
-    assert_eq!(RawR13.policy_observation(), support::policy_observation());
+    assert_eq!(support::WorkProfile::from_actor_job(&raw), Ok(RawR14));
+    assert_eq!(RawR14.policy_observation(), support::policy_observation());
     assert_eq!(
-        RawR13.policy_observation()["policy_id"],
-        "c110c3ccb1e229c3a85f4819b1e087fa819c865b50f8bd3ab78d3b8f45206cb2"
+        RawR14.policy_observation()["policy_id"],
+        "6d04725d8e7a84560baf69440b1becd79f47c9f1fb5e63b85f1447400c85d43f"
     );
     let mut opt_in = original;
     ArithmeticFactsV1.bind_actor_job(&mut opt_in);
@@ -1372,7 +1408,7 @@ fn arithmetic_campaign_profile_binding_preserves_raw_and_rejects_partial_actor_j
     );
     assert_eq!(
         opt_in["public_resource_policy"]["policy_id"],
-        "14ada27ef062b1e510b7d7ab470e83157e58e7752b8f27a754f64dac614146e3"
+        "c6d64d3f924ddc6b621e6a7faec04b4a835add3a90c8e3835a7718f77cf95825"
     );
     let mut malformed = Vec::new();
     for key in ["work_profile", "public_resource_policy"] {
@@ -1387,7 +1423,7 @@ fn arithmetic_campaign_profile_binding_preserves_raw_and_rejects_partial_actor_j
     unknown["work_profile"] = json!("raw-r13");
     malformed.push(unknown);
     let mut wrong_policy = opt_in.clone();
-    wrong_policy["public_resource_policy"] = RawR13.policy_observation();
+    wrong_policy["public_resource_policy"] = RawR14.policy_observation();
     malformed.push(wrong_policy);
     let mut wrong_bits = opt_in.clone();
     wrong_bits["public_resource_policy"]["ticket_bits"] = json!(7);
@@ -1405,14 +1441,14 @@ fn arithmetic_campaign_profile_binding_preserves_raw_and_rejects_partial_actor_j
 
 #[test]
 fn arithmetic_campaign_configuration_requires_the_original_measured_backend() {
-    use support::WorkProfile::{ArithmeticFactsV1, RawR13};
+    use support::WorkProfile::{ArithmeticFactsV1, RawR14};
     for backend in [
         StateBackendChoice::LegacyV2,
         StateBackendChoice::AuthenticatedV1,
     ] {
-        let raw = CampaignConfiguration::new(backend, RawR13).unwrap();
+        let raw = CampaignConfiguration::new(backend, RawR14).unwrap();
         assert_eq!(raw.state_backend.label(), backend.label());
-        assert_eq!(raw.work_profile, RawR13);
+        assert_eq!(raw.work_profile, RawR14);
     }
     assert!(matches!(
         CampaignConfiguration::new(StateBackendChoice::LegacyV2, ArithmeticFactsV1),
@@ -1426,7 +1462,7 @@ fn arithmetic_campaign_configuration_requires_the_original_measured_backend() {
 
 #[test]
 fn arithmetic_campaign_server_routing_does_not_change_cpu_capacity() {
-    let (raw, no_arithmetic) = campaign_server(support::WorkProfile::RawR13);
+    let (raw, no_arithmetic) = campaign_server(support::WorkProfile::RawR14);
     let (opt_in, arithmetic) = campaign_server(support::WorkProfile::ArithmeticFactsV1);
     assert!(no_arithmetic.is_none());
     assert!(raw.arithmetic_facts_software_bytes().is_none());
@@ -1454,7 +1490,7 @@ fn arithmetic_campaign_server_routing_does_not_change_cpu_capacity() {
 #[test]
 #[ignore = "explicit finite 3x30 second separate-process local campaign and producer cost; see retained report"]
 fn separate_process_work_and_signed_confirmation_campaign() {
-    run_campaign(support::WorkProfile::RawR13);
+    run_campaign(support::WorkProfile::RawR14);
 }
 
 #[test]
@@ -1670,7 +1706,7 @@ fn campaign(output: &Path, configuration: CampaignConfiguration) {
             mode.unwrap_or("baseline"),
             if mode.is_some() { ATTACKERS } else { 0 }
         );
-        let mut result=std::panic::catch_unwind(||phase(&output.join(mode.unwrap_or("baseline")),&settings,&seed,&business,mode,best,configuration))
+        let mut result=std::panic::catch_unwind(||phase_host::run(&output.join(mode.unwrap_or("baseline")),&settings,&seed,&business,mode,best,configuration))
             .unwrap_or_else(|error|{let message=error.downcast_ref::<String>().cloned().or_else(||error.downcast_ref::<&str>().map(|s|s.to_string())).unwrap_or_else(||"non-string panic".to_owned());
                 json!({"mode":mode.unwrap_or("baseline"),"state_backend":state_backend.label(),"startup_or_campaign_error":message,"all_signed_rounds_confirmed_in_window":false,"genuine_budget_depletion_observed":false})});
         if work_profile == support::WorkProfile::ArithmeticFactsV1
@@ -1757,7 +1793,7 @@ fn separate_process_root_rejection_and_signed_confirmation_supplement() {
     for mode in [None, Some("valid-work-root")] {
         let name = mode.unwrap_or("baseline");
         let configuration =
-            CampaignConfiguration::new(backend, support::WorkProfile::RawR13).unwrap();
+            CampaignConfiguration::new(backend, support::WorkProfile::RawR14).unwrap();
         let result = std::panic::catch_unwind(||phase(&output.join(name),&settings,&seed,&business,mode,0,configuration))
             .unwrap_or_else(|error|json!({"mode":name,"startup_or_campaign_error":error.downcast_ref::<String>()
                 .cloned().or_else(||error.downcast_ref::<&str>().map(|s|s.to_string())).unwrap_or_else(||"non-string panic".to_owned())}));

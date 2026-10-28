@@ -5,10 +5,13 @@ use std::time::Duration;
 fn snapshot(budget: &PaidMutationCpuBudget) -> Option<ServiceMutationCpuFlowObservation> {
     (!budget.unavailable)
         .then(|| {
-            budget
-                .flow
-                .as_ref()
-                .and_then(|flow| flow.snapshot(budget.credit_ns, budget.in_flight))
+            budget.flow.as_ref().and_then(|flow| {
+                flow.snapshot(
+                    budget.credit_ns,
+                    budget.in_flight,
+                    budget.termination_reserved_ns,
+                )
+            })
         })
         .flatten()
 }

@@ -2584,6 +2584,7 @@ dependencies = [
  "bincode",
  "hex",
  "risc0-zkvm",
+ "serde",
  "serde_json",
  "sha2",
  "trnm-w1-zk-methods",

@@ -505,6 +505,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-crypto-primitives/src/owned_ed25519.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/src/owned_ed25519.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -2738,6 +2745,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -2840,6 +2854,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-mvcc-fee/tests/pon_commitment.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-mvcc-fee/tests/pq_account_owner.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-mvcc-fee/tests/pq_account_owner.rs"
         )),
     ),
     (
@@ -3445,6 +3466,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/src/ingress/authenticated_recovery_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/ingress/authenticated_recovery_tests.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -3463,6 +3491,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/src/ingress/metered_work_facts.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tests.rs"
         )),
     ),
     (
@@ -3893,6 +3935,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/src/store/authenticated_pending_activation.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/authenticated_pending_activation.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/src/store/authenticated_replay_tests.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -3911,6 +3960,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/src/store/capacity_observation.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/store/detached_admission.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/detached_admission.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs"
         )),
     ),
     (
@@ -4173,6 +4236,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/src/store/pq_network.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/pq_network.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/src/store/public_reader.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -4184,6 +4254,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/src/store/public_reader_tests.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/store/reorg_cancellation.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/reorg_cancellation.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/store/reorg_cancellation/tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/reorg_cancellation/tests.rs"
         )),
     ),
     (
@@ -4289,6 +4373,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/tests/checkpoint_tile_operator.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/tests/cli_secret_canary.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/cli_secret_canary.rs"
         )),
     ),
     (
@@ -4513,6 +4604,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/tests/pool_mining.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/tests/pq_account_native.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/pq_account_native.rs"
         )),
     ),
     (
@@ -4751,6 +4849,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-protocol/src/pq_frame.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-protocol/src/pq_transaction.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-protocol/src/pq_transaction.rs"
         )),
     ),
     (

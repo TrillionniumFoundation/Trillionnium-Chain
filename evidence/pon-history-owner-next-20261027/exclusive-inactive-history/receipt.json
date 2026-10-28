@@ -1,0 +1,34 @@
+{
+  "schema": "history-exact-source-native-control-v1",
+  "argv": [
+    "/tmp/target-history-56818e4fba76/owner-next-d5a4652d3b-trnm-pon-node",
+    "store::native_authenticated_tests::native_inactive_page_parents_use_checked_material_without_early_activation",
+    "--exact",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "source_commit": "d5a4652d3b3fd3aa4015b747d865aae906933851",
+  "source_manifest_sha256": "911a2e3bc445d40fad3fdcf3d0f3f02a324e9ede6fd96734cf92d2c281299e50",
+  "binary_sha256": "0b3227680593caa2bc51fdc29a1abe8e78511a7efe704f445f6f5bfbad30434d",
+  "started_utc": "2026-10-28T00:09:00.434168+00:00",
+  "outer_observer_timeout_seconds": 90,
+  "exit_code": 0,
+  "elapsed_seconds": 2.5715091489983024,
+  "timed_out": false,
+  "stdout.txt": {
+    "bytes": 5678,
+    "sha256": "45469d6e0a6aa7505925d0398cc82f9deba1c57c8e09dd9ee543d947659440aa"
+  },
+  "stderr.txt": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "harness_results": [
+    {
+      "outcome": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    }
+  ]
+}

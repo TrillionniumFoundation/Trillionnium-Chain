@@ -897,6 +897,7 @@ dependencies = [
  "openssl",
  "sha2",
  "trnm-protocol",
+ "zeroize",
 ]
 
 [[package]]
@@ -947,6 +948,7 @@ version = "0.1.0"
 dependencies = [
  "borsh",
  "hex",
+ "openssl",
  "rusqlite",
  "serde",
  "serde_json",
@@ -986,6 +988,7 @@ dependencies = [
  "fs2",
  "hex",
  "libc",
+ "openssl",
  "rusqlite",
  "rustix",
  "serde",
@@ -999,6 +1002,7 @@ dependencies = [
  "trnm-protocol",
  "trnm-service-settlement",
  "trnm-transport",
+ "zeroize",
 ]
 
 [[package]]

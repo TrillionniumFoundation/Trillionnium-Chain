@@ -1,4 +1,6 @@
 //! Bounded native socket ingress. Development loopback only; not Sybil-safe public P2P.
+#[cfg(feature = "pq-native-openssl")]
+pub mod pq_network;
 use crate::{
     authenticated_payload_digest, authenticated_profile_digest, digest, ensure,
     store::{AuthenticatedReplayDecision, WorkCheckedPacket},
@@ -19,7 +21,7 @@ use std::{
     time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
 use trnm_crypto_primitives::{
-    public_key_hex, sign_hex, signing_key_from_hex, verify_hex_strict, verifying_key_from_hex,
+    owned_ed25519::OwnedEd25519Key, verify_hex_strict, verifying_key_from_hex,
 };
 use trnm_protocol::pon_wire::{hash, Hash};
 use trnm_transport::{
@@ -211,16 +213,16 @@ pub fn solve_admission_challenge(
 
 #[derive(Clone)]
 pub struct DevelopmentIdentity {
-    secret_hex: String,
+    signing_key: OwnedEd25519Key,
     public_hex: String,
 }
 impl DevelopmentIdentity {
     pub fn from_secret_hex(secret: &str) -> Result<Self> {
-        let key = signing_key_from_hex(secret).map_err(|e| Error::from(format!("AUTH_KEY:{e}")))?;
-        ensure(hex::encode(key.to_bytes()) == secret, "AUTH_KEY_CANONICAL")?;
+        let key = OwnedEd25519Key::from_canonical_hex(secret).map_err(Error::from)?;
+        let public_hex = key.public_key_hex();
         Ok(Self {
-            secret_hex: secret.to_owned(),
-            public_hex: public_key_hex(&key),
+            signing_key: key,
+            public_hex,
         })
     }
 
@@ -229,9 +231,7 @@ impl DevelopmentIdentity {
     }
 
     fn sign(&self, message: &[u8]) -> Result<String> {
-        let key = signing_key_from_hex(&self.secret_hex)
-            .map_err(|e| Error::from(format!("AUTH_KEY:{e}")))?;
-        Ok(sign_hex(&key, message))
+        Ok(self.signing_key.sign_hex(message))
     }
 }
 
@@ -546,6 +546,30 @@ fn signed_response(
         .identity
         .sign(&response_authority_digest(&response)?)?;
     Ok(serde_json::to_vec(&response)?)
+}
+
+fn begin_authenticated_dispatch(
+    owner: &mut Node,
+    request: &VerifiedAuthenticatedRequest,
+    progress: &mut dyn FnMut(u64) -> Result<()>,
+) -> Result<AuthenticatedReplayDecision> {
+    match owner.begin_authenticated_request(request.frame, &request.payload) {
+        Err(error) if error.is(ErrorCode::ReorgInProgress) => {
+            let Request::Submit { packet } = &request.request else {
+                return Err(error);
+            };
+            progress(0)?;
+            let packet = hex_packet(packet)?;
+            owner.begin_authenticated_pending_activation(
+                request.frame,
+                &request.payload,
+                &packet,
+                now()?,
+                &mut || progress(0),
+            )
+        }
+        result => result,
+    }
 }
 
 fn verify_authenticated_response(
@@ -1101,8 +1125,14 @@ fn lock_owner<'a>(
     }
 }
 
-fn submit_result(node: &mut Node, id: Hash, clock: u64) -> Result<Value> {
-    let active = node.activate_observed(id, clock)?;
+fn submit_result_with_progress(
+    node: &mut Node,
+    id: Hash,
+    clock: u64,
+    progress: &mut dyn FnMut() -> Result<()>,
+    termination_cpu: Option<&public_v3::ServiceMutationCpuCheckpoint>,
+) -> Result<Value> {
+    let active = node.activate_observed_with_termination(id, clock, progress, termination_cpu)?;
     Ok(json!({"block":hex::encode(id),"active":hex::encode(active),
         "generation":node.active()?.1,"physical_execution":false}))
 }
@@ -1163,6 +1193,7 @@ fn dispatch_shared_with_execution_progress(
         progress,
         verify,
         &trnm_mvcc_fee::pon_executor::ExecutionControl::new(execution_progress, &()),
+        None,
     )
 }
 fn dispatch_shared_with_execution_control(
@@ -1171,10 +1202,26 @@ fn dispatch_shared_with_execution_control(
     progress: &mut dyn FnMut(u64) -> Result<()>,
     verify: impl FnOnce(Packet) -> Result<WorkCheckedPacket>,
     control: &trnm_mvcc_fee::pon_executor::ExecutionControl<'_, Error>,
+    termination_cpu: Option<&public_v3::ServiceMutationCpuCheckpoint>,
 ) -> Result<Value> {
     dispatch_shared_with_execution_observation(
-        node, request, progress, verify, control, None, false,
+        node,
+        request,
+        progress,
+        verify,
+        control,
+        SubmitDispatchContext {
+            termination_cpu,
+            ..SubmitDispatchContext::default()
+        },
     )
+}
+
+#[derive(Default)]
+struct SubmitDispatchContext<'a> {
+    observation: Option<&'a public_v3::request_observation::TaskObservation>,
+    public_proof_before_unowned_task: bool,
+    termination_cpu: Option<&'a public_v3::ServiceMutationCpuCheckpoint>,
 }
 
 fn observe_submit_phase<T>(
@@ -1190,6 +1237,93 @@ fn observe_submit_phase<T>(
     result
 }
 
+/// Reuse the caller's original CPU operation, worker accounting and absolute
+/// cancellation control. There is no reservation/refill/account construction
+/// here. One bounded snapshot slot keeps M06 memory concurrency at one owner.
+fn admit_shared_checked<'a>(
+    node: &'a Mutex<Node>,
+    checked: WorkCheckedPacket,
+    permit: Option<crate::store::OwnerPacketPermit>,
+    progress: &mut dyn FnMut(u64) -> Result<()>,
+    control: &trnm_mvcc_fee::pon_executor::ExecutionControl<'_, Error>,
+    clock: impl Fn() -> Result<u64>,
+    observation: Option<&public_v3::request_observation::TaskObservation>,
+) -> Result<(MutexGuard<'a, Node>, Hash, u64)> {
+    use crate::store::{DetachedExecutionLease, PreparedSharedAdmission};
+    use public_v3::SubmitPhase;
+    use trnm_mvcc_fee::pon_executor::ExecutionProgress;
+    let wait_end = Instant::now() + Duration::from_secs(2);
+    let (mut owner, lease): (MutexGuard<'a, Node>, Option<DetachedExecutionLease>) =
+        observe_submit_phase(observation, SubmitPhase::AdmissionOwnerWait, || loop {
+            progress(0)?;
+            (control.progress)(ExecutionProgress::BeforeParentBinding)?;
+            let mut acquisition = |amount| {
+                progress(amount)?;
+                (control.progress)(ExecutionProgress::BeforeParentBinding)?;
+                ensure(Instant::now() < wait_end, "PUBLIC_QUEUE_BUSY")
+            };
+            let owner = lock_owner(node, &mut acquisition)?;
+            acquisition(0)?;
+            // Authorized non-ordinary modes keep their original verified path.
+            // They cannot manufacture an unsupported detached capability.
+            if !owner.detached_execution_supported() {
+                return Ok((owner, None));
+            }
+            match owner.reserve_detached_execution() {
+                Ok(lease) => return Ok((owner, Some(lease))),
+                Err(error) if error.is(ErrorCode::PublicQueueBusy) => {
+                    drop(owner);
+                    ensure(Instant::now() < wait_end, "PUBLIC_QUEUE_BUSY")?;
+                    thread::sleep(
+                        Duration::from_millis(2)
+                            .min(wait_end.saturating_duration_since(Instant::now())),
+                    );
+                }
+                Err(error) => return Err(error),
+            }
+        })?;
+    observe_submit_phase(observation, SubmitPhase::Admission, || {
+        let observed_now = clock()?;
+        let checked = owner.attach_owner_work(checked, permit)?;
+        let Some(lease) = lease else {
+            let id = owner.admit_work_checked_with_control(checked, observed_now, control)?;
+            return Ok((owner, id, observed_now));
+        };
+        match owner.prepare_shared_admission(checked, lease, observed_now, control)? {
+            PreparedSharedAdmission::Existing(id) => Ok((owner, id, observed_now)),
+            PreparedSharedAdmission::HeldForSnapshotCapacity {
+                checked,
+                observed_payload_bytes,
+            } => {
+                ensure(
+                    observed_payload_bytes > trnm_mvcc_fee::pon_commitment::MAX_CACHE_PAYLOAD_BYTES,
+                    "OWNER_DETACHED_EXECUTION_CONTEXT",
+                )?;
+                // This is the identical original checked M06 schedule, with
+                // its current checks and original CPU/deadline. It is not a
+                // Work-primitive fallback or an accepted arbitrary output.
+                let id = owner.admit_held_prepared(*checked, observed_now, control)?;
+                Ok((owner, id, observed_now))
+            }
+            PreparedSharedAdmission::Execute(prepared) => {
+                drop(owner);
+                let executed = prepared.execute(control)?;
+                // This wait is nested in the original Admission phase. It does
+                // not overwrite the earlier seven-slot wait measurement.
+                progress(0)?;
+                let mut reacquisition = |amount| {
+                    progress(amount)?;
+                    (control.progress)(ExecutionProgress::BeforeParentBinding)
+                };
+                let mut owner = lock_owner(node, &mut reacquisition)?;
+                let observed_now = clock()?;
+                let id = owner.commit_shared_admission(executed, observed_now, control)?;
+                Ok((owner, id, observed_now))
+            }
+        }
+    })
+}
+
 /// Optional seven-slot phase observations use the existing request owner. They
 /// never change a native result or mint credit; all old callers pass None.
 fn dispatch_shared_with_execution_observation(
@@ -1198,10 +1332,14 @@ fn dispatch_shared_with_execution_observation(
     progress: &mut dyn FnMut(u64) -> Result<()>,
     verify: impl FnOnce(Packet) -> Result<WorkCheckedPacket>,
     control: &trnm_mvcc_fee::pon_executor::ExecutionControl<'_, Error>,
-    observation: Option<&public_v3::request_observation::TaskObservation>,
-    public_proof_before_unowned_task: bool,
+    context: SubmitDispatchContext<'_>,
 ) -> Result<Value> {
     use public_v3::SubmitPhase;
+    let SubmitDispatchContext {
+        observation,
+        public_proof_before_unowned_task,
+        termination_cpu,
+    } = context;
     match request {
         Request::Submit { packet } => {
             let packet =
@@ -1249,9 +1387,17 @@ fn dispatch_shared_with_execution_observation(
                     })?;
                 if let Some((id, clock)) = existing {
                     return observe_submit_phase(observation, SubmitPhase::SubmitResult, || {
-                        let active =
-                            owner
-                                .activate_observed_with_progress(id, clock, &mut || progress(0))?;
+                        let active = owner.activate_observed_with_termination(
+                            id,
+                            clock,
+                            &mut || {
+                                progress(0)?;
+                                (control.progress)(
+                                    trnm_mvcc_fee::pon_executor::ExecutionProgress::BeforeOutput,
+                                )
+                            },
+                            termination_cpu,
+                        )?;
                         Ok(json!({"block":hex::encode(id),"active":hex::encode(active),
                             "generation":owner.active()?.1,"physical_execution":false}))
                     });
@@ -1262,18 +1408,28 @@ fn dispatch_shared_with_execution_observation(
             let checked = observe_submit_phase(observation, SubmitPhase::Work, || verify(packet))?;
             // Cancellation after work must not turn into a durable admission.
             progress(0)?;
-            let mut owner =
-                observe_submit_phase(observation, SubmitPhase::AdmissionOwnerWait, || {
-                    lock_owner(node, progress)
-                })?;
-            let (id, clock) = observe_submit_phase(observation, SubmitPhase::Admission, || {
-                let clock = now()?;
-                let checked = owner.attach_owner_work(checked, owner_permit)?;
-                let id = owner.admit_work_checked_with_control(checked, clock, control)?;
-                Ok((id, clock))
-            })?;
+            let (mut owner, id, clock) = admit_shared_checked(
+                node,
+                checked,
+                owner_permit,
+                progress,
+                control,
+                now,
+                observation,
+            )?;
             observe_submit_phase(observation, SubmitPhase::SubmitResult, || {
-                submit_result(&mut owner, id, clock)
+                submit_result_with_progress(
+                    &mut owner,
+                    id,
+                    clock,
+                    &mut || {
+                        progress(0)?;
+                        (control.progress)(
+                            trnm_mvcc_fee::pon_executor::ExecutionProgress::BeforeOutput,
+                        )
+                    },
+                    termination_cpu,
+                )
             })
         }
         other => {
@@ -1372,6 +1528,7 @@ fn serve_inner(
     authentication: Option<Arc<AuthenticatedServer>>,
     admission: Option<AdmissionPolicy>,
 ) -> Result<Metrics> {
+    node.require_classical_network_profile()?;
     let listener_address = listener.local_addr()?;
     if authentication.is_none() {
         ensure(
@@ -1558,8 +1715,13 @@ fn serve_inner(
                         }
                     };
                     let mut progress = |_: u64| -> Result<()> {
-                        ensure(!stop.load(Ordering::Acquire), "CANCELLED")?;
-                        ensure(Instant::now() < request_deadline, "REQUEST_DEADLINE")
+                        if stop.load(Ordering::Acquire) {
+                            return Err(Error::new(ErrorCode::LegacyRequestCancelled));
+                        }
+                        if Instant::now() >= request_deadline {
+                            return Err(Error::new(ErrorCode::LegacyRequestDeadline));
+                        }
+                        Ok(())
                     };
                     if let Some(authentication) = authentication.as_ref() {
                         let request = match authenticate_request(&bytes, &settings, authentication)
@@ -1621,7 +1783,7 @@ fn serve_inner(
                         };
                         let decision = {
                             let mut owner = lock_owner(&node, &mut progress)?;
-                            owner.begin_authenticated_request(request.frame, &request.payload)
+                            begin_authenticated_dispatch(&mut owner, &request, &mut progress)
                         };
                         let decision = match decision {
                             Ok(decision) => decision,
@@ -1699,6 +1861,25 @@ fn serve_inner(
                                 Ok(checked)
                             },
                         );
+                        if outcome
+                            .as_ref()
+                            .is_err_and(|error| error.kind() == crate::ErrorKind::Cancelled)
+                        {
+                            // Cancellation can leave a committed block or a
+                            // partial original reorg intent. Keep its exact
+                            // pending nonce: a new signed socket attempt may
+                            // resume it, but this request gets no new deadline
+                            // and no terminal ACK is fabricated after cancel.
+                            let retry = signed_response(authentication, &request, false, outcome)?;
+                            let mut counts = metrics
+                                .lock()
+                                .map_err(|_| Error::from("METRICS_POISONED"))?;
+                            counts.authenticated_requests += 1;
+                            counts.rejected_requests += 1;
+                            drop(counts);
+                            let _ = write_frame(&mut socket, &retry);
+                            continue;
+                        }
                         let succeeded = outcome.is_ok();
                         let terminal_reply =
                             signed_response(authentication, &request, true, outcome)?;
@@ -2511,6 +2692,10 @@ pub fn sync_from_authenticated_durable(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    mod authenticated_activation_recovery {
+        include!("ingress/authenticated_recovery_tests.rs");
+    }
 
     #[cfg(target_os = "linux")]
     #[test]
@@ -3754,8 +3939,10 @@ mod tests {
                     },
                     &(),
                 ),
-                None,
-                public_order,
+                SubmitDispatchContext {
+                    public_proof_before_unowned_task: public_order,
+                    ..SubmitDispatchContext::default()
+                },
             )
             .unwrap_err();
             assert_eq!(error.to_string(), "WORK:Transcript");
@@ -3779,8 +3966,10 @@ mod tests {
                 },
                 &(),
             ),
-            None,
-            true,
+            SubmitDispatchContext {
+                public_proof_before_unowned_task: true,
+                ..SubmitDispatchContext::default()
+            },
         )
         .unwrap();
         assert!(reads.load(Ordering::SeqCst) > 0);
@@ -3816,8 +4005,10 @@ mod tests {
                 Ok(checked)
             },
             &ExecutionControl::new(&|_| Ok(()), &()),
-            None,
-            true,
+            SubmitDispatchContext {
+                public_proof_before_unowned_task: true,
+                ..SubmitDispatchContext::default()
+            },
         )
         .unwrap_err();
         assert_eq!(error.to_string(), "ROOT");
@@ -3993,13 +4184,13 @@ mod tests {
     }
 
     #[test]
-    fn cancellation_set_at_durable_commit_boundary_preserves_submit_activation_and_reply() {
+    fn cancellation_after_admission_preserves_fact_and_exact_retry_controls_activation() {
         use trnm_mvcc_fee::pon_executor::ExecutionProgress;
         let (dir, node, packet) = pending_packet();
         let expected = packet.id().unwrap();
         let settings = node.lock().unwrap().settings().clone();
         let cancelled = AtomicBool::new(false);
-        let reply = dispatch_shared_with_execution_progress(
+        let result = dispatch_shared_with_execution_progress(
             &node,
             Request::Submit {
                 packet: hex::encode(packet.encode().unwrap()),
@@ -4025,8 +4216,27 @@ mod tests {
                 }
             },
         )
-        .unwrap();
+        .unwrap_err();
         assert!(cancelled.load(Ordering::Acquire));
+        assert!(result.is(ErrorCode::PublicRequestCancelled));
+        assert_eq!(
+            node.lock().unwrap().packet(expected).unwrap().id().unwrap(),
+            expected
+        );
+        assert_eq!(
+            node.lock().unwrap().read_active().unwrap().0,
+            settings.genesis()
+        );
+        // This is a new explicit retry, not an extension of the cancelled call.
+        let reply = dispatch_shared_with(
+            &node,
+            Request::Submit {
+                packet: hex::encode(packet.encode().unwrap()),
+            },
+            &mut |_| Ok(()),
+            |_| panic!("exact committed retry repeated W1"),
+        )
+        .unwrap();
         assert_eq!(reply["block"], hex::encode(expected));
         let after = node.lock().unwrap().read_active().unwrap();
         assert_eq!(after.0, expected);

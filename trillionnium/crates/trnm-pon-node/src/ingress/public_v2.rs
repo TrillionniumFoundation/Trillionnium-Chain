@@ -691,6 +691,7 @@ pub fn serve_public_protected_v2(
     stop: Arc<AtomicBool>,
     server: PublicServer,
 ) -> Result<PublicMetrics> {
+    node.require_classical_network_profile()?;
     ensure(
         lifetime > Duration::ZERO && lifetime <= Duration::from_secs(3600),
         "PUBLIC_LIFETIME",
@@ -719,6 +720,7 @@ fn serve_public_protected_v2_with_owner(
     server: PublicServer,
     metrics: Arc<Mutex<PublicMetrics>>,
 ) -> Result<PublicMetrics> {
+    lock_owner(&node, &mut |_| Ok(()))?.require_classical_network_profile()?;
     ensure(
         lifetime > Duration::ZERO && lifetime <= Duration::from_secs(3600),
         "PUBLIC_LIFETIME",

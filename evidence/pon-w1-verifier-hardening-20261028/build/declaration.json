@@ -1,0 +1,32 @@
+{
+  "schema": "TRNM-W1-STAGE-MEASUREMENT1",
+  "command": [
+    "/usr/bin/env",
+    "PATH=/tmp/pure-pon-toolchain-20261027/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+    "CARGO_HOME=/tmp/pure-pon-cargo-20261027",
+    "CARGO_TARGET_DIR=/tmp/trnm-w1-r2-target",
+    "CARGO_BUILD_JOBS=1",
+    "CARGO_INCREMENTAL=0",
+    "cargo",
+    "build",
+    "--locked",
+    "--offline",
+    "--release",
+    "--manifest-path",
+    "/tmp/w1-hardened-verifier-20261028/Cargo.toml"
+  ],
+  "cwd": "/workspace/scratch/56818e4fba76/chain-w1-next",
+  "wall_limit_seconds": 600.0,
+  "termination_grace_seconds": 5,
+  "started_unix_ns": 1793148891635488836,
+  "environment": {
+    "RAYON_NUM_THREADS": null,
+    "RUST_LOG": null,
+    "RISC0_HOME": null
+  },
+  "resource_scope": "wait4 direct child including descendants it has reaped; killed-stage CPU can be a lower bound; maxrss is largest single process, not summed peak",
+  "shared_cgroup": {
+    "cpu.max": "800000 100000",
+    "memory.max": "8589934592"
+  }
+}

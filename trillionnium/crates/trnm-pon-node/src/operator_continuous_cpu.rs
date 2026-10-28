@@ -35,8 +35,25 @@ impl ContinuousCheckpoint {
     pub(crate) fn checkpoint(&self) -> crate::Result<()> {
         self.cpu.checkpoint()?;
         self.allowance
-            .checkpoint(self.cpu.actual_live_paid_cpu_ns()?)
+            .checkpoint(self.cpu.actual_live_cpu_and_termination_headroom_ns()?)
             .map_err(|_| crate::Error::from("OWNER_CONTINUOUS_CPU_BUDGET"))
+    }
+
+    /// Same already claimed durable operation; this handle creates no account
+    /// or permit. Its original four ceilings also reserve cleanup headroom.
+    pub(crate) fn reorg_termination_checkpoint(
+        &self,
+    ) -> crate::Result<ServiceMutationCpuCheckpoint> {
+        self.checkpoint()?;
+        let with_headroom = self
+            .cpu
+            .actual_live_paid_cpu_ns()?
+            .checked_add(crate::ingress::public_v3::scalar_cpu::REORG_TERMINATION_RESERVE_NS)
+            .ok_or("PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+        self.allowance
+            .checkpoint(with_headroom)
+            .map_err(|_| crate::Error::from("OWNER_CONTINUOUS_CPU_BUDGET"))?;
+        Ok(self.cpu.clone())
     }
 }
 pub(crate) struct DurableSettlement {

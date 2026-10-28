@@ -102,6 +102,8 @@ error_codes! {
     PublicEof => ("PUBLIC_EOF", Transport),
     PublicClientDeadline => ("PUBLIC_CLIENT_DEADLINE", Cancelled),
     PeerPollCancelled => ("PEER_POLL_CANCELLED", Cancelled),
+    LegacyRequestCancelled => ("CANCELLED", Cancelled),
+    LegacyRequestDeadline => ("REQUEST_DEADLINE", Cancelled),
     PublicRequestCancelled => ("PUBLIC_REQUEST_CANCELLED", Cancelled),
     PublicRequestDeadline => ("PUBLIC_REQUEST_DEADLINE", Cancelled),
     SubmitRecoveryDeadline => ("SUBMIT_RECOVERY_DEADLINE", Cancelled),
@@ -110,11 +112,17 @@ error_codes! {
     PublicSpentCapacity => ("PUBLIC_SPENT_CAPACITY", Capacity),
     PublicBufferCapacity => ("PUBLIC_BUFFER_CAPACITY", Capacity),
     PublicQueueBusy => ("PUBLIC_QUEUE_BUSY", Capacity),
+    PublicExecutionSnapshotCapacity => ("PUBLIC_EXECUTION_SNAPSHOT_CAPACITY", Capacity),
+    OwnerDetachedExecutionContext => ("OWNER_DETACHED_EXECUTION_CONTEXT", LocalStructure),
+    OwnerDetachedExecutionUnsupported => ("OWNER_DETACHED_EXECUTION_UNSUPPORTED", DependencyUnavailable),
     // Local service/Node budget binding, never invalid consensus Work.
     OwnerPublicServiceCpuDomain => ("OWNER_PUBLIC_SERVICE_CPU_DOMAIN", PolicyRefusal),
     OwnerPublicServiceDomainUnbound => ("OWNER_PUBLIC_SERVICE_DOMAIN_UNBOUND", DependencyUnavailable),
+    OwnerReorgTerminationCpuRequired => ("OWNER_REORG_TERMINATION_CPU_REQUIRED", DependencyUnavailable),
+    ReorgLifecycle => ("REORG_LIFECYCLE", LocalStructure),
     OwnerPublicServiceUncleanEpoch => ("OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH", DependencyUnavailable),
     OwnerContinuousHistoryDurableRequired => ("OWNER_CONTINUOUS_HISTORY_DURABLE_REQUIRED", DependencyUnavailable),
+    OwnerContinuousCpuBudget => ("OWNER_CONTINUOUS_CPU_BUDGET", Capacity),
     OwnerPublicServiceEpochCorrupt => ("OWNER_PUBLIC_SERVICE_EPOCH_CORRUPT", LocalStructure),
     PublicListenerDomainCapacity => ("PUBLIC_LISTENER_DOMAIN_CAPACITY", Capacity),
     PublicHostProcessCapacity => ("PUBLIC_HOST_PROCESS_CAPACITY", Capacity),
@@ -232,7 +240,9 @@ impl Error {
                         | ErrorCode::PublicMutationCpuUnavailable
                         | ErrorCode::OwnerPublicServiceCpuDomain
                         | ErrorCode::OwnerPublicServiceDomainUnbound
+                        | ErrorCode::OwnerReorgTerminationCpuRequired
                         | ErrorCode::OwnerPublicServiceUncleanEpoch
+                        | ErrorCode::OwnerDetachedExecutionUnsupported
                         | ErrorCode::OwnerContinuousHistoryDurableRequired
                 )
             )
@@ -403,6 +413,24 @@ mod tests {
     use std::error::Error as _;
 
     #[test]
+    fn legacy_request_controls_keep_original_wire_and_typed_local_cancellation() {
+        for (code, wire) in [
+            (ErrorCode::LegacyRequestCancelled, "CANCELLED"),
+            (ErrorCode::LegacyRequestDeadline, "REQUEST_DEADLINE"),
+        ] {
+            let local = Error::new(code);
+            assert_eq!(local.to_string(), wire);
+            assert_eq!(local.kind(), ErrorKind::Cancelled);
+            assert!(!local.requires_owner_stop());
+            assert!(Error::from(wire).is(code));
+            let remote = Error::remote(wire);
+            assert_eq!(remote.kind(), ErrorKind::RemoteRefusal);
+            assert_eq!(remote.code(), None);
+            assert!(!remote.is(code));
+        }
+    }
+
+    #[test]
     fn continuous_history_without_a_durable_claim_is_a_local_owner_stop() {
         let message = "OWNER_CONTINUOUS_HISTORY_DURABLE_REQUIRED";
         let local = Error::from(message);
@@ -437,6 +465,7 @@ mod tests {
             ErrorCode::PublicMutationCpuUnavailable,
             ErrorCode::OwnerPublicServiceCpuDomain,
             ErrorCode::OwnerPublicServiceDomainUnbound,
+            ErrorCode::OwnerReorgTerminationCpuRequired,
             ErrorCode::OwnerPublicServiceUncleanEpoch,
         ] {
             let local = Error::new(code);

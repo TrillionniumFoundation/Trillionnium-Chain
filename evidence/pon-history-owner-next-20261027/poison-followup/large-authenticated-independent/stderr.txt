@@ -1,0 +1,4 @@
+
+thread 'store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator' (728178) panicked at crates/trnm-pon-node/src/store/detached_admission/tests.rs:561:31:
+called `Result::unwrap()` on an `Err` value: Error { code: Some(PublicMutationCpuBudget), kind: Capacity, message: "PUBLIC_MUTATION_CPU_BUDGET", source: None, request_history_budget: false }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace

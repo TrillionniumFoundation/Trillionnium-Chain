@@ -118,17 +118,50 @@ impl PqNativeVerifier {
         expected: &PqFrameExpectation<'_>,
     ) -> Result<PqSignatureObservation<'a>, PqNativeError> {
         let unverified = preflight_unverified_with_spki(frame, expected, &self.spki)?;
-        let mut verifier = Verifier::new_without_digest(&self.key)?;
-        if !verifier.verify_oneshot(
-            unverified.unverified_signature(),
+        self.verify_exact_message(
             unverified.unsigned_statement(),
-        )? {
-            return Err(PqNativeError::SignatureRejected);
-        }
+            unverified.unverified_signature(),
+        )?;
         Ok(PqSignatureObservation {
             frame,
             signer_key_id: self.key_id,
         })
+    }
+
+    /// Actual same-provider ML-DSA verification for the existing PQG1 migration
+    /// domain, whose historical wire signs a complete domain-separated message
+    /// directly. The caller must construct that exact expected message from
+    /// independently pinned source/account state; no account authority is minted.
+    pub fn verify_exact_message<'a>(
+        &self,
+        message: &'a [u8],
+        signature: &[u8],
+    ) -> Result<PqMessageObservation<'a>, PqNativeError> {
+        if message.len() > 65536 || signature.len() != ML_DSA_65_SIGNATURE_BYTES {
+            return Err(PqNativeError::SignatureRejected);
+        }
+        let mut verifier = Verifier::new_without_digest(&self.key)?;
+        if !verifier.verify_oneshot(signature, message)? {
+            return Err(PqNativeError::SignatureRejected);
+        }
+        Ok(PqMessageObservation {
+            message,
+            signer_key_id: self.key_id,
+        })
+    }
+}
+
+/// Opaque cryptographic observation only, never a source/migration permission.
+pub struct PqMessageObservation<'a> {
+    message: &'a [u8],
+    signer_key_id: [u8; 32],
+}
+impl<'a> PqMessageObservation<'a> {
+    pub fn authenticated_message(&self) -> &'a [u8] {
+        self.message
+    }
+    pub fn signer_key_id(&self) -> &[u8; 32] {
+        &self.signer_key_id
     }
 }
 
@@ -141,6 +174,15 @@ pub struct PqNativeSigningKey {
 }
 
 impl PqNativeSigningKey {
+    /// Public identity only; the private EVP key is never exported.
+    pub fn public_key_id(&self) -> [u8; 32] {
+        self.verifier.key_id
+    }
+
+    pub fn public_spki(&self) -> &[u8; ML_DSA_65_SPKI_BYTES] {
+        &self.verifier.spki
+    }
+
     pub fn from_owned_key(
         key: PKey<Private>,
         expected_key_id: [u8; 32],

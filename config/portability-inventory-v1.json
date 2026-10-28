@@ -202,7 +202,7 @@
       "package": "trnm-pon-node",
       "module": "M15",
       "path": "trillionnium/crates/trnm-pon-node",
-      "role": "Native development composition with a single branch/replay/outbox SQLite owner, explicit maintenance choice, bounded public entrypoints, typed local error identity, checked history projections and explicit revision16 model/task-window CLI context binding; not a publicly qualified deployment.",
+      "role": "Native development composition with a single branch/replay/outbox SQLite owner, explicit maintenance choice, bounded public entrypoints, typed local error identity, checked history projections, explicit revision16 model/task-window CLI context binding, and optional fresh PQ transport-only ownership; account/task/install authorization is not PQ-migrated and no publicly qualified deployment is claimed.",
       "consensus_authority": false,
       "production_activation": false
     }

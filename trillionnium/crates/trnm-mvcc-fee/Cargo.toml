@@ -15,6 +15,7 @@ consensus_authority = false
 
 [features]
 default = []
+pq-native-openssl = ["trnm-crypto-primitives/pq-native-openssl", "dep:openssl"]
 
 [dependencies]
 trnm-verification-profiles = { version = "=0.1.0", path = "../trnm-verification-profiles" }
@@ -26,6 +27,7 @@ hex = "0.4"
 borsh = { version = "1", features = ["derive"] }
 rusqlite = { version = "0.32", features = ["bundled"] }
 sha2 = "0.10"
+openssl = { version = "=0.10.81", optional = true }
 
 [dev-dependencies]
 serde_json = "1"

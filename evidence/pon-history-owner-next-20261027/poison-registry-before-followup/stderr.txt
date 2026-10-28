@@ -1,0 +1,7 @@
+
+thread '<unnamed>' (8) panicked at crates/trnm-pon-node/src/ingress/public_v3.rs:4650:13:
+controlled request registry poison
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'ingress::public_v3::tests::live_cpu_poisoned_request_registry_disables_global_starts_without_deadlock' (7) panicked at crates/trnm-pon-node/src/ingress/public_v3.rs:4664:18:
+called `Result::unwrap_err()` on an `Ok` value: ()
