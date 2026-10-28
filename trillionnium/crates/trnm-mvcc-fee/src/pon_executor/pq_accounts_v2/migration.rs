@@ -227,11 +227,7 @@ impl TrustedPqPrecommitments {
                     )?;
                 }
                 let mut translated = value.clone();
-                translated["deadline"] = json!(if deadline > material.header.height {
-                    deadline - material.header.height
-                } else {
-                    0
-                });
+                translated["deadline"] = json!(deadline.saturating_sub(material.header.height));
                 projection.insert(name.clone(), translated.clone());
                 for id in BTreeSet::from([owner, provider]) {
                     needed.insert(id);

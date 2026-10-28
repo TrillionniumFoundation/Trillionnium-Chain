@@ -1,0 +1,24 @@
+   Compiling trnm-mvcc-fee v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-mvcc-fee)
+    Finished `test` profile [unoptimized] target(s) in 26.16s
+     Running tests/pq3_quota_authority.rs (/home/runner/work/_temp/native-pq3-target/debug/deps/pq3_quota_authority-f05b3091c1dbfdd9)
+
+running 6 tests
+test actual_dual_pq_quota_conserves_escrow_fee_nonce_and_consumer_identity ... ok
+test both_real_proofs_current_state_consumer_and_nonconsuming_rejections_are_required ... ok
+test consumer_and_provider_rotations_are_exclusive_in_both_block_orders ... ok
+test full_dual_proof_capacity_allows_71_and_refuses_72_without_mutation ... ok
+test trusted_quota_profile_claim_redecodes_under_exact_config_and_consumes_once ... ok
+test v2_cannot_opt_into_quota_and_v3_context_cannot_be_relabelled ... ok
+
+successes:
+
+successes:
+    actual_dual_pq_quota_conserves_escrow_fee_nonce_and_consumer_identity
+    both_real_proofs_current_state_consumer_and_nonconsuming_rejections_are_required
+    consumer_and_provider_rotations_are_exclusive_in_both_block_orders
+    full_dual_proof_capacity_allows_71_and_refuses_72_without_mutation
+    trusted_quota_profile_claim_redecodes_under_exact_config_and_consumes_once
+    v2_cannot_opt_into_quota_and_v3_context_cannot_be_relabelled
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.48s
+

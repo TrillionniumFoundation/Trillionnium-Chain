@@ -4768,3 +4768,17 @@ and exact-head workflow must record actual execution, including failures.
 Remaining tags 6–9/12–24, independent migration/retirement, custody, transport,
 History and Hepta Final-use authority remain open. P1/whole-chain PQ and production
 activation remain false.
+
+The first exact published NPQ3 tree then ran in actual hosted CI on
+`809b012a92e319f1932c2e15852e9ebfc12fdddc` (tree `351f941cd4b9266eaea752d5d8121e037b8f9be4`).
+Its six new M06 cases and four new Node cases passed with nineteen actual
+complete-W1/reference/admit/SQL phases, alongside the retained NPQ2 capacity 2,
+NPQ2 Node 9 and NPQ1 Node 6 cases. The independent NPQ2 workflow also passed
+its original runtime targets. Both complete workflows nevertheless **failed**
+at strict Clippy's manual saturating-subtraction check in migration projection.
+The [original failures and exact runtime observations](../../evidence/pon-pq-quota-v3-ci-20261028/README.md)
+are retained. A separate successor expresses the same unsigned deadline
+translation with `saturating_sub`, preserving every preceding validation,
+signature domain, test, lint policy and command budget. It requires new actual
+CI; the earlier runtime pass does not certify the repaired source. Full P1,
+independent retirement, other authority owners and activation remain open.
