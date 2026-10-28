@@ -4620,3 +4620,92 @@ on the retained frozen helper source; the new segmented Rust host build, strict
 Clippy, real segment proofs, final receipt, hostile inputs and propagation
 measurement are **NOT_RUN**. The pinned upstream numerical soundness report
 remains a conditional model, not a proof verifier or whole-chain PQ guarantee.
+
+### P0 complete W1 — bounded loopback cost component, no new proving attempt (2026-10-27)
+
+The [separate loopback helper](../../trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/LOOPBACK_COST.md)
+is based on source `5d957878ea82b09b555c713976f5157fde1089a0` and preserves
+guest, input, receipt reuse and segmented scheduler semantics. Its public CLI must actually
+run the original Rust host verifier before sending and after fresh receiver
+materialization; supplied success JSON, fsync and byte-transfer success cannot
+replace either verification. It offers no skip or synthetic public mode.
+
+Two fixed private processes use IPv4 loopback, a single 30-second deadline,
+128 MiB payload bound, and separate 128 MiB measured RSS/address-space caps.
+Both use the existing exact-child wait4 owner. Stream SHA/length/EOF, no-replace
+publication and file/directory fsync are checked. The two native verification
+phases have separate 900-second/8 GiB caps and costs. Application bytes, closed
+child CPU/RSS and a single parent CPU interval are retained; no WAN, TCP/IP,
+whole-tree RSS, public ingress, work hardness or PQ qualification is asserted.
+
+[Original control evidence](../../evidence/pon-w1-loopback-controls-20261027/README.md)
+retains the initial 5-pass/9-error sandbox EPERM result and two subsequent
+fourteen-control passes, including the final source. Those are explicitly
+synthetic byte/process controls, not real proof results. No new proof, model
+training, native verification positive control or workflow activation occurred.
+The actual complete-receipt propagation exit remains **OPEN**. Before one
+successor is published, the original proof run must be terminal and its exact
+receipt reuse or separately reviewed same-session segment recovery must be
+bound; this component must not cause a new proof from the beginning.
+
+### P0 complete W1 — fixed same-session continuation, original failure retained (2026-10-27)
+
+Run `40511022475`, source `5d957878ea82b09b555c713976f5157fde1089a0`,
+actually finished only 26 of 62 segment proofs before its 3,500-second work
+stop. Its complete original artifact and 315 member hashes are retained in
+[the continuation evidence](../../evidence/pon-w1-session-continuation-20261027/README.md).
+Outer wall was 3,500.259693808 seconds; actual user/system CPU was
+13,885.722470/7.647299 seconds. No complete receipt, full verification or
+hostile-proof audit existed in that failed attempt.
+
+The [explicit successor](../../trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/CONTINUATION.md)
+keeps the original full guest, mathematical semantics, native verifier, source
+pins and no-added-PoW profile. Two fixed shards own missing indexes 26–43 and
+44–61 under independent original-size budgets. Fresh full executions must
+reproduce every original exported segment and claim. Only native strict
+62-segment assembly followed by actual full verification and 17 hostile-proof
+cases can close the proof exit. Original failed costs remain spent and count
+once; missing costs stay unknown. Actual loopback follows successful proof
+acceptance and grants no WAN or public ingress qualification.
+
+Four static-review findings are repaired: dangling-policy downgrade, late
+zero-exit stage acceptance, incomplete report source equality and unbounded
+artifact traversal. The corrected actual local run passed 36 controls,
+including two real owned-child wait4 controls. At this source freeze fresh
+SDK export, both proof continuations, complete receipt, full hostile-proof
+costs and real-receipt loopback are **NOT_RUN**. The P0 whole-proof/propagation
+exit and every whole-chain PQ or production-activation exit remain **OPEN**.
+
+### P0 continuation report — exact phase provenance and actual local controls (2026-10-27)
+
+The independent follow-up reproduced seven report-reader substitutions: assembly
+or soundness from another source, relaxed phase ceilings, and a stale assembly
+source/run/attempt. The reader now binds every such identity and retains its
+positive control. Bake and both invalid-input preparation logs also require
+actual successful source-bound phases. The final complete Python backend suite
+ran 78 tests, all passed; 37 are continuation controls and 14 are synthetic
+loopback byte/process controls, not additional independent totals. All original
+failed controls and the historical 26/62-segment failed proof are retained.
+The new heavy continuation, complete receipt and real-proof propagation have
+not executed locally, and GitHub publication has not been confirmed.
+
+### P0 complete W1 — original trace recovery after actual rerun failure (2026-10-27)
+
+The later actual [run 40606062524](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40606062524)
+on published draft #519/source `8a99968115d76069dc4cc49607929f42d183ad1b`
+completed guest builds, full executions, late-input checks and exact full
+source guards. Both shards failed before proving because all 62 fresh
+serialized segments differed. The [retained raw failure and pinned upstream
+source](../../evidence/pon-w1-original-trace-repair-20261027/README.md) identify
+128-bit guest-start memory entropy. Matching a complete claim cannot authorize
+mixing different intermediate trace states.
+
+Policy/attempt v2 now byte-checks the entire original archived session and
+proves missing segments directly from those original bytes. Fresh full
+execution remains an independent relation cross-check and cannot supply proof
+segments. The historical strict-rerun diagnostic and all its tests remain;
+eight added controls bring the continuation suite to 45 actual local passes.
+Original Rust assembly/verifier, source pins and budgets remain fixed. The
+corrected heavy run, complete receipt, hostile-proof costs and real-receipt
+propagation remain NOT_RUN at this source freeze; both actual failed attempts
+remain failures with costs spent.

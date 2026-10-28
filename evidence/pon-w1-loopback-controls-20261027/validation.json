@@ -1,0 +1,209 @@
+{
+  "schema": "pon-w1-loopback-component-validation-v1",
+  "source_base": "5d957878ea82b09b555c713976f5157fde1089a0",
+  "final_helper_sources": {
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/_loopback_tcp.py": "61da1485a609a7df932af587a0e2f6a6a55beea9fc24b12244316d4af40e5476",
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/measure_loopback.py": "a9df36e429f9223e5fc9806851c4932a827cd1fbfd1df8395a5735cd3bb00207",
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_measure_loopback.py": "8a519d78b22b05495ae3146c4ecaf48ee082c6c60d37ace4b512feca3147cd62"
+  },
+  "observations": {
+    "001": {
+      "tests": 14,
+      "passed": 5,
+      "errors": 9,
+      "exit_code": 1,
+      "cause": "restricted shell socket creation EPERM; raw failure retained"
+    },
+    "002": {
+      "tests": 14,
+      "passed": 14,
+      "exit_code": 0,
+      "scope": "approved IPv4 loopback synthetic controls"
+    },
+    "003": {
+      "tests": 14,
+      "passed": 14,
+      "exit_code": 0,
+      "scope": "final source; synthetic byte/process controls only"
+    }
+  },
+  "final_synthetic_transport": {
+    "application_framing_bytes": 160,
+    "application_payload_bytes": 2097152,
+    "consensus_authority": false,
+    "cryptographic_proof_verified": false,
+    "deadline_ns": 25255717006695,
+    "observed_wall_ns": 372890599,
+    "outcome": "complete",
+    "parent_observer_cpu_ns": 20443322,
+    "parent_observer_cpu_scope": "one parent process CPU interval; per-role observer intervals overlap",
+    "public_ingress_qualified": false,
+    "ready": {
+      "address": [
+        "127.0.0.1",
+        35939
+      ],
+      "nonce_sha256": "748dcbc931a48d9daa4744e20aee77506f7f0533b61b4e03dbc3040c79e6873c",
+      "pid": 313582,
+      "schema": "pon-w1-loopback-ready-v1"
+    },
+    "received": {
+      "bytes": 2097152,
+      "device": 27,
+      "inode": 53214,
+      "mtime_ns": 1793112163836411058,
+      "sha256": "91d3beb88a9b2f778a6c44a1c53b63d3c79931845a9aef84b3fb414610bd1938"
+    },
+    "resource_qualification": false,
+    "roles": {
+      "receiver": {
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-I",
+          "-c",
+          "import sys;sys.path.insert(0,sys.argv.pop(1));from _loopback_tcp import worker;worker()",
+          "/workspace/scratch/301262829a43/pon-hepta-impl/w1-loopback-cost-5d9578/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0",
+          "/workspace/scratch/301262829a43/pon-hepta-impl/w1-loopback-controls-003/raw/test_two_real_processes_stream_and_close_with_measured_rss/transfer/receiver-config.json"
+        ],
+        "process": {
+          "budget": {
+            "rss_bytes": 134217728,
+            "wall_seconds": 29.98961848
+          },
+          "child_cpu_ns": 163834000,
+          "child_spawned": true,
+          "cleanup_method": "wait4",
+          "cpu_scope": "Exact owned-child Linux wait4 user-plus-system CPU; includes inherited waited-descendant accounting",
+          "exit_code": 0,
+          "memory_scope": "sampled_peak_rss_bytes is direct-child 50ms RSS; waited_child_peak_rss_bytes is exact owned-child Linux wait4 ru_maxrss in KiB times 1024, a maximum single-process high-water with inherited waited-descendant accounting; neither is simultaneous process-tree RSS",
+          "observed_wall_ns": 355824003,
+          "observer_cpu_ns": 12312407,
+          "outcome": "success",
+          "owned_child_echild_observed": false,
+          "owned_child_exit_observed": true,
+          "owned_child_reap_resolved": true,
+          "rss_observation_gaps": [],
+          "sample_interval_ms": 50,
+          "sampled_peak_rss_bytes": 12505088,
+          "stop_reason": null,
+          "terminal_reconciliation_profile": "linux-held-pidfd-irreversible-exit-v1",
+          "waited_child_observation_error": null,
+          "waited_child_peak_rss_bytes": 22155264,
+          "waited_child_reaped": true
+        },
+        "worker": {
+          "ack_bytes_sent": 80,
+          "address_space_limit_bytes": 134217728,
+          "consensus_authority": false,
+          "cryptographic_proof_verified": false,
+          "directory_fsync_completed": true,
+          "file_fsync_completed": true,
+          "header_bytes_received": 80,
+          "local": [
+            "127.0.0.1",
+            35939
+          ],
+          "nonce_sha256": "748dcbc931a48d9daa4744e20aee77506f7f0533b61b4e03dbc3040c79e6873c",
+          "observed_wall_ns": 159710729,
+          "outcome": "complete",
+          "payload_bytes_received": 2097152,
+          "payload_sha256": "91d3beb88a9b2f778a6c44a1c53b63d3c79931845a9aef84b3fb414610bd1938",
+          "peer": [
+            "127.0.0.1",
+            48044
+          ],
+          "pid": 313582,
+          "public_ingress_qualified": false,
+          "resource_qualification": false,
+          "role": "receiver",
+          "schema": "pon-w1-loopback-worker-observation-v1",
+          "tcp_ip_bytes_measured": false
+        }
+      },
+      "sender": {
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-I",
+          "-c",
+          "import sys;sys.path.insert(0,sys.argv.pop(1));from _loopback_tcp import worker;worker()",
+          "/workspace/scratch/301262829a43/pon-hepta-impl/w1-loopback-cost-5d9578/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0",
+          "/workspace/scratch/301262829a43/pon-hepta-impl/w1-loopback-controls-003/raw/test_two_real_processes_stream_and_close_with_measured_rss/transfer/sender-config.json"
+        ],
+        "process": {
+          "budget": {
+            "rss_bytes": 134217728,
+            "wall_seconds": 29.820573589
+          },
+          "child_cpu_ns": 121954000,
+          "child_spawned": true,
+          "cleanup_method": "wait4",
+          "cpu_scope": "Exact owned-child Linux wait4 user-plus-system CPU; includes inherited waited-descendant accounting",
+          "exit_code": 0,
+          "memory_scope": "sampled_peak_rss_bytes is direct-child 50ms RSS; waited_child_peak_rss_bytes is exact owned-child Linux wait4 ru_maxrss in KiB times 1024, a maximum single-process high-water with inherited waited-descendant accounting; neither is simultaneous process-tree RSS",
+          "observed_wall_ns": 152918890,
+          "observer_cpu_ns": 3487877,
+          "outcome": "success",
+          "owned_child_echild_observed": false,
+          "owned_child_exit_observed": true,
+          "owned_child_reap_resolved": true,
+          "rss_observation_gaps": [],
+          "sample_interval_ms": 50,
+          "sampled_peak_rss_bytes": 13123584,
+          "stop_reason": null,
+          "terminal_reconciliation_profile": "linux-held-pidfd-irreversible-exit-v1",
+          "waited_child_observation_error": null,
+          "waited_child_peak_rss_bytes": 22155264,
+          "waited_child_reaped": true
+        },
+        "worker": {
+          "ack_bytes_received": 80,
+          "address_space_limit_bytes": 134217728,
+          "consensus_authority": false,
+          "cryptographic_proof_verified": false,
+          "header_bytes_sent": 80,
+          "local": [
+            "127.0.0.1",
+            48044
+          ],
+          "nonce_sha256": "748dcbc931a48d9daa4744e20aee77506f7f0533b61b4e03dbc3040c79e6873c",
+          "observed_wall_ns": 39326783,
+          "outcome": "complete",
+          "partial_send_unknown": false,
+          "payload_bytes_sendall_completed": 2097152,
+          "peer": [
+            "127.0.0.1",
+            35939
+          ],
+          "pid": 313591,
+          "public_ingress_qualified": false,
+          "resource_qualification": false,
+          "role": "sender",
+          "schema": "pon-w1-loopback-worker-observation-v1",
+          "tcp_ip_bytes_measured": false
+        }
+      }
+    },
+    "rss_cap_per_role_bytes": 134217728,
+    "schema": "pon-w1-loopback-transport-v1",
+    "tcp_ip_bytes_measured": false,
+    "test_material": "synthetic byte pattern; not a proof",
+    "wall_cap_seconds": 30,
+    "wan_measured": false
+  },
+  "native_verification_before": "NOT_RUN",
+  "native_verification_after": "NOT_RUN",
+  "real_proof_transfer_observed": false,
+  "public_ingress_qualified": false,
+  "resource_qualification": false,
+  "consensus_authority": false,
+  "pq_128_security_qualified": false,
+  "work_hardness_qualified": false,
+  "workflow_activated": false,
+  "archive": {
+    "path": "raw-evidence.tar.gz",
+    "bytes": 80292,
+    "sha256": "2d90b4f2d1db22c37e045afd4ada192cc7847b501485e97a9b31b5b3803e76ef",
+    "members": 95
+  },
+  "archive_scope": "Only this task synthetic controls, process logs, source bytes and fresh per-run nonces; no signing key, issuer state, user credential, model weight or actual W1 receipt."
+}

@@ -1,0 +1,44 @@
+{
+  "actual": {
+    "child_reaped": true,
+    "completed_segments": 26,
+    "independent_verify": "SKIPPED",
+    "max_waited_descendant_rss_kib": 2414420,
+    "owned_process_group_empty": true,
+    "partial_read_errors": 5692,
+    "proof_attack_audit": "SKIPPED",
+    "receipt_present": false,
+    "required_segments": 62,
+    "returncode": 1,
+    "system_cpu_seconds": 7.647299,
+    "user_cpu_seconds": 13885.72247,
+    "wall_seconds": 3500.259693808
+  },
+  "continuation_executed": false,
+  "origin": {
+    "archive_sha256": "d862b93d949612e6fc764d82622d507b208743bc8e6b6701dbf481802b040e8b",
+    "artifact_id": 12743386213,
+    "conclusion": "failure",
+    "job_id": 122212651078,
+    "repository": "TrillionniumFoundation/Trillionnium-Chain",
+    "run_attempt": 1,
+    "run_id": 40511022475,
+    "source_identity": {
+      "base": null,
+      "candidate": "5d957878ea82b09b555c713976f5157fde1089a0",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "5d957878ea82b09b555c713976f5157fde1089a0",
+      "tested_tree": "aeba742e5523ef10136ce800ab217cc571f34f4a",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 758631770,
+      "tracked_entries": 6091,
+      "tracked_worktree_verified": true
+    },
+    "source_sha": "5d957878ea82b09b555c713976f5157fde1089a0",
+    "source_tree": "aeba742e5523ef10136ce800ab217cc571f34f4a"
+  },
+  "production_qualified": false,
+  "schema": "pon-w1-original-segmented-observation-v1"
+}

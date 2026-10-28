@@ -1,0 +1,114 @@
+{
+  "archives": [
+    {
+      "artifact_id": 12782030083,
+      "bytes": 10321959,
+      "job_id": 122545909074,
+      "member_count": 466,
+      "retained_raw_members": {
+        "continuation/attempt.json": {
+          "bytes": 2006,
+          "path": "shard-0/continuation__attempt.json",
+          "sha256": "ec46805ffb3db4ab07dc0e262f7f3e36e035d98253770f7797ba571a3d41c958"
+        },
+        "continuation/session/session.json": {
+          "bytes": 14437,
+          "path": "shard-0/continuation__session__session.json",
+          "sha256": "a4f75ae5e9e6e8ba85ea524078ab3afd054d47fbfdfbc3b7a9c6b4b1dd902e6a"
+        },
+        "continuation/steps/export.terminal.json": {
+          "bytes": 1187,
+          "path": "shard-0/continuation__steps__export.terminal.json",
+          "sha256": "0424822ba922fbe335eb2f22fd4c6b9b2c972b7deb6a63b99ff6c5e7098d90f8"
+        },
+        "continue.process.json": {
+          "bytes": 4377,
+          "path": "shard-0/continue.process.json",
+          "sha256": "644f2cad06f882a162bd984e6def276335bd9976972591f95099b9aa48481f2d"
+        },
+        "continue.stderr.log": {
+          "bytes": 1238,
+          "path": "shard-0/continue.stderr.log",
+          "sha256": "ba5939c3257246806a0db570f408d5d10870a4fdc172accff09d0a598be2d2c8"
+        },
+        "source-after.json": {
+          "bytes": 421,
+          "path": "shard-0/source-after.json",
+          "sha256": "5f639c4b69ee36e930e43cfb701e0b0f1b82893b66e3d58a930bc64f27552fda"
+        },
+        "source-before.json": {
+          "bytes": 421,
+          "path": "shard-0/source-before.json",
+          "sha256": "5f639c4b69ee36e930e43cfb701e0b0f1b82893b66e3d58a930bc64f27552fda"
+        }
+      },
+      "sha256": "b0fe2ef6af3743d722675c4099bd445e6421f35052b0ca4b6ad0ad355bf1a1e9",
+      "shard": 0
+    },
+    {
+      "artifact_id": 12780723275,
+      "bytes": 10322018,
+      "job_id": 122545909018,
+      "member_count": 466,
+      "retained_raw_members": {
+        "continuation/attempt.json": {
+          "bytes": 2006,
+          "path": "shard-1/continuation__attempt.json",
+          "sha256": "f2e1c0e2b247cb8b9f0d384ff287e8229b2115f0852e014413282c7e6c8949c9"
+        },
+        "continuation/session/session.json": {
+          "bytes": 14437,
+          "path": "shard-1/continuation__session__session.json",
+          "sha256": "328bd8401f9529f9e0fa6024232d416fff757bab3f7d50cdeda3c555fe9ed2cc"
+        },
+        "continuation/steps/export.terminal.json": {
+          "bytes": 1186,
+          "path": "shard-1/continuation__steps__export.terminal.json",
+          "sha256": "cf82a8e3733d684e2c9902cd4e29c1e909c29feafbe490752261c5de1a08d55c"
+        },
+        "continue.process.json": {
+          "bytes": 4389,
+          "path": "shard-1/continue.process.json",
+          "sha256": "c102749ba00f690ce6eea970b1ec385f57a87f6ec44f4bd21fe9f2a16ca53c0a"
+        },
+        "continue.stderr.log": {
+          "bytes": 1238,
+          "path": "shard-1/continue.stderr.log",
+          "sha256": "ba5939c3257246806a0db570f408d5d10870a4fdc172accff09d0a598be2d2c8"
+        },
+        "source-after.json": {
+          "bytes": 421,
+          "path": "shard-1/source-after.json",
+          "sha256": "5f639c4b69ee36e930e43cfb701e0b0f1b82893b66e3d58a930bc64f27552fda"
+        },
+        "source-before.json": {
+          "bytes": 421,
+          "path": "shard-1/source-before.json",
+          "sha256": "5f639c4b69ee36e930e43cfb701e0b0f1b82893b66e3d58a930bc64f27552fda"
+        }
+      },
+      "sha256": "6aba9bf146992d734e0b91183ca9a043e149ccff976a1611fc45070eff932e67",
+      "shard": 1
+    }
+  ],
+  "backend_primary_sources": [
+    {
+      "git_blob_sha": "6101cbab4415ce5fd4654aa0f1a22e6e2bf6f14c",
+      "local": "risc0-v3.0.6-guest-env.rs",
+      "url": "https://github.com/risc0/risc0/blob/v3.0.6/risc0/zkvm/src/guest/env/mod.rs"
+    },
+    {
+      "git_blob_sha": "3ce1230aa7ac83c17a3e003bba0efb04adbec239",
+      "local": "risc0-v3.0.6-host-random.rs",
+      "url": "https://github.com/risc0/risc0/blob/v3.0.6/risc0/zkvm/src/host/server/exec/syscall/random.rs"
+    }
+  ],
+  "diagnosis": "Each of 62 serialized segments differs on rerun; complete claim bytes and all non-timing/non-segment-hash manifest fields are unchanged. Original exact-session check correctly rejected both reruns. Guest startup requests 128 bits of memory entropy; fresh segments are not original trace material.",
+  "full_proof_exists": false,
+  "new_segment_receipts": 0,
+  "run_conclusion": "failure",
+  "run_id": 40606062524,
+  "schema": "pon-w1-original-trace-repair-observation-v1",
+  "source_sha": "8a99968115d76069dc4cc49607929f42d183ad1b",
+  "source_tree": "49df03a6b02083f62e6a1a98a58c461527ba1648"
+}

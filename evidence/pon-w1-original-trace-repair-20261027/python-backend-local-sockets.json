@@ -1,0 +1,19 @@
+{
+  "name": "python-backend-local-sockets",
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0",
+    "-p",
+    "test_*.py",
+    "-v"
+  ],
+  "exit_code": 0,
+  "wall_seconds": 43.16946504100633,
+  "log_sha256": "0991740408829a2225920bc2e1bae0a917e31735c5f16e7933799574144b7f2c",
+  "external_network_used": false,
+  "scope": "loopback TCP and owned local processes; no actual cryptographic proof"
+}

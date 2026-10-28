@@ -1,0 +1,133 @@
+E.E.EEE...EEEE
+======================================================================
+ERROR: test_existing_final_is_never_replaced (__main__.LoopbackControls.test_existing_final_is_never_replaced)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3d4ec372c488/w1-continuation/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_measure_loopback.py", line 129, in test_existing_final_is_never_replaced
+    record,output = self._receive(frame+b'test',expected,b'7'*32,existing=b'original')
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/3d4ec372c488/w1-continuation/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_measure_loopback.py", line 35, in _receive
+    with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as listener:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/socket.py", line 233, in __init__
+    _socket.socket.__init__(self, family, type, proto, fileno)
+PermissionError: [Errno 1] Operation not permitted
+
+======================================================================
+ERROR: test_over_cap_rejects_header_before_allocating_payload (__main__.LoopbackControls.test_over_cap_rejects_header_before_allocating_payload)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3d4ec372c488/w1-continuation/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_measure_loopback.py", line 111, in test_over_cap_rejects_header_before_allocating_payload
+    record,output = self._receive(frame,expected,b'7'*32)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/3d4ec372c488/w1-continuation/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_measure_loopback.py", line 35, in _receive
+    with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as listener:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/socket.py", line 233, in __init__
+    _socket.socket.__init__(self, family, type, proto, fileno)
+PermissionError: [Errno 1] Operation not permitted
+
+======================================================================
+ERROR: test_short_frame_refuses_without_materialization (__main__.LoopbackControls.test_short_frame_refuses_without_materialization)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3d4ec372c488/w1-continuation/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_measure_loopback.py", line 84, in test_short_frame_refuses_without_materialization
+    record,output = self._receive(frame[:17],expected,b'7'*32)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/3d4ec372c488/w1-continuation/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_measure_loopback.py", line 35, in _receive
+    with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as listener:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/socket.py", line 233, in __init__
+    _socket.socket.__init__(self, family, type, proto, fileno)
+PermissionError: [Errno 1] Operation not permitted
+
+======================================================================
+ERROR: test_short_payload_retains_failure (__main__.LoopbackControls.test_short_payload_retains_failure)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3d4ec372c488/w1-continuation/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_measure_loopback.py", line 90, in test_short_payload_retains_failure
+    record,output = self._receive(frame+b'te',expected,b'7'*32)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/3d4ec372c488/w1-continuation/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_measure_loopback.py", line 35, in _receive
+    with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as listener:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/socket.py", line 233, in __init__
+    _socket.socket.__init__(self, family, type, proto, fileno)
+PermissionError: [Errno 1] Operation not permitted
+
+======================================================================
+ERROR: test_socket_timeout_is_failure_not_empty_success (__main__.LoopbackControls.test_socket_timeout_is_failure_not_empty_success)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3d4ec372c488/w1-continuation/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_measure_loopback.py", line 123, in test_socket_timeout_is_failure_not_empty_success
+    record,output = self._receive(None,expected,b'7'*32,deadline_seconds=.15)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/3d4ec372c488/w1-continuation/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_measure_loopback.py", line 35, in _receive
+    with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as listener:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/socket.py", line 233, in __init__
+    _socket.socket.__init__(self, family, type, proto, fileno)
+PermissionError: [Errno 1] Operation not permitted
+
+======================================================================
+ERROR: test_trailing_byte_refuses (__main__.LoopbackControls.test_trailing_byte_refuses)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3d4ec372c488/w1-continuation/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_measure_loopback.py", line 97, in test_trailing_byte_refuses
+    record,output = self._receive(frame+b'testX',expected,b'7'*32)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/3d4ec372c488/w1-continuation/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_measure_loopback.py", line 35, in _receive
+    with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as listener:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/socket.py", line 233, in __init__
+    _socket.socket.__init__(self, family, type, proto, fileno)
+PermissionError: [Errno 1] Operation not permitted
+
+======================================================================
+ERROR: test_two_real_processes_stream_and_close_with_measured_rss (__main__.LoopbackControls.test_two_real_processes_stream_and_close_with_measured_rss)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3d4ec372c488/w1-continuation/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_measure_loopback.py", line 66, in test_two_real_processes_stream_and_close_with_measured_rss
+    received = owner._transfer(source,expected,self.directory/'transfer',record)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/3d4ec372c488/w1-continuation/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/measure_loopback.py", line 155, in _transfer
+    if error is not None: raise error
+                          ^^^^^^^^^^^
+  File "/workspace/scratch/3d4ec372c488/w1-continuation/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/measure_loopback.py", line 125, in _transfer
+    require(not futures['receiver'].done(),'loopback-receiver-exited-before-ready')
+  File "/workspace/scratch/3d4ec372c488/w1-continuation/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/_loopback_tcp.py", line 21, in require
+    raise ValueError(reason)
+ValueError: loopback-receiver-exited-before-ready
+
+======================================================================
+ERROR: test_wrong_connection_nonce_refuses (__main__.LoopbackControls.test_wrong_connection_nonce_refuses)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3d4ec372c488/w1-continuation/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_measure_loopback.py", line 117, in test_wrong_connection_nonce_refuses
+    record,output = self._receive(frame,expected,b'7'*32)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/3d4ec372c488/w1-continuation/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_measure_loopback.py", line 35, in _receive
+    with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as listener:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/socket.py", line 233, in __init__
+    _socket.socket.__init__(self, family, type, proto, fileno)
+PermissionError: [Errno 1] Operation not permitted
+
+======================================================================
+ERROR: test_wrong_hash_refuses (__main__.LoopbackControls.test_wrong_hash_refuses)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/3d4ec372c488/w1-continuation/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_measure_loopback.py", line 104, in test_wrong_hash_refuses
+    record,output = self._receive(frame+b'evil',expected,b'7'*32)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/3d4ec372c488/w1-continuation/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_measure_loopback.py", line 35, in _receive
+    with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as listener:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/socket.py", line 233, in __init__
+    _socket.socket.__init__(self, family, type, proto, fileno)
+PermissionError: [Errno 1] Operation not permitted
+
+----------------------------------------------------------------------
+Ran 14 tests in 1.151s
+
+FAILED (errors=9)

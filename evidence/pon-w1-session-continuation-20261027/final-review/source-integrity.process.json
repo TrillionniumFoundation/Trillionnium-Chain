@@ -1,0 +1,197 @@
+{
+  "schema": "pon-w1-actual-process-v2",
+  "command": [
+    "python3",
+    "scripts/ci/test_ci_source_integrity.py"
+  ],
+  "started_utc": "2026-10-27T18:44:03.562107+00:00",
+  "timeout_seconds": 60,
+  "source_sha": null,
+  "timed_out": false,
+  "consensus_authority": false,
+  "child_pid": 405,
+  "child_returncode": 0,
+  "child_reaped": true,
+  "cleanup_actions": [],
+  "cleanup_errors": [],
+  "subreaper_enabled": true,
+  "leader_exited_before_group": false,
+  "adopted_child_terminals": [
+    {
+      "pid": 412,
+      "returncode": 0
+    },
+    {
+      "pid": 427,
+      "returncode": 0
+    },
+    {
+      "pid": 442,
+      "returncode": 0
+    },
+    {
+      "pid": 460,
+      "returncode": 0
+    },
+    {
+      "pid": 472,
+      "returncode": 0
+    },
+    {
+      "pid": 486,
+      "returncode": 0
+    },
+    {
+      "pid": 500,
+      "returncode": 0
+    },
+    {
+      "pid": 505,
+      "returncode": 0
+    },
+    {
+      "pid": 534,
+      "returncode": 0
+    },
+    {
+      "pid": 548,
+      "returncode": 0
+    },
+    {
+      "pid": 579,
+      "returncode": 0
+    },
+    {
+      "pid": 593,
+      "returncode": 0
+    },
+    {
+      "pid": 598,
+      "returncode": 0
+    },
+    {
+      "pid": 614,
+      "returncode": 0
+    },
+    {
+      "pid": 633,
+      "returncode": 0
+    },
+    {
+      "pid": 648,
+      "returncode": 0
+    },
+    {
+      "pid": 676,
+      "returncode": 0
+    },
+    {
+      "pid": 712,
+      "returncode": 0
+    },
+    {
+      "pid": 731,
+      "returncode": 0
+    },
+    {
+      "pid": 742,
+      "returncode": 0
+    },
+    {
+      "pid": 747,
+      "returncode": 0
+    },
+    {
+      "pid": 757,
+      "returncode": 0
+    },
+    {
+      "pid": 771,
+      "returncode": 0
+    },
+    {
+      "pid": 787,
+      "returncode": 0
+    },
+    {
+      "pid": 795,
+      "returncode": 0
+    },
+    {
+      "pid": 800,
+      "returncode": 0
+    },
+    {
+      "pid": 822,
+      "returncode": 0
+    },
+    {
+      "pid": 838,
+      "returncode": 0
+    },
+    {
+      "pid": 861,
+      "returncode": 0
+    },
+    {
+      "pid": 899,
+      "returncode": 0
+    },
+    {
+      "pid": 928,
+      "returncode": 0
+    },
+    {
+      "pid": 956,
+      "returncode": 0
+    },
+    {
+      "pid": 987,
+      "returncode": 0
+    },
+    {
+      "pid": 1015,
+      "returncode": 0
+    },
+    {
+      "pid": 1043,
+      "returncode": 0
+    },
+    {
+      "pid": 1058,
+      "returncode": 0
+    },
+    {
+      "pid": 1067,
+      "returncode": 0
+    },
+    {
+      "pid": 1081,
+      "returncode": 0
+    },
+    {
+      "pid": 1097,
+      "returncode": 0
+    }
+  ],
+  "owned_process_group_empty": true,
+  "returncode": 0,
+  "wall_seconds": 10.732332214000053,
+  "user_cpu_seconds": 4.10319,
+  "system_cpu_seconds": 5.441906,
+  "max_waited_descendant_rss_kib": 22744,
+  "rss_scope": "maximum reported for the waited child family; not total cgroup peak",
+  "finished_utc": "2026-10-27T18:44:14.294490+00:00",
+  "raw_logs": {
+    "stdout": {
+      "path": "source-integrity.stdout.log",
+      "bytes": 484,
+      "sha256": "b7e4912f0d9529ad40b204c4b699971067f5f21022b41c9fd9905eeb59218c88"
+    },
+    "stderr": {
+      "path": "source-integrity.stderr.log",
+      "bytes": 5025,
+      "sha256": "ec97a207b1f8a1740e334779f05435ff05b369be38ddf2a44778a0a70632a4c8"
+    }
+  }
+}
