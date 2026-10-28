@@ -110,3 +110,32 @@ The official [SuccinctReceipt API](https://docs.rs/risc0-zkvm/3.0.6/risc0_zkvm/s
 describes a recursive STARK; the separate
 [security model](https://dev.risczero.com/api/security-model) documents
 conditional soundness assumptions rather than a PQ-128 qualification here.
+
+## Continuation of the observed failed recursion window
+
+The first hosted recursion at `bfdb557412204244e43fef2007c31e20c9c8e5ff`,
+run [40624205143](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40624205143),
+reached the original 3,500-second work stop. Its 115 closed stage terminals comprise
+one preparation, 112 successful recursion stages and two interrupted joins.
+It did not produce a complete Succinct receipt. The original failure remains a failure.
+
+The separate `continuation.py`/`continuation_policy.json` profile consumes only its
+exact 122,897,597-byte, SHA-256-pinned artifact. It binds all extracted original
+records to the full retained ZIP, checks the exact source/tree and closed process
+family, rechecks all 112 retained STARKs against the original contiguous range
+claims, and generates the 11 missing stages. Current and original source identities
+and process costs remain separate. The original Rust relation, SDK locks,
+2 MiB decode cap, two workers, two Rayon threads, 300-second stage limit,
+3,500-second work stop and 3,600-second outer limit are unchanged.
+
+The final reader requires every retained and new stage, original native controls,
+the complete proof, 31 verifier samples, all 17 proof and seven certificate
+negative cases, and received-certificate verification after actual TCP transfer.
+Both windows' exclusive outer process costs include the failed work and rechecks;
+included stage costs are never added again. Composite generation, provisioning,
+source readers and artifact upload remain separately identified exclusions.
+No result here claims a from-zero measurement, a global invalid-input maximum,
+WAN qualification, PQ128, a production codec change or activation.
+
+Actual new-source native completion must be obtained from its hosted run.
+The prior 112 successful stages do not establish that the continuation succeeded.

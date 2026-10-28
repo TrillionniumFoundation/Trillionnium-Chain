@@ -408,6 +408,43 @@ fn stage(args: &[String]) -> Result<()> {
     );
     Ok(())
 }
+fn verify_range(args: &[String]) -> Result<()> {
+    ensure!(
+        args.len() == 6,
+        "verify-range <original> <start> <end> <retained-receipt>"
+    );
+    let start: usize = args[3].parse()?;
+    let end: usize = args[4].parse()?;
+    let original = original(Path::new(&args[2]))?;
+    let expected = expected_claim(&original, start, end)?;
+    let path = Path::new(&args[5]);
+    let raw = read(path, bounds::MAX_BYTES)?;
+    bounds::preflight(&raw, false)?;
+    let receipt: SuccinctReceipt<ReceiptClaim> = bincode::DefaultOptions::new()
+        .with_fixint_encoding()
+        .with_limit(bounds::MAX_BYTES as u64)
+        .reject_trailing_bytes()
+        .deserialize(&raw)?;
+    let started = Instant::now();
+    let cpu = process_cpu::nanoseconds()?;
+    check_succinct(&receipt, &expected, end - start)?;
+    ensure!(
+        read(path, bounds::MAX_BYTES)? == raw,
+        "retained receipt changed"
+    );
+    println!(
+        "{}",
+        json!({"schema":"pon-w1-succinct-retained-range-v1","start":start,"end":end,
+            "receipt_bytes":raw.len(),"receipt_sha256":hash(&raw),
+            "claim_digest":expected.digest::<risc0_zkvm::sha::Impl>().to_string(),
+            "real_recursion_stark_verified":true,"complete_w1_proof_verified":false,
+            "verify_wall_ns":started.elapsed().as_nanos(),
+            "verify_process_cpu_ns":process_cpu::nanoseconds()?.checked_sub(cpu).context("CPU clock backwards")?,
+            "new_proof_generated":false,"additional_pow":false,"povw_requested":false,
+            "dev_mode":false,"consensus_authority":false})
+    );
+    Ok(())
+}
 fn finish(args: &[String]) -> Result<()> {
     ensure!(
         args.len() == 6,
@@ -570,6 +607,7 @@ fn main() -> Result<()> {
     match args[1].as_str() {
         "prepare" => prepare(&args),
         "stage" => stage(&args),
+        "verify-range" => verify_range(&args),
         "finish" => finish(&args),
         "verify-certificate" => verify_certificate_command(&args),
         "verify" | "audit" | "benchmark" => {

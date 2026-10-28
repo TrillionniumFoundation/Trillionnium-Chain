@@ -1,0 +1,19 @@
+{
+  "schema": "pon-w1-succinct-continuation-development-v1",
+  "base_commit": "bfdb557412204244e43fef2007c31e20c9c8e5ff",
+  "base_tree": "2041ddbc40a08e7512455e074e31bc722b9c20c2",
+  "original_artifact_sha256": "fa9dfea364033d3aefd90f0cd9d2e07e00ef3edf4cc2643720466d3e15427ca5",
+  "new_controls_passed": 7,
+  "retained_controls_passed": 10,
+  "source_integrity_controls_passed": 34,
+  "actual_checkpoint_mutation_controls_passed": 6,
+  "new_complete_proof": "NOT_RUN",
+  "native_compile_initial_observation": {
+    "status": "FAILED_ENVIRONMENT",
+    "exit_code": 101,
+    "error": "could not execute rustc -vV: No such file or directory",
+    "remediation": "Explicit pinned RUSTC and RUSTDOC; no source, lock or test change"
+  },
+  "native_compile_retry": "RUNNING_AT_RECORD_CREATION",
+  "production_activation": false
+}

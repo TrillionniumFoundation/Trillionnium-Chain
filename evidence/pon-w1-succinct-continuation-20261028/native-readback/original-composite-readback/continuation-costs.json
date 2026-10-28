@@ -1,0 +1,1028 @@
+{
+  "actual_validation": {
+    "audit": {
+      "consensus_authority": false,
+      "native_w1_recomputed": false,
+      "negative_cases": [
+        {
+          "case": "wrong_image",
+          "cpu_scope": "current verifier process, all its threads; no child prover",
+          "outcome": "verification_failed",
+          "reason": "claim digest does not match the expected digest c717de185bfb18d3990dd7b31e4f94a2831dd159d8e9366740ea74e4c8e14a03; expected 1d8ffc47f23ae3e2d6b37f0e3f0dab849a626536990c38d7d137f12a66bc5bca",
+          "reject_process_cpu_ns": 1215888032,
+          "reject_wall_ns": 1215989221,
+          "rejected": true
+        },
+        {
+          "case": "wrong_statement_miner",
+          "cpu_scope": "current verifier process, all its threads; no child prover",
+          "outcome": "verification_failed",
+          "reason": "public journal does not match the complete bound W1 statement",
+          "reject_process_cpu_ns": 18015938,
+          "reject_wall_ns": 18014665,
+          "rejected": true
+        },
+        {
+          "case": "truncated_receipt",
+          "cpu_scope": "current verifier process, all its threads; no child prover",
+          "outcome": "malformed_encoding",
+          "reason": "Malformed certificate encoding: truncated field",
+          "reject_process_cpu_ns": 16330,
+          "reject_wall_ns": 15449,
+          "rejected": true
+        },
+        {
+          "case": "segment_count_allocation_bomb",
+          "cpu_scope": "current verifier process, all its threads; no child prover",
+          "outcome": "refused_not_evaluated",
+          "reason": "Refused (not evaluated): segment count budget",
+          "reject_process_cpu_ns": 2274,
+          "reject_wall_ns": 702,
+          "rejected": true
+        },
+        {
+          "case": "seal_length_allocation_bomb",
+          "cpu_scope": "current verifier process, all its threads; no child prover",
+          "outcome": "refused_not_evaluated",
+          "reason": "Refused (not evaluated): segment seal word budget",
+          "reject_process_cpu_ns": 2234,
+          "reject_wall_ns": 662,
+          "rejected": true
+        },
+        {
+          "case": "empty_seal_before_sdk",
+          "cpu_scope": "current verifier process, all its threads; no child prover",
+          "outcome": "malformed_encoding",
+          "reason": "Malformed certificate encoding: empty or incomplete seal header",
+          "reject_process_cpu_ns": 1553,
+          "reject_wall_ns": 431,
+          "rejected": true
+        },
+        {
+          "case": "outer_journal_allocation_bomb",
+          "cpu_scope": "current verifier process, all its threads; no child prover",
+          "outcome": "refused_not_evaluated",
+          "reason": "Refused (not evaluated): journal byte budget",
+          "reject_process_cpu_ns": 4348,
+          "reject_wall_ns": 3336,
+          "rejected": true
+        },
+        {
+          "case": "nested_assumptions_refused",
+          "cpu_scope": "current verifier process, all its threads; no child prover",
+          "outcome": "refused_not_evaluated",
+          "reason": "Refused (not evaluated): nested assumption receipts are unsupported",
+          "reject_process_cpu_ns": 4237,
+          "reject_wall_ns": 2285,
+          "rejected": true
+        },
+        {
+          "case": "seal_dimension_budget",
+          "cpu_scope": "current verifier process, all its threads; no child prover",
+          "outcome": "refused_not_evaluated",
+          "reason": "Refused (not evaluated): segment proof dimension budget",
+          "reject_process_cpu_ns": 1883,
+          "reject_wall_ns": 591,
+          "rejected": true
+        },
+        {
+          "case": "trailing_receipt_bytes",
+          "cpu_scope": "current verifier process, all its threads; no child prover",
+          "outcome": "malformed_encoding",
+          "reason": "Malformed certificate encoding: trailing certificate bytes",
+          "reject_process_cpu_ns": 5280,
+          "reject_wall_ns": 3857,
+          "rejected": true
+        },
+        {
+          "case": "first_seal_tamper",
+          "cpu_scope": "current verifier process, all its threads; no child prover",
+          "outcome": "verification_failed",
+          "reason": "verification indicates proof is invalid",
+          "reject_process_cpu_ns": 38552616,
+          "reject_wall_ns": 38550829,
+          "rejected": true
+        },
+        {
+          "case": "last_seal_tamper",
+          "cpu_scope": "current verifier process, all its threads; no child prover",
+          "outcome": "verification_failed",
+          "reason": "verification indicates proof is invalid",
+          "reject_process_cpu_ns": 1244473382,
+          "reject_wall_ns": 1244599022,
+          "rejected": true
+        },
+        {
+          "case": "last_seal_tamper_wire",
+          "cpu_scope": "current verifier process, all its threads; no child prover",
+          "outcome": "verification_failed",
+          "reason": "verification indicates proof is invalid",
+          "reject_process_cpu_ns": 1258585497,
+          "reject_wall_ns": 1258724013,
+          "rejected": true
+        },
+        {
+          "case": "wrong_hash_profile",
+          "cpu_scope": "current verifier process, all its threads; no child prover",
+          "outcome": "refused_not_evaluated",
+          "reason": "Refused (not evaluated): unsupported proof commitment hash",
+          "reject_process_cpu_ns": 17991262,
+          "reject_wall_ns": 17988977,
+          "rejected": true
+        },
+        {
+          "case": "wrong_verifier_parameters",
+          "cpu_scope": "current verifier process, all its threads; no child prover",
+          "outcome": "refused_not_evaluated",
+          "reason": "Refused (not evaluated): unsupported segment verifier parameters",
+          "reject_process_cpu_ns": 18579970,
+          "reject_wall_ns": 18578067,
+          "rejected": true
+        },
+        {
+          "case": "fake_receipt_refused",
+          "cpu_scope": "current verifier process, all its threads; no child prover",
+          "outcome": "refused_not_evaluated",
+          "reason": "Refused (not evaluated): only actual transparent Composite receipts are supported",
+          "reject_process_cpu_ns": 18120853,
+          "reject_wall_ns": 18119460,
+          "rejected": true
+        },
+        {
+          "case": "groth16_kind_refused",
+          "cpu_scope": "current verifier process, all its threads; no child prover",
+          "outcome": "refused_not_evaluated",
+          "reason": "Refused (not evaluated): only actual transparent Composite receipts are supported",
+          "reject_process_cpu_ns": 17961116,
+          "reject_wall_ns": 17960133,
+          "rejected": true
+        }
+      ],
+      "operation": "audit",
+      "public_ingress_qualified": false,
+      "real_proof_positive_control": true,
+      "schema": "pon-w1-risc0-research-v1"
+    },
+    "conditional_soundness": {
+      "accepted_research_profile": {
+        "host_bounds_source_sha256": "790e52ea29e543682aeae31dae90c85107d8b853ce5b99a4b295226c3725a340",
+        "maximum_padded_cycles": 268435456,
+        "maximum_receipt_bytes": 134217728,
+        "maximum_segments": 2048,
+        "po2_max": 20,
+        "po2_min": 13
+      },
+      "actual_segment_po2_histogram": {
+        "18": 62
+      },
+      "calculator_arithmetic": "upstream f32, then float64 union-bound summation; numerical estimate, not a machine-checked real bound",
+      "composition_scope": "union bound conditional on the upstream per-segment model; not a complete FS, adaptive-query, hash or QROM proof",
+      "consensus_authority": false,
+      "conservative_sum_of_segment_error_estimates_bits": {
+        "conjectured_strict_bits": 72.63889368961313,
+        "proven_list_decoding_bits": 39.347203689613124,
+        "toy_model_bits": 92.68822368961312
+      },
+      "conservative_superset_of_accepted_profile_bits": {
+        "conjectured_strict_bits": 63.87678,
+        "proven_list_decoding_bits": 30.56704,
+        "toy_model_bits": 86.14198
+      },
+      "descriptor_harness_is_not_a_proof_backend": true,
+      "model_input_kind": "receipt_metadata",
+      "parameters": {
+        "biggest_combo": 6,
+        "degree_scope": "hardcoded assumption in upstream calculator, with an upstream FIXME; not independently derived here",
+        "expansion": 4,
+        "extension_degree": 4,
+        "field_prime": 2013265921,
+        "final_degree": 256,
+        "folding_factor": 16,
+        "group_widths_accum_code_data": [
+          103,
+          1,
+          211
+        ],
+        "maximum_constraint_degree": 5,
+        "queries": 50
+      },
+      "per_segment_estimates": [
+        {
+          "conjectured_strict_bits": 85.05716,
+          "po2": 13,
+          "proven_list_decoding_bits": 47.773865,
+          "toy_model_bits": 99.93122
+        },
+        {
+          "conjectured_strict_bits": 84.17544,
+          "po2": 14,
+          "proven_list_decoding_bits": 47.75474,
+          "toy_model_bits": 99.86557
+        },
+        {
+          "conjectured_strict_bits": 83.08546,
+          "po2": 15,
+          "proven_list_decoding_bits": 47.68069,
+          "toy_model_bits": 99.74261
+        },
+        {
+          "conjectured_strict_bits": 81.78512,
+          "po2": 16,
+          "proven_list_decoding_bits": 47.417496,
+          "toy_model_bits": 99.524254
+        },
+        {
+          "conjectured_strict_bits": 80.2784,
+          "po2": 17,
+          "proven_list_decoding_bits": 46.680206,
+          "toy_model_bits": 99.16709
+        },
+        {
+          "conjectured_strict_bits": 78.59309,
+          "po2": 18,
+          "proven_list_decoding_bits": 45.3014,
+          "toy_model_bits": 98.64242
+        },
+        {
+          "conjectured_strict_bits": 76.77656,
+          "po2": 19,
+          "proven_list_decoding_bits": 43.509853,
+          "toy_model_bits": 97.955574
+        },
+        {
+          "conjectured_strict_bits": 74.87678,
+          "po2": 20,
+          "proven_list_decoding_bits": 41.56704,
+          "toy_model_bits": 97.14198
+        },
+        {
+          "conjectured_strict_bits": 66.97681,
+          "po2": 24,
+          "proven_list_decoding_bits": 33.58654,
+          "toy_model_bits": 93.34174
+        }
+      ],
+      "pq128_qualified": false,
+      "receipt_sha256": "0a5336a797c51829ed25d4ec2f1a03f4f56fda4c737a230b493d4abbe96f0ec8",
+      "receipt_was_not_cryptographically_verified_by_this_calculator": true,
+      "schema": "pon-w1-upstream-soundness-formula-observation-v1",
+      "source_commit": "1cc70cf05033a79ebc90f07c679cb4bd1cd301b9",
+      "source_sha256": {
+        "LICENSE": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594",
+        "risc0/circuit/rv32im/src/zirgen/taps.rs": "b423f7bd396cd4a7ea25c326ba077dca7f96dd144fd8e44d9474bfb2489818d2",
+        "risc0/core/src/field/baby_bear.rs": "df3e77d606dd74d78fb6b6f3dbbe72455c5ed5b091f7a74de8c049e85b857ff3",
+        "risc0/zkp/src/adapter.rs": "1d1aca1dd7cc4c12477e0d887a3edfa0825b822efee671170ec667c7dd65ca1d",
+        "risc0/zkp/src/lib.rs": "107521d2426442fbc9358b7b9ae5650be92d670ea85e9a34aec7b9e9cc27dc6d",
+        "risc0/zkp/src/prove/prover.rs": "bf63f227fe515dfa8b1edce90b6475a33369fb44fe66c5784a1d70d5947c4368",
+        "risc0/zkp/src/prove/soundness.rs": "6d814ec839d0f4b33f275cdfa2d382f4ce455957b1ec7932d9bc717ccf732921"
+      },
+      "superset_scope": "min of the conditional per-segment numerical estimates over po2=13..20, minus log2(2048). Deliberately ignores the joint cycle/byte limits and makes no claim this worst combination is feasible or is an attack.",
+      "upstream_rust_formulas_executed_verbatim": true
+    },
+    "global_worst_invalid_input_proven": false,
+    "last_seal_reject_to_native_production_median_ratio": 1966.2129312646427,
+    "maximum_tested_reject_process_cpu_ns": 1258585497,
+    "maximum_tested_reject_wall_ns": 1258724013,
+    "native_and_guest_journal_match": true,
+    "native_benchmark": {
+      "block_id": "cb35821c92fa659bcb645c964829f4d3d3c68d1295b703993155fe93b9621da5",
+      "consensus_authority": false,
+      "debug_assertions": false,
+      "kernels": {
+        "complete_relation": {
+          "max_wall_ns": 672777,
+          "median_wall_ns": 616913,
+          "min_wall_ns": 606494,
+          "samples_wall_ns": [
+            618365,
+            616913,
+            606563,
+            616942,
+            606494,
+            617815,
+            626822,
+            606734,
+            672777,
+            630178,
+            608257,
+            619217,
+            608276,
+            617454,
+            616993,
+            607395,
+            615199,
+            616241,
+            607866,
+            616963,
+            607195,
+            614969,
+            617413,
+            606633,
+            617564,
+            607976,
+            615911,
+            617003,
+            610210,
+            618074,
+            618546
+          ]
+        },
+        "native_limb": {
+          "max_wall_ns": 565837,
+          "median_wall_ns": 552903,
+          "min_wall_ns": 543936,
+          "samples_wall_ns": [
+            555558,
+            544097,
+            553324,
+            552903,
+            544137,
+            553123,
+            543936,
+            554616,
+            546461,
+            554436,
+            544027,
+            553344,
+            565837,
+            544478,
+            554165,
+            544338,
+            553454,
+            544918,
+            553434,
+            544277,
+            553334,
+            544347,
+            554266,
+            552853,
+            544448,
+            553344,
+            546551,
+            553514,
+            545108,
+            554827,
+            544036
+          ]
+        },
+        "native_production": {
+          "max_wall_ns": 646287,
+          "median_wall_ns": 632993,
+          "min_wall_ns": 623355,
+          "samples_wall_ns": [
+            635808,
+            636960,
+            624567,
+            643433,
+            646287,
+            624747,
+            633143,
+            632181,
+            626781,
+            632472,
+            644755,
+            624136,
+            639484,
+            623626,
+            633584,
+            644975,
+            623846,
+            643953,
+            633654,
+            624628,
+            633755,
+            623846,
+            632732,
+            642260,
+            625439,
+            635968,
+            642230,
+            623966,
+            632993,
+            632742,
+            623355
+          ]
+        },
+        "native_scalar_reference": {
+          "max_wall_ns": 695169,
+          "median_wall_ns": 685481,
+          "min_wall_ns": 674901,
+          "samples_wall_ns": [
+            695169,
+            687325,
+            678448,
+            686313,
+            685741,
+            679850,
+            688036,
+            687505,
+            678188,
+            685631,
+            685080,
+            675552,
+            685711,
+            685481,
+            674901,
+            688266,
+            685821,
+            675552,
+            685732,
+            685260,
+            684610,
+            675241,
+            686934,
+            685772,
+            675512,
+            685992,
+            684970,
+            675552,
+            687926,
+            684789,
+            677827
+          ]
+        }
+      },
+      "measurement_scope": "same fixed research input, local wall samples under shared-host load; not a throughput guarantee",
+      "samples_per_kernel": 31,
+      "schema": "pon-w1-native-fixed-input-cost-v1",
+      "statement_id": "412e233a4d2ca6e660dd50ff468e52476a69b78a8992f61f97da66b1590a728b"
+    },
+    "negative_cases": 17,
+    "production_throughput_measured": false,
+    "verified": {
+      "consensus_authority": false,
+      "cpu_scope": "current verifier process, all its threads; no child prover",
+      "image_id": "3ea1bcbf7900a32be73d7e78102de085562893732473667e1f3af07e585696b4",
+      "native_w1_recomputed": false,
+      "operation": "verify",
+      "real_composite_stark_verified": true,
+      "receipt_bytes": 15862780,
+      "schema": "pon-w1-risc0-research-v1",
+      "statement_id": "412e233a4d2ca6e660dd50ff468e52476a69b78a8992f61f97da66b1590a728b",
+      "verified_segment_profile": [
+        {
+          "hashfn": "poseidon2",
+          "index": 0,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 1,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 2,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 3,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 4,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 5,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 6,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 7,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 8,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 9,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 10,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 11,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 12,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 13,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 14,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 15,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 16,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 17,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 18,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 19,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 20,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 21,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 22,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 23,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 24,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 25,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 26,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 27,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 28,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 29,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 30,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 31,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 32,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 33,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 34,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 35,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 36,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 37,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 38,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 39,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 40,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 41,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 42,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 43,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 44,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 45,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 46,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 47,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 48,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 49,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 50,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 51,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 52,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 53,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 54,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 55,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 56,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 57,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 58,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 59,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 60,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        },
+        {
+          "hashfn": "poseidon2",
+          "index": 61,
+          "padded_cycles": 262144,
+          "po2": 18,
+          "seal_words": 63914
+        }
+      ],
+      "verify_process_cpu_ns": 1263229564,
+      "verify_wall_ns": 1263286953
+    },
+    "verify_to_native_production_median_ratio": 1995.7360555329997
+  },
+  "assembly_result": {
+    "additional_pow": false,
+    "additional_verify_process_cpu_ns": 1253012221,
+    "additional_verify_wall_ns": 1253104530,
+    "assumption_receipts": 0,
+    "consensus_authority": false,
+    "fresh_generation_phases": 2,
+    "image_id": "3ea1bcbf7900a32be73d7e78102de085562893732473667e1f3af07e585696b4",
+    "native_w1_recomputed": false,
+    "original_failure_reclassified": false,
+    "povw_requested": false,
+    "public_ingress_qualified": false,
+    "real_composite_stark_verified": true,
+    "receipt_bytes": 15862780,
+    "receipt_sha256": "0a5336a797c51829ed25d4ec2f1a03f4f56fda4c737a230b493d4abbe96f0ec8",
+    "reused_original_segments": 26,
+    "run_attempt": "1",
+    "run_id": "40608715148",
+    "schema": "pon-w1-continuation-assembly-v1",
+    "segment_po2_limit": 18,
+    "segments": 62,
+    "source_sha": "a54dc7355f58f40784b5a71fe7e73c4062a14951",
+    "statement_id": "412e233a4d2ca6e660dd50ff468e52476a69b78a8992f61f97da66b1590a728b",
+    "user_cycles": 13364385
+  },
+  "build_and_control_costs_included_in_generation": false,
+  "complete_generation_cost_observed": true,
+  "complete_proof_and_audit_observed": true,
+  "consensus_authority": false,
+  "cpu_scope": "outer wait4 child-family totals exactly once; per-segment costs are not added again",
+  "errors": [],
+  "generation_cpu_seconds_including_original_failure": 27755.580198,
+  "generation_cumulative_independent_phase_wall_seconds": 7014.2892562219995,
+  "global_worst_invalid_input_proven": false,
+  "known_generation_cpu_seconds_subtotal": 27755.580198,
+  "known_generation_phase_wall_seconds_subtotal": 7014.2892562219995,
+  "loopback_cost_scope": "separate loopback observation after this report; no WAN or gossip qualification",
+  "memory_scope": "per-phase maximum waited-descendant RSS; neither physical memory nor summed concurrent peak",
+  "original": {
+    "archive_sha256": "d862b93d949612e6fc764d82622d507b208743bc8e6b6701dbf481802b040e8b",
+    "artifact_id": 12743386213,
+    "conclusion": "failure",
+    "job_id": 122212651078,
+    "repository": "TrillionniumFoundation/Trillionnium-Chain",
+    "run_attempt": 1,
+    "run_id": 40511022475,
+    "source_identity": {
+      "base": null,
+      "candidate": "5d957878ea82b09b555c713976f5157fde1089a0",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "5d957878ea82b09b555c713976f5157fde1089a0",
+      "tested_tree": "aeba742e5523ef10136ce800ab217cc571f34f4a",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 758631770,
+      "tracked_entries": 6091,
+      "tracked_worktree_verified": true
+    },
+    "source_sha": "5d957878ea82b09b555c713976f5157fde1089a0",
+    "source_tree": "aeba742e5523ef10136ce800ab217cc571f34f4a"
+  },
+  "original_failure_reclassified": false,
+  "phase_costs": {
+    "assembly": {
+      "max_waited_descendant_rss_kib": 56900,
+      "returncode": 0,
+      "status": "OBSERVED",
+      "system_cpu_seconds": 0.18284799999999998,
+      "user_cpu_seconds": 1.50645,
+      "wall_seconds": 1.8679439120000438
+    },
+    "audit": {
+      "max_waited_descendant_rss_kib": 116016,
+      "returncode": 0,
+      "status": "OBSERVED",
+      "system_cpu_seconds": 0.052992,
+      "user_cpu_seconds": 5.11627,
+      "wall_seconds": 5.175554351000017
+    },
+    "continuation_0": {
+      "max_waited_descendant_rss_kib": 2422252,
+      "returncode": 0,
+      "status": "OBSERVED",
+      "system_cpu_seconds": 18.926226,
+      "user_cpu_seconds": 6964.518604,
+      "wall_seconds": 1777.3702411279999
+    },
+    "continuation_1": {
+      "max_waited_descendant_rss_kib": 2415044,
+      "returncode": 0,
+      "status": "OBSERVED",
+      "system_cpu_seconds": 7.6436399999999995,
+      "user_cpu_seconds": 6869.432661,
+      "wall_seconds": 1734.791377374
+    },
+    "original_failed_proof": {
+      "max_waited_descendant_rss_kib": 2414420,
+      "returncode": 1,
+      "status": "OBSERVED",
+      "system_cpu_seconds": 7.647299,
+      "user_cpu_seconds": 13885.72247,
+      "wall_seconds": 3500.259693808
+    },
+    "soundness": {
+      "max_waited_descendant_rss_kib": 236996,
+      "returncode": 0,
+      "status": "OBSERVED",
+      "system_cpu_seconds": 0.05567,
+      "user_cpu_seconds": 0.161051,
+      "wall_seconds": 0.21441691000001128
+    },
+    "verify": {
+      "max_waited_descendant_rss_kib": 38420,
+      "returncode": 0,
+      "status": "OBSERVED",
+      "system_cpu_seconds": 0.03001,
+      "user_cpu_seconds": 1.283453,
+      "wall_seconds": 1.3168087079999964
+    }
+  },
+  "public_ingress_qualified": false,
+  "quantum_128_security_claimed": false,
+  "schema": "pon-w1-continuation-cost-observation-v1",
+  "wall_scope": "sum of separately measured phases, not parallel critical-path elapsed time"
+}

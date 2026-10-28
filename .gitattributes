@@ -31,3 +31,5 @@ evidence/pon-client-confirmation-v1/**/*.log -text -whitespace
 
 # New successor qualification retains raw successful and failed output unchanged.
 /evidence/pon-closed-round-v1/**/*.log -text -whitespace
+# Exact native continuation output is hash-bound and must retain its raw whitespace.
+/evidence/pon-w1-succinct-continuation-20261028/native-readback/**/*.log -text -whitespace

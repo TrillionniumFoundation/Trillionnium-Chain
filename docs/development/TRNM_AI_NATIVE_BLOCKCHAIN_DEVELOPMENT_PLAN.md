@@ -161,6 +161,20 @@ the screened eight/nine-repeat variants need more field multiplications and an
 additional 128 KiB. Correctness, work cost and model usefulness retain separate
 acceptance decisions.
 
+### W1 transparent recursion continuation — 2026-10-28
+
+The complete original Composite receipt is retained by #529. Its transparent
+recursion successor #534 at `bfdb557412204244e43fef2007c31e20c9c8e5ff`
+stopped at the unchanged 3,500-second work limit after 112 successful stages;
+two joins were interrupted. This is an actual failed generation window.
+The [continuation implementation](../../trillionnium/crates/trnm-crypto-primitives/guests/w1-succinct/README.md#continuation-of-the-observed-failed-recursion-window)
+rechecks the exact retained range proofs and computes the 11 missing stages
+inside a new independent window with the same bounds. Both windows' costs
+and source identities remain separate, with complete original artifact bytes
+retained and no added PoW. Actual complete native verification, all original
+invalid-input controls and full-certificate transfer are still required on the
+new source; a published candidate alone does not close PN1 or activate a codec.
+
 ### Audit contract refinement — 2026-10-25
 
 This amendment refines the existing PN0–PN6 exits and I01–I10 interfaces. It

@@ -652,6 +652,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-crypto-primitives/guests/w1-succinct/continuation_policy.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/guests/w1-succinct/continuation_policy.json"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-crypto-primitives/guests/w1-succinct/policy.json",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),

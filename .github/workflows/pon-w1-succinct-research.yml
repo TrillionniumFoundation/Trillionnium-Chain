@@ -1,4 +1,4 @@
-name: PoN W1 transparent Succinct recursion research
+name: PoN W1 transparent Succinct continuation research
 on:
   pull_request:
     paths:
@@ -13,7 +13,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   recursion:
-    name: exact original Composite to transparent Succinct (independent finite window)
+    name: exact failed recursion continuation (112 rechecks and 11 new stages)
     runs-on: ubuntu-24.04
     timeout-minutes: 120
     env:
@@ -61,8 +61,9 @@ jobs:
         run: |
           set -euo pipefail
           cp "$SUCCINCT/policy.json" "$OUT/policy.json"
-          python3 "$LEGACY/measure_step.py" --out "$OUT" --name python-controls --timeout 60 -- python3 "$SUCCINCT/test_runner.py"
-          python3 "$LEGACY/measure_step.py" --out "$OUT" --name fetch --timeout 900 -- python3 "$SUCCINCT/runner.py" fetch --out "$OUT"
+          cp "$SUCCINCT/continuation_policy.json" "$OUT/continuation_policy.json"
+          python3 "$LEGACY/measure_step.py" --out "$OUT" --name python-controls --timeout 60 -- python3 -m unittest discover -s "$SUCCINCT" -p 'test_*.py' -v
+          python3 "$LEGACY/measure_step.py" --out "$OUT" --name fetch --timeout 900 -- python3 "$SUCCINCT/continuation.py" fetch --out "$OUT"
           python3 "$LEGACY/measure_step.py" --out "$OUT" --name install --timeout 900 -- python3 "$SUCCINCT/runner.py" install --out "$OUT" --dest "$WORK/backend"
       - name: Build and check unchanged Composite verifier and separate recursion driver
         shell: bash
@@ -80,11 +81,11 @@ jobs:
         run: |
           set -euo pipefail
           python3 "$LEGACY/measure_step.py" --out "$OUT" --name original-verify --timeout 900 -- "$OUT/native/trnm-w1-risc0-host" verify "$OUT/original/guest.bin" "$OUT/original/input.bin" "$OUT/original/receipt.bin"
-          python3 "$LEGACY/measure_step.py" --out "$OUT" --name native-controls --timeout 900 -- python3 "$SUCCINCT/test_native.py" --helper "$OUT/native/trnm-w1-succinct-research" --original "$OUT/original" --out "$OUT/native-controls"
-      - name: Run one bounded 62 lift plus 61 join transparent window
+          python3 "$LEGACY/measure_step.py" --out "$OUT" --name native-controls --timeout 900 -- python3 "$SUCCINCT/test_continuation_native.py" --helper "$OUT/native/trnm-w1-succinct-research" --out "$OUT"
+      - name: Reverify 112 retained stages and complete 11 missing stages within original bounds
         run: |
           python3 "$LEGACY/measure_step.py" --out "$OUT" --name compress --timeout 3600 --sample-proc-group -- \
-            python3 "$SUCCINCT/runner.py" prove --out "$OUT" \
+            python3 "$SUCCINCT/continuation.py" prove --out "$OUT" \
             --helper "$OUT/native/trnm-w1-succinct-research" --r0vm "$WORK/backend/tools/r0vm"
       - name: Preserve every completed stage and actual failed resource terminal
         if: always()
@@ -102,13 +103,13 @@ jobs:
       - name: Verify exact source after every success or failure
         if: always()
         run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$OUT/source-after.json"
-      - name: Close actual bytes and exclusive phase accounting
-        run: python3 "$SUCCINCT/runner.py" report --out "$OUT"
+      - name: Close actual bytes and both windows of exclusive phase accounting
+        run: python3 "$SUCCINCT/continuation.py" report --out "$OUT"
       - name: Retain original proof, new stages, binaries, costs and failures
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: w1-succinct-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}
+          name: w1-succinct-continuation-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/w1-succinct-${{ github.run_id }}-${{ github.run_attempt }}/
           if-no-files-found: error
           retention-days: 30

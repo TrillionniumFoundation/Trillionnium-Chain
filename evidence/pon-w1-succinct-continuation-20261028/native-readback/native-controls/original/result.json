@@ -1,0 +1,180 @@
+{
+  "schema": "pon-w1-succinct-native-controls-v1",
+  "cases": [
+    {
+      "case": "actual_original",
+      "command": [
+        "/workspace/scratch/121c7d6beede/w1_task/target/release/trnm-w1-succinct-research",
+        "prepare",
+        "/workspace/scratch/121c7d6beede/w1_task/checkpoint_readback/native-controls/original/native-control-x31d1m5f",
+        "/workspace/scratch/121c7d6beede/w1_task/checkpoint_readback/native-controls/original/native-control-x31d1m5f/prepared.json"
+      ],
+      "returncode": 0,
+      "wall_seconds": 1.5549683270073729,
+      "input_mutation": null,
+      "actual_native_command_executed": true,
+      "proof_generation_requested": false
+    },
+    {
+      "case": "same_size_input",
+      "command": [
+        "/workspace/scratch/121c7d6beede/w1_task/target/release/trnm-w1-succinct-research",
+        "prepare",
+        "/workspace/scratch/121c7d6beede/w1_task/checkpoint_readback/native-controls/original/native-control-4_v_sb6s",
+        "/workspace/scratch/121c7d6beede/w1_task/checkpoint_readback/native-controls/original/native-control-4_v_sb6s/prepared.json"
+      ],
+      "returncode": 1,
+      "wall_seconds": 0.003671338999993168,
+      "input_mutation": {
+        "bytes": 49640,
+        "sha256": "ef4fa917bf5014b06a213c8468928fe73f15e04b9194e7da261700737f44d7ff",
+        "mutation": 0,
+        "xor": 1
+      },
+      "actual_native_command_executed": true,
+      "proof_generation_requested": false
+    },
+    {
+      "case": "same_size_elf",
+      "command": [
+        "/workspace/scratch/121c7d6beede/w1_task/target/release/trnm-w1-succinct-research",
+        "prepare",
+        "/workspace/scratch/121c7d6beede/w1_task/checkpoint_readback/native-controls/original/native-control-8my_nimj",
+        "/workspace/scratch/121c7d6beede/w1_task/checkpoint_readback/native-controls/original/native-control-8my_nimj/prepared.json"
+      ],
+      "returncode": 1,
+      "wall_seconds": 0.0030923960002837703,
+      "input_mutation": {
+        "bytes": 291592,
+        "sha256": "2ebfc05707f3a577b386b04912ed5db4e5fbb93abd8e2818e1451f028ea1b0b8",
+        "mutation": 0,
+        "xor": 1
+      },
+      "actual_native_command_executed": true,
+      "proof_generation_requested": false
+    },
+    {
+      "case": "same_size_receipt",
+      "command": [
+        "/workspace/scratch/121c7d6beede/w1_task/target/release/trnm-w1-succinct-research",
+        "prepare",
+        "/workspace/scratch/121c7d6beede/w1_task/checkpoint_readback/native-controls/original/native-control-ov9lglp0",
+        "/workspace/scratch/121c7d6beede/w1_task/checkpoint_readback/native-controls/original/native-control-ov9lglp0/prepared.json"
+      ],
+      "returncode": 1,
+      "wall_seconds": 0.050556563001009636,
+      "input_mutation": {
+        "bytes": 15862780,
+        "sha256": "2ec038edb09844eb751f3986af6601edb8d71c719d27070235a40f21213aaceb",
+        "mutation": 200,
+        "xor": 1
+      },
+      "actual_native_command_executed": true,
+      "proof_generation_requested": false
+    },
+    {
+      "case": "trailing_receipt",
+      "command": [
+        "/workspace/scratch/121c7d6beede/w1_task/target/release/trnm-w1-succinct-research",
+        "prepare",
+        "/workspace/scratch/121c7d6beede/w1_task/checkpoint_readback/native-controls/original/native-control-sl_ohff8",
+        "/workspace/scratch/121c7d6beede/w1_task/checkpoint_readback/native-controls/original/native-control-sl_ohff8/prepared.json"
+      ],
+      "returncode": 1,
+      "wall_seconds": 0.033082515001297,
+      "input_mutation": {
+        "bytes": 15862781,
+        "sha256": "e51492c85c7d8efaba2c56058a4a61df8c03ab4a83421d6260eb16e3d950fc82",
+        "mutation": "append",
+        "xor": null
+      },
+      "actual_native_command_executed": true,
+      "proof_generation_requested": false
+    },
+    {
+      "case": "short_receipt",
+      "command": [
+        "/workspace/scratch/121c7d6beede/w1_task/target/release/trnm-w1-succinct-research",
+        "prepare",
+        "/workspace/scratch/121c7d6beede/w1_task/checkpoint_readback/native-controls/original/native-control-d683jlx1",
+        "/workspace/scratch/121c7d6beede/w1_task/checkpoint_readback/native-controls/original/native-control-d683jlx1/prepared.json"
+      ],
+      "returncode": 1,
+      "wall_seconds": 0.0395428639894817,
+      "input_mutation": {
+        "bytes": 15862779,
+        "sha256": "ddbb8cf25902bd604152c4d5b07fab76c8b2b132ff23d679f485608fd32fdd06",
+        "mutation": "truncate",
+        "xor": null
+      },
+      "actual_native_command_executed": true,
+      "proof_generation_requested": false
+    },
+    {
+      "case": "empty_receipt",
+      "command": [
+        "/workspace/scratch/121c7d6beede/w1_task/target/release/trnm-w1-succinct-research",
+        "prepare",
+        "/workspace/scratch/121c7d6beede/w1_task/checkpoint_readback/native-controls/original/native-control-qp6km7zc",
+        "/workspace/scratch/121c7d6beede/w1_task/checkpoint_readback/native-controls/original/native-control-qp6km7zc/prepared.json"
+      ],
+      "returncode": 1,
+      "wall_seconds": 0.03165107899985742,
+      "input_mutation": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "mutation": "empty",
+        "xor": null
+      },
+      "actual_native_command_executed": true,
+      "proof_generation_requested": false
+    },
+    {
+      "case": "symlink_input",
+      "command": [
+        "/workspace/scratch/121c7d6beede/w1_task/target/release/trnm-w1-succinct-research",
+        "prepare",
+        "/workspace/scratch/121c7d6beede/w1_task/checkpoint_readback/native-controls/original/native-control-hbsvn6jv",
+        "/workspace/scratch/121c7d6beede/w1_task/checkpoint_readback/native-controls/original/native-control-hbsvn6jv/prepared.json"
+      ],
+      "returncode": 1,
+      "wall_seconds": 0.002606300011393614,
+      "input_mutation": null,
+      "actual_native_command_executed": true,
+      "proof_generation_requested": false
+    },
+    {
+      "case": "fifo_input",
+      "command": [
+        "/workspace/scratch/121c7d6beede/w1_task/target/release/trnm-w1-succinct-research",
+        "prepare",
+        "/workspace/scratch/121c7d6beede/w1_task/checkpoint_readback/native-controls/original/native-control-xijh3140",
+        "/workspace/scratch/121c7d6beede/w1_task/checkpoint_readback/native-controls/original/native-control-xijh3140/prepared.json"
+      ],
+      "returncode": 1,
+      "wall_seconds": 0.002928213987615891,
+      "input_mutation": null,
+      "actual_native_command_executed": true,
+      "proof_generation_requested": false
+    },
+    {
+      "case": "existing_output",
+      "command": [
+        "/workspace/scratch/121c7d6beede/w1_task/target/release/trnm-w1-succinct-research",
+        "prepare",
+        "/workspace/scratch/121c7d6beede/w1_task/checkpoint_readback/native-controls/original/native-control-014ccn_e",
+        "/workspace/scratch/121c7d6beede/w1_task/checkpoint_readback/native-controls/original/native-control-014ccn_e/prepared.json"
+      ],
+      "returncode": 1,
+      "wall_seconds": 1.6069423309963895,
+      "input_mutation": null,
+      "actual_native_command_executed": true,
+      "proof_generation_requested": false
+    }
+  ],
+  "positive_actual_original_composite": true,
+  "negative_cases": 9,
+  "all_expected_results": true,
+  "recursion_proofs_generated": 0,
+  "temporary_mutant_bytes_removed_after_hash_and_native_terminal": true
+}
