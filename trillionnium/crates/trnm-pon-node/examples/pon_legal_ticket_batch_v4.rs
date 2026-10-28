@@ -361,25 +361,30 @@ fn cohort(
         wall_ns: cohort_started.elapsed().as_nanos(),
         process_cpu_ns: cohort_cpu.zip(cpu()).and_then(|(a, b)| b.checked_sub(a)),
     };
-    let value = json!({"kind":"cohort","status":"complete","round":round,"reuse":true,"order":order,"batch_workers":workers,
+    let phase_values = json!({"directory":directory,"node_open":open,"bootstrap_material":bootstrap_material,
+        "template_acquisition":template,"matrix_material":matrices,"producer_setup":setup,
+        "all_attempt_generation":generation,"packet_encoding":encode,"packet_archival":archive_cost,"first_native_admission":admit,
+        "node_close":close,"cold_node_open":reopen,"cold_packet_readback":readback,"cold_node_close":cold_close});
+    let mut value = json!({"kind":"cohort","status":"complete","round":round,"reuse":true,"order":order,
         "strategy":if limb {"maintenance-split-limb"} else {"prepared-general"},
         "parent":hex::encode(seed.header.parent),"target":hex::encode(seed.header.target),"task":hex::encode(task),
         "native_template_header":hex::encode(seed.header.encode()),"template_seed_admitted":false,
         "fresh_store":true,"search_horizon":SEARCHES,"attempt_budget":ATTEMPTS,"attempts":attempts,
-        "winners":winners.len(),"exhausted":SEARCHES-winners.len() as u64,"producer_setup_calls":1,"batch_process_clock_intervals":1,"worker_observations":worker_observations,
-        "overlapping_trial_times_added_to_batch":false,"batch_includes_spawn_join_and_trial_records":true,
+        "winners":winners.len(),"exhausted":SEARCHES-winners.len() as u64,"producer_setup_calls":1,
         "first_native_admissions":ids.len(),"cold_packet_readbacks":retained.len(),"explicit_activation_calls":0,
         "hot_active_before_close":{"id":hex::encode(hot_active.0),"generation":hot_active.1},
         "cold_recovery_active":{"id":hex::encode(cold_active.0),"generation":cold_active.1},
         "cold_recovery_selected_height":u64::from(!ids.is_empty()),
         "standalone_verifier_added_to_native_admission":false,
-        "phases":{"directory":directory,"node_open":open,"bootstrap_material":bootstrap_material,
-            "template_acquisition":template,"matrix_material":matrices,"producer_setup":setup,
-            "all_attempt_generation":generation,"packet_encoding":encode,"packet_archival":archive_cost,"first_native_admission":admit,
-            "node_close":close,"cold_node_open":reopen,"cold_packet_readback":readback,"cold_node_close":cold_close},
+        "phases":phase_values,
         "recurring_producer_encode_admission":recurring,"all_exclusive_phases":exclusive,"observed_outer":observed_outer,
         "stream_sha256":digest,"searches":searches,"retained_packets":retained,
         "scope":"real 1/2/4-thread CPU batch, one shared preparation; winning packet payload retained in independent cohort directory; fresh-store distinct fixed-parent tickets; complete native validation and SQLite admission; ordinary cold recovery and byte readback; no physical power loss, live-chain rewards, global optimum or throughput qualification"});
+    value["batch_workers"] = json!(workers);
+    value["batch_process_clock_intervals"] = json!(1);
+    value["worker_observations"] = json!(worker_observations);
+    value["overlapping_trial_times_added_to_batch"] = json!(false);
+    value["batch_includes_spawn_join_and_trial_records"] = json!(true);
     // Tempdir cleanup and serialization are outside per-cohort phases and still
     // present in the full-process accounting captured by the independent runner.
     drop(dir);
