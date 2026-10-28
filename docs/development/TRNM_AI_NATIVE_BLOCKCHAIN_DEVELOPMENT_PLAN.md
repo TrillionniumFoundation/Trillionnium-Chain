@@ -2168,6 +2168,21 @@ byte-identical #510 reports. Marked-count knowledge, physical rate, unknown-coun
 policies, strategic equilibrium, actual native tie resolution and whole-chain
 security stay unqualified. No original PoN semantics, DAA or activation change.
 
+The [unknown-marked-count policy continuation](../security/PON_UNKNOWN_MARKED_POLICY_COST_V1.md)
+now evaluates a concrete M-blind randomized iteration schedule with exact
+rational window growth, declared caps, failed-attempt exhaustion and an
+unbounded repeated-window tail. It charges policy draws as well as complete W1
+oracle/diffusion, setup, checks and winning publication, including tip
+interruption. Separate success/failure tails preserve rare failed-draw work
+when 64-bit success probabilities round to one. Twelve controls compare 8,576
+state-vector probabilities and 120 independently enumerated terminal-path
+experiments. Its original failure and source-bound executions belong to the
+[continuation evidence](../../evidence/pon-unknown-marked-cost-20261028/README.md).
+This costs one unknown-count policy; it does not measure the real marked
+distribution, establish an optimal oracle/policy or qualify physical quantum
+resources, production DAA or whole-chain security. All original source and
+qualification boundaries above remain in force.
+
 The [original native CI readback](../../evidence/pon-native-campaign-ci-20261027/README.md)
 retains every predeclared campaign at exact heads `63ae5018` and `e9c4bb0d`:
 FAIL/PASS/FAIL and FAIL/FAIL/FAIL. The five failing from-zero phases observed real
