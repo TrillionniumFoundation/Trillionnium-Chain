@@ -1,0 +1,108 @@
+[
+  {
+    "step": "preflight-final",
+    "command": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "elapsed_ns": 561760523
+  },
+  {
+    "step": "inventory-refresh",
+    "command": [
+      "python3",
+      "scripts/refresh_distributed_source_inventory.py"
+    ],
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "elapsed_ns": 157203640
+  },
+  {
+    "step": "inventory-check",
+    "command": [
+      "python3",
+      "scripts/refresh_distributed_source_inventory.py",
+      "--check"
+    ],
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "elapsed_ns": 821115777
+  },
+  {
+    "step": "controls-02",
+    "command": [
+      "python3",
+      "scripts/ci/test_recent_batch_source_profile.py",
+      "-v"
+    ],
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "elapsed_ns": 422031913
+  },
+  {
+    "step": "actual-old-profile",
+    "command": [
+      "python3",
+      "scripts/ci/check_recent_batch_source_profile.py",
+      "--profile",
+      "original-reviewed-v1",
+      "--output",
+      "/workspace/scratch/3d4ec372c488/pq-quota-publication/recent-profile-controls/actual-old-profile.json"
+    ],
+    "exit_code": 1,
+    "expected_exit_code": 1,
+    "elapsed_ns": 135740640
+  },
+  {
+    "step": "actual-new-profile",
+    "command": [
+      "python3",
+      "scripts/ci/check_recent_batch_source_profile.py",
+      "--profile",
+      "native-pq-quota-v3-reviewed-v1",
+      "--output",
+      "/workspace/scratch/3d4ec372c488/pq-quota-publication/recent-profile-controls/actual-new-profile.json"
+    ],
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "elapsed_ns": 138390830
+  },
+  {
+    "step": "pre-fmt",
+    "command": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "elapsed_ns": 512939943
+  },
+  {
+    "step": "fmt",
+    "command": [
+      "cargo",
+      "fmt",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "elapsed_ns": 40393787724
+  },
+  {
+    "step": "diff-check",
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "elapsed_ns": 51066422
+  }
+]

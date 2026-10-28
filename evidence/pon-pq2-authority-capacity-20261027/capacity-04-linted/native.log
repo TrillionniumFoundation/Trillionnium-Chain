@@ -1,0 +1,13 @@
+
+running 2 tests
+test complete_anchored_claim_bytes_allow_55_and_reject_56_without_reminting ... ok
+test complete_dual_proof_rotation_bytes_allow_56_and_reject_57_without_mutation ... ok
+
+successes:
+
+successes:
+    complete_anchored_claim_bytes_allow_55_and_reject_56_without_reminting
+    complete_dual_proof_rotation_bytes_allow_56_and_reject_57_without_mutation
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 18.15s
+

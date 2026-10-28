@@ -63,7 +63,7 @@ impl PqNodeV1 {
                 state_backend: StateBackend::AuthenticatedV1,
                 growth_observation_only: false,
                 native_io: None,
-                pq_explicit: true,
+                pq_explicit: Some(crate::native_packet::Profile::Pq1),
             },
         )?;
         Ok(Self { inner })

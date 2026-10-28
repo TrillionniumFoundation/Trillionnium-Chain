@@ -1,0 +1,15 @@
+test_cli_failure_retains_exact_profile_and_false_qualification (__main__.SourceProfileTests.test_cli_failure_retains_exact_profile_and_false_qualification) ... ok
+test_duplicate_manifest_keys_and_unsafe_paths_refuse (__main__.SourceProfileTests.test_duplicate_manifest_keys_and_unsafe_paths_refuse) ... ok
+test_explicit_new_identity_passes_but_old_never_falls_forward (__main__.SourceProfileTests.test_explicit_new_identity_passes_but_old_never_falls_forward) ... ok
+test_missing_file_and_symlink_alias_refuse (__main__.SourceProfileTests.test_missing_file_and_symlink_alias_refuse) ... ok
+test_only_updating_store_identity_leaves_hybrid_source_rejected (__main__.SourceProfileTests.test_only_updating_store_identity_leaves_hybrid_source_rejected) ... ok
+test_original_matrix_budgets_and_every_runtime_step_are_unchanged (__main__.SourceProfileTests.test_original_matrix_budgets_and_every_runtime_step_are_unchanged) ... ok
+test_original_sixteen_pins_remain_byte_exact (__main__.SourceProfileTests.test_original_sixteen_pins_remain_byte_exact) ... ok
+test_reviewed_native_owner_identity_matches_current_source (__main__.SourceProfileTests.test_reviewed_native_owner_identity_matches_current_source) ... ok
+test_same_size_late_mutation_is_not_hidden_by_stat_or_earlier_file (__main__.SourceProfileTests.test_same_size_late_mutation_is_not_hidden_by_stat_or_earlier_file) ... ok
+test_unknown_profile_cannot_select_any_identity (__main__.SourceProfileTests.test_unknown_profile_cannot_select_any_identity) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.323s
+
+OK

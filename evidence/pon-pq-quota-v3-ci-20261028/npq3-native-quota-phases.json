@@ -1,0 +1,173 @@
+[
+  {
+    "block": "7809515025d947b245bde72926ae24e6e6ac6f637b2dce965e0be75913881ea0",
+    "phase": "make-complete-w1-independent-reference-admit-sql",
+    "raw_bytes": 3821,
+    "schema": "native-pq3-actual-phase-v1",
+    "scope": "shared host actual calls, not isolated cost or worst case",
+    "transactions": 1,
+    "wall_nanoseconds": 48830164
+  },
+  {
+    "block": "8cc2816dd0785eb09f7e3f2d182ed4ae6d462c6d72b00098f7285b7d90e3f945",
+    "phase": "make-complete-w1-independent-reference-admit-sql",
+    "raw_bytes": 9272,
+    "schema": "native-pq3-actual-phase-v1",
+    "scope": "shared host actual calls, not isolated cost or worst case",
+    "transactions": 1,
+    "wall_nanoseconds": 73762308
+  },
+  {
+    "block": "1f80e2187bf7a1a57d8251054a05b95af30c28903ab4eaffc9dd59ce718bd2a0",
+    "phase": "make-complete-w1-independent-reference-admit-sql",
+    "raw_bytes": 7314,
+    "schema": "native-pq3-actual-phase-v1",
+    "scope": "shared host actual calls, not isolated cost or worst case",
+    "transactions": 1,
+    "wall_nanoseconds": 76309277
+  },
+  {
+    "block": "e8cedd44569a94ed7336e932713f48ccbe011303e4344bea9660196854023212",
+    "phase": "make-complete-w1-independent-reference-admit-sql",
+    "raw_bytes": 0,
+    "schema": "native-pq3-actual-phase-v1",
+    "scope": "shared host actual calls, not isolated cost or worst case",
+    "transactions": 0,
+    "wall_nanoseconds": 34197704
+  },
+  {
+    "block": "a5207b20973bf13c171f12fa94c5f91e3a0be1fefcf996aa14026bc4fa960012",
+    "phase": "make-complete-w1-independent-reference-admit-sql",
+    "raw_bytes": 0,
+    "schema": "native-pq3-actual-phase-v1",
+    "scope": "shared host actual calls, not isolated cost or worst case",
+    "transactions": 0,
+    "wall_nanoseconds": 36512026
+  },
+  {
+    "block": "a57eb87451c55ce9e9535efb5f2b2edb7db2b5f2614264eed52ff371175615d6",
+    "phase": "make-complete-w1-independent-reference-admit-sql",
+    "raw_bytes": 0,
+    "schema": "native-pq3-actual-phase-v1",
+    "scope": "shared host actual calls, not isolated cost or worst case",
+    "transactions": 0,
+    "wall_nanoseconds": 35996576
+  },
+  {
+    "block": "924cac7e0a8f94ccf4bca13f78b545c83f4897a0a0b01a0d3300bad72ce54a5a",
+    "phase": "make-complete-w1-independent-reference-admit-sql",
+    "raw_bytes": 9432,
+    "schema": "native-pq3-actual-phase-v1",
+    "scope": "shared host actual calls, not isolated cost or worst case",
+    "transactions": 1,
+    "wall_nanoseconds": 71967764
+  },
+  {
+    "block": "a033049e1b32bb97cf3a62ac0eb2d9b628abaef71efe0688ac2b58955f708f19",
+    "phase": "make-complete-w1-independent-reference-admit-sql",
+    "raw_bytes": 3821,
+    "schema": "native-pq3-actual-phase-v1",
+    "scope": "shared host actual calls, not isolated cost or worst case",
+    "transactions": 1,
+    "wall_nanoseconds": 56471150
+  },
+  {
+    "block": "779525be7b9f2b9e3de448ea25cb31c432638c1b083b22cae0a98f519e0a150a",
+    "phase": "make-complete-w1-independent-reference-admit-sql",
+    "raw_bytes": 7314,
+    "schema": "native-pq3-actual-phase-v1",
+    "scope": "shared host actual calls, not isolated cost or worst case",
+    "transactions": 1,
+    "wall_nanoseconds": 77322713
+  },
+  {
+    "block": "d99c4132fa1addfc3dc39f88e968b833b4f50661d0bcf6e28ddb2ac0c419954f",
+    "phase": "make-complete-w1-independent-reference-admit-sql",
+    "raw_bytes": 0,
+    "schema": "native-pq3-actual-phase-v1",
+    "scope": "shared host actual calls, not isolated cost or worst case",
+    "transactions": 0,
+    "wall_nanoseconds": 33155194
+  },
+  {
+    "block": "4837c5620e4c7f7b9dd5087535826d552e119f3462cbfb476458fe51891f0d50",
+    "phase": "make-complete-w1-independent-reference-admit-sql",
+    "raw_bytes": 0,
+    "schema": "native-pq3-actual-phase-v1",
+    "scope": "shared host actual calls, not isolated cost or worst case",
+    "transactions": 0,
+    "wall_nanoseconds": 37108236
+  },
+  {
+    "block": "aa4d46ee8e60775e8b89751c247a10bcdaa7d59c2a95360117646a39cc5a75f7",
+    "phase": "make-complete-w1-independent-reference-admit-sql",
+    "raw_bytes": 0,
+    "schema": "native-pq3-actual-phase-v1",
+    "scope": "shared host actual calls, not isolated cost or worst case",
+    "transactions": 0,
+    "wall_nanoseconds": 38802301
+  },
+  {
+    "block": "afebab435c0981e03f2a19127c2abe81d578fe77dccd3104768003f6afba6d7b",
+    "phase": "make-complete-w1-independent-reference-admit-sql",
+    "raw_bytes": 0,
+    "schema": "native-pq3-actual-phase-v1",
+    "scope": "shared host actual calls, not isolated cost or worst case",
+    "transactions": 0,
+    "wall_nanoseconds": 40365780
+  },
+  {
+    "block": "e4ba6fc03fa7b08b6e18f7ceebcc6c6e30270b1f0ceb7d6783cba2a0c041254d",
+    "phase": "make-complete-w1-independent-reference-admit-sql",
+    "raw_bytes": 9432,
+    "schema": "native-pq3-actual-phase-v1",
+    "scope": "shared host actual calls, not isolated cost or worst case",
+    "transactions": 1,
+    "wall_nanoseconds": 79582832
+  },
+  {
+    "block": "7809515025d947b245bde72926ae24e6e6ac6f637b2dce965e0be75913881ea0",
+    "phase": "make-complete-w1-independent-reference-admit-sql",
+    "raw_bytes": 3821,
+    "schema": "native-pq3-actual-phase-v1",
+    "scope": "shared host actual calls, not isolated cost or worst case",
+    "transactions": 1,
+    "wall_nanoseconds": 47098960
+  },
+  {
+    "block": "8d7e8649ecc9e2709d1c736c17c19814b24a7746df20d93dc01aa300bf596b70",
+    "phase": "make-complete-w1-independent-reference-admit-sql",
+    "raw_bytes": 7314,
+    "schema": "native-pq3-actual-phase-v1",
+    "scope": "shared host actual calls, not isolated cost or worst case",
+    "transactions": 1,
+    "wall_nanoseconds": 68333515
+  },
+  {
+    "block": "a5e6f83d38cdacbd08deb99cdd136e30b2f26de3cb84634731da0c058ab8d46c",
+    "phase": "make-complete-w1-independent-reference-admit-sql",
+    "raw_bytes": 0,
+    "schema": "native-pq3-actual-phase-v1",
+    "scope": "shared host actual calls, not isolated cost or worst case",
+    "transactions": 0,
+    "wall_nanoseconds": 35305917
+  },
+  {
+    "block": "b71a692daa7ac93feec196ac905804621e12c48c191555d3370859ab8a623eac",
+    "phase": "make-complete-w1-independent-reference-admit-sql",
+    "raw_bytes": 0,
+    "schema": "native-pq3-actual-phase-v1",
+    "scope": "shared host actual calls, not isolated cost or worst case",
+    "transactions": 0,
+    "wall_nanoseconds": 34852415
+  },
+  {
+    "block": "e623788e5e0221c3cb273b7f7042b64100ab978cb6db989142acffe3dc6403db",
+    "phase": "make-complete-w1-independent-reference-admit-sql",
+    "raw_bytes": 7314,
+    "schema": "native-pq3-actual-phase-v1",
+    "scope": "shared host actual calls, not isolated cost or worst case",
+    "transactions": 1,
+    "wall_nanoseconds": 71433170
+  }
+]

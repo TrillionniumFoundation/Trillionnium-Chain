@@ -22,7 +22,7 @@ pub(crate) struct Context {
     pub network: Hash,
     pub parameters: Hash,
     pub genesis: Hash,
-    pub pq_packet: bool,
+    pub pq_packet: crate::native_packet::Profile,
 }
 #[derive(Clone, Copy)]
 struct Metadata {
@@ -90,7 +90,7 @@ impl Budget<'_> {
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 enum ReadKey {
     Shape(Hash),
-    Header(Hash, bool),
+    Header(Hash, crate::native_packet::Profile),
     Jump(Hash, u8),
 }
 
@@ -149,9 +149,13 @@ fn read_shape(db: &Connection, id: Hash) -> rusqlite::Result<Option<StoredShape>
     )
     .optional()
 }
-fn read_header(db: &Connection, id: Hash, pq: bool) -> rusqlite::Result<Option<HeaderProjection>> {
+fn read_header(
+    db: &Connection,
+    id: Hash,
+    pq: crate::native_packet::Profile,
+) -> rusqlite::Result<Option<HeaderProjection>> {
     db.query_row("SELECT parent,state_root,substr(packet,1,?),substr(packet,-32) FROM blocks WHERE id=? AND length(parent)=32 AND length(state_root)=32 AND length(packet)<=?",
-        params![crate::pq_native_v1::header_prefix_bytes(pq),id.as_slice(),MAX_PACKET], |r| Ok((r.get(0)?,r.get(1)?,r.get(2)?,r.get(3)?))).optional()
+        params![crate::native_packet::header_prefix_bytes(pq),id.as_slice(),MAX_PACKET], |r| Ok((r.get(0)?,r.get(1)?,r.get(2)?,r.get(3)?))).optional()
 }
 fn read_jump(db: &Connection, id: Hash, level: u8) -> rusqlite::Result<Option<JumpProjection>> {
     db.query_row("SELECT ancestor,ancestor_height,left_seal,right_seal,seal FROM ancestry_jump WHERE block=? AND level=? AND length(ancestor)=32 AND length(left_seal)=32 AND length(right_seal)=32 AND length(seal)=32",
@@ -246,8 +250,9 @@ fn metadata(db: &Connection, ctx: Context, id: Hash, budget: &mut Budget<'_>) ->
         height > 0
             && parent_len == Some(32)
             && packet_len.is_some_and(|n| {
-                (crate::pq_native_v1::header_prefix_bytes(ctx.pq_packet) + 2 + pon_work::PROOF_BYTES
-                    ..=MAX_PACKET)
+                (crate::native_packet::header_prefix_bytes(ctx.pq_packet)
+                    + 2
+                    + pon_work::PROOF_BYTES..=MAX_PACKET)
                     .contains(&n)
             }),
         "ANCESTRY_INDEX_PACKET_BYTES",
@@ -262,7 +267,7 @@ fn metadata(db: &Connection, ctx: Context, id: Hash, budget: &mut Budget<'_>) ->
     let parent = bytes32(parent)?;
     let root = bytes32(root)?;
     let trace = bytes32(trace)?;
-    let header = crate::pq_native_v1::decode_header_projection(&prefix, ctx.pq_packet)
+    let header = crate::native_packet::decode_header_projection(&prefix, ctx.pq_packet)
         .map_err(|_| Error::from("ANCESTRY_INDEX_HEADER"))?;
     ensure(
         header.block_id(trace) == id
@@ -656,7 +661,7 @@ mod tests {
             network: [1; 32],
             parameters: [2; 32],
             genesis: [3; 32],
-            pq_packet: false,
+            pq_packet: crate::native_packet::Profile::Legacy,
         };
         db.execute(
             "INSERT INTO blocks VALUES(?,NULL,0,?,NULL,?)",

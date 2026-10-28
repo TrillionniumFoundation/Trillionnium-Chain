@@ -1,0 +1,28 @@
+{
+  "schema": "native-pq-quota-v3-path-review-v1",
+  "reviewed_prior_head": "0fc50c0701e0bfc94faa8c48df5957956cc6b8a3",
+  "native_execution": false,
+  "fixed": "migration::apply_claim now re-decodes with decode_for_config; public v2-only decoder remains closed to NPQ3",
+  "examined": [
+    "M00 prefix/statement/context/wire profile selection",
+    "M06 prepare/resolve/apply and migration apply_claim",
+    "actual quota consumer current generation and role 2",
+    "provider+consumer authority-changing mutex both orders",
+    "M05 canonical/signed/statement-table/pool profile selection",
+    "PQP3 packet/header/native selected profile dispatch",
+    "Node explicit opener/SQL schema and commitment State validation"
+  ],
+  "remaining_fixed_v2_entries": "Intentional NPQ2 public codec wrappers, old packet/node wrappers and retained NPQ2 fixtures; no input-controlled negotiation",
+  "files_sha256": {
+    "trillionnium/crates/trnm-protocol/src/pq_native_accounts_v2.rs": "75262f2cde06f72363eb61aa52ef827cc2300da79b8ee4183e4bede37d9ff2b3",
+    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs": "4ec580d2a763a07b49adc1a00b00af52b2a1b73c74e62dcf0b140ad2d70b5475",
+    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration.rs": "f122ca764c76a413a70d0fe1106024b867f7cfdd1c9f6eaf889c65ba7b23e0e6",
+    "trillionnium/crates/trnm-pon-node/src/native_packet.rs": "12e143063ee98b13bfbe49e0ab954836f93f766b7960e09f2ac1368954d62982",
+    "trillionnium/crates/trnm-pon-node/src/pq_accounts_v2.rs": "bad3696c13f11ac1f31673d2dd46c3dd9ea81f4fa8f5cbb252902633e1cfaa1a",
+    "trillionnium/crates/trnm-pon-node/src/pq_quota_v3.rs": "e8b18a3c93d7f99cae336d7f50b0eaa238b5b9502de21664cd9f2a89356d23b7",
+    "trillionnium/crates/trnm-pon-node/src/store/pq_accounts_v2.rs": "a23aa1b35c2bcd3a56ce3a276771575c0d379a2da1a29aa715ef691b1d0f2531",
+    "trillionnium/crates/trnm-pon-node/src/store/pq_quota_v3.rs": "c088d81b9211ab15c782f21e3510053a610621b949c34cc5ce6cceb18b2e6d1f",
+    "trillionnium/crates/trnm-pon-node/src/store/mempool.rs": "7e8ed61732c8b64ab4b35c3aa2f173456d7cea2069a2808373749899b2d8dd6b",
+    "trillionnium/crates/trnm-pon-node/src/store.rs": "b09c9faf6b634cc50da43ffb34cc13f887648853944025e7e10a2b8c2c1925a9"
+  }
+}

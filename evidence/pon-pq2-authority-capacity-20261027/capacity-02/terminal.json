@@ -1,0 +1,7 @@
+{
+  "returncode": 0,
+  "wall_seconds": 19.440678963997925,
+  "binary_sha256": "4006748d8c3706092f333c86e572304850a0bd2450a8d7257d50a0350eab8da7",
+  "source_before_after_equal": true,
+  "scope": "standalone integration probe linked to actual frozen Native PQ2 compiled M06 dependencies; not Cargo workspace qualification"
+}

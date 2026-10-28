@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "python3",
+    "scripts/refresh_distributed_source_inventory.py"
+  ],
+  "returncode": 0,
+  "wall_seconds": 0.09621439599868609,
+  "stdout": "distributed source inventory: PASS\n",
+  "stderr": ""
+}

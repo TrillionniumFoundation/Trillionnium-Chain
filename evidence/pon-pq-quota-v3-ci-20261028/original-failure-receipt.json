@@ -1,0 +1,419 @@
+{
+  "source_commit": "809b012a92e319f1932c2e15852e9ebfc12fdddc",
+  "source_tree": "351f941cd4b9266eaea752d5d8121e037b8f9be4",
+  "overall_result": "FAIL",
+  "runs": {
+    "npq3": {
+      "run_id": 40615932201,
+      "artifact_sha256": "ee556e79131523818b59e864d834d56221605bbf8b5dfcdd92bf52801342e9f0",
+      "result": "FAIL",
+      "error": "RuntimeError: command exited 101; retained /home/runner/work/_temp/native-pq3-observations/run/clippy.log",
+      "source_consistent": true,
+      "tests": {
+        "m00": {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 2,
+          "measured": 0,
+          "passed": 46,
+          "required_executed": [
+            "pq_native_accounts_v2::tests::closed_roles_lengths_reserved_bytes_and_old_namespaces_refuse",
+            "pq_native_accounts_v2::tests::exact_fresh_frame_sizes_include_every_key_and_both_proofs",
+            "pq_native_accounts_v2::tests::joint_core_binds_context_generation_every_descriptor_and_full_new_key",
+            "pq_native_accounts_v2::tests::new_roles_require_exact_branch_generation_and_anchored_source_identity",
+            "pq_native_accounts_v2::tests::quota_successor_has_fresh_exact_roles_and_full_dual_proof_bytes"
+          ]
+        },
+        "m06": {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 6,
+          "measured": 0,
+          "passed": 88,
+          "required_executed": [
+            "pon_executor::pq_accounts_v2::tests::anchored_migration_conserves_all_accounts_tasks_rewards_and_claims_once",
+            "pon_executor::pq_accounts_v2::tests::dual_rotation_keeps_stable_task_permissions_and_actual_key_reads",
+            "pon_executor::pq_accounts_v2::tests::migration_refuses_omissions_ambiguous_ids_untranslated_liabilities_and_unbound_roots",
+            "pon_executor::pq_accounts_v2::tests::real_pq_positive_funding_registration_state_resolved_transfer_and_zero_credit"
+          ]
+        },
+        "native-quota": {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 4,
+          "required_executed": [
+            "actual_consumer_rotation_rejects_retired_proof_and_reorg_restores_original_authority",
+            "actual_source_checkpoint_claimed_consumer_uses_quota_and_reorg_restores_import_lock",
+            "dual_pq_quota_actual_pool_work_sql_cut_cold_recovery_and_heavier_fork",
+            "exact_new_packet_settings_and_sql_namespaces_refuse_old_profile_fallback"
+          ]
+        },
+        "quota-authority": {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 6,
+          "required_executed": [
+            "actual_dual_pq_quota_conserves_escrow_fee_nonce_and_consumer_identity",
+            "both_real_proofs_current_state_consumer_and_nonconsuming_rejections_are_required",
+            "consumer_and_provider_rotations_are_exclusive_in_both_block_orders",
+            "full_dual_proof_capacity_allows_71_and_refuses_72_without_mutation",
+            "trusted_quota_profile_claim_redecodes_under_exact_config_and_consumes_once",
+            "v2_cannot_opt_into_quota_and_v3_context_cannot_be_relabelled"
+          ]
+        },
+        "retained-authority-capacity": {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 2,
+          "required_executed": [
+            "complete_anchored_claim_bytes_allow_55_and_reject_56_without_reminting",
+            "complete_dual_proof_rotation_bytes_allow_56_and_reject_57_without_mutation"
+          ]
+        },
+        "retained-pq1": {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 6,
+          "required_executed": [
+            "actual_pq_pool_m06_pon_sql_cold_open_and_heavier_fork_requeue",
+            "expiry_equal_header_time_mtp_preview_future_skew_and_overflow_are_explicit",
+            "explicit_namespace_old_codec_context_and_sql_schema_cannot_fall_back",
+            "full_6129_byte_rows_and_packet_have_actual_85_transfer_limit",
+            "interrupted_heavier_reorg_preserves_original_atomic_state_and_recovers_cold",
+            "randomized_resign_duplicate_requires_real_signature_and_keeps_removal_history"
+          ]
+        },
+        "retained-pq2": {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 9,
+          "required_executed": [
+            "actual_pq_pool_m06_pon_sql_cold_open_and_heavier_fork_requeue",
+            "dual_key_rotation_preserves_actual_task_permissions_and_reorg_reauthorizes_original_pool",
+            "expiry_equal_header_time_mtp_preview_future_skew_and_overflow_are_explicit",
+            "explicit_namespace_old_codec_context_and_sql_schema_cannot_fall_back",
+            "full_4263_byte_rows_and_packet_have_actual_122_transfer_limit",
+            "interrupted_heavier_reorg_preserves_original_atomic_state_and_recovers_cold",
+            "prior_pq_commitment_actual_legacy_pon_checkpoint_claim_cold_reorg_and_permission_conserve",
+            "randomized_resign_duplicate_requires_real_signature_and_keeps_removal_history",
+            "unregistered_pure_pon_miner_matures_actual_rewards_then_registers_without_whitelist"
+          ]
+        }
+      },
+      "commands": [
+        {
+          "log": "rustc.log",
+          "exit_code": 0,
+          "elapsed_ns": 1896740747,
+          "source_verified": true,
+          "timed_out": false
+        },
+        {
+          "log": "preflight.log",
+          "exit_code": 0,
+          "elapsed_ns": 1928618591,
+          "source_verified": true,
+          "timed_out": false
+        },
+        {
+          "log": "source-negatives.log",
+          "exit_code": 0,
+          "elapsed_ns": 4403521480,
+          "source_verified": true,
+          "timed_out": false
+        },
+        {
+          "log": "inventory.log",
+          "exit_code": 0,
+          "elapsed_ns": 1938607447,
+          "source_verified": true,
+          "timed_out": false
+        },
+        {
+          "log": "cargo-graph.log",
+          "exit_code": 0,
+          "elapsed_ns": 3604632948,
+          "source_verified": true,
+          "timed_out": false
+        },
+        {
+          "log": "fmt.log",
+          "exit_code": 0,
+          "elapsed_ns": 14110695993,
+          "source_verified": true,
+          "timed_out": false
+        },
+        {
+          "log": "m00.log",
+          "exit_code": 0,
+          "elapsed_ns": 32017842846,
+          "source_verified": true,
+          "timed_out": false
+        },
+        {
+          "log": "m06.log",
+          "exit_code": 0,
+          "elapsed_ns": 94823033075,
+          "source_verified": true,
+          "timed_out": false
+        },
+        {
+          "log": "quota-authority.log",
+          "exit_code": 0,
+          "elapsed_ns": 33521547988,
+          "source_verified": true,
+          "timed_out": false
+        },
+        {
+          "log": "retained-authority-capacity.log",
+          "exit_code": 0,
+          "elapsed_ns": 15031861934,
+          "source_verified": true,
+          "timed_out": false
+        },
+        {
+          "log": "native-quota.log",
+          "exit_code": 0,
+          "elapsed_ns": 154134716321,
+          "source_verified": true,
+          "timed_out": false
+        },
+        {
+          "log": "retained-pq2.log",
+          "exit_code": 0,
+          "elapsed_ns": 38036988823,
+          "source_verified": true,
+          "timed_out": false
+        },
+        {
+          "log": "retained-pq1.log",
+          "exit_code": 0,
+          "elapsed_ns": 20648583202,
+          "source_verified": true,
+          "timed_out": false
+        },
+        {
+          "log": "clippy.log",
+          "exit_code": 101,
+          "elapsed_ns": 17049881024,
+          "source_verified": true,
+          "timed_out": false
+        }
+      ],
+      "native_binary": {
+        "bytes": 11010136,
+        "cargo_path": "/home/runner/work/_temp/native-pq3-target/debug/deps/native_pq_v3-4aa32a366ea084a6",
+        "gzip_sha256": "6e74fd65e1ecb101036f22c4bf65b5138e2c1ee196922a92337ee85aa25a0286",
+        "keys": "public fixture seeds only",
+        "retained_gzip": "native-quota-test.bin.gz",
+        "sha256": "06cbf95ed4ece0382a9d17564fcca50a0e6ce43fe0b8334c46fe43eefbaa62ab"
+      },
+      "all_internal_file_hashes_verified": true,
+      "crc_ok": true,
+      "phase_count": 19
+    },
+    "npq2": {
+      "run_id": 40615932239,
+      "artifact_sha256": "0014101cf64b862a0a6040cb61ad2a0e0b52d1e4e7933c92f58473db028ce2b4",
+      "result": "FAIL",
+      "error": "RuntimeError: command exited 101; retained /home/runner/work/_temp/native-pq2-observations/run/clippy.log",
+      "source_consistent": true,
+      "tests": {
+        "authority-capacity": {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 2,
+          "required_executed": [
+            "complete_anchored_claim_bytes_allow_55_and_reject_56_without_reminting",
+            "complete_dual_proof_rotation_bytes_allow_56_and_reject_57_without_mutation"
+          ]
+        },
+        "m00": {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 2,
+          "measured": 0,
+          "passed": 46,
+          "required_executed": [
+            "pq_native_accounts_v2::tests::closed_roles_lengths_reserved_bytes_and_old_namespaces_refuse",
+            "pq_native_accounts_v2::tests::exact_fresh_frame_sizes_include_every_key_and_both_proofs",
+            "pq_native_accounts_v2::tests::joint_core_binds_context_generation_every_descriptor_and_full_new_key",
+            "pq_native_accounts_v2::tests::new_roles_require_exact_branch_generation_and_anchored_source_identity"
+          ]
+        },
+        "m06": {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 6,
+          "measured": 0,
+          "passed": 88,
+          "required_executed": [
+            "pon_executor::pq_accounts_v2::tests::anchored_migration_conserves_all_accounts_tasks_rewards_and_claims_once",
+            "pon_executor::pq_accounts_v2::tests::dual_rotation_keeps_stable_task_permissions_and_actual_key_reads",
+            "pon_executor::pq_accounts_v2::tests::migration_refuses_omissions_ambiguous_ids_untranslated_liabilities_and_unbound_roots",
+            "pon_executor::pq_accounts_v2::tests::real_pq_positive_funding_registration_state_resolved_transfer_and_zero_credit"
+          ]
+        },
+        "native-pq": {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 9,
+          "required_executed": [
+            "actual_pq_pool_m06_pon_sql_cold_open_and_heavier_fork_requeue",
+            "dual_key_rotation_preserves_actual_task_permissions_and_reorg_reauthorizes_original_pool",
+            "expiry_equal_header_time_mtp_preview_future_skew_and_overflow_are_explicit",
+            "explicit_namespace_old_codec_context_and_sql_schema_cannot_fall_back",
+            "full_4263_byte_rows_and_packet_have_actual_122_transfer_limit",
+            "interrupted_heavier_reorg_preserves_original_atomic_state_and_recovers_cold",
+            "prior_pq_commitment_actual_legacy_pon_checkpoint_claim_cold_reorg_and_permission_conserve",
+            "randomized_resign_duplicate_requires_real_signature_and_keeps_removal_history",
+            "unregistered_pure_pon_miner_matures_actual_rewards_then_registers_without_whitelist"
+          ]
+        },
+        "retained-pq1": {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 6,
+          "required_executed": [
+            "actual_pq_pool_m06_pon_sql_cold_open_and_heavier_fork_requeue",
+            "expiry_equal_header_time_mtp_preview_future_skew_and_overflow_are_explicit",
+            "explicit_namespace_old_codec_context_and_sql_schema_cannot_fall_back",
+            "full_6129_byte_rows_and_packet_have_actual_85_transfer_limit",
+            "interrupted_heavier_reorg_preserves_original_atomic_state_and_recovers_cold",
+            "randomized_resign_duplicate_requires_real_signature_and_keeps_removal_history"
+          ]
+        }
+      },
+      "commands": [
+        {
+          "log": "rustc.log",
+          "exit_code": 0,
+          "elapsed_ns": 1882527923,
+          "source_verified": true,
+          "timed_out": false
+        },
+        {
+          "log": "cargo.log",
+          "exit_code": 0,
+          "elapsed_ns": 1896230382,
+          "source_verified": true,
+          "timed_out": false
+        },
+        {
+          "log": "preflight.log",
+          "exit_code": 0,
+          "elapsed_ns": 1926005282,
+          "source_verified": true,
+          "timed_out": false
+        },
+        {
+          "log": "source-negatives.log",
+          "exit_code": 0,
+          "elapsed_ns": 4718867231,
+          "source_verified": true,
+          "timed_out": false
+        },
+        {
+          "log": "inventory.log",
+          "exit_code": 0,
+          "elapsed_ns": 1933621143,
+          "source_verified": true,
+          "timed_out": false
+        },
+        {
+          "log": "cargo-graph.log",
+          "exit_code": 0,
+          "elapsed_ns": 4077528600,
+          "source_verified": true,
+          "timed_out": false
+        },
+        {
+          "log": "fmt.log",
+          "exit_code": 0,
+          "elapsed_ns": 14044921343,
+          "source_verified": true,
+          "timed_out": false
+        },
+        {
+          "log": "m00.log",
+          "exit_code": 0,
+          "elapsed_ns": 31937886388,
+          "source_verified": true,
+          "timed_out": false
+        },
+        {
+          "log": "m06.log",
+          "exit_code": 0,
+          "elapsed_ns": 100269510746,
+          "source_verified": true,
+          "timed_out": false
+        },
+        {
+          "log": "authority-capacity.log",
+          "exit_code": 0,
+          "elapsed_ns": 38334050745,
+          "source_verified": true,
+          "timed_out": false
+        },
+        {
+          "log": "native-pq.log",
+          "exit_code": 0,
+          "elapsed_ns": 182066620688,
+          "source_verified": true,
+          "timed_out": false
+        },
+        {
+          "log": "retained-pq1.log",
+          "exit_code": 0,
+          "elapsed_ns": 20711226534,
+          "source_verified": true,
+          "timed_out": false
+        },
+        {
+          "log": "clippy.log",
+          "exit_code": 101,
+          "elapsed_ns": 16859351185,
+          "source_verified": true,
+          "timed_out": false
+        }
+      ],
+      "native_binary": {
+        "bytes": 11160808,
+        "capture": "post-command artifact, not an independent execution receipt",
+        "cargo_path": "/home/runner/work/_temp/native-pq2-target/debug/deps/native_pq_v2-fdb24771d9658ad2",
+        "gzip_sha256": "7b17d200fb0470ab696273ddaea13a9384efbcc7690acb103b28625c3df97315",
+        "keys": "deliberately public fixture seeds only; no deployed keys",
+        "retained_gzip": "native-pq-test.bin.gz",
+        "sha256": "f838c8c2053eadbaef4e2f3c5926b5a8d10668ce046ca63fd57d38a2d0ab044e"
+      },
+      "all_internal_file_hashes_verified": true,
+      "crc_ok": true,
+      "phase_count": 196
+    }
+  },
+  "schema": "native-pq3-original-ci-failure-review-v1",
+  "runtime_pass_is_not_workflow_pass": true,
+  "repaired_source_has_not_run": true,
+  "p1_complete": false,
+  "production_activation": false,
+  "artifact_urls": {
+    "npq3": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40615932201/artifacts/12785346941",
+    "npq2": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40615932239/artifacts/12784854785"
+  }
+}

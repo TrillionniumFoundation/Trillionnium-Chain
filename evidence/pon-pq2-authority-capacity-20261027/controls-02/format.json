@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "/workspace/scratch/301262829a43/pon-build-inputs/unpacked/toolchain/bin/rustfmt",
+    "--edition",
+    "2021",
+    "--check",
+    "trillionnium/crates/trnm-mvcc-fee/tests/pq2_authority_capacity.rs"
+  ],
+  "returncode": 0,
+  "wall_seconds": 0.03588716800004477,
+  "scope": "named source control only"
+}

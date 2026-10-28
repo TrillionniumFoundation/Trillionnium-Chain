@@ -13,13 +13,95 @@ use trnm_mempool::{
 use trnm_mvcc_fee::pon_commitment::{
     CacheLimits, CheckedExecutionParent, CheckedTransactionPrefix, CommitmentObservation,
 };
+use trnm_mvcc_fee::pon_executor::pq_accounts_v2 as pq2;
 use trnm_mvcc_fee::pon_executor::pq_native_v1 as pq;
 use trnm_mvcc_fee::pon_executor::{
     self, Config, ExecutionControl, ExecutionError, ExecutionProgress, ExecutionWorkerAccounting,
     PrefixContext, State,
 };
 use trnm_protocol::pon_wire::{hash, Envelope, Hash};
+use trnm_protocol::pq_native_accounts_v2 as pq2_wire;
 use trnm_protocol::pq_native_transfer_v1 as pq_wire;
+
+fn is_pq(cfg: &Config) -> bool {
+    pq::enabled(cfg) || pq2::enabled(cfg)
+}
+fn check_pq_signature(
+    state: &State,
+    raw: &[u8],
+    timestamp: u64,
+    cfg: &Config,
+) -> Result<(Hash, [u8; 48], Hash)> {
+    if pq2::enabled(cfg) {
+        let checked = pq2::prepare_signature(state, raw, timestamp, cfg)?;
+        pq2::validate_current_authority(state, raw, cfg)?;
+        Ok((checked.wire_id(), checked.statement_id(), checked.sender()))
+    } else {
+        let checked = pq::prepare_signature(raw, timestamp, cfg)?;
+        pq::validate_current_authority(state, raw, cfg)?;
+        Ok((checked.wire_id(), checked.statement_id(), checked.sender()))
+    }
+}
+fn validate_pq_block(
+    parent: &State,
+    raws: &[Vec<u8>],
+    miner: Hash,
+    timestamp: Option<u64>,
+    cfg: &Config,
+) -> Result<()> {
+    if pq2::enabled(cfg) {
+        Ok(pq2::validate_block(parent, raws, miner, timestamp, cfg)?)
+    } else {
+        Ok(pq::validate_block(parent, raws, miner, timestamp, cfg)?)
+    }
+}
+#[derive(Clone, Copy)]
+enum StatementQuery {
+    CountActive,
+    CountRemoved,
+    HasRemovedOrphan,
+    ReadPosition,
+    WasRemoved,
+    FindStatement,
+    InsertStatement,
+    ReadCommitted,
+    InsertRemoved,
+}
+fn statement_sql(cfg: &Config, query: StatementQuery) -> &'static str {
+    if pq2::quota_v3_enabled(cfg) {
+        return match query {
+        StatementQuery::CountActive =>"SELECT COUNT(*) FROM local_pq_statements_v3",
+        StatementQuery::CountRemoved =>"SELECT COUNT(*) FROM local_pq_removed_statements_v3",
+        StatementQuery::HasRemovedOrphan =>"SELECT EXISTS(SELECT 1 FROM local_pq_removed_statements_v3 s LEFT JOIN local_pool_removals r ON r.ordinal=s.removal_ordinal WHERE r.ordinal IS NULL)",
+        StatementQuery::ReadPosition =>"SELECT statement FROM local_pq_statements_v3 WHERE group_id=? AND position=? AND length(statement)=48",
+        StatementQuery::WasRemoved =>"SELECT EXISTS(SELECT 1 FROM local_pq_removed_statements_v3 WHERE statement=?)",
+        StatementQuery::FindStatement =>"SELECT group_id,position FROM local_pq_statements_v3 WHERE statement=?",
+        StatementQuery::InsertStatement =>"INSERT INTO local_pq_statements_v3 VALUES(?,?,?)",
+        StatementQuery::ReadCommitted =>"SELECT r.digest,r.raw,s.statement FROM local_pool_rows r JOIN local_pq_statements_v3 s USING(group_id,position) WHERE r.group_id=? AND r.position=?",
+        StatementQuery::InsertRemoved =>"INSERT INTO local_pq_removed_statements_v3 VALUES(?,?)",
+        };
+    }
+    match (pq2::enabled(cfg),query) {
+        (false,StatementQuery::CountActive)=>"SELECT COUNT(*) FROM local_pq_statements_v1",
+        (true,StatementQuery::CountActive)=>"SELECT COUNT(*) FROM local_pq_statements_v2",
+        (false,StatementQuery::CountRemoved)=>"SELECT COUNT(*) FROM local_pq_removed_statements_v1",
+        (true,StatementQuery::CountRemoved)=>"SELECT COUNT(*) FROM local_pq_removed_statements_v2",
+        (false,StatementQuery::HasRemovedOrphan)=>"SELECT EXISTS(SELECT 1 FROM local_pq_removed_statements_v1 s LEFT JOIN local_pool_removals r ON r.ordinal=s.removal_ordinal WHERE r.ordinal IS NULL)",
+        (true,StatementQuery::HasRemovedOrphan)=>"SELECT EXISTS(SELECT 1 FROM local_pq_removed_statements_v2 s LEFT JOIN local_pool_removals r ON r.ordinal=s.removal_ordinal WHERE r.ordinal IS NULL)",
+        (false,StatementQuery::ReadPosition)=>"SELECT statement FROM local_pq_statements_v1 WHERE group_id=? AND position=? AND length(statement)=48",
+        (true,StatementQuery::ReadPosition)=>"SELECT statement FROM local_pq_statements_v2 WHERE group_id=? AND position=? AND length(statement)=48",
+        (false,StatementQuery::WasRemoved)=>"SELECT EXISTS(SELECT 1 FROM local_pq_removed_statements_v1 WHERE statement=?)",
+        (true,StatementQuery::WasRemoved)=>"SELECT EXISTS(SELECT 1 FROM local_pq_removed_statements_v2 WHERE statement=?)",
+        (false,StatementQuery::FindStatement)=>"SELECT group_id,position FROM local_pq_statements_v1 WHERE statement=?",
+        (true,StatementQuery::FindStatement)=>"SELECT group_id,position FROM local_pq_statements_v2 WHERE statement=?",
+        (false,StatementQuery::InsertStatement)=>"INSERT INTO local_pq_statements_v1 VALUES(?,?,?)",
+        (true,StatementQuery::InsertStatement)=>"INSERT INTO local_pq_statements_v2 VALUES(?,?,?)",
+        (false,StatementQuery::ReadCommitted)=>"SELECT r.digest,r.raw,s.statement FROM local_pool_rows r JOIN local_pq_statements_v1 s USING(group_id,position) WHERE r.group_id=? AND r.position=?",
+        (true,StatementQuery::ReadCommitted)=>"SELECT r.digest,r.raw,s.statement FROM local_pool_rows r JOIN local_pq_statements_v2 s USING(group_id,position) WHERE r.group_id=? AND r.position=?",
+        (false,StatementQuery::InsertRemoved)=>"INSERT INTO local_pq_removed_statements_v1 VALUES(?,?)",
+        (true,StatementQuery::InsertRemoved)=>"INSERT INTO local_pq_removed_statements_v2 VALUES(?,?)",
+    }
+}
 
 pub const LOCAL_POOL_PROFILE: &str = "native-local-queued-pnx1-v2";
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -151,6 +233,7 @@ struct NativePoolView<'raw> {
     raw: &'raw [u8],
     // The PQ branch never constructs a legacy Ed25519 envelope.
     legacy: Option<Envelope>,
+    pq_profile: Option<pq2_wire::AccountProfile>,
     digest: CanonicalTxDigest,
     signer: CanonicalSignerId,
     fee: u64,
@@ -162,21 +245,33 @@ struct NativePoolView<'raw> {
     statement: Option<[u8; 48]>,
 }
 fn max_body_bytes(cfg: &Config) -> usize {
-    if pq::enabled(cfg) {
+    if pq2::enabled(cfg) {
+        pq2_wire::MAX_BYTES
+    } else if pq::enabled(cfg) {
         pq_wire::MAX_BYTES
     } else {
         2048
     }
 }
 fn pool_profile(cfg: &Config) -> &'static str {
-    if pq::enabled(cfg) {
+    if pq2::quota_v3_enabled(cfg) {
+        "native-local-queued-npq3-v1"
+    } else if pq2::enabled(cfg) {
+        "native-local-queued-npq2-v1"
+    } else if pq::enabled(cfg) {
         "native-local-queued-npq1-v1"
     } else {
         LOCAL_POOL_PROFILE
     }
 }
 fn minimum_fee(tag: u8, bytes: usize, cfg: &Config) -> Result<u64> {
-    let base = *cfg.fees.get(usize::from(tag)).ok_or("POOL_TAG")?;
+    let base = if pq2::enabled(cfg) && tag >= pq2_wire::REGISTER {
+        cfg.params["native_pq_v2_base_fees"][tag.to_string()]
+            .as_u64()
+            .ok_or("POOL_TAG")?
+    } else {
+        *cfg.fees.get(usize::from(tag)).ok_or("POOL_TAG")?
+    };
     let byte = cfg.params["byte_fee_units"].as_u64().ok_or("CONFIG")?;
     base.checked_add((bytes as u64).checked_mul(byte).ok_or("POOL_FEE")?)
         .ok_or_else(|| "POOL_FEE".into())
@@ -187,48 +282,67 @@ impl<'raw> NativePoolView<'raw> {
             !raw.is_empty() && raw.len() <= max_body_bytes(cfg),
             "POOL_BODY_LIMIT",
         )?;
-        let (legacy, digest, sender, nonce, expiry, fee_limit, tag, statement) = if pq::enabled(cfg)
-        {
-            let envelope =
-                pq_wire::UnverifiedEnvelope::decode(raw).map_err(|_| "POOL_PQ_ENCODING")?;
-            let tx = envelope.transfer();
-            let statement = envelope
-                .statement_id(pq::context(cfg)?)
-                .map_err(|_| "POOL_PQ_CONTEXT")?;
-            (
-                None,
-                envelope.wire_id(),
-                tx.sender,
-                tx.nonce,
-                tx.expires_at,
-                tx.max_fee,
-                1,
-                Some(statement),
-            )
-        } else {
-            let tx = Envelope::decode(raw).map_err(|_| "POOL_ENCODING")?;
-            let facts = (
-                tx.id().map_err(|_| "POOL_ENCODING")?,
-                tx.sender,
-                tx.nonce,
-                tx.expiry,
-                tx.fee_limit,
-                tx.tag,
-            );
-            (
-                Some(tx),
-                facts.0,
-                facts.1,
-                facts.2,
-                facts.3,
-                facts.4,
-                facts.5,
-                None,
-            )
-        };
+        let (legacy, digest, sender, nonce, expiry, fee_limit, tag, statement) =
+            if pq2::enabled(cfg) {
+                let envelope = pq2::decode_for_config(raw, cfg)?;
+                ensure(
+                    envelope.common.context == pq2::context(cfg)?,
+                    "POOL_PQ2_CONTEXT",
+                )?;
+                (
+                    None,
+                    envelope.wire_id(),
+                    envelope.common.account,
+                    envelope.common.nonce,
+                    envelope.common.expires_at,
+                    envelope.common.max_fee,
+                    envelope.kind,
+                    Some(envelope.statement_id()),
+                )
+            } else if pq::enabled(cfg) {
+                let envelope =
+                    pq_wire::UnverifiedEnvelope::decode(raw).map_err(|_| "POOL_PQ_ENCODING")?;
+                let tx = envelope.transfer();
+                let statement = envelope
+                    .statement_id(pq::context(cfg)?)
+                    .map_err(|_| "POOL_PQ_CONTEXT")?;
+                (
+                    None,
+                    envelope.wire_id(),
+                    tx.sender,
+                    tx.nonce,
+                    tx.expires_at,
+                    tx.max_fee,
+                    1,
+                    Some(statement),
+                )
+            } else {
+                let tx = Envelope::decode(raw).map_err(|_| "POOL_ENCODING")?;
+                let facts = (
+                    tx.id().map_err(|_| "POOL_ENCODING")?,
+                    tx.sender,
+                    tx.nonce,
+                    tx.expiry,
+                    tx.fee_limit,
+                    tx.tag,
+                );
+                (
+                    Some(tx),
+                    facts.0,
+                    facts.1,
+                    facts.2,
+                    facts.3,
+                    facts.4,
+                    facts.5,
+                    None,
+                )
+            };
         Ok(Self {
             raw,
             legacy,
+            pq_profile: pq2::enabled(cfg)
+                .then(|| pq2::account_profile(cfg))
+                .transpose()?,
             digest: CanonicalTxDigest::from_bytes(digest).map_err(|_| "POOL_ENCODING")?,
             signer: CanonicalSignerId::from_bytes(sender).map_err(|_| "POOL_SIGNER")?,
             fee: minimum_fee(tag, raw.len(), cfg)?,
@@ -270,6 +384,19 @@ impl SignedEnvelopeView for NativePoolView<'_> {
                     && tx.id().ok() == Some(self.digest.as_bytes())
                     && tx.sender == self.signer.as_bytes()
             }
+            None if self.pq_profile.is_some() => pq2_wire::UnverifiedEnvelope::decode_for_profile(
+                self.raw,
+                self.pq_profile.expect("selected account profile"),
+            )
+            .is_ok_and(|envelope| {
+                envelope.wire_id() == self.digest.as_bytes()
+                    && envelope.common.account == self.signer.as_bytes()
+                    && envelope.common.nonce == self.nonce
+                    && envelope.common.expires_at == self.expiry
+                    && envelope.common.max_fee == self.fee_limit
+                    && envelope.kind == self.tag
+                    && Some(envelope.statement_id()) == self.statement
+            }),
             None => pq_wire::UnverifiedEnvelope::decode(self.raw).is_ok_and(|envelope| {
                 let tx = envelope.transfer();
                 envelope.wire_id() == self.digest.as_bytes()
@@ -351,13 +478,12 @@ impl SignedAdmissionHooks<NativePoolView<'_>> for Hooks<'_, '_> {
                     .context
                     .timestamp
                     .ok_or(AdmissionReject::SignatureRejected)?;
-                let checked = pq::prepare_signature(view.raw, timestamp, self.context.cfg)
-                    .map_err(|_| AdmissionReject::SignatureRejected)?;
-                pq::validate_current_authority(self.context.state, view.raw, self.context.cfg)
-                    .map_err(|_| AdmissionReject::SignatureRejected)?;
-                if checked.wire_id() != view.digest.as_bytes()
-                    || checked.sender() != view.sender
-                    || Some(checked.statement_id()) != view.statement
+                let (wire_id, statement_id, sender) =
+                    check_pq_signature(self.context.state, view.raw, timestamp, self.context.cfg)
+                        .map_err(|_| AdmissionReject::SignatureRejected)?;
+                if wire_id != view.digest.as_bytes()
+                    || sender != view.sender
+                    || Some(statement_id) != view.statement
                 {
                     return Err(AdmissionReject::CanonicalValidationFailed);
                 }
@@ -559,7 +685,7 @@ impl PendingPreview<'_, '_> {
             0
         };
         let mut appended_signatures = Vec::with_capacity(raws.len() - reuse);
-        if pq::enabled(cfg) {
+        if is_pq(cfg) {
             let total = raws.iter().try_fold(0_usize, |sum, raw| {
                 sum.checked_add(raw.len()).ok_or("POOL_BYTE_LIMIT")
             })?;
@@ -729,10 +855,10 @@ impl Node {
         )?;
         self.namespace()?;
         limits.validate()?;
-        if self.settings.is_native_pq_v1() {
+        if self.settings.is_native_pq() {
             self.storage_context()?;
             let parent = self.active()?.0;
-            pq::validate_block(
+            validate_pq_block(
                 &self.state_at(parent)?,
                 &[],
                 limits.preview_miner,
@@ -806,7 +932,7 @@ impl Node {
             "GROWTH_REFERENCE_POOL_UNSUPPORTED",
         )?;
         self.namespace()?;
-        if self.settings.is_native_pq_v1() {
+        if self.settings.is_native_pq() {
             self.storage_context()?;
         }
         let (context, raw): (Vec<u8>, Vec<u8>) = self
@@ -938,21 +1064,25 @@ impl Node {
             })?
             .collect::<std::result::Result<Vec<_>, _>>()?;
         ensure(groups.len() <= limits.max_records, "POOL_STORAGE_LIMIT")?;
-        if self.settings.is_native_pq_v1() {
-            let mapped: usize =
-                self.db
-                    .query_row("SELECT COUNT(*) FROM local_pq_statements_v1", [], |r| {
-                        r.get(0)
-                    })?;
+        if self.settings.is_native_pq() {
+            let mapped: usize = self.db.query_row(
+                statement_sql(&self.settings.app, StatementQuery::CountActive),
+                [],
+                |r| r.get(0),
+            )?;
             let removed: usize =
                 self.db
                     .query_row("SELECT COUNT(*) FROM local_pool_removals", [], |r| r.get(0))?;
             let removed_mapped: usize = self.db.query_row(
-                "SELECT COUNT(*) FROM local_pq_removed_statements_v1",
+                statement_sql(&self.settings.app, StatementQuery::CountRemoved),
                 [],
                 |r| r.get(0),
             )?;
-            let orphaned:bool=self.db.query_row("SELECT EXISTS(SELECT 1 FROM local_pq_removed_statements_v1 s LEFT JOIN local_pool_removals r ON r.ordinal=s.removal_ordinal WHERE r.ordinal IS NULL)",[],|r|r.get(0))?;
+            let orphaned: bool = self.db.query_row(
+                statement_sql(&self.settings.app, StatementQuery::HasRemovedOrphan),
+                [],
+                |r| r.get(0),
+            )?;
             ensure(
                 mapped == total
                     && removed_mapped == removed
@@ -1003,9 +1133,11 @@ impl Node {
                     "POOL_STORAGE_BINDING",
                 )?;
                 if let Some(statement) = view.statement {
-                    let retained:Vec<u8>=self.db.query_row(
-                        "SELECT statement FROM local_pq_statements_v1 WHERE group_id=? AND position=? AND length(statement)=48",
-                        params![id.as_slice(),position],|r|r.get(0))?;
+                    let retained: Vec<u8> = self.db.query_row(
+                        statement_sql(&self.settings.app, StatementQuery::ReadPosition),
+                        params![id.as_slice(), position],
+                        |r| r.get(0),
+                    )?;
                     ensure(retained == statement, "POOL_PQ_STATEMENT_BINDING")?;
                 }
                 count += 1;
@@ -1061,7 +1193,7 @@ impl Node {
         self.pool_status_snapshot()
     }
     fn pool_preview_timestamp(&self, parent: Hash) -> Result<Option<u64>> {
-        if !self.settings.is_native_pq_v1() {
+        if !self.settings.is_native_pq() {
             return Ok(None);
         }
         let mut times: Vec<_> = self
@@ -1315,22 +1447,23 @@ impl Node {
         // retained semantic duplicate is only a local receipt, not current queue
         // eligibility; signature possession uses time 0 here, while the actual
         // M05/M06 admission below enforces the branch preview Header timestamp.
-        if self.settings.is_native_pq_v1() {
+        if self.settings.is_native_pq() {
             let mut statements = BTreeSet::new();
             let mut retained_statements = Vec::new();
             for (index, view) in views.iter().enumerate() {
                 (control.progress)(ExecutionProgress::BeforePrepare { index })?;
-                let signed = pq::prepare_signature(view.raw, 0, &actual.cfg)?;
-                pq::validate_current_authority(&actual.state, view.raw, &actual.cfg)?;
+                let (wire_id, statement_id, sender) =
+                    check_pq_signature(&actual.state, view.raw, 0, &actual.cfg)?;
                 let statement = view.statement.ok_or("POOL_PQ_STATEMENT")?;
                 ensure(
-                    signed.statement_id() == statement
-                        && signed.wire_id() == view.digest.as_bytes(),
+                    statement_id == statement
+                        && wire_id == view.digest.as_bytes()
+                        && sender == view.sender,
                     "POOL_PQ_BINDING",
                 )?;
                 ensure(statements.insert(statement), "POOL_PQ_DUPLICATE_STATEMENT")?;
                 let removed: bool = self.db.query_row(
-                    "SELECT EXISTS(SELECT 1 FROM local_pq_removed_statements_v1 WHERE statement=?)",
+                    statement_sql(&self.settings.app, StatementQuery::WasRemoved),
                     [statement.as_slice()],
                     |r| r.get(0),
                 )?;
@@ -1338,7 +1471,7 @@ impl Node {
                 let retained: Option<(Vec<u8>, usize)> = self
                     .db
                     .query_row(
-                        "SELECT group_id,position FROM local_pq_statements_v1 WHERE statement=?",
+                        statement_sql(&self.settings.app, StatementQuery::FindStatement),
                         [statement.as_slice()],
                         |r| Ok((r.get(0)?, r.get(1)?)),
                     )
@@ -1554,14 +1687,16 @@ impl Node {
             if let Some(statement) = view.statement {
                 ensure(
                     tx.execute(
-                        "INSERT INTO local_pq_statements_v1 VALUES(?,?,?)",
+                        statement_sql(&self.settings.app, StatementQuery::InsertStatement),
                         params![id.as_slice(), position as u32, statement.as_slice()],
                     )? == 1,
                     "POOL_PQ_STORAGE_WRITE",
                 )?;
-                let retained:(Vec<u8>,Vec<u8>,Vec<u8>)=tx.query_row(
-                    "SELECT r.digest,r.raw,s.statement FROM local_pool_rows r JOIN local_pq_statements_v1 s USING(group_id,position) WHERE r.group_id=? AND r.position=?",
-                    params![id.as_slice(),position as u32],|r|Ok((r.get(0)?,r.get(1)?,r.get(2)?)))?;
+                let retained: (Vec<u8>, Vec<u8>, Vec<u8>) = tx.query_row(
+                    statement_sql(&self.settings.app, StatementQuery::ReadCommitted),
+                    params![id.as_slice(), position as u32],
+                    |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)),
+                )?;
                 ensure(
                     retained.0 == view.digest.as_bytes()
                         && retained.1 == view.raw
@@ -1709,7 +1844,7 @@ impl Node {
                 checkpoint.check()?;
             }
             tx.execute("INSERT INTO local_pool_removals(id,group_id,reason) VALUES(?,?,'explicit-terminal-prune')",params![row.digest.as_slice(),id.as_slice()])?;
-            if self.settings.is_native_pq_v1() {
+            if self.settings.is_native_pq() {
                 let view = NativePoolView::new(&row.raw, &self.settings.app)?;
                 let statement = view.statement.ok_or("POOL_PQ_STATEMENT")?;
                 let ordinal: u64 = tx.query_row(
@@ -1719,7 +1854,7 @@ impl Node {
                 )?;
                 ensure(
                     tx.execute(
-                        "INSERT INTO local_pq_removed_statements_v1 VALUES(?,?)",
+                        statement_sql(&self.settings.app, StatementQuery::InsertRemoved),
                         params![statement.as_slice(), ordinal],
                     )? == 1,
                     "POOL_PQ_STORAGE_WRITE",

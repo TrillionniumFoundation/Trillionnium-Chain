@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "cargo",
+    "metadata",
+    "--offline",
+    "--locked",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--format-version",
+    "1"
+  ],
+  "returncode": 101,
+  "wall_seconds": 0.13741992100403877,
+  "stdout": "",
+  "stderr": "error: failed to select a version for the requirement `rusqlite = \"=0.39.0\"` (locked to 0.39.0)\ncandidate versions found which didn't match: 0.32.1\nlocation searched: directory source `/workspace/scratch/301262829a43/pon-build-inputs/original-unpacked/vendor` (which is replacing registry `crates-io`)\nrequired by package `trnm-data-availability v0.1.0 (/workspace/scratch/3d4ec372c488/pq-quota-v3/trillionnium/crates/trnm-data-availability)`\nperhaps a crate was updated and forgotten to be re-vendored?\nAs a reminder, you're using offline mode (--offline) which can sometimes cause surprising resolution failures, if this error is too confusing you may wish to retry without `--offline`.\n"
+}

@@ -28,14 +28,10 @@ impl Settings {
         pq_native_v1::enabled(&self.app)
     }
     pub(crate) fn encode_packet(&self, packet: &Packet) -> Result<Vec<u8>> {
-        packet.encode_for_native_profile(self.is_native_pq_v1())
+        crate::native_packet::encode(packet, self.packet_profile())
     }
     pub(crate) fn decode_packet(&self, raw: &[u8]) -> Result<Packet> {
-        if self.is_native_pq_v1() {
-            Ok(PqPacketV1::decode(raw)?.inner)
-        } else {
-            Packet::decode(raw)
-        }
+        crate::native_packet::decode(raw, self.packet_profile())
     }
 }
 

@@ -11,6 +11,7 @@ fn config() -> Config {
     fees[1] = 17;
     Config {
         native_pq: None,
+        native_pq_v2: None,
         network: [1; 32],
         parameters: [2; 32],
         family: [3; 32],

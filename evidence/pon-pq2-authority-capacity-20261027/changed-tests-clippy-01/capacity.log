@@ -1,0 +1,24 @@
+error: called `.err().expect()` on a `Result` value
+   --> /workspace/scratch/3d4ec372c488/pq-accounts-audit/trillionnium/crates/trnm-mvcc-fee/tests/pq2_authority_capacity.rs:108:10
+    |
+108 |           .err()
+    |  __________^
+109 | |         .expect("over-budget rotations must refuse");
+    | |_______________^ help: try: `expect_err`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.95.0/index.html#err_expect
+    = note: `-D clippy::err-expect` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::err_expect)]`
+
+error: called `.err().expect()` on a `Result` value
+   --> /workspace/scratch/3d4ec372c488/pq-accounts-audit/trillionnium/crates/trnm-mvcc-fee/tests/pq2_authority_capacity.rs:214:14
+    |
+214 |               .err()
+    |  ______________^
+215 | |             .expect("over-budget claims must refuse"),
+    | |___________________^ help: try: `expect_err`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.95.0/index.html#err_expect
+
+error: aborting due to 2 previous errors
+
