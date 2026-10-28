@@ -150,3 +150,81 @@ The locked main graph adds 101 packages without replacing or removing any old
 package version. The fuzz lock remains unchanged. Source inventory, Markdown
 links, repository checks and formatting passed on the locally recorded source.
 None of these regression results overrules the two failed service observations.
+
+## Subsequent exact-head failure and timed-close accounting
+
+The [exact-head manifest](exact-head-c2364a5-validation.json) and
+[66-file raw archive](exact-head-c2364a5-validation.tar.gz) preserve a later
+local validation on commit `c2364a5864face5e828140e557915f4380f97512`, tree
+`765ba4aa64625f26378bd3847f7a827bd6d7d436`. Source identity before and after,
+release build records, binary hashes, every process receipt and original
+stdout/stderr are included. Its runtime/host filter returned **180 passed,
+one failed**, exit 101 without an outer timeout. The earlier 181-pass result
+does not replace this exact-head failure. Crypto 127, CLI three, native
+confirmation two, height/generation one and the recorded static/model gates
+passed in this separate observation; its overall result remains failure.
+
+The failed original TCP case was
+`r4_paid_pending_eof_original_expiry_and_shutdown_never_create_body_or_work`.
+It first observed EOF and the expected pending-close count, but the assertion
+for at least one expired `solution` failed. The exact closing error was not
+recorded, so that connection's precise cause remains unknown.
+
+Source review found a reachable baseline classification gap: a deadline can
+elapse after the reactor's outer time check. A subsequent stage check can then
+return `PublicRequestDeadline` or `PublicCookieExpired`; the generic error
+path closed the request but did not add expiry counters. This explains how
+the observed combination can occur, not a captured trace proving that it was
+the specific failed connection's cause. It is not an expiry bypass.
+
+The correction captures time at the stage-error entry, before observer/metrics
+locks, and counts expiry only when **both** a precise time-related error code
+and the original connection deadline establish elapsed time. Stop before the
+deadline, malformed future intervals, cancellation, EOF, unrelated refusals
+and forged error display suffixes cannot claim expiry. The same metrics lock
+performs one pending close and retains the original error/refusal counters.
+Wire fields, signed profile identities, limits, deadlines and the original TCP
+test's conditions are unchanged.
+
+Two deterministic classification controls and that original TCP case passed
+locally in the declared test profile. Their
+[validation manifest](expiry-correction-validation.json) and
+[original log archive](expiry-correction-validation.tar.gz) preserve the exact
+source-file/diff hashes, binary identity, commands, profile and verdict. These
+controls do not force a real reactor scheduling race or qualify honest service.
+The full public-runtime/host compatibility filter then passed all 183 tests
+in the same declared test profile. Full-workspace/all-target/all-feature strict
+release Clippy also passed. The focused three tests are a subset of those 183,
+not additional distinct test coverage.
+The corrected committed source still needs its own release/head/merge CI.
+
+## Exact-head CI observations at c2364a5
+
+[Run 40748929769](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40748929769)
+completed its first x64 and ARM64 attempts successfully on the exact `c2364a5`
+source. Both original ZIP SHA-256 digests were checked. The independent reader
+was rerun locally on the unmodified prepared inputs and full phase reports;
+both recomputations exactly matched their recorded v3 qualifications.
+
+| Observation | Native confirmed rounds (baseline / from-zero / fresh-header) | Hostile rounds with both pressure and observed paid depletion | Actual fresh challenges published |
+| --- | --- | --- | --- |
+| [x64 manifest](ci-c2364a5-x64.json), [raw archive](ci-c2364a5-x64.tar.gz) | 3/3 / 3/3 / 3/3 | 4 of 6 | 1,731 |
+| [ARM64 manifest](ci-c2364a5-arm64.json), [raw archive](ci-c2364a5-arm64.tar.gz) | 3/3 / 3/3 / 3/3 | 4 of 6 | 1,736 |
+
+All six hostile rounds per architecture had actual attack and receiver-CPU
+overlap. In each hostile phase, rounds two and three additionally contained
+fresh paid-credit depletion observations; round one did not. Do not describe
+these samples as continuous exhaustion or as depletion in every round. Both
+fresh-header phases had zero arithmetic cache hits and exceeded the 64-slot
+churn requirement with actual completed/published facts.
+
+These runs used the declared 4-CPU / 16-GiB / nice-10 experimental parent,
+two local listeners and 24 actors with the original caps and deadlines. The
+six native gates and process/source/binary/resource checks passed. This is
+finite service evidence for that source and envelope. It does not certify the
+fixed 25%-CPU public receiver parent, hardware authenticity, unrestricted Sybil
+fairness, WAN throughput, PoN hardness, PQ-128 or production activation. The
+different shared local hardware cannot be used as a controlled throughput
+comparison. Both local pressure failures and the exact-head 180/1 regression
+remain preserved; these CI passes do not erase them or cover the later
+timed-close correction.

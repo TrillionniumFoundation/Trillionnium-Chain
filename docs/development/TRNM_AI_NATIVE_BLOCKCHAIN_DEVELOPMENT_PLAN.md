@@ -160,6 +160,21 @@ uses a new v3 namespace; the transport remains pure-v2. The original campaign
 source, workload, limits and historical failures remain unchanged. Final exact
 head CI must supply the corrected campaign's own observation.
 
+A subsequent exact-head check at `c2364a5` returned 180 runtime tests passed
+and one original timed-close assertion failed; its complete raw record is
+retained with the local observations. A reachable baseline gap omitted expiry
+counters when the original deadline elapsed inside a stage check. The narrow
+correction requires both a typed time error and an actually elapsed original
+deadline, preserving the old TCP conditions, all limits and wire identities.
+Two deterministic boundary controls plus the original TCP case passed locally;
+this diagnostic correction neither replaces prior failures nor qualifies service.
+The c2364a5 exact-head x64 and ARM64 CI observations separately passed all nine
+confirmation rounds each; four of six hostile rounds per architecture also
+contained fresh paid-depletion observations. Their unchanged raw inputs were
+independently reread with identical v3 verdicts. These are finite observations
+under the 4-CPU / 16-GiB / nice-10 experimental envelope, not evidence for the
+fixed public kernel parent or for the later timed-close correction.
+
 The conditional PoN DAA model includes task/solver costs, witness/publication
 latency, producer rate changes, hidden branches and full-cost quantum hypotheses,
 with native integer-rule vectors and a real PNW1 confirmation/reorg/reopen test.

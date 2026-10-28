@@ -181,6 +181,15 @@ activation generation and has a three-block, one-activation native regression.
 Later corrected telemetry cannot replace these failures or turn shared local
 hardware into the declared CI or receiver-kernel envelope.
 
+The same evidence index also retains a later exact-head runtime regression
+failure and its narrow timed-close accounting correction. A stage can detect
+expiry after the reactor's outer check; that closing error now contributes to
+expiry counters only when its typed code and original elapsed deadline both
+support that classification. Original phase-error counts, request closure,
+signed profiles, deadlines and the old TCP test conditions remain unchanged.
+The original failed connection's exact error was not captured, so a reachable
+classification gap is not presented as its proven trace or as an expiry bypass.
+
 ## PoN-specific DAA and confirmation experiment
 
 The [conditional risk model](../../../../formal/pon-nakamoto-v1/pon_risk_model_v1.py)

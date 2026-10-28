@@ -1215,6 +1215,43 @@ fn close_pending(metrics: &mut PublicMetrics, pending: Option<(PendingKind, Pend
         }
     }
 }
+fn record_stage_error(
+    metrics: &mut PublicMetrics,
+    pending: Option<(PendingKind, PendingOrder)>,
+    phase: &'static str,
+    error: &crate::Error,
+    deadline: Instant,
+    observed_now: Instant,
+) {
+    close_pending(metrics, pending);
+    // Time can cross the original deadline after the reactor's outer check.
+    // Retain the stage error, but count an actual timed close consistently
+    // with the outer expiry branch. RequestDeadline also represents stop, and
+    // CookieExpired can represent malformed intervals, so neither code alone
+    // establishes that this connection's original deadline has elapsed.
+    if observed_now >= deadline
+        && matches!(
+            error.code(),
+            Some(crate::ErrorCode::PublicRequestDeadline | crate::ErrorCode::PublicCookieExpired)
+        )
+    {
+        metrics.expired_connections += 1;
+        *metrics
+            .expired_phase_counts
+            .entry(phase.into())
+            .or_default() += 1;
+    }
+    *metrics
+        .retained_phase_errors
+        .entry(phase.into())
+        .or_default() += 1;
+    match phase {
+        "hello" => metrics.preface_refusals += 1,
+        "output" => metrics.response_write_failures += 1,
+        "body" => metrics.parse_refusals += 1,
+        _ => {}
+    }
+}
 struct Connection {
     observation: Option<ConnectionObservation>,
     id: u64,
@@ -2695,19 +2732,20 @@ fn serve_public_protected_v3_inner(
                     })();
                     match advanced {
                         Ok(next) => conn.stage = next,
-                        Err(_) => {
+                        Err(error) => {
+                            let observed_now = Instant::now();
                             if let Some(record) = &conn.observation {
                                 record.terminal(phase);
                             }
                             let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
-                            close_pending(&mut m, pending_before);
-                            *m.retained_phase_errors.entry(phase.into()).or_default() += 1;
-                            match phase {
-                                "hello" => m.preface_refusals += 1,
-                                "output" => m.response_write_failures += 1,
-                                "body" => m.parse_refusals += 1,
-                                _ => {}
-                            }
+                            record_stage_error(
+                                &mut m,
+                                pending_before,
+                                phase,
+                                &error,
+                                conn.deadline,
+                                observed_now,
+                            );
                             remove.push(*id);
                         }
                     }
@@ -6168,6 +6206,78 @@ mod tests {
             .iter()
             .filter(|r| !r.task_created)
             .all(|r| !r.full_work_started && r.full_work_thread_cpu_ns.is_none()));
+    }
+    #[test]
+    fn phase_deadline_crossing_records_expiry_and_one_pending_close() {
+        let deadline = Instant::now();
+        let pending = Some((
+            PendingKind::Grant,
+            PendingOrder {
+                sequence: 1,
+                entered_at: deadline,
+            },
+        ));
+        let stopped = AtomicBool::new(false);
+        let cancelled = AtomicBool::new(false);
+        let timed_error = task_alive(deadline, &stopped, &cancelled).unwrap_err();
+        assert!(timed_error.is(crate::ErrorCode::PublicRequestDeadline));
+        // A pre-boundary outer observation need not match the later stage
+        // check. Exercise exact equality and the next instant without sleeps.
+        for error in [
+            timed_error,
+            crate::Error::new(crate::ErrorCode::PublicCookieExpired),
+        ] {
+            for observed_now in [deadline, deadline + Duration::from_nanos(1)] {
+                let mut metrics = PublicMetrics::default();
+                record_stage_error(
+                    &mut metrics,
+                    pending,
+                    "solution",
+                    &error,
+                    deadline,
+                    observed_now,
+                );
+                assert_eq!(metrics.pending_grant_closed, 1);
+                assert_eq!(metrics.pending_grant_granted, 0);
+                assert_eq!(metrics.expired_connections, 1);
+                assert_eq!(metrics.expired_phase_counts.get("solution"), Some(&1));
+                assert_eq!(metrics.retained_phase_errors.get("solution"), Some(&1));
+                assert_eq!(metrics.body_bytes_received, 0);
+                assert_eq!(metrics.tasks_enqueued, 0);
+                assert_eq!(metrics.work_started, 0);
+            }
+        }
+    }
+    #[test]
+    fn stage_error_code_or_elapsed_time_alone_cannot_claim_expiry() {
+        let now = Instant::now();
+        let future = now + Duration::from_secs(3600);
+        let stop = AtomicBool::new(true);
+        let cancelled = AtomicBool::new(false);
+        let stop_error = task_alive(future, &stop, &cancelled).unwrap_err();
+        assert!(stop_error.is(crate::ErrorCode::PublicRequestDeadline));
+        for error in [
+            stop_error,
+            crate::Error::new(crate::ErrorCode::PublicCookieExpired),
+        ] {
+            let mut metrics = PublicMetrics::default();
+            record_stage_error(&mut metrics, None, "solution", &error, future, now);
+            assert_eq!(metrics.expired_connections, 0);
+            assert!(metrics.expired_phase_counts.is_empty());
+            assert_eq!(metrics.retained_phase_errors.get("solution"), Some(&1));
+        }
+        for message in [
+            "PUBLIC_REQUEST_CANCELLED",
+            "PUBLIC_EOF",
+            "PUBLIC_TICKET_TARGET",
+            "PUBLIC_REQUEST_DEADLINE: forged display suffix",
+        ] {
+            let mut metrics = PublicMetrics::default();
+            record_stage_error(&mut metrics, None, "solution", &message.into(), now, now);
+            assert_eq!(metrics.expired_connections, 0);
+            assert!(metrics.expired_phase_counts.is_empty());
+            assert_eq!(metrics.retained_phase_errors.get("solution"), Some(&1));
+        }
     }
     #[test]
     fn r4_paid_pending_eof_original_expiry_and_shutdown_never_create_body_or_work() {
