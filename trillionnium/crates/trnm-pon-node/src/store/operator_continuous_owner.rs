@@ -323,6 +323,7 @@ impl Node {
         if self.is_continuous() {
             return Ok(false);
         }
+        self.require_strict_history_resource_profile()?;
         ensure(
             !self.public_service_epoch_unknown,
             "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH",
@@ -367,6 +368,7 @@ impl Node {
         if self.is_continuous() {
             return Ok(());
         }
+        self.require_strict_history_resource_profile()?;
         ensure(
             self.public_service_epoch_listeners != 0,
             "OWNER_PUBLIC_SERVICE_EPOCH_CORRUPT",
@@ -473,6 +475,7 @@ impl Node {
     /// expensive History decode/W1/M06 operation; a real crash leaves it
     /// behind so a later process cannot silently forgive unknown CPU debt.
     pub(crate) fn begin_remote_history_cpu_epoch(&mut self) -> Result<bool> {
+        self.require_strict_history_resource_profile()?;
         // A continuous Node has a durable operation-ID journal, but the
         // generic ServiceMutationCpuDomain::begin used by History imports
         // does NOT enter that journal. Never mislabel volatile CPU debit as
@@ -494,6 +497,7 @@ impl Node {
     /// warm burst; a V3/continuous Node keeps its already bound owner.
     /// Never issue fresh credit on every peer, page or new signing identity.
     pub(crate) fn remote_history_cpu_domain(&mut self) -> Result<ServiceMutationCpuDomain> {
+        self.require_strict_history_resource_profile()?;
         // Once an ordinary public service is marked unclean, even its
         // previously bound account cannot authorize new History mutations.
         ensure(

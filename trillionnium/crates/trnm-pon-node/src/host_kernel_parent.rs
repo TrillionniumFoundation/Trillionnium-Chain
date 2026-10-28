@@ -353,6 +353,22 @@ mod kernel_parent {
             self.check()
         }
 
+        /// Source-independent identity observation for one explicit local
+        /// resource-policy epoch. It is never a reusable successful check.
+        pub(crate) fn identity_observation(&self) -> Result<serde_json::Value> {
+            self.check()?;
+            let value = serde_json::json!({
+                "schema":"fixed-kernel-parent-identity-observation-v1",
+                "path":self.parent,"device":self.identity.0,"inode":self.identity.1,
+                "boot_id":self.boot_id,"cpu_quota_us":self.limits.cpu_quota_us,
+                "cpu_period_us":self.limits.cpu_period_us,"cpu_burst_us":0,
+                "memory_bytes":self.limits.memory_bytes,"swap_bytes":0,"tasks":self.limits.tasks,
+                "observation_is_authority":false,
+            });
+            self.check()?;
+            Ok(value)
+        }
+
         /// Read-only aggregate kernel accounting. Verify the same fixed
         /// boot/inode/quotas/membership both before and after sampling; if any
         /// counter is unavailable or malformed, never issue a qualified receipt.
@@ -787,6 +803,9 @@ pub struct HostKernelBudget;
 #[cfg(not(target_os = "linux"))]
 impl HostKernelBudget {
     pub fn verify(&self) -> crate::Result<()> {
+        Err("PUBLIC_HOST_KERNEL_UNSUPPORTED".into())
+    }
+    pub(crate) fn identity_observation(&self) -> crate::Result<serde_json::Value> {
         Err("PUBLIC_HOST_KERNEL_UNSUPPORTED".into())
     }
     pub fn resource_sample(&self) -> crate::Result<KernelResourceSample> {

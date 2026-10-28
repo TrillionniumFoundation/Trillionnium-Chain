@@ -28,6 +28,39 @@ const MAX_MESSAGE_BYTES: u64 = 32 * 1024 * 1024;
 const MAX_REQUESTS: u64 = 132; // Original <=64 imports, <=64 confirmations, snapshot and finish.
 const PARENT: &str = host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT;
 
+#[derive(Clone, Copy, PartialEq, Eq)]
+pub(super) enum ResourceProfile {
+    Strict,
+    GraphFenceV1,
+}
+impl ResourceProfile {
+    fn label(self) -> &'static str {
+        match self {
+            Self::Strict => "strict-every-native-checkpoint-v1",
+            Self::GraphFenceV1 => ingress::HISTORY_GRAPH_RESOURCE_PROFILE_V1,
+        }
+    }
+    fn process_schema(self) -> &'static str {
+        match self {
+            Self::Strict => "native-public-history-verifier-process-v2",
+            Self::GraphFenceV1 => "native-public-history-verifier-graph-fence-process-v1",
+        }
+    }
+    fn entry_schema(self) -> &'static str {
+        match self {
+            Self::Strict => "native-public-history-verifier-entry-v2",
+            Self::GraphFenceV1 => "native-public-history-verifier-graph-fence-entry-v1",
+        }
+    }
+    fn from_job(job: &Value) -> Self {
+        match job["history_resource_profile"].as_str().unwrap() {
+            "strict-every-native-checkpoint-v1" => Self::Strict,
+            ingress::HISTORY_GRAPH_RESOURCE_PROFILE_V1 => Self::GraphFenceV1,
+            _ => panic!("explicit current History resource profile required"),
+        }
+    }
+}
+
 fn read(path: &Path) -> Value {
     let mut raw = Vec::new();
     File::open(path)
@@ -127,10 +160,18 @@ pub(super) struct Verifier {
     binary_sha256: String,
     finished: bool,
     spawned: Instant,
+    resource_profile: ResourceProfile,
 }
 impl Verifier {
     pub(super) fn start(path: &Path, backend: StateBackendChoice, seed: &[Packet]) -> Self {
         Self::start_inner(path, backend, seed, None)
+    }
+    pub(super) fn start_with_graph_resource_fence_v1(
+        path: &Path,
+        backend: StateBackendChoice,
+        seed: &[Packet],
+    ) -> Self {
+        Self::start_with_profile(path, backend, seed, None, ResourceProfile::GraphFenceV1)
     }
     fn start_inner(
         path: &Path,
@@ -138,6 +179,19 @@ impl Verifier {
         seed: &[Packet],
         cut: Option<&str>,
     ) -> Self {
+        Self::start_with_profile(path, backend, seed, cut, ResourceProfile::Strict)
+    }
+    fn start_with_profile(
+        path: &Path,
+        backend: StateBackendChoice,
+        seed: &[Packet],
+        cut: Option<&str>,
+        resource_profile: ResourceProfile,
+    ) -> Self {
+        assert!(
+            cut.is_none() || resource_profile == ResourceProfile::Strict,
+            "the original actual owner-death controls retain strict imports"
+        );
         fs::create_dir(path).unwrap();
         fs::set_permissions(path, fs::Permissions::from_mode(0o700)).unwrap();
         let executable = fs::canonicalize(std::env::current_exe().unwrap()).unwrap();
@@ -168,6 +222,7 @@ impl Verifier {
                 "binary_sha256":binary_sha256,
                 "parent":PARENT,
                 "owner_death_control":cut,
+                "history_resource_profile":resource_profile.label(),
                 "controller_observation":{
                     "pid":std::process::id(),
                     "uid":rustix::process::getuid().as_raw(),
@@ -247,6 +302,7 @@ impl Verifier {
             binary_sha256,
             finished: false,
             spawned,
+            resource_profile,
         };
         publish(
             &path.join("launch.json"),
@@ -256,11 +312,16 @@ impl Verifier {
                 "binary_sha256":verifier.binary_sha256,"parent":PARENT,
                 "original_outer_cgroup":verifier.outer_cgroup,"parent_before_spawn":verifier.before,
                 "job_sha256":sha(&job_path),"controller_capability_prequeued":true,
-                "owner_death_control":cut,"collect_on_exit":cut.is_none(),
+                "owner_death_control":cut,
+                "history_resource_profile":resource_profile.label(),"collect_on_exit":cut.is_none(),
             }),
         );
         verifier.ready = verifier.wait_file(&path.join("ready.json"));
         assert_eq!(verifier.ready["binary_sha256"], verifier.binary_sha256);
+        assert_eq!(
+            verifier.ready["history_resource_profile"],
+            resource_profile.label()
+        );
         let pid = u32::try_from(verifier.ready["pid"].as_u64().unwrap()).unwrap();
         assert_eq!(
             sha(&PathBuf::from(format!("/proc/{pid}/exe"))),
@@ -392,7 +453,8 @@ impl Verifier {
         let report = read(&self.path.join("report.json"));
         let completed = status.success() && report["error"].is_null();
         self.finished = true;
-        json!({"schema":"native-public-history-verifier-process-v2", "unit":self.unit,
+        json!({"schema":self.resource_profile.process_schema(), "unit":self.unit,
+            "history_resource_profile":self.resource_profile.label(),
             "ready":self.ready,"report":report,"completed_successfully":completed,
             "exit_success":status.success(),"parent_forced_kill":false,
             "request_count":self.sequence,"binary_sha256":self.binary_sha256,
@@ -432,6 +494,8 @@ pub(super) fn run(job: &Value, path: &Path) -> Value {
         "scope":"kernel-observed owner death or private EOF causes asynchronous self exit; no atomic zero-instruction guarantee and no fabricated clean settlement",
     });
     assert_eq!(job["parent"], PARENT);
+    let resource_profile = ResourceProfile::from_job(job);
+    assert!(job["owner_death_control"].is_null() || resource_profile == ResourceProfile::Strict);
     let binary_sha256 = sha(&std::env::current_exe().unwrap());
     assert_eq!(job["binary_sha256"], binary_sha256);
     let source: SocketAddr = "127.0.0.1:1".parse().unwrap();
@@ -467,6 +531,8 @@ pub(super) fn run(job: &Value, path: &Path) -> Value {
     let ready = json!({"pid":std::process::id(),"cgroup":membership(std::process::id()),
         "calling_thread_cgroup":short_file(Path::new("/proc/thread-self/cgroup")),
         "binary_sha256":binary_sha256,"public_host_kernel_checked":true,
+        "history_resource_profile":resource_profile.label(),
+        "history_graph_resource":node.history_graph_resource_observation_v1().unwrap(),
         "controller_lifeline":controller_lifeline,
         "wrong_parent_refused":wrong_parent_refused,"parent":parent_observation(),
         "setup_process_cpu_ns":support::elapsed_cpu(process_cpu),"setup_wall_ns":started.elapsed().as_nanos(),
@@ -500,7 +566,13 @@ pub(super) fn run(job: &Value, path: &Path) -> Value {
                 .map_err(|error| error.to_string())
                 .and_then(|page| {
                     let address: SocketAddr = request["source"].as_str().unwrap().parse().unwrap();
-                    ingress::receive_public_page_from(
+                    let import = match resource_profile {
+                        ResourceProfile::Strict => ingress::receive_public_page_from,
+                        ResourceProfile::GraphFenceV1 => {
+                            ingress::receive_public_page_with_graph_resource_fence_v1
+                        }
+                    };
+                    import(
                         &mut node,
                         address,
                         page,
@@ -542,6 +614,9 @@ pub(super) fn run(job: &Value, path: &Path) -> Value {
         }
         let mut measurement = stamp.finish(epoch);
         measurement["process_cpu_ns"] = json!(support::elapsed_cpu(call_cpu));
+        measurement["history_resource_profile"] = json!(resource_profile.label());
+        measurement["history_graph_resource"] =
+            node.history_graph_resource_observation_v1().unwrap();
         measurement["process_wall_ns"] = json!(call_started.elapsed().as_nanos());
         measurement["process_id"] = json!(std::process::id());
         measurement["sequence"] = json!(sequence);
@@ -563,9 +638,11 @@ pub(super) fn run(job: &Value, path: &Path) -> Value {
             "succeeded":error.is_none(),"measurement":measurement}),
         );
         if operation == "finish" {
+            let history_graph_resource = node.history_graph_resource_observation_v1().unwrap();
             drop(node);
             kernel.verify().unwrap();
-            return json!({"schema":"native-public-history-verifier-entry-v2", "pid":std::process::id(),
+            return json!({"schema":resource_profile.entry_schema(), "pid":std::process::id(),
+                "history_resource_profile":resource_profile.label(),"history_graph_resource":history_graph_resource,
                 "cgroup":membership(std::process::id()),"binary_sha256":binary_sha256,
                 "controller_lifeline":controller_lifeline,
                 "calls":calls,"whole_verifier_process_cpu_ns":support::elapsed_cpu(process_cpu),

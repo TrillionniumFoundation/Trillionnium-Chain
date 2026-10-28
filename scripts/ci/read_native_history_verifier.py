@@ -13,6 +13,16 @@ import re
 
 PARENT = '/sys/fs/cgroup/trnmponpublic.slice'
 SCHEMA = 'native-public-history-verifier-process-v2'
+STRICT_PROFILE = 'strict-every-native-checkpoint-v1'
+GRAPH_PROFILE = 'history-account-graph-resource-fence-v1'
+GRAPH_SCHEMA = 'native-public-history-verifier-graph-fence-process-v1'
+GRAPH_ENTRY_SCHEMA = 'native-public-history-verifier-graph-fence-entry-v1'
+GRAPH_COUNTERS = ('imports', 'imports_closed', 'imports_failed', 'native_cpu_checkpoints',
+                  'graph_entries', 'graph_exits', 'graph_aborts', 'graph_node_checkpoints',
+                  'graph_completed_node_bodies', 'graph_full_resource_checks', 'graph_max_node_window',
+                  'before_commit_checks', 'scope_failures', 'unfinished_scopes', 'kernel_checks',
+                  'kernel_failed_checks', 'kernel_cpu_known_calls', 'kernel_cpu_unknown_calls',
+                  'kernel_cpu_ns', 'kernel_wall_ns', 'binding_checks', 'binding_failed_checks')
 LIMITS = {'cpu.max': '25000 100000', 'cpu.max.burst': '0',
           'memory.max': '2147483648', 'memory.swap.max': '0', 'pids.max': '256'}
 COUNTERS = ('usage_usec', 'nr_periods', 'nr_throttled', 'throttled_usec')
@@ -78,10 +88,47 @@ def parent_identity(value):
     return tuple(value[key] for key in ('device', 'inode', 'boot_id'))
 
 
-def validate_phase(phase, directory, binary_sha256, outer_cgroup):
+def graph_observation(value):
+    require(value['schema'] == 'ordinary-history-graph-resource-observation-v1'
+            and value['profile'] == GRAPH_PROFILE
+            and type(value['maximum_node_bodies_between_full_checks']) is int
+            and value['maximum_node_bodies_between_full_checks'] == 8
+            and value['strict_path_is_separate'] is True
+            and value['observation_is_authority'] is False
+            and value['wall_clock_revocation_bound_claimed'] is False,
+            'explicit ordinary N8 observation without authority or wall-clock claim required')
+    counters = value['counters']
+    require(type(counters) is dict and set(counters) == set(GRAPH_COUNTERS), 'complete exact N8 counter schema')
+    for key in GRAPH_COUNTERS:integer(counters[key])
+    require(counters['imports_closed'] <= counters['imports']
+            and counters['imports_failed'] <= counters['imports']
+            and counters['graph_aborts'] <= counters['graph_exits'] <= counters['graph_entries']
+            and counters['graph_completed_node_bodies'] <= counters['graph_node_checkpoints']
+            and counters['graph_node_checkpoints'] <= counters['native_cpu_checkpoints']
+            and counters['graph_max_node_window'] <= 8,
+            'actual bounded graph and import counters required')
+    require(counters['kernel_checks'] == counters['kernel_cpu_known_calls'] + counters['kernel_cpu_unknown_calls']
+            and counters['kernel_failed_checks'] <= counters['kernel_checks']
+            and counters['binding_failed_checks'] <= counters['binding_checks'],
+            'complete instrumented current-read and binding accounting required')
+    require(counters['kernel_cpu_unknown_calls'] == 0, 'unknown inner kernel CPU is not zero')
+    if counters['kernel_checks']:
+        require(counters['kernel_cpu_ns'] > 0 and counters['kernel_wall_ns'] > 0,
+                'actual instrumented inner kernel costs required')
+    else:
+        require(counters['kernel_cpu_ns'] == counters['kernel_wall_ns'] == 0, 'no kernel calls cannot claim CPU')
+    if 'live_known_close_pending' in value:
+        require(type(value['live_known_close_pending']) is bool
+                and value['cold_epoch_recovery_granted'] is False, 'live pending is not cold debt authority')
+    return counters
+
+
+def validate_phase(phase, directory, binary_sha256, outer_cgroup, expected_profile=STRICT_PROFILE):
+    require(expected_profile in (STRICT_PROFILE, GRAPH_PROFILE), 'explicit supported History resource profile')
     digest(binary_sha256)
     value = phase['history_verifier_process']
-    require(value['schema'] == SCHEMA, 'mandatory real verifier process boundary')
+    expected_schema = GRAPH_SCHEMA if expected_profile == GRAPH_PROFILE else SCHEMA
+    require(value['schema'] == expected_schema, 'mandatory real verifier process boundary')
     require(value['completed_successfully'] is True and value['exit_success'] is True
             and value['parent_forced_kill'] is False, 'actual clean verifier exit required')
     require(value['outer_process_cpu_excludes_verifier'] is True,
@@ -101,6 +148,15 @@ def validate_phase(phase, directory, binary_sha256, outer_cgroup):
     retained_ready, _ = read(Path(directory) / 'ready.json')
     retained_report, _ = read(Path(directory) / 'report.json')
     job, _ = read(Path(directory) / 'job.json')
+    profiles = [item.get('history_resource_profile') for item in (phase, value, job, ready, entry)]
+    historical_strict = all(item is None for item in profiles)
+    require((historical_strict and expected_profile == STRICT_PROFILE
+             and 'history_graph_resource' not in ready and 'history_graph_resource' not in entry)
+            or all(item == expected_profile for item in profiles),
+            'job, phase, process, ready and entry must bind the requested resource profile')
+    previous_graph = None if historical_strict else graph_observation(ready['history_graph_resource'])
+    if previous_graph is not None:
+        require(not any(previous_graph.values()), 'fresh actual verifier begins without imported graph work')
     require(retained_ready == ready and retained_report == report,
             'complete actual ready/exit report bytes must match raw phase')
     require(job['kind'] == 'history-verifier' and job['parent'] == PARENT
@@ -137,7 +193,8 @@ def validate_phase(phase, directory, binary_sha256, outer_cgroup):
             and ready['wrong_parent_refused'] is True,
             'actual original checker and wrong-parent refusal required')
     require(report['kind'] == 'history-verifier' and report['error'] is None
-            and entry['schema'] == 'native-public-history-verifier-entry-v2'
+            and entry['schema'] == (GRAPH_ENTRY_SCHEMA if expected_profile == GRAPH_PROFILE
+                                    else 'native-public-history-verifier-entry-v2')
             and entry['clean_node_close'] is True, 'actual original Node close required')
     for observed in (value['binary_sha256'], ready['binary_sha256'], entry['binary_sha256']):
         require(digest(observed) == binary_sha256, 'same retained release binary required')
@@ -200,6 +257,17 @@ def validate_phase(phase, directory, binary_sha256, outer_cgroup):
         call_cpu += integer(measurement['process_cpu_ns'])
         integer(measurement['thread_cpu_ns'])
         integer(measurement['process_wall_ns'])
+        if historical_strict:
+            require('history_resource_profile' not in measurement and 'history_graph_resource' not in measurement,
+                    'historical strict data cannot mix a new profile into later calls')
+        else:
+            require(measurement['history_resource_profile'] == expected_profile, 'per-call resource profile binding')
+            current_graph = graph_observation(measurement['history_graph_resource'])
+            require(all(current_graph[key] >= previous_graph[key] for key in GRAPH_COUNTERS),
+                    'actual cumulative graph observations cannot rewind')
+            if expected_profile == STRICT_PROFILE:
+                require(not any(current_graph.values()), 'strict importer cannot silently use the N8 profile')
+            previous_graph = current_graph
         if operation == 'import':
             require(request['source'] == phase['address'], 'original concrete source address required')
             imported[sequence] = (request, response)
@@ -262,7 +330,20 @@ def validate_phase(phase, directory, binary_sha256, outer_cgroup):
                 for index, round_ in enumerate(rounds)),
             'every observed confirmation round must have its actual native call')
     require(phase['receiver_client_state_equal'] is True, 'actual full receiver/verifier state equality required')
-    return {'schema': SCHEMA, 'pid': pid, 'cgroup': cgroup,
+    if not historical_strict:
+        final_graph = graph_observation(entry['history_graph_resource'])
+        require(final_graph == previous_graph and entry['history_graph_resource']['live_known_close_pending'] is False,
+                'final observation must be the original closed Node observation')
+        if expected_profile == GRAPH_PROFILE:
+            require(final_graph['imports'] == len(imported) > 0
+                    and final_graph['imports_closed'] == final_graph['imports']
+                    and final_graph['graph_entries'] == final_graph['graph_exits'] > 0
+                    and final_graph['unfinished_scopes'] == final_graph['scope_failures'] == 0
+                    and final_graph['kernel_failed_checks'] == final_graph['binding_failed_checks'] == 0
+                    and final_graph['before_commit_checks'] > 0
+                    and final_graph['kernel_cpu_ns'] <= whole_cpu,
+                    'actual complete N8 imports, original commit edges and nested measured CPU required')
+    return {'schema': expected_schema, 'history_resource_profile': expected_profile, 'pid': pid, 'cgroup': cgroup,
             'request_count': len(calls), 'import_count': len(imported),
             'confirmation_count': len(confirmed), 'whole_fixed_parent_cpu_ns': kernel_cpu_ns,
             'whole_verifier_process_cpu_ns': whole_cpu,
@@ -274,16 +355,16 @@ def validate_phase(phase, directory, binary_sha256, outer_cgroup):
             'production_qualification': False}
 
 
-def validate_report(report, raw_directory, binary_sha256, outer_cgroup):
+def validate_report(report, raw_directory, binary_sha256, outer_cgroup, expected_profile=STRICT_PROFILE):
     phases = report['phases']
     require([phase['mode'] for phase in phases] == ['baseline', 'from-zero', 'late-product'],
             'original three phases required')
     result = []
     for phase in phases:
         row = validate_phase(phase, Path(raw_directory) / phase['mode'] / 'independent-client',
-                             binary_sha256, outer_cgroup)
+                             binary_sha256, outer_cgroup, expected_profile)
         row['mode'] = phase['mode']
         result.append(row)
     return {'schema': 'native-public-history-verifier-three-phase-readback-v1',
-            'phases': result, 'complete': True,
+            'phases': result, 'complete': True, 'history_resource_profile': expected_profile,
             'original_four_cpu_outer_budget_changed': False}

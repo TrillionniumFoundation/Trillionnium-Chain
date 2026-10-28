@@ -301,5 +301,97 @@ class NativeHistoryVerifierReader(unittest.TestCase):
                     reader.validate_report(report, root, BINARY, OUTER)
 
 
+def graph_fixture(root, profile=reader.GRAPH_PROFILE):
+    report, ipc = fixture(root)
+    def observation(start):
+        counters = dict.fromkeys(reader.GRAPH_COUNTERS, 0)
+        if not start and profile == reader.GRAPH_PROFILE:
+            counters.update(imports=1, imports_closed=1, native_cpu_checkpoints=20,
+                            graph_entries=1, graph_exits=1, graph_node_checkpoints=8,
+                            graph_completed_node_bodies=8, graph_full_resource_checks=4,
+                            graph_max_node_window=8, before_commit_checks=1,
+                            kernel_checks=4, kernel_cpu_known_calls=4, kernel_cpu_ns=10,
+                            kernel_wall_ns=20, binding_checks=4)
+        return {"schema": "ordinary-history-graph-resource-observation-v1", "profile": reader.GRAPH_PROFILE,
+                "maximum_node_bodies_between_full_checks": 8, "counters": counters,
+                "strict_path_is_separate": True, "observation_is_authority": False,
+                "wall_clock_revocation_bound_claimed": False,
+                "live_known_close_pending": False, "cold_epoch_recovery_granted": False}
+    for phase, data in zip(report["phases"], ipc):
+        value = phase["history_verifier_process"];entry = value["report"]["result"];ready = value["ready"]
+        value["schema"] = reader.GRAPH_SCHEMA if profile == reader.GRAPH_PROFILE else reader.SCHEMA
+        entry["schema"] = reader.GRAPH_ENTRY_SCHEMA if profile == reader.GRAPH_PROFILE else "native-public-history-verifier-entry-v2"
+        for item in (phase, value, data["job"], ready, entry):item["history_resource_profile"] = profile
+        ready["history_graph_resource"] = observation(True)
+        entry["history_graph_resource"] = observation(False)
+        for sequence, response in enumerate(data["responses"]):
+            measured = response["measurement"]
+            measured["history_resource_profile"] = profile
+            measured["history_graph_resource"] = observation(False)
+            entry["calls"][sequence]["measurement"] = copy.deepcopy(measured)
+            if sequence < 2:
+                phase["history"][0]["client_import" if sequence == 0 else "client_confirmation"] = {
+                    **copy.deepcopy(measured), "succeeded": True}
+            rehash(phase, data, sequence)
+    flush(report, ipc)
+    return report, ipc
+
+
+class ExplicitGraphHistoryVerifierReader(unittest.TestCase):
+    def test_both_named_profiles_keep_the_original_three_phases(self):
+        for profile in (reader.STRICT_PROFILE, reader.GRAPH_PROFILE):
+            with self.subTest(profile=profile), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary);report, _ = graph_fixture(root, profile)
+                result = reader.validate_report(report, root, BINARY, OUTER, profile)
+                self.assertTrue(result['complete']);self.assertEqual(len(result['phases']), 3)
+                self.assertEqual(result['history_resource_profile'], profile)
+
+    def test_twenty_eight_rehashed_graph_substitutions_fail(self):
+        changes = [
+            ('job-profile', None), ('phase-profile', None), ('ready-profile', None),
+            ('entry-profile', None), ('process-schema', None), ('measurement-profile', None),
+            ('maximum_node_bodies_between_full_checks', 9), ('maximum_node_bodies_between_full_checks', True),
+            ('observation_is_authority', True), ('wall_clock_revocation_bound_claimed', True),
+            ('strict_path_is_separate', False), ('cold_epoch_recovery_granted', True),
+            ('live_known_close_pending', True), ('missing-counter', None), ('extra-counter', None),
+            ('counter.graph_max_node_window', 9), ('counter.kernel_cpu_unknown_calls', 1),
+            ('counter.kernel_failed_checks', 1), ('counter.binding_failed_checks', 1),
+            ('counter.unfinished_scopes', 1), ('counter.scope_failures', 1),
+            ('counter.before_commit_checks', 0), ('counter.imports_closed', 0),
+            ('counter.graph_exits', 0), ('counter.graph_node_checkpoints', -1),
+            ('counter.native_cpu_checkpoints', True), ('counter.kernel_cpu_ns', 1001),
+            ('counter.kernel_cpu_known_calls', 0),
+        ]
+        self.assertEqual(len(changes), 28)
+        for key, replacement in changes:
+            with self.subTest(vector=(key, replacement)), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary);report, ipc = graph_fixture(root)
+                phase = report['phases'][0];data = ipc[0];value = phase['history_verifier_process']
+                entry = value['report']['result'];ready = value['ready']
+                if key in ('job-profile', 'phase-profile', 'ready-profile', 'entry-profile'):
+                    target = {'job-profile': data['job'], 'phase-profile': phase,
+                              'ready-profile': ready, 'entry-profile': entry}[key]
+                    target['history_resource_profile'] = reader.STRICT_PROFILE
+                elif key == 'process-schema':value['schema'] = reader.SCHEMA
+                elif key == 'measurement-profile':
+                    data['responses'][0]['measurement']['history_resource_profile'] = reader.STRICT_PROFILE
+                else:
+                    targets = [entry['history_graph_resource']] + [row['measurement']['history_graph_resource'] for row in data['responses']]
+                    for target in targets:
+                        if key.startswith('counter.'):target['counters'][key.removeprefix('counter.')] = replacement
+                        elif key == 'missing-counter':target['counters'].pop('binding_checks')
+                        elif key == 'extra-counter':target['counters']['caller_granted_credit'] = 0
+                        else:target[key] = replacement
+                for sequence, response in enumerate(data['responses']):
+                    measurement = response['measurement'];entry['calls'][sequence]['measurement'] = copy.deepcopy(measurement)
+                    if sequence < 2:
+                        phase['history'][0]['client_import' if sequence == 0 else 'client_confirmation'] = {
+                            **copy.deepcopy(measurement), 'succeeded': True}
+                    rehash(phase, data, sequence)
+                flush(report, ipc)
+                with self.assertRaises((ValueError, KeyError, TypeError, IndexError)):
+                    reader.validate_report(report, root, BINARY, OUTER, reader.GRAPH_PROFILE)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

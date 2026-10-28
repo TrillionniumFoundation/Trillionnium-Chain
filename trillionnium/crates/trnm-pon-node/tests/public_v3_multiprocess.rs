@@ -37,6 +37,7 @@ const ROUNDS: usize = 3;
 struct CampaignConfiguration {
     state_backend: StateBackendChoice,
     work_profile: support::WorkProfile,
+    history_resource_profile: history_verifier::ResourceProfile,
 }
 impl CampaignConfiguration {
     fn new(
@@ -51,6 +52,7 @@ impl CampaignConfiguration {
         Ok(Self {
             state_backend,
             work_profile,
+            history_resource_profile: history_verifier::ResourceProfile::Strict,
         })
     }
 }
@@ -771,6 +773,7 @@ fn phase(
     let CampaignConfiguration {
         state_backend,
         work_profile,
+        history_resource_profile,
     } = configuration;
     fs::create_dir(path).unwrap();
     let root_mode = mode == Some("valid-work-root");
@@ -791,8 +794,18 @@ fn phase(
             preview_miner: development_public(0).unwrap(),
         })
         .unwrap();
-    let mut verifier =
-        history_verifier::Verifier::start(&path.join("independent-client"), state_backend, seed);
+    let mut verifier = match history_resource_profile {
+        history_verifier::ResourceProfile::Strict => {
+            history_verifier::Verifier::start(&path.join("independent-client"), state_backend, seed)
+        }
+        history_verifier::ResourceProfile::GraphFenceV1 => {
+            history_verifier::Verifier::start_with_graph_resource_fence_v1(
+                &path.join("independent-client"),
+                state_backend,
+                seed,
+            )
+        }
+    };
     let initial = receiver.read_active().unwrap();
     let native_history_before = receiver.native_history_arithmetic_observation();
     let client_native_history_before = verifier.before();
@@ -1210,6 +1223,7 @@ fn phase(
         "receiver_client_state_equal":actual.0==checked.0&&actual.2==checked.2,
         "initial_tip":hex::encode(initial.0),"final_receiver_tip":hex::encode(actual.0),"final_client_tip":hex::encode(checked.0),
         "whole_parent_phase_cpu_ns":support::elapsed_cpu(whole_cpu),"whole_parent_phase_wall_ns":whole_started.elapsed().as_nanos(),"rss":support::rss()});
+    report["history_resource_profile"] = json!(verifier_process["history_resource_profile"]);
     report["history_verifier_process"] = verifier_process;
     report["parent_process_cpu_scope"] = json!("original outer campaign only; isolated verifier process and fixed-parent CPU are separately retained, not included in these parent process counters");
     report["public_resource_policy"] = work_profile.policy_observation();
@@ -1458,18 +1472,37 @@ fn arithmetic_campaign_server_routing_does_not_change_cpu_capacity() {
 #[test]
 #[ignore = "explicit finite 3x30 second separate-process local campaign and producer cost; see retained report"]
 fn separate_process_work_and_signed_confirmation_campaign() {
-    run_campaign(support::WorkProfile::RawR13);
+    run_campaign(
+        support::WorkProfile::RawR13,
+        history_verifier::ResourceProfile::Strict,
+    );
 }
 
 #[test]
 #[ignore = "explicit arithmetic-facts profile; same original finite 3x30 second workload, CPU and confirmation criteria; no r13 or arbitrary-key qualification"]
 fn separate_process_arithmetic_facts_and_signed_confirmation_campaign() {
-    run_campaign(support::WorkProfile::ArithmeticFactsV1);
+    run_campaign(
+        support::WorkProfile::ArithmeticFactsV1,
+        history_verifier::ResourceProfile::Strict,
+    );
 }
 
-fn run_campaign(work_profile: support::WorkProfile) {
+#[test]
+#[ignore = "explicit graph resource fence v1; original 3x30 second workload, 25 percent verifier CPU, signed confirmations and criteria"]
+fn separate_process_graph_resource_fence_v1_work_and_signed_confirmation_campaign() {
+    run_campaign(
+        support::WorkProfile::RawR13,
+        history_verifier::ResourceProfile::GraphFenceV1,
+    );
+}
+
+fn run_campaign(
+    work_profile: support::WorkProfile,
+    history_resource_profile: history_verifier::ResourceProfile,
+) {
     let state_backend = StateBackendChoice::from_environment();
-    let configuration = CampaignConfiguration::new(state_backend, work_profile).unwrap();
+    let mut configuration = CampaignConfiguration::new(state_backend, work_profile).unwrap();
+    configuration.history_resource_profile = history_resource_profile;
     let output = PathBuf::from(
         std::env::var_os("TRNM_MULTIPROCESS_REPORT_DIR").expect("explicit new report directory"),
     );
@@ -1549,6 +1582,7 @@ fn campaign(output: &Path, configuration: CampaignConfiguration) {
     let CampaignConfiguration {
         state_backend,
         work_profile,
+        history_resource_profile: _,
     } = configuration;
     eprintln!("P0 native campaign: honest 1024 signed transfers and 21 business blocks");
     let settings = support::settings();

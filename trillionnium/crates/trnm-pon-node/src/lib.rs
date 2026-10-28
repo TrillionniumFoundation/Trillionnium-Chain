@@ -7,6 +7,7 @@ mod error;
 pub mod host_kernel_parent;
 pub mod ingress;
 pub mod mining;
+mod native_progress;
 pub mod operator_checkpoint_tile;
 pub mod operator_continuous_controller;
 mod operator_continuous_cpu;

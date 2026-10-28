@@ -1,9 +1,11 @@
 //! Bounded native socket ingress. Development loopback only; not Sybil-safe public P2P.
+pub(crate) mod history_graph_resource_v1;
 use crate::{
     authenticated_payload_digest, authenticated_profile_digest, digest, ensure,
     store::{AuthenticatedReplayDecision, WorkCheckedPacket},
     Error, ErrorCode, Node, Packet, Result, Settings,
 };
+pub use history_graph_resource_v1::PROFILE as HISTORY_GRAPH_RESOURCE_PROFILE_V1;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use std::{
@@ -2168,11 +2170,35 @@ fn metered_history_operation<T>(
     let operation = begin_history_import_cpu(domain)?;
     let outcome = native(node, &operation);
     let receipt = operation.finish();
-    if receipt.accounting_unavailable {
+    let accounting_unavailable = receipt.accounting_unavailable;
+    #[cfg(test)]
+    if node.history_graph_resource_before_commit_hook.is_some() {
+        // Physical controls retain the REAL original finish result. This
+        // observation neither settles another worker nor changes the outcome.
+        node.history_graph_resource_cpu_receipts.push(receipt);
+    }
+    if accounting_unavailable {
         node.operator_task_accounting_unknown()?;
         return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
     }
     outcome
+}
+
+fn metered_history_operation_with_boundary<T>(
+    node: &mut Node,
+    domain: &public_v3::ServiceMutationCpuDomain,
+    resource: Option<&(dyn Fn() -> Result<()> + Sync)>,
+    native: impl FnOnce(&mut Node, &public_v3::ServiceMutationCpuOperation) -> Result<T>,
+) -> Result<T> {
+    match resource {
+        None => metered_history_operation(node, domain, native),
+        Some(check) => metered_history_operation(node, domain, |owner, operation| {
+            let result = native(owner, operation);
+            // The new explicit policy always fully checks the current resource
+            // boundary before original CPU settlement, including error returns.
+            history_graph_resource_v1::preserve_native(result, check())
+        }),
+    }
 }
 
 fn metered_history_packet(
@@ -2181,39 +2207,72 @@ fn metered_history_packet(
     packet: &Packet,
     clock: u64,
     resource_checkpoint: &(impl Fn() -> Result<()> + Sync),
+    graph_counters: Option<&history_graph_resource_v1::SharedCounters>,
 ) -> Result<Hash> {
-    metered_history_operation(node, domain, |owner, operation| {
+    let settlement =
+        graph_counters.map(|_| resource_checkpoint as &(dyn Fn() -> Result<()> + Sync));
+    metered_history_operation_with_boundary(node, domain, settlement, |owner, operation| {
         let progress = operation.checkpoint_handle();
-        progress.checkpoint()?;
-        resource_checkpoint()?;
-        if let Some(already) =
-            owner.check_admission_context_with_progress(packet, clock, &mut || {
-                progress.checkpoint()?;
-                resource_checkpoint()
-            })?
-        {
-            return Ok(already);
-        }
-        let permit = owner.begin_owner_work(packet)?;
-        let checked = WorkCheckedPacket::verify_with_progress(packet.clone(), &mut |point| {
-            progress.checkpoint()?;
-            if history_kernel_work_checkpoint(point) {
-                resource_checkpoint()?;
-            }
-            Ok(())
-        })?;
-        progress.checkpoint()?;
-        resource_checkpoint()?;
-        let checked = owner.attach_owner_work(checked, permit)?;
-        let execution_progress = |_phase| {
-            progress.checkpoint()?;
+        let cpu = || progress.checkpoint();
+        let mut strict = || {
+            cpu()?;
             resource_checkpoint()
         };
-        let control = trnm_mvcc_fee::pon_executor::ExecutionControl::new(
-            &execution_progress,
-            operation.worker_accounting(),
-        );
-        owner.admit_work_checked_with_control(checked, clock, &control)
+        let mut graph = graph_counters.map(|counts| {
+            history_graph_resource_v1::GraphProgress::new(
+                &cpu,
+                resource_checkpoint,
+                Arc::clone(counts),
+            )
+        });
+        #[cfg(test)]
+        if let Some(graph) = &mut graph {
+            graph.set_before_commit_hook(owner.history_graph_resource_before_commit_hook.clone());
+        }
+        let native_progress: &mut dyn crate::native_progress::NativeProgress = match &mut graph {
+            Some(graph) => graph,
+            None => &mut strict,
+        };
+        let result = (|| {
+            progress.checkpoint()?;
+            resource_checkpoint()?;
+            if let Some(already) = owner.check_admission_context_with_native_progress(
+                packet,
+                clock,
+                native_progress,
+            )? {
+                return Ok(already);
+            }
+            let permit = owner.begin_owner_work(packet)?;
+            let checked = WorkCheckedPacket::verify_with_progress(packet.clone(), &mut |point| {
+                progress.checkpoint()?;
+                if history_kernel_work_checkpoint(point) {
+                    resource_checkpoint()?;
+                }
+                Ok(())
+            })?;
+            progress.checkpoint()?;
+            resource_checkpoint()?;
+            let checked = owner.attach_owner_work(checked, permit)?;
+            let execution_progress = |_phase| {
+                progress.checkpoint()?;
+                resource_checkpoint()
+            };
+            let control = trnm_mvcc_fee::pon_executor::ExecutionControl::new(
+                &execution_progress,
+                operation.worker_accounting(),
+            );
+            owner.admit_work_checked_with_native_control(
+                checked,
+                clock,
+                &control,
+                &mut |_, point| crate::native_progress::dispatch(native_progress, point),
+            )
+        })();
+        match &graph {
+            Some(graph) => history_graph_resource_v1::preserve_native(result, graph.complete()),
+            None => result,
+        }
     })
 }
 
@@ -2225,6 +2284,29 @@ fn receive_page(
     after: Hash,
     clock: u64,
     resource_checkpoint: impl Fn() -> Result<()> + Sync,
+) -> Result<Hash> {
+    receive_page_with_resource_profile(
+        node,
+        domain,
+        page,
+        tip,
+        after,
+        clock,
+        resource_checkpoint,
+        None,
+    )
+}
+
+#[allow(clippy::too_many_arguments)]
+fn receive_page_with_resource_profile(
+    node: &mut Node,
+    domain: &public_v3::ServiceMutationCpuDomain,
+    page: Page,
+    tip: Hash,
+    after: Hash,
+    clock: u64,
+    kernel_checkpoint: impl Fn() -> Result<()> + Sync,
+    graph_parent: Option<Value>,
 ) -> Result<Hash> {
     ensure(
         page.schema == "pon-native-history-v1"
@@ -2252,72 +2334,176 @@ fn receive_page(
     // The original metadata marker is durable before the first paid unit.
     // The bounded canonical Page shape checks above remain cheap; malformed
     // top-level input must not acquire an unclean persistent epoch.
-    let owned_epoch = node.begin_remote_history_cpu_epoch()?;
+    let graph_epoch = graph_parent
+        .as_ref()
+        .map(|parent| node.begin_history_graph_resource_v1(parent, &kernel_checkpoint))
+        .transpose()?;
+    let owned_epoch = if graph_epoch.is_none() {
+        node.begin_remote_history_cpu_epoch()?
+    } else {
+        false
+    };
+    let graph_counters = graph_epoch
+        .as_ref()
+        .map(|_| node.history_graph_resource_counters());
+    if let Some(counters) = &graph_counters {
+        history_graph_resource_v1::count(counters, |c| {
+            c.imports = c
+                .imports
+                .checked_add(1)
+                .ok_or("HISTORY_GRAPH_RESOURCE_OBSERVATION_V1")?;
+            Ok(())
+        })?;
+    }
+    let resource_checkpoint = || {
+        if let (Some(epoch), Some(counters)) = (&graph_epoch, &graph_counters) {
+            let binding = history_graph_resource_v1::measured_binding(counters, || epoch.verify());
+            let kernel = history_graph_resource_v1::measured_kernel(counters, &kernel_checkpoint);
+            binding.and(kernel)
+        } else {
+            kernel_checkpoint()
+        }
+    };
+    let settlement = graph_epoch
+        .as_ref()
+        .map(|_| &resource_checkpoint as &(dyn Fn() -> Result<()> + Sync));
     let native = (|| -> Result<Hash> {
         // Charge canonical proof decoding, packet IDs and parent-chain checks
         // separately from the later full W1/M06 intervals. No nested operation:
         // actual decoder CPU must not be double-billed or run at no cost.
         resource_checkpoint()?;
-        let (packets, next) = metered_history_operation(node, domain, |_owner, operation| {
-            operation.checkpoint()?;
-            let packets = page
-                .packets
-                .iter()
-                .map(|s| hex_packet(s))
-                .collect::<Result<Vec<_>>>()?;
-            let mut next = after;
-            for packet in &packets {
-                ensure(packet.header.parent == next, "PAGE_PARENT")?;
-                next = packet.id()?;
-            }
-            ensure(
-                page.next == hex::encode(next) && page.complete == (next == tip),
-                "PAGE_COMPLETE",
-            )?;
-            operation.checkpoint()?;
-            resource_checkpoint()?;
-            Ok((packets, next))
-        })?;
+        let (packets, next) = metered_history_operation_with_boundary(
+            node,
+            domain,
+            settlement,
+            |_owner, operation| {
+                operation.checkpoint()?;
+                let packets = page
+                    .packets
+                    .iter()
+                    .map(|s| hex_packet(s))
+                    .collect::<Result<Vec<_>>>()?;
+                let mut next = after;
+                for packet in &packets {
+                    ensure(packet.header.parent == next, "PAGE_PARENT")?;
+                    next = packet.id()?;
+                }
+                ensure(
+                    page.next == hex::encode(next) && page.complete == (next == tip),
+                    "PAGE_COMPLETE",
+                )?;
+                operation.checkpoint()?;
+                resource_checkpoint()?;
+                Ok((packets, next))
+            },
+        )?;
         for packet in &packets {
             resource_checkpoint()?;
-            metered_history_packet(node, domain, packet, clock, &resource_checkpoint)?;
+            metered_history_packet(
+                node,
+                domain,
+                packet,
+                clock,
+                &resource_checkpoint,
+                graph_counters.as_ref(),
+            )?;
             resource_checkpoint()?;
         }
         if page.complete {
             // Reorganization/activation has its own original CPU reservation.
             // Already durable native effects cannot be undone by late CPU faults.
-            metered_history_operation(node, domain, |owner, operation| {
-                operation.checkpoint()?;
-                resource_checkpoint()?;
-                // An activation walks ancestors and may apply multiple durable
-                // reorganization steps. Keep the ORIGINAL operation and Host
-                // fence live inside that work, not just around the outer call.
-                owner.activate_observed_with_progress(tip, clock, &mut || {
+            metered_history_operation_with_boundary(
+                node,
+                domain,
+                settlement,
+                |owner, operation| {
                     operation.checkpoint()?;
-                    resource_checkpoint()
-                })?;
-                resource_checkpoint()?;
-                operation.checkpoint()
-            })?;
+                    resource_checkpoint()?;
+                    // An activation walks ancestors and may apply multiple durable
+                    // reorganization steps. Keep the ORIGINAL operation and Host
+                    // fence live inside that work, not just around the outer call.
+                    let cpu = || operation.checkpoint();
+                    let activated = if let Some(counters) = &graph_counters {
+                        let mut graph = history_graph_resource_v1::GraphProgress::new(
+                            &cpu,
+                            &resource_checkpoint,
+                            Arc::clone(counters),
+                        );
+                        #[cfg(test)]
+                        graph.set_before_commit_hook(
+                            owner.history_graph_resource_before_commit_hook.clone(),
+                        );
+                        let result =
+                            owner.activate_observed_with_native_progress(tip, clock, &mut graph);
+                        history_graph_resource_v1::preserve_native(result, graph.complete())
+                    } else {
+                        owner.activate_observed_with_progress(tip, clock, &mut || {
+                            cpu()?;
+                            resource_checkpoint()
+                        })
+                    };
+                    activated?;
+                    resource_checkpoint()?;
+                    operation.checkpoint()
+                },
+            )?;
         }
         Ok(next)
     })();
-    if owned_epoch {
-        // Finish only this standalone History epoch. A concurrent V3 listener
-        // already holds and eventually settles its OWN original marker; it
-        // never yields last-close authority to a History importer.
-        let clean = domain.observe().ok().is_some_and(|state| {
-            state.in_flight == 0 && !state.accounting_unavailable && state.stored_credit_ns >= 0
-        }) && domain.observe_actual_flow().ok().flatten().is_some();
-        node.finish_ordinary_public_service_epoch(clean)?;
-        if !clean {
-            // The original active metadata marker intentionally remains.
-            // Native success may already be durable; refuse only to qualify
-            // this sync completion, not the mathematical work or stored rows.
-            return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+    let completion = (|| {
+        if let Some(epoch) = &graph_epoch {
+            let native = history_graph_resource_v1::preserve_native(native, resource_checkpoint());
+            let clean = domain.observe().ok().is_some_and(|state| {
+                state.in_flight == 0 && !state.accounting_unavailable && state.stored_credit_ns >= 0
+            }) && domain.observe_actual_flow().ok().flatten().is_some();
+            // The close implementation separately verifies both original SQL
+            // markers. Its callback is ONLY the real fresh kernel check, so a
+            // local SQL/binding failure can never mint a pending resource close.
+            node.finish_history_graph_resource_v1(epoch, clean, &kernel_checkpoint)?;
+            if !clean {
+                return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+            }
+            history_graph_resource_v1::count(
+                graph_counters
+                    .as_ref()
+                    .ok_or("HISTORY_GRAPH_RESOURCE_OBSERVATION_V1")?,
+                |c| {
+                    c.imports_closed = c
+                        .imports_closed
+                        .checked_add(1)
+                        .ok_or("HISTORY_GRAPH_RESOURCE_OBSERVATION_V1")?;
+                    Ok(())
+                },
+            )?;
+            return native;
         }
+        if owned_epoch {
+            // Finish only this standalone History epoch. A concurrent V3 listener
+            // already holds and eventually settles its OWN original marker; it
+            // never yields last-close authority to a History importer.
+            let clean = domain.observe().ok().is_some_and(|state| {
+                state.in_flight == 0 && !state.accounting_unavailable && state.stored_credit_ns >= 0
+            }) && domain.observe_actual_flow().ok().flatten().is_some();
+            node.finish_ordinary_public_service_epoch(clean)?;
+            if !clean {
+                // The original active metadata marker intentionally remains.
+                // Native success may already be durable; refuse only to qualify
+                // this sync completion, not the mathematical work or stored rows.
+                return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+            }
+        }
+        native
+    })();
+    if let Some(counters) = &graph_counters {
+        history_graph_resource_v1::count(counters, |c| {
+            c.imports_failed = c
+                .imports_failed
+                .checked_add(u64::from(completion.is_err()))
+                .ok_or("HISTORY_GRAPH_RESOURCE_OBSERVATION_V1")?;
+            Ok(())
+        })?;
     }
-    native
+    completion
 }
 
 /// Public untrusted History import. Unlike the private local parser, this
@@ -2382,6 +2568,60 @@ pub fn receive_public_page_from(
     // when the last local Host owner observation fails.
     kernel.verify()?;
     native
+}
+
+/// Explicit v1 ordinary-History resource schedule. Every graph node retains
+/// actual SQL, CPU and cancellation checks; only the sealed eight-node resource
+/// interval differs from receive_public_page_from's retained strict path.
+/// Signed V6/continuous/mining owners cannot select this profile. It grants no
+/// consensus permission, new CPU credit, or recovery of an old active epoch.
+pub fn receive_public_page_with_graph_resource_fence_v1(
+    node: &mut Node,
+    source: SocketAddr,
+    page: Page,
+    tip: Hash,
+    after: Hash,
+    clock: u64,
+) -> Result<Hash> {
+    node.require_history_graph_resource_ordinary()?;
+    let kernel = crate::host_kernel_parent::require_host_kernel_budget(
+        source,
+        Some(crate::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT),
+    )?
+    .ok_or("PUBLIC_HOST_KERNEL_REQUIRED")?;
+    kernel.verify()?;
+    let parent = kernel.identity_observation()?;
+    let domain = node.remote_history_cpu_domain()?;
+    let native = receive_page_with_resource_profile(
+        node,
+        &domain,
+        page,
+        tip,
+        after,
+        clock,
+        || kernel.verify(),
+        Some(parent),
+    );
+    // A failure here still cannot undo a previously durable native effect.
+    history_graph_resource_v1::preserve_native(native, kernel.verify())
+}
+
+/// Resume only a known settled close retained by this SAME live ordinary Node.
+/// This cannot recover a cold active marker, trust a report, replay an import,
+/// forgive unknown CPU, or replace the original budget/parent identity.
+pub fn resume_public_history_graph_resource_settlement_v1(
+    node: &mut Node,
+    source: SocketAddr,
+) -> Result<()> {
+    node.require_history_graph_resource_ordinary()?;
+    let kernel = crate::host_kernel_parent::require_host_kernel_budget(
+        source,
+        Some(crate::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT),
+    )?
+    .ok_or("PUBLIC_HOST_KERNEL_REQUIRED")?;
+    kernel.verify()?;
+    let parent = kernel.identity_observation()?;
+    node.resume_history_graph_resource_settlement_v1(&parent, &|| kernel.verify())
 }
 
 /// Selects two already authenticated, independently signed operation claims.
