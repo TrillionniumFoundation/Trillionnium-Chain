@@ -8,7 +8,7 @@ general prepared task and maintenance split-limb prepared task.
 
 ## Fixed paired execution
 
-The native [driver](../../../../../trillionnium/crates/trnm-pon-node/examples/pon_legal_ticket_cost_v3.rs)
+The native [driver](../../../../trillionnium/crates/trnm-pon-node/examples/pon_legal_ticket_cost_v3.rs)
 uses eight fresh stores: two rounds, two producer arms and preparation either
 per search or retained for 64 challenges. Every cohort runs 64 searches with
 eight attempts at most. Fixed disjoint nonce windows include every miss,
@@ -58,7 +58,7 @@ compiler/lock/source identities, hardware observations and failures are retained
 
 ## Execution and boundaries
 
-The [workflow](../../../../../.github/workflows/pon-legal-ticket-cost-v3.yml)
+The [workflow](../../../../.github/workflows/pon-legal-ticket-cost-v3.yml)
 builds the exact source on native x86_64 and aarch64 GitHub runners, checks
 architecture, requires the original locked graph/test profile and strict
 Clippy, and runs the fixed 240-second campaign under a 250-second capture cap.
@@ -71,6 +71,6 @@ The existing special-matrix, multichallenge and hardware campaigns remain
 separate evidence. Their serial batch scheduling is not reclassified as a
 hardware batching result. This successor measures end-to-end costs for the
 two previously eligible leaders; it does not prove they are cheapest among
-every possible legal algorithm. The [bounded independent reader](../../../../../scripts/ci/check_legal_ticket_cost_v3.py)
+every possible legal algorithm. The [bounded independent reader](../../../../scripts/ci/check_legal_ticket_cost_v3.py)
 and eight synthetic accounting controls are source checks. New native x86_64
 and ARM observations remain **NOT_RUN** at this source freeze.

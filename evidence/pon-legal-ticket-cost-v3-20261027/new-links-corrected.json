@@ -1,0 +1,26 @@
+[
+  {
+    "file": "docs/protocol/pon-nakamoto-v1/details/LEGAL_TICKET_FIRST_ADMISSION_COST_V3.md",
+    "link": "../../../../trillionnium/crates/trnm-pon-node/examples/pon_legal_ticket_cost_v3.rs",
+    "resolved": "/workspace/scratch/3d4ec372c488/pon-legal-ticket-cost/trillionnium/crates/trnm-pon-node/examples/pon_legal_ticket_cost_v3.rs",
+    "exists": true
+  },
+  {
+    "file": "docs/protocol/pon-nakamoto-v1/details/LEGAL_TICKET_FIRST_ADMISSION_COST_V3.md",
+    "link": "../../../../.github/workflows/pon-legal-ticket-cost-v3.yml",
+    "resolved": "/workspace/scratch/3d4ec372c488/pon-legal-ticket-cost/.github/workflows/pon-legal-ticket-cost-v3.yml",
+    "exists": true
+  },
+  {
+    "file": "docs/protocol/pon-nakamoto-v1/details/LEGAL_TICKET_FIRST_ADMISSION_COST_V3.md",
+    "link": "../../../../scripts/ci/check_legal_ticket_cost_v3.py",
+    "resolved": "/workspace/scratch/3d4ec372c488/pon-legal-ticket-cost/scripts/ci/check_legal_ticket_cost_v3.py",
+    "exists": true
+  },
+  {
+    "file": "evidence/pon-legal-ticket-cost-v3-20261027/README.md",
+    "link": "../../docs/protocol/pon-nakamoto-v1/details/LEGAL_TICKET_FIRST_ADMISSION_COST_V3.md",
+    "resolved": "/workspace/scratch/3d4ec372c488/pon-legal-ticket-cost/docs/protocol/pon-nakamoto-v1/details/LEGAL_TICKET_FIRST_ADMISSION_COST_V3.md",
+    "exists": true
+  }
+]

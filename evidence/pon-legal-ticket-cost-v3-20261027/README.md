@@ -20,3 +20,11 @@ measured completed observations.
 The first formatting check refused a Rust 2024-only let-chain. The correction
 keeps the original Rust 2021 edition and uses `Option::is_some_and`; full
 formatting then passed. The original refusal and corrected receipt both remain.
+
+The first actual hosted [run 40609116618](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40609116618)
+on source `409cc73ac01d74e0ca14c010df40a154b926e2e4` failed on both architectures
+at the full repository link check, before native compilation. Three new
+relative links ascended one directory too far. The successor corrects those
+links and explicitly checks every link in the two new documents. The original
+full job logs are retained. No Rust source, algorithm, workload, runtime budget,
+test assertion or source checker changes for this repair.
