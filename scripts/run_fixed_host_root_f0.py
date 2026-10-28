@@ -119,7 +119,7 @@ def prepare(args, output):
                                            args.expected_head, args.expected_tree))
         cargo = [str(args.cargo.absolute()), '+1.95.0']
         for label, command in (
-            ('preflight', ['/bin/bash', 'scripts/project-preflight.sh']),
+            ('preflight', ['/bin/bash', 'scripts/project-preflight.sh', '--audit']),
             ('rustc-version', [str(args.cargo.absolute().parent / 'rustup'), 'run', '1.95.0', 'rustc', '-Vv']),
             ('cargo-version', [*cargo, '-Vv']),
             ('format', [*cargo, 'fmt', '--manifest-path', 'trillionnium/Cargo.toml', '--all', '--check']),

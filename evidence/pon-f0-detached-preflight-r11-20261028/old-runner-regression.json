@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/ci",
+    "-p",
+    "test_fixed_root_preflight.py",
+    "-v"
+  ],
+  "exit_code": 1,
+  "source_base": "6eaf5f8d6f9b12546878bc8286b1fcac219a0d4a",
+  "new_controls_only": true,
+  "native_executed": false
+}

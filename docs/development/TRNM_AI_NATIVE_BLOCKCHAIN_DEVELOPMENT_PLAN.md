@@ -4178,3 +4178,23 @@ The missing unpublished repair and proof artifacts are not assigned to this
 new source identity. Exact native qualification and a fresh bounded proof run
 remain required, and one-leaf calibration cannot establish the batch benefit,
 prover tail, full authorization, quantum soundness or WAN acceptance gates.
+
+## 2026-10-28 first F0 Host attempt: detached preparation boundary
+
+The [first hosted F0 readback and narrow caller correction](../../evidence/pon-f0-detached-preflight-r11-20261028/README.md)
+retain run `40741611297`, job `123004393839`, on actual head `439681f324482c0d5a7fb6f7cc9190f60dd16e2a`
+and tree `ea2cca3c0bbf8e3b65db2f3be96ccc31b256964f`. Static source controls,
+compiler installation and locked fetch passed, but preparation invoked the
+developer preflight mode on the exact-SHA detached checkout and exited 2 before
+any preparation formatter, Clippy, build or native control. The original
+19,973-byte artifact and complete job log remain retained. Both Host steps
+were skipped; all six confirmations and 42 business exposures remain
+unobserved, and missing service ownership remains unknown with no cleanup.
+
+Only F0 preparation's existing boundary call now explicitly selects `--audit`,
+matching the preceding hosted source check. Exact head/tree/clean-source checks,
+all boundary development/push rules, Rust/locks, work, Host ceilings, SLO,
+cleanup and all original denominators remain unchanged. A real detached Git
+fixture reproduces the old omitted-mode failure before the correction and
+forbids every native command. Python checks do not replace fresh hosted
+preparation and actual Host execution. The F0 service and WAN gates remain open.
