@@ -1,0 +1,12 @@
+test_audit_reader_rejects_substituted_cases_and_unmeasured_costs (__main__.Controls.test_audit_reader_rejects_substituted_cases_and_unmeasured_costs) ... ok
+test_duplicate_json_is_not_last_key_wins (__main__.Controls.test_duplicate_json_is_not_last_key_wins) ... ok
+test_exact_original_leaf_and_contiguous_join_graph (__main__.Controls.test_exact_original_leaf_and_contiguous_join_graph) ... ok
+test_invalid_terminal_cannot_close_stage (__main__.Controls.test_invalid_terminal_cannot_close_stage) ... ok
+test_native_log_duplicates_and_overflow_refuse (__main__.Controls.test_native_log_duplicates_and_overflow_refuse) ... ok
+test_nonfinite_json_and_nonregular_inputs_refused (__main__.Controls.test_nonfinite_json_and_nonregular_inputs_refused) ... ok
+test_original_policy_and_unchanged_budget (__main__.Controls.test_original_policy_and_unchanged_budget) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.013s
+
+OK

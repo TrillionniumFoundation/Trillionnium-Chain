@@ -4778,3 +4778,35 @@ the two measured legal strategies differ by about -4.09% to +0.14%, depending
 on architecture and setup reuse. This supplies actual admitted-ticket costs
 for the measured strategies, not a global cheapest solver or full hardware
 coverage. This followup executed only pure readers, no native search benchmark.
+
+
+### P0 W1 — independent transparent Succinct measurement candidate (2026-10-28)
+
+The actual complete Composite proof and its six complete original artifacts
+are durably archived in [#529](https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/529),
+exact head `303afe7a4581e67117bff135eed5892232aabb70`; all 34 remote parts
+and six reconstructed whole-object hashes passed byte readback. A separate
+[new transparent recursion driver](../../trillionnium/crates/trnm-crypto-primitives/guests/w1-succinct/README.md)
+now measures the fixed original receipt through 62 ordinary lifts and 61
+contiguous joins. It preserves the original guest/image/input/claim, source
+pins and additional-PoW-off relation. It does not use Groth16, PoVW,
+development proofs, remote proving or the old packet codec as a fallback.
+
+All 123 stages share one newly declared 3,500-second work / 3,600-second outer
+window, two workers with two Rayon threads and 300-second stage caps; no
+resume follows exhaustion. Completed stages, real failed costs and cleanup
+remain evidence. Native build/Clippy and original-proof negative controls
+are mandatory before this new hosted work; local source controls are not a
+completed new proof. The [source-freeze evidence](../../evidence/pon-w1-succinct-research-20261028/README.md)
+retains the local disk stop and rejected initial transitive-lock drift.
+
+If the strict root verifies, measure actual receipt/certificate bytes,
+31 verification samples, 17 proof plus seven certificate rejection cases,
+and whole-certificate TCP loopback with received public-input verification.
+`PWSR0001` includes all 49,640 original input bytes; two 900-second verifier
+caps and the 30-second transfer cap remain. The 1 MiB comparison and optional
+legacy 2,048-byte-transaction calculation do not qualify a PQ transaction
+budget or change the existing 49,188-byte PNW1 codec. All additional costs
+remain separate from the original proof and failed windows; WAN, global
+worst-case invalid input, recursive QROM/PQ-128 qualification and a complete
+from-zero W1 cost are not established by this candidate.

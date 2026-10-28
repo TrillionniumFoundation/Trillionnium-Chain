@@ -1,0 +1,111 @@
+name: PoN W1 transparent Succinct recursion research
+on:
+  pull_request:
+    paths:
+      - trillionnium/crates/trnm-crypto-primitives/guests/w1-succinct/**
+      - .github/workflows/pon-w1-succinct-research.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: pon-w1-succinct-${{ github.event.pull_request.head.sha || github.sha }}
+  cancel-in-progress: false
+jobs:
+  recursion:
+    name: exact original Composite to transparent Succinct (independent finite window)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    env:
+      TRNM_EXPECTED_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      CARGO_BUILD_JOBS: "2"
+      CARGO_INCREMENTAL: "0"
+      CARGO_PROFILE_DEV_DEBUG: "0"
+      CARGO_PROFILE_TEST_DEBUG: "0"
+      CARGO_TERM_COLOR: never
+      PYTHONDONTWRITEBYTECODE: "1"
+      RAYON_NUM_THREADS: "2"
+    steps:
+      - name: Checkout exact research head
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Reserve independent source and cost evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/w1-succinct-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          work="$RUNNER_TEMP/w1-succinct-build-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir "$out" "$work" "$out/native"
+          printf 'OUT=%s\nWORK=%s\n' "$out" "$work" >> "$GITHUB_ENV"
+          printf 'LEGACY=%s/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0\n' "$GITHUB_WORKSPACE" >> "$GITHUB_ENV"
+          printf 'SUCCINCT=%s/trillionnium/crates/trnm-crypto-primitives/guests/w1-succinct\n' "$GITHUB_WORKSPACE" >> "$GITHUB_ENV"
+          printf 'CARGO_HOME=%s/cargo\nCARGO_TARGET_DIR=%s/host-target\n' "$work" "$work" >> "$GITHUB_ENV"
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$out/source-before.json"
+          bash scripts/project-preflight.sh --audit > "$out/preflight.log" 2>&1
+          cat /proc/meminfo > "$out/meminfo.txt"
+          lscpu --json > "$out/lscpu.json"
+      - name: Install the same pinned native toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 "$LEGACY/measure_step.py" --out "$OUT" --name native-toolchain-install --timeout 900 -- rustup toolchain install 1.95.0 --profile minimal --component rustfmt,clippy
+          printf 'RUSTC=%s\n' "$(rustup which --toolchain 1.95.0 rustc)" >> "$GITHUB_ENV"
+          printf 'NATIVE_CARGO=%s\n' "$(rustup which --toolchain 1.95.0 cargo)" >> "$GITHUB_ENV"
+          rustc +1.95.0 -Vv > "$OUT/native-rustc.txt"
+      - name: Check fixed graph and fetch only the pinned actual complete proof
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          cp "$SUCCINCT/policy.json" "$OUT/policy.json"
+          python3 "$LEGACY/measure_step.py" --out "$OUT" --name python-controls --timeout 60 -- python3 "$SUCCINCT/test_runner.py"
+          python3 "$LEGACY/measure_step.py" --out "$OUT" --name fetch --timeout 900 -- python3 "$SUCCINCT/runner.py" fetch --out "$OUT"
+          python3 "$LEGACY/measure_step.py" --out "$OUT" --name install --timeout 900 -- python3 "$SUCCINCT/runner.py" install --out "$OUT" --dest "$WORK/backend"
+      - name: Build and check unchanged Composite verifier and separate recursion driver
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 "$LEGACY/measure_step.py" --out "$OUT" --name original-host-build --timeout 1800 -- "$NATIVE_CARGO" build --release --locked --manifest-path "$LEGACY/Cargo.toml" -p trnm-w1-risc0-host
+          python3 "$LEGACY/measure_step.py" --out "$OUT" --name succinct-build --timeout 1800 -- "$NATIVE_CARGO" build --release --locked --manifest-path "$SUCCINCT/Cargo.toml"
+          python3 "$LEGACY/measure_step.py" --out "$OUT" --name succinct-tests --timeout 1800 -- "$NATIVE_CARGO" test --release --locked --manifest-path "$SUCCINCT/Cargo.toml"
+          python3 "$LEGACY/measure_step.py" --out "$OUT" --name succinct-fmt --timeout 60 -- rustup run 1.95.0 cargo fmt --manifest-path "$SUCCINCT/Cargo.toml" --all -- --check
+          python3 "$LEGACY/measure_step.py" --out "$OUT" --name succinct-clippy --timeout 1800 -- "$NATIVE_CARGO" clippy --locked --manifest-path "$SUCCINCT/Cargo.toml" --all-targets -- -D warnings
+          cp "$CARGO_TARGET_DIR/release/trnm-w1-risc0-host" "$OUT/native/"
+          cp "$CARGO_TARGET_DIR/release/trnm-w1-succinct-research" "$OUT/native/"
+          sha256sum "$OUT/native/"* > "$OUT/native-binaries.sha256"
+      - name: Require actual original cryptographic verification and native rejection controls
+        run: |
+          set -euo pipefail
+          python3 "$LEGACY/measure_step.py" --out "$OUT" --name original-verify --timeout 900 -- "$OUT/native/trnm-w1-risc0-host" verify "$OUT/original/guest.bin" "$OUT/original/input.bin" "$OUT/original/receipt.bin"
+          python3 "$LEGACY/measure_step.py" --out "$OUT" --name native-controls --timeout 900 -- python3 "$SUCCINCT/test_native.py" --helper "$OUT/native/trnm-w1-succinct-research" --original "$OUT/original" --out "$OUT/native-controls"
+      - name: Run one bounded 62 lift plus 61 join transparent window
+        run: |
+          python3 "$LEGACY/measure_step.py" --out "$OUT" --name compress --timeout 3600 --sample-proc-group -- \
+            python3 "$SUCCINCT/runner.py" prove --out "$OUT" \
+            --helper "$OUT/native/trnm-w1-succinct-research" --r0vm "$WORK/backend/tools/r0vm"
+      - name: Preserve every completed stage and actual failed resource terminal
+        if: always()
+        run: python3 "$SUCCINCT/runner.py" finalize --out "$OUT"
+      - name: Measure the actual complete proof and tested invalid inputs
+        run: |
+          set -euo pipefail
+          python3 "$LEGACY/measure_step.py" --out "$OUT" --name verify --timeout 900 -- "$OUT/native/trnm-w1-succinct-research" verify "$OUT/original/guest.bin" "$OUT/original/input.bin" "$OUT/succinct.bin"
+          python3 "$LEGACY/measure_step.py" --out "$OUT" --name benchmark --timeout 900 -- "$OUT/native/trnm-w1-succinct-research" benchmark "$OUT/original/guest.bin" "$OUT/original/input.bin" "$OUT/succinct.bin"
+          python3 "$LEGACY/measure_step.py" --out "$OUT" --name audit --timeout 900 -- "$OUT/native/trnm-w1-succinct-research" audit "$OUT/original/guest.bin" "$OUT/original/input.bin" "$OUT/succinct.bin"
+          python3 "$LEGACY/measure_step.py" --out "$OUT" --name loopback --timeout 1900 -- python3 "$SUCCINCT/runner.py" loopback --out "$OUT" --helper "$OUT/native/trnm-w1-succinct-research"
+      - name: Verify exact source after every success or failure
+        if: always()
+        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$OUT/source-after.json"
+      - name: Close actual bytes and exclusive phase accounting
+        run: python3 "$SUCCINCT/runner.py" report --out "$OUT"
+      - name: Retain original proof, new stages, binaries, costs and failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: w1-succinct-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/w1-succinct-${{ github.run_id }}-${{ github.run_attempt }}/
+          if-no-files-found: error
+          retention-days: 30

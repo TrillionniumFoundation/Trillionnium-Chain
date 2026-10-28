@@ -1,0 +1,80 @@
+{
+  "additional_pow": false,
+  "budgets": {
+    "audit_seconds": 900,
+    "build_phase_seconds": 1800,
+    "complete_new_recursion_outer_seconds": 3600,
+    "complete_new_recursion_work_stop_seconds": 3500,
+    "each_recursion_stage_seconds": 300,
+    "effective_cpus_minimum": 4,
+    "install_phase_seconds": 900,
+    "job_timeout_minutes": 120,
+    "loopback_transfer_seconds": 30,
+    "loopback_verification_seconds_each": 900,
+    "minimum_available_bytes": 8589934592,
+    "one_mib_packet_comparison_bytes": 1048576,
+    "rayon_threads_per_worker": 2,
+    "succinct_receipt_bytes": 2097152,
+    "succinct_seal_words": 262144,
+    "verify_seconds": 900,
+    "workers": 2
+  },
+  "claim_digest": "c717de185bfb18d3990dd7b31e4f94a2831dd159d8e9366740ea74e4c8e14a03",
+  "complete_from_zero_generation_cost": false,
+  "consensus_authority": false,
+  "dev_mode_allowed": false,
+  "existing_packet_codec_changed": false,
+  "groth16_allowed": false,
+  "image_id": "3ea1bcbf7900a32be73d7e78102de085562893732473667e1f3af07e585696b4",
+  "input_files": {
+    "guest.bin": {
+      "bytes": 291592,
+      "sha256": "b8f32cd9c1b1edbb0cde04acf9aab146b7ff1aeeeaee0188e4d6e80d077b0c0a"
+    },
+    "input.bin": {
+      "bytes": 49640,
+      "sha256": "4babd290b10f7a68be27c2adf3b97448bb7bef04dba8bcb97f914acf4ac69020"
+    },
+    "receipt.bin": {
+      "bytes": 15862780,
+      "sha256": "0a5336a797c51829ed25d4ec2f1a03f4f56fda4c737a230b493d4abbe96f0ec8"
+    }
+  },
+  "namespace": "PWSR0001",
+  "origin": {
+    "archive_members": 1684,
+    "artifact_bytes": 80366759,
+    "artifact_id": 12784520070,
+    "artifact_name": "w1-assembled-a54dc7355f58f40784b5a71fe7e73c4062a14951-1",
+    "artifact_sha256": "bae22e7fab8f5475dc396a4225292f90e582a92558fecf1710e30da0b0d76ecc",
+    "repository": "TrillionniumFoundation/Trillionnium-Chain",
+    "run_attempt": 1,
+    "run_id": 40608715148,
+    "source_sha": "a54dc7355f58f40784b5a71fe7e73c4062a14951",
+    "source_tree": "74eb5ac1480096c213c17b72fc06513608f1d6cb"
+  },
+  "original_backend_manifest_sha256": "d7447807ea540d8c1d3c80934561bba955e73f251c0e7b31354fe86282cdfb76",
+  "original_cargo_lock_sha256": "b3bb8518308ee9a175d878e5cafaab269be20f2bf990ec3fbb4d6e49bf110996",
+  "original_composite_verifier_unchanged": true,
+  "original_guest_unchanged": true,
+  "original_source_pins_unchanged": true,
+  "povw_requested": false,
+  "pq128_qualified": false,
+  "recursion": {
+    "circuit": "4.0.5",
+    "control_root": "a54dc85ac99f851c92d7c96d7318af41dbe7c0194edfcc37eb4d422a998c1f56",
+    "hashfn": "poseidon2",
+    "join_control_id": "7a8f24092c34ed3eb81b3d0a0b796c588c615d3488ef9e61c21dbd1e4b83ea6e",
+    "lift_control_id": "e7934a23ddce1423b425cf32aa23be29f48cd40e0b6ff9376dce6f3bf9d0bc35",
+    "ordinary_joins": 61,
+    "ordinary_lifts": 62,
+    "po2": 18,
+    "schedule": "all original lifts then balanced contiguous joins; at most two independent workers; each result checked against original range claim",
+    "sdk": "3.0.6",
+    "source_commit": "1cc70cf05033a79ebc90f07c679cb4bd1cd301b9",
+    "total_new_recursion_stages": 123
+  },
+  "remote_proving_allowed": false,
+  "schema": "pon-w1-transparent-succinct-attempt-v1",
+  "status": "research-only-not-consensus-qualified"
+}

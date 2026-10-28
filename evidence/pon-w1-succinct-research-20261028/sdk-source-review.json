@@ -1,0 +1,67 @@
+{
+  "local_native_execution_claimed": false,
+  "schema": "w1-succinct-reviewed-primary-sdk-source-v1",
+  "sources": [
+    {
+      "bytes": 37966,
+      "registry_path": "risc0-zkvm-3.0.6/src/host/api/client.rs",
+      "sha256": "f69c1e4b95e1f6c896b9f5dfe6c71e7a8abd6792ba921effd6d3e2db8961823a"
+    },
+    {
+      "bytes": 40347,
+      "registry_path": "risc0-zkvm-3.0.6/src/host/recursion/prove/mod.rs",
+      "sha256": "41e2b6b92349ed28d2d4669e371d2ad1b5617d97b2ad4551d101c10a7560a520"
+    },
+    {
+      "bytes": 15717,
+      "registry_path": "risc0-zkvm-3.0.6/src/host/server/prove/mod.rs",
+      "sha256": "a3e5fdccbd4719820274c8b466fe7c211941b3fa24979f6eeddf5d1da4a347c9"
+    },
+    {
+      "bytes": 8875,
+      "registry_path": "risc0-zkvm-3.0.6/src/host/client/prove/opts.rs",
+      "sha256": "3638f721c91a7fd40aff6f6ddd10170070f14523f7bcc0a9db35e560cf9a3f80"
+    },
+    {
+      "bytes": 16709,
+      "registry_path": "risc0-zkvm-3.0.6/src/receipt/succinct.rs",
+      "sha256": "8e0165b3210e30e77074763d71d85fd0595e4190b96725182f33665b7df90d60"
+    },
+    {
+      "bytes": 7725,
+      "registry_path": "risc0-zkvm-3.0.6/src/receipt/merkle.rs",
+      "sha256": "b3eeb7cc62bba1dfa9ba32a75b905510b4777b9f61004891163d8f43ee8072d6"
+    },
+    {
+      "bytes": 45343,
+      "registry_path": "risc0-zkvm-3.0.6/src/receipt.rs",
+      "sha256": "ec445670befb0fad19bfe46eede73e551de03d9f91fa1fb81c9149dc04912fed"
+    },
+    {
+      "bytes": 22131,
+      "registry_path": "risc0-zkvm-3.0.6/src/claim/receipt.rs",
+      "sha256": "7c8dafb73bbf96394ebd1a0e651c4e7bcf7b3a166438444e35615bb397223ba1"
+    },
+    {
+      "bytes": 1815,
+      "registry_path": "risc0-circuit-recursion-4.0.5/src/info.rs",
+      "sha256": "128c29a8ddf0560fb3a69c03fa1d959fab542d2fa09eae6794d28be871e345e9"
+    },
+    {
+      "bytes": 13225,
+      "registry_path": "risc0-circuit-recursion-4.0.5/src/control_id.rs",
+      "sha256": "6fedf46fad3ca0ce3e537139be7873a43dd68fee5fc803d3e58604b4e9ae16cb"
+    },
+    {
+      "bytes": 21753,
+      "registry_path": "risc0-zkp-3.0.5/src/verify/mod.rs",
+      "sha256": "003a67af89a7cfaeac9ff23808225cdc4d81c41d64956f20243574531b166c4f"
+    },
+    {
+      "bytes": 1762,
+      "registry_path": "risc0-zkp-3.0.5/src/lib.rs",
+      "sha256": "107521d2426442fbc9358b7b9ae5650be92d670ea85e9a34aec7b9e9cc27dc6d"
+    }
+  ],
+  "upstream_commit": "1cc70cf05033a79ebc90f07c679cb4bd1cd301b9"
+}

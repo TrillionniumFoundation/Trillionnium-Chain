@@ -1,0 +1,69 @@
+{
+  "actual_hosted_process_records_not_yet_observed": true,
+  "all_phase_commands_present": true,
+  "exact_declared_phase_timeouts": {
+    "audit": 900,
+    "benchmark": 900,
+    "compress": 3600,
+    "fetch": 900,
+    "install": 900,
+    "loopback": 1900,
+    "native-controls": 900,
+    "native-toolchain-install": 900,
+    "original-host-build": 1800,
+    "original-verify": 900,
+    "python-controls": 60,
+    "succinct-build": 1800,
+    "succinct-clippy": 1800,
+    "succinct-fmt": 60,
+    "succinct-tests": 1800,
+    "verify": 900
+  },
+  "native_toolchain_install_process_record_produced_by_workflow_command": true,
+  "parsed_yaml": true,
+  "phase_count": 16,
+  "run_blocks": [
+    {
+      "bash_syntax": true,
+      "step": "Reserve independent source and cost evidence"
+    },
+    {
+      "bash_syntax": true,
+      "step": "Install the same pinned native toolchain"
+    },
+    {
+      "bash_syntax": true,
+      "step": "Check fixed graph and fetch only the pinned actual complete proof"
+    },
+    {
+      "bash_syntax": true,
+      "step": "Build and check unchanged Composite verifier and separate recursion driver"
+    },
+    {
+      "bash_syntax": true,
+      "step": "Require actual original cryptographic verification and native rejection controls"
+    },
+    {
+      "bash_syntax": true,
+      "step": "Run one bounded 62 lift plus 61 join transparent window"
+    },
+    {
+      "bash_syntax": true,
+      "step": "Preserve every completed stage and actual failed resource terminal"
+    },
+    {
+      "bash_syntax": true,
+      "step": "Measure the actual complete proof and tested invalid inputs"
+    },
+    {
+      "bash_syntax": true,
+      "step": "Verify exact source after every success or failure"
+    },
+    {
+      "bash_syntax": true,
+      "step": "Close actual bytes and exclusive phase accounting"
+    }
+  ],
+  "schema": "w1-succinct-workflow-static-gates-v1",
+  "timeout_minutes": 120
+}
