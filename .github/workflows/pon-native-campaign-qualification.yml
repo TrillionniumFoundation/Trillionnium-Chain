@@ -16,6 +16,8 @@ on:
       - scripts/ci/run_history_verifier_lifeline_v1.py
       - scripts/ci/read_history_verifier_lifeline_v1.py
       - scripts/ci/test_history_verifier_lifeline_v1.py
+      - scripts/ci/history_fixed_parent_v2.py
+      - scripts/ci/test_history_fixed_parent_v2.py
       - scripts/project-preflight.sh
       - scripts/ci/verify_ci_source.py
       - .github/workflows/pon-native-campaign-qualification.yml
@@ -84,47 +86,42 @@ jobs:
           python3 -B scripts/ci/test_history_verifier_lifeline_v1.py 2>&1 | tee "$OUT/verifier-lifeline-reader-controls.log"
           grep -E '^Ran 7 tests in ' "$OUT/verifier-lifeline-reader-controls.log"
           grep -x 'OK' "$OUT/verifier-lifeline-reader-controls.log"
-      - name: Provision the original separate fixed History parent
+      - name: Reject foreign configured parents and forged cleanup evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B scripts/ci/test_history_fixed_parent_v2.py 2>&1 | tee "$OUT/fixed-parent-reader-controls.log"
+          grep -E '^Ran 4 tests in ' "$OUT/fixed-parent-reader-controls.log"
+          grep -x 'OK' "$OUT/fixed-parent-reader-controls.log"
+      - name: Exercise real fresh-slice creation and exclusive cleanup before native work
         shell: bash
         run: |
           set -euo pipefail
           test "$(git hash-object config/systemd/trnmponpublic.slice)" = 8981b6aeed4c08c21679664940366b36a991444a
           test -d /run/systemd/system
           test -f /sys/fs/cgroup/cgroup.controllers
-          sudo -n python3 - "$GITHUB_WORKSPACE/config/systemd/trnmponpublic.slice" "$OUT/fixed-parent-provision.json" <<'PY'
-          import hashlib, json, os, stat, subprocess, sys
-          from pathlib import Path
-          source, receipt = map(Path, sys.argv[1:])
-          unit = 'trnmponpublic.slice'
-          destination = Path('/run/systemd/system') / unit
-          state = subprocess.check_output(
-              ['systemctl', 'show', unit, '--property=LoadState', '--value'], text=True).strip()
-          if state != 'not-found' or os.path.lexists(destination):
-              raise RuntimeError('refuse to replace an existing fixed parent or unit')
-          metadata = source.lstat()
-          if not stat.S_ISREG(metadata.st_mode):
-              raise RuntimeError('source-pinned regular slice file required')
-          raw = source.read_bytes()
-          fd = os.open(destination, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o644)
-          with os.fdopen(fd, 'wb') as stream:
-              stream.write(raw)
-              stream.flush()
-              os.fsync(stream.fileno())
-          created = destination.lstat()
-          record = {'schema': 'native-history-fixed-parent-provision-v1',
-                    'unit': unit, 'path': str(destination), 'device': created.st_dev,
-                    'inode': created.st_ino, 'uid': created.st_uid,
-                    'sha256': hashlib.sha256(raw).hexdigest(), 'exclusive_creation': True,
-                    'original_outer_four_cpu_budget_unchanged': True,
-                    'fixed_parent_is_a_ceiling_not_physical_reservation': True}
-          with receipt.open('x') as stream:
-              json.dump(record, stream, sort_keys=True, indent=2)
-              stream.write('\n')
-              stream.flush()
-              os.fsync(stream.fileno())
-          subprocess.run(['systemctl', 'daemon-reload'], check=True)
-          subprocess.run(['systemctl', 'start', unit], check=True)
-          PY
+          unit="trnm-history-parent-probe-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT.service"
+          # A separate finite fixture probe preserves all original native budgets.
+          sudo -n systemd-run --unit="$unit" --wait --pipe --collect \
+            --service-type=exec --expand-environment=no --uid=0 --gid=0 \
+            --working-directory="$GITHUB_WORKSPACE" \
+            --property=CPUAccounting=yes --property=MemoryAccounting=yes \
+            --property=CPUQuota=400% --property=CPUQuotaPeriodSec=100ms \
+            --property=MemoryMax=17179869184 --property=Nice=10 \
+            --property=KillMode=control-group --property=TimeoutStopSec=20s \
+            --property=RuntimeMaxSec=120s --setenv=PYTHONDONTWRITEBYTECODE=1 \
+            /usr/bin/python3 "$GITHUB_WORKSPACE/scripts/ci/history_fixed_parent_v2.py" probe \
+            --owner "$GITHUB_RUN_ID.$GITHUB_RUN_ATTEMPT" \
+            --source "$GITHUB_WORKSPACE/config/systemd/trnmponpublic.slice" \
+            > "$OUT/fixed-parent-real-probe.json" 2> "$OUT/fixed-parent-real-probe-systemd.log"
+      - name: Provision the original separate fixed History parent
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo -n python3 -B scripts/ci/history_fixed_parent_v2.py provision \
+            --owner "$GITHUB_RUN_ID.$GITHUB_RUN_ATTEMPT" \
+            --source "$GITHUB_WORKSPACE/config/systemd/trnmponpublic.slice" \
+            > "$OUT/fixed-parent-provision.json"
           sudo -n systemctl show trnmponpublic.slice > "$OUT/fixed-parent-systemd-show.txt"
       - name: Install the source-pinned compiler and fetch locked dependencies
         id: toolchain
@@ -447,49 +444,19 @@ jobs:
             --root "$GITHUB_WORKSPACE" --campaign-output "$OUT" \
             --output "$OUT/verifier-lifeline" --head "$EXPECTED_HEAD" --tree "$EXPECTED_TREE" \
             2>&1 | tee "$OUT/verifier-lifeline-systemd.log"
-      - name: Close only the fixed parent exclusively created by this run
+      - name: Close only parents bound to this run by a root-owned exclusive lease
         if: always()
         shell: bash
         run: |
-          set -euo pipefail
-          if test -f "$OUT/fixed-parent-provision.json"; then
-            sudo -n python3 - "$OUT/fixed-parent-provision.json" "$OUT/fixed-parent-cleanup.json" <<'PY'
-          import hashlib, json, os, stat, subprocess, sys
-          from pathlib import Path
-          receipt, output = map(Path, sys.argv[1:])
-          record = json.loads(receipt.read_bytes())
-          unit = 'trnmponpublic.slice'
-          destination = Path('/run/systemd/system') / unit
-          if record['unit'] != unit or record['path'] != str(destination):
-              raise RuntimeError('unexpected cleanup authority')
-          metadata = destination.lstat()
-          if (not stat.S_ISREG(metadata.st_mode) or metadata.st_uid != 0
-                  or (metadata.st_dev, metadata.st_ino) != (record['device'], record['inode'])
-                  or hashlib.sha256(destination.read_bytes()).hexdigest() != record['sha256']):
-              raise RuntimeError('refuse to stop or remove a replaced fixed parent')
-          root = Path('/sys/fs/cgroup/trnmponpublic.slice')
-          before = {name: (root / name).read_text().strip()
-                    for name in ('pids.current', 'cpu.stat', 'memory.current')
-                    if (root / name).is_file()}
-          stopped = subprocess.run(['systemctl', 'stop', unit], capture_output=True, text=True)
-          result = {'schema': 'native-history-fixed-parent-cleanup-v1',
-                    'pre_cleanup_counters': before, 'stop_returncode': stopped.returncode,
-                    'stop_stdout': stopped.stdout, 'stop_stderr': stopped.stderr,
-                    'cleanup_does_not_change_native_completion_or_failed_run': True}
-          # Do not remove a configuration whose owned service could not be stopped.
-          if stopped.returncode == 0:
-              checked = destination.lstat()
-              if (checked.st_dev, checked.st_ino) != (record['device'], record['inode']):
-                  raise RuntimeError('fixed parent changed during cleanup')
-              destination.unlink()
-              subprocess.run(['systemctl', 'daemon-reload'], check=True)
-              result['owned_runtime_unit_removed'] = True
-          with output.open('x') as stream:
-              json.dump(result, stream, sort_keys=True, indent=2)
-              stream.write('\n')
-          raise SystemExit(stopped.returncode)
-          PY
-          fi
+          set -uo pipefail
+          # A writable output receipt cannot grant authority to stop a unit.
+          sudo -n python3 -B scripts/ci/history_fixed_parent_v2.py cleanup-probe \
+            --owner "$GITHUB_RUN_ID.$GITHUB_RUN_ATTEMPT" > "$OUT/fixed-parent-probe-cleanup.json"
+          probe_status=$?
+          sudo -n python3 -B scripts/ci/history_fixed_parent_v2.py cleanup \
+            --owner "$GITHUB_RUN_ID.$GITHUB_RUN_ATTEMPT" > "$OUT/fixed-parent-cleanup.json"
+          parent_status=$?
+          test "$probe_status" -eq 0 && test "$parent_status" -eq 0
       - name: Preserve final source verification and all partial artifact hashes
         if: always()
         shell: bash

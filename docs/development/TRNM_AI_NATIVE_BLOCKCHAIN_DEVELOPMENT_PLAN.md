@@ -4196,3 +4196,39 @@ This increment's full crate typechecking, actual three systemd/Node kill control
 original campaigns, original 22/600, reorg 7/900, lifecycle 12/900 and four adjacent
 lanes still require same-source hosted execution. No earlier source's success is
 transferred, and whole History P0 remains OPEN until the applicable evidence closes.
+
+
+### 2026-10-28 — History fixed-parent provisioning and serialized confirmation follow-up
+
+The exact `9360088c5e48c1a0ed4209744bd41cbe544d0489` campaign stopped before
+native build because its fixture required `LoadState=not-found`. The failure
+artifact is retained. The failing host's complete unit properties were not
+recorded; implicit loaded slices are a source-supported candidate explanation,
+not a claimed observation of that host. The new fixture retains the actual
+manager state and unit search paths before making any change. It accepts only
+an inactive, dead, fragment-free, drop-in-free, non-transient unit with no job,
+no alias, no kernel parent and no unit/dependency configuration on disk.
+
+The original source-pinned 25% CPU, 2 GiB memory, zero swap and 256 task slice is
+created exclusively. A root-only `/run` lease binds the workflow run and attempt,
+unit identity, file device/inode and hash. Writable output receipts are evidence
+copies and cannot authorize cleanup. Configured, active, replaced or foreign
+parents are refused. A separate real systemd probe checks fresh creation,
+duplicate refusal, forged-copy refusal and owned cleanup inside the original
+four CPU, 16 GiB and nice 10 ceiling. Its 90 second helper lifetime and 120 second
+administrative service ceiling do not change the three original native 600
+second campaigns or the 600 second lifeline lane.
+
+The same exact source's strict all-target build exposed an E0609 error in the
+multiprocess campaign: the isolated verifier returns serialized JSON, while the
+confirmation check still used Rust struct fields. The follow-up reads the same
+four fields with strict JSON boolean/integer comparisons, preserving confirmed,
+not finalized, no execution authority, and depth exactly six. Missing or mistyped
+fields fail closed. The recent gate's exact public test blob pin is updated to
+these bytes; all other pins and native budgets remain unchanged.
+
+The new predicate controls and source checks alone do not certify Node, systemd,
+History settlement or a successful campaign. New exact-source cloud gates must
+run, and the original failed provisioning and compiler observations remain part
+of the evidence history. No production protocol, persistent schema or activation
+path is disabled by this fixture repair.

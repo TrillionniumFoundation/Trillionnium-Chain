@@ -1048,10 +1048,10 @@ fn phase(
                     .zip(hostile_after["rejected_work_cpu_ns"].as_u64())
                     .is_some_and(|(a, b)| b > a);
             let confirmed = observation.as_ref().is_some_and(|value| {
-                value.confirmed
-                    && !value.finalized
-                    && !value.execution_authority
-                    && value.depth == Some(6)
+                value["confirmed"].as_bool() == Some(true)
+                    && value["finalized"].as_bool() == Some(false)
+                    && value["execution_authority"].as_bool() == Some(false)
+                    && value["depth"].as_u64() == Some(6)
             }) && support::monotonic() < end;
             confirmations.push(json!({"round":round,"started_ns":round_start,"ended_ns":ended,"confirmed_inside_pressure_window":confirmed,
                 "transaction":hex::encode(transaction),"included_block":hex::encode(included),"tip":hex::encode(tip),"observation":observation,
