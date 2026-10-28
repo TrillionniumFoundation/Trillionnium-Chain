@@ -15,6 +15,7 @@
   },
   "complete_receipt_reuse": false,
   "consensus_authority": false,
+  "fresh_execution_role": "independent-full-relation-cross-check",
   "origin": {
     "archive_sha256": "d862b93d949612e6fc764d82622d507b208743bc8e6b6701dbf481802b040e8b",
     "artifact_id": 12743386213,
@@ -68,7 +69,8 @@
     25
   ],
   "partial_receipts_are_complete_proofs": false,
-  "schema": "pon-w1-frozen-session-continuation-policy-v1",
+  "schema": "pon-w1-frozen-session-continuation-policy-v2",
+  "segment_asset_source": "retained-original-byte-identical-session",
   "session_sha256": "4ac55c0db0356f02a119c4f54eab65b0e935ef078411a771aa1ebc7dc840bced",
   "shards": [
     {

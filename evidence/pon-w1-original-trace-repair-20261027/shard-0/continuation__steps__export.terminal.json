@@ -1,0 +1,28 @@
+{
+  "schema": "pon-w1-segment-worker-process-v1",
+  "command": [
+    "/home/runner/work/_temp/w1-continuation-build-40606062524-1-shard-0/host-target/release/trnm-w1-risc0-host",
+    "export-segments",
+    "/home/runner/work/_temp/w1-continuation-build-40606062524-1-shard-0/backend/tools/r0vm",
+    "/home/runner/work/_temp/w1-continuation-40606062524-1-shard-0/guest.bin",
+    "/home/runner/work/_temp/w1-continuation-40606062524-1-shard-0/input.bin",
+    "18",
+    "/home/runner/work/_temp/w1-continuation-40606062524-1-shard-0/continuation/session"
+  ],
+  "name": "export",
+  "pid": 14668,
+  "process_group": 14667,
+  "timeout_seconds": 300,
+  "source_sha": "8a99968115d76069dc4cc49607929f42d183ad1b",
+  "started_monotonic": 585.591421628,
+  "child_reaped": true,
+  "returncode": 0,
+  "complete_w1_proof_verified": false,
+  "consensus_authority": false,
+  "wall_seconds": 0.40362914999991517,
+  "user_cpu_seconds": 0.485865,
+  "system_cpu_seconds": 0.030885,
+  "max_waited_descendant_rss_kib": 48492,
+  "cpu_rss_scope": "this independently waited host and descendants it waited for; orphan cleanup belongs to the outer phase record",
+  "raw_logs_hashed_after_phase_cleanup": false
+}

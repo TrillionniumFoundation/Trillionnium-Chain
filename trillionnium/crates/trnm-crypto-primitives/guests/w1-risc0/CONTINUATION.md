@@ -34,11 +34,23 @@ The work-finished boundary is captured before cleanup and must precede 3,500
 seconds; cleanup and final outer settlement remain separately visible.
 
 Every shard freshly builds the original fixture, guest, host and backend,
-executes the complete guest, and byte-compares image, input, all exported
-segments and claim against the retained original. Only the fresh export wall
-measurement may differ. Thirty source pins protect the original relation,
-guest, host, scheduler, budgets, locks and build helpers. A changed or
-unavailable export fails; metadata cannot substitute for execution.
+executes the complete guest, and byte-compares image, input and the complete
+claim against the retained original. It checks every other manifest invariant
+except the measured wall time and individual segment digests. Each fresh
+segment must still match its own measured size/hash and bounded inventory.
+Fresh execution is an independent relation cross-check and supplies **no proof
+segment**. All 62 original assets, their manifest and claim must remain exactly
+byte-identical to the pinned archive. Only these original assets are passed to
+the unchanged native segment prover. Thirty source pins protect the original
+relation, guest, host, scheduler, budgets, locks and build helpers.
+
+This separation is required by an actual failed CI observation. RISC Zero
+3.0.6 writes host-provided 128-bit memory entropy at guest startup, so a new
+execution has different intermediate trace states. It cannot be spliced into
+the old receipt chain. Policy and attempt namespaces advance to v2; v1 policy
+is refused. The original exact-rerun diagnostic and all its controls remain.
+The [failure and upstream source evidence](../../../../../evidence/pon-w1-original-trace-repair-20261027/README.md)
+retain both failed shards and bind the new trace-selection rule.
 
 Selection treats a genuinely absent policy as original generation mode.
 Invalid policy, a dangling link, or a link to a real policy is an error and
@@ -86,11 +98,14 @@ accounting. Other controls cover retained-byte corruption, source/session
 substitution, budget relaxation, policy downgrade, directory/byte flooding,
 symlinks, nonregular files and missing-cost reporting.
 
-The fresh SDK export comparison, missing segment generation, complete native
-assembly, full positive/negative proof audit and real-receipt loopback transfer
-are **NOT_RUN** on this successor at source freeze. Earlier failed attempts
-remain failed. Controls do not establish a complete proof, public deployment,
-work hardness, physical resource accounting or whole-chain quantum resistance.
+The first hosted continuation run `40606062524` on `8a999681` actually built
+and executed the guest but **FAILED** in both exact-rerun comparisons. Neither
+shard started a segment proof. The retained-original-trace v2 successor has
+passed local controls; its new heavy continuation, complete native assembly,
+full positive/negative proof audit and real-receipt loopback remain **NOT_RUN**
+at source freeze. Earlier failed attempts remain failed. Controls do not
+establish a complete proof, public deployment, work hardness, physical resource
+accounting or whole-chain quantum resistance.
 
 ## Independent report provenance repair
 

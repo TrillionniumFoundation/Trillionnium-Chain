@@ -1,0 +1,32 @@
+{
+  "schema": "pon-w1-trace-repair-controls-v1",
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "/workspace/scratch/3d4ec372c488/w1-continuation-ci/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0",
+    "-p",
+    "test_segment_continue.py",
+    "-v"
+  ],
+  "exit_code": 0,
+  "wall_seconds": 4.649184510999476,
+  "log_sha256": "6ac98260e2b6b4b1d9d6cb262e5ec905e427657aa753c408f8686ce9b583f74d",
+  "actual_failed_archive_readbacks": [
+    {
+      "shard": 0,
+      "independent_execution": "PASS",
+      "original_trace": "PASS",
+      "old_exact_rerun": "REJECTED_AS_EXPECTED"
+    },
+    {
+      "shard": 1,
+      "independent_execution": "PASS",
+      "original_trace": "PASS",
+      "old_exact_rerun": "REJECTED_AS_EXPECTED"
+    }
+  ],
+  "native_segment_proof_executed": false
+}

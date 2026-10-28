@@ -157,9 +157,13 @@ def write_json(path, value):
 def check_policy(policy):
     require(set(policy) == {"schema", "origin", "archive_manifest", "unchanged_source_files",
         "session_sha256", "total_segments", "original_completed_indexes", "shards", "budgets",
-        "complete_receipt_reuse", "partial_receipts_are_complete_proofs", "consensus_authority"},
+        "complete_receipt_reuse", "partial_receipts_are_complete_proofs", "consensus_authority",
+        "segment_asset_source", "fresh_execution_role"},
         "unknown continuation policy field")
-    require(policy["schema"] == "pon-w1-frozen-session-continuation-policy-v1", "policy namespace")
+    require(policy["schema"] == "pon-w1-frozen-session-continuation-policy-v2", "policy namespace")
+    require(policy["segment_asset_source"] == "retained-original-byte-identical-session"
+            and policy["fresh_execution_role"] == "independent-full-relation-cross-check",
+            "original trace ownership differs")
     origin = policy["origin"]
     require(origin["repository"] == "TrillionniumFoundation/Trillionnium-Chain"
             and origin["source_sha"] == "5d957878ea82b09b555c713976f5157fde1089a0"
@@ -326,6 +330,11 @@ def compare_fresh_inputs(files, elf, input_path):
 
 
 def compare_fresh_session(files, directory):
+    """Historical exact-rerun diagnostic, deliberately retained unchanged.
+
+    A new SDK execution contains fresh guest-start memory entropy. This check
+    correctly refuses it; it cannot select inputs for partial-proof recovery.
+    """
     old = decode(files["segmented/session/session.json"])
     fresh = read(directory / "session.json")
     require(type(fresh.get("execute_and_export_wall_ns")) is int
@@ -340,4 +349,51 @@ def compare_fresh_session(files, directory):
     expected = {name.removeprefix("segmented/session/") for name in files if name.startswith("segmented/session/")}
     require(set(bounded_file_index(directory)) == expected,
             "fresh session has an unreviewed file")
+    return fresh
+
+
+def checked_original_session(files, directory):
+    """Only the byte-identical retained execution may supply proof segments."""
+    expected = {name.removeprefix("segmented/session/"): data
+                for name, data in files.items() if name.startswith("segmented/session/")}
+    require(set(bounded_file_index(directory)) == set(expected),
+            "original proof session has an unreviewed or missing file")
+    for name, data in expected.items():
+        require(checked_bytes(path_under(directory, name), 32 * 1024 * 1024) == data,
+                "original proof session bytes changed")
+    return decode(expected["session.json"])
+
+
+def check_independent_execution(files, directory):
+    """Cross-check the full relation, never authorize fresh trace/receipt reuse.
+
+    RISC Zero 3.0.6 initializes MEMORY_IMAGE_ENTROPY through SYS_RANDOM. A new
+    execution can have the same complete claim with different segment states.
+    The actual fresh files must match their own hashes and every original
+    invariant; proof generation separately consumes checked_original_session.
+    """
+    old = decode(files["segmented/session/session.json"])
+    fresh = read(directory / "session.json")
+    require(type(fresh.get("execute_and_export_wall_ns")) is int
+            and fresh["execute_and_export_wall_ns"] > 0, "fresh export measurement unavailable")
+
+    def invariants(value):
+        result = {k: v for k, v in value.items() if k != "execute_and_export_wall_ns"}
+        result["segments"] = [{k: v for k, v in item.items() if k != "sha256"}
+                              for item in value["segments"]]
+        return result
+
+    require(invariants(old) == invariants(fresh),
+            "independent execution changed a complete relation invariant")
+    indexed = bounded_file_index(directory)
+    expected = {name.removeprefix("segmented/session/") for name in files
+                if name.startswith("segmented/session/")}
+    require(set(indexed) == expected, "independent execution has an unreviewed file")
+    for item, original in zip(fresh["segments"], old["segments"], strict=True):
+        require(set(item) == set(original), "fresh segment fields differ")
+        require(indexed[item["file"]] == {"bytes": item["bytes"], "sha256": item["sha256"]},
+                "independent execution segment bytes/hash changed")
+    require(checked_bytes(directory / "session.claim.bin", 16 * 1024)
+            == files["segmented/session/session.claim.bin"],
+            "independent execution complete claim changed")
     return fresh

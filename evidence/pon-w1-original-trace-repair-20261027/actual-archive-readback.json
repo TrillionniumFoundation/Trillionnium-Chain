@@ -1,0 +1,14 @@
+[
+  {
+    "shard": 0,
+    "independent_execution": "PASS",
+    "original_trace": "PASS",
+    "old_exact_rerun": "REJECTED_AS_EXPECTED"
+  },
+  {
+    "shard": 1,
+    "independent_execution": "PASS",
+    "original_trace": "PASS",
+    "old_exact_rerun": "REJECTED_AS_EXPECTED"
+  }
+]

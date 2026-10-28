@@ -106,7 +106,7 @@ def prove(args):
     steps.mkdir()
     receipts.mkdir()
     stages = []
-    outcome = {"schema": "pon-w1-session-continuation-attempt-v1", **identity,
+    outcome = {"schema": "pon-w1-session-continuation-attempt-v2", **identity,
         "shard": args.shard, "completed_segment_indexes": [], "shard_complete": False,
         "real_composite_stark_verified": False, "partial_receipts_are_complete_proofs": False,
         "original_failure_reclassified": False, "consensus_authority": False}
@@ -116,16 +116,20 @@ def prove(args):
         files = source.original_members(policy, manifest)
         source.compare_fresh_inputs(files, Path(args.elf), Path(args.input))
         source.extract_original(files, args.out / "original")
+        proof_session_dir = args.out / "original/segmented/session"
+        session = source.checked_original_session(files, proof_session_dir)
         outcome.update(original=policy["origin"], budgets=policy["budgets"],
                        original_session_sha256=policy["session_sha256"],
+                       segment_asset_source=policy["segment_asset_source"],
+                       fresh_execution_role=policy["fresh_execution_role"],
                        selected_segment_indexes=policy["shards"][args.shard]["indexes"])
         require_runner(directory / "resources.json")
         export = scheduler.Stage(steps, "export", [args.host, "export-segments", args.r0vm,
             args.elf, args.input, "18", str(session_dir)], 300)
         stages.append(export)
         wait_stage(export)
-        session = source.compare_fresh_session(files, session_dir)
-        outcome["fresh_session_sha256"] = source.sha(source.checked_bytes(session_dir / "session.json", 1024 * 1024))
+        source.check_independent_execution(files, session_dir)
+        outcome["independent_execution_sha256"] = source.sha(source.checked_bytes(session_dir / "session.json", 1024 * 1024))
         pending = list(outcome["selected_segment_indexes"])
         active = {}
         while pending or active:
@@ -134,7 +138,7 @@ def prove(args):
             while pending and len(active) < 2:
                 index = pending.pop(0)
                 stage = scheduler.Stage(steps, f"segment-{index}", [args.host, "prove-segment",
-                    args.r0vm, str(session_dir), str(index), str(receipts / f"segment-{index}.bin"),
+                    args.r0vm, str(proof_session_dir), str(index), str(receipts / f"segment-{index}.bin"),
                     str(receipts / f"segment-{index}.json")], 300, logs=True)
                 stages.append(stage)
                 active[index] = stage
@@ -205,12 +209,14 @@ def check_shard(directory, shard, policy, original, identity):
     for name, value in identity.items():
         require(outcome[name] == value, "cross-source/run/attempt continuation refused")
     selected = policy["shards"][shard]["indexes"]
-    require(outcome["schema"] == "pon-w1-session-continuation-attempt-v1"
+    require(outcome["schema"] == "pon-w1-session-continuation-attempt-v2"
             and outcome["shard"] == shard and outcome["shard_complete"] is True
             and outcome["selected_segment_indexes"] == selected
             and sorted(outcome["completed_segment_indexes"]) == selected
             and outcome["original"] == policy["origin"] and outcome["budgets"] == policy["budgets"]
             and outcome["original_session_sha256"] == policy["session_sha256"]
+            and outcome["segment_asset_source"] == policy["segment_asset_source"]
+            and outcome["fresh_execution_role"] == policy["fresh_execution_role"]
             and outcome["direct_children_missing_terminal"] == []
             and "error" not in outcome and "cleanup_error" not in outcome,
             "missing/foreign/failed continuation shard")
@@ -221,9 +227,10 @@ def check_shard(directory, shard, policy, original, identity):
     check_stage_terminal(read(directory / "continuation/steps/export.terminal.json"),
                          identity["source_sha"], 300)
     session_dir = directory / "continuation/session"
-    session = source.compare_fresh_session(original, session_dir)
-    require(outcome["fresh_session_sha256"] == source.sha(source.checked_bytes(session_dir / "session.json", 1024 * 1024)),
-            "fresh session record changed")
+    source.check_independent_execution(original, session_dir)
+    require(outcome["independent_execution_sha256"] == source.sha(source.checked_bytes(session_dir / "session.json", 1024 * 1024)),
+            "independent execution record changed")
+    session = source.checked_original_session(original, directory / "original/segmented/session")
     results = {}
     for i in selected:
         data = source.checked_bytes(directory / f"continuation/receipts/segment-{i}.bin", 2 * 1024 * 1024)

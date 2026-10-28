@@ -153,6 +153,98 @@ class ContinuationControls(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "unreviewed file"):
             source.compare_fresh_session(self.files, directory)
 
+    def test_retained_proof_session_requires_manifest_and_every_exact_byte(self):
+        directory = self.session_copy()
+        self.assertEqual(source.checked_original_session(self.files, directory)["user_cycles"], 13364385)
+        manifest = source.read(directory / "session.json")
+        manifest["execute_and_export_wall_ns"] += 1
+        (directory / "session.json").write_text(json.dumps(manifest))
+        with self.assertRaisesRegex(ValueError, "original proof session bytes changed"):
+            source.checked_original_session(self.files, directory)
+
+    def test_original_proof_session_rejects_last_segment_tamper(self):
+        directory = self.session_copy()
+        path = directory / "segment-61"
+        data = bytearray(path.read_bytes())
+        data[-1] ^= 1
+        path.write_bytes(data)
+        with self.assertRaisesRegex(ValueError, "original proof session bytes changed"):
+            source.checked_original_session(self.files, directory)
+
+    def test_original_proof_session_rejects_missing_or_added_files(self):
+        directory = self.session_copy()
+        extra = directory / "extra"
+        extra.write_bytes(b"extra")
+        with self.assertRaisesRegex(ValueError, "unreviewed or missing"):
+            source.checked_original_session(self.files, directory)
+        extra.unlink()
+        (directory / "segment-61").unlink()
+        with self.assertRaisesRegex(ValueError, "unreviewed or missing"):
+            source.checked_original_session(self.files, directory)
+
+    def test_independent_trace_cannot_become_original_proof_material(self):
+        # Synthetic provenance fixture only: matching a fresh file hash does
+        # not validate a trace or produce any STARK/complete receipt.
+        directory = self.session_copy()
+        path = directory / "segment-26"
+        data = bytearray(path.read_bytes())
+        data[-1] ^= 1
+        path.write_bytes(data)
+        manifest = source.read(directory / "session.json")
+        manifest["segments"][26]["sha256"] = source.sha(data)
+        (directory / "session.json").write_text(json.dumps(manifest))
+        source.check_independent_execution(self.files, directory)
+        with self.assertRaisesRegex(ValueError, "original proof session bytes changed"):
+            source.checked_original_session(self.files, directory)
+        with self.assertRaisesRegex(ValueError, "same original session"):
+            source.compare_fresh_session(self.files, directory)
+        # Even a freshly self-consistent report cannot replace an original
+        # segment: the report reader still binds the original segment digest.
+        report = source.decode(self.files["segmented/receipts/segment-0.json"])
+        report["segment_sha256"] = manifest["segments"][26]["sha256"]
+        with self.assertRaisesRegex(ValueError, "foreign"):
+            source.check_receipt(0, source.decode(self.files["segmented/session/session.json"]),
+                                 self.files["segmented/receipts/segment-0.bin"], report)
+
+    def test_independent_execution_keeps_all_relation_invariants(self):
+        directory = self.session_copy()
+        original = source.read(directory / "session.json")
+        for field, value in [("statement_id", "0" * 64), ("journal_hex", "00"),
+                             ("user_cycles", 1), ("new_unknown", True), ("povw_requested", True)]:
+            item = copy.deepcopy(original)
+            item[field] = value
+            (directory / "session.json").write_text(json.dumps(item))
+            with self.assertRaisesRegex(ValueError, "relation invariant"):
+                source.check_independent_execution(self.files, directory)
+
+    def test_independent_execution_rejects_unbound_segment_bytes(self):
+        directory = self.session_copy()
+        path = directory / "segment-61"
+        data = bytearray(path.read_bytes())
+        data[-1] ^= 1
+        path.write_bytes(data)
+        with self.assertRaisesRegex(ValueError, "segment bytes/hash changed"):
+            source.check_independent_execution(self.files, directory)
+
+    def test_independent_execution_requires_exact_complete_claim(self):
+        directory = self.session_copy()
+        path = directory / "session.claim.bin"
+        data = bytearray(path.read_bytes())
+        data[-1] ^= 1
+        path.write_bytes(data)
+        with self.assertRaisesRegex(ValueError, "complete claim changed"):
+            source.check_independent_execution(self.files, directory)
+
+    def test_old_policy_and_fresh_trace_selection_are_refused(self):
+        policy = copy.deepcopy(self.policy)
+        policy["schema"] = "pon-w1-frozen-session-continuation-policy-v1"
+        with self.assertRaisesRegex(ValueError, "policy namespace"):
+            source.check_policy(policy)
+        policy = copy.deepcopy(self.policy)
+        policy["segment_asset_source"] = "fresh-execution"
+        with self.assertRaisesRegex(ValueError, "trace ownership"):
+            source.check_policy(policy)
+
     def test_no_symlink_or_parent_escape(self):
         for name in ["../other", "/absolute", "a/../b", "a\\b"]:
             with self.assertRaisesRegex(ValueError, "unsafe"):

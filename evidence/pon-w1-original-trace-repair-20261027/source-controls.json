@@ -1,0 +1,36 @@
+[
+  {
+    "name": "source-integrity",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/ci",
+      "-p",
+      "test_ci_source_integrity.py",
+      "-v"
+    ],
+    "exit_code": 0,
+    "wall_seconds": 5.019019714003662,
+    "log_sha256": "ce63d46e8b83b873671474c12d1d4f8278aa2de85e2e75067819f93ce6e50837"
+  },
+  {
+    "name": "python-backend",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0",
+      "-p",
+      "test_*.py",
+      "-v"
+    ],
+    "exit_code": 1,
+    "wall_seconds": 38.44151648099796,
+    "log_sha256": "369b60b05d98b57083a4900eb6075ecc66135bc9fbdcfc0528cf34b9bb6351ce"
+  }
+]

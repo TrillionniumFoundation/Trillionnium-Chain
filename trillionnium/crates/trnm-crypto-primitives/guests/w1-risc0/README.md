@@ -342,5 +342,9 @@ The [bounded continuation protocol](CONTINUATION.md) retains the original
 source-5d9578 failed run and its 26 actual partial receipts. It adds exactly
 two independent missing-segment budgets and requires unchanged native full
 Composite assembly, actual hostile-proof audit and separately measured
-loopback transfer. At source freeze those full runs remain **NOT_RUN**;
-36 local provenance/process controls are not a complete proof.
+loopback transfer. The first hosted run failed because fresh guest-start memory
+entropy changes intermediate trace states. The v2 successor proves only the
+byte-identical original trace and keeps fresh execution as a separate complete
+relation cross-check. Its new heavy run remains **NOT_RUN** at source freeze;
+45 local provenance/process controls are not a complete proof. See the
+[retained failure and source evidence](../../../../../evidence/pon-w1-original-trace-repair-20261027/README.md).
