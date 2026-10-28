@@ -1,0 +1,13 @@
+{
+  "schema": "hepta-v4-unused-upload-prefix-cleanup-v1",
+  "path": "/workspace/scratch/3d4ec372c488/.hepta-v4-full-tune-control.safetensors.YnUAFK",
+  "bytes": 289931264,
+  "sha256": "9cdec71eabf60d1c8aad4d873738d2d269152beb28fcaf06095d13d67eab3761",
+  "exact_prefix_of": "/workspace/scratch/3d4ec372c488/hepta-v4-run-002/train-budget-matched-full-tune/artifact.safetensors",
+  "original_bytes": 538090376,
+  "original_sha256": "0c2c599b2932677cd13d6e06140f2f8b451c2ff9d87d083b558615f317f75cf1",
+  "open_fd_holders": [],
+  "denied_proc_entries": [],
+  "original_preserved": true,
+  "removed": true
+}

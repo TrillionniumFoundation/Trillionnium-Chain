@@ -4747,3 +4747,59 @@ public diagnostic would still lack independent evaluation custody, original
 SystemLongitudinal/EligibleForIndependentSelection authorization, qualified
 selection/CURRENT installation and actual child FinalUse. Ordinary useful-model
 evolution, held runtime closure and the three-upgrade gate remain OPEN.
+
+### PN3 existing-parent task research V4 — 2026-10-27
+
+The explicit V4 parent-step namespace composes the unchanged V3 answer/EOS
+objective with the original V2 exact task-admission link. A preexisting actual
+parent may have a different registered task admission from this experiment;
+its immutable target contract, parameter bytes, model, tokenizer and numeric
+contract remain unchanged. Preflight and the actual loaded-model check both
+require that target admission is the sole difference. V3 remains strict and
+does not accept the new profile, fields or receipt domains.
+
+The original parent-step owner retains setup, training, child supervision,
+terminal wait, resource caps, byte export and completion. A separate V4
+candidate-observation namespace reuses the original observer while binding the
+complete V4 input, terminal result and candidate record. A zero exit without
+the original owned reap cannot qualify training or evaluation.
+
+`scripts/run_llm_task_research_v4.py` freezes one public six-arm diagnostic:
+the parent-derived candidate, all four unchanged controls and a reload of the
+actual source parent. The source parent is explicitly not represented as an
+admitted CURRENT. Every arm uses at most two CPU threads and retains the
+original per-child caps; full-tune checkpoint size and local disk headroom
+have explicit limits. The fixed V3 recipe remains ten steps, 526 input tokens
+and forty positive-weight targets. Actual CPU, wall, RSS and failed attempts
+must be retained rather than inferred from those counts.
+
+This continuation is based on the original runtime bytes shared by the parent
+and V3 source. V5 exit observation changes both runtime-bound tokenizer and
+numeric contract identifiers; the V4 admission-only link correctly refuses
+that migration. No V5 compatibility, independent future-task quality, useful
+release, ordinary upgraded-child installation, CURRENT mutation or FinalUse
+follows from this research path. Exact local execution evidence, including any
+nonpositive result, is retained separately from this source declaration.
+
+### PN3 actual V4 public comparison and controlled transfer — 2026-10-27
+
+At source `c86cabce381ff24f0e002693eb46d9b7a49e1690`, one frozen real135M six-arm
+run completed all18 required child stages with original owned reaps. The
+candidate, fresh LoRA and full tune each scored1/2 on the four public evaluation
+examples; the actual source parent, untrained backbone and randomized LoRA
+scored0. Relative gain against the strongest control is exactly0, so the fixed
+decision is `nonpositive-gain-no-installation`. The controlled source parent was
+never represented as admitted CURRENT. All three trained arms measured ten
+steps,526 input tokens and forty supervised tokens, with actual unequal costs.
+
+A separate bounded loopback producer and empty consumer fetched three exact
+candidate objects (1,011,315 payload bytes), then the original inherited-runtime
+owner performed a real next-prompt forward from the fetched candidate bytes.
+This single-host path reused the existing verified backbone and grants no
+ordinary installation, independent-node or installed-child FinalUse claim.
+Exact-source validation passed71 distinct Python boundary/gradient/registration
+tests with zero skips. Earlier failures, the prior failed Hepta owner gates,
+raw terminal and transfer receipts, source pins and explicit excluded model-byte
+inventory are retained in
+`evidence/hepta-task-bound-v4-20261027/README.md`. Full useful-model evolution,
+independent qualification and ordinary upgraded-child installation remain OPEN.
