@@ -1292,10 +1292,12 @@ impl Node {
             .map_err(|_| Error::from("WRITER_BUSY"))?;
         let storage_layout =
             shared_snapshot::Layout::for_opening(state_backend, native_io.as_ref());
-        let ddl = storage_layout.ddl(state_backend.ddl());
-        let schema_id = storage_layout.schema_id(state_backend.selected_schema_id(&settings));
+        let ddl = state_backend.ddl();
+        let schema_id = state_backend.selected_schema_id(&settings);
+        let storage_ddl = storage_layout.ddl(ddl);
+        let storage_schema_id = storage_layout.schema_id(schema_id);
         let expected = canonical(
-            &serde_json::json!({"schema":hex::encode(schema_id),"parameters":hex::encode(settings.parameters()),"genesis":hex::encode(settings.genesis())}),
+            &serde_json::json!({"schema":hex::encode(storage_schema_id),"parameters":hex::encode(settings.parameters()),"genesis":hex::encode(settings.genesis())}),
         )?;
         if !dbpath.exists() && !marker.exists() {
             for entry in fs::read_dir(&directory)? {
@@ -1328,7 +1330,7 @@ impl Node {
         } else {
             OwnedConnection::legacy(Connection::open_in_memory()?)
         };
-        expected_db.execute_batch(&ddl)?;
+        expected_db.execute_batch(&storage_ddl)?;
         let expected_schema = schema(&expected_db)?;
         let mut initialized = false;
         let mut prior_inode = None;
@@ -1357,7 +1359,7 @@ impl Node {
                     "OWNER_TASK_POLICY_REQUIRED",
                 )?;
                 for (key, value) in [
-                    ("schema", schema_id),
+                    ("schema", storage_schema_id),
                     ("parameters", settings.parameters()),
                     ("genesis", settings.genesis()),
                 ] {
@@ -1426,10 +1428,10 @@ impl Node {
         if !initialized {
             ensure(intent, "INITIALIZATION_INTENT_REQUIRED")?;
             let tx = db.transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
-            tx.execute_batch(&ddl)?;
+            tx.execute_batch(&storage_ddl)?;
             cut(&mut hook, "init-schema")?;
             for (key, value) in [
-                ("schema", schema_id),
+                ("schema", storage_schema_id),
                 ("parameters", settings.parameters()),
                 ("genesis", settings.genesis()),
             ] {

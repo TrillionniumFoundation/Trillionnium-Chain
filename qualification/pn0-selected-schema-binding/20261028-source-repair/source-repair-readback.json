@@ -1,0 +1,43 @@
+{
+  "schema": "pn0-real-base-schema-binding-source-repair-v1",
+  "recorded_utc": "2026-10-28T06:54:31.280540+00:00",
+  "source_parent": "c2801918494fbcb2aeba12c97dcbc450a239f2a9",
+  "original_published_source_failure": "c96022b897c1235fdbdbfcfa32764403511c6aab external-evidence-contract head/actual-preview, logs retained separately",
+  "original_local_source_class": {
+    "actual_child_wait_exit": 1,
+    "methods_run": 15,
+    "failure_subcases": 40,
+    "errors": 4,
+    "seconds": 117.772368193,
+    "raw": "original-and-fixed-source-controls/original-source-class.stderr.original"
+  },
+  "fixed_same_original_source_class": {
+    "actual_child_wait_exit": 0,
+    "methods_run": 15,
+    "ignored": 0,
+    "seconds": 223.353081596,
+    "raw": "original-and-fixed-source-controls/fixed-source-class.stderr.original"
+  },
+  "original_checker_test_helpers_and_assertions_byte_unchanged": true,
+  "actual_fix": "Selected backend base ddl and selected schema id are explicit real inputs to the existing shared_snapshot::Layout. All5 actual database/context consumers use the unchanged layout outputs; no bypass or unused matching pair.",
+  "exact_body_reverse_transform_proof": "original-and-fixed-source-controls/actual-source-application.json",
+  "Node_all_target_strict_Clippy": {
+    "actual_child_wait_exit": 0,
+    "seconds": 131.784301707
+  },
+  "Rust_formatter_check": {
+    "actual_child_wait_exit": 0,
+    "seconds": 18.024286602
+  },
+  "source_only_scope": "Legacy4775-byte schema/domain extraction and Rust typecheck; not a complete Rust semantics/source-owner or native qualification certificate.",
+  "full_external_contract_hosted_new_head_execution": "NOT_RUN",
+  "nine_owner_profile_and_eleven_prepare_claim_reader_cutset": "UNIMPLEMENTED_OPEN; candidate004 retained as design only.",
+  "original_CI_and_security_failure_evidence_retained": true,
+  "no_full48_SQL_or_full952_or_expired_native_budget_rerun": true,
+  "full_native_IO_guard": false,
+  "W1_4097_qualified": false,
+  "Windows_isolation_qualified": false,
+  "ordinary_model_or_WAN_qualified": false,
+  "merge_ready": false,
+  "task_complete": false
+}

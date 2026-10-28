@@ -1727,6 +1727,21 @@ The concurrent cloud build-input workflow is retained without certifying its
 resource bounds or execution. Current hosted head/merge checks,
 fresh CodeQL disposition and native/model acceptance remain separate open gates.
 
+The 2026-10-28 [selected-schema binding repair and original failures](../../qualification/pn0-selected-schema-binding/20261028-source-repair/source-repair-readback.json)
+address a later mismatch between the shared physical layout and this legacy data
+extractor. The selected backend's base DDL and schema ID are explicit inputs to
+the existing `shared_snapshot::Layout`; all five real database/context consumers
+still use that layout's outputs. No stored DDL, hash domain, mode or native IO
+guard changes. The original checker, helpers and test assertions remain exact.
+Its fifteen source-contract methods changed from a real failed run to all passing;
+Node all-target strict Clippy and formatting also passed. The [existing Node blob
+guard review](../../qualification/pn0-selected-schema-binding/20261028-reviewed-source-identity/source-identity-review.json)
+follows the actual source bytes; all original guards and lanes
+remain. Hosted head/preview execution is still required for the new source.
+These are schema extraction and typecheck results. The separate complete-owner
+source profile and its eleven prepare/claim/reader admission points remain open,
+along with original native, Windows, W1, model and WAN acceptance.
+
 The same PN0 CI boundary now partitions the unchanged local `rust-baseline`
 commands into required runtime and quality workers for both candidate and actual
 prospective merge. Each worker retains 180 minutes; the original required check

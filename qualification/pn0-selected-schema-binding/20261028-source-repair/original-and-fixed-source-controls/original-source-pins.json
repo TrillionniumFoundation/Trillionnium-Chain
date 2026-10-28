@@ -1,0 +1,22 @@
+{
+  "recorded_utc": "2026-10-27T07:20:59.558672+00:00",
+  "parent": "c2801918494fbcb2aeba12c97dcbc450a239f2a9",
+  "scope": "Original15NativeDurableSchemaTests data-extraction controls only; no SQL/native/W1 publicprepare/old budget rerun",
+  "source": {
+    "trillionnium/crates/trnm-pon-node/src/store.rs": {
+      "bytes": 309281,
+      "sha256": "48e3301d9a60ed62aed976249bf7816c2df94a19ab0a72273ba275feb8448df2"
+    },
+    "scripts/ci/check_public_readiness_evidence.py": {
+      "bytes": 56828,
+      "sha256": "01da9c348bf097bbe53a9aa90c1668bceb6ef11e79dd21ec1eb46538491fd07b"
+    },
+    "scripts/ci/test_public_readiness_evidence.py": {
+      "bytes": 66568,
+      "sha256": "366cd40b562634b7cc608263d3945798d630baa8b0830c9c30c8925573e26366"
+    }
+  },
+  "test_assertions_helpers_unchanged": true,
+  "new_runtime_or_source_owner_qualification": false,
+  "merge_ready": false
+}

@@ -1,0 +1,26 @@
+   Compiling typenum v1.19.0
+   Compiling generic-array v0.14.7
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling thiserror v1.0.69
+   Compiling serde_json v1.0.149
+   Compiling digest v0.10.7
+   Compiling thiserror-impl v1.0.69
+   Compiling cfg-if v1.0.4
+   Compiling cpufeatures v0.2.17
+   Compiling anyhow v1.0.103
+   Compiling sha2 v0.10.9
+   Compiling rustix v1.1.4
+    Checking trnm-protocol v0.1.0 (/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/trillionnium/crates/trnm-protocol)
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/trillionnium/crates/trnm-sqlite-io-boundary)
+    Checking linux-raw-sys v0.12.1
+    Checking trnm-crypto-primitives v0.1.0 (/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/trillionnium/crates/trnm-crypto-primitives)
+    Checking trnm-task-kernel v0.1.0 (/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/trillionnium/crates/trnm-task-kernel)
+    Checking trnm-verification-profiles v0.1.0 (/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/trillionnium/crates/trnm-verification-profiles)
+    Checking tempfile v3.27.0
+    Checking trnm-mvcc-fee v0.1.0 (/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/trillionnium/crates/trnm-mvcc-fee)
+    Checking trnm-service-settlement v0.1.0 (/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/trillionnium/crates/trnm-service-settlement)
+    Checking trnm-mempool v0.1.0 (/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/trillionnium/crates/trnm-mempool)
+    Checking trnm-transport v0.1.0 (/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/trillionnium/crates/trnm-transport)
+    Checking trnm-pon-node v0.1.0 (/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/trillionnium/crates/trnm-pon-node)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2m 11s

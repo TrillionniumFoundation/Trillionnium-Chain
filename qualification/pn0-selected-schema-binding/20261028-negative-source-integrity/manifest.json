@@ -1,0 +1,29 @@
+{
+  "schema": "pn0-retained-negative-source-integrity-result-v1",
+  "recorded_utc": "2026-10-28T07:10:56.491083+00:00",
+  "original_methods_passed": 34,
+  "source_only_not_native_qualification": true,
+  "files": [
+    {
+      "path": "actual-start.json",
+      "bytes": 452,
+      "sha256": "c4cff9654c8e8ccad0385d87e7ac0722a622a968b8989db8c9ea35eb012f63ee"
+    },
+    {
+      "path": "actual-terminal.json",
+      "bytes": 849,
+      "sha256": "cfb45a56bc0ba54c8bccdfee055aed79633ef800686c52247f029d509de9fc6c"
+    },
+    {
+      "path": "stdout.original",
+      "bytes": 484,
+      "sha256": "4e8d09ff68dbd5c41ca1c1fe30777de3c2fc46935c57e7b6380f610df0aba090"
+    },
+    {
+      "path": "stderr.original",
+      "bytes": 5025,
+      "sha256": "9029cb61342cb1f88292eded4847326a061090c5570efce98d549a6c2d17e6bb"
+    }
+  ],
+  "merge_ready": false
+}

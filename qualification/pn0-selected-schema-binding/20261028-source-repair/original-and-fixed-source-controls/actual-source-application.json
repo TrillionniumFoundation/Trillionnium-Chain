@@ -1,0 +1,15 @@
+{
+  "recorded_utc": "2026-10-27T07:24:18.573165+00:00",
+  "source_parent": "c2801918494fbcb2aeba12c97dcbc450a239f2a9",
+  "source": "trillionnium/crates/trnm-pon-node/src/store.rs",
+  "before_sha256": "48e3301d9a60ed62aed976249bf7816c2df94a19ab0a72273ba275feb8448df2",
+  "after_sha256": "1ea65f5827d3f617651747803505bcfa1fe34097612705513ada53c6f8296a45",
+  "change_limited_to_actual_open_selected_with_io_body": true,
+  "actual_base_ddl_and_schema_bindings_are_both_consumed_by_existing_Layout": true,
+  "all_five_actual_schema_ddl_consumers_use_the_existing_layout_outputs": true,
+  "reversing_alias_bindings_and_consumer_names_reconstructs_original_body_exactly": true,
+  "Rust_reader_test_helpers_and_assertions_unchanged": true,
+  "source_profiles_and_eleven_qualification_admission_points_still_unimplemented": true,
+  "current_source_or_native_execution_qualified": false,
+  "merge_ready": false
+}

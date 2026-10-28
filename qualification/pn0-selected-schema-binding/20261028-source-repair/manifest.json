@@ -1,0 +1,145 @@
+{
+  "schema": "immutable-source-repair-evidence-manifest-v1",
+  "files": [
+    {
+      "path": "original-and-fixed-source-controls/actual-source-application.json",
+      "bytes": 903,
+      "sha256": "38a8ba08e91f5572156579fc0dafdae3747fdb3e45eaf65f15b8cd1946d5758f"
+    },
+    {
+      "path": "original-and-fixed-source-controls/baseline/scripts/ci/check_public_readiness_evidence.py",
+      "bytes": 56828,
+      "sha256": "01da9c348bf097bbe53a9aa90c1668bceb6ef11e79dd21ec1eb46538491fd07b"
+    },
+    {
+      "path": "original-and-fixed-source-controls/baseline/scripts/ci/test_public_readiness_evidence.py",
+      "bytes": 66568,
+      "sha256": "366cd40b562634b7cc608263d3945798d630baa8b0830c9c30c8925573e26366"
+    },
+    {
+      "path": "original-and-fixed-source-controls/baseline/trillionnium/crates/trnm-pon-node/src/store.rs",
+      "bytes": 309281,
+      "sha256": "48e3301d9a60ed62aed976249bf7816c2df94a19ab0a72273ba275feb8448df2"
+    },
+    {
+      "path": "original-and-fixed-source-controls/fixed-source-class.actual-start.json",
+      "bytes": 503,
+      "sha256": "197a0da2ff6a2a72ac7d06ab677c67cfb23bca4385c784992d145b5d33f34502"
+    },
+    {
+      "path": "original-and-fixed-source-controls/fixed-source-class.actual-terminal.json",
+      "bytes": 932,
+      "sha256": "06556addf394b676912ad3e77a81afda1151fc2a4c55cf2cbeed3a937ecdcefc"
+    },
+    {
+      "path": "original-and-fixed-source-controls/fixed-source-class.stderr.original",
+      "bytes": 2770,
+      "sha256": "82372feb0dc41418aaa4f78bccef4066c655ad0cae3083e1ba8311af7882be29"
+    },
+    {
+      "path": "original-and-fixed-source-controls/fixed-source-class.stdout.original",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "original-and-fixed-source-controls/original-source-class.actual-start.json",
+      "bytes": 501,
+      "sha256": "7081a9329077dc5652f7eb2c527ae57cf92ea498ab497ca30cc97aaa0c143b6a"
+    },
+    {
+      "path": "original-and-fixed-source-controls/original-source-class.actual-terminal.json",
+      "bytes": 937,
+      "sha256": "11b748cad5b92e5c05e5605493785e182f356f071c824c9dc0d86b1ee359cf19"
+    },
+    {
+      "path": "original-and-fixed-source-controls/original-source-class.stderr.original",
+      "bytes": 68225,
+      "sha256": "d67531228bb2f3fb2d2bce7141ab41f270276c520789d18fa6c4c9cc93a17af2"
+    },
+    {
+      "path": "original-and-fixed-source-controls/original-source-class.stdout.original",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "original-and-fixed-source-controls/original-source-pins.json",
+      "bytes": 884,
+      "sha256": "3ab9cb0127e491f0a86baa4e3148601d90be0e6d13802990473dbd25094672e6"
+    },
+    {
+      "path": "actual-Node-strict-typecheck/001-Node-all-target-strict-Clippy-for-real-base-bindings/actual-start.json",
+      "bytes": 571,
+      "sha256": "f1e80e3d3942ddb6693f5d7d199720c8d8ffa57dc6b24fec7c67f684f30d3567"
+    },
+    {
+      "path": "actual-Node-strict-typecheck/001-Node-all-target-strict-Clippy-for-real-base-bindings/actual-terminal.json",
+      "bytes": 994,
+      "sha256": "9b4e4730bc3ff4736d3e97ca6e6584b47db4fda89135a978dfdfec19b6b6a2ce"
+    },
+    {
+      "path": "actual-Node-strict-typecheck/001-Node-all-target-strict-Clippy-for-real-base-bindings/stderr.original",
+      "bytes": 2540,
+      "sha256": "b3275704fc57cef4d479fff41402eff5a6f7b09a822536928f93f0837571d0da"
+    },
+    {
+      "path": "actual-Node-strict-typecheck/001-Node-all-target-strict-Clippy-for-real-base-bindings/stdout.original",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "actual-Node-strict-typecheck/002-all-Rust-format-check/actual-start.json",
+      "bytes": 484,
+      "sha256": "8f06fb5fa9418a6e7747008cb136eb08483cd7974b38693f5ea2c5f88eb7bdec"
+    },
+    {
+      "path": "actual-Node-strict-typecheck/002-all-Rust-format-check/actual-terminal.json",
+      "bytes": 903,
+      "sha256": "a14e8b5e960633a78896962154f8438b0f17961601a81e2dab42bc97d51fc1fa"
+    },
+    {
+      "path": "actual-Node-strict-typecheck/002-all-Rust-format-check/stderr.original",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "actual-Node-strict-typecheck/002-all-Rust-format-check/stdout.original",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "actual-Node-strict-typecheck/actual-native-runner-start.json",
+      "bytes": 617,
+      "sha256": "ed5c182b8174677e250a748d58601434ef2510bb7fbbafbda43913317f79cb69"
+    },
+    {
+      "path": "actual-Node-strict-typecheck/actual-native-runner-terminal.json",
+      "bytes": 2293,
+      "sha256": "9b0abe4423b1ae8f6f053b2380fdf6dd5ac6985282b23b2172fabbedd9f05da4"
+    },
+    {
+      "path": "actual-Node-strict-typecheck/actual-unit-launch.stderr",
+      "bytes": 133,
+      "sha256": "2b876eb05ba0e3c15b5bb1c7cb3a9a7aa193a723e40d73f262a8a18e02eff14f"
+    },
+    {
+      "path": "actual-Node-strict-typecheck/actual-unit-launch.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "actual-Node-strict-typecheck/native-validation-plan.json",
+      "bytes": 3473,
+      "sha256": "928362e7f0b4195638fd2687ffa3ce316993e91e50febde2eb20cc5dd53f5196"
+    },
+    {
+      "path": "source-after-repair/trillionnium/crates/trnm-pon-node/src/store.rs",
+      "bytes": 309395,
+      "sha256": "1ea65f5827d3f617651747803505bcfa1fe34097612705513ada53c6f8296a45"
+    },
+    {
+      "path": "source-repair-readback.json",
+      "bytes": 2128,
+      "sha256": "ba49cacf76207861afe2b904915cbb8a5996363a4a64b3a26c1b23cc86813d7b"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "recorded_utc": "2026-10-28T06:54:31.280540+00:00",
+  "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+  "old_actual_Node_blob": "fadc0f4c11bbead2925102cb1b18a49156d709d5",
+  "new_actual_Node_blob": "eb8afad24703860412915fe9be9f47624c6ea696",
+  "only_existing_expected_source_blob_changed": true,
+  "same_source_guard_expression_and_all_20_guards_lanes_commands_assertions_caps_remain": true,
+  "material_source_review": "actual-source-application.json reverse-transform proof + 15 unchanged original source methods PASS + all-target strict Clippy",
+  "not_execution_qualification_or_approval": true,
+  "merge_ready": false
+}
