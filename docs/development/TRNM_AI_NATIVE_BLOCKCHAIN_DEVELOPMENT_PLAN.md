@@ -4232,3 +4232,23 @@ History settlement or a successful campaign. New exact-source cloud gates must
 run, and the original failed provisioning and compiler observations remain part
 of the evidence history. No production protocol, persistent schema or activation
 path is disabled by this fixture repair.
+
+
+### 2026-10-28 - Preserve the owner-lifeline descriptor check under pinned Clippy
+
+On exact candidate d832759a21fab745d6e454f08a78e9309cae1b06, the real
+fixed-parent creation/duplicate/forged-copy/cleanup probe and subsequent fixed
+History parent provisioning steps completed successfully. Full raw artifact
+readback and the original native campaigns remain separate required evidence.
+The recent x64 head lane completed its business controls but strict Rust 1.95
+Clippy rejected one manual remainder check in the existing SCM_RIGHTS parser.
+
+Replace that expression with usize::is_multiple_of while retaining the exact
+descriptor-payload divisibility predicate, rejection path and all fixed bounds.
+No lint allow, new domain, test removal, timeout increase or skipped owner-death
+path is introduced. The existing pathname-only official distributed inventory
+is regenerated and checked; its 1052 entries remain byte-identical, and
+include_bytes! binds the updated helper at compilation. Source and formatting
+checks alone do not qualify the complete native History/activation path.
+All original cloud gates must execute on the new exact tree; the d832 Clippy
+failure is retained rather than relabeled as success.

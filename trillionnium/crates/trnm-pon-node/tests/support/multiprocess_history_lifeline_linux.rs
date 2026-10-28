@@ -251,7 +251,7 @@ fn receive_record(socket: &UnixStream) -> io::Result<OwnedFd> {
             let payload = length - base;
             if (*header).cmsg_level != libc::SOL_SOCKET
                 || (*header).cmsg_type != libc::SCM_RIGHTS
-                || payload % size_of::<RawFd>() != 0
+                || !payload.is_multiple_of(size_of::<RawFd>())
             {
                 valid_headers = false;
             } else {
