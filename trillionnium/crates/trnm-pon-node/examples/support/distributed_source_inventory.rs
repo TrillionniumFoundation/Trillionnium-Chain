@@ -22,6 +22,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "config/pon-recent-batch-source-profiles-v1.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/pon-recent-batch-source-profiles-v1.json"
+        )),
+    ),
+    (
         "config/pon/applicability-v1.json",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),

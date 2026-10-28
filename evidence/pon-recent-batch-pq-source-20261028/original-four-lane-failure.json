@@ -1,0 +1,144 @@
+{
+  "schema": "recent-batch-original-four-lane-failure-v1",
+  "run_id": 40615932188,
+  "result": "FAIL",
+  "jobs": [
+    {
+      "job": 122578291059,
+      "artifact_id": 12785485032,
+      "file_name": "recent-122578291059.zip",
+      "sha256": "f16fa370dffbfe51beefb0126adc53a754f2ec1a45dd5a5a88684905246faf2c",
+      "crc_ok": true,
+      "member_sha256": {
+        "logs.sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "source-after.json": "e29e40a54fa6a31c9a6ee594c326bcb1b0fbb0a1403813a5e7d06c36570d788d",
+        "source.json": "e29e40a54fa6a31c9a6ee594c326bcb1b0fbb0a1403813a5e7d06c36570d788d"
+      },
+      "job_log": {
+        "name": "original-job-122578291059.log.gz",
+        "encoding": "gzip",
+        "bytes": 16989,
+        "sha256": "547d50a51a331d7df82ecf542ed163d50f9bf6e5d9085ad48e507ac289b47b99",
+        "uncompressed_bytes": 93658,
+        "uncompressed_sha256": "1cc725874266005d60b12e6207b3d7872582d22468e1e55dc1331d54451d4332"
+      },
+      "actual_source_before_and_after": {
+        "base": null,
+        "candidate": "809b012a92e319f1932c2e15852e9ebfc12fdddc",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "809b012a92e319f1932c2e15852e9ebfc12fdddc",
+        "tested_tree": "351f941cd4b9266eaea752d5d8121e037b8f9be4",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 769464014,
+        "tracked_entries": 5942,
+        "tracked_worktree_verified": true
+      },
+      "native_tests_executed": false
+    },
+    {
+      "job": 122578291337,
+      "artifact_id": 12785087123,
+      "file_name": "recent-122578291337.zip",
+      "sha256": "5a04bb2bbec48f702c07e941e0645e2530c9d35df58e5ca1fffc44d8991f98ff",
+      "crc_ok": true,
+      "member_sha256": {
+        "logs.sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "source-after.json": "a9c1285c043748fe3ca962d07f25f39deff1653f2a16e797dc3f8f405865427e",
+        "source.json": "a9c1285c043748fe3ca962d07f25f39deff1653f2a16e797dc3f8f405865427e"
+      },
+      "job_log": {
+        "name": "original-job-122578291337.log.gz",
+        "encoding": "gzip",
+        "bytes": 16565,
+        "sha256": "d2e9f30eb8497448242fcec7d1e81d20ddc6583427aec10a629ab2cde6d7581e",
+        "uncompressed_bytes": 91832,
+        "uncompressed_sha256": "30b7ebb252e9e722d9825d928e91395f5ae68b41378345992931b5b88f798c11"
+      },
+      "actual_source_before_and_after": {
+        "base": "33945bc5cdf91977792faefefed0981f6b88222c",
+        "candidate": "809b012a92e319f1932c2e15852e9ebfc12fdddc",
+        "kind": "prospective-merge",
+        "prospective_merge": "8021d1fff2bc9f729df7eaf4f2008c469d1b1ff7",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "8021d1fff2bc9f729df7eaf4f2008c469d1b1ff7",
+        "tested_tree": "351f941cd4b9266eaea752d5d8121e037b8f9be4",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 769464014,
+        "tracked_entries": 5942,
+        "tracked_worktree_verified": true
+      },
+      "native_tests_executed": false
+    },
+    {
+      "job": 122578291402,
+      "artifact_id": 12784923509,
+      "file_name": "recent-122578291402.zip",
+      "sha256": "ec72753cdc5256fa29a4b6ca1f4e2f73e8abeae0c4b631fa25f31fbdf0cc4ff6",
+      "crc_ok": true,
+      "member_sha256": {
+        "logs.sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "source-after.json": "a9c1285c043748fe3ca962d07f25f39deff1653f2a16e797dc3f8f405865427e",
+        "source.json": "a9c1285c043748fe3ca962d07f25f39deff1653f2a16e797dc3f8f405865427e"
+      },
+      "job_log": {
+        "name": "original-job-122578291402.log.gz",
+        "encoding": "gzip",
+        "bytes": 17072,
+        "sha256": "ace157cb2f9053909b53af8440e0fe2c02861ea0b951bf2c5c96dbf041f32a34",
+        "uncompressed_bytes": 94459,
+        "uncompressed_sha256": "2be9dd3e665e5f729e70177566ba7cbf202b41dbae13cd066a6eb15aa94316f9"
+      },
+      "actual_source_before_and_after": {
+        "base": "33945bc5cdf91977792faefefed0981f6b88222c",
+        "candidate": "809b012a92e319f1932c2e15852e9ebfc12fdddc",
+        "kind": "prospective-merge",
+        "prospective_merge": "8021d1fff2bc9f729df7eaf4f2008c469d1b1ff7",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "8021d1fff2bc9f729df7eaf4f2008c469d1b1ff7",
+        "tested_tree": "351f941cd4b9266eaea752d5d8121e037b8f9be4",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 769464014,
+        "tracked_entries": 5942,
+        "tracked_worktree_verified": true
+      },
+      "native_tests_executed": false
+    },
+    {
+      "job": 122578291308,
+      "artifact_id": 12783934626,
+      "file_name": "recent-122578291308.zip",
+      "sha256": "4be9e1cae364b6a5a305794c327001911b70a1d0e4bd162bb09f92e95a4a90ae",
+      "crc_ok": true,
+      "member_sha256": {
+        "logs.sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "source-after.json": "e29e40a54fa6a31c9a6ee594c326bcb1b0fbb0a1403813a5e7d06c36570d788d",
+        "source.json": "e29e40a54fa6a31c9a6ee594c326bcb1b0fbb0a1403813a5e7d06c36570d788d"
+      },
+      "job_log": {
+        "name": "original-job-122578291308.log.gz",
+        "encoding": "gzip",
+        "bytes": 16567,
+        "sha256": "2adff2f92d1ca89fc521296ca7c0cee9e94339ebd48b880e58384a697bf0d799",
+        "uncompressed_bytes": 91529,
+        "uncompressed_sha256": "5967c4897b7807d0955c31db732ffa4a033be90b59423d54821fc4a3f5b209ff"
+      },
+      "actual_source_before_and_after": {
+        "base": null,
+        "candidate": "809b012a92e319f1932c2e15852e9ebfc12fdddc",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "809b012a92e319f1932c2e15852e9ebfc12fdddc",
+        "tested_tree": "351f941cd4b9266eaea752d5d8121e037b8f9be4",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 769464014,
+        "tracked_entries": 5942,
+        "tracked_worktree_verified": true
+      },
+      "native_tests_executed": false
+    }
+  ],
+  "native_tests_executed": false
+}

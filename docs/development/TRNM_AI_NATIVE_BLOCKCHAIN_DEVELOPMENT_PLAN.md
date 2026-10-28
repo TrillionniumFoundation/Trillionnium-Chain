@@ -4782,3 +4782,17 @@ translation with `saturating_sub`, preserving every preceding validation,
 signature domain, test, lint policy and command budget. It requires new actual
 CI; the earlier runtime pass does not certify the repaired source. Full P1,
 independent retirement, other authority owners and activation remain open.
+
+The original recent-batch acceptance run on that published PQ tree separately
+failed in all four lanes at its first fixed `store.rs` identity check, before
+native execution. Four of its sixteen source pins had changed through explicit
+PQ packet/schema/state routing; the complete original head/merge source checks
+still passed before and after. The
+[reviewed source-profile continuation](../../evidence/pon-recent-batch-pq-source-20261028/README.md)
+preserves every old pin in `original-reviewed-v1` and explicitly selects a new
+thirty-one-pin NPQ3 profile, including fifteen routing/executor owners. It keeps
+the frozen original workflow and requires byte equality of all original native
+steps, source checks, both architectures/head-and-merge matrix and resource
+limits. Ten identity/negative controls passed without native execution. The
+original four-lane native suite must still run on the committed new profile;
+identity agreement cannot promote the prior failure or certify compatibility.

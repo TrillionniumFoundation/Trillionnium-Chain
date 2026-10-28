@@ -1,0 +1,138 @@
+{
+  "schema": "recent-batch-pq-source-review-v1",
+  "failed_run": 40615932188,
+  "failed_head": "809b012a92e319f1932c2e15852e9ebfc12fdddc",
+  "review_basis_commit": "b3f93a17e4eb424d26e516ca98340219ab554dfe",
+  "original_workflow_git_blob": "59d1e66c6ea27d19dd5de0d43bc2a9d0d594b5c6",
+  "original_profile_pin_count": 16,
+  "new_profile_pin_count": 31,
+  "changed_original_pins": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "original_blob": "fadc0f4c11bbead2925102cb1b18a49156d709d5",
+      "reviewed_blob": "1ef412b273803724294a0223a7b9f4c3e3ddde74"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+      "original_blob": "d015587f5a52726fc6322efab4385d40b6e61a05",
+      "reviewed_blob": "c5d0f2c2ee0bbd633effd30be3c83fb76a2325fb"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs",
+      "original_blob": "252f2c96cf162f84636a4404b702a67caa4a44fe",
+      "reviewed_blob": "f9ef6b41f68b1ff8aeb29ac7fe22add687bc13db"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_fixed_blob_tests.rs",
+      "original_blob": "cecb8a984c02ffca7590e69c4392223ea748b40f",
+      "reviewed_blob": "cfa8dc696e160361da53fc14091d48a3b891cb90"
+    }
+  ],
+  "all_original_native_steps_preserved": true,
+  "actual_new_profile_native_result": "NOT_RUN",
+  "native_compatibility_qualified": false,
+  "production_activation": false,
+  "unchanged_original_named_steps": [
+    {
+      "name": "Execute conditional query accounting and anytime-bound counterexamples",
+      "sha256": "48f1e251fc2d82d400d8590b77060a983d4bc0437553765f7578204717d03d2b"
+    },
+    {
+      "name": "Reject incomplete, ambiguous or incorrectly bound cache observations",
+      "sha256": "de2bbceade5dd8ca45e39f0c13ac6e98e55e40d942fc48dadf0c44c400657cd3"
+    },
+    {
+      "name": "Install original pinned native compiler and lint tools",
+      "sha256": "661ff98dbdb01f1953c8b38f2a1da33070c5f2c503642004850a6632fcc46c1a"
+    },
+    {
+      "name": "Check committed formatting without rewriting source",
+      "sha256": "5a6354f888c5e87f5e8683db94ec2ba583b7ddee82ae3cfea6f70cf868d48652"
+    },
+    {
+      "name": "Require bounded ordinary record copies and complete history controls",
+      "sha256": "9909b0d508d61a84512f0050a94cfd05cc84f1817bd9ab2db750f85dbb407bac"
+    },
+    {
+      "name": "Execute complete original error-boundary suite and all new controls",
+      "sha256": "2d9d7eacdcc87a36f82dffbed3e2047de0a1a72ab9ff11bdd768714b19b4f5c3"
+    },
+    {
+      "name": "Execute all original authenticated owner controls and five snapshot regressions",
+      "sha256": "6e5f486203fd0d5c937bd4aa48789b1ab1c5b2f3acfa253d90e3f332b0fa724c"
+    },
+    {
+      "name": "Retain authenticated record, ancestry and cold recovery coverage",
+      "sha256": "550390e9b48a4a04dbc6643884e295b4d2010d1a64c5aa551f7f0b94d5298b04"
+    },
+    {
+      "name": "Require all five statement-reuse controls and complete-call observations separately",
+      "sha256": "df908a6b5f76a323bcc0e323a4dc251523f0787377f9b0d25701617a6e4b42f4"
+    },
+    {
+      "name": "Require every cached block, parent, commitment and snapshot owner control",
+      "sha256": "d2f92a88d5b16c6b5556629e7c3f5aaef3dbb16ffff0cb6eae2f3c63f8eb16ba"
+    },
+    {
+      "name": "Require live public owner mutation, admission rollback and cold reopen controls",
+      "sha256": "35f3cc4b6f032b937635b0f117f6255e0c65f8abe25fb2a607d82691a8ad5bd1"
+    },
+    {
+      "name": "Require fixed-BLOB allocation bounds with original errors and rollback semantics",
+      "sha256": "3e78699fd0d8a7c182c209b0d399c4097669feb63a988d7f5d8b2384f36cea13"
+    },
+    {
+      "name": "Reject empty nullable BLOB corruption through original native owners",
+      "sha256": "93f815bd270319308257053a698d2fbc7527d1025968f8308e6fe824e10727a4"
+    },
+    {
+      "name": "Preserve original source-preserving migration coverage",
+      "sha256": "4c4c4d23a452455e75bc7833c71a436a8f0b6e5fffea2cc3dca8d395c76a0465"
+    },
+    {
+      "name": "Preserve pending confirmation ownership and joined shutdown on failures",
+      "sha256": "49ce98694318f229520363264b7fd6d54b0ced5278e5aa956bdb930a30be77ca"
+    },
+    {
+      "name": "Execute real pipeline boundaries without claiming saturation throughput",
+      "sha256": "5e3ad0910437bdcf77f9b9eac2fd23addac0c0c7028c81f39af2590c69448564"
+    },
+    {
+      "name": "Require non-committing proof reads and actual nonce snapshot callers",
+      "sha256": "ec5e11e9ab7a59cb347c0d6cc0707343cbab049c976883805da02c012e55f8e0"
+    },
+    {
+      "name": "Execute public TCP business confirmation under rotating false work",
+      "sha256": "0542568b585d9e76f8caafe2d25a9f8a41363121a5e5b3a84546977c470b3260"
+    },
+    {
+      "name": "Check complete native target lint",
+      "sha256": "ba85836724d894fe91426e854911135b7fb9dd24e996f240c3359bd5bcd489e1"
+    },
+    {
+      "name": "Retain reproducible source and native replay executable",
+      "sha256": "1c9ef9a2030230f0f3f4c405079fe56d08e405db4743e2871b34c06adb504c66"
+    },
+    {
+      "name": "Recheck unchanged exact source and hash all native logs",
+      "sha256": "79fc06054dc802853b245575c4a593df670a16e5a44ea59531cb2e91bf1f651d"
+    },
+    {
+      "name": "Bind complete native cache observations to the unchanged tested source",
+      "sha256": "dd35fb28fc1d210453b605457f46596d2e6965846ad25a7510cb64026d054b91"
+    }
+  ],
+  "source_controls": {
+    "passed": 10,
+    "failed": 0,
+    "native_tests_executed": false
+  },
+  "reviewed_source_diff": {
+    "name": "reviewed-source-diff.patch.gz",
+    "encoding": "gzip",
+    "bytes": 5261,
+    "sha256": "d5e5e1d22423d3788b0b428d7fdc38f86f6d518404248e45515845a513fd75ed",
+    "uncompressed_bytes": 20538,
+    "uncompressed_sha256": "7ca300bd8f5f803c0b00e8aaca2976b2e79cac9aaccaf012be7bb58369587feb"
+  }
+}
