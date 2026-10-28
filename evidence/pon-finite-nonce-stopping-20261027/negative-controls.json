@@ -1,0 +1,70 @@
+{
+  "long_phase": [
+    {
+      "corrected_outcome": "GROVER_PHASE_OUTSIDE_NUMERIC_DOMAIN",
+      "exact": 0.5,
+      "iterations": 4503599627370495,
+      "marked": 1,
+      "naive": 0.074138587804662,
+      "nonce_bits": 1
+    },
+    {
+      "corrected_outcome": "GROVER_PHASE_OUTSIDE_NUMERIC_DOMAIN",
+      "exact": 0.5,
+      "iterations": 1099511627776,
+      "marked": 1,
+      "naive": 0.5001790421789464,
+      "nonce_bits": 1
+    }
+  ],
+  "nearly_full": {
+    "corrected": 0.2919265815147165,
+    "iterations": 2147483648,
+    "marked": "18446744073709551615",
+    "naive": 0.9999999999996672,
+    "nonce_bits": 64
+  },
+  "oracle_only_scaling": {
+    "best_declared_stop": {
+      "attempt_seconds": 0.01,
+      "attempt_success_probability": 0.003906249999999999,
+      "budget_expiry_probability": 0.0,
+      "candidate_first": 0,
+      "candidate_last": 12,
+      "completed_attempt_opportunities": null,
+      "enumerated_stops": 13,
+      "expected_context_seconds": 2.6100000000000017,
+      "external_tip_probability": 0.0,
+      "global_strategy_optimum": false,
+      "interpretation": "conditional_iid_context_renewal_rate",
+      "iterations": 0,
+      "nontermination_probability": 0.0,
+      "reward_per_expected_second": 0.383141762452107,
+      "win_probability": 1.0
+    },
+    "counterfactual_work_multiplier": 256,
+    "omission": "leaving_classical_check_setup_and_winning_tail_fixed_when_work_grows",
+    "timing_assumptions": {
+      "context_setup_seconds": 0.02,
+      "measure_check_restart_seconds": 0.01,
+      "oracle_and_diffusion_seconds": 2.56,
+      "winning_witness_publication_seconds": 0.03
+    },
+    "valid_work_scaling_conclusion": false
+  },
+  "tiny_probability": {
+    "attempts": "18446744073709551616",
+    "corrected_campaign": {
+      "budget_expiry_probability": 0.36787944117144233,
+      "completed_attempt_opportunities": 18446744073709551616,
+      "expected_context_seconds": 1.1660566172440666e+19,
+      "external_tip_probability": 0.0,
+      "interpretation": "bounded_campaign_reward_time_ratio",
+      "nontermination_probability": 0.0,
+      "reward_per_expected_second": 5.421010862427522e-20,
+      "win_probability": 0.6321205588285577
+    },
+    "naive_survival": 1.0,
+    "p": 5.421010862427522e-20
+  }
+}

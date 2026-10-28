@@ -1,0 +1,149 @@
+{
+  "cases": [
+    {
+      "catch_up_tip": false,
+      "constant_success_proof_seconds_assumed": "0",
+      "elapsed_seconds": "664920",
+      "fixed_target_experiment": false,
+      "history_valid_under_selected_model": true,
+      "honest_blocks": 66492,
+      "honest_chainwork": "132984",
+      "maximum_relative_required_work": "256",
+      "model": "classical_query_cost_assumption",
+      "modeled_time_and_required_work_rules_checked": true,
+      "native_retarget_rule_used": true,
+      "private_blocks": 176,
+      "private_chainwork": "33246",
+      "private_heavier": false,
+      "quantum_pon_hardness_qualified": false,
+      "quantum_resource_estimate": null,
+      "relative_isolated_rate_at_initial_target": "0.25",
+      "time_model": "deterministic_expected_query_cost_not_stochastic_consensus",
+      "tip_age_seconds": "663800",
+      "valid_w1_generated_or_verified": false
+    },
+    {
+      "catch_up_tip": false,
+      "constant_success_proof_seconds_assumed": "0",
+      "elapsed_seconds": "54496.45019878171246849621175241310155426885000361870150249612548471103179323622757296",
+      "fixed_target_experiment": false,
+      "history_valid_under_selected_model": true,
+      "honest_blocks": 5449,
+      "honest_chainwork": "10898",
+      "maximum_relative_required_work": "256",
+      "model": "quantum_query_cost_assumption",
+      "modeled_time_and_required_work_rules_checked": true,
+      "native_retarget_rule_used": true,
+      "private_blocks": 176,
+      "private_chainwork": "33246",
+      "private_heavier": true,
+      "quantum_pon_hardness_qualified": false,
+      "quantum_resource_estimate": null,
+      "relative_isolated_rate_at_initial_target": "0.25",
+      "time_model": "deterministic_expected_query_cost_not_stochastic_consensus",
+      "tip_age_seconds": "53376.45019878171246849621175241310155426885000361870150249612548471103179323622757296",
+      "valid_w1_generated_or_verified": false
+    },
+    {
+      "catch_up_tip": true,
+      "constant_success_proof_seconds_assumed": "0",
+      "elapsed_seconds": "54496.45019878171246849621175241310155426885000361870150249612548471103179323622757296",
+      "fixed_target_experiment": false,
+      "history_valid_under_selected_model": true,
+      "honest_blocks": 5449,
+      "honest_chainwork": "10898",
+      "maximum_relative_required_work": "256",
+      "model": "quantum_query_cost_assumption",
+      "modeled_time_and_required_work_rules_checked": true,
+      "native_retarget_rule_used": true,
+      "private_blocks": 176,
+      "private_chainwork": "33246",
+      "private_heavier": true,
+      "quantum_pon_hardness_qualified": false,
+      "quantum_resource_estimate": null,
+      "relative_isolated_rate_at_initial_target": "0.25",
+      "time_model": "deterministic_expected_query_cost_not_stochastic_consensus",
+      "tip_age_seconds": "640.45019878171246849621175241310155426885000361870150249612548471103179323622757296",
+      "valid_w1_generated_or_verified": false
+    },
+    {
+      "catch_up_tip": false,
+      "constant_success_proof_seconds_assumed": "0",
+      "elapsed_seconds": "7040",
+      "fixed_target_experiment": true,
+      "history_valid_under_selected_model": true,
+      "honest_blocks": 704,
+      "honest_chainwork": "1408",
+      "maximum_relative_required_work": "1",
+      "model": "quantum_query_cost_assumption",
+      "modeled_time_and_required_work_rules_checked": true,
+      "native_retarget_rule_used": false,
+      "private_blocks": 176,
+      "private_chainwork": "352",
+      "private_heavier": false,
+      "quantum_pon_hardness_qualified": false,
+      "quantum_resource_estimate": null,
+      "relative_isolated_rate_at_initial_target": "0.25",
+      "time_model": "deterministic_expected_query_cost_not_stochastic_consensus",
+      "tip_age_seconds": "5920",
+      "valid_w1_generated_or_verified": false
+    }
+  ],
+  "devnet_file_sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4",
+  "fixed_probability_fresh_work": {
+    "formula": "weight_rate(m)/weight_rate(1) = m / (Cq(m)/Cq(1)) for fixed p0",
+    "mandatory_unproven_assumptions": [
+      "m and the complete header are bound before the first fresh neural step",
+      "round seeds bind previous transcript and index; no selectable or reusable prefix",
+      "proof randomness and post-work metadata cannot create lottery trials",
+      "Cq(m) is linear under one declared physical resource budget, including uncompute",
+      "classical batching, low-rank shortcuts, quantum parallelism and data loading are counted",
+      "useful neural outputs, latency, liveness and full chain-quality model are separately qualified"
+    ],
+    "production_activation": false,
+    "quantum_pon_hardness_qualified": false,
+    "rows": [
+      {
+        "assumed_linear_oracle_relative_weight_rate": 1,
+        "assumed_sqrt_oracle_relative_weight_rate": "1",
+        "fresh_work_units": 1
+      },
+      {
+        "assumed_linear_oracle_relative_weight_rate": 1,
+        "assumed_sqrt_oracle_relative_weight_rate": "2",
+        "fresh_work_units": 4
+      },
+      {
+        "assumed_linear_oracle_relative_weight_rate": 1,
+        "assumed_sqrt_oracle_relative_weight_rate": "4",
+        "fresh_work_units": 16
+      },
+      {
+        "assumed_linear_oracle_relative_weight_rate": 1,
+        "assumed_sqrt_oracle_relative_weight_rate": "8",
+        "fresh_work_units": 64
+      },
+      {
+        "assumed_linear_oracle_relative_weight_rate": 1,
+        "assumed_sqrt_oracle_relative_weight_rate": "16",
+        "fresh_work_units": 256
+      }
+    ],
+    "status": "unproven_research_hypothesis_not_a_protocol_successor"
+  },
+  "native_arithmetic_source_blob": "2f63dd18dc5893e3020bb00b18f7dcb90bae41ae",
+  "native_arithmetic_source_commit": "5e797326b9c7635e43b93f97c65a309e51eafb46",
+  "native_pq_node_integrated": false,
+  "native_rust_parity_executed_by_this_report": false,
+  "not_measured": [
+    "reversible_W1_circuit",
+    "quantum_error_correction",
+    "physical_mining_rate",
+    "stochastic_attack_probability",
+    "network_partition_chain_quality"
+  ],
+  "production_activation": false,
+  "quantum_pon_hardness_qualified": false,
+  "schema": "pon-quantum-daa-conditional-model-v1",
+  "scope": "source-bound_integer_semantics_and_conditional_cost_model_only"
+}

@@ -9,6 +9,10 @@ on:
       - formal/pon-nakamoto-v1/work_oracle.py
       - formal/pon-nakamoto-v1/contract_wire.py
       - formal/pon-nakamoto-v1/quantum_daa.py
+      - formal/pon-nakamoto-v1/quantum_daa_native.rs
+      - formal/pon-nakamoto-v1/test_quantum_daa.py
+      - formal/pon-nakamoto-v1/quantum_stopping.py
+      - formal/pon-nakamoto-v1/test_quantum_stopping.py
       - trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs
       - trillionnium/crates/trnm-pon-node/src/consensus.rs
       - config/pon/devnet-v1.json
@@ -43,8 +47,14 @@ jobs:
         run: |
           set -euo pipefail
           python3 -B -m unittest discover -s formal/pon-nakamoto-v1 -p test_w1_oracle_blueprint.py -v 2>&1 | tee "$OUT/gate-controls.log"
+          export RUSTC="$(command -v rustc)"
+          test -n "$RUSTC"
+          "$RUSTC" -Vv > "$OUT/native-rustc-version.txt"
+          python3 -B -m unittest discover -s formal/pon-nakamoto-v1 -p test_quantum_daa.py -v 2>&1 | tee "$OUT/native-daa-controls.log"
+          python3 -B -m unittest discover -s formal/pon-nakamoto-v1 -p test_quantum_stopping.py -v 2>&1 | tee "$OUT/finite-stopping-controls.log"
           python3 -B formal/pon-nakamoto-v1/w1_oracle_blueprint.py --output "$OUT/logical-circuit-upper-bound.json"
           python3 -B formal/pon-nakamoto-v1/quantum_daa.py --output "$OUT/conditional-daa.json"
+          python3 -B formal/pon-nakamoto-v1/quantum_stopping.py --output "$OUT/finite-stopping.json"
       - name: Independently verify final source bytes
         if: always()
         run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$EXPECTED_HEAD"

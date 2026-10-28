@@ -2155,6 +2155,19 @@ DAA parity evidence remains separate, and its assumed r=0.25 is not calibrated b
 the new logical counts. Complete native PQ account migration/Node integration
 and the original whole-chain gates remain open.
 
+The [finite-nonce stopping increment](../security/PON_FINITE_NONCE_STOPPING_MODEL_V1.md)
+adds a separate conditional race model: actual finite marked counts, repeatable
+fixed stopping policies, nonzero setup/check/winning-tail costs, independent
+external-tip interruptions, hard budgets and up to four explicitly settled
+fixed-policy workers. Eighteen controls cover small state vectors and independent
+geometric enumeration. Its forty-five difficulty-versus-work rows charge all
+mandatory cost stages; an oracle-only scaling shortcut remains an explicit
+negative control. The [local evidence](../../evidence/pon-finite-nonce-stopping-20261027/README.md)
+also retains the original eleven gate/adjoint tests, seven native DAA tests and
+byte-identical #510 reports. Marked-count knowledge, physical rate, unknown-count
+policies, strategic equilibrium, actual native tie resolution and whole-chain
+security stay unqualified. No original PoN semantics, DAA or activation change.
+
 The [original native CI readback](../../evidence/pon-native-campaign-ci-20261027/README.md)
 retains every predeclared campaign at exact heads `63ae5018` and `e9c4bb0d`:
 FAIL/PASS/FAIL and FAIL/FAIL/FAIL. The five failing from-zero phases observed real
