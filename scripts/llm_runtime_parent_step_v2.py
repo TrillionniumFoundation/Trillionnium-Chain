@@ -307,8 +307,37 @@ def child(args, value):
         report.update(outcome='failed', error_type=type(error).__name__, error=str(error)[:128])
         raise
     finally:
-        report['observed_wall_ns'] = time.monotonic_ns() - begin
-        runtime.save(directory / 'actual-receipt.json', report)
+        try:
+            if observed.is_observed(value):
+                # Keep release work inside the live child and its unchanged
+                # training budget. No artifact/optimizer/model-plan operation
+                # occurs after this point. This does not replace the original
+                # independent 100 ms owned-exit observation.
+                import ctypes
+                import gc
+                release_started = time.monotonic_ns()
+                release = dict(schema='llm-parent-live-release-observed-v1',
+                    input=runtime.identity(value), source=value['source'],
+                    scope='post-training-resource-release-not-terminal-qualification',
+                    original_terminal_observer_required=True, outcome='failed')
+                try:
+                    model = tokenizer = tensors = captured = None
+                    release['collected_cycles'] = observer.stage('live-model-cycle-release', gc.collect)
+                    libc = ctypes.CDLL(None, use_errno=True)
+                    trim = libc.malloc_trim
+                    trim.argtypes = [ctypes.c_size_t]
+                    trim.restype = ctypes.c_int
+                    release['malloc_trim_return'] = observer.stage('live-model-allocator-trim', lambda: trim(0))
+                    release['outcome'] = 'attempt-completed'
+                except BaseException as error:
+                    release.update(error_type=type(error).__name__, error=str(error)[:128])
+                    raise
+                finally:
+                    release['observed_wall_ns'] = time.monotonic_ns() - release_started
+                    runtime.save(directory / 'live-release-observed-v1.json', release)
+        finally:
+            report['observed_wall_ns'] = time.monotonic_ns() - begin
+            runtime.save(directory / 'actual-receipt.json', report)
 
 
 def run(args):
