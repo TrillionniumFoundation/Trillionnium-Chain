@@ -1,0 +1,22 @@
+{
+  "pid": 15,
+  "head": "1368c139dbb2d2f174acd849d6f3c38b68f8d93a",
+  "helper_source_sha256": "830de1d59d9839a5e4c24da3f77253bc94ebbabded665d06e3df2da24f8adfed",
+  "command": [
+    "/workspace/scratch/301262829a43/pon-build-inputs/unpacked/toolchain/bin/cargo",
+    "build",
+    "--offline",
+    "--locked",
+    "--release",
+    "--manifest-path",
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/Cargo.toml",
+    "-p",
+    "trnm-w1-risc0-host",
+    "--bin",
+    "check_frozen_receipts",
+    "-j",
+    "1"
+  ],
+  "minimum_free_bytes": 734003200,
+  "prover_started": false
+}

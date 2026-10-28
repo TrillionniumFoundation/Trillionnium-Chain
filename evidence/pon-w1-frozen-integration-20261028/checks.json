@@ -1,0 +1,38 @@
+[
+  {
+    "command": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "name": "preflight",
+    "returncode": 0,
+    "wall_seconds": 0.0863824849948287
+  },
+  {
+    "command": [
+      "python3",
+      "scripts/ci/test_ci_source_integrity.py"
+    ],
+    "name": "source-integrity",
+    "returncode": 0,
+    "wall_seconds": 5.026725149997219
+  },
+  {
+    "command": [
+      "python3",
+      "scripts/ci/check_ci_contract.py"
+    ],
+    "name": "ci-contract",
+    "returncode": 0,
+    "wall_seconds": 0.13511966099758865
+  },
+  {
+    "command": [
+      "python3",
+      "scripts/ci/check_repository.py"
+    ],
+    "name": "repository",
+    "returncode": 2,
+    "wall_seconds": 0.7673118289967533
+  }
+]

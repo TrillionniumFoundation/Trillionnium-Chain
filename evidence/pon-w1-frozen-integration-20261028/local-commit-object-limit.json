@@ -1,0 +1,7 @@
+{
+  "base_path": "docs/protocol/pon-nakamoto-v1/evidence/w1-complete-risc0-20261027/soundness-profile/upstream/risc0/core/src/field/baby_bear.rs",
+  "base_tree_entry_modified": false,
+  "followup": "retain full existing tree entries using Git sparse-object plumbing; individually verify every changed blob; do not claim whole-source validation from partial local object store",
+  "missing_blob": "989a827f26e34bfd81f670dc51db4a5ddfa7c6d7",
+  "normal_commit_result": "FAILED_MISSING_UNCHANGED_BASE_BLOB"
+}

@@ -348,3 +348,15 @@ byte-identical original trace and keeps fresh execution as a separate complete
 relation cross-check. Its new heavy run remains **NOT_RUN** at source freeze;
 45 local provenance/process controls are not a complete proof. See the
 [retained failure and source evidence](../../../../../evidence/pon-w1-original-trace-repair-20261027/README.md).
+
+## Frozen witness continuation v2 after the actual v1 refusal
+
+Run `40606062524` failed both v1 shards because the SDK initializes a fresh
+16-byte `MEMORY_IMAGE_ENTROPY` before main. The actual ELF symbol, complete
+witness field comparison and all failed logs are retained. The explicit
+[v2 continuation](CONTINUATION_V2.md) proves only the original archived
+witnesses and adds native SDK verification of their receipt claim bindings.
+Fresh execution remains an independent complete-statement control. The original
+relation, input/image, 30 source pins, proof profile and all resource/time
+budgets stay unchanged. Full proof and propagation acceptance require a new
+completed real run; source checks alone do not close those gates.

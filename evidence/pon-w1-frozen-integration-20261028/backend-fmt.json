@@ -1,0 +1,12 @@
+{
+  "command": [
+    "/workspace/scratch/301262829a43/pon-build-inputs/unpacked/toolchain/bin/cargo",
+    "fmt",
+    "--manifest-path",
+    "/workspace/scratch/bb9b841c1d43/w1-integration-a54/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/Cargo.toml",
+    "--all",
+    "--check"
+  ],
+  "returncode": 0,
+  "wall_seconds": 0.11791248700319557
+}

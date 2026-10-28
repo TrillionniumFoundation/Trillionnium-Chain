@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/segment_continue.py", line 398, in <module>
+    main()
+  File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/segment_continue.py", line 388, in main
+    prove(args)
+  File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/segment_continue.py", line 127, in prove
+    session = source.compare_fresh_session(files, session_dir)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/segment_continue_source.py", line 334, in compare_fresh_session
+    require(without_time(old) == without_time(fresh), "fresh execution is not the same original session")
+  File "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/segment_continue_source.py", line 30, in require
+    raise ValueError(message)
+ValueError: fresh execution is not the same original session

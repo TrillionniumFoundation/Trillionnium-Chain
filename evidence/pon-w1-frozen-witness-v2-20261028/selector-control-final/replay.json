@@ -1,0 +1,62 @@
+{
+  "replayed_commands": [
+    {
+      "command": [
+        "python3",
+        "/workspace/scratch/bb9b841c1d43/w1-followup/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/measure_step.py",
+        "--out",
+        "/workspace/scratch/bb9b841c1d43/w1-followup/evidence/pon-w1-frozen-witness-v2-20261028/selector-control-final",
+        "--name",
+        "continuation-controls",
+        "--timeout",
+        "60",
+        "--",
+        "python3",
+        "/workspace/scratch/bb9b841c1d43/w1-followup/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_segment_continue.py"
+      ],
+      "returncode": 0,
+      "source_binding": "local control replay, not a committed CI source claim"
+    },
+    {
+      "command": [
+        "python3",
+        "/workspace/scratch/bb9b841c1d43/w1-followup/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/measure_step.py",
+        "--out",
+        "/workspace/scratch/bb9b841c1d43/w1-followup/evidence/pon-w1-frozen-witness-v2-20261028/selector-control-final",
+        "--name",
+        "frozen-witness-controls",
+        "--timeout",
+        "60",
+        "--",
+        "python3",
+        "/workspace/scratch/bb9b841c1d43/w1-followup/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_frozen_witness.py"
+      ],
+      "returncode": 0,
+      "source_binding": "local control replay, not a committed CI source claim"
+    }
+  ],
+  "workflow_backend_paths": [
+    "Cargo.toml",
+    "analyze_costs.py",
+    "backend-manifest.json",
+    "build_guest.py",
+    "check_observations.py",
+    "host_linker_bfd.sh",
+    "install_backend.py",
+    "measure_loopback.py",
+    "measure_step.py",
+    "prove_segments.py",
+    "receipt_reuse.py",
+    "segment_continue_v2.py",
+    "soundness_report.py",
+    "test_frozen_native.py",
+    "test_frozen_witness.py",
+    "test_measure_loopback.py",
+    "test_measure_step.py",
+    "test_receipt_reuse.py",
+    "test_segment_continue.py",
+    "test_segment_scheduler.py"
+  ],
+  "missing_paths": [],
+  "first_check_failure": "previous diagnostic regex omitted hyphens and misread backend-manifest.json as backend; raw previous failure retained"
+}

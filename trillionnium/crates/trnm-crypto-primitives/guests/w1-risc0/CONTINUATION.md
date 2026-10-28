@@ -1,5 +1,9 @@
 # Frozen full-W1 session continuation
 
+Historical v1: actual run `40606062524` refused a different runtime entropy
+trace in both shards. This exact-byte guard remains unchanged. The explicit
+[version 2 successor](CONTINUATION_V2.md) proves the retained original witnesses.
+
 This research successor retains the complete failed source-5d9578 artifact and
 continues its missing segment proofs. It changes neither the full W1 relation
 nor the pinned native assembler/verifier. The original attempt remains failed;
@@ -116,3 +120,14 @@ The corrected reader rejects each while retaining its positive control. All 37
 continuation controls and 14 real-loopback component controls passed. The initial
 sandbox socket denial and initial negative-fixture cleanup error are retained.
 No synthetic report-reader control is treated as a cryptographic proof.
+
+## Integrated native frozen-claim validation
+
+The concurrent original-trace repair above is preserved at
+`a54dc7355f58f40784b5a71fe7e73c4062a14951`, including all 45 controls.
+The [explicit helper/codec successor](CONTINUATION_V2.md) adds complete witness
+decoding, strict native SDK segment-claim verification and final report input
+readback. It binds this exact retained-trace policy by hash and selects the
+separate `segment_continue_v2.py` entry point. The original 30 source pins,
+proof budgets and full Composite verifier remain unchanged. Actual native
+verification and any missing-segment proof require successful hosted gates.
