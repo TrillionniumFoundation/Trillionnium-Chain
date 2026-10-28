@@ -4612,3 +4612,23 @@ terminal artifact must be read before any architecture comparison is claimed.
 
 
 **2026-10-27 complete current W1 v2 ARM64 readback:** Exact source 2b070fafcdd253c142da90fd7306d211057d3418 completed run 40507587240: all 4,032 cohorts, 702,232 attempts and every failed search retained, actual 741.246320278-second capture and actual ARM ELF archived. Independent source-aware readback found every fixed input, complete proof stream, ticket and non-timing cohort field equal to the original x64 e9c4bb0 experiment. The same 509 distinct native maintenance headers underlie 10,464 repeated admission calls per host. Maintenance-split-limb is least observed producer CPU in all eight eligible native groups on each host; horizon-256 retained-preparation ARM cost is 1.260630 ms/win vs Prepared 1.305780, excluding verification/admission/IO. Neither new low-rank arm is cheapest, and neither has native eligibility. See [complete original ARM archive and comparison](../../evidence/pon-w1-native-arm64-v2-20261027/README.md). Different shared hosts, two rounds, unauthenticated hardware and no GPU/energy evidence do not establish hardness, stable speedup, chain TPS or production qualification; no miner or consensus rule is changed.
+
+### P0 legal solver — first admission and ordinary cold recovery cost (2026-10-27)
+
+The [fixed positive-ticket experiment](../protocol/pon-nakamoto-v1/details/LEGAL_TICKET_FIRST_ADMISSION_COST_V3.md)
+adds eight fresh native stores and distinct first admissions to the existing
+producer/hardware evidence. The original general and eligible split-limb arms
+share exact paired header/proof streams, 64 disjoint nonce-window searches,
+eight attempts per search, two rounds and cold versus retained preparation.
+All misses, setup, template acquisition, encoding, native validation/SQLite,
+ordinary cold recovery and byte readback have separate measured cost scopes.
+The original verifier already runs inside admission and is not counted twice.
+Ordinary cold selection keeps original work/height/id semantics; repeated
+fixtures across stores are reported separately from distinct packet IDs.
+
+[Source controls](../../evidence/pon-legal-ticket-cost-v3-20261027/README.md)
+include eight actual synthetic reader passes. New native build, strict Clippy,
+x86_64/ARM campaigns and end-to-end advantages remain NOT_RUN at source freeze.
+The exact-head workflow retains executable/raw failures and original profiles.
+This finite experiment does not establish GPU/hardware batching, energy,
+physical power loss, live-chain rewards, public throughput or a global minimum.
