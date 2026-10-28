@@ -9,7 +9,10 @@ thread_local! {
     static HOOK: RefCell<Option<(String, PathBuf)>> = const { RefCell::new(None) };
 }
 pub(super) fn install_hook(mode: &str, control: &Path) {
-    if mode.starts_with("publication-") || mode.starts_with("epoch-recovery-publish-") {
+    if mode.starts_with("publication-")
+        || mode.starts_with("epoch-recovery-publish-")
+        || mode.starts_with("startup-no-native-publish-")
+    {
         HOOK.with(|slot| *slot.borrow_mut() = Some((mode.into(), control.into())));
     }
 }
@@ -23,6 +26,26 @@ pub(in crate::store::history_effect_v6) fn append_cut(
     let Some((mode, control)) = hook else {
         return;
     };
+    if mode == format!("startup-no-native-publish-{stage}") {
+        if let journal::Event::StartupNoNativeClosedV1 { signed, .. } = &frame.event {
+            write_value(
+                &control.join("crash-ready.json"),
+                &json!({
+                    "schema":"actual-history-startup-no-native-publication-barrier-v1",
+                    "pid":std::process::id(),"cutpoint":mode,"publication_stage":stage,
+                    "anchor":Anchor{sequence:frame.sequence,digest:policy::digest(raw)},
+                    "acknowledged_prefix_anchor":journal.anchor(),"frame_bytes":raw.len(),
+                    "signed_startup_closure_sha256":policy::digest(signed),
+                    "native_operation_started":false,"cpu_epoch_created":false,
+                    "recovery_receipt_created":false,
+                }),
+            );
+            loop {
+                std::thread::park_timeout(Duration::from_secs(5));
+            }
+        }
+        return;
+    }
     if mode == format!("epoch-recovery-publish-{stage}") {
         if let journal::Event::SettledEpochReconciledV1 { signed, .. } = &frame.event {
             write_value(

@@ -47,6 +47,47 @@ fn envelope(body: &Authorization) -> Vec<u8> {
     })
     .unwrap()
 }
+
+pub(super) fn refused_frontier_barrier(
+    owner: &HistoryEffectV6,
+    signed_operation: &[u8],
+    result: &HistoryEffectV6Result,
+    control: &Path,
+) -> ! {
+    let op = policy::operation(
+        signed_operation,
+        &owner.owner.identity,
+        policy::now().unwrap(),
+    )
+    .unwrap();
+    checked(result, 0);
+    assert!(!result.known_success());
+    assert_eq!(
+        result.native_error.as_deref(),
+        Some("HISTORY_V6_OWNER_FRONTIER")
+    );
+    assert!(result.marker.is_none() && result.operation_closed);
+    assert_ne!(actual(owner), op.body.owner_frontier);
+    let journal = owner.owner.journal().unwrap();
+    assert!(journal.pending().is_none());
+    assert_eq!(result.operation_id, op.body.operation_id);
+    write_value(
+        &control.join("crash-ready.json"),
+        &json!({
+            "schema":"actual-history-settled-epoch-crash-barrier-v1",
+            "pid":std::process::id(),"cutpoint":"settled-epoch-wrong-frontier",
+            "anchor":journal.anchor(),"pending_operation":null,
+            "last_settled_operation":op.body.operation_id,"intent_sha256":op.intent_sha256,
+            "epoch":op.body.epoch,"requested_frontier":op.body.owner_frontier,
+            "actual_frontier":actual(owner),"original_settlement":result,
+            "original_known_settlement_preserved":true,"clean_close_created":false,
+        }),
+    );
+    drop(journal);
+    loop {
+        std::thread::park_timeout(Duration::from_secs(5));
+    }
+}
 fn configuration(
     a: &TestAuthority,
     label: &str,
@@ -613,4 +654,9 @@ fn settled_epoch_recovery_record_survives_every_publication_cut_and_retry() {
 #[test]
 fn expired_old_budget_needs_fresh_close_authorization_then_separate_renewal() {
     process::run("settled-epoch-expired-budget");
+}
+
+#[test]
+fn known_wrong_frontier_refusal_keeps_actual_frontier_through_sigkill_and_recovery() {
+    process::run("settled-epoch-wrong-frontier");
 }

@@ -16,6 +16,7 @@ mod epoch_recovery_v1;
 mod journal;
 mod policy;
 mod recovery;
+mod startup_no_native_v1;
 mod storage;
 #[cfg(all(test, target_os = "linux"))]
 mod tests;
@@ -31,6 +32,10 @@ pub use policy::{
     ProtectedHistoryV6BudgetInput, ProtectedHistoryV6Input, ProtectedHistoryV6RecoveryInput,
 };
 pub use recovery::prepare_history_effect_v6_recovery;
+pub use startup_no_native_v1::{
+    close_history_startup_no_native_v1, repair_history_startup_no_native_v1_publication,
+    ProtectedHistoryStartupNoNativeV1Input,
+};
 
 pub(super) const DDL: &str = "CREATE TABLE history_effect_v6(operation TEXT PRIMARY KEY NOT NULL CHECK(length(operation)=64),intent BLOB UNIQUE NOT NULL CHECK(length(intent)=32),marker BLOB NOT NULL CHECK(length(marker)>0 AND length(marker)<=16384));";
 
@@ -61,6 +66,7 @@ impl StartupScope {
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) enum StartupProgress {
+    WaitingForCredit,
     Material(crate::operator_checkpoint_tile::ReplayProgress),
     BeforeNode,
     FirstState,
@@ -528,12 +534,43 @@ impl HistoryEffectV6 {
         let pending = journal.reserve(&config.signed_startup)?;
         let cpu =
             ServiceMutationCpuDomain::from_history_effect_v6_epoch(VerifiedEpoch { _sealed: () });
-        let initial_cpu = cpu.observe()?;
-        ensure(
-            initial_cpu.stored_credit_ns == 0 && initial_cpu.in_flight == 0,
-            "HISTORY_V6_COLD_CREDIT",
-        )?;
-        cpu.await_startup_credit(deadline)?;
+        let before_cpu = || {
+            ensure(!cancelled.load(Ordering::Acquire), "HISTORY_V6_CANCELLED")?;
+            ensure(
+                Instant::now() < deadline,
+                "OWNER_CONTINUOUS_STARTUP_DEADLINE",
+            )?;
+            let at = policy::now()?;
+            ensure(
+                at < pending.operation.expires_ns && at < pending.budget_expires_ns,
+                "HISTORY_V6_OPERATION_EXPIRED",
+            )
+        };
+        let waiting = (|| {
+            let initial = cpu.observe()?;
+            ensure(
+                initial.stored_credit_ns == 0 && initial.in_flight == 0,
+                "HISTORY_V6_COLD_CREDIT",
+            )?;
+            cpu.await_startup_credit_with_progress(deadline, &mut || {
+                before_cpu()?;
+                resource(StartupProgress::WaitingForCredit)?;
+                before_cpu()
+            })?;
+            before_cpu()?;
+            Ok(initial)
+        })();
+        let initial_cpu = match waiting {
+            Ok(initial) => initial,
+            Err(error) => {
+                // This branch precedes begin(), so no CPU interval/worker or
+                // Native work can have started. Retain the entire predebit and
+                // consumed nonce; the original NotStarted event creates no
+                // measured-zero receipt and clears only this unstarted epoch.
+                journal.not_started(&pending.operation.operation_id, &error)?;
+                return Err(error);
+            }
+        };
         let operation = match cpu.begin() {
             Ok(op) => op,
             Err(error) => {

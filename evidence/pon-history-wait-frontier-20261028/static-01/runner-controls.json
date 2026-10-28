@@ -1,0 +1,21 @@
+{
+  "name": "runner-controls",
+  "argv": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/ci",
+    "-p",
+    "test_history_effect_v6_native_runner.py",
+    "-v"
+  ],
+  "returncode": 0,
+  "passed": true,
+  "elapsed_wall_seconds": 1.31023108100635,
+  "raw_bytes": 1010,
+  "raw_sha256": "ebe3a1e60ea1d67b1c32506acd816ff78e00b7ac045fb5a8c99dcaffa380ffd2",
+  "gzip_bytes": 308,
+  "gzip_sha256": "50df3f9cb1626118081c4a35efd5846b8f84acb2ba62e0ff93cab6cb4d52ff9e"
+}

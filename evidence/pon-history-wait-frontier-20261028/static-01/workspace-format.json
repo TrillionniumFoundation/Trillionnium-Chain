@@ -1,0 +1,18 @@
+{
+  "name": "workspace-format",
+  "argv": [
+    "cargo",
+    "fmt",
+    "--all",
+    "--check",
+    "--manifest-path",
+    "trillionnium/Cargo.toml"
+  ],
+  "returncode": 0,
+  "passed": true,
+  "elapsed_wall_seconds": 25.064483688009204,
+  "raw_bytes": 0,
+  "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "gzip_bytes": 20,
+  "gzip_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+}

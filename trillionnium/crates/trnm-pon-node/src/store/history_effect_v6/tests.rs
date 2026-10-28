@@ -10,6 +10,8 @@ mod process;
 pub(super) mod publication;
 mod settled_epoch;
 mod startup;
+mod startup_no_native;
+mod wait;
 
 fn deadline() -> Instant {
     Instant::now() + Duration::from_secs(50)
@@ -99,6 +101,12 @@ impl TestAuthority {
         Self::with_budget_lifetime(3_600_000_000_000)
     }
     fn with_budget_lifetime(lifetime_ns: u64) -> Self {
+        Self::with_source_and_budget_lifetime(
+            "1116ae390e4ed408ab0899e13aec5d1f90f2192c",
+            lifetime_ns,
+        )
+    }
+    fn with_source_and_budget_lifetime(source_commit: &str, lifetime_ns: u64) -> Self {
         let f = Fixture::new();
         let identity = Identity {
             schema: "restricted-history-effect-identity-v6".into(),
@@ -107,7 +115,7 @@ impl TestAuthority {
             network: hex::encode(f.settings.network()),
             parameters: hex::encode(f.settings.parameters()),
             genesis: hex::encode(f.settings.genesis()),
-            source_commit: "1116ae390e4ed408ab0899e13aec5d1f90f2192c".into(),
+            source_commit: source_commit.into(),
             registry_key: f.identity.registry_key.clone(),
             task_key: f.identity.task_key.clone(),
         };

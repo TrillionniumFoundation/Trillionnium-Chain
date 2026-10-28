@@ -3970,3 +3970,40 @@ has nine current-source material tests passed, but its Node compile and complete
 remain mandatory; actual new release binaries must be retained and reconstructed.
 There is no new signed domain, budget increase, performance qualification or whole
 History P0 closure in this candidate.
+
+### Startup wait and retained frontier follow-up (2026-10-28 UTC)
+
+The isolated [wait/frontier follow-up](../../evidence/pon-history-wait-frontier-20261028/README.md)
+adds cooperative cancellation and signed-expiry checks inside the original cold
+credit wait. A refusal before CPU begin appends the original NotStarted record,
+retains the full reservation and consumed nonce/epoch, and creates no CPU receipt.
+Settled-epoch recovery now derives its actual frontier from the current epoch's
+retained effect markers instead of a later refused request's proposed frontier.
+The existing recovery domain, extra whole-process debit and lifetime ceiling are
+unchanged. Two additional mandatory methods retain all original 19 methods and the
+600-second/2-second/4-second/four-snapshot bounds. New Node compilation and actual
+21/0/1 native execution remain NOT_RUN locally and require same-source hosted
+qualification. Pending Startup/Close crash scopes and partial initialization remain
+open; live pre-begin refusal is not evidence of an unobserved process's nonexecution.
+
+### Explicit first-Startup empty-container closure (2026-10-28 UTC)
+
+The independent [first-Startup closure capability](../protocol/pon-nakamoto-v1/details/HISTORY_FIRST_STARTUP_EMPTY_NAMESPACE_V1.md)
+adds a fresh signature/record namespace for one already known failed first
+Startup. It requires an exclusively created, privately locked container observed
+unchanged from before the original signature through actual SIGKILL/wait4, exact
+original intent/journal and independent source/binary/preparation pins. It retains
+the original known CPU receipt and predebit and adds a finite whole-process charge
+under the original lifetime ceiling. It neither resets Native nor fabricates
+NotStarted. Complete interrupted closure records require the dedicated pinned
+publication wrapper, original-frame-time validation and current repair authority.
+
+All original 21 methods and the original ignored child helper remain; a new actual
+process method requires 22/0/1 with the unchanged 600-second suite, 2-second burst,
+4-second operation allowance and four-snapshot limit. Local source/component
+checks do not establish Node compile, Clippy or native success. The new same-source
+hosted gate must execute the complete group and retain the actual executable.
+The document specifies separate persistent stages needed for partial
+initialization; the old generic initializing marker is not upgraded into History
+or material authority. Whole History P0, pending Startup/Close, partial/torn
+records, SQLite cuts and signed multi-step reorg remain open.

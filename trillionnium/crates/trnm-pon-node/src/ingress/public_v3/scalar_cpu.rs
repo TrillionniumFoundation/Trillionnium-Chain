@@ -1107,11 +1107,22 @@ impl ServiceMutationCpuDomain {
     /// Only the already retained zero-credit epoch waits. Original refill and
     /// ceiling are used unchanged; Root's absolute business deadline clips wait.
     pub(crate) fn await_startup_credit(&self, deadline: Instant) -> Result<()> {
+        self.await_startup_credit_with_progress(deadline, &mut || Ok(()))
+    }
+    /// Check the caller's existing authority/cancellation while the same cold
+    /// epoch earns its original credit. No CPU operation or reservation exists
+    /// yet; the callback runs outside the budget lock and grants no credit.
+    pub(crate) fn await_startup_credit_with_progress(
+        &self,
+        deadline: Instant,
+        progress: &mut impl FnMut() -> Result<()>,
+    ) -> Result<()> {
         loop {
             ensure(
                 Instant::now() < deadline,
                 "OWNER_CONTINUOUS_STARTUP_DEADLINE",
             )?;
+            progress()?;
             let ready = {
                 let mut budget = self
                     .budget
@@ -1122,6 +1133,7 @@ impl ServiceMutationCpuDomain {
                 budget.in_flight == 0 && budget.credit_ns >= i128::from(MUTATION_CPU_BURST_NS)
             };
             if ready {
+                progress()?;
                 return Ok(());
             }
             thread::sleep(

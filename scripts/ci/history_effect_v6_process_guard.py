@@ -183,11 +183,16 @@ def main() -> int:
     repair_modes = ('publication-repair-linked', 'publication-repair-unlinked')
     epoch_publish_modes = tuple('epoch-recovery-publish-' + stage for stage in
                                 ('file-synced', 'linked', 'final-synced', 'unlinked', 'published'))
-    assert config['mode'] in ('validation-worker', 'activation-committed', 'settled-epoch', *publication_modes, *repair_modes, *epoch_publish_modes)
+    startup_publish_modes = tuple('startup-no-native-publish-' + stage for stage in
+                                  ('file-synced', 'linked', 'final-synced', 'unlinked', 'published'))
+    assert config['mode'] in ('validation-worker', 'activation-committed', 'settled-epoch',
+                              'settled-epoch-wrong-frontier', *publication_modes,
+                              *repair_modes, *epoch_publish_modes, *startup_publish_modes)
     publication_cut = config['mode'] in publication_modes
     repair_cut = config['mode'] in repair_modes
-    epoch_cut = config['mode'] == 'settled-epoch'
+    epoch_cut = config['mode'] in ('settled-epoch', 'settled-epoch-wrong-frontier')
     epoch_publish_cut = config['mode'] in epoch_publish_modes
+    startup_publish_cut = config['mode'] in startup_publish_modes
     assert args.directory.is_dir()
     ready = args.directory / 'crash-ready.json'
     env = os.environ.copy()
@@ -233,11 +238,15 @@ def main() -> int:
                 assert barrier['native_operation_started'] is False
                 assert barrier['cpu_epoch_created'] is False
                 assert barrier['recovery_receipt_created'] is False
-            elif epoch_publish_cut:
-                assert barrier['schema'] == 'actual-history-settled-epoch-publication-barrier-v1'
+            elif epoch_publish_cut or startup_publish_cut:
+                schema = ('actual-history-startup-no-native-publication-barrier-v1'
+                          if startup_publish_cut else 'actual-history-settled-epoch-publication-barrier-v1')
+                digest_key = ('signed_startup_closure_sha256' if startup_publish_cut
+                              else 'signed_epoch_recovery_sha256')
+                assert barrier['schema'] == schema
                 recovery_config = json.loads(Path(config['recovery']).read_bytes())
                 assert sha(Path(config['recovery'])) == config['recovery_sha256']
-                assert barrier['signed_epoch_recovery_sha256'] == hashlib.sha256(
+                assert barrier[digest_key] == hashlib.sha256(
                     bytes(recovery_config['signed'])).hexdigest()
                 assert barrier['native_operation_started'] is False
                 assert barrier['cpu_epoch_created'] is False
@@ -276,7 +285,7 @@ def main() -> int:
                 assert abs(value - integer) <= Decimal('0.001')
                 return int(integer)
             user, system = micros(raw_user), micros(raw_system)
-            if repair_cut or epoch_publish_cut:
+            if repair_cut or epoch_publish_cut or startup_publish_cut:
                 # This administrative process is not the crashed Native epoch.
                 # Never export its observation as a V6 recovery CPU receipt.
                 record.update(
@@ -299,7 +308,17 @@ def main() -> int:
                     marker_row = db.execute('SELECT marker FROM history_effect_v6 WHERE operation=?',
                                             (operation,)).fetchone()
                     marker = json.loads(marker_row[0]) if marker_row else None
-                if config['mode'] == 'validation-worker' or publication_cut:
+                if config['mode'] == 'settled-epoch-wrong-frontier':
+                    assert marker is None and generation == 1
+                    result = barrier['original_settlement']
+                    assert result['native_error'] == 'HISTORY_V6_OWNER_FRONTIER'
+                    assert result['native_id'] is None and result['operation_closed'] is True
+                    assert result['accounting_record_persisted'] is True
+                    assert result['within_original_allowance'] is True
+                    assert barrier['requested_frontier'] != barrier['actual_frontier']
+                    assert barrier['actual_frontier'] == {
+                        'block': tip.lower(), 'root': root.lower(), 'generation': generation}
+                elif config['mode'] == 'validation-worker' or publication_cut:
                     assert marker is None
                 else:
                     assert marker is not None and marker['purpose'] == 'activation'

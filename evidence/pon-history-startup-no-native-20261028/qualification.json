@@ -1,0 +1,53 @@
+{
+  "arbitrary_process_tree_qualified": false,
+  "cpu_zero_fabricated": false,
+  "fake_not_started_authorized": false,
+  "fresh_domain": "TRNM-HISTORY-STARTUP-NO-NATIVE-CLOSURE-V1",
+  "fresh_record_schema": "restricted-history-startup-no-native-closure-record-v1",
+  "full_static_raw_archive": {
+    "bytes": 198640,
+    "member_manifest": "static-01/members.json",
+    "members": 25,
+    "path": "static-01/raw-data.tar.gz",
+    "sha256": "a167c836a45d3904339b60a3c8aea41313f9ad04327408db07c6225e11198bf0"
+  },
+  "implementation_commit": "8c84a13f8ee64a29f93816fdc417dc726bea9b25",
+  "implementation_tree": "124b34a11726b75a6a6cb2f0e4f58525d0b634bc",
+  "local_equivalent_remote_base_commit": "c27c7201e700b6704faf3452da0921c7fedaa75a",
+  "local_static_and_component_passed": true,
+  "native_reset_authorized": false,
+  "new_native_suite": "NOT_RUN",
+  "new_node_clippy": "NOT_RUN",
+  "new_node_compile": "NOT_RUN",
+  "original_bounds": {
+    "complete_parent_snapshot_attempts": 4,
+    "cpu_burst_ns": 2000000000,
+    "full_native_seconds": 600,
+    "local_compile_disk_floor_bytes": 268435456,
+    "operation_allowance_ns": 4000000000
+  },
+  "original_cpu_receipt_and_predebit_preserved": true,
+  "original_frame_time_and_current_repair_authorization_separate": true,
+  "original_lifetime_ceiling_preserved": true,
+  "parent_commit": "b760ee01cd68362048f9f3cc5221c1ea2904f19e",
+  "partial_initialization_implemented": false,
+  "production_qualified": false,
+  "remote_expected_base_branch": "fix/chain-history-startup-seal-20261028",
+  "remote_expected_base_tree": "4ee466caf266401c1ff72f8ac3fdf121f2020b33",
+  "remote_expected_parent": "59e10da3f501970fff0a87ff398f8a08aa7fb59e",
+  "remote_mutations_performed": false,
+  "required_native_roster": {
+    "failed": 0,
+    "ignored": 1,
+    "names": 23,
+    "new_names": 1,
+    "passed": 22,
+    "retained_names": 22
+  },
+  "schema": "history-first-startup-empty-namespace-qualification-v1",
+  "source_binary_namespace_journal_lease_pins_required": true,
+  "source_files_unchanged": 1625,
+  "unchanged_since_checks": "Non-evidence source must remain byte-identical; later commit adds only these evidence files.",
+  "whole_dead_process_extra_debit_required": true,
+  "whole_history_p0_closed": false
+}

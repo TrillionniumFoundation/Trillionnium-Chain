@@ -20,9 +20,9 @@ struct ChildConfig {
     #[serde(default)]
     publication_sha256: Option<String>,
 }
-struct Process {
-    child: Child,
-    guardian: bool,
+pub(super) struct Process {
+    pub(super) child: Child,
+    pub(super) guardian: bool,
 }
 impl Drop for Process {
     fn drop(&mut self) {
@@ -36,7 +36,7 @@ impl Drop for Process {
         }
     }
 }
-fn wait(path: &Path, process: &mut Process) -> Value {
+pub(super) fn wait(path: &Path, process: &mut Process) -> Value {
     let end = Instant::now() + Duration::from_secs(85);
     loop {
         if path.exists() {
@@ -91,6 +91,26 @@ pub(super) fn child() {
     let config: ChildConfig = serde_json::from_slice(&raw).unwrap();
     assert_eq!(config.schema, "actual-history-effect-child-fixture-v6");
     let uid = rustix::process::geteuid().as_raw();
+    if config.mode == "startup-no-native" {
+        startup_no_native::child(
+            &config.store,
+            &config.control,
+            config.launch.as_ref().unwrap(),
+            config.launch_sha256.as_deref().unwrap(),
+        );
+    }
+    if config.mode.starts_with("startup-no-native-publish-") {
+        publication::install_hook(&config.mode, &config.control);
+        let result = close_history_startup_no_native_v1(
+            ProtectedHistoryStartupNoNativeV1Input::load(
+                config.recovery.as_ref().unwrap(),
+                uid,
+                config.recovery_sha256.as_deref().unwrap(),
+            )
+            .unwrap(),
+        );
+        panic!("first Startup closure returned without its publication barrier: {result:?}");
+    }
     if config.mode.starts_with("epoch-recovery-publish-") {
         publication::install_hook(&config.mode, &config.control);
         let result = prepare_history_settled_epoch_v1_recovery(
@@ -132,7 +152,9 @@ pub(super) fn child() {
         );
         return;
     }
-    let (launch, sha) = if config.mode == "resume-published-settled-epoch" {
+    let (launch, sha) = if config.mode == "resume-published-settled-epoch"
+        || config.mode == "resume-published-startup-no-native"
+    {
         let launch: Value =
             serde_json::from_slice(&child_wait(&config.control.join("outside-launch.json")))
                 .unwrap();
@@ -244,10 +266,22 @@ pub(super) fn child() {
     if config.mode == "settled-epoch" {
         settled_epoch::barrier(&owner, &activation, &activated, &config.control);
     }
+    if config.mode == "settled-epoch-wrong-frontier" {
+        write_value(
+            &config.control.join("activation-ready.json"),
+            &json!({"result":activated,"observation":owner.observation().unwrap(),"frontier":actual(&owner)}),
+        );
+        let wrong = child_wait(&config.control.join("outside-wrong-frontier.json"));
+        let refused = owner
+            .receive_with_progress(&wrong, &config.page, CLOCK, deadline(), &|_| Ok(()))
+            .unwrap();
+        settled_epoch::refused_frontier_barrier(&owner, &wrong, &refused, &config.control);
+    }
     assert!(
         config.mode == "resume"
             || config.mode == "resume-settled-epoch"
             || config.mode == "resume-published-settled-epoch"
+            || config.mode == "resume-published-startup-no-native"
     );
     write_value(
         &config.control.join("activation-ready.json"),
@@ -488,6 +522,7 @@ fn rejects(a: &TestAuthority, path: &Path, sha: &str) -> String {
 
 pub(super) fn run(cutpoint: &str) {
     let epoch_cut = cutpoint.starts_with("settled-epoch");
+    let wrong_frontier = cutpoint == "settled-epoch-wrong-frontier";
     let recovery_stage = cutpoint.strip_prefix("settled-epoch-record-");
     let expired_budget = cutpoint == "settled-epoch-expired-budget";
     let validation_cut =
@@ -511,7 +546,7 @@ pub(super) fn run(cutpoint: &str) {
     fs::create_dir(&first).unwrap();
     fs::set_permissions(&first, fs::Permissions::from_mode(0o700)).unwrap();
     let (launch, launch_sha) = a.launch("crash", 1, 1, a.genesis(), a.installed.clone());
-    let config = json!({"schema":"actual-history-effect-child-fixture-v6","mode":if epoch_cut {"settled-epoch"} else {cutpoint},"store":a.store,"control":first,"page":a.f.page,
+    let config = json!({"schema":"actual-history-effect-child-fixture-v6","mode":if epoch_cut && !wrong_frontier {"settled-epoch"} else {cutpoint},"store":a.store,"control":first,"page":a.f.page,
         "launch":launch,"launch_sha256":launch_sha,"recovery":null,"recovery_sha256":null});
     let conf = a.f.dir.path().join("crash-child.json");
     let conf_sha = write_value(&conf, &config);
@@ -576,6 +611,21 @@ pub(super) fn run(cutpoint: &str) {
         });
         write(&first.join("outside-activation.json"), &activation);
     }
+    if wrong_frontier {
+        let activated = wait(&first.join("activation-ready.json"), &mut guard);
+        assert_eq!(activated["frontier"]["generation"], 1);
+        let wrong = a.grant(Grant {
+            purpose: Purpose::Validation,
+            nonce: 4,
+            epoch: 1,
+            frontier: a.genesis(),
+            anchor: serde_json::from_value(activated["observation"]["journal"]["anchor"].clone())
+                .unwrap(),
+            packet: Some(&a.f.packet),
+            pair: Some((4, 5)),
+        });
+        write(&first.join("outside-wrong-frontier.json"), &wrong);
+    }
     let observed = wait(&first.join("guardian-result.json"), &mut guard);
     assert!(guard.child.wait().unwrap().success(), "{observed}");
     assert_eq!(observed["passed"], true);
@@ -600,6 +650,32 @@ pub(super) fn run(cutpoint: &str) {
     let closed: policy::ClosedProcess = serde_json::from_slice(&closed_raw).unwrap();
     assert!(closed.reported_cpu_upper_bound_ns <= 4_000_000_000);
     assert_eq!(closed.epoch, a.epoch(1));
+    if wrong_frontier {
+        assert_eq!(pending, a.id(4));
+        assert!(closed.marker.is_none());
+        assert_eq!(closed.actual_frontier.generation, 1);
+        assert_ne!(json!(closed.actual_frontier), barrier["requested_frontier"]);
+        let mut forged = closed.clone();
+        forged.actual_frontier =
+            serde_json::from_value(barrier["requested_frontier"].clone()).unwrap();
+        let (path, sha) = settled_epoch::input(
+            &a,
+            "refused-request-cannot-rewind-frontier",
+            &policy::encoded(&forged).unwrap(),
+            pending,
+        );
+        let error = rejects(&a, &path, &sha);
+        assert!(error.contains("SETTLED_BINDING"));
+        write_value(
+            &first.join("requested-frontier-refusal.json"),
+            &json!({
+                "error":error,"actual_frontier":closed.actual_frontier,
+                "refused_requested_frontier":forged.actual_frontier,"marker":null,
+                "journal_unchanged":snapshot(&a.journal)==original_records,
+            }),
+        );
+        assert_eq!(snapshot(&a.journal), original_records);
+    }
     let (noauth, noauthsha) = a.launch(
         "pending-refused",
         9,
@@ -801,7 +877,9 @@ pub(super) fn run(cutpoint: &str) {
     let finished = wait(&second.join("finished.json"), &mut resumed);
     assert!(resumed.child.wait().unwrap().success());
     assert_ne!(finished["pid"], json!(closed.owned_namespace_pid));
-    let count = if epoch_cut {
+    let count = if wrong_frontier {
+        9
+    } else if epoch_cut {
         8
     } else if validation_cut {
         6

@@ -9,7 +9,7 @@ import tempfile
 import time
 from types import SimpleNamespace
 from unittest.mock import patch
-from run_history_effect_v6_native import (HELPER, ORIGINAL_ROSTER, STARTUP_ROSTER, ROSTER,
+from run_history_effect_v6_native import (HELPER, ORIGINAL_ROSTER, STARTUP_ROSTER, FOLLOWUP_ROSTER, CLOSURE_ROSTER, ROSTER,
     bounded, roster, suite_passed, retain_binary, verify_binary_archive, sha)
 
 
@@ -33,8 +33,13 @@ class ExactNativeGate(unittest.TestCase):
     def test_exact_roster_retains_all_fifteen_and_the_process_helper(self):
         self.assertEqual(len(ORIGINAL_ROSTER), 16)
         self.assertEqual(len(STARTUP_ROSTER), 4)
-        self.assertEqual(len(ROSTER), 20)
+        self.assertEqual(len(FOLLOWUP_ROSTER), 2)
+        self.assertEqual(len(CLOSURE_ROSTER), 1)
+        self.assertEqual(len(ROSTER), 23)
         self.assertTrue(set(ORIGINAL_ROSTER).issubset(ROSTER))
+        self.assertTrue(set(STARTUP_ROSTER).issubset(ROSTER))
+        self.assertTrue(set(FOLLOWUP_ROSTER).issubset(ROSTER))
+        self.assertTrue(set(CLOSURE_ROSTER).issubset(ROSTER))
         self.assertEqual(roster('\n'.join(name + ': test' for name in ROSTER)), ROSTER)
         for changed in [ROSTER[:-1], ROSTER + [ROSTER[0]],
                         ROSTER[:-1] + ['store::history_effect_v6::tests::substitute']]:
@@ -42,19 +47,20 @@ class ExactNativeGate(unittest.TestCase):
                 roster('\n'.join(name + ': test' for name in changed))
 
     def test_zero_partial_failed_and_multiple_summaries_never_accept(self):
-        prefix = 'running 20 tests\n' + ''.join(
+        prefix = 'running 23 tests\n' + ''.join(
             f'test {name} ... ' + ('ignored, fixture only' if name == HELPER else 'ok') + '\n'
             for name in ROSTER)
-        valid = 'test result: ok. 19 passed; 0 failed; 1 ignored; 0 measured; 734 filtered out; finished in 300.00s'
+        valid = 'test result: ok. 22 passed; 0 failed; 1 ignored; 0 measured; 734 filtered out; finished in 300.00s'
         self.assertTrue(suite_passed(prefix + valid))
-        for bad in [valid.replace('19 passed', '0 passed'), valid.replace('19 passed', '18 passed'),
+        for bad in [valid.replace('22 passed', '0 passed'), valid.replace('22 passed', '19 passed'),
+                    valid.replace('22 passed', '20 passed'), valid.replace('22 passed', '21 passed'),
                     valid.replace('0 failed', '1 failed'), valid.replace('1 ignored', '2 ignored'),
                     valid + '\n' + valid, 'test result: FAILED. 18 passed; 1 failed; 1 ignored;']:
             self.assertFalse(suite_passed(prefix + bad))
         self.assertFalse(suite_passed(valid))
         self.assertFalse(suite_passed(prefix.replace(ROSTER[-1], ROSTER[-2]) + valid))
-        self.assertFalse(suite_passed(prefix.replace('running 20 tests', '') + valid))
-        self.assertFalse(suite_passed(prefix + 'running 20 tests\n' + valid))
+        self.assertFalse(suite_passed(prefix.replace('running 23 tests', '') + valid))
+        self.assertFalse(suite_passed(prefix + 'running 23 tests\n' + valid))
 
     def test_successful_leader_signals_owned_group_before_reaping(self):
         program = '''import os, time

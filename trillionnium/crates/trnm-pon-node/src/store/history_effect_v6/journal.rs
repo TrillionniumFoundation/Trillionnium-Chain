@@ -96,11 +96,16 @@ pub(super) enum Event {
         signed: Vec<u8>,
         closed_process: Vec<u8>,
     },
+    StartupNoNativeClosedV1 {
+        signed: Vec<u8>,
+        closed_process: Vec<u8>,
+    },
 }
 impl Event {
     fn record_schema(&self) -> &'static str {
         match self {
             Self::SettledEpochReconciledV1 { .. } => epoch_recovery_v1::RECORD_SCHEMA,
+            Self::StartupNoNativeClosedV1 { .. } => startup_no_native_v1::RECORD_SCHEMA,
             _ => "restricted-history-effect-record-v6",
         }
     }
@@ -121,12 +126,19 @@ pub(super) struct Pending {
     pub intent_sha256: String,
     pub observed_receipt: Option<CpuReceipt>,
     pub budget_expires_ns: u64,
+    pub envelope_sha256: String,
+    pub intent_at_ns: u64,
 }
 #[derive(Clone)]
 struct LastSettled {
     operation: Operation,
     intent_sha256: String,
     marker: Option<EffectMarker>,
+    envelope_sha256: String,
+    intent_at_ns: u64,
+    cpu: CpuReceipt,
+    native_id: Option<String>,
+    native_error: Option<String>,
 }
 #[derive(Clone)]
 struct State {
@@ -138,10 +150,14 @@ struct State {
     used: BTreeSet<String>,
     epochs: BTreeSet<String>,
     epoch: Option<String>,
+    // Derived by replay, never taken from the last refused request. Only a
+    // retained actual effect marker advances an already opened epoch frontier.
+    epoch_frontier: Option<Frontier>,
     pending: Option<Pending>,
     known: u64,
     reconciled_unknown: u64,
     reconciled_settled_epochs: u64,
+    closed_no_native_startups: u64,
     last_settled: Option<LastSettled>,
     markers: BTreeMap<String, EffectMarker>,
 }
@@ -156,10 +172,12 @@ impl Default for State {
             used: BTreeSet::new(),
             epochs: BTreeSet::new(),
             epoch: None,
+            epoch_frontier: None,
             pending: None,
             known: 0,
             reconciled_unknown: 0,
             reconciled_settled_epochs: 0,
+            closed_no_native_startups: 0,
             last_settled: None,
             markers: BTreeMap::new(),
         }
@@ -216,6 +234,7 @@ impl State {
                         "HISTORY_V6_UNCLOSED_EPOCH",
                     )?;
                     self.epoch = Some(op.epoch.clone());
+                    self.epoch_frontier = Some(op.owner_frontier.clone());
                     self.epochs.insert(op.epoch.clone());
                     self.last_settled = None;
                 } else {
@@ -229,6 +248,8 @@ impl State {
                     intent_sha256: verified.intent_sha256,
                     observed_receipt: None,
                     budget_expires_ns: budget.expires_ns,
+                    envelope_sha256: policy::digest(signed),
+                    intent_at_ns: at,
                 });
             }
             Event::Settlement {
@@ -275,10 +296,18 @@ impl State {
                         .total_cpu_ns
                         .is_some_and(|v| v <= pending.operation.allowance.cpu_ns)
                 {
+                    if let Some(marker) = marker {
+                        self.epoch_frontier = Some(marker.after.clone());
+                    }
                     self.last_settled = Some(LastSettled {
                         operation: pending.operation.clone(),
                         intent_sha256: pending.intent_sha256.clone(),
                         marker: marker.as_deref().cloned(),
+                        envelope_sha256: pending.envelope_sha256.clone(),
+                        intent_at_ns: pending.intent_at_ns,
+                        cpu: cpu.clone(),
+                        native_id: native_id.clone(),
+                        native_error: native_error.clone(),
                     });
                     self.pending = None;
                     self.known += 1;
@@ -302,6 +331,7 @@ impl State {
                 // no synthetic zero-valued receipt is emitted and no refund.
                 if pending.operation.purpose == Purpose::Startup {
                     self.epoch = None;
+                    self.epoch_frontier = None;
                     self.last_settled = None;
                 }
                 self.pending = None;
@@ -323,6 +353,7 @@ impl State {
                 self.nonces = recovery.body.request_nonce;
                 self.pending = None;
                 self.epoch = None;
+                self.epoch_frontier = None;
                 self.last_settled = None;
                 self.reconciled_unknown += 1;
             }
@@ -333,6 +364,7 @@ impl State {
                     "HISTORY_V6_PENDING_DEBT",
                 )?;
                 self.epoch = None;
+                self.epoch_frontier = None;
                 self.last_settled = None;
             }
             Event::SettledEpochReconciledV1 {
@@ -346,8 +378,24 @@ impl State {
                 self.nonces = verified.body.request_nonce;
                 self.used.insert(verified.body.reconciliation_id);
                 self.epoch = None;
+                self.epoch_frontier = None;
                 self.last_settled = None;
                 self.reconciled_settled_epochs += 1;
+            }
+            Event::StartupNoNativeClosedV1 {
+                signed,
+                closed_process,
+            } => {
+                let verified =
+                    startup_no_native_v1::authenticate(signed, closed_process, identity, at)?;
+                self.check_startup_no_native(&verified, at)?;
+                self.spent = self.spent.add(verified.body.allowance)?;
+                self.nonces = verified.body.request_nonce;
+                self.used.insert(verified.body.reconciliation_id);
+                self.epoch = None;
+                self.epoch_frontier = None;
+                self.last_settled = None;
+                self.closed_no_native_startups += 1;
             }
         }
         Ok(())
@@ -399,10 +447,10 @@ impl State {
             .last_settled
             .as_ref()
             .ok_or("HISTORY_EPOCH_V1_NO_SETTLEMENT")?;
-        let frontier = last
-            .marker
+        let frontier = self
+            .epoch_frontier
             .as_ref()
-            .map_or(&last.operation.owner_frontier, |m| &m.after);
+            .ok_or("HISTORY_EPOCH_V1_NO_FRONTIER")?;
         ensure(
             self.epoch.as_ref() == Some(&body.epoch)
                 && last.operation.epoch == body.epoch
@@ -428,6 +476,72 @@ impl State {
                     .add(body.allowance)?
                     .fits(budget.lifetime_ceiling),
             "HISTORY_EPOCH_V1_FRESH_ALLOWANCE",
+        )
+    }
+    fn check_startup_no_native(
+        &self,
+        verified: &startup_no_native_v1::Verified,
+        at: u64,
+    ) -> Result<()> {
+        ensure(self.pending.is_none(), "HISTORY_NO_NATIVE_PENDING_SCOPE")?;
+        let last = self
+            .last_settled
+            .as_ref()
+            .ok_or("HISTORY_NO_NATIVE_KNOWN_STARTUP_REQUIRED")?;
+        let body = &verified.body;
+        let closed = &verified.closed;
+        let cpu = &last.cpu;
+        ensure(
+            self.epochs.len() == 1
+                && self.used.len() == 1
+                && self.known == 1
+                && self.markers.is_empty()
+                && self.reconciled_unknown == 0
+                && self.reconciled_settled_epochs == 0
+                && self.closed_no_native_startups == 0
+                && last.operation.purpose == Purpose::Startup
+                && last.marker.is_none()
+                && last.native_id.is_none()
+                && last.native_error.as_ref().is_some_and(|s| !s.is_empty())
+                && cpu.known()
+                && !cpu.live_refused
+                && cpu.total_cpu_ns.is_some_and(|v| {
+                    v > 0
+                        && v <= last.operation.allowance.cpu_ns
+                        && v <= closed.reported_cpu_upper_bound_ns
+                })
+                && cpu.spawned_workers == 0
+                && cpu.started_workers == 0
+                && cpu.finished_workers == 0
+                && cpu.known_workers == 0
+                && cpu.scoped_worker_cpu_ns == Some(0)
+                && self.spent == last.operation.allowance
+                && self.epoch.as_ref() == Some(&last.operation.epoch),
+            "HISTORY_NO_NATIVE_SOLE_KNOWN_FAILED_STARTUP",
+        )?;
+        ensure(
+            body.outside_anchor == self.anchor
+                && body.startup_operation_id == last.operation.operation_id
+                && body.startup_intent_sha256 == last.intent_sha256
+                && body.signed_startup_sha256 == last.envelope_sha256
+                && closed.startup_intent_at_ns == last.intent_at_ns
+                && policy::encoded(&verified.startup)? == policy::encoded(&last.operation)?,
+            "HISTORY_NO_NATIVE_ORIGINAL_STARTUP_BINDING",
+        )?;
+        let budget = self.budget.as_ref().ok_or("HISTORY_V6_BUDGET_REQUIRED")?;
+        // This new administrative authority alone may close the known failed
+        // epoch after the old budget expires; it grants no old work authority.
+        ensure(
+            body.budget_id == budget.budget_id
+                && budget.issued_ns <= at
+                && body.request_nonce > self.nonces
+                && (budget.nonce_first..=budget.nonce_last).contains(&body.request_nonce)
+                && !self.used.contains(&body.reconciliation_id)
+                && self
+                    .spent
+                    .add(body.allowance)?
+                    .fits(budget.lifetime_ceiling),
+            "HISTORY_NO_NATIVE_FRESH_ALLOWANCE",
         )
     }
 }
@@ -748,6 +862,19 @@ impl Journal {
             closed_process: closed_process.to_vec(),
         })
     }
+    pub fn check_startup_no_native(
+        &self,
+        verified: &startup_no_native_v1::Verified,
+        at: u64,
+    ) -> Result<()> {
+        self.state.check_startup_no_native(verified, at)
+    }
+    pub fn close_startup_no_native(&mut self, signed: &[u8], closed_process: &[u8]) -> Result<()> {
+        self.append(Event::StartupNoNativeClosedV1 {
+            signed: signed.to_vec(),
+            closed_process: closed_process.to_vec(),
+        })
+    }
     pub fn close(&mut self, frontier: Frontier) -> Result<()> {
         self.append(Event::CleanClose { frontier })
     }
@@ -782,6 +909,7 @@ impl Journal {
             "spent":self.state.spent,"used_operations":self.state.used.len(),"request_nonce":self.state.nonces,
             "pending":self.state.pending.as_ref().map(|p|&p.operation.operation_id), "epoch":self.state.epoch,
             "known_settlements":self.state.known,"unknown_prepaid_reconciliations":self.state.reconciled_unknown,
-            "settled_epoch_reconciliations_v1":self.state.reconciled_settled_epochs})
+            "settled_epoch_reconciliations_v1":self.state.reconciled_settled_epochs,
+            "startup_no_native_closures_v1":self.state.closed_no_native_startups})
     }
 }

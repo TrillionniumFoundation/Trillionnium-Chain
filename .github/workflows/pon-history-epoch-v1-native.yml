@@ -14,6 +14,9 @@ on:
       - trillionnium/Cargo.toml
       - trillionnium/Cargo.lock
       - scripts/ci/history_effect_v6_process_guard.py
+      - scripts/ci/history_startup_no_native_process_guard.py
+      - scripts/ci/test_history_startup_no_native_guard.py
+      - scripts/ci/ci_job.sh
       - scripts/ci/test_history_effect_v6_guard.py
       - scripts/ci/run_history_effect_v6_native.py
       - scripts/ci/test_history_effect_v6_native_runner.py
@@ -65,7 +68,7 @@ jobs:
         run: rustup toolchain install 1.95.0 --profile minimal --component clippy,rustfmt
       - name: Reject missing or substituted mandatory tests
         run: python3 -m unittest discover -s scripts/ci -p test_history_effect_v6_native_runner.py -v
-      - name: Retain exact release binary and run original 15 plus four Startup controls
+      - name: Retain exact release binary and run all original 21 plus first-Startup closure
         id: native
         run: python3 scripts/ci/run_history_effect_v6_native.py --expected-source "$EXPECTED_SOURCE" --out "$OUT/execution"
       - name: Collect actual terminal state and unchanged source
