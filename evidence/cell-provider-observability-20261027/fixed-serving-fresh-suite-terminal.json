@@ -1,0 +1,26 @@
+{
+  "schema": "cell-worker-window-fixed-fresh-native-tests-v1",
+  "command": [
+    "cargo",
+    "test",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "--offline",
+    "-j",
+    "1",
+    "-p",
+    "trnm-data-availability",
+    "--lib",
+    "cell::network::serving::tests",
+    "--",
+    "--test-threads=1"
+  ],
+  "returncode": 0,
+  "elapsed_seconds": 30.554383802000302,
+  "binary_sha256": "7b07ffa7eccc8a1e43cd7e22da9f2b7f1bca7a871be167b1596c17658384d55b",
+  "scope": "fresh compilation of only the M09 owner after preserving and clearing stale failed Cargo diagnostic cache; unchanged dependency cache",
+  "source_manifest": "fixed-native-build-invocation.json",
+  "original_003_root_cause": "UNDETERMINED",
+  "model_transfer_pass_claimed": false
+}

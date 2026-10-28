@@ -1,0 +1,17 @@
+{
+  "schema": "cell-provider-initial-observations-v1",
+  "original_serving_git_blob_sha1": "735c1c1d7c3f16de77acf8b5f9e3f79da769574e",
+  "original_serving_sha256": "1ebb271e255d43bae45396dad21c13e4677ceac90e81440b7e556a7715af0715",
+  "c960_and_21e_source_identical": true,
+  "red_changes_production_semantics": false,
+  "red_only_serving_change": "cfg(test) observation barrier between existing reap and accept; asserted removal exactly reconstructs original bytes",
+  "original_003_touched": false,
+  "original_003_root_cause": "UNDETERMINED: provider terminal/serve counters absent",
+  "initial_python_control_failure": {
+    "test": "test_partial_announcement_timeout_preserves_raw_bytes_and_reaps_child",
+    "result": "FAIL expected partial bytes but observed empty stdout before termination",
+    "correction": "The test now waits for actual nonempty raw stdout before starting its missing-newline timeout; production 5s announcement deadline unchanged."
+  },
+  "python_controls_after_correction": "6 passed, 0 failed",
+  "original_deadline_consumer_controls": "5 passed, 0 failed"
+}

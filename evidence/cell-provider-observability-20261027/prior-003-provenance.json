@@ -1,0 +1,26 @@
+{
+  "schema": "cell-provider-prior-failure-readonly-copy-v1",
+  "original_files_modified": false,
+  "files": [
+    {
+      "source_path": "/workspace/scratch/301262829a43/pon-hepta-impl/real-model-run-001/cell-handoff-approved-release-003/handoff.json",
+      "retained_path": "prior-003/handoff.json",
+      "bytes": 9407,
+      "sha256": "e7594fdf57973068db7fbc36cff7ca9e29ce8814574bb84a753bb1eb3f427c5b"
+    },
+    {
+      "source_path": "/workspace/scratch/301262829a43/pon-hepta-impl/real-model-run-001/cell-handoff-approved-release-003/fetch-release.log",
+      "retained_path": "prior-003/fetch-release.log",
+      "bytes": 140,
+      "sha256": "e07c396e64dd24c4959f6f4750c485bd81a40db060d0f958b417a74414d2e72d"
+    },
+    {
+      "source_path": "/workspace/scratch/301262829a43/pon-hepta-impl/real-model-run-001/cell-handoff-approved-release-003/server-stderr.log",
+      "retained_path": "prior-003/server-stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "server_stdout_present": false,
+  "provider_root_cause": "UNDETERMINED"
+}

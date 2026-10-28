@@ -1,0 +1,26 @@
+{
+  "schema": "cell-worker-window-fixed-native-tests-v1",
+  "command": [
+    "cargo",
+    "test",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "--offline",
+    "-j",
+    "1",
+    "-p",
+    "trnm-data-availability",
+    "--lib",
+    "cell::network::serving::tests",
+    "--",
+    "--test-threads=1"
+  ],
+  "returncode": 0,
+  "elapsed_seconds": 2.414806102999137,
+  "binary_sha256": "7b07ffa7eccc8a1e43cd7e22da9f2b7f1bca7a871be167b1596c17658384d55b",
+  "source_manifest": "fixed-native-build-invocation.json",
+  "loopback_authorization": "auto-review approved ephemeral localhost-only native serving suite",
+  "original_003_root_cause": "UNDETERMINED",
+  "model_transfer_pass_claimed": false
+}

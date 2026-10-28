@@ -1,0 +1,51 @@
+{
+  "schema": "cell-provider-fixed-004-handoff-v1",
+  "source_commit": "57fbdfeead5cfa1436eeef0d1691ee9933246d4d",
+  "source_tree": "ef5265fdc67141058cd4e3bde43e3170b8763dd2",
+  "source_root": "/workspace/scratch/301262829a43/pon-work-impl/integration/provider-observability21e",
+  "driver_path": "/workspace/scratch/301262829a43/pon-work-impl/integration/provider-observability21e/scripts/run_llm_cell_native_handoff.py",
+  "driver_sha256": "fe55b3d15ce6e85bbbc8fda53187ae27bc9308d5179c92b3af9dc3136eaf24ca",
+  "binary_path": "/workspace/scratch/301262829a43/pon-work-impl/artifacts/trnm-cell-provider-fixed-57fbdfe",
+  "binary_bytes": 3167448,
+  "binary_sha256": "e9b71c605cb15f37dc6522a19fffc428f455381122b76ba051c4e7d3ba3b2bb1",
+  "help_exit_code": 0,
+  "release_build_receipt": "release-build-terminal.json",
+  "source_manifest": "release-build-invocation.json",
+  "native_serving_suite": {
+    "passed": 11,
+    "failed": 0,
+    "ignored": 0,
+    "scope": "M09 native serving suite; locked offline; fresh owner compile"
+  },
+  "python_provider_tests": 6,
+  "python_original_deadline_consumer_tests": 5,
+  "m09_all_targets_strict_clippy": "PASS",
+  "context_inputs": [
+    {
+      "path": "scripts/llm_cell_release.py",
+      "sha256": "ad9d9a7124c04d87bf039d704b6f16ef34b4fde45c578a05e211719aa372c028",
+      "identical_to_original_c960": true
+    },
+    {
+      "path": "scripts/llm_neural_read_worker.py",
+      "sha256": "791fbe67ae7d2b2e0551e5f9f6fd77797ed9f8c210e7ca47f9acb6ac02895769",
+      "identical_to_original_c960": true
+    },
+    {
+      "path": "config/pon/model-family-smollm2-135m-v1.json",
+      "sha256": "0837bbfb31f3f2b9a8731545c9f742aee1ebd32daed392a936a3ec9719537e52",
+      "identical_to_original_c960": true
+    }
+  ],
+  "required_new_batch": true,
+  "original_003_modified": false,
+  "original_003_root_cause": "UNDETERMINED",
+  "transfer_seconds": 35,
+  "provider_seconds": 45,
+  "provider_workers": 2,
+  "consumer_parallelism": 2,
+  "model_transfer_already_qualified": false,
+  "independent_operators": false,
+  "native_installation_authority": false,
+  "production_activation": false
+}

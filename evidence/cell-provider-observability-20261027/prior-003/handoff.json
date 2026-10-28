@@ -1,0 +1,173 @@
+{
+  "cell_binary_sha256": "480ffbafbf93307859c87872e807b90c218c4fb9e238be04e6ac88e3daa407e6",
+  "elapsed_seconds": 30.446197899999788,
+  "error": "Command '['/workspace/scratch/301262829a43/pon-hepta-impl/chain-target/release/trnm-cell', 'fetch-release', '--cache-max-bytes', '536870912', '--cache-max-chunks', '4096', '--cache-max-manifests', '256', '--cache-max-db-bytes', '536870912', '--store', '/workspace/scratch/301262829a43/pon-hepta-impl/real-model-run-001/cell-handoff-approved-release-003/consumer.sqlite', '--release-file', '/workspace/scratch/301262829a43/pon-hepta-impl/real-model-run-001/cell-handoff-approved-release-003/source-release.tcr1', '--release', '0c3b841b42f507129d24bb3f335c90756e8057fb06883c9bf62d3100bfdd0cfd', '--peers', '127.0.0.1:38523', '--output', '/workspace/scratch/301262829a43/pon-hepta-impl/real-model-run-001/cell-handoff-approved-release-003/consumer-release.tcr1', '--max-bytes', '272189870', '--max-chunks', '269', '--overall-ms', '34999', '--request-ms', '2000', '--max-response-bytes', '555919116', '--max-connections', '560', '--parallelism', '2']' returned non-zero exit status 1.",
+  "independent_evaluation": false,
+  "independent_operators": false,
+  "members": [
+    {
+      "destination": "/workspace/scratch/301262829a43/pon-hepta-impl/real-model-run-001/cell-handoff-approved-release-003/consumer-materials/README.md",
+      "name": "base/README.md",
+      "pack": {
+        "bytes": 6772,
+        "chunks": 1,
+        "manifest": "b0f81fcbbf67a09fa727e292b1954d5812d014a8f2411335b2ff4c7965e826ce",
+        "payload_sha256": "4f97533ad95b1b2fea15fbc075c01b94578ebdd7c8138888fa43fa3abd530dc4",
+        "schema": "trnm.cell.pack.v1"
+      },
+      "source": "/workspace/scratch/301262829a43/pon-hepta-impl/materials-legacy-i09/README.md"
+    },
+    {
+      "destination": "/workspace/scratch/301262829a43/pon-hepta-impl/real-model-run-001/cell-handoff-approved-release-003/consumer-materials/config.json",
+      "name": "base/config.json",
+      "pack": {
+        "bytes": 861,
+        "chunks": 1,
+        "manifest": "e972411398c2add1e278e4d9826f3dac88914b03d04ccd6f318988c4a393f5b7",
+        "payload_sha256": "8eb740e8bbe4cff95ea7b4588d17a2432deb16e8075bc5828ff7ba9be94d982a",
+        "schema": "trnm.cell.pack.v1"
+      },
+      "source": "/workspace/scratch/301262829a43/pon-hepta-impl/materials-legacy-i09/config.json"
+    },
+    {
+      "destination": "/workspace/scratch/301262829a43/pon-hepta-impl/real-model-run-001/cell-handoff-approved-release-003/consumer-materials/generation_config.json",
+      "name": "base/generation_config.json",
+      "pack": {
+        "bytes": 132,
+        "chunks": 1,
+        "manifest": "35734e3519c70ef5694f74d895f45687b82a67935ee3b90303b6a230f74835fe",
+        "payload_sha256": "87b916edaaab66b3899b9d0dd0752727dff6666686da0504d89ae0a6e055a013",
+        "schema": "trnm.cell.pack.v1"
+      },
+      "source": "/workspace/scratch/301262829a43/pon-hepta-impl/materials-legacy-i09/generation_config.json"
+    },
+    {
+      "destination": "/workspace/scratch/301262829a43/pon-hepta-impl/real-model-run-001/cell-handoff-approved-release-003/consumer-materials/model.safetensors",
+      "name": "base/model.safetensors",
+      "pack": {
+        "bytes": 269060552,
+        "chunks": 257,
+        "manifest": "7ce4f5527917926e341944c533b33335c2af6b514f84d591c7b12f0b21a7acb0",
+        "payload_sha256": "5af571cbf074e6d21a03528d2330792e532ca608f24ac70a143f6b369968ab8c",
+        "schema": "trnm.cell.pack.v1"
+      },
+      "source": "/workspace/scratch/301262829a43/pon-hepta-impl/materials-legacy-i09/model.safetensors"
+    },
+    {
+      "destination": "/workspace/scratch/301262829a43/pon-hepta-impl/real-model-run-001/cell-handoff-approved-release-003/consumer-materials/special_tokens_map.json",
+      "name": "base/special_tokens_map.json",
+      "pack": {
+        "bytes": 655,
+        "chunks": 1,
+        "manifest": "df4114a853fd348088693bbf737535ddd8536f13f7b51203a3883f3a5f49cda0",
+        "payload_sha256": "2b7379f3ae813529281a5c602bc5a11c1d4e0a99107aaa597fe936c1e813ca52",
+        "schema": "trnm.cell.pack.v1"
+      },
+      "source": "/workspace/scratch/301262829a43/pon-hepta-impl/materials-legacy-i09/special_tokens_map.json"
+    },
+    {
+      "destination": "/workspace/scratch/301262829a43/pon-hepta-impl/real-model-run-001/cell-handoff-approved-release-003/consumer-materials/tokenizer.json",
+      "name": "base/tokenizer.json",
+      "pack": {
+        "bytes": 2104556,
+        "chunks": 3,
+        "manifest": "74ba9101fd4c11196fedda171f5adacb2e1b87024cc4f4b39753bbbe5c4868a7",
+        "payload_sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+        "schema": "trnm.cell.pack.v1"
+      },
+      "source": "/workspace/scratch/301262829a43/pon-hepta-impl/materials-legacy-i09/tokenizer.json"
+    },
+    {
+      "destination": "/workspace/scratch/301262829a43/pon-hepta-impl/real-model-run-001/cell-handoff-approved-release-003/consumer-materials/tokenizer_config.json",
+      "name": "base/tokenizer_config.json",
+      "pack": {
+        "bytes": 3764,
+        "chunks": 1,
+        "manifest": "ec0c9462d1e79f3afd6329c4d0f59e79492c1ff24000af3c7ee9c8518dcdd523",
+        "payload_sha256": "4ec77d44f62efeb38d7e044a1db318f6a939438425312dfa333b8382dbad98df",
+        "schema": "trnm.cell.pack.v1"
+      },
+      "source": "/workspace/scratch/301262829a43/pon-hepta-impl/materials-legacy-i09/tokenizer_config.json"
+    },
+    {
+      "destination": "/workspace/scratch/301262829a43/pon-hepta-impl/real-model-run-001/cell-handoff-approved-release-003/consumer-materials/material-manifest.json",
+      "name": "base/material-manifest.json",
+      "pack": {
+        "bytes": 1263,
+        "chunks": 1,
+        "manifest": "c80211d1185ff37f40706584da3d010d7c24c345e661f1439d82ea31dde88d24",
+        "payload_sha256": "6e6a76d478f28906566c1cc8db9ef767922b7a215c9f795da8d845e965c59f0c",
+        "schema": "trnm.cell.pack.v1"
+      },
+      "source": "/workspace/scratch/301262829a43/pon-hepta-impl/materials-legacy-i09/material-manifest.json"
+    },
+    {
+      "destination": "/workspace/scratch/301262829a43/pon-hepta-impl/real-model-run-001/cell-handoff-approved-release-003/consumer-parent/target-contract.json",
+      "name": "adapter/target-contract.json",
+      "pack": {
+        "bytes": 56809,
+        "chunks": 1,
+        "manifest": "c05cec73fa41dd4656b3bd17bd6883ebb762b6431d4855ec95d75c46325a7f07",
+        "payload_sha256": "8aa74f728c428a3cb27f3651a9af9ac0c4cf02cbe894995d219079f6b1cf01ca",
+        "schema": "trnm.cell.pack.v1"
+      },
+      "source": "/workspace/scratch/301262829a43/pon-hepta-impl/real-model-run-001/parent-train/execution/target-contract.json"
+    },
+    {
+      "destination": "/workspace/scratch/301262829a43/pon-hepta-impl/real-model-run-001/cell-handoff-approved-release-003/consumer-parent/wrapped-adapter.json",
+      "name": "adapter/wrapped-adapter.json",
+      "pack": {
+        "bytes": 20962,
+        "chunks": 1,
+        "manifest": "4244b0fdf4056b205585e37d4fbe2d1c6ee46bca32247419a65943f831a1401c",
+        "payload_sha256": "3ed5b3af01dd4072565fda7c2b8df7077893633410a0b1182c04dd08d532870b",
+        "schema": "trnm.cell.pack.v1"
+      },
+      "source": "/workspace/scratch/301262829a43/pon-hepta-impl/real-model-run-001/parent-train/execution/wrapped-adapter.json"
+    },
+    {
+      "destination": "/workspace/scratch/301262829a43/pon-hepta-impl/real-model-run-001/cell-handoff-approved-release-003/consumer-parent/artifact.safetensors",
+      "name": "adapter/artifact.safetensors",
+      "pack": {
+        "bytes": 933544,
+        "chunks": 1,
+        "manifest": "644c7f4dfe8654b6bdd640e84473225c2a3564e2bef3e22518eeb2e4a06b9ac3",
+        "payload_sha256": "eaa627e8937afa9f23fb8ab97c89d03f8e59748c6016cd610772bc594f81a90b",
+        "schema": "trnm.cell.pack.v1"
+      },
+      "source": "/workspace/scratch/301262829a43/pon-hepta-impl/real-model-run-001/parent-train/execution/artifact.safetensors"
+    }
+  ],
+  "native_consumer_status": "UNAVAILABLE",
+  "native_receipt_status": "UNVERIFIED",
+  "producer_cleanup_after_failure": true,
+  "product_qualification": false,
+  "production_activation": false,
+  "release": {
+    "consumer_initially_absent": true,
+    "max_connections": 560,
+    "max_response_bytes": 555919116,
+    "prepare": {
+      "cells": 11,
+      "chunks": 269,
+      "payload_bytes": 272189870,
+      "release": "0c3b841b42f507129d24bb3f335c90756e8057fb06883c9bf62d3100bfdd0cfd",
+      "schema": "trnm.cell.release.prepare.v1"
+    },
+    "selection_authority": false,
+    "source_file": "/workspace/scratch/301262829a43/pon-hepta-impl/real-model-run-001/cell-handoff-approved-release-003/source-release.tcr1",
+    "source_sha256": "01a2dd0d3328f346170faefb96a9ec2c93ef4d3148d70830d1661cabf984079e"
+  },
+  "schema": "pon-smollm-cell-native-handoff-v1",
+  "scope": "one-host-controlled-tcp-full-model-dependencies-native-consumer-unavailable",
+  "status": "failed",
+  "transfer": {
+    "all_members_verified": false,
+    "clock": "monotonic",
+    "elapsed_seconds": 2.0745968330002142,
+    "limit_seconds": 35,
+    "schema": "cell-native-aggregate-transfer-v2",
+    "scope": "listener announced through aggregate TCR1 fetch, cache-only materialization and final consumer readback; excludes packing, release preparation, provider drain and Hepta load",
+    "within_original_deadline": true
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "scope": "actual native M09 test; original serving semantics plus test-only completion barrier; not batch003 attribution",
+  "command": [
+    "cargo",
+    "test",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "--offline",
+    "-j",
+    "1",
+    "-p",
+    "trnm-data-availability",
+    "--lib",
+    "completed_after_reap_before_accept_reuses_slot_without_a_queue",
+    "--",
+    "--nocapture"
+  ],
+  "source_base": "21e3ccb5b7e5f3e60cc7e79db676e9708bea3a59",
+  "source_sha256": {
+    "trillionnium/crates/trnm-data-availability/src/cell/network/serving.rs": "2cf448e17a6b522a02c8b8e22032dcc47159c6e0666d664d164fbe12bb22a12c",
+    "trillionnium/crates/trnm-data-availability/src/cell/network/serving/tests.rs": "5be9964226f2d65e819987cd550581cd9529c666859d3301a9fef4a70cfd115f",
+    "trillionnium/Cargo.lock": "3707ed772a9fd851638dca36e5b2472ac0657de65754480c448d3078107d9ff9"
+  },
+  "returncode": 101,
+  "elapsed_seconds": 25.420794408999427
+}

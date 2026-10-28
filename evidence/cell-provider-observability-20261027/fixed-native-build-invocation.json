@@ -1,0 +1,23 @@
+{
+  "schema": "cell-worker-window-fixed-native-build-v1",
+  "command": [
+    "cargo",
+    "test",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "--offline",
+    "-j",
+    "1",
+    "-p",
+    "trnm-data-availability",
+    "--lib",
+    "--no-run"
+  ],
+  "source_base": "21e3ccb5b7e5f3e60cc7e79db676e9708bea3a59",
+  "source_sha256": {
+    "trillionnium/crates/trnm-data-availability/src/cell/network/serving.rs": "d9a0e8e4fe07b1b95b4b6f3deacb5d336a6fe9a65735d94b876f5ac11d068fe7",
+    "trillionnium/crates/trnm-data-availability/src/cell/network/serving/tests.rs": "750bc8a7ab0d970e3ab93a7b7ac4c091a94df359cdce7a04a7e7beefe07575fe",
+    "trillionnium/Cargo.lock": "3707ed772a9fd851638dca36e5b2472ac0657de65754480c448d3078107d9ff9"
+  }
+}

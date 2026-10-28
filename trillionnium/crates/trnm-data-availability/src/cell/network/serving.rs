@@ -54,6 +54,19 @@ fn join_worker(
     }
 }
 
+fn reap_finished_workers(
+    active: &mut [Option<CellServeWorker<'_>>],
+    readers: &mut [Option<CellStoreV1>],
+    report: &mut CellServeReportV1,
+    failure: &mut Option<CellErrorV1>,
+) {
+    for (slot, reader) in active.iter_mut().zip(readers) {
+        if slot.as_ref().is_some_and(|worker| worker.is_finished()) {
+            *reader = join_worker(slot.take().unwrap(), report, failure);
+        }
+    }
+}
+
 /// Each active request owns a validated read-only cache connection. Completed
 /// workers return their reader for reuse; no SQLite lock spans socket I/O.
 /// Socket timeouts and all writes use the original absolute service deadline.
@@ -92,18 +105,25 @@ fn serve_cells_inner(
             && report.accepted_connections < limits.max_connections
             && Instant::now() < deadline
         {
-            for (slot, reader) in active.iter_mut().zip(&mut readers) {
-                if slot.as_ref().is_some_and(|worker| worker.is_finished()) {
-                    *reader = join_worker(slot.take().unwrap(), &mut report, &mut failure);
-                }
-            }
+            reap_finished_workers(&mut active, &mut readers, &mut report, &mut failure);
             if failure.is_some() {
                 // Explicitly join every remaining worker before returning an error.
                 break;
             }
+            #[cfg(test)]
+            tests::observe_reap_accept_window(&active);
             match listener.accept() {
                 Ok((mut stream, _)) => {
                     report.accepted_connections += 1;
+                    if readers.iter().all(Option::is_none) {
+                        // A worker may finish after the loop's reap and before
+                        // accept. Reuse finished slots before deciding overload;
+                        // never wait or queue for a worker that is still active.
+                        reap_finished_workers(&mut active, &mut readers, &mut report, &mut failure);
+                        if failure.is_some() {
+                            break;
+                        }
+                    }
                     let Some(index) = readers.iter().position(Option::is_some) else {
                         report.overloaded_connections += 1;
                         drop(stream);

@@ -2,6 +2,87 @@ use super::*;
 use crate::cell::{fetch_cell, CellContextV1};
 use std::{fs, sync::Arc, thread::JoinHandle};
 
+thread_local! {
+    static REAP_ACCEPT_WINDOW: std::cell::RefCell<Option<mpsc::Sender<()>>> =
+        const { std::cell::RefCell::new(None) };
+}
+
+pub(super) fn observe_reap_accept_window(active: &[Option<CellServeWorker<'_>>]) {
+    if active.iter().any(Option::is_none) {
+        return;
+    }
+    REAP_ACCEPT_WINDOW.with(|hook| {
+        if let Some(ready) = hook.borrow_mut().take() {
+            ready.send(()).unwrap();
+            let deadline = Instant::now() + Duration::from_secs(2);
+            while active.iter().flatten().any(|worker| !worker.is_finished()) {
+                assert!(Instant::now() < deadline, "controlled worker completion");
+                thread::yield_now();
+            }
+        }
+    });
+}
+
+#[test]
+fn completed_after_reap_before_accept_reuses_slot_without_a_queue() {
+    let (_dir, path, manifest) = fixture();
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    let address = listener.local_addr().unwrap();
+    let (ready, window) = mpsc::channel();
+    let handle = thread::spawn(move || {
+        REAP_ACCEPT_WINDOW.with(|hook| *hook.borrow_mut() = Some(ready));
+        serve_cells_bounded(
+            &listener,
+            &path,
+            &AtomicBool::new(false),
+            CellServeLimitsV1 {
+                max_connections: 3,
+                ..limits()
+            },
+        )
+        .unwrap()
+    });
+    let request = query(&manifest);
+    let mut sockets = Vec::new();
+    for _ in 0..2 {
+        let mut socket = TcpStream::connect(address).unwrap();
+        socket
+            .set_read_timeout(Some(Duration::from_secs(2)))
+            .unwrap();
+        socket.write_all(&request[..4]).unwrap();
+        sockets.push(socket);
+    }
+    // Both slots are occupied at the initial reap. Complete those real
+    // requests inside the original reap/accept window, then offer a third.
+    window.recv_timeout(Duration::from_secs(2)).unwrap();
+    let mut third = TcpStream::connect(address).unwrap();
+    third
+        .set_read_timeout(Some(Duration::from_secs(2)))
+        .unwrap();
+    third.write_all(&request).unwrap();
+    for socket in &mut sockets {
+        socket.write_all(&request[4..]).unwrap();
+    }
+    for socket in &mut sockets {
+        let mut bytes = Vec::new();
+        socket.read_to_end(&mut bytes).unwrap();
+        assert_eq!(&bytes[9..], manifest.encode());
+    }
+    let mut third_bytes = Vec::new();
+    let third_read = third.read_to_end(&mut third_bytes);
+    let report = handle.join().unwrap();
+    assert_eq!(report.accepted_connections, 3);
+    assert_eq!(report.overloaded_connections, 0);
+    assert_eq!(report.completed_requests, 3);
+    assert_eq!(report.peak_active_workers, 2);
+    third_read.unwrap();
+    assert_eq!(&third_bytes[9..], manifest.encode());
+    assert_eq!(
+        report.sent_response_bytes,
+        3 * (manifest.encode().len() + 9) as u64
+    );
+}
+
 fn limits() -> CellServeLimitsV1 {
     CellServeLimitsV1 {
         request_timeout: Duration::from_secs(1),

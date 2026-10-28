@@ -160,17 +160,23 @@ class CellHandoffDeadlineTests(unittest.TestCase):
                 return subprocess.CompletedProcess(command, 0, json.dumps(observation), "")
 
             producer = mock.Mock()
-            producer.stdout = io.StringIO('{"address":"127.0.0.1:12345"}\n')
-            producer.poll.return_value = None
-            producer.wait.return_value = 0
-            producer.communicate.side_effect = AssertionError("late transfer must not enter success/provider-drain path")
-            selector = mock.MagicMock()
-            selector.__enter__.return_value.select.return_value = [(object(), object())]
+            producer.pid = 12345
+            producer.returncode = None
+            producer.poll.side_effect = lambda: producer.returncode
+
+            def producer_wait(**kwargs):
+                producer.returncode = 0
+                return 0
+
+            producer.wait.side_effect = producer_wait
+
+            def provider_start(command, **kwargs):
+                kwargs["stdout"].write(b'{"schema":"trnm.cell.listen.v1","address":"127.0.0.1:12345"}\n')
+                return producer
             with mock.patch.object(sys, "argv", argv), mock.patch.object(handoff.time, "monotonic", side_effect=lambda: clock[0]), \
                     mock.patch.object(handoff, "sha", side_effect=controlled_sha), \
                     mock.patch.object(handoff.subprocess, "run", side_effect=controlled_run), \
-                    mock.patch.object(handoff.subprocess, "Popen", return_value=producer), \
-                    mock.patch.object(handoff.selectors, "DefaultSelector", return_value=selector), \
+                    mock.patch.object(handoff.subprocess, "Popen", side_effect=provider_start), \
                     mock.patch("sys.stdout", new=io.StringIO()):
                 with self.assertRaisesRegex(TimeoutError, "after consumer readback"):
                     handoff.main()
@@ -183,6 +189,13 @@ class CellHandoffDeadlineTests(unittest.TestCase):
             self.assertEqual(report["transfer"]["elapsed_seconds"], 35.25)
             self.assertEqual(report["status"], "failed")
             self.assertTrue(report["producer_cleanup_after_failure"])
+            self.assertIn(b'"trnm.cell.listen.v1"',
+                          (output / "server-stdout.log").read_bytes())
+            terminal = json.loads((output / "server-terminal.json").read_text())
+            self.assertTrue(terminal["reaped"])
+            self.assertEqual(terminal["cleanup_actions"], ["terminate"])
+            self.assertEqual(json.loads((output / "server-serve-report.json").read_text())[
+                "observation"], "not_emitted")
             self.assertFalse((output / "native-config.json").exists())
             for flag in ("independent_operators", "independent_evaluation", "product_qualification", "production_activation"):
                 self.assertIs(report[flag], False)
@@ -268,21 +281,22 @@ class CellHandoffConsumerTests(unittest.TestCase):
                 report_directory = output / "original-hepta-consumer"
                 report_directory.mkdir(mode=0o700)
                 (report_directory / "native-owner-bridge-result.json").write_text(raw_report)
-            return "", None
+            return 0
 
         producer = mock.Mock()
-        producer.stdout = io.StringIO('{"address":"127.0.0.1:12345"}\n')
+        producer.pid = 12345
         producer.returncode = 0
         producer.poll.return_value = 0
-        producer.communicate.side_effect = producer_drained
-        selector = mock.MagicMock()
-        selector.__enter__.return_value.select.return_value = [(object(), object())]
+        producer.wait.side_effect = producer_drained
+
+        def provider_start(command, **kwargs):
+            kwargs["stdout"].write(b'{"schema":"trnm.cell.listen.v1","address":"127.0.0.1:12345"}\n')
+            return producer
         refusal = None
         with mock.patch.object(sys, "argv", argv), \
                 mock.patch.object(handoff.time, "monotonic", return_value=100.0), \
                 mock.patch.object(handoff.subprocess, "run", side_effect=controlled_run), \
-                mock.patch.object(handoff.subprocess, "Popen", return_value=producer), \
-                mock.patch.object(handoff.selectors, "DefaultSelector", return_value=selector), \
+                mock.patch.object(handoff.subprocess, "Popen", side_effect=provider_start), \
                 mock.patch("sys.stdout", new=io.StringIO()):
             try:
                 handoff.main()
@@ -296,6 +310,8 @@ class CellHandoffConsumerTests(unittest.TestCase):
         self.assertTrue(report["transfer"]["all_members_verified"])
         self.assertTrue(report["transfer"]["within_original_deadline"])
         self.assertEqual(report["producer_exit_code_before_consumer_load"], 0)
+        self.assertEqual(json.loads((output / "server-terminal.json").read_text())[
+            "returncode"], 0)
         self.assertEqual(report["native_consumer_status"], "UNAVAILABLE")
         self.assertEqual(report["native_receipt_status"], "UNVERIFIED")
         for flag in ("independent_operators", "independent_evaluation", "product_qualification", "production_activation"):

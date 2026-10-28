@@ -1,0 +1,19 @@
+   Compiling trnm-data-availability v0.1.0 (/workspace/scratch/301262829a43/pon-work-impl/integration/provider-observability21e/trillionnium/crates/trnm-data-availability)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 25.20s
+     Running unittests src/lib.rs (/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/trnm_data_availability-9f9e910e78507ba5)
+
+running 1 test
+
+thread 'cell::network::serving::tests::completed_after_reap_before_accept_reuses_slot_without_a_queue' (293) panicked at crates/trnm-data-availability/src/cell/network/serving/tests.rs:29:53:
+called `Result::unwrap()` on an `Err` value: Os { code: 1, kind: PermissionDenied, message: "Operation not permitted" }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test cell::network::serving::tests::completed_after_reap_before_accept_reuses_slot_without_a_queue ... FAILED
+
+failures:
+
+failures:
+    cell::network::serving::tests::completed_after_reap_before_accept_reuses_slot_without_a_queue
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 135 filtered out; finished in 0.06s
+
+error: test failed, to rerun pass `-p trnm-data-availability --lib`

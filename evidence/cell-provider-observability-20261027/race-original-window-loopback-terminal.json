@@ -1,0 +1,15 @@
+{
+  "schema": "cell-worker-window-original-native-v1",
+  "command": [
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/trnm_data_availability-9f9e910e78507ba5",
+    "--exact",
+    "cell::network::serving::tests::completed_after_reap_before_accept_reuses_slot_without_a_queue",
+    "--nocapture"
+  ],
+  "binary_sha256": "2d4b0d7d9d760ecb676439df461b055dab12e6ed07111604ecaa3094891360c6",
+  "returncode": 101,
+  "elapsed_seconds": 0.2571070399990276,
+  "scope": "actual native test with original serving semantics; test-only barrier guarantees both workers finished after reap before accept",
+  "loopback_authorization": "auto-review approved ephemeral localhost-only regression; no external service",
+  "original_003_root_cause": "UNDETERMINED"
+}
