@@ -30,13 +30,53 @@ use trnm_pon_node::{
 };
 use trnm_protocol::pon_wire::{hash, Header};
 
-const SCHEMA: &str = "pon-pure-pressure-v2";
+const SCHEMA: &str = "pon-pure-pressure-v3";
 
 fn replay(node: &mut Node, packets: &[Packet]) {
     for packet in packets {
         let id = node.admit(packet, support::now()).unwrap();
         node.activate_observed(id, support::now()).unwrap();
     }
+}
+
+fn active_position(node: &Node) -> ([u8; 32], u64, u64) {
+    // read_active() returns (tip, activation generation, State). A History
+    // page can activate several admitted blocks at once, so generation is not
+    // block height. Preserve the full state check and query that tip's record.
+    let (tip, generation, _) = node.read_active().unwrap();
+    (tip, node.parent_height(tip).unwrap(), generation)
+}
+
+#[test]
+fn native_active_position_keeps_block_height_distinct_from_generation() {
+    let temp = tempfile::tempdir().unwrap();
+    let settings = support::settings();
+    let mut producer =
+        Node::open_with_authenticated_state(&temp.path().join("producer"), settings.clone(), 1)
+            .unwrap();
+    let mut receiver =
+        Node::open_with_authenticated_state(&temp.path().join("receiver"), settings.clone(), 1)
+            .unwrap();
+    let mut tip = producer.active().unwrap().0;
+    for height in 1..=3_u64 {
+        let packet = producer
+            .make_consensus_maintenance(
+                tip,
+                vec![],
+                development_public(0).unwrap(),
+                settings.genesis_time() + height * 10,
+                4096,
+            )
+            .unwrap();
+        tip = producer.admit(&packet, support::now()).unwrap();
+        producer.activate_observed(tip, support::now()).unwrap();
+        assert_eq!(receiver.admit(&packet, support::now()).unwrap(), tip);
+    }
+    // Three real complete blocks, one activation. The former tuple-index
+    // shortcut would incorrectly report height one for this receiver.
+    receiver.activate_observed(tip, support::now()).unwrap();
+    assert_eq!(active_position(&producer), (tip, 3, 3));
+    assert_eq!(active_position(&receiver), (tip, 3, 1));
 }
 
 fn prepare(root: &Path, settings: &Settings) -> (Vec<Packet>, Vec<Packet>) {
@@ -549,10 +589,9 @@ fn phase(
                 .is_some_and(|((x, y), deadline)| x < b && y.min(deadline) > a))
             .count());
     }
-    let receiver_active = owner.lock().unwrap().read_active().unwrap();
-    let client_active = verifier.read_active().unwrap();
-    let receiver_height: u64 = receiver_active.1;
-    let client_height: u64 = client_active.1;
+    let (receiver_tip, receiver_height, receiver_generation) =
+        active_position(&owner.lock().unwrap());
+    let (client_tip, client_height, client_generation) = active_position(&verifier);
     let report = json!({"schema":SCHEMA,"phase":mode,"epoch_monotonic_ns":epoch,"window_ns":WINDOW_NS,
         "policy":support::policy_observation(),"listeners":2,"shared_cpu_domain":shared,
         "ready_actors":if mode=="baseline" {0}else{ATTACKERS},
@@ -560,11 +599,12 @@ fn phase(
         "final_budget":domain.observe().unwrap(),"final_flow":domain.observe_actual_flow().unwrap(),
         "final_admission":domain.observe_pure_admission().unwrap(),"services":services,
         "actors":actors,"submissions":submissions,"history":histories,"rounds":rounds,
-        "samples":samples,"observations":capture,"receiver_tip":hex::encode(receiver_active.0),
-        "client_tip":hex::encode(client_active.0),"receiver_height":receiver_height,"client_height":client_height,
+        "samples":samples,"observations":capture,"receiver_tip":hex::encode(receiver_tip),
+        "client_tip":hex::encode(client_tip),"receiver_height":receiver_height,"client_height":client_height,
+        "receiver_generation":receiver_generation,"client_generation":client_generation,
         "errors":errors,"public_fairness_qualified":false,"production_qualified":false,
         "work_hardness_qualified":false,"installation_authorized":false});
-    // read_active() is (tip, height, State); a State must never be emitted as a height.
+    // Height comes from the active block record, not its activation generation.
     assert!(report["receiver_height"].is_u64() && report["client_height"].is_u64());
     report
 }

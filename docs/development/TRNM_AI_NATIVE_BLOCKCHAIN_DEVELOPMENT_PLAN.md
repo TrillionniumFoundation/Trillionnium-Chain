@@ -151,10 +151,14 @@ unrestricted Sybil fairness; fresh-challenge attacks remain real work.
 The supplemental fixed 24-actor/three-30-second campaign requires receiver-side
 work, actual shared CPU depletion and honest round overlap, plus true 64-slot
 capacity churn. Its reader preserves valid failed observations and refuses
-unearned finite qualification. Original failures are not replaced by this new
-campaign. The native original campaign's four JSON confirmation accesses are
-repaired to exact typed `Some(true/false)` / depth-six comparisons; missing or
-ill-typed fields still reject, with no timer, overlap condition or workload change.
+unearned finite qualification. The [two retained local observations](../../evidence/pon-pure-admission-daa-v2-local/README.md)
+both failed honest service: respectively 3/2/3 and 3/3/2 completed rounds across
+the three phases. Their raw reports and telemetry defects remain archived.
+The final collector obtains real height by active tip, records generation
+separately and checks fresh paid-credit depletion. Its corrected stored evidence
+uses a new v3 namespace; the transport remains pure-v2. The original campaign
+source, workload, limits and historical failures remain unchanged. Final exact
+head CI must supply the corrected campaign's own observation.
 
 The conditional PoN DAA model includes task/solver costs, witness/publication
 latency, producer rate changes, hidden branches and full-cost quantum hypotheses,

@@ -100,7 +100,8 @@ def phase(name, business):
               "services": [{"Ok": {"mutation_cpu_clock_failures": 0}} for _ in range(2)],
               "actors": [], "submissions": [], "history": [], "rounds": [], "samples": [],
               "observations": [], "receiver_tip": business[-1]["id"], "client_tip": business[-1]["id"],
-              "receiver_height": 25, "client_height": 25, "errors": [],
+              "receiver_height": 25, "client_height": 25,
+              "receiver_generation": 25, "client_generation": 7, "errors": [],
               "public_fairness_qualified": False, "production_qualified": False,
               "work_hardness_qualified": False, "installation_authorized": False}
     native, rejected = [[], []], [[], [], []]
@@ -425,6 +426,28 @@ class QualificationControls(unittest.TestCase):
         result = reader.check_phase(value, self.business)
         self.assertFalse(result["service_qualified"])
         self.assertFalse(result["finite_qualification"])
+
+    def test_activation_generation_cannot_be_reported_as_active_block_height(self):
+        # A client can activate one completed multi-block History range at a
+        # time. Its generation seven and block height twenty-five are distinct.
+        self.assertEqual(self.base["client_generation"], 7)
+        self.assertEqual(self.base["client_height"], 25)
+        self.assertTrue(reader.check_phase(self.base, self.business)["service_qualified"])
+        for owner in ("receiver", "client"):
+            value = copy.deepcopy(self.base)
+            value[owner + "_height"] = 7
+            with self.subTest(owner), self.assertRaisesRegex(ValueError, "active block height association"):
+                reader.check_phase(value, self.business)
+
+    def test_prior_evidence_schema_cannot_obtain_current_qualification(self):
+        value = copy.deepcopy(self.base)
+        value["schema"] = "pon-pure-pressure-v2"
+        with self.assertRaises(ValueError):
+            reader.check_phase(value, self.business)
+        old_preparation = copy.deepcopy(self.prepared)
+        old_preparation["schema"] = "pon-pure-pressure-v2"
+        with self.assertRaises(ValueError):
+            reader.preparation(old_preparation)
 
     def test_hashcash_deadline_extra_credit_and_split_domain_rejected(self):
         controls = [("policy", "ticket_bits", 8), ("policy", "lifetime_ms", 3000),

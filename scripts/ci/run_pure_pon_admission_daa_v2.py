@@ -24,7 +24,7 @@ from verify_ci_source import verify
 
 TOOLCHAIN = "1.95.0"
 NATIVE_GATES = frozenset({"transparent-complete-proof", "pure-runtime", "pure-cli",
-                          "native-confirmation-risk", "pure-pressure"})
+                          "native-confirmation-risk", "pressure-observation-contract", "pure-pressure"})
 BUILD_OVERRIDES = frozenset(bounds.BUILD_ENV) | {
     "RUSTDOC", "RUSTDOCFLAGS", "CARGO_ENCODED_RUSTDOCFLAGS", "RUSTC_BOOTSTRAP",
     "RUSTC_FORCE_UNSTABLE", "CARGO_BUILD_RUSTDOC", "CARGO_BUILD_RUSTDOCFLAGS",
@@ -243,6 +243,8 @@ def main():
             native("pure-runtime", "trnm_pon_node", ["ingress::public_v3::", "host_kernel_parent::"])
             native("pure-cli", "pure_pon_cli", [])
             native("native-confirmation-risk", "pon_confirmation_risk_v1", [])
+            native("pressure-observation-contract", "pure_pon_pressure_v2",
+                   ["--exact", "native_active_position_keeps_block_height_distinct_from_generation"])
             # Run once. Always retain and independently read failure/partial data.
             pressure_env = dict(env, TRNM_PURE_PRESSURE_V2_OUT=str(out / "pressure-native"))
             native("pure-pressure", "pure_pon_pressure_v2",

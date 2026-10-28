@@ -130,11 +130,16 @@ The research API cannot silently replace the current full native verifier.
 
 The new `pure_pon_pressure_v2` test and independent
 `check_pure_pon_pressure_v2.py` reader leave the old r13 and pure-v1 campaigns
-intact. Each phase uses a new zero-credit receiver epoch with two actual TCP
+intact. The corrected stored evidence uses the fresh `pon-pure-pressure-v3`
+namespace and `pon-pure-pressure-qualification-v3` verdicts. Old v2 telemetry
+cannot receive the new qualification; the signed pure-v2 transport identity
+and resource supply are unchanged. Each phase uses a new zero-credit receiver epoch with two actual TCP
 listeners sharing one account. The phases are the original 30 s baseline,
 30 s from-zero attack and 30 s correct-product/false-trace attack. Attack
 phases have 24 separate actors and at most 480 calls each; honest calls retain
-their 2 s deadline. The native fixture contains four 256-transfer seed blocks
+their 2 s network deadline. Local History replay and the resulting confirmation
+must finish inside the 30 s phase; they are not claimed to finish inside the
+preceding network call's 2 s deadline. The native fixture contains four 256-transfer seed blocks
 and 21 business blocks, with three signed business transactions, History
 replay and three depth-six confirmation rounds per phase.
 
@@ -169,9 +174,12 @@ exhaustion for the whole round; the observation never calls actual refill or
 changes the resource supply.
 
 The [retained local observations](../../../../evidence/pon-pure-admission-daa-v2-local/README.md)
-include the initial failed workload and its telemetry defects. A subsequent
-measurement of corrected telemetry cannot replace the original failure or turn
-shared local hardware into the declared CI or receiver-kernel envelope.
+include two failed workloads and their telemetry defects. The native round
+counts were 3/2/3 and 3/3/2 across the three phases. Neither observation qualifies
+honest service. The final collector distinguishes actual block height from
+activation generation and has a three-block, one-activation native regression.
+Later corrected telemetry cannot replace these failures or turn shared local
+hardware into the declared CI or receiver-kernel envelope.
 
 ## PoN-specific DAA and confirmation experiment
 

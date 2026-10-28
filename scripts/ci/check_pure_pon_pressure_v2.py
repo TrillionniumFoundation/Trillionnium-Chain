@@ -12,7 +12,7 @@ import math
 from pathlib import Path
 import struct
 
-SCHEMA = "pon-pure-pressure-v2"
+SCHEMA = "pon-pure-pressure-v3"
 PROFILE = "public-pure-pon-development-v2"
 # The 0-bit, 2000ms policy vector is independently pinned by the native
 # pure_admission_v2 signature-domain tests. A different digest needs a reviewed
@@ -512,7 +512,14 @@ def check_phase(report, business):
     churn_required = report["phase"] == "correct-product-false-trace"
     churn_observed = len(fresh_published) >= 65
     churn = not churn_required or churn_observed
-    require(natural(report["receiver_height"]) and natural(report["client_height"]), "native height type")
+    heights = {business[0]["header"][70:102].hex(): business[0]["height"] - 1}
+    heights.update({packet["id"]: packet["height"] for packet in business})
+    for owner in ("receiver", "client"):
+        require(natural(report[owner + "_height"]) and natural(report[owner + "_generation"])
+                and report[owner + "_generation"] <= U64_MAX, "native height/generation type")
+        require(report[owner + "_tip"] in heights
+                and report[owner + "_height"] == heights[report[owner + "_tip"]],
+                "active block height association; activation generation is not height")
     service = (len(round_reports) == ROUNDS and all(r["qualified_confirmation"] for r in round_reports)
                and report["receiver_tip"] == report["client_tip"] == business[-1]["id"]
                and report["receiver_height"] == report["client_height"] == 25
@@ -563,7 +570,7 @@ def check(manifest, prepared, phases):
                 "manifest hid failed confirmation")
         reports.append(report)
     qualified = all(p["finite_qualification"] for p in reports)
-    return {"schema": "pon-pure-pressure-qualification-v2", "input_consistent": True,
+    return {"schema": "pon-pure-pressure-qualification-v3", "input_consistent": True,
             "finite_qualification": qualified, "phases": reports,
             "public_fairness_qualified": False, "production_qualified": False,
             "work_hardness_qualified": False, "installation_authorized": False,
@@ -603,7 +610,7 @@ def main():
         result = check(load(args.directory / "campaign.json"), load(args.directory / "preparation.json"),
                        [load(args.directory / (p + ".json")) for p in PHASES])
     except (ValueError, KeyError, TypeError, OSError) as error:
-        result = {"schema": "pon-pure-pressure-qualification-v2", "input_consistent": False,
+        result = {"schema": "pon-pure-pressure-qualification-v3", "input_consistent": False,
                   "finite_qualification": False, "error": str(error),
                   "public_fairness_qualified": False, "production_qualified": False,
                   "work_hardness_qualified": False, "installation_authorized": False}
