@@ -20,6 +20,7 @@ pub mod pinned_account_query;
 pub(crate) mod pq_accounts_v2;
 pub(crate) mod pq_native_v1;
 pub(crate) mod pq_quota_v3;
+pub(crate) mod pq_tasks_v4;
 #[cfg(test)]
 pub(crate) mod public_reader;
 mod root_rejection_cache;
@@ -164,6 +165,7 @@ pub(crate) enum ParentTaskEligibility {
     ConsensusMaintenance,
     Signed(Box<QualifiedWorkTask>),
     Lifecycle(Box<qualified_task_lifecycle::EligibleLifecycleTask>),
+    PqTask(Box<trnm_mvcc_fee::pon_executor::pq_accounts_v2::tasks_v4::EligibleTaskV4>),
 }
 impl ParentTaskEligibility {
     fn manifest(&self) -> Option<&QualifiedWorkTask> {
@@ -171,6 +173,7 @@ impl ParentTaskEligibility {
             Self::Legacy | Self::ConsensusMaintenance => None,
             Self::Signed(manifest) => Some(manifest),
             Self::Lifecycle(eligible) => Some(eligible.manifest()),
+            Self::PqTask(eligible) => Some(eligible.manifest()),
         }
     }
 }
@@ -701,7 +704,9 @@ impl StateBackend {
         }
     }
     fn selected_ddl(self, settings: &Settings) -> String {
-        if settings.is_native_pq_v3() {
+        if settings.is_native_pq_v4() {
+            pq_tasks_v4::ddl(self.ddl())
+        } else if settings.is_native_pq_v3() {
             pq_quota_v3::ddl(self.ddl())
         } else if settings.is_native_pq_v2() {
             pq_accounts_v2::ddl(self.ddl())
@@ -712,6 +717,12 @@ impl StateBackend {
         }
     }
     fn selected_schema_id(self, settings: &Settings) -> Hash {
+        if settings.is_native_pq_v4() {
+            return hash(
+                b"native-pq-task-branch-schema-v4",
+                &[self.selected_ddl(settings).as_bytes()],
+            );
+        }
         if settings.is_native_pq_v3() {
             return hash(
                 b"native-pq-quota-branch-schema-v3",
@@ -2312,6 +2323,10 @@ impl Node {
             .map_err(|error| Error::from(error).local_integrity())?;
         trnm_mvcc_fee::pon_executor::pq_native_v1::validate_state(state, &self.settings.app)
             .map_err(|error| Error::from(error).local_integrity())?;
+        if self.settings.is_native_pq_v4() {
+            trnm_mvcc_fee::pon_executor::pq_accounts_v2::validate_state(state, &self.settings.app)
+                .map_err(|error| Error::from(error).local_integrity())?;
+        }
         // The native complete-state commitment may already contain this exact
         // full root. Compare all current State bytes before arithmetic reuse;
         // a miss retains the original root calculation and error order. Actual
@@ -2537,7 +2552,10 @@ impl Node {
             trnm_mvcc_fee::pon_executor::pq_native_v1::validate_state(actual, &self.settings.app)
                 .map_err(|error| Error::from(error).local_integrity())?;
         }
-        if self.settings.is_native_pq_v2() || self.settings.is_native_pq_v3() {
+        if self.settings.is_native_pq_v2()
+            || self.settings.is_native_pq_v3()
+            || self.settings.is_native_pq_v4()
+        {
             trnm_mvcc_fee::pon_executor::pq_accounts_v2::validate_state(actual, &self.settings.app)
                 .map_err(|error| Error::from(error).local_integrity())?;
         }
@@ -4502,6 +4520,7 @@ impl Node {
         let signed = eligible.manifest().ok_or("TASK_MANIFEST")?;
         let statement_id = match &eligible {
             ParentTaskEligibility::Lifecycle(task) => task.statement_id(),
+            ParentTaskEligibility::PqTask(task) => task.statement_id(),
             _ => signed.id().map_err(|_| Error::from("TASK_MANIFEST"))?,
         };
         ensure(
@@ -4567,6 +4586,7 @@ impl Node {
         let signed = eligible.manifest().ok_or("TASK_MANIFEST")?;
         let statement_id = match &eligible {
             ParentTaskEligibility::Lifecycle(task) => task.statement_id(),
+            ParentTaskEligibility::PqTask(task) => task.statement_id(),
             _ => signed.id().map_err(|_| Error::from("TASK_MANIFEST"))?,
         };
         ensure(
@@ -4632,6 +4652,15 @@ impl Node {
         {
             continuity_v1::check_maintenance(state, task, &self.settings.app)?;
             return Ok(ParentTaskEligibility::ConsensusMaintenance);
+        }
+        if self.settings.is_native_pq_v4() {
+            let eligible = trnm_mvcc_fee::pon_executor::pq_accounts_v2::tasks_v4::eligible_task(
+                state,
+                task,
+                height,
+                &self.settings.app,
+            )?;
+            return Ok(ParentTaskEligibility::PqTask(Box::new(eligible)));
         }
         if matches!(
             self.settings.task_profile(),
@@ -4885,6 +4914,18 @@ impl Node {
         product: &[u8],
     ) -> Result<bool> {
         match eligible {
+            ParentTaskEligibility::PqTask(task) => {
+                ensure(product.len() == pon_work::CELLS * 4, "TASK_OUTPUT")?;
+                Ok(
+                    trnm_mvcc_fee::pon_executor::pq_accounts_v2::tasks_v4::consume_output(
+                        state,
+                        task,
+                        hash(b"qualified-task-product-v1", &[product]),
+                        height,
+                        &self.settings.app,
+                    )?,
+                )
+            }
             ParentTaskEligibility::Lifecycle(task) => {
                 ensure(product.len() == pon_work::CELLS * 4, "TASK_OUTPUT")?;
                 Ok(qualified_task_lifecycle::consume_output(
@@ -5059,6 +5100,7 @@ impl Node {
                 )
                 .map_err(Error::local_integrity)?;
                 self.check_events_with_progress(next, &[(0, 1, target)], progress)?;
+                self.pq_tasks_remember_revocations(target, next)?;
                 Ok(())
             })?;
             ensure(
@@ -5374,6 +5416,11 @@ impl Node {
             .map_err(Error::local_integrity)?;
             self.check_reorg_row(old, target, g, count, 1)?;
             self.check_events_with_progress(g, &expected, progress)?;
+            for &(_, kind, id) in &expected {
+                if kind == 1 {
+                    self.pq_tasks_remember_revocations(id, g)?;
+                }
+            }
             self.check_persisted_state(
                 target,
                 &self.slot_state_with_progress(g, progress)?,
