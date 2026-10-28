@@ -1,0 +1,40 @@
+{
+  "schema": "pon-w1-actual-process-v2",
+  "command": [
+    "python3",
+    "/workspace/scratch/bb9b841c1d43/w1-integration-a54/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_frozen_witness.py"
+  ],
+  "started_utc": "2026-10-28T00:45:59.102423+00:00",
+  "timeout_seconds": 60,
+  "source_sha": null,
+  "timed_out": false,
+  "consensus_authority": false,
+  "child_pid": 14,
+  "child_returncode": 0,
+  "child_reaped": true,
+  "cleanup_actions": [],
+  "cleanup_errors": [],
+  "subreaper_enabled": true,
+  "leader_exited_before_group": false,
+  "adopted_child_terminals": [],
+  "owned_process_group_empty": true,
+  "returncode": 0,
+  "wall_seconds": 3.3785020319992327,
+  "user_cpu_seconds": 1.5401509999999998,
+  "system_cpu_seconds": 0.805526,
+  "max_waited_descendant_rss_kib": 47804,
+  "rss_scope": "maximum reported for the waited child family; not total cgroup peak",
+  "finished_utc": "2026-10-28T00:46:02.480962+00:00",
+  "raw_logs": {
+    "stdout": {
+      "path": "frozen-witness-controls.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "frozen-witness-controls.stderr.log",
+      "bytes": 115,
+      "sha256": "950f1fab766d79ff8974e43295ead41c9b36f4abc89ca3dc217429e8787a087a"
+    }
+  }
+}

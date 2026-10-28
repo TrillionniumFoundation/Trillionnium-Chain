@@ -1,0 +1,8 @@
+{
+  "fresh_execution_role": "independent-full-statement-control",
+  "legacy_policy_sha256": "8e1b8d1c8ece0fad8e8d6eb7dfe1d4918ec8029db5c8dd9fe2844dcf741b0897",
+  "mix_fresh_and_original_witnesses": false,
+  "native_receipt_claim_binding_required": true,
+  "schema": "pon-w1-frozen-witness-continuation-policy-v2",
+  "witness_source": "byte-exact-original-archive"
+}

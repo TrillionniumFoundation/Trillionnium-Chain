@@ -4709,3 +4709,38 @@ Original Rust assembly/verifier, source pins and budgets remain fixed. The
 corrected heavy run, complete receipt, hostile-proof costs and real-receipt
 propagation remain NOT_RUN at this source freeze; both actual failed attempts
 remain failures with costs spent.
+
+### P0 W1 — frozen witness v2 after an actual fresh-trace refusal (2026-10-28)
+
+Actual v1 run `40606062524` at `8a99968115d76069dc4cc49607929f42d183ad1b`
+failed both continuation shards before any missing segment proof. The original
+26 receipts and all 62 original witnesses remain intact. Complete byte decoding
+and the fixed ELF symbol table identify the difference as the SDK's 16-byte
+`MEMORY_IMAGE_ENTROPY` at `0x223b00`, initialized through `SYS_RANDOM` before
+main; the changed segment roots prevent mixing the fresh trace with old receipts.
+
+The [explicit v2 successor](../../trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/CONTINUATION_V2.md)
+continues only exact archived witnesses and retains v1's refusal and logs. The
+30 original source pins, image/input/complete W1 relation, lockfile, disabled
+extra PoW and proof resource/time budgets remain unchanged. Fresh execution is
+an independent complete-statement control. A new native SDK helper binds and
+verifies original and new receipts against frozen per-segment claims, and
+assembly repeats that verification for all 62 before the unchanged Composite
+verifier. [Evidence](../../evidence/pon-w1-frozen-witness-v2-20261028/README.md)
+retains the full original/fresh field comparison and strict provenance controls.
+The original timeout remains spent, and successful continuation would not be a
+from-zero complete-proof cost measurement. Full proof, real hostile-proof costs
+and real proof propagation require a completed new run; they are not closed by
+source changes or local controls.
+
+### P0 W1 — preserve concurrent repair and integrate native frozen claims (2026-10-28)
+
+Publication readback found that #519 had advanced concurrently to `a54dc735`.
+The [integration evidence](../../evidence/pon-w1-frozen-integration-20261028/README.md)
+preserves that repair and the separate frozen helper candidate as two parents.
+The concurrent policy/parser/45 controls remain byte-identical; the helper
+policy now binds that exact policy hash. The integrated workflow's exact
+45 continuation and 16 frozen-witness controls passed, as did 34 source
+negatives and backend formatting. Native actual-26 verification and missing
+segment proving remain required hosted gates; two honest local disk-floor
+build stops do not satisfy them. No whole-proof exit is marked closed.

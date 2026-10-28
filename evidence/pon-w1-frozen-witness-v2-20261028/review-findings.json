@@ -1,0 +1,12 @@
+{
+  "reviewer": "parallel pq agent",
+  "finding": "workflow global rename made selector reference nonexistent test_segment_continue_v2.py",
+  "status": "fixed before publication",
+  "correction": "explicitly run retained v1 test_segment_continue.py and new test_frozen_witness.py under separate original 60-second controls",
+  "second_finding": {
+    "finding": "report accepted earlier logs without rechecking equal-length final input content, assembly claim JSON or receipt input files",
+    "status": "fixed before publication",
+    "correction": "exact original ELF/input and frozen session readback; reconstruct all62actual receipts from original+shards; compare assembly claims and exact receipt files again",
+    "new_controls": 2
+  }
+}

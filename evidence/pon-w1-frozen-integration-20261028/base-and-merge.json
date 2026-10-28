@@ -1,0 +1,15 @@
+{
+  "base": "a54dc7355f58f40784b5a71fe7e73c4062a14951",
+  "complete_proof_observed": false,
+  "frozen_helper_parent": "1368c139dbb2d2f174acd849d6f3c38b68f8d93a",
+  "legacy_policy_sha256": "8e1b8d1c8ece0fad8e8d6eb7dfe1d4918ec8029db5c8dd9fe2844dcf741b0897",
+  "local_actual_native_verification": "NOT_RUN_DISK_FLOOR",
+  "local_prover_started": false,
+  "merge_conflict_paths": [
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/README.md"
+  ],
+  "native_helper_bytes_changed": false,
+  "resolution": "preserve both contribution sections; remove obsolete duplicate introductory sentence",
+  "schema": "pon-w1-frozen-witness-integration-observation-v1"
+}

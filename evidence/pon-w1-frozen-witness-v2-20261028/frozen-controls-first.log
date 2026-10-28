@@ -1,0 +1,19 @@
+test_actual_fresh_export_is_independent_control_and_v1_still_rejects (test_frozen_witness.FrozenWitnessControls.test_actual_fresh_export_is_independent_control_and_v1_still_rejects) ... ok
+test_fresh_claim_bytes_and_input_bytes_cannot_be_substituted (test_frozen_witness.FrozenWitnessControls.test_fresh_claim_bytes_and_input_bytes_cannot_be_substituted) ... ok
+test_fresh_original_boundary_splice_refused_even_after_rehash (test_frozen_witness.FrozenWitnessControls.test_fresh_original_boundary_splice_refused_even_after_rehash) ... ok
+test_fresh_trace_edit_requires_its_exact_new_raw_hash (test_frozen_witness.FrozenWitnessControls.test_fresh_trace_edit_requires_its_exact_new_raw_hash) ... ok
+test_fresh_w1_header_claim_input_and_unknown_metadata_refused (test_frozen_witness.FrozenWitnessControls.test_fresh_w1_header_claim_input_and_unknown_metadata_refused) ... ok
+test_known_entropy_difference_and_unchanged_ordered_other_reads (test_frozen_witness.FrozenWitnessControls.test_known_entropy_difference_and_unchanged_ordered_other_reads) ... ok
+test_missing_and_extra_frozen_paths_refused (test_frozen_witness.FrozenWitnessControls.test_missing_and_extra_frozen_paths_refused) ... ok
+test_missing_reordered_and_duplicate_witness_refused (test_frozen_witness.FrozenWitnessControls.test_missing_reordered_and_duplicate_witness_refused) ... ok
+test_missing_v2_policy_has_no_silent_generation (test_frozen_witness.FrozenWitnessControls.test_missing_v2_policy_has_no_silent_generation) ... ok
+test_original_62_witnesses_and_61_boundaries_decode_completely (test_frozen_witness.FrozenWitnessControls.test_original_62_witnesses_and_61_boundaries_decode_completely) ... ok
+test_sdk_shape_truncation_trailing_and_unbounded_length_refused (test_frozen_witness.FrozenWitnessControls.test_sdk_shape_truncation_trailing_and_unbounded_length_refused) ... ok
+test_single_byte_raw_mutation_and_claim_replacement_refused (test_frozen_witness.FrozenWitnessControls.test_single_byte_raw_mutation_and_claim_replacement_refused) ... ok
+test_substituted_fresh_witness_never_continues_original_receipts (test_frozen_witness.FrozenWitnessControls.test_substituted_fresh_witness_never_continues_original_receipts) ... ok
+test_v2_policy_cannot_relax_source_or_allow_mixing (test_frozen_witness.FrozenWitnessControls.test_v2_policy_cannot_relax_source_or_allow_mixing) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 1.061s
+
+OK

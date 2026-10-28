@@ -1,0 +1,36 @@
+{
+  "a54_exact_files_preserved": {
+    "segment-continuation.json": true,
+    "segment_continue.py": true,
+    "segment_continue_source.py": true,
+    "test_segment_continue.py": true
+  },
+  "missing_backend_paths": [],
+  "native_helper_sha256": "830de1d59d9839a5e4c24da3f77253bc94ebbabded665d06e3df2da24f8adfed",
+  "native_helper_unchanged_from_1368": true,
+  "original_archive_members": 315,
+  "original_source_pins_unchanged": 30,
+  "original_witness_count": 62,
+  "workflow_backend_paths": [
+    "Cargo.toml",
+    "analyze_costs.py",
+    "backend-manifest.json",
+    "build_guest.py",
+    "check_observations.py",
+    "host_linker_bfd.sh",
+    "install_backend.py",
+    "measure_loopback.py",
+    "measure_step.py",
+    "prove_segments.py",
+    "receipt_reuse.py",
+    "segment_continue_v2.py",
+    "soundness_report.py",
+    "test_frozen_native.py",
+    "test_frozen_witness.py",
+    "test_measure_loopback.py",
+    "test_measure_step.py",
+    "test_receipt_reuse.py",
+    "test_segment_continue.py",
+    "test_segment_scheduler.py"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "initial_cargo_check_offline": {
+    "returncode": 101,
+    "error": "cannot checkout locked sha2 Git revision in offline mode; subsequent authorized network check running"
+  },
+  "initial_parser_control": {
+    "returncode": 1,
+    "error": "witness initial image differs",
+    "cause": "raw memory root differs from tagged SystemState image_id; initial binding moved to official SDK SystemState.digest in native helper"
+  },
+  "complete_proof": false
+}

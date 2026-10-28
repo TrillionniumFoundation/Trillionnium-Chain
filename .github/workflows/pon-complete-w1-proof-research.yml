@@ -46,13 +46,16 @@ jobs:
         run: |
           set -euo pipefail
           trap 'cp "$GITHUB_OUTPUT" "$OUT/selector.outputs"' EXIT
-          python3 "$BACKEND/segment_continue.py" select 2>&1 | tee "$OUT/selector.log"
+          python3 "$BACKEND/segment_continue_v2.py" select 2>&1 | tee "$OUT/selector.log"
       - name: Reject missing or unknown selector output
         if: ${{ steps.selection.outputs.mode != 'continue' && steps.selection.outputs.mode != 'generate' }}
         run: exit 1
       - name: Check continuation policy and same-session controls
         if: ${{ steps.selection.outputs.mode == 'continue' }}
-        run: python3 "$BACKEND/measure_step.py" --out "$OUT" --name continuation-controls --timeout 60 -- python3 "$BACKEND/test_segment_continue.py"
+        run: |
+          set -euo pipefail
+          python3 "$BACKEND/measure_step.py" --out "$OUT" --name continuation-controls --timeout 60 -- python3 "$BACKEND/test_segment_continue.py"
+          python3 "$BACKEND/measure_step.py" --out "$OUT" --name frozen-witness-controls --timeout 60 -- python3 "$BACKEND/test_frozen_witness.py"
       - name: Verify selector source did not change
         if: always()
         run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$OUT/source-after.json"
@@ -216,7 +219,7 @@ jobs:
           if-no-files-found: error
           retention-days: 30
   continuation:
-    name: same-session continuation shard ${{ matrix.shard }} (new independent budget)
+    name: frozen-witness v2 continuation shard ${{ matrix.shard }} (new independent budget)
     needs: proof-selector
     if: ${{ needs.proof-selector.outputs.mode == 'continue' }}
     strategy:
@@ -310,6 +313,11 @@ jobs:
           python3 "$BACKEND/measure_step.py" --out "$OUT" --name bake --timeout 60 -- "$CARGO_TARGET_DIR/release/trnm-w1-risc0-host" bake "$OUT/guest.raw.elf" "$OUT/guest.bin"
           python3 "$BACKEND/check_observations.py" --out "$OUT" --build-only
           rm -rf "$WORK/backend/guest-compiler" "$WORK/guest-target"
+      - name: Bind actual original receipts and reject frozen-claim substitutions
+        run: |
+          python3 "$BACKEND/measure_step.py" --out "$OUT" --name native-frozen-controls --timeout 300 -- \
+            python3 "$BACKEND/test_frozen_native.py" --helper "$CARGO_TARGET_DIR/release/check_frozen_receipts" \
+            --out "$OUT/native-frozen-controls"
       - name: Execute the full pinned W1 image
         run: python3 "$BACKEND/measure_step.py" --out "$OUT" --name execute --timeout 300 -- "$CARGO_TARGET_DIR/release/trnm-w1-risc0-host" execute "$WORK/backend/tools/r0vm" "$OUT/guest.bin" "$OUT/input.bin" 18
       - name: Check real process retention controls
@@ -327,16 +335,17 @@ jobs:
             python3 "$BACKEND/measure_step.py" --out "$OUT" --name "prepare-$case" --timeout 60 -- "$host" make-invalid "$OUT/input.bin" "$case" "$OUT/$case.bin"
             python3 "$BACKEND/measure_step.py" --out "$OUT" --name "guest-$case" --timeout 300 -- "$host" reject-input "$WORK/backend/tools/r0vm" "$OUT/guest.bin" "$OUT/$case.bin" 18 "$case"
           done
-      - name: Continue only the fixed missing same-session segment shard
+      - name: Continue only the fixed missing original-witness segment shard
         run: |
           set -euo pipefail
           python3 "$BACKEND/measure_step.py" --out "$OUT" --name continue --timeout 3600 --sample-proc-group -- \
-            python3 "$BACKEND/segment_continue.py" prove --out "$OUT" \
+            python3 "$BACKEND/segment_continue_v2.py" prove --out "$OUT" \
             --host "$CARGO_TARGET_DIR/release/trnm-w1-risc0-host" \
-            --r0vm "$WORK/backend/tools/r0vm" --elf "$OUT/guest.bin" --input "$OUT/input.bin" --shard "$SHARD"
+            --r0vm "$WORK/backend/tools/r0vm" --elf "$OUT/guest.bin" --input "$OUT/input.bin" --shard "$SHARD" \
+            --helper "$CARGO_TARGET_DIR/release/check_frozen_receipts"
       - name: Retain actual continuation terminals after cleanup, including failures
         if: always()
-        run: python3 "$BACKEND/segment_continue.py" finalize --out "$OUT"
+        run: python3 "$BACKEND/segment_continue_v2.py" finalize --out "$OUT"
       - name: Verify continuation source did not change
         if: always()
         run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$OUT/source-after.json"
@@ -436,6 +445,11 @@ jobs:
           python3 "$BACKEND/measure_step.py" --out "$OUT" --name bake --timeout 60 -- "$CARGO_TARGET_DIR/release/trnm-w1-risc0-host" bake "$OUT/guest.raw.elf" "$OUT/guest.bin"
           python3 "$BACKEND/check_observations.py" --out "$OUT" --build-only
           rm -rf "$WORK/backend/guest-compiler" "$WORK/guest-target"
+      - name: Bind actual original receipts and reject frozen-claim substitutions
+        run: |
+          python3 "$BACKEND/measure_step.py" --out "$OUT" --name native-frozen-controls --timeout 300 -- \
+            python3 "$BACKEND/test_frozen_native.py" --helper "$CARGO_TARGET_DIR/release/check_frozen_receipts" \
+            --out "$OUT/native-frozen-controls"
       - name: Execute the full pinned W1 image
         run: python3 "$BACKEND/measure_step.py" --out "$OUT" --name execute --timeout 300 -- "$CARGO_TARGET_DIR/release/trnm-w1-risc0-host" execute "$WORK/backend/tools/r0vm" "$OUT/guest.bin" "$OUT/input.bin" 18
       - name: Check real process retention controls
@@ -479,8 +493,9 @@ jobs:
         run: |
           set -euo pipefail
           python3 "$BACKEND/measure_step.py" --out "$OUT" --name assembly --timeout 300 -- \
-            python3 "$BACKEND/segment_continue.py" assemble --out "$OUT" \
-            --host "$CARGO_TARGET_DIR/release/trnm-w1-risc0-host" --elf "$OUT/guest.bin" --input "$OUT/input.bin"
+            python3 "$BACKEND/segment_continue_v2.py" assemble --out "$OUT" \
+            --host "$CARGO_TARGET_DIR/release/trnm-w1-risc0-host" --elf "$OUT/guest.bin" --input "$OUT/input.bin" \
+            --helper "$CARGO_TARGET_DIR/release/check_frozen_receipts"
       - name: Independently verify and attack the actual assembled proof
         run: |
           set -euo pipefail
@@ -492,7 +507,7 @@ jobs:
         run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$OUT/source-after.json"
       - name: Report original failure and independent continuation costs without a fake prove phase
         if: always()
-        run: python3 "$BACKEND/segment_continue.py" report --out "$OUT"
+        run: python3 "$BACKEND/segment_continue_v2.py" report --out "$OUT"
       - name: Measure actual loopback transfer between two fresh native verifications
         if: ${{ success() }}
         run: |

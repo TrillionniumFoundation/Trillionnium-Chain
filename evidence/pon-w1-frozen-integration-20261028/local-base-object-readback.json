@@ -1,0 +1,9 @@
+{
+  "base_tree_changed": false,
+  "base_tree_file": "docs/protocol/pon-nakamoto-v1/evidence/w1-complete-risc0-20261027/soundness-profile/upstream/risc0/circuit/rv32im/src/zirgen/taps.rs",
+  "bytes": 111221,
+  "git_blob_sha": "94612132b37e792b9c3a33420c9fa7442059bd64",
+  "reason": "local shallow object database lacked this unchanged base blob; exact GitHub object restored only to new candidate object database",
+  "sha256": "b423f7bd396cd4a7ea25c326ba077dca7f96dd144fd8e44d9474bfb2489818d2",
+  "source_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs/94612132b37e792b9c3a33420c9fa7442059bd64"
+}

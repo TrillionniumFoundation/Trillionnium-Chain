@@ -1,0 +1,42 @@
+test_absent_policy_keeps_original_generation_selection (__main__.ContinuationControls.test_absent_policy_keeps_original_generation_selection) ... ok
+test_actual_child_in_budget_retains_original_accounting (__main__.ContinuationControls.test_actual_child_in_budget_retains_original_accounting) ... ok
+test_actual_session_index_is_exact_and_sorted (__main__.ContinuationControls.test_actual_session_index_is_exact_and_sorted) ... ok
+test_actual_zero_exit_child_polled_after_budget_is_refused (__main__.ContinuationControls.test_actual_zero_exit_child_polled_after_budget_is_refused) ... ok
+test_all_315_real_original_members_and_26_partial_receipts_read_back (__main__.ContinuationControls.test_all_315_real_original_members_and_26_partial_receipts_read_back) ... ok
+test_archive_part_reorder_refused (__main__.ContinuationControls.test_archive_part_reorder_refused) ... ok
+test_budget_relaxation_refused (__main__.ContinuationControls.test_budget_relaxation_refused) ... ok
+test_changed_exported_last_segment_refused (__main__.ContinuationControls.test_changed_exported_last_segment_refused) ... ok
+test_changed_session_statement_or_segment_metadata_refused (__main__.ContinuationControls.test_changed_session_statement_or_segment_metadata_refused) ... ok
+test_completed_worker_and_export_costs_keep_original_300_second_cap (__main__.ContinuationControls.test_completed_worker_and_export_costs_keep_original_300_second_cap) ... ok
+test_cumulative_bytes_refused_before_reading_excess_file (__main__.ContinuationControls.test_cumulative_bytes_refused_before_reading_excess_file) ... ok
+test_dangling_policy_link_cannot_select_generation (__main__.ContinuationControls.test_dangling_policy_link_cannot_select_generation) ... ok
+test_duplicate_json_and_nonfinite_refused (__main__.ContinuationControls.test_duplicate_json_and_nonfinite_refused) ... ok
+test_empty_directory_flood_and_depth_are_bounded (__main__.ContinuationControls.test_empty_directory_flood_and_depth_are_bounded) ... ok
+test_evidence_index_rejects_root_and_child_symlinks (__main__.ContinuationControls.test_evidence_index_rejects_root_and_child_symlinks) ... ok
+test_fifo_is_refused_without_opening_or_blocking (__main__.ContinuationControls.test_fifo_is_refused_without_opening_or_blocking) ... ok
+test_fresh_image_mutation_refused (__main__.ContinuationControls.test_fresh_image_mutation_refused) ... ok
+test_invalid_declared_policy_has_no_generation_fallback (__main__.ContinuationControls.test_invalid_declared_policy_has_no_generation_fallback) ... ok
+test_missing_continuations_and_receipt_report_unknown_not_zero (__main__.ContinuationControls.test_missing_continuations_and_receipt_report_unknown_not_zero) ... ok
+test_missing_owned_cleanup_and_nonfinite_cpu_refused (__main__.ContinuationControls.test_missing_owned_cleanup_and_nonfinite_cpu_refused) ... ok
+test_no_symlink_or_parent_escape (__main__.ContinuationControls.test_no_symlink_or_parent_escape) ... ok
+test_orig_receipt_report_extra_pow_or_complete_claim_refused (__main__.ContinuationControls.test_orig_receipt_report_extra_pow_or_complete_claim_refused) ... ok
+test_original_failure_cannot_be_rewritten_as_exit_zero (__main__.ContinuationControls.test_original_failure_cannot_be_rewritten_as_exit_zero) ... ok
+test_original_receipt_bytes_tamper_refused (__main__.ContinuationControls.test_original_receipt_bytes_tamper_refused) ... ok
+test_original_source_after_change_refused (__main__.ContinuationControls.test_original_source_after_change_refused) ... ok
+test_other_run_or_success_reclassification_refused (__main__.ContinuationControls.test_other_run_or_success_reclassification_refused) ... ok
+test_overlapping_or_missing_shards_refused (__main__.ContinuationControls.test_overlapping_or_missing_shards_refused) ... ok
+test_partial_receipt_never_marked_complete (__main__.ContinuationControls.test_partial_receipt_never_marked_complete) ... ok
+test_policy_link_to_real_file_is_also_refused (__main__.ContinuationControls.test_policy_link_to_real_file_is_also_refused) ... ok
+test_real_corrupted_archive_part_refused (__main__.ContinuationControls.test_real_corrupted_archive_part_refused) ... ok
+test_report_refuses_same_sha_with_different_complete_source_identity (__main__.ContinuationControls.test_report_refuses_same_sha_with_different_complete_source_identity) ... ok
+test_report_rejects_substituted_phase_source_budget_and_run (__main__.ContinuationControls.test_report_rejects_substituted_phase_source_budget_and_run) ... ok
+test_same_actual_export_bytes_allow_only_new_wall_measurement (__main__.ContinuationControls.test_same_actual_export_bytes_allow_only_new_wall_measurement) ... ok
+test_unreviewed_session_file_refused (__main__.ContinuationControls.test_unreviewed_session_file_refused) ... ok
+test_work_complete_boundary_is_before_3500_seconds (__main__.ContinuationControls.test_work_complete_boundary_is_before_3500_seconds) ... ok
+test_zero_byte_flood_has_bounded_file_count (__main__.ContinuationControls.test_zero_byte_flood_has_bounded_file_count) ... ok
+test_zero_exit_outer_phase_cannot_hide_observed_deadline_overrun (__main__.ContinuationControls.test_zero_exit_outer_phase_cannot_hide_observed_deadline_overrun) ... ok
+
+----------------------------------------------------------------------
+Ran 37 tests in 8.504s
+
+OK
