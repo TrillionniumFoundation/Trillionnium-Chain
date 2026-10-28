@@ -1117,7 +1117,8 @@ class ModelV2RegistrationTests(unittest.TestCase):
                  'rust-baseline', 'external-evidence-contract'}
         for path in ('scripts/test_llm_runtime_parent_step_v2.py',
                      'scripts/test_llm_runtime_parent_step_task_v2.py',
-                     'scripts/test_llm_answer_eos_research_v3.py'):
+                     'scripts/test_llm_answer_eos_research_v3.py',
+                     'scripts/test_llm_answer_eos_task_research_v4.py'):
             command = '    python3 ' + path + '\n'
             changes = [script.replace(command, ''), script.replace(command, command * 2),
                 script.replace(command, command.rstrip() + ' || true\n'),
