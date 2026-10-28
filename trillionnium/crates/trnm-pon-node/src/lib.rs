@@ -7,6 +7,7 @@ mod error;
 pub mod host_kernel_parent;
 pub mod ingress;
 pub mod mining;
+mod native_packet;
 pub mod operator_checkpoint_tile;
 pub mod operator_continuous_controller;
 mod operator_continuous_cpu;
@@ -21,9 +22,11 @@ pub mod operator_mining_controller;
 pub mod operator_mining_policy;
 pub mod operator_task_policy;
 pub mod peer_polling;
+pub mod pq_accounts_v2;
 /// Explicit native PQ signature/replay owner; not installed by legacy Node.
 pub mod pq_authority;
 pub mod pq_native_v1;
+pub mod pq_quota_v3;
 pub mod public_submit;
 /// Public genesis maintenance bytes; availability never grants work or model credit.
 pub mod public_task_bootstrap;

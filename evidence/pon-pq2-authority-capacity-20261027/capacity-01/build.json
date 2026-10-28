@@ -1,0 +1,58 @@
+{
+  "argv": [
+    "/workspace/scratch/301262829a43/pon-build-inputs/unpacked/toolchain/bin/rustc",
+    "--edition=2021",
+    "--test",
+    "/workspace/scratch/3d4ec372c488/pq-accounts-audit/trillionnium/crates/trnm-mvcc-fee/tests/pq2_authority_capacity.rs",
+    "-o",
+    "/workspace/scratch/3d4ec372c488/pq-audit-evidence/capacity-01/capacity-probe",
+    "-L",
+    "dependency=/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps",
+    "-C",
+    "opt-level=1",
+    "-C",
+    "debuginfo=0",
+    "--extern",
+    "trnm_mvcc_fee=/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libtrnm_mvcc_fee-a8a14054399ac368.rlib",
+    "--extern",
+    "trnm_protocol=/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libtrnm_protocol-0cd20374bde11379.rlib",
+    "--extern",
+    "ml_dsa=/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libml_dsa-f6128e48c08b8b47.rlib",
+    "--extern",
+    "serde_json=/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libserde_json-d9de496d4ac3237b.rlib",
+    "--extern",
+    "hex=/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libhex-2fc7d26d85c71ab4.rlib",
+    "-L",
+    "native=/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/build/libsqlite3-sys-0b4e9332de508ef1/out",
+    "-L",
+    "native=/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/build/libsqlite3-sys-3d4b08bddecd514c/out"
+  ],
+  "returncode": 1,
+  "wall_seconds": 1.3564591130052577,
+  "source_sha256": "234482b224debe398cf206923055faa792a01e160fe2c60ade958cebd84d8c4a",
+  "linked_primary_rlibs": {
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libtrnm_mvcc_fee-a8a14054399ac368.rlib": {
+      "sha256": "232a27b368fa7bc5ad8e43d8fb8f38568053486355794e3c250b63a10400fdcf",
+      "bytes": 11258646
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libtrnm_protocol-0cd20374bde11379.rlib": {
+      "sha256": "6a0acc52cf710a02d5e5d2238ce7c6bac41d3ae6b6750b8140331de749ca5a74",
+      "bytes": 1984344
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libml_dsa-f6128e48c08b8b47.rlib": {
+      "sha256": "badec2bdd64eba66604876ad47071a4a8c2ebeab57a40de9ef401a200bae8860",
+      "bytes": 690346
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libserde_json-d9de496d4ac3237b.rlib": {
+      "sha256": "e3e34bf394e9361ac804966e002b7ecc1064e677e66eff5f63a6550c3c1cb01b",
+      "bytes": 2402338
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libhex-2fc7d26d85c71ab4.rlib": {
+      "sha256": "0bc50b7d1327c51f9350c1f4943466bb6bdd2ab35b54aaceefc736f810c79c21",
+      "bytes": 359106
+    }
+  },
+  "compiler": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+  "source_head": "3be3d15d6bfb721f3c96848c235f17051eafbd51",
+  "scope": "standalone integration probe linked to actual frozen Native PQ2 compiled M06 dependencies; not Cargo workspace qualification"
+}

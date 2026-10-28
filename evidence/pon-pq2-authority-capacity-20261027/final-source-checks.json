@@ -1,0 +1,73 @@
+{
+  "checks": [
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "returncode": 0,
+      "stdout": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-pq-accounts-audit-20261027\", \"remote_policy_mutated\": false}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "returncode": 0,
+      "stdout": "distributed source inventory: PASS\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_native_pq_accounts_v2_research.py"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ".............\n----------------------------------------------------------------------\nRan 13 tests in 0.003s\n\nOK\n"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "--",
+        "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+        "scripts/ci/run_native_pq_accounts_v2.py",
+        "scripts/ci/test_native_pq_accounts_v2_research.py",
+        "trillionnium/crates/trnm-mvcc-fee/tests/pq2_authority_capacity.rs",
+        "trillionnium/crates/trnm-pon-node/tests/native_pq_v2.rs",
+        "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/workspace/scratch/301262829a43/pon-build-inputs/unpacked/toolchain/bin/rustfmt",
+        "--edition",
+        "2021",
+        "--check",
+        "trillionnium/crates/trnm-mvcc-fee/tests/pq2_authority_capacity.rs",
+        "trillionnium/crates/trnm-pon-node/tests/native_pq_v2.rs"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "files": {
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": "6f3c02cc462ddeae3d96dab45421e88c1bacf44424dbb2c15a0130752bee738a",
+    "scripts/ci/run_native_pq_accounts_v2.py": "8ec005d488bc28770f61065b4e1dbb7bca9b1ffd212a2a8333da1d6a7a5ded60",
+    "scripts/ci/test_native_pq_accounts_v2_research.py": "f97ee019a2ecd18e8219072953463f993d9ddae643efd4f33c0b11a387311332",
+    "trillionnium/crates/trnm-mvcc-fee/tests/pq2_authority_capacity.rs": "daa12cbb695339c88dc3a0152caeadcc6e33254a435cf20b91807a4a8107dc7b",
+    "trillionnium/crates/trnm-pon-node/tests/native_pq_v2.rs": "f504d1d90bfe4516420cc9962d1dbdbe6440e43583a20f05debaa7f939c707f4",
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs": "14081bf3bddae10c06c98ea93285b01d9b0974c6e8a144b1fa9db571851ccbfd"
+  },
+  "cargo_workspace_or_clippy_executed": false,
+  "changed_integration_targets_direct_clippy_pass": true,
+  "raw_log_trailing_newline_preserved": true
+}

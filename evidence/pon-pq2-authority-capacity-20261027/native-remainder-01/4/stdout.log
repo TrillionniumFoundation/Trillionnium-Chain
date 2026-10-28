@@ -1,0 +1,26 @@
+
+running 1 test
+test full_4263_byte_rows_and_packet_have_actual_122_transfer_limit ... FAILED
+
+successes:
+
+successes:
+
+failures:
+
+---- full_4263_byte_rows_and_packet_have_actual_122_transfer_limit stdout ----
+{"details":{"raw_bytes":68208,"transactions":16},"phase":"capacity_actual_pool_bundle","result":"ok","schema":"native-pq2-phase-observation-v1","scope":"actual complete call on shared host; not isolated CPU, worst-case cost or TPS","wall_nanoseconds":918688358}
+{"details":{"raw_bytes":68208,"transactions":16},"phase":"capacity_actual_pool_bundle","result":"ok","schema":"native-pq2-phase-observation-v1","scope":"actual complete call on shared host; not isolated CPU, worst-case cost or TPS","wall_nanoseconds":1825703005}
+
+thread 'full_4263_byte_rows_and_packet_have_actual_122_transfer_limit' (19) panicked at crates/trnm-pon-node/tests/native_pq_v2.rs:400:9:
+assertion `left == right` failed
+  left: 32
+ right: 16
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    full_4263_byte_rows_and_packet_have_actual_122_transfer_limit
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 8 filtered out; finished in 5.59s
+

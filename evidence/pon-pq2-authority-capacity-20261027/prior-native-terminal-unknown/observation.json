@@ -1,0 +1,6 @@
+{
+  "observed_unix": 1793127325.3443713,
+  "terminal_json_exists_at_observation": false,
+  "classification": "UNKNOWN command completion; original stdout is an incomplete snapshot, not a successful nine-case gate",
+  "old_source_files_match_original_before_at_rerun": 1164
+}

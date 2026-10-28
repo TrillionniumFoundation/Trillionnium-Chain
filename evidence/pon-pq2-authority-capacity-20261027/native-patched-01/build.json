@@ -1,0 +1,454 @@
+{
+  "argv": [
+    "/workspace/scratch/301262829a43/pon-build-inputs/unpacked/toolchain/bin/rustc",
+    "--edition=2021",
+    "--test",
+    "/workspace/scratch/3d4ec372c488/pq-accounts-audit/trillionnium/crates/trnm-pon-node/tests/native_pq_v2.rs",
+    "-o",
+    "/workspace/scratch/3d4ec372c488/pq-audit-evidence/native-patched-01/native-pq-v2",
+    "-L",
+    "dependency=/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps",
+    "-C",
+    "opt-level=0",
+    "-C",
+    "debuginfo=0",
+    "--extern",
+    "trnm_pon_node=/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libtrnm_pon_node-bf9203fddd9e4df0.rlib",
+    "--extern",
+    "trnm_mvcc_fee=/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libtrnm_mvcc_fee-a8a14054399ac368.rlib",
+    "--extern",
+    "trnm_protocol=/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libtrnm_protocol-0cd20374bde11379.rlib",
+    "--extern",
+    "trnm_crypto_primitives=/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libtrnm_crypto_primitives-b3896abbe480645c.rlib",
+    "--extern",
+    "ml_dsa=/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libml_dsa-f6128e48c08b8b47.rlib",
+    "--extern",
+    "serde_json=/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libserde_json-d9de496d4ac3237b.rlib",
+    "--extern",
+    "hex=/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libhex-2fc7d26d85c71ab4.rlib",
+    "--extern",
+    "rusqlite=/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/librusqlite-a4049fad72073537.rlib",
+    "--extern",
+    "tempfile=/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libtempfile-aa7cc0facf0b513f.rlib",
+    "-L",
+    "native=/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/build/libsqlite3-sys-0b4e9332de508ef1/out",
+    "-L",
+    "native=/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/build/libsqlite3-sys-3d4b08bddecd514c/out"
+  ],
+  "returncode": 0,
+  "wall_seconds": 3.3204531649971614,
+  "test_source_sha256": "f504d1d90bfe4516420cc9962d1dbdbe6440e43583a20f05debaa7f939c707f4",
+  "all_rlibs_at_build": {
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libanyhow-2b596a6e957b0f0f.rlib": {
+      "sha256": "b9123dda81f144db82d4206a5f194f9385cdb1cf6ffa1b30456eb4fc667e70fa",
+      "bytes": 808358
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libautocfg-28e5ef57abbb07d7.rlib": {
+      "sha256": "41e704e210f4cde5a5494782c4b83d23b240940045217b5e0d0a68988fea65f9",
+      "bytes": 660550
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libbitflags-0ae8635f413e6d95.rlib": {
+      "sha256": "2eabdc45d92c513989fded4be2719a6ef1d4cdb8cc55a287c87b60ff4a1ab255",
+      "bytes": 278412
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libbitflags-53ed63b37ca42593.rlib": {
+      "sha256": "af1b4f296bcfa745510b14509e5bc766c18697ab8916dc56e412bba986cbf8c4",
+      "bytes": 480044
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libblock_buffer-022e9d7379ec98cd.rlib": {
+      "sha256": "e7c9640dc603d099bc6d9e6541f072ea7bf661c2d7d009c068d59cf7ac49c2b6",
+      "bytes": 53132
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libblock_buffer-b0dd18262e45391e.rlib": {
+      "sha256": "a0ffda95102b482a13dd12fbbd2d2e3f415b90bf69fcc872bb66553ed4f89f70",
+      "bytes": 53132
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libblock_buffer-ba5487fa0bd48090.rlib": {
+      "sha256": "62e2d92da54acbba101641180e237549c1d1e3bb5ac29cc56ae930347f2ce5bd",
+      "bytes": 57348
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libborsh-c3a89607bcaab17b.rlib": {
+      "sha256": "59b07226a9aebcac8d4dcd7af4388b7a7861c879af6cb23a8dfe44ac353683cd",
+      "bytes": 754858
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libborsh-cbc2c4291fe7b204.rlib": {
+      "sha256": "402cf324bc9a5268372493bb28c9aed95030022067dcf9e7c4abb21490c8d9bb",
+      "bytes": 694378
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libcc-55bdd6a60470dae3.rlib": {
+      "sha256": "f9b1847dffc018730a12983b8c4dda14c1db73d42afd9262b1b4a800cdd31df9",
+      "bytes": 2779922
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libcc-d2081db1f9729a6b.rlib": {
+      "sha256": "b119e0ae32a47ce9578d4da9a4518c1b6e3ecd56ae4689d954255a0b3386ead5",
+      "bytes": 2781370
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libcfg_aliases-426f01a6b5517602.rlib": {
+      "sha256": "4d10ec072625c64986ef245c124698acdb493e9aa4193290ec3207f656fa1344",
+      "bytes": 19512
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libcfg_aliases-59d73828b2776613.rlib": {
+      "sha256": "af843586b89ac6d56c8791bac113519fbc138716c659ca477343b6dbba4e79c1",
+      "bytes": 19512
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libcfg_if-595cd1fd9b5b1165.rlib": {
+      "sha256": "80ff4c935af744d657f255d65729ba221fe6265d70625761a90204f73710e54c",
+      "bytes": 6990
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libcfg_if-cc3921fbd46ed034.rlib": {
+      "sha256": "c4ae4c151396a0a44098e31b2ec4b01b83380e4dde028b2bd76600ccadfd1491",
+      "bytes": 6990
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libcmov-0b0cd91cda43e32f.rlib": {
+      "sha256": "98f06b77e5215d49cb37ea93421b16961a5beedf461d0f5e9d3dc7ab51ebd51f",
+      "bytes": 272850
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libcpufeatures-bb94c12fd6ffc57b.rlib": {
+      "sha256": "6abe1d37f93b959ba214a168b3c5af55a863e669255ab38f3644c123555bfc81",
+      "bytes": 40848
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libcpufeatures-e124fef1b1d91f00.rlib": {
+      "sha256": "f8d8bf57df6612e3db2aef4b9befed49ed67aed5fb7b25a0786d2460c47466bb",
+      "bytes": 40848
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libcrypto_common-121deb944156ca4c.rlib": {
+      "sha256": "8d2021a0c953ed73da3390dc7d80dc0d5e598550e34c4471fb3e09708c08f020",
+      "bytes": 34848
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libcrypto_common-32a84a61a3eb6332.rlib": {
+      "sha256": "97f5da9018b0d64b702b2958e26abd8bf7c5816b6590d0343c27768f441c3129",
+      "bytes": 30568
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libcrypto_common-a040c891a0719229.rlib": {
+      "sha256": "66d64eddac8f7697b2be3aeb2c8d533e662aacb6632202f0158dfb8038736ca1",
+      "bytes": 1556678
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libcrypto_common-ee66619d90797d04.rlib": {
+      "sha256": "2052ff13853376a6603d8cce8d8e4e42040d6d8011969a6af71db733efb4219b",
+      "bytes": 30568
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libctutils-785dde9ec6395a1e.rlib": {
+      "sha256": "9889bb59a872dd12f433bba23129575f5aec13b256eef8ac3e47910015a19683",
+      "bytes": 390922
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libcurve25519_dalek-3bd7d72a5cea887f.rlib": {
+      "sha256": "e7c0499e2573d93341ecea04b767f5b90f7edb2332c9a3c79df09b0d543e9188",
+      "bytes": 4357220
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libcurve25519_dalek-844e8c0dca217be7.rlib": {
+      "sha256": "6fc5b0db7f6e0b4eb755f0cc617cdbbeb577037e0c077988002f6da3874c6cdb",
+      "bytes": 1880598
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libdigest-7a2f65af16b2c68a.rlib": {
+      "sha256": "3d308036a1433f42bcb1200f8ed4d3e51a38954d0e33af53a2908d15bd14c040",
+      "bytes": 175470
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libdigest-8364cf172238a69d.rlib": {
+      "sha256": "cd53bcef0829cb3b61d0e4a507a9d0df2dd3ad33bd5a23b0a1824cad9c8691e1",
+      "bytes": 175470
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libdigest-ae20bf5f6798a4b7.rlib": {
+      "sha256": "454246d5000857deed5168edb6a33171beb2e5898f1c84637b481f14f5310773",
+      "bytes": 162430
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libed25519-4f4985658e9ddf60.rlib": {
+      "sha256": "d47a8d1cd0541f4801ef13b4227b15f1b064a3712595da5f02a4860d5b170f8b",
+      "bytes": 114118
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libed25519_dalek-2bd12a8f35474372.rlib": {
+      "sha256": "b0cb8ae2e406122c9b14ba6c61cb9f6eb67876cf151b18f3d7f40d487bfd9116",
+      "bytes": 183866
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libequivalent-fbf76d4e97284637.rlib": {
+      "sha256": "27e68a27e7d90ba3506cc9a1d88bb01b7c1badbec94e7d8cf8fc7ca9a9728351",
+      "bytes": 9694
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libfallible_iterator-11b56aa78800e81f.rlib": {
+      "sha256": "7cbf6f3f9357e662da9fb98942d343d100f21e0ec3b19cb46c8e6723f3c5c68b",
+      "bytes": 448252
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libfallible_streaming_iterator-4dddcc82d7b3d84d.rlib": {
+      "sha256": "a562c4655412db16b08dcc1774f763757a4c86c0cd8106e1e4898af892dedad3",
+      "bytes": 85776
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libfastrand-6bf94f70c67954a8.rlib": {
+      "sha256": "43699220f412b80b520a9d5ec4b818f21167fe54192704c28b5d2d510a184dc2",
+      "bytes": 211314
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libfind_msvc_tools-573c9a72643a9aa1.rlib": {
+      "sha256": "3d9118378eef75aca57f7d551fb3b08c4e9abb6b2c354887c3b43e95a22a09fe",
+      "bytes": 311998
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libfoldhash-2de384eccee01de3.rlib": {
+      "sha256": "24e16a3d86635bccce438a34cc80392c111cad4eb80c460fbc47062e79d38105",
+      "bytes": 115508
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libfs2-4095a88451fe38f6.rlib": {
+      "sha256": "f078078c2232eb02756716ed912b0fc3ff9a5ad7d81ba6eb5cafcc340f7352c4",
+      "bytes": 64460
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libgeneric_array-443559cedb433ad2.rlib": {
+      "sha256": "78ed5b75b88220de8118aaef39672efd04ef5c357b488e84d61704ae82f2b151",
+      "bytes": 813660
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libgeneric_array-58f7f65f9d3c4dae.rlib": {
+      "sha256": "849a8adabdd172777e784f80c9814c306720b2c8bd713968c7045f9456bbe1c6",
+      "bytes": 813532
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libgetrandom-f889480cddf76bd8.rlib": {
+      "sha256": "1d738737ac8b2e480b229c93140d8937751fa700e94c6bbfaf96a895e2ab104c",
+      "bytes": 137510
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libhashbrown-06ba017e9d973032.rlib": {
+      "sha256": "5e65be654be8f127134eaa2063354c886cfc00b16529e9276410a4cb91b158ee",
+      "bytes": 1226176
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libhashbrown-d686179e1bed4918.rlib": {
+      "sha256": "26ce07b0b6b8e1d4bee6678664e51a1fce543ba8dc9d466320ee211b8d18ecc0",
+      "bytes": 1252334
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libhashlink-da1e77b440537c32.rlib": {
+      "sha256": "b4da964877d467497c74f9805092ae6fd0bfd8d95da36c78dd73958520ed6208",
+      "bytes": 449722
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libhex-2fc7d26d85c71ab4.rlib": {
+      "sha256": "0bc50b7d1327c51f9350c1f4943466bb6bdd2ab35b54aaceefc736f810c79c21",
+      "bytes": 359106
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libhybrid_array-ad03ea6e93f7744b.rlib": {
+      "sha256": "f36e838329bd857cb7d836a44d1206410e752f616a4f9b0052c995d31d3060b4",
+      "bytes": 1841776
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libindexmap-a96d8ea8691f68f1.rlib": {
+      "sha256": "421754a09302cf038131892a9100a9250bd194756cf716eaa8c2e59c81a2e943",
+      "bytes": 1270390
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libitoa-812a2061b055b717.rlib": {
+      "sha256": "1cecb914e9cdc4b991940faf7f18fb18f4c54a549b8fcf7afd456776a541e574",
+      "bytes": 138712
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libkeccak-587ac8c906abcbde.rlib": {
+      "sha256": "2b547c3c51e502806e11286de449a9ccaae32de2e9fb72149c9deeec3980e4e7",
+      "bytes": 60590
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/liblibc-06f87f0e4ef831a4.rlib": {
+      "sha256": "612251f08cb100a933d02da6666d9953220c042526f7f5ba05c52dbbb64704c2",
+      "bytes": 4006706
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/liblibsqlite3_sys-b6de7b404388502d.rlib": {
+      "sha256": "65833b6d5c201b2dd788884a1ff28f20a69860a5841af1beaf088fe99dd72308",
+      "bytes": 3709974
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/liblinux_raw_sys-95ce8cc111601395.rlib": {
+      "sha256": "8f9a05e4b80d4fffedba04c143b5f4204fb6689af7519b1b706861b720c442ca",
+      "bytes": 1423592
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libmemchr-2c0b9e58475ea957.rlib": {
+      "sha256": "0c5a944fe2c3d98c84bb1236c5dea9a7e0e7b5d692bbe3ed2f0e52406641eebc",
+      "bytes": 1860902
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libml_dsa-f6128e48c08b8b47.rlib": {
+      "sha256": "badec2bdd64eba66604876ad47071a4a8c2ebeab57a40de9ef401a200bae8860",
+      "bytes": 690346
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libmodule_lattice-03fcee7c1236bfd8.rlib": {
+      "sha256": "dd40acf837a62c3c369bb5430ec9c098dde065e5f76883964375335eec84e06f",
+      "bytes": 187856
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libnum_traits-50109b1873dc5d43.rlib": {
+      "sha256": "2caa2944a44357b2340f0af4a2f9fb2165e9e7369c2a82a504e44acd485f8cc1",
+      "bytes": 1679134
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libonce_cell-5ffae3dc441222fd.rlib": {
+      "sha256": "dbf326fb077dd6d15881fe022e02093524fa6ceab2cfac5d5a6ae8ded7890965",
+      "bytes": 230268
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libonce_cell-a4f39f56a6a7e0f1.rlib": {
+      "sha256": "8b929a2bcfabf312985be5c913f4264442b7e5d71f54c97febe17a6edf21b513",
+      "bytes": 230268
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libpkg_config-0fbd3bebb9c32def.rlib": {
+      "sha256": "fdad5f33bd4edca009fdcd3099061867f9f169a87768f6d2f4da180f92d85502",
+      "bytes": 926108
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libproc_macro2-d03d30e9a100686c.rlib": {
+      "sha256": "0d3b9df37157d5c431a2007dafcc5c5056ef7dc382ad74ff26a8da4a3fb3d6f6",
+      "bytes": 1208296
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libproc_macro_crate-d24b8b530564f10f.rlib": {
+      "sha256": "cde319947a87acc2a62e0b0322f0f314542da7a0aaa4144a8a91f8fb5c3efc66",
+      "bytes": 1033826
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libquote-a06cac21d3e471b4.rlib": {
+      "sha256": "dcd29b16bc0ff5dc1afbebb81f87cc6e83aad120e4e4406680555f06d79ea9d9",
+      "bytes": 490468
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/librusqlite-a4049fad72073537.rlib": {
+      "sha256": "348e6c5cf7934d4219a036000215f87b7e9ef6fb07d9e60db9013aeed2a290e1",
+      "bytes": 2809220
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/librustc_version-8adf6217f72f95cd.rlib": {
+      "sha256": "656f6071d4794eaaff17d4cc5d99c80f1c3a21aabe96237dcee2054eacec1787",
+      "bytes": 422072
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/librustix-73e56da2a8d7d049.rlib": {
+      "sha256": "791b3f45d859e78b528cfd722072ddabb7208f2185f703404e3613814c0d5b0d",
+      "bytes": 7357514
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libsemver-50705a0234f248fe.rlib": {
+      "sha256": "41e3a0ea7da35a73077bfc9c3b5d60d74f83eff0e80dcac63fb1439c9f42ece6",
+      "bytes": 402644
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libserde-9d830d9fb05068c2.rlib": {
+      "sha256": "8cfed4d48a48f4e3a9ad43821b074f9f6913444f4abc47d92d10fe62f58fb79e",
+      "bytes": 927258
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libserde_core-16bbd6aca2e4d576.rlib": {
+      "sha256": "5b9a9b507fea806bde53479736fb837090707b045644f3ff742319ce47dc1d18",
+      "bytes": 4943562
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libserde_json-d9de496d4ac3237b.rlib": {
+      "sha256": "e3e34bf394e9361ac804966e002b7ecc1064e677e66eff5f63a6550c3c1cb01b",
+      "bytes": 2402338
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libsha2-23d301766bb91198.rlib": {
+      "sha256": "fc30f4640b03f207e3a7d59f90e5739c0ec3e379c1935af5578efe787008185e",
+      "bytes": 714956
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libsha2-968cc9a72c77f5d0.rlib": {
+      "sha256": "5c46605f59c2e04ad163580e87db4f3a4ab00797652e37d9a07a8b5eee789c61",
+      "bytes": 714912
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libshake-a5c00c228f253e74.rlib": {
+      "sha256": "1256a9f16abb4abaccb2f3faf6c0f68a96f3c46665d7c73a09cf351b76636320",
+      "bytes": 31364
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libshlex-a7c69f9969bd3958.rlib": {
+      "sha256": "cf5e33f3963e561458b7095be485ee5322f16ff460186588f8cd309e0ac01c85",
+      "bytes": 139432
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libsignature-3b0586cec66d5f9c.rlib": {
+      "sha256": "5a0e5df8fbaf00ba705eb26c190f48c948025712716e4cc81f792ef4836120be",
+      "bytes": 60650
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libsignature-8e2688d735c397c8.rlib": {
+      "sha256": "5c6d0c9b85773a9d16ed8dde4dd487276ac993553f7b2855ed459cadd62a16e5",
+      "bytes": 92120
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libsmallvec-d6b8875064bb89b4.rlib": {
+      "sha256": "aa8a01a47b594a8a010528c3388a3d0387b8bec9d89e27f07b1f67e786ad6aba",
+      "bytes": 260748
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libsponge_cursor-5f11b140491bbc90.rlib": {
+      "sha256": "6742efe699491d736eb3220afef0cb6406f1a0c4dcd14584b9f12011aa65812c",
+      "bytes": 54484
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libsubtle-3f6b30fa6215d241.rlib": {
+      "sha256": "5e0d34a8b04b2e507e82e7cb91067110b41ef8c25f104acfb2f3376149efba5b",
+      "bytes": 121180
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libsyn-42db78f41db1348f.rlib": {
+      "sha256": "a3a80629a7ac979731dd185fb69b17df797ce3b004b21d993caabed25a66cda6",
+      "bytes": 9287616
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libtempfile-aa7cc0facf0b513f.rlib": {
+      "sha256": "02ff4cfb594aa260daf991273f4619e5e05288e3b8eab09a41782a9ac9cac466",
+      "bytes": 703408
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libthiserror-c2d03c4ef7c6963b.rlib": {
+      "sha256": "088fe5f4149ec33434fc4d460f3d4b0a6f379bb50826abea0020f5dd50b7a737",
+      "bytes": 26604
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libtoml_datetime-65cc77eb9bac2889.rlib": {
+      "sha256": "2f7829a6be9446c9b95bfbe7fe5076b7788a5b8e94f83a37ccb7d816c9470ad9",
+      "bytes": 265922
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libtoml_edit-82c742529b56aff3.rlib": {
+      "sha256": "4827ce1247d6f63722752c157d16c3eee06980bcf48616e6bf141303dd7a5323",
+      "bytes": 2425992
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libtoml_parser-5e436dadda210a4c.rlib": {
+      "sha256": "2b43589700b46d7793a8ac23eb71cdb899ad41eed94c4e3f1c9f9da042004757",
+      "bytes": 1079000
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libtrnm_crypto_primitives-b3896abbe480645c.rlib": {
+      "sha256": "200941637c8b0e8d9108e3cdce75b2c86bfa662654480e1ac8d833aafb7b414a",
+      "bytes": 1984480
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libtrnm_data_availability-9613aa03bf6e8a05.rlib": {
+      "sha256": "d0a503d901a5df6ad7e28e7e58c6c98d712a97bd917f23ea03187f21ec0eaece",
+      "bytes": 9306740
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libtrnm_mempool-da50fc504949d68f.rlib": {
+      "sha256": "349f84dfdb7818366f9243479a53a90b33027d0bbe6f9561d6d458db9fec59a6",
+      "bytes": 475226
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libtrnm_mvcc_fee-a8a14054399ac368.rlib": {
+      "sha256": "232a27b368fa7bc5ad8e43d8fb8f38568053486355794e3c250b63a10400fdcf",
+      "bytes": 11258646
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libtrnm_pon_node-bf9203fddd9e4df0.rlib": {
+      "sha256": "c9fbe0efc7d6e56849feceeb586430ce42721c3baba8261f0742cddbcb54a342",
+      "bytes": 40791180
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libtrnm_protocol-0cd20374bde11379.rlib": {
+      "sha256": "6a0acc52cf710a02d5e5d2238ce7c6bac41d3ae6b6750b8140331de749ca5a74",
+      "bytes": 1984344
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libtrnm_service_settlement-7a996820a5ea4bd2.rlib": {
+      "sha256": "752cb707e8b99334c32ffbfc45fc60cd01fb7b427f6c7e28f8b69d47d61d569a",
+      "bytes": 5284162
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libtrnm_sqlite_io_boundary-172334295bd0dde5.rlib": {
+      "sha256": "a1dea6adff3dec46d533c0bd78780156a9f6a7164ac9a7894d3b931a70e38205",
+      "bytes": 1806480
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libtrnm_task_kernel-af9bfbb589eebafd.rlib": {
+      "sha256": "60beca7618b95f021a748363caf086bad526ee018fef9b8b717759a47d8e35d8",
+      "bytes": 6651560
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libtrnm_transport-8b1bdfee84988d69.rlib": {
+      "sha256": "9aaab5b8bf66e172301093e42854ebc72511495273c7ee66bfa983222ff2709d",
+      "bytes": 514072
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libtrnm_verification_profiles-07158d3a1d8d7b5b.rlib": {
+      "sha256": "acfb2ed5962539549138ba1762e7660337211bc5dd16b5b4f0195d0042f397fa",
+      "bytes": 1131090
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libtypenum-031fbdd68d92c830.rlib": {
+      "sha256": "cb477ead664ba0e57128b2553237d92142e855d9a5e911275e80b0192db7ef94",
+      "bytes": 3639100
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libtypenum-1ca9fbd7b3f58327.rlib": {
+      "sha256": "ed1d29ef0c9d47b49676a2ef3fc2df1f0baafa47cb200617bd2addc2ba903ead",
+      "bytes": 2754012
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libunicode_ident-1cb145901fcfda59.rlib": {
+      "sha256": "762e938704141be416eaa6df57c834ca34f03904e8426e0690df2836fa6c82d6",
+      "bytes": 54172
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libvcpkg-cbbc4b10c1b3be4f.rlib": {
+      "sha256": "11a78de306b41d86796d09edb9baf8c8b54de1902a591dd0b85eaab9c63b8591",
+      "bytes": 1345214
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libversion_check-b134c9fa90cd7f7d.rlib": {
+      "sha256": "fa6f6214e6eae2842ab179e31f1a8d1a86610fea3dca184cdf2959d8cc11b16b",
+      "bytes": 473940
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libwinnow-4b13ad7d9e9be866.rlib": {
+      "sha256": "8ecdaf0ba65181618464a7e65081565765f0b0804748f793e9365a09915c1224",
+      "bytes": 2416744
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libzeroize-c17b0d8c47c5b50d.rlib": {
+      "sha256": "85f127774c0b35c77b4f12d64b6cf5215cffb7ed26351e0cddf3cec8764956c7",
+      "bytes": 441748
+    },
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/libzmij-d0f0be0e981a2a4e.rlib": {
+      "sha256": "8e4655978cf455209b0df5a6505ec1e2f241de330f6cd71c756cc6eb11209ef5",
+      "bytes": 508782
+    }
+  },
+  "compiler": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+  "source_head": "3be3d15d6bfb721f3c96848c235f17051eafbd51",
+  "scope": "actual patched full-nine native integration target linked to unchanged frozen original native PQ2 dependencies; not a new Cargo workspace or physical I/O qualification"
+}

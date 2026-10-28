@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "cargo",
+    "fmt",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--all"
+  ],
+  "returncode": 0,
+  "wall_seconds": 45.11979935599811,
+  "stdout": "",
+  "stderr": ""
+}
