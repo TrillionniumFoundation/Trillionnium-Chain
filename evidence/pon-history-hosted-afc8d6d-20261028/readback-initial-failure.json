@@ -1,0 +1,9 @@
+{
+  "scope": "local archive reader implementation; no runtime test was rerun",
+  "passed": false,
+  "error": "KeyError: closed_process at initial readback.py line 90",
+  "cause": "The initial reader assumed every guardian was a V6 operation guardian. Nine retained guardians intentionally kill publication administration before any native operation/CPU epoch; they correctly carry actual wait4/status but no V6 closed-process receipt.",
+  "correction": "The final reader separately requires actual closed-process proof for V6-operation guardians and explicit native_operation_started=false/new_cpu_epoch_created=false/v6_closed_process_receipt_created=false for publication-administration guardians. Both require SIGKILL status 9, actual wait4, exact binary/helper and original snapshot limits.",
+  "archive_changed": false,
+  "runtime_result_reclassified": false
+}

@@ -40,6 +40,58 @@ pub(crate) struct VerifiedEpoch {
     _sealed: (),
 }
 
+/// Same actual paid Startup, including its live CPU sampler and cancellation
+/// flag. Only the History owner constructs this in-memory scope; it is no verdict.
+#[derive(Clone)]
+pub(crate) struct StartupScope {
+    intent_sha256: String,
+    checkpoint: ServiceMutationCpuCheckpoint,
+    cancelled: Arc<AtomicBool>,
+    deadline: Instant,
+    budget_expires_ns: u64,
+}
+impl StartupScope {
+    pub(crate) fn same_operation(&self, other: &Self) -> bool {
+        self.intent_sha256 == other.intent_sha256
+            && self.checkpoint.same_operation(&other.checkpoint)
+            && Arc::ptr_eq(&self.cancelled, &other.cancelled)
+            && self.deadline == other.deadline
+            && self.budget_expires_ns == other.budget_expires_ns
+    }
+}
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum StartupProgress {
+    Material(crate::operator_checkpoint_tile::ReplayProgress),
+    BeforeNode,
+    FirstState,
+    SecondState,
+    BeforeSettlement,
+}
+pub(super) struct StartupMaterial<'a> {
+    pub(super) seal: crate::operator_checkpoint_tile::StartupMaterialSeal,
+    pub(super) progress: &'a dyn Fn(StartupProgress) -> Result<()>,
+}
+
+/// Request-only cancellation for one signed Startup. It grants no operation,
+/// CPU credit or replay authority and cannot cancel a different operation ID.
+#[derive(Clone)]
+pub struct HistoryEffectV6StartupCancellation {
+    operation_id: String,
+    cancelled: Arc<AtomicBool>,
+}
+impl HistoryEffectV6StartupCancellation {
+    pub fn for_operation(operation_id: &str) -> Result<Self> {
+        policy::id(operation_id, 32)?;
+        Ok(Self {
+            operation_id: operation_id.to_owned(),
+            cancelled: Arc::new(AtomicBool::new(false)),
+        })
+    }
+    pub fn cancel(&self) {
+        self.cancelled.store(true, Ordering::Release);
+    }
+}
+
 /// Installs only a separately signed finite budget. The returned local anchor
 /// is an observation: an outside authority must independently pin/sign it in a
 /// later startup claim. This API never creates a startup operation or Node.
@@ -63,6 +115,19 @@ struct Active {
     deadline: Instant,
 }
 impl Active {
+    fn startup_scope(&self) -> Result<StartupScope> {
+        ensure(
+            self.pending.operation.purpose == Purpose::Startup,
+            "HISTORY_V6_STARTUP_REQUIRED",
+        )?;
+        Ok(StartupScope {
+            intent_sha256: self.pending.intent_sha256.clone(),
+            checkpoint: self.checkpoint.clone(),
+            cancelled: self.cancelled.clone(),
+            deadline: self.deadline,
+            budget_expires_ns: self.pending.budget_expires_ns,
+        })
+    }
     fn check(&self) -> Result<()> {
         ensure(
             !self.cancelled.load(Ordering::Acquire),
@@ -95,6 +160,53 @@ pub(super) struct Owner {
     unavailable: Arc<AtomicBool>,
 }
 impl Owner {
+    pub(super) fn consume_startup_material(
+        &self,
+        seal: crate::operator_checkpoint_tile::StartupMaterialSeal,
+        settings: &Settings,
+        resource: &dyn Fn(StartupProgress) -> Result<()>,
+    ) -> Result<()> {
+        self.checkpoint()?;
+        let scope = self
+            .slot()?
+            .ok_or("HISTORY_V6_EXPLICIT_PAID_SCOPE_REQUIRED")?
+            .startup_scope()?;
+        let read = |role, limit| -> Result<Vec<u8>> {
+            let original = std::cell::RefCell::new(None);
+            let value = self.catalog.read_role(role, limit, &|| {
+                if let Err(error) = self.checkpoint() {
+                    *original.borrow_mut() = Some(error);
+                    Err("HISTORY_V6_STARTUP_MATERIAL_INTERRUPTED".into())
+                } else {
+                    Ok(())
+                }
+            });
+            if let Some(error) = original.into_inner() {
+                return Err(error);
+            }
+            value.map_err(|_| "HISTORY_V6_CATALOG".into())
+        };
+        let spec = read("spec", crate::operator_checkpoint_tile::SPEC_BYTES as u64)?;
+        let bundle = read("bootstrap", 8192)?;
+        let model = read("model", 16384)?;
+        let input = read("input", 16384)?;
+        seal.verify_and_consume(
+            settings,
+            crate::operator_checkpoint_tile::CurrentStartupMaterial {
+                scope,
+                spec: &spec,
+                bundle: &bundle,
+                model: &model,
+                input: &input,
+            },
+            &|event| {
+                self.checkpoint()?;
+                resource(StartupProgress::Material(event))?;
+                self.checkpoint()
+            },
+        )?;
+        self.checkpoint()
+    }
     fn journal(&self) -> Result<std::sync::MutexGuard<'_, journal::Journal>> {
         self.journal
             .lock()
@@ -154,10 +266,19 @@ impl Owner {
         cpu: ServiceMutationCpuOperation,
         deadline: Instant,
     ) -> Result<Running> {
+        self.enter_with_cancellation(pending, cpu, deadline, Arc::new(AtomicBool::new(false)))
+    }
+    fn enter_with_cancellation(
+        &self,
+        pending: journal::Pending,
+        cpu: ServiceMutationCpuOperation,
+        deadline: Instant,
+        cancelled: Arc<AtomicBool>,
+    ) -> Result<Running> {
         let active = Active {
             pending,
             checkpoint: cpu.checkpoint_handle(),
-            cancelled: Arc::new(AtomicBool::new(false)),
+            cancelled,
             deadline,
         };
         let mut slot = self.active.lock().map_err(|_| "HISTORY_V6_SCOPE_UNKNOWN")?;
@@ -355,6 +476,32 @@ impl HistoryEffectV6 {
         workers: usize,
         deadline: Instant,
     ) -> Result<Self> {
+        Self::open_with_startup_progress(path, input, workers, deadline, None, &|_| Ok(()))
+    }
+    pub fn open_with_cancellation(
+        path: &Path,
+        input: ProtectedHistoryV6Input,
+        workers: usize,
+        deadline: Instant,
+        cancellation: &HistoryEffectV6StartupCancellation,
+    ) -> Result<Self> {
+        Self::open_with_startup_progress(
+            path,
+            input,
+            workers,
+            deadline,
+            Some(cancellation),
+            &|_| Ok(()),
+        )
+    }
+    fn open_with_startup_progress(
+        path: &Path,
+        input: ProtectedHistoryV6Input,
+        workers: usize,
+        deadline: Instant,
+        cancellation: Option<&HistoryEffectV6StartupCancellation>,
+        resource: &dyn Fn(StartupProgress) -> Result<()>,
+    ) -> Result<Self> {
         ensure([1, 2, 4, 8].contains(&workers), "WORKERS")?;
         let config = &input.config;
         let mut journal = journal::Journal::open(
@@ -370,6 +517,14 @@ impl HistoryEffectV6 {
             startup.body.purpose == Purpose::Startup,
             "HISTORY_V6_STARTUP_REQUIRED",
         )?;
+        if let Some(cancellation) = cancellation {
+            ensure(
+                cancellation.operation_id == startup.body.operation_id,
+                "HISTORY_V6_STARTUP_CANCEL_BINDING",
+            )?;
+        }
+        let cancelled =
+            cancellation.map_or_else(|| Arc::new(AtomicBool::new(false)), |c| c.cancelled.clone());
         let pending = journal.reserve(&config.signed_startup)?;
         let cpu =
             ServiceMutationCpuDomain::from_history_effect_v6_epoch(VerifiedEpoch { _sealed: () });
@@ -393,6 +548,7 @@ impl HistoryEffectV6 {
             .ok_or("HISTORY_V6_TASK")?
             .clone();
         let progress = || {
+            ensure(!cancelled.load(Ordering::Acquire), "HISTORY_V6_CANCELLED")?;
             ensure(Instant::now() < deadline, "HISTORY_V6_DEADLINE")?;
             let at = policy::now()?;
             ensure(
@@ -407,26 +563,46 @@ impl HistoryEffectV6 {
             )
         };
         let built = (|| -> Result<_> {
+            let first_catalog_error = std::cell::RefCell::new(None);
             let catalog = crate::operator_continuous_policy::verify_catalog_bound(
                 &config.materials,
                 input.expected_uid,
                 &binding,
                 pending.operation.allowance.material_bytes,
                 pending.operation.allowance.received_bytes,
-                &|| progress().map_err(|_| crate::operator_task_policy::PolicyError::CpuUnknown),
-            )
-            .map_err(|_| "HISTORY_V6_CATALOG")?;
-            let read = |role, cap| {
-                catalog
-                    .read_role(role, cap, &progress)
-                    .map_err(|_| Error::from("HISTORY_V6_CATALOG"))
+                &|| {
+                    if first_catalog_error.borrow().is_some() {
+                        return Err(crate::operator_task_policy::PolicyError::CpuUnknown);
+                    }
+                    progress().map_err(|error| {
+                        *first_catalog_error.borrow_mut() = Some(error);
+                        crate::operator_task_policy::PolicyError::CpuUnknown
+                    })
+                },
+            );
+            if let Some(error) = first_catalog_error.into_inner() {
+                return Err(error);
+            }
+            let catalog = catalog.map_err(|_| "HISTORY_V6_CATALOG")?;
+            let read = |role, cap| -> Result<Vec<u8>> {
+                let original = std::cell::RefCell::new(None);
+                let value = catalog.read_role(role, cap, &|| {
+                    if let Err(error) = progress() {
+                        *original.borrow_mut() = Some(error);
+                        Err("HISTORY_V6_STARTUP_MATERIAL_INTERRUPTED".into())
+                    } else {
+                        Ok(())
+                    }
+                });
+                if let Some(error) = original.into_inner() {
+                    return Err(error);
+                }
+                value.map_err(|_| "HISTORY_V6_CATALOG".into())
             };
             let model = read("model", 16384)?;
             let input = read("input", 16384)?;
-            let spec = crate::operator_checkpoint_tile::OperatorCheckpointTileSpecV1::decode(
-                &read("spec", crate::operator_checkpoint_tile::SPEC_BYTES as u64)?,
-            )?;
-            let bundle = crate::operator_deployment::decode(&read("bootstrap", 8192)?)?;
+            let spec = read("spec", crate::operator_checkpoint_tile::SPEC_BYTES as u64)?;
+            let bundle = read("bootstrap", 8192)?;
             let paths = crate::operator_checkpoint_tile::CheckpointTileRuntimePaths::new(
                 catalog
                     .path_role("checkpoint")
@@ -435,9 +611,29 @@ impl HistoryEffectV6 {
                     .path_role("activation")
                     .map_err(|_| "HISTORY_V6_CATALOG")?,
             );
-            let settings = Settings::development_with_operator_checkpoint_tile(
-                &spec, &bundle, &model, &input, paths,
+            let scope = StartupScope {
+                intent_sha256: pending.intent_sha256.clone(),
+                checkpoint: operation.checkpoint_handle(),
+                cancelled: cancelled.clone(),
+                deadline,
+                budget_expires_ns: pending.budget_expires_ns,
+            };
+            let prepared = Settings::prepare_history_checkpoint(
+                crate::operator_checkpoint_tile::HistoryCheckpointInput {
+                    spec: &spec,
+                    bundle: &bundle,
+                    model: &model,
+                    input: &input,
+                },
+                paths,
+                scope,
+                &|event| {
+                    progress()?;
+                    resource(StartupProgress::Material(event))?;
+                    progress()
+                },
             )?;
+            let settings = prepared.settings();
             ensure(
                 config.identity.network == hex::encode(settings.network())
                     && config.identity.parameters == hex::encode(settings.parameters())
@@ -445,9 +641,9 @@ impl HistoryEffectV6 {
                 "HISTORY_V6_SETTINGS_CONTEXT",
             )?;
             progress()?;
-            Ok((catalog, settings))
+            Ok((catalog, prepared))
         })();
-        let (catalog, settings) = match built {
+        let (catalog, prepared) = match built {
             Ok(value) => value,
             Err(error) => {
                 let native = Err(error);
@@ -467,9 +663,11 @@ impl HistoryEffectV6 {
             active: Arc::new(Mutex::new(None)),
             unavailable: Arc::new(AtomicBool::new(false)),
         };
-        let running = owner.enter(pending, operation, deadline)?;
+        let running = owner.enter_with_cancellation(pending, operation, deadline, cancelled)?;
+        let (settings, seal) = prepared.into_parts();
         let opened = (|| -> Result<Node> {
             running.checkpoint()?;
+            resource(StartupProgress::BeforeNode)?;
             if !path.join("native.sqlite").exists() {
                 ensure(
                     running.active.pending.operation.owner_frontier
@@ -492,6 +690,10 @@ impl HistoryEffectV6 {
                     mining: None,
                     continuous: None,
                     history_effect: Some(owner.clone()),
+                    startup_material: Some(StartupMaterial {
+                        seal,
+                        progress: resource,
+                    }),
                 },
                 StateBackend::HistoryEffectV6,
                 false,
@@ -506,6 +708,7 @@ impl HistoryEffectV6 {
             storage::no_pending_reorg(&node.db)?;
             storage::verify_known_markers(&node.db, &*owner.journal()?, None)?;
             running.checkpoint()?;
+            resource(StartupProgress::BeforeSettlement)?;
             Ok(node)
         })();
         let native = opened

@@ -729,11 +729,12 @@ impl StateBackend {
         hash(domain, &[self.ddl().as_bytes()])
     }
 }
-struct NativeOwners {
+struct NativeOwners<'a> {
     policy: Option<OwnerPolicy>,
     mining: Option<operator_mining_owner::MiningOwner>,
     continuous: Option<operator_continuous_owner::ContinuousOwner>,
     history_effect: Option<history_effect_v6::Owner>,
+    startup_material: Option<history_effect_v6::StartupMaterial<'a>>,
 }
 struct OwnerPolicy {
     pool_policies: Vec<std::sync::Arc<crate::operator_task_policy::pool::VerifiedPoolPolicy>>,
@@ -953,6 +954,7 @@ impl Node {
                 mining: None,
                 continuous: None,
                 history_effect: None,
+                startup_material: None,
             },
             StateBackend::AuthenticatedV1,
             false,
@@ -1088,6 +1090,7 @@ impl Node {
                 mining: mining_owner,
                 continuous: continuous_owner,
                 history_effect: None,
+                startup_material: None,
             },
             StateBackend::Legacy,
             false,
@@ -1098,7 +1101,7 @@ impl Node {
         settings: Settings,
         workers: usize,
         mut hook: Option<&mut Hook<'_>>,
-        owners: NativeOwners,
+        owners: NativeOwners<'_>,
         state_backend: StateBackend,
         growth_observation_only: bool,
     ) -> Result<Self> {
@@ -1123,6 +1126,7 @@ impl Node {
             mining: mining_owner,
             continuous: continuous_owner,
             history_effect: history_effect_owner,
+            startup_material,
         } = owners;
         if growth_profile_v2::enabled(&settings.app) {
             ensure(
@@ -1160,7 +1164,19 @@ impl Node {
             owner.checkpoint()?;
         }
         ensure([1, 2, 4, 8].contains(&workers), "WORKERS")?;
-        settings.replay_checkpoint_tile_material()?;
+        let startup_progress = startup_material.as_ref().map(|material| material.progress);
+        if let Some(material) = startup_material {
+            let history_owner = history_effect_owner
+                .as_ref()
+                .ok_or("HISTORY_V6_OWNER_REQUIRED")?;
+            history_owner.consume_startup_material(material.seal, &settings, material.progress)?;
+        } else {
+            ensure(
+                history_effect_owner.is_none(),
+                "HISTORY_V6_STARTUP_SEAL_REQUIRED",
+            )?;
+            settings.replay_checkpoint_tile_material()?;
+        }
         if !path.exists() {
             fs::create_dir_all(path)?;
             fs::set_permissions(path, fs::Permissions::from_mode(0o700))?;
@@ -1439,7 +1455,22 @@ impl Node {
             // execution never clones this bootstrap State or the full account set.
             return Ok(node);
         }
-        node.read_active()?;
+        let history_owner = node.history_effect_owner.clone();
+        let startup_check = |stage| -> Result<()> {
+            if let Some(owner) = &history_owner {
+                owner.checkpoint()?;
+            }
+            if let Some(progress) = startup_progress {
+                progress(stage)?;
+            }
+            if let Some(owner) = &history_owner {
+                owner.checkpoint()?;
+            }
+            Ok(())
+        };
+        node.read_active_with_progress(&mut || {
+            startup_check(history_effect_v6::StartupProgress::FirstState)
+        })?;
         if node.state_backend == StateBackend::AuthenticatedV1 {
             native_authenticated::verify_history_with_cache(
                 &node.db,
@@ -1453,7 +1484,9 @@ impl Node {
         node.validate_authenticated_outbox()?;
         node.validate_native_budget_records_v1()?;
         node.recover()?;
-        node.read_active()?;
+        node.read_active_with_progress(&mut || {
+            startup_check(history_effect_v6::StartupProgress::SecondState)
+        })?;
         crate::ancestry_index::validate_tip(&node.db, node.ancestry_context(), node.active()?.0)?;
         Ok(node)
     }

@@ -1033,6 +1033,9 @@ impl ServiceMutationCpuCheckpoint {
     pub fn checkpoint(&self) -> Result<()> {
         self.live.checkpoint()
     }
+    pub(crate) fn same_operation(&self, other: &Self) -> bool {
+        Arc::ptr_eq(&self.live, &other.live)
+    }
 }
 impl ServiceMutationCpuOperation {
     pub fn checkpoint_handle(&self) -> ServiceMutationCpuCheckpoint {

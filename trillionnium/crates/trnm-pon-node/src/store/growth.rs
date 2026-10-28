@@ -246,6 +246,7 @@ impl Node {
                 mining: None,
                 continuous: None,
                 history_effect: None,
+                startup_material: None,
             },
             StateBackend::PermanentAccountGrowthV2,
             observation_only,

@@ -307,7 +307,7 @@ fn copy_tree(from: &Path, to: &Path) {
         }
     }
 }
-struct Retain {
+pub(super) struct Retain {
     source: PathBuf,
     target: Option<PathBuf>,
 }
@@ -318,6 +318,16 @@ impl Drop for Retain {
                 copy_tree(&self.source, target);
             }
         }
+    }
+}
+pub(super) fn retain_fixture(source: &Path, label: &str) -> Retain {
+    Retain {
+        source: source.to_path_buf(),
+        target: std::env::var_os("TRNM_HISTORY_V6_ARTIFACT_DIR").map(|base| {
+            let base = PathBuf::from(base);
+            fs::create_dir_all(&base).unwrap();
+            base.join(label)
+        }),
     }
 }
 fn snapshot(path: &Path) -> BTreeMap<String, String> {

@@ -1,0 +1,51 @@
+{
+  "scope": "audit note only; not canonical whole-repository source/link acceptance",
+  "passed": true,
+  "links": [
+    {
+      "target": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "worktree_present": true,
+      "retained_git_tree_entry": true
+    },
+    {
+      "target": "evidence/pon-history-startup-audit-20261028/source-audit.json",
+      "worktree_present": true,
+      "retained_git_tree_entry": false
+    },
+    {
+      "target": "evidence/pon-history-publication-native-20261028/startup-capacity-observation.json",
+      "worktree_present": false,
+      "retained_git_tree_entry": true
+    },
+    {
+      "target": "trillionnium/crates/trnm-pon-node/src/store/history_effect_v6.rs",
+      "worktree_present": true,
+      "retained_git_tree_entry": true
+    },
+    {
+      "target": "trillionnium/crates/trnm-pon-node/src/operator_checkpoint_tile.rs",
+      "worktree_present": true,
+      "retained_git_tree_entry": true
+    },
+    {
+      "target": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "worktree_present": true,
+      "retained_git_tree_entry": true
+    },
+    {
+      "target": "trillionnium/crates/trnm-pon-node/src/operator_continuous_policy.rs",
+      "worktree_present": true,
+      "retained_git_tree_entry": true
+    },
+    {
+      "target": "trillionnium/crates/trnm-mvcc-fee/src/checkpoint_tile_material_v1.rs",
+      "worktree_present": true,
+      "retained_git_tree_entry": true
+    },
+    {
+      "target": "trillionnium/crates/trnm-pon-node/src/lib.rs",
+      "worktree_present": true,
+      "retained_git_tree_entry": true
+    }
+  ]
+}
