@@ -1,0 +1,8 @@
+{
+  "command": [
+    "python3",
+    "scripts/ci/test_ci_source_integrity.py"
+  ],
+  "elapsed_seconds": 5.570097184005135,
+  "exit_code": 0
+}

@@ -1,0 +1,504 @@
+{
+  "additional_new_repair_crash_cuts": 2,
+  "arbitrary_subprocess_adoption_qualified": false,
+  "authorization_refusals_per_publication_case": 5,
+  "base_commit": "2e325e78e508bfe72d342d210a27b17ed53e2d24",
+  "binary_sha256": "73a4ae3107888b7997ce2de62a8b1ca6c5492f532e5bdeb6db77ffc8aff49e9b",
+  "build_receipt_sha256": "ef5a7ec9bda6c7711c2499b962582a8b8edb98988160da4021aa3e1fd939f478",
+  "cases": [
+    {
+      "actual_native_child_sigkill_wait4": true,
+      "cold_journal": {
+        "anchor": {
+          "digest": "8e0526709cf800d4760432f48f787e3c4c6b79cedaf382b9c094ba6f3c77f200",
+          "sequence": 14
+        },
+        "epoch": null,
+        "known_settlements": 5,
+        "pending": null,
+        "request_nonce": 14,
+        "schema": "restricted-history-effect-journal-observation-v6",
+        "spent": {
+          "cpu_ns": 24000000000,
+          "material_bytes": 12582912,
+          "operations": 6,
+          "received_bytes": 12582912
+        },
+        "unknown_prepaid_reconciliations": 1,
+        "used_operations": 6
+      },
+      "cutpoint": "validation-worker",
+      "final_marker_count": 2,
+      "new_native_process_initial_credit_ns": 0,
+      "new_validation_cpu": {
+        "accounting_unavailable": false,
+        "finished_workers": 2,
+        "known_workers": 2,
+        "live_paid_cpu_ns": 27291887,
+        "live_refused": false,
+        "owner_cpu_ns": 26914986,
+        "residual_cpu_ns": 5002,
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "scoped_worker_cpu_ns": 381903,
+        "spawned_workers": 2,
+        "started_workers": 2,
+        "total_cpu_ns": 27296889
+      },
+      "old_records_unchanged": true,
+      "original_scope_allowance_ns": 4000000000,
+      "process_result_sha256": "dae9974c17179c9dc181fe959c1338d9333bc56b42d4dbb67f9267b48ea91f25",
+      "whole_original_process_reported_cpu_upper_bound_ns": 153028000
+    },
+    {
+      "actual_native_child_sigkill_wait4": true,
+      "cold_journal": {
+        "anchor": {
+          "digest": "cee89ae4f50b674f47fdb9485b65434383817dbe3235f7e31efc875cd06aaa21",
+          "sequence": 16
+        },
+        "epoch": null,
+        "known_settlements": 6,
+        "pending": null,
+        "request_nonce": 14,
+        "schema": "restricted-history-effect-journal-observation-v6",
+        "spent": {
+          "cpu_ns": 28000000000,
+          "material_bytes": 14680064,
+          "operations": 7,
+          "received_bytes": 14680064
+        },
+        "unknown_prepaid_reconciliations": 1,
+        "used_operations": 7
+      },
+      "cutpoint": "activation-committed",
+      "final_marker_count": 4,
+      "new_native_process_initial_credit_ns": 0,
+      "new_validation_cpu": {
+        "accounting_unavailable": false,
+        "finished_workers": 2,
+        "known_workers": 2,
+        "live_paid_cpu_ns": 260374974,
+        "live_refused": false,
+        "owner_cpu_ns": 259909796,
+        "residual_cpu_ns": 6207,
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "scoped_worker_cpu_ns": 471385,
+        "spawned_workers": 2,
+        "started_workers": 2,
+        "total_cpu_ns": 260381181
+      },
+      "old_records_unchanged": true,
+      "original_scope_allowance_ns": 4000000000,
+      "process_result_sha256": "902787df9adeeb6d1af0665fd4b803b259f26488d0c3241dd226d6079ae808b6",
+      "whole_original_process_reported_cpu_upper_bound_ns": 182820000
+    },
+    {
+      "actual_native_child_sigkill_wait4": true,
+      "cold_journal": {
+        "anchor": {
+          "digest": "8a6d13de6ad888c4a7a015daa8037d7fa4d40b6e5d79295ce5ebd8ca8ddb95fe",
+          "sequence": 14
+        },
+        "epoch": null,
+        "known_settlements": 5,
+        "pending": null,
+        "request_nonce": 14,
+        "schema": "restricted-history-effect-journal-observation-v6",
+        "spent": {
+          "cpu_ns": 24000000000,
+          "material_bytes": 12582912,
+          "operations": 6,
+          "received_bytes": 12582912
+        },
+        "unknown_prepaid_reconciliations": 1,
+        "used_operations": 6
+      },
+      "cutpoint": "publication-intent-file-synced",
+      "final_marker_count": 2,
+      "new_native_process_initial_credit_ns": 0,
+      "new_validation_cpu": {
+        "accounting_unavailable": false,
+        "finished_workers": 2,
+        "known_workers": 2,
+        "live_paid_cpu_ns": 34617184,
+        "live_refused": false,
+        "owner_cpu_ns": 34142983,
+        "residual_cpu_ns": 5135,
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "scoped_worker_cpu_ns": 479336,
+        "spawned_workers": 2,
+        "started_workers": 2,
+        "total_cpu_ns": 34622319
+      },
+      "old_records_unchanged": true,
+      "original_scope_allowance_ns": 4000000000,
+      "process_result_sha256": "6cecb79f15c9da33b5fdabc6d10aea0e7d964e8c0eab5dfdc15002c7231c20fc",
+      "publication": {
+        "externally_signed_latest_anchor": {
+          "digest": "c987d1627f6c0e908bcd86da2cee13dc08db67e2f991a3b6480176ba5149c938",
+          "sequence": 4
+        },
+        "frame_bytes": 13432,
+        "frame_sha256": "c987d1627f6c0e908bcd86da2cee13dc08db67e2f991a3b6480176ba5149c938",
+        "idempotent_retry_no_new_event": true,
+        "prefix_anchor": {
+          "digest": "624eadbbcc6969cd7c137bcf00cd8fb7f9cb776ccc01e4b6affc2c27cefe319e",
+          "sequence": 3
+        },
+        "refusal_count": 5,
+        "result_sha256": "00f92087d52fe75635166de036cbb09f9007b61aeb60f04972c44f59efcf330f"
+      },
+      "whole_original_process_reported_cpu_upper_bound_ns": 337288000
+    },
+    {
+      "actual_native_child_sigkill_wait4": true,
+      "cold_journal": {
+        "anchor": {
+          "digest": "7599eb3fbdb9789179bd7aaa1c459766045857db5aff0c4bf96f6cfa131aa455",
+          "sequence": 14
+        },
+        "epoch": null,
+        "known_settlements": 5,
+        "pending": null,
+        "request_nonce": 14,
+        "schema": "restricted-history-effect-journal-observation-v6",
+        "spent": {
+          "cpu_ns": 24000000000,
+          "material_bytes": 12582912,
+          "operations": 6,
+          "received_bytes": 12582912
+        },
+        "unknown_prepaid_reconciliations": 1,
+        "used_operations": 6
+      },
+      "cutpoint": "publication-intent-linked",
+      "final_marker_count": 2,
+      "new_native_process_initial_credit_ns": 0,
+      "new_validation_cpu": {
+        "accounting_unavailable": false,
+        "finished_workers": 2,
+        "known_workers": 2,
+        "live_paid_cpu_ns": 18299319,
+        "live_refused": false,
+        "owner_cpu_ns": 17977188,
+        "residual_cpu_ns": 5453,
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "scoped_worker_cpu_ns": 327584,
+        "spawned_workers": 2,
+        "started_workers": 2,
+        "total_cpu_ns": 18304772
+      },
+      "old_records_unchanged": true,
+      "original_scope_allowance_ns": 4000000000,
+      "process_result_sha256": "51a92f6ff4f8a41dd2bd263c05b3e8757b521f36120eac0d2f72f06aa355cf73",
+      "publication": {
+        "externally_signed_latest_anchor": {
+          "digest": "b22eaf2e93853152587fc60559607455f36132fc605f20493c3cb800784cb2fd",
+          "sequence": 4
+        },
+        "frame_bytes": 13442,
+        "frame_sha256": "b22eaf2e93853152587fc60559607455f36132fc605f20493c3cb800784cb2fd",
+        "idempotent_retry_no_new_event": true,
+        "prefix_anchor": {
+          "digest": "927a74d5439b01491aad534536456a016c3935945a54ea280ec447c354cf24ef",
+          "sequence": 3
+        },
+        "refusal_count": 5,
+        "result_sha256": "b9536fb089edb719594980291ca9868d730d5a7991ee495b4a116edb586ef6f1"
+      },
+      "whole_original_process_reported_cpu_upper_bound_ns": 295863000
+    },
+    {
+      "actual_native_child_sigkill_wait4": true,
+      "cold_journal": {
+        "anchor": {
+          "digest": "252f955d46c1a892f8c0b23e2a5ec766e0d416c87e8acc17a2a044b2da5af84b",
+          "sequence": 14
+        },
+        "epoch": null,
+        "known_settlements": 5,
+        "pending": null,
+        "request_nonce": 14,
+        "schema": "restricted-history-effect-journal-observation-v6",
+        "spent": {
+          "cpu_ns": 24000000000,
+          "material_bytes": 12582912,
+          "operations": 6,
+          "received_bytes": 12582912
+        },
+        "unknown_prepaid_reconciliations": 1,
+        "used_operations": 6
+      },
+      "cutpoint": "publication-intent-final-synced",
+      "final_marker_count": 2,
+      "new_native_process_initial_credit_ns": 0,
+      "new_validation_cpu": {
+        "accounting_unavailable": false,
+        "finished_workers": 2,
+        "known_workers": 2,
+        "live_paid_cpu_ns": 14847625,
+        "live_refused": false,
+        "owner_cpu_ns": 14376081,
+        "residual_cpu_ns": 5584,
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "scoped_worker_cpu_ns": 477128,
+        "spawned_workers": 2,
+        "started_workers": 2,
+        "total_cpu_ns": 14853209
+      },
+      "old_records_unchanged": true,
+      "original_scope_allowance_ns": 4000000000,
+      "process_result_sha256": "f7d0788b87638f952bd57995d92f1c3dc8a2d55b8a25332339c7dd17b99f6c69",
+      "publication": {
+        "externally_signed_latest_anchor": {
+          "digest": "b8de766ffe3fe98460f3b67711e94afd0a600807db3162e634602e2993149031",
+          "sequence": 4
+        },
+        "frame_bytes": 13438,
+        "frame_sha256": "b8de766ffe3fe98460f3b67711e94afd0a600807db3162e634602e2993149031",
+        "idempotent_retry_no_new_event": true,
+        "prefix_anchor": {
+          "digest": "a08cb77468fcb7d34dade460a73486d370a0666756e00c9028815847f499f911",
+          "sequence": 3
+        },
+        "refusal_count": 5,
+        "result_sha256": "f0251e7261f5448eb4c849b283745068cb125c6e8a3a8810f9bea46c2b12d6a4"
+      },
+      "whole_original_process_reported_cpu_upper_bound_ns": 222260000
+    },
+    {
+      "actual_native_child_sigkill_wait4": true,
+      "cold_journal": {
+        "anchor": {
+          "digest": "a17c65977026045c0bad586bf84c9a2945e3e6d78839baf38ff0143f43317c69",
+          "sequence": 14
+        },
+        "epoch": null,
+        "known_settlements": 5,
+        "pending": null,
+        "request_nonce": 14,
+        "schema": "restricted-history-effect-journal-observation-v6",
+        "spent": {
+          "cpu_ns": 24000000000,
+          "material_bytes": 12582912,
+          "operations": 6,
+          "received_bytes": 12582912
+        },
+        "unknown_prepaid_reconciliations": 1,
+        "used_operations": 6
+      },
+      "cutpoint": "publication-intent-unlinked",
+      "final_marker_count": 2,
+      "new_native_process_initial_credit_ns": 0,
+      "new_validation_cpu": {
+        "accounting_unavailable": false,
+        "finished_workers": 2,
+        "known_workers": 2,
+        "live_paid_cpu_ns": 22049089,
+        "live_refused": false,
+        "owner_cpu_ns": 21691841,
+        "residual_cpu_ns": 5035,
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "scoped_worker_cpu_ns": 362283,
+        "spawned_workers": 2,
+        "started_workers": 2,
+        "total_cpu_ns": 22054124
+      },
+      "old_records_unchanged": true,
+      "original_scope_allowance_ns": 4000000000,
+      "process_result_sha256": "090a594235d258e70365195b8a7054ad508c8a5978014aec8eebfa93abca7181",
+      "publication": {
+        "externally_signed_latest_anchor": {
+          "digest": "8f8265711309a9f6de1896a5185236a5c52a8d6816cb1a3decd42cf7363c5009",
+          "sequence": 4
+        },
+        "frame_bytes": 13425,
+        "frame_sha256": "8f8265711309a9f6de1896a5185236a5c52a8d6816cb1a3decd42cf7363c5009",
+        "idempotent_retry_no_new_event": true,
+        "prefix_anchor": {
+          "digest": "7bcdae97fccb39edef42e7d23de6ae65ba636fb925c5fa1fbc28f2f545b82d74",
+          "sequence": 3
+        },
+        "refusal_count": 5,
+        "result_sha256": "eb4aeaf91aab74551a08067114702d39375bfaac8d79329612f1af89a9271f83"
+      },
+      "whole_original_process_reported_cpu_upper_bound_ns": 145945000
+    },
+    {
+      "actual_native_child_sigkill_wait4": true,
+      "cold_journal": {
+        "anchor": {
+          "digest": "98aaf1b297fcf0f689f381cf2e8145f67e79298d1315b66aa8944d1df7de281e",
+          "sequence": 14
+        },
+        "epoch": null,
+        "known_settlements": 5,
+        "pending": null,
+        "request_nonce": 14,
+        "schema": "restricted-history-effect-journal-observation-v6",
+        "spent": {
+          "cpu_ns": 24000000000,
+          "material_bytes": 12582912,
+          "operations": 6,
+          "received_bytes": 12582912
+        },
+        "unknown_prepaid_reconciliations": 1,
+        "used_operations": 6
+      },
+      "cutpoint": "publication-intent-published",
+      "final_marker_count": 2,
+      "new_native_process_initial_credit_ns": 0,
+      "new_validation_cpu": {
+        "accounting_unavailable": false,
+        "finished_workers": 2,
+        "known_workers": 2,
+        "live_paid_cpu_ns": 14408171,
+        "live_refused": false,
+        "owner_cpu_ns": 13985130,
+        "residual_cpu_ns": 4295,
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "scoped_worker_cpu_ns": 427336,
+        "spawned_workers": 2,
+        "started_workers": 2,
+        "total_cpu_ns": 14412466
+      },
+      "old_records_unchanged": true,
+      "original_scope_allowance_ns": 4000000000,
+      "process_result_sha256": "89eb9ecd2280fdf8827dd1f9b11e39f73bbcf4b48d7a7f779ee5b9d61f5f3ce8",
+      "publication": {
+        "externally_signed_latest_anchor": {
+          "digest": "85c8201ef3d1da32644c0d9bdc4812a66462e3aef4ec3d52795324019b46bdb3",
+          "sequence": 4
+        },
+        "frame_bytes": 13432,
+        "frame_sha256": "85c8201ef3d1da32644c0d9bdc4812a66462e3aef4ec3d52795324019b46bdb3",
+        "idempotent_retry_no_new_event": true,
+        "prefix_anchor": {
+          "digest": "3932fdc62379b4b0106cb5dac05d9e065351565c663d0b37a028330d2c93e3fa",
+          "sequence": 3
+        },
+        "refusal_count": 5,
+        "result_sha256": "f9e0a8bd56b0427ac616274a38e089c2aff736b279b45d10ab46c3a495f4bb0e"
+      },
+      "whole_original_process_reported_cpu_upper_bound_ns": 151260000
+    }
+  ],
+  "extra_link_test_scope": "unexpected additional alias: observed nlink=2 where one name requires 1",
+  "ignored_child_helpers": 1,
+  "literal_three_link_test_executed": false,
+  "native_attempt": "native-03",
+  "native_tests_passed": 12,
+  "new_original_append_crash_cuts": 5,
+  "original_frame_and_physical_refusals": [
+    {
+      "error": "JSON: EOF while parsing a list at line 1 column 2601",
+      "files_unchanged": true,
+      "frame_sha256": "236b3ee721beb0abdb40928080a48227ac4fcc56fd1a65476de7cdecf9d503c2",
+      "label": "partial"
+    },
+    {
+      "error": "HISTORY_PUBLICATION_FRAME_DIGEST",
+      "files_unchanged": true,
+      "frame_sha256": "6eb1074feb61424d86a330f8e6e2e9b1a2c120dcddf02181c8dcd5e56c6b6df3",
+      "label": "tampered"
+    },
+    {
+      "error": "HISTORY_V6_JOURNAL_CANONICAL",
+      "files_unchanged": true,
+      "frame_sha256": "9fbd9279272d64f7292c0453fea7d8a60d6fc139b8273cbab67662b3b6e9e82d",
+      "label": "noncanonical"
+    },
+    {
+      "error": "HISTORY_V6_SIGNATURE",
+      "files_unchanged": true,
+      "frame_sha256": "bf9f4b4ead0795c9c1edce1c31a7c812913608787995656ce6da5ca7c73f2eb7",
+      "label": "original-signature"
+    },
+    {
+      "error": "HISTORY_V6_BUDGET_ROLLBACK",
+      "files_unchanged": true,
+      "frame_sha256": "2473dd0969b6faa4724875574752a4df8073cdc1d51a1c75c5d05b08c536c152",
+      "label": "original-ceiling"
+    },
+    {
+      "error": "HISTORY_V6_JOURNAL_CHAIN",
+      "files_unchanged": true,
+      "frame_sha256": "3f9e61770ca6da45dcc83b167410adae92a85433f4c781f1653ae01680569703",
+      "label": "chain-previous"
+    },
+    {
+      "error": "HISTORY_V6_JOURNAL_CHAIN",
+      "files_unchanged": true,
+      "frame_sha256": "49b63e530112b1d3b9d9406df64ccc401831af56ecccf34aed14ab2a272fafe7",
+      "label": "chain-identity"
+    },
+    {
+      "error": "HISTORY_PUBLICATION_UNEXPECTED_TAIL",
+      "files_unchanged": true,
+      "frame_sha256": "6eb1074feb61424d86a330f8e6e2e9b1a2c120dcddf02181c8dcd5e56c6b6df3",
+      "label": "unexpected-tail"
+    },
+    {
+      "error": "HISTORY_PUBLICATION_FILE",
+      "files_unchanged": true,
+      "frame_sha256": "6eb1074feb61424d86a330f8e6e2e9b1a2c120dcddf02181c8dcd5e56c6b6df3",
+      "label": "external-hardlink"
+    },
+    {
+      "error": "HISTORY_PUBLICATION_FILE",
+      "files_unchanged": true,
+      "frame_sha256": "6eb1074feb61424d86a330f8e6e2e9b1a2c120dcddf02181c8dcd5e56c6b6df3",
+      "label": "distinct-two-files"
+    },
+    {
+      "error": "HISTORY_PUBLICATION_FILE",
+      "files_unchanged": true,
+      "frame_sha256": "6eb1074feb61424d86a330f8e6e2e9b1a2c120dcddf02181c8dcd5e56c6b6df3",
+      "label": "final-symlink"
+    },
+    {
+      "error": "HISTORY_PUBLICATION_PREFIX",
+      "files_unchanged": true,
+      "frame_sha256": "6eb1074feb61424d86a330f8e6e2e9b1a2c120dcddf02181c8dcd5e56c6b6df3",
+      "label": "missing-prefix"
+    },
+    {
+      "error": "HISTORY_PUBLICATION_FILE",
+      "files_unchanged": true,
+      "frame_sha256": "6eb1074feb61424d86a330f8e6e2e9b1a2c120dcddf02181c8dcd5e56c6b6df3",
+      "label": "unsafe-mode"
+    },
+    {
+      "error": "IO: Resource temporarily unavailable (os error 11)",
+      "files_unchanged": true,
+      "frame_sha256": "6eb1074feb61424d86a330f8e6e2e9b1a2c120dcddf02181c8dcd5e56c6b6df3",
+      "label": "held-lock"
+    }
+  ],
+  "original_native_crash_controls": 2,
+  "passed": true,
+  "physical_power_loss_qualified": false,
+  "physical_refusal_count": 14,
+  "production_qualified": false,
+  "repair_processes": [
+    {
+      "actual_sigkill_wait4": true,
+      "guardian_sha256": "be83560ddd72e7ef2b8faeca4778f977989a7f76e69e70c9c1d50fd85aa242eb",
+      "repair_stage": "linked",
+      "reported_system_seconds": "0.0",
+      "reported_user_seconds": "0.011652",
+      "v6_recovery_receipt_created": false
+    },
+    {
+      "actual_sigkill_wait4": true,
+      "guardian_sha256": "40338f07e63dfa83047025545cf8fd732d14638e00e07573bf40a7191af32395",
+      "repair_stage": "unlinked",
+      "reported_system_seconds": "0.004384",
+      "reported_user_seconds": "0.00615",
+      "v6_recovery_receipt_created": false
+    }
+  ],
+  "schema": "history-publication-native-readback-v1",
+  "tests_receipt_sha256": "7e646465c2177e5e95999aba58189a11f6a735edf4c316ed977a65f734580e35",
+  "whole_history_p0_closed": false
+}

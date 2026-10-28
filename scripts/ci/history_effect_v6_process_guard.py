@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Real owned-child SIGKILL/wait4 at two V6 native cutpoints.
+"""Real owned-child SIGKILL/wait4 at V6 native and publication cutpoints.
 
 The observer creates no recovery signature or budget. Test authorities separately
 sign these exact raw observations. No physical-power-loss qualification.
@@ -144,12 +144,25 @@ def stable_parent_observation(proc: Path, pinned: dict, deadline: float,
 
 
 def write(path: Path, value: dict) -> None:
-    with path.open('x') as output:
-        os.chmod(path, 0o600)
+    # Readers use final-name visibility as their completion signal. A complete
+    # wait4 record must never appear as an empty or partially written JSON file.
+    pending = path.with_name(path.name + '.pending')
+    with pending.open('x') as output:
+        os.chmod(pending, 0o600)
         json.dump(value, output, sort_keys=True, separators=(',', ':'))
         output.write('\n')
         output.flush()
         os.fsync(output.fileno())
+    # Linking is atomic and cannot replace an earlier observation. Preserve the
+    # pending evidence on failure instead of overwriting or hiding the conflict.
+    os.link(pending, path, follow_symlinks=False)
+    directory = os.open(path.parent, os.O_RDONLY | os.O_DIRECTORY)
+    try:
+        os.fsync(directory)
+        pending.unlink()
+        os.fsync(directory)
+    finally:
+        os.close(directory)
 
 
 def main() -> int:
@@ -164,7 +177,15 @@ def main() -> int:
     assert sha(args.binary) == args.binary_sha256
     assert sha(args.configuration) == args.configuration_sha256
     config = json.loads(args.configuration.read_bytes())
-    assert config['mode'] in ('validation-worker', 'activation-committed')
+    publication_modes = (
+        'publication-intent-file-synced', 'publication-intent-linked',
+        'publication-intent-final-synced', 'publication-intent-unlinked',
+        'publication-intent-published',
+    )
+    repair_modes = ('publication-repair-linked', 'publication-repair-unlinked')
+    assert config['mode'] in ('validation-worker', 'activation-committed', *publication_modes, *repair_modes)
+    publication_cut = config['mode'] in publication_modes
+    repair_cut = config['mode'] in repair_modes
     assert args.directory.is_dir()
     ready = args.directory / 'crash-ready.json'
     env = os.environ.copy()
@@ -201,7 +222,17 @@ def main() -> int:
                 time.sleep(0.01)
             barrier = json.loads(ready.read_bytes())
             assert barrier['pid'] == child.pid and barrier['cutpoint'] == config['mode']
-            assert barrier['pending_operation'] is not None
+            if repair_cut:
+                assert barrier['schema'] == 'actual-history-publication-repair-crash-barrier-v1'
+                repair_config = json.loads(Path(config['publication']).read_bytes())
+                assert sha(Path(config['publication'])) == config['publication_sha256']
+                assert barrier['signed_publication_sha256'] == hashlib.sha256(
+                    bytes(repair_config['signed_publication'])).hexdigest()
+                assert barrier['native_operation_started'] is False
+                assert barrier['cpu_epoch_created'] is False
+                assert barrier['recovery_receipt_created'] is False
+            else:
+                assert barrier['pending_operation'] is not None
             proc, pinned, threads = stop_owned_group(
                 child, pidfd, args.binary_sha256, deadline, record)
             before_descendants = stable_parent_observation(proc, pinned, deadline, record)
@@ -229,43 +260,58 @@ def main() -> int:
                 assert abs(value - integer) <= Decimal('0.001')
                 return int(integer)
             user, system = micros(raw_user), micros(raw_system)
-            database = Path(config['store']) / 'native.sqlite'
-            with sqlite3.connect(f'file:{database}?mode=ro', uri=True) as db:
-                db.execute('PRAGMA query_only=ON')
-                tip, root, generation = db.execute(
-                    'SELECT hex(a.tip),hex(b.state_root),a.generation FROM active a '
-                    'JOIN blocks b ON b.id=a.tip WHERE a.singleton=1').fetchone()
-                marker_row = db.execute('SELECT marker FROM history_effect_v6 WHERE operation=?',
-                                        (barrier['pending_operation'],)).fetchone()
-                marker = json.loads(marker_row[0]) if marker_row else None
-            if config['mode'] == 'validation-worker':
-                assert marker is None
+            if repair_cut:
+                # This administrative process is not the crashed Native epoch.
+                # Never export its observation as a V6 recovery CPU receipt.
+                record.update(
+                    passed=True, owned_child_pid=child.pid, child_identity=pinned,
+                    threads_before_kill=threads, descendants_before_kill=before_descendants,
+                    actual_wait4=True, wait_status=wait_status,
+                    reported_user_seconds=raw_user, reported_system_seconds=raw_system,
+                    reported_cpu_upper_bound_ns=(user + system + 2) * 1000,
+                    barrier_sha256=sha(ready), native_operation_started=False,
+                    new_cpu_epoch_created=False, v6_closed_process_receipt_created=False,
+                    publication_authorized_by_observer=False)
             else:
-                assert marker is not None and marker['purpose'] == 'activation'
-                assert marker['target'] == tip.lower() and marker['after']['generation'] == generation
-            closed = {'schema': 'actual-history-effect-closed-process-v6',
-                      'epoch': barrier['epoch'], 'executable_sha256': args.binary_sha256,
-                      'intent_sha256': barrier['intent_sha256'], 'original_journal': barrier['anchor'],
-                      'owned_namespace_pid': child.pid, 'observed_visible_pid': pinned['visible_pid'],
-                      'observed_starttime_ticks': pinned['starttime_ticks'],
-                      'pidfd_identity_verified': True, 'actual_wait4': True,
-                      'signal': signal.SIGKILL, 'all_descendants_closed': True, 'descendants': [],
-                      'descendant_accounting_profile': DESCENDANT_PROFILE,
-                      'fixture_selector': SELECTOR,
-                      'historical_process_tree_observed': False,
-                      'cpu_counter_profile': 'linux-wait4-timeval-quantized-v1',
-                      'reported_user_seconds': raw_user, 'reported_system_seconds': raw_system,
-                      'user_cpu_microseconds': user, 'system_cpu_microseconds': system,
-                      'reported_cpu_upper_bound_ns': (user + system + 2) * 1000,
-                      'marker': marker,
-                      'actual_frontier': {'block': tip.lower(), 'root': root.lower(), 'generation': generation},
-                      'physical_cost_qualified': False}
-            write(args.directory / 'closed-process.json', closed)
-            record.update(passed=True, owned_child_pid=child.pid, child_identity=pinned,
-                          threads_before_kill=threads, descendants_before_kill=before_descendants,
-                          actual_wait4=True, wait_status=wait_status, closed_process=closed,
-                          closed_process_sha256=sha(args.directory / 'closed-process.json'),
-                          barrier_sha256=sha(ready), clean_close_created=False)
+                database = Path(config['store']) / 'native.sqlite'
+                with sqlite3.connect(f'file:{database}?mode=ro', uri=True) as db:
+                    db.execute('PRAGMA query_only=ON')
+                    tip, root, generation = db.execute(
+                        'SELECT hex(a.tip),hex(b.state_root),a.generation FROM active a '
+                        'JOIN blocks b ON b.id=a.tip WHERE a.singleton=1').fetchone()
+                    marker_row = db.execute('SELECT marker FROM history_effect_v6 WHERE operation=?',
+                                            (barrier['pending_operation'],)).fetchone()
+                    marker = json.loads(marker_row[0]) if marker_row else None
+                if config['mode'] == 'validation-worker' or publication_cut:
+                    assert marker is None
+                else:
+                    assert marker is not None and marker['purpose'] == 'activation'
+                    assert marker['target'] == tip.lower() and marker['after']['generation'] == generation
+                closed = {'schema': 'actual-history-effect-closed-process-v6',
+                          'epoch': barrier['epoch'], 'executable_sha256': args.binary_sha256,
+                          'intent_sha256': barrier['intent_sha256'], 'original_journal': barrier['anchor'],
+                          'owned_namespace_pid': child.pid, 'observed_visible_pid': pinned['visible_pid'],
+                          'observed_starttime_ticks': pinned['starttime_ticks'],
+                          'pidfd_identity_verified': True, 'actual_wait4': True,
+                          'signal': signal.SIGKILL, 'all_descendants_closed': True, 'descendants': [],
+                          'descendant_accounting_profile': DESCENDANT_PROFILE,
+                          'fixture_selector': SELECTOR,
+                          'historical_process_tree_observed': False,
+                          'cpu_counter_profile': 'linux-wait4-timeval-quantized-v1',
+                          'reported_user_seconds': raw_user, 'reported_system_seconds': raw_system,
+                          'user_cpu_microseconds': user, 'system_cpu_microseconds': system,
+                          'reported_cpu_upper_bound_ns': (user + system + 2) * 1000,
+                          'marker': marker,
+                          'actual_frontier': {'block': tip.lower(), 'root': root.lower(), 'generation': generation},
+                          'physical_cost_qualified': False}
+                write(args.directory / 'closed-process.json', closed)
+                record.update(passed=True, owned_child_pid=child.pid, child_identity=pinned,
+                              threads_before_kill=threads, descendants_before_kill=before_descendants,
+                              actual_wait4=True, wait_status=wait_status, closed_process=closed,
+                              closed_process_sha256=sha(args.directory / 'closed-process.json'),
+                              barrier_sha256=sha(ready), clean_close_created=False,
+                              publication_repair_required=publication_cut,
+                              publication_authorized_by_observer=False)
     except BaseException as error:
         record['error'] = f'{type(error).__name__}: {error}'
         if child is not None and child.returncode is not None:

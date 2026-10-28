@@ -141,7 +141,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 scripts/ci/test_history_effect_v6_guard.py -v 2>&1 | tee "$OUT/history-v6-observer.log"
-          grep -E '^Ran 3 tests in ' "$OUT/history-v6-observer.log"
+          grep -E '^Ran 5 tests in ' "$OUT/history-v6-observer.log"
           grep -x 'OK' "$OUT/history-v6-observer.log"
       - name: Require V6 prepaid effects, actual unknown-window crash recovery and validation facts
         shell: bash
@@ -151,6 +151,16 @@ jobs:
             selector="store::history_effect_v6::tests::$test"
             TRNM_HISTORY_V6_ARTIFACT_DIR="$OUT/history-v6-process/$test" cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$OUT/$test.log"
             python3 scripts/ci/check_required_native_test.py "$OUT/$test.log" --test "$selector"
+          done
+      - name: Require exact-byte journal publication repair and actual crash continuation
+        shell: bash
+        run: |
+          set -euo pipefail
+          for test in history_publication_pending_file_fsync_crash_repairs_and_resumes history_publication_two_hardlinks_crash_repairs_and_resumes history_publication_final_directory_fsync_crash_repairs_and_resumes history_publication_pending_unlink_crash_repairs_and_resumes history_publication_durable_unacknowledged_crash_repairs_and_resumes publication::original_frame_and_physical_tail_refusals_preserve_every_byte; do
+            selector="store::history_effect_v6::tests::$test"
+            log_file="$OUT/${test//:/__}.log"
+            TRNM_HISTORY_V6_ARTIFACT_DIR="$OUT/history-v6-publication/${test//:/__}" cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$log_file"
+            python3 scripts/ci/check_required_native_test.py "$log_file" --test "$selector"
           done
       - name: Execute complete original error-boundary suite and all new controls
         shell: bash

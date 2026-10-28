@@ -18,6 +18,9 @@ mod recovery;
 mod storage;
 #[cfg(all(test, target_os = "linux"))]
 mod tests;
+pub use journal::publication::{
+    repair_history_journal_publication_v1, ProtectedHistoryJournalPublicationV1Input,
+};
 use policy::{EffectMarker, Frontier, Purpose};
 pub use policy::{
     ProtectedHistoryV6BudgetInput, ProtectedHistoryV6Input, ProtectedHistoryV6RecoveryInput,

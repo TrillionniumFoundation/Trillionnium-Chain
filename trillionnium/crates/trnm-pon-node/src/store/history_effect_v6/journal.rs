@@ -5,6 +5,8 @@ use policy::{Anchor, Budget, EffectMarker, Frontier, Identity, Operation, Purpos
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeSet;
 
+pub(super) mod publication;
+
 const MAX_RECORD: u64 = 256 * 1024;
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
@@ -64,7 +66,7 @@ impl From<&ServiceMutationCpuSettlement> for CpuReceipt {
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "kebab-case", deny_unknown_fields)]
-enum Event {
+pub(super) enum Event {
     Budget {
         signed: Vec<u8>,
     },
@@ -93,13 +95,13 @@ enum Event {
 }
 #[derive(Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
-struct Frame {
-    schema: String,
-    identity_sha256: String,
-    sequence: u64,
-    previous: String,
-    at_ns: u64,
-    event: Event,
+pub(super) struct Frame {
+    pub(super) schema: String,
+    pub(super) identity_sha256: String,
+    pub(super) sequence: u64,
+    pub(super) previous: String,
+    pub(super) at_ns: u64,
+    pub(super) event: Event,
 }
 #[derive(Clone)]
 pub(super) struct Pending {
@@ -405,33 +407,7 @@ impl Journal {
             fs::set_permissions(path, fs::Permissions::from_mode(0o700))?;
             sync_dir(path.parent().ok_or("HISTORY_V6_JOURNAL_PATH")?)?;
         }
-        let dir = OpenOptions::new()
-            .read(true)
-            .custom_flags(libc::O_DIRECTORY | libc::O_NOFOLLOW | libc::O_CLOEXEC)
-            .open(path)?;
-        let metadata = dir.metadata()?;
-        ensure(
-            metadata.is_dir() && metadata.uid() == expected_uid && metadata.mode() & 0o077 == 0,
-            "HISTORY_V6_JOURNAL_MODE",
-        )?;
-        let lock = OpenOptions::new()
-            .read(true)
-            .write(true)
-            .create(true)
-            .truncate(false)
-            .mode(0o600)
-            .custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC)
-            .open(path.join("owner.lock"))?;
-        lock.try_lock_exclusive()?;
-        let mut journal = Self {
-            path: path.to_path_buf(),
-            dir,
-            lock,
-            identity: identity.clone(),
-            expected_uid,
-            state: State::default(),
-        };
-        journal.ready()?;
+        let mut journal = Self::lock_directory(path, expected_uid, identity, true)?;
         let mut records = Vec::new();
         for entry in fs::read_dir(path)? {
             let entry = entry?;
@@ -466,6 +442,43 @@ impl Journal {
             journal.state.anchor == *outside,
             "HISTORY_V6_JOURNAL_ROLLBACK",
         )?;
+        journal.ready()?;
+        Ok(journal)
+    }
+    fn lock_directory(
+        path: &Path,
+        expected_uid: u32,
+        identity: &Identity,
+        create_lock: bool,
+    ) -> Result<Self> {
+        identity.validate()?;
+        ensure(path.is_absolute(), "HISTORY_V6_JOURNAL_PATH")?;
+        let dir = OpenOptions::new()
+            .read(true)
+            .custom_flags(libc::O_DIRECTORY | libc::O_NOFOLLOW | libc::O_CLOEXEC)
+            .open(path)?;
+        let metadata = dir.metadata()?;
+        ensure(
+            metadata.is_dir() && metadata.uid() == expected_uid && metadata.mode() & 0o077 == 0,
+            "HISTORY_V6_JOURNAL_MODE",
+        )?;
+        let lock = OpenOptions::new()
+            .read(true)
+            .write(true)
+            .create(create_lock)
+            .truncate(false)
+            .mode(0o600)
+            .custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC)
+            .open(path.join("owner.lock"))?;
+        lock.try_lock_exclusive()?;
+        let journal = Self {
+            path: path.to_path_buf(),
+            dir,
+            lock,
+            identity: identity.clone(),
+            expected_uid,
+            state: State::default(),
+        };
         journal.ready()?;
         Ok(journal)
     }
@@ -559,10 +572,20 @@ impl Journal {
             .open(&temporary)?;
         file.write_all(&raw)?;
         file.sync_all()?;
+        #[cfg(all(test, target_os = "linux"))]
+        super::tests::publication::append_cut(self, &frame, &raw, "file-synced");
         fs::hard_link(&temporary, &final_path)?;
+        #[cfg(all(test, target_os = "linux"))]
+        super::tests::publication::append_cut(self, &frame, &raw, "linked");
         self.dir.sync_all()?;
+        #[cfg(all(test, target_os = "linux"))]
+        super::tests::publication::append_cut(self, &frame, &raw, "final-synced");
         fs::remove_file(&temporary)?;
+        #[cfg(all(test, target_os = "linux"))]
+        super::tests::publication::append_cut(self, &frame, &raw, "unlinked");
         self.dir.sync_all()?;
+        #[cfg(all(test, target_os = "linux"))]
+        super::tests::publication::append_cut(self, &frame, &raw, "published");
         self.apply_frame(frame, digest)?;
         self.ready()
     }
