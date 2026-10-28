@@ -13,14 +13,17 @@ use std::sync::{
 use std::time::Instant;
 
 mod journal;
+mod known_epoch;
 mod policy;
 mod recovery;
 mod storage;
 #[cfg(all(test, target_os = "linux"))]
 mod tests;
 pub use journal::publication::{
-    repair_history_journal_publication_v1, ProtectedHistoryJournalPublicationV1Input,
+    repair_history_journal_publication_v1, repair_history_journal_publication_v2,
+    ProtectedHistoryJournalPublicationV1Input, ProtectedHistoryJournalPublicationV2Input,
 };
+pub use known_epoch::{retire_history_known_epoch_v1, ProtectedHistoryKnownEpochRetirementV1Input};
 use policy::{EffectMarker, Frontier, Purpose};
 pub use policy::{
     ProtectedHistoryV6BudgetInput, ProtectedHistoryV6Input, ProtectedHistoryV6RecoveryInput,

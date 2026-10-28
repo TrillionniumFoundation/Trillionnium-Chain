@@ -5,7 +5,47 @@
 use super::*;
 use serde::{Deserialize, Serialize};
 
-const DOMAIN: &[u8] = b"TRNM-HISTORY-JOURNAL-PUBLICATION-REPAIR-V1";
+#[derive(Clone, Copy)]
+enum Revision {
+    V1,
+    V2,
+}
+impl Revision {
+    fn domain(self) -> &'static [u8] {
+        match self {
+            Self::V1 => b"TRNM-HISTORY-JOURNAL-PUBLICATION-REPAIR-V1",
+            Self::V2 => b"TRNM-HISTORY-JOURNAL-PUBLICATION-REPAIR-V2",
+        }
+    }
+    fn input_schema(self) -> &'static str {
+        match self {
+            Self::V1 => "restricted-history-journal-publication-input-v1",
+            Self::V2 => "restricted-history-journal-publication-input-v2",
+        }
+    }
+    fn authorization_schema(self) -> &'static str {
+        match self {
+            Self::V1 => "restricted-history-journal-publication-authorization-v1",
+            Self::V2 => "restricted-history-journal-publication-authorization-v2",
+        }
+    }
+    fn result_schema(self) -> &'static str {
+        match self {
+            Self::V1 => "restricted-history-journal-publication-result-v1",
+            Self::V2 => "restricted-history-journal-publication-result-v2",
+        }
+    }
+    fn frame(self, frame: &Frame) -> Result<()> {
+        // V1 never gains authority over a new stored transition by a decoder
+        // upgrade. V2 explicitly admits the fresh retirement namespace, with
+        // its own signatures still required by complete State replay.
+        ensure(
+            frame.schema == "restricted-history-effect-record-v6"
+                || matches!(self, Self::V2) && frame.schema == known_epoch::RECORD_SCHEMA,
+            "HISTORY_PUBLICATION_RECORD_NAMESPACE",
+        )
+    }
+}
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -35,6 +75,29 @@ pub struct ProtectedHistoryJournalPublicationV1Input {
     expected_uid: u32,
     _file: File,
 }
+pub struct ProtectedHistoryJournalPublicationV2Input {
+    config: Configuration,
+    expected_uid: u32,
+    _file: File,
+}
+impl ProtectedHistoryJournalPublicationV2Input {
+    pub fn load(path: &Path, expected_uid: u32, expected_sha256: &str) -> Result<Self> {
+        let (raw, file) = policy::protected_file(path, expected_uid, expected_sha256)?;
+        let config: Configuration = serde_json::from_slice(&raw)?;
+        ensure(
+            config.schema == Revision::V2.input_schema(),
+            "HISTORY_PUBLICATION_CONFIGURATION",
+        )?;
+        config.identity.validate()?;
+        config.outside_latest_anchor.validate()?;
+        ensure(config.journal_path.is_absolute(), "HISTORY_V6_JOURNAL_PATH")?;
+        Ok(Self {
+            config,
+            expected_uid,
+            _file: file,
+        })
+    }
+}
 impl ProtectedHistoryJournalPublicationV1Input {
     pub fn load(path: &Path, expected_uid: u32, expected_sha256: &str) -> Result<Self> {
         let (raw, file) = policy::protected_file(path, expected_uid, expected_sha256)?;
@@ -57,18 +120,27 @@ pub(in crate::store::history_effect_v6) fn message(
     role: u8,
     body: &Authorization,
 ) -> Result<Vec<u8>> {
+    message_revision(role, body, Revision::V1)
+}
+pub(in crate::store::history_effect_v6) fn message_v2(
+    role: u8,
+    body: &Authorization,
+) -> Result<Vec<u8>> {
+    message_revision(role, body, Revision::V2)
+}
+fn message_revision(role: u8, body: &Authorization, revision: Revision) -> Result<Vec<u8>> {
     let raw = policy::encoded(body)?;
     ensure(
         raw.len() <= policy::MAX_ENVELOPE,
         "HISTORY_PUBLICATION_ENVELOPE",
     )?;
-    let mut result = DOMAIN.to_vec();
+    let mut result = revision.domain().to_vec();
     result.extend([b'P', role]);
     result.extend((raw.len() as u32).to_le_bytes());
     result.extend(raw);
     Ok(result)
 }
-fn authenticate(config: &Configuration) -> Result<Authorization> {
+fn authenticate(config: &Configuration, revision: Revision) -> Result<Authorization> {
     let raw = &config.signed_publication;
     ensure(
         !raw.is_empty() && raw.len() <= policy::MAX_ENVELOPE,
@@ -83,7 +155,11 @@ fn authenticate(config: &Configuration) -> Result<Authorization> {
         ),
         (2, &config.identity.task_key, &envelope.task_signature),
     ] {
-        trnm_crypto_primitives::verify_hex_strict(key, &message(role, &envelope.body)?, signature)
+        let signed = match revision {
+            Revision::V1 => message(role, &envelope.body)?,
+            Revision::V2 => message_v2(role, &envelope.body)?,
+        };
+        trnm_crypto_primitives::verify_hex_strict(key, &signed, signature)
             .map_err(|_| "HISTORY_PUBLICATION_SIGNATURE")?;
     }
     let body = envelope.body;
@@ -92,7 +168,7 @@ fn authenticate(config: &Configuration) -> Result<Authorization> {
     policy::id(&body.frame_sha256, 32)?;
     let at = policy::now()?;
     ensure(
-        body.schema == "restricted-history-journal-publication-authorization-v1"
+        body.schema == revision.authorization_schema()
             && body.identity == config.identity
             && body.published_anchor == config.outside_latest_anchor
             && body.published_anchor.sequence == body.prefix_anchor.sequence + 1
@@ -134,15 +210,20 @@ fn visible(file: &File, path: &Path, expected_links: u64) -> Result<()> {
 pub fn repair_history_journal_publication_v1(
     input: ProtectedHistoryJournalPublicationV1Input,
 ) -> Result<Value> {
-    let config = input.config;
-    let authorization = authenticate(&config)?;
+    repair(input.config, input.expected_uid, Revision::V1)
+}
+/// V2 additionally permits a separately signed known-epoch retirement frame.
+/// The publication authorization alone still cannot authorize that transition.
+pub fn repair_history_journal_publication_v2(
+    input: ProtectedHistoryJournalPublicationV2Input,
+) -> Result<Value> {
+    repair(input.config, input.expected_uid, Revision::V2)
+}
+fn repair(config: Configuration, expected_uid: u32, revision: Revision) -> Result<Value> {
+    let authorization = authenticate(&config, revision)?;
     // Do not create a journal or even its owner lock during administrative repair.
-    let mut journal = Journal::lock_directory(
-        &config.journal_path,
-        input.expected_uid,
-        &config.identity,
-        false,
-    )?;
+    let mut journal =
+        Journal::lock_directory(&config.journal_path, expected_uid, &config.identity, false)?;
     let sequence = authorization.published_anchor.sequence;
     let pending_name = format!("pending-{sequence:020}");
     let final_name = format!("{sequence:020}-{}.json", authorization.frame_sha256);
@@ -188,6 +269,7 @@ pub fn repair_history_journal_publication_v1(
                 && frame.sequence <= authorization.prefix_anchor.sequence,
             "HISTORY_PUBLICATION_PREFIX",
         )?;
+        revision.frame(&frame)?;
         journal.apply_frame(frame, policy::digest(&raw))?;
     }
     ensure(
@@ -205,7 +287,7 @@ pub fn repair_history_journal_publication_v1(
     let links = if has_pending && has_final { 2 } else { 1 };
     ensure(
         metadata.is_file()
-            && metadata.uid() == input.expected_uid
+            && metadata.uid() == expected_uid
             && metadata.mode() & 0o077 == 0
             && metadata.nlink() == links
             && metadata.len() == authorization.frame_bytes,
@@ -231,6 +313,7 @@ pub fn repair_history_journal_publication_v1(
     )?;
     // Full original replay checks the signed grant, nonce, lifetime ceiling,
     // allowance, marker and CPU receipt. A valid digest alone is insufficient.
+    revision.frame(&frame)?;
     journal.apply_frame(frame, authorization.frame_sha256.clone())?;
     ensure(
         journal.anchor() == authorization.published_anchor,
@@ -260,7 +343,7 @@ pub fn repair_history_journal_publication_v1(
         "HISTORY_PUBLICATION_FILE_CHANGED",
     )?;
     Ok(serde_json::json!({
-        "schema":"restricted-history-journal-publication-result-v1",
+        "schema":revision.result_schema(),
         "signed_publication_sha256":policy::digest(&config.signed_publication),
         "prefix_anchor":authorization.prefix_anchor,
         "externally_pinned_latest_anchor":config.outside_latest_anchor,

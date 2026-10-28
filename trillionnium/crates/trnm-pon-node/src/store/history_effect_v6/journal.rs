@@ -92,6 +92,18 @@ pub(super) enum Event {
     CleanClose {
         frontier: Frontier,
     },
+    KnownEpochRetiredV1 {
+        signed: Vec<u8>,
+        closed_process: Vec<u8>,
+    },
+}
+impl Event {
+    fn record_schema(&self) -> &'static str {
+        match self {
+            Self::KnownEpochRetiredV1 { .. } => known_epoch::RECORD_SCHEMA,
+            _ => "restricted-history-effect-record-v6",
+        }
+    }
 }
 #[derive(Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -120,6 +132,7 @@ struct State {
     used: BTreeSet<String>,
     epochs: BTreeSet<String>,
     epoch: Option<String>,
+    known_epoch: Option<known_epoch::KnownEpoch>,
     pending: Option<Pending>,
     known: u64,
     reconciled_unknown: u64,
@@ -136,6 +149,7 @@ impl Default for State {
             used: BTreeSet::new(),
             epochs: BTreeSet::new(),
             epoch: None,
+            known_epoch: None,
             pending: None,
             known: 0,
             reconciled_unknown: 0,
@@ -195,6 +209,12 @@ impl State {
                     )?;
                     self.epoch = Some(op.epoch.clone());
                     self.epochs.insert(op.epoch.clone());
+                    self.known_epoch = Some(known_epoch::KnownEpoch::start(
+                        &op,
+                        signed,
+                        &verified.intent_sha256,
+                        at,
+                    )?);
                 } else {
                     ensure(self.epoch.as_ref() == Some(&op.epoch), "HISTORY_V6_EPOCH")?;
                 }
@@ -252,6 +272,10 @@ impl State {
                         .total_cpu_ns
                         .is_some_and(|v| v <= pending.operation.allowance.cpu_ns)
                 {
+                    self.known_epoch
+                        .as_mut()
+                        .ok_or("HISTORY_RETIRE_EPOCH")?
+                        .terminal(pending, event)?;
                     self.pending = None;
                     self.known += 1;
                 } else {
@@ -274,6 +298,12 @@ impl State {
                 // no synthetic zero-valued receipt is emitted and no refund.
                 if pending.operation.purpose == Purpose::Startup {
                     self.epoch = None;
+                    self.known_epoch = None;
+                } else {
+                    self.known_epoch
+                        .as_mut()
+                        .ok_or("HISTORY_RETIRE_EPOCH")?
+                        .terminal(pending, event)?;
                 }
                 self.pending = None;
             }
@@ -294,6 +324,7 @@ impl State {
                 self.nonces = recovery.body.request_nonce;
                 self.pending = None;
                 self.epoch = None;
+                self.known_epoch = None;
                 self.reconciled_unknown += 1;
             }
             Event::CleanClose { frontier } => {
@@ -303,6 +334,17 @@ impl State {
                     "HISTORY_V6_PENDING_DEBT",
                 )?;
                 self.epoch = None;
+                self.known_epoch = None;
+            }
+            Event::KnownEpochRetiredV1 {
+                signed,
+                closed_process,
+            } => {
+                let retirement = known_epoch::verify(signed, closed_process, identity, at)?;
+                self.check_retirement(&retirement)?;
+                self.nonces = retirement.body.request_nonce;
+                self.epoch = None;
+                self.known_epoch = None;
             }
         }
         Ok(())
@@ -346,6 +388,34 @@ impl State {
             )?;
         }
         Ok(())
+    }
+    fn check_retirement(&self, verified: &known_epoch::Verified) -> Result<()> {
+        ensure(self.pending.is_none(), "HISTORY_RETIRE_PENDING_SCOPE")?;
+        let epoch = self.known_epoch.as_ref().ok_or("HISTORY_RETIRE_NO_EPOCH")?;
+        let body = &verified.body;
+        ensure(
+            self.epoch.as_ref() == Some(&epoch.epoch)
+                && epoch.known_operations > 0
+                && body.known_epoch == *epoch
+                && body.outside_anchor == self.anchor
+                && body.original_spent == self.spent
+                && body.original_used_operations == self.used.len() as u64,
+            "HISTORY_RETIRE_JOURNAL_BINDING",
+        )?;
+        let budget = self.budget.as_ref().ok_or("HISTORY_V6_BUDGET_REQUIRED")?;
+        ensure(
+            body.request_nonce > self.nonces
+                && (budget.nonce_first..=budget.nonce_last).contains(&body.request_nonce),
+            "HISTORY_V6_REPLAY",
+        )?;
+        // Every scope already passed its OWN ceiling and has its OWN real
+        // receipt. This extra whole-process check redistributes no scope CPU,
+        // covers no Unknown, and includes no NotStarted/other-epoch allowance.
+        ensure(
+            epoch.known_cpu_ns <= verified.closed.reported_cpu_upper_bound_ns
+                && verified.closed.reported_cpu_upper_bound_ns <= epoch.known_allowance_cpu_ns,
+            "HISTORY_RETIRE_PROCESS_CPU_BOUND",
+        )
     }
 }
 pub(super) fn check_marker(pending: &Pending, marker: &EffectMarker) -> Result<()> {
@@ -526,7 +596,7 @@ impl Journal {
     }
     fn apply_frame(&mut self, frame: Frame, digest: String) -> Result<()> {
         ensure(
-            frame.schema == "restricted-history-effect-record-v6"
+            frame.schema == frame.event.record_schema()
                 && frame.identity_sha256 == self.identity.digest()?
                 && frame.sequence == self.state.anchor.sequence + 1
                 && frame.sequence <= 4096
@@ -544,7 +614,7 @@ impl Journal {
     fn append(&mut self, event: Event) -> Result<()> {
         self.ready()?;
         let frame = Frame {
-            schema: "restricted-history-effect-record-v6".into(),
+            schema: event.record_schema().into(),
             identity_sha256: self.identity.digest()?,
             sequence: self.state.anchor.sequence + 1,
             previous: self.state.anchor.digest.clone(),
@@ -577,12 +647,16 @@ impl Journal {
         fs::hard_link(&temporary, &final_path)?;
         #[cfg(all(test, target_os = "linux"))]
         super::tests::publication::append_cut(self, &frame, &raw, "linked");
+        #[cfg(all(test, target_os = "linux"))]
+        super::tests::retirement::publication_cut(self, &frame, &raw, "linked");
         self.dir.sync_all()?;
         #[cfg(all(test, target_os = "linux"))]
         super::tests::publication::append_cut(self, &frame, &raw, "final-synced");
         fs::remove_file(&temporary)?;
         #[cfg(all(test, target_os = "linux"))]
         super::tests::publication::append_cut(self, &frame, &raw, "unlinked");
+        #[cfg(all(test, target_os = "linux"))]
+        super::tests::retirement::publication_cut(self, &frame, &raw, "unlinked");
         self.dir.sync_all()?;
         #[cfg(all(test, target_os = "linux"))]
         super::tests::publication::append_cut(self, &frame, &raw, "published");
@@ -614,6 +688,8 @@ impl Journal {
         marker: Option<EffectMarker>,
         effect_readback_known: bool,
     ) -> Result<()> {
+        #[cfg(all(test, target_os = "linux"))]
+        let purpose = self.pending().map(|p| p.operation.purpose);
         self.append(Event::Settlement {
             operation: operation.to_owned(),
             native_id: native.as_ref().ok().map(hex::encode),
@@ -621,7 +697,10 @@ impl Journal {
             cpu: CpuReceipt::from(cpu),
             marker: marker.map(Box::new),
             effect_readback_known,
-        })
+        })?;
+        #[cfg(all(test, target_os = "linux"))]
+        super::tests::retirement::settlement_cut(self, purpose);
+        Ok(())
     }
     pub fn not_started(&mut self, operation: &str, error: &Error) -> Result<()> {
         self.append(Event::NotStarted {
@@ -637,6 +716,19 @@ impl Journal {
     }
     pub fn check_recovery(&self, recovery: &policy::VerifiedRecovery) -> Result<()> {
         self.state.check_recovery(recovery)
+    }
+    pub fn check_retirement(&self, verified: &known_epoch::Verified) -> Result<()> {
+        self.state.check_retirement(verified)
+    }
+    pub fn retire(&mut self, signed: &[u8], closed_process: &[u8]) -> Result<()> {
+        self.append(Event::KnownEpochRetiredV1 {
+            signed: signed.to_vec(),
+            closed_process: closed_process.to_vec(),
+        })
+    }
+    #[cfg(all(test, target_os = "linux"))]
+    pub fn known_epoch(&self) -> Option<&known_epoch::KnownEpoch> {
+        self.state.known_epoch.as_ref()
     }
     pub fn close(&mut self, frontier: Frontier) -> Result<()> {
         self.append(Event::CleanClose { frontier })

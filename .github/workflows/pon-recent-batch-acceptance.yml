@@ -11,6 +11,7 @@ on:
       - trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner/**
       - scripts/ci/history_native_process_guard.py
       - scripts/ci/history_effect_v6_process_guard.py
+      - scripts/ci/history_known_epoch_process_guard.py
       - scripts/ci/test_history_effect_v6_guard.py
       - trillionnium/crates/trnm-pon-node/src/store/history_effect_v6.rs
       - trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/**
@@ -75,6 +76,7 @@ jobs:
             args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
           fi
           python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$out/source.json"
+          echo "TRNM_HISTORY_KNOWN_EPOCH_SOURCE_COMMIT=$(git --no-replace-objects rev-parse HEAD)" >> "$GITHUB_ENV"
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = ccc3d01d192eb80e2a837c5858c14e3ce4421ea9
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/history_page.rs)" = c8569bd62a9c374b03a8ffc0ad02c64b0365eee4
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs)" = ee003da6c292f3599a00dd9a09f2bf8fd156a440
@@ -161,6 +163,15 @@ jobs:
             log_file="$OUT/${test//:/__}.log"
             TRNM_HISTORY_V6_ARTIFACT_DIR="$OUT/history-v6-publication/${test//:/__}" cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$log_file"
             python3 scripts/ci/check_required_native_test.py "$log_file" --test "$selector"
+          done
+      - name: Require known-epoch retirement, actual publication crashes and ordinary next operations
+        shell: bash
+        run: |
+          set -euo pipefail
+          for test in history_known_epoch_validation_sigkill_retire_cold_open_and_next_operation history_known_epoch_activation_sigkill_retirement_link_crash_and_next_operation history_known_epoch_close_sigkill_retirement_unlink_crash_and_next_operation; do
+            selector="store::history_effect_v6::tests::$test"
+            TRNM_HISTORY_V6_ARTIFACT_DIR="$OUT/history-known-epoch/$test" cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$OUT/$test.log"
+            python3 scripts/ci/check_required_native_test.py "$OUT/$test.log" --test "$selector"
           done
       - name: Execute complete original error-boundary suite and all new controls
         shell: bash
