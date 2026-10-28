@@ -1,0 +1,43 @@
+{
+  "schema": "history-exact-binary-transport-parts-v1",
+  "source_commit": "1521ae83831a060e2e8afeabeb130591dc783823",
+  "runtime_tested_commit": "8d7741028eb650f0600e61fcab46ff3d14b50767",
+  "original_name": "native-binary-runtime-8d774102.gz",
+  "original_bytes": 20052436,
+  "original_sha256": "5357206a6a8d607166fa83ccd3962d38c2dbe6f78842476829104226677a6222",
+  "decompressed_bytes": 96678560,
+  "decompressed_sha256": "136bbeb0b474dc9d0bcb3c254ab3bf21d47666f4fb4e04957752f69ea905729b",
+  "parts": [
+    {
+      "path": "native-binary-runtime-8d774102.gz.part-000.bin",
+      "offset": 0,
+      "bytes": 4194304,
+      "sha256": "0d73ae4d76f310aa21a73ba42f487686f7979d0ce3d877c4f413ed6f0de1f7c8"
+    },
+    {
+      "path": "native-binary-runtime-8d774102.gz.part-001.bin",
+      "offset": 4194304,
+      "bytes": 4194304,
+      "sha256": "525c7bf72c6967adb4e64cbf5b87cd35a0d41316eab35aeff5e7392cbf22cc5b"
+    },
+    {
+      "path": "native-binary-runtime-8d774102.gz.part-002.bin",
+      "offset": 8388608,
+      "bytes": 4194304,
+      "sha256": "b543eacf396819dd4d6bcaf7e7d33d3d1fd851b9b6ea6ac4b295b859aaa32595"
+    },
+    {
+      "path": "native-binary-runtime-8d774102.gz.part-003.bin",
+      "offset": 12582912,
+      "bytes": 4194304,
+      "sha256": "f76eea07c85fd623a27c6ca525b77fd544185cb547fd5f6125ea850cd1e1d62e"
+    },
+    {
+      "path": "native-binary-runtime-8d774102.gz.part-004.bin",
+      "offset": 16777216,
+      "bytes": 3275220,
+      "sha256": "1568cd6aa2ea6cd087e23d659149a20f05e1ad6cc3ccd598340b6bc5dff69967"
+    }
+  ],
+  "reason": "The GitHub connector rejected the unmodified 20,052,436-byte gzip because the base64 request exceeds its 16 MiB request limit. These ordered ranges reproduce the exact original gzip; this is only transport packaging and no new runtime execution."
+}

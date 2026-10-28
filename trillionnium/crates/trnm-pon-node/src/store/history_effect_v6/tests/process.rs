@@ -15,6 +15,10 @@ struct ChildConfig {
     launch_sha256: Option<String>,
     recovery: Option<PathBuf>,
     recovery_sha256: Option<String>,
+    #[serde(default)]
+    publication: Option<PathBuf>,
+    #[serde(default)]
+    publication_sha256: Option<String>,
 }
 struct Process {
     child: Child,
@@ -87,14 +91,76 @@ pub(super) fn child() {
     let config: ChildConfig = serde_json::from_slice(&raw).unwrap();
     assert_eq!(config.schema, "actual-history-effect-child-fixture-v6");
     let uid = rustix::process::geteuid().as_raw();
-    let (launch, sha) = if config.mode == "resume" {
-        let recovery = ProtectedHistoryV6RecoveryInput::load(
-            config.recovery.as_ref().unwrap(),
-            uid,
-            config.recovery_sha256.as_deref().unwrap(),
+    if config.mode.starts_with("epoch-recovery-publish-") {
+        publication::install_hook(&config.mode, &config.control);
+        let result = prepare_history_settled_epoch_v1_recovery(
+            &config.store,
+            ProtectedHistorySettledEpochV1Input::load(
+                config.recovery.as_ref().unwrap(),
+                uid,
+                config.recovery_sha256.as_deref().unwrap(),
+            )
+            .unwrap(),
+        );
+        panic!("epoch recovery returned without its selected publication barrier: {result:?}");
+    }
+    if config.mode.starts_with("publication-repair-") {
+        if let Some(recovery) = &config.recovery {
+            publication::install_hook(&config.mode, &config.control);
+            let result = repair_history_settled_epoch_v1_publication(
+                &config.store,
+                ProtectedHistorySettledEpochV1Input::load(
+                    recovery,
+                    uid,
+                    config.recovery_sha256.as_deref().unwrap(),
+                )
+                .unwrap(),
+                ProtectedHistoryJournalPublicationV1Input::load(
+                    config.publication.as_ref().unwrap(),
+                    uid,
+                    config.publication_sha256.as_deref().unwrap(),
+                )
+                .unwrap(),
+            );
+            panic!("pinned epoch publication repair returned without crash barrier: {result:?}");
+        }
+        publication::repair_child(
+            &config.mode,
+            &config.control,
+            config.publication.as_ref().unwrap(),
+            config.publication_sha256.as_deref().unwrap(),
+        );
+        return;
+    }
+    let (launch, sha) = if config.mode == "resume-published-settled-epoch" {
+        let launch: Value =
+            serde_json::from_slice(&child_wait(&config.control.join("outside-launch.json")))
+                .unwrap();
+        (
+            PathBuf::from(launch["path"].as_str().unwrap()),
+            launch["sha256"].as_str().unwrap().to_owned(),
         )
-        .unwrap();
-        let result = prepare_history_effect_v6_recovery(&config.store, recovery).unwrap();
+    } else if config.mode == "resume" || config.mode == "resume-settled-epoch" {
+        let result = if config.mode == "resume-settled-epoch" {
+            prepare_history_settled_epoch_v1_recovery(
+                &config.store,
+                ProtectedHistorySettledEpochV1Input::load(
+                    config.recovery.as_ref().unwrap(),
+                    uid,
+                    config.recovery_sha256.as_deref().unwrap(),
+                )
+                .unwrap(),
+            )
+            .unwrap()
+        } else {
+            let recovery = ProtectedHistoryV6RecoveryInput::load(
+                config.recovery.as_ref().unwrap(),
+                uid,
+                config.recovery_sha256.as_deref().unwrap(),
+            )
+            .unwrap();
+            prepare_history_effect_v6_recovery(&config.store, recovery).unwrap()
+        };
         write_value(&config.control.join("reconciled-ready.json"), &result);
         let launch: Value =
             serde_json::from_slice(&child_wait(&config.control.join("outside-launch.json")))
@@ -121,6 +187,7 @@ pub(super) fn child() {
         &config.control.join("startup-ready.json"),
         &owner.observation().unwrap(),
     );
+    publication::install_hook(&config.mode, &config.control);
     let validation = child_wait(&config.control.join("outside-validation.json"));
     let owner_thread = std::thread::current().id();
     let validated = {
@@ -174,7 +241,14 @@ pub(super) fn child() {
     };
     checked(&activated, 0);
     assert!(activated.known_success());
-    assert_eq!(config.mode, "resume");
+    if config.mode == "settled-epoch" {
+        settled_epoch::barrier(&owner, &activation, &activated, &config.control);
+    }
+    assert!(
+        config.mode == "resume"
+            || config.mode == "resume-settled-epoch"
+            || config.mode == "resume-published-settled-epoch"
+    );
     write_value(
         &config.control.join("activation-ready.json"),
         &json!({"result":activated,"observation":owner.observation().unwrap(),"frontier":actual(&owner)}),
@@ -205,7 +279,7 @@ pub(super) fn child() {
     );
 }
 
-fn sha_file(path: &Path) -> String {
+pub(super) fn sha_file(path: &Path) -> String {
     use sha2::{Digest, Sha256};
     let mut hash = Sha256::new();
     let mut file = File::open(path).unwrap();
@@ -378,11 +452,23 @@ fn recovery_input(
 }
 fn rejects(a: &TestAuthority, path: &Path, sha: &str) -> String {
     let before = snapshot(&a.journal);
-    let result = prepare_history_effect_v6_recovery(
-        &a.store,
-        ProtectedHistoryV6RecoveryInput::load(path, rustix::process::geteuid().as_raw(), sha)
+    let result = if read(path)["schema"] == "restricted-history-settled-epoch-input-v1" {
+        prepare_history_settled_epoch_v1_recovery(
+            &a.store,
+            ProtectedHistorySettledEpochV1Input::load(
+                path,
+                rustix::process::geteuid().as_raw(),
+                sha,
+            )
             .unwrap(),
-    );
+        )
+    } else {
+        prepare_history_effect_v6_recovery(
+            &a.store,
+            ProtectedHistoryV6RecoveryInput::load(path, rustix::process::geteuid().as_raw(), sha)
+                .unwrap(),
+        )
+    };
     let error = result
         .expect_err("adversarial recovery unexpectedly accepted")
         .to_string();
@@ -391,7 +477,16 @@ fn rejects(a: &TestAuthority, path: &Path, sha: &str) -> String {
 }
 
 pub(super) fn run(cutpoint: &str) {
-    let a = TestAuthority::new();
+    let epoch_cut = cutpoint.starts_with("settled-epoch");
+    let recovery_stage = cutpoint.strip_prefix("settled-epoch-record-");
+    let expired_budget = cutpoint == "settled-epoch-expired-budget";
+    let validation_cut =
+        cutpoint == "validation-worker" || cutpoint.starts_with("publication-intent-");
+    let mut a = if expired_budget {
+        TestAuthority::with_budget_lifetime(30_000_000_000)
+    } else {
+        TestAuthority::new()
+    };
     let _retain = Retain {
         source: a.f.dir.path().to_path_buf(),
         target: std::env::var_os("TRNM_HISTORY_V6_ARTIFACT_DIR").map(|base| {
@@ -406,7 +501,7 @@ pub(super) fn run(cutpoint: &str) {
     fs::create_dir(&first).unwrap();
     fs::set_permissions(&first, fs::Permissions::from_mode(0o700)).unwrap();
     let (launch, launch_sha) = a.launch("crash", 1, 1, a.genesis(), a.installed.clone());
-    let config = json!({"schema":"actual-history-effect-child-fixture-v6","mode":cutpoint,"store":a.store,"control":first,"page":a.f.page,
+    let config = json!({"schema":"actual-history-effect-child-fixture-v6","mode":if epoch_cut {"settled-epoch"} else {cutpoint},"store":a.store,"control":first,"page":a.f.page,
         "launch":launch,"launch_sha256":launch_sha,"recovery":null,"recovery_sha256":null});
     let conf = a.f.dir.path().join("crash-child.json");
     let conf_sha = write_value(&conf, &config);
@@ -445,18 +540,19 @@ pub(super) fn run(cutpoint: &str) {
         guardian: true,
     };
     let started = wait(&first.join("startup-ready.json"), &mut guard);
-    let start_anchor = serde_json::from_value(started["journal"]["anchor"].clone()).unwrap();
+    let start_anchor: Anchor =
+        serde_json::from_value(started["journal"]["anchor"].clone()).unwrap();
     let validation = a.grant(Grant {
         purpose: Purpose::Validation,
         nonce: 2,
         epoch: 1,
         frontier: a.genesis(),
-        anchor: start_anchor,
+        anchor: start_anchor.clone(),
         packet: Some(&a.f.packet),
         pair: Some((2, 3)),
     });
     write(&first.join("outside-validation.json"), &validation);
-    if cutpoint == "activation-committed" {
+    if cutpoint == "activation-committed" || epoch_cut {
         let validated = wait(&first.join("validation-ready.json"), &mut guard);
         let activation = a.grant(Grant {
             purpose: Purpose::Activation,
@@ -474,7 +570,21 @@ pub(super) fn run(cutpoint: &str) {
     assert!(guard.child.wait().unwrap().success(), "{observed}");
     assert_eq!(observed["passed"], true);
     let barrier = read(&first.join("crash-ready.json"));
-    let pending = barrier["pending_operation"].as_str().unwrap();
+    let pending = if epoch_cut {
+        barrier["last_settled_operation"].as_str().unwrap()
+    } else {
+        barrier["pending_operation"].as_str().unwrap()
+    };
+    let publication_repair = if cutpoint.starts_with("publication-intent-") {
+        Some(publication::after_crash(
+            &a,
+            &first,
+            &barrier,
+            &start_anchor,
+        ))
+    } else {
+        None
+    };
     let original_records = snapshot(&a.journal);
     let closed_raw = fs::read(first.join("closed-process.json")).unwrap();
     let closed: policy::ClosedProcess = serde_json::from_slice(&closed_raw).unwrap();
@@ -495,8 +605,26 @@ pub(super) fn run(cutpoint: &str) {
         deadline(),
     );
     let pending_error = refused.err().unwrap().to_string();
-    assert!(pending_error.contains("PENDING_DEBT"));
+    assert!(pending_error.contains(if epoch_cut {
+        "UNCLOSED_EPOCH"
+    } else {
+        "PENDING_DEBT"
+    }));
     assert_eq!(snapshot(&a.journal), original_records);
+    if expired_budget {
+        settled_epoch::wait_expired(&a);
+    }
+    if !epoch_cut {
+        let (p, s) = settled_epoch::input(&a, "pending-cannot-be-forgiven", &closed_raw, pending);
+        assert!(rejects(&a, &p, &s).contains("PENDING_DEBT"));
+    }
+    let recovery_input = |a: &TestAuthority, label: &str, raw: &[u8], operation: &str| {
+        if epoch_cut {
+            settled_epoch::input(a, label, raw, operation)
+        } else {
+            self::recovery_input(a, label, raw, operation)
+        }
+    };
     let mut missing = closed.clone();
     missing.all_descendants_closed = false;
     let (p, s) = recovery_input(
@@ -523,7 +651,11 @@ pub(super) fn run(cutpoint: &str) {
     over.reported_cpu_upper_bound_ns = 4_000_003_000;
     let (p, s) = recovery_input(&a, "over-budget", &policy::encoded(&over).unwrap(), pending);
     let over_error = rejects(&a, &p, &s);
-    assert!(over_error.contains("UNCOVERED_PROCESS_CPU"));
+    assert!(over_error.contains(if epoch_cut {
+        "CLOSED_BINDING"
+    } else {
+        "UNCOVERED_PROCESS_CPU"
+    }));
     let mut wrong = closed.clone();
     wrong.actual_frontier.root = "ee".repeat(32);
     let (p, s) = recovery_input(
@@ -549,7 +681,13 @@ pub(super) fn run(cutpoint: &str) {
         "original_ceiling_not_covered":over_error,"wrong_frontier":wrong_error,"wrong_outside_anchor":rollback_error,"journal_unchanged":true}),
     );
     let (recovery_path, recovery_sha) = recovery_input(&a, "actual", &closed_raw, pending);
-    let next = if cutpoint == "validation-worker" {
+    if epoch_cut {
+        settled_epoch::refusals(&a, &recovery_path, &recovery_sha, &rejects);
+    }
+    let published_recovery = recovery_stage.map(|stage| {
+        settled_epoch::publish_interrupted(&a, stage, &recovery_path, &recovery_sha, &closed_raw)
+    });
+    let next = if validation_cut {
         Packet::decode(&a.f.packet.encode().unwrap()).unwrap()
     } else {
         next_packet(&a)
@@ -557,7 +695,7 @@ pub(super) fn run(cutpoint: &str) {
     let second = a.f.dir.path().join("resume-control");
     fs::create_dir(&second).unwrap();
     fs::set_permissions(&second, fs::Permissions::from_mode(0o700)).unwrap();
-    let cfg = json!({"schema":"actual-history-effect-child-fixture-v6","mode":"resume","store":a.store,"control":second,"page":page(&a,&next),
+    let cfg = json!({"schema":"actual-history-effect-child-fixture-v6","mode":if published_recovery.is_some() {"resume-published-settled-epoch"} else if epoch_cut {"resume-settled-epoch"} else {"resume"},"store":a.store,"control":second,"page":page(&a,&next),
         "launch":null,"launch_sha256":null,"recovery":recovery_path,"recovery_sha256":recovery_sha});
     let cfgpath = a.f.dir.path().join("resume-child.json");
     let cfgsha = write_value(&cfgpath, &cfg);
@@ -580,11 +718,29 @@ pub(super) fn run(cutpoint: &str) {
             .unwrap(),
         guardian: false,
     };
-    let reconciled = wait(&second.join("reconciled-ready.json"), &mut resumed);
-    assert_eq!(reconciled["original_cpu_split"], "unknown-preserved");
+    let reconciled = published_recovery
+        .unwrap_or_else(|| wait(&second.join("reconciled-ready.json"), &mut resumed));
+    if epoch_cut {
+        assert_eq!(reconciled["clean_close_fabricated"], false);
+        assert_eq!(reconciled["original_settlements_preserved"], true);
+        assert_eq!(
+            reconciled["additional_conservative_debit"]["cpu_ns"],
+            4_000_000_000u64
+        );
+        assert_eq!(reconciled["journal"]["settled_epoch_reconciliations_v1"], 1);
+    } else {
+        assert_eq!(reconciled["original_cpu_split"], "unknown-preserved");
+    }
     assert_eq!(reconciled["native_effect_repeated"], false);
-    assert_eq!(reconciled["journal"]["unknown_prepaid_reconciliations"], 1);
-    let recovered_head = serde_json::from_value(reconciled["journal"]["anchor"].clone()).unwrap();
+    assert_eq!(
+        reconciled["journal"]["unknown_prepaid_reconciliations"],
+        if epoch_cut { 0 } else { 1 }
+    );
+    let mut recovered_head =
+        serde_json::from_value(reconciled["journal"]["anchor"].clone()).unwrap();
+    if expired_budget {
+        recovered_head = settled_epoch::renew_budget(&mut a, recovered_head);
+    }
     let (launch, sha) = a.launch(
         "resume",
         11,
@@ -635,7 +791,9 @@ pub(super) fn run(cutpoint: &str) {
     let finished = wait(&second.join("finished.json"), &mut resumed);
     assert!(resumed.child.wait().unwrap().success());
     assert_ne!(finished["pid"], json!(closed.owned_namespace_pid));
-    let count = if cutpoint == "validation-worker" {
+    let count = if epoch_cut {
+        8
+    } else if validation_cut {
         6
     } else {
         7
@@ -648,34 +806,29 @@ pub(super) fn run(cutpoint: &str) {
     );
     assert_eq!(
         finished["cold_journal"]["unknown_prepaid_reconciliations"],
-        1
+        if epoch_cut { 0 } else { 1 }
     );
-    assert_eq!(
-        finished["marker_count"],
-        if cutpoint == "validation-worker" {
-            2
-        } else {
-            4
-        }
-    );
+    assert_eq!(finished["marker_count"], if validation_cut { 2 } else { 4 });
     assert_eq!(
         finished["frontier"]["block"],
         hex::encode(next.id().unwrap())
     );
     assert_eq!(
         finished["frontier"]["generation"],
-        if cutpoint == "validation-worker" {
-            1
-        } else {
-            2
-        }
+        if validation_cut { 1 } else { 2 }
     );
     let final_records = snapshot(&a.journal);
+    if cutpoint == "settled-epoch" {
+        settled_epoch::rejects_legacy_record_relabel(&a);
+    }
     for (name, digest) in &original_records {
         assert_eq!(final_records.get(name), Some(digest));
     }
     let replay_error = rejects(&a, &recovery_path, &recovery_sha);
     assert!(replay_error.contains("ROLLBACK"));
+    if let Some((path, digest)) = publication_repair {
+        publication::rejects_after_advance(&a, &path, &digest);
+    }
     assert_eq!(sha_file(&binary), binary_sha);
     write_value(
         &a.f.dir.path().join("process-result.json"),
@@ -688,4 +841,114 @@ pub(super) fn run(cutpoint: &str) {
         "HISTORY_V6_ACTUAL_PROCESS {}",
         serde_json::to_string(&finished).unwrap()
     );
+}
+
+/// A fresh administrative repair process is actually killed at its selected
+/// syscall. Its wait4 observation is NOT an original-operation CPU closure.
+pub(super) fn repair_crash(
+    a: &TestAuthority,
+    stage: &str,
+    input: &Path,
+    input_sha: &str,
+    epoch_recovery: Option<(&Path, &str)>,
+) {
+    let binary = std::env::current_exe().unwrap();
+    let binary_sha = sha_file(&binary);
+    let mode = format!("publication-repair-{stage}");
+    let control = a.f.dir.path().join(&mode);
+    fs::create_dir(&control).unwrap();
+    fs::set_permissions(&control, fs::Permissions::from_mode(0o700)).unwrap();
+    let config = json!({"schema":"actual-history-effect-child-fixture-v6","mode":mode,
+        "store":a.store,"control":control,"page":[],"launch":null,"launch_sha256":null,
+        "recovery":epoch_recovery.map(|v|v.0),"recovery_sha256":epoch_recovery.map(|v|v.1),
+        "publication":input,"publication_sha256":input_sha});
+    let path = a.f.dir.path().join(format!("{mode}.json"));
+    let digest = write_value(&path, &config);
+    let guardian = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../../../scripts/ci/history_effect_v6_process_guard.py");
+    assert_eq!(
+        sha_file(&guardian),
+        policy::digest(include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../scripts/ci/history_effect_v6_process_guard.py"
+        )))
+    );
+    let log = File::create(control.join("guardian.stdout.log")).unwrap();
+    let mut guard = Process {
+        child: Command::new("python3")
+            .arg(&guardian)
+            .arg("--binary")
+            .arg(&binary)
+            .args(["--binary-sha256", &binary_sha, "--configuration"])
+            .arg(&path)
+            .args(["--configuration-sha256", &digest, "--directory"])
+            .arg(&control)
+            .stdin(Stdio::null())
+            .stdout(log.try_clone().unwrap())
+            .stderr(log)
+            .spawn()
+            .unwrap(),
+        guardian: true,
+    };
+    let observed = wait(&control.join("guardian-result.json"), &mut guard);
+    assert!(guard.child.wait().unwrap().success(), "{observed}");
+    assert_eq!(observed["passed"], true);
+    assert_eq!(observed["actual_wait4"], true);
+    assert_eq!(observed["native_operation_started"], false);
+    assert_eq!(observed["v6_closed_process_receipt_created"], false);
+    assert!(!control.join("closed-process.json").exists());
+    assert_eq!(sha_file(&binary), binary_sha);
+}
+
+pub(super) fn epoch_recovery_crash(
+    a: &TestAuthority,
+    stage: &str,
+    input: &Path,
+    input_sha: &str,
+) -> Value {
+    let binary = std::env::current_exe().unwrap();
+    let binary_sha = sha_file(&binary);
+    let mode = format!("epoch-recovery-publish-{stage}");
+    let control = a.f.dir.path().join(&mode);
+    fs::create_dir(&control).unwrap();
+    fs::set_permissions(&control, fs::Permissions::from_mode(0o700)).unwrap();
+    let config = json!({"schema":"actual-history-effect-child-fixture-v6","mode":mode,
+        "store":a.store,"control":control,"page":[],"launch":null,"launch_sha256":null,
+        "recovery":input,"recovery_sha256":input_sha,"publication":null,"publication_sha256":null});
+    let path = a.f.dir.path().join(format!("{mode}.json"));
+    let digest = write_value(&path, &config);
+    let guardian = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../../../scripts/ci/history_effect_v6_process_guard.py");
+    assert_eq!(
+        sha_file(&guardian),
+        policy::digest(include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../scripts/ci/history_effect_v6_process_guard.py"
+        )))
+    );
+    let log = File::create(control.join("guardian.stdout.log")).unwrap();
+    let mut guard = Process {
+        child: Command::new("python3")
+            .arg(&guardian)
+            .arg("--binary")
+            .arg(&binary)
+            .args(["--binary-sha256", &binary_sha, "--configuration"])
+            .arg(&path)
+            .args(["--configuration-sha256", &digest, "--directory"])
+            .arg(&control)
+            .stdin(Stdio::null())
+            .stdout(log.try_clone().unwrap())
+            .stderr(log)
+            .spawn()
+            .unwrap(),
+        guardian: true,
+    };
+    let observed = wait(&control.join("guardian-result.json"), &mut guard);
+    assert!(guard.child.wait().unwrap().success(), "{observed}");
+    assert_eq!(observed["passed"], true);
+    assert_eq!(observed["actual_wait4"], true);
+    assert_eq!(observed["v6_closed_process_receipt_created"], false);
+    assert!(!control.join("closed-process.json").exists());
+    assert_eq!(sha_file(&binary), binary_sha);
+    read(&control.join("crash-ready.json"))
 }

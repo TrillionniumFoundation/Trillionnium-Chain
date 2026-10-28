@@ -1,0 +1,44 @@
+{
+  "binary_sha256": "136bbeb0b474dc9d0bcb3c254ab3bf21d47666f4fb4e04957752f69ea905729b",
+  "binary_stable": true,
+  "budget_seconds": 150,
+  "child_ownership": "direct subprocess with new session; only owned PID/process group signalled",
+  "command": [
+    "/tmp/pon-history-epoch-v1-20261028/debug/deps/trnm_pon_node-1d384016751e2606",
+    "store::history_effect_v6::tests::history_publication_final_directory_fsync_crash_repairs_and_resumes",
+    "--exact",
+    "--test-threads=1",
+    "--nocapture"
+  ],
+  "deadline_policy": "terminal-observation-must-not-exceed-budget",
+  "disk_after": {
+    "available_bytes": 759640064,
+    "free_bytes": 2494402560
+  },
+  "disk_before": {
+    "available_bytes": 783777792,
+    "free_bytes": 2518540288
+  },
+  "elapsed_seconds": 10.109185583001818,
+  "finished_unix": 1793149124.8593917,
+  "free_floor_bytes": 268435456,
+  "log_limit_bytes": 33554432,
+  "log_sha256": "9907203583f367db8c5c018a52e5e09101d9f4048c527d78a2103fad3f3ddfa7",
+  "max_rss_kib": 31312,
+  "native_returncode": 101,
+  "original_budgets_and_observer_rules_unchanged": true,
+  "outcome": "EXIT_NONZERO",
+  "owned_namespace_pid": 10,
+  "passed": false,
+  "reported_system_seconds": 0.9247449999999999,
+  "reported_user_seconds": 2.63189,
+  "samples_sha256": "d33dbf8eab91343f8506633659cbde87f5f97dbc30116ca6fc05f6a5b5aaaf5d",
+  "scope": "one explicitly isolated recheck of the Startup CPU-capacity refusal; no full-suite PASS claim",
+  "source_commit": "8d7741028eb650f0600e61fcab46ff3d14b50767",
+  "source_stable": true,
+  "started_unix": 1793149114.7502043,
+  "terminal_observed_elapsed_seconds": 10.109131060999061,
+  "termination_reason": null,
+  "uid": 0,
+  "wait4_status": 25856
+}

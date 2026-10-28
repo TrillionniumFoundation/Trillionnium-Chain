@@ -1,0 +1,541 @@
+{
+  "administrative_processes": [
+    {
+      "actual_sigkill_wait4": true,
+      "guardian_sha256": "f61d5e9c2b798845f6795f902da67036f3bc755c51fcfcc96eb129fe3dac946c",
+      "original_native_receipt_created": false,
+      "path": "native-03/artifacts/settled-epoch-record-file-synced/epoch-recovery-publish-file-synced",
+      "reported_cpu_upper_bound_ns": 51614000
+    },
+    {
+      "actual_sigkill_wait4": true,
+      "guardian_sha256": "ae7e45915a040a29a922d2a5fe3703c8ace6b25317951d267f5f1fe1ed73c074",
+      "original_native_receipt_created": false,
+      "path": "native-03/artifacts/settled-epoch-record-file-synced/publication-repair-linked",
+      "reported_cpu_upper_bound_ns": 26232000
+    },
+    {
+      "actual_sigkill_wait4": true,
+      "guardian_sha256": "5c45c42bbe62ffd8e3d92645f5a8093aaf2f36c296565117fde0b1f6ea556f27",
+      "original_native_receipt_created": false,
+      "path": "native-03/artifacts/settled-epoch-record-file-synced/publication-repair-unlinked",
+      "reported_cpu_upper_bound_ns": 62689000
+    },
+    {
+      "actual_sigkill_wait4": true,
+      "guardian_sha256": "3d399ab732ebaca957e9522ec317eaf8386c86f711eb262536e96aaa5b117740",
+      "original_native_receipt_created": false,
+      "path": "native-03/artifacts/settled-epoch-record-linked/epoch-recovery-publish-linked",
+      "reported_cpu_upper_bound_ns": 51825000
+    },
+    {
+      "actual_sigkill_wait4": true,
+      "guardian_sha256": "6ba61625b0f57b8dcd751dd9b914a869c607e9462da32438066a12240ba060ec",
+      "original_native_receipt_created": false,
+      "path": "native-03/artifacts/settled-epoch-record-final-synced/epoch-recovery-publish-final-synced",
+      "reported_cpu_upper_bound_ns": 244976000
+    },
+    {
+      "actual_sigkill_wait4": true,
+      "guardian_sha256": "322286e083758872d49762cc6a387267fed49bb20c05567ae9375018f52c271a",
+      "original_native_receipt_created": false,
+      "path": "native-03/artifacts/settled-epoch-record-unlinked/epoch-recovery-publish-unlinked",
+      "reported_cpu_upper_bound_ns": 75594000
+    },
+    {
+      "actual_sigkill_wait4": true,
+      "guardian_sha256": "81675250d4d65d0381f62d20ffc926b90e05a3b17a3ed4b10fb24557f7b4326e",
+      "original_native_receipt_created": false,
+      "path": "native-03/artifacts/settled-epoch-record-published/epoch-recovery-publish-published",
+      "reported_cpu_upper_bound_ns": 35944000
+    }
+  ],
+  "arbitrary_subprocess_adoption_qualified": false,
+  "binary_sha256": "136bbeb0b474dc9d0bcb3c254ab3bf21d47666f4fb4e04957752f69ea905729b",
+  "cases": [
+    {
+      "actual_original_sigkill_wait4": true,
+      "additional_conservative_debit_ns": 4000000000,
+      "case": "settled-epoch",
+      "cold_journal": {
+        "anchor": {
+          "digest": "685e68a262dbad31012809f853a06db6ef9a34946d6a973802f8b9343ee0ad8e",
+          "sequence": 17
+        },
+        "epoch": null,
+        "known_settlements": 7,
+        "pending": null,
+        "request_nonce": 14,
+        "schema": "restricted-history-effect-journal-observation-v6",
+        "settled_epoch_reconciliations_v1": 1,
+        "spent": {
+          "cpu_ns": 32000000000,
+          "material_bytes": 14680064,
+          "operations": 8,
+          "received_bytes": 14680064
+        },
+        "unknown_prepaid_reconciliations": 0,
+        "used_operations": 8
+      },
+      "next_epoch_initial_credit_ns": 0,
+      "next_validation_cpu": {
+        "accounting_unavailable": false,
+        "finished_workers": 2,
+        "known_workers": 2,
+        "live_paid_cpu_ns": 29833978,
+        "live_refused": false,
+        "owner_cpu_ns": 29476121,
+        "residual_cpu_ns": 13026,
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "scoped_worker_cpu_ns": 370883,
+        "spawned_workers": 2,
+        "started_workers": 2,
+        "total_cpu_ns": 29847004
+      },
+      "original_debit_preserved_ns": 12000000000,
+      "process_result_sha256": "bc90fd00645b77baf043a12c5fdd857eab5430b893fd3baf8a0a8db3193813d6",
+      "record_namespace_negative": {
+        "changed_record_prefix_self_consistent": true,
+        "error": "HISTORY_V6_JOURNAL_CHAIN",
+        "legacy_record_schema_relabel_refused": true,
+        "new_event_signatures_preserved": true,
+        "original_frame_sha256": "0f7d583b2538d738374bb4836824c24576c584f43cdd50ffb56af608fdbf5b5a"
+      },
+      "refusals": {
+        "expired": "HISTORY_EPOCH_V1_AUTHORIZATION",
+        "insufficient-process-allowance": "HISTORY_EPOCH_V1_CLOSED_BINDING",
+        "lifetime-overdraft": "HISTORY_EPOCH_V1_FRESH_ALLOWANCE",
+        "missing-journal-lock-no-recreation": "IO: No such file or directory (os error 2)",
+        "missing-task-signature": "HISTORY_EPOCH_V1_SIGNATURE",
+        "old-v6-signature-domain": "HISTORY_EPOCH_V1_SIGNATURE",
+        "resigned-wrong-executable-pin": "HISTORY_EPOCH_V1_SOURCE_PIN",
+        "reused-nonce": "HISTORY_EPOCH_V1_FRESH_ALLOWANCE",
+        "reused-operation-id": "HISTORY_EPOCH_V1_FRESH_ALLOWANCE",
+        "sqlite-frontier-mismatch": "HISTORY_EPOCH_V1_NATIVE_FRONTIER",
+        "wrong-budget": "HISTORY_EPOCH_V1_FRESH_ALLOWANCE",
+        "wrong-independent-source-pin": "HISTORY_EPOCH_V1_SOURCE_PIN",
+        "wrong-last-settlement": "HISTORY_EPOCH_V1_SETTLED_BINDING",
+        "wrong-operation-count": "HISTORY_EPOCH_V1_AUTHORIZATION"
+      },
+      "whole_dead_process_cpu_upper_bound_ns": 354048000
+    },
+    {
+      "actual_old_budget_expiry": {
+        "expires_ns": 1793148720653390414,
+        "new_run_authority_created": false,
+        "observed_at_ns": 1793148720671080943,
+        "schema": "actual-history-old-budget-expired-v1"
+      },
+      "actual_original_sigkill_wait4": true,
+      "additional_conservative_debit_ns": 4000000000,
+      "case": "settled-epoch-expired-budget",
+      "cold_journal": {
+        "anchor": {
+          "digest": "ef657414b62236994fe12f83db0f1b4e83bb1c0f41579442e0d464ae1869964a",
+          "sequence": 18
+        },
+        "epoch": null,
+        "known_settlements": 7,
+        "pending": null,
+        "request_nonce": 14,
+        "schema": "restricted-history-effect-journal-observation-v6",
+        "settled_epoch_reconciliations_v1": 1,
+        "spent": {
+          "cpu_ns": 32000000000,
+          "material_bytes": 14680064,
+          "operations": 8,
+          "received_bytes": 14680064
+        },
+        "unknown_prepaid_reconciliations": 0,
+        "used_operations": 8
+      },
+      "next_epoch_initial_credit_ns": 0,
+      "next_validation_cpu": {
+        "accounting_unavailable": false,
+        "finished_workers": 2,
+        "known_workers": 2,
+        "live_paid_cpu_ns": 30936017,
+        "live_refused": false,
+        "owner_cpu_ns": 30487948,
+        "residual_cpu_ns": 13272,
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "scoped_worker_cpu_ns": 461341,
+        "spawned_workers": 2,
+        "started_workers": 2,
+        "total_cpu_ns": 30949289
+      },
+      "old_run_authority_refusal": {
+        "error": "HISTORY_V6_WINDOW",
+        "journal_unchanged": true,
+        "old_budget_revived": false
+      },
+      "original_debit_preserved_ns": 12000000000,
+      "process_result_sha256": "b986dec8cbd652f57fe1295f7186ab4e9477fd43ea9326989dd1947ec5772d6d",
+      "refusals": {
+        "expired": "HISTORY_EPOCH_V1_AUTHORIZATION",
+        "insufficient-process-allowance": "HISTORY_EPOCH_V1_CLOSED_BINDING",
+        "lifetime-overdraft": "HISTORY_EPOCH_V1_FRESH_ALLOWANCE",
+        "missing-journal-lock-no-recreation": "IO: No such file or directory (os error 2)",
+        "missing-task-signature": "HISTORY_EPOCH_V1_SIGNATURE",
+        "old-v6-signature-domain": "HISTORY_EPOCH_V1_SIGNATURE",
+        "resigned-wrong-executable-pin": "HISTORY_EPOCH_V1_SOURCE_PIN",
+        "reused-nonce": "HISTORY_EPOCH_V1_FRESH_ALLOWANCE",
+        "reused-operation-id": "HISTORY_EPOCH_V1_FRESH_ALLOWANCE",
+        "sqlite-frontier-mismatch": "HISTORY_EPOCH_V1_NATIVE_FRONTIER",
+        "wrong-budget": "HISTORY_EPOCH_V1_FRESH_ALLOWANCE",
+        "wrong-independent-source-pin": "HISTORY_EPOCH_V1_SOURCE_PIN",
+        "wrong-last-settlement": "HISTORY_EPOCH_V1_SETTLED_BINDING",
+        "wrong-operation-count": "HISTORY_EPOCH_V1_AUTHORIZATION"
+      },
+      "separate_renewal_preserved_spend_ns": 16000000000,
+      "whole_dead_process_cpu_upper_bound_ns": 460408000
+    },
+    {
+      "actual_expired_original_event_fresh_publication": {
+        "fresh_publication_issued_ns": 1793148778231635173,
+        "original_event_expires_ns": 1793148778228570092,
+        "original_frame_at_ns": 1793148768830706608,
+        "original_pending_bytes_unchanged": true,
+        "publication_observed_at_ns": 1793148778231635173,
+        "refusals": {
+          "different-original-signed-bytes": "HISTORY_EPOCH_V1_PUBLICATION_BINDING",
+          "expired-current-publication": "HISTORY_PUBLICATION_AUTHORIZATION",
+          "wrong-independent-binary": "HISTORY_EPOCH_V1_SOURCE_PIN"
+        }
+      },
+      "actual_original_sigkill_wait4": true,
+      "additional_conservative_debit_ns": 4000000000,
+      "case": "settled-epoch-record-file-synced",
+      "cold_journal": {
+        "anchor": {
+          "digest": "ed7873dafb83cd720f3a3d79ebde509b45178dd02a774f7c96f1b068a2f47366",
+          "sequence": 17
+        },
+        "epoch": null,
+        "known_settlements": 7,
+        "pending": null,
+        "request_nonce": 14,
+        "schema": "restricted-history-effect-journal-observation-v6",
+        "settled_epoch_reconciliations_v1": 1,
+        "spent": {
+          "cpu_ns": 32000000000,
+          "material_bytes": 14680064,
+          "operations": 8,
+          "received_bytes": 14680064
+        },
+        "unknown_prepaid_reconciliations": 0,
+        "used_operations": 8
+      },
+      "exact_frame_publication": {
+        "bytes": 16007,
+        "frame_sha256": "6c3061cf24a5edd7ff2d01ba61f1b7e7bc792108c82e1d922026cced8d81bbe0",
+        "generic_bypass_refused": true,
+        "idempotent_retry": true
+      },
+      "next_epoch_initial_credit_ns": 0,
+      "next_validation_cpu": {
+        "accounting_unavailable": false,
+        "finished_workers": 2,
+        "known_workers": 2,
+        "live_paid_cpu_ns": 197118757,
+        "live_refused": false,
+        "owner_cpu_ns": 193427413,
+        "residual_cpu_ns": 19744,
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "scoped_worker_cpu_ns": 3711088,
+        "spawned_workers": 2,
+        "started_workers": 2,
+        "total_cpu_ns": 197138501
+      },
+      "original_debit_preserved_ns": 12000000000,
+      "process_result_sha256": "63d67f84b25af05fa8a6f794c4c474a8bf20713215da7447188000e40740fc1e",
+      "refusals": {
+        "expired": "HISTORY_EPOCH_V1_AUTHORIZATION",
+        "insufficient-process-allowance": "HISTORY_EPOCH_V1_CLOSED_BINDING",
+        "lifetime-overdraft": "HISTORY_EPOCH_V1_FRESH_ALLOWANCE",
+        "missing-journal-lock-no-recreation": "IO: No such file or directory (os error 2)",
+        "missing-task-signature": "HISTORY_EPOCH_V1_SIGNATURE",
+        "old-v6-signature-domain": "HISTORY_EPOCH_V1_SIGNATURE",
+        "resigned-wrong-executable-pin": "HISTORY_EPOCH_V1_SOURCE_PIN",
+        "reused-nonce": "HISTORY_EPOCH_V1_FRESH_ALLOWANCE",
+        "reused-operation-id": "HISTORY_EPOCH_V1_FRESH_ALLOWANCE",
+        "sqlite-frontier-mismatch": "HISTORY_EPOCH_V1_NATIVE_FRONTIER",
+        "wrong-budget": "HISTORY_EPOCH_V1_FRESH_ALLOWANCE",
+        "wrong-independent-source-pin": "HISTORY_EPOCH_V1_SOURCE_PIN",
+        "wrong-last-settlement": "HISTORY_EPOCH_V1_SETTLED_BINDING",
+        "wrong-operation-count": "HISTORY_EPOCH_V1_AUTHORIZATION"
+      },
+      "whole_dead_process_cpu_upper_bound_ns": 684100000
+    },
+    {
+      "actual_original_sigkill_wait4": true,
+      "additional_conservative_debit_ns": 4000000000,
+      "case": "settled-epoch-record-linked",
+      "cold_journal": {
+        "anchor": {
+          "digest": "674b8d978733a6e8b42b30932e66e1d54363085090ae1c4229d6a24fa0f3dfd1",
+          "sequence": 17
+        },
+        "epoch": null,
+        "known_settlements": 7,
+        "pending": null,
+        "request_nonce": 14,
+        "schema": "restricted-history-effect-journal-observation-v6",
+        "settled_epoch_reconciliations_v1": 1,
+        "spent": {
+          "cpu_ns": 32000000000,
+          "material_bytes": 14680064,
+          "operations": 8,
+          "received_bytes": 14680064
+        },
+        "unknown_prepaid_reconciliations": 0,
+        "used_operations": 8
+      },
+      "exact_frame_publication": {
+        "bytes": 16033,
+        "frame_sha256": "4307bcdd08088ea632b2b1fd83559742807f94251ee80bd01bcd14259b0bc699",
+        "generic_bypass_refused": true,
+        "idempotent_retry": true
+      },
+      "next_epoch_initial_credit_ns": 0,
+      "next_validation_cpu": {
+        "accounting_unavailable": false,
+        "finished_workers": 2,
+        "known_workers": 2,
+        "live_paid_cpu_ns": 53252835,
+        "live_refused": false,
+        "owner_cpu_ns": 52364512,
+        "residual_cpu_ns": 15161,
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "scoped_worker_cpu_ns": 903484,
+        "spawned_workers": 2,
+        "started_workers": 2,
+        "total_cpu_ns": 53267996
+      },
+      "original_debit_preserved_ns": 12000000000,
+      "process_result_sha256": "b3a9ae3c4f715a330d87633b26dfca0a132f64878b72ae6e8a57896985a1332d",
+      "refusals": {
+        "expired": "HISTORY_EPOCH_V1_AUTHORIZATION",
+        "insufficient-process-allowance": "HISTORY_EPOCH_V1_CLOSED_BINDING",
+        "lifetime-overdraft": "HISTORY_EPOCH_V1_FRESH_ALLOWANCE",
+        "missing-journal-lock-no-recreation": "IO: No such file or directory (os error 2)",
+        "missing-task-signature": "HISTORY_EPOCH_V1_SIGNATURE",
+        "old-v6-signature-domain": "HISTORY_EPOCH_V1_SIGNATURE",
+        "resigned-wrong-executable-pin": "HISTORY_EPOCH_V1_SOURCE_PIN",
+        "reused-nonce": "HISTORY_EPOCH_V1_FRESH_ALLOWANCE",
+        "reused-operation-id": "HISTORY_EPOCH_V1_FRESH_ALLOWANCE",
+        "sqlite-frontier-mismatch": "HISTORY_EPOCH_V1_NATIVE_FRONTIER",
+        "wrong-budget": "HISTORY_EPOCH_V1_FRESH_ALLOWANCE",
+        "wrong-independent-source-pin": "HISTORY_EPOCH_V1_SOURCE_PIN",
+        "wrong-last-settlement": "HISTORY_EPOCH_V1_SETTLED_BINDING",
+        "wrong-operation-count": "HISTORY_EPOCH_V1_AUTHORIZATION"
+      },
+      "whole_dead_process_cpu_upper_bound_ns": 458568000
+    },
+    {
+      "actual_original_sigkill_wait4": true,
+      "additional_conservative_debit_ns": 4000000000,
+      "case": "settled-epoch-record-final-synced",
+      "cold_journal": {
+        "anchor": {
+          "digest": "96f677ced44473abf0409f535ddd6f7c5b93b6b465054714e5867401b3eda8cb",
+          "sequence": 17
+        },
+        "epoch": null,
+        "known_settlements": 7,
+        "pending": null,
+        "request_nonce": 14,
+        "schema": "restricted-history-effect-journal-observation-v6",
+        "settled_epoch_reconciliations_v1": 1,
+        "spent": {
+          "cpu_ns": 32000000000,
+          "material_bytes": 14680064,
+          "operations": 8,
+          "received_bytes": 14680064
+        },
+        "unknown_prepaid_reconciliations": 0,
+        "used_operations": 8
+      },
+      "exact_frame_publication": {
+        "bytes": 16049,
+        "frame_sha256": "936dd489891e07bf56ec99178a75490649dd3ad22c6f6508560ca74d8701930c",
+        "generic_bypass_refused": true,
+        "idempotent_retry": true
+      },
+      "next_epoch_initial_credit_ns": 0,
+      "next_validation_cpu": {
+        "accounting_unavailable": false,
+        "finished_workers": 2,
+        "known_workers": 2,
+        "live_paid_cpu_ns": 53833895,
+        "live_refused": false,
+        "owner_cpu_ns": 53118470,
+        "residual_cpu_ns": 18839,
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "scoped_worker_cpu_ns": 734264,
+        "spawned_workers": 2,
+        "started_workers": 2,
+        "total_cpu_ns": 53852734
+      },
+      "original_debit_preserved_ns": 12000000000,
+      "process_result_sha256": "2d865f4c1c27f9e9d1fb589eda0da5f4e63793797215fdd2715c2283993cc7b6",
+      "refusals": {
+        "expired": "HISTORY_EPOCH_V1_AUTHORIZATION",
+        "insufficient-process-allowance": "HISTORY_EPOCH_V1_CLOSED_BINDING",
+        "lifetime-overdraft": "HISTORY_EPOCH_V1_FRESH_ALLOWANCE",
+        "missing-journal-lock-no-recreation": "IO: No such file or directory (os error 2)",
+        "missing-task-signature": "HISTORY_EPOCH_V1_SIGNATURE",
+        "old-v6-signature-domain": "HISTORY_EPOCH_V1_SIGNATURE",
+        "resigned-wrong-executable-pin": "HISTORY_EPOCH_V1_SOURCE_PIN",
+        "reused-nonce": "HISTORY_EPOCH_V1_FRESH_ALLOWANCE",
+        "reused-operation-id": "HISTORY_EPOCH_V1_FRESH_ALLOWANCE",
+        "sqlite-frontier-mismatch": "HISTORY_EPOCH_V1_NATIVE_FRONTIER",
+        "wrong-budget": "HISTORY_EPOCH_V1_FRESH_ALLOWANCE",
+        "wrong-independent-source-pin": "HISTORY_EPOCH_V1_SOURCE_PIN",
+        "wrong-last-settlement": "HISTORY_EPOCH_V1_SETTLED_BINDING",
+        "wrong-operation-count": "HISTORY_EPOCH_V1_AUTHORIZATION"
+      },
+      "whole_dead_process_cpu_upper_bound_ns": 721103000
+    },
+    {
+      "actual_original_sigkill_wait4": true,
+      "additional_conservative_debit_ns": 4000000000,
+      "case": "settled-epoch-record-unlinked",
+      "cold_journal": {
+        "anchor": {
+          "digest": "f5471e1f7ade9225fd7bfe3731887693992cb97782a73d9f0eab3de780271114",
+          "sequence": 17
+        },
+        "epoch": null,
+        "known_settlements": 7,
+        "pending": null,
+        "request_nonce": 14,
+        "schema": "restricted-history-effect-journal-observation-v6",
+        "settled_epoch_reconciliations_v1": 1,
+        "spent": {
+          "cpu_ns": 32000000000,
+          "material_bytes": 14680064,
+          "operations": 8,
+          "received_bytes": 14680064
+        },
+        "unknown_prepaid_reconciliations": 0,
+        "used_operations": 8
+      },
+      "exact_frame_publication": {
+        "bytes": 16008,
+        "frame_sha256": "09d558ea14fe1ba519f80a1d4988d2485eabcd7c8f9db3047cda8e52c37c2d01",
+        "generic_bypass_refused": true,
+        "idempotent_retry": true
+      },
+      "next_epoch_initial_credit_ns": 0,
+      "next_validation_cpu": {
+        "accounting_unavailable": false,
+        "finished_workers": 2,
+        "known_workers": 2,
+        "live_paid_cpu_ns": 28970047,
+        "live_refused": false,
+        "owner_cpu_ns": 28291488,
+        "residual_cpu_ns": 16237,
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "scoped_worker_cpu_ns": 694796,
+        "spawned_workers": 2,
+        "started_workers": 2,
+        "total_cpu_ns": 28986284
+      },
+      "original_debit_preserved_ns": 12000000000,
+      "process_result_sha256": "b6ab3435209b639e766cfca030cdd3075c5c2e816902fe258100677b43dcdeca",
+      "refusals": {
+        "expired": "HISTORY_EPOCH_V1_AUTHORIZATION",
+        "insufficient-process-allowance": "HISTORY_EPOCH_V1_CLOSED_BINDING",
+        "lifetime-overdraft": "HISTORY_EPOCH_V1_FRESH_ALLOWANCE",
+        "missing-journal-lock-no-recreation": "IO: No such file or directory (os error 2)",
+        "missing-task-signature": "HISTORY_EPOCH_V1_SIGNATURE",
+        "old-v6-signature-domain": "HISTORY_EPOCH_V1_SIGNATURE",
+        "resigned-wrong-executable-pin": "HISTORY_EPOCH_V1_SOURCE_PIN",
+        "reused-nonce": "HISTORY_EPOCH_V1_FRESH_ALLOWANCE",
+        "reused-operation-id": "HISTORY_EPOCH_V1_FRESH_ALLOWANCE",
+        "sqlite-frontier-mismatch": "HISTORY_EPOCH_V1_NATIVE_FRONTIER",
+        "wrong-budget": "HISTORY_EPOCH_V1_FRESH_ALLOWANCE",
+        "wrong-independent-source-pin": "HISTORY_EPOCH_V1_SOURCE_PIN",
+        "wrong-last-settlement": "HISTORY_EPOCH_V1_SETTLED_BINDING",
+        "wrong-operation-count": "HISTORY_EPOCH_V1_AUTHORIZATION"
+      },
+      "whole_dead_process_cpu_upper_bound_ns": 230600000
+    },
+    {
+      "actual_original_sigkill_wait4": true,
+      "additional_conservative_debit_ns": 4000000000,
+      "case": "settled-epoch-record-published",
+      "cold_journal": {
+        "anchor": {
+          "digest": "9d0b42afe3b3b04be842529f82128fe435225d9ead22757d252c2d4e2418c9f4",
+          "sequence": 17
+        },
+        "epoch": null,
+        "known_settlements": 7,
+        "pending": null,
+        "request_nonce": 14,
+        "schema": "restricted-history-effect-journal-observation-v6",
+        "settled_epoch_reconciliations_v1": 1,
+        "spent": {
+          "cpu_ns": 32000000000,
+          "material_bytes": 14680064,
+          "operations": 8,
+          "received_bytes": 14680064
+        },
+        "unknown_prepaid_reconciliations": 0,
+        "used_operations": 8
+      },
+      "exact_frame_publication": {
+        "bytes": 16026,
+        "frame_sha256": "b0cf9a0683e980262dd5a09b7762a2759476262ae6d76f307894b148592867bc",
+        "generic_bypass_refused": true,
+        "idempotent_retry": true
+      },
+      "next_epoch_initial_credit_ns": 0,
+      "next_validation_cpu": {
+        "accounting_unavailable": false,
+        "finished_workers": 2,
+        "known_workers": 2,
+        "live_paid_cpu_ns": 35387451,
+        "live_refused": false,
+        "owner_cpu_ns": 34907853,
+        "residual_cpu_ns": 13471,
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "scoped_worker_cpu_ns": 493069,
+        "spawned_workers": 2,
+        "started_workers": 2,
+        "total_cpu_ns": 35400922
+      },
+      "original_debit_preserved_ns": 12000000000,
+      "process_result_sha256": "4dced57c27b16df38247bc7855a59247fb6da32709a79b396de8eedb520a79ae",
+      "refusals": {
+        "expired": "HISTORY_EPOCH_V1_AUTHORIZATION",
+        "insufficient-process-allowance": "HISTORY_EPOCH_V1_CLOSED_BINDING",
+        "lifetime-overdraft": "HISTORY_EPOCH_V1_FRESH_ALLOWANCE",
+        "missing-journal-lock-no-recreation": "IO: No such file or directory (os error 2)",
+        "missing-task-signature": "HISTORY_EPOCH_V1_SIGNATURE",
+        "old-v6-signature-domain": "HISTORY_EPOCH_V1_SIGNATURE",
+        "resigned-wrong-executable-pin": "HISTORY_EPOCH_V1_SOURCE_PIN",
+        "reused-nonce": "HISTORY_EPOCH_V1_FRESH_ALLOWANCE",
+        "reused-operation-id": "HISTORY_EPOCH_V1_FRESH_ALLOWANCE",
+        "sqlite-frontier-mismatch": "HISTORY_EPOCH_V1_NATIVE_FRONTIER",
+        "wrong-budget": "HISTORY_EPOCH_V1_FRESH_ALLOWANCE",
+        "wrong-independent-source-pin": "HISTORY_EPOCH_V1_SOURCE_PIN",
+        "wrong-last-settlement": "HISTORY_EPOCH_V1_SETTLED_BINDING",
+        "wrong-operation-count": "HISTORY_EPOCH_V1_AUTHORIZATION"
+      },
+      "whole_dead_process_cpu_upper_bound_ns": 1456622000
+    }
+  ],
+  "full_native_suite_passed": false,
+  "passed": true,
+  "physical_power_loss_qualified": false,
+  "production_qualified": false,
+  "real_administrative_sigkill_cases": 7,
+  "real_original_death_cases": 7,
+  "schema": "history-settled-epoch-all-window-readback-v1",
+  "scope": "the seven new settled-epoch control cases only; not a full-suite acceptance",
+  "source_commit": "8d7741028eb650f0600e61fcab46ff3d14b50767",
+  "whole_history_p0_closed": false
+}

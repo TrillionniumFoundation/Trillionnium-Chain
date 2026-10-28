@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/workspace/scratch/bb9b841c1d43/history-next/scripts/ci/verify_ci_source.py", line 163, in <module>
+    main()
+  File "/workspace/scratch/bb9b841c1d43/history-next/scripts/ci/verify_ci_source.py", line 154, in main
+    result = verify(args.kind, args.expected_head, args.expected_base, args.expected_merge)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/bb9b841c1d43/history-next/scripts/ci/verify_ci_source.py", line 112, in verify
+    clean()
+  File "/workspace/scratch/bb9b841c1d43/history-next/scripts/ci/verify_ci_source.py", line 91, in clean
+    raise ValueError('index hides tracked worktree entries')
+ValueError: index hides tracked worktree entries

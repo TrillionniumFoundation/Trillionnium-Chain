@@ -1,0 +1,214 @@
+{
+  "schema": "history-publication-source-manifest-v2",
+  "base_pull_request": 518,
+  "base_commit": "44601b92f786613194a6098158abe663296d4f3e",
+  "source_head": "72b7cb10e28f07343b7a0fc96072975906ceae85",
+  "runtime_locally_tested_commit": "8d7741028eb650f0600e61fcab46ff3d14b50767",
+  "source_tree": "053cd7cbe9e4cf2824387af624431b19611d3b6c",
+  "scope": "complete non-evidence changed paths through the CI-only commit; final publication manifest separately includes frozen evidence",
+  "lineage": [
+    {
+      "commit": "2e325e78e508bfe72d342d210a27b17ed53e2d24",
+      "tree": "e5f89e3c471df0138079e276ac8680b97c3eef5a",
+      "subject": "fix(history): preserve local owner error provenance",
+      "parents": [
+        "44601b92f786613194a6098158abe663296d4f3e"
+      ]
+    },
+    {
+      "commit": "6b40375d08265aa19e570756fc67cdffc163fb5e",
+      "tree": "56d999aca541403ffb958447d1a7d448453a008e",
+      "subject": "fix(history): retain explicit publication repair continuation",
+      "parents": [
+        "2e325e78e508bfe72d342d210a27b17ed53e2d24"
+      ]
+    },
+    {
+      "commit": "a3a651cdc6b5d51302fdce1ade0e15be7b2ce474",
+      "tree": "a082e06143b566b39144a78f676e3c871d9fe29f",
+      "subject": "fix(history): close settled epochs with pinned recovery",
+      "parents": [
+        "6b40375d08265aa19e570756fc67cdffc163fb5e"
+      ]
+    },
+    {
+      "commit": "8d7741028eb650f0600e61fcab46ff3d14b50767",
+      "tree": "da2d7c4ca9358f588c4fa8a2909c2be5b59e4739",
+      "subject": "fix(history): publish complete guardian observations atomically",
+      "parents": [
+        "a3a651cdc6b5d51302fdce1ade0e15be7b2ce474"
+      ]
+    },
+    {
+      "commit": "72b7cb10e28f07343b7a0fc96072975906ceae85",
+      "tree": "053cd7cbe9e4cf2824387af624431b19611d3b6c",
+      "subject": "ci(history): require exact-source native recovery suite",
+      "parents": [
+        "8d7741028eb650f0600e61fcab46ff3d14b50767"
+      ]
+    }
+  ],
+  "changed_source_paths": [
+    {
+      "path": ".github/workflows/pon-history-epoch-v1-native.yml",
+      "mode": "100644",
+      "blob": "4854837bfaf268ae1772616579c9e0bc145f565f",
+      "bytes": 4782,
+      "sha256": "65140ebfd00cc81bd463814a093cbbff1fd8bc38e256770272f9fde10094cc73"
+    },
+    {
+      "path": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "mode": "100644",
+      "blob": "0e05eca7b35744cbbb20b6893eb65eb6b77f9547",
+      "bytes": 31380,
+      "sha256": "0ddc960ee8973f772f8e2ed9e9fbba82b43931733714776de915af06f0254a67"
+    },
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "mode": "100644",
+      "blob": "c6e3cb3306a6e438083c67c9a5146d6eed6b718a",
+      "bytes": 324980,
+      "sha256": "125fc78fc783d4682d29fde4b7c4419979c2eedf9a3e5e12264926b6c5c95a32"
+    },
+    {
+      "path": "docs/protocol/pon-nakamoto-v1/details/HISTORY_JOURNAL_PUBLICATION_REPAIR_V1.md",
+      "mode": "100644",
+      "blob": "ca90049d5f89a6a7f1ce75aa9eef32efd1962134",
+      "bytes": 5885,
+      "sha256": "46e19b4a7ebac57e5712f7368d4d5819a02df8853cde713c227d1f8fdbdb44e1"
+    },
+    {
+      "path": "docs/protocol/pon-nakamoto-v1/details/SETTLED_EPOCH_RECOVERY_V1.md",
+      "mode": "100644",
+      "blob": "b9febae543fecbdaad11cf78873d5d2520711733",
+      "bytes": 6103,
+      "sha256": "1e38ad9a53086bd6c23dea254639d8bef73a5c0d2bba39e1ae167a38e92aa576"
+    },
+    {
+      "path": "scripts/ci/history_effect_v6_process_guard.py",
+      "mode": "100644",
+      "blob": "c08129a5e191af1e3c6cf30d07fc8ae76d52b3f1",
+      "bytes": 19590,
+      "sha256": "7c6e59200ae5fce70ad64ab949b6bcd8b1f1bc0787ee5f1fe943bc62ab51e77b"
+    },
+    {
+      "path": "scripts/ci/run_history_effect_v6_native.py",
+      "mode": "100644",
+      "blob": "31316d485ad7445704995f25b2f2d65a55060421",
+      "bytes": 14005,
+      "sha256": "c7d6277ddc56922aaee11ec5c502481993adf90996db7d3fa3f0ed469b7a1b1d"
+    },
+    {
+      "path": "scripts/ci/test_history_effect_v6_guard.py",
+      "mode": "100644",
+      "blob": "c1ed88334768151ee5cd91bd10ee65bd4d58e495",
+      "bytes": 7742,
+      "sha256": "e7394785cf04586cace4559ebe0b60cb28c7ccc89caf8a2b8b8b95694a6b8c27"
+    },
+    {
+      "path": "scripts/ci/test_history_effect_v6_native_runner.py",
+      "mode": "100644",
+      "blob": "ae38471c42f222d024f1658e6aa5dcc0d4be2b80",
+      "bytes": 4168,
+      "sha256": "5796b117a213e3eb8a99f3bceb0e8d948c366010f3737db817a76e446c11ed9b"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "mode": "100644",
+      "blob": "1108eb96ffa434703cf1903957b55b55434f1ea9",
+      "bytes": 290041,
+      "sha256": "e18551152bb7439c978f7b9dcdb9575fe9519f061fadf8c9a5821c944b440fb0"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/error.rs",
+      "mode": "100644",
+      "blob": "c98b3f8d9ee7a7e0db61a05b3c327d9ddb977f9c",
+      "bytes": 31331,
+      "sha256": "8ade504d3a41c42d24772662d3db863dfa3f49381f1472fe72d999547fb02645"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_metered_fact_tests.rs",
+      "mode": "100644",
+      "blob": "93ebb92491c0cad29eec516e360bdf3f77f8f9cf",
+      "bytes": 15418,
+      "sha256": "8f3bdb51802841bf2273ef1bc6e688772bc83ebf5eb7cdd49821dc7a905bea5e"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/history_effect_v6.rs",
+      "mode": "100644",
+      "blob": "a22479f21b0115adc4fcf01d9a36856dd6360633",
+      "bytes": 28313,
+      "sha256": "488be00cd008af49977fc3ef8c5720550935351a762ca7b0078c3fb56da0996f"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/epoch_recovery_v1.rs",
+      "mode": "100644",
+      "blob": "6efd7c02487777574b80db0775493a49ecd42169",
+      "bytes": 14443,
+      "sha256": "d1fe98bb03aa439bb7a1e5d68860450f59ee899ea7a578d8c9bc0b1c1dff0d30"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/journal.rs",
+      "mode": "100644",
+      "blob": "e492cc2144c4a6be9a9208da3548b1cf68e3ddbd",
+      "bytes": 30284,
+      "sha256": "33c328b70328c6461f437b171c5498f61bed0e1ea3540555f1232fbdabd9eb3e"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/journal/publication.rs",
+      "mode": "100644",
+      "blob": "42766704b9c12d2596bfc260c960c95a27f05fd2",
+      "bytes": 11070,
+      "sha256": "b7c04e1b46900f8f761b674e6e81a24a3b1d0666c396ad53e6aace652282d2fa"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/policy.rs",
+      "mode": "100644",
+      "blob": "2f0779b3e6591740d5e92ac841773f76f6f744c8",
+      "bytes": 22414,
+      "sha256": "255678e441b535da9f0dcd0a8b5f7814eeaa75b992318f6f81aba3c26a58bba0"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/recovery.rs",
+      "mode": "100644",
+      "blob": "b1c6e3abfba399b4d22512bc94a8aaae804de6ff",
+      "bytes": 7461,
+      "sha256": "5aab9ea097f53d77303ff401859b9da88ae4db0cc99beab8f8bd442a2b572997"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/tests.rs",
+      "mode": "100644",
+      "blob": "1b6f8f8f236ea22dacba695d3d05ce34a66c5604",
+      "bytes": 25710,
+      "sha256": "f129ecec361c174b2ff2b8c29a457e0d6bafa39b8e8f80d733591bc32d94e10b"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/tests/process.rs",
+      "mode": "100644",
+      "blob": "596471ed7f1ec16c6b8319bb087c1f5ccbc725d0",
+      "bytes": 36928,
+      "sha256": "596e7cee880ab1e16784e8662b31835766abf764c313c383f3c3e42339d2f2c1"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/tests/publication.rs",
+      "mode": "100644",
+      "blob": "66738804bd458ea43d88a8983c1f905f2e1d52a4",
+      "bytes": 16770,
+      "sha256": "7c0436ca6d3733dbc4c1d986e89543677d29043e9574d174b68f1cfad2d451f7"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/tests/settled_epoch.rs",
+      "mode": "100644",
+      "blob": "51d12c17428c4cbe1247ce05860931b4d8f78a51",
+      "bytes": 23869,
+      "sha256": "cbf3f32e1694772f2c11c24faa8e91884ba7235991ea3b93742f5337abc4860f"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs",
+      "mode": "100644",
+      "blob": "16c894966292e9e70f24c3ff0ebccdd6da936654",
+      "bytes": 100446,
+      "sha256": "d8150e00528bc0cbfd234c6ba4d9aa9af164f33b9ca3d530383270097281f2cf"
+    }
+  ]
+}

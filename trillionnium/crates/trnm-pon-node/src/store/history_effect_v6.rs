@@ -12,12 +12,20 @@ use std::sync::{
 };
 use std::time::Instant;
 
+mod epoch_recovery_v1;
 mod journal;
 mod policy;
 mod recovery;
 mod storage;
 #[cfg(all(test, target_os = "linux"))]
 mod tests;
+pub use epoch_recovery_v1::{
+    prepare_history_settled_epoch_v1_recovery, repair_history_settled_epoch_v1_publication,
+    ProtectedHistorySettledEpochV1Input,
+};
+pub use journal::publication::{
+    repair_history_journal_publication_v1, ProtectedHistoryJournalPublicationV1Input,
+};
 use policy::{EffectMarker, Frontier, Purpose};
 pub use policy::{
     ProtectedHistoryV6BudgetInput, ProtectedHistoryV6Input, ProtectedHistoryV6RecoveryInput,

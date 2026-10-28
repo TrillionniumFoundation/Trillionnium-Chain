@@ -1,0 +1,80 @@
+{
+  "source_commit": "6b40375d08265aa19e570756fc67cdffc163fb5e",
+  "source_tree": "56d999aca541403ffb958447d1a7d448453a008e",
+  "parent": "2e325e78e508bfe72d342d210a27b17ed53e2d24",
+  "verified_original_build_manifest": "/workspace/scratch/3d4ec372c488/history-publication-repair/evidence/pon-history-publication-repair-20261027/source-before-build.json",
+  "paths": [
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "git_blob": "2f290ac0646589c7ce63d7e811aec3fa3e437e7f",
+      "sha256": "9a268716a63186a781a3246cf7504d8bfcf652f1bb2600d018588693eadeec12",
+      "mode": "100644"
+    },
+    {
+      "path": "docs/protocol/pon-nakamoto-v1/details/HISTORY_JOURNAL_PUBLICATION_REPAIR_V1.md",
+      "git_blob": "f1e70459fb321ac9e22ab57237dbfe0a763e2d03",
+      "sha256": "817508c7e4af42deb43cc9ba24678c4f61e4d040be9c81ab5ecb9c3ad00d1617",
+      "mode": "100644"
+    },
+    {
+      "path": "evidence/pon-history-publication-repair-20261027/README.md",
+      "git_blob": "ed8cd04915dc96fcf8b51e3b0fad2a8063e866a0",
+      "sha256": "e023c1325a45e72f4055da2955102f5e26871cce9dff4d39ede8391772bfc077",
+      "mode": "100644"
+    },
+    {
+      "path": "scripts/ci/history_effect_v6_process_guard.py",
+      "git_blob": "ec53c32361bd92e29685fd4b61832fa91226e93b",
+      "sha256": "7396f0c70861550502823cbea15745f274779fa70b7c4a836e47921db4ff4e05",
+      "mode": "100644"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "git_blob": "bbd8101fd5ec3c0fef220e6f324390ff97c250d0",
+      "sha256": "d0badd09872632d926c8892eae372291f491215ea78063ef1b43ff205bab9c05",
+      "mode": "100644"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/history_effect_v6.rs",
+      "git_blob": "2cd7c9e7704c0fbb3e287eebfc57e05c6871c8ac",
+      "sha256": "6f473f4f85a6caa5094d7235546d708547438c23e64c056734858b5de0183a24",
+      "mode": "100644"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/journal.rs",
+      "git_blob": "247d67adfc720edfecd1b9a883be8538c102ca30",
+      "sha256": "f1d401c135f4eeeff00fa94754c5abd58935bde69e6423db420c1d7df4c1707d",
+      "mode": "100644"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/journal/publication.rs",
+      "git_blob": "25b07438b073eba2176c4b6e458d4f1fc53dbba0",
+      "sha256": "c598bd7dd03e8902e8c9f96ff0f2697770fc4bae6fe8581783b0677393ea2779",
+      "mode": "100644"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/policy.rs",
+      "git_blob": "2f0779b3e6591740d5e92ac841773f76f6f744c8",
+      "sha256": "255678e441b535da9f0dcd0a8b5f7814eeaa75b992318f6f81aba3c26a58bba0",
+      "mode": "100644"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/tests.rs",
+      "git_blob": "9088b7f16cf17b0c30fd36e3cc852c52d60edc68",
+      "sha256": "8db66febcf48c493d0aadb03748c116b95d7c79160e3928f890753eaf020cc5a",
+      "mode": "100644"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/tests/process.rs",
+      "git_blob": "271acd26861c21477845938087154c506a47f1ee",
+      "sha256": "f6423a57e36acfd02d64cda480346b38a95951474374db11de6068fbfad9b536",
+      "mode": "100644"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/tests/publication.rs",
+      "git_blob": "d14bf870e226a9d4e5b4e33f85f6687aa27804ba",
+      "sha256": "e90b68b59ab79878d049d9221db9d5c5ef215b8598f7acc76c7017730cdcacbd",
+      "mode": "100644"
+    }
+  ]
+}

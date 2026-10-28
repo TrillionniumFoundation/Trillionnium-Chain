@@ -1,0 +1,36 @@
+[
+  {
+    "name": "source-integrity-negatives-final",
+    "source_commit": "8d7741028eb650f0600e61fcab46ff3d14b50767",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/ci",
+      "-p",
+      "test_ci_source_integrity.py"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 13.7400126049979,
+    "log_sha256": "d97f3a5d3aec35421a1454c70e1054b3d97e3bd525d66e80a5040076382c2a71"
+  },
+  {
+    "name": "evidence-source-negatives-final",
+    "source_commit": "8d7741028eb650f0600e61fcab46ff3d14b50767",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/ci",
+      "-p",
+      "test_evidence_sources.py"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 3.0209752570008277,
+    "log_sha256": "4080181895eac9bb025bb732635acaa05923b53ea3abfb166bfe5f5756f1ec0b"
+  }
+]
