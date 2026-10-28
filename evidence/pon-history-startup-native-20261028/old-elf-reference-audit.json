@@ -1,0 +1,38 @@
+{
+  "schema": "history-single-elf-reference-audit-v1",
+  "target": "/tmp/pon-history-epoch-v1-20261028/debug/deps/trnm_pon_node-1d384016751e2606",
+  "before": {
+    "device": 27,
+    "inode": 1620535,
+    "mode": 33261,
+    "mtime_ns": 1793148065593845638,
+    "ctime_ns": 1793148065613844869,
+    "bytes": 96678560,
+    "sha256": "136bbeb0b474dc9d0bcb3c254ab3bf21d47666f4fb4e04957752f69ea905729b"
+  },
+  "after": {
+    "device": 27,
+    "inode": 1620535,
+    "mode": 33261,
+    "mtime_ns": 1793148065593845638,
+    "ctime_ns": 1793148065613844869,
+    "bytes": 96678560,
+    "sha256": "136bbeb0b474dc9d0bcb3c254ab3bf21d47666f4fb4e04957752f69ea905729b"
+  },
+  "candidate_identity_and_hash_unchanged": true,
+  "intersection": [],
+  "unreadable_pid_count": 0,
+  "unexamined_current_pid_count": 0,
+  "passes": [
+    {
+      "attempt": 1,
+      "initial_pid_count": 12,
+      "final_pid_count": 12,
+      "unexamined_current_pid_count": 0
+    }
+  ],
+  "other_process_metadata_disclosed": false,
+  "deleted": false,
+  "passed": true,
+  "observed_unix_ns": 1793151722310741336
+}

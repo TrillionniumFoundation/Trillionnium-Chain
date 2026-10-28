@@ -1,0 +1,11 @@
+{
+  "schema": "history-retained-elf-remote-raw-readback-v1",
+  "head": "afc8d6dcb11168fa5d9799222c99dba2424dd520",
+  "manifest_sha256": "5ec26b4858510ff4800cff3d0f8d41bd5c90354f6a85a41eb4144999797e20e3",
+  "passed": false,
+  "parts": [],
+  "remote_bytes_written_to_disk": 0,
+  "local_elf_deleted": false,
+  "error": "URLError(PermissionError(1, 'Operation not permitted'))",
+  "elapsed_seconds": 0.016642326998407952
+}

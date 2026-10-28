@@ -1,0 +1,1228 @@
+{
+  "schema": "history-hosted-independent-archive-readback-v1",
+  "run_id": 40615369561,
+  "job_id": 122576500317,
+  "artifact_id": 12785735566,
+  "artifact_sha256": "02022560d614dcee8343b1a7683a45942e50697a1e56c0decdda8f374f1b63cc",
+  "source": {
+    "base": null,
+    "candidate": "afc8d6dcb11168fa5d9799222c99dba2424dd520",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "afc8d6dcb11168fa5d9799222c99dba2424dd520",
+    "tested_tree": "473a6ff2a297a635c9e72b245b3bba4e84900a21",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 735144380,
+    "tracked_entries": 5228,
+    "tracked_worktree_verified": true
+  },
+  "binary_sha256": "9855feed4ce0fb9f4142c16d43e3f2449140e8718b61cb48177f5a34b6064a6c",
+  "build_profile": {
+    "opt_level": "3",
+    "debuginfo": 0,
+    "debug_assertions": false,
+    "overflow_checks": false,
+    "test": true
+  },
+  "native_summary": "test result: ok. 15 passed; 0 failed; 1 ignored; 0 measured; 734 filtered out; finished in 315.14s",
+  "native_elapsed_seconds": 315.29021581999996,
+  "original_native_budget_seconds": 600,
+  "runtime_burst_ns": 2000000000,
+  "operation_allowance_ns": 4000000000,
+  "parent_snapshot_limit": 4,
+  "guardians": [
+    {
+      "path": "execution/native/artifacts/activation-committed/crash-control/guardian-result.json",
+      "sha256": "77657b30d9d717b7c88244bf06ddb1c5db3279d6d713a8980f310ce0648cb574",
+      "cutpoint": "activation-committed",
+      "owned_child_pid": 4584,
+      "actual_wait4": true,
+      "signal": 9,
+      "v6_closed_process_receipt": true,
+      "snapshot_attempts": 2
+    },
+    {
+      "path": "execution/native/artifacts/publication-intent-file-synced/crash-control/guardian-result.json",
+      "sha256": "de7c8f43323c4a722225b50330acdadd574500db99882352c0abe4c3e0b73fd0",
+      "cutpoint": "publication-intent-file-synced",
+      "owned_child_pid": 4301,
+      "actual_wait4": true,
+      "signal": 9,
+      "v6_closed_process_receipt": true,
+      "snapshot_attempts": 2
+    },
+    {
+      "path": "execution/native/artifacts/publication-intent-file-synced/publication-repair-linked/guardian-result.json",
+      "sha256": "e5ba962de6a46b7ca9ac408f9aaa21626cee095cd68cf5d2dd56f6ba1bddcad2",
+      "cutpoint": "publication-repair-linked",
+      "owned_child_pid": 4305,
+      "actual_wait4": true,
+      "signal": 9,
+      "v6_closed_process_receipt": false,
+      "snapshot_attempts": 2
+    },
+    {
+      "path": "execution/native/artifacts/publication-intent-file-synced/publication-repair-unlinked/guardian-result.json",
+      "sha256": "c72f7bb5531b5e7770bcbe09a4a40e65afec8c3725fd2b995cfa5689179fd71b",
+      "cutpoint": "publication-repair-unlinked",
+      "owned_child_pid": 4308,
+      "actual_wait4": true,
+      "signal": 9,
+      "v6_closed_process_receipt": false,
+      "snapshot_attempts": 2
+    },
+    {
+      "path": "execution/native/artifacts/publication-intent-final-synced/crash-control/guardian-result.json",
+      "sha256": "4896976d19e5e0134ba48aa991cf9c50cf00eb0eae728038bff9bd2dc73add24",
+      "cutpoint": "publication-intent-final-synced",
+      "owned_child_pid": 4287,
+      "actual_wait4": true,
+      "signal": 9,
+      "v6_closed_process_receipt": true,
+      "snapshot_attempts": 2
+    },
+    {
+      "path": "execution/native/artifacts/publication-intent-linked/crash-control/guardian-result.json",
+      "sha256": "f28cdcc5559178dd8cde7b67e53d7eae6797848f2209dc076a222fa65ddd856f",
+      "cutpoint": "publication-intent-linked",
+      "owned_child_pid": 4333,
+      "actual_wait4": true,
+      "signal": 9,
+      "v6_closed_process_receipt": true,
+      "snapshot_attempts": 2
+    },
+    {
+      "path": "execution/native/artifacts/publication-intent-published/crash-control/guardian-result.json",
+      "sha256": "bac79ed5bb26e48725ff24ed2c7417bd4dad365783747a2e911db71a9333092f",
+      "cutpoint": "publication-intent-published",
+      "owned_child_pid": 4272,
+      "actual_wait4": true,
+      "signal": 9,
+      "v6_closed_process_receipt": true,
+      "snapshot_attempts": 2
+    },
+    {
+      "path": "execution/native/artifacts/publication-intent-unlinked/crash-control/guardian-result.json",
+      "sha256": "79fbfe7074b67eabb363458776571ababb585e2058cc5c47762f8c237ec5b37e",
+      "cutpoint": "publication-intent-unlinked",
+      "owned_child_pid": 4321,
+      "actual_wait4": true,
+      "signal": 9,
+      "v6_closed_process_receipt": true,
+      "snapshot_attempts": 2
+    },
+    {
+      "path": "execution/native/artifacts/settled-epoch/crash-control/guardian-result.json",
+      "sha256": "a3b124037ae3023a340328fbac83a5f60ee92e59bd44395be755bc66487dd972",
+      "cutpoint": "settled-epoch",
+      "owned_child_pid": 4437,
+      "actual_wait4": true,
+      "signal": 9,
+      "v6_closed_process_receipt": true,
+      "snapshot_attempts": 2
+    },
+    {
+      "path": "execution/native/artifacts/settled-epoch-expired-budget/crash-control/guardian-result.json",
+      "sha256": "9c45c394873705a8c3b75c4fc8187f2c7aa549dcb78f6e56d62b0193b1a62c97",
+      "cutpoint": "settled-epoch",
+      "owned_child_pid": 4352,
+      "actual_wait4": true,
+      "signal": 9,
+      "v6_closed_process_receipt": true,
+      "snapshot_attempts": 2
+    },
+    {
+      "path": "execution/native/artifacts/settled-epoch-record-file-synced/crash-control/guardian-result.json",
+      "sha256": "cbc8a289d37ebaf54d5215ffe854ed4b8a87b52cc3cb4959af2b118374d44293",
+      "cutpoint": "settled-epoch",
+      "owned_child_pid": 4463,
+      "actual_wait4": true,
+      "signal": 9,
+      "v6_closed_process_receipt": true,
+      "snapshot_attempts": 2
+    },
+    {
+      "path": "execution/native/artifacts/settled-epoch-record-file-synced/epoch-recovery-publish-file-synced/guardian-result.json",
+      "sha256": "8c17f07cd80189eea0f2efaffbad98d34d3e1e508b55a9e5e2d1c4ca1a9c1644",
+      "cutpoint": "epoch-recovery-publish-file-synced",
+      "owned_child_pid": 4471,
+      "actual_wait4": true,
+      "signal": 9,
+      "v6_closed_process_receipt": false,
+      "snapshot_attempts": 2
+    },
+    {
+      "path": "execution/native/artifacts/settled-epoch-record-file-synced/publication-repair-linked/guardian-result.json",
+      "sha256": "f36e67680bcd342217b735d80f7ac88b7a41f258bb83a2513b478de01343a26b",
+      "cutpoint": "publication-repair-linked",
+      "owned_child_pid": 4475,
+      "actual_wait4": true,
+      "signal": 9,
+      "v6_closed_process_receipt": false,
+      "snapshot_attempts": 2
+    },
+    {
+      "path": "execution/native/artifacts/settled-epoch-record-file-synced/publication-repair-unlinked/guardian-result.json",
+      "sha256": "9bc15a19585cfbdf0ac9d9e513f90fbe846ea568eb013fd31cbe75cc9ae8af6e",
+      "cutpoint": "publication-repair-unlinked",
+      "owned_child_pid": 4479,
+      "actual_wait4": true,
+      "signal": 9,
+      "v6_closed_process_receipt": false,
+      "snapshot_attempts": 2
+    },
+    {
+      "path": "execution/native/artifacts/settled-epoch-record-final-synced/crash-control/guardian-result.json",
+      "sha256": "7a3a4f68ef436ef06bdd742278fed4f01ef9cecc0bba61432cb6360bc96bf4ad",
+      "cutpoint": "settled-epoch",
+      "owned_child_pid": 4517,
+      "actual_wait4": true,
+      "signal": 9,
+      "v6_closed_process_receipt": true,
+      "snapshot_attempts": 2
+    },
+    {
+      "path": "execution/native/artifacts/settled-epoch-record-final-synced/epoch-recovery-publish-final-synced/guardian-result.json",
+      "sha256": "c1ab6cea7506d3434260d2c2ef7d2d4024f9fd61a7b5901ed53453d11851cb61",
+      "cutpoint": "epoch-recovery-publish-final-synced",
+      "owned_child_pid": 4522,
+      "actual_wait4": true,
+      "signal": 9,
+      "v6_closed_process_receipt": false,
+      "snapshot_attempts": 2
+    },
+    {
+      "path": "execution/native/artifacts/settled-epoch-record-linked/crash-control/guardian-result.json",
+      "sha256": "cbf33669697aa17603decd2b8578fbbd130a3966f9cf0009d6c181b2c81154a0",
+      "cutpoint": "settled-epoch",
+      "owned_child_pid": 4497,
+      "actual_wait4": true,
+      "signal": 9,
+      "v6_closed_process_receipt": true,
+      "snapshot_attempts": 2
+    },
+    {
+      "path": "execution/native/artifacts/settled-epoch-record-linked/epoch-recovery-publish-linked/guardian-result.json",
+      "sha256": "0241b137876b555ff601db80b91230b436b6a107c5f8165ba89c166053f0f217",
+      "cutpoint": "epoch-recovery-publish-linked",
+      "owned_child_pid": 4502,
+      "actual_wait4": true,
+      "signal": 9,
+      "v6_closed_process_receipt": false,
+      "snapshot_attempts": 2
+    },
+    {
+      "path": "execution/native/artifacts/settled-epoch-record-published/crash-control/guardian-result.json",
+      "sha256": "4e5572a5cbf1264ddbfb198281933a432dc23acdb0552463c8a6f00aba75ea1e",
+      "cutpoint": "settled-epoch",
+      "owned_child_pid": 4560,
+      "actual_wait4": true,
+      "signal": 9,
+      "v6_closed_process_receipt": true,
+      "snapshot_attempts": 2
+    },
+    {
+      "path": "execution/native/artifacts/settled-epoch-record-published/epoch-recovery-publish-published/guardian-result.json",
+      "sha256": "ef8d91bed161551f33f3b14e234897254ba335059e6cc7faa9251c1dfdf9329a",
+      "cutpoint": "epoch-recovery-publish-published",
+      "owned_child_pid": 4568,
+      "actual_wait4": true,
+      "signal": 9,
+      "v6_closed_process_receipt": false,
+      "snapshot_attempts": 2
+    },
+    {
+      "path": "execution/native/artifacts/settled-epoch-record-unlinked/crash-control/guardian-result.json",
+      "sha256": "f3ca733f847947b554fd3ab500b6e22b219f58308bfcebaabd6ecb58ed1ba969",
+      "cutpoint": "settled-epoch",
+      "owned_child_pid": 4538,
+      "actual_wait4": true,
+      "signal": 9,
+      "v6_closed_process_receipt": true,
+      "snapshot_attempts": 2
+    },
+    {
+      "path": "execution/native/artifacts/settled-epoch-record-unlinked/epoch-recovery-publish-unlinked/guardian-result.json",
+      "sha256": "2c89251d28de0d020a4f3d072fd09594105ed173a76791266ae241f6578b843b",
+      "cutpoint": "epoch-recovery-publish-unlinked",
+      "owned_child_pid": 4545,
+      "actual_wait4": true,
+      "signal": 9,
+      "v6_closed_process_receipt": false,
+      "snapshot_attempts": 2
+    },
+    {
+      "path": "execution/native/artifacts/validation-worker/crash-control/guardian-result.json",
+      "sha256": "e907c8d3a8ae74c6a54b631b1e02df935c14979c8c9f7f35d8f89f395cf7d4f3",
+      "cutpoint": "validation-worker",
+      "owned_child_pid": 4603,
+      "actual_wait4": true,
+      "signal": 9,
+      "v6_closed_process_receipt": true,
+      "snapshot_attempts": 2
+    }
+  ],
+  "completed_process_windows": [
+    {
+      "path": "execution/native/artifacts/activation-committed/process-result.json",
+      "cutpoint": "activation-committed",
+      "cold_journal": {
+        "anchor": {
+          "digest": "fa3a7787d00b1496fa67852c65a3aa18267a7a02ac69db8c378d38a9f2bb0292",
+          "sequence": 16
+        },
+        "epoch": null,
+        "known_settlements": 6,
+        "pending": null,
+        "request_nonce": 14,
+        "schema": "restricted-history-effect-journal-observation-v6",
+        "settled_epoch_reconciliations_v1": 0,
+        "spent": {
+          "cpu_ns": 28000000000,
+          "material_bytes": 14680064,
+          "operations": 7,
+          "received_bytes": 14680064
+        },
+        "unknown_prepaid_reconciliations": 1,
+        "used_operations": 7
+      },
+      "frontier": {
+        "block": "131d82cfcdfa598c5d452872314b14a85deeee325e804e9214552b81cacb089e",
+        "generation": 2,
+        "root": "ed2dc9276bb4134864b1d08b79f27320010c2615a750073f750cbd0ac23c34ec"
+      },
+      "marker_count": 4
+    },
+    {
+      "path": "execution/native/artifacts/publication-intent-file-synced/process-result.json",
+      "cutpoint": "publication-intent-file-synced",
+      "cold_journal": {
+        "anchor": {
+          "digest": "f8aca7f81f7182d9e38ec3abace9845ba74073a163eca757035ab474a08bfb8a",
+          "sequence": 14
+        },
+        "epoch": null,
+        "known_settlements": 5,
+        "pending": null,
+        "request_nonce": 14,
+        "schema": "restricted-history-effect-journal-observation-v6",
+        "settled_epoch_reconciliations_v1": 0,
+        "spent": {
+          "cpu_ns": 24000000000,
+          "material_bytes": 12582912,
+          "operations": 6,
+          "received_bytes": 12582912
+        },
+        "unknown_prepaid_reconciliations": 1,
+        "used_operations": 6
+      },
+      "frontier": {
+        "block": "062e8528bc6fcb10b1915eb9bef78e0d5360bbe59d6f4931c0ca0b319c515e1f",
+        "generation": 1,
+        "root": "148ef3a0eb183997144cce6dfc7b5f0b3364435a3688536dc83dc6f660c19729"
+      },
+      "marker_count": 2
+    },
+    {
+      "path": "execution/native/artifacts/publication-intent-final-synced/process-result.json",
+      "cutpoint": "publication-intent-final-synced",
+      "cold_journal": {
+        "anchor": {
+          "digest": "2e4490a0da5ecb692bddaffc7faf63bc3906549888a2e8a2e29a1c48297a9ad5",
+          "sequence": 14
+        },
+        "epoch": null,
+        "known_settlements": 5,
+        "pending": null,
+        "request_nonce": 14,
+        "schema": "restricted-history-effect-journal-observation-v6",
+        "settled_epoch_reconciliations_v1": 0,
+        "spent": {
+          "cpu_ns": 24000000000,
+          "material_bytes": 12582912,
+          "operations": 6,
+          "received_bytes": 12582912
+        },
+        "unknown_prepaid_reconciliations": 1,
+        "used_operations": 6
+      },
+      "frontier": {
+        "block": "062e8528bc6fcb10b1915eb9bef78e0d5360bbe59d6f4931c0ca0b319c515e1f",
+        "generation": 1,
+        "root": "148ef3a0eb183997144cce6dfc7b5f0b3364435a3688536dc83dc6f660c19729"
+      },
+      "marker_count": 2
+    },
+    {
+      "path": "execution/native/artifacts/publication-intent-linked/process-result.json",
+      "cutpoint": "publication-intent-linked",
+      "cold_journal": {
+        "anchor": {
+          "digest": "ea2eb8218b77c7a498da4f2f0acce63255d19d8010f808b06aa889e65496935b",
+          "sequence": 14
+        },
+        "epoch": null,
+        "known_settlements": 5,
+        "pending": null,
+        "request_nonce": 14,
+        "schema": "restricted-history-effect-journal-observation-v6",
+        "settled_epoch_reconciliations_v1": 0,
+        "spent": {
+          "cpu_ns": 24000000000,
+          "material_bytes": 12582912,
+          "operations": 6,
+          "received_bytes": 12582912
+        },
+        "unknown_prepaid_reconciliations": 1,
+        "used_operations": 6
+      },
+      "frontier": {
+        "block": "062e8528bc6fcb10b1915eb9bef78e0d5360bbe59d6f4931c0ca0b319c515e1f",
+        "generation": 1,
+        "root": "148ef3a0eb183997144cce6dfc7b5f0b3364435a3688536dc83dc6f660c19729"
+      },
+      "marker_count": 2
+    },
+    {
+      "path": "execution/native/artifacts/publication-intent-published/process-result.json",
+      "cutpoint": "publication-intent-published",
+      "cold_journal": {
+        "anchor": {
+          "digest": "1daae56fb977ab0cb3cf11fefbcc03e95f2f9b1ff90149210faabf847262d1c8",
+          "sequence": 14
+        },
+        "epoch": null,
+        "known_settlements": 5,
+        "pending": null,
+        "request_nonce": 14,
+        "schema": "restricted-history-effect-journal-observation-v6",
+        "settled_epoch_reconciliations_v1": 0,
+        "spent": {
+          "cpu_ns": 24000000000,
+          "material_bytes": 12582912,
+          "operations": 6,
+          "received_bytes": 12582912
+        },
+        "unknown_prepaid_reconciliations": 1,
+        "used_operations": 6
+      },
+      "frontier": {
+        "block": "062e8528bc6fcb10b1915eb9bef78e0d5360bbe59d6f4931c0ca0b319c515e1f",
+        "generation": 1,
+        "root": "148ef3a0eb183997144cce6dfc7b5f0b3364435a3688536dc83dc6f660c19729"
+      },
+      "marker_count": 2
+    },
+    {
+      "path": "execution/native/artifacts/publication-intent-unlinked/process-result.json",
+      "cutpoint": "publication-intent-unlinked",
+      "cold_journal": {
+        "anchor": {
+          "digest": "602c78940248286c00e7e6749774cc6a39645f7df4f914832a7478d75955e071",
+          "sequence": 14
+        },
+        "epoch": null,
+        "known_settlements": 5,
+        "pending": null,
+        "request_nonce": 14,
+        "schema": "restricted-history-effect-journal-observation-v6",
+        "settled_epoch_reconciliations_v1": 0,
+        "spent": {
+          "cpu_ns": 24000000000,
+          "material_bytes": 12582912,
+          "operations": 6,
+          "received_bytes": 12582912
+        },
+        "unknown_prepaid_reconciliations": 1,
+        "used_operations": 6
+      },
+      "frontier": {
+        "block": "062e8528bc6fcb10b1915eb9bef78e0d5360bbe59d6f4931c0ca0b319c515e1f",
+        "generation": 1,
+        "root": "148ef3a0eb183997144cce6dfc7b5f0b3364435a3688536dc83dc6f660c19729"
+      },
+      "marker_count": 2
+    },
+    {
+      "path": "execution/native/artifacts/settled-epoch/process-result.json",
+      "cutpoint": "settled-epoch",
+      "cold_journal": {
+        "anchor": {
+          "digest": "f8d3e56b3141abc190a9e84a1cb1a0c8c16c2dcdd264158e8780b5614ea0f5ea",
+          "sequence": 17
+        },
+        "epoch": null,
+        "known_settlements": 7,
+        "pending": null,
+        "request_nonce": 14,
+        "schema": "restricted-history-effect-journal-observation-v6",
+        "settled_epoch_reconciliations_v1": 1,
+        "spent": {
+          "cpu_ns": 32000000000,
+          "material_bytes": 14680064,
+          "operations": 8,
+          "received_bytes": 14680064
+        },
+        "unknown_prepaid_reconciliations": 0,
+        "used_operations": 8
+      },
+      "frontier": {
+        "block": "131d82cfcdfa598c5d452872314b14a85deeee325e804e9214552b81cacb089e",
+        "generation": 2,
+        "root": "ed2dc9276bb4134864b1d08b79f27320010c2615a750073f750cbd0ac23c34ec"
+      },
+      "marker_count": 4
+    },
+    {
+      "path": "execution/native/artifacts/settled-epoch-expired-budget/process-result.json",
+      "cutpoint": "settled-epoch-expired-budget",
+      "cold_journal": {
+        "anchor": {
+          "digest": "e82a587172fdcb4d2fa23919c31be10d1df80b041174fb09e886b5b4426b1d50",
+          "sequence": 18
+        },
+        "epoch": null,
+        "known_settlements": 7,
+        "pending": null,
+        "request_nonce": 14,
+        "schema": "restricted-history-effect-journal-observation-v6",
+        "settled_epoch_reconciliations_v1": 1,
+        "spent": {
+          "cpu_ns": 32000000000,
+          "material_bytes": 14680064,
+          "operations": 8,
+          "received_bytes": 14680064
+        },
+        "unknown_prepaid_reconciliations": 0,
+        "used_operations": 8
+      },
+      "frontier": {
+        "block": "131d82cfcdfa598c5d452872314b14a85deeee325e804e9214552b81cacb089e",
+        "generation": 2,
+        "root": "ed2dc9276bb4134864b1d08b79f27320010c2615a750073f750cbd0ac23c34ec"
+      },
+      "marker_count": 4
+    },
+    {
+      "path": "execution/native/artifacts/settled-epoch-record-file-synced/process-result.json",
+      "cutpoint": "settled-epoch-record-file-synced",
+      "cold_journal": {
+        "anchor": {
+          "digest": "42b0eeda012b545049fd85b8e09888cf5f6edd411d8ad8807ffc1cd5ee631413",
+          "sequence": 17
+        },
+        "epoch": null,
+        "known_settlements": 7,
+        "pending": null,
+        "request_nonce": 14,
+        "schema": "restricted-history-effect-journal-observation-v6",
+        "settled_epoch_reconciliations_v1": 1,
+        "spent": {
+          "cpu_ns": 32000000000,
+          "material_bytes": 14680064,
+          "operations": 8,
+          "received_bytes": 14680064
+        },
+        "unknown_prepaid_reconciliations": 0,
+        "used_operations": 8
+      },
+      "frontier": {
+        "block": "131d82cfcdfa598c5d452872314b14a85deeee325e804e9214552b81cacb089e",
+        "generation": 2,
+        "root": "ed2dc9276bb4134864b1d08b79f27320010c2615a750073f750cbd0ac23c34ec"
+      },
+      "marker_count": 4
+    },
+    {
+      "path": "execution/native/artifacts/settled-epoch-record-final-synced/process-result.json",
+      "cutpoint": "settled-epoch-record-final-synced",
+      "cold_journal": {
+        "anchor": {
+          "digest": "66e4725da6b8694ef48e2f9dc215d1184dfdffa533fa2da4a9ad212691458430",
+          "sequence": 17
+        },
+        "epoch": null,
+        "known_settlements": 7,
+        "pending": null,
+        "request_nonce": 14,
+        "schema": "restricted-history-effect-journal-observation-v6",
+        "settled_epoch_reconciliations_v1": 1,
+        "spent": {
+          "cpu_ns": 32000000000,
+          "material_bytes": 14680064,
+          "operations": 8,
+          "received_bytes": 14680064
+        },
+        "unknown_prepaid_reconciliations": 0,
+        "used_operations": 8
+      },
+      "frontier": {
+        "block": "131d82cfcdfa598c5d452872314b14a85deeee325e804e9214552b81cacb089e",
+        "generation": 2,
+        "root": "ed2dc9276bb4134864b1d08b79f27320010c2615a750073f750cbd0ac23c34ec"
+      },
+      "marker_count": 4
+    },
+    {
+      "path": "execution/native/artifacts/settled-epoch-record-linked/process-result.json",
+      "cutpoint": "settled-epoch-record-linked",
+      "cold_journal": {
+        "anchor": {
+          "digest": "241345bcdf16553546eaf4f77eb626fc6eaec19207ef91e47a00e3eafc464817",
+          "sequence": 17
+        },
+        "epoch": null,
+        "known_settlements": 7,
+        "pending": null,
+        "request_nonce": 14,
+        "schema": "restricted-history-effect-journal-observation-v6",
+        "settled_epoch_reconciliations_v1": 1,
+        "spent": {
+          "cpu_ns": 32000000000,
+          "material_bytes": 14680064,
+          "operations": 8,
+          "received_bytes": 14680064
+        },
+        "unknown_prepaid_reconciliations": 0,
+        "used_operations": 8
+      },
+      "frontier": {
+        "block": "131d82cfcdfa598c5d452872314b14a85deeee325e804e9214552b81cacb089e",
+        "generation": 2,
+        "root": "ed2dc9276bb4134864b1d08b79f27320010c2615a750073f750cbd0ac23c34ec"
+      },
+      "marker_count": 4
+    },
+    {
+      "path": "execution/native/artifacts/settled-epoch-record-published/process-result.json",
+      "cutpoint": "settled-epoch-record-published",
+      "cold_journal": {
+        "anchor": {
+          "digest": "63c8f7880217ae01663a158b9fe5adb5ddf38ae7ddb9bef7c89e951618627e01",
+          "sequence": 17
+        },
+        "epoch": null,
+        "known_settlements": 7,
+        "pending": null,
+        "request_nonce": 14,
+        "schema": "restricted-history-effect-journal-observation-v6",
+        "settled_epoch_reconciliations_v1": 1,
+        "spent": {
+          "cpu_ns": 32000000000,
+          "material_bytes": 14680064,
+          "operations": 8,
+          "received_bytes": 14680064
+        },
+        "unknown_prepaid_reconciliations": 0,
+        "used_operations": 8
+      },
+      "frontier": {
+        "block": "131d82cfcdfa598c5d452872314b14a85deeee325e804e9214552b81cacb089e",
+        "generation": 2,
+        "root": "ed2dc9276bb4134864b1d08b79f27320010c2615a750073f750cbd0ac23c34ec"
+      },
+      "marker_count": 4
+    },
+    {
+      "path": "execution/native/artifacts/settled-epoch-record-unlinked/process-result.json",
+      "cutpoint": "settled-epoch-record-unlinked",
+      "cold_journal": {
+        "anchor": {
+          "digest": "1583f6d2c63ab21d725d59fc50dc4f155662e35ecc9f8cea071f1f2814ec9f37",
+          "sequence": 17
+        },
+        "epoch": null,
+        "known_settlements": 7,
+        "pending": null,
+        "request_nonce": 14,
+        "schema": "restricted-history-effect-journal-observation-v6",
+        "settled_epoch_reconciliations_v1": 1,
+        "spent": {
+          "cpu_ns": 32000000000,
+          "material_bytes": 14680064,
+          "operations": 8,
+          "received_bytes": 14680064
+        },
+        "unknown_prepaid_reconciliations": 0,
+        "used_operations": 8
+      },
+      "frontier": {
+        "block": "131d82cfcdfa598c5d452872314b14a85deeee325e804e9214552b81cacb089e",
+        "generation": 2,
+        "root": "ed2dc9276bb4134864b1d08b79f27320010c2615a750073f750cbd0ac23c34ec"
+      },
+      "marker_count": 4
+    },
+    {
+      "path": "execution/native/artifacts/validation-worker/process-result.json",
+      "cutpoint": "validation-worker",
+      "cold_journal": {
+        "anchor": {
+          "digest": "289cc3347da10977e43a2d8978611933a2ffa9ba3e6c23e6f139f77500f5ee0a",
+          "sequence": 14
+        },
+        "epoch": null,
+        "known_settlements": 5,
+        "pending": null,
+        "request_nonce": 14,
+        "schema": "restricted-history-effect-journal-observation-v6",
+        "settled_epoch_reconciliations_v1": 0,
+        "spent": {
+          "cpu_ns": 24000000000,
+          "material_bytes": 12582912,
+          "operations": 6,
+          "received_bytes": 12582912
+        },
+        "unknown_prepaid_reconciliations": 1,
+        "used_operations": 6
+      },
+      "frontier": {
+        "block": "062e8528bc6fcb10b1915eb9bef78e0d5360bbe59d6f4931c0ca0b319c515e1f",
+        "generation": 1,
+        "root": "148ef3a0eb183997144cce6dfc7b5f0b3364435a3688536dc83dc6f660c19729"
+      },
+      "marker_count": 2
+    }
+  ],
+  "startup_receipts": [
+    {
+      "case": "activation-committed",
+      "frame": "execution/native/artifacts/activation-committed/v6-journal/00000000000000000003-4f86ae63a6049c0a01d363350ad2cee734a6a72a07a674c53fc97970a4b9409a.json",
+      "request_nonce": 1,
+      "cpu": {
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "owner_cpu_ns": 67256969,
+        "scoped_worker_cpu_ns": 0,
+        "total_cpu_ns": 67256969,
+        "live_paid_cpu_ns": 67255887,
+        "residual_cpu_ns": 1082,
+        "spawned_workers": 0,
+        "started_workers": 0,
+        "finished_workers": 0,
+        "known_workers": 0,
+        "live_refused": false,
+        "accounting_unavailable": false
+      }
+    },
+    {
+      "case": "activation-committed",
+      "frame": "execution/native/artifacts/activation-committed/v6-journal/00000000000000000009-d49a04e5b139eac96dc773b671b86cb2c622b363a1fc53e12c2e53a66d2dd53b.json",
+      "request_nonce": 11,
+      "cpu": {
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "owner_cpu_ns": 64787072,
+        "scoped_worker_cpu_ns": 0,
+        "total_cpu_ns": 64787072,
+        "live_paid_cpu_ns": 64786030,
+        "residual_cpu_ns": 1042,
+        "spawned_workers": 0,
+        "started_workers": 0,
+        "finished_workers": 0,
+        "known_workers": 0,
+        "live_refused": false,
+        "accounting_unavailable": false
+      }
+    },
+    {
+      "case": "publication-intent-file-synced",
+      "frame": "execution/native/artifacts/publication-intent-file-synced/v6-journal/00000000000000000003-45f45706ec9b11bd2bb45294a2d38740f6bad6052d84eee18b8105a71f8e3750.json",
+      "request_nonce": 1,
+      "cpu": {
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "owner_cpu_ns": 66944078,
+        "scoped_worker_cpu_ns": 0,
+        "total_cpu_ns": 66944078,
+        "live_paid_cpu_ns": 66942976,
+        "residual_cpu_ns": 1102,
+        "spawned_workers": 0,
+        "started_workers": 0,
+        "finished_workers": 0,
+        "known_workers": 0,
+        "live_refused": false,
+        "accounting_unavailable": false
+      }
+    },
+    {
+      "case": "publication-intent-file-synced",
+      "frame": "execution/native/artifacts/publication-intent-file-synced/v6-journal/00000000000000000007-57b8f006b7b5de4a2417ef44ccded54e9c5603ccbbbed706f8277735072049e1.json",
+      "request_nonce": 11,
+      "cpu": {
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "owner_cpu_ns": 64552565,
+        "scoped_worker_cpu_ns": 0,
+        "total_cpu_ns": 64552565,
+        "live_paid_cpu_ns": 64551523,
+        "residual_cpu_ns": 1042,
+        "spawned_workers": 0,
+        "started_workers": 0,
+        "finished_workers": 0,
+        "known_workers": 0,
+        "live_refused": false,
+        "accounting_unavailable": false
+      }
+    },
+    {
+      "case": "publication-intent-final-synced",
+      "frame": "execution/native/artifacts/publication-intent-final-synced/v6-journal/00000000000000000003-daa1c5c725d59fa46a1bde7334c43a7d8e1562db2907522d8d48f735e9b1fd02.json",
+      "request_nonce": 1,
+      "cpu": {
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "owner_cpu_ns": 66621288,
+        "scoped_worker_cpu_ns": 0,
+        "total_cpu_ns": 66621288,
+        "live_paid_cpu_ns": 66620216,
+        "residual_cpu_ns": 1072,
+        "spawned_workers": 0,
+        "started_workers": 0,
+        "finished_workers": 0,
+        "known_workers": 0,
+        "live_refused": false,
+        "accounting_unavailable": false
+      }
+    },
+    {
+      "case": "publication-intent-final-synced",
+      "frame": "execution/native/artifacts/publication-intent-final-synced/v6-journal/00000000000000000007-7b3216684ca68719bca2cecd73288280b56dbca6d8ee8bc2579508612366e417.json",
+      "request_nonce": 11,
+      "cpu": {
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "owner_cpu_ns": 64278725,
+        "scoped_worker_cpu_ns": 0,
+        "total_cpu_ns": 64278725,
+        "live_paid_cpu_ns": 64277653,
+        "residual_cpu_ns": 1072,
+        "spawned_workers": 0,
+        "started_workers": 0,
+        "finished_workers": 0,
+        "known_workers": 0,
+        "live_refused": false,
+        "accounting_unavailable": false
+      }
+    },
+    {
+      "case": "publication-intent-linked",
+      "frame": "execution/native/artifacts/publication-intent-linked/v6-journal/00000000000000000003-c2ac5073b383cee0d93d943c1152c18ceb2a54d8fa73222d4dc17fc61943596c.json",
+      "request_nonce": 1,
+      "cpu": {
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "owner_cpu_ns": 67199979,
+        "scoped_worker_cpu_ns": 0,
+        "total_cpu_ns": 67199979,
+        "live_paid_cpu_ns": 67198887,
+        "residual_cpu_ns": 1092,
+        "spawned_workers": 0,
+        "started_workers": 0,
+        "finished_workers": 0,
+        "known_workers": 0,
+        "live_refused": false,
+        "accounting_unavailable": false
+      }
+    },
+    {
+      "case": "publication-intent-linked",
+      "frame": "execution/native/artifacts/publication-intent-linked/v6-journal/00000000000000000007-5a76baad7279b3c716b3a1748a0d80f6135c932f57488802490080e8c4ba9516.json",
+      "request_nonce": 11,
+      "cpu": {
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "owner_cpu_ns": 64371779,
+        "scoped_worker_cpu_ns": 0,
+        "total_cpu_ns": 64371779,
+        "live_paid_cpu_ns": 64370667,
+        "residual_cpu_ns": 1112,
+        "spawned_workers": 0,
+        "started_workers": 0,
+        "finished_workers": 0,
+        "known_workers": 0,
+        "live_refused": false,
+        "accounting_unavailable": false
+      }
+    },
+    {
+      "case": "publication-intent-published",
+      "frame": "execution/native/artifacts/publication-intent-published/v6-journal/00000000000000000003-dc7c5981cf30b7db47080779ea9370a8a7f389486d5b91990917b93529343d64.json",
+      "request_nonce": 1,
+      "cpu": {
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "owner_cpu_ns": 67798173,
+        "scoped_worker_cpu_ns": 0,
+        "total_cpu_ns": 67798173,
+        "live_paid_cpu_ns": 67797021,
+        "residual_cpu_ns": 1152,
+        "spawned_workers": 0,
+        "started_workers": 0,
+        "finished_workers": 0,
+        "known_workers": 0,
+        "live_refused": false,
+        "accounting_unavailable": false
+      }
+    },
+    {
+      "case": "publication-intent-published",
+      "frame": "execution/native/artifacts/publication-intent-published/v6-journal/00000000000000000007-b8beeffcc8a9b49ffbf09b21c020f7cbc67e7ec6c21eaf47dc5a0f952e05f524.json",
+      "request_nonce": 11,
+      "cpu": {
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "owner_cpu_ns": 64609330,
+        "scoped_worker_cpu_ns": 0,
+        "total_cpu_ns": 64609330,
+        "live_paid_cpu_ns": 64608108,
+        "residual_cpu_ns": 1222,
+        "spawned_workers": 0,
+        "started_workers": 0,
+        "finished_workers": 0,
+        "known_workers": 0,
+        "live_refused": false,
+        "accounting_unavailable": false
+      }
+    },
+    {
+      "case": "publication-intent-unlinked",
+      "frame": "execution/native/artifacts/publication-intent-unlinked/v6-journal/00000000000000000003-5b95881785b4fac6159bf7401a3912755dd0c0c002899ed70aac7c661b8d8544.json",
+      "request_nonce": 1,
+      "cpu": {
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "owner_cpu_ns": 66840862,
+        "scoped_worker_cpu_ns": 0,
+        "total_cpu_ns": 66840862,
+        "live_paid_cpu_ns": 66839800,
+        "residual_cpu_ns": 1062,
+        "spawned_workers": 0,
+        "started_workers": 0,
+        "finished_workers": 0,
+        "known_workers": 0,
+        "live_refused": false,
+        "accounting_unavailable": false
+      }
+    },
+    {
+      "case": "publication-intent-unlinked",
+      "frame": "execution/native/artifacts/publication-intent-unlinked/v6-journal/00000000000000000007-d05790f4d6b7223fa8332c527b1aa659fff55ab5d2806062d9c5e97a06a7ea15.json",
+      "request_nonce": 11,
+      "cpu": {
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "owner_cpu_ns": 64453390,
+        "scoped_worker_cpu_ns": 0,
+        "total_cpu_ns": 64453390,
+        "live_paid_cpu_ns": 64452348,
+        "residual_cpu_ns": 1042,
+        "spawned_workers": 0,
+        "started_workers": 0,
+        "finished_workers": 0,
+        "known_workers": 0,
+        "live_refused": false,
+        "accounting_unavailable": false
+      }
+    },
+    {
+      "case": "settled-epoch",
+      "frame": "execution/native/artifacts/settled-epoch/v6-journal/00000000000000000003-1df7d61bbfb717a3ee2e9bf05a2fb5ee89c1355304864e783809b3c264b72a0d.json",
+      "request_nonce": 1,
+      "cpu": {
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "owner_cpu_ns": 66443888,
+        "scoped_worker_cpu_ns": 0,
+        "total_cpu_ns": 66443888,
+        "live_paid_cpu_ns": 66442836,
+        "residual_cpu_ns": 1052,
+        "spawned_workers": 0,
+        "started_workers": 0,
+        "finished_workers": 0,
+        "known_workers": 0,
+        "live_refused": false,
+        "accounting_unavailable": false
+      }
+    },
+    {
+      "case": "settled-epoch",
+      "frame": "execution/native/artifacts/settled-epoch/v6-journal/00000000000000000010-e04c5641d611a44ef0444bc3c0a43443e0f08a152cf2c0eb9930796c70aff486.json",
+      "request_nonce": 11,
+      "cpu": {
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "owner_cpu_ns": 64815315,
+        "scoped_worker_cpu_ns": 0,
+        "total_cpu_ns": 64815315,
+        "live_paid_cpu_ns": 64814222,
+        "residual_cpu_ns": 1093,
+        "spawned_workers": 0,
+        "started_workers": 0,
+        "finished_workers": 0,
+        "known_workers": 0,
+        "live_refused": false,
+        "accounting_unavailable": false
+      }
+    },
+    {
+      "case": "settled-epoch-expired-budget",
+      "frame": "execution/native/artifacts/settled-epoch-expired-budget/v6-journal/00000000000000000003-2f1ec11ea0cf2a6aa7a6aba9650be10f8ee25f365c4dab23828b53321ff4bb21.json",
+      "request_nonce": 1,
+      "cpu": {
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "owner_cpu_ns": 66598489,
+        "scoped_worker_cpu_ns": 0,
+        "total_cpu_ns": 66598489,
+        "live_paid_cpu_ns": 66597447,
+        "residual_cpu_ns": 1042,
+        "spawned_workers": 0,
+        "started_workers": 0,
+        "finished_workers": 0,
+        "known_workers": 0,
+        "live_refused": false,
+        "accounting_unavailable": false
+      }
+    },
+    {
+      "case": "settled-epoch-expired-budget",
+      "frame": "execution/native/artifacts/settled-epoch-expired-budget/v6-journal/00000000000000000011-876bcec6ce3a48083a1e9486d8412d849049271a2cefc180e9f5c50644b8fbc9.json",
+      "request_nonce": 11,
+      "cpu": {
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "owner_cpu_ns": 65094365,
+        "scoped_worker_cpu_ns": 0,
+        "total_cpu_ns": 65094365,
+        "live_paid_cpu_ns": 65093333,
+        "residual_cpu_ns": 1032,
+        "spawned_workers": 0,
+        "started_workers": 0,
+        "finished_workers": 0,
+        "known_workers": 0,
+        "live_refused": false,
+        "accounting_unavailable": false
+      }
+    },
+    {
+      "case": "settled-epoch-record-file-synced",
+      "frame": "execution/native/artifacts/settled-epoch-record-file-synced/v6-journal/00000000000000000003-3a65f2150a63e6641be96670e2e775a0911713d15e84202e2b279c18c9e6ef17.json",
+      "request_nonce": 1,
+      "cpu": {
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "owner_cpu_ns": 67443383,
+        "scoped_worker_cpu_ns": 0,
+        "total_cpu_ns": 67443383,
+        "live_paid_cpu_ns": 67442361,
+        "residual_cpu_ns": 1022,
+        "spawned_workers": 0,
+        "started_workers": 0,
+        "finished_workers": 0,
+        "known_workers": 0,
+        "live_refused": false,
+        "accounting_unavailable": false
+      }
+    },
+    {
+      "case": "settled-epoch-record-file-synced",
+      "frame": "execution/native/artifacts/settled-epoch-record-file-synced/v6-journal/00000000000000000010-abdd6451b673b2c6f138770ae0ea2bb88a15d6ff63e28123a9ba3e97eb97b3e6.json",
+      "request_nonce": 11,
+      "cpu": {
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "owner_cpu_ns": 65419068,
+        "scoped_worker_cpu_ns": 0,
+        "total_cpu_ns": 65419068,
+        "live_paid_cpu_ns": 65417906,
+        "residual_cpu_ns": 1162,
+        "spawned_workers": 0,
+        "started_workers": 0,
+        "finished_workers": 0,
+        "known_workers": 0,
+        "live_refused": false,
+        "accounting_unavailable": false
+      }
+    },
+    {
+      "case": "settled-epoch-record-final-synced",
+      "frame": "execution/native/artifacts/settled-epoch-record-final-synced/v6-journal/00000000000000000003-beb9cf8c53524100fb70c4f30b2dfc93ddac17d7a2352565b025d0cd65acc5da.json",
+      "request_nonce": 1,
+      "cpu": {
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "owner_cpu_ns": 67046955,
+        "scoped_worker_cpu_ns": 0,
+        "total_cpu_ns": 67046955,
+        "live_paid_cpu_ns": 67045883,
+        "residual_cpu_ns": 1072,
+        "spawned_workers": 0,
+        "started_workers": 0,
+        "finished_workers": 0,
+        "known_workers": 0,
+        "live_refused": false,
+        "accounting_unavailable": false
+      }
+    },
+    {
+      "case": "settled-epoch-record-final-synced",
+      "frame": "execution/native/artifacts/settled-epoch-record-final-synced/v6-journal/00000000000000000010-331affd75d904d7d00ea97785ca6715f971cd6eb75507f6d5f473f9679d91fe7.json",
+      "request_nonce": 11,
+      "cpu": {
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "owner_cpu_ns": 65347356,
+        "scoped_worker_cpu_ns": 0,
+        "total_cpu_ns": 65347356,
+        "live_paid_cpu_ns": 65346074,
+        "residual_cpu_ns": 1282,
+        "spawned_workers": 0,
+        "started_workers": 0,
+        "finished_workers": 0,
+        "known_workers": 0,
+        "live_refused": false,
+        "accounting_unavailable": false
+      }
+    },
+    {
+      "case": "settled-epoch-record-linked",
+      "frame": "execution/native/artifacts/settled-epoch-record-linked/v6-journal/00000000000000000003-fef6705dfb445b963516dffece9a0b77380324338028fa422bfe3561ce33e424.json",
+      "request_nonce": 1,
+      "cpu": {
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "owner_cpu_ns": 67090555,
+        "scoped_worker_cpu_ns": 0,
+        "total_cpu_ns": 67090555,
+        "live_paid_cpu_ns": 67089463,
+        "residual_cpu_ns": 1092,
+        "spawned_workers": 0,
+        "started_workers": 0,
+        "finished_workers": 0,
+        "known_workers": 0,
+        "live_refused": false,
+        "accounting_unavailable": false
+      }
+    },
+    {
+      "case": "settled-epoch-record-linked",
+      "frame": "execution/native/artifacts/settled-epoch-record-linked/v6-journal/00000000000000000010-e12f96ee11254df40db963348e1b116a72984f2932f062e157b766909fb07fa5.json",
+      "request_nonce": 11,
+      "cpu": {
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "owner_cpu_ns": 65119833,
+        "scoped_worker_cpu_ns": 0,
+        "total_cpu_ns": 65119833,
+        "live_paid_cpu_ns": 65118771,
+        "residual_cpu_ns": 1062,
+        "spawned_workers": 0,
+        "started_workers": 0,
+        "finished_workers": 0,
+        "known_workers": 0,
+        "live_refused": false,
+        "accounting_unavailable": false
+      }
+    },
+    {
+      "case": "settled-epoch-record-published",
+      "frame": "execution/native/artifacts/settled-epoch-record-published/v6-journal/00000000000000000003-6933213f2346ef73a8d1356de61d7e9b9de94281c9c86a1433a7475dd0de68e7.json",
+      "request_nonce": 1,
+      "cpu": {
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "owner_cpu_ns": 67038267,
+        "scoped_worker_cpu_ns": 0,
+        "total_cpu_ns": 67038267,
+        "live_paid_cpu_ns": 67037255,
+        "residual_cpu_ns": 1012,
+        "spawned_workers": 0,
+        "started_workers": 0,
+        "finished_workers": 0,
+        "known_workers": 0,
+        "live_refused": false,
+        "accounting_unavailable": false
+      }
+    },
+    {
+      "case": "settled-epoch-record-published",
+      "frame": "execution/native/artifacts/settled-epoch-record-published/v6-journal/00000000000000000010-bc7874771e583d3e5a179a00b04caac6f17340034075d9d8e42473d4581ed010.json",
+      "request_nonce": 11,
+      "cpu": {
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "owner_cpu_ns": 65432915,
+        "scoped_worker_cpu_ns": 0,
+        "total_cpu_ns": 65432915,
+        "live_paid_cpu_ns": 65431753,
+        "residual_cpu_ns": 1162,
+        "spawned_workers": 0,
+        "started_workers": 0,
+        "finished_workers": 0,
+        "known_workers": 0,
+        "live_refused": false,
+        "accounting_unavailable": false
+      }
+    },
+    {
+      "case": "settled-epoch-record-unlinked",
+      "frame": "execution/native/artifacts/settled-epoch-record-unlinked/v6-journal/00000000000000000003-fc0776bf86b74c93f1839b76a8f855a0b9d276758be9da70050fc88699024ef5.json",
+      "request_nonce": 1,
+      "cpu": {
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "owner_cpu_ns": 66652199,
+        "scoped_worker_cpu_ns": 0,
+        "total_cpu_ns": 66652199,
+        "live_paid_cpu_ns": 66651157,
+        "residual_cpu_ns": 1042,
+        "spawned_workers": 0,
+        "started_workers": 0,
+        "finished_workers": 0,
+        "known_workers": 0,
+        "live_refused": false,
+        "accounting_unavailable": false
+      }
+    },
+    {
+      "case": "settled-epoch-record-unlinked",
+      "frame": "execution/native/artifacts/settled-epoch-record-unlinked/v6-journal/00000000000000000010-5a4d889c1cfa48424e88a57f8f0802832600669804ecf257ff8e16280b1cca8d.json",
+      "request_nonce": 11,
+      "cpu": {
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "owner_cpu_ns": 65315557,
+        "scoped_worker_cpu_ns": 0,
+        "total_cpu_ns": 65315557,
+        "live_paid_cpu_ns": 65314484,
+        "residual_cpu_ns": 1073,
+        "spawned_workers": 0,
+        "started_workers": 0,
+        "finished_workers": 0,
+        "known_workers": 0,
+        "live_refused": false,
+        "accounting_unavailable": false
+      }
+    },
+    {
+      "case": "validation-worker",
+      "frame": "execution/native/artifacts/validation-worker/v6-journal/00000000000000000003-bebbb3eee748012fbe9421c815d552ffad50a1c5ed0f37c6ae50362272a5c378.json",
+      "request_nonce": 1,
+      "cpu": {
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "owner_cpu_ns": 67152566,
+        "scoped_worker_cpu_ns": 0,
+        "total_cpu_ns": 67152566,
+        "live_paid_cpu_ns": 67151544,
+        "residual_cpu_ns": 1022,
+        "spawned_workers": 0,
+        "started_workers": 0,
+        "finished_workers": 0,
+        "known_workers": 0,
+        "live_refused": false,
+        "accounting_unavailable": false
+      }
+    },
+    {
+      "case": "validation-worker",
+      "frame": "execution/native/artifacts/validation-worker/v6-journal/00000000000000000007-38c08a92e0d9f2787b2636636ad52885dd9c8d2006fb7fcf9ed28f42ea826fb5.json",
+      "request_nonce": 11,
+      "cpu": {
+        "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+        "owner_cpu_ns": 64549389,
+        "scoped_worker_cpu_ns": 0,
+        "total_cpu_ns": 64549389,
+        "live_paid_cpu_ns": 64548267,
+        "residual_cpu_ns": 1122,
+        "spawned_workers": 0,
+        "started_workers": 0,
+        "finished_workers": 0,
+        "known_workers": 0,
+        "live_refused": false,
+        "accounting_unavailable": false
+      }
+    }
+  ],
+  "passed": true,
+  "binary_bytes_in_artifact": false,
+  "runtime_tests_executed_by_this_readback": false,
+  "new_startup_callback_and_seal_candidate_qualified": false,
+  "whole_history_p0_closed": false,
+  "production_qualified": false
+}

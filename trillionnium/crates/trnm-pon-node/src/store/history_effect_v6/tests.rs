@@ -9,6 +9,7 @@ use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
 mod process;
 pub(super) mod publication;
 mod settled_epoch;
+mod startup;
 
 fn deadline() -> Instant {
     Instant::now() + Duration::from_secs(50)

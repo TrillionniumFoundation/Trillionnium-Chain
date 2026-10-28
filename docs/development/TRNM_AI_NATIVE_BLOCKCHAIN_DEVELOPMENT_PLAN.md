@@ -3952,3 +3952,21 @@ expired budget. [Executed observations and retained failures](../../evidence/pon
 record the exact tested source/binary and verdicts. Pending Startup/Close scopes,
 signed multistep ReorgContinuation, arbitrary subprocess adoption and physical-host
 qualification remain open; this increment does not close whole History P0.
+
+### Startup resource propagation audit (2026-10-28 UTC)
+
+The separate [Startup CPU/cancellation and material reuse audit](../protocol/pon-nakamoto-v1/details/HISTORY_STARTUP_CHECKPOINT_REUSE_AUDIT.md)
+examines the frozen runtime's 2.087314423-second Startup CPU refusal. It identifies
+two material derivations, unpropagated internal progress checks and two retained
+active-State reads. The subsequent implementation passes the original owner checkpoint through
+bounded material stages and consuming a private same-Startup material proof while
+still rechecking actual file identities, complete hashes, current authority and
+native generation. The [frozen runtime's independent hosted result](../../evidence/pon-history-hosted-afc8d6d-20261028/README.md)
+is a complete 15/0/1 release run under the original limits. The
+[separate implementation candidate](../../evidence/pon-history-startup-native-20261028/README.md)
+has nine current-source material tests passed, but its Node compile and complete
+19/0/1 group remain pending independent hosted execution. All original 15 methods,
+600-second outer bound, 2-second burst, 4-second allowance and four-snapshot limit
+remain mandatory; actual new release binaries must be retained and reconstructed.
+There is no new signed domain, budget increase, performance qualification or whole
+History P0 closure in this candidate.

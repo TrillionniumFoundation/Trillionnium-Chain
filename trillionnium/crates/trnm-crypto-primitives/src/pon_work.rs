@@ -183,6 +183,43 @@ pub fn task_id(a: &[u32], b: &[u32]) -> Result<Hash, WorkError> {
     validate(b)?;
     Ok(hash(b"task", &[&field_bytes(a), &field_bytes(b)]))
 }
+/// Same task bytes with cooperative owner checkpoints; cancellation is never a
+/// statement that the task relation is invalid. The original entry stays intact.
+pub fn task_id_with_progress<E>(
+    a: &[u32],
+    b: &[u32],
+    progress: &mut impl FnMut(u64) -> Result<(), E>,
+) -> Result<Hash, VerificationError<E>> {
+    let mut completed = 0;
+    for values in [a, b] {
+        if values.len() != CELLS {
+            return Err(WorkError::Length.into());
+        }
+        for chunk in values.chunks(256) {
+            progress(completed).map_err(VerificationError::Cancelled)?;
+            if chunk.iter().any(|v| u128::from(*v) >= Q) {
+                return Err(WorkError::Field.into());
+            }
+            completed += chunk.len() as u64;
+        }
+    }
+    let mut h = Sha256::new();
+    h.update(b"TRNM-PON1\0");
+    h.update(4u16.to_le_bytes());
+    h.update(b"task");
+    for values in [a, b] {
+        h.update(((CELLS * 4) as u32).to_le_bytes());
+        for chunk in values.chunks(256) {
+            progress(completed).map_err(VerificationError::Cancelled)?;
+            for value in chunk {
+                h.update(value.to_le_bytes());
+            }
+            completed += chunk.len() as u64;
+        }
+    }
+    progress(completed).map_err(VerificationError::Cancelled)?;
+    Ok(h.finalize().into())
+}
 fn expand(challenge: Hash, label: u8, len: usize) -> Result<Vec<u32>, WorkError> {
     relation_only(expand_with_progress(
         challenge,

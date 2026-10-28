@@ -2,15 +2,17 @@
 //! Full checkpoint bytes, bounded original activation bits and all derived A/B
 //! values are checked. An observed hook is not proof of a complete model forward.
 use serde::{
-    de::{self, MapAccess, SeqAccess, Visitor},
+    de::{self, DeserializeSeed, MapAccess, SeqAccess, Visitor},
     Deserialize, Deserializer, Serialize,
 };
 use serde_json::Value;
 use sha2::{Digest, Sha256};
 use std::{
+    cell::{Cell, RefCell},
     collections::BTreeMap,
     fmt,
-    io::{Read, Seek, SeekFrom},
+    io::{self, Read, Seek, SeekFrom, Write},
+    rc::Rc,
 };
 use trnm_crypto_primitives::{pon_work, qualified_work_task::DevelopmentTaskAdmission};
 use trnm_protocol::{
@@ -166,54 +168,153 @@ impl CheckedCheckpointTileMaterialV1 {
     }
 }
 
-// Unique keys are checked recursively before conversion to typed closed records.
-struct UniqueValue(Value);
-impl<'de> Deserialize<'de> for UniqueValue {
-    fn deserialize<D: Deserializer<'de>>(d: D) -> std::result::Result<Self, D::Error> {
-        struct V;
-        impl<'de> Visitor<'de> for V {
-            type Value = UniqueValue;
+/// Local progress only: no signed bytes, material semantics or chain authority.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum MaterialPhase {
+    ActivationHash,
+    ActivationJson,
+    ActivationFields,
+    ActivationHex,
+    HeaderRead,
+    HeaderComplete,
+    HeaderJson,
+    TensorHeader,
+    TensorSpans,
+    CheckpointScan,
+    WeightQuantization,
+    ActivationNonfinite,
+    ActivationQuantization,
+    MatrixEncoding,
+    MatrixBinding,
+    TaskHash,
+    DescriptorBuild,
+    DescriptorJson,
+    DescriptorEncoding,
+    DescriptorHash,
+}
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct MaterialProgress {
+    pub phase: MaterialPhase,
+    /// Phase-local bytes/items; repeated boundaries may have the same value.
+    pub completed: u64,
+    pub checkpoint_bytes_read: u64,
+}
+struct Observer<'a> {
+    callback: &'a mut dyn FnMut(MaterialProgress) -> MaterialResult<()>,
+    first_error: Option<&'static str>,
+    checkpoint_bytes_read: u64,
+}
+type Observed<'a> = Rc<RefCell<Observer<'a>>>;
+fn pulse(o: &Observed<'_>, phase: MaterialPhase, completed: u64) -> MaterialResult<()> {
+    let mut o = o.borrow_mut();
+    if let Some(error) = o.first_error {
+        return Err(error);
+    }
+    let event = MaterialProgress {
+        phase,
+        completed,
+        checkpoint_bytes_read: o.checkpoint_bytes_read,
+    };
+    if let Err(error) = (o.callback)(event) {
+        o.first_error = Some(error);
+        return Err(error);
+    }
+    Ok(())
+}
+fn observed_error(o: &Observed<'_>, fallback: &'static str) -> &'static str {
+    o.borrow().first_error.unwrap_or(fallback)
+}
+fn sha_observed(raw: &[u8], phase: MaterialPhase, o: &Observed<'_>) -> MaterialResult<Hash> {
+    let mut h = Sha256::new();
+    pulse(o, phase, 0)?;
+    for (i, chunk) in raw.chunks(65_536).enumerate() {
+        h.update(chunk);
+        pulse(o, phase, ((i * 65_536) + chunk.len()) as u64)?;
+    }
+    Ok(h.finalize().into())
+}
+// Reader checkpoints also cover a single long JSON string before Visitor entry.
+struct JsonReader<'a, 'b> {
+    raw: &'a [u8],
+    position: Rc<Cell<u64>>,
+    observed: Observed<'b>,
+    phase: MaterialPhase,
+}
+impl Read for JsonReader<'_, '_> {
+    fn read(&mut self, out: &mut [u8]) -> io::Result<usize> {
+        let at = self.position.get() as usize;
+        if at.is_multiple_of(65_536) {
+            pulse(&self.observed, self.phase, at as u64).map_err(io::Error::other)?;
+        }
+        let n = out
+            .len()
+            .min(self.raw.len().saturating_sub(at))
+            .min(65_536 - at % 65_536);
+        out[..n].copy_from_slice(&self.raw[at..at + n]);
+        self.position.set((at + n) as u64);
+        Ok(n)
+    }
+}
+// Unique keys, float refusal and the original collection/depth limits stay intact.
+#[derive(Clone)]
+struct UniqueSeed<'a> {
+    observed: Observed<'a>,
+    phase: MaterialPhase,
+    position: Rc<Cell<u64>>,
+    nodes: Rc<Cell<u64>>,
+}
+impl<'de> DeserializeSeed<'de> for UniqueSeed<'_> {
+    type Value = Value;
+    fn deserialize<D: Deserializer<'de>>(self, d: D) -> std::result::Result<Value, D::Error> {
+        let nodes = self.nodes.get();
+        self.nodes.set(nodes + 1);
+        if nodes.is_multiple_of(256) {
+            pulse(&self.observed, self.phase, self.position.get()).map_err(de::Error::custom)?;
+        }
+        struct V<'a>(UniqueSeed<'a>);
+        impl<'de> Visitor<'de> for V<'_> {
+            type Value = Value;
             fn expecting(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
                 f.write_str("bounded unique JSON")
             }
-            fn visit_bool<E: de::Error>(self, v: bool) -> std::result::Result<Self::Value, E> {
-                Ok(UniqueValue(Value::Bool(v)))
+            fn visit_bool<E: de::Error>(self, v: bool) -> std::result::Result<Value, E> {
+                Ok(Value::Bool(v))
             }
-            fn visit_i64<E: de::Error>(self, v: i64) -> std::result::Result<Self::Value, E> {
-                Ok(UniqueValue(Value::from(v)))
+            fn visit_i64<E: de::Error>(self, v: i64) -> std::result::Result<Value, E> {
+                Ok(Value::from(v))
             }
-            fn visit_u64<E: de::Error>(self, v: u64) -> std::result::Result<Self::Value, E> {
-                Ok(UniqueValue(Value::from(v)))
+            fn visit_u64<E: de::Error>(self, v: u64) -> std::result::Result<Value, E> {
+                Ok(Value::from(v))
             }
-            fn visit_f64<E: de::Error>(self, _v: f64) -> std::result::Result<Self::Value, E> {
+            fn visit_f64<E: de::Error>(self, _: f64) -> std::result::Result<Value, E> {
                 Err(E::custom("JSON_FLOAT"))
             }
-            fn visit_str<E: de::Error>(self, v: &str) -> std::result::Result<Self::Value, E> {
-                Ok(UniqueValue(Value::String(v.into())))
+            fn visit_str<E: de::Error>(self, v: &str) -> std::result::Result<Value, E> {
+                Ok(Value::String(v.into()))
             }
-            fn visit_string<E: de::Error>(self, v: String) -> std::result::Result<Self::Value, E> {
-                Ok(UniqueValue(Value::String(v)))
+            fn visit_string<E: de::Error>(self, v: String) -> std::result::Result<Value, E> {
+                Ok(Value::String(v))
             }
-            fn visit_unit<E: de::Error>(self) -> std::result::Result<Self::Value, E> {
-                Ok(UniqueValue(Value::Null))
+            fn visit_unit<E: de::Error>(self) -> std::result::Result<Value, E> {
+                Ok(Value::Null)
             }
             fn visit_seq<A: SeqAccess<'de>>(
                 self,
                 mut a: A,
-            ) -> std::result::Result<Self::Value, A::Error> {
+            ) -> std::result::Result<Value, A::Error> {
                 let mut rows = Vec::new();
-                while let Some(v) = a.next_element::<UniqueValue>()? {
+                while let Some(v) = a.next_element_seed(self.0.clone())? {
                     if rows.len() >= 65536 {
                         return Err(de::Error::custom("JSON_ARRAY_LIMIT"));
                     }
-                    rows.push(v.0);
+                    rows.push(v);
                 }
-                Ok(UniqueValue(Value::Array(rows)))
+                Ok(Value::Array(rows))
             }
             fn visit_map<A: MapAccess<'de>>(
                 self,
                 mut a: A,
-            ) -> std::result::Result<Self::Value, A::Error> {
+            ) -> std::result::Result<Value, A::Error> {
                 let mut rows = serde_json::Map::new();
                 while let Some(k) = a.next_key::<String>()? {
                     if rows.len() >= 8192 {
@@ -222,25 +323,69 @@ impl<'de> Deserialize<'de> for UniqueValue {
                     if rows.contains_key(&k) {
                         return Err(de::Error::custom("JSON_DUPLICATE"));
                     }
-                    rows.insert(k, a.next_value::<UniqueValue>()?.0);
+                    rows.insert(k, a.next_value_seed(self.0.clone())?);
                 }
-                Ok(UniqueValue(Value::Object(rows)))
+                Ok(Value::Object(rows))
             }
         }
-        d.deserialize_any(V)
+        d.deserialize_any(V(self))
     }
 }
-fn parse(raw: &[u8], limit: usize) -> MaterialResult<Value> {
+fn parse_observed(
+    raw: &[u8],
+    limit: usize,
+    phase: MaterialPhase,
+    o: &Observed<'_>,
+) -> MaterialResult<Value> {
     require(raw.len() <= limit, "JSON_BYTE_LIMIT")?;
-    let mut d = serde_json::Deserializer::from_slice(raw);
-    let v = UniqueValue::deserialize(&mut d).map_err(|_| "STRICT_JSON")?;
-    d.end().map_err(|_| "STRICT_JSON")?;
-    Ok(v.0)
+    let position = Rc::new(Cell::new(0));
+    let reader = JsonReader {
+        raw,
+        position: position.clone(),
+        observed: o.clone(),
+        phase,
+    };
+    let mut d = serde_json::Deserializer::from_reader(reader);
+    let seed = UniqueSeed {
+        observed: o.clone(),
+        phase,
+        position,
+        nodes: Rc::new(Cell::new(0)),
+    };
+    let v = seed
+        .deserialize(&mut d)
+        .map_err(|_| observed_error(o, "STRICT_JSON"))?;
+    d.end().map_err(|_| observed_error(o, "STRICT_JSON"))?;
+    pulse(o, phase, raw.len() as u64)?;
+    Ok(v)
 }
-fn sha(bytes: &[u8]) -> Hash {
-    Sha256::digest(bytes).into()
+struct DescriptorWriter<'a> {
+    raw: Vec<u8>,
+    observed: Observed<'a>,
 }
-fn canonical_descriptor(d: &TileMaterialDescriptorV1) -> MaterialResult<Vec<u8>> {
+impl Write for DescriptorWriter<'_> {
+    fn write(&mut self, bytes: &[u8]) -> io::Result<usize> {
+        let at = self.raw.len();
+        let n = bytes.len().min(256 - at % 256);
+        if at.is_multiple_of(256) {
+            pulse(&self.observed, MaterialPhase::DescriptorEncoding, at as u64)
+                .map_err(io::Error::other)?;
+        }
+        if at.checked_add(n).is_none_or(|v| v > MAX_DESCRIPTOR_BYTES) {
+            return Err(io::Error::other("DESCRIPTOR_LIMIT"));
+        }
+        self.raw.extend_from_slice(&bytes[..n]);
+        Ok(n)
+    }
+    fn flush(&mut self) -> io::Result<()> {
+        Ok(())
+    }
+}
+fn canonical_descriptor_observed(
+    d: &TileMaterialDescriptorV1,
+    o: &Observed<'_>,
+) -> MaterialResult<Vec<u8>> {
+    pulse(o, MaterialPhase::DescriptorBuild, 0)?;
     let v = serde_json::to_value(d).map_err(|_| "DESCRIPTOR_ENCODING")?;
     let sorted: BTreeMap<_, _> = v
         .as_object()
@@ -248,7 +393,22 @@ fn canonical_descriptor(d: &TileMaterialDescriptorV1) -> MaterialResult<Vec<u8>>
         .iter()
         .map(|(k, v)| (k.clone(), v.clone()))
         .collect();
-    serde_json::to_vec(&sorted).map_err(|_| "DESCRIPTOR_ENCODING")
+    pulse(o, MaterialPhase::DescriptorBuild, sorted.len() as u64)?;
+    let mut writer = DescriptorWriter {
+        raw: Vec::new(),
+        observed: o.clone(),
+    };
+    serde_json::to_writer(&mut writer, &sorted)
+        .map_err(|_| observed_error(o, "DESCRIPTOR_ENCODING"))?;
+    pulse(
+        o,
+        MaterialPhase::DescriptorEncoding,
+        writer.raw.len() as u64,
+    )?;
+    Ok(writer.raw)
+}
+fn sha(bytes: &[u8]) -> Hash {
+    Sha256::digest(bytes).into()
 }
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -257,12 +417,15 @@ struct Tensor {
     shape: Vec<u64>,
     data_offsets: [u64; 2],
 }
-fn tensor_header(raw: &[u8], payload: u64) -> MaterialResult<([u64; 2], usize)> {
-    let v = parse(raw, MAX_HEADER_BYTES)?;
+fn tensor_header(raw: &[u8], payload: u64, o: &Observed<'_>) -> MaterialResult<([u64; 2], usize)> {
+    let v = parse_observed(raw, MAX_HEADER_BYTES, MaterialPhase::HeaderJson, o)?;
     let map = v.as_object().ok_or("HEADER_OBJECT")?;
     let mut spans = Vec::new();
     let mut target = None;
-    for (name, item) in map {
+    for (index, (name, item)) in map.iter().enumerate() {
+        if index.is_multiple_of(64) {
+            pulse(o, MaterialPhase::TensorHeader, index as u64)?;
+        }
         require(!name.is_empty() && name.len() <= 256, "TENSOR_NAME")?;
         if name == "__metadata__" {
             require(
@@ -305,9 +468,13 @@ fn tensor_header(raw: &[u8], payload: u64) -> MaterialResult<([u64; 2], usize)> 
         }
         spans.push(t.data_offsets);
     }
+    pulse(o, MaterialPhase::TensorSpans, 0)?;
     spans.sort_unstable();
     let mut end = 0;
-    for [start, next] in &spans {
+    for (index, [start, next]) in spans.iter().enumerate() {
+        if index.is_multiple_of(64) {
+            pulse(o, MaterialPhase::TensorSpans, index as u64)?;
+        }
         require(*start == end, "TENSOR_COVERAGE")?;
         end = *next;
     }
@@ -363,10 +530,23 @@ fn hex_hash(v: &str) -> MaterialResult<Hash> {
         .try_into()
         .map_err(|_| "HASH_ENCODING")
 }
-fn activation(raw: &[u8], ctx: &PinnedTileContextV1) -> MaterialResult<(usize, Vec<u8>)> {
-    require(sha(raw) == ctx.activation_sha256, "ACTIVATION_PIN")?;
-    let a: Activation = serde_json::from_value(parse(raw, MAX_ACTIVATION_BYTES)?)
-        .map_err(|_| "ACTIVATION_FIELDS")?;
+fn activation(
+    raw: &[u8],
+    ctx: &PinnedTileContextV1,
+    o: &Observed<'_>,
+) -> MaterialResult<(usize, Vec<u8>)> {
+    require(
+        sha_observed(raw, MaterialPhase::ActivationHash, o)? == ctx.activation_sha256,
+        "ACTIVATION_PIN",
+    )?;
+    let a: Activation = serde_json::from_value(parse_observed(
+        raw,
+        MAX_ACTIVATION_BYTES,
+        MaterialPhase::ActivationJson,
+        o,
+    )?)
+    .map_err(|_| "ACTIVATION_FIELDS")?;
+    pulse(o, MaterialPhase::ActivationFields, 0)?;
     require(
         a.schema == "checkpoint-qproj-postnorm-activation-v1"
             && hex_hash(&a.checkpoint_sha256)? == ctx.checkpoint_sha256
@@ -413,14 +593,20 @@ fn activation(raw: &[u8], ctx: &PinnedTileContextV1) -> MaterialResult<(usize, V
             .all(|s| !s.is_empty() && s.len() <= 128),
         "ACTIVATION_OBSERVATION_SCOPE",
     )?;
-    require(
-        a.hidden_hex.len() == t * WIDTH * 8
-            && a.hidden_hex
-                .bytes()
-                .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b)),
-        "ACTIVATION_BITS",
-    )?;
-    Ok((t, hex::decode(a.hidden_hex).map_err(|_| "ACTIVATION_BITS")?))
+    require(a.hidden_hex.len() == t * WIDTH * 8, "ACTIVATION_BITS")?;
+    let mut hidden = Vec::with_capacity(t * WIDTH * 4);
+    for (index, chunk) in a.hidden_hex.as_bytes().chunks(512).enumerate() {
+        pulse(o, MaterialPhase::ActivationHex, (index * 512) as u64)?;
+        require(
+            chunk
+                .iter()
+                .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(b)),
+            "ACTIVATION_BITS",
+        )?;
+        hidden.extend(hex::decode(chunk).map_err(|_| "ACTIVATION_BITS")?);
+    }
+    pulse(o, MaterialPhase::ActivationHex, a.hidden_hex.len() as u64)?;
+    Ok((t, hidden))
 }
 /// Integer-only IEEE decoding, exact nearest/even before clipping. Large finite
 /// exponents saturate before a shift; subnormals and signed zeros remain exact.
@@ -478,6 +664,59 @@ pub fn derive_checkpoint_tile_material_v1<R: Read + Seek, F: FnMut(u64) -> Mater
     ctx: &PinnedTileContextV1,
     mut progress: F,
 ) -> MaterialResult<CheckedCheckpointTileMaterialV1> {
+    derive_checkpoint_tile_material_v1_with_progress(
+        checkpoint,
+        activation_raw,
+        expected_a,
+        expected_b,
+        ctx,
+        |event| {
+            if event.phase == MaterialPhase::HeaderComplete
+                || (event.phase == MaterialPhase::CheckpointScan
+                    && event.completed > 0
+                    && (event.completed.is_multiple_of(1024 * 1024)
+                        || event.completed == ctx.checkpoint_bytes))
+            {
+                progress(event.checkpoint_bytes_read)
+            } else {
+                Ok(())
+            }
+        },
+    )
+}
+pub fn derive_checkpoint_tile_material_v1_with_progress<
+    R: Read + Seek,
+    F: FnMut(MaterialProgress) -> MaterialResult<()>,
+>(
+    checkpoint: &mut R,
+    activation_raw: &[u8],
+    expected_a: &[u8],
+    expected_b: &[u8],
+    ctx: &PinnedTileContextV1,
+    mut progress: F,
+) -> MaterialResult<CheckedCheckpointTileMaterialV1> {
+    let observed = Rc::new(RefCell::new(Observer {
+        callback: &mut progress,
+        first_error: None,
+        checkpoint_bytes_read: 0,
+    }));
+    derive_observed(
+        checkpoint,
+        activation_raw,
+        expected_a,
+        expected_b,
+        ctx,
+        &observed,
+    )
+}
+fn derive_observed<R: Read + Seek>(
+    checkpoint: &mut R,
+    activation_raw: &[u8],
+    expected_a: &[u8],
+    expected_b: &[u8],
+    ctx: &PinnedTileContextV1,
+    o: &Observed<'_>,
+) -> MaterialResult<CheckedCheckpointTileMaterialV1> {
     ctx.validate()?;
     require(
         activation_raw.len() <= MAX_ACTIVATION_BYTES
@@ -485,7 +724,7 @@ pub fn derive_checkpoint_tile_material_v1<R: Read + Seek, F: FnMut(u64) -> Mater
             && expected_b.len() == BYTES,
         "MATERIAL_LIMIT",
     )?;
-    let (tokens, hidden) = activation(activation_raw, ctx)?;
+    let (tokens, hidden) = activation(activation_raw, ctx, o)?;
     require(
         checkpoint
             .seek(SeekFrom::End(0))
@@ -496,6 +735,7 @@ pub fn derive_checkpoint_tile_material_v1<R: Read + Seek, F: FnMut(u64) -> Mater
     checkpoint
         .seek(SeekFrom::Start(0))
         .map_err(|_| "CHECKPOINT_IO")?;
+    pulse(o, MaterialPhase::HeaderRead, 0)?;
     let mut length = [0; 8];
     checkpoint
         .read_exact(&mut length)
@@ -506,19 +746,23 @@ pub fn derive_checkpoint_tile_material_v1<R: Read + Seek, F: FnMut(u64) -> Mater
         "HEADER_LIMIT",
     )?;
     let mut header = vec![0; n as usize];
-    checkpoint
-        .read_exact(&mut header)
-        .map_err(|_| "CHECKPOINT_IO")?;
-    progress(n + 8)?;
-    let (offsets, tensor_count) = tensor_header(&header, ctx.checkpoint_bytes - 8 - n)?;
+    for (i, chunk) in header.chunks_mut(65_536).enumerate() {
+        checkpoint.read_exact(chunk).map_err(|_| "CHECKPOINT_IO")?;
+        o.borrow_mut().checkpoint_bytes_read = (i * 65_536 + chunk.len()) as u64 + 8;
+        let bytes_read = o.borrow().checkpoint_bytes_read;
+        pulse(o, MaterialPhase::HeaderRead, bytes_read)?;
+    }
+    pulse(o, MaterialPhase::HeaderComplete, n + 8)?;
+    let (offsets, tensor_count) = tensor_header(&header, ctx.checkpoint_bytes - 8 - n, o)?;
     let payload = 8 + n;
     checkpoint
         .seek(SeekFrom::Start(0))
         .map_err(|_| "CHECKPOINT_IO")?;
     let mut tile = vec![0; SIDE * SIDE * 2];
     let mut hasher = Sha256::new();
-    let mut buffer = vec![0; 1024 * 1024];
+    let mut buffer = vec![0; 65_536];
     let mut pos = 0u64;
+    pulse(o, MaterialPhase::CheckpointScan, 0)?;
     while pos < ctx.checkpoint_bytes {
         let amount = (ctx.checkpoint_bytes - pos).min(buffer.len() as u64) as usize;
         checkpoint
@@ -553,7 +797,8 @@ pub fn derive_checkpoint_tile_material_v1<R: Read + Seek, F: FnMut(u64) -> Mater
             }
         }
         pos += amount as u64;
-        progress(n + 8 + pos)?;
+        o.borrow_mut().checkpoint_bytes_read = n + 8 + pos;
+        pulse(o, MaterialPhase::CheckpointScan, pos)?;
     }
     let mut extra = [0];
     require(
@@ -567,7 +812,10 @@ pub fn derive_checkpoint_tile_material_v1<R: Read + Seek, F: FnMut(u64) -> Mater
     let mut a = Vec::with_capacity(4096);
     let mut b = vec![0; 4096];
     let (mut ca, mut cb) = (0, 0);
-    for bytes in tile.chunks_exact(2) {
+    for (i, bytes) in tile.chunks_exact(2).enumerate() {
+        if i.is_multiple_of(256) {
+            pulse(o, MaterialPhase::WeightQuantization, i as u64)?;
+        }
         let (v, clipped) = quantize(
             u16::from_le_bytes(bytes.try_into().map_err(|_| "TILE_BITS")?) as u32,
             7,
@@ -578,7 +826,10 @@ pub fn derive_checkpoint_tile_material_v1<R: Read + Seek, F: FnMut(u64) -> Mater
         ca += usize::from(clipped);
     }
     // Reject every original activation nonfinite, including unselected coordinates.
-    for bytes in hidden.chunks_exact(4) {
+    for (i, bytes) in hidden.chunks_exact(4).enumerate() {
+        if i.is_multiple_of(256) {
+            pulse(o, MaterialPhase::ActivationNonfinite, i as u64)?;
+        }
         require(
             (u32::from_le_bytes(bytes.try_into().map_err(|_| "ACTIVATION_BITS")?) >> 23) & 255
                 != 255,
@@ -586,6 +837,11 @@ pub fn derive_checkpoint_tile_material_v1<R: Read + Seek, F: FnMut(u64) -> Mater
         )?;
     }
     for k in 0..SIDE {
+        pulse(
+            o,
+            MaterialPhase::ActivationQuantization,
+            (k * tokens) as u64,
+        )?;
         for token in 0..tokens {
             let at = (token * WIDTH + k) * 4;
             let (v, clipped) = quantize(
@@ -602,8 +858,11 @@ pub fn derive_checkpoint_tile_material_v1<R: Read + Seek, F: FnMut(u64) -> Mater
             cb += usize::from(clipped);
         }
     }
+    pulse(o, MaterialPhase::MatrixEncoding, 0)?;
     let aa = encode_matrix(&a);
+    pulse(o, MaterialPhase::MatrixEncoding, a.len() as u64)?;
     let bb = encode_matrix(&b);
+    pulse(o, MaterialPhase::MatrixBinding, (a.len() + b.len()) as u64)?;
     require(aa == expected_a && bb == expected_b, "MATRIX_REPLAY")?;
     require(
         hash(b"artifact", &[&aa]) == ctx.model
@@ -612,7 +871,14 @@ pub fn derive_checkpoint_tile_material_v1<R: Read + Seek, F: FnMut(u64) -> Mater
     )?;
     let av: Vec<_> = a.iter().map(|v| v.rem_euclid(Q) as u32).collect();
     let bv: Vec<_> = b.iter().map(|v| v.rem_euclid(Q) as u32).collect();
-    let task = pon_work::task_id(&av, &bv).map_err(|_| "MATRIX_TASK")?;
+    let task = pon_work::task_id_with_progress(&av, &bv, &mut |completed| {
+        pulse(o, MaterialPhase::TaskHash, completed)
+    })
+    .map_err(|error| match error {
+        pon_work::VerificationError::Relation(_) => "MATRIX_TASK",
+        pon_work::VerificationError::Cancelled(error) => error,
+    })?;
+    pulse(o, MaterialPhase::DescriptorBuild, 0)?;
     let nz = b.iter().filter(|v| **v != 0).count();
     let d = TileMaterialDescriptorV1 {
         schema: "checkpoint-tile-material-v1".into(),
@@ -655,9 +921,11 @@ pub fn derive_checkpoint_tile_material_v1<R: Read + Seek, F: FnMut(u64) -> Mater
         genuine_demand_verified: false,
         marginal_contribution_accepted: false,
     };
-    let canonical = canonical_descriptor(&d)?;
+    let canonical = canonical_descriptor_observed(&d, o)?;
     require(canonical.len() <= MAX_DESCRIPTOR_BYTES, "DESCRIPTOR_LIMIT")?;
+    pulse(o, MaterialPhase::DescriptorHash, 0)?;
     let id = hash(b"checkpoint-tile-material-receipt-v1", &[&canonical]);
+    pulse(o, MaterialPhase::DescriptorHash, canonical.len() as u64)?;
     Ok(CheckedCheckpointTileMaterialV1 {
         descriptor: d,
         canonical_descriptor: canonical,
@@ -677,21 +945,57 @@ pub fn verify_checkpoint_tile_material_v1<R: Read + Seek, F: FnMut(u64) -> Mater
     ctx: &PinnedTileContextV1,
     progress: F,
 ) -> MaterialResult<CheckedCheckpointTileMaterialV1> {
-    let claimed: TileMaterialDescriptorV1 =
-        serde_json::from_value(parse(descriptor_raw, MAX_DESCRIPTOR_BYTES)?)
-            .map_err(|_| "DESCRIPTOR_FIELDS")?;
-    require(
-        canonical_descriptor(&claimed)? == descriptor_raw,
-        "DESCRIPTOR_CANONICAL",
-    )?;
-    let checked = derive_checkpoint_tile_material_v1(
+    let mut progress = progress;
+    verify_checkpoint_tile_material_v1_with_progress(
         checkpoint,
         activation_raw,
+        descriptor_raw,
         expected_a,
         expected_b,
         ctx,
-        progress,
+        |event| {
+            if event.phase == MaterialPhase::HeaderComplete
+                || (event.phase == MaterialPhase::CheckpointScan
+                    && event.completed > 0
+                    && (event.completed.is_multiple_of(1024 * 1024)
+                        || event.completed == ctx.checkpoint_bytes))
+            {
+                progress(event.checkpoint_bytes_read)
+            } else {
+                Ok(())
+            }
+        },
+    )
+}
+pub fn verify_checkpoint_tile_material_v1_with_progress<
+    R: Read + Seek,
+    F: FnMut(MaterialProgress) -> MaterialResult<()>,
+>(
+    checkpoint: &mut R,
+    activation_raw: &[u8],
+    descriptor_raw: &[u8],
+    expected_a: &[u8],
+    expected_b: &[u8],
+    ctx: &PinnedTileContextV1,
+    mut progress: F,
+) -> MaterialResult<CheckedCheckpointTileMaterialV1> {
+    let o = Rc::new(RefCell::new(Observer {
+        callback: &mut progress,
+        first_error: None,
+        checkpoint_bytes_read: 0,
+    }));
+    let claimed: TileMaterialDescriptorV1 = serde_json::from_value(parse_observed(
+        descriptor_raw,
+        MAX_DESCRIPTOR_BYTES,
+        MaterialPhase::DescriptorJson,
+        &o,
+    )?)
+    .map_err(|_| "DESCRIPTOR_FIELDS")?;
+    require(
+        canonical_descriptor_observed(&claimed, &o)? == descriptor_raw,
+        "DESCRIPTOR_CANONICAL",
     )?;
+    let checked = derive_observed(checkpoint, activation_raw, expected_a, expected_b, ctx, &o)?;
     require(claimed == checked.descriptor, "DESCRIPTOR_REPLAY")?;
     Ok(checked)
 }

@@ -9,12 +9,32 @@ import tempfile
 import time
 from types import SimpleNamespace
 from unittest.mock import patch
-from run_history_effect_v6_native import HELPER, ROSTER, bounded, roster, suite_passed
+from run_history_effect_v6_native import (HELPER, ORIGINAL_ROSTER, STARTUP_ROSTER, ROSTER,
+    bounded, roster, suite_passed, retain_binary, verify_binary_archive, sha)
 
 
 class ExactNativeGate(unittest.TestCase):
+    def test_retained_binary_roundtrip_and_part_corruption_are_checked(self):
+        with tempfile.TemporaryDirectory() as temp:
+            binary = Path(temp) / 'native-fixture'
+            binary.write_bytes(os.urandom(65536))
+            directory = Path(temp) / 'parts'
+            manifest = retain_binary(binary, directory, sha(binary), part_limit=16384)
+            self.assertGreater(len(manifest['parts']), 1)
+            self.assertTrue(manifest['exact_decompression_readback_passed'])
+            verify_binary_archive(directory, manifest)
+            part = directory / manifest['parts'][0]['path']
+            raw = bytearray(part.read_bytes())
+            raw[-1] ^= 1
+            part.write_bytes(raw)
+            with self.assertRaisesRegex(ValueError, 'part identity mismatch'):
+                verify_binary_archive(directory, manifest)
+
     def test_exact_roster_retains_all_fifteen_and_the_process_helper(self):
-        self.assertEqual(len(ROSTER), 16)
+        self.assertEqual(len(ORIGINAL_ROSTER), 16)
+        self.assertEqual(len(STARTUP_ROSTER), 4)
+        self.assertEqual(len(ROSTER), 20)
+        self.assertTrue(set(ORIGINAL_ROSTER).issubset(ROSTER))
         self.assertEqual(roster('\n'.join(name + ': test' for name in ROSTER)), ROSTER)
         for changed in [ROSTER[:-1], ROSTER + [ROSTER[0]],
                         ROSTER[:-1] + ['store::history_effect_v6::tests::substitute']]:
@@ -22,19 +42,19 @@ class ExactNativeGate(unittest.TestCase):
                 roster('\n'.join(name + ': test' for name in changed))
 
     def test_zero_partial_failed_and_multiple_summaries_never_accept(self):
-        prefix = 'running 16 tests\n' + ''.join(
+        prefix = 'running 20 tests\n' + ''.join(
             f'test {name} ... ' + ('ignored, fixture only' if name == HELPER else 'ok') + '\n'
             for name in ROSTER)
-        valid = 'test result: ok. 15 passed; 0 failed; 1 ignored; 0 measured; 734 filtered out; finished in 300.00s'
+        valid = 'test result: ok. 19 passed; 0 failed; 1 ignored; 0 measured; 734 filtered out; finished in 300.00s'
         self.assertTrue(suite_passed(prefix + valid))
-        for bad in [valid.replace('15 passed', '0 passed'), valid.replace('15 passed', '14 passed'),
+        for bad in [valid.replace('19 passed', '0 passed'), valid.replace('19 passed', '18 passed'),
                     valid.replace('0 failed', '1 failed'), valid.replace('1 ignored', '2 ignored'),
-                    valid + '\n' + valid, 'test result: FAILED. 14 passed; 1 failed; 1 ignored;']:
+                    valid + '\n' + valid, 'test result: FAILED. 18 passed; 1 failed; 1 ignored;']:
             self.assertFalse(suite_passed(prefix + bad))
         self.assertFalse(suite_passed(valid))
         self.assertFalse(suite_passed(prefix.replace(ROSTER[-1], ROSTER[-2]) + valid))
-        self.assertFalse(suite_passed(prefix.replace('running 16 tests', '') + valid))
-        self.assertFalse(suite_passed(prefix + 'running 16 tests\n' + valid))
+        self.assertFalse(suite_passed(prefix.replace('running 20 tests', '') + valid))
+        self.assertFalse(suite_passed(prefix + 'running 20 tests\n' + valid))
 
     def test_successful_leader_signals_owned_group_before_reaping(self):
         program = '''import os, time

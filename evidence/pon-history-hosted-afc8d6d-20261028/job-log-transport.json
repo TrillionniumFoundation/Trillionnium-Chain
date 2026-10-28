@@ -1,0 +1,10 @@
+{
+  "schema": "history-hosted-decoded-job-log-transport-v1",
+  "original_decoded_utf8_bytes": 96934,
+  "original_decoded_utf8_sha256": "0a7ab0cc5533a4b6a8d678314ce6fe2724165730fafbc383063d7303f46b1c72",
+  "gzip_bytes": 18134,
+  "gzip_sha256": "a9fe57047393c16e38e55c43780f9ac59c0123ddb0623ec3b18dd0faaf4db9b7",
+  "bytes_normalized": false,
+  "gzip_mtime": 0,
+  "reason": "Raw GitHub decoded log contains trailing spaces; keep exact bytes in gzip rather than normalizing execution evidence."
+}

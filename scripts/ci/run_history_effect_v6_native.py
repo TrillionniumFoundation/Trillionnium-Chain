@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Execute all 15 History V6 tests from one exact release binary, retaining failures."""
+"""Execute the original 15 and four Startup controls from one retained release binary."""
 from __future__ import annotations
 import argparse
+import gzip
 import hashlib
 import json
 import os
@@ -11,13 +12,14 @@ import signal
 import subprocess
 import sys
 import time
+import zlib
 
 from verify_ci_source import verify
 
 ROOT = Path(__file__).resolve().parents[2]
 PREFIX = 'store::history_effect_v6::tests::'
 HELPER = PREFIX + 'history_effect_v6_process_child_helper'
-ROSTER = sorted(PREFIX + name for name in [
+ORIGINAL_ROSTER = sorted(PREFIX + name for name in [
     'history_effect_v6_process_child_helper',
     'history_publication_durable_unacknowledged_crash_repairs_and_resumes',
     'history_publication_final_directory_fsync_crash_repairs_and_resumes',
@@ -34,6 +36,24 @@ ROSTER = sorted(PREFIX + name for name in [
     'v6_late_journal_lock_failure_keeps_actual_native_and_original_cpu',
     'v6_unmarked_existing_bad_product_is_not_validated_by_sql_syntax',
     'v6_unsigned_worker_host_and_delegated_nonce_refuse_without_new_authority',
+])
+STARTUP_ROSTER = sorted(PREFIX + 'startup::' + name for name in [
+    'cancellation_reaches_material_second_hash_and_both_state_reads',
+    'consumed_material_seal_rechecks_actual_handles_bytes_and_current_context',
+    'original_cpu_deadline_and_signed_expiry_interrupt_interior_material',
+    'startup_cancellation_handle_cannot_select_another_signed_operation',
+])
+ROSTER = sorted(ORIGINAL_ROSTER + STARTUP_ROSTER)
+MATERIAL_ROSTER = sorted([
+    'synthetic_codec_fixture_full_relation_and_actual_signed_admission_binding',
+    'original_checkpoint_unselected_bytes_and_expected_matrix_pins_are_not_claims',
+    'closed_activation_and_descriptor_changes_cannot_select_a_new_recipe',
+    'strict_header_extents_unknown_fields_duplicates_and_progress_stop',
+    'actual_hashed_stream_header_must_equal_the_parsed_header',
+    'typed_progress_retains_legacy_bytes_and_original_descriptor',
+    'every_interior_numeric_and_hash_stage_preserves_first_owner_abort',
+    'long_json_string_is_interruptible_before_visitor_or_field_validation',
+    'task_hash_progress_keeps_original_bytes_and_field_refusals',
 ])
 
 
@@ -57,11 +77,87 @@ def roster(text):
 def suite_passed(text):
     summaries = re.findall(r'^test result: .+$', text, re.M)
     executed = sorted(re.findall(r'^test (' + re.escape(PREFIX) + r'\S+) \.\.\. ', text, re.M))
-    return (text.splitlines().count('running 16 tests') == 1 and executed == ROSTER
+    return (text.splitlines().count('running 20 tests') == 1 and executed == ROSTER
             and f'test {HELPER} ... ignored' in text
             and len(summaries) == 1
-            and re.fullmatch(r'test result: ok\. 15 passed; 0 failed; 1 ignored; '
+            and re.fullmatch(r'test result: ok\. 19 passed; 0 failed; 1 ignored; '
                              r'\d+ measured; \d+ filtered out; finished in .+s', summaries[0]) is not None)
+
+
+def verify_binary_archive(directory, manifest):
+    compressed = hashlib.sha256()
+    raw = hashlib.sha256()
+    raw_bytes = 0
+    decoder = zlib.decompressobj(31)
+    for row in manifest['parts']:
+        data = (directory / row['path']).read_bytes()
+        if len(data) != row['bytes'] or hashlib.sha256(data).hexdigest() != row['sha256']:
+            raise ValueError('retained binary part identity mismatch')
+        compressed.update(data)
+        decoded = decoder.decompress(data)
+        raw.update(decoded)
+        raw_bytes += len(decoded)
+    final = decoder.flush()
+    raw.update(final)
+    raw_bytes += len(final)
+    if (not decoder.eof or decoder.unused_data or decoder.unconsumed_tail
+            or compressed.hexdigest() != manifest['gzip_sha256']
+            or raw.hexdigest() != manifest['binary_sha256'] or raw_bytes != manifest['binary_bytes']):
+        raise ValueError('retained whole binary reconstruction mismatch')
+
+
+def retain_binary(binary, directory, expected_sha256, part_limit=4 * 1024 ** 2):
+    """Retain exact ELF bytes in ordered gzip parts, then independently decompress."""
+    directory.mkdir()
+    before = binary.stat()
+    parts = []
+    compressed_hash = hashlib.sha256()
+    class Parts:
+        def __init__(self):
+            self.pending = bytearray()
+        def emit(self, data):
+            path = directory / f'binary.gz.part-{len(parts):03}.bin'
+            with path.open('xb') as out:
+                out.write(data)
+                out.flush()
+                os.fsync(out.fileno())
+            parts.append({'path': path.name, 'bytes': len(data),
+                          'sha256': hashlib.sha256(data).hexdigest()})
+        def write(self, data):
+            compressed_hash.update(data)
+            self.pending.extend(data)
+            while len(self.pending) >= part_limit:
+                self.emit(self.pending[:part_limit])
+                del self.pending[:part_limit]
+            return len(data)
+        def finish(self):
+            if self.pending:
+                self.emit(self.pending)
+                self.pending.clear()
+    sink = Parts()
+    raw_hash = hashlib.sha256()
+    raw_bytes = 0
+    with binary.open('rb') as source, gzip.GzipFile(filename='', mode='wb', fileobj=sink,
+                                                  mtime=0, compresslevel=6) as encoded:
+        for chunk in iter(lambda: source.read(65536), b''):
+            raw_hash.update(chunk)
+            raw_bytes += len(chunk)
+            encoded.write(chunk)
+    sink.finish()
+    after = binary.stat()
+    identity = lambda s: (s.st_dev, s.st_ino, s.st_mode, s.st_size, s.st_mtime_ns, s.st_ctime_ns)
+    if identity(before) != identity(after) or raw_hash.hexdigest() != expected_sha256:
+        raise ValueError('actual binary changed while retaining its bytes')
+    manifest = {'schema': 'history-actual-release-binary-parts-v1', 'binary_path': str(binary),
+                'binary_sha256': expected_sha256, 'binary_bytes': raw_bytes,
+                'gzip_sha256': compressed_hash.hexdigest(), 'gzip_bytes': sum(p['bytes'] for p in parts),
+                'gzip_mtime': 0, 'parts': parts,
+                'reconstruction': 'Concatenate parts in listed order, verify gzip_sha256, decompress gzip, '
+                                  'then verify binary_bytes and binary_sha256.'}
+    verify_binary_archive(directory, manifest)
+    manifest['exact_decompression_readback_passed'] = True
+    write(directory / 'manifest.json', manifest)
+    return manifest
 
 
 def bounded(command, directory, seconds, env):
@@ -162,6 +258,43 @@ def bounded(command, directory, seconds, env):
     return receipt
 
 
+def material_controls(output, target, env):
+    build = bounded(['cargo', '+1.95.0', 'test', '--release', '--locked', '--manifest-path',
+                     'trillionnium/Cargo.toml', '-p', 'trnm-mvcc-fee', '--test',
+                     'checkpoint_tile_material_v1', '--no-run', '--message-format=json-render-diagnostics'],
+                    output / 'material-build', 600, env)
+    result = {'build': build, 'passed': False, 'expected_roster': MATERIAL_ROSTER}
+    if not build['passed']:
+        return result
+    candidates = []
+    for line in (output / 'material-build/native.log').read_text().splitlines():
+        try:
+            row = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if (row.get('reason') == 'compiler-artifact'
+                and row.get('manifest_path') == str(ROOT / 'trillionnium/crates/trnm-mvcc-fee/Cargo.toml')
+                and row.get('target', {}).get('name') == 'checkpoint_tile_material_v1'
+                and row.get('profile', {}).get('test') and row.get('executable')):
+            candidates.append(Path(row['executable']).resolve())
+    if len(candidates) != 1 or not candidates[0].is_file() or not candidates[0].is_relative_to(target):
+        raise ValueError('same-source material test binary is missing or ambiguous')
+    binary = candidates[0]
+    digest = sha(binary)
+    result['binary_archive'] = retain_binary(binary, output / 'material-binary', digest)
+    native = bounded([str(binary), '--test-threads=1', '--nocapture'], output / 'material-native', 120, env)
+    text = (output / 'material-native/native.log').read_text()
+    executed = sorted(re.findall(r'^test (\S+) \.\.\. ', text, re.M))
+    summaries = re.findall(r'^test result: .+$', text, re.M)
+    result.update(native=native, binary_stable=sha(binary) == digest,
+                  exact_nine_pass=(text.splitlines().count('running 9 tests') == 1
+                      and executed == MATERIAL_ROSTER and len(summaries) == 1
+                      and re.fullmatch(r'test result: ok\. 9 passed; 0 failed; 0 ignored; '
+                                       r'0 measured; 0 filtered out; finished in .+s', summaries[0]) is not None))
+    result['passed'] = native['passed'] and result['exact_nine_pass'] and result['binary_stable']
+    return result
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--expected-source', required=True)
@@ -176,7 +309,8 @@ def main():
                 'native_test_budget_seconds': 600, 'original_local_full_suite_budget_seconds': 600,
                 'runtime_burst_ns': 2_000_000_000, 'fixture_operation_allowance_ns': 4_000_000_000,
                 'complete_parent_snapshot_attempts': 4, 'production_qualified': False,
-                'whole_history_p0_closed': False}
+                'original_fifteen_required': True, 'new_startup_controls_required': 4,
+                'new_material_controls_required': 9, 'whole_history_p0_closed': False}
     source_ok = False
     try:
         before = verify('head', args.expected_source)
@@ -209,6 +343,7 @@ def main():
             raise ValueError('actual test binary missing or outside isolated target')
         digest = sha(executable)
         terminal.update(binary=str(executable), binary_sha256=digest)
+        terminal['binary_archive'] = retain_binary(executable, output / 'actual-binary', digest)
         listing = bounded([str(executable), '--list'], output / 'inventory', 30, env)
         if not listing['passed']:
             raise RuntimeError('actual binary test inventory failed')
@@ -226,10 +361,19 @@ def main():
         env['TRNM_HISTORY_V6_ARTIFACT_DIR'] = str(output / 'native/artifacts')
         native = bounded([str(executable), PREFIX, '--test-threads=1', '--nocapture'],
                          output / 'native', 600, env)
-        native['exact_fifteen_pass_one_ignored'] = suite_passed((output / 'native/native.log').read_text())
+        native['exact_nineteen_pass_one_ignored'] = suite_passed((output / 'native/native.log').read_text())
         terminal.update(native=native, binary_stable=sha(executable) == digest)
-        terminal['passed'] = (native['passed'] and native['exact_fifteen_pass_one_ignored']
-                              and observer['expected_four_tests_passed'] and terminal['binary_stable'])
+        terminal['material_controls'] = material_controls(output, target, env)
+        terminal['format'] = bounded(['cargo', '+1.95.0', 'fmt', '--manifest-path',
+                                     'trillionnium/Cargo.toml', '--all', '--check'], output / 'format', 120, env)
+        terminal['clippy'] = bounded(['cargo', '+1.95.0', 'clippy', '--release', '--locked',
+                                     '--manifest-path', 'trillionnium/Cargo.toml', '-p', 'trnm-pon-node',
+                                     '-p', 'trnm-crypto-primitives', '-p', 'trnm-mvcc-fee',
+                                     '--lib', '--tests', '--', '-D', 'warnings'], output / 'clippy', 1200, env)
+        terminal['passed'] = (native['passed'] and native['exact_nineteen_pass_one_ignored']
+                              and observer['expected_four_tests_passed'] and terminal['binary_stable']
+                              and terminal['material_controls']['passed']
+                              and terminal['format']['passed'] and terminal['clippy']['passed'])
     except BaseException as error:
         terminal['error'] = f'{type(error).__name__}: {error}'
         terminal['passed'] = False
