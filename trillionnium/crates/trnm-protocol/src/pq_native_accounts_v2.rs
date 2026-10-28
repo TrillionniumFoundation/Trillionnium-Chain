@@ -27,6 +27,7 @@ pub enum AccountProfile {
     AccountsV2,
     QuotaV3,
     TasksV4,
+    TasksV5,
 }
 impl AccountProfile {
     pub fn name(self) -> &'static str {
@@ -34,6 +35,7 @@ impl AccountProfile {
             Self::AccountsV2 => PROFILE,
             Self::QuotaV3 => "pon-native-pq-quota-v3",
             Self::TasksV4 => "pon-native-pq-tasks-v4",
+            Self::TasksV5 => "pon-native-pq-tasks-v5",
         }
     }
     pub fn packet_prefix(self) -> &'static [u8; 8] {
@@ -41,6 +43,7 @@ impl AccountProfile {
             Self::AccountsV2 => PACKET_PREFIX,
             Self::QuotaV3 => b"PQP3\x03\0\0\0",
             Self::TasksV4 => b"PQP4\x04\0\0\0",
+            Self::TasksV5 => b"PQP5\x05\0\0\0",
         }
     }
     fn prefix(self) -> &'static [u8; 5] {
@@ -48,6 +51,7 @@ impl AccountProfile {
             Self::AccountsV2 => b"NPQ2\x02",
             Self::QuotaV3 => b"NPQ3\x03",
             Self::TasksV4 => b"NPQ4\x04",
+            Self::TasksV5 => b"NPQ5\x05",
         }
     }
     fn statement_domain(self) -> &'static [u8] {
@@ -55,6 +59,7 @@ impl AccountProfile {
             Self::AccountsV2 => b"TRNM/PoN/NativePQCommandStatement/v2\0",
             Self::QuotaV3 => b"TRNM/PoN/NativePQQuotaStatement/v3\0",
             Self::TasksV4 => b"TRNM/PoN/NativePQTaskStatement/v4\0",
+            Self::TasksV5 => b"TRNM/PoN/NativePQTaskStatement/v5\0",
         }
     }
     fn context_domain(self) -> &'static [u8] {
@@ -62,6 +67,7 @@ impl AccountProfile {
             Self::AccountsV2 => b"TRNM/PoN/NativePQAccountContext/v2\0",
             Self::QuotaV3 => b"TRNM/PoN/NativePQQuotaContext/v3\0",
             Self::TasksV4 => b"TRNM/PoN/NativePQTaskContext/v4\0",
+            Self::TasksV5 => b"TRNM/PoN/NativePQTaskContext/v5\0",
         }
     }
     fn wire_domain(self) -> &'static [u8] {
@@ -69,6 +75,7 @@ impl AccountProfile {
             Self::AccountsV2 => b"TRNM/PoN/NativePQCommandWire/v2\0",
             Self::QuotaV3 => b"TRNM/PoN/NativePQQuotaWire/v3\0",
             Self::TasksV4 => b"TRNM/PoN/NativePQTaskWire/v4\0",
+            Self::TasksV5 => b"TRNM/PoN/NativePQTaskWire/v5\0",
         }
     }
 }
@@ -142,12 +149,22 @@ fn number(raw: &[u8], at: usize) -> Result<u64, Error> {
 fn roles(profile: AccountProfile, kind: u8) -> Result<&'static [(u8, bool)], Error> {
     match kind {
         1..=5 => Ok(&[(1, false)]),
-        10 if matches!(profile, AccountProfile::QuotaV3 | AccountProfile::TasksV4) => {
+        10 if matches!(
+            profile,
+            AccountProfile::QuotaV3 | AccountProfile::TasksV4 | AccountProfile::TasksV5
+        ) =>
+        {
             Ok(&[(1, false)])
         }
-        11 if matches!(profile, AccountProfile::QuotaV3 | AccountProfile::TasksV4) => {
+        11 if matches!(
+            profile,
+            AccountProfile::QuotaV3 | AccountProfile::TasksV4 | AccountProfile::TasksV5
+        ) =>
+        {
             Ok(&[(1, false), (2, false)])
         }
+        18..=20 if profile == AccountProfile::TasksV5 => Ok(&[(1, false)]),
+        21 | 22 if profile == AccountProfile::TasksV5 => Ok(&[(1, false), (2, false)]),
         18 | 20 if profile == AccountProfile::TasksV4 => Ok(&[(1, false)]),
         21 if profile == AccountProfile::TasksV4 => Ok(&[(1, false), (2, false)]),
         REGISTER => Ok(&[(2, true)]),
@@ -186,10 +203,14 @@ fn check(profile: AccountProfile, common: &Common, kind: u8, payload: &[u8]) -> 
         2 if payload.len() == 80 => {}
         3 if payload.len() == 32 => {}
         4 | 5 if payload.len() == 64 => {}
-        10 if matches!(profile, AccountProfile::QuotaV3 | AccountProfile::TasksV4)
-            && payload.len() == 112 => {}
-        11 if matches!(profile, AccountProfile::QuotaV3 | AccountProfile::TasksV4)
-            && payload.len() == 72 => {}
+        10 if matches!(
+            profile,
+            AccountProfile::QuotaV3 | AccountProfile::TasksV4 | AccountProfile::TasksV5
+        ) && payload.len() == 112 => {}
+        11 if matches!(
+            profile,
+            AccountProfile::QuotaV3 | AccountProfile::TasksV4 | AccountProfile::TasksV5
+        ) && payload.len() == 72 => {}
         18 if profile == AccountProfile::TasksV4 => {
             crate::qualified_work_task::pq_lifecycle_v4::DemandLeaseV4::decode(payload)
                 .map_err(|_| Error::Encoding)?;
@@ -200,6 +221,26 @@ fn check(profile: AccountProfile, common: &Common, kind: u8, payload: &[u8]) -> 
         }
         21 if profile == AccountProfile::TasksV4 => {
             crate::qualified_work_task::pq_lifecycle_v4::TaskRegistrationV4::decode(payload)
+                .map_err(|_| Error::Encoding)?;
+        }
+        18 if profile == AccountProfile::TasksV5 => {
+            crate::qualified_work_task::pq_lifecycle_v5::DemandLeaseV5::decode(payload)
+                .map_err(|_| Error::Encoding)?;
+        }
+        19 if profile == AccountProfile::TasksV5 => {
+            crate::qualified_work_task::pq_lifecycle_v5::DemandRenewalV5::decode(payload)
+                .map_err(|_| Error::Encoding)?;
+        }
+        20 if profile == AccountProfile::TasksV5 => {
+            crate::qualified_work_task::pq_lifecycle_v5::DemandRevocationV5::decode(payload)
+                .map_err(|_| Error::Encoding)?;
+        }
+        21 if profile == AccountProfile::TasksV5 => {
+            crate::qualified_work_task::pq_lifecycle_v5::TaskRegistrationV5::decode(payload)
+                .map_err(|_| Error::Encoding)?;
+        }
+        22 if profile == AccountProfile::TasksV5 => {
+            crate::qualified_work_task::pq_lifecycle_v5::AtomicRenewTaskV5::decode(payload)
                 .map_err(|_| Error::Encoding)?;
         }
         REGISTER if payload.len() == 8 && number(payload, 0)? == 1 => {}
@@ -284,12 +325,15 @@ fn key_bytes(
         }
         let generation = match role {
             1 | 3 => common.generation,
-            2 if matches!(profile, AccountProfile::QuotaV3 | AccountProfile::TasksV4)
-                && kind == 11 =>
+            2 if matches!(
+                profile,
+                AccountProfile::QuotaV3 | AccountProfile::TasksV4 | AccountProfile::TasksV5
+            ) && kind == 11 =>
             {
                 key.generation
             }
             2 if profile == AccountProfile::TasksV4 && kind == 21 => key.generation,
+            2 if profile == AccountProfile::TasksV5 && matches!(kind, 21 | 22) => key.generation,
             2 | 6 => 1,
             4 => number(payload, 0)?,
             5 => key.generation, // Independently pinned anchor generation is checked by State.
@@ -431,7 +475,9 @@ impl<'a> UnverifiedEnvelope<'a> {
         let kind = raw[5];
         let expected = roles(profile, kind)?;
         let body_len = u32::from_be_bytes(bytes(raw, 8)?) as usize;
-        let max_payload = if profile == AccountProfile::TasksV4 {
+        let max_payload = if profile == AccountProfile::TasksV5 {
+            crate::qualified_work_task::pq_lifecycle_v5::ATOMIC_RENEW_TASK_BYTES
+        } else if profile == AccountProfile::TasksV4 {
             crate::qualified_work_task::pq_lifecycle_v4::TASK_REGISTRATION_BYTES
         } else {
             554

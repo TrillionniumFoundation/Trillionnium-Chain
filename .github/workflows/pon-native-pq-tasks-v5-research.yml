@@ -1,0 +1,84 @@
+name: Native PQ task renewal v5 research
+on:
+  pull_request:
+    paths:
+      - .github/workflows/pon-native-pq-tasks-v5-research.yml
+      - scripts/ci/run_native_pq_tasks_v5.py
+      - scripts/ci/run_native_pq_accounts_v2.py
+      - scripts/ci/run_native_pq_quota_v3.py
+      - scripts/ci/ci_observation.py
+      - scripts/ci/verify_ci_source.py
+      - scripts/ci/test_native_pq_tasks_v5_research.py
+      - scripts/ci/native_pq_tasks_v4_unit_contract.py
+      - scripts/ci/run_native_pq_tasks_v4.py
+      - trillionnium/Cargo.toml
+      - trillionnium/Cargo.lock
+      - trillionnium/crates/trnm-protocol/**
+      - trillionnium/crates/trnm-crypto-primitives/**
+      - trillionnium/crates/trnm-mvcc-fee/**
+      - trillionnium/crates/trnm-pon-node/**
+      - config/**
+      - rust-toolchain.toml
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: native-pq-tasks-v5-${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+  cancel-in-progress: false
+jobs:
+  native-pq:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      CI: "true"
+      CARGO_INCREMENTAL: "0"
+      CARGO_BUILD_JOBS: "1"
+      CARGO_PROFILE_DEV_DEBUG: "0"
+      CARGO_PROFILE_TEST_DEBUG: "0"
+      RUST_TEST_THREADS: "1"
+      RUSTUP_TOOLCHAIN: "1.95.0"
+      PYTHONDONTWRITEBYTECODE: "1"
+      EXPECTED_HEAD: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - name: Checkout exact head without retained credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.EXPECTED_HEAD }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify source and isolate actual observations
+        run: |
+          set -euo pipefail
+          echo "CARGO_HOME=$RUNNER_TEMP/native-pq5-cargo" >> "$GITHUB_ENV"
+          echo "CARGO_TARGET_DIR=$RUNNER_TEMP/native-pq5-target" >> "$GITHUB_ENV"
+          echo "OUT=$RUNNER_TEMP/native-pq5-observations" >> "$GITHUB_ENV"
+          mkdir -p "$RUNNER_TEMP/native-pq5-observations"
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$EXPECTED_HEAD" --output "$RUNNER_TEMP/native-pq5-observations/source-before.json" 2>&1 | tee "$RUNNER_TEMP/native-pq5-observations/source-guard-before.log"
+          bash scripts/project-preflight.sh --audit 2>&1 | tee "$RUNNER_TEMP/native-pq5-observations/preflight.log"
+      - name: Install repository-pinned native compiler and checks
+        timeout-minutes: 5
+        run: |
+          set -euo pipefail
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy 2>&1 | tee "$OUT/rustup.log"
+      - name: Refuse compiled-only, missing, ignored and filtered success claims
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/test_native_pq_tasks_v5_research.py 2>&1 | tee "$OUT/reader-negatives.log"
+      - name: Execute real requester/source permissions and all retained PQ1 PQ2 PQ3 PQ4 paths
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/run_native_pq_tasks_v5.py --expected-head "$EXPECTED_HEAD" --output "$OUT/run" 2>&1 | tee "$OUT/controller.log"
+      - name: Verify final exact source regardless of test outcome
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/native-pq5-observations"
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$EXPECTED_HEAD" --output "$RUNNER_TEMP/native-pq5-observations/source-after.json" 2>&1 | tee "$RUNNER_TEMP/native-pq5-observations/source-guard-after.log"
+      - name: Retain successes and all actual failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-pq-tasks-v5-${{ env.EXPECTED_HEAD }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/native-pq5-observations/
+          if-no-files-found: error
+          retention-days: 30

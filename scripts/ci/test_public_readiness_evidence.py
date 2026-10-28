@@ -728,6 +728,7 @@ class NativeDurableSchemaTests(unittest.TestCase):
             'trillionnium/crates/trnm-pon-node/src/pq_accounts_v2.rs',
             'trillionnium/crates/trnm-pon-node/src/pq_quota_v3.rs',
             'trillionnium/crates/trnm-pon-node/src/pq_tasks_v4.rs',
+            'trillionnium/crates/trnm-pon-node/src/pq_tasks_v5.rs',
             'trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_native_v1.rs',
             'trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs',
         )}
@@ -1204,7 +1205,8 @@ class NativeDurableSchemaTests(unittest.TestCase):
         for version,module,domain in ((1,'pq_native_v1','native-pq-transfer-branch-schema-v1'),
                                       (2,'pq_accounts_v2','native-pq-accounts-branch-schema-v2'),
                                       (3,'pq_quota_v3','native-pq-quota-branch-schema-v3'),
-                                      (4,'pq_tasks_v4','native-pq-task-branch-schema-v4')):
+                                      (4,'pq_tasks_v4','native-pq-task-branch-schema-v4'),
+                                      (5,'pq_tasks_v5','native-pq-task-branch-schema-v5')):
             selector = 'settings.is_native_pq_v'+str(version)+'()'
             for part in (ddl,schema):
                 changes.append((part,self.replace_once(part,selector,'false')))
@@ -1226,14 +1228,14 @@ class NativeDurableSchemaTests(unittest.TestCase):
         node = 'trillionnium/crates/trnm-pon-node/src/'
         executor = 'trillionnium/crates/trnm-mvcc-fee/src/pon_executor/'
         changes = []
-        for version,module in ((1,'pq_native_v1'),(2,'pq_accounts_v2'),(3,'pq_quota_v3'),(4,'pq_tasks_v4')):
+        for version,module in ((1,'pq_native_v1'),(2,'pq_accounts_v2'),(3,'pq_quota_v3'),(4,'pq_tasks_v4'),(5,'pq_tasks_v5')):
             path = node+module+'.rs'; source = self.auxiliary[path]
             method = self.function_part(source,'is_native_pq_v'+str(version))
             changed = method[:method.index('{')+1]+' false }'
             changes.append((path,self.replace_once(source,method,changed)))
             changes.append((path,self.replace_once(source,'impl Settings {','#[cfg(any())]\nimpl Settings {')))
             changes.append((path,self.replace_once(source,'use trnm_mvcc_fee::','use forged_mvcc::')))
-        for module,method in (('pq_native_v1','enabled'),('pq_accounts_v2','enabled'),('pq_accounts_v2','quota_v3_enabled'),('pq_accounts_v2','tasks_v4_enabled')):
+        for module,method in (('pq_native_v1','enabled'),('pq_accounts_v2','enabled'),('pq_accounts_v2','quota_v3_enabled'),('pq_accounts_v2','tasks_v4_enabled'),('pq_accounts_v2','tasks_v5_enabled')):
             path = executor+module+'.rs'; source = self.auxiliary[path]
             part = self.function_part(source,method)
             changed = part[:part.index('{')+1]+' false }'
@@ -1252,6 +1254,22 @@ class NativeDurableSchemaTests(unittest.TestCase):
         for path,changed in changes:
             with self.subTest(path=path,tail=changed[-40:]),self.assertRaisesRegex(ValueError,'durable (?:PQ (?:settings selector|selector provider owner|executor selector)|source item trnm_mvcc_fee)'):
                 self.extract(self.current,auxiliary={path:changed})
+
+    def test_pq5_selector_exclusion_and_separate_profile_never_borrow_legacy_qualification(self):
+        node='trillionnium/crates/trnm-pon-node/src/'
+        executor='trillionnium/crates/trnm-mvcc-fee/src/pon_executor/'
+        changes=[]
+        path=node+'pq_accounts_v2.rs'; source=self.auxiliary[path]
+        changes.append((path,self.replace_once(source,'&& !pq::tasks_v5_enabled(&self.app)','')))
+        path=node+'pq_tasks_v5.rs'; source=self.auxiliary[path]
+        changes.append((path,self.replace_once(source,'pq::tasks_v5_enabled(&self.app)','pq::tasks_v4_enabled(&self.app)')))
+        path=executor+'pq_accounts_v2.rs'; source=self.auxiliary[path]
+        part=self.function_part(source,'tasks_v5_enabled')
+        changes.append((path,self.replace_once(source,part,self.replace_once(part,'AccountProfile::TasksV5','AccountProfile::TasksV4'))))
+        for path,changed in changes:
+            with self.subTest(path=path),self.assertRaisesRegex(ValueError,'durable PQ (?:settings selector|executor selector)'):
+                self.extract(self.current,auxiliary={path:changed})
+        self.assertEqual(self.extract(self.current)[1],'native-branch-schema-v2')
 
     def test_pq_explicit_constructor_guards_cannot_be_weakened_or_moved(self):
         prefix = check.pq_contract.OPENING_PREFIX
@@ -1282,7 +1300,8 @@ class NativeDurableSchemaTests(unittest.TestCase):
         for replacement in ('Some(crate::native_packet::Profile::Pq1)',
                             'Some(crate::native_packet::Profile::Pq2)',
                             'Some(crate::native_packet::Profile::Pq3)',
-                            'Some(crate::native_packet::Profile::Pq4)'):
+                            'Some(crate::native_packet::Profile::Pq4)',
+                            'Some(crate::native_packet::Profile::Pq5)'):
             changed = self.replace_once(bridge,'pq_explicit: None,','pq_explicit: '+replacement+',')
             with self.subTest(profile=replacement),self.assertRaisesRegex(ValueError,'durable backend selector bridge'):
                 self.extract(self.replace_once(self.current,bridge,changed))
@@ -1310,10 +1329,13 @@ class NativeDurableSchemaTests(unittest.TestCase):
              'Profile::Legacy => packet.encode_for_native_profile(true)'),
             ('if self.is_native_pq_v3()','if false'),
             ('if self.is_native_pq_v4()','if false'),
+            ('if self.is_native_pq_v5()','if false'),
+            ('Profile::Pq5 => Ok(crate::pq_tasks_v5::PqPacketV5::decode(raw)?.inner)',
+             'Profile::Pq5 => Ok(crate::pq_tasks_v4::PqPacketV4::decode(raw)?.inner)'),
             ('Profile::Pq4 => Ok(crate::pq_tasks_v4::PqPacketV4::decode(raw)?.inner)',
              'Profile::Pq4 => Ok(crate::pq_quota_v3::PqPacketV3::decode(raw)?.inner)'),
             ('} else {\n            Profile::Legacy','} else {\n            Profile::Pq1'),
-            ('Profile::Pq2 | Profile::Pq3 | Profile::Pq4 => HEADER_BYTES + 8','Profile::Pq2 | Profile::Pq3 | Profile::Pq4 => HEADER_BYTES'),
+            ('Profile::Pq2 | Profile::Pq3 | Profile::Pq4 | Profile::Pq5 => HEADER_BYTES + 8','Profile::Pq2 | Profile::Pq3 | Profile::Pq4 | Profile::Pq5 => HEADER_BYTES'),
         ]
         for before,after in mutations:
             changed = self.replace_once(source,before,after)
@@ -1322,7 +1344,7 @@ class NativeDurableSchemaTests(unittest.TestCase):
 
     def test_pq_packet_module_owner_cannot_be_cfg_path_or_alias_substituted(self):
         path = 'trillionnium/crates/trnm-pon-node/src/lib.rs'; source = self.auxiliary[path]
-        for declaration in ('mod native_packet;','pub mod pq_native_v1;','pub mod pq_accounts_v2;','pub mod pq_quota_v3;','pub mod pq_tasks_v4;'):
+        for declaration in ('mod native_packet;','pub mod pq_native_v1;','pub mod pq_accounts_v2;','pub mod pq_quota_v3;','pub mod pq_tasks_v4;','pub mod pq_tasks_v5;'):
             for replacement in ('#[cfg(any())]\n'+declaration,'#[path="other.rs"]\n'+declaration,
                                 'mod hidden { '+declaration+' }',declaration+'\n'+declaration):
                 with self.subTest(declaration=declaration,replacement=replacement),self.assertRaisesRegex(ValueError,'durable (?:PQ packet module owner|source item)'):
@@ -1345,7 +1367,7 @@ class NativeDurableSchemaTests(unittest.TestCase):
                 self.extract(self.current,auxiliary={path:changed})
 
     def test_ancestry_context_and_projected_header_share_the_selected_profile(self):
-        for selected in ('crate::native_packet::Profile::Legacy','crate::native_packet::Profile::Pq3','crate::native_packet::Profile::Pq4'):
+        for selected in ('crate::native_packet::Profile::Legacy','crate::native_packet::Profile::Pq3','crate::native_packet::Profile::Pq4','crate::native_packet::Profile::Pq5'):
             changed = self.replace_once(self.current,'pq_packet: self.settings.packet_profile(),','pq_packet: '+selected+',')
             with self.subTest(selected=selected),self.assertRaisesRegex(ValueError,'durable PQ ancestry context selection'):
                 self.extract(changed)

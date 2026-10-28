@@ -4851,3 +4851,32 @@ Remaining concrete model/evaluation tags 6–9/12–17/23–24, renewal 19/22,
 independent migration/retirement, custody, transport, History and Hepta authority
 owners are listed explicitly. P1 completion, whole-chain PQ and activation remain
 false while the new native gate and those owners remain open.
+
+#### P1 NPQ5 task-renewal continuation — 2026-10-28 (candidate / native gate OPEN)
+
+The [fresh NPQ5/PQP5 continuation](../../evidence/pon-pq-task-renewal-v5-20261028/README.md)
+adds atomic requester/source command 22 and explicit requester command 19 →
+`awaiting-source` → current-source command 21. Actual State owners, current keys,
+nonce, old revision and prior statement are resolved again before the fee patch.
+Current, initial and last dual-authorized leases remain separate, so an earlier
+source proof cannot authorize an extended window. Five bounded witness leaves
+retain the complete 8,274-byte atomic proof without changing the original
+4,096-byte value, 524,288-byte transaction-sum or 1 MiB packet limits. All size
+and 32-slot capacity claims remain executable expectations pending native runs.
+
+Ordinary Node pool/material/W1/output/activation/cold paths share the fresh
+namespace. Local withdrawal uses a State-derived stable lineage across renewal
+revisions and heavier forks; cold replay binds actual first-activation packets,
+transaction roots, revisions and SQL history. Parent-authorized output in a
+renewal block is preserved without granting future work to a pending revision.
+V5 has no trusted migration constructor, and old profiles refuse its encodings.
+
+Actual local observations include metadata-only Rust/Clippy and a complete
+76-test strict legacy-reader run; they do not claim native acceptance. The
+mandatory hosted gate requires all original 180 cases/eight ignores plus
+24 new passing cases, all 37 V5 and 26 retained V4 full-W1 phases, and fresh
+locked Cargo/strict Clippy under unchanged budgets. New native execution is
+NOT_RUN locally at the shared-resource stop line. The earlier NPQ4 hosted
+success belongs to its own source. Remaining model/retired-key authority,
+independent migration/retirement, full V5 independent runtime review,
+whole-chain PQ, P1 completion and activation remain open.

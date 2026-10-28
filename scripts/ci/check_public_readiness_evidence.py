@@ -212,7 +212,7 @@ def native_durable_schema(root):
 
     Historical literal V1, inline composed V2 and the explicitly selected V2
     backend, including its exact held-I/O and physical-layout delegation, are supported.
-    The explicit NPQ1/2/3 successor also requires its closed selector, guard
+    The explicit NPQ1/2/3/4/5 successor also requires its closed selector, guard
     and original Legacy header path. Authenticated, shared-account, PQ and growth storage
     are different evidence scopes; recognizing their exact backend mappings
     must never append their tables or return their domains in this legacy result.
@@ -372,7 +372,7 @@ def native_durable_schema(root):
             layout(body(source,'enum','StateBackend'),'Legacy, AuthenticatedV1, PermanentAccountGrowthV2,',
                    'durable backend variants')
             implementation = body(source,'impl','StateBackend')
-            pq_selected = re.search(r'\b(?:pq_explicit|selected_ddl|pq_native_v1|pq_accounts_v2|pq_quota_v3|pq_tasks_v4)\b',code) is not None
+            pq_selected = re.search(r'\b(?:pq_explicit|selected_ddl|pq_native_v1|pq_accounts_v2|pq_quota_v3|pq_tasks_v4|pq_tasks_v5)\b',code) is not None
             if pq_selected:
                 pq_contract.exact(item_prefix(source,'impl','StateBackend','{'),
                                   'impl StateBackend','durable backend PQ owner')

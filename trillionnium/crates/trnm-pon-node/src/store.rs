@@ -21,6 +21,7 @@ pub(crate) mod pq_accounts_v2;
 pub(crate) mod pq_native_v1;
 pub(crate) mod pq_quota_v3;
 pub(crate) mod pq_tasks_v4;
+pub(crate) mod pq_tasks_v5;
 #[cfg(test)]
 pub(crate) mod public_reader;
 mod root_rejection_cache;
@@ -166,6 +167,7 @@ pub(crate) enum ParentTaskEligibility {
     Signed(Box<QualifiedWorkTask>),
     Lifecycle(Box<qualified_task_lifecycle::EligibleLifecycleTask>),
     PqTask(Box<trnm_mvcc_fee::pon_executor::pq_accounts_v2::tasks_v4::EligibleTaskV4>),
+    PqTaskV5(Box<trnm_mvcc_fee::pon_executor::pq_accounts_v2::tasks_v5::EligibleTaskV5>),
 }
 impl ParentTaskEligibility {
     fn manifest(&self) -> Option<&QualifiedWorkTask> {
@@ -174,6 +176,7 @@ impl ParentTaskEligibility {
             Self::Signed(manifest) => Some(manifest),
             Self::Lifecycle(eligible) => Some(eligible.manifest()),
             Self::PqTask(eligible) => Some(eligible.manifest()),
+            Self::PqTaskV5(eligible) => Some(eligible.manifest()),
         }
     }
 }
@@ -704,7 +707,9 @@ impl StateBackend {
         }
     }
     fn selected_ddl(self, settings: &Settings) -> String {
-        if settings.is_native_pq_v4() {
+        if settings.is_native_pq_v5() {
+            pq_tasks_v5::ddl(self.ddl())
+        } else if settings.is_native_pq_v4() {
             pq_tasks_v4::ddl(self.ddl())
         } else if settings.is_native_pq_v3() {
             pq_quota_v3::ddl(self.ddl())
@@ -717,6 +722,12 @@ impl StateBackend {
         }
     }
     fn selected_schema_id(self, settings: &Settings) -> Hash {
+        if settings.is_native_pq_v5() {
+            return hash(
+                b"native-pq-task-branch-schema-v5",
+                &[self.selected_ddl(settings).as_bytes()],
+            );
+        }
         if settings.is_native_pq_v4() {
             return hash(
                 b"native-pq-task-branch-schema-v4",
@@ -2323,7 +2334,7 @@ impl Node {
             .map_err(|error| Error::from(error).local_integrity())?;
         trnm_mvcc_fee::pon_executor::pq_native_v1::validate_state(state, &self.settings.app)
             .map_err(|error| Error::from(error).local_integrity())?;
-        if self.settings.is_native_pq_v4() {
+        if self.settings.is_native_pq_v4() || self.settings.is_native_pq_v5() {
             trnm_mvcc_fee::pon_executor::pq_accounts_v2::validate_state(state, &self.settings.app)
                 .map_err(|error| Error::from(error).local_integrity())?;
         }
@@ -2555,6 +2566,7 @@ impl Node {
         if self.settings.is_native_pq_v2()
             || self.settings.is_native_pq_v3()
             || self.settings.is_native_pq_v4()
+            || self.settings.is_native_pq_v5()
         {
             trnm_mvcc_fee::pon_executor::pq_accounts_v2::validate_state(actual, &self.settings.app)
                 .map_err(|error| Error::from(error).local_integrity())?;
@@ -4653,6 +4665,15 @@ impl Node {
             continuity_v1::check_maintenance(state, task, &self.settings.app)?;
             return Ok(ParentTaskEligibility::ConsensusMaintenance);
         }
+        if self.settings.is_native_pq_v5() {
+            let eligible = trnm_mvcc_fee::pon_executor::pq_accounts_v2::tasks_v5::eligible_task(
+                state,
+                task,
+                height,
+                &self.settings.app,
+            )?;
+            return Ok(ParentTaskEligibility::PqTaskV5(Box::new(eligible)));
+        }
         if self.settings.is_native_pq_v4() {
             let eligible = trnm_mvcc_fee::pon_executor::pq_accounts_v2::tasks_v4::eligible_task(
                 state,
@@ -4914,6 +4935,18 @@ impl Node {
         product: &[u8],
     ) -> Result<bool> {
         match eligible {
+            ParentTaskEligibility::PqTaskV5(task) => {
+                ensure(product.len() == pon_work::CELLS * 4, "TASK_OUTPUT")?;
+                Ok(
+                    trnm_mvcc_fee::pon_executor::pq_accounts_v2::tasks_v5::consume_output(
+                        state,
+                        task,
+                        hash(b"qualified-task-product-v1", &[product]),
+                        height,
+                        &self.settings.app,
+                    )?,
+                )
+            }
             ParentTaskEligibility::PqTask(task) => {
                 ensure(product.len() == pon_work::CELLS * 4, "TASK_OUTPUT")?;
                 Ok(
@@ -5101,6 +5134,7 @@ impl Node {
                 .map_err(Error::local_integrity)?;
                 self.check_events_with_progress(next, &[(0, 1, target)], progress)?;
                 self.pq_tasks_remember_revocations(target, next)?;
+                self.pq_tasks_v5_remember_revocations(target, next)?;
                 Ok(())
             })?;
             ensure(
@@ -5419,6 +5453,7 @@ impl Node {
             for &(_, kind, id) in &expected {
                 if kind == 1 {
                     self.pq_tasks_remember_revocations(id, g)?;
+                    self.pq_tasks_v5_remember_revocations(id, g)?;
                 }
             }
             self.check_persisted_state(
