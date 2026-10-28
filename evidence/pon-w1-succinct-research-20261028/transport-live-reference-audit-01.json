@@ -1,0 +1,280 @@
+{
+  "materials": [
+    {
+      "allocated_bytes": 80371712,
+      "bytes": 80366759,
+      "ctime_ns": 1793150032138579556,
+      "device": 27,
+      "inode": 60551,
+      "mtime_ns": 1793150032066582291,
+      "path": "/workspace/scratch/bb9b841c1d43/w1-observation/a54-run-40608715148/assembly.zip",
+      "remote_name": "assembly-original.zip",
+      "remote_parts": [
+        {
+          "bytes": 4194304,
+          "git_blob_sha1": "e78b305f775d18fd3ebec3b8e09e96606c887910",
+          "path": "evidence/pon-w1-complete-artifacts-20261028/assembly-original.zip.part000",
+          "sha256": "7dbb122370903b51ee7f3c9b26c54c88f81f470f86bcfd632a4d71d8f096499b"
+        },
+        {
+          "bytes": 4194304,
+          "git_blob_sha1": "ea20f9b9c3a2a648eb5a553b12d619751bcb4e29",
+          "path": "evidence/pon-w1-complete-artifacts-20261028/assembly-original.zip.part001",
+          "sha256": "66f94c57c0c213596ef20cad11cd1528a881abfe837dfc6159f385a23dfc524a"
+        },
+        {
+          "bytes": 4194304,
+          "git_blob_sha1": "ef3166c72606dc49274a6a1ec9c6fdf07b83a3a0",
+          "path": "evidence/pon-w1-complete-artifacts-20261028/assembly-original.zip.part002",
+          "sha256": "7120e8ef62641ba56ef60481fefb01a5d390f44a6ba48b0887f74d27bda8ec04"
+        },
+        {
+          "bytes": 4194304,
+          "git_blob_sha1": "15f9f351d711535f726453c73eb004225dea5a42",
+          "path": "evidence/pon-w1-complete-artifacts-20261028/assembly-original.zip.part003",
+          "sha256": "e1c81de9fabc29c2ca5cd1e5ac6e88a3cd88ac8ee40b631e4cb303216f3cbcf3"
+        },
+        {
+          "bytes": 4194304,
+          "git_blob_sha1": "bb56a11403ecb0b2f66a61e57fc1c4b69655f07a",
+          "path": "evidence/pon-w1-complete-artifacts-20261028/assembly-original.zip.part004",
+          "sha256": "df62c587d202b41bf897d551fccfb8ace0d5ac4b2ed340cd6794536ef1fb6b10"
+        },
+        {
+          "bytes": 4194304,
+          "git_blob_sha1": "a08174b75431a44ff9fd1686d967e209e09b9559",
+          "path": "evidence/pon-w1-complete-artifacts-20261028/assembly-original.zip.part005",
+          "sha256": "8856c4ba01c986bb1a6eaff6039fa3774fd8c85efa6c0f951f6d255fff943467"
+        },
+        {
+          "bytes": 4194304,
+          "git_blob_sha1": "36cef262ae1c5c1dd7e2c05449148fde0130d2bd",
+          "path": "evidence/pon-w1-complete-artifacts-20261028/assembly-original.zip.part006",
+          "sha256": "4aa9cc88a3e097910f34a530fe0851501dbe9ae14ab01db19085ba467b5baffb"
+        },
+        {
+          "bytes": 4194304,
+          "git_blob_sha1": "72f2e1eb6077015e433486931e9fa58f0714f3a8",
+          "path": "evidence/pon-w1-complete-artifacts-20261028/assembly-original.zip.part007",
+          "sha256": "0120e56c1ce0c421ec88fd8abf905806b0c1f694d688fc35008b995c97c1a08b"
+        },
+        {
+          "bytes": 4194304,
+          "git_blob_sha1": "9c0d3f7cf2fff572ee4491789c23abfab00c0991",
+          "path": "evidence/pon-w1-complete-artifacts-20261028/assembly-original.zip.part008",
+          "sha256": "a72ae2e9c61bc25d1f9697b00c5e7c9466397f9f26d574b5dd5d45fb8cadcc69"
+        },
+        {
+          "bytes": 4194304,
+          "git_blob_sha1": "ef80aba63de116ddc75eb5d05f91b505e2cd85d5",
+          "path": "evidence/pon-w1-complete-artifacts-20261028/assembly-original.zip.part009",
+          "sha256": "7c701e382fb5365b495188db89581aae6c096be951c5a55ceb807ceace454113"
+        },
+        {
+          "bytes": 4194304,
+          "git_blob_sha1": "30f9599eedd4dcfb959f7437936eea643a2459f2",
+          "path": "evidence/pon-w1-complete-artifacts-20261028/assembly-original.zip.part010",
+          "sha256": "1ca2f6b6abda33aa3be3ef1a050967ad70b4f832ca0c23072d1155735b8fbe09"
+        },
+        {
+          "bytes": 4194304,
+          "git_blob_sha1": "200bdbf014398628f2c332851af307cb0b9bbef4",
+          "path": "evidence/pon-w1-complete-artifacts-20261028/assembly-original.zip.part011",
+          "sha256": "dea451d49d7f1fd3f4dfbc146f7ecd6717e8011cdf2acfbd832116e1eef5cab3"
+        },
+        {
+          "bytes": 4194304,
+          "git_blob_sha1": "470773319ffd2917fff6f2b8ee650a48051d8d35",
+          "path": "evidence/pon-w1-complete-artifacts-20261028/assembly-original.zip.part012",
+          "sha256": "b9aaa5c82fa9e96f7fecefa4b3e36b0a18d81fda5e480a94f129ad5ebe7b8e00"
+        },
+        {
+          "bytes": 4194304,
+          "git_blob_sha1": "b91e74c0abdedf489950c8783c7c1649648a41d9",
+          "path": "evidence/pon-w1-complete-artifacts-20261028/assembly-original.zip.part013",
+          "sha256": "ca9ff553f83b23f976e82bd0e6f42073e4b8890290fe31c8405ad0f7c69572c3"
+        },
+        {
+          "bytes": 4194304,
+          "git_blob_sha1": "1057ff80520aebffeb63242d48a1f5820e528423",
+          "path": "evidence/pon-w1-complete-artifacts-20261028/assembly-original.zip.part014",
+          "sha256": "15f76f95e45aa4d1479110b58ad275a19ac6270be2feb1c2a177a1a4dce3bda7"
+        },
+        {
+          "bytes": 4194304,
+          "git_blob_sha1": "07efbfddb26e3f2880484201f97ab4e9d6927227",
+          "path": "evidence/pon-w1-complete-artifacts-20261028/assembly-original.zip.part015",
+          "sha256": "0911ed69dfa87a03552c0c2db6ad2147a331dc3d0b64e21f9ba6f57b107b7217"
+        },
+        {
+          "bytes": 4194304,
+          "git_blob_sha1": "56fc89b56049b3d94eabea166f29ff9c9f81f347",
+          "path": "evidence/pon-w1-complete-artifacts-20261028/assembly-original.zip.part016",
+          "sha256": "f553fc831e96ae8e0cd7f05ab285f29f3b224b8e52ffd8e8dd2ada1f31b78049"
+        },
+        {
+          "bytes": 4194304,
+          "git_blob_sha1": "ecbec0a886de8be1e9da50196020c502d16c5e5d",
+          "path": "evidence/pon-w1-complete-artifacts-20261028/assembly-original.zip.part017",
+          "sha256": "a9047cba21a69299815ed6d7ceaba82edc12e12fdbc3987186894035a53ea7b0"
+        },
+        {
+          "bytes": 4194304,
+          "git_blob_sha1": "e95a677342284ef8e7396411ab70050a90fddaab",
+          "path": "evidence/pon-w1-complete-artifacts-20261028/assembly-original.zip.part018",
+          "sha256": "950afdbdfce012e132c7e8e2d8a46325e09cc7b8e4732bb903feb5754372b325"
+        },
+        {
+          "bytes": 674983,
+          "git_blob_sha1": "c9d4cc75b8912072377e172b555da644407840d1",
+          "path": "evidence/pon-w1-complete-artifacts-20261028/assembly-original.zip.part019",
+          "sha256": "87fe60de1d31111698291f697b43221248c328f018996804946ecc511c6900bf"
+        }
+      ],
+      "sha256": "bae22e7fab8f5475dc396a4225292f90e582a92558fecf1710e30da0b0d76ecc"
+    },
+    {
+      "allocated_bytes": 14450688,
+      "bytes": 14450432,
+      "ctime_ns": 1793149593367328976,
+      "device": 27,
+      "inode": 55430,
+      "mtime_ns": 1793149593367328976,
+      "path": "/workspace/scratch/bb9b841c1d43/w1-observation/a54-run-40608715148/shard0.zip",
+      "remote_name": "shard0-original.zip",
+      "remote_parts": [
+        {
+          "bytes": 4194304,
+          "git_blob_sha1": "6d809e87025e699a07e5fa652c35507575a61183",
+          "path": "evidence/pon-w1-complete-artifacts-20261028/shard0-original.zip.part000",
+          "sha256": "ad817f2e449e892ec2a75abb8e9cb5e17cdc227f74282ce344daed7555a6a99f"
+        },
+        {
+          "bytes": 4194304,
+          "git_blob_sha1": "dd77deecaf3408b61332bec5fede2b35c97083cc",
+          "path": "evidence/pon-w1-complete-artifacts-20261028/shard0-original.zip.part001",
+          "sha256": "37147307019209d77028257a90dc062db1c3663452730f2b8352ab0ca01867f3"
+        },
+        {
+          "bytes": 4194304,
+          "git_blob_sha1": "0daabaa9b18d73699784c1a6d36ede6ea441fcb2",
+          "path": "evidence/pon-w1-complete-artifacts-20261028/shard0-original.zip.part002",
+          "sha256": "a64369c922f7c7cb380f133899a892601fea816f39de646fa2fa9116775f2c70"
+        },
+        {
+          "bytes": 1867520,
+          "git_blob_sha1": "0f8c84b32cf0cb3ab0d5096e6ceda4f6778a115e",
+          "path": "evidence/pon-w1-complete-artifacts-20261028/shard0-original.zip.part003",
+          "sha256": "76cc62c3820fcb95f915168d3f4eda3b9ebaac05cc309197ef3c79ff0f563068"
+        }
+      ],
+      "sha256": "a90812a8db8c84c64ef857fadda0cb14486c4e7a9037ee25946838707cc5cb39"
+    },
+    {
+      "allocated_bytes": 14442496,
+      "bytes": 14440397,
+      "ctime_ns": 1793149593899308172,
+      "device": 27,
+      "inode": 55413,
+      "mtime_ns": 1793149593899308172,
+      "path": "/workspace/scratch/bb9b841c1d43/w1-observation/a54-run-40608715148/shard1.zip",
+      "remote_name": "shard1-original.zip",
+      "remote_parts": [
+        {
+          "bytes": 4194304,
+          "git_blob_sha1": "00301edd9f3e14b5204e564be65d497808a603af",
+          "path": "evidence/pon-w1-complete-artifacts-20261028/shard1-original.zip.part000",
+          "sha256": "59ea11698b35dff91ab5a189f15311cfae82d3e70d185303dd32648879903b71"
+        },
+        {
+          "bytes": 4194304,
+          "git_blob_sha1": "5b48bf5986b05dfabd2428264dc9be28857a3ee4",
+          "path": "evidence/pon-w1-complete-artifacts-20261028/shard1-original.zip.part001",
+          "sha256": "7367098dfd3d734d92a5a5998450f5fd78fe5269038af7b5075398c4f284d161"
+        },
+        {
+          "bytes": 4194304,
+          "git_blob_sha1": "012003659a0aec3151e96465a027adf56c9c05a6",
+          "path": "evidence/pon-w1-complete-artifacts-20261028/shard1-original.zip.part002",
+          "sha256": "427a0d580346444de291e661d49cd9669fe328505d6b93c04f4bd61993c46c98"
+        },
+        {
+          "bytes": 1857485,
+          "git_blob_sha1": "c5aa31a7d75ebe02a871775ba4207102671b9f19",
+          "path": "evidence/pon-w1-complete-artifacts-20261028/shard1-original.zip.part003",
+          "sha256": "f92540e169be7af24cab862104922a8b064f373f7c6a3c660bf4b425b78ebb10"
+        }
+      ],
+      "sha256": "dae8139ad022c48dfbd18a20be0cdfe318728cd6a94b8d404044a8c3d451e9ea"
+    },
+    {
+      "allocated_bytes": 3506176,
+      "bytes": 3504734,
+      "ctime_ns": 1793149594219295657,
+      "device": 27,
+      "inode": 55389,
+      "mtime_ns": 1793149594219295657,
+      "path": "/workspace/scratch/bb9b841c1d43/solver-v3-readback/x86_64.zip",
+      "remote_name": "solver-v3-x86_64-original.zip",
+      "remote_parts": [
+        {
+          "bytes": 3504734,
+          "git_blob_sha1": "4f94e4bd9903451e155460f23697871a1b94acad",
+          "path": "evidence/pon-w1-complete-artifacts-20261028/solver-v3-x86_64-original.zip.part000",
+          "sha256": "01a8220a874ab7779a99287434c01b669c1e55d2c0f6b582ddeac937dc5a1191"
+        }
+      ],
+      "sha256": "01a8220a874ab7779a99287434c01b669c1e55d2c0f6b582ddeac937dc5a1191"
+    },
+    {
+      "allocated_bytes": 3198976,
+      "bytes": 3195037,
+      "ctime_ns": 1793149594479285489,
+      "device": 27,
+      "inode": 55382,
+      "mtime_ns": 1793149594479285489,
+      "path": "/workspace/scratch/bb9b841c1d43/solver-v3-readback/aarch64.zip",
+      "remote_name": "solver-v3-aarch64-original.zip",
+      "remote_parts": [
+        {
+          "bytes": 3195037,
+          "git_blob_sha1": "c3313bf1cbe2695953dcbadf6f97c36aa11c9612",
+          "path": "evidence/pon-w1-complete-artifacts-20261028/solver-v3-aarch64-original.zip.part000",
+          "sha256": "a82694b0b2102a77a2bfc6f50f76069fdb74f2b8ee74174fa006885e6cee7e55"
+        }
+      ],
+      "sha256": "a82694b0b2102a77a2bfc6f50f76069fdb74f2b8ee74174fa006885e6cee7e55"
+    }
+  ],
+  "mode": "audit",
+  "proc_audit": {
+    "errors": [],
+    "fds": 117,
+    "hits": [],
+    "identities": {
+      "1": "64",
+      "3": "216",
+      "4": "216",
+      "5": "217",
+      "6": "217",
+      "7": "217",
+      "161": "128895",
+      "269": "129109",
+      "517": "130229",
+      "664401": "6521106",
+      "664402": "6521338"
+    },
+    "maps": 11,
+    "processes": 11,
+    "strict_ok": true
+  },
+  "receipt_and_unique_extracted_files_preserved": true,
+  "recovery": "Fetch every listed part from the exact remote commit in listed order; check each part SHA-256 and Git blob SHA-1, concatenate, then verify whole object byte length and SHA-256.",
+  "remote_head": "303afe7a4581e67117bff135eed5892232aabb70",
+  "remote_readback": "/workspace/scratch/bb9b841c1d43/publication/w1-complete-remote-byte-readback.json",
+  "remote_readback_sha256": "68874164819c20af350f0b3243d593088705be9c22cb4f3bb9bfe868fc62ff32",
+  "removed": [],
+  "schema": "w1-archived-transport-retirement-v1",
+  "strict_febf_unpublished_artifacts_preserved": true,
+  "wall_time_unix": 1793152151.3841636
+}

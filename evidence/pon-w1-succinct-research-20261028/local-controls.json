@@ -1,0 +1,127 @@
+{
+  "available_bytes_at_end": 109359104,
+  "native_build": "NOT_RUN_LOCAL",
+  "native_build_stop_bytes": 734003200,
+  "native_gate": "NOT_RUN_LOCAL",
+  "no_native_build_or_proof_executed": true,
+  "remote_base_head": "303afe7a4581e67117bff135eed5892232aabb70",
+  "remote_base_tree": "6a1743eca58793a09809fb03dce5021755918f44",
+  "runs": [
+    {
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "name": "preflight",
+      "returncode": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "9e7eff6453088d93ebcfb398f93275f0d21bda9d6b065d2da7b99bdfe746d43f",
+      "wall_seconds": 0.08370966899383347
+    },
+    {
+      "command": [
+        "python3",
+        "/workspace/scratch/bb9b841c1d43/w1-succinct-research/trillionnium/crates/trnm-crypto-primitives/guests/w1-succinct/test_runner.py"
+      ],
+      "name": "python-controls",
+      "returncode": 0,
+      "stderr_sha256": "733ec4fd97956757bfae8df57ef028fbf7a94a5224e9b4046c48370acd4b000d",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wall_seconds": 0.2657989130093483
+    },
+    {
+      "command": [
+        "rustfmt",
+        "--edition",
+        "2021",
+        "/workspace/scratch/bb9b841c1d43/w1-succinct-research/trillionnium/crates/trnm-crypto-primitives/guests/w1-succinct/src/main.rs",
+        "/workspace/scratch/bb9b841c1d43/w1-succinct-research/trillionnium/crates/trnm-crypto-primitives/guests/w1-succinct/src/bounds.rs"
+      ],
+      "name": "rustfmt",
+      "returncode": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wall_seconds": 0.0534204290015623
+    },
+    {
+      "command": [
+        "rustfmt",
+        "--edition",
+        "2021",
+        "--check",
+        "/workspace/scratch/bb9b841c1d43/w1-succinct-research/trillionnium/crates/trnm-crypto-primitives/guests/w1-succinct/src/main.rs",
+        "/workspace/scratch/bb9b841c1d43/w1-succinct-research/trillionnium/crates/trnm-crypto-primitives/guests/w1-succinct/src/bounds.rs"
+      ],
+      "name": "rustfmt-check",
+      "returncode": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wall_seconds": 0.08707626099931076
+    },
+    {
+      "command": [
+        "cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--no-deps",
+        "--format-version",
+        "1",
+        "--manifest-path",
+        "/workspace/scratch/bb9b841c1d43/w1-succinct-research/trillionnium/crates/trnm-crypto-primitives/guests/w1-succinct/Cargo.toml"
+      ],
+      "name": "cargo-metadata-locked",
+      "returncode": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "8deff2ccac7a27a5069f6022639bccc86159f0adf058e1d81e86318cdb780998",
+      "wall_seconds": 0.04926395301299635
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "name": "inventory-check",
+      "returncode": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "wall_seconds": 0.17408460599835962
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "name": "ci-contract",
+      "returncode": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "9dc9c460bfb8a0da9730ff9e6acc8d76cbdf3bfd873c933e273c775ada8233b3",
+      "wall_seconds": 0.4300053329934599
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "name": "source-integrity",
+      "returncode": 0,
+      "stderr_sha256": "f5715da1e9be5033dd9d4683e1efeeb2c43ef1caeebb640881a177fecfc71c4d",
+      "stdout_sha256": "87a917d2cee8528a8a65d1cb02fb9b24133058f1013a0832954b51e2c7546aaa",
+      "wall_seconds": 5.993165740001132
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/check_repository.py"
+      ],
+      "name": "repository-check",
+      "returncode": 2,
+      "stderr_sha256": "e9d6779920685ac8631f9cfe3fc344fa5a64886cd36ed304305284c108a90361",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wall_seconds": 0.6627563899965025
+    }
+  ],
+  "schema": "w1-succinct-source-controls-v1",
+  "succinct_proof": "NOT_RUN"
+}

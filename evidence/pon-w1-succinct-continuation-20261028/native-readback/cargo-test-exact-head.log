@@ -1,0 +1,16 @@
+    Finished `release` profile [optimized] target(s) in 0.29s
+     Running unittests src/main.rs (/workspace/scratch/121c7d6beede/w1_task/target/release/deps/trnm_w1_succinct_research-6afd4ad0998dec29)
+
+running 9 tests
+test bounds::tests::oversized_prefixes_and_foreign_kinds_refuse_before_allocation ... ok
+test certificate_tests::certificate_header_rejects_foreign_or_unbounded_material ... ok
+test composite_bounds::tests::empty_seal_is_stopped_before_the_sdk_direct_index ... ok
+test composite_bounds::tests::every_truncation_and_a_trailing_byte_fail_without_sdk_parsing ... ok
+test composite_bounds::tests::every_variable_length_is_checked_before_sdk_allocation ... ok
+test composite_bounds::tests::unsupported_receipt_kinds_never_enter_generic_deserialization ... ok
+test composite_bounds::tests::proof_dimensions_and_total_cycle_budget_are_independent_limits ... ok
+test composite_bounds::tests::bounded_sdk_shape_does_not_authenticate_a_synthetic_claim ... ok
+test composite_bounds::tests::independent_segment_and_claim_bounds_do_not_authenticate_partial_data ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

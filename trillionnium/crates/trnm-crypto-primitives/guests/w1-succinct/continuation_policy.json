@@ -1,0 +1,26 @@
+{
+  "schema": "pon-w1-succinct-continuation-policy-v1",
+  "origin": {
+    "repository": "TrillionniumFoundation/Trillionnium-Chain",
+    "source_sha": "bfdb557412204244e43fef2007c31e20c9c8e5ff",
+    "source_tree": "2041ddbc40a08e7512455e074e31bc722b9c20c2",
+    "run_id": 40624205143,
+    "run_attempt": 1,
+    "artifact_id": 12792030905,
+    "artifact_name": "w1-succinct-bfdb557412204244e43fef2007c31e20c9c8e5ff-1",
+    "artifact_bytes": 122897597,
+    "artifact_sha256": "fa9dfea364033d3aefd90f0cd9d2e07e00ef3edf4cc2643720466d3e15427ca5",
+    "archive_members": 656,
+    "archive_uncompressed_bytes": 134677481,
+    "conclusion": "failure"
+  },
+  "retained_successful_stages": 112,
+  "interrupted_stages": ["join-32-40", "join-40-48"],
+  "new_stages_required": 11,
+  "all_retained_stages_reverified": true,
+  "original_failed_window_retained": true,
+  "original_recursion_budget_changed": false,
+  "complete_from_zero_generation_measured": false,
+  "additional_pow": false,
+  "consensus_authority": false
+}

@@ -161,6 +161,20 @@ the screened eight/nine-repeat variants need more field multiplications and an
 additional 128 KiB. Correctness, work cost and model usefulness retain separate
 acceptance decisions.
 
+### W1 transparent recursion continuation — 2026-10-28
+
+The complete original Composite receipt is retained by #529. Its transparent
+recursion successor #534 at `bfdb557412204244e43fef2007c31e20c9c8e5ff`
+stopped at the unchanged 3,500-second work limit after 112 successful stages;
+two joins were interrupted. This is an actual failed generation window.
+The [continuation implementation](../../trillionnium/crates/trnm-crypto-primitives/guests/w1-succinct/README.md#continuation-of-the-observed-failed-recursion-window)
+rechecks the exact retained range proofs and computes the 11 missing stages
+inside a new independent window with the same bounds. Both windows' costs
+and source identities remain separate, with complete original artifact bytes
+retained and no added PoW. Actual complete native verification, all original
+invalid-input controls and full-certificate transfer are still required on the
+new source; a published candidate alone does not close PN1 or activate a codec.
+
 ### Audit contract refinement — 2026-10-25
 
 This amendment refines the existing PN0–PN6 exits and I01–I10 interfaces. It
@@ -4778,3 +4792,50 @@ the two measured legal strategies differ by about -4.09% to +0.14%, depending
 on architecture and setup reuse. This supplies actual admitted-ticket costs
 for the measured strategies, not a global cheapest solver or full hardware
 coverage. This followup executed only pure readers, no native search benchmark.
+
+
+### P0 W1 — independent transparent Succinct measurement candidate (2026-10-28)
+
+The actual complete Composite proof and its six complete original artifacts
+are durably archived in [#529](https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/529),
+exact head `303afe7a4581e67117bff135eed5892232aabb70`; all 34 remote parts
+and six reconstructed whole-object hashes passed byte readback. A separate
+[new transparent recursion driver](../../trillionnium/crates/trnm-crypto-primitives/guests/w1-succinct/README.md)
+now measures the fixed original receipt through 62 ordinary lifts and 61
+contiguous joins. It preserves the original guest/image/input/claim, source
+pins and additional-PoW-off relation. It does not use Groth16, PoVW,
+development proofs, remote proving or the old packet codec as a fallback.
+
+All 123 stages share one newly declared 3,500-second work / 3,600-second outer
+window, two workers with two Rayon threads and 300-second stage caps; no
+resume follows exhaustion. Completed stages, real failed costs and cleanup
+remain evidence. Native build/Clippy and original-proof negative controls
+are mandatory before this new hosted work; local source controls are not a
+completed new proof. The [source-freeze evidence](../../evidence/pon-w1-succinct-research-20261028/README.md)
+retains the local disk stop and rejected initial transitive-lock drift.
+
+If the strict root verifies, measure actual receipt/certificate bytes,
+31 verification samples, 17 proof plus seven certificate rejection cases,
+and whole-certificate TCP loopback with received public-input verification.
+`PWSR0001` includes all 49,640 original input bytes; two 900-second verifier
+caps and the 30-second transfer cap remain. The 1 MiB comparison and optional
+legacy 2,048-byte-transaction calculation do not qualify a PQ transaction
+budget or change the existing 49,188-byte PNW1 codec. All additional costs
+remain separate from the original proof and failed windows; WAN, global
+worst-case invalid input, recursive QROM/PQ-128 qualification and a complete
+from-zero W1 cost are not established by this candidate.
+
+
+### P0 W1 — close full-certificate transport evidence before research publication (2026-10-28)
+
+Independent review of the first transparent-recursion source found that its
+final reader did not bind detailed loopback costs and child terminals to the
+actual underlying files. The [independent repair and retained failures](../../evidence/pon-w1-succinct-report-closure-20261028/README.md)
+anchor all sixteen loopback files in the measured phase stdout, recheck them
+after actual outer-family cleanup, and revalidate native/transport supervisors,
+received certificate bytes, exact input/claim hashes and finite nonnegative
+costs. Ten controls passed, including actual bounded localhost TCP; the first
+sandbox socket refusal and an initial worker-log schema mistake remain
+recorded. Native code, locks, the 123-stage proof graph and all budgets remain
+unchanged. No local native proof or complete Succinct acceptance is claimed;
+the exact published head still requires its original hosted native gates.

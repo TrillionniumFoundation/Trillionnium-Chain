@@ -1,0 +1,57 @@
+{
+  "available_bytes": 115408896,
+  "cause_established": false,
+  "observed_reappearance": true,
+  "paths": [
+    {
+      "bytes": 80366759,
+      "ctime_ns": 1793152165406295556,
+      "device": 27,
+      "exists": true,
+      "inode": 55389,
+      "mtime_ns": 1793150032066582291,
+      "path": "/workspace/scratch/bb9b841c1d43/w1-observation/a54-run-40608715148/assembly.zip"
+    },
+    {
+      "bytes": 14450432,
+      "ctime_ns": 1793152165406295556,
+      "device": 27,
+      "exists": true,
+      "inode": 61242,
+      "mtime_ns": 1793149593367328976,
+      "path": "/workspace/scratch/bb9b841c1d43/w1-observation/a54-run-40608715148/shard0.zip"
+    },
+    {
+      "bytes": 14440397,
+      "ctime_ns": 1793152165406295556,
+      "device": 27,
+      "exists": true,
+      "inode": 61243,
+      "mtime_ns": 1793149593899308172,
+      "path": "/workspace/scratch/bb9b841c1d43/w1-observation/a54-run-40608715148/shard1.zip"
+    },
+    {
+      "bytes": 3504734,
+      "ctime_ns": 1793152165406295556,
+      "device": 27,
+      "exists": true,
+      "inode": 55413,
+      "mtime_ns": 1793149594219295657,
+      "path": "/workspace/scratch/bb9b841c1d43/solver-v3-readback/x86_64.zip"
+    },
+    {
+      "bytes": 3195037,
+      "ctime_ns": 1793152165406295556,
+      "device": 27,
+      "exists": true,
+      "inode": 55430,
+      "mtime_ns": 1793149594479285489,
+      "path": "/workspace/scratch/bb9b841c1d43/solver-v3-readback/aarch64.zip"
+    }
+  ],
+  "repeat_deletion_attempted": false,
+  "retirement_observation_sha256": "ede110aec24a5f4ec8ab751d853d4c2a452448b7268afb956ae4d61b67ef3ac7",
+  "schema": "w1-transport-reappearance-observation-v1",
+  "this_agent_restored_or_downloaded_these_paths": false,
+  "wall_time_unix": 1793152547.1067524
+}

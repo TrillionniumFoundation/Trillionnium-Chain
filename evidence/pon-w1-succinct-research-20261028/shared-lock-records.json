@@ -1,0 +1,48 @@
+{
+  "changed_shared_records": [],
+  "new_sha256": "4ebaec2636565b8a3f0835a60081983bdbae6994380e71d1a4dc7380eb2786e5",
+  "only_new": [
+    {
+      "dependencies": [
+        "anyhow",
+        "bincode",
+        "hex",
+        "risc0-binfmt",
+        "risc0-zkvm",
+        "serde_json",
+        "trnm-w1-guest-relation"
+      ],
+      "name": "trnm-w1-succinct-research",
+      "version": "0.1.0"
+    }
+  ],
+  "only_original": [
+    {
+      "dependencies": [
+        "anyhow",
+        "bincode",
+        "hex",
+        "risc0-binfmt",
+        "risc0-zkos-v1compat",
+        "risc0-zkvm",
+        "serde_json",
+        "trnm-w1-guest-relation"
+      ],
+      "name": "trnm-w1-risc0-host",
+      "version": "0.1.0"
+    },
+    {
+      "dependencies": [
+        "risc0-zkvm",
+        "sha2",
+        "trnm-w1-guest-relation"
+      ],
+      "name": "trnm-w1-risc0-guest",
+      "version": "0.1.0"
+    }
+  ],
+  "original_sha256": "b3bb8518308ee9a175d878e5cafaab269be20f2bf990ec3fbb4d6e49bf110996",
+  "pass": true,
+  "schema": "w1-succinct-shared-locked-graph-v1",
+  "shared_packages": 277
+}

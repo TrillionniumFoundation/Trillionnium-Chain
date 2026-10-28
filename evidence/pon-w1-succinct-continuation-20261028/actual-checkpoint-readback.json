@@ -1,0 +1,52 @@
+{
+  "schema": "pon-w1-succinct-continuation-local-readback-v1",
+  "original_artifact": {
+    "repository": "TrillionniumFoundation/Trillionnium-Chain",
+    "source_sha": "bfdb557412204244e43fef2007c31e20c9c8e5ff",
+    "source_tree": "2041ddbc40a08e7512455e074e31bc722b9c20c2",
+    "run_id": 40624205143,
+    "run_attempt": 1,
+    "artifact_id": 12792030905,
+    "artifact_name": "w1-succinct-bfdb557412204244e43fef2007c31e20c9c8e5ff-1",
+    "artifact_bytes": 122897597,
+    "artifact_sha256": "fa9dfea364033d3aefd90f0cd9d2e07e00ef3edf4cc2643720466d3e15427ca5",
+    "archive_members": 656,
+    "archive_uncompressed_bytes": 134677481,
+    "conclusion": "failure"
+  },
+  "retained_real_stage_records": 112,
+  "new_proof_generated": false,
+  "new_native_verification_executed": false,
+  "negative_controls": [
+    {
+      "mutation": "compress.process.json",
+      "rejected": true,
+      "reason": "extracted original evidence changed: compress.process.json"
+    },
+    {
+      "mutation": "source-before.json",
+      "rejected": true,
+      "reason": "extracted original evidence changed: source-before.json"
+    },
+    {
+      "mutation": "recursion/attempt.json",
+      "rejected": true,
+      "reason": "extracted original evidence changed: recursion/attempt.json"
+    },
+    {
+      "mutation": "recursion/steps/lift-0-1.terminal.json",
+      "rejected": true,
+      "reason": "extracted original evidence changed: recursion/steps/lift-0-1.terminal.json"
+    },
+    {
+      "mutation": "recursion/steps/lift-0-1.stdout.log",
+      "rejected": true,
+      "reason": "extracted original evidence changed: recursion/steps/lift-0-1.stdout.log"
+    },
+    {
+      "mutation": "recursion/receipts/range-0-1.bin",
+      "rejected": true,
+      "reason": "extracted original evidence changed: recursion/receipts/range-0-1.bin"
+    }
+  ]
+}

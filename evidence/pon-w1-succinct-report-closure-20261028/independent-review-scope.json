@@ -1,0 +1,13 @@
+{
+  "actual_full_report_counterexample_executed": false,
+  "finding": "Final report did not rebind loopback native/transport files or reject modified detailed cost/exit fields",
+  "finding_method": "static control-flow review; no fabricated complete Succinct proof or hosted identity",
+  "fixed_original_image_claim_and_pow_off_preserved": true,
+  "independent_overlay_preserves_frozen_source": true,
+  "native_compile_or_sdk_proof_executed": false,
+  "other_certain_native_api_codec_workflow_blocker_found": false,
+  "received_full_certificate_input_and_receipt_binding_reviewed": true,
+  "reviewed_head": "90d130e47def9ee3b1498336fff94e4202ab76a0",
+  "reviewed_tree": "e38511d50b5692962fdda28ac66e25610bc1f85e",
+  "schema": "w1-succinct-independent-read-only-review-scope-v1"
+}

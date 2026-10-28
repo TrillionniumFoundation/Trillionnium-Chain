@@ -1,0 +1,52 @@
+{
+  "actual_failures_final": 0,
+  "actual_tests": 10,
+  "after_cleanup_step_order_correct": true,
+  "base_head": "90d130e47def9ee3b1498336fff94e4202ab76a0",
+  "base_tree": "e38511d50b5692962fdda28ac66e25610bc1f85e",
+  "loopback_file_count": 16,
+  "native_build_or_proof_executed": false,
+  "native_source_policy_and_locks_unchanged": true,
+  "old_frozen_source_unchanged": true,
+  "only_three_existing_implementation_files_changed": [
+    ".github/workflows/pon-w1-succinct-research.yml",
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-succinct/runner.py",
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-succinct/test_runner.py"
+  ],
+  "phase_budgets_unchanged": {
+    "audit": 900,
+    "benchmark": 900,
+    "compress": 3600,
+    "fetch": 900,
+    "install": 900,
+    "loopback": 1900,
+    "native-controls": 900,
+    "native-toolchain-install": 900,
+    "original-host-build": 1800,
+    "original-verify": 900,
+    "python-controls": 60,
+    "succinct-build": 1800,
+    "succinct-clippy": 1800,
+    "succinct-fmt": 60,
+    "succinct-tests": 1800,
+    "verify": 900
+  },
+  "real_localhost_component_executed": true,
+  "run_blocks": [
+    "Reserve independent source and cost evidence",
+    "Install the same pinned native toolchain",
+    "Check fixed graph and fetch only the pinned actual complete proof",
+    "Build and check unchanged Composite verifier and separate recursion driver",
+    "Require actual original cryptographic verification and native rejection controls",
+    "Run one bounded 62 lift plus 61 join transparent window",
+    "Preserve every completed stage and actual failed resource terminal",
+    "Measure the actual complete proof and tested invalid inputs",
+    "Close full certificate transport material after actual family cleanup",
+    "Verify exact source after every success or failure",
+    "Close actual bytes and exclusive phase accounting"
+  ],
+  "schema": "w1-succinct-loopback-closure-source-controls-v1",
+  "skipped": 0,
+  "sole_plan_addendum_added_after_implementation_controls": true,
+  "yaml_and_bash_syntax_pass": true
+}

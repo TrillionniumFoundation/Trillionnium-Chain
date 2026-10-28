@@ -1,0 +1,39 @@
+{
+  "schema": "pon-w1-segmented-runner-prerequisites-v1",
+  "requested_workers": 2,
+  "rayon_threads_per_worker": 2,
+  "minimum_available_bytes": 8589934592,
+  "affinity_cpu_ids": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "memory": {
+    "MemTotal": 10451435520,
+    "MemAvailable": 9426014208
+  },
+  "cgroup_membership": "0::/\n",
+  "cgroup_observations": [
+    {
+      "path": "/sys/fs/cgroup",
+      "cpu.max": "1600000 200000",
+      "memory.max": "8589934592",
+      "memory.current": "8328691712"
+    }
+  ],
+  "resource_qualification": false,
+  "effective_cpu_limit": 8.0,
+  "conservative_available_memory_bytes": 261242880,
+  "prerequisites_met": false,
+  "errors": [
+    "the fixed profile requires at least eight GiB observed available memory"
+  ],
+  "missing_limits_mean_unlimited": false,
+  "silent_profile_fallback": false
+}
