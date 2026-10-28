@@ -1,0 +1,125 @@
+{
+  "all_branch_historical_alerts": false,
+  "analyses": [
+    {
+      "analysis_key": "dynamic/github-code-scanning/codeql:analyze",
+      "category": "/language:actions",
+      "commit_sha": "a99ef8e333b6f1b7486b33e820464cf824fec273",
+      "created_at": "2026-10-28T03:00:45Z",
+      "environment": "{\"build-mode\":\"none\",\"category\":\"/language:actions\",\"language\":\"actions\",\"runner\":\"[\\\"ubuntu-latest\\\"]\"}",
+      "error": "",
+      "id": 2041899112,
+      "metadata": "analyses/2041899112.json",
+      "ref": "refs/pull/533/head",
+      "ref_kind": "head",
+      "results_count": 0,
+      "rules_count": 17,
+      "sarif_id": "c47f755a-d27b-11f1-87c8-c9ab042f3bf2",
+      "sarif_subset": "analyses/2041899112.sarif",
+      "source_kind": "head",
+      "tool": {
+        "guid": null,
+        "name": "CodeQL",
+        "version": "2.27.3"
+      },
+      "warning": ""
+    },
+    {
+      "analysis_key": "dynamic/github-code-scanning/codeql:analyze",
+      "category": "/language:python",
+      "commit_sha": "a99ef8e333b6f1b7486b33e820464cf824fec273",
+      "created_at": "2026-10-28T03:02:03Z",
+      "environment": "{\"build-mode\":\"none\",\"category\":\"/language:python\",\"language\":\"python\",\"runner\":\"[\\\"ubuntu-latest\\\"]\"}",
+      "error": "",
+      "id": 2041904174,
+      "metadata": "analyses/2041904174.json",
+      "ref": "refs/pull/533/head",
+      "ref_kind": "head",
+      "results_count": 0,
+      "rules_count": 43,
+      "sarif_id": "f2632c6e-d27b-11f1-9605-7c1293c364e0",
+      "sarif_subset": "analyses/2041904174.sarif",
+      "source_kind": "head",
+      "tool": {
+        "guid": null,
+        "name": "CodeQL",
+        "version": "2.27.3"
+      },
+      "warning": ""
+    },
+    {
+      "analysis_key": "dynamic/github-code-scanning/codeql:analyze",
+      "category": "/language:rust",
+      "commit_sha": "a99ef8e333b6f1b7486b33e820464cf824fec273",
+      "created_at": "2026-10-28T03:09:37Z",
+      "environment": "{\"build-mode\":\"none\",\"category\":\"/language:rust\",\"language\":\"rust\",\"runner\":\"[\\\"ubuntu-latest\\\"]\"}",
+      "error": "",
+      "id": 2041935511,
+      "metadata": "analyses/2041935511.json",
+      "ref": "refs/pull/533/head",
+      "ref_kind": "head",
+      "results_count": 322,
+      "rules_count": 26,
+      "sarif_id": "01a5aca0-d27d-11f1-9c1e-d0364d5ae610",
+      "sarif_subset": "analyses/2041935511.sarif",
+      "source_kind": "head",
+      "tool": {
+        "guid": null,
+        "name": "CodeQL",
+        "version": "2.27.3"
+      },
+      "warning": ""
+    }
+  ],
+  "check_annotations": [
+    {
+      "all_reported_check_annotations_exported": true,
+      "annotation_analysis_association": "unproven",
+      "check_alert_count_from_title": null,
+      "complete_pr_gate_alert_mapping": false,
+      "conclusion": "success",
+      "exported_annotations_count": 0,
+      "gate_alert_count_from_title": null,
+      "head_sha": "a99ef8e333b6f1b7486b33e820464cf824fec273",
+      "id": 122605175751,
+      "metadata_after": "poll-024-annotations/122605175751/after.json",
+      "metadata_before": "poll-024-annotations/122605175751/before.json",
+      "pr": 533,
+      "pr_association": "exact-head-and-base",
+      "raw_pages_prefix": "poll-024-annotations/122605175751/page-",
+      "reported_annotations_count": 0,
+      "requested_pr": 533,
+      "schema": "codeql-source-check-annotations-v2",
+      "scope": "Only API-exposed source/check annotations; their count is not the PR gate alert total. An empty PR association is explicitly unknown, not derived from a summary or Actions suite. No SARIF matches, security pass or fixed-alert judgments are inferred.",
+      "source_kind": "head",
+      "status": "completed"
+    }
+  ],
+  "complete": true,
+  "error": null,
+  "finished_utc": "2026-10-28T03:10:38.837824+00:00",
+  "full_original_sarif_upload": false,
+  "last_checks": [
+    {
+      "conclusion": "success",
+      "head_sha": "a99ef8e333b6f1b7486b33e820464cf824fec273",
+      "id": 122605175751,
+      "status": "completed"
+    }
+  ],
+  "schema": "codeql-exact-source-analysis-export-v2",
+  "scope": "All API-available exact PR source analyses/categories after the existing CodeQL check completes; SARIF is the API-provided subset. Source-only check annotations may lack a PR association; complete export does not qualify the PR security gate.",
+  "security_gate_changed": false,
+  "started_utc": "2026-10-28T02:58:17.926460+00:00",
+  "target": {
+    "base": "9fedf7ecbbe07177069c030592b4e03dcffebb81",
+    "event": "pull_request",
+    "head": "a99ef8e333b6f1b7486b33e820464cf824fec273",
+    "head_ref": "refs/pull/533/head",
+    "merge": "bd9ea1ef1e57c887060bbf01e7c91c198cf3dd03",
+    "pr": 533,
+    "ref": "refs/pull/533/merge"
+  },
+  "target_pr_gate_authenticated": false,
+  "target_pr_gate_verdict": null
+}

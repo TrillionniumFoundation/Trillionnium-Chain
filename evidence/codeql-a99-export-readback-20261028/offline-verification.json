@@ -1,0 +1,30 @@
+{
+  "api_sarif_warning_count": 322,
+  "archive_sha256": "6e6f9b6545f288dd90a5c83d1158a96d1342da0e593689e39cfb1de23c3c818f",
+  "exact_local_source_files_verified": 40,
+  "export_elapsed_seconds": 740.911364,
+  "full_repo_zero_alerts_claim": false,
+  "inner_manifest_entries": 139,
+  "members_crc_and_sha_verified": 145,
+  "outer_manifest_entries": 143,
+  "pass": true,
+  "poll_23_equals_24_equals_after_export": true,
+  "schema": "codeql-a99-offline-independent-verify-v1",
+  "source_before_after_equal": {
+    "base": null,
+    "candidate": "a99ef8e333b6f1b7486b33e820464cf824fec273",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "a99ef8e333b6f1b7486b33e820464cf824fec273",
+    "tested_tree": "f996fa2ad8cfa4426b6a7b2e04c5fd858025f8fe",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 767617754,
+    "tracked_entries": 5959,
+    "tracked_worktree_verified": true
+  },
+  "source_check_id": 122605175751,
+  "source_check_success": true,
+  "target_pr_gate_authenticated_claim": false,
+  "warning_files": 40
+}

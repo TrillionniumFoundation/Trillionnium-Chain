@@ -1,0 +1,407 @@
+[
+  {
+    "run": 1,
+    "mode": "baseline",
+    "criteria": true,
+    "depleted": false,
+    "all_confirmed": true,
+    "actor_ok": true,
+    "initial_meter": {
+      "accounting_unavailable": false,
+      "burst_ns": 2000000000,
+      "in_flight": 0,
+      "refill_ns_per_second": 250000000,
+      "schema": "public-v3-local-stored-cpu-budget-v1",
+      "start_reserve_ns": 100000000,
+      "stored_credit_ns": 2000000000,
+      "worker_limit": 2
+    },
+    "final_meter": {
+      "accounting_unavailable": false,
+      "burst_ns": 2000000000,
+      "in_flight": 0,
+      "refill_ns_per_second": 250000000,
+      "schema": "public-v3-local-stored-cpu-budget-v1",
+      "start_reserve_ns": 100000000,
+      "stored_credit_ns": 1742130985,
+      "worker_limit": 2
+    },
+    "overlaps": [
+      0,
+      0,
+      0
+    ],
+    "full_work_failed": 0,
+    "full_work_accepted": 21,
+    "confirmation_depletion": [
+      false,
+      false,
+      false
+    ],
+    "confirmation_rejected": [
+      false,
+      false,
+      false
+    ]
+  },
+  {
+    "run": 1,
+    "mode": "from-zero",
+    "criteria": false,
+    "depleted": false,
+    "all_confirmed": true,
+    "actor_ok": true,
+    "initial_meter": {
+      "accounting_unavailable": false,
+      "burst_ns": 2000000000,
+      "in_flight": 0,
+      "refill_ns_per_second": 250000000,
+      "schema": "public-v3-local-stored-cpu-budget-v1",
+      "start_reserve_ns": 100000000,
+      "stored_credit_ns": 2000000000,
+      "worker_limit": 2
+    },
+    "final_meter": {
+      "accounting_unavailable": false,
+      "burst_ns": 2000000000,
+      "in_flight": 0,
+      "refill_ns_per_second": 250000000,
+      "schema": "public-v3-local-stored-cpu-budget-v1",
+      "start_reserve_ns": 100000000,
+      "stored_credit_ns": 1922532013,
+      "worker_limit": 2
+    },
+    "overlaps": [
+      265,
+      266,
+      271
+    ],
+    "full_work_failed": 3819,
+    "full_work_accepted": 21,
+    "confirmation_depletion": [
+      false,
+      false,
+      false
+    ],
+    "confirmation_rejected": [
+      true,
+      true,
+      true
+    ]
+  },
+  {
+    "run": 1,
+    "mode": "late-product",
+    "criteria": false,
+    "depleted": false,
+    "all_confirmed": true,
+    "actor_ok": true,
+    "initial_meter": {
+      "accounting_unavailable": false,
+      "burst_ns": 2000000000,
+      "in_flight": 0,
+      "refill_ns_per_second": 250000000,
+      "schema": "public-v3-local-stored-cpu-budget-v1",
+      "start_reserve_ns": 100000000,
+      "stored_credit_ns": 2000000000,
+      "worker_limit": 2
+    },
+    "final_meter": {
+      "accounting_unavailable": false,
+      "burst_ns": 2000000000,
+      "in_flight": 0,
+      "refill_ns_per_second": 250000000,
+      "schema": "public-v3-local-stored-cpu-budget-v1",
+      "start_reserve_ns": 100000000,
+      "stored_credit_ns": 918066787,
+      "worker_limit": 2
+    },
+    "overlaps": [
+      267,
+      266,
+      270
+    ],
+    "full_work_failed": 3819,
+    "full_work_accepted": 21,
+    "confirmation_depletion": [
+      false,
+      false,
+      false
+    ],
+    "confirmation_rejected": [
+      true,
+      true,
+      true
+    ]
+  },
+  {
+    "run": 2,
+    "mode": "baseline",
+    "criteria": true,
+    "depleted": false,
+    "all_confirmed": true,
+    "actor_ok": true,
+    "initial_meter": {
+      "accounting_unavailable": false,
+      "burst_ns": 2000000000,
+      "in_flight": 0,
+      "refill_ns_per_second": 250000000,
+      "schema": "public-v3-local-stored-cpu-budget-v1",
+      "start_reserve_ns": 100000000,
+      "stored_credit_ns": 2000000000,
+      "worker_limit": 2
+    },
+    "final_meter": {
+      "accounting_unavailable": false,
+      "burst_ns": 2000000000,
+      "in_flight": 0,
+      "refill_ns_per_second": 250000000,
+      "schema": "public-v3-local-stored-cpu-budget-v1",
+      "start_reserve_ns": 100000000,
+      "stored_credit_ns": 1739495313,
+      "worker_limit": 2
+    },
+    "overlaps": [
+      0,
+      0,
+      0
+    ],
+    "full_work_failed": 0,
+    "full_work_accepted": 21,
+    "confirmation_depletion": [
+      false,
+      false,
+      false
+    ],
+    "confirmation_rejected": [
+      false,
+      false,
+      false
+    ]
+  },
+  {
+    "run": 2,
+    "mode": "from-zero",
+    "criteria": false,
+    "depleted": false,
+    "all_confirmed": true,
+    "actor_ok": true,
+    "initial_meter": {
+      "accounting_unavailable": false,
+      "burst_ns": 2000000000,
+      "in_flight": 0,
+      "refill_ns_per_second": 250000000,
+      "schema": "public-v3-local-stored-cpu-budget-v1",
+      "start_reserve_ns": 100000000,
+      "stored_credit_ns": 2000000000,
+      "worker_limit": 2
+    },
+    "final_meter": {
+      "accounting_unavailable": false,
+      "burst_ns": 2000000000,
+      "in_flight": 0,
+      "refill_ns_per_second": 250000000,
+      "schema": "public-v3-local-stored-cpu-budget-v1",
+      "start_reserve_ns": 100000000,
+      "stored_credit_ns": 1998597621,
+      "worker_limit": 2
+    },
+    "overlaps": [
+      266,
+      265,
+      269
+    ],
+    "full_work_failed": 3819,
+    "full_work_accepted": 21,
+    "confirmation_depletion": [
+      false,
+      false,
+      false
+    ],
+    "confirmation_rejected": [
+      true,
+      true,
+      true
+    ]
+  },
+  {
+    "run": 2,
+    "mode": "late-product",
+    "criteria": false,
+    "depleted": false,
+    "all_confirmed": true,
+    "actor_ok": true,
+    "initial_meter": {
+      "accounting_unavailable": false,
+      "burst_ns": 2000000000,
+      "in_flight": 0,
+      "refill_ns_per_second": 250000000,
+      "schema": "public-v3-local-stored-cpu-budget-v1",
+      "start_reserve_ns": 100000000,
+      "stored_credit_ns": 2000000000,
+      "worker_limit": 2
+    },
+    "final_meter": {
+      "accounting_unavailable": false,
+      "burst_ns": 2000000000,
+      "in_flight": 0,
+      "refill_ns_per_second": 250000000,
+      "schema": "public-v3-local-stored-cpu-budget-v1",
+      "start_reserve_ns": 100000000,
+      "stored_credit_ns": 1512302619,
+      "worker_limit": 2
+    },
+    "overlaps": [
+      262,
+      260,
+      266
+    ],
+    "full_work_failed": 3819,
+    "full_work_accepted": 21,
+    "confirmation_depletion": [
+      false,
+      false,
+      false
+    ],
+    "confirmation_rejected": [
+      true,
+      true,
+      true
+    ]
+  },
+  {
+    "run": 3,
+    "mode": "baseline",
+    "criteria": true,
+    "depleted": false,
+    "all_confirmed": true,
+    "actor_ok": true,
+    "initial_meter": {
+      "accounting_unavailable": false,
+      "burst_ns": 2000000000,
+      "in_flight": 0,
+      "refill_ns_per_second": 250000000,
+      "schema": "public-v3-local-stored-cpu-budget-v1",
+      "start_reserve_ns": 100000000,
+      "stored_credit_ns": 2000000000,
+      "worker_limit": 2
+    },
+    "final_meter": {
+      "accounting_unavailable": false,
+      "burst_ns": 2000000000,
+      "in_flight": 0,
+      "refill_ns_per_second": 250000000,
+      "schema": "public-v3-local-stored-cpu-budget-v1",
+      "start_reserve_ns": 100000000,
+      "stored_credit_ns": 1761751196,
+      "worker_limit": 2
+    },
+    "overlaps": [
+      0,
+      0,
+      0
+    ],
+    "full_work_failed": 0,
+    "full_work_accepted": 21,
+    "confirmation_depletion": [
+      false,
+      false,
+      false
+    ],
+    "confirmation_rejected": [
+      false,
+      false,
+      false
+    ]
+  },
+  {
+    "run": 3,
+    "mode": "from-zero",
+    "criteria": false,
+    "depleted": false,
+    "all_confirmed": true,
+    "actor_ok": true,
+    "initial_meter": {
+      "accounting_unavailable": false,
+      "burst_ns": 2000000000,
+      "in_flight": 0,
+      "refill_ns_per_second": 250000000,
+      "schema": "public-v3-local-stored-cpu-budget-v1",
+      "start_reserve_ns": 100000000,
+      "stored_credit_ns": 2000000000,
+      "worker_limit": 2
+    },
+    "final_meter": {
+      "accounting_unavailable": false,
+      "burst_ns": 2000000000,
+      "in_flight": 0,
+      "refill_ns_per_second": 250000000,
+      "schema": "public-v3-local-stored-cpu-budget-v1",
+      "start_reserve_ns": 100000000,
+      "stored_credit_ns": 1998750092,
+      "worker_limit": 2
+    },
+    "overlaps": [
+      261,
+      273,
+      271
+    ],
+    "full_work_failed": 3819,
+    "full_work_accepted": 21,
+    "confirmation_depletion": [
+      false,
+      false,
+      false
+    ],
+    "confirmation_rejected": [
+      true,
+      true,
+      true
+    ]
+  },
+  {
+    "run": 3,
+    "mode": "late-product",
+    "criteria": false,
+    "depleted": false,
+    "all_confirmed": true,
+    "actor_ok": true,
+    "initial_meter": {
+      "accounting_unavailable": false,
+      "burst_ns": 2000000000,
+      "in_flight": 0,
+      "refill_ns_per_second": 250000000,
+      "schema": "public-v3-local-stored-cpu-budget-v1",
+      "start_reserve_ns": 100000000,
+      "stored_credit_ns": 2000000000,
+      "worker_limit": 2
+    },
+    "final_meter": {
+      "accounting_unavailable": false,
+      "burst_ns": 2000000000,
+      "in_flight": 0,
+      "refill_ns_per_second": 250000000,
+      "schema": "public-v3-local-stored-cpu-budget-v1",
+      "start_reserve_ns": 100000000,
+      "stored_credit_ns": 1486642036,
+      "worker_limit": 2
+    },
+    "overlaps": [
+      261,
+      260,
+      266
+    ],
+    "full_work_failed": 3819,
+    "full_work_accepted": 21,
+    "confirmation_depletion": [
+      false,
+      false,
+      false
+    ],
+    "confirmation_rejected": [
+      true,
+      true,
+      true
+    ]
+  }
+]

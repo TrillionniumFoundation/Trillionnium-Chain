@@ -1,0 +1,3222 @@
+[
+  {
+    "rule": "rust/cleartext-logging",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/examples/support/state_witness_artifact.rs",
+    "start_line": 283,
+    "end_line": 283,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "16b6f1d75d7d66aa:1"
+    }
+  },
+  {
+    "rule": "rust/cleartext-logging",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/multiproof_tests.rs",
+    "start_line": 211,
+    "end_line": 211,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "8c10a4a069f737e3:1"
+    }
+  },
+  {
+    "rule": "rust/cleartext-logging",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/tests/account_archive_execution.rs",
+    "start_line": 659,
+    "end_line": 660,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "9a29e19307f2e438:1"
+    }
+  },
+  {
+    "rule": "rust/cleartext-logging",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/examples/lifecycle_atomic_continuity.rs",
+    "start_line": 328,
+    "end_line": 328,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "c54fa18244e7abff:1"
+    }
+  },
+  {
+    "rule": "rust/cleartext-logging",
+    "level": "warning",
+    "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+    "start_line": 359,
+    "end_line": 359,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "1304561b40a66ef4:1"
+    }
+  },
+  {
+    "rule": "rust/cleartext-logging",
+    "level": "warning",
+    "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+    "start_line": 474,
+    "end_line": 475,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "93d6eb1fd2353d07:1"
+    }
+  },
+  {
+    "rule": "rust/cleartext-logging",
+    "level": "warning",
+    "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+    "start_line": 487,
+    "end_line": 487,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "fcb4cdd300f080d4:1"
+    }
+  },
+  {
+    "rule": "rust/cleartext-logging",
+    "level": "warning",
+    "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+    "start_line": 540,
+    "end_line": 541,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "93d6eb1fd2353d07:2"
+    }
+  },
+  {
+    "rule": "rust/cleartext-logging",
+    "level": "warning",
+    "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+    "start_line": 549,
+    "end_line": 549,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "c3fac149e48f3141:1"
+    }
+  },
+  {
+    "rule": "rust/cleartext-logging",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/examples/support/state_witness_artifact.rs",
+    "start_line": 234,
+    "end_line": 234,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "9511af29004a3e68:1"
+    }
+  },
+  {
+    "rule": "rust/cleartext-logging",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/tests/account_obligation_ranges.rs",
+    "start_line": 175,
+    "end_line": 175,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "afb75bfd542592e4:1"
+    }
+  },
+  {
+    "rule": "rust/cleartext-logging",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/tests/account_archive_execution.rs",
+    "start_line": 1194,
+    "end_line": 1194,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "bfc22d8c7d5f51ba:1"
+    }
+  },
+  {
+    "rule": "rust/cleartext-logging",
+    "level": "warning",
+    "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+    "start_line": 359,
+    "end_line": 359,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "1304561b40a66ef4:1"
+    }
+  },
+  {
+    "rule": "rust/cleartext-logging",
+    "level": "warning",
+    "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+    "start_line": 476,
+    "end_line": 476,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "60f51f99d302ef24:1"
+    }
+  },
+  {
+    "rule": "rust/cleartext-logging",
+    "level": "warning",
+    "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+    "start_line": 542,
+    "end_line": 542,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "60f51f99d302ef24:2"
+    }
+  },
+  {
+    "rule": "rust/cleartext-logging",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/tests/release_finality_v2.rs",
+    "start_line": 448,
+    "end_line": 449,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "1f628916da539ae6:1"
+    }
+  },
+  {
+    "rule": "rust/cleartext-logging",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+    "start_line": 2610,
+    "end_line": 2610,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "48220a5d14b85bec:1"
+    }
+  },
+  {
+    "rule": "rust/cleartext-logging",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store_batch_tests.rs",
+    "start_line": 477,
+    "end_line": 479,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "ecc3f49500ee0d9c:1"
+    }
+  },
+  {
+    "rule": "rust/cleartext-logging",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/growth/mandatory_capacity_tests.rs",
+    "start_line": 155,
+    "end_line": 160,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "40c730fa5acc6f49:1"
+    }
+  },
+  {
+    "rule": "rust/cleartext-logging",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs",
+    "start_line": 1281,
+    "end_line": 1281,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "e89c2f2acfb7b7a0:1"
+    }
+  },
+  {
+    "rule": "rust/cleartext-logging",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs",
+    "start_line": 1322,
+    "end_line": 1322,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "1725a627414e1ef0:1"
+    }
+  },
+  {
+    "rule": "rust/cleartext-logging",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs",
+    "start_line": 1503,
+    "end_line": 1503,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "ba7d04729744ea7a:1"
+    }
+  },
+  {
+    "rule": "rust/cleartext-logging",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/tests/model_evidence_v3.rs",
+    "start_line": 1513,
+    "end_line": 1513,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "70909057e4136f0:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/pure_pon.rs",
+    "start_line": 95,
+    "end_line": 95,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "8e58a92bdb1b0603:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 336,
+    "end_line": 336,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "96dbddbf304dfb9f:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 344,
+    "end_line": 344,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "d4266d4df52a1ce:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 352,
+    "end_line": 352,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "8bfb7bf70bd3e0c6:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 360,
+    "end_line": 360,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "4658358b9daf3cfd:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 741,
+    "end_line": 741,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "b47e6c7d50e37b03:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 746,
+    "end_line": 746,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "9724fa069b8c8355:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 773,
+    "end_line": 773,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "4cbb7c2e06d44c39:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 778,
+    "end_line": 778,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "30c7e5d8dce82f6f:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 792,
+    "end_line": 792,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "34bccb07d6012790:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 832,
+    "end_line": 832,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "e70f11fb9623a98c:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 853,
+    "end_line": 853,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "b47e6c7d50e37b03:2"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 858,
+    "end_line": 858,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "a3f0a0fb0415f770:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 887,
+    "end_line": 887,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "b47e6c7d50e37b03:3"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 892,
+    "end_line": 892,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "9724f194744fbc1f:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 964,
+    "end_line": 964,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "47edd53166e0092e:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 970,
+    "end_line": 970,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "15a4beb712d6e592:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 987,
+    "end_line": 987,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "b47e6c7d50e37b03:4"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 992,
+    "end_line": 992,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "b94aa0faae8f4533:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 1045,
+    "end_line": 1045,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "b47e6c7d50e37b03:5"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 1051,
+    "end_line": 1051,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "971ca51e53e74989:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 1058,
+    "end_line": 1058,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "4cbb7c2e06d44c39:2"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 1064,
+    "end_line": 1064,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "bfc166797e3dd025:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 1075,
+    "end_line": 1075,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "7574989f0fb6ac31:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 1088,
+    "end_line": 1088,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "34bccb07d6012790:2"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 1098,
+    "end_line": 1098,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "e49d617e5351778c:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 1125,
+    "end_line": 1125,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "c864b72f962b743:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 1153,
+    "end_line": 1153,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "c67e5b31084280de:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 1290,
+    "end_line": 1290,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "3353faff780b752a:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 1300,
+    "end_line": 1300,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "ae72282f5ab4d117:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 1318,
+    "end_line": 1318,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "dd5b8962cc5dc162:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 1415,
+    "end_line": 1415,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "132cf8616ce3b280:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 1486,
+    "end_line": 1486,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "36afacc2c1553cb4:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 1491,
+    "end_line": 1491,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "1e26737ea0a49f24:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 1500,
+    "end_line": 1500,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "1a8354b37c1f186a:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 1509,
+    "end_line": 1509,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "b47e6c7d50e37b03:6"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 1514,
+    "end_line": 1514,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "6478ada443c0e3c7:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 1630,
+    "end_line": 1630,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "f379383e2fdbd06a:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 1637,
+    "end_line": 1637,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "7cc4a05a81a3bce2:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 1639,
+    "end_line": 1639,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "32275faf38f14d52:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 1645,
+    "end_line": 1645,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "1d085f166dd562e8:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 1696,
+    "end_line": 1696,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "644a22970b6ab602:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 1701,
+    "end_line": 1701,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "14ac76af24b39e47:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 1718,
+    "end_line": 1718,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "644a22970b6ab602:2"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 1731,
+    "end_line": 1731,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "87997c5c53add020:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 1747,
+    "end_line": 1747,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "644a22970b6ab602:3"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 1760,
+    "end_line": 1760,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "11976a4e1ba84bba:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 1803,
+    "end_line": 1803,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "7836242d53a12d15:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 1807,
+    "end_line": 1807,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "b0c1e599508cd5df:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 1843,
+    "end_line": 1843,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "dba9186caaddc5e6:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 1863,
+    "end_line": 1863,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "b4777295d3ffd1ea:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 1878,
+    "end_line": 1878,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "90dcd11359d41b6a:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 1898,
+    "end_line": 1898,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "d43586435374dae:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 1917,
+    "end_line": 1917,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "b47fea75bcddb927:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 1922,
+    "end_line": 1922,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "8c007bcd1a5ebb65:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 1947,
+    "end_line": 1947,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "ae725a73b857566a:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 1953,
+    "end_line": 1953,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "bf89ea14cfd421c4:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 1958,
+    "end_line": 1958,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "b47e6c7d50e37b03:7"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 1964,
+    "end_line": 1964,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "971ca51e53e74989:2"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 1971,
+    "end_line": 1971,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "4cbb7c2e06d44c39:3"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 1977,
+    "end_line": 1977,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "bfc166797e3dd025:2"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 1989,
+    "end_line": 1989,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "34bccb07d601277e:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 2007,
+    "end_line": 2007,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "e70f11fb9623a98c:2"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 2052,
+    "end_line": 2052,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "1e7333a24dd16b10:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 2096,
+    "end_line": 2096,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "b47e6c7d50e37b03:8"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 2102,
+    "end_line": 2102,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "e4d5cba7084d541d:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 2137,
+    "end_line": 2137,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "b47e6c7d50e37b03:9"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 2143,
+    "end_line": 2143,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "971ca51e53e74989:3"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 2164,
+    "end_line": 2164,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "4cbb7c2e06d44c39:4"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 2182,
+    "end_line": 2182,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "5b50aaf335b06e29:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 2205,
+    "end_line": 2205,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "4cbb7c2e06d44c39:5"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 2216,
+    "end_line": 2216,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "96593e3d7eaca3f1:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 2238,
+    "end_line": 2238,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "b47772775fdc472e:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 2258,
+    "end_line": 2258,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "25f7ae8697904308:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 2289,
+    "end_line": 2289,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "4cbb7c2e06d44c39:6"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 2295,
+    "end_line": 2295,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "bfc166797e3dd025:3"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 2316,
+    "end_line": 2316,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "a09fa271dd314509:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 2346,
+    "end_line": 2346,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "4cbb7c2e06d44c39:7"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 2352,
+    "end_line": 2352,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "bfc166797e3dd025:4"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 2364,
+    "end_line": 2364,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "34bccb07d601277e:2"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 2374,
+    "end_line": 2374,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "e49d6188403e3c8f:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 2390,
+    "end_line": 2390,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "4cbb7c2e06d44c39:8"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 2396,
+    "end_line": 2396,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "bfc166797e3dd025:5"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 2408,
+    "end_line": 2408,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "34bccb07d601277e:3"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 2426,
+    "end_line": 2426,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "a233ef1d911fd03d:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 2444,
+    "end_line": 2444,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "b2554293627fcd75:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 2484,
+    "end_line": 2484,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "2a08c88b424685f9:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 2532,
+    "end_line": 2532,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "2a08c88b424685f9:2"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+    "start_line": 2571,
+    "end_line": 2571,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "2a08c88b424685f9:3"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-transport/src/lib.rs",
+    "start_line": 463,
+    "end_line": 463,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "35deccb1b8da308f:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-transport/src/lib.rs",
+    "start_line": 478,
+    "end_line": 478,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "ecb0771a9c437f54:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-transport/src/lib.rs",
+    "start_line": 493,
+    "end_line": 493,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "5878ce16690349d8:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-transport/src/lib.rs",
+    "start_line": 505,
+    "end_line": 505,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "6f9c056d8317d5f3:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-transport/src/lib.rs",
+    "start_line": 511,
+    "end_line": 511,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "cf33856baeef3d87:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-transport/src/lib.rs",
+    "start_line": 518,
+    "end_line": 518,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "5a72b9a5cb199c1:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-transport/src/lib.rs",
+    "start_line": 522,
+    "end_line": 522,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "533fb597c10f1c2b:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-transport/src/lib.rs",
+    "start_line": 528,
+    "end_line": 528,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "51855b49ad7a6dc9:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-transport/src/lib.rs",
+    "start_line": 560,
+    "end_line": 560,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "a5ac5a4e74ea4c68:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-transport/src/lib.rs",
+    "start_line": 578,
+    "end_line": 578,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "c534b423fa5c3547:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-transport/src/lib.rs",
+    "start_line": 612,
+    "end_line": 612,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "dbbad6450a5a00e0:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-transport/src/lib.rs",
+    "start_line": 616,
+    "end_line": 616,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "2ea77e8d6150ae2c:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/transcript/mod.rs",
+    "start_line": 109,
+    "end_line": 109,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "6afb4d5545c1ad6d:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/transcript/mod.rs",
+    "start_line": 110,
+    "end_line": 110,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "cff4068612652514:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/transcript/mod.rs",
+    "start_line": 111,
+    "end_line": 111,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "89a1c8890661cc77:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/transcript/mod.rs",
+    "start_line": 120,
+    "end_line": 120,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "3afb6d8eff636ffe:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/transcript/mod.rs",
+    "start_line": 121,
+    "end_line": 121,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "8e412e09dc0edc49:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/transcript/mod.rs",
+    "start_line": 122,
+    "end_line": 122,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "b5ee4bd2db1d4704:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/transcript/mod.rs",
+    "start_line": 132,
+    "end_line": 132,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "717c02a4f1ef6fa3:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/transcript/mod.rs",
+    "start_line": 133,
+    "end_line": 133,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "4f5755f3f6c637d1:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/transcript/mod.rs",
+    "start_line": 134,
+    "end_line": 134,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "2e1c08cfa339a91:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/transcript/mod.rs",
+    "start_line": 142,
+    "end_line": 142,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "fe96c77336b4ef03:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/transcript/mod.rs",
+    "start_line": 155,
+    "end_line": 155,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "f4c962e9668b9a8d:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/transcript/mod.rs",
+    "start_line": 156,
+    "end_line": 156,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "dd64f36eeab7bed7:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/transcript/mod.rs",
+    "start_line": 157,
+    "end_line": 157,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "d6739858a96806b3:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/transcript/mod.rs",
+    "start_line": 158,
+    "end_line": 158,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "1ace319332b500e9:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/transcript/mod.rs",
+    "start_line": 159,
+    "end_line": 159,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "b58471572e79d72f:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/transcript/mod.rs",
+    "start_line": 174,
+    "end_line": 174,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "8a0696073e7122f1:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/transcript/mod.rs",
+    "start_line": 175,
+    "end_line": 175,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "37d34d82ee63f883:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/transcript/mod.rs",
+    "start_line": 176,
+    "end_line": 176,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "8ab5952405f9f0ec:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/transcript/mod.rs",
+    "start_line": 184,
+    "end_line": 184,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "d5df9b827e28750f:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/relay.rs",
+    "start_line": 592,
+    "end_line": 592,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "4246896e20f3d8fd:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/relay.rs",
+    "start_line": 602,
+    "end_line": 602,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "3c7d785c70812dd7:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/relay.rs",
+    "start_line": 615,
+    "end_line": 615,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "216f52ef5b5d037c:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/relay.rs",
+    "start_line": 616,
+    "end_line": 616,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "4355154da2c87dd9:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/relay.rs",
+    "start_line": 633,
+    "end_line": 633,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "55dcbbbd63ea894f:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/relay.rs",
+    "start_line": 635,
+    "end_line": 635,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "1ac20b191564cb64:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/relay.rs",
+    "start_line": 652,
+    "end_line": 652,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "55dcbbbd63ea894f:2"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/relay.rs",
+    "start_line": 654,
+    "end_line": 654,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "289818f4384d0e6b:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/relay.rs",
+    "start_line": 670,
+    "end_line": 670,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "984e9d7a03a07c0f:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/relay.rs",
+    "start_line": 671,
+    "end_line": 671,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "93fe06663f7d43ae:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/relay.rs",
+    "start_line": 687,
+    "end_line": 687,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "bac73da820f12441:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/relay.rs",
+    "start_line": 699,
+    "end_line": 699,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "2cebf81a9e6da0b3:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/relay.rs",
+    "start_line": 711,
+    "end_line": 711,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "8d468110fb428c31:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/relay.rs",
+    "start_line": 725,
+    "end_line": 725,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "cd5905c2f24792b3:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/relay.rs",
+    "start_line": 739,
+    "end_line": 739,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "4bd293ec26648228:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/relay.rs",
+    "start_line": 753,
+    "end_line": 753,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "3a63985c7151b3f:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/relay.rs",
+    "start_line": 769,
+    "end_line": 769,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "e96eaf4018756b12:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/relay.rs",
+    "start_line": 779,
+    "end_line": 779,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "141aeeabc556b579:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/relay.rs",
+    "start_line": 790,
+    "end_line": 790,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "fd01466c9fc8968d:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/relay.rs",
+    "start_line": 795,
+    "end_line": 795,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "6caf1ccd2f418156:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/relay.rs",
+    "start_line": 805,
+    "end_line": 805,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "6ef833caf42b7ab2:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/relay.rs",
+    "start_line": 811,
+    "end_line": 811,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "fb38ef8f8df11d72:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/relay.rs",
+    "start_line": 822,
+    "end_line": 822,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "397034b99b6e3e34:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/relay.rs",
+    "start_line": 826,
+    "end_line": 826,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "b852706c574d95bb:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/relay.rs",
+    "start_line": 830,
+    "end_line": 830,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "97cd115414e2358e:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/relay.rs",
+    "start_line": 834,
+    "end_line": 834,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "f69b7e60bda37101:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/relay.rs",
+    "start_line": 838,
+    "end_line": 838,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "ae5e26b89d3d7621:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/relay.rs",
+    "start_line": 842,
+    "end_line": 842,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "9cf883c0ff63c80a:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/relay.rs",
+    "start_line": 851,
+    "end_line": 851,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "55086fd1377e31ac:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/relay.rs",
+    "start_line": 852,
+    "end_line": 852,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "8bb517695e04bc8:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/relay.rs",
+    "start_line": 875,
+    "end_line": 875,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "8c9dac25c3c5f78:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/relay.rs",
+    "start_line": 891,
+    "end_line": 891,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "72a3ec483b25daa9:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/relay.rs",
+    "start_line": 915,
+    "end_line": 915,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "60d25d6c4c26f3ac:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/relay.rs",
+    "start_line": 930,
+    "end_line": 930,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "88b188f9e907626f:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/relay.rs",
+    "start_line": 938,
+    "end_line": 938,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "206277506313a6c9:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/relay.rs",
+    "start_line": 965,
+    "end_line": 965,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "eb1980cf6705c054:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/relay.rs",
+    "start_line": 979,
+    "end_line": 979,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "cd8493629a53235a:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/relay.rs",
+    "start_line": 990,
+    "end_line": 990,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "664f15871d8ab161:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/relay.rs",
+    "start_line": 1005,
+    "end_line": 1005,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "c74d0a8d8e49fe63:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/relay.rs",
+    "start_line": 1019,
+    "end_line": 1019,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "883d5e53ac1330a9:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/relay.rs",
+    "start_line": 1029,
+    "end_line": 1029,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "84162ddb6b8df439:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/relay.rs",
+    "start_line": 1043,
+    "end_line": 1043,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "8d81e3cf97346e42:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-types/src/relay.rs",
+    "start_line": 1056,
+    "end_line": 1056,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "bd4b0ef74dcade39:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_commit_salt_security.rs",
+    "start_line": 36,
+    "end_line": 36,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "c6adef177a72b6e9:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_commit_salt_security.rs",
+    "start_line": 44,
+    "end_line": 44,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "d645237a7c1c4410:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_journal_security.rs",
+    "start_line": 9,
+    "end_line": 9,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "609d1a4509cd6bac:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_commit_salt_security.rs",
+    "start_line": 68,
+    "end_line": 68,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "5c81f13d0671037:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_commit_salt_security.rs",
+    "start_line": 84,
+    "end_line": 84,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "a881da02d1b320c8:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_commit_salt_security.rs",
+    "start_line": 87,
+    "end_line": 87,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "da01f20149c85d71:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_commit_salt_security.rs",
+    "start_line": 101,
+    "end_line": 101,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "ef058d5e97594273:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_commit_salt_security.rs",
+    "start_line": 150,
+    "end_line": 150,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "a61f9fdf1505bdb9:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_commit_salt_security.rs",
+    "start_line": 171,
+    "end_line": 171,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "8304b15358f34ade:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_commit_salt_security.rs",
+    "start_line": 189,
+    "end_line": 189,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "917f9ce27147863f:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_commit_salt_security.rs",
+    "start_line": 191,
+    "end_line": 191,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "d43d2fd3df4504f8:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_commit_salt_security.rs",
+    "start_line": 192,
+    "end_line": 192,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "2ae4ab06316753cc:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_commit_salt_security.rs",
+    "start_line": 205,
+    "end_line": 205,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "cbfb4c06650a851b:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_commit_salt_security.rs",
+    "start_line": 208,
+    "end_line": 208,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "f8fb5f56df7b8ced:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_commit_salt_security.rs",
+    "start_line": 211,
+    "end_line": 211,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "cbfb4c06650a851b:2"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_commit_salt_security.rs",
+    "start_line": 225,
+    "end_line": 225,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "623164090c2ca75e:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_commit_salt_security.rs",
+    "start_line": 237,
+    "end_line": 237,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "ace9fc0768e7ea33:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_commit_salt_security.rs",
+    "start_line": 240,
+    "end_line": 240,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "9df44411377149cb:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_commit_salt_security.rs",
+    "start_line": 249,
+    "end_line": 249,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "9df44411377149cb:2"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_commit_salt_security.rs",
+    "start_line": 267,
+    "end_line": 267,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "1c67345fbc7bf6c5:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-worker-agent/src/tests_commit_salt_security.rs",
+    "start_line": 285,
+    "end_line": 285,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "f4686131f8c09bde:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-worker-agent/src/workflow_ops.rs",
+    "start_line": 99,
+    "end_line": 99,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "e6fbb714662330a3:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-worker-agent/src/workflow_ops.rs",
+    "start_line": 109,
+    "end_line": 109,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "c3a28cb0f7ca9345:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-worker-agent/src/workflow_ops.rs",
+    "start_line": 116,
+    "end_line": 116,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "1b78311ed8166a52:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-worker-agent/src/workflow_ops.rs",
+    "start_line": 124,
+    "end_line": 124,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "aa585f1380bc9bec:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/full_relation_tests.rs",
+    "start_line": 168,
+    "end_line": 168,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "288bcc0c7e5d388c:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/full_relation_tests.rs",
+    "start_line": 194,
+    "end_line": 194,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "be27561d99b346d:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/full_relation_tests.rs",
+    "start_line": 208,
+    "end_line": 208,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "5f012e6b3a62b537:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/full_relation_tests.rs",
+    "start_line": 247,
+    "end_line": 247,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "438149eb5738fe6b:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/full_relation_tests.rs",
+    "start_line": 270,
+    "end_line": 270,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "6a1291bc9f4a698e:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/full_relation_tests.rs",
+    "start_line": 330,
+    "end_line": 330,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "38de013238b9281d:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/full_relation_tests.rs",
+    "start_line": 381,
+    "end_line": 381,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "8f26ff534f0e89f9:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/examples/pon_w1_budget_report.rs",
+    "start_line": 257,
+    "end_line": 257,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "90ddfe286139c387:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/ancestry_index.rs",
+    "start_line": 708,
+    "end_line": 708,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "577b9ba1ce669b6b:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/ancestry_index.rs",
+    "start_line": 718,
+    "end_line": 718,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "d0f1f774befb5b4c:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/ancestry_index.rs",
+    "start_line": 720,
+    "end_line": 720,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "f1288e5fca4f8587:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/ancestry_index.rs",
+    "start_line": 854,
+    "end_line": 854,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "6e5a2a2265fcbf9e:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/pure_pon.rs",
+    "start_line": 93,
+    "end_line": 93,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "f7e7f01e24ec7d5d:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/pure_pon.rs",
+    "start_line": 94,
+    "end_line": 94,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "13659f993a6f9441:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+    "start_line": 3188,
+    "end_line": 3188,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "864acf700aa43dc4:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+    "start_line": 3200,
+    "end_line": 3200,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "142136f58dea53c4:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+    "start_line": 3210,
+    "end_line": 3210,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "a38f9ea31cb256ef:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/operator_pool_policy_tests.rs",
+    "start_line": 85,
+    "end_line": 85,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "23b86f8041847019:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/operator_pool_policy_tests.rs",
+    "start_line": 106,
+    "end_line": 106,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "59e12814dd7b554f:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/operator_pool_policy_tests.rs",
+    "start_line": 116,
+    "end_line": 116,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "45ff582f50094692:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/operator_pool_policy_tests.rs",
+    "start_line": 117,
+    "end_line": 117,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "4d48224beb172c64:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/operator_pool_policy_tests.rs",
+    "start_line": 118,
+    "end_line": 118,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "e49b8e49a131d1c3:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/operator_pool_policy_tests.rs",
+    "start_line": 132,
+    "end_line": 132,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "a3495004a5348c13:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/operator_pool_policy_tests.rs",
+    "start_line": 137,
+    "end_line": 137,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "1b31b1bafe57074e:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/operator_pool_policy_tests.rs",
+    "start_line": 175,
+    "end_line": 175,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "8b7153733f0a1c04:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/operator_pool_policy_tests.rs",
+    "start_line": 189,
+    "end_line": 189,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "f71bbd1617e9e0df:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/operator_pool_policy_tests.rs",
+    "start_line": 201,
+    "end_line": 201,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "4c42bf66b92b5adb:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/operator_pool_policy_tests.rs",
+    "start_line": 241,
+    "end_line": 241,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "4c42bf66b92b5adb:2"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/operator_task_store_tests.rs",
+    "start_line": 247,
+    "end_line": 247,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "d7133aaaf61e71bb:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/operator_task_store_tests.rs",
+    "start_line": 251,
+    "end_line": 251,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "b32a393e3681e823:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/operator_task_store_tests.rs",
+    "start_line": 304,
+    "end_line": 304,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "83c8ad306b2fee8:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/operator_task_store_tests.rs",
+    "start_line": 350,
+    "end_line": 350,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "4c0034b74eda17b:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/admission_parent_tests.rs",
+    "start_line": 90,
+    "end_line": 90,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "69f7f0cb6ab3767b:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/admission_parent_tests.rs",
+    "start_line": 144,
+    "end_line": 144,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "5df55e71bc746a24:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/admission_parent_tests.rs",
+    "start_line": 202,
+    "end_line": 202,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "69f7f0cb6ab3767b:2"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/admission_parent_tests.rs",
+    "start_line": 284,
+    "end_line": 284,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "4f1f1d4530bf9390:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/admission_parent_tests.rs",
+    "start_line": 285,
+    "end_line": 285,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "89bfb3046c1e9f1a:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/admission_parent_tests.rs",
+    "start_line": 292,
+    "end_line": 292,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "7de06cb449bb8a6:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/authenticated_migration_tests.rs",
+    "start_line": 965,
+    "end_line": 965,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "3602254d8c422a2e:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/authenticated_migration_tests.rs",
+    "start_line": 986,
+    "end_line": 986,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "7c2464e537e1d27d:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/authenticated_migration_tests.rs",
+    "start_line": 998,
+    "end_line": 998,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "2a9b0d5e30dc6b9:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/growth/mandatory_capacity_tests.rs",
+    "start_line": 46,
+    "end_line": 46,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "a4b122cbb5442e2b:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/funding/tests.rs",
+    "start_line": 149,
+    "end_line": 149,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "65e4cd3c906d6d7b:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/funding/tests.rs",
+    "start_line": 278,
+    "end_line": 278,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "5de19b7d54d7ea4d:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/funding/tests.rs",
+    "start_line": 285,
+    "end_line": 285,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "de9875b6a832c31c:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/funding/tests.rs",
+    "start_line": 286,
+    "end_line": 286,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "760c3600453e13c0:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/funding/tests.rs",
+    "start_line": 288,
+    "end_line": 288,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "e26df51fd135c8c2:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests.rs",
+    "start_line": 126,
+    "end_line": 126,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "206430b1057eeda1:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/growth/work_checked_tests.rs",
+    "start_line": 21,
+    "end_line": 21,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "69c40273e78f5332:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/funding/tests.rs",
+    "start_line": 478,
+    "end_line": 478,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "2dad1be466c31a3a:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/growth/work_checked_tests.rs",
+    "start_line": 92,
+    "end_line": 92,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "4015a0699f79aec2:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/funding/tests.rs",
+    "start_line": 522,
+    "end_line": 522,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "a987965d20ce484a:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/funding/tests.rs",
+    "start_line": 523,
+    "end_line": 523,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "fbb95b445d5bb2f8:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/funding/tests.rs",
+    "start_line": 529,
+    "end_line": 529,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "76c0fdc1c030a2e2:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/growth/work_checked_tests.rs",
+    "start_line": 189,
+    "end_line": 189,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "2a05b593f17cb516:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/funding/tests.rs",
+    "start_line": 652,
+    "end_line": 652,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "963d79acecf5a703:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/funding/tests.rs",
+    "start_line": 657,
+    "end_line": 657,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "e09526c1b49fa61b:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/funding/tests.rs",
+    "start_line": 674,
+    "end_line": 674,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "e9cbc2ac7175c808:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/growth/work_checked_tests.rs",
+    "start_line": 229,
+    "end_line": 229,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "9836617d69551ed9:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/funding/tests.rs",
+    "start_line": 739,
+    "end_line": 739,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "cf7c8ad7c39c9ba0:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests.rs",
+    "start_line": 389,
+    "end_line": 389,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "17b5741a130b26e4:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests.rs",
+    "start_line": 398,
+    "end_line": 398,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "2f4fce35a8c3e3d9:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/growth/work_checked_tests.rs",
+    "start_line": 303,
+    "end_line": 303,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "2564a7ba48b82e7c:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests.rs",
+    "start_line": 456,
+    "end_line": 456,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "ab979bcc98c4f0a6:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/funding/tests.rs",
+    "start_line": 833,
+    "end_line": 833,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "915f58ea08a2cf57:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/funding/tests.rs",
+    "start_line": 843,
+    "end_line": 843,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "de9875b6a832c36b:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/funding/tests.rs",
+    "start_line": 844,
+    "end_line": 844,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "8e2b3b3fe79d7b91:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests.rs",
+    "start_line": 637,
+    "end_line": 637,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "bd3e0947dd9dbdc0:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests.rs",
+    "start_line": 706,
+    "end_line": 706,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "bd3e0947dd9dbdc0:2"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/growth_reference_tests.rs",
+    "start_line": 150,
+    "end_line": 150,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "8072fe5dab41eecf:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/growth_reference_tests.rs",
+    "start_line": 153,
+    "end_line": 153,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "e8434c46ce9670d5:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/growth_reference_tests.rs",
+    "start_line": 159,
+    "end_line": 159,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "ee2be0e5cab66e77:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/growth_reference_tests.rs",
+    "start_line": 165,
+    "end_line": 165,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "45063eaa647e089d:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/growth_reference_tests.rs",
+    "start_line": 201,
+    "end_line": 201,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "91d0612a6d97048e:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/growth_reference_tests.rs",
+    "start_line": 202,
+    "end_line": 202,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "9da650824051d935:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests.rs",
+    "start_line": 893,
+    "end_line": 893,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "b6eddb74831eb16f:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests.rs",
+    "start_line": 920,
+    "end_line": 920,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "d2701a38da065002:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests.rs",
+    "start_line": 921,
+    "end_line": 921,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "958fa7590e9e749c:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests.rs",
+    "start_line": 1006,
+    "end_line": 1006,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "d377a97a1175efc8:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests.rs",
+    "start_line": 1100,
+    "end_line": 1100,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "bbc5e4d0cfc626b4:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests.rs",
+    "start_line": 1191,
+    "end_line": 1191,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "40076340c017fd61:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests.rs",
+    "start_line": 1280,
+    "end_line": 1280,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "f3edbc9a75edd417:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests.rs",
+    "start_line": 1437,
+    "end_line": 1437,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "514ce2fd62c24854:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests.rs",
+    "start_line": 1498,
+    "end_line": 1498,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "a48e7e8f58eff50a:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests.rs",
+    "start_line": 1590,
+    "end_line": 1590,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "2c0f3e7f29651fac:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests.rs",
+    "start_line": 1619,
+    "end_line": 1619,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "481393276fd52bb4:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests.rs",
+    "start_line": 1621,
+    "end_line": 1621,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "716575d652927348:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests.rs",
+    "start_line": 1743,
+    "end_line": 1743,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "fc2b2f681af86482:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests.rs",
+    "start_line": 2000,
+    "end_line": 2000,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "2472838a011210b1:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/native_budget_tests.rs",
+    "start_line": 89,
+    "end_line": 89,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "6f47c1ddd0202d90:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/native_budget_tests.rs",
+    "start_line": 90,
+    "end_line": 90,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "952f39220791c0d3:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/native_budget_tests.rs",
+    "start_line": 363,
+    "end_line": 363,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "c77844f9dcf28679:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/root_rejection_cache_tests.rs",
+    "start_line": 53,
+    "end_line": 53,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "230bfd22bf66a208:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/root_rejection_cache_tests.rs",
+    "start_line": 247,
+    "end_line": 247,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "232ca0c21f28d284:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/tests/native_growth_cli.rs",
+    "start_line": 88,
+    "end_line": 88,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "7f04a7fa179824e2:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/tests/native_compact_execution.rs",
+    "start_line": 241,
+    "end_line": 241,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "70dea5aeb2c52c26:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/tests/native_compact_execution.rs",
+    "start_line": 244,
+    "end_line": 244,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "746bd64a587d94f:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/tests/native_compact_execution.rs",
+    "start_line": 245,
+    "end_line": 245,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "527a0952dab0ceca:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/tests/native_compact_execution.rs",
+    "start_line": 246,
+    "end_line": 246,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "7cc821b3abbfb1db:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/tests/native_compact_execution.rs",
+    "start_line": 262,
+    "end_line": 262,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "a55ffb6527e88ea0:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/tests/native_compact_execution.rs",
+    "start_line": 263,
+    "end_line": 263,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "dbf96fcd33920f39:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/tests/native_compact_execution.rs",
+    "start_line": 291,
+    "end_line": 291,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "beed7a5d271f25e3:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/tests/native_growth_cli.rs",
+    "start_line": 267,
+    "end_line": 267,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "a130f616d04da824:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/tests/native_compact_execution.rs",
+    "start_line": 542,
+    "end_line": 542,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "76cf8712a5961008:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/tests/native_compact_execution.rs",
+    "start_line": 587,
+    "end_line": 587,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "197e261a54b009dd:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_identity_churn.rs",
+    "start_line": 75,
+    "end_line": 75,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "60a256566a2dad96:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs",
+    "start_line": 1897,
+    "end_line": 1897,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "945127699416de31:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-research-protocol/tests/protocol_v1.rs",
+    "start_line": 481,
+    "end_line": 481,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "3a5a135d0b85c15:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-research-protocol/tests/protocol_v1.rs",
+    "start_line": 503,
+    "end_line": 503,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "8e521d6a6d07d123:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/examples/llm_zero_gain_round.rs",
+    "start_line": 242,
+    "end_line": 242,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "627d19305666a8a2:1"
+    }
+  },
+  {
+    "rule": "rust/hard-coded-cryptographic-value",
+    "level": "warning",
+    "path": "trillionnium/crates/trnm-pon-node/src/store/growth_reference_tests.rs",
+    "start_line": 249,
+    "end_line": 249,
+    "result_fingerprints": {
+      "primaryLocationLineHash": "af815a3aa7f0cd1d:1"
+    }
+  }
+]

@@ -1,0 +1,176 @@
+{
+  "schema": "legal-ticket-v4-two-architecture-independent-readback-v1",
+  "source_commit": "7e3543f8817d019975ae578b56b4997eb92bc422",
+  "source_tree": "c238630a84d2e950894e0a2b9b4256d48455e836",
+  "run_id": 40619573406,
+  "all_checks_passed": true,
+  "first_admissions_per_architecture": 762,
+  "first_admission_calls_both_architectures": 1524,
+  "distinct_fixture_packet_ids_across_both_architectures": 127,
+  "packet_bytes_identical_across_strategies_worker_counts_and_architectures": true,
+  "actual_native_or_solver_executions_by_this_readback": 0,
+  "architectures": {
+    "x86_64": {
+      "schema": "legal-ticket-v4-independent-cost-readback-v1",
+      "source_commit": "7e3543f8817d019975ae578b56b4997eb92bc422",
+      "source_tree": "c238630a84d2e950894e0a2b9b4256d48455e836",
+      "architecture": "x86_64",
+      "actual_host": {
+        "machine": "x86_64",
+        "platform": "Linux-6.17.0-1022-azure-x86_64-with-glibc2.39",
+        "affinity": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "cpu_count": 4,
+        "exclusive_host": false,
+        "hardware_authenticated": false,
+        "gpu_measured": false,
+        "energy_measured": false,
+        "hardware_batching_measured": false,
+        "cpu_batch_workers": [
+          1,
+          2,
+          4
+        ],
+        "cpu.max": null,
+        "memory.max": null,
+        "cpuset.cpus.effective": "0-3"
+      },
+      "all_archive_members_read_and_hashed": true,
+      "raw_rows": 14,
+      "cohorts": 12,
+      "raw_bytes": 1008272,
+      "raw_sha256": "942b76790b7bb63261106819638f4c01d04e6ebc476dc5cacf471623f42cf6e0",
+      "exact_original_reader_summary_recomputed": true,
+      "capture_and_source_and_native_elf_sha_bound": true,
+      "payload_archive": {
+        "files": 762,
+        "bytes": 37725096,
+        "all_sha256_verified": true,
+        "cryptographic_admission_repeated_by_reader": false
+      },
+      "native_binary": {
+        "name": "pon_legal_ticket_batch_v4.x86_64",
+        "bytes": 9239744,
+        "sha256": "ad5c6ef23559f26d01ff38bf1de621e7a64e3cf697e5a097b394c0d7035a6846",
+        "crc32": 1435681780,
+        "elf_class": 2,
+        "elf_data": 1,
+        "elf_machine": 62
+      },
+      "first_admission_calls": 762,
+      "distinct_fixture_packet_ids": 127,
+      "attempts": 1638,
+      "failures": 876,
+      "exhausted_searches": 6,
+      "all_exclusive_phase_totals": {
+        "wall_ns": 8435639278,
+        "process_cpu_ns": 6648090329
+      },
+      "sum_cohort_outer": {
+        "wall_ns": 8484926545,
+        "process_cpu_ns": 6693562524
+      },
+      "driver_terminal_wall_ns": 8507685821,
+      "capture_elapsed_ns": 8533785248,
+      "whole_native_process_cpu_ns": 6715042000,
+      "whole_native_process_cpu_ms_per_admission": 8.812391076115485,
+      "capture_max_rss_kib": 86732,
+      "identity_check_tracked_entries": 6102,
+      "identity_check_tracked_bytes": 793019723,
+      "native_solver_or_admission_executed_by_this_reader": false,
+      "limits": [
+        "Original raw positive native executions are read; no new solver run or adversarial trial is performed.",
+        "Actual complete native Node admission was performed by the hosted driver; this reader checks recorded costs and retained bytes, not a new cryptographic admission.",
+        "Two paired rounds and fixed parent/maintenance task; repeated admissions into independent fresh stores are not distinct mining rewards.",
+        "V4 adds whole-batch timing and packet archival; its all-phase cost is not an algorithm-only comparison with V3.",
+        "Shared four-vCPU runners; no hardware authentication, exclusive-host control, GPU, energy, global optimum or production throughput claim.",
+        "Archive ZIPs and native executables were read into memory and are not saved locally by this reader."
+      ]
+    },
+    "aarch64": {
+      "schema": "legal-ticket-v4-independent-cost-readback-v1",
+      "source_commit": "7e3543f8817d019975ae578b56b4997eb92bc422",
+      "source_tree": "c238630a84d2e950894e0a2b9b4256d48455e836",
+      "architecture": "aarch64",
+      "actual_host": {
+        "machine": "aarch64",
+        "platform": "Linux-7.0.0-1017-azure-aarch64-with-glibc2.39",
+        "affinity": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "cpu_count": 4,
+        "exclusive_host": false,
+        "hardware_authenticated": false,
+        "gpu_measured": false,
+        "energy_measured": false,
+        "hardware_batching_measured": false,
+        "cpu_batch_workers": [
+          1,
+          2,
+          4
+        ],
+        "cpu.max": null,
+        "memory.max": null,
+        "cpuset.cpus.effective": "0-3"
+      },
+      "all_archive_members_read_and_hashed": true,
+      "raw_rows": 14,
+      "cohorts": 12,
+      "raw_bytes": 1009816,
+      "raw_sha256": "a7674055409596fe3ecbdbd9130bbfba13c3151556a3c03b73497ba0ee4564a3",
+      "exact_original_reader_summary_recomputed": true,
+      "capture_and_source_and_native_elf_sha_bound": true,
+      "payload_archive": {
+        "files": 762,
+        "bytes": 37725096,
+        "all_sha256_verified": true,
+        "cryptographic_admission_repeated_by_reader": false
+      },
+      "native_binary": {
+        "name": "pon_legal_ticket_batch_v4.aarch64",
+        "bytes": 8330272,
+        "sha256": "ea26bcec63b9f231101b5cc835e72d253c0ad9844eb37b418e30dc5c37030ce9",
+        "crc32": 3361879175,
+        "elf_class": 2,
+        "elf_data": 1,
+        "elf_machine": 183
+      },
+      "first_admission_calls": 762,
+      "distinct_fixture_packet_ids": 127,
+      "attempts": 1638,
+      "failures": 876,
+      "exhausted_searches": 6,
+      "all_exclusive_phase_totals": {
+        "wall_ns": 10625928595,
+        "process_cpu_ns": 10547371184
+      },
+      "sum_cohort_outer": {
+        "wall_ns": 10744615005,
+        "process_cpu_ns": 10662931608
+      },
+      "driver_terminal_wall_ns": 10767345926,
+      "capture_elapsed_ns": 10779638625,
+      "whole_native_process_cpu_ns": 10687184000,
+      "whole_native_process_cpu_ms_per_admission": 14.025175853018373,
+      "capture_max_rss_kib": 37160,
+      "identity_check_tracked_entries": 6102,
+      "identity_check_tracked_bytes": 793019723,
+      "native_solver_or_admission_executed_by_this_reader": false,
+      "limits": [
+        "Original raw positive native executions are read; no new solver run or adversarial trial is performed.",
+        "Actual complete native Node admission was performed by the hosted driver; this reader checks recorded costs and retained bytes, not a new cryptographic admission.",
+        "Two paired rounds and fixed parent/maintenance task; repeated admissions into independent fresh stores are not distinct mining rewards.",
+        "V4 adds whole-batch timing and packet archival; its all-phase cost is not an algorithm-only comparison with V3.",
+        "Shared four-vCPU runners; no hardware authentication, exclusive-host control, GPU, energy, global optimum or production throughput claim.",
+        "Archive ZIPs and native executables were read into memory and are not saved locally by this reader."
+      ]
+    }
+  }
+}

@@ -1,0 +1,437 @@
+{
+  "schema": "codeql-a99-runtime-sarif-flow-location-readback-v1",
+  "head": "a99ef8e333b6f1b7486b33e820464cf824fec273",
+  "rule": "rust/cleartext-logging",
+  "primary_path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+  "primary_line": 2610,
+  "flows": [
+    {
+      "code_flow": 0,
+      "thread_flow": 0,
+      "locations": [
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+          "region": {
+            "endColumn": 39,
+            "endLine": 154,
+            "startColumn": 32,
+            "startLine": 154
+          }
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+          "region": {
+            "endColumn": 40,
+            "endLine": 154,
+            "startColumn": 27,
+            "startLine": 154
+          }
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+          "region": {
+            "endColumn": 41,
+            "endLine": 154,
+            "startColumn": 24,
+            "startLine": 154
+          }
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+          "region": {
+            "endColumn": 41,
+            "endLine": 154,
+            "startColumn": 17,
+            "startLine": 154
+          }
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+          "region": {
+            "endColumn": 56,
+            "endLine": 301,
+            "startColumn": 13,
+            "startLine": 301
+          }
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+          "region": {
+            "endColumn": 57,
+            "endLine": 301,
+            "startColumn": 13,
+            "startLine": 301
+          }
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+          "region": {
+            "endColumn": 6,
+            "endLine": 270,
+            "startColumn": 5,
+            "startLine": 264
+          }
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+          "region": {
+            "endColumn": 2,
+            "endLine": 271,
+            "startColumn": 19,
+            "startLine": 263
+          }
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs",
+          "region": {
+            "endColumn": 10,
+            "endLine": 295,
+            "startColumn": 24,
+            "startLine": 290
+          }
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs",
+          "region": {
+            "endColumn": 11,
+            "endLine": 295,
+            "startColumn": 24,
+            "startLine": 290
+          }
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs",
+          "region": {
+            "endColumn": 86,
+            "endLine": 197,
+            "startColumn": 9,
+            "startLine": 197
+          }
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs",
+          "region": {
+            "endColumn": 6,
+            "endLine": 198,
+            "startColumn": 23,
+            "startLine": 190
+          }
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs",
+          "region": {
+            "endColumn": 75,
+            "endLine": 183,
+            "startColumn": 9,
+            "startLine": 183
+          }
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs",
+          "region": {
+            "endColumn": 6,
+            "endLine": 184,
+            "startColumn": 94,
+            "startLine": 182
+          }
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/growth_cli.rs",
+          "region": {
+            "endColumn": 48,
+            "endLine": 280,
+            "startColumn": 17,
+            "startLine": 280
+          }
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/growth_cli.rs",
+          "region": {
+            "endColumn": 49,
+            "endLine": 280,
+            "startColumn": 17,
+            "startLine": 280
+          }
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+          "region": {
+            "endColumn": 48,
+            "endLine": 1301,
+            "startColumn": 16,
+            "startLine": 1301
+          }
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+          "region": {
+            "endColumn": 48,
+            "endLine": 1301,
+            "startColumn": 9,
+            "startLine": 1301
+          }
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+          "region": {
+            "endColumn": 16,
+            "endLine": 2607,
+            "startColumn": 11,
+            "startLine": 2607
+          }
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+          "region": {
+            "endColumn": 18,
+            "endLine": 2608,
+            "startColumn": 9,
+            "startLine": 2608
+          }
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+          "region": {
+            "endColumn": 31,
+            "endLine": 2610,
+            "startColumn": 22,
+            "startLine": 2610
+          }
+        }
+      ]
+    },
+    {
+      "code_flow": 1,
+      "thread_flow": 0,
+      "locations": [
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/growth_cli.rs",
+          "region": {
+            "endColumn": 73,
+            "endLine": 159,
+            "startColumn": 20,
+            "startLine": 154
+          }
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/growth_cli.rs",
+          "region": {
+            "endColumn": 74,
+            "endLine": 159,
+            "startColumn": 20,
+            "startLine": 154
+          }
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+          "region": {
+            "endColumn": 48,
+            "endLine": 1301,
+            "startColumn": 16,
+            "startLine": 1301
+          }
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+          "region": {
+            "endColumn": 48,
+            "endLine": 1301,
+            "startColumn": 9,
+            "startLine": 1301
+          }
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+          "region": {
+            "endColumn": 16,
+            "endLine": 2607,
+            "startColumn": 11,
+            "startLine": 2607
+          }
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+          "region": {
+            "endColumn": 18,
+            "endLine": 2608,
+            "startColumn": 9,
+            "startLine": 2608
+          }
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+          "region": {
+            "endColumn": 31,
+            "endLine": 2610,
+            "startColumn": 22,
+            "startLine": 2610
+          }
+        }
+      ]
+    },
+    {
+      "code_flow": 2,
+      "thread_flow": 0,
+      "locations": [
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/growth_cli.rs",
+          "region": {
+            "endColumn": 60,
+            "endLine": 257,
+            "startColumn": 27,
+            "startLine": 257
+          }
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/growth_cli.rs",
+          "region": {
+            "endColumn": 61,
+            "endLine": 257,
+            "startColumn": 27,
+            "startLine": 257
+          }
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+          "region": {
+            "endColumn": 48,
+            "endLine": 1301,
+            "startColumn": 16,
+            "startLine": 1301
+          }
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+          "region": {
+            "endColumn": 48,
+            "endLine": 1301,
+            "startColumn": 9,
+            "startLine": 1301
+          }
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+          "region": {
+            "endColumn": 16,
+            "endLine": 2607,
+            "startColumn": 11,
+            "startLine": 2607
+          }
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+          "region": {
+            "endColumn": 18,
+            "endLine": 2608,
+            "startColumn": 9,
+            "startLine": 2608
+          }
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+          "region": {
+            "endColumn": 31,
+            "endLine": 2610,
+            "startColumn": 22,
+            "startLine": 2610
+          }
+        }
+      ]
+    },
+    {
+      "code_flow": 3,
+      "thread_flow": 0,
+      "locations": [
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/growth_cli.rs",
+          "region": {
+            "endColumn": 14,
+            "endLine": 264,
+            "startColumn": 52,
+            "startLine": 261
+          }
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/growth_cli.rs",
+          "region": {
+            "endColumn": 15,
+            "endLine": 264,
+            "startColumn": 52,
+            "startLine": 261
+          }
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+          "region": {
+            "endColumn": 48,
+            "endLine": 1301,
+            "startColumn": 16,
+            "startLine": 1301
+          }
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+          "region": {
+            "endColumn": 48,
+            "endLine": 1301,
+            "startColumn": 9,
+            "startLine": 1301
+          }
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+          "region": {
+            "endColumn": 16,
+            "endLine": 2607,
+            "startColumn": 11,
+            "startLine": 2607
+          }
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+          "region": {
+            "endColumn": 18,
+            "endLine": 2608,
+            "startColumn": 9,
+            "startLine": 2608
+          }
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+          "region": {
+            "endColumn": 31,
+            "endLine": 2610,
+            "startColumn": 22,
+            "startLine": 2610
+          }
+        }
+      ]
+    }
+  ],
+  "all_flow_files_exact_git_blob_verified": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+      "bytes": 31858,
+      "sha256": "ad9e41b68379ec9e5aade1bc2339d2710c9128e142738488dec35eee20b5979f",
+      "git_blob_sha1": "5b09b2e473dbba311a398e9ed77d2b619eaa906c"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/growth_cli.rs",
+      "bytes": 13500,
+      "sha256": "761cfc49c53f897353a3a23cd9ec7313e308a9fc13ffca3f1c4753127f8ae2bf",
+      "git_blob_sha1": "a6ad60552c939d334b8b9425a83d9e5cf2de3a21"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+      "bytes": 119415,
+      "sha256": "abb1f7fc003d9be335b44fa3acbc77420378f0cedc87c0552bd1ea4e5a15a7ba",
+      "git_blob_sha1": "405718d4b65e36a78e1ffdaf9fe12216a99e47ac"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs",
+      "bytes": 29182,
+      "sha256": "1f186613b8f9df74ba50d6c8d1d0e02fdeaee22dc4a4d2969449cd5f96234164",
+      "git_blob_sha1": "c12b91dcb9d5a45b9782a78486660b2712a15e8b"
+    }
+  ]
+}

@@ -1,0 +1,1401 @@
+{
+  "schema": "legal-ticket-v4-independent-cost-readback-v1",
+  "source_commit": "7e3543f8817d019975ae578b56b4997eb92bc422",
+  "source_tree": "c238630a84d2e950894e0a2b9b4256d48455e836",
+  "architecture": "aarch64",
+  "actual_host": {
+    "machine": "aarch64",
+    "platform": "Linux-7.0.0-1017-azure-aarch64-with-glibc2.39",
+    "affinity": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "cpu_count": 4,
+    "exclusive_host": false,
+    "hardware_authenticated": false,
+    "gpu_measured": false,
+    "energy_measured": false,
+    "hardware_batching_measured": false,
+    "cpu_batch_workers": [
+      1,
+      2,
+      4
+    ],
+    "cpu.max": null,
+    "memory.max": null,
+    "cpuset.cpus.effective": "0-3"
+  },
+  "all_archive_members_read_and_hashed": true,
+  "raw_rows": 14,
+  "cohorts": 12,
+  "raw_bytes": 1009816,
+  "raw_sha256": "a7674055409596fe3ecbdbd9130bbfba13c3151556a3c03b73497ba0ee4564a3",
+  "exact_original_reader_summary_recomputed": true,
+  "capture_and_source_and_native_elf_sha_bound": true,
+  "payload_archive": {
+    "files": 762,
+    "bytes": 37725096,
+    "all_sha256_verified": true,
+    "cryptographic_admission_repeated_by_reader": false
+  },
+  "native_binary": {
+    "name": "pon_legal_ticket_batch_v4.aarch64",
+    "bytes": 8330272,
+    "sha256": "ea26bcec63b9f231101b5cc835e72d253c0ad9844eb37b418e30dc5c37030ce9",
+    "crc32": 3361879175,
+    "elf_class": 2,
+    "elf_data": 1,
+    "elf_machine": 183
+  },
+  "first_admission_calls": 762,
+  "distinct_fixture_packet_ids": 127,
+  "attempts": 1638,
+  "failures": 876,
+  "exhausted_searches": 6,
+  "phases": {
+    "directory": {
+      "wall_ns": 916054,
+      "process_cpu_ns": 925072
+    },
+    "node_open": {
+      "wall_ns": 127084030,
+      "process_cpu_ns": 109538544
+    },
+    "bootstrap_material": {
+      "wall_ns": 9061580,
+      "process_cpu_ns": 9074192
+    },
+    "template_acquisition": {
+      "wall_ns": 89246082,
+      "process_cpu_ns": 89269960
+    },
+    "matrix_material": {
+      "wall_ns": 609350,
+      "process_cpu_ns": 616384
+    },
+    "producer_setup": {
+      "wall_ns": 1980417,
+      "process_cpu_ns": 1988728
+    },
+    "all_attempt_generation": {
+      "wall_ns": 858089656,
+      "process_cpu_ns": 1414735720
+    },
+    "packet_encoding": {
+      "wall_ns": 4668561,
+      "process_cpu_ns": 5281472
+    },
+    "first_native_admission": {
+      "wall_ns": 8839347497,
+      "process_cpu_ns": 8519141232
+    },
+    "node_close": {
+      "wall_ns": 42445091,
+      "process_cpu_ns": 21614472
+    },
+    "cold_node_open": {
+      "wall_ns": 131620413,
+      "process_cpu_ns": 125145888
+    },
+    "cold_packet_readback": {
+      "wall_ns": 150304152,
+      "process_cpu_ns": 150664296
+    },
+    "cold_node_close": {
+      "wall_ns": 9643784,
+      "process_cpu_ns": 4980672
+    },
+    "packet_archival": {
+      "wall_ns": 360911928,
+      "process_cpu_ns": 94394552
+    }
+  },
+  "all_exclusive_phase_totals": {
+    "wall_ns": 10625928595,
+    "process_cpu_ns": 10547371184
+  },
+  "sum_cohort_outer": {
+    "wall_ns": 10744615005,
+    "process_cpu_ns": 10662931608
+  },
+  "driver_terminal_wall_ns": 10767345926,
+  "capture_elapsed_ns": 10779638625,
+  "whole_native_process_cpu_ns": 10687184000,
+  "whole_native_process_cpu_ms_per_admission": 14.025175853018373,
+  "capture_max_rss_kib": 37160,
+  "comparisons": [
+    {
+      "strategy": "prepared-general",
+      "workers": 1,
+      "first_admissions": 127,
+      "attempts": 273,
+      "ms_per_first_admission": {
+        "recurring": {
+          "wall_ms": 13.764112244094488,
+          "process_cpu_ms": 13.088447496062992
+        },
+        "all_phases": {
+          "wall_ms": 14.953966897637796,
+          "process_cpu_ms": 13.886288629921259
+        },
+        "outer": {
+          "wall_ms": 15.108403015748031,
+          "process_cpu_ms": 14.036697511811024
+        },
+        "batch_generation": {
+          "wall_ms": 1.8864448188976377,
+          "process_cpu_ms": 1.8864052913385827
+        }
+      },
+      "numerator_ns_by_scope": {
+        "recurring": {
+          "wall_ns": 1748042255,
+          "process_cpu_ns": 1662232832
+        },
+        "all_phases": {
+          "wall_ns": 1899153796,
+          "process_cpu_ns": 1763558656
+        },
+        "outer": {
+          "wall_ns": 1918767183,
+          "process_cpu_ns": 1782660584
+        },
+        "batch_generation": {
+          "wall_ns": 239578492,
+          "process_cpu_ns": 239573472
+        }
+      },
+      "denominator_first_admission_calls": 127,
+      "generation_wall_speedup_vs_one_worker": 1.0,
+      "generation_cpu_ratio_vs_one_worker": 1.0,
+      "all_phase_wall_speedup_vs_one_worker": 1.0,
+      "all_phase_cpu_ratio_vs_one_worker": 1.0,
+      "each_phase_ms_per_first_admission": {
+        "directory": {
+          "wall_ms": 0.001237779527559055,
+          "process_cpu_ms": 0.001248503937007874
+        },
+        "node_open": {
+          "wall_ms": 0.17967107874015747,
+          "process_cpu_ms": 0.14660692913385828
+        },
+        "bootstrap_material": {
+          "wall_ms": 0.011913629921259843,
+          "process_cpu_ms": 0.01193127559055118
+        },
+        "template_acquisition": {
+          "wall_ms": 0.11736537795275591,
+          "process_cpu_ms": 0.1173979842519685
+        },
+        "matrix_material": {
+          "wall_ms": 0.0007756929133858267,
+          "process_cpu_ms": 0.0007896062992125984
+        },
+        "producer_setup": {
+          "wall_ms": 0.004488653543307086,
+          "process_cpu_ms": 0.004499464566929134
+        },
+        "all_attempt_generation": {
+          "wall_ms": 1.8864448188976377,
+          "process_cpu_ms": 1.8864052913385827
+        },
+        "packet_encoding": {
+          "wall_ms": 0.00620351968503937,
+          "process_cpu_ms": 0.006944944881889763
+        },
+        "first_native_admission": {
+          "wall_ms": 11.866975251968505,
+          "process_cpu_ms": 11.190597795275592
+        },
+        "node_close": {
+          "wall_ms": 0.05968155118110236,
+          "process_cpu_ms": 0.02861007874015748
+        },
+        "cold_node_open": {
+          "wall_ms": 0.1717563149606299,
+          "process_cpu_ms": 0.16368623622047243
+        },
+        "cold_packet_readback": {
+          "wall_ms": 0.1965394094488189,
+          "process_cpu_ms": 0.1971868346456693
+        },
+        "cold_node_close": {
+          "wall_ms": 0.012866818897637794,
+          "process_cpu_ms": 0.0061737952755905505
+        },
+        "packet_archival": {
+          "wall_ms": 0.438047,
+          "process_cpu_ms": 0.12420988976377953
+        }
+      },
+      "per_round": [
+        {
+          "round": 0,
+          "winners": 64,
+          "attempts": 122,
+          "all_exclusive_phases": {
+            "process_cpu_ns": 877593712,
+            "wall_ns": 937353243
+          }
+        },
+        {
+          "round": 1,
+          "winners": 63,
+          "attempts": 151,
+          "all_exclusive_phases": {
+            "process_cpu_ns": 885964944,
+            "wall_ns": 961800553
+          }
+        }
+      ]
+    },
+    {
+      "strategy": "prepared-general",
+      "workers": 2,
+      "first_admissions": 127,
+      "attempts": 273,
+      "ms_per_first_admission": {
+        "recurring": {
+          "wall_ms": 12.525606417322836,
+          "process_cpu_ms": 13.029716031496063
+        },
+        "all_phases": {
+          "wall_ms": 13.633487661417321,
+          "process_cpu_ms": 13.820620031496063
+        },
+        "outer": {
+          "wall_ms": 13.78980274015748,
+          "process_cpu_ms": 13.972873133858267
+        },
+        "batch_generation": {
+          "wall_ms": 0.9993929133858267,
+          "process_cpu_ms": 1.8774839685039368
+        }
+      },
+      "numerator_ns_by_scope": {
+        "recurring": {
+          "wall_ns": 1590752015,
+          "process_cpu_ns": 1654773936
+        },
+        "all_phases": {
+          "wall_ns": 1731452933,
+          "process_cpu_ns": 1755218744
+        },
+        "outer": {
+          "wall_ns": 1751304948,
+          "process_cpu_ns": 1774554888
+        },
+        "batch_generation": {
+          "wall_ns": 126922900,
+          "process_cpu_ns": 238440464
+        }
+      },
+      "denominator_first_admission_calls": 127,
+      "generation_wall_speedup_vs_one_worker": 1.8875907499749849,
+      "generation_cpu_ratio_vs_one_worker": 0.9952707284719736,
+      "all_phase_wall_speedup_vs_one_worker": 1.096855571297242,
+      "all_phase_cpu_ratio_vs_one_worker": 0.9952709755518333,
+      "each_phase_ms_per_first_admission": {
+        "directory": {
+          "wall_ms": 0.0012093070866141733,
+          "process_cpu_ms": 0.0012207244094488189
+        },
+        "node_open": {
+          "wall_ms": 0.1626061653543307,
+          "process_cpu_ms": 0.14317089763779528
+        },
+        "bootstrap_material": {
+          "wall_ms": 0.011816692913385827,
+          "process_cpu_ms": 0.011834582677165353
+        },
+        "template_acquisition": {
+          "wall_ms": 0.11691010236220473,
+          "process_cpu_ms": 0.11694103937007874
+        },
+        "matrix_material": {
+          "wall_ms": 0.0007920078740157481,
+          "process_cpu_ms": 0.0008004409448818898
+        },
+        "producer_setup": {
+          "wall_ms": 0.00452796062992126,
+          "process_cpu_ms": 0.0045387086614173235
+        },
+        "all_attempt_generation": {
+          "wall_ms": 0.9993929133858267,
+          "process_cpu_ms": 1.8774839685039368
+        },
+        "packet_encoding": {
+          "wall_ms": 0.005784669291338583,
+          "process_cpu_ms": 0.006573984251968503
+        },
+        "first_native_admission": {
+          "wall_ms": 11.515900874015749,
+          "process_cpu_ms": 11.14111937007874
+        },
+        "node_close": {
+          "wall_ms": 0.05225689763779528,
+          "process_cpu_ms": 0.027520125984251968
+        },
+        "cold_node_open": {
+          "wall_ms": 0.17164614173228346,
+          "process_cpu_ms": 0.16383672440944883
+        },
+        "cold_packet_readback": {
+          "wall_ms": 0.19819888188976378,
+          "process_cpu_ms": 0.19751168503937008
+        },
+        "cold_node_close": {
+          "wall_ms": 0.012501110236220473,
+          "process_cpu_ms": 0.006408629921259843
+        },
+        "packet_archival": {
+          "wall_ms": 0.37994393700787404,
+          "process_cpu_ms": 0.12165914960629921
+        }
+      },
+      "per_round": [
+        {
+          "round": 0,
+          "winners": 64,
+          "attempts": 122,
+          "all_exclusive_phases": {
+            "process_cpu_ns": 870358368,
+            "wall_ns": 863915928
+          }
+        },
+        {
+          "round": 1,
+          "winners": 63,
+          "attempts": 151,
+          "all_exclusive_phases": {
+            "process_cpu_ns": 884860376,
+            "wall_ns": 867537005
+          }
+        }
+      ]
+    },
+    {
+      "strategy": "prepared-general",
+      "workers": 4,
+      "first_admissions": 127,
+      "attempts": 273,
+      "ms_per_first_admission": {
+        "recurring": {
+          "wall_ms": 12.10266125984252,
+          "process_cpu_ms": 13.073831874015749
+        },
+        "all_phases": {
+          "wall_ms": 13.246628937007875,
+          "process_cpu_ms": 13.867739212598424
+        },
+        "outer": {
+          "wall_ms": 13.402295503937008,
+          "process_cpu_ms": 14.019309543307086
+        },
+        "batch_generation": {
+          "wall_ms": 0.5434030866141732,
+          "process_cpu_ms": 1.8833943937007873
+        }
+      },
+      "numerator_ns_by_scope": {
+        "recurring": {
+          "wall_ns": 1537037980,
+          "process_cpu_ns": 1660376648
+        },
+        "all_phases": {
+          "wall_ns": 1682321875,
+          "process_cpu_ns": 1761202880
+        },
+        "outer": {
+          "wall_ns": 1702091529,
+          "process_cpu_ns": 1780452312
+        },
+        "batch_generation": {
+          "wall_ns": 69012192,
+          "process_cpu_ns": 239191088
+        }
+      },
+      "denominator_first_admission_calls": 127,
+      "generation_wall_speedup_vs_one_worker": 3.4715386521848193,
+      "generation_cpu_ratio_vs_one_worker": 0.9984038967386172,
+      "all_phase_wall_speedup_vs_one_worker": 1.1288884869311944,
+      "all_phase_cpu_ratio_vs_one_worker": 0.9986641918645659,
+      "each_phase_ms_per_first_admission": {
+        "directory": {
+          "wall_ms": 0.0012083700787401575,
+          "process_cpu_ms": 0.0012199685039370079
+        },
+        "node_open": {
+          "wall_ms": 0.167375,
+          "process_cpu_ms": 0.1436583937007874
+        },
+        "bootstrap_material": {
+          "wall_ms": 0.011934464566929133,
+          "process_cpu_ms": 0.011950551181102363
+        },
+        "template_acquisition": {
+          "wall_ms": 0.1171507244094488,
+          "process_cpu_ms": 0.11718343307086615
+        },
+        "matrix_material": {
+          "wall_ms": 0.0008413228346456693,
+          "process_cpu_ms": 0.0008511496062992126
+        },
+        "producer_setup": {
+          "wall_ms": 0.004449543307086614,
+          "process_cpu_ms": 0.0044605984251968505
+        },
+        "all_attempt_generation": {
+          "wall_ms": 0.5434030866141732,
+          "process_cpu_ms": 1.8833943937007873
+        },
+        "packet_encoding": {
+          "wall_ms": 0.006013472440944882,
+          "process_cpu_ms": 0.006810015748031496
+        },
+        "first_native_admission": {
+          "wall_ms": 11.548795157480315,
+          "process_cpu_ms": 11.179166866141733
+        },
+        "node_close": {
+          "wall_ms": 0.052674952755905516,
+          "process_cpu_ms": 0.0271588031496063
+        },
+        "cold_node_open": {
+          "wall_ms": 0.17272707874015747,
+          "process_cpu_ms": 0.1642356535433071
+        },
+        "cold_packet_readback": {
+          "wall_ms": 0.19671614173228347,
+          "process_cpu_ms": 0.19742267716535433
+        },
+        "cold_node_close": {
+          "wall_ms": 0.012325818897637794,
+          "process_cpu_ms": 0.006475464566929134
+        },
+        "packet_archival": {
+          "wall_ms": 0.4110138031496063,
+          "process_cpu_ms": 0.12375124409448818
+        }
+      },
+      "per_round": [
+        {
+          "round": 0,
+          "winners": 64,
+          "attempts": 122,
+          "all_exclusive_phases": {
+            "process_cpu_ns": 871888984,
+            "wall_ns": 843011703
+          }
+        },
+        {
+          "round": 1,
+          "winners": 63,
+          "attempts": 151,
+          "all_exclusive_phases": {
+            "process_cpu_ns": 889313896,
+            "wall_ns": 839310172
+          }
+        }
+      ]
+    },
+    {
+      "strategy": "maintenance-split-limb",
+      "workers": 1,
+      "first_admissions": 127,
+      "attempts": 273,
+      "ms_per_first_admission": {
+        "recurring": {
+          "wall_ms": 13.375896267716536,
+          "process_cpu_ms": 13.004747149606299
+        },
+        "all_phases": {
+          "wall_ms": 14.47010688976378,
+          "process_cpu_ms": 13.799267842519686
+        },
+        "outer": {
+          "wall_ms": 14.625612929133858,
+          "process_cpu_ms": 13.950585322834646
+        },
+        "batch_generation": {
+          "wall_ms": 1.828993559055118,
+          "process_cpu_ms": 1.8287717795275589
+        }
+      },
+      "numerator_ns_by_scope": {
+        "recurring": {
+          "wall_ns": 1698738826,
+          "process_cpu_ns": 1651602888
+        },
+        "all_phases": {
+          "wall_ns": 1837703575,
+          "process_cpu_ns": 1752507016
+        },
+        "outer": {
+          "wall_ns": 1857452842,
+          "process_cpu_ns": 1771724336
+        },
+        "batch_generation": {
+          "wall_ns": 232282182,
+          "process_cpu_ns": 232254016
+        }
+      },
+      "denominator_first_admission_calls": 127,
+      "generation_wall_speedup_vs_one_worker": 1.0,
+      "generation_cpu_ratio_vs_one_worker": 1.0,
+      "all_phase_wall_speedup_vs_one_worker": 1.0,
+      "all_phase_cpu_ratio_vs_one_worker": 1.0,
+      "each_phase_ms_per_first_admission": {
+        "directory": {
+          "wall_ms": 0.0011015905511811024,
+          "process_cpu_ms": 0.0011150236220472442
+        },
+        "node_open": {
+          "wall_ms": 0.16390743307086614,
+          "process_cpu_ms": 0.14168220472440946
+        },
+        "bootstrap_material": {
+          "wall_ms": 0.011878023622047243,
+          "process_cpu_ms": 0.011894047244094489
+        },
+        "template_acquisition": {
+          "wall_ms": 0.11697353543307086,
+          "process_cpu_ms": 0.11700352755905512
+        },
+        "matrix_material": {
+          "wall_ms": 0.0007769606299212598,
+          "process_cpu_ms": 0.0007848818897637796
+        },
+        "producer_setup": {
+          "wall_ms": 0.00071151968503937,
+          "process_cpu_ms": 0.0007220787401574802
+        },
+        "all_attempt_generation": {
+          "wall_ms": 1.828993559055118,
+          "process_cpu_ms": 1.8287717795275589
+        },
+        "packet_encoding": {
+          "wall_ms": 0.0057588818897637796,
+          "process_cpu_ms": 0.0066203464566929136
+        },
+        "first_native_admission": {
+          "wall_ms": 11.540432307086615,
+          "process_cpu_ms": 11.16863294488189
+        },
+        "node_close": {
+          "wall_ms": 0.05574662204724409,
+          "process_cpu_ms": 0.029790425196850392
+        },
+        "cold_node_open": {
+          "wall_ms": 0.17277766141732284,
+          "process_cpu_ms": 0.1641285039370079
+        },
+        "cold_packet_readback": {
+          "wall_ms": 0.1966480157480315,
+          "process_cpu_ms": 0.19729902362204724
+        },
+        "cold_node_close": {
+          "wall_ms": 0.012305346456692914,
+          "process_cpu_ms": 0.006543874015748031
+        },
+        "packet_archival": {
+          "wall_ms": 0.36209543307086617,
+          "process_cpu_ms": 0.1242791811023622
+        }
+      },
+      "per_round": [
+        {
+          "round": 0,
+          "winners": 64,
+          "attempts": 122,
+          "all_exclusive_phases": {
+            "process_cpu_ns": 870336016,
+            "wall_ns": 910768255
+          }
+        },
+        {
+          "round": 1,
+          "winners": 63,
+          "attempts": 151,
+          "all_exclusive_phases": {
+            "process_cpu_ns": 882171000,
+            "wall_ns": 926935320
+          }
+        }
+      ]
+    },
+    {
+      "strategy": "maintenance-split-limb",
+      "workers": 2,
+      "first_admissions": 127,
+      "attempts": 273,
+      "ms_per_first_admission": {
+        "recurring": {
+          "wall_ms": 12.535060346456694,
+          "process_cpu_ms": 13.029624062992125
+        },
+        "all_phases": {
+          "wall_ms": 13.67674694488189,
+          "process_cpu_ms": 13.82492
+        },
+        "outer": {
+          "wall_ms": 13.83254516535433,
+          "process_cpu_ms": 13.97668031496063
+        },
+        "batch_generation": {
+          "wall_ms": 0.9708512047244096,
+          "process_cpu_ms": 1.830591874015748
+        }
+      },
+      "numerator_ns_by_scope": {
+        "recurring": {
+          "wall_ns": 1591952664,
+          "process_cpu_ns": 1654762256
+        },
+        "all_phases": {
+          "wall_ns": 1736946862,
+          "process_cpu_ns": 1755764840
+        },
+        "outer": {
+          "wall_ns": 1756733236,
+          "process_cpu_ns": 1775038400
+        },
+        "batch_generation": {
+          "wall_ns": 123298103,
+          "process_cpu_ns": 232485168
+        }
+      },
+      "denominator_first_admission_calls": 127,
+      "generation_wall_speedup_vs_one_worker": 1.8839071838761376,
+      "generation_cpu_ratio_vs_one_worker": 1.0009952551261805,
+      "all_phase_wall_speedup_vs_one_worker": 1.0580079420990371,
+      "all_phase_cpu_ratio_vs_one_worker": 1.0018589506177473,
+      "each_phase_ms_per_first_admission": {
+        "directory": {
+          "wall_ms": 0.0011729055118110236,
+          "process_cpu_ms": 0.0011846299212598427
+        },
+        "node_open": {
+          "wall_ms": 0.1625404645669291,
+          "process_cpu_ms": 0.143739968503937
+        },
+        "bootstrap_material": {
+          "wall_ms": 0.011934149606299212,
+          "process_cpu_ms": 0.011950047244094488
+        },
+        "template_acquisition": {
+          "wall_ms": 0.11708275590551181,
+          "process_cpu_ms": 0.11711181102362206
+        },
+        "matrix_material": {
+          "wall_ms": 0.0007969212598425197,
+          "process_cpu_ms": 0.0008044094488188977
+        },
+        "producer_setup": {
+          "wall_ms": 0.0007069763779527559,
+          "process_cpu_ms": 0.0007181732283464567
+        },
+        "all_attempt_generation": {
+          "wall_ms": 0.9708512047244096,
+          "process_cpu_ms": 1.830591874015748
+        },
+        "packet_encoding": {
+          "wall_ms": 0.006046763779527559,
+          "process_cpu_ms": 0.006788220472440945
+        },
+        "first_native_admission": {
+          "wall_ms": 11.557455401574803,
+          "process_cpu_ms": 11.191525795275592
+        },
+        "node_close": {
+          "wall_ms": 0.05637581102362205,
+          "process_cpu_ms": 0.027226897637795275
+        },
+        "cold_node_open": {
+          "wall_ms": 0.17153314173228346,
+          "process_cpu_ms": 0.1635683779527559
+        },
+        "cold_packet_readback": {
+          "wall_ms": 0.19731659842519686,
+          "process_cpu_ms": 0.19805555905511812
+        },
+        "cold_node_close": {
+          "wall_ms": 0.012947700787401574,
+          "process_cpu_ms": 0.006983433070866142
+        },
+        "packet_archival": {
+          "wall_ms": 0.40998614960629925,
+          "process_cpu_ms": 0.12467080314960631
+        }
+      },
+      "per_round": [
+        {
+          "round": 0,
+          "winners": 64,
+          "attempts": 122,
+          "all_exclusive_phases": {
+            "process_cpu_ns": 870051832,
+            "wall_ns": 867411846
+          }
+        },
+        {
+          "round": 1,
+          "winners": 63,
+          "attempts": 151,
+          "all_exclusive_phases": {
+            "process_cpu_ns": 885713008,
+            "wall_ns": 869535016
+          }
+        }
+      ]
+    },
+    {
+      "strategy": "maintenance-split-limb",
+      "workers": 4,
+      "first_admissions": 127,
+      "attempts": 273,
+      "ms_per_first_admission": {
+        "recurring": {
+          "wall_ms": 12.106790480314961,
+          "process_cpu_ms": 13.050382614173229
+        },
+        "all_phases": {
+          "wall_ms": 13.68779176377953,
+          "process_cpu_ms": 13.851331086614174
+        },
+        "outer": {
+          "wall_ms": 13.844608401574803,
+          "process_cpu_ms": 14.003945574803149
+        },
+        "batch_generation": {
+          "wall_ms": 0.5275258818897638,
+          "process_cpu_ms": 1.8330040314960632
+        }
+      },
+      "numerator_ns_by_scope": {
+        "recurring": {
+          "wall_ns": 1537562391,
+          "process_cpu_ns": 1657398592
+        },
+        "all_phases": {
+          "wall_ns": 1738349554,
+          "process_cpu_ns": 1759119048
+        },
+        "outer": {
+          "wall_ns": 1758265267,
+          "process_cpu_ns": 1778501088
+        },
+        "batch_generation": {
+          "wall_ns": 66995787,
+          "process_cpu_ns": 232791512
+        }
+      },
+      "denominator_first_admission_calls": 127,
+      "generation_wall_speedup_vs_one_worker": 3.467116253145888,
+      "generation_cpu_ratio_vs_one_worker": 1.0023142592289989,
+      "all_phase_wall_speedup_vs_one_worker": 1.0571542246905308,
+      "all_phase_cpu_ratio_vs_one_worker": 1.0037728990181685,
+      "each_phase_ms_per_first_admission": {
+        "directory": {
+          "wall_ms": 0.0012830708661417322,
+          "process_cpu_ms": 0.0012951811023622047
+        },
+        "node_open": {
+          "wall_ms": 0.16456151181102363,
+          "process_cpu_ms": 0.14364982677165355
+        },
+        "bootstrap_material": {
+          "wall_ms": 0.011874062992125985,
+          "process_cpu_ms": 0.011889826771653542
+        },
+        "template_acquisition": {
+          "wall_ms": 0.11724255905511811,
+          "process_cpu_ms": 0.11727527559055119
+        },
+        "matrix_material": {
+          "wall_ms": 0.0008151259842519684,
+          "process_cpu_ms": 0.0008229291338582677
+        },
+        "producer_setup": {
+          "wall_ms": 0.0007091811023622047,
+          "process_cpu_ms": 0.0007202519685039371
+        },
+        "all_attempt_generation": {
+          "wall_ms": 0.5275258818897638,
+          "process_cpu_ms": 1.8330040314960632
+        },
+        "packet_encoding": {
+          "wall_ms": 0.006953015748031497,
+          "process_cpu_ms": 0.007848881889763779
+        },
+        "first_native_admission": {
+          "wall_ms": 11.571602401574804,
+          "process_cpu_ms": 11.208809448818897
+        },
+        "node_close": {
+          "wall_ms": 0.05747748031496063,
+          "process_cpu_ms": 0.02988636220472441
+        },
+        "cold_node_open": {
+          "wall_ms": 0.1759408661417323,
+          "process_cpu_ms": 0.1659451968503937
+        },
+        "cold_packet_readback": {
+          "wall_ms": 0.1980782125984252,
+          "process_cpu_ms": 0.19885725984251967
+        },
+        "cold_node_close": {
+          "wall_ms": 0.012988511811023621,
+          "process_cpu_ms": 0.006632692913385827
+        },
+        "packet_archival": {
+          "wall_ms": 0.8407398818897638,
+          "process_cpu_ms": 0.12469392125984252
+        }
+      },
+      "per_round": [
+        {
+          "round": 0,
+          "winners": 64,
+          "attempts": 122,
+          "all_exclusive_phases": {
+            "process_cpu_ns": 872011920,
+            "wall_ns": 899290703
+          }
+        },
+        {
+          "round": 1,
+          "winners": 63,
+          "attempts": 151,
+          "all_exclusive_phases": {
+            "process_cpu_ns": 887107128,
+            "wall_ns": 839058851
+          }
+        }
+      ]
+    }
+  ],
+  "identity_check_tracked_entries": 6102,
+  "identity_check_tracked_bytes": 793019723,
+  "packet_identities": {
+    "63f63bd277eb0b4c38c0146b9ce8279e66fcf82faf5f7d23f13d685b8289a041": [
+      "d7ece91566cbcf9f18060c3e9ebe72d1b1618189646e360a8aceefb4aaa0a0da",
+      49508
+    ],
+    "679aa2d526ea67fd75e70d46bb29c454736f21d6d3e9668c9fea98f25870c5bc": [
+      "63759ace4bc0cdb1182a40b109614d0feedeedaccbfd3521d1da74da03b5cfa1",
+      49508
+    ],
+    "579af22f782c3a300dfa3df586b9c8105bb314f4f824c20f5ebf45a0781c61e2": [
+      "9230c4976abcbfa194f095de7e6197d03b6ea2698e9d39adeceb88f306ad101a",
+      49508
+    ],
+    "505a9ffb7573081b2c2c74ccae7dad2adfa625f2d66819406d3a337b38b2c4ca": [
+      "c2bd94806d249c87749deba3cee022f1cb0bc81060c195426678234db34eecf2",
+      49508
+    ],
+    "354fa0ab298489050d15e1d4e4c84efd675f8facdd4e9e8404f330b8daaa350b": [
+      "16948f5c86cab9c1459599201920e7e5bfc06be38aa7b157e6d51a6559adeb3d",
+      49508
+    ],
+    "763c3c1fe0d5fa6a043b9f00bfc169591059ceb5210f9d09f11ab5eaa2a99147": [
+      "259d1f03dfb64b2541680d1490a19cdead3f73a74e99f16791aed8d5aaddc378",
+      49508
+    ],
+    "16e837bd721440411618055de28c66c908815792c4d0659cf5f8bdc7ee5d0cb3": [
+      "6987a7c2a406b40f6f9b171f37372f6bab0fb957d6db72e55a5f2599c387f54e",
+      49508
+    ],
+    "f9ccd16e1960f33887c7d0dbffc646e4543cb2f2e274054676618edda28b7994": [
+      "6ffca438cc9edae31512401f17ba762084e16f5f613d93ead8680f2b56a60d3d",
+      49508
+    ],
+    "3ac3022fec662be3547d36766c382a3c00290dd12e199d5ccfb4b65a038bdc86": [
+      "c9c688ef8e925117438cbe872cc006f47c141dbd40b9a70038e987ef6d1841c0",
+      49508
+    ],
+    "2c82bf741751ce6e2bdcc8d6a7d75116f509a5ca5fbd82dc73276dcc8fc3fd28": [
+      "8975eb037d9da66fff747692eb7dbbb8cc150224fe069adcee3dc7ab7abd5256",
+      49508
+    ],
+    "d02454f98c2fcc293004960597e04adfbf86af6683958a5ef22379c52492baf0": [
+      "9815a71e3c268993bd947d3995bb807de82937cd8b64ba8f7ada7ab02be38361",
+      49508
+    ],
+    "37c2c685f1617d684610b984e0827022056fc5af12782bb2ce1125ad16708318": [
+      "b7d2c970f343133564654c3b2706151a15cb24d78eb3f7bd15f44f7eae136038",
+      49508
+    ],
+    "fc55da60003fa80258f49e71696be3c2b5af9d914561732dc062b1f9324989e8": [
+      "797c694d79649343b5d25e8837f13eb00b183c164806b19fb1907fbe5686dd3c",
+      49508
+    ],
+    "3531e7ae8a2a877cbf12556f3150d159237045b582310147f2ffcaa76aaff3d9": [
+      "8012964c6870f925f8757e0d171da5955cde5d34137ed4e3540ca0c6c1419f55",
+      49508
+    ],
+    "c7c3471e081603a6086a6499c7520952043ac8bd7d9d7a02dd35ce3ec6f7ac2c": [
+      "1578a180f5dfaa415918fc821b2f5a5bafcfe6c359fe3fd1233dc8427df1fcd1",
+      49508
+    ],
+    "34612bd57708d64ef866f67465ca966d5b73e65d940f1a51185df9a639d5b607": [
+      "7e9e681c6fb9c6ce72daf114da7cda4120b103fa12717469af485ea395410eb6",
+      49508
+    ],
+    "9ccd55cc495f4d7d2e5fdbd0969d8db300890e984f090d1c9f9b1bb8a9c1c95f": [
+      "d5cb837f0e78371aa4671e72dcfc413b578407be49d4bdc8ebd22f1c0c28a8a1",
+      49508
+    ],
+    "a572878dd9de847290cde8bcbfb0bee96f112887da04ab3ce515c28dd06de064": [
+      "5e20d00970362a594e419b9360a103384ae9e066a4f929627ef29848df5b95d5",
+      49508
+    ],
+    "2d201e2e1ba49c7fb7d871dfe0563a25e2d525d33e2e0ac263217d49372021b1": [
+      "19527ec16cad866d052053e4c073927497b81b4aa59e8be6da1766e1996bec40",
+      49508
+    ],
+    "62d9437f919a80ff81d776543e39369f7130600e1b7ef35de0b2c7b15a465208": [
+      "f30e5e5129c3d9aeb197c0a0ec7dbdfb47122b85a3166dc01b7f98e26bbe7732",
+      49508
+    ],
+    "f2b2e55e6c002b4faa434f004c4547bed8517586ed260be87b73140bd0a829b4": [
+      "95384d5168d198926e9042e62c18ab5c4a2bd713d9c207f9b3dc8b6a23c87058",
+      49508
+    ],
+    "ea61a67a1893750908936292b4281d806917ff4705df9180a83d115b797eb38c": [
+      "9ff6dd0493a571126b8f35fad0299f59ab1076e4a84243c20366f3019b879582",
+      49508
+    ],
+    "13a5a9ed056c449b45d64a504572d876366ad26b744aabdb14da716eef8be6a1": [
+      "80685a9c261119e00e53f2f7378e35cb19dc5f619905d82b9fad3e26c7b310d8",
+      49508
+    ],
+    "df5a214c7a8db4ea394c86d7ac2d943ea48dba57d25e32f4fe328c70d07970bc": [
+      "6d4c421ce9ad54d839bef725c3d2b3d78f2a361180af3514b097b9ea940ed42e",
+      49508
+    ],
+    "ec37295565caf4335692e5832d4894e152faf6829faf4922ee60fc63b7ad55bc": [
+      "1f489c9626da025fd140ec62158521031369764caaf52841a4af91f868807ea0",
+      49508
+    ],
+    "679c872ffb32c485c85fbec02ca19f55e65d14c6e1bcccb2f34b6b83bf70a8a9": [
+      "4d59691e0e156ab0197831325163f4820a880316a5dac8aeb54068860ecb13e2",
+      49508
+    ],
+    "b629d8031f8d90f52a3d4e5f844d2d17300834fb145db5272df00f60793163b3": [
+      "c170405604cc7250bd7940794d4aa1dfa73d3d3451865f0f31d00b07f4adcd96",
+      49508
+    ],
+    "8403f4610d080c3e9e74a23d24e5e222fce3c244b37788c001b84e3ca3ebbdd5": [
+      "8dddbd3b2aea5209226757b0526e7635cbd2ef9ea77ea70b7e7fc9fe0522f88b",
+      49508
+    ],
+    "99d55fd954c77a048eb439592e7a08edc0c1545c5e972013cb8c77b04b9a7d6b": [
+      "7e488e6cf41315d46ccfb25036a7a204dd80ef2706c46694031c5b4bae3ee77c",
+      49508
+    ],
+    "32ed4f3d678ddfef71e0fce7aafc082ef560352c9838eee5a7873e0056c67b17": [
+      "da61a46f8f7a7fad48181644bbf4c4589f47cc87149d0397a90b1ad2068cbaa2",
+      49508
+    ],
+    "6352a63cb4e5a3bc0622e77e8168f361ca566be2aaa0e3af3b8355c49a1244df": [
+      "c77df93e9dc38182ed40a4ff53bbd6969104562584fcbd269f149ac8c2f35c9d",
+      49508
+    ],
+    "5ee9474bd6d994f542191cb2d613dae01961a9ccf6f8c252d22f9bf690bfee04": [
+      "db70fbe301aef2a0b4c4f28fb376b534a9d76e5a2a5c021f6fbd88ee4e5fc9d0",
+      49508
+    ],
+    "c7b11b52db3613773291424e7eb30764e3b21d8f126e03129d570f1bfefd3daf": [
+      "9daa784e0f3e8ec83b316849a07f1befa31cd7914374b3207def46daa13df990",
+      49508
+    ],
+    "cfd95b86550fd82edd6110cb79866131715115d9e403b2f1eb4315fed4301167": [
+      "a03659eab4de34c67a93153cd76b7438ab2c7a210bb5913bcd0c77a8d214fdb6",
+      49508
+    ],
+    "abf90c61c9141be4aaa526304fc3fdbb1898be4ed7a83d10afdc7106ed012151": [
+      "f9f3e86c285f5e7b79b3e0649c1afa7956576decb9cafbb2faf649990ba6b5e4",
+      49508
+    ],
+    "06bdcf98176719813b9c25c27b7d47560701fa600c7867bdc539c96d775b7b98": [
+      "a8171a0f96ac25e4f6f4aea4df9b9dcec991b921dfe53c8d7aa475e9d7b64bfc",
+      49508
+    ],
+    "5b9e2a42e315470b27b54385f1ce4c56f9a78a9b33720f1d5eac2141aa91f25b": [
+      "5ff8efdc707b631c8ea85efedb8615556e34f502e102cbce3ae003b6b781194a",
+      49508
+    ],
+    "3dd1d2ff6dedc37d6347e3de21eaea075d0403b229aad14702349145c6e7c3ba": [
+      "47accb244bbbb6f84093ead772718005a837655e6c780cafe4d3e347c2c45c44",
+      49508
+    ],
+    "dda01a0a5e332e765a9860b38ca834252b430726e5cda4b82ba7d6bb1b6f6db0": [
+      "de8ddc4c5a1bec96121ad8ba88d3d787a2d3e49c5d0ebfb8aa52a35fbec4db0a",
+      49508
+    ],
+    "eb0bff194c2c4b9f634bab0656141be3e7f8cd7c611a06ae3d5fa58ef7d37778": [
+      "b40b5a241b10c6a8d562bcae9245750d274d68ebd5959f7e0719dc8d19395278",
+      49508
+    ],
+    "f54a27a11d1cef7c7da01895dca816b6fe06b2dddc1954c1fec2e3b288b182e2": [
+      "3b17fa7bc4584147179cfd5c5b396776c6c365f35d37bd34fb2bdb0fb05944aa",
+      49508
+    ],
+    "8d85498a57892a298038b3f8d1baf303f00112940d1be4f1516263bc0c3f6cf1": [
+      "dbf0a569d4aead47a7899a7920539fdfbee3018d00f74ba0ea92ebca1cf66c53",
+      49508
+    ],
+    "f4c88883684658bf2e99ad22282c6ae0ab813e1f1c724de87f8a98009f69cb67": [
+      "0bd3e23697aee29c248839f370c70ceaec974269ee9687d64afc6747f1fccb5c",
+      49508
+    ],
+    "0b147051ad2d42790e38f6ce8ddc9d4f9539b75d1097dff920c88e02fd466ce8": [
+      "73d28d0bd5b087150516d29a7aff7dacbf3050398d6139e2fc8148da974ac0fe",
+      49508
+    ],
+    "adf408eed7ed81b70f8b61dd9671680ef7fea25c9b54554e709fa6efa246eb7e": [
+      "f3de0ad0d8a180c392b074032745290a55b547fa80b3a67f752f4a12cc4163f6",
+      49508
+    ],
+    "04727ff1c719d5957c33f18f346b7bed731f5d0900da0cabc94112b5977fd592": [
+      "0caf6229039d9a6747b9ff10a6425d7a7449ad293d88e71b7b7fbed4070afe58",
+      49508
+    ],
+    "736b16f52bfc519c95991036ffecd50431c18faf4a2a4ea0673564ca64d33767": [
+      "d4b9e8c389136315aabf5925487ae66afd0ffc0b29da36dd6bcc99e789e3f0ed",
+      49508
+    ],
+    "b47a7e14be5a7ae6f5ad82ff12594d1239270bf08e4e454dfc72a992e1d4035e": [
+      "ea511c71ca6be22d50dc0c58b49f73bcc427fa8321e7ea21f9d826648ef7339a",
+      49508
+    ],
+    "1fcd7737fcdd1e1d818d69c9cad90765c422277f43be406b80d5cd3e520f6ca6": [
+      "6061c78c7b6d82ccd2f36fb3bdbe06d04e3c722bbd2ce33b8a32359eebf089e5",
+      49508
+    ],
+    "793330aca17c314f0966463d0c4c43d8698d90a5a046344ac5149138cc8385e8": [
+      "1d2d0b5b38fdb4d83d03b1ea8191bb723842308655554f97349873cad4d695c9",
+      49508
+    ],
+    "2c4e508686be9219caab4758ad10e36a435e81b273a13e7f068b0672291b704f": [
+      "60e927adaacde00a45150e38c8c71d4fdaa9889a3c2955ef76785afff336f44a",
+      49508
+    ],
+    "56d7966082b90bb9b63db8cb29134973d864b057ce9597f693e5fcf3e54a2170": [
+      "2b67dec9e6456791a111b62d94b07da659c918fde9e0167278c5d2bd8ec9c62f",
+      49508
+    ],
+    "74dc0e22e9052ad8ef1f30608e51e5fda91f4452572d0439a0f5a54d05552fee": [
+      "6846a68749dc51c78ce29c72274389a40ff7fa8a56ac8082fa24c3f0e955c721",
+      49508
+    ],
+    "767fda138510f01d75d2739780d32f246219d4973d7f911cc3f27c5fbebad46d": [
+      "cbfe2485c321a1bdaad2210eefca56ca09faf1dcf88c625fd92869acbf313d78",
+      49508
+    ],
+    "428cf76e351fc7a07fbfac671e100eb3997a66f9fa48fbfd31e65bc11b9301eb": [
+      "485c3398ade894c1e1419daf968f94842af801327f16f056452ec840c1c22d15",
+      49508
+    ],
+    "4a8bc2ffa01832e9b31cec37917c354dbba890d59ebbacd3b88ef33fad3701e8": [
+      "c8d521b563572efab1e6b587e3bf1d4d8649ac0c4e0a8eed6d14702a259c3c10",
+      49508
+    ],
+    "b791674bd8229571618723066d8d0a937da71512068aeb2dea29a3f8c05b1a7e": [
+      "6b50626ae86c1140fe2dea64f57499be9be868a923932c4357090ad8ee7d14a4",
+      49508
+    ],
+    "27922c050b78fafac06283760e51be3cb550c787fd2dc40b83f9b49bc0631c49": [
+      "72200dcc36f4ef7bca0d6fd5088e071f7dcb7ee41c88d392a3d43ff82aff0526",
+      49508
+    ],
+    "19cac47621b79b958738d63800971a553360fb0cfcb83d77f0d8d93388d32fd1": [
+      "ca7d1df330f241561adfadfaa40359f9856036e232c431b8f8507e4405252dab",
+      49508
+    ],
+    "a71b81133abc53ba91a4480f6053b743fcb029b6c585ef60da78772f71681b43": [
+      "13fc5192fec4d9b549eea758dfc28eba45bc8631af59ef88c670080435901ee7",
+      49508
+    ],
+    "c2a842fabb6b7bc54cd65998e8d222498d49170d61203c206a5dee0124086753": [
+      "b4089aa6e6ca699006a875c02d9ea30ab2d0384ca500425f9d7b032358f1fa42",
+      49508
+    ],
+    "9b25d6a547473ebefec23f31fc1e71aa5248ef9ad3076c27523f80ec89308e21": [
+      "67a1707d7b17e6abce1f01f6b36ca3899abdd360c11ea8d83e70d009e0a286a1",
+      49508
+    ],
+    "ee2318635d45deb7f2e4f83cfaf84d69ad6e4ffd56b471f6bcaa663c57b75f35": [
+      "de7c4eb966a2ec0bbe21d2f3a9205fb9a4b0ce657d31860150eaae012667c97f",
+      49508
+    ],
+    "2e9cdf8ef8a255565af325abf367a2f412bfbfcb7b720beb7cc0056fbed7c900": [
+      "b46364259abb9bdac88cf6dd8ded4269b59f5062a93821d7c59bbb030549de86",
+      49508
+    ],
+    "4633f65963f10af2d3f0c77e9bfe06aaf9e28acf1b5088d05000a3fbe729581f": [
+      "eb69017a43e20edc312ac3c950d13f5285b7749cf78d2087a87f7820c3a871c6",
+      49508
+    ],
+    "3461e542db1e6b47b6fe32bb4712de6227ab169589e8944afb866527f9daea2f": [
+      "5bc1d4503556525d18d969721f622b05e7136ee5310dd8d126b9b1ee0780aef0",
+      49508
+    ],
+    "8a9d5bd61bd56984f5fc1438a04f90c89049c8613d42df0a9aa8ee9d6b1839e4": [
+      "da8caab23c1079a89a437a58c3ac64c3e18d8a1efc34705ae38c1547ef47c6fe",
+      49508
+    ],
+    "7d5c2bd9b6228ee7d31caa19cb43fa28535651e26f7bf41c0c361eb6617ed86a": [
+      "c4b793f474c886595fa09b87ae52b54bade7bbc008b5b51c7692572c504680c7",
+      49508
+    ],
+    "a92f93832bf00e29c9d7edeea5e00565821f6dd896390f423438914742140c29": [
+      "bdccb40f8a13c64387bf7e6cc96b2314c59d99028c0d55cf6cf2992ac5487bb1",
+      49508
+    ],
+    "8035f139efa2dafb13799fda7aeb110975ad7db7bb5713aaa1cfe1e54b5cafe5": [
+      "9dcb74a3b6d6e8728712ddd47561ca562d5f11caba06e454f37b31fff797bda9",
+      49508
+    ],
+    "f883d70ca16f185d3afc233517db974bbd2483234137c6b31bb8ec6ae176a938": [
+      "653ff268a4a76c072ccf0a6edeb1f142711d418734d04c8363fda92cef12cc3f",
+      49508
+    ],
+    "fdbd15586f180676c7d2abebfd8e53096e71deba5f25edc0a2e0e9ebbf093ec4": [
+      "e887bdfc6c3b5aec4447603167fe2b3f551a2baf42326990c777fbfb3718c8a8",
+      49508
+    ],
+    "ce02354d0674abc11e311a395877b12918ff92513bb947f30c60539a3ec90c70": [
+      "874f9484a0175640e7dbfcaf4cdc39369974f5c71252d4e999f2312d782dc24a",
+      49508
+    ],
+    "cace95d3f4518eebf773659bf1a5703c1bb4370cf9257e7ada17cceaa926fb96": [
+      "60aa76d34f9624e1447bd9118b68a8318094e96263603493187d47e0b26f8bcd",
+      49508
+    ],
+    "05ecd1d8116daeded2e1e89c2a428ff5b07e1ea9556738d0daea11ea36dee833": [
+      "6eb31d7f908bb84f75414fe7119627debd2e72884b1bf102282febb7c99278a1",
+      49508
+    ],
+    "23da19ee9c78e435642a93029042b78ca97399b8fdcb26dac19bbc71e38c117c": [
+      "08586fa4af948b8367d77c1c3147d1caeb8d18bd622544acb20f46d28eaa5cd3",
+      49508
+    ],
+    "728f1b4bbaea74aa6952023fe8c58c01ac6715076cdec862e3f7760cf9dc35a4": [
+      "9a682ede8a789c5de6e13f8992400c60bf2001c36e9f1360f61fd45d1f24fccb",
+      49508
+    ],
+    "c5096af2c33cc8b811e7ddf626b59e36203adbf6db7f9d039e4978f9d9c56dea": [
+      "aef6c66479271a8565f72e1063d6695cde4bf06284e6f5766edae7dbb60960cf",
+      49508
+    ],
+    "598055eb57a0c4a8496d2d916f0892d78886c5c9c1c43311fd46fa2deaa7a750": [
+      "337bd84c3c8f2df5a563d4b4119678713bd4678acce8b25b36f2be7fbbdb78ce",
+      49508
+    ],
+    "2c574ca3e225fb9f7c6bd78b1288494030efbfba3d2dfe23cd223de20cb8e785": [
+      "e1c46cb098a3fcf94f166d2c399a85eb7a311ed70f57eba389a6f011ba2e944e",
+      49508
+    ],
+    "a1b5601cc7afbb495b27fa9c2d4d5b45dbe3d95afc918ae09d16198707b10c93": [
+      "f333ce587cde5a36b19104734c1bafeec11650eeff74220bd8af0dbf288a77fb",
+      49508
+    ],
+    "ccb78f22767fb206438bffc03f6fac048fd8bb5c755c073d307ff39f1ca352c6": [
+      "ea63a96b55dd49ac123ad724dff46688417377a03f886fc330291955773070a0",
+      49508
+    ],
+    "079d195511ffa913633927d93a66de4c3ca4d97453b8da6a785e9557c181aa81": [
+      "c49a27435a9cf2a75e41dd7062564e7deabf5479845096a99effcf5d81d13bd3",
+      49508
+    ],
+    "a515caf4fac7cc200b5f417d148970f6978aa17a161651495a1404ca26f1461d": [
+      "1c0f4247ce5d11fbfb8fe278391b6f9d3c11cee2b99a953f604994e14c8a6cf0",
+      49508
+    ],
+    "71ed5e09913053f4043604eebbb490c0d18a8373c074d65a58d8945a14e7de6f": [
+      "0a1a00037dc6c1bba4db5711d24b50df97c5cd235d7d71fe2d4327829bb8f818",
+      49508
+    ],
+    "262e969dd13b3cd458f6cb8956b9ca73304206093bb9e40877d5ce8a0ceb7a14": [
+      "ef53ac247afb98346e5afa369bfd81dd99adcdfdcd9a024d06ff0cc429166e4f",
+      49508
+    ],
+    "7b64211d40bbe57d9616496ddd2add0a9464e9f460ea6cb8bb379eb84638f314": [
+      "2635f66263b3feaba3215e6cfe337571c67f785a5669cc4d8c6df2af2f004129",
+      49508
+    ],
+    "296b921aeb70b945e419a8e159a84bd455ebae2fc45b19ecfb7e61261114119f": [
+      "73b208d70bd5d0d0013828eb3b058aee6e5ba52cfd91d0d6725c7aa928cbd2f8",
+      49508
+    ],
+    "3157520fc8bab030264d4f021225943dc4a75ef391d349737265ec687dd9e4bb": [
+      "dfd076486059a796b6e5e3615d9b6aa7426917bfac2b1c594f2f850a194a3a4a",
+      49508
+    ],
+    "977b593071173b9cb8062a074bdbe055a7c090528e427348d1e4f89804defc8e": [
+      "8592a7ea4098dfece89ee08ebe0142d3f21394a2f8c254a637ea7ff1a60a5165",
+      49508
+    ],
+    "82f5bc6a70f93e6526387ad9c056e605ab76fc15f0cca47e7543fa59d209fbda": [
+      "5fd046e1a69355debd2eb80ddf769888c098584f548b8a85c9d69b9ada5cb949",
+      49508
+    ],
+    "38bf8f8ea7e2e554b632f99e9e1333ceace81dc39d61b9bcf66fa716c3ade127": [
+      "683ad1e2b145cd6747d42a3f078f7b1a612b88a009e346bcc59b162a7ac065a4",
+      49508
+    ],
+    "b0fd8eebf4eb1e313bd5884765a1fa96254a031013e5cf050daeeca160050eed": [
+      "14b0b5f852d7af2433a8cb6321738add3fd250e812673da3bf98e8b523c79bd9",
+      49508
+    ],
+    "a18609059ba8a187fb59d9cfb690e30bf4e5ccbfebbd67ca27f74a4a17e52b21": [
+      "9d9db000c6b5540227a9e91efad1b6da3a6b25384dcd62c3ab3ecdd0dfd1b452",
+      49508
+    ],
+    "9f4934920b47e24b0a7944cc4134c565f2dbecb3b3ee87c34e9ce63fc613b318": [
+      "b49b018b06ab590d29028e109bbd9b28a12d9e43b2fa022546ac36eee0341872",
+      49508
+    ],
+    "1ccd1cb75f316bfc680803ce85de46415654a73511247c9ee23a4e7c8083878f": [
+      "319501a2349f3c310f7c41b6f5c5f56382f52a577d60cac6d683d235621f729e",
+      49508
+    ],
+    "c8c838e87ee5038d0349c3747c74b5d294e5600f05ea1e948c92e3158f214ec8": [
+      "d1d90e9ba0e28d116d330705d505d3b660d49aaec5895b76f92f9ff822c93c9d",
+      49508
+    ],
+    "b2b7e0b7ae0ff9327fe3ac5e3b7b7c3de5d92c7d0736a57010aefb36d64976c5": [
+      "7c1d10ec5536a2f65652432c77d91d87e1da2a076a2199e1198baac177e2ce5c",
+      49508
+    ],
+    "257e3b59ecc20839a0f16cc6cc8af2732f0d3588038e820b8ff72bf1f9c038a8": [
+      "6ecf35605d0849966aa3a0c1c574952a5ae1e934784608a7e819666f9812a016",
+      49508
+    ],
+    "3263148a4114cdcf7d3b5cff26e0d89d8dadebb3163401c8961a84ad2bf016de": [
+      "8d9ae43b374251db956b80c5c8267c9b6efbd8dbf2ebc85c211bdb389f99bae6",
+      49508
+    ],
+    "a53f604ee3d149bdb5e2c35172e10d59c89c858facbbee7c97ad8b1a86b1cd52": [
+      "f4f0564a80fd4ac00a92786243ab8d6d3a780adfca9a4a3237d78f94bf1b025d",
+      49508
+    ],
+    "99f1e57f74af92e1b72dc98ff9130af91b2969e4d0c8218ac3548532fd8e1674": [
+      "d9288d3ad2cc4a8dd6f2d4a05c0693ca41192412abbe0f3e8a85e8c7d4df1ad8",
+      49508
+    ],
+    "6005dd52ba2801cba7c63f81d2dc64473793987007752972652a9ee1f127f62c": [
+      "348a83ce018377e12eeed0302bf7e8536cc73f7935382092255f97b5e27b707b",
+      49508
+    ],
+    "6f0cca6d21c6c74149ec1bd6289a0f585be3da9eec9a7d04ffa9f0ad81af57fc": [
+      "f52acc51b0ac217333ecf46596087827f116b1ba6d3c6ec04b06fd371c6f4a65",
+      49508
+    ],
+    "240abe782ec5f6450e1d367db0690888f65ccd8dd636b620604b7bf790909f11": [
+      "0717cb5871dedb3e9e466746542999a47b4e809286d4ec5a8d4f4b4fad02465c",
+      49508
+    ],
+    "d80b2a2633195e1543ac09684dd2fce8b50ec1477c7add5f1e53acff191cdcd0": [
+      "8cd265b0c2c3c9b6126f7f702063ef3159731356a965196403fe8a3c455bdb83",
+      49508
+    ],
+    "9a882c408489351015873a2a916d96527723b2ef1829b7ac045202daaf870d43": [
+      "93a779e1e15994088d634f249abb8410ded6a44fd7ce7c6d7d4d88d1d6f98aee",
+      49508
+    ],
+    "54a60975b926cd75b23f4df4efad1051fc3f4fee31b2fe3ce887827a98f61870": [
+      "5981d63ce13cf7e6e20cb0a9e87fe564dc22f5a8bec1e8b9ded4d75ad5b83bbf",
+      49508
+    ],
+    "08b39ab6e953561d9ebffc0924c289ad59c2cf921b32b9445ad19adc53503d72": [
+      "5a07341147d92fbc1cd09fd4a6c276c49d6cb77118a63721c3683f37b72994be",
+      49508
+    ],
+    "248e8046f8c7950a650a0c8ff9e35e07a96fa40b5c4015a049589cd9b1a6ac2e": [
+      "a69c5f7ee809c2b8fb598bb72be6174065a897ed5895be437469620c3db055ca",
+      49508
+    ],
+    "8813a9042deb6b84d3460ce1e6a382a930062591e0b210b5484f9481fed7285d": [
+      "ed8d16eec68a98cffe1207312c7b5edcd88b37ec385945d8e4223b7feeacb3ac",
+      49508
+    ],
+    "8af5a91001a2bcbb2651fb708944e11926e130c8586e813f4d8de1fa3b43409a": [
+      "1a19f00c0819ddf8a0fffcea77a9b22337dcbf1530fe2cd264dff504c9e3dccb",
+      49508
+    ],
+    "35eb04a183b1a920046c927fe6e1766bf60407253d3ad247255bb21687cdcaf5": [
+      "495893fa880758bb424fc9e41d72d6df1c889e8fd9e999592b9ea3444044f5df",
+      49508
+    ],
+    "8440f59cf2d13d5877907a2ccf3f642a967022dccd9606e4cdc81598c63b9a8d": [
+      "9613625427ba6e5981488091a6a89ccc7d168379584705a4806128dbe2f6ab06",
+      49508
+    ],
+    "1996daaa56f5cea5f7cc4fe1bacbaeb16d32c8ea78eb4c5a115dd21ecc006849": [
+      "0c725b3d533a8be214071b1300ef31aeac9730ad25795980884a3f3d7bf7c260",
+      49508
+    ],
+    "17497682385a11de283a222b9045d7191d8b9f538f3f578ecd7752da057e84fa": [
+      "ffcafa0dd9cc44c0f7d01a1a4110dcbe50ed0823e45f37214a89873fd00d771a",
+      49508
+    ],
+    "407aa8c88ed2236cf23dfde19ccc8ae46ba655cd5ee4116780acaf186ac11d0a": [
+      "5b59bbe95bee5cee26357653eeed96233f82ded7e3d531bfcbc67d8c63395595",
+      49508
+    ],
+    "e0d5b94e40486b3112ce8cb0b1be26498893c8174ccb56d754326d9258a7449f": [
+      "8212782f3c47e6530cf9259bbdc4e75cf99be13f3a2c3e61a4a03d5ed70649a6",
+      49508
+    ],
+    "5fb31886b5e5c7c5c5d219e2775a735562b8c385ca2e753e857dbf00c66d642c": [
+      "cf11975df9538a81a75e371490332ecb86e0e29f243f05fc58e27e89b4740f43",
+      49508
+    ],
+    "9f62b28ff48c3ebc49d541eab0fd9032531e9d9bb20e23e1b11ea5d33219a654": [
+      "55356c7281564f898b080b03dae993f7b5b333455f418f4a5c586ba410667e41",
+      49508
+    ],
+    "ef6901eb7e61cfae013b8ac3bcf59f62486715b96231bb5df8b2cae375631727": [
+      "7b19d6d18bd4734790db3bc3e70e1a234adc91996177a924eaacd09fc66c16ee",
+      49508
+    ],
+    "0def8b35e9afccadd0cf02a6ddbcfce493983dd92ed4c1cfe001469d501d8b49": [
+      "36c6296a08e77752b07b29f5484eb2a5289123a0243376f2a6b4a3b5cfd258e3",
+      49508
+    ],
+    "b4fb467c378c016ed17b858350a7b523f89c24e33f819c8097096ddad109ddae": [
+      "417f509a73c55720ba5ee28baeb5e638512b8dfd14be23655f3f26b959f04cdd",
+      49508
+    ],
+    "06f009487aa0ecc63e78c6dde46fc13b5c8cc12011b430c7923f15f53b9e3b31": [
+      "2f21224f74dc4fdac63d8ee73a0dc9478449f00a8fe703173737dd46bf36126b",
+      49508
+    ],
+    "c9ad9e63684af803f54f59da6950b9b4613618c28379bb499426bc1ca424699c": [
+      "5b8bf16eee4235aca15d5caa79cf5e27d888e505d0927813e14dbb6cd392002a",
+      49508
+    ],
+    "c0ff43a0a994134583b51b228633766c05ac665dec87b08eda2c5b6763fea519": [
+      "b89ff831900bcbd1a2e6cc1471a064405af50ee0490c80d93ecd645d0ada8d38",
+      49508
+    ],
+    "e4db2d54128c4c4b2c9ed638dd557caace62057239180ed6f517ba6f368b3172": [
+      "a6827ee40b0bb1cad119928eb26e54b288308dbb69faa99f510fb13fafd081fb",
+      49508
+    ]
+  },
+  "native_solver_or_admission_executed_by_this_reader": false,
+  "limits": [
+    "Original raw positive native executions are read; no new solver run or adversarial trial is performed.",
+    "Actual complete native Node admission was performed by the hosted driver; this reader checks recorded costs and retained bytes, not a new cryptographic admission.",
+    "Two paired rounds and fixed parent/maintenance task; repeated admissions into independent fresh stores are not distinct mining rewards.",
+    "V4 adds whole-batch timing and packet archival; its all-phase cost is not an algorithm-only comparison with V3.",
+    "Shared four-vCPU runners; no hardware authentication, exclusive-host control, GPU, energy, global optimum or production throughput claim.",
+    "Archive ZIPs and native executables were read into memory and are not saved locally by this reader."
+  ]
+}

@@ -1,0 +1,22 @@
+[
+  {
+    "artifact_id": 12786936942,
+    "architecture": "x86_64",
+    "bytes": 14927016,
+    "sha256": "f39393110c13db81500f37bb94f082163402fa35d3535be6f22801e337f93bf7",
+    "local_path": "/workspace/scratch/bb9b841c1d43/w1-evidence-durable-stage/originals/solver-v4-x86_64.zip",
+    "members": 780,
+    "all_crc_pass": true,
+    "all_planned_part_hashes_match": true
+  },
+  {
+    "artifact_id": 12787140823,
+    "architecture": "aarch64",
+    "bytes": 14613067,
+    "sha256": "6e409438eb496fb74439fcdf7fdd787e55cfce3a67b71053e2fb43ed2cbdfe45",
+    "local_path": "/workspace/scratch/bb9b841c1d43/w1-evidence-durable-stage/originals/solver-v4-aarch64.zip",
+    "members": 780,
+    "all_crc_pass": true,
+    "all_planned_part_hashes_match": true
+  }
+]

@@ -1,0 +1,95 @@
+{
+  "schema": "legal-ticket-v4-original-artifact-republication-plan-v1",
+  "source_commit": "7e3543f8817d019975ae578b56b4997eb92bc422",
+  "total_bytes": 29540083,
+  "artifacts": [
+    {
+      "architecture": "x86_64",
+      "artifact_id": 12786936942,
+      "run_id": 40619573406,
+      "bytes": 14927016,
+      "sha256": "f39393110c13db81500f37bb94f082163402fa35d3535be6f22801e337f93bf7",
+      "download_tool": "mcp__codex_apps__github_download_workflow_artifact",
+      "download_args": {
+        "repo_full_name": "TrillionniumFoundation/Trillionnium-Chain",
+        "artifact_id": 12786936942
+      },
+      "locally_saved": false,
+      "durable_republication_completed": false,
+      "parts": [
+        {
+          "index": 0,
+          "offset": 0,
+          "bytes": 4194304,
+          "sha256": "f8e5174542bf4d2ed54f9f52cdfdc4b7fbdf571caa44de13de8b54f05211b52d",
+          "git_blob_sha1": "85d69d2886cf8e69fa23317dae16620554b15c5e"
+        },
+        {
+          "index": 1,
+          "offset": 4194304,
+          "bytes": 4194304,
+          "sha256": "42255320ad038619b3ac01c3e0fad9d97667504d956c2a2f13b58b4e8231c45b",
+          "git_blob_sha1": "9aa577e6ecc9c220674a81867ae74e9c9eb31b43"
+        },
+        {
+          "index": 2,
+          "offset": 8388608,
+          "bytes": 4194304,
+          "sha256": "11949ffe8df08be09970b2e2f6f5700017cf3a96a619fcf353b75cc2ee2a664b",
+          "git_blob_sha1": "aa39d5bff45093f76b4051e40ab6211affd222b4"
+        },
+        {
+          "index": 3,
+          "offset": 12582912,
+          "bytes": 2344104,
+          "sha256": "1148b1df8cca6cd724a6d54fc4dde0c5a4746b535937deba7f1c681cfcc91081",
+          "git_blob_sha1": "83d006d3ae4ccad9764ac075737e1d5530dd1487"
+        }
+      ]
+    },
+    {
+      "architecture": "aarch64",
+      "artifact_id": 12787140823,
+      "run_id": 40619573406,
+      "bytes": 14613067,
+      "sha256": "6e409438eb496fb74439fcdf7fdd787e55cfce3a67b71053e2fb43ed2cbdfe45",
+      "download_tool": "mcp__codex_apps__github_download_workflow_artifact",
+      "download_args": {
+        "repo_full_name": "TrillionniumFoundation/Trillionnium-Chain",
+        "artifact_id": 12787140823
+      },
+      "locally_saved": false,
+      "durable_republication_completed": false,
+      "parts": [
+        {
+          "index": 0,
+          "offset": 0,
+          "bytes": 4194304,
+          "sha256": "c74b91a1c562304cf84cdd828a1dadf122bc58359264fa3591699fa03473d885",
+          "git_blob_sha1": "355cadff6636e6c76cfb4ebdad37824c5c55c223"
+        },
+        {
+          "index": 1,
+          "offset": 4194304,
+          "bytes": 4194304,
+          "sha256": "6bb5353c992ef6d6667d0867aec18291ff2cf50f5c036b3747541d21590c188d",
+          "git_blob_sha1": "9ce2dcbd37de5be16c8291f900f371f913512624"
+        },
+        {
+          "index": 2,
+          "offset": 8388608,
+          "bytes": 4194304,
+          "sha256": "910641a046885d95b828edbdc32e83934929174d93507e0b5866cc506304f10a",
+          "git_blob_sha1": "c0987738672e29c9f43c51c9068d4d71791754bb"
+        },
+        {
+          "index": 3,
+          "offset": 12582912,
+          "bytes": 2030155,
+          "sha256": "e5d9a60f32ed9d82fe5d2de5e3bb2507e2d1f25dfcbb46e1b18993157d88d526",
+          "git_blob_sha1": "96dbe074939c7730ce3db60e060c452475efa5aa"
+        }
+      ]
+    }
+  ]
+}

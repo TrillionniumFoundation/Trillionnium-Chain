@@ -1,0 +1,18 @@
+{
+  "workflow_count": 14,
+  "missing_local_blobs": [],
+  "push_triggers": [
+    {
+      "path": ".github/workflows/trnm-required-baseline.yml",
+      "on": {
+        "pull_request": "",
+        "push": {
+          "branches": [
+            "main"
+          ]
+        },
+        "workflow_dispatch": ""
+      }
+    }
+  ]
+}

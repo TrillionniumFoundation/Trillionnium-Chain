@@ -1,0 +1,2 @@
+{"class_counts": {"cfg_test_module": 88, "example_or_research_fixture": 5, "runtime_cli_output": 1, "test_or_fuzz_target": 228}, "file_count": 40, "latest_a99_commit_changes_any_warning_file": false, "main_base_file_status_counts": {"absent_at_main_base": 154, "changed_blob_from_main_base": 49, "identical_blob_to_main_base": 119}, "result_count": 322, "rule_counts": {"rust/cleartext-logging": 23, "rust/hard-coded-cryptographic-value": 299}}
+{"changed_file_locations": 49, "changed_file_exact_line_matches": 37}

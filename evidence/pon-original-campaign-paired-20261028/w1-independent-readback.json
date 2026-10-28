@@ -1,0 +1,254 @@
+{
+  "schema": "w1-original-campaign-independent-readback-v1",
+  "source": {
+    "base": null,
+    "candidate": "303afe7a4581e67117bff135eed5892232aabb70",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "303afe7a4581e67117bff135eed5892232aabb70",
+    "tested_tree": "6a1743eca58793a09809fb03dce5021755918f44",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 905854291,
+    "tracked_entries": 6716,
+    "tracked_worktree_verified": true
+  },
+  "run": 40616722050,
+  "job": 122580824951,
+  "artifact": 12786111478,
+  "archive_sha256": "321812d12ac39cac068d97340ed8a1a7f588ed006f4b6dc88ea47fbf36cafa67",
+  "archive_bytes": 67524496,
+  "members_crc_and_sha256_checked": 911,
+  "internal_manifest_entries_checked": 910,
+  "binary": {
+    "actual_compiler_artifact_profile": {
+      "debug_assertions": false,
+      "debuginfo": 0,
+      "opt_level": "3",
+      "overflow_checks": false,
+      "test": true
+    },
+    "build_artifact": "/home/runner/work/_temp/target-native-campaign/release/deps/public_v3_multiprocess-e14c374ae6629a26",
+    "build_separate_from_measured_campaign": true,
+    "bytes": 9871408,
+    "execution": "original cargo test command using the checked build artifact",
+    "retained": "public_v3_multiprocess.bin",
+    "sha256_after": null,
+    "sha256_before": "bec479f8f22677cdf33c903f9db1fe92647e51ef8219617253cab98f92fa7d7d"
+  },
+  "complete_three_runs": true,
+  "public_transport_ticket_bits": 8,
+  "public_transport_scope": "original public-protected development-v3 only, separate from additional-PoW-off W1 proof prototype",
+  "original_complete_source_and_binary": true,
+  "rows": [
+    {
+      "run": 1,
+      "mode": "baseline",
+      "criteria": true,
+      "depleted": false,
+      "depletion_at_ns": null,
+      "full_work_failed": 0,
+      "full_work_accepted": 21,
+      "all_confirmed": true,
+      "confirmation_depletion": [
+        false,
+        false,
+        false
+      ],
+      "overlaps": [
+        0,
+        0,
+        0
+      ],
+      "final_credit_ns": 1588076763,
+      "whole_parent_cpu_ns": 6345209854,
+      "whole_parent_wall_ns": 31174567908
+    },
+    {
+      "run": 1,
+      "mode": "from-zero",
+      "criteria": true,
+      "depleted": true,
+      "depletion_at_ns": 8497329592,
+      "full_work_failed": 2801,
+      "full_work_accepted": 21,
+      "all_confirmed": true,
+      "confirmation_depletion": [
+        false,
+        false,
+        true
+      ],
+      "overlaps": [
+        312,
+        316,
+        245
+      ],
+      "final_credit_ns": 99092500,
+      "whole_parent_cpu_ns": 16515665019,
+      "whole_parent_wall_ns": 31327941053
+    },
+    {
+      "run": 1,
+      "mode": "late-product",
+      "criteria": true,
+      "depleted": true,
+      "depletion_at_ns": 6206882427,
+      "full_work_failed": 2443,
+      "full_work_accepted": 21,
+      "all_confirmed": true,
+      "confirmation_depletion": [
+        false,
+        true,
+        true
+      ],
+      "overlaps": [
+        321,
+        239,
+        241
+      ],
+      "final_credit_ns": 100482437,
+      "whole_parent_cpu_ns": 16364583552,
+      "whole_parent_wall_ns": 31319096045
+    },
+    {
+      "run": 2,
+      "mode": "baseline",
+      "criteria": true,
+      "depleted": false,
+      "depletion_at_ns": null,
+      "full_work_failed": 0,
+      "full_work_accepted": 21,
+      "all_confirmed": true,
+      "confirmation_depletion": [
+        false,
+        false,
+        false
+      ],
+      "overlaps": [
+        0,
+        0,
+        0
+      ],
+      "final_credit_ns": 1579001308,
+      "whole_parent_cpu_ns": 6425376597,
+      "whole_parent_wall_ns": 31114335731
+    },
+    {
+      "run": 2,
+      "mode": "from-zero",
+      "criteria": true,
+      "depleted": true,
+      "depletion_at_ns": 8969215107,
+      "full_work_failed": 2793,
+      "full_work_accepted": 21,
+      "all_confirmed": true,
+      "confirmation_depletion": [
+        false,
+        false,
+        true
+      ],
+      "overlaps": [
+        314,
+        316,
+        246
+      ],
+      "final_credit_ns": 99645555,
+      "whole_parent_cpu_ns": 16584553592,
+      "whole_parent_wall_ns": 31334827983
+    },
+    {
+      "run": 2,
+      "mode": "late-product",
+      "criteria": true,
+      "depleted": true,
+      "depletion_at_ns": 6304852857,
+      "full_work_failed": 2472,
+      "full_work_accepted": 21,
+      "all_confirmed": true,
+      "confirmation_depletion": [
+        false,
+        true,
+        true
+      ],
+      "overlaps": [
+        315,
+        237,
+        243
+      ],
+      "final_credit_ns": 97930413,
+      "whole_parent_cpu_ns": 16365683909,
+      "whole_parent_wall_ns": 31308365001
+    },
+    {
+      "run": 3,
+      "mode": "baseline",
+      "criteria": true,
+      "depleted": false,
+      "depletion_at_ns": null,
+      "full_work_failed": 0,
+      "full_work_accepted": 21,
+      "all_confirmed": true,
+      "confirmation_depletion": [
+        false,
+        false,
+        false
+      ],
+      "overlaps": [
+        0,
+        0,
+        0
+      ],
+      "final_credit_ns": 1587142039,
+      "whole_parent_cpu_ns": 6340282010,
+      "whole_parent_wall_ns": 31152234461
+    },
+    {
+      "run": 3,
+      "mode": "from-zero",
+      "criteria": true,
+      "depleted": true,
+      "depletion_at_ns": 7939095484,
+      "full_work_failed": 2748,
+      "full_work_accepted": 21,
+      "all_confirmed": true,
+      "confirmation_depletion": [
+        false,
+        false,
+        true
+      ],
+      "overlaps": [
+        316,
+        314,
+        243
+      ],
+      "final_credit_ns": 100295059,
+      "whole_parent_cpu_ns": 16524471095,
+      "whole_parent_wall_ns": 31310873858
+    },
+    {
+      "run": 3,
+      "mode": "late-product",
+      "criteria": true,
+      "depleted": true,
+      "depletion_at_ns": 6310899321,
+      "full_work_failed": 2463,
+      "full_work_accepted": 21,
+      "all_confirmed": true,
+      "confirmation_depletion": [
+        false,
+        true,
+        true
+      ],
+      "overlaps": [
+        313,
+        235,
+        237
+      ],
+      "final_credit_ns": 100967391,
+      "whole_parent_cpu_ns": 16269017234,
+      "whole_parent_wall_ns": 31317828727
+    }
+  ],
+  "pq29e_result_inherited": false,
+  "independent_hardware_wan_or_physical_energy_qualified": false
+}
