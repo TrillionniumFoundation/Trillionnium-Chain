@@ -1,0 +1,19 @@
+test_existing_final_is_never_replaced (__main__.LoopbackControls.test_existing_final_is_never_replaced) ... ok
+test_measured_rss_breach_remains_failure_with_closed_wait4 (__main__.LoopbackControls.test_measured_rss_breach_remains_failure_with_closed_wait4) ... ok
+test_over_cap_rejects_header_before_allocating_payload (__main__.LoopbackControls.test_over_cap_rejects_header_before_allocating_payload) ... ok
+test_public_cli_has_no_skip_or_supplied_result_mode (__main__.LoopbackControls.test_public_cli_has_no_skip_or_supplied_result_mode) ... ok
+test_short_frame_refuses_without_materialization (__main__.LoopbackControls.test_short_frame_refuses_without_materialization) ... ok
+test_short_payload_retains_failure (__main__.LoopbackControls.test_short_payload_retains_failure) ... ok
+test_socket_timeout_is_failure_not_empty_success (__main__.LoopbackControls.test_socket_timeout_is_failure_not_empty_success) ... ok
+test_source_snapshot_checks_original_guest_and_includes_both_owners (__main__.LoopbackControls.test_source_snapshot_checks_original_guest_and_includes_both_owners) ... ok
+test_successful_nonverifier_without_result_cannot_verify (__main__.LoopbackControls.test_successful_nonverifier_without_result_cannot_verify) ... ok
+test_timeout_exact_child_is_reaped (__main__.LoopbackControls.test_timeout_exact_child_is_reaped) ... ok
+test_trailing_byte_refuses (__main__.LoopbackControls.test_trailing_byte_refuses) ... ok
+test_two_real_processes_stream_and_close_with_measured_rss (__main__.LoopbackControls.test_two_real_processes_stream_and_close_with_measured_rss) ... ok
+test_wrong_connection_nonce_refuses (__main__.LoopbackControls.test_wrong_connection_nonce_refuses) ... ok
+test_wrong_hash_refuses (__main__.LoopbackControls.test_wrong_hash_refuses) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 0.865s
+
+OK

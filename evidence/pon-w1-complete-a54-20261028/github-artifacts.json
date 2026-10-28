@@ -1,0 +1,80 @@
+{
+  "artifacts": [
+    {
+      "id": 12784520070,
+      "name": "w1-assembled-a54dc7355f58f40784b5a71fe7e73c4062a14951-1",
+      "size_in_bytes": 80366759,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/12784520070",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/12784520070/zip",
+      "expired": false,
+      "created_at": "2026-10-28T01:07:59Z",
+      "expires_at": "2026-11-27T01:07:54Z",
+      "updated_at": "2026-10-28T01:07:59Z",
+      "digest": "sha256:bae22e7fab8f5475dc396a4225292f90e582a92558fecf1710e30da0b0d76ecc",
+      "workflow_run": {
+        "id": 40608715148,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "test/chain-w1-continuation-ci-20261027",
+        "head_sha": "a54dc7355f58f40784b5a71fe7e73c4062a14951"
+      }
+    },
+    {
+      "id": 12783447754,
+      "name": "w1-continuation-a54dc7355f58f40784b5a71fe7e73c4062a14951-1-shard-0",
+      "size_in_bytes": 14450432,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/12783447754",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/12783447754/zip",
+      "expired": false,
+      "created_at": "2026-10-28T01:01:32Z",
+      "expires_at": "2026-11-27T01:01:30Z",
+      "updated_at": "2026-10-28T01:01:32Z",
+      "digest": "sha256:a90812a8db8c84c64ef857fadda0cb14486c4e7a9037ee25946838707cc5cb39",
+      "workflow_run": {
+        "id": 40608715148,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "test/chain-w1-continuation-ci-20261027",
+        "head_sha": "a54dc7355f58f40784b5a71fe7e73c4062a14951"
+      }
+    },
+    {
+      "id": 12782519571,
+      "name": "w1-continuation-a54dc7355f58f40784b5a71fe7e73c4062a14951-1-shard-1",
+      "size_in_bytes": 14440397,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/12782519571",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/12782519571/zip",
+      "expired": false,
+      "created_at": "2026-10-28T01:00:12Z",
+      "expires_at": "2026-11-27T01:00:11Z",
+      "updated_at": "2026-10-28T01:00:12Z",
+      "digest": "sha256:dae8139ad022c48dfbd18a20be0cdfe318728cd6a94b8d404044a8c3d451e9ea",
+      "workflow_run": {
+        "id": 40608715148,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "test/chain-w1-continuation-ci-20261027",
+        "head_sha": "a54dc7355f58f40784b5a71fe7e73c4062a14951"
+      }
+    },
+    {
+      "id": 12781778132,
+      "name": "w1-selector-a54dc7355f58f40784b5a71fe7e73c4062a14951-1",
+      "size_in_bytes": 3697,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/12781778132",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/12781778132/zip",
+      "expired": false,
+      "created_at": "2026-10-28T00:26:26Z",
+      "expires_at": "2026-11-27T00:26:25Z",
+      "updated_at": "2026-10-28T00:26:26Z",
+      "digest": "sha256:3fa61aeb2c53c82b2bd2d3a524f041cfff0dee0a9bd2ce7169b257dd14f259d4",
+      "workflow_run": {
+        "id": 40608715148,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "test/chain-w1-continuation-ci-20261027",
+        "head_sha": "a54dc7355f58f40784b5a71fe7e73c4062a14951"
+      }
+    }
+  ]
+}

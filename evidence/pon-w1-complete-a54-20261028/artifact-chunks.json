@@ -1,0 +1,310 @@
+{
+  "chunk_bytes": 4194304,
+  "no_large_copy_required": true,
+  "objects": [
+    {
+      "bytes": 80366759,
+      "chunks_materialized_locally": false,
+      "name": "assembly-original.zip",
+      "parts": [
+        {
+          "bytes": 4194304,
+          "index": 0,
+          "offset": 0,
+          "publication_path": "evidence/pon-w1-complete-artifacts-20261028/assembly-original.zip.part000",
+          "sha256": "7dbb122370903b51ee7f3c9b26c54c88f81f470f86bcfd632a4d71d8f096499b"
+        },
+        {
+          "bytes": 4194304,
+          "index": 1,
+          "offset": 4194304,
+          "publication_path": "evidence/pon-w1-complete-artifacts-20261028/assembly-original.zip.part001",
+          "sha256": "66f94c57c0c213596ef20cad11cd1528a881abfe837dfc6159f385a23dfc524a"
+        },
+        {
+          "bytes": 4194304,
+          "index": 2,
+          "offset": 8388608,
+          "publication_path": "evidence/pon-w1-complete-artifacts-20261028/assembly-original.zip.part002",
+          "sha256": "7120e8ef62641ba56ef60481fefb01a5d390f44a6ba48b0887f74d27bda8ec04"
+        },
+        {
+          "bytes": 4194304,
+          "index": 3,
+          "offset": 12582912,
+          "publication_path": "evidence/pon-w1-complete-artifacts-20261028/assembly-original.zip.part003",
+          "sha256": "e1c81de9fabc29c2ca5cd1e5ac6e88a3cd88ac8ee40b631e4cb303216f3cbcf3"
+        },
+        {
+          "bytes": 4194304,
+          "index": 4,
+          "offset": 16777216,
+          "publication_path": "evidence/pon-w1-complete-artifacts-20261028/assembly-original.zip.part004",
+          "sha256": "df62c587d202b41bf897d551fccfb8ace0d5ac4b2ed340cd6794536ef1fb6b10"
+        },
+        {
+          "bytes": 4194304,
+          "index": 5,
+          "offset": 20971520,
+          "publication_path": "evidence/pon-w1-complete-artifacts-20261028/assembly-original.zip.part005",
+          "sha256": "8856c4ba01c986bb1a6eaff6039fa3774fd8c85efa6c0f951f6d255fff943467"
+        },
+        {
+          "bytes": 4194304,
+          "index": 6,
+          "offset": 25165824,
+          "publication_path": "evidence/pon-w1-complete-artifacts-20261028/assembly-original.zip.part006",
+          "sha256": "4aa9cc88a3e097910f34a530fe0851501dbe9ae14ab01db19085ba467b5baffb"
+        },
+        {
+          "bytes": 4194304,
+          "index": 7,
+          "offset": 29360128,
+          "publication_path": "evidence/pon-w1-complete-artifacts-20261028/assembly-original.zip.part007",
+          "sha256": "0120e56c1ce0c421ec88fd8abf905806b0c1f694d688fc35008b995c97c1a08b"
+        },
+        {
+          "bytes": 4194304,
+          "index": 8,
+          "offset": 33554432,
+          "publication_path": "evidence/pon-w1-complete-artifacts-20261028/assembly-original.zip.part008",
+          "sha256": "a72ae2e9c61bc25d1f9697b00c5e7c9466397f9f26d574b5dd5d45fb8cadcc69"
+        },
+        {
+          "bytes": 4194304,
+          "index": 9,
+          "offset": 37748736,
+          "publication_path": "evidence/pon-w1-complete-artifacts-20261028/assembly-original.zip.part009",
+          "sha256": "7c701e382fb5365b495188db89581aae6c096be951c5a55ceb807ceace454113"
+        },
+        {
+          "bytes": 4194304,
+          "index": 10,
+          "offset": 41943040,
+          "publication_path": "evidence/pon-w1-complete-artifacts-20261028/assembly-original.zip.part010",
+          "sha256": "1ca2f6b6abda33aa3be3ef1a050967ad70b4f832ca0c23072d1155735b8fbe09"
+        },
+        {
+          "bytes": 4194304,
+          "index": 11,
+          "offset": 46137344,
+          "publication_path": "evidence/pon-w1-complete-artifacts-20261028/assembly-original.zip.part011",
+          "sha256": "dea451d49d7f1fd3f4dfbc146f7ecd6717e8011cdf2acfbd832116e1eef5cab3"
+        },
+        {
+          "bytes": 4194304,
+          "index": 12,
+          "offset": 50331648,
+          "publication_path": "evidence/pon-w1-complete-artifacts-20261028/assembly-original.zip.part012",
+          "sha256": "b9aaa5c82fa9e96f7fecefa4b3e36b0a18d81fda5e480a94f129ad5ebe7b8e00"
+        },
+        {
+          "bytes": 4194304,
+          "index": 13,
+          "offset": 54525952,
+          "publication_path": "evidence/pon-w1-complete-artifacts-20261028/assembly-original.zip.part013",
+          "sha256": "ca9ff553f83b23f976e82bd0e6f42073e4b8890290fe31c8405ad0f7c69572c3"
+        },
+        {
+          "bytes": 4194304,
+          "index": 14,
+          "offset": 58720256,
+          "publication_path": "evidence/pon-w1-complete-artifacts-20261028/assembly-original.zip.part014",
+          "sha256": "15f76f95e45aa4d1479110b58ad275a19ac6270be2feb1c2a177a1a4dce3bda7"
+        },
+        {
+          "bytes": 4194304,
+          "index": 15,
+          "offset": 62914560,
+          "publication_path": "evidence/pon-w1-complete-artifacts-20261028/assembly-original.zip.part015",
+          "sha256": "0911ed69dfa87a03552c0c2db6ad2147a331dc3d0b64e21f9ba6f57b107b7217"
+        },
+        {
+          "bytes": 4194304,
+          "index": 16,
+          "offset": 67108864,
+          "publication_path": "evidence/pon-w1-complete-artifacts-20261028/assembly-original.zip.part016",
+          "sha256": "f553fc831e96ae8e0cd7f05ab285f29f3b224b8e52ffd8e8dd2ada1f31b78049"
+        },
+        {
+          "bytes": 4194304,
+          "index": 17,
+          "offset": 71303168,
+          "publication_path": "evidence/pon-w1-complete-artifacts-20261028/assembly-original.zip.part017",
+          "sha256": "a9047cba21a69299815ed6d7ceaba82edc12e12fdbc3987186894035a53ea7b0"
+        },
+        {
+          "bytes": 4194304,
+          "index": 18,
+          "offset": 75497472,
+          "publication_path": "evidence/pon-w1-complete-artifacts-20261028/assembly-original.zip.part018",
+          "sha256": "950afdbdfce012e132c7e8e2d8a46325e09cc7b8e4732bb903feb5754372b325"
+        },
+        {
+          "bytes": 674983,
+          "index": 19,
+          "offset": 79691776,
+          "publication_path": "evidence/pon-w1-complete-artifacts-20261028/assembly-original.zip.part019",
+          "sha256": "87fe60de1d31111698291f697b43221248c328f018996804946ecc511c6900bf"
+        }
+      ],
+      "required_primary": true,
+      "sha256": "bae22e7fab8f5475dc396a4225292f90e582a92558fecf1710e30da0b0d76ecc",
+      "source_path": "/workspace/scratch/bb9b841c1d43/w1-observation/a54-run-40608715148/assembly.zip"
+    },
+    {
+      "bytes": 15862780,
+      "chunks_materialized_locally": false,
+      "name": "receipt.bin",
+      "parts": [
+        {
+          "bytes": 4194304,
+          "index": 0,
+          "offset": 0,
+          "publication_path": "evidence/pon-w1-complete-artifacts-20261028/receipt.bin.part000",
+          "sha256": "0e1941e27b8222265e6c4fa058aa0fcacd9cf2b616fd0400b98b6d40c055f45e"
+        },
+        {
+          "bytes": 4194304,
+          "index": 1,
+          "offset": 4194304,
+          "publication_path": "evidence/pon-w1-complete-artifacts-20261028/receipt.bin.part001",
+          "sha256": "322c3791878587f01c9871a5aeec50b3e8568b966a71de56a2fd2ddc35e30c5a"
+        },
+        {
+          "bytes": 4194304,
+          "index": 2,
+          "offset": 8388608,
+          "publication_path": "evidence/pon-w1-complete-artifacts-20261028/receipt.bin.part002",
+          "sha256": "291a037e290b9b8bb4611938934f180e18a49596d9aaf5cc8b73544056ba67c6"
+        },
+        {
+          "bytes": 3279868,
+          "index": 3,
+          "offset": 12582912,
+          "publication_path": "evidence/pon-w1-complete-artifacts-20261028/receipt.bin.part003",
+          "sha256": "a3e151b821ece6d2d5e7ca64e2c40d62db7e7179395d912bb1eaf126263fc628"
+        }
+      ],
+      "required_primary": true,
+      "sha256": "0a5336a797c51829ed25d4ec2f1a03f4f56fda4c737a230b493d4abbe96f0ec8",
+      "source_path": "/workspace/scratch/bb9b841c1d43/w1-observation/a54-run-40608715148/assembly-selected/receipt.bin"
+    },
+    {
+      "bytes": 14450432,
+      "chunks_materialized_locally": false,
+      "name": "shard0-original.zip",
+      "parts": [
+        {
+          "bytes": 4194304,
+          "index": 0,
+          "offset": 0,
+          "publication_path": "evidence/pon-w1-complete-artifacts-20261028/shard0-original.zip.part000",
+          "sha256": "ad817f2e449e892ec2a75abb8e9cb5e17cdc227f74282ce344daed7555a6a99f"
+        },
+        {
+          "bytes": 4194304,
+          "index": 1,
+          "offset": 4194304,
+          "publication_path": "evidence/pon-w1-complete-artifacts-20261028/shard0-original.zip.part001",
+          "sha256": "37147307019209d77028257a90dc062db1c3663452730f2b8352ab0ca01867f3"
+        },
+        {
+          "bytes": 4194304,
+          "index": 2,
+          "offset": 8388608,
+          "publication_path": "evidence/pon-w1-complete-artifacts-20261028/shard0-original.zip.part002",
+          "sha256": "a64369c922f7c7cb380f133899a892601fea816f39de646fa2fa9116775f2c70"
+        },
+        {
+          "bytes": 1867520,
+          "index": 3,
+          "offset": 12582912,
+          "publication_path": "evidence/pon-w1-complete-artifacts-20261028/shard0-original.zip.part003",
+          "sha256": "76cc62c3820fcb95f915168d3f4eda3b9ebaac05cc309197ef3c79ff0f563068"
+        }
+      ],
+      "required_primary": false,
+      "sha256": "a90812a8db8c84c64ef857fadda0cb14486c4e7a9037ee25946838707cc5cb39",
+      "source_path": "/workspace/scratch/bb9b841c1d43/w1-observation/a54-run-40608715148/shard0.zip"
+    },
+    {
+      "bytes": 14440397,
+      "chunks_materialized_locally": false,
+      "name": "shard1-original.zip",
+      "parts": [
+        {
+          "bytes": 4194304,
+          "index": 0,
+          "offset": 0,
+          "publication_path": "evidence/pon-w1-complete-artifacts-20261028/shard1-original.zip.part000",
+          "sha256": "59ea11698b35dff91ab5a189f15311cfae82d3e70d185303dd32648879903b71"
+        },
+        {
+          "bytes": 4194304,
+          "index": 1,
+          "offset": 4194304,
+          "publication_path": "evidence/pon-w1-complete-artifacts-20261028/shard1-original.zip.part001",
+          "sha256": "7367098dfd3d734d92a5a5998450f5fd78fe5269038af7b5075398c4f284d161"
+        },
+        {
+          "bytes": 4194304,
+          "index": 2,
+          "offset": 8388608,
+          "publication_path": "evidence/pon-w1-complete-artifacts-20261028/shard1-original.zip.part002",
+          "sha256": "427a0d580346444de291e661d49cd9669fe328505d6b93c04f4bd61993c46c98"
+        },
+        {
+          "bytes": 1857485,
+          "index": 3,
+          "offset": 12582912,
+          "publication_path": "evidence/pon-w1-complete-artifacts-20261028/shard1-original.zip.part003",
+          "sha256": "f92540e169be7af24cab862104922a8b064f373f7c6a3c660bf4b425b78ebb10"
+        }
+      ],
+      "required_primary": false,
+      "sha256": "dae8139ad022c48dfbd18a20be0cdfe318728cd6a94b8d404044a8c3d451e9ea",
+      "source_path": "/workspace/scratch/bb9b841c1d43/w1-observation/a54-run-40608715148/shard1.zip"
+    },
+    {
+      "bytes": 3504734,
+      "chunks_materialized_locally": false,
+      "name": "solver-v3-x86_64-original.zip",
+      "parts": [
+        {
+          "bytes": 3504734,
+          "index": 0,
+          "offset": 0,
+          "publication_path": "evidence/pon-w1-complete-artifacts-20261028/solver-v3-x86_64-original.zip.part000",
+          "sha256": "01a8220a874ab7779a99287434c01b669c1e55d2c0f6b582ddeac937dc5a1191"
+        }
+      ],
+      "required_primary": false,
+      "sha256": "01a8220a874ab7779a99287434c01b669c1e55d2c0f6b582ddeac937dc5a1191",
+      "source_path": "/workspace/scratch/bb9b841c1d43/solver-v3-readback/x86_64.zip"
+    },
+    {
+      "bytes": 3195037,
+      "chunks_materialized_locally": false,
+      "name": "solver-v3-aarch64-original.zip",
+      "parts": [
+        {
+          "bytes": 3195037,
+          "index": 0,
+          "offset": 0,
+          "publication_path": "evidence/pon-w1-complete-artifacts-20261028/solver-v3-aarch64-original.zip.part000",
+          "sha256": "a82694b0b2102a77a2bfc6f50f76069fdb74f2b8ee74174fa006885e6cee7e55"
+        }
+      ],
+      "required_primary": false,
+      "sha256": "a82694b0b2102a77a2bfc6f50f76069fdb74f2b8ee74174fa006885e6cee7e55",
+      "source_path": "/workspace/scratch/bb9b841c1d43/solver-v3-readback/aarch64.zip"
+    }
+  ],
+  "publication_status": "PLANNED_NOT_YET_DURABLE",
+  "read_method": "Open each source_path and read exactly each part offset/bytes; verify part SHA-256 before creating the Git blob. Reassemble by ascending index; verify whole byte count and SHA-256. Verify remote bytes before claiming persistence.",
+  "receipt_also_available_as_archive_member": "receipt.bin",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "schema": "pon-evidence-stream-chunks-v1",
+  "source_archive_remains_retained": true
+}

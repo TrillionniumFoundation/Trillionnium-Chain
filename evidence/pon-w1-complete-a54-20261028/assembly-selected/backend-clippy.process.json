@@ -1,0 +1,51 @@
+{
+  "schema": "pon-w1-actual-process-v2",
+  "command": [
+    "/home/runner/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "clippy",
+    "--locked",
+    "--manifest-path",
+    "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/Cargo.toml",
+    "-p",
+    "trnm-w1-risc0-host",
+    "-p",
+    "trnm-w1-guest-relation",
+    "--all-targets",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "started_utc": "2026-10-28T01:06:41.931393+00:00",
+  "timeout_seconds": 1800,
+  "source_sha": "a54dc7355f58f40784b5a71fe7e73c4062a14951",
+  "timed_out": false,
+  "consensus_authority": false,
+  "child_pid": 12101,
+  "child_returncode": 0,
+  "child_reaped": true,
+  "cleanup_actions": [],
+  "cleanup_errors": [],
+  "subreaper_enabled": true,
+  "leader_exited_before_group": false,
+  "adopted_child_terminals": [],
+  "owned_process_group_empty": true,
+  "returncode": 0,
+  "wall_seconds": 39.168893799000045,
+  "user_cpu_seconds": 69.280391,
+  "system_cpu_seconds": 7.725488,
+  "max_waited_descendant_rss_kib": 510868,
+  "rss_scope": "maximum reported for the waited child family; not total cgroup peak",
+  "finished_utc": "2026-10-28T01:07:21.100306+00:00",
+  "raw_logs": {
+    "stdout": {
+      "path": "backend-clippy.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "backend-clippy.stderr.log",
+      "bytes": 6512,
+      "sha256": "b28963555f38b1db07b0bb019e54be04dedf3cbc7120769d4421228a31510a51"
+    }
+  }
+}

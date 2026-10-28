@@ -540,6 +540,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/bin/check_frozen_receipts.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/bin/check_frozen_receipts.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/guest_negative.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -621,6 +628,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/relation/src/parameters.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/segment-continuation-v2.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/segment-continuation-v2.json"
         )),
     ),
     (

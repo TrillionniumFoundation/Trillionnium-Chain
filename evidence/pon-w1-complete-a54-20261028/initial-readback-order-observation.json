@@ -1,0 +1,6 @@
+{
+  "execution_failure_claimed": false,
+  "file": "shard1.zip",
+  "scope": "analyst expected concurrent completion order to equal sorted assigned indices; original runner correctly validates sorted completion set",
+  "status": "LOCAL_READBACK_ASSERTION_FAILED"
+}

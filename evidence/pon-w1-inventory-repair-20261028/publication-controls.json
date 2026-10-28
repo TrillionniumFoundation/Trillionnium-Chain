@@ -1,0 +1,34 @@
+{
+  "no_native_compilation": true,
+  "no_new_proof": true,
+  "runs": [
+    {
+      "command": [
+        "python3",
+        "scripts/ci/check_repository.py"
+      ],
+      "name": "repository-candidate",
+      "returncode": 2,
+      "wall_seconds": 0.7370951390039409
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "name": "ci-contract",
+      "returncode": 0,
+      "wall_seconds": 0.907608858004096
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "name": "source-integrity",
+      "returncode": 0,
+      "wall_seconds": 8.778044348997355
+    }
+  ],
+  "schema": "pon-w1-evidence-publication-controls-v1"
+}

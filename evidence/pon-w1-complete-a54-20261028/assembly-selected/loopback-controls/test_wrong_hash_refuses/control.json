@@ -1,0 +1,1 @@
+{"cryptographic_proof_verified": false, "directory_fsync_completed": false, "error": "loopback-payload-hash", "error_type": "ValueError", "file_fsync_completed": false, "header_bytes_received": 80, "payload_bytes_received": 4, "payload_sha256": "b5c1fb2efc6d6b4674c2fdcc48ce01b43a3b7c03763c0c3355de0099ee0f8c73", "synthetic_bytes_only": true}

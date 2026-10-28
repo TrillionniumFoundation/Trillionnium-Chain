@@ -1,0 +1,9 @@
+test_actual_failed_worker_cancels_other_worker_and_retains_terminal_logs (__main__.ActualProcesses.test_actual_failed_worker_cancels_other_worker_and_retains_terminal_logs) ... ok
+test_actual_per_worker_deadline_retains_sigkill_without_claiming_a_proof (__main__.ActualProcesses.test_actual_per_worker_deadline_retains_sigkill_without_claiming_a_proof) ... ok
+test_actual_membership_includes_all_visible_ancestors_and_namespace_root (__main__.Resources.test_actual_membership_includes_all_visible_ancestors_and_namespace_root) ... ok
+test_missing_limits_never_mean_unlimited_or_a_smaller_profile (__main__.Resources.test_missing_limits_never_mean_unlimited_or_a_smaller_profile) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 5.444s
+
+OK

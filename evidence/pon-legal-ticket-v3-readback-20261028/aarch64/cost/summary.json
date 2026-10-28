@@ -1,0 +1,889 @@
+{
+  "schema": "pon-legal-ticket-first-admission-summary-v3",
+  "cohorts": 8,
+  "fresh_stores": 8,
+  "first_admission_calls": 508,
+  "distinct_fixture_packet_ids_across_paired_cohorts": 127,
+  "groups": [
+    {
+      "round": 0,
+      "reuse": false,
+      "strategy": "prepared-general",
+      "attempts": 122,
+      "winners": 64,
+      "exhausted": 0,
+      "phases": {
+        "directory": {
+          "process_cpu_ns": 86080,
+          "wall_ns": 85179
+        },
+        "node_open": {
+          "process_cpu_ns": 9840384,
+          "wall_ns": 15129161
+        },
+        "bootstrap_material": {
+          "process_cpu_ns": 769616,
+          "wall_ns": 768527
+        },
+        "template_acquisition": {
+          "process_cpu_ns": 7556952,
+          "wall_ns": 7554485
+        },
+        "matrix_material": {
+          "process_cpu_ns": 51216,
+          "wall_ns": 50773
+        },
+        "producer_setup": {
+          "process_cpu_ns": 18667120,
+          "wall_ns": 18618349
+        },
+        "all_attempt_generation": {
+          "process_cpu_ns": 77696736,
+          "wall_ns": 77624942
+        },
+        "packet_encoding": {
+          "process_cpu_ns": 379624,
+          "wall_ns": 347003
+        },
+        "first_native_admission": {
+          "process_cpu_ns": 738334696,
+          "wall_ns": 824517655
+        },
+        "node_close": {
+          "process_cpu_ns": 1720368,
+          "wall_ns": 4166062
+        },
+        "cold_node_open": {
+          "process_cpu_ns": 10641688,
+          "wall_ns": 11449036
+        },
+        "cold_packet_readback": {
+          "process_cpu_ns": 3986496,
+          "wall_ns": 3943718
+        },
+        "cold_node_close": {
+          "process_cpu_ns": 526616,
+          "wall_ns": 908094
+        }
+      },
+      "recurring": {
+        "process_cpu_ns": 835078176,
+        "wall_ns": 921107949
+      },
+      "all_phases": {
+        "process_cpu_ns": 870257592,
+        "wall_ns": 965162984
+      },
+      "outer": {
+        "process_cpu_ns": 917754272,
+        "wall_ns": 1013055653
+      },
+      "milliseconds_per_first_admitted_ticket": {
+        "recurring": {
+          "process_cpu_ms": 13.0480965,
+          "wall_ms": 14.392311703125
+        },
+        "all_phases": {
+          "process_cpu_ms": 13.597774875,
+          "wall_ms": 15.080671625
+        },
+        "outer": {
+          "process_cpu_ms": 14.3399105,
+          "wall_ms": 15.828994578125
+        }
+      }
+    },
+    {
+      "round": 0,
+      "reuse": false,
+      "strategy": "maintenance-split-limb",
+      "attempts": 122,
+      "winners": 64,
+      "exhausted": 0,
+      "phases": {
+        "directory": {
+          "process_cpu_ns": 87432,
+          "wall_ns": 65508
+        },
+        "node_open": {
+          "process_cpu_ns": 9159544,
+          "wall_ns": 11523024
+        },
+        "bootstrap_material": {
+          "process_cpu_ns": 770616,
+          "wall_ns": 769423
+        },
+        "template_acquisition": {
+          "process_cpu_ns": 7486216,
+          "wall_ns": 7483417
+        },
+        "matrix_material": {
+          "process_cpu_ns": 53848,
+          "wall_ns": 53413
+        },
+        "producer_setup": {
+          "process_cpu_ns": 3165888,
+          "wall_ns": 3117497
+        },
+        "all_attempt_generation": {
+          "process_cpu_ns": 74481480,
+          "wall_ns": 74412850
+        },
+        "packet_encoding": {
+          "process_cpu_ns": 151608,
+          "wall_ns": 120678
+        },
+        "first_native_admission": {
+          "process_cpu_ns": 725502792,
+          "wall_ns": 753082762
+        },
+        "node_close": {
+          "process_cpu_ns": 1670872,
+          "wall_ns": 4080563
+        },
+        "cold_node_open": {
+          "process_cpu_ns": 10459536,
+          "wall_ns": 11055549
+        },
+        "cold_packet_readback": {
+          "process_cpu_ns": 3875352,
+          "wall_ns": 3837038
+        },
+        "cold_node_close": {
+          "process_cpu_ns": 477960,
+          "wall_ns": 853233
+        }
+      },
+      "recurring": {
+        "process_cpu_ns": 803301768,
+        "wall_ns": 830733787
+      },
+      "all_phases": {
+        "process_cpu_ns": 837343144,
+        "wall_ns": 870454955
+      },
+      "outer": {
+        "process_cpu_ns": 884407272,
+        "wall_ns": 917886359
+      },
+      "milliseconds_per_first_admitted_ticket": {
+        "recurring": {
+          "process_cpu_ms": 12.551590125,
+          "wall_ms": 12.980215421875
+        },
+        "all_phases": {
+          "process_cpu_ms": 13.083486625,
+          "wall_ms": 13.600858671875
+        },
+        "outer": {
+          "process_cpu_ms": 13.818863625,
+          "wall_ms": 14.341974359375
+        }
+      }
+    },
+    {
+      "round": 0,
+      "reuse": true,
+      "strategy": "prepared-general",
+      "attempts": 122,
+      "winners": 64,
+      "exhausted": 0,
+      "phases": {
+        "directory": {
+          "process_cpu_ns": 63784,
+          "wall_ns": 63052
+        },
+        "node_open": {
+          "process_cpu_ns": 8983552,
+          "wall_ns": 10810837
+        },
+        "bootstrap_material": {
+          "process_cpu_ns": 756704,
+          "wall_ns": 755799
+        },
+        "template_acquisition": {
+          "process_cpu_ns": 7481608,
+          "wall_ns": 7479538
+        },
+        "matrix_material": {
+          "process_cpu_ns": 52048,
+          "wall_ns": 51589
+        },
+        "producer_setup": {
+          "process_cpu_ns": 281024,
+          "wall_ns": 280326
+        },
+        "all_attempt_generation": {
+          "process_cpu_ns": 77591192,
+          "wall_ns": 77533023
+        },
+        "packet_encoding": {
+          "process_cpu_ns": 132664,
+          "wall_ns": 99587
+        },
+        "first_native_admission": {
+          "process_cpu_ns": 720029608,
+          "wall_ns": 748514663
+        },
+        "node_close": {
+          "process_cpu_ns": 1702288,
+          "wall_ns": 4002120
+        },
+        "cold_node_open": {
+          "process_cpu_ns": 10503984,
+          "wall_ns": 11222475
+        },
+        "cold_packet_readback": {
+          "process_cpu_ns": 3754520,
+          "wall_ns": 3715804
+        },
+        "cold_node_close": {
+          "process_cpu_ns": 499568,
+          "wall_ns": 937044
+        }
+      },
+      "recurring": {
+        "process_cpu_ns": 798034488,
+        "wall_ns": 826427599
+      },
+      "all_phases": {
+        "process_cpu_ns": 831832544,
+        "wall_ns": 865465857
+      },
+      "outer": {
+        "process_cpu_ns": 878766088,
+        "wall_ns": 912689650
+      },
+      "milliseconds_per_first_admitted_ticket": {
+        "recurring": {
+          "process_cpu_ms": 12.469288875,
+          "wall_ms": 12.912931234375
+        },
+        "all_phases": {
+          "process_cpu_ms": 12.9973835,
+          "wall_ms": 13.522904015625
+        },
+        "outer": {
+          "process_cpu_ms": 13.730720125,
+          "wall_ms": 14.26077578125
+        }
+      }
+    },
+    {
+      "round": 0,
+      "reuse": true,
+      "strategy": "maintenance-split-limb",
+      "attempts": 122,
+      "winners": 64,
+      "exhausted": 0,
+      "phases": {
+        "directory": {
+          "process_cpu_ns": 65528,
+          "wall_ns": 64684
+        },
+        "node_open": {
+          "process_cpu_ns": 9090872,
+          "wall_ns": 11220963
+        },
+        "bootstrap_material": {
+          "process_cpu_ns": 762144,
+          "wall_ns": 761359
+        },
+        "template_acquisition": {
+          "process_cpu_ns": 7489032,
+          "wall_ns": 7486737
+        },
+        "matrix_material": {
+          "process_cpu_ns": 51728,
+          "wall_ns": 50997
+        },
+        "producer_setup": {
+          "process_cpu_ns": 45352,
+          "wall_ns": 44565
+        },
+        "all_attempt_generation": {
+          "process_cpu_ns": 74771552,
+          "wall_ns": 74681105
+        },
+        "packet_encoding": {
+          "process_cpu_ns": 139408,
+          "wall_ns": 106454
+        },
+        "first_native_admission": {
+          "process_cpu_ns": 722038512,
+          "wall_ns": 750925517
+        },
+        "node_close": {
+          "process_cpu_ns": 1684840,
+          "wall_ns": 3875992
+        },
+        "cold_node_open": {
+          "process_cpu_ns": 10471624,
+          "wall_ns": 11354930
+        },
+        "cold_packet_readback": {
+          "process_cpu_ns": 3818496,
+          "wall_ns": 3781749
+        },
+        "cold_node_close": {
+          "process_cpu_ns": 519928,
+          "wall_ns": 855794
+        }
+      },
+      "recurring": {
+        "process_cpu_ns": 796994824,
+        "wall_ns": 825757641
+      },
+      "all_phases": {
+        "process_cpu_ns": 830949016,
+        "wall_ns": 865210846
+      },
+      "outer": {
+        "process_cpu_ns": 878075896,
+        "wall_ns": 912649309
+      },
+      "milliseconds_per_first_admitted_ticket": {
+        "recurring": {
+          "process_cpu_ms": 12.453044125,
+          "wall_ms": 12.902463140625
+        },
+        "all_phases": {
+          "process_cpu_ms": 12.983578375,
+          "wall_ms": 13.51891946875
+        },
+        "outer": {
+          "process_cpu_ms": 13.719935875,
+          "wall_ms": 14.260145453125
+        }
+      }
+    },
+    {
+      "round": 1,
+      "reuse": false,
+      "strategy": "maintenance-split-limb",
+      "attempts": 151,
+      "winners": 63,
+      "exhausted": 1,
+      "phases": {
+        "directory": {
+          "process_cpu_ns": 66680,
+          "wall_ns": 65916
+        },
+        "node_open": {
+          "process_cpu_ns": 9125464,
+          "wall_ns": 10940980
+        },
+        "bootstrap_material": {
+          "process_cpu_ns": 778216,
+          "wall_ns": 777286
+        },
+        "template_acquisition": {
+          "process_cpu_ns": 7471512,
+          "wall_ns": 7469251
+        },
+        "matrix_material": {
+          "process_cpu_ns": 51352,
+          "wall_ns": 50957
+        },
+        "producer_setup": {
+          "process_cpu_ns": 3220040,
+          "wall_ns": 3178157
+        },
+        "all_attempt_generation": {
+          "process_cpu_ns": 92031392,
+          "wall_ns": 91951023
+        },
+        "packet_encoding": {
+          "process_cpu_ns": 160264,
+          "wall_ns": 129036
+        },
+        "first_native_admission": {
+          "process_cpu_ns": 713299720,
+          "wall_ns": 741141202
+        },
+        "node_close": {
+          "process_cpu_ns": 1639368,
+          "wall_ns": 3730786
+        },
+        "cold_node_open": {
+          "process_cpu_ns": 10584896,
+          "wall_ns": 11336379
+        },
+        "cold_packet_readback": {
+          "process_cpu_ns": 3797056,
+          "wall_ns": 3760107
+        },
+        "cold_node_close": {
+          "process_cpu_ns": 516408,
+          "wall_ns": 988569
+        }
+      },
+      "recurring": {
+        "process_cpu_ns": 808711416,
+        "wall_ns": 836399418
+      },
+      "all_phases": {
+        "process_cpu_ns": 842742368,
+        "wall_ns": 875519649
+      },
+      "outer": {
+        "process_cpu_ns": 897233592,
+        "wall_ns": 930371880
+      },
+      "milliseconds_per_first_admitted_ticket": {
+        "recurring": {
+          "process_cpu_ms": 12.836689142857143,
+          "wall_ms": 13.276181238095239
+        },
+        "all_phases": {
+          "process_cpu_ms": 13.376862984126983,
+          "wall_ms": 13.897137285714285
+        },
+        "outer": {
+          "process_cpu_ms": 14.24180304761905,
+          "wall_ms": 14.76780761904762
+        }
+      }
+    },
+    {
+      "round": 1,
+      "reuse": false,
+      "strategy": "prepared-general",
+      "attempts": 151,
+      "winners": 63,
+      "exhausted": 1,
+      "phases": {
+        "directory": {
+          "process_cpu_ns": 63040,
+          "wall_ns": 62284
+        },
+        "node_open": {
+          "process_cpu_ns": 9095368,
+          "wall_ns": 11706539
+        },
+        "bootstrap_material": {
+          "process_cpu_ns": 770704,
+          "wall_ns": 769599
+        },
+        "template_acquisition": {
+          "process_cpu_ns": 7465336,
+          "wall_ns": 7463195
+        },
+        "matrix_material": {
+          "process_cpu_ns": 50056,
+          "wall_ns": 49637
+        },
+        "producer_setup": {
+          "process_cpu_ns": 18672352,
+          "wall_ns": 18625078
+        },
+        "all_attempt_generation": {
+          "process_cpu_ns": 95608272,
+          "wall_ns": 95528087
+        },
+        "packet_encoding": {
+          "process_cpu_ns": 145544,
+          "wall_ns": 116187
+        },
+        "first_native_admission": {
+          "process_cpu_ns": 711968256,
+          "wall_ns": 775832207
+        },
+        "node_close": {
+          "process_cpu_ns": 1691328,
+          "wall_ns": 3231130
+        },
+        "cold_node_open": {
+          "process_cpu_ns": 10464720,
+          "wall_ns": 11083459
+        },
+        "cold_packet_readback": {
+          "process_cpu_ns": 3679384,
+          "wall_ns": 3644900
+        },
+        "cold_node_close": {
+          "process_cpu_ns": 470160,
+          "wall_ns": 875432
+        }
+      },
+      "recurring": {
+        "process_cpu_ns": 826394424,
+        "wall_ns": 890101559
+      },
+      "all_phases": {
+        "process_cpu_ns": 860144520,
+        "wall_ns": 928987734
+      },
+      "outer": {
+        "process_cpu_ns": 914015208,
+        "wall_ns": 983193097
+      },
+      "milliseconds_per_first_admitted_ticket": {
+        "recurring": {
+          "process_cpu_ms": 13.11737180952381,
+          "wall_ms": 14.128596174603175
+        },
+        "all_phases": {
+          "process_cpu_ms": 13.65308761904762,
+          "wall_ms": 14.745837047619048
+        },
+        "outer": {
+          "process_cpu_ms": 14.508177904761904,
+          "wall_ms": 15.606239634920634
+        }
+      }
+    },
+    {
+      "round": 1,
+      "reuse": true,
+      "strategy": "maintenance-split-limb",
+      "attempts": 151,
+      "winners": 63,
+      "exhausted": 1,
+      "phases": {
+        "directory": {
+          "process_cpu_ns": 68768,
+          "wall_ns": 67940
+        },
+        "node_open": {
+          "process_cpu_ns": 9232912,
+          "wall_ns": 11193693
+        },
+        "bootstrap_material": {
+          "process_cpu_ns": 765784,
+          "wall_ns": 764968
+        },
+        "template_acquisition": {
+          "process_cpu_ns": 7456768,
+          "wall_ns": 7454532
+        },
+        "matrix_material": {
+          "process_cpu_ns": 51144,
+          "wall_ns": 50693
+        },
+        "producer_setup": {
+          "process_cpu_ns": 45960,
+          "wall_ns": 45357
+        },
+        "all_attempt_generation": {
+          "process_cpu_ns": 92530840,
+          "wall_ns": 92424813
+        },
+        "packet_encoding": {
+          "process_cpu_ns": 160728,
+          "wall_ns": 130788
+        },
+        "first_native_admission": {
+          "process_cpu_ns": 717557920,
+          "wall_ns": 744399067
+        },
+        "node_close": {
+          "process_cpu_ns": 1647928,
+          "wall_ns": 2946644
+        },
+        "cold_node_open": {
+          "process_cpu_ns": 10443792,
+          "wall_ns": 11110887
+        },
+        "cold_packet_readback": {
+          "process_cpu_ns": 3708608,
+          "wall_ns": 3672534
+        },
+        "cold_node_close": {
+          "process_cpu_ns": 464344,
+          "wall_ns": 839273
+        }
+      },
+      "recurring": {
+        "process_cpu_ns": 810295448,
+        "wall_ns": 837000025
+      },
+      "all_phases": {
+        "process_cpu_ns": 844135496,
+        "wall_ns": 875101189
+      },
+      "outer": {
+        "process_cpu_ns": 898041208,
+        "wall_ns": 929356515
+      },
+      "milliseconds_per_first_admitted_ticket": {
+        "recurring": {
+          "process_cpu_ms": 12.861832507936507,
+          "wall_ms": 13.285714682539682
+        },
+        "all_phases": {
+          "process_cpu_ms": 13.398976126984127,
+          "wall_ms": 13.890495063492063
+        },
+        "outer": {
+          "process_cpu_ms": 14.254622349206349,
+          "wall_ms": 14.751690714285715
+        }
+      }
+    },
+    {
+      "round": 1,
+      "reuse": true,
+      "strategy": "prepared-general",
+      "attempts": 151,
+      "winners": 63,
+      "exhausted": 1,
+      "phases": {
+        "directory": {
+          "process_cpu_ns": 65664,
+          "wall_ns": 64020
+        },
+        "node_open": {
+          "process_cpu_ns": 9078296,
+          "wall_ns": 10992742
+        },
+        "bootstrap_material": {
+          "process_cpu_ns": 771536,
+          "wall_ns": 770813
+        },
+        "template_acquisition": {
+          "process_cpu_ns": 7478320,
+          "wall_ns": 7475753
+        },
+        "matrix_material": {
+          "process_cpu_ns": 51504,
+          "wall_ns": 51109
+        },
+        "producer_setup": {
+          "process_cpu_ns": 288152,
+          "wall_ns": 287456
+        },
+        "all_attempt_generation": {
+          "process_cpu_ns": 95889296,
+          "wall_ns": 95786324
+        },
+        "packet_encoding": {
+          "process_cpu_ns": 135344,
+          "wall_ns": 105268
+        },
+        "first_native_admission": {
+          "process_cpu_ns": 710658960,
+          "wall_ns": 738650177
+        },
+        "node_close": {
+          "process_cpu_ns": 1665608,
+          "wall_ns": 2452920
+        },
+        "cold_node_open": {
+          "process_cpu_ns": 10490112,
+          "wall_ns": 11244935
+        },
+        "cold_packet_readback": {
+          "process_cpu_ns": 3749248,
+          "wall_ns": 3712868
+        },
+        "cold_node_close": {
+          "process_cpu_ns": 532344,
+          "wall_ns": 878903
+        }
+      },
+      "recurring": {
+        "process_cpu_ns": 806971752,
+        "wall_ns": 834829225
+      },
+      "all_phases": {
+        "process_cpu_ns": 840854384,
+        "wall_ns": 872473288
+      },
+      "outer": {
+        "process_cpu_ns": 894569248,
+        "wall_ns": 926519610
+      },
+      "milliseconds_per_first_admitted_ticket": {
+        "recurring": {
+          "process_cpu_ms": 12.809075428571429,
+          "wall_ms": 13.25125753968254
+        },
+        "all_phases": {
+          "process_cpu_ms": 13.346894984126983,
+          "wall_ms": 13.848782349206349
+        },
+        "outer": {
+          "process_cpu_ms": 14.199511873015872,
+          "wall_ms": 14.706660476190475
+        }
+      }
+    }
+  ],
+  "comparisons": [
+    {
+      "reuse": false,
+      "arms_ms_per_first_admission": {
+        "prepared-general": {
+          "winning_first_admissions": 127,
+          "attempts": 273,
+          "recurring": {
+            "wall_ms": 14.261492188976376,
+            "process_cpu_ms": 13.082461417322834
+          },
+          "all_phases": {
+            "wall_ms": 14.914572582677165,
+            "process_cpu_ms": 13.62521348031496
+          },
+          "outer": {
+            "wall_ms": 15.71849409448819,
+            "process_cpu_ms": 14.423381732283463
+          }
+        },
+        "maintenance-split-limb": {
+          "winning_first_admissions": 127,
+          "attempts": 273,
+          "recurring": {
+            "wall_ms": 13.12703311023622,
+            "process_cpu_ms": 12.693017196850393
+          },
+          "all_phases": {
+            "wall_ms": 13.747831527559056,
+            "process_cpu_ms": 13.22901977952756
+          },
+          "outer": {
+            "wall_ms": 14.55321448031496,
+            "process_cpu_ms": 14.02866822047244
+          }
+        }
+      },
+      "limb_over_general": {
+        "recurring": {
+          "wall_ms": 0.9204529888101713,
+          "process_cpu_ms": 0.9702315789017526
+        },
+        "all_phases": {
+          "wall_ms": 0.9217717404471084,
+          "process_cpu_ms": 0.970922018846912
+        },
+        "outer": {
+          "wall_ms": 0.9258656963467102,
+          "process_cpu_ms": 0.9726337748568669
+        }
+      }
+    },
+    {
+      "reuse": true,
+      "arms_ms_per_first_admission": {
+        "prepared-general": {
+          "winning_first_admissions": 127,
+          "attempts": 273,
+          "recurring": {
+            "wall_ms": 13.080762393700788,
+            "process_cpu_ms": 12.63784440944882
+          },
+          "all_phases": {
+            "wall_ms": 13.684560196850393,
+            "process_cpu_ms": 13.170763212598425
+          },
+          "outer": {
+            "wall_ms": 14.481962677165354,
+            "process_cpu_ms": 13.963270362204725
+          }
+        },
+        "maintenance-split-limb": {
+          "winning_first_admissions": 127,
+          "attempts": 273,
+          "recurring": {
+            "wall_ms": 13.092580047244095,
+            "process_cpu_ms": 12.655828913385827
+          },
+          "all_phases": {
+            "wall_ms": 13.70324437007874,
+            "process_cpu_ms": 13.189641826771654
+          },
+          "outer": {
+            "wall_ms": 14.503982866141733,
+            "process_cpu_ms": 13.985174047244094
+          }
+        }
+      },
+      "limb_over_general": {
+        "recurring": {
+          "wall_ms": 1.0009034376734034,
+          "process_cpu_ms": 1.0014230673645232
+        },
+        "all_phases": {
+          "wall_ms": 1.0013653470012611,
+          "process_cpu_ms": 1.001433372832576
+        },
+        "outer": {
+          "wall_ms": 1.0015205251848287,
+          "process_cpu_ms": 1.0015686643938841
+        }
+      }
+    }
+  ],
+  "settings_setup": {
+    "process_cpu_ns": 4893120,
+    "wall_ns": 4889199
+  },
+  "standalone_verifier_double_counted": false,
+  "physical_power_loss_qualified": false,
+  "native_independent_hardware_qualified": false,
+  "production_qualified": false,
+  "global_minimum_proved": false,
+  "hardware_batching_measured": false,
+  "scope": "distinct native tickets within each fresh store; paired fixture bytes repeat across cohorts; no active-chain rewards; all setup and failed attempts retained",
+  "source": {
+    "base": null,
+    "candidate": "9e73f62c5e5f026fff979840891301d9a8c56d52",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "9e73f62c5e5f026fff979840891301d9a8c56d52",
+    "tested_tree": "7ef7a5daca79fc67ecb242d89e381ac31ef606f6",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 792105627,
+    "tracked_entries": 6080,
+    "tracked_worktree_verified": true
+  },
+  "native_capture": {
+    "schema": "pon-pure-native-capture-v1",
+    "source": {
+      "commit": "9e73f62c5e5f026fff979840891301d9a8c56d52",
+      "tree": "7ef7a5daca79fc67ecb242d89e381ac31ef606f6",
+      "example_sha256": "2a97dc25567191aac520a01940d0d6fc3fb5f783bc9af771fdfd140d0b585dad",
+      "lock_sha256": "3707ed772a9fd851638dca36e5b2472ac0657de65754480c448d3078107d9ff9",
+      "workspace_manifest_sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+    },
+    "argv": [
+      "/home/runner/work/_temp/legal-ticket-v3-target/debug/examples/pon_legal_ticket_cost_v3"
+    ],
+    "rustc": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: aarch64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+    "build_profile": "cargo --profile test; repository package overrides",
+    "package_opt_levels": {
+      "trnm-pon-node": 3,
+      "trnm-crypto-primitives": 3,
+      "trnm-mvcc-fee": 1
+    },
+    "debug_info": 0,
+    "incremental": false,
+    "build_jobs": 1,
+    "binary_sha256_before": "7406b332cfd28183881592dcdf7ef9d24fd0ff9dae6e1d4396125b8bf208f9e1",
+    "timeout_seconds": 250,
+    "platform": "Linux-6.17.0-1022-azure-aarch64-with-glibc2.39",
+    "machine": "aarch64",
+    "exclusive_host": false,
+    "host_contention_controlled": false,
+    "production_qualified": false,
+    "hardness_proved": false,
+    "cpu.max": null,
+    "memory.max": null,
+    "exit_code": 0,
+    "timed_out": false,
+    "elapsed_ns": 7576080682,
+    "child_user_cpu_seconds": 6.912362999999999,
+    "child_system_cpu_seconds": 0.267976,
+    "child_max_rss_kib": 37284,
+    "binary_sha256_after": "7406b332cfd28183881592dcdf7ef9d24fd0ff9dae6e1d4396125b8bf208f9e1",
+    "stdout_bytes": 585104,
+    "stdout_uncompressed_sha256": "dcbb03fce46143989de8a39fa768b83f5a4c6fa57ffaa0267fdbc946b985c43d",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stable_binary": true,
+    "stdout_within_bound": true,
+    "stdout_gzip_sha256": "cdd6d5c19c6cf408f8086a4bbb1d8ee0a32064a1badad51be3bbf0ad04a685d1",
+    "stdout_gzip_bytes": 215687
+  },
+  "raw_uncompressed_sha256": "dcbb03fce46143989de8a39fa768b83f5a4c6fa57ffaa0267fdbc946b985c43d"
+}

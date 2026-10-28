@@ -1,0 +1,9 @@
+{
+  "archive_hash_had_matched": true,
+  "floor_scope": "local reader precaution, not proof/build policy",
+  "free_bytes": 548044800,
+  "selected_bytes": 16081506,
+  "status": "READBACK_STOPPED_BEFORE_ANY_MEMBER_WRITE",
+  "subsequent_direction": "parent prioritized full raw archive; original proof and build budgets unchanged",
+  "temporary_reader_floor_bytes": 536870912
+}
