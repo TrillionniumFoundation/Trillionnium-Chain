@@ -1,0 +1,18 @@
+[package]
+name = "trnm-w1-risc0-guest"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[[bin]]
+name = "trnm-w1-risc0-guest"
+path = "src/main.rs"
+test = false
+bench = false
+
+[dependencies]
+risc0-zkvm = { version = "=3.0.6", default-features = false, features = ["std", "disable-dev-mode"] }
+# Force the reviewed accelerator patch instead of silently selecting a newer
+# unpatched registry release. This nested workspace has its own exact lockfile.
+sha2 = "=0.10.6"
+trnm-w1-guest-relation = { path = "../relation" }

@@ -1,0 +1,10 @@
+
+running 5 tests
+test ingress::public_v3::pure_pon::tests::no_search_profile_has_fresh_identity_and_canonical_acknowledgement ... ok
+test ingress::public_v3::pure_pon::tests::a_pure_client_refuses_a_legacy_cookie_before_acknowledgement_without_retry ... ok
+test ingress::public_v3::pure_pon::tests::signed_cookies_and_responses_reject_both_cross_namespace_directions ... ok
+test ingress::public_v3::pure_pon::tests::pure_servers_share_original_cpu_and_intake_without_a_new_burst ... ok
+test ingress::public_v3::pure_pon::tests::two_cold_listeners_fetch_mine_reject_attacks_and_admit_without_hashcash ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 718 filtered out; finished in 0.48s
+

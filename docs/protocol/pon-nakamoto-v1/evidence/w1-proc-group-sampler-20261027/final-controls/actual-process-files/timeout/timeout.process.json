@@ -1,0 +1,99 @@
+{
+  "schema": "pon-w1-actual-process-v1",
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-c",
+    "import subprocess,sys,json\np=subprocess.Popen([sys.executable,'-c','import time\\nend=time.process_time()+0.1\\nwhile time.process_time()<end: pass\\ntime.sleep(60)'])\nprint(json.dumps({'owned_test_child_pid':p.pid}),flush=True)\np.wait()"
+  ],
+  "started_utc": "2026-10-27T10:27:50.345495+00:00",
+  "timeout_seconds": 16,
+  "source_sha": null,
+  "timed_out": true,
+  "consensus_authority": false,
+  "returncode": 124,
+  "proc_group_sampling": {
+    "schema": "pon-w1-proc-group-summary-v1",
+    "interval_seconds": 15.0,
+    "process_group_id": 817065,
+    "leader_start_ticks": 9269202,
+    "leader_identity_available": true,
+    "clock_ticks_per_second": 100,
+    "page_bytes": 4096,
+    "samples_written": 4,
+    "observed_process_identities": 2,
+    "observed_self_user_cpu_seconds_lower_bound": 0.04,
+    "observed_self_system_cpu_seconds_lower_bound": 0.07,
+    "maximum_sampled_sum_rss_bytes": 15335424,
+    "last_observed_processes": [
+      {
+        "pid": 817065,
+        "process_group_id": 817065,
+        "session_id": 817065,
+        "user_ticks": 1,
+        "system_ticks": 0,
+        "start_ticks": 9269202,
+        "rss_bytes": 8781824,
+        "vm_hwm_bytes": 8888320,
+        "last_seen_sample": 2,
+        "maximum_observed_user_ticks": 1,
+        "maximum_observed_system_ticks": 0,
+        "maximum_observed_vm_hwm_bytes": 8888320
+      },
+      {
+        "pid": 817066,
+        "process_group_id": 817065,
+        "session_id": 817065,
+        "user_ticks": 3,
+        "system_ticks": 7,
+        "start_ticks": 9269205,
+        "rss_bytes": 0,
+        "vm_hwm_bytes": null,
+        "last_seen_sample": 3,
+        "maximum_observed_user_ticks": 3,
+        "maximum_observed_system_ticks": 7,
+        "maximum_observed_vm_hwm_bytes": 6598656
+      }
+    ],
+    "last_sample": {
+      "schema": "pon-w1-proc-group-sample-v1",
+      "event": "terminated_timeout",
+      "sequence": 3,
+      "sampled_utc": "2026-10-27T10:28:06.348402+00:00",
+      "elapsed_seconds": 16.002391697009443,
+      "process_group_id": 817065,
+      "leader_start_ticks": 9269202,
+      "observations": [
+        {
+          "pid": 817066,
+          "process_group_id": 817065,
+          "session_id": 817065,
+          "user_ticks": 3,
+          "system_ticks": 7,
+          "start_ticks": 9269205,
+          "rss_bytes": 0,
+          "vm_hwm_bytes": null,
+          "last_seen_sample": 3,
+          "maximum_observed_user_ticks": 3,
+          "maximum_observed_system_ticks": 7,
+          "maximum_observed_vm_hwm_bytes": 6598656
+        }
+      ],
+      "sampled_sum_rss_bytes": 0,
+      "partial_read_errors_so_far": 2,
+      "tracking_was_truncated": false
+    },
+    "partial_read_errors": 2,
+    "tracking_was_truncated": false,
+    "cpu_scope": "sum of maximum observed SELF ticks for distinct PID/start-time identities, never child ticks; a sampling lower bound, not complete accounting",
+    "memory_scope": "sum RSS can double-count shared pages and miss between-sample peaks; it is not physical memory usage or a group peak. Per-process VmHWM values are not summed.",
+    "coverage_scope": "only this new process group/session; numeric PIDs are filtered by getpgid/getsid before resource files are read. New identities require the original leader PID/start time to remain live. Short-lived, unseen-after-leader-exit or escaped descendants can be missed. Final records retain last actual observations, not synthetic zero/completion.",
+    "consensus_authority": false,
+    "jsonl_file": "timeout.proc-group.jsonl"
+  },
+  "wall_seconds": 16.002939901998616,
+  "user_cpu_seconds": 0.020361999999999998,
+  "system_cpu_seconds": 0.0041719999999999995,
+  "max_waited_descendant_rss_kib": 11392,
+  "rss_scope": "maximum reported for the waited child family; not total cgroup peak",
+  "finished_utc": "2026-10-27T10:28:06.348459+00:00"
+}

@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "/workspace/scratch/20f5e808bfa5/chain-proof/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/check_observations.py", line 114, in <module>
+    main()
+  File "/workspace/scratch/20f5e808bfa5/chain-proof/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/check_observations.py", line 44, in main
+    observations[name] = read_single_result(out / f"{name}.stdout.log", schema, operation)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/20f5e808bfa5/chain-proof/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/observations.py", line 15, in read_single_result
+    raise ValueError(f"{path}: expected exactly one {schema} result; found {len(matches)}")
+ValueError: /workspace/scratch/20f5e808bfa5/pon-proof-artifacts/final-build-check/prove.stdout.log: expected exactly one pon-w1-risc0-research-v1 result; found 0

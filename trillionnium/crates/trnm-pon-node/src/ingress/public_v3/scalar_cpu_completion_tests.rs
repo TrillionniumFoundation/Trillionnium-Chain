@@ -286,6 +286,7 @@ fn only_fresh_successful_native_w1_promotes_not_false_product_or_existing_packet
                 observation: None,
                 mutation_cpu: Some(&measurement),
                 arithmetic_facts: None,
+                public_product: None,
             },
         );
         if index == 0 {
@@ -379,6 +380,7 @@ fn same_valid_w1_native_invalid_packet_cannot_reacquire_completion_priority() {
                 observation: None,
                 mutation_cpu: Some(&measurement),
                 arithmetic_facts: None,
+                public_product: None,
             },
         );
         promotions.push(server.mutation_cpu.lock().unwrap().verified_completions);
@@ -566,6 +568,7 @@ fn full_completion_registry_keeps_all_markers_and_allows_real_native_admission()
             observation: None,
             mutation_cpu: Some(&measurement),
             arithmetic_facts: None,
+            public_product: None,
         },
     )
     .unwrap();
@@ -665,6 +668,7 @@ fn same_verified_w1_with_changed_transaction_body_is_rejected_before_promotion()
                 observation: None,
                 mutation_cpu: Some(&measurement),
                 arithmetic_facts: None,
+                public_product: None,
             },
         );
         permit.finish(&measurement, &server, &metrics).unwrap();

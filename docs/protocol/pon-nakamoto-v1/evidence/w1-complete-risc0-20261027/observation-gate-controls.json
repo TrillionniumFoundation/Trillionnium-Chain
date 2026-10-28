@@ -1,0 +1,18 @@
+{
+  "schema": "pon-w1-observation-gate-controls-v1",
+  "guest_source_hashes": {
+    "../../src/pon_work/full_relation.rs": true,
+    "relation/src/lib.rs": true,
+    "relation/src/parameters.rs": true,
+    "guest/src/main.rs": true,
+    "Cargo.toml": true,
+    "guest/Cargo.toml": true,
+    "relation/Cargo.toml": true,
+    "Cargo.lock": true
+  },
+  "actual_build_identity_check_returncode": 0,
+  "actual_timeout_cannot_satisfy_full_proof_checker": true,
+  "missing_result_error_checked": true,
+  "full_proof_check_returncode": 1,
+  "cryptographic_proof_verified": false
+}

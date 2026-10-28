@@ -1,0 +1,15 @@
+{
+  "schema": "pon-proc-sampler-actual-controls-v1",
+  "environment": "authorized native /proc namespace; getpgid/getsid filtered resource reads",
+  "tests_run": 6,
+  "success": false,
+  "failures": 1,
+  "errors": 0,
+  "wall_seconds": 16.28089344300679,
+  "source_sha256": {
+    "measure_step.py": "2d6ed42c57c4ea7375f09627728bf60669c7a03a4599217397c3e6f70d0a4b24",
+    "proc_group_sampler.py": "368c6af017d82bf074a72e97404a09b927a8d517df724f19c5066a84b3ad1947",
+    "test_proc_group_sampler.py": "26729a72b76cb82eba8d91ff0553c0a26bccea3cbe1c9d950b72b04e0a44f2bc"
+  },
+  "scope": "Parser/ownership controls and actual short self-created process groups; no cryptographic proof generated."
+}

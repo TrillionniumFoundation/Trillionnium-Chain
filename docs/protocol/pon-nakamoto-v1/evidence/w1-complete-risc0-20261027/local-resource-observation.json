@@ -1,0 +1,15 @@
+{
+  "schema": "pon-w1-local-shared-resource-observation-v1",
+  "observed_utc": "2026-10-27T09:41:16Z",
+  "machine": "x86_64",
+  "system": "Linux",
+  "kernel": "6.18.55",
+  "rayon_num_threads": 2,
+  "omp_num_threads": 2,
+  "workload_scope": "shared 8 GiB cgroup, other jobs were paused during proof; external memory/cache contention still occurred",
+  "resource_reclamation": "Parent removed only rebuildable inactive native build cache during proof; no running prover/guest/input was modified.",
+  "memory.max": "8589934592\n",
+  "memory.current": "8399900672\n",
+  "memory.events": "low 0\nhigh 0\nmax 755175\noom 0\noom_kill 0\noom_group_kill 0\n",
+  "cpu.max": "800000 100000\n"
+}

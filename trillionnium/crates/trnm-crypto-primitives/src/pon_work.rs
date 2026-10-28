@@ -7,11 +7,13 @@ pub mod blocked_one_zero;
 pub mod blocked_zero;
 pub mod blocked_zero_paired;
 pub mod facts;
+pub mod full_relation;
 mod integer_paired;
 pub mod maintenance_limb;
 pub mod maintenance_periodic;
 pub mod maintenance_prefix;
 pub mod paired_product;
+pub mod public_product;
 pub mod structured;
 
 pub const PROFILE: &str = "pon-matmul-transcript-64-v1";

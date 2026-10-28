@@ -1,0 +1,3 @@
+# Byte-exact captured stdout is research data; retain Cargo's trailing blank lines.
+# This does not change source formatting, build, cryptographic or validation gates.
+*.stdout.log -whitespace
