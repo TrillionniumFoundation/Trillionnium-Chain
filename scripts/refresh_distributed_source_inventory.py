@@ -25,6 +25,10 @@ def render():
                  for path in [item.decode("utf-8")]
                  if Path(path).suffix in {".rs", ".json", ".bin", ".der"} or Path(path).name in {"Cargo.toml", "WYCHEPROOF_LICENSE"}}
     paths.update(("trillionnium/Cargo.toml", "trillionnium/Cargo.lock", str(OUTPUT.relative_to(ROOT))))
+    # The native confirmation-risk test includes this exact shared model vector.
+    # Keep its explicit repository-relative dependency in the cold build closure;
+    # this is not a scan of another filesystem root or a copied second vector.
+    paths.add("formal/pon-nakamoto-v1/vectors/pon-risk-native-vectors-v1.json")
     rows = ["// Embedded exact bytes. Regenerate inventory when adding native source files.", "pub const FILES: &[(&str, &[u8])] = &["]
     for path in sorted(paths):
         item = ROOT / path

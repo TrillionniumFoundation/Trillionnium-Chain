@@ -1,0 +1,246 @@
+{
+  "schema": "pon-conditional-risk-input-v1",
+  "cost_provenance": "explicit-synthetic-hypotheses-not-measurements",
+  "seed": 20261028,
+  "trials": 128,
+  "slot_seconds": 1,
+  "horizon_slots": 320,
+  "costs": {
+    "generic": {
+      "kind": "classical",
+      "task_class": "synthetic-maintenance-cold-complete-legal-producer",
+      "context_setup_ns": 100000000,
+      "full_attempt_ns": 250000000,
+      "winning_witness_ns": 100000000,
+      "publication_ns": 100000000
+    },
+    "structured": {
+      "kind": "classical",
+      "task_class": "synthetic-structured-reused-complete-legal-producer",
+      "context_setup_ns": 50000000,
+      "full_attempt_ns": 62500000,
+      "winning_witness_ns": 100000000,
+      "publication_ns": 100000000
+    },
+    "delayed": {
+      "kind": "classical",
+      "task_class": "synthetic-witness-and-publication-delay",
+      "context_setup_ns": 100000000,
+      "full_attempt_ns": 250000000,
+      "winning_witness_ns": 100000000,
+      "publication_ns": 450000000
+    },
+    "quantum_hypothesis": {
+      "kind": "quantum",
+      "task_class": "synthetic-complete-clean-W1-oracle-hypothesis",
+      "context_setup_ns": 100000000,
+      "winning_witness_ns": 200000000,
+      "publication_ns": 100000000,
+      "full_clean_oracle_and_diffusion_ns": 50000000,
+      "measurement_check_restart_ns": 100000000,
+      "iterations": 1,
+      "nonce_bits": 64,
+      "occupancy_hypothesis": "floor_mean"
+    }
+  },
+  "scenarios": [
+    {
+      "name": "equal_cost_two_honest_one_private",
+      "honest": [
+        {
+          "start": 0,
+          "end": 320,
+          "workers": 2,
+          "cost": "generic"
+        }
+      ],
+      "private": [
+        {
+          "start": 0,
+          "end": 320,
+          "workers": 1,
+          "cost": "generic"
+        }
+      ],
+      "private_timestamp": "wall",
+      "release_delay_slots": 1
+    },
+    {
+      "name": "cheaper_complete_legal_private",
+      "honest": [
+        {
+          "start": 0,
+          "end": 320,
+          "workers": 2,
+          "cost": "generic"
+        }
+      ],
+      "private": [
+        {
+          "start": 0,
+          "end": 320,
+          "workers": 1,
+          "cost": "structured"
+        }
+      ],
+      "private_timestamp": "wall",
+      "release_delay_slots": 1
+    },
+    {
+      "name": "honest_proof_publication_delay",
+      "honest": [
+        {
+          "start": 0,
+          "end": 320,
+          "workers": 2,
+          "cost": "delayed"
+        }
+      ],
+      "private": [
+        {
+          "start": 0,
+          "end": 320,
+          "workers": 1,
+          "cost": "generic"
+        }
+      ],
+      "private_timestamp": "wall",
+      "release_delay_slots": 1
+    },
+    {
+      "name": "private_burst_then_exit",
+      "honest": [
+        {
+          "start": 0,
+          "end": 320,
+          "workers": 2,
+          "cost": "generic"
+        }
+      ],
+      "private": [
+        {
+          "start": 0,
+          "end": 60,
+          "workers": 1,
+          "cost": "generic"
+        },
+        {
+          "start": 60,
+          "end": 140,
+          "workers": 8,
+          "cost": "generic"
+        },
+        {
+          "start": 140,
+          "end": 320,
+          "workers": 0,
+          "cost": "generic"
+        }
+      ],
+      "private_timestamp": "wall",
+      "release_delay_slots": 1
+    },
+    {
+      "name": "heterogeneous_tasks_then_honest_exit",
+      "honest": [
+        {
+          "start": 0,
+          "end": 80,
+          "workers": 2,
+          "cost": "generic"
+        },
+        {
+          "start": 80,
+          "end": 160,
+          "workers": 2,
+          "cost": "structured"
+        },
+        {
+          "start": 160,
+          "end": 320,
+          "workers": 0,
+          "cost": "generic"
+        }
+      ],
+      "private": [
+        {
+          "start": 0,
+          "end": 160,
+          "workers": 1,
+          "cost": "generic"
+        },
+        {
+          "start": 160,
+          "end": 320,
+          "workers": 1,
+          "cost": "structured"
+        }
+      ],
+      "private_timestamp": "wall",
+      "release_delay_slots": 1
+    },
+    {
+      "name": "legal_private_endpoint_clock",
+      "honest": [
+        {
+          "start": 0,
+          "end": 320,
+          "workers": 2,
+          "cost": "generic"
+        }
+      ],
+      "private": [
+        {
+          "start": 0,
+          "end": 320,
+          "workers": 1,
+          "cost": "generic"
+        }
+      ],
+      "private_timestamp": "period_endpoints",
+      "release_delay_slots": 1
+    },
+    {
+      "name": "long_private_release_delay",
+      "honest": [
+        {
+          "start": 0,
+          "end": 320,
+          "workers": 2,
+          "cost": "generic"
+        }
+      ],
+      "private": [
+        {
+          "start": 0,
+          "end": 320,
+          "workers": 1,
+          "cost": "structured"
+        }
+      ],
+      "private_timestamp": "wall",
+      "release_delay_slots": 12
+    },
+    {
+      "name": "fixed_stop_quantum_cost_hypothesis",
+      "honest": [
+        {
+          "start": 0,
+          "end": 320,
+          "workers": 2,
+          "cost": "generic"
+        }
+      ],
+      "private": [
+        {
+          "start": 0,
+          "end": 320,
+          "workers": 1,
+          "cost": "quantum_hypothesis"
+        }
+      ],
+      "private_timestamp": "wall",
+      "release_delay_slots": 1
+    }
+  ]
+}

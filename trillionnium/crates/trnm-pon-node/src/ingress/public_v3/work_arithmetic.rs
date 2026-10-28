@@ -37,7 +37,9 @@ impl PublicServer {
     /// Original constructors remain raw unless this method is explicitly called.
     pub fn with_arithmetic_facts(mut self) -> Result<Self> {
         ensure(
-            self.arithmetic_facts.is_none() && !self.native_growth,
+            self.arithmetic_facts.is_none()
+                && self.pure_admission_v2.is_none()
+                && !self.native_growth,
             "PUBLIC_ARITHMETIC_FACTS_ALREADY_ENABLED",
         )?;
         self.arithmetic_facts = Some(ArithmeticFactCache::new(MAX_ARITHMETIC_FACT_SLOTS)?);
@@ -47,11 +49,19 @@ impl PublicServer {
     pub fn resource_profile(&self) -> Hash {
         if self.native_growth {
             self.policy.growth_id()
+        } else if self.pure_admission_v2.is_some() {
+            self.policy.pure_admission_v2_id()
         } else if self.arithmetic_facts.is_some() {
             self.policy.arithmetic_facts_id()
         } else {
             self.policy.id()
         }
+    }
+
+    pub(super) fn work_arithmetic_facts(&self) -> Option<&ArithmeticFactCache> {
+        self.pure_admission_v2
+            .as_deref()
+            .or(self.arithmetic_facts.as_ref())
     }
 
     /// Retained Rust object-storage charge for this volatile arithmetic owner.

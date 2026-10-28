@@ -581,13 +581,30 @@ fn public_profile(args: &BTreeMap<String, String>) -> bool {
                 | ingress::public_v3::PROFILE
                 | ingress::public_v3::GROWTH_PROFILE
                 | ingress::public_v3::PURE_PON_PROFILE
+                | ingress::public_v3::PURE_PON_V2_PROFILE
         )
     )
 }
 fn public_pool_profile(args: &BTreeMap<String, String>) -> bool {
     matches!(
         args.get("--admission-profile").map(String::as_str),
-        Some(ingress::public_v3::PROFILE | ingress::public_v3::PURE_PON_PROFILE)
+        Some(
+            ingress::public_v3::PROFILE
+                | ingress::public_v3::PURE_PON_PROFILE
+                | ingress::public_v3::PURE_PON_V2_PROFILE
+        )
+    )
+}
+
+fn pure_v2_profile(args: &BTreeMap<String, String>) -> bool {
+    args.get("--admission-profile").map(String::as_str)
+        == Some(ingress::public_v3::PURE_PON_V2_PROFILE)
+}
+
+fn pure_public_profile(args: &BTreeMap<String, String>) -> bool {
+    matches!(
+        args.get("--admission-profile").map(String::as_str),
+        Some(ingress::public_v3::PURE_PON_PROFILE | ingress::public_v3::PURE_PON_V2_PROFILE)
     )
 }
 
@@ -734,8 +751,7 @@ fn public_policy(args: &BTreeMap<String, String>) -> Result<ingress::public_v2::
     )
 }
 fn public_v3_policy(args: &BTreeMap<String, String>) -> Result<ingress::public_v3::PublicPolicy> {
-    let pure = args.get("--admission-profile").map(String::as_str)
-        == Some(ingress::public_v3::PURE_PON_PROFILE);
+    let pure = pure_public_profile(args);
     let bits = u8::try_from(number(args, "--admission-bits", if pure { 0 } else { 16 })?)
         .map_err(|_| "PUBLIC_POLICY")?;
     if pure != (bits == 0) {
@@ -876,14 +892,19 @@ fn public_pool_call(
     if !public_pool_profile(args) {
         return Err("PUBLIC_V3_REQUIRED".into());
     }
-    let (reply, observations) = ingress::public_v3::call_public_protected_v3_with_metrics(
-        need(args, "--peer")?.parse().map_err(|_| "PEER_ADDRESS")?,
-        request,
-        settings,
-        need(args, "--server-public")?,
-        &public_identity(args)?,
-        public_v3_policy(args)?,
-    );
+    let address = need(args, "--peer")?.parse().map_err(|_| "PEER_ADDRESS")?;
+    let identity = public_identity(args)?;
+    let policy = public_v3_policy(args)?;
+    let pinned = need(args, "--server-public")?;
+    let (reply, observations) = if pure_v2_profile(args) {
+        ingress::public_v3::call_public_pure_pon_v2(
+            address, request, settings, pinned, &identity, policy, None,
+        )
+    } else {
+        ingress::public_v3::call_public_protected_v3_with_metrics(
+            address, request, settings, pinned, &identity, policy,
+        )
+    };
     if args.contains_key("--client-observations") {
         eprintln!(
             "{}",
@@ -1655,6 +1676,11 @@ fn run() -> Result<Value> {
     // Validate the opened, bounded operator configuration before creating a store.
     // The context below binds effective overrides, rather than an unused file value.
     let polling = if command == "serve" && args.contains_key("--peers") {
+        // Existing pinned peer configuration carries the v1 resource identity.
+        // Do not silently negotiate a foreign namespace from the v2 listener.
+        if pure_v2_profile(&args) {
+            return Err("PUBLIC_PURE_PON_V2_PEER_POLLING_UNAVAILABLE".into());
+        }
         let raw = read_owned_configuration(
             need(&args, "--peers")?,
             16384,
@@ -1735,10 +1761,7 @@ fn run() -> Result<Value> {
     }
     if matches!(command.as_str(), "public-task-export" | "public-task-fetch") {
         let (bundle, trials) = if command == "public-task-fetch" {
-            if args.get("--admission-profile").map(String::as_str)
-                != Some(ingress::public_v3::PURE_PON_PROFILE)
-                || number(&args, "--admission-bits", 0)? != 0
-            {
+            if !pure_public_profile(&args) || number(&args, "--admission-bits", 0)? != 0 {
                 return Err("PUBLIC_PURE_PON_PROFILE".into());
             }
             let policy = ingress::public_v3::PublicPolicy::pure_pon(Duration::from_millis(
@@ -1746,7 +1769,12 @@ fn run() -> Result<Value> {
             ))?;
             let caller = public_identity(&args)?;
             let address = need(&args, "--peer")?.parse().map_err(|_| "PEER_ADDRESS")?;
-            let (result, metrics) = ingress::public_v3::fetch_public_task_bootstrap(
+            let fetch = if pure_v2_profile(&args) {
+                ingress::public_v3::fetch_public_task_bootstrap_v2
+            } else {
+                ingress::public_v3::fetch_public_task_bootstrap
+            };
+            let (result, metrics) = fetch(
                 address,
                 &settings,
                 need(&args, "--server-public")?,
@@ -1802,6 +1830,9 @@ fn run() -> Result<Value> {
             .parse()
             .map_err(|_| Error::from("PEER_ADDRESS"))?;
         if let Some(plan) = recovery_plan {
+            if pure_v2_profile(&args) {
+                return Err("PUBLIC_PURE_PON_V2_RECOVERY_UNAVAILABLE".into());
+            }
             use trnm_pon_node::public_submit::{
                 submit_with_verified_parent_recovery, PinnedPublicClient,
             };
@@ -2284,12 +2315,16 @@ fn run() -> Result<Value> {
                         ingress::public_v3::PublicServer::new_process_cold(identity, policy)?;
                     let server = if growth_network {
                         server.with_native_growth()?
+                    } else if pure_v2_profile(&args) {
+                        server.with_pure_admission_v2()?
                     } else {
                         server
                     };
                     let resource_profile = server.resource_profile();
                     let profile = if growth_network {
                         ingress::public_v3::GROWTH_PROFILE
+                    } else if pure_v2_profile(&args) {
+                        ingress::public_v3::PURE_PON_V2_PROFILE
                     } else if policy.is_pure_pon() {
                         ingress::public_v3::PURE_PON_PROFILE
                     } else {
@@ -2309,10 +2344,22 @@ fn run() -> Result<Value> {
                     )?;
                     // Host counters aggregate ALL child processes of this same
                     // parent; never interpret them as one client's paid CPU.
-                    let host_resources_before = host_kernel
-                        .as_ref()
-                        .map(|budget| budget.resource_sample())
-                        .transpose()?;
+                    let bound_host_before = if pure_v2_profile(&args) {
+                        host_kernel
+                            .as_ref()
+                            .map(|budget| budget.bound_resource_sample())
+                            .transpose()?
+                    } else {
+                        None
+                    };
+                    let host_resources_before = if pure_v2_profile(&args) {
+                        bound_host_before.as_ref().map(|sample| sample.resources)
+                    } else {
+                        host_kernel
+                            .as_ref()
+                            .map(|budget| budget.resource_sample())
+                            .transpose()?
+                    };
                     let pool_context = pool
                         .map(|pool| node.enable_local_mempool(pool))
                         .transpose()?;
@@ -2321,9 +2368,7 @@ fn run() -> Result<Value> {
                     } else {
                         node.stats()?
                     };
-                    println!(
-                        "{}",
-                        json!({"event":"listening","address":listener.local_addr()?.to_string(),
+                    let mut listening = json!({"event":"listening","address":listener.local_addr()?.to_string(),
                         "state":state,"server_public":server_public,"scope":"public-development-unqualified",
                         "host_process_slot":_host_guard.slot,
                         "host_process_budget_scope":"cooperative-local-service-processes-4",
@@ -2333,8 +2378,13 @@ fn run() -> Result<Value> {
                         "admission_profile":profile,"admission_profile_digest":hex::encode(resource_profile),
                         "pool_context":pool_context.map(hex::encode),"mining_enabled":mining.is_some(),
                         "peer_polling_enabled":polling.is_some(),"peer_polling_context":polling_context,
-                        "confidentiality":false,"identity_authority":false,"public_network_ready":false,"production_activation":false})
-                    );
+                        "confidentiality":false,"identity_authority":false,"public_network_ready":false,"production_activation":false});
+                    if pure_v2_profile(&args) {
+                        listening["bound_host_resources_before"] =
+                            serde_json::to_value(&bound_host_before)?;
+                        listening["mutation_cpu_is_whole_node_cpu"] = json!(false);
+                    }
+                    println!("{listening}");
                     std::io::stdout().flush()?;
                     let owner = Arc::new(Mutex::new(node));
                     let stop = Arc::new(AtomicBool::new(false));
@@ -2469,23 +2519,47 @@ fn run() -> Result<Value> {
                     // aggregate across any other processes under the parent.
                     // Counter rewind is an error, not a falsely qualified CPU
                     // receipt or a reason to roll back committed Native work.
-                    let host_resources_after = host_kernel
-                        .as_ref()
-                        .map(|budget| budget.resource_sample())
-                        .transpose()?;
+                    let bound_host_after = if pure_v2_profile(&args) {
+                        host_kernel
+                            .as_ref()
+                            .map(|budget| budget.bound_resource_sample())
+                            .transpose()?
+                    } else {
+                        None
+                    };
+                    let host_resources_after = if pure_v2_profile(&args) {
+                        bound_host_after.as_ref().map(|sample| sample.resources)
+                    } else {
+                        host_kernel
+                            .as_ref()
+                            .map(|budget| budget.resource_sample())
+                            .transpose()?
+                    };
                     let host_kernel_cpu_delta = match (host_resources_before, host_resources_after)
                     {
                         (Some(before), Some(after)) => Some(after.cpu_delta_since(before)?),
                         (None, None) => None,
                         _ => return Err("PUBLIC_HOST_KERNEL_COUNTERS".into()),
                     };
-                    return Ok(
-                        json!({"result":metrics,"mining":mining_report,"peer_polling":polling_report,
+                    let mut result = json!({"result":metrics,"mining":mining_report,"peer_polling":polling_report,
                         "host_kernel_resources_after":host_resources_after,
                         "host_kernel_cpu_delta":host_kernel_cpu_delta,
                         "host_kernel_qualification":false,
-                        "public_network_ready":false,"production_activation":false}),
-                    );
+                        "public_network_ready":false,"production_activation":false});
+                    if pure_v2_profile(&args) {
+                        let delta = match (&bound_host_before, &bound_host_after) {
+                            (Some(before), Some(after)) => Some(after.cpu_delta_since(before)?),
+                            (None, None) => None,
+                            _ => return Err("PUBLIC_HOST_KERNEL_COUNTERS".into()),
+                        };
+                        result["bound_host_resources_before"] =
+                            serde_json::to_value(&bound_host_before)?;
+                        result["bound_host_resources_after"] =
+                            serde_json::to_value(&bound_host_after)?;
+                        result["bound_host_cpu_delta"] = serde_json::to_value(delta)?;
+                        result["mutation_cpu_is_whole_node_cpu"] = json!(false);
+                    }
+                    return Ok(result);
                 }
                 let listener = std::net::TcpListener::bind(
                     args.get("--listen")

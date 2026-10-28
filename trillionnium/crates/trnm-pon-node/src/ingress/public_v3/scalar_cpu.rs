@@ -133,6 +133,9 @@ pub(super) struct PaidMutationCpuBudget {
     pub(super) updated: Instant,
     pub(super) in_flight: usize,
     pub(super) unavailable: bool,
+    // Explicit pure-v2 participants share bounded ordering and exact arithmetic
+    // facts in this same volatile epoch. Neither is a second CPU balance.
+    pub(super) pure_admission_v2: Option<super::pure_admission_v2::PureAdmissionState>,
     // A full W1 success can protect only its existing public request. This is
     // scheduling state, not another bucket, start reserve or work authority.
     verified_completions: usize,
@@ -150,6 +153,7 @@ impl PaidMutationCpuBudget {
             updated: Instant::now(),
             in_flight: 0,
             unavailable: false,
+            pure_admission_v2: None,
             verified_completions: 0,
             completion_work: Box::new([[0; 32]; COMPLETION_WORK_CAPACITY]),
             completion_work_len: 0,

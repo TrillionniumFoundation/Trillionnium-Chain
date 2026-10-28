@@ -8,8 +8,13 @@ use super::{
     Request as NativeRequest, Result, Settings, WorkCheckedPacket,
 };
 mod intake;
+mod pure_admission_v2;
 mod pure_pon;
 use intake::{ConnectionLease, ListenerIntake};
+pub use pure_admission_v2::{
+    call_public_pure_pon_v2, fetch_public_task_bootstrap_v2, PureAdmissionObservation,
+    PURE_PON_V2_PROFILE,
+};
 pub use pure_pon::fetch_public_task_bootstrap;
 pub use pure_pon::PROFILE as PURE_PON_PROFILE;
 mod growth;
@@ -169,6 +174,8 @@ impl PaidMutationCpuPermit {
         stop: &AtomicBool,
         cancelled: &AtomicBool,
     ) -> Result<Self> {
+        task_alive(deadline, stop, cancelled)?;
+        let mut fifo = pure_admission_v2::PureAdmissionWaiter::for_server(server)?;
         loop {
             task_alive(deadline, stop, cancelled)?;
             let now = Instant::now();
@@ -184,8 +191,11 @@ impl PaidMutationCpuPermit {
             let possible_refill = remaining
                 .saturating_mul(u128::from(MUTATION_CPU_REFILL_NS_PER_SECOND))
                 / 1_000_000_000;
+            let waiting_for_turn = fifo
+                .as_ref()
+                .map_or(Ok(false), |waiter| waiter.waiting_for_turn(&budget))?;
             let retry = !budget.unavailable
-                && (budget.completion_pending()
+                && (waiting_for_turn || budget.completion_pending()
                     || budget.in_flight >= MUTATION_CPU_WORKERS || shortage > 0)
                 // With no live reservation to return, an impossible refill
                 // should retain the original immediate budget refusal.
@@ -214,7 +224,11 @@ impl PaidMutationCpuPermit {
             if stamp.is_none() {
                 budget.unavailable = true;
             }
-            let result = budget.reserve(now);
+            let result = if let Some(waiter) = fifo.as_mut() {
+                waiter.reserve_turn(&mut budget, now)
+            } else {
+                budget.reserve(now)
+            };
             drop(budget);
             if let Ok(mut m) = metrics.lock() {
                 if result.is_err() {
@@ -698,6 +712,8 @@ pub struct PublicServer {
     mutation_cpu: Arc<Mutex<PaidMutationCpuBudget>>,
     arithmetic_facts:
         Option<trnm_crypto_primitives::pon_work::arithmetic_facts::ArithmeticFactCache>,
+    pure_admission_v2:
+        Option<Arc<trnm_crypto_primitives::pon_work::arithmetic_facts::ArithmeticFactCache>>,
     public_product: Option<trnm_crypto_primitives::pon_work::public_product::PublicProduct>,
     #[cfg(test)]
     fail_next_output: AtomicBool,
@@ -722,6 +738,7 @@ impl PublicServer {
             started: Instant::now(),
             mutation_cpu: Arc::new(Mutex::new(PaidMutationCpuBudget::new())),
             arithmetic_facts: None,
+            pure_admission_v2: None,
             public_product: pure_pon::public_product(policy)?,
             #[cfg(test)]
             fail_next_output: AtomicBool::new(false),
@@ -1196,6 +1213,43 @@ fn close_pending(metrics: &mut PublicMetrics, pending: Option<(PendingKind, Pend
                     metrics.pending_grant_wait_ns.saturating_add(waited);
             }
         }
+    }
+}
+fn record_stage_error(
+    metrics: &mut PublicMetrics,
+    pending: Option<(PendingKind, PendingOrder)>,
+    phase: &'static str,
+    error: &crate::Error,
+    deadline: Instant,
+    observed_now: Instant,
+) {
+    close_pending(metrics, pending);
+    // Time can cross the original deadline after the reactor's outer check.
+    // Retain the stage error, but count an actual timed close consistently
+    // with the outer expiry branch. RequestDeadline also represents stop, and
+    // CookieExpired can represent malformed intervals, so neither code alone
+    // establishes that this connection's original deadline has elapsed.
+    if observed_now >= deadline
+        && matches!(
+            error.code(),
+            Some(crate::ErrorCode::PublicRequestDeadline | crate::ErrorCode::PublicCookieExpired)
+        )
+    {
+        metrics.expired_connections += 1;
+        *metrics
+            .expired_phase_counts
+            .entry(phase.into())
+            .or_default() += 1;
+    }
+    *metrics
+        .retained_phase_errors
+        .entry(phase.into())
+        .or_default() += 1;
+    match phase {
+        "hello" => metrics.preface_refusals += 1,
+        "output" => metrics.response_write_failures += 1,
+        "body" => metrics.parse_refusals += 1,
+        _ => {}
     }
 }
 struct Connection {
@@ -2055,8 +2109,7 @@ fn serve_public_protected_v3_inner(
                                                         observation: task.observation.as_ref(),
                                                         mutation_cpu,
                                                         arithmetic_facts: server
-                                                            .arithmetic_facts
-                                                            .as_ref(),
+                                                            .work_arithmetic_facts(),
                                                         public_product: server
                                                             .public_product
                                                             .as_ref(),
@@ -2679,19 +2732,20 @@ fn serve_public_protected_v3_inner(
                     })();
                     match advanced {
                         Ok(next) => conn.stage = next,
-                        Err(_) => {
+                        Err(error) => {
+                            let observed_now = Instant::now();
                             if let Some(record) = &conn.observation {
                                 record.terminal(phase);
                             }
                             let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
-                            close_pending(&mut m, pending_before);
-                            *m.retained_phase_errors.entry(phase.into()).or_default() += 1;
-                            match phase {
-                                "hello" => m.preface_refusals += 1,
-                                "output" => m.response_write_failures += 1,
-                                "body" => m.parse_refusals += 1,
-                                _ => {}
-                            }
+                            record_stage_error(
+                                &mut m,
+                                pending_before,
+                                phase,
+                                &error,
+                                conn.deadline,
+                                observed_now,
+                            );
                             remove.push(*id);
                         }
                     }
@@ -6152,6 +6206,78 @@ mod tests {
             .iter()
             .filter(|r| !r.task_created)
             .all(|r| !r.full_work_started && r.full_work_thread_cpu_ns.is_none()));
+    }
+    #[test]
+    fn phase_deadline_crossing_records_expiry_and_one_pending_close() {
+        let deadline = Instant::now();
+        let pending = Some((
+            PendingKind::Grant,
+            PendingOrder {
+                sequence: 1,
+                entered_at: deadline,
+            },
+        ));
+        let stopped = AtomicBool::new(false);
+        let cancelled = AtomicBool::new(false);
+        let timed_error = task_alive(deadline, &stopped, &cancelled).unwrap_err();
+        assert!(timed_error.is(crate::ErrorCode::PublicRequestDeadline));
+        // A pre-boundary outer observation need not match the later stage
+        // check. Exercise exact equality and the next instant without sleeps.
+        for error in [
+            timed_error,
+            crate::Error::new(crate::ErrorCode::PublicCookieExpired),
+        ] {
+            for observed_now in [deadline, deadline + Duration::from_nanos(1)] {
+                let mut metrics = PublicMetrics::default();
+                record_stage_error(
+                    &mut metrics,
+                    pending,
+                    "solution",
+                    &error,
+                    deadline,
+                    observed_now,
+                );
+                assert_eq!(metrics.pending_grant_closed, 1);
+                assert_eq!(metrics.pending_grant_granted, 0);
+                assert_eq!(metrics.expired_connections, 1);
+                assert_eq!(metrics.expired_phase_counts.get("solution"), Some(&1));
+                assert_eq!(metrics.retained_phase_errors.get("solution"), Some(&1));
+                assert_eq!(metrics.body_bytes_received, 0);
+                assert_eq!(metrics.tasks_enqueued, 0);
+                assert_eq!(metrics.work_started, 0);
+            }
+        }
+    }
+    #[test]
+    fn stage_error_code_or_elapsed_time_alone_cannot_claim_expiry() {
+        let now = Instant::now();
+        let future = now + Duration::from_secs(3600);
+        let stop = AtomicBool::new(true);
+        let cancelled = AtomicBool::new(false);
+        let stop_error = task_alive(future, &stop, &cancelled).unwrap_err();
+        assert!(stop_error.is(crate::ErrorCode::PublicRequestDeadline));
+        for error in [
+            stop_error,
+            crate::Error::new(crate::ErrorCode::PublicCookieExpired),
+        ] {
+            let mut metrics = PublicMetrics::default();
+            record_stage_error(&mut metrics, None, "solution", &error, future, now);
+            assert_eq!(metrics.expired_connections, 0);
+            assert!(metrics.expired_phase_counts.is_empty());
+            assert_eq!(metrics.retained_phase_errors.get("solution"), Some(&1));
+        }
+        for message in [
+            "PUBLIC_REQUEST_CANCELLED",
+            "PUBLIC_EOF",
+            "PUBLIC_TICKET_TARGET",
+            "PUBLIC_REQUEST_DEADLINE: forged display suffix",
+        ] {
+            let mut metrics = PublicMetrics::default();
+            record_stage_error(&mut metrics, None, "solution", &message.into(), now, now);
+            assert_eq!(metrics.expired_connections, 0);
+            assert!(metrics.expired_phase_counts.is_empty());
+            assert_eq!(metrics.retained_phase_errors.get("solution"), Some(&1));
+        }
     }
     #[test]
     fn r4_paid_pending_eof_original_expiry_and_shutdown_never_create_body_or_work() {

@@ -1,0 +1,135 @@
+{
+  "schema": "pon-pure-local-observation-archive-v1",
+  "observation": 1,
+  "source_commit_created_after_measurement": "fd6e466dbc13e8aef63f0677e2d1df9be5e4eab2",
+  "source_tree": "85ea5e6e5df64a40117f81aeaab23ae216c7078a",
+  "source_was_uncommitted_staged_candidate": true,
+  "archive": "local-observation-01.tar.gz",
+  "archive_bytes": 3587503,
+  "archive_sha256": "a1b54d893c214236de7f88f1ecc8dfcddc8853f86b9659fad1b4df15b45fcf12",
+  "files": [
+    {
+      "path": "staged-source-02.json",
+      "bytes": 9647,
+      "sha256": "09df43a3551464bb8eb965dd7704ce4b35611f383934fe8bd13e27e730d5e25e"
+    },
+    {
+      "path": "release-node-binaries.json",
+      "bytes": 1969,
+      "sha256": "334e934ee4f9655f1799453a2a27cdeca7791174543ae995dc1a957f210fb799"
+    },
+    {
+      "path": "release-node-build.jsonl",
+      "bytes": 100107,
+      "sha256": "fd425a94140a0149a0ab15824a8f19bf5b7faa05652115d45553b96a8413cd08"
+    },
+    {
+      "path": "release-node-build.stderr",
+      "bytes": 2902,
+      "sha256": "31f1ecb4c346d2b3e330551df4e40dfce260aaa943cf817bc8374d4564f32a66"
+    },
+    {
+      "path": "local-native-source-before.json",
+      "bytes": 346,
+      "sha256": "c3cc322f190c6ddfc8f845b697ce54ebd6637dfdab829b4b1c521de42711e31e"
+    },
+    {
+      "path": "local-native-source-after.json",
+      "bytes": 346,
+      "sha256": "c3cc322f190c6ddfc8f845b697ce54ebd6637dfdab829b4b1c521de42711e31e"
+    },
+    {
+      "path": "local-native-resources-before.json",
+      "bytes": 617,
+      "sha256": "c9542905de16fef3b96e826faebd510e1c3722342f2acfdcdb86797b8f476f86"
+    },
+    {
+      "path": "local-native-resources-after.json",
+      "bytes": 617,
+      "sha256": "17627a9dc2ffb539bc0e2d267ff7c0749dcc193186bced301b51125031da9fd8"
+    },
+    {
+      "path": "local-native-results.json",
+      "bytes": 2473,
+      "sha256": "9811bda5bdd239bc48edbaf35117d30fdcf8107b3c34a059a79fb3fdf075f33b"
+    },
+    {
+      "path": "release-pure-pressure.stdout.log",
+      "bytes": 240,
+      "sha256": "f8efe9f307984b675b5decf26ec0d02bc2b9911330d42427b543503c9e38468a"
+    },
+    {
+      "path": "release-pure-pressure.stderr.log",
+      "bytes": 544,
+      "sha256": "663933c53b35a776107f51ecdae28d1e5543001248b42a9a89386aa05ac97bfa"
+    },
+    {
+      "path": "release-pure-pressure.step.json",
+      "bytes": 863,
+      "sha256": "ad3262aa0289b1fb58a21dcc751a51c64a1aa869eecd66c72f5c89eb56d20a89"
+    },
+    {
+      "path": "release-pure-pressure.verdict.json",
+      "bytes": 198,
+      "sha256": "819b9293e71b281298814cbc5383cb0f57e64d001d18ca378c31b1eddc23b1ee"
+    },
+    {
+      "path": "release-pressure-reader.stdout.log",
+      "bytes": 291,
+      "sha256": "bc4b66de0d44a4d58bfc966ad31c3b41cc931036472242a6ec5d76f91acb1ff4"
+    },
+    {
+      "path": "release-pressure-reader.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "release-pressure-reader.step.json",
+      "bytes": 884,
+      "sha256": "aebc799938de2d7faa0b0e675f3bca74e6621d4c30b62a49320fb441bfa390c7"
+    },
+    {
+      "path": "pressure-qualification.json",
+      "bytes": 291,
+      "sha256": "bc4b66de0d44a4d58bfc966ad31c3b41cc931036472242a6ec5d76f91acb1ff4"
+    },
+    {
+      "path": "pressure-native/preparation.json",
+      "bytes": 2888492,
+      "sha256": "88d74cf92ee1e96a6039db2fa5a3fc57122e4c9e17e864b66a85f9e2646701bb"
+    },
+    {
+      "path": "pressure-native/campaign.json",
+      "bytes": 892,
+      "sha256": "16c07f5c3a1a256a6501b950b7387500b4e67106e8f470e63209a901140c0323"
+    },
+    {
+      "path": "pressure-native/baseline.json",
+      "bytes": 3007695,
+      "sha256": "570364341429dc546650053f9b8abfded542f646651d419baa46e194fc6dacee"
+    },
+    {
+      "path": "pressure-native/from-zero.json",
+      "bytes": 8786842,
+      "sha256": "44def56aa988006483c072d6edc8c4af46328ccd0ed68e980218b90b511154ba"
+    },
+    {
+      "path": "pressure-native/correct-product-false-trace.json",
+      "bytes": 11634750,
+      "sha256": "108a5d59a7cf3a527eafbdea8bdaa3388b27a793d9109dbb41bd1581321c08da"
+    }
+  ],
+  "native_service_pass": false,
+  "independent_input_consistency": false,
+  "reader_error": "native height type",
+  "unobserved_credit_freshness_not_recoverable_from_old_samples": true,
+  "raw_native_rounds_confirmed": [
+    3,
+    2,
+    3
+  ],
+  "rounds_required_per_phase": 3,
+  "budgets_or_deadlines_relaxed": false,
+  "public_fairness_qualified": false,
+  "production_activation": false
+}
