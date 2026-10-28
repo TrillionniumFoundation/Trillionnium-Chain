@@ -4047,6 +4047,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/journal/lifecycle_recovery_v1.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/journal/lifecycle_recovery_v1.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/journal/publication.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -4068,6 +4075,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/reorg_continuation_tests_v1.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/reorg_continuation_tests_v1.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/reorg_continuation_v1.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/reorg_continuation_v1.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/startup_no_native_v1.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -4086,6 +4107,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/tests.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/tests/lifecycle_native_v1.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/tests/lifecycle_native_v1.rs"
         )),
     ),
     (
@@ -4730,6 +4758,41 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/tests/release_finality_v2.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/tests/support/multiprocess_history_lifeline.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/support/multiprocess_history_lifeline.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/tests/support/multiprocess_history_lifeline_linux.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/support/multiprocess_history_lifeline_linux.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/tests/support/multiprocess_history_lifeline_native.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/support/multiprocess_history_lifeline_native.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/tests/support/multiprocess_history_lifeline_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/support/multiprocess_history_lifeline_tests.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/tests/support/multiprocess_history_verifier.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/support/multiprocess_history_verifier.rs"
         )),
     ),
     (

@@ -4067,3 +4067,132 @@ source. Whole History P0 remains OPEN until this same-source original-plus-new
 execution and independent adjacent gates pass with actual journals, process
 receipts, binaries and cold readback retained. Public deployment, arbitrary
 process adoption and physical-host cost qualification remain outside this scope.
+
+### Fresh reorg validation and separate fixed-parent verifier recovery checkpoint (2026-10-28 UTC)
+
+The exact published History head `003d2ad660464ccc3784c9b2a35afcdba868ae50`
+(tree `c72d9f188c20b12c8cf6f0dfea85c92f342f67e2`) has separate observed
+verdicts. Its [original-plus-new History run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40662127288)
+passed the original 22 methods under 600 seconds and all 12 lifecycle methods
+under their independent 900-second limit. The reorg lane passed one method and
+failed six at fresh Validation with `REORG_IN_PROGRESS`. Those failures remain
+failures. The [original native campaign](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40662127440)
+failed all three declared runs at the actual public kernel-parent boundary;
+the outer four-CPU service was not the verifier's original fixed quarter-CPU
+parent. Its [four recent-batch lanes](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40662127467)
+are distinct adjacent observations and do not replace either failed gate.
+
+The fresh Validation branch now requires the already reserved current operation,
+exact Page and packet digest, current task binding and original frontier before
+examining a continuation. An existing permit must match that exact operation and
+the complete current cursor/steps/staging snapshot. The original pending replay
+then rechecks the actual SQL target, current namespace, network, time and exact
+stored packet bytes. Reuse still requires the original validation fact in both
+the journal and SQLite. Only the new paid operation can write its new epoch's
+validation marker. Without a continuation, ordinary pending-reorg refusal remains.
+The original seven-method reorg lane includes five actual cut-and-reopen negative
+subcases: changed stored proof, removed SQL fact, cursor drift, internal cancellation
+and resource withdrawal. Old nonce, old epoch and another target must leave the
+journal unchanged; known native failures must retain the full new allowance and
+produce neither a marker nor additional cursor progress. The original 22-method
+missing-journal-fact control remains mandatory.
+
+The original campaign now places its actual public History importer in a separate
+unprivileged process under the unchanged administrator-provisioned
+`trnmponpublic.slice`: `cpu.max=25000 100000`, 2 GiB maximum memory, zero swap
+and 256 tasks. Producer, attackers, receiver and observer retain the original
+outer four-CPU/16-GiB service, original 30-second windows, three rounds, 24 attackers,
+seed inputs and three predeclared complete 600-second runs. The actual release ELF,
+request bytes, response bytes, calling-thread/process identity, original strict
+kernel checker, final Node close and empty fixed parent are retained. Whole verifier
+process CPU and whole fixed-parent CPU have separate scopes; nested intervals are
+not summed or relabeled as outer-process CPU. No production importer, consensus
+predicate, admission budget or wrong-parent refusal is weakened.
+
+The strict reader binds every actual import target/cursor and confirmation
+transaction/block/result to the original phase, and binds the final snapshot to
+the original client tip. The recovered reader bytes are SHA256
+`9f503d0770e206114733bfd6e585f531f4c224a8a2b70b43ba6c3456aa11a327`.
+A new three-method synthetic fixture re-executed 24 boundary mutations and
+19 coherent semantic substitutions: the old reader accepted all 19 semantic
+substitutions, while the recovered reader rejected all 43 mutations. Rehashing
+all changed IPC digests does not make an altered target or result acceptable.
+These are reader controls, not execution evidence or independent host attestation.
+
+This checkpoint is reconstructed from the exact published head after loss of the
+unpublished local candidate; it does not claim to restore that candidate's tree
+or transfer its checks. New Rust formatting and reader controls do not establish
+typechecking, native reorg completion, recent-batch acceptance or campaign success.
+The original 22/600, new 7/900, new 12/900 and all four adjacent lanes must execute
+this new source and actual binary. Controller SIGKILL currently retains only the
+finite systemd runtime/stop backup; capability-bound controller-death propagation
+through Node setup, import and the final report remains a separate open obligation.
+Whole History P0 and public-service qualification remain OPEN.
+
+
+### Private controller lifetime through native verifier exit (2026-10-28 UTC)
+
+A separate increment now binds the isolated public History verifier to its actual
+controller lifetime. Before launching `sudo -n systemd-run --pipe`, the controller
+creates an anonymous Unix socketpair, opens only its own kernel pidfd and queues
+that descriptor through `SCM_RIGHTS`. The service receives the original socket
+endpoint as stdin. Numeric peer credentials are consistency observations, not an
+API for selecting another process or authority granted by a same-user listener.
+Named/abstract sockets, wrong or missing descriptors, extra rights, truncated
+ancillary data and changed protocol bytes are refused. The actual pidfd type is
+checked with `waitid(P_PIDFD, WNOWAIT)` without requiring an inner `/proc` mount.
+Unsupported platforms return an explicit error before Native work.
+
+The verifier arms a real polling thread and completes a readiness handshake before
+opening Node. That thread holds the pidfd and socket until the entire helper's OS
+exit. Returning from the Node runner, unwinding a native failure or entering the
+outer report serialization/fsync tail cannot disarm it. Kernel-visible controller
+death, private-channel EOF, unexpected data or observation errors cause the helper
+to exit itself with status 137; no arbitrary PID or process group is signalled.
+This is asynchronous termination, not an atomic guarantee of zero additional
+instructions after controller death. It does not manufacture a clean Node close,
+a successful settlement or a completion report. The original systemd control-group
+kill mode, 240-second service ceiling and five-second stop backup remain in place.
+
+The pinned libc-only module was actually compiled by Rust 1.95 with `-D warnings`
+and executed as six parent controls, with one explicitly invoked process helper.
+The final standalone ELF SHA256 was
+`65130b3710e21a3dd2e7b59726e26cf25e65e971a14aecd4240011babcb421ec`.
+The controls cover actual controller SIGKILL even while a separate process retains
+the socket peer, EOF while the controller still lives, an already-dead controller,
+normal exec/return, incorrect capabilities and later protocol data. The failed
+restricted-environment run and the failed overlong pathname fixture are retained;
+they were not rewritten as successes. These small controls do not qualify the
+actual systemd launcher, Node or original campaign.
+
+A new mandatory, separate 600-second lane reuses the exact retained release ELF
+from the original campaign build. It verifies the full source before/after, original
+compiler artifact profile and every retained executable byte, executes the six
+small methods, and executes three distinct systemd/Node controls under individual
+180-second limits. They kill only the still-owned controller Child after actual
+Node open and before seeding, after a successful original strict public import and
+before its IPC response, or after real Node close and runner return but before the
+outer report. These labels describe actual call boundaries; they do not claim an
+instruction-level kill within W1 arithmetic. Each case requires actual main-process
+`CLD_EXITED`/status 137 and an empty unchanged fixed parent within five seconds,
+observed before any administrative stop. Failed units are retained for this
+observation and only then reset. Cleanup cannot supply a passing result.
+
+The death controls use their own empty-seed/one-legal-packet fixtures and cannot
+replace the original 1024-transfer campaign. The outer four-CPU/16-GiB/Nice-10
+limits and the verifier's original fixed quarter-CPU/2-GiB/zero-swap/256-task parent
+remain distinct. The original campaign keeps its three 600-second runs, 30-second
+windows, three rounds and 24 attackers. Its ordinary reader rejects death-control
+jobs, requires the same private owner observations at Node open and close, and
+retains all original target, cursor, confirmation and cost-scope checks. Its three
+synthetic methods now cover 57 refusal vectors; a separate seven-method reader
+suite covers the new death-boundary evidence, build/source binding, exact method
+rosters and finite deadlines. Neither synthetic suite substitutes for native runs.
+
+The public fixture's only additional shared-entry change is a three-line tail hook.
+Its independently reviewed recent-batch source pin is
+`1e02fb6659984e49830737b7665ff26d26ffbc39`; the other fifteen pins remain unchanged.
+This increment's full crate typechecking, actual three systemd/Node kill controls,
+original campaigns, original 22/600, reorg 7/900, lifecycle 12/900 and four adjacent
+lanes still require same-source hosted execution. No earlier source's success is
+transferred, and whole History P0 remains OPEN until the applicable evidence closes.

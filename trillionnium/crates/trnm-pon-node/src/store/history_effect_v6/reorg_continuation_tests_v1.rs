@@ -887,8 +887,215 @@ fn compiled_source() -> &'static str {
 fn authority() -> TestAuthority {
     TestAuthority::with_source_and_budget_lifetime(compiled_source(), 3_600_000_000_000)
 }
+
+fn fresh_validation_rechecks_pending_native_authority() {
+    // These are real paid operations after an actual child cut at cursor zero.
+    // Reusing the old validated bytes never reuses that epoch's authority.
+    for (case, expected_error) in [
+        ("stored-packet", "DUPLICATE_CONTENT"),
+        (
+            "missing-sql-fact",
+            "HISTORY_V6_REUSE_VALIDATION_SQL_REQUIRED",
+        ),
+        ("cursor-drift", "HISTORY_REORG_V1_SQL_SNAPSHOT"),
+        ("internal-cancel", "HISTORY_V6_CANCELLED"),
+        (
+            "resource-revoked",
+            "ACTUAL_REORG_VALIDATION_RESOURCE_REVOKED",
+        ),
+    ] {
+        let a = authority();
+        let _retain = process::retain_fixture(a.f.dir.path(), &format!("reorg-fresh-{case}"));
+        let (target, frontier, outside) = prepare_fork(&a);
+        let closed = first_crash(&a, "reorg-cursor-0", &target, frontier, outside);
+        let root = original(&a, &a.id(9));
+        let body = authorization(&a, &closed, &root, None, Closure::PendingUnknown, 10, 3);
+        let (path, sha) = input(&a, "fresh-controls", &body, &closed);
+        let prepared = prepare(&a, &path, &sha).unwrap();
+        let mut owner = a.open(
+            "fresh-validation-controls",
+            11,
+            3,
+            body.snapshot.old_frontier.clone(),
+            serde_json::from_value(prepared["journal"]["anchor"].clone()).unwrap(),
+        );
+        assert_eq!(owner.initial_cpu.stored_credit_ns, 0);
+        let page = process::page(&a, &target);
+        let before_authority_controls = records(&a);
+        let mut authority_controls = Vec::new();
+        for (label, nonce, epoch, packet) in [
+            ("old-nonce", 11, 3, &target),
+            ("old-epoch", 12, 2, &target),
+            ("other-pending-target", 12, 3, &a.f.packet),
+        ] {
+            let bad = a.grant(Grant {
+                purpose: Purpose::Validation,
+                nonce,
+                epoch,
+                frontier: body.snapshot.old_frontier.clone(),
+                anchor: anchor(&owner),
+                packet: Some(packet),
+                pair: Some((12, 13)),
+            });
+            let error = owner
+                .receive_with_progress(&bad, &page, CLOCK, deadline(), &|_| Ok(()))
+                .err()
+                .unwrap()
+                .to_string();
+            assert_eq!(records(&a), before_authority_controls, "{case}/{label}");
+            authority_controls.push(json!({"case":label,"error":error,"journal_unchanged":true}));
+        }
+        let signed = a.grant(Grant {
+            purpose: Purpose::Validation,
+            nonce: 12,
+            epoch: 3,
+            frontier: body.snapshot.old_frontier.clone(),
+            anchor: anchor(&owner),
+            packet: Some(&target),
+            pair: Some((12, 13)),
+        });
+        let operation: policy::Envelope<Operation> = serde_json::from_slice(&signed).unwrap();
+        let before = owner.observation().unwrap();
+        let before_frontier = actual(&owner);
+        match case {
+            "stored-packet" => {
+                let mut changed = target.clone();
+                let offset = 4 + 2 * pon_work::CELLS * 4;
+                let word =
+                    u32::from_le_bytes(changed.proof[offset..offset + 4].try_into().unwrap());
+                let replacement = ((u128::from(word) + 1) % pon_work::Q) as u32;
+                changed.proof[offset..offset + 4].copy_from_slice(&replacement.to_le_bytes());
+                pon_work::precheck_proof_statement(
+                    changed.header.challenge(),
+                    changed.header.work_task,
+                    changed.header.target,
+                    &changed.proof,
+                )
+                .unwrap();
+                let raw = changed.encode().unwrap();
+                assert_eq!(
+                    Packet::decode(&raw).unwrap().id().unwrap(),
+                    target.id().unwrap()
+                );
+                assert_eq!(
+                    owner
+                        .node
+                        .db
+                        .execute(
+                            "UPDATE blocks SET packet=? WHERE id=?",
+                            params![raw, target.id().unwrap().as_slice()],
+                        )
+                        .unwrap(),
+                    1,
+                );
+            }
+            "missing-sql-fact" => {
+                assert_eq!(
+                    owner
+                        .node
+                        .db
+                        .execute("DELETE FROM history_effect_v6 WHERE operation=?", [a.id(8)],)
+                        .unwrap(),
+                    1,
+                );
+            }
+            "cursor-drift" => {
+                assert_eq!(
+                    owner
+                        .node
+                        .db
+                        .execute(
+                            "UPDATE reorg SET cursor=1 WHERE singleton=1 AND cursor=0 AND done=0",
+                            [],
+                        )
+                        .unwrap(),
+                    1,
+                );
+            }
+            "internal-cancel" | "resource-revoked" => {}
+            _ => unreachable!(),
+        }
+        let cursor_before: (u64, u64) = owner
+            .node
+            .db
+            .query_row(
+                "SELECT cursor,done FROM reorg WHERE singleton=1",
+                [],
+                |row| Ok((row.get(0)?, row.get(1)?)),
+            )
+            .unwrap();
+        let cancellation = owner.cancellation_for(&a.id(12)).unwrap();
+        let triggered = AtomicBool::new(false);
+        let callback = |point| -> Result<()> {
+            if point == Progress::Context && !triggered.swap(true, Ordering::AcqRel) {
+                if case == "internal-cancel" {
+                    assert!(cancellation.cancel()?);
+                }
+                if case == "resource-revoked" {
+                    return Err("ACTUAL_REORG_VALIDATION_RESOURCE_REVOKED".into());
+                }
+            }
+            Ok(())
+        };
+        let result = owner
+            .receive_with_progress(&signed, &page, CLOCK, deadline(), &callback)
+            .unwrap();
+        checked(&result, 0);
+        assert!(result.operation_closed);
+        assert!(!result.known_success());
+        assert_eq!(result.native_error.as_deref(), Some(expected_error));
+        assert!(triggered.load(Ordering::Acquire));
+        assert!(storage::read_marker(&owner.node.db, &a.id(12))
+            .unwrap()
+            .is_none());
+        assert!(!owner
+            .owner
+            .journal()
+            .unwrap()
+            .markers()
+            .contains_key(&a.id(12)));
+        assert_eq!(actual(&owner), before_frontier);
+        let cursor_after: (u64, u64) = owner
+            .node
+            .db
+            .query_row(
+                "SELECT cursor,done FROM reorg WHERE singleton=1",
+                [],
+                |row| Ok((row.get(0)?, row.get(1)?)),
+            )
+            .unwrap();
+        assert_eq!(cursor_after, cursor_before);
+        let after = owner.observation().unwrap();
+        let allowance = serde_json::to_value(operation.body.allowance).unwrap();
+        for field in ["cpu_ns", "material_bytes", "received_bytes", "operations"] {
+            assert_eq!(
+                after["journal"]["spent"][field].as_u64().unwrap(),
+                before["journal"]["spent"][field].as_u64().unwrap()
+                    + allowance[field].as_u64().unwrap(),
+                "{case}/{field}",
+            );
+        }
+        let settled_records = records(&a);
+        assert!(owner
+            .receive_with_progress(&signed, &page, CLOCK, deadline(), &|_| Ok(()))
+            .is_err());
+        assert_eq!(records(&a), settled_records);
+        write_value(
+            &a.f.dir.path().join("fresh-validation-refusal.json"),
+            &json!({"case":case,"expected_error":expected_error,"result":result,
+                "before":before,"after":after,"authority_controls":authority_controls,
+                "cursor_before":cursor_before,"cursor_after":cursor_after,
+                "new_sql_marker":false,"new_journal_marker":false,"frontier_unchanged":true,
+                "full_new_allowance_predebit_retained":true,"same_operation_replay_refused":true,
+                "old_journal_fact_missing_control":"original tests::v6_unmarked_existing_bad_product_is_not_validated_by_sql_syntax",
+                "production_authority":false}),
+        );
+    }
+}
+
 #[test]
 fn partial_reorg_intent_and_each_committed_cursor_recover_with_fresh_paid_attempt() {
+    fresh_validation_rechecks_pending_native_authority();
     for cursor in 0..=3 {
         let a = authority();
         let _retain = process::retain_fixture(a.f.dir.path(), &format!("reorg-cursor-{cursor}"));

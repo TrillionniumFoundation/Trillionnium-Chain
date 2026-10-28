@@ -11,6 +11,11 @@ on:
       - scripts/pon_public_v3_phase_read.py
       - scripts/pon_public_v3_policy_read.py
       - scripts/ci/test_pon_public_v3_policy_read.py
+      - scripts/ci/read_native_history_verifier.py
+      - scripts/ci/test_native_history_verifier.py
+      - scripts/ci/run_history_verifier_lifeline_v1.py
+      - scripts/ci/read_history_verifier_lifeline_v1.py
+      - scripts/ci/test_history_verifier_lifeline_v1.py
       - scripts/project-preflight.sh
       - scripts/ci/verify_ci_source.py
       - .github/workflows/pon-native-campaign-qualification.yml
@@ -65,6 +70,62 @@ jobs:
           from run_pon_w1_native_campaign import validate_build_environment
           validate_build_environment(os.environ)
           PY
+      - name: Require strict isolated-verifier report controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B scripts/ci/test_native_history_verifier.py 2>&1 | tee "$OUT/verifier-reader-controls.log"
+          grep -E '^Ran 3 tests in ' "$OUT/verifier-reader-controls.log"
+          grep -x 'OK' "$OUT/verifier-reader-controls.log"
+      - name: Require strict owner-death evidence controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B scripts/ci/test_history_verifier_lifeline_v1.py 2>&1 | tee "$OUT/verifier-lifeline-reader-controls.log"
+          grep -E '^Ran 7 tests in ' "$OUT/verifier-lifeline-reader-controls.log"
+          grep -x 'OK' "$OUT/verifier-lifeline-reader-controls.log"
+      - name: Provision the original separate fixed History parent
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object config/systemd/trnmponpublic.slice)" = 8981b6aeed4c08c21679664940366b36a991444a
+          test -d /run/systemd/system
+          test -f /sys/fs/cgroup/cgroup.controllers
+          sudo -n python3 - "$GITHUB_WORKSPACE/config/systemd/trnmponpublic.slice" "$OUT/fixed-parent-provision.json" <<'PY'
+          import hashlib, json, os, stat, subprocess, sys
+          from pathlib import Path
+          source, receipt = map(Path, sys.argv[1:])
+          unit = 'trnmponpublic.slice'
+          destination = Path('/run/systemd/system') / unit
+          state = subprocess.check_output(
+              ['systemctl', 'show', unit, '--property=LoadState', '--value'], text=True).strip()
+          if state != 'not-found' or os.path.lexists(destination):
+              raise RuntimeError('refuse to replace an existing fixed parent or unit')
+          metadata = source.lstat()
+          if not stat.S_ISREG(metadata.st_mode):
+              raise RuntimeError('source-pinned regular slice file required')
+          raw = source.read_bytes()
+          fd = os.open(destination, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o644)
+          with os.fdopen(fd, 'wb') as stream:
+              stream.write(raw)
+              stream.flush()
+              os.fsync(stream.fileno())
+          created = destination.lstat()
+          record = {'schema': 'native-history-fixed-parent-provision-v1',
+                    'unit': unit, 'path': str(destination), 'device': created.st_dev,
+                    'inode': created.st_ino, 'uid': created.st_uid,
+                    'sha256': hashlib.sha256(raw).hexdigest(), 'exclusive_creation': True,
+                    'original_outer_four_cpu_budget_unchanged': True,
+                    'fixed_parent_is_a_ceiling_not_physical_reservation': True}
+          with receipt.open('x') as stream:
+              json.dump(record, stream, sort_keys=True, indent=2)
+              stream.write('\n')
+              stream.flush()
+              os.fsync(stream.fileno())
+          subprocess.run(['systemctl', 'daemon-reload'], check=True)
+          subprocess.run(['systemctl', 'start', unit], check=True)
+          PY
+          sudo -n systemctl show trnmponpublic.slice > "$OUT/fixed-parent-systemd-show.txt"
       - name: Install the source-pinned compiler and fetch locked dependencies
         id: toolchain
         shell: bash
@@ -96,6 +157,7 @@ jobs:
           sys.path[:0] = [str(root / 'scripts'), str(root / 'scripts/ci')]
           import run_pon_w1_native_campaign as bounds
           import pon_public_v3_phase_read as phase_reader
+          import read_native_history_verifier as verifier_reader
           from pon_public_v3_policy_read import load_profiles, policy_id
           from verify_ci_source import verify
 
@@ -118,6 +180,9 @@ jobs:
                                   'attacker_processes': [0, 24, 24]},
               'expected_resources': {'cpu_max': '400000 100000',
                                      'memory_max': '17179869184', 'nice': 10},
+              'separate_verifier_limits': dict(verifier_reader.LIMITS),
+              'separate_verifier_parent': verifier_reader.PARENT,
+              'verifier_reader_sha256': bounds.sha(root / 'scripts/ci/read_native_history_verifier.py'),
               'binary': None, 'source_after': None, 'complete_success': False,
               'failure': None, 'finalization_failures': [],
               'runner_sha256': bounds.sha(__file__),
@@ -146,7 +211,7 @@ jobs:
                              and not target.is_relative_to(out), 'ISOLATED_OUTPUT_REQUIRED')
               bounds.validate_build_environment(os.environ)
               source_observation('source-before-build.json')
-              resources('resource-before-build.json')
+              outer_resources = resources('resource-before-build.json')
               bounds.write_new(out / 'hardware.json', {
                   'machine': platform.machine(), 'kernel': platform.release(),
                   'logical_cpu_count': os.cpu_count(),
@@ -228,6 +293,10 @@ jobs:
                       derived = phase_reader.read_report(raw_path, report_hash, expected_public_policy)
                       bounds.write_new(out / f'{name}-phase-readback.json', derived)
                       raw = json.loads(raw_path.read_bytes())
+                      verifier_readback = verifier_reader.validate_report(
+                          raw, report_dir, digest, outer_resources['cgroup'])
+                      bounds.write_new(out / f'{name}-verifier-readback.json', verifier_readback)
+                      attempt['actual_verifier_boundary_readback'] = verifier_readback['complete']
                       preparation = raw['preparation']
                       phases = raw['phases']
                       bounds.require(
@@ -252,7 +321,8 @@ jobs:
                           stdout, re.MULTILINE) is not None
                       attempt['complete_success'] = (
                           step['complete_success'] and one_test_passed
-                          and attempt['original_criteria_met'])
+                          and attempt['original_criteria_met']
+                          and attempt['actual_verifier_boundary_readback'])
                   except (OSError, ValueError, KeyError, TypeError) as error:
                       attempt['report_validation_failure'] = str(error)
                   bounds.write_new(out / f'{name}-result.json', attempt)
@@ -335,6 +405,91 @@ jobs:
             /usr/bin/python3 "$OUT/run-native-campaign.py" \
             "$GITHUB_WORKSPACE" "$OUT" "$CARGO_TARGET_DIR" "$cargo_path" \
             "$EXPECTED_HEAD" "$EXPECTED_TREE" 2>&1 | tee "$OUT/systemd-run.log"
+      - name: Require actual controller-death closure with the same release binary
+        id: verifier_lifeline
+        if: always()
+        timeout-minutes: 12
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$EXPECTED_HEAD"
+          test -n "$EXPECTED_TREE"
+          test -f "$OUT/binary-before.json"
+          test -f "$OUT/public_v3_multiprocess.bin"
+          test -f "$OUT/fixed-parent-provision.json"
+          unit="trnm-native-history-lifeline-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT.service"
+          cleanup() {
+            original_status=$?
+            trap - EXIT INT TERM
+            set +e
+            sudo -n systemctl stop "$unit" >> "$OUT/lifeline-unit-cleanup.log" 2>&1
+            cleanup_status=$?
+            printf 'original_exit=%s\ncleanup_exit=%s\n' "$original_status" "$cleanup_status" >> "$OUT/lifeline-unit-cleanup.log"
+            exit "$original_status"
+          }
+          trap cleanup EXIT
+          trap 'exit 130' INT
+          trap 'exit 143' TERM
+          # Independent finite lane: the original three 600s campaigns and
+          # their result stay unchanged. No build or old binary is substituted.
+          sudo -n systemd-run --unit="$unit" --wait --pipe --collect \
+            --service-type=exec --expand-environment=no \
+            --uid="$(id -u)" --gid="$(id -g)" \
+            --working-directory="$GITHUB_WORKSPACE" \
+            --property=CPUAccounting=yes --property=MemoryAccounting=yes \
+            --property=CPUQuota=400% --property=CPUQuotaPeriodSec=100ms \
+            --property=MemoryMax=17179869184 --property=Nice=10 \
+            --property=KillMode=control-group --property=TimeoutStopSec=20s \
+            --property=RuntimeMaxSec=600s \
+            --setenv="PATH=$PATH" --setenv=PYTHONDONTWRITEBYTECODE=1 \
+            --setenv=RUST_TEST_THREADS=1 \
+            /usr/bin/python3 "$GITHUB_WORKSPACE/scripts/ci/run_history_verifier_lifeline_v1.py" \
+            --root "$GITHUB_WORKSPACE" --campaign-output "$OUT" \
+            --output "$OUT/verifier-lifeline" --head "$EXPECTED_HEAD" --tree "$EXPECTED_TREE" \
+            2>&1 | tee "$OUT/verifier-lifeline-systemd.log"
+      - name: Close only the fixed parent exclusively created by this run
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          if test -f "$OUT/fixed-parent-provision.json"; then
+            sudo -n python3 - "$OUT/fixed-parent-provision.json" "$OUT/fixed-parent-cleanup.json" <<'PY'
+          import hashlib, json, os, stat, subprocess, sys
+          from pathlib import Path
+          receipt, output = map(Path, sys.argv[1:])
+          record = json.loads(receipt.read_bytes())
+          unit = 'trnmponpublic.slice'
+          destination = Path('/run/systemd/system') / unit
+          if record['unit'] != unit or record['path'] != str(destination):
+              raise RuntimeError('unexpected cleanup authority')
+          metadata = destination.lstat()
+          if (not stat.S_ISREG(metadata.st_mode) or metadata.st_uid != 0
+                  or (metadata.st_dev, metadata.st_ino) != (record['device'], record['inode'])
+                  or hashlib.sha256(destination.read_bytes()).hexdigest() != record['sha256']):
+              raise RuntimeError('refuse to stop or remove a replaced fixed parent')
+          root = Path('/sys/fs/cgroup/trnmponpublic.slice')
+          before = {name: (root / name).read_text().strip()
+                    for name in ('pids.current', 'cpu.stat', 'memory.current')
+                    if (root / name).is_file()}
+          stopped = subprocess.run(['systemctl', 'stop', unit], capture_output=True, text=True)
+          result = {'schema': 'native-history-fixed-parent-cleanup-v1',
+                    'pre_cleanup_counters': before, 'stop_returncode': stopped.returncode,
+                    'stop_stdout': stopped.stdout, 'stop_stderr': stopped.stderr,
+                    'cleanup_does_not_change_native_completion_or_failed_run': True}
+          # Do not remove a configuration whose owned service could not be stopped.
+          if stopped.returncode == 0:
+              checked = destination.lstat()
+              if (checked.st_dev, checked.st_ino) != (record['device'], record['inode']):
+                  raise RuntimeError('fixed parent changed during cleanup')
+              destination.unlink()
+              subprocess.run(['systemctl', 'daemon-reload'], check=True)
+              result['owned_runtime_unit_removed'] = True
+          with output.open('x') as stream:
+              json.dump(result, stream, sort_keys=True, indent=2)
+              stream.write('\n')
+          raise SystemExit(stopped.returncode)
+          PY
+          fi
       - name: Preserve final source verification and all partial artifact hashes
         if: always()
         shell: bash

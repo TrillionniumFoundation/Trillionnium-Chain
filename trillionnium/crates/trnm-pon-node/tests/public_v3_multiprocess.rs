@@ -1,5 +1,7 @@
 //! Finite same-host, separate-process W1 economics and original public service
 //! campaign. No independent operator, WAN, hardness, energy or release claim.
+#[path = "support/multiprocess_history_verifier.rs"]
+mod history_verifier;
 #[path = "support/multiprocess_support.rs"]
 mod support;
 #[path = "support/multiprocess_work.rs"]
@@ -21,10 +23,7 @@ use std::{
 use trnm_crypto_primitives::pon_work;
 use trnm_pon_node::{
     development_public,
-    ingress::{
-        self,
-        public_v3::{self, PublicServer, Request},
-    },
+    ingress::public_v3::{self, PublicServer, Request},
     Node, Packet, PoolLimits, Settings,
 };
 use trnm_protocol::pon_wire::{hash, Header};
@@ -726,6 +725,7 @@ fn multiprocess_actor_entry() {
     let outcome = std::panic::catch_unwind(|| match job["kind"].as_str().unwrap() {
         "cost" => cost_actor(&job),
         "attack" => attack_actor(&job, path.parent().unwrap()),
+        "history-verifier" => history_verifier::run(&job, path.parent().unwrap()),
         _ => panic!("unknown actor kind"),
     });
     let (result, error) = match outcome {
@@ -739,6 +739,9 @@ fn multiprocess_actor_entry() {
             (None, Some(message))
         }
     };
+    if job["kind"] == "history-verifier" {
+        history_verifier::after_run_return(&job, path.parent().unwrap(), result.as_ref());
+    }
     support::write_new(
         &path.parent().unwrap().join("report.json"),
         &json!({"kind":job["kind"],"result":result,"error":error,
@@ -788,11 +791,11 @@ fn phase(
             preview_miner: development_public(0).unwrap(),
         })
         .unwrap();
-    let mut verifier = state_backend.open(&path.join("independent-client"), settings.clone());
-    replay(&mut verifier, seed);
+    let mut verifier =
+        history_verifier::Verifier::start(&path.join("independent-client"), state_backend, seed);
     let initial = receiver.read_active().unwrap();
     let native_history_before = receiver.native_history_arithmetic_observation();
-    let client_native_history_before = verifier.native_history_arithmetic_observation();
+    let client_native_history_before = verifier.before();
     let owner = Arc::new(Mutex::new(receiver));
     let listener = TcpListener::bind("127.0.0.1:0").unwrap();
     let address = listener.local_addr().unwrap();
@@ -989,22 +992,17 @@ fn phase(
                     work_profile,
                 );
                 if support::on_time(&row) {
-                    let import_stamp = ClientOperationStamp::start(epoch);
-                    let imported =
-                        serde_json::from_value::<ingress::Page>(row["response"]["value"].clone())
-                            .map_err(|e| e.to_string())
-                            .and_then(|page| {
-                                ingress::receive_public_page_from(
-                                    &mut verifier,
-                                    address,
-                                    page,
-                                    tip,
-                                    after,
-                                    support::now(),
-                                )
-                                .map_err(|e| e.to_string())
-                            });
-                    row["client_import"] = import_stamp.finish(epoch);
+                    // The same original Page enters the unchanged strict
+                    // public importer inside its actual fixed kernel parent.
+                    let (imported, import_measurement) = verifier.import(
+                        address,
+                        row["response"]["value"].clone(),
+                        tip,
+                        after,
+                        support::now(),
+                        epoch,
+                    );
+                    row["client_import"] = import_measurement;
                     row["client_import"]["operation"] = json!(
                         "deserialize Page and source-aware receive_public_page_from, including activation only on the original complete page"
                     );
@@ -1014,9 +1012,9 @@ fn phase(
                         Err(error) => errors.push(error),
                     }
                     if after == tip {
-                        let confirmation_stamp = ClientOperationStamp::start(epoch);
-                        let result = verifier.confirmation(transaction, included, support::now());
-                        row["client_confirmation"] = confirmation_stamp.finish(epoch);
+                        let (result, confirmation_measurement) =
+                            verifier.confirmation(transaction, included, support::now(), epoch);
+                        row["client_confirmation"] = confirmation_measurement;
                         row["client_confirmation"]["operation"] =
                             json!("ordinary verifier confirmation after the original complete-page activation");
                         row["client_confirmation"]["succeeded"] = json!(result.is_ok());
@@ -1095,7 +1093,7 @@ fn phase(
         .lock()
         .ok()
         .map(|node| node.native_history_arithmetic_observation());
-    let client_native_history_after = verifier.native_history_arithmetic_observation();
+    let (checked, client_native_history_after) = verifier.snapshot();
     let captured = observer.snapshot();
     let budget_samples = samples.lock().unwrap().clone();
     let depletion_meter = budget_samples
@@ -1119,7 +1117,7 @@ fn phase(
                     && sample["meter"]["Ok"]["depleted"] == true));
     }
     let actual = owner.lock().unwrap().read_active().unwrap();
-    let checked = verifier.read_active().unwrap();
+    let verifier_process = verifier.finish();
     let final_meter = domain.observe().unwrap();
     let all_confirmed = confirmations.len() == ROUNDS
         && confirmations
@@ -1161,7 +1159,16 @@ fn phase(
         .filter(|row| row.full_work_accepted == Some(true))
         .count();
     let observer_complete = captured.coverage_complete();
+    // Every caller of this shared phase, including the ROOT supplement, needs
+    // the actual verifier's final close and exit, not only an earlier snapshot.
+    let verifier_complete = verifier_process["completed_successfully"] == true
+        && verifier_process["exit_success"] == true
+        && verifier_process["parent_forced_kill"] == false
+        && verifier_process["report"]["error"].is_null()
+        && verifier_process["report"]["result"]["clean_node_close"] == true
+        && verifier_process["parent_after_reap"]["pids.current"] == 0;
     let common_criteria = all_confirmed
+        && verifier_complete
         && actual.0 == checked.0
         && actual.2 == checked.2
         && observer_complete
@@ -1203,6 +1210,8 @@ fn phase(
         "receiver_client_state_equal":actual.0==checked.0&&actual.2==checked.2,
         "initial_tip":hex::encode(initial.0),"final_receiver_tip":hex::encode(actual.0),"final_client_tip":hex::encode(checked.0),
         "whole_parent_phase_cpu_ns":support::elapsed_cpu(whole_cpu),"whole_parent_phase_wall_ns":whole_started.elapsed().as_nanos(),"rss":support::rss()});
+    report["history_verifier_process"] = verifier_process;
+    report["parent_process_cpu_scope"] = json!("original outer campaign only; isolated verifier process and fixed-parent CPU are separately retained, not included in these parent process counters");
     report["public_resource_policy"] = work_profile.policy_observation();
     if let Some(arithmetic_owner) = arithmetic_owner {
         report["work_profile"] = json!("arithmetic-facts-v1");

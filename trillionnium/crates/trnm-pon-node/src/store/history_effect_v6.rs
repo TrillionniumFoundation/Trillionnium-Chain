@@ -885,6 +885,27 @@ impl HistoryEffectV6 {
             fence(Progress::Context)?;
             self.node
                 .history_effect_packet_binding(op, &packet, &mut || fence(Progress::Context))?;
+            let continuation = self.owner.journal()?.reorg_continuation().is_some();
+            if continuation {
+                // This paid Validation can reuse only the exact target sealed
+                // by this attempt. Ordinary ready() still rejects pending reorgs.
+                // Recheck the current permit and complete SQL cursor/staging
+                // snapshot before the existing exact packet/context replay.
+                storage::check_reorg_authority(
+                    &self.node.db,
+                    &*self.owner.journal()?,
+                    op,
+                    &mut || fence(Progress::Context),
+                )?;
+                let id = self
+                    .node
+                    .pending_exact_activation_replay(&packet, observed_now, &mut || {
+                        fence(Progress::Context)
+                    })?
+                    .ok_or("HISTORY_REORG_V1_EXACT_PENDING_PACKET")?;
+                self.node.history_effect_reuse_marker(&packet)?;
+                return Ok(id);
+            }
             if let Some(id) = self.node.check_admission_context_with_progress(
                 &packet,
                 observed_now,
