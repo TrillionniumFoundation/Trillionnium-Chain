@@ -47,6 +47,13 @@ def source_identity() -> dict:
             'test_sha256': digest((ROOT / SOURCE).read_bytes())}
 
 
+def native_build_command() -> list[str]:
+    """One exact source-build command for CI preparation and original execution."""
+    return ['cargo', 'test', '--locked', '--release', '--manifest-path',
+            'trillionnium/Cargo.toml', '-p', 'trnm-pon-node', '--test', TARGET,
+            '--no-run', '--message-format=json']
+
+
 def select_binary(lines: list[str]) -> Path:
     paths = []
     for line in lines:
@@ -723,10 +730,7 @@ def run(out: Path) -> dict:
             out / 'format-check', 60)
         result['format_passed'] = result['format']['exit_code'] == 0 and not result['format']['timed_out']
         require(result['format']['timed_out'] is False, 'NATIVE_TIMEOUT_STOPS_CAMPAIGN')
-        command = ['cargo', 'test', '--locked', '--release', '--manifest-path',
-                   'trillionnium/Cargo.toml', '-p', 'trnm-pon-node', '--test', TARGET,
-                   '--no-run', '--message-format=json']
-        result['build'] = run_child(command, out / 'build', 900)
+        result['build'] = run_child(native_build_command(), out / 'build', 900)
         require(result['build']['exit_code'] == 0 and not result['build']['timed_out'], 'NATIVE_BUILD_FAILED')
         binary = select_binary((out / 'build/stdout').read_text().splitlines())
         require(binary.is_file() and not binary.is_symlink(), 'REGULAR_BINARY_REQUIRED')

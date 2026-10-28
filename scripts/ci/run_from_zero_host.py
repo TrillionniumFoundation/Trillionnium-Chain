@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
-"""Run only the unchanged from-zero subprocess in its real fixed CI Host parent.
+"""Prepare exact source, then run the original tests in their fixed CI Host parent.
 
 No native test, admission check, acceptance predicate or time budget is replaced.
 The hosted runner provisions the checked-in unit; native code still owns the
 original eligibility checks. This script must never provision a local workstation.
+The same source build first warms this job's Cargo target outside the service
+quota. The original runner still builds, hashes and executes inside that quota.
 """
 from __future__ import annotations
 
@@ -18,6 +20,7 @@ from pathlib import Path
 
 from public_host_ci_observation import (PARENT, RUNTIME_UNIT, UNIT, UNIT_SHA256,
                                         capture, validate, write_new)
+import run_from_zero_native as native
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -30,6 +33,7 @@ ENVIRONMENT = (
     'PATH', 'CARGO_HOME', 'CARGO_TARGET_DIR', 'CARGO_BUILD_JOBS', 'CARGO_INCREMENTAL',
     'CARGO_TERM_COLOR', 'RUST_TEST_THREADS', 'RUSTFLAGS', 'CARGO_ENCODED_RUSTFLAGS',
     'RUSTUP_HOME', 'RUSTUP_TOOLCHAIN', 'CI', 'PYTHONDONTWRITEBYTECODE', 'RUNNER_TEMP',
+    'OPENSSL_DIR', 'OPENSSL_STATIC',
     'GITHUB_ACTIONS', 'GITHUB_WORKSPACE', 'GITHUB_RUN_ID', 'GITHUB_RUN_ATTEMPT',
     'GITHUB_JOB', 'GITHUB_SHA', 'GITHUB_EVENT_NAME', 'GITHUB_EVENT_PATH',
     'TRNM_CI_RECEIPT_DIR', 'TRNM_EXPECTED_SOURCE_SHA', 'TRNM_EXPECTED_CANDIDATE_SHA',
@@ -91,6 +95,77 @@ def service_command(service: str, receipts: Path, command: list[str],
     ]
 
 
+def prepare_native_build(receipts: Path) -> dict:
+    """Bounded build-only preparation, never a service or test acceptance."""
+    result = {'schema': 'trnm-ci-original-native-build-preparation-v1',
+              'source_before': None, 'source_after': None, 'process': None,
+              'binary_sha256': None, 'failure_type': None, 'source_error': None,
+              'completed': False, 'native_tests_executed': False,
+              'service_resource_observation': False,
+              'consensus_or_model_authority': False}
+    try:
+        result['source_before'] = native.source_identity()
+        result['build_env'] = {key: os.environ.get(key) for key in (
+            'CARGO_HOME', 'CARGO_TARGET_DIR', 'CARGO_BUILD_JOBS', 'CARGO_INCREMENTAL',
+            'RUSTFLAGS', 'CARGO_ENCODED_RUSTFLAGS', 'RUSTUP_TOOLCHAIN',
+            'OPENSSL_DIR', 'OPENSSL_STATIC')}
+        result['process'] = native.run_child(
+            native.native_build_command(), receipts / 'prepare-build', 900)
+        require(result['process']['exit_code'] == 0
+                and result['process']['timed_out'] is False,
+                'EXACT_NATIVE_PREPARATION_FAILED')
+        binary = native.select_binary(
+            (receipts / 'prepare-build/stdout').read_text().splitlines())
+        require(binary.is_file() and not binary.is_symlink(), 'REGULAR_PREPARED_BINARY')
+        result['binary_path'] = str(binary)
+        result['binary_sha256'] = native.digest(binary.read_bytes())
+    except BaseException as error:
+        # Retain incomplete preparation even for the controller's signal unwind.
+        # run_child owns and reaps its process group before propagating a signal.
+        result['failure_type'] = type(error).__name__
+        raise
+    finally:
+        try:
+            result['source_after'] = native.source_identity()
+        except (OSError, ValueError, TypeError, KeyError, subprocess.SubprocessError) as error:
+            result['source_error'] = type(error).__name__
+        result['completed'] = (result['failure_type'] is None
+                               and result['source_error'] is None
+                               and result['binary_sha256'] is not None
+                               and result['source_before'] == result['source_after'])
+        write_new(receipts / 'prepare-build.json', result)
+    require(result['completed'], 'NATIVE_PREPARATION_SOURCE_CHANGED')
+    return result
+
+
+def bind_prepared_execution(prepared: dict, output: Path) -> dict:
+    """Link this invocation's build to the original runner's actual execution."""
+    require(prepared.get('completed') is True, 'NATIVE_PREPARATION_INCOMPLETE')
+    path = output / 'manifest.json'
+    require(path.is_file() and not path.is_symlink(), 'ORIGINAL_NATIVE_MANIFEST_REQUIRED')
+    with path.open('rb') as stream:
+        raw = stream.read(native.REPORT_LIMIT + 1)
+    require(len(raw) <= native.REPORT_LIMIT, 'ORIGINAL_NATIVE_MANIFEST_BOUND')
+    result = native.json_load(raw)
+    require(result.get('schema') == 'trnm-from-zero-native-execution-v3',
+            'ORIGINAL_NATIVE_MANIFEST_SCHEMA')
+    require(prepared['source_before'] == prepared['source_after']
+            == result['source_before'] == result['source_after'],
+            'PREPARATION_AND_EXECUTION_SOURCE_MISMATCH')
+    require(prepared['binary_sha256'] == result['binary_sha256_before']
+            == result['binary_sha256_after'], 'PREPARATION_AND_EXECUTION_BINARY_MISMATCH')
+    require(result.get('passed') is True and result.get('all_named_tests_passed') is True
+            and result.get('source_recompiled') is True
+            and [row['name'] for row in result['runs']] == list(native.TESTS),
+            'ORIGINAL_NATIVE_ACCEPTANCE_REQUIRED')
+    return {'schema': 'trnm-ci-original-native-build-execution-binding-v1',
+            'manifest_sha256': native.digest(raw),
+            'source_commit': prepared['source_before']['commit'],
+            'binary_sha256': prepared['binary_sha256'],
+            'original_runner_repeated_source_build': True,
+            'runtime_limits_or_deadlines_changed': False}
+
+
 def inside(receipts: Path, service: str, uid: int, gid: int, command: list[str]) -> int:
     validate_command(command)
     before = capture('inside-before-native', service)
@@ -139,7 +214,7 @@ def outer(command: list[str]) -> int:
     service = f'trnm-from-zero-{run}-{attempt}-{job}-{os.getpid()}.service'
     receipts = output.with_name(output.name + '-host')
     receipts.mkdir(parents=True, exist_ok=False)
-    result = {'schema': 'trnm-ci-original-public-host-controller-v1',
+    result = {'schema': 'trnm-ci-original-public-host-controller-v2',
               'service': service, 'command_argv': command, 'uid': uid, 'gid': gid,
               'cwd': str(ROOT), 'systemd_run_exit': None, 'failure': None,
               'cleanup': None, 'passed': False, 'host_readiness_only': True,
@@ -174,6 +249,10 @@ def outer(command: list[str]) -> int:
         properties = validate_unprovisioned_parent(
             (receipts / 'parent-properties.log').read_text())
         write_new(receipts / 'unprovisioned-parent.json', properties)
+        # Compilation is setup, not public service. Keep its entire cost and
+        # failure outside the service denominator, in this same invocation.
+        # The child retains the original build command and every native gate.
+        result['preparation'] = prepare_native_build(receipts)
         require(not RUNTIME_UNIT.exists() and not RUNTIME_UNIT.is_symlink()
                 and not PARENT.exists() and not PARENT.is_symlink(),
                 'PARENT_CHANGED_BEFORE_INSTALL')
@@ -210,6 +289,9 @@ def outer(command: list[str]) -> int:
                                  cwd=str(ROOT), reference=provisioned),
                     'PROVISIONED_CHILD_CONTEXT_CHANGED:' + name)
         result['passed'] = result['systemd_run_exit'] == 0 and child['native_child_exit'] == 0
+        if result['passed']:
+            result['preparation_execution_binding'] = bind_prepared_execution(
+                result['preparation'], output)
     except HostSignal as error:
         result['failure'] = 'SIGNAL_' + str(error.number)
         result['systemd_run_exit'] = 128 + error.number

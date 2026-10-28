@@ -155,16 +155,120 @@ class OriginalHostControls(unittest.TestCase):
         argv = host.service_command('trnm-from-zero-1-1-cost-55.service', Path('/tmp/receipt'),
                                     command, 1001, 1002, {'PATH': '/original/bin',
                                     'CARGO_BUILD_JOBS': '2', 'RUSTUP_TOOLCHAIN': '1.95.0',
+                                    'OPENSSL_DIR': '/original/pinned-provider', 'OPENSSL_STATIC': '1',
                                     'GITHUB_TOKEN': 'synthetic-not-a-token'})
         self.assertEqual(argv[-4:], command)
         for item in ('--slice=trnmponpublic.slice', '--uid=1001', '--gid=1002',
                      '--property=Delegate=no', '--property=NoNewPrivileges=yes',
                      '--property=CapabilityBoundingSet=', '--property=KillMode=control-group',
                      '--setenv=PATH=/original/bin', '--setenv=CARGO_BUILD_JOBS=2',
-                     '--setenv=RUSTUP_TOOLCHAIN=1.95.0'):
+                     '--setenv=RUSTUP_TOOLCHAIN=1.95.0',
+                     '--setenv=OPENSSL_DIR=/original/pinned-provider', '--setenv=OPENSSL_STATIC=1'):
             self.assertIn(item, argv)
         self.assertFalse(any('GITHUB_TOKEN' in item for item in argv))
         self.assertFalse(any('CPUQuota=' in item or 'MemoryMax=' in item for item in argv))
+
+    def test_preparation_uses_exact_build_only_and_retains_original_build_budget(self):
+        expected = ['cargo', 'test', '--locked', '--release', '--manifest-path',
+                    'trillionnium/Cargo.toml', '-p', 'trnm-pon-node', '--test',
+                    'public_v3_from_zero', '--no-run', '--message-format=json']
+        self.assertEqual(host.native.native_build_command(), expected)
+        with tempfile.TemporaryDirectory() as temporary:
+            folder = Path(temporary)
+            binary = folder / 'compiler-produced-test'
+            binary.write_bytes(b'public test fixture, never executed')
+            source = {'commit': 'a' * 40, 'tree': 'b' * 40}
+
+            def build(command, output, deadline):
+                self.assertEqual(command, expected)
+                self.assertEqual(deadline, 900)
+                output.mkdir()
+                (output / 'stdout').write_text(json.dumps({
+                    'reason': 'compiler-artifact', 'target': {'name': host.native.TARGET},
+                    'profile': {'test': True}, 'executable': str(binary)}) + '\n')
+                return {'exit_code': 0, 'timed_out': False, 'command': command}
+
+            with patch.object(host.native, 'source_identity', return_value=source), \
+                    patch.object(host.native, 'run_child', side_effect=build) as run:
+                receipt = host.prepare_native_build(folder)
+            run.assert_called_once()
+            self.assertIs(receipt['completed'], True)
+            self.assertIs(receipt['native_tests_executed'], False)
+            self.assertIs(receipt['service_resource_observation'], False)
+            self.assertEqual(receipt['binary_sha256'], hashlib.sha256(binary.read_bytes()).hexdigest())
+            self.assertEqual(json.loads((folder / 'prepare-build.json').read_text()), receipt)
+
+    def test_failed_and_timed_out_preparation_cannot_borrow_a_binary(self):
+        for process in ({'exit_code': 1, 'timed_out': False},
+                        {'exit_code': 0, 'timed_out': True}):
+            with self.subTest(process=process), tempfile.TemporaryDirectory() as temporary, \
+                    patch.object(host.native, 'source_identity', return_value={'commit': 'a' * 40}), \
+                    patch.object(host.native, 'run_child', return_value=process), \
+                    patch.object(host.native, 'select_binary') as select:
+                folder = Path(temporary)
+                with self.assertRaisesRegex(ValueError, 'EXACT_NATIVE_PREPARATION_FAILED'):
+                    host.prepare_native_build(folder)
+                select.assert_not_called()
+                saved = json.loads((folder / 'prepare-build.json').read_text())
+                self.assertIs(saved['completed'], False)
+                self.assertEqual(saved['process'], process)
+
+    def test_preparation_signal_retains_incomplete_receipt(self):
+        with tempfile.TemporaryDirectory() as temporary, \
+                patch.object(host.native, 'source_identity', return_value={'commit': 'a' * 40}), \
+                patch.object(host.native, 'run_child', side_effect=host.HostSignal(15)):
+            with self.assertRaises(host.HostSignal):
+                host.prepare_native_build(Path(temporary))
+            saved = json.loads((Path(temporary) / 'prepare-build.json').read_text())
+            self.assertIs(saved['completed'], False)
+            self.assertEqual(saved['failure_type'], 'HostSignal')
+
+    def test_preparation_source_drift_refuses_and_keeps_both_identities(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            folder = Path(temporary)
+            (folder / 'prepare-build').mkdir()
+            (folder / 'prepare-build/stdout').write_text('')
+            binary = folder / 'compiler-produced-test'
+            binary.write_bytes(b'synthetic fixture')
+            with patch.object(host.native, 'source_identity', side_effect=[
+                    {'commit': 'a' * 40}, {'commit': 'b' * 40}]), \
+                    patch.object(host.native, 'run_child', return_value={
+                        'exit_code': 0, 'timed_out': False}), \
+                    patch.object(host.native, 'select_binary', return_value=binary):
+                with self.assertRaisesRegex(ValueError, 'NATIVE_PREPARATION_SOURCE_CHANGED'):
+                    host.prepare_native_build(folder)
+            saved = json.loads((folder / 'prepare-build.json').read_text())
+            self.assertIs(saved['completed'], False)
+            self.assertNotEqual(saved['source_before'], saved['source_after'])
+
+    def test_prepared_execution_binds_source_binary_and_original_acceptance(self):
+        source = {'commit': 'a' * 40, 'tree': 'b' * 40}
+        prepared = {'completed': True, 'source_before': source, 'source_after': source,
+                    'binary_sha256': 'c' * 64}
+        original = {'schema': 'trnm-from-zero-native-execution-v3',
+                    'source_before': source, 'source_after': source,
+                    'binary_sha256_before': 'c' * 64, 'binary_sha256_after': 'c' * 64,
+                    'passed': True, 'all_named_tests_passed': True, 'source_recompiled': True,
+                    'runs': [{'name': name} for name in host.native.TESTS]}
+        with tempfile.TemporaryDirectory() as temporary:
+            folder = Path(temporary)
+            path = folder / 'manifest.json'
+            path.write_text(json.dumps(original))
+            self.assertEqual(host.bind_prepared_execution(prepared, folder)['binary_sha256'], 'c' * 64)
+            for key, value in (('source_after', {'commit': 'd' * 40}),
+                               ('binary_sha256_before', 'd' * 64),
+                               ('binary_sha256_after', 'd' * 64),
+                               ('passed', False), ('all_named_tests_passed', False),
+                               ('source_recompiled', False), ('runs', original['runs'][:-1])):
+                changed = copy.deepcopy(original)
+                changed[key] = value
+                path.write_text(json.dumps(changed))
+                with self.subTest(key=key), self.assertRaises(ValueError):
+                    host.bind_prepared_execution(prepared, folder)
+            path.write_text(json.dumps(original))
+            incomplete = dict(prepared, completed=False)
+            with self.assertRaisesRegex(ValueError, 'NATIVE_PREPARATION_INCOMPLETE'):
+                host.bind_prepared_execution(incomplete, folder)
 
     def test_local_invocation_never_runs_a_host_command(self):
         with patch.dict(host.os.environ, {'CI': 'true', 'GITHUB_ACTIONS': 'false'}, clear=True), \

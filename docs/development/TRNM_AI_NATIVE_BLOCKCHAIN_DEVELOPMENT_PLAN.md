@@ -3836,3 +3836,35 @@ retains the source boundary, fresh Python controls and missing hosted-run gate.
 No native owner, work relation, resource ceiling or activation policy changes.
 The previous local commit identity and its lost records are not reconstructed
 as an allegedly identical successful publication.
+
+### Actual reversible components, 2026-10-28
+
+The pure-PoN quantum work package now has [explicit reversible arithmetic and
+SHA-256 components](../../formal/pon-nakamoto-v1/REVERSIBLE_COMPONENTS.md), including
+exported gate lists, strict artifact reopen, nonzero-output execution and actual
+scratch cleanup checks. The original full W1 relation, work identity and chain
+weight are unchanged. The observation records gate counts and logical resources
+for these components only. It does not supply the coherent rejection sampler,
+whole matrix/prefix memory schedule, complete phase oracle, physical machine
+or quantum proof-system soundness. Existing DAA rate experiments remain
+conditional models; no simulated rate is relabelled as a quantum attack or
+used to grant pure-PoN security acceptance.
+
+### Exact native build preparation outside the public Host quota, 2026-10-28
+
+The original `73ffdd94` protocol-contract execution passed the actual Host
+checks but exhausted its 900-second build deadline before any native test ran.
+Its [preserved evidence and follow-up boundary](../../evidence/pon-host-build-separation-20261028/README.md)
+separate that compilation failure from the distinct multi-process campaign's
+public-Host membership refusal. The CI controller now runs the exact build-only
+command once as ordinary preparation, preserving its whole CPU/resource/failure
+receipt. It then invokes the unchanged original runner in the fixed 25% CPU,
+2 GiB, swap-free Host parent. That runner repeats its original source build and
+all original native tests, with unchanged deadlines and report predicates.
+Source identities and executable digests must join across both stages. No
+downloaded executable or earlier source can satisfy this preparation, and a
+successful build alone grants no test or service acceptance. Pinned OpenSSL
+build inputs are explicitly preserved across the unprivileged process boundary.
+The new controller receipt uses its own v2 schema; separate preparation and
+build-to-execution binding receipts use new v1 namespaces. Hosted execution on
+the resulting source must establish its own result.

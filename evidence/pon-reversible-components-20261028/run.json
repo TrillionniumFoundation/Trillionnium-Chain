@@ -1,0 +1,67 @@
+{
+  "schema": "pon-reversible-exact-source-run-v1",
+  "source_commit": "7d12655bd5cfc967c6150bba00ab349826c1bf67",
+  "all_commands_completed": true,
+  "commands": [
+    {
+      "name": "source-before",
+      "argv": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "7d12655bd5cfc967c6150bba00ab349826c1bf67"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 1.5463501749982242,
+      "log_sha256": "fdce3d3913bdce98c07f86f0ebe040479da84a16b957b8cdf3d759efa964b5ed"
+    },
+    {
+      "name": "controls",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_reversible_components.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.42571920899354154,
+      "log_sha256": "06dd750109648b06ed89f2298c51a28cf075b65d1ce077e5ce48b5707b9f4eb8"
+    },
+    {
+      "name": "observation",
+      "argv": [
+        "python3",
+        "formal/pon-nakamoto-v1/reversible_components.py",
+        "--output",
+        "/tmp/pure-pon-reversible-final-20261028/netlists"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 4.262318765999225,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "source-after",
+      "argv": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "7d12655bd5cfc967c6150bba00ab349826c1bf67"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.7834144080043188,
+      "log_sha256": "fdce3d3913bdce98c07f86f0ebe040479da84a16b957b8cdf3d759efa964b5ed"
+    }
+  ],
+  "physical_quantum_execution": false,
+  "complete_W1_oracle": false,
+  "production_activation": false
+}
