@@ -1,0 +1,59 @@
+{
+  "checks": [
+    {
+      "source": "docs/protocol/pon-nakamoto-v1/details/LEGAL_CPU_BATCH_COST_V4.md",
+      "target": "../../../../trillionnium/crates/trnm-pon-node/examples/pon_legal_ticket_batch_v4.rs",
+      "resolved": "trillionnium/crates/trnm-pon-node/examples/pon_legal_ticket_batch_v4.rs",
+      "git_index_present": true
+    },
+    {
+      "source": "docs/protocol/pon-nakamoto-v1/details/LEGAL_CPU_BATCH_COST_V4.md",
+      "target": "../../../../scripts/ci/check_legal_ticket_batch_v4.py",
+      "resolved": "scripts/ci/check_legal_ticket_batch_v4.py",
+      "git_index_present": true
+    },
+    {
+      "source": "docs/protocol/pon-nakamoto-v1/details/LEGAL_CPU_BATCH_COST_V4.md",
+      "target": "../../../../scripts/ci/test_legal_ticket_batch_v4.py",
+      "resolved": "scripts/ci/test_legal_ticket_batch_v4.py",
+      "git_index_present": true
+    },
+    {
+      "source": "docs/protocol/pon-nakamoto-v1/details/LEGAL_CPU_BATCH_COST_V4.md",
+      "target": "../../../../.github/workflows/pon-legal-ticket-batch-v4.yml",
+      "resolved": ".github/workflows/pon-legal-ticket-batch-v4.yml",
+      "git_index_present": true
+    },
+    {
+      "source": "evidence/pon-legal-cpu-batch-v4-20261028/README.md",
+      "target": "../../docs/protocol/pon-nakamoto-v1/details/LEGAL_CPU_BATCH_COST_V4.md",
+      "resolved": "docs/protocol/pon-nakamoto-v1/details/LEGAL_CPU_BATCH_COST_V4.md",
+      "git_index_present": true
+    },
+    {
+      "source": "evidence/pon-legal-cpu-batch-v4-20261028/README.md",
+      "target": "../../trillionnium/crates/trnm-pon-node/examples/pon_legal_ticket_batch_v4.rs",
+      "resolved": "trillionnium/crates/trnm-pon-node/examples/pon_legal_ticket_batch_v4.rs",
+      "git_index_present": true
+    },
+    {
+      "source": "evidence/pon-legal-cpu-batch-v4-20261028/README.md",
+      "target": "../../.github/workflows/pon-legal-ticket-batch-v4.yml",
+      "resolved": ".github/workflows/pon-legal-ticket-batch-v4.yml",
+      "git_index_present": true
+    },
+    {
+      "source": "evidence/pon-legal-cpu-batch-v4-20261028/README.md",
+      "target": "../../scripts/ci/check_legal_ticket_batch_v4.py",
+      "resolved": "scripts/ci/check_legal_ticket_batch_v4.py",
+      "git_index_present": true
+    },
+    {
+      "source": "evidence/pon-legal-cpu-batch-v4-20261028/README.md",
+      "target": "../../scripts/ci/test_legal_ticket_batch_v4.py",
+      "resolved": "scripts/ci/test_legal_ticket_batch_v4.py",
+      "git_index_present": true
+    }
+  ],
+  "all_passed": true
+}

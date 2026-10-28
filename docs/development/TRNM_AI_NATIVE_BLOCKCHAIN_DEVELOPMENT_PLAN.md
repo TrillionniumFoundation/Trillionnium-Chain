@@ -4632,3 +4632,8 @@ x86_64/ARM campaigns and end-to-end advantages remain NOT_RUN at source freeze.
 The exact-head workflow retains executable/raw failures and original profiles.
 This finite experiment does not establish GPU/hardware batching, energy,
 physical power loss, live-chain rewards, public throughput or a global minimum.
+
+
+## 2026-10-28: positive legal CPU batches and retained first-admission payloads
+
+The [V4 experiment](../protocol/pon-nakamoto-v1/details/LEGAL_CPU_BATCH_COST_V4.md) adds actual 1/2/4-thread batches to the original legal maintenance work and native admission owners. One aggregate batch process clock includes all workers; overlapping trial clocks are diagnostic only. Twelve fresh-store cohorts retain all misses, preparation, ordinary cold recovery, first-admission payload bytes and separate archive costs. V3 remains unchanged. New source/reader controls do not imply native execution; the exact-source x86_64/aarch64 workflow must supply actual compilation, strict Clippy and campaign terminals. GPU/ASIC/energy/global-optimum claims remain false.
