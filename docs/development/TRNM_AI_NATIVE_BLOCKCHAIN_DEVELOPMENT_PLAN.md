@@ -4818,3 +4818,36 @@ workflow has not acquired acceptance from the pin update and must execute again.
 This follow-up changes no Rust runtime or protocol namespace. Complete workspace
 qualification, remaining authority owners, independent migration trust/source
 retirement, physical I/O, whole-chain PQ, P1 completion and activation remain open.
+
+#### P1 NPQ4 task-authority continuation — 2026-10-28 (candidate / native gate OPEN)
+
+The [fresh NPQ4 task owner](../protocol/pon-nakamoto-v1/details/NATIVE_PQ_TASKS_V4_RESEARCH.md)
+implements the selected 18/open → 21/dual registration → 20/revoke path with
+actual State requester and source accounts, independent ML-DSA proofs, current
+generation resolution and apply-time reauthorization. Its complete 7,894-byte
+registration is retained as four bounded witness leaves under the unchanged
+4,096-byte State-value grammar; 32 registrations account for 64 real proofs and
+252,608 command bytes. Ordinary Node material/W1/output/publication/cold and
+heavier-fork paths use explicit NPQ4 packet, network, SQL and signed namespaces.
+
+Local revocations are published with actual activation events and retained after
+detach. Cold audit also rebinds every detached event packet's actual transaction
+bytes to the header; a retained original block ID/W1 cannot excuse replacement
+of the transaction list. The source-identified counterexample and required real
+SQLite negative control remain distinct from an executed native RED/PASS claim.
+Branch-relative remote validity remains separate from monotonic local mining
+permission. The finite local history cap and full-history audit cost remain
+explicit; no outside database rollback anchor or unbounded-history qualification
+is inferred.
+
+The [new observations and remaining gates](../../evidence/pon-pq-tasks-v4-20261028/README.md)
+keep metadata-only compilation, direct Clippy, strict reader controls and native
+execution separate. New actual native execution is NOT_RUN locally because the
+shared disk reached its stop line. The mandatory hosted gate retains the original
+2,400-second command budget and requires the complete old 164-test cohort plus
+16 new cases, with all original ignores and every integration name pinned.
+The earlier hosted 164 PASS is historical evidence on its own exact source.
+Remaining concrete model/evaluation tags 6–9/12–17/23–24, renewal 19/22,
+independent migration/retirement, custody, transport, History and Hepta authority
+owners are listed explicitly. P1 completion, whole-chain PQ and activation remain
+false while the new native gate and those owners remain open.

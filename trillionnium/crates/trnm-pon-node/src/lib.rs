@@ -27,6 +27,7 @@ pub mod pq_accounts_v2;
 pub mod pq_authority;
 pub mod pq_native_v1;
 pub mod pq_quota_v3;
+pub mod pq_tasks_v4;
 pub mod public_submit;
 /// Public genesis maintenance bytes; availability never grants work or model credit.
 pub mod public_task_bootstrap;

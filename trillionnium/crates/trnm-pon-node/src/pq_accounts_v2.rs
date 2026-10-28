@@ -44,7 +44,9 @@ impl Settings {
         Ok(pq::context(&self.app)?)
     }
     pub(crate) fn is_native_pq_v2(&self) -> bool {
-        pq::enabled(&self.app) && !pq::quota_v3_enabled(&self.app)
+        pq::enabled(&self.app)
+            && !pq::quota_v3_enabled(&self.app)
+            && !pq::tasks_v4_enabled(&self.app)
     }
 }
 /// Syntactically bounded PQP2 packet. It carries no verified work or admission.

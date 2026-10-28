@@ -372,7 +372,7 @@ def native_durable_schema(root):
             layout(body(source,'enum','StateBackend'),'Legacy, AuthenticatedV1, PermanentAccountGrowthV2,',
                    'durable backend variants')
             implementation = body(source,'impl','StateBackend')
-            pq_selected = re.search(r'\b(?:pq_explicit|selected_ddl|pq_native_v1|pq_accounts_v2|pq_quota_v3)\b',code) is not None
+            pq_selected = re.search(r'\b(?:pq_explicit|selected_ddl|pq_native_v1|pq_accounts_v2|pq_quota_v3|pq_tasks_v4)\b',code) is not None
             if pq_selected:
                 pq_contract.exact(item_prefix(source,'impl','StateBackend','{'),
                                   'impl StateBackend','durable backend PQ owner')

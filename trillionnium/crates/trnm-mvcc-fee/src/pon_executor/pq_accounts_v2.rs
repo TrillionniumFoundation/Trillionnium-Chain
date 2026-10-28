@@ -11,6 +11,7 @@ use trnm_protocol::pq_frame::{ml_dsa_65_key_id_from_spki, PqFrameExpectation};
 use trnm_protocol::pq_native_accounts_v2::{self as wire, ChainContext, UnverifiedEnvelope};
 
 pub mod migration;
+pub mod tasks_v4;
 pub use migration::{
     CheckpointMaterial, PrecommittedAccount, TrustedMigrationAnchor, TrustedPqPrecommitments,
 };
@@ -77,6 +78,14 @@ pub fn quota_v3_enabled(cfg: &Config) -> bool {
     cfg.native_pq_v2
         .as_ref()
         .is_some_and(|p| p.wire_profile == wire::AccountProfile::QuotaV3)
+}
+fn quota_commands_enabled(cfg: &Config) -> bool {
+    quota_v3_enabled(cfg) || tasks_v4_enabled(cfg)
+}
+pub fn tasks_v4_enabled(cfg: &Config) -> bool {
+    cfg.native_pq_v2
+        .as_ref()
+        .is_some_and(|p| p.wire_profile == wire::AccountProfile::TasksV4)
 }
 pub fn decode_for_config<'a>(raw: &'a [u8], cfg: &Config) -> Result<UnverifiedEnvelope<'a>> {
     UnverifiedEnvelope::decode_for_profile(raw, account_profile(cfg)?).map_err(|_| "PQ2_ENCODING")
@@ -157,6 +166,13 @@ pub fn genesis_quota_v3_with_trusted_migration(
         wire::AccountProfile::QuotaV3,
     )
 }
+/// Fresh network only. No legacy task or migration payload opts into NPQ4.
+pub fn genesis_tasks_v4(
+    accounts: &[GenesisAccount],
+    timestamp: u64,
+) -> Result<(Config, State, Hash)> {
+    build_genesis(accounts, timestamp, None, wire::AccountProfile::TasksV4)
+}
 fn build_genesis(
     accounts: &[GenesisAccount],
     timestamp: u64,
@@ -196,12 +212,18 @@ fn build_genesis(
     let old_network = cfg.network;
     let old_parameters = cfg.parameters;
     cfg.params[SELECTOR] = json!(wire_profile.name());
+    if wire_profile == wire::AccountProfile::TasksV4 {
+        cfg.params["native_pq_task_contract"] = json!({"profile":tasks_v4::PROFILE,"slots":32,
+            "witness_chunks":4,"chunk_raw_bytes":2000,"local_revocation_capacity":1024,
+            "commands":[18,20,21],"renewal_supported":false,"migration_supported":false});
+    }
     cfg.params["genesis_timestamp"] = json!(timestamp);
     cfg.params["native_pq_v2_anchor"] = json!(anchor.as_ref().map(|a| hex::encode(a.id)));
     cfg.params["native_pq_v2_descriptor"] = json!(hex::encode(hash(
         match wire_profile {
             wire::AccountProfile::AccountsV2 => b"native-pq-genesis-descriptor-v2",
             wire::AccountProfile::QuotaV3 => b"native-pq-quota-descriptor-v3",
+            wire::AccountProfile::TasksV4 => b"native-pq-task-descriptor-v4",
         },
         &[&descriptor]
     )));
@@ -210,6 +232,7 @@ fn build_genesis(
         match wire_profile {
             wire::AccountProfile::AccountsV2 => b"native-pq-network-v2",
             wire::AccountProfile::QuotaV3 => b"native-pq-quota-network-v3",
+            wire::AccountProfile::TasksV4 => b"native-pq-task-network-v4",
         },
         &[&old_network, &descriptor],
     );
@@ -217,6 +240,7 @@ fn build_genesis(
         match wire_profile {
             wire::AccountProfile::AccountsV2 => b"native-pq-parameters-v2",
             wire::AccountProfile::QuotaV3 => b"native-pq-quota-parameters-v3",
+            wire::AccountProfile::TasksV4 => b"native-pq-task-parameters-v4",
         },
         &[
             &old_parameters,
@@ -240,6 +264,9 @@ fn build_genesis(
         ("model:current".into(), json!(hex::encode([0; 32]))),
     ]);
     state.extend(crate::continuity_v1::bootstrap_state(&cfg)?);
+    if wire_profile == wire::AccountProfile::TasksV4 {
+        state.insert(tasks_v4::GENERATION_KEY.into(), json!(0));
+    }
     for (id, account) in sorted {
         let name = hex::encode(id);
         state.insert(
@@ -390,6 +417,9 @@ pub fn validate_state(state: &State, cfg: &Config) -> Result<()> {
             .all(|key| expected.contains(key)),
         "PQ2_ORPHAN_AUTHORITY",
     )?;
+    if tasks_v4_enabled(cfg) {
+        tasks_v4::validate_state(state, cfg)?;
+    }
     Ok(())
 }
 
@@ -456,6 +486,7 @@ pub fn validate_block(
     )?;
     let mut total = 0_usize;
     let mut accounts = BTreeMap::<Hash, (usize, bool)>::new();
+    let mut task_demands = BTreeSet::new();
     for raw in transactions {
         let tx = decode_for_config(raw, cfg)?;
         total = total
@@ -466,8 +497,14 @@ pub fn validate_block(
             "PQ2_TRANSACTION_LIMIT",
         )?;
         let mut referenced = BTreeSet::from([tx.common.account]);
-        if tx.kind == 11 && quota_v3_enabled(cfg) {
+        if tx.kind == 11 && quota_commands_enabled(cfg) {
             referenced.insert(quota_consumer(&mut View::new(parent, None), tx.payload)?);
+        }
+        if tasks_v4_enabled(cfg) && matches!(tx.kind, 18 | 20 | 21) {
+            let (demand, requester, source) =
+                tasks_v4::command_owners(&mut View::new(parent, None), &tx, cfg)?;
+            require(task_demands.insert(demand), "PQ4_TASK_BLOCK_MUTEX")?;
+            referenced.extend([requester, source]);
         }
         for account in referenced {
             let entry = accounts.entry(account).or_default();
@@ -489,6 +526,7 @@ pub struct PreparedCommand {
     keys: Vec<Vec<u8>>,
     wire_id: Hash,
     statement_id: [u8; 48],
+    admitted_at: u64,
 }
 impl PreparedCommand {
     pub fn sender(&self) -> Hash {
@@ -545,7 +583,16 @@ fn resolve(
             )?;
             Ok(current.spki)
         }
-        2 if tx.kind == 11 && quota_v3_enabled(cfg) => {
+        2 if tx.kind == 21 && tasks_v4_enabled(cfg) => {
+            let (_, _, source) = tasks_v4::command_owners(view, tx, cfg)?;
+            let current = authorize(view, source)?;
+            require(
+                current.generation == witness.generation && current.key_id == witness.key_id,
+                "PQ4_STALE_SOURCE_AUTHORITY",
+            )?;
+            Ok(current.spki)
+        }
+        2 if tx.kind == 11 && quota_commands_enabled(cfg) => {
             let consumer = quota_consumer(view, tx.payload)?;
             let current = authorize(view, consumer)?;
             require(
@@ -584,6 +631,9 @@ pub fn prepare_signature(
     require(tx.common.context == context, "PQ2_CONTEXT")?;
     require(tx.common.max_fee <= cfg.limit("max_fee_limit")?, "FEE")?;
     let mut view = View::new(parent, None);
+    if tasks_v4_enabled(cfg) && matches!(tx.kind, 18 | 20 | 21) {
+        tasks_v4::command_owners(&mut view, &tx, cfg)?;
+    }
     let mut keys = Vec::with_capacity(tx.witnesses().len());
     for (index, witness) in tx.witnesses().iter().enumerate() {
         let spki = resolve(&mut view, &tx, index, cfg)?;
@@ -619,6 +669,7 @@ pub fn prepare_signature(
         keys,
         wire_id: tx.wire_id(),
         statement_id: tx.statement_id(),
+        admitted_at: timestamp,
     })
 }
 pub fn validate_current_authority(parent: &State, raw: &[u8], cfg: &Config) -> Result<()> {
@@ -627,6 +678,9 @@ pub fn validate_current_authority(parent: &State, raw: &[u8], cfg: &Config) -> R
     let tx = decode_for_config(raw, cfg)?;
     require(tx.common.context == context(cfg)?, "PQ2_CONTEXT")?;
     let mut view = View::new(parent, None);
+    if tasks_v4_enabled(cfg) && matches!(tx.kind, 18 | 20 | 21) {
+        tasks_v4::command_owners(&mut view, &tx, cfg)?;
+    }
     for index in 0..tx.witnesses().len() {
         resolve(&mut view, &tx, index, cfg)?;
     }
@@ -646,6 +700,9 @@ pub(super) fn apply(
     )?;
     let tx = decode_for_config(&prepared.raw, cfg)?;
     let mut view = View::new(base, access);
+    if tasks_v4_enabled(cfg) && matches!(tx.kind, 18 | 20 | 21) {
+        tasks_v4::command_owners(&mut view, &tx, cfg)?;
+    }
     for (index, key) in prepared.keys.iter().enumerate() {
         require(
             resolve(&mut view, &tx, index, cfg)? == *key,
@@ -705,7 +762,7 @@ pub(super) fn apply(
             height,
             cfg,
         )?,
-        10 if quota_v3_enabled(cfg) => super::reserve_quota(
+        10 if quota_commands_enabled(cfg) => super::reserve_quota(
             &mut view,
             prepared.common.account,
             prepared.common.nonce,
@@ -713,7 +770,7 @@ pub(super) fn apply(
             height,
             cfg,
         )?,
-        11 if quota_v3_enabled(cfg) => {
+        11 if quota_commands_enabled(cfg) => {
             let quota: Hash = prepared.payload[..32]
                 .try_into()
                 .map_err(|_| "PQ3_QUOTA_ENCODING")?;
@@ -731,6 +788,7 @@ pub(super) fn apply(
                 super::quota_use_context(&mut view, &sender, quota, units, result, height)?;
             super::settle_verified_quota(&mut view, &sender, key, row, units, fee, cfg)?;
         }
+        18 | 20 | 21 if tasks_v4_enabled(cfg) => tasks_v4::apply(&mut view, prepared, height, cfg)?,
         wire::REGISTER => {
             let mut writes = State::new();
             install_key(
@@ -798,3 +856,6 @@ pub(super) fn apply(
 
 #[cfg(test)]
 mod tests;
+
+#[cfg(test)]
+mod tasks_v4_tests;

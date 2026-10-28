@@ -178,7 +178,7 @@ class PacketAndObservationTests(unittest.TestCase):
             with self.assertRaises(ValueError): check.decode_packet(raw)
 
     def test_pqp1_pqp2_pqp3_never_negotiate_a_legacy_packet(self):
-        for version in (1,2,3):
+        for version in (1,2,3,4):
             prefix = b'PQP'+str(version).encode()+bytes([version,0,0,0])
             for raw in (prefix+self.raw,prefix+self.raw[8:]):
                 with self.subTest(version=version,bytes=len(raw)),self.assertRaisesRegex(ValueError,'header version'):
@@ -536,7 +536,8 @@ class DurableStoreTests(unittest.TestCase):
         ddl,domain = check.native_durable_schema(check.ROOT)
         for foreign in ('native-pq-transfer-branch-schema-v1',
                         'native-pq-accounts-branch-schema-v2',
-                        'native-pq-quota-branch-schema-v3'):
+                        'native-pq-quota-branch-schema-v3',
+                        'native-pq-task-branch-schema-v4'):
             with self.subTest(domain=foreign):
                 with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
                     database.execute("UPDATE metadata SET value=? WHERE key='schema'",
@@ -552,7 +553,8 @@ class DurableStoreTests(unittest.TestCase):
         original = self.H(domain,ddl.encode())
         for version,foreign in ((1,'native-pq-transfer-branch-schema-v1'),
                                 (2,'native-pq-accounts-branch-schema-v2'),
-                                (3,'native-pq-quota-branch-schema-v3')):
+                                (3,'native-pq-quota-branch-schema-v3'),
+                                (4,'native-pq-task-branch-schema-v4')):
             table = 'local_pq_statements_v'+str(version)
             extension = 'CREATE TABLE '+table+'(statement BLOB PRIMARY KEY);'
             for schema in (original,self.H(domain,(ddl+extension).encode()),
@@ -574,7 +576,7 @@ class DurableStoreTests(unittest.TestCase):
 
     def test_replayed_and_stored_pq_packet_still_fails_legacy_ancestry(self):
         original = self.packets[0]
-        for version in (1,2,3):
+        for version in (1,2,3,4):
             changed = b'PQP'+str(version).encode()+bytes([version,0,0,0])+original
             with self.subTest(version=version):
                 self.packets[0] = changed
@@ -591,6 +593,32 @@ class DurableStoreTests(unittest.TestCase):
                     with sqlite3.connect(self.folder/owner/'native.sqlite') as database:
                         database.execute('UPDATE blocks SET packet=? WHERE height=1',(original,))
                 self.summary['ledger_disk_bytes'] = sum(path.stat().st_size for path in self.folder.rglob('*') if path.is_file())
+        self.verify()
+
+    def test_pq4_revocation_history_cannot_borrow_a_resealed_legacy_schema(self):
+        ddl,domain = check.native_durable_schema(check.ROOT)
+        original = self.H(domain,ddl.encode())
+        extension = ('CREATE TABLE local_pq_task_revocations_v4('
+            'ordinal INTEGER PRIMARY KEY CHECK(ordinal>=1 AND ordinal<=1024),'
+            'lease BLOB UNIQUE NOT NULL CHECK(length(lease)=32),'
+            'demand BLOB NOT NULL CHECK(length(demand)=32),'
+            'block BLOB NOT NULL REFERENCES blocks(id),'
+            'generation INTEGER NOT NULL CHECK(generation>0));')
+        for schema in (original,self.H(domain,(ddl+extension).encode()),
+                       self.H('native-pq-task-branch-schema-v4',(ddl+extension).encode())):
+            with self.subTest(schema=schema.hex()):
+                with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
+                    database.execute(extension)
+                    database.execute("UPDATE metadata SET value=? WHERE key='schema'",(schema,))
+                self.summary['ledger_disk_bytes'] = sum(path.stat().st_size for path in self.folder.rglob('*') if path.is_file())
+                try:
+                    with self.assertRaisesRegex(ValueError,'durable schema additions/omissions/changes'):
+                        self.verify()
+                finally:
+                    with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
+                        database.execute('DROP TABLE local_pq_task_revocations_v4')
+                        database.execute("UPDATE metadata SET value=? WHERE key='schema'",(original,))
+                    self.summary['ledger_disk_bytes'] = sum(path.stat().st_size for path in self.folder.rglob('*') if path.is_file())
         self.verify()
 
     def test_shared_layout_table_and_resealed_domain_remain_out_of_scope(self):
@@ -699,6 +727,7 @@ class NativeDurableSchemaTests(unittest.TestCase):
             'trillionnium/crates/trnm-pon-node/src/pq_native_v1.rs',
             'trillionnium/crates/trnm-pon-node/src/pq_accounts_v2.rs',
             'trillionnium/crates/trnm-pon-node/src/pq_quota_v3.rs',
+            'trillionnium/crates/trnm-pon-node/src/pq_tasks_v4.rs',
             'trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_native_v1.rs',
             'trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs',
         )}
@@ -1174,7 +1203,8 @@ class NativeDurableSchemaTests(unittest.TestCase):
         changes = []
         for version,module,domain in ((1,'pq_native_v1','native-pq-transfer-branch-schema-v1'),
                                       (2,'pq_accounts_v2','native-pq-accounts-branch-schema-v2'),
-                                      (3,'pq_quota_v3','native-pq-quota-branch-schema-v3')):
+                                      (3,'pq_quota_v3','native-pq-quota-branch-schema-v3'),
+                                      (4,'pq_tasks_v4','native-pq-task-branch-schema-v4')):
             selector = 'settings.is_native_pq_v'+str(version)+'()'
             for part in (ddl,schema):
                 changes.append((part,self.replace_once(part,selector,'false')))
@@ -1196,14 +1226,14 @@ class NativeDurableSchemaTests(unittest.TestCase):
         node = 'trillionnium/crates/trnm-pon-node/src/'
         executor = 'trillionnium/crates/trnm-mvcc-fee/src/pon_executor/'
         changes = []
-        for version,module in ((1,'pq_native_v1'),(2,'pq_accounts_v2'),(3,'pq_quota_v3')):
+        for version,module in ((1,'pq_native_v1'),(2,'pq_accounts_v2'),(3,'pq_quota_v3'),(4,'pq_tasks_v4')):
             path = node+module+'.rs'; source = self.auxiliary[path]
             method = self.function_part(source,'is_native_pq_v'+str(version))
             changed = method[:method.index('{')+1]+' false }'
             changes.append((path,self.replace_once(source,method,changed)))
             changes.append((path,self.replace_once(source,'impl Settings {','#[cfg(any())]\nimpl Settings {')))
             changes.append((path,self.replace_once(source,'use trnm_mvcc_fee::','use forged_mvcc::')))
-        for module,method in (('pq_native_v1','enabled'),('pq_accounts_v2','enabled'),('pq_accounts_v2','quota_v3_enabled')):
+        for module,method in (('pq_native_v1','enabled'),('pq_accounts_v2','enabled'),('pq_accounts_v2','quota_v3_enabled'),('pq_accounts_v2','tasks_v4_enabled')):
             path = executor+module+'.rs'; source = self.auxiliary[path]
             part = self.function_part(source,method)
             changed = part[:part.index('{')+1]+' false }'
@@ -1211,6 +1241,14 @@ class NativeDurableSchemaTests(unittest.TestCase):
         path = executor+'pq_accounts_v2.rs'; source = self.auxiliary[path]
         changes.append((path,self.replace_once(source,'const SELECTOR: &str = "native_pq_accounts_profile";',
                                               'const SELECTOR: &str = "native_pq_profile";')))
+        part = self.function_part(source,'tasks_v4_enabled')
+        changes.append((path,self.replace_once(source,part,part.replace('AccountProfile::TasksV4','AccountProfile::QuotaV3'))))
+        path = node+'pq_accounts_v2.rs'; source = self.auxiliary[path]
+        part = self.function_part(source,'is_native_pq_v2')
+        changes.append((path,self.replace_once(source,part,self.replace_once(part,'&& !pq::tasks_v4_enabled(&self.app)',''))))
+        path = node+'pq_tasks_v4.rs'; source = self.auxiliary[path]
+        part = self.function_part(source,'is_native_pq_v4')
+        changes.append((path,self.replace_once(source,part,part.replace('pq::tasks_v4_enabled','pq::quota_v3_enabled'))))
         for path,changed in changes:
             with self.subTest(path=path,tail=changed[-40:]),self.assertRaisesRegex(ValueError,'durable (?:PQ (?:settings selector|selector provider owner|executor selector)|source item trnm_mvcc_fee)'):
                 self.extract(self.current,auxiliary={path:changed})
@@ -1243,7 +1281,8 @@ class NativeDurableSchemaTests(unittest.TestCase):
         bridge = self.held_io_parts()['open_selected'][2]
         for replacement in ('Some(crate::native_packet::Profile::Pq1)',
                             'Some(crate::native_packet::Profile::Pq2)',
-                            'Some(crate::native_packet::Profile::Pq3)'):
+                            'Some(crate::native_packet::Profile::Pq3)',
+                            'Some(crate::native_packet::Profile::Pq4)'):
             changed = self.replace_once(bridge,'pq_explicit: None,','pq_explicit: '+replacement+',')
             with self.subTest(profile=replacement),self.assertRaisesRegex(ValueError,'durable backend selector bridge'):
                 self.extract(self.replace_once(self.current,bridge,changed))
@@ -1270,8 +1309,11 @@ class NativeDurableSchemaTests(unittest.TestCase):
             ('Profile::Legacy => packet.encode_for_native_profile(false)',
              'Profile::Legacy => packet.encode_for_native_profile(true)'),
             ('if self.is_native_pq_v3()','if false'),
+            ('if self.is_native_pq_v4()','if false'),
+            ('Profile::Pq4 => Ok(crate::pq_tasks_v4::PqPacketV4::decode(raw)?.inner)',
+             'Profile::Pq4 => Ok(crate::pq_quota_v3::PqPacketV3::decode(raw)?.inner)'),
             ('} else {\n            Profile::Legacy','} else {\n            Profile::Pq1'),
-            ('Profile::Pq2 | Profile::Pq3 => HEADER_BYTES + 8','Profile::Pq2 | Profile::Pq3 => HEADER_BYTES'),
+            ('Profile::Pq2 | Profile::Pq3 | Profile::Pq4 => HEADER_BYTES + 8','Profile::Pq2 | Profile::Pq3 | Profile::Pq4 => HEADER_BYTES'),
         ]
         for before,after in mutations:
             changed = self.replace_once(source,before,after)
@@ -1280,7 +1322,7 @@ class NativeDurableSchemaTests(unittest.TestCase):
 
     def test_pq_packet_module_owner_cannot_be_cfg_path_or_alias_substituted(self):
         path = 'trillionnium/crates/trnm-pon-node/src/lib.rs'; source = self.auxiliary[path]
-        for declaration in ('mod native_packet;','pub mod pq_native_v1;','pub mod pq_accounts_v2;','pub mod pq_quota_v3;'):
+        for declaration in ('mod native_packet;','pub mod pq_native_v1;','pub mod pq_accounts_v2;','pub mod pq_quota_v3;','pub mod pq_tasks_v4;'):
             for replacement in ('#[cfg(any())]\n'+declaration,'#[path="other.rs"]\n'+declaration,
                                 'mod hidden { '+declaration+' }',declaration+'\n'+declaration):
                 with self.subTest(declaration=declaration,replacement=replacement),self.assertRaisesRegex(ValueError,'durable (?:PQ packet module owner|source item)'):
@@ -1303,7 +1345,7 @@ class NativeDurableSchemaTests(unittest.TestCase):
                 self.extract(self.current,auxiliary={path:changed})
 
     def test_ancestry_context_and_projected_header_share_the_selected_profile(self):
-        for selected in ('crate::native_packet::Profile::Legacy','crate::native_packet::Profile::Pq3'):
+        for selected in ('crate::native_packet::Profile::Legacy','crate::native_packet::Profile::Pq3','crate::native_packet::Profile::Pq4'):
             changed = self.replace_once(self.current,'pq_packet: self.settings.packet_profile(),','pq_packet: '+selected+',')
             with self.subTest(selected=selected),self.assertRaisesRegex(ValueError,'durable PQ ancestry context selection'):
                 self.extract(changed)
@@ -1326,7 +1368,8 @@ class NativeDurableSchemaTests(unittest.TestCase):
 
     def test_pq_namespace_cannot_enter_historical_or_current_legacy_ddl(self):
         for name in ('local_pq_statements_v1','local_pq_removed_statements_v2',
-                     'local_pq_statements_v3','LoCaL_Pq_Unknown'):
+                     'local_pq_statements_v3','local_pq_statements_v4',
+                     'local_pq_task_revocations_v4','LoCaL_Pq_Unknown'):
             extension = 'CREATE TABLE '+name+'(statement BLOB PRIMARY KEY);'
             v1 = ('const DDL: &str = "'+extension+'";'
                   'fn open(){hash(b"native-branch-schema-v1",&[DDL.as_bytes()]);}')

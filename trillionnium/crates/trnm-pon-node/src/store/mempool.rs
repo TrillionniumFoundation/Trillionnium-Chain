@@ -68,6 +68,19 @@ enum StatementQuery {
     InsertRemoved,
 }
 fn statement_sql(cfg: &Config, query: StatementQuery) -> &'static str {
+    if pq2::tasks_v4_enabled(cfg) {
+        return match query {
+        StatementQuery::CountActive =>"SELECT COUNT(*) FROM local_pq_statements_v4",
+        StatementQuery::CountRemoved =>"SELECT COUNT(*) FROM local_pq_removed_statements_v4",
+        StatementQuery::HasRemovedOrphan =>"SELECT EXISTS(SELECT 1 FROM local_pq_removed_statements_v4 s LEFT JOIN local_pool_removals r ON r.ordinal=s.removal_ordinal WHERE r.ordinal IS NULL)",
+        StatementQuery::ReadPosition =>"SELECT statement FROM local_pq_statements_v4 WHERE group_id=? AND position=? AND length(statement)=48",
+        StatementQuery::WasRemoved =>"SELECT EXISTS(SELECT 1 FROM local_pq_removed_statements_v4 WHERE statement=?)",
+        StatementQuery::FindStatement =>"SELECT group_id,position FROM local_pq_statements_v4 WHERE statement=?",
+        StatementQuery::InsertStatement =>"INSERT INTO local_pq_statements_v4 VALUES(?,?,?)",
+        StatementQuery::ReadCommitted =>"SELECT r.digest,r.raw,s.statement FROM local_pool_rows r JOIN local_pq_statements_v4 s USING(group_id,position) WHERE r.group_id=? AND r.position=?",
+        StatementQuery::InsertRemoved =>"INSERT INTO local_pq_removed_statements_v4 VALUES(?,?)",
+        };
+    }
     if pq2::quota_v3_enabled(cfg) {
         return match query {
         StatementQuery::CountActive =>"SELECT COUNT(*) FROM local_pq_statements_v3",
