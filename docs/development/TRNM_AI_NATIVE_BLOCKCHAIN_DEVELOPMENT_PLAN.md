@@ -4252,3 +4252,39 @@ include_bytes! binds the updated helper at compilation. Source and formatting
 checks alone do not qualify the complete native History/activation path.
 All original cloud gates must execute on the new exact tree; the d832 Clippy
 failure is retained rather than relabeled as success.
+
+
+### 2026-10-28 - Fresh current-path kernel reads preserve every History progress fence
+
+Exact d832759a21fab745d6e454f08a78e9309cae1b06 completed the real fixed-parent
+probe, provisioning and cleanup and all six lifeline methods plus three actual
+Node/controller-death boundaries. Its original three native campaigns all failed
+under the retained 30-second phase and fixed 25-percent verifier CPU ceiling.
+The baseline first round reached its first confirmation after 45.48 seconds;
+its 92 additional account-graph checks consumed 9.722 seconds of nested CPU.
+The original 22 History controls and nine material controls passed, while strict
+Clippy stopped the full gate; reorg/lifecycle followups were not credited. The
+8909154 followup repaired that lint and its four recent lanes passed, but its
+separate original native campaign still failed. All failed raw artifacts remain
+failed evidence, never a replacement for same-source successful native gates.
+
+Use a fresh-open, stack-buffered text reader for current kernel observations.
+Every original progress callback still reads the current boot identity, parent
+identity/mode, actual calling-thread membership and all five resource limits.
+File opening still checks the current path and current credentials on EVERY
+call. There is no descriptor, contents, permission, authority or quota cache.
+Short reads continue to real EOF, Interrupted retries, and late errors or invalid
+UTF-8 cannot qualify a successful prefix. The existing 128-byte quota recheck
+uses a 129-byte refusal sentinel; initial limit parsing, boot identity and
+thread membership retain their original accepted-length behavior. All original
+CPU, cancellation, revocation, resource and native validity checks remain.
+
+Five reader boundary controls cover exact/oversize input, short/interrupted
+reads, late I/O and UTF-8 errors, current replacement/removal/permission behavior,
+and a real distinct calling-thread procfs read. The four recent lanes require
+all eleven original kernel-boundary tests plus those five controls, retaining
+the original job budget. A separate Rust 1.95 local real procfs/sysfs diagnostic
+observed 669.88ms versus 329.47ms for 20,000 seven-file iterations; this isolated
+I/O result does not predict or qualify the original campaign. No 30-second
+window, 25-percent kernel ceiling, worker count, W1 semantics, signed domain,
+stored namespace, test requirement or native campaign budget is changed.

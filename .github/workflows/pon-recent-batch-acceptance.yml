@@ -4,6 +4,7 @@ on:
     paths:
       - trillionnium/crates/trnm-pon-node/src/store.rs
       - trillionnium/crates/trnm-pon-node/src/ingress.rs
+      - trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs
       - trillionnium/crates/trnm-pon-node/src/main.rs
       - trillionnium/crates/trnm-pon-node/src/operator_continuous_controller.rs
       - trillionnium/crates/trnm-pon-node/src/operator_continuous_controller/**
@@ -113,6 +114,12 @@ jobs:
         run: |
           set -euo pipefail
           cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee "$OUT/format.log"
+      - name: Require fresh kernel reads and all original host boundary controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib host_kernel_parent::kernel_parent:: -- --show-output --test-threads=1 2>&1 | tee "$OUT/host-kernel-current-reads.log"
+          grep -E '^test result: ok\. 16 passed; 0 failed; 0 ignored;' "$OUT/host-kernel-current-reads.log"
       - name: Require bounded ordinary record copies and complete history controls
         shell: bash
         run: |

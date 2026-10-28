@@ -60,6 +60,7 @@ mod kernel_parent {
     use super::KernelResourceSample;
     use std::{
         fs,
+        io::{self, Read},
         net::SocketAddr,
         os::unix::fs::{MetadataExt, PermissionsExt},
         path::{Path, PathBuf},
@@ -87,6 +88,53 @@ mod kernel_parent {
         cpu_period_us: u64,
         memory_bytes: u64,
         tasks: u64,
+    }
+
+    // Open the current path on EVERY invocation, with current credentials.
+    // No descriptor, content, permission or resource verdict is retained.
+    // Small procfs/kernfs values do not need read_to_string's size probing and
+    // growth loop. Still read to a real EOF, including after a short read;
+    // Interrupted is retried and every other read failure stays a failure.
+    // Only the existing quota recheck has a 128-byte ceiling. Boot identity,
+    // thread membership and initial limit parsing retain their original size
+    // behavior instead of imposing a new successful-input restriction.
+    fn read_fresh_kernel_text(
+        path: impl AsRef<Path>,
+        maximum: Option<usize>,
+    ) -> io::Result<String> {
+        read_kernel_text(&mut fs::File::open(path)?, maximum)
+    }
+
+    fn read_kernel_text(reader: &mut impl Read, maximum: Option<usize>) -> io::Result<String> {
+        let limit = maximum
+            .map(|maximum| {
+                maximum
+                    .checked_add(1)
+                    .ok_or_else(|| io::Error::new(io::ErrorKind::InvalidData, "kernel text limit"))
+            })
+            .transpose()?
+            .unwrap_or(usize::MAX);
+        let mut bytes = Vec::new();
+        let mut buffer = [0_u8; 4096];
+        loop {
+            let available = (limit - bytes.len()).min(buffer.len());
+            let count = match reader.read(&mut buffer[..available]) {
+                Ok(count) => count,
+                Err(error) if error.kind() == io::ErrorKind::Interrupted => continue,
+                Err(error) => return Err(error),
+            };
+            if count == 0 {
+                return String::from_utf8(bytes)
+                    .map_err(|error| io::Error::new(io::ErrorKind::InvalidData, error));
+            }
+            bytes.extend_from_slice(&buffer[..count]);
+            if maximum.is_some_and(|maximum| bytes.len() > maximum) {
+                return Err(io::Error::new(
+                    io::ErrorKind::InvalidData,
+                    "kernel text limit",
+                ));
+            }
+        }
     }
 
     fn numeric(text: &str, limit: u64) -> Option<u64> {
@@ -130,7 +178,7 @@ mod kernel_parent {
         // cgroup-v2 threaded subtree. /proc/self identifies the thread-group
         // leader and cannot attest the actual calling worker's CPU cgroup.
         // The kernel's /proc/thread-self resolves to the current TID.
-        let text = fs::read_to_string("/proc/thread-self/cgroup")
+        let text = read_fresh_kernel_text("/proc/thread-self/cgroup", None)
             .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_CONTEXT"))?;
         let mut entries = text.lines();
         let only = entries.next().ok_or("PUBLIC_HOST_KERNEL_CONTEXT")?;
@@ -209,7 +257,7 @@ mod kernel_parent {
     }
     impl KernelBudget {
         fn check(&self) -> Result<()> {
-            let now_boot = fs::read_to_string("/proc/sys/kernel/random/boot_id")
+            let now_boot = read_fresh_kernel_text("/proc/sys/kernel/random/boot_id", None)
                 .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_CONTEXT"))?;
             if now_boot.trim() != self.boot_id {
                 return Err("PUBLIC_HOST_KERNEL_REPLACED".into());
@@ -235,7 +283,7 @@ mod kernel_parent {
                 return Err("PUBLIC_HOST_KERNEL_CONTEXT".into());
             }
             let read = |name: &str| -> Result<String> {
-                let text = fs::read_to_string(self.parent.join(name))
+                let text = read_fresh_kernel_text(self.parent.join(name), Some(128))
                     .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_UNAVAILABLE"))?;
                 if text.len() > 128 {
                     return Err("PUBLIC_HOST_KERNEL_UNAVAILABLE".into());
@@ -273,7 +321,7 @@ mod kernel_parent {
             if !meta.is_dir() || meta.uid() != 0 || meta.permissions().mode() & 0o022 != 0 {
                 return Err("PUBLIC_HOST_KERNEL_PARENT".into());
             }
-            let boot = fs::read_to_string("/proc/sys/kernel/random/boot_id")
+            let boot = read_fresh_kernel_text("/proc/sys/kernel/random/boot_id", None)
                 .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_CONTEXT"))?;
             let budget = Self {
                 identity: (meta.dev(), meta.ino()),
@@ -287,7 +335,7 @@ mod kernel_parent {
                 },
             };
             let read = |name: &str| -> Result<String> {
-                fs::read_to_string(budget.parent.join(name))
+                read_fresh_kernel_text(budget.parent.join(name), None)
                     .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_UNAVAILABLE"))
             };
             let limits = validate_limits(
@@ -311,7 +359,7 @@ mod kernel_parent {
         pub fn resource_sample(&self) -> Result<KernelResourceSample> {
             self.check()?;
             let read = |name| -> Result<String> {
-                fs::read_to_string(self.parent.join(name))
+                read_fresh_kernel_text(self.parent.join(name), None)
                     .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_COUNTERS"))
             };
             let sample = resource_sample(
@@ -329,6 +377,155 @@ mod kernel_parent {
             Some(path) => KernelBudget::open(path).map(Some),
             None if !address.ip().is_loopback() => Err("PUBLIC_HOST_KERNEL_REQUIRED".into()),
             None => Ok(None), // Retained loopback-only development tools.
+        }
+    }
+
+    #[cfg(test)]
+    mod fresh_read_tests {
+        use super::*;
+
+        struct ShortReader<'a> {
+            remaining: &'a [u8],
+            consumed: usize,
+            interrupt: bool,
+            tail_error: Option<io::ErrorKind>,
+        }
+        impl Read for ShortReader<'_> {
+            fn read(&mut self, destination: &mut [u8]) -> io::Result<usize> {
+                if self.interrupt {
+                    self.interrupt = false;
+                    return Err(io::ErrorKind::Interrupted.into());
+                }
+                if self.remaining.is_empty() {
+                    return self.tail_error.map_or(Ok(0), |kind| Err(kind.into()));
+                }
+                let count = destination.len().min(self.remaining.len()).min(3);
+                destination[..count].copy_from_slice(&self.remaining[..count]);
+                self.remaining = &self.remaining[count..];
+                self.consumed += count;
+                Ok(count)
+            }
+        }
+
+        #[test]
+        fn exact_limit_requires_real_eof_and_overlimit_read_stays_bounded() {
+            for length in [0, 1, 127, 128, 129, 16_384] {
+                let value = vec![b'7'; length];
+                let mut reader = ShortReader {
+                    remaining: &value,
+                    consumed: 0,
+                    interrupt: false,
+                    tail_error: None,
+                };
+                let result = read_kernel_text(&mut reader, Some(128));
+                if length <= 128 {
+                    assert_eq!(result.unwrap().as_bytes(), value);
+                    assert_eq!(reader.consumed, length);
+                } else {
+                    assert_eq!(result.unwrap_err().kind(), io::ErrorKind::InvalidData);
+                    assert_eq!(reader.consumed, 129);
+                }
+            }
+            let mut exact_with_late_error = ShortReader {
+                remaining: &[b'7'; 128],
+                consumed: 0,
+                interrupt: false,
+                tail_error: Some(io::ErrorKind::PermissionDenied),
+            };
+            assert_eq!(
+                read_kernel_text(&mut exact_with_late_error, Some(128))
+                    .unwrap_err()
+                    .kind(),
+                io::ErrorKind::PermissionDenied
+            );
+        }
+
+        #[test]
+        fn short_reads_and_interruption_preserve_unbounded_original_text() {
+            let value = "0::/trnmponpublic.slice/".to_owned() + &"a".repeat(9000) + ".service\n";
+            let mut reader = ShortReader {
+                remaining: value.as_bytes(),
+                consumed: 0,
+                interrupt: true,
+                tail_error: None,
+            };
+            assert_eq!(read_kernel_text(&mut reader, None).unwrap(), value);
+            assert_eq!(reader.consumed, value.len());
+        }
+
+        #[test]
+        fn invalid_utf8_and_io_errors_never_become_a_successful_prefix() {
+            for maximum in [None, Some(128)] {
+                let mut invalid = &b"25000 100000\n\xff"[..];
+                assert_eq!(
+                    read_kernel_text(&mut invalid, maximum).unwrap_err().kind(),
+                    io::ErrorKind::InvalidData
+                );
+                for prefix in [&b""[..], &b"25000 100000\n"[..]] {
+                    let mut failed = ShortReader {
+                        remaining: prefix,
+                        consumed: 0,
+                        interrupt: false,
+                        tail_error: Some(io::ErrorKind::PermissionDenied),
+                    };
+                    assert_eq!(
+                        read_kernel_text(&mut failed, maximum).unwrap_err().kind(),
+                        io::ErrorKind::PermissionDenied
+                    );
+                }
+            }
+        }
+
+        #[test]
+        fn every_call_reopens_replaced_removed_and_permission_changed_paths() {
+            let directory = tempfile::tempdir().unwrap();
+            let path = directory.path().join("current");
+            fs::write(&path, "25000 100000\n").unwrap();
+            assert_eq!(
+                read_fresh_kernel_text(&path, Some(128)).unwrap(),
+                "25000 100000\n"
+            );
+            fs::rename(&path, directory.path().join("old")).unwrap();
+            fs::write(&path, "50000 100000\n").unwrap();
+            assert_eq!(
+                read_fresh_kernel_text(&path, Some(128)).unwrap(),
+                "50000 100000\n"
+            );
+            fs::set_permissions(&path, fs::Permissions::from_mode(0o0)).unwrap();
+            // The kernel decides access for the ACTUAL current credentials.
+            // A privileged test process may retain DAC override; compare the
+            // original fresh-open behavior rather than inventing a denial.
+            let original = fs::read_to_string(&path).map_err(|error| error.kind());
+            let observed = read_fresh_kernel_text(&path, Some(128)).map_err(|error| error.kind());
+            assert_eq!(observed, original);
+            fs::remove_file(&path).unwrap();
+            assert_eq!(
+                read_fresh_kernel_text(&path, Some(128)).unwrap_err().kind(),
+                io::ErrorKind::NotFound
+            );
+            std::os::unix::fs::symlink(directory.path().join("old"), &path).unwrap();
+            assert_eq!(
+                read_fresh_kernel_text(&path, Some(128)).unwrap(),
+                "25000 100000\n"
+            );
+        }
+
+        #[test]
+        fn actual_native_thread_and_boot_reads_match_original_current_paths() {
+            std::thread::spawn(|| {
+                let thread = fs::read_link("/proc/thread-self").unwrap();
+                let current = Path::new("/proc").join(thread).join("cgroup");
+                assert_eq!(
+                    read_fresh_kernel_text("/proc/thread-self/cgroup", None).unwrap(),
+                    fs::read_to_string(current).unwrap()
+                );
+                assert_eq!(
+                    read_fresh_kernel_text("/proc/sys/kernel/random/boot_id", None).unwrap(),
+                    fs::read_to_string("/proc/sys/kernel/random/boot_id").unwrap()
+                );
+            })
+            .join()
+            .unwrap();
         }
     }
 
