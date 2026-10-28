@@ -84,6 +84,7 @@ LLM_INITIAL_V2_BYTE_TESTS = (
     '    python3 scripts/test_llm_runtime_parent_step_v2.py\n'
     '    python3 scripts/test_llm_runtime_parent_step_task_v2.py\n'
     '    python3 scripts/test_llm_answer_eos_research_v3.py\n'
+    '    python3 scripts/test_llm_answer_eos_task_research_v4.py\n'
 )
 
 MODEL_RUNTIME_TRIGGER_PATHS = '''      - config/pon/**
@@ -275,6 +276,7 @@ PROTOCOL_CONTRACT_BLOCK = '''    python3 scripts/ci/run_from_zero_native.py --ou
     python3 scripts/test_llm_runtime_parent_step_v2.py
     python3 scripts/test_llm_runtime_parent_step_task_v2.py
     python3 scripts/test_llm_answer_eos_research_v3.py
+    python3 scripts/test_llm_answer_eos_task_research_v4.py
     python3 formal/pon-nakamoto-v1/test_reward_budget_oracle.py
     python3 formal/pon-nakamoto-v1/test_model_attribution.py
     python3 formal/pon-nakamoto-v1/test_model_evolution_oracle.py -v

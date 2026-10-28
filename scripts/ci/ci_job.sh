@@ -72,6 +72,7 @@ case "${1:?required job}" in
     python3 scripts/test_llm_runtime_parent_step_v2.py
     python3 scripts/test_llm_runtime_parent_step_task_v2.py
     python3 scripts/test_llm_answer_eos_research_v3.py
+    python3 scripts/test_llm_answer_eos_task_research_v4.py
     python3 formal/pon-nakamoto-v1/test_reward_budget_oracle.py
     python3 formal/pon-nakamoto-v1/test_model_attribution.py
     python3 formal/pon-nakamoto-v1/test_model_evolution_oracle.py -v

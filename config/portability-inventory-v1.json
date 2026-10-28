@@ -616,6 +616,9 @@
       "supporting_sources": [
         "scripts/llm_runtime_pilot.py",
         "scripts/llm_answer_eos_research_v3.py",
+        "scripts/llm_answer_eos_task_research_v4.py",
+        "scripts/run_llm_task_research_v4.py",
+        "scripts/test_llm_answer_eos_task_research_v4.py",
         "scripts/test_llm_answer_eos_research_v3.py",
         "scripts/test_llm_answer_eos_loss_v3.py",
         "scripts/llm_runtime_host_scope.py",

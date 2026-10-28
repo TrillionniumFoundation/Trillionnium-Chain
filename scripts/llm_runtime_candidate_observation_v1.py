@@ -19,8 +19,20 @@ import llm_runtime_pilot as runtime
 INPUT = 'llm-runtime-v2-candidate-observation-input-v1'
 ACTUAL = 'llm-runtime-v2-candidate-observation-actual-v1'
 RESULT = 'llm-runtime-v2-candidate-observation-result-v1'
+INPUT_V4 = 'llm-runtime-v4-candidate-observation-input-v1'
+ACTUAL_V4 = 'llm-runtime-v4-candidate-observation-actual-v1'
+RESULT_V4 = 'llm-runtime-v4-candidate-observation-result-v1'
 SCOPE = 'unsigned-candidate-evaluation-not-independent-qualification-or-ordinary-use'
 REQUESTS, DECODE_STEPS = 8, 64
+
+
+def _version(value):
+    runtime.require(value.get('schema') in (INPUT, INPUT_V4), 'CANDIDATE_OBSERVATION_SCOPE')
+    return 'v4' if value['schema'] == INPUT_V4 else 'v2'
+
+
+def _actual_schema(value):
+    return ACTUAL_V4 if _version(value) == 'v4' else ACTUAL
 
 
 def _sources(profile):
@@ -38,18 +50,21 @@ def _terminal(result, budget):
 
 def _producer(value):
     directory = Path(value['training_directory'])
-    training = step.read_object(directory / 'parent-step-input-v2.json')
+    version = _version(value)
+    training = step.read_object(directory / ('parent-step-input-' + version + '.json'))
     profile = training['initial_setup']['profile']
-    runtime.require(profile in (producer.PROFILE, producer.NEW_TASK_PROFILE) and
+    allowed = ((producer.task_research.PROFILE,) if version == 'v4' else
+               (producer.PROFILE, producer.NEW_TASK_PROFILE))
+    runtime.require(profile in allowed and producer.version(training) == version and
         value['source'] == _sources(profile), 'CANDIDATE_OBSERVATION_SOURCE')
     checked = producer.preflight(training)
     plan, _, _, _, _, _, _ = checked
-    raw = step.parent.read_regular(directory / 'parent-step-result-v2.json', step.MAX_INPUT)
+    raw = step.parent.read_regular(directory / ('parent-step-result-' + version + '.json'), step.MAX_INPUT)
     runtime.require(hashlib.sha256(raw).hexdigest() == value['training_result_sha256'],
                     'CANDIDATE_OBSERVATION_RESULT_PIN')
     result = json.loads(raw, object_pairs_hook=runtime.unique)
     step.closed(result, 'schema scope input attempt_binding supervisor outcome completion_verified actual_receipt_sha256 flags')
-    runtime.require(result['schema'] == producer.RESULT and result['scope'] == step.SCOPE and
+    runtime.require(result['schema'] == producer.named(training, 'llm-runtime-parent-step-result') and result['scope'] == step.SCOPE and
         result['input'] == value['training_input_digest'] == runtime.identity(training) and
         result['attempt_binding'] == producer.binding(training) and result['outcome'] == 'success' and
         result['completion_verified'] is True and result['flags'] == step.FALSES and
@@ -63,7 +78,7 @@ def _producer(value):
     _terminal(result['supervisor'], plan['training_budget'])
     runtime.require(producer.verify_completion(training) == result['actual_receipt_sha256'] ==
         value['actual_training_receipt_sha256'], 'CANDIDATE_OBSERVATION_TRAINING_RECEIPT')
-    record = step.parent.read_regular(directory / 'execution/parent-candidate-v2.json', step.MAX_INPUT)
+    record = step.parent.read_regular(directory / ('execution/parent-candidate-' + version + '.json'), step.MAX_INPUT)
     runtime.require(hashlib.sha256(record).hexdigest() == value['candidate_record_sha256'],
                     'CANDIDATE_OBSERVATION_RECORD_PIN')
     actual = step.parent.read_regular(directory / 'execution/actual-receipt.json', step.MAX_INPUT)
@@ -84,7 +99,7 @@ def _producer(value):
 def _preflight(value):
     step.closed(value, 'schema scope operation attempt_id source training_directory training_input_digest '
         'training_result_sha256 candidate_record_sha256 actual_training_receipt_sha256 parent candidate plan_digest output flags')
-    runtime.require(value['schema'] == INPUT and value['scope'] == SCOPE and value['operation'] == 'evaluate' and
+    runtime.require(value['schema'] in (INPUT, INPUT_V4) and value['scope'] == SCOPE and value['operation'] == 'evaluate' and
         value['flags'] == step.FALSES and all(v is False for v in value['flags'].values()),
         'CANDIDATE_OBSERVATION_SCOPE')
     for name in ('training_directory', 'output'):
@@ -114,7 +129,7 @@ def _child(args):
     runtime.require(directory.is_dir() and all(entry.name == 'process.log' and not entry.is_symlink()
         for entry in directory.iterdir()), 'CANDIDATE_OBSERVATION_ALREADY_USED')
     observer = runtime.Observer(directory, plan['backend'])
-    report = dict(schema=ACTUAL, scope=SCOPE, input=runtime.identity(value), source=value['source'],
+    report = dict(schema=_actual_schema(value), scope=SCOPE, input=runtime.identity(value), source=value['source'],
         training_input_digest=value['training_input_digest'], parent=value['parent'], candidate=value['candidate'],
         plan_digest=value['plan_digest'], **step.FALSES)
     begin = time.monotonic_ns()
@@ -175,7 +190,7 @@ def _verify_observation(value):
         ' '.join(step.FALSES))
     expected_link = training['initial_setup'].get('task_link')
     expected_loaded = expected_link['derived_contract'] if expected_link else value['parent']['contract']
-    runtime.require(report['schema'] == ACTUAL and report['scope'] == SCOPE and
+    runtime.require(report['schema'] == _actual_schema(value) and report['scope'] == SCOPE and
         report['input'] == runtime.identity(value) and report['source'] == value['source'] and
         all(report[name] == value[name] for name in ('training_input_digest', 'parent', 'candidate', 'plan_digest')) and
         report['outcome'] == 'success' and report['actual_loaded_contract'] == expected_loaded and
@@ -210,10 +225,12 @@ def _verify_observation(value):
 
 def _run(args):
     directory = Path(args.training_directory).resolve()
-    training = step.read_object(directory / 'parent-step-input-v2.json')
-    result = step.read_object(directory / 'parent-step-result-v2.json')
+    version = getattr(args, 'producer_version', 'v2')
+    runtime.require(version in ('v2', 'v4'), 'CANDIDATE_OBSERVATION_SOURCE')
+    training = step.read_object(directory / ('parent-step-input-' + version + '.json'))
+    result = step.read_object(directory / ('parent-step-result-' + version + '.json'))
     output = Path(args.output).resolve()
-    value = dict(schema=INPUT, scope=SCOPE, operation='evaluate', attempt_id=args.attempt_id,
+    value = dict(schema=INPUT_V4 if version == 'v4' else INPUT, scope=SCOPE, operation='evaluate', attempt_id=args.attempt_id,
         source=_sources(training['initial_setup']['profile']), training_directory=str(directory),
         training_input_digest=runtime.identity(training), training_result_sha256=args.expected_training_result_sha256,
         candidate_record_sha256=args.expected_candidate_record_sha256,
@@ -229,7 +246,7 @@ def _run(args):
     result = runtime.supervise([sys.executable, str(Path(__file__).resolve()), '_child', '--input', str(frozen),
         '--expected-input', runtime.identity(value)], value['output'], checked[0]['inference_budget'],
         exit_observation=checked[0].get('exit_observation'))
-    completion = dict(schema=RESULT, scope=SCOPE, input=runtime.identity(value), supervisor=result,
+    completion = dict(schema=RESULT_V4 if version == 'v4' else RESULT, scope=SCOPE, input=runtime.identity(value), supervisor=result,
         outcome='failed', completion_verified=False, actual_observation_sha256=None, flags=step.FALSES)
     try:
         _terminal(result, checked[0]['inference_budget'])
@@ -243,6 +260,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest='operation', required=True)
     observe = commands.add_parser('evaluate')
+    observe.add_argument('--producer-version', choices=('v2', 'v4'), default='v2')
     for name in ('training-directory', 'expected-training-result-sha256', 'expected-candidate-record-sha256',
                  'expected-contract', 'expected-parent-adapter', 'expected-parent-file-sha256',
                  'expected-candidate-adapter', 'expected-candidate-file-sha256', 'output', 'attempt-id'):
