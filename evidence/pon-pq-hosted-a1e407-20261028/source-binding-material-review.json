@@ -1,0 +1,42 @@
+{
+  "source": "a1e40747746772d1326bb3e656aec4ba10440147",
+  "tree": "f90cd9f63fce5fb785061419c9cb12b57ae24873",
+  "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+  "original_workflow_sha256": "e946e2582d310f7e488ec2750b73f685d3891f137fc0861385c79bef70c8dc87",
+  "updated_workflow_sha256": "6a3422b7a34113a5ebfbd87655f23538684c5a80c8a56b64b2f0a5056f32ca9f",
+  "existing_guard_count": 16,
+  "changed_guard_count": 4,
+  "only_four_reviewed_hash_literals_changed": true,
+  "runtime_changes_in_this_followup": false,
+  "budgets_assertions_commands_and_lanes_unchanged": true,
+  "runtime_qualification_by_pin_check": false,
+  "reviewed_changes": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "old": "fadc0f4c11bbead2925102cb1b18a49156d709d5",
+      "new": "1ef412b273803724294a0223a7b9f4c3e3ddde74",
+      "review": "Explicit NPQ1/2/3 constructors and isolated DDL/schema domains; selected packet codecs and projected-header lengths; state grammar and current storage-schema readback; timestamp propagation for actual block/proposal execution. Legacy constructor requires Legacy profile. No packet fallback is added; current caller/owner bindings remain checked."
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+      "old": "d015587f5a52726fc6322efab4385d40b6e61a05",
+      "new": "c5d0f2c2ee0bbd633effd30be3c83fb76a2325fb",
+      "review": "Authenticated cold packet reader uses the exact Settings-selected decoder. Legacy selection still dispatches Packet::decode; NPQ profiles require their own exact decoder."
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_fixed_blob_tests.rs",
+      "old": "cecb8a984c02ffca7590e69c4392223ea748b40f",
+      "new": "cfa8dc696e160361da53fc14091d48a3b891cb90",
+      "review": "Only imports Packet explicitly after it stopped arriving through the parent wildcard import. Existing test function and assertion ASTs have no body changes."
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs",
+      "old": "252f2c96cf162f84636a4404b702a67caa4a44fe",
+      "new": "f9ef6b41f68b1ff8aeb29ac7fe22add687bc13db",
+      "review": "Runs PQ1 state-membership/key/authority validation before cached state-root arithmetic. The validator returns without changing legacy state when the PQ1 profile is not enabled. No SQL or acceptance verdict cache is introduced."
+    }
+  ],
+  "unaffected_guards": 12,
+  "original_failed_run": 40611087330,
+  "original_read_job": 122562499932
+}

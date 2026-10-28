@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "python3",
+    "scripts/ci/test_native_pq_quota_v3_research.py"
+  ],
+  "returncode": 0,
+  "wall_seconds": 0.11083016300108284,
+  "cargo_home": "/workspace/scratch/3d4ec372c488/pq-quota-cargo-home",
+  "stdout": "",
+  "stderr": "....\n----------------------------------------------------------------------\nRan 4 tests in 0.003s\n\nOK\n"
+}

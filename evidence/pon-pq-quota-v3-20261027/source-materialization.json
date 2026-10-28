@@ -1,0 +1,992 @@
+[
+  {
+    "path": ".githooks/pre-commit",
+    "object": "2148e91174f7b80ee88b60a193be8dd2648ec519",
+    "available": true,
+    "bytes": 86
+  },
+  {
+    "path": ".githooks/pre-push",
+    "object": "fe4beecc9317e3a6e6137b0fabc7803a7de5cfff",
+    "available": true,
+    "bytes": 94
+  },
+  {
+    "path": "docs/architecture/CI_EXECUTION_CONTRACT.md",
+    "object": "455df83bd95ea475230246b1fd5c91101ec7bb40",
+    "available": true,
+    "bytes": 48310
+  },
+  {
+    "path": "docs/architecture/CURRENT_IMPLEMENTATION.md",
+    "object": "d70be364beee9f4727499ff92ab0c76396bad9d6",
+    "available": true,
+    "bytes": 9271
+  },
+  {
+    "path": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+    "object": "36528816304926295ac24b3cc01b3d4a192e19bb",
+    "available": true,
+    "bytes": 58044
+  },
+  {
+    "path": "docs/modules/M00_FOUNDATION_PROTOCOL_TECHNICAL_SPEC_V1.md",
+    "object": "8910dd39aca500fb2158e4708d4d348e7334a1fa",
+    "available": true,
+    "bytes": 9973
+  },
+  {
+    "path": "docs/modules/M01_CRYPTO_IDENTITY_TECHNICAL_SPEC_V1.md",
+    "object": "da5b38557d4c8650572a1a2e659fb76b8497d665",
+    "available": true,
+    "bytes": 10724
+  },
+  {
+    "path": "docs/modules/M02_CONSENSUS_CORE_TECHNICAL_SPEC_V1.md",
+    "object": "d0328aa749f9a327c0b27a78027990eaa23135a2",
+    "available": true,
+    "bytes": 8731
+  },
+  {
+    "path": "docs/modules/M03_SAFETY_SIGNER_TECHNICAL_SPEC_V1.md",
+    "object": "863dbaa972cb0466929007fb696f696b637466d0",
+    "available": true,
+    "bytes": 12196
+  },
+  {
+    "path": "docs/modules/M04_P2P_TECHNICAL_SPEC_V1.md",
+    "object": "21f0d6a1fb1231a1475d3ab65a066de80cbb18dd",
+    "available": true,
+    "bytes": 12201
+  },
+  {
+    "path": "docs/modules/M05_TX_LIFECYCLE_TECHNICAL_SPEC_V1.md",
+    "object": "3cf3d8db7ed686958d13940b5f886323d4deea4f",
+    "available": true,
+    "bytes": 6564
+  },
+  {
+    "path": "docs/modules/M06_EXECUTION_TECHNICAL_SPEC_V1.md",
+    "object": "f9d9e8048d56a5c97edbfe8d5b44407eab160712",
+    "available": true,
+    "bytes": 26963
+  },
+  {
+    "path": "docs/modules/M07_STATE_STORAGE_TECHNICAL_SPEC_V1.md",
+    "object": "5e564bec67dd9b8d73c02ab5a31c6472f3825574",
+    "available": true,
+    "bytes": 16251
+  },
+  {
+    "path": "docs/modules/M08_FINALITY_RECOVERY_TECHNICAL_SPEC_V1.md",
+    "object": "a579a25fa74daf190f7780cd8a2ef822c9ed9146",
+    "available": true,
+    "bytes": 12723
+  },
+  {
+    "path": "docs/modules/M09_DATA_AVAILABILITY_TECHNICAL_SPEC_V1.md",
+    "object": "1c7f70378458067541cc98bf77036dca1eaed5d5",
+    "available": true,
+    "bytes": 11738
+  },
+  {
+    "path": "docs/modules/M10_AGENT_MARKET_TECHNICAL_SPEC_V1.md",
+    "object": "a8879467bd5bbf990001cbf0336fdc88a2a22562",
+    "available": true,
+    "bytes": 20747
+  },
+  {
+    "path": "docs/modules/M11_VERIFICATION_CHALLENGE_TECHNICAL_SPEC_V1.md",
+    "object": "040a593ac52e4bd2953e64badb7e165fbd517a28",
+    "available": true,
+    "bytes": 14297
+  },
+  {
+    "path": "docs/modules/M12_SETTLEMENT_TECHNICAL_SPEC_V1.md",
+    "object": "d3831a1cd3a1e0bd249dec754c54accbb5ad52f4",
+    "available": true,
+    "bytes": 9420
+  },
+  {
+    "path": "docs/modules/M13_STATE_SYNC_MIGRATION_TECHNICAL_SPEC_V1.md",
+    "object": "3376d5290be0d9b1922dabc12fb6aea58b7e064c",
+    "available": true,
+    "bytes": 7774
+  },
+  {
+    "path": "docs/modules/M14_CLIENT_PLATFORM_TECHNICAL_SPEC_V1.md",
+    "object": "1ba1f28956308cb77f233b5c395658f2f75d50bd",
+    "available": true,
+    "bytes": 8837
+  },
+  {
+    "path": "docs/modules/M15_NODE_RELEASE_TECHNICAL_SPEC_V1.md",
+    "object": "787fdaa2f72ecffcdf939745202e07ce82eb4eac",
+    "available": true,
+    "bytes": 27284
+  },
+  {
+    "path": "docs/modules/M16_CONTROL_PLANE_TECHNICAL_SPEC_V1.md",
+    "object": "dab4becf7216d6d5eb6d0e529cbc0b8be59f88af",
+    "available": true,
+    "bytes": 5021
+  },
+  {
+    "path": "docs/modules/M17_EVIDENCE_SECURITY_TECHNICAL_SPEC_V1.md",
+    "object": "76742999e366be9fcdcc46e3437d364707cc6571",
+    "available": true,
+    "bytes": 16171
+  },
+  {
+    "path": "docs/modules/README.md",
+    "object": "0bd879b15d2b1b925b4d63f935399d93afbbf895",
+    "available": true,
+    "bytes": 12464
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/CONSENSUS.md",
+    "object": "f67905813b819ba19a97dcacb357aac97b8c9318",
+    "available": true,
+    "bytes": 9306
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/ECONOMICS.md",
+    "object": "c565404cabf3c5448117718d73bf59afde0baee7",
+    "available": true,
+    "bytes": 11703
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/MODEL_COMMONS.md",
+    "object": "30e3bca4d035dcac6ee2a4cb8bb8d6046893e273",
+    "available": true,
+    "bytes": 9815
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/NEURAL_WORK.md",
+    "object": "d4bc2cac3e61f1f796b6826907b1ed3aea97feb0",
+    "available": true,
+    "bytes": 8550
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/README.md",
+    "object": "b3eb30a52e4e81358d4e07dd3cbde8f9cbc61dfa",
+    "available": true,
+    "bytes": 7228
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/RECOVERY_MIGRATION.md",
+    "object": "6b1a593666baa2c3acff6584f18aa76a3f9cd77e",
+    "available": true,
+    "bytes": 6211
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/REFERENCES.md",
+    "object": "ad80d0d62f91f477705869473ef82613a1debf99",
+    "available": true,
+    "bytes": 2471
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/SECURITY_ACCEPTANCE.md",
+    "object": "2493c95ca6ac4cbf9aadf9a5747b76e9aa24c941",
+    "available": true,
+    "bytes": 11070
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/ACCOUNT_ARCHIVE_PROTOTYPE_V1.md",
+    "object": "b8a24526d004eed82151c59d8d9c675f423cf873",
+    "available": true,
+    "bytes": 54743
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md",
+    "object": "e87018d4c32a876aa5c81a77bc1a13a9dfa8675d",
+    "available": true,
+    "bytes": 91013
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/ARCHITECTURE_COMPARISON_V1.md",
+    "object": "c30171b926aff148386e65ddbad32a4a7c6b1e2f",
+    "available": true,
+    "bytes": 13630
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/AUTHENTICATED_STATE_ARCHIVE_V1.md",
+    "object": "1f4e939290fedab7dd279fcab74aedfc2922ae1d",
+    "available": true,
+    "bytes": 13897
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/CELL_P2P_V1.md",
+    "object": "a9853a16b69d315b2b887ddb30883b7ca03538d4",
+    "available": true,
+    "bytes": 42006
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/CHECKPOINT_TILE_MATERIAL_V1.md",
+    "object": "39044f6d317b2bf44ccdb8fcaec6070e4c3645a7",
+    "available": true,
+    "bytes": 7724
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/CHECKPOINT_TILE_PROVENANCE_V1.md",
+    "object": "b2df73d0fa409c654775480a65528367daec9565",
+    "available": true,
+    "bytes": 10454
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/CHECKPOINT_TILE_TASK_V1.md",
+    "object": "3de43b6cacad340f34a482881e04e6f789d48fa5",
+    "available": true,
+    "bytes": 6694
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/CONSUMER_CONTEXT_V1.md",
+    "object": "5afc68358202bc74af6aaa1380c1389275012c8b",
+    "available": true,
+    "bytes": 4689
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/CONTINUITY_V1.md",
+    "object": "d9800aa1b8033ed36263ec5d3d1172a93602e225",
+    "available": true,
+    "bytes": 21660
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/CONTINUOUS_MINING_V1.md",
+    "object": "21e62223bc42061f89e30fd264b717de0feaaef2",
+    "available": true,
+    "bytes": 15107
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/DEPENDENCY_SECURITY.md",
+    "object": "d2637a45c34c914c32fdc04faebdc728e87125af",
+    "available": true,
+    "bytes": 3125
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/DEPLETED_PUBLIC_OVERLAP.md",
+    "object": "c40a5a3d96d939bdefa83032f2641e22a718c687",
+    "available": true,
+    "bytes": 6450
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/DERIVED_STATE_COMMITMENT.md",
+    "object": "193ddac377f56f7310f20fe1d17c3c3d88e1dd80",
+    "available": true,
+    "bytes": 22869
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/DISTRIBUTED_PIPELINE.md",
+    "object": "3aa2b6ed9eb46461164125f95d54c30928c77e5f",
+    "available": true,
+    "bytes": 13268
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/EVALUATION_BUNDLE.md",
+    "object": "5ee1ec5ebe68844d6a61e94a09dc00a10dd26e45",
+    "available": true,
+    "bytes": 9384
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/EVALUATION_CONFIRMED_OBSERVATION_V1.md",
+    "object": "f3ba076884038e2e61b8f87d584f7d7581ed4124",
+    "available": true,
+    "bytes": 7391
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/EVALUATION_CONFIRMED_ROUND_OBSERVATION_V2.md",
+    "object": "6b3b9c18a5ee7de3e54c216160e93de45405d7ed",
+    "available": true,
+    "bytes": 6073
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/EXECUTION_PARALLEL.md",
+    "object": "4ab60df2136f76098ebd05a570e5ad7a617cfa13",
+    "available": true,
+    "bytes": 16228
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/HEPTA_HANDOFF.md",
+    "object": "9319672af20c814af2ef17f9c95e0697c352621f",
+    "available": true,
+    "bytes": 32559
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/HISTORY_STATE_RESOURCE_BOUNDS_V1.md",
+    "object": "352e96fb2bd88f2aaba89fadafc88b3db94b7170",
+    "available": true,
+    "bytes": 46127
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/INTEGER_LINEAR_NORMAL_FORM_COMPONENT_V1.md",
+    "object": "3612628534df9d879e458f2117cc9c62855e83ff",
+    "available": true,
+    "bytes": 6440
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/INTERNAL_ERROR_IDENTITY.md",
+    "object": "6e6905ad3003886f61cedc940c0fec0f5c360739",
+    "available": true,
+    "bytes": 11949
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/LEDGER_WIRE.md",
+    "object": "c841f87b6c8130df7def52875ebcfbf1856d637f",
+    "available": true,
+    "bytes": 18589
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/LLM_ADAPTER_CONTRACT.md",
+    "object": "a3cdcab9ce3a0e396c3d326a94519e6f64fd6a99",
+    "available": true,
+    "bytes": 15572
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/LOCAL_MEMPOOL_CACHE_V2.md",
+    "object": "2b2a8664435b8e57e3289e9c291023fbfda1dc03",
+    "available": true,
+    "bytes": 6498
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/LOCAL_MEMPOOL_LIFECYCLE.md",
+    "object": "60dc866375042005a97f11ae9a6b6b008418ca85",
+    "available": true,
+    "bytes": 25884
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/MODEL_ATTRIBUTION.md",
+    "object": "eaa7ac0179c675c266796c733dad6eaf6a2ee16a",
+    "available": true,
+    "bytes": 8219
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/MODEL_EVALUATION.md",
+    "object": "f71c9f6070fc7c599a73b288202f8e39371b60be",
+    "available": true,
+    "bytes": 19909
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/MODEL_GENERATION_CONTEXT_SEQUENCE_V2.md",
+    "object": "b76dcd82d4f69c8872ad2fda721fcff700433e7e",
+    "available": true,
+    "bytes": 6221
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/MODEL_GENERATION_SEQUENCE.md",
+    "object": "db84a04cc7b3991489fb07a0e1b45b1016a0fa03",
+    "available": true,
+    "bytes": 3182
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/MODEL_OPERATIONS_ACCEPTANCE_V1.md",
+    "object": "b91afb434dc944bc2f4db994a788930dab7f8c5a",
+    "available": true,
+    "bytes": 19016
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/MONETARY_OBLIGATION_RANGES_V1.md",
+    "object": "38465d32842850627ab5f15caa74398e45dec489",
+    "available": true,
+    "bytes": 12598
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/NATIVE_ACCOUNT_GROWTH_V2.md",
+    "object": "d7303faa7f56b4fcc7eada2297a5d50cd390f80f",
+    "available": true,
+    "bytes": 47163
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/NATIVE_ANCESTRY_INDEX.md",
+    "object": "e0fcc04ab89c04eed115eec8cbbe0528bd090df5",
+    "available": true,
+    "bytes": 9920
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/NATIVE_AUTHENTICATED_STORAGE_V1.md",
+    "object": "ea9139681c7a864471e44ee2794e3b700638015c",
+    "available": true,
+    "bytes": 35064
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/NATIVE_EVALUATION_QUORUM_V2.md",
+    "object": "c496d5fcc507102a40f64881a22bcc75f789e898",
+    "available": true,
+    "bytes": 15149
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/NATIVE_INTEGER_FACTOR_CANDIDATE_V2.md",
+    "object": "3d4ad25b6776c5076c11814398a58aabb1ec4a02",
+    "available": true,
+    "bytes": 11740
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/NATIVE_MODEL_COMPOSITION_V4.md",
+    "object": "5f1c2b4d63f21fc8b89200fb20fedd71ebc9b4c0",
+    "available": true,
+    "bytes": 14918
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/NATIVE_MODEL_EVIDENCE_V3.md",
+    "object": "b5f7254fd611bb13d9283d2b75b135715e8c46af",
+    "available": true,
+    "bytes": 12380
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/NATIVE_PQ_TRANSFER_V1.md",
+    "object": "d705541b98990506cc546e7f7fa107e3b3d2c4e1",
+    "available": true,
+    "bytes": 10351
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/NATIVE_SNAPSHOT_ACCELERATION.md",
+    "object": "3d46f4e5a88390041bd2f1d2ca7e85bd3b3c1ea9",
+    "available": true,
+    "bytes": 4736
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/NETWORK_CLIENT.md",
+    "object": "b1d49ed44dd479507e9123a1ce24db265fbfc979",
+    "available": true,
+    "bytes": 25842
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/OPERATOR_ACTORS_V1.md",
+    "object": "0416c4f40f55441693137bc65b7c74bfb6b1d858",
+    "available": true,
+    "bytes": 8837
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/OPERATOR_POOL_FIXTURE.md",
+    "object": "3d9eff527ae0d90473af61184c1c3f2b9773e26c",
+    "available": true,
+    "bytes": 4086
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/PERFORMANCE_ACCEPTANCE.md",
+    "object": "d23b451a4cc19021f62d8b2751ed5b9f4e7a066a",
+    "available": true,
+    "bytes": 53120
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/PINNED_PEER_POLLING.md",
+    "object": "74338826a51e798cf389135de0415dca20c0891d",
+    "available": true,
+    "bytes": 10676
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/PQ_NATIVE_AUTHORIZATION_V1.md",
+    "object": "461c057694dd9d79a0844bdaa73034fa3a93dbbb",
+    "available": true,
+    "bytes": 6098
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/PUBLIC_EVALUATION_LIFECYCLE.md",
+    "object": "981d4dc99d78cf9efb44f6ea0f46a8f229b8dc6e",
+    "available": true,
+    "bytes": 9964
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/PUBLIC_INTAKE_V2.md",
+    "object": "4dd80a039c6cb58772f02b054577692f902c785b",
+    "available": true,
+    "bytes": 14703
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/PUBLIC_POOL_INTAKE_V3.md",
+    "object": "1b22f37841409256230b27dcf6aadce226f976b5",
+    "available": true,
+    "bytes": 86963
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/PUBLIC_READINESS.md",
+    "object": "d878018d3fe6866c11e23a19cbb4bd395264629b",
+    "available": true,
+    "bytes": 32483
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/PUBLIC_REQUEST_RESOURCE_OBSERVATION.md",
+    "object": "3e0651e5f6353e052b40717be79523f608ec3dd8",
+    "available": true,
+    "bytes": 8413
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/PUBLIC_SUBMIT_RECOVERY_V1.md",
+    "object": "b29d4d950b606dd6f6ee15cf91bdb45cd23ba8c0",
+    "available": true,
+    "bytes": 9484
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/PUBLIC_V3_CLI_REQUEST_OBSERVATION_V1.md",
+    "object": "f21fb06ec79f2e18643385a7e9922f996845d601",
+    "available": true,
+    "bytes": 5643
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/PUBLIC_V3_SERVICE_CAMPAIGN.md",
+    "object": "d1130327a5daf7bf91c2655c89adc769a21e3e82",
+    "available": true,
+    "bytes": 6938
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/PURE_PON_COST_CAMPAIGNS_V1.md",
+    "object": "aad2a501d67f5ccb6d143eeef5b0f3adb2604b76",
+    "available": true,
+    "bytes": 7040
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/PURE_PON_PUBLIC_BOOTSTRAP_V1.md",
+    "object": "76914ed6c2f2dd1135336fab5349392f61181263",
+    "available": true,
+    "bytes": 6539
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V2.md",
+    "object": "61c6295a0123111970f865d56a5bd5ac338874c1",
+    "available": true,
+    "bytes": 11888
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V3.md",
+    "object": "fd12ac0c993818c6e3e5a0feeaa39e2bbfddeaca",
+    "available": true,
+    "bytes": 5903
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/QUALIFIED_TASK_LIFECYCLE_V4.md",
+    "object": "76ea42e2f153d7a079c332e09ef51b00cb6e7eba",
+    "available": true,
+    "bytes": 5312
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/QUALIFIED_WORK_TASK.md",
+    "object": "f384d8f6e94a4e248bcc2d1d18770131b8dbed3c",
+    "available": true,
+    "bytes": 14072
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/RESTRICTED_MINING_CPU_DOMAIN_V1.md",
+    "object": "49636e39c10c64c935408bb4fabc1a7cd6a47a38",
+    "available": true,
+    "bytes": 2842
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/RESTRICTED_OWNER_CONTINUOUS_MODE4.md",
+    "object": "bd7fba9b8250f6d1437eb412fb53ee5d8f4bcaf6",
+    "available": true,
+    "bytes": 8610
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/RESTRICTED_OWNER_CONTINUOUS_MODE5.md",
+    "object": "3d48266ea45408dc6b22b3cbb99ac0b26e4c2089",
+    "available": true,
+    "bytes": 10016
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/RESTRICTED_OWNER_FINITE_MINING_MODE3.md",
+    "object": "4ec4e91eea1bec4818094f0768c71313569ccf63",
+    "available": true,
+    "bytes": 12966
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/STATE_RECOVERY.md",
+    "object": "e246e49a7a78100eca98d4245b19fc47288d4813",
+    "available": true,
+    "bytes": 19171
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/SYNC_EVALUATION_OBSERVATION_V1.md",
+    "object": "d9e985a6588c89db2fb48e07be842bd412cdf932",
+    "available": true,
+    "bytes": 5930
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/TEST_PROFILE_COST_BOUNDARY.md",
+    "object": "880e519c89874da7f96746f6b866bccea5b8b803",
+    "available": true,
+    "bytes": 3770
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/W1_COMPLETE_RELATION_RESEARCH.md",
+    "object": "182f924f8265280e8cd404e76f4cb94f60c0fa24",
+    "available": true,
+    "bytes": 5903
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/W1_FACT_REUSE_V1.md",
+    "object": "3abc7de214d5f7121814f58874d0ba1d3134e13f",
+    "available": true,
+    "bytes": 15743
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/W1_IMPLEMENTATION_COMPARISON.md",
+    "object": "cc716d413f612246f8c4ae90c22facc3578cb93d",
+    "available": true,
+    "bytes": 81462
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/W1_LOCAL_SECURITY_PROFILE.md",
+    "object": "0c698e2ddbf8e4f1071c6ca84b15ea6d9e93527d",
+    "available": true,
+    "bytes": 13748
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/W1_SAME_TARGET_BUDGET_REPORT.md",
+    "object": "541dced4195746de93ee843390648bf4ccc5fd14",
+    "available": true,
+    "bytes": 9344
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/W1_ZERO_PAIRED_COST_ACCOUNTING.md",
+    "object": "a24e2ee5e5d45abb1298b390f47667b9a79ba623",
+    "available": true,
+    "bytes": 6950
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/WORK_COST_DAA_BOUNDARIES.md",
+    "object": "c2013e500ce07ddab4e580e1814cfaf2b0a0fdc6",
+    "available": true,
+    "bytes": 23830
+  },
+  {
+    "path": "docs/protocol/pon-nakamoto-v1/details/WORK_PROFILE.md",
+    "object": "de5500c5b3e465cd03eaf01ea3f84e070bb93813",
+    "available": true,
+    "bytes": 21829
+  },
+  {
+    "path": "docs/protocol/release-finality-v2/SPEC.md",
+    "object": "ed20737001152808ab1d2711605eba11e0672431",
+    "available": true,
+    "bytes": 16724
+  },
+  {
+    "path": "docs/security/PQ_NATIVE_TRANSFER_AND_QUANTUM_DAA_V1.md",
+    "object": "78fcd472dcfb85311763a6b8198ed4a2da9ff5ee",
+    "available": true,
+    "bytes": 22609
+  },
+  {
+    "path": "formal/release-finality-v2/campaign_gate.py",
+    "object": "95a99f14eeb5ad231871fb46c71db03170ba4159",
+    "available": true,
+    "bytes": 6255
+  },
+  {
+    "path": "formal/release-finality-v2/check_existing_learning_owner.py",
+    "object": "94022e91c18a1058d7f7497ad7bd83e5032d3eb3",
+    "available": true,
+    "bytes": 1657
+  },
+  {
+    "path": "formal/release-finality-v2/protocol.py",
+    "object": "a1f793a0105d82a0b9d288e7e13689ffe1c37789",
+    "available": true,
+    "bytes": 21239
+  },
+  {
+    "path": "formal/release-finality-v2/run_conformance.py",
+    "object": "23b1d18bd123f3e55acd78feb183d4dbd11f9357",
+    "available": true,
+    "bytes": 4472
+  },
+  {
+    "path": "formal/release-finality-v2/test_campaign_gate.py",
+    "object": "64a5125c62430f31ccd83e413bbeaa3f76b1ea4d",
+    "available": true,
+    "bytes": 4377
+  },
+  {
+    "path": "formal/release-finality-v2/test_protocol.py",
+    "object": "894283333606c640bb171280526f782fa4898a9d",
+    "available": true,
+    "bytes": 19453
+  },
+  {
+    "path": "formal/release-finality-v2/test_strict_bindings.py",
+    "object": "9d643859b09676db55478c114d4dc7ffbbe72c81",
+    "available": true,
+    "bytes": 9283
+  },
+  {
+    "path": "formal/release-finality-v2/verify_certificate.py",
+    "object": "3558bde278c2dea7e55a9d9134cb959c1a01d5bb",
+    "available": true,
+    "bytes": 5435
+  },
+  {
+    "path": "qualification/release-finality-v2/README.md",
+    "object": "7b086b653e989b26f18eca8e0febaabfeb646fe6",
+    "available": true,
+    "bytes": 1521
+  },
+  {
+    "path": "qualification/release-finality-v2/SOURCE_INPUTS.json",
+    "object": "38b81429fc06cc426dbe4e39692143bfe682304a",
+    "available": true,
+    "bytes": 794
+  },
+  {
+    "path": "qualification/release-finality-v2/local-receipt.json",
+    "object": "25d49ad71c09b9ef2c3caeb1b538aea576614dca",
+    "available": true,
+    "bytes": 1899
+  },
+  {
+    "path": "qualification/release-finality-v2/local-tests.log",
+    "object": "0c194253e8ccc0262901e1b9e6cb14a9d1a3d7ca",
+    "available": true,
+    "bytes": 6642
+  },
+  {
+    "path": "tests/fuzz/Cargo.lock",
+    "object": "8397f6cf1bf3a263280831d27c065001cecd834a",
+    "available": true,
+    "bytes": 33246
+  },
+  {
+    "path": "tests/fuzz/Cargo.toml",
+    "object": "274ea1942e657123cc04913cd7b5a520814e5e72",
+    "available": true,
+    "bytes": 1111
+  },
+  {
+    "path": "tests/fuzz/README.md",
+    "object": "d1258b2fca1e97f14ad9151e20c557e90733df67",
+    "available": true,
+    "bytes": 4571
+  },
+  {
+    "path": "tests/fuzz/fuzz_targets/authenticated_state.rs",
+    "object": "1d3d422dd4bfaa722526ff46e8decd9e61574ec5",
+    "available": true,
+    "bytes": 21937
+  },
+  {
+    "path": "tests/fuzz/fuzz_targets/canonical_wire.rs",
+    "object": "172b5ff576f25cda590d87bc63e8f0d6164198af",
+    "available": true,
+    "bytes": 903
+  },
+  {
+    "path": "tests/fuzz/fuzz_targets/support/work_certificate.rs",
+    "object": "6424d587da60c964dbc4a96e15175f3441100887",
+    "available": true,
+    "bytes": 5128
+  },
+  {
+    "path": "tests/fuzz/fuzz_targets/work_certificate.rs",
+    "object": "29cee39d8d8ebce2c1711efb7056f021e64944d0",
+    "available": true,
+    "bytes": 381
+  },
+  {
+    "path": "tests/fuzz/seeds/authenticated_state/aggregate",
+    "object": "9b55c2339ac63144ea3b5fdae38fb60b12f3ead5",
+    "available": true,
+    "bytes": 64
+  },
+  {
+    "path": "tests/fuzz/seeds/authenticated_state/cancel",
+    "object": "0e36a02de2d1d033b3aaf922d565aaaf8d563aed",
+    "available": true,
+    "bytes": 61
+  },
+  {
+    "path": "tests/fuzz/seeds/authenticated_state/codec",
+    "object": "2393a5778de716cb497fdc12b23f00e06c184ca5",
+    "available": true,
+    "bytes": 60
+  },
+  {
+    "path": "tests/fuzz/seeds/authenticated_state/compact-account",
+    "object": "0ee4170e88016c61423eb2031a573e4cf1cdbb1c",
+    "available": true,
+    "bytes": 64
+  },
+  {
+    "path": "tests/fuzz/seeds/authenticated_state/compact-aggregate",
+    "object": "bd51f45764454f7d8e363ca4f688c5b36b3c40ce",
+    "available": true,
+    "bytes": 64
+  },
+  {
+    "path": "tests/fuzz/seeds/authenticated_state/compact-cancel",
+    "object": "f4fcd11733675efbe986d0b3f84bbe3872035f64",
+    "available": true,
+    "bytes": 64
+  },
+  {
+    "path": "tests/fuzz/seeds/authenticated_state/compact-codec",
+    "object": "d48b400deaa0733043599c373f2c66897dcbfdc6",
+    "available": true,
+    "bytes": 64
+  },
+  {
+    "path": "tests/fuzz/seeds/authenticated_state/compact-duplicate",
+    "object": "fcb5b7a5b675cdce60a36155734e77d3fe3271c3",
+    "available": true,
+    "bytes": 64
+  },
+  {
+    "path": "tests/fuzz/seeds/authenticated_state/compact-missing",
+    "object": "32785ecd4cb7e86f625d787e0114509620cfcafd",
+    "available": true,
+    "bytes": 64
+  },
+  {
+    "path": "tests/fuzz/seeds/authenticated_state/compact-valid",
+    "object": "c57b85ed1ef18446f8b77e76b0142fd58160a27c",
+    "available": true,
+    "bytes": 64
+  },
+  {
+    "path": "tests/fuzz/seeds/authenticated_state/context",
+    "object": "264722f34f94c6df1601e24761453a74d8c585bc",
+    "available": true,
+    "bytes": 62
+  },
+  {
+    "path": "tests/fuzz/seeds/authenticated_state/duplicate",
+    "object": "45f4fdfa992c23600669f338dabaf7bf12934690",
+    "available": true,
+    "bytes": 64
+  },
+  {
+    "path": "tests/fuzz/seeds/authenticated_state/missing",
+    "object": "839ef1ca07d04c59b60b61d9c9adf3bc6dbb4216",
+    "available": true,
+    "bytes": 62
+  },
+  {
+    "path": "tests/fuzz/seeds/authenticated_state/ordering",
+    "object": "aae067aa0125ea130a1e25449ef14002450cc778",
+    "available": true,
+    "bytes": 63
+  },
+  {
+    "path": "tests/fuzz/seeds/authenticated_state/parent",
+    "object": "28fbe5599cffa64c3b00ce977c68f3b8f8517238",
+    "available": true,
+    "bytes": 61
+  },
+  {
+    "path": "tests/fuzz/seeds/authenticated_state/partition",
+    "object": "89e3481f44c85c1b85e50e88931f31b76258a6e7",
+    "available": true,
+    "bytes": 64
+  },
+  {
+    "path": "tests/fuzz/seeds/authenticated_state/proof",
+    "object": "8719a3dd1c446f43d749221a359e5355bf2fe55d",
+    "available": true,
+    "bytes": 60
+  },
+  {
+    "path": "tests/fuzz/seeds/authenticated_state/range-cancel",
+    "object": "4d04e9ddaac25a74db5068f67f5a65ee1197d31a",
+    "available": true,
+    "bytes": 17
+  },
+  {
+    "path": "tests/fuzz/seeds/authenticated_state/range-checkpoint",
+    "object": "e7e35e7a6e3146dc5b93acad1afee651b6c1263a",
+    "available": true,
+    "bytes": 17
+  },
+  {
+    "path": "tests/fuzz/seeds/authenticated_state/range-codec",
+    "object": "6e971221afb95cd33a63cca3600a6f54edd8c8ea",
+    "available": true,
+    "bytes": 17
+  },
+  {
+    "path": "tests/fuzz/seeds/authenticated_state/range-commitment",
+    "object": "227e38a1eddaf0018f76158d8cac187a6a65c6b0",
+    "available": true,
+    "bytes": 17
+  },
+  {
+    "path": "tests/fuzz/seeds/authenticated_state/range-count",
+    "object": "4597de9b35780ba15470f99d63172d8e5c590835",
+    "available": true,
+    "bytes": 17
+  },
+  {
+    "path": "tests/fuzz/seeds/authenticated_state/range-decoder",
+    "object": "176d09ed6c26bd4f23a91581e1b4474e034b5e6b",
+    "available": true,
+    "bytes": 17
+  },
+  {
+    "path": "tests/fuzz/seeds/authenticated_state/range-duplicate",
+    "object": "d3519cbfcb52d0405e30ffdc94b61d311058e942",
+    "available": true,
+    "bytes": 17
+  },
+  {
+    "path": "tests/fuzz/seeds/authenticated_state/range-frontier",
+    "object": "cbe4ca1ea2e4c98d6c18d600e8312ef3ad763121",
+    "available": true,
+    "bytes": 17
+  },
+  {
+    "path": "tests/fuzz/seeds/authenticated_state/range-frontier-order",
+    "object": "7f7bb020a3de54cf074b9689ae36e62cbe198f2e",
+    "available": true,
+    "bytes": 17
+  },
+  {
+    "path": "tests/fuzz/seeds/authenticated_state/range-key",
+    "object": "6e640679608a0eed63aa170ce365fd514353a201",
+    "available": true,
+    "bytes": 17
+  },
+  {
+    "path": "tests/fuzz/seeds/authenticated_state/range-missing",
+    "object": "be8097eacc08b56c6ee1c1fcfa47031fdcaece0e",
+    "available": true,
+    "bytes": 17
+  },
+  {
+    "path": "tests/fuzz/seeds/authenticated_state/range-order",
+    "object": "dcc05ec6248dfbf83813232070d0c41f7028354d",
+    "available": true,
+    "bytes": 17
+  },
+  {
+    "path": "tests/fuzz/seeds/authenticated_state/range-parent",
+    "object": "129226bf5350af85ca6f820eb30ec264888d3170",
+    "available": true,
+    "bytes": 17
+  },
+  {
+    "path": "tests/fuzz/seeds/authenticated_state/range-rank",
+    "object": "f789d2dd7dde1d65b968039d8651892be7647549",
+    "available": true,
+    "bytes": 17
+  },
+  {
+    "path": "tests/fuzz/seeds/authenticated_state/range-valid",
+    "object": "3bb03ec740a88250999b4bdf36701658c34927c1",
+    "available": true,
+    "bytes": 17
+  },
+  {
+    "path": "tests/fuzz/seeds/authenticated_state/range-value",
+    "object": "ee8b3217dcf2350d87dd9a1d51e90d5eccfb4c41",
+    "available": true,
+    "bytes": 17
+  },
+  {
+    "path": "tests/fuzz/seeds/authenticated_state/valid",
+    "object": "0f2aaae27d605526149a8d0cf219991e750629ab",
+    "available": true,
+    "bytes": 60
+  },
+  {
+    "path": "tests/vectors/pon/native-growth-reference-v2.json",
+    "object": "10a5e80e526c04a3ff0320f4e315e2e7958d9c3b",
+    "available": true,
+    "bytes": 14205
+  }
+]

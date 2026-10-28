@@ -1,0 +1,16 @@
+{
+  "case": "full_4263_byte_rows_and_packet_have_actual_122_transfer_limit",
+  "argv": [
+    "/workspace/scratch/301262829a43/pon-work-impl/provider-native-target/debug/deps/native_pq_v2-fdb24771d9658ad2",
+    "--exact",
+    "full_4263_byte_rows_and_packet_have_actual_122_transfer_limit",
+    "--test-threads=1",
+    "--show-output"
+  ],
+  "returncode": 101,
+  "timeout": false,
+  "wall_seconds": 5.6263240719999885,
+  "native_stdout": "\nrunning 1 test\ntest full_4263_byte_rows_and_packet_have_actual_122_transfer_limit ... FAILED\n\nsuccesses:\n\nsuccesses:\n\nfailures:\n\n---- full_4263_byte_rows_and_packet_have_actual_122_transfer_limit stdout ----\n{\"details\":{\"raw_bytes\":68208,\"transactions\":16},\"phase\":\"capacity_actual_pool_bundle\",\"result\":\"ok\",\"schema\":\"native-pq2-phase-observation-v1\",\"scope\":\"actual complete call on shared host; not isolated CPU, worst-case cost or TPS\",\"wall_nanoseconds\":918688358}\n{\"details\":{\"raw_bytes\":68208,\"transactions\":16},\"phase\":\"capacity_actual_pool_bundle\",\"result\":\"ok\",\"schema\":\"native-pq2-phase-observation-v1\",\"scope\":\"actual complete call on shared host; not isolated CPU, worst-case cost or TPS\",\"wall_nanoseconds\":1825703005}\n\nthread 'full_4263_byte_rows_and_packet_have_actual_122_transfer_limit' (19) panicked at crates/trnm-pon-node/tests/native_pq_v2.rs:400:9:\nassertion `left == right` failed\n  left: 32\n right: 16\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n\n\nfailures:\n    full_4263_byte_rows_and_packet_have_actual_122_transfer_limit\n\ntest result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 8 filtered out; finished in 5.59s\n\n",
+  "source_before_after_equal": true,
+  "binary_before_after_equal": true
+}

@@ -1,0 +1,40 @@
+{
+  "checks": [
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "returncode": 0,
+      "stdout": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-pq-accounts-audit-20261027\", \"remote_policy_mutated\": false}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "returncode": 0,
+      "stdout": "distributed source inventory: PASS\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "files": {
+    "scripts/ci/run_native_pq_accounts_v2.py": "8ec005d488bc28770f61065b4e1dbb7bca9b1ffd212a2a8333da1d6a7a5ded60",
+    "scripts/ci/test_native_pq_accounts_v2_research.py": "f97ee019a2ecd18e8219072953463f993d9ddae643efd4f33c0b11a387311332",
+    "trillionnium/crates/trnm-mvcc-fee/tests/pq2_authority_capacity.rs": "7f32f6cd397eab329b2ec3134b71403c9e9c64284d496b8a06ba5a1b10235b98",
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs": "14081bf3bddae10c06c98ea93285b01d9b0974c6e8a144b1fa9db571851ccbfd"
+  },
+  "cargo_workspace_or_clippy_executed": false
+}

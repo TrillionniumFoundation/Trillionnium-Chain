@@ -1,0 +1,10 @@
+{
+  "kind": "quota",
+  "id": 12782843853,
+  "run": 40611087331,
+  "bytes": 3913336,
+  "sha256": "254df2cd97f65c3db6c1a28c98056d4250df7e244b1a69228f07622ad9c0d468",
+  "path": "/workspace/scratch/bb9b841c1d43/pq-hosted-a1e407/quota.zip",
+  "download_seconds": 0.5824757139998837,
+  "hash_verified": true
+}

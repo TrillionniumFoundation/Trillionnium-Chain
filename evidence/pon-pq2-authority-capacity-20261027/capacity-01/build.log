@@ -1,0 +1,21 @@
+error[E0603]: function `relation_only` is private
+  --> /workspace/scratch/3d4ec372c488/pq-accounts-audit/trillionnium/crates/trnm-mvcc-fee/tests/pq2_authority_capacity.rs:16:11
+   |
+16 |     exec::relation_only(exec::execute_with_control(parent, BlockExecution {
+   |           ^^^^^^^^^^^^^ private function
+   |
+note: the function `relation_only` is defined here
+  --> crates/trnm-mvcc-fee/src/pon_executor.rs:155:0
+
+error[E0603]: function `no_cancellation` is private
+  --> /workspace/scratch/3d4ec372c488/pq-accounts-audit/trillionnium/crates/trnm-mvcc-fee/tests/pq2_authority_capacity.rs:18:43
+   |
+18 |     }, cfg, &ExecutionControl::new(&exec::no_cancellation, &())))
+   |                                           ^^^^^^^^^^^^^^^ private function
+   |
+note: the function `no_cancellation` is defined here
+  --> crates/trnm-mvcc-fee/src/pon_executor.rs:162:0
+
+error: aborting due to 2 previous errors
+
+For more information about this error, try `rustc --explain E0603`.

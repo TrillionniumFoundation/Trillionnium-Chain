@@ -230,6 +230,11 @@ fn scan_capacity_with_sources<E>(
         .as_u64()
         .ok_or("CONFIG")?;
     let evaluation_enabled = crate::public_evaluation::enabled(cfg);
+    let imported_rewards = crate::pon_executor::pq_accounts_v2::migration::retained_reward_count(
+        monetary.unwrap_or(state),
+        height,
+        cfg,
+    )?;
     let mut recipients = BTreeSet::new();
     let mut reward_heights = BTreeSet::new();
     let mut archives = 0usize;
@@ -282,9 +287,14 @@ fn scan_capacity_with_sources<E>(
         }
     }
     // A generated block leaves exactly one reward for each of the latest M
-    // heights; no gaps or extra maturity rows can manufacture reserve headroom.
+    // heights. Only the separate PQ2 anchor can additionally retain exact
+    // pre-genesis liabilities (due at heights 1..=M); original profiles return
+    // zero here. Neither arbitrary rows nor gaps manufacture reserve headroom.
     let expected_rewards = height.min(maturity) as usize;
-    if reward_heights.len() != expected_rewards {
+    let total_expected = expected_rewards
+        .checked_add(imported_rewards)
+        .ok_or("RANGE")?;
+    if reward_heights.len() != total_expected {
         return Err("CONTINUITY_REWARD_QUEUE".into());
     }
     for offset in 0..expected_rewards {
@@ -297,7 +307,7 @@ fn scan_capacity_with_sources<E>(
         }
     }
     let queue_reserve = (maturity as usize)
-        .checked_sub(expected_rewards)
+        .checked_sub(total_expected)
         .ok_or("CONTINUITY_REWARD_QUEUE")?;
     let required = state
         .len()

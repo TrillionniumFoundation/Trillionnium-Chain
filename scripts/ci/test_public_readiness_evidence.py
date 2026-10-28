@@ -14,6 +14,7 @@ import unittest
 from pathlib import Path
 
 import check_public_readiness_evidence as check
+from test_rust_source_tokens import RustSourceTokenTests
 
 
 class SourceAndArtifactTests(unittest.TestCase):
@@ -175,6 +176,14 @@ class PacketAndObservationTests(unittest.TestCase):
         self.assertEqual((len(header),len(txs),len(proof)),(318,1,49188))
         for raw in [self.raw[:-1],self.raw+b'\x00',self.raw[:319],b'XXXX'+self.raw[4:],self.raw[:318]+b'\xff\xff'+self.raw[320:]]:
             with self.assertRaises(ValueError): check.decode_packet(raw)
+
+    def test_pqp1_pqp2_pqp3_never_negotiate_a_legacy_packet(self):
+        for version in (1,2,3):
+            prefix = b'PQP'+str(version).encode()+bytes([version,0,0,0])
+            for raw in (prefix+self.raw,prefix+self.raw[8:]):
+                with self.subTest(version=version,bytes=len(raw)),self.assertRaisesRegex(ValueError,'header version'):
+                    check.decode_packet(raw)
+        self.assertEqual(check.decode_packet(self.raw)[0],self.raw[:318])
 
     def test_hash_repair_does_not_replace_actual_transcript_verification(self):
         sys.path.insert(0,str(check.ROOT/'formal/pon-nakamoto-v1'))
@@ -523,6 +532,92 @@ class DurableStoreTests(unittest.TestCase):
                              (self.H(domain,ddl.encode()),))
         self.verify()
 
+    def test_pq_domains_cannot_relabel_legacy_tables(self):
+        ddl,domain = check.native_durable_schema(check.ROOT)
+        for foreign in ('native-pq-transfer-branch-schema-v1',
+                        'native-pq-accounts-branch-schema-v2',
+                        'native-pq-quota-branch-schema-v3'):
+            with self.subTest(domain=foreign):
+                with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
+                    database.execute("UPDATE metadata SET value=? WHERE key='schema'",
+                                     (self.H(foreign,ddl.encode()),))
+                with self.assertRaisesRegex(ValueError,'durable metadata/context'): self.verify()
+        with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
+            database.execute("UPDATE metadata SET value=? WHERE key='schema'",
+                             (self.H(domain,ddl.encode()),))
+        self.verify()
+
+    def test_pq_tables_cannot_borrow_legacy_qualification_after_resealing(self):
+        ddl,domain = check.native_durable_schema(check.ROOT)
+        original = self.H(domain,ddl.encode())
+        for version,foreign in ((1,'native-pq-transfer-branch-schema-v1'),
+                                (2,'native-pq-accounts-branch-schema-v2'),
+                                (3,'native-pq-quota-branch-schema-v3')):
+            table = 'local_pq_statements_v'+str(version)
+            extension = 'CREATE TABLE '+table+'(statement BLOB PRIMARY KEY);'
+            for schema in (original,self.H(domain,(ddl+extension).encode()),
+                           self.H(foreign,(ddl+extension).encode())):
+                with self.subTest(version=version,schema=schema.hex()):
+                    with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
+                        database.execute(extension)
+                        database.execute("UPDATE metadata SET value=? WHERE key='schema'",(schema,))
+                    self.summary['ledger_disk_bytes'] = sum(path.stat().st_size for path in self.folder.rglob('*') if path.is_file())
+                    try:
+                        with self.assertRaisesRegex(ValueError,'durable schema additions/omissions/changes'):
+                            self.verify()
+                    finally:
+                        with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
+                            database.execute('DROP TABLE '+table)
+                            database.execute("UPDATE metadata SET value=? WHERE key='schema'",(original,))
+                        self.summary['ledger_disk_bytes'] = sum(path.stat().st_size for path in self.folder.rglob('*') if path.is_file())
+        self.verify()
+
+    def test_replayed_and_stored_pq_packet_still_fails_legacy_ancestry(self):
+        original = self.packets[0]
+        for version in (1,2,3):
+            changed = b'PQP'+str(version).encode()+bytes([version,0,0,0])+original
+            with self.subTest(version=version):
+                self.packets[0] = changed
+                with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
+                    database.execute('UPDATE blocks SET packet=? WHERE height=1',(changed,))
+                # Also replace the producer packet and the replay input: exact
+                # equality alone must never authorize another header profile.
+                with sqlite3.connect(self.folder/'producer/native.sqlite') as database:
+                    database.execute('UPDATE blocks SET packet=? WHERE height=1',(changed,))
+                self.summary['ledger_disk_bytes'] = sum(path.stat().st_size for path in self.folder.rglob('*') if path.is_file())
+                with self.assertRaisesRegex(ValueError,'header version'): self.verify()
+                self.packets[0] = original
+                for owner in ('producer','validator'):
+                    with sqlite3.connect(self.folder/owner/'native.sqlite') as database:
+                        database.execute('UPDATE blocks SET packet=? WHERE height=1',(original,))
+                self.summary['ledger_disk_bytes'] = sum(path.stat().st_size for path in self.folder.rglob('*') if path.is_file())
+        self.verify()
+
+    def test_shared_layout_table_and_resealed_domain_remain_out_of_scope(self):
+        ddl,domain = check.native_durable_schema(check.ROOT)
+        extension = 'CREATE TABLE native_io_shared_snapshots(block BLOB PRIMARY KEY,data BLOB NOT NULL);'
+        original = self.H(domain,ddl.encode())
+        shared_domain = 'native-io-shared-authenticated-branch-schema-v1'
+        shared = self.H(shared_domain,original,extension.encode(),
+                        b'native-io-shared-authenticated-snapshot-v1')
+        for schema in (original,self.H(domain,(ddl+extension).encode()),shared):
+            with self.subTest(schema=schema.hex()):
+                with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
+                    database.executescript(extension)
+                    database.execute('INSERT INTO native_io_shared_snapshots VALUES(?,?)',
+                                     (bytes(32),b'unverified shared snapshot'))
+                    database.execute("UPDATE metadata SET value=? WHERE key='schema'",(schema,))
+                self.summary['ledger_disk_bytes'] = sum(path.stat().st_size for path in self.folder.rglob('*') if path.is_file())
+                with self.assertRaisesRegex(ValueError,'durable schema additions/omissions/changes'): self.verify()
+                with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
+                    database.execute('DROP TABLE native_io_shared_snapshots')
+                    database.execute("UPDATE metadata SET value=? WHERE key='schema'",(original,))
+                self.summary['ledger_disk_bytes'] = sum(path.stat().st_size for path in self.folder.rglob('*') if path.is_file())
+                self.verify()
+        with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
+            database.execute("UPDATE metadata SET value=? WHERE key='schema'",(shared,))
+        with self.assertRaisesRegex(ValueError,'durable metadata/context'): self.verify()
+
     def test_permanent_growth_tables_remain_out_of_scope_after_metadata_resealing(self):
         ddl,domain = check.native_durable_schema(check.ROOT)
         extension = ('CREATE TABLE archive_nodes(id BLOB PRIMARY KEY,data BLOB NOT NULL);\n'
@@ -582,6 +677,11 @@ class DurableStoreTests(unittest.TestCase):
         self.verify()
 
 class NativeDurableSchemaTests(unittest.TestCase):
+    selected_bindings = ('let storage_layout =\n'
+        '            shared_snapshot::Layout::for_opening(state_backend, native_io.as_ref());\n'
+        '        let ddl = storage_layout.ddl(state_backend.selected_ddl(&settings));\n'
+        '        let schema_id = storage_layout.schema_id(state_backend.selected_schema_id(&settings));')
+
     def setUp(self):
         self.temporary = tempfile.TemporaryDirectory()
         self.root = Path(self.temporary.name)
@@ -590,12 +690,32 @@ class NativeDurableSchemaTests(unittest.TestCase):
         self.index = self.store.with_name('ancestry_index.rs')
         self.current = (check.ROOT/'trillionnium/crates/trnm-pon-node/src/store.rs').read_text()
         self.current_index = (check.ROOT/'trillionnium/crates/trnm-pon-node/src/ancestry_index.rs').read_text()
+        self.shared = self.store.parent/'store/shared_snapshot.rs'
+        self.shared.parent.mkdir()
+        self.current_shared = (check.ROOT/'trillionnium/crates/trnm-pon-node/src/store/shared_snapshot.rs').read_text()
+        self.auxiliary = {name:(check.ROOT/name).read_text() for name in (
+            'trillionnium/crates/trnm-pon-node/src/lib.rs',
+            'trillionnium/crates/trnm-pon-node/src/native_packet.rs',
+            'trillionnium/crates/trnm-pon-node/src/pq_native_v1.rs',
+            'trillionnium/crates/trnm-pon-node/src/pq_accounts_v2.rs',
+            'trillionnium/crates/trnm-pon-node/src/pq_quota_v3.rs',
+            'trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_native_v1.rs',
+            'trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs',
+        )}
 
     def tearDown(self): self.temporary.cleanup()
 
-    def extract(self, source, index=None):
+    def extract(self, source, index=None, shared=None, auxiliary=None):
         self.store.write_text(source)
         self.index.write_text(self.current_index if index is None else index)
+        self.shared.write_text(self.current_shared if shared is None else shared)
+        files = dict(self.auxiliary)
+        if auxiliary is not None:
+            files.update(auxiliary)
+        for name, text in files.items():
+            path = self.root/name
+            path.parent.mkdir(parents=True,exist_ok=True)
+            path.write_text(text)
         return check.native_durable_schema(self.root)
 
     def replace_once(self, source, before, after):
@@ -699,7 +819,7 @@ class NativeDurableSchemaTests(unittest.TestCase):
                 self.extract(self.replace_once(self.current,before,after))
 
     def test_permanent_growth_table_cannot_be_inserted_into_legacy_literals(self):
-        for name in ('growth_states','GrOwTh_StAtEs'):
+        for name in ('growth_states','GrOwTh_StAtEs','native_io_shared_snapshots','NaTiVe_Io_ShArEd_SnApShOtS'):
             extension = 'CREATE TABLE '+name+'(block BLOB PRIMARY KEY,data BLOB NOT NULL);'
             literal = 'const DDL: &str = "'+extension+'";'
             v1 = literal+'fn open() { hash(b"native-branch-schema-v1", &[DDL.as_bytes()]); }'
@@ -713,7 +833,7 @@ class NativeDurableSchemaTests(unittest.TestCase):
                     self.extract(source,index)
 
     def test_actual_opener_and_selected_schema_bindings_cannot_be_replaced(self):
-        pair = 'let ddl = state_backend.ddl();\n        let schema_id = state_backend.selected_schema_id(&settings);'
+        pair = self.selected_bindings
         mutations = [
             ('default-open','Self::open_with_fault(path, settings, workers, None)',
              'Self::open_with_authenticated_state_and_fault(path, settings, workers, None)'),
@@ -727,8 +847,8 @@ class NativeDurableSchemaTests(unittest.TestCase):
              'StateBackend::Legacy,\n            true,\n        )\n    }\n    fn open_selected'),
             ('auth-observation','StateBackend::AuthenticatedV1,\n            false,\n        )\n    }\n    /// Explicit local operator policy',
              'StateBackend::AuthenticatedV1,\n            true,\n        )\n    }\n    /// Explicit local operator policy'),
-            ('ddl-unselected','let ddl = state_backend.ddl();','let ddl = ddl();'),
-            ('schema-unselected','let schema_id = state_backend.selected_schema_id(&settings);','let schema_id = StateBackend::Legacy.schema_id();'),
+            ('ddl-unselected','let ddl = storage_layout.ddl(state_backend.selected_ddl(&settings));','let ddl = ddl();'),
+            ('schema-unselected','let schema_id = storage_layout.schema_id(state_backend.selected_schema_id(&settings));','let schema_id = StateBackend::Legacy.schema_id();'),
             ('nested-pair',pair,'if false { '+pair+' }'),
         ]
         for label,before,after in mutations:
@@ -767,7 +887,7 @@ class NativeDurableSchemaTests(unittest.TestCase):
 
     def test_selected_settings_cannot_be_mutated_through_fields_or_borrowed(self):
         header = 'fn open_selected(\n        path: &Path,\n        settings: Settings,'
-        pair = 'let ddl = state_backend.ddl();\n        let schema_id = state_backend.selected_schema_id(&settings);'
+        pair = self.selected_bindings
         statements = [
             'settings.app.params["work_task_profile"] = serde_json::json!("legacy-task-v1");',
             'settings.app.params["work_task_profile"][0] = serde_json::json!(0);',
@@ -787,8 +907,7 @@ class NativeDurableSchemaTests(unittest.TestCase):
         # Recognizing the current selector must not permit a changed growth
         # namespace, bypassed selector or an unapproved implementation body.
         # Every negative still targets exactly one real current-source site.
-        selector = ('fn selected_schema_id(self, settings: &Settings) -> Hash {\n'
-                    '        if growth_profile_v2::enabled(&settings.app) {')
+        selector = self.function_part(self.current,'selected_schema_id')
         mutations = [
             ('wrong-growth-domain', 'b"native-growth-reference-branch-schema-v2"',
              'b"native-branch-schema-v2"'),
@@ -797,12 +916,12 @@ class NativeDurableSchemaTests(unittest.TestCase):
             ('flipped-growth-selector', selector, selector.replace('if growth_', 'if !growth_', 1)),
             ('bypassed-growth-selector', selector,
              selector.replace('if growth_profile_v2::enabled(&settings.app) {', 'if false {', 1)),
-            ('default-instead-selected', 'let schema_id = state_backend.selected_schema_id(&settings);',
-             'let schema_id = state_backend.schema_id();'),
-            ('bypassed-backend', 'let schema_id = state_backend.selected_schema_id(&settings);',
-             'let schema_id = StateBackend::Legacy.selected_schema_id(&settings);'),
-            ('ignored-settings', 'let schema_id = state_backend.selected_schema_id(&settings);',
-             'let schema_id = state_backend.selected_schema_id(&settings.clone());'),
+            ('default-instead-selected', 'let schema_id = storage_layout.schema_id(state_backend.selected_schema_id(&settings));',
+             'let schema_id = storage_layout.schema_id(state_backend.schema_id());'),
+            ('bypassed-backend', 'let schema_id = storage_layout.schema_id(state_backend.selected_schema_id(&settings));',
+             'let schema_id = storage_layout.schema_id(StateBackend::Legacy.selected_schema_id(&settings));'),
+            ('ignored-settings', 'let schema_id = storage_layout.schema_id(state_backend.selected_schema_id(&settings));',
+             'let schema_id = storage_layout.schema_id(state_backend.selected_schema_id(&settings.clone()));'),
             ('unapproved-method', 'impl StateBackend {',
              'impl StateBackend { fn other(self) -> Hash { self.schema_id() }'),
         ]
@@ -823,7 +942,7 @@ class NativeDurableSchemaTests(unittest.TestCase):
         for decoy in decoys:
             with self.subTest(decoy=decoy):
                 self.assertEqual(self.extract(self.current+decoy),expected)
-                with self.assertRaisesRegex(ValueError,'durable backend domain Legacy'): self.extract(bad+decoy)
+                with self.assertRaisesRegex(ValueError,'durable backend (?:domain Legacy|composition/domain)'): self.extract(bad+decoy)
         inline = '\nfn historical(ddl: String) -> Hash { hash(b"native-branch-schema-v2", &[ddl.as_bytes()]) }\n'
         for broken in (bad,self.replace_once(self.current,'Self::Legacy => ddl(),','Self::Legacy => native_authenticated::DDL.to_string(),')):
             with self.subTest(broken=broken[-80:]),self.assertRaisesRegex(ValueError,'durable backend'):
@@ -835,7 +954,7 @@ class NativeDurableSchemaTests(unittest.TestCase):
         for decoy in ['mod historical { '+literal+' }','ignored!('+literal+');','ignored!['+literal+'];']:
             with self.subTest(decoy=decoy),self.assertRaisesRegex(ValueError,'durable schema literal DDL'):
                 self.extract(decoy+'\nuse other::DDL;\n'+opener)
-        for name in ['archive_nodes','native_state_commitments','ArChIvE_NoDeS']:
+        for name in ['archive_nodes','native_state_commitments','ArChIvE_NoDeS','native_io_shared_snapshots']:
             extension = 'CREATE TABLE '+name+'(id BLOB PRIMARY KEY,data BLOB NOT NULL);'
             sources = [
                 (literal.replace('CREATE TABLE exact',extension+'CREATE TABLE exact')+opener,None),
@@ -882,7 +1001,7 @@ class NativeDurableSchemaTests(unittest.TestCase):
 
     def test_held_io_bridge_refuses_changed_fields_effects_or_nested_delegation(self):
         bridge = self.held_io_parts()['open_selected'][2]
-        pair = 'let ddl = state_backend.ddl();\n        let schema_id = state_backend.selected_schema_id(&settings);'
+        pair = self.selected_bindings
         replacements = [
             bridge.replace('path,','other_path,',1),
             bridge.replace('state_backend,','state_backend: StateBackend::AuthenticatedV1,',1),
@@ -915,13 +1034,13 @@ class NativeDurableSchemaTests(unittest.TestCase):
             (unpack,unpack+'\n'+unpack),
         ]
         for before,after in changes:
-            with self.subTest(after=after),self.assertRaisesRegex(ValueError,'durable backend'):
+            with self.subTest(after=after),self.assertRaisesRegex(ValueError,'durable (?:backend|PQ opening guard)'):
                 self.extract(self.replace_once(self.current,before,after))
 
     def test_held_io_nested_decoy_duplicate_and_string_binding_are_refused(self):
         parts = self.held_io_parts()
         whole,header,_ = parts['open_selected_with_io']
-        pair = 'let ddl = state_backend.ddl();\n        let schema_id = state_backend.selected_schema_id(&settings);'
+        pair = self.selected_bindings
         for replacement in ['if false { '+pair+' }',
                             'let NOTE: &str = '+json.dumps(pair)+';',
                             'let NOTE: &str = r###"'+pair+'"###;',
@@ -939,6 +1058,322 @@ class NativeDurableSchemaTests(unittest.TestCase):
         for source in invalid:
             with self.subTest(source=source[-80:]),self.assertRaisesRegex(ValueError,'durable'):
                 self.extract(source)
+
+    def test_shared_layout_selection_composition_and_literal_domains_are_exact(self):
+        selector = 'backend == StateBackend::AuthenticatedV1 && io.is_some()'
+        mutations = [
+            (selector,selector.replace('&&','||')),
+            (selector,selector.replace('AuthenticatedV1','Legacy')),
+            (selector,selector.replace('is_some','is_none')),
+            (selector,'true'),
+            ('} else {\n            Self::CanonicalJson','} else {\n            Self::SharedAccountsV1'),
+            ('Self::CanonicalJson => base,\n            Self::SharedAccountsV1 => format!',
+             'Self::CanonicalJson => format!("{base}{DDL}"),\n            Self::SharedAccountsV1 => format!'),
+            ('"{base}{DDL}"','"{DDL}{base}"'),
+            ('&[&base, DDL.as_bytes(), SCHEMA.as_bytes()]','&[DDL.as_bytes(), SCHEMA.as_bytes()]'),
+            ('&[&base, DDL.as_bytes(), SCHEMA.as_bytes()]','&[&base, SCHEMA.as_bytes(), DDL.as_bytes()]'),
+            ('b"native-io-shared-authenticated-branch-schema-v1"','b"native-branch-schema-v2"'),
+            ('b"native-io-shared-authenticated-branch-schema-v1"','b"native-io-shared- authenticated-branch-schema-v1"'),
+            ('const SCHEMA: &str = "native-io-shared-authenticated-snapshot-v1";',
+             'const SCHEMA: &str = "native-branch-schema-v2";'),
+            ('CREATE TABLE native_io_shared_snapshots','CREATE TABLE snapshots'),
+            ('data BLOB NOT NULL);"','data BLOB NOT NULL); CREATE TABLE injected(x BLOB);"'),
+            ('impl Layout {','impl Layout { fn unknown(self) -> Self { Self::CanonicalJson }'),
+            ('#[derive(Clone, Copy, Debug, PartialEq, Eq)]','#[cfg(any())]\n#[derive(Clone, Copy, Debug, PartialEq, Eq)]'),
+            ('impl Layout {','#[cfg(any())]\nimpl Layout {'),
+            ('const DDL: &str','#[cfg(any())]\nconst DDL: &str'),
+            ('const SCHEMA: &str','#[cfg(any())]\nconst SCHEMA: &str'),
+        ]
+        for before,after in mutations:
+            with self.subTest(after=after),self.assertRaisesRegex(ValueError,'durable shared layout'):
+                self.extract(self.current,shared=self.replace_once(self.current_shared,before,after))
+
+    def test_shared_layout_module_and_implementation_cannot_be_forged(self):
+        declaration = 'mod shared_snapshot;'
+        # These visibility + path/cfg and local-shadow counterexamples were
+        # accepted by the initial uncommitted wrapper reader. Keep them explicit.
+        for replacement in ('#[path = "other.rs"]\n'+declaration,
+                            '#[path = "other.rs"]\npub '+declaration,
+                            '#[path = "other.rs"]\npub(crate) '+declaration,
+                            '#[cfg(any())]\npub '+declaration,
+                            '#[cfg(any())]\npub(crate) '+declaration,
+                            '#[cfg(any())]\n'+declaration,
+                            'mod shared_snapshot {}',
+                            'mod hidden { '+declaration+' }',
+                            '/* '+declaration+' */',declaration+'\n'+declaration):
+            with self.subTest(replacement=replacement),self.assertRaisesRegex(ValueError,'durable shared layout source'):
+                self.extract(self.replace_once(self.current,declaration,replacement))
+        code = check.rust_code(self.current_shared)
+        start = code.index('impl Layout {')
+        end = check.rust_group_end(code,code.index('{',start))
+        implementation = self.current_shared[start:end]
+        bad = self.replace_once(self.current_shared,'impl Layout {','impl Other {')
+        for decoy in ('mod hidden { '+implementation+' }',
+                      '/* '+implementation+' */',
+                      'const NOTE: &str = '+json.dumps(implementation)+';',
+                      'ignored!('+implementation+');'):
+            with self.subTest(decoy=decoy),self.assertRaisesRegex(ValueError,'durable source (?:body|item) Layout'):
+                self.extract(self.current,shared=bad+'\n'+decoy)
+        with self.assertRaisesRegex(ValueError,'durable source (?:body|item) Layout'):
+            self.extract(self.current,shared=self.current_shared+'\n'+implementation)
+
+    def test_shared_layout_binding_cannot_be_bypassed_or_mixed(self):
+        pair = self.selected_bindings
+        changes = [
+            ('shared_snapshot::Layout::for_opening','Other::for_opening'),
+            ('for_opening(state_backend, native_io.as_ref())','for_opening(StateBackend::Legacy, native_io.as_ref())'),
+            ('for_opening(state_backend, native_io.as_ref())','for_opening(state_backend, None)'),
+            ('for_opening(state_backend, native_io.as_ref())','for_opening(state_backend, other_io.as_ref())'),
+            ('storage_layout.ddl(state_backend.selected_ddl(&settings))','state_backend.ddl()'),
+            ('storage_layout.schema_id(state_backend.selected_schema_id(&settings))','state_backend.selected_schema_id(&settings)'),
+            ('storage_layout.schema_id(','other_layout.schema_id('),
+            ('&settings','&settings.clone()'),
+        ]
+        invalid = [pair.replace(before,after,1) for before,after in changes]
+        invalid += [pair+'\n'+pair,
+                    'let ddl = state_backend.ddl();\n        let schema_id = state_backend.selected_schema_id(&settings);']
+        for replacement in invalid:
+            with self.subTest(replacement=replacement),self.assertRaisesRegex(ValueError,'durable backend selected schema'):
+                self.extract(self.replace_once(self.current,pair,replacement))
+
+    def test_shared_layout_and_io_cannot_be_rebound_or_mutably_aliased(self):
+        pair = self.selected_bindings
+        for local in ('use forged as shared_snapshot;', 'use forged::*;',
+                      'mod shared_snapshot {}', 'type shared_snapshot = Other;',
+                      'extern crate forged as shared_snapshot;'):
+            with self.subTest(local=local),self.assertRaisesRegex(ValueError,'durable shared layout local scope'):
+                self.extract(self.replace_once(self.current,pair,local+'\n'+pair))
+        statements = [
+            'let storage_layout = shared_snapshot::Layout::CanonicalJson;',
+            'let (storage_layout, _) = (shared_snapshot::Layout::SharedAccountsV1, ());',
+            'storage_layout = shared_snapshot::Layout::SharedAccountsV1;',
+            'let native_io = None;',
+            'native_io = Some(other_io);',
+            'let alias = &mut native_io;',
+            'let alias = &mut (storage_layout);',
+        ]
+        for statement in statements:
+            for before in (True,False):
+                replacement = statement+'\n'+pair if before else pair+'\n'+statement
+                with self.subTest(statement=statement,before=before),self.assertRaisesRegex(
+                        ValueError,'durable backend selected schema rebound'):
+                    self.extract(self.replace_once(self.current,pair,replacement))
+
+    def function_part(self, source, name):
+        code = check.rust_code(source)
+        matches = list(re.finditer(r'\bfn\s+'+name+r'\b',code))
+        self.assertEqual(len(matches),1)
+        start = code.index('{',matches[0].end())
+        end = check.rust_group_end(code,start)
+        self.assertIsNotNone(end)
+        return source[matches[0].start():end]
+
+    def test_pq_selected_ddl_and_domain_order_are_closed_contracts(self):
+        ddl = self.function_part(self.current,'selected_ddl')
+        schema = self.function_part(self.current,'selected_schema_id')
+        changes = []
+        for version,module,domain in ((1,'pq_native_v1','native-pq-transfer-branch-schema-v1'),
+                                      (2,'pq_accounts_v2','native-pq-accounts-branch-schema-v2'),
+                                      (3,'pq_quota_v3','native-pq-quota-branch-schema-v3')):
+            selector = 'settings.is_native_pq_v'+str(version)+'()'
+            for part in (ddl,schema):
+                changes.append((part,self.replace_once(part,selector,'false')))
+                changes.append((part,self.replace_once(part,selector,'!'+selector)))
+            changes.append((ddl,self.replace_once(ddl,module+'::ddl(self.ddl())','self.ddl()')))
+            changes.append((schema,self.replace_once(schema,domain,'native-branch-schema-v2')))
+        changes.extend([
+            (ddl,ddl.replace('is_native_pq_v3','is_native_pq_vTEMP').replace('is_native_pq_v2','is_native_pq_v3').replace('is_native_pq_vTEMP','is_native_pq_v2')),
+            (schema,schema.replace('self.selected_ddl(settings).as_bytes()','self.ddl().as_bytes()',1)),
+            (ddl,ddl.replace('self.ddl()\n        }','pq_quota_v3::ddl(self.ddl())\n        }',1)),
+        ])
+        for before,after in changes:
+            self.assertNotEqual(before,after)
+            with self.subTest(after=after),self.assertRaisesRegex(ValueError,'durable backend composition/domain'):
+                self.extract(self.replace_once(self.current,before,after))
+        self.assertEqual(self.extract(self.current)[1],'native-branch-schema-v2')
+
+    def test_pq_settings_and_executor_selectors_cannot_change_the_legacy_branch(self):
+        node = 'trillionnium/crates/trnm-pon-node/src/'
+        executor = 'trillionnium/crates/trnm-mvcc-fee/src/pon_executor/'
+        changes = []
+        for version,module in ((1,'pq_native_v1'),(2,'pq_accounts_v2'),(3,'pq_quota_v3')):
+            path = node+module+'.rs'; source = self.auxiliary[path]
+            method = self.function_part(source,'is_native_pq_v'+str(version))
+            changed = method[:method.index('{')+1]+' false }'
+            changes.append((path,self.replace_once(source,method,changed)))
+            changes.append((path,self.replace_once(source,'impl Settings {','#[cfg(any())]\nimpl Settings {')))
+            changes.append((path,self.replace_once(source,'use trnm_mvcc_fee::','use forged_mvcc::')))
+        for module,method in (('pq_native_v1','enabled'),('pq_accounts_v2','enabled'),('pq_accounts_v2','quota_v3_enabled')):
+            path = executor+module+'.rs'; source = self.auxiliary[path]
+            part = self.function_part(source,method)
+            changed = part[:part.index('{')+1]+' false }'
+            changes.append((path,self.replace_once(source,part,changed)))
+        path = executor+'pq_accounts_v2.rs'; source = self.auxiliary[path]
+        changes.append((path,self.replace_once(source,'const SELECTOR: &str = "native_pq_accounts_profile";',
+                                              'const SELECTOR: &str = "native_pq_profile";')))
+        for path,changed in changes:
+            with self.subTest(path=path,tail=changed[-40:]),self.assertRaisesRegex(ValueError,'durable (?:PQ (?:settings selector|selector provider owner|executor selector)|source item trnm_mvcc_fee)'):
+                self.extract(self.current,auxiliary={path:changed})
+
+    def test_pq_explicit_constructor_guards_cannot_be_weakened_or_moved(self):
+        prefix = check.pq_contract.OPENING_PREFIX
+        mutations = [
+            ('settings.packet_profile()','crate::native_packet::Profile::Legacy'),
+            ('== pq_explicit','!= pq_explicit'),
+            ('Profile::Legacy','Profile::Pq3'),
+            ('pq_explicit.is_none()','true'),
+            ('|| (','&& ('),
+            ('state_backend == StateBackend::AuthenticatedV1','state_backend == StateBackend::Legacy'),
+            ('native_io.is_none()','true'),
+            ('!growth_observation_only','true'),
+            ('owners.policy.is_none()','true'),
+            ('owners.mining.is_none()','true'),
+            ('owners.continuous.is_none()','true'),
+            ('"PQ_EXPLICIT_CONSTRUCTOR_REQUIRED"','"IGNORED"'),
+        ]
+        for before,after in mutations:
+            with self.subTest(before=before),self.assertRaisesRegex(ValueError,'durable PQ opening guard'):
+                self.extract(self.replace_once(self.current,prefix,self.replace_once(prefix,before,after)))
+        for replacement in (prefix.replace(')?;',');',1),
+                            prefix[:prefix.index('        ensure(')],
+                            'if false {'+prefix+'}',
+                            prefix+'\nlet pq_explicit = Some(crate::native_packet::Profile::Pq3);'):
+            with self.subTest(replacement=replacement),self.assertRaisesRegex(ValueError,'durable (?:PQ opening guard|backend opening bindings|backend selected schema rebound)'):
+                self.extract(self.replace_once(self.current,prefix,replacement))
+        bridge = self.held_io_parts()['open_selected'][2]
+        for replacement in ('Some(crate::native_packet::Profile::Pq1)',
+                            'Some(crate::native_packet::Profile::Pq2)',
+                            'Some(crate::native_packet::Profile::Pq3)'):
+            changed = self.replace_once(bridge,'pq_explicit: None,','pq_explicit: '+replacement+',')
+            with self.subTest(profile=replacement),self.assertRaisesRegex(ValueError,'durable backend selector bridge'):
+                self.extract(self.replace_once(self.current,bridge,changed))
+
+    def test_pq_opening_owner_attributes_and_nested_decoys_do_not_authorize(self):
+        for name in ('open_selected','open_selected_with_io'):
+            part = self.function_part(self.current,name)
+            for replacement in ('#[cfg(any())]\n'+part,'mod hidden { '+part+' }',part+'\n'+part):
+                with self.subTest(name=name,replacement=replacement[:60]),self.assertRaisesRegex(ValueError,'durable'):
+                    self.extract(self.replace_once(self.current,part,replacement))
+        for before in ('impl Node {','impl StateBackend {','struct NativeStoreOpening {'):
+            with self.subTest(before=before),self.assertRaisesRegex(ValueError,'durable backend'):
+                self.extract(self.replace_once(self.current,before,'#[cfg(any())]\n'+before))
+
+    def test_packet_profile_dispatch_and_legacy_header_are_not_negotiated(self):
+        path = 'trillionnium/crates/trnm-pon-node/src/native_packet.rs'
+        source = self.auxiliary[path]
+        mutations = [
+            ('Profile::Legacy => crate::pq_native_v1::header_prefix_bytes(false)',
+             'Profile::Legacy => crate::pq_native_v1::header_prefix_bytes(true)'),
+            ('Profile::Legacy => crate::pq_native_v1::decode_header_projection(bytes, false)',
+             'Profile::Legacy => crate::pq_native_v1::decode_header_projection(bytes, true)'),
+            ('Profile::Legacy => Packet::decode(raw)','Profile::Legacy => Ok(crate::pq_quota_v3::PqPacketV3::decode(raw)?.inner)'),
+            ('Profile::Legacy => packet.encode_for_native_profile(false)',
+             'Profile::Legacy => packet.encode_for_native_profile(true)'),
+            ('if self.is_native_pq_v3()','if false'),
+            ('} else {\n            Profile::Legacy','} else {\n            Profile::Pq1'),
+            ('Profile::Pq2 | Profile::Pq3 => HEADER_BYTES + 8','Profile::Pq2 | Profile::Pq3 => HEADER_BYTES'),
+        ]
+        for before,after in mutations:
+            changed = self.replace_once(source,before,after)
+            with self.subTest(before=before),self.assertRaisesRegex(ValueError,'durable PQ packet selection/legacy header contract'):
+                self.extract(self.current,auxiliary={path:changed})
+
+    def test_pq_packet_module_owner_cannot_be_cfg_path_or_alias_substituted(self):
+        path = 'trillionnium/crates/trnm-pon-node/src/lib.rs'; source = self.auxiliary[path]
+        for declaration in ('mod native_packet;','pub mod pq_native_v1;','pub mod pq_accounts_v2;','pub mod pq_quota_v3;'):
+            for replacement in ('#[cfg(any())]\n'+declaration,'#[path="other.rs"]\n'+declaration,
+                                'mod hidden { '+declaration+' }',declaration+'\n'+declaration):
+                with self.subTest(declaration=declaration,replacement=replacement),self.assertRaisesRegex(ValueError,'durable (?:PQ packet module owner|source item)'):
+                    self.extract(self.current,auxiliary={path:self.replace_once(source,declaration,replacement)})
+
+    def test_original_legacy_header_projection_cannot_be_replaced(self):
+        path = 'trillionnium/crates/trnm-pon-node/src/pq_native_v1.rs'; source = self.auxiliary[path]
+        for method,token,replacement in (
+                ('header_prefix_bytes','HEADER_BYTES + if pq { 8 } else { 0 }','HEADER_BYTES + 8'),
+                ('decode_header_projection','if pq {','if true {'),
+                ('decode_header_projection','Header::decode(bytes)','Header::decode(&bytes[8..])')):
+            part = self.function_part(source,method)
+            changed = self.replace_once(source,part,self.replace_once(part,token,replacement))
+            with self.subTest(method=method,token=token),self.assertRaisesRegex(ValueError,'durable PQ original legacy header'):
+                self.extract(self.current,auxiliary={path:changed})
+        for method in ('header_prefix_bytes','decode_header_projection'):
+            declaration = 'pub(crate) fn '+method
+            changed = self.replace_once(source,declaration,'#[cfg(any())]\n'+declaration)
+            with self.subTest(method=method),self.assertRaisesRegex(ValueError,'durable PQ legacy header owner'):
+                self.extract(self.current,auxiliary={path:changed})
+
+    def test_ancestry_context_and_projected_header_share_the_selected_profile(self):
+        for selected in ('crate::native_packet::Profile::Legacy','crate::native_packet::Profile::Pq3'):
+            changed = self.replace_once(self.current,'pq_packet: self.settings.packet_profile(),','pq_packet: '+selected+',')
+            with self.subTest(selected=selected),self.assertRaisesRegex(ValueError,'durable PQ ancestry context selection'):
+                self.extract(changed)
+        mutations = [
+            ('crate::native_packet::header_prefix_bytes(pq)','318'),
+            ('crate::native_packet::header_prefix_bytes(ctx.pq_packet)','318'),
+            ('read_header(db, id, ctx.pq_packet)','read_header(db, id, crate::native_packet::Profile::Legacy)'),
+            ('crate::native_packet::decode_header_projection(&prefix, ctx.pq_packet)',
+             'crate::native_packet::decode_header_projection(&prefix, crate::native_packet::Profile::Pq3)'),
+            ('SELECT parent,state_root,substr(packet,1,?),substr(packet,-32)',
+             'SELECT parent,state_root,substr(packet,9,?),substr(packet,-32)'),
+        ]
+        for before,after in mutations:
+            with self.subTest(before=before),self.assertRaisesRegex(ValueError,'durable PQ ancestry header selection'):
+                self.extract(self.current,index=self.replace_once(self.current_index,before,after))
+        for method in ('read_header','metadata'):
+            changed = self.replace_once(self.current_index,'fn '+method+'(','#[cfg(any())]\nfn '+method+'(')
+            with self.subTest(method=method),self.assertRaisesRegex(ValueError,'durable PQ ancestry header owner'):
+                self.extract(self.current,index=changed)
+
+    def test_pq_namespace_cannot_enter_historical_or_current_legacy_ddl(self):
+        for name in ('local_pq_statements_v1','local_pq_removed_statements_v2',
+                     'local_pq_statements_v3','LoCaL_Pq_Unknown'):
+            extension = 'CREATE TABLE '+name+'(statement BLOB PRIMARY KEY);'
+            v1 = ('const DDL: &str = "'+extension+'";'
+                  'fn open(){hash(b"native-branch-schema-v1",&[DDL.as_bytes()]);}')
+            changes = ((v1,None),
+                (self.replace_once(self.current,'CREATE TABLE metadata',extension+'CREATE TABLE metadata'),None),
+                (self.current,self.replace_once(self.current_index,'CREATE TABLE ancestry_jump',extension+'CREATE TABLE ancestry_jump')))
+            for source,index in changes:
+                with self.subTest(name=name,index=index is not None),self.assertRaisesRegex(ValueError,'tables in legacy durable schema'):
+                    self.extract(source,index)
+
+    def test_pq_token_contract_allows_comments_but_not_literal_or_current_file_changes(self):
+        path = 'trillionnium/crates/trnm-pon-node/src/native_packet.rs'; source = self.auxiliary[path]
+        expected = self.extract(self.current)
+        comments = source.replace('Profile::Legacy => Packet::decode(raw)',
+                                  'Profile /* nested /* inner */ comment */ :: Legacy => Packet::decode(raw)')
+        self.assertEqual(self.extract(self.current,auxiliary={path:comments}),expected)
+        # Same path, same byte length, new input: a previous successful parse
+        # must never cache its verdict or its source bytes across invocations.
+        changed = self.replace_once(source,'"PQ2_HEADER_PROFILE"','"PQ3_HEADER_PROFILE"')
+        self.assertEqual(len(source),len(changed))
+        with self.assertRaisesRegex(ValueError,'durable PQ packet selection/legacy header contract'):
+            self.extract(self.current,auxiliary={path:changed})
+        self.assertEqual(self.extract(self.current),expected)
+
+    def test_shared_layout_refuses_split_joint_operator_and_byte_literal(self):
+        # Both real source mutations were ACCEPTed by the original 53-method
+        # reader. Keep them distinct from the direct tokenizer tests.
+        mutations = [
+            ('backend == StateBackend::AuthenticatedV1 && io.is_some()',
+             'backend == StateBackend::AuthenticatedV1 & & io.is_some()'),
+            ('b"native-io-shared-authenticated-branch-schema-v1"',
+             'b "native-io-shared-authenticated-branch-schema-v1"'),
+        ]
+        for before,after in mutations:
+            with self.subTest(after=after),self.assertRaisesRegex(ValueError,'durable shared layout composition/selection'):
+                self.extract(self.current,shared=self.replace_once(self.current_shared,before,after))
+        self.assertEqual(self.extract(self.current)[1],'native-branch-schema-v2')
+
+    def test_pq_exact_contract_refuses_split_joint_operator_and_byte_literal(self):
+        prefix = check.pq_contract.OPENING_PREFIX
+        changed = self.replace_once(prefix,'&& native_io.is_none()','& & native_io.is_none()')
+        with self.assertRaisesRegex(ValueError,'durable PQ opening guard'):
+            self.extract(self.replace_once(self.current,prefix,changed))
+        changed = self.replace_once(self.current,'b"native-pq-quota-branch-schema-v3"',
+                                    'b "native-pq-quota-branch-schema-v3"')
+        with self.assertRaisesRegex(ValueError,'durable backend composition/domain'):
+            self.extract(changed)
 
 
 if __name__ == '__main__': unittest.main(verbosity=2)
