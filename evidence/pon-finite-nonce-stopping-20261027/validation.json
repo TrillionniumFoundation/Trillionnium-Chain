@@ -1,0 +1,167 @@
+{
+  "base_head": "5d16aafee014fe7a06a0ed76b9aaa06b6058c5d0",
+  "commands": [
+    {
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--dev"
+      ],
+      "elapsed_seconds": 0.14963545300270198,
+      "exit_code": 0,
+      "label": "preflight",
+      "log_sha256": "f4c31ac584b94b0f69214347e06c19ba6f8503011141f60c5cd26401218821c1"
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_quantum_stopping.py",
+        "-v"
+      ],
+      "elapsed_seconds": 0.7472846179953194,
+      "exit_code": 0,
+      "label": "finite-stopping-controls",
+      "log_sha256": "b1f08194bf082893ac6c48b592676bb20c2ffac7d22b891f05508dc1225b7540"
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "formal/pon-nakamoto-v1/quantum_stopping.py",
+        "--output",
+        "/workspace/scratch/3d4ec372c488/quantum-review/repo/evidence/pon-finite-nonce-stopping-20261027/finite-stopping.json"
+      ],
+      "elapsed_seconds": 0.9196003040051437,
+      "exit_code": 0,
+      "label": "finite-stopping-report",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "elapsed_seconds": 13.586999382001522,
+      "exit_code": 0,
+      "label": "negative-source-integrity",
+      "log_sha256": "625a1aafa8f53f81d5d80f3374ae17a15f41b69ff4917af654e61e5dadd6391f"
+    },
+    {
+      "command": [
+        "/workspace/scratch/301262829a43/pon-build-inputs/unpacked/toolchain/bin/rustc",
+        "-Vv"
+      ],
+      "elapsed_seconds": 0.030554550998203922,
+      "exit_code": 0,
+      "label": "native-rustc-version",
+      "log_sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+    },
+    {
+      "command": [
+        "/workspace/scratch/301262829a43/pon-build-inputs/unpacked/toolchain/bin/cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "elapsed_seconds": 60.965434026002185,
+      "exit_code": 0,
+      "label": "native-format",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "elapsed_seconds": 0.1792780749965459,
+      "exit_code": 0,
+      "label": "native-inventory",
+      "log_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/check_repository.py"
+      ],
+      "elapsed_seconds": 3.4831527729984373,
+      "exit_code": 2,
+      "label": "repository-check",
+      "log_sha256": "e9d6779920685ac8631f9cfe3fc344fa5a64886cd36ed304305284c108a90361"
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "5d16aafee014fe7a06a0ed76b9aaa06b6058c5d0"
+      ],
+      "elapsed_seconds": 0.6906442210020032,
+      "exit_code": 1,
+      "label": "tracked-worktree-guard",
+      "log_sha256": "681f752a46ee38e4ca79fe283460018224b8032c66ecbf8cc5dcb5e1c9c2131f"
+    }
+  ],
+  "dense_state_vector_comparisons": 1139,
+  "full_repository_qualified": false,
+  "full_tracked_worktree_qualified": false,
+  "independent_multi_worker_K_tuple_cases": 120,
+  "independent_single_worker_K_cases": 5000,
+  "new_controls": 18,
+  "note": "Local sparse selected-input execution; source hashes, not a full-tree CI certificate.",
+  "production_activation": false,
+  "quantum_security_qualified": false,
+  "selected_input_bytes_unchanged_during_execution": true,
+  "selected_input_sha256_after": {
+    ".github/workflows/pon-w1-logical-oracle-research.yml": "afff107205981998afbcd62bdabc81c6c31b414812daf673803c84da37ae1bb4",
+    "config/pon/devnet-v1.json": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4",
+    "formal/pon-nakamoto-v1/contract_wire.py": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6",
+    "formal/pon-nakamoto-v1/quantum_daa.py": "233c7b2d3c2421b3fb82a1d6802d1b134126c64ec833b074063e1bd161ae673c",
+    "formal/pon-nakamoto-v1/quantum_daa_native.rs": "86415c354dec6c9debfcff6330c936a17105f94b2f9eedc3ce1dfe6d06e7ebb7",
+    "formal/pon-nakamoto-v1/quantum_stopping.py": "3a5421b52f0e7a15147d5b203d86d9984ec4c41ae841c33ac32bba6189f66ca4",
+    "formal/pon-nakamoto-v1/reversible_bits.py": "611b1f12ebaaf1d71db320400bac24e232380b891118d973bcb0b90b37fe9f79",
+    "formal/pon-nakamoto-v1/test_quantum_daa.py": "5c235fb39148737af28b9ecd36fb7e3f732a497b2c225c04c62f41ed6121acd0",
+    "formal/pon-nakamoto-v1/test_quantum_stopping.py": "5a6fae6609878aac7ecaa7fecc668d2fade8086f94bb68fd8987562c8a19e06c",
+    "formal/pon-nakamoto-v1/test_w1_oracle_blueprint.py": "acb844831349506af2bb6b7d1e5166f5492f217d5eb24b185bbfd2becaf6a61e",
+    "formal/pon-nakamoto-v1/w1_oracle_blueprint.py": "523699b3ba76313eb2784c3a58033423960efaa2c1530e90f31a27620acacd79",
+    "formal/pon-nakamoto-v1/work_oracle.py": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18",
+    "trillionnium/Cargo.lock": "3707ed772a9fd851638dca36e5b2472ac0657de65754480c448d3078107d9ff9",
+    "trillionnium/Cargo.toml": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": "9d28d64da80fd059c1619a17d24b6959a76bbdb64108600adc4dc95fe6c2636d",
+    "trillionnium/crates/trnm-pon-node/src/consensus.rs": "53088562316151516348ea723e03b9132b9994fee14167da18c79c2c3b3fed29"
+  },
+  "selected_input_sha256_before": {
+    ".github/workflows/pon-w1-logical-oracle-research.yml": "afff107205981998afbcd62bdabc81c6c31b414812daf673803c84da37ae1bb4",
+    "config/pon/devnet-v1.json": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4",
+    "formal/pon-nakamoto-v1/contract_wire.py": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6",
+    "formal/pon-nakamoto-v1/quantum_daa.py": "233c7b2d3c2421b3fb82a1d6802d1b134126c64ec833b074063e1bd161ae673c",
+    "formal/pon-nakamoto-v1/quantum_daa_native.rs": "86415c354dec6c9debfcff6330c936a17105f94b2f9eedc3ce1dfe6d06e7ebb7",
+    "formal/pon-nakamoto-v1/quantum_stopping.py": "3a5421b52f0e7a15147d5b203d86d9984ec4c41ae841c33ac32bba6189f66ca4",
+    "formal/pon-nakamoto-v1/reversible_bits.py": "611b1f12ebaaf1d71db320400bac24e232380b891118d973bcb0b90b37fe9f79",
+    "formal/pon-nakamoto-v1/test_quantum_daa.py": "5c235fb39148737af28b9ecd36fb7e3f732a497b2c225c04c62f41ed6121acd0",
+    "formal/pon-nakamoto-v1/test_quantum_stopping.py": "5a6fae6609878aac7ecaa7fecc668d2fade8086f94bb68fd8987562c8a19e06c",
+    "formal/pon-nakamoto-v1/test_w1_oracle_blueprint.py": "acb844831349506af2bb6b7d1e5166f5492f217d5eb24b185bbfd2becaf6a61e",
+    "formal/pon-nakamoto-v1/w1_oracle_blueprint.py": "523699b3ba76313eb2784c3a58033423960efaa2c1530e90f31a27620acacd79",
+    "formal/pon-nakamoto-v1/work_oracle.py": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18",
+    "trillionnium/Cargo.lock": "3707ed772a9fd851638dca36e5b2472ac0657de65754480c448d3078107d9ff9",
+    "trillionnium/Cargo.toml": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": "9d28d64da80fd059c1619a17d24b6959a76bbdb64108600adc4dc95fe6c2636d",
+    "trillionnium/crates/trnm-pon-node/src/consensus.rs": "53088562316151516348ea723e03b9132b9994fee14167da18c79c2c3b3fed29"
+  }
+}

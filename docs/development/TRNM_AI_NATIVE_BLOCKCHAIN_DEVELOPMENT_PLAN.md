@@ -2155,6 +2155,19 @@ DAA parity evidence remains separate, and its assumed r=0.25 is not calibrated b
 the new logical counts. Complete native PQ account migration/Node integration
 and the original whole-chain gates remain open.
 
+The [finite-nonce stopping increment](../security/PON_FINITE_NONCE_STOPPING_MODEL_V1.md)
+adds a separate conditional race model: actual finite marked counts, repeatable
+fixed stopping policies, nonzero setup/check/winning-tail costs, independent
+external-tip interruptions, hard budgets and up to four explicitly settled
+fixed-policy workers. Eighteen controls cover small state vectors and independent
+geometric enumeration. Its forty-five difficulty-versus-work rows charge all
+mandatory cost stages; an oracle-only scaling shortcut remains an explicit
+negative control. The [local evidence](../../evidence/pon-finite-nonce-stopping-20261027/README.md)
+also retains the original eleven gate/adjoint tests, seven native DAA tests and
+byte-identical #510 reports. Marked-count knowledge, physical rate, unknown-count
+policies, strategic equilibrium, actual native tie resolution and whole-chain
+security stay unqualified. No original PoN semantics, DAA or activation change.
+
 The [original native CI readback](../../evidence/pon-native-campaign-ci-20261027/README.md)
 retains every predeclared campaign at exact heads `63ae5018` and `e9c4bb0d`:
 FAIL/PASS/FAIL and FAIL/FAIL/FAIL. The five failing from-zero phases observed real
@@ -4614,3 +4627,18 @@ outside the shared layout; it does not guarantee physical WAL size. All twenty
 guards, eight original lanes, assertions and resource limits remain. Source
 identity agreement grants no SQL, C ABI, layout, two-second service or native
 qualification; the original lane executions and fullT/Layout003 remain open.
+
+
+### Finite-stop classical baseline: independent numerical correction
+
+The quantum/DAA research successor now refuses nonfinite expected times before
+forming classical win probabilities, and explicitly refuses an overflowing sum
+of finite competing rates. The predecessor returned infinity/NaN for positive
+rates near `1e-310/s`; the original failures are retained. A finite-budget
+counterpart remains accepted and matches a 90-digit Decimal calculation.
+[Source-bound correction evidence](../../evidence/pon-finite-rate-boundary-20261028/README.md)
+records 39 passing controls with actual pinned Rust DAA parity and no skipped
+tests. The fixed conditional scenario results remain unchanged except for their
+model source hash. Native W1, DAA, namespaces and timing assumptions are unchanged.
+This closes the numerical defect only; minimum oracle cost, physical quantum
+resources, complete native proof and production/security qualification remain open.

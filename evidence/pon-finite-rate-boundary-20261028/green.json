@@ -1,0 +1,17 @@
+{
+  "returncode": 0,
+  "wall_seconds": 6.532223189002252,
+  "head": "d32401076e47b0a2fe1f9067049c4c7d932571e6",
+  "inputs_sha256_before": {
+    "formal/pon-nakamoto-v1/quantum_stopping.py": "540934502c944c4f65c7102f6329b76b7fe9aa084cdd40d0ec00031334c32fa4",
+    "formal/pon-nakamoto-v1/test_quantum_stopping.py": "4abb1558f7b9004ea24a4b6372948a6a6072b0345b5662ce55bca7001ccdf494"
+  },
+  "inputs_sha256_after": {
+    "formal/pon-nakamoto-v1/quantum_stopping.py": "540934502c944c4f65c7102f6329b76b7fe9aa084cdd40d0ec00031334c32fa4",
+    "formal/pon-nakamoto-v1/test_quantum_stopping.py": "4abb1558f7b9004ea24a4b6372948a6a6072b0345b5662ce55bca7001ccdf494"
+  },
+  "measured_inputs_stable": true,
+  "synthetic_numeric_and_gate_controls_only": true,
+  "full_oracle_simulated": false,
+  "proof_generated": false
+}
