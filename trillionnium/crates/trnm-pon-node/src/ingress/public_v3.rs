@@ -8,8 +8,13 @@ use super::{
     Request as NativeRequest, Result, Settings, WorkCheckedPacket,
 };
 mod intake;
+mod pure_admission_v2;
 mod pure_pon;
 use intake::{ConnectionLease, ListenerIntake};
+pub use pure_admission_v2::{
+    call_public_pure_pon_v2, fetch_public_task_bootstrap_v2, PureAdmissionObservation,
+    PURE_PON_V2_PROFILE,
+};
 pub use pure_pon::fetch_public_task_bootstrap;
 pub use pure_pon::PROFILE as PURE_PON_PROFILE;
 mod growth;
@@ -169,6 +174,8 @@ impl PaidMutationCpuPermit {
         stop: &AtomicBool,
         cancelled: &AtomicBool,
     ) -> Result<Self> {
+        task_alive(deadline, stop, cancelled)?;
+        let mut fifo = pure_admission_v2::PureAdmissionWaiter::for_server(server)?;
         loop {
             task_alive(deadline, stop, cancelled)?;
             let now = Instant::now();
@@ -184,8 +191,11 @@ impl PaidMutationCpuPermit {
             let possible_refill = remaining
                 .saturating_mul(u128::from(MUTATION_CPU_REFILL_NS_PER_SECOND))
                 / 1_000_000_000;
+            let waiting_for_turn = fifo
+                .as_ref()
+                .map_or(Ok(false), |waiter| waiter.waiting_for_turn(&budget))?;
             let retry = !budget.unavailable
-                && (budget.completion_pending()
+                && (waiting_for_turn || budget.completion_pending()
                     || budget.in_flight >= MUTATION_CPU_WORKERS || shortage > 0)
                 // With no live reservation to return, an impossible refill
                 // should retain the original immediate budget refusal.
@@ -214,7 +224,11 @@ impl PaidMutationCpuPermit {
             if stamp.is_none() {
                 budget.unavailable = true;
             }
-            let result = budget.reserve(now);
+            let result = if let Some(waiter) = fifo.as_mut() {
+                waiter.reserve_turn(&mut budget, now)
+            } else {
+                budget.reserve(now)
+            };
             drop(budget);
             if let Ok(mut m) = metrics.lock() {
                 if result.is_err() {
@@ -698,6 +712,8 @@ pub struct PublicServer {
     mutation_cpu: Arc<Mutex<PaidMutationCpuBudget>>,
     arithmetic_facts:
         Option<trnm_crypto_primitives::pon_work::arithmetic_facts::ArithmeticFactCache>,
+    pure_admission_v2:
+        Option<Arc<trnm_crypto_primitives::pon_work::arithmetic_facts::ArithmeticFactCache>>,
     public_product: Option<trnm_crypto_primitives::pon_work::public_product::PublicProduct>,
     #[cfg(test)]
     fail_next_output: AtomicBool,
@@ -722,6 +738,7 @@ impl PublicServer {
             started: Instant::now(),
             mutation_cpu: Arc::new(Mutex::new(PaidMutationCpuBudget::new())),
             arithmetic_facts: None,
+            pure_admission_v2: None,
             public_product: pure_pon::public_product(policy)?,
             #[cfg(test)]
             fail_next_output: AtomicBool::new(false),
@@ -2055,8 +2072,7 @@ fn serve_public_protected_v3_inner(
                                                         observation: task.observation.as_ref(),
                                                         mutation_cpu,
                                                         arithmetic_facts: server
-                                                            .arithmetic_facts
-                                                            .as_ref(),
+                                                            .work_arithmetic_facts(),
                                                         public_product: server
                                                             .public_product
                                                             .as_ref(),

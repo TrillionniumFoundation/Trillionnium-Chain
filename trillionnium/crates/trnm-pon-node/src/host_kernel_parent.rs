@@ -31,6 +31,48 @@ pub struct KernelCpuDelta {
     pub throttled_usec: u64,
 }
 
+/// The exact immutable values pinned by the live kernel-parent handle. This is
+/// an observation binding, not a signed proof or authority to widen a limit.
+/// The parent covers all descendant processes/threads, not only mutation work.
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize)]
+pub struct HostKernelBinding {
+    pub schema: &'static str,
+    pub parent: String,
+    pub boot_id: String,
+    pub device: u64,
+    pub inode: u64,
+    pub cpu_quota_usec: u64,
+    pub cpu_period_usec: u64,
+    pub cpu_burst_usec: u64,
+    pub memory_max_bytes: u64,
+    pub memory_swap_max_bytes: u64,
+    pub pids_max: u64,
+}
+
+/// Counters from the same verified fixed parent, with its original identity and
+/// limits attached for an independent reader. Memory/tasks remain point samples.
+/// A manually constructed diagnostic value conveys no OS or ledger authority.
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize)]
+pub struct BoundKernelResourceSample {
+    pub schema: &'static str,
+    pub binding: HostKernelBinding,
+    pub resources: KernelResourceSample,
+}
+impl BoundKernelResourceSample {
+    /// A different boot, inode, fixed parent or any changed resource ceiling
+    /// cannot be used as the other endpoint of the same accounting interval.
+    pub fn cpu_delta_since(&self, before: &Self) -> crate::Result<KernelCpuDelta> {
+        crate::ensure(
+            self.schema == "public-host-kernel-bound-resource-sample-v1"
+                && before.schema == self.schema
+                && self.binding.schema == "public-host-kernel-binding-v1"
+                && self.binding == before.binding,
+            "PUBLIC_HOST_KERNEL_BINDING_CHANGED",
+        )?;
+        self.resources.cpu_delta_since(before.resources)
+    }
+}
+
 impl KernelResourceSample {
     pub fn cpu_delta_since(self, before: Self) -> crate::Result<KernelCpuDelta> {
         let changed = || crate::Error::from("PUBLIC_HOST_KERNEL_COUNTER_REWIND");
@@ -57,7 +99,7 @@ impl KernelResourceSample {
 
 #[cfg(target_os = "linux")]
 mod kernel_parent {
-    use super::KernelResourceSample;
+    use super::{BoundKernelResourceSample, HostKernelBinding, KernelResourceSample};
     use std::{
         fs,
         net::SocketAddr,
@@ -94,7 +136,7 @@ mod kernel_parent {
         (value > 0 && value <= limit).then_some(value)
     }
 
-    // The maximum CPU bandwidth is strictly <= 250,000 ns per second per
+    // The maximum CPU bandwidth is strictly <= 250,000,000 ns per second per
     // entire host parent. Explicit finite ceilings only; never accept "max".
     fn validate_limits(
         cpu: &str,
@@ -321,6 +363,35 @@ mod kernel_parent {
             )?;
             self.check()?;
             Ok(sample)
+        }
+
+        /// Uses the same checked sample path: fixed parent, boot/inode, actual
+        /// calling-thread membership and exact unchanged limits before and after
+        /// all reads. It creates no cgroup, reservation, credit or policy change.
+        pub fn bound_resource_sample(&self) -> Result<BoundKernelResourceSample> {
+            let resources = self.resource_sample()?;
+            Ok(BoundKernelResourceSample {
+                schema: "public-host-kernel-bound-resource-sample-v1",
+                binding: HostKernelBinding {
+                    schema: "public-host-kernel-binding-v1",
+                    parent: self
+                        .parent
+                        .to_str()
+                        .ok_or("PUBLIC_HOST_KERNEL_PARENT")?
+                        .to_owned(),
+                    boot_id: self.boot_id.clone(),
+                    device: self.identity.0,
+                    inode: self.identity.1,
+                    cpu_quota_usec: self.limits.cpu_quota_us,
+                    cpu_period_usec: self.limits.cpu_period_us,
+                    // Both exact zero settings are revalidated on every sample.
+                    cpu_burst_usec: 0,
+                    memory_max_bytes: self.limits.memory_bytes,
+                    memory_swap_max_bytes: 0,
+                    pids_max: self.limits.tasks,
+                },
+                resources,
+            })
         }
     }
 
@@ -595,6 +666,9 @@ impl HostKernelBudget {
     pub fn resource_sample(&self) -> crate::Result<KernelResourceSample> {
         Err("PUBLIC_HOST_KERNEL_UNSUPPORTED".into())
     }
+    pub fn bound_resource_sample(&self) -> crate::Result<BoundKernelResourceSample> {
+        Err("PUBLIC_HOST_KERNEL_UNSUPPORTED".into())
+    }
 }
 #[cfg(not(target_os = "linux"))]
 pub fn require_host_kernel_budget(
@@ -621,4 +695,110 @@ pub fn require_for_listener(
         address,
         (!address.ip().is_loopback()).then_some(FIXED_PUBLIC_KERNEL_PARENT),
     )
+}
+
+#[cfg(test)]
+mod bound_observation_tests {
+    use super::*;
+
+    // Diagnostic parser controls only. They never open/replace a real resource
+    // parent and cannot turn synthetic counters into a host qualification.
+    fn sample() -> BoundKernelResourceSample {
+        BoundKernelResourceSample {
+            schema: "public-host-kernel-bound-resource-sample-v1",
+            binding: HostKernelBinding {
+                schema: "public-host-kernel-binding-v1",
+                parent: FIXED_PUBLIC_KERNEL_PARENT.into(),
+                boot_id: "test-only-boot".into(),
+                device: 21,
+                inode: 55,
+                cpu_quota_usec: 25_000,
+                cpu_period_usec: 100_000,
+                cpu_burst_usec: 0,
+                memory_max_bytes: 2 * 1024 * 1024 * 1024,
+                memory_swap_max_bytes: 0,
+                pids_max: 256,
+            },
+            resources: KernelResourceSample {
+                cpu_usage_usec: 600,
+                cpu_nr_periods: 16,
+                cpu_nr_throttled: 4,
+                cpu_throttled_usec: 150,
+                memory_current_bytes: 1000,
+                pids_current: 7,
+            },
+        }
+    }
+
+    #[test]
+    fn bound_parent_cpu_interval_keeps_memory_and_tasks_as_point_observations() {
+        let before = sample();
+        let mut after = before.clone();
+        after.resources.cpu_usage_usec += 300;
+        after.resources.cpu_nr_periods += 4;
+        after.resources.cpu_nr_throttled += 1;
+        after.resources.cpu_throttled_usec += 30;
+        after.resources.memory_current_bytes = 20;
+        after.resources.pids_current = 2;
+        assert_eq!(
+            after.cpu_delta_since(&before).unwrap(),
+            KernelCpuDelta {
+                usage_usec: 300,
+                nr_periods: 4,
+                nr_throttled: 1,
+                throttled_usec: 30,
+            }
+        );
+        assert_eq!(after.resources.memory_current_bytes, 20);
+        assert_eq!(after.resources.pids_current, 2);
+        assert_eq!(after.binding.parent, FIXED_PUBLIC_KERNEL_PARENT);
+    }
+
+    #[test]
+    fn no_comparison_after_parent_replacement_or_any_changed_ceiling() {
+        let before = sample();
+        for change in 0..11 {
+            let mut after = before.clone();
+            after.resources.cpu_usage_usec += 1;
+            match change {
+                0 => after.binding.boot_id.push_str("-restarted"),
+                1 => after.binding.device += 1,
+                2 => after.binding.inode += 1,
+                3 => after.binding.parent.push_str("/child.service"),
+                4 => after.binding.cpu_quota_usec += 1,
+                5 => after.binding.cpu_period_usec += 1,
+                6 => after.binding.cpu_burst_usec += 1,
+                7 => after.binding.memory_max_bytes += 1,
+                8 => after.binding.memory_swap_max_bytes += 1,
+                9 => after.binding.pids_max += 1,
+                10 => after.schema = "different-sample-schema",
+                _ => unreachable!(),
+            }
+            assert_eq!(
+                after.cpu_delta_since(&before).unwrap_err().to_string(),
+                "PUBLIC_HOST_KERNEL_BINDING_CHANGED",
+                "change {change}"
+            );
+        }
+    }
+
+    #[test]
+    fn unchanged_parent_identity_does_not_excuse_a_kernel_cpu_counter_rewind() {
+        let before = sample();
+        for change in 0..4 {
+            let mut after = before.clone();
+            match change {
+                0 => after.resources.cpu_usage_usec -= 1,
+                1 => after.resources.cpu_nr_periods -= 1,
+                2 => after.resources.cpu_nr_throttled -= 1,
+                3 => after.resources.cpu_throttled_usec -= 1,
+                _ => unreachable!(),
+            }
+            assert_eq!(
+                after.cpu_delta_since(&before).unwrap_err().to_string(),
+                "PUBLIC_HOST_KERNEL_COUNTER_REWIND",
+                "counter {change}"
+            );
+        }
+    }
 }

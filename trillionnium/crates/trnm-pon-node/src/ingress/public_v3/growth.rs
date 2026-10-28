@@ -10,6 +10,7 @@ pub const GROWTH_PROFILE: &str = "public-protected-growth-development-v1";
 pub(super) enum ClientProfile {
     Legacy,
     ArithmeticFacts,
+    PurePoNV2,
     NativeGrowthV1,
 }
 impl ClientProfile {
@@ -17,12 +18,14 @@ impl ClientProfile {
         match self {
             Self::Legacy => policy.id(),
             Self::ArithmeticFacts => policy.arithmetic_facts_id(),
+            Self::PurePoNV2 => policy.pure_admission_v2_id(),
             Self::NativeGrowthV1 => policy.growth_id(),
         }
     }
     pub(super) fn operation_allowed(self, op: u8) -> bool {
         match self {
             Self::Legacy | Self::ArithmeticFacts => (1..=5).contains(&op),
+            Self::PurePoNV2 => (1..=5).contains(&op) || op == 9,
             Self::NativeGrowthV1 => (6..=8).contains(&op),
         }
     }
@@ -43,7 +46,9 @@ impl PublicServer {
     /// actual CPU/intake domain and starts no listener or owner.
     pub fn with_native_growth(mut self) -> Result<Self> {
         ensure(
-            !self.native_growth && self.arithmetic_facts.is_none(),
+            !self.native_growth
+                && self.arithmetic_facts.is_none()
+                && self.pure_admission_v2.is_none(),
             "PUBLIC_GROWTH_PROFILE",
         )?;
         self.native_growth = true;

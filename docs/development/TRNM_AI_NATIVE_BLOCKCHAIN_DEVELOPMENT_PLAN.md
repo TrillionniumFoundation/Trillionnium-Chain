@@ -137,6 +137,35 @@ and preserves failures; it does not replace the original required head/merge,
 cross-architecture, original-pressure or long-capacity lanes. All acceptance and
 activation flags remain unchanged.
 
+### Pure PoN admission / DAA continuation — 2026-10-28
+
+The user's two-item continuation starts at `0d02a946c9126c5dbdad41edd770c81eda07a96e`
+inside PN1/I01-I02. The [technical attachment](../protocol/pon-nakamoto-v1/details/PURE_PON_ADMISSION_DAA_V2.md)
+specifies a fresh explicit pure-v2 transport, same-account cross-listener FIFO,
+same-epoch bounded arithmetic facts, and a separate real complete-statement
+transparent certificate verifier research API. Existing pure-v1/r13 protocols,
+native W1 authority, CPU/byte/deadline limits and all acceptance flags remain.
+There is no added Hashcash or other PoW gate. FIFO after bounded intake is not
+unrestricted Sybil fairness; fresh-challenge attacks remain real work.
+
+The supplemental fixed 24-actor/three-30-second campaign requires receiver-side
+work, actual shared CPU depletion and honest round overlap, plus true 64-slot
+capacity churn. Its reader preserves valid failed observations and refuses
+unearned finite qualification. Original failures are not replaced by this new
+campaign. The native original campaign's four JSON confirmation accesses are
+repaired to exact typed `Some(true/false)` / depth-six comparisons; missing or
+ill-typed fields still reject, with no timer, overlap condition or workload change.
+
+The conditional PoN DAA model includes task/solver costs, witness/publication
+latency, producer rate changes, hidden branches and full-cost quantum hypotheses,
+with native integer-rule vectors and a real PNW1 confirmation/reorg/reopen test.
+It changes no consensus DAA and supplies no economic exploit or chain-security
+probability. Transparent proof production, worst-case public proof rejection,
+arbitrary-Sybil honest service, physical work/quantum costs and independent
+security acceptance remain OPEN. Final source/merge CI and actual native
+campaigns must supply their own receipts; this section grants no release or
+activation authority.
+
 ### Audit contract refinement — 2026-10-25
 
 This amendment refines the existing PN0–PN6 exits and I01–I10 interfaces. It
