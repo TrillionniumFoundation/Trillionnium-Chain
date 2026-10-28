@@ -4791,3 +4791,30 @@ the prior owner's trusted-migration commit `0fc50c0701e0bfc94faa8c48df5957956cc6
 as its parent, preserves prior failures and records final source/command/binary
 identities. Independent migration trust/source retirement, the remaining authority
 owners, physical I/O, whole-chain PQ and P1 completion remain open.
+
+#### P1 PQ legacy-reader and hosted Cargo follow-up — 2026-10-28 (component / OPEN)
+
+The [strict reader continuation](../../evidence/pon-pq-legacy-reader-20261028/README.md)
+recognizes the exact NPQ1/2/3 `selected_ddl` and packet-profile joins, the explicit
+constructor guards and the original legacy header projection. It still returns
+only the unchanged 4,775-byte legacy V2 schema. PQ, authenticated, shared-account
+and growth schemas or packets cannot borrow that legacy evidence scope. All 53
+prior methods remain; the complete expanded reader run executes 74 methods,
+including real SQLite/packet negatives and joint-token/literal-prefix controls.
+The prior strict-reader refusal, two original-parser false accepts and the first
+67-method continuation's five failing subcases remain as observations. Source
+binding and lexical recognition do not certify compilation or public readiness.
+
+The [independent hosted Cargo replay](../../evidence/pon-pq-hosted-a1e407-20261028/README.md)
+on published `a1e40747746772d1326bb3e656aec4ba10440147` executes all 164 selected
+tests, including all 30 integration cases, with real locked Cargo builds and
+strict M00/M06/node `--all-targets --all-features` Clippy. It closes the earlier
+manual-link-only limitation for those targets, while preserving the eight
+original library ignores. Both complete original artifact archives and their
+independent source/binary/member readbacks are retained. A separate early
+recent-batch failure is preserved; only four reviewed stale source-blob guards
+are synchronized, with all sixteen guards and execution limits retained. That
+workflow has not acquired acceptance from the pin update and must execute again.
+This follow-up changes no Rust runtime or protocol namespace. Complete workspace
+qualification, remaining authority owners, independent migration trust/source
+retirement, physical I/O, whole-chain PQ, P1 completion and activation remain open.
