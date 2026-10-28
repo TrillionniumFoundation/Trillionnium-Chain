@@ -1,0 +1,49 @@
+test_classical_unbounded_time_overflow_refuses_nonfinite_probabilities (test_quantum_stopping.CompetingWorkers.test_classical_unbounded_time_overflow_refuses_nonfinite_probabilities) ... 
+  test_classical_unbounded_time_overflow_refuses_nonfinite_probabilities (test_quantum_stopping.CompetingWorkers.test_classical_unbounded_time_overflow_refuses_nonfinite_probabilities) (own=1e-310, others=[]) ... FAIL
+  test_classical_unbounded_time_overflow_refuses_nonfinite_probabilities (test_quantum_stopping.CompetingWorkers.test_classical_unbounded_time_overflow_refuses_nonfinite_probabilities) (own=0, others=[1e-310]) ... FAIL
+  test_classical_unbounded_time_overflow_refuses_nonfinite_probabilities (test_quantum_stopping.CompetingWorkers.test_classical_unbounded_time_overflow_refuses_nonfinite_probabilities) (own=1e-310, others=[2e-310]) ... FAIL
+test_classical_bounded_tiny_rate_matches_decimal_integral (test_quantum_stopping.CompetingWorkers.test_classical_bounded_tiny_rate_matches_decimal_integral) ... ok
+test_classical_total_rate_overflow_has_explicit_model_refusal (test_quantum_stopping.CompetingWorkers.test_classical_total_rate_overflow_has_explicit_model_refusal) ... ERROR
+
+======================================================================
+ERROR: test_classical_total_rate_overflow_has_explicit_model_refusal (test_quantum_stopping.CompetingWorkers.test_classical_total_rate_overflow_has_explicit_model_refusal)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/bb9b841c1d43/quantum-followup/formal/pon-nakamoto-v1/test_quantum_stopping.py", line 232, in test_classical_total_rate_overflow_has_explicit_model_refusal
+    q.poisson_classical_race(0, [1e308, 1e308])
+  File "/workspace/scratch/bb9b841c1d43/quantum-followup/formal/pon-nakamoto-v1/quantum_stopping.py", line 212, in poisson_classical_race
+    other = math.fsum(_real(r, "COMPETING_RATE") for r in competing_rates)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OverflowError: intermediate overflow in fsum
+
+======================================================================
+FAIL: test_classical_unbounded_time_overflow_refuses_nonfinite_probabilities (test_quantum_stopping.CompetingWorkers.test_classical_unbounded_time_overflow_refuses_nonfinite_probabilities) (own=1e-310, others=[])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/bb9b841c1d43/quantum-followup/formal/pon-nakamoto-v1/test_quantum_stopping.py", line 202, in test_classical_unbounded_time_overflow_refuses_nonfinite_probabilities
+    with self.assertRaisesRegex(q.Reject, "EXPECTED_TIME_NUMERIC_RANGE"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Reject not raised
+
+======================================================================
+FAIL: test_classical_unbounded_time_overflow_refuses_nonfinite_probabilities (test_quantum_stopping.CompetingWorkers.test_classical_unbounded_time_overflow_refuses_nonfinite_probabilities) (own=0, others=[1e-310])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/bb9b841c1d43/quantum-followup/formal/pon-nakamoto-v1/test_quantum_stopping.py", line 202, in test_classical_unbounded_time_overflow_refuses_nonfinite_probabilities
+    with self.assertRaisesRegex(q.Reject, "EXPECTED_TIME_NUMERIC_RANGE"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Reject not raised
+
+======================================================================
+FAIL: test_classical_unbounded_time_overflow_refuses_nonfinite_probabilities (test_quantum_stopping.CompetingWorkers.test_classical_unbounded_time_overflow_refuses_nonfinite_probabilities) (own=1e-310, others=[2e-310])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/bb9b841c1d43/quantum-followup/formal/pon-nakamoto-v1/test_quantum_stopping.py", line 202, in test_classical_unbounded_time_overflow_refuses_nonfinite_probabilities
+    with self.assertRaisesRegex(q.Reject, "EXPECTED_TIME_NUMERIC_RANGE"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Reject not raised
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.078s
+
+FAILED (failures=3, errors=1)

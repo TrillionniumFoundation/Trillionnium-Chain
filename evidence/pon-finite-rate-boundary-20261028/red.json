@@ -1,0 +1,11 @@
+{
+  "returncode": 1,
+  "wall_seconds": 1.7642618440004298,
+  "head": "d32401076e47b0a2fe1f9067049c4c7d932571e6",
+  "inputs_sha256": {
+    "formal/pon-nakamoto-v1/quantum_stopping.py": "3a5421b52f0e7a15147d5b203d86d9984ec4c41ae841c33ac32bba6189f66ca4",
+    "formal/pon-nakamoto-v1/test_quantum_stopping.py": "4abb1558f7b9004ea24a4b6372948a6a6072b0345b5662ce55bca7001ccdf494"
+  },
+  "synthetic_numeric_controls_only": true,
+  "proof_generated": false
+}

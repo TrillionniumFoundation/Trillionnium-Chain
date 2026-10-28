@@ -2155,6 +2155,34 @@ DAA parity evidence remains separate, and its assumed r=0.25 is not calibrated b
 the new logical counts. Complete native PQ account migration/Node integration
 and the original whole-chain gates remain open.
 
+The [finite-nonce stopping increment](../security/PON_FINITE_NONCE_STOPPING_MODEL_V1.md)
+adds a separate conditional race model: actual finite marked counts, repeatable
+fixed stopping policies, nonzero setup/check/winning-tail costs, independent
+external-tip interruptions, hard budgets and up to four explicitly settled
+fixed-policy workers. Eighteen controls cover small state vectors and independent
+geometric enumeration. Its forty-five difficulty-versus-work rows charge all
+mandatory cost stages; an oracle-only scaling shortcut remains an explicit
+negative control. The [local evidence](../../evidence/pon-finite-nonce-stopping-20261027/README.md)
+also retains the original eleven gate/adjoint tests, seven native DAA tests and
+byte-identical #510 reports. Marked-count knowledge, physical rate, unknown-count
+policies, strategic equilibrium, actual native tie resolution and whole-chain
+security stay unqualified. No original PoN semantics, DAA or activation change.
+
+The [unknown-marked-count policy continuation](../security/PON_UNKNOWN_MARKED_POLICY_COST_V1.md)
+now evaluates a concrete M-blind randomized iteration schedule with exact
+rational window growth, declared caps, failed-attempt exhaustion and an
+unbounded repeated-window tail. It charges policy draws as well as complete W1
+oracle/diffusion, setup, checks and winning publication, including tip
+interruption. Separate success/failure tails preserve rare failed-draw work
+when 64-bit success probabilities round to one. Twelve controls compare 8,576
+state-vector probabilities and 120 independently enumerated terminal-path
+experiments. Its original failure and source-bound executions belong to the
+[continuation evidence](../../evidence/pon-unknown-marked-cost-20261028/README.md).
+This costs one unknown-count policy; it does not measure the real marked
+distribution, establish an optimal oracle/policy or qualify physical quantum
+resources, production DAA or whole-chain security. All original source and
+qualification boundaries above remain in force.
+
 The [original native CI readback](../../evidence/pon-native-campaign-ci-20261027/README.md)
 retains every predeclared campaign at exact heads `63ae5018` and `e9c4bb0d`:
 FAIL/PASS/FAIL and FAIL/FAIL/FAIL. The five failing from-zero phases observed real
@@ -4614,3 +4642,48 @@ outside the shared layout; it does not guarantee physical WAL size. All twenty
 guards, eight original lanes, assertions and resource limits remain. Source
 identity agreement grants no SQL, C ABI, layout, two-second service or native
 qualification; the original lane executions and fullT/Layout003 remain open.
+
+
+### Finite-stop classical baseline: independent numerical correction
+
+The quantum/DAA research successor now refuses nonfinite expected times before
+forming classical win probabilities, and explicitly refuses an overflowing sum
+of finite competing rates. The predecessor returned infinity/NaN for positive
+rates near `1e-310/s`; the original failures are retained. A finite-budget
+counterpart remains accepted and matches a 90-digit Decimal calculation.
+[Source-bound correction evidence](../../evidence/pon-finite-rate-boundary-20261028/README.md)
+records 39 passing controls with actual pinned Rust DAA parity and no skipped
+tests. The fixed conditional scenario results remain unchanged except for their
+model source hash. Native W1, DAA, namespaces and timing assumptions are unchanged.
+This closes the numerical defect only; minimum oracle cost, physical quantum
+resources, complete native proof and production/security qualification remain open.
+
+The published source `c3a13bcf50a46826974681f4b837f291278bcaf5` subsequently
+completed hosted run `40607357176`: the same 39 tests passed without skips, and
+all 5,900 tracked entries retained the same source/tree identity before and
+after execution. Its original nine-member archive and complete log are retained
+with the correction evidence above. This independent execution does not add
+new test methods, complete the full Cargo workspace gate or change the research
+qualification limits.
+
+The required legacy evidence job separately failed on that same published
+source because its inherited reader still expected direct DDL selection after
+the runtime had adopted the versioned `shared_snapshot::Layout` path. The
+[strict source compatibility repair](../../evidence/pon-evidence-layout-reader-20261028/README.md)
+preserves the complete failed hosted log and transfers the integration reader
+only after checking byte-identical runtime inputs. All 53 complete reader
+regressions then passed on frozen source within the original 600-second limit,
+with no skips and identical input hashes before and after execution. Legacy
+schema qualification remains strict; PQ, shared and growth evidence receive no
+new acceptance. The numerical results and Rust runtime are unchanged. The new
+published reader source still needs its own hosted required-job observation.
+
+Subsequent review found that the inherited reader erased joint-token whitespace.
+The two new source-mutation methods actually failed in five subcases before the
+correction. The reader now preserves joint operators and literal prefixes, and
+only caches pure transforms of current text within one invocation. A separate
+full 60-method regression passed in 125.765 seconds within that same 600-second
+limit; all original 53 method ASTs and all runtime bytes are unchanged. The old
+53-test observation and the later lexical failures remain retained. This is a
+source-contract repair and does not establish a compiled runtime attack or
+grant PQ/shared/growth evidence eligibility.

@@ -1,0 +1,91 @@
+{
+  "source_before_and_after_match": true,
+  "tests": [
+    {
+      "file": "gate-controls.log",
+      "passed": 11,
+      "skipped": 0
+    },
+    {
+      "file": "native-daa-controls.log",
+      "passed": 7,
+      "skipped": 0
+    },
+    {
+      "file": "finite-stopping-controls.log",
+      "passed": 21,
+      "skipped": 0
+    }
+  ],
+  "distinct_tests_passed": 39,
+  "native_compiler": "1.95.0",
+  "full_cargo_workspace_executed": false,
+  "model_and_physical_security_qualified": false,
+  "files": [
+    {
+      "path": "acquisition.json",
+      "bytes": 1064,
+      "sha256": "d635dfb6158c7135778a4275f5c45099fe0c042a661c2e9bcdb8cc1d7cfc379f"
+    },
+    {
+      "path": "archive-readback.json",
+      "bytes": 1610,
+      "sha256": "1950430fc66ec160a7b301ea7768efe0904636dd31273f4d5eb998511cb32c73"
+    },
+    {
+      "path": "artifact.zip",
+      "bytes": 13436,
+      "sha256": "b18b1082219001ff2a96cded0e42e10225fa8da29ad9409e6a57bcfaa79f2bd0"
+    },
+    {
+      "path": "conditional-daa.json",
+      "bytes": 6302,
+      "sha256": "bc0fa4100d243b356c3fc157d4d089f85d452b32e1e07b57cdd2d5b01d5256da"
+    },
+    {
+      "path": "finite-stopping-controls.log",
+      "bytes": 3622,
+      "sha256": "bd362a040fab7ce382bcb1309d99cfb8e5e61b51ce52e1451c7e31f739d01134"
+    },
+    {
+      "path": "finite-stopping.json",
+      "bytes": 61543,
+      "sha256": "c8e17d657f086ca69746481554dfcd439d4b17811da3527509030f5e98d8ef46"
+    },
+    {
+      "path": "gate-controls.log",
+      "bytes": 1793,
+      "sha256": "4a7e496d70c3df61c333ca91818dc4de02164dbdde079a1b8598b0cadadfc31c"
+    },
+    {
+      "path": "job.log.gz",
+      "bytes": 16939,
+      "sha256": "8c75ff459eee9fda847051fe65684c3442a1bfc9335eae21f20267a4ca2bc385"
+    },
+    {
+      "path": "logical-circuit-upper-bound.json",
+      "bytes": 8513,
+      "sha256": "a6e782778c4551ce35aa4fc1ae9092b6b5036c00010e9c2f2dde73ca27cfac63"
+    },
+    {
+      "path": "native-daa-controls.log",
+      "bytes": 1277,
+      "sha256": "04807a75abf26acad83f18f898974517f1f72ea185772d2c31447060cde0a708"
+    },
+    {
+      "path": "native-rustc-version.txt",
+      "bytes": 196,
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+    },
+    {
+      "path": "preflight.log",
+      "bytes": 133,
+      "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0"
+    },
+    {
+      "path": "source-before.json",
+      "bytes": 421,
+      "sha256": "6a44d8a442ab96630d0d030fa3f37b46fc8f432c661000aeea826b09418dc2b5"
+    }
+  ]
+}

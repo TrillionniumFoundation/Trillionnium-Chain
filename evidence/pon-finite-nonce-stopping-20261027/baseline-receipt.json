@@ -1,0 +1,81 @@
+{
+  "accepted_branch": "test/chain-finite-nonce-stopping-20261027",
+  "base_head": "5d16aafee014fe7a06a0ed76b9aaa06b6058c5d0",
+  "commands": [
+    {
+      "command": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_w1_oracle_blueprint.py",
+        "-v"
+      ],
+      "elapsed_seconds": 6.846237201003532,
+      "exit_code": 0,
+      "label": "gate-controls",
+      "log_sha256": "56ef46db8a78bb4a2bf97d38e0b4af7ef8970b2c5f80430bfc69c7837c5929a8"
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_quantum_daa.py",
+        "-v"
+      ],
+      "elapsed_seconds": 8.841839055996388,
+      "exit_code": 0,
+      "label": "native-daa-controls",
+      "log_sha256": "4882c01b76eb8beba58876ed8b55a411c23700d2a860ada5945cdbed9b9a9adf"
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "formal/pon-nakamoto-v1/w1_oracle_blueprint.py",
+        "--output",
+        "/workspace/scratch/3d4ec372c488/quantum-review/baseline/logical-circuit-upper-bound.json"
+      ],
+      "elapsed_seconds": 0.5697894859986263,
+      "exit_code": 0,
+      "label": "logical-circuit-report",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "formal/pon-nakamoto-v1/quantum_daa.py",
+        "--output",
+        "/workspace/scratch/3d4ec372c488/quantum-review/baseline/conditional-daa.json"
+      ],
+      "elapsed_seconds": 1.7335610910013202,
+      "exit_code": 0,
+      "label": "conditional-daa-report",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "initial_rejected_branch": "research/chain-finite-nonce-stopping-20261027 (not allowed development branch)",
+  "old_ci_member_sha256": {
+    "conditional-daa.json": "bc0fa4100d243b356c3fc157d4d089f85d452b32e1e07b57cdd2d5b01d5256da",
+    "gate-controls.log": "46b1e152d51b376c1674ffc171e86c901edc3bfa53a803781c3a51fcc4c96187",
+    "logical-circuit-upper-bound.json": "a6e782778c4551ce35aa4fc1ae9092b6b5036c00010e9c2f2dde73ca27cfac63",
+    "preflight.log": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0",
+    "source-before.json": "913964b17b943f81097a72577aeccb75640648fc09bb9aee9610330731ad64fd"
+  },
+  "old_ci_zip_sha256": "cc9740c63fa5c8a503036705be0ea5ada4b96f7712fc3622e9f5e5a6eaa1ed22",
+  "report_exact_bytes_equal_old_ci": {
+    "conditional-daa.json": true,
+    "logical-circuit-upper-bound.json": true
+  }
+}

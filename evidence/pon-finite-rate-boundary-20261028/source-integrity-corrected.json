@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "python",
+    "-B",
+    "scripts/ci/test_ci_source_integrity.py"
+  ],
+  "returncode": 0,
+  "wall_seconds": 6.353460473997984,
+  "preceding_wrong_test_pattern_retained": true
+}
