@@ -1,0 +1,40 @@
+{
+  "source": "7887b2efbbed0613640b2c1be6019bd31ca5651c",
+  "command": [
+    "python3",
+    "-B",
+    "scripts/ci/test_public_readiness_evidence.py"
+  ],
+  "timeout_seconds": 600,
+  "returncode": 0,
+  "timed_out": false,
+  "child_reaped": true,
+  "wall_seconds": 125.76533136399667,
+  "child_cpu_seconds": 124.268403,
+  "max_waited_descendant_rss_kib": 47852,
+  "source_before": {
+    "scripts/ci/check_public_readiness_evidence.py": "03c08cf6e3c61ddf36208f56fb882a0e1fdc7a706a4e467b9f13db81f9673612",
+    "scripts/ci/test_public_readiness_evidence.py": "12a1480328a21624047376430cfe76205be7918ea75a34e845ec485782ea86ce",
+    "scripts/ci/rust_source_tokens.py": "32921977673afbae29d7b6cf037605621e7770243902a0118af1cd9309e5f6c6",
+    "scripts/ci/test_rust_source_tokens.py": "0bef50998b5b7377543efa3179917c1d672bb0ee926530dcd47d337d50409807",
+    "scripts/ci/report_module_evidence.py": "031b21a54e0e893e755fcddaa524a2a6971e385b3742ce901954d27cba3f154e",
+    "trillionnium/crates/trnm-pon-node/src/store.rs": "48e3301d9a60ed62aed976249bf7816c2df94a19ab0a72273ba275feb8448df2",
+    "trillionnium/crates/trnm-pon-node/src/store/shared_snapshot.rs": "a84c63e80e88b60826671de2430753bf12289a15c0cde699ef6fcd4521788a70",
+    "trillionnium/crates/trnm-pon-node/src/ancestry_index.rs": "fcae76af67e5d487fee90c276ec60a49f8b920b0e7c06eda631e96d0a0ce9e84"
+  },
+  "source_after": {
+    "scripts/ci/check_public_readiness_evidence.py": "03c08cf6e3c61ddf36208f56fb882a0e1fdc7a706a4e467b9f13db81f9673612",
+    "scripts/ci/test_public_readiness_evidence.py": "12a1480328a21624047376430cfe76205be7918ea75a34e845ec485782ea86ce",
+    "scripts/ci/rust_source_tokens.py": "32921977673afbae29d7b6cf037605621e7770243902a0118af1cd9309e5f6c6",
+    "scripts/ci/test_rust_source_tokens.py": "0bef50998b5b7377543efa3179917c1d672bb0ee926530dcd47d337d50409807",
+    "scripts/ci/report_module_evidence.py": "031b21a54e0e893e755fcddaa524a2a6971e385b3742ce901954d27cba3f154e",
+    "trillionnium/crates/trnm-pon-node/src/store.rs": "48e3301d9a60ed62aed976249bf7816c2df94a19ab0a72273ba275feb8448df2",
+    "trillionnium/crates/trnm-pon-node/src/store/shared_snapshot.rs": "a84c63e80e88b60826671de2430753bf12289a15c0cde699ef6fcd4521788a70",
+    "trillionnium/crates/trnm-pon-node/src/ancestry_index.rs": "fcae76af67e5d487fee90c276ec60a49f8b920b0e7c06eda631e96d0a0ce9e84"
+  },
+  "source_unchanged": true,
+  "retained_original_test_methods_ast_identical": 53,
+  "added_source_methods": 2,
+  "added_lexical_methods": 5,
+  "whole_native_workspace_qualified": false
+}

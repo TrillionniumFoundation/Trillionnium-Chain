@@ -1,0 +1,87 @@
+{
+  "source": "a2da85012afac22c46412aa9a4e0e6b79f2ac57b",
+  "results": [
+    {
+      "name": "source-integrity",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "returncode": 0,
+      "wall_seconds": 8.007881602999987,
+      "logs": {
+        "stdout.log": {
+          "bytes": 484,
+          "sha256": "4eb3cadf5bfba89c499b5ca86b3d0e7cf2663d20025ad2bfb1c47f9cde17245b"
+        },
+        "stderr.log": {
+          "bytes": 5025,
+          "sha256": "f0550cec120353dd36aef4a6b7e382bb82016c6393c065a2ada39a545d02c285"
+        }
+      }
+    },
+    {
+      "name": "ci-contract-tests",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/test_ci_contract.py"
+      ],
+      "returncode": 0,
+      "wall_seconds": 12.75673785899562,
+      "logs": {
+        "stdout.log": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr.log": {
+          "bytes": 15866,
+          "sha256": "73115640baac7f2883eee4f4271e69df06d8ef891ecc08ed5e9736441feedd99"
+        }
+      }
+    },
+    {
+      "name": "ci-contract",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "returncode": 0,
+      "wall_seconds": 0.16943093400186626,
+      "logs": {
+        "stdout.log": {
+          "bytes": 123,
+          "sha256": "9dc9c460bfb8a0da9730ff9e6acc8d76cbdf3bfd873c933e273c775ada8233b3"
+        },
+        "stderr.log": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "name": "distributed-inventory",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "returncode": 0,
+      "wall_seconds": 0.2320548960051383,
+      "logs": {
+        "stdout.log": {
+          "bytes": 35,
+          "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+        },
+        "stderr.log": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    }
+  ],
+  "whole_native_workspace_qualified": false
+}

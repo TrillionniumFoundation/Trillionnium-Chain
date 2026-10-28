@@ -4650,3 +4650,25 @@ after execution. Its original nine-member archive and complete log are retained
 with the correction evidence above. This independent execution does not add
 new test methods, complete the full Cargo workspace gate or change the research
 qualification limits.
+
+The required legacy evidence job separately failed on that same published
+source because its inherited reader still expected direct DDL selection after
+the runtime had adopted the versioned `shared_snapshot::Layout` path. The
+[strict source compatibility repair](../../evidence/pon-evidence-layout-reader-20261028/README.md)
+preserves the complete failed hosted log and transfers the integration reader
+only after checking byte-identical runtime inputs. All 53 complete reader
+regressions then passed on frozen source within the original 600-second limit,
+with no skips and identical input hashes before and after execution. Legacy
+schema qualification remains strict; PQ, shared and growth evidence receive no
+new acceptance. The numerical results and Rust runtime are unchanged. The new
+published reader source still needs its own hosted required-job observation.
+
+Subsequent review found that the inherited reader erased joint-token whitespace.
+The two new source-mutation methods actually failed in five subcases before the
+correction. The reader now preserves joint operators and literal prefixes, and
+only caches pure transforms of current text within one invocation. A separate
+full 60-method regression passed in 125.765 seconds within that same 600-second
+limit; all original 53 method ASTs and all runtime bytes are unchanged. The old
+53-test observation and the later lexical failures remain retained. This is a
+source-contract repair and does not establish a compiled runtime attack or
+grant PQ/shared/growth evidence eligibility.

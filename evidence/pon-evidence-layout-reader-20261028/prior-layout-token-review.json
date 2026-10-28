@@ -1,0 +1,28 @@
+{
+  "reader": "/workspace/scratch/301262829a43/pon-work-impl/integration/w1-transparent9e05/scripts/ci/check_public_readiness_evidence.py",
+  "reader_sha256": "dd127ef8cf0866679956e02361d84662d8dfd95f3e3e4c89a321e4e2300add28",
+  "scope": "source-only comparator boundary; no runtime compilation or qualification",
+  "cases": [
+    {
+      "case": "control",
+      "result": "ACCEPT",
+      "ddl_sha256": "ce0de86674de23181ef1f6fb59f357f94971feeaee0c5503f065dbf45bb5c964",
+      "domain": "native-branch-schema-v2",
+      "seconds": 3.574197282003297
+    },
+    {
+      "case": "split_boolean_operator",
+      "result": "ACCEPT",
+      "ddl_sha256": "ce0de86674de23181ef1f6fb59f357f94971feeaee0c5503f065dbf45bb5c964",
+      "domain": "native-branch-schema-v2",
+      "seconds": 2.7298434559997986
+    },
+    {
+      "case": "split_byte_literal",
+      "result": "ACCEPT",
+      "ddl_sha256": "ce0de86674de23181ef1f6fb59f357f94971feeaee0c5503f065dbf45bb5c964",
+      "domain": "native-branch-schema-v2",
+      "seconds": 2.5336942819994874
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "source": "7887b2efbbed0613640b2c1be6019bd31ca5651c",
+  "results": [
+    {
+      "name": "source-integrity",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "returncode": 0,
+      "wall_seconds": 5.277154186005646,
+      "stdout_sha256": "92437dfd3a30ce4374a4299f11a8a0ca12eee2c322c3af5386ae93d73db6c6e7",
+      "stderr_sha256": "c3a0c1e0f06f2faa784894711f6ec6e79cb01ba8944049f4571be0e17ff74e55"
+    },
+    {
+      "name": "evidence-source",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/test_evidence_sources.py"
+      ],
+      "returncode": 0,
+      "wall_seconds": 3.4847843120005564,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "3c24fa3f455374da800da6b490c80be80d0a2205e6e5aa4dfba69dfef8b87aeb"
+    },
+    {
+      "name": "ci-contract-tests",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/test_ci_contract.py"
+      ],
+      "returncode": 0,
+      "wall_seconds": 10.575434121004946,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "6f179f2785338053d3161d789ae57916088033ae57f06b16a07d929ef00fb48b"
+    },
+    {
+      "name": "ci-contract",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "returncode": 0,
+      "wall_seconds": 0.18902774199523265,
+      "stdout_sha256": "9dc9c460bfb8a0da9730ff9e6acc8d76cbdf3bfd873c933e273c775ada8233b3",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "distributed-inventory",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "returncode": 0,
+      "wall_seconds": 0.11078282399830641,
+      "stdout_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "whole_native_workspace_qualified": false
+}

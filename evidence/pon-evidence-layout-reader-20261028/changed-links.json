@@ -1,0 +1,87 @@
+{
+  "base": "3b86b6d0879ee42887a28e701e6db18254fbe9b0",
+  "scope": "every added local link in final changed Markdown",
+  "rows": [
+    {
+      "source": "evidence/pon-evidence-layout-reader-20261028/README.md",
+      "target": "hosted-original-failure.json",
+      "exists": true
+    },
+    {
+      "source": "evidence/pon-evidence-layout-reader-20261028/README.md",
+      "target": "hosted-original-failure.log.gz",
+      "exists": true
+    },
+    {
+      "source": "evidence/pon-evidence-layout-reader-20261028/README.md",
+      "target": "source-transfer.json",
+      "exists": true
+    },
+    {
+      "source": "evidence/pon-evidence-layout-reader-20261028/README.md",
+      "target": "final-tests.json",
+      "exists": true
+    },
+    {
+      "source": "evidence/pon-evidence-layout-reader-20261028/README.md",
+      "target": "final-tests.stdout.log",
+      "exists": true
+    },
+    {
+      "source": "evidence/pon-evidence-layout-reader-20261028/README.md",
+      "target": "final-tests.stderr.log",
+      "exists": true
+    },
+    {
+      "source": "evidence/pon-evidence-layout-reader-20261028/README.md",
+      "target": "prior-layout-token-review.json",
+      "exists": true
+    },
+    {
+      "source": "evidence/pon-evidence-layout-reader-20261028/README.md",
+      "target": "token-red.json",
+      "exists": true
+    },
+    {
+      "source": "evidence/pon-evidence-layout-reader-20261028/README.md",
+      "target": "token-red.stderr.log.gz",
+      "exists": true
+    },
+    {
+      "source": "evidence/pon-evidence-layout-reader-20261028/README.md",
+      "target": "token-final-tests.json",
+      "exists": true
+    },
+    {
+      "source": "evidence/pon-evidence-layout-reader-20261028/README.md",
+      "target": "token-final-tests.stdout.log",
+      "exists": true
+    },
+    {
+      "source": "evidence/pon-evidence-layout-reader-20261028/README.md",
+      "target": "token-final-tests.stderr.log",
+      "exists": true
+    },
+    {
+      "source": "evidence/pon-evidence-layout-reader-20261028/README.md",
+      "target": "repository-controls.json",
+      "exists": true
+    },
+    {
+      "source": "evidence/pon-evidence-layout-reader-20261028/README.md",
+      "target": "full-repository.json",
+      "exists": true
+    },
+    {
+      "source": "evidence/pon-evidence-layout-reader-20261028/README.md",
+      "target": "token-repository-controls.json",
+      "exists": true
+    },
+    {
+      "source": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "target": "../../evidence/pon-evidence-layout-reader-20261028/README.md",
+      "exists": true
+    }
+  ],
+  "passed": true
+}
