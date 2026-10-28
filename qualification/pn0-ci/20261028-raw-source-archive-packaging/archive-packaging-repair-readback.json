@@ -1,0 +1,56 @@
+{
+  "recorded_utc": "2026-10-28T07:42:57.692370+00:00",
+  "schema": "trnm-qualification-raw-source-archive-packaging-repair-v1",
+  "domain": "trnm.qualification.raw-source-archive-packaging-repair.v1",
+  "original_failed_source": "5a2a0ec55ab954e624ecdb77a9a5c866ac0c4708",
+  "original_failed_preview": "28805aa4467eb68b7ba45972a65edb941d4f250e",
+  "original_run": 40649973956,
+  "original_attempt": 1,
+  "original_jobs": [
+    122687511727,
+    122687511631
+  ],
+  "full_original_logs_captured": true,
+  "two_official_ZIP_digests_CRC_and_actual_head_preview_tree_verified": true,
+  "root_cause": "Two byte-exact historical partial-source Markdown preimages were stored as current .md documents at a relocated path, where their original relative dependency tree does not exist. The unchanged repository checker correctly rejected them before the original external evidence methods were reached.",
+  "repair": "Keep both original byte streams and original frozen manifests unchanged, store preimages with explicit .original suffix, and add transparent original-storage to current-storage map with exact bytes/SHA/Gitblob identity. Sole live plan and every live Markdown link remain subject to unchanged checker.",
+  "local_original_checker_before_actual_wait": 2,
+  "local_original_checker_after_actual_wait": 0,
+  "historical_frozen_manifests_still_original": true,
+  "original_checker_tests_workflow_assertions_and_runtime_code_unchanged": true,
+  "old48_external_contract_tests_not_executed_by_failed_hosted_jobs": true,
+  "new_hosted_PASS": "NOT_RUN",
+  "no_cancel_retry_dispatch_push_or_merge": true,
+  "merge_ready": false,
+  "original_log_storage": [
+    {
+      "job_id": 122687511727,
+      "format": "Original connector JSON envelope, lossless UTF8 decoded full log payload in structuredContent.content",
+      "path": "qualification/pn0-ci/20261028-raw-source-archive-packaging/122687511727.full-job-log-tool-result.original.json",
+      "decoded_bytes": 101217,
+      "decoded_sha256": "e4bda883a3a826906befa58c55c4866e59dabef52229f1208caf0bb7d1ee6bbc",
+      "working_raw_plaintext_retained": "work/ci-follow/Chain-5a2-original-external-contract-job-terminal-readonly-20261028-001/122687511727.full-job-log.original.txt",
+      "original_log_bytes_not_stripped_normalized_or_edited": true
+    },
+    {
+      "job_id": 122687511631,
+      "format": "Original connector JSON envelope, lossless UTF8 decoded full log payload in structuredContent.content",
+      "path": "qualification/pn0-ci/20261028-raw-source-archive-packaging/122687511631.full-job-log-tool-result.original.json",
+      "decoded_bytes": 101039,
+      "decoded_sha256": "bda8753ab921ecc90870b4e317875d5694576852fcd138bba067fd8a44916308",
+      "working_raw_plaintext_retained": "work/ci-follow/Chain-5a2-original-external-contract-job-terminal-readonly-20261028-001/122687511631.full-job-log.original.txt",
+      "original_log_bytes_not_stripped_normalized_or_edited": true
+    }
+  ],
+  "actual_original_git_diff_check_RED_and_lossless_original_envelope_storage": true,
+  "all_six_original_failed_jobs": [
+    122687511727,
+    122687511631,
+    122687511802,
+    122687511747,
+    122687511663,
+    122687511402
+  ],
+  "all_six_complete_original_logs_and_per_job_source_artifact_ZIP_CRC_verified": true,
+  "additional_fuzz_scope": "Original50 RepositoryMutants methods:49pass1actualsource ERROR from same historical-preimage link. Not a new fuzz primitive failure; no full50/local952 rerun claimed."
+}

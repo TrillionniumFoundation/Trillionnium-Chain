@@ -1,0 +1,28 @@
+{
+  "recorded_utc": "2026-10-28T07:34:01.717391+00:00",
+  "read_only": true,
+  "jobs": [
+    {
+      "id": 122687511727,
+      "run_id": 40649973956,
+      "run_attempt": 1,
+      "head_sha": "5a2a0ec55ab954e624ecdb77a9a5c866ac0c4708",
+      "name": "external-evidence-contract",
+      "status": "completed",
+      "conclusion": "failure",
+      "started_at": "2026-10-28T07:25:29Z",
+      "completed_at": "2026-10-28T07:26:37Z"
+    },
+    {
+      "id": 122687511631,
+      "run_id": 40649973956,
+      "run_attempt": 1,
+      "head_sha": "5a2a0ec55ab954e624ecdb77a9a5c866ac0c4708",
+      "name": "prospective-merge (external-evidence-contract)",
+      "status": "completed",
+      "conclusion": "failure",
+      "started_at": "2026-10-28T07:25:30Z",
+      "completed_at": "2026-10-28T07:26:41Z"
+    }
+  ]
+}

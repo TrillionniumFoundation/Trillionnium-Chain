@@ -1742,6 +1742,19 @@ These are schema extraction and typecheck results. The separate complete-owner
 source profile and its eleven prepare/claim/reader admission points remain open,
 along with original native, Windows, W1, model and WAN acceptance.
 
+The subsequent [head and preview CI failure](../../qualification/pn0-ci/20261028-raw-source-archive-packaging/archive-packaging-repair-readback.json)
+reached the unchanged repository checker but stopped before the external evidence
+methods: two partial historical source snapshots stored a byte-exact old plan
+under a new live Markdown path, without its original relative dependency tree.
+The raw plans now have explicit `.original` storage names and a
+[transparent storage relocation map](../../qualification/pn4-runtime-materialization/20261028-raw-source-storage-relocation.json).
+Their bytes, original source paths, Git blobs and frozen manifests remain exact;
+the sole current plan and the original checker are unchanged in role. The local
+original checker reproduced the rejection and then passed after this packaging
+repair. That result does not close the failed hosted jobs or execute the later
+schema/native contracts. Original active CI runs are retained and no replacement
+push is admitted while their branch concurrency remains active.
+
 The same PN0 CI boundary now partitions the unchanged local `rust-baseline`
 commands into required runtime and quality workers for both candidate and actual
 prospective merge. Each worker retains 180 minutes; the original required check
