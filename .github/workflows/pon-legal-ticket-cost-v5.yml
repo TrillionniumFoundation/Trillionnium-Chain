@@ -1,0 +1,126 @@
+name: Complete legal PoN producer and amortization costs
+on:
+  pull_request:
+    paths:
+      - .github/workflows/pon-legal-ticket-cost-v5.yml
+      - trillionnium/crates/trnm-pon-node/examples/pon_legal_ticket_cost_v5.rs
+      - scripts/ci/check_legal_ticket_cost_v5.py
+      - scripts/ci/test_legal_ticket_cost_v5.py
+permissions:
+  contents: read
+concurrency:
+  group: pon-legal-ticket-cost-v5-${{ github.event.pull_request.head.sha }}
+  cancel-in-progress: false
+jobs:
+  first-native-admission:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            machine: x86_64
+          - runner: ubuntu-24.04-arm
+            machine: aarch64
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 60
+    env:
+      CI: "true"
+      CARGO_INCREMENTAL: "0"
+      CARGO_BUILD_JOBS: "1"
+      CARGO_PROFILE_DEV_DEBUG: "0"
+      CARGO_PROFILE_TEST_DEBUG: "0"
+      RUSTUP_TOOLCHAIN: "1.95.0"
+      PYTHONDONTWRITEBYTECODE: "1"
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+      EXPECTED_MACHINE: ${{ matrix.machine }}
+    steps:
+      - name: Checkout exact candidate source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Bind complete source and native architecture
+        run: |
+          set -euo pipefail
+          echo "CARGO_HOME=$RUNNER_TEMP/legal-ticket-v5-cargo" >> "$GITHUB_ENV"
+          echo "CARGO_TARGET_DIR=$RUNNER_TEMP/legal-ticket-v5-target" >> "$GITHUB_ENV"
+          echo "OUT=$RUNNER_TEMP/legal-ticket-v5-evidence" >> "$GITHUB_ENV"
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$EXPECTED_HEAD" --output "$RUNNER_TEMP/legal-ticket-v5-evidence/source-before.json"
+          bash scripts/project-preflight.sh --audit
+          python3 - <<'PY'
+          import json, os, platform
+          from pathlib import Path
+          machine = platform.machine()
+          if machine != os.environ['EXPECTED_MACHINE']:
+              raise SystemExit('native architecture mismatch; no emulation')
+          value = dict(machine=machine, platform=platform.platform(), affinity=sorted(os.sched_getaffinity(0)),
+                       cpu_count=os.cpu_count(), exclusive_host=False, hardware_authenticated=False,
+                       gpu_measured=False, energy_measured=False, hardware_batching_measured=False)
+          for name in ('cpu.max', 'memory.max', 'cpuset.cpus.effective'):
+              p = Path('/sys/fs/cgroup') / name
+              value[name] = p.read_text().strip() if p.is_file() else None
+          (Path(os.environ['RUNNER_TEMP']) / 'legal-ticket-v5-evidence/host.json').write_text(json.dumps(value, indent=2) + '\n')
+          PY
+          lscpu --json > "$RUNNER_TEMP/legal-ticket-v5-evidence/lscpu.json"
+      - name: Install pinned compiler
+        run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt,clippy
+      - name: Check graph, both original readers and the new complete grid reader
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/check_repository.py 2>&1 | tee "$OUT/repository.log"
+          python3 scripts/refresh_distributed_source_inventory.py --check 2>&1 | tee "$OUT/inventory.log"
+          python3 scripts/ci/test_ci_source_integrity.py 2>&1 | tee "$OUT/source-controls.log"
+          python3 scripts/ci/test_legal_ticket_cost_v3.py 2>&1 | tee "$OUT/original-v3-reader-controls.log"
+          python3 scripts/ci/test_legal_ticket_batch_v4.py 2>&1 | tee "$OUT/original-batch-v4-reader-controls.log"
+          python3 scripts/ci/test_legal_ticket_cost_v5.py 2>&1 | tee "$OUT/v5-reader-controls.log"
+          cargo metadata --locked --format-version 1 --manifest-path trillionnium/Cargo.toml > "$OUT/cargo-graph.json"
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee "$OUT/fmt.log"
+      - name: Preserve original matrix controls and verify every complete legal proof
+        run: |
+          set -euo pipefail
+          cargo test --locked --profile test --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example pon_w1_cost_matrix_v2 -- --nocapture 2>&1 | tee "$OUT/original-matrix-controls.log"
+          cargo test --locked --profile test --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example pon_legal_ticket_cost_v5 -- --nocapture 2>&1 | tee "$OUT/complete-proof-controls.log"
+      - name: Build all three exact native drivers and require strict Clippy
+        run: |
+          set -euo pipefail
+          cargo build --locked --profile test --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example pon_legal_ticket_cost_v3 --example pon_legal_ticket_batch_v4 --example pon_legal_ticket_cost_v5 2>&1 | tee "$OUT/build.log"
+          cargo clippy --locked --profile test --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example pon_legal_ticket_cost_v3 --example pon_legal_ticket_batch_v4 --example pon_legal_ticket_cost_v5 -- -D warnings 2>&1 | tee "$OUT/clippy.log"
+          cp "$CARGO_TARGET_DIR/debug/examples/pon_legal_ticket_cost_v3" "$OUT/pon_legal_ticket_cost_v3.${EXPECTED_MACHINE}"
+          cp "$CARGO_TARGET_DIR/debug/examples/pon_legal_ticket_batch_v4" "$OUT/pon_legal_ticket_batch_v4.${EXPECTED_MACHINE}"
+          cp "$CARGO_TARGET_DIR/debug/examples/pon_legal_ticket_cost_v5" "$OUT/pon_legal_ticket_cost_v5.${EXPECTED_MACHINE}"
+          sha256sum "$OUT/pon_legal_ticket_cost_v3.${EXPECTED_MACHINE}" "$OUT/pon_legal_ticket_batch_v4.${EXPECTED_MACHINE}" "$OUT/pon_legal_ticket_cost_v5.${EXPECTED_MACHINE}" > "$OUT/native-binaries.sha256"
+      - name: Execute the original V3 campaign with its original 250-second outer bound
+        id: original
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/capture_pure_pon_campaign.py --binary "$CARGO_TARGET_DIR/debug/examples/pon_legal_ticket_cost_v3" --output "$OUT/original-v3" --timeout 250
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$EXPECTED_HEAD" --output "$OUT/source-after-v3.json"
+          python3 scripts/ci/check_legal_ticket_cost_v3.py --capture "$OUT/original-v3/capture.json" --expected-head "$EXPECTED_HEAD" --source-before "$OUT/source-before.json" --source-after "$OUT/source-after-v3.json" --output "$OUT/original-v3/summary.json"
+      - name: Preserve the original V4 one/two/four-thread batch campaign and bounds
+        id: original_batch
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/capture_pure_pon_campaign.py --binary "$CARGO_TARGET_DIR/debug/examples/pon_legal_ticket_batch_v4" --output "$OUT/original-batch-v4" --timeout 250 -- "$OUT/packets-v4"
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$EXPECTED_HEAD" --output "$OUT/source-after-batch-v4.json"
+          python3 scripts/ci/check_legal_ticket_batch_v4.py --capture "$OUT/original-batch-v4/capture.json" --expected-head "$EXPECTED_HEAD" --source-before "$OUT/source-before.json" --source-after "$OUT/source-after-batch-v4.json" --packets "$OUT/packets-v4" --output "$OUT/original-batch-v4/summary.json"
+      - name: Measure the complete nine-producer four-horizon grid
+        id: campaign
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/capture_pure_pon_campaign.py --binary "$CARGO_TARGET_DIR/debug/examples/pon_legal_ticket_cost_v5" --output "$OUT/cost" --timeout 610
+      - name: Verify final source even on failure
+        id: source_after
+        if: always()
+        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$EXPECTED_HEAD" --output "$RUNNER_TEMP/legal-ticket-v5-evidence/source-after.json"
+      - name: Independently verify complete costs, unique admissions and cold readback
+        if: ${{ !cancelled() && steps.campaign.outcome == 'success' && steps.source_after.outcome == 'success' }}
+        run: python3 scripts/ci/check_legal_ticket_cost_v5.py --capture "$OUT/cost/capture.json" --expected-head "$EXPECTED_HEAD" --source-before "$OUT/source-before.json" --source-after "$OUT/source-after.json" --output "$OUT/cost/summary.json"
+      - name: Retain all three executables, original V4 packet bytes and every observation including failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: legal-ticket-v5-${{ matrix.machine }}-${{ github.event.pull_request.head.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/legal-ticket-v5-evidence/
+          if-no-files-found: error
+          retention-days: 30
