@@ -4744,3 +4744,37 @@ policy now binds that exact policy hash. The integrated workflow's exact
 negatives and backend formatting. Native actual-26 verification and missing
 segment proving remain required hosted gates; two honest local disk-floor
 build stops do not satisfy them. No whole-proof exit is marked closed.
+
+### P0 W1 — exact-source native inventory repair (2026-10-28)
+
+The actual #525 `febf622c` focused run passed the full repository/source checks
+but failed its mandatory embedded-source inventory comparison. The
+[retained failure and minimal generated repair](../../evidence/pon-w1-inventory-repair-20261028/README.md)
+add only the new native helper and v2 policy include entries. The official
+before/after inventory checks reproduce failure then success; formatting passes.
+No original W1 source pin, relation, verifier or proof budget changes. Native
+proof acceptance remains contingent on the separately identified hosted runs.
+
+### P0 W1 and legal ticket cost — actual complete receipts and bounded V3 measurements (2026-10-28)
+
+The concurrent `a54dc735` [actual complete W1 run](../../evidence/pon-w1-complete-a54-20261028/README.md)
+succeeded: all 62 original witnesses, original 26 plus new 36 receipts, official
+Composite verification, all 17 tested invalid cases and whole-receipt loopback.
+The 15,862,780-byte complete receipt verifies in 1.263286953 seconds on the
+observed host, about 1,995.736 times the fixed-input native production median.
+The worst tested invalid case takes 1.258724013 seconds; global worst-input
+and WAN costs remain unproved. The retained full 80,366,759-byte original ZIP
+and receipt have a precise 4 MiB chunk publication plan; planned persistence
+is not recorded as completed publication. Original failures and all cumulative
+costs remain explicit; this continuation is not a complete from-zero cost.
+The separate hardened `febf622c` run must retain its own native-gate and proof
+evidence and cannot borrow this run's source identity.
+
+Actual [V3 admission-cost readback](../../evidence/pon-legal-ticket-v3-readback-20261028/README.md)
+recomputed published x86-64 and AArch64 results exactly. Each architecture has
+508 first-admission calls over repeated cohorts and the same 127 unique packet
+IDs. Including failed attempts, setup, admission and ordinary cold readback,
+the two measured legal strategies differ by about -4.09% to +0.14%, depending
+on architecture and setup reuse. This supplies actual admitted-ticket costs
+for the measured strategies, not a global cheapest solver or full hardware
+coverage. This followup executed only pure readers, no native search benchmark.

@@ -1,0 +1,47 @@
+{
+  "schema": "pon-pure-native-capture-v1",
+  "source": {
+    "commit": "9e73f62c5e5f026fff979840891301d9a8c56d52",
+    "tree": "7ef7a5daca79fc67ecb242d89e381ac31ef606f6",
+    "example_sha256": "2a97dc25567191aac520a01940d0d6fc3fb5f783bc9af771fdfd140d0b585dad",
+    "lock_sha256": "3707ed772a9fd851638dca36e5b2472ac0657de65754480c448d3078107d9ff9",
+    "workspace_manifest_sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+  },
+  "argv": [
+    "/home/runner/work/_temp/legal-ticket-v3-target/debug/examples/pon_legal_ticket_cost_v3"
+  ],
+  "rustc": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: aarch64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+  "build_profile": "cargo --profile test; repository package overrides",
+  "package_opt_levels": {
+    "trnm-pon-node": 3,
+    "trnm-crypto-primitives": 3,
+    "trnm-mvcc-fee": 1
+  },
+  "debug_info": 0,
+  "incremental": false,
+  "build_jobs": 1,
+  "binary_sha256_before": "7406b332cfd28183881592dcdf7ef9d24fd0ff9dae6e1d4396125b8bf208f9e1",
+  "timeout_seconds": 250,
+  "platform": "Linux-6.17.0-1022-azure-aarch64-with-glibc2.39",
+  "machine": "aarch64",
+  "exclusive_host": false,
+  "host_contention_controlled": false,
+  "production_qualified": false,
+  "hardness_proved": false,
+  "cpu.max": null,
+  "memory.max": null,
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_ns": 7576080682,
+  "child_user_cpu_seconds": 6.912362999999999,
+  "child_system_cpu_seconds": 0.267976,
+  "child_max_rss_kib": 37284,
+  "binary_sha256_after": "7406b332cfd28183881592dcdf7ef9d24fd0ff9dae6e1d4396125b8bf208f9e1",
+  "stdout_bytes": 585104,
+  "stdout_uncompressed_sha256": "dcbb03fce46143989de8a39fa768b83f5a4c6fa57ffaa0267fdbc946b985c43d",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stable_binary": true,
+  "stdout_within_bound": true,
+  "stdout_gzip_sha256": "cdd6d5c19c6cf408f8086a4bbb1d8ee0a32064a1badad51be3bbf0ad04a685d1",
+  "stdout_gzip_bytes": 215687
+}

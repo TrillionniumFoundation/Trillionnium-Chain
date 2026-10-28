@@ -1,0 +1,49 @@
+{
+  "schema": "pon-w1-actual-process-v2",
+  "command": [
+    "python3",
+    "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/segment_continue.py",
+    "assemble",
+    "--out",
+    "/home/runner/work/_temp/w1-assembly-40608715148-1",
+    "--host",
+    "/home/runner/work/_temp/w1-assembly-build-40608715148-1/host-target/release/trnm-w1-risc0-host",
+    "--elf",
+    "/home/runner/work/_temp/w1-assembly-40608715148-1/guest.bin",
+    "--input",
+    "/home/runner/work/_temp/w1-assembly-40608715148-1/input.bin"
+  ],
+  "started_utc": "2026-10-28T01:07:40.140080+00:00",
+  "timeout_seconds": 300,
+  "source_sha": "a54dc7355f58f40784b5a71fe7e73c4062a14951",
+  "timed_out": false,
+  "consensus_authority": false,
+  "child_pid": 14612,
+  "child_returncode": 0,
+  "child_reaped": true,
+  "cleanup_actions": [],
+  "cleanup_errors": [],
+  "subreaper_enabled": true,
+  "leader_exited_before_group": false,
+  "adopted_child_terminals": [],
+  "owned_process_group_empty": true,
+  "returncode": 0,
+  "wall_seconds": 1.8679439120000438,
+  "user_cpu_seconds": 1.50645,
+  "system_cpu_seconds": 0.18284799999999998,
+  "max_waited_descendant_rss_kib": 56900,
+  "rss_scope": "maximum reported for the waited child family; not total cgroup peak",
+  "finished_utc": "2026-10-28T01:07:42.008043+00:00",
+  "raw_logs": {
+    "stdout": {
+      "path": "assembly.stdout.log",
+      "bytes": 894,
+      "sha256": "4071d2e01dcd786a268d59d14fa473c9cc36a975d2994cd5bb54163bf019080a"
+    },
+    "stderr": {
+      "path": "assembly.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

@@ -1,0 +1,259 @@
+{
+  "architectures": [
+    {
+      "arch": "x86_64",
+      "binary_sha256": "58ca4cddee7d653f26775e857f5a40e58fc7ae78bee2bf74f7dbd819dfb19087",
+      "capture_process_cpu_seconds": 4.704367,
+      "capture_wall_seconds": 4.974201857,
+      "claims": {
+        "global_minimum_proved": false,
+        "hardware_batching_measured": false,
+        "native_independent_hardware_qualified": false,
+        "physical_power_loss_qualified": false,
+        "production_qualified": false
+      },
+      "comparisons": [
+        {
+          "arms_ms_per_first_admission": {
+            "maintenance-split-limb": {
+              "all_phases": {
+                "process_cpu_ms": 8.916305133858268,
+                "wall_ms": 9.400068535433071
+              },
+              "attempts": 273,
+              "outer": {
+                "process_cpu_ms": 9.196340330708662,
+                "wall_ms": 9.683388181102362
+              },
+              "recurring": {
+                "process_cpu_ms": 8.499103393700787,
+                "wall_ms": 8.920793952755906
+              },
+              "winning_first_admissions": 127
+            },
+            "prepared-general": {
+              "all_phases": {
+                "process_cpu_ms": 9.296824881889764,
+                "wall_ms": 9.779804881889763
+              },
+              "attempts": 273,
+              "outer": {
+                "process_cpu_ms": 9.579103322834646,
+                "wall_ms": 10.065144795275591
+              },
+              "recurring": {
+                "process_cpu_ms": 8.884110700787401,
+                "wall_ms": 9.303958850393702
+              },
+              "winning_first_admissions": 127
+            }
+          },
+          "limb_over_general": {
+            "all_phases": {
+              "process_cpu_ms": 0.9590699241014263,
+              "wall_ms": 0.9611713780548028
+            },
+            "outer": {
+              "process_cpu_ms": 0.9600418766531565,
+              "wall_ms": 0.9620714235176806
+            },
+            "recurring": {
+              "process_cpu_ms": 0.956663382520381,
+              "wall_ms": 0.9588170042667824
+            }
+          },
+          "reuse": false
+        },
+        {
+          "arms_ms_per_first_admission": {
+            "maintenance-split-limb": {
+              "all_phases": {
+                "process_cpu_ms": 8.75729131496063,
+                "wall_ms": 9.224402897637797
+              },
+              "attempts": 273,
+              "outer": {
+                "process_cpu_ms": 9.033425937007875,
+                "wall_ms": 9.50323625984252
+              },
+              "recurring": {
+                "process_cpu_ms": 8.34931216535433,
+                "wall_ms": 8.756916031496063
+              },
+              "winning_first_admissions": 127
+            },
+            "prepared-general": {
+              "all_phases": {
+                "process_cpu_ms": 8.85012679527559,
+                "wall_ms": 9.234069732283464
+              },
+              "attempts": 273,
+              "outer": {
+                "process_cpu_ms": 9.12586877952756,
+                "wall_ms": 9.512427913385826
+              },
+              "recurring": {
+                "process_cpu_ms": 8.432011299212599,
+                "wall_ms": 8.764019551181102
+              },
+              "winning_first_admissions": 127
+            }
+          },
+          "limb_over_general": {
+            "all_phases": {
+              "process_cpu_ms": 0.9895102655066459,
+              "wall_ms": 0.9989531338915635
+            },
+            "outer": {
+              "process_cpu_ms": 0.989870241973338,
+              "wall_ms": 0.9990337216085106
+            },
+            "recurring": {
+              "process_cpu_ms": 0.9901922411007691,
+              "wall_ms": 0.9991894678413763
+            }
+          },
+          "reuse": true
+        }
+      ],
+      "driver_sha256": "2a97dc25567191aac520a01940d0d6fc3fb5f783bc9af771fdfd140d0b585dad",
+      "first_admission_calls": 508,
+      "fresh_stores": 8,
+      "independent_reader_returncode": 0,
+      "recomputed_summary_equal": true,
+      "unique_packet_ids": 127
+    },
+    {
+      "arch": "aarch64",
+      "binary_sha256": "7406b332cfd28183881592dcdf7ef9d24fd0ff9dae6e1d4396125b8bf208f9e1",
+      "capture_process_cpu_seconds": 7.180338999999999,
+      "capture_wall_seconds": 7.576080682,
+      "claims": {
+        "global_minimum_proved": false,
+        "hardware_batching_measured": false,
+        "native_independent_hardware_qualified": false,
+        "physical_power_loss_qualified": false,
+        "production_qualified": false
+      },
+      "comparisons": [
+        {
+          "arms_ms_per_first_admission": {
+            "maintenance-split-limb": {
+              "all_phases": {
+                "process_cpu_ms": 13.22901977952756,
+                "wall_ms": 13.747831527559056
+              },
+              "attempts": 273,
+              "outer": {
+                "process_cpu_ms": 14.02866822047244,
+                "wall_ms": 14.55321448031496
+              },
+              "recurring": {
+                "process_cpu_ms": 12.693017196850393,
+                "wall_ms": 13.12703311023622
+              },
+              "winning_first_admissions": 127
+            },
+            "prepared-general": {
+              "all_phases": {
+                "process_cpu_ms": 13.62521348031496,
+                "wall_ms": 14.914572582677165
+              },
+              "attempts": 273,
+              "outer": {
+                "process_cpu_ms": 14.423381732283463,
+                "wall_ms": 15.71849409448819
+              },
+              "recurring": {
+                "process_cpu_ms": 13.082461417322834,
+                "wall_ms": 14.261492188976376
+              },
+              "winning_first_admissions": 127
+            }
+          },
+          "limb_over_general": {
+            "all_phases": {
+              "process_cpu_ms": 0.970922018846912,
+              "wall_ms": 0.9217717404471084
+            },
+            "outer": {
+              "process_cpu_ms": 0.9726337748568669,
+              "wall_ms": 0.9258656963467102
+            },
+            "recurring": {
+              "process_cpu_ms": 0.9702315789017526,
+              "wall_ms": 0.9204529888101713
+            }
+          },
+          "reuse": false
+        },
+        {
+          "arms_ms_per_first_admission": {
+            "maintenance-split-limb": {
+              "all_phases": {
+                "process_cpu_ms": 13.189641826771654,
+                "wall_ms": 13.70324437007874
+              },
+              "attempts": 273,
+              "outer": {
+                "process_cpu_ms": 13.985174047244094,
+                "wall_ms": 14.503982866141733
+              },
+              "recurring": {
+                "process_cpu_ms": 12.655828913385827,
+                "wall_ms": 13.092580047244095
+              },
+              "winning_first_admissions": 127
+            },
+            "prepared-general": {
+              "all_phases": {
+                "process_cpu_ms": 13.170763212598425,
+                "wall_ms": 13.684560196850393
+              },
+              "attempts": 273,
+              "outer": {
+                "process_cpu_ms": 13.963270362204725,
+                "wall_ms": 14.481962677165354
+              },
+              "recurring": {
+                "process_cpu_ms": 12.63784440944882,
+                "wall_ms": 13.080762393700788
+              },
+              "winning_first_admissions": 127
+            }
+          },
+          "limb_over_general": {
+            "all_phases": {
+              "process_cpu_ms": 1.001433372832576,
+              "wall_ms": 1.0013653470012611
+            },
+            "outer": {
+              "process_cpu_ms": 1.0015686643938841,
+              "wall_ms": 1.0015205251848287
+            },
+            "recurring": {
+              "process_cpu_ms": 1.0014230673645232,
+              "wall_ms": 1.0009034376734034
+            }
+          },
+          "reuse": true
+        }
+      ],
+      "driver_sha256": "2a97dc25567191aac520a01940d0d6fc3fb5f783bc9af771fdfd140d0b585dad",
+      "first_admission_calls": 508,
+      "fresh_stores": 8,
+      "independent_reader_returncode": 0,
+      "recomputed_summary_equal": true,
+      "unique_packet_ids": 127
+    }
+  ],
+  "global_fixture_packet_ids": 127,
+  "native_benchmark_executed_locally": false,
+  "native_binary_executed_locally": false,
+  "prior_failed_409cc73_run_not_reclassified": true,
+  "read_only_recomputation": true,
+  "run_id": 40609636499,
+  "same_fixture_packet_ids_across_architectures": true,
+  "schema": "legal-ticket-v3-existing-ci-independent-readback-v1",
+  "source": "9e73f62c5e5f026fff979840891301d9a8c56d52"
+}

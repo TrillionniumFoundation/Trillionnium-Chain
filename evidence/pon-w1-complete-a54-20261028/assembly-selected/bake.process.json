@@ -1,0 +1,42 @@
+{
+  "schema": "pon-w1-actual-process-v2",
+  "command": [
+    "/home/runner/work/_temp/w1-assembly-build-40608715148-1/host-target/release/trnm-w1-risc0-host",
+    "bake",
+    "/home/runner/work/_temp/w1-assembly-40608715148-1/guest.raw.elf",
+    "/home/runner/work/_temp/w1-assembly-40608715148-1/guest.bin"
+  ],
+  "started_utc": "2026-10-28T01:07:21.151703+00:00",
+  "timeout_seconds": 60,
+  "source_sha": "a54dc7355f58f40784b5a71fe7e73c4062a14951",
+  "timed_out": false,
+  "consensus_authority": false,
+  "child_pid": 14502,
+  "child_returncode": 0,
+  "child_reaped": true,
+  "cleanup_actions": [],
+  "cleanup_errors": [],
+  "subreaper_enabled": true,
+  "leader_exited_before_group": false,
+  "adopted_child_terminals": [],
+  "owned_process_group_empty": true,
+  "returncode": 0,
+  "wall_seconds": 0.03194068499999503,
+  "user_cpu_seconds": 0.019445999999999998,
+  "system_cpu_seconds": 0.001023,
+  "max_waited_descendant_rss_kib": 19288,
+  "rss_scope": "maximum reported for the waited child family; not total cgroup peak",
+  "finished_utc": "2026-10-28T01:07:21.183691+00:00",
+  "raw_logs": {
+    "stdout": {
+      "path": "bake.stdout.log",
+      "bytes": 223,
+      "sha256": "d5f9ced076c1a6cd5238b90676b2b90dac0172460b3d6ad54b9d4fa3720d1ebe"
+    },
+    "stderr": {
+      "path": "bake.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "hosted_inventory_check": "FAILED_BEFORE_NATIVE_INTEGRATION",
+  "hosted_job": 122564063532,
+  "hosted_repository_check": "PASS_1336_LINKS_1016_RUST_FILES",
+  "hosted_run": 40611562732,
+  "native_compiler_started": false,
+  "original_30_source_pins_changed": false,
+  "proof_generation_started": false,
+  "remote_source": "febf622c7e4e919ad2ee4e0864230ab572f5d5b4",
+  "schema": "pon-w1-inventory-repair-observation-v1",
+  "source_tree": "f936a01b1391242c2014b162ea2d77ef18769e67",
+  "tests": [
+    {
+      "command": [
+        "python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "name": "inventory-before",
+      "returncode": 1,
+      "wall_seconds": 0.11687761500070337
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/refresh_distributed_source_inventory.py"
+      ],
+      "name": "inventory-refresh",
+      "returncode": 0,
+      "wall_seconds": 0.21155231800366892
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "name": "inventory-after",
+      "returncode": 0,
+      "wall_seconds": 0.12752892400021665
+    },
+    {
+      "command": [
+        "/workspace/scratch/301262829a43/pon-build-inputs/unpacked/toolchain/bin/rustfmt",
+        "--edition",
+        "2021",
+        "--check",
+        "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs"
+      ],
+      "name": "inventory-fmt",
+      "returncode": 0,
+      "wall_seconds": 0.128470051997283
+    }
+  ]
+}

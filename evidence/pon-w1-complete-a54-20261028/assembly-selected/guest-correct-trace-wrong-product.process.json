@@ -1,0 +1,45 @@
+{
+  "schema": "pon-w1-actual-process-v2",
+  "command": [
+    "/home/runner/work/_temp/w1-assembly-build-40608715148-1/host-target/release/trnm-w1-risc0-host",
+    "reject-input",
+    "/home/runner/work/_temp/w1-assembly-build-40608715148-1/backend/tools/r0vm",
+    "/home/runner/work/_temp/w1-assembly-40608715148-1/guest.bin",
+    "/home/runner/work/_temp/w1-assembly-40608715148-1/correct-trace-wrong-product.bin",
+    "18",
+    "correct-trace-wrong-product"
+  ],
+  "started_utc": "2026-10-28T01:07:35.975473+00:00",
+  "timeout_seconds": 300,
+  "source_sha": "a54dc7355f58f40784b5a71fe7e73c4062a14951",
+  "timed_out": false,
+  "consensus_authority": false,
+  "child_pid": 14556,
+  "child_returncode": 0,
+  "child_reaped": true,
+  "cleanup_actions": [],
+  "cleanup_errors": [],
+  "subreaper_enabled": true,
+  "leader_exited_before_group": false,
+  "adopted_child_terminals": [],
+  "owned_process_group_empty": true,
+  "returncode": 0,
+  "wall_seconds": 0.3648190300000351,
+  "user_cpu_seconds": 0.423467,
+  "system_cpu_seconds": 0.017464,
+  "max_waited_descendant_rss_kib": 64608,
+  "rss_scope": "maximum reported for the waited child family; not total cgroup peak",
+  "finished_utc": "2026-10-28T01:07:36.340312+00:00",
+  "raw_logs": {
+    "stdout": {
+      "path": "guest-correct-trace-wrong-product.stdout.log",
+      "bytes": 482,
+      "sha256": "6d0578625f698b5ce347027b12398a9efeccc75aebb0b30819ac5aaec4826999"
+    },
+    "stderr": {
+      "path": "guest-correct-trace-wrong-product.stderr.log",
+      "bytes": 175,
+      "sha256": "19304fa8eb74795b5385b422ea98d0907326735960ead531887a4485d82fc0c5"
+    }
+  }
+}

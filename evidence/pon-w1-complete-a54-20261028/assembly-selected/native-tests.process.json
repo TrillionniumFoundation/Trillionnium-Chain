@@ -1,0 +1,46 @@
+{
+  "schema": "pon-w1-actual-process-v2",
+  "command": [
+    "/home/runner/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "test",
+    "--locked",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-crypto-primitives",
+    "full_relation"
+  ],
+  "started_utc": "2026-10-28T01:02:19.154211+00:00",
+  "timeout_seconds": 1800,
+  "source_sha": "a54dc7355f58f40784b5a71fe7e73c4062a14951",
+  "timed_out": false,
+  "consensus_authority": false,
+  "child_pid": 2517,
+  "child_returncode": 0,
+  "child_reaped": true,
+  "cleanup_actions": [],
+  "cleanup_errors": [],
+  "subreaper_enabled": true,
+  "leader_exited_before_group": false,
+  "adopted_child_terminals": [],
+  "owned_process_group_empty": true,
+  "returncode": 0,
+  "wall_seconds": 32.792732017999995,
+  "user_cpu_seconds": 61.58177,
+  "system_cpu_seconds": 2.841754,
+  "max_waited_descendant_rss_kib": 548660,
+  "rss_scope": "maximum reported for the waited child family; not total cgroup peak",
+  "finished_utc": "2026-10-28T01:02:51.946964+00:00",
+  "raw_logs": {
+    "stdout": {
+      "path": "native-tests.stdout.log",
+      "bytes": 1557,
+      "sha256": "6bce6b222b08d356c5b93f83ccece5625eb4e694846011b0f41ca4f4d21f522a"
+    },
+    "stderr": {
+      "path": "native-tests.stderr.log",
+      "bytes": 4023,
+      "sha256": "085fa77861db75ea32ca73d65dc48b88b8d2afb1347ca9e58e49a403697e32c6"
+    }
+  }
+}

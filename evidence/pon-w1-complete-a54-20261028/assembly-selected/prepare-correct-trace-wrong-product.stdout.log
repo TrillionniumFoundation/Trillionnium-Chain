@@ -1,0 +1,1 @@
+{"case":"correct-trace-wrong-product","consensus_authority":false,"cryptographic_proof_generated":false,"expected_error":"Work(Product)","guest_executed":false,"input_bytes":49640,"native_late_failure_checked":true,"operation":"make-invalid","schema":"pon-w1-guest-negative-v1","witness_commitment_rebound":true}

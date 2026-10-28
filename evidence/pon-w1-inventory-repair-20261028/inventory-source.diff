@@ -1,0 +1,32 @@
+diff --git a/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs b/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs
+index baddb3f..84cf517 100644
+--- a/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs
++++ b/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs
+@@ -539,6 +539,13 @@ pub const FILES: &[(&str, &[u8])] = &[
+             "/../../../trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/Cargo.toml"
+         )),
+     ),
++    (
++        "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/bin/check_frozen_receipts.rs",
++        include_bytes!(concat!(
++            env!("CARGO_MANIFEST_DIR"),
++            "/../../../trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/bin/check_frozen_receipts.rs"
++        )),
++    ),
+     (
+         "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/guest_negative.rs",
+         include_bytes!(concat!(
+@@ -623,6 +630,13 @@ pub const FILES: &[(&str, &[u8])] = &[
+             "/../../../trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/relation/src/parameters.rs"
+         )),
+     ),
++    (
++        "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/segment-continuation-v2.json",
++        include_bytes!(concat!(
++            env!("CARGO_MANIFEST_DIR"),
++            "/../../../trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/segment-continuation-v2.json"
++        )),
++    ),
+     (
+         "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/segment-continuation.json",
+         include_bytes!(concat!(

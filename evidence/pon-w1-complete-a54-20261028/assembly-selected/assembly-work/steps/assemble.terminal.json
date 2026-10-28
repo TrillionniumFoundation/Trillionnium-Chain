@@ -1,0 +1,28 @@
+{
+  "schema": "pon-w1-segment-worker-process-v1",
+  "command": [
+    "/home/runner/work/_temp/w1-assembly-build-40608715148-1/host-target/release/trnm-w1-risc0-host",
+    "assemble-segments",
+    "/home/runner/work/_temp/w1-assembly-40608715148-1/guest.bin",
+    "/home/runner/work/_temp/w1-assembly-40608715148-1/input.bin",
+    "/home/runner/work/_temp/w1-assembly-40608715148-1/original/segmented/session",
+    "/home/runner/work/_temp/w1-assembly-40608715148-1/assembly-work/receipts",
+    "/home/runner/work/_temp/w1-assembly-40608715148-1/receipt.bin"
+  ],
+  "name": "assemble",
+  "pid": 14613,
+  "process_group": 14612,
+  "timeout_seconds": 300,
+  "source_sha": "a54dc7355f58f40784b5a71fe7e73c4062a14951",
+  "started_monotonic": 387.613763496,
+  "child_reaped": true,
+  "returncode": 0,
+  "complete_w1_proof_verified": false,
+  "consensus_authority": false,
+  "wall_seconds": 1.3575285420000114,
+  "user_cpu_seconds": 1.294982,
+  "system_cpu_seconds": 0.033999,
+  "max_waited_descendant_rss_kib": 53332,
+  "cpu_rss_scope": "this independently waited host and descendants it waited for; orphan cleanup belongs to the outer phase record",
+  "raw_logs_hashed_after_phase_cleanup": false
+}

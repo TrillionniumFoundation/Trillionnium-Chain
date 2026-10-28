@@ -1,0 +1,52 @@
+{
+  "schema": "pon-w1-actual-process-v2",
+  "command": [
+    "python3",
+    "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/build_guest.py",
+    "--cargo",
+    "/home/runner/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "--guest-rustc",
+    "/home/runner/work/_temp/w1-assembly-build-40608715148-1/backend/guest-compiler/bin/rustc",
+    "--target-dir",
+    "/home/runner/work/_temp/w1-assembly-build-40608715148-1/guest-target",
+    "--cargo-home",
+    "/home/runner/work/_temp/w1-assembly-build-40608715148-1/cargo",
+    "--host-linker",
+    "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host_linker_bfd.sh",
+    "--jobs",
+    "2"
+  ],
+  "started_utc": "2026-10-28T01:03:18.029332+00:00",
+  "timeout_seconds": 1800,
+  "source_sha": "a54dc7355f58f40784b5a71fe7e73c4062a14951",
+  "timed_out": false,
+  "consensus_authority": false,
+  "child_pid": 4427,
+  "child_returncode": 0,
+  "child_reaped": true,
+  "cleanup_actions": [],
+  "cleanup_errors": [],
+  "subreaper_enabled": true,
+  "leader_exited_before_group": false,
+  "adopted_child_terminals": [],
+  "owned_process_group_empty": true,
+  "returncode": 0,
+  "wall_seconds": 61.62549526100001,
+  "user_cpu_seconds": 107.484035,
+  "system_cpu_seconds": 10.962991,
+  "max_waited_descendant_rss_kib": 486836,
+  "rss_scope": "maximum reported for the waited child family; not total cgroup peak",
+  "finished_utc": "2026-10-28T01:04:19.654849+00:00",
+  "raw_logs": {
+    "stdout": {
+      "path": "guest-build.stdout.log",
+      "bytes": 122,
+      "sha256": "27e7f505a7bac5cec4dee0211fe81a05d686938c5fad5da4b62818de14bac3b8"
+    },
+    "stderr": {
+      "path": "guest-build.stderr.log",
+      "bytes": 8178,
+      "sha256": "1590cfd32e50b33440130c3167ddf6b5467fbe9ff2ca5e946753d1486f713efc"
+    }
+  }
+}
