@@ -4829,3 +4829,249 @@ CURRENT update or future observation window was performed. Historical third-roun
 strict failure, zero gains and zero installed children remain unchanged. Evidence
 and reproduction boundaries are in
 `evidence/hepta-observed-execution-v1-20261028/README.md`.
+
+### PN3 separate binary-answer observed training V2 candidate — 2026-10-28
+
+The original Hepta neural study at `067bc8a16c7b7cac5124dd7bc4c6ae894c4a2286`
+completed ten real training steps and 2,048 real future forwards. Parent and child
+chose the same answer on every row; the original ProductEvaluationRunner rejected
+the candidate with NoGain. No ordinary child installation followed. This failed
+observation remains authoritative for that experiment.
+
+The new `canonical-positive-zero-binary-batch-observed-v2` profile is a separately
+frozen training hypothesis, not a rerun of the old workload. It retains the exact
+original model plan, pilot, target contract, parent bytes, rank-four factors and
+seeded initial working copy. Ten optimizer updates each accumulate the mean of
+ten original source-row gradients. This is 100 actual forward/backward exposures
+of ten independent examples, not 100 independent examples. The original two
+single-token yes/no answer logits at the last prompt position define its binary
+cross entropy. Labels are absent from the visible prompt; this new objective has
+one supervised answer and no EOS supervision per exposure. AdamW uses the fixed
+learning rate 0.002 and zero weight decay, with no holdout-based parameter search.
+
+A new input, execution plan, actual receipt, candidate, attempt and result domain
+binds the recipe and original material context. A bounded runtime trace records
+all 100 completed microsteps and ten optimizer updates, actual token IDs, source
+row identities, answer logits, losses, gradient norms and event clocks. Completion
+recounts this trace and refuses legacy 526/40 totals, reordered or missing rows,
+nonfinite values and changed source/recipe/observer identities. This trace remains
+unsigned execution evidence; it grants no model qualification or installation.
+
+The original owner retains the 1800 s / 16 GiB training cap, actual wait/reap and
+the existing 100 ms terminal observer. Live model release runs within this same
+budget; primary training errors remain primary even when finalization or receipt
+I/O also fails. V1, V2, V3, V4 and observed V1 keep their original exact workload
+and receipt rules. Seventy-one local finite namespace, material, trace and owner
+controls passed, including ten new controls. These fixtures are explicitly not
+pretrained-model or gradient-execution evidence.
+
+The complete source checkout and finite compatibility controls are available.
+Actual development execution retained the original ordinary parent artifact
+`1c5af7b5a7144a619dfac83b14bd83ae77f1e2227b18a6a9c5dcb214889a0cba` and the
+original public model snapshot. This local directory rebase does not constitute a
+new ordinary installation or independent qualification of that parent.
+
+The first development attempt wrote all 100 microsteps and ten optimizer updates
+but the child exited on SIGKILL before its final actual receipt. Its original
+owner also rejected terminal cleanup beyond 100 ms. A shared 8 GiB cgroup had an
+OOM-kill event, but no before-counter was retained for that attempt, so a unique
+causal diagnosis is not claimed. This attempt remains failed. The profiler was
+then bounded to one context per ten-microstep optimizer update, with all 100
+forward/backward operations still measured and supported-operator FLOPs summed.
+Independent AST comparison found the gradient and optimizer statements unchanged.
+The observation overhead changed and remains charged to the original owner.
+
+The second attempt froze the identical mathematical recipe before execution with
+trainer source `6e588493c7c956b5fb55f6b5875dab3fb951b964783c1dc8366caa9178e827fc`.
+It completed under the unchanged owner: wall 490.563795345 s, child CPU
+766.764043 s, observer CPU 9.337635507 s, and wait4 single-process high-water
+2,828,050,432 bytes. Measured terminal cleanup was 9,590,857 ns. Before/after OOM
+counters were unchanged. Native compilation ran concurrently, so these costs do
+not establish an exclusive-machine performance comparison. The actual trace has
+4,860 input tokens, 100 supervised answer positions, zero EOS positions and
+2,667,553,722,120 profiler-supported operator FLOPs; the FLOP count is not total
+work. Independent readback reproduced every source-row token, microstep ordering,
+binary cross entropy, optimizer completion, full execution-plan context and
+original resource-owner binding.
+
+Eight pre-existing public calibration/evaluation prompts were frozen before the
+development queries. The real parent answered yes on all eight and was correct
+on four; the actual trained child answered yes once and no seven times and was
+correct on five. This excludes the earlier all-yes behavior on this small public
+development set only. It is not a prospective quality result and grants no
+selection, two-node transfer, installation or next-task FinalUse. Neither this
+attempt nor its source uses these eight prompts as a new future window.
+
+The explicit Hepta binary study has separate input and evidence namespaces,
+retains the original forward implementation and qualification thresholds, and
+independently reads the complete 100-microstep trace. Its future cohort generator
+excludes all 1,024 previously consumed prompt identities, freezes a fresh seed
+and all tasks before model queries, and retains two 512-row balanced cohorts in
+the original task families. Native cohort verification and finite reader,
+transport and training-binding controls are source-level evidence only. The full
+prospective ProductRunner decision, retention, withdrawal, two-node Cell,
+ordinary generation-two installation and next-task byte readback remain pending.
+A further NoGain result must again block installation.
+
+### Legacy evidence reader and held-layout selection — 2026-10-28
+
+The actual head and prospective-merge external-evidence-contract jobs for the
+binary trainer candidate `f1fdee165623c376005270ba84a65b0b6f9cf15b` failed at the
+legacy schema reader. The native opener already selects the shared-snapshot
+layout before binding its DDL and schema ID; the reader still required the old
+unwrapped pair. This is an evidence-reader mismatch, not a successful runtime or
+model qualification observation.
+
+The reader now recognizes only that exact module, enum, layout implementation,
+source-file binding and direct three-statement selection. It verifies that
+CanonicalJson preserves the original legacy DDL and schema, while shared storage
+requires AuthenticatedV1 and held native IO with its separate namespace. Unknown
+mapping bodies, literals, substituted arguments, old-pair decoys, rebinding,
+shadowed modules and missing or symlinked layout sources remain refused. Shared
+snapshot tables remain outside the legacy evidence scope, including resealed
+metadata and source attempts to append them to legacy DDL. The independent
+4775-byte legacy DDL and pre-backend hash remain unchanged.
+
+This repair changes the reader and its negative controls only. All native runtime,
+transaction/signature/nonce code and all trainer/model source bytes remain exact.
+Full CI and the prospective ProductRunner decision retain their original gates;
+this parser repair confers neither model efficacy nor an ordinary installation.
+
+### PN3 same-call worker count transition — 2026-10-29 (candidate / OPEN)
+
+A retained real original-model validation stopped during exit observation after
+an earlier full worker binding. The compound `exit-task-identity` refusal did not
+retain the exact mismatching field. A deterministic control separately reproduces
+the narrower race in which the complete task roster contains two original tasks
+and a bound worker retires before the next leader status read reports one thread.
+This reconstruction does not reclassify the historical failed observation.
+
+The V4 observer now distinguishes only a positive count decrease after complete
+initial classification and binding. All successful identity, namespace, memory,
+state and stat reads must still pass before that transition can request proof.
+A strictly smaller complete roster, a nonincreasing observed count and a new
+terminal event from the same retained original worker pidfd are all required.
+The incomplete frontier is discarded; the existing finite recapture requires
+two complete remaining frontiers, the original owner and the original deadline.
+A changed-count status followed by missing stat remains a refusal. Worker
+retirement does not establish released RSS or group completion. Only the exact
+owned-child wait4 receipt can close the observation within the unchanged 100 ms.
+
+All 96 original and added observer/resource controls passed with zero skips,
+including actual own-child kernel pidfd probes. Wrong identities, task additions,
+count increases, missing terminal events, incomplete reads, pre-binding changes
+and expired deadlines remain refusals. Model, training, task, retention,
+qualification, resource and timing rules are unchanged. Source-bound observation
+policies acquire the actual new worker-source hash; the old observer policy is
+rejected on the changed source. This source repair grants no model efficacy,
+qualified child installation or next-task child-byte read.
+
+This binary candidate applies the identical observer and regression tests to
+the 090d source tree, which already contains the strict shared-layout evidence
+reader repair. All four binary trainer and trainer-test files remain byte-for-byte
+identical to their preceding published binary source. The separate original
+model route keeps its 003-based training code; these source roles are not swapped.
+
+### PN3 separate diverse60 scalar training V3 — 2026-10-29 (candidate / OPEN)
+
+The explicit `canonical-positive-zero-binary-diverse60-observed-v3` candidate is
+a new training execution contract. It keeps the exact original ten-step material
+plan and parent target contract, while a separate recipe records thirty optimizer
+updates over sixty fixed public source rows. Six committed ten-row groups repeat
+five times: 300 actual scalar forward/backward calls, 300 supervised original
+yes/no answer positions, no EOS positions, and exactly 15,600 input tokens. Each
+optimizer update keeps one original CPU profiler context. This is thirty profiler
+contexts, not three hundred. AdamW, learning rate 0.002, zero weight decay, rank
+four, alpha eight, seed seven, dropout zero and mean ten-row gradients are fixed.
+There is no tensor batch, OpenMP pause, intermediate model selection or future
+task in this Chain execution contract.
+
+The explicit input is
+[`config/pon/binary-diverse60-training-v3.json`](../../config/pon/binary-diverse60-training-v3.json),
+47,712 bytes with SHA256
+`d457f4b01cc6aaa445403e81b1fa9511e24f23e4254a6ef9ff9ec29abab693cf`.
+Its sixty row records, original tokenizer arrays and 30-by-10 schedule match the
+precommitted development input identified by plan
+`920553660721745af24963bb4d360f76e0d0bc0f6bb1a65c1c03e1cb369605b7`.
+It contains no temporary paths, future windows, future predictions or claimed
+qualification. Distinct prompt rows are not a claim of independent semantic
+operations. The declared 120 source-ledger records describe the later required
+one-decision/one-target provenance width, not an authenticated ledger created by
+this trainer.
+
+The new
+[`llm_binary_diverse60_observed_v3.py`](../../scripts/llm_binary_diverse60_observed_v3.py)
+provides strict plan, input, data, trace and completion readers. Callers must
+provide both `--diverse-plan` / `--diverse-plan-sha256` and
+`--diverse-training-data` / `--diverse-training-data-sha256` with the new profile.
+Other profiles reject these arguments. The input's `initial_setup` binds the
+original setup recipe and parent material, plus the separately pinned plan and
+training-data roles. Data is offered explicitly; the bundled file is not a
+silent fallback. The fixed data digest and actual new module digest are included
+in the source closure, and preflight rereads the supplied data before and after
+training. The original material/setup validator still checks the actual parent
+and all factors. A setup-only unchanged candidate cannot complete this new
+training profile.
+
+The `binary-diverse60-observed-v3` input/actual/candidate/result suffix and
+`binary_diverse60_observed_execution` context are separate from Binary V2.
+The bounded `binary-diverse60-training-trace-v3.jsonl` contains exactly 332
+records: start, 300 scalar microsteps, thirty optimizer completions and complete.
+Each microstep binds the global source-row index, within-update position, exact
+token IDs, target, both answer logits, CE, actual backward completion and clocks.
+Readback verifies the committed schedule, five uses of every source row, complete
+work and token totals, finite gradient norms and unchanged source/plan context.
+The actual tokenizer must reproduce the frozen token arrays before training.
+Full parent-to-seeded-setup-to-child byte checks remain in the original runner.
+
+The current V4 owned observer is pinned to
+`aae68f92393e5e88c5aaa02095b5990200c121834bec05d8b3a11cd3f09ffc50`.
+The original 1800 s / 16 GiB training limit, 600 s / 8 GiB inference limit,
+100 ms terminal rule, original wait4 ownership and live release behavior remain
+unchanged. The new completion checks also recheck full owner policy, nonnegative
+CPU/wall/RSS counters, both RSS measurements and any present cleanup timestamps.
+Absent cleanup observation is not a zero-duration measurement. A development
+result from an older AEF observer is not an execution result under this new AAE
+source. Model failures, owner failures and receipt failures remain failures.
+
+The original V2 trainer and its 10/100 readers remain byte-for-byte unchanged.
+Fourteen new finite controls cover source/data/namespace confusion, exact scalar
+trace and token accounting, schedule/row omission, changed parent bytes, source
+and budget relabelling, failed owner receipts and actual child discriminant
+failure before model import. Their successful model materials, logits and owner
+receipts are explicitly fabricated fixtures; they do not certify model execution.
+The original seventy-one compatibility controls remain required on the changed
+dispatchers. No pretrained model, gradient run, Cargo rebuild, hosted CI,
+qualification, installation or protocol activation is performed by this stage.
+
+The sixty public training inputs were frozen before a later prior-study raw
+exposure audit became available. The complete ten-study audit reports three
+exact prompt overlaps with these inputs. Its 9,382-prompt union has SHA256
+`b691fd97f2e2f7ef73806d858ea3ece4c67c0ad9ed7e2aab966196b080831d1d`.
+The fixed training input is not renamed an unseen or fresh holdout, and it is not
+retrospectively changed. Hepta's separately frozen, hash-only exclusion fixture
+has 10,382 unique prompt identities and SHA256
+`946d33b8f3cd95949f8eaf3623948639cf68c58214ad8b8f191ae0c2088606e4`:
+all ten formal studies, the old 067 study, original public tasks and the sixty
+fixed training rows. The old eight and 128 development inputs are covered too.
+A subsequent formal study must exclude that complete known set before creating
+its new future cohort.
+It cannot reuse an a593 window as qualification for a new child. Hepta's original
+two 512-task windows, IPS/confidence and family-retention checks, 2700 s whole
+study cap, ordinary batch-one/four-thread forward, two-node Cell acquisition,
+normal installation and next-task child-byte read remain separate unmet gates
+for this new source/profile until actually executed and independently read back.
+
+### 2026-10-29: diverse60 native source inventory follow-up
+
+The first published diverse60 source, `0bd7019a06e34c69fcbc84f23dda8510689b9a8d`,
+failed the original repository-truth inventory check in both head and prospective
+merge jobs `123296601045` and `123296600859`. The preceding audit, boundary and
+repository checks passed, but the fixed training JSON had not been added to the
+embedded native source inventory. The original inventory generator now includes
+that existing 47,712-byte file. This is one seven-line include entry; the training
+data, all Python execution and reader code, observer, budgets and qualification
+conditions remain unchanged. The two original failures remain failed observations.
+This registration change does not establish a model result or a passing native
+campaign. Its new source identity must be selected explicitly by any later Hepta
+candidate before hosted execution.
