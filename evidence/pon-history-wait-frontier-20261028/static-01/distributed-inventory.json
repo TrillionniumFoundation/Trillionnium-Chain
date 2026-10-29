@@ -1,0 +1,15 @@
+{
+  "name": "distributed-inventory",
+  "argv": [
+    "python3",
+    "scripts/refresh_distributed_source_inventory.py",
+    "--check"
+  ],
+  "returncode": 0,
+  "passed": true,
+  "elapsed_wall_seconds": 0.08585448899248149,
+  "raw_bytes": 35,
+  "raw_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+  "gzip_bytes": 55,
+  "gzip_sha256": "b2ac584c0e9f95251d4fe5572e1692e11a8923a388dc7e7a4ebf112954435108"
+}

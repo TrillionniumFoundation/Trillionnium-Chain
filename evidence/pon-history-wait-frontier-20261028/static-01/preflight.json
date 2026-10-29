@@ -1,0 +1,14 @@
+{
+  "name": "preflight",
+  "argv": [
+    "bash",
+    "scripts/project-preflight.sh"
+  ],
+  "returncode": 0,
+  "passed": true,
+  "elapsed_wall_seconds": 0.09144628200738225,
+  "raw_bytes": 179,
+  "raw_sha256": "20c9e61b1652b8eef6b7dfb77b33ef911c2852dfc15515b6e5c8c46215eb5ed1",
+  "gzip_bytes": 161,
+  "gzip_sha256": "cced66dd9f69273d97018862a0177d5b10031555655c7a54d81c3180ee79d281"
+}

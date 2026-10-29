@@ -8,8 +8,14 @@ use std::cell::RefCell;
 thread_local! {
     static HOOK: RefCell<Option<(String, PathBuf)>> = const { RefCell::new(None) };
 }
-pub(super) fn install_hook(mode: &str, control: &Path) {
-    if mode.starts_with("publication-") || mode.starts_with("epoch-recovery-publish-") {
+pub(in crate::store::history_effect_v6) fn install_hook(mode: &str, control: &Path) {
+    if mode.starts_with("publication-")
+        || mode.starts_with("epoch-recovery-publish-")
+        || mode.starts_with("startup-no-native-publish-")
+        || mode.starts_with("reorg-publish-")
+        || mode.starts_with("lifecycle-publish-")
+        || mode.starts_with("reorg-repair-")
+    {
         HOOK.with(|slot| *slot.borrow_mut() = Some((mode.into(), control.into())));
     }
 }
@@ -23,6 +29,66 @@ pub(in crate::store::history_effect_v6) fn append_cut(
     let Some((mode, control)) = hook else {
         return;
     };
+    if mode == format!("lifecycle-publish-{stage}") {
+        if let journal::Event::LifecycleReconciledV1 { signed, .. } = &frame.event {
+            write_value(
+                &control.join("crash-ready.json"),
+                &json!({
+                    "schema":"actual-history-lifecycle-barrier-v1",
+                    "pid":std::process::id(),"cutpoint":mode,"publication_stage":stage,
+                    "anchor":Anchor{sequence:frame.sequence,digest:policy::digest(raw)},
+                    "acknowledged_prefix_anchor":journal.anchor(),"frame_bytes":raw.len(),
+                    "signed_lifecycle_sha256":policy::digest(signed),
+                    "native_operation_started":false,"cpu_epoch_created":false,
+                    "recovery_receipt_created":false,
+                }),
+            );
+            loop {
+                std::thread::park_timeout(Duration::from_secs(5));
+            }
+        }
+        return;
+    }
+    if mode == format!("reorg-publish-{stage}") {
+        if let journal::Event::ReorgContinuationPreparedV1 { signed, .. } = &frame.event {
+            write_value(
+                &control.join("crash-ready.json"),
+                &json!({
+                    "schema":"actual-history-reorg-continuation-barrier-v1",
+                    "pid":std::process::id(),"cutpoint":mode,"publication_stage":stage,
+                    "anchor":Anchor{sequence:frame.sequence,digest:policy::digest(raw)},
+                    "acknowledged_prefix_anchor":journal.anchor(),"frame_bytes":raw.len(),
+                    "signed_reorg_continuation_sha256":policy::digest(signed),
+                    "native_operation_started":false,"cpu_epoch_created":false,
+                    "recovery_receipt_created":false,
+                }),
+            );
+            loop {
+                std::thread::park_timeout(Duration::from_secs(5));
+            }
+        }
+        return;
+    }
+    if mode == format!("startup-no-native-publish-{stage}") {
+        if let journal::Event::StartupNoNativeClosedV1 { signed, .. } = &frame.event {
+            write_value(
+                &control.join("crash-ready.json"),
+                &json!({
+                    "schema":"actual-history-startup-no-native-publication-barrier-v1",
+                    "pid":std::process::id(),"cutpoint":mode,"publication_stage":stage,
+                    "anchor":Anchor{sequence:frame.sequence,digest:policy::digest(raw)},
+                    "acknowledged_prefix_anchor":journal.anchor(),"frame_bytes":raw.len(),
+                    "signed_startup_closure_sha256":policy::digest(signed),
+                    "native_operation_started":false,"cpu_epoch_created":false,
+                    "recovery_receipt_created":false,
+                }),
+            );
+            loop {
+                std::thread::park_timeout(Duration::from_secs(5));
+            }
+        }
+        return;
+    }
     if mode == format!("epoch-recovery-publish-{stage}") {
         if let journal::Event::SettledEpochReconciledV1 { signed, .. } = &frame.event {
             write_value(
@@ -79,6 +145,21 @@ pub(in crate::store::history_effect_v6) fn repair_cut(signed: &[u8], stage: &str
     let Some((mode, control)) = hook else {
         return;
     };
+    if mode == format!("reorg-repair-{stage}") {
+        write_value(
+            &control.join("crash-ready.json"),
+            &json!({
+                "schema":"actual-history-reorg-continuation-barrier-v1",
+                "pid":std::process::id(),"cutpoint":mode,
+                "signed_publication_sha256":policy::digest(signed),
+                "native_operation_started":false,"cpu_epoch_created":false,
+                "recovery_receipt_created":false,
+            }),
+        );
+        loop {
+            std::thread::park_timeout(Duration::from_secs(5));
+        }
+    }
     if mode != format!("publication-repair-{stage}") {
         return;
     }
@@ -96,12 +177,17 @@ pub(in crate::store::history_effect_v6) fn repair_cut(signed: &[u8], stage: &str
         std::thread::park_timeout(Duration::from_secs(5));
     }
 }
-pub(super) fn repair_child(mode: &str, control: &Path, path: &Path, digest: &str) {
+pub(in crate::store::history_effect_v6) fn repair_child(
+    mode: &str,
+    control: &Path,
+    path: &Path,
+    digest: &str,
+) {
     install_hook(mode, control);
     let result = repair(path, digest);
     panic!("repair child returned without its selected actual crash barrier: {result:?}");
 }
-pub(super) fn envelope(body: &Authorization) -> Vec<u8> {
+pub(in crate::store::history_effect_v6) fn envelope(body: &Authorization) -> Vec<u8> {
     let registry = signing_key_from_hex(&"11".repeat(32)).unwrap();
     let task = signing_key_from_hex(&"22".repeat(32)).unwrap();
     policy::encoded(&policy::Envelope {
@@ -111,7 +197,7 @@ pub(super) fn envelope(body: &Authorization) -> Vec<u8> {
     })
     .unwrap()
 }
-pub(super) fn input(
+pub(in crate::store::history_effect_v6) fn input(
     a: &TestAuthority,
     label: &str,
     body: &Authorization,
@@ -126,7 +212,7 @@ pub(super) fn input(
     let digest = write_value(&path, &config);
     (path, digest)
 }
-pub(super) fn repair(path: &Path, digest: &str) -> Result<Value> {
+pub(in crate::store::history_effect_v6) fn repair(path: &Path, digest: &str) -> Result<Value> {
     repair_history_journal_publication_v1(ProtectedHistoryJournalPublicationV1Input::load(
         path,
         rustix::process::geteuid().as_raw(),
@@ -148,7 +234,7 @@ fn files(path: &Path) -> BTreeMap<String, (u64, String)> {
         })
         .collect()
 }
-pub(super) fn after_crash(
+pub(in crate::store::history_effect_v6) fn after_crash(
     a: &TestAuthority,
     control: &Path,
     barrier: &Value,
@@ -292,7 +378,11 @@ pub(super) fn after_crash(
     );
     (path, digest)
 }
-pub(super) fn rejects_after_advance(a: &TestAuthority, path: &Path, digest: &str) {
+pub(in crate::store::history_effect_v6) fn rejects_after_advance(
+    a: &TestAuthority,
+    path: &Path,
+    digest: &str,
+) {
     let before = files(&a.journal);
     assert!(repair(path, digest).is_err());
     assert_eq!(files(&a.journal), before);

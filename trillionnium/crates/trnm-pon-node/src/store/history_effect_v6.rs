@@ -14,14 +14,25 @@ use std::time::Instant;
 
 mod epoch_recovery_v1;
 mod journal;
+#[cfg(all(test, target_os = "linux"))]
+#[path = "history_effect_v6/tests/lifecycle_native_v1.rs"]
+mod lifecycle_native_tests_v1;
 mod policy;
 mod recovery;
+#[cfg(all(test, target_os = "linux"))]
+mod reorg_continuation_tests_v1;
+mod reorg_continuation_v1;
+mod startup_no_native_v1;
 mod storage;
 #[cfg(all(test, target_os = "linux"))]
 mod tests;
 pub use epoch_recovery_v1::{
     prepare_history_settled_epoch_v1_recovery, repair_history_settled_epoch_v1_publication,
     ProtectedHistorySettledEpochV1Input,
+};
+pub use journal::lifecycle_recovery_v1::{
+    prepare_history_lifecycle_v1_recovery, repair_history_lifecycle_v1_publication,
+    ProtectedHistoryLifecycleV1Input,
 };
 pub use journal::publication::{
     repair_history_journal_publication_v1, ProtectedHistoryJournalPublicationV1Input,
@@ -31,6 +42,14 @@ pub use policy::{
     ProtectedHistoryV6BudgetInput, ProtectedHistoryV6Input, ProtectedHistoryV6RecoveryInput,
 };
 pub use recovery::prepare_history_effect_v6_recovery;
+pub use reorg_continuation_v1::{
+    prepare_history_reorg_continuation_v1, repair_history_reorg_continuation_v1_publication,
+    ProtectedHistoryReorgContinuationV1Input,
+};
+pub use startup_no_native_v1::{
+    close_history_startup_no_native_v1, repair_history_startup_no_native_v1_publication,
+    ProtectedHistoryStartupNoNativeV1Input,
+};
 
 pub(super) const DDL: &str = "CREATE TABLE history_effect_v6(operation TEXT PRIMARY KEY NOT NULL CHECK(length(operation)=64),intent BLOB UNIQUE NOT NULL CHECK(length(intent)=32),marker BLOB NOT NULL CHECK(length(marker)>0 AND length(marker)<=16384));";
 
@@ -61,8 +80,10 @@ impl StartupScope {
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) enum StartupProgress {
+    WaitingForCredit,
     Material(crate::operator_checkpoint_tile::ReplayProgress),
     BeforeNode,
+    NativeInitialization(&'static str),
     FirstState,
     SecondState,
     BeforeSettlement,
@@ -528,12 +549,43 @@ impl HistoryEffectV6 {
         let pending = journal.reserve(&config.signed_startup)?;
         let cpu =
             ServiceMutationCpuDomain::from_history_effect_v6_epoch(VerifiedEpoch { _sealed: () });
-        let initial_cpu = cpu.observe()?;
-        ensure(
-            initial_cpu.stored_credit_ns == 0 && initial_cpu.in_flight == 0,
-            "HISTORY_V6_COLD_CREDIT",
-        )?;
-        cpu.await_startup_credit(deadline)?;
+        let before_cpu = || {
+            ensure(!cancelled.load(Ordering::Acquire), "HISTORY_V6_CANCELLED")?;
+            ensure(
+                Instant::now() < deadline,
+                "OWNER_CONTINUOUS_STARTUP_DEADLINE",
+            )?;
+            let at = policy::now()?;
+            ensure(
+                at < pending.operation.expires_ns && at < pending.budget_expires_ns,
+                "HISTORY_V6_OPERATION_EXPIRED",
+            )
+        };
+        let waiting = (|| {
+            let initial = cpu.observe()?;
+            ensure(
+                initial.stored_credit_ns == 0 && initial.in_flight == 0,
+                "HISTORY_V6_COLD_CREDIT",
+            )?;
+            cpu.await_startup_credit_with_progress(deadline, &mut || {
+                before_cpu()?;
+                resource(StartupProgress::WaitingForCredit)?;
+                before_cpu()
+            })?;
+            before_cpu()?;
+            Ok(initial)
+        })();
+        let initial_cpu = match waiting {
+            Ok(initial) => initial,
+            Err(error) => {
+                // This branch precedes begin(), so no CPU interval/worker or
+                // Native work can have started. Retain the entire predebit and
+                // consumed nonce; the original NotStarted event creates no
+                // measured-zero receipt and clears only this unstarted epoch.
+                journal.not_started(&pending.operation.operation_id, &error)?;
+                return Err(error);
+            }
+        };
         let operation = match cpu.begin() {
             Ok(op) => op,
             Err(error) => {
@@ -703,9 +755,15 @@ impl HistoryEffectV6 {
                 frontier == running.active.pending.operation.owner_frontier,
                 "HISTORY_V6_OWNER_FRONTIER",
             )?;
-            // Partial reorg requires its own explicitly bound continuation.
-            // This first prototype does not allow startup to resume it.
-            storage::no_pending_reorg(&node.db)?;
+            // Ordinary Startup retains the partial-reorg refusal. Only the
+            // independently signed V1 record admits this exact fresh attempt;
+            // opening still never executes its reorganization.
+            storage::check_reorg_authority(
+                &node.db,
+                &*owner.journal()?,
+                &running.active.pending.operation,
+                &mut || running.checkpoint(),
+            )?;
             storage::verify_known_markers(&node.db, &*owner.journal()?, None)?;
             running.checkpoint()?;
             resource(StartupProgress::BeforeSettlement)?;
@@ -827,6 +885,27 @@ impl HistoryEffectV6 {
             fence(Progress::Context)?;
             self.node
                 .history_effect_packet_binding(op, &packet, &mut || fence(Progress::Context))?;
+            let continuation = self.owner.journal()?.reorg_continuation().is_some();
+            if continuation {
+                // This paid Validation can reuse only the exact target sealed
+                // by this attempt. Ordinary ready() still rejects pending reorgs.
+                // Recheck the current permit and complete SQL cursor/staging
+                // snapshot before the existing exact packet/context replay.
+                storage::check_reorg_authority(
+                    &self.node.db,
+                    &*self.owner.journal()?,
+                    op,
+                    &mut || fence(Progress::Context),
+                )?;
+                let id = self
+                    .node
+                    .pending_exact_activation_replay(&packet, observed_now, &mut || {
+                        fence(Progress::Context)
+                    })?
+                    .ok_or("HISTORY_REORG_V1_EXACT_PENDING_PACKET")?;
+                self.node.history_effect_reuse_marker(&packet)?;
+                return Ok(id);
+            }
             if let Some(id) = self.node.check_admission_context_with_progress(
                 &packet,
                 observed_now,
@@ -881,20 +960,37 @@ impl HistoryEffectV6 {
                 })
         })();
         let marker = storage::read_marker(&self.node.db, &op.operation_id);
+        let partial = storage::no_pending_reorg(&self.node.db).is_err();
         let boundary = resource(Progress::BeforeSettlement)
             .err()
             .map(|e| e.to_string());
-        running.finish(native, marker, boundary)
+        let result = running.finish(native, marker, boundary);
+        if partial {
+            // A durable cursor needs another exact outside closure/attempt.
+            // A known cancellation is not permission to reuse this attempt.
+            self.owner.unavailable.store(true, Ordering::Release);
+        }
+        result
     }
     /// The final complete State/readback is another paid, signed operation;
     /// only then can a clean close permit a later zero-credit epoch.
     pub fn close(&mut self, signed: &[u8], deadline: Instant) -> Result<Value> {
+        self.close_with_progress(signed, deadline, &|_| Ok(()))
+    }
+    pub(crate) fn close_with_progress(
+        &mut self,
+        signed: &[u8],
+        deadline: Instant,
+        resource: &(dyn Fn(Progress) -> Result<()> + Sync),
+    ) -> Result<Value> {
         let running = self.owner.start(signed, Purpose::Close, deadline)?;
         let expected = running.active.pending.operation.owner_frontier.clone();
         let native = (|| -> Result<Hash> {
-            let (tip, _, _) = self
-                .node
-                .read_active_with_progress(&mut || running.checkpoint())?;
+            let (tip, _, _) = self.node.read_active_with_progress(&mut || {
+                running.checkpoint()?;
+                resource(Progress::Context)?;
+                running.checkpoint()
+            })?;
             ensure(
                 storage::frontier(&self.node.db)? == expected,
                 "HISTORY_V6_OWNER_FRONTIER",
@@ -905,7 +1001,13 @@ impl HistoryEffectV6 {
             running.checkpoint()?;
             Ok(tip)
         })();
-        let result = running.finish(native, Ok(None), None)?;
+        let boundary = running
+            .checkpoint()
+            .and_then(|_| resource(Progress::BeforeSettlement))
+            .and_then(|_| running.checkpoint())
+            .err()
+            .map(|error| error.to_string());
+        let result = running.finish(native, Ok(None), boundary)?;
         ensure(result.known_success(), "HISTORY_V6_CLOSE_ACCOUNTING")?;
         let actual = self.owner.cpu.observe()?;
         ensure(

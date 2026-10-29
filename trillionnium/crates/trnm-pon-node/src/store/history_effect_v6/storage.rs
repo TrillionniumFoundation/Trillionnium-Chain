@@ -25,6 +25,21 @@ pub(super) fn no_pending_reorg(db: &Connection) -> Result<()> {
     let count: u64 = db.query_row("SELECT COUNT(*) FROM reorg WHERE done!=1", [], |r| r.get(0))?;
     ensure(count == 0, "HISTORY_V6_PARTIAL_REORG_REQUIRES_CONTINUATION")
 }
+pub(super) fn check_reorg_authority(
+    db: &Connection,
+    journal: &journal::Journal,
+    operation: &policy::Operation,
+    progress: &mut dyn FnMut() -> Result<()>,
+) -> Result<()> {
+    let Some(permit) = journal.reorg_continuation() else {
+        return no_pending_reorg(db);
+    };
+    permit.check_operation(operation)?;
+    ensure(
+        reorg_continuation_v1::snapshot(db, progress)? == permit.snapshot,
+        "HISTORY_REORG_V1_SQL_SNAPSHOT",
+    )
+}
 pub(super) fn read_marker(db: &Connection, operation: &str) -> Result<Option<EffectMarker>> {
     policy::id(operation, 32)?;
     let row: Option<(Vec<u8>, Vec<u8>, u64)> = db
@@ -336,10 +351,9 @@ impl Node {
             "HISTORY_V6_ACTIVATION_PURPOSE",
         )?;
         require_validation_marker(&self.db, &*owner.journal()?, op)?;
-        // Never let activate(A) first resume an unrelated stored intent(B).
-        // The initial qualification covers intact owner operations; pending
-        // multistep reorg continuation remains an explicit unsupported case.
-        no_pending_reorg(&self.db)
+        // A fresh pair is still mandatory. The V1 authority can select only
+        // its exact stored target/cursor; ordinary activation remains refused.
+        check_reorg_authority(&self.db, &*owner.journal()?, op, &mut || active.check())
     }
     pub(in crate::store) fn history_effect_activation_marker(
         &self,

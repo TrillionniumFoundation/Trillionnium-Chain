@@ -1107,11 +1107,22 @@ impl ServiceMutationCpuDomain {
     /// Only the already retained zero-credit epoch waits. Original refill and
     /// ceiling are used unchanged; Root's absolute business deadline clips wait.
     pub(crate) fn await_startup_credit(&self, deadline: Instant) -> Result<()> {
+        self.await_startup_credit_with_progress(deadline, &mut || Ok(()))
+    }
+    /// Check the caller's existing authority/cancellation while the same cold
+    /// epoch earns its original credit. No CPU operation or reservation exists
+    /// yet; the callback runs outside the budget lock and grants no credit.
+    pub(crate) fn await_startup_credit_with_progress(
+        &self,
+        deadline: Instant,
+        progress: &mut impl FnMut() -> Result<()>,
+    ) -> Result<()> {
         loop {
             ensure(
                 Instant::now() < deadline,
                 "OWNER_CONTINUOUS_STARTUP_DEADLINE",
             )?;
+            progress()?;
             let ready = {
                 let mut budget = self
                     .budget
@@ -1122,6 +1133,7 @@ impl ServiceMutationCpuDomain {
                 budget.in_flight == 0 && budget.credit_ns >= i128::from(MUTATION_CPU_BURST_NS)
             };
             if ready {
+                progress()?;
                 return Ok(());
             }
             thread::sleep(
@@ -1164,6 +1176,36 @@ impl ServiceMutationCpuDomain {
             start_reserve_ns: MUTATION_CPU_START_RESERVE_NS,
             worker_limit: MUTATION_CPU_WORKERS,
         })
+    }
+
+    /// One short close of an already owned ordinary History epoch. The same
+    /// original mutex protects both the complete quiescent observation and the
+    /// SQL/kernel close, so concurrent begin cannot enter the observation gap.
+    /// No refill, credit, new domain, worker or synthetic settlement is created.
+    pub(crate) fn with_known_quiescent_history_close<T>(
+        &self,
+        close: impl FnOnce() -> Result<T>,
+    ) -> Result<T> {
+        let budget = self
+            .budget
+            .lock()
+            .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+        ensure(
+            !budget.unavailable
+                && budget
+                    .flow
+                    .as_ref()
+                    .and_then(|flow| flow.snapshot(budget.credit_ns, budget.in_flight))
+                    .is_some(),
+            "PUBLIC_MUTATION_CPU_UNAVAILABLE",
+        )?;
+        ensure(
+            budget.in_flight == 0 && budget.credit_ns >= 0,
+            "PUBLIC_MUTATION_CPU_BUDGET",
+        )?;
+        let result = close();
+        drop(budget);
+        result
     }
     /// Independent optional diagnostic object. The original observe() struct,
     /// JSON/schema and old evidence readers remain unchanged. No refill occurs.
@@ -1570,4 +1612,51 @@ impl ServiceMutationCpuDomain {
             full_capacity_disables_ordinary_verification: false,
         })
     }
+}
+
+#[test]
+fn graph_resource_v1_close_holds_original_quiescence_against_concurrent_begin() {
+    let domain = ServiceMutationCpuDomain::cold_remote_history_epoch();
+    let before = domain.observe().unwrap();
+    domain
+        .with_known_quiescent_history_close(|| Ok(()))
+        .unwrap();
+    assert_eq!(
+        domain.observe().unwrap(),
+        before,
+        "close grants no refill or credit"
+    );
+    let other = domain.clone();
+    let (go, start) = std::sync::mpsc::channel();
+    let (attempting, attempted) = std::sync::mpsc::channel();
+    let (started, began) = std::sync::mpsc::channel();
+    let closed = Arc::new(AtomicBool::new(false));
+    let child_closed = Arc::clone(&closed);
+    let child = thread::spawn(move || {
+        start.recv().unwrap();
+        attempting.send(()).unwrap();
+        let operation = super::super::begin_history_import_cpu(&other).unwrap();
+        assert!(child_closed.load(Ordering::Acquire));
+        started.send(()).unwrap();
+        operation.finish()
+    });
+    domain
+        .with_known_quiescent_history_close(|| {
+            assert!(matches!(
+                domain.budget.try_lock(),
+                Err(std::sync::TryLockError::WouldBlock)
+            ));
+            go.send(()).unwrap();
+            attempted.recv().unwrap();
+            assert!(matches!(
+                began.try_recv(),
+                Err(std::sync::mpsc::TryRecvError::Empty)
+            ));
+            closed.store(true, Ordering::Release);
+            Ok(())
+        })
+        .unwrap();
+    began.recv_timeout(Duration::from_secs(2)).unwrap();
+    assert!(!child.join().unwrap().accounting_unavailable);
+    assert_eq!(domain.observe().unwrap().in_flight, 0);
 }

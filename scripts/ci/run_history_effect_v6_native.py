@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Execute the original 15 and four Startup controls from one retained release binary."""
+"""Execute all original 21 and first-Startup closure from one retained release binary."""
 from __future__ import annotations
 import argparse
 import gzip
@@ -43,7 +43,13 @@ STARTUP_ROSTER = sorted(PREFIX + 'startup::' + name for name in [
     'original_cpu_deadline_and_signed_expiry_interrupt_interior_material',
     'startup_cancellation_handle_cannot_select_another_signed_operation',
 ])
-ROSTER = sorted(ORIGINAL_ROSTER + STARTUP_ROSTER)
+FOLLOWUP_ROSTER = sorted(PREFIX + name for name in [
+    'wait::zero_credit_wait_interruptions_record_not_started_without_refund',
+    'settled_epoch::known_wrong_frontier_refusal_keeps_actual_frontier_through_sigkill_and_recovery',
+])
+CLOSURE_ROSTER = [PREFIX + 'startup_no_native::first_failed_startup_empty_namespace_closes_after_real_death_and_publication_crash_then_runs']
+ROSTER = sorted(ORIGINAL_ROSTER + STARTUP_ROSTER + FOLLOWUP_ROSTER + CLOSURE_ROSTER)
+SOURCE_ENV = 'TRNM_HISTORY_STARTUP_NO_NATIVE_SOURCE_COMMIT'
 MATERIAL_ROSTER = sorted([
     'synthetic_codec_fixture_full_relation_and_actual_signed_admission_binding',
     'original_checkpoint_unselected_bytes_and_expected_matrix_pins_are_not_claims',
@@ -77,10 +83,10 @@ def roster(text):
 def suite_passed(text):
     summaries = re.findall(r'^test result: .+$', text, re.M)
     executed = sorted(re.findall(r'^test (' + re.escape(PREFIX) + r'\S+) \.\.\. ', text, re.M))
-    return (text.splitlines().count('running 20 tests') == 1 and executed == ROSTER
+    return (text.splitlines().count('running 23 tests') == 1 and executed == ROSTER
             and f'test {HELPER} ... ignored' in text
             and len(summaries) == 1
-            and re.fullmatch(r'test result: ok\. 19 passed; 0 failed; 1 ignored; '
+            and re.fullmatch(r'test result: ok\. 22 passed; 0 failed; 1 ignored; '
                              r'\d+ measured; \d+ filtered out; finished in .+s', summaries[0]) is not None)
 
 
@@ -310,6 +316,7 @@ def main():
                 'runtime_burst_ns': 2_000_000_000, 'fixture_operation_allowance_ns': 4_000_000_000,
                 'complete_parent_snapshot_attempts': 4, 'production_qualified': False,
                 'original_fifteen_required': True, 'new_startup_controls_required': 4,
+                'retained_followup_controls_required': 2, 'first_startup_closure_controls_required': 1,
                 'new_material_controls_required': 9, 'whole_history_p0_closed': False}
     source_ok = False
     try:
@@ -322,6 +329,9 @@ def main():
             raise ValueError('Cargo output must not mutate the source tree')
         env.update(CARGO_INCREMENTAL='0', CARGO_BUILD_JOBS='1', RUST_TEST_THREADS='1',
                    PYTHONDONTWRITEBYTECODE='1')
+        # Embed and later compare the independently verified actual checkout
+        # identity. This is not a historical protocol fixture source label.
+        env[SOURCE_ENV] = args.expected_source
         build = bounded(['cargo', '+1.95.0', 'test', '--release', '--locked', '--manifest-path',
                          'trillionnium/Cargo.toml', '-p', 'trnm-pon-node', '--lib', '--no-run',
                          '--message-format=json-render-diagnostics'], output / 'build', 2400, env)
@@ -355,13 +365,21 @@ def main():
             and re.search(r'^Ran 4 tests in ', observer_text, re.M) is not None
             and re.search(r'^OK$', observer_text, re.M) is not None)
         terminal['observer'] = observer
+        closure_observer = bounded([sys.executable, '-m', 'unittest', 'discover', '-s', 'scripts/ci',
+                                    '-p', 'test_history_startup_no_native_guard.py'],
+                                   output / 'closure-observer', 60, env)
+        closure_text = (output / 'closure-observer/native.log').read_text()
+        closure_observer['expected_four_tests_passed'] = (closure_observer['passed']
+            and re.search(r'^Ran 4 tests in ', closure_text, re.M) is not None
+            and re.search(r'^OK$', closure_text, re.M) is not None)
+        terminal['closure_observer'] = closure_observer
         # Run every retained test even when the standalone observer group failed.
         # The ignored helper is invoked by the process tests with --exact
         # --ignored, protected fixture inputs and an independently owning guardian.
         env['TRNM_HISTORY_V6_ARTIFACT_DIR'] = str(output / 'native/artifacts')
         native = bounded([str(executable), PREFIX, '--test-threads=1', '--nocapture'],
                          output / 'native', 600, env)
-        native['exact_nineteen_pass_one_ignored'] = suite_passed((output / 'native/native.log').read_text())
+        native['exact_twenty_two_pass_one_ignored'] = suite_passed((output / 'native/native.log').read_text())
         terminal.update(native=native, binary_stable=sha(executable) == digest)
         terminal['material_controls'] = material_controls(output, target, env)
         terminal['format'] = bounded(['cargo', '+1.95.0', 'fmt', '--manifest-path',
@@ -370,8 +388,9 @@ def main():
                                      '--manifest-path', 'trillionnium/Cargo.toml', '-p', 'trnm-pon-node',
                                      '-p', 'trnm-crypto-primitives', '-p', 'trnm-mvcc-fee',
                                      '--lib', '--tests', '--', '-D', 'warnings'], output / 'clippy', 1200, env)
-        terminal['passed'] = (native['passed'] and native['exact_nineteen_pass_one_ignored']
+        terminal['passed'] = (native['passed'] and native['exact_twenty_two_pass_one_ignored']
                               and observer['expected_four_tests_passed'] and terminal['binary_stable']
+                              and closure_observer['expected_four_tests_passed']
                               and terminal['material_controls']['passed']
                               and terminal['format']['passed'] and terminal['clippy']['passed'])
     except BaseException as error:

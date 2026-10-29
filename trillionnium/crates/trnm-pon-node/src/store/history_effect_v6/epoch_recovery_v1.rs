@@ -361,7 +361,7 @@ pub fn repair_history_settled_epoch_v1_publication(
     })
 }
 
-fn require_visible(file: &File, path: &Path, uid: u32) -> Result<()> {
+pub(super) fn require_visible(file: &File, path: &Path, uid: u32) -> Result<()> {
     let held = file.metadata()?;
     let named = fs::symlink_metadata(path)?;
     ensure(

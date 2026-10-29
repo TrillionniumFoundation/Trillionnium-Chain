@@ -355,6 +355,13 @@ fn read_only_archive(directory: &Path, settings: Settings, backend: StateBackend
         public_service_cpu: None,
         public_service_epoch_listeners: 0,
         public_service_epoch_unknown: false,
+        history_graph_resource_binding: None,
+        history_graph_resource_pending: None,
+        history_graph_resource_counters: Default::default(),
+        #[cfg(test)]
+        history_graph_resource_before_commit_hook: None,
+        #[cfg(test)]
+        history_graph_resource_cpu_receipts: Vec::new(),
     })
 }
 fn read_receipt(directory: &Path) -> Result<GrowthRehearsalReceiptV2> {

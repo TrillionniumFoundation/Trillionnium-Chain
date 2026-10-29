@@ -9,6 +9,7 @@ use crate::account_archive_execution::state_witness::{
     commitment_from_complete_state, StateCommitment,
 };
 use crate::account_archive_prototype::native_store::{self, Root};
+use crate::native_progress::NativeProgress;
 use crate::{consensus, ensure, sequence_root, Error, Packet, Result, Settings};
 use rusqlite::{params, Connection, OptionalExtension};
 use serde::{Deserialize, Serialize};
@@ -250,10 +251,10 @@ const DELTA_ROWS_SQL: &str = "SELECT
 fn visit_deltas(
     db: &Connection,
     id: Hash,
-    progress: &mut dyn FnMut() -> Result<()>,
+    progress: &mut dyn NativeProgress,
     mut visit: impl FnMut(Delta) -> Result<()>,
 ) -> Result<usize> {
-    progress()?;
+    progress.checkpoint()?;
     let mut statement = local(db.prepare_cached(DELTA_ROWS_SQL).map_err(Error::from))?;
     let mut rows = local(statement.query([id.as_slice()]).map_err(Error::from))?;
     let mut previous: Option<String> = None;
@@ -284,10 +285,10 @@ fn visit_deltas(
         visit(row)?;
         count += 1;
         if count.is_multiple_of(256) {
-            progress()?;
+            progress.checkpoint()?;
         }
     }
-    progress()?;
+    progress.checkpoint()?;
     Ok(count)
 }
 
@@ -298,7 +299,7 @@ pub(crate) fn deltas(db: &Connection, id: Hash) -> Result<Vec<Delta>> {
 pub(super) fn deltas_with_progress(
     db: &Connection,
     id: Hash,
-    progress: &mut dyn FnMut() -> Result<()>,
+    progress: &mut dyn NativeProgress,
 ) -> Result<Vec<Delta>> {
     let mut out = Vec::new();
     visit_deltas(db, id, progress, |row| {
@@ -314,14 +315,14 @@ pub(super) fn deltas_with_progress(
 fn stored_delta_root(
     db: &Connection,
     id: Hash,
-    progress: &mut dyn FnMut() -> Result<()>,
+    progress: &mut dyn NativeProgress,
 ) -> Result<(usize, Hash)> {
     stored_delta_root_observed(db, id, progress, None)
 }
 fn stored_delta_root_observed(
     db: &Connection,
     id: Hash,
-    progress: &mut dyn FnMut() -> Result<()>,
+    progress: &mut dyn NativeProgress,
     cache: Option<(&Settings, &ArithmeticCache)>,
 ) -> Result<(usize, Hash)> {
     let _measurement = cache.map(|(_, cache)| cache.history.observe(HistoryStage::Delta));
@@ -343,7 +344,7 @@ fn stored_delta_root_observed(
         }
     })?;
     let root = tree.finish();
-    progress()?;
+    progress.checkpoint()?;
     if let Some(material) = material {
         material.finish();
     }
@@ -357,20 +358,17 @@ fn delta_root(rows: &[Delta]) -> Result<Hash> {
 /// The original indexed, duplicate-last sequence root, computed one encoded row
 /// at a time. This is operation-local hashing, never a stored validity cache.
 /// An occupied frontier slot at level k is a complete 2^k-leaf left subtree.
-fn delta_root_with_progress(
-    rows: &[Delta],
-    progress: &mut dyn FnMut() -> Result<()>,
-) -> Result<Hash> {
-    progress()?;
+fn delta_root_with_progress(rows: &[Delta], progress: &mut dyn NativeProgress) -> Result<Hash> {
+    progress.checkpoint()?;
     let mut tree = DeltaRootBuilder::default();
     for (index, row) in rows.iter().enumerate() {
         tree.push(row)?;
         if (index + 1).is_multiple_of(256) {
-            progress()?;
+            progress.checkpoint()?;
         }
     }
     let root = tree.finish();
-    progress()?;
+    progress.checkpoint()?;
     Ok(root)
 }
 
@@ -446,10 +444,10 @@ impl DeltaRootBuilder {
 fn visit_difference(
     before: &State,
     after: &State,
-    progress: &mut dyn FnMut() -> Result<()>,
+    progress: &mut dyn NativeProgress,
     mut visit: impl FnMut(&str, Option<Vec<u8>>, Option<Vec<u8>>),
 ) -> Result<()> {
-    progress()?;
+    progress.checkpoint()?;
     let mut inspected = 0usize;
     // Walk the two existing sorted maps without a third full-key tree or a
     // repeated lookup per key. Still encode EVERY value, before then after:
@@ -493,17 +491,17 @@ fn visit_difference(
         }
         inspected += 1;
         if inspected.is_multiple_of(256) {
-            progress()?;
+            progress.checkpoint()?;
         }
     }
-    progress()
+    progress.checkpoint()
 }
 
 fn matches_difference(
     before: &State,
     after: &State,
     rows: &[Delta],
-    progress: &mut dyn FnMut() -> Result<()>,
+    progress: &mut dyn NativeProgress,
 ) -> Result<bool> {
     let mut position = 0usize;
     let mut equal = true;
@@ -592,7 +590,7 @@ fn verify_record(
     db: &Connection,
     settings: &Settings,
     record: &Record,
-    progress: &mut dyn FnMut() -> Result<()>,
+    progress: &mut dyn NativeProgress,
     cache: Option<&ArithmeticCache>,
 ) -> Result<()> {
     let native = native_block_with_cache(db, settings, record.block, cache)?;
@@ -650,8 +648,19 @@ pub(crate) fn verify_state_with_cache(
     progress: &mut dyn FnMut() -> Result<()>,
     cache: Option<&ArithmeticCache>,
 ) -> Result<()> {
+    verify_state_with_native_progress(db, settings, block, state, &mut || progress(), cache)
+}
+
+pub(crate) fn verify_state_with_native_progress(
+    db: &Connection,
+    settings: &Settings,
+    block: Hash,
+    state: &State,
+    progress: &mut dyn NativeProgress,
+    cache: Option<&ArithmeticCache>,
+) -> Result<()> {
     let _measurement = cache.map(|cache| cache.history.observe(HistoryStage::VerifyState));
-    progress()?;
+    progress.checkpoint()?;
     let record = load_observed(db, block, cache.map(|cache| (settings, cache)))?;
     verify_record(db, settings, &record, progress, cache)?;
     local(ensure(
@@ -664,7 +673,7 @@ pub(crate) fn verify_state_with_cache(
     ))?;
     {
         let _measurement = cache.map(|cache| cache.history.observe(HistoryStage::AccountGraph));
-        native_store::verify_with_lifts(
+        native_store::verify_with_lifts_native_progress(
             db,
             &record.accounts,
             state,
@@ -672,7 +681,7 @@ pub(crate) fn verify_state_with_cache(
             cache.map(|c| &c.lifts),
         )?;
     }
-    progress()
+    progress.checkpoint()
 }
 
 /// Seal and verify every delta record needed to reconstruct a retained branch.
@@ -684,9 +693,10 @@ pub(crate) fn verify_history(
     block: Hash,
     progress: &mut dyn FnMut() -> Result<()>,
 ) -> Result<()> {
-    verify_history_with_cache(db, settings, block, progress, None)
+    verify_history_with_native_progress(db, settings, block, &mut || progress(), None)
 }
 
+#[cfg(test)]
 pub(crate) fn verify_history_with_cache(
     db: &Connection,
     settings: &Settings,
@@ -694,11 +704,21 @@ pub(crate) fn verify_history_with_cache(
     progress: &mut dyn FnMut() -> Result<()>,
     cache: Option<&ArithmeticCache>,
 ) -> Result<()> {
+    verify_history_with_native_progress(db, settings, block, &mut || progress(), cache)
+}
+
+pub(crate) fn verify_history_with_native_progress(
+    db: &Connection,
+    settings: &Settings,
+    block: Hash,
+    progress: &mut dyn NativeProgress,
+    cache: Option<&ArithmeticCache>,
+) -> Result<()> {
     let _measurement = cache.map(|cache| cache.history.observe(HistoryStage::VerifyHistory));
     let mut current = block;
     let mut expected_height = None;
     loop {
-        progress()?;
+        progress.checkpoint()?;
         let record = load_observed(db, current, cache.map(|cache| (settings, cache)))?;
         verify_record(db, settings, &record, progress, cache)?;
         local(ensure(
@@ -722,7 +742,9 @@ pub(crate) fn verify_history_with_cache(
                     canonical(&state)? == bytes && state == settings.initial,
                     "NATIVE_STATE_GENESIS",
                 ))?;
-                return verify_state_with_cache(db, settings, current, &state, progress, cache);
+                return verify_state_with_native_progress(
+                    db, settings, current, &state, progress, cache,
+                );
             }
         }
     }
@@ -778,8 +800,31 @@ pub(crate) fn publish_with_cache(
     progress: &mut dyn FnMut() -> Result<()>,
     cache: Option<&ArithmeticCache>,
 ) -> Result<()> {
+    publish_with_native_progress(
+        db,
+        settings,
+        parent,
+        block,
+        before,
+        after,
+        &mut || progress(),
+        cache,
+    )
+}
+
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn publish_with_native_progress(
+    db: &Connection,
+    settings: &Settings,
+    parent: Hash,
+    block: Hash,
+    before: &State,
+    after: &State,
+    progress: &mut dyn NativeProgress,
+    cache: Option<&ArithmeticCache>,
+) -> Result<()> {
     let _measurement = cache.map(|cache| cache.history.observe(HistoryStage::Publish));
-    verify_state_with_cache(db, settings, parent, before, progress, cache)?;
+    verify_state_with_native_progress(db, settings, parent, before, progress, cache)?;
     let parent_record = load_observed(db, parent, cache.map(|cache| (settings, cache)))?;
     let native = native_block_with_cache(db, settings, block, cache)?;
     local(ensure(
@@ -789,7 +834,9 @@ pub(crate) fn publish_with_cache(
     let rows = deltas_with_progress(db, block, progress)?;
     let matches = matches_difference(before, after, &rows, progress)?;
     local(ensure(matches, "NATIVE_STATE_DELTA"))?;
-    let accounts = native_store::apply(db, &parent_record.accounts, &rows, progress)?;
+    let accounts = native_store::apply(db, &parent_record.accounts, &rows, &mut || {
+        progress.checkpoint()
+    })?;
     let state = match cache {
         Some(cache) => cache.complete(settings, after)?,
         None => complete(settings, after)?,
@@ -814,8 +861,8 @@ pub(crate) fn publish_with_cache(
         delta_root: delta_root_with_progress(&rows, progress)?,
     };
     save(db, &mut record)?;
-    verify_state_with_cache(db, settings, block, after, progress, cache)?;
-    verify_history_with_cache(db, settings, block, progress, cache)
+    verify_state_with_native_progress(db, settings, block, after, progress, cache)?;
+    verify_history_with_native_progress(db, settings, block, progress, cache)
 }
 
 #[cfg(test)]
@@ -1618,9 +1665,9 @@ mod stored_delta_stream_tests {
 
     fn baseline_226_root_with_progress(
         rows: &[Delta],
-        progress: &mut dyn FnMut() -> Result<()>,
+        progress: &mut dyn NativeProgress,
     ) -> Result<Hash> {
-        progress()?;
+        progress.checkpoint()?;
         let mut frontier: Vec<Option<Hash>> = Vec::new();
         for (index, row) in rows.iter().enumerate() {
             let encoded = canonical(row)?;
@@ -1648,7 +1695,7 @@ mod stored_delta_stream_tests {
                 }
             }
             if (index + 1).is_multiple_of(256) {
-                progress()?;
+                progress.checkpoint()?;
             }
         }
         // Fold the suffix from low to high. Only the rightmost partial subtree is
@@ -1678,7 +1725,7 @@ mod stored_delta_stream_tests {
             |(root, _)| root,
         );
         // A fully computed root still cannot escape an operation cancelled here.
-        progress()?;
+        progress.checkpoint()?;
         Ok(root)
     }
 

@@ -11,6 +11,7 @@ mod historical_commitment;
 #[cfg(test)]
 mod historical_commitment_tests;
 pub mod history_effect_v6;
+mod history_graph_resource_v1;
 mod history_page;
 pub mod mempool;
 pub(crate) mod native_authenticated;
@@ -25,6 +26,7 @@ mod root_rejection_cache;
 mod root_rejection_cache_tests;
 pub mod storage_service;
 mod task_observation;
+use crate::native_progress::{NativeProgress, NativeProgressPoint, TypedNativeProgress};
 use crate::{
     consensus::{self, Work},
     development_public, ensure, maintenance, sequence_root, Error, Packet, Result, Settings,
@@ -692,6 +694,15 @@ pub struct Node {
     // already owner-locked Node; the durable marker survives process exit.
     public_service_epoch_listeners: usize,
     public_service_epoch_unknown: bool,
+    history_graph_resource_binding: Option<Vec<u8>>,
+    history_graph_resource_pending: Option<history_graph_resource_v1::KnownPendingClose>,
+    history_graph_resource_counters: crate::ingress::history_graph_resource_v1::SharedCounters,
+    #[cfg(test)]
+    pub(crate) history_graph_resource_before_commit_hook:
+        Option<std::sync::Arc<dyn Fn() + Send + Sync>>,
+    #[cfg(test)]
+    pub(crate) history_graph_resource_cpu_receipts:
+        Vec<crate::ingress::public_v3::ServiceMutationCpuSettlement>,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum StateBackend {
@@ -1177,6 +1188,19 @@ impl Node {
             )?;
             settings.replay_checkpoint_tile_material()?;
         }
+        let history_owner = history_effect_owner.clone();
+        let startup_check = |stage| -> Result<()> {
+            if let Some(owner) = &history_owner {
+                owner.checkpoint()?;
+            }
+            if let Some(progress) = startup_progress {
+                progress(stage)?;
+            }
+            if let Some(owner) = &history_owner {
+                owner.checkpoint()?;
+            }
+            Ok(())
+        };
         if !path.exists() {
             fs::create_dir_all(path)?;
             fs::set_permissions(path, fs::Permissions::from_mode(0o700))?;
@@ -1214,6 +1238,9 @@ impl Node {
         owner
             .try_lock_exclusive()
             .map_err(|_| Error::from("WRITER_BUSY"))?;
+        startup_check(history_effect_v6::StartupProgress::NativeInitialization(
+            "init-locked",
+        ))?;
         let ddl = state_backend.ddl();
         let schema_id = state_backend.selected_schema_id(&settings);
         let expected = canonical(
@@ -1239,6 +1266,9 @@ impl Node {
             intent.sync_all()?;
             sync_dir(&directory)?;
             cut(&mut hook, "init-intent")?;
+            startup_check(history_effect_v6::StartupProgress::NativeInitialization(
+                "init-intent",
+            ))?;
         }
         let intent = marker.exists();
         if intent {
@@ -1356,11 +1386,17 @@ impl Node {
             let tx = db.transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
             tx.execute_batch(&ddl)?;
             cut(&mut hook, "init-schema")?;
+            startup_check(history_effect_v6::StartupProgress::NativeInitialization(
+                "init-schema",
+            ))?;
             for (key, value) in [
                 ("schema", schema_id),
                 ("parameters", settings.parameters()),
                 ("genesis", settings.genesis()),
             ] {
+                startup_check(history_effect_v6::StartupProgress::NativeInitialization(
+                    "init-metadata",
+                ))?;
                 tx.execute(
                     "INSERT INTO metadata VALUES(?,?)",
                     params![key, value.as_slice()],
@@ -1391,6 +1427,9 @@ impl Node {
             )?;
             if state_backend != StateBackend::PermanentAccountGrowthV2 {
                 for (key, value) in &settings.initial {
+                    startup_check(history_effect_v6::StartupProgress::NativeInitialization(
+                        "init-kv",
+                    ))?;
                     tx.execute(
                         "INSERT INTO kv VALUES(0,?,?)",
                         params![key, canonical(value)?],
@@ -1407,12 +1446,21 @@ impl Node {
                 native_authenticated::seed(&tx, &settings)?;
             }
             cut(&mut hook, "init-before-commit")?;
+            startup_check(history_effect_v6::StartupProgress::NativeInitialization(
+                "init-before-commit",
+            ))?;
             tx.commit()?;
             cut(&mut hook, "init-committed")?;
+            startup_check(history_effect_v6::StartupProgress::NativeInitialization(
+                "init-committed",
+            ))?;
         }
         if intent {
             fs::remove_file(marker)?;
             sync_dir(&directory)?;
+            startup_check(history_effect_v6::StartupProgress::NativeInitialization(
+                "init-published",
+            ))?;
         }
         let mut node = Self {
             db,
@@ -1445,6 +1493,13 @@ impl Node {
             public_service_cpu: None,
             public_service_epoch_listeners: 0,
             public_service_epoch_unknown: false,
+            history_graph_resource_binding: None,
+            history_graph_resource_pending: None,
+            history_graph_resource_counters: Default::default(),
+            #[cfg(test)]
+            history_graph_resource_before_commit_hook: None,
+            #[cfg(test)]
+            history_graph_resource_cpu_receipts: Vec::new(),
         };
         if node.state_backend == StateBackend::PermanentAccountGrowthV2 {
             // Complete-State reference budget records cannot be silently ignored
@@ -1455,24 +1510,11 @@ impl Node {
             // execution never clones this bootstrap State or the full account set.
             return Ok(node);
         }
-        let history_owner = node.history_effect_owner.clone();
-        let startup_check = |stage| -> Result<()> {
-            if let Some(owner) = &history_owner {
-                owner.checkpoint()?;
-            }
-            if let Some(progress) = startup_progress {
-                progress(stage)?;
-            }
-            if let Some(owner) = &history_owner {
-                owner.checkpoint()?;
-            }
-            Ok(())
-        };
         node.read_active_with_progress(&mut || {
             startup_check(history_effect_v6::StartupProgress::FirstState)
         })?;
         if node.state_backend == StateBackend::AuthenticatedV1 {
-            native_authenticated::verify_history_with_cache(
+            native_authenticated::verify_history_with_native_progress(
                 &node.db,
                 &node.settings,
                 node.active()?.0,
@@ -2143,7 +2185,7 @@ impl Node {
         &self,
         id: Hash,
         state: &State,
-        progress: &mut dyn FnMut() -> Result<()>,
+        progress: &mut dyn NativeProgress,
     ) -> Result<()> {
         let record = self.record(id).map_err(Error::local_integrity)?;
         continuity_v1::check_state(state, record.height, &self.settings.app)
@@ -2160,7 +2202,7 @@ impl Node {
         };
         ensure(actual_root == record.root, "ROOT").map_err(Error::local_integrity)?;
         if self.state_backend == StateBackend::AuthenticatedV1 {
-            native_authenticated::verify_state_with_cache(
+            native_authenticated::verify_state_with_native_progress(
                 &self.db,
                 &self.settings,
                 id,
@@ -2179,9 +2221,9 @@ impl Node {
     }
     fn check_active_before_commit_with_progress(
         &self,
-        progress: &mut dyn FnMut() -> Result<()>,
+        progress: &mut dyn NativeProgress,
     ) -> Result<()> {
-        progress()?;
+        progress.checkpoint()?;
         self.namespace()?;
         self.storage_context()?;
         let count: u64 = self
@@ -2195,7 +2237,7 @@ impl Node {
         crate::ancestry_index::validate_tip(&self.db, self.ancestry_context(), selected.0)
             .map_err(Error::local_integrity)?;
         if self.state_backend == StateBackend::AuthenticatedV1 {
-            native_authenticated::verify_history_with_cache(
+            native_authenticated::verify_history_with_native_progress(
                 &self.db,
                 &self.settings,
                 selected.0,
@@ -2283,9 +2325,9 @@ impl Node {
     fn slot_state_with_progress(
         &self,
         slot: u64,
-        progress: &mut dyn FnMut() -> Result<()>,
+        progress: &mut dyn NativeProgress,
     ) -> Result<State> {
-        progress()?;
+        progress.checkpoint()?;
         // Validate stored dimensions before copying a cell into Rust. SQL types
         // are retained: TEXT is not a value BLOB, and a BLOB is not a key TEXT.
         let mut stmt = self.db.prepare(
@@ -2304,7 +2346,7 @@ impl Node {
             .map_err(|error| Error::from(error).local_integrity())?
         {
             if state.len().is_multiple_of(256) {
-                progress()?;
+                progress.checkpoint()?;
             }
             let key: String = (|| -> Result<_> {
                 let key_len: i64 = row.get(2)?;
@@ -2344,7 +2386,7 @@ impl Node {
             ensure(canonical_bytes == bytes, "STATE_BYTES").map_err(Error::local_integrity)?;
             state.insert(key, value);
         }
-        progress()?;
+        progress.checkpoint()?;
         Ok(state)
     }
     fn invalidate_commitment(&self) {
@@ -2649,13 +2691,19 @@ impl Node {
             self.state_backend != StateBackend::PermanentAccountGrowthV2,
             "GROWTH_COMPLETE_STATE_UNAVAILABLE",
         )?;
-        self.read_active_with_progress(&mut || Ok(()))
+        self.read_active_with_native_progress(&mut || Ok(()))
     }
     /// Rechecks actual KV bytes and root, with cancellation at most 256 rows apart.
     /// Root arithmetic is still bounded by the state limit and checked as one stage.
     pub fn read_active_with_progress(
         &self,
         progress: &mut dyn FnMut() -> Result<()>,
+    ) -> Result<(Hash, u64, State)> {
+        self.read_active_with_native_progress(&mut || progress())
+    }
+    pub(crate) fn read_active_with_native_progress(
+        &self,
+        progress: &mut dyn NativeProgress,
     ) -> Result<(Hash, u64, State)> {
         ensure(
             self.state_backend != StateBackend::PermanentAccountGrowthV2,
@@ -2666,7 +2714,7 @@ impl Node {
                 .history
                 .observe(native_authenticated::HistoryStage::ReadActive)
         });
-        progress()?;
+        progress.checkpoint()?;
         self.namespace()?;
         let (tip, generation) = self.active()?;
         let slot = self.slot()?;
@@ -2678,14 +2726,14 @@ impl Node {
         )
         .map_err(|error| Error::from(error).local_integrity())?;
         let prior = self.cached_parent(tip)?;
-        progress()?;
+        progress.checkpoint()?;
         let prepared = self.checked_commitment(
             &state,
             self.record(tip).map_err(Error::local_integrity)?.root,
             prior.as_ref(),
         )?;
         if self.state_backend == StateBackend::AuthenticatedV1 {
-            native_authenticated::verify_state_with_cache(
+            native_authenticated::verify_state_with_native_progress(
                 &self.db,
                 &self.settings,
                 tip,
@@ -2694,7 +2742,7 @@ impl Node {
                 Some(&self.authenticated_arithmetic),
             )?;
         }
-        progress()?;
+        progress.checkpoint()?;
         ensure(
             self.active()? == (tip, generation) && self.slot()? == slot,
             "STALE_VIEW",
@@ -2925,12 +2973,12 @@ impl Node {
     fn delta_rows_with_progress(
         &self,
         id: Hash,
-        progress: &mut dyn FnMut() -> Result<()>,
+        progress: &mut dyn NativeProgress,
     ) -> Result<Vec<Delta>> {
         if self.state_backend == StateBackend::AuthenticatedV1 {
             return native_authenticated::deltas_with_progress(&self.db, id, progress);
         }
-        progress()?;
+        progress.checkpoint()?;
         let mut stmt = self
             .db
             .prepare("SELECT key,before,after FROM deltas WHERE block=? ORDER BY key")?;
@@ -2939,10 +2987,10 @@ impl Node {
         for row in rows {
             out.push(row?);
             if out.len().is_multiple_of(256) {
-                progress()?;
+                progress.checkpoint()?;
             }
         }
-        progress()?;
+        progress.checkpoint()?;
         Ok(out)
     }
     pub fn state_at(&self, tip: Hash) -> Result<State> {
@@ -2951,7 +2999,7 @@ impl Node {
     fn state_at_with_progress(
         &self,
         tip: Hash,
-        progress: &mut dyn FnMut() -> Result<()>,
+        progress: &mut dyn NativeProgress,
     ) -> Result<State> {
         ensure(
             self.state_backend != StateBackend::PermanentAccountGrowthV2,
@@ -2962,15 +3010,15 @@ impl Node {
                 .history
                 .observe(native_authenticated::HistoryStage::StateAt)
         });
-        progress()?;
+        progress.checkpoint()?;
         if tip == self.active()?.0 {
-            return Ok(self.read_active_with_progress(progress)?.2);
+            return Ok(self.read_active_with_native_progress(progress)?.2);
         }
         let mut path = tempfile::tempfile()?;
         let mut count = 0u64;
         let mut cur = tip;
         let (mut state, mut commitment): (State, Option<CheckedCommitment>) = loop {
-            progress()?;
+            progress.checkpoint()?;
             let row = self.record(cur)?;
             if let Some(bytes) = self
                 .db
@@ -2991,7 +3039,7 @@ impl Node {
                     .checked_historical_commitment(cur, &state, row.root, None)?
                     .snapshot;
                 if self.state_backend == StateBackend::AuthenticatedV1 {
-                    native_authenticated::verify_state_with_cache(
+                    native_authenticated::verify_state_with_native_progress(
                         &self.db,
                         &self.settings,
                         cur,
@@ -3007,7 +3055,7 @@ impl Node {
             cur = self.parent(cur)?;
         };
         for i in (0..count).rev() {
-            progress()?;
+            progress.checkpoint()?;
             path.seek(SeekFrom::Start(i.checked_mul(32).ok_or("ANCESTRY_LIMIT")?))?;
             let mut id = [0; 32];
             path.read_exact(&mut id)?;
@@ -3017,7 +3065,7 @@ impl Node {
                 .enumerate()
             {
                 if index.is_multiple_of(256) {
-                    progress()?;
+                    progress.checkpoint()?;
                 }
                 ensure(
                     state.get(&key).map(canonical).transpose()? == before,
@@ -3045,7 +3093,7 @@ impl Node {
             continuity_v1::check_state(&state, self.record(id)?.height, &self.settings.app)
                 .map_err(|error| Error::from(error).local_integrity())?;
             if self.state_backend == StateBackend::AuthenticatedV1 {
-                native_authenticated::verify_state_with_cache(
+                native_authenticated::verify_state_with_native_progress(
                     &self.db,
                     &self.settings,
                     id,
@@ -3055,7 +3103,7 @@ impl Node {
                 )?;
             }
         }
-        progress()?;
+        progress.checkpoint()?;
         Ok(state)
     }
     fn recent(&self, mut parent: Hash) -> Result<Vec<(u64, Hash)>> {
@@ -3111,9 +3159,9 @@ impl Node {
         &self,
         packet: &Packet,
         observed_now: u64,
-        progress: &mut dyn FnMut() -> Result<()>,
+        progress: &mut dyn NativeProgress,
     ) -> Result<Option<Hash>> {
-        progress()?;
+        progress.checkpoint()?;
         self.namespace()?;
         let pending: Option<Vec<u8>> = self
             .db
@@ -3146,7 +3194,7 @@ impl Node {
                 <= observed_now as u128 + self.settings.limit("future_skew_seconds")? as u128,
             "TIME_DEFERRED",
         )?;
-        progress()?;
+        progress.checkpoint()?;
         Ok(Some(id))
     }
     pub(crate) fn check_admission_context(
@@ -3154,13 +3202,21 @@ impl Node {
         packet: &Packet,
         observed_now: u64,
     ) -> Result<Option<Hash>> {
-        self.check_admission_context_with_progress(packet, observed_now, &mut || Ok(()))
+        self.check_admission_context_with_native_progress(packet, observed_now, &mut || Ok(()))
     }
     pub(crate) fn check_admission_context_with_progress(
         &self,
         packet: &Packet,
         observed_now: u64,
         progress: &mut dyn FnMut() -> Result<()>,
+    ) -> Result<Option<Hash>> {
+        self.check_admission_context_with_native_progress(packet, observed_now, &mut || progress())
+    }
+    pub(crate) fn check_admission_context_with_native_progress(
+        &self,
+        packet: &Packet,
+        observed_now: u64,
+        progress: &mut dyn NativeProgress,
     ) -> Result<Option<Hash>> {
         Ok(self
             .check_admission_context_for_permit(packet, observed_now, None, progress)?
@@ -3173,13 +3229,13 @@ impl Node {
         &self,
         packet: &Packet,
         observed_now: u64,
-        progress: &mut dyn FnMut() -> Result<()>,
+        progress: &mut dyn NativeProgress,
     ) -> Result<Option<Hash>> {
         let task_before_work = self.owner_policy.is_some()
             || self.continuous_owner.is_some()
             || self.mining_owner.is_some();
         if task_before_work {
-            self.check_admission_context_with_progress(packet, observed_now, progress)
+            self.check_admission_context_with_native_progress(packet, observed_now, progress)
         } else {
             self.check_admission_header_context(packet, observed_now, None)
         }
@@ -3189,7 +3245,7 @@ impl Node {
         packet: &Packet,
         observed_now: u64,
         reserved: Option<&OwnerPacketPermit>,
-        progress: &mut dyn FnMut() -> Result<()>,
+        progress: &mut dyn NativeProgress,
     ) -> Result<CheckedAdmissionContext> {
         if let Some(id) = self.check_admission_header_context(packet, observed_now, reserved)? {
             return Ok(CheckedAdmissionContext::Existing(id));
@@ -3291,7 +3347,7 @@ impl Node {
     fn check_admission_parent(
         &self,
         packet: &Packet,
-        progress: &mut dyn FnMut() -> Result<()>,
+        progress: &mut dyn NativeProgress,
     ) -> Result<CheckedAdmissionParent> {
         let h = &packet.header;
         // The Node owner excludes cooperating writers. These inexpensive SQLite
@@ -3835,6 +3891,28 @@ impl Node {
         observed_now: u64,
         control: &ExecutionControl<'_, Error>,
     ) -> Result<Hash> {
+        self.admit_work_checked_with_native_control(
+            checked,
+            observed_now,
+            control,
+            &mut |stage, point| {
+                if crate::native_progress::legacy_checkpoint(&point) {
+                    (control.progress)(stage)?;
+                }
+                Ok(())
+            },
+        )
+    }
+    /// Typed native-storage progress is separate from M06 worker accounting.
+    /// Only the explicit ordinary History profile selects the new resource
+    /// schedule; every old caller above retains the original strict adapter.
+    pub(crate) fn admit_work_checked_with_native_control(
+        &mut self,
+        checked: WorkCheckedPacket,
+        observed_now: u64,
+        control: &ExecutionControl<'_, Error>,
+        native: &mut dyn FnMut(ExecutionProgress, NativeProgressPoint) -> Result<()>,
+    ) -> Result<Hash> {
         let _measurement = (self.state_backend == StateBackend::AuthenticatedV1).then(|| {
             self.authenticated_arithmetic
                 .history
@@ -3849,7 +3927,7 @@ impl Node {
             &packet,
             observed_now,
             owner_permit.as_ref(),
-            &mut || (control.progress)(ExecutionProgress::BeforeParentBinding),
+            &mut TypedNativeProgress(|point| native(ExecutionProgress::BeforeParentBinding, point)),
         )? {
             CheckedAdmissionContext::Existing(id) => return Ok(id),
             CheckedAdmissionContext::Parent(parent) => parent,
@@ -3883,8 +3961,7 @@ impl Node {
         // No journal mutex/RefCell guard or filesystem write is held across either.
         let mining_progress = self.mining_progress_snapshot()?;
         let continuous_progress = self.continuous_progress_snapshot()?;
-        let guarded_progress = |point: ExecutionProgress| -> Result<()> {
-            (control.progress)(point)?;
+        let owner_checkpoint = || -> Result<()> {
             if let Some(p) = &continuous_progress {
                 p.check()?;
             }
@@ -3893,6 +3970,18 @@ impl Node {
             }
             if let Some(permit) = &owner_permit {
                 permit.progress()?;
+            }
+            Ok(())
+        };
+        let guarded_progress = |point: ExecutionProgress| -> Result<()> {
+            (control.progress)(point)?;
+            owner_checkpoint()
+        };
+        let mut guarded_native = |stage, point| -> Result<()> {
+            let original_checkpoint = crate::native_progress::legacy_checkpoint(&point);
+            native(stage, point)?;
+            if original_checkpoint {
+                owner_checkpoint()?;
             }
             Ok(())
         };
@@ -3912,9 +4001,12 @@ impl Node {
             checked_parent
         } else {
             drop(checked_parent);
-            self.check_admission_parent(&packet, &mut || {
-                progress(ExecutionProgress::BeforeParentBinding)
-            })?
+            self.check_admission_parent(
+                &packet,
+                &mut TypedNativeProgress(|point| {
+                    guarded_native(ExecutionProgress::BeforeParentBinding, point)
+                }),
+            )?
         };
         let CheckedAdmissionParent {
             state: prior,
@@ -4050,43 +4142,58 @@ impl Node {
             ensure(retained <= 64, "SNAPSHOT_LIMIT").map_err(Error::local_integrity)?;
         }
         if self.state_backend == StateBackend::AuthenticatedV1 {
-            native_authenticated::publish_with_cache(
+            native_authenticated::publish_with_native_progress(
                 &tx,
                 &self.settings,
                 h.parent,
                 id,
                 &prior,
                 &output.state,
-                &mut || progress(ExecutionProgress::BeforeDurableCommit),
+                &mut TypedNativeProgress(|point| {
+                    guarded_native(ExecutionProgress::BeforeDurableCommit, point)
+                }),
                 Some(&self.authenticated_arithmetic),
             )?;
         }
         // Re-read after every write/trigger, while rollback can still remove the
         // whole block. A snapshot cannot conceal an omitted canonical delta.
         ensure(
-            self.delta_rows_with_progress(id, &mut || {
-                progress(ExecutionProgress::BeforeDurableCommit)
-            })? == expected_deltas
+            self.delta_rows_with_progress(
+                id,
+                &mut TypedNativeProgress(|point| {
+                    guarded_native(ExecutionProgress::BeforeDurableCommit, point)
+                }),
+            )? == expected_deltas
                 && self.packet(id)?.encode()? == bytes,
             "STORAGE_WRITE",
         )
         .map_err(Error::local_integrity)?;
         ensure(
-            self.state_at_with_progress(h.parent, &mut || {
-                progress(ExecutionProgress::BeforeDurableCommit)
-            })? == prior
-                && self.state_at_with_progress(id, &mut || {
-                    progress(ExecutionProgress::BeforeDurableCommit)
-                })? == output.state,
+            self.state_at_with_progress(
+                h.parent,
+                &mut TypedNativeProgress(|point| {
+                    guarded_native(ExecutionProgress::BeforeDurableCommit, point)
+                }),
+            )? == prior
+                && self.state_at_with_progress(
+                    id,
+                    &mut TypedNativeProgress(|point| {
+                        guarded_native(ExecutionProgress::BeforeDurableCommit, point)
+                    }),
+                )? == output.state,
             "STORAGE_WRITE",
         )
         .map_err(Error::local_integrity)?;
         crate::ancestry_index::verify_inserted(&tx, index_context, &inserted_ancestry)
             .map_err(Error::local_integrity)?;
-        self.check_active_before_commit_with_progress(&mut || {
-            progress(ExecutionProgress::BeforeDurableCommit)
-        })?;
-        progress(ExecutionProgress::BeforeDurableCommit)?;
+        self.check_active_before_commit_with_progress(&mut TypedNativeProgress(|point| {
+            guarded_native(ExecutionProgress::BeforeDurableCommit, point)
+        }))?;
+        guarded_native(
+            ExecutionProgress::BeforeDurableCommit,
+            NativeProgressPoint::BeforeCommit,
+        )?;
+        self.check_history_graph_resource_before_commit()?;
         self.history_effect_admission_marker(&tx, &packet)?;
         tx.commit()?;
         // No cancellation fence after commit: the native durable fact stays true.
@@ -4143,7 +4250,7 @@ impl Node {
         progress: &mut dyn FnMut() -> Result<()>,
     ) -> Result<trnm_protocol::qualified_work_task::lifecycle_v2::DemandLeaseV2> {
         Ok(qualified_task_lifecycle::eligible_task(
-            &self.state_at_with_progress(parent, progress)?,
+            &self.state_at_with_progress(parent, &mut || progress())?,
             task,
             height,
             &self.settings.app,
@@ -4363,7 +4470,7 @@ impl Node {
     ) -> Result<Option<QualifiedWorkTask>> {
         Ok(self
             .eligible_work_task_from_state(
-                &self.state_at_with_progress(parent, progress)?,
+                &self.state_at_with_progress(parent, &mut || progress())?,
                 task,
                 height,
             )?
@@ -4661,10 +4768,10 @@ impl Node {
     }
     fn atomic_with_progress<T>(
         &self,
-        progress: &mut dyn FnMut() -> Result<()>,
-        run: impl FnOnce(&mut dyn FnMut() -> Result<()>) -> Result<T>,
+        progress: &mut dyn NativeProgress,
+        run: impl FnOnce(&mut dyn NativeProgress) -> Result<T>,
     ) -> Result<T> {
-        progress()?;
+        progress.checkpoint()?;
         let tx = rusqlite::Transaction::new_unchecked(
             &self.db,
             rusqlite::TransactionBehavior::Immediate,
@@ -4673,7 +4780,8 @@ impl Node {
         self.check_active_before_commit_with_progress(progress)?;
         self.continuous_scope_checkpoint()?;
         self.mining_scope_checkpoint()?;
-        progress()?;
+        progress.before_commit()?;
+        self.check_history_graph_resource_before_commit()?;
         self.history_effect_activation_marker(&tx)?;
         tx.commit()?;
         // No cancellation after COMMIT: the durable result is already factual.
@@ -4684,9 +4792,9 @@ impl Node {
         id: Hash,
         slot: u64,
         detach: bool,
-        progress: &mut dyn FnMut() -> Result<()>,
+        progress: &mut dyn NativeProgress,
     ) -> Result<()> {
-        progress()?;
+        progress.checkpoint()?;
         let mut read = self
             .db
             .prepare_cached("SELECT value FROM kv WHERE slot=? AND key=?")?;
@@ -4697,7 +4805,7 @@ impl Node {
             .db
             .prepare_cached("DELETE FROM kv WHERE slot=? AND key=?")?;
         for (key, before, after) in self.delta_rows_with_progress(id, progress)? {
-            progress()?;
+            progress.checkpoint()?;
             let (expected, new) = if detach {
                 (after, before)
             } else {
@@ -4737,13 +4845,14 @@ impl Node {
         &mut self,
         target: Hash,
         mut hook: Option<&mut Hook<'_>>,
-        progress: &mut dyn FnMut() -> Result<()>,
+        progress: &mut dyn NativeProgress,
     ) -> Result<Hash> {
-        progress()?;
+        progress.checkpoint()?;
         if self.state_backend == StateBackend::PermanentAccountGrowthV2 {
             ensure(hook.is_none(), "GROWTH_USE_PROGRESS_HOOK")?;
             let progress = RefCell::new(progress);
-            return self.growth_activate_with_progress(target, &|_| (progress.borrow_mut())());
+            return self
+                .growth_activate_with_progress(target, &|_| progress.borrow_mut().checkpoint());
         }
         self.continuous_activation_gate(target)?;
         self.mining_activation_gate(target)?;
@@ -4760,22 +4869,22 @@ impl Node {
             .ok_or("GENERATION")?;
         if self.record(target)?.parent == Some(old) && hook.is_none() {
             let slot = self.slot()?;
-            progress()?;
+            progress.checkpoint()?;
             let prior = self.cached_parent(old)?;
-            progress()?;
+            progress.checkpoint()?;
             let mut staged = None;
             self.atomic_with_progress(progress, |progress| {
                 self.apply_delta_with_progress(target, slot, false, progress)?;
                 let state = self.slot_state_with_progress(slot, progress)?;
                 continuity_v1::check_state(&state, self.record(target)?.height, &self.settings.app)
                     .map_err(|error| Error::from(error).local_integrity())?;
-                progress()?;
+                progress.checkpoint()?;
                 staged = Some(self.checked_commitment(
                     &state,
                     self.record(target)?.root,
                     prior.as_ref(),
                 )?);
-                progress()?;
+                progress.checkpoint()?;
                 ensure(
                     self.db.execute(
                         "UPDATE active SET tip=?,generation=? WHERE singleton=1",
@@ -4823,7 +4932,7 @@ impl Node {
             let mut detached = 0i64;
             let mut attached = 0i64;
             while left != right {
-                progress()?;
+                progress.checkpoint()?;
                 if self.record(left)?.height >= self.record(right)?.height {
                     self.db.execute(
                         "INSERT INTO steps VALUES(?,0,?)",
@@ -4874,9 +4983,9 @@ impl Node {
         old: Hash,
         target: Hash,
         cursor: u64,
-        progress: &mut dyn FnMut() -> Result<()>,
+        progress: &mut dyn NativeProgress,
     ) -> Result<u64> {
-        progress()?;
+        progress.checkpoint()?;
         let mut stmt = self
             .db
             .prepare("SELECT ordinal,kind,block FROM steps ORDER BY ordinal")
@@ -4894,7 +5003,7 @@ impl Node {
         let mut count = 0u64;
         let mut attaching = false;
         for row in rows {
-            progress()?;
+            progress.checkpoint()?;
             let (ordinal, kind, bytes) =
                 row.map_err(|error| Error::from(error).local_integrity())?;
             let id = bytes32(bytes).map_err(Error::local_integrity)?;
@@ -4955,9 +5064,9 @@ impl Node {
         &self,
         generation: u64,
         expected: &[(u64, u64, Hash)],
-        progress: &mut dyn FnMut() -> Result<()>,
+        progress: &mut dyn NativeProgress,
     ) -> Result<()> {
-        progress()?;
+        progress.checkpoint()?;
         let mut statement = self
             .db
             .prepare("SELECT ordinal,kind,block FROM events WHERE generation=? ORDER BY ordinal")?;
@@ -4970,7 +5079,7 @@ impl Node {
         })?;
         let mut count = 0usize;
         for row in rows {
-            progress()?;
+            progress.checkpoint()?;
             let (ordinal, kind, id) = row?;
             ensure(
                 expected.get(count).is_some_and(|want| {
@@ -4989,9 +5098,9 @@ impl Node {
     fn resume_intent_with_progress(
         &mut self,
         hook: &mut Option<&mut Hook<'_>>,
-        progress: &mut dyn FnMut() -> Result<()>,
+        progress: &mut dyn NativeProgress,
     ) -> Result<Hash> {
-        progress()?;
+        progress.checkpoint()?;
         let row = self
             .db
             .query_row(
@@ -5024,7 +5133,7 @@ impl Node {
         // retained rows are classified by the checking functions themselves.
         let count = self.check_steps_with_progress(old, target, position, progress)?;
         for index in position..count {
-            progress()?;
+            progress.checkpoint()?;
             let (kind, bytes) = self.db.query_row(
                 "SELECT kind,block FROM steps WHERE ordinal=?",
                 [index],
@@ -5055,7 +5164,7 @@ impl Node {
             )?;
         }
         let state = self.slot_state_with_progress(g, progress)?;
-        progress()?;
+        progress.checkpoint()?;
         continuity_v1::check_state(&state, self.record(target)?.height, &self.settings.app)
             .map_err(|error| Error::from(error).local_integrity())?;
         ensure(
@@ -5063,7 +5172,7 @@ impl Node {
             "ROOT",
         )
         .map_err(Error::local_integrity)?;
-        progress()?;
+        progress.checkpoint()?;
         cut(hook, "before-publish")?;
         self.atomic_with_progress(progress, |progress| {
             let expected: Vec<(u64, u64, Hash)> = self
@@ -5077,7 +5186,7 @@ impl Node {
                     ))
                 })?
                 .map(|row| {
-                    progress()?;
+                    progress.checkpoint()?;
                     let (ordinal, kind, id) = row?;
                     Ok((ordinal, kind, bytes32(id)?))
                 })
@@ -5156,22 +5265,22 @@ impl Node {
         &self,
         tip: Hash,
         observed_now: u64,
-        progress: &mut dyn FnMut() -> Result<()>,
+        progress: &mut dyn NativeProgress,
     ) -> Result<()> {
-        progress()?;
+        progress.checkpoint()?;
         let bound = observed_now as u128 + self.settings.limit("future_skew_seconds")? as u128;
         let mut current = tip;
         while current != self.settings.genesis() {
-            progress()?;
+            progress.checkpoint()?;
             (current, _) = self.visit_header_batch(current, &mut |_, link| {
-                progress()?;
+                progress.checkpoint()?;
                 ensure(link.header.timestamp as u128 <= bound, "TIME_DEFERRED")
             })?;
         }
-        progress()
+        progress.checkpoint()
     }
     pub fn activate_observed(&mut self, tip: Hash, observed_now: u64) -> Result<Hash> {
-        self.activate_observed_with_progress(tip, observed_now, &mut || Ok(()))
+        self.activate_observed_with_native_progress(tip, observed_now, &mut || Ok(()))
     }
     /// Cooperative existing-packet recovery keeps all original time, owner,
     /// State and journal validation. SQL/root primitives remain indivisible;
@@ -5182,7 +5291,15 @@ impl Node {
         observed_now: u64,
         progress: &mut dyn FnMut() -> Result<()>,
     ) -> Result<Hash> {
-        progress()?;
+        self.activate_observed_with_native_progress(tip, observed_now, &mut || progress())
+    }
+    pub(crate) fn activate_observed_with_native_progress(
+        &mut self,
+        tip: Hash,
+        observed_now: u64,
+        progress: &mut dyn NativeProgress,
+    ) -> Result<Hash> {
+        progress.checkpoint()?;
         let _measurement = (self.state_backend == StateBackend::AuthenticatedV1).then(|| {
             self.authenticated_arithmetic
                 .history
@@ -5225,7 +5342,7 @@ impl Node {
         ensure(unique.len() == queries.len(), "DUPLICATE_QUERY")?;
         progress(0)?;
         self.ready()?;
-        let (tip, generation, _) = self.read_active_with_progress(&mut || progress(0))?;
+        let (tip, generation, _) = self.read_active_with_native_progress(&mut || progress(0))?;
         let mut included = BTreeMap::new();
         for (transaction, block) in queries {
             if !included.contains_key(block) {

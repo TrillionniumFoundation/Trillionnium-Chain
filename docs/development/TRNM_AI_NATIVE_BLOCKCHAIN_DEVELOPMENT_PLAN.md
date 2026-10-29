@@ -3970,3 +3970,336 @@ has nine current-source material tests passed, but its Node compile and complete
 remain mandatory; actual new release binaries must be retained and reconstructed.
 There is no new signed domain, budget increase, performance qualification or whole
 History P0 closure in this candidate.
+
+### Startup wait and retained frontier follow-up (2026-10-28 UTC)
+
+The isolated [wait/frontier follow-up](../../evidence/pon-history-wait-frontier-20261028/README.md)
+adds cooperative cancellation and signed-expiry checks inside the original cold
+credit wait. A refusal before CPU begin appends the original NotStarted record,
+retains the full reservation and consumed nonce/epoch, and creates no CPU receipt.
+Settled-epoch recovery now derives its actual frontier from the current epoch's
+retained effect markers instead of a later refused request's proposed frontier.
+The existing recovery domain, extra whole-process debit and lifetime ceiling are
+unchanged. Two additional mandatory methods retain all original 19 methods and the
+600-second/2-second/4-second/four-snapshot bounds. New Node compilation and actual
+21/0/1 native execution remain NOT_RUN locally and require same-source hosted
+qualification. Pending Startup/Close crash scopes and partial initialization remain
+open; live pre-begin refusal is not evidence of an unobserved process's nonexecution.
+
+### Explicit first-Startup empty-container closure (2026-10-28 UTC)
+
+The independent [first-Startup closure capability](../protocol/pon-nakamoto-v1/details/HISTORY_FIRST_STARTUP_EMPTY_NAMESPACE_V1.md)
+adds a fresh signature/record namespace for one already known failed first
+Startup. It requires an exclusively created, privately locked container observed
+unchanged from before the original signature through actual SIGKILL/wait4, exact
+original intent/journal and independent source/binary/preparation pins. It retains
+the original known CPU receipt and predebit and adds a finite whole-process charge
+under the original lifetime ceiling. It neither resets Native nor fabricates
+NotStarted. Complete interrupted closure records require the dedicated pinned
+publication wrapper, original-frame-time validation and current repair authority.
+
+All original 21 methods and the original ignored child helper remain; a new actual
+process method requires 22/0/1 with the unchanged 600-second suite, 2-second burst,
+4-second operation allowance and four-snapshot limit. Local source/component
+checks do not establish Node compile, Clippy or native success. The new same-source
+hosted gate must execute the complete group and retain the actual executable.
+The document specifies separate persistent stages needed for partial
+initialization; the old generic initializing marker is not upgraded into History
+or material authority. Whole History P0, pending Startup/Close, partial/torn
+records, SQLite cuts and signed multi-step reorg remain open.
+
+
+### Paid multistep reorg continuation and lifecycle closure candidate (2026-10-28 UTC)
+
+The new `TRNM-HISTORY-REORG-CONTINUATION-V1` domain authorizes a fresh paid
+attempt against one sealed partial Native reorganization. It binds the original
+intent, prior attempt, old frontier, target, cursor, step and staging digests,
+source, executable, actual closed process and outside journal anchor. Preparation
+consumes a fresh nonce and management allowance before further work. Each permit
+admits only its specified fresh epoch and Startup/Validation/Activation operation
+IDs; known cancellation, unknown death and no-progress retries require distinct
+signed attempts. Cursor progress does not refund old reservations or permit reuse.
+A fresh validation marker remains required, and the final activation retains the
+original reorganization intent. Streaming staging inspection preserves the
+original 65,536-key and 4,096-byte-value limits without introducing a smaller
+aggregate-state refusal.
+
+The separate `TRNM-HISTORY-LIFECYCLE-RECOVERY-V1` domain closes a dead pending
+Startup/Close or a known failed Startup after reading the actual retained Native
+prefix. It preserves absent, empty, committed-genesis and ready database states;
+ordinary paid Startup completes initialization. A missing owner marker is accepted
+only through the separately signed proof of an exclusively created empty birth
+namespace, original Startup envelope/time, actual death, complete unchanged
+namespace identities and an independently pinned held lease. Directory absence
+alone supplies no nonexecution authority. Existing first-Startup closure limits
+remain unchanged. Neither management event fabricates a successful operation,
+rewrites a receipt, resets a database nor grants work authority.
+
+Both domains preserve all prior spent balances and original operation allowances.
+Unknown operation debt requires the conservative whole-process upper bound to fit
+the original allowance. Known operation debt retains its exact original CPU
+receipt; the fresh management allowance additionally covers the whole dead process.
+An expired budget can authorize administrative closure but cannot start work. If
+pending debt exhausts the current lifetime ceiling, an explicit original-domain,
+doubly signed replacement Budget can be bound inside the new management envelope.
+Its identity, anchor, sequence, nonce range, unused ID and nondecreasing ceilings
+are verified before one atomic journal append. It cannot absorb an old operation
+overrun. Specialized publication repair revalidates the exact original event at
+its original frame time and holds the same Native or birth-namespace fences;
+current publication authority remains independently required.
+
+The unchanged original native lane still requires exactly 22 passed methods and
+one ignored process helper under 600 seconds. Two additional mandatory lanes use
+that exact retained binary and same-source original terminal: seven reorg methods
+and twelve lifecycle methods, each under a separate 900-second limit with no
+ignored cases. They cover real committed cursor cuts, cancellation and fresh
+attempts, Startup/Validation deaths, final-marker recovery, all five publication
+cuts, repair interruption, expired/exhausted budgets, partial initialization,
+pending Close and repeated empty-birth recovery. Their reader controls reject
+missing, duplicate, substituted or ignored methods. The recent-batch four-lane
+acceptance remains separate; its live Store source pin follows the independently
+reviewed initialization checkpoint hooks.
+
+This entry describes the implemented candidate and its mandatory execution gates.
+Typechecks, formatter checks and observer controls are not native execution
+receipts. The original frozen baseline's passing results do not qualify this new
+source. Whole History P0 remains OPEN until this same-source original-plus-new
+execution and independent adjacent gates pass with actual journals, process
+receipts, binaries and cold readback retained. Public deployment, arbitrary
+process adoption and physical-host cost qualification remain outside this scope.
+
+### Fresh reorg validation and separate fixed-parent verifier recovery checkpoint (2026-10-28 UTC)
+
+The exact published History head `003d2ad660464ccc3784c9b2a35afcdba868ae50`
+(tree `c72d9f188c20b12c8cf6f0dfea85c92f342f67e2`) has separate observed
+verdicts. Its [original-plus-new History run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40662127288)
+passed the original 22 methods under 600 seconds and all 12 lifecycle methods
+under their independent 900-second limit. The reorg lane passed one method and
+failed six at fresh Validation with `REORG_IN_PROGRESS`. Those failures remain
+failures. The [original native campaign](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40662127440)
+failed all three declared runs at the actual public kernel-parent boundary;
+the outer four-CPU service was not the verifier's original fixed quarter-CPU
+parent. Its [four recent-batch lanes](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40662127467)
+are distinct adjacent observations and do not replace either failed gate.
+
+The fresh Validation branch now requires the already reserved current operation,
+exact Page and packet digest, current task binding and original frontier before
+examining a continuation. An existing permit must match that exact operation and
+the complete current cursor/steps/staging snapshot. The original pending replay
+then rechecks the actual SQL target, current namespace, network, time and exact
+stored packet bytes. Reuse still requires the original validation fact in both
+the journal and SQLite. Only the new paid operation can write its new epoch's
+validation marker. Without a continuation, ordinary pending-reorg refusal remains.
+The original seven-method reorg lane includes five actual cut-and-reopen negative
+subcases: changed stored proof, removed SQL fact, cursor drift, internal cancellation
+and resource withdrawal. Old nonce, old epoch and another target must leave the
+journal unchanged; known native failures must retain the full new allowance and
+produce neither a marker nor additional cursor progress. The original 22-method
+missing-journal-fact control remains mandatory.
+
+The original campaign now places its actual public History importer in a separate
+unprivileged process under the unchanged administrator-provisioned
+`trnmponpublic.slice`: `cpu.max=25000 100000`, 2 GiB maximum memory, zero swap
+and 256 tasks. Producer, attackers, receiver and observer retain the original
+outer four-CPU/16-GiB service, original 30-second windows, three rounds, 24 attackers,
+seed inputs and three predeclared complete 600-second runs. The actual release ELF,
+request bytes, response bytes, calling-thread/process identity, original strict
+kernel checker, final Node close and empty fixed parent are retained. Whole verifier
+process CPU and whole fixed-parent CPU have separate scopes; nested intervals are
+not summed or relabeled as outer-process CPU. No production importer, consensus
+predicate, admission budget or wrong-parent refusal is weakened.
+
+The strict reader binds every actual import target/cursor and confirmation
+transaction/block/result to the original phase, and binds the final snapshot to
+the original client tip. The recovered reader bytes are SHA256
+`9f503d0770e206114733bfd6e585f531f4c224a8a2b70b43ba6c3456aa11a327`.
+A new three-method synthetic fixture re-executed 24 boundary mutations and
+19 coherent semantic substitutions: the old reader accepted all 19 semantic
+substitutions, while the recovered reader rejected all 43 mutations. Rehashing
+all changed IPC digests does not make an altered target or result acceptable.
+These are reader controls, not execution evidence or independent host attestation.
+
+This checkpoint is reconstructed from the exact published head after loss of the
+unpublished local candidate; it does not claim to restore that candidate's tree
+or transfer its checks. New Rust formatting and reader controls do not establish
+typechecking, native reorg completion, recent-batch acceptance or campaign success.
+The original 22/600, new 7/900, new 12/900 and all four adjacent lanes must execute
+this new source and actual binary. Controller SIGKILL currently retains only the
+finite systemd runtime/stop backup; capability-bound controller-death propagation
+through Node setup, import and the final report remains a separate open obligation.
+Whole History P0 and public-service qualification remain OPEN.
+
+
+### Private controller lifetime through native verifier exit (2026-10-28 UTC)
+
+A separate increment now binds the isolated public History verifier to its actual
+controller lifetime. Before launching `sudo -n systemd-run --pipe`, the controller
+creates an anonymous Unix socketpair, opens only its own kernel pidfd and queues
+that descriptor through `SCM_RIGHTS`. The service receives the original socket
+endpoint as stdin. Numeric peer credentials are consistency observations, not an
+API for selecting another process or authority granted by a same-user listener.
+Named/abstract sockets, wrong or missing descriptors, extra rights, truncated
+ancillary data and changed protocol bytes are refused. The actual pidfd type is
+checked with `waitid(P_PIDFD, WNOWAIT)` without requiring an inner `/proc` mount.
+Unsupported platforms return an explicit error before Native work.
+
+The verifier arms a real polling thread and completes a readiness handshake before
+opening Node. That thread holds the pidfd and socket until the entire helper's OS
+exit. Returning from the Node runner, unwinding a native failure or entering the
+outer report serialization/fsync tail cannot disarm it. Kernel-visible controller
+death, private-channel EOF, unexpected data or observation errors cause the helper
+to exit itself with status 137; no arbitrary PID or process group is signalled.
+This is asynchronous termination, not an atomic guarantee of zero additional
+instructions after controller death. It does not manufacture a clean Node close,
+a successful settlement or a completion report. The original systemd control-group
+kill mode, 240-second service ceiling and five-second stop backup remain in place.
+
+The pinned libc-only module was actually compiled by Rust 1.95 with `-D warnings`
+and executed as six parent controls, with one explicitly invoked process helper.
+The final standalone ELF SHA256 was
+`65130b3710e21a3dd2e7b59726e26cf25e65e971a14aecd4240011babcb421ec`.
+The controls cover actual controller SIGKILL even while a separate process retains
+the socket peer, EOF while the controller still lives, an already-dead controller,
+normal exec/return, incorrect capabilities and later protocol data. The failed
+restricted-environment run and the failed overlong pathname fixture are retained;
+they were not rewritten as successes. These small controls do not qualify the
+actual systemd launcher, Node or original campaign.
+
+A new mandatory, separate 600-second lane reuses the exact retained release ELF
+from the original campaign build. It verifies the full source before/after, original
+compiler artifact profile and every retained executable byte, executes the six
+small methods, and executes three distinct systemd/Node controls under individual
+180-second limits. They kill only the still-owned controller Child after actual
+Node open and before seeding, after a successful original strict public import and
+before its IPC response, or after real Node close and runner return but before the
+outer report. These labels describe actual call boundaries; they do not claim an
+instruction-level kill within W1 arithmetic. Each case requires actual main-process
+`CLD_EXITED`/status 137 and an empty unchanged fixed parent within five seconds,
+observed before any administrative stop. Failed units are retained for this
+observation and only then reset. Cleanup cannot supply a passing result.
+
+The death controls use their own empty-seed/one-legal-packet fixtures and cannot
+replace the original 1024-transfer campaign. The outer four-CPU/16-GiB/Nice-10
+limits and the verifier's original fixed quarter-CPU/2-GiB/zero-swap/256-task parent
+remain distinct. The original campaign keeps its three 600-second runs, 30-second
+windows, three rounds and 24 attackers. Its ordinary reader rejects death-control
+jobs, requires the same private owner observations at Node open and close, and
+retains all original target, cursor, confirmation and cost-scope checks. Its three
+synthetic methods now cover 57 refusal vectors; a separate seven-method reader
+suite covers the new death-boundary evidence, build/source binding, exact method
+rosters and finite deadlines. Neither synthetic suite substitutes for native runs.
+
+The public fixture's only additional shared-entry change is a three-line tail hook.
+Its independently reviewed recent-batch source pin is
+`1e02fb6659984e49830737b7665ff26d26ffbc39`; the other fifteen pins remain unchanged.
+This increment's full crate typechecking, actual three systemd/Node kill controls,
+original campaigns, original 22/600, reorg 7/900, lifecycle 12/900 and four adjacent
+lanes still require same-source hosted execution. No earlier source's success is
+transferred, and whole History P0 remains OPEN until the applicable evidence closes.
+
+
+### 2026-10-28 — History fixed-parent provisioning and serialized confirmation follow-up
+
+The exact `9360088c5e48c1a0ed4209744bd41cbe544d0489` campaign stopped before
+native build because its fixture required `LoadState=not-found`. The failure
+artifact is retained. The failing host's complete unit properties were not
+recorded; implicit loaded slices are a source-supported candidate explanation,
+not a claimed observation of that host. The new fixture retains the actual
+manager state and unit search paths before making any change. It accepts only
+an inactive, dead, fragment-free, drop-in-free, non-transient unit with no job,
+no alias, no kernel parent and no unit/dependency configuration on disk.
+
+The original source-pinned 25% CPU, 2 GiB memory, zero swap and 256 task slice is
+created exclusively. A root-only `/run` lease binds the workflow run and attempt,
+unit identity, file device/inode and hash. Writable output receipts are evidence
+copies and cannot authorize cleanup. Configured, active, replaced or foreign
+parents are refused. A separate real systemd probe checks fresh creation,
+duplicate refusal, forged-copy refusal and owned cleanup inside the original
+four CPU, 16 GiB and nice 10 ceiling. Its 90 second helper lifetime and 120 second
+administrative service ceiling do not change the three original native 600
+second campaigns or the 600 second lifeline lane.
+
+The same exact source's strict all-target build exposed an E0609 error in the
+multiprocess campaign: the isolated verifier returns serialized JSON, while the
+confirmation check still used Rust struct fields. The follow-up reads the same
+four fields with strict JSON boolean/integer comparisons, preserving confirmed,
+not finalized, no execution authority, and depth exactly six. Missing or mistyped
+fields fail closed. The recent gate's exact public test blob pin is updated to
+these bytes; all other pins and native budgets remain unchanged.
+
+The new predicate controls and source checks alone do not certify Node, systemd,
+History settlement or a successful campaign. New exact-source cloud gates must
+run, and the original failed provisioning and compiler observations remain part
+of the evidence history. No production protocol, persistent schema or activation
+path is disabled by this fixture repair.
+
+
+### 2026-10-28 - Preserve the owner-lifeline descriptor check under pinned Clippy
+
+On exact candidate d832759a21fab745d6e454f08a78e9309cae1b06, the real
+fixed-parent creation/duplicate/forged-copy/cleanup probe and subsequent fixed
+History parent provisioning steps completed successfully. Full raw artifact
+readback and the original native campaigns remain separate required evidence.
+The recent x64 head lane completed its business controls but strict Rust 1.95
+Clippy rejected one manual remainder check in the existing SCM_RIGHTS parser.
+
+Replace that expression with usize::is_multiple_of while retaining the exact
+descriptor-payload divisibility predicate, rejection path and all fixed bounds.
+No lint allow, new domain, test removal, timeout increase or skipped owner-death
+path is introduced. The existing pathname-only official distributed inventory
+is regenerated and checked; its 1052 entries remain byte-identical, and
+include_bytes! binds the updated helper at compilation. Source and formatting
+checks alone do not qualify the complete native History/activation path.
+All original cloud gates must execute on the new exact tree; the d832 Clippy
+failure is retained rather than relabeled as success.
+
+
+### 2026-10-28 - Fresh current-path kernel reads preserve every History progress fence
+
+Exact d832759a21fab745d6e454f08a78e9309cae1b06 completed the real fixed-parent
+probe, provisioning and cleanup and all six lifeline methods plus three actual
+Node/controller-death boundaries. Its original three native campaigns all failed
+under the retained 30-second phase and fixed 25-percent verifier CPU ceiling.
+The baseline first round reached its first confirmation after 45.48 seconds;
+its 92 additional account-graph checks consumed 9.722 seconds of nested CPU.
+The original 22 History controls and nine material controls passed, while strict
+Clippy stopped the full gate; reorg/lifecycle followups were not credited. The
+8909154 followup repaired that lint and its four recent lanes passed, but its
+separate original native campaign still failed. All failed raw artifacts remain
+failed evidence, never a replacement for same-source successful native gates.
+
+Use a fresh-open, stack-buffered text reader for current kernel observations.
+Every original progress callback still reads the current boot identity, parent
+identity/mode, actual calling-thread membership and all five resource limits.
+File opening still checks the current path and current credentials on EVERY
+call. There is no descriptor, contents, permission, authority or quota cache.
+Short reads continue to real EOF, Interrupted retries, and late errors or invalid
+UTF-8 cannot qualify a successful prefix. The existing 128-byte quota recheck
+uses a 129-byte refusal sentinel; initial limit parsing, boot identity and
+thread membership retain their original accepted-length behavior. All original
+CPU, cancellation, revocation, resource and native validity checks remain.
+
+Five reader boundary controls cover exact/oversize input, short/interrupted
+reads, late I/O and UTF-8 errors, current replacement/removal/permission behavior,
+and a real distinct calling-thread procfs read. The four recent lanes require
+all eleven original kernel-boundary tests plus those five controls, retaining
+the original job budget. A separate Rust 1.95 local real procfs/sysfs diagnostic
+observed 669.88ms versus 329.47ms for 20,000 seven-file iterations; this isolated
+I/O result does not predict or qualify the original campaign. No 30-second
+window, 25-percent kernel ceiling, worker count, W1 semantics, signed domain,
+stored namespace, test requirement or native campaign budget is changed.
+
+
+## Ordinary History graph resource fence v1 — recovery candidate, 2026-10-28
+
+The previously published `4086f6c2de16f0726893d202b4af9020cd65618d` retained all original 22 History, 7 reorg, 12 lifecycle and four recent-lane functional gates. Its three independent original fixed-budget propagation runs still failed receiver/client state equality. Those failures remain failures. This candidate introduces the explicitly selected `history-account-graph-resource-fence-v1`; it is a new resource observation policy, not an equivalent timing optimization of the strict profile. No production activation is claimed.
+
+Only the ordinary History API may select this policy. Signed V6, continuous and mining owners keep their original strict entry points. A private typed account-graph cursor emits entry, every node ordinal, final relation and exit. Original CPU/cancel checks, actual SQL reads and the complete graph relation remain on every original node. Fresh complete kernel checks occur before entry, node 0 and every eight node bodies, final relation, exit, ordinary boundaries, real admission/activation commit and settlement. The kernel checker itself retains no descriptor, value, permission or successful verdict cache. A persistent resource change is detected within eight bounded node bodies; this is not a wall-clock revocation guarantee or a claim to detect changes reverted between observations.
+
+The new policy key and random epoch nonce are atomically coupled to the original durable public CPU marker. Full fences freshly read both markers from one bounded SQL snapshot; actual commits also recheck the original connection's uncommitted view. No profile switch can clear an active epoch, grant CPU credit or discard unknown debt. Known same-process settlement refusal holds a private live capability for a real retry after the original parent is restored; it neither serializes that capability nor permits cold debt recovery. Original strict next work and explicit v1 next work must run after successful known settlement. Existing V6 recovery and journal/nonce behavior remain independently required.
+
+The original 22/7/12 workflow jobs and their native budgets are unchanged. The propagation workflow has separate strict and v1 lanes, each with all original three complete runs, three 30-second phases, original signed work, original 25-percent verifier CPU, 2-GiB memory, zero swap, 256-task cap and original confirmation criteria. Each result and artifact names its selected profile; a strict failure cannot be overwritten by a v1 pass.
+
+A separate 1800-second physical lane reuses the same actual executable retained by the original 22-test gate. It declares 23 finite cases: offsets 0 through 7; original strict next-node refusal; entry/final/exit/admission/activation/settlement refusal; burst, memory, swap, tasks and permission mutation; actual whole-process migration with a nonleader verifier thread; same-executable strict/v1 complete import and cold byte equality; and public-entry failure followed by same-live-domain settlement, ordinary strict import, another v1 import and cold readback. Each case retains its original 60-second limit. The privileged guardian verifies its root-owned exclusive parent lease and actual systemd MainPID, pins a pidfd and checks the actual executable and nonleader membership. All privileged case-file reads and writes use a directory descriptor opened component by component with `O_NOFOLLOW`; replacing the unprivileged case pathname cannot redirect privileged writes. Final receipts use no-replace publication. Records are observations, not administrative authority or independently authenticated remote proofs.
+
+Recovery provenance: the earlier unpublished 32-file stage4 candidate and old raw logs disappeared with the workspace. The retained native executable was SHA-256 `0cb89255895fb15c0bb0840508fc0a5d9d4a30cfc29e1f959b8cf52ed7d8771d`; its embedded source recovered all 19 changed native files byte-for-byte. A new actual invocation of that unchanged executable passed 16 controls and left only the explicit physical helper ignored. The non-native reader/workflow/document changes are newly reconstructed and reviewed; this candidate must receive its own source tree and raw validation. Neither the old stage4 tree nor vanished logs are claimed recovered. Physical controls and complete v1 propagation are NOT_RUN until their actual source-bound hosted results are read back.

@@ -151,6 +151,9 @@ case "${1:?required job}" in
       test ! -L "$TRNM_DAA_EVIDENCE_DIR"
       test ! -e "$trnm_model_receipt_root/workspace-tests.log"
       test ! -L "$trnm_model_receipt_root/workspace-tests.log"
+      # The first-Startup guardian fixture binds the actual compile and run
+      # source, independently checked by this workflow's normal source boundary.
+      export TRNM_HISTORY_STARTUP_NO_NATIVE_SOURCE_COMMIT="$(git rev-parse HEAD)"
       cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features 2>&1 | tee "$trnm_model_receipt_root/workspace-tests.log"
       unset TRNM_ZERO_PAIRED_PREFIX_OUTPUT
       python3 scripts/pon_daa_schedule_reader.py --raw-dir "$TRNM_DAA_EVIDENCE_DIR" --expected-report-sha256 "$(sha256sum "$TRNM_DAA_EVIDENCE_DIR/daa-bounds.json" | cut -d ' ' -f 1)" > "$trnm_model_receipt_root/daa-bounds-python.json"

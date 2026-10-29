@@ -138,6 +138,18 @@ pub fn repair_history_journal_publication_v1(
         ensure(
             !matches!(frame.event, Event::SettledEpochReconciledV1 { .. }),
             "HISTORY_PUBLICATION_EPOCH_PINS_REQUIRED",
+        )?;
+        ensure(
+            !matches!(frame.event, Event::ReorgContinuationPreparedV1 { .. }),
+            "HISTORY_REORG_V1_PUBLICATION_VALIDATION_REQUIRED",
+        )?;
+        ensure(
+            !matches!(frame.event, Event::LifecycleReconciledV1 { .. }),
+            "HISTORY_LIFECYCLE_V1_PUBLICATION_VALIDATION_REQUIRED",
+        )?;
+        ensure(
+            !matches!(frame.event, Event::StartupNoNativeClosedV1 { .. }),
+            "HISTORY_PUBLICATION_NO_NATIVE_PINS_REQUIRED",
         )
     })
 }
