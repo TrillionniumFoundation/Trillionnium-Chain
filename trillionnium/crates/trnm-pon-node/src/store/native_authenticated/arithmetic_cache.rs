@@ -17,6 +17,7 @@ mod root_arithmetic;
 use root_arithmetic::RootArithmetic;
 
 // The normal parent, child and genesis may all be revisited during one commit.
+// Exact-input hits refresh recency within the same three-entry bound.
 const MAX_COMPLETE_ENTRIES: usize = 3;
 const MAX_COMPLETE_BYTES: usize = 4 * 1024 * 1024;
 
@@ -66,6 +67,23 @@ impl ArithmeticCache {
         value
     }
 
+    fn promote_complete(&self, index: usize) {
+        // Only an exact current-byte/context match selects this index. The
+        // caller has released its lookup borrow, with no callback or mutation
+        // between lookup and promotion. Move the existing entry without a new
+        // retained allocation. A shared borrow may prevent this optional order
+        // change, but cannot turn an exact-input arithmetic hit into a miss.
+        let Ok(mut entries) = self.complete.try_borrow_mut() else {
+            return;
+        };
+        if index + 1 >= entries.len() {
+            return;
+        }
+        if let Some(entry) = entries.remove(index) {
+            entries.push_back(entry);
+        }
+    }
+
     fn complete_root(
         &self,
         settings: &Settings,
@@ -99,7 +117,7 @@ impl ArithmeticCache {
         value: Hash,
     ) {
         // Complete-cache hits must warm the independent initial root too. A
-        // later FIFO eviction must not turn a genesis check into a destructive
+        // later bounded eviction must not turn a genesis check into a destructive
         // rewrite of the offered successor's mathematical tree. The existing
         // entry is only exact-input arithmetic; context alone never returns it.
         let vacant = self
@@ -138,14 +156,22 @@ impl ArithmeticCache {
             settings.genesis(),
         ];
         let bytes = bounded_bytes(state);
-        if let (Some(bytes), Ok(entries)) = (bytes.as_ref(), self.complete.try_borrow()) {
-            if let Some(entry) = entries.iter().find(|entry| {
-                entry.context == context && entry.bytes.as_slice() == bytes.as_slice()
-            }) {
+        if let Some(bytes) = bytes.as_ref() {
+            let cached = self.complete.try_borrow().ok().and_then(|entries| {
+                entries
+                    .iter()
+                    .enumerate()
+                    .find(|(_, entry)| {
+                        entry.context == context && entry.bytes.as_slice() == bytes.as_slice()
+                    })
+                    .map(|(index, entry)| (index, entry.value.state_root))
+            });
+            if let Some((index, value)) = cached {
+                self.promote_complete(index);
                 #[cfg(test)]
                 self.root_hits.set(self.root_hits.get() + 1);
-                self.retain_initial_complete_root(settings, context, bytes, entry.value.state_root);
-                return Ok(entry.value.state_root);
+                self.retain_initial_complete_root(settings, context, bytes, value);
+                return Ok(value);
             }
         }
         if let (Some(bytes), Ok(root)) = (bytes.as_ref(), self.root.try_borrow()) {
@@ -197,14 +223,22 @@ impl ArithmeticCache {
         // signed zero and integer/float representations must remain distinct.
         // Oversize input uses the original full calculation without retention.
         let bytes = bounded_bytes(state);
-        if let (Some(bytes), Ok(entries)) = (bytes.as_ref(), self.complete.try_borrow()) {
-            if let Some(entry) = entries.iter().find(|entry| {
-                entry.context == context && entry.bytes.as_slice() == bytes.as_slice()
-            }) {
+        if let Some(bytes) = bytes.as_ref() {
+            let cached = self.complete.try_borrow().ok().and_then(|entries| {
+                entries
+                    .iter()
+                    .enumerate()
+                    .find(|(_, entry)| {
+                        entry.context == context && entry.bytes.as_slice() == bytes.as_slice()
+                    })
+                    .map(|(index, entry)| (index, entry.value.clone()))
+            });
+            if let Some((index, value)) = cached {
+                self.promote_complete(index);
                 self.root_arithmetic.complete_hit();
                 #[cfg(test)]
                 self.hits.set(self.hits.get() + 1);
-                return Ok(entry.value.clone());
+                return Ok(value);
             }
         }
         self.root_arithmetic.complete_computation();
@@ -257,6 +291,91 @@ fn bounded_bytes(state: &State) -> Option<Vec<u8>> {
 mod tests {
     use super::*;
     use serde_json::json;
+
+    fn hot_non_genesis_slot(root_only: bool) {
+        // A staged reorg changes one slot while repeatedly checking the old
+        // active slot. Root-only and complete hits must both keep that actual
+        // byte-identical input hot; it is deliberately not the initial State.
+        let settings = Settings::development(Some(1000)).unwrap();
+        let cache = ArithmeticCache::default();
+        let mut active = settings.initial.clone();
+        active.insert("arithmetic-cache-old-slot".into(), json!(1));
+        let material = trnm_mvcc_fee::pon_commitment::derive_snapshot(
+            &active,
+            None,
+            trnm_mvcc_fee::pon_commitment::CacheLimits::default(),
+        )
+        .unwrap();
+        cache.offer_root_material(&settings, material.snapshot.as_ref());
+        let expected_active = complete(&settings, &active).unwrap();
+        assert_eq!(cache.complete(&settings, &active).unwrap(), expected_active);
+        let before = cache.observation()["complete_root_arithmetic"]["counters"].clone();
+        for marker in 0..8 {
+            let mut staged = active.clone();
+            staged.insert("arithmetic-cache-staged-slot".into(), json!(marker));
+            let expected_staged = complete(&settings, &staged).unwrap();
+            assert_eq!(cache.complete(&settings, &staged).unwrap(), expected_staged);
+            if root_only {
+                assert_eq!(
+                    cache.state_root(&settings, &active).unwrap(),
+                    expected_active.state_root
+                );
+            } else {
+                assert_eq!(cache.complete(&settings, &active).unwrap(), expected_active);
+            }
+            assert_eq!(cache.complete(&settings, &staged).unwrap(), expected_staged);
+            let retained = cache.complete.borrow();
+            assert!(retained.len() <= MAX_COMPLETE_ENTRIES);
+            assert!(retained
+                .iter()
+                .all(|entry| entry.bytes.len() <= MAX_COMPLETE_BYTES));
+        }
+        let after = cache.observation()["complete_root_arithmetic"]["counters"].clone();
+        for counter in [
+            "complete_computations",
+            "calculations",
+            "actual_changed_keys",
+        ] {
+            assert_eq!(
+                    after[counter].as_u64().unwrap() - before[counter].as_u64().unwrap(),
+                    8,
+                    "root_only={root_only}: {counter}; eight new staged inputs must not evict and rebuild the repeatedly checked old slot"
+                );
+        }
+        assert_eq!(cache.complete.borrow().len(), MAX_COMPLETE_ENTRIES);
+    }
+
+    #[test]
+    fn complete_hits_keep_a_hot_non_genesis_slot_within_three_entries() {
+        hot_non_genesis_slot(false);
+    }
+
+    #[test]
+    fn root_hits_keep_a_hot_non_genesis_slot_within_three_complete_entries() {
+        hot_non_genesis_slot(true);
+    }
+
+    #[test]
+    fn exact_hit_under_shared_borrow_keeps_original_arithmetic_without_retention_change() {
+        let settings = Settings::development(Some(1000)).unwrap();
+        let cache = ArithmeticCache::default();
+        let mut active = settings.initial.clone();
+        active.insert("arithmetic-cache-old-slot".into(), json!(1));
+        let expected = cache.complete(&settings, &active).unwrap();
+        let before = cache.observation()["complete_root_arithmetic"]["counters"].clone();
+        let retained = cache.complete.borrow();
+        assert_eq!(cache.complete(&settings, &active).unwrap(), expected);
+        assert_eq!(
+            cache.state_root(&settings, &active).unwrap(),
+            expected.state_root
+        );
+        assert_eq!(retained.len(), 1);
+        assert_eq!(retained[0].bytes, bounded_bytes(&active).unwrap());
+        assert_eq!(
+            cache.observation()["complete_root_arithmetic"]["counters"]["complete_computations"],
+            before["complete_computations"]
+        );
+    }
 
     #[test]
     fn arithmetic_cache_binds_exact_complete_bytes_context_and_has_fixed_retention() {
@@ -428,7 +547,7 @@ mod tests {
         let settings = Settings::development(Some(1000)).unwrap();
         let cache = ArithmeticCache::default();
         // The native genesis check can first hit a complete commitment. That
-        // must also warm the independent root entry before this FIFO evicts it.
+        // must also warm the independent root entry before bounded eviction.
         let initial = cache.complete(&settings, &settings.initial).unwrap();
         assert_eq!(
             cache.state_root(&settings, &settings.initial).unwrap(),

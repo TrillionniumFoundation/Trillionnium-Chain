@@ -7158,3 +7158,66 @@ controls, an actual tiny owned wait4 with an explicitly synthetic initial roster
 gap, and retained resource-owner tests exercise only this component. They do not
 replay either historical model run or establish three installed generations,
 future quality, cross-node independence, or a qualified model update.
+
+### PN3 original cold activation and bounded recency — 2026-10-29 (OPEN)
+
+The integrated source `147bae52e9abbc6f91f89f85e42c5dff4ae53d23`
+passed all seven admission-parent controls with real compile-time source pins,
+but its unchanged seven-page cold History fixture still failed on page index 6.
+Its 21 cumulative `state_at` calls did not identify the failing phase. That
+failure and executable remain retained; a later diagnostic does not relabel it.
+
+The diagnostic-only child `4998469386f22115fd196f2a36e44b353f67bcb4`
+compiled successfully, then the same original fixture failed again. New reads
+occurred only after the original receive call had returned `Err`; no success-path
+snapshot, retained settlement, hook, wait or extra refill interval was added.
+Its actual Activation counter advanced from zero to one, with 135,518,495 ns of
+known current-thread CPU and no failed stage observation. The target block at
+height 8 was stored; the reorg row remained generation 2, cursor 6, done 0,
+while the active seed remained generation 1. This establishes an activation
+attempt and six committed steps, not the exact final checkpoint; a later step
+or transaction may have begun and rolled back. Nested stage intervals are not
+additive. Known paid CPU was 481,787,574 ns against 481,739,116 ns of credited
+refill. The resulting 48,458 ns debt, zero in-flight work and available accounting
+correctly left the ordinary epoch unclean. No debt is clamped or converted into
+an unknown clock, and no restart grants a clean replacement epoch.
+
+The next candidate changes only recency of the existing three complete-input
+arithmetic entries. Every hit still serializes and compares the entire current
+State and its network/parameters/genesis context. An exact complete-commitment
+or root-only hit moves the existing entry to the end of the same bounded deque;
+no new retained entry or larger byte limit is introduced. A conflicting shared
+borrow merely prevents optional promotion and preserves the original exact hit.
+The old active slot can therefore remain hot while new staging slots arrive.
+The single opaque root material, independent initial root and historical-cache
+invalidation lifetime remain unchanged. All current SQL reads, both state-slot
+checks, account graphs, progress callbacks and CPU/settlement limits remain.
+Three new controls cover complete hits, root-only hits and shared-borrow behavior.
+They were not executed on the old source; the actual `4998469` cold failure is
+the retained full-path baseline. This source change still requires new native
+execution and does not itself establish cold-start or recovery acceptance.
+
+[Integration PR #557](https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/557)
+preserves the exact four-parent historical source combination. Its first recent
+batch CI run verified all 7,108 tracked entries and 924,278,644 bytes on the full
+checkout, then correctly refused stale literal pins for the reviewed store and
+cold-test changes. The follow-up updates those two pins and the newly reviewed
+arithmetic-cache pin to their actual new blobs. The other literal pins, source
+identity checks, native selectors, resource limits and recovery requirements
+remain mandatory. Source identity success alone does not qualify any native test.
+The later #545 F and #556 sources remain separate until explicitly reviewed and
+integrated; their observations cannot be attributed to this frozen combination.
+
+The independent full-W1 four-hour cost experiment has now reached a real terminal
+result on source `007b80cc99ba52fe7afcd6d0e0dea52628f5a026`:
+[run 40861413707](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40861413707)
+completed a fresh 62-segment Composite proof in 14,320.133611461 seconds under
+its separate 14,400-second limit. The 15,862,780-byte receipt passed independent
+verification and all 16 retained attack controls rejected. The official artifact
+ZIP SHA-256 is `3f22a3bfe047fa365bb52e3fe25ab299206e094f0e23be9967c60dd67cde8eba`;
+all 67 members passed CRC and file-hash readback. Direct host `wait4` reports
+28,643.838479 CPU seconds, potentially including descendants it waited; complete
+family accounting remains unavailable and sampled/adopted CPU is not added to
+that number. The original 5,400-second experiment remains a timeout. This new
+cost result does not pass that original budget, public ingress, PQ-128 security,
+same-source integrated qualification, work-hardness or production activation.
