@@ -262,3 +262,43 @@ are retained in the [boundary evidence](../../evidence/pon-finite-rate-boundary-
 The fixed scenario report is unchanged apart from its source hash. Original
 schema names, all declared timing assumptions, complete W1/DAA semantics and
 the unqualified physical-resource/security status remain unchanged.
+
+## Separate outcome tails and peak correction (v2 numerical report)
+
+The continuation on the exact research source
+`0682274361e529cd6a8e13285324c3c9ee0744b8` fixes two further finite-domain
+counterexamples. For `N=2**64, M=N-1, j=0`, the success probability rounds to
+one in binary64, while the failed tail is exactly `2**-64`. Previously the
+known-M single-worker budget and multiple-worker race reconstructed failure as
+`1-success` and incorrectly erased both budget expiry and a later worker's
+chance to win. The separate unknown-M implementation already retained both
+tails; its source and policy are unchanged.
+
+Computing both sine and cosine from the same rounded angle would not close the
+second defect. With `M=3*N/4 +/- 1` and one Grover iteration, the old success
+projection returned approximately `2.5860584564e-32`. The independent identity
+`p1=p*(3-4*p)**2`, with exact `p=M/N`, gives approximately
+`3.5264830525e-38`. Near the complementary quarter-domain peak, the equally
+small failed tail must also survive. Exact quarter-domain zero tails must
+remain zero.
+
+The corrected evaluator uses `x=1-2*M/N` and binary doubling of the Chebyshev
+polynomial `T_(2*j+1)(x)`. It computes success `(1-T)/2` and failure `(1+T)/2`
+at 80 decimal digits, then rounds each tail separately. This requires only
+`O(log(j+1))` arithmetic steps and retains the existing 64-radian minority-angle
+domain guard. It is a numerical evaluation, without a certified interval bound
+or a quantum hardware claim. `grover_success` remains the compatible scalar
+projection; `search_stop` carries both tails into elapsed-time, budget and
+worker-race calculations. Direct `FixedStop(p, ...)` callers retain their
+existing interface, with an optional separately supplied failure tail whose
+rounded sum must agree with one.
+
+The stored finite-stopping report uses the new namespace
+`pon-finite-nonce-stopping-conditional-model-v2`. Five added methods check the
+actual dense-domain loss, a later worker's nonzero chance, the independent exact
+one-iteration cubic, agreement with the retained sequential unknown-M
+recurrence, and invalid explicit tails. The original 21 stopping methods are
+retained, including state-vector comparisons, geometric-path enumeration,
+budget boundaries, full-cost work scaling and large-phase refusal. The W1
+relation, complete logical oracle cost, native integer DAA, policy budgets and
+production flags are unchanged.

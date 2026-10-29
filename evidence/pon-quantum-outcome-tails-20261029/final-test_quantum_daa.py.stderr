@@ -1,0 +1,12 @@
+test_profile_refuses_activation_and_other_time_rules (test_quantum_daa.ConditionalSchedules.test_profile_refuses_activation_and_other_time_rules) ... ok
+test_runtime_cost_and_fixed_fresh_work_assumptions_remain_explicit (test_quantum_daa.ConditionalSchedules.test_runtime_cost_and_fixed_fresh_work_assumptions_remain_explicit) ... ok
+test_target_and_time_recomputed_from_this_branch (test_quantum_daa.ConditionalSchedules.test_target_and_time_recomputed_from_this_branch) ... ok
+test_valid_timestamp_difficulty_ramp_is_conditional_quantum_counterexample (test_quantum_daa.ConditionalSchedules.test_valid_timestamp_difficulty_ramp_is_conditional_quantum_counterexample) ... ok
+test_median_time_uses_parent_first_11_and_u128_future_bound (test_quantum_daa.NativeArithmeticParity.test_median_time_uses_parent_first_11_and_u128_future_bound) ... ok
+test_required_work_boundaries_and_512_bit_overflow (test_quantum_daa.NativeArithmeticParity.test_required_work_boundaries_and_512_bit_overflow) ... ok
+test_retarget_exact_rounding_clamps_and_saturating_timestamp_delta (test_quantum_daa.NativeArithmeticParity.test_retarget_exact_rounding_clamps_and_saturating_timestamp_delta) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 2.166s
+
+OK

@@ -1,0 +1,66 @@
+{
+  "scope": "Original local controller outputs copied without rewriting; source-only candidate tree predates this evidence attachment. Sparse materialization was explicit. No full-workspace or hosted CI success claimed.",
+  "source_candidate_tree": "8254f7f9e0675d73263849f7ab9c0dd0a0c3dbe6",
+  "members": [
+    {
+      "path": "final-regression-original-source.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "final-regression-original-source.stderr",
+      "bytes": 4340,
+      "sha256": "48c58bbabb70a58ec346e4d31c6f60265d20f518aa1d65f7d55ae9df0eeacdd4"
+    },
+    {
+      "path": "final-regression-original-source.json",
+      "bytes": 345,
+      "sha256": "da1b1f0accfcd03bb7d5c01d0b86efed98f5f3a8563f27c4b98748c33f3969b1"
+    },
+    {
+      "path": "final-validation.json",
+      "bytes": 4702,
+      "sha256": "300c1f3fcc449c9b2413dbec2ff8bed7f12c42b2b2c0d7d7705cf3dbd6a64a58"
+    },
+    {
+      "path": "final-test_w1_oracle_blueprint.py.stderr",
+      "bytes": 1793,
+      "sha256": "313be60cd3cabf21b6715ea2ac97623efaf130163da0f647263bbd79d4b1b644"
+    },
+    {
+      "path": "final-test_quantum_daa.py.stderr",
+      "bytes": 1277,
+      "sha256": "532b5975ed8b1e78cf39b20db6b0a19578c4154ded8fbd7388fff8fdca207e16"
+    },
+    {
+      "path": "final-test_quantum_stopping.py.stderr",
+      "bytes": 4478,
+      "sha256": "d76833655713e31302493cea8e2354a0be6a01db872025d6fbdf02ab5af11cc6"
+    },
+    {
+      "path": "final-test_quantum_unknown_marked.py.stderr",
+      "bytes": 2303,
+      "sha256": "faafa8771584842810bc4a7e3f2b36c75a6667284a0b712d2628ec024f531275"
+    },
+    {
+      "path": "final-w1_oracle_blueprint.json",
+      "bytes": 8513,
+      "sha256": "a6e782778c4551ce35aa4fc1ae9092b6b5036c00010e9c2f2dde73ca27cfac63"
+    },
+    {
+      "path": "final-quantum_daa.json",
+      "bytes": 6302,
+      "sha256": "bc0fa4100d243b356c3fc157d4d089f85d452b32e1e07b57cdd2d5b01d5256da"
+    },
+    {
+      "path": "final-quantum_stopping.json",
+      "bytes": 61624,
+      "sha256": "67cd9681fe845cac3844a30b5a9a8606e8a75a220d302fcc55ea73f8969cec86"
+    },
+    {
+      "path": "final-quantum_unknown_marked.json",
+      "bytes": 122668,
+      "sha256": "006692dabc5ca54da0aa4d345d5ecec87dad9d0237403661c5a811c4c3695348"
+    }
+  ]
+}
