@@ -1,0 +1,19 @@
+{
+  "schema": "pure-history-lifeline-actual-build-red-green-v1",
+  "artifact_id": 12893938279,
+  "artifact_sha256": "76c3dea064839146a19dfe9a8370611bdcd70e31fd91761a03ff8885470aa9cf",
+  "source_head": "f8b79050282fe0561b9cae1a8253e735d7fb0f6c",
+  "source_tree": "4cf0ab6782dd2d74708d9b5301133feb7c95540e",
+  "old_reader_actual_refusal": "recognized actual campaign source observation required",
+  "new_reader_bound_actual_retained_build": true,
+  "binary_sha256": "625fa3cd23132d3405e53b0e7feb4e61c79c2c488591665bc704a6659b41fe2b",
+  "binary_bytes": 10574600,
+  "campaign_result_preserved_failed": true,
+  "retained_binary_executed": false,
+  "actual_lifeline_reexecuted": false,
+  "original_budget_or_result_gate_changed": false,
+  "source_reader_sha256": {
+    "before": "04e821ad7e8f88718e1826a8ca01ae5eb7aeeaa48787619090707b58e3f55ef5",
+    "after": "6762116dd825e773b16ce1a39fd7434e4cc7c86b02eb0f81e89d8c8f5ad157fd"
+  }
+}

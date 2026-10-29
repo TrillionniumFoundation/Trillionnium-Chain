@@ -103,7 +103,7 @@ def baseline_binary(directory, head, tree):
             and rows[0]["executable"] == record["build_artifact"],
             "retained binary must bind to the one actual compiler artifact")
     result, _ = read(directory / "results.json")
-    # Both campaigns retain the same actual compiler artifact. This permits
+    # Recognized campaigns retain the same actual compiler artifact. This permits
     # independent strict owner-death controls after either campaign failed;
     # it never transfers the campaign's result or the N8 execution policy.
     profiles = {
@@ -114,15 +114,33 @@ def baseline_binary(directory, head, tree):
             "history-account-graph-resource-fence-v1",
             "separate_process_graph_resource_fence_v1_work_and_signed_confirmation_campaign"),
     }
-    require(result["schema"] in profiles, "recognized actual campaign source observation required")
-    expected_profile, expected_selector = profiles[result["schema"]]
+    if result["schema"] == "pon-pure-history-raw-joint-ci-v1":
+        import read_pure_history_raw_campaign_v1 as pure_reader
+
+        pure_profiles = {
+            "strict-every-native-checkpoint-v1": "separate_process_pure_history_raw_strict_campaign",
+            "history-account-graph-resource-fence-v1": "separate_process_pure_history_raw_graph_fence_campaign",
+        }
+        expected_profile = result.get("history_resource_profile")
+        require(type(expected_profile) is str and expected_profile in pure_profiles,
+                "exact pure History resource profile required")
+        expected_selector = pure_profiles[expected_profile]
+        require(result.get("work_profile") == "pure-history-raw-v1"
+                and result.get("state_backend") == "authenticated-v1"
+                and type(result.get("admission_search_budget")) is int
+                and result["admission_search_budget"] == 0
+                and result.get("expected_public_policy_id") == pure_reader.expected_policy()["policy_id"],
+                "exact pure History policy, work, backend and zero search required")
+    else:
+        require(result["schema"] in profiles, "recognized actual campaign source observation required")
+        expected_profile, expected_selector = profiles[result["schema"]]
     expected_fields = {
         "history_resource_profile": expected_profile, "native_selector": expected_selector,
         "strict_profile_result_is_separate": True,
     }
     # The original strict schema predates these profile fields. Preserve its
     # existing build-reader contract; if supplied, their values cannot conflict.
-    required = result["schema"] == "pon-history-graph-resource-fence-campaign-ci-v1"
+    required = result["schema"] != "pon-original-native-campaign-ci-v1"
     require(all((not required and key not in result)
                 or (result.get(key) == value and type(result.get(key)) is type(value))
                 for key, value in expected_fields.items()),
