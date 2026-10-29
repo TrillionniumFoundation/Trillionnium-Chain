@@ -136,6 +136,138 @@ class WorkerPidfdTests(unittest.TestCase):
                     self.assertFalse(observed.belongs_to(501,state.held,state.token))
                 finally: observed.close()
 
+    def test_midfrontier_status_count_drop_requires_new_held_retirement_and_two_frontiers(self):
+        with self.proc() as state:
+            observed=self.observation(state); original=base._read; triggered=False
+            def read(descriptor, name):
+                nonlocal triggered
+                if descriptor==observed.task_fds['10001'] and name=='status' and not triggered:
+                    triggered=True; self.retire(state)
+                return original(descriptor,name)
+            try:
+                with patch.object(base,'_read',side_effect=read): record=observed.recheck()
+                self.assertTrue(triggered)
+                self.assertEqual(record['tasks'],['10001'])
+                self.assertEqual(record['frontier_before'],record['frontier_after'])
+                self.assertEqual(record['pending_retired_tasks'],['10002'])
+                self.assertEqual(record['transition'],'worker-terminal-pending-group-wait4')
+                self.assertEqual(len(record['interrupted_frontiers']),1)
+                interruption=record['interrupted_frontiers'][0]['count_interruption']
+                self.assertEqual(interruption['reported_threads'],1)
+                self.assertEqual(interruption['newly_proved_retired_tasks'],['10002'])
+                self.assertNotIn('rss_bytes',record)
+                self.assertNotIn('retirement_closed_by',record)
+            finally: observed.close()
+
+    def test_status_count_drop_without_new_terminal_disappearance_is_sticky(self):
+        for mode in ('no-event','event-only','no-disappearance','under-count','increase','zero'):
+            with self.subTest(mode=mode), self.proc() as state:
+                if mode=='under-count': self.additional_worker(state)
+                observed=self.observation(state); original=base._read; triggered=False
+                def read(descriptor,name):
+                    nonlocal triggered
+                    if descriptor==observed.task_fds['10001'] and name=='status' and not triggered:
+                        triggered=True
+                        if mode in ('event-only','no-disappearance'):
+                            if mode=='event-only': state.terminal.add('10002')
+                        else:
+                            self.retire(state)
+                            if mode=='no-event': state.terminal.clear()
+                        raw=original(descriptor,name)
+                        reported=3 if mode=='increase' else 0 if mode=='zero' else 1
+                        return ''.join('Threads:\t'+str(reported)+'\n' if line.startswith('Threads:') else line
+                            for line in raw.splitlines(keepends=True))
+                    return original(descriptor,name)
+                try:
+                    with patch.object(base,'_read',side_effect=read), self.assertRaises(ValueError):
+                        observed.recheck()
+                    self.assertTrue(observed.failed)
+                    with self.assertRaisesRegex(ValueError,'sticky-failure'): observed.recheck()
+                    self.assertFalse(observed.terminal_belongs_to(501,state.held,state.token))
+                finally: observed.close()
+
+    def test_count_drop_during_initial_binding_cannot_create_observer_authority(self):
+        with self.proc() as state:
+            original=worker.os.pidfd_open
+            def opened(pid,flags):
+                descriptor=original(pid,flags)
+                path=state.root/'task/10002/status'
+                path.write_text(path.read_text().replace('Threads:\t2','Threads:\t1'))
+                return descriptor
+            with patch.object(worker.os,'pidfd_open',side_effect=opened), \
+                    self.assertRaisesRegex(ValueError,'exit-task-identity'):
+                self.observation(state)
+            self.assertEqual(len(state.opened),1)
+            for descriptor in state.identities:
+                with self.assertRaises(OSError): os.fstat(descriptor)
+
+    def test_count_drop_cannot_erase_observed_identity_memory_or_stat_failure(self):
+        for mode in ('pid','parent','tgid','namespace','group-namespace','rss','state','starttime','flags','vsize'):
+            with self.subTest(mode=mode), self.proc() as state:
+                observed=self.observation(state); original=base._read; triggered=False
+                def read(descriptor,name):
+                    nonlocal triggered
+                    if descriptor==observed.task_fds['10001'] and name=='status' and not triggered:
+                        triggered=True; self.retire(state)
+                        raw=original(descriptor,name)
+                        changes={'pid':('Pid:\t10001','Pid:\t10009'),
+                            'parent':('PPid:\t10000','PPid:\t10009'),
+                            'tgid':('Tgid:\t10001','Tgid:\t10009'),
+                            'namespace':('NSpid:\t10001 501','NSpid:\t10009 501'),
+                            'group-namespace':('NStgid:\t10001 501','NStgid:\t10001 509'),
+                            'state':('State:\tZ','State:\tR')}
+                        if mode in changes: raw=raw.replace(*changes[mode])
+                        if mode=='rss': raw+='VmRSS:\t0 kB\n'
+                        return raw
+                    if descriptor==observed.task_fds['10001'] and name=='stat' and triggered:
+                        return state.fixture.stat(start=999 if mode=='starttime' else 12345,
+                            flags=0 if mode=='flags' else 4,vsize=4096 if mode=='vsize' else 0)
+                    return original(descriptor,name)
+                try:
+                    with patch.object(base,'_read',side_effect=read), self.assertRaises(ValueError):
+                        observed.recheck()
+                    self.assertTrue(observed.failed)
+                    self.assertFalse(observed.terminal_belongs_to(501,state.held,state.token))
+                finally: observed.close()
+
+    def test_count_drop_recapture_keeps_deadline_and_both_complete_frontiers(self):
+        for mode in ('late','second-frontier'):
+            with self.subTest(mode=mode), self.proc() as state:
+                observed=self.observation(state); original=base._read; reads=0
+                def read(descriptor,name):
+                    nonlocal reads
+                    if descriptor==observed.task_fds['10001'] and name=='status':
+                        reads+=1
+                        if reads==1:
+                            self.retire(state)
+                            if mode=='late': observed.sample_started_ns-=worker.MAX_DRAIN_NS+1
+                        if mode=='second-frontier' and reads==3:
+                            return original(descriptor,name)+'VmRSS:\t0 kB\n'
+                    return original(descriptor,name)
+                try:
+                    with patch.object(base,'_read',side_effect=read), self.assertRaises(ValueError):
+                        observed.recheck()
+                    self.assertTrue(observed.failed)
+                    self.assertFalse(observed.terminal_belongs_to(501,state.held,state.token))
+                finally: observed.close()
+
+    def test_count_drop_cannot_be_erased_by_later_worker_stat_enoent(self):
+        with self.proc() as state:
+            self.additional_worker(state)
+            observed=self.observation(state); original=base._read
+            def read(descriptor,name):
+                if descriptor==observed.task_fds['10002']:
+                    if name=='status':
+                        return original(descriptor,name).replace('Threads:\t3','Threads:\t1')
+                    if name=='stat' and '10002' not in state.terminal: self.retire(state)
+                return original(descriptor,name)
+            try:
+                with patch.object(base,'_read',side_effect=read), self.assertRaises(ValueError):
+                    observed.recheck()
+                self.assertTrue(observed.failed)
+                self.assertFalse(observed.terminal_belongs_to(501,state.held,state.token))
+            finally: observed.close()
+
     def test_acquisition_or_two_complete_frontiers_crossing_original_deadline_refuse(self):
         with self.proc() as state:
             original=worker.WorkerPidfdObservation._check_bindings

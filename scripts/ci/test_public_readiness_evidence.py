@@ -590,12 +590,16 @@ class NativeDurableSchemaTests(unittest.TestCase):
         self.index = self.store.with_name('ancestry_index.rs')
         self.current = (check.ROOT/'trillionnium/crates/trnm-pon-node/src/store.rs').read_text()
         self.current_index = (check.ROOT/'trillionnium/crates/trnm-pon-node/src/ancestry_index.rs').read_text()
+        self.shared = self.store.parent/'store/shared_snapshot.rs'
+        self.shared.parent.mkdir()
+        self.current_shared = (check.ROOT/'trillionnium/crates/trnm-pon-node/src/store/shared_snapshot.rs').read_text()
 
     def tearDown(self): self.temporary.cleanup()
 
-    def extract(self, source, index=None):
+    def extract(self, source, index=None, shared=None):
         self.store.write_text(source)
         self.index.write_text(self.current_index if index is None else index)
+        self.shared.write_text(self.current_shared if shared is None else shared)
         return check.native_durable_schema(self.root)
 
     def replace_once(self, source, before, after):
@@ -713,7 +717,7 @@ class NativeDurableSchemaTests(unittest.TestCase):
                     self.extract(source,index)
 
     def test_actual_opener_and_selected_schema_bindings_cannot_be_replaced(self):
-        pair = 'let ddl = state_backend.ddl();\n        let schema_id = state_backend.selected_schema_id(&settings);'
+        pair = 'let ddl = storage_layout.ddl(state_backend.ddl());\n        let schema_id = storage_layout.schema_id(state_backend.selected_schema_id(&settings));'
         mutations = [
             ('default-open','Self::open_with_fault(path, settings, workers, None)',
              'Self::open_with_authenticated_state_and_fault(path, settings, workers, None)'),
@@ -727,8 +731,8 @@ class NativeDurableSchemaTests(unittest.TestCase):
              'StateBackend::Legacy,\n            true,\n        )\n    }\n    fn open_selected'),
             ('auth-observation','StateBackend::AuthenticatedV1,\n            false,\n        )\n    }\n    /// Explicit local operator policy',
              'StateBackend::AuthenticatedV1,\n            true,\n        )\n    }\n    /// Explicit local operator policy'),
-            ('ddl-unselected','let ddl = state_backend.ddl();','let ddl = ddl();'),
-            ('schema-unselected','let schema_id = state_backend.selected_schema_id(&settings);','let schema_id = StateBackend::Legacy.schema_id();'),
+            ('ddl-unselected','let ddl = storage_layout.ddl(state_backend.ddl());','let ddl = ddl();'),
+            ('schema-unselected','let schema_id = storage_layout.schema_id(state_backend.selected_schema_id(&settings));','let schema_id = StateBackend::Legacy.schema_id();'),
             ('nested-pair',pair,'if false { '+pair+' }'),
         ]
         for label,before,after in mutations:
@@ -767,7 +771,7 @@ class NativeDurableSchemaTests(unittest.TestCase):
 
     def test_selected_settings_cannot_be_mutated_through_fields_or_borrowed(self):
         header = 'fn open_selected(\n        path: &Path,\n        settings: Settings,'
-        pair = 'let ddl = state_backend.ddl();\n        let schema_id = state_backend.selected_schema_id(&settings);'
+        pair = 'let ddl = storage_layout.ddl(state_backend.ddl());\n        let schema_id = storage_layout.schema_id(state_backend.selected_schema_id(&settings));'
         statements = [
             'settings.app.params["work_task_profile"] = serde_json::json!("legacy-task-v1");',
             'settings.app.params["work_task_profile"][0] = serde_json::json!(0);',
@@ -776,6 +780,8 @@ class NativeDurableSchemaTests(unittest.TestCase):
             'let alias = &mut settings.app;',
             'let alias = &mut (settings.app);',
         ]
+        pair = ('let storage_layout =\n            '
+                'shared_snapshot::Layout::for_opening(state_backend, native_io.as_ref());\n        '+pair)
         for statement in statements:
             with self.subTest(statement=statement),self.assertRaisesRegex(ValueError,'durable backend selected schema rebound'):
                 # A mutable parameter makes these mutations executable in Rust;
@@ -797,11 +803,11 @@ class NativeDurableSchemaTests(unittest.TestCase):
             ('flipped-growth-selector', selector, selector.replace('if growth_', 'if !growth_', 1)),
             ('bypassed-growth-selector', selector,
              selector.replace('if growth_profile_v2::enabled(&settings.app) {', 'if false {', 1)),
-            ('default-instead-selected', 'let schema_id = state_backend.selected_schema_id(&settings);',
+            ('default-instead-selected', 'let schema_id = storage_layout.schema_id(state_backend.selected_schema_id(&settings));',
              'let schema_id = state_backend.schema_id();'),
-            ('bypassed-backend', 'let schema_id = state_backend.selected_schema_id(&settings);',
+            ('bypassed-backend', 'let schema_id = storage_layout.schema_id(state_backend.selected_schema_id(&settings));',
              'let schema_id = StateBackend::Legacy.selected_schema_id(&settings);'),
-            ('ignored-settings', 'let schema_id = state_backend.selected_schema_id(&settings);',
+            ('ignored-settings', 'let schema_id = storage_layout.schema_id(state_backend.selected_schema_id(&settings));',
              'let schema_id = state_backend.selected_schema_id(&settings.clone());'),
             ('unapproved-method', 'impl StateBackend {',
              'impl StateBackend { fn other(self) -> Hash { self.schema_id() }'),
@@ -882,7 +888,7 @@ class NativeDurableSchemaTests(unittest.TestCase):
 
     def test_held_io_bridge_refuses_changed_fields_effects_or_nested_delegation(self):
         bridge = self.held_io_parts()['open_selected'][2]
-        pair = 'let ddl = state_backend.ddl();\n        let schema_id = state_backend.selected_schema_id(&settings);'
+        pair = 'let ddl = storage_layout.ddl(state_backend.ddl());\n        let schema_id = storage_layout.schema_id(state_backend.selected_schema_id(&settings));'
         replacements = [
             bridge.replace('path,','other_path,',1),
             bridge.replace('state_backend,','state_backend: StateBackend::AuthenticatedV1,',1),
@@ -921,7 +927,7 @@ class NativeDurableSchemaTests(unittest.TestCase):
     def test_held_io_nested_decoy_duplicate_and_string_binding_are_refused(self):
         parts = self.held_io_parts()
         whole,header,_ = parts['open_selected_with_io']
-        pair = 'let ddl = state_backend.ddl();\n        let schema_id = state_backend.selected_schema_id(&settings);'
+        pair = 'let ddl = storage_layout.ddl(state_backend.ddl());\n        let schema_id = storage_layout.schema_id(state_backend.selected_schema_id(&settings));'
         for replacement in ['if false { '+pair+' }',
                             'let NOTE: &str = '+json.dumps(pair)+';',
                             'let NOTE: &str = r###"'+pair+'"###;',
@@ -939,6 +945,98 @@ class NativeDurableSchemaTests(unittest.TestCase):
         for source in invalid:
             with self.subTest(source=source[-80:]),self.assertRaisesRegex(ValueError,'durable'):
                 self.extract(source)
+
+
+
+    def test_shared_layout_mapping_cannot_relabel_or_append_to_legacy(self):
+        mutations = [
+            ('select-legacy', 'backend == StateBackend::AuthenticatedV1', 'backend == StateBackend::Legacy'),
+            ('unheld-shared', 'io.is_some()', 'io.is_none()'),
+            ('select-either', 'StateBackend::AuthenticatedV1 && io.is_some()',
+             'StateBackend::AuthenticatedV1 || io.is_some()'),
+            ('canonical-ddl', 'Self::CanonicalJson => base,\n            Self::SharedAccountsV1 => format!',
+             'Self::CanonicalJson => format!("{base}{DDL}"),\n            Self::SharedAccountsV1 => format!'),
+            ('canonical-schema', 'Self::CanonicalJson => base,\n            Self::SharedAccountsV1 => hash(',
+             'Self::CanonicalJson => [0; 32],\n            Self::SharedAccountsV1 => hash('),
+            ('shared-order', 'format!("{base}{DDL}")', 'format!("{DDL}{base}")'),
+            ('shared-ddl', 'native_io_shared_snapshots(block BLOB PRIMARY KEY,data BLOB NOT NULL)',
+             'snapshots(block BLOB PRIMARY KEY,data BLOB NOT NULL)'),
+            ('shared-domain', 'b"native-io-shared-authenticated-branch-schema-v1"',
+             'b"native-branch-schema-v2"'),
+            ('shared-wire', 'const SCHEMA: &str = "native-io-shared-authenticated-snapshot-v1";',
+             'const SCHEMA: &str = "native-io-shared-authenticated-snapshot-unknown";'),
+            ('shared-variant', '    CanonicalJson,\n    SharedAccountsV1,',
+             '    CanonicalJson,\n    SharedAccountsV1,\n    Other,'),
+            ('extra-method', 'impl Layout {', 'impl Layout { fn other(self) -> Self { self }'),
+            ('other-owner', 'impl Layout {', 'impl Layout for Other {'),
+        ]
+        for label,before,after in mutations:
+            changed = self.replace_once(self.current_shared,before,after)
+            reason = 'durable source header Layout' if label == 'other-owner' else 'durable shared layout'
+            with self.subTest(label=label),self.assertRaisesRegex(ValueError,reason):
+                self.extract(self.current,shared=changed)
+        # This table is outside the legacy contract even if metadata is resealed.
+        extension = 'CREATE TABLE native_io_shared_snapshots(block BLOB PRIMARY KEY,data BLOB NOT NULL);'
+        for name in ['native_io_shared_snapshots','NaTiVe_Io_ShArEd_SnApShOtS']:
+            changed = self.replace_once(self.current,'CREATE TABLE metadata',
+                extension.replace('native_io_shared_snapshots',name)+'CREATE TABLE metadata')
+            with self.subTest(name=name),self.assertRaisesRegex(ValueError,'tables in legacy durable schema'):
+                self.extract(changed)
+
+    def test_shared_layout_binding_has_no_old_pair_fallback_or_rebinding(self):
+        pair = ('let ddl = storage_layout.ddl(state_backend.ddl());\n        '
+                'let schema_id = storage_layout.schema_id(state_backend.selected_schema_id(&settings));')
+        selection = ('let storage_layout =\n            '
+                     'shared_snapshot::Layout::for_opening(state_backend, native_io.as_ref());')
+        triple = selection+'\n        '+pair
+        old_pair = ('let ddl = state_backend.ddl();\n        '
+                    'let schema_id = state_backend.selected_schema_id(&settings);')
+        replacements = [
+            old_pair,
+            'if false { '+triple+' }',
+            triple+'\n        '+triple,
+            '/* '+triple+' */',
+            'let NOTE: &str = '+json.dumps(triple)+';',
+            triple.replace('for_opening(state_backend, native_io.as_ref())',
+                           'for_opening(StateBackend::Legacy, native_io.as_ref())'),
+            triple.replace('native_io.as_ref()', 'None'),
+            triple.replace('storage_layout.ddl(state_backend.ddl())', 'state_backend.ddl()'),
+            triple.replace('storage_layout.schema_id(state_backend.selected_schema_id(&settings))',
+                           'state_backend.selected_schema_id(&settings)'),
+        ]
+        for replacement in replacements:
+            with self.subTest(replacement=replacement),self.assertRaisesRegex(
+                    ValueError,'durable backend selected schema'):
+                self.extract(self.replace_once(self.current,triple,replacement))
+        for statement in [
+            'let storage_layout = shared_snapshot::Layout::SharedAccountsV1;',
+            'storage_layout = shared_snapshot::Layout::SharedAccountsV1;',
+            'let native_io = Some(other);',
+            'native_io = None;',
+            'let alias = &mut native_io;',
+        ]:
+            with self.subTest(statement=statement),self.assertRaisesRegex(
+                    ValueError,'durable backend selected schema rebound'):
+                self.extract(self.replace_once(self.current,triple,triple+'\n        '+statement))
+
+    def test_shared_layout_module_and_exact_file_are_required(self):
+        declaration = 'mod shared_snapshot;'
+        for replacement in [
+            '#[path = "other.rs"]\n'+declaration,
+            '#[cfg(any())]\n'+declaration,
+            'mod shared_snapshot {}',
+            declaration+'\n'+declaration,
+        ]:
+            with self.subTest(replacement=replacement),self.assertRaisesRegex(
+                    ValueError,'durable shared layout module'):
+                self.extract(self.replace_once(self.current,declaration,replacement))
+        self.extract(self.current)
+        self.shared.unlink()
+        with self.assertRaisesRegex(ValueError,'missing artifact'):
+            check.native_durable_schema(self.root)
+        self.shared.symlink_to(self.index)
+        with self.assertRaisesRegex(ValueError,'symlink artifact'):
+            check.native_durable_schema(self.root)
 
 
 if __name__ == '__main__': unittest.main(verbosity=2)
