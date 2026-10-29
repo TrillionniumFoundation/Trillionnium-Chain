@@ -4971,3 +4971,93 @@ the 090d source tree, which already contains the strict shared-layout evidence
 reader repair. All four binary trainer and trainer-test files remain byte-for-byte
 identical to their preceding published binary source. The separate original
 model route keeps its 003-based training code; these source roles are not swapped.
+
+### PN3 separate diverse60 scalar training V3 — 2026-10-29 (candidate / OPEN)
+
+The explicit `canonical-positive-zero-binary-diverse60-observed-v3` candidate is
+a new training execution contract. It keeps the exact original ten-step material
+plan and parent target contract, while a separate recipe records thirty optimizer
+updates over sixty fixed public source rows. Six committed ten-row groups repeat
+five times: 300 actual scalar forward/backward calls, 300 supervised original
+yes/no answer positions, no EOS positions, and exactly 15,600 input tokens. Each
+optimizer update keeps one original CPU profiler context. This is thirty profiler
+contexts, not three hundred. AdamW, learning rate 0.002, zero weight decay, rank
+four, alpha eight, seed seven, dropout zero and mean ten-row gradients are fixed.
+There is no tensor batch, OpenMP pause, intermediate model selection or future
+task in this Chain execution contract.
+
+The explicit input is
+[`config/pon/binary-diverse60-training-v3.json`](../../config/pon/binary-diverse60-training-v3.json),
+47,712 bytes with SHA256
+`d457f4b01cc6aaa445403e81b1fa9511e24f23e4254a6ef9ff9ec29abab693cf`.
+Its sixty row records, original tokenizer arrays and 30-by-10 schedule match the
+precommitted development input identified by plan
+`920553660721745af24963bb4d360f76e0d0bc0f6bb1a65c1c03e1cb369605b7`.
+It contains no temporary paths, future windows, future predictions or claimed
+qualification. Distinct prompt rows are not a claim of independent semantic
+operations. The declared 120 source-ledger records describe the later required
+one-decision/one-target provenance width, not an authenticated ledger created by
+this trainer.
+
+The new
+[`llm_binary_diverse60_observed_v3.py`](../../scripts/llm_binary_diverse60_observed_v3.py)
+provides strict plan, input, data, trace and completion readers. Callers must
+provide both `--diverse-plan` / `--diverse-plan-sha256` and
+`--diverse-training-data` / `--diverse-training-data-sha256` with the new profile.
+Other profiles reject these arguments. The input's `initial_setup` binds the
+original setup recipe and parent material, plus the separately pinned plan and
+training-data roles. Data is offered explicitly; the bundled file is not a
+silent fallback. The fixed data digest and actual new module digest are included
+in the source closure, and preflight rereads the supplied data before and after
+training. The original material/setup validator still checks the actual parent
+and all factors. A setup-only unchanged candidate cannot complete this new
+training profile.
+
+The `binary-diverse60-observed-v3` input/actual/candidate/result suffix and
+`binary_diverse60_observed_execution` context are separate from Binary V2.
+The bounded `binary-diverse60-training-trace-v3.jsonl` contains exactly 332
+records: start, 300 scalar microsteps, thirty optimizer completions and complete.
+Each microstep binds the global source-row index, within-update position, exact
+token IDs, target, both answer logits, CE, actual backward completion and clocks.
+Readback verifies the committed schedule, five uses of every source row, complete
+work and token totals, finite gradient norms and unchanged source/plan context.
+The actual tokenizer must reproduce the frozen token arrays before training.
+Full parent-to-seeded-setup-to-child byte checks remain in the original runner.
+
+The current V4 owned observer is pinned to
+`aae68f92393e5e88c5aaa02095b5990200c121834bec05d8b3a11cd3f09ffc50`.
+The original 1800 s / 16 GiB training limit, 600 s / 8 GiB inference limit,
+100 ms terminal rule, original wait4 ownership and live release behavior remain
+unchanged. The new completion checks also recheck full owner policy, nonnegative
+CPU/wall/RSS counters, both RSS measurements and any present cleanup timestamps.
+Absent cleanup observation is not a zero-duration measurement. A development
+result from an older AEF observer is not an execution result under this new AAE
+source. Model failures, owner failures and receipt failures remain failures.
+
+The original V2 trainer and its 10/100 readers remain byte-for-byte unchanged.
+Fourteen new finite controls cover source/data/namespace confusion, exact scalar
+trace and token accounting, schedule/row omission, changed parent bytes, source
+and budget relabelling, failed owner receipts and actual child discriminant
+failure before model import. Their successful model materials, logits and owner
+receipts are explicitly fabricated fixtures; they do not certify model execution.
+The original seventy-one compatibility controls remain required on the changed
+dispatchers. No pretrained model, gradient run, Cargo rebuild, hosted CI,
+qualification, installation or protocol activation is performed by this stage.
+
+The sixty public training inputs were frozen before a later prior-study raw
+exposure audit became available. The complete ten-study audit reports three
+exact prompt overlaps with these inputs. Its 9,382-prompt union has SHA256
+`b691fd97f2e2f7ef73806d858ea3ece4c67c0ad9ed7e2aab966196b080831d1d`.
+The fixed training input is not renamed an unseen or fresh holdout, and it is not
+retrospectively changed. Hepta's separately frozen, hash-only exclusion fixture
+has 10,382 unique prompt identities and SHA256
+`946d33b8f3cd95949f8eaf3623948639cf68c58214ad8b8f191ae0c2088606e4`:
+all ten formal studies, the old 067 study, original public tasks and the sixty
+fixed training rows. The old eight and 128 development inputs are covered too.
+A subsequent formal study must exclude that complete known set before creating
+its new future cohort.
+It cannot reuse an a593 window as qualification for a new child. Hepta's original
+two 512-task windows, IPS/confidence and family-retention checks, 2700 s whole
+study cap, ordinary batch-one/four-thread forward, two-node Cell acquisition,
+normal installation and next-task child-byte read remain separate unmet gates
+for this new source/profile until actually executed and independently read back.
