@@ -1,0 +1,56 @@
+{
+  "actual_lifeline_reexecuted": false,
+  "independent_review": {
+    "new_methods_independently_passed": 5,
+    "reviewer_executed_native_elf": false,
+    "reviewer_reaudited_zip": false,
+    "seconds": 0.089,
+    "source_review": "PASS"
+  },
+  "native_elf_reexecuted": false,
+  "native_or_acceptance_budget_changed": false,
+  "new_reader_methods_passed": 5,
+  "original_failed_campaigns_remain_failed": true,
+  "original_reader_methods_passed": 8,
+  "raw_evidence": [
+    {
+      "bytes": 927,
+      "path": "actual-build-red-green.json",
+      "sha256": "013d1a7acd63f95f1879227809cbcd57618a8908932fd69c30e6b6382b05e06b"
+    },
+    {
+      "bytes": 12246,
+      "embedded_original_logs": [
+        {
+          "bytes": 1350,
+          "name": "original-reader-after.stderr.log",
+          "sha256": "741a0434b67f9ad74c333ea6c0c5b8cfda79003c147626c487346ea1c0e7c057"
+        },
+        {
+          "bytes": 888,
+          "name": "reader-after.stderr.log",
+          "sha256": "0aac403a78fb7413204bed2abe19f328a878c75ba96304134bda44d270ba55cf"
+        },
+        {
+          "bytes": 3931,
+          "name": "reader-before.stderr.log",
+          "sha256": "82b40175b7da41b7a767e1e909424aa0c6917dcf446334e8cb0b17c978d859cd"
+        },
+        {
+          "bytes": 5025,
+          "name": "source-integrity.stderr.log",
+          "sha256": "282dc4a020028887024041c37f7f3a61789352ae6af6539cf56d1a77e7e5cb6a"
+        }
+      ],
+      "path": "control-logs.json",
+      "sha256": "a4eaacd6e734937e0fb7319af17ba9f8cded8f08a2534284a0da4dfbebd0979b"
+    }
+  ],
+  "remote_base_commit": "98873ccfbb4a416218c49df39082f0b3a842b5c8",
+  "remote_base_tree": "af60fb916a284103cf362ef1ff0ec2cf331f44b1",
+  "schema": "pure-history-lifeline-build-binding-local-validation-v1",
+  "source_integrity_methods_passed": 34,
+  "staging_source_scope": "selected files, not complete remote tree",
+  "workflow_bash_blocks_syntax_passed": 14,
+  "workflow_python_heredocs_syntax_passed": 3
+}

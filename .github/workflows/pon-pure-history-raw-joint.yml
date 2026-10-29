@@ -94,6 +94,13 @@ jobs:
           python3 -B scripts/ci/test_history_verifier_lifeline_v1.py 2>&1 | tee "$OUT/verifier-lifeline-reader-controls.log"
           grep -E '^Ran 8 tests in ' "$OUT/verifier-lifeline-reader-controls.log"
           grep -x 'OK' "$OUT/verifier-lifeline-reader-controls.log"
+      - name: Require pure-profile build binding for independent lifeline
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B scripts/ci/test_history_verifier_lifeline_pure_v1.py 2>&1 | tee "$OUT/pure-lifeline-build-controls.log"
+          grep -E '^Ran 5 tests in ' "$OUT/pure-lifeline-build-controls.log"
+          grep -x 'OK' "$OUT/pure-lifeline-build-controls.log"
       - name: Reject foreign configured parents and forged cleanup evidence
         shell: bash
         run: |
