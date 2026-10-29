@@ -194,6 +194,79 @@ fn graph_resource_v1_uncommitted_same_connection_change_cannot_hide_from_commit_
 }
 
 #[test]
+fn graph_resource_v1_reused_statement_rebinds_and_reads_after_failure_restore_and_eviction() {
+    for capacity in [0, 1, 16] {
+        let (dir, _settings, mut node) = fixture();
+        let epoch = begin(&mut node);
+        epoch
+            .reader
+            .lock()
+            .unwrap()
+            .set_prepared_statement_cache_capacity(capacity);
+        node.db.set_prepared_statement_cache_capacity(capacity);
+        let outside = Connection::open(dir.path().join("native.sqlite")).unwrap();
+        epoch.verify().unwrap();
+        node.check_history_graph_resource_before_commit().unwrap();
+        for (key, original) in [(CPU_KEY, CPU_ACTIVE), (KEY, epoch.expected.as_slice())] {
+            for sql_value in [
+                rusqlite::types::Value::Integer(0),
+                rusqlite::types::Value::Text("different".into()),
+                rusqlite::types::Value::Blob(vec![0; 16_385]),
+            ] {
+                outside
+                    .execute(
+                        "UPDATE metadata SET value=?1 WHERE key=?2",
+                        params![sql_value, key],
+                    )
+                    .unwrap();
+                assert!(epoch.verify().is_err());
+                assert!(node.check_history_graph_resource_before_commit().is_err());
+                outside
+                    .execute(
+                        "UPDATE metadata SET value=?1 WHERE key=?2",
+                        params![original, key],
+                    )
+                    .unwrap();
+                epoch.verify().unwrap();
+                node.check_history_graph_resource_before_commit().unwrap();
+            }
+            outside
+                .execute("DELETE FROM metadata WHERE key=?1", [key])
+                .unwrap();
+            assert!(epoch.verify().is_err());
+            outside
+                .execute(
+                    "INSERT INTO metadata(key,value) VALUES(?1,?2)",
+                    params![key, original],
+                )
+                .unwrap();
+            epoch.verify().unwrap();
+        }
+        // Reusing the plan must not retain an expected-row comparison, even
+        // after successful reads and explicit eviction of its compiled plan.
+        assert!(matches_current(&node.db, b"a different epoch").is_err());
+        matches_current(&node.db, &epoch.expected).unwrap();
+        for db in [&node.db, &*epoch.reader.lock().unwrap()] {
+            db.flush_prepared_statement_cache();
+            matches_current(db, &epoch.expected).unwrap();
+            assert!(db.is_autocommit());
+        }
+        node.db
+            .execute_batch(
+                "BEGIN IMMEDIATE; DELETE FROM metadata WHERE key='ordinary-public-v3-epoch-v1';",
+            )
+            .unwrap();
+        epoch.verify().unwrap(); // Fresh independent WAL reader sees committed state.
+        assert!(node.check_history_graph_resource_before_commit().is_err());
+        node.db.execute_batch("ROLLBACK;").unwrap();
+        node.check_history_graph_resource_before_commit().unwrap();
+        epoch.verify().unwrap();
+        node.finish_history_graph_resource_v1(&epoch, true, &|| Ok(()))
+            .unwrap();
+    }
+}
+
+#[test]
 fn graph_resource_v1_finish_transaction_refusal_retains_both_original_markers() {
     let (dir, settings, mut node) = fixture();
     let epoch = begin(&mut node);

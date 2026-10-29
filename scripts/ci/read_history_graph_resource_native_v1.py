@@ -7,7 +7,7 @@ import hashlib
 import re
 
 from history_graph_resource_guardian_v1 import CASES, CASE_SECONDS, HELPER, MUTATIONS, PROFILE
-from read_native_history_verifier import LIMITS, PARENT, digest, graph_observation, integer, parent_identity, read, require
+from read_native_history_verifier import LIMITS, PARENT, digest, graph_observation, integer, read, require
 
 TOTAL_SECONDS = 1800
 PURE_ROSTER = sorted([
@@ -25,6 +25,7 @@ PURE_ROSTER = sorted([
     'store::history_graph_resource_v1::tests::graph_resource_v1_missing_changed_or_oversized_marker_never_reuses_a_verdict',
     'store::history_graph_resource_v1::tests::graph_resource_v1_policy_and_original_cpu_epoch_publish_atomically',
     'store::history_graph_resource_v1::tests::graph_resource_v1_refuses_profile_switch_or_borrowed_listener_last_close',
+    'store::history_graph_resource_v1::tests::graph_resource_v1_reused_statement_rebinds_and_reads_after_failure_restore_and_eviction',
     'store::history_graph_resource_v1::tests::graph_resource_v1_unclean_and_resource_refused_closes_never_clear_original_debt',
     'store::history_graph_resource_v1::tests::graph_resource_v1_uncommitted_same_connection_change_cannot_hide_from_commit_fence',
 ])
@@ -54,6 +55,10 @@ def identity(value, cgroup):
 def parent(value, expected_limits, expected_pids=None):
     require(value['path'] == PARENT and value['limits'] == expected_limits,
             'exact actual parent limits required')
+    require(type(value['uid']) is int and value['uid'] == 0
+            and integer(value['mode']) & 0o170000 == 0o040000
+            and value['mode'] & 0o022 == 0,
+            'fresh guardian lstat must retain the original root-owned non-writable parent')
     require(integer(value['device']) > 0 and integer(value['inode']) > 0,
             'original physical parent identity required')
     require(type(value['boot_id']) is str and re.fullmatch(
@@ -70,6 +75,27 @@ def parent(value, expected_limits, expected_pids=None):
         require(key not in stats and raw.isdigit(), 'actual unique kernel CPU counters required')
         stats[key] = int(raw)
     require('usage_usec' in stats, 'actual kernel CPU usage required')
+    return tuple(value[key] for key in ('path', 'device', 'inode', 'boot_id'))
+
+
+def native_parent_identity(value):
+    # The actual native checker emits a versioned identity descriptor, not the
+    # campaign's independent CPU/memory sample. Do not invent missing ownership
+    # or counter fields; the privileged guardian separately retains fresh lstat.
+    numeric = {'cpu_quota_us': 25_000, 'cpu_period_us': 100_000, 'cpu_burst_us': 0,
+               'memory_bytes': 2_147_483_648, 'swap_bytes': 0, 'tasks': 256}
+    require(type(value) is dict and set(value) == {
+        'schema', 'path', 'device', 'inode', 'boot_id', 'observation_is_authority', *numeric},
+        'exact native fixed-parent identity observation fields required')
+    require(value['schema'] == 'fixed-kernel-parent-identity-observation-v1'
+            and value['path'] == PARENT and value['observation_is_authority'] is False,
+            'original native checker identity must remain an observation')
+    require(all(type(value[key]) is int and value[key] == expected for key, expected in numeric.items()),
+            'native numeric limits must equal the unchanged original quarter-CPU policy')
+    require(integer(value['device']) > 0 and integer(value['inode']) > 0
+            and type(value['boot_id']) is str and re.fullmatch(
+                '[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}', value['boot_id']),
+            'actual native parent device, inode and boot identity required')
     return tuple(value[key] for key in ('path', 'device', 'inode', 'boot_id'))
 
 
@@ -189,7 +215,7 @@ def validate_case(directory, spec, binary_sha256):
             and complete['passed'] is True and complete['parent_restored_and_rechecked'] is True,
             'actual same original process, thread, executable and restored completion required')
     original_parent = guardian['original_parent']; pin = parent(original_parent, LIMITS, 0)
-    require(parent_identity(ready['parent']) == pin[1:], 'native checker and guardian must observe the same physical parent')
+    require(native_parent_identity(ready['parent']) == pin, 'native checker and guardian must observe the same physical parent')
     require(original_parent['cpu_file_mode'] & 0o444 != 0, 'original CPU quota readable by the real non-root verifier')
     for name in ('final_parent', 'cleanup_parent'):
         value = guardian[name]

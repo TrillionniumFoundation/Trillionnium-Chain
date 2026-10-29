@@ -77,13 +77,14 @@ def fixture(directory, spec):
     group = '/trnmponpublic.slice/' + unit
     outer = '/system.slice/owned-outer.service'
     identity = {'pid': 100, 'tid': 101, 'uid': 1001, 'gid': 1001, 'thread_cgroup': '0::' + group}
-    parent = {'path': reader.PARENT, 'device': 20, 'inode': 30, 'boot_id': BOOT,
+    parent = {'path': reader.PARENT, 'device': 20, 'inode': 30, 'boot_id': BOOT, 'uid': 0, 'mode': 0o40755,
               'limits': dict(reader.LIMITS), 'cpu_file_mode': 0o644, 'pids_current': 0,
               'cpu_stat': 'usage_usec 100\nnr_periods 1\nnr_throttled 0\nthrottled_usec 0\n'}
-    kernel_parent = {'path': reader.PARENT, 'uid': 0, 'mode': 0o40755, 'device': 20,
-                     'inode': 30, 'boot_id': BOOT, **reader.LIMITS, 'memory.current': 100,
-                     'pids.current': 1, 'cpu.stat': {'usage_usec': 100, 'nr_periods': 1,
-                                                   'nr_throttled': 0, 'throttled_usec': 0}}
+    kernel_parent = {'schema': 'fixed-kernel-parent-identity-observation-v1',
+                     'path': reader.PARENT, 'device': 20, 'inode': 30, 'boot_id': BOOT,
+                     'cpu_quota_us': 25_000, 'cpu_period_us': 100_000, 'cpu_burst_us': 0,
+                     'memory_bytes': 2_147_483_648, 'swap_bytes': 0, 'tasks': 256,
+                     'observation_is_authority': False}
     documents = {
         'job.json': {**spec, 'schema': 'history-graph-resource-physical-job-v1', 'parent': reader.PARENT,
                      'profile': reader.PROFILE, 'binary_sha256': BINARY},
@@ -184,6 +185,46 @@ def fixture(directory, spec):
 
 
 class PhysicalReader(unittest.TestCase):
+    def test_actual_native_identity_shape_requires_exact_limits_and_no_invented_sample_fields(self):
+        # Exact ready.parent shape retained from source1252076's cpu-window-0
+        # job123174765428. This reader regression never reclassifies that failed
+        # whole lane, whose guardian did not retain uid/mode and must run again.
+        actual = {"boot_id": "b21288b9-f29d-43ee-8296-36b8fc329c27",
+                  "cpu_burst_us": 0, "cpu_period_us": 100000, "cpu_quota_us": 25000,
+                  "device": 31, "inode": 6818, "memory_bytes": 2147483648,
+                  "observation_is_authority": False, "path": reader.PARENT,
+                  "schema": "fixed-kernel-parent-identity-observation-v1",
+                  "swap_bytes": 0, "tasks": 256}
+        self.assertEqual(reader.native_parent_identity(actual),
+                         (reader.PARENT, 31, 6818, actual['boot_id']))
+        for key in actual:
+            changed = dict(actual);del changed[key]
+            with self.subTest(missing=key), self.assertRaises((ValueError, KeyError, TypeError)):
+                reader.native_parent_identity(changed)
+        for key, value in [('cpu_quota_us', 20000), ('cpu_period_us', 200000),
+                           ('cpu_burst_us', 1), ('memory_bytes', 2147483649), ('swap_bytes', 1),
+                           ('tasks', 257), ('observation_is_authority', True), ('device', True),
+                           ('uid', 0), ('cpu.stat', {})]:
+            with self.subTest(replacement=key), self.assertRaises((ValueError, KeyError, TypeError)):
+                reader.native_parent_identity({**actual, key: value})
+
+    def test_missing_guardian_ownership_and_changed_native_identity_cannot_qualify(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            for number, (filename, parent_key, field, replacement) in enumerate([
+                ('guardian.json', 'original_parent', 'uid', None),
+                ('guardian.json', 'final_parent', 'mode', None),
+                ('guardian.json', 'cleanup_parent', 'uid', True),
+                ('ready.json', 'parent', 'inode', 31),
+                ('ready.json', 'parent', 'cpu_quota_us', 20000),
+                ('guardian.json', 'original_parent', 'mode', 0o40757),
+            ]):
+                directory = Path(tmp) / str(number);documents = fixture(directory, reader.CASES[0])
+                if replacement is None:del documents[filename][parent_key][field]
+                else:documents[filename][parent_key][field] = replacement
+                write(directory / filename, documents[filename])
+                with self.subTest(filename=filename, field=field), self.assertRaises((ValueError, KeyError, TypeError)):
+                    reader.validate_case(directory, reader.CASES[0], BINARY)
+
     def test_all_twenty_three_explicit_schema_cases(self):
         self.assertEqual(len(reader.CASES), 23)
         self.assertEqual(len(set(row['case'] for row in reader.CASES)), 23)
@@ -200,7 +241,13 @@ class PhysicalReader(unittest.TestCase):
             ('guardian.json', ('case_budget_seconds',), 61), ('guardian.json', ('production_qualified',), True),
             ('guardian.json', ('original_identity', 'uid'), 0), ('guardian.json', ('actual_systemd_main_pid',), 999),
             ('guardian.json', ('final_parent', 'pids_current'), 1), ('guardian.json', ('cleanup_parent', 'inode'), 99),
-            ('ready.json', ('binary_sha256',), 'cd' * 32), ('ready.json', ('parent', 'memory.max'), '2147483649'),
+            ('guardian.json', ('original_parent', 'uid'), 1001),
+            ('guardian.json', ('final_parent', 'mode'), 0o40777),
+            ('guardian.json', ('cleanup_parent', 'mode'), 0o100644),
+            ('ready.json', ('binary_sha256',), 'cd' * 32), ('ready.json', ('parent', 'memory_bytes'), 2_147_483_649),
+            ('ready.json', ('parent', 'cpu_quota_us'), 25_001),
+            ('ready.json', ('parent', 'cpu_burst_us'), True),
+            ('ready.json', ('parent', 'observation_is_authority'), True),
             ('complete.json', ('parent_restored_and_rechecked',), False),
             ('complete.json', ('result', 'protocol_invalid'), True),
             ('complete.json', ('result', 'completed_node_bodies'), 9),
@@ -232,9 +279,9 @@ class PhysicalReader(unittest.TestCase):
     def test_roster_and_native_terminal_cannot_be_omitted_or_forged(self):
         text = '\n'.join('test ' + name + ' ... ok' for name in reader.PURE_ROSTER)
         text += '\ntest ' + reader.HELPER + ' ... ignored, actual parent required\n'
-        text += 'test result: ok. 16 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 1.68s\n'
+        text += 'test result: ok. 17 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 1.68s\n'
         reader.test_terminal(text, reader.PURE_ROSTER, [reader.HELPER])
-        for altered in (text.replace(reader.PURE_ROSTER[0], 'substituted'), text.replace('16 passed', '17 passed'),
+        for altered in (text.replace(reader.PURE_ROSTER[0], 'substituted'), text.replace('17 passed', '16 passed'),
                         text + text, text.replace(' ... ok', ' ... FAILED', 1)):
             with self.assertRaises(ValueError):reader.test_terminal(altered, reader.PURE_ROSTER, [reader.HELPER])
 

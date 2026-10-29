@@ -103,8 +103,31 @@ def baseline_binary(directory, head, tree):
             and rows[0]["executable"] == record["build_artifact"],
             "retained binary must bind to the one actual compiler artifact")
     result, _ = read(directory / "results.json")
-    require(result["schema"] == "pon-original-native-campaign-ci-v1"
-            and result["expected_head"] == head and result["expected_tree"] == tree
+    # Both campaigns retain the same actual compiler artifact. This permits
+    # independent strict owner-death controls after either campaign failed;
+    # it never transfers the campaign's result or the N8 execution policy.
+    profiles = {
+        "pon-original-native-campaign-ci-v1": (
+            "strict-every-native-checkpoint-v1",
+            "separate_process_work_and_signed_confirmation_campaign"),
+        "pon-history-graph-resource-fence-campaign-ci-v1": (
+            "history-account-graph-resource-fence-v1",
+            "separate_process_graph_resource_fence_v1_work_and_signed_confirmation_campaign"),
+    }
+    require(result["schema"] in profiles, "recognized actual campaign source observation required")
+    expected_profile, expected_selector = profiles[result["schema"]]
+    expected_fields = {
+        "history_resource_profile": expected_profile, "native_selector": expected_selector,
+        "strict_profile_result_is_separate": True,
+    }
+    # The original strict schema predates these profile fields. Preserve its
+    # existing build-reader contract; if supplied, their values cannot conflict.
+    required = result["schema"] == "pon-history-graph-resource-fence-campaign-ci-v1"
+    require(all((not required and key not in result)
+                or (result.get(key) == value and type(result.get(key)) is type(value))
+                for key, value in expected_fields.items()),
+            "exact campaign profile and selector required; strict lifeline remains separate")
+    require(result["expected_head"] == head and result["expected_tree"] == tree
             and result["profile"] == "release" and result["toolchain"] == "1.95.0"
             and result["binary"]["sha256_before"] == record["sha256_before"]
             and result["binary"]["sha256_after"] == record["sha256_before"]

@@ -68,6 +68,7 @@ def parent():
     require(stat.S_ISDIR(info.st_mode) and info.st_uid == 0 and info.st_mode & 0o022 == 0,
             'original root-owned parent required')
     return {'path': PARENT, 'device': info.st_dev, 'inode': info.st_ino,
+            'uid': info.st_uid, 'mode': info.st_mode,
             'boot_id': Path('/proc/sys/kernel/random/boot_id').read_text().strip(),
             'limits': {name: (root / name).read_text().strip() for name in LIMITS},
             'cpu_file_mode': stat.S_IMODE((root / 'cpu.max').stat().st_mode),

@@ -26,15 +26,19 @@ fn matches_current(db: &Connection, expected: &[u8]) -> Result<()> {
     // Read both markers in one statement/snapshot. Separate autocommit reads
     // could otherwise combine values from two concurrent committed epochs.
     // NULL, oversized and non-BLOB rows remain errors, never an absent pair.
-    let pair: Option<(Vec<u8>, Vec<u8>)> = db
-        .query_row(
+    // Cache only SQLite's compiled statement. Each invocation rebinds both
+    // keys, steps a fresh snapshot and drops/reset the statement before return.
+    // No Row, value, read transaction or successful authority survives a fence.
+    let mut statement = db
+        .prepare_cached(
             "SELECT CASE WHEN length(cpu.value)<=16384 THEN cpu.value ELSE NULL END, \
              CASE WHEN length(policy.value)<=16384 THEN policy.value ELSE NULL END \
              FROM metadata AS cpu JOIN metadata AS policy ON policy.key=?2 \
              WHERE cpu.key=?1",
-            params![CPU_KEY, KEY],
-            |row| Ok((row.get(0)?, row.get(1)?)),
         )
+        .map_err(|error| Error::from(error).local_integrity())?;
+    let pair: Option<(Vec<u8>, Vec<u8>)> = statement
+        .query_row(params![CPU_KEY, KEY], |row| Ok((row.get(0)?, row.get(1)?)))
         .optional()
         .map_err(|error| Error::from(error).local_integrity())?;
     ensure(

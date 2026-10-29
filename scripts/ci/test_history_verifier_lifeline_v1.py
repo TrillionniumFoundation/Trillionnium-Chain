@@ -346,6 +346,50 @@ class LifelineReaderControls(unittest.TestCase):
             with self.assertRaises(ValueError):
                 reader.baseline_binary(positive, HEAD, TREE)
 
+    def test_graph_campaign_build_keeps_exact_profile_and_strict_lifeline_separate(self):
+        fields = {
+            "schema": "pon-history-graph-resource-fence-campaign-ci-v1",
+            "history_resource_profile": "history-account-graph-resource-fence-v1",
+            "native_selector": "separate_process_graph_resource_fence_v1_work_and_signed_confirmation_campaign",
+            "strict_profile_result_is_separate": True,
+        }
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / "graph"
+            build_fixture(root)
+            original, _ = reader.read(root / "results.json")
+            graph = {**original, **fields}
+            put(root / "results.json", graph)
+            reader.baseline_binary(root, HEAD, TREE)
+            # An independently failed campaign stays failed after its actual
+            # binary is admitted solely for fresh owner-death controls.
+            self.assertIs(reader.read(root / "results.json")[0]["complete_success"], False)
+            for key in fields:
+                for missing in (False, True):
+                    with self.subTest(field=key, missing=missing):
+                        changed = copy.deepcopy(graph)
+                        if missing:
+                            del changed[key]
+                        else:
+                            changed[key] = (1 if key == "strict_profile_result_is_separate" else "other")
+                        put(root / "results.json", changed)
+                        with self.assertRaises((ValueError, KeyError, TypeError)):
+                            reader.baseline_binary(root, HEAD, TREE)
+            for key in ("expected_head", "expected_tree"):
+                changed = {**graph, key: "33" * 20}
+                put(root / "results.json", changed)
+                with self.assertRaises(ValueError):
+                    reader.baseline_binary(root, HEAD, TREE)
+            for key in ("sha256_before", "sha256_after"):
+                changed = copy.deepcopy(graph)
+                changed["binary"][key] = "ff" * 32
+                put(root / "results.json", changed)
+                with self.assertRaises(ValueError):
+                    reader.baseline_binary(root, HEAD, TREE)
+            # Relabelling an N8 run with the original strict schema cannot pass.
+            put(root / "results.json", {**graph, "schema": original["schema"]})
+            with self.assertRaises(ValueError):
+                reader.baseline_binary(root, HEAD, TREE)
+
     def test_deadline_and_final_inventory_cannot_skip_failed_artifacts(self):
         self.assertEqual(remaining_timeout(600, 180, now=0), 180)
         self.assertEqual(remaining_timeout(600, 180, now=550), 50)
