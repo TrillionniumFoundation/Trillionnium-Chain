@@ -1,0 +1,28 @@
+{
+  "command": [
+    "/tmp/chain-pon-rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+    "--edition=2024",
+    "-C",
+    "opt-level=3",
+    "-C",
+    "codegen-units=1",
+    "-D",
+    "warnings",
+    "/workspace/scratch/faebcae3f86e/proof/preflight-boundary/repo/scripts/ci/w1_preflight_boundary_v1.rs",
+    "-o",
+    "/workspace/scratch/faebcae3f86e/proof/preflight-boundary/observations-01/w1-preflight-boundary"
+  ],
+  "wall_limit_seconds": 45,
+  "address_space_limit_bytes": 2147483648,
+  "file_size_limit_bytes": 131072,
+  "timed_out": false,
+  "returncode": 1,
+  "cleanup_complete": true,
+  "started_utc": "2026-10-29T10:19:06.250746+00:00",
+  "leader_pid": 6,
+  "user_cpu_seconds": 0.742845,
+  "system_cpu_seconds": 0.29878899999999997,
+  "max_waited_rss_kib": 139460,
+  "wall_seconds": 1.3317380110092927,
+  "success": false
+}
