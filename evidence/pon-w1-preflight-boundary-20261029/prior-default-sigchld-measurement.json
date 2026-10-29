@@ -1,0 +1,2236 @@
+{
+  "schema": "pon-w1-preflight-boundary-campaign-v1",
+  "base_commit_reference": "974932be6dcfe830ce1ce92d58cb10e89cb8358d",
+  "actual_parser": {
+    "bytes": 8229,
+    "sha256": "e4b5bea658dc06649e0b0c69f09bf3407d4eb64b73f382aac3be2a24da8d2d37",
+    "git_blob": "a35271781ae442c534b456dde3c930ecd034eb86"
+  },
+  "harness_source": {
+    "bytes": 17509,
+    "sha256": "8e965321d852c6fb2649ca335e1f21bd50645a0b29c9bdb76c14750240922d11",
+    "git_blob": "2c1e936037f2d161991d4f58ae5021cc91999f88"
+  },
+  "runner_source": {
+    "bytes": 14298,
+    "sha256": "0dab05df4cc71ba10e8580681bc28609056bae26d9f5bbaebcba1c4f99692224",
+    "git_blob": "8e9c1f96cb78a499ea723628f5ae82007ef179f6"
+  },
+  "parser_expected_git_blob": "a35271781ae442c534b456dde3c930ecd034eb86",
+  "synthetic_grammar": true,
+  "preflight_only": true,
+  "sdk_called": false,
+  "proof_generated": false,
+  "cryptographic_worst_case_established": false,
+  "source_checkout_qualified": false,
+  "network_used": false,
+  "platform": "Linux-6.18.55-x86_64-with-glibc2.39",
+  "architecture": "x86_64",
+  "python": "3.12.14",
+  "limits": {
+    "case_wall_seconds": 20,
+    "case_address_space_bytes": 536870912,
+    "compile_wall_seconds": 45,
+    "compile_address_space_bytes": 2147483648,
+    "campaign_seconds": 90,
+    "file_size_bytes": 131072
+  },
+  "timing_scope": "Each process constructs its own in-memory input. Construction time and Rust allocator calls are separate. Eleven black-box preflight calls follow. Clock/counter overhead is included without subtraction. First sample is after construction, not a cold-cache guarantee. A fixed4096-call batch also records CPU with loop/counter overhead; zero deltas are unresolved, not zero cost. A fixed empty-loop reference is recorded raw and never subtracted. Per-trial output fsync is outside parser timing but inside process wall/CPU/RSS. RSS includes construction.",
+  "cases": [
+    {
+      "case": "small_control",
+      "passed": true,
+      "parse_error": null,
+      "construction": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "construction",
+        "case": "small_control",
+        "synthetic_grammar": true,
+        "preflight_only": true,
+        "sdk_called": false,
+        "cryptographic_proof": false,
+        "input_bytes": 926,
+        "input_capacity_bytes": 927,
+        "wall_ns": 3593,
+        "process_cpu_ns": 0,
+        "rust_allocations": 1,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 927
+      },
+      "trial_count": 11,
+      "process": {
+        "command": [
+          "/workspace/scratch/faebcae3f86e/proof/preflight-boundary/observations-final/w1-preflight-boundary",
+          "small_control"
+        ],
+        "wall_limit_seconds": 20,
+        "address_space_limit_bytes": 536870912,
+        "file_size_limit_bytes": 131072,
+        "timed_out": false,
+        "returncode": 0,
+        "cleanup_complete": true,
+        "started_utc": "2026-10-29T10:21:54.469612+00:00",
+        "leader_pid": 25,
+        "user_cpu_seconds": 0.005984,
+        "system_cpu_seconds": 0.0,
+        "max_waited_rss_kib": 10228,
+        "wall_seconds": 0.013202604008256458,
+        "success": true
+      },
+      "allocation_counter_positive_control": true,
+      "cpu_batch": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "cpu_batch",
+        "case": "small_control",
+        "calls": 4096,
+        "wall_ns": 46300,
+        "process_cpu_ns": 0,
+        "rust_allocations": 0,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 0,
+        "expected_outcome_matches": true,
+        "passed": true
+      },
+      "empty_loop_reference": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "empty_loop_reference",
+        "case": "small_control",
+        "calls": 4096,
+        "wall_ns": 4149,
+        "process_cpu_ns": 0,
+        "rust_allocations": 0,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 0,
+        "passed": true,
+        "subtracted_from_parser": false
+      },
+      "recorded_classes": [
+        "shape_admitted_not_verified"
+      ],
+      "wall_ns": {
+        "samples": [
+          1443,
+          583,
+          843,
+          413,
+          546,
+          691,
+          404,
+          539,
+          476,
+          419,
+          376
+        ],
+        "min": 376,
+        "median": 539,
+        "max": 1443,
+        "first_after_construction": 1443
+      },
+      "process_cpu_ns": {
+        "samples": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "min": 0,
+        "median": 0,
+        "max": 0,
+        "first_after_construction": 0
+      },
+      "shapes": [
+        {
+          "segments": 1,
+          "padded_cycles": 8192,
+          "maximum_po2": 13
+        }
+      ],
+      "amortized_observed_cpu_ns_per_call": null,
+      "cpu_zero_means": "unresolved short-interval measurement, never zero computation"
+    },
+    {
+      "case": "largest_seal_control",
+      "passed": true,
+      "parse_error": null,
+      "construction": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "construction",
+        "case": "largest_seal_control",
+        "synthetic_grammar": true,
+        "preflight_only": true,
+        "sdk_called": false,
+        "cryptographic_proof": false,
+        "input_bytes": 1049134,
+        "input_capacity_bytes": 1049135,
+        "wall_ns": 966032,
+        "process_cpu_ns": 2718487,
+        "rust_allocations": 1,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 1049135
+      },
+      "trial_count": 11,
+      "process": {
+        "command": [
+          "/workspace/scratch/faebcae3f86e/proof/preflight-boundary/observations-final/w1-preflight-boundary",
+          "largest_seal_control"
+        ],
+        "wall_limit_seconds": 20,
+        "address_space_limit_bytes": 536870912,
+        "file_size_limit_bytes": 131072,
+        "timed_out": false,
+        "returncode": 0,
+        "cleanup_complete": true,
+        "started_utc": "2026-10-29T10:21:54.484522+00:00",
+        "leader_pid": 26,
+        "user_cpu_seconds": 0.0,
+        "system_cpu_seconds": 0.005937,
+        "max_waited_rss_kib": 10268,
+        "wall_seconds": 0.012835679997806437,
+        "success": true
+      },
+      "allocation_counter_positive_control": true,
+      "cpu_batch": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "cpu_batch",
+        "case": "largest_seal_control",
+        "calls": 4096,
+        "wall_ns": 47596,
+        "process_cpu_ns": 0,
+        "rust_allocations": 0,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 0,
+        "expected_outcome_matches": true,
+        "passed": true
+      },
+      "empty_loop_reference": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "empty_loop_reference",
+        "case": "largest_seal_control",
+        "calls": 4096,
+        "wall_ns": 4224,
+        "process_cpu_ns": 0,
+        "rust_allocations": 0,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 0,
+        "passed": true,
+        "subtracted_from_parser": false
+      },
+      "recorded_classes": [
+        "shape_admitted_not_verified"
+      ],
+      "wall_ns": {
+        "samples": [
+          1781,
+          1150,
+          794,
+          935,
+          450,
+          642,
+          607,
+          740,
+          756,
+          945,
+          650
+        ],
+        "min": 450,
+        "median": 756,
+        "max": 1781,
+        "first_after_construction": 1781
+      },
+      "process_cpu_ns": {
+        "samples": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "min": 0,
+        "median": 0,
+        "max": 0,
+        "first_after_construction": 0
+      },
+      "shapes": [
+        {
+          "segments": 1,
+          "padded_cycles": 1048576,
+          "maximum_po2": 20
+        }
+      ],
+      "amortized_observed_cpu_ns_per_call": null,
+      "cpu_zero_means": "unresolved short-interval measurement, never zero computation"
+    },
+    {
+      "case": "max_segments_cycles_control",
+      "passed": true,
+      "parse_error": null,
+      "construction": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "construction",
+        "case": "max_segments_cycles_control",
+        "synthetic_grammar": true,
+        "preflight_only": true,
+        "sdk_called": false,
+        "cryptographic_proof": false,
+        "input_bytes": 1241408,
+        "input_capacity_bytes": 1241409,
+        "wall_ns": 434634,
+        "process_cpu_ns": 0,
+        "rust_allocations": 1,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 1241409
+      },
+      "trial_count": 11,
+      "process": {
+        "command": [
+          "/workspace/scratch/faebcae3f86e/proof/preflight-boundary/observations-final/w1-preflight-boundary",
+          "max_segments_cycles_control"
+        ],
+        "wall_limit_seconds": 20,
+        "address_space_limit_bytes": 536870912,
+        "file_size_limit_bytes": 131072,
+        "timed_out": false,
+        "returncode": 0,
+        "cleanup_complete": true,
+        "started_utc": "2026-10-29T10:21:54.498943+00:00",
+        "leader_pid": 27,
+        "user_cpu_seconds": 0.09415699999999999,
+        "system_cpu_seconds": 0.0,
+        "max_waited_rss_kib": 10276,
+        "wall_seconds": 0.1041411030018935,
+        "success": true
+      },
+      "allocation_counter_positive_control": true,
+      "cpu_batch": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "cpu_batch",
+        "case": "max_segments_cycles_control",
+        "calls": 4096,
+        "wall_ns": 88241491,
+        "process_cpu_ns": 87796428,
+        "rust_allocations": 0,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 0,
+        "expected_outcome_matches": true,
+        "passed": true
+      },
+      "empty_loop_reference": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "empty_loop_reference",
+        "case": "max_segments_cycles_control",
+        "calls": 4096,
+        "wall_ns": 5641,
+        "process_cpu_ns": 0,
+        "rust_allocations": 0,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 0,
+        "passed": true,
+        "subtracted_from_parser": false
+      },
+      "recorded_classes": [
+        "shape_admitted_not_verified"
+      ],
+      "wall_ns": {
+        "samples": [
+          76779,
+          37965,
+          27524,
+          19069,
+          25447,
+          55754,
+          47478,
+          34472,
+          30215,
+          35362,
+          53571
+        ],
+        "min": 19069,
+        "median": 35362,
+        "max": 76779,
+        "first_after_construction": 76779
+      },
+      "process_cpu_ns": {
+        "samples": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "min": 0,
+        "median": 0,
+        "max": 0,
+        "first_after_construction": 0
+      },
+      "shapes": [
+        {
+          "segments": 2048,
+          "padded_cycles": 268435456,
+          "maximum_po2": 17
+        }
+      ],
+      "amortized_observed_cpu_ns_per_call": 21434.6748046875,
+      "cpu_zero_means": "unresolved short-interval measurement, never zero computation"
+    },
+    {
+      "case": "near_total_bytes_control",
+      "passed": true,
+      "parse_error": null,
+      "construction": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "construction",
+        "case": "near_total_bytes_control",
+        "synthetic_grammar": true,
+        "preflight_only": true,
+        "sdk_called": false,
+        "cryptographic_proof": false,
+        "input_bytes": 134217724,
+        "input_capacity_bytes": 134217725,
+        "wall_ns": 131147723,
+        "process_cpu_ns": 132193168,
+        "rust_allocations": 1,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 134217725
+      },
+      "trial_count": 11,
+      "process": {
+        "command": [
+          "/workspace/scratch/faebcae3f86e/proof/preflight-boundary/observations-final/w1-preflight-boundary",
+          "near_total_bytes_control"
+        ],
+        "wall_limit_seconds": 20,
+        "address_space_limit_bytes": 536870912,
+        "file_size_limit_bytes": 131072,
+        "timed_out": false,
+        "returncode": 0,
+        "cleanup_complete": true,
+        "started_utc": "2026-10-29T10:21:54.605229+00:00",
+        "leader_pid": 28,
+        "user_cpu_seconds": 0.132381,
+        "system_cpu_seconds": 0.127766,
+        "max_waited_rss_kib": 132844,
+        "wall_seconds": 0.27047226499416865,
+        "success": true
+      },
+      "allocation_counter_positive_control": true,
+      "cpu_batch": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "cpu_batch",
+        "case": "near_total_bytes_control",
+        "calls": 4096,
+        "wall_ns": 112667919,
+        "process_cpu_ns": 111689593,
+        "rust_allocations": 0,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 0,
+        "expected_outcome_matches": true,
+        "passed": true
+      },
+      "empty_loop_reference": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "empty_loop_reference",
+        "case": "near_total_bytes_control",
+        "calls": 4096,
+        "wall_ns": 4225,
+        "process_cpu_ns": 0,
+        "rust_allocations": 0,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 0,
+        "passed": true,
+        "subtracted_from_parser": false
+      },
+      "recorded_classes": [
+        "shape_admitted_not_verified"
+      ],
+      "wall_ns": {
+        "samples": [
+          185492,
+          105358,
+          164327,
+          37768,
+          61715,
+          26856,
+          23023,
+          20462,
+          64822,
+          108529,
+          75486
+        ],
+        "min": 20462,
+        "median": 64822,
+        "max": 185492,
+        "first_after_construction": 185492
+      },
+      "process_cpu_ns": {
+        "samples": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "min": 0,
+        "median": 0,
+        "max": 0,
+        "first_after_construction": 0
+      },
+      "shapes": [
+        {
+          "segments": 2048,
+          "padded_cycles": 268435456,
+          "maximum_po2": 17
+        }
+      ],
+      "amortized_observed_cpu_ns_per_call": 27267.967041015625,
+      "cpu_zero_means": "unresolved short-interval measurement, never zero computation"
+    },
+    {
+      "case": "exact_total_bytes_control",
+      "passed": true,
+      "parse_error": null,
+      "construction": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "construction",
+        "case": "exact_total_bytes_control",
+        "synthetic_grammar": true,
+        "preflight_only": true,
+        "sdk_called": false,
+        "cryptographic_proof": false,
+        "input_bytes": 134217728,
+        "input_capacity_bytes": 134217729,
+        "wall_ns": 111693998,
+        "process_cpu_ns": 109474650,
+        "rust_allocations": 1,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 134217729
+      },
+      "trial_count": 11,
+      "process": {
+        "command": [
+          "/workspace/scratch/faebcae3f86e/proof/preflight-boundary/observations-final/w1-preflight-boundary",
+          "exact_total_bytes_control"
+        ],
+        "wall_limit_seconds": 20,
+        "address_space_limit_bytes": 536870912,
+        "file_size_limit_bytes": 131072,
+        "timed_out": false,
+        "returncode": 0,
+        "cleanup_complete": true,
+        "started_utc": "2026-10-29T10:21:54.879109+00:00",
+        "leader_pid": 29,
+        "user_cpu_seconds": 0.106709,
+        "system_cpu_seconds": 0.11970399999999999,
+        "max_waited_rss_kib": 132780,
+        "wall_seconds": 0.23512028600089252,
+        "success": true
+      },
+      "allocation_counter_positive_control": true,
+      "cpu_batch": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "cpu_batch",
+        "case": "exact_total_bytes_control",
+        "calls": 4096,
+        "wall_ns": 99676964,
+        "process_cpu_ns": 98480800,
+        "rust_allocations": 0,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 0,
+        "expected_outcome_matches": true,
+        "passed": true
+      },
+      "empty_loop_reference": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "empty_loop_reference",
+        "case": "exact_total_bytes_control",
+        "calls": 4096,
+        "wall_ns": 4433,
+        "process_cpu_ns": 0,
+        "rust_allocations": 0,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 0,
+        "passed": true,
+        "subtracted_from_parser": false
+      },
+      "recorded_classes": [
+        "shape_admitted_not_verified"
+      ],
+      "wall_ns": {
+        "samples": [
+          234108,
+          130965,
+          40118,
+          37337,
+          48917,
+          42370,
+          41903,
+          40116,
+          49714,
+          47830,
+          54242
+        ],
+        "min": 37337,
+        "median": 47830,
+        "max": 234108,
+        "first_after_construction": 234108
+      },
+      "process_cpu_ns": {
+        "samples": [
+          219525,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "min": 0,
+        "median": 0,
+        "max": 219525,
+        "first_after_construction": 219525
+      },
+      "shapes": [
+        {
+          "segments": 2048,
+          "padded_cycles": 268435456,
+          "maximum_po2": 17
+        }
+      ],
+      "amortized_observed_cpu_ns_per_call": 24043.1640625,
+      "cpu_zero_means": "unresolved short-interval measurement, never zero computation"
+    },
+    {
+      "case": "late_last_segment_index",
+      "passed": true,
+      "parse_error": null,
+      "construction": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "construction",
+        "case": "late_last_segment_index",
+        "synthetic_grammar": true,
+        "preflight_only": true,
+        "sdk_called": false,
+        "cryptographic_proof": false,
+        "input_bytes": 134217728,
+        "input_capacity_bytes": 134217729,
+        "wall_ns": 628062855,
+        "process_cpu_ns": 621201369,
+        "rust_allocations": 1,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 134217729
+      },
+      "trial_count": 11,
+      "process": {
+        "command": [
+          "/workspace/scratch/faebcae3f86e/proof/preflight-boundary/observations-final/w1-preflight-boundary",
+          "late_last_segment_index"
+        ],
+        "wall_limit_seconds": 20,
+        "address_space_limit_bytes": 536870912,
+        "file_size_limit_bytes": 131072,
+        "timed_out": false,
+        "returncode": 0,
+        "cleanup_complete": true,
+        "started_utc": "2026-10-29T10:21:55.119203+00:00",
+        "leader_pid": 30,
+        "user_cpu_seconds": 0.314671,
+        "system_cpu_seconds": 0.511748,
+        "max_waited_rss_kib": 132780,
+        "wall_seconds": 0.8498173319967464,
+        "success": true
+      },
+      "allocation_counter_positive_control": true,
+      "cpu_batch": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "cpu_batch",
+        "case": "late_last_segment_index",
+        "calls": 4096,
+        "wall_ns": 139824495,
+        "process_cpu_ns": 137179284,
+        "rust_allocations": 0,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 0,
+        "expected_outcome_matches": true,
+        "passed": true
+      },
+      "empty_loop_reference": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "empty_loop_reference",
+        "case": "late_last_segment_index",
+        "calls": 4096,
+        "wall_ns": 6246,
+        "process_cpu_ns": 0,
+        "rust_allocations": 0,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 0,
+        "passed": true,
+        "subtracted_from_parser": false
+      },
+      "recorded_classes": [
+        "malformed_encoding"
+      ],
+      "wall_ns": {
+        "samples": [
+          289618,
+          174486,
+          521741,
+          156084,
+          176818,
+          115827,
+          171379,
+          104116,
+          98804,
+          80971,
+          75955
+        ],
+        "min": 75955,
+        "median": 156084,
+        "max": 521741,
+        "first_after_construction": 289618
+      },
+      "process_cpu_ns": {
+        "samples": [
+          0,
+          0,
+          49385,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "min": 0,
+        "median": 0,
+        "max": 49385,
+        "first_after_construction": 0
+      },
+      "shapes": [
+        null
+      ],
+      "amortized_observed_cpu_ns_per_call": 33491.0361328125,
+      "cpu_zero_means": "unresolved short-interval measurement, never zero computation"
+    },
+    {
+      "case": "late_last_segment_hash",
+      "passed": true,
+      "parse_error": null,
+      "construction": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "construction",
+        "case": "late_last_segment_hash",
+        "synthetic_grammar": true,
+        "preflight_only": true,
+        "sdk_called": false,
+        "cryptographic_proof": false,
+        "input_bytes": 134217728,
+        "input_capacity_bytes": 134217729,
+        "wall_ns": 147622831,
+        "process_cpu_ns": 147773896,
+        "rust_allocations": 1,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 134217729
+      },
+      "trial_count": 11,
+      "process": {
+        "command": [
+          "/workspace/scratch/faebcae3f86e/proof/preflight-boundary/observations-final/w1-preflight-boundary",
+          "late_last_segment_hash"
+        ],
+        "wall_limit_seconds": 20,
+        "address_space_limit_bytes": 536870912,
+        "file_size_limit_bytes": 131072,
+        "timed_out": false,
+        "returncode": 0,
+        "cleanup_complete": true,
+        "started_utc": "2026-10-29T10:21:55.978013+00:00",
+        "leader_pid": 31,
+        "user_cpu_seconds": 0.10019199999999999,
+        "system_cpu_seconds": 0.152387,
+        "max_waited_rss_kib": 132780,
+        "wall_seconds": 0.2649087749887258,
+        "success": true
+      },
+      "allocation_counter_positive_control": true,
+      "cpu_batch": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "cpu_batch",
+        "case": "late_last_segment_hash",
+        "calls": 4096,
+        "wall_ns": 91107865,
+        "process_cpu_ns": 87450876,
+        "rust_allocations": 0,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 0,
+        "expected_outcome_matches": true,
+        "passed": true
+      },
+      "empty_loop_reference": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "empty_loop_reference",
+        "case": "late_last_segment_hash",
+        "calls": 4096,
+        "wall_ns": 4385,
+        "process_cpu_ns": 0,
+        "rust_allocations": 0,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 0,
+        "passed": true,
+        "subtracted_from_parser": false
+      },
+      "recorded_classes": [
+        "refused_not_evaluated"
+      ],
+      "wall_ns": {
+        "samples": [
+          209097,
+          224196,
+          86889,
+          59199,
+          54765,
+          128664,
+          56365,
+          52093,
+          33682,
+          30441,
+          43045
+        ],
+        "min": 30441,
+        "median": 56365,
+        "max": 224196,
+        "first_after_construction": 209097
+      },
+      "process_cpu_ns": {
+        "samples": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "min": 0,
+        "median": 0,
+        "max": 0,
+        "first_after_construction": 0
+      },
+      "shapes": [
+        null
+      ],
+      "amortized_observed_cpu_ns_per_call": 21350.3115234375,
+      "cpu_zero_means": "unresolved short-interval measurement, never zero computation"
+    },
+    {
+      "case": "late_last_segment_cycle",
+      "passed": true,
+      "parse_error": null,
+      "construction": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "construction",
+        "case": "late_last_segment_cycle",
+        "synthetic_grammar": true,
+        "preflight_only": true,
+        "sdk_called": false,
+        "cryptographic_proof": false,
+        "input_bytes": 134217728,
+        "input_capacity_bytes": 134217729,
+        "wall_ns": 285794387,
+        "process_cpu_ns": 283463642,
+        "rust_allocations": 1,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 134217729
+      },
+      "trial_count": 11,
+      "process": {
+        "command": [
+          "/workspace/scratch/faebcae3f86e/proof/preflight-boundary/observations-final/w1-preflight-boundary",
+          "late_last_segment_cycle"
+        ],
+        "wall_limit_seconds": 20,
+        "address_space_limit_bytes": 536870912,
+        "file_size_limit_bytes": 131072,
+        "timed_out": false,
+        "returncode": 0,
+        "cleanup_complete": true,
+        "started_utc": "2026-10-29T10:21:56.245765+00:00",
+        "leader_pid": 32,
+        "user_cpu_seconds": 0.192371,
+        "system_cpu_seconds": 0.24967499999999998,
+        "max_waited_rss_kib": 132828,
+        "wall_seconds": 0.453140451994841,
+        "success": true
+      },
+      "allocation_counter_positive_control": true,
+      "cpu_batch": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "cpu_batch",
+        "case": "late_last_segment_cycle",
+        "calls": 4096,
+        "wall_ns": 127765997,
+        "process_cpu_ns": 124386720,
+        "rust_allocations": 0,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 0,
+        "expected_outcome_matches": true,
+        "passed": true
+      },
+      "empty_loop_reference": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "empty_loop_reference",
+        "case": "late_last_segment_cycle",
+        "calls": 4096,
+        "wall_ns": 5177,
+        "process_cpu_ns": 0,
+        "rust_allocations": 0,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 0,
+        "passed": true,
+        "subtracted_from_parser": false
+      },
+      "recorded_classes": [
+        "refused_not_evaluated"
+      ],
+      "wall_ns": {
+        "samples": [
+          1002459,
+          138085,
+          48461,
+          55499,
+          44022,
+          98769,
+          32060,
+          94346,
+          45242,
+          43057,
+          45180
+        ],
+        "min": 32060,
+        "median": 48461,
+        "max": 1002459,
+        "first_after_construction": 1002459
+      },
+      "process_cpu_ns": {
+        "samples": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "min": 0,
+        "median": 0,
+        "max": 0,
+        "first_after_construction": 0
+      },
+      "shapes": [
+        null
+      ],
+      "amortized_observed_cpu_ns_per_call": 30367.8515625,
+      "cpu_zero_means": "unresolved short-interval measurement, never zero computation"
+    },
+    {
+      "case": "late_last_claim_option",
+      "passed": true,
+      "parse_error": null,
+      "construction": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "construction",
+        "case": "late_last_claim_option",
+        "synthetic_grammar": true,
+        "preflight_only": true,
+        "sdk_called": false,
+        "cryptographic_proof": false,
+        "input_bytes": 134217728,
+        "input_capacity_bytes": 134217729,
+        "wall_ns": 82681060,
+        "process_cpu_ns": 79996759,
+        "rust_allocations": 1,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 134217729
+      },
+      "trial_count": 11,
+      "process": {
+        "command": [
+          "/workspace/scratch/faebcae3f86e/proof/preflight-boundary/observations-final/w1-preflight-boundary",
+          "late_last_claim_option"
+        ],
+        "wall_limit_seconds": 20,
+        "address_space_limit_bytes": 536870912,
+        "file_size_limit_bytes": 131072,
+        "timed_out": false,
+        "returncode": 0,
+        "cleanup_complete": true,
+        "started_utc": "2026-10-29T10:21:56.703419+00:00",
+        "leader_pid": 33,
+        "user_cpu_seconds": 0.156914,
+        "system_cpu_seconds": 0.111385,
+        "max_waited_rss_kib": 132780,
+        "wall_seconds": 0.2880561880010646,
+        "success": true
+      },
+      "allocation_counter_positive_control": true,
+      "cpu_batch": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "cpu_batch",
+        "case": "late_last_claim_option",
+        "calls": 4096,
+        "wall_ns": 160764062,
+        "process_cpu_ns": 157395151,
+        "rust_allocations": 0,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 0,
+        "expected_outcome_matches": true,
+        "passed": true
+      },
+      "empty_loop_reference": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "empty_loop_reference",
+        "case": "late_last_claim_option",
+        "calls": 4096,
+        "wall_ns": 6684,
+        "process_cpu_ns": 0,
+        "rust_allocations": 0,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 0,
+        "passed": true,
+        "subtracted_from_parser": false
+      },
+      "recorded_classes": [
+        "malformed_encoding"
+      ],
+      "wall_ns": {
+        "samples": [
+          179394,
+          115100,
+          107981,
+          63408,
+          122921,
+          67582,
+          35288,
+          38288,
+          34358,
+          69007,
+          182431
+        ],
+        "min": 34358,
+        "median": 69007,
+        "max": 182431,
+        "first_after_construction": 179394
+      },
+      "process_cpu_ns": {
+        "samples": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "min": 0,
+        "median": 0,
+        "max": 0,
+        "first_after_construction": 0
+      },
+      "shapes": [
+        null
+      ],
+      "amortized_observed_cpu_ns_per_call": 38426.550537109375,
+      "cpu_zero_means": "unresolved short-interval measurement, never zero computation"
+    },
+    {
+      "case": "late_outer_assumptions",
+      "passed": true,
+      "parse_error": null,
+      "construction": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "construction",
+        "case": "late_outer_assumptions",
+        "synthetic_grammar": true,
+        "preflight_only": true,
+        "sdk_called": false,
+        "cryptographic_proof": false,
+        "input_bytes": 134217728,
+        "input_capacity_bytes": 134217729,
+        "wall_ns": 542560927,
+        "process_cpu_ns": 543983762,
+        "rust_allocations": 1,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 134217729
+      },
+      "trial_count": 11,
+      "process": {
+        "command": [
+          "/workspace/scratch/faebcae3f86e/proof/preflight-boundary/observations-final/w1-preflight-boundary",
+          "late_outer_assumptions"
+        ],
+        "wall_limit_seconds": 20,
+        "address_space_limit_bytes": 536870912,
+        "file_size_limit_bytes": 131072,
+        "timed_out": false,
+        "returncode": 0,
+        "cleanup_complete": true,
+        "started_utc": "2026-10-29T10:21:56.997256+00:00",
+        "leader_pid": 34,
+        "user_cpu_seconds": 0.301652,
+        "system_cpu_seconds": 0.559682,
+        "max_waited_rss_kib": 132776,
+        "wall_seconds": 0.8905901630059816,
+        "success": true
+      },
+      "allocation_counter_positive_control": true,
+      "cpu_batch": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "cpu_batch",
+        "case": "late_outer_assumptions",
+        "calls": 4096,
+        "wall_ns": 211115811,
+        "process_cpu_ns": 208204180,
+        "rust_allocations": 0,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 0,
+        "expected_outcome_matches": true,
+        "passed": true
+      },
+      "empty_loop_reference": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "empty_loop_reference",
+        "case": "late_outer_assumptions",
+        "calls": 4096,
+        "wall_ns": 5442,
+        "process_cpu_ns": 0,
+        "rust_allocations": 0,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 0,
+        "passed": true,
+        "subtracted_from_parser": false
+      },
+      "recorded_classes": [
+        "refused_not_evaluated"
+      ],
+      "wall_ns": {
+        "samples": [
+          3886476,
+          223419,
+          161754,
+          125069,
+          98903,
+          81554,
+          71935,
+          87356,
+          68851,
+          102717,
+          89920
+        ],
+        "min": 68851,
+        "median": 98903,
+        "max": 3886476,
+        "first_after_construction": 3886476
+      },
+      "process_cpu_ns": {
+        "samples": [
+          2642303,
+          87051,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "min": 0,
+        "median": 0,
+        "max": 2642303,
+        "first_after_construction": 2642303
+      },
+      "shapes": [
+        null
+      ],
+      "amortized_observed_cpu_ns_per_call": 50831.0986328125,
+      "cpu_zero_means": "unresolved short-interval measurement, never zero computation"
+    },
+    {
+      "case": "late_outer_journal_length",
+      "passed": true,
+      "parse_error": null,
+      "construction": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "construction",
+        "case": "late_outer_journal_length",
+        "synthetic_grammar": true,
+        "preflight_only": true,
+        "sdk_called": false,
+        "cryptographic_proof": false,
+        "input_bytes": 134217728,
+        "input_capacity_bytes": 134217729,
+        "wall_ns": 181010122,
+        "process_cpu_ns": 178619315,
+        "rust_allocations": 1,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 134217729
+      },
+      "trial_count": 11,
+      "process": {
+        "command": [
+          "/workspace/scratch/faebcae3f86e/proof/preflight-boundary/observations-final/w1-preflight-boundary",
+          "late_outer_journal_length"
+        ],
+        "wall_limit_seconds": 20,
+        "address_space_limit_bytes": 536870912,
+        "file_size_limit_bytes": 131072,
+        "timed_out": false,
+        "returncode": 0,
+        "cleanup_complete": true,
+        "started_utc": "2026-10-29T10:21:57.907564+00:00",
+        "leader_pid": 35,
+        "user_cpu_seconds": 0.170489,
+        "system_cpu_seconds": 0.156169,
+        "max_waited_rss_kib": 132824,
+        "wall_seconds": 0.3447808070050087,
+        "success": true
+      },
+      "allocation_counter_positive_control": true,
+      "cpu_batch": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "cpu_batch",
+        "case": "late_outer_journal_length",
+        "calls": 4096,
+        "wall_ns": 117150773,
+        "process_cpu_ns": 116179241,
+        "rust_allocations": 0,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 0,
+        "expected_outcome_matches": true,
+        "passed": true
+      },
+      "empty_loop_reference": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "empty_loop_reference",
+        "case": "late_outer_journal_length",
+        "calls": 4096,
+        "wall_ns": 6033,
+        "process_cpu_ns": 0,
+        "rust_allocations": 0,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 0,
+        "passed": true,
+        "subtracted_from_parser": false
+      },
+      "recorded_classes": [
+        "refused_not_evaluated"
+      ],
+      "wall_ns": {
+        "samples": [
+          197393,
+          191761,
+          78423,
+          39443,
+          85748,
+          65613,
+          60493,
+          69531,
+          102207,
+          134943,
+          113593
+        ],
+        "min": 39443,
+        "median": 85748,
+        "max": 197393,
+        "first_after_construction": 197393
+      },
+      "process_cpu_ns": {
+        "samples": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "min": 0,
+        "median": 0,
+        "max": 0,
+        "first_after_construction": 0
+      },
+      "shapes": [
+        null
+      ],
+      "amortized_observed_cpu_ns_per_call": 28364.072509765625,
+      "cpu_zero_means": "unresolved short-interval measurement, never zero computation"
+    },
+    {
+      "case": "late_truncated_metadata",
+      "passed": true,
+      "parse_error": null,
+      "construction": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "construction",
+        "case": "late_truncated_metadata",
+        "synthetic_grammar": true,
+        "preflight_only": true,
+        "sdk_called": false,
+        "cryptographic_proof": false,
+        "input_bytes": 134217727,
+        "input_capacity_bytes": 134217729,
+        "wall_ns": 81607246,
+        "process_cpu_ns": 84001695,
+        "rust_allocations": 1,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 134217729
+      },
+      "trial_count": 11,
+      "process": {
+        "command": [
+          "/workspace/scratch/faebcae3f86e/proof/preflight-boundary/observations-final/w1-preflight-boundary",
+          "late_truncated_metadata"
+        ],
+        "wall_limit_seconds": 20,
+        "address_space_limit_bytes": 536870912,
+        "file_size_limit_bytes": 131072,
+        "timed_out": false,
+        "returncode": 0,
+        "cleanup_complete": true,
+        "started_utc": "2026-10-29T10:21:58.254848+00:00",
+        "leader_pid": 36,
+        "user_cpu_seconds": 0.098395,
+        "system_cpu_seconds": 0.10374599999999999,
+        "max_waited_rss_kib": 132780,
+        "wall_seconds": 0.2123966030048905,
+        "success": true
+      },
+      "allocation_counter_positive_control": true,
+      "cpu_batch": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "cpu_batch",
+        "case": "late_truncated_metadata",
+        "calls": 4096,
+        "wall_ns": 94667956,
+        "process_cpu_ns": 92481154,
+        "rust_allocations": 0,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 0,
+        "expected_outcome_matches": true,
+        "passed": true
+      },
+      "empty_loop_reference": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "empty_loop_reference",
+        "case": "late_truncated_metadata",
+        "calls": 4096,
+        "wall_ns": 6190,
+        "process_cpu_ns": 0,
+        "rust_allocations": 0,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 0,
+        "passed": true,
+        "subtracted_from_parser": false
+      },
+      "recorded_classes": [
+        "malformed_encoding"
+      ],
+      "wall_ns": {
+        "samples": [
+          200871,
+          168668,
+          96946,
+          27143,
+          21420,
+          20577,
+          22681,
+          49769,
+          90956,
+          59102,
+          72564
+        ],
+        "min": 20577,
+        "median": 59102,
+        "max": 200871,
+        "first_after_construction": 200871
+      },
+      "process_cpu_ns": {
+        "samples": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "min": 0,
+        "median": 0,
+        "max": 0,
+        "first_after_construction": 0
+      },
+      "shapes": [
+        null
+      ],
+      "amortized_observed_cpu_ns_per_call": 22578.40673828125,
+      "cpu_zero_means": "unresolved short-interval measurement, never zero computation"
+    },
+    {
+      "case": "late_trailing_byte",
+      "passed": true,
+      "parse_error": null,
+      "construction": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "construction",
+        "case": "late_trailing_byte",
+        "synthetic_grammar": true,
+        "preflight_only": true,
+        "sdk_called": false,
+        "cryptographic_proof": false,
+        "input_bytes": 134217725,
+        "input_capacity_bytes": 134217725,
+        "wall_ns": 657410472,
+        "process_cpu_ns": 643214492,
+        "rust_allocations": 1,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 134217725
+      },
+      "trial_count": 11,
+      "process": {
+        "command": [
+          "/workspace/scratch/faebcae3f86e/proof/preflight-boundary/observations-final/w1-preflight-boundary",
+          "late_trailing_byte"
+        ],
+        "wall_limit_seconds": 20,
+        "address_space_limit_bytes": 536870912,
+        "file_size_limit_bytes": 131072,
+        "timed_out": false,
+        "returncode": 0,
+        "cleanup_complete": true,
+        "started_utc": "2026-10-29T10:21:58.485853+00:00",
+        "leader_pid": 37,
+        "user_cpu_seconds": 0.27026,
+        "system_cpu_seconds": 0.513218,
+        "max_waited_rss_kib": 132780,
+        "wall_seconds": 0.8169176959927427,
+        "success": true
+      },
+      "allocation_counter_positive_control": true,
+      "cpu_batch": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "cpu_batch",
+        "case": "late_trailing_byte",
+        "calls": 4096,
+        "wall_ns": 109739512,
+        "process_cpu_ns": 106438624,
+        "rust_allocations": 0,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 0,
+        "expected_outcome_matches": true,
+        "passed": true
+      },
+      "empty_loop_reference": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "empty_loop_reference",
+        "case": "late_trailing_byte",
+        "calls": 4096,
+        "wall_ns": 5924,
+        "process_cpu_ns": 0,
+        "rust_allocations": 0,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 0,
+        "passed": true,
+        "subtracted_from_parser": false
+      },
+      "recorded_classes": [
+        "malformed_encoding"
+      ],
+      "wall_ns": {
+        "samples": [
+          463343,
+          163119,
+          107485,
+          125923,
+          128344,
+          107672,
+          115847,
+          55143,
+          44250,
+          47273,
+          62931
+        ],
+        "min": 44250,
+        "median": 107672,
+        "max": 463343,
+        "first_after_construction": 463343
+      },
+      "process_cpu_ns": {
+        "samples": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "min": 0,
+        "median": 0,
+        "max": 0,
+        "first_after_construction": 0
+      },
+      "shapes": [
+        null
+      ],
+      "amortized_observed_cpu_ns_per_call": 25985.9921875,
+      "cpu_zero_means": "unresolved short-interval measurement, never zero computation"
+    },
+    {
+      "case": "over_total_bytes",
+      "passed": true,
+      "parse_error": null,
+      "construction": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "construction",
+        "case": "over_total_bytes",
+        "synthetic_grammar": true,
+        "preflight_only": true,
+        "sdk_called": false,
+        "cryptographic_proof": false,
+        "input_bytes": 134217729,
+        "input_capacity_bytes": 134217729,
+        "wall_ns": 161654226,
+        "process_cpu_ns": 163896593,
+        "rust_allocations": 1,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 134217729
+      },
+      "trial_count": 11,
+      "process": {
+        "command": [
+          "/workspace/scratch/faebcae3f86e/proof/preflight-boundary/observations-final/w1-preflight-boundary",
+          "over_total_bytes"
+        ],
+        "wall_limit_seconds": 20,
+        "address_space_limit_bytes": 536870912,
+        "file_size_limit_bytes": 131072,
+        "timed_out": false,
+        "returncode": 0,
+        "cleanup_complete": true,
+        "started_utc": "2026-10-29T10:21:59.307805+00:00",
+        "leader_pid": 38,
+        "user_cpu_seconds": 0.020967,
+        "system_cpu_seconds": 0.169159,
+        "max_waited_rss_kib": 132780,
+        "wall_seconds": 0.20469125200179406,
+        "success": true
+      },
+      "allocation_counter_positive_control": true,
+      "cpu_batch": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "cpu_batch",
+        "case": "over_total_bytes",
+        "calls": 4096,
+        "wall_ns": 14436,
+        "process_cpu_ns": 0,
+        "rust_allocations": 0,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 0,
+        "expected_outcome_matches": true,
+        "passed": true
+      },
+      "empty_loop_reference": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "empty_loop_reference",
+        "case": "over_total_bytes",
+        "calls": 4096,
+        "wall_ns": 57773,
+        "process_cpu_ns": 0,
+        "rust_allocations": 0,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 0,
+        "passed": true,
+        "subtracted_from_parser": false
+      },
+      "recorded_classes": [
+        "refused_not_evaluated"
+      ],
+      "wall_ns": {
+        "samples": [
+          1785,
+          1486,
+          969,
+          1101,
+          773,
+          697,
+          628,
+          635,
+          1203,
+          1387,
+          1563
+        ],
+        "min": 628,
+        "median": 1101,
+        "max": 1785,
+        "first_after_construction": 1785
+      },
+      "process_cpu_ns": {
+        "samples": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "min": 0,
+        "median": 0,
+        "max": 0,
+        "first_after_construction": 0
+      },
+      "shapes": [
+        null
+      ],
+      "amortized_observed_cpu_ns_per_call": null,
+      "cpu_zero_means": "unresolved short-interval measurement, never zero computation"
+    },
+    {
+      "case": "over_segment_count",
+      "passed": true,
+      "parse_error": null,
+      "construction": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "construction",
+        "case": "over_segment_count",
+        "synthetic_grammar": true,
+        "preflight_only": true,
+        "sdk_called": false,
+        "cryptographic_proof": false,
+        "input_bytes": 134217728,
+        "input_capacity_bytes": 134217729,
+        "wall_ns": 88928745,
+        "process_cpu_ns": 88004992,
+        "rust_allocations": 1,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 134217729
+      },
+      "trial_count": 11,
+      "process": {
+        "command": [
+          "/workspace/scratch/faebcae3f86e/proof/preflight-boundary/observations-final/w1-preflight-boundary",
+          "over_segment_count"
+        ],
+        "wall_limit_seconds": 20,
+        "address_space_limit_bytes": 536870912,
+        "file_size_limit_bytes": 131072,
+        "timed_out": false,
+        "returncode": 0,
+        "cleanup_complete": true,
+        "started_utc": "2026-10-29T10:21:59.516738+00:00",
+        "leader_pid": 39,
+        "user_cpu_seconds": 0.008113,
+        "system_cpu_seconds": 0.093411,
+        "max_waited_rss_kib": 132844,
+        "wall_seconds": 0.11154297699977178,
+        "success": true
+      },
+      "allocation_counter_positive_control": true,
+      "cpu_batch": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "cpu_batch",
+        "case": "over_segment_count",
+        "calls": 4096,
+        "wall_ns": 13602,
+        "process_cpu_ns": 0,
+        "rust_allocations": 0,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 0,
+        "expected_outcome_matches": true,
+        "passed": true
+      },
+      "empty_loop_reference": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "empty_loop_reference",
+        "case": "over_segment_count",
+        "calls": 4096,
+        "wall_ns": 5284,
+        "process_cpu_ns": 0,
+        "rust_allocations": 0,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 0,
+        "passed": true,
+        "subtracted_from_parser": false
+      },
+      "recorded_classes": [
+        "refused_not_evaluated"
+      ],
+      "wall_ns": {
+        "samples": [
+          1307,
+          798,
+          665,
+          581,
+          474,
+          565,
+          540,
+          524,
+          611,
+          618,
+          692
+        ],
+        "min": 474,
+        "median": 611,
+        "max": 1307,
+        "first_after_construction": 1307
+      },
+      "process_cpu_ns": {
+        "samples": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "min": 0,
+        "median": 0,
+        "max": 0,
+        "first_after_construction": 0
+      },
+      "shapes": [
+        null
+      ],
+      "amortized_observed_cpu_ns_per_call": null,
+      "cpu_zero_means": "unresolved short-interval measurement, never zero computation"
+    },
+    {
+      "case": "over_seal_words",
+      "passed": true,
+      "parse_error": null,
+      "construction": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "construction",
+        "case": "over_seal_words",
+        "synthetic_grammar": true,
+        "preflight_only": true,
+        "sdk_called": false,
+        "cryptographic_proof": false,
+        "input_bytes": 134217728,
+        "input_capacity_bytes": 134217729,
+        "wall_ns": 175323842,
+        "process_cpu_ns": 175975106,
+        "rust_allocations": 1,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 134217729
+      },
+      "trial_count": 11,
+      "process": {
+        "command": [
+          "/workspace/scratch/faebcae3f86e/proof/preflight-boundary/observations-final/w1-preflight-boundary",
+          "over_seal_words"
+        ],
+        "wall_limit_seconds": 20,
+        "address_space_limit_bytes": 536870912,
+        "file_size_limit_bytes": 131072,
+        "timed_out": false,
+        "returncode": 0,
+        "cleanup_complete": true,
+        "started_utc": "2026-10-29T10:21:59.646619+00:00",
+        "leader_pid": 40,
+        "user_cpu_seconds": 0.016914,
+        "system_cpu_seconds": 0.178447,
+        "max_waited_rss_kib": 132772,
+        "wall_seconds": 0.2171153490053257,
+        "success": true
+      },
+      "allocation_counter_positive_control": true,
+      "cpu_batch": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "cpu_batch",
+        "case": "over_seal_words",
+        "calls": 4096,
+        "wall_ns": 17347,
+        "process_cpu_ns": 0,
+        "rust_allocations": 0,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 0,
+        "expected_outcome_matches": true,
+        "passed": true
+      },
+      "empty_loop_reference": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "empty_loop_reference",
+        "case": "over_seal_words",
+        "calls": 4096,
+        "wall_ns": 4192,
+        "process_cpu_ns": 0,
+        "rust_allocations": 0,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 0,
+        "passed": true,
+        "subtracted_from_parser": false
+      },
+      "recorded_classes": [
+        "refused_not_evaluated"
+      ],
+      "wall_ns": {
+        "samples": [
+          1678,
+          417,
+          621,
+          1039,
+          552,
+          608,
+          1000,
+          561,
+          510,
+          560,
+          614
+        ],
+        "min": 417,
+        "median": 608,
+        "max": 1678,
+        "first_after_construction": 1678
+      },
+      "process_cpu_ns": {
+        "samples": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "min": 0,
+        "median": 0,
+        "max": 0,
+        "first_after_construction": 0
+      },
+      "shapes": [
+        null
+      ],
+      "amortized_observed_cpu_ns_per_call": null,
+      "cpu_zero_means": "unresolved short-interval measurement, never zero computation"
+    },
+    {
+      "case": "over_seal_length_u64max",
+      "passed": true,
+      "parse_error": null,
+      "construction": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "construction",
+        "case": "over_seal_length_u64max",
+        "synthetic_grammar": true,
+        "preflight_only": true,
+        "sdk_called": false,
+        "cryptographic_proof": false,
+        "input_bytes": 134217728,
+        "input_capacity_bytes": 134217729,
+        "wall_ns": 332531081,
+        "process_cpu_ns": 331413899,
+        "rust_allocations": 1,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 134217729
+      },
+      "trial_count": 11,
+      "process": {
+        "command": [
+          "/workspace/scratch/faebcae3f86e/proof/preflight-boundary/observations-final/w1-preflight-boundary",
+          "over_seal_length_u64max"
+        ],
+        "wall_limit_seconds": 20,
+        "address_space_limit_bytes": 536870912,
+        "file_size_limit_bytes": 131072,
+        "timed_out": false,
+        "returncode": 0,
+        "cleanup_complete": true,
+        "started_utc": "2026-10-29T10:21:59.867049+00:00",
+        "leader_pid": 41,
+        "user_cpu_seconds": 0.014877999999999999,
+        "system_cpu_seconds": 0.32995599999999997,
+        "max_waited_rss_kib": 132772,
+        "wall_seconds": 0.36332261700590607,
+        "success": true
+      },
+      "allocation_counter_positive_control": true,
+      "cpu_batch": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "cpu_batch",
+        "case": "over_seal_length_u64max",
+        "calls": 4096,
+        "wall_ns": 19049,
+        "process_cpu_ns": 0,
+        "rust_allocations": 0,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 0,
+        "expected_outcome_matches": true,
+        "passed": true
+      },
+      "empty_loop_reference": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "empty_loop_reference",
+        "case": "over_seal_length_u64max",
+        "calls": 4096,
+        "wall_ns": 4767,
+        "process_cpu_ns": 0,
+        "rust_allocations": 0,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 0,
+        "passed": true,
+        "subtracted_from_parser": false
+      },
+      "recorded_classes": [
+        "refused_not_evaluated"
+      ],
+      "wall_ns": {
+        "samples": [
+          2781,
+          1451,
+          481,
+          425,
+          414,
+          974,
+          2352,
+          659,
+          1037,
+          491,
+          575
+        ],
+        "min": 414,
+        "median": 659,
+        "max": 2781,
+        "first_after_construction": 2781
+      },
+      "process_cpu_ns": {
+        "samples": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "min": 0,
+        "median": 0,
+        "max": 0,
+        "first_after_construction": 0
+      },
+      "shapes": [
+        null
+      ],
+      "amortized_observed_cpu_ns_per_call": null,
+      "cpu_zero_means": "unresolved short-interval measurement, never zero computation"
+    },
+    {
+      "case": "short_last_seal",
+      "passed": true,
+      "parse_error": null,
+      "construction": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "construction",
+        "case": "short_last_seal",
+        "synthetic_grammar": true,
+        "preflight_only": true,
+        "sdk_called": false,
+        "cryptographic_proof": false,
+        "input_bytes": 134217728,
+        "input_capacity_bytes": 134217729,
+        "wall_ns": 239792605,
+        "process_cpu_ns": 239966116,
+        "rust_allocations": 1,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 134217729
+      },
+      "trial_count": 11,
+      "process": {
+        "command": [
+          "/workspace/scratch/faebcae3f86e/proof/preflight-boundary/observations-final/w1-preflight-boundary",
+          "short_last_seal"
+        ],
+        "wall_limit_seconds": 20,
+        "address_space_limit_bytes": 536870912,
+        "file_size_limit_bytes": 131072,
+        "timed_out": false,
+        "returncode": 0,
+        "cleanup_complete": true,
+        "started_utc": "2026-10-29T10:22:00.246227+00:00",
+        "leader_pid": 42,
+        "user_cpu_seconds": 0.132648,
+        "system_cpu_seconds": 0.212417,
+        "max_waited_rss_kib": 132780,
+        "wall_seconds": 0.424284478998743,
+        "success": true
+      },
+      "allocation_counter_positive_control": true,
+      "cpu_batch": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "cpu_batch",
+        "case": "short_last_seal",
+        "calls": 4096,
+        "wall_ns": 90080970,
+        "process_cpu_ns": 86485628,
+        "rust_allocations": 0,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 0,
+        "expected_outcome_matches": true,
+        "passed": true
+      },
+      "empty_loop_reference": {
+        "schema": "pon-w1-preflight-boundary-measurement-v1",
+        "record": "empty_loop_reference",
+        "case": "short_last_seal",
+        "calls": 4096,
+        "wall_ns": 5296,
+        "process_cpu_ns": 0,
+        "rust_allocations": 0,
+        "rust_reallocations": 0,
+        "rust_deallocations": 0,
+        "requested_allocation_bytes": 0,
+        "passed": true,
+        "subtracted_from_parser": false
+      },
+      "recorded_classes": [
+        "malformed_encoding"
+      ],
+      "wall_ns": {
+        "samples": [
+          239327,
+          180270,
+          73080,
+          38217,
+          47520,
+          36455,
+          78182,
+          62292,
+          42738,
+          76115,
+          30177
+        ],
+        "min": 30177,
+        "median": 62292,
+        "max": 239327,
+        "first_after_construction": 239327
+      },
+      "process_cpu_ns": {
+        "samples": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "min": 0,
+        "median": 0,
+        "max": 0,
+        "first_after_construction": 0
+      },
+      "shapes": [
+        null
+      ],
+      "amortized_observed_cpu_ns_per_call": 21114.6552734375,
+      "cpu_zero_means": "unresolved short-interval measurement, never zero computation"
+    }
+  ],
+  "failures": [],
+  "rustc": {
+    "path": "/tmp/chain-pon-rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+    "bytes": 644784,
+    "sha256": "bff349e72704ff70bc08a234a3847338e797065bbedde5e556808bc87b7bf7c6",
+    "git_blob": "d2d5434a06d69fdd4982b4ed3e41cba1d138cd4e"
+  },
+  "dynamic_std": {
+    "path": "/tmp/chain-pon-rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libstd-d1237ef7159db0a2.so",
+    "bytes": 5418488,
+    "sha256": "abca53e870629e3f9f97ae72897181dcc4db555d8e6ace00351b02a74ef77c81",
+    "git_blob": "5f15867799cd29f14eb30d0e3bfca5673753ec2d"
+  },
+  "linkage": "Dynamic compiler-owned std plus symbol stripping keeps the ELF inside the unchanged128KiB file cap. No SDK or non-std Rust dependency.",
+  "compile": {
+    "command": [
+      "/tmp/chain-pon-rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+      "--edition=2024",
+      "-C",
+      "opt-level=3",
+      "-C",
+      "prefer-dynamic",
+      "-C",
+      "strip=symbols",
+      "-C",
+      "codegen-units=1",
+      "-D",
+      "warnings",
+      "/workspace/scratch/faebcae3f86e/proof/preflight-boundary/repo/scripts/ci/w1_preflight_boundary_v1.rs",
+      "-o",
+      "/workspace/scratch/faebcae3f86e/proof/preflight-boundary/observations-final/w1-preflight-boundary"
+    ],
+    "wall_limit_seconds": 45,
+    "address_space_limit_bytes": 2147483648,
+    "file_size_limit_bytes": 131072,
+    "timed_out": false,
+    "returncode": 0,
+    "cleanup_complete": true,
+    "started_utc": "2026-10-29T10:21:53.880357+00:00",
+    "leader_pid": 6,
+    "user_cpu_seconds": 0.499691,
+    "system_cpu_seconds": 0.086925,
+    "max_waited_rss_kib": 143652,
+    "wall_seconds": 0.5875327039975673,
+    "success": true
+  },
+  "binary": {
+    "bytes": 35104,
+    "sha256": "d81b6ee747de150a1b3085853b2c5215f11e8bd6c277fde880fb4b64d2dad275",
+    "git_blob": "165dc0ea2ec78e9e602a42142bfea36b6759cf07"
+  },
+  "parser_after": {
+    "bytes": 8229,
+    "sha256": "e4b5bea658dc06649e0b0c69f09bf3407d4eb64b73f382aac3be2a24da8d2d37",
+    "git_blob": "a35271781ae442c534b456dde3c930ecd034eb86"
+  },
+  "harness_after": {
+    "bytes": 17509,
+    "sha256": "8e965321d852c6fb2649ca335e1f21bd50645a0b29c9bdb76c14750240922d11",
+    "git_blob": "2c1e936037f2d161991d4f58ae5021cc91999f88"
+  },
+  "source_unchanged": true,
+  "dynamic_std_after": {
+    "path": "/tmp/chain-pon-rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libstd-d1237ef7159db0a2.so",
+    "bytes": 5418488,
+    "sha256": "abca53e870629e3f9f97ae72897181dcc4db555d8e6ace00351b02a74ef77c81",
+    "git_blob": "5f15867799cd29f14eb30d0e3bfca5673753ec2d"
+  },
+  "passed": true
+}

@@ -1,0 +1,15 @@
+{
+  "command": [
+    "/usr/bin/true"
+  ],
+  "wall_limit_seconds": 1,
+  "address_space_limit_bytes": 536870912,
+  "file_size_limit_bytes": 131072,
+  "timed_out": false,
+  "returncode": null,
+  "cleanup_complete": false,
+  "started_utc": "2026-10-29T10:26:50.684098+00:00",
+  "owner_error": "ValueError('nondefault SIGCHLD would invalidate leader reservation')",
+  "wall_seconds": 5.0458009354770184e-05,
+  "success": false
+}
