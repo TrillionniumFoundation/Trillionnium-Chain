@@ -4340,3 +4340,28 @@ artifact inventory step. A signal received during the final safety cleanup is
 retained as controller cancellation and prevents normal success while cleanup
 continues. Synthetic successful-record controls retain both these negative
 cases and the positive all-steps-complete path; none is a native qualification.
+
+### 2026-10-29 - Additional pure/raw-W1 ordinary History integration
+
+Add the explicit research namespace `public-pure-pon-history-raw-development-v1`
+on the `96f5e502d677fa37d53e0241208ce228a913d907` History implementation. Its signed
+policy binds zero ticket bits, canonical acknowledgement nonce zero and a zero
+search budget. The historical protected constructor, signed IDs, actor jobs,
+tests and workflows retain their existing behavior. Pure configuration refuses
+arithmetic, rejection-cache and native-growth overlays; the original complete
+raw W1 checks and ordinary journal/activation/History paths remain enabled.
+
+The separate strict/N8 selectors preserve every original workload, CPU/memory
+limit, deadline, paid-depletion, overlap, full-state equality and confirmation
+predicate. Their independent reader refuses protected or nonzero-search
+receipts and requires the original real verifier IPC, fixed-parent and lifeline
+evidence. Its synthetic controls and actual TCP/CLI component controls cannot
+replace a source-bound hosted fixed-cgroup execution. The additive workflow has
+its own concurrency group and artifact names and preserves failed/partial runs.
+
+See `PURE_HISTORY_RAW_JOINT_V1.md` for the exact signed vector, CLI, selectors and
+evidence boundary. This integration does not claim that the original failed
+protected campaigns passed. Hosted pure campaigns remain unqualified until
+their actual frozen-source results are read. Existing clean-close and owner-death
+receipts do not by themselves close mid-journal/activation crash recovery or
+all durable child settlement; that additional fault/restart work remains open.

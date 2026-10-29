@@ -43,6 +43,10 @@ impl PublicServer {
     /// actual CPU/intake domain and starts no listener or owner.
     pub fn with_native_growth(mut self) -> Result<Self> {
         ensure(
+            !self.policy.is_pure_history_raw(),
+            "PUBLIC_PURE_HISTORY_RAW_PROFILE",
+        )?;
+        ensure(
             !self.native_growth && self.arithmetic_facts.is_none(),
             "PUBLIC_GROWTH_PROFILE",
         )?;

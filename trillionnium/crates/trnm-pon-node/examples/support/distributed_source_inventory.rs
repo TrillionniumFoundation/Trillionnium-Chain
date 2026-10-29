@@ -3494,6 +3494,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/pure_history_raw.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/ingress/public_v3/pure_history_raw.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/pure_history_raw/tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/ingress/public_v3/pure_history_raw/tests.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -4786,6 +4800,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/tests/public_v3_service_campaign.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/tests/pure_history_raw_cli.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/pure_history_raw_cli.rs"
         )),
     ),
     (
