@@ -463,6 +463,7 @@ jobs:
         shell: bash
         run: |
           set -uo pipefail
+          set +e
           # A writable output receipt cannot grant authority to stop a unit.
           sudo -n python3 -B scripts/ci/history_fixed_parent_v2.py cleanup-probe \
             --owner "$GITHUB_RUN_ID.$GITHUB_RUN_ATTEMPT" > "$OUT/fixed-parent-probe-cleanup.json"
@@ -476,6 +477,7 @@ jobs:
         shell: bash
         run: |
           set -uo pipefail
+          set +e
           python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$EXPECTED_HEAD" --output "$OUT/source-after.json" > "$OUT/source-after.log" 2>&1
           source_status=$?
           python3 - <<'PY'
