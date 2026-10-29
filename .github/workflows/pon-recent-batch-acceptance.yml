@@ -112,7 +112,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 -m unittest discover -s scripts/ci -p test_history_graph_resource_native_v1.py -v 2>&1 | tee "$OUT/graph-physical-reader.log"
-          grep -E '^Ran 6 tests in ' "$OUT/graph-physical-reader.log"
+          grep -E '^Ran 8 tests in ' "$OUT/graph-physical-reader.log"
           grep -x OK "$OUT/graph-physical-reader.log"
           python3 -m unittest discover -s scripts/ci -p test_native_history_verifier.py -v 2>&1 | tee "$OUT/graph-history-reader.log"
           grep -E '^Ran 5 tests in ' "$OUT/graph-history-reader.log"

@@ -308,7 +308,7 @@ jobs:
           python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$EXPECTED_SOURCE" --output "$OUT/checkout-source.json"
           bash scripts/project-preflight.sh --audit
           python3 -m unittest discover -s scripts/ci -p test_history_graph_resource_native_v1.py -v 2>&1 | tee "$OUT/physical-reader-controls.log"
-          grep -E '^Ran 6 tests in ' "$OUT/physical-reader-controls.log"
+          grep -E '^Ran 8 tests in ' "$OUT/physical-reader-controls.log"
           grep -x OK "$OUT/physical-reader-controls.log"
           python3 -m unittest discover -s scripts/ci -p test_history_fixed_parent_v2.py -v 2>&1 | tee "$OUT/fixed-parent-controls.log"
           grep -E '^Ran 4 tests in ' "$OUT/fixed-parent-controls.log"
