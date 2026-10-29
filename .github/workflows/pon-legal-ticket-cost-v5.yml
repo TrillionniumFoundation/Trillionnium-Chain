@@ -6,6 +6,8 @@ on:
       - trillionnium/crates/trnm-pon-node/examples/pon_legal_ticket_cost_v5.rs
       - scripts/ci/check_legal_ticket_cost_v5.py
       - scripts/ci/test_legal_ticket_cost_v5.py
+      - scripts/ci/legal_ticket_cost_diagnostics_v1.py
+      - scripts/ci/test_legal_ticket_cost_diagnostics_v1.py
 permissions:
   contents: read
 concurrency:
@@ -74,6 +76,7 @@ jobs:
           python3 scripts/ci/test_legal_ticket_cost_v3.py 2>&1 | tee "$OUT/original-v3-reader-controls.log"
           python3 scripts/ci/test_legal_ticket_batch_v4.py 2>&1 | tee "$OUT/original-batch-v4-reader-controls.log"
           python3 scripts/ci/test_legal_ticket_cost_v5.py 2>&1 | tee "$OUT/v5-reader-controls.log"
+          python3 scripts/ci/test_legal_ticket_cost_diagnostics_v1.py 2>&1 | tee "$OUT/v5-paired-diagnostic-controls.log"
           cargo metadata --locked --format-version 1 --manifest-path trillionnium/Cargo.toml > "$OUT/cargo-graph.json"
           cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee "$OUT/fmt.log"
       - name: Preserve original matrix controls and verify every complete legal proof
@@ -115,7 +118,7 @@ jobs:
         run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$EXPECTED_HEAD" --output "$RUNNER_TEMP/legal-ticket-v5-evidence/source-after.json"
       - name: Independently verify complete costs, unique admissions and cold readback
         if: ${{ !cancelled() && steps.campaign.outcome == 'success' && steps.source_after.outcome == 'success' }}
-        run: python3 scripts/ci/check_legal_ticket_cost_v5.py --capture "$OUT/cost/capture.json" --expected-head "$EXPECTED_HEAD" --source-before "$OUT/source-before.json" --source-after "$OUT/source-after.json" --output "$OUT/cost/summary.json"
+        run: python3 scripts/ci/check_legal_ticket_cost_v5.py --capture "$OUT/cost/capture.json" --expected-head "$EXPECTED_HEAD" --source-before "$OUT/source-before.json" --source-after "$OUT/source-after.json" --output "$OUT/cost/summary.json" --diagnostics-output "$OUT/cost/paired-diagnostics.json"
       - name: Retain all three executables, original V4 packet bytes and every observation including failures
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02

@@ -64,6 +64,33 @@ def control():
     return rows
 
 
+def exhausted_control(rounds=(0,)):
+    """A whole paired horizon exhausts; none of its eight misses disappears."""
+    rows = control()
+    for row in rows[1:-1]:
+        if row["round"] not in rounds or row["search_horizon"] != 1:
+            continue
+        first = row["searches"][0]["trials"][0]
+        trials = []
+        for trial in range(8):
+            attempted = {key: copy.deepcopy(value) for key, value in first.items()
+                         if key not in ("packet_id", "packet_bytes", "native_admission")}
+            attempted.update(trial=trial, nonce=first["nonce"] + trial,
+                             ticket="ff" * 32, target_hit=False)
+            trials.append(attempted)
+        row.update(target="00" * 32, searches=[dict(search=0, won=False, trials=trials)],
+                   retained_packets=[], attempts=8, winners=0, exhausted=1,
+                   first_native_admissions=0, cold_packet_readbacks=0,
+                   cold_recovery_active=dict(id=row["parent"], generation=2),
+                   cold_recovery_selected_height=0)
+        for name, value in (("all_attempt_generation", 8), ("packet_encoding", 0),
+                            ("first_native_admission", 0), ("cold_packet_readback", 0)):
+            row["phases"][name] = dict(wall_ns=value, process_cpu_ns=value)
+        row["all_exclusive_phases"] = summed(row["phases"].values())
+        row["recurring_producer_encode_admission"] = summed(row["phases"][name] for name in RECURRING)
+    return rows
+
+
 class Reader(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -108,6 +135,40 @@ class Reader(unittest.TestCase):
         self.reject(lambda r: r[19]["searches"][0]["trials"][0].update(
             nonce=r[1]["searches"][0]["trials"][0]["nonce"]))
         self.reject(lambda r: r[2].update(stream_sha256="ff" * 32))
+
+    def test_unchanged_claimed_stream_cannot_hide_different_attempt_records(self):
+        for field, value in (("challenge", "a1" * 32), ("proof_sha256", "a2" * 32),
+                             ("ticket", "a3" * 32)):
+            with self.subTest(field=field):
+                self.reject(lambda rows: rows[2]["searches"][0]["trials"][0].update(
+                    {field: value}))
+
+    def test_unchanged_claimed_stream_cannot_hide_different_retained_bytes(self):
+        self.reject(lambda rows: rows[2]["retained_packets"][0].update(sha256="a4" * 32))
+
+        def change_packet_length(rows):
+            rows[2]["searches"][0]["trials"][0]["packet_bytes"] = 50001
+            rows[2]["retained_packets"][0]["bytes"] = 50001
+
+        self.reject(change_packet_length)
+
+    def test_exhausted_search_keeps_every_paired_missed_proof(self):
+        rows = exhausted_control()
+        self.assertEqual(validate(rows)["cohorts"], COHORTS)
+        for trial in (0, 7):
+            changed = copy.deepcopy(rows)
+            changed[2]["searches"][0]["trials"][trial]["proof_sha256"] = "a5" * 32
+            with self.subTest(trial=trial), self.assertRaisesRegex(ValueError, "paired attempted"):
+                validate(changed)
+
+    def test_paired_observation_allows_different_measured_clocks(self):
+        rows = copy.deepcopy(self.original)
+        row = rows[2]
+        row["searches"][0]["trials"][0]["generation"]["wall_ns"] += 7
+        row["phases"]["all_attempt_generation"]["wall_ns"] += 7
+        row["all_exclusive_phases"]["wall_ns"] += 7
+        row["recurring_producer_encode_admission"]["wall_ns"] += 7
+        self.assertEqual(validate(rows)["cohorts"], COHORTS)
 
     def test_duplicate_admission_and_missing_cold_bytes(self):
         self.reject(lambda r: r[19]["searches"][1]["trials"][0].update(

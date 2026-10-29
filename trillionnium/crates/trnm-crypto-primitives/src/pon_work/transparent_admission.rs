@@ -11,6 +11,7 @@ use bincode::Options;
 use hex::FromHex;
 use risc0_binfmt::Digestible;
 use risc0_zkvm::{sha::Digest, InnerReceipt, Receipt, VerifierContext};
+use trnm_protocol::pon_wire::Header;
 
 use super::full_relation::{self, PublicStatement, INPUT_BYTES, STATEMENT_BYTES};
 
@@ -69,6 +70,19 @@ pub fn verify_bound(wire: &[u8], expected: &PublicStatement) -> Result<VerifiedC
     ensure!(
         input[..STATEMENT_BYTES] == expected.encode(),
         "W1_CERTIFICATE_CONTEXT"
+    );
+    // Equality with the supplied context does not establish that the header's
+    // duplicated task and target agree with that context. The fixed guest
+    // rejects either mismatch; do so before witness or receipt processing too.
+    let header = Header::decode(expected.header_bytes())
+        .map_err(|error| anyhow::anyhow!("W1_CERTIFICATE_HEADER:{error:?}"))?;
+    ensure!(
+        header.work_task == expected.expected_task(),
+        "W1_CERTIFICATE_HEADER_TASK"
+    );
+    ensure!(
+        header.target == expected.expected_target(),
+        "W1_CERTIFICATE_HEADER_TARGET"
     );
     let journal = full_relation::unverified_claimed_journal(input)
         .map_err(|error| anyhow::anyhow!("W1_CERTIFICATE_STATEMENT:{error:?}"))?;

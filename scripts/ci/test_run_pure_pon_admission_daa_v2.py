@@ -132,6 +132,20 @@ class NativeCompletionControls(unittest.TestCase):
     def test_process_failure_cannot_be_overruled_by_printed_success(self):
         self.assertFalse(runner.native_verdict("pure-cli", {"complete_success": False}, summary())["qualified"])
 
+    def test_cost_contract_cannot_be_satisfied_by_an_unselected_native_test(self):
+        steps = [{"complete_success": True}]
+        verdicts = [runner.native_verdict(name, steps[0], summary()) for name in sorted(runner.NATIVE_GATES)]
+        cost = next(row for row in verdicts if row["name"] == "pressure-attacker-cost-contract")
+        original = deepcopy(cost)
+        cost.update(runner.native_verdict(cost["name"], steps[0], summary(0)))
+        self.assertTrue(cost["process_complete_success"])
+        self.assertFalse(runner.terminal_success(steps, verdicts, None, []))
+        cost.update(original)
+        # A failed independent ledger read stays failed even when every native
+        # test and the old pressure service test completed successfully.
+        self.assertFalse(runner.terminal_success(
+            steps + [{"name": "pure-attacker-cost-reader", "complete_success": False}], verdicts, None, []))
+
     def test_all_required_native_gates_and_finalization_must_pass(self):
         steps = [{"complete_success": True}]
         verdicts = [runner.native_verdict(name, steps[0], summary()) for name in sorted(runner.NATIVE_GATES)]

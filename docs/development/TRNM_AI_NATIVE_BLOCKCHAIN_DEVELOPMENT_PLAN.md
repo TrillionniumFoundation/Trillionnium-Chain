@@ -4700,3 +4700,93 @@ The [V4 experiment](../protocol/pon-nakamoto-v1/details/LEGAL_CPU_BATCH_COST_V4.
 ### 2026-10-28 — legal CPU batch V4 report construction repair
 
 The first exact-source x86-64 hosted build at c4d055d81a6f707fb28c9726821da4163b0057cb failed before native execution on the large serde_json macro recursion expansion. The unchanged phase object is now constructed separately after the outer observation and inserted into the same report. No compiler recursion attribute, runtime budget, complete W1 work, predicate, packet output, accounting scope or acceptance control changes. The original job log and hash are retained in evidence/pon-legal-cpu-batch-v4-20261028; both original native architecture lanes still need real terminal results.
+
+### PN1/I01-I02 — complete producer and attacker cost continuation (2026-10-28)
+
+This continuation starts from `0f04de8ee26b1871ef95653dda51df220660bd4a` inside
+the existing M01/M02/M03/M04/M15/M17 owners. Required-work accumulation, target
+arithmetic, equal-work nonreplacement, DAA, maintenance eligibility, zero useful
+maintenance credit and probabilistic finality remain unchanged. Statement
+correctness, computational-cost qualification and honest public service retain
+three separate verdicts. Model evaluation or a finite experiment grants none of
+the other authorities.
+
+The original prepared generic and maintenance-limb producers now additionally
+offer an opaque borrowed `ProducerCandidate`. It retains the exact task prefix,
+challenge and fully computed transcript. Every candidate still evaluates all
+noise and 512 transcript tiles. The candidate can expose its ticket before a
+49,188-byte proof is materialized. Winning assembly has its own real
+`BeforeProof` cancellation boundary; it creates bytes only, never `VerifiedWork`.
+The existing `prove` callbacks, error order, arithmetic, wire bytes and default
+verifier are retained. The independent 898-observation / 56-cancellation legacy
+control passed against the original implementation before this refactor.
+
+The new [six-arm native driver](../../trillionnium/crates/trnm-pon-node/examples/pon_ticket_first_cost_v1.rs)
+separates legacy assembly, candidate assembly on every attempt, and assembly only
+for target hits for each of the two kernels. Two paired rounds, four actual
+horizons (1/8/64/256), fresh/retained setup and six arms produce 96 fresh stores.
+The seed-two nonce windows are disjoint from the old V5 fixture. Complete missed
+attempts, actual setup, first native admission and ordinary cold packet readback
+remain in the recorded cost scopes. A missed candidate's canonical proof hash
+is streamed from the fixed prefix and real trace without allocating its full
+proof; it is not mislabeled as a serialized or independently verified miss.
+The [independent reader](../../scripts/ci/check_ticket_first_cost_v1.py) checks
+paired raw records and distinguishes allocation changes from avoided miss
+serialization. The new 600/610-second observation is separate from the unchanged
+V3/V4/V5 campaigns. Source controls alone do not establish a performance gain.
+Bounded, flushed write-ahead records retain completed trial observations when a
+cohort fails; successful readback reconciles their exact sequence and clocks
+against the complete stdout records. Missing or inconsistent records cannot
+qualify a surviving subset. Exclusive phase costs, the enclosing cohort and the
+whole native process remain distinct; final cleanup, serialization and producer
+destruction are included only in the whole-process capture. The explicit new
+release capture identity cannot relabel an old test-profile observation.
+
+The original V5 reader now rejects inconsistent per-trial challenge/proof/ticket
+or cold packet records even if the producer repeats the same claimed stream
+digest. Actual old x86_64 artifact 12834526404 and aarch64 artifact 12834666223
+were reread with their original source/capture bindings: all 144 cohorts per host
+pass, and the original summaries remain byte-value equivalent as JSON. Four
+in-memory substitutions accepted by the old reader are rejected by the new
+reader. These are historical-byte rechecks, not current-source native runs.
+Optional [paired diagnostics](../../scripts/ci/legal_ticket_cost_diagnostics_v1.py)
+retain both rounds, all failed-search cost and unknown CPU. They reuse the
+existing conditional work-share sensitivity and do not calibrate the DAA model,
+infer independent hosts, or assert a global minimum from two shared-host rounds.
+
+The original pressure harness additionally writes a separately named
+`pon-pure-attacker-cost-v1` sidecar per actor. It includes preparations that cross
+the original phase deadline or never enter the original client call. An enclosing
+thread-CPU interval covers the actor entry through loop exit; nested stage
+measurements are never added again. Unknown CPU remains unknown. Process launch,
+other threads and final evidence publication are explicitly outside that scope.
+The [cost reader](../../scripts/ci/check_pure_pon_attacker_cost_v1.py) requires
+complete records and exact links to the old calls without changing the old v3
+service verdict. Original 30-second phases, two-second calls, actor/request
+bounds, resource policy and historical failures remain authoritative. Missing
+sidecars cannot be backfilled as a historical cost pass.
+A create-only parent manifest binds each original actor report and cost sidecar
+by exact byte length, SHA256, terminal and counts after the old joins, service
+stop and report construction. Fixed-path no-follow regular-file reads and a
+separate bounded observation deadline preserve the original attack windows.
+The reader rejects even same-length coordinated deletion of an unissued final
+preparation with rewritten summaries. CPU-versus-monotonic checks are consistency
+diagnostics only. Initial template search counts remain explicitly unobserved;
+neither the local clocks nor jointly forged host files acquire physical
+authentication from these bindings.
+
+The optional transparent-proof admission host also rejects impossible
+header/task/target contexts before decoding and cryptographically verifying the
+receipt. The frozen guest, proof grammar and native work authority are unchanged;
+this is a research API rejection-cost improvement, not live proof intake or
+evidence that forged work was previously accepted.
+
+At this source freeze, exact-committed-source native qualification, strict
+Clippy, complete pressure costs and the six-arm measurements are **NOT_RUN**.
+Working-tree controls do not substitute for those verdicts; exact-source results
+must be read from their raw records. Public stranger/Sybil fairness, whole receiver-owner
+costs, optimal CPU/GPU/FPGA/ASIC and energy bounds, quantum effective work,
+independent WAN service, beneficial model releases and production activation
+remain **OPEN / NO_GO**. Original finite passes and failures retain their own
+source/profile identities; no fallback consensus or new development roadmap is
+introduced.

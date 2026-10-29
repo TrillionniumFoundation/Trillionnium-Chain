@@ -25,7 +25,7 @@ from verify_ci_source import verify
 TOOLCHAIN = "1.95.0"
 NATIVE_GATES = frozenset({"transparent-complete-proof", "pure-runtime", "pure-cli",
                           "native-confirmation-risk", "pressure-observation-contract",
-                          "pressure-call-window-contract", "pure-pressure"})
+                          "pressure-call-window-contract", "pressure-attacker-cost-contract", "pure-pressure"})
 BUILD_OVERRIDES = frozenset(bounds.BUILD_ENV) | {
     "RUSTDOC", "RUSTDOCFLAGS", "CARGO_ENCODED_RUSTDOCFLAGS", "RUSTC_BOOTSTRAP",
     "RUSTC_FORCE_UNSTABLE", "CARGO_BUILD_RUSTDOC", "CARGO_BUILD_RUSTDOCFLAGS",
@@ -217,6 +217,7 @@ def main():
             ("inventory", ["python3", "scripts/refresh_distributed_source_inventory.py", "--check"]),
             ("source-negatives", ["python3", "scripts/ci/test_ci_source_integrity.py"]),
             ("pressure-reader-negatives", ["python3", "scripts/ci/test_check_pure_pon_pressure_v2.py"]),
+            ("attacker-cost-reader-negatives", ["python3", "scripts/ci/test_check_pure_pon_attacker_cost_v1.py"]),
             ("campaign-runner-negatives", ["python3", "scripts/ci/test_run_pure_pon_admission_daa_v2.py"]),
             ("risk-model-negatives", ["python3", "formal/pon-nakamoto-v1/test_pon_risk_model_v1.py", "-v"]),
             ("risk-model-experiment", ["python3", "formal/pon-nakamoto-v1/pon_risk_model_v1.py"]),
@@ -248,6 +249,8 @@ def main():
                    ["--exact", "native_active_position_keeps_block_height_distinct_from_generation"])
             native("pressure-call-window-contract", "pure_pon_pressure_v2",
                    ["--exact", "native_call_window_refuses_late_entry_without_extending_deadlines"])
+            native("pressure-attacker-cost-contract", "pure_pon_pressure_v2",
+                   ["--exact", "native_attacker_cost_retains_unissued_preparations_and_unknown_cpu"])
             # Run once. Always retain and independently read failure/partial data.
             pressure_env = dict(env, TRNM_PURE_PRESSURE_V2_OUT=str(out / "pressure-native"))
             native("pure-pressure", "pure_pon_pressure_v2",
@@ -256,6 +259,12 @@ def main():
             step("pure-pressure-reader", ["python3", "scripts/ci/check_pure_pon_pressure_v2.py",
                  str(out / "pressure-native"), "--output", str(out / "pressure-qualification.json"),
                  "--require-qualified"], 120)
+            # Cost coverage is read even when the unchanged service gate failed.
+            # Unknown CPU stays explicit; this separate step cannot qualify
+            # service, arbitrary-Sybil fairness or physical work hardness.
+            step("pure-attacker-cost-reader", ["python3", "scripts/ci/check_pure_pon_attacker_cost_v1.py",
+                 str(out / "pressure-native"), "--output", str(out / "attacker-cost-observation-v1.json"),
+                 "--require-observed-cpu"], 120)
         # Static validation runs after the pressure, never competes with it.
         step("strict-clippy", [*cargo, "clippy", "--release", "--locked", "--offline",
              "--manifest-path", "trillionnium/Cargo.toml", "-p", "trnm-crypto-primitives",

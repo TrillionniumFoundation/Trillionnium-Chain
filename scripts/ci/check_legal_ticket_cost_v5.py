@@ -82,6 +82,24 @@ def read_rows(path):
     return rows, total, digest.hexdigest()
 
 
+def paired_observation(row):
+    """Compare recorded bytes independently of the driver's stream assertion.
+
+    Timing, preparation reuse and invocation order legitimately differ between
+    producers. Every attempted header/proof/ticket and retained winning packet
+    must agree, including misses and exhausted searches. This cross-check does
+    not reconstruct the full proof or replay its transcript: the raw schema
+    retains proof digests, not complete failed-proof bytes.
+    """
+    searches = tuple((search["search"], search["won"], tuple(
+        (trial["trial"], trial["nonce"], trial["challenge"], trial["proof_sha256"],
+         trial["ticket"], trial["target_hit"], trial.get("packet_id"), trial.get("packet_bytes"))
+        for trial in search["trials"])) for search in row["searches"])
+    retained = tuple(sorted((packet["id"], packet["sha256"], packet["bytes"])
+                            for packet in row["retained_packets"]))
+    return searches, retained
+
+
 def validate(rows):
     require(len(rows) == COHORTS + 2, "exact complete all-producer horizon grid required")
     require(all(r.get("schema") == SCHEMA for r in rows), "report schema")
@@ -117,7 +135,7 @@ def validate(rows):
                 rotation = (horizon_index + int(reuse)) % len(arms)
                 arms = arms[rotation:] + arms[:rotation]
                 expected_order.extend((round_id, horizon, reuse, arm) for arm in arms)
-    groups, observed, paired, global_ids = [], set(), {}, set()
+    groups, observed, paired, paired_records, global_ids = [], set(), {}, {}, set()
     for position, row in enumerate(rows[1:-1]):
         require(row["kind"] == "cohort" and row["status"] == "complete", "cohort status")
         horizon = row["search_horizon"]
@@ -185,6 +203,10 @@ def validate(rows):
         for packet in retained:
             hex_value(packet["sha256"], 64)
             require(number(packet["bytes"]) == admitted_bytes[packet["id"]], "cold packet size changed")
+        projection = paired_observation(row)
+        require(pair_key not in paired_records or paired_records[pair_key] == projection,
+                "paired attempted proofs/tickets and retained packet records differ")
+        paired_records[pair_key] = projection
         require(row["hot_active_before_close"]["id"] == row["parent"] and
                 row["cold_recovery_active"]["id"] == (min(ids) if ids else row["parent"]) and
                 row["cold_recovery_selected_height"] == int(bool(ids)), "ordinary cold recovery selection")
@@ -255,7 +277,11 @@ def main():
     p.add_argument("--source-before", type=Path, required=True)
     p.add_argument("--source-after", type=Path, required=True)
     p.add_argument("--output", type=Path, required=True)
+    p.add_argument("--diagnostics-output", type=Path,
+                   help="optional new-schema paired cost derivation; original summary remains unchanged")
     args = p.parse_args()
+    require(args.diagnostics_output is None or args.diagnostics_output.resolve() != args.output.resolve(),
+            "diagnostics must not overwrite the original summary")
     capture = parsed(args.capture.read_bytes())
     raw = args.capture.parent / "stdout.jsonl.gz"
     rows, count, digest = read_rows(raw)
@@ -276,6 +302,18 @@ def main():
     result = validate(rows)
     result.update(source=before, native_capture=capture, raw_uncompressed_sha256=digest)
     args.output.write_text(json.dumps(result, indent=2) + "\n")
+    if args.diagnostics_output is not None:
+        from legal_ticket_cost_diagnostics_v1 import derive
+        diagnostics = derive(rows)
+        diagnostics.update(measured_source=before, native_capture=capture,
+                           raw_uncompressed_sha256=digest,
+                           derivation_source_sha256={
+                               str(path.relative_to(Path(__file__).resolve().parents[2])):
+                                   hashlib.sha256(path.read_bytes()).hexdigest()
+                               for path in (Path(__file__).resolve(),
+                                            Path(__file__).with_name("legal_ticket_cost_diagnostics_v1.py").resolve(),
+                                            Path(__file__).resolve().parents[1] / "read_original_native_campaign.py")})
+        args.diagnostics_output.write_text(json.dumps(diagnostics, indent=2) + "\n")
     print(json.dumps({k: result[k] for k in ("schema", "cohorts", "first_admission_calls",
                                             "distinct_fixture_packet_ids_across_paired_cohorts")}))
 
