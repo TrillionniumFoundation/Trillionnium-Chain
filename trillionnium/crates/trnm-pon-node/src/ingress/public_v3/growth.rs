@@ -11,6 +11,7 @@ pub(super) enum ClientProfile {
     Legacy,
     ArithmeticFacts,
     NativeGrowthV1,
+    PqHistoryV4,
 }
 impl ClientProfile {
     pub(super) fn id(self, policy: PublicPolicy) -> Hash {
@@ -18,12 +19,14 @@ impl ClientProfile {
             Self::Legacy => policy.id(),
             Self::ArithmeticFacts => policy.arithmetic_facts_id(),
             Self::NativeGrowthV1 => policy.growth_id(),
+            Self::PqHistoryV4 => policy.pq_history_id(),
         }
     }
     pub(super) fn operation_allowed(self, op: u8) -> bool {
         match self {
             Self::Legacy | Self::ArithmeticFacts => (1..=5).contains(&op),
             Self::NativeGrowthV1 => (6..=8).contains(&op),
+            Self::PqHistoryV4 => matches!(op, 2 | 3),
         }
     }
 }
@@ -43,14 +46,16 @@ impl PublicServer {
     /// actual CPU/intake domain and starts no listener or owner.
     pub fn with_native_growth(mut self) -> Result<Self> {
         ensure(
-            !self.native_growth && self.arithmetic_facts.is_none(),
+            !self.identity.is_pq() && !self.native_growth && self.arithmetic_facts.is_none(),
             "PUBLIC_GROWTH_PROFILE",
         )?;
         self.native_growth = true;
         Ok(self)
     }
     pub(super) fn operation_allowed(&self, op: u8) -> bool {
-        if self.native_growth {
+        if self.identity.is_pq() {
+            ClientProfile::PqHistoryV4.operation_allowed(op)
+        } else if self.native_growth {
             ClientProfile::NativeGrowthV1.operation_allowed(op)
         } else {
             ClientProfile::Legacy.operation_allowed(op)

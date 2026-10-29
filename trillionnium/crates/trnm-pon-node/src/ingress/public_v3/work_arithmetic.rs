@@ -37,7 +37,7 @@ impl PublicServer {
     /// Original constructors remain raw unless this method is explicitly called.
     pub fn with_arithmetic_facts(mut self) -> Result<Self> {
         ensure(
-            self.arithmetic_facts.is_none() && !self.native_growth,
+            !self.identity.is_pq() && self.arithmetic_facts.is_none() && !self.native_growth,
             "PUBLIC_ARITHMETIC_FACTS_ALREADY_ENABLED",
         )?;
         self.arithmetic_facts = Some(ArithmeticFactCache::new(MAX_ARITHMETIC_FACT_SLOTS)?);
@@ -45,7 +45,9 @@ impl PublicServer {
     }
 
     pub fn resource_profile(&self) -> Hash {
-        if self.native_growth {
+        if self.identity.is_pq() {
+            self.policy.pq_history_id()
+        } else if self.native_growth {
             self.policy.growth_id()
         } else if self.arithmetic_facts.is_some() {
             self.policy.arithmetic_facts_id()

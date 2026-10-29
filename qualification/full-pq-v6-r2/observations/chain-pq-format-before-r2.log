@@ -1,0 +1,54 @@
+error: expected identifier, found `:`
+  --> /workspace/scratch/52b001730263/chain-pq-integration/trillionnium/crates/trnm-mvcc-fee/tests/incremental_prefix.rs:66:14
+   |
+66 |     timestamp: None,
+   |              ^ expected identifier
+
+Diff in /workspace/scratch/52b001730263/chain-pq-integration/trillionnium/crates/trnm-pon-node/src/ingress/pq_network/canonical_tests.rs:194:
+     assert_eq!(observed.gross_escrow_debit, amount);
+     assert_eq!(observed.beneficiary_credit, amount);
+     for wrong in [
+-        NativePaymentQueryV1 { subject: [92; 32], ..query.clone() },
+-        NativePaymentQueryV1 { beneficiary: key(3).public_key_id(), ..query.clone() },
+-        NativePaymentQueryV1 { maximum_gross_units: amount - 1, ..query.clone() },
+-        NativePaymentQueryV1 { operation: [93; 32], ..query.clone() },
++        NativePaymentQueryV1 {
++            subject: [92; 32],
++            ..query.clone()
++        },
++        NativePaymentQueryV1 {
++            beneficiary: key(3).public_key_id(),
++            ..query.clone()
++        },
++        NativePaymentQueryV1 {
++            maximum_gross_units: amount - 1,
++            ..query.clone()
++        },
++        NativePaymentQueryV1 {
++            operation: [93; 32],
++            ..query.clone()
++        },
+     ] {
+         assert!(node.native_payment_observation(&wrong).is_err());
+     }
+Diff in /workspace/scratch/52b001730263/chain-pq-integration/trillionnium/crates/trnm-pon-node/src/operator_continuous_controller.rs:465:
+                 }
+                 Step::ReceiverValidation { packet: value } => {
+                     let packet = packet(&value, node.settings())?;
+-                    serde_json::to_value(node.receive_owned_continuous_packet(
+-                        packet,
+-                        ingress::now()?,
+-                    )?)?
++                    serde_json::to_value(
++                        node.receive_owned_continuous_packet(packet, ingress::now()?)?,
++                    )?
+                 }
+                 Step::Activate { block, receiver } => {
+                     serde_json::to_value(node.activate_owned_continuous_packet(
+Diff in /workspace/scratch/52b001730263/chain-pq-integration/trillionnium/crates/trnm-protocol/src/lib.rs:1:
+-pub mod pq_native_accounts_v2;
+ pub mod pq_frame;
++pub mod pq_native_accounts_v2;
+ pub mod pq_transaction;
+ use serde::{Deserialize, Serialize};
+ use sha2::{Digest, Sha256};

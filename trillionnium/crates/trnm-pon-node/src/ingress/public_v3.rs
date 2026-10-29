@@ -8,7 +8,10 @@ use super::{
     Request as NativeRequest, Result, Settings, WorkCheckedPacket,
 };
 mod intake;
+mod pq_identity;
 use intake::{ConnectionLease, ListenerIntake};
+pub use pq_identity::{call_public_history_pq_v4, PqPublicIdentity, PQ_HISTORY_PROFILE};
+use pq_identity::{Caller, ServerPin, SigningIdentity};
 mod growth;
 pub(super) mod request_observation;
 pub mod scalar_cpu;
@@ -431,6 +434,10 @@ pub struct PublicMetrics {
     pub issued_challenges: u64,
     pub ticket_refusals: u64,
     pub signature_refusals: u64,
+    pub pq_authentication_attempts: u64,
+    pub pq_authentication_bytes: u64,
+    pub pq_authentication_thread_cpu_ns: u64,
+    pub pq_authentication_unavailable: bool,
     pub spent_capacity_refusals: u64,
     pub paid_body_capacity_refusals: u64,
     pub lane_capacity_refusals: u64,
@@ -519,13 +526,17 @@ impl Cookie {
         c.signature.clear();
         Ok(serde_json::to_vec(&c)?)
     }
-    fn server_message(&self) -> Result<Hash> {
+    fn server_message(&self) -> Result<Vec<u8>> {
         let mut c = self.clone();
         c.signature.clear();
-        Ok(hash(
-            b"public-cookie-server-sign-v3",
-            &[&serde_json::to_vec(&c)?],
-        ))
+        let raw = serde_json::to_vec(&c)?;
+        if self.schema == "public-resource-cookie-pq-v4" {
+            let mut out = b"TRNM/PoN/PaidHistory/Cookie/PQ/v4\0".to_vec();
+            out.extend_from_slice(&sha2::Sha384::digest(&raw));
+            Ok(out)
+        } else {
+            Ok(hash(b"public-cookie-server-sign-v3", &[&raw]).to_vec())
+        }
     }
     fn id(&self) -> Result<Hash> {
         Ok(hash(b"public-cookie-id-v3", &[&serde_json::to_vec(self)?]))
@@ -648,9 +659,15 @@ struct Hello {
     client_nonce: Hash,
 }
 impl Hello {
+    #[cfg(test)]
     fn parse(raw: &[u8]) -> Result<Self> {
+        Self::parse_for(raw, false)
+    }
+    fn parse_for(raw: &[u8], pq: bool) -> Result<Self> {
         ensure(
-            raw.len() == HELLO_BYTES && raw[..4] == *b"PPH3" && raw[5..8] == [0; 3],
+            raw.len() == HELLO_BYTES
+                && raw[..4] == *if pq { b"PPH4" } else { b"PPH3" }
+                && raw[5..8] == [0; 3],
             "PUBLIC_HELLO",
         )?;
         let op = raw[4];
@@ -667,8 +684,12 @@ impl Hello {
             client_nonce: raw[76..108].try_into().map_err(|_| "PUBLIC_HELLO")?,
         })
     }
+    #[cfg(test)]
     fn encode(self) -> Vec<u8> {
-        let mut xs = b"PPH3".to_vec();
+        self.encode_for(false)
+    }
+    fn encode_for(self, pq: bool) -> Vec<u8> {
+        let mut xs = if pq { b"PPH4" } else { b"PPH3" }.to_vec();
         xs.push(self.op);
         xs.extend([0; 3]);
         xs.extend((self.len as u32).to_le_bytes());
@@ -679,7 +700,7 @@ impl Hello {
     }
 }
 pub struct PublicServer {
-    identity: DevelopmentIdentity,
+    identity: SigningIdentity,
     policy: PublicPolicy,
     native_growth: bool,
     secret: Hash,
@@ -702,6 +723,9 @@ pub struct PublicServer {
 }
 impl PublicServer {
     pub fn new(identity: DevelopmentIdentity, policy: PublicPolicy) -> Result<Self> {
+        Self::new_identity(SigningIdentity::Classical(identity), policy)
+    }
+    fn new_identity(identity: SigningIdentity, policy: PublicPolicy) -> Result<Self> {
         PublicPolicy::new(policy.bits, Duration::from_millis(policy.lifetime_ms))?;
         Ok(Self {
             identity,
@@ -769,7 +793,12 @@ impl PublicServer {
         ensure(self.operation_allowed(h.op), "PUBLIC_OPERATION_PROFILE")?;
         let tick = self.tick()?;
         let mut c = Cookie {
-            schema: "public-resource-cookie-v3".into(),
+            schema: pq_identity::schema(
+                self.identity.is_pq(),
+                "public-resource-cookie-v3",
+                "public-resource-cookie-pq-v4",
+            )
+            .into(),
             profile: hex::encode(self.resource_profile()),
             network: hex::encode(s.network()),
             parameters: hex::encode(s.parameters()),
@@ -796,13 +825,18 @@ impl PublicServer {
             signature: String::new(),
         };
         c.mac = hex::encode(hmac(&self.secret, &c.unsigned()?));
-        c.signature = self.identity.sign(&c.server_message()?)?;
+        c.signature = self.sign_authentication(&c.server_message()?)?;
         Ok(c)
     }
     fn validate(&self, c: &Cookie, s: &Settings, check_expiry: bool) -> Result<()> {
         ensure(self.operation_allowed(c.op), "PUBLIC_OPERATION_PROFILE")?;
         ensure(
-            c.schema == "public-resource-cookie-v3"
+            c.schema
+                == pq_identity::schema(
+                    self.identity.is_pq(),
+                    "public-resource-cookie-v3",
+                    "public-resource-cookie-pq-v4",
+                )
                 && c.profile == hex::encode(self.resource_profile())
                 && c.network == hex::encode(s.network())
                 && c.parameters == hex::encode(s.parameters())
@@ -861,7 +895,7 @@ struct Response {
     signature: String,
 }
 impl Response {
-    fn message(&self) -> Result<Hash> {
+    fn message(&self) -> Result<Vec<u8>> {
         let mut r = Self {
             schema: self.schema.clone(),
             profile: self.profile.clone(),
@@ -876,10 +910,14 @@ impl Response {
             signature: String::new(),
         };
         r.signature.clear();
-        Ok(hash(
-            b"public-response-sign-v3",
-            &[&serde_json::to_vec(&r)?],
-        ))
+        let raw = serde_json::to_vec(&r)?;
+        if self.schema == "public-protected-response-pq-v4" {
+            let mut out = b"TRNM/PoN/PaidHistory/Response/PQ/v4\0".to_vec();
+            out.extend_from_slice(&sha2::Sha384::digest(&raw));
+            Ok(out)
+        } else {
+            Ok(hash(b"public-response-sign-v3", &[&raw]).to_vec())
+        }
     }
 }
 fn framed(bytes: Vec<u8>, maximum: usize) -> Result<Vec<u8>> {
@@ -905,7 +943,12 @@ fn response(
         ),
     };
     let mut r = Response {
-        schema: "public-protected-response-v3".into(),
+        schema: pq_identity::schema(
+            server.identity.is_pq(),
+            "public-protected-response-v3",
+            "public-protected-response-pq-v4",
+        )
+        .into(),
         profile: hex::encode(server.resource_profile()),
         network: hex::encode(s.network()),
         parameters: hex::encode(s.parameters()),
@@ -917,8 +960,11 @@ fn response(
         value,
         signature: String::new(),
     };
-    r.signature = server.identity.sign(&r.message()?)?;
-    framed(serde_json::to_vec(&r)?, response_maximum(c.op))
+    r.signature = server.sign_authentication(&r.message()?)?;
+    framed(
+        serde_json::to_vec(&r)?,
+        pq_identity::response_maximum_for(c.op, server.identity.is_pq()),
+    )
 }
 /// Streaming canonical equality avoids another body-sized serialization Vec.
 struct ExactCanonical<'a> {
@@ -1584,6 +1630,7 @@ fn public_dispatch(
                 ),
                 super::SubmitDispatchContext {
                     observation,
+                    packet_settings: None,
                     public_proof_before_unowned_task: true,
                     termination_cpu: live_cpu
                         .and_then(|cpu| cpu.live.as_ref())
@@ -1627,7 +1674,7 @@ fn public_dispatch(
                 .unwrap_or_else(|| after.clone());
             let mut encoded = Vec::new();
             for packet in packets {
-                let raw = packet.encode()?;
+                let raw = packet.encode_for_settings(owner.settings())?;
                 ensure(
                     raw.len()
                         .checked_mul(2)
@@ -1637,7 +1684,12 @@ fn public_dispatch(
                 encoded.push(hex::encode(raw));
             }
             Ok(serde_json::to_value(super::Page {
-                schema: "pon-native-history-v1".into(),
+                schema: if owner.settings().is_native_pq_application_v6() {
+                    "pon-native-pq-history-v6"
+                } else {
+                    "pon-native-history-v1"
+                }
+                .into(),
                 network: hex::encode(owner.settings().network()),
                 parameters: hex::encode(owner.settings().parameters()),
                 genesis: hex::encode(owner.settings().genesis()),
@@ -1872,11 +1924,16 @@ fn serve_public_protected_v3_inner(
             )
         };
         let mut owner = lock_owner(&node, &mut progress)?;
-        owner.require_classical_network_profile()?;
+        owner.require_continuous_public_authentication(server.identity.is_pq())?;
+        if server.identity.is_pq() {
+            owner.require_pq_history_transport()?;
+        } else {
+            owner.require_classical_network_profile()?;
+        }
         if server.native_growth {
             owner.growth_head_observation_with_progress(&|_| Ok(()))?;
             ensure(!owner.is_continuous(), "PUBLIC_GROWTH_OWNER")?;
-        } else if !owner.is_continuous() {
+        } else if !owner.is_continuous() && !server.identity.is_pq() {
             owner.pool_status_snapshot()?;
         } // Never enable a pool from the guest listener.
         progress(0)?;
@@ -1954,7 +2011,10 @@ fn serve_public_protected_v3_inner(
                                 }
                                 continue;
                             }
-                            let response_max = response_maximum(task.cookie.op);
+                            let response_max = pq_identity::response_maximum_for(
+                                task.cookie.op,
+                                server.identity.is_pq(),
+                            );
                             let permit = BufferPermit::acquire(
                                 output_pool.clone(),
                                 response_max * 4,
@@ -2322,7 +2382,7 @@ fn serve_public_protected_v3_inner(
                                     }
                                     return Ok(Stage::Hello(bytes));
                                 }
-                                let hello = Hello::parse(&bytes)?;
+                                let hello = Hello::parse_for(&bytes, server.identity.is_pq())?;
                                 ensure(
                                     server.operation_allowed(hello.op),
                                     "PUBLIC_OPERATION_PROFILE",
@@ -2345,7 +2405,10 @@ fn serve_public_protected_v3_inner(
                                     return Ok(Stage::WaitChallenge { hello, pending });
                                 }
                                 let cookie = server.cookie(&settings, hello, conn.peer)?;
-                                let frame = framed(serde_json::to_vec(&cookie)?, 2048)?;
+                                let frame = framed(
+                                    serde_json::to_vec(&cookie)?,
+                                    pq_identity::challenge_maximum(server.identity.is_pq()),
+                                )?;
                                 metrics
                                     .lock()
                                     .map_err(|_| "PUBLIC_METRICS")?
@@ -2388,7 +2451,9 @@ fn serve_public_protected_v3_inner(
                                         .waiting_for_input(Instant::now())?;
                                     Ok(Stage::Solution {
                                         cookie,
-                                        bytes: Vec::with_capacity(SOLUTION_BYTES),
+                                        bytes: Vec::with_capacity(pq_identity::solution_bytes(
+                                            server.identity.is_pq(),
+                                        )),
                                     })
                                 } else {
                                     Ok(Stage::Challenge {
@@ -2403,7 +2468,7 @@ fn serve_public_protected_v3_inner(
                                 let complete = read_available_observed(
                                     &mut conn.socket,
                                     &mut bytes,
-                                    SOLUTION_BYTES,
+                                    pq_identity::solution_bytes(server.identity.is_pq()),
                                     conn.observation.as_ref(),
                                     2,
                                 )?;
@@ -2423,7 +2488,9 @@ fn serve_public_protected_v3_inner(
                                 }
                                 server.validate(&cookie, &settings, true)?;
                                 ensure(
-                                    bytes[..4] == *b"PPS3" && bytes[4..36] == cookie.id()?,
+                                    bytes[..4]
+                                        == *pq_identity::solution_magic(server.identity.is_pq())
+                                        && bytes[4..36] == cookie.id()?,
                                     "PUBLIC_SOLUTION",
                                 )?;
                                 let nonce = u64::from_le_bytes(
@@ -2436,22 +2503,12 @@ fn serve_public_protected_v3_inner(
                                         .ticket_refusals += 1;
                                     return Err("PUBLIC_TICKET_TARGET".into());
                                 }
-                                let auth = hash(
-                                    b"public-caller-sign-v3",
-                                    &[&cookie.id()?, &nonce.to_le_bytes()],
-                                );
-                                if verify_hex_strict(
-                                    &cookie.caller,
-                                    &auth,
-                                    &hex::encode(&bytes[44..108]),
-                                )
-                                .is_err()
-                                {
+                                if let Err(error) = server.verify_caller(&cookie, nonce, &bytes) {
                                     metrics
                                         .lock()
                                         .map_err(|_| "PUBLIC_METRICS")?
                                         .signature_refusals += 1;
-                                    return Err("PUBLIC_CALLER_SIGNATURE".into());
+                                    return Err(error);
                                 }
                                 if let Err(e) = spent.reserve(
                                     cookie.id()?,
@@ -2501,7 +2558,7 @@ fn serve_public_protected_v3_inner(
                                 };
                                 let frame = framed(
                                     serde_json::to_vec(
-                                        &json!({"schema":"public-body-ready-v3","cookie_digest":hex::encode(cookie.id()?)}),
+                                        &json!({"schema":pq_identity::schema(server.identity.is_pq(), "public-body-ready-v3", "public-body-ready-pq-v4"),"cookie_digest":hex::encode(cookie.id()?)}),
                                     )?,
                                     256,
                                 )?;
@@ -2804,6 +2861,14 @@ fn serve_public_protected_v3_inner(
     epoch_fence.complete(
         cpu.in_flight == 0 && !cpu.accounting_unavailable && cpu.stored_credit_ns >= 0 && balanced,
     )?;
+    if server.identity.is_pq() {
+        let auth = server.listener_intake()?.pq_authentication.usage()?;
+        let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
+        m.pq_authentication_attempts = auth.attempts;
+        m.pq_authentication_bytes = auth.bytes;
+        m.pq_authentication_thread_cpu_ns = auth.actual_thread_cpu_ns;
+        m.pq_authentication_unavailable = auth.unavailable;
+    }
     let final_metrics = metrics.lock().map_err(|_| "PUBLIC_METRICS")?.clone();
     Ok(final_metrics)
 }
@@ -2941,8 +3006,29 @@ fn call_public_protected_v3_with_profile(
     policy_and_arithmetic: (PublicPolicy, ClientProfile),
     outer_deadline: Option<Instant>,
 ) -> (Result<PublicReply>, PublicClientMetrics) {
+    call_public_authenticated(
+        address,
+        request,
+        settings,
+        ServerPin::Classical(pinned_server),
+        Caller::Classical(caller),
+        policy_and_arithmetic,
+        outer_deadline,
+    )
+}
+fn call_public_authenticated(
+    address: SocketAddr,
+    request: &Request,
+    settings: &Settings,
+    server_pin: ServerPin<'_>,
+    caller: Caller<'_>,
+    policy_and_arithmetic: (PublicPolicy, ClientProfile),
+    outer_deadline: Option<Instant>,
+) -> (Result<PublicReply>, PublicClientMetrics) {
     let (policy, client_profile) = policy_and_arithmetic;
     let expected_profile = client_profile.id(policy);
+    let pq = caller.is_pq();
+    let pinned_server = server_pin.public_key();
     let call_start = Instant::now();
     let mut phase_start = call_start;
     let mut phase = PublicClientStage::Construction;
@@ -2951,6 +3037,10 @@ fn call_public_protected_v3_with_profile(
         if let Some(deadline) = outer_deadline {
             ensure(Instant::now() < deadline, "PUBLIC_CLIENT_DEADLINE")?;
         }
+        ensure(
+            pq == server_pin.is_pq() && pq == matches!(client_profile, ClientProfile::PqHistoryV4),
+            "PUBLIC_OPERATION_PROFILE",
+        )?;
         PublicPolicy::new(policy.bits, Duration::from_millis(policy.lifetime_ms))?;
         let raw = serde_json::to_vec(request)?;
         let op = request_op(request)?;
@@ -2966,7 +3056,7 @@ fn call_public_protected_v3_with_profile(
             digest: hash(b"public-request-body-v3", &[&raw]),
             client_nonce: entropy()?,
         };
-        Hello::parse(&hello.encode())?;
+        Hello::parse_for(&hello.encode_for(pq), pq)?;
         metrics.construction_ns = elapsed_ns(phase_start);
         phase = PublicClientStage::Challenge;
         phase_start = Instant::now();
@@ -2988,21 +3078,21 @@ fn call_public_protected_v3_with_profile(
         stream.set_write_timeout(Some(Duration::from_secs(5)))?;
         client_write(
             &mut stream,
-            &hello.encode(),
+            &hello.encode_for(pq),
             total_deadline.min(Instant::now() + Duration::from_millis(PREFIX_MS)),
         )?;
         let bytes = client_frame(
             &mut stream,
-            2048,
+            pq_identity::challenge_maximum(pq),
             total_deadline.min(Instant::now() + Duration::from_millis(CHALLENGE_MS)),
         )?;
         let cookie: Cookie = serde_json::from_slice(&bytes)?;
-        validate_challenge_context(
+        validate_challenge_context_authenticated(
             &bytes,
             &cookie,
             &hello,
             settings,
-            pinned_server,
+            &server_pin,
             policy,
             expected_profile,
         )?;
@@ -3034,15 +3124,13 @@ fn call_public_protected_v3_with_profile(
         metrics.solution_found = true;
         phase = PublicClientStage::SolutionBodyResponse;
         phase_start = Instant::now();
-        let mut solution = b"PPS3".to_vec();
+        let mut solution = pq_identity::solution_magic(pq).to_vec();
         solution.extend(id);
         solution.extend(nonce.to_le_bytes());
+        caller.append_spki(&mut solution);
         solution.extend(
-            hex::decode(caller.sign(&hash(
-                b"public-caller-sign-v3",
-                &[&id, &nonce.to_le_bytes()],
-            ))?)
-            .map_err(|_| "PUBLIC_CALLER_SIGNATURE")?,
+            hex::decode(caller.sign(&pq_identity::caller_message(&cookie, nonce, pq)?)?)
+                .map_err(|_| "PUBLIC_CALLER_SIGNATURE")?,
         );
         client_write(
             &mut stream,
@@ -3055,7 +3143,9 @@ fn call_public_protected_v3_with_profile(
             total_deadline.min(Instant::now() + Duration::from_millis(CHALLENGE_MS)),
         )?)?;
         ensure(
-            ready["schema"] == "public-body-ready-v3" && ready["cookie_digest"] == hex::encode(id),
+            ready["schema"]
+                == pq_identity::schema(pq, "public-body-ready-v3", "public-body-ready-pq-v4")
+                && ready["cookie_digest"] == hex::encode(id),
             "PUBLIC_READY",
         )?;
         client_write(
@@ -3065,13 +3155,18 @@ fn call_public_protected_v3_with_profile(
         )?;
         let bytes = client_frame(
             &mut stream,
-            response_maximum(op),
+            pq_identity::response_maximum_for(op, pq),
             total_deadline.min(Instant::now() + Duration::from_millis(WORK_MS + OUTPUT_MS)),
         )?;
         let r: Response = serde_json::from_slice(&bytes)?;
         ensure(
             serde_json::to_vec(&r)? == bytes
-                && r.schema == "public-protected-response-v3"
+                && r.schema
+                    == pq_identity::schema(
+                        pq,
+                        "public-protected-response-v3",
+                        "public-protected-response-pq-v4",
+                    )
                 && r.profile == hex::encode(expected_profile)
                 && r.network == hex::encode(settings.network())
                 && r.parameters == hex::encode(settings.parameters())
@@ -3081,7 +3176,8 @@ fn call_public_protected_v3_with_profile(
                 && r.request_digest == hex::encode(hello.digest),
             "PUBLIC_RESPONSE_CONTEXT",
         )?;
-        verify_hex_strict(pinned_server, &r.message()?, &r.signature)
+        server_pin
+            .verify(&r.message()?, &r.signature)
             .map_err(|_| "PUBLIC_RESPONSE_SIGNATURE")?;
         if outer_deadline.is_some() {
             ensure(Instant::now() < total_deadline, "PUBLIC_CLIENT_DEADLINE")?;
@@ -3105,6 +3201,7 @@ fn call_public_protected_v3_with_profile(
     (result, metrics)
 }
 
+#[cfg(test)]
 fn validate_challenge_context(
     raw: &[u8],
     cookie: &Cookie,
@@ -3114,14 +3211,39 @@ fn validate_challenge_context(
     policy: PublicPolicy,
     expected_profile: Hash,
 ) -> Result<()> {
+    validate_challenge_context_authenticated(
+        raw,
+        cookie,
+        hello,
+        settings,
+        &ServerPin::Classical(pinned_server),
+        policy,
+        expected_profile,
+    )
+}
+
+fn validate_challenge_context_authenticated(
+    raw: &[u8],
+    cookie: &Cookie,
+    hello: &Hello,
+    settings: &Settings,
+    server_pin: &ServerPin<'_>,
+    policy: PublicPolicy,
+    expected_profile: Hash,
+) -> Result<()> {
     ensure(
         serde_json::to_vec(cookie)? == raw
-            && cookie.schema == "public-resource-cookie-v3"
+            && cookie.schema
+                == pq_identity::schema(
+                    server_pin.is_pq(),
+                    "public-resource-cookie-v3",
+                    "public-resource-cookie-pq-v4",
+                )
             && cookie.profile == hex::encode(expected_profile)
             && cookie.network == hex::encode(settings.network())
             && cookie.parameters == hex::encode(settings.parameters())
             && cookie.genesis == hex::encode(settings.genesis())
-            && cookie.server == pinned_server
+            && cookie.server == server_pin.public_key()
             && cookie.caller == hex::encode(hello.caller)
             && cookie.op == hello.op
             && cookie.body_len as usize == hello.len
@@ -3133,7 +3255,8 @@ fn validate_challenge_context(
                 == Some(policy.lifetime_ms),
         "PUBLIC_CHALLENGE_CONTEXT",
     )?;
-    verify_hex_strict(pinned_server, &cookie.server_message()?, &cookie.signature)
+    server_pin
+        .verify(&cookie.server_message()?, &cookie.signature)
         .map_err(|_| "PUBLIC_CHALLENGE_SIGNATURE".into())
 }
 
@@ -4691,6 +4814,7 @@ mod tests {
         let result = pon_executor::execute_with_control(
             &state,
             BlockExecution {
+                timestamp: None,
                 transactions: &transactions,
                 height: 1,
                 miner: crate::development_public(0).unwrap(),
@@ -4870,6 +4994,7 @@ mod tests {
             let rejected = pon_executor::execute_with_control(
                 &state,
                 BlockExecution {
+                    timestamp: None,
                     transactions: &invalid,
                     height: 1,
                     miner: crate::development_public(0).unwrap(),
@@ -4893,6 +5018,7 @@ mod tests {
             let result = pon_executor::execute_with_control(
                 &state,
                 BlockExecution {
+                    timestamp: None,
                     transactions: &transactions,
                     height: 1,
                     miner: crate::development_public(0).unwrap(),
@@ -4978,6 +5104,7 @@ mod tests {
             let result = pon_executor::execute_with_control(
                 &state,
                 BlockExecution {
+                    timestamp: None,
                     transactions: &transactions,
                     height: 1,
                     miner: crate::development_public(0).unwrap(),
@@ -5323,6 +5450,7 @@ mod tests {
                     let result = pon_executor::execute_with_control(
                         state,
                         BlockExecution {
+                            timestamp: None,
                             transactions,
                             height: 1,
                             miner: crate::development_public(0).unwrap(),

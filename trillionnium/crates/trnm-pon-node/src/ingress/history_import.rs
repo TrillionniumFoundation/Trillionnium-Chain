@@ -3,8 +3,8 @@
 //! and bounded M06 execution. The original owner checks the private execution
 //! artifact and retains the original transaction/readback publication fences.
 use super::{
-    ensure, hex_packet, history_kernel_work_checkpoint, now, public_v3, Hash, Node, Packet, Page,
-    Result, Settings, WorkCheckedPacket, MAX_FRAME,
+    ensure, hex_packet_for_settings, history_kernel_work_checkpoint, now, public_v3, Hash, Node,
+    Packet, Page, Result, Settings, WorkCheckedPacket, MAX_FRAME,
 };
 use std::{
     sync::{Mutex, TryLockError},
@@ -167,8 +167,13 @@ fn metered<T>(
 }
 
 fn validate_page(settings: &Settings, page: &Page, tip: Hash, after: Hash) -> Result<()> {
+    let schema = if settings.is_native_pq_application_v6() {
+        "pon-native-pq-history-v6"
+    } else {
+        "pon-native-history-v1"
+    };
     ensure(
-        page.schema == "pon-native-history-v1"
+        page.schema == schema
             && page.network == hex::encode(settings.network())
             && page.parameters == hex::encode(settings.parameters())
             && page.genesis == hex::encode(settings.genesis()),
@@ -209,7 +214,7 @@ fn admit_packet(
         // control.check() performed no ledger work and duplicated Host reads.
         let check = || progress.history_checkpoint(owns_node_mutex, &|| control.check());
         check()?;
-        let (existing, permit) = owner.with(control, |node| {
+        let (existing, permit, settings) = owner.with(control, |node| {
             let existing =
                 node.precheck_public_admission_context_with_progress(&packet, clock, &mut || {
                     check()
@@ -219,7 +224,7 @@ fn admit_packet(
             } else {
                 None
             };
-            Ok((existing, permit))
+            Ok((existing, permit, node.settings().clone()))
         })?;
         if let Some(id) = existing {
             if let Some(tip) = activate {
@@ -247,7 +252,7 @@ fn admit_packet(
             }
             Ok(())
         })?;
-        operation.history_work_verified(&checked)?;
+        operation.history_work_verified_for_settings(&checked, &settings)?;
         // Promotion changes only scheduling for this complete, unique W1.
         // Shared owners retain nonwaiting checkpoints while holding Node;
         // exclusive embedding has no Node mutex and keeps its exact stack.
@@ -326,8 +331,9 @@ pub(super) fn receive(
     clock: u64,
     control: Control<'_>,
 ) -> Result<Hash> {
-    owner.with(&control, |node| {
-        validate_page(node.settings(), &page, tip, after)
+    let settings = owner.with(&control, |node| {
+        validate_page(node.settings(), &page, tip, after)?;
+        Ok(node.settings().clone())
     })?;
     scoped(&mut owner, &control, |owner, cpu| {
         let (packets, next) = metered(cpu, &control, |operation| {
@@ -336,7 +342,7 @@ pub(super) fn receive(
             for raw in &page.packets {
                 control.check()?;
                 operation.checkpoint()?;
-                let packet = hex_packet(raw)?;
+                let packet = hex_packet_for_settings(raw, &settings)?;
                 ensure(packet.header.parent == next, "PAGE_PARENT")?;
                 next = packet.id()?;
                 packets.push(packet);

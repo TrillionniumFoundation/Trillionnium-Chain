@@ -1,0 +1,151 @@
+{
+  "schema": "trnm.pq.fuzz-lock-sync.v1",
+  "method": "cargo update -p typenum --precise 1.20.1; cargo update -p ctutils --precise 0.4.6",
+  "changed_versions": {
+    "autocfg": {
+      "before": [],
+      "after": [
+        "1.5.1"
+      ]
+    },
+    "cmov": {
+      "before": [],
+      "after": [
+        "0.5.4"
+      ]
+    },
+    "const-oid": {
+      "before": [
+        "0.9.6"
+      ],
+      "after": [
+        "0.10.2",
+        "0.9.6"
+      ]
+    },
+    "cpufeatures": {
+      "before": [
+        "0.2.17"
+      ],
+      "after": [
+        "0.2.17",
+        "0.3.1"
+      ]
+    },
+    "crypto-common": {
+      "before": [
+        "0.1.7"
+      ],
+      "after": [
+        "0.1.7",
+        "0.2.2"
+      ]
+    },
+    "ctutils": {
+      "before": [],
+      "after": [
+        "0.4.6"
+      ]
+    },
+    "der": {
+      "before": [
+        "0.7.10"
+      ],
+      "after": [
+        "0.7.10",
+        "0.8.3"
+      ]
+    },
+    "digest": {
+      "before": [
+        "0.10.7"
+      ],
+      "after": [
+        "0.10.7",
+        "0.11.3"
+      ]
+    },
+    "hybrid-array": {
+      "before": [],
+      "after": [
+        "0.4.15"
+      ]
+    },
+    "keccak": {
+      "before": [],
+      "after": [
+        "0.2.2"
+      ]
+    },
+    "ml-dsa": {
+      "before": [],
+      "after": [
+        "0.1.1"
+      ]
+    },
+    "module-lattice": {
+      "before": [],
+      "after": [
+        "0.2.3"
+      ]
+    },
+    "num-traits": {
+      "before": [],
+      "after": [
+        "0.2.19"
+      ]
+    },
+    "pkcs8": {
+      "before": [
+        "0.10.2"
+      ],
+      "after": [
+        "0.10.2",
+        "0.11.0"
+      ]
+    },
+    "shake": {
+      "before": [],
+      "after": [
+        "0.1.0"
+      ]
+    },
+    "signature": {
+      "before": [
+        "2.2.0"
+      ],
+      "after": [
+        "2.2.0",
+        "3.0.0"
+      ]
+    },
+    "spki": {
+      "before": [
+        "0.7.3"
+      ],
+      "after": [
+        "0.7.3",
+        "0.8.1"
+      ]
+    },
+    "sponge-cursor": {
+      "before": [],
+      "after": [
+        "0.1.0"
+      ]
+    },
+    "typenum": {
+      "before": [
+        "1.19.0"
+      ],
+      "after": [
+        "1.20.1"
+      ]
+    }
+  },
+  "shared_version_mismatches": {},
+  "result": "PASS",
+  "fuzz_lock_sha256": "879560acc18af3210f957070afe2f98bdaab11d61e7e70c17c3810ffaf7e0294",
+  "native_only_optional_version": "rand_core 0.10.1 is not reachable from fuzz target graph; no unused lock entry or feature added",
+  "no_rust_compilation": true
+}

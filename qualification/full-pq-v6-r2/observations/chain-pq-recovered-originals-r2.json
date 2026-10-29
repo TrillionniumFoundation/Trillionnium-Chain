@@ -1,0 +1,188 @@
+{
+  "schema": "trnm-pq-r2-historical-evidence-restoration-v1",
+  "status": "EXACT_ORIGINAL_BLOBS_RESTORED_NO_NEW_TEST_ACCEPTANCE",
+  "repository": "https://github.com/TrillionniumFoundation/Trillionnium-Chain",
+  "recovery_source_commit": "e19bf296a3e85dd15c00e9c6957fc59bfb358249",
+  "verified_at_utc": "2026-10-29T00:31:17.639552+00:00",
+  "restore_exec_session_id": 22274,
+  "restore_method": "git ls-tree HEAD pins; read-only git cat-file blob via promisor; Git blob SHA1 verification; exclusive-create xb write of absent path",
+  "recovered_original_count": 17,
+  "original_corpus_pin_count": 16,
+  "additional_existing_evidence_locator_count": 1,
+  "wrote_remote_repository": false,
+  "modified_git_index_during_recovery": false,
+  "created_replacement_evidence": false,
+  "historical_logs_are_current_run_results": false,
+  "records": [
+    {
+      "path": "evidence/pon-pq-cell-deadline-native-v1/README.md",
+      "head_blob_oid": "76b74547693d7ee09845776b440c24cd960417a8",
+      "verified_worktree_blob_oid": "76b74547693d7ee09845776b440c24cd960417a8",
+      "bytes": 1833,
+      "baseline_pin_source": "prior_corpus_pinned_blobs",
+      "restored_from_exact_head_blob": true,
+      "pre_restore_path_absent": true,
+      "overwrote_existing_file": false
+    },
+    {
+      "path": "evidence/pon-pq-cell-deadline-native-v1/baseline-real-tcp.log",
+      "head_blob_oid": "f8c5894587a4a239d7b83b36d8062682c4e4bb90",
+      "verified_worktree_blob_oid": "f8c5894587a4a239d7b83b36d8062682c4e4bb90",
+      "bytes": 1963,
+      "baseline_pin_source": "prior_corpus_pinned_blobs",
+      "restored_from_exact_head_blob": true,
+      "pre_restore_path_absent": true,
+      "overwrote_existing_file": false
+    },
+    {
+      "path": "evidence/pon-pq-cell-deadline-native-v1/fixed-python.log",
+      "head_blob_oid": "b7223a755a4b6b588451e7da94393daaa4a6be4c",
+      "verified_worktree_blob_oid": "b7223a755a4b6b588451e7da94393daaa4a6be4c",
+      "bytes": 7409,
+      "baseline_pin_source": "prior_corpus_pinned_blobs",
+      "restored_from_exact_head_blob": true,
+      "pre_restore_path_absent": true,
+      "overwrote_existing_file": false
+    },
+    {
+      "path": "evidence/pon-pq-cell-deadline-native-v1/local-qualification.json",
+      "head_blob_oid": "7da5272cb6423fa6da8a65d02a77f511cba77632",
+      "verified_worktree_blob_oid": "7da5272cb6423fa6da8a65d02a77f511cba77632",
+      "bytes": 6618,
+      "baseline_pin_source": "prior_corpus_pinned_blobs",
+      "restored_from_exact_head_blob": true,
+      "pre_restore_path_absent": true,
+      "overwrote_existing_file": false
+    },
+    {
+      "path": "evidence/pon-pq-cell-deadline-native-v1/native-clippy.log",
+      "head_blob_oid": "8ab4f9d11c6ea18011ce29d32c20dbf2b8460341",
+      "verified_worktree_blob_oid": "8ab4f9d11c6ea18011ce29d32c20dbf2b8460341",
+      "bytes": 72,
+      "baseline_pin_source": "prior_corpus_pinned_blobs",
+      "restored_from_exact_head_blob": true,
+      "pre_restore_path_absent": true,
+      "overwrote_existing_file": false
+    },
+    {
+      "path": "evidence/pon-pq-cell-deadline-native-v1/native-format.log",
+      "head_blob_oid": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "verified_worktree_blob_oid": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "bytes": 0,
+      "baseline_pin_source": "prior_corpus_pinned_blobs",
+      "restored_from_exact_head_blob": true,
+      "pre_restore_path_absent": true,
+      "overwrote_existing_file": false
+    },
+    {
+      "path": "evidence/pon-pq-cell-deadline-native-v1/native-rust.log",
+      "head_blob_oid": "703250081e72cbb28635d4d76e2eccf26b763e85",
+      "verified_worktree_blob_oid": "703250081e72cbb28635d4d76e2eccf26b763e85",
+      "bytes": 2110,
+      "baseline_pin_source": "prior_corpus_pinned_blobs",
+      "restored_from_exact_head_blob": true,
+      "pre_restore_path_absent": true,
+      "overwrote_existing_file": false
+    },
+    {
+      "path": "evidence/pon-pq-pql10-pem-source-v1/combined-test.log",
+      "head_blob_oid": "1d8cd4234d1ae143434d024c8629aaf81014c62a",
+      "verified_worktree_blob_oid": "1d8cd4234d1ae143434d024c8629aaf81014c62a",
+      "bytes": 1839,
+      "baseline_pin_source": "prior_corpus_pinned_blobs",
+      "restored_from_exact_head_blob": true,
+      "pre_restore_path_absent": true,
+      "overwrote_existing_file": false
+    },
+    {
+      "path": "evidence/pon-pq-pql10-pem-source-v1/local-qualification.json",
+      "head_blob_oid": "596aa94783e6b029c73a05696fb8bdfc32b25c74",
+      "verified_worktree_blob_oid": "596aa94783e6b029c73a05696fb8bdfc32b25c74",
+      "bytes": 2348,
+      "baseline_pin_source": "prior_corpus_pinned_blobs",
+      "restored_from_exact_head_blob": true,
+      "pre_restore_path_absent": true,
+      "overwrote_existing_file": false
+    },
+    {
+      "path": "evidence/pon-pq-pql10-pem-source-v1/normal-test.log",
+      "head_blob_oid": "4768863acadbe03d793e615763cf2fe006a3332a",
+      "verified_worktree_blob_oid": "4768863acadbe03d793e615763cf2fe006a3332a",
+      "bytes": 1018,
+      "baseline_pin_source": "prior_corpus_pinned_blobs",
+      "restored_from_exact_head_blob": true,
+      "pre_restore_path_absent": true,
+      "overwrote_existing_file": false
+    },
+    {
+      "path": "evidence/pon-pq-pql10-pem-source-v1/sanitizer-test.log",
+      "head_blob_oid": "2ada9806d35604801ab9a01d289d8a60867a0cac",
+      "verified_worktree_blob_oid": "2ada9806d35604801ab9a01d289d8a60867a0cac",
+      "bytes": 1018,
+      "baseline_pin_source": "prior_corpus_pinned_blobs",
+      "restored_from_exact_head_blob": true,
+      "pre_restore_path_absent": true,
+      "overwrote_existing_file": false
+    },
+    {
+      "path": "evidence/pon-pq-pql11b-source-guard-v1/local-qualification.json",
+      "head_blob_oid": "afaf66bc3269ae2d09230e67253462252d5da4dc",
+      "verified_worktree_blob_oid": "afaf66bc3269ae2d09230e67253462252d5da4dc",
+      "bytes": 1507,
+      "baseline_pin_source": "prior_corpus_pinned_blobs",
+      "restored_from_exact_head_blob": true,
+      "pre_restore_path_absent": true,
+      "overwrote_existing_file": false
+    },
+    {
+      "path": "evidence/pon-pq-spki-v1/README.md",
+      "head_blob_oid": "5d9e67e90cf335e5b0f8350577bed539e6fb1ad7",
+      "verified_worktree_blob_oid": "5d9e67e90cf335e5b0f8350577bed539e6fb1ad7",
+      "bytes": 1247,
+      "baseline_pin_source": "prior_corpus_pinned_blobs",
+      "restored_from_exact_head_blob": true,
+      "pre_restore_path_absent": true,
+      "overwrote_existing_file": false
+    },
+    {
+      "path": "evidence/pon-pq-tpq1-native-v1/README.md",
+      "head_blob_oid": "29384ad0a2cfbfd987334d12de93a0a912837512",
+      "verified_worktree_blob_oid": "29384ad0a2cfbfd987334d12de93a0a912837512",
+      "bytes": 2239,
+      "baseline_pin_source": "prior_corpus_pinned_blobs",
+      "restored_from_exact_head_blob": true,
+      "pre_restore_path_absent": true,
+      "overwrote_existing_file": false
+    },
+    {
+      "path": "evidence/pon-pq-tpq1-native-v1/native-sanitizer-test.log",
+      "head_blob_oid": "f7092477840b5139380251e6ec396c98b60a2143",
+      "verified_worktree_blob_oid": "f7092477840b5139380251e6ec396c98b60a2143",
+      "bytes": 918,
+      "baseline_pin_source": "prior_corpus_pinned_blobs",
+      "restored_from_exact_head_blob": true,
+      "pre_restore_path_absent": true,
+      "overwrote_existing_file": false
+    },
+    {
+      "path": "evidence/pon-pq-tpq1-native-v1/native-test.log",
+      "head_blob_oid": "08a3ee020dc978572c56c81b0ea1f834a6ebf4f7",
+      "verified_worktree_blob_oid": "08a3ee020dc978572c56c81b0ea1f834a6ebf4f7",
+      "bytes": 918,
+      "baseline_pin_source": "prior_corpus_pinned_blobs",
+      "restored_from_exact_head_blob": true,
+      "pre_restore_path_absent": true,
+      "overwrote_existing_file": false
+    },
+    {
+      "path": "evidence/pon-pq-account-native-20261028/README.md",
+      "head_blob_oid": "2885a560883ff59e67411e8bec5813d2f132587a",
+      "verified_worktree_blob_oid": "2885a560883ff59e67411e8bec5813d2f132587a",
+      "bytes": 6743,
+      "baseline_pin_source": "HEAD_tree_for_existing_required_evidence_locator",
+      "restored_from_exact_head_blob": true,
+      "pre_restore_path_absent": true,
+      "overwrote_existing_file": false
+    }
+  ]
+}

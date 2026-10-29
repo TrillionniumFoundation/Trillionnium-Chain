@@ -1,11 +1,12 @@
 //! Explicit same-operator recovery of a fully known fsynced prefix after a real
 //! outside-owned SIGKILL. No CleanClose invention, refund or volatile burst.
 use crate::operator_continuous_history::{Anchor, Identity};
+use crate::operator_pq_auth::SignatureBudget;
 use crate::operator_task_policy::PolicyError;
 use serde::{Deserialize, Serialize};
-use trnm_crypto_primitives::verify_hex_strict;
 type Result<T> = std::result::Result<T, PolicyError>;
 const DOMAIN: &[u8] = b"TRNM-RESTRICTED-CONTINUOUS-KNOWN-UNCLEAN-RESTART1";
+const PQ_DOMAIN: &[u8] = b"TRNM/PoN/ContinuousKnownUnclean/PQ/v3\0";
 fn check(value: bool) -> Result<()> {
     if value {
         Ok(())
@@ -47,7 +48,11 @@ impl RecoveryBody {
     pub(crate) fn validate(&self) -> Result<()> {
         self.identity.validate()?;
         check(
-            self.schema == "restricted-continuous-known-unclean-restart-v1"
+            self.schema
+                == self.identity.profile()?.schema(
+                    "restricted-continuous-known-unclean-restart-v1",
+                    "restricted-continuous-known-unclean-restart-pq-v3",
+                )
                 && self.prior_journal.sequence > 0
                 && self.actual_wait4
                 && self.signal == 9
@@ -105,13 +110,20 @@ pub(crate) struct Verified {
 }
 fn message(body: &RecoveryBody, role: u8) -> Result<Vec<u8>> {
     body.validate()?;
-    let raw = serde_json::to_vec(body).map_err(|_| PolicyError::Input)?;
-    check(raw.len() <= 4096)?;
-    let mut out = DOMAIN.to_vec();
-    out.push(role);
-    out.extend_from_slice(&(raw.len() as u32).to_le_bytes());
-    out.extend_from_slice(&raw);
-    Ok(out)
+    let limit = if body.identity.profile()? == crate::operator_pq_auth::Profile::PqV3 {
+        16_384
+    } else {
+        4096
+    };
+    check(
+        serde_json::to_vec(body)
+            .map_err(|_| PolicyError::Input)?
+            .len()
+            <= limit,
+    )?;
+    body.identity
+        .profile()?
+        .message(DOMAIN, PQ_DOMAIN, body, role)
 }
 pub(crate) fn body_digest(body: &RecoveryBody) -> Result<String> {
     Ok(crate::operator_task_policy::digest_bytes(&message(
@@ -136,14 +148,20 @@ pub(crate) fn authenticate(input: &Input, expected: &Identity, now: u64) -> Resu
             && b.issued_ns <= now
             && now < b.expires_ns,
     )?;
-    verify_hex_strict(
+    let profile = expected.profile()?;
+    let mut budget = SignatureBudget::pair();
+    profile.verify(
         &expected.registry_key,
         &message(b, 1)?,
         &v.registry_signature,
-    )
-    .map_err(|_| PolicyError::Signature)?;
-    verify_hex_strict(&expected.task_key, &message(b, 2)?, &v.task_signature)
-        .map_err(|_| PolicyError::Signature)?;
+        &mut budget,
+    )?;
+    profile.verify(
+        &expected.task_key,
+        &message(b, 2)?,
+        &v.task_signature,
+        &mut budget,
+    )?;
     Ok(Verified {
         body: v.body,
         digest: e.body_digest.clone(),

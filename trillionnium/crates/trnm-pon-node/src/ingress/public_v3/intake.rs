@@ -18,6 +18,7 @@ use std::time::{Duration, Instant};
 pub(super) const UNPAID_PRESSURE_IDLE_MS: u64 = 250;
 
 pub(super) struct ListenerIntake {
+    pub(super) pq_authentication: super::pq_identity::AuthenticationBudget,
     // Controls aggregate spawned 3-worker listener services, their queue and
     // live spent-cookie tables under this CPU domain. Separate listener
     // rebuilds cannot exceed a finite worker/queue envelope.
@@ -100,6 +101,7 @@ impl ListenerIntake {
     }
     fn with_challenge_credit(tokens: u64) -> Self {
         Self {
+            pq_authentication: super::pq_identity::AuthenticationBudget::default(),
             listeners: Arc::new(Mutex::new(0)),
             connections: Arc::new(Mutex::new(0)),
             body_pool: Arc::new(Mutex::new(0)),

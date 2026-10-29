@@ -760,7 +760,11 @@ where
     let started = Instant::now();
     let result = (|| -> Result<PeerPollingReport> {
         let startup_end = started + Duration::from_secs(10);
-        let settings = lock(&node, startup_end, &stop)?.settings().clone();
+        let settings = {
+            let owner = lock(&node, startup_end, &stop)?;
+            owner.require_classical_network_profile()?;
+            owner.settings().clone()
+        };
         cfg.validate(&settings)?;
         // The sibling V3 listener and this poller start concurrently.
         // Await its original Node CPU binding before any remote history Work;

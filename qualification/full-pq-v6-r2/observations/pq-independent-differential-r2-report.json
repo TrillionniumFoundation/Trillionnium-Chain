@@ -1,0 +1,39 @@
+{
+  "schema": "trnm.pq.independent-message-differential.v2",
+  "result": "PASS",
+  "cryptography": "50.0.2",
+  "independent_backend": "OpenSSL 4.0.3 29 Sep 2026",
+  "canonical_backend": "RustCrypto ml-dsa 0.1.1, pure, empty context",
+  "binaries": [
+    {
+      "path": "/tmp/chain-pq-target/release/examples/pq_message_oracle",
+      "sha256": "a17367c3ab5142f98e94d5e87d49425c6dc92942dc9f92bc4cf9ee3ba80aa3a2"
+    },
+    {
+      "path": "/tmp/hepta-pq-target/release/examples/pq_message_oracle",
+      "sha256": "bf83524f037d76a3211a52df3e1119b6cd690b3bd0b8c4ea18966989a1cb715e"
+    }
+  ],
+  "upstream_vector_sha256": "1ca235f61928421a173a171780beb00264ae9155dc33c52a11e1766cc7979034",
+  "wycheproof": {
+    "total": 210,
+    "valid": 79,
+    "invalid": 131
+  },
+  "fixed_seed_signatures_each_adapter": 20,
+  "verification_cases_each_adapter": 417,
+  "categories": {
+    "cross_backend_positive": 40,
+    "changed_signature": 40,
+    "context_domain_rejection": 20,
+    "wrong_message": 20,
+    "wrong_pin": 20,
+    "signature_length": 40,
+    "strict_spki": 26,
+    "message_limit": 1,
+    "wycheproof_application_policy": 210
+  },
+  "elapsed_seconds": 0.73779,
+  "independent_implementation_audit": "HOLD",
+  "quantum_work_and_proof_audit": "HOLD"
+}

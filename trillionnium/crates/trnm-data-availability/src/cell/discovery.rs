@@ -12,6 +12,7 @@ use std::{
 };
 
 mod directory;
+pub mod pq;
 mod transport;
 pub use directory::{CellProviderDirectoryUsageV1, CellProviderDirectoryV1};
 pub use transport::{

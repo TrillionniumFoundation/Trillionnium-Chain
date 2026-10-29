@@ -1,0 +1,53 @@
+{
+  "schema": "trnm.pq.independent-differential.source-window.v1",
+  "started": "2026-10-29T00:29:13.447752+00:00",
+  "finished": "2026-10-29T00:29:14.341278+00:00",
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "/workspace/scratch/52b001730263/chain-pq-integration/trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/differential.py",
+    "--chain-oracle",
+    "/tmp/chain-pq-target/release/examples/pq_message_oracle",
+    "--hepta-oracle",
+    "/tmp/hepta-pq-target/release/examples/pq_message_oracle",
+    "--wycheproof",
+    "/workspace/scratch/52b001730263/chain-pq-integration/trillionnium/crates/trnm-crypto-primitives/tests/fixtures/wycheproof/mldsa_65_verify_test.json",
+    "--report",
+    "/tmp/pq-independent-differential-r2-report.json"
+  ],
+  "exit_code": 0,
+  "before": {
+    "/workspace/scratch/52b001730263/chain-pq-integration/trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs": "2ed59c0c6adeda7c27b503d7465680bc08b02139d2d19ec9f5d4f44c1e02477b",
+    "/workspace/scratch/52b001730263/chain-pq-integration/trillionnium/crates/trnm-crypto-primitives/examples/pq_message_oracle.rs": "19f4aab9534761342378a70631c52891d24c1ad82d0670f9f3254afeb52e36e5",
+    "/workspace/scratch/52b001730263/chain-pq-integration/trillionnium/crates/trnm-crypto-primitives/Cargo.toml": "49cd28093512c08ae123a5e1f2bb7e766d51ae9b06580f4bb21cb2f36604804f",
+    "/workspace/scratch/52b001730263/chain-pq-integration/trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/differential.py": "c291315fca62f5149b99eec2dda8580d07bc2b3d9b9c65eab4bd890f11eb229e",
+    "/workspace/scratch/52b001730263/chain-pq-integration/trillionnium/crates/trnm-crypto-primitives/tests/fixtures/wycheproof/mldsa_65_verify_test.json": "1ca235f61928421a173a171780beb00264ae9155dc33c52a11e1766cc7979034",
+    "/workspace/scratch/52b001730263/chain-pq-integration/trillionnium/Cargo.lock": "420b25c7cdf17e04be7c9f4e33b85fd026f8f464de7d9f4b3ea101faec228691",
+    "/workspace/scratch/52b001730263/hepta-pq-integration/codex-rs/hepta-contracts/src/pq_auth.rs": "2f7d9381730cf312ed2798170892c662df044fcac8285b9535129e2b60a0035d",
+    "/workspace/scratch/52b001730263/hepta-pq-integration/codex-rs/hepta-contracts/examples/pq_message_oracle.rs": "af98ac69eb198ea3fe82e649d6e80d280adaea7c3151429baf9a12fd93d47a70",
+    "/workspace/scratch/52b001730263/hepta-pq-integration/codex-rs/hepta-contracts/Cargo.toml": "2d44d41f5ca73fb32ac651f242c44f1617ae657d119a822515acab9048425d47",
+    "/workspace/scratch/52b001730263/hepta-pq-integration/codex-rs/Cargo.lock": "f3d26686ca58720723438e85e71932a62408b7a34df88e4e0a73dbe0b5f23015",
+    "/tmp/chain-pq-target/release/examples/pq_message_oracle": "a17367c3ab5142f98e94d5e87d49425c6dc92942dc9f92bc4cf9ee3ba80aa3a2",
+    "/tmp/hepta-pq-target/release/examples/pq_message_oracle": "bf83524f037d76a3211a52df3e1119b6cd690b3bd0b8c4ea18966989a1cb715e"
+  },
+  "after": {
+    "/workspace/scratch/52b001730263/chain-pq-integration/trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs": "2ed59c0c6adeda7c27b503d7465680bc08b02139d2d19ec9f5d4f44c1e02477b",
+    "/workspace/scratch/52b001730263/chain-pq-integration/trillionnium/crates/trnm-crypto-primitives/examples/pq_message_oracle.rs": "19f4aab9534761342378a70631c52891d24c1ad82d0670f9f3254afeb52e36e5",
+    "/workspace/scratch/52b001730263/chain-pq-integration/trillionnium/crates/trnm-crypto-primitives/Cargo.toml": "49cd28093512c08ae123a5e1f2bb7e766d51ae9b06580f4bb21cb2f36604804f",
+    "/workspace/scratch/52b001730263/chain-pq-integration/trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/differential.py": "c291315fca62f5149b99eec2dda8580d07bc2b3d9b9c65eab4bd890f11eb229e",
+    "/workspace/scratch/52b001730263/chain-pq-integration/trillionnium/crates/trnm-crypto-primitives/tests/fixtures/wycheproof/mldsa_65_verify_test.json": "1ca235f61928421a173a171780beb00264ae9155dc33c52a11e1766cc7979034",
+    "/workspace/scratch/52b001730263/chain-pq-integration/trillionnium/Cargo.lock": "420b25c7cdf17e04be7c9f4e33b85fd026f8f464de7d9f4b3ea101faec228691",
+    "/workspace/scratch/52b001730263/hepta-pq-integration/codex-rs/hepta-contracts/src/pq_auth.rs": "2f7d9381730cf312ed2798170892c662df044fcac8285b9535129e2b60a0035d",
+    "/workspace/scratch/52b001730263/hepta-pq-integration/codex-rs/hepta-contracts/examples/pq_message_oracle.rs": "af98ac69eb198ea3fe82e649d6e80d280adaea7c3151429baf9a12fd93d47a70",
+    "/workspace/scratch/52b001730263/hepta-pq-integration/codex-rs/hepta-contracts/Cargo.toml": "2d44d41f5ca73fb32ac651f242c44f1617ae657d119a822515acab9048425d47",
+    "/workspace/scratch/52b001730263/hepta-pq-integration/codex-rs/Cargo.lock": "f3d26686ca58720723438e85e71932a62408b7a34df88e4e0a73dbe0b5f23015",
+    "/tmp/chain-pq-target/release/examples/pq_message_oracle": "a17367c3ab5142f98e94d5e87d49425c6dc92942dc9f92bc4cf9ee3ba80aa3a2",
+    "/tmp/hepta-pq-target/release/examples/pq_message_oracle": "bf83524f037d76a3211a52df3e1119b6cd690b3bd0b8c4ea18966989a1cb715e"
+  },
+  "source_or_binary_drift": [],
+  "git_heads": {
+    "/workspace/scratch/52b001730263/chain-pq-integration": "e19bf296a3e85dd15c00e9c6957fc59bfb358249",
+    "/workspace/scratch/52b001730263/hepta-pq-integration": "1ef265818fe8553c0e202e45442203d744fc250f"
+  },
+  "result": "PASS",
+  "scope": "Actual independent backend differential execution; source window and compiled binary identities; not whole-project qualification."
+}

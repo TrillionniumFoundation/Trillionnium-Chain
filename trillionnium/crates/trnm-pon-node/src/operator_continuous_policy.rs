@@ -5,6 +5,7 @@ use crate::operator_continuous_recipient::{
     self as recipient, Authority, DeclaredBinding, VerifiedAllocation,
 };
 use crate::operator_mining_policy::SearchIntent;
+use crate::operator_pq_auth::{SignatureBudget, PQ_MODE};
 use crate::operator_task_policy::{MaterialInput, PolicyError};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
@@ -18,10 +19,10 @@ use std::{
         Arc,
     },
 };
-use trnm_crypto_primitives::verify_hex_strict;
 type Result<T> = std::result::Result<T, PolicyError>;
 pub const MODE: &str = "restricted-owner-node-v5";
 const VIEW_DOMAIN: &[u8] = b"TRNM-RESTRICTED-CONTINUOUS-TASKVIEW2";
+const PQ_VIEW_DOMAIN: &[u8] = b"TRNM/PoN/ContinuousView/PQ/v3\0";
 const MAX_BYTES: usize = 65536;
 fn check(v: bool, e: PolicyError) -> Result<()> {
     if v {
@@ -135,13 +136,9 @@ pub(crate) struct VerifiedView {
     pub pool_selections: Vec<crate::operator_continuous_pool::VerifiedSelection>,
 }
 fn message(v: &TaskView, role: u8) -> Result<Vec<u8>> {
-    let raw = serde_json::to_vec(v).map_err(|_| PolicyError::Input)?;
-    check(raw.len() <= MAX_BYTES, PolicyError::Capacity)?;
-    let mut out = VIEW_DOMAIN.to_vec();
-    out.push(role);
-    out.extend_from_slice(&(raw.len() as u32).to_le_bytes());
-    out.extend_from_slice(&raw);
-    Ok(out)
+    v.identity
+        .profile()?
+        .message(VIEW_DOMAIN, PQ_VIEW_DOMAIN, v, role)
 }
 pub(crate) fn authenticate(inputs: &Inputs, now: u64) -> Result<VerifiedView> {
     let raw = &inputs.raw_view;
@@ -154,13 +151,19 @@ pub(crate) fn authenticate(inputs: &Inputs, now: u64) -> Result<VerifiedView> {
         PolicyError::Capacity,
     )?;
     e.identity.validate()?;
+    let profile = e.identity.profile()?;
+    let mut signature_budget = SignatureBudget::batch();
     for h in [&e.envelope_sha256, &e.latest_digest] {
         hex_id(h, 32)?;
     }
     let v: ViewEnvelope = serde_json::from_slice(raw).map_err(|_| PolicyError::Input)?;
     let b = &v.body;
     check(
-        b.schema == "restricted-continuous-task-view-v2"
+        b.schema
+            == profile.schema(
+                "restricted-continuous-task-view-v2",
+                "restricted-continuous-task-view-pq-v3",
+            )
             && b.identity == e.identity
             && *b == e.expected
             && sha(raw) == e.envelope_sha256
@@ -201,8 +204,21 @@ pub(crate) fn authenticate(inputs: &Inputs, now: u64) -> Result<VerifiedView> {
         total = total
             .checked_add(input.raw.len())
             .ok_or(PolicyError::Capacity)?;
-        check(total <= 524288, PolicyError::Capacity)?;
-        let permission = recipient::authenticate(&input.raw, &input.authority, now)?;
+        check(
+            total
+                <= if profile == crate::operator_pq_auth::Profile::PqV3 {
+                    2 * 1024 * 1024
+                } else {
+                    524288
+                },
+            PolicyError::Capacity,
+        )?;
+        let permission = recipient::authenticate_metered(
+            &input.raw,
+            &input.authority,
+            now,
+            &mut signature_budget,
+        )?;
         let p = permission.body();
         let c = &p.claim;
         check(
@@ -322,14 +338,18 @@ pub(crate) fn authenticate(inputs: &Inputs, now: u64) -> Result<VerifiedView> {
             PolicyError::NativeBinding,
         )?;
     }
-    verify_hex_strict(
-        &b.identity.registry_key,
+    profile.verify(
+        &e.identity.registry_key,
         &message(b, 1)?,
         &v.registry_signature,
-    )
-    .map_err(|_| PolicyError::Signature)?;
-    verify_hex_strict(&b.identity.task_key, &message(b, 2)?, &v.task_signature)
-        .map_err(|_| PolicyError::Signature)?;
+        &mut signature_budget,
+    )?;
+    profile.verify(
+        &e.identity.task_key,
+        &message(b, 2)?,
+        &v.task_signature,
+        &mut signature_budget,
+    )?;
     Ok(VerifiedView {
         body: v.body,
         digest: e.latest_digest.clone(),
@@ -354,7 +374,7 @@ impl VerifiedView {
     pub fn marker(&self, journal: &Path) -> Result<Vec<u8>> {
         check(journal.is_absolute(), PolicyError::Input)?;
         serde_json::to_vec(&(
-            MODE,
+            self.body.identity.profile()?.schema(MODE, PQ_MODE),
             &self.body.identity,
             journal.to_string_lossy().as_ref(),
         ))

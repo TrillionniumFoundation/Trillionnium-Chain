@@ -1,5 +1,4 @@
 //! Bounded native socket ingress. Development loopback only; not Sybil-safe public P2P.
-#[cfg(feature = "pq-native-openssl")]
 pub mod pq_network;
 use crate::{
     authenticated_payload_digest, authenticated_profile_digest, digest, ensure,
@@ -898,6 +897,12 @@ fn write_untrusted_error(
     )
 }
 fn hex_packet(text: &str) -> Result<Packet> {
+    decode_hex_packet(text, None)
+}
+fn hex_packet_for_settings(text: &str, settings: &Settings) -> Result<Packet> {
+    decode_hex_packet(text, Some(settings))
+}
+fn decode_hex_packet(text: &str, settings: Option<&Settings>) -> Result<Packet> {
     ensure(
         text.len() <= 2_097_152
             && text.len().is_multiple_of(2)
@@ -906,7 +911,11 @@ fn hex_packet(text: &str) -> Result<Packet> {
                 .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b)),
         "PACKET_HEX",
     )?;
-    Packet::decode(&hex::decode(text).map_err(|_| Error::from("PACKET_HEX"))?)
+    let raw = hex::decode(text).map_err(|_| Error::from("PACKET_HEX"))?;
+    match settings {
+        Some(settings) => Packet::decode_for_settings(&raw, settings),
+        None => Packet::decode(&raw),
+    }
 }
 /// Negotiate before sending Submit; legacy listeners see only a nonmutating hello.
 /// Durable authenticated outbox bytes remain the exact originally signed request.
@@ -1078,7 +1087,12 @@ fn dispatch(
                 .transpose()?
                 .unwrap_or_else(|| after.clone());
             Ok(serde_json::to_value(Page {
-                schema: "pon-native-history-v1".into(),
+                schema: if node.settings().is_native_pq_application_v6() {
+                    "pon-native-pq-history-v6"
+                } else {
+                    "pon-native-history-v1"
+                }
+                .into(),
                 network: hex::encode(node.settings().network()),
                 parameters: hex::encode(node.settings().parameters()),
                 genesis: hex::encode(node.settings().genesis()),
@@ -1088,7 +1102,7 @@ fn dispatch(
                 next,
                 packets: packets
                     .iter()
-                    .map(|p| p.encode().map(hex::encode))
+                    .map(|p| p.encode_for_settings(node.settings()).map(hex::encode))
                     .collect::<Result<_>>()?,
             })?)
         }
@@ -1219,6 +1233,8 @@ fn dispatch_shared_with_execution_control(
 
 #[derive(Default)]
 struct SubmitDispatchContext<'a> {
+    // Only a protected network owner supplies this exact selected context.
+    packet_settings: Option<&'a Settings>,
     observation: Option<&'a public_v3::request_observation::TaskObservation>,
     public_proof_before_unowned_task: bool,
     termination_cpu: Option<&'a public_v3::ServiceMutationCpuCheckpoint>,
@@ -1336,14 +1352,16 @@ fn dispatch_shared_with_execution_observation(
 ) -> Result<Value> {
     use public_v3::SubmitPhase;
     let SubmitDispatchContext {
+        packet_settings,
         observation,
         public_proof_before_unowned_task,
         termination_cpu,
     } = context;
     match request {
         Request::Submit { packet } => {
-            let packet =
-                observe_submit_phase(observation, SubmitPhase::Decode, || hex_packet(&packet))?;
+            let packet = observe_submit_phase(observation, SubmitPhase::Decode, || {
+                decode_hex_packet(&packet, packet_settings)
+            })?;
             let owner_permit = {
                 let mut owner =
                     observe_submit_phase(observation, SubmitPhase::ContextOwnerWait, || {
@@ -2678,6 +2696,65 @@ pub fn sync_from_authenticated_durable(
         if let Some(kernel) = &host_kernel {
             kernel.verify()?;
         }
+        if complete {
+            return Ok(after);
+        }
+    }
+    Err(format!(
+        "INCOMPLETE_HISTORY:page_budget:after={}",
+        hex::encode(after)
+    )
+    .into())
+}
+
+/// Fetch explicitly PQ-authenticated History pages, then feed the existing
+/// paid importer. The configured server pin fixes the signature algorithm;
+/// neither a classical response nor a different ledger profile is a fallback.
+/// All pages share one original deadline, Host parent and Node CPU/crash epoch.
+#[allow(clippy::too_many_arguments)]
+pub fn sync_from_public_history_pq_v4(
+    node: &mut Node,
+    address: SocketAddr,
+    tip: Hash,
+    mut after: Hash,
+    page_budget: usize,
+    pinned_server_spki: &[u8],
+    pinned_server_id: Hash,
+    caller: &public_v3::PqPublicIdentity,
+    policy: public_v3::PublicPolicy,
+) -> Result<Hash> {
+    ensure((1..=4096).contains(&page_budget), "SYNC_BUDGET")?;
+    node.require_pq_history_transport()?;
+    let deadline = Instant::now() + history_import::SYNC_BUDGET;
+    let kernel = crate::host_kernel_parent::require_host_kernel_budget(
+        address,
+        Some(crate::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT),
+    )?
+    .ok_or("PUBLIC_HOST_KERNEL_REQUIRED")?;
+    kernel.verify()?;
+    let settings = node.settings().clone();
+    for _ in 0..page_budget {
+        ensure(Instant::now() < deadline, "PUBLIC_REQUEST_DEADLINE")?;
+        kernel.verify()?;
+        let (response, _) = public_v3::call_public_history_pq_v4(
+            address,
+            &public_v3::Request::History {
+                tip: hex::encode(tip),
+                after: hex::encode(after),
+            },
+            &settings,
+            pinned_server_spki,
+            pinned_server_id,
+            caller,
+            policy,
+            Some(deadline),
+        );
+        let response = response?;
+        ensure(response.ok, "PUBLIC_HISTORY_REJECTED")?;
+        let page: Page = serde_json::from_value(response.value)?;
+        let complete = page.complete;
+        after = receive_public_page_from_before(node, address, page, tip, after, now()?, deadline)?;
+        kernel.verify()?;
         if complete {
             return Ok(after);
         }

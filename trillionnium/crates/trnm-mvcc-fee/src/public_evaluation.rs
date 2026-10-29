@@ -6,6 +6,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use trnm_crypto_primitives::verify_hex_strict;
 use trnm_protocol::pon_wire::{hash, Envelope, Hash};
 
+pub mod pq_storage;
 pub mod quorum_v2;
 pub use quorum_v2::{
     PROFILE as QUORUM_PROFILE, RECORD_NAMESPACE as QUORUM_RECORD_NAMESPACE,
@@ -60,6 +61,26 @@ pub fn quorum_enabled(cfg: &Config) -> bool {
 }
 pub fn is_quorum(evaluation: &Value) -> Result<bool> {
     match n(evaluation, "storage_revision")? {
+        pq_storage::REVISION => {
+            check(
+                evaluation["plan"]["schema"] == "pon-native-frozen-evaluation-v1"
+                    && evaluation["plan"]["authentication_profile"]
+                        == "pon-native-pq-application-v6"
+                    && evaluation["plan"]["pq_conflict_scope"] == pq_storage::CONFLICT_SCOPE,
+                "PUBLIC_EVAL_PROFILE",
+            )?;
+            Ok(false)
+        }
+        pq_storage::QUORUM_REVISION => {
+            quorum_v2::validate_plan(&evaluation["plan"])?;
+            check(
+                evaluation["plan"]["authentication_profile"] == "pon-native-pq-application-v6"
+                    && evaluation["plan"]["pq_conflict_scope"] == pq_storage::CONFLICT_SCOPE
+                    && evaluation["plan"]["disqualified_at_freeze"] == json!([]),
+                "PUBLIC_EVAL_PROFILE",
+            )?;
+            Ok(true)
+        }
         STORAGE_REVISION => {
             check(
                 evaluation["plan"]["schema"] == "pon-native-frozen-evaluation-v1",
@@ -75,6 +96,9 @@ pub fn is_quorum(evaluation: &Value) -> Result<bool> {
     }
 }
 pub fn record_namespace(cfg: &Config) -> &'static str {
+    if crate::pon_executor::pq_accounts_v2::application_v6::enabled(cfg) {
+        return pq_storage::NAMESPACE;
+    }
     if quorum_enabled(cfg) {
         QUORUM_RECORD_NAMESPACE
     } else {
@@ -89,6 +113,14 @@ pub fn freeze(
     excluded: &BTreeSet<String>,
 ) -> Result<Value> {
     check(enabled(cfg), "PUBLIC_EVAL_PROFILE")?;
+    // PQ conflicts have no authority outside their own frozen round. In
+    // particular, classic stable-account exclusions cannot enter a PQ plan.
+    let no_cross_round_exclusions = BTreeSet::new();
+    let excluded = if crate::pon_executor::pq_accounts_v2::application_v6::enabled(cfg) {
+        &no_cross_round_exclusions
+    } else {
+        excluded
+    };
     let width = n(&cfg.params, "candidate_round_blocks")?;
     check(
         width > ADOPTION_START && height % width <= CANDIDATE_END,
@@ -110,20 +142,37 @@ pub fn freeze(
     } else {
         STORAGE_REVISION
     };
+    let storage_revision = if crate::pon_executor::pq_accounts_v2::application_v6::enabled(cfg) {
+        plan["authentication_profile"] = json!("pon-native-pq-application-v6");
+        plan["pq_conflict_scope"] = json!(pq_storage::CONFLICT_SCOPE);
+        if quorum_enabled(cfg) {
+            pq_storage::QUORUM_REVISION
+        } else {
+            pq_storage::REVISION
+        }
+    } else {
+        storage_revision
+    };
     let mut evaluation = json!({"storage_revision":storage_revision,"plan":plan,"round":null,"record_counts":{"commits":0,"reveals":0,"conflicts":0,"appeals":0},"closed":null});
     evaluation["round"] = json!(hex::encode(expected_round(&evaluation)?));
     Ok(evaluation)
 }
 pub fn round(evaluation: &Value) -> Result<Hash> {
     let result = digest(evaluation, "round")?;
-    if is_quorum(evaluation)? {
+    if is_quorum(evaluation)? || pq_storage::enabled(evaluation) {
         check(result == expected_round(evaluation)?, "PUBLIC_EVAL_ROUND")?;
     }
     Ok(result)
 }
 /// Recompute the profile-specific frozen-plan commitment for native observations.
 pub fn expected_round(evaluation: &Value) -> Result<Hash> {
-    let domain: &[u8] = if is_quorum(evaluation)? {
+    let domain: &[u8] = if pq_storage::enabled(evaluation) {
+        if is_quorum(evaluation)? {
+            b"native-public-evaluation-pq-round-v7"
+        } else {
+            b"native-public-evaluation-pq-round-v6"
+        }
+    } else if is_quorum(evaluation)? {
         b"native-public-evaluation-round-v2"
     } else {
         b"native-public-evaluation-round-v1"
@@ -172,6 +221,11 @@ pub fn commit(
     evaluator(evaluation, sender, round_id)?;
     if is_quorum(evaluation)? {
         quorum_v2::eligible(evaluation, sender)?;
+    } else if pq_storage::enabled(evaluation) {
+        check(
+            !pq_conflict_signers(evaluation)?.contains(sender),
+            "PUBLIC_EVAL_DISQUALIFIED",
+        )?;
     }
     let plan = &evaluation["plan"];
     check(
@@ -222,6 +276,11 @@ pub fn reveal(evaluation: &mut Value, value: Reveal, height: u64) -> Result<()> 
     evaluator(evaluation, &sender, value.round)?;
     if is_quorum(evaluation)? {
         quorum_v2::eligible(evaluation, &sender)?;
+    } else if pq_storage::enabled(evaluation) {
+        check(
+            !pq_conflict_signers(evaluation)?.contains(&sender),
+            "PUBLIC_EVAL_DISQUALIFIED",
+        )?;
     }
     let plan = &evaluation["plan"];
     check(
@@ -438,6 +497,14 @@ pub fn record_prefix(candidate: Hash) -> String {
     format!("{RECORD_NAMESPACE}:{}:", hex::encode(candidate))
 }
 pub fn record_prefix_for(candidate: Hash, evaluation: &Value) -> Result<String> {
+    if pq_storage::enabled(evaluation) {
+        is_quorum(evaluation)?;
+        return Ok(format!(
+            "{}:{}:",
+            pq_storage::NAMESPACE,
+            hex::encode(candidate)
+        ));
+    }
     if is_quorum(evaluation)? {
         Ok(format!(
             "{QUORUM_RECORD_NAMESPACE}:{}:",
@@ -471,6 +538,9 @@ fn identity(kind: &str, id: &str) -> Result<()> {
     )
 }
 pub fn record_rows(candidate: Hash, evaluation: &Value) -> Result<BTreeMap<String, Value>> {
+    if pq_storage::enabled(evaluation) {
+        return pq_storage::rows(candidate, evaluation);
+    }
     check(
         evaluation["plan"]["candidate"] == hex::encode(candidate),
         "PUBLIC_EVAL_RECORD_CONTEXT",
@@ -511,6 +581,9 @@ pub fn compact(evaluation: &Value) -> Result<Value> {
     Ok(value)
 }
 pub fn hydrate(compact: &Value, candidate: Hash, rows: &BTreeMap<String, Value>) -> Result<Value> {
+    if pq_storage::enabled(compact) {
+        return pq_storage::hydrate(compact, candidate, rows);
+    }
     is_quorum(compact)?;
     check(
         compact["plan"]["candidate"] == hex::encode(candidate),
@@ -576,4 +649,97 @@ fn records_digest(evaluation: &Value) -> Result<Hash> {
         b"native-public-evaluation-closure-records-v2"
     };
     Ok(hash(domain, &[&bytes(&snapshot)?]))
+}
+
+/// The private M06 proof was produced by actual ML-DSA verification of both
+/// inner statements. The original frozen-roster/conflict/appeal state remains owner.
+pub(crate) fn conflict_pq(
+    evaluation: &mut Value,
+    cfg: &Config,
+    candidate: Hash,
+    first: &[u8],
+    second: &[u8],
+    proof: &crate::pon_executor::pq_accounts_v2::application_v6::VerifiedConflict,
+) -> Result<String> {
+    check(
+        crate::pon_executor::pq_accounts_v2::application_v6::enabled(cfg)
+            && pq_storage::enabled(evaluation)
+            && proof.raw() == (first, second),
+        "PQ6_CONFLICT_CONTEXT",
+    )?;
+    let sender = hex::encode(proof.signer());
+    let tag = proof.kind();
+    let generation = crate::pon_executor::pq_accounts_v2::application_v6::frozen_generation(
+        evaluation,
+        proof.signer(),
+    )?;
+    check(generation == proof.generation(), "PQ_EVAL_CONFLICT_SCOPE")?;
+    for payload in [proof.payloads().0, proof.payloads().1] {
+        check(
+            payload[..32] == candidate && payload[32..64] == round(evaluation)?,
+            "PUBLIC_EVAL_CONFLICT_CONTEXT",
+        )?;
+        evaluator(evaluation, &sender, round(evaluation)?)?;
+        if tag == 14 {
+            check(payload[64..96] != [0; 32], "PUBLIC_EVAL_COMMITMENT")?;
+        } else {
+            check(
+                tag == 15
+                    && payload[64..96] == cfg.plan
+                    && payload[96..128] != [0; 32]
+                    && u64::from_le_bytes(
+                        payload[128..136]
+                            .try_into()
+                            .map_err(|_| "PUBLIC_EVAL_STATE")?,
+                    ) <= n(&evaluation["plan"], "max_score")?,
+                "PUBLIC_EVAL_REVEAL_CONTEXT",
+            )?;
+        }
+    }
+    check(
+        proof.payloads().0 != proof.payloads().1,
+        "PUBLIC_EVAL_NOT_CONFLICT",
+    )?;
+    let key = format!("{sender}:{tag}");
+    check(evaluation["conflicts"].get(&key).is_none(), "DUPLICATE")?;
+    let mut records = [hex::encode(first), hex::encode(second)];
+    records.sort();
+    evaluation["conflicts"][key] = json!({
+        "records": records,
+        "signer": sender,
+        "signer_generation": generation,
+        "candidate": evaluation["plan"]["candidate"],
+        "round": evaluation["round"],
+        "scope": pq_storage::CONFLICT_SCOPE,
+        "effect": "signer excluded only in this frozen authority generation and round; historical closure unchanged; signature creation time not established"
+    });
+    pq_conflict_signers(evaluation)?;
+    Ok(sender)
+}
+
+/// Validate the immutable scope before PQ conflicts influence any vote count.
+/// No result from this function is a cross-round revocation or account ban.
+pub(super) fn pq_conflict_signers(evaluation: &Value) -> Result<BTreeSet<String>> {
+    check(pq_storage::enabled(evaluation), "PQ_EVAL_CONFLICT_SCOPE")?;
+    let round = hex::encode(round(evaluation)?);
+    let mut signers = BTreeSet::new();
+    for conflict in evaluation["conflicts"]
+        .as_object()
+        .ok_or("PUBLIC_EVAL_STATE")?
+        .values()
+    {
+        let signer = digest(conflict, "signer")?;
+        let generation = crate::pon_executor::pq_accounts_v2::application_v6::frozen_generation(
+            evaluation, signer,
+        )?;
+        check(
+            conflict["scope"] == pq_storage::CONFLICT_SCOPE
+                && conflict["candidate"] == evaluation["plan"]["candidate"]
+                && conflict["round"] == round
+                && n(conflict, "signer_generation")? == generation,
+            "PQ_EVAL_CONFLICT_SCOPE",
+        )?;
+        signers.insert(hex::encode(signer));
+    }
+    Ok(signers)
 }

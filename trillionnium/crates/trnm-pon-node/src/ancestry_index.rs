@@ -20,6 +20,12 @@ pub(crate) struct Context {
     pub network: Hash,
     pub parameters: Hash,
     pub genesis: Hash,
+    pub packet_profile: Option<trnm_protocol::pq_native_accounts_v2::AccountProfile>,
+}
+impl Context {
+    fn header_bytes(self) -> usize {
+        HEADER_BYTES + if self.packet_profile.is_some() { 8 } else { 0 }
+    }
 }
 #[derive(Clone, Copy)]
 struct Metadata {
@@ -87,7 +93,7 @@ impl Budget<'_> {
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 enum ReadKey {
     Shape(Hash),
-    Header(Hash),
+    Header(Hash, usize),
     Jump(Hash, u8),
 }
 
@@ -126,7 +132,7 @@ impl ReadSet {
             let actual = (|| -> Result<Hash> {
                 Ok(match *key {
                     ReadKey::Shape(id) => shape_digest(&read_shape(db, id)?),
-                    ReadKey::Header(id) => header_digest(&read_header(db, id)?),
+                    ReadKey::Header(id, bytes) => header_digest(&read_header(db, id, bytes)?),
                     ReadKey::Jump(id, level) => jump_digest(&read_jump(db, id, level)?),
                 })
             })()
@@ -146,9 +152,13 @@ fn read_shape(db: &Connection, id: Hash) -> rusqlite::Result<Option<StoredShape>
     )
     .optional()
 }
-fn read_header(db: &Connection, id: Hash) -> rusqlite::Result<Option<HeaderProjection>> {
+fn read_header(
+    db: &Connection,
+    id: Hash,
+    header_bytes: usize,
+) -> rusqlite::Result<Option<HeaderProjection>> {
     db.query_row("SELECT parent,state_root,substr(packet,1,?),substr(packet,-32) FROM blocks WHERE id=? AND length(parent)=32 AND length(state_root)=32 AND length(packet)<=?",
-        params![HEADER_BYTES,id.as_slice(),MAX_PACKET], |r| Ok((r.get(0)?,r.get(1)?,r.get(2)?,r.get(3)?))).optional()
+        params![header_bytes,id.as_slice(),MAX_PACKET], |r| Ok((r.get(0)?,r.get(1)?,r.get(2)?,r.get(3)?))).optional()
 }
 fn read_jump(db: &Connection, id: Hash, level: u8) -> rusqlite::Result<Option<JumpProjection>> {
     db.query_row("SELECT ancestor,ancestor_height,left_seal,right_seal,seal FROM ancestry_jump WHERE block=? AND level=? AND length(ancestor)=32 AND length(left_seal)=32 AND length(right_seal)=32 AND length(seal)=32",
@@ -203,7 +213,11 @@ fn bytes32(bytes: Vec<u8>) -> Result<Hash> {
 }
 fn seal(ctx: Context, row: &Row, metadata: Metadata) -> Hash {
     hash(
-        b"native-derived-ancestry-row-v1",
+        if ctx.packet_profile.is_some() {
+            b"native-derived-ancestry-row-pq-v6"
+        } else {
+            b"native-derived-ancestry-row-v1"
+        },
         &[
             &ctx.network,
             &ctx.parameters,
@@ -243,21 +257,32 @@ fn metadata(db: &Connection, ctx: Context, id: Hash, budget: &mut Budget<'_>) ->
         height > 0
             && parent_len == Some(32)
             && packet_len.is_some_and(|n| {
-                (HEADER_BYTES + 2 + pon_work::PROOF_BYTES..=MAX_PACKET).contains(&n)
+                (ctx.header_bytes() + 2 + pon_work::PROOF_BYTES..=MAX_PACKET).contains(&n)
             }),
         "ANCESTRY_INDEX_PACKET_BYTES",
     )?;
     budget.charge()?;
     // Predicates precede prefix/trace extraction: even corrupt oversized BLOBs
     // never enter the projection or Rust Vec allocation.
-    let row = read_header(db, id)?;
+    let row = read_header(db, id, ctx.header_bytes())?;
     #[cfg(test)]
-    budget.observe(ReadKey::Header(id), || header_digest(&row))?;
+    budget.observe(ReadKey::Header(id, ctx.header_bytes()), || {
+        header_digest(&row)
+    })?;
     let (parent, root, prefix, trace) = row.ok_or("ANCESTRY_INDEX_METADATA")?;
     let parent = bytes32(parent)?;
     let root = bytes32(root)?;
     let trace = bytes32(trace)?;
-    let header = Header::decode(&prefix).map_err(|_| Error::from("ANCESTRY_INDEX_HEADER"))?;
+    let header_bytes = if let Some(profile) = ctx.packet_profile {
+        ensure(
+            prefix.len() == HEADER_BYTES + 8 && prefix.starts_with(profile.packet_prefix()),
+            "ANCESTRY_INDEX_HEADER",
+        )?;
+        &prefix[8..]
+    } else {
+        prefix.as_slice()
+    };
+    let header = Header::decode(header_bytes).map_err(|_| Error::from("ANCESTRY_INDEX_HEADER"))?;
     ensure(
         header.block_id(trace) == id
             && header.network == ctx.network
@@ -647,6 +672,7 @@ mod tests {
         db.execute_batch("PRAGMA foreign_keys=ON;CREATE TABLE blocks(id BLOB PRIMARY KEY,parent BLOB,height INTEGER NOT NULL,chainwork BLOB NOT NULL,packet BLOB,state_root BLOB NOT NULL);").unwrap();
         db.execute_batch(DDL).unwrap();
         let ctx = Context {
+            packet_profile: None,
             network: [1; 32],
             parameters: [2; 32],
             genesis: [3; 32],

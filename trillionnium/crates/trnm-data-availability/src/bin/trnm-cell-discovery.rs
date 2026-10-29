@@ -2,8 +2,15 @@
 //! An advertisement is not custody, payment, model selection or use authority.
 //! Configured-peer trnm-cell remains separate; both use finite TCL2 cache limits.
 
+mod cell_pq;
+
 const USAGE: &str = "trnm-cell-discovery: opt-in finite development discovery (Unix)
-Every command requires --profile cell-provider-discovery-dev-v1.
+Every command requires --profile cell-provider-discovery-dev-v1 OR cell-provider-discovery-pq-v2.
+The PQ profile uses CDP2/CDQ2/CDS2 and a fresh SQLite v2 namespace, without fallback.
+PQ init/serve/fetch/announce also require --pq-keys-file LOCAL_CPK2. The immutable host roster must match the directory on reopen.
+PQ key-public requires --spki-output ABSENT_DER. PQ sign additionally requires --owner-generation N [--withdrawn true|false] and produces 3592 bytes.
+PQ pin-key --spki DER --owner HEX --owner-generation N --key-not-before UNIX --key-expires UNIX [--key-revoked-at UNIX] [--prior-pins CPK2] --keys-output ABSENT_CPK2.
+Public pin files are explicit local authority policy, never learned from the same advertisement.
 Context flags: --namespace HEX --network HEX --parameters HEX --genesis HEX
 Scope flags: --scope loopback-dev --ports N[,N] OR --scope scoped --cidrs IP/PREFIX[,IP/PREFIX] --ports N[,N]
 Client limits: (--seconds N | --overall-ms N) --request-ms N --max-bytes N --parallelism N --max-connections N --max-response-bytes N
@@ -53,6 +60,8 @@ mod unix {
         time::{Duration, Instant},
     };
 
+    mod pq;
+
     use ed25519_dalek::SigningKey;
     use sha2::{Digest, Sha256};
     use trnm_data_availability::cell::{
@@ -94,8 +103,12 @@ mod unix {
             return Ok(());
         }
         let mut args = Args::new(&values[1..])?;
-        if args.take("--profile")? != CELL_DISCOVERY_PROFILE_V1 {
-            return Err(invalid("explicit discovery development profile required"));
+        let profile = args.take("--profile")?;
+        if profile == trnm_data_availability::cell::discovery::pq::CELL_DISCOVERY_PROFILE_V2 {
+            return pq::run(values[0].as_str(), &mut args, started);
+        }
+        if profile != CELL_DISCOVERY_PROFILE_V1 {
+            return Err(invalid("explicit discovery profile required"));
         }
         match values[0].as_str() {
             "init" => init(&mut args),

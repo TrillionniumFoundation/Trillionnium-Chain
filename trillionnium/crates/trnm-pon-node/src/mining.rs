@@ -361,47 +361,63 @@ impl Node {
             b: &b,
         };
         let mut eligibility = None;
-        let admission = match self.settings().task_profile() {
-            "signed-task-lifecycle-dev-v2"
-            | "signed-task-lifecycle-dev-v3"
-            | "signed-task-lifecycle-dev-v4"
-            | continuity_v1::PROFILE
-            | "signed-checkpoint-tile-maintenance-dev-v1" => {
-                let eligible = qualified_task_lifecycle::eligible_task(
+        let admission = if trnm_mvcc_fee::pon_executor::pq_accounts_v2::tasks_v5_enabled(
+            &self.settings().app,
+        ) {
+            let (eligible, admission) =
+                trnm_mvcc_fee::pon_executor::pq_accounts_v2::tasks_v5::admit_material(
                     &state,
                     task,
                     height,
                     &self.settings().app,
+                    material(),
                 )?;
-                let record = state
-                    .get(&qualified_task_lifecycle::slot_key(eligible.lease().slot)?)
-                    .ok_or("TASK_DEMAND")?;
-                let encoded = record["statement"].as_str().ok_or("TASK_STATEMENT")?;
-                ensure(encoded.len() == 1368, "TASK_STATEMENT")?;
-                let wire = hex::decode(encoded).map_err(|_| "TASK_STATEMENT")?;
-                ensure(hex::encode(&wire) == encoded, "TASK_STATEMENT")?;
-                let admission =
-                    verify_lifecycle_admission(&wire, material(), eligible.lease(), height)
-                        .map_err(|e| format!("TASK_ADMISSION:{e:?}"))?;
-                eligibility = Some(ParentTaskEligibility::Lifecycle(Box::new(eligible)));
-                admission
+            eligibility = Some(ParentTaskEligibility::PqTasksV5(Box::new(eligible)));
+            admission
+        } else {
+            match self.settings().task_profile() {
+                "signed-task-lifecycle-dev-v2"
+                | "signed-task-lifecycle-dev-v3"
+                | "signed-task-lifecycle-dev-v4"
+                | continuity_v1::PROFILE
+                | "signed-checkpoint-tile-maintenance-dev-v1" => {
+                    let eligible = qualified_task_lifecycle::eligible_task(
+                        &state,
+                        task,
+                        height,
+                        &self.settings().app,
+                    )?;
+                    let record = state
+                        .get(&qualified_task_lifecycle::slot_key(eligible.lease().slot)?)
+                        .ok_or("TASK_DEMAND")?;
+                    let encoded = record["statement"].as_str().ok_or("TASK_STATEMENT")?;
+                    ensure(encoded.len() == 1368, "TASK_STATEMENT")?;
+                    let wire = hex::decode(encoded).map_err(|_| "TASK_STATEMENT")?;
+                    ensure(hex::encode(&wire) == encoded, "TASK_STATEMENT")?;
+                    let admission =
+                        verify_lifecycle_admission(&wire, material(), eligible.lease(), height)
+                            .map_err(|e| format!("TASK_ADMISSION:{e:?}"))?;
+                    eligibility = Some(ParentTaskEligibility::Lifecycle(Box::new(eligible)));
+                    admission
+                }
+                "signed-task-dev-v1" => {
+                    let record = state
+                        .get(&format!("work:{}", hex::encode(task)))
+                        .ok_or("TASK")?;
+                    let encoded = record["manifest"].as_str().ok_or("TASK_MANIFEST")?;
+                    ensure(encoded.len() == 1304, "TASK_MANIFEST")?;
+                    let wire = hex::decode(encoded).map_err(|_| "TASK_MANIFEST")?;
+                    ensure(hex::encode(&wire) == encoded, "TASK_MANIFEST")?;
+                    let signed =
+                        SignedQualifiedWorkTask::decode(&wire).map_err(|_| "TASK_MANIFEST")?;
+                    let context = self
+                        .settings()
+                        .qualified_task_context(signed.manifest.demand_id, height)?;
+                    verify_development_admission(&wire, material(), &context)
+                        .map_err(|e| format!("TASK_ADMISSION:{e:?}"))?
+                }
+                _ => return Err("SIGNED_TASK_PROFILE_REQUIRED".into()),
             }
-            "signed-task-dev-v1" => {
-                let record = state
-                    .get(&format!("work:{}", hex::encode(task)))
-                    .ok_or("TASK")?;
-                let encoded = record["manifest"].as_str().ok_or("TASK_MANIFEST")?;
-                ensure(encoded.len() == 1304, "TASK_MANIFEST")?;
-                let wire = hex::decode(encoded).map_err(|_| "TASK_MANIFEST")?;
-                ensure(hex::encode(&wire) == encoded, "TASK_MANIFEST")?;
-                let signed = SignedQualifiedWorkTask::decode(&wire).map_err(|_| "TASK_MANIFEST")?;
-                let context = self
-                    .settings()
-                    .qualified_task_context(signed.manifest.demand_id, height)?;
-                verify_development_admission(&wire, material(), &context)
-                    .map_err(|e| format!("TASK_ADMISSION:{e:?}"))?
-            }
-            _ => return Err("SIGNED_TASK_PROFILE_REQUIRED".into()),
         };
         self.prepare_with_task_from_parent(
             parent,
@@ -461,47 +477,63 @@ impl Node {
             b: &b,
         };
         let mut eligibility = None;
-        let admission = match self.settings().task_profile() {
-            "signed-task-lifecycle-dev-v2"
-            | "signed-task-lifecycle-dev-v3"
-            | "signed-task-lifecycle-dev-v4"
-            | continuity_v1::PROFILE
-            | "signed-checkpoint-tile-maintenance-dev-v1" => {
-                let eligible = qualified_task_lifecycle::eligible_task(
+        let admission = if trnm_mvcc_fee::pon_executor::pq_accounts_v2::tasks_v5_enabled(
+            &self.settings().app,
+        ) {
+            let (eligible, admission) =
+                trnm_mvcc_fee::pon_executor::pq_accounts_v2::tasks_v5::admit_material(
                     &state,
                     task,
                     height,
                     &self.settings().app,
+                    material(),
                 )?;
-                let record = state
-                    .get(&qualified_task_lifecycle::slot_key(eligible.lease().slot)?)
-                    .ok_or("TASK_DEMAND")?;
-                let encoded = record["statement"].as_str().ok_or("TASK_STATEMENT")?;
-                ensure(encoded.len() == 1368, "TASK_STATEMENT")?;
-                let wire = hex::decode(encoded).map_err(|_| "TASK_STATEMENT")?;
-                ensure(hex::encode(&wire) == encoded, "TASK_STATEMENT")?;
-                let admission =
-                    verify_lifecycle_admission(&wire, material(), eligible.lease(), height)
-                        .map_err(|e| format!("TASK_ADMISSION:{e:?}"))?;
-                eligibility = Some(ParentTaskEligibility::Lifecycle(Box::new(eligible)));
-                admission
+            eligibility = Some(ParentTaskEligibility::PqTasksV5(Box::new(eligible)));
+            admission
+        } else {
+            match self.settings().task_profile() {
+                "signed-task-lifecycle-dev-v2"
+                | "signed-task-lifecycle-dev-v3"
+                | "signed-task-lifecycle-dev-v4"
+                | continuity_v1::PROFILE
+                | "signed-checkpoint-tile-maintenance-dev-v1" => {
+                    let eligible = qualified_task_lifecycle::eligible_task(
+                        &state,
+                        task,
+                        height,
+                        &self.settings().app,
+                    )?;
+                    let record = state
+                        .get(&qualified_task_lifecycle::slot_key(eligible.lease().slot)?)
+                        .ok_or("TASK_DEMAND")?;
+                    let encoded = record["statement"].as_str().ok_or("TASK_STATEMENT")?;
+                    ensure(encoded.len() == 1368, "TASK_STATEMENT")?;
+                    let wire = hex::decode(encoded).map_err(|_| "TASK_STATEMENT")?;
+                    ensure(hex::encode(&wire) == encoded, "TASK_STATEMENT")?;
+                    let admission =
+                        verify_lifecycle_admission(&wire, material(), eligible.lease(), height)
+                            .map_err(|e| format!("TASK_ADMISSION:{e:?}"))?;
+                    eligibility = Some(ParentTaskEligibility::Lifecycle(Box::new(eligible)));
+                    admission
+                }
+                "signed-task-dev-v1" => {
+                    let record = state
+                        .get(&format!("work:{}", hex::encode(task)))
+                        .ok_or("TASK")?;
+                    let encoded = record["manifest"].as_str().ok_or("TASK_MANIFEST")?;
+                    ensure(encoded.len() == 1304, "TASK_MANIFEST")?;
+                    let wire = hex::decode(encoded).map_err(|_| "TASK_MANIFEST")?;
+                    ensure(hex::encode(&wire) == encoded, "TASK_MANIFEST")?;
+                    let signed =
+                        SignedQualifiedWorkTask::decode(&wire).map_err(|_| "TASK_MANIFEST")?;
+                    let context = self
+                        .settings()
+                        .qualified_task_context(signed.manifest.demand_id, height)?;
+                    verify_development_admission(&wire, material(), &context)
+                        .map_err(|e| format!("TASK_ADMISSION:{e:?}"))?
+                }
+                _ => return Err("SIGNED_TASK_PROFILE_REQUIRED".into()),
             }
-            "signed-task-dev-v1" => {
-                let record = state
-                    .get(&format!("work:{}", hex::encode(task)))
-                    .ok_or("TASK")?;
-                let encoded = record["manifest"].as_str().ok_or("TASK_MANIFEST")?;
-                ensure(encoded.len() == 1304, "TASK_MANIFEST")?;
-                let wire = hex::decode(encoded).map_err(|_| "TASK_MANIFEST")?;
-                ensure(hex::encode(&wire) == encoded, "TASK_MANIFEST")?;
-                let signed = SignedQualifiedWorkTask::decode(&wire).map_err(|_| "TASK_MANIFEST")?;
-                let context = self
-                    .settings()
-                    .qualified_task_context(signed.manifest.demand_id, height)?;
-                verify_development_admission(&wire, material(), &context)
-                    .map_err(|e| format!("TASK_ADMISSION:{e:?}"))?
-            }
-            _ => return Err("SIGNED_TASK_PROFILE_REQUIRED".into()),
         };
         self.prepare_with_task_from_parent_controlled(
             parent,

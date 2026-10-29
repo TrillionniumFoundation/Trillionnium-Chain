@@ -555,6 +555,7 @@ pub(super) fn prepare(
         payload,
     };
     Ok(Prepared {
+        native_pq: None,
         command,
         legacy: None,
         sender: hex::encode(transfer.sender),

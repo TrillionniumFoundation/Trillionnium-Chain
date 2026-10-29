@@ -181,7 +181,9 @@ pub struct Envelope {
     pub payload: Vec<u8>,
     pub signature: [u8; 64],
 }
-fn payload_len(tag: u8, p: &[u8]) -> Result<(), WireError> {
+/// Canonical application payload grammar shared by explicitly selected signature
+/// profiles. This parses bytes only and never constructs an authenticated envelope.
+pub(crate) fn payload_len(tag: u8, p: &[u8]) -> Result<(), WireError> {
     let size = match tag {
         1 => 40,
         2 => 80,

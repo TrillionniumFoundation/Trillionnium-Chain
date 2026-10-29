@@ -24,13 +24,16 @@ use trnm_protocol::{
     },
 };
 
-pub const PROFILE: &str = "native-pq-network-owner-v1";
+pub const PROFILE: &str = "native-pq-network-owner-v2";
 pub(crate) const MAX_WIRE: usize = 2 * 1024 * 1024;
 pub(crate) const MAX_LEDGER_BYTES: u64 = 16 * 1024 * 1024;
 pub(crate) const MAX_RECORDS: u64 = 4096;
+pub(crate) const MAX_INGRESS_CONNECTIONS: u64 = 64;
+pub(crate) const MAX_INGRESS_BYTES: u64 = 32 * 1024 * 1024;
+pub(crate) const MAX_INBOUND_VERIFICATIONS: u64 = 64;
 const MAX_LIFETIME_SECONDS: u64 = 60;
-const REQUEST_MAGIC: &[u8; 4] = b"PNQ1";
-const RESPONSE_MAGIC: &[u8; 4] = b"PNP1";
+const REQUEST_MAGIC: &[u8; 4] = b"PNQ2";
+const RESPONSE_MAGIC: &[u8; 4] = b"PNP2";
 // TPQ1 purpose 6 is the existing peer-authorization purpose. Directions are
 // separate owner contexts; transaction/artifact purpose assignments stay intact.
 const PEER_PURPOSE: u8 = 6;
@@ -52,6 +55,10 @@ struct PolicyRecord {
     peers: Vec<String>,
     ledger_byte_limit: u64,
     ledger_record_limit: u64,
+    ingress_connection_limit: u64,
+    ingress_byte_limit: u64,
+    inbound_verification_limit: u64,
+    transport_confidentiality: String,
 }
 
 /// Operator-supplied pins. No key from an incoming frame can enter this roster.
@@ -108,9 +115,13 @@ impl PqNetworkPolicy {
             peers: public.into_values().collect(),
             ledger_byte_limit: MAX_LEDGER_BYTES,
             ledger_record_limit: MAX_RECORDS,
+            ingress_connection_limit: MAX_INGRESS_CONNECTIONS,
+            ingress_byte_limit: MAX_INGRESS_BYTES,
+            inbound_verification_limit: MAX_INBOUND_VERIFICATIONS,
+            transport_confidentiality: "loopback-signed-plaintext-dev-only".into(),
         };
         let bytes = serde_json::to_vec(&record)?;
-        let id = hash(b"native-pq-network-policy-v1", &[&bytes]);
+        let id = hash(b"native-pq-network-policy-v2", &[&bytes]);
         Ok(Self {
             record,
             bytes,
@@ -144,7 +155,7 @@ impl PqNetworkPolicy {
     }
     fn context(&self, peer: Hash, direction: Direction) -> Hash {
         hash(
-            b"native-pq-network-peer-context-v1",
+            b"native-pq-network-peer-context-v2",
             &[&self.id, &peer, &[direction as u8]],
         )
     }
@@ -173,6 +184,14 @@ impl PqNetworkPolicy {
         }
     }
     pub(crate) fn verify_request(&self, wire: &[u8], now: u64) -> Result<VerifiedRequest> {
+        self.verify_request_metered(wire, now, &mut || Ok(()))
+    }
+    fn verify_request_metered(
+        &self,
+        wire: &[u8],
+        now: u64,
+        before_verification: &mut impl FnMut() -> Result<()>,
+    ) -> Result<VerifiedRequest> {
         let (frame, payload) = decode_wire(wire, REQUEST_MAGIC)?;
         let peer: Hash = frame[72..104].try_into().map_err(|_| "PQ_NETWORK_KEY")?;
         let verifier = self.peers.get(&peer).ok_or("PQ_NETWORK_UNKNOWN_PEER")?;
@@ -183,9 +202,10 @@ impl PqNetworkPolicy {
             "PQ_NETWORK_SEQUENCE",
         )?;
         let expected = self.expectation(peer, Direction::Request, sequence, expiry, now, payload);
+        before_verification()?;
         let observed = verifier.verify(frame, &expected).map_err(crypto)?;
         let operation = hash(
-            b"native-pq-network-operation-v1",
+            b"native-pq-network-operation-v2",
             &[observed.authenticated_statement()],
         );
         let request: Request = serde_json::from_slice(payload)?;
@@ -232,7 +252,7 @@ impl PqNetworkPolicy {
         let response: PqResponse = serde_json::from_slice(payload)?;
         ensure(
             serde_json::to_vec(&response)? == payload
-                && response.schema == "native-pq-network-response-v1"
+                && response.schema == "native-pq-network-response-v2"
                 && response.operation == hex::encode(request.operation),
             "PQ_NETWORK_RESPONSE_CONTEXT",
         )?;
@@ -423,7 +443,7 @@ impl PqServer {
             (ok, value)
         };
         let response = PqResponse {
-            schema: "native-pq-network-response-v1".into(),
+            schema: "native-pq-network-response-v2".into(),
             operation: hex::encode(request.operation),
             ok,
             value,
@@ -445,17 +465,43 @@ impl PqServer {
             .map_err(crypto)?;
         encode_wire(RESPONSE_MAGIC, &frame, &payload)
     }
+    fn read_request(
+        &self,
+        node: &Mutex<Node>,
+        stream: &mut TcpStream,
+        deadline: Instant,
+    ) -> Result<Vec<u8>> {
+        // Charge the original durable owner before reading or allocating a body.
+        node.lock()
+            .map_err(|_| "PQ_NETWORK_OWNER")?
+            .charge_pq_ingress(&self.policy, true, 0, false)?;
+        let mut prefix = [0; 4];
+        super::read_exact_deadline(stream, &mut prefix, deadline)?;
+        let length = u32::from_be_bytes(prefix) as usize;
+        ensure((1..=MAX_WIRE).contains(&length), "PQ_NETWORK_WIRE_LIMIT")?;
+        node.lock()
+            .map_err(|_| "PQ_NETWORK_OWNER")?
+            .charge_pq_ingress(&self.policy, false, length as u64, false)?;
+        let mut wire = vec![0; length];
+        super::read_exact_deadline(stream, &mut wire, deadline)?;
+        Ok(wire)
+    }
     fn handle(&self, node: &Mutex<Node>, wire: &[u8], deadline: Instant) -> Result<Vec<u8>> {
         let now = super::now()?;
-        let verified = self.policy.verify_request(wire, now)?;
+        let verified = self.policy.verify_request_metered(wire, now, &mut || {
+            node.lock()
+                .map_err(|_| "PQ_NETWORK_OWNER")?
+                .charge_pq_ingress(&self.policy, false, 0, true)
+        })?;
         ensure(
             verified.expiry - now <= MAX_LIFETIME_SECONDS,
             "PQ_NETWORK_LIFETIME",
         )?;
-        let begin = node
-            .lock()
-            .map_err(|_| "PQ_NETWORK_OWNER")?
-            .begin_pq_network_request(&self.policy, &verified)?;
+        let (begin, settings) = {
+            let mut owner = node.lock().map_err(|_| "PQ_NETWORK_OWNER")?;
+            let begin = owner.begin_pq_network_request(&self.policy, &verified)?;
+            (begin, owner.settings().clone())
+        };
         let (epoch, expected_epoch) = match begin {
             crate::store::pq_network::PqReplay::Cached(response) => return Ok(response),
             crate::store::pq_network::PqReplay::Execute(epoch, expected) => (epoch, expected),
@@ -472,12 +518,16 @@ impl PqServer {
             }
             Ok(())
         };
-        let result = super::dispatch_shared_with_execution_progress(
+        let result = super::dispatch_shared_with_execution_observation(
             node,
             verified.request.clone(),
             &mut |_| check(),
             |packet| WorkCheckedPacket::verify_with_progress(packet, &mut |_| check()),
-            &|_| check(),
+            &trnm_mvcc_fee::pon_executor::ExecutionControl::new(&|_| check(), &()),
+            super::SubmitDispatchContext {
+                packet_settings: Some(&settings),
+                ..super::SubmitDispatchContext::default()
+            },
         );
         // Complete outcomes, including errors, consume this operation sequence.
         // A caller can issue a new sequence, but cannot change this retained result.
@@ -522,7 +572,8 @@ pub fn serve_pq_authenticated(
         match listener.accept() {
             Ok((mut stream, _)) => {
                 let deadline = end.min(Instant::now() + Duration::from_secs(10));
-                let result = super::read_frame_deadline(&mut stream, deadline)
+                let result = server
+                    .read_request(&owner, &mut stream, deadline)
                     .and_then(|wire| server.handle(&owner, &wire, deadline))
                     .and_then(|response| {
                         super::write_frame_deadline(&mut stream, &response, deadline)
@@ -542,5 +593,8 @@ pub fn serve_pq_authenticated(
     Ok(metrics)
 }
 
-#[cfg(test)]
+#[cfg(all(test, feature = "pq-native-openssl"))]
 mod tests;
+
+#[cfg(test)]
+mod canonical_tests;

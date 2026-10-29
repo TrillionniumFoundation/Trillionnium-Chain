@@ -7,8 +7,9 @@ use rusqlite::{params, OptionalExtension};
 use serde_json::Value;
 use std::sync::Mutex;
 use trnm_crypto_primitives::pon_work;
+use trnm_mvcc_fee::pon_executor::pq_accounts_v2;
 use trnm_mvcc_fee::pon_executor::{self, CanonicalTransitionObserver, State};
-use trnm_protocol::pon_wire::{hash, Envelope, Hash, Header, HEADER_BYTES};
+use trnm_protocol::pon_wire::{hash, Envelope, Hash, Header};
 
 const MAX_ANCESTORS: usize = 4096;
 const MAX_CANDIDATE_BYTES: usize = 16 * 1024 * 1024;
@@ -102,23 +103,84 @@ impl CanonicalTransitionObserver for PaymentObserver<'_> {
         fee: u64,
         receipt: &[u8],
     ) -> pon_executor::Result<()> {
+        self.observe_command(
+            PaymentCommand {
+                id: envelope.id().map_err(|_| "ENCODING")?,
+                sender: envelope.sender,
+                tag: envelope.tag,
+                payload: &envelope.payload,
+                encoding: PaymentEncoding::Classical,
+            },
+            before,
+            writes,
+            fee,
+            receipt,
+        )
+    }
+    fn native_pq_transaction(
+        &self,
+        _index: usize,
+        command: &pq_accounts_v2::PreparedCommand,
+        before: &State,
+        writes: &State,
+        fee: u64,
+        receipt: &[u8],
+    ) -> pon_executor::Result<()> {
+        self.observe_command(
+            PaymentCommand {
+                id: command.wire_id(),
+                sender: command.sender(),
+                tag: command.kind(),
+                payload: command.payload(),
+                encoding: PaymentEncoding::NativePq,
+            },
+            before,
+            writes,
+            fee,
+            receipt,
+        )
+    }
+}
+
+// Only the two verified canonical observer callbacks above construct this view.
+// The enum selects payload grammar; it is never signature or payment authority.
+enum PaymentEncoding {
+    Classical,
+    NativePq,
+}
+struct PaymentCommand<'a> {
+    id: Hash,
+    sender: Hash,
+    tag: u8,
+    payload: &'a [u8],
+    encoding: PaymentEncoding,
+}
+impl PaymentObserver<'_> {
+    fn observe_command(
+        &self,
+        command: PaymentCommand<'_>,
+        before: &State,
+        writes: &State,
+        fee: u64,
+        receipt: &[u8],
+    ) -> pon_executor::Result<()> {
         if matches!(self.query.source, NativeFundingSourceV1::Reward(_))
-            || envelope.id().map_err(|_| "ENCODING")? != self.query.operation
+            || command.id != self.query.operation
         {
             return Ok(());
         }
-        let raw = &envelope.payload;
+        let raw = &command.payload;
         let source_key = self.query.source.key();
         let original = before.get(&source_key).ok_or("NATIVE_PAYMENT_SOURCE")?;
         let successor = writes.get(&source_key).ok_or("NATIVE_PAYMENT_SOURCE")?;
         let (gross, credit) = match self.query.source {
             NativeFundingSourceV1::Task(task) => {
                 check(
-                    envelope.tag == 5
+                    command.tag == 5
                         && raw.len() == 64
                         && h(&raw[..32])? == task
                         && h(&raw[32..])? == self.query.subject
-                        && text(original, "owner")? == hex::encode(envelope.sender)
+                        && text(original, "owner")? == hex::encode(command.sender)
                         && text(original, "provider")? == hex::encode(self.query.beneficiary)
                         && text(original, "status")? == "receipt"
                         && text(original, "output")? == hex::encode(self.query.subject)
@@ -130,11 +192,11 @@ impl CanonicalTransitionObserver for PaymentObserver<'_> {
             }
             NativeFundingSourceV1::Release(release) => {
                 check(
-                    envelope.tag == 9
+                    command.tag == 9
                         && raw.len() >= 73
                         && h(&raw[..32])? == release
                         && h(&raw[32..64])? == self.query.subject
-                        && envelope.sender == self.query.beneficiary
+                        && command.sender == self.query.beneficiary
                         && text(original, "status")? == "open"
                         && self.height >= n(original, "maturity")?
                         && self.height < n(original, "deadline")?,
@@ -158,12 +220,16 @@ impl CanonicalTransitionObserver for PaymentObserver<'_> {
             }
             NativeFundingSourceV1::Quota(quota) => {
                 check(
-                    envelope.tag == 11
-                        && raw.len() == 136
+                    command.tag == 11
+                        && raw.len()
+                            == match command.encoding {
+                                PaymentEncoding::Classical => 136,
+                                PaymentEncoding::NativePq => 72,
+                            }
                         && h(&raw[..32])? == quota
                         && h(&raw[40..72])? == self.query.subject
-                        && envelope.sender == self.query.beneficiary
-                        && text(original, "provider")? == hex::encode(envelope.sender)
+                        && command.sender == self.query.beneficiary
+                        && text(original, "provider")? == hex::encode(command.sender)
                         && text(original, "status")? == "reserved"
                         && self.height < n(original, "deadline")?,
                 )?;
@@ -185,7 +251,7 @@ impl CanonicalTransitionObserver for PaymentObserver<'_> {
         let old = before.get(&account_key);
         let next = writes.get(&account_key).ok_or("NATIVE_PAYMENT_CREDIT")?;
         let prior_balance = old.map(|v| n(v, "balance")).transpose()?.unwrap_or(0);
-        let sender_fee = if envelope.sender == self.query.beneficiary && envelope.tag != 11 {
+        let sender_fee = if command.sender == self.query.beneficiary && command.tag != 11 {
             fee
         } else {
             0
@@ -297,13 +363,21 @@ impl Node {
                         (packet.transactions, bytes)
                     } else {
                         let packet = self.packet(cursor)?;
-                        let bytes = packet.encode()?.len();
+                        let bytes = packet.checked_wire_length_for_settings(&self.settings)?;
                         (packet.transactions, bytes)
                     };
                 ensure(encoded_bytes == bytes, "NATIVE_PAYMENT_PACKET_LENGTH")?;
+                let selected_pq = if pq_accounts_v2::enabled(&self.settings.app) {
+                    Some(pq_accounts_v2::account_profile(&self.settings.app)?)
+                } else {
+                    None
+                };
                 let found = matches!(query.source, NativeFundingSourceV1::Reward(_))
                     || transactions.iter().any(|raw| {
-                        Envelope::decode(raw).and_then(|tx| tx.id()).ok() == Some(query.operation)
+                        if let Some(profile) = selected_pq {
+                            trnm_protocol::pq_native_accounts_v2::UnverifiedEnvelope::decode_for_profile(raw,profile)
+                                .map(|tx|tx.wire_id()).ok() == Some(query.operation)
+                        } else { Envelope::decode(raw).and_then(|tx| tx.id()).ok() == Some(query.operation) }
                     });
                 if found {
                     let observer = PaymentObserver {
@@ -356,7 +430,7 @@ impl Node {
         let width = if growth {
             4 + trnm_protocol::pon_growth::GROWTH_HEADER_BYTES
         } else {
-            HEADER_BYTES
+            self.settings.packet_header_length()
         };
         let (prefix, trace): (Vec<u8>, Vec<u8>) = self.db.query_row(
             "SELECT substr(packet,1,?),substr(packet,-32,32) FROM blocks WHERE id=?",
@@ -372,7 +446,7 @@ impl Node {
             ensure(h.block_id(trace) == id, "BLOCK_ID")?;
             Ok(h.ledger)
         } else {
-            let h = Header::decode(&prefix).map_err(|_| "HEADER_CODEC")?;
+            let h = self.settings.decode_packet_header(&prefix)?;
             ensure(h.block_id(trace) == id, "BLOCK_ID")?;
             Ok(h)
         }
@@ -421,6 +495,7 @@ impl Node {
         let mut output = pon_executor::execute_observed(
             &before,
             pon_executor::BlockExecution {
+                timestamp: Some(h.timestamp),
                 transactions: &packet.transactions,
                 height: h.height,
                 miner: h.miner,

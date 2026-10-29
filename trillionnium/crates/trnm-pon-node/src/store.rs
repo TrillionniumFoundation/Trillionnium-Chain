@@ -17,7 +17,6 @@ pub mod native_budget;
 mod operator_continuous_owner;
 mod operator_mining_owner;
 pub mod pinned_account_query;
-#[cfg(feature = "pq-native-openssl")]
 pub(crate) mod pq_network;
 #[cfg(test)]
 pub(crate) mod public_reader;
@@ -64,9 +63,11 @@ use trnm_mvcc_fee::pon_commitment::{
 #[cfg(test)]
 use trnm_mvcc_fee::pon_executor::root;
 use trnm_mvcc_fee::pon_executor::SIGNED_TASK_PROFILE;
-use trnm_mvcc_fee::pon_executor::{ExecutionControl, ExecutionError, ExecutionProgress, State};
+use trnm_mvcc_fee::pon_executor::{
+    pq_accounts_v2, ExecutionControl, ExecutionError, ExecutionProgress, State,
+};
 use trnm_mvcc_fee::qualified_task_lifecycle;
-use trnm_protocol::pon_wire::{hash, Hash, Header, HEADER_BYTES};
+use trnm_protocol::pon_wire::{hash, Hash, Header};
 use trnm_protocol::qualified_work_task::lifecycle_v2::PROFILE as LIFECYCLE_TASK_PROFILE;
 use trnm_protocol::qualified_work_task::lifecycle_v3::PROFILE as ATOMIC_TASK_PROFILE;
 use trnm_protocol::qualified_work_task::lifecycle_v4::PROFILE as OVERLAP_TASK_PROFILE;
@@ -166,6 +167,7 @@ pub(crate) enum ParentTaskEligibility {
     ConsensusMaintenance,
     Signed(Box<QualifiedWorkTask>),
     Lifecycle(Box<qualified_task_lifecycle::EligibleLifecycleTask>),
+    PqTasksV5(Box<pq_accounts_v2::tasks_v5::EligibleTaskV5>),
 }
 impl ParentTaskEligibility {
     fn manifest(&self) -> Option<&QualifiedWorkTask> {
@@ -173,6 +175,7 @@ impl ParentTaskEligibility {
             Self::Legacy | Self::ConsensusMaintenance => None,
             Self::Signed(manifest) => Some(manifest),
             Self::Lifecycle(eligible) => Some(eligible.manifest()),
+            Self::PqTasksV5(eligible) => Some(eligible.manifest()),
         }
     }
 }
@@ -234,8 +237,19 @@ fn record_eligible_output(
     state: &mut State,
     eligible: &ParentTaskEligibility,
     product: &[u8],
+    cfg: &trnm_mvcc_fee::pon_executor::Config,
 ) -> Result<bool> {
     match eligible {
+        ParentTaskEligibility::PqTasksV5(task) => {
+            ensure(product.len() == pon_work::CELLS * 4, "TASK_OUTPUT")?;
+            Ok(pq_accounts_v2::tasks_v5::consume_output(
+                state,
+                task,
+                hash(b"qualified-task-product-v1", &[product]),
+                height,
+                cfg,
+            )?)
+        }
         ParentTaskEligibility::Lifecycle(task) => {
             ensure(product.len() == pon_work::CELLS * 4, "TASK_OUTPUT")?;
             Ok(qualified_task_lifecycle::consume_output(
@@ -550,6 +564,22 @@ impl WorkCheckedPacket {
             &[&self.packet.encode()?],
         ))
     }
+    /// The original History owner supplies its immutable ledger settings after
+    /// checking the actual parent. Input bytes cannot select a weaker codec.
+    pub(crate) fn completion_identity_for_settings(&self, settings: &Settings) -> Result<Hash> {
+        ensure(
+            self.packet.header.network == settings.network()
+                && self.packet.header.parameters == settings.parameters(),
+            "CONTEXT",
+        )?;
+        if !trnm_mvcc_fee::pon_executor::pq_accounts_v2::enabled(&settings.app) {
+            return self.completion_identity();
+        }
+        Ok(hash(
+            b"public-pq-history-complete-work-identity-v1",
+            &[&self.packet.encode_for_settings(settings)?],
+        ))
+    }
     pub(crate) fn verify(packet: Packet) -> Result<Self> {
         let h = &packet.header;
         let work = pon_work::verify(h.challenge(), h.work_task, h.target, &packet.proof)
@@ -732,7 +762,6 @@ pub struct Node {
     detached_execution: std::sync::Arc<std::sync::atomic::AtomicBool>,
     #[cfg(test)]
     cancel_next_activation_intent: bool,
-    #[cfg(feature = "pq-native-openssl")]
     pq_network_epoch: std::sync::Arc<std::sync::atomic::AtomicU64>,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -740,8 +769,7 @@ enum StateBackend {
     Legacy,
     AuthenticatedV1,
     PermanentAccountGrowthV2,
-    #[cfg(feature = "pq-native-openssl")]
-    PqNetworkV1,
+    PqNetworkV2,
 }
 impl StateBackend {
     fn ddl(self) -> String {
@@ -749,8 +777,7 @@ impl StateBackend {
             Self::Legacy => ddl(),
             Self::AuthenticatedV1 => format!("{}{}", ddl(), native_authenticated::DDL),
             Self::PermanentAccountGrowthV2 => format!("{}{}", ddl(), growth::DDL),
-            #[cfg(feature = "pq-native-openssl")]
-            Self::PqNetworkV1 => format!("{}{}", ddl(), pq_network::DDL),
+            Self::PqNetworkV2 => format!("{}{}", ddl(), pq_network::DDL),
         }
     }
     fn selected_schema_id(self, settings: &Settings) -> Hash {
@@ -768,8 +795,7 @@ impl StateBackend {
             Self::Legacy => b"native-branch-schema-v2",
             Self::AuthenticatedV1 => b"native-authenticated-branch-schema-v1",
             Self::PermanentAccountGrowthV2 => b"native-permanent-account-growth-schema-v2",
-            #[cfg(feature = "pq-native-openssl")]
-            Self::PqNetworkV1 => b"native-pq-network-owner-schema-v1",
+            Self::PqNetworkV2 => b"native-pq-network-owner-schema-v2",
         };
         hash(domain, &[self.ddl().as_bytes()])
     }
@@ -930,10 +956,20 @@ impl Node {
     /// An explicitly PQ-only native namespace never serves through a classical
     /// or unauthenticated listener. A build without the optional PQ provider
     /// cannot open its different exact SQLite schema at all.
+    pub(crate) fn require_pq_history_transport(&self) -> Result<()> {
+        self.namespace()?;
+        self.storage_context()?;
+        if trnm_mvcc_fee::pon_executor::pq_accounts_v2::enabled(&self.settings.app) {
+            ensure(
+                self.state_backend == StateBackend::PqNetworkV2,
+                "PQ_NETWORK_BACKEND",
+            )?;
+        }
+        Ok(())
+    }
     pub(crate) fn require_classical_network_profile(&self) -> Result<()> {
-        #[cfg(feature = "pq-native-openssl")]
         ensure(
-            self.state_backend != StateBackend::PqNetworkV1,
+            self.state_backend != StateBackend::PqNetworkV2,
             "PQ_NETWORK_REQUIRED",
         )?;
         Ok(())
@@ -1191,10 +1227,8 @@ impl Node {
             )?;
         }
 
-        #[cfg(feature = "pq-native-openssl")]
-        let pq_selected = state_backend == StateBackend::PqNetworkV1;
-        #[cfg(not(feature = "pq-native-openssl"))]
-        let pq_selected = false;
+        let pq_selected = state_backend == StateBackend::PqNetworkV2;
+
         ensure(pq_selected == pq_network.is_some(), "PQ_NETWORK_BACKEND")?;
         ensure(
             !settings.app.is_pq_account_profile() || pq_selected,
@@ -1317,7 +1351,7 @@ impl Node {
                 )?;
                 let recorded_pq: Option<Vec<u8>> = probe
                     .query_row(
-                        "SELECT value FROM metadata WHERE key='pq_network_owner_v1'",
+                        "SELECT value FROM metadata WHERE key='pq_network_owner_v2'",
                         [],
                         |row| row.get(0),
                     )
@@ -1391,10 +1425,9 @@ impl Node {
             }
             if let Some(policy) = pq_network.as_deref() {
                 tx.execute(
-                    "INSERT INTO metadata VALUES('pq_network_owner_v1',?)",
+                    "INSERT INTO metadata VALUES('pq_network_owner_v2',?)",
                     [policy],
                 )?;
-                #[cfg(feature = "pq-native-openssl")]
                 pq_network::seed(&tx, policy)?;
             }
             if let Some(marker) = required_owner_marker {
@@ -1478,7 +1511,6 @@ impl Node {
             detached_execution: std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false)),
             #[cfg(test)]
             cancel_next_activation_intent: false,
-            #[cfg(feature = "pq-native-openssl")]
             pq_network_epoch: std::sync::Arc::new(std::sync::atomic::AtomicU64::new(1)),
         };
         if node.state_backend == StateBackend::PermanentAccountGrowthV2 {
@@ -1505,15 +1537,20 @@ impl Node {
         node.validate_native_budget_records_v1()?;
         node.recover()?;
         node.read_active()?;
-        crate::ancestry_index::validate_tip(&node.db, node.ancestry_context(), node.active()?.0)?;
+        crate::ancestry_index::validate_tip(&node.db, node.ancestry_context()?, node.active()?.0)?;
         Ok(node)
     }
-    fn ancestry_context(&self) -> crate::ancestry_index::Context {
-        crate::ancestry_index::Context {
+    fn ancestry_context(&self) -> Result<crate::ancestry_index::Context> {
+        Ok(crate::ancestry_index::Context {
+            packet_profile: if pq_accounts_v2::enabled(&self.settings.app) {
+                Some(pq_accounts_v2::account_profile(&self.settings.app)?)
+            } else {
+                None
+            },
             network: self.settings.network(),
             parameters: self.settings.parameters(),
             genesis: self.settings.genesis(),
-        }
+        })
     }
     pub fn settings(&self) -> &Settings {
         &self.settings
@@ -2207,7 +2244,7 @@ impl Node {
         let slot = self.slot()?;
         let state = self.slot_state_with_progress(slot, progress)?;
         self.check_persisted_state(selected.0, &state, progress)?;
-        crate::ancestry_index::validate_tip(&self.db, self.ancestry_context(), selected.0)
+        crate::ancestry_index::validate_tip(&self.db, self.ancestry_context()?, selected.0)
             .map_err(Error::local_integrity)?;
         if self.state_backend == StateBackend::AuthenticatedV1 {
             native_authenticated::verify_history_with_cache(
@@ -2441,12 +2478,14 @@ impl Node {
         parent: Hash,
         transactions: &[Vec<u8>],
         height: u64,
+        timestamp: u64,
         miner: Hash,
         workers: usize,
     ) -> Result<trnm_mvcc_fee::pon_commitment::StagedOutput> {
         self.execute_derived_with_progress(
             actual,
             ExecutionRequest {
+                timestamp: Some(timestamp),
                 transactions,
                 height,
                 miner,
@@ -2586,6 +2625,7 @@ impl Node {
         drop(parent_measurement);
         *self.commitment_observation.borrow_mut() = Some(observation);
         let request = || ExecutionRequest {
+            timestamp: block.timestamp,
             transactions: block.transactions,
             height: block.height,
             miner: block.miner,
@@ -2744,7 +2784,8 @@ impl Node {
                 error.local_integrity()
             }
         })?;
-        let packet = Packet::decode(&raw).map_err(Error::local_integrity)?;
+        let packet =
+            Packet::decode_for_settings(&raw, &self.settings).map_err(Error::local_integrity)?;
         ensure(
             packet.id()? == id
                 && Some(packet.header.parent) == row.parent
@@ -2764,7 +2805,10 @@ impl Node {
         )?;
         self.count_header_query();
         let projection = statement
-            .query_row(params![HEADER_BYTES, id.as_slice()], HeaderProjection::read)
+            .query_row(
+                params![self.settings.packet_header_length(), id.as_slice()],
+                HeaderProjection::read,
+            )
             .optional()?
             .ok_or("UNKNOWN_PARENT")?;
         self.check_header_projection(id, projection)
@@ -2789,7 +2833,7 @@ impl Node {
                 root: bytes32(projection.root)?,
             };
             ensure(
-                (HEADER_BYTES + 2 + pon_work::PROOF_BYTES..=1_048_576)
+                (self.settings.packet_header_length() + 2 + pon_work::PROOF_BYTES..=1_048_576)
                     .contains(&projection.length.ok_or("GENESIS_HAS_NO_PACKET")?),
                 "PACKET_LIMIT",
             )?;
@@ -2800,7 +2844,7 @@ impl Node {
                 .header_trace_bytes
                 .saturating_add((prefix.len() + trace.len()) as u64);
             self.history_read_counters.set(counters);
-            let header = Header::decode(&prefix).map_err(|_| Error::from("HEADER_CODEC"))?;
+            let header = self.settings.decode_packet_header(&prefix)?;
             let trace = bytes32(trace)?;
             ensure(
                 header.block_id(trace) == id
@@ -2876,7 +2920,7 @@ impl Node {
             start.as_slice(),
             self.settings.genesis().as_slice(),
             maximum,
-            HEADER_BYTES,
+            self.settings.packet_header_length(),
         ])?;
         let mut current = start;
         let mut checked = 0_u64;
@@ -3157,7 +3201,10 @@ impl Node {
             "NETWORK",
         )?;
         ensure(
-            self.packet(id).map_err(Error::local_integrity)?.encode()? == packet.encode()?,
+            self.packet(id)
+                .map_err(Error::local_integrity)?
+                .encode_for_settings(&self.settings)?
+                == packet.encode_for_settings(&self.settings)?,
             "DUPLICATE_CONTENT",
         )?;
         ensure(
@@ -3226,7 +3273,7 @@ impl Node {
         // Bounded full-packet identity precedes State/lease/context/Work work.
         self.precheck_owner_packet(packet)?;
         self.ready()?;
-        let bytes = packet.encode()?;
+        let bytes = packet.encode_for_settings(&self.settings)?;
         let h = &packet.header;
         let id = packet.id()?;
         ensure(
@@ -3406,7 +3453,7 @@ impl Node {
             owner
                 .policy
                 .check_packet(&crate::operator_task_policy::digest_bytes(
-                    &packet.encode()?,
+                    &packet.encode_for_settings(&self.settings)?,
                 ))
                 .map_err(owner_error)?;
         }
@@ -3417,7 +3464,8 @@ impl Node {
             return Ok(None);
         };
         self.precheck_owner_packet(packet)?;
-        let packet_sha256 = crate::operator_task_policy::digest_bytes(&packet.encode()?);
+        let packet_sha256 =
+            crate::operator_task_policy::digest_bytes(&packet.encode_for_settings(&self.settings)?);
         owner
             .policy
             .check_packet(&packet_sha256)
@@ -3494,7 +3542,9 @@ impl Node {
         if let Some(permit) = &permit {
             ensure(
                 permit.facts.packet_sha256
-                    == crate::operator_task_policy::digest_bytes(&checked.packet.encode()?),
+                    == crate::operator_task_policy::digest_bytes(
+                        &checked.packet.encode_for_settings(&self.settings)?,
+                    ),
                 "OWNER_TASK_PACKET_CHANGED",
             )?;
             permit.progress()?;
@@ -3896,7 +3946,9 @@ impl Node {
             )?;
             ensure(
                 permit.facts.packet_sha256
-                    == crate::operator_task_policy::digest_bytes(&packet.encode()?),
+                    == crate::operator_task_policy::digest_bytes(
+                        &packet.encode_for_settings(&self.settings)?,
+                    ),
                 "OWNER_TASK_PACKET_CHANGED",
             )?;
             owner
@@ -3930,7 +3982,7 @@ impl Node {
         let guarded_control = ExecutionControl::new(&guarded_progress, control.worker_accounting);
         let control = &guarded_control;
         let progress = control.progress;
-        let bytes = packet.encode()?;
+        let bytes = packet.encode_for_settings(&self.settings)?;
         let h = &packet.header;
         let parent = self.record(h.parent)?;
         // Keep the original second parent-read cancellation/CPU boundary. The
@@ -3954,6 +4006,7 @@ impl Node {
         let (executed, rejection_scope) = self.execute_derived_core_with_rejection(
             &prior,
             ExecutionRequest {
+                timestamp: Some(h.timestamp),
                 transactions: &packet.transactions,
                 height: h.height,
                 miner: h.miner,
@@ -4052,7 +4105,7 @@ impl Node {
             .checked_add(consensus::required_work(h.target)?)?;
         let mut keys: std::collections::BTreeSet<_> = prior.keys().collect();
         keys.extend(output.state.keys());
-        let index_context = self.ancestry_context();
+        let index_context = self.ancestry_context()?;
         progress(ExecutionProgress::BeforePersistence)?;
         let tx = rusqlite::Transaction::new_unchecked(
             &self.db,
@@ -4325,6 +4378,7 @@ impl Node {
         let signed = eligible.manifest().ok_or("TASK_MANIFEST")?;
         let statement_id = match &eligible {
             ParentTaskEligibility::Lifecycle(task) => task.statement_id(),
+            ParentTaskEligibility::PqTasksV5(task) => task.statement_id(),
             _ => signed.id().map_err(|_| Error::from("TASK_MANIFEST"))?,
         };
         ensure(
@@ -4390,6 +4444,7 @@ impl Node {
         let signed = eligible.manifest().ok_or("TASK_MANIFEST")?;
         let statement_id = match &eligible {
             ParentTaskEligibility::Lifecycle(task) => task.statement_id(),
+            ParentTaskEligibility::PqTasksV5(task) => task.statement_id(),
             _ => signed.id().map_err(|_| Error::from("TASK_MANIFEST"))?,
         };
         ensure(
@@ -4455,6 +4510,11 @@ impl Node {
         {
             continuity_v1::check_maintenance(state, task, &self.settings.app)?;
             return Ok(ParentTaskEligibility::ConsensusMaintenance);
+        }
+        if pq_accounts_v2::tasks_v5_enabled(&self.settings.app) {
+            let eligible =
+                pq_accounts_v2::tasks_v5::eligible_task(state, task, height, &self.settings.app)?;
+            return Ok(ParentTaskEligibility::PqTasksV5(Box::new(eligible)));
         }
         if matches!(
             self.settings.task_profile(),
@@ -4588,8 +4648,15 @@ impl Node {
         self.ready()?;
         let height = self.record(parent)?.height.checked_add(1).ok_or("HEIGHT")?;
         let task = pon_work::task_id(a, b).map_err(|_| Error::from("WORK_TASK"))?;
-        let executed =
-            self.execute_derived(actual, parent, &transactions, height, miner, self.workers)?;
+        let executed = self.execute_derived(
+            actual,
+            parent,
+            &transactions,
+            height,
+            timestamp,
+            miner,
+            self.workers,
+        )?;
         let mut output = executed.output;
         let commitment = executed.commitment;
         let prepared =
@@ -4645,6 +4712,7 @@ impl Node {
         let executed = self.execute_derived_with_control(
             actual,
             ExecutionRequest {
+                timestamp: Some(timestamp),
                 transactions: &transactions,
                 height,
                 miner,
@@ -4696,7 +4764,7 @@ impl Node {
         eligible: &ParentTaskEligibility,
         product: &[u8],
     ) -> Result<bool> {
-        record_eligible_output(height, state, eligible, product)
+        record_eligible_output(height, state, eligible, product, &self.settings.app)
     }
     pub fn mine(
         &mut self,
@@ -5437,7 +5505,7 @@ impl Node {
             .map_or(maximum_steps, |limit| maximum_steps.min(limit));
         let lookup = crate::ancestry_index::next_public_request(
             &self.db,
-            self.ancestry_context(),
+            self.ancestry_context()?,
             tip,
             after,
             maximum_steps,
@@ -5465,7 +5533,8 @@ impl Node {
             params![id.as_slice(), maximum],
             |r| r.get(0),
         )?;
-        let packet = Packet::decode(&raw).map_err(Error::local_integrity)?;
+        let packet =
+            Packet::decode_for_settings(&raw, &self.settings).map_err(Error::local_integrity)?;
         ensure(
             packet.id()? == id
                 && packet.header.parent == after
@@ -5487,7 +5556,7 @@ impl Node {
             "NETWORK",
         )?;
         let id = packet.id()?;
-        let expected = packet.encode()?;
+        let expected = packet.encode_for_settings(&self.settings)?;
         let stored: Option<Vec<u8>> = self
             .db
             .query_row(
@@ -5513,13 +5582,16 @@ impl Node {
             Some(raw) => {
                 ensure(raw == expected, "DUPLICATE_CONTENT")?;
                 let retained = self.packet(id)?;
-                ensure(retained.encode()? == expected, "STORAGE_PACKET")?;
+                ensure(
+                    retained.encode_for_settings(&self.settings)? == expected,
+                    "STORAGE_PACKET",
+                )?;
                 let block_record = self.record(id)?;
                 let block_height = block_record.height;
                 let mut active_membership_sql_lookups = 0_u64;
                 let active_chain_member = crate::ancestry_index::contains(
                     &self.db,
-                    self.ancestry_context(),
+                    self.ancestry_context()?,
                     tip,
                     id,
                     crate::ancestry_index::READ_SQL_BUDGET,
@@ -6967,6 +7039,7 @@ mod native_ancestry_tests {
                 .execute_derived_with_progress(
                     &before.2,
                     ExecutionRequest {
+                        timestamp: None,
                         transactions: &[],
                         height: 1,
                         miner: development_public(0).unwrap(),
@@ -6995,6 +7068,7 @@ mod native_ancestry_tests {
             .execute_derived_with_progress(
                 &before.2,
                 ExecutionRequest {
+                    timestamp: None,
                     transactions: &[],
                     height: 1,
                     miner: development_public(0).unwrap(),
@@ -7026,6 +7100,7 @@ mod native_ancestry_tests {
             .execute_derived_with_progress(
                 &before.2,
                 ExecutionRequest {
+                    timestamp: None,
                     transactions: &[],
                     height: 1,
                     miner: development_public(0).unwrap(),

@@ -12,6 +12,7 @@ pub mod discovery;
 mod historical_tcl3_cache_budget;
 mod manifest;
 mod network;
+pub mod pq;
 mod release;
 mod retention;
 mod store;

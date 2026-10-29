@@ -452,12 +452,12 @@ fn interrupted_owner_revocation_and_retained_ledger_corruption_fail_closed() {
         );
     }
     for mutation in [
-        "UPDATE pq_network_request_v1 SET operation=zeroblob(32)",
-        "UPDATE pq_network_request_v1 SET wire=zeroblob(length(wire))",
-        "UPDATE pq_network_request_v1 SET response=zeroblob(length(response))",
-        "UPDATE pq_network_request_v1 SET response_digest=zeroblob(32)",
-        "UPDATE pq_network_peer_v1 SET highest_sequence=0",
-        "DELETE FROM pq_network_request_v1",
+        "UPDATE pq_network_request_v2 SET operation=zeroblob(32)",
+        "UPDATE pq_network_request_v2 SET wire=zeroblob(length(wire))",
+        "UPDATE pq_network_request_v2 SET response=zeroblob(length(response))",
+        "UPDATE pq_network_request_v2 SET response_digest=zeroblob(32)",
+        "UPDATE pq_network_peer_v2 SET highest_sequence=0",
+        "DELETE FROM pq_network_request_v2",
     ] {
         let directory = tempfile::tempdir().unwrap();
         let node =

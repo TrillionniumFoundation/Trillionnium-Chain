@@ -14,8 +14,8 @@ consensus_authority = false
 
 [features]
 default = []
-# Explicit development integration only; does not replace installed Ed25519
-# owners, activate a PQ ledger profile or authorize account migration.
+# Optional independent signing adapter and differential verification source.
+# The canonical verifier is always RustCrypto; this never enables fallback.
 pq-native-openssl = ["dep:openssl"]
 
 [dependencies]
@@ -26,5 +26,7 @@ ed25519-dalek = "2"
 trnm-protocol = { version = "=0.1.0", path = "../trnm-protocol" }
 openssl = { version = "=0.10.81", optional = true }
 zeroize = "=1.8.2"
+ml-dsa = { version = "=0.1.1", default-features = false, features = ["alloc", "zeroize"] }
 
 [dev-dependencies]
+serde_json = "1"

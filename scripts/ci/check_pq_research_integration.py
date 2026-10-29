@@ -12,6 +12,7 @@ from pathlib import Path
 import re
 import stat
 import sys
+import tomllib
 
 REL_MANIFEST = "config/pon/pq-cross-branch-corpus-v1.json"
 REQUIRED_UPSTREAM = frozenset(("base", "cell", "migration", "witness", "roster", "parity"))
@@ -28,6 +29,10 @@ PQ_SOURCE_DIRS = (
     "formal/pon-nakamoto-v1",
     "trillionnium/crates/trnm-protocol/src",
     "trillionnium/crates/trnm-crypto-primitives/src",
+    "trillionnium/crates/trnm-crypto-primitives/tests",
+    "trillionnium/crates/trnm-crypto-primitives/examples",
+    "trillionnium/crates/trnm-data-availability/src",
+    "trillionnium/crates/trnm-data-availability/tests",
     "trillionnium/crates/trnm-mvcc-fee/src",
     "trillionnium/crates/trnm-mvcc-fee/tests",
     "trillionnium/crates/trnm-pon-node/src",
@@ -39,24 +44,72 @@ PQ_SOURCE_DIRS = (
 # transport slice remains mandatory and separately bounded from whole-chain PQ.
 NATIVE_REQUIRED_PATHS = frozenset((
     "docs/security/PQ_NATIVE_NETWORK_OWNER_V1.md",
+    "docs/security/PQ_NATIVE_NETWORK_OWNER_V2.md",
+    "docs/security/PQ_APPLICATION_AUTHORIZATION_V6.md",
     "trillionnium/crates/trnm-pon-node/Cargo.toml",
+    "trillionnium/crates/trnm-pon-node/src/lib.rs",
     "trillionnium/crates/trnm-pon-node/src/ingress.rs",
     "trillionnium/crates/trnm-pon-node/src/ingress/public_v2.rs",
     "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
     "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs",
     "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/canonical_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/pq_identity.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/pq_identity_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs",
+    "trillionnium/crates/trnm-pon-node/src/ancestry_index.rs",
+    "trillionnium/crates/trnm-pon-node/src/peer_polling.rs",
+    "trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs",
+    "trillionnium/crates/trnm-pon-node/src/operator_pq_auth.rs",
+    "trillionnium/crates/trnm-pon-node/src/operator_pq_auth_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/operator_continuous_history.rs",
+    "trillionnium/crates/trnm-pon-node/src/operator_continuous_policy.rs",
+    "trillionnium/crates/trnm-pon-node/src/operator_continuous_recipient.rs",
+    "trillionnium/crates/trnm-pon-node/src/operator_continuous_recovery.rs",
+    "trillionnium/crates/trnm-pon-node/src/operator_continuous_lease.rs",
+    "trillionnium/crates/trnm-pon-node/src/operator_continuous_controller.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/funding/payment.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/authenticated_pending_activation.rs",
     "trillionnium/crates/trnm-pon-node/src/store.rs",
     "trillionnium/crates/trnm-pon-node/src/store/pq_network.rs",
     "trillionnium/crates/trnm-pon-node/src/main.rs",
     "trillionnium/crates/trnm-pon-node/tests/cli_secret_canary.rs",
     "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs",
+    "trillionnium/crates/trnm-crypto-primitives/src/lib.rs",
+    "trillionnium/crates/trnm-crypto-primitives/Cargo.toml",
+    "trillionnium/crates/trnm-crypto-primitives/src/pq_auth/tests.rs",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pq_message_oracle.rs",
+    "trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/differential.py",
+    "trillionnium/crates/trnm-crypto-primitives/tests/fixtures/wycheproof/PROVENANCE.md",
+    "trillionnium/crates/trnm-crypto-primitives/tests/fixtures/wycheproof/LICENSE",
+    "trillionnium/crates/trnm-crypto-primitives/tests/fixtures/wycheproof/mldsa_65_verify_test.json",
     "trillionnium/crates/trnm-crypto-primitives/src/owned_ed25519.rs",
     "trillionnium/crates/trnm-mvcc-fee/Cargo.toml",
+    "trillionnium/crates/trnm-mvcc-fee/src/lib.rs",
     "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+    "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation.rs",
+    "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation/quorum_v2.rs",
     "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts.rs",
+    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs",
+    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/application_v6.rs",
+    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tasks_v5.rs",
+    "trillionnium/crates/trnm-data-availability/Cargo.toml",
+    "trillionnium/crates/trnm-data-availability/src/cell.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/pq.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs",
+    "trillionnium/crates/trnm-data-availability/src/bin/trnm-cell.rs",
+    "trillionnium/crates/trnm-data-availability/src/bin/cell_pq/mod.rs",
+    "trillionnium/crates/trnm-data-availability/src/bin/unix/pq.rs",
+    "trillionnium/crates/trnm-data-availability/tests/pq_cell_cli.rs",
     "trillionnium/crates/trnm-mvcc-fee/tests/pq_account_owner.rs",
     "trillionnium/crates/trnm-pon-node/tests/pq_account_native.rs",
     "trillionnium/crates/trnm-protocol/src/pq_transaction.rs",
+    "trillionnium/crates/trnm-protocol/src/pq_native_accounts_v2.rs",
+    "trillionnium/crates/trnm-protocol/src/qualified_work_task.rs",
+    "trillionnium/crates/trnm-protocol/src/qualified_work_task/pq_lifecycle_v5.rs",
+    "trillionnium/Cargo.lock",
     "docs/security/PQ_NATIVE_ACCOUNT_OWNER_V1.md",
 ))
 NATIVE_FALSE = frozenset((
@@ -64,6 +117,50 @@ NATIVE_FALSE = frozenset((
     "allow_legacy_fallback", "production_activation", "public_wan_accepted",
     "physical_rollback_resistant",
 ))
+
+# These are bounded source contracts, not results of a cryptographic audit.
+# In particular, an always-compiled provider is not default chain activation.
+NATIVE_V2_EXPECTED = {
+    "profile": "native-pq-network-owner-v2",
+    "feature": "canonical-default-no-feature-required",
+    "canonical_provider": "RustCrypto/ml-dsa-0.1.1",
+    "independent_provider": "pq-native-openssl-differential-only-no-fallback",
+    "scope": "fresh explicitly selected PNQ2 transport owner; account/task authorization remains the original separately selected M06 owner",
+    "contract": "docs/security/PQ_NATIVE_NETWORK_OWNER_V2.md",
+    "request_wire": "PNQ2/v2",
+    "response_wire": "PNP2/v2",
+    "activation_rule": "protected-settings-fresh-namespace-no-input-negotiation",
+    "transport_confidentiality": "loopback-signed-plaintext-dev-only",
+    "canonical_crypto_available_by_default": True,
+    "tpq1_peer_purpose": 6,
+    "signed_frame_bytes": 3487,
+    "signature_bytes": 3309,
+    "spki_bytes": 1974,
+    "maximum_wire_bytes": 2097152,
+    "ledger_byte_limit": 16777216,
+    "ledger_record_limit": 4096,
+    "ingress_connection_limit": 64,
+    "ingress_byte_limit": 33554432,
+    "inbound_verification_limit": 64,
+    "signature_independent_operation_identity": True,
+    "reorg_independent_local_revocation": True,
+    "durable_ingress_budget": True,
+    "failed_verifications_refunded": False,
+    "default_chain_activation": False,
+    "continuous_npq6_combination_accepted": False,
+    "research_archive_pq_accepted": False,
+    "cli_automatic_parent_recovery_pq_accepted": False,
+    **{flag: False for flag in NATIVE_FALSE},
+}
+
+
+def is_pq_source(parts: tuple[str, ...]) -> bool:
+    """Recognize pq.rs, cell_pq and operator_pq_auth as well as older prefixes."""
+    return any(
+        part.startswith(("pq_", "pqg_", "pql"))
+        or re.search(r"(?:^|_)pq(?:_|$)", Path(part).stem)
+        for part in parts
+    )
 
 class IntegrityError(ValueError):
     pass
@@ -112,6 +209,45 @@ def _git_blob(data: bytes) -> str:
     return hashlib.sha1(b"blob " + str(len(data)).encode("ascii") + b"\0" + data).hexdigest()
 
 
+def _check_canonical_provider_contract(root: Path) -> None:
+    """Check real Cargo declarations in addition to their reviewed source pins."""
+    manifests = {}
+    for name in ("trnm-crypto-primitives", "trnm-mvcc-fee", "trnm-pon-node"):
+        relative = f"trillionnium/crates/{name}/Cargo.toml"
+        try:
+            value = tomllib.loads(_safe_regular(root, relative).decode("utf-8"))
+        except (UnicodeError, tomllib.TOMLDecodeError) as exc:
+            raise IntegrityError("canonical provider manifest invalid") from exc
+        package = value.get("package", {})
+        features = value.get("features", {})
+        dependencies = value.get("dependencies", {})
+        if any(not isinstance(table, dict) for table in (package, features, dependencies)):
+            raise IntegrityError("canonical provider manifest table invalid")
+        package_metadata = package.get("metadata", {})
+        if not isinstance(package_metadata, dict):
+            raise IntegrityError("canonical provider manifest table invalid")
+        metadata = package_metadata.get("trnm", {})
+        if not isinstance(metadata, dict):
+            raise IntegrityError("canonical provider manifest table invalid")
+        openssl = dependencies.get("openssl", {})
+        if (features.get("default") != []
+                or "pq-native-openssl" not in features
+                or not isinstance(openssl, dict)
+                or openssl.get("optional") is not True
+                or metadata.get("production_activation") is not False
+                or metadata.get("consensus_authority") is not False):
+            raise IntegrityError("canonical provider/default activation contract changed")
+        manifests[name] = value
+    provider = manifests["trnm-crypto-primitives"].get("dependencies", {}).get("ml-dsa")
+    if (not isinstance(provider, dict) or provider.get("version") != "=0.1.1"
+            or provider.get("optional", False) is not False
+            or provider.get("default-features") is not False
+            or not isinstance(provider.get("features"), list)
+            or any(type(feature) is not str for feature in provider["features"])
+            or sorted(provider.get("features", [])) != ["alloc", "zeroize"]):
+        raise IntegrityError("canonical ML-DSA provider contract changed")
+
+
 def _check_pq_source_coverage(root: Path, pins: dict[str, str]) -> None:
     """Fail closed when a newly added PQ implementation evades the blob manifest."""
     for directory in PQ_SOURCE_DIRS:
@@ -137,9 +273,7 @@ def _check_pq_source_coverage(root: Path, pins: dict[str, str]) -> None:
                 # Nested Rust/C/Python files inside a PQ-named module are
                 # implementations too, even when called native.rs or mod.rs.
                 parts = source.relative_to(parent).parts
-                is_pq_source = any(part.startswith(("pq_", "pqg_", "pql"))
-                                   for part in parts)
-                if source.suffix not in (".py", ".c", ".rs") or not is_pq_source:
+                if source.suffix not in (".py", ".c", ".rs") or not is_pq_source(parts):
                     continue
                 if relative not in pins:
                     raise IntegrityError("unpinned PQ source: " + relative)
@@ -175,24 +309,21 @@ def check(root: Path) -> dict:
         if _git_blob(_safe_regular(root, relative)) != sha:
             raise IntegrityError("changed source: " + relative)
     _check_pq_source_coverage(root, pins)
-    native = m.get("native_network_owner_slice_v1")
+    # PNQ1/OpenSSL-only records remain historical evidence, not the active
+    # source contract for this canonical-provider PNQ2 candidate.
+    if "native_network_owner_slice_v1" in m:
+        raise IntegrityError("superseded PNQ1 native slice cannot select this candidate")
+    native = m.get("native_network_owner_slice_v2")
     if (not isinstance(native, dict)
-            or native.get("profile") != "native-pq-network-owner-v1"
-            or native.get("feature") != "pq-native-openssl"
-            or native.get("contract") != "docs/security/PQ_NATIVE_NETWORK_OWNER_V1.md"
-            or type(native.get("scope")) is not str
-            or not native["scope"]
-            or type(native.get("tpq1_peer_purpose")) is not int
-            or native["tpq1_peer_purpose"] != 6
-            or type(native.get("signed_frame_bytes")) is not int
-            or native["signed_frame_bytes"] != 3487
-            or native.get("signature_independent_operation_identity") is not True
-            or native.get("reorg_independent_local_revocation") is not True
-            or any(native.get(flag) is not False for flag in NATIVE_FALSE)
+            or set(native) != set(NATIVE_V2_EXPECTED) | {"evidence"}
+            or any(type(native.get(key)) is not type(value) or native.get(key) != value
+                   for key, value in NATIVE_V2_EXPECTED.items())
             or not NATIVE_REQUIRED_PATHS.issubset(required)):
-        raise IntegrityError("native PQ transport-only contract changed")
+        raise IntegrityError("canonical PNQ2 bounded-profile contract changed")
+    _check_canonical_provider_contract(root)
     evidence = native.get("evidence")
-    if (type(evidence) is not str or not evidence.startswith("evidence/")
+    if (type(evidence) is not str
+            or not evidence.startswith(("evidence/", "qualification/"))
             or not evidence.endswith("/README.md")):
         raise IntegrityError("native PQ evidence locator")
     # Presence/readability is not test acceptance. The report must distinguish
@@ -248,6 +379,11 @@ def check(root: Path) -> dict:
         "whole_native_authorization_migrated": False,
         "native_transport_contract_checked": True,
         "native_transfer_account_contract_checked": True,
+        "canonical_pnq2_contract_checked": True,
+        "canonical_default_provider_contract_checked": True,
+        "legacy_qtx1_optional_adapter_contract_checked": True,
+        "continuous_npq6_combination_accepted": False,
+        "production_confidentiality_accepted": False,
     }
 
 

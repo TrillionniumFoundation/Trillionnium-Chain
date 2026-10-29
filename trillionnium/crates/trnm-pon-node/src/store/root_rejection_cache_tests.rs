@@ -2,7 +2,7 @@ use super::*;
 use root_rejection_cache::{Cache, FinalMismatch, MAX_ENTRIES, MAX_RETAINED_BYTES, TTL_NS};
 use std::sync::atomic::{AtomicUsize, Ordering};
 use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
-use trnm_protocol::pon_wire::Envelope;
+use trnm_protocol::pon_wire::{Envelope, HEADER_BYTES};
 
 fn transfer(settings: &Settings, nonce: u64) -> Vec<u8> {
     let key =

@@ -89,8 +89,7 @@ fn backend_name(backend: StateBackend) -> Result<&'static str> {
         StateBackend::Legacy => Ok("legacy"),
         StateBackend::AuthenticatedV1 => Ok("authenticated-v1"),
         StateBackend::PermanentAccountGrowthV2 => Err("GROWTH_REHEARSAL_SOURCE_PROFILE".into()),
-        #[cfg(feature = "pq-native-openssl")]
-        StateBackend::PqNetworkV1 => Err("GROWTH_REHEARSAL_SOURCE_PROFILE".into()),
+        StateBackend::PqNetworkV2 => Err("GROWTH_REHEARSAL_SOURCE_PROFILE".into()),
     }
 }
 fn schema_id() -> Hash {
@@ -261,7 +260,7 @@ fn verify_source(
                 .checked_add(count)
                 .ok_or("GROWTH_REHEARSAL_COUNT")?;
         }
-        crate::ancestry_index::validate_tip(&node.db, node.ancestry_context(), id)?;
+        crate::ancestry_index::validate_tip(&node.db, node.ancestry_context()?, id)?;
         check_snapshot(node, id)?;
         blocks = blocks.checked_add(1).ok_or("GROWTH_REHEARSAL_COUNT")?;
         progress(AuthenticatedMigrationProgress::AfterBlock { height })?;
@@ -357,7 +356,6 @@ fn read_only_archive(directory: &Path, settings: Settings, backend: StateBackend
         detached_execution: std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false)),
         #[cfg(test)]
         cancel_next_activation_intent: false,
-        #[cfg(feature = "pq-native-openssl")]
         pq_network_epoch: std::sync::Arc::new(std::sync::atomic::AtomicU64::new(1)),
     })
 }

@@ -289,7 +289,7 @@ impl Node {
         }
         let lookup = ancestry_index::next(
             &self.db,
-            self.ancestry_context(),
+            self.ancestry_context()?,
             tip,
             current_block,
             ancestry_index::READ_SQL_BUDGET,

@@ -47,7 +47,7 @@ impl Node {
         // The existing hex_packet ingress accepts only lowercase canonical hex.
         // Bind these exact request bytes to the packet, not just its claimed ID.
         let canonical = serde_json::to_vec(&crate::ingress::Request::Submit {
-            packet: hex::encode(packet.encode()?),
+            packet: hex::encode(packet.encode_for_settings(&self.settings)?),
         })?;
         ensure(canonical == payload, "AUTH_CONFLICTING_REPLAY")?;
         ensure(

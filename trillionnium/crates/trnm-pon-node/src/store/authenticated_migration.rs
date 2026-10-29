@@ -524,7 +524,7 @@ impl Node {
                     .checked_add(transactions)
                     .ok_or("AUTHENTICATED_MIGRATION_COUNT")?;
             }
-            crate::ancestry_index::validate_tip(&source, self.ancestry_context(), id)?;
+            crate::ancestry_index::validate_tip(&source, self.ancestry_context()?, id)?;
             check_snapshot(self, id)?;
             progress(AuthenticatedMigrationProgress::AfterBlock {
                 height: record.height,
@@ -1051,6 +1051,7 @@ fn checked_successor(
     let executed = node.execute_derived_core(
         &prior,
         ExecutionRequest {
+            timestamp: Some(header.timestamp),
             transactions: &packet.transactions,
             height: header.height,
             miner: header.miner,

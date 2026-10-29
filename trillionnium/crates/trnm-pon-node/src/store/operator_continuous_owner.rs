@@ -554,6 +554,24 @@ impl Node {
     pub(crate) fn is_continuous(&self) -> bool {
         self.continuous_owner.is_some()
     }
+    /// A listener cannot substitute classical authentication after the original
+    /// continuous owner selected its protected PQ identity (or vice versa).
+    pub(crate) fn require_continuous_public_authentication(&self, pq: bool) -> Result<()> {
+        if let Some(owner) = &self.continuous_owner {
+            let expected = owner
+                .view
+                .body
+                .identity
+                .profile()
+                .map_err(continuous_error)?;
+            ensure(
+                (expected == crate::operator_pq_auth::Profile::PqV3) == pq,
+                "OWNER_CONTINUOUS_PROTECTED_CONTEXT",
+            )?;
+        }
+        Ok(())
+    }
+
     /// Material load follows actual reservations, and all errors settle before
     /// choosing their Native result. New persistent mode4 namespace only.
     pub fn open_operator_continuous_checkpoint(
@@ -1015,7 +1033,7 @@ impl Node {
             return Ok(());
         };
         o.ready()?;
-        let encoded = packet.encode()?;
+        let encoded = packet.encode_for_settings(&self.settings)?;
         let sha = crate::operator_task_policy::digest_bytes(&encoded);
         ensure(
             hex::encode(packet.header.work_task) == o.view.body.declared_binding.task.native_task,
@@ -1173,7 +1191,7 @@ impl Node {
             return Ok(None);
         };
         o.ready()?;
-        let encoded = packet.encode()?;
+        let encoded = packet.encode_for_settings(&self.settings)?;
         let prior: Option<Vec<u8>> = self
             .db
             .query_row(
@@ -1186,13 +1204,14 @@ impl Node {
             return Ok(None);
         }
         ensure(o.slot()?.is_none(), "OWNER_CONTINUOUS_SCOPE_BUSY")?;
-        let sha = crate::operator_task_policy::digest_bytes(&packet.encode()?);
+        let sha =
+            crate::operator_task_policy::digest_bytes(&packet.encode_for_settings(&self.settings)?);
         let (parent, generation) = self.active()?;
         let v = o
             .view
             .permission("receiver-validation", &sha)
             .map_err(continuous_error)?;
-        v.check_exact_receiver_packet(packet, parent, generation)
+        v.check_exact_receiver_packet(packet, &self.settings, parent, generation)
             .map_err(continuous_error)?;
         let activate = o
             .view
@@ -1491,7 +1510,11 @@ impl Node {
         };
         let trials = trace.trials.len() as u64;
         let complete = trace.trials.iter().filter(|t| t.complete_proof).count() as u64;
-        let raw = trace.packet.as_ref().map(Packet::encode).transpose()?;
+        let raw = trace
+            .packet
+            .as_ref()
+            .map(|packet| packet.encode_for_settings(&self.settings))
+            .transpose()?;
         let packet_hash = raw
             .as_deref()
             .map(crate::operator_task_policy::digest_bytes);
@@ -1574,7 +1597,8 @@ impl Node {
             .ok_or("OWNER_CONTINUOUS_MODE_REQUIRED")?
             .clone();
         o.ready()?;
-        let digest = crate::operator_task_policy::digest_bytes(&packet.encode()?);
+        let digest =
+            crate::operator_task_policy::digest_bytes(&packet.encode_for_settings(&self.settings)?);
         let raw_permission = o
             .view
             .permission(purpose, &digest)
@@ -1656,7 +1680,7 @@ impl Node {
             [tip.as_slice()],
             |r| r.get(0),
         )?;
-        let packet = Packet::decode(&raw)?;
+        let packet = Packet::decode_for_settings(&raw, &self.settings)?;
         ensure(
             hex::encode(packet.header.work_task) == o.view.body.declared_binding.task.native_task,
             "OWNER_CONTINUOUS_PACKET_TASK",
@@ -1950,8 +1974,14 @@ impl Node {
                 }
             }
             ensure(found == 1, "OWNER_CONTINUOUS_EXACT_RENEWAL_REQUIRED")?;
-            edge.check_actual(parent, generation, &old, &new, &packet.encode()?)
-                .map_err(continuous_error)?;
+            edge.check_actual(
+                parent,
+                generation,
+                &old,
+                &new,
+                &packet.encode_for_settings(&self.settings)?,
+            )
+            .map_err(continuous_error)?;
             let manifest = self
                 .eligible_work_task(parent, task, next_height)?
                 .ok_or("OWNER_CONTINUOUS_COMPLETE_REGISTRATION_REQUIRED")?;

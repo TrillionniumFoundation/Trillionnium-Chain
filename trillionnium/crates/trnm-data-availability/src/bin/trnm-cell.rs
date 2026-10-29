@@ -1,6 +1,8 @@
 //! Explicit configured-peer cell cache pilot. This executable cannot publish a
 //! Chain release, change CURRENT, or authorize model execution.
 
+mod cell_pq;
+
 use std::{
     collections::BTreeMap,
     error::Error,
@@ -8,7 +10,7 @@ use std::{
     net::{SocketAddr, TcpListener},
     path::PathBuf,
     sync::atomic::AtomicBool,
-    time::{Duration, Instant},
+    time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
 
 use trnm_data_availability::cell::{
@@ -17,6 +19,12 @@ use trnm_data_availability::cell::{
     CellPeerLimitsV1, CellReleaseFetchLimitsV1, CellReleaseLimitsV1, CellReleaseManifestV1,
     CellServeLimitsV1, CellStoreV1, MAX_CELL_BYTES,
 };
+
+use trnm_data_availability::cell::pq::{
+    CellPqKeyPinV2, CellPqReleaseAuthorizationV2, CellPqReleaseExpectationV2,
+    CellPqReleaseStatementV2, CELL_PQ_PROFILE_V2, CELL_PQ_RELEASE_BYTES_V2,
+};
+use trnm_protocol::pq_frame::ml_dsa_65_key_id_from_spki;
 
 type Result<T> = std::result::Result<T, Box<dyn Error>>;
 
@@ -32,7 +40,11 @@ prepare-release --store DB --manifests HEX,HEX --output ABSENT_TCR1 --max-bytes 
   Verify all locally declared members and prepare their canonical TCR1 root; no selection authority.
 fetch-release --store DB --release-file OWNER_TCR1 --release HEX --peers IP:PORT,IP:PORT --output ABSENT_MARKER --max-bytes N --max-chunks N (--seconds N | --overall-ms N) --max-response-bytes N [--parallelism 2] [--request-ms 2000] [--max-connections 32768]
   One aggregate reservation covers all declared members. Output is the exact TCR1 completion marker, not weights or use authority.
-verify-release --store DB --release-file OWNER_TCR1 --release HEX --max-bytes N --max-chunks N (--seconds N | --overall-ms N)";
+verify-release --store DB --release-file OWNER_TCR1 --release HEX --max-bytes N --max-chunks N (--seconds N | --overall-ms N)
+  PQ fetch-release/verify-release: --authentication-profile cell-pq-v2 --pq-authorization CPR2 --pq-signer-spki DER --pq-signer-key-id HEX --pq-generation N --pq-sequence N --pq-network HEX --pq-parameters HEX --pq-key-not-before UNIX --pq-key-expires UNIX [--pq-key-revoked-at UNIX]
+  Host key pins/lifetimes and current sequence are independent of peer data. Authentication precedes cache open/dial; its expiry clamps the original aggregate deadline.
+pq-key-public --pq-seed-file PRIVATE_RAW32 --output ABSENT_DER
+sign-release --authentication-profile cell-pq-v2 --release-file OWNER_TCR1 --release HEX --output ABSENT_CPR2 --pq-seed-file PRIVATE_RAW32 --pq-signer-key-id HEX --pq-network HEX --pq-parameters HEX --pq-generation N --pq-sequence N --pq-issued UNIX --pq-expires UNIX [--pq-withdrawn true|false]";
 
 fn main() {
     if let Err(error) = run() {
@@ -56,6 +68,8 @@ fn run() -> Result<()> {
     let command = values[0].as_str();
     let mut args = Args::new(&values[1..])?;
     match command {
+        "pq-key-public" => pq_key_public(&mut args),
+        "sign-release" => sign_release(&mut args),
         "pack" => pack(&mut args),
         "serve" => serve(&mut args),
         "fetch" => fetch(&mut args),
@@ -302,6 +316,7 @@ fn prepare_release(args: &mut Args) -> Result<()> {
 }
 
 fn fetch_release(args: &mut Args) -> Result<()> {
+    let authentication = ReleaseAuthentication::parse(args)?;
     let store = PathBuf::from(args.take("--store")?);
     let cache_config = args.cache_config()?;
     let root = PathBuf::from(args.take("--release-file")?);
@@ -313,13 +328,14 @@ fn fetch_release(args: &mut Args) -> Result<()> {
         .map(str::parse)
         .collect::<std::result::Result<Vec<SocketAddr>, _>>()?;
     let output = PathBuf::from(args.take("--output")?);
-    let (release_limits, overall_timeout) = release_limits(args)?;
+    let (mut release_limits, overall_timeout) = release_limits(args)?;
     let request_ms = args.optional("--request-ms", "2000").parse()?;
     let parallelism = args.optional("--parallelism", "2").parse()?;
     let max_connections = args.optional("--max-connections", "32768").parse()?;
     let max_response_bytes = args.take("--max-response-bytes")?.parse()?;
     args.finish()?;
     let release = read_pinned_release(&root, pinned)?;
+    authentication.verify(&release, &mut release_limits)?;
     let store = CellStoreV1::open(&store, cache_config)?;
     let report = fetch_release_to_file(
         &store,
@@ -348,19 +364,174 @@ fn fetch_release(args: &mut Args) -> Result<()> {
 }
 
 fn verify_release(args: &mut Args) -> Result<()> {
+    let authentication = ReleaseAuthentication::parse(args)?;
     let store = PathBuf::from(args.take("--store")?);
     let cache_config = args.cache_config()?;
     let root = PathBuf::from(args.take("--release-file")?);
     let pinned = parse_digest(&args.take("--release")?)?;
-    let (limits, _) = release_limits(args)?;
+    let (mut limits, _) = release_limits(args)?;
     args.finish()?;
     let release = read_pinned_release(&root, pinned)?;
+    authentication.verify(&release, &mut limits)?;
     CellStoreV1::open(&store, cache_config)?.verify_release_complete(&release, limits)?;
     println!(
         "{{\"schema\":\"trnm.cell.release.verify.v1\",\"release\":\"{}\",\"cells\":{}}}",
         digest_hex(pinned),
         release.cells().len()
     );
+    Ok(())
+}
+
+// This cache-only legacy profile is not model-use authority. A caller that
+// requires PQ must select cell-pq-v2; that branch has no unsigned/Ed fallback.
+enum ReleaseAuthentication {
+    ContentAddress,
+    Pq {
+        authorization: PathBuf,
+        key: Box<CellPqKeyPinV2>,
+        network: [u8; 32],
+        parameters: [u8; 32],
+        sequence: u64,
+    },
+}
+impl ReleaseAuthentication {
+    fn parse(args: &mut Args) -> Result<Self> {
+        match args
+            .optional("--authentication-profile", "content-cache-v1")
+            .as_str()
+        {
+            "content-cache-v1" => Ok(Self::ContentAddress),
+            CELL_PQ_PROFILE_V2 => {
+                let authorization = PathBuf::from(args.take("--pq-authorization")?);
+                let spki_path = PathBuf::from(args.take("--pq-signer-spki")?);
+                let key_id = parse_digest(&args.take("--pq-signer-key-id")?)?;
+                let generation = args.take("--pq-generation")?.parse()?;
+                let sequence = args.take("--pq-sequence")?.parse()?;
+                let network = parse_digest(&args.take("--pq-network")?)?;
+                let parameters = parse_digest(&args.take("--pq-parameters")?)?;
+                let not_before = args.take("--pq-key-not-before")?.parse()?;
+                let expires_at = args.take("--pq-key-expires")?.parse()?;
+                let revoked_at = args
+                    .0
+                    .remove("--pq-key-revoked-at")
+                    .map(|s| s.parse())
+                    .transpose()?;
+                let spki = cell_pq::read_regular(&spki_path, false)?;
+                let key = Box::new(CellPqKeyPinV2 {
+                    key_id,
+                    generation,
+                    spki,
+                    not_before,
+                    expires_at,
+                    revoked_at,
+                });
+                key.validate()?;
+                Ok(Self::Pq {
+                    authorization,
+                    key,
+                    network,
+                    parameters,
+                    sequence,
+                })
+            }
+            _ => Err(CellErrorV1::Invalid("unknown release authentication profile").into()),
+        }
+    }
+    fn verify(
+        &self,
+        release: &CellReleaseManifestV1,
+        limits: &mut CellReleaseLimitsV1,
+    ) -> Result<()> {
+        if let Self::Pq {
+            authorization,
+            key,
+            network,
+            parameters,
+            sequence,
+        } = self
+        {
+            let raw = cell_pq::read_regular::<CELL_PQ_RELEASE_BYTES_V2>(authorization, false)?;
+            let auth = CellPqReleaseAuthorizationV2::decode(&raw)?;
+            let monotonic = Instant::now();
+            let wall = SystemTime::now().duration_since(UNIX_EPOCH)?;
+            let checked = auth.verify_at(
+                release,
+                &CellPqReleaseExpectationV2 {
+                    network: *network,
+                    parameters: *parameters,
+                    key,
+                    sequence: *sequence,
+                    now: wall.as_secs(),
+                },
+            )?;
+            checked.release_at(wall.as_secs())?;
+            let left = Duration::from_secs(checked.expires_at())
+                .checked_sub(wall)
+                .ok_or(CellErrorV1::Invalid("PQ release expired"))?;
+            limits.deadline = limits.deadline.min(
+                monotonic
+                    .checked_add(left)
+                    .ok_or(CellErrorV1::Invalid("PQ release deadline overflow"))?,
+            );
+            if Instant::now() >= limits.deadline {
+                return Err(CellErrorV1::Invalid("PQ release deadline").into());
+            }
+        }
+        Ok(())
+    }
+}
+fn pq_key_public(args: &mut Args) -> Result<()> {
+    let seed = PathBuf::from(args.take("--pq-seed-file")?);
+    let output = PathBuf::from(args.take("--output")?);
+    args.finish()?;
+    let spki = cell_pq::public_spki(&seed)?;
+    let id =
+        ml_dsa_65_key_id_from_spki(&spki).map_err(|_| CellErrorV1::Invalid("PQ public SPKI"))?;
+    cell_pq::write_new(&output, &spki)?;
+    println!(
+        "{{\"schema\":\"trnm.cell.pq-key.v2\",\"key_id\":\"{}\",\"spki_bytes\":1974}}",
+        digest_hex(id)
+    );
+    Ok(())
+}
+fn sign_release(args: &mut Args) -> Result<()> {
+    if args.take("--authentication-profile")? != CELL_PQ_PROFILE_V2 {
+        return Err(CellErrorV1::Invalid("PQ release profile required").into());
+    }
+    let root = PathBuf::from(args.take("--release-file")?);
+    let pinned = parse_digest(&args.take("--release")?)?;
+    let output = PathBuf::from(args.take("--output")?);
+    let seed = PathBuf::from(args.take("--pq-seed-file")?);
+    let signer_key_id = parse_digest(&args.take("--pq-signer-key-id")?)?;
+    let network = parse_digest(&args.take("--pq-network")?)?;
+    let parameters = parse_digest(&args.take("--pq-parameters")?)?;
+    let generation = args.take("--pq-generation")?.parse()?;
+    let sequence = args.take("--pq-sequence")?.parse()?;
+    let issued_at = args.take("--pq-issued")?.parse()?;
+    let expires_at = args.take("--pq-expires")?.parse()?;
+    let withdrawn = args.optional("--pq-withdrawn", "false").parse()?;
+    args.finish()?;
+    let release = read_pinned_release(&root, pinned)?;
+    let cell_context =
+        trnm_data_availability::cell::discovery::cell_discovery_context_digest(release.context())?;
+    let key = cell_pq::signing_key(&seed, signer_key_id)?;
+    let auth = CellPqReleaseAuthorizationV2::sign(
+        CellPqReleaseStatementV2 {
+            network,
+            parameters,
+            release: pinned,
+            cell_context,
+            signer_key_id,
+            generation,
+            sequence,
+            issued_at,
+            expires_at,
+            withdrawn,
+        },
+        &key,
+    )?;
+    cell_pq::write_new(&output, &auth.encode()?)?;
+    println!("{{\"schema\":\"trnm.cell.release.authorization.v2\",\"release\":\"{}\",\"key_id\":\"{}\",\"bytes\":3509}}",digest_hex(pinned),digest_hex(signer_key_id));
     Ok(())
 }
 

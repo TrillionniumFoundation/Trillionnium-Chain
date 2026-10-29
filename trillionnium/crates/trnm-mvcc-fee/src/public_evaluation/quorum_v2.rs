@@ -129,6 +129,11 @@ pub(super) fn reveal_commitment(value: &Reveal) -> Hash {
 fn disqualified(evaluation: &Value) -> Result<BTreeSet<String>> {
     let roster = keys(&evaluation["plan"]["roster"])?;
     let mut result = keys(&evaluation["plan"]["disqualified_at_freeze"])?;
+    if super::pq_storage::enabled(evaluation) {
+        check(result.is_empty(), "PQ_EVAL_CONFLICT_SCOPE")?;
+        result.extend(super::pq_conflict_signers(evaluation)?);
+        return Ok(result);
+    }
     for conflict in evaluation["conflicts"]
         .as_object()
         .ok_or("PUBLIC_EVAL_STATE")?
@@ -164,7 +169,9 @@ fn count(evaluation: &Value, current_disqualified: &BTreeSet<String>) -> Result<
     super::round(evaluation)?;
     let roster = keys(&evaluation["plan"]["roster"])?;
     let mut excluded = disqualified(evaluation)?;
-    excluded.extend(roster.intersection(current_disqualified).cloned());
+    if !super::pq_storage::enabled(evaluation) {
+        excluded.extend(roster.intersection(current_disqualified).cloned());
+    }
     let reveals = evaluation["reveals"]
         .as_object()
         .ok_or("PUBLIC_EVAL_STATE")?;

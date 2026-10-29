@@ -1,5 +1,6 @@
 //! Candidate mode4 retained owner history. No Work/State/ledger capability.
 //! Same-operator declarations are not balances, source truth or mining hardness.
+use crate::operator_pq_auth::{Profile, SignatureBudget};
 use crate::operator_task_policy::{Allocation, PolicyError};
 use fs2::FileExt;
 use serde::{Deserialize, Serialize};
@@ -18,7 +19,6 @@ use std::{
         Arc,
     },
 };
-use trnm_crypto_primitives::verify_hex_strict;
 type Result<T> = std::result::Result<T, PolicyError>;
 pub(crate) const MAX_CLAIMS: usize = 32768;
 pub(crate) const MAX_ROWS: usize = 131072;
@@ -27,6 +27,7 @@ const MAX_ROW_BYTES: u64 = 65536;
 const MAX_BUDGET_KEYS: usize = 256;
 const FAULT_HEADROOM_BYTES: u64 = 1024;
 const BUMP_DOMAIN: &[u8] = b"TRNM-RESTRICTED-CONTINUOUS-BUDGET2";
+const PQ_BUMP_DOMAIN: &[u8] = b"TRNM/PoN/ContinuousBudget/PQ/v3\0";
 fn check(ok: bool, error: PolicyError) -> Result<()> {
     if ok {
         Ok(())
@@ -103,11 +104,13 @@ pub(crate) struct Identity {
     pub global_allocator: String,
 }
 impl Identity {
+    pub(crate) fn profile(&self) -> Result<Profile> {
+        Profile::from_identity_schema(&self.schema)
+    }
     pub(crate) fn validate(&self) -> Result<()> {
-        check(
-            self.schema == "restricted-continuous-identity-v2",
-            PolicyError::Input,
-        )?;
+        let profile = self.profile()?;
+        profile.validate_key(&self.registry_key)?;
+        profile.validate_key(&self.task_key)?;
         for v in [
             &self.registry,
             &self.operator,
@@ -115,8 +118,6 @@ impl Identity {
             &self.parameters,
             &self.node_policy_source,
             &self.registry2_package,
-            &self.registry_key,
-            &self.task_key,
             &self.recipient_node,
             &self.global_allocator,
         ] {
@@ -289,7 +290,11 @@ pub(crate) struct RegistryDelegation {
 impl RegistryDelegation {
     fn validate(&self, identity: &Identity, body: &BudgetIncrease) -> Result<()> {
         check(
-            self.schema == "restricted-continuous-registry2-budget-delegation-v2",
+            self.schema
+                == identity.profile()?.schema(
+                    "restricted-continuous-registry2-budget-delegation-v2",
+                    "restricted-continuous-registry2-budget-delegation-pq-v3",
+                ),
             PolicyError::Input,
         )?;
         for h in [
@@ -437,13 +442,9 @@ pub(crate) struct VerifiedBump {
     digest: String,
 }
 fn bump_message(v: &BudgetIncrease, role: u8) -> Result<Vec<u8>> {
-    let raw = serde_json::to_vec(v).map_err(|_| PolicyError::Input)?;
-    check(raw.len() <= MAX_ROW_BYTES as usize, PolicyError::Capacity)?;
-    let mut out = BUMP_DOMAIN.to_vec();
-    out.push(role);
-    out.extend_from_slice(&(raw.len() as u32).to_le_bytes());
-    out.extend_from_slice(&raw);
-    Ok(out)
+    v.identity
+        .profile()?
+        .message(BUMP_DOMAIN, PQ_BUMP_DOMAIN, v, role)
 }
 pub(crate) fn authenticate_bump(
     raw: &[u8],
@@ -459,7 +460,11 @@ pub(crate) fn authenticate_bump(
     id(&outside.latest_digest)?;
     let e: BumpEnvelope = serde_json::from_slice(raw).map_err(|_| PolicyError::Input)?;
     check(
-        e.body.schema == "restricted-continuous-budget-increase-v2"
+        e.body.schema
+            == outside.identity.profile()?.schema(
+                "restricted-continuous-budget-increase-v2",
+                "restricted-continuous-budget-increase-pq-v3",
+            )
             && e.body == outside.expected
             && e.body.identity == outside.identity
             && digest(raw) == outside.envelope_sha256
@@ -485,18 +490,20 @@ pub(crate) fn authenticate_bump(
     id(&e.body.exact_prior_journal.digest)?;
     e.body.ceilings.validate()?;
     e.body.delegation.validate(&outside.identity, &e.body)?;
-    verify_hex_strict(
+    let profile = outside.identity.profile()?;
+    let mut budget = SignatureBudget::pair();
+    profile.verify(
         &outside.identity.registry_key,
         &bump_message(&e.body, 1)?,
         &e.registry_signature,
-    )
-    .map_err(|_| PolicyError::Signature)?;
-    verify_hex_strict(
+        &mut budget,
+    )?;
+    profile.verify(
         &outside.identity.task_key,
         &bump_message(&e.body, 2)?,
         &e.task_signature,
-    )
-    .map_err(|_| PolicyError::Signature)?;
+        &mut budget,
+    )?;
     Ok(VerifiedBump {
         body: e.body,
         digest: outside.latest_digest.clone(),
@@ -1504,7 +1511,11 @@ impl Journal {
             )?;
             let r: Record = serde_json::from_slice(&raw).map_err(|_| PolicyError::Journal)?;
             check(
-                r.schema == "restricted-continuous-journal-row-v2"
+                r.schema
+                    == identity.profile()?.schema(
+                        "restricted-continuous-journal-row-v2",
+                        "restricted-continuous-journal-row-pq-v3",
+                    )
                     && r.sequence == anchor.sequence + 1
                     && r.previous == anchor.digest,
                 PolicyError::Journal,
@@ -1573,7 +1584,14 @@ impl Journal {
             .ok_or(PolicyError::Capacity)?;
         check(sequence <= MAX_ROWS as u64, PolicyError::Capacity)?;
         let record = Record {
-            schema: "restricted-continuous-journal-row-v2".into(),
+            schema: self
+                .identity
+                .profile()?
+                .schema(
+                    "restricted-continuous-journal-row-v2",
+                    "restricted-continuous-journal-row-pq-v3",
+                )
+                .into(),
             sequence,
             previous: self.anchor.digest.clone(),
             event,

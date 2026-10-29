@@ -4198,3 +4198,29 @@ cleanup and all original denominators remain unchanged. A real detached Git
 fixture reproduces the old omitted-mode failure before the correction and
 forbids every native command. Python checks do not replace fresh hosted
 preparation and actual Host execution. The F0 service and WAN gates remain open.
+
+## 2026-10-29 full PQ application candidate: explicit V6, no promotion
+
+The [Application V6 authorization contract](../security/PQ_APPLICATION_AUTHORIZATION_V6.md)
+and [reconstruction qualification record](../../qualification/full-pq-v6-r2/README.md)
+extend the existing PN0–PN5 work on verified base `58d533877ccdf56f2fc2b87e0b60c485300955a5`.
+The default M01 path is one pinned ML-DSA-65 implementation; the other provider
+is an independent differential test source, never an acceptance fallback.
+The candidate adds explicitly selected NPQ6/PQP6 domains, account/task/model
+authorization, frozen evaluation key generations, bounded conflict storage,
+PNQ2 durable rejection accounting, original-owner operator and paid History
+authentication, and Cell manifest/discovery authentication. Hepta installation,
+trust-frontier and FinalUse verification belong to its separately tested tree.
+
+The 16 KiB command, 512 KiB aggregate command, 1 MiB packet and 64 transaction
+signature limits are development resource contracts, not throughput measurements.
+Actual task-eligibility verification, transport authentication, work verification
+and proof costs remain separate. Source checks, fixed vectors and loopback tests
+cannot qualify a 9.6 score, whole-chain quantum resistance or production activation.
+
+Continuous startup/catalog/lease/bootstrap composition with NPQ6, old-network
+migration, PQ peer identity plus encrypted transport, quantum PoN hardness,
+complete proof-system audit, independent sustained WAN and the model product
+loop remain explicit gates. Prior unavailable work copies and test claims are
+not inherited. The qualification record preserves actual failures, exact source
+windows and the subsequent fixes without replacing this sole development plan.

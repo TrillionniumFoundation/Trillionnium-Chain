@@ -1,12 +1,13 @@
 //! Distinct outside allocated recipient permission, never a local Search claim.
 //! Full original packet Work/State remains mandatory after cheap exact checks.
 use crate::operator_continuous_history::{Claim, Identity};
+use crate::operator_pq_auth::SignatureBudget;
 use crate::operator_task_policy::{PolicyError, Task};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
-use trnm_crypto_primitives::verify_hex_strict;
 type Result<T> = std::result::Result<T, PolicyError>;
 const DOMAIN: &[u8] = b"TRNM-RESTRICTED-CONTINUOUS-RECIPIENT2";
+const PQ_DOMAIN: &[u8] = b"TRNM/PoN/ContinuousRecipient/PQ/v3\0";
 const OP_DOMAIN: &[u8] = b"TRNM-RESTRICTED-CONTINUOUS-OP2";
 const TASK_DOMAIN: &[u8] = b"TRNM-RESTRICTED-CONTINUOUS-DECLARED-TASK2";
 const MAX_BYTES: usize = 65536;
@@ -279,7 +280,14 @@ pub(crate) fn operation_id(identity: &Identity, c: &Claim) -> Result<String> {
             && matches!(c.instance_class.as_str(), "dense" | "structured" | "zero"),
         PolicyError::Input,
     )?;
-    let mut out = OP_DOMAIN.to_vec();
+    let mut out = identity
+        .profile()?
+        .schema(
+            std::str::from_utf8(OP_DOMAIN).map_err(|_| PolicyError::Input)?,
+            "TRNM/PoN/ContinuousOperation/PQ/v3\0",
+        )
+        .as_bytes()
+        .to_vec();
     out.extend_from_slice(&(identity_raw.len() as u32).to_le_bytes());
     out.extend_from_slice(&identity_raw);
     put_text(&mut out, &c.purpose);
@@ -296,15 +304,19 @@ pub(crate) fn operation_id(identity: &Identity, c: &Claim) -> Result<String> {
     Ok(digest(&out))
 }
 fn message(body: &AllocationBody, role: u8) -> Result<Vec<u8>> {
-    let raw = serde_json::to_vec(body).map_err(|_| PolicyError::Input)?;
-    check(raw.len() <= MAX_BYTES, PolicyError::Capacity)?;
-    let mut out = DOMAIN.to_vec();
-    out.push(role);
-    out.extend_from_slice(&(raw.len() as u32).to_le_bytes());
-    out.extend_from_slice(&raw);
-    Ok(out)
+    body.identity
+        .profile()?
+        .message(DOMAIN, PQ_DOMAIN, body, role)
 }
 pub(crate) fn authenticate(raw: &[u8], e: &Authority, now: u64) -> Result<VerifiedAllocation> {
+    authenticate_metered(raw, e, now, &mut SignatureBudget::pair())
+}
+pub(crate) fn authenticate_metered(
+    raw: &[u8],
+    e: &Authority,
+    now: u64,
+    budget: &mut SignatureBudget,
+) -> Result<VerifiedAllocation> {
     check(
         !raw.is_empty() && raw.len() <= MAX_BYTES,
         PolicyError::Capacity,
@@ -315,7 +327,11 @@ pub(crate) fn authenticate(raw: &[u8], e: &Authority, now: u64) -> Result<Verifi
     }
     let v: Envelope = serde_json::from_slice(raw).map_err(|_| PolicyError::Input)?;
     check(
-        v.body.schema == "restricted-continuous-recipient-allocation-v2"
+        v.body.schema
+            == e.identity.profile()?.schema(
+                "restricted-continuous-recipient-allocation-v2",
+                "restricted-continuous-recipient-allocation-pq-v3",
+            )
             && v.body.identity == e.identity
             && v.body == e.expected
             && digest(raw) == e.expected_envelope_sha256
@@ -364,14 +380,19 @@ pub(crate) fn authenticate(raw: &[u8], e: &Authority, now: u64) -> Result<Verifi
     } else {
         check(b.origin.is_none(), PolicyError::Input)?;
     }
-    verify_hex_strict(
+    let profile = e.identity.profile()?;
+    profile.verify(
         &e.identity.registry_key,
         &message(b, 1)?,
         &v.registry_signature,
-    )
-    .map_err(|_| PolicyError::Signature)?;
-    verify_hex_strict(&e.identity.task_key, &message(b, 2)?, &v.task_signature)
-        .map_err(|_| PolicyError::Signature)?;
+        budget,
+    )?;
+    profile.verify(
+        &e.identity.task_key,
+        &message(b, 2)?,
+        &v.task_signature,
+        budget,
+    )?;
     Ok(VerifiedAllocation { body: v.body })
 }
 impl VerifiedAllocation {
@@ -426,6 +447,7 @@ impl VerifiedAllocation {
     pub(crate) fn check_exact_receiver_packet(
         &self,
         packet: &crate::Packet,
+        settings: &crate::Settings,
         parent: crate::Hash,
         generation: u64,
     ) -> Result<()> {
@@ -438,7 +460,9 @@ impl VerifiedAllocation {
                 && hex::encode(packet.header.work_task) == c.native_task,
             PolicyError::NativeBinding,
         )?;
-        let raw = packet.encode().map_err(|_| PolicyError::NativeBinding)?;
+        let raw = packet
+            .encode_for_settings(settings)
+            .map_err(|_| PolicyError::NativeBinding)?;
         check(digest(&raw) == c.payload, PolicyError::NativeBinding)
     }
 }

@@ -10,7 +10,7 @@ import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from check_pq_research_integration import (
-    IntegrityError, NATIVE_FALSE, NATIVE_REQUIRED_PATHS, check,
+    IntegrityError, NATIVE_FALSE, NATIVE_REQUIRED_PATHS, NATIVE_V2_EXPECTED, check,
 )
 
 REQUIRED = (
@@ -64,6 +64,15 @@ class CorpusGateTests(unittest.TestCase):
         self.put("formal/pon-nakamoto-v1/test_pq_pql5_quorum.py", b"unit-test")
         for p in sorted(NATIVE_REQUIRED_PATHS - set(REQUIRED)):
             self.put(p, p.encode())
+        for name in ("trnm-crypto-primitives", "trnm-mvcc-fee", "trnm-pon-node"):
+            contents = ('[package.metadata.trnm]\nproduction_activation = false\n'
+                        'consensus_authority = false\n[features]\ndefault = []\n'
+                        'pq-native-openssl = ["dep:openssl"]\n[dependencies]\n'
+                        'openssl = {version = "=0.10.81", optional = true}\n')
+            if name == "trnm-crypto-primitives":
+                contents += ('ml-dsa = {version = "=0.1.1", default-features = false, '
+                             'features = ["alloc", "zeroize"]}\n')
+            self.put(f"trillionnium/crates/{name}/Cargo.toml", contents.encode())
         report = "evidence/fixture-pq-native-source/README.md"
         self.put(report, b"Source fixture only; no cryptographic acceptance.")
         account_report = "evidence/pon-pq-account-native-20261028/README.md"
@@ -78,17 +87,9 @@ class CorpusGateTests(unittest.TestCase):
                 "production_activation", "independent_accepted", "native_pq_node_integrated",
                 "quantum_pon_hardness_qualified", "physical_rollback_resistant",
                 "hepta_final_use_integrated", "public_wan_accepted", "allow_legacy_fallback")},
-            "native_network_owner_slice_v1": {
-                "profile": "native-pq-network-owner-v1",
-                "feature": "pq-native-openssl",
-                "scope": "Native transport only; no account/task/install migration.",
-                "contract": "docs/security/PQ_NATIVE_NETWORK_OWNER_V1.md",
+            "native_network_owner_slice_v2": {
+                **NATIVE_V2_EXPECTED,
                 "evidence": report,
-                "tpq1_peer_purpose": 6,
-                "signed_frame_bytes": 3487,
-                "signature_independent_operation_identity": True,
-                "reorg_independent_local_revocation": True,
-                **{flag: False for flag in NATIVE_FALSE},
             },
             "native_account_owner_slice_v1": {
                 "profile": "native-pq-qtx1-account-v1",
@@ -204,6 +205,10 @@ class CorpusGateTests(unittest.TestCase):
             "trillionnium/crates/trnm-pon-node/tests/pq_unpinned.rs",
             "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_unpinned.rs",
             "trillionnium/crates/trnm-mvcc-fee/tests/pq_unpinned.rs",
+            "trillionnium/crates/trnm-data-availability/src/cell/pq_unpinned.rs",
+            "trillionnium/crates/trnm-data-availability/tests/pq_unpinned.rs",
+            "trillionnium/crates/trnm-crypto-primitives/examples/pq_unpinned.rs",
+            "trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/pq_unpinned.py",
         ):
             with self.subTest(path=name):
                 path = self.root / name
@@ -231,6 +236,9 @@ class CorpusGateTests(unittest.TestCase):
             "trillionnium/crates/trnm-pon-node/src/store/pq_owner/receipt.rs",
             "trillionnium/crates/trnm-pon-node/tests/pq_owner/replay.rs",
             "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_owner/authorize.rs",
+            "trillionnium/crates/trnm-pon-node/src/operator_pq_unpinned.rs",
+            "trillionnium/crates/trnm-data-availability/src/cell/pq/hidden.rs",
+            "trillionnium/crates/trnm-data-availability/src/bin/cell_pq/hidden.rs",
         ):
             with self.subTest(path=name):
                 path = self.root / name
@@ -252,6 +260,8 @@ class CorpusGateTests(unittest.TestCase):
             ("dual_possession_signatures_required", False),
             ("transaction_byte_limit", True),
             ("transaction_count_limit", 256),
+            ("transaction_wire", "NPQ6/v6"),
+            ("feature", "canonical-default-no-feature-required"),
         ):
             with self.subTest(field=field):
                 self.manifest["native_account_owner_slice_v1"] = {**original, field: value}
@@ -314,19 +324,19 @@ class CorpusGateTests(unittest.TestCase):
         with self.assertRaisesRegex(IntegrityError, "traversal budget"):
             check(self.root)
 
-    def test_native_profile_is_mandatory_and_stays_transport_only(self):
-        original = copy.deepcopy(self.manifest["native_network_owner_slice_v1"])
+    def test_native_profile_is_mandatory_and_never_claims_whole_authorization(self):
+        original = copy.deepcopy(self.manifest["native_network_owner_slice_v2"])
         for field in NATIVE_FALSE:
             for value in (True, 0, None):
                 with self.subTest(field=field, value=value):
-                    self.manifest["native_network_owner_slice_v1"] = dict(original)
-                    self.manifest["native_network_owner_slice_v1"][field] = value
+                    self.manifest["native_network_owner_slice_v2"] = dict(original)
+                    self.manifest["native_network_owner_slice_v2"][field] = value
                     self.save()
-                    with self.assertRaisesRegex(IntegrityError, "transport-only"):
+                    with self.assertRaisesRegex(IntegrityError, "PNQ2 bounded-profile"):
                         check(self.root)
-        del self.manifest["native_network_owner_slice_v1"]
+        del self.manifest["native_network_owner_slice_v2"]
         self.save()
-        with self.assertRaisesRegex(IntegrityError, "transport-only"):
+        with self.assertRaisesRegex(IntegrityError, "PNQ2 bounded-profile"):
             check(self.root)
 
     def test_native_owner_guards_and_cli_cannot_be_dropped_from_required_pins(self):
@@ -335,23 +345,29 @@ class CorpusGateTests(unittest.TestCase):
             with self.subTest(path=path):
                 self.manifest["required_paths"] = [p for p in original if p != path]
                 self.save()
-                with self.assertRaisesRegex(IntegrityError, "transport-only"):
+                with self.assertRaisesRegex(IntegrityError, "PNQ2 bounded-profile"):
                     check(self.root)
 
     def test_native_wire_numeric_claims_refuse_bool_or_wrong_version(self):
-        original = copy.deepcopy(self.manifest["native_network_owner_slice_v1"])
+        original = copy.deepcopy(self.manifest["native_network_owner_slice_v2"])
         for field, value in (("tpq1_peer_purpose", True), ("tpq1_peer_purpose", 1),
                              ("signed_frame_bytes", "3487"), ("signed_frame_bytes", 64),
-                             ("feature", "default"), ("profile", "legacy-development")):
+                             ("feature", "pq-native-openssl"), ("profile", "native-pq-network-owner-v1"),
+                             ("request_wire", "PNQ1/v1"), ("response_wire", "PNP1/v1"),
+                             ("activation_rule", "classical-or-pq"),
+                             ("canonical_provider", "OpenSSL-only"),
+                             ("ingress_connection_limit", True),
+                             ("ingress_byte_limit", 33554433),
+                             ("inbound_verification_limit", 65)):
             with self.subTest(field=field, value=value):
-                self.manifest["native_network_owner_slice_v1"] = dict(original)
-                self.manifest["native_network_owner_slice_v1"][field] = value
+                self.manifest["native_network_owner_slice_v2"] = dict(original)
+                self.manifest["native_network_owner_slice_v2"][field] = value
                 self.save()
-                with self.assertRaisesRegex(IntegrityError, "transport-only"):
+                with self.assertRaisesRegex(IntegrityError, "PNQ2 bounded-profile"):
                     check(self.root)
 
     def test_native_evidence_must_exist_but_never_grants_acceptance(self):
-        report = self.manifest["native_network_owner_slice_v1"]["evidence"]
+        report = self.manifest["native_network_owner_slice_v2"]["evidence"]
         del self.manifest["pinned_blobs"][report]
         self.save()
         self.assertFalse(check(self.root)["cryptographic_acceptance"])
@@ -360,7 +376,7 @@ class CorpusGateTests(unittest.TestCase):
             check(self.root)
 
     def test_native_evidence_traversal_or_symlink_refuses(self):
-        profile = self.manifest["native_network_owner_slice_v1"]
+        profile = self.manifest["native_network_owner_slice_v2"]
         report = profile["evidence"]
         del self.manifest["pinned_blobs"][report]
         profile["evidence"] = "evidence/../../foreign/README.md"
@@ -373,6 +389,93 @@ class CorpusGateTests(unittest.TestCase):
         (self.root / report).symlink_to(self.root / REQUIRED[0])
         with self.assertRaisesRegex(IntegrityError, "symlink"):
             check(self.root)
+
+    def test_pnq1_cannot_replace_or_coexist_as_active_candidate(self):
+        self.manifest["native_network_owner_slice_v1"] = copy.deepcopy(
+            self.manifest["native_network_owner_slice_v2"])
+        self.save()
+        with self.assertRaisesRegex(IntegrityError, "superseded PNQ1"):
+            check(self.root)
+
+    def test_canonical_slice_forbids_fallback_refund_and_unaccepted_combinations(self):
+        original = dict(self.manifest["native_network_owner_slice_v2"])
+        for field, value in (
+            ("independent_provider", "OpenSSL-or-classical-on-canonical-failure"),
+            ("failed_verifications_refunded", True),
+            ("durable_ingress_budget", False),
+            ("canonical_crypto_available_by_default", False),
+            ("default_chain_activation", True),
+            ("continuous_npq6_combination_accepted", True),
+            ("research_archive_pq_accepted", True),
+            ("cli_automatic_parent_recovery_pq_accepted", True),
+            ("transport_confidentiality", "production-pq-tls"),
+            ("unreviewed_classical_acceptance", True),
+        ):
+            with self.subTest(field=field):
+                self.manifest["native_network_owner_slice_v2"] = {**original, field: value}
+                self.save()
+                with self.assertRaisesRegex(IntegrityError, "PNQ2 bounded-profile"):
+                    check(self.root)
+
+    def test_canonical_provider_manifest_change_is_refused_even_if_repinned(self):
+        path = "trillionnium/crates/trnm-crypto-primitives/Cargo.toml"
+        original = (self.root / path).read_bytes()
+        for before, after in (
+            (b'version = "=0.1.1"', b'version = "=0.1.2"'),
+            (b'default = []', b'default = ["pq-native-openssl"]'),
+            (b'default-features = false', b'optional = true, default-features = false'),
+            (b'optional = true}', b'optional = false}'),
+            (b'production_activation = false', b'production_activation = true'),
+        ):
+            with self.subTest(change=after):
+                self.put(path, original.replace(before, after))
+                self.save()
+                with self.assertRaisesRegex(IntegrityError, "canonical .*contract changed"):
+                    check(self.root)
+
+    def test_new_canonical_sources_and_negative_vectors_keep_exact_blob_identity(self):
+        for name in (
+            "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/canonical_tests.rs",
+            "trillionnium/crates/trnm-pon-node/src/operator_pq_auth.rs",
+            "trillionnium/crates/trnm-data-availability/src/cell/pq.rs",
+            "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation.rs",
+            "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation/quorum_v2.rs",
+            "trillionnium/crates/trnm-crypto-primitives/tests/fixtures/wycheproof/mldsa_65_verify_test.json",
+        ):
+            with self.subTest(path=name):
+                path = self.root / name
+                original = path.read_bytes()
+                path.write_bytes(original + b"changed after review")
+                with self.assertRaisesRegex(IntegrityError, "changed source"):
+                    check(self.root)
+                path.write_bytes(original)
+
+    def test_canonical_provider_malformed_tables_and_feature_shapes_fail_closed(self):
+        path = "trillionnium/crates/trnm-crypto-primitives/Cargo.toml"
+        original = (self.root / path).read_bytes()
+        for altered in (
+            b'features = 7\n',
+            b'package = false\n',
+            b'dependencies = "non-table"\n',
+            b'[package]\nmetadata = true\n',
+            b'[package.metadata]\ntrnm = []\n',
+            original.replace(b'features = ["alloc", "zeroize"]', b'features = true'),
+            original.replace(b'features = ["alloc", "zeroize"]', b'features = ["alloc", 7]'),
+        ):
+            with self.subTest(manifest=altered):
+                self.put(path, altered)
+                self.save()
+                with self.assertRaisesRegex(IntegrityError, "canonical .* (invalid|changed)"):
+                    check(self.root)
+
+    def test_all_global_acceptance_flags_stay_false(self):
+        original = dict(self.manifest["assertions"])
+        for field in original:
+            with self.subTest(field=field):
+                self.manifest["assertions"] = {**original, field: True}
+                self.save()
+                with self.assertRaisesRegex(IntegrityError, "unaccepted capability"):
+                    check(self.root)
 
 
 if __name__ == "__main__":

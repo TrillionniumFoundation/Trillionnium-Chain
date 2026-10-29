@@ -146,7 +146,17 @@ fn read_launch(outside: &OutsideLaunch<'_>) -> Result<Launch> {
     )?;
     let config: Launch = serde_json::from_slice(&raw)?;
     ensure(
-        config.schema == "restricted-owner-continuous-launch-v2"
+        config.schema
+            == config
+                .inputs
+                .view_authority
+                .identity
+                .profile()
+                .map_err(|_| "OWNER_CONTINUOUS_PROTECTED_CONTEXT")?
+                .schema(
+                    "restricted-owner-continuous-launch-v2",
+                    "restricted-owner-continuous-launch-pq-v3",
+                )
             && config.source_commit == outside.source_commit
             && config.node_policy_source == outside.node_policy_source
             && config.registry2_package == outside.registry2_package
@@ -190,7 +200,14 @@ pub fn prepare_known_unclean_restart(outside: OutsideLaunch<'_>) -> Result<Value
     let config: RecoveryLaunch = serde_json::from_slice(&raw)?;
     let identity = &config.input.authority.identity;
     ensure(
-        config.schema == "restricted-continuous-known-unclean-recovery-launch-v1"
+        config.schema
+            == identity
+                .profile()
+                .map_err(|_| "OWNER_CONTINUOUS_RECOVERY_PROTECTED_CONTEXT")?
+                .schema(
+                    "restricted-continuous-known-unclean-recovery-launch-v1",
+                    "restricted-continuous-known-unclean-recovery-launch-pq-v3",
+                )
             && config.source_commit == outside.source_commit
             && config.node_policy_source == outside.node_policy_source
             && config.registry2_package == outside.registry2_package
@@ -230,14 +247,14 @@ pub fn prepare_known_unclean_restart(outside: OutsideLaunch<'_>) -> Result<Value
     )
 }
 
-fn packet(value: &str) -> Result<Packet> {
+fn packet(value: &str, settings: &crate::Settings) -> Result<Packet> {
     ensure(
         value.len() <= 2 * 1024 * 1024,
         "OWNER_CONTINUOUS_PACKET_LIMIT",
     )?;
     let raw = hex::decode(value).map_err(|_| "OWNER_CONTINUOUS_PACKET_HEX")?;
     ensure(hex::encode(&raw) == value, "OWNER_CONTINUOUS_PACKET_HEX")?;
-    Packet::decode(&raw)
+    Packet::decode_for_settings(&raw, settings)
 }
 struct Completion {
     parent: Option<String>,
@@ -280,6 +297,12 @@ impl Controller {
             .checked_add(Duration::from_secs(config.wall_seconds))
             .ok_or("OWNER_CONTINUOUS_DEADLINE")?;
         ensure(Instant::now() < deadline, "OWNER_CONTINUOUS_DEADLINE")?;
+        let authentication_profile = config
+            .inputs
+            .view_authority
+            .identity
+            .profile()
+            .map_err(|_| "OWNER_CONTINUOUS_PROTECTED_CONTEXT")?;
         let (node, model, input) =
             Node::open_operator_continuous_checkpoint(&config.store, config.inputs, deadline)?;
         let startup = node.continuous_startup_receipt()?;
@@ -287,20 +310,40 @@ impl Controller {
         let node = Arc::new(Mutex::new(node));
         let stop = Arc::new(AtomicBool::new(false));
         let receiver = if let Some(service) = config.receiver_service {
-            let raw = held_configuration(&service.secret_path, 128)?;
+            let raw = zeroize::Zeroizing::new(held_configuration(&service.secret_path, 128)?);
             let text = std::str::from_utf8(&raw)
                 .map_err(|_| "OWNER_CONTINUOUS_SECRET_CODEC")?
                 .trim();
             ensure(text.len() == 64, "OWNER_CONTINUOUS_SECRET_CODEC")?;
-            let identity = DevelopmentIdentity::from_secret_hex(text)
-                .map_err(|_| "OWNER_CONTINUOUS_SECRET_CODEC")?;
-            ensure(
-                identity.public_key() == service.public_key,
-                "OWNER_CONTINUOUS_SERVER_PUBLIC_KEY",
-            )?;
             let public_policy =
                 PublicPolicy::new(service.bits, Duration::from_millis(service.lifetime_ms))?;
-            let server = PublicServer::with_continuous_domain(identity, public_policy, &cpu)?;
+            let server = match authentication_profile {
+                crate::operator_pq_auth::Profile::ClassicalV2 => {
+                    let identity = DevelopmentIdentity::from_secret_hex(text)
+                        .map_err(|_| "OWNER_CONTINUOUS_SECRET_CODEC")?;
+                    ensure(
+                        identity.public_key() == service.public_key,
+                        "OWNER_CONTINUOUS_SERVER_PUBLIC_KEY",
+                    )?;
+                    PublicServer::with_continuous_domain(identity, public_policy, &cpu)?
+                }
+                crate::operator_pq_auth::Profile::PqV3 => {
+                    ensure(
+                        text.bytes()
+                            .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b)),
+                        "OWNER_CONTINUOUS_SECRET_CODEC",
+                    )?;
+                    let decoded = zeroize::Zeroizing::new(
+                        hex::decode(text).map_err(|_| "OWNER_CONTINUOUS_SECRET_CODEC")?,
+                    );
+                    let mut seed = zeroize::Zeroizing::new([0u8; 32]);
+                    seed.copy_from_slice(&decoded);
+                    let expected = crate::digest(&service.public_key)?;
+                    let identity =
+                        ingress::public_v3::PqPublicIdentity::from_owned_seed(seed, expected)?;
+                    PublicServer::with_continuous_pq_history(identity, public_policy, &cpu)?
+                }
+            };
             let listener = TcpListener::bind(service.listen)?;
             let owner = node.clone();
             let stopping = stop.clone();
@@ -395,7 +438,7 @@ impl Controller {
                     let packet = found
                         .packet
                         .as_ref()
-                        .map(Packet::encode)
+                        .map(|p| p.encode_for_settings(node.settings()))
                         .transpose()?
                         .map(hex::encode);
                     json!({"search":found,"packet":packet})
@@ -412,14 +455,20 @@ impl Controller {
                 Step::WinnerValidation {
                     packet: value,
                     search_operation,
-                } => serde_json::to_value(node.validate_owned_continuous_winner(
-                    packet(&value)?,
-                    &search_operation,
-                    ingress::now()?,
-                )?)?,
-                Step::ReceiverValidation { packet: value } => serde_json::to_value(
-                    node.receive_owned_continuous_packet(packet(&value)?, ingress::now()?)?,
-                )?,
+                } => {
+                    let packet = packet(&value, node.settings())?;
+                    serde_json::to_value(node.validate_owned_continuous_winner(
+                        packet,
+                        &search_operation,
+                        ingress::now()?,
+                    )?)?
+                }
+                Step::ReceiverValidation { packet: value } => {
+                    let packet = packet(&value, node.settings())?;
+                    serde_json::to_value(
+                        node.receive_owned_continuous_packet(packet, ingress::now()?)?,
+                    )?
+                }
                 Step::Activate { block, receiver } => {
                     serde_json::to_value(node.activate_owned_continuous_packet(
                         crate::digest(&block)?,
@@ -445,7 +494,7 @@ impl Controller {
                     )?;
                     let rows = packets
                         .iter()
-                        .map(|p| p.encode().map(hex::encode))
+                        .map(|p| p.encode_for_settings(node.settings()).map(hex::encode))
                         .collect::<Result<Vec<_>>>()?;
                     json!({"packets":rows})
                 }

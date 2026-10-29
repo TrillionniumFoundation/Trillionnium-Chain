@@ -4,8 +4,8 @@ use super::{NativeOwners, Node, StateBackend};
 use crate::{
     ensure,
     ingress::pq_network::{
-        peer_ids_from_policy_record, PqNetworkPolicy, VerifiedRequest, MAX_LEDGER_BYTES,
-        MAX_RECORDS, MAX_WIRE,
+        peer_ids_from_policy_record, PqNetworkPolicy, VerifiedRequest, MAX_INBOUND_VERIFICATIONS,
+        MAX_INGRESS_BYTES, MAX_INGRESS_CONNECTIONS, MAX_LEDGER_BYTES, MAX_RECORDS, MAX_WIRE,
     },
     Error, Result, Settings,
 };
@@ -20,14 +20,16 @@ use std::{
 use trnm_protocol::pon_wire::{hash, Hash};
 
 pub(crate) const DDL: &str = "
-CREATE TABLE pq_network_peer_v1(peer BLOB PRIMARY KEY CHECK(length(peer)=32),highest_sequence INTEGER NOT NULL CHECK(highest_sequence>=0),revoked INTEGER NOT NULL CHECK(revoked IN (0,1)));
-CREATE TABLE pq_network_request_v1(peer BLOB NOT NULL,sequence INTEGER NOT NULL CHECK(sequence>0),operation BLOB NOT NULL CHECK(length(operation)=32),wire BLOB NOT NULL CHECK(length(wire)>=3495 AND length(wire)<=2097152),response BLOB,response_digest BLOB,status INTEGER NOT NULL CHECK(status IN (0,1,2)),PRIMARY KEY(peer,sequence),FOREIGN KEY(peer) REFERENCES pq_network_peer_v1(peer),CHECK((status IN (0,2) AND response IS NULL AND response_digest IS NULL) OR (status=1 AND response IS NOT NULL AND response_digest IS NOT NULL AND length(response)>=3495 AND length(response)<=2097152 AND length(response_digest)=32)));
+CREATE TABLE pq_network_resource_v2(singleton INTEGER PRIMARY KEY CHECK(singleton=1),connections INTEGER NOT NULL CHECK(connections>=0 AND connections<=64),input_bytes INTEGER NOT NULL CHECK(input_bytes>=0 AND input_bytes<=33554432),inbound_verifications INTEGER NOT NULL CHECK(inbound_verifications>=0 AND inbound_verifications<=64));
+CREATE TABLE pq_network_peer_v2(peer BLOB PRIMARY KEY CHECK(length(peer)=32),highest_sequence INTEGER NOT NULL CHECK(highest_sequence>=0),revoked INTEGER NOT NULL CHECK(revoked IN (0,1)));
+CREATE TABLE pq_network_request_v2(peer BLOB NOT NULL,sequence INTEGER NOT NULL CHECK(sequence>0),operation BLOB NOT NULL CHECK(length(operation)=32),wire BLOB NOT NULL CHECK(length(wire)>=3495 AND length(wire)<=2097152),response BLOB,response_digest BLOB,status INTEGER NOT NULL CHECK(status IN (0,1,2)),PRIMARY KEY(peer,sequence),FOREIGN KEY(peer) REFERENCES pq_network_peer_v2(peer),CHECK((status IN (0,2) AND response IS NULL AND response_digest IS NULL) OR (status=1 AND response IS NOT NULL AND response_digest IS NOT NULL AND length(response)>=3495 AND length(response)<=2097152 AND length(response_digest)=32)));
 ";
 
 pub(crate) fn seed(tx: &Transaction<'_>, policy: &[u8]) -> Result<()> {
+    tx.execute("INSERT INTO pq_network_resource_v2 VALUES(1,0,0,0)", [])?;
     for peer in peer_ids_from_policy_record(policy)? {
         tx.execute(
-            "INSERT INTO pq_network_peer_v1 VALUES(?,0,0)",
+            "INSERT INTO pq_network_peer_v2 VALUES(?,0,0)",
             [peer.as_slice()],
         )?;
     }
@@ -68,7 +70,7 @@ impl Node {
                 continuous: None,
                 pq_network: Some(policy.canonical().to_vec()),
             },
-            StateBackend::PqNetworkV1,
+            StateBackend::PqNetworkV2,
             false,
         )?;
         node.validate_pq_network_ledger(policy)?;
@@ -79,11 +81,11 @@ impl Node {
         self.namespace()?;
         self.storage_context()?;
         ensure(
-            self.state_backend == StateBackend::PqNetworkV1 && policy.matches(&self.settings),
+            self.state_backend == StateBackend::PqNetworkV2 && policy.matches(&self.settings),
             "PQ_NETWORK_BACKEND",
         )?;
         let recorded: Vec<u8> = self.db.query_row(
-            "SELECT value FROM metadata WHERE key='pq_network_owner_v1'",
+            "SELECT value FROM metadata WHERE key='pq_network_owner_v2'",
             [],
             |row| row.get(0),
         )?;
@@ -92,15 +94,16 @@ impl Node {
 
     fn pq_network_usage(&self) -> Result<(u64, u64)> {
         Ok(self.db.query_row(
-            "SELECT COUNT(*),COALESCE(SUM(length(wire)+CASE WHEN status=0 THEN 2097152 ELSE COALESCE(length(response),0) END),0) FROM pq_network_request_v1",
+            "SELECT COUNT(*),COALESCE(SUM(length(wire)+CASE WHEN status=0 THEN 2097152 ELSE COALESCE(length(response),0) END),0) FROM pq_network_request_v2",
             [], |row| Ok((row.get(0)?, row.get(1)?)))?)
     }
 
     pub fn pq_network_status(&self, policy: &PqNetworkPolicy) -> Result<serde_json::Value> {
         self.check_pq_network_policy(policy)?;
         let (records, reserved_bytes) = self.pq_network_usage()?;
+        let ingress = self.pq_ingress_usage()?;
         let revoked: u64 = self.db.query_row(
-            "SELECT COUNT(*) FROM pq_network_peer_v1 WHERE revoked=1",
+            "SELECT COUNT(*) FROM pq_network_peer_v2 WHERE revoked=1",
             [],
             |row| row.get(0),
         )?;
@@ -108,16 +111,53 @@ impl Node {
             serde_json::json!({"profile":crate::ingress::pq_network::PROFILE,
             "policy":hex::encode(policy.id()),"records":records,"reserved_bytes":reserved_bytes,
             "revoked_peers":revoked,"record_limit":MAX_RECORDS,"byte_limit":MAX_LEDGER_BYTES,
+            "ingress_connections":ingress.0,"ingress_bytes":ingress.1,"inbound_signature_attempts":ingress.2,
+            "ingress_connection_limit":MAX_INGRESS_CONNECTIONS,"ingress_byte_limit":MAX_INGRESS_BYTES,
+            "inbound_signature_attempt_limit":MAX_INBOUND_VERIFICATIONS,"transport_confidentiality":false,
             "account_migration":false,
             "imported_transfer_accounts":self.settings.app.is_pq_account_profile(),
             "whole_native_authorization_migrated":false,"production_activation":false}),
         )
     }
 
+    fn pq_ingress_usage(&self) -> Result<(u64, u64, u64)> {
+        let result = self.db.query_row("SELECT connections,input_bytes,inbound_verifications FROM pq_network_resource_v2 WHERE singleton=1", [],
+            |row| Ok((row.get::<_,u64>(0)?,row.get::<_,u64>(1)?,row.get::<_,u64>(2)?)))?;
+        ensure(
+            result.0 <= MAX_INGRESS_CONNECTIONS
+                && result.1 <= MAX_INGRESS_BYTES
+                && result.2 <= MAX_INBOUND_VERIFICATIONS,
+            "PQ_NETWORK_RESOURCE_STATE",
+        )?;
+        Ok(result)
+    }
+    /// A failed network attempt consumes protected local capacity, never fees
+    /// from an unauthenticated claimed account. Reorg and reopen do not refund it.
+    pub(crate) fn charge_pq_ingress(
+        &mut self,
+        policy: &PqNetworkPolicy,
+        connection: bool,
+        bytes: u64,
+        verification: bool,
+    ) -> Result<()> {
+        self.check_pq_network_policy(policy)?;
+        let tx = self
+            .db
+            .transaction_with_behavior(TransactionBehavior::Immediate)?;
+        let changed = tx.execute("UPDATE pq_network_resource_v2 SET connections=connections+?,input_bytes=input_bytes+?,inbound_verifications=inbound_verifications+? WHERE singleton=1 AND connections<=?-? AND input_bytes<=?-? AND inbound_verifications<=?-?",
+            params![u64::from(connection), bytes, u64::from(verification),
+                MAX_INGRESS_CONNECTIONS,u64::from(connection),MAX_INGRESS_BYTES,bytes,
+                MAX_INBOUND_VERIFICATIONS,u64::from(verification)])?;
+        ensure(changed == 1, "PQ_NETWORK_INGRESS_BUDGET")?;
+        tx.commit()?;
+        Ok(())
+    }
+
     pub(crate) fn validate_pq_network_ledger(&self, policy: &PqNetworkPolicy) -> Result<()> {
         self.check_pq_network_policy(policy)?;
+        self.pq_ingress_usage()?;
         let mut statement = self.db.prepare(
-            "SELECT peer,highest_sequence,revoked FROM pq_network_peer_v1 ORDER BY peer",
+            "SELECT peer,highest_sequence,revoked FROM pq_network_peer_v2 ORDER BY peer",
         )?;
         let peers = statement
             .query_map([], |row| {
@@ -142,7 +182,7 @@ impl Node {
             "PQ_NETWORK_LEDGER_BUDGET",
         )?;
         for (peer, highest, _) in peers {
-            let mut statement = self.db.prepare("SELECT sequence,operation,wire,response,response_digest,status FROM pq_network_request_v1 WHERE peer=? ORDER BY sequence")?;
+            let mut statement = self.db.prepare("SELECT sequence,operation,wire,response,response_digest,status FROM pq_network_request_v2 WHERE peer=? ORDER BY sequence")?;
             let rows: Vec<AuditRow> = statement
                 .query_map([peer.as_slice()], |row| {
                     Ok((
@@ -176,7 +216,7 @@ impl Node {
                 match (response, response_digest, status) {
                     (Some(response), Some(digest), 1) if sequence <= highest => {
                         ensure(
-                            hash(b"native-pq-network-response-bytes-v1", &[&response]).as_slice()
+                            hash(b"native-pq-network-response-bytes-v2", &[&response]).as_slice()
                                 == digest,
                             "PQ_NETWORK_RESPONSE_INTEGRITY",
                         )?;
@@ -200,7 +240,7 @@ impl Node {
         self.check_pq_network_policy(policy)?;
         ensure(request.policy == policy.id(), "PQ_NETWORK_CONTEXT")?;
         let (mut highest, revoked): (u64, bool) = self.db.query_row(
-            "SELECT highest_sequence,revoked FROM pq_network_peer_v1 WHERE peer=?",
+            "SELECT highest_sequence,revoked FROM pq_network_peer_v2 WHERE peer=?",
             [request.peer.as_slice()],
             |row| Ok((row.get(0)?, row.get(1)?)),
         )?;
@@ -213,7 +253,7 @@ impl Node {
             "PQ_NETWORK_SEQUENCE_GAP",
         )?;
         let existing: Option<ReplayRow> = self.db.query_row(
-            "SELECT operation,response,response_digest,status FROM pq_network_request_v1 WHERE peer=? AND sequence=?",
+            "SELECT operation,response,response_digest,status FROM pq_network_request_v2 WHERE peer=? AND sequence=?",
             params![request.peer.as_slice(),request.sequence], |row| Ok((row.get(0)?,row.get(1)?,row.get(2)?,row.get(3)?))).optional()?;
         if let Some((operation, response, digest, status)) = existing {
             ensure(
@@ -224,7 +264,7 @@ impl Node {
                 (Some(response), Some(digest), 1) => {
                     ensure(
                         request.sequence <= highest
-                            && hash(b"native-pq-network-response-bytes-v1", &[&response])
+                            && hash(b"native-pq-network-response-bytes-v2", &[&response])
                                 .as_slice()
                                 == digest,
                         "PQ_NETWORK_RESPONSE_INTEGRITY",
@@ -254,7 +294,7 @@ impl Node {
                 .db
                 .transaction_with_behavior(TransactionBehavior::Immediate)?;
             tx.execute(
-                "INSERT INTO pq_network_request_v1 VALUES(?,?,?,?,NULL,NULL,0)",
+                "INSERT INTO pq_network_request_v2 VALUES(?,?,?,?,NULL,NULL,0)",
                 params![
                     request.peer.as_slice(),
                     request.sequence,
@@ -284,14 +324,14 @@ impl Node {
         )?;
         policy.verify_response(response, request, request.expiry)?;
         ensure(response.len() <= MAX_WIRE, "PQ_NETWORK_WIRE_LIMIT")?;
-        let digest = hash(b"native-pq-network-response-bytes-v1", &[response]);
+        let digest = hash(b"native-pq-network-response-bytes-v2", &[response]);
         let tx = self
             .db
             .transaction_with_behavior(TransactionBehavior::Immediate)?;
-        let changed = tx.execute("UPDATE pq_network_request_v1 SET response=?,response_digest=?,status=1 WHERE peer=? AND sequence=? AND operation=? AND response IS NULL AND status=0",
+        let changed = tx.execute("UPDATE pq_network_request_v2 SET response=?,response_digest=?,status=1 WHERE peer=? AND sequence=? AND operation=? AND response IS NULL AND status=0",
             params![response,digest.as_slice(),request.peer.as_slice(),request.sequence,request.operation.as_slice()])?;
         ensure(changed == 1, "PQ_NETWORK_AUDIT_INTEGRITY")?;
-        let changed = tx.execute("UPDATE pq_network_peer_v1 SET highest_sequence=? WHERE peer=? AND highest_sequence=? AND revoked=0",
+        let changed = tx.execute("UPDATE pq_network_peer_v2 SET highest_sequence=? WHERE peer=? AND highest_sequence=? AND revoked=0",
             params![request.sequence,request.peer.as_slice(),request.sequence-1])?;
         ensure(changed == 1, "PQ_NETWORK_SEQUENCE_INTEGRITY")?;
         tx.commit()?;
@@ -307,7 +347,7 @@ impl Node {
         let pending: Option<Vec<u8>> = self
             .db
             .query_row(
-                "SELECT wire FROM pq_network_request_v1 WHERE peer=? AND sequence=? AND status=0",
+                "SELECT wire FROM pq_network_request_v2 WHERE peer=? AND sequence=? AND status=0",
                 params![peer.as_slice(), highest + 1],
                 |row| row.get(0),
             )
@@ -331,9 +371,9 @@ impl Node {
         let tx = self
             .db
             .transaction_with_behavior(TransactionBehavior::Immediate)?;
-        ensure(tx.execute("UPDATE pq_network_request_v1 SET status=2 WHERE peer=? AND sequence=? AND status=0",
+        ensure(tx.execute("UPDATE pq_network_request_v2 SET status=2 WHERE peer=? AND sequence=? AND status=0",
             params![peer.as_slice(), old.sequence])? == 1, "PQ_NETWORK_AUDIT_INTEGRITY")?;
-        ensure(tx.execute("UPDATE pq_network_peer_v1 SET highest_sequence=? WHERE peer=? AND highest_sequence=?",
+        ensure(tx.execute("UPDATE pq_network_peer_v2 SET highest_sequence=? WHERE peer=? AND highest_sequence=?",
             params![old.sequence, peer.as_slice(), highest])? == 1, "PQ_NETWORK_SEQUENCE_INTEGRITY")?;
         tx.commit()?;
         // Invalidate any still-running phase before it can acquire the owner
@@ -348,7 +388,7 @@ impl Node {
     pub fn revoke_pq_network_peer(&mut self, policy: &PqNetworkPolicy, peer: Hash) -> Result<()> {
         self.check_pq_network_policy(policy)?;
         let revoked: bool = self.db.query_row(
-            "SELECT revoked FROM pq_network_peer_v1 WHERE peer=?",
+            "SELECT revoked FROM pq_network_peer_v2 WHERE peer=?",
             [peer.as_slice()],
             |row| row.get(0),
         )?;
@@ -365,7 +405,7 @@ impl Node {
             .transaction_with_behavior(TransactionBehavior::Immediate)?;
         ensure(
             tx.execute(
-                "UPDATE pq_network_peer_v1 SET revoked=1 WHERE peer=? AND revoked=0",
+                "UPDATE pq_network_peer_v2 SET revoked=1 WHERE peer=? AND revoked=0",
                 [peer.as_slice()],
             )? == 1,
             "PQ_NETWORK_REVOKED",

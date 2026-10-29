@@ -162,7 +162,7 @@ impl Node {
         let height = self.record(tip)?.height;
         let canonical_source = crate::ancestry_index::contains(
             &self.db,
-            self.ancestry_context(),
+            self.ancestry_context()?,
             tip,
             record.source_tip,
             crate::ancestry_index::READ_SQL_BUDGET,

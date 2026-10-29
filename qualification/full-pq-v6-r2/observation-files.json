@@ -1,0 +1,101 @@
+{
+  "schema": "trnm-pq-observation-files-v1",
+  "scope": "actual local observations; not production or whole-chain qualification",
+  "files": [
+    {
+      "file": "observations/chain-pq-m06-all-r2.log",
+      "bytes": 25397,
+      "sha256": "261e7e9ff76ceaf6da058a0e5d57e4e01ce047b7a3252ae040979c4693a8b813"
+    },
+    {
+      "file": "observations/chain-pq-m06-all-r2.json",
+      "bytes": 162367,
+      "sha256": "77e0f12a6f0abbdfcb58f057a3e3715302b6904da5c3e62bc780a176c8bb1a3d"
+    },
+    {
+      "file": "observations/chain-pq-m06-scope-r2.log",
+      "bytes": 25145,
+      "sha256": "786805404285eb7b251221e058264a930f2887ac6a10e5cd54cdde91ab903a07"
+    },
+    {
+      "file": "observations/chain-pq-m06-scope-r2.json",
+      "bytes": 162540,
+      "sha256": "86798b3c8aa5ad47c70c07477fc004ac7a7aca050e980279195c21e3d4dbcbc3"
+    },
+    {
+      "file": "observations/pq-cell-r2-first.log",
+      "bytes": 1539,
+      "sha256": "4f1a6494dbad0e26328f2807492fecc69f7e3f60602a8b3f950042c99742e931"
+    },
+    {
+      "file": "observations/pq-cell-r2-second.log",
+      "bytes": 16663,
+      "sha256": "66d8beefd107d3be010830d96a5711d84a8c877265766c579afb454ffb32eec9"
+    },
+    {
+      "file": "observations/pq-cell-r2-second-evidence.json",
+      "bytes": 36157,
+      "sha256": "9bb06872b6d574c72b2f01d33fa6a0c2a69eceda29ec8b160bb638fd569a5724"
+    },
+    {
+      "file": "observations/pq-m01-r2-first.log",
+      "bytes": 13196,
+      "sha256": "30d6814805939acbb37bed2c26880e92e25e84600cb398b59f390b42317be25f"
+    },
+    {
+      "file": "observations/pq-m01-r2-first-evidence.json",
+      "bytes": 23633,
+      "sha256": "532ee372cf1fee829a80505f2c1df563695184c72ca6fff08b06a805e5b0d476"
+    },
+    {
+      "file": "observations/pq-independent-differential-r2-report.json",
+      "bytes": 1254,
+      "sha256": "74dedb655ed2b31a510f117658d39a62f93bc459b556f87999a8bef3f4eddcc8"
+    },
+    {
+      "file": "observations/pq-independent-differential-r2-evidence.json",
+      "bytes": 5469,
+      "sha256": "9821f8c5bd3d375a937048de7c7faa670911683ec85edb35cd051fa7f17b706d"
+    },
+    {
+      "file": "observations/pq-independent-differential-r2.log",
+      "bytes": 1120,
+      "sha256": "414131e3169f901e1b663857038f5f687c724f01140131c2f76189439386277e"
+    },
+    {
+      "file": "observations/chain-pq-source-gate-r2.json",
+      "bytes": 557,
+      "sha256": "8a97aad314cd4ed4a7c79ae74b821aaebb0c695eb7cfa94217504371d2f51d32"
+    },
+    {
+      "file": "observations/chain-pq-source-gate-unit-tests-r2.log",
+      "bytes": 131,
+      "sha256": "40d74c17d8fa2d9c758a95fbd4ae0876e618e6463330b25280030b6922589b57"
+    },
+    {
+      "file": "observations/chain-pq-recovered-originals-r2.json",
+      "bytes": 8229,
+      "sha256": "0578e529f1ab9f1876aef50432ea5bece897883913960f298efcce57877dae38"
+    },
+    {
+      "file": "observations/chain-pq-repository-first-r2.log",
+      "bytes": 127,
+      "sha256": "03f764180f8008cced62db8df91dbbfec2f4d199a9e2c45e14a656d6ff51d6b4"
+    },
+    {
+      "file": "observations/chain-pq-repository-fuzz-sync-r2.log",
+      "bytes": 307,
+      "sha256": "0a0ccd57273b4e3f2fcef465224863de630b1a985acd37796e9d27e9913ba6f4"
+    },
+    {
+      "file": "observations/pq-fuzz-lock-sync-r2.json",
+      "bytes": 2469,
+      "sha256": "d4e839d10a4d4cb51173d7830a696d0ef9b23a93c0c87f2b6574f27d0cd7b7c1"
+    },
+    {
+      "file": "observations/chain-pq-format-before-r2.log",
+      "bytes": 2427,
+      "sha256": "489feb121ae2d13462b898eef343698e277b5c69f41f17e73de16d4925a0c991"
+    }
+  ]
+}

@@ -553,6 +553,7 @@ impl PendingPreview<'_, '_> {
                     .ok_or("POOL_PARENT_BINDING")?
                     .into_prefix_with_control(
                         PrefixContext {
+                            timestamp: None,
                             height,
                             miner: limits.preview_miner,
                             parent_id: parent,

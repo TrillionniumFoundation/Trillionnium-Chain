@@ -563,7 +563,7 @@ impl LiveRequestCpu {
         let identity = checked.completion_identity()?;
         self.promote_verified_identity(identity)
     }
-    // Only the two typed full-work entrypoints above may produce this identity.
+    // Only typed full-work entrypoints may produce this identity.
     fn promote_verified_identity(&self, identity: [u8; 32]) -> Result<()> {
         self.checkpoint()?;
         let mut state = self
@@ -1072,6 +1072,21 @@ impl ServiceMutationCpuOperation {
         checked: &crate::store::WorkCheckedPacket,
     ) -> Result<()> {
         self.live.work_verified(checked)
+    }
+
+    /// Profile selection comes from the same Node that prechecked this packet.
+    /// Its larger canonical PQ wire remains charged to this original interval.
+    pub(crate) fn history_work_verified_for_settings(
+        &self,
+        checked: &crate::store::WorkCheckedPacket,
+        settings: &crate::Settings,
+    ) -> Result<()> {
+        if !trnm_mvcc_fee::pon_executor::pq_accounts_v2::enabled(&settings.app) {
+            return self.history_work_verified(checked);
+        }
+        self.live.checkpoint()?;
+        let identity = checked.completion_identity_for_settings(settings)?;
+        self.live.promote_verified_identity(identity)
     }
 
     pub fn worker_accounting(&self) -> &dyn ExecutionWorkerAccounting {

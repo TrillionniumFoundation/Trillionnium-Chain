@@ -447,6 +447,7 @@ impl PreparedExecution {
         let mut staged = bound
             .execute_with_control(
                 ExecutionRequest {
+                    timestamp: Some(h.timestamp),
                     transactions: &prepared.checked.packet.transactions,
                     height: h.height,
                     miner: h.miner,
@@ -471,6 +472,7 @@ impl PreparedExecution {
                 &mut staged.output.state,
                 &prepared.eligibility,
                 &product,
+                &prepared.app,
             )? {
                 staged.commitment = pon_commitment::derive_snapshot(
                     &staged.output.state,
@@ -487,7 +489,14 @@ impl PreparedExecution {
             "ROOT",
         )?;
         drop(prepared.execution_measurement.take());
-        let bytes = prepared.checked.packet.encode()?;
+        let bytes = if pq_accounts_v2::enabled(&prepared.app) {
+            crate::pq_application_v6::encode_packet_for_profile(
+                &prepared.checked.packet,
+                pq_accounts_v2::account_profile(&prepared.app)?,
+            )?
+        } else {
+            prepared.checked.packet.encode()?
+        };
         Ok(ExecutedSharedAdmission {
             pin: prepared.pin,
             admission: AdmissionPersistence {

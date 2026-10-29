@@ -326,7 +326,7 @@ impl Node {
             database_id: self.database_id,
             owner: self.owner.try_clone()?,
             schema: self.expected_schema.clone(),
-            context: self.ancestry_context(),
+            context: self.ancestry_context()?,
             schema_id: self.state_backend.schema_id(),
             reorg_owner_context: self.reorg_owner_context(),
             active: selected,

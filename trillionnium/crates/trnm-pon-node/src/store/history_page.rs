@@ -146,7 +146,9 @@ impl Node {
         limit: usize,
         progress: &mut dyn FnMut(u64) -> Result<()>,
     ) -> Result<Vec<Packet>> {
-        self.history_with_packet_length(tip, after, limit, progress, Packet::checked_wire_length)
+        self.history_with_packet_length(tip, after, limit, progress, |packet| {
+            packet.checked_wire_length_for_settings(&self.settings)
+        })
     }
 
     // The production caller selects only the complete native grammar/length
@@ -279,7 +281,7 @@ mod tests {
             spool.read_exact(&mut id)?;
             counts.spool_bytes_read += 32;
             let packet = node.packet(id)?;
-            let n = packet.encode()?.len();
+            let n = packet.checked_wire_length_for_settings(&node.settings)?;
             if bytes + n > 800_000 && !packets.is_empty() {
                 break;
             }

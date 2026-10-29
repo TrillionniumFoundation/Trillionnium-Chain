@@ -295,11 +295,11 @@ fn snapshot(directory: &Path) -> Result<Value> {
         .query_map([], |row| Ok((row.get(0)?,row.get(1)?,row.get(2)?,row.get(3)?,row.get(4)?,row.get(5)?,row.get(6)?)))?
         .collect::<rusqlite::Result<_>>()?;
     let peers: Vec<PeerObservationRow> = tx.prepare(
-        "SELECT lower(hex(peer)),highest_sequence,revoked FROM pq_network_peer_v1 ORDER BY peer")?
+        "SELECT lower(hex(peer)),highest_sequence,revoked FROM pq_network_peer_v2 ORDER BY peer")?
         .query_map([], |row| Ok((row.get(0)?,row.get(1)?,row.get(2)?)))?
         .collect::<rusqlite::Result<_>>()?;
     let requests: Vec<RequestObservationRow> = tx.prepare(
-        "SELECT lower(hex(peer)),sequence,lower(hex(operation)),status,length(wire),CASE WHEN response IS NULL THEN NULL ELSE lower(hex(response)) END,CASE WHEN response_digest IS NULL THEN NULL ELSE lower(hex(response_digest)) END FROM pq_network_request_v1 ORDER BY peer,sequence")?
+        "SELECT lower(hex(peer)),sequence,lower(hex(operation)),status,length(wire),CASE WHEN response IS NULL THEN NULL ELSE lower(hex(response)) END,CASE WHEN response_digest IS NULL THEN NULL ELSE lower(hex(response_digest)) END FROM pq_network_request_v2 ORDER BY peer,sequence")?
         .query_map([], |row| Ok((row.get(0)?,row.get(1)?,row.get(2)?,row.get(3)?,row.get(4)?,row.get(5)?,row.get(6)?)))?
         .collect::<rusqlite::Result<_>>()?;
     let metadata: Vec<(String, String)> = tx
