@@ -4936,3 +4936,38 @@ This repair changes the reader and its negative controls only. All native runtim
 transaction/signature/nonce code and all trainer/model source bytes remain exact.
 Full CI and the prospective ProductRunner decision retain their original gates;
 this parser repair confers neither model efficacy nor an ordinary installation.
+
+### PN3 same-call worker count transition — 2026-10-29 (candidate / OPEN)
+
+A retained real original-model validation stopped during exit observation after
+an earlier full worker binding. The compound `exit-task-identity` refusal did not
+retain the exact mismatching field. A deterministic control separately reproduces
+the narrower race in which the complete task roster contains two original tasks
+and a bound worker retires before the next leader status read reports one thread.
+This reconstruction does not reclassify the historical failed observation.
+
+The V4 observer now distinguishes only a positive count decrease after complete
+initial classification and binding. All successful identity, namespace, memory,
+state and stat reads must still pass before that transition can request proof.
+A strictly smaller complete roster, a nonincreasing observed count and a new
+terminal event from the same retained original worker pidfd are all required.
+The incomplete frontier is discarded; the existing finite recapture requires
+two complete remaining frontiers, the original owner and the original deadline.
+A changed-count status followed by missing stat remains a refusal. Worker
+retirement does not establish released RSS or group completion. Only the exact
+owned-child wait4 receipt can close the observation within the unchanged 100 ms.
+
+All 96 original and added observer/resource controls passed with zero skips,
+including actual own-child kernel pidfd probes. Wrong identities, task additions,
+count increases, missing terminal events, incomplete reads, pre-binding changes
+and expired deadlines remain refusals. Model, training, task, retention,
+qualification, resource and timing rules are unchanged. Source-bound observation
+policies acquire the actual new worker-source hash; the old observer policy is
+rejected on the changed source. This source repair grants no model efficacy,
+qualified child installation or next-task child-byte read.
+
+This binary candidate applies the identical observer and regression tests to
+the 090d source tree, which already contains the strict shared-layout evidence
+reader repair. All four binary trainer and trainer-test files remain byte-for-byte
+identical to their preceding published binary source. The separate original
+model route keeps its 003-based training code; these source roles are not swapped.
