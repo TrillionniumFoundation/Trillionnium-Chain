@@ -439,6 +439,19 @@ fn anchored_migration_conserves_all_accounts_tasks_rewards_and_claims_once() {
         authority(1, new_owner.id, false)
     );
     assert_eq!(out.state[&format!("pq-import-v2:{name}")]["claimed"], true);
+    // A completed CLAIM necessarily consumed source_nonce + 1. A retained
+    // authority paired with a pre-CLAIM nonce is an inconsistent imported State,
+    // even when all immutable anchor and key records are still unchanged.
+    for reverted_nonce in [0, 6, 7] {
+        let mut reverted = out.state.clone();
+        reverted.get_mut(&format!("account:{name}")).unwrap()["nonce"] = json!(reverted_nonce);
+        assert_eq!(
+            validate_state(&reverted, &cfg),
+            Err("PQ2_IMPORT_CLAIM_NONCE"),
+            "claimed account retained pre-CLAIM nonce {reverted_nonce}"
+        );
+        assert!(execute(&reverted, &cfg, 2, new_owner.id, &[], Some(1502)).is_err());
+    }
     assert!(execute(&out.state, &cfg, 2, new_owner.id, &[raw], Some(1502)).is_err());
     let cancel = ordinary(&cfg, &new_owner, owner, 9, 1, 3, &[207; 32]);
     let cancelled = execute(&out.state, &cfg, 2, new_owner.id, &[cancel], Some(1502)).unwrap();
