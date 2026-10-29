@@ -4912,3 +4912,27 @@ transport and training-binding controls are source-level evidence only. The full
 prospective ProductRunner decision, retention, withdrawal, two-node Cell,
 ordinary generation-two installation and next-task byte readback remain pending.
 A further NoGain result must again block installation.
+
+### Legacy evidence reader and held-layout selection — 2026-10-28
+
+The actual head and prospective-merge external-evidence-contract jobs for the
+binary trainer candidate `f1fdee165623c376005270ba84a65b0b6f9cf15b` failed at the
+legacy schema reader. The native opener already selects the shared-snapshot
+layout before binding its DDL and schema ID; the reader still required the old
+unwrapped pair. This is an evidence-reader mismatch, not a successful runtime or
+model qualification observation.
+
+The reader now recognizes only that exact module, enum, layout implementation,
+source-file binding and direct three-statement selection. It verifies that
+CanonicalJson preserves the original legacy DDL and schema, while shared storage
+requires AuthenticatedV1 and held native IO with its separate namespace. Unknown
+mapping bodies, literals, substituted arguments, old-pair decoys, rebinding,
+shadowed modules and missing or symlinked layout sources remain refused. Shared
+snapshot tables remain outside the legacy evidence scope, including resealed
+metadata and source attempts to append them to legacy DDL. The independent
+4775-byte legacy DDL and pre-backend hash remain unchanged.
+
+This repair changes the reader and its negative controls only. All native runtime,
+transaction/signature/nonce code and all trainer/model source bytes remain exact.
+Full CI and the prospective ProductRunner decision retain their original gates;
+this parser repair confers neither model efficacy nor an ordinary installation.
