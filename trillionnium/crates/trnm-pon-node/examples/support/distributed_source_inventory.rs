@@ -29,6 +29,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "config/pon/binary-diverse60-training-v3.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/pon/binary-diverse60-training-v3.json"
+        )),
+    ),
+    (
         "config/pon/checkpoint-tile-task-v1.json",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),

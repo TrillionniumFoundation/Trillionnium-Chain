@@ -5061,3 +5061,17 @@ two 512-task windows, IPS/confidence and family-retention checks, 2700 s whole
 study cap, ordinary batch-one/four-thread forward, two-node Cell acquisition,
 normal installation and next-task child-byte read remain separate unmet gates
 for this new source/profile until actually executed and independently read back.
+
+### 2026-10-29: diverse60 native source inventory follow-up
+
+The first published diverse60 source, `0bd7019a06e34c69fcbc84f23dda8510689b9a8d`,
+failed the original repository-truth inventory check in both head and prospective
+merge jobs `123296601045` and `123296600859`. The preceding audit, boundary and
+repository checks passed, but the fixed training JSON had not been added to the
+embedded native source inventory. The original inventory generator now includes
+that existing 47,712-byte file. This is one seven-line include entry; the training
+data, all Python execution and reader code, observer, budgets and qualification
+conditions remain unchanged. The two original failures remain failed observations.
+This registration change does not establish a model result or a passing native
+campaign. Its new source identity must be selected explicitly by any later Hepta
+candidate before hosted execution.
