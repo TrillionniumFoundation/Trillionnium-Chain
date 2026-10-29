@@ -579,12 +579,32 @@ fn public_profile(args: &BTreeMap<String, String>) -> bool {
         Some(
             ingress::public_v2::PROFILE
                 | ingress::public_v3::PROFILE
+                | ingress::public_v3::PURE_HISTORY_RAW_PROFILE
                 | ingress::public_v3::GROWTH_PROFILE
         )
     )
 }
+fn public_pure_history_raw_profile(args: &BTreeMap<String, String>) -> bool {
+    args.get("--admission-profile").map(String::as_str)
+        == Some(ingress::public_v3::PURE_HISTORY_RAW_PROFILE)
+}
 fn public_pool_profile(args: &BTreeMap<String, String>) -> bool {
     args.get("--admission-profile").map(String::as_str) == Some(ingress::public_v3::PROFILE)
+        || public_pure_history_raw_profile(args)
+}
+fn public_pool_policy(args: &BTreeMap<String, String>) -> Result<ingress::public_v3::PublicPolicy> {
+    let pure = public_pure_history_raw_profile(args);
+    let bits = u8::try_from(number(args, "--admission-bits", if pure { 0 } else { 16 })?)
+        .map_err(|_| "PUBLIC_POLICY")?;
+    let lifetime = Duration::from_millis(number(args, "--admission-ttl-ms", 2000)?);
+    if pure {
+        if bits != 0 {
+            return Err("PUBLIC_PURE_HISTORY_RAW_PROFILE".into());
+        }
+        ingress::public_v3::PublicPolicy::pure_history_raw(lifetime)
+    } else {
+        ingress::public_v3::PublicPolicy::new(bits, lifetime)
+    }
 }
 
 fn public_growth_profile(args: &BTreeMap<String, String>) -> bool {
@@ -916,24 +936,38 @@ fn public_pool_call(
     if !public_pool_profile(args) {
         return Err("PUBLIC_V3_REQUIRED".into());
     }
-    let (reply, observations) = ingress::public_v3::call_public_protected_v3_with_metrics(
-        need(args, "--peer")?.parse().map_err(|_| "PEER_ADDRESS")?,
-        request,
-        settings,
-        need(args, "--server-public")?,
-        &public_identity(args)?,
-        ingress::public_v3::PublicPolicy::new(
-            u8::try_from(number(args, "--admission-bits", 16)?).map_err(|_| "PUBLIC_POLICY")?,
-            Duration::from_millis(number(args, "--admission-ttl-ms", 2000)?),
-        )?,
-    );
-    if args.contains_key("--client-observations") {
-        eprintln!(
-            "{}",
-            json!({"schema":"public-v3-cli-client-observation-v1","observations":observations,
-            "scope":"local elapsed stage time including failed calls; not server CPU or cost authority",
-            "public_network_ready":false})
+    let policy = public_pool_policy(args)?;
+    let mut pure_acknowledgement = None;
+    let (reply, observations) = if public_pure_history_raw_profile(args) {
+        let (reply, observations, ack) = ingress::public_v3::call_public_pure_history_raw(
+            need(args, "--peer")?.parse().map_err(|_| "PEER_ADDRESS")?,
+            request,
+            settings,
+            need(args, "--server-public")?,
+            &public_identity(args)?,
+            policy,
+            None,
         );
+        pure_acknowledgement = Some(ack);
+        (reply, observations)
+    } else {
+        ingress::public_v3::call_public_protected_v3_with_metrics(
+            need(args, "--peer")?.parse().map_err(|_| "PEER_ADDRESS")?,
+            request,
+            settings,
+            need(args, "--server-public")?,
+            &public_identity(args)?,
+            policy,
+        )
+    };
+    if args.contains_key("--client-observations") {
+        let mut observation = json!({"schema":"public-v3-cli-client-observation-v1","observations":observations,
+            "scope":"local elapsed stage time including failed calls; not server CPU or cost authority",
+            "public_network_ready":false});
+        if let Some(ack) = pure_acknowledgement {
+            observation["pure_history_acknowledgement"] = json!(ack);
+        }
+        eprintln!("{}", observation);
     }
     reply
 }
@@ -1398,6 +1432,9 @@ fn run() -> Result<Value> {
         }
     }
     let growth_network = growth_network_options(&command, &args)?;
+    if public_pure_history_raw_profile(&args) {
+        public_pool_policy(&args)?; // Reject a nonzero override before store/network I/O.
+    }
     validate_host_kernel_profile(&command, &args)?;
     let authenticated_state = authenticated_state_backend(&command, &args)?;
     // Fixed outside authority is authenticated before any model/material loader.
@@ -1814,11 +1851,7 @@ fn run() -> Result<Value> {
             let pinned_server = need(&args, "--server-public")?;
             digest(pinned_server)?;
             let identity = public_identity(&args)?;
-            let policy = ingress::public_v3::PublicPolicy::new(
-                u8::try_from(number(&args, "--admission-bits", 16)?)
-                    .map_err(|_| "PUBLIC_POLICY")?,
-                Duration::from_millis(number(&args, "--admission-ttl-ms", 2000)?),
-            )?;
+            let policy = public_pool_policy(&args)?;
             let store = Path::new(need(&args, "--store")?);
             if !store.join("native.sqlite").is_file() {
                 return Err("SUBMIT_RECOVERY_EXISTING_PRODUCER_REQUIRED".into());
@@ -2274,11 +2307,7 @@ fn run() -> Result<Value> {
                     } else {
                         None
                     };
-                    let policy = ingress::public_v3::PublicPolicy::new(
-                        u8::try_from(number(&args, "--admission-bits", 16)?)
-                            .map_err(|_| "PUBLIC_POLICY")?,
-                        Duration::from_millis(number(&args, "--admission-ttl-ms", 2000)?),
-                    )?;
+                    let policy = public_pool_policy(&args)?;
                     let polling_identity = identity.clone();
                     let polling_context = polling
                         .as_ref()
@@ -2302,6 +2331,8 @@ fn run() -> Result<Value> {
                     let resource_profile = server.resource_profile();
                     let profile = if growth_network {
                         ingress::public_v3::GROWTH_PROFILE
+                    } else if public_pure_history_raw_profile(&args) {
+                        ingress::public_v3::PURE_HISTORY_RAW_PROFILE
                     } else {
                         ingress::public_v3::PROFILE
                     };

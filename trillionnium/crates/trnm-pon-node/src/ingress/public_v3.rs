@@ -7,6 +7,10 @@ use super::{
     digest, elapsed_ns, ensure, hash, lock_owner, DevelopmentIdentity, Node,
     Request as NativeRequest, Result, Settings, WorkCheckedPacket,
 };
+mod pure_history_raw;
+pub use pure_history_raw::{
+    call_public_pure_history_raw, PureHistoryRawAcknowledgement, PURE_HISTORY_RAW_PROFILE,
+};
 mod intake;
 use intake::{ConnectionLease, ListenerIntake};
 mod growth;
@@ -396,7 +400,7 @@ impl PublicPolicy {
             lifetime_ms: 2000,
         }
     }
-    pub fn id(self) -> Hash {
+    fn original_resource_id(self) -> Hash {
         hash(b"public-protected-profile-v3",&[PROFILE.as_bytes(),b"resource-revision-r13/shared64-unpaid-input-idle250ms-pressure-cancel-no-slot-refund/hello-and-incomplete-solution-only/server-owed-and-paid-protected/no-deadline-renewal/connection-local-ready-fifo-challenge-and-grant-split-read-mutation/pending64-no-extra-queue-or-worker/hello-wait-original-accept2s/paid-grant-wait-original-cookie-expiry-no-renewal/spent-reserve-once/lane-and-body-together-rollback-on-full/bounded-paid-enqueue-fifo-by-connection-with-unchanged-absolute-work-and-total-deadlines/hello108/solution108/conn64/paid-raw-json-canonical8MiB-factor3/read-body-reserve131072/output-conservative32MiB/control-output-reserve524288/grants-mutation8-read8-held-until-connection-and-task-release/queueproof2-read2/workers2-read1/spent1024-no-live-eviction/packet1048576/body2097216/read512/response2101248/history1/error2KiB/hello2s/challenge2s/solution-policy/body5s/work10s/output5s/overall30s/quantum64KiB/derived-jump-v1-levels63-sql1024-local-integrity-only/challenge128-burst32-read-reserve8-exact-nanosecond-fraction-full-bucket-discards-surplus/await-write-half-close-cancels-request-operation-stage-fences/ops1-block-2-head-3-history-4-poolbundle-5-poolsnapshot/poolraw159..2048-members1..16-sum32768-body66048-contextpin64hex/scalarstatus16KiB-no-reconcile-cachegc4scalars-localdiagnostic/no-guest-policy-prune-reset/shared-node-miner-operatorenabled/service72h-m05-cooperative-noise-row-tile-final-m06-envelope-prepare-canonical-apply-precommit-deadline-cancel-deep-state-root-history-sqlite-nonpreemptive/no-durable-guest-rows/global-paid-mutation-thread-cpu-bucket-reserve-before-paid-body-digest-and-canonical-decode-through-signed-response-charge-outer-plus-all-scoped-worker-thread-intervals-once-work-body-response-nested-no-double-debit/scoped-start-end-same-thread-all-started-joined-exact-counts-panic-cancel-partial-spawn/unknown-scoped-clock-disables-future-mutations/sequential-pool-preview-no-scoped-workers/read-not-charged/clock-unavailable-disables-future-mutations/native-success-preserved/two-inflight-m05-m06-boundary-cooperative-deep-stages-nonpreemptive-debt-no-caller-reset/available-plus-outstanding-start-reserves-ceiling/live-same-thread-owner-and-scoped-progress-increments/global-immediate-debit/original-full-outer-plus-children-minus-paid-residual-once/unverified-sticky-request-budget-cancel/full-native-W1-completion-priority-within-original-shared-bucket/no-new-probe-starts-until-verified-request-settles/existing-probes-own-original-start-quantum-only/verified-owner-scoped-checkpoints-await-original-refill-original-absolute-task-deadline-stop-cancel/no-added-credit-or-worker-or-identity-preference/complete-work-key-domain-public-v3-complete-work-identity-v1-canonical-whole-packet-sha256/fixed4096-digests131072bytes-per-shared-live-cpu-owner-epoch/atomic-claim-and-promotion-paid-hash-max4096-exact-probes/monotone-no-ttl-no-eviction-unknown-cancel-failure-success-retain/listener-clones-share-epoch/process-restart-clears-keys-original-zero-credit-no-permanent-once/repeat-or-capacity-full-only-denies-extra-priority-ordinary-paid-validation-and-recovery-continue/no-general-distinct-valid-W1-fairness/existing-packet-no-promotion-cooperative-history-each-row-reorg-steps-delta-rows-precommit/exact-stored-pending-intent-target-can-resume-original-time-owner-state-checks/committed-partial-intent-retained-no-post-commit-cancel/unknown-live-clock-denies-future/deep-root-and-sql-no-preemption/native-durable-outcome-preserved/controlled-pool-full-prefix-cancel-propagation-reconcile-relation-only-blocking/precommit-only-fences",&[self.bits],&self.lifetime_ms.to_le_bytes(),&MUTATION_CPU_BURST_NS.to_le_bytes(),&MUTATION_CPU_REFILL_NS_PER_SECOND.to_le_bytes(),&MUTATION_CPU_START_RESERVE_NS.to_le_bytes(),&(MUTATION_CPU_WORKERS as u32).to_le_bytes()])
     }
 }
@@ -551,6 +555,9 @@ fn equal_mac(a: Hash, b: Hash) -> bool {
     a.iter().zip(b).fold(0u8, |acc, (x, y)| acc | (x ^ y)) == 0
 }
 fn winner(cookie: Hash, nonce: u64, bits: u8) -> bool {
+    if bits == 0 {
+        return nonce == 0;
+    }
     let h = hash(b"public-ticket-v3", &[&cookie, &nonce.to_le_bytes()]);
     u32::from_be_bytes(h[..4].try_into().expect("fixed hash")).leading_zeros() >= u32::from(bits)
 }
@@ -702,7 +709,7 @@ pub struct PublicServer {
 }
 impl PublicServer {
     pub fn new(identity: DevelopmentIdentity, policy: PublicPolicy) -> Result<Self> {
-        PublicPolicy::new(policy.bits, Duration::from_millis(policy.lifetime_ms))?;
+        policy.validate()?;
         Ok(Self {
             identity,
             policy,
@@ -730,7 +737,10 @@ impl PublicServer {
     /// the complete verifier; NEW bogus traces still consume one full replay.
     /// Future public rollout requires a separately reviewed resource profile.
     pub fn with_w1_rejection_cache(mut self, slots: usize, ttl: Duration) -> Result<Self> {
-        ensure(self.arithmetic_facts.is_none(), "PUBLIC_W1_CACHE_MODE")?;
+        ensure(
+            !self.policy.is_pure_history_raw() && self.arithmetic_facts.is_none(),
+            "PUBLIC_W1_CACHE_MODE",
+        )?;
         self.w1_rejection_cache = Some(
             trnm_crypto_primitives::pon_work::rejection_cache::RejectionCache::new(slots, ttl)
                 .ok_or("PUBLIC_W1_CACHE_LIMIT")?,
@@ -2944,7 +2954,11 @@ fn call_public_protected_v3_with_profile(
         if let Some(deadline) = outer_deadline {
             ensure(Instant::now() < deadline, "PUBLIC_CLIENT_DEADLINE")?;
         }
-        PublicPolicy::new(policy.bits, Duration::from_millis(policy.lifetime_ms))?;
+        policy.validate()?;
+        ensure(
+            !policy.is_pure_history_raw() || matches!(client_profile, ClientProfile::Legacy),
+            "PUBLIC_PURE_HISTORY_RAW_PROFILE",
+        )?;
         let raw = serde_json::to_vec(request)?;
         let op = request_op(request)?;
         ensure(
@@ -3004,8 +3018,10 @@ fn call_public_protected_v3_with_profile(
         phase_start = Instant::now();
         let started = Instant::now();
         let id = cookie.id()?;
-        let mut solved = None;
-        for nonce in 0..1_048_576u64 {
+        let pure = policy.is_pure_history_raw();
+        let mut solved = pure.then_some(0);
+        let search_budget = if pure { 0 } else { 1_048_576u64 };
+        for nonce in 0..search_budget {
             if nonce % 256 == 0 {
                 if outer_deadline.is_some() {
                     ensure(Instant::now() < total_deadline, "PUBLIC_CLIENT_DEADLINE")?;
@@ -3022,8 +3038,8 @@ fn call_public_protected_v3_with_profile(
             }
         }
         let nonce = solved.ok_or("PUBLIC_SOLVE_BUDGET")?;
-        let solve_elapsed_ns = elapsed_ns(started);
-        metrics.solution_search_ns = elapsed_ns(phase_start);
+        let solve_elapsed_ns = if pure { 0 } else { elapsed_ns(started) };
+        metrics.solution_search_ns = if pure { 0 } else { elapsed_ns(phase_start) };
         metrics.solution_found = true;
         phase = PublicClientStage::SolutionBodyResponse;
         phase_start = Instant::now();
@@ -3084,7 +3100,7 @@ fn call_public_protected_v3_with_profile(
         Ok(PublicReply {
             ok: r.ok,
             value: r.value,
-            solve_trials: nonce + 1,
+            solve_trials: metrics.solution_trials,
             solve_elapsed_ns,
             body_bytes_sent: raw.len(),
             public_network_ready: false,
