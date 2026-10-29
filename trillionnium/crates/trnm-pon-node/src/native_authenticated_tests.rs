@@ -768,9 +768,56 @@ fn native_inactive_page_parents_use_checked_material_without_early_activation() 
             100_000,
         );
         if let Err(error) = &received {
+            // Failure-only observation: no hook, receipt collection, extra
+            // snapshot, wait or logging is added between successful pages.
+            let native_after = client.native_history_arithmetic_observation();
+            let cpu = client
+                .public_service_cpu_domain()
+                .and_then(|domain| domain.observe())
+                .map_err(|error| error.to_string());
+            let flow = client
+                .public_service_cpu_domain()
+                .and_then(|domain| domain.observe_actual_flow())
+                .map_err(|error| error.to_string());
+            let active = client
+                .active()
+                .map(|(id, generation)| (hex::encode(id), generation))
+                .map_err(|error| error.to_string());
+            let target_record = client
+                .record(tip)
+                .map(|record| {
+                    json!({"present":true,"height":record.height,
+                        "parent":record.parent.map(hex::encode),"root":hex::encode(record.root)})
+                })
+                .map_err(|error| error.to_string());
+            let reorg = client
+                .db
+                .query_row(
+                    "SELECT old_tip,new_tip,generation,cursor,done FROM reorg WHERE singleton=1",
+                    [],
+                    |row| {
+                        Ok((
+                            hex::encode(row.get::<_, Vec<u8>>(0)?),
+                            hex::encode(row.get::<_, Vec<u8>>(1)?),
+                            row.get::<_, u64>(2)?,
+                            row.get::<_, u64>(3)?,
+                            row.get::<_, u64>(4)?,
+                        ))
+                    },
+                )
+                .optional()
+                .map_err(|error| error.to_string());
             eprintln!(
-                "original cold History failure index={index} cumulative_state_at_calls={} error={error}",
-                state_reads(&client.native_history_arithmetic_observation()) - state_reads(&before),
+                "ORIGINAL_COLD_HISTORY_ERROR_DIAGNOSTIC {}",
+                json!({"schema":"original-cold-history-failure-only-v1",
+                    "index":index,"error":error.to_string(),"tip":hex::encode(tip),
+                    "cumulative_state_at_calls":state_reads(&native_after)-state_reads(&before),
+                    "native_before":before,"native_after":native_after,"cpu":cpu,
+                    "actual_flow":flow,"active":active,"target_record":target_record,
+                    "reorg":reorg,"retained_settlements":client.history_graph_resource_cpu_receipts,
+                    "settlement_hook_enabled":client.history_graph_resource_before_commit_hook.is_some(),
+                    "ordinary_epoch_unknown":client.public_service_epoch_unknown,
+                    "scope":"failure-only readback; empty retained settlements stay empty; no new receipt or authority"}),
             );
         }
         after = received.unwrap();
