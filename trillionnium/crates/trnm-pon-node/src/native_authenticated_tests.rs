@@ -332,6 +332,143 @@ fn native_arithmetic_warm_cache_still_reads_external_tampering_and_matches_cold_
 }
 
 #[test]
+fn native_reorg_final_root_reads_current_sql_after_last_step() {
+    for backend in [StateBackend::Legacy, StateBackend::AuthenticatedV1] {
+        for value in [json!(1), json!(-0.0)] {
+            let dir = tempfile::tempdir().unwrap();
+            let mut node = open(dir.path(), backend);
+            let genesis = node.settings.genesis();
+            let packet = make(&node, genesis, vec![transfer(&node.settings, 1, 91)]);
+            let id = node.admit(&packet, 100_000).unwrap();
+            let original = node.state_at(id).unwrap();
+            if backend == StateBackend::AuthenticatedV1 {
+                assert_eq!(
+                    node.authenticated_arithmetic
+                        .state_root(&node.settings, &original)
+                        .unwrap(),
+                    node.record(id).unwrap().root
+                );
+            }
+            let mut changed = original;
+            changed.insert("reorg-final-root-current-sql".into(), value.clone());
+            let expected = match node.settings.state_root(&changed) {
+                Ok(root) => {
+                    assert_ne!(root, node.record(id).unwrap().root);
+                    Error::from("ROOT").local_integrity()
+                }
+                Err(error) => error,
+            };
+            let external = Connection::open(dir.path().join("native.sqlite")).unwrap();
+            let mut changed_after_last_step = false;
+            let mut reached_publish = false;
+            let mut hook = |point: &str| {
+                if point == "attach:0" {
+                    assert_eq!(
+                        external
+                            .execute(
+                                "INSERT INTO kv(slot,key,value) SELECT generation,?,? FROM reorg WHERE singleton=1",
+                                params![
+                                    "reorg-final-root-current-sql",
+                                    serde_json::to_vec(&value).unwrap()
+                                ],
+                            )
+                            .unwrap(),
+                        1
+                    );
+                    changed_after_last_step = true;
+                }
+                if point == "before-publish" {
+                    reached_publish = true;
+                }
+                Ok(())
+            };
+            let observed = node.activate_with_fault(id, Some(&mut hook)).unwrap_err();
+            assert!(changed_after_last_step, "{backend:?}/{value}");
+            assert!(!reached_publish, "{backend:?}/{value}");
+            assert_eq!(
+                observed.to_string(),
+                expected.to_string(),
+                "{backend:?}/{value}"
+            );
+            assert_eq!(observed.kind(), expected.kind(), "{backend:?}/{value}");
+            assert_eq!(node.active().unwrap().0, genesis);
+            let pending: (u64, u64) = external
+                .query_row(
+                    "SELECT cursor,done FROM reorg WHERE singleton=1",
+                    [],
+                    |row| Ok((row.get(0)?, row.get(1)?)),
+                )
+                .unwrap();
+            assert_eq!(pending, (1, 0));
+        }
+    }
+}
+
+#[test]
+fn native_reorg_final_root_keeps_pq2_pq3_profile_validation() {
+    use crate::native_packet::Profile;
+    use crate::pq_accounts_v2::GenesisAccount;
+
+    // Public research fixture. This checks private Node composition and actual
+    // stored-state validation; it does not open a public PQ transport path.
+    let spki = include_bytes!("../../trnm-protocol/tests/fixtures/pq_transfer/public.der");
+    let account = trnm_protocol::pq_frame::ml_dsa_65_key_id_from_spki(spki).unwrap();
+    let accounts = [GenesisAccount {
+        spki: spki.to_vec(),
+        balance: 100_000_000,
+    }];
+    for profile in [Profile::Pq2, Profile::Pq3] {
+        let settings = match profile {
+            Profile::Pq2 => Settings::native_pq_accounts_v2(&accounts, 1000).unwrap(),
+            Profile::Pq3 => Settings::native_pq_quota_v3(&accounts, 1000).unwrap(),
+            _ => unreachable!(),
+        };
+        let dir = tempfile::tempdir().unwrap();
+        let mut node =
+            pq_accounts_v2::open_pq_node(dir.path(), settings, 1, None, profile).unwrap();
+        let genesis = node.settings.genesis();
+        let (model, input, _, _) = node.settings.consensus_maintenance_material().unwrap();
+        let packet = node
+            .make_with_registered_material(genesis, Vec::new(), account, 1001, 4096, &model, &input)
+            .unwrap();
+        let id = node.admit(&packet, 10_000).unwrap();
+        let original = node.state_at(id).unwrap();
+        let key = format!("pq-auth-v2:{}", hex::encode(account));
+        let mut changed = original;
+        assert!(changed.remove(&key).is_some());
+        let expected = node.settings.state_root(&changed).unwrap_err();
+        assert!(expected.to_string().starts_with("PQ2_"));
+        let external = Connection::open(dir.path().join("native.sqlite")).unwrap();
+        let mut changed_after_last_step = false;
+        let mut reached_publish = false;
+        let mut hook = |point: &str| {
+            if point == "attach:0" {
+                assert_eq!(
+                    external
+                        .execute(
+                            "DELETE FROM kv WHERE slot=(SELECT generation FROM reorg WHERE singleton=1) AND key=?",
+                            [&key],
+                        )
+                        .unwrap(),
+                    1
+                );
+                changed_after_last_step = true;
+            }
+            if point == "before-publish" {
+                reached_publish = true;
+            }
+            Ok(())
+        };
+        let observed = node.activate_with_fault(id, Some(&mut hook)).unwrap_err();
+        assert!(changed_after_last_step, "{profile:?}");
+        assert!(!reached_publish, "{profile:?}");
+        assert_eq!(observed.to_string(), expected.to_string(), "{profile:?}");
+        assert_eq!(observed.kind(), expected.kind(), "{profile:?}");
+        assert_eq!(node.active().unwrap().0, genesis);
+    }
+}
+
+#[test]
 fn native_commit_admission_suppression_rolls_back_all_rows_in_both_backends() {
     for backend in [StateBackend::Legacy, StateBackend::AuthenticatedV1] {
         for table in [

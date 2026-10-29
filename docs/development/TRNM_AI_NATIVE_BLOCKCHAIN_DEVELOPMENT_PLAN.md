@@ -7221,3 +7221,50 @@ family accounting remains unavailable and sampled/adopted CPU is not added to
 that number. The original 5,400-second experiment remains a timeout. This new
 cost result does not pass that original budget, public ingress, PQ-128 security,
 same-source integrated qualification, work-hardness or production activation.
+
+### PN3 exact legacy final-root reuse follow-up — 2026-10-29 (OPEN)
+
+The bounded-recency candidate was frozen as
+`ab545e25ed49269245f5f1a7242f8aed5840ea8b`, tree
+`020a896647d18c03746a988717b039fb110e2ef3`. Its newly compiled test executable
+SHA-256 is `4feef52a15deb32d345592dc63393cab556b2b3ff8f81a243016827970c8fef2`.
+All eight arithmetic-cache controls passed (857 other tests filtered), and
+workspace/all-targets strict Clippy passed with the exact source unchanged.
+The original cold History fixture still failed: zero passed, one failed,
+864 filtered. Its native runtime was 3.00 seconds; the complete recording
+command took 11.993679351 seconds. The original failure log SHA-256 is
+`c86dffcef9b45138eef28a5df64c230991172c2340bf5c2f26f966a1862cb158`.
+
+The failure-only observation now showed generation 2, cursor 7, done 0,
+while the active seed remained generation 1. Known paid CPU was 523,612,861 ns
+and credited refill was 523,429,324 ns: the 183,537 ns debt was retained,
+with no in-flight owner and no unavailable accounting. Final publication was
+not completed. Complete-root computations fell from 36 to 26 compared with the
+earlier `4998469` observation, but this run reached one additional committed
+step on a shared host; aggregate elapsed/CPU differences are not an isolated
+performance estimate. Cursor 7 does not identify the exact remaining checkpoint.
+
+The next change reuses arithmetic only at the original final staged-state root
+check, after the current SQL slot has been read again. Its exact predicate is
+`AuthenticatedV1` plus the legacy packet profile. All PQ profiles retain the
+original `Settings::state_root` call and validation/error order. The broader
+draft was withdrawn before integration because the existing arithmetic helper
+and original root function have different PQ2/PQ3 validation paths. Both growth
+profiles are already excluded from this backend by the original constructor
+checks. No current SQL read, continuity check, target-record read, checkpoint,
+fault cut, account-graph validation or atomic publication step is removed.
+The cache capacity, CPU debt, original time/resource limits and durable epoch
+rules remain unchanged. New controls inject changed canonical input and signed
+zero through an external SQL connection after the last attached step, and delete
+actual PQ2/PQ3 authorization state at that same point. Their native execution
+and the original cold fixture on this new source remain required; no pass is
+inferred from static review or the earlier eight controls.
+
+The separate exact-`4998469` hosted History recovery run
+[40897810787](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40897810787)
+has completed all four original lanes: the 600-second gate passed 22 tests with
+one original ignored test in 517.957807999 seconds; graph checks passed 23 physical
+cases; lifecycle passed 12 tests in 301.014390253 seconds under its own 900-second
+limit; reorg continuation passed seven tests in 704.080576124 seconds under its
+own 900-second limit. These results do not override the separate cold failures,
+establish whole-History P0 closure or prove complete descendant quiescence.

@@ -5775,11 +5775,19 @@ impl Node {
         progress.checkpoint()?;
         continuity_v1::check_state(&state, self.record(target)?.height, &self.settings.app)
             .map_err(|error| Error::from(error).local_integrity())?;
-        ensure(
-            self.settings.state_root(&state)? == self.record(target)?.root,
-            "ROOT",
-        )
-        .map_err(Error::local_integrity)?;
+        // Reuse only complete current-input arithmetic at the original root
+        // check. The State above is freshly read from the staged SQL slot;
+        // target-record, publication and graph checks retain their order. PQ
+        // profiles keep their original complete profile validation here.
+        let actual_root = if self.state_backend == StateBackend::AuthenticatedV1
+            && self.settings.packet_profile() == crate::native_packet::Profile::Legacy
+        {
+            self.authenticated_arithmetic
+                .state_root(&self.settings, &state)?
+        } else {
+            self.settings.state_root(&state)?
+        };
+        ensure(actual_root == self.record(target)?.root, "ROOT").map_err(Error::local_integrity)?;
         progress.checkpoint()?;
         cut(hook, "before-publish")?;
         self.atomic_with_progress(progress, |progress| {
