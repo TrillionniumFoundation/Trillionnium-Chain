@@ -5321,3 +5321,138 @@ lower bound on proving cost. Global cheapest-work and accelerator/energy bounds,
 arbitrary Sybil service, complete proof qualification, independent WAN custody,
 beneficial Hepta releases, whole-chain PQ128 and governed activation remain
 **OPEN / NO_GO** until their distinct original acceptance evidence exists.
+
+### PN0/PN1 — exact-D failures carried into the next candidate (2026-10-29)
+
+Exact D `bd7a9511eb69d77bf448f72232ab9ed66d6cc176`, tree
+`fc7879cc21b8f748338880edd246dbd457ff235a`, completed 432 Python controls
+and all 24 declared control/check steps. Its separate eight-step native record
+completed all 136 data-availability library tests, locked main/fuzz graphs,
+release formatting and strict workspace/all-target/all-feature Clippy. Both
+records independently verified unchanged source before/after on all 6,181
+tracked entries and 819,800,777 bytes. This does not represent every workspace
+test or a successful hosted qualification.
+
+#### Owned-parent membership formatting: actual migration succeeded
+
+The [exact-D fixed-parent run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40840801235)
+passed the typed absence query and actually created the owned parent on both
+architectures. Original receiver observations show the process and all its
+threads in `0::/trnmponpublic.slice/owned-….group`, with the migration descriptor
+absent and the fixed-parent guard observing the intended group. The Rust
+expectation incorrectly omitted the slash after `0::` because
+`Path::strip_prefix("/sys/fs/cgroup")` returns a relative path. Strict role
+verification therefore rejected the receiver after approximately two
+milliseconds. The parent retained its original 180-second readiness deadline;
+no phase was armed and no 30-second stress observation took place. Owned cleanup
+completed. These samples do not support a permission/migration failure theory.
+
+A shared Rust formatter now restores the absolute hierarchy slash for both
+receiver entry and parent-side role checks. The existing native descriptor
+control retains its original ordinary-file refusal and adds the two original
+D path vectors, an actual `/proc/self/cgroup` round trip, and adjacent-prefix
+refusal. A rebound Python counterexample continues to reject an expected or
+observed membership string with the slash removed. No membership, descriptor,
+privilege, service, budget or cleanup requirement is relaxed.
+
+The original two ZIPs, build/ELF identities, native short controls, all 57 present
+binding rows and all 43 missing rows are retained. Independent invocation of the
+exact-D reader still exits 1 and reproduces each original summary byte-for-byte.
+The initial HTTP 503 download failure is separately retained; the later transport
+retry did not rerun a hosted experiment. New actual host execution is required
+on the next committed source to test this formatting correction.
+
+#### Small diagnostics exposed the actual Rust allocation failure
+
+All four small diagnostic artifacts from the [exact-D CodeQL run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40840801599)
+were accessible and independently checked against their public artifact sizes
+and digests, fixed member inventory, source records, phase JSON and retained log
+byte intervals. Actions, Python and C/C++ producer records report completed
+analysis; this small-artifact readback does not pretend to reopen their full
+SARIF/BQRS inputs. Those artifacts remain separately available.
+
+The 25,960-byte Rust diagnostic archive retains the complete 18,219-byte analyzer
+stderr with the same SHA as the original phase. Creation completed in about
+196.455 seconds with status 0; analysis exited 99 after about 347.951 seconds,
+before the original 1,200-second deadline. The actual errors identify Java heap
+and off-heap allocation exhaustion, including a Java heap maximum of 1,080 MiB.
+This is query-engine allocation failure, not evidence of an OS OOM kill or the
+same failure as B's local relation-cache error. C's inaccessible large Rust
+artifact still has an unknown internal cause.
+
+Only Rust's explicit analysis RAM hint changes from 4,096 to 8,192 MiB. One
+language-specific configuration feeds the create/analyze argv, `CODEQL_RAM`
+environment, phase records and result. Other languages remain at 4,096 MiB;
+two threads, official suites, no-download analysis, source scope, before/after
+bindings and both 1,200-second phase deadlines remain. The declared public
+`ubuntu-24.04` runner has a documented 16 GB memory class, but CLI hints are not
+hard process-family limits. A bounded `/proc/meminfo` snapshot records actual
+readable values without certifying cgroup capacity or future availability.
+
+The failed D extraction also retains 299 semantic-unavailable markers. Logs
+report only twelve diagnostic/summary queries completed and no completed
+security query. More evaluator memory may repair execution; it does not waive
+semantic coverage, supply a missing SARIF, dismiss a finding or authenticate the
+original official security gate. The new source must produce its own original
+analysis artifacts and undergo independent readback.
+
+#### Complete W1 proof: bounded progress and actual process observations
+
+The old 5,400-second proof timeout has genuinely empty stdout/stderr and no
+receipt. The pinned SDK's `--port` interface returns after the entire prove call;
+the host previously printed only after strict verification, serialization and
+file synchronization. The new optional observer therefore records a separate
+bounded host phase journal at entry/return of the SDK call, strict verifier,
+codec and receipt write. Its event vocabulary contains fixed labels only, not
+proof contents or exception payloads. Partial journals remain partial. Host
+`Instant` values have their own epoch and are not subtracted from the owner's
+monotonic timestamps. A journal write failure cannot hide an earlier SDK or
+verification error or promote a printed success to a successful process exit.
+
+An explicit `--observe-proof` path retains the original full W1, Composite/
+Poseidon2 profile, segment power 18, fixed input/image, no-development/no-remote
+requirements and 5,400-second work deadline. A narrow held-ELF exec shim
+preserves the SDK's `--version` stdout protocol; only `--port` redirects backend
+progress into separate capped pipes. The real backend replaces the shim in the
+same PID. The host's machine-readable stdout remains separate. Executable
+before/after identities, actual sampled executable images and file descriptors
+are observations; they are not compiler or physical-hardware attestations.
+
+The process owner retains an unreaped leader, uses non-reaping exit observation,
+signals its owned process group before reaping, and records one actual direct
+`wait4` result plus separately adopted child rows. Current incomplete cleanup
+is a failure. Historical process-family completeness remains unknown even after
+successful finite cleanup. Sampled process CPU ticks are not added to nested
+wait4 totals. Unreadable, missing, racing or bounded-out process/cgroup evidence
+remains explicit; no inferred whole-family CPU or memory peak is reported.
+Logging, hashing and sampling overhead stays inside the measured outer work
+scope and its original deadline. Cleanup keeps its existing separate finite
+allowance; cooperative checks are not hard real-time kernel-I/O guarantees.
+
+Because direct wait4 and the old observer-parent `RUSAGE_CHILDREN` difference
+have different meanings, the new process record uses
+`pon-w1-observed-process-v2`. Historical process-v1 records and failed artifacts
+are not rewritten. The new workflow explicitly requires the proof observer;
+legacy compatibility must not allow a changed schema label to bypass required
+sidecar/source/phase checks. None of these observations substitutes for an actual
+receipt, independent verification, all original negative proof controls or a
+quantitative security argument. Complete proof, whole-chain PQ128 and public
+service qualification remain separate open requirements.
+
+The original native pressure schedule has also been independently checked:
+its shared monotonic epoch is consistent, actors start within milliseconds, and
+honest rounds are deliberately scheduled at 1/5/9 seconds while pressure lasts
+30 seconds. C's first depletion at 14.56-14.87 seconds follows its third completed
+round. No time-origin defect was found. A separately named, predeclared late-round
+supplement could test this coverage gap; no such experiment is counted as run,
+and moving honest CPU work cannot assume the old depletion trajectory persists.
+The original schedules, samples and failed overlap predicates remain intact.
+
+Before publication, the next candidate's real standalone host/client dependency
+graph, strict all-target Clippy and eight actual host tests passed with unchanged
+selected backend source and a retained test ELF. Two real node controls checked
+the cgroup formatter and the original absolute readiness deadline. These are
+explicit precommit observations, not exact-commit qualification. The 59 parent
+reader, 25 CodeQL, 17 process-owner and 13 proof-reader controls also passed in
+their retained author runs; independent reviews retained the original rejected
+counterexamples. None of these short tests executes the full W1 prover.

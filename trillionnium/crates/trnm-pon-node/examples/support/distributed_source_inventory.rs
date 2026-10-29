@@ -547,6 +547,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/phase_journal.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/phase_journal.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/receipt_bounds.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),

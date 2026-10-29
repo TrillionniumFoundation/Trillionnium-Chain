@@ -476,6 +476,27 @@ class FixedParentControls(unittest.TestCase):
                     lambda value: value["actors"][0].update(cgroup="0::/trnmponpublic.slice/foreign\n"))
         self.reject()
 
+    def test_missing_hierarchy_slash_is_rejected_after_rebinding(self):
+        path = self.root / "native/baseline/fixed-parent-receiver-entry-v1.json"
+        original = load(path)
+        for target in ("expected", "observed"):
+            with self.subTest(target=target):
+                value = copy.deepcopy(original)
+                role = value["role"]
+                missing_slash = role["expected_cgroup"].replace("0::/", "0::", 1)
+                if target == "expected":
+                    role["expected_cgroup"] = missing_slash
+                else:
+                    role["cgroup"] = missing_slash
+                    for thread in role["threads"]:
+                        thread["cgroup"] = missing_slash
+                # Even a claimed match plus newly computed outer hashes must
+                # not normalize a wrong raw kernel/expected hierarchy path.
+                role["membership_matches"] = True
+                write(path, value)
+                rebind(self.root)
+                self.reject()
+
     def test_same_inner_wrong_inode_is_not_accepted(self):
         location = self.root / "native/baseline"
         node = load(location / "receiver-report.json")

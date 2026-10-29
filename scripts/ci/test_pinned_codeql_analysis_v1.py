@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 """Negative controls for analysis completion, coverage and source attribution."""
 import copy
+import io
 import json
 from pathlib import Path
+import sys
 import tempfile
+from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
 
@@ -310,6 +313,110 @@ class AnalysisControls(unittest.TestCase):
             self.assertEqual(result["failure"]["type"], "FileNotFoundError")
             self.assertTrue((output / "source-before.json").is_file())
             self.assertTrue((output / "source-after.json").is_file())
+
+    def test_actual_phase_construction_keeps_resource_hints_environment_and_deadlines_bound(self):
+        # The executor and source observations are explicit fixtures. The real
+        # runner constructs commands, records failures and returns nonzero;
+        # this does not execute CodeQL or certify any query result.
+        for language, expected_ram in (("rust", 8192), ("python", 4096)):
+            for failing_phase in ("create", "analyze"):
+                with self.subTest(language=language, failing_phase=failing_phase), tempfile.TemporaryDirectory() as temp:
+                    root = Path(temp)
+                    executable = root / "codeql"
+                    executable.write_bytes(b"fixture only; never executed")
+                    output = root / "output"
+                    calls = []
+                    def run(argv, _input, **kwargs):
+                        calls.append((list(argv), dict(kwargs["env"]), kwargs["timeout"]))
+                        command = argv[1:3]
+                        stdout = b"fixture toolchain\n"
+                        if argv[1:] == ["version", "--format=json"]:
+                            stdout = json.dumps({"version": reader.VERSION, "sha": reader.CLI_SHA,
+                                                 "configFileFound": False}).encode()
+                        elif command == ["resolve", "queries"]:
+                            stdout = json.dumps([f"/fixture/{i}.ql" for i in range(reader.QUERY_COUNTS[language])]).encode()
+                        elif command == ["resolve", "packs"]:
+                            stdout = b"{}"
+                        failed = command == ["database", failing_phase]
+                        return SimpleNamespace(returncode=99 if failed else 0, stdout=stdout,
+                                               stderr=b"synthetic resource failure" if failed else b"")
+                    bounded = SimpleNamespace(run_bounded=run, ProcessFailure=RuntimeError)
+                    spec = SimpleNamespace(name="_codeql_resource_fixture", loader=SimpleNamespace(exec_module=lambda _: None))
+                    argv = ["runner", "--language", language, "--codeql", str(executable),
+                            "--output", str(output), "--expected-head", "a" * 40]
+                    with patch.object(reader.verify_ci_source, "verify", return_value={"fixture_source": "unchanged"}), \
+                            patch.object(reader.importlib.util, "spec_from_file_location", return_value=spec), \
+                            patch.object(reader.importlib.util, "module_from_spec", return_value=bounded), \
+                            patch.object(reader.subprocess, "check_output", return_value=b"current.rs\0"), \
+                            patch.object(reader, "query_bindings", return_value=[]), \
+                            patch.object(reader, "host_memory_observation", return_value={"observed": False, "fixture": True}), \
+                            patch.dict(reader.os.environ, {"CODEQL_RAM": "1", "CODEQL_THREADS": "99"}), \
+                            patch.dict(sys.modules), patch("sys.argv", argv), patch("sys.stdout", io.StringIO()):
+                        self.assertEqual(reader.main(), 1)
+                    result = json.loads((output / "result.json").read_text())
+                    self.assertFalse(result["passed"])
+                    self.assertFalse(result["analysis_execution_complete"])
+                    self.assertEqual(result["ram_hint_mb"], expected_ram)
+                    self.assertEqual(result["resource_hints"]["ram_hint_mb"], expected_ram)
+                    self.assertEqual(result["threads_hint"], 2)
+                    self.assertEqual(result["phases"][-1]["name"], failing_phase)
+                    self.assertEqual(result["phases"][-1]["returncode"], 99)
+                    for arguments, environment, budget in calls:
+                        self.assertEqual(environment["CODEQL_RAM"], str(expected_ram))
+                        self.assertEqual(environment["CODEQL_THREADS"], "2")
+                        if arguments[1:3] in (["database", "create"], ["database", "analyze"]):
+                            self.assertEqual([a for a in arguments if a.startswith("--ram=")], [f"--ram={expected_ram}"])
+                            self.assertEqual([a for a in arguments if a.startswith("--threads=")], ["--threads=2"])
+                            self.assertEqual(budget, 1200)
+                    for phase in result["phases"]:
+                        self.assertEqual(phase["codeql_environment"], {"CODEQL_RAM": str(expected_ram), "CODEQL_THREADS": "2"})
+                    if failing_phase == "analyze":
+                        self.assertIn(f"codeql/{language}-queries@{reader.PACKS[language]}:codeql-suites/{language}-code-scanning.qls",
+                                      result["phases"][-1]["argv"])
+                        self.assertIn("--no-download", result["phases"][-1]["argv"])
+
+    def test_other_languages_keep_original_resource_profile_and_unknown_is_refused(self):
+        for language in ("actions", "python", "cpp"):
+            self.assertEqual(reader.resource_hints(language)["ram_hint_mb"], 4096)
+            self.assertEqual(reader.resource_hints(language)["threads_hint"], 2)
+        with self.assertRaisesRegex(ValueError, "known CodeQL language"):
+            reader.resource_hints("unknown")
+
+    def test_memory_observation_is_raw_bound_and_not_a_capacity_certificate(self):
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / "meminfo"
+            raw = b"MemTotal:       16384000 kB\nMemAvailable:   12000000 kB\n"
+            path.write_bytes(raw)
+            value = reader.host_memory_observation(8192, path)
+            self.assertTrue(value["observed"])
+            self.assertEqual(value["physical_memory_bytes"], 16384000 * 1024)
+            self.assertEqual(value["available_memory_bytes"], 12000000 * 1024)
+            self.assertEqual(value["meminfo"]["sha256"], reader.hashlib.sha256(raw).hexdigest())
+            self.assertEqual(value["meminfo"]["raw_utf8"].encode(), raw)
+            self.assertTrue(value["hint_below_observed_available_memory"])
+            self.assertNotIn("resource_qualified", value)
+            path.write_bytes(b"MemTotal: 8388608 kB\nMemAvailable: 1000 kB\n")
+            value = reader.host_memory_observation(8192, path)
+            self.assertTrue(value["observed"])
+            self.assertFalse(value["hint_below_observed_available_memory"])
+            path.write_bytes(b"MemTotal: 8388608 kB\nMemAvailable: 0 kB\n")
+            value = reader.host_memory_observation(8192, path)
+            self.assertTrue(value["observed"])
+            self.assertEqual(value["available_memory_bytes"], 0)
+            self.assertFalse(value["hint_below_observed_available_memory"])
+
+    def test_missing_or_invalid_memory_stays_unknown_without_positive_fallback(self):
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / "meminfo"
+            for raw in (None, b"", b"MemTotal: 1 kB\nMemAvailable: 2 kB\n",
+                        b"MemTotal: 8 kB\nMemTotal: 8 kB\nMemAvailable: 1 kB\n",
+                        b"MemTotal: 8 MB\nMemAvailable: 1 kB\n", b"x" * 65537):
+                with self.subTest(raw=raw[:100] if raw is not None else None):
+                    if raw is not None:
+                        path.write_bytes(raw)
+                    value = reader.host_memory_observation(8192, path)
+                    self.assertFalse(value["observed"])
+                    self.assertNotIn("hint_below_observed_available_memory", value)
 
 
 if __name__ == "__main__":

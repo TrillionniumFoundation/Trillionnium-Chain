@@ -10,6 +10,7 @@ import json
 import math
 import os
 from pathlib import Path, PurePosixPath
+import re
 import shlex
 import stat
 import subprocess
@@ -54,6 +55,37 @@ def parsed(raw):
 
 def digest(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def resource_hints(language):
+    require(language in PACKS, "known CodeQL language required")
+    # Exact D's original Rust suite exited 99 with an evaluator allocation
+    # failure at 4096. This is only an analysis resource profile; the original
+    # failure, two threads, query suite, source scope and deadlines remain.
+    return {"schema": "pon-pinned-codeql-resource-hints-v1", "threads_hint": 2,
+            "ram_hint_mb": 8192 if language == "rust" else 4096}
+
+
+def host_memory_observation(ram_hint_mb, path=Path("/proc/meminfo")):
+    observation = {"schema": "pon-codeql-host-memory-observation-v1", "observed": False,
+                   "scope": "One kernel memory snapshot; not effective cgroup/family capacity, a hard resource cap or a future availability guarantee."}
+    try:
+        raw = cpp_build.raw(path, 65536)
+        observation["meminfo"] = {"bytes": len(raw), "sha256": hashlib.sha256(raw).hexdigest(),
+                                  "raw_utf8": raw.decode("utf-8")}
+        values = {}
+        for name in ("MemTotal", "MemAvailable"):
+            matches = re.findall(rb"^" + name.encode() + rb":[ \t]+([0-9]+)[ \t]+kB$", raw, re.MULTILINE)
+            require(len(matches) == 1, "unique memory observation required")
+            values[name] = int(matches[0]) * 1024
+        require(values["MemTotal"] > 0 and values["MemAvailable"] <= values["MemTotal"],
+                "memory snapshot contradicts total")
+        observation.update(observed=True, physical_memory_bytes=values["MemTotal"],
+                           available_memory_bytes=values["MemAvailable"],
+                           hint_below_observed_available_memory=ram_hint_mb * 1024 * 1024 <= values["MemAvailable"])
+    except (OSError, UnicodeError, ValueError) as error:
+        observation["failure_type"] = type(error).__name__
+    return observation
 
 
 def write_new(path, value):
@@ -252,16 +284,21 @@ def main():
     output = args.output.resolve()
     require(not output.is_relative_to(ROOT), "analysis output must be outside source")
     output.mkdir(parents=True, exist_ok=False)
+    resources = resource_hints(args.language)
+    ram_hint = str(resources["ram_hint_mb"])
+    thread_hint = str(resources["threads_hint"])
     result = {"schema": "pon-pinned-codeql-analysis-v1", "language": args.language,
               "expected_head": args.expected_head, "analysis_execution_complete": False,
               "source_stable": False, "passed": False,
               "official_security_gate_qualified": False, "production_qualified": False,
               "query_or_model_changes": False, "findings_require_separate_review": True,
-              "threads_hint": 2, "ram_hint_mb": 4096,
+              "threads_hint": resources["threads_hint"], "ram_hint_mb": resources["ram_hint_mb"],
+              "resource_hints": resources,
               "resource_scope": "CLI hints; not a two-thread or process-family hard resource cap.",
               "phases": []}
     bounded = None
-    environment = dict(os.environ, PYTHONDONTWRITEBYTECODE="1", CODEQL_THREADS="2", CODEQL_RAM="4096")
+    environment = dict(os.environ, PYTHONDONTWRITEBYTECODE="1",
+                       CODEQL_THREADS=thread_hint, CODEQL_RAM=ram_hint)
     # Public source analysis needs no service credentials; do not forward them
     # to dependency build scripts or log an inherited environment.
     for key in list(environment):
@@ -270,7 +307,8 @@ def main():
 
     def phase(name, argv, budget):
         started = time.monotonic()
-        record = {"name": name, "argv": list(map(str, argv)), "wall_budget_seconds": budget}
+        record = {"name": name, "argv": list(map(str, argv)), "wall_budget_seconds": budget,
+                  "codeql_environment": {key: environment[key] for key in ("CODEQL_THREADS", "CODEQL_RAM")}}
         try:
             capture = bounded.run_bounded(record["argv"], b"", cwd=ROOT, env=environment,
                                           timeout=budget, stdout_limit=LOG_LIMIT, stderr_limit=LOG_LIMIT)
@@ -297,6 +335,8 @@ def main():
     try:
         before = verify_ci_source.verify("head", args.expected_head, root=ROOT)
         write_new(output / "source-before.json", before)
+        if args.language == "rust":
+            result["host_memory_observation"] = host_memory_observation(resources["ram_hint_mb"])
         bounded_path = ROOT / "formal/pon-nakamoto-v1/bounded_process.py"
         spec = importlib.util.spec_from_file_location("_pinned_codeql_bounded", bounded_path)
         bounded = importlib.util.module_from_spec(spec)
@@ -323,7 +363,7 @@ def main():
             cpp_copy_before = cpp_source_copy(ROOT, cpp_project, tracked, create=True)
             write_new(output / "cpp-source-copy-before.json", cpp_copy_before)
         command = [executable, "database", "create", database, "--language=" + args.language,
-                   "--source-root=" + str(analysis_root), "--threads=2", "--ram=4096"]
+                   "--source-root=" + str(analysis_root), "--threads=" + thread_hint, "--ram=" + ram_hint]
         if args.language in ("rust", "cpp"):
             phase("project-toolchain", ["rustup", "run", "1.95.0", "rustc", "-Vv"], 30)
         if args.language == "rust":
@@ -339,7 +379,7 @@ def main():
         category = f"independent-artifact/{args.expected_head}/{args.language}/code-scanning"
         sarif = output / "analysis.sarif"
         phase("analyze", [executable, "database", "analyze", database, suite, "--no-download",
-                          "--threads=2", "--ram=4096", "--format=sarifv2.1.0",
+                          "--threads=" + thread_hint, "--ram=" + ram_hint, "--format=sarifv2.1.0",
                           "--sarif-category=" + category, "--output=" + str(sarif)], 1200)
         final_queries = query_bindings(queries, pack_root, database)
         write_new(output / "queries-after.json", final_queries)

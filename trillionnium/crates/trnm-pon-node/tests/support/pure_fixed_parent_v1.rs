@@ -142,6 +142,14 @@ fn group(pid: u32) -> io::Result<String> {
     String::from_utf8(read(&PathBuf::from(format!("/proc/{pid}/cgroup")), 4096)?)
         .map_err(io::Error::other)
 }
+fn expected_unified_group(path: &Path) -> io::Result<String> {
+    // Path::strip_prefix returns a relative path, whereas /proc reports an
+    // absolute hierarchy path. Keep its leading slash in both native checks.
+    let relative = path
+        .strip_prefix("/sys/fs/cgroup")
+        .map_err(io::Error::other)?;
+    Ok(format!("0::/{}\n", relative.display()))
+}
 fn role(pid: u32, expected_group: &str, forbidden: &Value) -> io::Result<Value> {
     let started = support::monotonic();
     let root = PathBuf::from(format!("/proc/{pid}"));
@@ -305,13 +313,8 @@ impl Placement {
             self.context["outer_cgroup"].as_str().unwrap(),
             &self.context["migration_file_identity"],
         )?;
-        let receiver_group = format!(
-            "0::{}\n",
-            Path::new(self.context["leaf_path"].as_str().unwrap())
-                .strip_prefix("/sys/fs/cgroup")
-                .map_err(io::Error::other)?
-                .display()
-        );
+        let receiver_group =
+            expected_unified_group(Path::new(self.context["leaf_path"].as_str().unwrap()))?;
         let receiver = role(
             receiver_pid,
             &receiver_group,
@@ -378,13 +381,8 @@ pub fn receiver_entry(path: &Path) -> io::Result<()> {
         "FIXED_PARENT_PLACEMENT",
     )?;
     checked_context(&job["context"])?;
-    let expected = format!(
-        "0::{}\n",
-        Path::new(job["context"]["leaf_path"].as_str().unwrap())
-            .strip_prefix("/sys/fs/cgroup")
-            .map_err(io::Error::other)?
-            .display()
-    );
+    let expected =
+        expected_unified_group(Path::new(job["context"]["leaf_path"].as_str().unwrap()))?;
     let role = role(
         std::process::id(),
         &expected,
@@ -505,6 +503,31 @@ fn fixed_parent_receiver_phase_v1() {
 
 #[test]
 fn native_fixed_parent_descriptor_rejects_ordinary_files() {
+    // This existing selector is executed by the fixed-parent prepare runner.
+    // These paths are the original exact-D x64/ARM observations; the fixture
+    // failed because its expected string omitted the hierarchy's leading '/'.
+    for (path, expected) in [
+        (
+            "/sys/fs/cgroup/trnmponpublic.slice/owned-d1b2d5ffd71a406e9ce792ef9d7538f7.group",
+            "0::/trnmponpublic.slice/owned-d1b2d5ffd71a406e9ce792ef9d7538f7.group\n",
+        ),
+        (
+            "/sys/fs/cgroup/trnmponpublic.slice/owned-3d7d95bab8234cc38c3ba4f8f0ee2ccc.group",
+            "0::/trnmponpublic.slice/owned-3d7d95bab8234cc38c3ba4f8f0ee2ccc.group\n",
+        ),
+    ] {
+        assert_eq!(expected_unified_group(Path::new(path)).unwrap(), expected);
+    }
+    assert!(expected_unified_group(Path::new("/sys/fs/cgroup-other/leaf")).is_err());
+    let observed = group(std::process::id()).unwrap();
+    let hierarchy = observed
+        .strip_prefix("0::/")
+        .and_then(|value| value.strip_suffix('\n'))
+        .expect("actual unified cgroup record with an absolute hierarchy path");
+    assert!(!hierarchy.contains('\n'));
+    let actual_path = Path::new("/sys/fs/cgroup").join(hierarchy);
+    assert_eq!(expected_unified_group(&actual_path).unwrap(), observed);
+
     let temp = tempfile::tempdir().unwrap();
     let path = temp.path().join("not-a-cgroup");
     fs::write(&path, b"unchanged").unwrap();
