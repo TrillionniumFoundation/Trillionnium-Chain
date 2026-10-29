@@ -292,6 +292,49 @@ mod tests {
     use super::*;
     use serde_json::json;
 
+    #[test]
+    fn pq_account_roots_keep_original_validation_on_cold_and_warm_cache() {
+        use crate::pq_accounts_v2::GenesisAccount;
+
+        // Public repository SPKI fixture; no transport or admission capability.
+        let spki =
+            include_bytes!("../../../../trnm-protocol/tests/fixtures/pq_transfer/public.der");
+        let account = trnm_protocol::pq_frame::ml_dsa_65_key_id_from_spki(spki).unwrap();
+        let accounts = [GenesisAccount {
+            spki: spki.to_vec(),
+            balance: 100_000_000,
+        }];
+        for settings in [
+            Settings::native_pq_accounts_v2(&accounts, 1000).unwrap(),
+            Settings::native_pq_quota_v3(&accounts, 1000).unwrap(),
+        ] {
+            let expected_root = settings.state_root(&settings.initial).unwrap();
+            let mut invalid = settings.initial.clone();
+            let key = format!("pq-auth-v2:{}", hex::encode(account));
+            assert!(invalid.remove(&key).is_some());
+            // Removing only current authority leaves the real key-history/status
+            // rows orphaned, rather than constructing a legal pending account.
+            let expected = settings.state_root(&invalid).unwrap_err();
+            assert_eq!(expected.to_string(), "PQ2_ORPHAN_AUTHORITY");
+            for warm in [false, true] {
+                let cache = ArithmeticCache::default();
+                if warm {
+                    assert_eq!(
+                        cache.state_root(&settings, &settings.initial).unwrap(),
+                        expected_root
+                    );
+                }
+                let observed = cache.state_root(&settings, &invalid).unwrap_err();
+                assert_eq!(observed.to_string(), expected.to_string());
+                assert_eq!(observed.kind(), expected.kind());
+                assert_eq!(
+                    cache.state_root(&settings, &settings.initial).unwrap(),
+                    expected_root
+                );
+            }
+        }
+    }
+
     fn hot_non_genesis_slot(root_only: bool) {
         // A staged reorg changes one slot while repeatedly checking the old
         // active slot. Root-only and complete hits must both keep that actual
