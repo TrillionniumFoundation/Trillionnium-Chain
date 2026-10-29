@@ -1,0 +1,1 @@
+error: could not create home directory: '/root/.rustup': Read-only file system (os error 30)

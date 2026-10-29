@@ -452,6 +452,12 @@ pub fn validate_state(state: &State, cfg: &Config) -> Result<()> {
                 state.contains_key(&auth_key(name)),
                 "PQ2_IMPORT_CLAIM_AUTHORITY",
             )?;
+            // CLAIM atomically installs authority and consumes the next source
+            // nonce. Retained authority cannot coexist with a pre-CLAIM nonce.
+            require(
+                field(account, "nonce")? > imported.original_nonce,
+                "PQ2_IMPORT_CLAIM_NONCE",
+            )?;
         }
         let Some(auth) = state.get(&auth_key(name)) else {
             require(
