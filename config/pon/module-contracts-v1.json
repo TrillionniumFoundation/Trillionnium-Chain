@@ -85,7 +85,11 @@
         "formal/pon-nakamoto-v1/test_zero_work.py",
         "trillionnium/crates/trnm-pon-node/tests/zero_task_preparation_lifecycle.rs",
         "scripts/ci/check_zero_locality_cost.py",
-        "scripts/ci/test_zero_locality_cost.py"
+        "scripts/ci/test_zero_locality_cost.py",
+        "trillionnium/crates/ark-relations/src/lib.rs",
+        "trillionnium/crates/ark-relations/UPSTREAM.json",
+        "trillionnium/crates/ark-crypto-primitives/src/lib.rs",
+        "trillionnium/crates/ark-crypto-primitives/UPSTREAM.json"
       ],
       "test_classes": [
         "InteropTests",
@@ -94,7 +98,9 @@
       ],
       "native_packages": [
         "trnm-crypto-primitives",
-        "trnm-governance-guard"
+        "trnm-governance-guard",
+        "ark-relations",
+        "ark-crypto-primitives"
       ],
       "implementation_scope": "native-candidate-and-executable-spec",
       "native_product_integrated": false,

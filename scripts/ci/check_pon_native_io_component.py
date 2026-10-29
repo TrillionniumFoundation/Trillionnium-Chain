@@ -36,6 +36,26 @@ SCHEMA = 'pon-native-io-three-fd-component-readback-v1'
 MODE = 'fresh-identities'
 PHASE = 'raw/' + MODE + '/'
 ROLES = {0: 'honest-miner', 5: MODE+'/receiver', 6: MODE+'/independent-client'}
+ROOT_FIELDS = tuple(('schema owner_pid root_device root_inode logical_bytes_limit '
+    'retained_object_limit high_water_sum retained_logical_bytes_peak retained_objects_peak '
+    'objects failed first_failure first_failure_sqlite_code secondary_failures '
+    'secondary_failures_complete callback_operations denied_operations '
+    'allocated_blocks_hard_cap_implemented lifecycle cleanup_lifecycle lifecycle_complete '
+    'lifecycle_serialized_bytes lifecycle_serialized_bytes_cap quarantined_actual_states '
+    'quarantined_sqlite_codes quarantine_entries_complete').split())
+# This is the Serialize field order of LifecycleReceipt, not the enclosing
+# inventory's sorted JSON order. Ledger::record charges each compact event.
+EVENT_FIELDS = tuple(('sequence action generation basename device inode linked handles '
+    'pending_opens shm_references high_water_bytes actual_last_bytes').split())
+OBJECT_FIELDS = tuple(('generation device inode basename linked handles pending_opens '
+    'shm_references high_water_bytes actual_last_bytes actual_last_allocated_blocks_512 '
+    'reserved_pending_open').split())
+ORDINARY_ACTIONS = frozenset(('reserve-open', 'bind-real-inode', 'reserve-growth',
+    'reserve-handle', 'opened', 'shm-reference'))
+HEALTHY_CLEANUP_ACTIONS = frozenset(('underlying-close', 'underlying-shm-unmap', 'unlinked'))
+REF_FIELDS = ('handles', 'pending_opens', 'shm_references')
+SQLITE_NAMES = frozenset(('native.sqlite', 'native.sqlite-journal',
+    'native.sqlite-wal', 'native.sqlite-shm'))
 
 
 def same(actual, expected):
@@ -162,10 +182,177 @@ def seed_facts(value):
     return facts
 
 
+def exact_fields(value, fields, reason):
+    require(type(value) is dict and set(value) == set(fields), reason)
+
+
+def root_object_fields(value):
+    positive(value['generation'], 1, 2**64-1)
+    name = value['basename']
+    require(type(name) is str and 0 < len(name.encode('utf-8')) <= 96
+        and (name in SQLITE_NAMES or re.fullmatch(r'trnm-temp-[A-Za-z0-9-]+', name)),
+        'COMPONENT_ROOT_OBJECT_BASENAME')
+    require(type(value['linked']) is bool, 'COMPONENT_ROOT_LINKED_TYPE')
+    for field in REF_FIELDS: positive(value[field], 0, 32)
+    require(value['handles'] + value['pending_opens'] <= 32,
+            'COMPONENT_ROOT_HANDLE_CAP')
+    if name != 'native.sqlite-shm':
+        same(value['shm_references'], 0)
+    else:
+        same([value['handles'], value['pending_opens']], [0, 0])
+    positive(value['actual_last_bytes'], 0, 16*MIB)
+    positive(value['high_water_bytes'], value['actual_last_bytes'], 16*MIB)
+    require((value['device'] is None) == (value['inode'] is None),
+            'COMPONENT_ROOT_PARTIAL_INODE')
+    if value['device'] is not None:
+        positive(value['device'], 0, 2**64-1)
+        positive(value['inode'], 1, 2**64-1)
+
+
+def root_lifecycle(row):
+    """Reconcile the existing healthy ledger's recorded state, without inventing I/O.
+
+    bind() deliberately does not emit an event for an already bound inode. Such
+    observations may refresh actual size and high water between events. They
+    cannot change the recorded generation/inode or handle/reference balances.
+    Consequently peaks are checked against observed lower bounds; this is not
+    a new all-write, physical-allocation or hostile-host authentication claim.
+    """
+    ordinary, cleanup = row['lifecycle'], row['cleanup_lifecycle']
+    require(type(ordinary) is list and type(cleanup) is list
+        and len(ordinary) <= 1024 and len(cleanup) <= 256,
+        'COMPONENT_ORIGINAL_LIFECYCLE_BOUNDS')
+    events, charged = [], 0
+    for series, actions in ((ordinary, ORDINARY_ACTIONS), (cleanup, HEALTHY_CLEANUP_ACTIONS)):
+        previous_sequence = -1
+        for event in series:
+            exact_fields(event, EVENT_FIELDS, 'COMPONENT_LIFECYCLE_EXACT_FIELDS')
+            positive(event['sequence'], 0, 1279)
+            require(event['sequence'] > previous_sequence
+                and type(event['action']) is str and event['action'] in actions,
+                'COMPONENT_LIFECYCLE_ACTION_OR_ORDER')
+            previous_sequence = event['sequence']
+            root_object_fields(event)
+            size = len(json.dumps({key:event[key] for key in EVENT_FIELDS},
+                ensure_ascii=False, separators=(',', ':'), allow_nan=False).encode('utf-8'))
+            require(size <= 512, 'COMPONENT_LIFECYCLE_EVENT_BYTES')
+            charged += size
+            events.append(event)
+    same(positive(row['lifecycle_serialized_bytes'], 0, 655360), charged)
+    same(row['lifecycle_serialized_bytes_cap'], 655360)
+    events.sort(key=lambda event: event['sequence'])
+    same([event['sequence'] for event in events], list(range(len(events))))
+    active, generations, peak_objects, peak_bytes = {}, 0, 0, 0
+    observed_admissions = 0
+    for event in events:
+        action, generation = event['action'], event['generation']
+        if action == 'reserve-open':
+            generations += 1
+            same(generation, generations)
+            require(len(active) < 3 and not any(old['linked']
+                and old['basename'] == event['basename'] for old in active.values()),
+                'COMPONENT_LIFECYCLE_RESERVED_SLOT_OR_NAME')
+            same([event[key] for key in ('device', 'inode', 'linked', *REF_FIELDS,
+                'high_water_bytes', 'actual_last_bytes')], [None, None, True, 0, 0, 0, 0, 0])
+            state = dict(event, reserved_pending_open=True)
+            observed_admissions += 1
+        else:
+            require(generation in active, 'COMPONENT_LIFECYCLE_UNKNOWN_OR_COLLECTED_GENERATION')
+            old = active[generation]
+            same(event['basename'], old['basename'])
+            require(event['high_water_bytes'] >= old['high_water_bytes']
+                and (old['linked'] or event['linked'] is False),
+                'COMPONENT_LIFECYCLE_REWOUND_OR_RELINKED')
+            expected_refs = [old[key] for key in REF_FIELDS]
+            if action == 'bind-real-inode':
+                require(old['device'] is None and event['device'] is not None,
+                        'COMPONENT_LIFECYCLE_FIRST_INODE_BIND')
+                same(event['high_water_bytes'], max(old['high_water_bytes'], event['actual_last_bytes']))
+            else:
+                same([event['device'], event['inode']], [old['device'], old['inode']])
+                if old['device'] is None:
+                    same(event['actual_last_bytes'], 0)
+                    same(event['linked'], True)
+            if action == 'reserve-handle':
+                expected_refs[1] += 1
+                observed_admissions += 1
+            elif action == 'opened':
+                require(old['pending_opens'] > 0 and event['device'] is not None,
+                        'COMPONENT_LIFECYCLE_OPEN_WITHOUT_RESERVATION')
+                expected_refs[0] += 1
+                expected_refs[1] -= 1
+            elif action == 'shm-reference':
+                same(event['basename'], 'native.sqlite-shm')
+                expected_refs[2] += 1
+            elif action == 'underlying-close':
+                require(old['handles'] > 0, 'COMPONENT_LIFECYCLE_UNOWNED_CLOSE')
+                expected_refs[0] -= 1
+            elif action == 'underlying-shm-unmap':
+                require(old['shm_references'] > 0, 'COMPONENT_LIFECYCLE_UNOWNED_UNMAP')
+                expected_refs[2] -= 1
+            elif action == 'unlinked':
+                same(event['linked'], False)
+            elif action == 'reserve-growth':
+                require(event['high_water_bytes'] > old['high_water_bytes'],
+                        'COMPONENT_LIFECYCLE_NON_GROWTH_RECORD')
+                observed_admissions += 1
+            same([event[key] for key in REF_FIELDS], expected_refs)
+            state = dict(event, reserved_pending_open=(old['reserved_pending_open']
+                and action != 'bind-real-inode'))
+        active[generation] = state
+        ids = [(entry['device'], entry['inode']) for entry in active.values()
+            if entry['device'] is not None]
+        require(len(ids) == len(set(ids)), 'COMPONENT_LIFECYCLE_RETAINED_INODE_ALIAS')
+        peak_objects = max(peak_objects, len(active))
+        peak_bytes = max(peak_bytes, sum(entry['high_water_bytes'] for entry in active.values()))
+        if action in HEALTHY_CLEANUP_ACTIONS:
+            main_refs = sum(entry['handles'] + entry['pending_opens']
+                for entry in active.values() if entry['basename'] == 'native.sqlite')
+            active = {key:entry for key,entry in active.items() if not (
+                entry['linked'] is False and entry['reserved_pending_open'] is False
+                and all(entry[field] == 0 for field in REF_FIELDS)
+                and (entry['basename'] != 'native.sqlite' or main_refs == 0))}
+    objects = row['objects']
+    require(type(objects) is list and len(objects) <= 3, 'COMPONENT_ROOT_OBJECTS_BOUND')
+    seen, high_water = set(), 0
+    for obj in objects:
+        exact_fields(obj, OBJECT_FIELDS, 'COMPONENT_ROOT_OBJECT_EXACT_FIELDS')
+        root_object_fields(obj)
+        positive(obj['actual_last_allocated_blocks_512'], 0, 2**64-1)
+        require(obj['reserved_pending_open'] is False and obj['device'] is not None
+            and obj['generation'] in active and obj['generation'] not in seen,
+            'COMPONENT_PENDING_OR_UNRECORDED_ROOT_OBJECT')
+        seen.add(obj['generation'])
+        old = active[obj['generation']]
+        for key in ('generation', 'device', 'inode', 'basename', 'linked',
+                *REF_FIELDS, 'reserved_pending_open'):
+            same(obj[key], old[key])
+        same([obj[key] for key in REF_FIELDS], [0, 0, 0])
+        require(obj['high_water_bytes'] >= old['high_water_bytes'],
+                'COMPONENT_ROOT_FINAL_HIGH_WATER_REWIND')
+        high_water += obj['high_water_bytes']
+    same(seen, set(active))
+    same(positive(row['high_water_sum'], 0, 48*MIB), high_water)
+    same(positive(row['retained_objects_peak'], 0, 3), peak_objects)
+    positive(row['retained_logical_bytes_peak'], max(peak_bytes, high_water), 48*MIB)
+    positive(row['callback_operations'], observed_admissions, 2**64-1)
+
+
 def root_terminal(bundle, role, native_pid, layout):
+    exact_fields(role, ('index', 'role', 'registered_vfs', 'receipt'),
+                 'COMPONENT_ROOT_ROLE_EXACT_FIELDS')
     index = positive(role['index'], 0, 6)
     require(index in ROLES and role['role'] == ROLES[index], 'COMPONENT_ACTUAL_USED_NODE_ROLE')
     row = role['receipt']
+    exact_fields(row, ROOT_FIELDS, 'COMPONENT_ROOT_EXACT_FIELDS')
+    positive(row['owner_pid'], 1, 2**32-1)
+    positive(row['root_device'], 0, 2**64-1)
+    positive(row['root_inode'], 1, 2**64-1)
+    same(row['logical_bytes_limit'], 48*MIB)
+    same(row['retained_object_limit'], 3)
+    same(row['denied_operations'], 0)
+    same(row['quarantined_actual_states'], 0)
+    for key in ('secondary_failures', 'quarantined_sqlite_codes'): same(row[key], [])
     require(row['schema'] == 'pn1-owned-sqlite-real-inode-v1'
         and row['owner_pid'] == native_pid and row['logical_bytes_limit'] == 48*MIB
         and row['retained_object_limit'] == 3 and row['failed'] is False
@@ -181,29 +368,19 @@ def root_terminal(bundle, role, native_pid, layout):
     same(declared['index'], index)
     same(declared['root_dev_ino'], [row['root_device'], row['root_inode']])
     same(declared['registered_vfs'], role['registered_vfs'])
-    require(len(row['objects']) <= positive(row['retained_objects_peak'], 0, 3)
-        and positive(row['retained_logical_bytes_peak'], 0, 48*MIB) >= row['high_water_sum'],
-        'COMPONENT_ROOT_RETAINED_OBJECT_PEAK')
-    high_water = 0
+    root_lifecycle(row)
+    linked = set()
     for obj in row['objects']:
-        same([obj[k] for k in ('handles', 'pending_opens', 'shm_references')], [0, 0, 0])
-        require(obj['reserved_pending_open'] is False and type(obj['linked']) is bool,
-                'COMPONENT_PENDING_ROOT_OBJECT')
-        size = positive(obj['actual_last_bytes'], 0, 16*MIB)
-        high_water += positive(obj['high_water_bytes'], size, 16*MIB)
         if obj['linked']:
             path = 'raw/'+ROLES[index]+'/'+obj['basename']
-            require(path in bundle.files and bundle.files[path]['bytes'] == size,
+            linked.add(path)
+            require(path in bundle.files and bundle.files[path]['bytes'] == obj['actual_last_bytes'],
                     'COMPONENT_LINKED_ROOT_BYTES_MISMATCH')
             original.live_original_identity(bundle, path,
                 dict(device=obj['device'], inode=obj['inode']), False)
-    same(high_water, row['high_water_sum'])
-    require(len(row['lifecycle']) <= 1024 and len(row['cleanup_lifecycle']) <= 256
-        and positive(row['lifecycle_serialized_bytes']) <= row['lifecycle_serialized_bytes_cap'] == 655360,
-        'COMPONENT_ORIGINAL_LIFECYCLE_BOUNDS')
-    events = row['lifecycle']+row['cleanup_lifecycle']
-    sequences = [positive(event['sequence']) for event in events]
-    same(sorted(sequences), list(range(len(events))))
+    prefix = 'raw/'+ROLES[index]+'/'
+    same({name for name in bundle.files if name.startswith(prefix)
+        and name != prefix+'owner.lock'}, linked)
     return index
 
 

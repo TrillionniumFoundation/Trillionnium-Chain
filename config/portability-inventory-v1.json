@@ -213,6 +213,22 @@
       "role": "Explicit process-owned native SQLite VFS safe boundary; fresh local PN1 receipt domain, not a default VFS or consensus authority.",
       "consensus_authority": false,
       "production_activation": false
+    },
+    {
+      "package": "ark-relations",
+      "module": "M01",
+      "path": "trillionnium/crates/ark-relations",
+      "role": "Complete maintained ark-relations 0.5.1 upstream component with tracing-subscriber 0.3 callback migration; no consensus or proof-security qualification.",
+      "consensus_authority": false,
+      "production_activation": false
+    },
+    {
+      "package": "ark-crypto-primitives",
+      "module": "M01",
+      "path": "trillionnium/crates/ark-crypto-primitives",
+      "role": "Complete maintained ark-crypto-primitives 0.5.0 upstream component with derivative-to-educe migration and unchanged arithmetic/serialization; no consensus or proof-security qualification.",
+      "consensus_authority": false,
+      "production_activation": false
     }
   ],
   "source_disposition": [

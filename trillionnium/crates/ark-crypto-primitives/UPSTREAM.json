@@ -1,0 +1,535 @@
+{
+  "activation_or_qualification_granted": false,
+  "all_original_features_preserved": true,
+  "changed_original_files_at_initial_import": [
+    {
+      "maintained_sha256": "c03fb443b0931fefcf8cf063abc239af2b469813ccc688a3d6bc3a9d0507bd19",
+      "original_sha256": "b93858824a1abcd2b5be404557d9312395b7f6007a44ff3e2b05b2bc8bbf5ae0",
+      "path": "Cargo.toml"
+    },
+    {
+      "maintained_sha256": "29bdd7eef0c8b53f549ba89a722a1dc3fb45a90798b804a12656513c47092da7",
+      "original_sha256": "e2970ff0ff0c03f165ba9e761b2a0ff26324ddc9e1c832af31574b204c5f4943",
+      "path": "src/commitment/pedersen/constraints.rs"
+    },
+    {
+      "maintained_sha256": "2d9c18bb6b57cc5ad2fa615ea2a4f3088d84a1b893013d4f7566fd2310ec2e6e",
+      "original_sha256": "690ef6d84511bfeb8313370d416cf5899ea1566a6924f4e5794a95f843fa1d41",
+      "path": "src/commitment/pedersen/mod.rs"
+    },
+    {
+      "maintained_sha256": "6f90a4dfc37af7c0431f65bac7f034bba3486c47c84091b82f947ab56a6a350e",
+      "original_sha256": "76e98791457cc5d415e6554cdbb07fa33196c034c9f80e01c0df15f333aac4e6",
+      "path": "src/crh/bowe_hopwood/constraints.rs"
+    },
+    {
+      "maintained_sha256": "768de051f6c7de77b965cd5b1dcfe032e9dc90ea7a3be37a20b4b798106afece",
+      "original_sha256": "9f00b673adb60aab5e632376e0abc0da5c4def824cb6ab7eea4e8bd0b41cb708",
+      "path": "src/crh/bowe_hopwood/mod.rs"
+    },
+    {
+      "maintained_sha256": "c609bc092fe79eada84c13562a082c0eb872448fcaba4bcc812f92f103fd1bb3",
+      "original_sha256": "1b6999a41f3b66b82e4407f3d23c5283220494e32f81a713b979eb2988eeead2",
+      "path": "src/crh/pedersen/constraints.rs"
+    },
+    {
+      "maintained_sha256": "b7094a81fc3fd847073c7a752770670e9dca673dd0e857d9ca9ad19e10760d45",
+      "original_sha256": "51af92a30eea390f3da1ccd34e2df0235c4c968b8b798e102b62603534ae760f",
+      "path": "src/encryption/elgamal/constraints.rs"
+    },
+    {
+      "maintained_sha256": "c48cb2519dfc51ffd1a63aa4ff57d322ea20e98c32a3e59f3c1bb6587c43a850",
+      "original_sha256": "4b0a1f9452124f5075d346ef45cb108024fb5f2f4f9f7ade2ad2ec6ae9f65563",
+      "path": "src/lib.rs"
+    },
+    {
+      "maintained_sha256": "76e54fe24e8bdf330a3e78b0ac81366ba7a8203763af67d76ad934071cb7d049",
+      "original_sha256": "28642c25329894f89e553e2e983d242040a82333d1a0ea50c75e148beeb6baca",
+      "path": "src/merkle_tree/constraints.rs"
+    },
+    {
+      "maintained_sha256": "d0d9730816a3e00216106cb274e9c6fb21c441eb7e86a158c16c22f9df8e7078",
+      "original_sha256": "26b8a4a2a7a79ec3ef839fc9bab0bfa151e2ad3d19ad3c29bb6d7c84e83c68a2",
+      "path": "src/merkle_tree/mod.rs"
+    },
+    {
+      "maintained_sha256": "2ed7e1d1f22355168bdf1469669d8755de1b196de7ba65e04db25d745adb7df9",
+      "original_sha256": "f1bca88bd47e8292d5f5414844f604dfbac7f591baefe1d5a24760e6aabc05a4",
+      "path": "src/signature/schnorr/constraints.rs"
+    },
+    {
+      "maintained_sha256": "1f2f7aa7e1a6e0a7b8749e899b8d369b0c39c8d36011946f529e2ea7f57a0f35",
+      "original_sha256": "8caa91371b8599fab297bc73d3a268754a2c002eeff4b055f5c11fc27290f529",
+      "path": "src/signature/schnorr/mod.rs"
+    }
+  ],
+  "checksum_source": "Original exact E Cargo.lock, matched to the retained published archive and every imported member.",
+  "complete_published_bytes": 411170,
+  "complete_published_file_count": 57,
+  "complete_published_files": [
+    {
+      "bytes": 111,
+      "mode": 420,
+      "path": ".cargo_vcs_info.json",
+      "sha256": "ce50693c365fb03e40a64164d5117c2c7af3021f514cfbd164980863bf102ca4"
+    },
+    {
+      "bytes": 3891,
+      "mode": 420,
+      "path": "Cargo.toml",
+      "sha256": "b93858824a1abcd2b5be404557d9312395b7f6007a44ff3e2b05b2bc8bbf5ae0"
+    },
+    {
+      "bytes": 3525,
+      "mode": 420,
+      "path": "Cargo.toml.orig",
+      "sha256": "de44221d622e25c8dc8d54b30099bfffb840139e4cdcd571bcf10c13119e1489"
+    },
+    {
+      "bytes": 10847,
+      "mode": 420,
+      "path": "LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "bytes": 1046,
+      "mode": 420,
+      "path": "LICENSE-MIT",
+      "sha256": "8f71659370c5268d9a1dc962a46232540e8fca63462586d8efaa95aab492a208"
+    },
+    {
+      "bytes": 4179,
+      "mode": 420,
+      "path": "src/commitment/blake2s/constraints.rs",
+      "sha256": "5e0fe47f481a65e7801ee593804d453f8f9c68b59f87e30231bd5d80f39d7962"
+    },
+    {
+      "bytes": 747,
+      "mode": 420,
+      "path": "src/commitment/blake2s/mod.rs",
+      "sha256": "7fa8f7ddaefcb3cde098d8f9762940afb835dab7b6a1656524658f9a9f51635e"
+    },
+    {
+      "bytes": 750,
+      "mode": 420,
+      "path": "src/commitment/constraints.rs",
+      "sha256": "2516a99fc6ce7f98c414530ebd7dc66a75b9baafa034cbabb3b57775dbaf0bd1"
+    },
+    {
+      "bytes": 1738,
+      "mode": 420,
+      "path": "src/commitment/injective_map/constraints.rs",
+      "sha256": "cfa2319de106425e601538cd64a0ea1d4244daef13baed6372eb2985c3e538a5"
+    },
+    {
+      "bytes": 1351,
+      "mode": 420,
+      "path": "src/commitment/injective_map/mod.rs",
+      "sha256": "0ad5e44686dfff5d517e2c057e4ed1d78838a0e14ca3591d988d932b9f5126f9"
+    },
+    {
+      "bytes": 722,
+      "mode": 420,
+      "path": "src/commitment/mod.rs",
+      "sha256": "832cd518203819e023a50aa41b63ca806ba8fbb489f754e3a719e85f7840e6fb"
+    },
+    {
+      "bytes": 6756,
+      "mode": 420,
+      "path": "src/commitment/pedersen/constraints.rs",
+      "sha256": "e2970ff0ff0c03f165ba9e761b2a0ff26324ddc9e1c832af31574b204c5f4943"
+    },
+    {
+      "bytes": 3751,
+      "mode": 420,
+      "path": "src/commitment/pedersen/mod.rs",
+      "sha256": "690ef6d84511bfeb8313370d416cf5899ea1566a6924f4e5794a95f843fa1d41"
+    },
+    {
+      "bytes": 10898,
+      "mode": 420,
+      "path": "src/crh/bowe_hopwood/constraints.rs",
+      "sha256": "76e98791457cc5d415e6554cdbb07fa33196c034c9f80e01c0df15f333aac4e6"
+    },
+    {
+      "bytes": 9232,
+      "mode": 420,
+      "path": "src/crh/bowe_hopwood/mod.rs",
+      "sha256": "9f00b673adb60aab5e632376e0abc0da5c4def824cb6ab7eea4e8bd0b41cb708"
+    },
+    {
+      "bytes": 1516,
+      "mode": 420,
+      "path": "src/crh/constraints.rs",
+      "sha256": "637c3a723e250392cb224b4ada2ecc3add76523798efc4ca1d7103b93e311e16"
+    },
+    {
+      "bytes": 4868,
+      "mode": 420,
+      "path": "src/crh/injective_map/constraints.rs",
+      "sha256": "4f4d972b0e735fa3fbe852ea26e6f36d1714f617e0d4b6b0c0adff0e6684dafe"
+    },
+    {
+      "bytes": 3473,
+      "mode": 420,
+      "path": "src/crh/injective_map/mod.rs",
+      "sha256": "f5e9d1ee18bc90ca3e6ec21312d106ba6dd5984323294779eb128a8d4afd8509"
+    },
+    {
+      "bytes": 1791,
+      "mode": 420,
+      "path": "src/crh/mod.rs",
+      "sha256": "f81cfbc8ecbf4c1823a4df7b2273cd7b657ce7a89d93b7e076a3a57163bd13e0"
+    },
+    {
+      "bytes": 8487,
+      "mode": 420,
+      "path": "src/crh/pedersen/constraints.rs",
+      "sha256": "1b6999a41f3b66b82e4407f3d23c5283220494e32f81a713b979eb2988eeead2"
+    },
+    {
+      "bytes": 7021,
+      "mode": 420,
+      "path": "src/crh/pedersen/mod.rs",
+      "sha256": "cde883c0798b9c3b82ad550a9f090017d8305ec4bdf9867452e67454c61c7a87"
+    },
+    {
+      "bytes": 6147,
+      "mode": 420,
+      "path": "src/crh/poseidon/constraints.rs",
+      "sha256": "ce1ffa2412dffa991919d7d6324ea47c783654a6bc1e6c62425e47f89bd787c6"
+    },
+    {
+      "bytes": 2323,
+      "mode": 420,
+      "path": "src/crh/poseidon/mod.rs",
+      "sha256": "6cabceb33dd47603f8c020b967f716db5925a193bbca6dc34ff1662fd2f39422"
+    },
+    {
+      "bytes": 18589,
+      "mode": 420,
+      "path": "src/crh/sha256/constraints.rs",
+      "sha256": "84012d86c81f41e208b201a13d6f620c57ca222c552beaf613d718591188834d"
+    },
+    {
+      "bytes": 2240,
+      "mode": 420,
+      "path": "src/crh/sha256/mod.rs",
+      "sha256": "2250cb095f2365bd1f9c50e60e2d6811ee871e170ad3a431450cd5073c3872bd"
+    },
+    {
+      "bytes": 911,
+      "mode": 420,
+      "path": "src/encryption/constraints.rs",
+      "sha256": "eb3bdfadfcf5d95044e8e004cb49552381c406e0961b88beaae38131b4091d61"
+    },
+    {
+      "bytes": 9799,
+      "mode": 420,
+      "path": "src/encryption/elgamal/constraints.rs",
+      "sha256": "51af92a30eea390f3da1ccd34e2df0235c4c968b8b798e102b62603534ae760f"
+    },
+    {
+      "bytes": 3665,
+      "mode": 420,
+      "path": "src/encryption/elgamal/mod.rs",
+      "sha256": "2e5ee95e1d72ff2c4d539025c65cef3c08b2c0030e90ad7ed4e34f21d2aea5bd"
+    },
+    {
+      "bytes": 870,
+      "mode": 420,
+      "path": "src/encryption/mod.rs",
+      "sha256": "2155206e9b4dcf0ac9c458814611cd38b397b4166a5804218563f4e73e906a7d"
+    },
+    {
+      "bytes": 1605,
+      "mode": 420,
+      "path": "src/lib.rs",
+      "sha256": "4b0a1f9452124f5075d346ef45cb108024fb5f2f4f9f7ade2ad2ec6ae9f65563"
+    },
+    {
+      "bytes": 369,
+      "mode": 420,
+      "path": "src/macros.rs",
+      "sha256": "c9b6d30ae85db3bf4a24e984e25224e4988c258e0d3408e942c2b544a3e7c710"
+    },
+    {
+      "bytes": 10480,
+      "mode": 420,
+      "path": "src/merkle_tree/constraints.rs",
+      "sha256": "28642c25329894f89e553e2e983d242040a82333d1a0ea50c75e148beeb6baca"
+    },
+    {
+      "bytes": 31319,
+      "mode": 420,
+      "path": "src/merkle_tree/mod.rs",
+      "sha256": "26b8a4a2a7a79ec3ef839fc9bab0bfa151e2ad3d19ad3c29bb6d7c84e83c68a2"
+    },
+    {
+      "bytes": 17721,
+      "mode": 420,
+      "path": "src/merkle_tree/tests/constraints.rs",
+      "sha256": "c4f5605f379709b821945bca9ac307d65685dd4e3a1236cafe1d21b6c8edd3c8"
+    },
+    {
+      "bytes": 10031,
+      "mode": 420,
+      "path": "src/merkle_tree/tests/mod.rs",
+      "sha256": "95f3ad941368e33ab128f20e7c9fe7ddac99ed9a86922be4bee7ceadc3d0bfb8"
+    },
+    {
+      "bytes": 22429,
+      "mode": 420,
+      "path": "src/merkle_tree/tests/test_utils.rs",
+      "sha256": "7a60e19871d32a696c59d7f4f659bcc5b9a9054c8d27c8b2b67077cdcf45b74f"
+    },
+    {
+      "bytes": 17885,
+      "mode": 420,
+      "path": "src/prf/blake2s/constraints.rs",
+      "sha256": "69a96b7ad094b4b202e5dc30cf9ef38adadf942c84127fd844d12e50e2d0d804"
+    },
+    {
+      "bytes": 1376,
+      "mode": 420,
+      "path": "src/prf/blake2s/mod.rs",
+      "sha256": "8040f49f6ec9680d068f3162a7201394040e794b8629984636cb61b9d9bbfd91"
+    },
+    {
+      "bytes": 589,
+      "mode": 420,
+      "path": "src/prf/constraints.rs",
+      "sha256": "972487e67c4c61ac8103e50402254c97be2009eb79edcca0fb8daadd14e7a924"
+    },
+    {
+      "bytes": 614,
+      "mode": 420,
+      "path": "src/prf/mod.rs",
+      "sha256": "8496aa270be04afc8629211e3881189bd848d3087fe8a767a1a61a01cc5a8f0f"
+    },
+    {
+      "bytes": 1265,
+      "mode": 420,
+      "path": "src/signature/constraints.rs",
+      "sha256": "eae5da07c38d53acac3fcd8d8fe54ea175cefc334ed654d52ed7f43184bf97e4"
+    },
+    {
+      "bytes": 3734,
+      "mode": 420,
+      "path": "src/signature/mod.rs",
+      "sha256": "da75888ba41dd9d3d52c09271e5e30fe6d9fdf5ec6b8da0b33607eaadc3b7fe0"
+    },
+    {
+      "bytes": 4604,
+      "mode": 420,
+      "path": "src/signature/schnorr/constraints.rs",
+      "sha256": "f1bca88bd47e8292d5f5414844f604dfbac7f591baefe1d5a24760e6aabc05a4"
+    },
+    {
+      "bytes": 7153,
+      "mode": 420,
+      "path": "src/signature/schnorr/mod.rs",
+      "sha256": "8caa91371b8599fab297bc73d3a268754a2c002eeff4b055f5c11fc27290f529"
+    },
+    {
+      "bytes": 22952,
+      "mode": 420,
+      "path": "src/snark/constraints.rs",
+      "sha256": "25eb6bc72372185434fac2058552760739c621d4198bd9df97879b8dc697e071"
+    },
+    {
+      "bytes": 118,
+      "mode": 420,
+      "path": "src/snark/mod.rs",
+      "sha256": "94bd94572231bf610d9fe740d1d903c495788e5fe8aa498327344cbf9e9023ca"
+    },
+    {
+      "bytes": 15120,
+      "mode": 420,
+      "path": "src/sponge/absorb.rs",
+      "sha256": "c7a2aae0a4fd0d81edce0fadd857b44eb588c63a0e6356bb76246a40c9298811"
+    },
+    {
+      "bytes": 12573,
+      "mode": 420,
+      "path": "src/sponge/constraints/absorb.rs",
+      "sha256": "2c70362736ae9700ed3dc5df3b735bb83cb7b6e2440a4cb31e38aae9fa174642"
+    },
+    {
+      "bytes": 6782,
+      "mode": 420,
+      "path": "src/sponge/constraints/mod.rs",
+      "sha256": "bfcb3acce723fc4d50b3c0b3a4b6810a1a3a625c273f836f73a8d07741ec5b5b"
+    },
+    {
+      "bytes": 979,
+      "mode": 420,
+      "path": "src/sponge/merlin/mod.rs",
+      "sha256": "8b1ca951fb9738935bc618f1faa0c16ea6dcb836592d0ccb294761eb5ba26fb3"
+    },
+    {
+      "bytes": 6923,
+      "mode": 420,
+      "path": "src/sponge/mod.rs",
+      "sha256": "364cde7c44283be520617e1afef981c319e861b237eb239ad562b870e71caaec"
+    },
+    {
+      "bytes": 14035,
+      "mode": 420,
+      "path": "src/sponge/poseidon/constraints.rs",
+      "sha256": "13688f41274d0439ebc3ea669a186afb0130bf30199d1c509d599b14bbab5f12"
+    },
+    {
+      "bytes": 6008,
+      "mode": 420,
+      "path": "src/sponge/poseidon/grain_lfsr.rs",
+      "sha256": "2dd53dbe7216a0af2482c858e69fd1fd9ee6d7a8acb72276cf6ad859b8faa4e8"
+    },
+    {
+      "bytes": 14024,
+      "mode": 420,
+      "path": "src/sponge/poseidon/mod.rs",
+      "sha256": "4e0a366cf555bd09fe1437b14841f757cfbce692d6859f94627dbc74a2c8e2af"
+    },
+    {
+      "bytes": 35479,
+      "mode": 420,
+      "path": "src/sponge/poseidon/tests.rs",
+      "sha256": "d60d1e2f3092cba7ba304cd3ab5515d0c2cd58752cf4a116f96657a65fc7aa55"
+    },
+    {
+      "bytes": 12360,
+      "mode": 420,
+      "path": "src/sponge/poseidon/traits.rs",
+      "sha256": "737aaa4cc7ffe3456b6b8adf7c86ac7b8db9e83fe7b6718b4d22040ded94841c"
+    },
+    {
+      "bytes": 1399,
+      "mode": 420,
+      "path": "src/sponge/test.rs",
+      "sha256": "a82acf8aeea1bdbf49d6e8b3f7eeb72a2d841181a293198c265206361866a914"
+    }
+  ],
+  "consensus_authority": false,
+  "criterion_dev_dependency_maintenance": {
+    "advisory_urls": [
+      "https://rustsec.org/advisories/RUSTSEC-2024-0375.html",
+      "https://rustsec.org/advisories/RUSTSEC-2021-0145.html"
+    ],
+    "criterion_api_uses_in_retained_rust_sources": 0,
+    "declared_minimum_rust_version": "1.86",
+    "default_features_retained": true,
+    "dev_dependency_removed": false,
+    "maintained_requirement": "=0.8.2",
+    "observed_original_resolution": "criterion 0.4.0 -> atty 0.2.14",
+    "original_requirement": "0.4",
+    "platform_note": "Criterion 0.8.2 adds alloca 0.4 on Unix/Windows; retain its default features and validate the actual complete graph.",
+    "published_benchmark_targets": 0,
+    "published_package_rust_sources_reviewed": 52,
+    "reason": "Retaining the complete published development graph exposed the unmaintained atty dependency; upgrade the development tool without removing tests or narrowing features.",
+    "reviewed_changelog_git_blob": "58269a9db85734328b7355dd13693ca86f6fac10",
+    "reviewed_manifest_git_blob": "fe5e1751c6c0903cd5f2e60a3e099c9366c063e1",
+    "reviewed_release_commit": "7f0d745532e3c7b2e11bbf9de9b911f91790d3b1",
+    "reviewed_release_tag": "criterion-v0.8.2",
+    "validation_scope": "Official release manifest/changelog and local source-use review; no compilation, test or dependency-policy qualification is granted here.",
+    "workspace_rust_toolchain": "1.95"
+  },
+  "historical_original_manifest": "Cargo.toml.orig is unchanged published provenance. Cargo uses the maintained Cargo.toml.",
+  "license_expression_retained": "MIT/Apache-2.0",
+  "local_maintenance": [
+    "Replace derivative with actual educe =0.6.0, default-features=false and Clone/Debug/Default/Eq/PartialEq.",
+    "Convert all 15 derive sites and retain every explicit generic bound, including bound(false) for original empty bounds.",
+    "Retain the original unused-import allowance for feature subsets; no arithmetic or serialization algorithm changed.",
+    "Retain the development dependency and default features; upgrade Criterion from 0.4 to =0.8.2 to remove its atty dependency without removing original tests.",
+    "Set publish=false and explicit M01 metadata; do not rename the original package or claim a new upstream release."
+  ],
+  "local_version_is_not_a_new_registry_release": true,
+  "module_owner": "M01",
+  "original_source_or_tests_removed": false,
+  "package": "ark-crypto-primitives",
+  "production_activation": false,
+  "published_archive_bytes": 84890,
+  "published_archive_sha256": "1e0c292754729c8a190e50414fd1a37093c786c709899f29c9f7daccecfa855e",
+  "published_archive_url": "https://static.crates.io/crates/ark-crypto-primitives/ark-crypto-primitives-0.5.0.crate",
+  "registry": "https://github.com/rust-lang/crates.io-index",
+  "reviewed_upstream_proposal": {
+    "backport_scope": "The reviewed proposal targets a later ark tree. Only its 15 derive conversions and macro dependency are backported; published 0.5 r1cs imports, arithmetic APIs and features remain.",
+    "head": "2e61b9ba5092c63a30874f6d459e29f26b65df31",
+    "status_at_review": "open, unmerged",
+    "url": "https://github.com/arkworks-rs/crypto-primitives/pull/184"
+  },
+  "schema": "trnm-maintained-upstream-package-v1",
+  "shared_registry_cache_modified": false,
+  "strict_lint_maintenance": {
+    "allow_or_expect_added": false,
+    "base_repository_commit": "6506da1902f6fd85142d0249e861e58cc11e179e",
+    "equivalent_repairs": [
+      "Remove redundant borrows, copied clones, unused indices and allocation wrappers.",
+      "Keep iteration and random-draw order; retain padding length.",
+      "Name the actual emulated field/Boolean tuple."
+    ],
+    "minimum_compiler_claim": "Repository Rust 1.95; original older compiler compatibility is not promised.",
+    "original_tests_preserved": 45,
+    "public_api_migration": {
+      "compatibility_note": "External trait implementations and explicit function-pointer signatures must migrate. This is local maintenance, not a new registry release.",
+      "external_implementor_and_function_pointer_compatibility": false,
+      "methods": [
+        "repack_input",
+        "from_field_elements"
+      ],
+      "ordinary_vector_calls": "Existing &Vec arguments coerce to slices; new control covers both implementations.",
+      "parameter_change": "Borrow slices instead of Vec references; migrate both existing implementations.",
+      "trait": "FromFieldElementsGadget"
+    },
+    "real_asm_forward_feature": {
+      "ark_ff_asm_dependency_already_unconditional": true,
+      "arm_behavior": "Upstream x86_64 blocks remain excluded.",
+      "default_enabled": false,
+      "empty_feature": false,
+      "feature": "asm",
+      "forwards_to": [
+        "ark-ff/asm"
+      ],
+      "montgomery_assembly_guards": [
+        "x86_64",
+        "bmi2",
+        "adx"
+      ],
+      "other_x86_64_behavior": "The selected upstream feature also enables carry intrinsics without BMI2/ADX target features.",
+      "qualification": "Each supported architecture still requires actual all-feature tests; neither every ISA branch nor other architectures are certified by a generic x86_64 run."
+    },
+    "signed_integer_boundary": {
+      "cases": [
+        "MIN",
+        "MAX",
+        "-1",
+        "0",
+        "1"
+      ],
+      "implementation": "unsigned_abs followed by the existing sign in the field",
+      "little_endian_bytes_unchanged": true,
+      "maintained_checked_overflow_minimum": "mathematical signed field value",
+      "minimum_magnitude": "2^(bits-1)",
+      "old_checked_overflow_minimum": "panicked during signed abs",
+      "old_release_overflow_disabled_result_retained": true,
+      "types": [
+        "i8",
+        "i16",
+        "i32",
+        "i64",
+        "i128"
+      ]
+    },
+    "size_rounding": "usize::div_ceil preserves representable original results and avoids intermediate addition overflow; it does not establish an allocator/resource bound.",
+    "validation_scope": "Original 45 tests passed before these repairs; final native, doc, strict Clippy and complete repository gates must be bound to the maintained final source."
+  },
+  "upstream_repository": "https://github.com/arkworks-rs/crypto-primitives",
+  "upstream_vcs": {
+    "git": {
+      "sha1": "455d599aae0aa81acf1c2faadf37def63a25a291"
+    },
+    "path_in_vcs": "crypto-primitives"
+  },
+  "upstream_version": "0.5.0",
+  "validation_scope": "Source import and maintenance only; exact-source builds, original tests, strict Clippy and all dependency-policy categories require separate actual evidence."
+}

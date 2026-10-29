@@ -7,7 +7,6 @@
 //! This optional research API is deliberately not a live public network profile.
 //! In particular, bounded encoding is not a CPU deadline or PQ-128 qualification.
 use anyhow::{ensure, Context, Result};
-use bincode::Options;
 use hex::FromHex;
 use risc0_binfmt::Digestible;
 use risc0_zkvm::{sha::Digest, InnerReceipt, Receipt, VerifierContext};
@@ -93,13 +92,9 @@ pub fn verify_bound(wire: &[u8], expected: &PublicStatement) -> Result<VerifiedC
         &input[STATEMENT_BYTES..],
     )
     .map_err(|error| anyhow::anyhow!("W1_CERTIFICATE_ENCODING:{error:?}"))?;
-    // Complete allocation-free grammar/dimension scan before any bincode Vec.
-    bounds::preflight(raw)?;
-    let receipt: Receipt = bincode::DefaultOptions::new()
-        .with_fixint_encoding()
-        .with_limit((MAX_CERTIFICATE_BYTES - 16 - INPUT_BYTES) as u64)
-        .reject_trailing_bytes()
-        .deserialize(raw)?;
+    // The external fixed-width wire is unchanged. Its complete allocation-free
+    // scan precedes bounded conversion to the SDK's maintained Borsh decoder.
+    let receipt: Receipt = bounds::decode(raw)?;
     ensure!(receipt.journal.bytes == journal, "W1_CERTIFICATE_JOURNAL");
     let InnerReceipt::Succinct(proof) = &receipt.inner else {
         anyhow::bail!("W1_CERTIFICATE_SUCCINCT_REQUIRED")

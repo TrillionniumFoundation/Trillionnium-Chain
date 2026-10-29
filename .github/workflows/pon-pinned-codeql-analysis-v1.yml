@@ -82,6 +82,25 @@ jobs:
       - name: Recheck source after failures as well as successful execution
         if: always()
         run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$EXPECTED_HEAD" --output "$OUT/source-final.json"
+      - name: Prepare a bounded publication bundle without changing original results
+        id: publication
+        if: always()
+        run: |
+          set -euo pipefail
+          python3 -I -S scripts/ci/prepare_codeql_publication_v1.py prepare \
+            --repo "$GITHUB_WORKSPACE" --head "$EXPECTED_HEAD" \
+            --language "${{ matrix.language }}" --run-id "$GITHUB_RUN_ID" \
+            --attempt "$GITHUB_RUN_ATTEMPT" --analysis "$OUT/analysis" \
+            --bundle "$OUT/publication" > "$OUT/publication-preparation.json"
+      - name: Retain the small source-bound publication bundle
+        if: always() && steps.publication.outcome == 'success'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: pinned-codeql-publication-${{ matrix.language }}-${{ env.EXPECTED_HEAD }}-${{ github.run_attempt }}
+          path: ${{ env.OUT }}/publication/
+          if-no-files-found: error
+          retention-days: 30
+
       - name: Collect bounded raw diagnostics without changing the scan outcome
         if: always()
         run: |
@@ -108,5 +127,144 @@ jobs:
             ${{ env.OUT }}/
             !${{ env.OUT }}/analysis/cargo-target/**
             !${{ env.OUT }}/analysis/cpp-scope/project/**
+          if-no-files-found: error
+          retention-days: 30
+
+  publish_codeql:
+    name: Publish retained CodeQL SARIF (${{ matrix.language }})
+    needs: analysis
+    # A fresh job never executes build/query/guest code with the write token.
+    # No pull_request_target, fork, Dependabot escalation or administrator token.
+    if: >-
+      ${{
+        always() && !cancelled() &&
+        github.event_name == 'pull_request' &&
+        github.event.pull_request.head.repo.full_name == github.repository &&
+        github.actor != 'dependabot[bot]'
+      }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      actions: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [actions, python, rust, cpp]
+    env:
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+      PUBLISH_REF: refs/pull/${{ github.event.pull_request.number }}/head
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - name: Reserve fresh official action observation directories on the allocated runner
+        shell: bash
+        run: |
+          set -euo pipefail
+          temp="$RUNNER_TEMP/codeql-upload-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-${{ matrix.language }}"
+          dump="$RUNNER_TEMP/codeql-processed-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-${{ matrix.language }}"
+          test ! -e "$temp" && test ! -L "$temp"
+          test ! -e "$dump" && test ! -L "$dump"
+          mkdir "$temp" "$dump"
+          printf 'CODEQL_ACTION_TEMP=%s\n' "$temp" >> "$GITHUB_ENV"
+          printf 'CODEQL_ACTION_SARIF_DUMP_DIR=%s\n' "$dump" >> "$GITHUB_ENV"
+      - name: Checkout exact analyzed source for path and fingerprint binding
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.EXPECTED_HEAD }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Download the immutable small bundle from this same run and attempt
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          name: pinned-codeql-publication-${{ matrix.language }}-${{ env.EXPECTED_HEAD }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/publication-${{ matrix.language }}
+      - name: Reverify original bytes, exact Git blobs and position-only mapping
+        shell: bash
+        run: |
+          set -euo pipefail
+          # The pinned action reads pr-diff-range.json from this directory.
+          # A fresh empty directory provides no PR range filter.
+          test ! -e "$CODEQL_ACTION_TEMP/pr-diff-range.json"
+          env -u GITHUB_TOKEN -u GH_TOKEN python3 -I -S \
+            scripts/ci/prepare_codeql_publication_v1.py verify \
+            --repo "$GITHUB_WORKSPACE" --head "$EXPECTED_HEAD" \
+            --language "${{ matrix.language }}" --run-id "$GITHUB_RUN_ID" \
+            --attempt "$GITHUB_RUN_ATTEMPT" \
+            --bundle "$RUNNER_TEMP/publication-${{ matrix.language }}" \
+            > "$RUNNER_TEMP/publication-${{ matrix.language }}/publisher-verification.json"
+      - name: Verify actual publisher worktree bytes before official fingerprints
+        shell: bash
+        run: |
+          set -euo pipefail
+          # This existing verifier imports only Python standard-library modules.
+          # Its no-follow full-byte check binds the worktree read by the official
+          # action; the preceding mapper separately binds immutable Git objects.
+          # Write only in the fresh publisher-owned directory, outside the
+          # downloaded bundle and its fixed original file set.
+          env -u GITHUB_TOKEN -u GH_TOKEN python3 -I -S \
+            scripts/ci/verify_ci_source.py --kind head --expected-head "$EXPECTED_HEAD" \
+            --output "$CODEQL_ACTION_TEMP/publisher-source.json" \
+            > "$CODEQL_ACTION_TEMP/publisher-source.stdout.log" \
+            2> "$CODEQL_ACTION_TEMP/publisher-source.stderr.log"
+      - name: Publish all retained results with the official fixed action
+        id: upload
+        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370
+        with:
+          sarif_file: ${{ runner.temp }}/publication-${{ matrix.language }}/publication.sarif
+          checkout_path: ${{ github.workspace }}
+          sha: ${{ env.EXPECTED_HEAD }}
+          ref: ${{ env.PUBLISH_REF }}
+          wait-for-processing: "true"
+          # Omit category: retain the SDK's original SHA-containing category.
+      - name: Check the exact official postprocessed payload without promoting the gate
+        if: always()
+        shell: bash
+        env:
+          UPLOAD_OUTCOME: ${{ steps.upload.outcome }}
+          SARIF_ID: ${{ steps.upload.outputs.sarif-id }}
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/publication-${{ matrix.language }}"
+          python3 -I -S - <<'PY'
+          import json, os
+          from pathlib import Path
+          out = Path(os.environ["RUNNER_TEMP"]) / "publication-${{ matrix.language }}"
+          out.mkdir(exist_ok=True)
+          # These are action outputs, not an independent API gate readback.
+          (out / "official-action-observation.json").write_text(json.dumps({
+              "schema": "pon-codeql-upload-action-observation-v1",
+              "expected_head": os.environ["EXPECTED_HEAD"],
+              "explicit_ref": os.environ["PUBLISH_REF"],
+              "action_outcome": os.environ["UPLOAD_OUTCOME"],
+              "sarif_id": os.environ.get("SARIF_ID") or None,
+              "official_security_gate_qualified": False,
+              "production_qualified": False
+          }, sort_keys=True, indent=2) + "\n")
+          PY
+          if test -f "$CODEQL_ACTION_SARIF_DUMP_DIR/upload.sarif"; then
+            env -u GITHUB_TOKEN -u GH_TOKEN python3 -I -S \
+              scripts/ci/prepare_codeql_publication_v1.py postprocessed \
+              --bundle "$out" --processed "$CODEQL_ACTION_SARIF_DUMP_DIR/upload.sarif" \
+              > "$out/official-postprocessing-verification.json"
+          else
+            printf '%s\n' 'Official upload did not retain a postprocessed SARIF; publication is incomplete.' >&2
+            exit 1
+          fi
+          if test "$UPLOAD_OUTCOME" != success || test -z "$SARIF_ID"; then
+            printf '%s\n' 'No successful official action with a retained SARIF ID was observed.' >&2
+            exit 1
+          fi
+      - name: Retain originals, mapping, official payload and upload failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: pinned-codeql-publication-attempt-${{ matrix.language }}-${{ env.EXPECTED_HEAD }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/publication-${{ matrix.language }}/
+            ${{ env.CODEQL_ACTION_SARIF_DUMP_DIR }}/
+            ${{ env.CODEQL_ACTION_TEMP }}/publisher-source.json
+            ${{ env.CODEQL_ACTION_TEMP }}/publisher-source.stdout.log
+            ${{ env.CODEQL_ACTION_TEMP }}/publisher-source.stderr.log
           if-no-files-found: error
           retention-days: 30
