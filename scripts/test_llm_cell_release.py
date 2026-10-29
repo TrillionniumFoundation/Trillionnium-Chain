@@ -159,5 +159,74 @@ class ControlledCellReadbackTests(unittest.TestCase):
                     self.consume(args, parent, sidecar)
 
 
+class OrdinaryCellContentConfigTests(unittest.TestCase):
+    def fixture(self, root):
+        # Untrusted declaration/config bytes only, never a qualified model Pin.
+        value = {key: "11" * 32 for key in ("family_file_sha256 artifact_sha256 "
+            "adapter_digest contract_digest backbone_digest tokenizer_digest "
+            "execution_profile_sha256 tcr1_id").split()}
+        value.update(schema=release.SCHEMA, scope="controlled-native-load-only",
+            profile=release.PROFILE, operation_id="original-operation", generation=3,
+            family_id="smollm2-135m-cpu-dev-v1", model="untrusted-model", revision="untrusted-revision",
+            sources=[], actions=[], tcr1_hex="", members=[dict(name=name,
+                manifest_id="22" * 32, payload_sha256="33" * 32, size=1, tcm1_hex="")
+                for name in release.ROSTER])
+        sidecar = root / "sidecar.json"
+        sidecar.write_bytes(release.canonical(value))
+        host = root / "host.json"
+        host.write_bytes(release.canonical(dict(schema="hepta-smollm-cognitive-host-v1")))
+        args = SimpleNamespace(sidecar=sidecar, sidecar_sha256=release.digest(sidecar.read_bytes()),
+            host_config=host, host_config_sha256=release.digest(host.read_bytes()), output=root / "export")
+        return args, value
+
+    def test_actual_export_pins_fresh_content_and_original_host_and_refuses_overwrite(self):
+        with tempfile.TemporaryDirectory() as directory:
+            args, value = self.fixture(Path(directory).resolve())
+            original = args.sidecar.read_bytes()
+            result = release.prepare_ordinary_host_config_v2(args)
+            config = json.loads(Path(result["path"]).read_bytes())
+            content_path = Path(config["cell_content"]["path"])
+            content = content_path.read_bytes()
+            self.assertEqual(config, dict(schema="hepta-smollm-cognitive-cell-host-v2",
+                host=dict(path=str(args.host_config), sha256=args.host_config_sha256),
+                cell_content=dict(path=str(content_path), sha256=release.digest(content)),
+                operation_id=value["operation_id"]))
+            self.assertEqual(json.loads(content), dict(value,
+                schema="hepta-smollm-ordinary-cell-content-v1", scope="qualified-host-content-only"))
+            self.assertEqual(result["sha256"], release.digest(Path(result["path"]).read_bytes()))
+            with self.assertRaises(FileExistsError):
+                release.prepare_ordinary_host_config_v2(args)
+            self.assertEqual(content_path.read_bytes(), content)
+            self.assertEqual(args.sidecar.read_bytes(), original)
+
+    def test_rehashed_bad_domain_operation_roster_or_authority_fields_refuse_before_output(self):
+        changes = [("schema", "hepta-smollm-ordinary-cell-content-v1"),
+            ("scope", "qualified-host-content-only"), ("installation_authorized", True),
+            ("operation_id", ""), ("operation_id", "has space"), ("operation_id", "é")]
+        for key, changed in changes + [("members", []), ("members", "duplicate")]:
+            with self.subTest(field=key, value=changed), tempfile.TemporaryDirectory() as directory:
+                args, value = self.fixture(Path(directory).resolve())
+                value[key] = [value["members"][0]] * 11 if changed == "duplicate" else changed
+                args.sidecar.write_bytes(release.canonical(value))
+                args.sidecar_sha256 = release.digest(args.sidecar.read_bytes())
+                with self.assertRaises(ValueError):
+                    release.prepare_ordinary_host_config_v2(args)
+                self.assertFalse(args.output.exists())
+
+    def test_actual_input_change_and_wrong_pin_refuse_before_output(self):
+        for kind in ("changed-content", "wrong-host-hash"):
+            with self.subTest(kind=kind), tempfile.TemporaryDirectory() as directory:
+                args, _ = self.fixture(Path(directory).resolve())
+                if kind == "changed-content":
+                    args.sidecar.write_bytes(args.sidecar.read_bytes() + b"\n")
+                else:
+                    args.host_config_sha256 = "00" * 32
+                with self.assertRaises(ValueError):
+                    release.prepare_ordinary_host_config_v2(args)
+                self.assertFalse(args.output.exists())
+
+
 if __name__ == "__main__":
+    from test_llm_ordinary_action_catalog import OrdinaryCatalogTests
+
     unittest.main()

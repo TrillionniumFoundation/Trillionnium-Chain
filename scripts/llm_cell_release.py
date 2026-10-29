@@ -156,3 +156,98 @@ def consume_controlled(args, consumer_parent, sidecar):
     return dict(source=before, command=command, exit_code=result.returncode,
         elapsed_seconds=time.monotonic() - started, readback_sha256=digest(readback_raw),
         readback=readback, scope="CONTROLLED_LOAD_ONLY_NOT_I10_OR_INSTALLATION")
+
+
+def _write_protected_new(path, raw):
+    # Linux ordinary-host inputs, not a namespace/admission capability.
+    fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
+    with os.fdopen(fd, "wb") as stream:
+        stream.write(raw)
+        stream.flush()
+        os.fsync(stream.fileno())
+
+
+def prepare_ordinary_host_config_v2(args):
+    """Export content/configuration only; the ordinary host rechecks all bytes.
+
+    Reusing a controlled declaration's wire data transfers no native-test,
+    selector, installation, grant or FinalUse authority. The original V1 host
+    descriptor and all its independent owners are still required by the consumer.
+    """
+    inputs = {}
+    for name, path, expected in (("content", args.sidecar, args.sidecar_sha256),
+                                 ("host", args.host_config, args.host_config_sha256)):
+        if (not path.is_absolute() or path.resolve(strict=True) != path
+                or len(expected) != 64 or any(c not in "0123456789abcdef" for c in expected)):
+            raise ValueError("ordinary host requires canonical pinned inputs")
+        raw = read_regular(path, MAX_SIDECAR)
+        if digest(raw) != expected:
+            raise ValueError("ordinary host input digest mismatch")
+        inputs[name] = json.loads(raw, object_pairs_hook=runtime.unique)
+    sidecar = inputs["content"]
+    fields = set("schema scope profile operation_id generation family_id family_file_sha256 model revision "
+        "artifact_sha256 adapter_digest contract_digest backbone_digest tokenizer_digest "
+        "execution_profile_sha256 sources actions tcr1_hex tcr1_id members".split())
+    if (type(sidecar) is not dict or set(sidecar) != fields or sidecar["schema"] != SCHEMA
+            or sidecar["scope"] != "controlled-native-load-only" or sidecar["profile"] != PROFILE
+            or type(sidecar["members"]) is not list
+            or [m["name"] for m in sidecar["members"]] != ROSTER
+            or inputs["host"].get("schema") != "hepta-smollm-cognitive-host-v1"):
+        raise ValueError("ordinary content requires original bounded declarations")
+    operation = sidecar["operation_id"]
+    if type(operation) is not str or not 1 <= len(operation) <= 128 or not all(33 <= ord(c) <= 126 for c in operation):
+        raise ValueError("ordinary content operation identity")
+    sidecar = dict(sidecar, schema="hepta-smollm-ordinary-cell-content-v1",
+                   scope="qualified-host-content-only")
+    content = canonical(sidecar)
+    if len(content) > MAX_SIDECAR:
+        raise ValueError("ordinary content declaration bound")
+    if not args.output.is_absolute() or args.output.parent.resolve(strict=True) != args.output.parent:
+        raise ValueError("ordinary output requires a canonical parent")
+    args.output.mkdir(mode=0o700)
+    content_path = args.output / "ordinary-cell-content-v1.json"
+    _write_protected_new(content_path, content)
+    config = canonical(dict(schema="hepta-smollm-cognitive-cell-host-v2",
+        host=dict(path=str(args.host_config), sha256=args.host_config_sha256),
+        cell_content=dict(path=str(content_path), sha256=digest(content)), operation_id=operation))
+    if len(config) > MAX_SIDECAR:
+        raise ValueError("ordinary host configuration bound")
+    config_path = args.output / "ordinary-cell-host-v2.json"
+    _write_protected_new(config_path, config)
+    return dict(path=str(config_path), sha256=digest(config), bytes=len(config),
+                scope="configuration-and-content-only-no-qualification-or-installation")
+
+
+if __name__ == "__main__":
+    import argparse
+    parser = argparse.ArgumentParser(description="Export explicitly pinned ordinary Cell content configuration")
+    parser.add_argument("command", choices=("prepare-ordinary-host-config-v2",
+        "freeze-ordinary-action-catalog-v1", "prepare-ordinary-host-config-v3"))
+    parser.add_argument("--sidecar", type=Path)
+    parser.add_argument("--sidecar-sha256")
+    parser.add_argument("--host-config", type=Path)
+    parser.add_argument("--host-config-sha256")
+    parser.add_argument("--catalog-input", type=Path)
+    parser.add_argument("--catalog", type=Path)
+    parser.add_argument("--catalog-sha256")
+    parser.add_argument("--output", type=Path, required=True)
+    args = parser.parse_args()
+    if args.command == "freeze-ordinary-action-catalog-v1":
+        if args.catalog_input is None or any(value is not None for value in
+                (args.sidecar, args.sidecar_sha256, args.host_config, args.host_config_sha256, args.catalog, args.catalog_sha256)):
+            parser.error("freeze accepts only catalogue input and output")
+        from llm_ordinary_action_catalog import freeze_catalog
+        result = freeze_catalog(args)
+    else:
+        if any(value is None for value in (args.sidecar, args.sidecar_sha256, args.host_config, args.host_config_sha256)):
+            parser.error("pinned sidecar and host inputs are required")
+        if args.command == "prepare-ordinary-host-config-v2":
+            if any(value is not None for value in (args.catalog_input, args.catalog, args.catalog_sha256)):
+                parser.error("V2 does not accept catalogue inputs")
+            result = prepare_ordinary_host_config_v2(args)
+        else:
+            if args.catalog_input is not None or args.catalog is None or args.catalog_sha256 is None:
+                parser.error("pinned preregistered catalogue is required")
+            from llm_ordinary_action_catalog import prepare_ordinary_host_config_v3
+            result = prepare_ordinary_host_config_v3(args)
+    print(json.dumps(result, sort_keys=True))

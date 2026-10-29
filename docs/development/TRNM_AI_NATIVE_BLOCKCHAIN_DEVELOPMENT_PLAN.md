@@ -4643,3 +4643,68 @@ authorized installation and next-task readback. Persistent custody/repair and
 the independent WAN acceptance follow that real integration. Each step retains
 its own acceptance evidence; mechanism closure and measured model benefit remain
 separate decisions, including mandatory rejection of an upgrade without benefit.
+
+
+PN3/I09 ordinary content-consumer follow-up: the existing llm_cell_release.py now
+exports an explicit content-only V2 envelope referencing the original ordinary
+host configuration. Its Hepta consumer validates the11 downloaded materials only
+after original qualification and CURRENT, then uses the original cancellable
+loader. No selection, installation, reward or native-control qualification is
+manufactured. Original8 plus3 new pure Python protocol controls pass on actual
+D67 source after genuine canonical fetch and before-apply project preflight.
+Original failed preparation observations remain. Rust/model/native execution,
+I10, three ordinary successful installations and persistent custody remain OPEN.
+See evidence/pon-upgrade-implementation-20261018/native-rounds/ordinary-cell-content-20261029/README.md.
+Root alone integrates/commits/pushes; original caps, guards and budgets remain.
+
+
+### PN0 / I09–I10 — ordinary forward-to-next-task source, 2026-10-29 (024)
+
+Hepta's ordinary native-context V2 source continues the existing Cell content
+producer and full registered runtime profile. The actual NativeRequest binding
+enters the original inference admission payload; the same held load/forward
+journal yields response/logits/score and loaded-version references. A bounded
+owner slot binds the final ordered memory projection, and the ordinary
+AppServer revalidates it before original FinalUse and physical turn/start. The
+worker CLI joins that same task's original successful native terminal to a fresh
+historical readback. This does not issue installation or CURRENT authority.
+The next task can explicitly require the installed parameter digest, generation
+and execution profile. These requirements enter a fresh native request domain
+and must equal the actual loaded-version observation before physical effect;
+an older eligible model cannot silently satisfy a different required version.
+
+The unchanged controlled native-answer vocabulary does not cover ordinary
+memory action identities. Independent qualification must commit the complete
+pre-registered ordinary vocabulary/profile; neither per-query answer mapping
+nor a NoGain bypass is permitted. Unsupported, replaced, empty, denied, unknown
+or stale observations refuse consumption. The source patch and new test source
+are not an actual ordinary installation or a completed training round. Preserve
+all original budgets, caps, guards and failed raw evidence; complete runtime/
+custody repair, three real train/evaluate/install/next-task rounds with separate
+benefit rejection, Windows original native groups, paid W1/full-state and
+independent WAN remain NO_GO. This is the existing PN0/I09–I10 dependency, not
+a replacement acceptance plan.
+
+
+### PN0 / I09–I10 — preregistered ordinary catalog source (2026-10-29, 025)
+
+The existing ordinary producer now has a query-independent, create-only catalog
+entry. It fixes 1–128 exact memory ID/revision/content identities and completion
+labels before the execution profile is independently evaluated. The fresh
+ordinary content-v2 and host-v3 path pins this complete map and reaches the same
+qualified descriptor, CURRENT, held parameter FD, eleven-material validation
+and original CPU worker. The old controlled and ordinary-v1 paths still require
+two actions. Actual tokenizer/single-token admission remains with the original
+worker; a catalog hash provides no chronology, evaluation or installation grant.
+The 024 ordinary consumer and explicit next-task version requirement remain in
+force. New revision/content or an unsupported complete action set refuses use.
+
+New-source Python protocol tests passed the original eleven plus five new cases;
+this does not qualify Rust, a real model load, installation or benefit. The Mac
+ordinary-model caller fixes preserve actual sockets, assertions and all limits;
+actual Mac execution remains required. The same-owner CURRENT observation fence
+must still cover the final typed effect entry: the present RPC observation and
+independent kernel token do not compose that fence. Repeated reads, hashes or a
+lease number cannot replace the actual owner guard. Full runtime/dependency/
+custody/repair, three real upgrade-and-next-task rounds with NoGain rejection,
+Windows, paid W1 and independent WAN remain OPEN / NO_GO. No budgets are reset.
