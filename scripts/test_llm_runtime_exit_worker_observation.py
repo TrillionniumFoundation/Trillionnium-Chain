@@ -354,8 +354,23 @@ class WorkerPidfdTests(unittest.TestCase):
                     elif mode == 'starttime': (state.root/'task/10002/stat').write_text(state.fixture.stat(10002,'R',start=999))
                     else: state.identities[descriptor] = '10003'
                     return descriptor
-                with patch.object(worker.os,'pidfd_open',side_effect=opened), self.assertRaises((OSError,ValueError)):
-                    self.observation(state)
+                with patch.object(worker.os,'pidfd_open',side_effect=opened):
+                    if mode == 'missing':
+                        # Explicit new source semantics: this already-proved
+                        # worker may keep a bounded pending reservation. It
+                        # still cannot complete V4 binding or release resources.
+                        observed = self.observation(state)
+                        try:
+                            self.assertFalse(observed.baseline_qualified)
+                            self.assertFalse(observed.record['complete_worker_pidfd_acquisition'])
+                            self.assertEqual(observed.record['transition'],
+                                'binding-acquisition-pending-owned-wait4')
+                            self.assertNotIn('retirement_closed_by', observed.record)
+                            self.assertNotIn('worker_terminal_events', observed.record)
+                            self.assertNotIn('rss_bytes', observed.record)
+                        finally: observed.close()
+                    else:
+                        with self.assertRaises((OSError,ValueError)): self.observation(state)
                 self.assertLessEqual(len(state.opened),1)
 
     def test_original_unknown_task_is_not_qualified_by_retiring(self):

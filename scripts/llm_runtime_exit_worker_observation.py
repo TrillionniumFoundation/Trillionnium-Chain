@@ -4,6 +4,9 @@ A separate source-bound initial-capture state may retain an owned reservation
 across disappearing tasks. It is not a complete exit-only classification: only
 the original timed wait4 and resource receipt may close it. Complete initial V2
 classification still precedes worker-pidfd binding and later retirement proof.
+If a proved original worker vanishes during binding, a separate pending state
+retains that complete prebinding proof and every partial capability. It still
+requires the original timed owned wait4; missing pidfd/leader reads never qualify.
 No state measures zero RSS or physical release. The leader always needs procfs.
 """
 import contextvars
@@ -41,6 +44,19 @@ class _InitialTerminalPending:
         self.interruptions = []
 
 
+class _BindingTaskMissing(Exception):
+    """Only a proved original task's held-directory read may raise this."""
+    def __init__(self, task, component, phase, error_errno):
+        self.task, self.component, self.phase = task, component, phase
+        self.error_errno = error_errno
+
+
+class _BindingTerminalPending:
+    """Incomplete pidfd acquisition; never a worker terminal-event proof."""
+    def __init__(self, interruption, prebinding_record):
+        self.interruption, self.prebinding_record = interruption, prebinding_record
+
+
 class WorkerPidfdObservation(base.ExitOnlyObservation):
     def __init__(self, pid, held_pidfd, owner_token, initial_leader, missing_sample_ns):
         self.baseline_qualified = self.failed = False
@@ -49,6 +65,8 @@ class WorkerPidfdObservation(base.ExitOnlyObservation):
         self.retirements, self.baseline_starts = {}, {}
         self.failure_context = None
         self.initial_capture = None
+        self.prebinding_record = self.binding_pending = None
+        self.acquisition_phase = 'owner-context'
         # Keep the original owner/acquisition predicates, but retain a typed
         # pending result when a nonleader disappears before a complete baseline.
         # V2/V3 and the model-bound pilot source remain byte-for-byte unchanged.
@@ -66,6 +84,7 @@ class WorkerPidfdObservation(base.ExitOnlyObservation):
             self.visible, self.parent, self.namespace = self.identity
             count = self._leader(initial_leader)
             self._deadline()
+            self.acquisition_phase = 'group-directory-open'
             self.group_fd = base._open_group(self.visible)
             self.group_signature = base._signature(self.group_fd)
             self.tasks_fd = os.open('task', os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC,
@@ -77,6 +96,7 @@ class WorkerPidfdObservation(base.ExitOnlyObservation):
             self.initial_capture = _InitialTerminalPending(self.names, count)
             if len(self.names) < count:
                 self._initial_interruption(None, 'initial-roster', count=count, names=self.names)
+            self.acquisition_phase = 'task-directory-open'
             for name in self.names:
                 try:
                     descriptor = os.open(name, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC,
@@ -87,15 +107,15 @@ class WorkerPidfdObservation(base.ExitOnlyObservation):
                 self.task_fds[name] = descriptor
                 self.task_signatures[name] = base._signature(descriptor)
             self.recheck()
-        except BaseException:
+        except BaseException as error:
             self.failed = True
             try:
                 self.close()
             finally:
-                self._retain_constructor_refusal()
+                self._retain_constructor_refusal(error)
             raise
 
-    def _retain_constructor_refusal(self):
+    def _retain_constructor_refusal(self, error):
         # The existing supervisor rejects an exact typed failed result before
         # its immediate-terminal race branch. Preserve that rejection even when
         # current_rss catches the constructor exception. This slot only refuses;
@@ -116,6 +136,23 @@ class WorkerPidfdObservation(base.ExitOnlyObservation):
                     owner[1] == self.held_pidfd and owner[2] is self.owner_token and
                     selected.get() is type(self) is WorkerPidfdObservation and output.get() is None):
                 output.set(self)
+                trace = getattr(module, '_RSS_READ_TRACE', None)
+                if type(trace) is contextvars.ContextVar and type(trace.get()) is dict:
+                    # Fixed source frames from this original failing call, not
+                    # a later proc snapshot or a diagnostic grant of authority.
+                    frames, cursor, scanned = [], error.__traceback__, 0
+                    sources = {str(base.Path(__file__).resolve()),
+                               str(base.Path(base.__file__).resolve())}
+                    while cursor is not None and len(frames) < 16 and scanned < 32:
+                        scanned += 1
+                        code = cursor.tb_frame.f_code
+                        if str(base.Path(code.co_filename).resolve()) in sources:
+                            frames.append(dict(function=code.co_name, line=cursor.tb_lineno))
+                        cursor = cursor.tb_next
+                    trace.get().setdefault('same_sample_exit_acquisition_failure', dict(
+                        source='original-constructor-exception', phase=self.acquisition_phase,
+                        error_type=type(error).__name__, error_errno=getattr(error, 'errno', None),
+                        source_frames=frames, diagnostic_only=True))
 
     def _initial_interruption(self, name, component, *, error_errno=None, count=None, names=None):
         capture = self.initial_capture
@@ -242,11 +279,25 @@ class WorkerPidfdObservation(base.ExitOnlyObservation):
         base._require(time.monotonic_ns() < self.sample_started_ns + MAX_DRAIN_NS,
                       'exit-worker-deadline')
 
+    def _task_read(self, name, component):
+        acquiring = (self.prebinding_record is not None and not self.baseline_qualified and
+            self.acquisition_phase in ('worker-pidfd-bind', 'post-bind-double-frontier',
+                                       'worker-pidfd-recheck'))
+        if acquiring:
+            base._require(base._signature(self.task_fds[name]) == self.task_signatures[name],
+                          'exit-task-fd-reused')
+        try:
+            return base._read(self.task_fds[name], component)
+        except OSError as error:
+            if acquiring and error.errno == errno.ENOENT and int(name) != self.visible:
+                raise _BindingTaskMissing(name, component, self.acquisition_phase, error.errno) from error
+            raise
+
     def _fields(self, name, count, shrinking):
         # Validate each successful read before a later read can disappear.
         if self.failure_context is not None:
             self.failure_context.update(reading_task=name, reading_component='status')
-        fields = base._status(base._read(self.task_fds[name], 'status'))
+        fields = base._status(self._task_read(name, 'status'))
         namespace = tuple(base._namespace(fields, 'NSpid'))
         base._require(base._one(fields, 'Pid') == int(name) and
             base._one(fields, 'Tgid') == self.visible and
@@ -262,12 +313,15 @@ class WorkerPidfdObservation(base.ExitOnlyObservation):
             'exit-task-not-exit-only')
         if name in self.bindings:
             base._require(namespace == self.bindings[name]['namespace'], 'exit-task-namespace')
+        if self.prebinding_record is not None and not self.baseline_qualified:
+            base._require(namespace == self.initial_capture.statuses[name]['namespace'],
+                          'exit-task-namespace')
         if int(name) == self.visible or shrinking:
             base._require(fields['State'][0] == 'Z', 'exit-worker-remaining-not-zombie')
         if self.failure_context is not None:
             self.failure_context['reading_component'] = 'stat'
         try:
-            raw_stat = base._read(self.task_fds[name], 'stat')
+            raw_stat = self._task_read(name, 'stat')
         except OSError:
             # A changed count needs the complete task read before recapture.
             # A later ENOENT cannot erase an inconsistent reported count.
@@ -285,6 +339,58 @@ class WorkerPidfdObservation(base.ExitOnlyObservation):
             # This complete task read is still not a complete frontier.
             raise _CountDecreased(reported_threads)
         return namespace, observed
+
+    def _frontier(self):
+        if self.prebinding_record is None or self.baseline_qualified:
+            return super()._frontier()
+        # Preserve the original complete roster/count, two-frontier and birth
+        # requirements. Validate each status BEFORE a later stat can vanish.
+        # The unchanged V2/V3 implementations never take this V4-only path.
+        count = self._leader(base._status(base._read(self.group_fd, 'status')))
+        base._require(base._task_names(self.tasks_fd) == self.names and
+                      count == len(self.names), 'exit-task-set')
+        result = {}
+        for name in self.names:
+            _, result[name] = self._fields(name, count, False)
+        base._require(base._task_names(self.tasks_fd) == self.names and
+            self._leader(base._status(base._read(self.group_fd, 'status'))) == count,
+            'exit-task-set')
+        return result
+
+    def _retain_binding_task_loss(self, error):
+        base._require(type(error) is _BindingTaskMissing and self.prebinding_record is not None and
+            not self.baseline_qualified and error.task in self.names and
+            int(error.task) != self.visible, 'exit-worker-pidfd-binding')
+        self._owner()
+        self._deadline()
+        names, _ = self._initial_names()
+        # ENOENT alone is insufficient: the same owned roster must now have
+        # actually lost this original nonleader, without additions or revival.
+        base._require(error.task not in names and error.task in self.initial_capture.retired,
+                      'exit-worker-frontier-change')
+        self._initial_interruption(error.task, 'binding-' + error.component,
+                                   error_errno=error.error_errno)
+        self._initial_frontier()
+        self.binding_pending = _BindingTerminalPending(dict(task=error.task,
+            component=error.component, phase=error.phase, error_errno=error.error_errno),
+            self.prebinding_record)
+        self.acquisition_phase = 'binding-terminal-pending'
+        return self._binding_pending_record()
+
+    def _binding_pending_record(self):
+        base._require(type(self.binding_pending) is _BindingTerminalPending,
+                      'exit-worker-pidfd-binding')
+        record = self._initial_record()
+        record.update(schema='llm-owned-binding-terminal-pending-v1',
+            transition='binding-acquisition-pending-owned-wait4',
+            complete_prebinding_classification=True, complete_worker_pidfd_acquisition=False,
+            prebinding_classification=self.binding_pending.prebinding_record,
+            acquisition_interruption=dict(self.binding_pending.interruption),
+            complete_worker_bindings=self._binding_record(),
+            retained_thread_pidfds=len(self.thread_fds),
+            scope='incomplete V4 binding after a complete double frontier; reservation retained; '
+                  'not worker terminal-event proof, zero RSS or release; original timed owned wait4 required')
+        return record
 
     def _bind_workers(self):
         base._require(callable(getattr(os, 'pidfd_open', None)), 'exit-worker-pidfd-unavailable')
@@ -405,8 +511,10 @@ class WorkerPidfdObservation(base.ExitOnlyObservation):
         try:
             if self.initial_capture.pending:
                 self._initial_frontier()
-                return self._initial_record()
+                return (self._binding_pending_record() if self.binding_pending is not None
+                        else self._initial_record())
             if not self.baseline_qualified:
+                self.acquisition_phase = 'initial-double-frontier'
                 before, after = self._initial_frontier(), self._initial_frontier()
                 if self.initial_capture.pending:
                     return self._initial_record()
@@ -420,12 +528,19 @@ class WorkerPidfdObservation(base.ExitOnlyObservation):
                     scope='exit-only cleanup with no observable attached user-mm; not zero or physically released RSS')
                 self.baseline_starts = dict(self.starts)
                 self.active_names = self.names
-                self._bind_workers()
-                # Acquisition cannot erase even one task or change its qualification.
-                base.ExitOnlyObservation.recheck(self)
-                self._check_bindings()
+                self.prebinding_record = dict(self.record)
+                try:
+                    self.acquisition_phase = 'worker-pidfd-bind'
+                    self._bind_workers()
+                    self.acquisition_phase = 'post-bind-double-frontier'
+                    base.ExitOnlyObservation.recheck(self)
+                    self.acquisition_phase = 'worker-pidfd-recheck'
+                    self._check_bindings()
+                except _BindingTaskMissing as error:
+                    return self._retain_binding_task_loss(error)
                 self._deadline()
                 self.baseline_qualified = True
+                self.acquisition_phase = 'qualified'
                 self.record.update(profile=PROFILE, initial_tasks=list(self.names),
                     pending_retired_tasks=[], worker_bindings=self._binding_record(),
                     transition='complete-initial-set-with-held-worker-pidfds')

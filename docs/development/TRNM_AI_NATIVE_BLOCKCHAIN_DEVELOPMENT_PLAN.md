@@ -7342,3 +7342,44 @@ must qualify that lock and actual core/host paths. Three real model loops,
 strong baselines, the single integrated product source combination, full PQ
 authority closure, original cold recovery, independent WAN operation and a
 fair successor-protocol comparison all remain explicit acceptance obligations.
+
+### V4 binding acquisition reservation boundary (2026-10-29)
+
+The `147bae5` / Hepta `8c19667` three-round product run failed in round one's
+budget-matched full tune with a same-sample constructor `FileNotFoundError`.
+The original artifact does not identify its constructor substage. The later
+zombie snapshot and successful process exit do not repair that missing RSS
+observation. Its failure remains an acceptance result, not a legal no-update.
+
+The next source-bound V4 observer admits one narrower pending state: an
+original nonleader has already passed both complete prebinding frontiers;
+reading its held task-directory `status` or `stat` then returns `ENOENT`; the
+same owned roster actually loses that task; and the remaining frontier still
+passes its identity, birth, exit and memory predicates. This retains the
+reservation and partial FDs. It is neither completed worker-pidfd acquisition
+nor a worker terminal-event or zero-RSS proof. The unchanged original
+100-millisecond and whole-operation deadlines, exclusive owned `wait4`, CPU,
+RSS, exit-status and family-owner checks still decide completion. Missing
+leader/group/fdinfo reads, `pidfd_open` errors and already-read bad fields do
+not enter this state. Constructor diagnostics record bounded fixed-source
+frames from the failing call, without granting authority.
+
+The original pilot, V2 and V3 production files remain byte-identical. An old
+V4 source receipt must reject the changed observer, and a separately frozen
+execution profile is required for any new model run. One former blanket
+disappearance subcase now explicitly asserts incomplete binding and no release;
+the other original refusal cases remain. Controls include actual original
+supervisor/owned-wait4 finalization of small children, with synthetic proc/task
+acquisition fixtures, plus late, conflicting, missing and over-budget receipts.
+These controls do not locate or replay the historical model race.
+
+In the separate positive run on the original `147bae5` tuple, actual training
+changed the weights and all four future forward phases completed. Parent and
+candidate each answered 512 of 1,024 observed tasks correctly and made the same
+1,024 choices. The original product runner returned `Ineligible`; the outer
+expected-positive test failed and no child was installed. The equal IPS bounds
+are utility estimates, not those direct correctness counts. A separate six-arm
+descendant diagnostic completed three rounds and 33 supervised phases, including
+nine nonzero-step training receipts and six zero-step controls. All three rounds
+failed to beat the strongest control, installed zero children and left CURRENT
+at generation one; the later candidate ordinals were not admitted generations.
