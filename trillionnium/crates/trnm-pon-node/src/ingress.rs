@@ -2263,24 +2263,6 @@ fn metered_history_packet(
         let result = (|| {
             progress.checkpoint()?;
             resource_checkpoint()?;
-            if let Some(already) = owner.check_admission_context_with_native_progress(
-                packet,
-                clock,
-                native_progress,
-            )? {
-                return Ok(already);
-            }
-            let permit = owner.begin_owner_work(packet)?;
-            let checked = WorkCheckedPacket::verify_with_progress(packet.clone(), &mut |point| {
-                progress.checkpoint()?;
-                if history_kernel_work_checkpoint(point) {
-                    resource_checkpoint()?;
-                }
-                Ok(())
-            })?;
-            progress.checkpoint()?;
-            resource_checkpoint()?;
-            let checked = owner.attach_owner_work(checked, permit)?;
             let execution_progress = |_phase| {
                 progress.checkpoint()?;
                 resource_checkpoint()
@@ -2289,11 +2271,18 @@ fn metered_history_packet(
                 &execution_progress,
                 operation.worker_accounting(),
             );
-            owner.admit_work_checked_with_native_control(
-                checked,
+            owner.admit_history_packet_with_native_control(
+                packet,
                 clock,
+                &mut |point| {
+                    progress.checkpoint()?;
+                    if history_kernel_work_checkpoint(point) {
+                        resource_checkpoint()?;
+                    }
+                    Ok(())
+                },
                 &control,
-                &mut |_, point| crate::native_progress::dispatch(native_progress, point),
+                native_progress,
             )
         })();
         match &graph {

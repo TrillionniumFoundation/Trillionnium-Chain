@@ -20,6 +20,8 @@ import sys
 from check_required_native_test import validate
 from replay_pinned_native import digest, json_load, require, run_child
 from verify_ci_source import verify as verify_source
+from from_zero_native_host import HOST_TEST, run_host_child
+from history_fixed_parent_v2 import owner as validate_host_owner
 
 ROOT = Path(__file__).resolve().parents[2]
 # Reuse the existing wire owner for bounded metadata consistency. This reader
@@ -690,7 +692,8 @@ def save_manifest(out: Path, result: dict) -> None:
     os.replace(temporary, out / 'manifest.json')
 
 
-def run(out: Path) -> dict:
+def run(out: Path, *, host_owner: str) -> dict:
+    validate_host_owner(host_owner)
     out = out.resolve()
     require(not out.is_relative_to(ROOT), 'OUTPUT_MUST_BE_OUTSIDE_CHECKOUT')
     identity = source_identity()
@@ -735,13 +738,22 @@ def run(out: Path) -> dict:
         shutil.copy2(binary, out / TARGET)
         for name in TESTS:
             folder = out / name
-            observed = run_child([str(binary), name, '--exact', '--nocapture', '--test-threads=1'], folder, 90)
+            command = [str(binary), name, '--exact', '--nocapture', '--test-threads=1']
+            if name == HOST_TEST:
+                observed = run_host_child(command, folder, 90, run_owner=host_owner,
+                                          source=result['source_before']['commit'],
+                                          binary_sha256=result['binary_sha256_before'])
+            else:
+                observed = run_child(command, folder, 90)
             row = {'name': name, 'process': observed, 'passed': False,
                    'stdout_sha256': digest((folder / 'stdout').read_bytes()),
                    'stderr_sha256': digest((folder / 'stderr').read_bytes())}
             result['runs'].append(row)
             try:
                 require(observed['exit_code'] == 0 and not observed['timed_out'], 'NATIVE_TEST_FAILED')
+                if name == HOST_TEST:
+                    require(observed.get('host_scope', {}).get('complete') is True,
+                            'NATIVE_HOST_SCOPE_NOT_CLOSED')
                 row['named_execution'] = validate((folder / 'stdout').read_text().splitlines(), name)
                 row['passed'] = True
             except (ValueError, OSError, UnicodeError) as error:
@@ -810,6 +822,9 @@ def run(out: Path) -> dict:
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--out', type=Path, required=True)
-    receipt = run(parser.parse_args().out)
+    parser.add_argument('--host-owner', required=True,
+                        help='numeric run.attempt whose original fixed parent was explicitly provisioned')
+    args = parser.parse_args()
+    receipt = run(args.out, host_owner=args.host_owner)
     print(json.dumps({'passed': receipt['passed'], 'failures': receipt['failures']}))
     raise SystemExit(0 if receipt['passed'] else 1)

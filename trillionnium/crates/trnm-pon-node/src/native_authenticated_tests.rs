@@ -732,6 +732,16 @@ fn native_inactive_page_parents_use_checked_material_without_early_activation() 
         packets.push(packet);
     }
     let before = client.native_history_arithmetic_observation();
+    let state_reads = |value: &serde_json::Value| {
+        value["stages"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|row| row["stage"] == "state_at")
+            .unwrap()["totals"]["calls"]
+            .as_u64()
+            .unwrap()
+    };
     let mut after = seed;
     for (index, packet) in packets.iter().enumerate() {
         let next = packet.id().unwrap();
@@ -749,15 +759,21 @@ fn native_inactive_page_parents_use_checked_material_without_early_activation() 
         // This is a local native fixture. Keep the source-aware compatibility
         // entry and its original Node-owned CPU account; do not expose the
         // private parser to make the old call compile.
-        after = crate::ingress::receive_page_from(
+        let received = crate::ingress::receive_page_from(
             &mut client,
             ([127, 0, 0, 1], 1).into(),
             page,
             tip,
             after,
             100_000,
-        )
-        .unwrap();
+        );
+        if let Err(error) = &received {
+            eprintln!(
+                "original cold History failure index={index} cumulative_state_at_calls={} error={error}",
+                state_reads(&client.native_history_arithmetic_observation()) - state_reads(&before),
+            );
+        }
+        after = received.unwrap();
         assert_eq!(after, next);
         assert_eq!(
             client.active().unwrap().0,
@@ -765,6 +781,10 @@ fn native_inactive_page_parents_use_checked_material_without_early_activation() 
         );
     }
     let observed = client.native_history_arithmetic_observation();
+    eprintln!(
+        "original cold History seven pages including activation state_at_calls={}",
+        state_reads(&observed) - state_reads(&before),
+    );
     let count = |value: &serde_json::Value, key: &str| value["counters"][key].as_u64().unwrap();
     assert_eq!(
         count(&observed, "execution_parent_historical_candidates")

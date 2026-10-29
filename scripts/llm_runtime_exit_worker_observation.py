@@ -1,13 +1,16 @@
 """V4 worker retirement needs a previously bound kernel thread-pidfd event.
 
-The unchanged full V2 classification precedes binding. A worker disappearing
-mid-frontier permits only bounded recapture of two complete remaining frontiers,
-never zero RSS, resource release or success without the original owned wait4.
-Linux v7.0 delays early-leader pidfd readiness; the leader always needs procfs.
+A separate source-bound initial-capture state may retain an owned reservation
+across disappearing tasks. It is not a complete exit-only classification: only
+the original timed wait4 and resource receipt may close it. Complete initial V2
+classification still precedes worker-pidfd binding and later retirement proof.
+No state measures zero RSS or physical release. The leader always needs procfs.
 """
+import contextvars
 import errno
 import os
 import select
+import sys
 import time
 
 import llm_runtime_exit_observation as base
@@ -28,6 +31,16 @@ class _CountDecreased(Exception):
         self.reported_threads = reported_threads
 
 
+class _InitialTerminalPending:
+    """Private acquisition state; no serialized record can construct authority."""
+    def __init__(self, names, count):
+        self.names = self.active_names = names
+        self.count = self.initial_count = count
+        self.pending = False
+        self.retired, self.statuses, self.validated = set(), {}, {}
+        self.interruptions = []
+
+
 class WorkerPidfdObservation(base.ExitOnlyObservation):
     def __init__(self, pid, held_pidfd, owner_token, initial_leader, missing_sample_ns):
         self.baseline_qualified = self.failed = False
@@ -35,7 +48,175 @@ class WorkerPidfdObservation(base.ExitOnlyObservation):
         self.active_names, self.pending_retired = (), ()
         self.retirements, self.baseline_starts = {}, {}
         self.failure_context = None
-        super().__init__(pid, held_pidfd, owner_token, initial_leader, missing_sample_ns)
+        self.initial_capture = None
+        # Keep the original owner/acquisition predicates, but retain a typed
+        # pending result when a nonleader disappears before a complete baseline.
+        # V2/V3 and the model-bound pilot source remain byte-for-byte unchanged.
+        self.pid, self.held_pidfd, self.owner_token = pid, held_pidfd, owner_token
+        self.group_fd, self.tasks_fd, self.task_fds = None, None, {}
+        self.task_signatures, self.starts = {}, {}
+        self.closed, self.record = False, {}
+        self.sample_started_ns = missing_sample_ns
+        try:
+            base._require(type(pid) is int and pid > 0 and type(held_pidfd) is int and held_pidfd >= 0 and
+                owner_token is not None and type(missing_sample_ns) is int and
+                0 < missing_sample_ns <= time.monotonic_ns(), 'exit-owner-context')
+            self.held_signature = base._signature(held_pidfd)
+            self.identity = base._pidfd_identity(pid, held_pidfd)
+            self.visible, self.parent, self.namespace = self.identity
+            count = self._leader(initial_leader)
+            self._deadline()
+            self.group_fd = base._open_group(self.visible)
+            self.group_signature = base._signature(self.group_fd)
+            self.tasks_fd = os.open('task', os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC,
+                dir_fd=self.group_fd)
+            self.tasks_signature = base._signature(self.tasks_fd)
+            self.names = base._task_names(self.tasks_fd)
+            base._require(str(self.visible) in self.names, 'exit-leader-not-in-task-set')
+            base._require(len(self.names) <= count, 'exit-task-set')
+            self.initial_capture = _InitialTerminalPending(self.names, count)
+            if len(self.names) < count:
+                self._initial_interruption(None, 'initial-roster', count=count, names=self.names)
+            for name in self.names:
+                try:
+                    descriptor = os.open(name, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC,
+                        dir_fd=self.tasks_fd)
+                except OSError as error:
+                    self._initial_missing(name, 'open', error)
+                    continue
+                self.task_fds[name] = descriptor
+                self.task_signatures[name] = base._signature(descriptor)
+            self.recheck()
+        except BaseException:
+            self.failed = True
+            try:
+                self.close()
+            finally:
+                self._retain_constructor_refusal()
+            raise
+
+    def _retain_constructor_refusal(self):
+        # The existing supervisor rejects an exact typed failed result before
+        # its immediate-terminal race branch. Preserve that rejection even when
+        # current_rss catches the constructor exception. This slot only refuses;
+        # it cannot authorize execution. The pilot can run as __main__ or import.
+        expected = base.Path(__file__).with_name('llm_runtime_pilot.py').resolve()
+        for name in ('__main__', 'llm_runtime_pilot'):
+            module = sys.modules.get(name)
+            source = getattr(module, '__file__', None)
+            if type(source) is not str or base.Path(source).resolve() != expected:
+                continue
+            context = getattr(module, '_RSS_OWNER_CONTEXT', None)
+            selected = getattr(module, '_RSS_EXIT_CLASS', None)
+            output = getattr(module, '_RSS_EXIT_OBSERVATION', None)
+            if not all(type(value) is contextvars.ContextVar for value in (context, selected, output)):
+                continue
+            owner = context.get()
+            if (type(owner) is tuple and len(owner) == 3 and owner[0] == self.pid and
+                    owner[1] == self.held_pidfd and owner[2] is self.owner_token and
+                    selected.get() is type(self) is WorkerPidfdObservation and output.get() is None):
+                output.set(self)
+
+    def _initial_interruption(self, name, component, *, error_errno=None, count=None, names=None):
+        capture = self.initial_capture
+        capture.pending = True
+        if name is not None:
+            base._require(name in capture.names and int(name) != self.visible,
+                          'exit-worker-initial-leader-loss')
+            capture.retired.add(name)
+        base._require(len(capture.interruptions) < 2 * base.MAX_TASKS,
+                      'exit-worker-initial-capture-bound')
+        capture.interruptions.append(dict(task=name, component=component, error_errno=error_errno,
+            reported_threads=count, observed_tasks=list(names) if names is not None else None,
+            observed_ns=time.monotonic_ns()))
+
+    def _initial_missing(self, name, component, error):
+        if error.errno not in (errno.ENOENT, errno.ESRCH) or int(name) == self.visible:
+            raise error
+        self._initial_interruption(name, component, error_errno=error.errno)
+
+    def _initial_names(self):
+        capture = self.initial_capture
+        count = self._leader(base._status(base._read(self.group_fd, 'status')))
+        names = base._task_names(self.tasks_fd)
+        base._require(count <= capture.count and str(self.visible) in names and
+            set(names) <= set(capture.active_names) and not set(names) & capture.retired,
+            'exit-worker-initial-task-set')
+        if names != capture.active_names or count != capture.count or count != len(names):
+            self._initial_interruption(None, 'task-set', count=count, names=names)
+        capture.retired.update(set(capture.active_names) - set(names))
+        capture.active_names, capture.count = names, count
+        return names, count
+
+    def _initial_fields(self, name, count):
+        capture = self.initial_capture
+        descriptor = self.task_fds[name]
+        base._require(base._signature(descriptor) == self.task_signatures[name], 'exit-task-fd-reused')
+        try:
+            fields = base._status(base._read(descriptor, 'status'))
+        except OSError as error:
+            self._initial_missing(name, 'status', error)
+            return None
+        # Every successful status is checked before the next read can vanish.
+        namespace = tuple(base._namespace(fields, 'NSpid'))
+        base._require(base._one(fields, 'Pid') == int(name) and
+            base._one(fields, 'Tgid') == self.visible and base._one(fields, 'PPid') == self.parent and
+            tuple(base._namespace(fields, 'NStgid')) == self.namespace and
+            namespace[0] == int(name) and len(namespace) == len(self.namespace), 'exit-task-identity')
+        reported = base._one(fields, 'Threads')
+        base._require(reported <= min(count, capture.count), 'exit-task-identity')
+        base._require(len(fields['State'][0]) == 1 and fields['State'][0] in 'RSDTtXZPI' and
+            'VmRSS' not in fields, 'exit-task-not-exit-only')
+        if int(name) == self.visible:
+            base._require(fields['State'][0] == 'Z', 'exit-leader-state')
+        previous = capture.statuses.get(name)
+        base._require(previous is None or previous['namespace'] == namespace, 'exit-task-namespace')
+        capture.statuses[name] = dict(namespace=namespace, state=fields['State'][0], reported_threads=reported)
+        if reported < capture.count:
+            self._initial_interruption(None, 'task-status-count', count=reported)
+            capture.count = reported
+        try:
+            observed = base._stat(base._read(descriptor, 'stat'))
+        except OSError as error:
+            self._initial_missing(name, 'stat', error)
+            return None
+        base._require(observed['pid'] == int(name) and observed['ppid'] == self.parent and
+            observed['flags'] & base.PF_EXITING and not observed['flags'] & base.PF_KTHREAD and
+            observed['vsize'] == observed['rss'] == 0, 'exit-task-not-exit-only')
+        if int(name) == self.visible:
+            base._require(observed['state'] == 'Z', 'exit-leader-state')
+        previous = capture.validated.get(name)
+        base._require(previous is None or previous['starttime'] == observed['starttime'], 'exit-task-starttime')
+        capture.validated[name] = observed
+        return observed
+
+    def _initial_frontier(self):
+        self._owner()
+        self._deadline()
+        names, count = self._initial_names()
+        result = {}
+        for name in names:
+            observed = self._initial_fields(name, count)
+            if observed is not None:
+                result[name] = observed
+        self._initial_names()
+        self._owner()
+        self._deadline()
+        return result
+
+    def _initial_record(self):
+        capture = self.initial_capture
+        self.pending_retired = tuple(name for name in self.names if name in capture.retired)
+        self.record = dict(schema='llm-owned-initial-terminal-pending-v1', profile=PROFILE,
+            sample_started_ns=self.sample_started_ns, observed_ns=time.monotonic_ns(),
+            initial_threads=capture.initial_count, initial_tasks=list(self.names),
+            tasks=list(capture.active_names), pending_retired_tasks=list(self.pending_retired),
+            validated_statuses=dict(capture.statuses), validated_tasks=dict(capture.validated),
+            validated_tasks_scope='cumulative successful reads; not a complete same-call frontier',
+            interruptions=list(capture.interruptions), complete_initial_classification=False,
+            transition='initial-capture-pending-owned-wait4',
+            scope='reservation retained; only original timed owned wait4 and resource receipt can close; not zero RSS')
+        return self.record
 
     def _held_capabilities(self):
         base._require(not self.closed and
@@ -222,8 +403,21 @@ class WorkerPidfdObservation(base.ExitOnlyObservation):
     def recheck(self):
         base._require(not self.failed, 'exit-worker-sticky-failure')
         try:
+            if self.initial_capture.pending:
+                self._initial_frontier()
+                return self._initial_record()
             if not self.baseline_qualified:
-                base.ExitOnlyObservation.recheck(self)
+                before, after = self._initial_frontier(), self._initial_frontier()
+                if self.initial_capture.pending:
+                    return self._initial_record()
+                starts = {name: value['starttime'] for name, value in before.items()}
+                base._require(starts == {name: value['starttime'] for name, value in after.items()} and
+                    set(starts) == set(self.names), 'exit-task-starttime')
+                self.starts = starts
+                self.record = dict(profile=base.PROFILE, sample_started_ns=self.sample_started_ns,
+                    classification_completed_ns=time.monotonic_ns(), tasks=list(self.names),
+                    frontier_before=before, frontier_after=after,
+                    scope='exit-only cleanup with no observable attached user-mm; not zero or physically released RSS')
                 self.baseline_starts = dict(self.starts)
                 self.active_names = self.names
                 self._bind_workers()
@@ -287,7 +481,8 @@ class WorkerPidfdObservation(base.ExitOnlyObservation):
             for name, value in self.bindings.items()}
 
     def belongs_to(self, pid, held_pidfd, owner_token):
-        if not self.baseline_qualified or self.failed:
+        if self.failed or not (self.baseline_qualified or
+                self.initial_capture is not None and self.initial_capture.pending):
             return False
         try:
             self._owner()
@@ -302,7 +497,8 @@ class WorkerPidfdObservation(base.ExitOnlyObservation):
         Reaped pidfd fdinfo says -1, so live namespace/proc checks cannot apply.
         No caller-supplied terminal boolean or later identity can mint authority.
         """
-        if not self.baseline_qualified or self.failed:
+        if self.failed or not (self.baseline_qualified or
+                self.initial_capture is not None and self.initial_capture.pending):
             return False
         try:
             self._held_capabilities()

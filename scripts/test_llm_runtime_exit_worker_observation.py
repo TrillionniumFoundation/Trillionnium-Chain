@@ -59,7 +59,7 @@ class WorkerPidfdTests(unittest.TestCase):
 
     def observation(self, state):
         return worker.WorkerPidfdObservation(501, state.held, state.token,
-            base._status(state.fixture.status()), time.monotonic_ns())
+            base._status((state.root/'status').read_text()), time.monotonic_ns())
 
     def retire(self, state, name='10002'):
         state.terminal.add(name)
@@ -509,7 +509,8 @@ class WorkerPidfdTests(unittest.TestCase):
             result=runtime.supervise([sys.executable,'-c',program],Path(directory)/'owned-live-worker',
                 dict(wall_seconds=2,rss_bytes=128*1024**2),
                 exit_observation=runtime.exit_observation_profile(worker.PROFILE))
-        self.assertEqual(result['stop_reason'],'rss-observation-unavailable')
+        self.assertEqual(result['stop_reason'],'rss-exit-cleanup-observation-unavailable')
+        self.assertEqual(result['outcome'],'failed')
         self.assertEqual(result['rss_gap_diagnostic']['leader_state'],'Z')
 
     def test_real_own_worker_pidfd_event_and_missing_proc_are_not_group_completion(self):

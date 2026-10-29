@@ -17,6 +17,7 @@ from unittest.mock import patch
 
 import run_from_zero_native as driver
 from contract_wire import header_decode, header_encode, tx_unsigned
+from test_from_zero_native_host import HostBoundaryTests
 
 
 def artifact(path: Path, **fields: object) -> str:
@@ -312,7 +313,8 @@ class ExecutionBoundaryTests(unittest.TestCase):
                  format_exit=0, build_exit=0, source_drift=False, binary_drift=False,
                  missing_report=False, report_edit=None, log_drift=False, report_drift=False,
                  missing_sustained=False, sustained_edit=None, sustained_drift=False,
-                 missing_confirmation=False, confirmation_edit=None, confirmation_drift=False):
+                 missing_confirmation=False, confirmation_edit=None, confirmation_drift=False,
+                 host_complete=True):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory) / 'source'; root.mkdir()
             test_source = root / driver.SOURCE
@@ -325,7 +327,7 @@ class ExecutionBoundaryTests(unittest.TestCase):
                 after['tree'] = 'c'*40
             out = Path(directory) / 'observations'
             seen = []
-            def child(command, folder, seconds):
+            def child(command, folder, seconds, **host_arguments):
                 folder.mkdir()
                 name = folder.name
                 seen.append(name)
@@ -370,7 +372,15 @@ class ExecutionBoundaryTests(unittest.TestCase):
                 (folder / 'stdout').write_text(text)
                 (folder / 'stderr').write_text('retained simulated stderr\n')
                 # There are deliberately no invented CPU values in this fixture.
-                return {'exit_code': code, 'timed_out': timed_out, 'simulated_control': True}
+                observation = {'exit_code': code, 'timed_out': timed_out, 'simulated_control': True}
+                if name == driver.HOST_TEST:
+                    self.assertEqual(host_arguments, {'run_owner': '123.1', 'source': identity['commit'],
+                                                     'binary_sha256': driver.digest(b'not a real executable')})
+                    self.assertEqual(seconds, 90)
+                    observation['host_scope'] = {'complete': host_complete, 'simulated_control': True}
+                else:
+                    self.assertEqual(host_arguments, {})
+                return observation
             previous_cwd = Path.cwd()
             identities = iter([identity, after])
             def read_identity():
@@ -389,9 +399,10 @@ class ExecutionBoundaryTests(unittest.TestCase):
                 with patch.object(driver, 'ROOT', root), \
                      patch.object(driver, 'source_identity', side_effect=read_identity), \
                      patch.object(driver, 'run_child', side_effect=child), \
+                     patch.object(driver, 'run_host_child', side_effect=child), \
                      patch.object(driver.subprocess, 'check_output', return_value='simulated compiler version\n'):
                     with redirect_stdout(io.StringIO()):
-                        result = driver.run(out)
+                        result = driver.run(out, host_owner='123.1')
                 retained = json.loads((out / 'manifest.json').read_text())
                 self.assertEqual(retained, result)
                 self.assertEqual(Path.cwd(), previous_cwd)
@@ -415,20 +426,28 @@ class ExecutionBoundaryTests(unittest.TestCase):
         self.assertNotIn(driver.TESTS[0], seen)
         self.assertIn('NATIVE_BUILD_FAILED', result['failures'])
 
+    def test_success_text_cannot_replace_closed_actual_host_scope(self):
+        for value in (False, None, 0, 1, 'true'):
+            with self.subTest(value=value):
+                result, _ = self.exercise(host_complete=value)
+                self.assertFalse(result['passed'])
+                self.assertFalse(result['runs'][-1]['passed'])
+                self.assertIn('NATIVE_HOST_SCOPE_NOT_CLOSED', result['runs'][-1]['failure'])
+
     def test_zero_match_exit_zero_is_still_failure(self):
         result, _ = self.exercise(zero=driver.TESTS[0])
         self.assertFalse(result['passed'])
-        self.assertEqual([r['passed'] for r in result['runs']], [False, True, True, True])
+        self.assertEqual([r['passed'] for r in result['runs']], [False, True, True, True, True])
 
     def test_ignored_exit_zero_is_still_failure(self):
         result, _ = self.exercise(ignored=driver.TESTS[1])
         self.assertFalse(result['passed'])
-        self.assertEqual([r['passed'] for r in result['runs']], [True, False, True, True])
+        self.assertEqual([r['passed'] for r in result['runs']], [True, False, True, True, True])
 
     def test_nonzero_exit_cannot_be_overridden_by_success_text(self):
         result, _ = self.exercise(fail=driver.TESTS[0])
         self.assertFalse(result['passed'])
-        self.assertEqual(len(result['runs']), 4)
+        self.assertEqual(len(result['runs']), 5)
         self.assertFalse(result['runs'][0]['passed'])
 
     def test_timeout_cannot_be_overridden_by_success_text(self):

@@ -345,3 +345,269 @@ fn admission_parent_reuse_matches_reference_execution_on_inactive_parent_and_reo
         );
     }
 }
+
+#[test]
+fn history_parent_single_call_reuses_state_but_never_work_or_a_prior_refusal() {
+    let dir = tempfile::tempdir().unwrap();
+    let settings = Settings::development(Some(1)).unwrap();
+    let mut node = open(&dir.path().join("history"), &settings, true);
+    let valid = make(&node, settings.genesis(), 1, 1001, 0);
+    let wrong = wrong_root(valid.clone());
+    let before = node.read_active().unwrap();
+    let stats = node.stats().unwrap();
+    for _ in 0..2 {
+        let reads = state_reads(&node);
+        let replayed = AtomicUsize::new(0);
+        let prepared = AtomicUsize::new(0);
+        let error = node
+            .admit_history_packet_with_native_control(
+                &wrong,
+                1000,
+                &mut |point| {
+                    if point == pon_work::VerificationProgress::BeforeReplay {
+                        replayed.fetch_add(1, Ordering::Relaxed);
+                    }
+                    Ok(())
+                },
+                &ExecutionControl::new(
+                    &|point| {
+                        if matches!(point, ExecutionProgress::BeforePrepare { .. }) {
+                            prepared.fetch_add(1, Ordering::Relaxed);
+                        }
+                        Ok(())
+                    },
+                    &(),
+                ),
+                &mut || Ok(()),
+            )
+            .unwrap_err();
+        assert_eq!(error.to_string(), "ROOT");
+        assert!(!error.requires_owner_stop());
+        assert_eq!(replayed.load(Ordering::Relaxed), 1);
+        assert!(prepared.load(Ordering::Relaxed) > 0);
+        assert_eq!(state_reads(&node) - reads, 1);
+        assert!(node.record(wrong.id().unwrap()).is_err());
+        assert_eq!(node.stats().unwrap(), stats);
+        assert_eq!(node.read_active().unwrap(), before);
+        assert!(node.root_rejection_cache.borrow().is_none());
+    }
+    let mut reference = open(&dir.path().join("reference"), &settings, false);
+    let id = reference.admit(&valid, 1000).unwrap();
+    reference.activate_observed(id, 1000).unwrap();
+    assert_eq!(
+        node.admit_history_packet_with_native_control(
+            &valid,
+            1000,
+            &mut |_| Ok(()),
+            &ExecutionControl::new(&|_| Ok(()), &()),
+            &mut || Ok(()),
+        )
+        .unwrap(),
+        id
+    );
+    assert_eq!(node.active().unwrap().0, settings.genesis());
+    node.activate_observed(id, 1000).unwrap();
+    let after = node.read_active().unwrap();
+    assert_eq!(after, reference.read_active().unwrap());
+    drop(node);
+    assert_eq!(
+        open(&dir.path().join("history"), &settings, true)
+            .read_active()
+            .unwrap(),
+        after
+    );
+}
+
+#[test]
+fn history_parent_foreign_sql_during_work_or_second_fence_forces_fresh_validation() {
+    for during_work in [true, false] {
+        let dir = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(1)).unwrap();
+        let mut node = open(dir.path(), &settings, true);
+        let packet = make(&node, settings.genesis(), 1, 1001, 0);
+        let before = node.read_active().unwrap();
+        let stats = node.stats().unwrap();
+        let slot = node.slot().unwrap();
+        let key = format!("work:{}", hex::encode(packet.header.work_task));
+        let bytes: Vec<u8> = node
+            .db
+            .query_row(
+                "SELECT value FROM kv WHERE slot=? AND key=?",
+                params![slot, key],
+                |row| row.get(0),
+            )
+            .unwrap();
+        assert_eq!(
+            serde_json::from_slice::<Value>(&bytes).unwrap(),
+            Value::Bool(true)
+        );
+        let foreign = Mutex::new(Connection::open(dir.path().join("native.sqlite")).unwrap());
+        let changed = AtomicUsize::new(0);
+        let corrupt = || -> Result<()> {
+            assert_eq!(changed.fetch_add(1, Ordering::Relaxed), 0);
+            assert_eq!(
+                foreign.lock().unwrap().execute(
+                    "UPDATE kv SET value=? WHERE slot=? AND key=?",
+                    params![b"null".as_slice(), slot, key],
+                )?,
+                1
+            );
+            Ok(())
+        };
+        let epoch = node.admission_state_epoch().unwrap();
+        let reads = state_reads(&node);
+        let completed_work = AtomicUsize::new(0);
+        let boundary = AtomicUsize::new(0);
+        let prepared = AtomicUsize::new(0);
+        let error = node
+            .admit_history_packet_with_native_control(
+                &packet,
+                1000,
+                &mut |point| {
+                    if point == pon_work::VerificationProgress::BeforeVerifiedWork {
+                        completed_work.fetch_add(1, Ordering::Relaxed);
+                        if during_work {
+                            corrupt()?;
+                        }
+                    }
+                    Ok(())
+                },
+                &ExecutionControl::new(
+                    &|point| {
+                        if matches!(point, ExecutionProgress::BeforePrepare { .. }) {
+                            prepared.fetch_add(1, Ordering::Relaxed);
+                        }
+                        if point == ExecutionProgress::BeforeParentBinding
+                            && boundary.fetch_add(1, Ordering::Relaxed) + 1 == 2
+                            && !during_work
+                        {
+                            corrupt()?;
+                        }
+                        Ok(())
+                    },
+                    &(),
+                ),
+                &mut || Ok(()),
+            )
+            .unwrap_err();
+        assert_eq!(completed_work.load(Ordering::Relaxed), 1);
+        assert_eq!(changed.load(Ordering::Relaxed), 1);
+        assert!(node.admission_state_epoch().unwrap() != epoch);
+        assert_eq!(error.to_string(), "ROOT");
+        assert!(error.requires_owner_stop());
+        assert_eq!(prepared.load(Ordering::Relaxed), 0);
+        assert_eq!(state_reads(&node) - reads, 2);
+        assert!(node.record(packet.id().unwrap()).is_err());
+        foreign
+            .lock()
+            .unwrap()
+            .execute(
+                "UPDATE kv SET value=? WHERE slot=? AND key=?",
+                params![bytes, slot, key],
+            )
+            .unwrap();
+        assert_eq!(node.read_active().unwrap(), before);
+        assert_eq!(node.stats().unwrap(), stats);
+    }
+}
+
+#[test]
+fn history_parent_keeps_task_and_clock_before_work_and_second_fence_cancellation() {
+    let dir = tempfile::tempdir().unwrap();
+    let settings = Settings::development(Some(1)).unwrap();
+    let mut node = open(dir.path(), &settings, true);
+    let valid = make(&node, settings.genesis(), 1, 1001, 0);
+    let mut unregistered = valid.clone();
+    let zeros = vec![0; pon_work::CELLS];
+    let producer = pon_work::PreparedTask::new(&zeros, &zeros).unwrap();
+    unregistered.header.work_task = pon_work::task_id(&zeros, &zeros).unwrap();
+    assert_ne!(unregistered.header.work_task, valid.header.work_task);
+    for nonce in 0..4096 {
+        unregistered.header.nonce = nonce;
+        unregistered.proof = producer.prove(unregistered.header.challenge()).unwrap();
+        if pon_work::precheck_proof_statement(
+            unregistered.header.challenge(),
+            unregistered.header.work_task,
+            unregistered.header.target,
+            &unregistered.proof,
+        )
+        .is_ok()
+        {
+            break;
+        }
+    }
+    // The task rejection below is separate from genuine complete W1 validity.
+    WorkCheckedPacket::verify(unregistered.clone()).unwrap();
+    let before = node.read_active().unwrap();
+    let stats = node.stats().unwrap();
+    for (packet, clock, reason) in [(&unregistered, 1000, "TASK"), (&valid, 0, "TIME_DEFERRED")] {
+        let work = AtomicUsize::new(0);
+        let executed = AtomicUsize::new(0);
+        let error = node
+            .admit_history_packet_with_native_control(
+                packet,
+                clock,
+                &mut |_| {
+                    work.fetch_add(1, Ordering::Relaxed);
+                    Ok(())
+                },
+                &ExecutionControl::new(
+                    &|_| {
+                        executed.fetch_add(1, Ordering::Relaxed);
+                        Ok(())
+                    },
+                    &(),
+                ),
+                &mut || Ok(()),
+            )
+            .unwrap_err();
+        assert_eq!(error.to_string(), reason);
+        assert_eq!(work.load(Ordering::Relaxed), 0);
+        assert_eq!(executed.load(Ordering::Relaxed), 0);
+        assert!(node.record(packet.id().unwrap()).is_err());
+    }
+    for code in [
+        crate::ErrorCode::PublicRequestCancelled,
+        crate::ErrorCode::PublicMutationCpuBudget,
+    ] {
+        let boundary = AtomicUsize::new(0);
+        let prepared = AtomicUsize::new(0);
+        let completed_work = AtomicUsize::new(0);
+        let error = node
+            .admit_history_packet_with_native_control(
+                &valid,
+                1000,
+                &mut |point| {
+                    if point == pon_work::VerificationProgress::BeforeVerifiedWork {
+                        completed_work.fetch_add(1, Ordering::Relaxed);
+                    }
+                    Ok(())
+                },
+                &ExecutionControl::new(
+                    &|point| {
+                        if matches!(point, ExecutionProgress::BeforePrepare { .. }) {
+                            prepared.fetch_add(1, Ordering::Relaxed);
+                        }
+                        if point == ExecutionProgress::BeforeParentBinding
+                            && boundary.fetch_add(1, Ordering::Relaxed) + 1 == 2
+                        {
+                            Err(Error::new(code))
+                        } else {
+                            Ok(())
+                        }
+                    },
+                    &(),
+                ),
+                &mut || Ok(()),
+            )
+            .unwrap_err();
+        assert!(error.is(code));
+        assert!(!error.requires_owner_stop());
+        assert_eq!(completed_work.load(Ordering::Relaxed), 1);
+        assert_eq!(boundary.load(Ordering::Relaxed), 2);
+        assert_eq!(prepared.load(Ordering::Relaxed), 0);
+        assert!(node.record(valid.id().unwrap()).is_err());
+        assert_eq!(node.read_active().unwrap(), before);
+        assert_eq!(node.stats().unwrap(), stats);
+    }
+}

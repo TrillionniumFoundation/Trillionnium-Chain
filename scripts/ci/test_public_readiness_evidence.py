@@ -699,6 +699,31 @@ class DurableStoreTests(unittest.TestCase):
                 self.summary['ledger_disk_bytes'] = sum(path.stat().st_size for path in self.folder.rglob('*') if path.is_file())
                 self.verify()
 
+    def test_history_tables_and_resealed_domains_do_not_become_legacy_evidence(self):
+        ddl,domain = check.native_durable_schema(check.ROOT)
+        extension = ('CREATE TABLE history_effect_v6(operation TEXT PRIMARY KEY NOT NULL CHECK(length(operation)=64),'
+                     'intent BLOB UNIQUE NOT NULL CHECK(length(intent)=32),'
+                     'marker BLOB NOT NULL CHECK(length(marker)>0 AND length(marker)<=16384));')
+        original = self.H(domain,ddl.encode())
+        history = self.H('native-history-effect-schema-v6',(ddl+extension).encode())
+        for schema in (original,self.H(domain,(ddl+extension).encode()),history):
+            with self.subTest(schema=schema.hex()):
+                with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
+                    database.executescript(extension)
+                    database.execute('INSERT INTO history_effect_v6 VALUES(?,?,?)',
+                                     ('1'*64,bytes(32),b'unverified effect'))
+                    database.execute("UPDATE metadata SET value=? WHERE key='schema'",(schema,))
+                self.summary['ledger_disk_bytes'] = sum(path.stat().st_size for path in self.folder.rglob('*') if path.is_file())
+                with self.assertRaisesRegex(ValueError,'durable schema additions/omissions/changes'): self.verify()
+                with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
+                    database.execute('DROP TABLE history_effect_v6')
+                    database.execute("UPDATE metadata SET value=? WHERE key='schema'",(original,))
+                self.summary['ledger_disk_bytes'] = sum(path.stat().st_size for path in self.folder.rglob('*') if path.is_file())
+                self.verify()
+        with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
+            database.execute("UPDATE metadata SET value=? WHERE key='schema'",(history,))
+        with self.assertRaisesRegex(ValueError,'durable metadata/context'): self.verify()
+
     def test_resealed_wrong_half_link_is_not_accepted_as_derived_structure(self):
         block,previous,height = self.blocks[1]
         with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
@@ -760,6 +785,7 @@ class NativeDurableSchemaTests(unittest.TestCase):
             'trillionnium/crates/trnm-pon-node/src/pq_quota_v3.rs',
             'trillionnium/crates/trnm-pon-node/src/pq_tasks_v4.rs',
             'trillionnium/crates/trnm-pon-node/src/pq_tasks_v5.rs',
+            'trillionnium/crates/trnm-pon-node/src/store/history_effect_v6.rs',
             'trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_native_v1.rs',
             'trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs',
         )}
@@ -928,7 +954,7 @@ class NativeDurableSchemaTests(unittest.TestCase):
         for label,before,after in mutations:
             with self.subTest(label=label),self.assertRaises(ValueError):
                 self.extract(self.replace_once(self.current,before,after))
-        backend = self.current[self.current.index('impl StateBackend {'):self.current.index('\nstruct NativeOwners {')]
+        backend = self.current[self.current.index('impl StateBackend {'):self.current.index('\nstruct NativeOwners')]
         with self.assertRaisesRegex(ValueError,'durable source body StateBackend'):
             self.extract(self.current+'\n'+backend)
 
@@ -957,7 +983,8 @@ class NativeDurableSchemaTests(unittest.TestCase):
                 self.extract(self.replace_once(self.current,before,after))
 
     def test_permanent_growth_table_cannot_be_inserted_into_legacy_literals(self):
-        for name in ('growth_states','GrOwTh_StAtEs','native_io_shared_snapshots','NaTiVe_Io_ShArEd_SnApShOtS'):
+        for name in ('growth_states','GrOwTh_StAtEs','native_io_shared_snapshots','NaTiVe_Io_ShArEd_SnApShOtS',
+                     'history_effect_v6','HiStOrY_EfFeCt_V6'):
             extension = 'CREATE TABLE '+name+'(block BLOB PRIMARY KEY,data BLOB NOT NULL);'
             literal = 'const DDL: &str = "'+extension+'";'
             v1 = literal+'fn open() { hash(b"native-branch-schema-v1", &[DDL.as_bytes()]); }'
@@ -969,6 +996,106 @@ class NativeDurableSchemaTests(unittest.TestCase):
             for source,index in sources:
                 with self.subTest(name=name,index=index is not None),self.assertRaisesRegex(ValueError,'tables in legacy durable schema'):
                     self.extract(source,index)
+
+    def test_history_mapping_is_closed_without_granting_history_evidence(self):
+        expected = self.extract(self.current)
+        self.assertNotIn('history_effect_v6',expected[0])
+        arm = 'Self::HistoryEffectV6 => format!("{}{}", ddl(), history_effect_v6::DDL),'
+        changes = [
+            ('b"native-history-effect-schema-v6"','b"native-branch-schema-v2"'),
+            (arm,'Self::HistoryEffectV6 => ddl(),'),
+            (arm,'Self::HistoryEffectV6 => format!("{}{}", history_effect_v6::DDL, ddl()),'),
+            (arm,'Self::HistoryEffectV6 => format!("{}{}", ddl(), native_authenticated::DDL),'),
+            ('    PermanentAccountGrowthV2,\n    HistoryEffectV6,','    PermanentAccountGrowthV2,'),
+        ]
+        for before,after in changes:
+            with self.subTest(after=after),self.assertRaisesRegex(ValueError,'durable backend'):
+                self.extract(self.replace_once(self.current,before,after))
+        # A comment/string mentioning the successor must not select it for an
+        # explicitly historical backend, or authorize a broken active mapping.
+        historical = self.historical_backend_source()
+        decoy = '\n// HistoryEffectV6 history_effect_owner\nconst NOTE: &str = r#"history_effect_v6 startup_material"#;\n'
+        self.assertEqual(self.extract(historical+decoy),self.extract(historical))
+        broken = self.replace_once(self.current,arm,'Self::HistoryEffectV6 => ddl(),')
+        with self.assertRaisesRegex(ValueError,'durable backend composition/domain'):
+            self.extract(broken+decoy)
+
+    def test_history_owner_fields_and_ordinary_openers_are_exact(self):
+        owners = "struct NativeOwners<'a> {"
+        changes = [
+            (owners,"pub struct NativeOwners<'a> {"),
+            (owners,"#[cfg(any())]\n"+owners),
+            (owners,'struct NativeOwners {'),
+            ('history_effect: Option<history_effect_v6::Owner>,','history_effect: Option<OtherOwner>,'),
+            ("startup_material: Option<history_effect_v6::StartupMaterial<'a>>,",
+             "startup_material: Option<history_effect_v6::StartupMaterial<'static>>,"),
+        ]
+        for before,after in changes:
+            with self.subTest(after=after),self.assertRaisesRegex(ValueError,'durable History owner declaration'):
+                self.extract(self.replace_once(self.current,before,after))
+        for name in ('open_inner','open_with_authenticated_state_and_fault'):
+            method = self.function_part(self.current,name)
+            for field in ('history_effect','startup_material'):
+                changed = self.replace_once(method,field+': None,',field+': Some(other),')
+                with self.subTest(name=name,field=field),self.assertRaisesRegex(ValueError,'durable backend opener'):
+                    self.extract(self.replace_once(self.current,method,changed))
+
+    def test_history_owner_and_startup_seal_cannot_be_bypassed_or_rebound(self):
+        method = self.function_part(self.current,'open_selected_with_io')
+        consume = 'history_owner.consume_startup_material(material.seal, &settings, material.progress)?;'
+        equivalence = '(state_backend == StateBackend::HistoryEffectV6) == history_effect_owner.is_some()'
+        changes = [
+            (equivalence,'history_effect_owner.is_none() || state_backend == StateBackend::HistoryEffectV6'),
+            (consume,'settings.replay_checkpoint_tile_material()?;'),
+            (consume,consume.replace('&settings','&other_settings')),
+            (consume,consume.replace(')?;',');')),
+            ('history_effect_owner.is_none(),\n                "HISTORY_V6_STARTUP_SEAL_REQUIRED",',
+             'true,\n                "HISTORY_V6_STARTUP_SEAL_REQUIRED",'),
+            ('+ usize::from(history_effect_owner.is_some())','+ 0'),
+            ('.or_else(|| history_effect_owner.as_ref().map(|p| p.marker.as_slice()))',''),
+            ('progress(stage)?;','let _ = progress(stage);'),
+        ]
+        for before,after in changes:
+            changed = self.replace_once(method,before,after)
+            with self.subTest(after=after),self.assertRaisesRegex(ValueError,'durable History opening owner contract'):
+                self.extract(self.replace_once(self.current,method,changed))
+        pair = self.selected_schema_bindings()
+        for statement in ('let history_effect_owner = None;', 'let startup_material = None;',
+                          'let startup_check = |_| Ok(());', 'let alias = &mut history_effect_owner;'):
+            with self.subTest(statement=statement),self.assertRaisesRegex(ValueError,'durable History opening owner (?:contract|rebound)'):
+                self.extract(self.replace_once(self.current,pair,pair+'\n'+statement))
+        # The unchanged seal path remains valid with non-code trivia; a rejected
+        # invocation must not poison, or cache acceptance for, the next input.
+        commented = self.replace_once(method,consume,'/* exact sealed material */ '+consume)
+        self.assertEqual(self.extract(self.replace_once(self.current,method,commented)),self.extract(self.current))
+
+    def test_history_module_ddl_and_startup_material_declarations_are_bound(self):
+        path = 'trillionnium/crates/trnm-pon-node/src/store/history_effect_v6.rs'
+        history = self.auxiliary[path]
+        declaration = 'pub mod history_effect_v6;'
+        for replacement in ('#[path = "other.rs"]\n'+declaration, '#[cfg(any())]\n'+declaration,
+                            'pub mod history_effect_v6 {}', declaration+'\n'+declaration,
+                            'mod decoy { '+declaration+' }'):
+            with self.subTest(replacement=replacement),self.assertRaisesRegex(ValueError,'durable (?:History module owner|source item history_effect_v6)'):
+                self.extract(self.replace_once(self.current,declaration,replacement))
+        for before,after in [
+            ('pub(super) const DDL: &str','#[cfg(any())]\npub(super) const DDL: &str'),
+            ('CREATE TABLE history_effect_v6(','CREATE TABLE legacy_effect('),
+            ("pub(super) struct StartupMaterial<'a>","pub struct StartupMaterial<'a>"),
+            ('pub(super) seal: crate::operator_checkpoint_tile::StartupMaterialSeal,','pub(super) seal: (),'),
+        ]:
+            with self.subTest(after=after),self.assertRaisesRegex(ValueError,'durable History (?:DDL|owner declaration)'):
+                self.extract(self.current,auxiliary={path:self.replace_once(history,before,after)})
+        ambiguous = self.store.with_suffix('')/'history_effect_v6/mod.rs'
+        ambiguous.parent.mkdir()
+        ambiguous.write_text(history)
+        try:
+            with self.assertRaisesRegex(ValueError,'durable History ambiguous module path'):
+                self.extract(self.current)
+        finally:
+            ambiguous.unlink()
+            ambiguous.parent.rmdir()
+        self.assertEqual(self.extract(self.current)[1],'native-branch-schema-v2')
 
     def test_actual_opener_and_selected_schema_bindings_cannot_be_replaced(self):
         pair = self.selected_schema_bindings()
@@ -1068,7 +1195,7 @@ class NativeDurableSchemaTests(unittest.TestCase):
                 self.extract(self.replace_once(self.current,before,after))
 
     def test_backend_decoys_and_historical_hash_cannot_authorize_bad_active_mapping(self):
-        backend = self.current[self.current.index('impl StateBackend {'):self.current.index('\nstruct NativeOwners {')]
+        backend = self.current[self.current.index('impl StateBackend {'):self.current.index('\nstruct NativeOwners')]
         bad = self.replace_once(self.current,'b"native-branch-schema-v2"','b"native-branch-schema-unknown"')
         decoys = ['\n'+''.join('// '+line+'\n' for line in backend.splitlines()),
                   '\n/* outer /* nested */ '+backend+' */\n',

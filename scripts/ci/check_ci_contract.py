@@ -247,7 +247,7 @@ NATIVE_RELEASE_BLOCK = '''    (
 # Freeze the complete straight-line lane independently of the file being checked.
 # Presence/count checks alone also match commands skipped or swallowed by shell
 # control flow. Keep their specific diagnostics before the full-lane comparison.
-PROTOCOL_CONTRACT_BLOCK = '''    python3 scripts/ci/run_from_zero_native.py --out "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/from-zero-native"
+PROTOCOL_CONTRACT_BLOCK = '''    python3 scripts/ci/run_from_zero_native.py --out "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/from-zero-native" --host-owner "${TRNM_FROM_ZERO_HOST_OWNER:?explicit provisioned fixed-parent owner required}"
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives -p trnm-checkpoint-types -p trnm-verification-profiles --all-targets --all-features
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-protocol --all-targets --all-features
     cargo build --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-protocol -p trnm-crypto-primitives -p trnm-mvcc-fee --examples

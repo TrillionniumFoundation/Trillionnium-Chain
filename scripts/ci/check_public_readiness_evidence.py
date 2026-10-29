@@ -16,6 +16,7 @@ from unittest.mock import patch
 from report_module_evidence import rust_code, rust_group_end
 from rust_source_tokens import rust_structure_tokens
 import pq_legacy_source_contract as pq_contract
+import history_legacy_source_contract as history_contract
 
 ROOT = Path(__file__).resolve().parents[2]
 FLAGS = ('public_network_ready', 'production_activation', 'independent_accepted',
@@ -227,7 +228,9 @@ def native_durable_schema(root):
     backend, including its exact held-I/O delegation and the ordinary opener's
     identity mapping through the known shared-snapshot layout, are supported.
     The explicit NPQ1/2/3/4/5 successor also requires its closed selector, guard
-    and original Legacy header path. Authenticated, shared-account, PQ and growth storage
+    and original Legacy header path. The explicit History V6 join additionally
+    binds its private owner fields and consumed startup material. Authenticated,
+    shared-account, PQ, growth and History storage
     are different evidence scopes; recognizing their exact backend mappings
     must never append their tables or return their domains in this legacy result.
     This is not a Rust evaluator. Unknown bodies/literals fail closed. The shared
@@ -380,7 +383,7 @@ def native_durable_schema(root):
     def legacy(ddl, domain):
         # Source binding does not authorize widening this evidence contract.
         # These tables have their own full-state/commitment/node verification.
-        require(not re.search(r'\b(?:archive_nodes|native_state_commitments|growth_states|native_io_shared_snapshots|local_pq_[A-Za-z0-9_]+)\b',ddl,re.I),
+        require(not re.search(r'\b(?:archive_nodes|native_state_commitments|growth_states|native_io_shared_snapshots|history_effect_v6|local_pq_[A-Za-z0-9_]+)\b',ddl,re.I),
                 'authenticated tables in legacy durable schema')
         return ddl,domain
     def shared_layout_contract():
@@ -450,16 +453,23 @@ def native_durable_schema(root):
         if re.search(r'\bStateBackend\b',code):
             # Select this branch first. A bad current mapping cannot fall back
             # to a historical inline hash elsewhere in the same source file.
-            layout(body(source,'enum','StateBackend'),'Legacy, AuthenticatedV1, PermanentAccountGrowthV2,',
+            history_selected = re.search(r'\b(?:HistoryEffectV6|history_effect_v6|history_effect_owner|startup_material)\b',code) is not None
+            variants = 'Legacy, AuthenticatedV1, PermanentAccountGrowthV2,'
+            if history_selected:
+                variants += ' HistoryEffectV6,'
+            layout(body(source,'enum','StateBackend'),variants,
                    'durable backend variants')
             implementation = body(source,'impl','StateBackend')
             pq_selected = re.search(r'\b(?:pq_explicit|selected_ddl|pq_native_v1|pq_accounts_v2|pq_quota_v3|pq_tasks_v4|pq_tasks_v5)\b',code) is not None
             if pq_selected:
                 pq_contract.exact(item_prefix(source,'impl','StateBackend','{'),
                                   'impl StateBackend','durable backend PQ owner')
-                pq_contract.exact(implementation,pq_contract.BACKEND_IMPLEMENTATION,
+                expected_backend = (history_contract.BACKEND_IMPLEMENTATION if history_selected
+                                    else pq_contract.BACKEND_IMPLEMENTATION)
+                pq_contract.exact(implementation,expected_backend,
                                   'durable backend composition/domain')
             else:
+                require(not history_selected,'durable History PQ selector required')
                 layout(implementation, '''
                 fn ddl(self) -> String {
                     match self {
@@ -517,6 +527,15 @@ def native_durable_schema(root):
                     Self::open_selected(path, settings, workers, hook,
                         NativeOwners { policy: None, mining: None, continuous: None, }, StateBackend::AuthenticatedV1, false,)''',
             }
+            if history_selected:
+                selections['open_inner'] = '''Self::open_selected(path, settings, workers, hook,
+                    NativeOwners { policy: owner_policy, mining: mining_owner, continuous: continuous_owner,
+                        history_effect: None, startup_material: None, }, StateBackend::Legacy, false,)'''
+                selections['open_with_authenticated_state_and_fault'] = '''
+                    ensure(!owner_marker_present(path)?, "OWNER_TASK_POLICY_REQUIRED")?;
+                    Self::open_selected(path, settings, workers, hook,
+                        NativeOwners { policy: None, mining: None, continuous: None,
+                            history_effect: None, startup_material: None, }, StateBackend::AuthenticatedV1, false,)'''
             for name, expected in selections.items():
                 layout(body(node,'fn',name),expected,'durable backend opener '+name)
             selected = body(node,'fn','open_selected')
@@ -528,11 +547,13 @@ def native_durable_schema(root):
                 # fall back to an old matching pair or a nested method decoy.
                 opening_header = re.sub(r'\bmut\s+settings\s*:', 'settings:',
                                         header(node,'open_selected'),count=1)
+                owners_type = "NativeOwners<'_>" if history_selected else 'NativeOwners'
                 layout(opening_header, '''fn open_selected(
                     path: &Path, settings: Settings, workers: usize,
                     hook: Option<&mut Hook<'_>>, owners: NativeOwners,
                     state_backend: StateBackend, growth_observation_only: bool,
-                ) -> Result<Self>''', 'durable backend selector header')
+                ) -> Result<Self>'''.replace('owners: NativeOwners','owners: '+owners_type),
+                       'durable backend selector header')
                 if pq_selected:
                     pq_contract.exact(selected,pq_contract.BRIDGE,'durable backend selector bridge')
                     pq_contract.exact(body(source,'struct','NativeStoreOpening'),
@@ -553,7 +574,8 @@ def native_durable_schema(root):
                     path: &Path, settings: Settings, workers: usize,
                     mut hook: Option<&mut Hook<'_>>, owners: NativeOwners,
                     opening: NativeStoreOpening,
-                ) -> Result<Self>''', 'durable backend opening header')
+                ) -> Result<Self>'''.replace('owners: NativeOwners','owners: '+owners_type),
+                       'durable backend opening header')
                 opening_source = body(node,'fn','open_selected_with_io')
                 if pq_selected:
                     for name in ('open_selected','open_selected_with_io'):
@@ -572,6 +594,22 @@ def native_durable_schema(root):
                     end = pq_contract.opening_prefix_end(opening_source,selected,end,rust_group_end,require)
                     pq_contract.verify_packet_contract(root,source,node,safe=safe,body=body,
                         header=header,item_prefix=item_prefix,require=require)
+                if history_selected:
+                    pq_contract.exact(item_prefix(source,'enum','StateBackend','{'),
+                        '#[derive(Clone, Copy, Debug, PartialEq, Eq)] enum StateBackend',
+                        'durable History backend owner')
+                    module = item_prefix(source,'mod','history_effect_v6',';')
+                    pq_contract.exact(module,'pub mod history_effect_v6','durable History module owner')
+                    require(not (Path(root)/'trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/mod.rs').exists(),
+                            'durable History ambiguous module path')
+                    history = safe(root,'trillionnium/crates/trnm-pon-node/src/store/history_effect_v6.rs').read_text()
+                    pq_contract.exact(item_prefix(history,'const','DDL','='),
+                                      'pub(super) const DDL: &str','durable History DDL owner')
+                    require(literal(history,'DDL') == history_contract.DDL,'durable History DDL')
+                    for text,name,expected in [(source,'NativeOwners',history_contract.OWNERS),
+                                               (history,'StartupMaterial',history_contract.STARTUP_MATERIAL)]:
+                        history_contract.struct_contract(text,name,expected,masked=masked,direct=direct,
+                            item_prefix=item_prefix,group_end=rust_group_end,require=require)
                 selected = selected[end:]
                 held_io = True
             else:
@@ -605,6 +643,11 @@ def native_durable_schema(root):
                     and not re.search(places+r'\s*[+*/%&|^\-]?=(?!=)',remaining)
                     and not re.search(r'&\s*mut\s*\(*\s*'+names,remaining),
                     'durable backend selected schema rebound')
+            if history_selected:
+                # Preserve the original selector/rebinding guards and their
+                # diagnostics before imposing the additional History owner join.
+                history_contract.opening_prefix_end(opening_source,masked(opening_source),end,
+                    direct=direct,group_end=rust_group_end,require=require)
         else:
             matches = [match for match in re.finditer(r'\bhash\(\s*b"native-branch-schema-v2"\s*,\s*&\[\s*ddl\.as_bytes\(\)\s*\]\s*\)',source)
                        if code[match.start():match.start()+4] == 'hash']

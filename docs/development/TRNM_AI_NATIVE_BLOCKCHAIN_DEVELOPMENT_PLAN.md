@@ -7001,3 +7001,160 @@ own exact Chain tuple until a new paired run is actually completed. Independent
 72-hour WAN operation, complete release retention/repair, strong-baseline model
 benefit and end-to-end net throughput comparisons remain open. All existing
 release and public-readiness denial flags remain in force.
+
+### Native convergence observations and retained failures
+
+The first complete local Node library preflight used the converged source tree
+`f5ad3536ae52897a5ea55cae11fa05a57445fdfc`, now retained as the historical source
+[commit](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/6a5eb9de422cc3ae4392ee7ace8ef12f3a7395e6).
+All 1,297 paths captured by that run's source observer match this tree. This is
+preservation of the failed observation's source, not retroactive certification
+of inputs outside that observer's scope or of a missing compiler environment.
+The real run completed with **816 passed, 21 failed and 22 original ignored
+helpers**. Its retained executable SHA-256 is
+`51022b9662c256e823291396dccc2e51260a4423768c2201314818684582002d`;
+raw log SHA-256 is
+`db29555130bdb605cb2361859a9c65f8ea11c5761890aa991dad3dbe28a6582f`.
+The original two 65,536-key capacity controls and all eight pure/raw History
+controls executed successfully; neither their datasets nor the failure inventory
+were reduced.
+
+Nineteen failures stopped at the absent compile-time
+`TRNM_HISTORY_STARTUP_NO_NATIVE_SOURCE_COMMIT`: twelve lifecycle, six reorg and
+one first-startup case. The repository's original CI already exports this source
+pin; the local preflight invocation omitted it. Supplying an environment variable
+to the old executable cannot qualify that build. The final committed source must
+be rebuilt with its actual commit at compile time and runtime. The normal Rustup
+entry point also remains necessary to execute the pinned SQLite build-script
+layout witness; no synthetic qualifying cfg, fence or allowlist is supplied.
+
+Two other failures require independent treatment. The settled-epoch publication
+case could not establish the original two consecutive complete process-graph
+observations while unrelated processes appeared and disappeared. The exact same
+executable passed the original case and all five publication cuts in a subsequent
+quiet serial run. This preserves a real observation/liveness limitation; it does
+not turn the original failure into a pass or establish busy-host availability.
+The inactive-parent History case independently failed with a known negative
+CPU balance, not missing CPU accounting: an instrumented exact-case run observed
+137,113,446 ns credited against 138,756,603 ns charged, leaving -1,643,157 ns with
+no in-flight workers. Its existing crash fence therefore retained an unclean
+owner. Clamping debt, treating the close as clean, increasing the reserve, or
+changing the original test to ignore the refusal would not repair this problem.
+
+The candidate instead removes the duplicated complete parent-State traversal
+inside one History admission. A private checked parent is produced by the
+original complete pre-W1 eligibility checks, kept inside the same mutable Node
+call for the same packet, and reused only after current header/owner checks and
+an unchanged stable SQLite epoch. The original second parent-binding checkpoint
+and epoch check remain. A real external SQLite change requires fresh full
+validation. Ordinary admission still supplies no reusable History parent, and
+no cache, caller-held capability, work shortcut or budget change is introduced.
+Three new controls exercise real W1/M06, invalid output, task/time preconditions,
+external SQL mutation at both fences and cancellation. The original seven-page
+cold fixture retains every success-path call and assertion; its diagnostic
+reads occur only after refusal or after the original loop. Type checking on the
+combined source succeeded, while actual budget/service acceptance remains a
+separate native result.
+
+The combined source/readiness follow-up retains the original strict PQ checks
+and explicitly recognizes the fourth, separately sealed History backend. Its
+closed source contract checks startup ownership, mutual exclusion, seal
+consumption and ordinary-opener refusal. On the combined worktree, all 34 source
+integrity controls, 96 CI contract controls, 97 startup-driver controls and 91
+readiness controls passed with source bytes unchanged. The ten host-launcher
+controls are included in the driver inventory and were also run separately;
+they are not ten additional independent product qualifications.
+
+Only the existing fixed-budget signed-business startup case now uses the native
+fixed-parent host launcher. The original 90-second window includes setup and
+attach. Its real ELF stays open in the unprivileged child; the narrow privileged
+helper checks the run lease, PID births, executable inode and digest, original
+fixed parent and deadline before releasing that same PID through `fexecve`.
+The four other startup cases retain their original owners. No sudo policy,
+general root command, alternative resource limit or successful fallback is
+introduced. These local source/driver controls do not establish an actual
+privileged host qualification, and cleanup remains part of the terminal result.
+
+The Hepta lineage source in
+[PR #4246](https://github.com/TrillionniumFoundation/hepta-private-ci/pull/4246)
+has real hosted observations on its historical multi-Chain tuple. Its three-round
+model experiment completed one legal no-update round, then failed while observing
+the second round's exiting evaluation process. Its positive-child experiment
+completed ten real parent training steps, then failed while observing the first
+parent forward process; it never reached child qualification or installation.
+Both failures are `rss-observation-unavailable` at an owned process's exit
+transition. A later exit status of zero does not establish the missing original
+bounded observation. Any observer repair must preserve identity, live RSS
+refusals, actual `wait4` accounting, the original 100 ms drain and whole-stage
+deadline, and must be selected through a new closed execution-source profile.
+The two Linux x64 lanes, Linux ARM source-head lane and both Windows ledger lanes
+passed; the ARM prospective-merge lane was cancelled before its final three
+native steps. The blocking Hepta job was also cancelled. Neither cancellation
+is recorded as a pass, and the cancellation actor/reason is not established by
+the available logs.
+
+The independent 90-minute complete-W1 Composite proof-cost experiment also
+retains its actual timeout: full guest execution completed, but no complete proof
+or independent verification completed inside its original 5,400-second owner
+window. Backend observation shows continued segment proving on its original two
+workers. This is a research cost result, not a current raw-PoN admission verdict
+or a replacement for the distinct earlier Succinct experiment. The separately
+started four-hour cost profile must receive its own terminal receipt; extrapolated
+completion time cannot substitute for that observation.
+
+Whole public-service, end-to-end PQ and automatic-model-evolution acceptance stay
+open. A FinalUse PQ slice must pass through the real issuer, courier, nonce claim
+and turn-start owner while preserving revocation and external frontier history.
+It cannot certify the still-classical contribution/evaluation/publication/install
+owners or retire a migration source. The complete-release fault experiment,
+independent 72-hour WAN operation, strongest-solver work/service matrix and fair
+PoN-NG/DAG/Prism comparison remain separate required observations.
+
+### PN3 initial terminal receipt acquisition — 2026-10-29 (candidate / OPEN)
+
+Two original Hepta `47884ac6047f2341869ae566e4f599e57e864d45` executions
+remain failed. Run `40870778799` completed the first real round with
+`hold-no-positive-gain`, then its second-round backbone evaluation refused
+`exit-task-set` during the first observer capture. Run `40870778787` completed
+ten actual training steps, but the first parent forward refused an initial
+`ENOENT`. Both later exact owned waits reported exit zero and valid high-water
+receipts; neither recorded a terminal wait timestamp inside the original
+100 ms gap. Post-gap zombie-leader/running-PF_EXITING/no-mm diagnostics do not
+retroactively qualify those missing samples, model results or installations.
+The retained constructor errors do not identify the exact internal read or
+whether worker binding had already started. The deterministic regressions below
+isolate the incomplete-baseline branch; a fresh full-source model execution must
+still establish whether it resolves either real failure.
+
+The V4 worker owner now distinguishes a private initial terminal-receipt state
+from a complete initial exit-only classification. It may retain the existing
+reservation across a bounded nonleader disappearance or monotonically shrinking
+task roster/count, while continuing to validate every successful identity,
+namespace, state, PF_EXITING, memory and starttime read. Every successful count
+sets a nonincreasing ceiling; new or reappearing tasks, any observed live memory
+or invalid identity, and permission, I/O or malformed reads remain sticky
+refusals. Initial incomplete capture never binds worker pidfds or becomes the
+old full-baseline proof. Already fully bound V4 worker retirement keeps its
+original terminal-event and complete-frontier requirements.
+
+Only the original supervisor's exclusive same-child wait4, valid CPU and positive
+peak-RSS receipt, original RSS cap and exit status may close this pending state.
+Its deadline remains the lesser of the original missing sample plus 100 ms and
+the original whole-child deadline. No missing RSS value becomes zero, physical
+release, refunded capacity or an unlimited exit allowance. Failed constructors
+retain only a closed, failed typed result in the exact existing owner context,
+including the direct `__main__` entry, so a later exit zero cannot erase a prior
+refusal. All acquired FDs close; the borrowed supervisor pidfd stays with its owner.
+
+The frozen model-bound pilot and V2/V3 observer bytes remain unchanged. The V4
+worker source hash changes the complete observation-policy identity; old V4
+plans and receipts refuse on the new source. The paired Hepta experiment must
+explicitly freeze the new closed execution profile and exact Chain source, while
+retaining the original model plan, target and workload. Its execution profile is
+`hepta-integrated-chain-execution-v1`, with a fixed commit and complete reviewed
+source manifest; historical execution pins remain strict on the default path.
+Deterministic capture
+controls, an actual tiny owned wait4 with an explicitly synthetic initial roster
+gap, and retained resource-owner tests exercise only this component. They do not
+replay either historical model run or establish three installed generations,
+future quality, cross-node independence, or a qualified model update.

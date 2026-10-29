@@ -4339,9 +4339,40 @@ impl Node {
             completion,
         )
     }
-    /// Typed native-storage progress is separate from M06 worker accounting.
-    /// Only the explicit ordinary History profile selects the new resource
-    /// schedule; every old caller above retains the original strict adapter.
+    /// History retains its complete task/material check before W1. Its checked
+    /// parent stays inside this one call, on this same owner and exact packet;
+    /// it never becomes a caller-held token or a Node cache. Current header,
+    /// permit and SQL epoch checks still run after the full work verification.
+    pub(crate) fn admit_history_packet_with_native_control(
+        &mut self,
+        packet: &Packet,
+        observed_now: u64,
+        work_progress: &mut impl FnMut(pon_work::VerificationProgress) -> Result<()>,
+        control: &ExecutionControl<'_, Error>,
+        native: &mut dyn NativeProgress,
+    ) -> Result<Hash> {
+        let checked_parent =
+            match self.check_admission_context_for_permit(packet, observed_now, None, native)? {
+                CheckedAdmissionContext::Existing(id) => return Ok(id),
+                CheckedAdmissionContext::Parent(parent) => parent,
+            };
+        let permit = self.begin_owner_work(packet)?;
+        let checked = WorkCheckedPacket::verify_with_progress(packet.clone(), work_progress)?;
+        // This is the original History post-W1 CPU/resource boundary, before
+        // attaching the permit. The ingress control retains both checkpoints.
+        (control.progress)(ExecutionProgress::BeforeParentBinding)?;
+        let checked = self.attach_owner_work(checked, permit)?;
+        self.admit_work_checked_with_native_parent(
+            checked,
+            observed_now,
+            control,
+            &mut |_, point| crate::native_progress::dispatch(native, point),
+            &|_| Ok(()),
+            Some(checked_parent),
+        )
+    }
+    /// Preserve the original direct native-admission resource regressions.
+    #[cfg(test)]
     pub(crate) fn admit_work_checked_with_native_control(
         &mut self,
         checked: WorkCheckedPacket,
@@ -4365,19 +4396,63 @@ impl Node {
         native: &mut dyn FnMut(ExecutionProgress, NativeProgressPoint) -> Result<()>,
         completion: &dyn Fn(&WorkCheckedPacket) -> Result<()>,
     ) -> Result<Hash> {
+        self.admit_work_checked_with_native_parent(
+            checked,
+            observed_now,
+            control,
+            native,
+            completion,
+            None,
+        )
+    }
+    fn admit_work_checked_with_native_parent(
+        &mut self,
+        checked: WorkCheckedPacket,
+        observed_now: u64,
+        control: &ExecutionControl<'_, Error>,
+        native: &mut dyn FnMut(ExecutionProgress, NativeProgressPoint) -> Result<()>,
+        completion: &dyn Fn(&WorkCheckedPacket) -> Result<()>,
+        prior_parent: Option<CheckedAdmissionParent>,
+    ) -> Result<Hash> {
         let _measurement = (self.state_backend == StateBackend::AuthenticatedV1).then(|| {
             self.authenticated_arithmetic
                 .history
                 .observe(native_authenticated::HistoryStage::Admission)
         });
-        let checked_parent = match self.check_admission_context_for_permit(
-            &checked.packet,
-            observed_now,
-            checked.owner_permit.as_ref(),
-            &mut TypedNativeProgress(|point| native(ExecutionProgress::BeforeParentBinding, point)),
-        )? {
-            CheckedAdmissionContext::Existing(id) => return Ok(id),
-            CheckedAdmissionContext::Parent(parent) => parent,
+        let checked_parent = if let Some(parent) = prior_parent {
+            // Only the same-call History method above can supply this private
+            // value. W1 is not header/clock/owner authority, and an unstable or
+            // changed epoch requires the original complete parent validation.
+            if let Some(id) = self.check_admission_header_context(
+                &checked.packet,
+                observed_now,
+                checked.owner_permit.as_ref(),
+            )? {
+                return Ok(id);
+            }
+            if parent.epoch == Some(self.admission_state_epoch()?) {
+                parent
+            } else {
+                drop(parent);
+                self.check_admission_parent(
+                    &checked.packet,
+                    &mut TypedNativeProgress(|point| {
+                        native(ExecutionProgress::BeforeParentBinding, point)
+                    }),
+                )?
+            }
+        } else {
+            match self.check_admission_context_for_permit(
+                &checked.packet,
+                observed_now,
+                checked.owner_permit.as_ref(),
+                &mut TypedNativeProgress(|point| {
+                    native(ExecutionProgress::BeforeParentBinding, point)
+                }),
+            )? {
+                CheckedAdmissionContext::Existing(id) => return Ok(id),
+                CheckedAdmissionContext::Parent(parent) => parent,
+            }
         };
         ensure(
             self.owner_policy.is_some() == checked.owner_permit.is_some(),

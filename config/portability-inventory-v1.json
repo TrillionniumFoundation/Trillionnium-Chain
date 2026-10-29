@@ -635,6 +635,8 @@
         "scripts/test_llm_runtime_host_u_readback.py",
         "scripts/test_llm_runtime_decode.py",
         "scripts/llm_runtime_exit_observation.py",
+        "scripts/llm_runtime_exit_worker_observation.py",
+        "scripts/test_llm_runtime_exit_initial_pending.py",
         "scripts/test_llm_runtime_kernel_owned.py",
         "scripts/test_llm_runtime_kernel_close.py",
         "scripts/llm_runtime_kernel_aggregate.py",

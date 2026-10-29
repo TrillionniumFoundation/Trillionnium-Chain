@@ -115,8 +115,15 @@ pub fn rounds(
                     serde_json::from_value::<ingress::Page>(row["response"]["value"].clone())
                         .map_err(|e| e.to_string())
                         .and_then(|page| {
-                            ingress::receive_page(verifier, page, tip, after, support::now())
-                                .map_err(|e| e.to_string())
+                            ingress::receive_public_page_from(
+                                verifier,
+                                address,
+                                page,
+                                tip,
+                                after,
+                                support::now(),
+                            )
+                            .map_err(|e| e.to_string())
                         });
                 row["client_import"] = json!({"thread_cpu_ns":work::elapsed(import_cpu),"wall_ns":import_wall.elapsed().as_nanos(),"succeeded":result.is_ok()});
                 match result {

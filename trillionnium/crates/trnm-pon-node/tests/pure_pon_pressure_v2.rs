@@ -992,8 +992,15 @@ fn phase(
                     serde_json::from_value::<ingress::Page>(row["response"]["value"].clone())
                         .map_err(|e| e.to_string())
                         .and_then(|page| {
-                            ingress::receive_page(&mut verifier, page, tip, after, support::now())
-                                .map_err(|e| e.to_string())
+                            ingress::receive_public_page_from(
+                                &mut verifier,
+                                addresses[round % 2],
+                                page,
+                                tip,
+                                after,
+                                support::now(),
+                            )
+                            .map_err(|e| e.to_string())
                         });
                 row["client_import"] = json!({"started_ns":started,"ended_ns":support::monotonic().saturating_sub(epoch),
                     "thread_cpu_ns":support::cpu_delta(cpu),"succeeded":imported.is_ok()});

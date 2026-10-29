@@ -13,6 +13,7 @@ env:
   CARGO_BUILD_JOBS: "2"
   RUST_TEST_THREADS: "1"
   PYTHONDONTWRITEBYTECODE: "1"
+  TRNM_FROM_ZERO_HOST_OWNER: ${{ github.run_id }}.${{ github.run_attempt }}
 jobs:
   retained-pressure-failure:
     runs-on: ubuntu-24.04
@@ -111,9 +112,15 @@ jobs:
           grep -E '^Ran 7 tests in ' "$TRNM_CI_RECEIPT_DIR/model-generation-sequence.log"
           "$RUNNER_TEMP/model-context-env/bin/python" formal/pon-nakamoto-v1/test_model_generation_sequence_context.py -v 2>&1 | tee "$TRNM_CI_RECEIPT_DIR/model-generation-context.log"
           grep -E '^Ran 8 tests in ' "$TRNM_CI_RECEIPT_DIR/model-generation-context.log"
+      - name: Provision original fixed Host for native confirmation only
+        if: ${{ !cancelled() && steps.source.outcome == 'success' && steps.toolchain.outcome == 'success' && matrix.campaign == 'service-model' }}
+        run: sudo -n python3 -B scripts/ci/history_fixed_parent_v2.py provision --owner "$TRNM_FROM_ZERO_HOST_OWNER" --source "$GITHUB_WORKSPACE/config/systemd/trnmponpublic.slice" > "$TRNM_CI_RECEIPT_DIR/from-zero-host-provision.json"
       - name: Execute original release from-zero controls
         if: ${{ !cancelled() && steps.source.outcome == 'success' && steps.toolchain.outcome == 'success' && matrix.campaign == 'service-model' }}
-        run: python3 scripts/ci/run_from_zero_native.py --out "$TRNM_CI_RECEIPT_DIR/from-zero-native"
+        run: python3 scripts/ci/run_from_zero_native.py --out "$TRNM_CI_RECEIPT_DIR/from-zero-native" --host-owner "$TRNM_FROM_ZERO_HOST_OWNER"
+      - name: Close only this run owned native confirmation Host
+        if: always() && matrix.campaign == 'service-model'
+        run: sudo -n python3 -B scripts/ci/history_fixed_parent_v2.py cleanup --owner "$TRNM_FROM_ZERO_HOST_OWNER" > "$TRNM_CI_RECEIPT_DIR/from-zero-host-cleanup.json"
       - name: Execute actual CLI observation boundaries and retain every child result
         if: ${{ !cancelled() && steps.source.outcome == 'success' && steps.toolchain.outcome == 'success' && matrix.campaign == 'service-model' }}
         shell: bash
