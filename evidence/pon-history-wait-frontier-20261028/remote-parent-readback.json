@@ -1,0 +1,13 @@
+{
+  "schema": "history-followup-remote-parent-readback-v1",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "pr": 535,
+  "ref": "refs/heads/fix/chain-history-startup-seal-20261028",
+  "head": "59e10da3f501970fff0a87ff398f8a08aa7fb59e",
+  "tree": "4ee466caf266401c1ff72f8ac3fdf121f2020b33",
+  "parents": [
+    "afc8d6dcb11168fa5d9799222c99dba2424dd520"
+  ],
+  "equal_tree_local_parent": "c27c7201e700b6704faf3452da0921c7fedaa75a",
+  "method": "Independent GitHub GET of immutable git commit and current base ref; no mutation"
+}

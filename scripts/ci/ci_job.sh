@@ -25,6 +25,7 @@ case "${1:?required job}" in
     python3 scripts/ci/test_pon_public_v3_phase_read.py
     python3 scripts/ci/test_pon_public_v3_policy_read.py
     python3 scripts/ci/test_run_pon_w1_native_campaign.py
+    python3 scripts/ci/test_pon_v3_cookie_cpu_study.py
     python3 scripts/ci/test_pon_w1_cost_matrix_reader.py
     python3 scripts/ci/test_llm_cell_handoff_deadline.py
     python3 scripts/test_llm_cell_release.py
@@ -51,6 +52,7 @@ case "${1:?required job}" in
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-transport proof_admission --all-targets
     python3 formal/pon-nakamoto-v1/test_contracts.py
     python3 formal/pon-nakamoto-v1/test_invariants.py
+    python3 formal/pon-nakamoto-v1/test_quantum_daa.py -v
     cargo fetch --locked --manifest-path trillionnium/Cargo.toml
     cargo build --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --bins --examples
     python3 formal/pon-nakamoto-v1/test_account_archive_oracle.py -v
@@ -155,6 +157,9 @@ case "${1:?required job}" in
       test ! -L "$TRNM_DAA_EVIDENCE_DIR"
       test ! -e "$trnm_model_receipt_root/workspace-tests.log"
       test ! -L "$trnm_model_receipt_root/workspace-tests.log"
+      # The first-Startup guardian fixture binds the actual compile and run
+      # source, independently checked by this workflow's normal source boundary.
+      export TRNM_HISTORY_STARTUP_NO_NATIVE_SOURCE_COMMIT="$(git rev-parse HEAD)"
       cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features 2>&1 | tee "$trnm_model_receipt_root/workspace-tests.log"
       unset TRNM_ZERO_PAIRED_PREFIX_OUTPUT
       python3 scripts/pon_daa_schedule_reader.py --raw-dir "$TRNM_DAA_EVIDENCE_DIR" --expected-report-sha256 "$(sha256sum "$TRNM_DAA_EVIDENCE_DIR/daa-bounds.json" | cut -d ' ' -f 1)" > "$trnm_model_receipt_root/daa-bounds-python.json"

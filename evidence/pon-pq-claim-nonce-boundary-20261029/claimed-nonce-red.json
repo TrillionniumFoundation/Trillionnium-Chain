@@ -1,0 +1,23 @@
+{
+  "base_commit": "42ab57f1c5065d50f981cc337c417ef0ab7dc096",
+  "test_overlay": true,
+  "production_source_changed": false,
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "-p",
+    "trnm-mvcc-fee",
+    "--lib",
+    "anchored_migration_conserves_all_accounts_tasks_rewards_and_claims_once",
+    "--",
+    "--test-threads=1"
+  ],
+  "returncode": 101,
+  "elapsed_s": 10.777017030995921,
+  "source_sha256": {
+    "crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs": "944a6fdf08873a010b9fa7225b5a890eba2a5434347653b7dfd9078dd5ea4977",
+    "crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tests.rs": "1a31c24ad3cc6f59cb05c9a21114350640d16b7836dd73e51b2fca8c5b363e14"
+  }
+}

@@ -1,0 +1,34 @@
+[
+  {
+    "name": "format",
+    "command": [
+      "/workspace/scratch/301262829a43/pon-build-inputs/unpacked/toolchain/bin/cargo",
+      "fmt",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--package",
+      "trnm-pon-node",
+      "--",
+      "--check"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 27.10430497299967,
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "cargo-graph",
+    "command": [
+      "/workspace/scratch/301262829a43/pon-build-inputs/unpacked/toolchain/bin/cargo",
+      "metadata",
+      "--offline",
+      "--locked",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--format-version",
+      "1"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.17028996199951507,
+    "log_sha256": "87b25d49db769689b104a8c5da644cf909e1ce75811ea208059875d6cf71cc50"
+  }
+]

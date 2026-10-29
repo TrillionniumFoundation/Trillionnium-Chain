@@ -287,6 +287,7 @@ fn only_fresh_successful_native_w1_promotes_not_false_product_or_existing_packet
                 mutation_cpu: Some(&measurement),
                 arithmetic_facts: None,
                 public_product: None,
+                w1_rejection_cache: None,
             },
         );
         if index == 0 {
@@ -381,6 +382,7 @@ fn same_valid_w1_native_invalid_packet_cannot_reacquire_completion_priority() {
                 mutation_cpu: Some(&measurement),
                 arithmetic_facts: None,
                 public_product: None,
+                w1_rejection_cache: None,
             },
         );
         promotions.push(server.mutation_cpu.lock().unwrap().verified_completions);
@@ -407,6 +409,154 @@ fn same_valid_w1_native_invalid_packet_cannot_reacquire_completion_priority() {
         promotions,
         vec![1, 0],
         "one acquired W1 granted repeated completion priority"
+    );
+}
+
+#[test]
+fn unregistered_zero_task_cannot_claim_pure_pon_completion_priority() {
+    use super::super::{
+        public_dispatch, MutationCpuMeasurement, PaidMutationCpuPermit, PublicMetrics,
+        PublicPolicy, PublicServer, Request,
+    };
+    use crate::ingress::DevelopmentIdentity;
+    use trnm_crypto_primitives::pon_work;
+
+    let (directory, settings, valid) = packet();
+    let mut candidate = valid.clone();
+    let node = Mutex::new(Node::open(&directory.path().join("receiver"), settings, 1).unwrap());
+    let before = node.lock().unwrap().read_active().unwrap();
+    let zeros = vec![0; pon_work::CELLS];
+    let prepared = pon_work::PreparedTask::new(&zeros, &zeros).unwrap();
+    let unregistered = pon_work::task_id(&zeros, &zeros).unwrap();
+    assert_ne!(candidate.header.work_task, unregistered);
+    candidate.header.work_task = unregistered;
+    for nonce in 0..4096 {
+        candidate.header.nonce = nonce;
+        candidate.proof = prepared.prove(candidate.header.challenge()).unwrap();
+        if pon_work::precheck_proof_statement(
+            candidate.header.challenge(),
+            candidate.header.work_task,
+            candidate.header.target,
+            &candidate.proof,
+        )
+        .is_ok()
+        {
+            break;
+        }
+    }
+    // This is genuine full W1, not a forged ticket or an injected verifier.
+    WorkCheckedPacket::verify(candidate.clone()).unwrap();
+    let server = PublicServer::new_process_cold(
+        DevelopmentIdentity::from_secret_hex(&hex::encode([71; 32])).unwrap(),
+        PublicPolicy::pure_pon(Duration::from_secs(2)).unwrap(),
+    )
+    .unwrap()
+    .with_pure_admission_v2()
+    .unwrap();
+    let domain = server.mutation_cpu_domain();
+    let stop = Arc::new(AtomicBool::new(false));
+    let cancelled = Arc::new(AtomicBool::new(false));
+    let metrics = Mutex::new(PublicMetrics::default());
+    let deadline = Instant::now() + Duration::from_secs(5);
+    let permit =
+        PaidMutationCpuPermit::acquire_before(&server, &metrics, deadline, &stop, &cancelled)
+            .unwrap();
+    permit
+        .live
+        .bind_public_request(deadline, stop.clone(), cancelled.clone())
+        .unwrap();
+    let measurement = MutationCpuMeasurement::for_permit(Some(&permit));
+    let outcome = public_dispatch(
+        &node,
+        Request::Submit {
+            packet: hex::encode(candidate.encode().unwrap()),
+        },
+        deadline,
+        &stop,
+        &cancelled,
+        &metrics,
+        PublicDispatchObservation {
+            observation: None,
+            mutation_cpu: Some(&measurement),
+            arithmetic_facts: server.pure_admission_v2.as_deref(),
+            public_product: None,
+            w1_rejection_cache: None,
+        },
+    );
+    assert_eq!(outcome.unwrap_err().to_string(), "TASK");
+    let completion = domain.observe_completion_work().unwrap();
+    permit.finish(&measurement, &server, &metrics).unwrap();
+    assert_eq!(node.lock().unwrap().read_active().unwrap(), before);
+    assert!(node
+        .lock()
+        .unwrap()
+        .packet(candidate.id().unwrap())
+        .is_err());
+    assert_eq!(metrics.lock().unwrap().work_started, 1);
+    assert_eq!(metrics.lock().unwrap().work_failed, 0);
+    assert!(
+        domain
+            .observe_actual_flow()
+            .unwrap()
+            .unwrap()
+            .balance_identity_verified
+    );
+    assert_eq!(
+        completion.live_completions, 0,
+        "unregistered task received priority"
+    );
+    assert_eq!(
+        completion.retained_identities, 0,
+        "unregistered task consumed an epoch identity"
+    );
+    // A legal retry still receives the original benefit in this same cold
+    // epoch, then its exact durable duplicate neither replays nor promotes.
+    for existing in [false, true] {
+        let deadline = Instant::now() + Duration::from_secs(5);
+        let permit =
+            PaidMutationCpuPermit::acquire_before(&server, &metrics, deadline, &stop, &cancelled)
+                .unwrap();
+        permit
+            .live
+            .bind_public_request(deadline, stop.clone(), cancelled.clone())
+            .unwrap();
+        let measurement = MutationCpuMeasurement::for_permit(Some(&permit));
+        let reply = public_dispatch(
+            &node,
+            Request::Submit {
+                packet: hex::encode(valid.encode().unwrap()),
+            },
+            deadline,
+            &stop,
+            &cancelled,
+            &metrics,
+            PublicDispatchObservation {
+                observation: None,
+                mutation_cpu: Some(&measurement),
+                arithmetic_facts: server.pure_admission_v2.as_deref(),
+                public_product: None,
+                w1_rejection_cache: None,
+            },
+        )
+        .unwrap();
+        assert_eq!(reply["block"], hex::encode(valid.id().unwrap()));
+        let completion = domain.observe_completion_work().unwrap();
+        assert_eq!(completion.live_completions, usize::from(!existing));
+        assert_eq!(completion.retained_identities, 1);
+        permit.finish(&measurement, &server, &metrics).unwrap();
+        assert!(
+            domain
+                .observe_actual_flow()
+                .unwrap()
+                .unwrap()
+                .balance_identity_verified
+        );
+    }
+    assert_eq!(metrics.lock().unwrap().work_started, 2);
+    assert_eq!(metrics.lock().unwrap().work_failed, 0);
+    assert_eq!(
+        domain.observe_completion_work().unwrap().live_completions,
+        0
     );
 }
 
@@ -569,6 +719,7 @@ fn full_completion_registry_keeps_all_markers_and_allows_real_native_admission()
             mutation_cpu: Some(&measurement),
             arithmetic_facts: None,
             public_product: None,
+            w1_rejection_cache: None,
         },
     )
     .unwrap();
@@ -669,6 +820,7 @@ fn same_verified_w1_with_changed_transaction_body_is_rejected_before_promotion()
                 mutation_cpu: Some(&measurement),
                 arithmetic_facts: None,
                 public_product: None,
+                w1_rejection_cache: None,
             },
         );
         permit.finish(&measurement, &server, &metrics).unwrap();

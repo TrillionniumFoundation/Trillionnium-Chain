@@ -1,0 +1,17 @@
+{
+  "schema": "pon-w1-actual-artifact-readback-process-v1",
+  "command": [
+    "python3",
+    "/workspace/scratch/301262829a43/pon-work-impl/integration/cost-evidence-e9c4bb0/evidence/pon-w1-native-v2-e9c4bb0-20261027/readback.py",
+    "--out",
+    "/workspace/scratch/301262829a43/pon-work-impl/ci-v2-focused-e9c4bb0-run40490909605/bundle-readback-002"
+  ],
+  "started_utc": "2026-10-27T12:22:40.920994+00:00",
+  "wall_seconds": 4.024245945001894,
+  "returncode": 0,
+  "reader_sha256": "cff6156aff231bb90c88a6ab7ed187a78f73106d141915fe37f1fac67522a3f1",
+  "stdout_sha256": "48df9e47031e658bad05f73b4fc91e059799c206b7941da57076805aad79ab99",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "repeats_mining_or_proof_generation": false,
+  "supplementary_change": "adds every supported aggregate-group comparison, not only long-horizon representatives"
+}

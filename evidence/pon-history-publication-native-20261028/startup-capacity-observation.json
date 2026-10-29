@@ -1,0 +1,64 @@
+{
+  "schema": "history-startup-cpu-capacity-observation-v1",
+  "source_commit": "8d7741028eb650f0600e61fcab46ff3d14b50767",
+  "binary_sha256": "136bbeb0b474dc9d0bcb3c254ab3bf21d47666f4fb4e04957752f69ea905729b",
+  "native_test_batch_passed": false,
+  "failed_cutpoint": "publication-intent-final-synced",
+  "error": "PUBLIC_MUTATION_CPU_BUDGET",
+  "measured_scope": "resumed process Startup owner CPU interval; not end-to-end host CPU",
+  "startup_cpu": {
+    "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+    "owner_cpu_ns": 2087314423,
+    "scoped_worker_cpu_ns": 0,
+    "total_cpu_ns": 2087314423,
+    "live_paid_cpu_ns": 2086987006,
+    "residual_cpu_ns": 327417,
+    "spawned_workers": 0,
+    "started_workers": 0,
+    "finished_workers": 0,
+    "known_workers": 0,
+    "live_refused": true,
+    "accounting_unavailable": false
+  },
+  "local_burst_ns": 2000000000,
+  "signed_operation_allowance": {
+    "cpu_ns": 4000000000,
+    "material_bytes": 2097152,
+    "received_bytes": 2097152,
+    "operations": 1
+  },
+  "actual_store_counts": {
+    "blocks": 1,
+    "history_effect_v6": 0,
+    "kv": 10,
+    "snapshots": 1,
+    "reorg": 0,
+    "peer_outbox": 0,
+    "peer_replay": 0
+  },
+  "snapshot_bytes": 3479,
+  "material_bytes_by_role": {
+    "activation": 10260,
+    "bootstrap": 3002,
+    "checkpoint": 663663,
+    "input": 16384,
+    "model": 16384,
+    "spec": 3183
+  },
+  "failure_frame": "native-03/artifacts/publication-intent-final-synced/v6-journal/00000000000000000007-cc399632eed91105836e6bd8908a2efe6b357be8a29d7c2d543425b32e079b81.json",
+  "failure_frame_sha256": "cc399632eed91105836e6bd8908a2efe6b357be8a29d7c2d543425b32e079b81",
+  "source_call_graph_facts": [
+    "HistoryEffectV6::open starts the CPU interval before verify_catalog_bound and Settings construction",
+    "Settings::development_with_operator_checkpoint_tile calls prepare, which calls CheckpointTileRuntimePaths::replay",
+    "Node::open_selected subsequently calls Settings::replay_checkpoint_tile_material, which calls the same replay again",
+    "Node::open_selected calls read_active before and after recover; History V6 recover itself returns the current active frontier without selecting a new branch",
+    "CheckpointTileRuntimePaths::replay inner progress callback checks a 90-second wall bound; it does not invoke the History owner CPU/cancellation checkpoint",
+    "The new settled-epoch reconciliation API is not called by this older publication-intent case"
+  ],
+  "source_level_conclusion": "Regular Startup contains repeated material replay and active-State checks; a scoped reuse proof could remove repeated work only while preserving file identity, hash, input, frontier/generation and current authorization checks. Current receipts cannot assign per-function CPU shares or prove that all repeated work is removable.",
+  "new_epoch_recovery_cost_attribution": false,
+  "per_function_cpu_measurements_available": false,
+  "budget_increased": false,
+  "accounting_disabled": false,
+  "capacity_qualified": false
+}

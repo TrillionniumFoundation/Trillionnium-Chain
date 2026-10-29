@@ -1,0 +1,76 @@
+{
+  "actual_second_process_completed": true,
+  "actual_sigkill_wait4": true,
+  "additional_conservative_debit_ns": 4000000000,
+  "arbitrary_subprocess_adoption_qualified": false,
+  "binary_sha256": "136bbeb0b474dc9d0bcb3c254ab3bf21d47666f4fb4e04957752f69ea905729b",
+  "cold_journal": {
+    "anchor": {
+      "digest": "685e68a262dbad31012809f853a06db6ef9a34946d6a973802f8b9343ee0ad8e",
+      "sequence": 17
+    },
+    "epoch": null,
+    "known_settlements": 7,
+    "pending": null,
+    "request_nonce": 14,
+    "schema": "restricted-history-effect-journal-observation-v6",
+    "settled_epoch_reconciliations_v1": 1,
+    "spent": {
+      "cpu_ns": 32000000000,
+      "material_bytes": 14680064,
+      "operations": 8,
+      "received_bytes": 14680064
+    },
+    "unknown_prepaid_reconciliations": 0,
+    "used_operations": 8
+  },
+  "final_frontier": {
+    "block": "131d82cfcdfa598c5d452872314b14a85deeee325e804e9214552b81cacb089e",
+    "generation": 2,
+    "root": "ed2dc9276bb4134864b1d08b79f27320010c2615a750073f750cbd0ac23c34ec"
+  },
+  "full_native_suite_passed": false,
+  "new_epoch_initial_credit_ns": 0,
+  "new_epoch_validation_cpu": {
+    "accounting_unavailable": false,
+    "finished_workers": 2,
+    "known_workers": 2,
+    "live_paid_cpu_ns": 29833978,
+    "live_refused": false,
+    "owner_cpu_ns": 29476121,
+    "residual_cpu_ns": 13026,
+    "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+    "scoped_worker_cpu_ns": 370883,
+    "spawned_workers": 2,
+    "started_workers": 2,
+    "total_cpu_ns": 29847004
+  },
+  "new_record_namespace_verified": true,
+  "original_debit_preserved_ns": 12000000000,
+  "original_settlement_known": true,
+  "passed": true,
+  "physical_resource_or_performance_qualified": false,
+  "process_result_sha256": "bc90fd00645b77baf043a12c5fdd857eab5430b893fd3baf8a0a8db3193813d6",
+  "production_qualified": false,
+  "refusals": {
+    "expired": "HISTORY_EPOCH_V1_AUTHORIZATION",
+    "insufficient-process-allowance": "HISTORY_EPOCH_V1_CLOSED_BINDING",
+    "lifetime-overdraft": "HISTORY_EPOCH_V1_FRESH_ALLOWANCE",
+    "missing-journal-lock-no-recreation": "IO: No such file or directory (os error 2)",
+    "missing-task-signature": "HISTORY_EPOCH_V1_SIGNATURE",
+    "old-v6-signature-domain": "HISTORY_EPOCH_V1_SIGNATURE",
+    "resigned-wrong-executable-pin": "HISTORY_EPOCH_V1_SOURCE_PIN",
+    "reused-nonce": "HISTORY_EPOCH_V1_FRESH_ALLOWANCE",
+    "reused-operation-id": "HISTORY_EPOCH_V1_FRESH_ALLOWANCE",
+    "sqlite-frontier-mismatch": "HISTORY_EPOCH_V1_NATIVE_FRONTIER",
+    "wrong-budget": "HISTORY_EPOCH_V1_FRESH_ALLOWANCE",
+    "wrong-independent-source-pin": "HISTORY_EPOCH_V1_SOURCE_PIN",
+    "wrong-last-settlement": "HISTORY_EPOCH_V1_SETTLED_BINDING",
+    "wrong-operation-count": "HISTORY_EPOCH_V1_AUTHORIZATION"
+  },
+  "schema": "history-settled-epoch-native-readback-v1",
+  "scope": "the direct settled-epoch case only; never a full-suite acceptance",
+  "source_bound_native_crash_cut": "settled-epoch",
+  "whole_dead_process_cpu_upper_bound_ns": 354048000,
+  "whole_history_p0_closed": false
+}

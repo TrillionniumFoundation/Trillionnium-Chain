@@ -84,6 +84,7 @@ pub fn fetch_discovered_cell_to_file(
         overall,
         requests_left: &requests_left,
         responses: &responses,
+        peer_failures: Default::default(),
     };
     let mut observation = CellDiscoveryObservationV1::default();
     let (peers, expires) = discover(directory, options, &transport, &mut observation)?;
@@ -365,6 +366,7 @@ pub fn announce_cell_provider(
         overall,
         requests_left: &requests_left,
         responses: &responses,
+        peer_failures: Default::default(),
     };
     let mut observation = CellDiscoveryObservationV1 {
         record_validation_attempts: 1,

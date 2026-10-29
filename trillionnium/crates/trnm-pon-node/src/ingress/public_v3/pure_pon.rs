@@ -14,10 +14,13 @@ impl PublicPolicy {
     }
 
     pub fn is_pure_pon(self) -> bool {
-        self.bits == 0
+        self.bits == 0 && self.admission_variant == PublicAdmissionVariant::Standard
     }
 
     pub fn id(self) -> Hash {
+        if self.is_pure_history_raw() {
+            return self.pure_history_raw_id();
+        }
         let original = self.original_resource_id();
         if self.is_pure_pon() {
             hash(b"public-pure-pon-resource-v1", &[

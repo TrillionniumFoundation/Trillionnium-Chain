@@ -1,0 +1,127 @@
+{
+  "schema": "pon-pure-local-observation-archive-v1",
+  "observation": 2,
+  "source_commit_created_after_measurement": "19212da4100796c39f1e71fd33f6c0778414dbae",
+  "source_tree": "6feff931ecf914588e6c5e9876367b3e303826ca",
+  "source_was_uncommitted_staged_candidate": true,
+  "archive": "local-observation-02.tar.gz",
+  "archive_bytes": 3445554,
+  "archive_sha256": "4e505bf702d14020dac13cec35894ec33b8704109c87c9fa372316a2b34d7fa3",
+  "files": [
+    {
+      "path": "staged-source.json",
+      "bytes": 2052,
+      "sha256": "c4024fa2cf591bc976e44884de55a7aeab60f6b4d11c066ae4510a4a0f419098"
+    },
+    {
+      "path": "binaries.json",
+      "bytes": 778,
+      "sha256": "f802c0b47a605a49c85998a1f7f93d77fb96f7329021bd49dc58029cf6701249"
+    },
+    {
+      "path": "source-before.json",
+      "bytes": 508,
+      "sha256": "96546cb116373ded7a82030a4758f50019a4e293c2e5a5fcd1e49a4d2bb5495a"
+    },
+    {
+      "path": "source-after.json",
+      "bytes": 508,
+      "sha256": "96546cb116373ded7a82030a4758f50019a4e293c2e5a5fcd1e49a4d2bb5495a"
+    },
+    {
+      "path": "resources-before.json",
+      "bytes": 617,
+      "sha256": "e662bf1561ad66af593c5de74ccfd2373697c62222cc205d2ad3df2cb18278cf"
+    },
+    {
+      "path": "resources-after.json",
+      "bytes": 617,
+      "sha256": "0c7e38e36649a0d81b430c2d4e99406135ac0901ed8bb5702891ebad2568206d"
+    },
+    {
+      "path": "results.json",
+      "bytes": 1660,
+      "sha256": "47355f8de58daea7b12f9dda5ad1d0e58df53b1258b6ee272ab7029aad1615b5"
+    },
+    {
+      "path": "pure-pressure.stdout.log",
+      "bytes": 240,
+      "sha256": "6925a1c96ff1407f6a0b79f95945ab1572fb468a55ec1f7e903f813daa7dc4c8"
+    },
+    {
+      "path": "pure-pressure.stderr.log",
+      "bytes": 544,
+      "sha256": "08cf11778de0a4b1526de2a4a834cb486f16e7e429a2c979dd44ebc9baf5584c"
+    },
+    {
+      "path": "pure-pressure.step.json",
+      "bytes": 839,
+      "sha256": "910ae6d9cf98ccb24b6c7d6aa38d0f73a04f1da0b2d8b86ad854070009ea4da5"
+    },
+    {
+      "path": "pure-pressure.verdict.json",
+      "bytes": 190,
+      "sha256": "7c62dc3f87ab8edd11c3c187cf957b3527bbdb10c99203e812ef1c988880dc62"
+    },
+    {
+      "path": "pressure-reader.stdout.log",
+      "bytes": 8046,
+      "sha256": "7efe5714873233a8e5c948f99ace8fbb09143ba1c02170c2c160b9bec40cdbfd"
+    },
+    {
+      "path": "pressure-reader.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "pressure-reader.step.json",
+      "bytes": 878,
+      "sha256": "00a343ef9890f08870cad522c9b23460c82b711f9f2f1000bcbeb27990d7bb82"
+    },
+    {
+      "path": "pressure-qualification.json",
+      "bytes": 8046,
+      "sha256": "7efe5714873233a8e5c948f99ace8fbb09143ba1c02170c2c160b9bec40cdbfd"
+    },
+    {
+      "path": "pressure-native/preparation.json",
+      "bytes": 2888492,
+      "sha256": "c6fa2cb6b1fb453b0e5fa3ad3314ae35662cd6914698734ead374d5277ed3a92"
+    },
+    {
+      "path": "pressure-native/campaign.json",
+      "bytes": 892,
+      "sha256": "7c2c4dcd818bc9c5191b7085566671f11f079ccef0d688aa13b7455fe0a01ce5"
+    },
+    {
+      "path": "pressure-native/baseline.json",
+      "bytes": 3293849,
+      "sha256": "7003a53531388758154db9833ac750cc05a311ca9a136abc243da9db57673d8b"
+    },
+    {
+      "path": "pressure-native/from-zero.json",
+      "bytes": 14405519,
+      "sha256": "c45c765e0c45d70f924224292850e934b2b073f49d838749b3a0a41c55e936c9"
+    },
+    {
+      "path": "pressure-native/correct-product-false-trace.json",
+      "bytes": 7569183,
+      "sha256": "c115083d0c02efd89bc21c87f863de496a7a828de061dbc44eb0803b64485b53"
+    }
+  ],
+  "native_service_pass": false,
+  "reader_at_measurement_input_consistent": true,
+  "reader_at_measurement_finite_qualification": false,
+  "semantic_height_labels_invalid": true,
+  "height_fields_actually_contain_activation_generations": true,
+  "credit_freshness_captured": true,
+  "raw_native_rounds_confirmed": [
+    3,
+    3,
+    2
+  ],
+  "rounds_required_per_phase": 3,
+  "budgets_or_deadlines_relaxed": false,
+  "public_fairness_qualified": false,
+  "production_activation": false
+}

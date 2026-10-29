@@ -1,0 +1,9 @@
+{
+  "schema": "pon-w1-derived-csv-format-observation-v1",
+  "original_local_commit": "1081fac4e9d10f866473afbbca59ba022325973c",
+  "original_local_tree": "b1bca4874be31c2306ffed6ab6bf8fa5100a1cb3",
+  "observation": "staged git diff --check reported CRLF trailing whitespace in our derived display CSV; the shell did not retain that command exit separately",
+  "correction": "normalize only the derived display CSV to LF; preserve every original artifact byte and all observations",
+  "original_raw_gzip_changed": false,
+  "readback_source_changed": false
+}

@@ -63,6 +63,7 @@ fn experiment<E: Send>(
 }
 fn request(raws: &[Vec<u8>], workers: usize) -> BlockExecution<'_> {
     BlockExecution {
+        timestamp: None,
         transactions: raws,
         height: 1,
         miner: [249; 32],

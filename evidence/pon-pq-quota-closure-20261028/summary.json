@@ -1,0 +1,551 @@
+{
+  "all_frozen_link_artifacts_before_after_equal": true,
+  "cargo_all_targets_all_features_clippy_qualified": false,
+  "compiled_current_libraries": [
+    {
+      "crate": "trnm_protocol",
+      "current_relevant_source_matches_compile": true,
+      "input_record": "native/trnm_protocol-lib-01-inputs.json",
+      "library_bytes": 2638524,
+      "library_sha256": "2a7cffffd0f74e44f8dff705ce7947ef70b604528b835c3582d6b47af48da32f",
+      "relevant_source_files": 74
+    },
+    {
+      "crate": "trnm_crypto_primitives",
+      "current_relevant_source_matches_compile": true,
+      "input_record": "native/trnm_crypto_primitives-lib-01-inputs.json",
+      "library_bytes": 3256016,
+      "library_sha256": "7f08e1480c821877b479c9d50af7a3bab14c2473c59a2d0777f5a0aed3c144de",
+      "relevant_source_files": 106
+    },
+    {
+      "crate": "trnm_mvcc_fee",
+      "current_relevant_source_matches_compile": true,
+      "input_record": "native/trnm_mvcc_fee-lib-final-inputs.json",
+      "library_bytes": 19992914,
+      "library_sha256": "f538aaf9773cdf1e805eb3cb25a5edc9c41dcf2e21d06cb23f5c5d86d0563db4",
+      "relevant_source_files": 95
+    },
+    {
+      "crate": "trnm_pon_node",
+      "current_relevant_source_matches_compile": true,
+      "input_record": "native/trnm_pon_node-lib-final-inputs.json",
+      "library_bytes": 67936964,
+      "library_sha256": "b2897c9df8266ae576163408cd874096b0d82a9da6e3f526c3ea437d012fb1eb",
+      "relevant_source_files": 308
+    }
+  ],
+  "direct_warnings_denied_clippy": [
+    {
+      "command_record": "native/trnm_protocol-lib-01-clippy-final.json",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "target": "trnm_protocol-lib-01"
+    },
+    {
+      "command_record": "native/trnm_crypto_primitives-lib-01-clippy-final.json",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "target": "trnm_crypto_primitives-lib-01"
+    },
+    {
+      "command_record": "native/trnm_mvcc_fee-lib-final-clippy-final.json",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "target": "trnm_mvcc_fee-lib-final"
+    },
+    {
+      "command_record": "native/trnm_pon_node-lib-final-clippy-final.json",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "target": "trnm_pon_node-lib-final"
+    },
+    {
+      "command_record": "native/trnm_mvcc_fee-pq3_quota_authority-final-clippy-final.json",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "target": "trnm_mvcc_fee-pq3_quota_authority-final"
+    },
+    {
+      "command_record": "native/trnm_pon_node-native_pq_v3-final-clippy-final.json",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "target": "trnm_pon_node-native_pq_v3-final"
+    }
+  ],
+  "distinct_passed": 164,
+  "final_native_source_before_after_equal": true,
+  "first_failed_binary": {
+    "bytes": 17251440,
+    "gzip_sha256": "81832d34bf3aff6f80eebcc0e50f4437d2bfc1040897d006b94459e83e8c17ed",
+    "retained": "native-quota-first-failure.bin.gz",
+    "sha256": "543598d65157443d66822ee08c9ef75f6678a85305c5e9b30da8f3fdf603580e"
+  },
+  "frozen_external_link_artifact_count": 223,
+  "inherited_parent": "0fc50c0701e0bfc94faa8c48df5957956cc6b8a3",
+  "integration_cases_with_zero_ignored_or_filtered": 30,
+  "native_binary": {
+    "bytes": 17327528,
+    "fixture_keys": "public seeds only",
+    "gzip_bytes": 5394468,
+    "gzip_sha256": "af19a3c6811f165c64cc91fcf708500336a7173a2946e64b728e150a0fe739ba",
+    "retained": "native-quota-test.bin.gz",
+    "sha256": "a66917198cb2b484331cf22b0e5156edb070913c359184aa146ee02a16bb6704"
+  },
+  "native_quota_phase_count": 21,
+  "observation_archive": {
+    "gzip_bytes": 3314214,
+    "gzip_sha256": "f836449c30b5f8c0a1e93f77dbfd23f564c8c08fd3fb5fde08ba4e3a63fc61ba",
+    "members": 199,
+    "uncompressed_bytes": 12227313,
+    "uncompressed_sha256": "f37f86fa1767bc09c4ca8c117294367803cb86daeeb2edeeb36fa716c4e9b855"
+  },
+  "original_ignored_unit_cases": 8,
+  "p1_complete": false,
+  "physical_io_qualified": false,
+  "preserved_failures": [
+    {
+      "kind": "first fresh Cargo test cancelled for shared capacity",
+      "native_pass": false,
+      "record": "local/quota-authority-01.json"
+    },
+    {
+      "kind": "first manual integration compiler command missing explicit self extern",
+      "record": "native/trnm_mvcc_fee-pq3_quota_authority-01.json"
+    },
+    {
+      "kind": "real native 3 pass / 1 fail NPQ3 CLAIM reparsed as NPQ2",
+      "record": "native/node-tests-01.json"
+    },
+    {
+      "kind": "warnings-denied inherited manual saturating subtraction",
+      "record": "native/trnm_mvcc_fee-lib-03-clippy.json"
+    },
+    {
+      "kind": "warnings-denied three single-element test clones",
+      "record": "native/trnm_mvcc_fee-pq3_quota_authority-03-clippy.json"
+    }
+  ],
+  "prior_registry_trust_independently_established": false,
+  "production_activation": false,
+  "publication_base": "33945bc5cdf91977792faefefed0981f6b88222c",
+  "result": "PASS_COMPONENT_NATIVE",
+  "retained_pq2_phase_count": 196,
+  "schema": "native-pq-quota-component-closure-20261028-v1",
+  "source_chain_retirement_proved": false,
+  "source_file_count": 1170,
+  "source_gates": {
+    "diff-check-final": {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "returncode": 0,
+      "wall_seconds": 0.05365656199865043
+    },
+    "fmt-final": {
+      "cargo_lock_before_after_equal": true,
+      "command": [
+        "/workspace/scratch/301262829a43/pon-build-inputs/unpacked/toolchain/bin/cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "returncode": 0,
+      "wall_seconds": 29.725918207994255
+    },
+    "full-metadata-final": {
+      "cargo_lock_before_after_equal": true,
+      "command": [
+        "/workspace/scratch/301262829a43/pon-build-inputs/unpacked/toolchain/bin/cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1",
+        "--manifest-path",
+        "trillionnium/Cargo.toml"
+      ],
+      "log_sha256": "08c87ff92a92f937331fcb937523142a17bf9198a33a2a532436a0ccada037d8",
+      "packages": 173,
+      "resolved_nodes": 173,
+      "returncode": 0,
+      "wall_seconds": 0.2681967690004967,
+      "workspace_members": 26
+    },
+    "inventory-final": {
+      "cargo_lock_before_after_equal": true,
+      "command": [
+        "python",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "log_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "returncode": 0,
+      "wall_seconds": 1.7464752070009126
+    },
+    "markdown-links-final": {
+      "checked": 187,
+      "missing": [],
+      "result": "PASS",
+      "scope": "relative file targets in changed Markdown; exact Git tree entries prove tracked historical targets whose blob bodies are omitted in this partial local checkout"
+    },
+    "precommit-preflight": {
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "log_sha256": "8c03a65b65a7d39c3f7a544d6600f29cb898d58cd53884f8e439935f4be6a3a7",
+      "returncode": 0,
+      "wall_seconds": 0.1702928119993885
+    },
+    "quota-reader-final": {
+      "cargo_lock_before_after_equal": true,
+      "command": [
+        "python",
+        "scripts/ci/test_native_pq_quota_v3_research.py"
+      ],
+      "log_sha256": "4c979c0d06f0e9e2109df48cae7f69ac5d403754045b4cfe404fe744e7390b47",
+      "returncode": 0,
+      "wall_seconds": 0.16823282100085635
+    },
+    "source-negatives-final": {
+      "cargo_lock_before_after_equal": true,
+      "command": [
+        "python",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "log_sha256": "c9fe4d51c9be861dbb8dab56cfee8fbf7b5bf826ff5dccdc23ce01a8d0d07eb3",
+      "returncode": 0,
+      "wall_seconds": 9.854121356001997
+    }
+  },
+  "source_scope": "current native source hashes in command inputs; final containing commit binds these bytes; not a Cargo qualification run",
+  "tests": {
+    "m00-unit": {
+      "command_record": "native/m00-unit-tests-unit-final.json",
+      "failed": 0,
+      "filtered_out": 0,
+      "frozen_link_artifacts": 223,
+      "ignored": 2,
+      "log_sha256": "055c43d5a164a4b69c0d1722ffffb6e3e35938fd1dd5fcacdda16b5399af0dfe",
+      "measured": 0,
+      "passed": 46,
+      "required_executed": [
+        "pq_native_accounts_v2::tests::closed_roles_lengths_reserved_bytes_and_old_namespaces_refuse",
+        "pq_native_accounts_v2::tests::exact_fresh_frame_sizes_include_every_key_and_both_proofs",
+        "pq_native_accounts_v2::tests::joint_core_binds_context_generation_every_descriptor_and_full_new_key",
+        "pq_native_accounts_v2::tests::new_roles_require_exact_branch_generation_and_anchored_source_identity",
+        "pq_native_accounts_v2::tests::quota_successor_has_fresh_exact_roles_and_full_dual_proof_bytes"
+      ],
+      "source_files": 1170,
+      "test_outcomes": {
+        "pon_growth::tests::native_growth_v2_header_fixed_vector_and_domain_separation": "ok",
+        "pon_state::bulk_tests::bulk_collision_in_valid_prefix_keeps_original_error_precedence": "ok",
+        "pon_state::bulk_tests::bulk_complete_construction_cost_observation": "ignored",
+        "pon_state::bulk_tests::bulk_keeps_original_bounds_and_absent_empty_distinction": "ok",
+        "pon_state::bulk_tests::bulk_keeps_updates_inverse_and_failed_batch_snapshot_immutable": "ok",
+        "pon_state::bulk_tests::bulk_matches_insertion_shape_and_full_wire_at_size_edges": "ok",
+        "pon_state::bulk_tests::bulk_matches_original_every_divergence_depth_and_path_direction": "ok",
+        "pon_state::bulk_tests::bulk_nested_all_depths_matches_both_insertion_orders": "ok",
+        "pon_state::bulk_tests::bulk_real_65536_keys_preserves_every_leaf_and_original_root": "ok",
+        "pon_state::tests::all_deletions_return_empty_and_values_remain_bounded": "ok",
+        "pon_state::tests::compressed_roots_equal_independent_full_builder": "ok",
+        "pon_state::tests::failing_last_change_leaves_predecessor_and_content_unchanged": "ok",
+        "pon_state::tests::mixed_batches_match_full_builder_and_inverse_restores_predecessor": "ok",
+        "pon_state::tests::updates_deletes_and_empty_values_preserve_frozen_snapshots": "ok",
+        "pon_state::tests::wrong_root_duplicate_key_and_oversize_are_rejected": "ok",
+        "pon_wire::streamed_state_root_tests::state_empty_constants_match_all_depths_and_parallel_callers": "ok",
+        "pon_wire::streamed_state_root_tests::state_node_and_complete_root_paired_cost_observation": "ignored",
+        "pon_wire::streamed_state_root_tests::state_node_single_buffer_matches_original_wire": "ok",
+        "pon_wire::streamed_state_root_tests::state_root_constants_do_not_cache_values_or_failures": "ok",
+        "pon_wire::streamed_state_root_tests::streamed_state_root_drops_each_owned_encoding_before_requesting_the_next": "ok",
+        "pon_wire::streamed_state_root_tests::streamed_state_root_preserves_original_sparse_tree_for_all_input_orders": "ok",
+        "pon_wire::streamed_state_root_tests::streamed_state_root_refuses_duplicate_limit_and_truncated_producer_errors": "ok",
+        "pon_wire::tests::account_archive_reference_root_matches_independent_vectors": "ok",
+        "pon_wire::tests::contribution_without_signed_round_is_not_revision3_wire": "ok",
+        "pon_wire::tests::every_tx_tag_has_an_exact_payload": "ok",
+        "pon_wire::tests::header_exact_and_context_bound": "ok",
+        "pon_wire::tests::release_payload_is_bounded_and_sorted": "ok",
+        "pon_wire::tests::sparse_root_is_order_independent_and_value_sensitive": "ok",
+        "pq_frame::tests::entire_statement_has_one_exact_canonical_preflight_binding": "ok",
+        "pq_frame::tests::malformed_spki_or_classical_key_never_binds_pq_identity": "ok",
+        "pq_frame::tests::old_devnet_transaction_size_cannot_hold_pq_signature": "ok",
+        "pq_frame::tests::pinned_mldsa_spki_identity_matches_independent_sha256_vector": "ok",
+        "pq_frame::tests::sha384_payload_commitment_matches_independent_python_oracle": "ok",
+        "pq_frame::tests::stale_payload_and_signature_size_refuse": "ok",
+        "pq_frame::tests::unverified_signature_change_never_grants_authority": "ok",
+        "pq_frame::tests::zero_lifetimes_bad_length_and_classical_downgrade_reject": "ok",
+        "pq_native_accounts_v2::tests::closed_roles_lengths_reserved_bytes_and_old_namespaces_refuse": "ok",
+        "pq_native_accounts_v2::tests::exact_fresh_frame_sizes_include_every_key_and_both_proofs": "ok",
+        "pq_native_accounts_v2::tests::joint_core_binds_context_generation_every_descriptor_and_full_new_key": "ok",
+        "pq_native_accounts_v2::tests::new_roles_require_exact_branch_generation_and_anchored_source_identity": "ok",
+        "pq_native_accounts_v2::tests::quota_successor_has_fresh_exact_roles_and_full_dual_proof_bytes": "ok",
+        "pq_native_transfer_v1::tests::exact_outer_bounds_and_old_codec_refusal": "ok",
+        "pq_native_transfer_v1::tests::genesis_and_parameters_bind_semantics_signature_randomness_only_changes_wire_id": "ok",
+        "pq_transfer::tests::alleged_signature_is_not_parser_authority_or_transaction_identity": "ok",
+        "pq_transfer::tests::exact_bounds_and_canonical_body_reject_before_signature_work": "ok",
+        "tests::identifiers_and_decimal_values_are_canonical": "ok",
+        "tests::object_namespaces_do_not_collide": "ok",
+        "tests::result_commitment_binds_every_field": "ok"
+      },
+      "wall_seconds": 25.910369516001083
+    },
+    "m06-unit": {
+      "command_record": "native/m06-unit-tests-unit-final.json",
+      "failed": 0,
+      "filtered_out": 0,
+      "frozen_link_artifacts": 223,
+      "ignored": 6,
+      "log_sha256": "b863c50207798142e2d1bcfe3c316060c1064758f7ee0b57c3fe48e6669f9c32",
+      "measured": 0,
+      "passed": 88,
+      "required_executed": [
+        "pon_executor::pq_accounts_v2::tests::anchored_migration_conserves_all_accounts_tasks_rewards_and_claims_once",
+        "pon_executor::pq_accounts_v2::tests::dual_rotation_keeps_stable_task_permissions_and_actual_key_reads",
+        "pon_executor::pq_accounts_v2::tests::migration_refuses_omissions_ambiguous_ids_untranslated_liabilities_and_unbound_roots",
+        "pon_executor::pq_accounts_v2::tests::real_pq_positive_funding_registration_state_resolved_transfer_and_zero_credit"
+      ],
+      "source_files": 1170,
+      "test_outcomes": {
+        "checkpoint_tile_material_v1::tests::all_finite_bf16_patterns_match_independent_exact_f64_powers_and_even_rounding": "ok",
+        "checkpoint_tile_material_v1::tests::ieee_integer_rounding_zero_subnormal_ties_clips_and_nonfinite": "ok",
+        "deterministic_parallel_v1::tests::canonical_indices_and_unique_transaction_ids_are_required": "ok",
+        "deterministic_parallel_v1::tests::fee_limit_and_worker_bounds_fail_closed": "ok",
+        "deterministic_parallel_v1::tests::reverted_and_out_of_resource_never_write": "ok",
+        "deterministic_parallel_v1::tests::undeclared_access_and_noncanonical_sets_fail_closed": "ok",
+        "deterministic_parallel_v1::tests::worker_count_does_not_change_roots_or_receipts": "ok",
+        "growth_profile_v2::tests::growth_reference_codec_matches_independent_vector": "ok",
+        "growth_profile_v2::tests::growth_reference_independent_full_vectors_and_field_mutations": "ok",
+        "growth_profile_v2::tests::growth_reference_keeps_zero_nonce_history_and_working_bound": "ok",
+        "growth_profile_v2::tests::growth_reference_root_is_context_bound_and_conserved": "ok",
+        "model_composition_v4::oracle_observations::native_arithmetic_observations_for_independent_python": "ok",
+        "model_composition_v4::tests::a_rank_three_sum_has_no_rank_three_ilf2_witness_escape": "ok",
+        "model_composition_v4::tests::exact_sum_and_ablation_count_a_nonzero_parent_once": "ok",
+        "model_composition_v4::tests::exact_zero_subset_is_refused_even_when_full_bundle_is_nonzero": "ok",
+        "model_composition_v4::tests::wide_sum_preserves_cancellation_but_checks_every_ablation_range": "ok",
+        "pon_commitment::bounded_encoding_tests::actual_state_fallback_encoding_cost": "ignored",
+        "pon_commitment::bounded_encoding_tests::bounded_encoder_discards_full_payload_map_but_keeps_exact_old_charges": "ok",
+        "pon_commitment::bounded_encoding_tests::bounded_fallback_matches_old_full_map_for_forks_removals_and_every_budget": "ok",
+        "pon_commitment::bounded_encoding_tests::canonical_buffer_reuse_component_timing": "ignored",
+        "pon_commitment::bounded_encoding_tests::discarded_cache_never_hides_late_canonical_or_wire_errors_or_invalid_limits": "ok",
+        "pon_commitment::bounded_encoding_tests::payload_and_workspace_exact_edges_preserve_old_selection_and_root": "ok",
+        "pon_commitment::bounded_encoding_tests::reused_encoders_preserve_shrinking_values_deletions_and_late_errors": "ok",
+        "pon_commitment::checked_binding_tests::checked_binding_actual_eight_mib_payload_fallback_keeps_all_bytes": "ok",
+        "pon_commitment::checked_binding_tests::checked_binding_complete_cost_observation": "ignored",
+        "pon_commitment::checked_binding_tests::checked_binding_matches_two_steps_for_cold_warm_and_every_budget_fallback": "ok",
+        "pon_commitment::checked_binding_tests::checked_binding_preserves_wrong_roots_late_errors_and_invalid_limits": "ok",
+        "pon_commitment::checked_binding_tests::checked_binding_rechecks_actual_values_and_repairs_only_derived_material": "ok",
+        "pon_commitment::growth_reference_single_successor_tests::growth_single_successor_root_preserves_every_serial_cancellation_boundary": "ok",
+        "pon_commitment::growth_reference_single_successor_tests::growth_single_successor_root_preserves_relation_rejection_and_parent_immutability": "ok",
+        "pon_commitment::growth_reference_single_successor_tests::growth_single_successor_root_preserves_signed_output_and_rechecks_each_call": "ok",
+        "pon_commitment::tests::cancelled_panicked_and_partially_started_workers_all_finish_and_join": "ok",
+        "pon_commitment::tests::cancelled_prepare_apply_and_staged_root_never_publish_output_or_change_parent": "ok",
+        "pon_commitment::tests::checked_binding_signed_execution_errors_and_cancellation_match_two_steps": "ok",
+        "pon_commitment::tests::controlled_cancellation_joins_every_started_scoped_worker_before_return": "ok",
+        "pon_commitment::tests::controlled_previews_preserve_full_state_receipts_and_canonical_errors_for_all_workers": "ok",
+        "pon_commitment::tests::disjoint_delta_exact_and_overflow_preserve_full_state_and_allocation_order": "ok",
+        "pon_commitment::tests::immutable_parent_corrupt_tree_fallback_matches_full_execution": "ok",
+        "pon_commitment::tests::immutable_parent_preview_component_timing": "ignored",
+        "pon_commitment::tests::immutable_parent_previews_match_full_execution_including_failures_and_rebind": "ok",
+        "pon_commitment::tests::internal_tree_mismatch_uses_complete_root_without_mutating_snapshot": "ok",
+        "pon_commitment::tests::late_canonical_error_precedes_cache_choice_and_all_change_clones": "ok",
+        "pon_commitment::tests::resource_fallback_finishes_full_root_before_required_change_clones": "ok",
+        "pon_commitment::tests::scoped_accounting_preserves_all_workers_state_receipts_and_late_error_parity": "ok",
+        "pon_commitment::tests::warm_parent_binding_cancellation_preserves_shared_bytes_and_successful_retry": "ok",
+        "pon_commitment::tests::warm_parent_binding_component_timing": "ignored",
+        "pon_commitment::tests::warm_parent_binding_preserves_late_canonical_limits_and_context_error_order": "ok",
+        "pon_commitment::tests::warm_parent_binding_shares_only_after_complete_actual_comparison": "ok",
+        "pon_executor::pq_accounts_v2::tests::anchored_migration_conserves_all_accounts_tasks_rewards_and_claims_once": "ok",
+        "pon_executor::pq_accounts_v2::tests::dual_rotation_keeps_stable_task_permissions_and_actual_key_reads": "ok",
+        "pon_executor::pq_accounts_v2::tests::migration_refuses_omissions_ambiguous_ids_untranslated_liabilities_and_unbound_roots": "ok",
+        "pon_executor::pq_accounts_v2::tests::real_pq_positive_funding_registration_state_resolved_transfer_and_zero_credit": "ok",
+        "pon_executor::pq_native_v1::tests::actual_authority_reads_refuse_tampered_retirement_key_or_account_after_prepare": "ok",
+        "pon_executor::pq_native_v1::tests::actual_mldsa_enters_original_m06_nonce_fee_balance_reward_and_root": "ok",
+        "pon_executor::pq_native_v1::tests::explicit_unknown_or_empty_pq_selection_cannot_use_a_legacy_root": "ok",
+        "pon_executor::pq_native_v1::tests::randomized_valid_signatures_share_statement_and_cannot_advance_nonce_twice": "ok",
+        "pon_executor::pq_native_v1::tests::state_key_cap_and_whole_npq1_cost_cannot_be_hidden_by_inner_frame": "ok",
+        "pon_executor::pq_native_v1::tests::time_is_explicit_header_seconds_and_signature_binds_genesis_and_parameters": "ok",
+        "pon_executor::pq_transfer::tests::invalid_signature_key_expiry_funds_and_overflow_leave_parent_unchanged": "ok",
+        "pon_executor::pq_transfer::tests::randomized_signatures_do_not_multiply_transaction_identities": "ok",
+        "pon_executor::pq_transfer::tests::real_pq_signature_reaches_existing_native_nonce_fee_and_transfer_rules": "ok",
+        "pon_executor::pq_transfer::tests::replay_and_alternate_parent_nonce_are_rechecked_without_mutation": "ok",
+        "pon_executor::pq_transfer::tests::valid_crypto_does_not_override_fresh_owner_fee_nonce_or_purpose": "ok",
+        "pon_executor::repeated_sender_tests::repeated_sender_cancel_and_partial_worker_start_join_all_actual_workers": "ok",
+        "pon_executor::repeated_sender_tests::repeated_sender_complete_failures_preserve_canonical_first_error_and_parent": "ok",
+        "pon_executor::repeated_sender_tests::repeated_sender_complete_signed_batches_keep_state_receipts_root_and_every_signature": "ok",
+        "pon_executor::repeated_sender_tests::repeated_sender_tag11_and_cross_sender_funding_keep_complete_canonical_relation": "ok",
+        "pon_executor::session_tests::invalid_context_transaction_and_sequence_never_publish_session_state": "ok",
+        "pon_executor::session_tests::session_state_and_receipts_equal_existing_complete_builder": "ok",
+        "pon_executor::streaming_root_tests::complete_root_encoding_cost": "ignored",
+        "pon_executor::streaming_root_tests::streamed_m06_root_keeps_complete_canonical_value_errors_before_wire_limits": "ok",
+        "pon_executor::streaming_root_tests::streamed_m06_root_matches_original_values_removals_and_branch_edits": "ok",
+        "store::object_delta_tests::object_delta_detects_committed_parent_drift_before_first_write_v1": "ok",
+        "store::object_delta_tests::object_delta_empty_initialization_and_noop_have_exact_write_counts_v1": "ok",
+        "store::object_delta_tests::object_delta_insert_update_delete_matches_complete_target_v1": "ok",
+        "store::object_delta_tests::object_delta_parent_drift_under_write_lock_rejects_and_rolls_back_v1": "ok",
+        "store::object_delta_tests::object_delta_sqlite_full_after_partial_writes_rolls_back_exactly_v1": "ok",
+        "store::object_delta_tests::object_delta_unexpected_parent_row_is_not_erased_v1": "ok",
+        "tests::committed_sparse_block_writes_only_changed_objects_and_replays_exactly_v1": "ok",
+        "tests::conflicts_outcomes_resources_and_fee_reduction_are_deterministic": "ok",
+        "tests::crash_outcomes_reopen_to_exact_source_target_or_fence": "ok",
+        "tests::exact_replay_and_parent_identity_are_fail_closed": "ok",
+        "tests::execution_preview_executes_full_fee_path_without_advancing_the_store": "ok",
+        "tests::open_existing_requires_precreated_regular_nonsymlink_store": "ok",
+        "tests::parallel_execution_tests::hotspot_revert_and_resource_exhaustion_match_sequential_journal_oracle": "ok",
+        "tests::parallel_execution_tests::multiple_speculative_failures_report_the_canonical_transaction_error": "ok",
+        "tests::parallel_execution_tests::speculative_insufficient_funds_is_retried_after_predecessor_funds_payer_or_source": "ok",
+        "tests::parallel_execution_tests::stale_speculative_success_cannot_publish_when_canonical_payer_is_exhausted": "ok",
+        "tests::parallel_execution_tests::workers_compute_program_meter_fees_and_successors_on_immutable_parent": "ok",
+        "tests::persistent_parallel_worker_count_bounds_fail_closed": "ok",
+        "tests::persistent_parallel_worker_counts_reopen_to_identical_canonical_results": "ok",
+        "tests::schema_sidecar_and_self_consistent_row_tamper_fail_closed": "ok",
+        "tests::static_access_fee_and_arithmetic_mutants_fail_before_commit": "ok",
+        "tests::vector_inventory_matches_executable_candidate_assertions": "ok"
+      },
+      "wall_seconds": 87.16911808400619
+    },
+    "native-quota": {
+      "command_record": "native/node-tests-final.json",
+      "failed": 0,
+      "filtered_out": 0,
+      "frozen_link_artifacts": 223,
+      "ignored": 0,
+      "log_sha256": "2fb133e8174b2b91e839aef4f01eead6a53c60c08325b55c3da9aa8986c404a3",
+      "measured": 0,
+      "passed": 5,
+      "required_executed": [
+        "actual_consumer_rotation_rejects_retired_proof_and_reorg_restores_original_authority",
+        "actual_source_checkpoint_claimed_consumer_uses_quota_and_reorg_restores_import_lock",
+        "dual_pq_quota_actual_pool_work_sql_cut_cold_recovery_and_heavier_fork",
+        "exact_new_packet_settings_and_sql_namespaces_refuse_old_profile_fallback",
+        "full_dual_proof_capacity_reaches_native_pool_packet_sql_and_cold_read"
+      ],
+      "source_files": 1170,
+      "test_outcomes": {
+        "actual_consumer_rotation_rejects_retired_proof_and_reorg_restores_original_authority": "ok",
+        "actual_source_checkpoint_claimed_consumer_uses_quota_and_reorg_restores_import_lock": "ok",
+        "dual_pq_quota_actual_pool_work_sql_cut_cold_recovery_and_heavier_fork": "ok",
+        "exact_new_packet_settings_and_sql_namespaces_refuse_old_profile_fallback": "ok",
+        "full_dual_proof_capacity_reaches_native_pool_packet_sql_and_cold_read": "ok"
+      },
+      "wall_seconds": 63.34568842299632
+    },
+    "quota-authority": {
+      "command_record": "native/rebuild-m06-tests-final.json",
+      "failed": 0,
+      "filtered_out": 0,
+      "frozen_link_artifacts": 223,
+      "ignored": 0,
+      "log_sha256": "7494d71c0399bac98e16fac66f1adf971051b87aaed92b5bbfd77dbfbadbc9a9",
+      "measured": 0,
+      "passed": 8,
+      "required_executed": [
+        "actual_dual_pq_quota_conserves_escrow_fee_nonce_and_consumer_identity",
+        "both_real_proofs_current_state_consumer_and_nonconsuming_rejections_are_required",
+        "consumer_and_provider_rotations_are_exclusive_in_both_block_orders",
+        "consumer_registration_and_quota_use_require_separate_parent_authority",
+        "full_dual_proof_capacity_allows_71_and_refuses_72_without_mutation",
+        "rotated_provider_uses_stable_account_and_rejects_retired_proof_without_spending",
+        "same_block_quota_creation_cannot_supply_consumer_authority",
+        "v2_cannot_opt_into_quota_and_v3_context_cannot_be_relabelled"
+      ],
+      "source_files": 1170,
+      "test_outcomes": {
+        "actual_dual_pq_quota_conserves_escrow_fee_nonce_and_consumer_identity": "ok",
+        "both_real_proofs_current_state_consumer_and_nonconsuming_rejections_are_required": "ok",
+        "consumer_and_provider_rotations_are_exclusive_in_both_block_orders": "ok",
+        "consumer_registration_and_quota_use_require_separate_parent_authority": "ok",
+        "full_dual_proof_capacity_allows_71_and_refuses_72_without_mutation": "ok",
+        "rotated_provider_uses_stable_account_and_rejects_retired_proof_without_spending": "ok",
+        "same_block_quota_creation_cannot_supply_consumer_authority": "ok",
+        "v2_cannot_opt_into_quota_and_v3_context_cannot_be_relabelled": "ok"
+      },
+      "wall_seconds": 14.139382923996891
+    },
+    "retained-authority-capacity": {
+      "command_record": "native/pq2-capacity-tests-final.json",
+      "failed": 0,
+      "filtered_out": 0,
+      "frozen_link_artifacts": 223,
+      "ignored": 0,
+      "log_sha256": "080fddb3d813fa0d597d9ce30235f124957f5316e0024a97f68c56370e992ec8",
+      "measured": 0,
+      "passed": 2,
+      "required_executed": [
+        "complete_anchored_claim_bytes_allow_55_and_reject_56_without_reminting",
+        "complete_dual_proof_rotation_bytes_allow_56_and_reject_57_without_mutation"
+      ],
+      "source_files": 1170,
+      "test_outcomes": {
+        "complete_anchored_claim_bytes_allow_55_and_reject_56_without_reminting": "ok",
+        "complete_dual_proof_rotation_bytes_allow_56_and_reject_57_without_mutation": "ok"
+      },
+      "wall_seconds": 20.249962863999826
+    },
+    "retained-pq1": {
+      "command_record": "native/pq1-native-tests-final.json",
+      "failed": 0,
+      "filtered_out": 0,
+      "frozen_link_artifacts": 223,
+      "ignored": 0,
+      "log_sha256": "6a621bf9314d4dfdcc968187b5fa028bca220865d6d3b84668d54aeb329a61a4",
+      "measured": 0,
+      "passed": 6,
+      "required_executed": [
+        "actual_pq_pool_m06_pon_sql_cold_open_and_heavier_fork_requeue",
+        "expiry_equal_header_time_mtp_preview_future_skew_and_overflow_are_explicit",
+        "explicit_namespace_old_codec_context_and_sql_schema_cannot_fall_back",
+        "full_6129_byte_rows_and_packet_have_actual_85_transfer_limit",
+        "interrupted_heavier_reorg_preserves_original_atomic_state_and_recovers_cold",
+        "randomized_resign_duplicate_requires_real_signature_and_keeps_removal_history"
+      ],
+      "source_files": 1170,
+      "test_outcomes": {
+        "actual_pq_pool_m06_pon_sql_cold_open_and_heavier_fork_requeue": "ok",
+        "expiry_equal_header_time_mtp_preview_future_skew_and_overflow_are_explicit": "ok",
+        "explicit_namespace_old_codec_context_and_sql_schema_cannot_fall_back": "ok",
+        "full_6129_byte_rows_and_packet_have_actual_85_transfer_limit": "ok",
+        "interrupted_heavier_reorg_preserves_original_atomic_state_and_recovers_cold": "ok",
+        "randomized_resign_duplicate_requires_real_signature_and_keeps_removal_history": "ok"
+      },
+      "wall_seconds": 41.73689963200013
+    },
+    "retained-pq2": {
+      "command_record": "native/pq2-native-tests-final.json",
+      "failed": 0,
+      "filtered_out": 0,
+      "frozen_link_artifacts": 223,
+      "ignored": 0,
+      "log_sha256": "d56b54b64dca1987553b6fca52d3d195ec300bf91b2aabf3afd775ea95e408b9",
+      "measured": 0,
+      "passed": 9,
+      "required_executed": [
+        "actual_pq_pool_m06_pon_sql_cold_open_and_heavier_fork_requeue",
+        "dual_key_rotation_preserves_actual_task_permissions_and_reorg_reauthorizes_original_pool",
+        "expiry_equal_header_time_mtp_preview_future_skew_and_overflow_are_explicit",
+        "explicit_namespace_old_codec_context_and_sql_schema_cannot_fall_back",
+        "full_4263_byte_rows_and_packet_have_actual_122_transfer_limit",
+        "interrupted_heavier_reorg_preserves_original_atomic_state_and_recovers_cold",
+        "prior_pq_commitment_actual_legacy_pon_checkpoint_claim_cold_reorg_and_permission_conserve",
+        "randomized_resign_duplicate_requires_real_signature_and_keeps_removal_history",
+        "unregistered_pure_pon_miner_matures_actual_rewards_then_registers_without_whitelist"
+      ],
+      "source_files": 1170,
+      "test_outcomes": {
+        "actual_pq_pool_m06_pon_sql_cold_open_and_heavier_fork_requeue": "ok",
+        "dual_key_rotation_preserves_actual_task_permissions_and_reorg_reauthorizes_original_pool": "ok",
+        "expiry_equal_header_time_mtp_preview_future_skew_and_overflow_are_explicit": "ok",
+        "explicit_namespace_old_codec_context_and_sql_schema_cannot_fall_back": "ok",
+        "full_4263_byte_rows_and_packet_have_actual_122_transfer_limit": "ok",
+        "interrupted_heavier_reorg_preserves_original_atomic_state_and_recovers_cold": "ok",
+        "prior_pq_commitment_actual_legacy_pon_checkpoint_claim_cold_reorg_and_permission_conserve": "ok",
+        "randomized_resign_duplicate_requires_real_signature_and_keeps_removal_history": "ok",
+        "unregistered_pure_pon_miner_matures_actual_rewards_then_registers_without_whitelist": "ok"
+      },
+      "wall_seconds": 71.98452019900287
+    }
+  },
+  "whole_cargo_build_qualified": false,
+  "whole_chain_post_quantum": false
+}

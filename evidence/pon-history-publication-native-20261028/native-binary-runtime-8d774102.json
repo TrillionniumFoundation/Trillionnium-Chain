@@ -1,0 +1,25 @@
+{
+  "schema": "history-native-retained-binary-v1",
+  "runtime_source_commit": "8d7741028eb650f0600e61fcab46ff3d14b50767",
+  "runtime_source_tree": "da2d7c4ca9358f588c4fa8a2909c2be5b59e4739",
+  "original_path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/trnm_pon_node-1d384016751e2606",
+  "raw_bytes": 96678560,
+  "raw_sha256": "136bbeb0b474dc9d0bcb3c254ab3bf21d47666f4fb4e04957752f69ea905729b",
+  "raw_mode": "0o755",
+  "raw_uid": 0,
+  "raw_gid": 0,
+  "raw_mtime_ns": 1793148065593845638,
+  "archive": "native-binary-runtime-8d774102.gz",
+  "archive_bytes": 20052436,
+  "archive_sha256": "5357206a6a8d607166fa83ccd3962d38c2dbe6f78842476829104226677a6222",
+  "decompressed_sha256_verified": true,
+  "source_unchanged_during_archive": true,
+  "profile": "node package opt-level=0 local test; not performance qualification",
+  "transport": {
+    "kind": "ordered-exact-ranges",
+    "manifest": "native-binary-runtime-8d774102-parts.json",
+    "chunks": 5,
+    "original_archive_preserved_locally": true,
+    "reconstruction_required": true
+  }
+}

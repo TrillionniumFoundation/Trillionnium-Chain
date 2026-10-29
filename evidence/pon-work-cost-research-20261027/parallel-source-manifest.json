@@ -1,0 +1,50 @@
+{
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "source_commit": "5e797326b9c7635e43b93f97c65a309e51eafb46",
+  "files": [
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/full_relation.rs",
+      "sha": "b5e0c64426a3f4c3f25385b893bbb87916b89a2d"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/public_product.rs",
+      "sha": "cb8b97f6b200f9e863ac23e0f2255cd3a39dedc8"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/full_relation_tests.rs",
+      "sha": "832638935c2279350933ef75b4c39e105c679763"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_w1_complete_relation.rs",
+      "sha": "652fa8483c1af9481257dab7057445239d9ce3ee"
+    },
+    {
+      "path": "docs/protocol/pon-nakamoto-v1/details/W1_COMPLETE_RELATION_RESEARCH.md",
+      "sha": "0d3d687085a89d8847fceb070f097acbb01c83fd"
+    },
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "sha": "7a1f2096354861195b7ebf57fbeaa85dc0708355"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "sha": "edc516a57cd57ecd8a80a059cc5ed98e997b745c"
+    }
+  ],
+  "compared_base_changed": [
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "base_sha": "795a5e98a7dac66f372d0dcb9f8d8e8479aba0e3",
+      "new_sha": "7a1f2096354861195b7ebf57fbeaa85dc0708355"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "base_sha": "1c76bfa6039823196f936d668fa1148570487762",
+      "new_sha": "edc516a57cd57ecd8a80a059cc5ed98e997b745c"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs",
+      "base_sha": "fd064b33b833b5b388027fd7869f267e8069ddc4"
+    }
+  ]
+}

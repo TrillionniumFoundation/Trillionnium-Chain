@@ -155,6 +155,7 @@ fn fetch_cell_inner(
         overall: deadline,
         requests_left: &requests_left,
         responses: &responses,
+        peer_failures: Default::default(),
     };
     fetch_cell_in_session(store, pinned, peers, limits, &transport, output)
 }
@@ -318,9 +319,10 @@ pub(super) fn fetch_manifest_observed(
         None => {
             let mut received = None;
             let mut last_io = None;
-            for peer in peers {
+            for peer_index in transport.peer_indices(peers.len(), 0)? {
+                let peer = peers[peer_index];
                 let candidate =
-                    request(*peer, 1, pinned, MAX_MANIFEST_BYTES, transport).and_then(|wire| {
+                    request(peer, 1, pinned, MAX_MANIFEST_BYTES, transport).and_then(|wire| {
                         let manifest = CellManifestV1::decode(&wire)?;
                         require(manifest.id() == pinned, "manifest digest")?;
                         require(
@@ -337,6 +339,7 @@ pub(super) fn fetch_manifest_observed(
                         break;
                     }
                     Err(error) => {
+                        transport.peer_failed(peer_index);
                         rejected += 1;
                         if let CellErrorV1::Io(error) = error {
                             last_io = Some(error);
@@ -364,17 +367,25 @@ fn download_chunk(
     transport: &RequestContext<'_>,
 ) -> CellResultV1<(Vec<u8>, SocketAddr, usize)> {
     let mut last_io = None;
-    for offset in 0..peers.len() {
-        let peer = peers[(order + offset) % peers.len()];
+    for (attempt, peer_index) in transport
+        .peer_indices(peers.len(), order)?
+        .into_iter()
+        .enumerate()
+    {
+        let peer = peers[peer_index];
         let candidate =
             request(peer, 2, chunk.sha256, chunk.size as usize, transport).and_then(|bytes| {
                 verify_chunk(chunk, &bytes)?;
                 Ok(bytes)
             });
         match candidate {
-            Ok(bytes) => return Ok((bytes, peer, offset)),
-            Err(CellErrorV1::Io(error)) => last_io = Some(error),
-            Err(_) => (),
+            Ok(bytes) => return Ok((bytes, peer, attempt)),
+            Err(error) => {
+                transport.peer_failed(peer_index);
+                if let CellErrorV1::Io(error) = error {
+                    last_io = Some(error);
+                }
+            }
         }
     }
     Err(unavailable_with_transport_cause(transport, last_io))
@@ -488,6 +499,34 @@ pub(super) struct RequestContext<'a> {
     pub(super) overall: Instant,
     pub(super) requests_left: &'a AtomicU64,
     pub(super) responses: &'a ResponseBudget,
+    /// The configured/discovered provider list stays fixed for one session.
+    /// Bootstrap discovery does not populate these provider ordering hints.
+    pub(super) peer_failures: [AtomicU64; 8],
+}
+
+impl RequestContext<'_> {
+    /// Snapshot once before sorting: concurrent workers must not change the
+    /// comparator's ordering. Equal scores retain the original cyclic order.
+    /// Every configured peer remains a fallback for every missing object,
+    /// including a peer that previously lacked a different required member.
+    fn peer_indices(&self, count: usize, start: usize) -> CellResultV1<Vec<usize>> {
+        require(count <= self.peer_failures.len(), "configured peer count")?;
+        let failures: Vec<_> = self.peer_failures[..count]
+            .iter()
+            .map(|failure| failure.load(Ordering::Relaxed))
+            .collect();
+        let mut indices: Vec<_> = (0..count).map(|offset| (start + offset) % count).collect();
+        indices.sort_by_key(|index| failures[*index]);
+        Ok(indices)
+    }
+
+    fn peer_failed(&self, index: usize) {
+        let _ = self.peer_failures[index].fetch_update(
+            Ordering::Relaxed,
+            Ordering::Relaxed,
+            |failures| Some(failures.saturating_add(1)),
+        );
+    }
 }
 
 pub(super) struct ResponseBudget {
@@ -780,6 +819,7 @@ mod budget_tests {
                 overall: Instant::now() + Duration::from_secs(5),
                 requests_left: &requests_left,
                 responses: &responses,
+                peer_failures: Default::default(),
             };
             let succeeded = thread::scope(|scope| {
                 let clients: Vec<_> = (0..4)

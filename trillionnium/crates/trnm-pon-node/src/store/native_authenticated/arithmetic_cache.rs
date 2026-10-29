@@ -123,6 +123,12 @@ impl ArithmeticCache {
     /// account/conservation checks before the original state-root grammar.
     /// Caller-owned State is serialized anew; no SQL observation is reused.
     pub(crate) fn state_root(&self, settings: &Settings, state: &State) -> Result<Hash> {
+        trnm_mvcc_fee::pon_executor::pq_native_v1::validate_state(state, &settings.app)
+            .map_err(crate::Error::from)?;
+        if settings.is_native_pq_v4() || settings.is_native_pq_v5() {
+            trnm_mvcc_fee::pon_executor::pq_accounts_v2::validate_state(state, &settings.app)
+                .map_err(crate::Error::from)?;
+        }
         let _measurement = self
             .history
             .observe(super::HistoryStage::PersistedStateRoot);

@@ -12,6 +12,9 @@ use std::sync::{
     Arc, Mutex,
 };
 use trnm_protocol::pon_wire::Envelope;
+pub(super) mod history_import;
+mod history_recovery;
+pub use history_recovery::{ContinuousHistoryRecovery, HistoryRecoverySelection};
 fn continuous_error(e: crate::operator_task_policy::PolicyError) -> Error {
     Error::from(format!("OWNER_CONTINUOUS:{e:?}"))
 }
@@ -28,6 +31,7 @@ pub(super) struct ContinuousOwner {
     active: Arc<Mutex<Option<Active>>>,
     startup_scope: String,
     sink: Arc<history::FaultSink>,
+    history_recovery: Option<HistoryRecoverySelection>,
 }
 #[derive(Clone)]
 struct Active {
@@ -184,6 +188,12 @@ impl ContinuousOwner {
             .view
             .permission(purpose, payload)
             .map_err(continuous_error)?;
+        if let Some(selection) = &self.history_recovery {
+            ensure(
+                selection.permits(allocation.claim()),
+                "OWNER_CONTINUOUS_HISTORY_RECOVERY_SELECTED_OPERATION_ONLY",
+            )?;
+        }
         self.journal
             .lock()
             .map_err(|_| "OWNER_CONTINUOUS_JOURNAL_UNKNOWN")?
@@ -255,7 +265,26 @@ pub struct ContinuousSearchRequest<'a> {
     pub stop: &'a AtomicBool,
     pub deadline: std::time::Instant,
 }
-fn check_actual_task_fields(
+/// Local cancellation only, bound to the exact current view epoch. It cannot
+/// issue permission, refund a claim, reset CPU credit, or cancel a later view.
+#[derive(Clone)]
+pub struct ContinuousEpochCancellation {
+    epoch: Arc<AtomicU64>,
+    expected: u64,
+}
+impl ContinuousEpochCancellation {
+    pub fn cancel(&self) -> Result<bool> {
+        let next = self
+            .expected
+            .checked_add(1)
+            .ok_or("OWNER_CONTINUOUS_EPOCH_OVERFLOW")?;
+        Ok(self
+            .epoch
+            .compare_exchange(self.expected, next, Ordering::AcqRel, Ordering::Acquire)
+            .is_ok())
+    }
+}
+pub(super) fn check_actual_task_fields(
     task: &crate::operator_task_policy::Task,
     purpose: TaskPurpose,
     model: Hash,
@@ -294,6 +323,7 @@ impl Node {
         if self.is_continuous() {
             return Ok(false);
         }
+        self.require_strict_history_resource_profile()?;
         ensure(
             !self.public_service_epoch_unknown,
             "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH",
@@ -338,6 +368,7 @@ impl Node {
         if self.is_continuous() {
             return Ok(());
         }
+        self.require_strict_history_resource_profile()?;
         ensure(
             self.public_service_epoch_listeners != 0,
             "OWNER_PUBLIC_SERVICE_EPOCH_CORRUPT",
@@ -409,10 +440,16 @@ impl Node {
             "OWNER_CONTINUOUS_SERVICE_CPU_DOMAIN",
         )?;
         match &self.public_service_cpu {
-            Some(existing) => ensure(
-                existing.shares_domain_with(cpu),
-                "OWNER_PUBLIC_SERVICE_CPU_DOMAIN",
-            ),
+            Some(existing) => {
+                if existing.shares_domain_with(cpu) {
+                    return Ok(());
+                }
+                ensure(
+                    existing.accounting_available(),
+                    "PUBLIC_MUTATION_CPU_UNAVAILABLE",
+                )?;
+                Err(Error::public_service_domain_refusal())
+            }
             None => {
                 self.public_service_cpu = Some(cpu.clone());
                 Ok(())
@@ -427,6 +464,71 @@ impl Node {
             .or_else(|| self.continuous_owner.as_ref().map(|owner| &owner.cpu))
             .cloned()
             .ok_or_else(|| "OWNER_PUBLIC_SERVICE_DOMAIN_UNBOUND".into())
+    }
+    /// Begin an original durable public-service crash fence for an untrusted
+    /// standalone History page. No new schema or CPU budget is constructed.
+    ///
+    /// The ordinary V3 listener already owns this Node's active epoch when
+    /// the listener count is nonzero, and the continuous runtime has its
+    /// separate journal. Do not borrow another listener's last-close right.
+    /// In a standalone Node, start one persistent active marker BEFORE any
+    /// expensive History decode/W1/M06 operation; a real crash leaves it
+    /// behind so a later process cannot silently forgive unknown CPU debt.
+    pub(crate) fn begin_remote_history_cpu_epoch(&mut self) -> Result<bool> {
+        self.require_strict_history_resource_profile()?;
+        // A continuous Node has a durable operation-ID journal, but the
+        // generic ServiceMutationCpuDomain::begin used by History imports
+        // does NOT enter that journal. Never mislabel volatile CPU debit as
+        // recoverable continuous work; this path must fail closed until the
+        // original continuous owner provides an authorized durable scope.
+        ensure(
+            !self.is_continuous(),
+            "OWNER_CONTINUOUS_HISTORY_DURABLE_REQUIRED",
+        )?;
+        if self.public_service_epoch_listeners != 0 {
+            return Ok(false);
+        }
+        self.begin_ordinary_public_service_epoch()
+    }
+
+    /// Use one existing Node-owned budget for all remotely sourced History
+    /// proof imports, including loopback and nonloopback sources. A standalone
+    /// sync Node receives a COLD original CPU epoch, not the 2s diagnostic
+    /// warm burst; a V3/continuous Node keeps its already bound owner.
+    /// Never issue fresh credit on every peer, page or new signing identity.
+    pub(crate) fn remote_history_cpu_domain(&mut self) -> Result<ServiceMutationCpuDomain> {
+        self.require_strict_history_resource_profile()?;
+        // Once an ordinary public service is marked unclean, even its
+        // previously bound account cannot authorize new History mutations.
+        ensure(
+            !self.public_service_epoch_unknown,
+            "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH",
+        )?;
+        if let Ok(domain) = self.public_service_cpu_domain() {
+            return Ok(domain);
+        }
+        // No live listener can create an unrelated budget behind its owner.
+        ensure(
+            self.public_service_epoch_listeners == 0,
+            "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH",
+        )?;
+        // A process may have died with outstanding public W1 CPU. The
+        // volatile marker then resets on Node::open, but the original SQLite
+        // active-epoch row survives. Refuse a cold History budget BEFORE
+        // attempting any new verification. The existing V3 service uses the
+        // same canonical durable key and exact unknown-debt semantics.
+        let prior_epoch: Option<Vec<u8>> = self
+            .db
+            .query_row(
+                "SELECT value FROM metadata WHERE key=?1",
+                [ORDINARY_PUBLIC_EPOCH_KEY],
+                |row| row.get(0),
+            )
+            .optional()?;
+        ensure(prior_epoch.is_none(), "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH")?;
+        let cold = ServiceMutationCpuDomain::cold_remote_history_epoch();
+        self.bind_public_service_cpu_domain(&cold)?;
+        Ok(cold)
     }
     #[cfg(test)]
     pub(crate) fn continuous_domain_matches(&self, cpu: &ServiceMutationCpuDomain) -> bool {
@@ -448,6 +550,27 @@ impl Node {
         inputs: policy::Inputs,
         deadline: std::time::Instant,
     ) -> Result<(Self, Vec<u8>, Vec<u8>)> {
+        Self::open_operator_continuous_checkpoint_with_workers(path, inputs, deadline, 1)
+    }
+    /// Local operator configuration only. Worker count does not issue a claim,
+    /// add credit, or create another CPU domain. All M06 children use the same
+    /// original interval and must join before its durable settlement.
+    pub fn open_operator_continuous_checkpoint_with_workers(
+        path: &Path,
+        inputs: policy::Inputs,
+        deadline: std::time::Instant,
+        workers: usize,
+    ) -> Result<(Self, Vec<u8>, Vec<u8>)> {
+        Self::open_continuous_checkpoint_internal(path, inputs, deadline, workers, None)
+    }
+    fn open_continuous_checkpoint_internal(
+        path: &Path,
+        inputs: policy::Inputs,
+        deadline: std::time::Instant,
+        workers: usize,
+        history_recovery: Option<HistoryRecoverySelection>,
+    ) -> Result<(Self, Vec<u8>, Vec<u8>)> {
+        ensure([1, 2, 4, 8].contains(&workers), "WORKERS")?;
         let now = crate::operator_task_policy::now_ns().map_err(continuous_error)?;
         let view = Arc::new(policy::authenticate(&inputs, now).map_err(continuous_error)?);
         let mut journal = history::Journal::open(
@@ -458,6 +581,10 @@ impl Node {
         )
         .map_err(continuous_error)?;
         if journal.pristine() {
+            ensure(
+                history_recovery.is_none(),
+                "OWNER_CONTINUOUS_HISTORY_RECOVERY_NOT_FRESH",
+            )?;
             ensure(
                 inputs.lease_transition.is_none(),
                 "OWNER_CONTINUOUS_LEASE_NOT_FRESH",
@@ -652,6 +779,7 @@ impl Node {
             active: Arc::new(Mutex::new(None)),
             startup_scope: operation.scope().to_owned(),
             sink,
+            history_recovery,
         };
         let _scope = owner.enter(
             reconcile,
@@ -660,7 +788,7 @@ impl Node {
             Binding::none(),
         )?;
         Self::install_mining_marker(path, inputs.expected_uid, &owner.marker)?;
-        let opened = Self::open_inner(path, settings, 1, None, None, None, Some(owner));
+        let opened = Self::open_inner(path, settings, workers, None, None, None, Some(owner));
         let settled = operation.finish().map_err(continuous_error)?;
         let node = opened?;
         ensure(
@@ -683,6 +811,12 @@ impl Node {
         Ok((node, model, input))
     }
     pub fn refresh_operator_continuous_view(&mut self, inputs: policy::Inputs) -> Result<()> {
+        ensure(
+            self.continuous_owner
+                .as_ref()
+                .is_none_or(|owner| owner.history_recovery.is_none()),
+            "OWNER_CONTINUOUS_HISTORY_RECOVERY_INCOMPLETE",
+        )?;
         ensure(
             inputs.known_unclean_restart.is_none(),
             "OWNER_CONTINUOUS_RECOVERY_STARTUP_ONLY",
@@ -772,17 +906,17 @@ impl Node {
         Ok(())
     }
     pub fn cancel_continuous_epoch(&self) -> Result<bool> {
+        self.continuous_cancellation_handle()?.cancel()
+    }
+    pub fn continuous_cancellation_handle(&self) -> Result<ContinuousEpochCancellation> {
         let o = self
             .continuous_owner
             .as_ref()
             .ok_or("OWNER_CONTINUOUS_MODE_REQUIRED")?;
-        let next = o
-            .view_epoch
-            .checked_add(1)
-            .ok_or("OWNER_CONTINUOUS_EPOCH_OVERFLOW")?;
-        Ok(o.epoch
-            .compare_exchange(o.view_epoch, next, Ordering::AcqRel, Ordering::Acquire)
-            .is_ok())
+        Ok(ContinuousEpochCancellation {
+            epoch: o.epoch.clone(),
+            expected: o.view_epoch,
+        })
     }
     pub fn close_continuous_checkpoint(&self) -> Result<serde_json::Value> {
         let o = self
@@ -889,10 +1023,12 @@ impl Node {
             [],
             |r| r.get(0),
         )?;
-        ensure(
-            bytes32(best)? == tip,
-            "OWNER_CONTINUOUS_RECOVERY_ADVANCE_HOLD",
-        )?;
+        let best = bytes32(best)?;
+        if let Some(selection) = &o.history_recovery {
+            self.continuous_authorized_history_recovery(o, selection, tip, generation, best)?;
+        } else {
+            ensure(best == tip, "OWNER_CONTINUOUS_RECOVERY_ADVANCE_HOLD")?;
+        }
         self.namespace()?;
         ContinuousScopeCheckpoint(a).check()?;
         Ok(Some(tip))
@@ -1138,6 +1274,14 @@ impl Node {
         self.continuous_actual_packet_binding(&active.permit, packet)
     }
     fn continuous_actual_packet_binding(&self, p: &Permit, packet: &Packet) -> Result<()> {
+        self.continuous_actual_packet_binding_with_progress(p, packet, &mut || Ok(()))
+    }
+    fn continuous_actual_packet_binding_with_progress(
+        &self,
+        p: &Permit,
+        packet: &Packet,
+        progress: &mut dyn FnMut() -> Result<()>,
+    ) -> Result<()> {
         let c = p.allocation.claim();
         let t = &p.view.body.declared_binding.task;
         ensure(
@@ -1157,17 +1301,19 @@ impl Node {
         )
         .map_err(|error| Error::from(format!("WORK:{error:?}")))?;
         let manifest = self
-            .eligible_work_task(
+            .eligible_work_task_with_progress(
                 packet.header.parent,
                 packet.header.work_task,
                 packet.header.height,
+                progress,
             )?
             .ok_or("OWNER_CONTINUOUS_COMPLETE_REGISTRATION_REQUIRED")?;
         let lease = self
-            .lifecycle_task_lease(
+            .lifecycle_task_lease_with_progress(
                 packet.header.parent,
                 packet.header.work_task,
                 packet.header.height,
+                progress,
             )?
             .encode()
             .map_err(|_| "OWNER_CONTINUOUS_LEASE")?;
@@ -1494,8 +1640,29 @@ impl Node {
         );
         let result = (|| {
             progress()?;
-            self.continuous_actual_packet_binding(&permit, &packet)?;
-            if let Some(id) = self.check_admission_context(&packet, observed_now)? {
+            if purpose == "receiver-validation" {
+                let (parent, generation) = self.active()?;
+                permit
+                    .allocation
+                    .check_exact_receiver_packet(&packet, parent, generation)
+                    .map_err(continuous_error)?;
+            }
+            // A separately signed exact packet is still constrained by the
+            // upper delegation's nonce window. Keep this inside the same paid
+            // operation and before State restoration, Work or M06 children.
+            o.journal
+                .lock()
+                .map_err(|_| "OWNER_CONTINUOUS_JOURNAL_UNKNOWN")?
+                .check_nonce_window(packet.header.nonce, packet.header.nonce)
+                .map_err(continuous_error)?;
+            self.continuous_actual_packet_binding_with_progress(&permit, &packet, &mut || {
+                progress()
+            })?;
+            if let Some(id) =
+                self.check_admission_context_with_progress(&packet, observed_now, &mut || {
+                    progress()
+                })?
+            {
                 return Ok(id);
             }
             let checked = WorkCheckedPacket::verify_with_progress(packet, &mut |_| progress())?;
@@ -1544,19 +1711,12 @@ impl Node {
             &crate::operator_task_policy::digest_bytes(&raw),
         )?;
         let operation = o.operation(&permit, None)?;
-        let _scope = o.enter(
-            permit,
-            None,
-            operation.checkpoint_handle().map_err(continuous_error)?,
-            Binding::none(),
-        )?;
-        let result = (|| {
-            operation
-                .checkpoint_handle()
-                .map_err(continuous_error)?
-                .checkpoint()?;
-            self.activate_observed(tip, observed_now)
-        })();
+        let checkpoint = operation.checkpoint_handle().map_err(continuous_error)?;
+        let _scope = o.enter(permit.clone(), None, checkpoint.clone(), Binding::none())?;
+        let result = self.activate_observed_with_progress(tip, observed_now, &mut || {
+            permit.progress().map_err(continuous_error)?;
+            checkpoint.checkpoint()
+        });
         let settled = operation.finish().map_err(continuous_error)?;
         Ok(OwnedMutationResult {
             schema: "restricted-owner-continuous-activation-v1",

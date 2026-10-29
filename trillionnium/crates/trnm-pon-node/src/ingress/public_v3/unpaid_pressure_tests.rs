@@ -249,7 +249,15 @@ fn real_shared64_unpaid_pressure_releases_slots_protects_paid_body_and_confirms_
             .unwrap();
             assert!(reply.ok);
             let page: super::super::Page = serde_json::from_value(reply.value).unwrap();
-            after = super::super::receive_page(&mut verifier, page, tip, after, clock).unwrap();
+            after = super::super::receive_page_from(
+                &mut verifier,
+                addresses[1],
+                page,
+                tip,
+                after,
+                clock,
+            )
+            .unwrap();
             history_calls += 1;
             assert!(history_calls <= packets.len());
         }

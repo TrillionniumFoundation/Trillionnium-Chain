@@ -4,8 +4,8 @@
 //! Its bounded dot product is shared with the explicit verifier research comparison.
 use super::{
     expand_with_progress, maintenance_periodic::MaintenancePeriodicPreparedTask, Hash,
-    PreparedGenerationError, PreparedGenerationProgress, PreparedTask, VerificationError,
-    VerificationProgress, WorkError, CELLS, N, Q, R,
+    PreparedGenerationError, PreparedGenerationProgress, PreparedTask, ProducerCandidate,
+    VerificationError, VerificationProgress, WorkError, CELLS, N, Q, R,
 };
 use sha2::{Digest, Sha256};
 
@@ -148,6 +148,46 @@ impl MaintenanceLimbPreparedTask {
         challenge: Hash,
         mut progress: impl FnMut(PreparedGenerationProgress) -> Result<(), E>,
     ) -> Result<Vec<u8>, PreparedGenerationError<E>> {
+        let transcript = self.transcript_with_progress(challenge, &mut progress)?;
+        progress(PreparedGenerationProgress::BeforeProof)
+            .map_err(PreparedGenerationError::Cancelled)?;
+        let mut proof = self.inner.prefix.clone();
+        proof.extend_from_slice(&transcript.finalize());
+        Ok(proof)
+    }
+
+    /// Complete original limb arithmetic without a per-trial PNW1 prefix copy.
+    /// The returned local candidate confers no verification or target authority.
+    pub fn candidate(&self, challenge: Hash) -> Result<ProducerCandidate<'_>, WorkError> {
+        match self.candidate_with_progress(challenge, |_| Ok::<_, std::convert::Infallible>(())) {
+            Ok(candidate) => Ok(candidate),
+            Err(PreparedGenerationError::Relation(error)) => Err(error),
+            Err(PreparedGenerationError::Cancelled(impossible)) => match impossible {},
+        }
+    }
+
+    /// Emits the original observations through the final transcript tile.
+    /// Actual winning serialization has its own `BeforeProof` checkpoint in
+    /// `ProducerCandidate::into_proof_with_progress`; a cancelled call here
+    /// returns no candidate and does not alter the prepared task.
+    pub fn candidate_with_progress<E>(
+        &self,
+        challenge: Hash,
+        progress: impl FnMut(PreparedGenerationProgress) -> Result<(), E>,
+    ) -> Result<ProducerCandidate<'_>, PreparedGenerationError<E>> {
+        let transcript = self.transcript_with_progress(challenge, progress)?;
+        Ok(ProducerCandidate {
+            prefix: &self.inner.prefix,
+            challenge,
+            trace: transcript.finalize().into(),
+        })
+    }
+
+    fn transcript_with_progress<E>(
+        &self,
+        challenge: Hash,
+        mut progress: impl FnMut(PreparedGenerationProgress) -> Result<(), E>,
+    ) -> Result<Sha256, PreparedGenerationError<E>> {
         progress(PreparedGenerationProgress::BeforeReplay)
             .map_err(PreparedGenerationError::Cancelled)?;
         let mut noise = |label| {
@@ -186,11 +226,7 @@ impl MaintenanceLimbPreparedTask {
         transcript.update(b"TRNM-PON-TRACE1\0");
         transcript.update(challenge);
         transcript_tiles(&ap, &bp, &mut progress, |bytes| transcript.update(bytes))?;
-        progress(PreparedGenerationProgress::BeforeProof)
-            .map_err(PreparedGenerationError::Cancelled)?;
-        let mut proof = self.inner.prefix.clone();
-        proof.extend_from_slice(&transcript.finalize());
-        Ok(proof)
+        Ok(transcript)
     }
 }
 

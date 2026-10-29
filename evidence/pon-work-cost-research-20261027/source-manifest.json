@@ -1,0 +1,122 @@
+{
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "source_commit": "4b6b8a91b6dfe41fbd7f40f40b359d535c2c4251",
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "sha": "702727dcf00f032b16d593519b7b74894da40e17"
+    },
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "sha": "795a5e98a7dac66f372d0dcb9f8d8e8479aba0e3"
+    },
+    {
+      "path": "scripts/project-preflight.sh",
+      "sha": "cfd4f58405ca7620ad267f6aa42b240be038797c"
+    },
+    {
+      "path": "scripts/ci/project_boundary.py",
+      "sha": "3dbc60fd89e2e6417e04648fb433fbbcfaabf878"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/work_oracle.py",
+      "sha": "9cbfccd2d50af48fc43522b967ffdfb1f45ec098"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/contract_wire.py",
+      "sha": "37f62b2f0913e372bc1c75fed2cd3a3e1267870b"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/examples/support/w1_material.rs",
+      "sha": "83ab348459f3e5cae409d4dcffba359ef90aaf64"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "sha": "1c76bfa6039823196f936d668fa1148570487762"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts.rs",
+      "sha": "bd1093a73728a537a6f96c6a8a0b1701e3b72815"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/churn_controls.rs",
+      "sha": "effe3147d6b1c65e23ec5617b0fe1b814c02b7f8"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/controls.rs",
+      "sha": "f3c07fa83137df5f6f662f92db27f1d6d4149a69"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/tests.rs",
+      "sha": "81c1c73fe5b0e113ff8e2e7010527ead723ae5fb"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_one_zero.rs",
+      "sha": "d95d20caba662c884241a51cb045cfa17fa03983"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero.rs",
+      "sha": "0ae9356516dd4201b086fc4323296db57fbea219"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero_paired.rs",
+      "sha": "ee09310b8600ab7dee99e5ec230b8421b68227ee"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/facts.rs",
+      "sha": "2e92d9d41e5ff24c27c10b7b7acdb70ad259e5e5"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/facts/tests.rs",
+      "sha": "d15dfe9b69e831be9cca3d33050e78db72ce73b3"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/integer_paired.rs",
+      "sha": "ed132de30fb271c0cb56662cf2cbef053abfb69f"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_limb.rs",
+      "sha": "c7b9aa74098b62261180077db048a769aa9fcf31"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_periodic.rs",
+      "sha": "e33309316b5eed3fc8e9ceb3b816f81cb7485d95"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_prefix.rs",
+      "sha": "69f2ffbc96d5fce17c262d0f1165812448cf18e4"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/paired_product.rs",
+      "sha": "0b03945c58b0d90ad1b073487374351e3a9020e7"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs",
+      "sha": "fd064b33b833b5b388027fd7869f267e8069ddc4"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/structured.rs",
+      "sha": "1358d5f5a2df7f593ecfde0382357961631b6a8f"
+    },
+    {
+      "path": "config/pon/ledger-v1.json",
+      "sha": "f7d8dba05cd0267b716834d76774a7ce94a1276b"
+    },
+    {
+      "path": "config/pon/work-profile-v1.json",
+      "sha": "54e43139d3691b62f76f9e8976e1d2a974e8524b"
+    },
+    {
+      "path": "config/pon/model-family-v1.json",
+      "sha": "9a931f21ca86563cf7e5c6415acd20a0ced7da68"
+    },
+    {
+      "path": "config/pon/devnet-v1.json",
+      "sha": "a60f403b2f0e7343aed61170ca2aef875a787790"
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/continuity_v1.rs",
+      "sha": "70fde5fc8844ffe60f63593081f0a2fb54b53557"
+    }
+  ]
+}

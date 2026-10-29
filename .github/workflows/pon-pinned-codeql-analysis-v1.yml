@@ -1,0 +1,112 @@
+name: Pinned CodeQL analysis and coverage research
+on:
+  pull_request:
+    paths:
+      - .github/workflows/**
+      - scripts/**
+      - formal/**
+      - trillionnium/**
+      - tests/**
+      - evidence/**
+      - config/**
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: pon-pinned-codeql-${{ github.event.pull_request.head.sha || github.sha }}
+  cancel-in-progress: false
+jobs:
+  analysis:
+    name: Original CodeQL queries and retained diagnostics (${{ matrix.language }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [actions, python, rust, cpp]
+    env:
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+      PYTHONDONTWRITEBYTECODE: "1"
+      CARGO_INCREMENTAL: "0"
+      CARGO_BUILD_JOBS: "2"
+      RUSTUP_TOOLCHAIN: "1.95.0"
+    steps:
+      - name: Checkout exact source without retained credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.EXPECTED_HEAD }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Bind source and isolate all tool and database output
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/pinned-codeql-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-${{ matrix.language }}"
+          mkdir "$out"
+          echo "OUT=$out" >> "$GITHUB_ENV"
+          echo "TOOLS=$RUNNER_TEMP/codeql-tools-${{ matrix.language }}" >> "$GITHUB_ENV"
+          echo "CARGO_HOME=$RUNNER_TEMP/codeql-cargo-${{ matrix.language }}" >> "$GITHUB_ENV"
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$EXPECTED_HEAD" --output "$out/source-checkout.json"
+          bash scripts/project-preflight.sh --audit
+          python3 scripts/ci/test_pinned_codeql_analysis_v1.py 2>&1 | tee "$out/reader-controls.log"
+          timeout --kill-after=5s 60s python3 scripts/ci/test_collect_pinned_codeql_metadata_v1.py 2>&1 | tee "$out/metadata-reader-controls.log"
+      - name: Download and verify immutable official bundle
+        run: |
+          set -euo pipefail
+          bundle="$RUNNER_TEMP/codeql-bundle-${{ matrix.language }}.tar.zst"
+          curl --fail --show-error --silent --location --connect-timeout 30 --max-time 300 \
+            https://github.com/github/codeql-action/releases/download/codeql-bundle-v2.27.3/codeql-bundle-linux64.tar.zst \
+            --output "$bundle"
+          test "$(stat -c %s "$bundle")" = 558869612
+          printf '5e7607e1b721728955e31f5402d460ad227cbd2ffed0d4cc610116755796150e  %s\n' "$bundle" > "$OUT/bundle-sha256.txt"
+          sha256sum --check "$OUT/bundle-sha256.txt"
+          mkdir "$TOOLS"
+          tar --zstd --extract --file="$bundle" --directory="$TOOLS" --no-same-owner
+      - name: Install project and official extractor toolchains without changing defaults
+        if: matrix.language == 'rust' || matrix.language == 'cpp'
+        run: |
+          set -euo pipefail
+          rustup toolchain install 1.95.0 --profile minimal --component rust-src 2>&1 | tee "$OUT/rust-toolchain.log"
+      - name: Install the fixed Rust extractor analysis dependency
+        if: matrix.language == 'rust'
+        run: |
+          set -euo pipefail
+          # CodeQL 2.27.3 selects its own fixed 1.99.0 for non-nightly projects.
+          # This analysis dependency does not change the project runtime/compiler.
+          rustup toolchain install 1.99.0 --profile minimal --component rust-src 2>&1 | tee "$OUT/rust-extractor-toolchain.log"
+      - name: Execute original queries with complete source and diagnostic retention
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/run_pinned_codeql_analysis_v1.py \
+            --language "${{ matrix.language }}" --codeql "$TOOLS/codeql/codeql" \
+            --expected-head "$EXPECTED_HEAD" --output "$OUT/analysis" 2>&1 | tee "$OUT/runner.log"
+      - name: Recheck source after failures as well as successful execution
+        if: always()
+        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$EXPECTED_HEAD" --output "$OUT/source-final.json"
+      - name: Collect bounded raw diagnostics without changing the scan outcome
+        if: always()
+        run: |
+          set -euo pipefail
+          timeout --kill-after=5s 60s python3 scripts/ci/collect_pinned_codeql_metadata_v1.py \
+            --input "$RUNNER_TEMP/pinned-codeql-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-${{ matrix.language }}" \
+            --output "$RUNNER_TEMP/pinned-codeql-metadata-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-${{ matrix.language }}" \
+            --expected-head "$EXPECTED_HEAD" --language "${{ matrix.language }}" \
+            --run-id "$GITHUB_RUN_ID" --run-attempt "$GITHUB_RUN_ATTEMPT"
+      - name: Retain separately accessible bounded diagnostic inventory
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: pinned-codeql-metadata-${{ matrix.language }}-${{ env.EXPECTED_HEAD }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/pinned-codeql-metadata-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.language }}/
+          if-no-files-found: error
+          retention-days: 30
+      - name: Retain original SARIF, BQRS, diagnostics and partial failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: pinned-codeql-${{ matrix.language }}-${{ env.EXPECTED_HEAD }}-${{ github.run_attempt }}
+          path: |
+            ${{ env.OUT }}/
+            !${{ env.OUT }}/analysis/cargo-target/**
+            !${{ env.OUT }}/analysis/cpp-scope/project/**
+          if-no-files-found: error
+          retention-days: 30

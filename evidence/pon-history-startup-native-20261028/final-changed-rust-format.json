@@ -1,0 +1,25 @@
+{
+  "command": [
+    "/workspace/scratch/301262829a43/pon-build-inputs/unpacked/toolchain/bin/rustfmt",
+    "--edition",
+    "2021",
+    "--check",
+    "trillionnium/crates/trnm-pon-node/src/operator_checkpoint_tile.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/history_effect_v6.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/tests/startup.rs"
+  ],
+  "native_returncode": 0,
+  "elapsed_seconds": 0.9564790299918968,
+  "source_before": {
+    "trillionnium/crates/trnm-pon-node/src/store/history_effect_v6.rs": "a5808aa063c8d78408284ded0a2971c6db2f5385f6a4a9c7b8ba1d96264564c6",
+    "trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/tests/startup.rs": "f2e87324f012ae6d5a8080198ec45589ba3944b685e269dcd5eda711d437de47"
+  },
+  "source_after": {
+    "trillionnium/crates/trnm-pon-node/src/store/history_effect_v6.rs": "a5808aa063c8d78408284ded0a2971c6db2f5385f6a4a9c7b8ba1d96264564c6",
+    "trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/tests/startup.rs": "f2e87324f012ae6d5a8080198ec45589ba3944b685e269dcd5eda711d437de47"
+  },
+  "source_stable": true,
+  "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "passed": true,
+  "node_native_tests_executed": false
+}

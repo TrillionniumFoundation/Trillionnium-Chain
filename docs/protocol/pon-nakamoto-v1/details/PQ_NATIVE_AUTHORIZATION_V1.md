@@ -42,6 +42,15 @@ expired messages and failed inserts cannot consume a new sequence. Two valid
 randomized signatures for one statement remain the same operation. Local history
 is not part of a reversible chain-state transition.
 
+The owner's v1 hardening checks its exact main schema, refuses TEMP objects,
+rechecks the pinned policy and retained tip under the immediate transaction,
+checks both affected-row counts and reads back the exact new statement/digest
+and sequence before commit. This prevents a silently ignored insert, trigger
+rewrite or temporary table shadow from returning a successful record. The
+[native PQ component contract](../../../security/PQ_NATIVE_TRANSFER_AND_QUANTUM_DAA_V1.md)
+keeps schema-consistency protection separate from full-history and physical
+rollback resistance.
+
 The returned record proves only that this local owner recorded a signature-checked
 operation. It does not claim that an external effect executed, and is not a
 replacement for the effect owner's atomic execution/recovery protocol. This

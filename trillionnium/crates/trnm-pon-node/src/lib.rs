@@ -7,6 +7,8 @@ mod error;
 pub mod host_kernel_parent;
 pub mod ingress;
 pub mod mining;
+mod native_packet;
+mod native_progress;
 pub mod operator_checkpoint_tile;
 pub mod operator_continuous_controller;
 mod operator_continuous_cpu;
@@ -21,8 +23,13 @@ pub mod operator_mining_controller;
 pub mod operator_mining_policy;
 pub mod operator_task_policy;
 pub mod peer_polling;
+pub mod pq_accounts_v2;
 /// Explicit native PQ signature/replay owner; not installed by legacy Node.
 pub mod pq_authority;
+pub mod pq_native_v1;
+pub mod pq_quota_v3;
+pub mod pq_tasks_v4;
+pub mod pq_tasks_v5;
 pub mod public_submit;
 /// Public genesis maintenance bytes; availability never grants work or model credit.
 pub mod public_task_bootstrap;
@@ -44,6 +51,8 @@ pub use store::evaluation_round_observation::{
 };
 pub use store::growth::{GrowthObservation, GrowthPacket, GrowthProgress, GrowthWorkingSnapshot};
 pub use store::growth_reference::GrowthReferenceObservation;
+/// Explicit protected research owner; no general Node or production activation.
+pub use store::history_effect_v6;
 pub use store::mempool::{
     PoolBatch, PoolGcSummary, PoolGroupStatus, PoolLimits, PoolReceipt, PoolState, PoolStatus,
     LOCAL_POOL_PROFILE,
@@ -58,9 +67,10 @@ pub use store::storage_service::{
     NativeCellRepairRequestV1, NativeCellRetentionRequestV1,
 };
 pub use store::{
-    ConfirmationBatch, ContinuousSearchRequest, DerivedCommitmentStatus, MiningEpochCancellation,
-    NativeAccountProofProgress, Node, Observation, OwnedContinuousLeaseResult,
-    OwnedContinuousPoolResult, OwnedMutationResult, OwnedSearchResult,
+    ConfirmationBatch, ContinuousEpochCancellation, ContinuousHistoryRecovery,
+    ContinuousSearchRequest, DerivedCommitmentStatus, HistoryRecoverySelection,
+    MiningEpochCancellation, NativeAccountProofProgress, Node, Observation,
+    OwnedContinuousLeaseResult, OwnedContinuousPoolResult, OwnedMutationResult, OwnedSearchResult,
 };
 use trnm_crypto_primitives::pon_work;
 use trnm_crypto_primitives::qualified_work_task::{derive_matrices, AdmissionContext};

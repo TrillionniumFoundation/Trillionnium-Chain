@@ -1,0 +1,47 @@
+{
+  "all_archived_raw_bytes_read_back_verified": true,
+  "archive": "observer-component-02.tar.gz",
+  "archive_bytes": 9083,
+  "archive_sha256": "f2e02eee40d6b4c814e32995739c1cb717ef252bbb08d3560286ad78590164aa",
+  "executed_binaries_retained_outside_repository": [],
+  "failed_observations_reclassified": false,
+  "raw_files": [
+    {
+      "bytes": 3512,
+      "path": "actual-owned-observer.log",
+      "sha256": "e87e8f314e3fab05bf9e08365e05be39994e48f3c905bbafb3255d736aff5a12"
+    },
+    {
+      "bytes": 15388,
+      "path": "history_effect_v6_process_guard.py",
+      "sha256": "b22cb13f41611c5724eee658eda83be244f3603790b72db1e09004b3d1d3a8f3"
+    },
+    {
+      "bytes": 10494,
+      "path": "history_native_process_guard.py",
+      "sha256": "99c74545d529bbea43b741aaf3b4f83f2801ed1ce2b09a7206d1f82e306ef6ca"
+    },
+    {
+      "bytes": 303,
+      "path": "result.json",
+      "sha256": "53efc91597f7425ae7e2923709cfe4acee7f5c576feba400c5ab6a784e51333d"
+    },
+    {
+      "bytes": 354,
+      "path": "source-after.json",
+      "sha256": "9a950f8eb2618a7c877f924d8c6fdebec2b7dc1130dac2ad162384f9ba36858b"
+    },
+    {
+      "bytes": 354,
+      "path": "source-before.json",
+      "sha256": "9a950f8eb2618a7c877f924d8c6fdebec2b7dc1130dac2ad162384f9ba36858b"
+    },
+    {
+      "bytes": 4949,
+      "path": "test_history_effect_v6_guard.py",
+      "sha256": "a66f7b06199579b10e457b661eaa12fa22cd2eea0183da336b74e85ca80d1b64"
+    }
+  ],
+  "schema": "history-v6-completed-observation-archive-v1",
+  "source_directory": "/workspace/scratch/301262829a43/pon-pq-impl/history-v6-evidence/observer-component-02"
+}

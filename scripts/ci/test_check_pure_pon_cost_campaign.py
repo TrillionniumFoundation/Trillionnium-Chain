@@ -3,13 +3,18 @@
 import copy
 import itertools
 import unittest
-from check_pure_pon_cost_campaign import ARMS, GENERAL_ARMS, MATERIALS, SCHEMA, check
+import hashlib
+import tempfile
+from pathlib import Path
+from check_pure_pon_cost_campaign import ARMS, ARMS_V1, GENERAL_ARMS, MATERIALS, SCHEMA, SCHEMA_V1, check
 
 
 def fixture():
     native = "7f" + "ff" * 31
     rows = [{"kind": "begin", "hardness_proved": False, "rounds": 1,
-             "max_horizon": 1, "attempt_budget": 4, "native_target": native}]
+             "max_horizon": 1, "attempt_budget": 4, "native_target": native,
+             "compiled_source_sha256": {name: "aa" * 32 for name in
+                ("campaign_driver", "canonical_w1", "low_rank_prefix", "cargo_lock")}}]
     rows += [{"kind": "material", "name": name} for name in sorted(MATERIALS)]
     for material, arm, reuse, target in itertools.product(sorted(MATERIALS), sorted(ARMS),
                                                          (False, True), (native, "07" + "ff" * 31)):
@@ -48,6 +53,46 @@ class EvidenceReaderTests(unittest.TestCase):
         self.first["search_cpu_ns"] = None
         self.first["total_producer_cpu_ns"] = None
         check(self.rows)
+
+    def test_historical_v1_keeps_its_original_twelve_strategy_roster(self):
+        rows = [row for row in self.rows if row.get("kind") != "cohort" or row["strategy"] in ARMS_V1]
+        for row in rows:
+            row["schema"] = SCHEMA_V1
+        rows[-1]["cohorts"] = len(MATERIALS) * len(ARMS_V1) * 2 * 2
+        rows[0].pop("compiled_source_sha256")
+        self.assertEqual(check(rows)["input_schema"], SCHEMA_V1)
+
+    def test_v2_requires_all_compiled_source_digests(self):
+        self.rows[0]["compiled_source_sha256"].pop("low_rank_prefix")
+        with self.assertRaisesRegex(ValueError, "compiled source digests"):
+            check(self.rows)
+
+    def test_v2_cannot_drop_an_unsupported_low_rank_arm(self):
+        row = next(r for r in self.rows if r.get("strategy") == "low-rank-prefix-paired")
+        self.rows.remove(row)
+        self.rows[-1]["cohorts"] -= 1
+        with self.assertRaisesRegex(ValueError, "missing offered cohort"):
+            check(self.rows)
+
+    def test_explicit_source_readback_rejects_changed_solver_bytes(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            names = {
+                "campaign_driver": "trillionnium/crates/trnm-pon-node/examples/pon_pure_cost_campaign.rs",
+                "canonical_w1": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+                "low_rank_prefix": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/low_rank_prefix.rs",
+                "cargo_lock": "trillionnium/Cargo.lock",
+            }
+            for key, name in names.items():
+                path = root / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                content = (key + " synthetic parser fixture").encode()
+                path.write_bytes(content)
+                self.rows[0]["compiled_source_sha256"][key] = hashlib.sha256(content).hexdigest()
+            self.assertTrue(check(self.rows, root)["compiled_source_bytes_matched"])
+            (root / names["low_rank_prefix"]).write_text("changed")
+            with self.assertRaisesRegex(ValueError, "compiled source bytes differ"):
+                check(self.rows, root)
 
     def test_dropped_failed_attempts_cannot_reduce_denominator(self):
         self.first["searches"][0]["attempts"] = 1

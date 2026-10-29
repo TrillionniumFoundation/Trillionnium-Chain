@@ -1,0 +1,6 @@
+error: let chains are only allowed in Rust 2024 or later
+   --> /workspace/scratch/3d4ec372c488/pon-legal-ticket-cost/trillionnium/crates/trnm-pon-node/examples/pon_legal_ticket_cost_v3.rs:354:20
+    |
+354 |                 if let Some(previous) = streams.insert(round, stream.clone())
+    |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+

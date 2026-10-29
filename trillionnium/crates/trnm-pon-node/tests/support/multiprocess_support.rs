@@ -76,9 +76,24 @@ pub fn policy_observation() -> Value {
 pub enum WorkProfile {
     RawR13,
     ArithmeticFactsV1,
+    PureHistoryRawV1,
 }
 impl WorkProfile {
+    pub fn policy(self) -> PublicPolicy {
+        if self == Self::PureHistoryRawV1 {
+            PublicPolicy::pure_history_raw(Duration::from_millis(POLICY_LIFETIME_MS)).unwrap()
+        } else {
+            policy()
+        }
+    }
+
     pub fn policy_observation(self) -> Value {
+        if self == Self::PureHistoryRawV1 {
+            return json!({"schema":"public-pure-history-raw-resource-observation-v1",
+                "transport_profile":public_v3::PURE_HISTORY_RAW_PROFILE,
+                "policy_id":hex::encode(self.policy().id()),"ticket_bits":0,
+                "lifetime_ms":POLICY_LIFETIME_MS});
+        }
         let mut value = policy_observation();
         if self == Self::ArithmeticFactsV1 {
             value["policy_id"] = json!(hex::encode(policy().arithmetic_facts_id()));
@@ -91,8 +106,12 @@ impl WorkProfile {
     pub fn bind_actor_job(self, job: &mut Value) {
         assert!(job.get("work_profile").is_none());
         assert!(job.get("public_resource_policy").is_none());
-        if self == Self::ArithmeticFactsV1 {
-            job["work_profile"] = json!("arithmetic-facts-v1");
+        if self != Self::RawR13 {
+            job["work_profile"] = json!(if self == Self::ArithmeticFactsV1 {
+                "arithmetic-facts-v1"
+            } else {
+                "pure-history-raw-v1"
+            });
             job["public_resource_policy"] = self.policy_observation();
         }
     }
@@ -105,6 +124,12 @@ impl WorkProfile {
                     && policy == &Self::ArithmeticFactsV1.policy_observation() =>
             {
                 Ok(Self::ArithmeticFactsV1)
+            }
+            (Some(profile), Some(policy))
+                if profile.as_str() == Some("pure-history-raw-v1")
+                    && policy == &Self::PureHistoryRawV1.policy_observation() =>
+            {
+                Ok(Self::PureHistoryRawV1)
             }
             _ => Err("MULTIPROCESS_WORK_PROFILE"),
         }
@@ -255,6 +280,7 @@ pub fn call_with_work_profile(
     let wall = Instant::now();
     let remaining = window_end.saturating_sub(monotonic());
     let deadline = Instant::now() + Duration::from_nanos(remaining).min(Duration::from_secs(2));
+    let mut pure_acknowledgement = None;
     let (reply, metrics) = match work_profile {
         WorkProfile::RawR13 => public_v3::call_public_protected_v3_with_deadline(
             address,
@@ -265,6 +291,19 @@ pub fn call_with_work_profile(
             policy(),
             Some(deadline),
         ),
+        WorkProfile::PureHistoryRawV1 => {
+            let (reply, metrics, acknowledgement) = public_v3::call_public_pure_history_raw(
+                address,
+                &request,
+                settings,
+                identity(71).public_key(),
+                &identity(who),
+                work_profile.policy(),
+                Some(deadline),
+            );
+            pure_acknowledgement = Some(acknowledgement);
+            (reply, metrics)
+        }
         WorkProfile::ArithmeticFactsV1 => {
             public_v3::call_public_protected_v3_with_arithmetic_facts(
                 address,
@@ -297,6 +336,10 @@ pub fn call_with_work_profile(
         "recorded_request_bytes":raw.len(),"metrics":metrics});
     if request_value["op"] != "submit" {
         value["request"] = request_value;
+    }
+    if let Some(acknowledgement) = pure_acknowledgement {
+        value["pure_history_acknowledgement"] = json!(acknowledgement);
+        work_profile.bind_actor_job(&mut value);
     }
     value
 }

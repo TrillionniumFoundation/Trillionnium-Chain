@@ -22,6 +22,9 @@ pub const LEGACY_TASK_PROFILE: &str = "legacy-task-v1";
 pub const QUALIFIED_DEMANDS: u64 = 16;
 
 pub mod growth;
+pub mod pq_accounts_v2;
+pub mod pq_native_v1;
+pub mod pq_transfer;
 
 pub type State = BTreeMap<String, Value>;
 pub type Result<T> = std::result::Result<T, &'static str>;
@@ -251,6 +254,8 @@ pub fn root(state: &State) -> Result<Hash> {
 /// Consensus-profile selected root. The historical root function and every old
 /// profile retain their complete grammar, error order and 65,536-key boundary.
 pub fn root_for_config(state: &State, cfg: &Config) -> Result<Hash> {
+    pq_native_v1::validate_state(state, cfg)?;
+    pq_accounts_v2::validate_state(state, cfg)?;
     if crate::growth_profile_v2::enabled(cfg) {
         Ok(crate::growth_profile_v2::commitment(state, cfg)?.id())
     } else {
@@ -260,6 +265,8 @@ pub fn root_for_config(state: &State, cfg: &Config) -> Result<Hash> {
 
 #[derive(Clone)]
 pub struct Config {
+    pub(crate) native_pq: Option<std::sync::Arc<pq_native_v1::Profile>>,
+    pub(crate) native_pq_v2: Option<std::sync::Arc<pq_accounts_v2::Profile>>,
     pub network: Hash,
     pub parameters: Hash,
     pub family: Hash,
@@ -845,6 +852,8 @@ impl Config {
             evaluators.insert(trnm_crypto_primitives::public_key_hex(&key));
         }
         Ok(Self {
+            native_pq: None,
+            native_pq_v2: None,
             network,
             parameters,
             family,
@@ -1182,17 +1191,54 @@ fn active_candidate(v: &Value, current: &str, height: u64, cfg: &Config) -> Resu
 // This carrier is private and tied to the exact immutable input and installed context.
 // Main-envelope verification is independent of branch state and is done only once.
 // Consumer-use signatures still depend on the actual quota state and are checked there.
+enum PreparedEnvelope {
+    Pnx(Envelope),
+    Pq(pq_native_v1::PreparedTransfer),
+    Pq2(pq_accounts_v2::PreparedCommand),
+}
 struct Prepared {
-    envelope: Envelope,
+    envelope: PreparedEnvelope,
     sender: String,
     encoded_len: usize,
 }
 /// Read-only native admission check for exact PNX1 canonical context, selected tag,
 /// expiry and strict main signature. This grants no nonce, funds or execution fact.
 pub fn validate_main_envelope(raw: &[u8], height: u64, cfg: &Config) -> Result<Envelope> {
-    Ok(prepare(raw, height, cfg, &AtomicUsize::new(0))?.envelope)
+    match prepare(raw, height, None, cfg, &AtomicUsize::new(0), None)?.envelope {
+        PreparedEnvelope::Pnx(envelope) => Ok(envelope),
+        PreparedEnvelope::Pq(_) | PreparedEnvelope::Pq2(_) => Err("PQ_EXPLICIT_ENTRY_REQUIRED"),
+    }
 }
-fn prepare(raw: &[u8], height: u64, cfg: &Config, signatures: &AtomicUsize) -> Result<Prepared> {
+fn prepare(
+    raw: &[u8],
+    height: u64,
+    timestamp: Option<u64>,
+    cfg: &Config,
+    signatures: &AtomicUsize,
+    parent: Option<&State>,
+) -> Result<Prepared> {
+    if pq_accounts_v2::enabled(cfg) {
+        let timestamp = timestamp.ok_or("PQ2_HEADER_TIMESTAMP_REQUIRED")?;
+        let parent = parent.ok_or("PQ2_CURRENT_STATE_REQUIRED")?;
+        let tx = pq_accounts_v2::prepare_signature(parent, raw, timestamp, cfg)?;
+        signatures.fetch_add(tx.signature_count(), Ordering::Relaxed);
+        return Ok(Prepared {
+            sender: hex::encode(tx.sender()),
+            encoded_len: raw.len(),
+            envelope: PreparedEnvelope::Pq2(tx),
+        });
+    }
+    if pq_native_v1::enabled(cfg) {
+        let timestamp = timestamp.ok_or("PQ_HEADER_TIMESTAMP_REQUIRED")?;
+        signatures.fetch_add(1, Ordering::Relaxed);
+        let tx = pq_native_v1::prepare_signature(raw, timestamp, cfg)?;
+        let sender = hex::encode(tx.sender());
+        return Ok(Prepared {
+            envelope: PreparedEnvelope::Pq(tx),
+            sender,
+            encoded_len: raw.len(),
+        });
+    }
     let tx = Envelope::decode(raw).map_err(|_| "ENCODING")?;
     require(
         !(18..=21).contains(&tx.tag) || qualified_task_lifecycle::enabled(cfg),
@@ -1255,7 +1301,7 @@ fn prepare(raw: &[u8], height: u64, cfg: &Config, signatures: &AtomicUsize) -> R
     )
     .map_err(|_| "SIGNATURE")?;
     Ok(Prepared {
-        envelope: tx,
+        envelope: PreparedEnvelope::Pnx(tx),
         sender,
         encoded_len: raw.len(),
     })
@@ -1263,41 +1309,56 @@ fn prepare(raw: &[u8], height: u64, cfg: &Config, signatures: &AtomicUsize) -> R
 fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) -> Result<Patch> {
     apply_prepared_with_account_access(base, prepared, height, cfg, None)
 }
-fn apply_prepared_with_account_access(
-    base: &State,
-    prepared: &Prepared,
-    height: u64,
+// Shared native M06 arithmetic after the selected authentication owner succeeds.
+// This private function is never a signature verifier or a public bypass.
+fn debit_authorized_fee(
+    s: &mut View<'_>,
+    sender: &str,
+    tag: u8,
+    nonce: u64,
+    fee_limit: u64,
+    encoded_len: usize,
     cfg: &Config,
-    account_access: Option<&AccountPointAccess<'_>>,
-) -> Result<Patch> {
-    let tx = &prepared.envelope;
-    let sender = prepared.sender.clone();
-    let mut s = View::new(base, account_access);
-    let acct = s.account(&sender)?;
-    require(tx.nonce == add(field(&acct, "nonce")?, 1)?, "NONCE")?;
+) -> Result<u64> {
+    let acct = s.account(sender)?;
+    require(nonce == add(field(&acct, "nonce")?, 1)?, "NONCE")?;
     let fee = add(
-        cfg.fees[tx.tag as usize],
-        (prepared.encoded_len as u64)
+        *cfg.fees.get(tag as usize).ok_or("VERSION")?,
+        (encoded_len as u64)
             .checked_mul(cfg.limit("byte_fee_units")?)
             .ok_or("RANGE")?,
     )?;
-    require(tx.fee_limit >= fee, "FEE")?;
-    if tx.tag != 11 {
-        s.debit(&sender, fee)?;
+    require(fee_limit >= fee, "FEE")?;
+    if tag != 11 {
+        s.debit(sender, fee)?;
     } else {
         s.put(format!("account:{sender}"), acct);
     }
+    Ok(fee)
+}
+
+fn transfer_balances(s: &mut View<'_>, sender: &str, recipient: &str, amount: u64) -> Result<()> {
+    s.debit(sender, amount)?;
+    s.credit(recipient, amount)
+}
+
+// Private common task owner. Both signature profiles reach this only after
+// their genuine authorization and original nonce/fee checks have succeeded.
+fn apply_task_command(
+    s: &mut View<'_>,
+    sender_id: Hash,
+    nonce: u64,
+    tag: u8,
+    payload: &[u8],
+    height: u64,
+    cfg: &Config,
+) -> Result<()> {
+    let sender = hex::encode(sender_id);
     let mut p = Payload {
-        bytes: &tx.payload,
+        bytes: payload,
         pos: 0,
     };
-    match tx.tag {
-        1 => {
-            let recipient = hex::encode(p.h()?);
-            let amount = p.n()?;
-            s.debit(&sender, amount)?;
-            s.credit(&recipient, amount)?;
-        }
+    match tag {
         2 => {
             let task = p.h()?;
             let provider = hex::encode(p.h()?);
@@ -1309,8 +1370,8 @@ fn apply_prepared_with_account_access(
                     &[
                         &cfg.network,
                         &cfg.parameters,
-                        &tx.sender,
-                        &tx.nonce.to_le_bytes(),
+                        &sender_id,
+                        &nonce.to_le_bytes(),
                         &hash32(&provider)?,
                         &budget.to_le_bytes(),
                         &deadline.to_le_bytes(),
@@ -1356,10 +1417,157 @@ fn apply_prepared_with_account_access(
                     && text(&o, "output")? == output,
                 "STATE",
             )?;
-            s.credit(text(&o, "provider")?, field(&o, "remaining")?)?;
+            if field(&o, "remaining")? > 0 || !pq_accounts_v2::enabled(cfg) {
+                s.credit(text(&o, "provider")?, field(&o, "remaining")?)?;
+            }
             o["remaining"] = json!(0);
             o["status"] = json!("settled");
             s.put(k, o);
+        }
+        _ => return Err("VERSION"),
+    }
+    require(p.pos == p.bytes.len(), "ENCODING")
+}
+
+// Original quota owner shared by the legacy and explicit NPQ3 authorization
+// paths. Authentication is performed by their respective private prepared owners.
+fn reserve_quota(
+    s: &mut View<'_>,
+    sender_id: Hash,
+    nonce: u64,
+    payload: &[u8],
+    height: u64,
+    cfg: &Config,
+) -> Result<()> {
+    let sender = hex::encode(sender_id);
+    let mut p = Payload {
+        bytes: payload,
+        pos: 0,
+    };
+    let quota = p.h()?;
+    let consumer = hex::encode(p.h()?);
+    let provider = hex::encode(p.h()?);
+    let units = p.n()?;
+    let deadline = p.n()?;
+    require(
+        quota
+            == hash(
+                b"quota-instance-v3",
+                &[
+                    &cfg.network,
+                    &cfg.parameters,
+                    &sender_id,
+                    &nonce.to_le_bytes(),
+                    &hash32(&consumer)?,
+                    &hash32(&provider)?,
+                    &units.to_le_bytes(),
+                    &deadline.to_le_bytes(),
+                ],
+            ),
+        "RESOURCE_ID",
+    )?;
+    let k = format!("quota:{}", hex::encode(quota));
+    require(s.get(&k).is_none(), "DUPLICATE")?;
+    s.deadline(cfg, deadline, height)?;
+    require(units > 0 && units <= cfg.limit("max_quota_units")?, "LIMIT")?;
+    let cost = units
+        .checked_mul(cfg.limit("quota_unit_price")?)
+        .ok_or("RANGE")?;
+    s.debit(&sender, cost)?;
+    s.put(k,json!({"owner":sender,"consumer":consumer,"provider":provider,"remaining":cost,"units":units,"deadline":deadline,"status":"reserved"}));
+    require(p.pos == p.bytes.len(), "ENCODING")
+}
+
+fn quota_use_context(
+    s: &mut View<'_>,
+    sender: &str,
+    quota: Hash,
+    units: u64,
+    result: Hash,
+    height: u64,
+) -> Result<(String, Value)> {
+    let (key, row) = s.object("quota:", quota)?;
+    require(text(&row, "provider")? == sender, "AUTHORITY")?;
+    require(
+        text(&row, "status")? == "reserved" && height < field(&row, "deadline")?,
+        "STATE",
+    )?;
+    require(
+        units > 0 && units <= field(&row, "units")? && result != ZERO,
+        "LIMIT",
+    )?;
+    Ok((key, row))
+}
+
+fn settle_verified_quota(
+    s: &mut View<'_>,
+    sender: &str,
+    key: String,
+    mut row: Value,
+    units: u64,
+    fee: u64,
+    cfg: &Config,
+) -> Result<()> {
+    let cost = units
+        .checked_mul(cfg.limit("quota_unit_price")?)
+        .ok_or("RANGE")?;
+    require(cost >= fee && field(&row, "remaining")? >= cost, "FUNDS")?;
+    row["remaining"] = json!(field(&row, "remaining")? - cost);
+    row["units"] = json!(field(&row, "units")? - units);
+    s.credit(sender, cost - fee)?;
+    if field(&row, "units")? == 0 {
+        row["status"] = json!("spent");
+    }
+    s.put(key, row);
+    Ok(())
+}
+
+fn apply_prepared_with_account_access(
+    base: &State,
+    prepared: &Prepared,
+    height: u64,
+    cfg: &Config,
+    account_access: Option<&AccountPointAccess<'_>>,
+) -> Result<Patch> {
+    let tx = match &prepared.envelope {
+        PreparedEnvelope::Pnx(tx) => tx,
+        PreparedEnvelope::Pq(tx) => return pq_native_v1::apply(base, tx, cfg, account_access),
+        PreparedEnvelope::Pq2(tx) => {
+            return pq_accounts_v2::apply(base, tx, height, cfg, account_access)
+        }
+    };
+    let sender = prepared.sender.clone();
+    let mut s = View::new(base, account_access);
+    let fee = debit_authorized_fee(
+        &mut s,
+        &sender,
+        tx.tag,
+        tx.nonce,
+        tx.fee_limit,
+        prepared.encoded_len,
+        cfg,
+    )?;
+    let mut p = Payload {
+        bytes: &tx.payload,
+        pos: 0,
+    };
+    match tx.tag {
+        1 => {
+            let recipient = hex::encode(p.h()?);
+            let amount = p.n()?;
+            transfer_balances(&mut s, &sender, &recipient, amount)?;
+        }
+        2..=5 => {
+            apply_task_command(
+                &mut s,
+                tx.sender,
+                tx.nonce,
+                tx.tag,
+                &tx.payload,
+                height,
+                cfg,
+            )?;
+            p.pos = p.bytes.len();
         }
         23 => {
             let witness = trnm_protocol::integer_factor_v2::FactorWitnessV2::decode(&tx.payload)
@@ -1758,53 +1966,15 @@ fn apply_prepared_with_account_access(
             s.put(rk, rel);
         }
         10 => {
-            let quota = p.h()?;
-            let consumer = hex::encode(p.h()?);
-            let provider = hex::encode(p.h()?);
-            let units = p.n()?;
-            let deadline = p.n()?;
-            require(
-                quota
-                    == hash(
-                        b"quota-instance-v3",
-                        &[
-                            &cfg.network,
-                            &cfg.parameters,
-                            &tx.sender,
-                            &tx.nonce.to_le_bytes(),
-                            &hash32(&consumer)?,
-                            &hash32(&provider)?,
-                            &units.to_le_bytes(),
-                            &deadline.to_le_bytes(),
-                        ],
-                    ),
-                "RESOURCE_ID",
-            )?;
-            let k = format!("quota:{}", hex::encode(quota));
-            require(s.get(&k).is_none(), "DUPLICATE")?;
-            s.deadline(cfg, deadline, height)?;
-            require(units > 0 && units <= cfg.limit("max_quota_units")?, "LIMIT")?;
-            let cost = units
-                .checked_mul(cfg.limit("quota_unit_price")?)
-                .ok_or("RANGE")?;
-            s.debit(&sender, cost)?;
-            s.put(k,json!({"owner":sender,"consumer":consumer,"provider":provider,"remaining":cost,"units":units,"deadline":deadline,"status":"reserved"}));
+            reserve_quota(&mut s, tx.sender, tx.nonce, &tx.payload, height, cfg)?;
+            p.pos = p.bytes.len();
         }
         11 => {
             let quota = p.h()?;
-            let (k, mut o) = s.object("quota:", quota)?;
             let units = p.n()?;
             let result = p.h()?;
             let signature = p.take::<64>()?;
-            require(text(&o, "provider")? == sender, "AUTHORITY")?;
-            require(
-                text(&o, "status")? == "reserved" && height < field(&o, "deadline")?,
-                "STATE",
-            )?;
-            require(
-                units > 0 && units <= field(&o, "units")? && result != ZERO,
-                "LIMIT",
-            )?;
+            let (k, o) = quota_use_context(&mut s, &sender, quota, units, result, height)?;
             let digest = hash(
                 b"use",
                 &[
@@ -1819,17 +1989,7 @@ fn apply_prepared_with_account_access(
             );
             verify_hex_strict(text(&o, "consumer")?, &digest, &hex::encode(signature))
                 .map_err(|_| "SIGNATURE")?;
-            let cost = units
-                .checked_mul(cfg.limit("quota_unit_price")?)
-                .ok_or("RANGE")?;
-            require(cost >= fee && field(&o, "remaining")? >= cost, "FUNDS")?;
-            o["remaining"] = json!(field(&o, "remaining")? - cost);
-            o["units"] = json!(field(&o, "units")? - units);
-            s.credit(&sender, cost - fee)?;
-            if field(&o, "units")? == 0 {
-                o["status"] = json!("spent");
-            }
-            s.put(k, o);
+            settle_verified_quota(&mut s, &sender, k, o, units, fee, cfg)?;
         }
         12 => {
             let task = p.h()?;
@@ -2177,12 +2337,14 @@ fn mandatory(
     for (k, maturity) in mature {
         if maturity <= height {
             let reward = state.remove(&k).ok_or("STATE")?;
-            credit_state(
-                state,
-                text(&reward, "owner")?,
-                field(&reward, "amount")?,
-                account_access,
-            )?;
+            if field(&reward, "amount")? > 0 || !pq_accounts_v2::enabled(cfg) {
+                credit_state(
+                    state,
+                    text(&reward, "owner")?,
+                    field(&reward, "amount")?,
+                    account_access,
+                )?;
+            }
         }
     }
     crate::model_evolution_v5::cleanup(state, height, cfg)?;
@@ -2205,6 +2367,7 @@ pub fn execute(
     execute_with_commitment(
         parent,
         BlockExecution {
+            timestamp: None,
             transactions,
             height,
             miner,
@@ -2352,6 +2515,8 @@ pub fn execute_with_authenticated_obligation_input<E: Send>(
 }
 /// Ordinary caller-supplied facts, not prepared execution or admission authority.
 pub struct BlockExecution<'a> {
+    /// Exact header timestamp for the explicit PQ profile; legacy callers use None.
+    pub timestamp: Option<u64>,
     pub transactions: &'a [Vec<u8>],
     pub height: u64,
     pub miner: Hash,
@@ -2422,12 +2587,15 @@ fn execute_with_state_inputs<E: Send>(
     } = inputs;
     let progress = control.progress;
     let BlockExecution {
+        timestamp,
         transactions,
         height,
         miner,
         parent_id,
         workers,
     } = block;
+    pq_native_v1::validate_block(parent, transactions, miner, timestamp, cfg)?;
+    pq_accounts_v2::validate_block(parent, transactions, miner, timestamp, cfg)?;
     require([1, 2, 4, 8].contains(&workers), "WORKERS")?;
     require(
         transactions.len() as u64 <= cfg.limit("max_transactions")?,
@@ -2456,7 +2624,9 @@ fn execute_with_state_inputs<E: Send>(
     let signatures = AtomicUsize::new(0);
     // Same sender means every transaction writes the same nonce. Preserve a serial
     // state path, while independent cryptographic checks may still use the bounded pool.
-    let serial_state = workers == 1
+    let serial_state = pq_native_v1::enabled(cfg)
+        || pq_accounts_v2::enabled(cfg)
+        || workers == 1
         || (transactions.len() > 1
             && transactions[0].len() >= 68
             && transactions
@@ -2484,11 +2654,11 @@ fn execute_with_state_inputs<E: Send>(
     }
     let predict = |index: usize, raw: &[u8]| -> ControlledResult<Predicted, E> {
         progress(ExecutionProgress::BeforePrepare { index }).map_err(ExecutionError::Cancelled)?;
-        let prepared = prepare(raw, height, cfg, &signatures);
+        let prepared = prepare(raw, height, timestamp, cfg, &signatures, Some(parent));
         progress(ExecutionProgress::AfterPrepare { index }).map_err(ExecutionError::Cancelled)?;
         let range_command = prepared
             .as_ref()
-            .is_ok_and(|p| matches!(p.envelope.tag, 2 | 6 | 8 | 10 | 23));
+            .is_ok_and(|p| matches!(&p.envelope, PreparedEnvelope::Pnx(tx) if matches!(tx.tag, 2 | 6 | 8 | 10 | 23)));
         // Prefix-capacity operations remain canonical: do not retain one full
         // prefix snapshot per transaction merely to parallelize shared budgets.
         #[cfg(test)]
@@ -2621,14 +2791,19 @@ fn execute_with_state_inputs<E: Send>(
             }
         };
         if let Some(observer) = observer {
-            observer.transaction(
-                index,
-                &prepared.envelope,
-                &state,
-                &patch.writes,
-                patch.fee,
-                &patch.receipt,
-            )?;
+            match &prepared.envelope {
+                PreparedEnvelope::Pnx(envelope) => observer.transaction(
+                    index,
+                    envelope,
+                    &state,
+                    &patch.writes,
+                    patch.fee,
+                    &patch.receipt,
+                )?,
+                PreparedEnvelope::Pq(_) | PreparedEnvelope::Pq2(_) => {
+                    return Err("PQ_OBSERVER_UNSUPPORTED".into())
+                }
+            }
         }
         fees = add(fees, patch.fee)?;
         receipts.push(patch.receipt.clone());
@@ -2774,6 +2949,8 @@ fn check_completed_block_state_with_account_access(
     cfg: &Config,
     account_access: Option<&AccountPointAccess<'_>>,
 ) -> Result<()> {
+    pq_native_v1::validate_state(state, cfg)?;
+    pq_accounts_v2::validate_state(state, cfg)?;
     require(
         funds(state)? == num(state.get("meta:issued").ok_or("STATE")?)?,
         "CONSERVATION",
@@ -2785,6 +2962,8 @@ fn check_completed_block_state_with_account_access(
 /// This is computation input only; no consensus, Pool or owner permission.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct PrefixContext {
+    /// Part of this one-candidate binding; never a wall-clock query.
+    pub timestamp: Option<u64>,
     pub height: u64,
     pub miner: Hash,
     pub parent_id: Hash,
@@ -2794,6 +2973,9 @@ pub struct PrefixContext {
 /// construct the public commitment wrapper. All authority stays with that caller.
 pub(crate) struct TransactionPrefix {
     state: State,
+    // PQ2 signature key resolution is always from this immutable parent, even
+    // after prior prefix effects. Actual application still re-reads current State.
+    pq2_signature_parent: Option<std::sync::Arc<State>>,
     receipts: Vec<Vec<u8>>,
     fees: u64,
     transactions: Vec<Vec<u8>>,
@@ -2845,10 +3027,14 @@ impl TransactionPrefix {
     ) -> ControlledResult<Self, E> {
         (control.progress)(ExecutionProgress::BeforeStateClone)
             .map_err(ExecutionError::Cancelled)?;
+        pq_native_v1::validate_block(parent, &[], context.miner, context.timestamp, config)?;
+        pq_accounts_v2::validate_block(parent, &[], context.miner, context.timestamp, config)?;
         let (state, receipts) = prepare_block_state(parent, context.height, config)?;
         (control.progress)(ExecutionProgress::AfterMandatory).map_err(ExecutionError::Cancelled)?;
         Ok(Self {
             state,
+            pq2_signature_parent: pq_accounts_v2::enabled(config)
+                .then(|| std::sync::Arc::new(parent.clone())),
             receipts,
             fees: 0,
             transactions: Vec::new(),
@@ -2879,6 +3065,22 @@ impl TransactionPrefix {
             transactions.starts_with(&self.transactions),
             "PREFIX_BINDING",
         )?;
+        pq_native_v1::validate_block(
+            &self.state,
+            transactions,
+            self.context.miner,
+            self.context.timestamp,
+            &self.config,
+        )?;
+        // Recheck the complete prefix against its original block parent.
+        // Suffix application below still checks the current staged authority.
+        pq_accounts_v2::validate_block(
+            self.pq2_signature_parent.as_deref().unwrap_or(&self.state),
+            transactions,
+            self.context.miner,
+            self.context.timestamp,
+            &self.config,
+        )?;
         let progress = control.progress;
         let first = self.transactions.len();
         let suffix = &transactions[first..];
@@ -2889,7 +3091,14 @@ impl TransactionPrefix {
             let index = first + offset;
             progress(ExecutionProgress::BeforePrepare { index })
                 .map_err(ExecutionError::Cancelled)?;
-            prepared.push(prepare(raw, self.context.height, &self.config, &signatures));
+            prepared.push(prepare(
+                raw,
+                self.context.height,
+                self.context.timestamp,
+                &self.config,
+                &signatures,
+                self.pq2_signature_parent.as_deref().or(Some(&self.state)),
+            ));
             progress(ExecutionProgress::AfterPrepare { index })
                 .map_err(ExecutionError::Cancelled)?;
         }
@@ -3026,6 +3235,7 @@ impl ExecutionSession {
         let output = execute_with_commitment(
             &self.state,
             BlockExecution {
+                timestamp: None,
                 transactions,
                 height,
                 miner,

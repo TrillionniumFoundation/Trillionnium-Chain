@@ -14,10 +14,19 @@ import sys
 from pathlib import Path
 from unittest.mock import patch
 from report_module_evidence import rust_code, rust_group_end
+from rust_source_tokens import rust_structure_tokens
+import pq_legacy_source_contract as pq_contract
 
 ROOT = Path(__file__).resolve().parents[2]
 FLAGS = ('public_network_ready', 'production_activation', 'independent_accepted',
          'future_window_accepted', 'work_profile_qualified', 'physical_power_loss')
+# These optional statements must remain false wherever an artifact includes
+# them. They are not new mandatory fields in historical evidence schemas.
+UNSUPPORTED_AUTHORITY_FLAGS = frozenset(FLAGS) | frozenset({
+    'pq128_qualified', 'pq_128_security_qualified', 'public_ingress_qualified',
+    'consensus_activation', 'consensus_authority', 'production_consensus_activation',
+    'physical_quantum_oracle_measured', 'quantum_cost_bound',
+})
 CASES = (('hot', 'legacy'), ('hot', 'protected'), ('disjoint4', 'protected'), ('growth', 'protected'))
 TESTS = ('test_model_attribution', 'test_work_utility', 'test_public_evaluation_lifecycle', 'test_llm_adapter_contract')
 SOCKET_RUN = 'transport-sustained-paid-unpaid'
@@ -42,7 +51,12 @@ def unique(pairs):
 def load(path):
     def constant(value):
         raise ValueError('noncanonical JSON constant '+value)
-    return json.loads(path.read_text(), object_pairs_hook=unique, parse_constant=constant)
+    def floating(value):
+        number = float(value)
+        require(math.isfinite(number), 'nonfinite JSON number')
+        return number
+    return json.loads(path.read_text(), object_pairs_hook=unique, parse_constant=constant,
+                      parse_float=floating)
 
 
 def sha(raw):
@@ -62,7 +76,7 @@ def digest(value, length=64):
 def scope_flags(value):
     if isinstance(value, dict):
         for key, item in value.items():
-            if key in FLAGS:
+            if key in UNSUPPORTED_AUTHORITY_FLAGS:
                 require(item is False, 'artifact unsupported authority '+key)
             scope_flags(item)
     elif isinstance(value, list):
@@ -119,6 +133,7 @@ def validate_source(root, report, manifest, *, current=True):
 
 
 def validate_artifacts(root, folder, manifest, *, tracked=True):
+    scope_flags(manifest)
     files = manifest['files']
     require(isinstance(files, dict) and 'qualification.json' in files, 'artifact inventory')
     observed = set()
@@ -209,9 +224,10 @@ def native_durable_schema(root):
     """Extract the legacy evidence schema from one explicitly supported contract.
 
     Historical literal V1, inline composed V2 and the explicitly selected V2
-    backend, including its exact held-I/O delegation and canonical branch of
-    the shared-snapshot layout selector, are supported.
-    Authenticated and permanent-account growth storage
+    backend, including its exact held-I/O delegation and the ordinary opener's
+    identity mapping through the known shared-snapshot layout, are supported.
+    The explicit NPQ1/2/3/4/5 successor also requires its closed selector, guard
+    and original Legacy header path. Authenticated, shared-account, PQ and growth storage
     are different evidence scopes; recognizing their exact backend mappings
     must never append their tables or return their domains in this legacy result.
     This is not a Rust evaluator. Unknown bodies/literals fail closed. The shared
@@ -219,11 +235,19 @@ def native_durable_schema(root):
     whose exact bytes are checked separately below.
     """
     source = safe(root,'trillionnium/crates/trnm-pon-node/src/store.rs').read_text()
+    masks = {}
+    structures = {}
+    def masked(text):
+        # Reuse only identical immutable text within this invocation. Every
+        # invocation rereads the source; no path or prior verdict is cached.
+        if text not in masks:
+            masks[text] = rust_code(text)
+        return masks[text]
     def direct(code, position):
         prefix = code[:position]
         return all(prefix.count(left) == prefix.count(right) for left,right in ('{}','()','[]'))
     def bodies(text, kind, name):
-        code = rust_code(text)
+        code = masked(text)
         found = []
         for match in re.finditer(r'\b'+kind+r'\s+'+re.escape(name)+r'\b',code):
             # Only direct items of this source/owner, not nested modules, macros
@@ -243,39 +267,180 @@ def native_durable_schema(root):
         require(len(found) == 1, 'durable source body '+name)
         return found[0]
     def header(text, name):
-        code = rust_code(text)
+        code = masked(text)
         found = [match for match in re.finditer(r'\bfn\s+'+re.escape(name)+r'\b',code)
                  if direct(code,match.start())]
         require(len(found) == 1, 'durable source header '+name)
         start = code.find('{',found[0].end())
         require(start >= 0, 'durable source header '+name)
         return text[found[0].start():start]
+    def item_prefix(text, kind, name, terminator):
+        # Include attributes and visibility, not only the text after `mod`,
+        # `enum` or `impl`: a cfg-disabled exact body is not an active owner.
+        code = masked(text)
+        found = [match for match in re.finditer(r'\b'+kind+r'\s+'+re.escape(name)+r'\b',code)
+                 if direct(code,match.start())]
+        require(len(found) == 1, 'durable source item '+name)
+        match = found[0]
+        boundaries = [item.end() for item in re.finditer(r'[;}]',code[:match.start()])
+                      if direct(code,item.end())]
+        start = max(boundaries,default=0)
+        end = code.find(terminator,match.end())
+        require(end >= 0, 'durable source item '+name)
+        return text[start:end]
     def layout(actual, expected, message):
-        # String payloads are not compared by whitespace normalization. Each
-        # schema-affecting literal is also checked, byte for byte, with value().
-        normalize = lambda text: re.sub(r'\s+','',rust_code(text))
-        require(normalize(actual) == normalize(expected),message)
+        # Keep joint punctuation and literal prefixes. Structural comparison
+        # hides only literal payloads; each schema-affecting payload is also
+        # checked byte for byte with value() or literal().
+        for text in (actual,expected):
+            if text not in structures:
+                structures[text] = rust_structure_tokens(text)
+        require(structures[actual] == structures[expected],message)
     def value(text, prefix):
-        matches = list(re.finditer(prefix,rust_code(text)))
+        matches = list(re.finditer(prefix,masked(text)))
         require(len(matches) == 1, 'durable schema literal prefix')
         literal = re.match(r'\s*"([^"\\]*)"',text[matches[0].end():],re.S)
         require(literal is not None, 'durable schema string literal')
         return literal[1]
     def literal(text, name):
-        code = rust_code(text)
+        code = masked(text)
         matches = [match for match in re.finditer(r'\bconst\s+'+name+r'\s*:\s*&str\s*=',code)
                    if direct(code,match.start())]
         require(len(matches) == 1, 'durable schema literal '+name)
         parsed = re.match(r'\s*"([^"\\]*)"\s*;',text[matches[0].end():],re.S)
         require(parsed is not None, 'durable schema literal '+name)
         return parsed[1]
+    def declaration(text, kind, name, prefix):
+        # Bind the actual direct declaration, including its attributes and
+        # visibility. In particular, a #[path] or #[cfg] module substitution
+        # must not authorize reading an unrelated same-named local file.
+        code = rust_code(text)
+        matches = [match for match in re.finditer(r'\b'+kind+r'\s+'+name+r'\b',code)
+                   if direct(code,match.start())]
+        require(len(matches) == 1, 'durable shared layout declaration '+name)
+        match = matches[0]
+        starts = [0]+[end.end() for end in re.finditer(r'[;}]',code[:match.start()])
+                      if direct(code,end.end())]
+        layout(text[max(starts):match.start()],prefix,
+               'durable shared layout declaration '+name)
+        if kind != 'mod':
+            require(re.match(r'\s*\{',code[match.end():]) is not None,
+                    'durable shared layout declaration '+name)
+        return match
+    def shared_layout():
+        module = declaration(source,'mod','shared_snapshot','')
+        require(re.match(r'\s*;',code[module.end():]) is not None,
+                'durable shared layout module path')
+        shared_path = 'trillionnium/crates/trnm-pon-node/src/store/shared_snapshot.rs'
+        require(not (Path(root)/'trillionnium/crates/trnm-pon-node/src/store/shared_snapshot/mod.rs').exists(),
+                'durable shared layout ambiguous module path')
+        shared = safe(root,shared_path).read_text()
+        declaration(shared,'enum','Layout','#[derive(Clone, Copy, Debug, PartialEq, Eq)] pub(super)')
+        declaration(shared,'impl','Layout','')
+        layout(body(shared,'enum','Layout'),'CanonicalJson, SharedAccountsV1,',
+               'durable shared layout variants')
+        implementation = body(shared,'impl','Layout')
+        layout(implementation, '''
+            pub(super) fn for_opening(backend: StateBackend, io: Option<&NativeIoLease>) -> Self {
+                if backend == StateBackend::AuthenticatedV1 && io.is_some() {
+                    Self::SharedAccountsV1
+                } else {
+                    Self::CanonicalJson
+                }
+            }
+            pub(super) fn is_shared(self) -> bool {
+                self == Self::SharedAccountsV1
+            }
+            pub(super) fn ddl(self, base: String) -> String {
+                match self {
+                    Self::CanonicalJson => base,
+                    Self::SharedAccountsV1 => format!("{base}{DDL}"),
+                }
+            }
+            pub(super) fn schema_id(self, base: Hash) -> Hash {
+                match self {
+                    Self::CanonicalJson => base,
+                    Self::SharedAccountsV1 => hash(
+                        b"native-io-shared-authenticated-branch-schema-v1",
+                        &[&base, DDL.as_bytes(), SCHEMA.as_bytes()],
+                    ),
+                }
+            }
+        ''', 'durable shared layout mapping')
+        require(literal(shared,'DDL') ==
+                'CREATE TABLE native_io_shared_snapshots(block BLOB PRIMARY KEY,data BLOB NOT NULL);',
+                'durable shared layout DDL')
+        require(literal(shared,'SCHEMA') == 'native-io-shared-authenticated-snapshot-v1',
+                'durable shared layout schema')
+        require(value(body(implementation,'fn','ddl'),r'\bformat!\s*\(') == '{base}{DDL}',
+                'durable shared layout composition')
+        require(value(body(implementation,'fn','schema_id'),r'\bhash\s*\(\s*b') ==
+                'native-io-shared-authenticated-branch-schema-v1',
+                'durable shared layout domain')
     def legacy(ddl, domain):
         # Source binding does not authorize widening this evidence contract.
         # These tables have their own full-state/commitment/node verification.
-        require(not re.search(r'\b(?:archive_nodes|native_state_commitments|growth_states|native_io_shared_snapshots)\b',ddl,re.I),
+        require(not re.search(r'\b(?:archive_nodes|native_state_commitments|growth_states|native_io_shared_snapshots|local_pq_[A-Za-z0-9_]+)\b',ddl,re.I),
                 'authenticated tables in legacy durable schema')
         return ddl,domain
-    code = rust_code(source)
+    def shared_layout_contract():
+        # The implicit Rust submodule path is part of this one supported join.
+        # A path/cfg attribute, inline module or nested decoy cannot replace it.
+        modules = [match for match in re.finditer(r'\bmod\s+shared_snapshot\b',code)
+                   if direct(code,match.start())]
+        require(len(modules) == 1
+                and re.match(r'mod\s+shared_snapshot\s*;',code[modules[0].start():]),
+                'durable shared layout source')
+        layout(item_prefix(source,'mod','shared_snapshot',';'),'mod shared_snapshot',
+               'durable shared layout source')
+        shared = safe(root,'trillionnium/crates/trnm-pon-node/src/store/shared_snapshot.rs').read_text()
+        layout(item_prefix(shared,'enum','Layout','{'),
+               '#[derive(Clone, Copy, Debug, PartialEq, Eq)] pub(super) enum Layout',
+               'durable shared layout enum owner')
+        layout(body(shared,'enum','Layout'),'CanonicalJson, SharedAccountsV1,',
+               'durable shared layout variants')
+        layout(item_prefix(shared,'impl','Layout','{'),'impl Layout',
+               'durable shared layout impl owner')
+        implementation = body(shared,'impl','Layout')
+        layout(implementation, '''
+            pub(super) fn for_opening(backend: StateBackend, io: Option<&NativeIoLease>) -> Self {
+                if backend == StateBackend::AuthenticatedV1 && io.is_some() {
+                    Self::SharedAccountsV1
+                } else {
+                    Self::CanonicalJson
+                }
+            }
+            pub(super) fn is_shared(self) -> bool { self == Self::SharedAccountsV1 }
+            pub(super) fn ddl(self, base: String) -> String {
+                match self {
+                    Self::CanonicalJson => base,
+                    Self::SharedAccountsV1 => format!("{base}{DDL}"),
+                }
+            }
+            pub(super) fn schema_id(self, base: Hash) -> Hash {
+                match self {
+                    Self::CanonicalJson => base,
+                    Self::SharedAccountsV1 => hash(
+                        b"native-io-shared-authenticated-branch-schema-v1",
+                        &[&base, DDL.as_bytes(), SCHEMA.as_bytes()],
+                    ),
+                }
+            }
+        ''', 'durable shared layout composition/selection')
+        for name in ('DDL','SCHEMA'):
+            layout(item_prefix(shared,'const',name,'='),'const '+name+': &str',
+                   'durable shared layout literal owner')
+        require(literal(shared,'DDL') ==
+                'CREATE TABLE native_io_shared_snapshots(block BLOB PRIMARY KEY,data BLOB NOT NULL);',
+                'durable shared layout DDL')
+        require(literal(shared,'SCHEMA') == 'native-io-shared-authenticated-snapshot-v1',
+                'durable shared layout schema')
+        require(value(body(implementation,'fn','ddl'),r'\bformat!\s*\(') == '{base}{DDL}',
+                'durable shared layout composition')
+        require(value(body(implementation,'fn','schema_id'),r'\bhash\s*\(\s*b') ==
+                'native-io-shared-authenticated-branch-schema-v1',
+                'durable shared layout domain')
+    code = masked(source)
     if re.search(r'\bconst\s+BASE_DDL\b',code):
         base = literal(source,'BASE_DDL')
         composed = body(source,'fn','ddl')
@@ -288,7 +453,14 @@ def native_durable_schema(root):
             layout(body(source,'enum','StateBackend'),'Legacy, AuthenticatedV1, PermanentAccountGrowthV2,',
                    'durable backend variants')
             implementation = body(source,'impl','StateBackend')
-            layout(implementation, '''
+            pq_selected = re.search(r'\b(?:pq_explicit|selected_ddl|pq_native_v1|pq_accounts_v2|pq_quota_v3|pq_tasks_v4|pq_tasks_v5)\b',code) is not None
+            if pq_selected:
+                pq_contract.exact(item_prefix(source,'impl','StateBackend','{'),
+                                  'impl StateBackend','durable backend PQ owner')
+                pq_contract.exact(implementation,pq_contract.BACKEND_IMPLEMENTATION,
+                                  'durable backend composition/domain')
+            else:
+                layout(implementation, '''
                 fn ddl(self) -> String {
                     match self {
                         Self::Legacy => ddl(),
@@ -321,14 +493,18 @@ def native_durable_schema(root):
             for variant in ('AuthenticatedV1', 'PermanentAccountGrowthV2'):
                 require(value(backend_ddl,r'\bSelf::'+variant+r'\s*=>\s*format!\s*\(') == '{}{}',
                         'durable backend composition '+variant)
-            require(value(selected_domain,r'\bhash\s*\(\s*b') == 'native-growth-reference-branch-schema-v2',
-                    'durable growth schema domain')
+            if not pq_selected:
+                require(value(selected_domain,r'\bhash\s*\(\s*b') == 'native-growth-reference-branch-schema-v2',
+                        'durable growth schema domain')
             for variant, expected in [('Legacy','native-branch-schema-v2'),
                                       ('AuthenticatedV1','native-authenticated-branch-schema-v1'),
                                       ('PermanentAccountGrowthV2','native-permanent-account-growth-schema-v2')]:
                 require(value(domain,r'\bSelf::'+variant+r'\s*=>\s*b') == expected,
                         'durable backend domain '+variant)
             node = body(source,'impl','Node')
+            if pq_selected:
+                pq_contract.exact(item_prefix(source,'impl','Node','{'),'impl Node',
+                                  'durable backend PQ node owner')
             selections = {
                 'open':'Self::open_with_fault(path, settings, workers, None)',
                 'open_with_fault':'''ensure(!owner_marker_present(path)?, "OWNER_TASK_POLICY_REQUIRED")?;
@@ -344,7 +520,8 @@ def native_durable_schema(root):
             for name, expected in selections.items():
                 layout(body(node,'fn',name),expected,'durable backend opener '+name)
             selected = body(node,'fn','open_selected')
-            if re.search(r'\bfn\s+open_selected_with_io\b',rust_code(node)):
+            held_io = False
+            if re.search(r'\bfn\s+open_selected_with_io\b',masked(node)):
                 # This is one known delegation, not a search through arbitrary
                 # callees. Validate the parameter/field join before inspecting
                 # the callee's direct schema binding; a broken bridge cannot
@@ -356,90 +533,73 @@ def native_durable_schema(root):
                     hook: Option<&mut Hook<'_>>, owners: NativeOwners,
                     state_backend: StateBackend, growth_observation_only: bool,
                 ) -> Result<Self>''', 'durable backend selector header')
-                layout(selected, '''Self::open_selected_with_io(
-                    path, settings, workers, hook, owners,
-                    NativeStoreOpening { state_backend, growth_observation_only, native_io: None, },
-                )''', 'durable backend selector bridge')
-                layout(body(source,'struct','NativeStoreOpening'), '''
-                    state_backend: StateBackend,
-                    growth_observation_only: bool,
-                    native_io: Option<NativeIoLease>,
-                ''', 'durable backend opening layout')
+                if pq_selected:
+                    pq_contract.exact(selected,pq_contract.BRIDGE,'durable backend selector bridge')
+                    pq_contract.exact(body(source,'struct','NativeStoreOpening'),
+                                      pq_contract.OPENING_FIELDS,'durable backend opening layout')
+                    pq_contract.exact(item_prefix(source,'struct','NativeStoreOpening','{'),
+                                      'struct NativeStoreOpening','durable backend opening owner')
+                else:
+                    layout(selected, '''Self::open_selected_with_io(
+                        path, settings, workers, hook, owners,
+                        NativeStoreOpening { state_backend, growth_observation_only, native_io: None, },
+                    )''', 'durable backend selector bridge')
+                    layout(body(source,'struct','NativeStoreOpening'), '''
+                        state_backend: StateBackend,
+                        growth_observation_only: bool,
+                        native_io: Option<NativeIoLease>,
+                    ''', 'durable backend opening layout')
                 layout(header(node,'open_selected_with_io'), '''fn open_selected_with_io(
                     path: &Path, settings: Settings, workers: usize,
                     mut hook: Option<&mut Hook<'_>>, owners: NativeOwners,
                     opening: NativeStoreOpening,
                 ) -> Result<Self>''', 'durable backend opening header')
-                selected = rust_code(body(node,'fn','open_selected_with_io'))
-                unpack = re.match(r'\s*let\s+NativeStoreOpening\s*\{\s*state_backend\s*,\s*'
+                opening_source = body(node,'fn','open_selected_with_io')
+                if pq_selected:
+                    for name in ('open_selected','open_selected_with_io'):
+                        pq_contract.exact(item_prefix(node,'fn',name,'{'),header(node,name),
+                                          'durable backend PQ opening owner')
+                selected = masked(opening_source)
+                pq_field = r'pq_explicit\s*,\s*' if pq_selected else ''
+                unpack = re.match(r'\s*let\s+NativeStoreOpening\s*\{\s*'+pq_field+r'state_backend\s*,\s*'
                     r'growth_observation_only\s*,\s*native_io\s*,\s*\}\s*=\s*opening\s*;',selected)
                 require(unpack is not None, 'durable backend opening bindings')
-                # Only the exact, first-statement destructure introduces these
-                # original parameters. All subsequent rebinding remains denied.
-                selected = selected[unpack.end():]
+                # Only the exact first destructure introduces the original
+                # parameters. The PQ successor additionally requires its two
+                # first guards before any selected schema can acquire meaning.
+                end = unpack.end()
+                if pq_selected:
+                    end = pq_contract.opening_prefix_end(opening_source,selected,end,rust_group_end,require)
+                    pq_contract.verify_packet_contract(root,source,node,safe=safe,body=body,
+                        header=header,item_prefix=item_prefix,require=require)
+                selected = selected[end:]
+                held_io = True
             else:
-                selected = rust_code(selected)
-            shared_layout = re.search(r'\bshared_snapshot\b',code) is not None
-            if shared_layout:
-                # This single known layout preserves the exact legacy bytes.
-                # Do not evaluate arbitrary callees, accept only the old pair
-                # as a decoy, or relabel the held authenticated layout as V2.
-                modules = list(re.finditer(r'\bmod\s+shared_snapshot\s*;',code))
-                require(len(modules) == 1 and direct(code,modules[0].start())
-                        and code[:modules[0].start()].rstrip().endswith((';','}')),
-                        'durable shared layout module')
-                shared = safe(root,'trillionnium/crates/trnm-pon-node/src/store/shared_snapshot.rs').read_text()
-                layout(body(shared,'enum','Layout'),'CanonicalJson, SharedAccountsV1,',
-                       'durable shared layout variants')
-                shared_impl = body(shared,'impl','Layout')
-                layout(shared_impl, '''
-                    pub(super) fn for_opening(backend: StateBackend, io: Option<&NativeIoLease>) -> Self {
-                        if backend == StateBackend::AuthenticatedV1 && io.is_some() {
-                            Self::SharedAccountsV1
-                        } else {
-                            Self::CanonicalJson
-                        }
-                    }
-                    pub(super) fn is_shared(self) -> bool {
-                        self == Self::SharedAccountsV1
-                    }
-                    pub(super) fn ddl(self, base: String) -> String {
-                        match self {
-                            Self::CanonicalJson => base,
-                            Self::SharedAccountsV1 => format!("{base}{DDL}"),
-                        }
-                    }
-                    pub(super) fn schema_id(self, base: Hash) -> Hash {
-                        match self {
-                            Self::CanonicalJson => base,
-                            Self::SharedAccountsV1 => hash(
-                                b"native-io-shared-authenticated-branch-schema-v1",
-                                &[&base, DDL.as_bytes(), SCHEMA.as_bytes()],
-                            ),
-                        }
-                    }
-                ''', 'durable shared layout mapping')
-                require(value(body(shared_impl,'fn','ddl'),r'\bformat!\s*\(') == '{base}{DDL}'
-                        and value(body(shared_impl,'fn','schema_id'),r'\bhash\s*\(\s*b')
-                            == 'native-io-shared-authenticated-branch-schema-v1'
-                        and literal(shared,'DDL')
-                            == 'CREATE TABLE native_io_shared_snapshots(block BLOB PRIMARY KEY,data BLOB NOT NULL);'
-                        and literal(shared,'SCHEMA') == 'native-io-shared-authenticated-snapshot-v1',
-                        'durable shared layout literals')
-                binding_pattern = (r'\blet\s+storage_layout\s*=\s*shared_snapshot::Layout::for_opening'
-                    r'\(\s*state_backend\s*,\s*native_io\.as_ref\(\)\s*\)\s*;\s*'
-                    r'let\s+ddl\s*=\s*storage_layout\.ddl\(state_backend\.ddl\(\)\)\s*;\s*'
-                    r'let\s+schema_id\s*=\s*storage_layout\.schema_id\('
-                    r'state_backend\.selected_schema_id\(\s*&\s*settings\s*\)\)\s*;')
+                require(not pq_selected,'durable backend PQ opening bridge required')
+                selected = masked(selected)
+            uses_shared_layout = (re.search(r'\b(?:mod\s+shared_snapshot|shared_snapshot\s*::\s*Layout)\b',code) is not None
+                                  or re.search(r'\b(?:shared_snapshot|storage_layout)\b',selected) is not None)
+            if uses_shared_layout:
+                # Retain both exact contracts: declaration/path ownership and
+                # identity mapping, plus schema literal owners and punctuation.
+                require(held_io, 'durable shared layout missing held-I/O bridge')
+                shared_layout()
+                shared_layout_contract()
+                require(not re.search(r'\b(?:use|mod|extern|type|struct|enum|trait|macro_rules)\b',selected),
+                        'durable shared layout local scope')
+                ddl_call = (r'selected_ddl\s*\(\s*&\s*settings\s*\)' if pq_selected else r'ddl\s*\(\s*\)')
+                binding = (r'\blet\s+storage_layout\s*=\s*shared_snapshot\s*::\s*Layout\s*::\s*for_opening\s*'
+                           r'\(\s*state_backend\s*,\s*native_io\s*\.\s*as_ref\s*\(\s*\)\s*\)\s*;\s*'
+                           r'let\s+ddl\s*=\s*storage_layout\s*\.\s*ddl\s*\(\s*state_backend\s*\.\s*'+ddl_call+r'\s*\)\s*;\s*'
+                           r'let\s+schema_id\s*=\s*storage_layout\s*\.\s*schema_id\s*\(\s*state_backend\s*\.\s*selected_schema_id\s*\(\s*&\s*settings\s*\)\s*\)\s*;')
             else:
-                binding_pattern = (r'\blet\s+ddl\s*=\s*state_backend\.ddl\(\)\s*;\s*'
-                    r'let\s+schema_id\s*=\s*state_backend\.selected_schema_id\(\s*&\s*settings\s*\)\s*;')
-            bindings = list(re.finditer(binding_pattern,selected))
+                require(not pq_selected,'durable backend PQ shared layout required')
+                binding = r'\blet\s+ddl\s*=\s*state_backend\.ddl\(\)\s*;\s*let\s+schema_id\s*=\s*state_backend\.selected_schema_id\(\s*&\s*settings\s*\)\s*;'
+            bindings = list(re.finditer(binding,selected))
             require(len(bindings) == 1 and direct(selected,bindings[0].start()),
                     'durable backend selected schema')
             remaining = selected[:bindings[0].start()]+selected[bindings[0].end():]
-            names = r'\b(?:state_backend|settings|ddl|schema_id'+(
-                r'|storage_layout|native_io' if shared_layout else '')+r')\b'
+            names = r'\b(?:state_backend|settings|ddl|schema_id|native_io|storage_layout|pq_explicit)\b'
             places = names+r'(?:\s*\.\s*[A-Za-z_]\w*|\s*\[[^\]]*\])*'
             require(not re.search(r'\blet\s+[^;=]*'+names+r'[^;=]*=',remaining)
                     and not re.search(places+r'\s*[+*/%&|^\-]?=(?!=)',remaining)

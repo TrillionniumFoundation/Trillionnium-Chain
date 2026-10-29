@@ -31,6 +31,48 @@ pub struct KernelCpuDelta {
     pub throttled_usec: u64,
 }
 
+/// The exact immutable values pinned by the live kernel-parent handle. This is
+/// an observation binding, not a signed proof or authority to widen a limit.
+/// The parent covers all descendant processes/threads, not only mutation work.
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize)]
+pub struct HostKernelBinding {
+    pub schema: &'static str,
+    pub parent: String,
+    pub boot_id: String,
+    pub device: u64,
+    pub inode: u64,
+    pub cpu_quota_usec: u64,
+    pub cpu_period_usec: u64,
+    pub cpu_burst_usec: u64,
+    pub memory_max_bytes: u64,
+    pub memory_swap_max_bytes: u64,
+    pub pids_max: u64,
+}
+
+/// Counters from the same verified fixed parent, with its original identity and
+/// limits attached for an independent reader. Memory/tasks remain point samples.
+/// A manually constructed diagnostic value conveys no OS or ledger authority.
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize)]
+pub struct BoundKernelResourceSample {
+    pub schema: &'static str,
+    pub binding: HostKernelBinding,
+    pub resources: KernelResourceSample,
+}
+impl BoundKernelResourceSample {
+    /// A different boot, inode, fixed parent or any changed resource ceiling
+    /// cannot be used as the other endpoint of the same accounting interval.
+    pub fn cpu_delta_since(&self, before: &Self) -> crate::Result<KernelCpuDelta> {
+        crate::ensure(
+            self.schema == "public-host-kernel-bound-resource-sample-v1"
+                && before.schema == self.schema
+                && self.binding.schema == "public-host-kernel-binding-v1"
+                && self.binding == before.binding,
+            "PUBLIC_HOST_KERNEL_BINDING_CHANGED",
+        )?;
+        self.resources.cpu_delta_since(before.resources)
+    }
+}
+
 impl KernelResourceSample {
     pub fn cpu_delta_since(self, before: Self) -> crate::Result<KernelCpuDelta> {
         let changed = || crate::Error::from("PUBLIC_HOST_KERNEL_COUNTER_REWIND");
@@ -57,9 +99,10 @@ impl KernelResourceSample {
 
 #[cfg(target_os = "linux")]
 mod kernel_parent {
-    use super::KernelResourceSample;
+    use super::{BoundKernelResourceSample, HostKernelBinding, KernelResourceSample};
     use std::{
         fs,
+        io::{self, Read},
         net::SocketAddr,
         os::unix::fs::{MetadataExt, PermissionsExt},
         path::{Path, PathBuf},
@@ -89,12 +132,59 @@ mod kernel_parent {
         tasks: u64,
     }
 
+    // Open the current path on EVERY invocation, with current credentials.
+    // No descriptor, content, permission or resource verdict is retained.
+    // Small procfs/kernfs values do not need read_to_string's size probing and
+    // growth loop. Still read to a real EOF, including after a short read;
+    // Interrupted is retried and every other read failure stays a failure.
+    // Only the existing quota recheck has a 128-byte ceiling. Boot identity,
+    // thread membership and initial limit parsing retain their original size
+    // behavior instead of imposing a new successful-input restriction.
+    fn read_fresh_kernel_text(
+        path: impl AsRef<Path>,
+        maximum: Option<usize>,
+    ) -> io::Result<String> {
+        read_kernel_text(&mut fs::File::open(path)?, maximum)
+    }
+
+    fn read_kernel_text(reader: &mut impl Read, maximum: Option<usize>) -> io::Result<String> {
+        let limit = maximum
+            .map(|maximum| {
+                maximum
+                    .checked_add(1)
+                    .ok_or_else(|| io::Error::new(io::ErrorKind::InvalidData, "kernel text limit"))
+            })
+            .transpose()?
+            .unwrap_or(usize::MAX);
+        let mut bytes = Vec::new();
+        let mut buffer = [0_u8; 4096];
+        loop {
+            let available = (limit - bytes.len()).min(buffer.len());
+            let count = match reader.read(&mut buffer[..available]) {
+                Ok(count) => count,
+                Err(error) if error.kind() == io::ErrorKind::Interrupted => continue,
+                Err(error) => return Err(error),
+            };
+            if count == 0 {
+                return String::from_utf8(bytes)
+                    .map_err(|error| io::Error::new(io::ErrorKind::InvalidData, error));
+            }
+            bytes.extend_from_slice(&buffer[..count]);
+            if maximum.is_some_and(|maximum| bytes.len() > maximum) {
+                return Err(io::Error::new(
+                    io::ErrorKind::InvalidData,
+                    "kernel text limit",
+                ));
+            }
+        }
+    }
+
     fn numeric(text: &str, limit: u64) -> Option<u64> {
         let value = text.trim().parse::<u64>().ok()?;
         (value > 0 && value <= limit).then_some(value)
     }
 
-    // The maximum CPU bandwidth is strictly <= 250,000 ns per second per
+    // The maximum CPU bandwidth is strictly <= 250,000,000 ns per second per
     // entire host parent. Explicit finite ceilings only; never accept "max".
     fn validate_limits(
         cpu: &str,
@@ -130,7 +220,7 @@ mod kernel_parent {
         // cgroup-v2 threaded subtree. /proc/self identifies the thread-group
         // leader and cannot attest the actual calling worker's CPU cgroup.
         // The kernel's /proc/thread-self resolves to the current TID.
-        let text = fs::read_to_string("/proc/thread-self/cgroup")
+        let text = read_fresh_kernel_text("/proc/thread-self/cgroup", None)
             .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_CONTEXT"))?;
         let mut entries = text.lines();
         let only = entries.next().ok_or("PUBLIC_HOST_KERNEL_CONTEXT")?;
@@ -209,7 +299,7 @@ mod kernel_parent {
     }
     impl KernelBudget {
         fn check(&self) -> Result<()> {
-            let now_boot = fs::read_to_string("/proc/sys/kernel/random/boot_id")
+            let now_boot = read_fresh_kernel_text("/proc/sys/kernel/random/boot_id", None)
                 .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_CONTEXT"))?;
             if now_boot.trim() != self.boot_id {
                 return Err("PUBLIC_HOST_KERNEL_REPLACED".into());
@@ -235,7 +325,7 @@ mod kernel_parent {
                 return Err("PUBLIC_HOST_KERNEL_CONTEXT".into());
             }
             let read = |name: &str| -> Result<String> {
-                let text = fs::read_to_string(self.parent.join(name))
+                let text = read_fresh_kernel_text(self.parent.join(name), Some(128))
                     .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_UNAVAILABLE"))?;
                 if text.len() > 128 {
                     return Err("PUBLIC_HOST_KERNEL_UNAVAILABLE".into());
@@ -273,7 +363,7 @@ mod kernel_parent {
             if !meta.is_dir() || meta.uid() != 0 || meta.permissions().mode() & 0o022 != 0 {
                 return Err("PUBLIC_HOST_KERNEL_PARENT".into());
             }
-            let boot = fs::read_to_string("/proc/sys/kernel/random/boot_id")
+            let boot = read_fresh_kernel_text("/proc/sys/kernel/random/boot_id", None)
                 .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_CONTEXT"))?;
             let budget = Self {
                 identity: (meta.dev(), meta.ino()),
@@ -287,7 +377,7 @@ mod kernel_parent {
                 },
             };
             let read = |name: &str| -> Result<String> {
-                fs::read_to_string(budget.parent.join(name))
+                read_fresh_kernel_text(budget.parent.join(name), None)
                     .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_UNAVAILABLE"))
             };
             let limits = validate_limits(
@@ -305,13 +395,29 @@ mod kernel_parent {
             self.check()
         }
 
+        /// Source-independent identity observation for one explicit local
+        /// resource-policy epoch. It is never a reusable successful check.
+        pub(crate) fn identity_observation(&self) -> Result<serde_json::Value> {
+            self.check()?;
+            let value = serde_json::json!({
+                "schema":"fixed-kernel-parent-identity-observation-v1",
+                "path":self.parent,"device":self.identity.0,"inode":self.identity.1,
+                "boot_id":self.boot_id,"cpu_quota_us":self.limits.cpu_quota_us,
+                "cpu_period_us":self.limits.cpu_period_us,"cpu_burst_us":0,
+                "memory_bytes":self.limits.memory_bytes,"swap_bytes":0,"tasks":self.limits.tasks,
+                "observation_is_authority":false,
+            });
+            self.check()?;
+            Ok(value)
+        }
+
         /// Read-only aggregate kernel accounting. Verify the same fixed
         /// boot/inode/quotas/membership both before and after sampling; if any
         /// counter is unavailable or malformed, never issue a qualified receipt.
         pub fn resource_sample(&self) -> Result<KernelResourceSample> {
             self.check()?;
             let read = |name| -> Result<String> {
-                fs::read_to_string(self.parent.join(name))
+                read_fresh_kernel_text(self.parent.join(name), None)
                     .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_COUNTERS"))
             };
             let sample = resource_sample(
@@ -322,6 +428,35 @@ mod kernel_parent {
             self.check()?;
             Ok(sample)
         }
+
+        /// Uses the same checked sample path: fixed parent, boot/inode, actual
+        /// calling-thread membership and exact unchanged limits before and after
+        /// all reads. It creates no cgroup, reservation, credit or policy change.
+        pub fn bound_resource_sample(&self) -> Result<BoundKernelResourceSample> {
+            let resources = self.resource_sample()?;
+            Ok(BoundKernelResourceSample {
+                schema: "public-host-kernel-bound-resource-sample-v1",
+                binding: HostKernelBinding {
+                    schema: "public-host-kernel-binding-v1",
+                    parent: self
+                        .parent
+                        .to_str()
+                        .ok_or("PUBLIC_HOST_KERNEL_PARENT")?
+                        .to_owned(),
+                    boot_id: self.boot_id.clone(),
+                    device: self.identity.0,
+                    inode: self.identity.1,
+                    cpu_quota_usec: self.limits.cpu_quota_us,
+                    cpu_period_usec: self.limits.cpu_period_us,
+                    // Both exact zero settings are revalidated on every sample.
+                    cpu_burst_usec: 0,
+                    memory_max_bytes: self.limits.memory_bytes,
+                    memory_swap_max_bytes: 0,
+                    pids_max: self.limits.tasks,
+                },
+                resources,
+            })
+        }
     }
 
     pub fn require(address: SocketAddr, parent: Option<&str>) -> Result<Option<KernelBudget>> {
@@ -329,6 +464,155 @@ mod kernel_parent {
             Some(path) => KernelBudget::open(path).map(Some),
             None if !address.ip().is_loopback() => Err("PUBLIC_HOST_KERNEL_REQUIRED".into()),
             None => Ok(None), // Retained loopback-only development tools.
+        }
+    }
+
+    #[cfg(test)]
+    mod fresh_read_tests {
+        use super::*;
+
+        struct ShortReader<'a> {
+            remaining: &'a [u8],
+            consumed: usize,
+            interrupt: bool,
+            tail_error: Option<io::ErrorKind>,
+        }
+        impl Read for ShortReader<'_> {
+            fn read(&mut self, destination: &mut [u8]) -> io::Result<usize> {
+                if self.interrupt {
+                    self.interrupt = false;
+                    return Err(io::ErrorKind::Interrupted.into());
+                }
+                if self.remaining.is_empty() {
+                    return self.tail_error.map_or(Ok(0), |kind| Err(kind.into()));
+                }
+                let count = destination.len().min(self.remaining.len()).min(3);
+                destination[..count].copy_from_slice(&self.remaining[..count]);
+                self.remaining = &self.remaining[count..];
+                self.consumed += count;
+                Ok(count)
+            }
+        }
+
+        #[test]
+        fn exact_limit_requires_real_eof_and_overlimit_read_stays_bounded() {
+            for length in [0, 1, 127, 128, 129, 16_384] {
+                let value = vec![b'7'; length];
+                let mut reader = ShortReader {
+                    remaining: &value,
+                    consumed: 0,
+                    interrupt: false,
+                    tail_error: None,
+                };
+                let result = read_kernel_text(&mut reader, Some(128));
+                if length <= 128 {
+                    assert_eq!(result.unwrap().as_bytes(), value);
+                    assert_eq!(reader.consumed, length);
+                } else {
+                    assert_eq!(result.unwrap_err().kind(), io::ErrorKind::InvalidData);
+                    assert_eq!(reader.consumed, 129);
+                }
+            }
+            let mut exact_with_late_error = ShortReader {
+                remaining: &[b'7'; 128],
+                consumed: 0,
+                interrupt: false,
+                tail_error: Some(io::ErrorKind::PermissionDenied),
+            };
+            assert_eq!(
+                read_kernel_text(&mut exact_with_late_error, Some(128))
+                    .unwrap_err()
+                    .kind(),
+                io::ErrorKind::PermissionDenied
+            );
+        }
+
+        #[test]
+        fn short_reads_and_interruption_preserve_unbounded_original_text() {
+            let value = "0::/trnmponpublic.slice/".to_owned() + &"a".repeat(9000) + ".service\n";
+            let mut reader = ShortReader {
+                remaining: value.as_bytes(),
+                consumed: 0,
+                interrupt: true,
+                tail_error: None,
+            };
+            assert_eq!(read_kernel_text(&mut reader, None).unwrap(), value);
+            assert_eq!(reader.consumed, value.len());
+        }
+
+        #[test]
+        fn invalid_utf8_and_io_errors_never_become_a_successful_prefix() {
+            for maximum in [None, Some(128)] {
+                let mut invalid = &b"25000 100000\n\xff"[..];
+                assert_eq!(
+                    read_kernel_text(&mut invalid, maximum).unwrap_err().kind(),
+                    io::ErrorKind::InvalidData
+                );
+                for prefix in [&b""[..], &b"25000 100000\n"[..]] {
+                    let mut failed = ShortReader {
+                        remaining: prefix,
+                        consumed: 0,
+                        interrupt: false,
+                        tail_error: Some(io::ErrorKind::PermissionDenied),
+                    };
+                    assert_eq!(
+                        read_kernel_text(&mut failed, maximum).unwrap_err().kind(),
+                        io::ErrorKind::PermissionDenied
+                    );
+                }
+            }
+        }
+
+        #[test]
+        fn every_call_reopens_replaced_removed_and_permission_changed_paths() {
+            let directory = tempfile::tempdir().unwrap();
+            let path = directory.path().join("current");
+            fs::write(&path, "25000 100000\n").unwrap();
+            assert_eq!(
+                read_fresh_kernel_text(&path, Some(128)).unwrap(),
+                "25000 100000\n"
+            );
+            fs::rename(&path, directory.path().join("old")).unwrap();
+            fs::write(&path, "50000 100000\n").unwrap();
+            assert_eq!(
+                read_fresh_kernel_text(&path, Some(128)).unwrap(),
+                "50000 100000\n"
+            );
+            fs::set_permissions(&path, fs::Permissions::from_mode(0o0)).unwrap();
+            // The kernel decides access for the ACTUAL current credentials.
+            // A privileged test process may retain DAC override; compare the
+            // original fresh-open behavior rather than inventing a denial.
+            let original = fs::read_to_string(&path).map_err(|error| error.kind());
+            let observed = read_fresh_kernel_text(&path, Some(128)).map_err(|error| error.kind());
+            assert_eq!(observed, original);
+            fs::remove_file(&path).unwrap();
+            assert_eq!(
+                read_fresh_kernel_text(&path, Some(128)).unwrap_err().kind(),
+                io::ErrorKind::NotFound
+            );
+            std::os::unix::fs::symlink(directory.path().join("old"), &path).unwrap();
+            assert_eq!(
+                read_fresh_kernel_text(&path, Some(128)).unwrap(),
+                "25000 100000\n"
+            );
+        }
+
+        #[test]
+        fn actual_native_thread_and_boot_reads_match_original_current_paths() {
+            std::thread::spawn(|| {
+                let thread = fs::read_link("/proc/thread-self").unwrap();
+                let current = Path::new("/proc").join(thread).join("cgroup");
+                assert_eq!(
+                    read_fresh_kernel_text("/proc/thread-self/cgroup", None).unwrap(),
+                    fs::read_to_string(current).unwrap()
+                );
+                assert_eq!(
+                    read_fresh_kernel_text("/proc/sys/kernel/random/boot_id", None).unwrap(),
+                    fs::read_to_string("/proc/sys/kernel/random/boot_id").unwrap()
+                );
+            })
+            .join()
+            .unwrap();
         }
     }
 
@@ -592,7 +876,13 @@ impl HostKernelBudget {
     pub fn verify(&self) -> crate::Result<()> {
         Err("PUBLIC_HOST_KERNEL_UNSUPPORTED".into())
     }
+    pub(crate) fn identity_observation(&self) -> crate::Result<serde_json::Value> {
+        Err("PUBLIC_HOST_KERNEL_UNSUPPORTED".into())
+    }
     pub fn resource_sample(&self) -> crate::Result<KernelResourceSample> {
+        Err("PUBLIC_HOST_KERNEL_UNSUPPORTED".into())
+    }
+    pub fn bound_resource_sample(&self) -> crate::Result<BoundKernelResourceSample> {
         Err("PUBLIC_HOST_KERNEL_UNSUPPORTED".into())
     }
 }
@@ -621,4 +911,110 @@ pub fn require_for_listener(
         address,
         (!address.ip().is_loopback()).then_some(FIXED_PUBLIC_KERNEL_PARENT),
     )
+}
+
+#[cfg(test)]
+mod bound_observation_tests {
+    use super::*;
+
+    // Diagnostic parser controls only. They never open/replace a real resource
+    // parent and cannot turn synthetic counters into a host qualification.
+    fn sample() -> BoundKernelResourceSample {
+        BoundKernelResourceSample {
+            schema: "public-host-kernel-bound-resource-sample-v1",
+            binding: HostKernelBinding {
+                schema: "public-host-kernel-binding-v1",
+                parent: FIXED_PUBLIC_KERNEL_PARENT.into(),
+                boot_id: "test-only-boot".into(),
+                device: 21,
+                inode: 55,
+                cpu_quota_usec: 25_000,
+                cpu_period_usec: 100_000,
+                cpu_burst_usec: 0,
+                memory_max_bytes: 2 * 1024 * 1024 * 1024,
+                memory_swap_max_bytes: 0,
+                pids_max: 256,
+            },
+            resources: KernelResourceSample {
+                cpu_usage_usec: 600,
+                cpu_nr_periods: 16,
+                cpu_nr_throttled: 4,
+                cpu_throttled_usec: 150,
+                memory_current_bytes: 1000,
+                pids_current: 7,
+            },
+        }
+    }
+
+    #[test]
+    fn bound_parent_cpu_interval_keeps_memory_and_tasks_as_point_observations() {
+        let before = sample();
+        let mut after = before.clone();
+        after.resources.cpu_usage_usec += 300;
+        after.resources.cpu_nr_periods += 4;
+        after.resources.cpu_nr_throttled += 1;
+        after.resources.cpu_throttled_usec += 30;
+        after.resources.memory_current_bytes = 20;
+        after.resources.pids_current = 2;
+        assert_eq!(
+            after.cpu_delta_since(&before).unwrap(),
+            KernelCpuDelta {
+                usage_usec: 300,
+                nr_periods: 4,
+                nr_throttled: 1,
+                throttled_usec: 30,
+            }
+        );
+        assert_eq!(after.resources.memory_current_bytes, 20);
+        assert_eq!(after.resources.pids_current, 2);
+        assert_eq!(after.binding.parent, FIXED_PUBLIC_KERNEL_PARENT);
+    }
+
+    #[test]
+    fn no_comparison_after_parent_replacement_or_any_changed_ceiling() {
+        let before = sample();
+        for change in 0..11 {
+            let mut after = before.clone();
+            after.resources.cpu_usage_usec += 1;
+            match change {
+                0 => after.binding.boot_id.push_str("-restarted"),
+                1 => after.binding.device += 1,
+                2 => after.binding.inode += 1,
+                3 => after.binding.parent.push_str("/child.service"),
+                4 => after.binding.cpu_quota_usec += 1,
+                5 => after.binding.cpu_period_usec += 1,
+                6 => after.binding.cpu_burst_usec += 1,
+                7 => after.binding.memory_max_bytes += 1,
+                8 => after.binding.memory_swap_max_bytes += 1,
+                9 => after.binding.pids_max += 1,
+                10 => after.schema = "different-sample-schema",
+                _ => unreachable!(),
+            }
+            assert_eq!(
+                after.cpu_delta_since(&before).unwrap_err().to_string(),
+                "PUBLIC_HOST_KERNEL_BINDING_CHANGED",
+                "change {change}"
+            );
+        }
+    }
+
+    #[test]
+    fn unchanged_parent_identity_does_not_excuse_a_kernel_cpu_counter_rewind() {
+        let before = sample();
+        for change in 0..4 {
+            let mut after = before.clone();
+            match change {
+                0 => after.resources.cpu_usage_usec -= 1,
+                1 => after.resources.cpu_nr_periods -= 1,
+                2 => after.resources.cpu_nr_throttled -= 1,
+                3 => after.resources.cpu_throttled_usec -= 1,
+                _ => unreachable!(),
+            }
+            assert_eq!(
+                after.cpu_delta_since(&before).unwrap_err().to_string(),
+                "PUBLIC_HOST_KERNEL_COUNTER_REWIND",
+                "counter {change}"
+            );
+        }
+    }
 }

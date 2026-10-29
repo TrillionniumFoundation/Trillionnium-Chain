@@ -1,0 +1,9 @@
+{
+  "argv": [
+    "python3",
+    "scripts/ci/test_native_pq_accounts_v2_research.py"
+  ],
+  "returncode": 0,
+  "wall_seconds": 0.21598344799713232,
+  "scope": "named source control only"
+}

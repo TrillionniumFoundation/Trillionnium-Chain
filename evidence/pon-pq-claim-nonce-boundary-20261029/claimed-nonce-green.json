@@ -1,0 +1,28 @@
+{
+  "base_commit": "42ab57f1c5065d50f981cc337c417ef0ab7dc096",
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "-p",
+    "trnm-mvcc-fee",
+    "--lib",
+    "--test",
+    "pq2_authority_capacity",
+    "--test",
+    "pq3_quota_authority",
+    "--test",
+    "pq4_task_authority",
+    "--test",
+    "pq5_task_renewal",
+    "--",
+    "--test-threads=2"
+  ],
+  "returncode": 0,
+  "elapsed_s": 99.49593034900317,
+  "source_sha256": {
+    "crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs": "22e661e3ed0f1a5a9c2db09d45dca5ea27d31af835ed92405697a42f94d5cea2",
+    "crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tests.rs": "15e5ec9b8cb72f7da9396b692d0cb4341bfaa07c1f6480b9ce7ca6acc24d233f"
+  }
+}

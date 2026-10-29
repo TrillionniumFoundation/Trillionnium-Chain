@@ -279,7 +279,14 @@ fn run(directory: &Path) -> Result<serde_json::Value> {
             {
                 return Err("LONG_FIRST_PAGE".into());
             }
-            after = ingress::receive_page(&mut confirmer, page, tip, after, ingress::now()?)?;
+            after = ingress::receive_public_page_from(
+                &mut confirmer,
+                address,
+                page,
+                tip,
+                after,
+                ingress::now()?,
+            )?;
             count += 1;
             if count < BLOCKS && confirmer.active()?.0 != settings.genesis() {
                 return Err("PARTIAL_SYNC_ACTIVATED".into());

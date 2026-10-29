@@ -1,0 +1,65 @@
+{
+  "binary_sha256": "136bbeb0b474dc9d0bcb3c254ab3bf21d47666f4fb4e04957752f69ea905729b",
+  "binary_stable": true,
+  "budget_seconds": 600,
+  "child_ownership": "direct subprocess with new session; only owned PID/process group signalled",
+  "command": [
+    "/tmp/pon-history-epoch-v1-20261028/debug/deps/trnm_pon_node-1d384016751e2606",
+    "store::history_effect_v6::tests::",
+    "--test-threads=1",
+    "--nocapture"
+  ],
+  "deadline_policy": "terminal-observation-must-not-exceed-budget",
+  "disk_after": {
+    "available_bytes": 831283200,
+    "free_bytes": 2566045696
+  },
+  "disk_before": {
+    "available_bytes": 910241792,
+    "free_bytes": 2645004288
+  },
+  "elapsed_seconds": 390.8386279920014,
+  "finished_unix": 1793148974.6487098,
+  "free_floor_bytes": 268435456,
+  "log_limit_bytes": 33554432,
+  "log_sha256": "083156e530476494d2b9e95f1a987388fd01951f76719100b120d407c80a70f5",
+  "max_rss_kib": 36568,
+  "native_returncode": 101,
+  "outcome": "EXIT_NONZERO",
+  "owned_namespace_pid": 11,
+  "passed": false,
+  "production_qualified": false,
+  "reported_system_seconds": 19.379447,
+  "reported_user_seconds": 76.113733,
+  "runner_sha256": "ddef4c78581c540b8069760735a8c898c5a156f8e297a383578b09550e9b41a2",
+  "samples_sha256": "ff9953676caaed8fba718205c19545fea87b8cb6e11b7cbecd52b51f01ca779f",
+  "schema": "history-publication-native-tests-v1",
+  "selected": [
+    "store::history_effect_v6::tests::history_effect_v6_process_child_helper",
+    "store::history_effect_v6::tests::history_publication_durable_unacknowledged_crash_repairs_and_resumes",
+    "store::history_effect_v6::tests::history_publication_final_directory_fsync_crash_repairs_and_resumes",
+    "store::history_effect_v6::tests::history_publication_pending_file_fsync_crash_repairs_and_resumes",
+    "store::history_effect_v6::tests::history_publication_pending_unlink_crash_repairs_and_resumes",
+    "store::history_effect_v6::tests::history_publication_two_hardlinks_crash_repairs_and_resumes",
+    "store::history_effect_v6::tests::publication::original_frame_and_physical_tail_refusals_preserve_every_byte",
+    "store::history_effect_v6::tests::settled_epoch::expired_old_budget_needs_fresh_close_authorization_then_separate_renewal",
+    "store::history_effect_v6::tests::settled_epoch::settled_activation_epoch_sigkill_requires_fresh_charge_then_resumes",
+    "store::history_effect_v6::tests::settled_epoch::settled_epoch_recovery_record_survives_every_publication_cut_and_retry",
+    "store::history_effect_v6::tests::v6_actual_sigkill_after_activation_commit_recovers_and_advances_again",
+    "store::history_effect_v6::tests::v6_actual_sigkill_during_registered_worker_recovers_with_fresh_claims",
+    "store::history_effect_v6::tests::v6_actual_two_worker_cancel_retry_close_and_cold_reopen_keep_predebits",
+    "store::history_effect_v6::tests::v6_late_journal_lock_failure_keeps_actual_native_and_original_cpu",
+    "store::history_effect_v6::tests::v6_unmarked_existing_bad_product_is_not_validated_by_sql_syntax",
+    "store::history_effect_v6::tests::v6_unsigned_worker_host_and_delegated_nonce_refuse_without_new_authority"
+  ],
+  "source_stable": true,
+  "started_unix": 1793148583.8100781,
+  "summaries": [
+    "test result: FAILED. 14 passed; 1 failed; 1 ignored; 0 measured; 734 filtered out; finished in 390.55s"
+  ],
+  "terminal_observed_elapsed_seconds": 390.83857812899805,
+  "termination_reason": null,
+  "uid": 0,
+  "wait4_status": 25856,
+  "whole_history_p0_closed": false
+}

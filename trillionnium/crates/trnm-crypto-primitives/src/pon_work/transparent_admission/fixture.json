@@ -1,0 +1,18 @@
+{
+  "schema": "pon-full-w1-admission-fixture-v1",
+  "origin_source": "bc053e24a590a4d07ad79e2ea065d190223d4426",
+  "run_id": 40659377917,
+  "artifact_id": 12804405518,
+  "artifact_bytes": 211531566,
+  "artifact_sha256": "fd681537c4040b2884e3a99982aa750c2cdca8374e366726c8a688e0ad20100c",
+  "member": "certificate.bin",
+  "bytes": 273338,
+  "sha256": "9c370089ba5203b9a8559b900c975778425839f4ccfa171387bdfb0853a3e5c9",
+  "original_namespace": "PWSR0001",
+  "test_adaptation": "Only eight framing magic bytes change to PWAI0001; full original input and actual proof retained unchanged.",
+  "new_proof_generated": false,
+  "from_zero_generation_measured": false,
+  "consensus_authority": false,
+  "pq128_qualified": false,
+  "production_activation": false
+}

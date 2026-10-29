@@ -1,0 +1,113 @@
+{
+  "actual_new_native_passes": 0,
+  "component_metadata_targets": 8,
+  "detached_packet_source_review": "fixed private full transaction-root binding; actual SQL counterexample is compiled metadata but execution NOT_RUN",
+  "full_local_checkout_qualification": false,
+  "locked_offline_graph": {
+    "lock_and_manifests_unchanged": true,
+    "packages": 173,
+    "resolved_nodes": 173,
+    "wall_seconds": 0.2443016860052012,
+    "workspace_members": 26
+  },
+  "native_red_reproduced_for_detached_packet_gap": false,
+  "native_status": "NOT_RUN_RESOURCE_STOP",
+  "observations": {
+    "ci-contract-final": {
+      "elapsed_ns": 234696869,
+      "exit_code": 0,
+      "passed": true,
+      "source_unchanged": true,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "9dc9c460bfb8a0da9730ff9e6acc8d76cbdf3bfd873c933e273c775ada8233b3",
+      "timed_out": false
+    },
+    "evidence-sources-final": {
+      "elapsed_ns": 2794964573,
+      "exit_code": 0,
+      "passed": true,
+      "source_unchanged": true,
+      "stderr_sha256": "3a817ab7a62255b27469e8a573a23fc15d0817ad2417ae5f3bf1f69823c3ad30",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    },
+    "fmt-final": {
+      "elapsed_ns": 36037300010,
+      "exit_code": 0,
+      "passed": true,
+      "source_unchanged": true,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    },
+    "inventory-final": {
+      "elapsed_ns": 125943407,
+      "exit_code": 0,
+      "passed": true,
+      "source_unchanged": true,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "timed_out": false
+    },
+    "legacy-reader-01": {
+      "elapsed_ns": 172582036124,
+      "exit_code": 0,
+      "passed": true,
+      "source_unchanged": true,
+      "stderr_sha256": "9e53cd673c01a78d8feb59a01d39c44dce4a12708cbd0a811954dcc9d7608988",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    },
+    "legacy-reader-final": {
+      "elapsed_ns": 332401892643,
+      "exit_code": 0,
+      "passed": true,
+      "source_unchanged": true,
+      "stderr_sha256": "61eed453f71e9026139d06a8c1599bda16ab19a3beb611303c6dfa318101e727",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    },
+    "new-gate-readers-02": {
+      "elapsed_ns": 181328223,
+      "exit_code": 0,
+      "passed": true,
+      "source_unchanged": true,
+      "stderr_sha256": "d5c42298542e8087193ca809f6dfcba308030c868c5e717efbc32ab0ad47b9de",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    },
+    "new-gate-readers-final": {
+      "elapsed_ns": 163831115,
+      "exit_code": 1,
+      "passed": false,
+      "source_unchanged": true,
+      "stderr_sha256": "119d5109e43bf7e86b0f115d3c3f45b9cb9f141f6b244c53a5a718a4454e20c7",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    },
+    "source-negatives-final": {
+      "elapsed_ns": 7690760231,
+      "exit_code": 0,
+      "passed": true,
+      "source_unchanged": true,
+      "stderr_sha256": "d5c3f0793ac95d2b8db134baad85cce2f02a943e523034cee66aa87fae281c5b",
+      "stdout_sha256": "46f878ef2fd52b1c00af061d918cc57d4e246cbff498971ac7999e64434f59f3",
+      "timed_out": false
+    }
+  },
+  "p1_complete": false,
+  "production_activation": false,
+  "raw_archive_sha256": "5b58af5fe6c37e40bb7e83582adf8b46354d6d7acae945498bc6347b759a377d",
+  "raw_bytes": 11963806,
+  "raw_files": 131,
+  "real_demand_proved": false,
+  "required_hosted_integration_passes": 44,
+  "required_hosted_native_passes": 180,
+  "required_hosted_original_unit_ignores": 8,
+  "result": "CANDIDATE_NATIVE_NOT_RUN",
+  "schema": "npq4-task-authority-local-candidate-v1",
+  "source_identity_join_sha256": "9bc11ab1334f8380b9d2f70e324d68e4a2ec15fc564fc75db5b820fb4607c24c",
+  "sqlite_physical_io_qualified": false,
+  "useful_model_work_qualified": false,
+  "whole_chain_post_quantum": false
+}

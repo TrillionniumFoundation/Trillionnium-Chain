@@ -14,6 +14,8 @@ use trnm_w1_guest_relation::full_relation;
 
 mod receipt_bounds;
 use receipt_bounds::{BoundaryError, MAX_RECEIPT_BYTES};
+mod phase_journal;
+use phase_journal::PhaseJournal;
 
 const MAX_ELF_BYTES: usize = 16 * 1024 * 1024;
 const MAX_SESSION_CYCLES: u64 = 256 * 1024 * 1024;
@@ -257,11 +259,37 @@ fn require_pinned_image(elf: &[u8]) -> Result<()> {
 }
 
 fn main() -> Result<()> {
+    let args: Vec<_> = std::env::args().collect();
+    let journal_path = std::env::var_os("TRNM_W1_PHASE_JOURNAL");
+    ensure!(
+        journal_path.is_none() || args.get(1).map(String::as_str) == Some("prove"),
+        "phase journal is restricted to the explicit prove operation"
+    );
+    let mut journal = PhaseJournal::new(journal_path.as_deref().map(Path::new))?;
+    journal.event("host-enter")?;
+    let result = run(&args, &mut journal);
+    // A killed/panicked process can leave a partial journal. A missing terminal
+    // record is never filled in by the observer or converted into success.
+    let terminal = journal.event(if result.is_ok() {
+        "host-complete"
+    } else {
+        "host-failed"
+    });
+    match (result, terminal) {
+        (Ok(()), Ok(())) => Ok(()),
+        (Ok(()), Err(secondary)) => Err(secondary.into()),
+        (Err(primary), Ok(())) => Err(primary),
+        (Err(primary), Err(secondary)) => Err(primary.context(format!(
+            "phase journal terminal write also failed: {secondary}"
+        ))),
+    }
+}
+
+fn run(args: &[String], journal: &mut PhaseJournal) -> Result<()> {
     ensure!(
         std::env::var_os("RISC0_DEV_MODE").is_none(),
         "unset RISC0_DEV_MODE; this driver never accepts development receipts"
     );
-    let args: Vec<_> = std::env::args().collect();
     ensure!(args.len() >= 2, "expected execute, prove or verify");
     if args[1] == "bake" {
         ensure!(args.len() == 4, "bake <raw-guest-elf> <new-program-binary>");
@@ -304,11 +332,13 @@ fn main() -> Result<()> {
         "expected execute, prove or verify"
     );
     ensure!(args.len() == if prove { 7 } else { 6 }, "execute <r0vm> <elf> <fixed-input> <segment-po2>; prove additionally requires a new receipt output path");
+    journal.event("input-native-check-enter")?;
     let elf = bounded_read(Path::new(&args[3]), MAX_ELF_BYTES)?;
     require_pinned_image(&elf)?;
     let input = bounded_read(Path::new(&args[4]), full_relation::INPUT_BYTES)?;
     let expected = full_relation::execute_input(&input).map_err(|e| anyhow!("{e:?}"))?;
     let po2: u32 = args[5].parse().context("segment power")?;
+    journal.event("input-native-check-return")?;
     let prover = ExternalProver::new("pinned-local-r0vm", &args[2]);
     let started = Instant::now();
     if !prove {
@@ -327,23 +357,32 @@ fn main() -> Result<()> {
         .with_hashfn("poseidon2".to_owned())
         .with_receipt_kind(ReceiptKind::Composite);
     let context = VerifierContext::default().with_dev_mode(false);
-    let info = prover.prove_with_ctx(environment(&input, po2)?, &context, &elf, &options)?;
+    let environment = environment(&input, po2)?;
+    journal.event("sdk-prove-enter")?;
+    let info = prover.prove_with_ctx(environment, &context, &elf, &options)?;
     let prove_ns = started.elapsed().as_nanos();
+    journal.event("sdk-prove-return")?;
     let verify_started = Instant::now();
+    journal.event("strict-verify-enter")?;
     strict_verify(&info.receipt, &elf, &expected.journal())?;
     let verify_ns = verify_started.elapsed().as_nanos();
+    journal.event("strict-verify-return")?;
+    journal.event("codec-enter")?;
     let encoded = bincode::serialize(&info.receipt)?;
     receipt_bounds::preflight(&encoded)?;
     ensure!(
         encoded.len() <= MAX_RECEIPT_BYTES,
         "receipt exceeds research byte cap"
     );
+    journal.event("codec-return")?;
+    journal.event("receipt-write-enter")?;
     let mut output = OpenOptions::new()
         .write(true)
         .create_new(true)
         .open(&args[6])?;
     output.write_all(&encoded)?;
     output.sync_all()?;
+    journal.event("receipt-write-return")?;
     println!("{{\"schema\":\"pon-w1-risc0-research-v1\",\"operation\":\"prove\",\"real_composite_stark_verified\":true,\"user_cycles\":{},\"total_cycles\":{},\"segments\":{},\"segment_po2_limit\":{},\"prove_including_execution_and_integrity_verify_wall_ns\":{},\"additional_verify_wall_ns\":{},\"receipt_bytes\":{},\"image_id\":\"{}\",\"statement_id\":\"{}\",\"independent_hashcash\":false,\"consensus_authority\":false}}", info.stats.user_cycles, info.stats.total_cycles, info.stats.segments, po2, prove_ns, verify_ns, encoded.len(), compute_image_id(&elf)?, hex::encode(expected.statement_id()));
     Ok(())
 }

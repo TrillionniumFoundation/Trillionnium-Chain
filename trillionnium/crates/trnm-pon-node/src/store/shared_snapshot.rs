@@ -6,6 +6,7 @@
 //! partition; reads materialize ALL accounts before the original State checks.
 use super::{bytes32, canonical, native_authenticated, StateBackend};
 use crate::account_archive_prototype::native_store;
+use crate::native_progress::NativeProgress;
 use crate::{ensure, Error, Result, Settings};
 use rusqlite::{params, Connection, OptionalExtension};
 use serde::{Deserialize, Serialize};
@@ -230,7 +231,7 @@ pub(super) fn save(
     settings: &Settings,
     block: Hash,
     state: &State,
-    progress: &mut dyn FnMut() -> Result<()>,
+    progress: &mut dyn NativeProgress,
     cache: &native_authenticated::ArithmeticCache,
 ) -> Result<()> {
     binding::check(db, settings, RETAINED)?;
@@ -281,7 +282,7 @@ pub(super) fn load(
     db: &Connection,
     settings: &Settings,
     block: Hash,
-    progress: &mut dyn FnMut() -> Result<()>,
+    progress: &mut dyn NativeProgress,
     cache: &native_authenticated::ArithmeticCache,
 ) -> Result<Option<State>> {
     load_with_limit(db, settings, block, progress, cache, RETAINED)
@@ -290,7 +291,7 @@ fn load_with_limit(
     db: &Connection,
     settings: &Settings,
     block: Hash,
-    progress: &mut dyn FnMut() -> Result<()>,
+    progress: &mut dyn NativeProgress,
     cache: &native_authenticated::ArithmeticCache,
     limit: usize,
 ) -> Result<Option<State>> {
@@ -306,13 +307,13 @@ fn load_in_scope(
     db: &Connection,
     settings: &Settings,
     block: Hash,
-    progress: &mut dyn FnMut() -> Result<()>,
+    progress: &mut dyn NativeProgress,
     cache: &native_authenticated::ArithmeticCache,
     limit: usize,
 ) -> Result<Option<State>> {
     let schema_version: u64 = db.query_row("PRAGMA main.schema_version", [], |row| row.get(0))?;
     let autocommit = db.is_autocommit();
-    progress()?;
+    progress.checkpoint()?;
     binding::check(db, settings, limit)?;
     let bytes = encoded_with_limit(db, block, limit)?;
     let Some(bytes) = bytes else {
@@ -323,11 +324,17 @@ fn load_in_scope(
         return Ok(None);
     };
     let (snapshot, native) = binding::decode(db, settings, block, &bytes)?;
-    let accounts =
-        native_store::materialize_accounts(db, &native.accounts, progress, Some(&cache.lifts))?;
+    // Materialization retains its original strict per-node callbacks. Only the
+    // sealed verifier below emits typed graph points; no synthetic graph epoch.
+    let accounts = native_store::materialize_accounts(
+        db,
+        &native.accounts,
+        &mut || progress.checkpoint(),
+        Some(&cache.lifts),
+    )?;
     let mut state = snapshot.working;
     for (owner, account) in accounts {
-        progress()?;
+        progress.checkpoint()?;
         ensure(
             state
                 .insert(
@@ -341,7 +348,7 @@ fn load_in_scope(
     }
     continuity_v1::check_state(&state, native.height, &settings.app)
         .map_err(|error| Error::from(error).local_integrity())?;
-    native_authenticated::verify_state_with_cache(
+    native_authenticated::verify_state_with_native_progress(
         db,
         settings,
         block,
@@ -349,8 +356,14 @@ fn load_in_scope(
         progress,
         Some(cache),
     )?;
-    native_authenticated::verify_history_with_cache(db, settings, block, progress, Some(cache))?;
-    progress()?;
+    native_authenticated::verify_history_with_native_progress(
+        db,
+        settings,
+        block,
+        progress,
+        Some(cache),
+    )?;
+    progress.checkpoint()?;
     final_read(db, || {
         // A caller callback can mutate this SAME SQLite connection even inside a
         // pinned read snapshot. Re-read the actual complete graph/State/history
@@ -363,7 +376,7 @@ fn load_in_scope(
             &mut || Ok(()),
             Some(cache),
         )?;
-        native_authenticated::verify_history_with_cache(
+        native_authenticated::verify_history_with_native_progress(
             db,
             settings,
             block,
@@ -463,7 +476,7 @@ pub(super) fn verify_returned_state(
         &mut || Ok(()),
         Some(cache),
     )?;
-    native_authenticated::verify_history_with_cache(
+    native_authenticated::verify_history_with_native_progress(
         db,
         settings,
         block,

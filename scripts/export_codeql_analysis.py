@@ -13,10 +13,13 @@ import argparse
 from datetime import datetime, timezone
 import hashlib
 import html
+import http.client
 import json
 import os
 from pathlib import Path
 import re
+import socket
+import ssl
 import sys
 import time
 import urllib.error
@@ -51,6 +54,7 @@ class API:
         self.out = out
         self.deadline = deadline
         self.opener = urllib.request.build_opener(NoRedirect())
+        self.request_sequence = 0
 
     def save(self, relative, raw):
         require(self.token.encode() not in raw, "Refusing to persist a token-bearing response")
@@ -62,16 +66,69 @@ class API:
     def save_json(self, relative, value):
         return self.save(relative, (json.dumps(value, indent=2, sort_keys=True) + "\n").encode())
 
+    def record_request_failure(self, path, relative, started, timeout, error):
+        """Preserve safe exception kinds; never persist exception text or bodies.
+
+        Reaching our deadline and the transport's exception kind are separate
+        observations. Neither explains why an analysis was absent or grants a
+        security verdict. Existing result/schema and no-fallback semantics stay
+        intact; this additional namespace only supplies missing diagnostics.
+        """
+        ended = time.monotonic()
+        category, status = "os-error", None
+        reason = error
+        if isinstance(error, urllib.error.HTTPError):
+            category, status, reason = "http-error", error.code, None
+        elif isinstance(error, http.client.HTTPException):
+            category = "http-protocol-error"
+        elif isinstance(error, urllib.error.URLError):
+            category, reason = "url-error", error.reason
+        elif isinstance(error, TimeoutError):
+            category = "timeout-error"
+        reason_category = None if reason is None else "unclassified"
+        # Use only fixed categories. str(error), repr(error), URLs from an
+        # exception, TLS detail and DNS text may contain credentials or tokens.
+        for kind, name in ((http.client.BadStatusLine, "bad-status-line"),
+                           (http.client.IncompleteRead, "incomplete-read"),
+                           (http.client.HTTPException, "http-protocol"),
+                           (TimeoutError, "timeout"), (socket.gaierror, "dns"),
+                           (ssl.SSLError, "tls"),
+                           (ConnectionRefusedError, "connection-refused"),
+                           (ConnectionResetError, "connection-reset"),
+                           (BrokenPipeError, "broken-pipe"), (OSError, "os-error")):
+            if isinstance(reason, kind):
+                reason_category = name
+                break
+        number = reason.errno if isinstance(reason, OSError) else None
+        number = number if type(number) is int and -65535 <= number <= 65535 else None
+        self.save_json(f"request-failures/{self.request_sequence:06d}.json", {
+            "schema": "codeql-read-request-failure-v1",
+            "request_sequence": self.request_sequence,
+            "method": "GET", "api_path": path, "expected_output": relative,
+            "category": category, "reason_category": reason_category,
+            "http_status": status, "errno": number,
+            "remaining_seconds_at_start": self.deadline - started,
+            "configured_timeout_seconds": timeout,
+            "elapsed_seconds": max(0.0, ended - started),
+            "deadline_reached_at_observation": ended >= self.deadline,
+            "expected_result_received": False,
+            "exception_text_persisted": False,
+            "security_gate_changed": False,
+        })
+
     def get(self, path, relative, accept="application/vnd.github+json"):
-        remaining = self.deadline - time.monotonic()
+        started = time.monotonic()
+        remaining = self.deadline - started
         require(remaining > 0, "Deadline reached before CodeQL export completed")
+        self.request_sequence += 1
+        timeout = min(30, remaining)
         request = urllib.request.Request(
             self.base + path, method="GET",
             headers={"Authorization": "Bearer " + self.token, "Accept": accept,
                      "X-GitHub-Api-Version": "2026-03-10",
                      "User-Agent": "Trillionnium-CodeQL-read-only-export"})
         try:
-            with self.opener.open(request, timeout=min(30, remaining)) as response:
+            with self.opener.open(request, timeout=timeout) as response:
                 chunks, size = [], 0
                 while True:
                     require(time.monotonic() < self.deadline, "CodeQL export deadline reached")
@@ -83,8 +140,10 @@ class API:
                     chunks.append(chunk)
                 raw = b"".join(chunks)
         except urllib.error.HTTPError as error:
+            self.record_request_failure(path, relative, started, timeout, error)
             raise ExportError(f"GitHub GET {path}: HTTP {error.code}; no fallback") from None
-        except (urllib.error.URLError, TimeoutError, OSError):
+        except (urllib.error.URLError, TimeoutError, OSError, http.client.HTTPException) as error:
+            self.record_request_failure(path, relative, started, timeout, error)
             raise ExportError(f"GitHub GET {path}: transport failure; no fallback") from None
         self.save(relative, raw)
         try:

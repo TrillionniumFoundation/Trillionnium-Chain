@@ -4,6 +4,7 @@
 //! or commits a transaction. The native owner supplies its own SQLite connection
 //! and commits account nodes with the actual block, deltas and state commitment.
 use super::{Account, ArchiveError, Kind, Node};
+use crate::native_progress::NativeProgress;
 use crate::{Error, Result};
 use rusqlite::Connection;
 use serde::{Deserialize, Serialize};
@@ -354,6 +355,29 @@ pub(crate) fn verify(
     verify_with_lifts(db, root, state, progress, None)
 }
 
+/// Only this verifier constructs these points. The ordinal is generated from
+/// the actual traversal, never supplied by a Page, caller, policy or SQL row.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum AccountGraphKind {
+    Enter,
+    BeforeNode { ordinal: u32 },
+    BeforeFinalRelation { completed: u32 },
+    Exit { completed: u32, succeeded: bool },
+}
+pub(crate) struct AccountGraphPoint {
+    kind: AccountGraphKind,
+}
+impl AccountGraphPoint {
+    pub(crate) fn kind(&self) -> AccountGraphKind {
+        self.kind
+    }
+}
+
+#[cfg(test)]
+pub(crate) fn graph_point_for_test(kind: AccountGraphKind) -> AccountGraphPoint {
+    AccountGraphPoint { kind }
+}
+
 pub(crate) fn verify_with_lifts(
     db: &Connection,
     root: &Root,
@@ -361,60 +385,93 @@ pub(crate) fn verify_with_lifts(
     progress: &mut dyn FnMut() -> Result<()>,
     lifts: Option<&LiftCache>,
 ) -> Result<()> {
-    let empty = empty_hashes();
-    let actual = super::accounts(state).map_err(storage)?;
-    let mut reader = NodeReader::new(db);
-    let node = root
-        .node
-        .map(|id| reader.load(id, lifts))
-        .transpose()
-        .map_err(storage)?;
-    crate::ensure(
-        root.count <= 65_536
-            && root.node.is_none() == (root.count == 0)
-            && node.as_ref().map_or(empty[0], |node| {
-                lifts.map_or_else(|| node.lift(0, &empty), |cache| cache.lift(node, 0))
-            }) == root.digest,
-        "NATIVE_ACCOUNT_ROOT",
-    )
-    .map_err(Error::local_integrity)?;
-    let mut stack = node.into_iter().collect::<Vec<_>>();
-    let mut seen = BTreeSet::new();
-    let mut retained = BTreeMap::new();
-    let mut balance = 0u64;
-    while let Some(node) = stack.pop() {
-        progress()?;
+    verify_with_lifts_native_progress(db, root, state, &mut || progress(), lifts)
+}
+
+pub(crate) fn verify_with_lifts_native_progress(
+    db: &Connection,
+    root: &Root,
+    state: &State,
+    progress: &mut dyn NativeProgress,
+    lifts: Option<&LiftCache>,
+) -> Result<()> {
+    let mut completed = 0u32;
+    let result = (|| {
+        progress.account_graph(AccountGraphPoint {
+            kind: AccountGraphKind::Enter,
+        })?;
+        let empty = empty_hashes();
+        let actual = super::accounts(state).map_err(storage)?;
+        let mut reader = NodeReader::new(db);
+        let node = root
+            .node
+            .map(|id| reader.load(id, lifts))
+            .transpose()
+            .map_err(storage)?;
         crate::ensure(
-            seen.insert(node.id) && seen.len() <= 131_071,
-            "NATIVE_ACCOUNT_GRAPH",
+            root.count <= 65_536
+                && root.node.is_none() == (root.count == 0)
+                && node.as_ref().map_or(empty[0], |node| {
+                    lifts.map_or_else(|| node.lift(0, &empty), |cache| cache.lift(node, 0))
+                }) == root.digest,
+            "NATIVE_ACCOUNT_ROOT",
         )
         .map_err(Error::local_integrity)?;
-        match node.kind {
-            Kind::Leaf(owner, value) => {
-                crate::ensure(
-                    retained.insert(owner, value).is_none(),
-                    "NATIVE_ACCOUNT_DUPLICATE",
-                )
-                .map_err(Error::local_integrity)?;
-                balance = balance
-                    .checked_add(value.balance)
-                    .ok_or("NATIVE_ACCOUNT_BALANCE")?;
+        let mut stack = node.into_iter().collect::<Vec<_>>();
+        let mut seen = BTreeSet::new();
+        let mut retained = BTreeMap::new();
+        let mut balance = 0u64;
+        while let Some(node) = stack.pop() {
+            progress.account_graph(AccountGraphPoint {
+                kind: AccountGraphKind::BeforeNode { ordinal: completed },
+            })?;
+            crate::ensure(
+                seen.insert(node.id) && seen.len() <= 131_071,
+                "NATIVE_ACCOUNT_GRAPH",
+            )
+            .map_err(Error::local_integrity)?;
+            match node.kind {
+                Kind::Leaf(owner, value) => {
+                    crate::ensure(
+                        retained.insert(owner, value).is_none(),
+                        "NATIVE_ACCOUNT_DUPLICATE",
+                    )
+                    .map_err(Error::local_integrity)?;
+                    balance = balance
+                        .checked_add(value.balance)
+                        .ok_or("NATIVE_ACCOUNT_BALANCE")?;
+                }
+                Kind::Fork { .. } => {
+                    stack.push(
+                        child_with_lifts(&mut reader, &node, true, &empty, lifts)
+                            .map_err(storage)?,
+                    );
+                    stack.push(
+                        child_with_lifts(&mut reader, &node, false, &empty, lifts)
+                            .map_err(storage)?,
+                    );
+                }
             }
-            Kind::Fork { .. } => {
-                stack.push(
-                    child_with_lifts(&mut reader, &node, true, &empty, lifts).map_err(storage)?,
-                );
-                stack.push(
-                    child_with_lifts(&mut reader, &node, false, &empty, lifts).map_err(storage)?,
-                );
-            }
+            completed = completed.checked_add(1).ok_or("NATIVE_ACCOUNT_GRAPH")?;
         }
-    }
-    crate::ensure(
-        retained == actual && retained.len() as u64 == root.count && balance == root.balance,
-        "NATIVE_ACCOUNT_STATE",
-    )
-    .map_err(Error::local_integrity)
+        progress.account_graph(AccountGraphPoint {
+            kind: AccountGraphKind::BeforeFinalRelation { completed },
+        })?;
+        crate::ensure(
+            retained == actual && retained.len() as u64 == root.count && balance == root.balance,
+            "NATIVE_ACCOUNT_STATE",
+        )
+        .map_err(Error::local_integrity)
+    })();
+    let exit = progress.account_graph(AccountGraphPoint {
+        kind: AccountGraphKind::Exit {
+            completed,
+            succeeded: result.is_ok(),
+        },
+    });
+    // Preserve the original native error when both fail. A typed resource
+    // controller separately latches its failed exit and cannot qualify work.
+    result.and(exit)
 }
 
 fn child_with_lifts(

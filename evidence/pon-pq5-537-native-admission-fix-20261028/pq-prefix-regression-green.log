@@ -1,0 +1,14 @@
+   Compiling trnm-mvcc-fee v0.1.0 (/workspace/scratch/121c7d6beede/history_pq_task/pq/trillionnium/crates/trnm-mvcc-fee)
+    Finished `test` profile [unoptimized] target(s) in 1m 08s
+     Running tests/pq5_task_renewal.rs (/workspace/scratch/121c7d6beede/history_pq_task/pq-target/debug/deps/pq5_task_renewal-467784b2d835bccf)
+
+running 1 test
+test incremental_atomic_renewal_prefix_uses_original_parent_and_rolls_back_rejected_suffix ... ok
+
+successes:
+
+successes:
+    incremental_atomic_renewal_prefix_uses_original_parent_and_rolls_back_rejected_suffix
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 16 filtered out; finished in 0.82s
+

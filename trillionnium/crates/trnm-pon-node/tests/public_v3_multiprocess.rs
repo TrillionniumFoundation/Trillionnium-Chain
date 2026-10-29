@@ -1,5 +1,7 @@
 //! Finite same-host, separate-process W1 economics and original public service
 //! campaign. No independent operator, WAN, hardness, energy or release claim.
+#[path = "support/multiprocess_history_verifier.rs"]
+mod history_verifier;
 #[path = "support/multiprocess_support.rs"]
 mod support;
 #[path = "support/multiprocess_work.rs"]
@@ -21,10 +23,7 @@ use std::{
 use trnm_crypto_primitives::pon_work;
 use trnm_pon_node::{
     development_public,
-    ingress::{
-        self,
-        public_v3::{self, PublicServer, Request},
-    },
+    ingress::public_v3::{self, PublicServer, Request},
     Node, Packet, PoolLimits, Settings,
 };
 use trnm_protocol::pon_wire::{hash, Header};
@@ -38,6 +37,7 @@ const ROUNDS: usize = 3;
 struct CampaignConfiguration {
     state_backend: StateBackendChoice,
     work_profile: support::WorkProfile,
+    history_resource_profile: history_verifier::ResourceProfile,
 }
 impl CampaignConfiguration {
     fn new(
@@ -49,17 +49,23 @@ impl CampaignConfiguration {
         {
             return Err("ARITHMETIC_CAMPAIGN_REQUIRES_AUTHENTICATED_V1");
         }
+        if work_profile == support::WorkProfile::PureHistoryRawV1
+            && !matches!(state_backend, StateBackendChoice::AuthenticatedV1)
+        {
+            return Err("PURE_HISTORY_RAW_REQUIRES_AUTHENTICATED_V1");
+        }
         Ok(Self {
             state_backend,
             work_profile,
+            history_resource_profile: history_verifier::ResourceProfile::Strict,
         })
     }
 }
 
 fn campaign_server(work_profile: support::WorkProfile) -> (PublicServer, Option<Value>) {
-    let server = PublicServer::new(support::identity(71), support::policy()).unwrap();
-    if work_profile == support::WorkProfile::RawR13 {
-        assert_eq!(server.resource_profile(), support::policy().id());
+    let server = PublicServer::new(support::identity(71), work_profile.policy()).unwrap();
+    if work_profile != support::WorkProfile::ArithmeticFactsV1 {
+        assert_eq!(server.resource_profile(), work_profile.policy().id());
         assert!(server.arithmetic_facts_software_bytes().is_none());
         return (server, None);
     }
@@ -726,6 +732,7 @@ fn multiprocess_actor_entry() {
     let outcome = std::panic::catch_unwind(|| match job["kind"].as_str().unwrap() {
         "cost" => cost_actor(&job),
         "attack" => attack_actor(&job, path.parent().unwrap()),
+        "history-verifier" => history_verifier::run(&job, path.parent().unwrap()),
         _ => panic!("unknown actor kind"),
     });
     let (result, error) = match outcome {
@@ -739,6 +746,9 @@ fn multiprocess_actor_entry() {
             (None, Some(message))
         }
     };
+    if job["kind"] == "history-verifier" {
+        history_verifier::after_run_return(&job, path.parent().unwrap(), result.as_ref());
+    }
     support::write_new(
         &path.parent().unwrap().join("report.json"),
         &json!({"kind":job["kind"],"result":result,"error":error,
@@ -768,6 +778,7 @@ fn phase(
     let CampaignConfiguration {
         state_backend,
         work_profile,
+        history_resource_profile,
     } = configuration;
     fs::create_dir(path).unwrap();
     let root_mode = mode == Some("valid-work-root");
@@ -788,11 +799,21 @@ fn phase(
             preview_miner: development_public(0).unwrap(),
         })
         .unwrap();
-    let mut verifier = state_backend.open(&path.join("independent-client"), settings.clone());
-    replay(&mut verifier, seed);
+    let mut verifier = match history_resource_profile {
+        history_verifier::ResourceProfile::Strict => {
+            history_verifier::Verifier::start(&path.join("independent-client"), state_backend, seed)
+        }
+        history_verifier::ResourceProfile::GraphFenceV1 => {
+            history_verifier::Verifier::start_with_graph_resource_fence_v1(
+                &path.join("independent-client"),
+                state_backend,
+                seed,
+            )
+        }
+    };
     let initial = receiver.read_active().unwrap();
     let native_history_before = receiver.native_history_arithmetic_observation();
-    let client_native_history_before = verifier.native_history_arithmetic_observation();
+    let client_native_history_before = verifier.before();
     let owner = Arc::new(Mutex::new(receiver));
     let listener = TcpListener::bind("127.0.0.1:0").unwrap();
     let address = listener.local_addr().unwrap();
@@ -989,23 +1010,19 @@ fn phase(
                     work_profile,
                 );
                 if support::on_time(&row) {
-                    let import_stamp = ClientOperationStamp::start(epoch);
-                    let imported =
-                        serde_json::from_value::<ingress::Page>(row["response"]["value"].clone())
-                            .map_err(|e| e.to_string())
-                            .and_then(|page| {
-                                ingress::receive_page(
-                                    &mut verifier,
-                                    page,
-                                    tip,
-                                    after,
-                                    support::now(),
-                                )
-                                .map_err(|e| e.to_string())
-                            });
-                    row["client_import"] = import_stamp.finish(epoch);
+                    // The same original Page enters the unchanged strict
+                    // public importer inside its actual fixed kernel parent.
+                    let (imported, import_measurement) = verifier.import(
+                        address,
+                        row["response"]["value"].clone(),
+                        tip,
+                        after,
+                        support::now(),
+                        epoch,
+                    );
+                    row["client_import"] = import_measurement;
                     row["client_import"]["operation"] = json!(
-                        "deserialize Page and ordinary receive_page, including activation only on the original complete page"
+                        "deserialize Page and source-aware receive_public_page_from, including activation only on the original complete page"
                     );
                     row["client_import"]["succeeded"] = json!(imported.is_ok());
                     match imported {
@@ -1013,9 +1030,9 @@ fn phase(
                         Err(error) => errors.push(error),
                     }
                     if after == tip {
-                        let confirmation_stamp = ClientOperationStamp::start(epoch);
-                        let result = verifier.confirmation(transaction, included, support::now());
-                        row["client_confirmation"] = confirmation_stamp.finish(epoch);
+                        let (result, confirmation_measurement) =
+                            verifier.confirmation(transaction, included, support::now(), epoch);
+                        row["client_confirmation"] = confirmation_measurement;
                         row["client_confirmation"]["operation"] =
                             json!("ordinary verifier confirmation after the original complete-page activation");
                         row["client_confirmation"]["succeeded"] = json!(result.is_ok());
@@ -1049,10 +1066,10 @@ fn phase(
                     .zip(hostile_after["rejected_work_cpu_ns"].as_u64())
                     .is_some_and(|(a, b)| b > a);
             let confirmed = observation.as_ref().is_some_and(|value| {
-                value.confirmed
-                    && !value.finalized
-                    && !value.execution_authority
-                    && value.depth == Some(6)
+                value["confirmed"].as_bool() == Some(true)
+                    && value["finalized"].as_bool() == Some(false)
+                    && value["execution_authority"].as_bool() == Some(false)
+                    && value["depth"].as_u64() == Some(6)
             }) && support::monotonic() < end;
             confirmations.push(json!({"round":round,"started_ns":round_start,"ended_ns":ended,"confirmed_inside_pressure_window":confirmed,
                 "transaction":hex::encode(transaction),"included_block":hex::encode(included),"tip":hex::encode(tip),"observation":observation,
@@ -1094,7 +1111,7 @@ fn phase(
         .lock()
         .ok()
         .map(|node| node.native_history_arithmetic_observation());
-    let client_native_history_after = verifier.native_history_arithmetic_observation();
+    let (checked, client_native_history_after) = verifier.snapshot();
     let captured = observer.snapshot();
     let budget_samples = samples.lock().unwrap().clone();
     let depletion_meter = budget_samples
@@ -1118,7 +1135,7 @@ fn phase(
                     && sample["meter"]["Ok"]["depleted"] == true));
     }
     let actual = owner.lock().unwrap().read_active().unwrap();
-    let checked = verifier.read_active().unwrap();
+    let verifier_process = verifier.finish();
     let final_meter = domain.observe().unwrap();
     let all_confirmed = confirmations.len() == ROUNDS
         && confirmations
@@ -1160,7 +1177,16 @@ fn phase(
         .filter(|row| row.full_work_accepted == Some(true))
         .count();
     let observer_complete = captured.coverage_complete();
+    // Every caller of this shared phase, including the ROOT supplement, needs
+    // the actual verifier's final close and exit, not only an earlier snapshot.
+    let verifier_complete = verifier_process["completed_successfully"] == true
+        && verifier_process["exit_success"] == true
+        && verifier_process["parent_forced_kill"] == false
+        && verifier_process["report"]["error"].is_null()
+        && verifier_process["report"]["result"]["clean_node_close"] == true
+        && verifier_process["parent_after_reap"]["pids.current"] == 0;
     let common_criteria = all_confirmed
+        && verifier_complete
         && actual.0 == checked.0
         && actual.2 == checked.2
         && observer_complete
@@ -1169,8 +1195,15 @@ fn phase(
         && final_meter.in_flight == 0
         && !final_meter.accounting_unavailable
         && errors.is_empty();
+    let pure_calls_bound = work_profile != support::WorkProfile::PureHistoryRawV1
+        || submissions
+            .iter()
+            .chain(history.iter())
+            .chain(attack_calls.iter().copied())
+            .all(pure_history_call_bound);
     let phase_criteria = !root_mode
         && common_criteria
+        && pure_calls_bound
         && (mode.is_none()
             || (depletion_at.is_some()
                 && ready_count == ATTACKERS
@@ -1202,10 +1235,20 @@ fn phase(
         "receiver_client_state_equal":actual.0==checked.0&&actual.2==checked.2,
         "initial_tip":hex::encode(initial.0),"final_receiver_tip":hex::encode(actual.0),"final_client_tip":hex::encode(checked.0),
         "whole_parent_phase_cpu_ns":support::elapsed_cpu(whole_cpu),"whole_parent_phase_wall_ns":whole_started.elapsed().as_nanos(),"rss":support::rss()});
+    report["history_resource_profile"] = json!(verifier_process["history_resource_profile"]);
+    report["history_verifier_process"] = verifier_process;
+    report["parent_process_cpu_scope"] = json!("original outer campaign only; isolated verifier process and fixed-parent CPU are separately retained, not included in these parent process counters");
     report["public_resource_policy"] = work_profile.policy_observation();
+    if work_profile == support::WorkProfile::PureHistoryRawV1 {
+        report["work_profile"] = json!("pure-history-raw-v1");
+        report["pure_pon_production_qualified"] = json!(false);
+    }
     if let Some(arithmetic_owner) = arithmetic_owner {
         report["work_profile"] = json!("arithmetic-facts-v1");
         report["work_arithmetic_owner"] = arithmetic_owner;
+    }
+    if work_profile == support::WorkProfile::PureHistoryRawV1 {
+        report["pure_history_acknowledgements_verified"] = json!(pure_calls_bound);
     }
     report["completion_work_observation"] = json!(domain.observe_completion_work().ok());
     report["client_native_history_arithmetic_before"] = client_native_history_before;
@@ -1448,18 +1491,173 @@ fn arithmetic_campaign_server_routing_does_not_change_cpu_capacity() {
 #[test]
 #[ignore = "explicit finite 3x30 second separate-process local campaign and producer cost; see retained report"]
 fn separate_process_work_and_signed_confirmation_campaign() {
-    run_campaign(support::WorkProfile::RawR13);
+    run_campaign(
+        support::WorkProfile::RawR13,
+        history_verifier::ResourceProfile::Strict,
+    );
 }
 
 #[test]
 #[ignore = "explicit arithmetic-facts profile; same original finite 3x30 second workload, CPU and confirmation criteria; no r13 or arbitrary-key qualification"]
 fn separate_process_arithmetic_facts_and_signed_confirmation_campaign() {
-    run_campaign(support::WorkProfile::ArithmeticFactsV1);
+    run_campaign(
+        support::WorkProfile::ArithmeticFactsV1,
+        history_verifier::ResourceProfile::Strict,
+    );
 }
 
-fn run_campaign(work_profile: support::WorkProfile) {
+#[test]
+#[ignore = "explicit graph resource fence v1; original 3x30 second workload, 25 percent verifier CPU, signed confirmations and criteria"]
+fn separate_process_graph_resource_fence_v1_work_and_signed_confirmation_campaign() {
+    run_campaign(
+        support::WorkProfile::RawR13,
+        history_verifier::ResourceProfile::GraphFenceV1,
+    );
+}
+
+#[test]
+#[ignore = "explicit pure zero-search/r13-full-W1 + original strict isolated History; unchanged 3x30s gates"]
+fn separate_process_pure_history_raw_strict_campaign() {
+    run_campaign(
+        support::WorkProfile::PureHistoryRawV1,
+        history_verifier::ResourceProfile::Strict,
+    );
+}
+
+#[test]
+#[ignore = "explicit pure zero-search/r13-full-W1 + original N8 isolated History; unchanged 3x30s gates"]
+fn separate_process_pure_history_raw_graph_fence_campaign() {
+    run_campaign(
+        support::WorkProfile::PureHistoryRawV1,
+        history_verifier::ResourceProfile::GraphFenceV1,
+    );
+}
+
+fn pure_history_call_bound(row: &Value) -> bool {
+    let policy = support::WorkProfile::PureHistoryRawV1.policy_observation();
+    let ack = &row["pure_history_acknowledgement"];
+    let found = row["metrics"]["solution_found"] == true;
+    let completed = matches!(row["status"].as_str(), Some("ok" | "refused"));
+    row["work_profile"] == "pure-history-raw-v1"
+        && matches!(row["status"].as_str(), Some("ok" | "refused" | "error"))
+        && row["metrics"]["solution_found"].is_boolean()
+        && row["public_resource_policy"] == policy
+        && ack.as_object().is_some_and(|fields| fields.len() == 7)
+        && ack["schema"] == "public-pure-history-raw-acknowledgement-v1"
+        && ack["profile"] == public_v3::PURE_HISTORY_RAW_PROFILE
+        && ack["policy_id"] == policy["policy_id"]
+        && ack["ticket_bits"] == 0
+        && ack["search_budget"] == 0
+        && ack["solution_trials"] == 0
+        && row["metrics"]["solution_trials"] == 0
+        && row["metrics"]["solution_search_ns"] == 0
+        && (if found {
+            ack["solution_nonce"] == 0
+        } else {
+            ack["solution_nonce"].is_null()
+        })
+        && (!completed || (found && row["response"]["solve_trials"] == 0))
+}
+
+#[test]
+fn pure_history_raw_campaign_profile_is_explicit_and_preserves_original_capacity() {
+    use support::WorkProfile::{PureHistoryRawV1, RawR13};
+    assert!(matches!(
+        CampaignConfiguration::new(StateBackendChoice::LegacyV2, PureHistoryRawV1),
+        Err("PURE_HISTORY_RAW_REQUIRES_AUTHENTICATED_V1")
+    ));
+    CampaignConfiguration::new(StateBackendChoice::AuthenticatedV1, PureHistoryRawV1).unwrap();
+    let mut original = json!({"kind":"attack"});
+    RawR13.bind_actor_job(&mut original);
+    assert_eq!(original, json!({"kind":"attack"}));
+    assert_eq!(support::WorkProfile::from_actor_job(&original), Ok(RawR13));
+    let mut explicit = json!({"kind":"attack"});
+    PureHistoryRawV1.bind_actor_job(&mut explicit);
+    assert_eq!(
+        support::WorkProfile::from_actor_job(&explicit),
+        Ok(PureHistoryRawV1)
+    );
+    assert_eq!(
+        explicit["public_resource_policy"]["policy_id"],
+        "bf409dae237253a2ce14152c54198ed06e824e709763946e9c84e68e894eee58"
+    );
+    for field in ["work_profile", "public_resource_policy"] {
+        let mut partial = explicit.clone();
+        partial.as_object_mut().unwrap().remove(field);
+        assert_eq!(
+            support::WorkProfile::from_actor_job(&partial),
+            Err("MULTIPROCESS_WORK_PROFILE")
+        );
+    }
+    let mut protected = explicit;
+    protected["public_resource_policy"] = RawR13.policy_observation();
+    assert_eq!(
+        support::WorkProfile::from_actor_job(&protected),
+        Err("MULTIPROCESS_WORK_PROFILE")
+    );
+    let (server, arithmetic) = campaign_server(PureHistoryRawV1);
+    assert!(arithmetic.is_none() && server.arithmetic_facts_software_bytes().is_none());
+    assert_eq!(server.resource_profile(), PureHistoryRawV1.policy().id());
+    let meter = server.mutation_cpu_domain().observe().unwrap();
+    assert_eq!(meter.burst_ns, 2_000_000_000);
+    assert_eq!(meter.refill_ns_per_second, 250_000_000);
+    assert_eq!(meter.start_reserve_ns, 100_000_000);
+    assert_eq!(meter.worker_limit, 2);
+}
+
+#[test]
+fn pure_history_raw_campaign_receipts_refuse_search_and_foreign_profiles() {
+    let profile = support::WorkProfile::PureHistoryRawV1;
+    let observation = profile.policy_observation();
+    let row = json!({"work_profile":"pure-history-raw-v1","public_resource_policy":observation,
+        "status":"refused","response":{"solve_trials":0},
+        "metrics":{"solution_found":true,"solution_trials":0,"solution_search_ns":0},
+        "pure_history_acknowledgement":{"schema":"public-pure-history-raw-acknowledgement-v1",
+            "profile":public_v3::PURE_HISTORY_RAW_PROFILE,"policy_id":hex::encode(profile.policy().id()),
+            "ticket_bits":0,"search_budget":0,"solution_trials":0,"solution_nonce":0}});
+    assert!(pure_history_call_bound(&row));
+    for (section, field, value) in [
+        ("pure_history_acknowledgement", "ticket_bits", json!(8)),
+        (
+            "pure_history_acknowledgement",
+            "search_budget",
+            json!(1_048_576),
+        ),
+        ("pure_history_acknowledgement", "solution_trials", json!(1)),
+        ("pure_history_acknowledgement", "solution_nonce", json!(1)),
+        (
+            "pure_history_acknowledgement",
+            "profile",
+            json!(public_v3::PROFILE),
+        ),
+        ("metrics", "solution_trials", json!(1)),
+        ("metrics", "solution_search_ns", json!(1)),
+        ("metrics", "solution_found", Value::Null),
+        ("response", "solve_trials", json!(1)),
+    ] {
+        let mut altered = row.clone();
+        altered[section][field] = value;
+        assert!(!pure_history_call_bound(&altered), "{section}.{field}");
+    }
+    let mut protected = row.clone();
+    protected["public_resource_policy"] = support::WorkProfile::RawR13.policy_observation();
+    assert!(!pure_history_call_bound(&protected));
+    let mut not_reached = row;
+    not_reached["status"] = json!("error");
+    not_reached["metrics"]["solution_found"] = json!(false);
+    not_reached["pure_history_acknowledgement"]["solution_nonce"] = Value::Null;
+    assert!(pure_history_call_bound(&not_reached));
+    not_reached["status"] = json!("unknown");
+    assert!(!pure_history_call_bound(&not_reached));
+}
+
+fn run_campaign(
+    work_profile: support::WorkProfile,
+    history_resource_profile: history_verifier::ResourceProfile,
+) {
     let state_backend = StateBackendChoice::from_environment();
-    let configuration = CampaignConfiguration::new(state_backend, work_profile).unwrap();
+    let mut configuration = CampaignConfiguration::new(state_backend, work_profile).unwrap();
+    configuration.history_resource_profile = history_resource_profile;
     let output = PathBuf::from(
         std::env::var_os("TRNM_MULTIPROCESS_REPORT_DIR").expect("explicit new report directory"),
     );
@@ -1539,6 +1737,7 @@ fn campaign(output: &Path, configuration: CampaignConfiguration) {
     let CampaignConfiguration {
         state_backend,
         work_profile,
+        history_resource_profile: _,
     } = configuration;
     eprintln!("P0 native campaign: honest 1024 signed transfers and 21 business blocks");
     let settings = support::settings();
@@ -1691,12 +1890,19 @@ fn campaign(output: &Path, configuration: CampaignConfiguration) {
         "work_profile_qualified":false,"cryptographic_hardness_qualified":false,"independent_operators":false,"wan_qualified":false,
         "production_candidate":false,"release_ready":false});
     report["public_resource_policy"] = work_profile.policy_observation();
+    if work_profile == support::WorkProfile::PureHistoryRawV1 {
+        report["work_profile"] = json!("pure-history-raw-v1");
+        report["pure_pon_production_qualified"] = json!(false);
+    }
     if work_profile == support::WorkProfile::ArithmeticFactsV1 {
         report["schema"] = json!("native-public-v3-arithmetic-facts-separate-process-campaign-v1");
         report["work_profile"] = json!("arithmetic-facts-v1");
         report["scope"] = json!("explicit arithmetic-facts profile; same original finite controlled TCP loopback workload, raw producer/attack construction, CPU/deadline/cap/confirmation/depletion criteria; fresh server-local owner per phase; work observations separate actual recomputation from reused mathematical facts; not original r13, arbitrary-key service, WAN or independent-operator qualification");
         report["original_r13_campaign_qualified"] = json!(false);
         report["adversarial_key_churn_service_qualified"] = json!(false);
+    }
+    if work_profile == support::WorkProfile::PureHistoryRawV1 {
+        report["schema"] = json!("native-public-pure-history-raw-campaign-v1");
     }
     support::write_new(&output.join("report.json"), &report);
     assert!(

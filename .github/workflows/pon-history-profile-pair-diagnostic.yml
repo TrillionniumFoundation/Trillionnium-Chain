@@ -1,0 +1,76 @@
+name: History same-runner profile pair diagnostic
+on:
+  pull_request:
+    paths:
+      - scripts/ci/run_history_profile_pair_diagnostic_v1.py
+      - scripts/ci/test_history_profile_pair_diagnostic_v1.py
+      - .github/workflows/pon-history-profile-pair-diagnostic.yml
+  workflow_dispatch:
+    inputs:
+      profile_order:
+        description: Predeclare the sequential profile order
+        type: choice
+        required: true
+        default: strict-then-n8
+        options: [strict-then-n8, n8-then-strict]
+permissions:
+  contents: read
+concurrency:
+  group: history-profile-pair-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  profile-pair-diagnostic:
+    runs-on: ubuntu-24.04
+    # Additive diagnostic only: two original 80-minute lanes, each still
+    # bounded separately. No existing job or acceptance deadline changes.
+    # The native controller retains its two 80-minute ceilings. The remaining
+    # ten minutes permit owned safety cleanup and evidence upload after failure.
+    timeout-minutes: 170
+    env:
+      CI: "true"
+      CARGO_INCREMENTAL: "0"
+      CARGO_BUILD_JOBS: "2"
+      RUST_TEST_THREADS: "1"
+      PYTHONDONTWRITEBYTECODE: "1"
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+      PROFILE_ORDER: ${{ inputs.profile_order || 'strict-then-n8' }}
+    steps:
+      - name: Checkout one immutable source for both profiles
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.EXPECTED_HEAD }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Exercise actual interruption and external-cleanup controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B scripts/ci/test_history_profile_pair_diagnostic_v1.py
+      - name: Execute the predeclared same-runner pair
+        timeout-minutes: 160
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B scripts/ci/run_history_profile_pair_diagnostic_v1.py \
+            --root "$GITHUB_WORKSPACE" \
+            --output "$RUNNER_TEMP/history-profile-pair-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" \
+            --order "$PROFILE_ORDER"
+      - name: Independently close only this run's root-leased parents
+        if: always()
+        timeout-minutes: 5
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B scripts/ci/run_history_profile_pair_diagnostic_v1.py \
+            --root "$GITHUB_WORKSPACE" \
+            --output "$RUNNER_TEMP/history-profile-pair-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" \
+            --cleanup-only
+      - name: Retain complete and partial pair observations
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: history-profile-pair-${{ env.PROFILE_ORDER }}-${{ env.EXPECTED_HEAD }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/history-profile-pair-${{ github.run_id }}-${{ github.run_attempt }}
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 30

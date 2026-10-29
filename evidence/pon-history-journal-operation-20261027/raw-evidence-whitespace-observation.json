@@ -1,0 +1,12 @@
+{
+  "schema": "raw-tool-output-whitespace-observation-v1",
+  "command": [
+    "git",
+    "diff",
+    "--cached",
+    "--check"
+  ],
+  "returncode": 2,
+  "scope": "unmodified raw CI/libtest output has trailing spaces and extra terminal blank lines; source formatting already passes",
+  "resolution": "gzip byte-identical raw logs; do not trim original observations"
+}

@@ -114,7 +114,13 @@ error_codes! {
     OwnerPublicServiceCpuDomain => ("OWNER_PUBLIC_SERVICE_CPU_DOMAIN", PolicyRefusal),
     OwnerPublicServiceDomainUnbound => ("OWNER_PUBLIC_SERVICE_DOMAIN_UNBOUND", DependencyUnavailable),
     OwnerPublicServiceUncleanEpoch => ("OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH", DependencyUnavailable),
+    OwnerContinuousHistoryDurableRequired => ("OWNER_CONTINUOUS_HISTORY_DURABLE_REQUIRED", DependencyUnavailable),
     OwnerPublicServiceEpochCorrupt => ("OWNER_PUBLIC_SERVICE_EPOCH_CORRUPT", LocalStructure),
+    HistoryGraphResourceProfileV1 => ("HISTORY_GRAPH_RESOURCE_PROFILE_V1", PolicyRefusal),
+    HistoryGraphResourceScopeV1 => ("HISTORY_GRAPH_RESOURCE_SCOPE_V1", LocalStructure),
+    HistoryGraphResourceBindingV1 => ("HISTORY_GRAPH_RESOURCE_BINDING_V1", LocalStructure),
+    HistoryGraphResourceObservationV1 => ("HISTORY_GRAPH_RESOURCE_OBSERVATION_V1", DependencyUnavailable),
+    HistoryGraphResourceOrdinaryOnlyV1 => ("HISTORY_GRAPH_RESOURCE_ORDINARY_ONLY_V1", PolicyRefusal),
     PublicListenerDomainCapacity => ("PUBLIC_LISTENER_DOMAIN_CAPACITY", Capacity),
     PublicHostProcessCapacity => ("PUBLIC_HOST_PROCESS_CAPACITY", Capacity),
     PublicHostProcessUnavailable => ("PUBLIC_HOST_PROCESS_UNAVAILABLE", DependencyUnavailable),
@@ -183,6 +189,9 @@ pub struct Error {
     /// Only the controlled public-history operation can select this origin.
     /// Parsing a string or an authenticated remote reply never selects it.
     request_history_budget: bool,
+    /// The bound healthy owner rejected a different caller's CPU domain.
+    /// Only the local binding check may select this request-local origin.
+    request_cpu_domain_refusal: bool,
 }
 impl Error {
     pub fn new(code: ErrorCode) -> Self {
@@ -192,6 +201,7 @@ impl Error {
             message: code.as_str().into(),
             source: None,
             request_history_budget: false,
+            request_cpu_domain_refusal: false,
         }
     }
     pub fn code(&self) -> Option<ErrorCode> {
@@ -213,6 +223,12 @@ impl Error {
         if self.request_history_budget && self.kind == ErrorKind::Capacity {
             return false;
         }
+        if self.request_cpu_domain_refusal
+            && self.kind == ErrorKind::PolicyRefusal
+            && self.code == Some(ErrorCode::OwnerPublicServiceCpuDomain)
+        {
+            return false;
+        }
         if self.kind == ErrorKind::RemoteRefusal {
             return false;
         }
@@ -224,6 +240,15 @@ impl Error {
                         | ErrorCode::DatabaseReplaced
                         | ErrorCode::OwnerReplaced
                         | ErrorCode::AncestryIndexBudget
+                        // The original paid CPU owner becoming unavailable is
+                        // NOT a transient remote peer refusal or budget debit.
+                        // A pinned poller must stop instead of silently trying
+                        // fresh unowned work in its next cycle.
+                        | ErrorCode::PublicMutationCpuUnavailable
+                        | ErrorCode::OwnerPublicServiceCpuDomain
+                        | ErrorCode::OwnerPublicServiceDomainUnbound
+                        | ErrorCode::OwnerPublicServiceUncleanEpoch
+                        | ErrorCode::OwnerContinuousHistoryDurableRequired
                 )
             )
     }
@@ -234,6 +259,14 @@ impl Error {
     pub(crate) fn public_history_budget() -> Self {
         let mut error = Self::new(ErrorCode::AncestryIndexBudget);
         error.request_history_budget = true;
+        error
+    }
+    /// A healthy bound owner refuses a foreign accounting domain before any
+    /// reservation or native work. Parsing this diagnostic cannot mint this
+    /// origin; genuine owner failure and later local integrity remain fatal.
+    pub(crate) fn public_service_domain_refusal() -> Self {
+        let mut error = Self::new(ErrorCode::OwnerPublicServiceCpuDomain);
+        error.request_cpu_domain_refusal = true;
         error
     }
     /// Use only for a failed invariant of bytes/links already held by the local
@@ -302,12 +335,19 @@ impl Error {
             message: format!("{prefix}:{source}"),
             source: Some(Box::new(source)),
             request_history_budget: false,
+            request_cpu_domain_refusal: false,
         }
     }
     /// Parse only after the caller has established its required reply authentication.
     /// Construction itself authenticates nothing and gives no local failure authority.
     pub(crate) fn remote(message: impl Into<String>) -> Self {
         let mut error = Self::from(message.into());
+        // A peer may report its refusal, but cannot create a typed identity
+        // for this process's owner/storage authority. Keep nonfatal protocol
+        // identities used by the authenticated bounded Submit recovery path.
+        if error.requires_owner_stop() {
+            error.code = None;
+        }
         error.kind = ErrorKind::RemoteRefusal;
         error
     }
@@ -332,6 +372,7 @@ impl Error {
             message: format!("{prefix}: {source}"),
             source: Some(Box::new(source)),
             request_history_budget: false,
+            request_cpu_domain_refusal: false,
         }
     }
 }
@@ -361,6 +402,7 @@ impl From<String> for Error {
             message,
             source: None,
             request_history_budget: false,
+            request_cpu_domain_refusal: false,
         }
     }
 }
@@ -386,6 +428,19 @@ mod tests {
     use std::error::Error as _;
 
     #[test]
+    fn continuous_history_without_a_durable_claim_is_a_local_owner_stop() {
+        let message = "OWNER_CONTINUOUS_HISTORY_DURABLE_REQUIRED";
+        let local = Error::from(message);
+        assert!(local.is(ErrorCode::OwnerContinuousHistoryDurableRequired));
+        assert_eq!(local.kind(), ErrorKind::DependencyUnavailable);
+        assert!(local.requires_owner_stop());
+        // A remote peer's arbitrary string is not local resource authority.
+        let remote = Error::remote(message);
+        assert!(!remote.requires_owner_stop());
+        assert!(!remote.is(ErrorCode::OwnerContinuousHistoryDurableRequired));
+    }
+
+    #[test]
     fn display_changes_cannot_change_typed_retry_or_owner_stop_identity() {
         let mut budget = Error::new(ErrorCode::PublicMutationCpuBudget);
         assert_eq!(budget.to_string(), "PUBLIC_MUTATION_CPU_BUDGET");
@@ -399,6 +454,46 @@ mod tests {
         let mut eof = Error::new(ErrorCode::FrameEof);
         eof.message = "peer closed the socket".into();
         assert!(eof.is(ErrorCode::FrameEof));
+    }
+
+    #[test]
+    fn unavailable_original_cpu_owner_is_fatal_but_budget_and_remote_refusals_are_not() {
+        for code in [
+            ErrorCode::PublicMutationCpuUnavailable,
+            ErrorCode::OwnerPublicServiceCpuDomain,
+            ErrorCode::OwnerPublicServiceDomainUnbound,
+            ErrorCode::OwnerPublicServiceUncleanEpoch,
+            ErrorCode::OwnerContinuousHistoryDurableRequired,
+        ] {
+            let local = Error::new(code);
+            assert!(local.requires_owner_stop(), "{code:?}");
+            // Never allow an attacker-controlled remote error string to
+            // disable a healthy local receiver, even if its wire text
+            // matches a local CPU owner diagnostic.
+            let remote = Error::remote(local.to_string());
+            assert!(!remote.requires_owner_stop(), "{code:?}");
+            assert_eq!(remote.code(), None, "{code:?}");
+        }
+        assert!(!Error::new(ErrorCode::PublicMutationCpuBudget).requires_owner_stop());
+    }
+
+    #[test]
+    fn foreign_domain_refusal_origin_preserves_fatal_owner_failures() {
+        let mut refusal = Error::public_service_domain_refusal();
+        assert!(refusal.is(ErrorCode::OwnerPublicServiceCpuDomain));
+        assert_eq!(refusal.kind(), ErrorKind::PolicyRefusal);
+        assert!(!refusal.requires_owner_stop());
+        assert!(Error::from(refusal.to_string()).requires_owner_stop());
+        assert!(Error::new(ErrorCode::OwnerPublicServiceCpuDomain).requires_owner_stop());
+        refusal.message = "healthy owner refused another listener".into();
+        assert!(!refusal.requires_owner_stop());
+        assert!(refusal.local_integrity().requires_owner_stop());
+        for code in [ErrorCode::UnknownParent, ErrorCode::PublicMutationCpuBudget] {
+            let remote = Error::remote(code.as_str());
+            assert!(remote.is(code));
+            assert_eq!(remote.kind(), ErrorKind::RemoteRefusal);
+            assert!(!remote.requires_owner_stop());
+        }
     }
 
     #[test]
@@ -508,7 +603,7 @@ mod tests {
             let local = Error::from(message);
             assert!(local.requires_owner_stop());
             let remote = Error::remote(message);
-            assert_eq!(remote.code(), local.code());
+            assert_eq!(remote.code(), None);
             assert_eq!(remote.kind(), ErrorKind::RemoteRefusal);
             assert!(!remote.requires_owner_stop());
             assert_eq!(remote.to_string(), message);

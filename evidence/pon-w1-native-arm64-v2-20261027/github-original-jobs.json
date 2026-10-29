@@ -1,0 +1,113 @@
+{
+  "total_count": 1,
+  "jobs": [
+    {
+      "id": 122200761109,
+      "run_id": 40507587240,
+      "workflow_name": "Pure PoN complete v2 ARM64 cost research",
+      "head_branch": "test/chain-pure-pon-arm64-v2-20261027",
+      "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40507587240",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOTty1_c8AAAAcc7ujFQ",
+      "head_sha": "2b070fafcdd253c142da90fd7306d211057d3418",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/122200761109",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40507587240/job/122200761109",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-27T12:55:08Z",
+      "started_at": "2026-10-27T13:11:34Z",
+      "completed_at": "2026-10-27T13:28:59Z",
+      "name": "complete-arm64-grid",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-27T13:11:35Z",
+          "completed_at": "2026-10-27T13:11:36Z"
+        },
+        {
+          "name": "Checkout exact candidate without persistent credentials",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-27T13:11:36Z",
+          "completed_at": "2026-10-27T13:11:50Z"
+        },
+        {
+          "name": "Bind complete source and actual architecture",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-27T13:11:50Z",
+          "completed_at": "2026-10-27T13:11:51Z"
+        },
+        {
+          "name": "Install original compiler and check the complete source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-27T13:11:51Z",
+          "completed_at": "2026-10-27T13:12:57Z"
+        },
+        {
+          "name": "Build the original native producer and retain its actual executable",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-27T13:12:57Z",
+          "completed_at": "2026-10-27T13:16:30Z"
+        },
+        {
+          "name": "Execute every original v2 cohort once and retain every failed search",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-27T13:16:30Z",
+          "completed_at": "2026-10-27T13:28:54Z"
+        },
+        {
+          "name": "Independently recheck final source bytes even after failure",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-27T13:28:54Z",
+          "completed_at": "2026-10-27T13:28:55Z"
+        },
+        {
+          "name": "Preserve actual source, binary, hardware observations and complete raw outcomes",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-10-27T13:28:55Z",
+          "completed_at": "2026-10-27T13:28:57Z"
+        },
+        {
+          "name": "Post Checkout exact candidate without persistent credentials",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16,
+          "started_at": "2026-10-27T13:28:57Z",
+          "completed_at": "2026-10-27T13:28:57Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 17,
+          "started_at": "2026-10-27T13:28:57Z",
+          "completed_at": "2026-10-27T13:28:57Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/122200761109",
+      "labels": [
+        "ubuntu-24.04-arm"
+      ],
+      "runner_id": 1000266696,
+      "runner_name": "GitHub Actions 1000266696",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    }
+  ]
+}

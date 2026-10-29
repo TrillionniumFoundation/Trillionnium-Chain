@@ -1,0 +1,2412 @@
+{
+  "cpu_measured": false,
+  "energy_measured": false,
+  "network_throughput_measured": false,
+  "observations": [
+    {
+      "details": {
+        "fixture": "bound native genesis",
+        "raw_bytes": 3751,
+        "state_keys": 11,
+        "witnesses": 1
+      },
+      "phase": "m01_m06_signature_with_actual_state_key_reads",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 13047770
+    },
+    {
+      "details": {
+        "state_keys": 11
+      },
+      "phase": "actual_state_grammar_and_current_authority",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 1082259
+    },
+    {
+      "details": {
+        "raw_bytes": 3751,
+        "scope": "genuine canonical ML-DSA signature from another statement, not a proven global worst case",
+        "state_keys": 11
+      },
+      "phase": "canonical_signature_for_wrong_message",
+      "result": "error",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 14670450
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "b2c47a0c632b7a48c00ac0498956200b9d764a1488fc1c25ceb0fa59e43766cc",
+        "raw_bytes": 3751,
+        "transactions": 1
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 24988643
+    },
+    {
+      "details": {
+        "block": "57147c6ec088327e0785eb86934d4daccaae8a40746ea99ecb0f8eb72a0f402f",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 0
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 854463
+    },
+    {
+      "details": {
+        "block": "57147c6ec088327e0785eb86934d4daccaae8a40746ea99ecb0f8eb72a0f402f",
+        "raw_bytes": 3751,
+        "transactions": 1
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 45378062
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "b2c47a0c632b7a48c00ac0498956200b9d764a1488fc1c25ceb0fa59e43766cc",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 21774788
+    },
+    {
+      "details": {
+        "block": "decf235ea6c84e5c904e24fc8aef5394131b6b6d486fb952977cb0dc3a47564e",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 8
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 1367993
+    },
+    {
+      "details": {
+        "block": "decf235ea6c84e5c904e24fc8aef5394131b6b6d486fb952977cb0dc3a47564e",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 32689949
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "decf235ea6c84e5c904e24fc8aef5394131b6b6d486fb952977cb0dc3a47564e",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 14542064
+    },
+    {
+      "details": {
+        "block": "cdc28576aa8114455a317c26d611043f0c221ca1d8d0c72550a2a16b8b9f8aee",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 4
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 866201
+    },
+    {
+      "details": {
+        "block": "cdc28576aa8114455a317c26d611043f0c221ca1d8d0c72550a2a16b8b9f8aee",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 44282451
+    },
+    {
+      "details": {
+        "kind": 2,
+        "parent": "b2c47a0c632b7a48c00ac0498956200b9d764a1488fc1c25ceb0fa59e43766cc",
+        "raw_bytes": 3789,
+        "witnesses": 1
+      },
+      "phase": "actual_pool_crypto_state_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 45020941
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "b2c47a0c632b7a48c00ac0498956200b9d764a1488fc1c25ceb0fa59e43766cc",
+        "raw_bytes": 3789,
+        "transactions": 1
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 17109348
+    },
+    {
+      "details": {
+        "block": "2e68b77aecaf55ae1e88050e4c6717202cab485c4754e2553d7510aaf159c6eb",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 0
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 752196
+    },
+    {
+      "details": {
+        "block": "2e68b77aecaf55ae1e88050e4c6717202cab485c4754e2553d7510aaf159c6eb",
+        "raw_bytes": 3789,
+        "transactions": 1
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 31231625
+    },
+    {
+      "details": {
+        "parent": "2e68b77aecaf55ae1e88050e4c6717202cab485c4754e2553d7510aaf159c6eb"
+      },
+      "phase": "actual_rotation_authority_state_read",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 2906342
+    },
+    {
+      "details": {
+        "kind": 129,
+        "parent": "2e68b77aecaf55ae1e88050e4c6717202cab485c4754e2553d7510aaf159c6eb",
+        "raw_bytes": 9272,
+        "witnesses": 2
+      },
+      "phase": "actual_pool_crypto_state_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 83006891
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "2e68b77aecaf55ae1e88050e4c6717202cab485c4754e2553d7510aaf159c6eb",
+        "raw_bytes": 9272,
+        "transactions": 1
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 30094395
+    },
+    {
+      "details": {
+        "block": "da4e7699853b462768d7e51cb551f83002836f5ef056923b3f5434a0a8560c21",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 1
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 747916
+    },
+    {
+      "details": {
+        "block": "da4e7699853b462768d7e51cb551f83002836f5ef056923b3f5434a0a8560c21",
+        "raw_bytes": 9272,
+        "transactions": 1
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 52812778
+    },
+    {
+      "details": {
+        "kind": 4,
+        "parent": "da4e7699853b462768d7e51cb551f83002836f5ef056923b3f5434a0a8560c21",
+        "raw_bytes": 3773,
+        "witnesses": 1
+      },
+      "phase": "actual_pool_crypto_state_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 51408838
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "da4e7699853b462768d7e51cb551f83002836f5ef056923b3f5434a0a8560c21",
+        "raw_bytes": 3773,
+        "transactions": 1
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 21906867
+    },
+    {
+      "details": {
+        "block": "adf10b5dcc9c60c8dbd6951f8298ea790d3714ba2d81b5fe4b4cf3e468679a7d",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 3
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 783844
+    },
+    {
+      "details": {
+        "block": "adf10b5dcc9c60c8dbd6951f8298ea790d3714ba2d81b5fe4b4cf3e468679a7d",
+        "raw_bytes": 3773,
+        "transactions": 1
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 38182527
+    },
+    {
+      "details": {
+        "kind": 5,
+        "parent": "adf10b5dcc9c60c8dbd6951f8298ea790d3714ba2d81b5fe4b4cf3e468679a7d",
+        "raw_bytes": 3773,
+        "witnesses": 1
+      },
+      "phase": "actual_pool_crypto_state_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 74143386
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "adf10b5dcc9c60c8dbd6951f8298ea790d3714ba2d81b5fe4b4cf3e468679a7d",
+        "raw_bytes": 3773,
+        "transactions": 1
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 52729268
+    },
+    {
+      "details": {
+        "block": "4bd99f2feffd84602168d02e63db68daa5f35fee58b24e129c5cfef220edeed2",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 0
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 1648152
+    },
+    {
+      "details": {
+        "block": "4bd99f2feffd84602168d02e63db68daa5f35fee58b24e129c5cfef220edeed2",
+        "raw_bytes": 3773,
+        "transactions": 1
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 82925998
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "da4e7699853b462768d7e51cb551f83002836f5ef056923b3f5434a0a8560c21",
+        "raw_bytes": 3741,
+        "transactions": 1
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 37684290
+    },
+    {
+      "details": {
+        "block": "f17500ee9c3907c91aa52a74d7f9e9aa5c2b3f2192711de68e1a0b652bfa6acc",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 3
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 1534902
+    },
+    {
+      "details": {
+        "block": "f17500ee9c3907c91aa52a74d7f9e9aa5c2b3f2192711de68e1a0b652bfa6acc",
+        "raw_bytes": 3741,
+        "transactions": 1
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 103145767
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "f17500ee9c3907c91aa52a74d7f9e9aa5c2b3f2192711de68e1a0b652bfa6acc",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 20207747
+    },
+    {
+      "details": {
+        "block": "c9dbf8e91ab4cbe7604ba06a15e6ccd77a574edf6983b1c60214c55cd0a50f51",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 3
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 1323561
+    },
+    {
+      "details": {
+        "block": "c9dbf8e91ab4cbe7604ba06a15e6ccd77a574edf6983b1c60214c55cd0a50f51",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 46638535
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "c9dbf8e91ab4cbe7604ba06a15e6ccd77a574edf6983b1c60214c55cd0a50f51",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 12684896
+    },
+    {
+      "details": {
+        "block": "029d089ac7c6c2a1e30340789e4fb6caf29200f2d1d325616c42fc18cd919891",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 0
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 1194487
+    },
+    {
+      "details": {
+        "block": "029d089ac7c6c2a1e30340789e4fb6caf29200f2d1d325616c42fc18cd919891",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 52817565
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "2e68b77aecaf55ae1e88050e4c6717202cab485c4754e2553d7510aaf159c6eb",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 15641156
+    },
+    {
+      "details": {
+        "block": "62173e5557f751907e3fa1ee514e30ef3fb3a5c4d9b5a5a06073042d63e28eb6",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 0
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 1548878
+    },
+    {
+      "details": {
+        "block": "62173e5557f751907e3fa1ee514e30ef3fb3a5c4d9b5a5a06073042d63e28eb6",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 46305201
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "62173e5557f751907e3fa1ee514e30ef3fb3a5c4d9b5a5a06073042d63e28eb6",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 12107877
+    },
+    {
+      "details": {
+        "block": "f7a1f75ba5f173633f657bbdbb8dfdbe12c5a8bdff570f1b792ab5a445c6d0fe",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 4
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 2371072
+    },
+    {
+      "details": {
+        "block": "f7a1f75ba5f173633f657bbdbb8dfdbe12c5a8bdff570f1b792ab5a445c6d0fe",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 49562440
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "f7a1f75ba5f173633f657bbdbb8dfdbe12c5a8bdff570f1b792ab5a445c6d0fe",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 16493622
+    },
+    {
+      "details": {
+        "block": "c3bbc13b10abc7846745cbfdd7bea6e96a72f1a8ddd189ab1cf26a5b19afb0bf",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 1
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 2432168
+    },
+    {
+      "details": {
+        "block": "c3bbc13b10abc7846745cbfdd7bea6e96a72f1a8ddd189ab1cf26a5b19afb0bf",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 61368004
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "c3bbc13b10abc7846745cbfdd7bea6e96a72f1a8ddd189ab1cf26a5b19afb0bf",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 15775682
+    },
+    {
+      "details": {
+        "block": "48f69806b6fd8349ebdb12188f8a8eb70589741b498cdd9af8a7e17bd4f33a0f",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 1
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 1542069
+    },
+    {
+      "details": {
+        "block": "48f69806b6fd8349ebdb12188f8a8eb70589741b498cdd9af8a7e17bd4f33a0f",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 43451011
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "48f69806b6fd8349ebdb12188f8a8eb70589741b498cdd9af8a7e17bd4f33a0f",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 17113378
+    },
+    {
+      "details": {
+        "block": "9d7c2acc2dbcac32c61cdeccf93a47a8fc86c5facd50fc738a130aaac16fafa3",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 2
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 1675254
+    },
+    {
+      "details": {
+        "block": "9d7c2acc2dbcac32c61cdeccf93a47a8fc86c5facd50fc738a130aaac16fafa3",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 59791697
+    },
+    {
+      "details": {
+        "local_generation": 6,
+        "parent": "9d7c2acc2dbcac32c61cdeccf93a47a8fc86c5facd50fc738a130aaac16fafa3"
+      },
+      "phase": "actual_pool_reauthorization_at_branch",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 281086752
+    },
+    {
+      "details": {
+        "local_generation": 6,
+        "parent": "9d7c2acc2dbcac32c61cdeccf93a47a8fc86c5facd50fc738a130aaac16fafa3"
+      },
+      "phase": "actual_pool_reauthorization_at_branch",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 1071775696
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "b2c47a0c632b7a48c00ac0498956200b9d764a1488fc1c25ceb0fa59e43766cc",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 7476131
+    },
+    {
+      "details": {
+        "block": "9837700913b6d1212385b6aa0306bd5bfccb575ad5e01a917088f3631a20e13f",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 0
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 811754
+    },
+    {
+      "details": {
+        "block": "9837700913b6d1212385b6aa0306bd5bfccb575ad5e01a917088f3631a20e13f",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 42752079
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "9837700913b6d1212385b6aa0306bd5bfccb575ad5e01a917088f3631a20e13f",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 9883332
+    },
+    {
+      "details": {
+        "block": "c85500dd01178957668a0a78e942ebd1c9569cf737ba42bb1102e23cef788b51",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 3
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 926503
+    },
+    {
+      "details": {
+        "block": "c85500dd01178957668a0a78e942ebd1c9569cf737ba42bb1102e23cef788b51",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 29715651
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "c85500dd01178957668a0a78e942ebd1c9569cf737ba42bb1102e23cef788b51",
+        "raw_bytes": 3751,
+        "transactions": 1
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 20509273
+    },
+    {
+      "details": {
+        "block": "d449eed646ef02bf8d42bd2e5c7676daa991ecf943e3d7e49f05e88763977143",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 5
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 1005656
+    },
+    {
+      "details": {
+        "block": "d449eed646ef02bf8d42bd2e5c7676daa991ecf943e3d7e49f05e88763977143",
+        "raw_bytes": 3751,
+        "transactions": 1
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 40063963
+    },
+    {
+      "details": {
+        "raw_bytes": 68208,
+        "transactions": 16
+      },
+      "phase": "capacity_actual_pool_bundle",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 1169677901
+    },
+    {
+      "details": {
+        "raw_bytes": 68208,
+        "transactions": 16
+      },
+      "phase": "capacity_actual_pool_bundle",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 1442573957
+    },
+    {
+      "details": {
+        "raw_bytes": 68208,
+        "transactions": 16
+      },
+      "phase": "capacity_actual_pool_bundle",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 2091033388
+    },
+    {
+      "details": {
+        "raw_bytes": 68208,
+        "transactions": 16
+      },
+      "phase": "capacity_actual_pool_bundle",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 7639336992
+    },
+    {
+      "details": {
+        "raw_bytes": 68208,
+        "transactions": 16
+      },
+      "phase": "capacity_actual_pool_bundle",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 4984943327
+    },
+    {
+      "details": {
+        "raw_bytes": 68208,
+        "transactions": 16
+      },
+      "phase": "capacity_actual_pool_bundle",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 4552098224
+    },
+    {
+      "details": {
+        "raw_bytes": 68208,
+        "transactions": 16
+      },
+      "phase": "capacity_actual_pool_bundle",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 4691956340
+    },
+    {
+      "details": {
+        "raw_bytes": 42630,
+        "transactions": 10
+      },
+      "phase": "capacity_actual_pool_bundle",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 6653899482
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "b2c47a0c632b7a48c00ac0498956200b9d764a1488fc1c25ceb0fa59e43766cc",
+        "raw_bytes": 520086,
+        "transactions": 122
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 2487752025
+    },
+    {
+      "details": {
+        "block": "2185f1baedd3e2139b8af809cbf4734fc9d46e18db58858502685054ca0017a7",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 0
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 1541974
+    },
+    {
+      "details": {
+        "block": "2185f1baedd3e2139b8af809cbf4734fc9d46e18db58858502685054ca0017a7",
+        "raw_bytes": 520086,
+        "transactions": 122
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 2454720336
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "b2c47a0c632b7a48c00ac0498956200b9d764a1488fc1c25ceb0fa59e43766cc",
+        "raw_bytes": 3751,
+        "transactions": 1
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 30208017
+    },
+    {
+      "details": {
+        "block": "57147c6ec088327e0785eb86934d4daccaae8a40746ea99ecb0f8eb72a0f402f",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 0
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 950072
+    },
+    {
+      "details": {
+        "block": "57147c6ec088327e0785eb86934d4daccaae8a40746ea99ecb0f8eb72a0f402f",
+        "raw_bytes": 3751,
+        "transactions": 1
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 51324644
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "b2c47a0c632b7a48c00ac0498956200b9d764a1488fc1c25ceb0fa59e43766cc",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 17171888
+    },
+    {
+      "details": {
+        "block": "decf235ea6c84e5c904e24fc8aef5394131b6b6d486fb952977cb0dc3a47564e",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 8
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 1102289
+    },
+    {
+      "details": {
+        "block": "decf235ea6c84e5c904e24fc8aef5394131b6b6d486fb952977cb0dc3a47564e",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 23659903
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "decf235ea6c84e5c904e24fc8aef5394131b6b6d486fb952977cb0dc3a47564e",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 16834563
+    },
+    {
+      "details": {
+        "block": "cdc28576aa8114455a317c26d611043f0c221ca1d8d0c72550a2a16b8b9f8aee",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 4
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 1422389
+    },
+    {
+      "details": {
+        "block": "cdc28576aa8114455a317c26d611043f0c221ca1d8d0c72550a2a16b8b9f8aee",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 39437127
+    },
+    {
+      "details": {
+        "kind": 130,
+        "parent": "6f3bcc1aaa37e0566d7b1cd2b38c6acc9982e15cb567388650719a557fe4470f",
+        "raw_bytes": 9432,
+        "witnesses": 2
+      },
+      "phase": "actual_pool_crypto_state_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 159809762
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "6f3bcc1aaa37e0566d7b1cd2b38c6acc9982e15cb567388650719a557fe4470f",
+        "raw_bytes": 9432,
+        "transactions": 1
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 51195673
+    },
+    {
+      "details": {
+        "block": "86065d47cd799ab31caad4c5f4b13975ce93ee39b6c25b2f7e25f85e634d0818",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 0
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 1503282
+    },
+    {
+      "details": {
+        "block": "86065d47cd799ab31caad4c5f4b13975ce93ee39b6c25b2f7e25f85e634d0818",
+        "raw_bytes": 9432,
+        "transactions": 1
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 71830544
+    },
+    {
+      "details": {
+        "kind": 3,
+        "parent": "86065d47cd799ab31caad4c5f4b13975ce93ee39b6c25b2f7e25f85e634d0818",
+        "raw_bytes": 3741,
+        "witnesses": 1
+      },
+      "phase": "actual_pool_crypto_state_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 113470934
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "86065d47cd799ab31caad4c5f4b13975ce93ee39b6c25b2f7e25f85e634d0818",
+        "raw_bytes": 3741,
+        "transactions": 1
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 31223665
+    },
+    {
+      "details": {
+        "block": "e3948a40f322ecb82899361df084be2db032a0db5e39c3bafbb4666c9484c9a3",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 0
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 1824214
+    },
+    {
+      "details": {
+        "block": "e3948a40f322ecb82899361df084be2db032a0db5e39c3bafbb4666c9484c9a3",
+        "raw_bytes": 3741,
+        "transactions": 1
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 67820515
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "6f3bcc1aaa37e0566d7b1cd2b38c6acc9982e15cb567388650719a557fe4470f",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 11194782
+    },
+    {
+      "details": {
+        "block": "19dd87bd5cd1383ef37ebb71d9462c2bdfe6088b86e0088c3f65101dd7106a1b",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 0
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 1457342
+    },
+    {
+      "details": {
+        "block": "19dd87bd5cd1383ef37ebb71d9462c2bdfe6088b86e0088c3f65101dd7106a1b",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 63986559
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "19dd87bd5cd1383ef37ebb71d9462c2bdfe6088b86e0088c3f65101dd7106a1b",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 12441484
+    },
+    {
+      "details": {
+        "block": "6d80dd021b3c875b729afe0642f38bd6cab151e4807141e3f4d7fed630ec92e7",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 1
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 1426208
+    },
+    {
+      "details": {
+        "block": "6d80dd021b3c875b729afe0642f38bd6cab151e4807141e3f4d7fed630ec92e7",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 46766490
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "6d80dd021b3c875b729afe0642f38bd6cab151e4807141e3f4d7fed630ec92e7",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 13266987
+    },
+    {
+      "details": {
+        "block": "e805d86e33d50153d54063ea4601b2d864b7cf695d7db87d3f4e5452c4f83f7c",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 0
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 1509983
+    },
+    {
+      "details": {
+        "block": "e805d86e33d50153d54063ea4601b2d864b7cf695d7db87d3f4e5452c4f83f7c",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 43740749
+    },
+    {
+      "details": {
+        "local_generation": 3,
+        "parent": "e805d86e33d50153d54063ea4601b2d864b7cf695d7db87d3f4e5452c4f83f7c"
+      },
+      "phase": "actual_pool_reauthorization_at_branch",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 171700390
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "e805d86e33d50153d54063ea4601b2d864b7cf695d7db87d3f4e5452c4f83f7c",
+        "raw_bytes": 9432,
+        "transactions": 1
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 44559762
+    },
+    {
+      "details": {
+        "block": "4627c2a5d743aa59b8949f9693d5fd5fdcc634a3c33a939b49e352b9bd706700",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 2
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 2091861
+    },
+    {
+      "details": {
+        "block": "4627c2a5d743aa59b8949f9693d5fd5fdcc634a3c33a939b49e352b9bd706700",
+        "raw_bytes": 9432,
+        "transactions": 1
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 71878571
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "b2c47a0c632b7a48c00ac0498956200b9d764a1488fc1c25ceb0fa59e43766cc",
+        "raw_bytes": 3751,
+        "transactions": 1
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 20852280
+    },
+    {
+      "details": {
+        "block": "f5e2138b93ce13c5e1e3a35396d28d1ab0dcdc7ef6d10978fd6e588c4f60704e",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 0
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 771639
+    },
+    {
+      "details": {
+        "block": "f5e2138b93ce13c5e1e3a35396d28d1ab0dcdc7ef6d10978fd6e588c4f60704e",
+        "raw_bytes": 3751,
+        "transactions": 1
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 33438965
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "b2c47a0c632b7a48c00ac0498956200b9d764a1488fc1c25ceb0fa59e43766cc",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 15399745
+    },
+    {
+      "details": {
+        "block": "decf235ea6c84e5c904e24fc8aef5394131b6b6d486fb952977cb0dc3a47564e",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 8
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 846207
+    },
+    {
+      "details": {
+        "block": "decf235ea6c84e5c904e24fc8aef5394131b6b6d486fb952977cb0dc3a47564e",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 26496966
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "decf235ea6c84e5c904e24fc8aef5394131b6b6d486fb952977cb0dc3a47564e",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 14640596
+    },
+    {
+      "details": {
+        "block": "cdc28576aa8114455a317c26d611043f0c221ca1d8d0c72550a2a16b8b9f8aee",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 4
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 964512
+    },
+    {
+      "details": {
+        "block": "cdc28576aa8114455a317c26d611043f0c221ca1d8d0c72550a2a16b8b9f8aee",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 36818353
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "b2c47a0c632b7a48c00ac0498956200b9d764a1488fc1c25ceb0fa59e43766cc",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 8048534
+    },
+    {
+      "details": {
+        "block": "dc7076eca4d85e6c857ae18bd3b7e95d49a79a16bee988c657bd98d159e449b9",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 0
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 1369510
+    },
+    {
+      "details": {
+        "block": "dc7076eca4d85e6c857ae18bd3b7e95d49a79a16bee988c657bd98d159e449b9",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 20355751
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "dc7076eca4d85e6c857ae18bd3b7e95d49a79a16bee988c657bd98d159e449b9",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 8590629
+    },
+    {
+      "details": {
+        "block": "283542e45937dc5b4f3433c1270fb52188d97d46834dd5e3f67c29cb26386eeb",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 0
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 857932
+    },
+    {
+      "details": {
+        "block": "283542e45937dc5b4f3433c1270fb52188d97d46834dd5e3f67c29cb26386eeb",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 20925715
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "283542e45937dc5b4f3433c1270fb52188d97d46834dd5e3f67c29cb26386eeb",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 13397901
+    },
+    {
+      "details": {
+        "block": "1e83238a4ceb23cc11dd1a0ce302ad67f78407b7d0156f678368cb0ab42d8861",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 0
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 1619001
+    },
+    {
+      "details": {
+        "block": "1e83238a4ceb23cc11dd1a0ce302ad67f78407b7d0156f678368cb0ab42d8861",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 29644567
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "1e83238a4ceb23cc11dd1a0ce302ad67f78407b7d0156f678368cb0ab42d8861",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 12422256
+    },
+    {
+      "details": {
+        "block": "903ad8bcf7acd1e0916855892984d79666eb18345fb4c6f0701cef70874f78e4",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 7
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 772519
+    },
+    {
+      "details": {
+        "block": "903ad8bcf7acd1e0916855892984d79666eb18345fb4c6f0701cef70874f78e4",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 35348520
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "903ad8bcf7acd1e0916855892984d79666eb18345fb4c6f0701cef70874f78e4",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 13100943
+    },
+    {
+      "details": {
+        "block": "5fa73d9fa93c2286c4e3f6dc7282a4574e0c532cb2e5f17e00a324b61436bab8",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 0
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 1150908
+    },
+    {
+      "details": {
+        "block": "5fa73d9fa93c2286c4e3f6dc7282a4574e0c532cb2e5f17e00a324b61436bab8",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 28438346
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "5fa73d9fa93c2286c4e3f6dc7282a4574e0c532cb2e5f17e00a324b61436bab8",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 9894588
+    },
+    {
+      "details": {
+        "block": "aa78423f100c3a9fcf81176b6c9750d4c8b14eba2eef7f752e121955ed7eb237",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 0
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 748945
+    },
+    {
+      "details": {
+        "block": "aa78423f100c3a9fcf81176b6c9750d4c8b14eba2eef7f752e121955ed7eb237",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 34989779
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "aa78423f100c3a9fcf81176b6c9750d4c8b14eba2eef7f752e121955ed7eb237",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 9499236
+    },
+    {
+      "details": {
+        "block": "6add113dc9e9a264be915356502a4644a58193a2392d028c50718ff848750741",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 4
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 753652
+    },
+    {
+      "details": {
+        "block": "6add113dc9e9a264be915356502a4644a58193a2392d028c50718ff848750741",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 32027212
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "6add113dc9e9a264be915356502a4644a58193a2392d028c50718ff848750741",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 16080808
+    },
+    {
+      "details": {
+        "block": "5d990c1a901ffdbba0d563ec9b479c4a4685e7a0837aee09ec05180d729128c4",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 0
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 2235964
+    },
+    {
+      "details": {
+        "block": "5d990c1a901ffdbba0d563ec9b479c4a4685e7a0837aee09ec05180d729128c4",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 42362896
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "5d990c1a901ffdbba0d563ec9b479c4a4685e7a0837aee09ec05180d729128c4",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 7355465
+    },
+    {
+      "details": {
+        "block": "2113ab78ad3f6a17370f33666d6accaa2960e694d082c2ecd070b280a52a9c92",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 0
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 842471
+    },
+    {
+      "details": {
+        "block": "2113ab78ad3f6a17370f33666d6accaa2960e694d082c2ecd070b280a52a9c92",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 29158243
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "2113ab78ad3f6a17370f33666d6accaa2960e694d082c2ecd070b280a52a9c92",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 8159433
+    },
+    {
+      "details": {
+        "block": "120238809e2ed36193c9133f822d8c9050e9b7e3b1f4fbaf79a60cb0ed99727d",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 0
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 1057092
+    },
+    {
+      "details": {
+        "block": "120238809e2ed36193c9133f822d8c9050e9b7e3b1f4fbaf79a60cb0ed99727d",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 29184385
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "120238809e2ed36193c9133f822d8c9050e9b7e3b1f4fbaf79a60cb0ed99727d",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 7814397
+    },
+    {
+      "details": {
+        "block": "0281c836c4d5cf6506830fa1d9cdc9ba4194396a43d5b1a9723c693877ac2922",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 0
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 872661
+    },
+    {
+      "details": {
+        "block": "0281c836c4d5cf6506830fa1d9cdc9ba4194396a43d5b1a9723c693877ac2922",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 29634594
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "0281c836c4d5cf6506830fa1d9cdc9ba4194396a43d5b1a9723c693877ac2922",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 8161778
+    },
+    {
+      "details": {
+        "block": "f5093f52ad5ee501b36771ec6060c6adac4ac769ed43e97c7b73f3e1c95c1e3a",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 0
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 879759
+    },
+    {
+      "details": {
+        "block": "f5093f52ad5ee501b36771ec6060c6adac4ac769ed43e97c7b73f3e1c95c1e3a",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 49817801
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "f5093f52ad5ee501b36771ec6060c6adac4ac769ed43e97c7b73f3e1c95c1e3a",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 9181293
+    },
+    {
+      "details": {
+        "block": "64622575bf48e68840e4a1142cef519c5edffeb70871c4e8d23871d487809313",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 0
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 866057
+    },
+    {
+      "details": {
+        "block": "64622575bf48e68840e4a1142cef519c5edffeb70871c4e8d23871d487809313",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 34326548
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "64622575bf48e68840e4a1142cef519c5edffeb70871c4e8d23871d487809313",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 8961568
+    },
+    {
+      "details": {
+        "block": "d8a3f266e0e49af62df2df8c8bae298ef053286c373993ed352f7ec8de753bb9",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 0
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 856167
+    },
+    {
+      "details": {
+        "block": "d8a3f266e0e49af62df2df8c8bae298ef053286c373993ed352f7ec8de753bb9",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 25749444
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "d8a3f266e0e49af62df2df8c8bae298ef053286c373993ed352f7ec8de753bb9",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 6998256
+    },
+    {
+      "details": {
+        "block": "318b65b8c8159cb097e0cb2984ac38735b546cee461f09b04b60a38ae752002b",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 0
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 780750
+    },
+    {
+      "details": {
+        "block": "318b65b8c8159cb097e0cb2984ac38735b546cee461f09b04b60a38ae752002b",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 41720234
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "318b65b8c8159cb097e0cb2984ac38735b546cee461f09b04b60a38ae752002b",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 12011416
+    },
+    {
+      "details": {
+        "block": "5cfd1558cb0c88ccfda40dc56a515ab835fd167c144f07472fadad3ab32109ad",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 1
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 859261
+    },
+    {
+      "details": {
+        "block": "5cfd1558cb0c88ccfda40dc56a515ab835fd167c144f07472fadad3ab32109ad",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 35162772
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "5cfd1558cb0c88ccfda40dc56a515ab835fd167c144f07472fadad3ab32109ad",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 10988437
+    },
+    {
+      "details": {
+        "block": "e3317ed784655e45db2ec356efee9d625d719aaf32ba3397495ca98d14c69032",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 1
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 1011265
+    },
+    {
+      "details": {
+        "block": "e3317ed784655e45db2ec356efee9d625d719aaf32ba3397495ca98d14c69032",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 31753024
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "e3317ed784655e45db2ec356efee9d625d719aaf32ba3397495ca98d14c69032",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 8845408
+    },
+    {
+      "details": {
+        "block": "3e43bef2e675a51964b44c372bcbfd1940912ca8dc6082238673a2377e2a80b0",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 0
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 911350
+    },
+    {
+      "details": {
+        "block": "3e43bef2e675a51964b44c372bcbfd1940912ca8dc6082238673a2377e2a80b0",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 33921564
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "3e43bef2e675a51964b44c372bcbfd1940912ca8dc6082238673a2377e2a80b0",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 9526029
+    },
+    {
+      "details": {
+        "block": "4cc65c68aa0e6787a6b5848cab520c9cfea6502fee34ccdd88f47bc5fa78fd05",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 0
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 824916
+    },
+    {
+      "details": {
+        "block": "4cc65c68aa0e6787a6b5848cab520c9cfea6502fee34ccdd88f47bc5fa78fd05",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 38296625
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "4cc65c68aa0e6787a6b5848cab520c9cfea6502fee34ccdd88f47bc5fa78fd05",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 9943839
+    },
+    {
+      "details": {
+        "block": "a019326dddede6c556759d70aa3947ca03cf3e882a607ea8ebe8a3723d0f35a5",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 0
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 778286
+    },
+    {
+      "details": {
+        "block": "a019326dddede6c556759d70aa3947ca03cf3e882a607ea8ebe8a3723d0f35a5",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 36472402
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "a019326dddede6c556759d70aa3947ca03cf3e882a607ea8ebe8a3723d0f35a5",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 14511149
+    },
+    {
+      "details": {
+        "block": "cd963f2090ec201e6817ba52429e6df10d732d796da05425da5c2c7f1aa93ab4",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 0
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 1864007
+    },
+    {
+      "details": {
+        "block": "cd963f2090ec201e6817ba52429e6df10d732d796da05425da5c2c7f1aa93ab4",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 36263119
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "cd963f2090ec201e6817ba52429e6df10d732d796da05425da5c2c7f1aa93ab4",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 9980233
+    },
+    {
+      "details": {
+        "block": "ecde35fe186c70578db7289b1beda547d579ec1a4d4a50457c4541b5b5efd0f5",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 1
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 1704801
+    },
+    {
+      "details": {
+        "block": "ecde35fe186c70578db7289b1beda547d579ec1a4d4a50457c4541b5b5efd0f5",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 40637087
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "ecde35fe186c70578db7289b1beda547d579ec1a4d4a50457c4541b5b5efd0f5",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 9338845
+    },
+    {
+      "details": {
+        "block": "6ab51dbca7d5597e1f8d57902c513684e33674b7bb25bc9a72577673245bd3be",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 3
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 870010
+    },
+    {
+      "details": {
+        "block": "6ab51dbca7d5597e1f8d57902c513684e33674b7bb25bc9a72577673245bd3be",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 36091086
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "6ab51dbca7d5597e1f8d57902c513684e33674b7bb25bc9a72577673245bd3be",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 11007366
+    },
+    {
+      "details": {
+        "block": "aa295487a93c8e9138f49bb897201dd928da79ee1152d73ce997e57b001ed949",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 0
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 978700
+    },
+    {
+      "details": {
+        "block": "aa295487a93c8e9138f49bb897201dd928da79ee1152d73ce997e57b001ed949",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 43957056
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "aa295487a93c8e9138f49bb897201dd928da79ee1152d73ce997e57b001ed949",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 10841803
+    },
+    {
+      "details": {
+        "block": "f149a857d383a6944822c5bd3b5d0d19ca78334d305a0983f27af452c300a61d",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 1
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 2762779
+    },
+    {
+      "details": {
+        "block": "f149a857d383a6944822c5bd3b5d0d19ca78334d305a0983f27af452c300a61d",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 38503948
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "f149a857d383a6944822c5bd3b5d0d19ca78334d305a0983f27af452c300a61d",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 9732199
+    },
+    {
+      "details": {
+        "block": "64c0038fb3db49ade805e3ebb249c29adf5c441f98e7329e0a1e8e8619c1bb96",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 1
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 984626
+    },
+    {
+      "details": {
+        "block": "64c0038fb3db49ade805e3ebb249c29adf5c441f98e7329e0a1e8e8619c1bb96",
+        "raw_bytes": 0,
+        "transactions": 0
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 34214012
+    },
+    {
+      "details": {
+        "kind": 128,
+        "parent": "64c0038fb3db49ade805e3ebb249c29adf5c441f98e7329e0a1e8e8619c1bb96",
+        "raw_bytes": 5691,
+        "witnesses": 1
+      },
+      "phase": "actual_pool_crypto_state_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 48937813
+    },
+    {
+      "details": {
+        "attempt_cap": 4096,
+        "parent": "64c0038fb3db49ade805e3ebb249c29adf5c441f98e7329e0a1e8e8619c1bb96",
+        "raw_bytes": 5691,
+        "transactions": 1
+      },
+      "phase": "native_make_m06_and_complete_pon_search",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 22041033
+    },
+    {
+      "details": {
+        "block": "b85ce5cda7806be4bbcabda5e1cb2680e73554853e2f2146b12553b6fea86cd7",
+        "proof_bytes": 49188,
+        "winning_header_nonce": 1
+      },
+      "phase": "independent_complete_w1_reference",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 861348
+    },
+    {
+      "details": {
+        "block": "b85ce5cda7806be4bbcabda5e1cb2680e73554853e2f2146b12553b6fea86cd7",
+        "raw_bytes": 5691,
+        "transactions": 1
+      },
+      "phase": "native_admit_w1_m06_sql",
+      "result": "ok",
+      "schema": "native-pq2-phase-observation-v1",
+      "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+      "wall_nanoseconds": 60263560
+    }
+  ],
+  "scope": "actual complete call on shared host; not isolated CPU, worst-case cost or TPS",
+  "worst_case_bound": false
+}

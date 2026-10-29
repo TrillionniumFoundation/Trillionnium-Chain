@@ -1,0 +1,63 @@
+{
+  "schema": "history-frozen-archives-v1",
+  "archives": [
+    {
+      "archive": "raw-isolated-final-synced-failed.tar.gz",
+      "archive_bytes": 44007,
+      "archive_sha256": "89dc1ec9c784e4d01e7f0109bfdc4c150d289c473c24aed1e99bc54a7f6236d2",
+      "member_manifest": "raw-isolated-final-synced-failed-members.json",
+      "member_count": 45
+    },
+    {
+      "archive": "raw-native-attempt-04-failed.tar.gz",
+      "archive_bytes": 813412,
+      "archive_sha256": "13daea2c3000b6a9dbc8fd37a7c3ba62f0462ee2820cb4b21024316c9e16dc42",
+      "member_manifest": "raw-native-attempt-04-failed-members.json",
+      "member_count": 859
+    },
+    {
+      "archive": "raw-native-attempt-05-failed.tar.gz",
+      "archive_bytes": 1015713,
+      "archive_sha256": "2a76a1ba2b68a39f2720c180ec8926d22a5f089913d969d4467cf1998bddd6db",
+      "member_manifest": "raw-native-attempt-05-failed-members.json",
+      "member_count": 1068
+    },
+    {
+      "archive": "raw-native-attempt-06-failed.tar.gz",
+      "archive_bytes": 1226431,
+      "archive_sha256": "9d43e0d71052a6dcbec58876afa959e21506e06e63568fe5991613b1f261d385",
+      "member_manifest": "raw-native-attempt-06-failed-members.json",
+      "member_count": 1280
+    },
+    {
+      "archive": "raw-native-initial-intermediate.tar.gz",
+      "archive_bytes": 94848,
+      "archive_sha256": "e4abcd8408421065762d8837d8293e21ad94fa4dc2a36ad9b2ff67343d46bfcc",
+      "member_manifest": "raw-native-initial-intermediate-members.json",
+      "member_count": 99
+    },
+    {
+      "archive": "raw-settled-seven-window-success.tar.gz",
+      "archive_bytes": 706365,
+      "archive_sha256": "0f1abbffd48985a1291fe7fe7703ebb99c536e0555ed0df35c895aeacb46ff2b",
+      "member_manifest": "raw-settled-seven-window-success-members.json",
+      "member_count": 736
+    },
+    {
+      "archive": "native-binary-runtime-8d774102.gz",
+      "archive_bytes": 20052436,
+      "archive_sha256": "5357206a6a8d607166fa83ccd3962d38c2dbe6f78842476829104226677a6222",
+      "binary_manifest": "native-binary-runtime-8d774102.json",
+      "transport": {
+        "kind": "ordered-exact-ranges",
+        "manifest": "native-binary-runtime-8d774102-parts.json",
+        "chunks": 5,
+        "original_archive_preserved_locally": true,
+        "reconstruction_required": true
+      }
+    }
+  ],
+  "all_archive_hashes_read_back": true,
+  "production_credentials": false,
+  "full_native_suite_passed": false
+}

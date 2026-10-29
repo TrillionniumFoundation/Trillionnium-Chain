@@ -1,6 +1,6 @@
 //! Fixed-width retained block fields must be bounded before owned decoding.
 use super::*;
-use crate::Node;
+use crate::{Node, Packet};
 use rusqlite::types::Value as SqlValue;
 
 const ORIGINAL_BLOCK_SQL: &str = "SELECT parent,height,chainwork,CASE WHEN typeof(packet)='blob' THEN substr(packet,1,1048577) ELSE packet END AS packet,state_root FROM blocks WHERE id=?";

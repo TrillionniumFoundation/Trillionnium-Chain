@@ -1,0 +1,38 @@
+{
+  "authorization": "Root authorized exactly two reviewed blob literal updates and new draft publication; no original gate budget, assertion, lane or test change.",
+  "commands_assertions_tests_budgets_changed": false,
+  "frozen_source_commit": "f9f1cf844682baf7f6df4a618cd9fafd2c2f4fde",
+  "frozen_source_tree": "6896bb03aa42a1afb756b24cd1f73b5a53481974",
+  "lanes": 4,
+  "local_observation_identity": "The retained candidate observations bind f9f1c source bytes. This separately reviewed workflow-only pin update does not claim another execution of those observations.",
+  "masked_workflow_bytes_identical": true,
+  "native_candidate_original_unit_ignores": 8,
+  "native_candidate_required_integration_passes": 44,
+  "native_candidate_required_passes": 180,
+  "native_execution_status": "NOT_RUN_RESOURCE_STOP",
+  "p1_complete": false,
+  "production_activation": false,
+  "reviewed_changes": [
+    {
+      "finding": "Fresh PQ4 DDL/domain/eligible consume/persistent revocation and PQ4-only account validation. pq_tasks_remember_revocations returns Ok immediately for every non-PQ4 profile; legacy SQL remains unchanged.",
+      "new_blob": "78ae4e606369cc60931fa2942e3fde349f4a0733",
+      "old_blob": "1ef412b273803724294a0223a7b9f4c3e3ddde74",
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs"
+    },
+    {
+      "finding": "Additional validate_state only when is_native_pq_v4; original arithmetic/root/snapshot calculations remain unchanged.",
+      "new_blob": "a2a0c2220ef7ab51539ea92e5ebe36c433840de5",
+      "old_blob": "f9ef6b41f68b1ff8aeb29ac7fe22add687bc13db",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs"
+    }
+  ],
+  "reviewer": "root independent of PQ implementation",
+  "runtime_changed_since_frozen_candidate": false,
+  "schema": "npq4-recent-batch-independent-material-review-v1",
+  "timeout_minutes": 25,
+  "total_guards": 16,
+  "unchanged_guards": 14,
+  "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+  "workflow_sha256_after": "74ddeffa58add0d54a5d7ae8f800d2cad45eedf0f1f42acd5c9f3d69172ee076",
+  "workflow_sha256_before": "6a3422b7a34113a5ebfbd87655f23538684c5a80c8a56b64b2f0a5056f32ca9f"
+}

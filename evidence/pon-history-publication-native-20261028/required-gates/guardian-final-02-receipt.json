@@ -1,0 +1,18 @@
+{
+  "source_commit": "8d7741028eb650f0600e61fcab46ff3d14b50767",
+  "command": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/ci",
+    "-p",
+    "test_history_effect_v6_guard.py"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 0.6412578169984045,
+  "log_sha256": "e102a6ac4521abade2151db1b7ac938c2148406df75dd86d46b7c346e3ee20c9",
+  "prior_attempt_retained": "guardian-final.log",
+  "changed_execution_condition": "Cargo/Clippy owned child had reached actual terminal exit before this attempt; no observer rule changed"
+}

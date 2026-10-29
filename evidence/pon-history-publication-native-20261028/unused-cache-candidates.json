@@ -1,0 +1,2341 @@
+{
+  "deleted": false,
+  "based_on_build": 4,
+  "total_bytes": 359395489,
+  "rows": [
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtrnm_task_kernel-94a86365d7481a05.rmeta",
+      "bytes": 1560542,
+      "mtime": 1793097476.6433783,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libmodel_composition_v4-7d31de05d76bb32c.rmeta",
+      "bytes": 0,
+      "mtime": 1793116107.8577714,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libthiserror_impl-3b344dcdc8710b27.so",
+      "bytes": 8532888,
+      "mtime": 1793094049.9697008,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libcheckpoint_tile_operator-d0731ed4540a62da.rmeta",
+      "bytes": 0,
+      "mtime": 1793102737.5296762,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtrnm_task_kernel-94a86365d7481a05.rlib",
+      "bytes": 6899488,
+      "mtime": 1793097480.369701,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libsyn-fa803870aa938a99.rmeta",
+      "bytes": 3236983,
+      "mtime": 1793094040.0446835,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libsmallvec-6493f5c176dac0e6.rmeta",
+      "bytes": 153971,
+      "mtime": 1793094085.9883509,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libcpufeatures-66955f910975b241.rmeta",
+      "bytes": 39294,
+      "mtime": 1793094039.9940782,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libevolution_cli-655ffd8d15cf9fc7.rmeta",
+      "bytes": 0,
+      "mtime": 1793116105.8618562,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libaccount_archive_projection-8c1599b40b5a57bc.rmeta",
+      "bytes": 0,
+      "mtime": 1793102704.403005,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libserde_derive-e84327115793e889.so",
+      "bytes": 9528296,
+      "mtime": 1793094052.237615,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtrnm_mvcc_fee-2e61f0040f05173e.rmeta",
+      "bytes": 3028852,
+      "mtime": 1793097493.9775004,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libderived_commitment-130166152c9eaf15.rmeta",
+      "bytes": 0,
+      "mtime": 1793102726.934101,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtrnm_protocol-915afc9c7fd172a1.rlib",
+      "bytes": 1528436,
+      "mtime": 1793097447.4949615,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libvcpkg-7bfcbd001e9a3e56.rmeta",
+      "bytes": 92551,
+      "mtime": 1793094061.6779864,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libmaintenance_paired_conformance-c4df60b6fc11ac1d.rmeta",
+      "bytes": 0,
+      "mtime": 1793116082.8948348,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libonce_cell-3aa86285b77f7766.rlib",
+      "bytes": 230292,
+      "mtime": 1793094077.0366864,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/librusqlite-14a67485c048abce.rmeta",
+      "bytes": 997145,
+      "mtime": 1793094099.291851,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtrnm_data_availability-fd482813466972d6.rlib",
+      "bytes": 9767788,
+      "mtime": 1793097562.558542,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/librelease_finality_v2-fd97163753791152.rmeta",
+      "bytes": 0,
+      "mtime": 1793102698.8232286,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtrnm_data_availability-fd482813466972d6.rmeta",
+      "bytes": 1518420,
+      "mtime": 1793097559.4721012,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtrnm_pon_node-7921db3e980d207e.rmeta",
+      "bytes": 0,
+      "mtime": 1793102741.4375193,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libpublic_pool_v3-ef2340de323cc94b.rmeta",
+      "bytes": 0,
+      "mtime": 1793116109.8016877,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtask_lifecycle-5f728e0d63104868.rmeta",
+      "bytes": 0,
+      "mtime": 1793102735.9217412,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libequivalent-0938b6321dd527a6.rmeta",
+      "bytes": 8180,
+      "mtime": 1793094056.8665464,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libwinnow-8dfd71f6a14b89a3.rlib",
+      "bytes": 2417148,
+      "mtime": 1793094056.5414524,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libhashlink-de5ec88624a7eb68.rmeta",
+      "bytes": 292850,
+      "mtime": 1793094082.9204652,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libfs2-e999aabeb9702368.rmeta",
+      "bytes": 25345,
+      "mtime": 1793094105.8756037,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libed25519-25fa30561d932ea7.rmeta",
+      "bytes": 35233,
+      "mtime": 1793094043.1779575,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtrnm_verification_profiles-c896b5922f93b9e6.rmeta",
+      "bytes": 117394,
+      "mtime": 1793102630.5859065,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libserde-b16e63406a0b6821.rmeta",
+      "bytes": 515196,
+      "mtime": 1793094052.3536108,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtoml_parser-dea1a2b60c582fb6.rlib",
+      "bytes": 1079260,
+      "mtime": 1793094061.2092757,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtrnm_transport-4e105f9571625a07.rmeta",
+      "bytes": 61747,
+      "mtime": 1793121824.7038422,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtask_lifecycle_v4-6c1472c04f0e71a8.rmeta",
+      "bytes": 0,
+      "mtime": 1793102712.7226694,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtoml_edit-57e28a65b0af21cc.rlib",
+      "bytes": 2426328,
+      "mtime": 1793094064.9531343,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libevaluation_round_observation-c5c5accf43c53eac.rmeta",
+      "bytes": 0,
+      "mtime": 1793102700.1951747,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libevaluation_observation_cli-c71c09651508fe4e.rmeta",
+      "bytes": 0,
+      "mtime": 1793102712.246689,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libhex-7029ca3838e3fb5b.rmeta",
+      "bytes": 193023,
+      "mtime": 1793094050.9075441,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libaccount_archive_prototype-4156b00ac4da8d8a.rmeta",
+      "bytes": 0,
+      "mtime": 1793102713.8746233,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtrnm_data_availability-37169c0e676bd556.rmeta",
+      "bytes": 904140,
+      "mtime": 1793121820.5079799,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libinteger_factor_candidate_v2-92de68614fc358f9.rmeta",
+      "bytes": 0,
+      "mtime": 1793116106.893813,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libfind_msvc_tools-c67de4483d55f240.rlib",
+      "bytes": 312022,
+      "mtime": 1793094056.8334413,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libcurve25519_dalek_derive-e73ccceec2ee957f.so",
+      "bytes": 8014400,
+      "mtime": 1793094043.321952,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/liblocal_mempool-169f4fa7e82cebc4.rmeta",
+      "bytes": 0,
+      "mtime": 1793102731.9938993,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libsyn-fa803870aa938a99.rlib",
+      "bytes": 9290674,
+      "mtime": 1793094042.2099943,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libnative_compact_execution-bdfb309e0564e187.rmeta",
+      "bytes": 0,
+      "mtime": 1793116106.7378197,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/liboperator_actors-a1d8fbb5e0d49bdd.rmeta",
+      "bytes": 0,
+      "mtime": 1793116091.4624631,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libevaluation_round_observation_cli-b5d2eb20b1087894.rmeta",
+      "bytes": 0,
+      "mtime": 1793116106.1578445,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libhashbrown-5d63eabf10d9579f.rlib",
+      "bytes": 1226288,
+      "mtime": 1793094057.4614174,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtrnm_service_settlement-65db2a8d0478003f.rmeta",
+      "bytes": 510198,
+      "mtime": 1793102639.6455543,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libsemver-123d4da949f89bf5.rlib",
+      "bytes": 401646,
+      "mtime": 1793094041.7220128,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libunicode_ident-af7f0a76d4392b05.rlib",
+      "bytes": 54180,
+      "mtime": 1793094034.762276,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libaccount_obligation_ranges-e43195e1f3717218.rmeta",
+      "bytes": 0,
+      "mtime": 1793116085.3987248,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtrnm_task_kernel-be82fb0e86ec49ff.rmeta",
+      "bytes": 749609,
+      "mtime": 1793102623.9221652,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libevaluation_sync_observation-ede029b37b731fda.rmeta",
+      "bytes": 0,
+      "mtime": 1793102691.2435324,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libqualified_task_lifecycle_v2-8e03fe4577ed3f1b.rmeta",
+      "bytes": 0,
+      "mtime": 1793128114.5463521,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libnonce_speculation_cost-ceb78f8c360e7d35.rmeta",
+      "bytes": 0,
+      "mtime": 1793102686.171733,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libnative_compact_execution-c95568025bc1a9e6.rmeta",
+      "bytes": 0,
+      "mtime": 1793102709.0908198,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libpublic_intake_v2-8cf63028dc0bb215.rmeta",
+      "bytes": 0,
+      "mtime": 1793102704.1230159,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtrnm_crypto_primitives-66d63eaaf652434e.rmeta",
+      "bytes": 348419,
+      "mtime": 1793102622.0182393,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libqualified_work_task-c9c1e16e925072e6.rmeta",
+      "bytes": 0,
+      "mtime": 1793102800.107143,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libsha2-d8842d1bd2ba159e.rmeta",
+      "bytes": 634628,
+      "mtime": 1793094042.241993,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libthiserror-13e9d58a180f08cb.rmeta",
+      "bytes": 23580,
+      "mtime": 1793094050.8536673,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libone_zero_task_preparation_lifecycle-e1057d1f87a1d743.rmeta",
+      "bytes": 0,
+      "mtime": 1793116084.934745,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtrnm_protocol-915afc9c7fd172a1.rmeta",
+      "bytes": 1061312,
+      "mtime": 1793097440.4147701,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libarchitecture_delivery_compare-3fec8c6ddf071506.rmeta",
+      "bytes": 0,
+      "mtime": 1793102706.9349048,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libproc_macro_crate-f60b6a8890f28495.rmeta",
+      "bytes": 55289,
+      "mtime": 1793094076.1103935,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libaccount_obligation_ranges-9e8a552655d608a5.rmeta",
+      "bytes": 0,
+      "mtime": 1793102692.4754841,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libnative_growth_public_cli-3a49de00149dc5c8.rmeta",
+      "bytes": 0,
+      "mtime": 1793116102.050011,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libshlex-a7a282e15b9edeec.rmeta",
+      "bytes": 53213,
+      "mtime": 1793094057.606508,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libindexmap-bfaf3099e558b609.rlib",
+      "bytes": 1270494,
+      "mtime": 1793094060.3893068,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libone_zero_task_preparation_lifecycle-a12637af2b02b6b0.rmeta",
+      "bytes": 0,
+      "mtime": 1793102737.8776622,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libpublic_pool_cli-9bf63d0b91e4f622.rmeta",
+      "bytes": 0,
+      "mtime": 1793102735.2817671,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libnative_node-9b633b6887a6c2c1.rmeta",
+      "bytes": 0,
+      "mtime": 1793116102.7539804,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libpublic_v3_multiprocess-3b043340eb24b8a1.rmeta",
+      "bytes": 0,
+      "mtime": 1793116104.017927,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libahash-310f899ccab417eb.rmeta",
+      "bytes": 85210,
+      "mtime": 1793094074.5887766,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtrnm_pon_node-ae3c5433f031110d.rmeta",
+      "bytes": 7440418,
+      "mtime": 1793121824.8678126,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtrnm_pon_node-e26552e46936d9a7.rmeta",
+      "bytes": 0,
+      "mtime": 1793116101.2620454,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libvcpkg-7bfcbd001e9a3e56.rlib",
+      "bytes": 1344950,
+      "mtime": 1793094062.2812352,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libevaluation_quorum_cli-eb3803d50a605d21.rmeta",
+      "bytes": 0,
+      "mtime": 1793102714.5505965,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libpublic_v3_from_zero-9f7440d40ea95fd2.rmeta",
+      "bytes": 0,
+      "mtime": 1793102692.9194667,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libaccount_archive_prototype-71d06e9baf62895f.rmeta",
+      "bytes": 0,
+      "mtime": 1793116092.9104002,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libqualified_task_lifecycle_v2-5c6feda488d34cd7.rmeta",
+      "bytes": 0,
+      "mtime": 1793102800.2911355,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtrnm_transport-280e6e7774458248.rmeta",
+      "bytes": 91709,
+      "mtime": 1793097563.357531,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libbitflags-0f8f1ba048bf1359.rmeta",
+      "bytes": 159586,
+      "mtime": 1793094065.4700618,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/liblocal_mempool-f33fec6e75e70f3d.rmeta",
+      "bytes": 0,
+      "mtime": 1793116082.5588496,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libnative_growth_cli-2d16d90b1303f370.rmeta",
+      "bytes": 0,
+      "mtime": 1793102728.866024,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libserde_json-73dd0df01905fc06.rmeta",
+      "bytes": 951433,
+      "mtime": 1793094100.6957984,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtrnm_crypto_primitives-9f5bb4511eccf0ce.rlib",
+      "bytes": 1609286,
+      "mtime": 1793097470.8940635,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libcheckpoint_tile_operator-9c0740cb31838f75.rmeta",
+      "bytes": 0,
+      "mtime": 1793116086.9106584,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libpublic_v3_service_campaign-71cbdfcf5cedd921.rmeta",
+      "bytes": 0,
+      "mtime": 1793102716.3745244,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libsemver-123d4da949f89bf5.rmeta",
+      "bytes": 130394,
+      "mtime": 1793094041.5241723,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtrnm_verification_profiles-9792871982bd191c.rmeta",
+      "bytes": 116718,
+      "mtime": 1793121814.7761989,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libhashbrown-843a5b41654eca00.rmeta",
+      "bytes": 877812,
+      "mtime": 1793094074.9247649,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtrnm_data_availability-4cfe228851d32384.rmeta",
+      "bytes": 907753,
+      "mtime": 1793102645.185338,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libpublic_intake_v2-70312da30da1bc60.rmeta",
+      "bytes": 0,
+      "mtime": 1793116103.8819323,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libqualified_tasks-fd78a6d03b639ee5.rmeta",
+      "bytes": 0,
+      "mtime": 1793102726.6781113,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libblock_buffer-114bdfca807f1490.rmeta",
+      "bytes": 28086,
+      "mtime": 1793094039.4780974,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libauthenticated_storage_cli-a543123ba7fde66b.rmeta",
+      "bytes": 0,
+      "mtime": 1793102739.7975848,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libpublic_submit_recovery-e5dfc8f571ccec45.rmeta",
+      "bytes": 0,
+      "mtime": 1793102703.2190523,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtrnm_crypto_primitives-9f5bb4511eccf0ce.rmeta",
+      "bytes": 715816,
+      "mtime": 1793097448.7958739,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libzmij-bcc13de4de662bf5.rmeta",
+      "bytes": 367774,
+      "mtime": 1793094095.7679834,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libprotected_ingress-ca5f16a1a646fc94.rmeta",
+      "bytes": 0,
+      "mtime": 1793102730.6699522,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libevaluation_quorum_cli-192e2ad0d5429347.rmeta",
+      "bytes": 0,
+      "mtime": 1793116100.7660668,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libzero_task_preparation_lifecycle-c4b002092c621d48.rmeta",
+      "bytes": 0,
+      "mtime": 1793102739.2576065,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libmodel_evidence_v3-b8a78bf3040ad4b6.rmeta",
+      "bytes": 0,
+      "mtime": 1793116098.1781774,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtoml_datetime-31f3e921a98cc057.rmeta",
+      "bytes": 66099,
+      "mtime": 1793094063.1637704,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtrnm_pon_node-e61d89e2adc414fd.rmeta",
+      "bytes": 0,
+      "mtime": 1793102689.3476067,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/liboperation_local_parent-26d12739489152cc.rmeta",
+      "bytes": 0,
+      "mtime": 1793102735.7017503,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libpkg_config-0a776c850d8d59e4.rmeta",
+      "bytes": 70091,
+      "mtime": 1793094062.6083992,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtrnm_crypto_primitives-14de56afb26f67ec.rmeta",
+      "bytes": 347189,
+      "mtime": 1793121812.4162896,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libpublic_v3_observer-155b44f3fb8cb66d.rmeta",
+      "bytes": 0,
+      "mtime": 1793116110.0816755,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtrnm_mempool-0d5582af62ffd97f.rlib",
+      "bytes": 562484,
+      "mtime": 1793097563.1585188,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libpublic_v3_observer-a6fb004f21d4b5f4.rmeta",
+      "bytes": 0,
+      "mtime": 1793102729.446001,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libdaa_adversarial_schedule-b638c60f992d915b.rmeta",
+      "bytes": 0,
+      "mtime": 1793116109.585697,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libancestry_long_sync-2845e8d568ca1d33.rmeta",
+      "bytes": 0,
+      "mtime": 1793116102.373997,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtrnm_verification_profiles-da83328821881979.rlib",
+      "bytes": 1241372,
+      "mtime": 1793097481.6936505,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtempfile-66a3b96a20bba351.rmeta",
+      "bytes": 188337,
+      "mtime": 1793094108.1275184,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libevaluation_observation_cli-d8ffa4cb04b2773d.rmeta",
+      "bytes": 0,
+      "mtime": 1793116100.1740928,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libmemchr-dae7bfe1bfd1fba3.rmeta",
+      "bytes": 976356,
+      "mtime": 1793094097.8919036,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libborsh_derive-53cd5007a8c9fee8.so",
+      "bytes": 9995136,
+      "mtime": 1793094082.8284686,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libprotected_ingress-23a0f8ef07933deb.rmeta",
+      "bytes": 0,
+      "mtime": 1793116083.026829,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtask_output_root_parity-24adc7b378a0f9c7.rmeta",
+      "bytes": 0,
+      "mtime": 1793116096.5062456,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libpublic_v3_request_accounting-3648e32f80d7bac7.rmeta",
+      "bytes": 0,
+      "mtime": 1793102715.4105625,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libpublic_v3_from_zero-bfa786b5aee51288.rmeta",
+      "bytes": 0,
+      "mtime": 1793116093.642368,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/liboperation_local_parent-44a9095e7b9dd767.rmeta",
+      "bytes": 0,
+      "mtime": 1793116108.81773,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libqualified_tasks-a5a865aaf51678d8.rmeta",
+      "bytes": 0,
+      "mtime": 1793116105.1338842,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libcontinuity_authenticated-4f8f8372e3c037d0.rmeta",
+      "bytes": 0,
+      "mtime": 1793116107.3017952,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libevaluation_round_observation-024809ce95c09e45.rmeta",
+      "bytes": 0,
+      "mtime": 1793116086.7226665,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtoml_edit-57e28a65b0af21cc.rmeta",
+      "bytes": 620174,
+      "mtime": 1793094064.1878686,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libcontinuity_cli-ac47fbf161d66691.rmeta",
+      "bytes": 0,
+      "mtime": 1793116084.8147504,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libonce_cell-e6f12d9872c1c0d3.rmeta",
+      "bytes": 138880,
+      "mtime": 1793094053.053584,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtrnm_service_settlement-977da65de5cbad4e.rlib",
+      "bytes": 5453886,
+      "mtime": 1793097555.5428226,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtrnm_pon_node-2d91ef59cdbf5b04.rmeta",
+      "bytes": 0,
+      "mtime": 1793136115.027346,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libmodel_evidence_v3-2973cfe966bbe629.rmeta",
+      "bytes": 0,
+      "mtime": 1793102734.1658125,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libversion_check-840764120b23b4cc.rlib",
+      "bytes": 473440,
+      "mtime": 1793094034.3142927,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libindexmap-bfaf3099e558b609.rmeta",
+      "bytes": 1262708,
+      "mtime": 1793094060.3741455,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libpublic_v3_observation_cli-fc3f36d0ce699c19.rmeta",
+      "bytes": 0,
+      "mtime": 1793116103.2779574,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libzerocopy-ab0cd291306b613d.rmeta",
+      "bytes": 12776111,
+      "mtime": 1793094060.437305,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libnative_growth_cli-1aa125922beba649.rmeta",
+      "bytes": 0,
+      "mtime": 1793116102.5619886,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libcfg_aliases-59d73828b2776613.rlib",
+      "bytes": 19512,
+      "mtime": 1793094065.4651148,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libpublic_cli-6e182c32365b5597.rmeta",
+      "bytes": 0,
+      "mtime": 1793102712.998658,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtrnm_protocol-353bf12b5f605956.rmeta",
+      "bytes": 533080,
+      "mtime": 1793102620.226309,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libpkg_config-0a776c850d8d59e4.rlib",
+      "bytes": 927204,
+      "mtime": 1793094062.9892085,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libcurve25519_dalek-bcf4ee4fa881393d.rmeta",
+      "bytes": 925618,
+      "mtime": 1793094043.3339517,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libpool_mining-92efcb5388823f81.rmeta",
+      "bytes": 0,
+      "mtime": 1793102713.274647,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtoml_parser-dea1a2b60c582fb6.rmeta",
+      "bytes": 305602,
+      "mtime": 1793094060.817377,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libaccepted_task_observation-38be1e08e08c6640.rmeta",
+      "bytes": 0,
+      "mtime": 1793102729.2260098,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libgeneric_array-e03d7540e58097d9.rmeta",
+      "bytes": 643939,
+      "mtime": 1793094037.8741581,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtrnm_mvcc_fee-8f42db9289009d86.rmeta",
+      "bytes": 1520563,
+      "mtime": 1793102631.2138822,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtrnm_mvcc_fee-027f546cd0a54fa2.rmeta",
+      "bytes": 1520156,
+      "mtime": 1793121815.0321891,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtrnm_crypto_primitives-0afa3ba71677b397.rmeta",
+      "bytes": 0,
+      "mtime": 1793102806.786876,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libfallible_streaming_iterator-c417cd7b4a900098.rmeta",
+      "bytes": 54268,
+      "mtime": 1793094088.3082638,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libquote-18ed579c8635b8c4.rmeta",
+      "bytes": 271748,
+      "mtime": 1793094036.2942767,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libaccount_archive_execution-75c50809cbec95fd.rmeta",
+      "bytes": 0,
+      "mtime": 1793116106.3378367,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libarchitecture_delivery_compare-ee09d7674691f01f.rmeta",
+      "bytes": 0,
+      "mtime": 1793116083.4628098,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libonce_cell-3aa86285b77f7766.rmeta",
+      "bytes": 193965,
+      "mtime": 1793094077.0038524,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/liblinux_raw_sys-4c831b7054fbbc3b.rmeta",
+      "bytes": 1220963,
+      "mtime": 1793094101.579765,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libpinned_peer_polling-126185ce7b914bfd.rmeta",
+      "bytes": 0,
+      "mtime": 1793102708.8628287,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libpublic_v3_request_accounting-a99e459105cd62a2.rmeta",
+      "bytes": 0,
+      "mtime": 1793116084.2867737,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtypenum-4b2c2f805d34b2e6.rmeta",
+      "bytes": 2102449,
+      "mtime": 1793094036.1182246,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libpublic_v3_multiprocess-25a3f720608cd305.rmeta",
+      "bytes": 0,
+      "mtime": 1793102724.7581878,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/librustc_version-357a8feac8491790.rmeta",
+      "bytes": 66031,
+      "mtime": 1793094042.0144942,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtrnm_protocol-f09a7d1573600c79.rmeta",
+      "bytes": 533606,
+      "mtime": 1793121810.7363539,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libnative_node-b9724953b8536c9d.rmeta",
+      "bytes": 0,
+      "mtime": 1793102709.9347851,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libqualified_work_task-6f392c7beae953a0.rmeta",
+      "bytes": 0,
+      "mtime": 1793128115.9383,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libderived_commitment-99bfa3b1a9a134df.rmeta",
+      "bytes": 0,
+      "mtime": 1793116103.6179428,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/librelease_finality_v2-0741c25a6a7aeac6.rmeta",
+      "bytes": 0,
+      "mtime": 1793116105.3258767,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libnonce_speculation_cost-010aeeb2e1a288a9.rmeta",
+      "bytes": 0,
+      "mtime": 1793116087.4586341,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libdigest-c305fdf427e85167.rmeta",
+      "bytes": 114828,
+      "mtime": 1793094039.67809,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libsubtle-50cfb81cffe4bfe8.rmeta",
+      "bytes": 70825,
+      "mtime": 1793094042.8139715,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtrnm_mempool-0d5582af62ffd97f.rmeta",
+      "bytes": 171506,
+      "mtime": 1793097562.8762393,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libcrypto_common-656bcde3a3bf43bd.rmeta",
+      "bytes": 23093,
+      "mtime": 1793094039.358102,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libevolution_cli-891f8ddf9775fcb2.rmeta",
+      "bytes": 0,
+      "mtime": 1793102688.0916567,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libevaluation_round_observation_cli-549530cb1f69a0ad.rmeta",
+      "bytes": 0,
+      "mtime": 1793102700.619158,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libcc-d2081db1f9729a6b.rmeta",
+      "bytes": 419794,
+      "mtime": 1793094059.3923795,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libcontinuity_authenticated-c3308a6f3e508982.rmeta",
+      "bytes": 0,
+      "mtime": 1793102731.7619085,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libwinnow-8dfd71f6a14b89a3.rmeta",
+      "bytes": 2158898,
+      "mtime": 1793094056.3707604,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libancestry_long_sync-45aea5ae6eafa7a7.rmeta",
+      "bytes": 0,
+      "mtime": 1793102721.21833,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtask_lifecycle_v3-dc5573ae8f7480a5.rmeta",
+      "bytes": 0,
+      "mtime": 1793116103.1379635,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtrnm_service_settlement-977da65de5cbad4e.rmeta",
+      "bytes": 1163532,
+      "mtime": 1793097553.4900398,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libcfg_aliases-59d73828b2776613.rmeta",
+      "bytes": 17992,
+      "mtime": 1793094065.4619465,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libzeroize-4bbbb4fb8d391bec.rmeta",
+      "bytes": 385156,
+      "mtime": 1793094043.013964,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/librustc_version-357a8feac8491790.rlib",
+      "bytes": 423298,
+      "mtime": 1793094042.1979947,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libfallible_iterator-180a63eda1d4888d.rmeta",
+      "bytes": 262169,
+      "mtime": 1793094083.7856698,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/liboperator_actors-87e426822a828632.rmeta",
+      "bytes": 0,
+      "mtime": 1793102688.431643,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libborsh-4265c6e6dab2f193.rmeta",
+      "bytes": 260117,
+      "mtime": 1793094088.5762537,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libpinned_peer_polling-91c3ff2e218f0025.rmeta",
+      "bytes": 0,
+      "mtime": 1793116103.4859486,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libaccount_archive_execution-768a0f253d88401a.rmeta",
+      "bytes": 0,
+      "mtime": 1793102700.9071467,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtask_lifecycle_v3-eeb59c0118b4c812.rmeta",
+      "bytes": 0,
+      "mtime": 1793102712.4746797,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libinteger_factor_candidate_v2-04b17d01cf14557a.rmeta",
+      "bytes": 0,
+      "mtime": 1793102707.4708836,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libversion_check-840764120b23b4cc.rmeta",
+      "bytes": 74973,
+      "mtime": 1793094033.954721,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libdaa_adversarial_schedule-f96e0973c93fb9b0.rmeta",
+      "bytes": 0,
+      "mtime": 1793102711.7347105,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtrnm_mvcc_fee-2e61f0040f05173e.rlib",
+      "bytes": 10855294,
+      "mtime": 1793097551.330985,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libevaluation_observation-4e880a36ed477698.rmeta",
+      "bytes": 0,
+      "mtime": 1793102687.8236673,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libcfg_if-c6d826bb37e33bbd.rmeta",
+      "bytes": 5489,
+      "mtime": 1793094035.4022517,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libequivalent-0938b6321dd527a6.rlib",
+      "bytes": 9702,
+      "mtime": 1793094056.8685262,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtrnm_pon_node-0903e0d80241cc3f.rmeta",
+      "bytes": 0,
+      "mtime": 1793128062.3484907,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtrnm_pon_node-5672c77a134fc0d5.rmeta",
+      "bytes": 0,
+      "mtime": 1793102736.173731,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libproc_macro2-2d78e42288489a3b.rmeta",
+      "bytes": 342569,
+      "mtime": 1793094035.6671348,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libauthenticated_storage_cli-9cef0b499d4d6965.rmeta",
+      "bytes": 0,
+      "mtime": 1793116107.609782,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libanyhow-61fbf14cc4039973.rmeta",
+      "bytes": 385286,
+      "mtime": 1793094051.361648,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libitoa-7a7d2489023e9f8d.rmeta",
+      "bytes": 49505,
+      "mtime": 1793094097.6999109,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtrnm_mempool-7009e503e74524b9.rmeta",
+      "bytes": 113968,
+      "mtime": 1793121824.491827,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libpublic_v3_observation_cli-00dd7280d3092b8f.rmeta",
+      "bytes": 0,
+      "mtime": 1793102687.2636895,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libcc-d2081db1f9729a6b.rlib",
+      "bytes": 2781450,
+      "mtime": 1793094060.3133097,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtrnm_transport-280e6e7774458248.rlib",
+      "bytes": 566646,
+      "mtime": 1793097563.6385002,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libquote-18ed579c8635b8c4.rlib",
+      "bytes": 490516,
+      "mtime": 1793094036.4302127,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libshlex-a7a282e15b9edeec.rlib",
+      "bytes": 139440,
+      "mtime": 1793094057.6454105,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libmining_service_budget-7f778f342701d9e4.rmeta",
+      "bytes": 0,
+      "mtime": 1793116091.9424424,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libmaintenance_paired_conformance-4140a11577e2ef6e.rmeta",
+      "bytes": 0,
+      "mtime": 1793102734.0098188,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libzero_task_preparation_lifecycle-4901b869a9719dc0.rmeta",
+      "bytes": 0,
+      "mtime": 1793116107.1338027,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libproc_macro2-2d78e42288489a3b.rlib",
+      "bytes": 1207432,
+      "mtime": 1793094036.0582268,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libpublic_pool_v3-6eb6a609c48038e3.rmeta",
+      "bytes": 0,
+      "mtime": 1793102714.6465926,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libwork_fuzz_semantics-458270e78276c0e5.rmeta",
+      "bytes": 0,
+      "mtime": 1793102731.5459173,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libmodel_composition_v4-325381fce3b13d7a.rmeta",
+      "bytes": 0,
+      "mtime": 1793102708.2508528,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtrnm_service_settlement-cd3320d45b193137.rmeta",
+      "bytes": 507204,
+      "mtime": 1793121819.0760348,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libfastrand-f4cbfbdcac2a98d2.rmeta",
+      "bytes": 61118,
+      "mtime": 1793094107.6675358,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libpool_mining-4e0e2cf0a5244824.rmeta",
+      "bytes": 0,
+      "mtime": 1793116085.0907383,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/librustix-8d185275d49eedca.rmeta",
+      "bytes": 4035597,
+      "mtime": 1793094102.6357255,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/liblibsqlite3_sys-39f60cab4fb8b006.rmeta",
+      "bytes": 393061,
+      "mtime": 1793094098.3918848,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libhashbrown-5d63eabf10d9579f.rmeta",
+      "bytes": 1181923,
+      "mtime": 1793094057.4300845,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libpublic_evaluation-ab70679fd4b45d46.rmeta",
+      "bytes": 0,
+      "mtime": 1793102734.9017825,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libpublic_pool_cli-3b472ef857891320.rmeta",
+      "bytes": 0,
+      "mtime": 1793116110.2016704,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libserde_core-946f5ff2be4ca0dd.rmeta",
+      "bytes": 2656825,
+      "mtime": 1793094043.2899535,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libproc_macro_crate-f60b6a8890f28495.rlib",
+      "bytes": 1033858,
+      "mtime": 1793094076.7020462,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libpublic_submit_recovery-800adf3180706b39.rmeta",
+      "bytes": 0,
+      "mtime": 1793116092.1464336,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtrnm_transport-0227a43402ba9182.rmeta",
+      "bytes": 62028,
+      "mtime": 1793102651.4530926,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libevaluation_sync_observation-45548edbeb3d7ae8.rmeta",
+      "bytes": 0,
+      "mtime": 1793116084.59876,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtrnm_task_kernel-7b32e54b9baafa4e.rmeta",
+      "bytes": 745761,
+      "mtime": 1793121813.1522613,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/liblibc-9e3036e9e06353da.rmeta",
+      "bytes": 3535894,
+      "mtime": 1793094091.0281615,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libcontinuity_cli-ebb75242eb75e831.rmeta",
+      "bytes": 0,
+      "mtime": 1793102691.1035378,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtask_lifecycle-ef094dcb8adc99a2.rmeta",
+      "bytes": 0,
+      "mtime": 1793116091.7424512,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libmining_service_budget-f053d13fc00635d9.rmeta",
+      "bytes": 0,
+      "mtime": 1793102707.7748716,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libdistributed_roles-2798b3e186298151.rmeta",
+      "bytes": 0,
+      "mtime": 1793102729.8819835,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libed25519_dalek-18a3bda0024a8fdb.rmeta",
+      "bytes": 91524,
+      "mtime": 1793094044.4499094,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libpublic_evaluation-c85c407d3ff693b7.rmeta",
+      "bytes": 0,
+      "mtime": 1793116084.0627835,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libwork_fuzz_semantics-b8e55d446f3ee26d.rmeta",
+      "bytes": 0,
+      "mtime": 1793116086.2866857,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libgetrandom-26754b1f61f7a92b.rmeta",
+      "bytes": 67599,
+      "mtime": 1793094105.4996178,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtrnm_pon_node-5e773f1ef9ecad88.rmeta",
+      "bytes": 6470424,
+      "mtime": 1793102652.2130628,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtask_lifecycle_v4-ba80d2641290ef0c.rmeta",
+      "bytes": 0,
+      "mtime": 1793116099.5621192,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtrnm_mempool-5aad0bb6c709faa7.rmeta",
+      "bytes": 114530,
+      "mtime": 1793102650.7171214,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libunicode_ident-af7f0a76d4392b05.rmeta",
+      "bytes": 32965,
+      "mtime": 1793094034.7494743,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libpublic_v3_service_campaign-be9a4783badec672.rmeta",
+      "bytes": 0,
+      "mtime": 1793116097.0942216,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libdistributed_roles-f5b242713938e2ea.rmeta",
+      "bytes": 0,
+      "mtime": 1793116105.6938627,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libevaluation_observation-b7218530c49ed114.rmeta",
+      "bytes": 0,
+      "mtime": 1793116083.8787916,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libfind_msvc_tools-c67de4483d55f240.rmeta",
+      "bytes": 51193,
+      "mtime": 1793094056.7635074,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtask_output_root_parity-e1aaf432d8696fba.rmeta",
+      "bytes": 0,
+      "mtime": 1793102708.0268617,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libnative_growth_public_cli-df0a8da7837ffca1.rmeta",
+      "bytes": 0,
+      "mtime": 1793102706.6829147,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libsignature-937231ea4bb44ce0.rmeta",
+      "bytes": 38079,
+      "mtime": 1793094042.7139752,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtoml_datetime-31f3e921a98cc057.rlib",
+      "bytes": 265946,
+      "mtime": 1793094063.2092001,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libaccepted_task_observation-f18e23f69d0034ac.rmeta",
+      "bytes": 0,
+      "mtime": 1793116099.3261297,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtrnm_crypto_primitives-4896c726f87847fe.rmeta",
+      "bytes": 0,
+      "mtime": 1793128117.7502265,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libaccount_archive_projection-a3a27f65ef9afcf0.rmeta",
+      "bytes": 0,
+      "mtime": 1793116106.0258498,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libpublic_cli-c3b18498bb1b3e92.rmeta",
+      "bytes": 0,
+      "mtime": 1793116100.878062,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/deps/libtrnm_verification_profiles-da83328821881979.rmeta",
+      "bytes": 190758,
+      "mtime": 1793097480.9765863,
+      "kind": "unused-in-final-build-04-and-older-than-build"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/libc-8c2ef3391ee0c0df/root-output",
+      "bytes": 69,
+      "mtime": 1793094078.2646399,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/libc-8c2ef3391ee0c0df/output",
+      "bytes": 1297,
+      "mtime": 1793094078.2046423,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/libc-8c2ef3391ee0c0df/stderr",
+      "bytes": 0,
+      "mtime": 1793094078.2646399,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/libc-8c2ef3391ee0c0df/invoked.timestamp",
+      "bytes": 48,
+      "mtime": 1793094078.2046423,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/proc-macro2-86585082b6f41d92/build-script-build",
+      "bytes": 4497136,
+      "mtime": 1793094034.1822977,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/proc-macro2-86585082b6f41d92/build_script_build-86585082b6f41d92.d",
+      "bytes": 510,
+      "mtime": 1793094033.7023158,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/proc-macro2-86585082b6f41d92/build_script_build-86585082b6f41d92",
+      "bytes": 4497136,
+      "mtime": 1793094034.1822977,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/libc-9b7cc5838f8d228d/build-script-build",
+      "bytes": 4520976,
+      "mtime": 1793094078.156644,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/libc-9b7cc5838f8d228d/build_script_build-9b7cc5838f8d228d.d",
+      "bytes": 475,
+      "mtime": 1793094077.1846807,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/libc-9b7cc5838f8d228d/build_script_build-9b7cc5838f8d228d",
+      "bytes": 4520976,
+      "mtime": 1793094078.156644,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/zerocopy-2083c507cc683d32/build-script-build",
+      "bytes": 4536208,
+      "mtime": 1793094052.3896093,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/zerocopy-2083c507cc683d32/build_script_build-2083c507cc683d32.d",
+      "bytes": 495,
+      "mtime": 1793094051.973625,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/zerocopy-2083c507cc683d32/build_script_build-2083c507cc683d32",
+      "bytes": 4536208,
+      "mtime": 1793094052.3896093,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/generic-array-8dfb2b39765de00e/root-output",
+      "bytes": 78,
+      "mtime": 1793094036.110225,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/generic-array-8dfb2b39765de00e/output",
+      "bytes": 34,
+      "mtime": 1793094036.078226,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/generic-array-8dfb2b39765de00e/stderr",
+      "bytes": 0,
+      "mtime": 1793094036.110225,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/generic-array-8dfb2b39765de00e/invoked.timestamp",
+      "bytes": 48,
+      "mtime": 1793094036.078226,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/anyhow-138b7ec0be486411/build_script_build-138b7ec0be486411",
+      "bytes": 4493336,
+      "mtime": 1793094050.6816738,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/anyhow-138b7ec0be486411/build-script-build",
+      "bytes": 4493336,
+      "mtime": 1793094050.6816738,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/anyhow-138b7ec0be486411/build_script_build-138b7ec0be486411.d",
+      "bytes": 485,
+      "mtime": 1793094050.2456903,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/rustix-b4d6ce17ef0ebc55/build_script_build-b4d6ce17ef0ebc55",
+      "bytes": 4502528,
+      "mtime": 1793094097.4879189,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/rustix-b4d6ce17ef0ebc55/build-script-build",
+      "bytes": 4502528,
+      "mtime": 1793094097.4879189,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/rustix-b4d6ce17ef0ebc55/build_script_build-b4d6ce17ef0ebc55.d",
+      "bytes": 485,
+      "mtime": 1793094097.0119367,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/borsh-6bdef03b031dcba8/root-output",
+      "bytes": 70,
+      "mtime": 1793094083.7856698,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/borsh-6bdef03b031dcba8/output",
+      "bytes": 77,
+      "mtime": 1793094083.7644336,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/borsh-6bdef03b031dcba8/stderr",
+      "bytes": 0,
+      "mtime": 1793094083.7856698,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/borsh-6bdef03b031dcba8/invoked.timestamp",
+      "bytes": 48,
+      "mtime": 1793094083.7644336,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/libsqlite3-sys-0aaace8777c52d56/build_script_build-0aaace8777c52d56",
+      "bytes": 5985768,
+      "mtime": 1793094065.3771183,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/libsqlite3-sys-0aaace8777c52d56/build-script-build",
+      "bytes": 5985768,
+      "mtime": 1793094065.3771183,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/libsqlite3-sys-0aaace8777c52d56/build_script_build-0aaace8777c52d56.d",
+      "bytes": 644,
+      "mtime": 1793094065.0251315,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/thiserror-5c3b15b30768f63c/build_script_build-5c3b15b30768f63c",
+      "bytes": 4481704,
+      "mtime": 1793094045.041887,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/thiserror-5c3b15b30768f63c/build-script-build",
+      "bytes": 4481704,
+      "mtime": 1793094045.041887,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/thiserror-5c3b15b30768f63c/build_script_build-5c3b15b30768f63c.d",
+      "bytes": 500,
+      "mtime": 1793094044.8818932,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/zmij-a392cf5ca611cf30/build-script-build",
+      "bytes": 4447392,
+      "mtime": 1793094088.248266,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/zmij-a392cf5ca611cf30/build_script_build-a392cf5ca611cf30.d",
+      "bytes": 475,
+      "mtime": 1793094087.264303,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/zmij-a392cf5ca611cf30/build_script_build-a392cf5ca611cf30",
+      "bytes": 4447392,
+      "mtime": 1793094088.248266,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/getrandom-79fce9ad44ccf908/build_script_build-79fce9ad44ccf908",
+      "bytes": 4368272,
+      "mtime": 1793094100.4678068,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/getrandom-79fce9ad44ccf908/build_script_build-79fce9ad44ccf908.d",
+      "bytes": 500,
+      "mtime": 1793094099.8638296,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/getrandom-79fce9ad44ccf908/build-script-build",
+      "bytes": 4368272,
+      "mtime": 1793094100.4678068,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/getrandom-b37e72086bc7b097/root-output",
+      "bytes": 74,
+      "mtime": 1793094100.6717992,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/getrandom-b37e72086bc7b097/output",
+      "bytes": 32,
+      "mtime": 1793094100.6597996,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/getrandom-b37e72086bc7b097/stderr",
+      "bytes": 0,
+      "mtime": 1793094100.6717992,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/getrandom-b37e72086bc7b097/invoked.timestamp",
+      "bytes": 48,
+      "mtime": 1793094100.6597996,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/typenum-36e2b66de11dccb2/root-output",
+      "bytes": 72,
+      "mtime": 1793094035.5022478,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/typenum-36e2b66de11dccb2/output",
+      "bytes": 29,
+      "mtime": 1793094035.4622493,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/typenum-36e2b66de11dccb2/stderr",
+      "bytes": 0,
+      "mtime": 1793094035.5022478,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/typenum-36e2b66de11dccb2/invoked.timestamp",
+      "bytes": 48,
+      "mtime": 1793094035.4622493,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/typenum-36e2b66de11dccb2/out/tests.rs",
+      "bytes": 622641,
+      "mtime": 1793094035.498248,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/quote-0570cbb96c29a4e7/root-output",
+      "bytes": 70,
+      "mtime": 1793094034.758276,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/quote-0570cbb96c29a4e7/output",
+      "bytes": 83,
+      "mtime": 1793094034.7182775,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/quote-0570cbb96c29a4e7/stderr",
+      "bytes": 0,
+      "mtime": 1793094034.758276,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/quote-0570cbb96c29a4e7/invoked.timestamp",
+      "bytes": 48,
+      "mtime": 1793094034.7182775,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/serde_json-5a6c079082828684/build-script-build",
+      "bytes": 4341288,
+      "mtime": 1793094095.681933,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/serde_json-5a6c079082828684/build_script_build-5a6c079082828684",
+      "bytes": 4341288,
+      "mtime": 1793094095.681933,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/serde_json-5a6c079082828684/build_script_build-5a6c079082828684.d",
+      "bytes": 505,
+      "mtime": 1793094095.301389,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/zerocopy-5a0774b911493cf4/root-output",
+      "bytes": 73,
+      "mtime": 1793094052.5736024,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/zerocopy-5a0774b911493cf4/output",
+      "bytes": 1306,
+      "mtime": 1793094052.421608,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/zerocopy-5a0774b911493cf4/stderr",
+      "bytes": 0,
+      "mtime": 1793094052.5736024,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/zerocopy-5a0774b911493cf4/invoked.timestamp",
+      "bytes": 48,
+      "mtime": 1793094052.421608,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/serde_json-556b6cf5c302a042/root-output",
+      "bytes": 75,
+      "mtime": 1793094095.7639835,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/serde_json-556b6cf5c302a042/output",
+      "bytes": 132,
+      "mtime": 1793094095.7382026,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/serde_json-556b6cf5c302a042/stderr",
+      "bytes": 0,
+      "mtime": 1793094095.7639835,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/serde_json-556b6cf5c302a042/invoked.timestamp",
+      "bytes": 48,
+      "mtime": 1793094095.7382026,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/serde-e7f06f5de16a9578/build_script_build-e7f06f5de16a9578.d",
+      "bytes": 480,
+      "mtime": 1793094044.6299028,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/serde-e7f06f5de16a9578/build-script-build",
+      "bytes": 4472672,
+      "mtime": 1793094044.8498945,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/serde-e7f06f5de16a9578/build_script_build-e7f06f5de16a9578",
+      "bytes": 4472672,
+      "mtime": 1793094044.8498945,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/generic-array-c61903c61fac97ae/build-script-build",
+      "bytes": 4506424,
+      "mtime": 1793094035.8582344,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/generic-array-c61903c61fac97ae/build_script_build-c61903c61fac97ae",
+      "bytes": 4506424,
+      "mtime": 1793094035.8582344,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/generic-array-c61903c61fac97ae/build_script_build-c61903c61fac97ae.d",
+      "bytes": 520,
+      "mtime": 1793094035.5462463,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/serde-be62b92d4562b0f4/root-output",
+      "bytes": 70,
+      "mtime": 1793094045.149883,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/serde-be62b92d4562b0f4/output",
+      "bytes": 582,
+      "mtime": 1793094045.1298838,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/serde-be62b92d4562b0f4/stderr",
+      "bytes": 0,
+      "mtime": 1793094045.149883,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/serde-be62b92d4562b0f4/invoked.timestamp",
+      "bytes": 48,
+      "mtime": 1793094045.1298838,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/serde-be62b92d4562b0f4/out/private.rs",
+      "bytes": 142,
+      "mtime": 1793094045.1378834,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/rustix-bb2407d3c54b15f4/root-output",
+      "bytes": 71,
+      "mtime": 1793094101.5717654,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/rustix-bb2407d3c54b15f4/output",
+      "bytes": 525,
+      "mtime": 1793094101.3117752,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/rustix-bb2407d3c54b15f4/stderr",
+      "bytes": 0,
+      "mtime": 1793094101.5717654,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/rustix-bb2407d3c54b15f4/invoked.timestamp",
+      "bytes": 48,
+      "mtime": 1793094101.3117752,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/rustix-bb2407d3c54b15f4/out/rustix_test_can_compile",
+      "bytes": 2149,
+      "mtime": 1793094101.5571115,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/serde_core-e9531bdb6193ba06/root-output",
+      "bytes": 75,
+      "mtime": 1793094042.7139752,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/serde_core-e9531bdb6193ba06/output",
+      "bytes": 484,
+      "mtime": 1793094042.6899762,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/serde_core-e9531bdb6193ba06/stderr",
+      "bytes": 0,
+      "mtime": 1793094042.7139752,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/serde_core-e9531bdb6193ba06/invoked.timestamp",
+      "bytes": 48,
+      "mtime": 1793094042.6899762,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/serde_core-e9531bdb6193ba06/out/private.rs",
+      "bytes": 90,
+      "mtime": 1793094042.6979759,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/anyhow-0f85b58ad6563fc7/root-output",
+      "bytes": 71,
+      "mtime": 1793094050.8536673,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/anyhow-0f85b58ad6563fc7/output",
+      "bytes": 336,
+      "mtime": 1793094050.733672,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/anyhow-0f85b58ad6563fc7/stderr",
+      "bytes": 0,
+      "mtime": 1793094050.8536673,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/anyhow-0f85b58ad6563fc7/invoked.timestamp",
+      "bytes": 48,
+      "mtime": 1793094050.733672,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/curve25519-dalek-296d962297d715fc/root-output",
+      "bytes": 81,
+      "mtime": 1793094042.7099752,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/curve25519-dalek-296d962297d715fc/output",
+      "bytes": 91,
+      "mtime": 1793094042.6739767,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/curve25519-dalek-296d962297d715fc/stderr",
+      "bytes": 0,
+      "mtime": 1793094042.7099752,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/curve25519-dalek-296d962297d715fc/invoked.timestamp",
+      "bytes": 48,
+      "mtime": 1793094042.6739767,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/libsqlite3-sys-842cb929d7650acb/root-output",
+      "bytes": 79,
+      "mtime": 1793094098.3718855,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/libsqlite3-sys-842cb929d7650acb/output",
+      "bytes": 2617,
+      "mtime": 1793094066.0250938,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/libsqlite3-sys-842cb929d7650acb/stderr",
+      "bytes": 0,
+      "mtime": 1793094098.3718855,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/libsqlite3-sys-842cb929d7650acb/invoked.timestamp",
+      "bytes": 48,
+      "mtime": 1793094066.0250938,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/libsqlite3-sys-842cb929d7650acb/out/bindgen.rs",
+      "bytes": 117543,
+      "mtime": 1793094066.0420187,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/libsqlite3-sys-842cb929d7650acb/out/c877a2978823c39d-sqlite3.o",
+      "bytes": 5734296,
+      "mtime": 1793094098.0038993,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/libsqlite3-sys-842cb929d7650acb/out/libsqlite3.a",
+      "bytes": 5741534,
+      "mtime": 1793094098.303888,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/zmij-3e9c54f9d8e35349/root-output",
+      "bytes": 69,
+      "mtime": 1793094088.560254,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/zmij-3e9c54f9d8e35349/output",
+      "bytes": 126,
+      "mtime": 1793094088.512256,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/zmij-3e9c54f9d8e35349/stderr",
+      "bytes": 0,
+      "mtime": 1793094088.560254,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/zmij-3e9c54f9d8e35349/invoked.timestamp",
+      "bytes": 48,
+      "mtime": 1793094088.512256,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/ahash-14e949334a98a41c/root-output",
+      "bytes": 70,
+      "mtime": 1793094060.437305,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/ahash-14e949334a98a41c/output",
+      "bytes": 145,
+      "mtime": 1793094060.4013064,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/ahash-14e949334a98a41c/stderr",
+      "bytes": 0,
+      "mtime": 1793094060.437305,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/ahash-14e949334a98a41c/invoked.timestamp",
+      "bytes": 48,
+      "mtime": 1793094060.4013064,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/typenum-09b172495fee95f2/build-script-build",
+      "bytes": 4440064,
+      "mtime": 1793094035.366253,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/typenum-09b172495fee95f2/build_script_build-09b172495fee95f2.d",
+      "bytes": 490,
+      "mtime": 1793094034.8782716,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/typenum-09b172495fee95f2/build_script_build-09b172495fee95f2",
+      "bytes": 4440064,
+      "mtime": 1793094035.366253,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/proc-macro2-4a599ed645bc3058/root-output",
+      "bytes": 76,
+      "mtime": 1793094034.6462803,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/proc-macro2-4a599ed645bc3058/output",
+      "bytes": 1061,
+      "mtime": 1793094034.2142966,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/proc-macro2-4a599ed645bc3058/stderr",
+      "bytes": 0,
+      "mtime": 1793094034.6462803,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/proc-macro2-4a599ed645bc3058/invoked.timestamp",
+      "bytes": 48,
+      "mtime": 1793094034.2142966,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/thiserror-55ba6e71ece5289f/root-output",
+      "bytes": 74,
+      "mtime": 1793094045.1298838,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/thiserror-55ba6e71ece5289f/output",
+      "bytes": 189,
+      "mtime": 1793094045.0578866,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/thiserror-55ba6e71ece5289f/stderr",
+      "bytes": 0,
+      "mtime": 1793094045.1298838,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/thiserror-55ba6e71ece5289f/invoked.timestamp",
+      "bytes": 48,
+      "mtime": 1793094045.0578866,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/ahash-2fcac83f7c96eb69/build-script-build",
+      "bytes": 4535512,
+      "mtime": 1793094052.9935865,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/ahash-2fcac83f7c96eb69/build_script_build-2fcac83f7c96eb69.d",
+      "bytes": 480,
+      "mtime": 1793094052.7335963,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/ahash-2fcac83f7c96eb69/build_script_build-2fcac83f7c96eb69",
+      "bytes": 4535512,
+      "mtime": 1793094052.9935865,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/borsh-9e986927bf5ab806/build-script-build",
+      "bytes": 4396720,
+      "mtime": 1793094065.9850953,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/borsh-9e986927bf5ab806/build_script_build-9e986927bf5ab806",
+      "bytes": 4396720,
+      "mtime": 1793094065.9850953,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/borsh-9e986927bf5ab806/build_script_build-9e986927bf5ab806.d",
+      "bytes": 480,
+      "mtime": 1793094065.7371047,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/curve25519-dalek-961b8604bc356a0a/build_script_build-961b8604bc356a0a.d",
+      "bytes": 535,
+      "mtime": 1793094042.2619922,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/curve25519-dalek-961b8604bc356a0a/build-script-build",
+      "bytes": 4601832,
+      "mtime": 1793094042.425986,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/curve25519-dalek-961b8604bc356a0a/build_script_build-961b8604bc356a0a",
+      "bytes": 4601832,
+      "mtime": 1793094042.425986,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/quote-df94c1d0f5801bb9/build_script_build-df94c1d0f5801bb9.d",
+      "bytes": 480,
+      "mtime": 1793094034.410289,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/quote-df94c1d0f5801bb9/build_script_build-df94c1d0f5801bb9",
+      "bytes": 4442816,
+      "mtime": 1793094034.6702793,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/quote-df94c1d0f5801bb9/build-script-build",
+      "bytes": 4442816,
+      "mtime": 1793094034.6702793,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/serde_core-5b186a30dda9ef02/build-script-build",
+      "bytes": 4475504,
+      "mtime": 1793094042.6739767,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/serde_core-5b186a30dda9ef02/build_script_build-5b186a30dda9ef02.d",
+      "bytes": 505,
+      "mtime": 1793094042.481984,
+      "kind": "unused-build-script-directory"
+    },
+    {
+      "path": "/tmp/pon-history-epoch-v1-20261028/debug/build/serde_core-5b186a30dda9ef02/build_script_build-5b186a30dda9ef02",
+      "bytes": 4475504,
+      "mtime": 1793094042.6739767,
+      "kind": "unused-build-script-directory"
+    }
+  ]
+}

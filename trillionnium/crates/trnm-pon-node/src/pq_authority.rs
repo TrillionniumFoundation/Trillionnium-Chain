@@ -13,11 +13,21 @@ use trnm_protocol::pq_frame::{ml_dsa_65_key_id_from_spki, PqFrameExpectation, TP
 
 const APPLICATION_ID: i64 = 0x54505131;
 const MAX_PAYLOAD: usize = 1_048_576;
+// These are the existing v1 schema bytes, not a replacement database format.
+const OWNER_SCHEMA: &str =
+    "CREATE TABLE pq_owner_v1 (singleton INTEGER PRIMARY KEY CHECK(singleton=1),
+                 identity BLOB NOT NULL CHECK(length(identity)=48),
+                 sequence INTEGER NOT NULL CHECK(sequence>=0))";
+const RECORD_SCHEMA: &str =
+    "CREATE TABLE pq_authorizations_v1 (sequence INTEGER PRIMARY KEY CHECK(sequence>0),
+                 statement BLOB NOT NULL CHECK(length(statement)=176),
+                 digest BLOB NOT NULL CHECK(length(digest)=48))";
 
 #[derive(Debug)]
 pub enum PqOwnerError {
     Scope,
     StoreIdentity,
+    StoreIntegrity,
     Sequence,
     Lifetime,
     Payload,
@@ -71,6 +81,92 @@ pub struct PqAuthorizationOwner {
     database: Connection,
     scope: PqAuthorizationScope,
     key_id: [u8; 32],
+    identity: [u8; 48],
+}
+
+fn statement_digest(statement: &[u8]) -> [u8; 48] {
+    let mut hash = Sha384::new();
+    hash.update(b"TRNM/PoN/TPQ1RecordedStatement/v1\0");
+    hash.update(statement);
+    hash.finalize().into()
+}
+
+/// Call only while holding the owner's write transaction. This is a bounded
+/// layout/tip consistency check, not a physical rollback or full-history proof.
+fn check_store(database: &Connection, identity: &[u8; 48]) -> Result<i64, PqOwnerError> {
+    let application: i64 = database.query_row("PRAGMA main.application_id", [], |r| r.get(0))?;
+    let temporary: bool =
+        database.query_row("SELECT EXISTS(SELECT 1 FROM temp.sqlite_schema)", [], |r| {
+            r.get(0)
+        })?;
+    if application != APPLICATION_ID || temporary {
+        return Err(PqOwnerError::StoreIdentity);
+    }
+    let mut query = database.prepare(
+        "SELECT type, name, tbl_name, sql FROM main.sqlite_schema ORDER BY name LIMIT 3",
+    )?;
+    let objects = query
+        .query_map([], |r| {
+            Ok((
+                r.get::<_, String>(0)?,
+                r.get::<_, String>(1)?,
+                r.get::<_, String>(2)?,
+                r.get::<_, Option<String>>(3)?,
+            ))
+        })?
+        .collect::<Result<Vec<_>, _>>()?;
+    let expected = [
+        ("pq_authorizations_v1", RECORD_SCHEMA),
+        ("pq_owner_v1", OWNER_SCHEMA),
+    ];
+    if objects.len() != expected.len()
+        || objects.iter().zip(expected).any(
+            |((kind, name, table, sql), (expected_name, expected_sql))| {
+                kind != "table"
+                    || name != expected_name
+                    || table != expected_name
+                    || sql.as_deref() != Some(expected_sql)
+            },
+        )
+    {
+        return Err(PqOwnerError::StoreIdentity);
+    }
+    let mut query =
+        database.prepare("SELECT singleton, identity, sequence FROM main.pq_owner_v1 LIMIT 2")?;
+    let owners = query
+        .query_map([], |r| {
+            Ok((
+                r.get::<_, i64>(0)?,
+                r.get::<_, Vec<u8>>(1)?,
+                r.get::<_, i64>(2)?,
+            ))
+        })?
+        .collect::<Result<Vec<_>, _>>()?;
+    if owners.len() != 1 || owners[0].0 != 1 || owners[0].1 != identity.as_slice() {
+        return Err(PqOwnerError::StoreIdentity);
+    }
+    let sequence = owners[0].2;
+    let last: Option<(i64, Vec<u8>, Vec<u8>)> = database
+        .query_row(
+            "SELECT sequence, statement, digest FROM main.pq_authorizations_v1
+         ORDER BY sequence DESC LIMIT 1",
+            [],
+            |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)),
+        )
+        .optional()?;
+    let valid_tip = match last {
+        None => sequence == 0,
+        Some((last_sequence, statement, digest)) => {
+            sequence > 0
+                && last_sequence == sequence
+                && statement.len() == 176
+                && digest == statement_digest(&statement)
+        }
+    };
+    if !valid_tip {
+        return Err(PqOwnerError::StoreIntegrity);
+    }
+    Ok(sequence)
 }
 
 impl PqAuthorizationOwner {
@@ -109,14 +205,7 @@ impl PqAuthorizationOwner {
         )?;
         if application == 0 && table_count == 0 {
             transaction.pragma_update(None, "application_id", APPLICATION_ID)?;
-            transaction.execute_batch(
-                "CREATE TABLE pq_owner_v1 (singleton INTEGER PRIMARY KEY CHECK(singleton=1),
-                 identity BLOB NOT NULL CHECK(length(identity)=48),
-                 sequence INTEGER NOT NULL CHECK(sequence>=0));
-                 CREATE TABLE pq_authorizations_v1 (sequence INTEGER PRIMARY KEY CHECK(sequence>0),
-                 statement BLOB NOT NULL CHECK(length(statement)=176),
-                 digest BLOB NOT NULL CHECK(length(digest)=48));",
-            )?;
+            transaction.execute_batch(&format!("{OWNER_SCHEMA}; {RECORD_SCHEMA};"))?;
             transaction.execute(
                 "INSERT INTO pq_owner_v1 VALUES (1, ?1, 0)",
                 [identity.as_slice()],
@@ -124,21 +213,13 @@ impl PqAuthorizationOwner {
         } else if application != APPLICATION_ID {
             return Err(PqOwnerError::StoreIdentity);
         }
-        let pinned: Option<Vec<u8>> = transaction
-            .query_row(
-                "SELECT identity FROM pq_owner_v1 WHERE singleton=1",
-                [],
-                |r| r.get(0),
-            )
-            .optional()?;
-        if pinned.as_deref() != Some(identity.as_slice()) {
-            return Err(PqOwnerError::StoreIdentity);
-        }
+        check_store(&transaction, &identity)?;
         transaction.commit()?;
         Ok(Self {
             database,
             scope,
             key_id,
+            identity,
         })
     }
 
@@ -163,7 +244,7 @@ impl PqAuthorizationOwner {
             return Err(PqOwnerError::Lifetime);
         }
         let previous: i64 = self.database.query_row(
-            "SELECT sequence FROM pq_owner_v1 WHERE singleton=1",
+            "SELECT sequence FROM main.pq_owner_v1 WHERE singleton=1",
             [],
             |r| r.get(0),
         )?;
@@ -184,24 +265,35 @@ impl PqAuthorizationOwner {
         };
         let checked = verify_tpq1(frame, &expected, &self.scope.public_key_spki)
             .map_err(PqOwnerError::Authentication)?;
-        let mut hash = Sha384::new();
-        hash.update(b"TRNM/PoN/TPQ1RecordedStatement/v1\0");
-        hash.update(checked.statement());
-        let digest: [u8; 48] = hash.finalize().into();
+        let digest = statement_digest(checked.statement());
         let transaction = self
             .database
             .transaction_with_behavior(TransactionBehavior::Immediate)?;
+        if check_store(&transaction, &self.identity)? != previous {
+            return Err(PqOwnerError::Sequence);
+        }
         let changed = transaction.execute(
-            "UPDATE pq_owner_v1 SET sequence=?1 WHERE singleton=1 AND sequence=?2",
+            "UPDATE main.pq_owner_v1 SET sequence=?1 WHERE singleton=1 AND sequence=?2",
             params![next, previous],
         )?;
         if changed != 1 {
             return Err(PqOwnerError::Sequence);
         }
-        transaction.execute(
-            "INSERT INTO pq_authorizations_v1 VALUES (?1, ?2, ?3)",
+        let inserted = transaction.execute(
+            "INSERT INTO main.pq_authorizations_v1 VALUES (?1, ?2, ?3)",
             params![next, checked.statement(), digest.as_slice()],
         )?;
+        if inserted != 1 || check_store(&transaction, &self.identity)? != next {
+            return Err(PqOwnerError::StoreIntegrity);
+        }
+        let stored: (Vec<u8>, Vec<u8>) = transaction.query_row(
+            "SELECT statement, digest FROM main.pq_authorizations_v1 WHERE sequence=?1",
+            [next],
+            |r| Ok((r.get(0)?, r.get(1)?)),
+        )?;
+        if stored.0 != checked.statement() || stored.1 != digest {
+            return Err(PqOwnerError::StoreIntegrity);
+        }
         transaction.commit()?;
         Ok(RecordedPqAuthorization {
             sequence: next as u64,

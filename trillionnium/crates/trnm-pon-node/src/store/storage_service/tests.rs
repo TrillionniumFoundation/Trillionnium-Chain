@@ -30,6 +30,7 @@ fn open_node(path: &Path, backend: StateBackend) -> Node {
     )
     .unwrap();
     match backend {
+        StateBackend::HistoryEffectV6 => panic!("use the protected V6 fixture"),
         StateBackend::Legacy => Node::open(path, settings, 1).unwrap(),
         StateBackend::AuthenticatedV1 => {
             Node::open_with_authenticated_state(path, settings, 1).unwrap()

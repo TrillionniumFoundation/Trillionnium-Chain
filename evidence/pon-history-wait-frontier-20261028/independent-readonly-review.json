@@ -1,0 +1,70 @@
+{
+  "schema": "history-wait-frontier-independent-readonly-review-v1",
+  "base": "c27c7201e700b6704faf3452da0921c7fedaa75a",
+  "checkout": "/workspace/scratch/bb9b841c1d43/history-wait-followup",
+  "review_mode": "read only; no code edits, compilation, native execution or publication",
+  "reviewed_files": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs",
+      "sha256": "6ffd4e842bb52300c0c215dfea3cd2476497fdf614de8b0f7fdd1fe8328e43c8"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/history_effect_v6.rs",
+      "sha256": "a58746aeef5ed9de2defcbc1ca3645077f58a24e6620421023019742f9302f74"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/journal.rs",
+      "sha256": "a42e0829a822c757c368698ae8d6112656370a2ca17ab4249794850acb80d735"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/tests/wait.rs",
+      "sha256": "13994d14d5c21b4b6e38fe35afb7015f8169e563690c7a4658a5362c44f84445"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/tests/process.rs",
+      "sha256": "26c0ae1c6df050f5ee5a45b63666aab0826bf72abd83391bc2a84f5dda94c0a2"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/tests/settled_epoch.rs",
+      "sha256": "ca3763486abb199f8ce0fe3a981e8cc2b5d52c70daffd7906ea8e65ca72ea5da"
+    },
+    {
+      "path": "scripts/ci/history_effect_v6_process_guard.py",
+      "sha256": "fdc4c780b527a3c4b0c5a001b812f2d64119e16a26ab47b9ef13d24c62d8de1c"
+    },
+    {
+      "path": "scripts/ci/run_history_effect_v6_native.py",
+      "sha256": "f83684dc869dc8d65879da079852e199583127672168e5476330805d2cdc72bb"
+    }
+  ],
+  "unchanged_native_roster_assignments": {
+    "PREFIX": true,
+    "HELPER": true,
+    "ORIGINAL_ROSTER": true,
+    "STARTUP_ROSTER": true,
+    "MATERIAL_ROSTER": true
+  },
+  "unchanged_existing_guardian_helpers": {
+    "stop_owned_group": true,
+    "complete_parent_graph": true,
+    "descendants_of": true,
+    "stable_parent_observation": true,
+    "write": true
+  },
+  "no_new_code_level_blocker_found": true,
+  "findings": [
+    "Wait cancellation/deadline/operation-expiry/budget-expiry checks occur outside the original budget lock and before begin; ready return is checked again.",
+    "Pre-begin errors append the existing NotStarted with original error; full allowance, nonce, used operation and used epoch remain spent. No measured-zero settlement is created.",
+    "Any NotStarted append failure remains an unresolved durable journal state and is not represented as success.",
+    "Cold journal epoch_frontier is initialized only by Startup and advanced only by known retained SQL marker.after; a marker-free refused request does not overwrite it.",
+    "Recovery still binds last operation/intent and exact marker-or-absence plus independently locked Native frontier; the original signed recovery namespace and conservative whole-dead-process additional debit are unchanged.",
+    "The new wrong-frontier guard still performs original real stop/pidfd/four-snapshot/SIGKILL/wait4/SQLite steps; no CPU or frontier is replaced by a requested value.",
+    "All original 19 native tests plus the ignored fixture helper remain exactly selected; two new methods extend to 21 passed / 0 failed / 1 ignored."
+  ],
+  "limits": [
+    "Source review is not successful native execution; new compilation, strict Clippy and exact 21/0/1 remain required.",
+    "An incorrect first Startup frontier remains a deliberately unqualified case; this change repairs a real established frontier followed by a known refused request.",
+    "SIGKILL before NotStarted persistence cannot be classified as pre-begin from this branch; no such crash result is claimed.",
+    "Partial Native initialization, unknown CPU, exhausted lifetime ceiling and other documented recovery states remain fail-closed."
+  ]
+}

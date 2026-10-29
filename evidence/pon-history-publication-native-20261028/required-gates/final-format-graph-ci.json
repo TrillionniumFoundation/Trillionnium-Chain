@@ -1,0 +1,60 @@
+{
+  "source_commit": "72b7cb10e28f07343b7a0fc96072975906ceae85",
+  "runtime_source": "8d7741028eb650f0600e61fcab46ff3d14b50767",
+  "source_phase": "CI-only followup; runtime source unchanged",
+  "observations": [
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_history_effect_v6_native_runner.py",
+        "-v"
+      ],
+      "native_returncode": 0,
+      "elapsed_seconds": 0.6959795100046904,
+      "log": "hosted-runner-final.log",
+      "log_sha256": "518c20c5e4f9246d5e0ce8503e0411a8a532ed269ea5e1f26779232bf8bd75dc",
+      "passed": true
+    },
+    {
+      "command": [
+        "/workspace/scratch/301262829a43/pon-build-inputs/unpacked/toolchain/bin/cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--package",
+        "trnm-pon-node",
+        "--",
+        "--check"
+      ],
+      "native_returncode": 0,
+      "elapsed_seconds": 15.237409527995624,
+      "log": "format-final.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "passed": true
+    },
+    {
+      "command": [
+        "/workspace/scratch/301262829a43/pon-build-inputs/unpacked/toolchain/bin/cargo",
+        "metadata",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--format-version",
+        "1"
+      ],
+      "native_returncode": 0,
+      "elapsed_seconds": 0.2334716240002308,
+      "log": "cargo-graph-final.log",
+      "log_sha256": "87b25d49db769689b104a8c5da644cf909e1ce75811ea208059875d6cf71cc50",
+      "passed": true
+    }
+  ],
+  "hosted_native_executed": false
+}

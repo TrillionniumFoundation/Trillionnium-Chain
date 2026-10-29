@@ -1,0 +1,179 @@
+name: Owned fixed-parent receiver fixture
+on:
+  pull_request:
+    paths:
+      - .github/workflows/pon-fixed-parent-receiver-v1.yml
+      - scripts/ci/**
+      - scripts/project-preflight.sh
+      - scripts/run_pon_w1_native_campaign.py
+      - scripts/pon_identity_outer_owner.py
+      - formal/pon-nakamoto-v1/**
+      - trillionnium/**
+      - config/**
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: pon-fixed-parent-${{ github.event.pull_request.head.sha || github.sha }}
+  cancel-in-progress: false
+jobs:
+  fixed-parent:
+    name: owned host fixture; separate service and depletion (${{ matrix.arch }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            arch: x64
+          - runner: ubuntu-24.04-arm
+            arch: arm64
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 120
+    env:
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+      CARGO_INCREMENTAL: "0"
+      CARGO_BUILD_JOBS: "2"
+      RUST_TEST_THREADS: "1"
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - name: Checkout exact fixture candidate without persistent credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.EXPECTED_HEAD }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Reserve original evidence and build paths
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/fixed-parent-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-${{ matrix.arch }}"
+          mkdir "$out"
+          echo "OUT=$out" >> "$GITHUB_ENV"
+          echo "CARGO_HOME=$RUNNER_TEMP/fixed-parent-cargo" >> "$GITHUB_ENV"
+          echo "CARGO_TARGET_DIR=$RUNNER_TEMP/fixed-parent-target" >> "$GITHUB_ENV"
+          python3 -B scripts/ci/verify_ci_source.py --kind head --expected-head "$EXPECTED_HEAD" --output "$out/source-checkout.json"
+          bash scripts/project-preflight.sh --audit
+          # This shell owns only its fresh, nonce-labelled outer experiment unit.
+          # The root fixture separately owns and validates the exact fixed slice.
+          cat > "$out/run-owned-outer.sh" <<'BASH'
+          #!/usr/bin/env bash
+          set -euo pipefail
+          stage="$1"
+          shift
+          nonce="$(cat /proc/sys/kernel/random/uuid)"
+          unit="trnm-fixed-parent-$stage-$nonce.service"
+          description="Owned PoN fixed-parent outer experiment $nonce"
+          log="$OUT/$stage-outer-cleanup.log"
+          state="$(sudo -n systemctl show "$unit" --property=LoadState --value)"
+          printf 'unit=%s\noriginal_load_state=%s\n' "$unit" "$state" >> "$log"
+          test "$state" = "not-found"
+          cleanup() {
+            original_status=$?
+            trap - EXIT INT TERM
+            set +e
+            state="$(sudo -n systemctl show "$unit" --property=LoadState --value 2>> "$log")"
+            observed="$(sudo -n systemctl show "$unit" --property=Description --value 2>> "$log")"
+            cleanup_status=0
+            if test "$state" != "not-found"; then
+              if test "$observed" = "$description"; then
+                sudo -n systemctl stop "$unit" >> "$log" 2>&1
+                cleanup_status=$?
+              else
+                printf 'refused_foreign_or_replaced_outer_unit\n' >> "$log"
+                cleanup_status=1
+              fi
+            fi
+            printf 'original_exit=%s\ncleanup_exit=%s\n' "$original_status" "$cleanup_status" >> "$log"
+            if test "$original_status" -eq 0 && test "$cleanup_status" -ne 0; then
+              exit "$cleanup_status"
+            fi
+            exit "$original_status"
+          }
+          trap cleanup EXIT
+          trap 'exit 130' INT
+          trap 'exit 143' TERM
+          identity=()
+          if test "$stage" = "build"; then
+            identity=(--uid="$(id -u)" --gid="$(id -g)")
+          else
+            test "$stage" = "fixture"
+          fi
+          sudo -n systemd-run --unit="$unit" --description="$description" --wait --pipe --collect \
+            --service-type=exec --expand-environment=no "${identity[@]}" \
+            --working-directory="$GITHUB_WORKSPACE" \
+            --property=CPUAccounting=yes --property=MemoryAccounting=yes \
+            --property=CPUQuota=400% --property=CPUQuotaPeriodSec=100ms \
+            --property=MemoryMax=17179869184 --property=Nice=10 \
+            --property=KillMode=control-group --property=TimeoutStopSec=20s \
+            --property=RuntimeMaxSec=4800s \
+            --setenv="PATH=$PATH" --setenv="CARGO_HOME=$CARGO_HOME" \
+            --setenv="RUSTUP_HOME=$(rustup show home)" --setenv=PYTHONDONTWRITEBYTECODE=1 \
+            --setenv="GITHUB_ACTIONS=$GITHUB_ACTIONS" --setenv="RUNNER_ENVIRONMENT=$RUNNER_ENVIRONMENT" \
+            "$@"
+          BASH
+      - name: Run fixture association and ownership negative controls
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s scripts/ci -p 'test_*fixed_parent_v1.py' -v 2>&1 | tee "$OUT/python-controls.log"
+      - name: Install exact compiler and fetch locked dependencies
+        run: |
+          set -euo pipefail
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy 2>&1 | tee "$OUT/toolchain.log"
+          cargo +1.95.0 fetch --locked --manifest-path trillionnium/Cargo.toml 2>&1 | tee "$OUT/fetch.log"
+      - name: Build exact binary and execute two genuine native short controls
+        run: |
+          set -euo pipefail
+          test -d /run/systemd/system
+          test -f /sys/fs/cgroup/cgroup.controllers
+          bash "$OUT/run-owned-outer.sh" build \
+            /usr/bin/python3 -B scripts/ci/run_pure_pon_fixed_parent_v1.py --prepare \
+            --output "$OUT/build" --target "$CARGO_TARGET_DIR" --cargo "$(command -v cargo)" \
+            --expected-head "$EXPECTED_HEAD" 2>&1 | tee "$OUT/build.log"
+      - name: Observe three controllers with one fresh fixed parent and unchanged limits
+        run: |
+          set -euo pipefail
+          # The owned temporary slice is refused if any existing name/path is
+          # present. No ancestor permissions, capabilities or limits are changed.
+          # All receiver CPU is capped at 0.25; paid-credit depletion is a separate
+          # unchanged predicate, not a prerequisite for this new host fixture.
+          bash "$OUT/run-owned-outer.sh" fixture \
+            /usr/bin/python3 -B scripts/ci/run_pure_pon_fixed_parent_v1.py \
+            --output "$OUT/fixture" --binary-description "$OUT/build/native-binary.json" \
+            --runner-uid "$(id -u)" --runner-gid "$(id -g)" --expected-head "$EXPECTED_HEAD" \
+            2>&1 | tee "$OUT/fixture.log"
+      - name: Independently read actual source, binary, membership, counters and cleanup
+        if: always()
+        run: |
+          set -euo pipefail
+          python3 -B scripts/ci/check_pure_pon_fixed_parent_v1.py "$OUT/fixture" \
+            --output "$OUT/fixture-summary.json" --require-host-fixture \
+            2>&1 | tee "$OUT/readback.log"
+      - name: Publish distinct observations and preserve the original failed qualification
+        if: always()
+        run: |
+          python3 -B - <<'PY'
+          import json, os
+          from pathlib import Path
+          out = Path(os.environ["OUT"])
+          value = json.loads((out / "fixture-summary.json").read_text()) if (out / "fixture-summary.json").exists() else {}
+          with Path(os.environ["GITHUB_STEP_SUMMARY"]).open("a") as stream:
+              stream.write("## Research fixture only\n\n")
+              stream.write("| Observation | Result |\n|---|---|\n")
+              for key in ("input_consistent", "host_fixture_qualified", "honest_service_qualified",
+                          "unchanged_paid_depletion_qualified", "unchanged_full_finite_predicate"):
+                  stream.write(f"| {key} | {value.get(key, 'not observed')} |\n")
+              stream.write("\nOriginal campaign qualification, public fairness and production qualification remain false.\n")
+              stream.write("\nThe preserved exact-B x64 from-zero supplemental paid-depletion failure remains an independent failed observation: ")
+              stream.write("[run 40825729556, job 123288212503](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40825729556/job/123288212503). ")
+              stream.write("This workflow does not replace or retry that sample and does not require its paid-depletion predicate to pass.\n")
+          PY
+      - name: Recheck source after successful or failed observation
+        if: always()
+        run: python3 -B scripts/ci/verify_ci_source.py --kind head --expected-head "$EXPECTED_HEAD" --output "$OUT/source-final.json"
+      - name: Preserve all original binaries, raw observations and failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: owned-fixed-parent-${{ matrix.arch }}-${{ env.EXPECTED_HEAD }}-${{ github.run_attempt }}
+          path: ${{ env.OUT }}/
+          if-no-files-found: error
+          retention-days: 30

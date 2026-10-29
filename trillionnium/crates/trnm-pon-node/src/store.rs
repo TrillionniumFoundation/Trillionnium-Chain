@@ -10,6 +10,8 @@ pub mod growth_reference;
 mod historical_commitment;
 #[cfg(test)]
 mod historical_commitment_tests;
+pub mod history_effect_v6;
+mod history_graph_resource_v1;
 mod history_page;
 pub mod mempool;
 pub(crate) mod native_authenticated;
@@ -17,6 +19,11 @@ pub mod native_budget;
 mod operator_continuous_owner;
 mod operator_mining_owner;
 pub mod pinned_account_query;
+pub(crate) mod pq_accounts_v2;
+pub(crate) mod pq_native_v1;
+pub(crate) mod pq_quota_v3;
+pub(crate) mod pq_tasks_v4;
+pub(crate) mod pq_tasks_v5;
 #[cfg(test)]
 pub(crate) mod public_reader;
 mod root_rejection_cache;
@@ -25,6 +32,7 @@ mod root_rejection_cache_tests;
 mod shared_snapshot;
 pub mod storage_service;
 mod task_observation;
+use crate::native_progress::{NativeProgress, NativeProgressPoint, TypedNativeProgress};
 use crate::{
     consensus::{self, Work},
     development_public, ensure, maintenance, sequence_root, Error, Packet, Result, Settings,
@@ -33,7 +41,8 @@ use fs2::FileExt;
 pub use history_page::HistoryPageReadCounters;
 pub(crate) use operator_continuous_owner::PublicContinuousScope;
 pub use operator_continuous_owner::{
-    ContinuousSearchRequest, OwnedContinuousLeaseResult, OwnedContinuousPoolResult,
+    ContinuousEpochCancellation, ContinuousHistoryRecovery, ContinuousSearchRequest,
+    HistoryRecoverySelection, OwnedContinuousLeaseResult, OwnedContinuousPoolResult,
 };
 pub use operator_mining_owner::{MiningEpochCancellation, OwnedMutationResult, OwnedSearchResult};
 use rusqlite::{params, Connection, OpenFlags, OptionalExtension};
@@ -64,7 +73,7 @@ use trnm_mvcc_fee::pon_executor::root;
 use trnm_mvcc_fee::pon_executor::SIGNED_TASK_PROFILE;
 use trnm_mvcc_fee::pon_executor::{ExecutionControl, ExecutionError, ExecutionProgress, State};
 use trnm_mvcc_fee::qualified_task_lifecycle;
-use trnm_protocol::pon_wire::{hash, Hash, Header, HEADER_BYTES};
+use trnm_protocol::pon_wire::{hash, Hash, Header};
 use trnm_protocol::qualified_work_task::lifecycle_v2::PROFILE as LIFECYCLE_TASK_PROFILE;
 use trnm_protocol::qualified_work_task::lifecycle_v3::PROFILE as ATOMIC_TASK_PROFILE;
 use trnm_protocol::qualified_work_task::lifecycle_v4::PROFILE as OVERLAP_TASK_PROFILE;
@@ -161,6 +170,8 @@ pub(crate) enum ParentTaskEligibility {
     ConsensusMaintenance,
     Signed(Box<QualifiedWorkTask>),
     Lifecycle(Box<qualified_task_lifecycle::EligibleLifecycleTask>),
+    PqTask(Box<trnm_mvcc_fee::pon_executor::pq_accounts_v2::tasks_v4::EligibleTaskV4>),
+    PqTaskV5(Box<trnm_mvcc_fee::pon_executor::pq_accounts_v2::tasks_v5::EligibleTaskV5>),
 }
 impl ParentTaskEligibility {
     fn manifest(&self) -> Option<&QualifiedWorkTask> {
@@ -168,6 +179,8 @@ impl ParentTaskEligibility {
             Self::Legacy | Self::ConsensusMaintenance => None,
             Self::Signed(manifest) => Some(manifest),
             Self::Lifecycle(eligible) => Some(eligible.manifest()),
+            Self::PqTask(eligible) => Some(eligible.manifest()),
+            Self::PqTaskV5(eligible) => Some(eligible.manifest()),
         }
     }
 }
@@ -524,6 +537,37 @@ impl WorkCheckedPacket {
             owner_permit: None,
         })
     }
+    /// Optional exact invalid-mathematics cache. The current Node still
+    /// checks context, task, source, clock and owner before this verifier is
+    /// selected. Only previously fully verified Transcript/Product failures
+    /// can return early; never a VerifiedWork or a consensus-invalidity veto.
+    pub(crate) fn verify_with_rejection_cache(
+        packet: Packet,
+        cache: &pon_work::rejection_cache::RejectionCache,
+        progress: &mut impl FnMut(pon_work::VerificationProgress) -> Result<()>,
+    ) -> Result<Self> {
+        let h = &packet.header;
+        let work = cache
+            .verify_with_progress(
+                h.challenge(),
+                h.work_task,
+                h.target,
+                &packet.proof,
+                progress,
+            )
+            .map_err(|error| match error {
+                pon_work::VerificationError::Relation(error) => {
+                    Error::from(format!("WORK:{error:?}"))
+                }
+                pon_work::VerificationError::Cancelled(error) => error,
+            })?;
+        Ok(Self {
+            packet,
+            work,
+            owner_permit: None,
+        })
+    }
+
     pub(crate) fn verify_with_progress(
         packet: Packet,
         progress: &mut impl FnMut(pon_work::VerificationProgress) -> Result<()>,
@@ -646,6 +690,8 @@ pub struct Node {
     // Source-derived DDL grammar only; actual SQL/schema is re-read on use.
     // Ordinary full-JSON owners retain no additional schema cache.
     shared_storage_schema: Option<BTreeMap<String, String>>,
+    // Frozen source grammar, not an on-disk authorization verdict.
+    pq_storage_schema: Option<BTreeMap<String, String>>,
     growth_epoch: Option<growth::Epoch>,
     #[cfg(test)]
     // Research reader's immutable source DDL, never a cached on-disk verdict.
@@ -671,6 +717,7 @@ pub struct Node {
     owner_policy: Option<OwnerPolicy>,
     mining_owner: Option<operator_mining_owner::MiningOwner>,
     continuous_owner: Option<operator_continuous_owner::ContinuousOwner>,
+    history_effect_owner: Option<history_effect_v6::Owner>,
     // One volatile budget domain per actual open Node owner (continuous uses its
     // already persistent owner CPU). A listener or local work caller may bind
     // exactly once; a different domain cannot replace or reset that binding.
@@ -680,12 +727,22 @@ pub struct Node {
     // already owner-locked Node; the durable marker survives process exit.
     public_service_epoch_listeners: usize,
     public_service_epoch_unknown: bool,
+    history_graph_resource_binding: Option<Vec<u8>>,
+    history_graph_resource_pending: Option<history_graph_resource_v1::KnownPendingClose>,
+    history_graph_resource_counters: crate::ingress::history_graph_resource_v1::SharedCounters,
+    #[cfg(test)]
+    pub(crate) history_graph_resource_before_commit_hook:
+        Option<std::sync::Arc<dyn Fn() + Send + Sync>>,
+    #[cfg(test)]
+    pub(crate) history_graph_resource_cpu_receipts:
+        Vec<crate::ingress::public_v3::ServiceMutationCpuSettlement>,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum StateBackend {
     Legacy,
     AuthenticatedV1,
     PermanentAccountGrowthV2,
+    HistoryEffectV6,
 }
 impl StateBackend {
     fn ddl(self) -> String {
@@ -693,9 +750,55 @@ impl StateBackend {
             Self::Legacy => ddl(),
             Self::AuthenticatedV1 => format!("{}{}", ddl(), native_authenticated::DDL),
             Self::PermanentAccountGrowthV2 => format!("{}{}", ddl(), growth::DDL),
+            Self::HistoryEffectV6 => format!("{}{}", ddl(), history_effect_v6::DDL),
+        }
+    }
+    fn selected_ddl(self, settings: &Settings) -> String {
+        if settings.is_native_pq_v5() {
+            pq_tasks_v5::ddl(self.ddl())
+        } else if settings.is_native_pq_v4() {
+            pq_tasks_v4::ddl(self.ddl())
+        } else if settings.is_native_pq_v3() {
+            pq_quota_v3::ddl(self.ddl())
+        } else if settings.is_native_pq_v2() {
+            pq_accounts_v2::ddl(self.ddl())
+        } else if settings.is_native_pq_v1() {
+            pq_native_v1::ddl(self.ddl())
+        } else {
+            self.ddl()
         }
     }
     fn selected_schema_id(self, settings: &Settings) -> Hash {
+        if settings.is_native_pq_v5() {
+            return hash(
+                b"native-pq-task-branch-schema-v5",
+                &[self.selected_ddl(settings).as_bytes()],
+            );
+        }
+        if settings.is_native_pq_v4() {
+            return hash(
+                b"native-pq-task-branch-schema-v4",
+                &[self.selected_ddl(settings).as_bytes()],
+            );
+        }
+        if settings.is_native_pq_v3() {
+            return hash(
+                b"native-pq-quota-branch-schema-v3",
+                &[self.selected_ddl(settings).as_bytes()],
+            );
+        }
+        if settings.is_native_pq_v2() {
+            return hash(
+                b"native-pq-accounts-branch-schema-v2",
+                &[self.selected_ddl(settings).as_bytes()],
+            );
+        }
+        if settings.is_native_pq_v1() {
+            return hash(
+                b"native-pq-transfer-branch-schema-v1",
+                &[self.selected_ddl(settings).as_bytes()],
+            );
+        }
         if growth_profile_v2::enabled(&settings.app) {
             hash(
                 b"native-growth-reference-branch-schema-v2",
@@ -710,19 +813,23 @@ impl StateBackend {
             Self::Legacy => b"native-branch-schema-v2",
             Self::AuthenticatedV1 => b"native-authenticated-branch-schema-v1",
             Self::PermanentAccountGrowthV2 => b"native-permanent-account-growth-schema-v2",
+            Self::HistoryEffectV6 => b"native-history-effect-schema-v6",
         };
         hash(domain, &[self.ddl().as_bytes()])
     }
 }
 struct NativeStoreOpening {
+    pq_explicit: Option<crate::native_packet::Profile>,
     state_backend: StateBackend,
     growth_observation_only: bool,
     native_io: Option<NativeIoLease>,
 }
-struct NativeOwners {
+struct NativeOwners<'a> {
     policy: Option<OwnerPolicy>,
     mining: Option<operator_mining_owner::MiningOwner>,
     continuous: Option<operator_continuous_owner::ContinuousOwner>,
+    history_effect: Option<history_effect_v6::Owner>,
+    startup_material: Option<history_effect_v6::StartupMaterial<'a>>,
 }
 struct OwnerPolicy {
     pool_policies: Vec<std::sync::Arc<crate::operator_task_policy::pool::VerifiedPoolPolicy>>,
@@ -929,8 +1036,11 @@ impl Node {
                 policy: None,
                 mining: None,
                 continuous: None,
+                history_effect: None,
+                startup_material: None,
             },
             NativeStoreOpening {
+                pq_explicit: None,
                 state_backend: StateBackend::Legacy,
                 growth_observation_only: false,
                 native_io: Some(native_io),
@@ -977,8 +1087,11 @@ impl Node {
                 policy: None,
                 mining: None,
                 continuous: None,
+                history_effect: None,
+                startup_material: None,
             },
             NativeStoreOpening {
+                pq_explicit: None,
                 state_backend: StateBackend::AuthenticatedV1,
                 growth_observation_only: false,
                 native_io: Some(native_io),
@@ -1021,6 +1134,8 @@ impl Node {
                 policy: None,
                 mining: None,
                 continuous: None,
+                history_effect: None,
+                startup_material: None,
             },
             StateBackend::AuthenticatedV1,
             false,
@@ -1155,6 +1270,8 @@ impl Node {
                 policy: owner_policy,
                 mining: mining_owner,
                 continuous: continuous_owner,
+                history_effect: None,
+                startup_material: None,
             },
             StateBackend::Legacy,
             false,
@@ -1165,7 +1282,7 @@ impl Node {
         settings: Settings,
         workers: usize,
         hook: Option<&mut Hook<'_>>,
-        owners: NativeOwners,
+        owners: NativeOwners<'_>,
         state_backend: StateBackend,
         growth_observation_only: bool,
     ) -> Result<Self> {
@@ -1176,6 +1293,7 @@ impl Node {
             hook,
             owners,
             NativeStoreOpening {
+                pq_explicit: None,
                 state_backend,
                 growth_observation_only,
                 native_io: None,
@@ -1187,14 +1305,30 @@ impl Node {
         settings: Settings,
         workers: usize,
         mut hook: Option<&mut Hook<'_>>,
-        owners: NativeOwners,
+        owners: NativeOwners<'_>,
         opening: NativeStoreOpening,
     ) -> Result<Self> {
         let NativeStoreOpening {
+            pq_explicit,
             state_backend,
             growth_observation_only,
             native_io,
         } = opening;
+        ensure(
+            settings.packet_profile()
+                == pq_explicit.unwrap_or(crate::native_packet::Profile::Legacy),
+            "PQ_EXPLICIT_CONSTRUCTOR_REQUIRED",
+        )?;
+        ensure(
+            pq_explicit.is_none()
+                || (state_backend == StateBackend::AuthenticatedV1
+                    && native_io.is_none()
+                    && !growth_observation_only
+                    && owners.policy.is_none()
+                    && owners.mining.is_none()
+                    && owners.continuous.is_none()),
+            "PQ_OPEN_PROFILE",
+        )?;
         if let Some(io) = &native_io {
             io.check().map_err(|e| Error::from(e.to_string()))?;
             ensure(path == io.directory(), "NATIVE_IO_HELD_ROOT")?;
@@ -1219,6 +1353,8 @@ impl Node {
             policy: owner_policy,
             mining: mining_owner,
             continuous: continuous_owner,
+            history_effect: history_effect_owner,
+            startup_material,
         } = owners;
         if growth_profile_v2::enabled(&settings.app) {
             ensure(
@@ -1226,7 +1362,10 @@ impl Node {
                 "GROWTH_REFERENCE_BACKEND",
             )?;
             ensure(
-                owner_policy.is_none() && mining_owner.is_none() && continuous_owner.is_none(),
+                owner_policy.is_none()
+                    && mining_owner.is_none()
+                    && continuous_owner.is_none()
+                    && history_effect_owner.is_none(),
                 "GROWTH_REFERENCE_OWNER",
             )?;
         }
@@ -1235,6 +1374,7 @@ impl Node {
             usize::from(owner_policy.is_some())
                 + usize::from(mining_owner.is_some())
                 + usize::from(continuous_owner.is_some())
+                + usize::from(history_effect_owner.is_some())
                 <= 1,
             "OWNER_MODE_AMBIGUOUS",
         )?;
@@ -1242,9 +1382,42 @@ impl Node {
             .as_ref()
             .map(|p| p.required_marker.as_slice())
             .or_else(|| mining_owner.as_ref().map(|p| p.marker.as_slice()))
-            .or_else(|| continuous_owner.as_ref().map(|p| p.marker.as_slice()));
+            .or_else(|| continuous_owner.as_ref().map(|p| p.marker.as_slice()))
+            .or_else(|| history_effect_owner.as_ref().map(|p| p.marker.as_slice()));
+        ensure(
+            (state_backend == StateBackend::HistoryEffectV6) == history_effect_owner.is_some(),
+            "HISTORY_V6_OWNER_REQUIRED",
+        )?;
+        if let Some(owner) = &history_effect_owner {
+            owner.checkpoint()?;
+        }
         ensure([1, 2, 4, 8].contains(&workers), "WORKERS")?;
-        settings.replay_checkpoint_tile_material()?;
+        let startup_progress = startup_material.as_ref().map(|material| material.progress);
+        if let Some(material) = startup_material {
+            let history_owner = history_effect_owner
+                .as_ref()
+                .ok_or("HISTORY_V6_OWNER_REQUIRED")?;
+            history_owner.consume_startup_material(material.seal, &settings, material.progress)?;
+        } else {
+            ensure(
+                history_effect_owner.is_none(),
+                "HISTORY_V6_STARTUP_SEAL_REQUIRED",
+            )?;
+            settings.replay_checkpoint_tile_material()?;
+        }
+        let history_owner = history_effect_owner.clone();
+        let startup_check = |stage| -> Result<()> {
+            if let Some(owner) = &history_owner {
+                owner.checkpoint()?;
+            }
+            if let Some(progress) = startup_progress {
+                progress(stage)?;
+            }
+            if let Some(owner) = &history_owner {
+                owner.checkpoint()?;
+            }
+            Ok(())
+        };
         if !path.exists() {
             fs::create_dir_all(path)?;
             fs::set_permissions(path, fs::Permissions::from_mode(0o700))?;
@@ -1290,9 +1463,12 @@ impl Node {
         owner
             .try_lock_exclusive()
             .map_err(|_| Error::from("WRITER_BUSY"))?;
+        startup_check(history_effect_v6::StartupProgress::NativeInitialization(
+            "init-locked",
+        ))?;
         let storage_layout =
             shared_snapshot::Layout::for_opening(state_backend, native_io.as_ref());
-        let ddl = storage_layout.ddl(state_backend.ddl());
+        let ddl = storage_layout.ddl(state_backend.selected_ddl(&settings));
         let schema_id = storage_layout.schema_id(state_backend.selected_schema_id(&settings));
         let expected = canonical(
             &serde_json::json!({"schema":hex::encode(schema_id),"parameters":hex::encode(settings.parameters()),"genesis":hex::encode(settings.genesis())}),
@@ -1317,6 +1493,9 @@ impl Node {
             intent.sync_all()?;
             sync_dir(&directory)?;
             cut(&mut hook, "init-intent")?;
+            startup_check(history_effect_v6::StartupProgress::NativeInitialization(
+                "init-intent",
+            ))?;
         }
         let intent = marker.exists();
         if intent {
@@ -1385,6 +1564,34 @@ impl Node {
             !growth_observation_only || initialized,
             "GROWTH_PACKET_STATUS_EXISTING_STORE_REQUIRED",
         )?;
+        if state_backend == StateBackend::HistoryEffectV6 {
+            // Fresh V6 stores deliberately require a private database file.
+            // SQLite's default create mode otherwise follows the ambient
+            // umask (0644 was observed). Never relax/chmod an existing file or
+            // silently migrate an older namespace through this constructor.
+            let protected = OpenOptions::new()
+                .read(true)
+                .write(true)
+                .create(true)
+                .truncate(false)
+                .mode(0o600)
+                .custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC)
+                .open(&dbpath)?;
+            let metadata = protected.metadata()?;
+            ensure(
+                metadata.is_file()
+                    && metadata.nlink() == 1
+                    && metadata.uid() == rustix::process::geteuid().as_raw()
+                    && metadata.mode() & 0o077 == 0,
+                "HISTORY_V6_NATIVE_FILE",
+            )?;
+            let actual = (metadata.dev(), metadata.ino());
+            ensure(
+                prior_inode.is_none_or(|previous| previous == actual),
+                "NAMESPACE_CHANGED",
+            )?;
+            prior_inode = Some(actual);
+        }
         let mut db = if growth_observation_only {
             native_connection(
                 &native_io,
@@ -1428,11 +1635,17 @@ impl Node {
             let tx = db.transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
             tx.execute_batch(&ddl)?;
             cut(&mut hook, "init-schema")?;
+            startup_check(history_effect_v6::StartupProgress::NativeInitialization(
+                "init-schema",
+            ))?;
             for (key, value) in [
                 ("schema", schema_id),
                 ("parameters", settings.parameters()),
                 ("genesis", settings.genesis()),
             ] {
+                startup_check(history_effect_v6::StartupProgress::NativeInitialization(
+                    "init-metadata",
+                ))?;
                 tx.execute(
                     "INSERT INTO metadata VALUES(?,?)",
                     params![key, value.as_slice()],
@@ -1463,6 +1676,9 @@ impl Node {
             )?;
             if state_backend != StateBackend::PermanentAccountGrowthV2 {
                 for (key, value) in &settings.initial {
+                    startup_check(history_effect_v6::StartupProgress::NativeInitialization(
+                        "init-kv",
+                    ))?;
                     tx.execute(
                         "INSERT INTO kv VALUES(0,?,?)",
                         params![key, canonical(value)?],
@@ -1479,12 +1695,21 @@ impl Node {
                 native_authenticated::seed(&tx, &settings)?;
             }
             cut(&mut hook, "init-before-commit")?;
+            startup_check(history_effect_v6::StartupProgress::NativeInitialization(
+                "init-before-commit",
+            ))?;
             tx.commit()?;
             cut(&mut hook, "init-committed")?;
+            startup_check(history_effect_v6::StartupProgress::NativeInitialization(
+                "init-committed",
+            ))?;
         }
         if intent {
             fs::remove_file(marker)?;
             sync_dir(&directory)?;
+            startup_check(history_effect_v6::StartupProgress::NativeInitialization(
+                "init-published",
+            ))?;
         }
         let mut node = Self {
             db,
@@ -1499,6 +1724,7 @@ impl Node {
             state_backend,
             storage_layout,
             shared_storage_schema: storage_layout.is_shared().then(|| expected_schema.clone()),
+            pq_storage_schema: pq_explicit.map(|_| expected_schema.clone()),
             growth_epoch: None,
             #[cfg(test)]
             expected_schema,
@@ -1516,9 +1742,17 @@ impl Node {
             owner_policy,
             mining_owner,
             continuous_owner,
+            history_effect_owner,
             public_service_cpu: None,
             public_service_epoch_listeners: 0,
             public_service_epoch_unknown: false,
+            history_graph_resource_binding: None,
+            history_graph_resource_pending: None,
+            history_graph_resource_counters: Default::default(),
+            #[cfg(test)]
+            history_graph_resource_before_commit_hook: None,
+            #[cfg(test)]
+            history_graph_resource_cpu_receipts: Vec::new(),
         };
         if node.state_backend == StateBackend::PermanentAccountGrowthV2 {
             // Complete-State reference budget records cannot be silently ignored
@@ -1529,9 +1763,11 @@ impl Node {
             // execution never clones this bootstrap State or the full account set.
             return Ok(node);
         }
-        node.read_active()?;
+        node.read_active_with_progress(&mut || {
+            startup_check(history_effect_v6::StartupProgress::FirstState)
+        })?;
         if node.state_backend == StateBackend::AuthenticatedV1 {
-            native_authenticated::verify_history_with_cache(
+            native_authenticated::verify_history_with_native_progress(
                 &node.db,
                 &node.settings,
                 node.active()?.0,
@@ -1546,12 +1782,15 @@ impl Node {
         node.validate_authenticated_outbox()?;
         node.validate_native_budget_records_v1()?;
         node.recover()?;
-        node.read_active()?;
+        node.read_active_with_progress(&mut || {
+            startup_check(history_effect_v6::StartupProgress::SecondState)
+        })?;
         crate::ancestry_index::validate_tip(&node.db, node.ancestry_context(), node.active()?.0)?;
         Ok(node)
     }
     fn ancestry_context(&self) -> crate::ancestry_index::Context {
         crate::ancestry_index::Context {
+            pq_packet: self.settings.packet_profile(),
             network: self.settings.network(),
             parameters: self.settings.parameters(),
             genesis: self.settings.genesis(),
@@ -2141,6 +2380,9 @@ impl Node {
         ))
     }
     fn namespace(&self) -> Result<()> {
+        if let Some(owner) = &self.history_effect_owner {
+            owner.checkpoint()?;
+        }
         if let Some(snapshot) = &self.growth_observer_snapshot {
             snapshot.check()?;
         }
@@ -2179,6 +2421,18 @@ impl Node {
         )
     }
     fn storage_context(&self) -> Result<()> {
+        if let Some(expected) = &self.pq_storage_schema {
+            let temp_objects: u64 =
+                self.db
+                    .query_row("SELECT COUNT(*) FROM sqlite_temp_master", [], |row| {
+                        row.get(0)
+                    })?;
+            ensure(
+                temp_objects == 0 && schema(&self.db)? == *expected,
+                "PQ_SCHEMA",
+            )
+            .map_err(Error::local_integrity)?;
+        }
         if self.storage_layout.is_shared() {
             shared_snapshot::check_authoritative_namespace(&self.db)?;
         }
@@ -2237,11 +2491,17 @@ impl Node {
         &self,
         id: Hash,
         state: &State,
-        progress: &mut dyn FnMut() -> Result<()>,
+        progress: &mut dyn NativeProgress,
     ) -> Result<()> {
         let record = self.record(id).map_err(Error::local_integrity)?;
         continuity_v1::check_state(state, record.height, &self.settings.app)
             .map_err(|error| Error::from(error).local_integrity())?;
+        trnm_mvcc_fee::pon_executor::pq_native_v1::validate_state(state, &self.settings.app)
+            .map_err(|error| Error::from(error).local_integrity())?;
+        if self.settings.is_native_pq_v4() || self.settings.is_native_pq_v5() {
+            trnm_mvcc_fee::pon_executor::pq_accounts_v2::validate_state(state, &self.settings.app)
+                .map_err(|error| Error::from(error).local_integrity())?;
+        }
         // The native complete-state commitment may already contain this exact
         // full root. Compare all current State bytes before arithmetic reuse;
         // a miss retains the original root calculation and error order. Actual
@@ -2254,7 +2514,7 @@ impl Node {
         };
         ensure(actual_root == record.root, "ROOT").map_err(Error::local_integrity)?;
         if self.state_backend == StateBackend::AuthenticatedV1 {
-            native_authenticated::verify_state_with_cache(
+            native_authenticated::verify_state_with_native_progress(
                 &self.db,
                 &self.settings,
                 id,
@@ -2273,9 +2533,9 @@ impl Node {
     }
     fn check_active_before_commit_with_progress(
         &self,
-        progress: &mut dyn FnMut() -> Result<()>,
+        progress: &mut dyn NativeProgress,
     ) -> Result<()> {
-        progress()?;
+        progress.checkpoint()?;
         self.namespace()?;
         self.storage_context()?;
         let count: u64 = self
@@ -2289,7 +2549,7 @@ impl Node {
         crate::ancestry_index::validate_tip(&self.db, self.ancestry_context(), selected.0)
             .map_err(Error::local_integrity)?;
         if self.state_backend == StateBackend::AuthenticatedV1 {
-            native_authenticated::verify_history_with_cache(
+            native_authenticated::verify_history_with_native_progress(
                 &self.db,
                 &self.settings,
                 selected.0,
@@ -2377,9 +2637,9 @@ impl Node {
     fn slot_state_with_progress(
         &self,
         slot: u64,
-        progress: &mut dyn FnMut() -> Result<()>,
+        progress: &mut dyn NativeProgress,
     ) -> Result<State> {
-        progress()?;
+        progress.checkpoint()?;
         // Validate stored dimensions before copying a cell into Rust. SQL types
         // are retained: TEXT is not a value BLOB, and a BLOB is not a key TEXT.
         let mut stmt = self.db.prepare(
@@ -2398,7 +2658,7 @@ impl Node {
             .map_err(|error| Error::from(error).local_integrity())?
         {
             if state.len().is_multiple_of(256) {
-                progress()?;
+                progress.checkpoint()?;
             }
             let key: String = (|| -> Result<_> {
                 let key_len: i64 = row.get(2)?;
@@ -2438,7 +2698,7 @@ impl Node {
             ensure(canonical_bytes == bytes, "STATE_BYTES").map_err(Error::local_integrity)?;
             state.insert(key, value);
         }
-        progress()?;
+        progress.checkpoint()?;
         Ok(state)
     }
     fn invalidate_commitment(&self) {
@@ -2463,6 +2723,18 @@ impl Node {
         expected: Hash,
         prior: Option<&CheckedCommitment>,
     ) -> Result<PreparedCommitment> {
+        if self.settings.is_native_pq_v1() {
+            trnm_mvcc_fee::pon_executor::pq_native_v1::validate_state(actual, &self.settings.app)
+                .map_err(|error| Error::from(error).local_integrity())?;
+        }
+        if self.settings.is_native_pq_v2()
+            || self.settings.is_native_pq_v3()
+            || self.settings.is_native_pq_v4()
+            || self.settings.is_native_pq_v5()
+        {
+            trnm_mvcc_fee::pon_executor::pq_accounts_v2::validate_state(actual, &self.settings.app)
+                .map_err(|error| Error::from(error).local_integrity())?;
+        }
         let result = if growth_profile_v2::enabled(&self.settings.app) {
             pon_commitment::growth_reference_snapshot(actual, Some(expected), &self.settings.app)
         } else {
@@ -2514,6 +2786,7 @@ impl Node {
             snapshot,
         });
     }
+    #[cfg(test)]
     fn execute_derived(
         &self,
         actual: &State,
@@ -2526,6 +2799,7 @@ impl Node {
         self.execute_derived_with_progress(
             actual,
             ExecutionRequest {
+                timestamp: None,
                 transactions,
                 height,
                 miner,
@@ -2665,6 +2939,7 @@ impl Node {
         drop(parent_measurement);
         *self.commitment_observation.borrow_mut() = Some(observation);
         let request = || ExecutionRequest {
+            timestamp: block.timestamp,
             transactions: block.transactions,
             height: block.height,
             miner: block.miner,
@@ -2743,13 +3018,19 @@ impl Node {
             self.state_backend != StateBackend::PermanentAccountGrowthV2,
             "GROWTH_COMPLETE_STATE_UNAVAILABLE",
         )?;
-        self.read_active_with_progress(&mut || Ok(()))
+        self.read_active_with_native_progress(&mut || Ok(()))
     }
     /// Rechecks actual KV bytes and root, with cancellation at most 256 rows apart.
     /// Root arithmetic is still bounded by the state limit and checked as one stage.
     pub fn read_active_with_progress(
         &self,
         progress: &mut dyn FnMut() -> Result<()>,
+    ) -> Result<(Hash, u64, State)> {
+        self.read_active_with_native_progress(&mut || progress())
+    }
+    pub(crate) fn read_active_with_native_progress(
+        &self,
+        progress: &mut dyn NativeProgress,
     ) -> Result<(Hash, u64, State)> {
         if self.storage_layout.is_shared() {
             return shared_snapshot::in_read_snapshot(&self.db, || {
@@ -2772,7 +3053,7 @@ impl Node {
     }
     fn read_active_in_current_snapshot(
         &self,
-        progress: &mut dyn FnMut() -> Result<()>,
+        progress: &mut dyn NativeProgress,
     ) -> Result<(Hash, u64, State)> {
         ensure(
             self.state_backend != StateBackend::PermanentAccountGrowthV2,
@@ -2783,7 +3064,7 @@ impl Node {
                 .history
                 .observe(native_authenticated::HistoryStage::ReadActive)
         });
-        progress()?;
+        progress.checkpoint()?;
         self.namespace()?;
         if self.storage_layout.is_shared() {
             self.storage_context()?;
@@ -2798,14 +3079,14 @@ impl Node {
         )
         .map_err(|error| Error::from(error).local_integrity())?;
         let prior = self.cached_parent(tip)?;
-        progress()?;
+        progress.checkpoint()?;
         let prepared = self.checked_commitment(
             &state,
             self.record(tip).map_err(Error::local_integrity)?.root,
             prior.as_ref(),
         )?;
         if self.state_backend == StateBackend::AuthenticatedV1 {
-            native_authenticated::verify_state_with_cache(
+            native_authenticated::verify_state_with_native_progress(
                 &self.db,
                 &self.settings,
                 tip,
@@ -2814,7 +3095,7 @@ impl Node {
                 Some(&self.authenticated_arithmetic),
             )?;
         }
-        progress()?;
+        progress.checkpoint()?;
         ensure(
             self.active()? == (tip, generation) && self.slot()? == slot,
             "STALE_VIEW",
@@ -2845,7 +3126,10 @@ impl Node {
                 error.local_integrity()
             }
         })?;
-        let packet = Packet::decode(&raw).map_err(Error::local_integrity)?;
+        let packet = self
+            .settings
+            .decode_packet(&raw)
+            .map_err(Error::local_integrity)?;
         ensure(
             packet.id()? == id
                 && Some(packet.header.parent) == row.parent
@@ -2865,7 +3149,13 @@ impl Node {
         )?;
         self.count_header_query();
         let projection = statement
-            .query_row(params![HEADER_BYTES, id.as_slice()], HeaderProjection::read)
+            .query_row(
+                params![
+                    crate::native_packet::header_prefix_bytes(self.settings.packet_profile()),
+                    id.as_slice()
+                ],
+                HeaderProjection::read,
+            )
             .optional()?
             .ok_or("UNKNOWN_PARENT")?;
         self.check_header_projection(id, projection)
@@ -2890,7 +3180,9 @@ impl Node {
                 root: bytes32(projection.root)?,
             };
             ensure(
-                (HEADER_BYTES + 2 + pon_work::PROOF_BYTES..=1_048_576)
+                (crate::native_packet::header_prefix_bytes(self.settings.packet_profile())
+                    + 2
+                    + pon_work::PROOF_BYTES..=1_048_576)
                     .contains(&projection.length.ok_or("GENESIS_HAS_NO_PACKET")?),
                 "PACKET_LIMIT",
             )?;
@@ -2901,7 +3193,10 @@ impl Node {
                 .header_trace_bytes
                 .saturating_add((prefix.len() + trace.len()) as u64);
             self.history_read_counters.set(counters);
-            let header = Header::decode(&prefix).map_err(|_| Error::from("HEADER_CODEC"))?;
+            let header = crate::native_packet::decode_header_projection(
+                &prefix,
+                self.settings.packet_profile(),
+            )?;
             let trace = bytes32(trace)?;
             ensure(
                 header.block_id(trace) == id
@@ -2977,7 +3272,7 @@ impl Node {
             start.as_slice(),
             self.settings.genesis().as_slice(),
             maximum,
-            HEADER_BYTES,
+            crate::native_packet::header_prefix_bytes(self.settings.packet_profile()),
         ])?;
         let mut current = start;
         let mut checked = 0_u64;
@@ -3045,12 +3340,12 @@ impl Node {
     fn delta_rows_with_progress(
         &self,
         id: Hash,
-        progress: &mut dyn FnMut() -> Result<()>,
+        progress: &mut dyn NativeProgress,
     ) -> Result<Vec<Delta>> {
         if self.state_backend == StateBackend::AuthenticatedV1 {
             return native_authenticated::deltas_with_progress(&self.db, id, progress);
         }
-        progress()?;
+        progress.checkpoint()?;
         let mut stmt = self
             .db
             .prepare("SELECT key,before,after FROM deltas WHERE block=? ORDER BY key")?;
@@ -3059,10 +3354,10 @@ impl Node {
         for row in rows {
             out.push(row?);
             if out.len().is_multiple_of(256) {
-                progress()?;
+                progress.checkpoint()?;
             }
         }
-        progress()?;
+        progress.checkpoint()?;
         Ok(out)
     }
     pub fn state_at(&self, tip: Hash) -> Result<State> {
@@ -3071,7 +3366,7 @@ impl Node {
     fn state_at_with_progress(
         &self,
         tip: Hash,
-        progress: &mut dyn FnMut() -> Result<()>,
+        progress: &mut dyn NativeProgress,
     ) -> Result<State> {
         if self.storage_layout.is_shared() {
             return shared_snapshot::in_read_snapshot(&self.db, || {
@@ -3098,7 +3393,7 @@ impl Node {
     fn state_at_in_current_snapshot(
         &self,
         tip: Hash,
-        progress: &mut dyn FnMut() -> Result<()>,
+        progress: &mut dyn NativeProgress,
         mut shared_reads: Option<&mut shared_snapshot::ReadSet>,
     ) -> Result<State> {
         ensure(
@@ -3110,15 +3405,15 @@ impl Node {
                 .history
                 .observe(native_authenticated::HistoryStage::StateAt)
         });
-        progress()?;
+        progress.checkpoint()?;
         if tip == self.active()?.0 {
-            return Ok(self.read_active_with_progress(progress)?.2);
+            return Ok(self.read_active_with_native_progress(progress)?.2);
         }
         let mut path = tempfile::tempfile()?;
         let mut count = 0u64;
         let mut cur = tip;
         let (mut state, mut commitment): (State, Option<CheckedCommitment>) = loop {
-            progress()?;
+            progress.checkpoint()?;
             let row = self.record(cur)?;
             let snapshot = if self.storage_layout.is_shared() && cur != self.settings.genesis() {
                 let state = shared_snapshot::load(
@@ -3163,7 +3458,7 @@ impl Node {
                     .checked_historical_commitment(cur, &state, row.root, None)?
                     .snapshot;
                 if self.state_backend == StateBackend::AuthenticatedV1 {
-                    native_authenticated::verify_state_with_cache(
+                    native_authenticated::verify_state_with_native_progress(
                         &self.db,
                         &self.settings,
                         cur,
@@ -3179,7 +3474,7 @@ impl Node {
             cur = self.parent(cur)?;
         };
         for i in (0..count).rev() {
-            progress()?;
+            progress.checkpoint()?;
             path.seek(SeekFrom::Start(i.checked_mul(32).ok_or("ANCESTRY_LIMIT")?))?;
             let mut id = [0; 32];
             path.read_exact(&mut id)?;
@@ -3189,7 +3484,7 @@ impl Node {
                 .enumerate()
             {
                 if index.is_multiple_of(256) {
-                    progress()?;
+                    progress.checkpoint()?;
                 }
                 ensure(
                     state.get(&key).map(canonical).transpose()? == before,
@@ -3217,7 +3512,7 @@ impl Node {
             continuity_v1::check_state(&state, self.record(id)?.height, &self.settings.app)
                 .map_err(|error| Error::from(error).local_integrity())?;
             if self.state_backend == StateBackend::AuthenticatedV1 {
-                native_authenticated::verify_state_with_cache(
+                native_authenticated::verify_state_with_native_progress(
                     &self.db,
                     &self.settings,
                     id,
@@ -3227,7 +3522,7 @@ impl Node {
                 )?;
             }
         }
-        progress()?;
+        progress.checkpoint()?;
         Ok(state)
     }
     fn recent(&self, mut parent: Hash) -> Result<Vec<(u64, Hash)>> {
@@ -3283,9 +3578,9 @@ impl Node {
         &self,
         packet: &Packet,
         observed_now: u64,
-        progress: &mut dyn FnMut() -> Result<()>,
+        progress: &mut dyn NativeProgress,
     ) -> Result<Option<Hash>> {
-        progress()?;
+        progress.checkpoint()?;
         self.namespace()?;
         let pending: Option<Vec<u8>> = self
             .db
@@ -3310,7 +3605,9 @@ impl Node {
             "NETWORK",
         )?;
         ensure(
-            self.packet(id).map_err(Error::local_integrity)?.encode()? == packet.encode()?,
+            self.settings
+                .encode_packet(&self.packet(id).map_err(Error::local_integrity)?)?
+                == self.settings.encode_packet(packet)?,
             "DUPLICATE_CONTENT",
         )?;
         ensure(
@@ -3318,7 +3615,7 @@ impl Node {
                 <= observed_now as u128 + self.settings.limit("future_skew_seconds")? as u128,
             "TIME_DEFERRED",
         )?;
-        progress()?;
+        progress.checkpoint()?;
         Ok(Some(id))
     }
     pub(crate) fn check_admission_context(
@@ -3326,13 +3623,21 @@ impl Node {
         packet: &Packet,
         observed_now: u64,
     ) -> Result<Option<Hash>> {
-        self.check_admission_context_with_progress(packet, observed_now, &mut || Ok(()))
+        self.check_admission_context_with_native_progress(packet, observed_now, &mut || Ok(()))
     }
     pub(crate) fn check_admission_context_with_progress(
         &self,
         packet: &Packet,
         observed_now: u64,
         progress: &mut dyn FnMut() -> Result<()>,
+    ) -> Result<Option<Hash>> {
+        self.check_admission_context_with_native_progress(packet, observed_now, &mut || progress())
+    }
+    pub(crate) fn check_admission_context_with_native_progress(
+        &self,
+        packet: &Packet,
+        observed_now: u64,
+        progress: &mut dyn NativeProgress,
     ) -> Result<Option<Hash>> {
         Ok(self
             .check_admission_context_for_permit(packet, observed_now, None, progress)?
@@ -3345,13 +3650,13 @@ impl Node {
         &self,
         packet: &Packet,
         observed_now: u64,
-        progress: &mut dyn FnMut() -> Result<()>,
+        progress: &mut dyn NativeProgress,
     ) -> Result<Option<Hash>> {
         let task_before_work = self.owner_policy.is_some()
             || self.continuous_owner.is_some()
             || self.mining_owner.is_some();
         if task_before_work {
-            self.check_admission_context_with_progress(packet, observed_now, progress)
+            self.check_admission_context_with_native_progress(packet, observed_now, progress)
         } else {
             self.check_admission_header_context(packet, observed_now, None)
         }
@@ -3361,7 +3666,7 @@ impl Node {
         packet: &Packet,
         observed_now: u64,
         reserved: Option<&OwnerPacketPermit>,
-        progress: &mut dyn FnMut() -> Result<()>,
+        progress: &mut dyn NativeProgress,
     ) -> Result<CheckedAdmissionContext> {
         if let Some(id) = self.check_admission_header_context(packet, observed_now, reserved)? {
             return Ok(CheckedAdmissionContext::Existing(id));
@@ -3379,7 +3684,7 @@ impl Node {
         // Bounded full-packet identity precedes State/lease/context/Work work.
         self.precheck_owner_packet(packet)?;
         self.ready()?;
-        let bytes = packet.encode()?;
+        let bytes = self.settings.encode_packet(packet)?;
         let h = &packet.header;
         let id = packet.id()?;
         ensure(
@@ -3463,7 +3768,7 @@ impl Node {
     fn check_admission_parent(
         &self,
         packet: &Packet,
-        progress: &mut dyn FnMut() -> Result<()>,
+        progress: &mut dyn NativeProgress,
     ) -> Result<CheckedAdmissionParent> {
         let h = &packet.header;
         // The Node owner excludes cooperating writers. These inexpensive SQLite
@@ -3516,6 +3821,32 @@ impl Node {
         let checked = self.attach_owner_work(WorkCheckedPacket::verify(packet.clone())?, permit)?;
         self.admit_work_checked(checked, observed_now)
     }
+    /// Only the original Node checks current parent/task/permit/state/clock.
+    /// The caller may refuse LOCAL resource continuation at mathematical W1
+    /// checkpoints; cancellation must never masquerade as invalid work.
+    /// Production History uses the metered owner path; this helper remains
+    /// only for the original native resource-cancellation regressions.
+    #[cfg(test)]
+    pub(crate) fn admit_with_work_progress(
+        &mut self,
+        packet: &Packet,
+        observed_now: u64,
+        progress: &mut impl FnMut(pon_work::VerificationProgress) -> Result<()>,
+        execution_progress: &(impl Fn(ExecutionProgress) -> Result<()> + Sync),
+    ) -> Result<Hash> {
+        if let Some(id) = self.check_admission_context(packet, observed_now)? {
+            return Ok(id);
+        }
+        let permit = self.begin_owner_work(packet)?;
+        let checked = self.attach_owner_work(
+            WorkCheckedPacket::verify_with_progress(packet.clone(), progress)?,
+            permit,
+        )?;
+        // Keep the SAME caller-local Host owner through M06, authenticated
+        // State and SQL deltas. A resource refusal before durable commit must
+        // roll back the original Node transaction, not become invalid W1.
+        self.admit_work_checked_with_progress(checked, observed_now, execution_progress)
+    }
     fn precheck_owner_packet(&self, packet: &Packet) -> Result<()> {
         ensure(
             self.state_backend != StateBackend::PermanentAccountGrowthV2,
@@ -3535,7 +3866,7 @@ impl Node {
             owner
                 .policy
                 .check_packet(&crate::operator_task_policy::digest_bytes(
-                    &packet.encode()?,
+                    &self.settings.encode_packet(packet)?,
                 ))
                 .map_err(owner_error)?;
         }
@@ -3546,7 +3877,8 @@ impl Node {
             return Ok(None);
         };
         self.precheck_owner_packet(packet)?;
-        let packet_sha256 = crate::operator_task_policy::digest_bytes(&packet.encode()?);
+        let packet_sha256 =
+            crate::operator_task_policy::digest_bytes(&self.settings.encode_packet(packet)?);
         owner
             .policy
             .check_packet(&packet_sha256)
@@ -3623,7 +3955,9 @@ impl Node {
         if let Some(permit) = &permit {
             ensure(
                 permit.facts.packet_sha256
-                    == crate::operator_task_policy::digest_bytes(&checked.packet.encode()?),
+                    == crate::operator_task_policy::digest_bytes(
+                        &self.settings.encode_packet(&checked.packet)?,
+                    ),
                 "OWNER_TASK_PACKET_CHANGED",
             )?;
             permit.progress()?;
@@ -3981,37 +4315,84 @@ impl Node {
         observed_now: u64,
         control: &ExecutionControl<'_, Error>,
     ) -> Result<Hash> {
+        self.admit_work_checked_with_completion(checked, observed_now, control, &|_| Ok(()))
+    }
+    /// Completion priority follows this owner's current parent/task/material
+    /// checks. Pure W1 arithmetic alone does not establish registered work.
+    pub(crate) fn admit_work_checked_with_completion(
+        &mut self,
+        checked: WorkCheckedPacket,
+        observed_now: u64,
+        control: &ExecutionControl<'_, Error>,
+        completion: &dyn Fn(&WorkCheckedPacket) -> Result<()>,
+    ) -> Result<Hash> {
+        self.admit_work_checked_with_native_completion(
+            checked,
+            observed_now,
+            control,
+            &mut |stage, point| {
+                if crate::native_progress::legacy_checkpoint(&point) {
+                    (control.progress)(stage)?;
+                }
+                Ok(())
+            },
+            completion,
+        )
+    }
+    /// Typed native-storage progress is separate from M06 worker accounting.
+    /// Only the explicit ordinary History profile selects the new resource
+    /// schedule; every old caller above retains the original strict adapter.
+    pub(crate) fn admit_work_checked_with_native_control(
+        &mut self,
+        checked: WorkCheckedPacket,
+        observed_now: u64,
+        control: &ExecutionControl<'_, Error>,
+        native: &mut dyn FnMut(ExecutionProgress, NativeProgressPoint) -> Result<()>,
+    ) -> Result<Hash> {
+        self.admit_work_checked_with_native_completion(
+            checked,
+            observed_now,
+            control,
+            native,
+            &|_| Ok(()),
+        )
+    }
+    fn admit_work_checked_with_native_completion(
+        &mut self,
+        checked: WorkCheckedPacket,
+        observed_now: u64,
+        control: &ExecutionControl<'_, Error>,
+        native: &mut dyn FnMut(ExecutionProgress, NativeProgressPoint) -> Result<()>,
+        completion: &dyn Fn(&WorkCheckedPacket) -> Result<()>,
+    ) -> Result<Hash> {
         let _measurement = (self.state_backend == StateBackend::AuthenticatedV1).then(|| {
             self.authenticated_arithmetic
                 .history
                 .observe(native_authenticated::HistoryStage::Admission)
         });
-        let WorkCheckedPacket {
-            packet,
-            work: verified_work,
-            owner_permit,
-        } = checked;
         let checked_parent = match self.check_admission_context_for_permit(
-            &packet,
+            &checked.packet,
             observed_now,
-            owner_permit.as_ref(),
-            &mut || (control.progress)(ExecutionProgress::BeforeParentBinding),
+            checked.owner_permit.as_ref(),
+            &mut TypedNativeProgress(|point| native(ExecutionProgress::BeforeParentBinding, point)),
         )? {
             CheckedAdmissionContext::Existing(id) => return Ok(id),
             CheckedAdmissionContext::Parent(parent) => parent,
         };
         ensure(
-            self.owner_policy.is_some() == owner_permit.is_some(),
+            self.owner_policy.is_some() == checked.owner_permit.is_some(),
             "OWNER_TASK_PERMIT_REQUIRED",
         )?;
-        if let (Some(owner), Some(permit)) = (&self.owner_policy, &owner_permit) {
+        if let (Some(owner), Some(permit)) = (&self.owner_policy, &checked.owner_permit) {
             ensure(
                 std::sync::Arc::ptr_eq(&owner.policy, &permit.policy),
                 "OWNER_TASK_STALE_POLICY",
             )?;
             ensure(
                 permit.facts.packet_sha256
-                    == crate::operator_task_policy::digest_bytes(&packet.encode()?),
+                    == crate::operator_task_policy::digest_bytes(
+                        &self.settings.encode_packet(&checked.packet)?,
+                    ),
                 "OWNER_TASK_PACKET_CHANGED",
             )?;
             owner
@@ -4025,12 +4406,16 @@ impl Node {
                 )
                 .map_err(owner_error)?;
         }
+        let WorkCheckedPacket {
+            packet,
+            work: verified_work,
+            owner_permit,
+        } = &checked;
         // Only immutable permit/atomic flags are consulted while M06 or SQL run.
         // No journal mutex/RefCell guard or filesystem write is held across either.
         let mining_progress = self.mining_progress_snapshot()?;
         let continuous_progress = self.continuous_progress_snapshot()?;
-        let guarded_progress = |point: ExecutionProgress| -> Result<()> {
-            (control.progress)(point)?;
+        let owner_checkpoint = || -> Result<()> {
             if let Some(p) = &continuous_progress {
                 p.check()?;
             }
@@ -4042,10 +4427,22 @@ impl Node {
             }
             Ok(())
         };
+        let guarded_progress = |point: ExecutionProgress| -> Result<()> {
+            (control.progress)(point)?;
+            owner_checkpoint()
+        };
+        let mut guarded_native = |stage, point| -> Result<()> {
+            let original_checkpoint = crate::native_progress::legacy_checkpoint(&point);
+            native(stage, point)?;
+            if original_checkpoint {
+                owner_checkpoint()?;
+            }
+            Ok(())
+        };
         let guarded_control = ExecutionControl::new(&guarded_progress, control.worker_accounting);
         let control = &guarded_control;
         let progress = control.progress;
-        let bytes = packet.encode()?;
+        let bytes = self.settings.encode_packet(packet)?;
         let h = &packet.header;
         let id = packet.id()?;
         let parent = self.record(h.parent)?;
@@ -4058,18 +4455,26 @@ impl Node {
             checked_parent
         } else {
             drop(checked_parent);
-            self.check_admission_parent(&packet, &mut || {
-                progress(ExecutionProgress::BeforeParentBinding)
-            })?
+            self.check_admission_parent(
+                packet,
+                &mut TypedNativeProgress(|point| {
+                    guarded_native(ExecutionProgress::BeforeParentBinding, point)
+                }),
+            )?
         };
         let CheckedAdmissionParent {
             state: prior,
             eligibility: registered_task,
             ..
         } = checked_parent;
+        // Native typed resource fences and the original second SQL epoch check
+        // have completed. M06/output/durable checks still follow; priority never
+        // constitutes a block, State, task or recovery authority.
+        completion(&checked)?;
         let (executed, rejection_scope) = self.execute_derived_core_with_rejection(
             &prior,
             ExecutionRequest {
+                timestamp: Some(h.timestamp),
                 transactions: &packet.transactions,
                 height: h.height,
                 miner: h.miner,
@@ -4199,14 +4604,16 @@ impl Node {
             ensure(retained <= 64, "SNAPSHOT_LIMIT").map_err(Error::local_integrity)?;
         }
         if self.state_backend == StateBackend::AuthenticatedV1 {
-            native_authenticated::publish_with_cache(
+            native_authenticated::publish_with_native_progress(
                 &tx,
                 &self.settings,
                 h.parent,
                 id,
                 &prior,
                 &output.state,
-                &mut || progress(ExecutionProgress::BeforeDurableCommit),
+                &mut TypedNativeProgress(|point| {
+                    guarded_native(ExecutionProgress::BeforeDurableCommit, point)
+                }),
                 Some(&self.authenticated_arithmetic),
             )?;
             if self.storage_layout.is_shared() {
@@ -4215,7 +4622,9 @@ impl Node {
                     &self.settings,
                     id,
                     &output.state,
-                    &mut || progress(ExecutionProgress::BeforeDurableCommit),
+                    &mut TypedNativeProgress(|point| {
+                        guarded_native(ExecutionProgress::BeforeDurableCommit, point)
+                    }),
                     &self.authenticated_arithmetic,
                 )?;
             }
@@ -4223,29 +4632,43 @@ impl Node {
         // Re-read after every write/trigger, while rollback can still remove the
         // whole block. A snapshot cannot conceal an omitted canonical delta.
         ensure(
-            self.delta_rows_with_progress(id, &mut || {
-                progress(ExecutionProgress::BeforeDurableCommit)
-            })? == expected_deltas
-                && self.packet(id)?.encode()? == bytes,
+            self.delta_rows_with_progress(
+                id,
+                &mut TypedNativeProgress(|point| {
+                    guarded_native(ExecutionProgress::BeforeDurableCommit, point)
+                }),
+            )? == expected_deltas
+                && self.settings.encode_packet(&self.packet(id)?)? == bytes,
             "STORAGE_WRITE",
         )
         .map_err(Error::local_integrity)?;
         ensure(
-            self.state_at_with_progress(h.parent, &mut || {
-                progress(ExecutionProgress::BeforeDurableCommit)
-            })? == prior
-                && self.state_at_with_progress(id, &mut || {
-                    progress(ExecutionProgress::BeforeDurableCommit)
-                })? == output.state,
+            self.state_at_with_progress(
+                h.parent,
+                &mut TypedNativeProgress(|point| {
+                    guarded_native(ExecutionProgress::BeforeDurableCommit, point)
+                }),
+            )? == prior
+                && self.state_at_with_progress(
+                    id,
+                    &mut TypedNativeProgress(|point| {
+                        guarded_native(ExecutionProgress::BeforeDurableCommit, point)
+                    }),
+                )? == output.state,
             "STORAGE_WRITE",
         )
         .map_err(Error::local_integrity)?;
         crate::ancestry_index::verify_inserted(&tx, index_context, &inserted_ancestry)
             .map_err(Error::local_integrity)?;
-        self.check_active_before_commit_with_progress(&mut || {
-            progress(ExecutionProgress::BeforeDurableCommit)
-        })?;
-        progress(ExecutionProgress::BeforeDurableCommit)?;
+        self.check_active_before_commit_with_progress(&mut TypedNativeProgress(|point| {
+            guarded_native(ExecutionProgress::BeforeDurableCommit, point)
+        }))?;
+        guarded_native(
+            ExecutionProgress::BeforeDurableCommit,
+            NativeProgressPoint::BeforeCommit,
+        )?;
+        self.check_history_graph_resource_before_commit()?;
+        self.history_effect_admission_marker(&tx, packet)?;
         tx.commit()?;
         // No cancellation fence after commit: the native durable fact stays true.
         Ok(id)
@@ -4291,8 +4714,17 @@ impl Node {
         task: Hash,
         height: u64,
     ) -> Result<trnm_protocol::qualified_work_task::lifecycle_v2::DemandLeaseV2> {
+        self.lifecycle_task_lease_with_progress(parent, task, height, &mut || Ok(()))
+    }
+    fn lifecycle_task_lease_with_progress(
+        &self,
+        parent: Hash,
+        task: Hash,
+        height: u64,
+        progress: &mut dyn FnMut() -> Result<()>,
+    ) -> Result<trnm_protocol::qualified_work_task::lifecycle_v2::DemandLeaseV2> {
         Ok(qualified_task_lifecycle::eligible_task(
-            &self.state_at(parent)?,
+            &self.state_at_with_progress(parent, &mut || progress())?,
             task,
             height,
             &self.settings.app,
@@ -4399,6 +4831,8 @@ impl Node {
         let signed = eligible.manifest().ok_or("TASK_MANIFEST")?;
         let statement_id = match &eligible {
             ParentTaskEligibility::Lifecycle(task) => task.statement_id(),
+            ParentTaskEligibility::PqTask(task) => task.statement_id(),
+            ParentTaskEligibility::PqTaskV5(task) => task.statement_id(),
             _ => signed.id().map_err(|_| Error::from("TASK_MANIFEST"))?,
         };
         ensure(
@@ -4464,6 +4898,8 @@ impl Node {
         let signed = eligible.manifest().ok_or("TASK_MANIFEST")?;
         let statement_id = match &eligible {
             ParentTaskEligibility::Lifecycle(task) => task.statement_id(),
+            ParentTaskEligibility::PqTask(task) => task.statement_id(),
+            ParentTaskEligibility::PqTaskV5(task) => task.statement_id(),
             _ => signed.id().map_err(|_| Error::from("TASK_MANIFEST"))?,
         };
         ensure(
@@ -4512,7 +4948,7 @@ impl Node {
     ) -> Result<Option<QualifiedWorkTask>> {
         Ok(self
             .eligible_work_task_from_state(
-                &self.state_at_with_progress(parent, progress)?,
+                &self.state_at_with_progress(parent, &mut || progress())?,
                 task,
                 height,
             )?
@@ -4529,6 +4965,24 @@ impl Node {
         {
             continuity_v1::check_maintenance(state, task, &self.settings.app)?;
             return Ok(ParentTaskEligibility::ConsensusMaintenance);
+        }
+        if self.settings.is_native_pq_v5() {
+            let eligible = trnm_mvcc_fee::pon_executor::pq_accounts_v2::tasks_v5::eligible_task(
+                state,
+                task,
+                height,
+                &self.settings.app,
+            )?;
+            return Ok(ParentTaskEligibility::PqTaskV5(Box::new(eligible)));
+        }
+        if self.settings.is_native_pq_v4() {
+            let eligible = trnm_mvcc_fee::pon_executor::pq_accounts_v2::tasks_v4::eligible_task(
+                state,
+                task,
+                height,
+                &self.settings.app,
+            )?;
+            return Ok(ParentTaskEligibility::PqTask(Box::new(eligible)));
         }
         if matches!(
             self.settings.task_profile(),
@@ -4662,8 +5116,18 @@ impl Node {
         self.ready()?;
         let height = self.record(parent)?.height.checked_add(1).ok_or("HEIGHT")?;
         let task = pon_work::task_id(a, b).map_err(|_| Error::from("WORK_TASK"))?;
-        let executed =
-            self.execute_derived(actual, parent, &transactions, height, miner, self.workers)?;
+        let executed = self.execute_derived_with_progress(
+            actual,
+            ExecutionRequest {
+                timestamp: Some(timestamp),
+                transactions: &transactions,
+                height,
+                miner,
+                parent_id: parent,
+                workers: self.workers,
+            },
+            &|_| Ok(()),
+        )?;
         let mut output = executed.output;
         let commitment = executed.commitment;
         let prepared =
@@ -4719,6 +5183,7 @@ impl Node {
         let executed = self.execute_derived_with_control(
             actual,
             ExecutionRequest {
+                timestamp: Some(timestamp),
                 transactions: &transactions,
                 height,
                 miner,
@@ -4771,6 +5236,30 @@ impl Node {
         product: &[u8],
     ) -> Result<bool> {
         match eligible {
+            ParentTaskEligibility::PqTaskV5(task) => {
+                ensure(product.len() == pon_work::CELLS * 4, "TASK_OUTPUT")?;
+                Ok(
+                    trnm_mvcc_fee::pon_executor::pq_accounts_v2::tasks_v5::consume_output(
+                        state,
+                        task,
+                        hash(b"qualified-task-product-v1", &[product]),
+                        height,
+                        &self.settings.app,
+                    )?,
+                )
+            }
+            ParentTaskEligibility::PqTask(task) => {
+                ensure(product.len() == pon_work::CELLS * 4, "TASK_OUTPUT")?;
+                Ok(
+                    trnm_mvcc_fee::pon_executor::pq_accounts_v2::tasks_v4::consume_output(
+                        state,
+                        task,
+                        hash(b"qualified-task-product-v1", &[product]),
+                        height,
+                        &self.settings.app,
+                    )?,
+                )
+            }
             ParentTaskEligibility::Lifecycle(task) => {
                 ensure(product.len() == pon_work::CELLS * 4, "TASK_OUTPUT")?;
                 Ok(qualified_task_lifecycle::consume_output(
@@ -4810,10 +5299,10 @@ impl Node {
     }
     fn atomic_with_progress<T>(
         &self,
-        progress: &mut dyn FnMut() -> Result<()>,
-        run: impl FnOnce(&mut dyn FnMut() -> Result<()>) -> Result<T>,
+        progress: &mut dyn NativeProgress,
+        run: impl FnOnce(&mut dyn NativeProgress) -> Result<T>,
     ) -> Result<T> {
-        progress()?;
+        progress.checkpoint()?;
         let tx = rusqlite::Transaction::new_unchecked(
             &self.db,
             rusqlite::TransactionBehavior::Immediate,
@@ -4822,7 +5311,9 @@ impl Node {
         self.check_active_before_commit_with_progress(progress)?;
         self.continuous_scope_checkpoint()?;
         self.mining_scope_checkpoint()?;
-        progress()?;
+        progress.before_commit()?;
+        self.check_history_graph_resource_before_commit()?;
+        self.history_effect_activation_marker(&tx)?;
         tx.commit()?;
         // No cancellation after COMMIT: the durable result is already factual.
         Ok(result)
@@ -4832,9 +5323,9 @@ impl Node {
         id: Hash,
         slot: u64,
         detach: bool,
-        progress: &mut dyn FnMut() -> Result<()>,
+        progress: &mut dyn NativeProgress,
     ) -> Result<()> {
-        progress()?;
+        progress.checkpoint()?;
         let mut read = self
             .db
             .prepare_cached("SELECT value FROM kv WHERE slot=? AND key=?")?;
@@ -4845,7 +5336,7 @@ impl Node {
             .db
             .prepare_cached("DELETE FROM kv WHERE slot=? AND key=?")?;
         for (key, before, after) in self.delta_rows_with_progress(id, progress)? {
-            progress()?;
+            progress.checkpoint()?;
             let (expected, new) = if detach {
                 (after, before)
             } else {
@@ -4885,16 +5376,18 @@ impl Node {
         &mut self,
         target: Hash,
         mut hook: Option<&mut Hook<'_>>,
-        progress: &mut dyn FnMut() -> Result<()>,
+        progress: &mut dyn NativeProgress,
     ) -> Result<Hash> {
-        progress()?;
+        progress.checkpoint()?;
         if self.state_backend == StateBackend::PermanentAccountGrowthV2 {
             ensure(hook.is_none(), "GROWTH_USE_PROGRESS_HOOK")?;
             let progress = RefCell::new(progress);
-            return self.growth_activate_with_progress(target, &|_| (progress.borrow_mut())());
+            return self
+                .growth_activate_with_progress(target, &|_| progress.borrow_mut().checkpoint());
         }
         self.continuous_activation_gate(target)?;
         self.mining_activation_gate(target)?;
+        self.history_effect_activation_gate(target)?;
         self.namespace()?;
         self.resume_intent_with_progress(&mut hook, progress)?;
         let (old, g) = self.active()?;
@@ -4907,22 +5400,22 @@ impl Node {
             .ok_or("GENERATION")?;
         if self.record(target)?.parent == Some(old) && hook.is_none() {
             let slot = self.slot()?;
-            progress()?;
+            progress.checkpoint()?;
             let prior = self.cached_parent(old)?;
-            progress()?;
+            progress.checkpoint()?;
             let mut staged = None;
             self.atomic_with_progress(progress, |progress| {
                 self.apply_delta_with_progress(target, slot, false, progress)?;
                 let state = self.slot_state_with_progress(slot, progress)?;
                 continuity_v1::check_state(&state, self.record(target)?.height, &self.settings.app)
                     .map_err(|error| Error::from(error).local_integrity())?;
-                progress()?;
+                progress.checkpoint()?;
                 staged = Some(self.checked_commitment(
                     &state,
                     self.record(target)?.root,
                     prior.as_ref(),
                 )?);
-                progress()?;
+                progress.checkpoint()?;
                 ensure(
                     self.db.execute(
                         "UPDATE active SET tip=?,generation=? WHERE singleton=1",
@@ -4945,6 +5438,8 @@ impl Node {
                 )
                 .map_err(Error::local_integrity)?;
                 self.check_events_with_progress(next, &[(0, 1, target)], progress)?;
+                self.pq_tasks_remember_revocations(target, next)?;
+                self.pq_tasks_v5_remember_revocations(target, next)?;
                 Ok(())
             })?;
             ensure(
@@ -4970,7 +5465,7 @@ impl Node {
             let mut detached = 0i64;
             let mut attached = 0i64;
             while left != right {
-                progress()?;
+                progress.checkpoint()?;
                 if self.record(left)?.height >= self.record(right)?.height {
                     self.db.execute(
                         "INSERT INTO steps VALUES(?,0,?)",
@@ -5021,9 +5516,9 @@ impl Node {
         old: Hash,
         target: Hash,
         cursor: u64,
-        progress: &mut dyn FnMut() -> Result<()>,
+        progress: &mut dyn NativeProgress,
     ) -> Result<u64> {
-        progress()?;
+        progress.checkpoint()?;
         let mut stmt = self
             .db
             .prepare("SELECT ordinal,kind,block FROM steps ORDER BY ordinal")
@@ -5041,7 +5536,7 @@ impl Node {
         let mut count = 0u64;
         let mut attaching = false;
         for row in rows {
-            progress()?;
+            progress.checkpoint()?;
             let (ordinal, kind, bytes) =
                 row.map_err(|error| Error::from(error).local_integrity())?;
             let id = bytes32(bytes).map_err(Error::local_integrity)?;
@@ -5102,9 +5597,9 @@ impl Node {
         &self,
         generation: u64,
         expected: &[(u64, u64, Hash)],
-        progress: &mut dyn FnMut() -> Result<()>,
+        progress: &mut dyn NativeProgress,
     ) -> Result<()> {
-        progress()?;
+        progress.checkpoint()?;
         let mut statement = self
             .db
             .prepare("SELECT ordinal,kind,block FROM events WHERE generation=? ORDER BY ordinal")?;
@@ -5117,7 +5612,7 @@ impl Node {
         })?;
         let mut count = 0usize;
         for row in rows {
-            progress()?;
+            progress.checkpoint()?;
             let (ordinal, kind, id) = row?;
             ensure(
                 expected.get(count).is_some_and(|want| {
@@ -5136,9 +5631,9 @@ impl Node {
     fn resume_intent_with_progress(
         &mut self,
         hook: &mut Option<&mut Hook<'_>>,
-        progress: &mut dyn FnMut() -> Result<()>,
+        progress: &mut dyn NativeProgress,
     ) -> Result<Hash> {
-        progress()?;
+        progress.checkpoint()?;
         let row = self
             .db
             .query_row(
@@ -5171,7 +5666,7 @@ impl Node {
         // retained rows are classified by the checking functions themselves.
         let count = self.check_steps_with_progress(old, target, position, progress)?;
         for index in position..count {
-            progress()?;
+            progress.checkpoint()?;
             let (kind, bytes) = self.db.query_row(
                 "SELECT kind,block FROM steps WHERE ordinal=?",
                 [index],
@@ -5202,7 +5697,7 @@ impl Node {
             )?;
         }
         let state = self.slot_state_with_progress(g, progress)?;
-        progress()?;
+        progress.checkpoint()?;
         continuity_v1::check_state(&state, self.record(target)?.height, &self.settings.app)
             .map_err(|error| Error::from(error).local_integrity())?;
         ensure(
@@ -5210,7 +5705,7 @@ impl Node {
             "ROOT",
         )
         .map_err(Error::local_integrity)?;
-        progress()?;
+        progress.checkpoint()?;
         cut(hook, "before-publish")?;
         self.atomic_with_progress(progress, |progress| {
             let expected: Vec<(u64, u64, Hash)> = self
@@ -5224,7 +5719,7 @@ impl Node {
                     ))
                 })?
                 .map(|row| {
-                    progress()?;
+                    progress.checkpoint()?;
                     let (ordinal, kind, id) = row?;
                     Ok((ordinal, kind, bytes32(id)?))
                 })
@@ -5260,6 +5755,12 @@ impl Node {
             .map_err(Error::local_integrity)?;
             self.check_reorg_row(old, target, g, count, 1)?;
             self.check_events_with_progress(g, &expected, progress)?;
+            for &(_, kind, id) in &expected {
+                if kind == 1 {
+                    self.pq_tasks_remember_revocations(id, g)?;
+                    self.pq_tasks_v5_remember_revocations(id, g)?;
+                }
+            }
             self.check_persisted_state(
                 target,
                 &self.slot_state_with_progress(g, progress)?,
@@ -5271,6 +5772,12 @@ impl Node {
         Ok(target)
     }
     pub fn recover(&mut self) -> Result<Hash> {
+        if let Some(owner) = &self.history_effect_owner {
+            owner.checkpoint()?;
+            // V6 open only verifies the externally authorized actual frontier.
+            // It NEVER resumes a reorg or activates a best stored block here.
+            return Ok(self.active()?.0);
+        }
         if self.state_backend == StateBackend::PermanentAccountGrowthV2 {
             return self.growth_recover();
         }
@@ -5297,22 +5804,22 @@ impl Node {
         &self,
         tip: Hash,
         observed_now: u64,
-        progress: &mut dyn FnMut() -> Result<()>,
+        progress: &mut dyn NativeProgress,
     ) -> Result<()> {
-        progress()?;
+        progress.checkpoint()?;
         let bound = observed_now as u128 + self.settings.limit("future_skew_seconds")? as u128;
         let mut current = tip;
         while current != self.settings.genesis() {
-            progress()?;
+            progress.checkpoint()?;
             (current, _) = self.visit_header_batch(current, &mut |_, link| {
-                progress()?;
+                progress.checkpoint()?;
                 ensure(link.header.timestamp as u128 <= bound, "TIME_DEFERRED")
             })?;
         }
-        progress()
+        progress.checkpoint()
     }
     pub fn activate_observed(&mut self, tip: Hash, observed_now: u64) -> Result<Hash> {
-        self.activate_observed_with_progress(tip, observed_now, &mut || Ok(()))
+        self.activate_observed_with_native_progress(tip, observed_now, &mut || Ok(()))
     }
     /// Cooperative existing-packet recovery keeps all original time, owner,
     /// State and journal validation. SQL/root primitives remain indivisible;
@@ -5323,7 +5830,15 @@ impl Node {
         observed_now: u64,
         progress: &mut dyn FnMut() -> Result<()>,
     ) -> Result<Hash> {
-        progress()?;
+        self.activate_observed_with_native_progress(tip, observed_now, &mut || progress())
+    }
+    pub(crate) fn activate_observed_with_native_progress(
+        &mut self,
+        tip: Hash,
+        observed_now: u64,
+        progress: &mut dyn NativeProgress,
+    ) -> Result<Hash> {
+        progress.checkpoint()?;
         let _measurement = (self.state_backend == StateBackend::AuthenticatedV1).then(|| {
             self.authenticated_arithmetic
                 .history
@@ -5366,7 +5881,7 @@ impl Node {
         ensure(unique.len() == queries.len(), "DUPLICATE_QUERY")?;
         progress(0)?;
         self.ready()?;
-        let (tip, generation, _) = self.read_active_with_progress(&mut || progress(0))?;
+        let (tip, generation, _) = self.read_active_with_native_progress(&mut || progress(0))?;
         let mut included = BTreeMap::new();
         for (transaction, block) in queries {
             if !included.contains_key(block) {
@@ -5509,7 +6024,10 @@ impl Node {
             params![id.as_slice(), maximum],
             |r| r.get(0),
         )?;
-        let packet = Packet::decode(&raw).map_err(Error::local_integrity)?;
+        let packet = self
+            .settings
+            .decode_packet(&raw)
+            .map_err(Error::local_integrity)?;
         ensure(
             packet.id()? == id
                 && packet.header.parent == after
@@ -5531,7 +6049,7 @@ impl Node {
             "NETWORK",
         )?;
         let id = packet.id()?;
-        let expected = packet.encode()?;
+        let expected = self.settings.encode_packet(packet)?;
         let stored: Option<Vec<u8>> = self
             .db
             .query_row(
@@ -5557,7 +6075,10 @@ impl Node {
             Some(raw) => {
                 ensure(raw == expected, "DUPLICATE_CONTENT")?;
                 let retained = self.packet(id)?;
-                ensure(retained.encode()? == expected, "STORAGE_PACKET")?;
+                ensure(
+                    self.settings.encode_packet(&retained)? == expected,
+                    "STORAGE_PACKET",
+                )?;
                 let block_record = self.record(id)?;
                 let block_height = block_record.height;
                 let mut active_membership_sql_lookups = 0_u64;
@@ -6976,6 +7497,7 @@ mod native_ancestry_tests {
                 .execute_derived_with_progress(
                     &before.2,
                     ExecutionRequest {
+                        timestamp: None,
                         transactions: &[],
                         height: 1,
                         miner: development_public(0).unwrap(),
@@ -7004,6 +7526,7 @@ mod native_ancestry_tests {
             .execute_derived_with_progress(
                 &before.2,
                 ExecutionRequest {
+                    timestamp: None,
                     transactions: &[],
                     height: 1,
                     miner: development_public(0).unwrap(),
@@ -7035,6 +7558,7 @@ mod native_ancestry_tests {
             .execute_derived_with_progress(
                 &before.2,
                 ExecutionRequest {
+                    timestamp: None,
                     transactions: &[],
                     height: 1,
                     miner: development_public(0).unwrap(),

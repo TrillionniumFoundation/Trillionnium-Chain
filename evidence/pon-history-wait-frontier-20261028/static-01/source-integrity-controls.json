@@ -1,0 +1,21 @@
+{
+  "name": "source-integrity-controls",
+  "argv": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/ci",
+    "-p",
+    "test_ci_source_integrity.py",
+    "-v"
+  ],
+  "returncode": 0,
+  "passed": true,
+  "elapsed_wall_seconds": 5.858181553005124,
+  "raw_bytes": 6053,
+  "raw_sha256": "2b820973c4d39425128db0706b82cf7674a0205eecc5043150f5b5c8df4db0db",
+  "gzip_bytes": 1075,
+  "gzip_sha256": "df9781028ba360852c093ed97c1de78a016d84293dbfb4fe4d0d1f81f33a4e42"
+}

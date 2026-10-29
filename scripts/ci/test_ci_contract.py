@@ -67,6 +67,20 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
     def test_actual_lane_preserves_quorum_reference_and_retained_vector_checks(self):
         check_independent_conformance(self.script, self.lanes)
 
+    def test_history_source_pin_cannot_be_missing_substituted_duplicated_or_conditional(self):
+        command = '      export TRNM_HISTORY_STARTUP_NO_NATIVE_SOURCE_COMMIT="$(git rev-parse HEAD)"\n'
+        self.assertEqual(self.script.count(command), 1)
+        changes = {
+            'missing': self.script.replace(command, ''),
+            'fixed other source': self.script.replace(command, command.replace('$(git rev-parse HEAD)', '0' * 40)),
+            'duplicate': self.script.replace(command, command * 2),
+            'conditional': self.script.replace(command, '      if false; then\n' + command + '      fi\n'),
+            'other lane': self.script.replace(command, '').replace('  fuzz-smoke)\n', '  fuzz-smoke)\n' + command),
+        }
+        for label, changed in changes.items():
+            with self.subTest(change=label), self.assertRaises(ValueError):
+                check_independent_conformance(changed, self.lanes)
+
     def test_current_readers_and_runtime_controls_cannot_be_missing_duplicated_stubbed_or_moved(self):
         # Independent inventory: removing a required command from the checker
         # must not silently remove that command's negative coverage as well.

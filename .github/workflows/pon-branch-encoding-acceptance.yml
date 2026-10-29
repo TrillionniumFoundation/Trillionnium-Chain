@@ -50,7 +50,7 @@ jobs:
           python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$out/source.json"
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs)" = 5daaa4461859d2dbe1f0fc91c32b03e606e0dbbf
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs)" = 2a4cfe2dd66692cfd27bc99948ee1d509ebb9dbf
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs)" = 5b09b2e473dbba311a398e9ed77d2b619eaa906c
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs)" = 330c1f10f3ced58a05b4266584994f4459d44783
           bash scripts/project-preflight.sh --audit
       - name: Install pinned native compiler and lint tools
         run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy

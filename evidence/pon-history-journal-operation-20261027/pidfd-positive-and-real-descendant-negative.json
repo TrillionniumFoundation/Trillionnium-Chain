@@ -1,0 +1,42 @@
+{
+  "schema": "history-guardian-owned-process-observation-tests-v1",
+  "guardian_sha256": "99c74545d529bbea43b741aaf3b4f83f2801ed1ce2b09a7206d1f82e306ef6ca",
+  "results": [
+    {
+      "case": "parked-owned-child-no-descendant",
+      "passed": true,
+      "owned_child_pid": 9,
+      "observed_identity": {
+        "visible_pid": 209055,
+        "visible_parent_pid": 209054,
+        "namespace_pids": [
+          209055,
+          9
+        ],
+        "pid_namespace_inode": 4026532277,
+        "starttime_ticks": 1483720
+      },
+      "descendants": []
+    },
+    {
+      "case": "actual-grandchild-must-refuse",
+      "passed": true,
+      "owned_child_pid": 10,
+      "observed_identity": {
+        "visible_pid": 209056,
+        "visible_parent_pid": 209054,
+        "namespace_pids": [
+          209056,
+          10
+        ],
+        "pid_namespace_inode": 4026532277,
+        "starttime_ticks": 1483729
+      },
+      "descendants": [
+        209057
+      ]
+    }
+  ],
+  "passed": true,
+  "native_history_recovery_qualified": false
+}

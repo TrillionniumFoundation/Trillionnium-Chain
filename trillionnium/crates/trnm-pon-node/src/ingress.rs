@@ -1,9 +1,11 @@
 //! Bounded native socket ingress. Development loopback only; not Sybil-safe public P2P.
+pub(crate) mod history_graph_resource_v1;
 use crate::{
     authenticated_payload_digest, authenticated_profile_digest, digest, ensure,
     store::{AuthenticatedReplayDecision, WorkCheckedPacket},
     Error, ErrorCode, Node, Packet, Result, Settings,
 };
+pub use history_graph_resource_v1::PROFILE as HISTORY_GRAPH_RESOURCE_PROFILE_V1;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use std::{
@@ -629,21 +631,58 @@ pub struct Metrics {
     pub admission_verification_ns: u64,
     pub work_verifications: u64,
     pub work_verification_ns: u64,
+    /// Known actual calling-thread CPU only; the full original W1/M05 interval.
+    /// No guessed CPU is inserted when the clock is missing or moves backward.
+    pub work_verification_thread_cpu_known_ns: u64,
+    pub work_verification_thread_cpu_known_calls: u64,
+    pub work_verification_thread_cpu_unknown_calls: u64,
 }
 fn elapsed_ns(start: Instant) -> u64 {
     u64::try_from(start.elapsed().as_nanos()).unwrap_or(u64::MAX)
 }
+#[cfg(target_os = "linux")]
+fn calling_thread_cpu_ns() -> Option<u64> {
+    use rustix::time::{clock_gettime_dynamic, ClockId, DynamicClockId};
+    let time = clock_gettime_dynamic(DynamicClockId::Known(ClockId::ThreadCPUTime)).ok()?;
+    let seconds = u64::try_from(time.tv_sec).ok()?;
+    let nanos = u64::try_from(time.tv_nsec).ok()?;
+    if nanos >= 1_000_000_000 {
+        return None;
+    }
+    seconds.checked_mul(1_000_000_000)?.checked_add(nanos)
+}
+#[cfg(not(target_os = "linux"))]
+fn calling_thread_cpu_ns() -> Option<u64> {
+    None
+}
+
 fn measured_work_verify(packet: Packet, metrics: &Mutex<Metrics>) -> Result<WorkCheckedPacket> {
     let start = Instant::now();
+    let start_cpu = calling_thread_cpu_ns();
     metrics
         .lock()
         .map_err(|_| "METRICS_POISONED")?
         .work_verifications += 1;
     let result = WorkCheckedPacket::verify(packet);
+    let actual_cpu = start_cpu
+        .zip(calling_thread_cpu_ns())
+        .and_then(|(before, after)| after.checked_sub(before));
     let mut counts = metrics.lock().map_err(|_| "METRICS_POISONED")?;
     counts.work_verification_ns = counts
         .work_verification_ns
         .saturating_add(elapsed_ns(start));
+    if let Some(cpu) = actual_cpu {
+        counts.work_verification_thread_cpu_known_ns = counts
+            .work_verification_thread_cpu_known_ns
+            .saturating_add(cpu);
+        counts.work_verification_thread_cpu_known_calls = counts
+            .work_verification_thread_cpu_known_calls
+            .saturating_add(1);
+    } else {
+        counts.work_verification_thread_cpu_unknown_calls = counts
+            .work_verification_thread_cpu_unknown_calls
+            .saturating_add(1);
+    }
     result
 }
 
@@ -1072,7 +1111,10 @@ fn submit_result(node: &mut Node, id: Hash, clock: u64) -> Result<Value> {
 
 #[path = "ingress/metered_work_facts.rs"]
 mod metered_work_facts;
-pub use metered_work_facts::{dispatch_shared_with_metered_work_facts, MeteredWorkFactOutcome};
+pub use metered_work_facts::{
+    dispatch_shared_with_metered_w1, dispatch_shared_with_metered_work_facts,
+    MeteredWorkFactOutcome,
+};
 
 /// Explicit local-development W1 fact-reuse entrypoint on the existing M05/M06
 /// and durable owner path. This is NOT selected by V2/V3 network listeners or CLI.
@@ -1161,6 +1203,32 @@ fn dispatch_shared_with_execution_observation(
     observation: Option<&public_v3::request_observation::TaskObservation>,
     public_proof_before_unowned_task: bool,
 ) -> Result<Value> {
+    dispatch_shared_with_execution_completion(
+        node,
+        request,
+        progress,
+        verify,
+        control,
+        observation,
+        public_proof_before_unowned_task,
+        &|_| Ok(()),
+    )
+}
+
+/// The private completion callback runs only after the reacquired native owner
+/// checks current parent/task/material eligibility. Verification stays outside
+/// that lock, and full-W1 but unregistered work receives no scheduling benefit.
+#[allow(clippy::too_many_arguments)]
+fn dispatch_shared_with_execution_completion(
+    node: &Mutex<Node>,
+    request: Request,
+    progress: &mut dyn FnMut(u64) -> Result<()>,
+    verify: impl FnOnce(Packet) -> Result<WorkCheckedPacket>,
+    control: &trnm_mvcc_fee::pon_executor::ExecutionControl<'_, Error>,
+    observation: Option<&public_v3::request_observation::TaskObservation>,
+    public_proof_before_unowned_task: bool,
+    completion: &dyn Fn(&WorkCheckedPacket) -> Result<()>,
+) -> Result<Value> {
     use public_v3::SubmitPhase;
     match request {
         Request::Submit { packet } => {
@@ -1229,7 +1297,8 @@ fn dispatch_shared_with_execution_observation(
             let (id, clock) = observe_submit_phase(observation, SubmitPhase::Admission, || {
                 let clock = now()?;
                 let checked = owner.attach_owner_work(checked, owner_permit)?;
-                let id = owner.admit_work_checked_with_control(checked, clock, control)?;
+                let id = owner
+                    .admit_work_checked_with_completion(checked, clock, control, completion)?;
                 Ok((id, clock))
             })?;
             observe_submit_phase(observation, SubmitPhase::SubmitResult, || {
@@ -1332,12 +1401,24 @@ fn serve_inner(
     authentication: Option<Arc<AuthenticatedServer>>,
     admission: Option<AdmissionPolicy>,
 ) -> Result<Metrics> {
+    let listener_address = listener.local_addr()?;
     if authentication.is_none() {
         ensure(
-            listener.local_addr()?.ip().is_loopback(),
+            listener_address.ip().is_loopback(),
             "DEVELOPMENT_LOOPBACK_ONLY",
         )?;
     }
+    // A signed allowlist still does not pay verification CPU. Remote legacy
+    // authenticated listeners must choose the pre-existing bounded transport
+    // AdmissionPolicy; the unpriced authenticated-only transport is local-only.
+    if !listener_address.ip().is_loopback() {
+        ensure(admission.is_some(), "DEVELOPMENT_REMOTE_ADMISSION_REQUIRED")?;
+    }
+    // An allowlisted peer is not a CPU resource owner. All remotely exposed
+    // legacy authenticated listeners must join the SAME administrator-owned
+    // host cgroup as public V3 before accepting a single socket. A service
+    // without that parent fails closed; no fresh per-listener CPU allowance.
+    let host_kernel = crate::host_kernel_parent::require_for_listener(listener_address)?;
     ensure(
         lifetime > Duration::ZERO && lifetime <= Duration::from_secs(3600),
         "SERVER_BUDGET",
@@ -1373,7 +1454,13 @@ fn serve_inner(
             let authentication = authentication.clone();
             let settings = settings.clone();
             let handoff_senders = handoff_senders.clone();
+            let host_kernel_for_worker = host_kernel.as_ref();
             workers.push(scope.spawn(move || -> Result<()> {
+                // Membership is checked on the ACTUAL native thread, not
+                // only on the listener's different parent thread.
+                if let Some(kernel) = host_kernel_for_worker {
+                    kernel.verify()?;
+                }
                 while !stop.load(Ordering::Acquire) && Instant::now() < deadline {
                     let handed = if admission.is_some() {
                         handoff_receiver.as_ref().and_then(|receiver| {
@@ -1628,7 +1715,18 @@ fn serve_inner(
                             &node,
                             request.request.clone(),
                             &mut progress,
-                            |packet| measured_work_verify(packet, &metrics),
+                            |packet| {
+                                if let Some(kernel) = host_kernel_for_worker {
+                                    kernel.verify()?;
+                                }
+                                let checked = measured_work_verify(packet, &metrics)?;
+                                // Recheck the actual worker after expensive W1, so a
+                                // moved thread cannot promote its observed work.
+                                if let Some(kernel) = host_kernel_for_worker {
+                                    kernel.verify()?;
+                                }
+                                Ok(checked)
+                            },
                         );
                         let succeeded = outcome.is_ok();
                         let terminal_reply =
@@ -1714,7 +1812,14 @@ fn serve_inner(
                             }
                         };
                     let result = dispatch_shared_with(&node, request, &mut progress, |packet| {
-                        measured_work_verify(packet, &metrics)
+                        if let Some(kernel) = host_kernel_for_worker {
+                            kernel.verify()?;
+                        }
+                        let checked = measured_work_verify(packet, &metrics)?;
+                        if let Some(kernel) = host_kernel_for_worker {
+                            kernel.verify()?;
+                        }
+                        Ok(checked)
                     });
                     let reply = match result {
                         Ok(value) => {
@@ -2041,12 +2146,194 @@ fn call_authenticated_durable_inner(
     Err(Error::authenticated_remote(terminal, error))
 }
 
-pub fn receive_page(
+// A fixed cgroup is enforced by the kernel. Recheck current worker and
+// unchanged Host limits at original W1 stage boundaries: at most 64 transcript
+// tiles proceed without a physical owner recheck. These are resource checks,
+// not mathematical W1 validity or blockchain authorization.
+pub(crate) fn history_kernel_work_checkpoint(
+    point: trnm_crypto_primitives::pon_work::VerificationProgress,
+) -> bool {
+    use trnm_crypto_primitives::pon_work::VerificationProgress;
+    match point {
+        VerificationProgress::BeforeReplay
+        | VerificationProgress::BeforeProduct
+        | VerificationProgress::BeforeVerifiedWork => true,
+        VerificationProgress::Noise { counter, .. } => counter % 32 == 0,
+        VerificationProgress::MatrixRow { row } => row % 32 == 0,
+        VerificationProgress::TranscriptTile { column, inner, .. } => column == 0 && inner == 0,
+    }
+}
+
+/// Begin work from the original Node-owned CPU domain. A fresh standalone
+/// History Node begins with ZERO credit and earns the original start quantum
+/// only through the original refill. This is bounded waiting, not extra credit.
+fn begin_history_import_cpu(
+    domain: &public_v3::ServiceMutationCpuDomain,
+) -> Result<public_v3::ServiceMutationCpuOperation> {
+    let deadline = Instant::now() + Duration::from_secs(2);
+    loop {
+        match domain.begin() {
+            Ok(operation) => return Ok(operation),
+            Err(error)
+                if error.is(crate::ErrorCode::PublicMutationCpuBudget)
+                    && Instant::now() < deadline =>
+            {
+                thread::sleep(Duration::from_millis(2));
+            }
+            Err(error) => return Err(error),
+        }
+    }
+}
+
+/// One packet/activation uses one original CPU operation including native M06
+/// worker scopes. The actual native result and CPU settlement are independent.
+/// A lost CPU clock after a real commit cannot undo a committed block; it
+/// does make the overall synchronization fail closed and fences new work.
+fn metered_history_operation<T>(
     node: &mut Node,
+    domain: &public_v3::ServiceMutationCpuDomain,
+    native: impl FnOnce(&mut Node, &public_v3::ServiceMutationCpuOperation) -> Result<T>,
+) -> Result<T> {
+    let operation = begin_history_import_cpu(domain)?;
+    let outcome = native(node, &operation);
+    let receipt = operation.finish();
+    let accounting_unavailable = receipt.accounting_unavailable;
+    #[cfg(test)]
+    if node.history_graph_resource_before_commit_hook.is_some() {
+        // Physical controls retain the REAL original finish result. This
+        // observation neither settles another worker nor changes the outcome.
+        node.history_graph_resource_cpu_receipts.push(receipt);
+    }
+    if accounting_unavailable {
+        node.operator_task_accounting_unknown()?;
+        return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+    }
+    outcome
+}
+
+fn metered_history_operation_with_boundary<T>(
+    node: &mut Node,
+    domain: &public_v3::ServiceMutationCpuDomain,
+    resource: Option<&(dyn Fn() -> Result<()> + Sync)>,
+    native: impl FnOnce(&mut Node, &public_v3::ServiceMutationCpuOperation) -> Result<T>,
+) -> Result<T> {
+    match resource {
+        None => metered_history_operation(node, domain, native),
+        Some(check) => metered_history_operation(node, domain, |owner, operation| {
+            let result = native(owner, operation);
+            // The new explicit policy always fully checks the current resource
+            // boundary before original CPU settlement, including error returns.
+            history_graph_resource_v1::preserve_native(result, check())
+        }),
+    }
+}
+
+fn metered_history_packet(
+    node: &mut Node,
+    domain: &public_v3::ServiceMutationCpuDomain,
+    packet: &Packet,
+    clock: u64,
+    resource_checkpoint: &(impl Fn() -> Result<()> + Sync),
+    graph_counters: Option<&history_graph_resource_v1::SharedCounters>,
+) -> Result<Hash> {
+    let settlement =
+        graph_counters.map(|_| resource_checkpoint as &(dyn Fn() -> Result<()> + Sync));
+    metered_history_operation_with_boundary(node, domain, settlement, |owner, operation| {
+        let progress = operation.checkpoint_handle();
+        let cpu = || progress.checkpoint();
+        let mut strict = || {
+            cpu()?;
+            resource_checkpoint()
+        };
+        let mut graph = graph_counters.map(|counts| {
+            history_graph_resource_v1::GraphProgress::new(
+                &cpu,
+                resource_checkpoint,
+                Arc::clone(counts),
+            )
+        });
+        #[cfg(test)]
+        if let Some(graph) = &mut graph {
+            graph.set_before_commit_hook(owner.history_graph_resource_before_commit_hook.clone());
+        }
+        let native_progress: &mut dyn crate::native_progress::NativeProgress = match &mut graph {
+            Some(graph) => graph,
+            None => &mut strict,
+        };
+        let result = (|| {
+            progress.checkpoint()?;
+            resource_checkpoint()?;
+            if let Some(already) = owner.check_admission_context_with_native_progress(
+                packet,
+                clock,
+                native_progress,
+            )? {
+                return Ok(already);
+            }
+            let permit = owner.begin_owner_work(packet)?;
+            let checked = WorkCheckedPacket::verify_with_progress(packet.clone(), &mut |point| {
+                progress.checkpoint()?;
+                if history_kernel_work_checkpoint(point) {
+                    resource_checkpoint()?;
+                }
+                Ok(())
+            })?;
+            progress.checkpoint()?;
+            resource_checkpoint()?;
+            let checked = owner.attach_owner_work(checked, permit)?;
+            let execution_progress = |_phase| {
+                progress.checkpoint()?;
+                resource_checkpoint()
+            };
+            let control = trnm_mvcc_fee::pon_executor::ExecutionControl::new(
+                &execution_progress,
+                operation.worker_accounting(),
+            );
+            owner.admit_work_checked_with_native_control(
+                checked,
+                clock,
+                &control,
+                &mut |_, point| crate::native_progress::dispatch(native_progress, point),
+            )
+        })();
+        match &graph {
+            Some(graph) => history_graph_resource_v1::preserve_native(result, graph.complete()),
+            None => result,
+        }
+    })
+}
+
+fn receive_page(
+    node: &mut Node,
+    domain: &public_v3::ServiceMutationCpuDomain,
     page: Page,
     tip: Hash,
     after: Hash,
     clock: u64,
+    resource_checkpoint: impl Fn() -> Result<()> + Sync,
+) -> Result<Hash> {
+    receive_page_with_resource_profile(
+        node,
+        domain,
+        page,
+        tip,
+        after,
+        clock,
+        resource_checkpoint,
+        None,
+    )
+}
+
+#[allow(clippy::too_many_arguments)]
+fn receive_page_with_resource_profile(
+    node: &mut Node,
+    domain: &public_v3::ServiceMutationCpuDomain,
+    page: Page,
+    tip: Hash,
+    after: Hash,
+    clock: u64,
+    kernel_checkpoint: impl Fn() -> Result<()> + Sync,
+    graph_parent: Option<Value>,
 ) -> Result<Hash> {
     ensure(
         page.schema == "pon-native-history-v1"
@@ -2069,28 +2356,369 @@ pub fn receive_page(
         page.packets.iter().map(String::len).sum::<usize>() <= MAX_FRAME - 1024,
         "PAGE_LIMIT",
     )?;
-    let packets = page
-        .packets
-        .iter()
-        .map(|s| hex_packet(s))
-        .collect::<Result<Vec<_>>>()?;
-    let mut next = after;
-    for packet in &packets {
-        ensure(packet.header.parent == next, "PAGE_PARENT")?;
-        next = packet.id()?;
+    // The independent History CPU epoch must survive a crash DURING
+    // expensive replay or M06, not merely detect an older V3 listener.
+    // The original metadata marker is durable before the first paid unit.
+    // The bounded canonical Page shape checks above remain cheap; malformed
+    // top-level input must not acquire an unclean persistent epoch.
+    let graph_epoch = graph_parent
+        .as_ref()
+        .map(|parent| node.begin_history_graph_resource_v1(parent, &kernel_checkpoint))
+        .transpose()?;
+    let owned_epoch = if graph_epoch.is_none() {
+        node.begin_remote_history_cpu_epoch()?
+    } else {
+        false
+    };
+    let graph_counters = graph_epoch
+        .as_ref()
+        .map(|_| node.history_graph_resource_counters());
+    if let Some(counters) = &graph_counters {
+        history_graph_resource_v1::count(counters, |c| {
+            c.imports = c
+                .imports
+                .checked_add(1)
+                .ok_or("HISTORY_GRAPH_RESOURCE_OBSERVATION_V1")?;
+            Ok(())
+        })?;
     }
-    ensure(
-        page.next == hex::encode(next) && page.complete == (next == tip),
-        "PAGE_COMPLETE",
-    )?;
-    for packet in &packets {
-        node.admit(packet, clock)?;
+    let resource_checkpoint = || {
+        if let (Some(epoch), Some(counters)) = (&graph_epoch, &graph_counters) {
+            let binding = history_graph_resource_v1::measured_binding(counters, || epoch.verify());
+            let kernel = history_graph_resource_v1::measured_kernel(counters, &kernel_checkpoint);
+            binding.and(kernel)
+        } else {
+            kernel_checkpoint()
+        }
+    };
+    let settlement = graph_epoch
+        .as_ref()
+        .map(|_| &resource_checkpoint as &(dyn Fn() -> Result<()> + Sync));
+    let native = (|| -> Result<Hash> {
+        // Charge canonical proof decoding, packet IDs and parent-chain checks
+        // separately from the later full W1/M06 intervals. No nested operation:
+        // actual decoder CPU must not be double-billed or run at no cost.
+        resource_checkpoint()?;
+        let (packets, next) = metered_history_operation_with_boundary(
+            node,
+            domain,
+            settlement,
+            |_owner, operation| {
+                operation.checkpoint()?;
+                let packets = page
+                    .packets
+                    .iter()
+                    .map(|s| hex_packet(s))
+                    .collect::<Result<Vec<_>>>()?;
+                let mut next = after;
+                for packet in &packets {
+                    ensure(packet.header.parent == next, "PAGE_PARENT")?;
+                    next = packet.id()?;
+                }
+                ensure(
+                    page.next == hex::encode(next) && page.complete == (next == tip),
+                    "PAGE_COMPLETE",
+                )?;
+                operation.checkpoint()?;
+                resource_checkpoint()?;
+                Ok((packets, next))
+            },
+        )?;
+        for packet in &packets {
+            resource_checkpoint()?;
+            metered_history_packet(
+                node,
+                domain,
+                packet,
+                clock,
+                &resource_checkpoint,
+                graph_counters.as_ref(),
+            )?;
+            resource_checkpoint()?;
+        }
+        if page.complete {
+            // Reorganization/activation has its own original CPU reservation.
+            // Already durable native effects cannot be undone by late CPU faults.
+            metered_history_operation_with_boundary(
+                node,
+                domain,
+                settlement,
+                |owner, operation| {
+                    operation.checkpoint()?;
+                    resource_checkpoint()?;
+                    // An activation walks ancestors and may apply multiple durable
+                    // reorganization steps. Keep the ORIGINAL operation and Host
+                    // fence live inside that work, not just around the outer call.
+                    let cpu = || operation.checkpoint();
+                    let activated = if let Some(counters) = &graph_counters {
+                        let mut graph = history_graph_resource_v1::GraphProgress::new(
+                            &cpu,
+                            &resource_checkpoint,
+                            Arc::clone(counters),
+                        );
+                        #[cfg(test)]
+                        graph.set_before_commit_hook(
+                            owner.history_graph_resource_before_commit_hook.clone(),
+                        );
+                        let result =
+                            owner.activate_observed_with_native_progress(tip, clock, &mut graph);
+                        history_graph_resource_v1::preserve_native(result, graph.complete())
+                    } else {
+                        owner.activate_observed_with_progress(tip, clock, &mut || {
+                            cpu()?;
+                            resource_checkpoint()
+                        })
+                    };
+                    activated?;
+                    resource_checkpoint()?;
+                    operation.checkpoint()
+                },
+            )?;
+        }
+        Ok(next)
+    })();
+    let completion = (|| {
+        if let Some(epoch) = &graph_epoch {
+            let native = history_graph_resource_v1::preserve_native(native, resource_checkpoint());
+            let clean = domain.observe().ok().is_some_and(|state| {
+                state.in_flight == 0 && !state.accounting_unavailable && state.stored_credit_ns >= 0
+            }) && domain.observe_actual_flow().ok().flatten().is_some();
+            // The close implementation separately verifies both original SQL
+            // markers. Its callback is ONLY the real fresh kernel check, so a
+            // local SQL/binding failure can never mint a pending resource close.
+            node.finish_history_graph_resource_v1(epoch, clean, &kernel_checkpoint)?;
+            if !clean {
+                return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+            }
+            history_graph_resource_v1::count(
+                graph_counters
+                    .as_ref()
+                    .ok_or("HISTORY_GRAPH_RESOURCE_OBSERVATION_V1")?,
+                |c| {
+                    c.imports_closed = c
+                        .imports_closed
+                        .checked_add(1)
+                        .ok_or("HISTORY_GRAPH_RESOURCE_OBSERVATION_V1")?;
+                    Ok(())
+                },
+            )?;
+            return native;
+        }
+        if owned_epoch {
+            // Finish only this standalone History epoch. A concurrent V3 listener
+            // already holds and eventually settles its OWN original marker; it
+            // never yields last-close authority to a History importer.
+            let clean = domain.observe().ok().is_some_and(|state| {
+                state.in_flight == 0 && !state.accounting_unavailable && state.stored_credit_ns >= 0
+            }) && domain.observe_actual_flow().ok().flatten().is_some();
+            node.finish_ordinary_public_service_epoch(clean)?;
+            if !clean {
+                // The original active metadata marker intentionally remains.
+                // Native success may already be durable; refuse only to qualify
+                // this sync completion, not the mathematical work or stored rows.
+                return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+            }
+        }
+        native
+    })();
+    if let Some(counters) = &graph_counters {
+        history_graph_resource_v1::count(counters, |c| {
+            c.imports_failed = c
+                .imports_failed
+                .checked_add(u64::from(completion.is_err()))
+                .ok_or("HISTORY_GRAPH_RESOURCE_OBSERVATION_V1")?;
+            Ok(())
+        })?;
     }
-    if page.complete {
-        node.activate_observed(tip, clock)?;
-    }
-    Ok(next)
+    completion
 }
+
+/// Public untrusted History import. Unlike the private local parser, this
+/// entry REQUIRES a concrete original source address and checks the existing
+/// fixed, administrator-owned host resource parent around every possible
+/// W1 replay. A caller cannot bypass the guard by calling the addressless
+/// parser from another crate or by supplying a fake already-verified work
+/// token. Only the full native Node determines consensus validity.
+pub(crate) fn receive_page_from(
+    node: &mut Node,
+    source: SocketAddr,
+    page: Page,
+    tip: Hash,
+    after: Hash,
+    clock: u64,
+) -> Result<Hash> {
+    let host_kernel = crate::host_kernel_parent::require_for_listener(source)?;
+    if let Some(kernel) = &host_kernel {
+        kernel.verify()?;
+    }
+    let domain = node.remote_history_cpu_domain()?;
+    let native = receive_page(node, &domain, page, tip, after, clock, || {
+        if let Some(kernel) = &host_kernel {
+            kernel.verify()?;
+        }
+        Ok(())
+    });
+    // A completed native admission cannot be undone by a post-verification
+    // host fault. That fault still makes the overall synchronization fail.
+    if let Some(kernel) = &host_kernel {
+        kernel.verify()?;
+    }
+    native
+}
+/// Public History import is untrusted even when a local TCP proxy carries
+/// remote packets through a loopback address. No external caller can select
+/// the weaker native development compatibility wrapper.
+///
+/// ```compile_fail
+/// use trnm_pon_node::ingress::receive_page_from;
+/// fn main() {}
+/// ```
+pub fn receive_public_page_from(
+    node: &mut Node,
+    source: SocketAddr,
+    page: Page,
+    tip: Hash,
+    after: Hash,
+    clock: u64,
+) -> Result<Hash> {
+    // The ORIGINAL fixed administrator-owned Host parent is required even
+    // for a loopback source: a caller's socket address is not provenance.
+    let kernel = crate::host_kernel_parent::require_host_kernel_budget(
+        source,
+        Some(crate::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT),
+    )?
+    .ok_or("PUBLIC_HOST_KERNEL_REQUIRED")?;
+    kernel.verify()?;
+    let domain = node.remote_history_cpu_domain()?;
+    let native = receive_page(node, &domain, page, tip, after, clock, || kernel.verify());
+    // Do not convert an already committed block into an invalid work proof
+    // when the last local Host owner observation fails.
+    kernel.verify()?;
+    native
+}
+
+/// Explicit v1 ordinary-History resource schedule. Every graph node retains
+/// actual SQL, CPU and cancellation checks; only the sealed eight-node resource
+/// interval differs from receive_public_page_from's retained strict path.
+/// Signed V6/continuous/mining owners cannot select this profile. It grants no
+/// consensus permission, new CPU credit, or recovery of an old active epoch.
+pub fn receive_public_page_with_graph_resource_fence_v1(
+    node: &mut Node,
+    source: SocketAddr,
+    page: Page,
+    tip: Hash,
+    after: Hash,
+    clock: u64,
+) -> Result<Hash> {
+    node.require_history_graph_resource_ordinary()?;
+    let kernel = crate::host_kernel_parent::require_host_kernel_budget(
+        source,
+        Some(crate::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT),
+    )?
+    .ok_or("PUBLIC_HOST_KERNEL_REQUIRED")?;
+    kernel.verify()?;
+    let parent = kernel.identity_observation()?;
+    let domain = node.remote_history_cpu_domain()?;
+    let native = receive_page_with_resource_profile(
+        node,
+        &domain,
+        page,
+        tip,
+        after,
+        clock,
+        || kernel.verify(),
+        Some(parent),
+    );
+    // A failure here still cannot undo a previously durable native effect.
+    history_graph_resource_v1::preserve_native(native, kernel.verify())
+}
+
+/// Resume only a known settled close retained by this SAME live ordinary Node.
+/// This cannot recover a cold active marker, trust a report, replay an import,
+/// forgive unknown CPU, or replace the original budget/parent identity.
+pub fn resume_public_history_graph_resource_settlement_v1(
+    node: &mut Node,
+    source: SocketAddr,
+) -> Result<()> {
+    node.require_history_graph_resource_ordinary()?;
+    let kernel = crate::host_kernel_parent::require_host_kernel_budget(
+        source,
+        Some(crate::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT),
+    )?
+    .ok_or("PUBLIC_HOST_KERNEL_REQUIRED")?;
+    kernel.verify()?;
+    let parent = kernel.identity_observation()?;
+    node.resume_history_graph_resource_settlement_v1(&parent, &|| kernel.verify())
+}
+
+/// Selects two already authenticated, independently signed operation claims.
+/// These IDs and the untrusted Page bytes confer no permission. V5 only allows
+/// one exact successor of the current active parent per signed view.
+#[derive(Clone, Copy)]
+pub struct OwnedHistoryRequest<'a> {
+    pub raw_page: &'a [u8],
+    pub tip: Hash,
+    pub after: Hash,
+    pub validation_operation_id: &'a str,
+    pub activation_operation_id: &'a str,
+    pub observed_now: u64,
+}
+
+#[derive(Serialize)]
+pub struct OwnedHistoryStepResult {
+    pub operation_id: String,
+    pub native_id: Option<Hash>,
+    pub native_error: Option<String>,
+    pub cpu: public_v3::ServiceMutationCpuSettlement,
+    pub accounting_record_persisted: bool,
+    pub accounting_fault_persistence_failed: bool,
+}
+
+/// Native effects and accounting are reported separately. A late local fault
+/// never retracts a committed block and never qualifies History completion.
+#[derive(Serialize)]
+pub struct OwnedHistoryResult {
+    pub schema: &'static str,
+    pub validation: OwnedHistoryStepResult,
+    pub activation: Option<OwnedHistoryStepResult>,
+    pub activation_start_error: Option<String>,
+    pub terminal_boundary_error: Option<String>,
+    pub completed: bool,
+    pub durable_result_preserved: bool,
+    pub public_network_ready: bool,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum OwnedHistoryProgress {
+    Decode,
+    Context,
+    Work(trnm_crypto_primitives::pon_work::VerificationProgress),
+    Execution(trnm_mvcc_fee::pon_executor::ExecutionProgress),
+    Activation,
+}
+
+/// Explicit authorized import. Every external caller, including a loopback
+/// proxy, must satisfy the ORIGINAL administrator-owned Host parent. Generic
+/// receive_page/sync_from still refuse continuous mode without this operation.
+pub fn receive_public_owned_history_from(
+    node: &mut Node,
+    source: SocketAddr,
+    request: OwnedHistoryRequest<'_>,
+) -> Result<OwnedHistoryResult> {
+    let kernel = crate::host_kernel_parent::require_host_kernel_budget(
+        source,
+        Some(crate::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT),
+    )?
+    .ok_or("PUBLIC_HOST_KERNEL_REQUIRED")?;
+    kernel.verify()?;
+    let mut result = node.receive_owned_history_operation(request, &|_| kernel.verify())?;
+    if let Err(error) = kernel.verify() {
+        result.terminal_boundary_error = Some(error.to_string());
+        result.completed = false;
+    }
+    Ok(result)
+}
+
 pub fn sync_from(
     node: &mut Node,
     address: SocketAddr,
@@ -2099,7 +2727,14 @@ pub fn sync_from(
     page_budget: usize,
 ) -> Result<Hash> {
     ensure((1..=4096).contains(&page_budget), "SYNC_BUDGET")?;
+    // Every WAN page may contain 16 untrusted W1 proofs. The same fixed,
+    // administrator-owned host cgroup used by V3 must already contain this
+    // actual sync thread; no new per-peer budget or consensus authority.
+    let host_kernel = crate::host_kernel_parent::require_for_listener(address)?;
     for _ in 0..page_budget {
+        if let Some(kernel) = &host_kernel {
+            kernel.verify()?;
+        }
         let request = Request::History {
             tip: hex::encode(tip),
             after: hex::encode(after),
@@ -2110,7 +2745,12 @@ pub fn sync_from(
         write_frame(&mut stream, &serde_json::to_vec(&request)?)?;
         let page: Page = serde_json::from_slice(&read_frame(&mut stream)?)?;
         let complete = page.complete;
-        after = receive_page(node, page, tip, after, now()?)?;
+        after = receive_page_from(node, address, page, tip, after, now()?)?;
+        // Resource-counter/membership failure does not roll back any already
+        // admitted native block; it makes this sync result unqualified.
+        if let Some(kernel) = &host_kernel {
+            kernel.verify()?;
+        }
         if complete {
             return Ok(after);
         }
@@ -2132,8 +2772,15 @@ pub fn sync_from_authenticated(
     replay_nonce: &mut u64,
 ) -> Result<Hash> {
     ensure((1..=4096).contains(&page_budget), "SYNC_BUDGET")?;
+    // Every WAN page may contain 16 untrusted W1 proofs. The same fixed,
+    // administrator-owned host cgroup used by V3 must already contain this
+    // actual sync thread; no new per-peer budget or consensus authority.
+    let host_kernel = crate::host_kernel_parent::require_for_listener(address)?;
     let settings = node.settings().clone();
     for _ in 0..page_budget {
+        if let Some(kernel) = &host_kernel {
+            kernel.verify()?;
+        }
         let value = call_authenticated(
             address,
             &Request::History {
@@ -2146,7 +2793,12 @@ pub fn sync_from_authenticated(
         )?;
         let page: Page = serde_json::from_value(value)?;
         let complete = page.complete;
-        after = receive_page(node, page, tip, after, now()?)?;
+        after = receive_page_from(node, address, page, tip, after, now()?)?;
+        // Resource-counter/membership failure does not roll back any already
+        // admitted native block; it makes this sync result unqualified.
+        if let Some(kernel) = &host_kernel {
+            kernel.verify()?;
+        }
         if complete {
             return Ok(after);
         }
@@ -2167,7 +2819,14 @@ pub fn sync_from_authenticated_durable(
     client: &AuthenticatedClient,
 ) -> Result<Hash> {
     ensure((1..=4096).contains(&page_budget), "SYNC_BUDGET")?;
+    // Every WAN page may contain 16 untrusted W1 proofs. The same fixed,
+    // administrator-owned host cgroup used by V3 must already contain this
+    // actual sync thread; no new per-peer budget or consensus authority.
+    let host_kernel = crate::host_kernel_parent::require_for_listener(address)?;
     for _ in 0..page_budget {
+        if let Some(kernel) = &host_kernel {
+            kernel.verify()?;
+        }
         let value = call_authenticated_durable(
             node,
             address,
@@ -2179,7 +2838,12 @@ pub fn sync_from_authenticated_durable(
         )?;
         let page: Page = serde_json::from_value(value)?;
         let complete = page.complete;
-        after = receive_page(node, page, tip, after, now()?)?;
+        after = receive_page_from(node, address, page, tip, after, now()?)?;
+        // Resource-counter/membership failure does not roll back any already
+        // admitted native block; it makes this sync result unqualified.
+        if let Some(kernel) = &host_kernel {
+            kernel.verify()?;
+        }
         if complete {
             return Ok(after);
         }
@@ -2191,9 +2855,727 @@ pub fn sync_from_authenticated_durable(
     .into())
 }
 
+#[cfg(all(test, target_os = "linux"))]
+#[path = "ingress/history_activation_tests.rs"]
+mod history_activation_tests;
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn history_paid_epoch_crash_cut_refuses_new_cold_credit() {
+        // Simulated abrupt process exit AFTER the durable active marker but
+        // BEFORE the original History CPU operation could be settled. This
+        // is a local SQLite cold-reopen negative, not a physical power cut.
+        let settings = crate::Settings::development(Some(now().unwrap() - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let mut original = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let account = original.remote_history_cpu_domain().unwrap();
+        assert_eq!(account.observe().unwrap().stored_credit_ns, 0);
+        assert!(original.begin_remote_history_cpu_epoch().unwrap());
+        drop(original);
+        let mut reopened = Node::open(dir.path(), settings, 2).unwrap();
+        assert_eq!(
+            reopened
+                .remote_history_cpu_domain()
+                .err()
+                .unwrap()
+                .to_string(),
+            "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH"
+        );
+        assert!(reopened.public_service_cpu_domain().is_err());
+        assert_eq!(
+            reopened
+                .begin_remote_history_cpu_epoch()
+                .unwrap_err()
+                .to_string(),
+            "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH"
+        );
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn malformed_paid_history_rejection_closes_known_epoch_without_poisoning_cold_reopen() {
+        let observed = now().unwrap();
+        let settings = crate::Settings::development(Some(observed - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let initial = node.stats().unwrap();
+        let page = Page {
+            schema: "pon-native-history-v1".into(),
+            network: hex::encode(settings.network()),
+            parameters: hex::encode(settings.parameters()),
+            genesis: hex::encode(settings.genesis()),
+            tip: hex::encode([19; 32]),
+            after: hex::encode(settings.genesis()),
+            packets: vec!["00".into()],
+            next: hex::encode([19; 32]),
+            complete: true,
+        };
+        let loopback: SocketAddr = "127.0.0.1:1".parse().unwrap();
+        assert!(receive_page_from(
+            &mut node,
+            loopback,
+            page,
+            [19; 32],
+            settings.genesis(),
+            observed,
+        )
+        .is_err());
+        let account = node.public_service_cpu_domain().unwrap();
+        let metered = account.observe().unwrap();
+        assert_eq!(metered.in_flight, 0);
+        assert!(!metered.accounting_unavailable);
+        assert!(metered.stored_credit_ns >= 0);
+        let marker_count: i64 = rusqlite::Connection::open(dir.path().join("native.sqlite"))
+            .unwrap()
+            .query_row(
+                "SELECT COUNT(*) FROM metadata WHERE key=?1",
+                ["ordinary-public-v3-epoch-v1"],
+                |row| row.get(0),
+            )
+            .unwrap();
+        assert_eq!(marker_count, 0, "paid known rejection must clean its epoch");
+        assert_eq!(node.stats().unwrap(), initial);
+        drop(node);
+        let mut reopened = Node::open(dir.path(), settings, 2).unwrap();
+        let fresh = reopened.remote_history_cpu_domain().unwrap();
+        assert_eq!(fresh.observe().unwrap().stored_credit_ns, 0);
+        assert_eq!(reopened.stats().unwrap(), initial);
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn standalone_history_does_not_steal_live_v3_listener_epoch() {
+        let settings = crate::Settings::development(Some(now().unwrap() - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let mut node = Node::open(dir.path(), settings, 2).unwrap();
+        let public = public_v3::ServiceMutationCpuDomain::standalone();
+        node.bind_public_service_cpu_domain(&public).unwrap();
+        assert!(node.begin_ordinary_public_service_epoch().unwrap());
+        assert!(!node.begin_remote_history_cpu_epoch().unwrap());
+        assert!(node
+            .public_service_cpu_domain()
+            .unwrap()
+            .shares_domain_with(&public));
+        // Only the actual V3 owner holds the last-close right.
+        node.finish_ordinary_public_service_epoch(true).unwrap();
+        assert_eq!(
+            rusqlite::Connection::open(dir.path().join("native.sqlite"))
+                .unwrap()
+                .query_row(
+                    "SELECT COUNT(*) FROM metadata WHERE key=?1",
+                    ["ordinary-public-v3-epoch-v1"],
+                    |row| row.get::<_, i64>(0),
+                )
+                .unwrap(),
+            0
+        );
+    }
+
+    #[test]
+    fn malformed_remote_history_decode_pays_original_cpu_and_preserves_state() {
+        let observed = now().unwrap();
+        let settings = crate::Settings::development(Some(observed - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let start = node.stats().unwrap();
+        let source: SocketAddr = "127.0.0.1:1".parse().unwrap();
+        let page = Page {
+            schema: "pon-native-history-v1".into(),
+            network: hex::encode(settings.network()),
+            parameters: hex::encode(settings.parameters()),
+            genesis: hex::encode(settings.genesis()),
+            tip: hex::encode([9; 32]),
+            after: hex::encode(settings.genesis()),
+            packets: vec!["00".into()],
+            next: hex::encode([9; 32]),
+            complete: true,
+        };
+        assert!(receive_page_from(
+            &mut node,
+            source,
+            page,
+            [9; 32],
+            settings.genesis(),
+            observed,
+        )
+        .is_err());
+        let account = node.public_service_cpu_domain().unwrap().observe().unwrap();
+        assert_eq!(account.in_flight, 0);
+        assert!(!account.accounting_unavailable);
+        assert_eq!(node.stats().unwrap(), start);
+        assert_eq!(node.read_active().unwrap().0, settings.genesis());
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn mixed_false_then_valid_history_across_source_ports_reuses_one_cpu_owner() {
+        let observed = now().unwrap();
+        let settings = crate::Settings::development(Some(observed - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let good = node
+            .make(
+                settings.genesis(),
+                vec![],
+                crate::development_public(0).unwrap(),
+                settings.genesis_time() + 10,
+                4096,
+            )
+            .unwrap();
+        let id = good.id().unwrap();
+        let mut bad = good.clone();
+        let cell = 4 + 2 * trnm_crypto_primitives::pon_work::CELLS * 4;
+        let prior = u32::from_le_bytes(bad.proof[cell..cell + 4].try_into().unwrap());
+        let altered = ((u128::from(prior) + 1) % trnm_crypto_primitives::pon_work::Q) as u32;
+        bad.proof[cell..cell + 4].copy_from_slice(&altered.to_le_bytes());
+        assert_eq!(bad.id().unwrap(), id);
+        let make_page = |packet: &Packet| Page {
+            schema: "pon-native-history-v1".into(),
+            network: hex::encode(settings.network()),
+            parameters: hex::encode(settings.parameters()),
+            genesis: hex::encode(settings.genesis()),
+            tip: hex::encode(id),
+            after: hex::encode(settings.genesis()),
+            packets: vec![hex::encode(packet.encode().unwrap())],
+            next: hex::encode(id),
+            complete: true,
+        };
+        let first: SocketAddr = "127.0.0.1:1".parse().unwrap();
+        let second: SocketAddr = "127.0.0.1:2".parse().unwrap();
+        let initial = node.stats().unwrap();
+        assert_eq!(
+            receive_page_from(
+                &mut node,
+                first,
+                make_page(&bad),
+                id,
+                settings.genesis(),
+                observed,
+            )
+            .unwrap_err()
+            .to_string(),
+            "WORK:Product"
+        );
+        assert_eq!(node.stats().unwrap(), initial);
+        let original_domain = node.public_service_cpu_domain().unwrap();
+        assert_eq!(
+            receive_page_from(
+                &mut node,
+                second,
+                make_page(&good),
+                id,
+                settings.genesis(),
+                observed,
+            )
+            .unwrap(),
+            id
+        );
+        assert!(node
+            .public_service_cpu_domain()
+            .unwrap()
+            .shares_domain_with(&original_domain));
+        assert_eq!(node.read_active().unwrap().0, id);
+        assert_eq!(original_domain.observe().unwrap().in_flight, 0);
+        let success_state = node.stats().unwrap();
+        // The exact block ID's stored byte identity is authoritative; the
+        // previously invalid C cannot overwrite the now accepted legal proof.
+        let repeated = receive_page_from(
+            &mut node,
+            first,
+            make_page(&bad),
+            id,
+            settings.genesis(),
+            observed,
+        )
+        .unwrap_err();
+        assert_eq!(repeated.to_string(), "DUPLICATE_CONTENT");
+        assert_eq!(node.stats().unwrap(), success_state);
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn four_distinct_ticket_valid_false_history_traces_never_obtain_work() {
+        let observed = now().unwrap();
+        let settings = crate::Settings::development(Some(observed - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        // The legal packet is the honest control only. Attacker proofs below
+        // are synthesized by hashing arbitrary trace claims without replay.
+        let honest = node
+            .make(
+                settings.genesis(),
+                vec![],
+                crate::development_public(0).unwrap(),
+                settings.genesis_time() + 10,
+                4096,
+            )
+            .unwrap();
+        let challenge = honest.header.challenge();
+        let task = honest.header.work_task;
+        let target = honest.header.target;
+        let initial = node.stats().unwrap();
+        let mut accepted_tickets = 0;
+        let mut original_budget = None;
+        for nonce in 0..128_u64 {
+            let trace = hash(
+                b"history-four-false-transcripts-v1",
+                &[&challenge, &nonce.to_le_bytes()],
+            );
+            let ticket = hash(b"ticket", &[&challenge, &trace]);
+            if target == [0; 32] || ticket > target {
+                continue;
+            }
+            let mut fake = honest.clone();
+            let product = 4 + 2 * trnm_crypto_primitives::pon_work::CELLS * 4;
+            fake.proof[product..product + trnm_crypto_primitives::pon_work::CELLS * 4].fill(0);
+            fake.proof[trnm_crypto_primitives::pon_work::PROOF_BYTES - 32..]
+                .copy_from_slice(&trace);
+            assert_eq!(
+                trnm_crypto_primitives::pon_work::precheck_proof_statement(
+                    challenge,
+                    task,
+                    target,
+                    &fake.proof,
+                ),
+                Ok(())
+            );
+            let id = fake.id().unwrap();
+            let page = Page {
+                schema: "pon-native-history-v1".into(),
+                network: hex::encode(settings.network()),
+                parameters: hex::encode(settings.parameters()),
+                genesis: hex::encode(settings.genesis()),
+                tip: hex::encode(id),
+                after: hex::encode(settings.genesis()),
+                packets: vec![hex::encode(fake.encode().unwrap())],
+                next: hex::encode(id),
+                complete: true,
+            };
+            let source: SocketAddr = format!("127.0.0.1:{}", nonce + 1).parse().unwrap();
+            let error =
+                receive_page_from(&mut node, source, page, id, settings.genesis(), observed)
+                    .unwrap_err();
+            assert_eq!(error.to_string(), "WORK:Transcript");
+            let domain = node.public_service_cpu_domain().unwrap();
+            if let Some(previous) = &original_budget {
+                assert!(domain.shares_domain_with(previous));
+            } else {
+                original_budget = Some(domain.clone());
+            }
+            assert_eq!(domain.observe().unwrap().in_flight, 0);
+            assert_eq!(node.stats().unwrap(), initial);
+            assert_eq!(node.read_active().unwrap().0, settings.genesis());
+            accepted_tickets += 1;
+            if accepted_tickets == 4 {
+                break;
+            }
+        }
+        assert_eq!(
+            accepted_tickets, 4,
+            "the fixed target must yield four false claims"
+        );
+        let id = honest.id().unwrap();
+        let legal_page = Page {
+            schema: "pon-native-history-v1".into(),
+            network: hex::encode(settings.network()),
+            parameters: hex::encode(settings.parameters()),
+            genesis: hex::encode(settings.genesis()),
+            tip: hex::encode(id),
+            after: hex::encode(settings.genesis()),
+            packets: vec![hex::encode(honest.encode().unwrap())],
+            next: hex::encode(id),
+            complete: true,
+        };
+        assert_eq!(
+            receive_page_from(
+                &mut node,
+                "127.0.0.1:999".parse().unwrap(),
+                legal_page,
+                id,
+                settings.genesis(),
+                observed,
+            )
+            .unwrap(),
+            id
+        );
+        assert_eq!(node.read_active().unwrap().0, id);
+        assert_eq!(
+            node.public_service_cpu_domain()
+                .unwrap()
+                .observe()
+                .unwrap()
+                .in_flight,
+            0
+        );
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn loopback_history_false_product_charges_one_cold_node_cpu_domain() {
+        let observed = now().unwrap();
+        let settings = crate::Settings::development(Some(observed - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let mut packet = node
+            .make(
+                settings.genesis(),
+                vec![],
+                crate::development_public(0).unwrap(),
+                settings.genesis_time() + 10,
+                4096,
+            )
+            .unwrap();
+        // Keep a correct winning trace/ticket; forge only canonical C, forcing
+        // a late complete W1 Product rejection, not a cheap target miss.
+        let cell = 4 + 2 * trnm_crypto_primitives::pon_work::CELLS * 4;
+        let original = u32::from_le_bytes(packet.proof[cell..cell + 4].try_into().unwrap());
+        let forged = ((u128::from(original) + 1) % trnm_crypto_primitives::pon_work::Q) as u32;
+        packet.proof[cell..cell + 4].copy_from_slice(&forged.to_le_bytes());
+        let id = packet.id().unwrap();
+        let page = Page {
+            schema: "pon-native-history-v1".into(),
+            network: hex::encode(settings.network()),
+            parameters: hex::encode(settings.parameters()),
+            genesis: hex::encode(settings.genesis()),
+            tip: hex::encode(id),
+            after: hex::encode(settings.genesis()),
+            packets: vec![hex::encode(packet.encode().unwrap())],
+            next: hex::encode(id),
+            complete: true,
+        };
+        assert!(node.public_service_cpu_domain().is_err());
+        let state_before = node.stats().unwrap();
+        let address: SocketAddr = "127.0.0.1:1".parse().unwrap();
+        let error = receive_page_from(&mut node, address, page, id, settings.genesis(), observed)
+            .unwrap_err();
+        assert_eq!(error.to_string(), "WORK:Product");
+        let domain = node.public_service_cpu_domain().unwrap();
+        let reloaded = node.remote_history_cpu_domain().unwrap();
+        assert!(domain.shares_domain_with(&reloaded));
+        let receipt = domain.observe().unwrap();
+        assert_eq!(receipt.in_flight, 0);
+        assert!(!receipt.accounting_unavailable);
+        assert!(receipt.stored_credit_ns <= i128::from(receipt.burst_ns));
+        assert_eq!(node.stats().unwrap(), state_before);
+        assert_eq!(node.read_active().unwrap().0, settings.genesis());
+        drop(node);
+        let reopened = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        assert_eq!(reopened.stats().unwrap(), state_before);
+        assert_eq!(reopened.read_active().unwrap().0, settings.genesis());
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn loopback_history_valid_work_still_accepts_under_cold_cpu_meter() {
+        let observed = now().unwrap();
+        let settings = crate::Settings::development(Some(observed - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let packet = node
+            .make(
+                settings.genesis(),
+                vec![],
+                crate::development_public(0).unwrap(),
+                settings.genesis_time() + 10,
+                4096,
+            )
+            .unwrap();
+        let id = packet.id().unwrap();
+        let page = Page {
+            schema: "pon-native-history-v1".into(),
+            network: hex::encode(settings.network()),
+            parameters: hex::encode(settings.parameters()),
+            genesis: hex::encode(settings.genesis()),
+            tip: hex::encode(id),
+            after: hex::encode(settings.genesis()),
+            packets: vec![hex::encode(packet.encode().unwrap())],
+            next: hex::encode(id),
+            complete: true,
+        };
+        let address: SocketAddr = "127.0.0.1:1".parse().unwrap();
+        assert_eq!(
+            receive_page_from(&mut node, address, page, id, settings.genesis(), observed).unwrap(),
+            id
+        );
+        assert_eq!(node.read_active().unwrap().0, id);
+        let receipt = node.public_service_cpu_domain().unwrap().observe().unwrap();
+        assert_eq!(receipt.in_flight, 0);
+        assert!(!receipt.accounting_unavailable);
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn cold_reopen_with_durable_active_v3_epoch_cannot_mint_history_cpu() {
+        let observed = now().unwrap();
+        let settings = crate::Settings::development(Some(observed - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        assert!(node.begin_ordinary_public_service_epoch().unwrap());
+        // Emulate a service disappearing before its original clean epoch
+        // closure; the SQLite active marker is durable, not a test-only bool.
+        drop(node);
+        let mut reopened = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let stats = reopened.stats().unwrap();
+        assert_eq!(
+            reopened
+                .remote_history_cpu_domain()
+                .err()
+                .unwrap()
+                .to_string(),
+            "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH"
+        );
+        assert!(reopened.public_service_cpu_domain().is_err());
+        assert_eq!(reopened.stats().unwrap(), stats);
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn clean_v3_epoch_close_permits_only_one_cold_history_owner() {
+        let observed = now().unwrap();
+        let settings = crate::Settings::development(Some(observed - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        assert!(node.begin_ordinary_public_service_epoch().unwrap());
+        node.finish_ordinary_public_service_epoch(true).unwrap();
+        drop(node);
+        let mut reopened = Node::open(dir.path(), settings, 2).unwrap();
+        let first = reopened.remote_history_cpu_domain().unwrap();
+        let next = reopened.remote_history_cpu_domain().unwrap();
+        assert!(first.shares_domain_with(&next));
+        let initial = first.observe().unwrap();
+        assert_eq!(initial.stored_credit_ns, 0);
+        assert_eq!(initial.in_flight, 0);
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn unclean_public_epoch_cannot_mint_fresh_remote_history_credit() {
+        let observed = now().unwrap();
+        let settings = crate::Settings::development(Some(observed - 100)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let mut node = Node::open(dir.path(), settings, 2).unwrap();
+        node.mark_ordinary_public_service_epoch_unknown();
+        assert_eq!(
+            node.remote_history_cpu_domain().err().unwrap().to_string(),
+            "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH"
+        );
+    }
+
+    #[test]
+    fn history_valid_w1_cannot_commit_after_m06_host_owner_rejection() {
+        use std::sync::atomic::{AtomicUsize, Ordering};
+        use trnm_crypto_primitives::pon_work::VerificationProgress;
+        use trnm_mvcc_fee::pon_executor::ExecutionProgress;
+        let (dir, mutex, packet) = pending_packet();
+        let mut node = mutex.lock().unwrap();
+        let original = node.stats().unwrap();
+        let original_active = node.read_active().unwrap();
+        let id = packet.id().unwrap();
+        let m06_checks = AtomicUsize::new(0);
+        let mut tiles = 0_usize;
+        let result = node.admit_with_work_progress(
+            &packet,
+            now().unwrap(),
+            &mut |point| {
+                if matches!(point, VerificationProgress::TranscriptTile { .. }) {
+                    tiles += 1;
+                }
+                Ok(())
+            },
+            &|stage| {
+                if stage == ExecutionProgress::BeforeDurableCommit {
+                    m06_checks.fetch_add(1, Ordering::SeqCst);
+                    return Err(Error::from("PUBLIC_HOST_KERNEL_LIMITS_CHANGED"));
+                }
+                Ok(())
+            },
+        );
+        assert_eq!(
+            result.unwrap_err().to_string(),
+            "PUBLIC_HOST_KERNEL_LIMITS_CHANGED"
+        );
+        assert_eq!(tiles, 512, "valid W1 must have completed full replay");
+        assert!(m06_checks.load(Ordering::SeqCst) > 0);
+        assert_eq!(node.stats().unwrap(), original);
+        assert_eq!(node.read_active().unwrap(), original_active);
+        let persisted: u64 = rusqlite::Connection::open(dir.path().join("native.sqlite"))
+            .unwrap()
+            .query_row(
+                "SELECT COUNT(*) FROM blocks WHERE id=?",
+                [id.as_slice()],
+                |row| row.get(0),
+            )
+            .unwrap();
+        assert_eq!(
+            persisted, 0,
+            "precommit owner fault must roll back all block rows"
+        );
+        // Host error is local, not mathematical Invalid. Later reuse of the
+        // exact valid W1 must succeed after the resource owner is restored.
+        assert_eq!(node.admit(&packet, now().unwrap()).unwrap(), id);
+    }
+
+    #[test]
+    fn kernel_progress_rechecks_original_host_at_most_every_64_tiles() {
+        use trnm_crypto_primitives::pon_work::VerificationProgress;
+        let mut owner_checks = Vec::new();
+        for ordinal in 0..512_usize {
+            let point = VerificationProgress::TranscriptTile {
+                row: ordinal / 64,
+                column: (ordinal / 8) % 8,
+                inner: ordinal % 8,
+            };
+            if history_kernel_work_checkpoint(point) {
+                owner_checks.push(ordinal);
+            }
+        }
+        assert_eq!(owner_checks, vec![0, 64, 128, 192, 256, 320, 384, 448]);
+        for point in [
+            VerificationProgress::BeforeReplay,
+            VerificationProgress::BeforeProduct,
+            VerificationProgress::BeforeVerifiedWork,
+            VerificationProgress::Noise {
+                label: 1,
+                counter: 0,
+            },
+            VerificationProgress::MatrixRow { row: 0 },
+        ] {
+            assert!(history_kernel_work_checkpoint(point));
+        }
+        assert!(!history_kernel_work_checkpoint(
+            VerificationProgress::Noise {
+                label: 1,
+                counter: 1
+            }
+        ));
+    }
+
+    #[test]
+    fn host_owner_failure_during_w1_tile_does_not_commit_or_poison_retry() {
+        // Exercise the actual Node verification path, not just the progress
+        // selector. A local Host guard failure is NOT invalid chain work.
+        let (_dir, owner, packet) = pending_packet();
+        let mut node = owner.lock().unwrap();
+        let before_stats = node.stats().unwrap();
+        let before_active = node.read_active().unwrap();
+        let mut tiles = 0_usize;
+        let refused = node
+            .admit_with_work_progress(&packet, now().unwrap(), &mut |point| {
+                if matches!(
+                    point,
+                    trnm_crypto_primitives::pon_work::VerificationProgress::TranscriptTile { .. }
+                ) {
+                    tiles += 1;
+                    return Err("PUBLIC_HOST_KERNEL_LIMITS_CHANGED".into());
+                }
+                Ok(())
+            },
+            &|_| Ok(()),
+        )
+        .unwrap_err();
+        assert_eq!(refused.to_string(), "PUBLIC_HOST_KERNEL_LIMITS_CHANGED");
+        assert_eq!(
+            tiles, 1,
+            "full W1 must abort cooperatively before verified work"
+        );
+        assert_eq!(node.stats().unwrap(), before_stats);
+        assert_eq!(node.read_active().unwrap(), before_active);
+        // Recovery from a LOCAL Host refusal must not poison the unchanged
+        // mathematical statement or turn it into a cached invalid W1 fact.
+        let admitted = node.admit(&packet, now().unwrap()).unwrap();
+        assert_eq!(admitted, packet.id().unwrap());
+    }
+
+    #[test]
+    fn public_loopback_history_requires_real_fixed_host_parent() {
+        let loopback: SocketAddr = "127.0.0.1:12345".parse().unwrap();
+        let legacy = crate::host_kernel_parent::require_for_listener(loopback).unwrap();
+        assert!(
+            legacy.is_none(),
+            "weak local compatibility remains local only"
+        );
+        let strict = crate::host_kernel_parent::require_host_kernel_budget(
+            loopback,
+            Some(crate::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT),
+        );
+        // A real matching parent yields Some; an unprovisioned one returns an
+        // operational refusal. Neither is an unguarded None for public import.
+        assert!(!matches!(strict, Ok(None)));
+    }
+
+    #[test]
+    fn remote_sync_without_original_host_cgroup_rejects_before_any_network_or_w1() {
+        // Documentation-only network address. If this host really has the
+        // registered fixed cgroup, its owner is tested by the kernel checker.
+        // Otherwise remote history cannot reach a complete W1 verifier.
+        let remote: SocketAddr = "192.0.2.1:12345".parse().unwrap();
+        let budget = crate::host_kernel_parent::require_for_listener(remote);
+        assert!(!matches!(budget, Ok(None)), "remote must never be unowned");
+        if let Err(expected) = budget {
+            let dir = tempfile::tempdir().unwrap();
+            let settings = crate::Settings::development(Some(now().unwrap() - 100)).unwrap();
+            let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+            let original = node.stats().unwrap();
+            let error = sync_from(&mut node, remote, settings.genesis(), settings.genesis(), 1)
+                .unwrap_err();
+            assert_eq!(error.to_string(), expected.to_string());
+            // Public untrusted page API refuses the same unbudgeted source
+            // before it even attempts a page context/W1/State lookup.
+            let unchecked_page = Page {
+                schema: String::new(),
+                network: String::new(),
+                parameters: String::new(),
+                genesis: String::new(),
+                tip: String::new(),
+                after: String::new(),
+                packets: vec![],
+                next: String::new(),
+                complete: false,
+            };
+            let page_error = receive_page_from(
+                &mut node,
+                remote,
+                unchecked_page,
+                settings.genesis(),
+                settings.genesis(),
+                now().unwrap(),
+            )
+            .unwrap_err();
+            assert_eq!(page_error.to_string(), expected.to_string());
+            // Authenticating a remote service is not equivalent to a CPU
+            // budget. Both signed and durable signed sync must refuse before
+            // connecting, same as the unauthenticated remote sync above.
+            let (_, client) = authentication_fixture(&settings);
+            let mut replay_nonce = 1_u64;
+            let auth_error = sync_from_authenticated(
+                &mut node,
+                remote,
+                settings.genesis(),
+                settings.genesis(),
+                1,
+                &client,
+                &mut replay_nonce,
+            )
+            .unwrap_err();
+            assert_eq!(auth_error.to_string(), expected.to_string());
+            let durable_error = sync_from_authenticated_durable(
+                &mut node,
+                remote,
+                settings.genesis(),
+                settings.genesis(),
+                1,
+                &client,
+            )
+            .unwrap_err();
+            assert_eq!(durable_error.to_string(), expected.to_string());
+            assert_eq!(node.stats().unwrap(), original);
+            assert_eq!(node.read_active().unwrap().0, settings.genesis());
+        }
+    }
 
     #[test]
     fn protected_hello_rendezvous_from_reserved_socket_preserves_full_native_admission() {
@@ -2766,7 +4148,7 @@ mod tests {
                 |row| row.get(0),
             )
             .unwrap();
-        let error = dispatch_shared_with_execution_observation(
+        let error = dispatch_shared_with_execution_completion(
             &node,
             Request::Submit {
                 packet: hex::encode(packet.encode().unwrap()),
@@ -2784,6 +4166,7 @@ mod tests {
             &ExecutionControl::new(&|_| Ok(()), &()),
             None,
             true,
+            &|_| panic!("corrupt parent must not receive completion priority"),
         )
         .unwrap_err();
         assert_eq!(error.to_string(), "ROOT");
@@ -3379,6 +4762,89 @@ mod tests {
             server.public_key()
         );
         (server, client)
+    }
+
+    #[test]
+    fn authenticated_legacy_nonloopback_has_no_unmetered_host_bypass() {
+        // V3 and legacy authenticated ingress now check the SAME fixed parent.
+        // This regression works with either an unprivileged CI host (denied)
+        // or an actual admin-provisioned parent (must be verified, never None).
+        let remote: SocketAddr = "0.0.0.0:0".parse().unwrap();
+        assert!(crate::host_kernel_parent::require_host_kernel_budget(remote, None).is_err());
+        let probe = crate::host_kernel_parent::require_for_listener(remote);
+        match &probe {
+            Ok(Some(kernel)) => kernel.verify().unwrap(),
+            Err(_) => {}
+            Ok(None) => panic!("nonloopback must not run without host budget"),
+        }
+        // Even when an administrator provisioned a valid cgroup, the
+        // unaffordable no-cookie authenticated-only WAN transport is denied.
+        {
+            let dir = tempfile::tempdir().unwrap();
+            let settings = Settings::development(Some(now().unwrap() - 100)).unwrap();
+            let (authentication, _) = authentication_fixture(&settings);
+            let node = Node::open(dir.path(), settings, 2).unwrap();
+            let listener = TcpListener::bind(remote).unwrap();
+            let error = serve_authenticated(
+                listener,
+                node,
+                Duration::from_secs(1),
+                Arc::new(AtomicBool::new(true)),
+                authentication,
+            )
+            .unwrap_err();
+            assert_eq!(error.to_string(), "DEVELOPMENT_REMOTE_ADMISSION_REQUIRED");
+        }
+        // The priced, authenticated legacy WAN route requires the original
+        // host parent too; no second identity-scoped host budget is allowed.
+        if let Err(expected) = probe {
+            let dir = tempfile::tempdir().unwrap();
+            let settings = Settings::development(Some(now().unwrap() - 100)).unwrap();
+            let (authentication, _) = authentication_fixture(&settings);
+            let node = Node::open(dir.path(), settings, 2).unwrap();
+            let listener = TcpListener::bind(remote).unwrap();
+            let error = serve_authenticated_protected(
+                listener,
+                node,
+                Duration::from_secs(1),
+                Arc::new(AtomicBool::new(true)),
+                authentication,
+                AdmissionPolicy::development(),
+            )
+            .unwrap_err();
+            assert_eq!(error.to_string(), expected.to_string());
+        }
+    }
+
+    #[test]
+    fn measured_native_w1_rejection_reports_real_or_explicitly_unknown_thread_cpu() {
+        let dir = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(now().unwrap() - 100)).unwrap();
+        let node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+        let original = node
+            .make(
+                settings.genesis(),
+                vec![],
+                crate::development_public(0).unwrap(),
+                settings.genesis_time() + 10,
+                4096,
+            )
+            .unwrap();
+        let mut bad = original;
+        let last = bad.proof.len() - 1;
+        bad.proof[last] ^= 1;
+        let metrics = Mutex::new(Metrics::default());
+        // The adjusted trace may happen to miss target; accept either a
+        // cheap TARGET refusal or expensive TRANSCRIPT refusal as invalid.
+        assert!(measured_work_verify(bad, &metrics).is_err());
+        let snapshot = metrics.lock().unwrap();
+        assert_eq!(snapshot.work_verifications, 1);
+        assert_eq!(
+            snapshot.work_verification_thread_cpu_unknown_calls
+                + snapshot.work_verification_thread_cpu_known_calls,
+            1
+        );
+        assert!(snapshot.work_verification_ns > 0);
     }
 
     #[test]

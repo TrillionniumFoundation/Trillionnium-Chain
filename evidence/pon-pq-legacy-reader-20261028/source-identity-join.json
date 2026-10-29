@@ -1,0 +1,50 @@
+{
+  "frozen_local_base": "969150c1f1ad1821ee5ac3c11f0535677e9bb8e9",
+  "remote_parent": "a1e40747746772d1326bb3e656aec4ba10440147",
+  "parent_tree": "f90cd9f63fce5fb785061419c9cb12b57ae24873",
+  "reader_observation": "reader-suite-final",
+  "recorded_inputs": 1542,
+  "equal_after_extras": 1541,
+  "later_composition_differences": [
+    {
+      "path": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "observed_sha256": "e946e2582d310f7e488ec2750b73f685d3891f137fc0861385c79bef70c8dc87",
+      "composed_sha256": "6a3422b7a34113a5ebfbd87655f23538684c5a80c8a56b64b2f0a5056f32ca9f"
+    }
+  ],
+  "reader_helpers": {
+    "scripts/ci/check_public_readiness_evidence.py": "16a4919760b350d0fc219dac52858597ea202073d3d6602dcdde28037e488bd0",
+    "scripts/ci/test_public_readiness_evidence.py": "5ecf1b152fa9f91aee5731b16223de75ad200faaf4f7cc259b0b4fbbbaa2cf11",
+    "scripts/ci/pq_legacy_source_contract.py": "3e085ccf4f4a2855a10348edede86f3eebd8e0c7913da837e605fb062bd873ce",
+    "scripts/ci/rust_source_tokens.py": "32921977673afbae29d7b6cf037605621e7770243902a0118af1cd9309e5f6c6",
+    "scripts/ci/test_rust_source_tokens.py": "0bef50998b5b7377543efa3179917c1d672bb0ee926530dcd47d337d50409807"
+  },
+  "runtime_inputs_count": 1170,
+  "runtime_inputs_unchanged": true,
+  "runtime_git_diff_empty": true,
+  "workflow_guards": {
+    "all_retained": 16,
+    "unchanged": 12,
+    "reviewed_literal_updates": 4,
+    "only_these_literal_substitutions": true,
+    "all_match_actual_git_blobs": true,
+    "actual_new_workflow_executed": false
+  },
+  "copied_hosted_archives": [
+    {
+      "path": "evidence/pon-pq-hosted-a1e407-20261028/quota.zip",
+      "members": 26,
+      "crc_readback": true,
+      "sha256": "254df2cd97f65c3db6c1a28c98056d4250df7e244b1a69228f07622ad9c0d468"
+    },
+    {
+      "path": "evidence/pon-pq-hosted-a1e407-20261028/accounts.zip",
+      "members": 24,
+      "crc_readback": true,
+      "sha256": "e41e0e18fa99e98b8e005de824baa04dd11a07ecdd7c373cc62af09463d331be"
+    }
+  ],
+  "p1_complete": false,
+  "public_network_ready": false,
+  "production_activation": false
+}

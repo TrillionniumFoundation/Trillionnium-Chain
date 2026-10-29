@@ -1,0 +1,24 @@
+   Compiling trnm-mvcc-fee v0.1.0 (/workspace/scratch/faebcae3f86e/pq/repo/trillionnium/crates/trnm-mvcc-fee)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 10.36s
+     Running unittests src/lib.rs (/workspace/scratch/faebcae3f86e/pq/target/debug/deps/trnm_mvcc_fee-ee732425c876ed63)
+
+running 1 test
+test pon_executor::pq_accounts_v2::tests::anchored_migration_conserves_all_accounts_tasks_rewards_and_claims_once ... FAILED
+
+failures:
+
+---- pon_executor::pq_accounts_v2::tests::anchored_migration_conserves_all_accounts_tasks_rewards_and_claims_once stdout ----
+
+thread 'pon_executor::pq_accounts_v2::tests::anchored_migration_conserves_all_accounts_tasks_rewards_and_claims_once' (226) panicked at crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tests.rs:449:9:
+assertion `left == right` failed: claimed account retained pre-CLAIM nonce 0
+  left: Ok(())
+ right: Err("PQ2_IMPORT_CLAIM_NONCE")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    pon_executor::pq_accounts_v2::tests::anchored_migration_conserves_all_accounts_tasks_rewards_and_claims_once
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 95 filtered out; finished in 0.23s
+
+error: test failed, to rerun pass `-p trnm-mvcc-fee --lib`

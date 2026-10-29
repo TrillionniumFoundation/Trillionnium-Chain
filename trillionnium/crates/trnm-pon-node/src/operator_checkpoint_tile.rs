@@ -8,9 +8,12 @@ use crate::{
 use serde_json::json;
 use sha2::{Digest, Sha256};
 use std::{
-    fs::OpenOptions,
-    os::unix::fs::{MetadataExt, OpenOptionsExt},
+    fs::{self, File, OpenOptions},
+    marker::PhantomData,
+    os::unix::fs::{FileExt, MetadataExt, OpenOptionsExt},
     path::{Path, PathBuf},
+    rc::Rc,
+    sync::Arc,
     time::{Duration, Instant},
 };
 use trnm_crypto_primitives::verify_hex_strict;
@@ -37,6 +40,215 @@ pub const BUNDLE_SCHEMA: &str = "pon-native-checkpoint-bootstrap-bundle-v1";
 pub struct CheckpointTileRuntimePaths {
     checkpoint: PathBuf,
     activation: PathBuf,
+}
+/// Local owner checkpoints only. These never enter an activation or signature.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum ReplayProgress {
+    Material(checkpoint_tile_material_v1::MaterialProgress),
+    ActivationRead(u64),
+    SecondCheckpointHash(u64),
+    SecondActivationHash(u64),
+    Settings,
+}
+type ReplayCheck<'a> = &'a dyn Fn(ReplayProgress) -> Result<()>;
+type FileIdentity = (u64, u64, u64, u64, u32, u32, u32, i64, i64, i64, i64);
+fn file_identity(m: &fs::Metadata) -> FileIdentity {
+    (
+        m.dev(),
+        m.ino(),
+        m.len(),
+        m.nlink(),
+        m.mode(),
+        m.uid(),
+        m.gid(),
+        m.mtime(),
+        m.mtime_nsec(),
+        m.ctime(),
+        m.ctime_nsec(),
+    )
+}
+struct HeldOriginal {
+    path: PathBuf,
+    file: File,
+    identity: FileIdentity,
+}
+impl HeldOriginal {
+    fn open(path: &Path, limit: u64) -> Result<Self> {
+        let file = OpenOptions::new()
+            .read(true)
+            .custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC | libc::O_NONBLOCK)
+            .open(path)?;
+        let m = file.metadata()?;
+        ensure(
+            m.is_file() && m.nlink() == 1 && m.len() <= limit && m.mode() & 0o022 == 0,
+            "CHECKPOINT_FILE",
+        )?;
+        let held = Self {
+            path: path.to_owned(),
+            file,
+            identity: file_identity(&m),
+        };
+        held.ready()?;
+        Ok(held)
+    }
+    fn ready(&self) -> Result<()> {
+        ensure(
+            file_identity(&self.file.metadata()?) == self.identity
+                && file_identity(&fs::symlink_metadata(&self.path)?) == self.identity,
+            "CHECKPOINT_FILE_CHANGED",
+        )
+    }
+    fn scan(
+        &self,
+        phase: fn(u64) -> ReplayProgress,
+        progress: ReplayCheck<'_>,
+        collect: bool,
+    ) -> Result<(Hash, Vec<u8>)> {
+        self.ready()?;
+        let mut hasher = Sha256::new();
+        let mut bytes = Vec::new();
+        let mut buffer = [0u8; 65_536];
+        let mut offset = 0;
+        progress(phase(offset))?;
+        while offset < self.identity.2 {
+            let amount = (self.identity.2 - offset).min(buffer.len() as u64) as usize;
+            let n = self.file.read_at(&mut buffer[..amount], offset)?;
+            ensure(n > 0, "CHECKPOINT_FILE_CHANGED")?;
+            hasher.update(&buffer[..n]);
+            if collect {
+                bytes.extend_from_slice(&buffer[..n]);
+            }
+            offset += n as u64;
+            progress(phase(offset))?;
+        }
+        ensure(
+            self.file.read_at(&mut [0u8; 1], offset)? == 0,
+            "CHECKPOINT_FILE_CHANGED",
+        )?;
+        self.ready()?;
+        Ok((hasher.finalize().into(), bytes))
+    }
+}
+
+/// An owned one-shot material result, never a Clone flag on general Settings.
+pub(crate) struct PreparedHistoryCheckpoint {
+    settings: Settings,
+    seal: StartupMaterialSeal,
+}
+impl PreparedHistoryCheckpoint {
+    pub(crate) fn settings(&self) -> &Settings {
+        &self.settings
+    }
+    pub(crate) fn into_parts(self) -> (Settings, StartupMaterialSeal) {
+        (self.settings, self.seal)
+    }
+}
+pub(crate) struct StartupMaterialSeal {
+    checked: CheckedCheckpointTileMaterialV1,
+    checkpoint: HeldOriginal,
+    activation: HeldOriginal,
+    scope: crate::store::history_effect_v6::StartupScope,
+    spec_sha256: Hash,
+    bundle_sha256: Hash,
+    settings_sha256: Hash,
+    task_windows: Option<Arc<trnm_mvcc_fee::model_task_windows_v1::TaskWindows>>,
+    _owner_thread: PhantomData<Rc<()>>,
+}
+pub(crate) struct CurrentStartupMaterial<'a> {
+    pub scope: crate::store::history_effect_v6::StartupScope,
+    pub spec: &'a [u8],
+    pub bundle: &'a [u8],
+    pub model: &'a [u8],
+    pub input: &'a [u8],
+}
+pub(crate) struct HistoryCheckpointInput<'a> {
+    pub spec: &'a [u8],
+    pub bundle: &'a [u8],
+    pub model: &'a [u8],
+    pub input: &'a [u8],
+}
+fn settings_digest(settings: &Settings) -> Result<Hash> {
+    let boot = settings
+        .operator_bootstrap
+        .as_ref()
+        .ok_or("CHECKPOINT_BOOTSTRAP_CONTEXT")?;
+    let app = &settings.app;
+    let raw = operator_deployment::canonical(&json!({
+        "network":app.network,"parameters":app.parameters,"family":app.family,"plan":app.plan,
+        "evaluators":app.evaluators,"fees":app.fees,"params":app.params,"model_registry":app.model_registry,
+        "genesis":settings.genesis,"initial":settings.initial,"material":settings.operator_material,
+        "lease":hex::encode(boot.lease.encode().map_err(|_|"ACTOR_LEASE")?),
+        "statement":hex::encode(boot.signed.encode().map_err(|_|"ACTOR_STATEMENT")?),"bootstrap_state":boot.state
+    }))?;
+    Ok(Sha256::digest(raw).into())
+}
+impl StartupMaterialSeal {
+    pub(crate) fn verify_and_consume(
+        self,
+        settings: &Settings,
+        current: CurrentStartupMaterial<'_>,
+        progress: ReplayCheck<'_>,
+    ) -> Result<()> {
+        progress(ReplayProgress::Settings)?;
+        ensure(
+            self.scope.same_operation(&current.scope),
+            "HISTORY_V6_STARTUP_SEAL_SCOPE",
+        )?;
+        ensure(
+            self.spec_sha256 == Hash::from(Sha256::digest(current.spec))
+                && self.bundle_sha256 == Hash::from(Sha256::digest(current.bundle))
+                && self.settings_sha256 == settings_digest(settings)?,
+            "HISTORY_V6_STARTUP_SEAL_CONTEXT",
+        )?;
+        ensure(
+            match (&self.task_windows, &settings.app.task_windows) {
+                (None, None) => true,
+                (Some(a), Some(b)) => Arc::ptr_eq(a, b),
+                _ => false,
+            },
+            "HISTORY_V6_STARTUP_SEAL_CONTEXT",
+        )?;
+        let policy = settings
+            .app
+            .checkpoint_tile_policy()?
+            .ok_or("CHECKPOINT_POLICY_REQUIRED")?;
+        let (model, input, _, _) = settings
+            .operator_material
+            .as_ref()
+            .ok_or("CHECKPOINT_MATERIAL_REQUIRED")?;
+        ensure(
+            model == current.model
+                && input == current.input
+                && Hash::from(Sha256::digest(current.model))
+                    == deployment_actors::digest(&policy.a_sha256)?
+                && Hash::from(Sha256::digest(current.input))
+                    == deployment_actors::digest(&policy.b_sha256)?,
+            "CHECKPOINT_MATRIX_SHA",
+        )?;
+        let paths = settings
+            .checkpoint_tile_paths
+            .as_ref()
+            .ok_or("CHECKPOINT_MATERIAL_REQUIRED")?;
+        ensure(
+            paths.checkpoint == self.checkpoint.path && paths.activation == self.activation.path,
+            "HISTORY_V6_STARTUP_SEAL_CONTEXT",
+        )?;
+        let (checkpoint, _) =
+            self.checkpoint
+                .scan(ReplayProgress::SecondCheckpointHash, progress, false)?;
+        let (activation, _) =
+            self.activation
+                .scan(ReplayProgress::SecondActivationHash, progress, false)?;
+        let context = policy.context(&settings.app)?;
+        ensure(
+            checkpoint == context.checkpoint_sha256 && activation == context.activation_sha256,
+            "HISTORY_V6_STARTUP_SEAL_BYTES",
+        )?;
+        policy.check_replay(&self.checked)?;
+        self.checkpoint.ready()?;
+        self.activation.ready()?;
+        progress(ReplayProgress::Settings)
+    }
 }
 impl CheckpointTileRuntimePaths {
     pub fn new(checkpoint: PathBuf, activation: PathBuf) -> Self {
@@ -162,6 +374,15 @@ pub fn prepare(
 ) -> Result<BootstrapTemplate> {
     let (app, _, lease, signed) = objects(spec, model, input)?;
     let checked = paths.replay(&app, model, input)?;
+    template_from_checked(spec, &app, &lease, &signed, checked.descriptor_id())
+}
+fn template_from_checked(
+    spec: &OperatorCheckpointTileSpecV1,
+    app: &Config,
+    lease: &DemandLeaseV2,
+    signed: &SignedLifecycleTaskV2,
+    descriptor_id: Hash,
+) -> Result<BootstrapTemplate> {
     Ok(BootstrapTemplate {
         schema: TEMPLATE_SCHEMA.into(),
         spec_hash: hex::encode(spec.id()?),
@@ -174,10 +395,10 @@ pub fn prepare(
         source_message: hex::encode(signed.signing_message().map_err(|_| "ACTOR_STATEMENT")?),
         requester_message: hex::encode(requester_message(
             spec.id()?,
-            &app,
-            &lease,
-            &signed,
-            checked.descriptor_id(),
+            app,
+            lease,
+            signed,
+            descriptor_id,
         )?),
         production_activation: false,
         public_network_ready: false,
@@ -292,6 +513,108 @@ impl Settings {
         paths: CheckpointTileRuntimePaths,
     ) -> Result<Self> {
         let expected = prepare(spec, model, input, &paths)?;
+        Self::checkpoint_settings_from_expected(
+            spec,
+            bundle,
+            model,
+            input,
+            paths,
+            &expected,
+            &|_| Ok(()),
+        )
+    }
+    pub(crate) fn prepare_history_checkpoint(
+        material: HistoryCheckpointInput<'_>,
+        paths: CheckpointTileRuntimePaths,
+        scope: crate::store::history_effect_v6::StartupScope,
+        progress: ReplayCheck<'_>,
+    ) -> Result<PreparedHistoryCheckpoint> {
+        progress(ReplayProgress::Settings)?;
+        let spec = OperatorCheckpointTileSpecV1::decode(material.spec)?;
+        let bundle: BootstrapBundle = operator_deployment::decode(material.bundle)?;
+        let (model, input) = (material.model, material.input);
+        progress(ReplayProgress::Settings)?;
+        let (app, _, lease, signed) = objects(&spec, model, input)?;
+        let policy = app
+            .checkpoint_tile_policy()?
+            .ok_or("CHECKPOINT_POLICY_REQUIRED")?;
+        ensure(
+            Hash::from(Sha256::digest(model)) == deployment_actors::digest(&policy.a_sha256)?
+                && Hash::from(Sha256::digest(input))
+                    == deployment_actors::digest(&policy.b_sha256)?,
+            "CHECKPOINT_MATRIX_SHA",
+        )?;
+        let activation = HeldOriginal::open(
+            &paths.activation,
+            checkpoint_tile_material_v1::MAX_ACTIVATION_BYTES as u64,
+        )?;
+        let (_, activation_raw) =
+            activation.scan(ReplayProgress::ActivationRead, progress, true)?;
+        let mut checkpoint = HeldOriginal::open(&paths.checkpoint, policy.checkpoint_bytes)?;
+        ensure(
+            checkpoint.identity.2 == policy.checkpoint_bytes,
+            "CHECKPOINT_FILE",
+        )?;
+        let start = Instant::now();
+        let mut first_error = None;
+        let checked = checkpoint_tile_material_v1::derive_checkpoint_tile_material_v1_with_progress(
+            &mut checkpoint.file,
+            &activation_raw,
+            model,
+            input,
+            &policy.context(&app)?,
+            |event| {
+                let result = ensure(
+                    start.elapsed() < Duration::from_secs(90),
+                    "CHECKPOINT_REPLAY_WALL",
+                )
+                .and_then(|_| progress(ReplayProgress::Material(event)));
+                if let Err(error) = result {
+                    first_error = Some(error);
+                    Err("CHECKPOINT_OWNER_BOUNDARY_ABORT")
+                } else {
+                    Ok(())
+                }
+            },
+        );
+        if let Some(error) = first_error {
+            return Err(error);
+        }
+        let checked = checked?;
+        checkpoint.ready()?;
+        activation.ready()?;
+        policy.check_replay(&checked)?;
+        let expected =
+            template_from_checked(&spec, &app, &lease, &signed, checked.descriptor_id())?;
+        let settings = Self::checkpoint_settings_from_expected(
+            &spec, &bundle, model, input, paths, &expected, progress,
+        )?;
+        let seal = StartupMaterialSeal {
+            checked,
+            checkpoint,
+            activation,
+            scope,
+            // The original codecs accept one final LF. Bind the exact protected
+            // bytes actually decoded, including that legal LF, without normalizing.
+            spec_sha256: Sha256::digest(material.spec).into(),
+            bundle_sha256: Sha256::digest(material.bundle).into(),
+            settings_sha256: settings_digest(&settings)?,
+            task_windows: settings.app.task_windows.clone(),
+            _owner_thread: PhantomData,
+        };
+        progress(ReplayProgress::Settings)?;
+        Ok(PreparedHistoryCheckpoint { settings, seal })
+    }
+    fn checkpoint_settings_from_expected(
+        spec: &OperatorCheckpointTileSpecV1,
+        bundle: &BootstrapBundle,
+        model: &[u8],
+        input: &[u8],
+        paths: CheckpointTileRuntimePaths,
+        expected: &BootstrapTemplate,
+        progress: ReplayCheck<'_>,
+    ) -> Result<Self> {
+        progress(ReplayProgress::Settings)?;
         ensure(
             bundle.schema == BUNDLE_SCHEMA
                 && bundle.spec_hash == expected.spec_hash
@@ -300,7 +623,8 @@ impl Settings {
                 && bundle.lease == expected.lease,
             "CHECKPOINT_BOOTSTRAP_CONTEXT",
         )?;
-        verify_approval(&expected, &bundle.requester_approval, "requester")?;
+        verify_approval(expected, &bundle.requester_approval, "requester")?;
+        progress(ReplayProgress::Settings)?;
         let (app, material, lease, mut unsigned) = objects(spec, model, input)?;
         let signed =
             SignedLifecycleTaskV2::decode(&bytes(&bundle.signed_statement, LIFECYCLE_TASK_BYTES)?)
@@ -308,11 +632,15 @@ impl Settings {
         unsigned.signature = signed.signature;
         ensure(unsigned == signed, "CHECKPOINT_BOOTSTRAP_STATEMENT")?;
         let boot = qualified_task_lifecycle::bootstrap_from_signed(&app, lease, signed)?;
+        progress(ReplayProgress::Settings)?;
         let mut initial = State::new();
         initial.insert("meta:issued".into(), json!(spec.actors.issued()?));
         initial.insert("model:current".into(), json!(hex::encode([0; 32])));
         initial.extend(boot.state.clone());
-        for a in &spec.actors.allocations {
+        for (index, a) in spec.actors.allocations.iter().enumerate() {
+            if index.is_multiple_of(32) {
+                progress(ReplayProgress::Settings)?;
+            }
             initial.insert(
                 format!("account:{}", a.public_key),
                 json!({"balance":a.balance,"nonce":0}),
@@ -327,6 +655,7 @@ impl Settings {
                 &spec.actors.genesis_timestamp.to_le_bytes(),
             ],
         );
+        progress(ReplayProgress::Settings)?;
         Ok(Self {
             app,
             genesis,

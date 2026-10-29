@@ -1,0 +1,47 @@
+"""Compile the actual M02 PQ owner as a test root using Cargo-built locked rlibs.
+
+This targeted runner is supplementary evidence, not a full Node/workspace gate.
+"""
+import hashlib
+import json
+from pathlib import Path
+import subprocess
+import sys
+import time
+
+root = Path(__file__).resolve().parent.parent
+source = root / 'pq-base5e/trillionnium/crates/trnm-pon-node/src/pq_authority.rs'
+dependencies = root / 'target-native/debug/deps'
+label = sys.argv[1]
+binary = root / 'evidence' / ('pq-owner-' + label)
+command = [str(root.parent / 'pon-build-inputs/unpacked/toolchain/bin/rustc'),
+           '--edition=2021', '--crate-name', 'pq_authority_targeted', '--test', str(source),
+           '-L', 'dependency=' + str(dependencies), '-o', str(binary)]
+for name in ['rusqlite', 'sha2', 'trnm_crypto_primitives', 'trnm_protocol', 'tempfile']:
+    choices = list(dependencies.glob('lib' + name + '-*.rlib'))
+    if name == 'sha2' and len(choices) > 1:
+        fingerprints = dependencies.parent / '.fingerprint'
+        protocol = list(fingerprints.glob('trnm-protocol-*/lib-trnm_protocol.json'))
+        assert len(protocol) == 1, protocol
+        expected = next(d[3] for d in json.loads(protocol[0].read_text())['deps'] if d[1] == name)
+        choices = [p for p in choices if int.from_bytes(bytes.fromhex(
+            (fingerprints / p.stem.removeprefix('lib') / ('lib-' + name)).read_text()), 'little') == expected]
+    assert len(choices) == 1, (name, choices)
+    command += ['--extern', name + '=' + str(choices[0])]
+for path in (root / 'target-native/debug/build').glob('*/out'):
+    command += ['-L', 'native=' + str(path)]
+started = time.monotonic()
+compile_result = subprocess.run(command, capture_output=True, text=True)
+(root / 'evidence' / ('pq-owner-' + label + '-compile.log')).write_text(
+    compile_result.stdout + compile_result.stderr)
+result = {'scope': 'actual_native_owner_source_standalone_test_root_with_locked_Cargo_rlibs',
+          'source_sha256': hashlib.sha256(source.read_bytes()).hexdigest(),
+          'compile_exit': compile_result.returncode, 'test_exit': None}
+if compile_result.returncode == 0:
+    run = subprocess.run([str(binary), '--nocapture'], capture_output=True, text=True)
+    (root / 'evidence' / ('pq-owner-' + label + '-tests.log')).write_text(run.stdout + run.stderr)
+    result['test_exit'] = run.returncode
+result['elapsed_seconds'] = time.monotonic() - started
+(root / 'evidence' / ('pq-owner-' + label + '.json')).write_text(json.dumps(result, indent=2)+'\n')
+print(json.dumps(result))
+sys.exit(compile_result.returncode or result['test_exit'] or 0)

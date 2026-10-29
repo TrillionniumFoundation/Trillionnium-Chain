@@ -11,6 +11,13 @@ on:
       - scripts/pon_public_v3_phase_read.py
       - scripts/pon_public_v3_policy_read.py
       - scripts/ci/test_pon_public_v3_policy_read.py
+      - scripts/ci/read_native_history_verifier.py
+      - scripts/ci/test_native_history_verifier.py
+      - scripts/ci/run_history_verifier_lifeline_v1.py
+      - scripts/ci/read_history_verifier_lifeline_v1.py
+      - scripts/ci/test_history_verifier_lifeline_v1.py
+      - scripts/ci/history_fixed_parent_v2.py
+      - scripts/ci/test_history_fixed_parent_v2.py
       - scripts/project-preflight.sh
       - scripts/ci/verify_ci_source.py
       - .github/workflows/pon-native-campaign-qualification.yml
@@ -23,7 +30,11 @@ concurrency:
   cancel-in-progress: false
 jobs:
   original-campaign:
-    name: original native campaign (x64, head, release)
+    name: original native campaign (${{ matrix.history_resource_profile }}, x64, head, release)
+    strategy:
+      fail-fast: false
+      matrix:
+        history_resource_profile: [strict-every-native-checkpoint-v1, history-account-graph-resource-fence-v1]
     runs-on: ubuntu-24.04
     timeout-minutes: 80
     env:
@@ -33,6 +44,7 @@ jobs:
       RUST_TEST_THREADS: "1"
       PYTHONDONTWRITEBYTECODE: "1"
       EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+      HISTORY_RESOURCE_PROFILE: ${{ matrix.history_resource_profile }}
     steps:
       - name: Reserve new output and isolated Cargo directories
         shell: bash
@@ -65,6 +77,57 @@ jobs:
           from run_pon_w1_native_campaign import validate_build_environment
           validate_build_environment(os.environ)
           PY
+      - name: Require strict isolated-verifier report controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B scripts/ci/test_native_history_verifier.py 2>&1 | tee "$OUT/verifier-reader-controls.log"
+          grep -E '^Ran 5 tests in ' "$OUT/verifier-reader-controls.log"
+          grep -x 'OK' "$OUT/verifier-reader-controls.log"
+      - name: Require strict owner-death evidence controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B scripts/ci/test_history_verifier_lifeline_v1.py 2>&1 | tee "$OUT/verifier-lifeline-reader-controls.log"
+          grep -E '^Ran 8 tests in ' "$OUT/verifier-lifeline-reader-controls.log"
+          grep -x 'OK' "$OUT/verifier-lifeline-reader-controls.log"
+      - name: Reject foreign configured parents and forged cleanup evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B scripts/ci/test_history_fixed_parent_v2.py 2>&1 | tee "$OUT/fixed-parent-reader-controls.log"
+          grep -E '^Ran 4 tests in ' "$OUT/fixed-parent-reader-controls.log"
+          grep -x 'OK' "$OUT/fixed-parent-reader-controls.log"
+      - name: Exercise real fresh-slice creation and exclusive cleanup before native work
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object config/systemd/trnmponpublic.slice)" = 8981b6aeed4c08c21679664940366b36a991444a
+          test -d /run/systemd/system
+          test -f /sys/fs/cgroup/cgroup.controllers
+          unit="trnm-history-parent-probe-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT.service"
+          # A separate finite fixture probe preserves all original native budgets.
+          sudo -n systemd-run --unit="$unit" --wait --pipe --collect \
+            --service-type=exec --expand-environment=no --uid=0 --gid=0 \
+            --working-directory="$GITHUB_WORKSPACE" \
+            --property=CPUAccounting=yes --property=MemoryAccounting=yes \
+            --property=CPUQuota=400% --property=CPUQuotaPeriodSec=100ms \
+            --property=MemoryMax=17179869184 --property=Nice=10 \
+            --property=KillMode=control-group --property=TimeoutStopSec=20s \
+            --property=RuntimeMaxSec=120s --setenv=PYTHONDONTWRITEBYTECODE=1 \
+            /usr/bin/python3 "$GITHUB_WORKSPACE/scripts/ci/history_fixed_parent_v2.py" probe \
+            --owner "$GITHUB_RUN_ID.$GITHUB_RUN_ATTEMPT" \
+            --source "$GITHUB_WORKSPACE/config/systemd/trnmponpublic.slice" \
+            > "$OUT/fixed-parent-real-probe.json" 2> "$OUT/fixed-parent-real-probe-systemd.log"
+      - name: Provision the original separate fixed History parent
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo -n python3 -B scripts/ci/history_fixed_parent_v2.py provision \
+            --owner "$GITHUB_RUN_ID.$GITHUB_RUN_ATTEMPT" \
+            --source "$GITHUB_WORKSPACE/config/systemd/trnmponpublic.slice" \
+            > "$OUT/fixed-parent-provision.json"
+          sudo -n systemctl show trnmponpublic.slice > "$OUT/fixed-parent-systemd-show.txt"
       - name: Install the source-pinned compiler and fetch locked dependencies
         id: toolchain
         shell: bash
@@ -96,14 +159,23 @@ jobs:
           sys.path[:0] = [str(root / 'scripts'), str(root / 'scripts/ci')]
           import run_pon_w1_native_campaign as bounds
           import pon_public_v3_phase_read as phase_reader
+          import read_native_history_verifier as verifier_reader
           from pon_public_v3_policy_read import load_profiles, policy_id
           from verify_ci_source import verify
 
-          selector = 'separate_process_work_and_signed_confirmation_campaign'
+          resource_profile = os.environ['HISTORY_RESOURCE_PROFILE']
+          bounds.require(resource_profile in (verifier_reader.STRICT_PROFILE, verifier_reader.GRAPH_PROFILE),
+                         'EXPLICIT_HISTORY_RESOURCE_PROFILE_REQUIRED')
+          selector = ('separate_process_graph_resource_fence_v1_work_and_signed_confirmation_campaign'
+                      if resource_profile == verifier_reader.GRAPH_PROFILE else
+                      'separate_process_work_and_signed_confirmation_campaign')
           policy_vectors = load_profiles()
           expected_public_policy = policy_id(policy_vectors, policy_vectors['current_revision'], 8, 2000)
           result = {
-              'schema': 'pon-original-native-campaign-ci-v1',
+              'schema': ('pon-original-native-campaign-ci-v1' if resource_profile == verifier_reader.STRICT_PROFILE
+                         else 'pon-history-graph-resource-fence-campaign-ci-v1'),
+              'history_resource_profile': resource_profile, 'native_selector': selector,
+              'strict_profile_result_is_separate': True,
               'source_kind': 'head', 'expected_head': expected_head,
               'expected_tree': expected_tree, 'profile': 'release',
               'toolchain': '1.95.0', 'state_backend': 'authenticated-v1',
@@ -118,6 +190,9 @@ jobs:
                                   'attacker_processes': [0, 24, 24]},
               'expected_resources': {'cpu_max': '400000 100000',
                                      'memory_max': '17179869184', 'nice': 10},
+              'separate_verifier_limits': dict(verifier_reader.LIMITS),
+              'separate_verifier_parent': verifier_reader.PARENT,
+              'verifier_reader_sha256': bounds.sha(root / 'scripts/ci/read_native_history_verifier.py'),
               'binary': None, 'source_after': None, 'complete_success': False,
               'failure': None, 'finalization_failures': [],
               'runner_sha256': bounds.sha(__file__),
@@ -146,7 +221,7 @@ jobs:
                              and not target.is_relative_to(out), 'ISOLATED_OUTPUT_REQUIRED')
               bounds.validate_build_environment(os.environ)
               source_observation('source-before-build.json')
-              resources('resource-before-build.json')
+              outer_resources = resources('resource-before-build.json')
               bounds.write_new(out / 'hardware.json', {
                   'machine': platform.machine(), 'kernel': platform.release(),
                   'logical_cpu_count': os.cpu_count(),
@@ -228,6 +303,10 @@ jobs:
                       derived = phase_reader.read_report(raw_path, report_hash, expected_public_policy)
                       bounds.write_new(out / f'{name}-phase-readback.json', derived)
                       raw = json.loads(raw_path.read_bytes())
+                      verifier_readback = verifier_reader.validate_report(
+                          raw, report_dir, digest, outer_resources['cgroup'], resource_profile)
+                      bounds.write_new(out / f'{name}-verifier-readback.json', verifier_readback)
+                      attempt['actual_verifier_boundary_readback'] = verifier_readback['complete']
                       preparation = raw['preparation']
                       phases = raw['phases']
                       bounds.require(
@@ -252,7 +331,8 @@ jobs:
                           stdout, re.MULTILINE) is not None
                       attempt['complete_success'] = (
                           step['complete_success'] and one_test_passed
-                          and attempt['original_criteria_met'])
+                          and attempt['original_criteria_met']
+                          and attempt['actual_verifier_boundary_readback'])
                   except (OSError, ValueError, KeyError, TypeError) as error:
                       attempt['report_validation_failure'] = str(error)
                   bounds.write_new(out / f'{name}-result.json', attempt)
@@ -332,14 +412,72 @@ jobs:
             --property=RuntimeMaxSec=4200s \
             --setenv="PATH=$PATH" --setenv="CARGO_HOME=$CARGO_HOME" \
             --setenv="RUSTUP_HOME=$rustup_home" --setenv=PYTHONDONTWRITEBYTECODE=1 \
+            --setenv="HISTORY_RESOURCE_PROFILE=$HISTORY_RESOURCE_PROFILE" \
             /usr/bin/python3 "$OUT/run-native-campaign.py" \
             "$GITHUB_WORKSPACE" "$OUT" "$CARGO_TARGET_DIR" "$cargo_path" \
             "$EXPECTED_HEAD" "$EXPECTED_TREE" 2>&1 | tee "$OUT/systemd-run.log"
+      - name: Require actual controller-death closure with the same release binary
+        id: verifier_lifeline
+        if: always()
+        timeout-minutes: 12
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$EXPECTED_HEAD"
+          test -n "$EXPECTED_TREE"
+          test -f "$OUT/binary-before.json"
+          test -f "$OUT/public_v3_multiprocess.bin"
+          test -f "$OUT/fixed-parent-provision.json"
+          unit="trnm-native-history-lifeline-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT.service"
+          cleanup() {
+            original_status=$?
+            trap - EXIT INT TERM
+            set +e
+            sudo -n systemctl stop "$unit" >> "$OUT/lifeline-unit-cleanup.log" 2>&1
+            cleanup_status=$?
+            printf 'original_exit=%s\ncleanup_exit=%s\n' "$original_status" "$cleanup_status" >> "$OUT/lifeline-unit-cleanup.log"
+            exit "$original_status"
+          }
+          trap cleanup EXIT
+          trap 'exit 130' INT
+          trap 'exit 143' TERM
+          # Independent finite lane: the original three 600s campaigns and
+          # their result stay unchanged. No build or old binary is substituted.
+          sudo -n systemd-run --unit="$unit" --wait --pipe --collect \
+            --service-type=exec --expand-environment=no \
+            --uid="$(id -u)" --gid="$(id -g)" \
+            --working-directory="$GITHUB_WORKSPACE" \
+            --property=CPUAccounting=yes --property=MemoryAccounting=yes \
+            --property=CPUQuota=400% --property=CPUQuotaPeriodSec=100ms \
+            --property=MemoryMax=17179869184 --property=Nice=10 \
+            --property=KillMode=control-group --property=TimeoutStopSec=20s \
+            --property=RuntimeMaxSec=600s \
+            --setenv="PATH=$PATH" --setenv=PYTHONDONTWRITEBYTECODE=1 \
+            --setenv=RUST_TEST_THREADS=1 \
+            /usr/bin/python3 "$GITHUB_WORKSPACE/scripts/ci/run_history_verifier_lifeline_v1.py" \
+            --root "$GITHUB_WORKSPACE" --campaign-output "$OUT" \
+            --output "$OUT/verifier-lifeline" --head "$EXPECTED_HEAD" --tree "$EXPECTED_TREE" \
+            2>&1 | tee "$OUT/verifier-lifeline-systemd.log"
+      - name: Close only parents bound to this run by a root-owned exclusive lease
+        if: always()
+        shell: bash
+        run: |
+          set -uo pipefail
+          set +e
+          # A writable output receipt cannot grant authority to stop a unit.
+          sudo -n python3 -B scripts/ci/history_fixed_parent_v2.py cleanup-probe \
+            --owner "$GITHUB_RUN_ID.$GITHUB_RUN_ATTEMPT" > "$OUT/fixed-parent-probe-cleanup.json"
+          probe_status=$?
+          sudo -n python3 -B scripts/ci/history_fixed_parent_v2.py cleanup \
+            --owner "$GITHUB_RUN_ID.$GITHUB_RUN_ATTEMPT" > "$OUT/fixed-parent-cleanup.json"
+          parent_status=$?
+          test "$probe_status" -eq 0 && test "$parent_status" -eq 0
       - name: Preserve final source verification and all partial artifact hashes
         if: always()
         shell: bash
         run: |
           set -uo pipefail
+          set +e
           python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$EXPECTED_HEAD" --output "$OUT/source-after.json" > "$OUT/source-after.log" 2>&1
           source_status=$?
           python3 - <<'PY'
@@ -369,7 +507,8 @@ jobs:
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: pon-native-campaign-x64-head-release-${{ env.EXPECTED_HEAD }}-${{ github.run_attempt }}
+          name: pon-native-campaign-${{ matrix.history_resource_profile }}-x64-head-release-${{ env.EXPECTED_HEAD }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/pon-native-campaign-${{ github.run_id }}-${{ github.run_attempt }}
+          include-hidden-files: true
           if-no-files-found: error
           retention-days: 30

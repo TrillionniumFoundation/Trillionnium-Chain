@@ -1,0 +1,15 @@
+{
+  "source_commit": "99be553ea80bee137b0bcc3b67d8786348547256",
+  "original_atomic_runner_result": "FAILED",
+  "original_failure_stage": "source_after / git status nonempty",
+  "original_postcheck_tracked_non_evidence_blobs_matched": 1675,
+  "observation_kind": "recorded tool observation; original wrapper did not write its result JSON",
+  "original_first_attempt": "refused before Cargo because old self-generated hex fixtures were untracked",
+  "original_final_attempt": "Cargo and four uniquely copied test binaries ran; post-source guard then refused",
+  "failure_cause_not_established": true,
+  "current_same_guard_recheck": {
+    "accepted": false,
+    "traceback": "Traceback (most recent call last):\n  File \"/workspace/scratch/301262829a43/pon-pq-impl/inputs/prepare_evidence_archive.py\", line 49, in <module>\n    guard_recheck = namespace[\"verify_source\"]()\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/scratch/301262829a43/pon-pq-impl/inputs/validate_final_native.py\", line 46, in verify_source\n    assert not git('status', '--porcelain', '--untracked-files=all')\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n"
+  },
+  "full_repository_source_guard_passed": false
+}

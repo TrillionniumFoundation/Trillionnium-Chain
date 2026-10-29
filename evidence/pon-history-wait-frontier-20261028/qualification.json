@@ -1,0 +1,21 @@
+{
+  "schema": "history-wait-frontier-qualification-v1",
+  "native_node_compile": "NOT_RUN",
+  "native_clippy": "NOT_RUN",
+  "native_full_suite": "NOT_RUN",
+  "expected_native_passed": 21,
+  "expected_native_failed": 0,
+  "expected_native_ignored": 1,
+  "original_passed_methods_retained": 19,
+  "same_source_hosted_required": true,
+  "compilation_floor_bytes": 268435456,
+  "native_test_budget_seconds": 600,
+  "original_burst_ns": 2000000000,
+  "original_scope_allowance_ns": 4000000000,
+  "original_complete_parent_snapshots_max": 4,
+  "new_signed_domains": false,
+  "new_record_schemas": false,
+  "original_additional_whole_process_debit_preserved": true,
+  "frozen_c27_source_changed": false,
+  "no_caches_removed": true
+}

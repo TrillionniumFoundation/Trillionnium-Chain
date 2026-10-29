@@ -9,12 +9,18 @@ pub mod blocked_zero_paired;
 pub mod facts;
 pub mod full_relation;
 mod integer_paired;
+pub mod low_rank_prefix;
 pub mod maintenance_limb;
 pub mod maintenance_periodic;
 pub mod maintenance_prefix;
 pub mod paired_product;
+#[cfg(test)]
+mod producer_candidate_tests;
 pub mod public_product;
+pub mod rejection_cache;
 pub mod structured;
+#[cfg(feature = "transparent-w1-admission-research")]
+pub mod transparent_admission;
 
 pub const PROFILE: &str = "pon-matmul-transcript-64-v1";
 pub const N: usize = 64;
@@ -183,6 +189,43 @@ pub fn task_id(a: &[u32], b: &[u32]) -> Result<Hash, WorkError> {
     validate(a)?;
     validate(b)?;
     Ok(hash(b"task", &[&field_bytes(a), &field_bytes(b)]))
+}
+/// Same task bytes with cooperative owner checkpoints; cancellation is never a
+/// statement that the task relation is invalid. The original entry stays intact.
+pub fn task_id_with_progress<E>(
+    a: &[u32],
+    b: &[u32],
+    progress: &mut impl FnMut(u64) -> Result<(), E>,
+) -> Result<Hash, VerificationError<E>> {
+    let mut completed = 0;
+    for values in [a, b] {
+        if values.len() != CELLS {
+            return Err(WorkError::Length.into());
+        }
+        for chunk in values.chunks(256) {
+            progress(completed).map_err(VerificationError::Cancelled)?;
+            if chunk.iter().any(|v| u128::from(*v) >= Q) {
+                return Err(WorkError::Field.into());
+            }
+            completed += chunk.len() as u64;
+        }
+    }
+    let mut h = Sha256::new();
+    h.update(b"TRNM-PON1\0");
+    h.update(4u16.to_le_bytes());
+    h.update(b"task");
+    for values in [a, b] {
+        h.update(((CELLS * 4) as u32).to_le_bytes());
+        for chunk in values.chunks(256) {
+            progress(completed).map_err(VerificationError::Cancelled)?;
+            for value in chunk {
+                h.update(value.to_le_bytes());
+            }
+            completed += chunk.len() as u64;
+        }
+    }
+    progress(completed).map_err(VerificationError::Cancelled)?;
+    Ok(h.finalize().into())
 }
 fn expand(challenge: Hash, label: u8, len: usize) -> Result<Vec<u32>, WorkError> {
     relation_only(expand_with_progress(
@@ -813,6 +856,53 @@ pub struct PreparedTask {
     prefix: Vec<u8>,
 }
 
+/// A completed local producer trace, borrowing its exact prepared proof prefix.
+/// This is not verified work, authenticated chain context or evidence that a
+/// target was met. Retaining or transporting its observations grants no such
+/// authority. Only the unchanged full verifier can construct `VerifiedWork`.
+///
+/// Fields and construction are private. Assembly cannot substitute another
+/// prepared task, challenge or trace, and this value cannot outlive its task.
+pub struct ProducerCandidate<'a> {
+    prefix: &'a [u8],
+    challenge: Hash,
+    trace: Hash,
+}
+
+impl ProducerCandidate<'_> {
+    pub fn trace(&self) -> Hash {
+        self.trace
+    }
+
+    /// The original ticket hash for the exact challenge used in generation.
+    /// Comparing it with a target is a producer decision, not admission.
+    pub fn ticket(&self) -> Hash {
+        hash(b"ticket", &[&self.challenge, &self.trace])
+    }
+
+    pub fn into_proof(self) -> Vec<u8> {
+        match self.into_proof_with_progress(|_| Ok::<_, std::convert::Infallible>(())) {
+            Ok(proof) => proof,
+            Err(impossible) => match impossible {},
+        }
+    }
+
+    /// Assemble canonical PNW1 bytes only after the real `BeforeProof`
+    /// cancellation checkpoint. No full-proof allocation occurs before it;
+    /// cancellation consumes this candidate and returns no proof. Neither
+    /// assembly nor the caller's checkpoint validates context or the target.
+    pub fn into_proof_with_progress<E>(
+        self,
+        progress: impl FnOnce(PreparedGenerationProgress) -> Result<(), E>,
+    ) -> Result<Vec<u8>, E> {
+        progress(PreparedGenerationProgress::BeforeProof)?;
+        let mut proof = Vec::with_capacity(PROOF_BYTES);
+        proof.extend_from_slice(self.prefix);
+        proof.extend_from_slice(&self.trace);
+        Ok(proof)
+    }
+}
+
 /// Local generation checkpoints, with no proof field or verification capability.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum PreparedGenerationProgress {
@@ -876,6 +966,47 @@ impl PreparedTask {
         challenge: Hash,
         mut progress: impl FnMut(PreparedGenerationProgress) -> Result<(), E>,
     ) -> Result<Vec<u8>, PreparedGenerationError<E>> {
+        let transcript = self.transcript_with_progress(challenge, &mut progress)?;
+        progress(PreparedGenerationProgress::BeforeProof)
+            .map_err(PreparedGenerationError::Cancelled)?;
+        let mut out = self.prefix.clone();
+        out.extend_from_slice(&transcript.finalize());
+        Ok(out)
+    }
+
+    /// Generate a full local trace without copying the fixed PNW1 prefix.
+    /// A caller can inspect the ticket and assemble only winning candidates.
+    /// Every challenge still recomputes all original noise and transcript tiles.
+    pub fn candidate(&self, challenge: Hash) -> Result<ProducerCandidate<'_>, WorkError> {
+        match self.candidate_with_progress(challenge, |_| Ok::<_, std::convert::Infallible>(())) {
+            Ok(candidate) => Ok(candidate),
+            Err(PreparedGenerationError::Relation(error)) => Err(error),
+            Err(PreparedGenerationError::Cancelled(impossible)) => match impossible {},
+        }
+    }
+
+    /// Original generation observations through the last transcript tile.
+    /// `BeforeProof` belongs to the later `into_proof_with_progress` call, so
+    /// losing candidates need no full-proof allocation. Cancellation here
+    /// returns no candidate and leaves the immutable prepared task reusable.
+    pub fn candidate_with_progress<E>(
+        &self,
+        challenge: Hash,
+        progress: impl FnMut(PreparedGenerationProgress) -> Result<(), E>,
+    ) -> Result<ProducerCandidate<'_>, PreparedGenerationError<E>> {
+        let transcript = self.transcript_with_progress(challenge, progress)?;
+        Ok(ProducerCandidate {
+            prefix: &self.prefix,
+            challenge,
+            trace: transcript.finalize().into(),
+        })
+    }
+
+    fn transcript_with_progress<E>(
+        &self,
+        challenge: Hash,
+        mut progress: impl FnMut(PreparedGenerationProgress) -> Result<(), E>,
+    ) -> Result<Sha256, PreparedGenerationError<E>> {
         progress(PreparedGenerationProgress::BeforeReplay)
             .map_err(PreparedGenerationError::Cancelled)?;
         let mut noise = |label| {
@@ -956,11 +1087,7 @@ impl PreparedTask {
                 }
             }
         }
-        progress(PreparedGenerationProgress::BeforeProof)
-            .map_err(PreparedGenerationError::Cancelled)?;
-        let mut out = self.prefix.clone();
-        out.extend_from_slice(&transcript.finalize());
-        Ok(out)
+        Ok(transcript)
     }
 }
 

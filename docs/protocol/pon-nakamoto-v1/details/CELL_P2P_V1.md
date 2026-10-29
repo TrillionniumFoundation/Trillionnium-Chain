@@ -598,3 +598,34 @@ for every requested release, not just available popular chunks. The 72-hour
 minimum and replica objective are development coverage, not current production
 guarantees. Long-term durability and permissionless incentives need independent
 review and funded sustained observations.
+
+## Bounded provider order within one acquisition session
+
+The configured-peer and discovered-peer fetch paths retain at most eight
+per-provider failed-attempt counters for the current session. Before fetching
+each manifest or chunk, they snapshot those counters and stably prefer fewer
+failures; equal counters retain the original cyclic order. Snapshotting before
+sorting keeps the comparator stable while concurrent chunk workers finish.
+The provider list remains fixed during the session. Bootstrap discovery does
+not write these provider counters, and the discovery expiry can only shorten
+the original deadline.
+
+This is an ordering hint, not a persisted reputation or an exclusion decision.
+Every configured provider remains a fallback for each object, including a
+provider that lacked a different object earlier. A local manifest-persistence
+failure is returned directly and never treated as a remote failure. Every
+object still attempts each provider at most once, and the original connection,
+received-byte and absolute-time reservations remain shared across all members.
+Canonical manifest, context, chunk and complete-release verification remain
+mandatory; neither a successful response nor a preferred position selects a
+release or grants installation authority.
+
+The native regression uses an actual empty provider and an actual complete
+provider with one worker. Two manifests and four chunks require six successful
+requests. Under the unchanged seven-connection reservation, the previous order
+spent three connections on the empty provider and failed with only four useful
+requests. The session hint completes with six useful requests and one rejection.
+The existing disjoint-provider, corrupt-byte, exact aggregate-budget, deadline,
+resumption and create-only publication controls remain in the library suite.
+This finite control shows avoided repeated failed attempts; general throughput,
+independent failure-domain availability and the PN5 WAN target remain unqualified.

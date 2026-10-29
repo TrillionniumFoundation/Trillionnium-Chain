@@ -119,6 +119,7 @@ pub fn fetch_release_to_file(
         overall: deadline,
         requests_left: &requests_left,
         responses: &responses,
+        peer_failures: Default::default(),
     };
     let mut report = CellReleaseFetchReportV1 {
         release_id: pinned,

@@ -9,6 +9,10 @@ pub mod lifecycle_v3;
 /// Fresh overlapping atomic-renewal profile; V2/V3 contexts are never reinterpreted.
 pub mod lifecycle_v4;
 
+/// Fresh native PQ task permissions; no old signed lifecycle alias.
+pub mod pq_lifecycle_v4;
+pub mod pq_lifecycle_v5;
+
 pub const MANIFEST_BYTES: usize = 584;
 pub const SIGNED_TASK_BYTES: usize = 4 + MANIFEST_BYTES + 64;
 pub const MAX_MATERIAL_BYTES: u32 = 64 * 1024 * 1024;

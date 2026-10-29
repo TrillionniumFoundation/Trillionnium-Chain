@@ -1,0 +1,13 @@
+test_budget_scope_and_payload_path_reject (__main__.Reader.test_budget_scope_and_payload_path_reject) ... ok
+test_changed_paired_attempt_and_unearned_admission_reject (__main__.Reader.test_changed_paired_attempt_and_unearned_admission_reject) ... ok
+test_exact_retained_payloads_and_changed_bytes (__main__.Reader.test_exact_retained_payloads_and_changed_bytes) ... ok
+test_missing_worker_duplicate_thread_and_wrong_partition_reject (__main__.Reader.test_missing_worker_duplicate_thread_and_wrong_partition_reject) ... ok
+test_overlapping_process_clock_and_omitted_cost_reject (__main__.Reader.test_overlapping_process_clock_and_omitted_cost_reject) ... ok
+test_real_batch_scopes_do_not_sum_overlapping_trial_times (__main__.Reader.test_real_batch_scopes_do_not_sum_overlapping_trial_times) ... ok
+test_retained_symlink_and_unexpected_files_reject (__main__.Reader.test_retained_symlink_and_unexpected_files_reject) ... ok
+test_unknown_process_cpu_remains_unknown (__main__.Reader.test_unknown_process_cpu_remains_unknown) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 1.906s
+
+OK

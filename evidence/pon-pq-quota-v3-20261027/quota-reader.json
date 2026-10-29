@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "python3",
+    "scripts/ci/test_native_pq_quota_v3_research.py"
+  ],
+  "returncode": 0,
+  "wall_seconds": 0.09041130499826977,
+  "stdout": "",
+  "stderr": "....\n----------------------------------------------------------------------\nRan 4 tests in 0.002s\n\nOK\n"
+}

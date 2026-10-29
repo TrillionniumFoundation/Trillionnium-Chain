@@ -245,6 +245,8 @@ impl Node {
                 policy: None,
                 mining: None,
                 continuous: None,
+                history_effect: None,
+                startup_material: None,
             },
             StateBackend::PermanentAccountGrowthV2,
             observation_only,
@@ -581,6 +583,7 @@ fn execute_observed(
     let result = limits::execute_with_commitment_observed(
         &view,
         pon_executor::BlockExecution {
+            timestamp: None,
             transactions: &packet.transactions,
             height: h.height,
             miner: h.miner,

@@ -1,0 +1,28 @@
+   Compiling libc v0.2.184
+   Compiling rustix v1.1.4
+   Compiling linux-raw-sys v0.12.1
+   Compiling trnm-protocol v0.1.0 (/workspace/scratch/301262829a43/pon-pq-impl/pq-base5e/trillionnium/crates/trnm-protocol)
+   Compiling trnm-crypto-primitives v0.1.0 (/workspace/scratch/301262829a43/pon-pq-impl/pq-base5e/trillionnium/crates/trnm-crypto-primitives)
+   Compiling getrandom v0.4.2
+   Compiling tempfile v3.27.0
+   Compiling trnm-mvcc-fee v0.1.0 (/workspace/scratch/301262829a43/pon-pq-impl/pq-base5e/trillionnium/crates/trnm-mvcc-fee)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 49s
+     Running unittests src/lib.rs (/workspace/scratch/301262829a43/pon-pq-impl/target-native/debug/deps/trnm_mvcc_fee-1e79e62172f8a03c)
+
+running 5 tests
+test pon_executor::pq_transfer::tests::randomized_signatures_do_not_multiply_transaction_identities ... ok
+test pon_executor::pq_transfer::tests::real_pq_signature_reaches_existing_native_nonce_fee_and_transfer_rules ... ok
+test pon_executor::pq_transfer::tests::invalid_signature_key_expiry_funds_and_overflow_leave_parent_unchanged ... ok
+test pon_executor::pq_transfer::tests::replay_and_alternate_parent_nonce_are_rechecked_without_mutation ... ok
+test pon_executor::pq_transfer::tests::valid_crypto_does_not_override_fresh_owner_fee_nonce_or_purpose ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 79 filtered out; finished in 0.25s
+
+     Running unittests src/lib.rs (/workspace/scratch/301262829a43/pon-pq-impl/target-native/debug/deps/trnm_protocol-b8cc0ec1affbc871)
+
+running 2 tests
+test pq_transfer::tests::alleged_signature_is_not_parser_authority_or_transaction_identity ... ok
+test pq_transfer::tests::exact_bounds_and_canonical_body_reject_before_signature_work ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 39 filtered out; finished in 0.00s
+

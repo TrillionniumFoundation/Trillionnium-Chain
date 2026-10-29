@@ -7,9 +7,18 @@ use super::{
     digest, elapsed_ns, ensure, hash, lock_owner, DevelopmentIdentity, Node,
     Request as NativeRequest, Result, Settings, WorkCheckedPacket,
 };
+mod pure_history_raw;
+pub use pure_history_raw::{
+    call_public_pure_history_raw, PureHistoryRawAcknowledgement, PURE_HISTORY_RAW_PROFILE,
+};
 mod intake;
+mod pure_admission_v2;
 mod pure_pon;
 use intake::{ConnectionLease, ListenerIntake};
+pub use pure_admission_v2::{
+    call_public_pure_pon_v2, fetch_public_task_bootstrap_v2, PureAdmissionObservation,
+    PURE_PON_V2_PROFILE,
+};
 pub use pure_pon::fetch_public_task_bootstrap;
 pub use pure_pon::PROFILE as PURE_PON_PROFILE;
 mod growth;
@@ -169,6 +178,8 @@ impl PaidMutationCpuPermit {
         stop: &AtomicBool,
         cancelled: &AtomicBool,
     ) -> Result<Self> {
+        task_alive(deadline, stop, cancelled)?;
+        let mut fifo = pure_admission_v2::PureAdmissionWaiter::for_server(server)?;
         loop {
             task_alive(deadline, stop, cancelled)?;
             let now = Instant::now();
@@ -184,8 +195,11 @@ impl PaidMutationCpuPermit {
             let possible_refill = remaining
                 .saturating_mul(u128::from(MUTATION_CPU_REFILL_NS_PER_SECOND))
                 / 1_000_000_000;
+            let waiting_for_turn = fifo
+                .as_ref()
+                .map_or(Ok(false), |waiter| waiter.waiting_for_turn(&budget))?;
             let retry = !budget.unavailable
-                && (budget.completion_pending()
+                && (waiting_for_turn || budget.completion_pending()
                     || budget.in_flight >= MUTATION_CPU_WORKERS || shortage > 0)
                 // With no live reservation to return, an impossible refill
                 // should retain the original immediate budget refusal.
@@ -214,7 +228,11 @@ impl PaidMutationCpuPermit {
             if stamp.is_none() {
                 budget.unavailable = true;
             }
-            let result = budget.reserve(now);
+            let result = if let Some(waiter) = fifo.as_mut() {
+                waiter.reserve_turn(&mut budget, now)
+            } else {
+                budget.reserve(now)
+            };
             drop(budget);
             if let Ok(mut m) = metrics.lock() {
                 if result.is_err() {
@@ -379,11 +397,30 @@ impl Drop for PaidMutationCpuPermit {
     }
 }
 
+/// `bits = 0` predates raw History and already selects pure-v1 (or the explicit
+/// pure-v2 server extension). Keep that spelling and every old signed ID stable;
+/// raw History must carry its own local/serialized choice before a cookie exists.
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq, Serialize, Deserialize)]
+enum PublicAdmissionVariant {
+    #[default]
+    #[serde(rename = "standard")]
+    Standard,
+    #[serde(rename = "pure-history-raw-v1")]
+    PureHistoryRawV1,
+}
+impl PublicAdmissionVariant {
+    fn is_standard(&self) -> bool {
+        *self == Self::Standard
+    }
+}
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct PublicPolicy {
     pub bits: u8,
     pub lifetime_ms: u64,
+    #[serde(default, skip_serializing_if = "PublicAdmissionVariant::is_standard")]
+    admission_variant: PublicAdmissionVariant,
 }
 impl PublicPolicy {
     pub fn new(bits: u8, lifetime: Duration) -> Result<Self> {
@@ -392,13 +429,21 @@ impl PublicPolicy {
             (bits == 0 || (8..=20).contains(&bits)) && (100..=2000).contains(&lifetime_ms),
             "PUBLIC_POLICY",
         )?;
-        Ok(Self { bits, lifetime_ms })
+        Ok(Self {
+            bits,
+            lifetime_ms,
+            admission_variant: PublicAdmissionVariant::Standard,
+        })
     }
     pub fn development() -> Self {
         Self {
             bits: 16,
             lifetime_ms: 2000,
+            admission_variant: PublicAdmissionVariant::Standard,
         }
+    }
+    fn is_zero_search(self) -> bool {
+        self.is_pure_pon() || self.is_pure_history_raw()
     }
     fn original_resource_id(self) -> Hash {
         hash(b"public-protected-profile-v3",&[PROFILE.as_bytes(),b"resource-revision-r13/shared64-unpaid-input-idle250ms-pressure-cancel-no-slot-refund/hello-and-incomplete-solution-only/server-owed-and-paid-protected/no-deadline-renewal/connection-local-ready-fifo-challenge-and-grant-split-read-mutation/pending64-no-extra-queue-or-worker/hello-wait-original-accept2s/paid-grant-wait-original-cookie-expiry-no-renewal/spent-reserve-once/lane-and-body-together-rollback-on-full/bounded-paid-enqueue-fifo-by-connection-with-unchanged-absolute-work-and-total-deadlines/hello108/solution108/conn64/paid-raw-json-canonical8MiB-factor3/read-body-reserve131072/output-conservative32MiB/control-output-reserve524288/grants-mutation8-read8-held-until-connection-and-task-release/queueproof2-read2/workers2-read1/spent1024-no-live-eviction/packet1048576/body2097216/read512/response2101248/history1/error2KiB/hello2s/challenge2s/solution-policy/body5s/work10s/output5s/overall30s/quantum64KiB/derived-jump-v1-levels63-sql1024-local-integrity-only/challenge128-burst32-read-reserve8-exact-nanosecond-fraction-full-bucket-discards-surplus/await-write-half-close-cancels-request-operation-stage-fences/ops1-block-2-head-3-history-4-poolbundle-5-poolsnapshot/poolraw159..2048-members1..16-sum32768-body66048-contextpin64hex/scalarstatus16KiB-no-reconcile-cachegc4scalars-localdiagnostic/no-guest-policy-prune-reset/shared-node-miner-operatorenabled/service72h-m05-cooperative-noise-row-tile-final-m06-envelope-prepare-canonical-apply-precommit-deadline-cancel-deep-state-root-history-sqlite-nonpreemptive/no-durable-guest-rows/global-paid-mutation-thread-cpu-bucket-reserve-before-paid-body-digest-and-canonical-decode-through-signed-response-charge-outer-plus-all-scoped-worker-thread-intervals-once-work-body-response-nested-no-double-debit/scoped-start-end-same-thread-all-started-joined-exact-counts-panic-cancel-partial-spawn/unknown-scoped-clock-disables-future-mutations/sequential-pool-preview-no-scoped-workers/read-not-charged/clock-unavailable-disables-future-mutations/native-success-preserved/two-inflight-m05-m06-boundary-cooperative-deep-stages-nonpreemptive-debt-no-caller-reset/available-plus-outstanding-start-reserves-ceiling/live-same-thread-owner-and-scoped-progress-increments/global-immediate-debit/original-full-outer-plus-children-minus-paid-residual-once/unverified-sticky-request-budget-cancel/full-native-W1-completion-priority-within-original-shared-bucket/no-new-probe-starts-until-verified-request-settles/existing-probes-own-original-start-quantum-only/verified-owner-scoped-checkpoints-await-original-refill-original-absolute-task-deadline-stop-cancel/no-added-credit-or-worker-or-identity-preference/complete-work-key-domain-public-v3-complete-work-identity-v1-canonical-whole-packet-sha256/fixed4096-digests131072bytes-per-shared-live-cpu-owner-epoch/atomic-claim-and-promotion-paid-hash-max4096-exact-probes/monotone-no-ttl-no-eviction-unknown-cancel-failure-success-retain/listener-clones-share-epoch/process-restart-clears-keys-original-zero-credit-no-permanent-once/repeat-or-capacity-full-only-denies-extra-priority-ordinary-paid-validation-and-recovery-continue/no-general-distinct-valid-W1-fairness/existing-packet-no-promotion-cooperative-history-each-row-reorg-steps-delta-rows-precommit/exact-stored-pending-intent-target-can-resume-original-time-owner-state-checks/committed-partial-intent-retained-no-post-commit-cancel/unknown-live-clock-denies-future/deep-root-and-sql-no-preemption/native-durable-outcome-preserved/controlled-pool-full-prefix-cancel-propagation-reconcile-relation-only-blocking/precommit-only-fences",&[self.bits],&self.lifetime_ms.to_le_bytes(),&MUTATION_CPU_BURST_NS.to_le_bytes(),&MUTATION_CPU_REFILL_NS_PER_SECOND.to_le_bytes(),&MUTATION_CPU_START_RESERVE_NS.to_le_bytes(),&(MUTATION_CPU_WORKERS as u32).to_le_bytes()])
@@ -698,7 +743,10 @@ pub struct PublicServer {
     mutation_cpu: Arc<Mutex<PaidMutationCpuBudget>>,
     arithmetic_facts:
         Option<trnm_crypto_primitives::pon_work::arithmetic_facts::ArithmeticFactCache>,
+    pure_admission_v2:
+        Option<Arc<trnm_crypto_primitives::pon_work::arithmetic_facts::ArithmeticFactCache>>,
     public_product: Option<trnm_crypto_primitives::pon_work::public_product::PublicProduct>,
+    w1_rejection_cache: Option<trnm_crypto_primitives::pon_work::rejection_cache::RejectionCache>,
     #[cfg(test)]
     fail_next_output: AtomicBool,
     #[cfg(test)]
@@ -712,7 +760,7 @@ pub struct PublicServer {
 }
 impl PublicServer {
     pub fn new(identity: DevelopmentIdentity, policy: PublicPolicy) -> Result<Self> {
-        PublicPolicy::new(policy.bits, Duration::from_millis(policy.lifetime_ms))?;
+        policy.validate()?;
         Ok(Self {
             identity,
             policy,
@@ -722,7 +770,9 @@ impl PublicServer {
             started: Instant::now(),
             mutation_cpu: Arc::new(Mutex::new(PaidMutationCpuBudget::new())),
             arithmetic_facts: None,
+            pure_admission_v2: None,
             public_product: pure_pon::public_product(policy)?,
+            w1_rejection_cache: None,
             #[cfg(test)]
             fail_next_output: AtomicBool::new(false),
             #[cfg(test)]
@@ -734,6 +784,23 @@ impl PublicServer {
             #[cfg(test)]
             fail_next_live_cpu_finish: AtomicBool::new(false),
         })
+    }
+    /// Opt-in exact invalid-math suppression for a single bounded V3 service.
+    /// Does not alter W1 validity, signed profile, caller admission budgets or
+    /// the complete verifier; NEW bogus traces still consume one full replay.
+    /// Future public rollout requires a separately reviewed resource profile.
+    pub fn with_w1_rejection_cache(mut self, slots: usize, ttl: Duration) -> Result<Self> {
+        ensure(
+            !self.policy.is_zero_search()
+                && self.arithmetic_facts.is_none()
+                && self.pure_admission_v2.is_none(),
+            "PUBLIC_W1_CACHE_MODE",
+        )?;
+        self.w1_rejection_cache = Some(
+            trnm_crypto_primitives::pon_work::rejection_cache::RejectionCache::new(slots, ttl)
+                .ok_or("PUBLIC_W1_CACHE_LIMIT")?,
+        );
+        Ok(self)
     }
     /// Actual fresh native CLI process: zero initial CPU and challenge credit.
     /// It remains a development-unqualified service, not a host CPU proof.
@@ -1198,6 +1265,43 @@ fn close_pending(metrics: &mut PublicMetrics, pending: Option<(PendingKind, Pend
         }
     }
 }
+fn record_stage_error(
+    metrics: &mut PublicMetrics,
+    pending: Option<(PendingKind, PendingOrder)>,
+    phase: &'static str,
+    error: &crate::Error,
+    deadline: Instant,
+    observed_now: Instant,
+) {
+    close_pending(metrics, pending);
+    // Time can cross the original deadline after the reactor's outer check.
+    // Retain the stage error, but count an actual timed close consistently
+    // with the outer expiry branch. RequestDeadline also represents stop, and
+    // CookieExpired can represent malformed intervals, so neither code alone
+    // establishes that this connection's original deadline has elapsed.
+    if observed_now >= deadline
+        && matches!(
+            error.code(),
+            Some(crate::ErrorCode::PublicRequestDeadline | crate::ErrorCode::PublicCookieExpired)
+        )
+    {
+        metrics.expired_connections += 1;
+        *metrics
+            .expired_phase_counts
+            .entry(phase.into())
+            .or_default() += 1;
+    }
+    *metrics
+        .retained_phase_errors
+        .entry(phase.into())
+        .or_default() += 1;
+    match phase {
+        "hello" => metrics.preface_refusals += 1,
+        "output" => metrics.response_write_failures += 1,
+        "body" => metrics.parse_refusals += 1,
+        _ => {}
+    }
+}
 struct Connection {
     observation: Option<ConnectionObservation>,
     id: u64,
@@ -1406,6 +1510,8 @@ struct PublicDispatchObservation<'a> {
     arithmetic_facts:
         Option<&'a trnm_crypto_primitives::pon_work::arithmetic_facts::ArithmeticFactCache>,
     public_product: Option<&'a trnm_crypto_primitives::pon_work::public_product::PublicProduct>,
+    w1_rejection_cache:
+        Option<&'a trnm_crypto_primitives::pon_work::rejection_cache::RejectionCache>,
 }
 fn public_dispatch(
     node: &Mutex<Node>,
@@ -1421,6 +1527,7 @@ fn public_dispatch(
         mutation_cpu,
         arithmetic_facts,
         public_product,
+        w1_rejection_cache,
     } = observation;
     if matches!(
         &request,
@@ -1483,7 +1590,7 @@ fn public_dispatch(
                     None
                 }
             };
-            super::dispatch_shared_with_execution_observation(
+            super::dispatch_shared_with_execution_completion(
                 node,
                 NativeRequest::Submit { packet },
                 &mut progress,
@@ -1530,7 +1637,14 @@ fn public_dispatch(
                         .map_err(|error| crate::Error::from(format!("WORK:{error:?}")))
                     });
                     let result = filtered.and_then(|()| match arithmetic_facts {
-                        None => WorkCheckedPacket::verify_with_progress(packet, &mut checkpoint),
+                        None => match w1_rejection_cache {
+                            Some(cache) => WorkCheckedPacket::verify_with_rejection_cache(
+                                packet,
+                                cache,
+                                &mut checkpoint,
+                            ),
+                            None => WorkCheckedPacket::verify_with_progress(packet, &mut checkpoint),
+                        },
                         Some(facts) => {
                             if let Some(record) = observation {
                                 record.work_arithmetic(PublicArithmeticWorkObservation::started(
@@ -1572,11 +1686,7 @@ fn public_dispatch(
                         m.work_failed += 1;
                     }
                     drop(m);
-                    let checked = result?;
-                    if let Some(live) = live_cpu.and_then(|cpu| cpu.live.as_ref()) {
-                        live.work_verified(&checked)?;
-                    }
-                    Ok(checked)
+                    result
                 },
                 &ExecutionControl::new(
                     &|_| {
@@ -1590,6 +1700,12 @@ fn public_dispatch(
                 ),
                 observation,
                 true,
+                &|checked| {
+                    if let Some(live) = live_cpu.and_then(|cpu| cpu.live.as_ref()) {
+                        live.work_verified(checked)?;
+                    }
+                    Ok(())
+                },
             )
         }
         Request::GrowthSubmitV1 { .. }
@@ -2055,10 +2171,12 @@ fn serve_public_protected_v3_inner(
                                                         observation: task.observation.as_ref(),
                                                         mutation_cpu,
                                                         arithmetic_facts: server
-                                                            .arithmetic_facts
-                                                            .as_ref(),
+                                                            .work_arithmetic_facts(),
                                                         public_product: server
                                                             .public_product
+                                                            .as_ref(),
+                                                        w1_rejection_cache: server
+                                                            .w1_rejection_cache
                                                             .as_ref(),
                                                     },
                                                 )
@@ -2679,19 +2797,20 @@ fn serve_public_protected_v3_inner(
                     })();
                     match advanced {
                         Ok(next) => conn.stage = next,
-                        Err(_) => {
+                        Err(error) => {
+                            let observed_now = Instant::now();
                             if let Some(record) = &conn.observation {
                                 record.terminal(phase);
                             }
                             let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
-                            close_pending(&mut m, pending_before);
-                            *m.retained_phase_errors.entry(phase.into()).or_default() += 1;
-                            match phase {
-                                "hello" => m.preface_refusals += 1,
-                                "output" => m.response_write_failures += 1,
-                                "body" => m.parse_refusals += 1,
-                                _ => {}
-                            }
+                            record_stage_error(
+                                &mut m,
+                                pending_before,
+                                phase,
+                                &error,
+                                conn.deadline,
+                                observed_now,
+                            );
                             remove.push(*id);
                         }
                     }
@@ -2950,7 +3069,11 @@ fn call_public_protected_v3_with_profile(
         if let Some(deadline) = outer_deadline {
             ensure(Instant::now() < deadline, "PUBLIC_CLIENT_DEADLINE")?;
         }
-        PublicPolicy::new(policy.bits, Duration::from_millis(policy.lifetime_ms))?;
+        policy.validate()?;
+        ensure(
+            !policy.is_pure_history_raw() || matches!(client_profile, ClientProfile::Legacy),
+            "PUBLIC_PURE_HISTORY_RAW_PROFILE",
+        )?;
         let raw = serde_json::to_vec(request)?;
         let op = request_op(request)?;
         ensure(
@@ -3013,12 +3136,9 @@ fn call_public_protected_v3_with_profile(
         phase_start = Instant::now();
         let started = Instant::now();
         let id = cookie.id()?;
-        let mut solved = policy.is_pure_pon().then_some(0);
-        let search_budget = if policy.is_pure_pon() {
-            0
-        } else {
-            1_048_576u64
-        };
+        let pure = policy.is_zero_search();
+        let mut solved = pure.then_some(0);
+        let search_budget = if pure { 0 } else { 1_048_576u64 };
         for nonce in 0..search_budget {
             if nonce % 256 == 0 {
                 if outer_deadline.is_some() {
@@ -3036,8 +3156,8 @@ fn call_public_protected_v3_with_profile(
             }
         }
         let nonce = solved.ok_or("PUBLIC_SOLVE_BUDGET")?;
-        let solve_elapsed_ns = elapsed_ns(started);
-        metrics.solution_search_ns = elapsed_ns(phase_start);
+        let solve_elapsed_ns = if pure { 0 } else { elapsed_ns(started) };
+        metrics.solution_search_ns = if pure { 0 } else { elapsed_ns(phase_start) };
         metrics.solution_found = true;
         phase = PublicClientStage::SolutionBodyResponse;
         phase_start = Instant::now();
@@ -3437,6 +3557,31 @@ mod shared_cpu_domain_source_tests {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn w1_negative_cache_is_explicit_bounded_and_never_activated_by_default() {
+        let make = || {
+            PublicServer::new(
+                DevelopmentIdentity::from_secret_hex(&hex::encode([71; 32])).unwrap(),
+                PublicPolicy::new(8, Duration::from_secs(2)).unwrap(),
+            )
+            .unwrap()
+        };
+        assert!(make().w1_rejection_cache.is_none());
+        let selected = make()
+            .with_w1_rejection_cache(8, Duration::from_secs(1))
+            .unwrap();
+        assert!(selected.w1_rejection_cache.is_some());
+        assert!(make()
+            .with_w1_rejection_cache(0, Duration::from_secs(1))
+            .is_err());
+        assert!(make()
+            .with_w1_rejection_cache(8, Duration::from_secs(60))
+            .is_err());
+        // Signed policy identity remains the original V3 identity. This is
+        // strictly optional/local and is not an activated protocol migration.
+        assert_eq!(selected.policy.id(), make().policy.id());
+    }
 
     #[test]
     fn client_stage_identity_preserves_observation_labels_and_exact_failed_phase_accounting() {
@@ -4493,6 +4638,7 @@ mod tests {
                     mutation_cpu: None,
                     arithmetic_facts: None,
                     public_product: None,
+                    w1_rejection_cache: None,
                 },
             )
             .unwrap_err();
@@ -4693,6 +4839,7 @@ mod tests {
         let result = pon_executor::execute_with_control(
             &state,
             BlockExecution {
+                timestamp: None,
                 transactions: &transactions,
                 height: 1,
                 miner: crate::development_public(0).unwrap(),
@@ -4872,6 +5019,7 @@ mod tests {
             let rejected = pon_executor::execute_with_control(
                 &state,
                 BlockExecution {
+                    timestamp: None,
                     transactions: &invalid,
                     height: 1,
                     miner: crate::development_public(0).unwrap(),
@@ -4895,6 +5043,7 @@ mod tests {
             let result = pon_executor::execute_with_control(
                 &state,
                 BlockExecution {
+                    timestamp: None,
                     transactions: &transactions,
                     height: 1,
                     miner: crate::development_public(0).unwrap(),
@@ -4980,6 +5129,7 @@ mod tests {
             let result = pon_executor::execute_with_control(
                 &state,
                 BlockExecution {
+                    timestamp: None,
                     transactions: &transactions,
                     height: 1,
                     miner: crate::development_public(0).unwrap(),
@@ -5325,6 +5475,7 @@ mod tests {
                     let result = pon_executor::execute_with_control(
                         state,
                         BlockExecution {
+                            timestamp: None,
                             transactions,
                             height: 1,
                             miner: crate::development_public(0).unwrap(),
@@ -6154,6 +6305,78 @@ mod tests {
             .all(|r| !r.full_work_started && r.full_work_thread_cpu_ns.is_none()));
     }
     #[test]
+    fn phase_deadline_crossing_records_expiry_and_one_pending_close() {
+        let deadline = Instant::now();
+        let pending = Some((
+            PendingKind::Grant,
+            PendingOrder {
+                sequence: 1,
+                entered_at: deadline,
+            },
+        ));
+        let stopped = AtomicBool::new(false);
+        let cancelled = AtomicBool::new(false);
+        let timed_error = task_alive(deadline, &stopped, &cancelled).unwrap_err();
+        assert!(timed_error.is(crate::ErrorCode::PublicRequestDeadline));
+        // A pre-boundary outer observation need not match the later stage
+        // check. Exercise exact equality and the next instant without sleeps.
+        for error in [
+            timed_error,
+            crate::Error::new(crate::ErrorCode::PublicCookieExpired),
+        ] {
+            for observed_now in [deadline, deadline + Duration::from_nanos(1)] {
+                let mut metrics = PublicMetrics::default();
+                record_stage_error(
+                    &mut metrics,
+                    pending,
+                    "solution",
+                    &error,
+                    deadline,
+                    observed_now,
+                );
+                assert_eq!(metrics.pending_grant_closed, 1);
+                assert_eq!(metrics.pending_grant_granted, 0);
+                assert_eq!(metrics.expired_connections, 1);
+                assert_eq!(metrics.expired_phase_counts.get("solution"), Some(&1));
+                assert_eq!(metrics.retained_phase_errors.get("solution"), Some(&1));
+                assert_eq!(metrics.body_bytes_received, 0);
+                assert_eq!(metrics.tasks_enqueued, 0);
+                assert_eq!(metrics.work_started, 0);
+            }
+        }
+    }
+    #[test]
+    fn stage_error_code_or_elapsed_time_alone_cannot_claim_expiry() {
+        let now = Instant::now();
+        let future = now + Duration::from_secs(3600);
+        let stop = AtomicBool::new(true);
+        let cancelled = AtomicBool::new(false);
+        let stop_error = task_alive(future, &stop, &cancelled).unwrap_err();
+        assert!(stop_error.is(crate::ErrorCode::PublicRequestDeadline));
+        for error in [
+            stop_error,
+            crate::Error::new(crate::ErrorCode::PublicCookieExpired),
+        ] {
+            let mut metrics = PublicMetrics::default();
+            record_stage_error(&mut metrics, None, "solution", &error, future, now);
+            assert_eq!(metrics.expired_connections, 0);
+            assert!(metrics.expired_phase_counts.is_empty());
+            assert_eq!(metrics.retained_phase_errors.get("solution"), Some(&1));
+        }
+        for message in [
+            "PUBLIC_REQUEST_CANCELLED",
+            "PUBLIC_EOF",
+            "PUBLIC_TICKET_TARGET",
+            "PUBLIC_REQUEST_DEADLINE: forged display suffix",
+        ] {
+            let mut metrics = PublicMetrics::default();
+            record_stage_error(&mut metrics, None, "solution", &message.into(), now, now);
+            assert_eq!(metrics.expired_connections, 0);
+            assert!(metrics.expired_phase_counts.is_empty());
+            assert_eq!(metrics.retained_phase_errors.get("solution"), Some(&1));
+        }
+    }
+    #[test]
     fn r4_paid_pending_eof_original_expiry_and_shutdown_never_create_body_or_work() {
         let directory = tempfile::tempdir().unwrap();
         let settings = Settings::development(Some(super::super::now().unwrap() - 100)).unwrap();
@@ -6970,6 +7193,7 @@ mod paid_settlement_consistency_tests {
                     mutation_cpu: Some(&measurement),
                     arithmetic_facts: None,
                     public_product: None,
+                    w1_rejection_cache: None,
                 },
             )
             .unwrap_err();

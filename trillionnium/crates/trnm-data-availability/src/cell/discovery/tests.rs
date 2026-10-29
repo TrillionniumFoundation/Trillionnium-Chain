@@ -945,6 +945,7 @@ fn oversized_and_partial_tcp_replies_debit_actual_bytes_and_do_not_reopen_attemp
         overall: deadline(),
         requests_left: &requests,
         responses: &responses,
+        peer_failures: Default::default(),
     };
     let mut observed = CellDiscoveryObservationV1::default();
     let body = request([11; 32]).encode();
@@ -986,6 +987,7 @@ fn slowloris_retains_one_absolute_deadline_and_counts_partial_response_bytes() {
         overall: original,
         requests_left: &requests,
         responses: &responses,
+        peer_failures: Default::default(),
     };
     let mut observed = CellDiscoveryObservationV1::default();
     let body = request([11; 32]).encode();
@@ -1044,6 +1046,7 @@ fn bad_advertisement_cannot_trigger_an_unscoped_dial_or_grant_a_candidate() {
         overall: deadline(),
         requests_left: &requests,
         responses: &responses,
+        peer_failures: Default::default(),
     };
     let options = CellDiscoveryOptionsV1 {
         request: pin,
@@ -1108,6 +1111,7 @@ fn four_bootstraps_exhaust_exact_eight_attempts_and_64_validation_slots_without_
         overall: deadline(),
         requests_left: &requests,
         responses: &responses,
+        peer_failures: Default::default(),
     };
     let mut observed = CellDiscoveryObservationV1::default();
     assert!(transport::discover(&directory, &options, &transport, &mut observed).is_err());
