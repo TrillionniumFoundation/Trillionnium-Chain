@@ -7383,3 +7383,18 @@ descendant diagnostic completed three rounds and 33 supervised phases, including
 nine nonzero-step training receipts and six zero-step controls. All three rounds
 failed to beat the strongest control, installed zero children and left CURRENT
 at generation one; the later candidate ordinals were not admitted generations.
+
+### Retained recent-batch source-pin refusal (2026-10-29)
+
+Run `40928680264` on exact head `91e4a5e9ad10d7ef00bf2922c7b7c69d48be27ad`
+failed all four recent-batch lanes before native work. The inspected x64 head
+job `123640974634` first verified the complete 7,114-entry committed source,
+then rejected the old literal Git blob for `public_v3_multiprocess.rs`.
+The earlier `f9df86d` single-module declaration fix changed that file from
+`0449aafb3b3c3b4f85c80059f4f88f00fe7a93ab` to
+`4e098e7a078dc269780c213eab7c84cab7f08482`. An exhaustive comparison of the
+current workflow literal `git hash-object` pins found only this mismatch.
+The follow-up updates that one expected blob, retaining all other pins,
+original selectors, budgets and source checks. This does not turn the failed
+run into an executed native result. Its later log-glob cleanup refusal is
+also retained; subsequent acceptance requires a new exact-source run.
