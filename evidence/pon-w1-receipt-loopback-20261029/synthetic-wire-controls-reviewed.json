@@ -1,0 +1,303 @@
+{
+  "schema": "pon-w1-synthetic-loopback-controls-v1",
+  "real_receipt": false,
+  "proof_generated": false,
+  "qualified_proof_cost": null,
+  "source_sha256": "001fe427999077a254dfdff7c747103cd1d75350566658b1817534ea85c59fa8",
+  "cases": [
+    {
+      "schema": "pon-w1-receipt-loopback-case-v1",
+      "case": "positive-0",
+      "transport": "IPv4 TCP 127.0.0.1 only",
+      "wire_namespace": "PWCO0001",
+      "network_deadline_seconds": 30,
+      "passed": true,
+      "effective_deadline_seconds": 2.999972791003529,
+      "expected_refusal": null,
+      "sender": {
+        "wall_ns": 267376,
+        "thread_cpu_ns": 249056
+      },
+      "sender_error": null,
+      "receiver": {
+        "accepted": true,
+        "refusal": null,
+        "error": null,
+        "assets": {
+          "input": {
+            "bytes": 49640,
+            "sha256": "204ca9959a049d1f79d5fb5b5cfcd1312f992b5e32241685024083e2bdd16287"
+          },
+          "receipt": {
+            "bytes": 722,
+            "sha256": "d444610a3c8b7e503a400e2215d80803010dc15678f937ee4ee35243b7c87442"
+          }
+        },
+        "wall_ns": 2252846,
+        "thread_cpu_ns": 1092005
+      },
+      "counters": {
+        "sent_bytes": 50378,
+        "received_bytes": 50378
+      },
+      "local_transfer_wall_ns": 2693378,
+      "worker_self_cpu_ns": 1693248,
+      "cpu_scope": "thread CPU overlaps worker self CPU; do not add them",
+      "io_scope": "sender pread/send; receiver recv/write/hash/fsync/EOF, includes local file I/O",
+      "physical_network_bytes_measured": false,
+      "wan_measurement": false,
+      "cryptographic_verification_performed_here": false
+    },
+    {
+      "schema": "pon-w1-receipt-loopback-case-v1",
+      "case": "positive-1",
+      "transport": "IPv4 TCP 127.0.0.1 only",
+      "wire_namespace": "PWCO0001",
+      "network_deadline_seconds": 30,
+      "passed": true,
+      "effective_deadline_seconds": 2.999950308003463,
+      "expected_refusal": null,
+      "sender": {
+        "wall_ns": 364910,
+        "thread_cpu_ns": 366816
+      },
+      "sender_error": null,
+      "receiver": {
+        "accepted": true,
+        "refusal": null,
+        "error": null,
+        "assets": {
+          "input": {
+            "bytes": 49640,
+            "sha256": "204ca9959a049d1f79d5fb5b5cfcd1312f992b5e32241685024083e2bdd16287"
+          },
+          "receipt": {
+            "bytes": 722,
+            "sha256": "d444610a3c8b7e503a400e2215d80803010dc15678f937ee4ee35243b7c87442"
+          }
+        },
+        "wall_ns": 2915726,
+        "thread_cpu_ns": 628508
+      },
+      "counters": {
+        "sent_bytes": 50378,
+        "received_bytes": 50378
+      },
+      "local_transfer_wall_ns": 3235673,
+      "worker_self_cpu_ns": 1254670,
+      "cpu_scope": "thread CPU overlaps worker self CPU; do not add them",
+      "io_scope": "sender pread/send; receiver recv/write/hash/fsync/EOF, includes local file I/O",
+      "physical_network_bytes_measured": false,
+      "wan_measurement": false,
+      "cryptographic_verification_performed_here": false
+    },
+    {
+      "schema": "pon-w1-receipt-loopback-case-v1",
+      "case": "positive-2",
+      "transport": "IPv4 TCP 127.0.0.1 only",
+      "wire_namespace": "PWCO0001",
+      "network_deadline_seconds": 30,
+      "passed": true,
+      "effective_deadline_seconds": 2.9999531649955316,
+      "expected_refusal": null,
+      "sender": {
+        "wall_ns": 345172,
+        "thread_cpu_ns": 274617
+      },
+      "sender_error": null,
+      "receiver": {
+        "accepted": true,
+        "refusal": null,
+        "error": null,
+        "assets": {
+          "input": {
+            "bytes": 49640,
+            "sha256": "204ca9959a049d1f79d5fb5b5cfcd1312f992b5e32241685024083e2bdd16287"
+          },
+          "receipt": {
+            "bytes": 722,
+            "sha256": "d444610a3c8b7e503a400e2215d80803010dc15678f937ee4ee35243b7c87442"
+          }
+        },
+        "wall_ns": 2279535,
+        "thread_cpu_ns": 1343203
+      },
+      "counters": {
+        "sent_bytes": 50378,
+        "received_bytes": 50378
+      },
+      "local_transfer_wall_ns": 2621651,
+      "worker_self_cpu_ns": 1909974,
+      "cpu_scope": "thread CPU overlaps worker self CPU; do not add them",
+      "io_scope": "sender pread/send; receiver recv/write/hash/fsync/EOF, includes local file I/O",
+      "physical_network_bytes_measured": false,
+      "wan_measurement": false,
+      "cryptographic_verification_performed_here": false
+    },
+    {
+      "schema": "pon-w1-receipt-loopback-case-v1",
+      "case": "wrong-magic",
+      "transport": "IPv4 TCP 127.0.0.1 only",
+      "wire_namespace": "PWCO0001",
+      "network_deadline_seconds": 30,
+      "passed": true,
+      "effective_deadline_seconds": 2.999950950994389,
+      "expected_refusal": "wrong-magic",
+      "sender": {
+        "wall_ns": 190982,
+        "thread_cpu_ns": 192969
+      },
+      "sender_error": null,
+      "receiver": {
+        "accepted": false,
+        "refusal": "wrong-magic",
+        "error": null,
+        "wall_ns": 321428,
+        "thread_cpu_ns": 84755
+      },
+      "counters": {
+        "sent_bytes": 16,
+        "received_bytes": 16
+      },
+      "local_transfer_wall_ns": 923106,
+      "worker_self_cpu_ns": 814448,
+      "cpu_scope": "thread CPU overlaps worker self CPU; do not add them",
+      "io_scope": "sender pread/send; receiver recv/write/hash/fsync/EOF, includes local file I/O",
+      "physical_network_bytes_measured": false,
+      "wan_measurement": false,
+      "cryptographic_verification_performed_here": false
+    },
+    {
+      "schema": "pon-w1-receipt-loopback-case-v1",
+      "case": "wrong-input-length",
+      "transport": "IPv4 TCP 127.0.0.1 only",
+      "wire_namespace": "PWCO0001",
+      "network_deadline_seconds": 30,
+      "passed": true,
+      "effective_deadline_seconds": 2.9999460319959326,
+      "expected_refusal": "wrong-input-length",
+      "sender": {
+        "wall_ns": 154815,
+        "thread_cpu_ns": 156243
+      },
+      "sender_error": null,
+      "receiver": {
+        "accepted": false,
+        "refusal": "wrong-input-length",
+        "error": null,
+        "wall_ns": 287071,
+        "thread_cpu_ns": 84482
+      },
+      "counters": {
+        "sent_bytes": 16,
+        "received_bytes": 16
+      },
+      "local_transfer_wall_ns": 590788,
+      "worker_self_cpu_ns": 483291,
+      "cpu_scope": "thread CPU overlaps worker self CPU; do not add them",
+      "io_scope": "sender pread/send; receiver recv/write/hash/fsync/EOF, includes local file I/O",
+      "physical_network_bytes_measured": false,
+      "wan_measurement": false,
+      "cryptographic_verification_performed_here": false
+    },
+    {
+      "schema": "pon-w1-receipt-loopback-case-v1",
+      "case": "over-receipt-cap",
+      "transport": "IPv4 TCP 127.0.0.1 only",
+      "wire_namespace": "PWCO0001",
+      "network_deadline_seconds": 30,
+      "passed": true,
+      "effective_deadline_seconds": 2.9999523220030824,
+      "expected_refusal": "receipt-cap",
+      "sender": {
+        "wall_ns": 68486,
+        "thread_cpu_ns": 70084
+      },
+      "sender_error": null,
+      "receiver": {
+        "accepted": false,
+        "refusal": "receipt-cap",
+        "error": null,
+        "wall_ns": 169518,
+        "thread_cpu_ns": 94704
+      },
+      "counters": {
+        "sent_bytes": 16,
+        "received_bytes": 16
+      },
+      "local_transfer_wall_ns": 730319,
+      "worker_self_cpu_ns": 706664,
+      "cpu_scope": "thread CPU overlaps worker self CPU; do not add them",
+      "io_scope": "sender pread/send; receiver recv/write/hash/fsync/EOF, includes local file I/O",
+      "physical_network_bytes_measured": false,
+      "wan_measurement": false,
+      "cryptographic_verification_performed_here": false
+    },
+    {
+      "schema": "pon-w1-receipt-loopback-case-v1",
+      "case": "truncated-receipt",
+      "transport": "IPv4 TCP 127.0.0.1 only",
+      "wire_namespace": "PWCO0001",
+      "network_deadline_seconds": 30,
+      "passed": true,
+      "effective_deadline_seconds": 2.999403769004857,
+      "expected_refusal": "truncated-frame",
+      "sender": {
+        "wall_ns": 355537,
+        "thread_cpu_ns": 272940
+      },
+      "sender_error": null,
+      "receiver": {
+        "accepted": false,
+        "refusal": "truncated-frame",
+        "error": null,
+        "wall_ns": 1697950,
+        "thread_cpu_ns": 843783
+      },
+      "counters": {
+        "sent_bytes": 50377,
+        "received_bytes": 50377
+      },
+      "local_transfer_wall_ns": 2123080,
+      "worker_self_cpu_ns": 1511707,
+      "cpu_scope": "thread CPU overlaps worker self CPU; do not add them",
+      "io_scope": "sender pread/send; receiver recv/write/hash/fsync/EOF, includes local file I/O",
+      "physical_network_bytes_measured": false,
+      "wan_measurement": false,
+      "cryptographic_verification_performed_here": false
+    },
+    {
+      "schema": "pon-w1-receipt-loopback-case-v1",
+      "case": "trailing-byte",
+      "transport": "IPv4 TCP 127.0.0.1 only",
+      "wire_namespace": "PWCO0001",
+      "network_deadline_seconds": 30,
+      "passed": true,
+      "effective_deadline_seconds": 2.9996716790046776,
+      "expected_refusal": "trailing-byte",
+      "sender": {
+        "wall_ns": 237246,
+        "thread_cpu_ns": 165389
+      },
+      "sender_error": null,
+      "receiver": {
+        "accepted": false,
+        "refusal": "trailing-byte",
+        "error": null,
+        "wall_ns": 2079316,
+        "thread_cpu_ns": 718782
+      },
+      "counters": {
+        "sent_bytes": 50379,
+        "received_bytes": 50379
+      },
+      "local_transfer_wall_ns": 2410223,
+      "worker_self_cpu_ns": 1252252,
+      "cpu_scope": "thread CPU overlaps worker self CPU; do not add them",
+      "io_scope": "sender pread/send; receiver recv/write/hash/fsync/EOF, includes local file I/O",
+      "physical_network_bytes_measured": false,
+      "wan_measurement": false,
+      "cryptographic_verification_performed_here": false
+    }
+  ]
+}

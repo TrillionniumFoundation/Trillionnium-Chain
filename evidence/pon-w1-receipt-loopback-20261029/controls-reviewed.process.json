@@ -1,0 +1,23 @@
+{
+  "command": [
+    "python3",
+    "-B",
+    "-m",
+    "unittest",
+    "-v",
+    "test_w1_receipt_loopback_v1"
+  ],
+  "returncode": 0,
+  "timeout_seconds": 30,
+  "network_scope": "127.0.0.1 TCP and local socketpair only",
+  "synthetic_wire_only": true,
+  "sdk_invoked": false,
+  "proof_generated": false,
+  "qualified_proof_cost": null,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "41b316eec9382c4acf09dccb0f24f9d3176a30c7aa30f9c9ece2b17e6b45541a",
+  "source_sha256": {
+    "measure_w1_receipt_loopback_v1.py": "001fe427999077a254dfdff7c747103cd1d75350566658b1817534ea85c59fa8",
+    "test_w1_receipt_loopback_v1.py": "9585a3bf42bad57b767f7b85b06b1bf1cde0534f0a0ff099042ffba0d9f832b4"
+  }
+}

@@ -1,0 +1,102 @@
+{
+  "schema": "pon-w1-proof-process-observer-v1",
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-c",
+    "import os,signal,time;os.kill(os.getppid(),signal.SIGTERM);time.sleep(0.2)"
+  ],
+  "started_utc": "2026-10-29T11:15:37.161340+00:00",
+  "timeout_seconds": 2400,
+  "source_sha": null,
+  "returncode": 125,
+  "timed_out": false,
+  "failure": "observer-system-error",
+  "secondary_failures": [],
+  "direct_wait4": null,
+  "adopted_wait4": [],
+  "finite_cleanup_observed": false,
+  "family_capture_complete": false,
+  "complete_family_cpu_seconds": null,
+  "family_scope": "observed direct/adopted wait4 and sampled proc; no historical family total",
+  "wait4_scope": "each row can include descendants already waited by that child; do not add proc ticks",
+  "consensus_authority": false,
+  "proof_qualification": false,
+  "stream_limits": {
+    "stdout": 1048576,
+    "stderr": 1048576,
+    "backend-stdout": 16777216,
+    "backend-stderr": 4194304
+  },
+  "sample_limit": 16777216,
+  "work_deadline_monotonic": 96444.420218648,
+  "cleanup_allowance_seconds": 5,
+  "wall_scope": "owner entry through final readback, including setup/work/cleanup; bounded JSON publication follows",
+  "blocking_kernel_operations_hard_bounded": false,
+  "user_ticks_per_second": 100,
+  "subreaper": {
+    "requested": true,
+    "enabled": true,
+    "errno": null
+  },
+  "observer_source": {
+    "device": 27,
+    "inode": 1336277,
+    "bytes": 31639,
+    "mtime_ns": 1793272297745310890,
+    "ctime_ns": 1793272297745310890,
+    "mode": 33188,
+    "sha256": "fb3fd8a033ac0781052b5da55577bbeb59e6f4c714d2b4b3ff8e2c6c866e62bd"
+  },
+  "failure_errno": 40,
+  "work_finished_monotonic_ns": 94044421134287,
+  "leader_exit_observation": null,
+  "streams": {
+    "stdout": {
+      "device": 27,
+      "inode": 1337529,
+      "bytes": 0,
+      "mtime_ns": 1793272537158170216,
+      "ctime_ns": 1793272537158170216,
+      "mode": 33188,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "truncated": false
+    },
+    "stderr": {
+      "device": 27,
+      "inode": 1337530,
+      "bytes": 0,
+      "mtime_ns": 1793272537158170216,
+      "ctime_ns": 1793272537158170216,
+      "mode": 33188,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "truncated": false
+    },
+    "backend-stdout": {
+      "device": 27,
+      "inode": 1337531,
+      "bytes": 0,
+      "mtime_ns": 1793272537158170216,
+      "ctime_ns": 1793272537158170216,
+      "mode": 33188,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "truncated": false
+    },
+    "backend-stderr": {
+      "device": 27,
+      "inode": 1337532,
+      "bytes": 0,
+      "mtime_ns": 1793272537158170216,
+      "ctime_ns": 1793272537158170216,
+      "mode": 33188,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "truncated": false
+    }
+  },
+  "samples": {
+    "count": 0,
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "wall_seconds": 0.001039559007040225,
+  "finished_utc": "2026-10-29T11:15:37.162369+00:00"
+}

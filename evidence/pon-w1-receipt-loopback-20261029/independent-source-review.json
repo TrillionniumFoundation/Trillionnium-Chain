@@ -1,0 +1,69 @@
+{
+  "schema": "w1-receipt-transport-independent-source-review-v1",
+  "verdict": "PASS for publication as a bounded research harness; real-receipt end-to-end execution and proof-cost qualification remain pending.",
+  "source_sha256": {
+    "harness": "001fe427999077a254dfdff7c747103cd1d75350566658b1817534ea85c59fa8",
+    "tests": "9585a3bf42bad57b767f7b85b06b1bf1cde0534f0a0ff099042ffba0d9f832b4",
+    "fixed_E_owner": "fb3fd8a033ac0781052b5da55577bbeb59e6f4c714d2b4b3ff8e2c6c866e62bd"
+  },
+  "reviewed_scope": [
+    "All public/worker/verifier entry points; fixed E owner source pin and copied source identity; frame parser and transfer; held-file hash identities; both actual-host verification calls; cancellation and waitid/WNOWAIT/kill-before-wait4 ownership; numeric/resource bounds and failure reporting.",
+    "Expected verifier host SHA-256 is an explicit caller trust input, permitted to differ from the original prover host; both digests and same_host_binary_as_prover are reported. The harness does not compile, attest, or establish that caller trust.",
+    "Only a trusted actual verifier success before network and a second trusted verifier success on retained received bytes can set qualified_cost. Missing artifact, no receipt, nonzero verifier, cancellation, timeout, incomplete cleanup, or a failed case keeps it null/failed.",
+    "Frame is separate PWCO0001 Composite research transport; it does not claim compatibility with Succinct PWAI0001, ordinary PoN admission, or WAN cost.",
+    "Outer E process-group owner reserves leader until SIGKILL then wait4; internal verifier remains in that group and does not call start_new_session. Default SIGCHLD is enforced.",
+    "Persistent cancellation at every original work-deadline safe point survives the samplers OSError catch; separate cleanup deadline remains operational; original E owner bytes unchanged."
+  ],
+  "limits": {
+    "campaign_work_seconds": 2400,
+    "owner_cleanup_seconds": 5,
+    "verify_step_max_seconds": 900,
+    "network_case_max_seconds": 30,
+    "receipt_bytes": 134217728,
+    "input_bytes": 49640,
+    "frame_bytes_cap": 134267384,
+    "stream_chunk_bytes": 65536,
+    "per_process_address_space_bytes": 2147483648,
+    "network_cases": 8,
+    "positive_network_transfers": 3,
+    "verifier_children_at_once": 1
+  },
+  "validation_readback": {
+    "author_test_methods": 13,
+    "author_log_sha256": "41b316eec9382c4acf09dccb0f24f9d3176a30c7aa30f9c9ece2b17e6b45541a",
+    "author_full_run_returncode": 0,
+    "wire_cases_passed": 8,
+    "wire_scope": "Real localhost TCP with synthetic non-proof receipt bytes",
+    "real_receipt_verified": false,
+    "qualified_proof_cost": null,
+    "real_sigterm_outer_returncode": 125,
+    "real_sigterm_direct_wait4_returncode": -9,
+    "real_sigterm_finite_cleanup_observed": true,
+    "reviewer_additional_control": {
+      "command": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "-v",
+        "test_w1_receipt_loopback_v1.FileAndProcessBounds.test_sampling_oserror_catch_cannot_consume_cancellation"
+      ],
+      "returncode": 0,
+      "tests_run": 1,
+      "reported_test_seconds": 0.001,
+      "scope": "Deterministic adapter integration control; no additional network/proof run"
+    }
+  },
+  "red_evidence_preserved": [
+    "controls-final.process.json / controls-final.stderr.log: original 12-method run timed out on cancellation",
+    "cancel-control-reviewed.cancel-owner: signal15 swallowed as sampler errno4, child and outer naturally exited0 under previous one-shot adapter",
+    "rejected-async-cancellation.json: initial ELOOP fixture failure interpretation explicitly retracted; not evidence of a Popen cancellation race"
+  ],
+  "remaining_boundaries": [
+    "No actual Composite receipt existed in the original E terminal artifact, so these synthetic controls provide no actual receipt verification/propagation latency.",
+    "Wire bytes and shape caps do not establish a global worst-case invalid-proof CPU/RAM bound.",
+    "Per-process AS and child wait4/RSS are not whole-process-family peak memory; thread CPU overlaps worker self CPU and must not be summed.",
+    "Blocking kernel I/O has the unchanged owners documented deadline/cleanup limitations.",
+    "Local TCP timing includes sender pread and receiver write/hash/fsync/EOF and does not measure physical network bytes or WAN propagation."
+  ]
+}

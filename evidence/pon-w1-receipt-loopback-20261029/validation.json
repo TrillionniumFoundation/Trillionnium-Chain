@@ -1,0 +1,199 @@
+{
+  "schema": "pon-w1-receipt-loopback-local-validation-v1",
+  "base_commit": "974932be6dcfe830ce1ce92d58cb10e89cb8358d",
+  "candidate_derived_directly_from_E": true,
+  "base_is_cost_profile_commit": false,
+  "source_sha256": {
+    "measure_w1_receipt_loopback_v1.py": "001fe427999077a254dfdff7c747103cd1d75350566658b1817534ea85c59fa8",
+    "test_w1_receipt_loopback_v1.py": "9585a3bf42bad57b767f7b85b06b1bf1cde0534f0a0ff099042ffba0d9f832b4"
+  },
+  "fixed_owner_sha256": "fb3fd8a033ac0781052b5da55577bbeb59e6f4c714d2b4b3ff8e2c6c866e62bd",
+  "raw_records": [
+    {
+      "path": "controls-reviewed.stderr.log",
+      "bytes": 2349,
+      "sha256": "41b316eec9382c4acf09dccb0f24f9d3176a30c7aa30f9c9ece2b17e6b45541a"
+    },
+    {
+      "path": "controls-reviewed.process.json",
+      "bytes": 753,
+      "sha256": "6484d1a0c8a6eeb980241a6ec14356717b8ef2035220772d3718b88139cb86a3"
+    },
+    {
+      "path": "synthetic-wire-controls-reviewed.json",
+      "bytes": 9985,
+      "sha256": "f934ae7f26cfe20794c083743ff54e74b375f8815e8b1805c257ef81fd0e598b"
+    },
+    {
+      "path": "prior-12-controls.stderr.log",
+      "bytes": 4681,
+      "sha256": "1ed21df88283b56147261689d834758fffb227d5f1eedc90c200bb9c594402ae"
+    },
+    {
+      "path": "prior-12-controls.process.json",
+      "bytes": 513,
+      "sha256": "ca73249c41d39e326fe46abbb57986509487c13cb349f396248c85d1be2a1580"
+    },
+    {
+      "path": "prior-one-shot-cancel.observer.json",
+      "bytes": 4656,
+      "sha256": "252a3414d7f8cfa03869635cb38e0c24c9fb0d6e03a432e046dd265b39bab729"
+    },
+    {
+      "path": "prior-one-shot-cancel.process-samples.jsonl",
+      "bytes": 823,
+      "sha256": "6607c7a35a63c3d1ae5456a013094a3828eb6aa7e68293870ac00108f2a05459"
+    },
+    {
+      "path": "final-cancel.observer.json",
+      "bytes": 4626,
+      "sha256": "bca6c27f231a43089713fcba78a6d535ef3326d5e62eefa961faf37bed1026ef"
+    },
+    {
+      "path": "final-cancel.process-samples.jsonl",
+      "bytes": 823,
+      "sha256": "7bbfd1ae93cbc309d4586e87605cade57bd4fcb2d023ba4b7703aabccadd1034"
+    },
+    {
+      "path": "prior-fixture-ELOOP.observer.json",
+      "bytes": 3207,
+      "sha256": "912aabf35f522d07d7870ddfa9046fdf152f2fbc7e14a44330e976938c865d85"
+    },
+    {
+      "path": "independent-source-review.json",
+      "bytes": 4391,
+      "sha256": "7b5ab6995d01200101f95aa6055f418b077e3d9d06257ef907c999265f9c74be"
+    }
+  ],
+  "final_controls": {
+    "command": [
+      "python3",
+      "-B",
+      "-m",
+      "unittest",
+      "-v",
+      "test_w1_receipt_loopback_v1"
+    ],
+    "returncode": 0,
+    "timeout_seconds": 30,
+    "network_scope": "127.0.0.1 TCP and local socketpair only",
+    "synthetic_wire_only": true,
+    "sdk_invoked": false,
+    "proof_generated": false,
+    "qualified_proof_cost": null,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "41b316eec9382c4acf09dccb0f24f9d3176a30c7aa30f9c9ece2b17e6b45541a",
+    "source_sha256": {
+      "measure_w1_receipt_loopback_v1.py": "001fe427999077a254dfdff7c747103cd1d75350566658b1817534ea85c59fa8",
+      "test_w1_receipt_loopback_v1.py": "9585a3bf42bad57b767f7b85b06b1bf1cde0534f0a0ff099042ffba0d9f832b4"
+    }
+  },
+  "methods_passed": 13,
+  "prior_12_control_run_failed": true,
+  "prior_one_shot_cancellation_defect": {
+    "schema": "pon-w1-loopback-cancellation-adapter-red-v1",
+    "harness_sha256": "e2803ac621b3185ac5ff5334f4fc54162689e58b5015f9a61638bc82bfde4393",
+    "signal_observed_by_test": 15,
+    "observer_returncode": 0,
+    "observer_failure": null,
+    "direct_wait4": {
+      "pid": 470813,
+      "raw_wait_status": 0,
+      "starttime_ticks": null,
+      "identity_scope": "kernel wait4 child event; sampled process identities are separate, not joined by PID alone",
+      "returncode": 0,
+      "user_cpu_seconds": 0.019341,
+      "system_cpu_seconds": 0.007346,
+      "max_rss_kib": 16728,
+      "minor_faults": 2106,
+      "major_faults": 0,
+      "voluntary_context_switches": 2,
+      "involuntary_context_switches": 1,
+      "observed_monotonic_ns": 94417925203857
+    },
+    "finite_cleanup_observed": true,
+    "sample_errors": [
+      {
+        "scope": "children",
+        "pid": 470812,
+        "tid": 470812,
+        "errno": 2
+      },
+      {
+        "scope": "children",
+        "pid": 470813,
+        "tid": 470813,
+        "errno": 2
+      },
+      {
+        "scope": "actual-executable",
+        "pid": 470813,
+        "errno": 4
+      }
+    ],
+    "explanation": "One-shot InterruptedError was caught as an actual-executable sampling OSError (errno4); main loop then missed cancellation. This is an adapter defect, not an original-E cancellation contract.",
+    "proof_generated": false
+  },
+  "prior_fixture_failure_and_correction": {
+    "schema": "pon-w1-loopback-cancellation-red-observation-v1",
+    "source_sha256": "a3f0b634e86ad87644a1ffa0bd2e4cfb3dab7774eaa17f6e5c30dda8f50a3436",
+    "control": "test_actual_sigterm_owner_cancels_and_reaps_its_worker_group",
+    "actual_control_returncode": 1,
+    "observed_error": "TypeError: 'NoneType' object is not subscriptable when indexing report['direct_wait4']",
+    "mechanism": "Initial fixture used unresolved sys.executable symlink; fixed E owner refused it with O_NOFOLLOW/ELOOP before spawning. This control did not reproduce a Popen cancellation race.",
+    "proof_generated": false,
+    "qualified_proof_cost": null,
+    "actual_failure_errno": 40,
+    "signal_observed": null,
+    "initial_signal_window_interpretation_retracted": true,
+    "design_decision": "Use flag-only cancellation and explicit safe points so asynchronous exceptions cannot interrupt PID assignment; this is a design precaution, not a claimed observed original-owner defect."
+  },
+  "initial_sandbox_socket_failure": {
+    "schema": "pon-w1-loopback-test-environment-failure-v1",
+    "operation": "socket(AF_INET,SOCK_STREAM)",
+    "errno": 1,
+    "exception": "PermissionError: Operation not permitted",
+    "socket_created": false,
+    "real_receipt_cost_measured": false,
+    "controls_run_to_completion": false
+  },
+  "network_controls_explicitly_approved_for_localhost": true,
+  "external_endpoint_used": false,
+  "actual_real_receipt_campaign_executed": false,
+  "sdk_invoked_by_controls": false,
+  "proof_generated": false,
+  "qualified_real_receipt_cost": null,
+  "global_worst_invalid_proof_established": false,
+  "wan_measurement": false,
+  "production_admission": false,
+  "local_host_rebuilt": false,
+  "local_filesystem_free_bytes_at_freeze": 595832832,
+  "local_build_disk_sufficiency_measured": false,
+  "same_prover_host_required": false,
+  "trusted_host_sha_is_explicit_caller_input": true,
+  "limits": {
+    "campaign_work_seconds": 2400,
+    "original_owner_cleanup_seconds": 5,
+    "verify_work_seconds": 900,
+    "verify_cleanup_max_seconds_within_campaign": 2,
+    "network_case_seconds": 30,
+    "receipt_bytes": 134217728,
+    "input_bytes": 49640,
+    "frame_bytes": 134267384,
+    "stream_bytes": 65536,
+    "process_address_space_bytes": 2147483648,
+    "maximum_owned_verifier_children_at_once": 1,
+    "network_cases": 8,
+    "positive_transfers": 3,
+    "parent_recording_outside_owner_deadline": true,
+    "whole_family_memory_bound_established": false
+  },
+  "sdk_verifier_order_source_blobs": {
+    "upstream_commit": "1cc70cf05033a79ebc90f07c679cb4bd1cd301b9",
+    "receipt.rs": "55cb42b41a558e440f871ad9c1c862e017a17961",
+    "receipt/composite.rs": "43a410a4cf4ccbb4c35cf76040a8c7cd3add2149",
+    "receipt/segment.rs": "ea8f721082b0736fbaf408720a34c2b3f1a02589"
+  },
+  "future_audit_one_implemented": false,
+  "finite_invalid_cost_still_missing": "Per-case wait4 CPU/RSS with a real positive receipt; existing 16-case audit retains inner wall only."
+}
