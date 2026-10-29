@@ -386,7 +386,8 @@ class WorkerPidfdTests(unittest.TestCase):
                 finally: observed.close()
 
     def test_remaining_non_zombie_and_unproved_cross_frontier_changes_refuse(self):
-        with self.proc() as state:
+        # Check this refusal independently of host scheduling and the deadline gate.
+        with patch.object(time, 'monotonic_ns', return_value=1_000_000_000), self.proc() as state:
             third=state.root/'task/10003'; third.mkdir()
             (third/'status').write_text(state.fixture.status(10003,'R'))
             (third/'stat').write_text(state.fixture.stat(10003,'R'))
