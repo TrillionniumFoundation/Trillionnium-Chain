@@ -1,0 +1,36 @@
+test_digest_mismatch_is_refused_after_complete_transport (test_w1_receipt_loopback_v1.ActualLoopbackWireControls.test_digest_mismatch_is_refused_after_complete_transport) ... ok
+test_eight_real_loopback_cases_keep_wire_scope_and_exact_counters (test_w1_receipt_loopback_v1.ActualLoopbackWireControls.test_eight_real_loopback_cases_keep_wire_scope_and_exact_counters) ... ok
+test_socket_deadline_is_an_operational_failure (test_w1_receipt_loopback_v1.ActualLoopbackWireControls.test_socket_deadline_is_an_operational_failure) ... ok
+test_actual_held_elf_nonzero_exit_is_retained_as_failure (test_w1_receipt_loopback_v1.FileAndProcessBounds.test_actual_held_elf_nonzero_exit_is_retained_as_failure) ... ok
+test_actual_short_timeout_kills_and_reaps_only_owned_child (test_w1_receipt_loopback_v1.FileAndProcessBounds.test_actual_short_timeout_kills_and_reaps_only_owned_child) ... ok
+test_actual_sigterm_owner_cancels_and_reaps_its_worker_group (test_w1_receipt_loopback_v1.FileAndProcessBounds.test_actual_sigterm_owner_cancels_and_reaps_its_worker_group) ... ERROR
+test_duplicate_nonfinite_and_nonobject_metadata_are_refused (test_w1_receipt_loopback_v1.FileAndProcessBounds.test_duplicate_nonfinite_and_nonobject_metadata_are_refused) ... ok
+test_growth_after_open_is_refused_before_fingerprint_read (test_w1_receipt_loopback_v1.FileAndProcessBounds.test_growth_after_open_is_refused_before_fingerprint_read) ... ok
+test_header_caps_refuse_before_body_allocation (test_w1_receipt_loopback_v1.FileAndProcessBounds.test_header_caps_refuse_before_body_allocation) ... ok
+test_missing_actual_artifact_cannot_create_a_qualified_cost (test_w1_receipt_loopback_v1.FileAndProcessBounds.test_missing_actual_artifact_cannot_create_a_qualified_cost) ... ok
+test_nondefault_sigchld_refuses_before_output_or_spawn (test_w1_receipt_loopback_v1.FileAndProcessBounds.test_nondefault_sigchld_refuses_before_output_or_spawn) ... ok
+test_symlink_fifo_empty_and_oversized_files_are_refused (test_w1_receipt_loopback_v1.FileAndProcessBounds.test_symlink_fifo_empty_and_oversized_files_are_refused) ... ok
+
+======================================================================
+ERROR: test_actual_sigterm_owner_cancels_and_reaps_its_worker_group (test_w1_receipt_loopback_v1.FileAndProcessBounds.test_actual_sigterm_owner_cancels_and_reaps_its_worker_group)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/faebcae3f86e/proof/receipt-transport/repo/scripts/ci/test_w1_receipt_loopback_v1.py", line 158, in test_actual_sigterm_owner_cancels_and_reaps_its_worker_group
+    result = subprocess.run([sys.executable, "-B", "-c", code, str(HERE), str(ROOT / transport.BACKEND),
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 550, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 1209, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 2116, in _communicate
+    self._check_timeout(endtime, orig_timeout, stdout, stderr)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 1253, in _check_timeout
+    raise TimeoutExpired(
+subprocess.TimeoutExpired: Command '['/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3', '-B', '-c', "import sys,json,signal;from pathlib import Path;sys.path.insert(0,sys.argv[1]);sys.path.insert(0,sys.argv[2]);import measure_w1_receipt_loopback_v1 as t;import proof_observer_v1 as o;child=[str(Path(sys.executable).resolve()),'-c','import os,signal,time;os.kill(os.getppid(),signal.SIGTERM);time.sleep(60)'];r,s=t.owned_campaign(o,child,sys.argv[3]);print(json.dumps({'signal':s,'returncode':r['returncode'],'cleanup':r['finite_cleanup_observed'],'child':r['direct_wait4']['returncode']}))", '/workspace/scratch/faebcae3f86e/proof/receipt-transport/repo/scripts/ci', '/workspace/scratch/faebcae3f86e/proof/receipt-transport/repo/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0', '/tmp/tmpf1zv8nuk/cancel-owner']' timed out after 10 seconds
+
+----------------------------------------------------------------------
+Ran 12 tests in 10.523s
+
+FAILED (errors=1)

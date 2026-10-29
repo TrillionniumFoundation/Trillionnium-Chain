@@ -1,0 +1,147 @@
+{
+  "schema": "pon-w1-proof-process-observer-v1",
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+    "-c",
+    "import os,signal,time;os.kill(os.getppid(),signal.SIGTERM);time.sleep(0.5)"
+  ],
+  "started_utc": "2026-10-29T11:21:50.089913+00:00",
+  "timeout_seconds": 2400,
+  "source_sha": null,
+  "returncode": 0,
+  "timed_out": false,
+  "failure": null,
+  "secondary_failures": [],
+  "direct_wait4": {
+    "pid": 470813,
+    "raw_wait_status": 0,
+    "starttime_ticks": null,
+    "identity_scope": "kernel wait4 child event; sampled process identities are separate, not joined by PID alone",
+    "returncode": 0,
+    "user_cpu_seconds": 0.019341,
+    "system_cpu_seconds": 0.007346,
+    "max_rss_kib": 16728,
+    "minor_faults": 2106,
+    "major_faults": 0,
+    "voluntary_context_switches": 2,
+    "involuntary_context_switches": 1,
+    "observed_monotonic_ns": 94417925203857
+  },
+  "adopted_wait4": [],
+  "finite_cleanup_observed": true,
+  "family_capture_complete": false,
+  "complete_family_cpu_seconds": null,
+  "family_scope": "observed direct/adopted wait4 and sampled proc; no historical family total",
+  "wait4_scope": "each row can include descendants already waited by that child; do not add proc ticks",
+  "consensus_authority": false,
+  "proof_qualification": false,
+  "stream_limits": {
+    "stdout": 1048576,
+    "stderr": 1048576,
+    "backend-stdout": 16777216,
+    "backend-stderr": 4194304
+  },
+  "sample_limit": 16777216,
+  "work_deadline_monotonic": 96817.348774868,
+  "cleanup_allowance_seconds": 5,
+  "wall_scope": "owner entry through final readback, including setup/work/cleanup; bounded JSON publication follows",
+  "blocking_kernel_operations_hard_bounded": false,
+  "user_ticks_per_second": 100,
+  "subreaper": {
+    "requested": true,
+    "enabled": true,
+    "errno": null
+  },
+  "observer_source": {
+    "device": 27,
+    "inode": 1336277,
+    "bytes": 31639,
+    "mtime_ns": 1793272297745310890,
+    "ctime_ns": 1793272297745310890,
+    "mode": 33188,
+    "sha256": "fb3fd8a033ac0781052b5da55577bbeb59e6f4c714d2b4b3ff8e2c6c866e62bd"
+  },
+  "host_before": {
+    "device": 27,
+    "inode": 9223372036855188825,
+    "bytes": 30894944,
+    "mtime_ns": 1792962266000000000,
+    "ctime_ns": 1792962266000000000,
+    "mode": 33261,
+    "sha256": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7"
+  },
+  "effective_command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+    "-c",
+    "import os,signal,time;os.kill(os.getppid(),signal.SIGTERM);time.sleep(0.5)"
+  ],
+  "leader_pid": 470813,
+  "spawn_returned_monotonic_ns": 94417398884897,
+  "work_finished_monotonic_ns": 94417925118830,
+  "leader_exit_observation": {
+    "pid": 470813,
+    "code": 1,
+    "status": 0,
+    "monotonic_ns": 94417925115881
+  },
+  "final_group_signal": "SIGKILL",
+  "adoption_probe": "ECHILD-observed-not-full-family-certification",
+  "host_after": {
+    "device": 27,
+    "inode": 9223372036855188825,
+    "bytes": 30894944,
+    "mtime_ns": 1792962266000000000,
+    "ctime_ns": 1792962266000000000,
+    "mode": 33261,
+    "sha256": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7"
+  },
+  "streams": {
+    "stdout": {
+      "device": 27,
+      "inode": 1341918,
+      "bytes": 0,
+      "mtime_ns": 1793272910087543941,
+      "ctime_ns": 1793272910087543941,
+      "mode": 33188,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "truncated": false
+    },
+    "stderr": {
+      "device": 27,
+      "inode": 1341919,
+      "bytes": 0,
+      "mtime_ns": 1793272910087543941,
+      "ctime_ns": 1793272910087543941,
+      "mode": 33188,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "truncated": false
+    },
+    "backend-stdout": {
+      "device": 27,
+      "inode": 1341920,
+      "bytes": 0,
+      "mtime_ns": 1793272910087543941,
+      "ctime_ns": 1793272910087543941,
+      "mode": 33188,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "truncated": false
+    },
+    "backend-stderr": {
+      "device": 27,
+      "inode": 1341921,
+      "bytes": 0,
+      "mtime_ns": 1793272910087543941,
+      "ctime_ns": 1793272910087543941,
+      "mode": 33188,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "truncated": false
+    }
+  },
+  "samples": {
+    "count": 1,
+    "bytes": 823,
+    "sha256": "6607c7a35a63c3d1ae5456a013094a3828eb6aa7e68293870ac00108f2a05459"
+  },
+  "wall_seconds": 0.6048409689974505,
+  "finished_utc": "2026-10-29T11:21:50.694729+00:00"
+}

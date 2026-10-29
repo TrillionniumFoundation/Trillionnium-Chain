@@ -1,0 +1,18 @@
+test_digest_mismatch_is_refused_after_complete_transport (test_w1_receipt_loopback_v1.ActualLoopbackWireControls.test_digest_mismatch_is_refused_after_complete_transport) ... ok
+test_eight_real_loopback_cases_keep_wire_scope_and_exact_counters (test_w1_receipt_loopback_v1.ActualLoopbackWireControls.test_eight_real_loopback_cases_keep_wire_scope_and_exact_counters) ... ok
+test_socket_deadline_is_an_operational_failure (test_w1_receipt_loopback_v1.ActualLoopbackWireControls.test_socket_deadline_is_an_operational_failure) ... ok
+test_actual_held_elf_nonzero_exit_is_retained_as_failure (test_w1_receipt_loopback_v1.FileAndProcessBounds.test_actual_held_elf_nonzero_exit_is_retained_as_failure) ... ok
+test_actual_short_timeout_kills_and_reaps_only_owned_child (test_w1_receipt_loopback_v1.FileAndProcessBounds.test_actual_short_timeout_kills_and_reaps_only_owned_child) ... ok
+test_actual_sigterm_owner_cancels_and_reaps_its_worker_group (test_w1_receipt_loopback_v1.FileAndProcessBounds.test_actual_sigterm_owner_cancels_and_reaps_its_worker_group) ... ok
+test_duplicate_nonfinite_and_nonobject_metadata_are_refused (test_w1_receipt_loopback_v1.FileAndProcessBounds.test_duplicate_nonfinite_and_nonobject_metadata_are_refused) ... ok
+test_growth_after_open_is_refused_before_fingerprint_read (test_w1_receipt_loopback_v1.FileAndProcessBounds.test_growth_after_open_is_refused_before_fingerprint_read) ... ok
+test_header_caps_refuse_before_body_allocation (test_w1_receipt_loopback_v1.FileAndProcessBounds.test_header_caps_refuse_before_body_allocation) ... ok
+test_missing_actual_artifact_cannot_create_a_qualified_cost (test_w1_receipt_loopback_v1.FileAndProcessBounds.test_missing_actual_artifact_cannot_create_a_qualified_cost) ... ok
+test_nondefault_sigchld_refuses_before_output_or_spawn (test_w1_receipt_loopback_v1.FileAndProcessBounds.test_nondefault_sigchld_refuses_before_output_or_spawn) ... ok
+test_sampling_oserror_catch_cannot_consume_cancellation (test_w1_receipt_loopback_v1.FileAndProcessBounds.test_sampling_oserror_catch_cannot_consume_cancellation) ... ok
+test_symlink_fifo_empty_and_oversized_files_are_refused (test_w1_receipt_loopback_v1.FileAndProcessBounds.test_symlink_fifo_empty_and_oversized_files_are_refused) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.751s
+
+OK
