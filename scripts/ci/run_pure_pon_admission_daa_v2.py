@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """One exact-source supplemental campaign; failures never become retried passes.
 
-The outer 4-CPU/16-GiB experimental cgroup is distinct from a receiver's fixed
-25%-CPU public service parent. This runner never certifies that inner parent,
+The receiver and attackers keep the outer 4-CPU/16-GiB experimental cgroup;
+the new named client composition uses the original fixed 25%-CPU parent.
+This runner never authenticates an independently operated inner parent,
 unrestricted Sybil fairness, proof soundness or production activation.
 """
 from datetime import datetime, timezone
@@ -21,6 +22,7 @@ sys.path[:0] = [str(ROOT / "scripts"), str(ROOT / "scripts/ci")]
 import run_pon_w1_native_campaign as bounds
 from verify_ci_source import verify
 import pure_pon_binary_archive_v1 as binary_archive
+import read_pure_fixed_host_client_v1 as fixed_client
 
 
 TOOLCHAIN = "1.95.0"
@@ -28,8 +30,10 @@ NATIVE_GATES = frozenset({"transparent-complete-proof", "pure-runtime", "pure-cl
                           "native-confirmation-risk", "pressure-observation-contract",
                           "pressure-call-window-contract", "pressure-attacker-cost-contract",
                           "pressure-process-cost-contract", "child-ownership-probe-contract",
+                          "pressure-process-peek-contract", "client-profile-contract",
                           "receiver-ipc-deadline-contract", "receiver-owner-contract",
                           "pure-pressure", "receiver-owner-supplement"})
+CLIENT_READER_GATES = frozenset({"pure-client-reader", "receiver-client-reader"})
 BUILD_OVERRIDES = frozenset(bounds.BUILD_ENV) | {
     "RUSTDOC", "RUSTDOCFLAGS", "CARGO_ENCODED_RUSTDOCFLAGS", "RUSTC_BOOTSTRAP",
     "RUSTC_FORCE_UNSTABLE", "CARGO_BUILD_RUSTDOC", "CARGO_BUILD_RUSTDOCFLAGS",
@@ -113,7 +117,10 @@ def native_verdict(name, process_row, stdout):
 
 def campaign_success(steps, verdicts):
     names = [verdict["name"] for verdict in verdicts]
+    client_readers = [row.get("name") for row in steps if row.get("name") in CLIENT_READER_GATES]
     return (bool(steps) and all(row["complete_success"] is True for row in steps)
+            and len(client_readers) == len(CLIENT_READER_GATES)
+            and set(client_readers) == CLIENT_READER_GATES
             and len(names) == len(NATIVE_GATES) and set(names) == NATIVE_GATES
             and all(verdict["qualified"] is True for verdict in verdicts))
 
@@ -155,6 +162,7 @@ def main():
     parser.add_argument("--target", required=True, type=Path)
     parser.add_argument("--cargo", required=True, type=Path)
     parser.add_argument("--expected-head", required=True)
+    parser.add_argument("--client-execution-profile", required=True, choices=[fixed_client.PROFILE])
     args = parser.parse_args()
     out, target = args.output.resolve(), args.target.resolve()
     bounds.require(not out.is_relative_to(ROOT) and not target.is_relative_to(ROOT)
@@ -163,10 +171,12 @@ def main():
     validate_build_environment(os.environ)
     validate_cargo_configuration(os.environ)
     out.mkdir(parents=True, exist_ok=False)
-    result = {"schema": "pon-pure-admission-daa-native-v2", "expected_head": args.expected_head,
+    result = {"schema": "pon-pure-admission-daa-fixed-client-v1", "expected_head": args.expected_head,
+              "client_execution_profile": args.client_execution_profile,
               "started_utc": datetime.now(timezone.utc).isoformat(), "steps": [], "binaries": {},
               "native_verdicts": [], "toolchain_observation": None,
               "required_native_gates": sorted(NATIVE_GATES),
+              "required_client_reader_gates": sorted(CLIENT_READER_GATES),
               "source_before": None, "source_after": None, "failure": None,
               "finalization_failures": [], "complete_success": False,
               "automatic_retries": 0, "pressure_phase_seconds": 30,
@@ -174,7 +184,7 @@ def main():
               "outer_pressure_timeout_seconds": 600,
               "public_fairness_qualified": False, "production_activation": False,
               "pq128_qualified": False, "consensus_authority": False,
-              "scope": "Exact head, release binaries, two local TCP listeners; shared hosted hardware. Outer experimental cgroup is not the receiver's fixed public-kernel parent. Conditional model probabilities are not observed chain security."}
+              "scope": "Exact head, release binaries, two local TCP listeners; shared hosted hardware. Receiver and attackers retain the original four-CPU outer group; only the actual History client uses the original separate fixed Host. The explicit new composition retains every original finite predicate and never relabels historical failures. Conditional model probabilities are not observed chain security."}
     env = {key: value for key, value in os.environ.items() if not key.startswith("TRNM_")}
     env.update(CARGO_TARGET_DIR=str(target), CARGO_BUILD_JOBS="2", CARGO_NET_OFFLINE="true",
                CARGO_INCREMENTAL="0", RUSTUP_TOOLCHAIN="1.95.0", RUST_TEST_THREADS="1",
@@ -224,6 +234,9 @@ def main():
             ("attacker-cost-reader-negatives", ["python3", "scripts/ci/test_check_pure_pon_attacker_cost_v1.py"]),
             ("process-cost-reader-negatives", ["python3", "scripts/ci/test_check_pure_pon_process_cost_v1.py"]),
             ("receiver-owner-reader-negatives", ["python3", "scripts/ci/test_check_pure_pon_receiver_owner_v1.py"]),
+            ("original-history-owner-reader-negatives", ["python3", "scripts/ci/test_native_history_verifier.py"]),
+            ("pure-client-reader-negatives", ["python3", "scripts/ci/test_read_pure_fixed_host_client_v1.py"]),
+            ("fixed-parent-reader-negatives", ["python3", "scripts/ci/test_history_fixed_parent_v2.py"]),
             ("campaign-runner-negatives", ["python3", "scripts/ci/test_run_pure_pon_admission_daa_v2.py"]),
             ("binary-archive-negatives", ["python3", "scripts/ci/test_pure_pon_binary_archive_v1.py"]),
             ("risk-model-negatives", ["python3", "formal/pon-nakamoto-v1/test_pon_risk_model_v1.py", "-v"]),
@@ -260,6 +273,10 @@ def main():
                    ["--exact", "native_attacker_cost_retains_unissued_preparations_and_unknown_cpu"])
             native("pressure-process-cost-contract", "pure_pon_pressure_v2",
                    ["--exact", "native_actor_wait4_preserves_whole_lifetime_and_single_reap"])
+            native("pressure-process-peek-contract", "pure_pon_pressure_v2",
+                   ["--exact", "native_actor_terminal_observation_preserves_the_only_wait4_reap"])
+            native("client-profile-contract", "pure_pon_pressure_v2",
+                   ["--exact", "history_verifier::client_execution_profile_has_no_implicit_pure_relabel"])
             ownership_env = dict(env, TRNM_CHILD_OWNERSHIP_CONTROL_OUT=str(out / "child-ownership-control.json"))
             native("child-ownership-probe-contract", "pure_pon_pressure_v2",
                    ["--exact", "native_child_ownership_probe_distinguishes_live_zombie_and_reaped"],
@@ -275,8 +292,13 @@ def main():
             # Run once. Always retain and independently read failure/partial data.
             pressure_env = dict(env, TRNM_PURE_PRESSURE_V2_OUT=str(out / "pressure-native"))
             native("pure-pressure", "pure_pon_pressure_v2",
-                   ["--exact", "pure_pon_cold_shared_domain_pressure_v2", "--ignored"],
+                   ["--exact", fixed_client.EXPERIMENTS["pure-pressure"], "--ignored"],
                    600, pressure_env)
+            step("pure-client-reader", ["python3", "scripts/ci/read_pure_fixed_host_client_v1.py",
+                 str(out / "pressure-native"), "--experiment", "pure-pressure",
+                 "--binary-sha256", result["binaries"]["pure_pon_pressure_v2"]["sha256"],
+                 "--outer-cgroup", resources["cgroup"],
+                 "--output", str(out / "pure-client-readback-v1.json")], 120)
             step("pure-pressure-reader", ["python3", "scripts/ci/check_pure_pon_pressure_v2.py",
                  str(out / "pressure-native"), "--output", str(out / "pressure-qualification.json"),
                  "--require-qualified"], 120)
@@ -293,8 +315,13 @@ def main():
             # originals. It never replaces the preceding 90-second campaign.
             receiver_env = dict(env, TRNM_RECEIVER_OWNER_V1_OUT=str(out / "receiver-owner-native"))
             native("receiver-owner-supplement", "pure_pon_pressure_v2",
-                   ["--exact", "receiver_owner::whole_receiver_owner_pressure_v1", "--ignored"],
+                   ["--exact", fixed_client.EXPERIMENTS["receiver-owner-supplement"], "--ignored"],
                    600, receiver_env)
+            step("receiver-client-reader", ["python3", "scripts/ci/read_pure_fixed_host_client_v1.py",
+                 str(out / "receiver-owner-native"), "--experiment", "receiver-owner-supplement",
+                 "--binary-sha256", result["binaries"]["pure_pon_pressure_v2"]["sha256"],
+                 "--outer-cgroup", resources["cgroup"],
+                 "--output", str(out / "receiver-client-readback-v1.json")], 120)
             step("receiver-owner-reader", ["python3", "scripts/ci/check_pure_pon_receiver_owner_v1.py",
                  str(out / "receiver-owner-native"), "--output", str(out / "receiver-owner-observation-v2.json"),
                  "--require-qualified", "--require-observed-cpu", "--require-quiescent-descendants"], 120)

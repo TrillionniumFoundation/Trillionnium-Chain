@@ -63,6 +63,30 @@ jobs:
           set -euo pipefail
           rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy 2>&1 | tee "$OUT/toolchain.log"
           cargo +1.95.0 fetch --locked --manifest-path trillionnium/Cargo.toml 2>&1 | tee "$OUT/fetch.log"
+      - name: Probe and provision the original fixed Host for the explicitly isolated client
+        run: |
+          set -euo pipefail
+          test "$(git hash-object config/systemd/trnmponpublic.slice)" = 8981b6aeed4c08c21679664940366b36a991444a
+          test -d /run/systemd/system
+          test -f /sys/fs/cgroup/cgroup.controllers
+          probe_unit="trnm-pure-client-parent-probe-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT.service"
+          sudo -n systemd-run --unit="$probe_unit" --wait --pipe --collect \
+            --service-type=exec --expand-environment=no --uid=0 --gid=0 \
+            --working-directory="$GITHUB_WORKSPACE" \
+            --property=CPUAccounting=yes --property=MemoryAccounting=yes \
+            --property=CPUQuota=400% --property=CPUQuotaPeriodSec=100ms \
+            --property=MemoryMax=17179869184 --property=Nice=10 \
+            --property=KillMode=control-group --property=TimeoutStopSec=20s \
+            --property=RuntimeMaxSec=120s --setenv=PYTHONDONTWRITEBYTECODE=1 \
+            /usr/bin/python3 "$GITHUB_WORKSPACE/scripts/ci/history_fixed_parent_v2.py" probe \
+            --owner "$GITHUB_RUN_ID.$GITHUB_RUN_ATTEMPT" \
+            --source "$GITHUB_WORKSPACE/config/systemd/trnmponpublic.slice" \
+            > "$OUT/client-parent-real-probe.json" 2> "$OUT/client-parent-real-probe-systemd.log"
+          sudo -n python3 -B scripts/ci/history_fixed_parent_v2.py provision \
+            --owner "$GITHUB_RUN_ID.$GITHUB_RUN_ATTEMPT" \
+            --source "$GITHUB_WORKSPACE/config/systemd/trnmponpublic.slice" \
+            > "$OUT/client-parent-provision.json" 2> "$OUT/client-parent-provision.log"
+          sudo -n systemctl show trnmponpublic.slice > "$OUT/client-parent-systemd-show.txt"
       - name: Run one complete source-bound observation under the original experimental envelope
         run: |
           set -euo pipefail
@@ -98,7 +122,22 @@ jobs:
             --setenv="RUSTUP_HOME=$rustup_home" --setenv=PYTHONDONTWRITEBYTECODE=1 \
             /usr/bin/python3 scripts/ci/run_pure_pon_admission_daa_v2.py \
             --output "$OUT/campaign" --target "$CARGO_TARGET_DIR" \
-            --cargo "$cargo_path" --expected-head "$EXPECTED_HEAD" 2>&1 | tee "$OUT/native.log"
+            --cargo "$cargo_path" --expected-head "$EXPECTED_HEAD" \
+            --client-execution-profile pure-pon-fixed-host-client-v1 2>&1 | tee "$OUT/native.log"
+      - name: After the driver terminates close only this run's actually owned fixed parents
+        if: always()
+        run: |
+          set -uo pipefail
+          set +e
+          sudo -n python3 -B scripts/ci/history_fixed_parent_v2.py cleanup-probe \
+            --owner "$GITHUB_RUN_ID.$GITHUB_RUN_ATTEMPT" \
+            > "$OUT/client-parent-probe-cleanup.json" 2> "$OUT/client-parent-probe-cleanup.log"
+          probe_status=$?
+          sudo -n python3 -B scripts/ci/history_fixed_parent_v2.py cleanup \
+            --owner "$GITHUB_RUN_ID.$GITHUB_RUN_ATTEMPT" \
+            > "$OUT/client-parent-cleanup.json" 2> "$OUT/client-parent-cleanup.log"
+          parent_status=$?
+          test "$probe_status" -eq 0 && test "$parent_status" -eq 0
       - name: Recheck source even when native evidence failed
         if: always()
         run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$EXPECTED_HEAD" --output "$OUT/source-final.json"

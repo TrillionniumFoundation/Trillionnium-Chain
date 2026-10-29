@@ -1,5 +1,8 @@
 //! Finite same-host, separate-process W1 economics and original public service
 //! campaign. No independent operator, WAN, hardness, energy or release claim.
+#[path = "support/native_history_context.rs"]
+mod history_context;
+use history_context::{ClientOperationStamp, StateBackendChoice};
 #[path = "support/multiprocess_history_verifier.rs"]
 mod history_verifier;
 #[path = "support/multiprocess_support.rs"]
@@ -93,40 +96,6 @@ fn campaign_server(work_profile: support::WorkProfile) -> (PublicServer, Option<
     (server, Some(observation))
 }
 
-struct ClientOperationStamp {
-    started_ns: u64,
-    started: Instant,
-    thread: thread::ThreadId,
-    cpu_ns: Option<u64>,
-}
-impl ClientOperationStamp {
-    fn start(epoch: u64) -> Self {
-        Self {
-            started_ns: support::monotonic().saturating_sub(epoch),
-            started: Instant::now(),
-            thread: thread::current().id(),
-            cpu_ns: support::clock(rustix::time::ClockId::ThreadCPUTime),
-        }
-    }
-    fn finish(self, epoch: u64) -> Value {
-        let cpu_ns = (self.thread == thread::current().id())
-            .then(|| support::clock(rustix::time::ClockId::ThreadCPUTime))
-            .flatten()
-            .zip(self.cpu_ns)
-            .and_then(|(end, start)| end.checked_sub(start));
-        let ended_ns = support::monotonic().saturating_sub(epoch);
-        let wall_ns = u64::try_from(self.started.elapsed().as_nanos()).ok();
-        json!({"started_ns":self.started_ns,"ended_ns":ended_ns,"wall_ns":wall_ns,
-            "thread_cpu_ns":cpu_ns,"thread_cpu_observation_available":cpu_ns.is_some(),
-            "scope":"calling client thread only; excludes scoped execution worker CPU; unknown clock is null; no deadline or acceptance authority"})
-    }
-}
-
-#[derive(Clone, Copy)]
-enum StateBackendChoice {
-    LegacyV2,
-    AuthenticatedV1,
-}
 impl StateBackendChoice {
     fn from_environment() -> Self {
         match std::env::var("TRNM_MULTIPROCESS_STATE_BACKEND") {
@@ -142,22 +111,6 @@ impl StateBackendChoice {
                 panic!("TRNM_MULTIPROCESS_STATE_BACKEND must be Unicode")
             }
         }
-    }
-    fn label(self) -> &'static str {
-        match self {
-            Self::LegacyV2 => "legacy-v2",
-            Self::AuthenticatedV1 => "authenticated-v1",
-        }
-    }
-    fn open(self, path: &Path, settings: Settings) -> Node {
-        // The outer campaign and phase directories are create-only. Select the
-        // original opener once for every fresh Node; do not migrate or retry a
-        // failed authenticated namespace through the legacy implementation.
-        match self {
-            Self::LegacyV2 => Node::open(path, settings, 1),
-            Self::AuthenticatedV1 => Node::open_with_authenticated_state(path, settings, 1),
-        }
-        .unwrap()
     }
 }
 
@@ -799,21 +752,16 @@ fn phase(
             preview_miner: development_public(0).unwrap(),
         })
         .unwrap();
-    let mut verifier = match history_resource_profile {
-        history_verifier::ResourceProfile::Strict => {
-            history_verifier::Verifier::start(&path.join("independent-client"), state_backend, seed)
-        }
-        history_verifier::ResourceProfile::GraphFenceV1 => {
-            history_verifier::Verifier::start_with_graph_resource_fence_v1(
-                &path.join("independent-client"),
-                state_backend,
-                seed,
-            )
-        }
-    };
+    let mut verifier = history_verifier::Verifier::start(
+        &path.join("independent-client"),
+        state_backend,
+        seed,
+        history_resource_profile,
+        history_verifier::ExecutionProfile::Original,
+    );
     let initial = receiver.read_active().unwrap();
     let native_history_before = receiver.native_history_arithmetic_observation();
-    let client_native_history_before = verifier.before();
+    let client_native_history_before = verifier.ready()["native_history_arithmetic"].clone();
     let owner = Arc::new(Mutex::new(receiver));
     let listener = TcpListener::bind("127.0.0.1:0").unwrap();
     let address = listener.local_addr().unwrap();
@@ -1111,7 +1059,7 @@ fn phase(
         .lock()
         .ok()
         .map(|node| node.native_history_arithmetic_observation());
-    let (checked, client_native_history_after) = verifier.snapshot();
+    let (checked, client_native_history_after, _) = verifier.snapshot();
     let captured = observer.snapshot();
     let budget_samples = samples.lock().unwrap().clone();
     let depletion_meter = budget_samples

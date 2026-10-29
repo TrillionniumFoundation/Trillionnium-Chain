@@ -17,6 +17,9 @@ STRICT_PROFILE = 'strict-every-native-checkpoint-v1'
 GRAPH_PROFILE = 'history-account-graph-resource-fence-v1'
 GRAPH_SCHEMA = 'native-public-history-verifier-graph-fence-process-v1'
 GRAPH_ENTRY_SCHEMA = 'native-public-history-verifier-graph-fence-entry-v1'
+PURE_CLIENT_PROFILE = 'pure-pon-fixed-host-client-v1'
+PURE_CLIENT_SCHEMA = 'native-public-history-pure-client-process-v1'
+PURE_CLIENT_ENTRY_SCHEMA = 'native-public-history-pure-client-entry-v1'
 GRAPH_COUNTERS = ('imports', 'imports_closed', 'imports_failed', 'native_cpu_checkpoints',
                   'graph_entries', 'graph_exits', 'graph_aborts', 'graph_node_checkpoints',
                   'graph_completed_node_bodies', 'graph_full_resource_checks', 'graph_max_node_window',
@@ -124,10 +127,27 @@ def graph_observation(value):
 
 
 def validate_phase(phase, directory, binary_sha256, outer_cgroup, expected_profile=STRICT_PROFILE):
+    return _validate_phase(phase, directory, binary_sha256, outer_cgroup, expected_profile,
+                           pure_client=False)
+
+
+def validate_pure_client_phase(phase, directory, binary_sha256, outer_cgroup):
+    """The explicit pure-client composition, without inventing full-state equality.
+
+    Its original pressure reader independently validates the three finite
+    rounds. Here every native import, confirmation and final position is bound
+    to the actual isolated actor and original retained IPC bytes.
+    """
+    return _validate_phase(phase, directory, binary_sha256, outer_cgroup, STRICT_PROFILE,
+                           pure_client=True)
+
+
+def _validate_phase(phase, directory, binary_sha256, outer_cgroup, expected_profile, *, pure_client):
     require(expected_profile in (STRICT_PROFILE, GRAPH_PROFILE), 'explicit supported History resource profile')
     digest(binary_sha256)
     value = phase['history_verifier_process']
-    expected_schema = GRAPH_SCHEMA if expected_profile == GRAPH_PROFILE else SCHEMA
+    expected_schema = (PURE_CLIENT_SCHEMA if pure_client else
+                       GRAPH_SCHEMA if expected_profile == GRAPH_PROFILE else SCHEMA)
     require(value['schema'] == expected_schema, 'mandatory real verifier process boundary')
     require(value['completed_successfully'] is True and value['exit_success'] is True
             and value['parent_forced_kill'] is False, 'actual clean verifier exit required')
@@ -147,9 +167,23 @@ def validate_phase(phase, directory, binary_sha256, outer_cgroup, expected_profi
     entry = report['result']
     retained_ready, _ = read(Path(directory) / 'ready.json')
     retained_report, _ = read(Path(directory) / 'report.json')
-    job, _ = read(Path(directory) / 'job.json')
+    job, job_sha = read(Path(directory) / 'job.json')
+    if pure_client:
+        require(expected_profile == STRICT_PROFILE
+                and phase['state_backend'] == 'authenticated-v1'
+                and all(item.get('client_execution_profile') == PURE_CLIENT_PROFILE
+                        for item in (phase, value, job, ready, entry)),
+                'exact new pure-client profile bound at every owner boundary required')
+        addresses = phase['addresses']
+        require(type(addresses) is list and len(addresses) == len(set(addresses)) == 2
+                and all(type(address) is str and re.fullmatch(r'127\.0\.0\.1:[1-9][0-9]{0,4}', address)
+                        and 0 < int(address.rsplit(':', 1)[1]) <= 65535 for address in addresses),
+                'two concrete original pure-pressure listener addresses required')
+    else:
+        require(all('client_execution_profile' not in item for item in (phase, value, job, ready, entry)),
+                'original History owner schema cannot relabel a new client composition')
     profiles = [item.get('history_resource_profile') for item in (phase, value, job, ready, entry)]
-    historical_strict = all(item is None for item in profiles)
+    historical_strict = not pure_client and all(item is None for item in profiles)
     require((historical_strict and expected_profile == STRICT_PROFILE
              and 'history_graph_resource' not in ready and 'history_graph_resource' not in entry)
             or all(item == expected_profile for item in profiles),
@@ -193,11 +227,39 @@ def validate_phase(phase, directory, binary_sha256, outer_cgroup, expected_profi
             and ready['wrong_parent_refused'] is True,
             'actual original checker and wrong-parent refusal required')
     require(report['kind'] == 'history-verifier' and report['error'] is None
-            and entry['schema'] == (GRAPH_ENTRY_SCHEMA if expected_profile == GRAPH_PROFILE
+            and entry['schema'] == (PURE_CLIENT_ENTRY_SCHEMA if pure_client else
+                                    GRAPH_ENTRY_SCHEMA if expected_profile == GRAPH_PROFILE
                                     else 'native-public-history-verifier-entry-v2')
             and entry['clean_node_close'] is True, 'actual original Node close required')
     for observed in (value['binary_sha256'], ready['binary_sha256'], entry['binary_sha256']):
         require(digest(observed) == binary_sha256, 'same retained release binary required')
+    launcher = None
+    if pure_client:
+        launch, _ = read(Path(directory) / 'launch.json')
+        require(launch['schema'] == 'native-history-verifier-launch-v1'
+                and launch['native_selector'] == 'history_verifier::owned_actor_entry'
+                and launch['unit'] == unit and launch['controller_pid'] == owner['pid']
+                and launch['binary_sha256'] == binary_sha256
+                and launch['parent'] == PARENT and launch['original_outer_cgroup'] == outer_cgroup
+                and launch['parent_before_spawn'] == value['parent_before_spawn']
+                and digest(launch['job_sha256']) == job_sha
+                and launch['controller_capability_prequeued'] is True
+                and launch['owner_death_control'] is None
+                and launch['history_resource_profile'] == STRICT_PROFILE
+                and launch['collect_on_exit'] is True,
+                'actual controlled launcher must bind the exact job and fixed parent')
+        wait4 = value['launcher_wait4']
+        require(integer(launch['launcher_pid']) > 1 and launch['launcher_pid'] != pid
+                and wait4['role'] == 'sudo-systemd-run-launcher-only'
+                and wait4['native_actor_is_direct_child'] is False
+                and wait4['native_actor_cpu_included'] is False
+                and wait4['observed_before_original_finish_deadline'] is True
+                and wait4['exit_success'] is True and wait4['parent_forced_kill'] is False,
+                'launcher wait4 cannot be relabeled native-actor wait4 or late success')
+        from check_pure_pon_process_cost_v1 import check_wait4
+        launcher = check_wait4(wait4, launch['launcher_pid'], owner['pid'],
+                               integer(value['launcher_observed_monotonic_ns']))
+        require(launcher['cpu_observed'], 'unknown actual launcher CPU is not zero')
     points = [value['parent_before_spawn'], entry['parent_before'], ready['parent'],
               entry['parent_after_node_close'], value['parent_after_reap']]
     identities = [parent_identity(point) for point in points]
@@ -269,7 +331,9 @@ def validate_phase(phase, directory, binary_sha256, outer_cgroup, expected_profi
                 require(not any(current_graph.values()), 'strict importer cannot silently use the N8 profile')
             previous_graph = current_graph
         if operation == 'import':
-            require(request['source'] == phase['address'], 'original concrete source address required')
+            require(request['source'] in phase['addresses'] if pure_client
+                    else request['source'] == phase['address'],
+                    'original concrete source address required')
             imported[sequence] = (request, response)
         elif operation == 'confirmation':
             confirmed[sequence] = (request, response)
@@ -277,13 +341,21 @@ def validate_phase(phase, directory, binary_sha256, outer_cgroup, expected_profi
             require(response['error'] is None, 'actual final native snapshot must succeed')
             active = response['value']['active']
             require(type(active) is list and len(active) == 3
-                    and native_hash(active[0]) == digest(phase['final_client_tip']),
+                    and native_hash(active[0]) == digest(phase['client_tip'] if pure_client
+                                                       else phase['final_client_tip']),
                     'actual snapshot tip must match the original final client tip')
+            if pure_client:
+                require(integer(active[1]) == integer(phase['client_generation'])
+                        and integer(response['value']['active_height']) == integer(phase['client_height']),
+                        'actual final client record height and generation must match independently')
+        if pure_client and operation in ('import', 'confirmation'):
+            require(integer(request['epoch']) == integer(phase['epoch_monotonic_ns']),
+                    'actual client operation belongs to the original pressure epoch')
     require(integer(ready['setup_process_cpu_ns']) + call_cpu <= whole_cpu,
             'disjoint setup/call process CPU cannot exceed whole verifier CPU')
     actual_imports = {}
     actual_confirmations = {}
-    rounds = phase['confirmations']
+    rounds = phase['rounds'] if pure_client else phase['confirmations']
     require(type(rounds) is list, 'original confirmation rounds required')
     matched_rounds = set()
     for row in phase['history']:
@@ -292,6 +364,10 @@ def validate_phase(phase, directory, binary_sha256, outer_cgroup, expected_profi
             require(sequence in imported and sequence not in actual_imports,
                     'raw history must reference each actual importer once')
             request, response = imported[sequence]
+            if pure_client:
+                require(integer(row['listener']) in (0, 1)
+                        and request['source'] == phase['addresses'][row['listener']],
+                        'actual importer source must match the concrete original row listener')
             require(request['page'] == row['response']['value'], 'exact original Page bytes/value required')
             original = row['request']
             require(original['op'] == 'history'
@@ -329,7 +405,8 @@ def validate_phase(phase, directory, binary_sha256, outer_cgroup, expected_profi
     require(all(round_['observation'] is None or index in matched_rounds
                 for index, round_ in enumerate(rounds)),
             'every observed confirmation round must have its actual native call')
-    require(phase['receiver_client_state_equal'] is True, 'actual full receiver/verifier state equality required')
+    if not pure_client:
+        require(phase['receiver_client_state_equal'] is True, 'actual full receiver/verifier state equality required')
     if not historical_strict:
         final_graph = graph_observation(entry['history_graph_resource'])
         require(final_graph == previous_graph and entry['history_graph_resource']['live_known_close_pending'] is False,
@@ -343,7 +420,7 @@ def validate_phase(phase, directory, binary_sha256, outer_cgroup, expected_profi
                     and final_graph['before_commit_checks'] > 0
                     and final_graph['kernel_cpu_ns'] <= whole_cpu,
                     'actual complete N8 imports, original commit edges and nested measured CPU required')
-    return {'schema': expected_schema, 'history_resource_profile': expected_profile, 'pid': pid, 'cgroup': cgroup,
+    result = {'schema': expected_schema, 'history_resource_profile': expected_profile, 'pid': pid, 'cgroup': cgroup,
             'request_count': len(calls), 'import_count': len(imported),
             'confirmation_count': len(confirmed), 'whole_fixed_parent_cpu_ns': kernel_cpu_ns,
             'whole_verifier_process_cpu_ns': whole_cpu,
@@ -353,6 +430,11 @@ def validate_phase(phase, directory, binary_sha256, outer_cgroup, expected_profi
             'cost_scopes_are_nested_not_additive': True,
             'all_ipc_bytes_read_back': True, 'independent_host_authentication': False,
             'production_qualification': False}
+    if pure_client:
+        result.update(client_execution_profile=PURE_CLIENT_PROFILE,
+                      launcher_wait4=launcher, native_actor_wait4_claimed=False,
+                      full_receiver_state_equality_claimed=False)
+    return result
 
 
 def validate_report(report, raw_directory, binary_sha256, outer_cgroup, expected_profile=STRICT_PROFILE):

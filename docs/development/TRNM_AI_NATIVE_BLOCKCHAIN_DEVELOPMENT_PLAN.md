@@ -7268,3 +7268,77 @@ cases; lifecycle passed 12 tests in 301.014390253 seconds under its own 900-seco
 limit; reorg continuation passed seven tests in 704.080576124 seconds under its
 own 900-second limit. These results do not override the separate cold failures,
 establish whole-History P0 closure or prove complete descendant quiescence.
+
+### PN3 PQ root parity and explicit fixed Host client — 2026-10-29 (OPEN)
+
+The exact `7eb5257368016b4880c55c54f74412209ab697ba` candidate passed both
+final-root tamper controls, 37 growth-profile controls (two original ignored),
+and workspace/all-targets strict Clippy. Its unchanged original cold History
+fixture still failed on page index 4 before any Activation observation. The
+target was unknown, no reorg row existed and the old active seed remained.
+Known paid CPU was 412,022,247 ns against 403,972,426 ns credited refill;
+the 8,049,821 ns debt was retained with zero in-flight work and available
+accounting. This execution never reached the new final-root branch and cannot
+establish that branch's throughput or cold-start benefit. Shared-host elapsed
+times are not an isolated performance comparison.
+
+The test-only child `37c4301153c911d6095636e0b9732359be713034` reproduced a
+separate validation-parity defect in the arithmetic helper. Deleting the actual
+PQ2 authority while retaining the real account/key history made original
+`Settings::state_root` refuse, but the cold arithmetic path returned an `Ok`
+root. The retained second invocation failed its target assertion: zero passed,
+one failed, 867 filtered, 0.01 native seconds. Its log SHA-256 is
+`10e6ca45547845a2e0aedbb9716a7022462a7a8ebc3bae4fb7966cf0b254e0f2` and
+ELF SHA-256 is
+`e528b043fa6c2e623c56fd18cd08daba827a9458b177e202d155acaa67a59d2a`.
+The first invocation returned 101 but its saved output lacked the native
+terminal; that incomplete observation is not counted as another target RED.
+The first failing PQ2 cold assertion stopped the test, so its later PQ2 warm
+and PQ3 cases were not executed on the old implementation. The candidate now
+runs both original validators unconditionally, in their original order, before
+any cache lookup. Disabled validators retain their original no-op behavior.
+This is state-root parity hardening, not proof of a remote unsigned transaction
+exploit, a final-publication bypass or end-to-end PQ authorization. The exact
+new source must pass the whole cache module and original cold fixture; neither
+acceptance is inferred from the local reproduction.
+
+The pure-admission experiment now selects a separate
+`pure-pon-fixed-host-client-v1` execution profile and source-bound sidecar.
+The real History client/verifier runs inside the existing fixed public Host
+parent, while compiler, receiver and attack actors retain the original outer
+experimental parent. Original phase, actor, network, CPU, memory and cleanup
+limits remain unchanged. Old native selectors remain available. The common
+wait4 owner waits only its direct launcher; native actor CPU and enclosing
+kernel CPU remain separate, nested observations and are never added together.
+The strict reader requires actual IPC, matching source and profile, bound
+initial/final chain positions and an empty fixed parent before and after.
+Position agreement in the new pressure adapter is not full state equality;
+the original receiver/client state and service-cost readers remain mandatory.
+Python negative controls and source review do not replace native typechecking
+or a real fixed-parent execution on the frozen candidate.
+
+The separate full-release Cell experiment on `7eb5257` completed its explicitly
+reserved eleven-member V3 local fault scenario: 272,189,870 input bytes,
+269 cold chunks, zero cache hits and two live suppliers after author and
+retired-provider exit. Cold completion took 41.699117094 seconds under its
+120-second reservation. After all four provider processes were reaped, all
+eleven receiver-only materializations matched their original sizes/hashes with
+zero network counters. Its report SHA-256 is
+`80856526073eb6f1ebdf62f602aafe082cba1a2070c8202d5594fe6d22a91cf1`.
+This is a local complete-release availability observation with a development
+adapter, not the older three-member/35-second scenario, an installed new model,
+continuous disk-absence proof, independent operators or a 72-hour WAN result.
+
+[Hepta PR #4294](https://github.com/TrillionniumFoundation/hepta-private-ci/pull/4294)
+pins the reviewed `147bae5` execution profile; its receipts cannot be relabeled
+as `7eb5257` or this follow-up. Its four Linux native-pair lanes refused the
+original confirmation target. The inspected x64 head phase confirmed in
+4.064181696 seconds, outside its unchanged four-second business window,
+although native state equality and accounting controls passed. The separate
+[FinalUse PQ PR #4297](https://github.com/TrillionniumFoundation/hepta-private-ci/pull/4297)
+now includes the real Bazel-generated lock on `d734ba4`; its first run stopped
+at the original lock check before native host tests. A new exact-source run
+must qualify that lock and actual core/host paths. Three real model loops,
+strong baselines, the single integrated product source combination, full PQ
+authority closure, original cold recovery, independent WAN operation and a
+fair successor-protocol comparison all remain explicit acceptance obligations.

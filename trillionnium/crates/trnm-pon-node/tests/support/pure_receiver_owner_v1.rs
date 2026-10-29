@@ -943,8 +943,9 @@ fn receiver_phase(
     seed: &[Packet],
     business: &[Packet],
     mode: &str,
+    client_mode: pure_history_client::ClientMode,
 ) -> Value {
-    receiver_phase_inner(path, settings, seed, business, mode, None)
+    receiver_phase_inner(path, settings, seed, business, mode, None, client_mode)
 }
 
 pub(super) fn fixed_parent_phase(
@@ -955,7 +956,15 @@ pub(super) fn fixed_parent_phase(
     mode: &str,
     placement: &mut fixed_parent::Placement,
 ) -> Value {
-    receiver_phase_inner(path, settings, seed, business, mode, Some(placement))
+    receiver_phase_inner(
+        path,
+        settings,
+        seed,
+        business,
+        mode,
+        Some(placement),
+        pure_history_client::ClientMode::OriginalOuter,
+    )
 }
 
 fn receiver_phase_inner(
@@ -965,7 +974,12 @@ fn receiver_phase_inner(
     business: &[Packet],
     mode: &str,
     mut placement: Option<&mut fixed_parent::Placement>,
+    client_mode: pure_history_client::ClientMode,
 ) -> Value {
+    assert!(
+        placement.is_none() || client_mode == pure_history_client::ClientMode::OriginalOuter,
+        "the separate receiver-placement experiment cannot borrow the sole client Host parent"
+    );
     fs::create_dir(path).unwrap();
     let ipc_dir = tempfile::tempdir().unwrap();
     let requests: Vec<_> = business
@@ -992,12 +1006,14 @@ fn receiver_phase_inner(
         .iter()
         .map(|v| v.as_str().unwrap().parse().unwrap())
         .collect();
-    let mut verifier =
-        Node::open_with_authenticated_state(&path.join("independent-client"), settings.clone(), 1)
-            .unwrap();
-    replay(&mut verifier, seed);
-    let initial = verifier.read_active().unwrap();
-    assert_eq!(hex::encode(initial.0), ready["initial_tip"]);
+    let mut verifier = pure_history_client::Client::start(
+        &path.join("independent-client"),
+        settings,
+        seed,
+        client_mode,
+    );
+    let initial_tip = verifier.initial_tip();
+    assert_eq!(hex::encode(initial_tip), ready["initial_tip"]);
     let mut actors = Vec::new();
     if mode != "baseline" {
         for actor in 0..ATTACKERS {
@@ -1062,7 +1078,7 @@ fn receiver_phase_inner(
     let mut rounds = Vec::new();
     let mut errors = Vec::new();
     let mut next = 0;
-    let mut after = initial.0;
+    let mut after = initial_tip;
     for round in 0..ROUNDS {
         let scheduled = 1_000_000_000 + round as u64 * 4_000_000_000;
         while support::monotonic() < epoch + scheduled {
@@ -1111,33 +1127,23 @@ fn receiver_phase_inner(
             row["request"] = serde_json::to_value(request).unwrap();
             row["listener"] = json!(round % 2);
             if support::on_time(&row) {
-                let started = support::monotonic().saturating_sub(epoch);
-                let cpu = support::thread_cpu();
-                let imported =
-                    serde_json::from_value::<ingress::Page>(row["response"]["value"].clone())
-                        .map_err(|e| e.to_string())
-                        .and_then(|page| {
-                            ingress::receive_public_page_from(
-                                &mut verifier,
-                                addresses[round % 2],
-                                page,
-                                tip,
-                                after,
-                                support::now(),
-                            )
-                            .map_err(|e| e.to_string())
-                        });
-                row["client_import"] = json!({"started_ns":started,"ended_ns":support::monotonic().saturating_sub(epoch),
-                    "thread_cpu_ns":support::cpu_delta(cpu),"succeeded":imported.is_ok()});
+                let (imported, measurement) = verifier.import(
+                    addresses[round % 2],
+                    row["response"]["value"].clone(),
+                    tip,
+                    after,
+                    support::now(),
+                    epoch,
+                );
+                row["client_import"] = measurement;
                 match imported {
                     Ok(value) => after = value,
                     Err(error) => errors.push(error),
                 }
                 if after == tip {
-                    let started = support::monotonic().saturating_sub(epoch);
-                    let value = verifier.confirmation(transaction, included, support::now());
-                    row["client_confirmation"] = json!({"started_ns":started,
-                        "ended_ns":support::monotonic().saturating_sub(epoch),"succeeded":value.is_ok()});
+                    let (value, measurement) =
+                        verifier.confirmation(transaction, included, support::now(), epoch);
+                    row["client_confirmation"] = measurement;
                     match value {
                         Ok(value) => observation = Some(value),
                         Err(error) => errors.push(error.to_string()),
@@ -1152,7 +1158,10 @@ fn receiver_phase_inner(
         let after_snapshot = hostile(&control, path).unwrap();
         let ended = support::monotonic().saturating_sub(epoch);
         let confirmed = observation.as_ref().is_some_and(|v| {
-            v.confirmed && !v.finalized && !v.execution_authority && v.depth == Some(6)
+            v["confirmed"] == true
+                && v["finalized"] == false
+                && v["execution_authority"] == false
+                && v["depth"] == 6
         }) && ended < WINDOW_NS;
         rounds.push(json!({"round":round,"scheduled_ns":scheduled,"started_ns":started,"ended_ns":ended,
             "confirmed_inside_pressure_window":confirmed,"observation":observation,
@@ -1208,7 +1217,8 @@ fn receiver_phase_inner(
             .count());
     }
 
-    let (client_tip, client_height, client_generation) = active_position(&verifier);
+    let (client_tip, client_height, client_generation) = verifier.snapshot_position();
+    let client_process = verifier.finish();
     report["schema"] = json!(PHASE_SCHEMA);
     report["parent_pid"] = json!(std::process::id());
     report["receiver_pid"] = json!(receiver_pid);
@@ -1227,6 +1237,7 @@ fn receiver_phase_inner(
     report["work_hardness_qualified"] = json!(false);
     report["installation_authorized"] = json!(false);
     report["original_campaign_qualification"] = json!(false);
+    pure_history_client::bind_phase(&mut report, client_process, &addresses);
     if let Err(e) = support::capture_attacker_cost_bindings(path, &report) {
         eprintln!("supplement thread-cost binding: {e}");
     }
@@ -1245,6 +1256,16 @@ fn receiver_phase_inner(
 #[test]
 #[ignore = "independent 90-second receiver subprocess supplement; original campaign is separate"]
 fn whole_receiver_owner_pressure_v1() {
+    run_receiver_campaign(pure_history_client::ClientMode::OriginalOuter);
+}
+
+#[test]
+#[ignore = "new independent receiver and fixed-Host client composition; original finite gates remain"]
+fn whole_receiver_owner_pressure_fixed_host_client_v1() {
+    run_receiver_campaign(pure_history_client::ClientMode::FixedHostV1);
+}
+
+fn run_receiver_campaign(client_mode: pure_history_client::ClientMode) {
     let output = PathBuf::from(
         std::env::var_os("TRNM_RECEIVER_OWNER_V1_OUT").expect("create-only supplement output"),
     );
@@ -1255,7 +1276,14 @@ fn whole_receiver_owner_pressure_v1() {
     for mode in ["baseline", "from-zero", "correct-product-false-trace"] {
         eprintln!("receiver-owner supplement: {mode}, fixed 30s, same 24 actors / 2s calls, independent receiver PID");
         let result = std::panic::catch_unwind(|| {
-            receiver_phase(&output.join(mode), &settings, &seed, &business, mode)
+            receiver_phase(
+                &output.join(mode),
+                &settings,
+                &seed,
+                &business,
+                mode,
+                client_mode,
+            )
         });
         match result {
             Ok(report) => {
@@ -1289,6 +1317,7 @@ fn whole_receiver_owner_pressure_v1() {
         "fixed_parent_provisioned":false,"physical_authentication":false,"public_fairness_qualified":false,
         "production_qualified":false,"work_hardness_qualified":false,"installation_authorized":false}),
     );
+    pure_history_client::write_composition(&output, client_mode, "receiver-owner-supplement");
     assert!(
         summaries
             .iter()

@@ -113,6 +113,11 @@ class ActualToolchainControls(unittest.TestCase):
 
 
 class NativeCompletionControls(unittest.TestCase):
+    @staticmethod
+    def complete_steps():
+        return [{"name": name, "complete_success": True}
+                for name in sorted(runner.CLIENT_READER_GATES)]
+
     def test_zero_tests_has_zero_process_exit_but_never_qualifies(self):
         process = {"complete_success": True, "returncode": 0, "error": None}
         original = deepcopy(process)
@@ -133,7 +138,7 @@ class NativeCompletionControls(unittest.TestCase):
         self.assertFalse(runner.native_verdict("pure-cli", {"complete_success": False}, summary())["qualified"])
 
     def test_cost_contract_cannot_be_satisfied_by_an_unselected_native_test(self):
-        steps = [{"complete_success": True}]
+        steps = self.complete_steps()
         verdicts = [runner.native_verdict(name, steps[0], summary()) for name in sorted(runner.NATIVE_GATES)]
         cost = next(row for row in verdicts if row["name"] == "pressure-attacker-cost-contract")
         original = deepcopy(cost)
@@ -147,7 +152,7 @@ class NativeCompletionControls(unittest.TestCase):
             steps + [{"name": "pure-attacker-cost-reader", "complete_success": False}], verdicts, None, []))
 
     def test_all_required_native_gates_and_finalization_must_pass(self):
-        steps = [{"complete_success": True}]
+        steps = self.complete_steps()
         verdicts = [runner.native_verdict(name, steps[0], summary()) for name in sorted(runner.NATIVE_GATES)]
         self.assertTrue(runner.terminal_success(steps, verdicts, None, []))
         self.assertFalse(runner.terminal_success(steps, verdicts[:-1], None, []))
@@ -160,6 +165,16 @@ class NativeCompletionControls(unittest.TestCase):
                 self.assertFalse(runner.terminal_success(steps, verdicts, failure, []))
         verdicts[0] = runner.native_verdict(verdicts[0]["name"], steps[0], summary(0))
         self.assertFalse(runner.terminal_success(steps, verdicts, None, []))
+
+    def test_native_pass_cannot_replace_missing_duplicate_or_failed_client_owner_readback(self):
+        steps = self.complete_steps()
+        verdicts = [runner.native_verdict(name, steps[0], summary()) for name in sorted(runner.NATIVE_GATES)]
+        self.assertTrue(runner.terminal_success(steps, verdicts, None, []))
+        for changed in (steps[:-1], steps + [steps[0]],
+                        [dict(row, complete_success=False) for row in steps],
+                        [dict(row, name="original-pressure-reader") for row in steps]):
+            with self.subTest(steps=changed):
+                self.assertFalse(runner.terminal_success(changed, verdicts, None, []))
 
 
 class CargoArtifactControls(unittest.TestCase):

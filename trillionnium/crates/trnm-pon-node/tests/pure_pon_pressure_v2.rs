@@ -3,6 +3,12 @@
 //! fairness, W1 hardness, useful model work, WAN or production qualification.
 #[path = "support/pure_fixed_parent_v1.rs"]
 mod fixed_parent;
+#[path = "support/native_history_context.rs"]
+mod history_context;
+#[path = "support/multiprocess_history_verifier.rs"]
+mod history_verifier;
+#[path = "support/pure_history_client_v1.rs"]
+mod pure_history_client;
 #[path = "support/pure_receiver_owner_v1.rs"]
 mod receiver_owner;
 #[path = "support/pure_pressure_v2.rs"]
@@ -26,10 +32,7 @@ use support::{ATTACKERS, CALL_CAP, ROUNDS, WINDOW_NS};
 use trnm_crypto_primitives::pon_work::{self, PreparedTask};
 use trnm_pon_node::{
     development_public,
-    ingress::{
-        self,
-        public_v3::{self, PublicRequestObserver, PublicServer, Request},
-    },
+    ingress::public_v3::{self, PublicRequestObserver, PublicServer, Request},
     Node, Packet, PoolLimits, Settings,
 };
 use trnm_protocol::pon_wire::{hash, Header};
@@ -71,6 +74,64 @@ fn pure_pressure_process_cost_child_entry() {
         b"final child publication\n",
     )
     .unwrap();
+}
+
+#[test]
+fn native_actor_terminal_observation_preserves_the_only_wait4_reap() {
+    use std::process::{Command, Stdio};
+    for mode in ["failure", "wait"] {
+        let mut command = Command::new(std::env::current_exe().unwrap());
+        command
+            .args([
+                "--exact",
+                "pure_pressure_process_cost_child_entry",
+                "--ignored",
+                "--test-threads=1",
+            ])
+            .env("TRNM_PROCESS_COST_CONTROL", mode)
+            .stdout(Stdio::null())
+            .stderr(Stdio::null());
+        let mut child = support::process_cost::ObservedChild::spawn(&mut command).unwrap();
+        let pid = child.id();
+        let deadline = Instant::now() + Duration::from_secs(5);
+        if mode == "failure" {
+            while !child.terminal_observed().unwrap() {
+                assert!(
+                    Instant::now() < deadline,
+                    "original finite owned-child observation"
+                );
+                thread::sleep(Duration::from_millis(2));
+            }
+            assert!(
+                child.terminal_observed().unwrap(),
+                "WNOWAIT cannot consume the terminal"
+            );
+        } else {
+            assert!(
+                !child.terminal_observed().unwrap(),
+                "a live child is not a terminal event"
+            );
+        }
+        let result = child.finish(if mode == "wait" {
+            Instant::now()
+        } else {
+            deadline
+        });
+        assert_eq!(result["pid"], pid);
+        assert_eq!(result["successful_reaps"], 1);
+        assert!(result["error"].is_null());
+        assert!(result["rusage"]["total_cpu_ns"].is_u64());
+        assert_eq!(result["parent_forced_kill"], mode == "wait");
+        assert_eq!(result["exit_success"], false);
+        if mode == "failure" {
+            assert_eq!(result["raw_wait_status"], 7 << 8);
+        }
+        assert!(
+            child.terminal_observed().is_err(),
+            "reaped ownership cannot be reused"
+        );
+        assert_eq!(child.finish(Instant::now())["successful_reaps"], 0);
+    }
 }
 
 #[test]
@@ -804,6 +865,7 @@ fn phase(
     seed: &[Packet],
     business: &[Packet],
     mode: &str,
+    client_mode: pure_history_client::ClientMode,
 ) -> Value {
     fs::create_dir(path).unwrap();
     let mut receiver =
@@ -819,11 +881,16 @@ fn phase(
             preview_miner: development_public(0).unwrap(),
         })
         .unwrap();
-    let mut verifier =
-        Node::open_with_authenticated_state(&path.join("independent-client"), settings.clone(), 1)
-            .unwrap();
-    replay(&mut verifier, seed);
+    let mut verifier = pure_history_client::Client::start(
+        &path.join("independent-client"),
+        settings,
+        seed,
+        client_mode,
+    );
     let initial = receiver.read_active().unwrap();
+    if client_mode == pure_history_client::ClientMode::FixedHostV1 {
+        assert_eq!(verifier.initial_tip(), initial.0);
+    }
     let owner = Arc::new(Mutex::new(receiver));
     let listeners = [
         TcpListener::bind("127.0.0.1:0").unwrap(),
@@ -986,33 +1053,23 @@ fn phase(
             row["request"] = serde_json::to_value(request).unwrap();
             row["listener"] = json!(round % 2);
             if support::on_time(&row) {
-                let started = support::monotonic().saturating_sub(epoch);
-                let cpu = support::thread_cpu();
-                let imported =
-                    serde_json::from_value::<ingress::Page>(row["response"]["value"].clone())
-                        .map_err(|e| e.to_string())
-                        .and_then(|page| {
-                            ingress::receive_public_page_from(
-                                &mut verifier,
-                                addresses[round % 2],
-                                page,
-                                tip,
-                                after,
-                                support::now(),
-                            )
-                            .map_err(|e| e.to_string())
-                        });
-                row["client_import"] = json!({"started_ns":started,"ended_ns":support::monotonic().saturating_sub(epoch),
-                    "thread_cpu_ns":support::cpu_delta(cpu),"succeeded":imported.is_ok()});
+                let (imported, measurement) = verifier.import(
+                    addresses[round % 2],
+                    row["response"]["value"].clone(),
+                    tip,
+                    after,
+                    support::now(),
+                    epoch,
+                );
+                row["client_import"] = measurement;
                 match imported {
                     Ok(value) => after = value,
                     Err(error) => errors.push(error),
                 }
                 if after == tip {
-                    let started = support::monotonic().saturating_sub(epoch);
-                    let value = verifier.confirmation(transaction, included, support::now());
-                    row["client_confirmation"] = json!({"started_ns":started,
-                        "ended_ns":support::monotonic().saturating_sub(epoch),"succeeded":value.is_ok()});
+                    let (value, measurement) =
+                        verifier.confirmation(transaction, included, support::now(), epoch);
+                    row["client_confirmation"] = measurement;
                     match value {
                         Ok(value) => observation = Some(value),
                         Err(error) => errors.push(error.to_string()),
@@ -1027,7 +1084,10 @@ fn phase(
         let after_snapshot = hostile_snapshot(&observers, &honest, epoch);
         let ended = support::monotonic().saturating_sub(epoch);
         let confirmed = observation.as_ref().is_some_and(|v| {
-            v.confirmed && !v.finalized && !v.execution_authority && v.depth == Some(6)
+            v["confirmed"] == true
+                && v["finalized"] == false
+                && v["execution_authority"] == false
+                && v["depth"] == 6
         }) && ended < WINDOW_NS;
         rounds.push(json!({"round":round,"scheduled_ns":scheduled,"started_ns":started,"ended_ns":ended,
             "confirmed_inside_pressure_window":confirmed,"observation":observation,
@@ -1081,8 +1141,9 @@ fn phase(
     }
     let (receiver_tip, receiver_height, receiver_generation) =
         active_position(&owner.lock().unwrap());
-    let (client_tip, client_height, client_generation) = active_position(&verifier);
-    let report = json!({"schema":SCHEMA,"phase":mode,"epoch_monotonic_ns":epoch,"window_ns":WINDOW_NS,
+    let (client_tip, client_height, client_generation) = verifier.snapshot_position();
+    let client_process = verifier.finish();
+    let mut report = json!({"schema":SCHEMA,"phase":mode,"epoch_monotonic_ns":epoch,"window_ns":WINDOW_NS,
         "policy":support::policy_observation(),"listeners":2,"shared_cpu_domain":shared,
         "ready_actors":if mode=="baseline" {0}else{ATTACKERS},
         "initial_budget":initial_budget,"initial_flow":initial_flow,"initial_admission":initial_admission,
@@ -1094,6 +1155,7 @@ fn phase(
         "receiver_generation":receiver_generation,"client_generation":client_generation,
         "errors":errors,"public_fairness_qualified":false,"production_qualified":false,
         "work_hardness_qualified":false,"installation_authorized":false});
+    pure_history_client::bind_phase(&mut report, client_process, &addresses);
     // Height comes from the active block record, not its activation generation.
     assert!(report["receiver_height"].is_u64() && report["client_height"].is_u64());
     // Parent-only observation follows all original joins, stop and verdict
@@ -1114,6 +1176,16 @@ fn phase(
 #[test]
 #[ignore = "90-second separate-process pure-PoN pressure campaign; retains failed observations"]
 fn pure_pon_cold_shared_domain_pressure_v2() {
+    run_pressure_campaign(pure_history_client::ClientMode::OriginalOuter);
+}
+
+#[test]
+#[ignore = "new explicit fixed-Host client composition; original 30-second windows and all failures remain"]
+fn pure_pon_cold_shared_domain_pressure_fixed_host_client_v1() {
+    run_pressure_campaign(pure_history_client::ClientMode::FixedHostV1);
+}
+
+fn run_pressure_campaign(client_mode: pure_history_client::ClientMode) {
     let output = PathBuf::from(
         std::env::var_os("TRNM_PURE_PRESSURE_V2_OUT").expect("create-only output path"),
     );
@@ -1123,7 +1195,14 @@ fn pure_pon_cold_shared_domain_pressure_v2() {
     let mut summaries = Vec::new();
     for mode in ["baseline", "from-zero", "correct-product-false-trace"] {
         eprintln!("pure-PoN v2: {mode}, fixed 30s, cold shared CPU epoch, two listeners");
-        let report = phase(&output.join(mode), &settings, &seed, &business, mode);
+        let report = phase(
+            &output.join(mode),
+            &settings,
+            &seed,
+            &business,
+            mode,
+            client_mode,
+        );
         support::write_new(&output.join(format!("{mode}.json")), &report);
         summaries.push(json!({"phase":mode,"file":format!("{mode}.json"),
             "all_rounds_confirmed":report["rounds"].as_array().is_some_and(|r|r.len()==ROUNDS
@@ -1138,6 +1217,7 @@ fn pure_pon_cold_shared_domain_pressure_v2() {
         "public_fairness_qualified":false,"production_qualified":false,"work_hardness_qualified":false,
         "installation_authorized":false}),
     );
+    pure_history_client::write_composition(&output, client_mode, "pure-pressure");
     assert!(summaries.iter().all(|s|s["all_rounds_confirmed"]==true),
         "finite service failed; complete evidence retained; independent reader checks pressure/depletion/overlap");
 }

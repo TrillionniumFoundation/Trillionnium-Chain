@@ -2,12 +2,15 @@
 //! the original administrator-provisioned fixed kernel parent. The campaign's
 //! producer, attacker, receiver and observer remain in the original outer
 //! 4-CPU/16-GiB service. No production guard or loopback exception is changed.
+#[path = "native_child_wait4.rs"]
+mod child_wait4;
 #[path = "multiprocess_history_lifeline.rs"]
 mod lifeline;
 #[path = "multiprocess_history_lifeline_native.rs"]
 mod lifeline_native;
 
-use super::{support, ClientOperationStamp, StateBackendChoice};
+use super::history_context as support;
+use super::history_context::{ClientOperationStamp, StateBackendChoice};
 use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
 use std::{
@@ -16,7 +19,7 @@ use std::{
     net::SocketAddr,
     os::unix::fs::{MetadataExt, OpenOptionsExt, PermissionsExt},
     path::{Path, PathBuf},
-    process::{Child, Command, Stdio},
+    process::{Command, Stdio},
     thread,
     time::{Duration, Instant},
 };
@@ -27,6 +30,34 @@ use trnm_protocol::pon_wire::Hash;
 const MAX_MESSAGE_BYTES: u64 = 32 * 1024 * 1024;
 const MAX_REQUESTS: u64 = 132; // Original <=64 imports, <=64 confirmations, snapshot and finish.
 const PARENT: &str = host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT;
+pub(super) const PURE_CLIENT_PROFILE: &str = "pure-pon-fixed-host-client-v1";
+
+#[derive(Clone, Copy, PartialEq, Eq)]
+pub(super) enum ExecutionProfile {
+    Original,
+    PureClientV1,
+}
+impl ExecutionProfile {
+    fn from_job(job: &Value) -> Self {
+        match job.get("client_execution_profile") {
+            None => Self::Original,
+            Some(value) if value == PURE_CLIENT_PROFILE => Self::PureClientV1,
+            _ => panic!("exact explicit client execution profile required"),
+        }
+    }
+    fn process_schema(self, resource: ResourceProfile) -> &'static str {
+        match self {
+            Self::Original => resource.process_schema(),
+            Self::PureClientV1 => "native-public-history-pure-client-process-v1",
+        }
+    }
+    fn entry_schema(self, resource: ResourceProfile) -> &'static str {
+        match self {
+            Self::Original => resource.entry_schema(),
+            Self::PureClientV1 => "native-public-history-pure-client-entry-v1",
+        }
+    }
+}
 
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub(super) enum ResourceProfile {
@@ -147,7 +178,7 @@ fn parent_observation() -> Value {
 }
 
 pub(super) struct Verifier {
-    child: Child,
+    child: child_wait4::ObservedChild,
     // Keep the private controller end until the actual service has exited,
     // including its outer report/fsync tail. There is no early disarm.
     _controller_lifeline: lifeline::ControllerLifeline,
@@ -161,17 +192,24 @@ pub(super) struct Verifier {
     finished: bool,
     spawned: Instant,
     resource_profile: ResourceProfile,
+    execution_profile: ExecutionProfile,
 }
 impl Verifier {
-    pub(super) fn start(path: &Path, backend: StateBackendChoice, seed: &[Packet]) -> Self {
-        Self::start_inner(path, backend, seed, None)
-    }
-    pub(super) fn start_with_graph_resource_fence_v1(
+    pub(super) fn start(
         path: &Path,
         backend: StateBackendChoice,
         seed: &[Packet],
+        resource_profile: ResourceProfile,
+        execution_profile: ExecutionProfile,
     ) -> Self {
-        Self::start_with_profile(path, backend, seed, None, ResourceProfile::GraphFenceV1)
+        Self::start_with_profile(
+            path,
+            backend,
+            seed,
+            None,
+            resource_profile,
+            execution_profile,
+        )
     }
     fn start_inner(
         path: &Path,
@@ -179,7 +217,14 @@ impl Verifier {
         seed: &[Packet],
         cut: Option<&str>,
     ) -> Self {
-        Self::start_with_profile(path, backend, seed, cut, ResourceProfile::Strict)
+        Self::start_with_profile(
+            path,
+            backend,
+            seed,
+            cut,
+            ResourceProfile::Strict,
+            ExecutionProfile::Original,
+        )
     }
     fn start_with_profile(
         path: &Path,
@@ -187,6 +232,7 @@ impl Verifier {
         seed: &[Packet],
         cut: Option<&str>,
         resource_profile: ResourceProfile,
+        execution_profile: ExecutionProfile,
     ) -> Self {
         assert!(
             cut.is_none() || resource_profile == ResourceProfile::Strict,
@@ -214,22 +260,23 @@ impl Verifier {
             "fresh sole verifier under the shared fixed parent"
         );
         let job_path = path.join("job.json");
-        publish(
-            &job_path,
-            &json!({
-                "kind":"history-verifier", "backend":backend.label(),
-                "seed":seed.iter().map(|packet|hex::encode(packet.encode().unwrap())).collect::<Vec<_>>(),
-                "binary_sha256":binary_sha256,
-                "parent":PARENT,
-                "owner_death_control":cut,
-                "history_resource_profile":resource_profile.label(),
-                "controller_observation":{
-                    "pid":std::process::id(),
-                    "uid":rustix::process::getuid().as_raw(),
-                    "gid":rustix::process::getgid().as_raw(),
-                },
-            }),
-        );
+        let mut job = json!({
+            "kind":"history-verifier", "backend":backend.label(),
+            "seed":seed.iter().map(|packet|hex::encode(packet.encode().unwrap())).collect::<Vec<_>>(),
+            "binary_sha256":binary_sha256,
+            "parent":PARENT,
+            "owner_death_control":cut,
+            "history_resource_profile":resource_profile.label(),
+            "controller_observation":{
+                "pid":std::process::id(),
+                "uid":rustix::process::getuid().as_raw(),
+                "gid":rustix::process::getgid().as_raw(),
+            },
+        });
+        if execution_profile == ExecutionProfile::PureClientV1 {
+            job["client_execution_profile"] = json!(PURE_CLIENT_PROFILE);
+        }
+        publish(&job_path, &job);
         let unit = format!(
             "trnm-campaign-verifier-{}-{}.service",
             std::process::id(),
@@ -281,7 +328,7 @@ impl Verifier {
             .arg(&executable)
             .args([
                 "--exact",
-                "multiprocess_actor_entry",
+                "history_verifier::owned_actor_entry",
                 "--ignored",
                 "--nocapture",
                 "--test-threads=1",
@@ -289,7 +336,7 @@ impl Verifier {
             .stdin(actor_input)
             .stdout(Stdio::from(log))
             .stderr(Stdio::from(error_log));
-        let child = launch.spawn().unwrap();
+        let child = child_wait4::ObservedChild::spawn(&mut launch).unwrap();
         let mut verifier = Self {
             child,
             _controller_lifeline: controller_lifeline,
@@ -303,11 +350,13 @@ impl Verifier {
             finished: false,
             spawned,
             resource_profile,
+            execution_profile,
         };
         publish(
             &path.join("launch.json"),
             &json!({
                 "schema":"native-history-verifier-launch-v1", "unit":verifier.unit,
+                "native_selector":"history_verifier::owned_actor_entry",
                 "controller_pid":std::process::id(), "launcher_pid":verifier.child.id(),
                 "binary_sha256":verifier.binary_sha256,"parent":PARENT,
                 "original_outer_cgroup":verifier.outer_cgroup,"parent_before_spawn":verifier.before,
@@ -322,6 +371,12 @@ impl Verifier {
             verifier.ready["history_resource_profile"],
             resource_profile.label()
         );
+        if execution_profile == ExecutionProfile::PureClientV1 {
+            assert_eq!(
+                verifier.ready["client_execution_profile"],
+                PURE_CLIENT_PROFILE
+            );
+        }
         let pid = u32::try_from(verifier.ready["pid"].as_u64().unwrap()).unwrap();
         assert_eq!(
             sha(&PathBuf::from(format!("/proc/{pid}/exe"))),
@@ -352,7 +407,7 @@ impl Verifier {
         let deadline = Instant::now() + Duration::from_secs(180);
         while !path.is_file() {
             assert!(
-                self.child.try_wait().unwrap().is_none(),
+                !self.child.terminal_observed().unwrap(),
                 "verifier exited before its real response; actor.log retained"
             );
             assert!(
@@ -382,8 +437,8 @@ impl Verifier {
         self.sequence += 1;
         response
     }
-    pub(super) fn before(&self) -> Value {
-        self.ready["native_history_arithmetic"].clone()
+    pub(super) fn ready(&self) -> &Value {
+        &self.ready
     }
     pub(super) fn import(
         &mut self,
@@ -423,45 +478,54 @@ impl Verifier {
         };
         (result, response["measurement"].clone())
     }
-    pub(super) fn snapshot(&mut self) -> ((Hash, u64, State), Value) {
+    pub(super) fn snapshot(&mut self) -> ((Hash, u64, State), Value, Option<u64>) {
         let response = self.call(json!({"operation":"snapshot"}));
         assert!(response["error"].is_null());
         (
             serde_json::from_value(response["value"]["active"].clone()).unwrap(),
             response["value"]["native_history_arithmetic"].clone(),
+            response["value"]["active_height"].as_u64(),
         )
     }
     pub(super) fn finish(mut self) -> Value {
         let response = self.call(json!({"operation":"finish"}));
         assert!(response["error"].is_null());
         let deadline = Instant::now() + Duration::from_secs(10);
-        let status = loop {
-            if let Some(status) = self.child.try_wait().unwrap() {
-                break status;
-            }
-            assert!(
-                Instant::now() < deadline,
-                "verifier did not exit and close its cgroup"
-            );
-            thread::sleep(Duration::from_millis(2));
-        };
+        let mut launcher_wait4 = self.child.finish(deadline);
+        let observed_on_time = Instant::now() < deadline;
+        let launcher_observed_monotonic_ns = support::monotonic();
+        launcher_wait4["role"] = json!("sudo-systemd-run-launcher-only");
+        launcher_wait4["native_actor_is_direct_child"] = json!(false);
+        launcher_wait4["native_actor_cpu_included"] = json!(false);
+        launcher_wait4["observed_before_original_finish_deadline"] = json!(observed_on_time);
+        let exit_success = launcher_wait4["exit_success"] == true
+            && launcher_wait4["successful_reaps"] == 1
+            && launcher_wait4["error"].is_null()
+            && launcher_wait4["parent_forced_kill"] == false
+            && observed_on_time;
         let after = parent_observation();
         assert_eq!(
             after["pids.current"], 0,
             "no verifier descendant may escape settlement"
         );
         let report = read(&self.path.join("report.json"));
-        let completed = status.success() && report["error"].is_null();
+        let completed = exit_success && report["error"].is_null();
         self.finished = true;
-        json!({"schema":self.resource_profile.process_schema(), "unit":self.unit,
+        let mut result = json!({"schema":self.execution_profile.process_schema(self.resource_profile), "unit":self.unit,
             "history_resource_profile":self.resource_profile.label(),
             "ready":self.ready,"report":report,"completed_successfully":completed,
-            "exit_success":status.success(),"parent_forced_kill":false,
+            "exit_success":exit_success,"parent_forced_kill":launcher_wait4["parent_forced_kill"],
+            "launcher_wait4":launcher_wait4,
+            "launcher_observed_monotonic_ns":launcher_observed_monotonic_ns,
             "request_count":self.sequence,"binary_sha256":self.binary_sha256,
             "original_outer_cgroup":self.outer_cgroup,"parent_before_spawn":self.before,
             "parent_after_reap":after,"spawn_to_reap_wall_ns":self.spawned.elapsed().as_nanos(),
             "outer_process_cpu_excludes_verifier":true,
-            "scope":"same-host test actor; actual original fixed25-percent parent, all descendants; separate whole-process and whole-parent CPU, never add nested intervals or infer physical reservations"})
+            "scope":"same-host test actor; actual original fixed25-percent parent, all descendants; separate whole-process and whole-parent CPU, never add nested intervals or infer physical reservations"});
+        if self.execution_profile == ExecutionProfile::PureClientV1 {
+            result["client_execution_profile"] = json!(PURE_CLIENT_PROFILE);
+        }
+        result
     }
 }
 impl Drop for Verifier {
@@ -472,7 +536,7 @@ impl Drop for Verifier {
                 .stdout(Stdio::null())
                 .stderr(Stdio::null())
                 .status();
-            let _ = self.child.wait();
+            let _ = self.child.finish(Instant::now());
         }
     }
 }
@@ -495,6 +559,12 @@ pub(super) fn run(job: &Value, path: &Path) -> Value {
     });
     assert_eq!(job["parent"], PARENT);
     let resource_profile = ResourceProfile::from_job(job);
+    let execution_profile = ExecutionProfile::from_job(job);
+    if execution_profile == ExecutionProfile::PureClientV1 {
+        assert!(resource_profile == ResourceProfile::Strict);
+        assert_eq!(job["backend"], "authenticated-v1");
+        assert!(job["owner_death_control"].is_null());
+    }
     assert!(job["owner_death_control"].is_null() || resource_profile == ResourceProfile::Strict);
     let binary_sha256 = sha(&std::env::current_exe().unwrap());
     assert_eq!(job["binary_sha256"], binary_sha256);
@@ -528,7 +598,9 @@ pub(super) fn run(job: &Value, path: &Path) -> Value {
         node.activate_observed(id, support::now()).unwrap();
         kernel.verify().unwrap();
     }
-    let ready = json!({"pid":std::process::id(),"cgroup":membership(std::process::id()),
+    let initial_tip = (execution_profile == ExecutionProfile::PureClientV1)
+        .then(|| node.read_active().unwrap().0);
+    let mut ready = json!({"pid":std::process::id(),"cgroup":membership(std::process::id()),
         "calling_thread_cgroup":short_file(Path::new("/proc/thread-self/cgroup")),
         "binary_sha256":binary_sha256,"public_host_kernel_checked":true,
         "history_resource_profile":resource_profile.label(),
@@ -537,6 +609,10 @@ pub(super) fn run(job: &Value, path: &Path) -> Value {
         "wrong_parent_refused":wrong_parent_refused,"parent":parent_observation(),
         "setup_process_cpu_ns":support::elapsed_cpu(process_cpu),"setup_wall_ns":started.elapsed().as_nanos(),
         "native_history_arithmetic":node.native_history_arithmetic_observation()});
+    if execution_profile == ExecutionProfile::PureClientV1 {
+        ready["client_execution_profile"] = json!(PURE_CLIENT_PROFILE);
+        ready["initial_tip"] = json!(initial_tip.unwrap());
+    }
     publish(&path.join("ready.json"), &ready);
     // The original actors may legitimately spend up to 180s becoming ready
     // before the unchanged 30s pressure window. This matches the administrative
@@ -593,9 +669,13 @@ pub(super) fn run(job: &Value, path: &Path) -> Value {
                 .map_err(|error| error.to_string()),
             "snapshot" => node
                 .read_active()
-                .map(|active| {
-                    json!({"active":active,
-                "native_history_arithmetic":node.native_history_arithmetic_observation()})
+                .and_then(|active| {
+                    let mut snapshot = json!({"active":active,
+                    "native_history_arithmetic":node.native_history_arithmetic_observation()});
+                    if execution_profile == ExecutionProfile::PureClientV1 {
+                        snapshot["active_height"] = json!(node.parent_height(active.0)?);
+                    }
+                    Ok(snapshot)
                 })
                 .map_err(|error| error.to_string()),
             "finish" => Ok(json!({"closing_original_node":true})),
@@ -641,7 +721,7 @@ pub(super) fn run(job: &Value, path: &Path) -> Value {
             let history_graph_resource = node.history_graph_resource_observation_v1().unwrap();
             drop(node);
             kernel.verify().unwrap();
-            return json!({"schema":resource_profile.entry_schema(), "pid":std::process::id(),
+            let mut entry = json!({"schema":execution_profile.entry_schema(resource_profile), "pid":std::process::id(),
                 "history_resource_profile":resource_profile.label(),"history_graph_resource":history_graph_resource,
                 "cgroup":membership(std::process::id()),"binary_sha256":binary_sha256,
                 "controller_lifeline":controller_lifeline,
@@ -649,6 +729,10 @@ pub(super) fn run(job: &Value, path: &Path) -> Value {
                 "process_cpu_since_start_ns":support::cpu(),
                 "whole_verifier_wall_ns":started.elapsed().as_nanos(),"parent_before":parent_before,
                 "parent_after_node_close":parent_observation(),"rss":support::rss(),"clean_node_close":true});
+            if execution_profile == ExecutionProfile::PureClientV1 {
+                entry["client_execution_profile"] = json!(PURE_CLIENT_PROFILE);
+            }
+            return entry;
         }
     }
     panic!("finite verifier request count exhausted without close")
@@ -663,4 +747,62 @@ pub(super) fn after_run_return(job: &Value, path: &Path, result: Option<&Value>)
         json!({"actual_node_close_returned":true,"actual_runner_returned":true,
             "entry_schema":result["schema"],"clean_node_close":result["clean_node_close"]})
     });
+}
+
+/// Both named fixture compositions share this exact actor entry and owner.
+/// The immutable job selects the original or new explicit execution namespace;
+/// no alternate launcher or outer-Node fallback is attempted after a failure.
+#[test]
+#[ignore = "exact isolated fixed-Host actor; only an owned immutable job may dispatch"]
+fn owned_actor_entry() {
+    let job_path = PathBuf::from(std::env::var_os("TRNM_MULTIPROCESS_JOB").unwrap());
+    let job = read(&job_path);
+    assert_eq!(job["kind"], "history-verifier");
+    ExecutionProfile::from_job(&job);
+    let path = job_path.parent().unwrap();
+    let started = Instant::now();
+    let cpu = support::cpu();
+    let outcome = std::panic::catch_unwind(|| run(&job, path));
+    let (result, error) = match outcome {
+        Ok(value) => (Some(value), None),
+        Err(error) => {
+            let message = error
+                .downcast_ref::<String>()
+                .cloned()
+                .or_else(|| error.downcast_ref::<&str>().map(|value| value.to_string()))
+                .unwrap_or_else(|| "non-string panic".to_owned());
+            (None, Some(message))
+        }
+    };
+    after_run_return(&job, path, result.as_ref());
+    publish(
+        &path.join("report.json"),
+        &json!({"kind":job["kind"],
+        "result":result,"error":error,"whole_entry_cpu_ns":support::elapsed_cpu(cpu),
+        "whole_entry_wall_ns":started.elapsed().as_nanos(),"rss":support::rss()}),
+    );
+    assert!(
+        error.is_none(),
+        "actual History client failed; original report retained"
+    );
+}
+
+#[test]
+fn client_execution_profile_has_no_implicit_pure_relabel() {
+    assert!(ExecutionProfile::from_job(&json!({})) == ExecutionProfile::Original);
+    assert!(
+        ExecutionProfile::from_job(&json!({"client_execution_profile":PURE_CLIENT_PROFILE}))
+            == ExecutionProfile::PureClientV1
+    );
+    for value in [
+        Value::Null,
+        json!("original"),
+        json!(ResourceProfile::Strict.label()),
+        json!(1),
+    ] {
+        assert!(std::panic::catch_unwind(|| ExecutionProfile::from_job(
+            &json!({"client_execution_profile":value})
+        ))
+        .is_err());
+    }
 }
