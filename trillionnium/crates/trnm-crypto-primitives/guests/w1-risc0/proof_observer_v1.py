@@ -1,7 +1,9 @@
 #!/usr/bin/python3
 """Optional local proof diagnostics; neither a prover nor a proof qualifier.
 
-Only the explicit workflow entry accepts the original prove/5400/po2=18 shape.
+The default entry accepts only the original prove/5400/po2=18 shape. An
+explicit, separately named cost-only profile accepts exactly 14400 seconds;
+its observations cannot qualify the original 5400-second budget.
 The process owner borrows the reserved-leader/WNOWAIT/killpg-before-reap rule
 from formal/pon-nakamoto-v1/bounded_process.py. It records actual wait4 rows,
 not a subtraction of the observing parent's mixed RUSAGE_CHILDREN. A sampled
@@ -37,6 +39,8 @@ PHASE_CAP = 16 * 1024
 SAMPLE_CAP = 16 * 1024 * 1024
 IMAGE_CAP = 256 * 1024 * 1024
 RUST_LOG = "risc0_zkvm::host::server::prove::prover_impl=debug"
+ORIGINAL_PROFILE = "original-5400-v1"
+COST_PROFILE = "cost-only-14400-v1"
 
 
 class ObservationError(ValueError):
@@ -46,6 +50,12 @@ class ObservationError(ValueError):
 def require(value, code):
     if not value:
         raise ObservationError(code)
+
+
+def profile_budget(profile):
+    require(type(profile) is str and profile in (ORIGINAL_PROFILE, COST_PROFILE),
+            "unknown-proof-profile")
+    return 5400 if profile == ORIGINAL_PROFILE else 14400
 
 
 def encoded_report(value):
@@ -289,10 +299,18 @@ def _shim(arguments):
 
 
 def run_observed(command, out, timeout, *, backend_index=None, require_phases=False,
-                 stream_caps=None, sample_interval=5.0):
+                 stream_caps=None, sample_interval=5.0, proof_profile=ORIGINAL_PROFILE):
     """Internal owner; tests call this only in fresh, dedicated CLI processes."""
     require(sys.platform == "linux", "observer-linux-only")
-    require(type(timeout) in (int, float) and math.isfinite(timeout) and 0 < timeout <= 5400, "observer-timeout")
+    budget = profile_budget(proof_profile)
+    if proof_profile == COST_PROFILE:
+        require(type(timeout) is int and timeout == budget, "observer-cost-only-timeout")
+        require(backend_index == 2 and require_phases is True and stream_caps is None
+                and sample_interval == 5.0, "cost-only-fixed-observer-settings")
+        validate_prove_call(command, out, "prove", timeout, proof_profile)
+    else:
+        require(type(timeout) in (int, float) and math.isfinite(timeout) and 0 < timeout <= budget,
+                "observer-timeout")
     require(not any(key.startswith("TRNM_W1_") for key in os.environ), "observer-environment-override")
     out = Path(out)
     out.mkdir(parents=True, exist_ok=True)
@@ -314,6 +332,9 @@ def run_observed(command, out, timeout, *, backend_index=None, require_phases=Fa
               "wall_scope": "owner entry through final readback, including setup/work/cleanup; bounded JSON publication follows",
               "blocking_kernel_operations_hard_bounded": False,
               "user_ticks_per_second": os.sysconf("SC_CLK_TCK")}
+    if proof_profile == COST_PROFILE:
+        report.update(schema="pon-w1-cost-proof-process-observer-v1",
+                      proof_profile=COST_PROFILE, original_5400s_budget_passed=False)
     def failure(code, error=None):
         if report["failure"] is None:
             report["failure"] = code
@@ -584,17 +605,26 @@ def run_observed(command, out, timeout, *, backend_index=None, require_phases=Fa
     return report
 
 
-def observed_prove(command, out, name, timeout):
-    require(name == "prove" and timeout == 5400 and len(command) == 7
+def validate_prove_call(command, out, name, timeout, proof_profile):
+    budget = profile_budget(proof_profile)
+    require(name == "prove" and timeout == budget
+            and (proof_profile == ORIGINAL_PROFILE or type(timeout) is int) and len(command) == 7
             and Path(command[0]).name == "trnm-w1-risc0-host"
-            and command[1] == "prove" and command[5] == "18", "explicit-original-proof-profile")
+            and command[1] == "prove" and command[5] == "18",
+            "explicit-original-proof-profile" if proof_profile == ORIGINAL_PROFILE else "explicit-cost-only-proof-profile")
     out = Path(out)
     require(all(Path(command[index]).absolute() == (out / filename).absolute()
                 for index, filename in ((3, "guest.bin"), (4, "input.bin"), (6, "receipt.bin"))),
             "explicit-workflow-input-output-paths")
+
+
+def observed_prove(command, out, name, timeout, *, proof_profile=ORIGINAL_PROFILE):
+    validate_prove_call(command, out, name, timeout, proof_profile)
+    out = Path(out)
     out.mkdir(parents=True, exist_ok=True)
     with (out / "prove.process.json").open("x") as stream:
-        observed = run_observed(command, out, timeout, backend_index=2, require_phases=True)
+        observed = run_observed(command, out, timeout, backend_index=2, require_phases=True,
+                                proof_profile=proof_profile)
         row = observed["direct_wait4"]
         legacy = {"schema": "pon-w1-observed-process-v2", "command": command,
                   "started_utc": observed["started_utc"], "finished_utc": observed["finished_utc"],
@@ -610,6 +640,9 @@ def observed_prove(command, out, name, timeout):
                   "supplement_sha256": hashlib.sha256(encoded_report(observed)).hexdigest(),
                   "family_capture_complete": False, "complete_family_cpu_seconds": None,
                   "consensus_authority": False}
+        if proof_profile == COST_PROFILE:
+            legacy.update(schema="pon-w1-cost-observed-process-v1",
+                          proof_profile=COST_PROFILE, original_5400s_budget_passed=False)
         json.dump(legacy, stream, indent=2, allow_nan=False)
         stream.write("\n")
     print(json.dumps(legacy, indent=2))

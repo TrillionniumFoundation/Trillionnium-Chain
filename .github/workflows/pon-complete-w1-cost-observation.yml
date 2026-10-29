@@ -1,0 +1,206 @@
+name: PoN complete W1 cost observation
+on:
+  pull_request:
+    paths:
+      - .github/workflows/pon-complete-w1-cost-observation.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: pon-complete-w1-cost-observation-${{ github.event.pull_request.head.sha || github.sha }}
+  cancel-in-progress: false
+jobs:
+  real-composite-proof:
+    name: full W1 real Composite STARK cost only (4h profile)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 300
+    env:
+      TRNM_EXPECTED_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      CARGO_BUILD_JOBS: "2"
+      CARGO_INCREMENTAL: "0"
+      CARGO_PROFILE_DEV_DEBUG: "0"
+      CARGO_PROFILE_TEST_DEBUG: "0"
+      CARGO_TERM_COLOR: never
+      PYTHONDONTWRITEBYTECODE: "1"
+      RAYON_NUM_THREADS: "2"
+    steps:
+      - name: Checkout exact candidate head
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Reserve output and record exact source
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/complete-w1-cost-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          work="$RUNNER_TEMP/complete-w1-cost-build-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir "$out" "$work"
+          printf 'OUT=%s\nWORK=%s\n' "$out" "$work" >> "$GITHUB_ENV"
+          printf 'BACKEND=%s/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0\n' "$GITHUB_WORKSPACE" >> "$GITHUB_ENV"
+          printf 'CARGO_HOME=%s/cargo\nCARGO_TARGET_DIR=%s/host-target\n' "$work" "$work" >> "$GITHUB_ENV"
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$out/source-before.json"
+          bash scripts/project-preflight.sh --audit > "$out/preflight.log" 2>&1
+          cat /proc/meminfo > "$out/meminfo.txt"
+          python3 - "$out/cgroup-observations.json" <<'PY'
+          import json, sys
+          from pathlib import Path
+          observed = {}
+          for name in ["/proc/self/cgroup", "/sys/fs/cgroup/memory.max",
+                       "/sys/fs/cgroup/cpu.max", "/sys/fs/cgroup/memory/memory.limit_in_bytes",
+                       "/sys/fs/cgroup/cpu/cpu.cfs_quota_us", "/sys/fs/cgroup/cpu/cpu.cfs_period_us"]:
+              try:
+                  observed[name] = {"status": "read", "raw": Path(name).read_text()}
+              except OSError as error:
+                  observed[name] = {"status": "unavailable", "errno": error.errno, "raw": None}
+          Path(sys.argv[1]).write_text(json.dumps({"schema": "pon-w1-cgroup-observation-v1",
+              "observations": observed, "missing_means_unlimited": False,
+              "resource_qualification": False}, indent=2) + "\n")
+          PY
+          printf 'Full 64x64/r8/512-tile W1; real local Composite STARK. Research backend only; quantitative security must use the pinned parameter analysis. No PQ128 or public-ingress qualification, no consensus activation. Failures remain failures.\n' > "$out/SCOPE.txt"
+          printf 'Explicit cost-only-14400-v1 profile: up to four hours for from-zero cost observation. The original E 5400-second failure remains a failure; this separate run cannot qualify that budget. No reuse or resume of prior segments.\n' >> "$out/SCOPE.txt"
+      - name: Observe actual host CPU and raw resource settings
+        shell: bash
+        run: |
+          set -euo pipefail
+          ( set -o noclobber; cat > "$OUT/capture-host-resources.py" <<'PY'
+          import base64
+          from datetime import datetime, timezone
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+          import platform
+          import resource
+          import sys
+
+          def read_raw(path, cap=65536):
+              try:
+                  with open(path, "rb") as stream:
+                      raw = stream.read(cap + 1)
+                  truncated = len(raw) > cap
+                  raw = raw[:cap]
+                  try:
+                      text = raw.decode("utf-8")
+                      encoding = "utf-8"
+                  except UnicodeDecodeError:
+                      text = base64.b64encode(raw).decode("ascii")
+                      encoding = "base64"
+                  return {"status": "read", "raw": text, "encoding": encoding,
+                          "captured_bytes": len(raw), "captured_sha256": hashlib.sha256(raw).hexdigest(),
+                          "capture_limit_bytes": cap, "truncated": truncated}
+              except OSError as error:
+                  return {"status": "unavailable", "errno": error.errno, "raw": None,
+                          "capture_limit_bytes": cap, "truncated": None}
+
+          paths = ["/proc/cpuinfo", "/proc/self/status", "/proc/self/limits",
+                   "/proc/self/cgroup", "/proc/self/mountinfo", "/proc/meminfo",
+                   "/proc/pressure/cpu", "/proc/pressure/memory",
+                   "/sys/devices/system/cpu/online", "/sys/devices/system/cpu/possible",
+                   "/sys/fs/cgroup/cpu.max", "/sys/fs/cgroup/cpu.stat",
+                   "/sys/fs/cgroup/cpu.pressure", "/sys/fs/cgroup/cpuset.cpus.effective",
+                   "/sys/fs/cgroup/cpuset.mems.effective", "/sys/fs/cgroup/memory.max",
+                   "/sys/fs/cgroup/memory.high", "/sys/fs/cgroup/memory.current",
+                   "/sys/fs/cgroup/memory.peak", "/sys/fs/cgroup/memory.events",
+                   "/sys/fs/cgroup/memory.swap.max",
+                   "/sys/fs/cgroup/cpu/cpu.cfs_quota_us", "/sys/fs/cgroup/cpu/cpu.cfs_period_us",
+                   "/sys/fs/cgroup/cpu,cpuacct/cpu.cfs_quota_us",
+                   "/sys/fs/cgroup/cpu,cpuacct/cpu.cfs_period_us",
+                   "/sys/fs/cgroup/cpuset/cpuset.cpus", "/sys/fs/cgroup/cpuset/cpuset.mems",
+                   "/sys/fs/cgroup/memory/memory.limit_in_bytes"]
+          observations = {path: read_raw(path, 1048576 if path in ("/proc/cpuinfo", "/proc/self/mountinfo")
+                                         else 65536) for path in paths}
+          try:
+              affinity = {"status": "read", "cpu_ids": sorted(os.sched_getaffinity(0)),
+                          "scope": "this snapshot process at capture time; not every proof descendant"}
+          except (AttributeError, OSError) as error:
+              affinity = {"status": "unavailable", "errno": getattr(error, "errno", None), "cpu_ids": None}
+          rlimits = {}
+          for name in ("RLIMIT_CPU", "RLIMIT_AS", "RLIMIT_DATA", "RLIMIT_STACK", "RLIMIT_NOFILE", "RLIMIT_FSIZE"):
+              try:
+                  rlimits[name] = {"status": "read", "raw_soft_hard": list(resource.getrlimit(getattr(resource, name)))}
+              except (AttributeError, OSError, ValueError) as error:
+                  rlimits[name] = {"status": "unavailable", "errno": getattr(error, "errno", None)}
+          cpuinfo = observations["/proc/cpuinfo"]
+          models = sorted({line.split(":", 1)[1].strip() for line in (cpuinfo.get("raw") or "").splitlines()
+                           if ":" in line and line.split(":", 1)[0].strip() in ("model name", "Hardware", "Processor")})
+          report = {"schema": "pon-w1-cost-host-resources-v1", "phase": sys.argv[2],
+                    "captured_utc": datetime.now(timezone.utc).isoformat(),
+                    "source_sha": os.environ.get("TRNM_EXPECTED_SOURCE_SHA"),
+                    "collector_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+                    "kernel": dict(zip(("system", "node", "release", "version", "machine", "processor"), platform.uname())),
+                    "cpu_model_values_from_captured_raw": models, "os_cpu_count": os.cpu_count(),
+                    "affinity": affinity, "process_rlimits": rlimits, "observations": observations,
+                    "configured_environment": {key: os.environ.get(key) for key in
+                        ("RAYON_NUM_THREADS", "CARGO_BUILD_JOBS", "RUNNER_OS", "RUNNER_ARCH", "RUNNER_NAME")},
+                    "missing_means_unlimited": False, "resource_qualification": False,
+                    "effective_cpu_quota": None, "whole_family_affinity_qualified": False,
+                    "cgroup_scope": "raw mounted-root controller files plus self membership/mountinfo; no ancestor-resolved effective quota",
+                    "sampling_scope": "two host snapshots; proof owner retains its unchanged live process sampler"}
+          with Path(sys.argv[1]).open("x") as output:
+              json.dump(report, output, indent=2, allow_nan=False)
+              output.write("\n")
+          PY
+          )
+          python3 "$OUT/capture-host-resources.py" "$OUT/host-resource-before.json" before
+      - name: Reject unsupported manifest authority before native work
+        run: |
+          set -euo pipefail
+          python3 "$BACKEND/test_check_observations.py" -v 2>&1 | tee "$OUT/observer-controls.log"
+          python3 "$BACKEND/test_proof_observer_v1.py" -v 2>&1 | tee "$OUT/process-observer-controls.log"
+          python3 "$BACKEND/test_cost_observation_profile_v1.py" -v 2>&1 | tee "$OUT/cost-profile-controls.log"
+      - name: Install pinned native toolchain
+        run: |
+          set -euo pipefail
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt,clippy
+          printf 'RUSTC=%s\n' "$(rustup which --toolchain 1.95.0 rustc)" >> "$GITHUB_ENV"
+          printf 'NATIVE_CARGO=%s\n' "$(rustup which --toolchain 1.95.0 cargo)" >> "$GITHUB_ENV"
+          rustc +1.95.0 -Vv > "$OUT/native-rustc.txt"
+      - name: Run native differential controls and produce independent fixture
+        run: |
+          set -euo pipefail
+          python3 "$BACKEND/measure_step.py" --out "$OUT" --name native-tests --timeout 1800 -- "$NATIVE_CARGO" test --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives full_relation
+          python3 "$BACKEND/measure_step.py" --out "$OUT" --name native-fixture --timeout 1800 -- "$NATIVE_CARGO" run --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives --example pon_w1_complete_relation -- fixture "$OUT/input.bin"
+          python3 "$BACKEND/measure_step.py" --out "$OUT" --name native-execute --timeout 60 -- "$CARGO_TARGET_DIR/release/examples/pon_w1_complete_relation" execute "$OUT/input.bin"
+          python3 "$BACKEND/measure_step.py" --out "$OUT" --name native-benchmark --timeout 60 -- "$CARGO_TARGET_DIR/release/examples/pon_w1_complete_relation" benchmark "$OUT/input.bin"
+      - name: Download and verify actual backend and guest compiler
+        run: |
+          set -euo pipefail
+          cp "$BACKEND/backend-manifest.json" "$OUT/backend-manifest.json"
+          python3 "$BACKEND/measure_step.py" --out "$OUT" --name install --timeout 900 -- python3 "$BACKEND/install_backend.py" --dest "$WORK/backend"
+      - name: Build locked full guest and verifier
+        run: |
+          set -euo pipefail
+          python3 "$BACKEND/measure_step.py" --out "$OUT" --name guest-build --timeout 1800 -- python3 "$BACKEND/build_guest.py" --cargo "$NATIVE_CARGO" --guest-rustc "$WORK/backend/guest-compiler/bin/rustc" --target-dir "$WORK/guest-target" --cargo-home "$CARGO_HOME" --host-linker "$BACKEND/host_linker_bfd.sh" --jobs 2
+          cp "$WORK/guest-target/riscv32im-risc0-zkvm-elf/release/trnm-w1-risc0-guest" "$OUT/guest.raw.elf"
+          python3 "$BACKEND/measure_step.py" --out "$OUT" --name host-build --timeout 1800 -- "$NATIVE_CARGO" build --release --locked --manifest-path "$BACKEND/Cargo.toml" -p trnm-w1-risc0-host
+          python3 "$BACKEND/measure_step.py" --out "$OUT" --name host-boundary-tests --timeout 1800 -- "$NATIVE_CARGO" test --release --locked --manifest-path "$BACKEND/Cargo.toml" -p trnm-w1-risc0-host
+          python3 "$BACKEND/measure_step.py" --out "$OUT" --name backend-clippy --timeout 1800 -- "$NATIVE_CARGO" clippy --locked --manifest-path "$BACKEND/Cargo.toml" -p trnm-w1-risc0-host -p trnm-w1-guest-relation --all-targets -- -D warnings
+          python3 "$BACKEND/measure_step.py" --out "$OUT" --name bake --timeout 60 -- "$CARGO_TARGET_DIR/release/trnm-w1-risc0-host" bake "$OUT/guest.raw.elf" "$OUT/guest.bin"
+          python3 "$BACKEND/check_observations.py" --out "$OUT" --build-only
+          rm -rf "$WORK/backend/guest-compiler" "$WORK/guest-target"
+      - name: Execute the full pinned W1 image
+        run: python3 "$BACKEND/measure_step.py" --out "$OUT" --name execute --timeout 300 -- "$CARGO_TARGET_DIR/release/trnm-w1-risc0-host" execute "$WORK/backend/tools/r0vm" "$OUT/guest.bin" "$OUT/input.bin" 18
+      - name: Produce actual transparent proof with no development receipt
+        run: python3 "$BACKEND/measure_step.py" --out "$OUT" --name prove --timeout 14400 --observe-proof --proof-profile cost-only-14400-v1 -- "$CARGO_TARGET_DIR/release/trnm-w1-risc0-host" prove "$WORK/backend/tools/r0vm" "$OUT/guest.bin" "$OUT/input.bin" 18 "$OUT/receipt.bin"
+      - name: Independently verify and attack the actual proof
+        run: |
+          set -euo pipefail
+          python3 "$BACKEND/measure_step.py" --out "$OUT" --name verify --timeout 900 -- "$CARGO_TARGET_DIR/release/trnm-w1-risc0-host" verify "$OUT/guest.bin" "$OUT/input.bin" "$OUT/receipt.bin"
+          python3 "$BACKEND/measure_step.py" --out "$OUT" --name audit --timeout 900 -- "$CARGO_TARGET_DIR/release/trnm-w1-risc0-host" audit "$OUT/guest.bin" "$OUT/input.bin" "$OUT/receipt.bin"
+          python3 "$BACKEND/check_observations.py" --out "$OUT" --require-proof-observer --proof-profile cost-only-14400-v1
+      - name: Retain final raw host resource snapshot
+        if: always()
+        run: python3 "$OUT/capture-host-resources.py" "$OUT/host-resource-after.json" after
+      - name: Verify source did not change
+        if: always()
+        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$OUT/source-after.json"
+      - name: Retain actual proof, ELF, inputs, costs and failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: complete-w1-cost-observation-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/complete-w1-cost-${{ github.run_id }}-${{ github.run_attempt }}/
+          if-no-files-found: error
+          retention-days: 30

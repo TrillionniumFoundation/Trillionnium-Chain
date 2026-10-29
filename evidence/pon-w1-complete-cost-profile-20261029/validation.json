@@ -1,0 +1,414 @@
+{
+  "schema": "pon-w1-cost-profile-local-validation-v1",
+  "base_commit": "974932be6dcfe830ce1ce92d58cb10e89cb8358d",
+  "controls": {
+    "count": 44,
+    "returncode": 0,
+    "reported_seconds": 3.603,
+    "log_sha256": "eb9fe3448532d8b71c93cc2dc9995b99b3f65dbe08720d80cc67d61ad5049819"
+  },
+  "structural": {
+    "schema": "pon-w1-cost-candidate-structural-check-v1",
+    "base_commit": "974932be6dcfe830ce1ce92d58cb10e89cb8358d",
+    "original_workflow_unchanged": true,
+    "old_prove_budget_seconds": 5400,
+    "new_cost_only_budget_seconds": 14400,
+    "new_job_timeout_minutes": 300,
+    "one_cost_job": true,
+    "original_semantic_steps_preserved": true,
+    "same_environment_and_two_rayon_threads": true,
+    "permissions_contents_read_only": true,
+    "narrow_new_workflow_path_trigger": true,
+    "unchanged_source_after_and_always_artifact_retention": true,
+    "bash_syntax_blocks": 12,
+    "inline_python_syntax_blocks": 2,
+    "python_syntax_files": [
+      "measure_step.py",
+      "proof_observer_v1.py",
+      "check_observations.py",
+      "test_cost_observation_profile_v1.py"
+    ],
+    "pyyaml_version": "6.0.3",
+    "actionlint_available": false,
+    "hosted_workflow_run": false,
+    "missing_resource_control": {
+      "status": "unavailable",
+      "errno": 2,
+      "raw": null,
+      "capture_limit_bytes": 65536,
+      "truncated": null
+    },
+    "bounded_raw_reader_truncation_control": {
+      "captured_bytes": 65536,
+      "captured_sha256": "1f8745f0d2d1387ec1af2211a3cf417b2e9e885e853472649c1d979d0e9370e3",
+      "capture_limit_bytes": 65536,
+      "truncated": true
+    },
+    "local_resource_smoke_sha256": "3da489c487ddb9fd6429439ec7da9ab12e2a7e6ace9cb27e5f489e50a22b5194",
+    "local_smoke_is_hosted_runner_measurement": false,
+    "source_sha256": {
+      ".github/workflows/pon-complete-w1-cost-observation.yml": "bbe5786c79de5c963cf5846449ed3ce772a13ad123e5d5142cfb8150f3c09278",
+      ".github/workflows/pon-complete-w1-proof-research.yml": "1fe52025f6dc13c2ee0663f03614223bbf397dcb356e08024483ac0f23bc4ee3",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/measure_step.py": "c99c72f7bf4bd792318522203dda1b37b333ecbdfeeb5b5d2d76bc65e43443ee",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/proof_observer_v1.py": "f800191639c6e40f6c2227fb387098976a5c2bee3533058bdec15b8457343950",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/check_observations.py": "ec544fd965ed532466d62a6a194d76579de558b09bbe1a4f97b60a12481b5377",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_cost_observation_profile_v1.py": "6a90091840a5d3729691332d6054738107d792fb4860a5cb623d42c8865641cd"
+    },
+    "passed": true
+  },
+  "cli_authority_readback": {
+    "schema": "pon-w1-cost-cli-authority-readback-v1",
+    "cases": [
+      {
+        "case": "baseline-cost-unavailable",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-B",
+          "/workspace/scratch/faebcae3f86e/proof/w1-cost-profile/base/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/measure_step.py",
+          "--out",
+          "/workspace/scratch/faebcae3f86e/proof/w1-cost-profile/verification/authority-cli-readback/baseline-cost-unavailable/out",
+          "--name",
+          "prove",
+          "--timeout",
+          "14400",
+          "--observe-proof",
+          "--proof-profile",
+          "cost-only-14400-v1",
+          "--",
+          "/workspace/scratch/faebcae3f86e/proof/w1-cost-profile/verification/authority-cli-readback/baseline-cost-unavailable/trnm-w1-risc0-host",
+          "prove",
+          "/usr/bin/true",
+          "/workspace/scratch/faebcae3f86e/proof/w1-cost-profile/verification/authority-cli-readback/baseline-cost-unavailable/out/guest.bin",
+          "/workspace/scratch/faebcae3f86e/proof/w1-cost-profile/verification/authority-cli-readback/baseline-cost-unavailable/out/input.bin",
+          "18",
+          "/workspace/scratch/faebcae3f86e/proof/w1-cost-profile/verification/authority-cli-readback/baseline-cost-unavailable/out/receipt.bin"
+        ],
+        "returncode": 2,
+        "out_created": false,
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_sha256": "1406011d0fed7f41bdc6cf7e9a5ee76c16f9f00ef937fc1c8043f89f3464ef1e",
+        "synthetic_owner_only": true,
+        "proof_generated": false,
+        "actual_short_child_expected": false
+      },
+      {
+        "case": "candidate-original-four-hours",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-B",
+          "/workspace/scratch/faebcae3f86e/proof/w1-cost-profile/repo/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/measure_step.py",
+          "--out",
+          "/workspace/scratch/faebcae3f86e/proof/w1-cost-profile/verification/authority-cli-readback/candidate-original-four-hours/out",
+          "--name",
+          "prove",
+          "--timeout",
+          "14400",
+          "--observe-proof",
+          "--",
+          "/workspace/scratch/faebcae3f86e/proof/w1-cost-profile/verification/authority-cli-readback/candidate-original-four-hours/trnm-w1-risc0-host",
+          "prove",
+          "/usr/bin/true",
+          "/workspace/scratch/faebcae3f86e/proof/w1-cost-profile/verification/authority-cli-readback/candidate-original-four-hours/out/guest.bin",
+          "/workspace/scratch/faebcae3f86e/proof/w1-cost-profile/verification/authority-cli-readback/candidate-original-four-hours/out/input.bin",
+          "18",
+          "/workspace/scratch/faebcae3f86e/proof/w1-cost-profile/verification/authority-cli-readback/candidate-original-four-hours/out/receipt.bin"
+        ],
+        "returncode": 1,
+        "out_created": false,
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_sha256": "b408ea463819151755c2bf29bda77f1a716e1cb4c6458016a454eeeb542f7214",
+        "synthetic_owner_only": true,
+        "proof_generated": false,
+        "actual_short_child_expected": false
+      },
+      {
+        "case": "candidate-cost-short-success",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-B",
+          "/workspace/scratch/faebcae3f86e/proof/w1-cost-profile/repo/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/measure_step.py",
+          "--out",
+          "/workspace/scratch/faebcae3f86e/proof/w1-cost-profile/verification/authority-cli-readback/candidate-cost-short-success/out",
+          "--name",
+          "prove",
+          "--timeout",
+          "14400",
+          "--observe-proof",
+          "--proof-profile",
+          "cost-only-14400-v1",
+          "--",
+          "/workspace/scratch/faebcae3f86e/proof/w1-cost-profile/verification/authority-cli-readback/candidate-cost-short-success/trnm-w1-risc0-host",
+          "prove",
+          "/usr/bin/true",
+          "/workspace/scratch/faebcae3f86e/proof/w1-cost-profile/verification/authority-cli-readback/candidate-cost-short-success/out/guest.bin",
+          "/workspace/scratch/faebcae3f86e/proof/w1-cost-profile/verification/authority-cli-readback/candidate-cost-short-success/out/input.bin",
+          "18",
+          "/workspace/scratch/faebcae3f86e/proof/w1-cost-profile/verification/authority-cli-readback/candidate-cost-short-success/out/receipt.bin"
+        ],
+        "returncode": 0,
+        "out_created": true,
+        "stdout_sha256": "18819d5903b186511aa2f6636f12764f89ef601331f12d2a0dba9dbc4035cf30",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "synthetic_owner_only": true,
+        "proof_generated": false,
+        "actual_short_child_expected": true,
+        "process_schema": "pon-w1-cost-observed-process-v1",
+        "declared_budget": 14400,
+        "direct_child_returncode": 0,
+        "finite_cleanup_observed": true,
+        "failure": null,
+        "original_5400s_budget_passed": false
+      },
+      {
+        "case": "candidate-cost-short-exit7",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-B",
+          "/workspace/scratch/faebcae3f86e/proof/w1-cost-profile/repo/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/measure_step.py",
+          "--out",
+          "/workspace/scratch/faebcae3f86e/proof/w1-cost-profile/verification/authority-cli-readback/candidate-cost-short-exit7/out",
+          "--name",
+          "prove",
+          "--timeout",
+          "14400",
+          "--observe-proof",
+          "--proof-profile",
+          "cost-only-14400-v1",
+          "--",
+          "/workspace/scratch/faebcae3f86e/proof/w1-cost-profile/verification/authority-cli-readback/candidate-cost-short-exit7/trnm-w1-risc0-host",
+          "prove",
+          "/usr/bin/true",
+          "/workspace/scratch/faebcae3f86e/proof/w1-cost-profile/verification/authority-cli-readback/candidate-cost-short-exit7/out/guest.bin",
+          "/workspace/scratch/faebcae3f86e/proof/w1-cost-profile/verification/authority-cli-readback/candidate-cost-short-exit7/out/input.bin",
+          "18",
+          "/workspace/scratch/faebcae3f86e/proof/w1-cost-profile/verification/authority-cli-readback/candidate-cost-short-exit7/out/receipt.bin"
+        ],
+        "returncode": 7,
+        "out_created": true,
+        "stdout_sha256": "ec4bc52f6b8d5907f9366461c92b3471bebbdaefb0a412f46ab2d3b2c43bf329",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "synthetic_owner_only": true,
+        "proof_generated": false,
+        "actual_short_child_expected": true,
+        "process_schema": "pon-w1-cost-observed-process-v1",
+        "declared_budget": 14400,
+        "direct_child_returncode": 7,
+        "finite_cleanup_observed": true,
+        "failure": null,
+        "original_5400s_budget_passed": false
+      }
+    ],
+    "passed": true
+  },
+  "independent_cross_profile_review": {
+    "schema": "pon-w1-cost-profile-cross-reader-independent-review-v1",
+    "previous_checker_sha256": "c93eb9539c44a0c750687588c3440f9ade88540f009e455c91401198dd1c0c66",
+    "fixed_checker_sha256": "ec544fd965ed532466d62a6a194d76579de558b09bbe1a4f97b60a12481b5377",
+    "previous_code_reconstructed_in_memory_by_removing_exact_new_guard": true,
+    "reconstructed_sha256_matches_originally_reviewed_candidate": true,
+    "source_files_modified": false,
+    "fixture": "original process/observer schema, 5400 seconds, valid source/raw/supplement bindings; add indicated metadata only",
+    "results": [
+      {
+        "added_original_schema_observer_fields": {},
+        "previous": {
+          "accepted": true,
+          "error": null
+        },
+        "fixed": {
+          "accepted": true,
+          "error": null
+        }
+      },
+      {
+        "added_original_schema_observer_fields": {
+          "proof_profile": "cost-only-14400-v1"
+        },
+        "previous": {
+          "accepted": true,
+          "error": null
+        },
+        "fixed": {
+          "accepted": false,
+          "error": "original observer cannot contain cost-only profile metadata"
+        }
+      },
+      {
+        "added_original_schema_observer_fields": {
+          "original_5400s_budget_passed": false
+        },
+        "previous": {
+          "accepted": true,
+          "error": null
+        },
+        "fixed": {
+          "accepted": false,
+          "error": "original observer cannot contain cost-only profile metadata"
+        }
+      },
+      {
+        "added_original_schema_observer_fields": {
+          "proof_profile": "cost-only-14400-v1",
+          "original_5400s_budget_passed": false
+        },
+        "previous": {
+          "accepted": true,
+          "error": null
+        },
+        "fixed": {
+          "accepted": false,
+          "error": "original observer cannot contain cost-only profile metadata"
+        }
+      }
+    ],
+    "cryptographic_proof_generated": false,
+    "scope": "Metadata cross-profile refusal only; no cryptographic-proof bypass claim. Original field-absent control still accepted."
+  },
+  "initial_synthetic_fixture_failures": [
+    {
+      "expected_synthetic_child_exit": 0,
+      "observed_process": {
+        "schema": "pon-w1-cost-observed-process-v1",
+        "command": [
+          "/workspace/scratch/faebcae3f86e/proof/w1-cost-profile/verification/initial-synthetic-host-failures/0/trnm-w1-risc0-host",
+          "prove",
+          "/usr/bin/true",
+          "/workspace/scratch/faebcae3f86e/proof/w1-cost-profile/verification/initial-synthetic-host-failures/0/out/guest.bin",
+          "/workspace/scratch/faebcae3f86e/proof/w1-cost-profile/verification/initial-synthetic-host-failures/0/out/input.bin",
+          "18",
+          "/workspace/scratch/faebcae3f86e/proof/w1-cost-profile/verification/initial-synthetic-host-failures/0/out/receipt.bin"
+        ],
+        "started_utc": "2026-10-29T10:42:32.131341+00:00",
+        "finished_utc": "2026-10-29T10:42:32.204816+00:00",
+        "timeout_seconds": 14400,
+        "source_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "returncode": 125,
+        "timed_out": false,
+        "wall_seconds": 0.07348411400744226,
+        "user_cpu_seconds": 0.0036669999999999997,
+        "system_cpu_seconds": 0.004458,
+        "max_waited_descendant_rss_kib": 16200,
+        "rss_scope": "direct host wait4, potentially including descendants it waited; not whole-family peak",
+        "cpu_scope": "direct host wait4 only; adopted rows separate; total family unknown",
+        "supplement": "prove.observer.json",
+        "supplement_sha256": "3adcfd7d15c99ca6b6aa3d5a54f64df35bd778f269996eb4711eabfbb9cd1942",
+        "family_capture_complete": false,
+        "complete_family_cpu_seconds": null,
+        "consensus_authority": false,
+        "proof_profile": "cost-only-14400-v1",
+        "original_5400s_budget_passed": false
+      },
+      "observer_failure": "host-phases-incomplete",
+      "observer_source": {
+        "device": 27,
+        "inode": 1092408,
+        "bytes": 33391,
+        "mtime_ns": 1793270459980298377,
+        "ctime_ns": 1793270459980298377,
+        "mode": 33188,
+        "sha256": "f800191639c6e40f6c2227fb387098976a5c2bee3533058bdec15b8457343950"
+      },
+      "host_before": {
+        "device": 27,
+        "inode": 1092422,
+        "bytes": 30894944,
+        "mtime_ns": 1792962266000000000,
+        "ctime_ns": 1793270552072694312,
+        "mode": 33261,
+        "sha256": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7"
+      },
+      "direct_wait4": {
+        "pid": 7,
+        "raw_wait_status": 256,
+        "starttime_ticks": null,
+        "identity_scope": "kernel wait4 child event; sampled process identities are separate, not joined by PID alone",
+        "returncode": 1,
+        "user_cpu_seconds": 0.0036669999999999997,
+        "system_cpu_seconds": 0.004458,
+        "max_rss_kib": 16200,
+        "minor_faults": 969,
+        "major_faults": 0,
+        "voluntary_context_switches": 1,
+        "involuntary_context_switches": 0,
+        "observed_monotonic_ns": 92059434435962
+      },
+      "actual_stderr": "Could not find platform independent libraries <prefix>\nCould not find platform dependent libraries <exec_prefix>\nPython path configuration:\n  PYTHONHOME = (not set)\n  PYTHONPATH = (not set)\n  program name = '/workspace/scratch/faebcae3f86e/proof/w1-cost-profile/verification/initial-synthetic-host-failures/0/trnm-w1-risc0-host'\n  isolated = 0\n  environment = 1\n  user site = 1\n  safe_path = 0\n  import site = 1\n  is in build tree = 0\n  stdlib dir = '/install/lib/python3.12'\n  sys._base_executable = '/workspace/scratch/faebcae3f86e/proof/w1-cost-profile/verification/initial-synthetic-host-failures/0/trnm-w1-risc0-host'\n  sys.base_prefix = '/install'\n  sys.base_exec_prefix = '/install'\n  sys.platlibdir = 'lib'\n  sys.executable = '/workspace/scratch/faebcae3f86e/proof/w1-cost-profile/verification/initial-synthetic-host-failures/0/trnm-w1-risc0-host'\n  sys.prefix = '/install'\n  sys.exec_prefix = '/install'\n  sys.path = [\n    '/install/lib/python312.zip',\n    '/install/lib/python3.12',\n    '/install/lib/python3.12/lib-dynload',\n  ]\nFatal Python error: init_fs_encoding: failed to get the Python codec of the filesystem encoding\nPython runtime state: core initialized\nModuleNotFoundError: No module named 'encodings'\n\nCurrent thread 0x00007f8cbd01e740 (most recent call first):\n  <no Python frame>\n",
+      "actual_stderr_sha256": "f140a4e6853f153296f9beff987fbb073716b9638afac6ba1195e1ebf940996a"
+    },
+    {
+      "expected_synthetic_child_exit": 7,
+      "observed_process": {
+        "schema": "pon-w1-cost-observed-process-v1",
+        "command": [
+          "/workspace/scratch/faebcae3f86e/proof/w1-cost-profile/verification/initial-synthetic-host-failures/7/trnm-w1-risc0-host",
+          "prove",
+          "/usr/bin/true",
+          "/workspace/scratch/faebcae3f86e/proof/w1-cost-profile/verification/initial-synthetic-host-failures/7/out/guest.bin",
+          "/workspace/scratch/faebcae3f86e/proof/w1-cost-profile/verification/initial-synthetic-host-failures/7/out/input.bin",
+          "18",
+          "/workspace/scratch/faebcae3f86e/proof/w1-cost-profile/verification/initial-synthetic-host-failures/7/out/receipt.bin"
+        ],
+        "started_utc": "2026-10-29T10:42:32.301574+00:00",
+        "finished_utc": "2026-10-29T10:42:32.373380+00:00",
+        "timeout_seconds": 14400,
+        "source_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "returncode": 125,
+        "timed_out": false,
+        "wall_seconds": 0.0718567699950654,
+        "user_cpu_seconds": 0.0,
+        "system_cpu_seconds": 0.007984,
+        "max_waited_descendant_rss_kib": 16200,
+        "rss_scope": "direct host wait4, potentially including descendants it waited; not whole-family peak",
+        "cpu_scope": "direct host wait4 only; adopted rows separate; total family unknown",
+        "supplement": "prove.observer.json",
+        "supplement_sha256": "a5b7f3debb52b7a1d4abb8e005699b6ea90aacabfa18977429492c1816790a53",
+        "family_capture_complete": false,
+        "complete_family_cpu_seconds": null,
+        "consensus_authority": false,
+        "proof_profile": "cost-only-14400-v1",
+        "original_5400s_budget_passed": false
+      },
+      "observer_failure": "host-phases-incomplete",
+      "observer_source": {
+        "device": 27,
+        "inode": 1092408,
+        "bytes": 33391,
+        "mtime_ns": 1793270459980298377,
+        "ctime_ns": 1793270459980298377,
+        "mode": 33188,
+        "sha256": "f800191639c6e40f6c2227fb387098976a5c2bee3533058bdec15b8457343950"
+      },
+      "host_before": {
+        "device": 27,
+        "inode": 1092436,
+        "bytes": 30894944,
+        "mtime_ns": 1792962266000000000,
+        "ctime_ns": 1793270552240687736,
+        "mode": 33261,
+        "sha256": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7"
+      },
+      "direct_wait4": {
+        "pid": 9,
+        "raw_wait_status": 256,
+        "starttime_ticks": null,
+        "identity_scope": "kernel wait4 child event; sampled process identities are separate, not joined by PID alone",
+        "returncode": 1,
+        "user_cpu_seconds": 0.0,
+        "system_cpu_seconds": 0.007984,
+        "max_rss_kib": 16200,
+        "minor_faults": 968,
+        "major_faults": 0,
+        "voluntary_context_switches": 1,
+        "involuntary_context_switches": 0,
+        "observed_monotonic_ns": 92059599897254
+      },
+      "actual_stderr": "Could not find platform independent libraries <prefix>\nCould not find platform dependent libraries <exec_prefix>\nPython path configuration:\n  PYTHONHOME = (not set)\n  PYTHONPATH = (not set)\n  program name = '/workspace/scratch/faebcae3f86e/proof/w1-cost-profile/verification/initial-synthetic-host-failures/7/trnm-w1-risc0-host'\n  isolated = 0\n  environment = 1\n  user site = 1\n  safe_path = 0\n  import site = 1\n  is in build tree = 0\n  stdlib dir = '/install/lib/python3.12'\n  sys._base_executable = '/workspace/scratch/faebcae3f86e/proof/w1-cost-profile/verification/initial-synthetic-host-failures/7/trnm-w1-risc0-host'\n  sys.base_prefix = '/install'\n  sys.base_exec_prefix = '/install'\n  sys.platlibdir = 'lib'\n  sys.executable = '/workspace/scratch/faebcae3f86e/proof/w1-cost-profile/verification/initial-synthetic-host-failures/7/trnm-w1-risc0-host'\n  sys.prefix = '/install'\n  sys.exec_prefix = '/install'\n  sys.path = [\n    '/install/lib/python312.zip',\n    '/install/lib/python3.12',\n    '/install/lib/python3.12/lib-dynload',\n  ]\nFatal Python error: init_fs_encoding: failed to get the Python codec of the filesystem encoding\nPython runtime state: core initialized\nModuleNotFoundError: No module named 'encodings'\n\nCurrent thread 0x00007fd185819740 (most recent call first):\n  <no Python frame>\n",
+      "actual_stderr_sha256": "8d2864a421f9027be1b4239e0716e176b3d3c68b7495e2816b0396c42fbbf9fc"
+    }
+  ],
+  "test_only_correction": "Copied Python synthetic host uses its actual sys.base_prefix as PYTHONHOME; production workflow environment unchanged.",
+  "original_failure_preserved": true,
+  "hosted_cost_workflow_started": false,
+  "sdk_invoked_by_local_controls": false,
+  "proof_generated": false
+}
