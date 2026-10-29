@@ -103,7 +103,10 @@ fn restored(path: &Path, job: &Value, kernel: &KernelBudget, result: &Value) {
 }
 fn expected_error(job: &Value, error: &crate::Error) {
     let expected = match job["action"].as_str().unwrap() {
-        "cpu" | "burst" | "memory" | "swap" | "pids" => "PUBLIC_HOST_KERNEL_LIMITS_CHANGED",
+        "cpu" | "memory" | "pids" => "PUBLIC_HOST_KERNEL_LIMITS_CHANGED",
+        // Nonzero burst/swap fails the original finite-limits validation
+        // before the checker can compare a valid sample with its opened limits.
+        "burst" | "swap" => "PUBLIC_HOST_KERNEL_LIMITS",
         "unreadable-cpu" => "PUBLIC_HOST_KERNEL_UNAVAILABLE",
         "migrate-process" => "PUBLIC_HOST_KERNEL_CONTEXT",
         _ => panic!("explicit physical mutation"),

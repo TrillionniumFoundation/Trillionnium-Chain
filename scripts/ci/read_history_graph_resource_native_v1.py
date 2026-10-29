@@ -268,7 +268,8 @@ def validate_case(directory, spec, binary_sha256):
                 and mutation['after']['cpu_file_mode'] == (0 if spec['action'] == 'unreadable-cpu' else original_parent['cpu_file_mode'])
                 and restored['parent']['cpu_file_mode'] == original_parent['cpu_file_mode'], 'actual permission refusal and restoration required')
         expected_error = ('PUBLIC_HOST_KERNEL_CONTEXT' if migrated else 'PUBLIC_HOST_KERNEL_UNAVAILABLE'
-                          if spec['action'] == 'unreadable-cpu' else 'PUBLIC_HOST_KERNEL_LIMITS_CHANGED')
+                          if spec['action'] == 'unreadable-cpu' else 'PUBLIC_HOST_KERNEL_LIMITS'
+                          if spec['action'] in ('burst', 'swap') else 'PUBLIC_HOST_KERNEL_LIMITS_CHANGED')
         require(native['triggered'] is True and native['error'] == expected_error and native['protocol_invalid'] is False,
                 'resource failure is an actual refusal, not a consensus-invalid verdict')
         identity(native['identity_after_refusal'], outer if migrated else group)

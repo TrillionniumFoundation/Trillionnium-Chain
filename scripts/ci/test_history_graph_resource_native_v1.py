@@ -110,7 +110,8 @@ def fixture(directory, spec):
         migrated = spec['action'] == 'migrate-process'
         if migrated:native['identity_after_refusal']['thread_cgroup'] = '0::' + outer
         error = ('PUBLIC_HOST_KERNEL_CONTEXT' if migrated else 'PUBLIC_HOST_KERNEL_UNAVAILABLE'
-                 if spec['action'] == 'unreadable-cpu' else 'PUBLIC_HOST_KERNEL_LIMITS_CHANGED')
+                 if spec['action'] == 'unreadable-cpu' else 'PUBLIC_HOST_KERNEL_LIMITS'
+                 if spec['action'] in ('burst', 'swap') else 'PUBLIC_HOST_KERNEL_LIMITS_CHANGED')
         native.update(error=error, protocol_invalid=False, cpu_receipt=receipt(),
                       original_cpu=cpu(), original_cpu_flow=flow())
         point = {}
@@ -228,11 +229,31 @@ class PhysicalReader(unittest.TestCase):
     def test_all_twenty_three_explicit_schema_cases(self):
         self.assertEqual(len(reader.CASES), 23)
         self.assertEqual(len(set(row['case'] for row in reader.CASES)), 23)
+        expected_errors = {'cpu': 'PUBLIC_HOST_KERNEL_LIMITS_CHANGED',
+                           'memory': 'PUBLIC_HOST_KERNEL_LIMITS_CHANGED',
+                           'pids': 'PUBLIC_HOST_KERNEL_LIMITS_CHANGED',
+                           'burst': 'PUBLIC_HOST_KERNEL_LIMITS', 'swap': 'PUBLIC_HOST_KERNEL_LIMITS',
+                           'unreadable-cpu': 'PUBLIC_HOST_KERNEL_UNAVAILABLE',
+                           'migrate-process': 'PUBLIC_HOST_KERNEL_CONTEXT'}
         with tempfile.TemporaryDirectory() as tmp:
             for spec in reader.CASES:
                 with self.subTest(case=spec['case']):
-                    directory = Path(tmp) / spec['case'];fixture(directory, spec)
+                    directory = Path(tmp) / spec['case'];documents = fixture(directory, spec)
                     self.assertTrue(reader.validate_case(directory, spec, BINARY)['passed'])
+                    if spec['action'] == 'none':
+                        continue
+                    expected = expected_errors[spec['action']]
+                    self.assertEqual(documents['complete.json']['result']['error'], expected)
+                    # Update both retained observations coherently. A reader
+                    # must still refuse a wrong runtime category, even when
+                    # the pre-restoration and completed reports agree.
+                    for substituted in sorted(set(expected_errors.values()) - {expected}):
+                        documents['complete.json']['result']['error'] = substituted
+                        documents['native-result-before-restore.json']['error'] = substituted
+                        for name in ('complete.json', 'native-result-before-restore.json'):
+                            write(directory / name, documents[name])
+                        with self.subTest(substituted=substituted), self.assertRaises(ValueError):
+                            reader.validate_case(directory, spec, BINARY)
 
     def test_semantic_substitutions_after_reencoding_are_rejected(self):
         changes = [
