@@ -232,8 +232,90 @@ class ChildProbeControls(unittest.TestCase):
     def test_actual_proc_children_cannot_be_ignored_even_if_probe_claims_echild(self):
         census = family(2000, 100)
         census["observed_child_pids"] = [3000]
+        census["thread_children"][0]["children"] = [3000]
         with self.assertRaisesRegex(ValueError, "contradict"):
             self.check(child_probe(2000, 100), census)
+
+
+class PartialCensusControls(unittest.TestCase):
+    def census(self):
+        value = family(2000, 100)
+        value["thread_children"][0]["children"] = [3000]
+        value["thread_children"][1].update(children=None, error="No such file or directory (os error 2)")
+        value.update(capture_complete=False, errors=["No such file or directory (os error 2)"],
+                     no_live_or_unreaped_children_observed=False, observed_child_pids=[3000])
+        return value
+
+    def test_failed_sibling_read_cannot_hide_successful_child_row(self):
+        # Actual B counterexample shape: one successful positive row, one ENOENT,
+        # but a false empty aggregate. Both public predicate entry points reject.
+        value = self.census()
+        value["observed_child_pids"] = []
+        with self.assertRaisesRegex(ValueError, "census association"):
+            reader.check_family(value, receipt())
+        with self.assertRaisesRegex(ValueError, "census association"):
+            reader.check_child_probe(child_probe(2000, 100), receipt(), value)
+
+    def test_partial_known_children_remain_positive_and_cpu_stays_unknown(self):
+        value = self.census()
+        result = reader.check_family(value, receipt())
+        self.assertFalse(result["family_observation_complete"])
+        self.assertFalse(result["descendants_quiescent_observed"])
+        self.assertIsNone(result["self_cpu_before_publication_ns"])
+        self.assertIsNone(result["waited_children_cpu_ns"])
+        with self.assertRaisesRegex(ValueError, "contradict"):
+            reader.check_child_probe(child_probe(2000, 100), receipt(), value)
+        probe = child_probe(2000, 100)
+        probe.update(waitid_return=0, errno=None,
+                     event={"signo": 0, "code": 0, "errno": 0, "pid": 0, "uid": 0, "status": 0},
+                     waitid_echild_observed=False, no_eligible_children_at_probe=False)
+        result = reader.check_child_probe(probe, receipt(), value)
+        self.assertEqual(result["procfs_children_observed"], [3000])
+        self.assertFalse(result["descendants_quiescent_observed"])
+
+    def test_partial_census_covers_before_rows_even_when_after_set_changes(self):
+        for after in ([2000], None, []):
+            value = self.census()
+            value["thread_children"][0]["children"] = []
+            value.update(observed_child_pids=[], thread_ids_after=after, thread_set_stable=False)
+            with self.subTest(after=after):
+                self.assertFalse(reader.check_family(value, receipt())["family_observation_complete"])
+                result = reader.check_child_probe(child_probe(2000, 100), receipt(), value)
+                self.assertFalse(result["procfs_capture_complete"])
+                self.assertTrue(result["descendants_quiescent_observed"])
+                self.assertEqual(result["quiescence_basis"], "waitid-echild-with-sig-dfl-no-nocldwait")
+
+    def test_missing_before_census_is_unknown_without_invented_rows(self):
+        for after in (None, [2000]):
+            value = self.census()
+            value.update(thread_ids_before=None, thread_ids_after=after, thread_set_stable=False,
+                         thread_children=[], observed_child_pids=[])
+            with self.subTest(after=after):
+                self.assertFalse(reader.check_family(value, receipt())["family_observation_complete"])
+                self.assertTrue(reader.check_child_probe(child_probe(2000, 100), receipt(), value)
+                                ["descendants_quiescent_observed"])
+                value["thread_children"] = [{"tid": 2000, "children": [], "error": None}]
+                with self.assertRaisesRegex(ValueError, "row coverage"):
+                    reader.check_family(value, receipt())
+
+    def test_partial_row_omission_and_boolean_pid_are_rejected(self):
+        value = self.census()
+        value["thread_children"].pop(0)
+        value["observed_child_pids"] = []
+        with self.assertRaisesRegex(ValueError, "row coverage"):
+            reader.check_family(value, receipt())
+        for target in ("before", "row", "child", "aggregate"):
+            value = self.census()
+            if target == "before":
+                value["thread_ids_before"][0] = True
+            elif target == "row":
+                value["thread_children"][0]["tid"] = True
+            elif target == "child":
+                value["thread_children"][0]["children"] = [True]
+            else:
+                value["observed_child_pids"] = [True]
+            with self.subTest(target=target), self.assertRaises(ValueError):
+                reader.check_family(value, receipt())
 
 
 class DirectoryControls(unittest.TestCase):
@@ -290,6 +372,19 @@ class DirectoryControls(unittest.TestCase):
         self.assertFalse(value["cpu_observation_complete"])
         self.assertIsNone(value["phases"][2]["whole_actor_process_cpu"]["total_ns"])
         self.assertEqual(value["phases"][2]["whole_actor_process_cpu"]["unknown_count"], 1)
+
+    def test_resealed_parent_bindings_do_not_hide_partial_positive_census(self):
+        path = self.cost.parent / "actor-0" / reader.FAMILY_FILE
+        value = json.loads(path.read_text())
+        value["thread_children"][0]["children"] = [3000]
+        value["thread_children"][1].update(children=None, error="ENOENT")
+        value.update(capture_complete=False, errors=["ENOENT"],
+                     no_live_or_unreaped_children_observed=False, observed_child_pids=[])
+        path.write_text(json.dumps(value) + "\n")
+        self.mutate(lambda process: process["actors"][0]["files"].update(
+            {reader.FAMILY_FILE: binding(path.read_bytes())}))
+        with self.assertRaisesRegex(ValueError, "census association"):
+            reader.check_directory(self.path)
 
 
 if __name__ == "__main__":

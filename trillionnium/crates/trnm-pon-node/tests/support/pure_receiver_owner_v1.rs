@@ -128,6 +128,14 @@ fn exchange_before(
         &mut capture.sent_frame_bytes,
     )?;
     write_before(stream, request, deadline, &mut capture.sent_frame_bytes)?;
+    receive_before(stream, deadline, capture)
+}
+
+fn receive_before(
+    stream: &mut UnixStream,
+    deadline: Instant,
+    capture: &mut FrameCapture,
+) -> io::Result<()> {
     read_before(stream, &mut capture.prefix, 4, deadline)?;
     let size = u32::from_be_bytes(capture.prefix.as_slice().try_into().unwrap()) as usize;
     if size == 0 || size > FRAME_LIMIT {
@@ -275,6 +283,7 @@ impl Drop for Stop {
 }
 
 fn child_run(job: &Value, path: &Path) -> io::Result<()> {
+    fixed_parent::receiver_entry(path)?;
     support::process_cost::enable_receiver_subreaper()?;
     let settings = support::settings();
     let mut stream = UnixStream::connect(
@@ -582,6 +591,18 @@ fn start_receiver(
     mode: &str,
     experiment: &str,
 ) -> io::Result<(Receiver, Control, Value)> {
+    start_receiver_placed(path, socket, seed, honest, mode, experiment, None)
+}
+
+fn start_receiver_placed(
+    path: &Path,
+    socket: &Path,
+    seed: &[Packet],
+    honest: &BTreeSet<[u8; 32]>,
+    mode: &str,
+    experiment: &str,
+    mut placement: Option<&mut fixed_parent::Placement>,
+) -> io::Result<(Receiver, Control, Value)> {
     let listener = UnixListener::bind(socket)?;
     listener.set_nonblocking(true)?;
     support::write_new(
@@ -606,8 +627,16 @@ fn start_receiver(
         .env("TRNM_RECEIVER_OWNER_JOB", path.join("receiver-job.json"))
         .stdout(Stdio::from(log.try_clone()?))
         .stderr(Stdio::from(log));
+    if let Some(placement) = placement.as_deref_mut() {
+        placement.configure(&mut command, path)?;
+    }
     let child = support::process_cost::ObservedChild::spawn(&mut command)?;
+    // Drops the pre-exec closure's parent-side capability before any honest
+    // client, attacker or sampler starts. The receiver exec closed its copy.
+    drop(command);
+    let ready_deadline_arm_before = support::monotonic();
     let deadline = Instant::now() + Duration::from_secs(180);
+    let ready_deadline_arm_after = support::monotonic();
     let receiver = Receiver {
         child,
         output: path.to_owned(),
@@ -626,12 +655,22 @@ fn start_receiver(
             Err(e) => return Err(e),
         }
     };
-    stream.set_read_timeout(Some(
-        deadline
-            .saturating_duration_since(Instant::now())
-            .max(Duration::from_nanos(1)),
-    ))?;
-    let raw = receive(&mut stream)?;
+    let ready_started = support::monotonic();
+    let mut capture = FrameCapture::default();
+    let received = receive_before(&mut stream, deadline, &mut capture);
+    support::write_new(
+        &path.join("receiver-ready-exchange-v1.json"),
+        &json!({"schema":"pon-receiver-ready-exchange-v1","pid":receiver.child.id(),
+            "started_monotonic_ns":ready_started,"ended_monotonic_ns":support::monotonic(),
+            "deadline_arm_before_monotonic_ns":ready_deadline_arm_before,
+            "deadline_arm_after_monotonic_ns":ready_deadline_arm_after,
+            "startup_budget_ns":180_000_000_000_u64,
+            "original_owner_deadline":true,"timeout_restarted_between_reads":false,
+            "prefix_hex":hex::encode(&capture.prefix),"payload_hex":hex::encode(&capture.payload),
+            "error":received.as_ref().err().map(ToString::to_string),"physical_authentication":false}),
+    );
+    received?;
+    let raw = capture.payload;
     let ready = parsed(&raw)?;
     if ready["schema"] != "pon-receiver-ready-v1"
         || ready["pid"] != receiver.child.id()
@@ -640,6 +679,9 @@ fn start_receiver(
         return Err(error("RECEIVER_READY_IDENTITY"));
     }
     support::write_new(&path.join("receiver-ready.json"), &ready);
+    if let Some(placement) = placement {
+        placement.after_spawn(path, receiver.child.id())?;
+    }
     let control = Control {
         stream,
         pid: receiver.child.id(),
@@ -706,6 +748,52 @@ fn capture_receiver(
         "capture_complete":all,"files":files,"physical_authentication":false,"public_fairness_qualified":false,"production_qualified":false}),
     );
     Ok(())
+}
+
+#[test]
+fn native_receiver_ready_deadline_retains_partial_prefix_and_body() {
+    let mut observations = Vec::new();
+    for prefix_only in [true, false] {
+        let (mut receiver, mut peer) = UnixStream::pair().unwrap();
+        let frame = [0_u8, 0, 0, 5, b'r', b'e', b'a', b'd', b'y'];
+        let split = if prefix_only { 3 } else { 5 };
+        // The partial bytes exist before the read begins; the final bytes are
+        // withheld beyond the one absolute deadline, never a renewed read cap.
+        peer.write_all(&frame[..split]).unwrap();
+        let sender = thread::spawn(move || {
+            thread::sleep(Duration::from_millis(200));
+            peer.write_all(&frame[split..])
+        });
+        let started = support::monotonic();
+        let deadline = Instant::now() + Duration::from_millis(100);
+        let mut capture = FrameCapture::default();
+        let result = receive_before(&mut receiver, deadline, &mut capture);
+        let ended = support::monotonic();
+        drop(receiver);
+        let tail = sender.join().unwrap();
+        let valid = result.is_err()
+            && capture.prefix == frame[..if prefix_only { 3 } else { 4 }]
+            && capture.payload == if prefix_only { &b""[..] } else { &b"r"[..] };
+        observations.push(json!({"prefix_only":prefix_only,"assertions_passed":valid,
+            "started_monotonic_ns":started,"ended_monotonic_ns":ended,
+            "deadline_allowance_ns":100_000_000u64,
+            "prefix_hex":hex::encode(&capture.prefix),"payload_hex":hex::encode(&capture.payload),
+            "error":result.as_ref().err().map(ToString::to_string),
+            "late_peer_write_error":tail.err().map(|e|e.to_string())}));
+    }
+    if let Some(output) = std::env::var_os("TRNM_RECEIVER_READY_CONTROL_OUT") {
+        support::write_new(
+            &PathBuf::from(output),
+            &json!({
+            "schema":"pon-receiver-ready-deadline-control-v1","observations":observations,
+            "original_ready_budget_seconds":180,"qualification_budget_changed":false,
+            "physical_authentication":false}),
+        );
+    }
+    assert!(
+        observations.iter().all(|r| r["assertions_passed"] == true),
+        "readiness absolute-deadline observations: {observations:?}"
+    );
 }
 
 #[test]
@@ -856,6 +944,28 @@ fn receiver_phase(
     business: &[Packet],
     mode: &str,
 ) -> Value {
+    receiver_phase_inner(path, settings, seed, business, mode, None)
+}
+
+pub(super) fn fixed_parent_phase(
+    path: &Path,
+    settings: &Settings,
+    seed: &[Packet],
+    business: &[Packet],
+    mode: &str,
+    placement: &mut fixed_parent::Placement,
+) -> Value {
+    receiver_phase_inner(path, settings, seed, business, mode, Some(placement))
+}
+
+fn receiver_phase_inner(
+    path: &Path,
+    settings: &Settings,
+    seed: &[Packet],
+    business: &[Packet],
+    mode: &str,
+    mut placement: Option<&mut fixed_parent::Placement>,
+) -> Value {
     fs::create_dir(path).unwrap();
     let ipc_dir = tempfile::tempdir().unwrap();
     let requests: Vec<_> = business
@@ -865,13 +975,14 @@ fn receiver_phase(
         })
         .collect();
     let honest: BTreeSet<_> = requests.iter().map(support::body_digest).collect();
-    let (mut receiver, control, ready) = start_receiver(
+    let (mut receiver, control, ready) = start_receiver_placed(
         path,
         &ipc_dir.path().join("control"),
         seed,
         &honest,
         mode,
         "receiver-owner-supplement",
+        placement.as_deref_mut(),
     )
     .unwrap();
     let receiver_pid = receiver.child.id();
@@ -907,6 +1018,11 @@ fn receiver_phase(
             "supplement attacker preparation did not complete"
         );
         support::pause();
+    }
+    if let Some(placement) = placement {
+        placement
+            .actors_ready(path, if mode == "baseline" { 0 } else { ATTACKERS })
+            .unwrap();
     }
     let control = Arc::new(Mutex::new(control));
     let arm = control

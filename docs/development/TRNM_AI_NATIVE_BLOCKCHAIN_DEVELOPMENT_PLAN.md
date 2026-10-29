@@ -4973,3 +4973,209 @@ and preregistered WAN service, beneficial model releases, whole-chain PQ128 or
 production governance. Related PQ4/PQ5 and transparent-proof candidates retain
 their own branches and evidence until explicitly reviewed and integrated. The
 existing PN0–PN6 production exits remain **OPEN / NO_GO**.
+
+### PN1/I02 — fixed-parent custody and actual static analysis (2026-10-29)
+
+This continuation retains source
+`504ccfe6bc4aa504f4a67f73c16040fca5b8e10e` (B), its original failures and all
+earlier qualification boundaries. New fixture and reader controls must be
+verified on their own committed source. A local control, a complete scan and a
+passing host-fixture observation have different scopes; none enables PN0–PN6.
+
+#### Partial process observations retain positive evidence
+
+The [process reader](../../scripts/ci/check_pure_pon_process_cost_v1.py) previously
+returned early when a per-thread census was incomplete. A counterexample based
+on an actual B partial census retained one successful row containing a child PID
+and another row with ENOENT, but supplied an incorrect empty aggregate. The old
+local predicates ignored the positive row and accepted the separate ECHILD
+quiescence claim. This was a reader-semantic defect, not a demonstration that
+modified bytes bypassed an unchanged parent SHA-256 binding.
+
+The reader now checks the saved before-thread row coverage and the union of all
+successful child reads before that early return, and checks the same association
+at the independent probe entry point. A changing or unavailable after-thread set
+remains a partial observation. Unknown usage is not zero, and the independent
+ECHILD basis cannot override an actually observed child. The directory negative
+control also reseals its synthetic parent bindings and still rejects the
+contradictory census. Precommit process/receiver/attacker controls passed 24/23/24;
+six original B local/x64/ARM process and receiver outputs remained byte-identical.
+The x64 receiver's original qualification exit remained 1.
+
+#### The original x64 failure is not erased
+
+The [B pressure run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40825729556)
+retains the failed x64 from-zero receiver supplement. Its 597 samples include
+36 with the original freshness upper bound below the 100 ms reservation, but
+those samples have cumulative paid debit at most 706,710,672 ns. The 409 samples
+with paid debit above 1.9 seconds have a minimum freshness upper bound of
+198,714,857 ns. No sample satisfies the unchanged conjunction. All three honest
+confirmation rounds and their measured hostile overlap passed. These point
+samples neither prove a continuous-time absence of depletion nor establish an
+invalid-block acceptance attack. An upper bound is not a lower bound on actual
+credit. The B fixed-parent observation was unavailable, so these B measurements
+must not be described as running inside the fixed 0.25-CPU kernel parent.
+
+The new fixed-parent experiment keeps the 128/s challenge profile, 0.25-CPU/s
+paid refill, 24 hostile actors, 30-second phases and two-second calls. It reports
+three distinct outcomes: fixture custody/resource observations, honest service,
+and the original paid-depletion predicate. A kernel ceiling over all receiver
+work also covers reactors, parsing and observation IPC; therefore a 0.25-CPU
+whole-receiver ceiling does not promise that paid W1 debit will continuously
+exceed a 0.25-CPU/s refill. Finite-window CFS accounting, initial/carry credit and
+discarded refill require their own bounds. No quota reduction or predicate change
+is used to manufacture the missing depletion witness.
+
+#### A separate, owned fixed-parent experiment
+
+The separate [fixture owner](../../scripts/ci/run_pure_pon_fixed_parent_v1.py) is
+restricted to a disposable GitHub-hosted systemd/cgroup-v2 runner. It refuses an
+existing fixed parent or unit. The runtime-only transient slice keeps the exact
+original ceilings: `cpu.max=25000 100000`, zero CPU burst, 2 GiB memory, zero swap
+and 256 tasks. The unit's nonce/InvocationID, root-owned parent/leaf identities,
+boot ID, resource files, memberships and cumulative counters are retained.
+
+One root-opened `cgroup.procs` descriptor intentionally grants migration into
+the owned leaf. No root/common-ancestor write permission or capability is given
+to the running service. The trusted pre-exec hook writes only zero to migrate
+itself; the kernel descriptor capability is broader than a write-zero-only rule.
+The descriptor is close-on-exec, and the controller drops its copy before
+starting honest clients, sampler and hostile actors. The receiver stays its
+controller's direct child for the original wait4 accounting. Three independent
+phase controllers reuse the same parent and immutable prepared inputs; this
+has a fresh schema and is not the old 90-second campaign. Fork/pre-migration CPU
+remains in wait4 and is explicitly outside the cgroup interval.
+
+Only owned, identity-matching, empty assets may be removed. Controller nonzero
+exit, reap errors, truncated capture and failed ownership cleanup refuse
+qualification. The parent is sampled before process-group cleanup so that a
+later signal cannot conceal receiver residue. Root unit identities and held
+directory identities are rechecked during partial-creation cleanup as well.
+These are finite custody observations, not independent-operator or physical-host
+authentication. A positive kernel-parent result requires the real new CI run;
+local ordinary-file refusal and IPC controls cannot supply it.
+The [new disposable-host workflow](../../.github/workflows/pon-fixed-parent-receiver-v1.yml)
+is separate from both original campaigns. It retains the exact compiler's Cargo
+artifact record, two real short controls, binary bytes, original controller IPC,
+root-held file bindings and independent reader output. Its success condition is
+the new host fixture only; the original finite paid-depletion predicate is
+reported separately and the previous failed x64 sample remains failed.
+
+The receiver startup handshake now shares one absolute deadline across partial
+prefix and body reads, reusing the established control-channel deadline owner.
+The original 180-second readiness budget is unchanged. Two new actual native
+controls passed before commit: ordinary files cannot serve as migration
+descriptors, and delayed/partial readiness frames cannot restart their deadline.
+Release/all-features interface compilation and strict Clippy also passed. These
+precommit observations remain distinct from committed-source qualification.
+The new sidecar brackets the actual deadline-arm operation with monotonic
+observations, rather than incorrectly using process-spawn completion as its
+exact start. The 180-second value and original read deadline remain unchanged.
+
+#### Actual CodeQL execution is separate from the existing security gate
+
+The [pinned analysis workflow](../../.github/workflows/pon-pinned-codeql-analysis-v1.yml)
+executes the unmodified official CodeQL 2.27.3 code-scanning suites and retains
+SARIF, every selected query's BQRS, query bytes, source checks, extraction
+diagnostics and failures. It uses `contents: read`, no persistent checkout
+credentials and no `security-events` writes. The original exporter/default
+setup and its failed or missing security verdict are unchanged. Findings remain
+findings even when query execution completes.
+
+The official Linux64 bundle is pinned to 558,869,612 bytes and SHA-256
+`5e7607e1b721728955e31f5402d460ad227cbd2ffed0d4cc610116755796150e`.
+Original query packs are Actions 0.6.38, Python 1.8.13, Rust 0.1.45 and C++ 1.9.2.
+The [analysis owner/reader](../../scripts/ci/run_pinned_codeql_analysis_v1.py)
+uses the retained bounded process owner, fixed outer phase deadlines, a fresh
+database and source checks on both success and failure. Its thread/RAM options
+are CLI hints, not a claimed process-family hard resource ceiling.
+
+Independent local B execution completed 18 Actions queries over all 19 tracked
+workflows and 45 Python queries over all 384 tracked Python files, with no
+reported findings or warning/error diagnostics in those two runs. First Rust
+extraction returned exit zero but could not load any of its four discovered
+workspaces; all 1,038 Rust inputs lacked semantic analysis. Its 37 queries and
+186 hard-coded-cryptographic-value findings are retained as partial results,
+with original severity and traces. First C/C++ execution completed 61 queries
+with zero findings but successfully extracted only two of three tracked C
+translation units. Neither partial result qualifies complete security analysis.
+
+The exact official extractor
+[toolchain selector](https://github.com/github/codeql/blob/a1575b98a8cc19bcfa7bb6cb41be688cb3dae65c/rust/extractor/src/toolchain.rs)
+selects Rust 1.99.0 for non-nightly projects; its configuration explicitly enables
+that toolchain's automatic installation. Diagnostic forwarding retained actual
+child commands trying to install 1.99.0 when it was unavailable, while direct
+project 1.95.0 Cargo metadata succeeded. Adding only 1.95.0 `rust-src` did not
+repair that failure. The independent workflow therefore installs the official
+extractor dependency separately. The project/default runtime compiler remains
+1.95.0; an analyzer's newer compiler must not be described as native-runtime
+validation of another toolchain. Old partial databases and failed observations
+remain retained until a new, unchanged-source extraction proves its own coverage.
+
+Installing the official 1.99.0 analysis dependency recovered real main-workspace
+semantic loading, but did not establish full archived-source or macro coverage.
+That extraction retained 33 warning/error lines and 299 semantic-failure marker
+lines, including incomplete historical workspaces and guest macro expansion.
+Its subsequent original-query run exited 100 inside CodeQL's relation-cache
+reader: a recorded 3,562-byte relation produced a 5,787-byte read. Eleven of 37
+diagnostic/metric BQRS files completed; 26 query results and the new SARIF were
+absent. No new security-query result or zero-finding result is inferred. The
+original failed database, cache sample and logs remain retained. Resource
+observations showed neither OOM nor sampled disk exhaustion; the underlying
+cache failure cause is not established by the generic exception wording.
+
+The [C analysis compiler](../../scripts/ci/build_pinned_codeql_cpp_v1.py) explicitly
+reconstructs the original two-fragment native translation unit as the unchanged
+spawn bytes, one LF, then unchanged retirement bytes. Byte ranges, line offsets,
+source hashes and generated-file bytes are checked independently. Named-file
+input replaces stdin only for analysis; path/line-sensitive predefined macros
+are refused. The SQLite analysis uses the exact original 0.37.0 registry
+amalgamation/build-source pins, witness input, include macro, 20 explicit defines
+and optimization setting. Both original recipe owners are hash-bound; changed
+owners require review. These analysis compilations do not execute a native
+library or publish the production SQLite build fence, whose loader-override
+refusals are unchanged.
+
+The C context is not itself extraction coverage. A composed input counts only
+when the original SARIF diagnostics actually name the exact, byte-verified
+generated unit; the witness still requires its own direct successful extraction.
+The independent context reader checks all four actual command phases, their
+logs, completion statuses and compiler output bindings. No missing fragment,
+query result or diagnostic is waived to make the analysis green.
+The first manual compilation and all 61 original queries completed, but its
+generated unit was outside the declared analysis root: the official successful
+file diagnostics named only the witness, and independent readback correctly
+retained 1/3 tracked-source coverage. That zero-finding partial result remains.
+The new runner instead uses one narrow analysis directory containing only an
+exact tracked-source copy and the generated build directory. All copied files
+are compared byte-for-byte by independent hashes before and after extraction;
+symlinks, special files, omissions and extra files are refused. Database/tools
+stay outside that root. Diagnostic URI bases and the project/generated prefixes
+remain explicit, separately checked mappings, not a blanket coverage waiver.
+
+Reader negative controls retain two additional counterexamples: a configuration
+error cannot be hidden behind successful execution, and a foreign SARIF URI base
+cannot relabel another source tree as current-source coverage. Missing tools
+retain a false terminal and both available source observations. Zero findings,
+exit zero or a selected-query count alone cannot substitute for actual coverage.
+
+#### Additional exact-B cost readback
+
+The [complete legal-cost run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40825729541)
+and [ARM v2 run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40825729599)
+were downloaded with their original GitHub sizes/digests. Independent readback
+checked seven actual ELF files, unchanged original summaries, 128 paired
+full-outer-cost ratios and the v2 compiled source bindings. Each x64/ARM V5 run
+retains 144 cohorts, nine supported legal producers, four horizons, 11,772 first
+admissions and 654 distinct paired fixture packets. The ARM v2 run retains all
+4,032 cohorts, 702,232 attempts and 58,916 exhausted searches.
+
+The V4 CLI's original absolute packet destination correctly refused a relocated
+local archive. That refusal remains; the subsequent explicitly mapped offline
+readback used the original semantic and packet-byte readers without modifying
+capture metadata. Full outer cost includes admission and storage work and must
+not be called a universal marginal mining cost. No new native cost run or full
+failed-transcript replay is inferred from this structural readback. Global
+cheapest-work bounds, accelerator/energy qualification, arbitrary public Sybil
+fairness, independent WAN operation, beneficial Hepta releases, whole-chain
+PQ128 and production governance remain **OPEN / NO_GO**.

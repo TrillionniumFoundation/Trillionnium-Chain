@@ -88,6 +88,40 @@ def check_wait4(value, pid, parent_pid, capture_started, nested=None):
             "parent_forced_kill": value["parent_forced_kill"], "cpu_observed": total is not None}
 
 
+def check_family_census(value):
+    """Retain successful child observations even when another census read failed.
+
+    The collector iterates its saved before set. A thread may disappear before
+    its child-file read or the after census; that race does not erase another
+    thread's successfully observed children.
+    """
+    before, after, rows = value["thread_ids_before"], value["thread_ids_after"], value["thread_children"]
+    for tids in (before, after):
+        require(tids is None or (type(tids) is list and len(tids) <= 256
+                and all(natural(tid) and tid > 0 for tid in tids)
+                and tids == sorted(set(tids))), "family thread census type/order")
+    require(type(rows) is list and len(rows) <= 256
+            and all(type(row) is dict and natural(row.get("tid")) and row["tid"] > 0 for row in rows)
+            and [row["tid"] for row in rows] == ([] if before is None else before),
+            "family before-census row coverage")
+    stable = before is not None and bool(before) and before == after
+    require(value["thread_set_stable"] is stable, "family thread stability relabelled")
+    children = set()
+    for row in rows:
+        if row["error"] is None:
+            require(type(row["children"]) is list
+                    and all(natural(pid) and pid > 0 and pid != value["pid"] for pid in row["children"]),
+                    "family child census type")
+            children.update(row["children"])
+        else:
+            require(type(row["error"]) is str and row["error"] and row["children"] is None,
+                    "family failed child census type")
+    observed = value["observed_child_pids"]
+    require(type(observed) is list and all(natural(pid) and pid > 0 for pid in observed)
+            and observed == sorted(children), "family child census association")
+    return observed
+
+
 def check_family(value, wait4, nested=None, require_subreaper=False):
     require(value["schema"] == "pon-process-family-observation-v1" and value["scope"] == FAMILY_SCOPE
             and value["pid"] == wait4["pid"] and type(value["pid"]) is int
@@ -100,7 +134,9 @@ def check_family(value, wait4, nested=None, require_subreaper=False):
     require(type(value["capture_complete"]) is bool and type(value["thread_set_stable"]) is bool
             and type(value["no_live_or_unreaped_children_observed"]) is bool
             and (value["child_subreaper"] is None or type(value["child_subreaper"]) is bool)
-            and type(value["errors"]) is list, "family observation flag types")
+            and type(value["errors"]) is list
+            and all(type(error) is str and error for error in value["errors"]), "family observation flag types")
+    observed = check_family_census(value)
     if not value["capture_complete"]:
         require(value["errors"] and value["no_live_or_unreaped_children_observed"] is False,
                 "incomplete family observation relabelled")
@@ -118,7 +154,7 @@ def check_family(value, wait4, nested=None, require_subreaper=False):
                 "family child census type")
         children.extend(row["children"])
     require(len(set(children)) == len(children)
-            and value["observed_child_pids"] == sorted(children)
+            and observed == sorted(children)
             and value["no_live_or_unreaped_children_observed"] is (not children), "family child census association")
     cpus = []
     # Reuse the exact wait4 time-field decoder while retaining distinct scope:
@@ -184,9 +220,7 @@ def check_child_probe(value, wait4, family, require_subreaper=False):
         require(type(value["subreaper_error"]) is str and value["subreaper_error"], "unknown subreaper observation")
     else:
         require(type(value["child_subreaper"]) is bool and value["subreaper_error"] is None, "subreaper observation type")
-    children = family["observed_child_pids"]
-    require(type(children) is list and all(natural(pid) and pid > 0 for pid in children)
-            and children == sorted(set(children)), "preserved procfs child observations")
+    children = check_family_census(family)
     require(not (children and absent), "procfs children contradict kernel ECHILD")
     subreaper = not require_subreaper or value["child_subreaper"] is family["child_subreaper"] is True
     quiet = absent and not children and subreaper

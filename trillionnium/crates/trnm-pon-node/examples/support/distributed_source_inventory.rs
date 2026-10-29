@@ -5139,6 +5139,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/tests/support/pure_fixed_parent_v1.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/support/pure_fixed_parent_v1.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/tests/support/pure_pressure_v2.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),

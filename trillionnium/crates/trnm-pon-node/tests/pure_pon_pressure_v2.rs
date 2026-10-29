@@ -1,6 +1,8 @@
 //! Separate finite pure-PoN v2 qualification. The historical r13 campaign and
 //! its failures remain intact. Passing this workload is not unlimited-Sybil
 //! fairness, W1 hardness, useful model work, WAN or production qualification.
+#[path = "support/pure_fixed_parent_v1.rs"]
+mod fixed_parent;
 #[path = "support/pure_receiver_owner_v1.rs"]
 mod receiver_owner;
 #[path = "support/pure_pressure_v2.rs"]
