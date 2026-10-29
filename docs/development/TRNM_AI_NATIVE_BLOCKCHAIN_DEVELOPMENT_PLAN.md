@@ -17,6 +17,22 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+### 2026-10-29 research continuation: preserve quantum outcome tails
+
+On the exact unknown-M research baseline
+`0682274361e529cd6a8e13285324c3c9ee0744b8`, the known-M stopping model is
+extended to preserve success and failure separately through single-worker
+budgets and multiple-worker races. Binary64 subtraction previously erased the
+`2**-64` failed tail of an almost-full nonce domain. A separately reproduced
+one-iteration near-quarter case also exposed a rounded-angle residual about
+six orders of magnitude larger than the true rare probability. The finite
+report moves to v2; independent exact-polynomial, existing state-vector and
+terminal-path controls retain the original experimental bounds. Details are
+in the [finite stopping research contract](../security/PON_FINITE_NONCE_STOPPING_MODEL_V1.md).
+This corrects conditional research arithmetic only. Complete W1 hardware cost,
+minimum legal oracle cost, physical quantum rates and production DAA
+qualification remain open.
+
 This is the one active engineering plan. It owns sequence, work boundaries and integration
 policy; the protocol suite owns domain rules and the module guides own implementation
 contracts. There is no parallel PoCO completion roadmap or separate Hepta blockchain.

@@ -317,5 +317,74 @@ class ModelBoundaries(unittest.TestCase):
         json.dumps(value, allow_nan=False)
 
 
+class SeparateOutcomeTails(unittest.TestCase):
+    def test_dense_nonce_failure_survives_single_worker_budget(self):
+        stop = q.search_stop(64, (1 << 64) - 1, 0, q.Timing(1, 2))
+        actual = q.campaign(stop, 0, 2)
+        expected = 2.0 ** -64
+        self.assertGreater(actual["budget_expiry_probability"], 0)
+        self.assertAlmostEqual(actual["budget_expiry_probability"] / expected, 1, delta=2e-15)
+        self.assertEqual(stop.failure_probability, expected)
+
+    def test_dense_nonce_failure_leaves_a_later_worker_a_real_chance(self):
+        dense = q.search_stop(64, (1 << 64) - 1, 0, q.Timing(1, 2))
+        actual = q.fixed_stop_race([dense, q.FixedStop(1, 3)], 3)
+        # The dense worker first completes at t=2 and cannot try again before
+        # t=4. The certain worker at t=3 wins exactly when the first one fails.
+        self.assertGreater(actual["worker_win_probabilities"][1], 0)
+        self.assertAlmostEqual(actual["worker_win_probabilities"][1] / (2.0 ** -64),
+                               1, delta=2e-15)
+        one = q.fixed_stop_race([dense], 2)
+        self.assertAlmostEqual(one["budget_expiry_probability"] / (2.0 ** -64),
+                               1, delta=2e-15)
+
+    def test_one_iteration_tails_match_independent_exact_cubic(self):
+        # sin(3 theta)^2 = p*(3-4p)^2 and its complement is
+        # (1-p)*(1-4p)^2. At M=N/4 +/- 1, the failed tail is about 3.53e-38;
+        # computing cos of a rounded pi/2 cannot recover this probability.
+        with localcontext() as context:
+            context.prec = 90
+            size = 1 << 64
+            for marked in (3 * size // 4 - 1, 3 * size // 4, 3 * size // 4 + 1,
+                           size // 4 - 1, size // 4, size // 4 + 1):
+                p = Decimal(marked) / Decimal(size)
+                expected = (p * (3 - 4 * p) ** 2, (1 - p) * (1 - 4 * p) ** 2)
+                scalar = q.grover_success(64, marked, 1)
+                if expected[0] == 0:
+                    self.assertEqual(scalar, 0)
+                else:
+                    self.assertAlmostEqual(scalar / float(expected[0]), 1, delta=2e-15)
+                got = q.grover_outcomes(64, marked, 1)
+                for value, exact in zip(got, expected):
+                    if exact == 0:
+                        self.assertEqual(value, 0)
+                    else:
+                        self.assertAlmostEqual(value / float(exact), 1, delta=2e-15)
+
+    def test_outcome_tails_agree_with_independent_sequential_recurrence(self):
+        import quantum_unknown_marked as unknown
+        size = 1 << 64
+        for marked in (0, 1, size // 4 - 1, size // 4, size // 4 + 1,
+                       size // 2, 3 * size // 4 - 1, 3 * size // 4 + 1, size - 1, size):
+            reference = unknown.marked_outcomes(64, marked, 32)
+            for j in (0, 1, 2, 7, 15, 31):
+                actual = q.grover_outcomes(64, marked, j)
+                for value, expected in zip(actual, reference[j]):
+                    if expected == 0:
+                        self.assertEqual(value, 0)
+                    else:
+                        self.assertAlmostEqual(value / expected, 1, delta=5e-14)
+
+    def test_explicit_tail_validation_and_legacy_probability_interface(self):
+        legacy = q.FixedStop(0.25, 1)
+        self.assertEqual(legacy.failure_probability, 0.75)
+        for failure in (-0.1, 1.1, math.nan, math.inf, True, 0.5):
+            with self.subTest(failure=failure):
+                with self.assertRaises(q.Reject):
+                    q.FixedStop(0.25, 1, failure_probability=failure)
+        self.assertEqual(q.grover_success(8, 64, 1), 1)
+        self.assertEqual(q.grover_outcomes(8, 64, 1), (1, 0))
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

@@ -1,0 +1,18 @@
+{
+  "command": [
+    "python",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "/workspace/scratch/faebcae3f86e/proof/evidence/original-source-red",
+    "-p",
+    "test_quantum_stopping.py",
+    "-k",
+    "SeparateOutcomeTails",
+    "-v"
+  ],
+  "original_source": "0682274361e529cd6a8e13285324c3c9ee0744b8",
+  "exit_code": 1
+}

@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import argparse
 from dataclasses import asdict, dataclass
+from decimal import Decimal, localcontext
 from fractions import Fraction
 import hashlib
 import itertools
@@ -19,6 +20,7 @@ from pathlib import Path
 
 
 MAX_NUMERIC_PHASE_RADIANS = 64.0
+OUTCOME_PRECISION = 80
 
 
 class Reject(ValueError):
@@ -43,16 +45,23 @@ def _integer(value, name: str, lower: int, upper: int) -> int:
     return value
 
 
-def grover_success(nonce_bits: int, marked: int, iterations: int) -> float:
-    """Ideal known-M success; no W1 distribution or circuit correctness claim."""
+def grover_outcomes(nonce_bits: int, marked: int, iterations: int) -> tuple[float, float]:
+    """Ideal known-M success/failure tails, rounded separately to binary64.
+
+    For x=1-2M/N, cos((4j+2)theta)=T_(2j+1)(x). Binary doubling evaluates
+    that Chebyshev polynomial in O(log(j+1)) Decimal operations. This avoids
+    subtracting a rounded success from one, and avoids rounded-pi/2 residuals
+    near a Grover peak. The retained phase bound remains an explicit domain
+    restriction; eighty digits are a numerical method, not interval proof.
+    """
     bits = _integer(nonce_bits, "NONCE_BITS", 1, 64)
     size = 1 << bits
     _integer(marked, "MARKED_COUNT", 0, size)
     _integer(iterations, "ITERATIONS", 0, (1 << 52) - 1)
     if marked == 0:
-        return 0.0
+        return 0.0, 1.0
     if marked == size:
-        return 1.0
+        return 1.0, 0.0
     # M/N can round to one for N=2**64,M=N-1. The complementary angle retains
     # the small unmarked count, including at long stopping times.
     complement = marked > size // 2
@@ -63,7 +72,25 @@ def grover_success(nonce_bits: int, marked: int, iterations: int) -> float:
     # phases for every M rather than special-case symmetric marked sets.
     if phase > MAX_NUMERIC_PHASE_RADIANS:
         raise Reject("GROVER_PHASE_OUTSIDE_NUMERIC_DOMAIN")
-    return (math.cos(phase) if complement else math.sin(phase)) ** 2
+    with localcontext() as context:
+        context.prec = OUTCOME_PRECISION
+        x = 1 - 2 * Decimal(marked) / Decimal(size)
+        left, right = Decimal(1), x
+        for bit in bin(2 * iterations + 1)[2:]:
+            middle = 2 * left * right - x
+            if bit == "0":
+                left, right = 2 * left * left - 1, middle
+            else:
+                left, right = middle, 2 * right * right - 1
+        success, failure = (1 - left) / 2, (1 + left) / 2
+        if not 0 <= success <= 1 or not 0 <= failure <= 1:
+            raise Reject("PROBABILITY_NUMERIC_RANGE")
+        return float(success), float(failure)
+
+
+def grover_success(nonce_bits: int, marked: int, iterations: int) -> float:
+    """Compatibility success projection; campaign callers retain both tails."""
+    return grover_outcomes(nonce_bits, marked, iterations)[0]
 
 
 def empty_domain_probability(nonce_bits: int, target_probability: float) -> float:
@@ -126,14 +153,31 @@ class FixedStop:
     attempt_seconds: float
     context_setup_seconds: float = 0.0
     winning_witness_publication_seconds: float = 0.0
+    failure_probability: float | None = None
 
     def __post_init__(self):
         for name in self.__dataclass_fields__:
+            if name == "failure_probability":
+                continue
             value = _real(getattr(self, name), name, positive=name == "attempt_seconds")
             if name == "success_probability" and value > 1:
                 raise Reject(name)
             object.__setattr__(self, name, value)
+        failure = (1 - self.success_probability if self.failure_probability is None
+                   else _real(self.failure_probability, "failure_probability"))
+        if failure > 1 or math.fsum((self.success_probability, failure)) != 1.0:
+            raise Reject("INCONSISTENT_OUTCOME_TAILS")
+        object.__setattr__(self, "failure_probability", failure)
         _real(float(self.first_completion()), "FIRST_COMPLETION", positive=True)
+
+    def log_failure(self) -> float:
+        if self.failure_probability == 0:
+            return -math.inf
+        # A small success may round its complement to one; a small failure
+        # may round success to one. Use the retained minority tail in either
+        # case so subsequent work and later-worker wins remain represented.
+        return (math.log1p(-self.success_probability) if self.success_probability <= 0.5
+                else math.log(self.failure_probability))
 
     def first_completion(self) -> Fraction:
         return (Fraction(self.context_setup_seconds) + Fraction(self.attempt_seconds)
@@ -148,9 +192,10 @@ class FixedStop:
 
 
 def search_stop(nonce_bits: int, marked: int, iterations: int, timing: Timing) -> FixedStop:
-    return FixedStop(grover_success(nonce_bits, marked, iterations),
+    success, failure = grover_outcomes(nonce_bits, marked, iterations)
+    return FixedStop(success,
                      timing.attempt_seconds(iterations), timing.context_setup_seconds,
-                     timing.winning_witness_publication_seconds)
+                     timing.winning_witness_publication_seconds, failure)
 
 
 def campaign(stop: FixedStop, external_tip_rate: float = 0.0,
@@ -173,7 +218,7 @@ def campaign(stop: FixedStop, external_tip_rate: float = 0.0,
                  else _integral(rate, float(budget)))
         expires = 0.0 if budget is None else math.exp(-rate * float(budget))
     else:
-        log_failure = -math.inf if p == 1 else math.log1p(-p)
+        log_failure = stop.log_failure()
         log_ratio = log_failure - rate * step
         win = math.exp(-rate * first) * p * _geometric(log_ratio, count)
         expires = (0.0 if budget is None else
@@ -188,7 +233,8 @@ def campaign(stop: FixedStop, external_tip_rate: float = 0.0,
                 series = (_integral(rate, step) * _geometric(log_ratio, periods)
                           + math.exp(_log_power(log_ratio, periods))
                           * _integral(rate, float(remainder)))
-            spent = _integral(rate, first) + math.exp(-rate * first) * (1 - p) * series
+            spent = (_integral(rate, first) + math.exp(-rate * first)
+                     * stop.failure_probability * series)
     if spent is not None and (not math.isfinite(spent) or spent <= 0):
         raise Reject("EXPECTED_TIME_NUMERIC_RANGE")
     external = 0.0 if spent is None else min(1.0, rate * spent)
@@ -260,7 +306,7 @@ def fixed_stop_race(stops: list[FixedStop], budget_seconds: float,
         weighted_survival = math.exp(log_survival - rate * float(at))
         for successes in itertools.product((False, True), repeat=len(due)):
             probability = math.prod(stops[i].success_probability if success
-                                    else 1 - stops[i].success_probability
+                                    else stops[i].failure_probability
                                     for i, success in zip(due, successes))
             winners = [i for i, success in zip(due, successes) if success]
             if winners:
@@ -269,8 +315,7 @@ def fixed_stop_race(stops: list[FixedStop], budget_seconds: float,
                     wins[index] += mass / len(winners)
                 if len(winners) > 1:
                     tie_mass += mass
-        log_survival += math.fsum(-math.inf if stops[i].success_probability == 1
-                                 else math.log1p(-stops[i].success_probability) for i in due)
+        log_survival += math.fsum(stops[i].log_failure() for i in due)
         previous = at
     spent += math.exp(log_survival - rate * float(previous)) * _integral(rate, float(budget - previous))
     return {
@@ -349,7 +394,7 @@ def report() -> dict:
                             timing.measure_check_restart_seconds, timing.context_setup_seconds,
                             timing.winning_witness_publication_seconds)
     return {
-        "schema": "pon-finite-nonce-stopping-conditional-model-v1",
+        "schema": "pon-finite-nonce-stopping-conditional-model-v2",
         "model_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
         "status": "research_conditional_not_production",
         "scope": {
@@ -359,6 +404,8 @@ def report() -> dict:
             "external_tips_independent_poisson_assumed": True,
             "abandon_on_tip_immediate_without_salvage_assumed": True,
             "binary64_probabilities_exact_fraction_time_order": True,
+            "success_and_failure_tails_rounded_separately": True,
+            "grover_outcome_decimal_precision": OUTCOME_PRECISION,
             "grover_minority_angle_phase_limit_radians": MAX_NUMERIC_PHASE_RADIANS,
             "native_W1_executed_by_this_model": False,
             "full_clean_W1_plus_diffusion_time_measured": False,

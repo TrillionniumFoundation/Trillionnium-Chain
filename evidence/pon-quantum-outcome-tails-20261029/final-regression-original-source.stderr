@@ -1,0 +1,52 @@
+test_dense_nonce_failure_leaves_a_later_worker_a_real_chance (test_quantum_stopping.SeparateOutcomeTails.test_dense_nonce_failure_leaves_a_later_worker_a_real_chance) ... FAIL
+test_dense_nonce_failure_survives_single_worker_budget (test_quantum_stopping.SeparateOutcomeTails.test_dense_nonce_failure_survives_single_worker_budget) ... FAIL
+test_explicit_tail_validation_and_legacy_probability_interface (test_quantum_stopping.SeparateOutcomeTails.test_explicit_tail_validation_and_legacy_probability_interface) ... ERROR
+test_one_iteration_tails_match_independent_exact_cubic (test_quantum_stopping.SeparateOutcomeTails.test_one_iteration_tails_match_independent_exact_cubic) ... FAIL
+test_outcome_tails_agree_with_independent_sequential_recurrence (test_quantum_stopping.SeparateOutcomeTails.test_outcome_tails_agree_with_independent_sequential_recurrence) ... ERROR
+
+======================================================================
+ERROR: test_explicit_tail_validation_and_legacy_probability_interface (test_quantum_stopping.SeparateOutcomeTails.test_explicit_tail_validation_and_legacy_probability_interface)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/faebcae3f86e/proof/evidence/original-source-red/test_quantum_stopping.py", line 380, in test_explicit_tail_validation_and_legacy_probability_interface
+    self.assertEqual(legacy.failure_probability, 0.75)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'FixedStop' object has no attribute 'failure_probability'
+
+======================================================================
+ERROR: test_outcome_tails_agree_with_independent_sequential_recurrence (test_quantum_stopping.SeparateOutcomeTails.test_outcome_tails_agree_with_independent_sequential_recurrence)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/faebcae3f86e/proof/evidence/original-source-red/test_quantum_stopping.py", line 371, in test_outcome_tails_agree_with_independent_sequential_recurrence
+    actual = q.grover_outcomes(64, marked, j)
+             ^^^^^^^^^^^^^^^^^
+AttributeError: module 'quantum_stopping' has no attribute 'grover_outcomes'. Did you mean: 'grover_success'?
+
+======================================================================
+FAIL: test_dense_nonce_failure_leaves_a_later_worker_a_real_chance (test_quantum_stopping.SeparateOutcomeTails.test_dense_nonce_failure_leaves_a_later_worker_a_real_chance)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/faebcae3f86e/proof/evidence/original-source-red/test_quantum_stopping.py", line 334, in test_dense_nonce_failure_leaves_a_later_worker_a_real_chance
+    self.assertGreater(actual["worker_win_probabilities"][1], 0)
+AssertionError: 0.0 not greater than 0
+
+======================================================================
+FAIL: test_dense_nonce_failure_survives_single_worker_budget (test_quantum_stopping.SeparateOutcomeTails.test_dense_nonce_failure_survives_single_worker_budget)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/faebcae3f86e/proof/evidence/original-source-red/test_quantum_stopping.py", line 325, in test_dense_nonce_failure_survives_single_worker_budget
+    self.assertGreater(actual["budget_expiry_probability"], 0)
+AssertionError: 0.0 not greater than 0
+
+======================================================================
+FAIL: test_one_iteration_tails_match_independent_exact_cubic (test_quantum_stopping.SeparateOutcomeTails.test_one_iteration_tails_match_independent_exact_cubic)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/faebcae3f86e/proof/evidence/original-source-red/test_quantum_stopping.py", line 356, in test_one_iteration_tails_match_independent_exact_cubic
+    self.assertAlmostEqual(scalar / float(expected[0]), 1, delta=2e-15)
+AssertionError: 733325.0771172694 != 1 within 2e-15 delta (733324.0771172694 difference)
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.007s
+
+FAILED (failures=3, errors=2)

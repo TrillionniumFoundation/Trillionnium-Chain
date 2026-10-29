@@ -1,0 +1,146 @@
+{
+  "base_commit": "0682274361e529cd6a8e13285324c3c9ee0744b8",
+  "candidate_tree": "8254f7f9e0675d73263849f7ab9c0dd0a0c3dbe6",
+  "partial_checkout": true,
+  "full_workspace_cargo_and_clippy_not_run": true,
+  "changed_source_sha256": {
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": "b10ed98ac6a72e258447ddba0f8043db862cb92110f41afa6790d15fa94c08e4",
+    "docs/security/PON_FINITE_NONCE_STOPPING_MODEL_V1.md": "22b9bc005958748898e8655530266d0cfb6d413bb3444acd1f1d3713158890e2",
+    "formal/pon-nakamoto-v1/quantum_stopping.py": "5769285b6fde7b4af5e6ef015286daa79a60f0b95874fd75a0396b5af8a19a03",
+    "formal/pon-nakamoto-v1/test_quantum_stopping.py": "6de1cc4231867eef1308f3c18c01afd505f0c3624ee842b553ca746590e4d8b6"
+  },
+  "methods": 56,
+  "all_passed": true,
+  "records": [
+    {
+      "command": [
+        "python",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_w1_oracle_blueprint.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "methods": 11,
+      "skipped": false,
+      "wall_seconds": 2.9547954730078345,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "313be60cd3cabf21b6715ea2ac97623efaf130163da0f647263bbd79d4b1b644"
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_quantum_daa.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "methods": 7,
+      "skipped": false,
+      "wall_seconds": 2.303311997005949,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "532b5975ed8b1e78cf39b20db6b0a19578c4154ded8fbd7388fff8fdca207e16"
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_quantum_stopping.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "methods": 26,
+      "skipped": false,
+      "wall_seconds": 1.1804659979970893,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "d76833655713e31302493cea8e2354a0be6a01db872025d6fbdf02ab5af11cc6"
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_quantum_unknown_marked.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "methods": 12,
+      "skipped": false,
+      "wall_seconds": 0.39103387099748943,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "faafa8771584842810bc4a7e3f2b36c75a6667284a0b712d2628ec024f531275"
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "formal/pon-nakamoto-v1/w1_oracle_blueprint.py",
+        "--output",
+        "/workspace/scratch/faebcae3f86e/proof/evidence/final-w1_oracle_blueprint.json"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.5803462260082597,
+      "sha256": "a6e782778c4551ce35aa4fc1ae9092b6b5036c00010e9c2f2dde73ca27cfac63"
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "formal/pon-nakamoto-v1/quantum_daa.py",
+        "--output",
+        "/workspace/scratch/faebcae3f86e/proof/evidence/final-quantum_daa.json"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.9522128230019007,
+      "sha256": "bc0fa4100d243b356c3fc157d4d089f85d452b32e1e07b57cdd2d5b01d5256da"
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "formal/pon-nakamoto-v1/quantum_stopping.py",
+        "--output",
+        "/workspace/scratch/faebcae3f86e/proof/evidence/final-quantum_stopping.json"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.13041381699440535,
+      "sha256": "67cd9681fe845cac3844a30b5a9a8606e8a75a220d302fcc55ea73f8969cec86"
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "formal/pon-nakamoto-v1/quantum_unknown_marked.py",
+        "--output",
+        "/workspace/scratch/faebcae3f86e/proof/evidence/final-quantum_unknown_marked.json"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 3.2286000609892653,
+      "sha256": "006692dabc5ca54da0aa4d345d5ecec87dad9d0237403661c5a811c4c3695348"
+    }
+  ],
+  "compiler": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+  "production_qualification": false
+}
