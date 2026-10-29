@@ -21,6 +21,7 @@ import llm_runtime_pilot as runtime
 import llm_answer_eos_research_v3 as research
 import llm_answer_eos_task_research_v4 as task_research
 import llm_runtime_observed_execution_v1 as observed
+import llm_binary_answer_observed_v2 as binary
 
 SCHEMA = 'llm-runtime-parent-step-input-v2'
 PROFILE = 'canonical-positive-zero-to-caller-peft-A-v2'
@@ -40,10 +41,14 @@ def sources(profile=PROFILE):
         result['research_task'] = runtime.file_sha(task_research.__file__)
     if profile == observed.PROFILE:
         result['observation_execution'] = runtime.file_sha(observed.__file__)
+    if profile == binary.PROFILE:
+        result['binary_answer_observed'] = runtime.file_sha(binary.__file__)
     return result
 
 
 def version(value):
+    if binary.is_binary(value):
+        return 'binary-observed-v2'
     if observed.is_observed(value):
         return 'observed-v1'
     if task_research.is_research(value):
@@ -73,6 +78,8 @@ def binding(value):
 
 
 def preflight(value):
+    if binary.is_binary(value):
+        return binary.preflight(value)
     if observed.is_observed(value):
         return observed.preflight(value)
     if task_research.is_research(value):
@@ -170,6 +177,8 @@ def candidate_record(value, descriptor, candidate, changed, task_link=None):
         record['research'] = research_module(value).context(value)
     if observed.is_observed(value):
         record['observation_execution'] = observed.context(value)
+    if binary.is_binary(value):
+        record['binary_observed_execution'] = binary.context(value)
     return record
 
 
@@ -183,9 +192,12 @@ def verify_completion(value):
         'outcome observed_wall_ns training setup candidate setup_changed_from_parent training_changed_from_setup ' +
         ' '.join(step.FALSES) + (' task_link' if new_task(value) else '') +
         (' research' if research_module(value) else '') +
-        (' observation_execution' if observed.is_observed(value) else ''))
+        (' observation_execution' if observed.is_observed(value) else '') +
+        (' binary_observed_execution' if binary.is_binary(value) else ''))
     if observed.is_observed(value):
         runtime.require(report['observation_execution'] == observed.context(value), 'OBSERVED_REPORT_CONTEXT')
+    if binary.is_binary(value):
+        runtime.require(report['binary_observed_execution'] == binary.context(value), 'BINARY_V2_REPORT_CONTEXT')
     if new_task(value):
         from llm_runtime_parent_step_task_v2 import verify_report
         verify_report(value, report['task_link'])
@@ -204,17 +216,20 @@ def verify_completion(value):
     runtime.require(all(type(v) is str and 0 < len(v) <= 128 for v in report['environment'].values()) and
         type(report['observed_wall_ns']) is int and report['observed_wall_ns'] >= 0, 'PARENT_V2_OBSERVATIONS')
     training = report['training']
-    step.closed(training, 'steps loss tokens supervised_tokens supported_profile_flops flop_scope' +
-                (' objective' if research_module(value) else ''))
-    runtime.require(type(training['steps']) is int and training['steps'] == plan['training_steps'] and
-        type(training['loss']) is list and len(training['loss']) == training['steps'] and
-        all(type(v) is str and 0 < len(v) <= 128 and math.isfinite(float(v)) for v in training['loss']) and
-        all(type(training[n]) is int and training[n] >= 0 for n in
-            ('tokens', 'supervised_tokens', 'supported_profile_flops')) and
-        0 < training['supervised_tokens'] <= training['tokens'] <= training['steps'] * plan['input_tokens_max'] and
-        training['flop_scope'] == 'profiler-supported-operators-only-not-total-work', 'PARENT_V2_TRAINING')
-    if research_module(value):
-        research.verify_training(training)
+    if binary.is_binary(value):
+        binary.verify_training(value, plan, training)
+    else:
+        step.closed(training, 'steps loss tokens supervised_tokens supported_profile_flops flop_scope' +
+                    (' objective' if research_module(value) else ''))
+        runtime.require(type(training['steps']) is int and training['steps'] == plan['training_steps'] and
+            type(training['loss']) is list and len(training['loss']) == training['steps'] and
+            all(type(v) is str and 0 < len(v) <= 128 and math.isfinite(float(v)) for v in training['loss']) and
+            all(type(training[n]) is int and training[n] >= 0 for n in
+                ('tokens', 'supervised_tokens', 'supported_profile_flops')) and
+            0 < training['supervised_tokens'] <= training['tokens'] <= training['steps'] * plan['input_tokens_max'] and
+            training['flop_scope'] == 'profiler-supported-operators-only-not-total-work', 'PARENT_V2_TRAINING')
+        if research_module(value):
+            research.verify_training(training)
     prepared = verify_setup(value, report['setup'], contract, original)
     candidate = _material(value, directory, '', report['candidate'])
     changed = candidate != prepared
@@ -222,7 +237,8 @@ def verify_completion(value):
     step.closed(record, 'schema scope operation attempt_binding input source contract parent parent_generation '
         'candidate_generation setup candidate training_changed_from_setup flags' + (' task_link' if new_task(value) else '') +
         (' research' if research_module(value) else '') +
-        (' observation_execution' if observed.is_observed(value) else ''))
+        (' observation_execution' if observed.is_observed(value) else '') +
+        (' binary_observed_execution' if binary.is_binary(value) else ''))
     runtime.require(type(record['parent_generation']) is int and type(record['candidate_generation']) is int and
         type(record['training_changed_from_setup']) is bool and all(v is False for v in record['flags'].values()) and
         type(report['training_changed_from_setup']) is bool and
@@ -251,6 +267,8 @@ def child(args, value):
         report['research'] = research_module(value).context(value)
     if observed.is_observed(value):
         report['observation_execution'] = observed.context(value)
+    if binary.is_binary(value):
+        report['binary_observed_execution'] = binary.context(value)
     begin = time.monotonic_ns()
     try:
         imports = observer.stage('runtime-import', lambda: runtime.runtime_import(plan))
@@ -285,9 +303,13 @@ def child(args, value):
             actual_device=str(device), actual_threads=torch.get_num_threads(), torch_cuda=torch.version.cuda,
             environment={n: importlib.metadata.version(n) for n in
                 ('torch', 'transformers', 'peft', 'safetensors', 'tokenizers', 'numpy', 'accelerate')})
-        report['training'] = observer.stage('training', lambda:
-            research.train(model, tokenizer, plan, torch, device) if research_module(value) else
-            runtime.train(model, tokenizer, plan, 'candidate', torch, device))
+        if binary.is_binary(value):
+            report['training'] = observer.stage('training', lambda:
+                binary.train(value, model, tokenizer, plan, torch, device, directory))
+        else:
+            report['training'] = observer.stage('training', lambda:
+                research.train(model, tokenizer, plan, torch, device) if research_module(value) else
+                runtime.train(model, tokenizer, plan, 'candidate', torch, device))
         index = {n: runtime.tensor_descriptor(t) for n, t in runtime.backbone_tensors(model, shapes).items()}
         runtime.require(runtime.contract_module().H('llm-tensor-index-v1', runtime.canonical(index)).hex() ==
                         contract['backbone']['index_root'], 'PARENT_STEP_BACKBONE_MUTATION')
@@ -307,47 +329,57 @@ def child(args, value):
         report.update(outcome='failed', error_type=type(error).__name__, error=str(error)[:128])
         raise
     finally:
-        try:
-            if observed.is_observed(value):
-                # Keep release work inside the live child and its unchanged
-                # training budget. No artifact/optimizer/model-plan operation
-                # occurs after this point. This does not replace the original
-                # independent 100 ms owned-exit observation.
-                import ctypes
-                import gc
-                release_started = time.monotonic_ns()
-                release = dict(schema='llm-parent-live-release-observed-v1',
-                    input=runtime.identity(value), source=value['source'],
-                    scope='post-training-resource-release-not-terminal-qualification',
-                    original_terminal_observer_required=True, outcome='failed')
-                try:
-                    model = tokenizer = tensors = captured = None
-                    release['collected_cycles'] = observer.stage('live-model-cycle-release', gc.collect)
-                    libc = ctypes.CDLL(None, use_errno=True)
-                    trim = libc.malloc_trim
-                    trim.argtypes = [ctypes.c_size_t]
-                    trim.restype = ctypes.c_int
-                    release['malloc_trim_return'] = observer.stage('live-model-allocator-trim', lambda: trim(0))
-                    release['outcome'] = 'attempt-completed'
-                except BaseException as error:
-                    release.update(error_type=type(error).__name__, error=str(error)[:128])
-                    raise
-                finally:
-                    release['observed_wall_ns'] = time.monotonic_ns() - release_started
-                    runtime.save(directory / 'live-release-observed-v1.json', release)
-        finally:
-            report['observed_wall_ns'] = time.monotonic_ns() - begin
-            runtime.save(directory / 'actual-receipt.json', report)
+        if binary.is_binary(value):
+            # Release all references owned by this frame before collecting cycles;
+            # an active training traceback can still own references and remains a
+            # failure. The independent original terminal observer still decides.
+            model = tokenizer = tensors = captured = None
+            binary.finalize_live_child(value, directory, observer, report, begin, sys.exception())
+        else:
+            try:
+                if observed.is_observed(value):
+                    # Keep release work inside the live child and its unchanged
+                    # training budget. No artifact/optimizer/model-plan operation
+                    # occurs after this point. This does not replace the original
+                    # independent 100 ms owned-exit observation.
+                    import ctypes
+                    import gc
+                    release_started = time.monotonic_ns()
+                    release = dict(schema='llm-parent-live-release-observed-v1',
+                        input=runtime.identity(value), source=value['source'],
+                        scope='post-training-resource-release-not-terminal-qualification',
+                        original_terminal_observer_required=True, outcome='failed')
+                    try:
+                        model = tokenizer = tensors = captured = None
+                        release['collected_cycles'] = observer.stage('live-model-cycle-release', gc.collect)
+                        libc = ctypes.CDLL(None, use_errno=True)
+                        trim = libc.malloc_trim
+                        trim.argtypes = [ctypes.c_size_t]
+                        trim.restype = ctypes.c_int
+                        release['malloc_trim_return'] = observer.stage('live-model-allocator-trim', lambda: trim(0))
+                        release['outcome'] = 'attempt-completed'
+                    except BaseException as error:
+                        release.update(error_type=type(error).__name__, error=str(error)[:128])
+                        raise
+                    finally:
+                        release['observed_wall_ns'] = time.monotonic_ns() - release_started
+                        runtime.save(directory / 'live-release-observed-v1.json', release)
+            finally:
+                report['observed_wall_ns'] = time.monotonic_ns() - begin
+                runtime.save(directory / 'actual-receipt.json', report)
 
 
 def run(args):
     runtime.require(args.operation == 'train', 'PARENT_V2_OPERATION_UNIMPLEMENTED')
-    runtime.require(args.initial_setup_profile in (PROFILE, NEW_TASK_PROFILE, research.PROFILE, task_research.PROFILE, observed.PROFILE) and args.parent_material and args.parent_material_sha256,
+    runtime.require(args.initial_setup_profile in (PROFILE, NEW_TASK_PROFILE, research.PROFILE, task_research.PROFILE, observed.PROFILE, binary.PROFILE) and args.parent_material and args.parent_material_sha256,
                     'PARENT_V2_ARGUMENTS')
     selected_research = (task_research if args.initial_setup_profile == task_research.PROFILE else
                          research if args.initial_setup_profile == research.PROFILE else None)
     is_research = selected_research is not None
     is_observed = args.initial_setup_profile == observed.PROFILE
+    is_binary = args.initial_setup_profile == binary.PROFILE
+    binary_role = (getattr(args, 'binary_plan', None), getattr(args, 'binary_plan_sha256', None))
+    runtime.require(all(binary_role) if is_binary else not any(binary_role), 'BINARY_V2_PLAN_ARGUMENTS')
     observation_role = (getattr(args, 'observation_plan', None), getattr(args, 'observation_plan_sha256', None))
     runtime.require(all(observation_role) if is_observed else not any(observation_role), 'OBSERVED_PLAN_ARGUMENTS')
     plan_role = (getattr(args, 'research_plan', None), getattr(args, 'research_plan_sha256', None))
@@ -359,7 +391,7 @@ def run(args):
         ('materials', 'plan', 'parent_contract', 'parent_adapter', 'parent_artifact')}
     files['candidate_directory'] = None
     directory = Path(args.output).absolute()
-    value = dict(schema=observed.SCHEMA if is_observed else selected_research.SCHEMA if is_research else SCHEMA, scope=step.SCOPE, attempt_id=args.attempt_id, operation='train',
+    value = dict(schema=binary.SCHEMA if is_binary else observed.SCHEMA if is_observed else selected_research.SCHEMA if is_research else SCHEMA, scope=step.SCOPE, attempt_id=args.attempt_id, operation='train',
         experiment=args.expected_plan, source=sources(args.initial_setup_profile), files=files,
         parent=dict(contract=args.expected_contract, adapter=args.expected_parent_adapter,
                     file_sha256=args.expected_parent_file_sha256), candidate=None,
@@ -370,6 +402,8 @@ def run(args):
         value['initial_setup']['research_plan'] = dict(path=str(Path(plan_role[0]).absolute()), sha256=plan_role[1])
     if is_observed:
         value['initial_setup']['observation_plan'] = dict(path=str(Path(observation_role[0]).absolute()), sha256=observation_role[1])
+    if is_binary:
+        value['initial_setup']['binary_plan'] = dict(path=str(Path(binary_role[0]).absolute()), sha256=binary_role[1])
     if new_task(value):
         from llm_runtime_parent_step_task_v2 import request_link
         value['initial_setup']['task_link'] = request_link(value)
@@ -380,13 +414,16 @@ def run(args):
     command = [sys.executable, str(Path(runtime.__file__).resolve()), '_child', '--materials', files['materials'],
         '--plan', files['plan'], '--output', value['output'], '--phase', 'parent-step', '--role', 'candidate',
         '--parent-step-input', str(frozen), '--expected-parent-step-input', runtime.identity(value)]
-    observer_profile = observed.checked_plan(value)['observer'] if is_observed else plan.get('exit_observation')
+    observer_profile = (binary.checked_plan(value)['observer'] if is_binary else
+        observed.checked_plan(value)['observer'] if is_observed else plan.get('exit_observation'))
     result = runtime.supervise(command, value['output'], plan['training_budget'], exit_observation=observer_profile)
     completion = dict(schema=named(value, 'llm-runtime-parent-step-result'), scope=step.SCOPE, input=runtime.identity(value), attempt_binding=binding(value),
         supervisor=result, outcome='failed', completion_verified=False, actual_receipt_sha256=None, flags=step.FALSES)
     try:
         if is_observed:
             completion['observation_execution'] = observed.context(value)
+        if is_binary:
+            completion['binary_observed_execution'] = binary.context(value)
         runtime.require(result['outcome'] == 'success' and type(result['exit_code']) is int and result['exit_code'] == 0 and
             result['stop_reason'] is None and result['budget'] == plan['training_budget'] and
             result['waited_child_reaped'] is True and result['owned_child_reap_resolved'] is True and
@@ -394,6 +431,8 @@ def run(args):
             'PARENT_STEP_CHILD_FAILED')
         if is_observed:
             observed.verify_supervisor(value, result)
+        if is_binary:
+            binary.verify_supervisor(value, result)
         completion['actual_receipt_sha256'] = verify_completion(value)
         completion.update(outcome='success', completion_verified=True)
     finally:
@@ -401,10 +440,12 @@ def run(args):
 
 
 def add_arguments(parser):
-    parser.add_argument('--initial-setup-profile', choices=(PROFILE, NEW_TASK_PROFILE, research.PROFILE, task_research.PROFILE, observed.PROFILE))
+    parser.add_argument('--initial-setup-profile', choices=(PROFILE, NEW_TASK_PROFILE, research.PROFILE, task_research.PROFILE, observed.PROFILE, binary.PROFILE))
     parser.add_argument('--parent-material')
     parser.add_argument('--parent-material-sha256')
     parser.add_argument('--research-plan')
     parser.add_argument('--research-plan-sha256')
     parser.add_argument('--observation-plan')
     parser.add_argument('--observation-plan-sha256')
+    parser.add_argument('--binary-plan')
+    parser.add_argument('--binary-plan-sha256')
