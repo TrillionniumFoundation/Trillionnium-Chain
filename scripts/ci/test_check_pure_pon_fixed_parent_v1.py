@@ -439,6 +439,53 @@ class FixedParentControls(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "stop preceded final phase"):
             reader.check_directory(self.root)
 
+    def test_c1_rebound_stop_before_cleanup_snapshot_end_is_rejected(self):
+        result = load(self.root / "results.json")
+        final_end = result["phases"][-1]["after"]["ended_monotonic_ns"]
+        path = self.root / "manager-command-04.json"
+        stop = load(path)
+        stop.update(started_monotonic_ns=final_end + 1, ended_monotonic_ns=final_end + 2)
+        self.assertLessEqual(final_end, stop["started_monotonic_ns"])
+        self.assertLess(stop["ended_monotonic_ns"], result["cleanup"]["before"]["started_monotonic_ns"])
+        before_results = (self.root / "results.json").read_bytes()
+        write(path, stop)
+        rebind(self.root)
+        self.assertEqual((self.root / "results.json").read_bytes(), before_results)
+        with self.assertRaisesRegex(ValueError, "fixture stop preceded cleanup empty observation"):
+            reader.check_directory(self.root)
+
+    def test_cleanup_snapshot_end_equal_stop_start_is_consistent(self):
+        cleanup_end = load(self.root / "results.json")["cleanup"]["before"]["ended_monotonic_ns"]
+        self.mutate("manager-command-04.json", lambda value: value.update(
+            started_monotonic_ns=cleanup_end, ended_monotonic_ns=cleanup_end + 1))
+        value = reader.check_directory(self.root)
+        self.assertTrue(value["host_fixture_qualified"])
+        self.assertFalse(value["physical_authentication"])
+        self.assertFalse(value["original_campaign_qualification"])
+
+    def test_cleanup_snapshot_end_strictly_before_stop_is_consistent(self):
+        cleanup_end = load(self.root / "results.json")["cleanup"]["before"]["ended_monotonic_ns"]
+        self.mutate("manager-command-04.json", lambda value: value.update(
+            started_monotonic_ns=cleanup_end + 1, ended_monotonic_ns=cleanup_end + 2))
+        value = reader.check_directory(self.root)
+        self.assertTrue(value["host_fixture_qualified"])
+        self.assertFalse(value["physical_authentication"])
+        self.assertFalse(value["original_campaign_qualification"])
+
+    def test_cleanup_order_does_not_bypass_raw_binding_or_manager_exit(self):
+        cleanup_end = load(self.root / "results.json")["cleanup"]["before"]["ended_monotonic_ns"]
+        path = self.root / "manager-command-04.json"
+        original = load(path)
+        write(path, {**original, "started_monotonic_ns": cleanup_end,
+                     "ended_monotonic_ns": cleanup_end + 1})
+        with self.assertRaisesRegex(ValueError, "root-bound raw bytes changed"):
+            reader.check_directory(self.root)
+        rebind(self.root)
+        self.assertTrue(reader.check_directory(self.root)["host_fixture_qualified"])
+        self.mutate("manager-command-04.json", lambda value: value.update(returncode=1))
+        with self.assertRaisesRegex(ValueError, "manager operation failed"):
+            reader.check_directory(self.root)
+
     def test_nonzero_controller_exit_cannot_be_host_success(self):
         self.mutate("baseline-process.json", lambda value: value.update(returncode=7))
         result = load(self.root / "results.json")
