@@ -9,7 +9,7 @@ use std::{
     net::SocketAddr,
     os::unix::fs::MetadataExt,
     path::{Component, Path, PathBuf},
-    process::{Child, Command, Stdio},
+    process::{Command, Stdio},
     thread,
     time::{Duration, Instant},
 };
@@ -20,6 +20,9 @@ use trnm_pon_node::{
     Settings,
 };
 use trnm_protocol::pon_wire::{hash, Envelope, Header};
+
+#[path = "pure_process_cost_v1.rs"]
+pub mod process_cost;
 
 pub const WINDOW_NS: u64 = 30_000_000_000;
 pub const ATTACKERS: usize = 24;
@@ -134,7 +137,7 @@ impl AttackerCostLedger {
     }
 }
 
-fn cost_directory(path: &Path) -> io::Result<fs::File> {
+pub(super) fn cost_directory(path: &Path) -> io::Result<fs::File> {
     let flags = rustix::fs::OFlags::RDONLY
         | rustix::fs::OFlags::DIRECTORY
         | rustix::fs::OFlags::NOFOLLOW
@@ -157,7 +160,7 @@ fn cost_directory(path: &Path) -> io::Result<fs::File> {
     Ok(held)
 }
 
-fn cost_file_bytes(
+pub(super) fn cost_file_bytes(
     directory: &fs::File,
     name: &str,
     limit: u64,
@@ -338,6 +341,250 @@ pub fn capture_attacker_cost_bindings(path: &Path, report: &Value) -> io::Result
     let mut file: fs::File = rustix::fs::openat(
         &directory,
         COST_BINDING_FILE,
+        rustix::fs::OFlags::WRONLY
+            | rustix::fs::OFlags::CREATE
+            | rustix::fs::OFlags::EXCL
+            | rustix::fs::OFlags::NOFOLLOW
+            | rustix::fs::OFlags::CLOEXEC,
+        rustix::fs::Mode::from_bits_truncate(0o600),
+    )?
+    .into();
+    file.write_all(&raw)?;
+    file.sync_all()
+}
+
+/// Single-reap whole-actor observations, published after the original service
+/// shutdown. The old v3 service report and its deadline predicates stay intact.
+pub fn capture_actor_process_costs(
+    path: &Path,
+    report: &Value,
+    records: &[Value],
+) -> io::Result<()> {
+    const LOG_LIMIT: u64 = 1024 * 1024;
+    let started = monotonic();
+    let deadline = Instant::now() + Duration::from_nanos(COST_CAPTURE_BUDGET_NS);
+    let directory = cost_directory(path)?;
+    let wrappers = report["actors"]
+        .as_array()
+        .ok_or_else(|| io::Error::other("PROCESS_COST_ACTOR_LIST"))?;
+    let expected = if report["phase"] == "baseline" {
+        0
+    } else {
+        ATTACKERS
+    };
+    let mut rows = Vec::new();
+    for (index, wrapper) in wrappers.iter().enumerate() {
+        let name = format!("actor-{index}");
+        let child = rustix::fs::openat(
+            &directory,
+            name.as_str(),
+            rustix::fs::OFlags::RDONLY
+                | rustix::fs::OFlags::DIRECTORY
+                | rustix::fs::OFlags::NOFOLLOW
+                | rustix::fs::OFlags::CLOEXEC,
+            rustix::fs::Mode::empty(),
+        )
+        .map(fs::File::from);
+        let mut files = serde_json::Map::new();
+        let mut complete = records.get(index).is_some();
+        for (file, limit) in [
+            ("report.json", ACTOR_REPORT_LIMIT),
+            ("attacker-cost-v1.json", ACTOR_COST_LIMIT),
+            ("actor.log", LOG_LIMIT),
+            ("actor-family-observation-v1.json", LOG_LIMIT),
+        ] {
+            let value = child
+                .as_ref()
+                .map_err(|_| io::Error::other("PROCESS_COST_DIRECTORY"))
+                .and_then(|held| cost_file_bytes(held, file, limit, deadline));
+            let identity = match value {
+                Ok(raw) => {
+                    json!({"bytes":raw.len(),"sha256":hex::encode(Sha256::digest(&raw)),"error":null})
+                }
+                Err(error) => {
+                    complete = false;
+                    json!({"bytes":null,"sha256":null,"error":error.to_string()})
+                }
+            };
+            files.insert(file.to_owned(), identity);
+        }
+        let cost = records.get(index);
+        complete &= cost.is_some_and(|record| {
+            record["pid"] == wrapper["pid"]
+                && record["exit_success"] == wrapper["exit_success"]
+                && record["parent_forced_kill"] == wrapper["parent_forced_kill"]
+        });
+        rows.push(
+            json!({"actor":index,"actor_directory":name,"pid":wrapper["pid"],
+            "cost":cost,"files":files,"capture_complete":complete}),
+        );
+    }
+    let binding = cost_file_bytes(
+        &directory,
+        COST_BINDING_FILE,
+        COST_BINDING_LIMIT as u64,
+        deadline,
+    );
+    let (binding, binding_ok) = match binding {
+        Ok(raw) => (
+            json!({"bytes":raw.len(),"sha256":hex::encode(Sha256::digest(&raw)),"error":null}),
+            true,
+        ),
+        Err(error) => (
+            json!({"bytes":null,"sha256":null,"error":error.to_string()}),
+            false,
+        ),
+    };
+    let ended = monotonic();
+    let complete = wrappers.len() == expected
+        && records.len() == expected
+        && binding_ok
+        && rows.iter().all(|row| row["capture_complete"] == true)
+        && ended.saturating_sub(started) <= COST_CAPTURE_BUDGET_NS;
+    let value = json!({"schema":"pon-pure-attacker-process-cost-v1","phase":report["phase"],
+        "parent_pid":std::process::id(),"epoch_monotonic_ns":report["epoch_monotonic_ns"],
+        "started_monotonic_ns":started,"ended_monotonic_ns":ended,
+        "read_budget_ns":COST_CAPTURE_BUDGET_NS,"actor_report_limit":ACTOR_REPORT_LIMIT,
+        "actor_cost_limit":ACTOR_COST_LIMIT,"actor_log_limit":LOG_LIMIT,
+        "expected_actors":expected,"actors":rows,"thread_cost_parent_binding":binding,
+        "capture_complete":complete,"physical_authentication":false,
+        "scope":"Parent single-reap wait4 observations for each original actor PID, bound to complete report, thread-cost sidecar and final log bytes after original cleanup. Whole actor process costs are separate from receiver costs; nested CPU is not added twice."});
+    let mut raw = serde_json::to_vec(&value)?;
+    raw.push(b'\n');
+    if raw.len() > COST_BINDING_LIMIT {
+        return Err(io::Error::other("PROCESS_COST_BINDING_BYTES"));
+    }
+    let mut file: fs::File = rustix::fs::openat(
+        &directory,
+        "attacker-process-cost-v1.json",
+        rustix::fs::OFlags::WRONLY
+            | rustix::fs::OFlags::CREATE
+            | rustix::fs::OFlags::EXCL
+            | rustix::fs::OFlags::NOFOLLOW
+            | rustix::fs::OFlags::CLOEXEC,
+        rustix::fs::Mode::from_bits_truncate(0o600),
+    )?
+    .into();
+    file.write_all(&raw)?;
+    file.sync_all()
+}
+
+/// A new independent binding, so historical proc-only files and their failures
+/// remain immutable. Parent cost manifests are themselves byte-bound here.
+pub fn capture_child_ownership_binding(
+    path: &Path,
+    report: &Value,
+    receiver: bool,
+) -> io::Result<()> {
+    let started = monotonic();
+    let deadline = Instant::now() + Duration::from_secs(5);
+    let held = cost_directory(path)?;
+    let (kind, filename, parent_file, probe_file) = if receiver {
+        (
+            "receiver",
+            "receiver-child-ownership-binding-v1.json",
+            "receiver-owner-binding-v1.json",
+            "receiver-child-ownership-v1.json",
+        )
+    } else {
+        (
+            "actor",
+            "attacker-child-ownership-binding-v1.json",
+            "attacker-process-cost-v1.json",
+            "actor-child-ownership-v1.json",
+        )
+    };
+    let parent_raw = cost_file_bytes(&held, parent_file, COST_BINDING_LIMIT as u64, deadline);
+    let (parent_binding, parent_complete) = match parent_raw {
+        Ok(raw) => (
+            json!({"bytes":raw.len(),"sha256":hex::encode(Sha256::digest(&raw)),"error":null}),
+            true,
+        ),
+        Err(e) => (
+            json!({"bytes":null,"sha256":null,"error":e.to_string()}),
+            false,
+        ),
+    };
+    let expected = if receiver {
+        1
+    } else if report["phase"] == "baseline" {
+        0
+    } else {
+        ATTACKERS
+    };
+    let pids: Vec<_> = if receiver {
+        vec![report["receiver_pid"].clone()]
+    } else {
+        report["actors"]
+            .as_array()
+            .ok_or_else(|| io::Error::other("CHILD_PROBE_ACTORS"))?
+            .iter()
+            .map(|a| a["pid"].clone())
+            .collect()
+    };
+    let mut rows = Vec::new();
+    for (index, pid) in pids.iter().enumerate() {
+        let subdir = if receiver {
+            None
+        } else {
+            Some(format!("actor-{index}"))
+        };
+        let child = subdir.as_ref().map(|name| {
+            rustix::fs::openat(
+                &held,
+                name.as_str(),
+                rustix::fs::OFlags::RDONLY
+                    | rustix::fs::OFlags::DIRECTORY
+                    | rustix::fs::OFlags::NOFOLLOW
+                    | rustix::fs::OFlags::CLOEXEC,
+                rustix::fs::Mode::empty(),
+            )
+            .map(fs::File::from)
+        });
+        let directory = if receiver {
+            Some(&held)
+        } else {
+            child.as_ref().and_then(|v| v.as_ref().ok())
+        };
+        let captured = directory
+            .ok_or_else(|| io::Error::other("CHILD_PROBE_DIRECTORY"))
+            .and_then(|directory| cost_file_bytes(directory, probe_file, 1024 * 1024, deadline));
+        let (binding, complete) = match captured {
+            Ok(raw) => {
+                let parsed = serde_json::from_slice::<Value>(&raw);
+                let valid = parsed.as_ref().is_ok_and(|v| {
+                    v["schema"] == "pon-child-ownership-probe-v1" && v["pid"] == *pid
+                });
+                (
+                    json!({"bytes":raw.len(),"sha256":hex::encode(Sha256::digest(&raw)),"error":null}),
+                    valid,
+                )
+            }
+            Err(e) => (
+                json!({"bytes":null,"sha256":null,"error":e.to_string()}),
+                false,
+            ),
+        };
+        rows.push(json!({"index":index,"pid":pid,"directory":subdir,"file":probe_file,"binding":binding,"capture_complete":complete}));
+    }
+    let ended = monotonic();
+    let complete = parent_complete
+        && rows.len() == expected
+        && rows.iter().all(|r| r["capture_complete"] == true)
+        && ended.saturating_sub(started) <= COST_CAPTURE_BUDGET_NS;
+    let value = json!({"schema":"pon-child-ownership-binding-v1","kind":kind,"phase":report["phase"],
+        "parent_pid":std::process::id(),"parent_cost_file":parent_file,"parent_cost_binding":parent_binding,
+        "started_monotonic_ns":started,"ended_monotonic_ns":ended,"read_budget_ns":COST_CAPTURE_BUDGET_NS,
+        "probe_limit":1024*1024,"expected_children":expected,"children":rows,"capture_complete":complete,
+        "physical_authentication":false,"scope":"Parent exact-byte binding of independent non-reaping child-ownership probes after single-reap cost capture; not authentication or a replacement for preserved procfs failures."});
+    let mut raw = serde_json::to_vec(&value)?;
+    raw.push(b'\n');
+    if raw.len() > COST_BINDING_LIMIT {
+        return Err(io::Error::other("CHILD_PROBE_BINDING_BYTES"));
+    }
+    let mut file: fs::File = rustix::fs::openat(
+        &held,
+        filename,
         rustix::fs::OFlags::WRONLY
             | rustix::fs::OFlags::CREATE
             | rustix::fs::OFlags::EXCL
@@ -541,7 +788,7 @@ pub fn false_proof(prefix: &[u8], header: &Header, call: u64) -> (Vec<u8>, u64) 
 }
 
 pub struct Actor {
-    child: Child,
+    child: process_cost::ObservedChild,
     path: PathBuf,
 }
 impl Actor {
@@ -554,7 +801,8 @@ impl Actor {
             .open(path.join("actor.log"))
             .unwrap();
         let stderr = stdout.try_clone().unwrap();
-        let child = Command::new(std::env::current_exe().unwrap())
+        let mut command = Command::new(std::env::current_exe().unwrap());
+        command
             .args([
                 "--exact",
                 "pure_pressure_v2_actor_entry",
@@ -564,9 +812,8 @@ impl Actor {
             ])
             .env("TRNM_PURE_PRESSURE_V2_JOB", path.join("job.json"))
             .stdout(Stdio::from(stdout))
-            .stderr(Stdio::from(stderr))
-            .spawn()
-            .unwrap();
+            .stderr(Stdio::from(stderr));
+        let child = process_cost::ObservedChild::spawn(&mut command).unwrap();
         Self {
             child,
             path: path.to_owned(),
@@ -575,31 +822,16 @@ impl Actor {
     pub fn ready(&self) -> bool {
         self.path.join("ready.json").is_file()
     }
-    pub fn finish(mut self, deadline: Instant) -> Value {
-        let mut forced = false;
-        let status = loop {
-            if let Some(status) = self.child.try_wait().unwrap() {
-                break status;
-            }
-            if Instant::now() >= deadline {
-                self.child.kill().unwrap();
-                forced = true;
-                break self.child.wait().unwrap();
-            }
-            pause();
-        };
+    pub fn finish_with_process_cost(mut self, deadline: Instant) -> (Value, Value) {
+        let cost = self.child.finish(deadline);
         let report = fs::read(self.path.join("report.json"))
             .ok()
             .and_then(|raw| serde_json::from_slice::<Value>(&raw).ok());
-        json!({"pid":self.child.id(),"exit_success":status.success(),
-            "parent_forced_kill":forced,"report":report,"report_path":self.path.join("report.json")})
-    }
-}
-impl Drop for Actor {
-    fn drop(&mut self) {
-        if self.child.try_wait().ok().flatten().is_none() {
-            let _ = self.child.kill();
-            let _ = self.child.wait();
-        }
+        (
+            json!({"pid":self.child.id(),"exit_success":cost["exit_success"],
+            "parent_forced_kill":cost["parent_forced_kill"],"report":report,
+            "report_path":self.path.join("report.json")}),
+            cost,
+        )
     }
 }

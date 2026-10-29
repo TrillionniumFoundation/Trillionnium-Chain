@@ -62,6 +62,10 @@ jobs:
               "resource_qualification": False}, indent=2) + "\n")
           PY
           printf 'Full 64x64/r8/512-tile W1; real local Composite STARK. Research backend only; quantitative security must use the pinned parameter analysis. No PQ128 or public-ingress qualification, no consensus activation. Failures remain failures.\n' > "$out/SCOPE.txt"
+      - name: Reject unsupported manifest authority before native work
+        run: |
+          set -euo pipefail
+          python3 "$BACKEND/test_check_observations.py" -v 2>&1 | tee "$OUT/observer-controls.log"
       - name: Install pinned native toolchain
         run: |
           set -euo pipefail

@@ -4790,3 +4790,186 @@ independent WAN service, beneficial model releases and production activation
 remain **OPEN / NO_GO**. Original finite passes and failures retain their own
 source/profile identities; no fallback consensus or new development roadmap is
 introduced.
+
+
+### PN1/I01-I02 — exact A readback and blocker continuation (2026-10-29)
+
+The preceding source-freeze NOT_RUN labels are superseded only for exact source
+`8018eb875aaf2cc1f74b33232b5c9197e94bfea4` by its completed local observations and
+[original x86_64/aarch64 cost run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40815302333)
+and [original pressure run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40815302237).
+Each complete six-arm capture retained 96 cohorts, 16,404 attempted observations,
+7,860 repeated first-admission calls, 36 exhausted searches and 655 distinct
+winning packet contexts. Repetition across paired arms is not new work, rewards
+or independent confirmations. The representative retained-preparation,
+horizon-256 pair reduced proof materializations from 1,089 to 509, while keeping
+all 1,089 complete W1 attempts; the three shared-host observations did not show a
+stable total CPU advantage. The default miner remains unchanged.
+
+The original three 30-second pressure phases with 24 actors in each attack phase
+completed on both hosted architectures, with three honest rounds per phase.
+They remain finite loopback observations. The x86_64 correct-product/false-trace
+phase retained 2,271 preparations and 2,270 client calls; the final unissued
+preparation is part of cost evidence. The original CodeQL export failed during
+transport after empty analysis observations. That is an incomplete security
+export, not a clean scan or a proved GitHub permission diagnosis. None of these
+A-source artifacts is reassigned to later source, binaries or resource owners.
+
+#### Complete independent W1 arithmetic
+
+The separate [offline replay](../../scripts/ci/replay_ticket_first_w1_v1.py)
+uses the unchanged scalar `work_oracle.evaluate` for all recorded unique inputs.
+It replays noise, all 512 transcript tiles, trace and product for wins, target
+misses and exhausted searches. Calling the existing target-checking `verify`
+would incorrectly skip missed work, so that entry is deliberately not used.
+The dictionary key contains the task, challenge and full canonical prefix bytes.
+The frozen complete capture contains 1,367 unique inputs: 655 winners, 688 misses
+before a winner and 24 exhausted-search misses, each observed in all twelve
+arm/setup pairings. Multiple captures can share arithmetic only when their
+complete input sets agree; shared replay is not independent host execution.
+
+An explicitly synthetic mutation of one actual A-source miss changed all twelve
+paired traces and consistently rebuilt the ticket/proof/stream/journal hashes.
+The original structural cost reader accepted it; the unchanged scalar oracle
+and new complete replay rejected it. Original raw artifacts remain untouched.
+A developmental replay over the local, x86_64 and aarch64 A captures completed
+all 1,367 evaluations and covered 49,212 raw observations in 120.858697 seconds.
+Its exact helper snapshot predates the final output-cap addition and is retained
+separately. Those timings measure offline verification, never native mining.
+The final helper has an independent cooperative 300-second limit, bounded input
+roster, 16-KiB journal lines, an 8-MiB journal and a 16-MiB receipt. It reserves
+failure-terminal space and retains incomplete observations. Blocking file I/O
+and an in-progress scalar evaluation are not claimed to be preempted.
+
+The original [cost workflow](../../.github/workflows/pon-ticket-first-cost-v1.yml)
+adds this independent readback after its original successful reader, with a
+separate seven-minute step. Original native 600/610-second limits, six-arm
+semantics, summaries and qualification flags remain unchanged. Statement
+correctness does not certify the recorded machine, cheapest legal strategy,
+energy cost, quantum resistance or public service.
+
+#### Actual executable retention and complete process observations
+
+The [create-only binary archive](../../scripts/ci/pure_pon_binary_archive_v1.py)
+retains the actual six original pressure executables, after the native stages,
+with complete build/source associations and independent copied-byte readback.
+Fixed no-follow directory traversal, regular-file checks, before/after identity,
+a 64-MiB per-file bound, a 192-MiB total bound and a separate 30-second cooperative
+copy budget constrain this evidence step. Missing binaries, changed source bytes,
+partial copies and failed campaigns remain failures. An archived executable does
+not authenticate a physical host or prove that it was executed.
+
+The pressure harness uses one parent-owned `wait4` reaper per original actor.
+It retains startup-through-exit user/system CPU, peak RSS, exit status and
+monotonic spawn/reap brackets. The existing two-millisecond polling and absolute
+five-second cleanup deadline remain. A known reaped or ECHILD child is not killed
+again through a possibly reused PID. The separate process sidecar binds final
+report, thread-cost, log and process-family bytes; its
+[independent reader](../../scripts/ci/check_pure_pon_process_cost_v1.py) compares
+nested CPU scopes with explicit clock precision tolerance, without adding them
+together. Missing CPU or process-family observations remain unknown.
+
+Process-family evidence records bounded per-thread Linux child lists and actual
+RUSAGE_SELF/RUSAGE_CHILDREN. A stable empty list is an observed quiescent state,
+not hostile-host authentication; terminated descendants count only when actually
+waited for. Waited-child CPU is nested inside Linux wait4 usage. Peak RSS is not
+a summed or simultaneous process-tree memory peak. Original service verdicts,
+request limits, attack windows, deadlines and fixed-parent qualification remain
+separate from these cost observations.
+
+The separately named [receiver-owner supplement](../../trillionnium/crates/trnm-pon-node/tests/support/pure_receiver_owner_v1.rs)
+places the real Node, two protected reactors and their worker threads in one
+fresh child process. The honest client, sampler and 24 attacker siblings stay
+in the parent or separate processes. Its own three 30-second phases, two-second
+calls and fixed cleanup deadline preserve the declared experiment. Private
+bounded observation IPC, startup, final publication and teardown are included
+in receiver wait4 cost. Only this temporary child sets its local subreaper
+attribute; no deployed receiver or parent setting changes. Joined reactors,
+dropped Node ownership and final per-thread child observations must agree with
+the actual reaped terminal. An existing fixed public parent is inspected
+read-only, if available; no stand-in is provisioned. Its aggregate counters
+include other members and are not exclusive receiver CPU. A new-namespace
+reader retains the original campaign's separate verdict and never reclassifies
+this supplemental campaign as an original-run or public-fairness qualification.
+
+The local development environment did not expose per-thread procfs `children`
+files. Their ENOENT records remain unknown, not empty child lists. A separate
+`pon-child-ownership-probe-v1` records one non-reaping Linux waitid with P_ALL,
+WEXITED, WNOHANG, WNOWAIT and __WALL, together with unchanged SIG_DFL and absent
+SA_NOCLDWAIT before/after observations. Only the actual -1/ECHILD result can
+observe no eligible children at that probe; zero-event success, an observed
+zombie, other errors and signal-policy uncertainty cannot. Live-child,
+repeated-zombie and post-reap controls exercise these distinctions using real
+processes. The reader identifies the evidence method and retains the original
+procfs status. The probe does not consume the child's wait4 record, count CPU
+again, replace worker joins, cover CLONE_PARENT causal siblings or authenticate
+a kernel or complete historical cost. See the
+[Linux wait interface](https://man7.org/linux/man-pages/man2/waitpid.2.html).
+
+Independent review found that per-call socket timeouts did not bound a whole
+prefix/payload exchange by the fixed cleanup deadline. The supplemental IPC now
+recomputes the same absolute remaining budget around each actual read/write,
+retains partial frames, and refuses late completion. The reader binds arm's
+epoch to that request's clock bracket and rejects stop completion or receiver
+reap after phase-plus-five-second cleanup. The earlier accepted synthetic
+clock counterexamples and actual startup/procfs control failures are retained.
+No original campaign budget or failed observation is rewritten.
+
+#### Unsupported authority and numerical-model controls
+
+The [complete-proof observation checker](../../trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/check_observations.py)
+now compares the entire artifact backend manifest with its source-owned manifest
+using typed canonical JSON, and refuses duplicate keys, nonfinite values and
+unsupported PQ/activation/Groth16/fake/remote-proving flags. Historical actual
+build-only bytes supply the positive control; ten manifest mutations accepted
+by the exact A checker are rejected after this change. This is source/build
+identity evidence and does not claim a newly generated or verified proof.
+These controls run before native work in the existing proof workflow. The
+public-readiness checker keeps the same unsupported-authority boundary.
+
+The complete public-readiness regression also exposed an existing source
+contract mismatch: the A-source opener already delegates through
+`shared_snapshot::Layout`, while its evidence reader still required the older
+direct bindings. Both the exact A reader and the initial candidate failed this
+positive case. The reader now recognizes only the exact held-I/O None bridge,
+module binding and identity mapper. Path/attribute substitutions, nested or
+string/comment decoys, unknown mapper bodies, rebinding and shared-table
+pollution remain rejected. No Rust storage owner changes. The ordinary legacy
+DDL remains 4,775 bytes with raw SHA256
+`ce0de86674de23181ef1f6fb59f357f94971feeaee0c5503f065dbf45bb5c964`;
+its separately domain-derived schema ID remains
+`8c2627fa0b06e51742e7e6d40662c61d4b4727e810abc02b24634a8a817dc0e0`
+under `native-branch-schema-v2`. This finite source contract is not a general
+Rust semantic proof or native storage qualification.
+
+The conditional Grover model previously rounded a nearly full 64-bit marked
+set to probability one before amplifying the phase. For 2^64-1 marked points and
+one billion iterations it reported about 0.9999999999998794 instead of the
+independent 100-digit decimal value 0.7983866285855264. The complement expression
+preserves the small unmarked set, and the half-domain case is exactly one half.
+An independent Chebyshev-doubling oracle supplies boundary controls; original
+input ceilings stay fixed. This remains a floating-point conditional model,
+not a measured quantum oracle, general numerical-error theorem or security bound.
+
+#### CodeQL evidence failures remain distinct from security findings
+
+The [read-only exporter](../../scripts/export_codeql_analysis.py) adds separately
+named, bounded-category request-failure observations. HTTP status, DNS/TLS/
+connection/timeout/protocol categories and deadline observations are retained
+without exception text, response bodies or signed URLs. A malformed-response
+counterexample showed that the original HTTPException path could leak an
+unrelated signed-URL sentinel through generic error text; this path is now
+converted to the same safe failure handling. The original request timeout,
+overall deadline, no-retry policy, exact source/PR bindings and security verdict
+are unchanged. Diagnostic controls cannot supply a missing CodeQL analysis.
+
+#### Remaining qualification boundaries
+
+These changes close specific reader, retention and measurement defects only
+after their own committed-source controls and native observations complete.
+They do not close cheapest-legal-algorithm/hardware/energy research, arbitrary
+Sybil arrival fairness, the fixed public kernel parent, independent operators
+and preregistered WAN service, beneficial model releases, whole-chain PQ128 or
+production governance. Related PQ4/PQ5 and transparent-proof candidates retain
+their own branches and evidence until explicitly reviewed and integrated. The
+existing PN0–PN6 production exits remain **OPEN / NO_GO**.

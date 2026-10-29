@@ -20,12 +20,16 @@ sys.dont_write_bytecode = True
 sys.path[:0] = [str(ROOT / "scripts"), str(ROOT / "scripts/ci")]
 import run_pon_w1_native_campaign as bounds
 from verify_ci_source import verify
+import pure_pon_binary_archive_v1 as binary_archive
 
 
 TOOLCHAIN = "1.95.0"
 NATIVE_GATES = frozenset({"transparent-complete-proof", "pure-runtime", "pure-cli",
                           "native-confirmation-risk", "pressure-observation-contract",
-                          "pressure-call-window-contract", "pressure-attacker-cost-contract", "pure-pressure"})
+                          "pressure-call-window-contract", "pressure-attacker-cost-contract",
+                          "pressure-process-cost-contract", "child-ownership-probe-contract",
+                          "receiver-ipc-deadline-contract", "receiver-owner-contract",
+                          "pure-pressure", "receiver-owner-supplement"})
 BUILD_OVERRIDES = frozenset(bounds.BUILD_ENV) | {
     "RUSTDOC", "RUSTDOCFLAGS", "CARGO_ENCODED_RUSTDOCFLAGS", "RUSTC_BOOTSTRAP",
     "RUSTC_FORCE_UNSTABLE", "CARGO_BUILD_RUSTDOC", "CARGO_BUILD_RUSTDOCFLAGS",
@@ -218,7 +222,10 @@ def main():
             ("source-negatives", ["python3", "scripts/ci/test_ci_source_integrity.py"]),
             ("pressure-reader-negatives", ["python3", "scripts/ci/test_check_pure_pon_pressure_v2.py"]),
             ("attacker-cost-reader-negatives", ["python3", "scripts/ci/test_check_pure_pon_attacker_cost_v1.py"]),
+            ("process-cost-reader-negatives", ["python3", "scripts/ci/test_check_pure_pon_process_cost_v1.py"]),
+            ("receiver-owner-reader-negatives", ["python3", "scripts/ci/test_check_pure_pon_receiver_owner_v1.py"]),
             ("campaign-runner-negatives", ["python3", "scripts/ci/test_run_pure_pon_admission_daa_v2.py"]),
+            ("binary-archive-negatives", ["python3", "scripts/ci/test_pure_pon_binary_archive_v1.py"]),
             ("risk-model-negatives", ["python3", "formal/pon-nakamoto-v1/test_pon_risk_model_v1.py", "-v"]),
             ("risk-model-experiment", ["python3", "formal/pon-nakamoto-v1/pon_risk_model_v1.py"]),
             ("format", [*cargo, "fmt", "--manifest-path", "trillionnium/Cargo.toml", "--all", "--", "--check"]),
@@ -251,6 +258,20 @@ def main():
                    ["--exact", "native_call_window_refuses_late_entry_without_extending_deadlines"])
             native("pressure-attacker-cost-contract", "pure_pon_pressure_v2",
                    ["--exact", "native_attacker_cost_retains_unissued_preparations_and_unknown_cpu"])
+            native("pressure-process-cost-contract", "pure_pon_pressure_v2",
+                   ["--exact", "native_actor_wait4_preserves_whole_lifetime_and_single_reap"])
+            ownership_env = dict(env, TRNM_CHILD_OWNERSHIP_CONTROL_OUT=str(out / "child-ownership-control.json"))
+            native("child-ownership-probe-contract", "pure_pon_pressure_v2",
+                   ["--exact", "native_child_ownership_probe_distinguishes_live_zombie_and_reaped"],
+                   60, ownership_env)
+            ipc_env = dict(env, TRNM_RECEIVER_IPC_CONTROL_OUT=str(out / "ipc-deadline-control.json"))
+            native("receiver-ipc-deadline-contract", "pure_pon_pressure_v2",
+                   ["--exact", "receiver_owner::native_receiver_ipc_deadline_retains_partial_frame"],
+                   60, ipc_env)
+            control_env = dict(env, TRNM_RECEIVER_OWNER_CONTROL_OUT=str(out / "receiver-owner-control"))
+            native("receiver-owner-contract", "pure_pon_pressure_v2",
+                   ["--exact", "receiver_owner::native_receiver_owner_isolation_and_shutdown"],
+                   60, control_env)
             # Run once. Always retain and independently read failure/partial data.
             pressure_env = dict(env, TRNM_PURE_PRESSURE_V2_OUT=str(out / "pressure-native"))
             native("pure-pressure", "pure_pon_pressure_v2",
@@ -265,6 +286,18 @@ def main():
             step("pure-attacker-cost-reader", ["python3", "scripts/ci/check_pure_pon_attacker_cost_v1.py",
                  str(out / "pressure-native"), "--output", str(out / "attacker-cost-observation-v1.json"),
                  "--require-observed-cpu"], 120)
+            step("pure-process-cost-reader", ["python3", "scripts/ci/check_pure_pon_process_cost_v1.py",
+                 str(out / "pressure-native"), "--output", str(out / "process-cost-observation-v2.json"),
+                 "--require-observed-cpu", "--require-quiescent-descendants"], 120)
+            # Independent receiver-owner experiment, with its own namespace and
+            # originals. It never replaces the preceding 90-second campaign.
+            receiver_env = dict(env, TRNM_RECEIVER_OWNER_V1_OUT=str(out / "receiver-owner-native"))
+            native("receiver-owner-supplement", "pure_pon_pressure_v2",
+                   ["--exact", "receiver_owner::whole_receiver_owner_pressure_v1", "--ignored"],
+                   600, receiver_env)
+            step("receiver-owner-reader", ["python3", "scripts/ci/check_pure_pon_receiver_owner_v1.py",
+                 str(out / "receiver-owner-native"), "--output", str(out / "receiver-owner-observation-v2.json"),
+                 "--require-qualified", "--require-observed-cpu", "--require-quiescent-descendants"], 120)
         # Static validation runs after the pressure, never competes with it.
         step("strict-clippy", [*cargo, "clippy", "--release", "--locked", "--offline",
              "--manifest-path", "trillionnium/Cargo.toml", "-p", "trnm-crypto-primitives",
@@ -286,6 +319,16 @@ def main():
             for binary in result["binaries"].values():
                 bounds.require(bounds.sha(binary["path"]) == binary["sha256"], "TEST_BINARY_CHANGED")
         except (OSError, ValueError, KeyError, TypeError, subprocess.SubprocessError) as error:
+            result["finalization_failures"].append(str(error))
+        # Observation-only retention after every native stage. The original
+        # binaries remain the executables under test; no copy is run. Failed
+        # builds/campaigns still retain available identities and failure bytes.
+        try:
+            tree = (result["source_after"] or result["source_before"] or {}).get("tested_tree")
+            archived = binary_archive.retain(out, target, result["binaries"], args.expected_head, tree)
+            bounds.require(archived["complete"], "ACTUAL_BINARY_ARCHIVE_INCOMPLETE")
+            binary_archive.verify(out, result["binaries"], args.expected_head, tree)
+        except (OSError, ValueError, KeyError, TypeError) as error:
             result["finalization_failures"].append(str(error))
         result["complete_success"] = terminal_success(
             result["steps"], result["native_verdicts"], result["failure"], result["finalization_failures"])

@@ -21,6 +21,9 @@ on:
       - scripts/ci/check_legal_ticket_cost_v5.py
       - scripts/ci/check_ticket_first_cost_v1.py
       - scripts/ci/test_ticket_first_cost_v1.py
+      - scripts/ci/replay_ticket_first_w1_v1.py
+      - scripts/ci/test_replay_ticket_first_w1_v1.py
+      - scripts/ci/pure_pon_binary_archive_v1.py
       - scripts/pon_w1_cost_matrix_reader.py
       - scripts/read_original_native_campaign.py
       - scripts/run_pon_w1_native_campaign.py
@@ -89,6 +92,7 @@ jobs:
           python3 scripts/ci/test_ci_source_integrity.py 2>&1 | tee "$OUT/source-controls.log"
           python3 scripts/ci/test_capture_ticket_first_release.py 2>&1 | tee "$OUT/capture-controls.log"
           python3 scripts/ci/test_ticket_first_cost_v1.py 2>&1 | tee "$OUT/reader-controls.log"
+          python3 scripts/ci/test_replay_ticket_first_w1_v1.py 2>&1 | tee "$OUT/independent-replay-controls.log"
           cargo metadata --locked --format-version 1 --manifest-path trillionnium/Cargo.toml > "$OUT/cargo-graph.json"
           cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee "$OUT/fmt.log"
       - name: Preserve complete old crypto tests and candidate cancellation controls
@@ -111,8 +115,30 @@ jobs:
         if: always()
         run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$EXPECTED_HEAD" --output "$RUNNER_TEMP/ticket-first-evidence/source-after.json"
       - name: Independently check complete costs and paired packet bytes
+        id: cost_reader
         if: ${{ !cancelled() && steps.campaign.outcome == 'success' && steps.source_after.outcome == 'success' }}
         run: python3 scripts/ci/check_ticket_first_cost_v1.py --capture "$OUT/cost/capture.json" --expected-head "$EXPECTED_HEAD" --source-before "$OUT/source-before.json" --source-after "$OUT/source-after.json" --output "$OUT/cost/summary.json"
+      - name: Replay every distinct hit and miss with the independent complete W1 oracle
+        if: ${{ !cancelled() && steps.cost_reader.outcome == 'success' }}
+        timeout-minutes: 7
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          value = {"schema": "pon-ticket-first-independent-w1-input-v1", "datasets": [{
+              "label": os.environ["EXPECTED_MACHINE"],
+              "capture": "cost/capture.json",
+              "source_before": "source-before.json",
+              "source_after": "source-after.json",
+              "expected_head": os.environ["EXPECTED_HEAD"],
+          }]}
+          path = Path(os.environ["OUT"]) / "independent-w1-input.json"
+          with path.open("x") as stream:
+              json.dump(value, stream, indent=2)
+              stream.write("\n")
+          PY
+          python3 scripts/ci/replay_ticket_first_w1_v1.py --input-manifest "$OUT/independent-w1-input.json" --output "$OUT/independent-w1-replay" 2>&1 | tee "$OUT/independent-replay.log"
       - name: Preserve binary, raw measurements and original failures
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02

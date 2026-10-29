@@ -2,10 +2,13 @@
 """Offline regressions for exact PR refs, incomplete CodeQL checks and evidence."""
 
 import contextlib
+import http.client
 import io
 import json
 import os
 from pathlib import Path
+import socket
+import ssl
 import sys
 import tempfile
 import unittest
@@ -156,7 +159,7 @@ class ExportTests(unittest.TestCase):
                     "GITHUB_REF": MERGE_REF, "GITHUB_TOKEN": TOKEN}
         self.attempt = 0
 
-    def run_export(self, server):
+    def run_export(self, server, forbidden_text=()):
         self.attempt += 1
         out = self.root / f"export-{self.attempt}"
         args = ["export", "--out", str(out), "--wait-seconds", "5", "--poll-seconds", "1"]
@@ -167,9 +170,13 @@ class ExportTests(unittest.TestCase):
                 contextlib.redirect_stdout(logs), contextlib.redirect_stderr(logs):
             code = export.main()
         self.assertNotIn(TOKEN, logs.getvalue())
+        for text in forbidden_text:
+            self.assertNotIn(text, logs.getvalue())
         for path in out.rglob("*"):
             if path.is_file():
                 self.assertNotIn(TOKEN.encode(), path.read_bytes())
+                for text in forbidden_text:
+                    self.assertNotIn(text.encode(), path.read_bytes())
         result = json.loads((out / "result.json").read_text())
         self.assertEqual(code == 0, result["complete"])
         self.assertTrue((out / "sha256.json").is_file())
@@ -237,6 +244,112 @@ class ExportTests(unittest.TestCase):
                 self.assertEqual(code, 1)
                 self.assertIn(reason, result["error"])
                 self.assertTrue((out / "initial-pr.json").exists())
+
+    def test_transport_failures_keep_safe_typed_diagnostics_and_no_security_verdict(self):
+        cases = [
+            (urllib.error.URLError(TimeoutError(TOKEN)), "url-error", "timeout", None),
+            (urllib.error.URLError(socket.gaierror(-2, TOKEN)), "url-error", "dns", -2),
+            (ConnectionResetError(104, TOKEN), "os-error", "connection-reset", 104),
+            (ssl.SSLError(1, TOKEN), "os-error", "tls", 1),
+            (urllib.error.URLError(TOKEN), "url-error", "unclassified", None),
+        ]
+        for failure, category, reason, number in cases:
+            with self.subTest(category=category, reason=reason):
+                server = Server()
+                original = server.open
+
+                def fail_checks(request, timeout):
+                    if "/check-runs?" in request.full_url:
+                        raise failure
+                    return original(request, timeout)
+
+                server.open = fail_checks
+                code, result, out = self.run_export(server)
+                self.assertEqual(code, 1)
+                self.assertFalse(result["target_pr_gate_authenticated"])
+                self.assertIsNone(result["target_pr_gate_verdict"])
+                paths = list((out / "request-failures").glob("*.json"))
+                self.assertEqual(len(paths), 1)
+                row = json.loads(paths[0].read_text())
+                self.assertEqual(row["schema"], "codeql-read-request-failure-v1")
+                self.assertEqual(row["category"], category)
+                self.assertEqual(row["reason_category"], reason)
+                self.assertEqual(row["errno"], number)
+                self.assertIsNone(row["http_status"])
+                self.assertEqual(row["method"], "GET")
+                self.assertIn(HEAD, row["api_path"])
+                self.assertEqual(row["remaining_seconds_at_start"], 5)
+                self.assertEqual(row["configured_timeout_seconds"], 5)
+                self.assertFalse(row["deadline_reached_at_observation"])
+                self.assertFalse(row["expected_result_received"])
+                self.assertFalse(row["exception_text_persisted"])
+                self.assertTrue((out / "initial-pr.json").exists())
+                self.assertIn(str(paths[0].relative_to(out)),
+                              json.loads((out / "sha256.json").read_text()))
+
+    def test_transport_deadline_observation_is_separate_from_error_class(self):
+        server = Server()
+        original = server.open
+
+        def fail_at_deadline(request, timeout):
+            if "/check-runs?" in request.full_url:
+                export.time.now += timeout + 0.25
+                raise ConnectionResetError(104, TOKEN)
+            return original(request, timeout)
+
+        server.open = fail_at_deadline
+        code, _, out = self.run_export(server)
+        self.assertEqual(code, 1)
+        row = json.loads(next((out / "request-failures").glob("*.json")).read_text())
+        self.assertEqual(row["reason_category"], "connection-reset")
+        self.assertTrue(row["deadline_reached_at_observation"])
+        self.assertEqual(row["elapsed_seconds"], 5.25)
+
+    def test_http_protocol_errors_never_persist_response_lines_or_partial_bytes(self):
+        signed_url = "https://example.invalid/private-result?sig=offline-signed-url-sentinel-43792"
+        for failure, reason, during_read in (
+            (http.client.BadStatusLine(signed_url), "bad-status-line", False),
+            (http.client.IncompleteRead(signed_url.encode(), 100), "incomplete-read", True),
+            (http.client.HTTPException(signed_url), "http-protocol", False),
+        ):
+            with self.subTest(reason=reason, during_read=during_read):
+                server = Server()
+                original = server.open
+
+                class BrokenResponse(Response):
+                    def read(self, _size=-1):
+                        raise failure
+
+                def fail_protocol(request, timeout):
+                    if "/check-runs?" in request.full_url:
+                        if during_read:
+                            return BrokenResponse(b"")
+                        raise failure
+                    return original(request, timeout)
+
+                server.open = fail_protocol
+                code, result, out = self.run_export(server, forbidden_text=(signed_url,))
+                self.assertEqual(code, 1)
+                self.assertFalse(result["target_pr_gate_authenticated"])
+                self.assertIsNone(result["target_pr_gate_verdict"])
+                row = json.loads(next((out / "request-failures").glob("*.json")).read_text())
+                self.assertEqual(row["category"], "http-protocol-error")
+                self.assertEqual(row["reason_category"], reason)
+                self.assertIsNone(row["http_status"])
+                self.assertIsNone(row["errno"])
+                self.assertFalse(row["exception_text_persisted"])
+
+    def test_http_status_observation_does_not_store_error_body_or_claim_transport_cause(self):
+        server = Server()
+        server.forbidden = True
+        code, result, out = self.run_export(server)
+        self.assertEqual(code, 1)
+        row = json.loads(next((out / "request-failures").glob("*.json")).read_text())
+        self.assertEqual(row["category"], "http-error")
+        self.assertEqual(row["http_status"], 403)
+        self.assertIsNone(row["reason_category"])
+        self.assertIsNone(row["errno"])
+        self.assertIsNone(result["target_pr_gate_verdict"])
 
     def test_changed_snapshot_after_export_cannot_claim_completion(self):
         server = Server()

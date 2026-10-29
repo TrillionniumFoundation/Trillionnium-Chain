@@ -1,5 +1,6 @@
 """Independent vectors, causal counterexamples and honest model boundaries."""
 from copy import deepcopy
+from decimal import Decimal, localcontext
 import json
 from pathlib import Path
 import unittest
@@ -12,6 +13,25 @@ HERE = Path(__file__).resolve().parent
 
 def suite():
     return model.load_json((HERE / "vectors/pon-risk-scenarios-v1.json").read_bytes())
+
+
+def decimal_grover_success(nonce_bits, marked, iterations):
+    """Independent 100-digit Chebyshev doubling; no asin/sin/cos or floats.
+
+    P = (1 - T_(2*k+1)(1-2*M/N))/2. Doubling needs only O(log k)
+    operations and keeps the test oracle practical at the allowed maximum k.
+    """
+    with localcontext() as context:
+        context.prec = 100
+        x = Decimal(1) - Decimal(2 * marked) / Decimal(1 << nonce_bits)
+        left, right = Decimal(1), x
+        for bit in bin(2 * iterations + 1)[2:]:
+            middle = 2 * left * right - x
+            if bit == '0':
+                left, right = 2 * left * left - 1, middle
+            else:
+                left, right = middle, 2 * right * right - 1
+        return (1 - left) / 2
 
 
 def deterministic_fixture(delay):
@@ -165,6 +185,42 @@ class CompleteResourceAccounting(unittest.TestCase):
         self.assertAlmostEqual(model.grover_success(8, 64, 0), 0.25)
         self.assertAlmostEqual(model.grover_success(8, 64, 1), 1)
         self.assertLess(model.grover_success(8, 192, 1), 1e-28)
+
+    def test_nearly_full_64_bit_domain_retains_the_missing_marked_point(self):
+        bits, marked, iterations = 64, (1 << 64) - 1, 1_000_000_000
+        expected = decimal_grover_success(bits, marked, iterations)
+        self.assertAlmostEqual(float(expected), 0.7983866285855264, delta=1e-15)
+        self.assertAlmostEqual(model.grover_success(bits, marked, iterations),
+                               float(expected), delta=1e-14)
+        for marked in (1, 2, 3, 1024):
+            with self.subTest(unmarked=marked):
+                expected = decimal_grover_success(64, (1 << 64) - marked, iterations)
+                self.assertAlmostEqual(model.grover_success(64, (1 << 64) - marked, iterations),
+                                       float(expected), delta=1e-13)
+
+    def test_high_phase_and_domain_boundaries_against_independent_decimal(self):
+        for bits in (1, 2, 8, 32, 53, 64):
+            domain = 1 << bits
+            counts = {0, 1, domain // 4, domain // 2 - 1, domain // 2,
+                      domain // 2 + 1, 3 * domain // 4, domain - 1, domain}
+            for marked in counts:
+                for iterations in (0, 1, 17, 999_999_999, 1_000_000_000):
+                    with self.subTest(bits=bits, marked=marked, iterations=iterations):
+                        actual = model.grover_success(bits, marked, iterations)
+                        expected = float(decimal_grover_success(bits, marked, iterations))
+                        self.assertGreaterEqual(actual, 0)
+                        self.assertLessEqual(actual, 1)
+                        # Large binary64 phases still have rounding error. This
+                        # finite control is not a bound for all model inputs.
+                        self.assertAlmostEqual(actual, expected, delta=1e-6)
+            self.assertEqual(model.grover_success(bits, domain // 2, 1_000_000_000), 0.5)
+
+    def test_grover_input_limits_remain_strict(self):
+        for args in ((0, 0, 0), (65, 1, 0), (True, 1, 0), (1, -1, 0),
+                     (1, 3, 0), (1, True, 0), (1, 1, -1),
+                     (1, 1, 1_000_000_001), (1, 1, True), (1, 1, 0.0)):
+            with self.subTest(args=args), self.assertRaises(ValueError):
+                model.grover_success(*args)
 
     def test_empty_domain_and_unknown_occupancy_are_not_hidden(self):
         original = suite()["costs"]["quantum_hypothesis"]

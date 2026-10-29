@@ -1,6 +1,8 @@
 //! Separate finite pure-PoN v2 qualification. The historical r13 campaign and
 //! its failures remain intact. Passing this workload is not unlimited-Sybil
 //! fairness, W1 hardness, useful model work, WAN or production qualification.
+#[path = "support/pure_receiver_owner_v1.rs"]
+mod receiver_owner;
 #[path = "support/pure_pressure_v2.rs"]
 mod support;
 
@@ -31,6 +33,188 @@ use trnm_pon_node::{
 use trnm_protocol::pon_wire::{hash, Header};
 
 const SCHEMA: &str = "pon-pure-pressure-v3";
+
+#[test]
+#[ignore = "exact subprocess fixture for the wait4 owner control"]
+fn pure_pressure_process_cost_child_entry() {
+    let mode = std::env::var("TRNM_PROCESS_COST_CONTROL").unwrap();
+    if mode == "wait" {
+        thread::sleep(Duration::from_secs(30));
+        return;
+    }
+    if mode == "failure" {
+        std::process::exit(7);
+    }
+    assert_eq!(mode, "complete");
+    // Actual child threads and final publication are outside an actor's old
+    // entry-to-loop thread interval, but inside its parent's wait4 observation.
+    let workers: Vec<_> = (0..2_u64)
+        .map(|seed| {
+            thread::spawn(move || {
+                let mut value = seed;
+                for _ in 0..200_000 {
+                    value = std::hint::black_box(
+                        value.wrapping_mul(6364136223846793005).wrapping_add(1),
+                    );
+                }
+                value
+            })
+        })
+        .collect();
+    for worker in workers {
+        std::hint::black_box(worker.join().unwrap());
+    }
+    fs::write(
+        std::env::var_os("TRNM_PROCESS_COST_CONTROL_OUTPUT").unwrap(),
+        b"final child publication\n",
+    )
+    .unwrap();
+}
+
+#[test]
+fn native_actor_wait4_preserves_whole_lifetime_and_single_reap() {
+    use std::process::{Command, Stdio};
+    let temp = tempfile::tempdir().unwrap();
+    for mode in ["complete", "failure", "wait"] {
+        let path = temp.path().join(mode);
+        let mut command = Command::new(std::env::current_exe().unwrap());
+        command
+            .args([
+                "--exact",
+                "pure_pressure_process_cost_child_entry",
+                "--ignored",
+                "--test-threads=1",
+            ])
+            .env("TRNM_PROCESS_COST_CONTROL", mode)
+            .env("TRNM_PROCESS_COST_CONTROL_OUTPUT", &path)
+            .stdout(Stdio::null())
+            .stderr(Stdio::null());
+        let mut child = support::process_cost::ObservedChild::spawn(&mut command).unwrap();
+        let original_pid = child.id();
+        let duration = if mode == "wait" {
+            Duration::from_millis(20)
+        } else {
+            Duration::from_secs(5)
+        };
+        let cost = child.finish(Instant::now() + duration);
+        assert_eq!(cost["pid"], original_pid);
+        assert_eq!(cost["successful_reaps"], 1);
+        assert!(cost["error"].is_null());
+        assert!(cost["rusage"]["total_cpu_ns"].is_u64());
+        assert_eq!(cost["exit_success"], mode == "complete");
+        assert_eq!(cost["parent_forced_kill"], mode == "wait");
+        if mode == "complete" {
+            assert!(cost["rusage"]["total_cpu_ns"].as_u64().unwrap() > 0);
+            assert_eq!(fs::read(path).unwrap(), b"final child publication\n");
+        }
+        if mode == "failure" {
+            assert_eq!(cost["raw_wait_status"], 7 << 8);
+        }
+        if mode == "wait" {
+            assert_eq!(cost["raw_wait_status"].as_i64().unwrap() & 0x7f, 9);
+        }
+        let duplicate = child.finish(Instant::now());
+        assert_eq!(duplicate["successful_reaps"], 0);
+        assert!(duplicate["rusage"].is_null());
+        assert_eq!(duplicate["error"], "PROCESS_ALREADY_REAPED");
+    }
+}
+
+#[test]
+fn native_child_ownership_probe_distinguishes_live_zombie_and_reaped() {
+    use std::process::{Command, Stdio};
+    let temp = tempfile::tempdir().unwrap();
+    let output = std::env::var_os("TRNM_CHILD_OWNERSHIP_CONTROL_OUT")
+        .map(PathBuf::from)
+        .unwrap_or_else(|| temp.path().join("ownership-control.json"));
+    let mut observations = Vec::new();
+    let probe = support::process_cost::child_ownership_probe();
+    observations.push(json!({"stage":"initial","probe":probe}));
+    let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+        assert_eq!(
+            probe["no_eligible_children_at_probe"], true,
+            "initial owner observation: {probe}"
+        );
+        for mode in ["wait", "failure"] {
+            let mut command = Command::new(std::env::current_exe().unwrap());
+            command
+                .args([
+                    "--exact",
+                    "pure_pressure_process_cost_child_entry",
+                    "--ignored",
+                    "--test-threads=1",
+                ])
+                .env("TRNM_PROCESS_COST_CONTROL", mode)
+                .stdout(Stdio::null())
+                .stderr(Stdio::null());
+            let mut child = support::process_cost::ObservedChild::spawn(&mut command).unwrap();
+            if mode == "wait" {
+                let live = support::process_cost::child_ownership_probe();
+                observations.push(json!({"stage":"live","child_pid":child.id(),"probe":live}));
+                assert_eq!(
+                    live["waitid_return"], 0,
+                    "actual live child must not produce ECHILD: {live}"
+                );
+                assert_eq!(live["event"]["pid"], 0);
+                assert_eq!(live["no_eligible_children_at_probe"], false);
+            } else {
+                let deadline = Instant::now() + Duration::from_secs(5);
+                loop {
+                    let zombie = support::process_cost::child_ownership_probe();
+                    observations.push(
+                        json!({"stage":"await-zombie","child_pid":child.id(),"probe":zombie}),
+                    );
+                    assert_eq!(
+                        zombie["waitid_return"], 0,
+                        "eligible child disappeared before owner reap: {zombie}"
+                    );
+                    if zombie["event"]["pid"] == child.id() {
+                        break;
+                    }
+                    assert!(
+                        Instant::now() < deadline,
+                        "child did not produce a retained terminal event"
+                    );
+                    support::pause();
+                }
+                let still_zombie = support::process_cost::child_ownership_probe();
+                observations.push(json!({"stage":"zombie-still-owned","child_pid":child.id(),"probe":still_zombie}));
+                assert_eq!(
+                    still_zombie["event"]["pid"],
+                    child.id(),
+                    "WNOWAIT must not reap the terminal"
+                );
+                assert_eq!(still_zombie["successful_reaps"], 0);
+            }
+            let cost = child.finish(if mode == "wait" {
+                Instant::now()
+            } else {
+                Instant::now() + Duration::from_secs(5)
+            });
+            observations.push(json!({"stage":"actual-single-wait4","mode":mode,"cost":cost}));
+            assert_eq!(cost["successful_reaps"], 1);
+            assert!(cost["rusage"]["total_cpu_ns"].is_u64());
+            if mode == "failure" {
+                assert_eq!(cost["raw_wait_status"], 7 << 8);
+            }
+            let after = support::process_cost::child_ownership_probe();
+            observations.push(json!({"stage":"after-reap","mode":mode,"probe":after}));
+            assert_eq!(after["waitid_echild_observed"], true);
+            assert_eq!(after["no_eligible_children_at_probe"], true);
+        }
+    }));
+    support::write_new(
+        &output,
+        &json!({"schema":"pon-child-ownership-native-control-v1","observations":observations,
+        "passed":result.is_ok(),"physical_authentication":false,
+        "scope":"Actual same-environment live and unreaped-zombie controls prevent treating a fixed ECHILD interception as demonstrated kernel behavior; finite observations are not hostile-host authentication."}),
+    );
+    assert!(
+        result.is_ok(),
+        "child ownership control failed; complete observations retained at {}",
+        output.display()
+    );
+}
 
 fn replay(node: &mut Node, packets: &[Packet]) {
     for packet in packets {
@@ -547,6 +731,17 @@ fn pure_pressure_v2_actor_entry() {
         &path.parent().unwrap().join("report.json"),
         &json!({"schema":SCHEMA,"result":value,"error":error}),
     );
+    support::write_new(
+        &path
+            .parent()
+            .unwrap()
+            .join("actor-family-observation-v1.json"),
+        &support::process_cost::family_observation(),
+    );
+    support::write_new(
+        &path.parent().unwrap().join("actor-child-ownership-v1.json"),
+        &support::process_cost::child_ownership_probe(),
+    );
     assert!(error.is_none(), "actor failure is retained");
 }
 
@@ -838,7 +1033,10 @@ fn phase(
     let cleanup = Instant::now()
         + Duration::from_nanos((epoch + WINDOW_NS).saturating_sub(support::monotonic()))
         + Duration::from_secs(5);
-    let actors: Vec<_> = actors.into_iter().map(|a| a.finish(cleanup)).collect();
+    let (actors, actor_process_costs): (Vec<_>, Vec<_>) = actors
+        .into_iter()
+        .map(|a| a.finish_with_process_cost(cleanup))
+        .unzip();
     sampler.join().unwrap();
     stop.store(true, Ordering::Release);
     let services: Vec<_> = workers
@@ -894,6 +1092,12 @@ fn phase(
     // alter the historical v3 report and service qualification predicates.
     if let Err(error) = support::capture_attacker_cost_bindings(path, &report) {
         eprintln!("attacker cost binding capture unavailable: {error}");
+    }
+    if let Err(error) = support::capture_actor_process_costs(path, &report, &actor_process_costs) {
+        eprintln!("attacker whole-process cost capture unavailable: {error}");
+    }
+    if let Err(error) = support::capture_child_ownership_binding(path, &report, false) {
+        eprintln!("actor child-ownership binding capture unavailable: {error}");
     }
     report
 }
