@@ -4303,3 +4303,40 @@ The original 22/7/12 workflow jobs and their native budgets are unchanged. The p
 A separate 1800-second physical lane reuses the same actual executable retained by the original 22-test gate. It declares 23 finite cases: offsets 0 through 7; original strict next-node refusal; entry/final/exit/admission/activation/settlement refusal; burst, memory, swap, tasks and permission mutation; actual whole-process migration with a nonleader verifier thread; same-executable strict/v1 complete import and cold byte equality; and public-entry failure followed by same-live-domain settlement, ordinary strict import, another v1 import and cold readback. Each case retains its original 60-second limit. The privileged guardian verifies its root-owned exclusive parent lease and actual systemd MainPID, pins a pidfd and checks the actual executable and nonleader membership. All privileged case-file reads and writes use a directory descriptor opened component by component with `O_NOFOLLOW`; replacing the unprivileged case pathname cannot redirect privileged writes. Final receipts use no-replace publication. Records are observations, not administrative authority or independently authenticated remote proofs.
 
 Recovery provenance: the earlier unpublished 32-file stage4 candidate and old raw logs disappeared with the workspace. The retained native executable was SHA-256 `0cb89255895fb15c0bb0840508fc0a5d9d4a30cfc29e1f959b8cf52ed7d8771d`; its embedded source recovered all 19 changed native files byte-for-byte. A new actual invocation of that unchanged executable passed 16 controls and left only the explicit physical helper ignored. The non-native reader/workflow/document changes are newly reconstructed and reviewed; this candidate must receive its own source tree and raw validation. Neither the old stage4 tree nor vanished logs are claimed recovered. Physical controls and complete v1 propagation are NOT_RUN until their actual source-bound hosted results are read back.
+
+### 2026-10-29 - Retain both owned cleanup actions and prepare a paired observation
+
+The original campaign's cleanup and final-retention shell steps inherit Bash
+`-e`. Their `set -uo pipefail` did not clear that setting: a failed probe cleanup
+could prevent the fixed History parent cleanup, and a failed final source check
+could prevent retention of partial artifact hashes. Explicitly disable errexit
+in those two safety steps, retain both original commands, capture both statuses,
+and still fail unless both required actions succeed. The root-only exclusive
+lease remains cleanup authority; an output receipt does not grant it.
+
+The additive same-runner diagnostic executes both original profiles in one
+predeclared order, pins all twelve shell step bodies, and compares the retained
+ELF bytes, complete source records, host boot/CPU/affinity and original inputs.
+Every arm retains its 80-minute ceiling, each campaign its original 600 seconds,
+each phase 30 seconds, and the original fixed parent and paid-depletion rules.
+The independent lifeline retains its original twelve-minute step ceiling.
+Strict failure cannot become success because the N8 arm passes.
+
+Controller interruption sets a cancellation flag across subprocess creation;
+timeout/cancellation signals only a freshly created, unreaped process group.
+The final group kill precedes reaping, including a TERM-exiting leader with a
+TERM-ignoring child. A separate workflow `always` step invokes only the pinned
+root-lease cleanup after controller failure or death. Its safety time is separate
+from the native work budget and cannot certify late useful work. Failures and
+cleanup attempts are retained separately. Actual process controls and fake sudo
+dispatch negatives test these orchestration boundaries; they do not prove actual
+systemd cleanup, cgroup quiescence, paired measurements or History P0 completion.
+Those hosted observations remain required on the exact newly published source.
+
+Each arm also records the complete original step roster and requires every step
+to execute and finish with zero status, without timeout or interruption. Existing
+successful source/ELF/native records cannot hide a failed final source check or
+artifact inventory step. A signal received during the final safety cleanup is
+retained as controller cancellation and prevents normal success while cleanup
+continues. Synthetic successful-record controls retain both these negative
+cases and the positive all-steps-complete path; none is a native qualification.
