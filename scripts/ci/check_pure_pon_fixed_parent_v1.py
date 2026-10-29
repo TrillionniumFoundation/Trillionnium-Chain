@@ -525,6 +525,8 @@ def check_directory(directory):
                 "cleanup preceded final receiver observation")
         require(previous_after["ended_monotonic_ns"] <= stops[0]["started_monotonic_ns"],
                 "fixture stop preceded final phase observation")
+        require(cleanup["before"]["ended_monotonic_ns"] <= stops[0]["started_monotonic_ns"],
+                "fixture stop preceded cleanup empty observation")
         require(all(cleaned[scope][key] >= a[scope][key] for scope in ("parent", "leaf")
                     for key in ("usage_usec", "nr_periods", "nr_throttled", "throttled_usec")),
                 "cleanup counters rewound")
