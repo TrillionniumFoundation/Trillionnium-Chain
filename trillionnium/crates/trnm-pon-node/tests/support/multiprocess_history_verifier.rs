@@ -2,8 +2,6 @@
 //! the original administrator-provisioned fixed kernel parent. The campaign's
 //! producer, attacker, receiver and observer remain in the original outer
 //! 4-CPU/16-GiB service. No production guard or loopback exception is changed.
-#[path = "native_child_wait4.rs"]
-mod child_wait4;
 #[path = "multiprocess_history_lifeline.rs"]
 mod lifeline;
 #[path = "multiprocess_history_lifeline_native.rs"]
@@ -11,6 +9,7 @@ mod lifeline_native;
 
 use super::history_context as support;
 use super::history_context::{ClientOperationStamp, StateBackendChoice};
+use crate::native_child_wait4 as child_wait4;
 use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
 use std::{

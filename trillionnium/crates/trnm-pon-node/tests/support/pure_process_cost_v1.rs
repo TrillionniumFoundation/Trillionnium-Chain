@@ -7,10 +7,8 @@ use std::{
     mem::MaybeUninit,
 };
 
-#[path = "native_child_wait4.rs"]
-mod child_wait4;
-pub use child_wait4::ObservedChild;
-use child_wait4::{monotonic, usage};
+pub use crate::native_child_wait4::ObservedChild;
+use crate::native_child_wait4::{monotonic, usage};
 
 fn rusage_sample(who: libc::c_int) -> io::Result<Value> {
     let mut value = MaybeUninit::<libc::rusage>::uninit();

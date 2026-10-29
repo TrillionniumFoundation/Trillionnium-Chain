@@ -5,6 +5,8 @@ mod history_context;
 use history_context::{ClientOperationStamp, StateBackendChoice};
 #[path = "support/multiprocess_history_verifier.rs"]
 mod history_verifier;
+#[path = "support/native_child_wait4.rs"]
+mod native_child_wait4;
 #[path = "support/multiprocess_support.rs"]
 mod support;
 #[path = "support/multiprocess_work.rs"]

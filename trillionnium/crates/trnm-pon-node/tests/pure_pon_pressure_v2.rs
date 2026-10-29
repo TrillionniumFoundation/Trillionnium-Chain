@@ -7,6 +7,8 @@ mod fixed_parent;
 mod history_context;
 #[path = "support/multiprocess_history_verifier.rs"]
 mod history_verifier;
+#[path = "support/native_child_wait4.rs"]
+mod native_child_wait4;
 #[path = "support/pure_history_client_v1.rs"]
 mod pure_history_client;
 #[path = "support/pure_receiver_owner_v1.rs"]
