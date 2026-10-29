@@ -333,12 +333,27 @@ def check_directory(directory):
         commands = [get(name) for name in manager_names]
         require(all(c["returncode"] == 0 and type(c["returncode"]) is int and c["error"] is None
                     for c in commands), "manager operation failed")
+        previous_command_end = None
+        for command in commands:
+            start, end = command.get("started_monotonic_ns"), command.get("ended_monotonic_ns")
+            require(natural(start) and natural(end) and start <= end, "manager command time bracket")
+            require(previous_command_end is None or previous_command_end <= start,
+                    "manager command sequence contradicts monotonic times")
+            previous_command_end = end
         starts = [c for c in commands if c["label"] == "create-owned-runtime-unit"]
         stops = [c for c in commands if c["label"] == "stop-only-owned-runtime-unit"]
         require(len(starts) == len(stops) == 1 and starts[0]["command"] ==
                 fixture.transient_unit_command(expected["manager_identity"]["Description"])
                 and stops[0]["command"] == ["/usr/bin/systemctl", "stop", fixture.UNIT],
                 "owned runtime unit lifecycle")
+        loaded = [c for c in commands if c["label"] == "absence-list-units"]
+        unit_files = [c for c in commands if c["label"] == "absence-unit-files-by-patterns"]
+        require(len(loaded) == len(unit_files) == 1 and commands[:3] == [loaded[0], unit_files[0], starts[0]],
+                "unit absence must be observed before creation")
+        require(loaded[0]["command"] == fixture.loaded_unit_absence_command()
+                and type(loaded[0].get("stdout")) is str and not loaded[0]["stdout"].strip(),
+                "loaded unit absence")
+        fixture.require_unit_file_absence(unit_files[0])
         capability = get("host-capability.json")
         require(capability["schema"] == "pon-fixed-parent-host-capability-v1" and capability["euid"] == 0
                 and type(capability["euid"]) is int and capability["github_actions"] == "true"
@@ -394,6 +409,9 @@ def check_directory(directory):
                 require(all(b[scope][key] >= prior[scope][key] for scope in ("parent", "leaf")
                             for key in ("usage_usec", "nr_periods", "nr_throttled", "throttled_usec")),
                         "parent/leaf counters reset between controllers")
+            else:
+                require(starts[0]["ended_monotonic_ns"] <= before["started_monotonic_ns"],
+                        "fixture creation must precede first phase observation")
             previous_after = after
             for scope in ("parent", "leaf"):
                 require(all(b[scope][key] <= s[scope][key] <= a[scope][key]
@@ -505,6 +523,8 @@ def check_directory(directory):
         cleaned = kernel_snapshot(cleanup["before"], expected)
         require(previous_after["ended_monotonic_ns"] <= cleanup["before"]["started_monotonic_ns"],
                 "cleanup preceded final receiver observation")
+        require(previous_after["ended_monotonic_ns"] <= stops[0]["started_monotonic_ns"],
+                "fixture stop preceded final phase observation")
         require(all(cleaned[scope][key] >= a[scope][key] for scope in ("parent", "leaf")
                     for key in ("usage_usec", "nr_periods", "nr_throttled", "throttled_usec")),
                 "cleanup counters rewound")

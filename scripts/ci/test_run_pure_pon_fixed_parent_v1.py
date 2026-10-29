@@ -6,6 +6,7 @@ import json
 import os
 from pathlib import Path
 import stat
+import subprocess
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -99,6 +100,99 @@ class TerminalControls(unittest.TestCase):
         for name in ("cgroup.procs", "cpu.max", "memory.max", "../cgroup.procs"):
             with self.subTest(name=name), self.assertRaises(ValueError):
                 fixture.write_at(-1, name, "0\n")
+
+
+class UnitFileAbsenceControls(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.output = Path(self.temp.name)
+        self.owner = fixture.Owner(self.output)
+        self.capability = {"euid": 0, "github_actions": "true", "runner_environment": "github-hosted",
+                           "systemd_present": True, "cgroup_root_writable": True, "fixed_parent_exists": False}
+
+    def reply(self, **changes):
+        return {"label": "absence-unit-files-by-patterns", "command": fixture.unit_file_absence_command(),
+                "returncode": 0, "error": None, "stdout": "a(ss) 0\n", "stderr": "", **changes}
+
+    def capture(self, code=0, stdout=b"a(ss) 0\n", stderr=b""):
+        return subprocess.CompletedProcess(fixture.unit_file_absence_command(), code, stdout, stderr)
+
+    def rejected_create(self, capture):
+        loaded = subprocess.CompletedProcess(fixture.loaded_unit_absence_command(), 0, b"", b"")
+        with patch.object(fixture, "host_capability", return_value=self.capability), \
+             patch.object(fixture.os.path, "lexists", return_value=False), \
+             patch.object(fixture.subprocess, "run", side_effect=[loaded, capture]) as process, \
+             self.assertRaises(ValueError):
+            self.owner.create()
+        self.assertEqual(process.call_count, 2)
+        self.assertFalse(self.owner.creation_attempted)
+        self.assertFalse(self.owner.started_by_fixture)
+        self.assertEqual([row["label"] for row in self.owner.commands],
+                         ["absence-list-units", "absence-unit-files-by-patterns"])
+        row = json.loads((self.output / "manager-command-02.json").read_bytes())
+        self.assertEqual(row, self.owner.commands[1])
+        return row
+
+    def test_query_uses_empty_state_filter_and_only_exact_fixed_unit(self):
+        self.assertEqual(fixture.unit_file_absence_command(), [
+            "/usr/bin/busctl", "--system", "call", "org.freedesktop.systemd1",
+            "/org/freedesktop/systemd1", "org.freedesktop.systemd1.Manager",
+            "ListUnitFilesByPatterns", "asas", "0", "1", "trnmponpublic.slice"])
+
+    def test_only_typed_empty_array_is_absence(self):
+        fixture.require_unit_file_absence(self.reply())
+        for raw in ("", "0\n", "as 0\n", "a(ss)\n0\n", "a(ss) 0\na(ss) 0\n",
+                    "a(ss) 0 trailing\n", 'a(ss) 1 "/etc/systemd/system/trnmponpublic.slice" "enabled"\n'):
+            with self.subTest(raw=raw), self.assertRaises(ValueError):
+                fixture.require_unit_file_absence(self.reply(stdout=raw))
+
+    def test_typed_empty_array_does_not_override_exit_error_or_warning(self):
+        for changes in ({"returncode": 1}, {"returncode": -9}, {"returncode": None},
+                        {"returncode": False}, {"error": "capture failed"}, {"stderr": "warning\n"},
+                        {"command": ["/usr/bin/systemctl", "list-unit-files", fixture.UNIT]},
+                        {"label": "absence-list-unit-files"}):
+            with self.subTest(changes=changes), self.assertRaises(ValueError):
+                fixture.require_unit_file_absence(self.reply(**changes))
+
+    def test_present_unit_is_refused_before_creation(self):
+        raw = b'a(ss) 1 "/etc/systemd/system/trnmponpublic.slice" "enabled"\n'
+        row = self.rejected_create(self.capture(stdout=raw))
+        self.assertEqual(row["returncode"], 0)
+        self.assertEqual(row["stdout"], raw.decode())
+
+    def test_silent_nonzero_query_is_retained_and_not_absence(self):
+        row = self.rejected_create(self.capture(code=1, stdout=b""))
+        self.assertEqual((row["returncode"], row["stdout"], row["stderr"], row["error"]), (1, "", "", None))
+
+    def test_unsupported_method_is_retained_and_rejected(self):
+        row = self.rejected_create(self.capture(code=1, stderr=b"Call failed: Unknown method ListUnitFilesByPatterns\n"))
+        self.assertEqual(row["returncode"], 1)
+        self.assertIn("Unknown method", row["stderr"])
+
+    def test_query_capture_timeout_is_retained_and_rejected(self):
+        row = self.rejected_create(subprocess.TimeoutExpired(fixture.unit_file_absence_command(), 30))
+        self.assertIsNone(row["returncode"])
+        self.assertIn("timed out", row["error"])
+
+    def test_typed_empty_query_reaches_only_mocked_creation_boundary(self):
+        original = self.owner.command
+        def command(label, argv):
+            if label == "create-owned-runtime-unit":
+                self.assertEqual(argv, fixture.transient_unit_command(self.owner.description))
+                raise RuntimeError("synthetic creation boundary; no host operation")
+            return original(label, argv)
+        loaded = subprocess.CompletedProcess(fixture.loaded_unit_absence_command(), 0, b"", b"")
+        with patch.object(fixture, "host_capability", return_value=self.capability), \
+             patch.object(fixture.os.path, "lexists", return_value=False), \
+             patch.object(fixture.subprocess, "run", side_effect=[loaded, self.capture()]) as process, \
+             patch.object(self.owner, "command", side_effect=command), \
+             self.assertRaisesRegex(RuntimeError, "synthetic creation boundary"):
+            self.owner.create()
+        self.assertEqual(process.call_count, 2)
+        self.assertTrue(self.owner.creation_attempted)
+        self.assertFalse(self.owner.started_by_fixture)
+        fixture.require_unit_file_absence(self.owner.commands[1])
 
 
 class OwnershipControls(unittest.TestCase):

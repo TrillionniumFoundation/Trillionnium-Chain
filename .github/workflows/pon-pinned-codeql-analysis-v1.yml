@@ -48,6 +48,7 @@ jobs:
           python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$EXPECTED_HEAD" --output "$out/source-checkout.json"
           bash scripts/project-preflight.sh --audit
           python3 scripts/ci/test_pinned_codeql_analysis_v1.py 2>&1 | tee "$out/reader-controls.log"
+          timeout --kill-after=5s 60s python3 scripts/ci/test_collect_pinned_codeql_metadata_v1.py 2>&1 | tee "$out/metadata-reader-controls.log"
       - name: Download and verify immutable official bundle
         run: |
           set -euo pipefail
@@ -81,6 +82,23 @@ jobs:
       - name: Recheck source after failures as well as successful execution
         if: always()
         run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$EXPECTED_HEAD" --output "$OUT/source-final.json"
+      - name: Collect bounded raw diagnostics without changing the scan outcome
+        if: always()
+        run: |
+          set -euo pipefail
+          timeout --kill-after=5s 60s python3 scripts/ci/collect_pinned_codeql_metadata_v1.py \
+            --input "$RUNNER_TEMP/pinned-codeql-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-${{ matrix.language }}" \
+            --output "$RUNNER_TEMP/pinned-codeql-metadata-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-${{ matrix.language }}" \
+            --expected-head "$EXPECTED_HEAD" --language "${{ matrix.language }}" \
+            --run-id "$GITHUB_RUN_ID" --run-attempt "$GITHUB_RUN_ATTEMPT"
+      - name: Retain separately accessible bounded diagnostic inventory
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: pinned-codeql-metadata-${{ matrix.language }}-${{ env.EXPECTED_HEAD }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/pinned-codeql-metadata-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.language }}/
+          if-no-files-found: error
+          retention-days: 30
       - name: Retain original SARIF, BQRS, diagnostics and partial failures
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02

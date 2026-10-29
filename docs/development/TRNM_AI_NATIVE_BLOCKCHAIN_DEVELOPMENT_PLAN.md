@@ -5179,3 +5179,145 @@ failed-transcript replay is inferred from this structural readback. Global
 cheapest-work bounds, accelerator/energy qualification, arbitrary public Sybil
 fairness, independent WAN operation, beneficial Hepta releases, whole-chain
 PQ128 and production governance remain **OPEN / NO_GO**.
+
+### PN0/PN1/PN5 — retained CI failures and narrow follow-up (2026-10-29)
+
+Exact source `39e865f453926a2b86565bf69e197a621e74b93c`, tree
+`c6101eb1832d76cd2e09f947b6593fbaed8bf98f`, completed 391 local Python
+controls and 332 actual native tests. The local 26-step native record includes
+both locked Cargo graphs, release formatting, strict workspace/all-target/
+all-feature Clippy, the original pressure and separate receiver-owner runs,
+retained actual executables and the complete independent W1 arithmetic replay.
+Before/after source observations agree on all 6,179 tracked entries and
+819,750,990 bytes. These are local observations under the recorded inherited
+resource envelope; they do not authenticate hardware or qualify public service.
+The same source's [public PoN CI](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40836515063)
+completed successfully on both hosted architectures. The earlier exact-B x64
+paid-depletion failure remains an original failed sample; new successes never
+rewrite it or establish a universal work-cost or fairness bound.
+
+#### Fixed-parent setup: typed absence and temporal evidence
+
+Both architectures of the [first owned-parent run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40836515148)
+stopped at the second manager command, before unit creation or a pressure phase.
+`systemctl list-unit-files` returned status 1 with empty stdout/stderr for no
+matching files. This is a query-contract error in the fixture, not an observed
+resource-parent permission failure or a completed failed depletion experiment.
+The original artifact ZIPs, both actual ELF files, Cargo build identities,
+manager outputs and false qualification records are retained and independently
+hash-checked. No historical command output is rewritten.
+
+The follow-up uses systemd's read-only `ListUnitFilesByPatterns` D-Bus method
+with an empty state filter and the one exact owned unit name. Absence requires
+integer exit status zero, no command error, the exact typed `a(ss) 0` reply and
+empty stderr. A missing method, timeout, malformed reply, populated result or
+nonzero status remains a failure; there is no compatibility fallback. The
+loaded-unit query, filesystem checks, `StartTransientUnit(mode="fail")`, exact
+identity/resource checks, single owned lifecycle and safe cleanup remain.
+The offline reader requires unique absence commands before creation and
+consistent nonnegative integer monotonic intervals in actual execution order.
+A retained counterexample moved the absence query's recorded time after creation
+and recomputed the outer binding. List order alone had accepted it; the new
+reader rejects that contradiction. This is an evidence-reader defect, not a
+claim that the original runner executed commands concurrently or out of order.
+
+Python controls cannot demonstrate a real parent creation, migration descriptor,
+phase process, accounting interval or cleanup. The new committed source needs
+its own two-architecture hosted execution with the original service predicates.
+The challenge rate, paid CPU refill, actor count, phase duration, call deadlines
+and all public/production qualification boundaries remain unchanged.
+
+#### Separately accessible CodeQL diagnostics
+
+The [first pinned CodeQL run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40836515003)
+completed Actions, Python and C/C++ successfully; Rust failed. Its original Rust
+artifact is 843,326,935 bytes, above the connected artifact downloader's
+536,870,912-byte limit. The downloader refused it and returned no download URL.
+The job log alone does not identify Rust's internal failure. The preceding
+local exact-B relation-cache error must not be assigned to this different
+hosted run without its original execution record.
+
+Independent readback of the three accessible original artifacts verified all
+124 original query/BQRS bindings: Actions 18 queries over 21 workflow inputs,
+Python 45 over 391 inputs, and C/C++ 61 over three original inputs. The C scope
+retains one directly extracted witness plus two original fragments covered by
+the byte-verified composed translation unit. Source-copy bytes/modes, actual
+compilation records, original diagnostics and official query identities were
+checked; these three SARIFs contain zero findings and no warning/error
+diagnostics. This limited successful analysis is not a Rust result or a
+whole-repository security clearance.
+
+A separate bounded metadata artifact now retains a fixed diagnostic inventory:
+original source/result/phase JSON and explicitly partial log tails. It records
+missing, oversized, unsafe, changing and unreadable files; each retained tail
+has its observed original file size, byte interval and sample hash. JSON files
+are limited individually and in aggregate; log tails have their own bounds,
+and the entire artifact is below 32 MiB. Reads refuse symlinks, non-regular
+files and multiple hard links, use a cooperative deadline and have a separate
+outer workflow timeout. The inventory does not infer analysis success,
+coverage, findings or security clearance. A successful diagnostic collection
+cannot turn a failed scan into a passing scan.
+
+The original large artifact, complete available SARIF/BQRS/diagnostic files,
+original official suites, analyzer version, phase budgets and source checks are
+retained. No security-events write, finding suppression, query removal, default
+branch policy change or substitute required gate is introduced. The new small
+artifact makes future failures reviewable through the existing authorized
+connector; it does not recover unread bytes of the previous Rust artifact.
+
+#### Cell TCP fixture initializes before publishing an address
+
+Exact B's required prospective-merge runtime failed
+`tcp_two_bootstraps_newer_owner_sequence_never_dials_superseded_endpoint` with
+`WouldBlock`, `phase=response-header`, after the fixed 200 ms request allowance.
+The original failure is retained. Its log alone does not prove the historical
+cause or show that a superseded endpoint was dialed.
+
+The test fixture previously opened the real Cell store in its worker after
+returning a listener address. The follow-up validates the existing limits,
+finishes the store open and sets nonblocking mode before spawning the worker
+and publishing its address. Store initialization retains its existing bounded
+writer setup. A real SQLite file with an incorrect cache namespace now fails
+synchronously; the former fixture returned a peer before that failure. The
+negative control uses no sleep, retry or scheduling assumption. The fixed
+200 ms request limit, ten-second overall allowance and all real stale/current
+connection assertions remain. All 136 data-availability library tests passed
+on the precommit Rust snapshot. This fixes premature publication, not arbitrary
+host scheduling delays; exact-source hosted runtime acceptance remains separate.
+
+#### Newly observed upstream dependency and proof gates remain open
+
+Both exact-B required-quality lanes rejected four original dependency graph
+entries: `bincode 1.3.3` (`RUSTSEC-2025-0141`), `derivative 2.2.0`
+(`RUSTSEC-2024-0388`), `paste 1.0.15` (`RUSTSEC-2024-0436`) and
+`tracing-subscriber 0.2.25` (`RUSTSEC-2025-0055`). The first three advisories
+report unmaintained packages; the fourth concerns ANSI injection in logging.
+The current tracing dependency has default features disabled and no enabled
+formatter path in the observed graph. This narrows the demonstrated exposure
+but does not waive the unchanged dependency gate. The fuzz graph passed. These
+main-workspace manifests and lockfile were unchanged by exact B and C.
+
+The current published RISC Zero 3.0.6 and inspected newer upstream source still
+introduce parts of this graph. A narrow maintenance route would require real
+parent-crate changes: ark-relations' tracing API/dependency, a complete derivative
+to educe backport, and seven parent manifests using the maintained pastey package.
+It must preserve algorithms, features, provenance, licenses and exact graphs.
+Renaming old package source, removing proof features or adding advisory ignores
+would not establish maintenance or close the security requirement.
+
+The bounded proof receipt codec requires separate compatibility evidence. The
+main succinct receipt and standalone composite host use different accepted
+structures and limits. Switching the serialization beneath the same wire magic
+without real receipt compatibility tests would introduce a new verifier risk.
+Removing a direct main-workspace dependency would also not eliminate bincode
+inside the standalone SDK client. No such change is silently counted as done.
+
+The [exact-B complete-proof experiment](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40825729537)
+retains native/guest agreement for 13,364,385 user cycles and 62 segments, followed
+by the actual 5,400-second prove timeout and no receipt. Its observed waited-child
+CPU is not complete descendant CPU accounting, and its resource qualification
+is false. It proves neither successful cryptographic W1 verification nor a
+lower bound on proving cost. Global cheapest-work and accelerator/energy bounds,
+arbitrary Sybil service, complete proof qualification, independent WAN custody,
+beneficial Hepta releases, whole-chain PQ128 and governed activation remain
+**OPEN / NO_GO** until their distinct original acceptance evidence exists.

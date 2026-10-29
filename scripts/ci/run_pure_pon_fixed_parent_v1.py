@@ -167,6 +167,30 @@ def host_capability():
     return value
 
 
+def loaded_unit_absence_command():
+    return ["/usr/bin/systemctl", "list-units", "--all", "--plain", "--full",
+            "--no-legend", "--no-pager", UNIT]
+
+
+def unit_file_absence_command():
+    # Unlike systemctl list-unit-files (which returns 1 for zero matches),
+    # this read-only API returns a typed empty array on successful absence.
+    # Unsupported methods and every failed command still fail closed.
+    return ["/usr/bin/busctl", "--system", "call", "org.freedesktop.systemd1",
+            "/org/freedesktop/systemd1", "org.freedesktop.systemd1.Manager",
+            "ListUnitFilesByPatterns", "asas", "0", "1", UNIT]
+
+
+def require_unit_file_absence(row):
+    require(row.get("label") == "absence-unit-files-by-patterns"
+            and row.get("command") == unit_file_absence_command(), "FIXTURE_ABSENCE_QUERY")
+    require(type(row.get("returncode")) is int and row["returncode"] == 0
+            and row.get("error") is None, "FIXTURE_MANAGER_COMMAND")
+    require(type(row.get("stdout")) is str and row["stdout"].strip() == "a(ss) 0"
+            and type(row.get("stderr")) is str and not row["stderr"].strip(),
+            "FIXTURE_TYPED_UNIT_FILE_ABSENCE_REQUIRED")
+
+
 def transient_unit_command(description):
     properties = [("Description", "s", description), ("StopWhenUnneeded", "b", "false"),
                   ("CPUAccounting", "b", "true"), ("CPUQuotaPerSecUSec", "t", "250000"),
@@ -247,11 +271,10 @@ class Owner:
             require(not os.path.lexists(Path(location) / UNIT)
                     and not os.path.lexists(Path(location) / (UNIT + ".d")),
                     "FIXTURE_EXISTING_UNIT_FILE_REFUSED")
-        for operation in ("list-units", "list-unit-files"):
-            raw = self.command("absence-" + operation, [
-                "/usr/bin/systemctl", operation, "--all", "--plain", "--full",
-                "--no-legend", "--no-pager", UNIT])
-            require(not raw.strip(), "FIXTURE_EXISTING_MANAGER_UNIT_REFUSED")
+        raw = self.command("absence-list-units", loaded_unit_absence_command())
+        require(not raw.strip(), "FIXTURE_EXISTING_MANAGER_UNIT_REFUSED")
+        self.command("absence-unit-files-by-patterns", unit_file_absence_command())
+        require_unit_file_absence(self.commands[-1])
         self.creation_attempted = True
         self.command("create-owned-runtime-unit", transient_unit_command(self.description))
         self.started_by_fixture = True

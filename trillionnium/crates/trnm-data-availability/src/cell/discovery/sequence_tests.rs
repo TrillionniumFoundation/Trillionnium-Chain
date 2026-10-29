@@ -109,15 +109,18 @@ struct Peer {
 
 impl Peer {
     fn start(path: &Path, bounds: CellPeerLimitsV1) -> Self {
+        // Finish the real store initialization before publishing the listener
+        // address. Its bounded writer setup must not consume the first fetch's
+        // separate request allowance. A setup error fails this fixture
+        // here instead of leaving a listener backed by a failed worker.
+        bounds.validate().unwrap();
+        let store = CellStoreV1::open(path, cache_config()).unwrap();
         let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        listener.set_nonblocking(true).unwrap();
         let address = listener.local_addr().unwrap();
         let shutdown = Arc::new(AtomicBool::new(false));
         let stop = shutdown.clone();
-        let path = path.to_owned();
-        let handle = thread::spawn(move || {
-            let store = CellStoreV1::open(&path, cache_config())?;
-            serve_cells(&listener, &store, &stop, bounds)
-        });
+        let handle = thread::spawn(move || serve_cells(&listener, &store, &stop, bounds));
         Self {
             address,
             shutdown,
@@ -419,6 +422,21 @@ fn assert_current_sequence(
         .unwrap();
     assert_eq!(rows.len(), 1);
     assert_eq!(rows[0].statement().sequence, sequence);
+}
+
+#[test]
+fn peer_setup_error_is_reported_before_address_publication() {
+    let temp = tempfile::tempdir().unwrap();
+    let source = temp.path().join("wrong-cache-namespace.sqlite");
+    let connection = rusqlite::Connection::open(&source).unwrap();
+    connection.pragma_update(None, "application_id", 1).unwrap();
+    connection.pragma_update(None, "user_version", 4).unwrap();
+    drop(connection);
+
+    // The original worker-side open returned an address even when this real
+    // store initialization failed. No scheduling delay or retry is involved.
+    let started = std::panic::catch_unwind(|| Peer::start(&source, limits()));
+    assert!(started.is_err(), "a failed store must not publish a peer");
 }
 
 #[test]

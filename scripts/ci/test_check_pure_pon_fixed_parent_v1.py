@@ -268,15 +268,23 @@ def write_fixture(root, *, paid_depletion=True):
           "github_actions": "true", "runner_environment": "github-hosted", "fixed_parent_exists": False,
           "systemd_present": True, "cgroup_root_writable": True, "self_cgroup": expected["outer_cgroup"]})
     create = fixture.transient_unit_command(expected["manager_identity"]["Description"])
-    for index, (label, command) in enumerate((("create-owned-runtime-unit", create),
-                     ("stop-only-owned-runtime-unit", ["/usr/bin/systemctl", "stop", fixture.UNIT])), 1):
-        write(root / ("manager-command-%02d.json" % index), {"label": label, "command": command, "returncode": 0, "error": None})
+    manager_commands = (("absence-list-units", fixture.loaded_unit_absence_command(), ""),
+                        ("absence-unit-files-by-patterns", fixture.unit_file_absence_command(), "a(ss) 0\n"),
+                        ("create-owned-runtime-unit", create, ""),
+                        ("stop-only-owned-runtime-unit", ["/usr/bin/systemctl", "stop", fixture.UNIT], ""))
+    first_before = load(root / (fixture.PHASES[0] + "-kernel-before.json"))
+    for index, (label, command, stdout) in enumerate(manager_commands, 1):
+        started = (first_before["started_monotonic_ns"] - 1000 + index * 100
+                   if index < 4 else executions[-1]["after"]["ended_monotonic_ns"] + 1000)
+        write(root / ("manager-command-%02d.json" % index), {"label": label, "command": command,
+              "returncode": 0, "error": None, "stdout": stdout, "stderr": "",
+              "started_monotonic_ns": started, "ended_monotonic_ns": started + 10})
     cleanup_before = copy.deepcopy(executions[-1]["after"])
     cleanup_before["started_monotonic_ns"] += 200
     cleanup_before["ended_monotonic_ns"] += 200
     write(root / "results.json", {"schema": fixture.RESULT_SCHEMA, "expected_head": expected["expected_head"],
           "failure": None, "finalization_failures": [], "prior_failure": fixture.PRIOR_FAILURE,
-          "phases": executions, "manager_command_files": ["manager-command-01.json", "manager-command-02.json"],
+          "phases": executions, "manager_command_files": ["manager-command-%02d.json" % i for i in range(1, 5)],
           "common_preparation_sha256": common_hash, "physical_authentication": False,
           "original_campaign_qualification": False, "cleanup": {"schema": "pon-fixed-parent-cleanup-v1",
           "attempted": True, "complete": True, "error": None, "forced_kernel_kill": False,
@@ -333,8 +341,103 @@ class FixedParentControls(unittest.TestCase):
         self.reject()
 
     def test_extra_manager_properties_are_not_silently_accepted(self):
-        self.mutate("manager-command-01.json", lambda value: value["command"].extend(["TasksMax", "t", "4096"]))
+        self.mutate("manager-command-03.json", lambda value: value["command"].extend(["TasksMax", "t", "4096"]))
         self.reject()
+
+    def test_rebound_nonempty_or_untyped_unit_file_reply_is_rejected(self):
+        path = self.root / "manager-command-02.json"
+        original = load(path)
+        for stdout in ("", "as 0\n", "a(ss) 0\nextra\n",
+                       'a(ss) 1 "/etc/systemd/system/trnmponpublic.slice" "enabled"\n'):
+            with self.subTest(stdout=stdout):
+                write(path, {**original, "stdout": stdout})
+                rebind(self.root)
+                self.reject()
+
+    def test_rebound_failed_unit_file_query_never_becomes_absence(self):
+        path = self.root / "manager-command-02.json"
+        original = load(path)
+        for changes in ({"returncode": 1}, {"returncode": False}, {"error": "timeout"},
+                        {"stderr": "Call failed: Unknown method\n"}):
+            with self.subTest(changes=changes):
+                write(path, {**original, **changes})
+                rebind(self.root)
+                self.reject()
+
+    def test_rebound_wrong_absence_method_is_rejected(self):
+        self.mutate("manager-command-02.json", lambda value: value.update(
+            command=["/usr/bin/systemctl", "list-unit-files", fixture.UNIT]))
+        self.reject()
+
+    def test_rebound_loaded_unit_presence_is_rejected(self):
+        self.mutate("manager-command-01.json", lambda value: value.update(
+            stdout="trnmponpublic.slice loaded active active existing\n"))
+        self.reject()
+
+    def test_absence_queries_cannot_be_moved_after_creation(self):
+        first = load(self.root / "manager-command-01.json")
+        third = load(self.root / "manager-command-03.json")
+        write(self.root / "manager-command-01.json", third)
+        write(self.root / "manager-command-03.json", first)
+        rebind(self.root)
+        self.reject()
+
+    def test_rebound_query_clock_after_create_is_rejected_despite_file_order(self):
+        for index, (start, end) in enumerate(((100, 110), (500, 510), (300, 310), (600, 610)), 1):
+            path = self.root / ("manager-command-%02d.json" % index)
+            write(path, {**load(path), "started_monotonic_ns": start, "ended_monotonic_ns": end})
+        rebind(self.root)
+        with self.assertRaisesRegex(ValueError, "manager command sequence"):
+            reader.check_directory(self.root)
+
+    def test_rebound_missing_manager_clock_is_rejected(self):
+        path = self.root / "manager-command-02.json"
+        original = load(path)
+        for field in ("started_monotonic_ns", "ended_monotonic_ns"):
+            with self.subTest(field=field):
+                changed = copy.deepcopy(original)
+                del changed[field]
+                write(path, changed)
+                rebind(self.root)
+                with self.assertRaisesRegex(ValueError, "manager command time bracket"):
+                    reader.check_directory(self.root)
+
+    def test_rebound_noninteger_or_negative_manager_clock_is_rejected(self):
+        path = self.root / "manager-command-02.json"
+        original = load(path)
+        for field in ("started_monotonic_ns", "ended_monotonic_ns"):
+            for invalid in (None, False, 0.0, "0", -1):
+                with self.subTest(field=field, invalid=invalid):
+                    write(path, {**original, field: invalid})
+                    rebind(self.root)
+                    with self.assertRaisesRegex(ValueError, "manager command time bracket"):
+                        reader.check_directory(self.root)
+
+    def test_rebound_reversed_manager_clock_bracket_is_rejected(self):
+        path = self.root / "manager-command-02.json"
+        original = load(path)
+        write(path, {**original, "started_monotonic_ns": original["ended_monotonic_ns"] + 1})
+        rebind(self.root)
+        with self.assertRaisesRegex(ValueError, "manager command time bracket"):
+            reader.check_directory(self.root)
+
+    def test_sorted_manager_queries_and_create_after_phase_start_are_rejected(self):
+        first = load(self.root / (fixture.PHASES[0] + "-kernel-before.json"))["started_monotonic_ns"]
+        for index in range(1, 4):
+            path = self.root / ("manager-command-%02d.json" % index)
+            start = first + index * 100
+            write(path, {**load(path), "started_monotonic_ns": start, "ended_monotonic_ns": start + 10})
+        rebind(self.root)
+        with self.assertRaisesRegex(ValueError, "creation must precede first phase"):
+            reader.check_directory(self.root)
+
+    def test_sorted_manager_stop_before_final_phase_end_is_rejected(self):
+        final = load(self.root / (fixture.PHASES[-1] + "-kernel-after.json"))["ended_monotonic_ns"]
+        path = self.root / "manager-command-04.json"
+        write(path, {**load(path), "started_monotonic_ns": final - 20, "ended_monotonic_ns": final - 10})
+        rebind(self.root)
+        with self.assertRaisesRegex(ValueError, "stop preceded final phase"):
+            reader.check_directory(self.root)
 
     def test_nonzero_controller_exit_cannot_be_host_success(self):
         self.mutate("baseline-process.json", lambda value: value.update(returncode=7))
