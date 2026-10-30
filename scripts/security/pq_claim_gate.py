@@ -21,6 +21,17 @@ CLASSICAL_MARKERS = {
     "cell_discovery": ("ed25519_dalek", "CellProviderRecordV1"),
 }
 PRODUCTION_FLAGS = ("production_candidate", "production_consensus_activation", "public_testnet_ready", "release_ready")
+# These must remain explicit Boolean false in the pinned research-only W1 backend.
+# Turning one on, removing it, or changing its type cannot be an implicit
+# production-proof policy migration; a separately reviewed revision is needed.
+PROOF_RESEARCH_ONLY_FALSE_FLAGS = (
+    "fake_receipts_allowed",
+    "groth16_receipts_allowed",
+    "remote_proving_allowed",
+    "production_consensus_activation",
+    "independent_hashcash_grinding",
+)
+RESEARCH_PROOF_RECEIPT_KIND = "Composite"
 
 def inspect(root: Path) -> dict:
     blockers = []
@@ -51,6 +62,20 @@ def inspect(root: Path) -> dict:
                     blockers.append({"kind": "unreviewed_pq128_proof_claim", "path": rel})
                 else:
                     blockers.append({"kind": "unqualified_proof", "path": rel})
+                # A truthful pq_128=false is not enough: a changed receipt
+                # type or a permissive fallback could silently weaken the
+                # research proof boundary while the public flags remain false.
+                if isinstance(profile, dict):
+                    if profile.get("proof_receipt_kind") != RESEARCH_PROOF_RECEIPT_KIND:
+                        blockers.append({"kind": "unsupported_proof_receipt_kind", "path": rel})
+                    for flag in PROOF_RESEARCH_ONLY_FALSE_FLAGS:
+                        value = profile.get(flag)
+                        if type(value) is not bool:
+                            blockers.append({"kind": "invalid_proof_policy_flag_type",
+                                             "path": rel, "field": flag})
+                        elif value:
+                            blockers.append({"kind": "unsafe_proof_policy_enabled",
+                                             "path": rel, "field": flag})
             except (ValueError, OSError, UnicodeError):
                 blockers.append({"kind": "unreadable_proof_profile", "path": rel})
     config_path = root / PATHS["consensus"]
@@ -93,6 +118,8 @@ def main():
         "unreadable_consensus_profile", "invalid_proof_profile_shape",
         "invalid_proof_qualification_flag_type", "invalid_consensus_profile_shape",
         "invalid_production_flag_type", "unreviewed_pq128_proof_claim",
+        "unsupported_proof_receipt_kind", "invalid_proof_policy_flag_type",
+        "unsafe_proof_policy_enabled",
         "production_claim_requires_independent_pq_review") for item in report["known_open_findings"]):
         raise SystemExit(2)
 
