@@ -9,8 +9,7 @@ use super::{
 use crate::cell::{CellErrorV1, CellResultV1};
 use std::net::SocketAddr;
 use trnm_crypto_primitives::pq_cell_provider::{
-    PqCellProviderExpectationV2, SignedPqCellProviderRecordV2,
-    PQ_CELL_PROVIDER_RECORD_V2_BYTES,
+    PqCellProviderExpectationV2, SignedPqCellProviderRecordV2, PQ_CELL_PROVIDER_RECORD_V2_BYTES,
 };
 
 /// An eight-provider PCP2 reply fits the original 32-KiB envelope.
@@ -130,9 +129,7 @@ mod tests {
     fn authentic_pcp2_uses_existing_m09_request_and_address_policy() {
         let request = request();
         let (wire, key) = signed_wire(request);
-        let addresses = CellDiscoveryAddressPolicyV1::LoopbackDevOnly {
-            ports: vec![31234],
-        };
+        let addresses = CellDiscoveryAddressPolicyV1::LoopbackDevOnly { ports: vec![31234] };
         let expectation = PqCellProviderExpectationM09V2 {
             request,
             trusted_ml_dsa65_public_key: &key,
@@ -153,9 +150,7 @@ mod tests {
     fn rejects_replay_wrong_request_key_address_and_expired_record() {
         let request = request();
         let (wire, key) = signed_wire(request);
-        let addresses = CellDiscoveryAddressPolicyV1::LoopbackDevOnly {
-            ports: vec![31234],
-        };
+        let addresses = CellDiscoveryAddressPolicyV1::LoopbackDevOnly { ports: vec![31234] };
         let mut expectation = PqCellProviderExpectationM09V2 {
             request,
             trusted_ml_dsa65_public_key: &key,
@@ -177,9 +172,7 @@ mod tests {
         expectation.trusted_ml_dsa65_public_key = &wrong_key;
         assert!(verify_pcp2_provider_hint_v2(&wire, &expectation).is_err());
         expectation.trusted_ml_dsa65_public_key = &key;
-        let denied = CellDiscoveryAddressPolicyV1::LoopbackDevOnly {
-            ports: vec![31235],
-        };
+        let denied = CellDiscoveryAddressPolicyV1::LoopbackDevOnly { ports: vec![31235] };
         expectation.addresses = &denied;
         assert!(verify_pcp2_provider_hint_v2(&wire, &expectation).is_err());
     }
@@ -188,9 +181,7 @@ mod tests {
     fn competing_cdp2_classic_cdp1_and_tamper_have_no_fallback() {
         let request = request();
         let (wire, key) = signed_wire(request);
-        let addresses = CellDiscoveryAddressPolicyV1::LoopbackDevOnly {
-            ports: vec![31234],
-        };
+        let addresses = CellDiscoveryAddressPolicyV1::LoopbackDevOnly { ports: vec![31234] };
         let expectation = PqCellProviderExpectationM09V2 {
             request,
             trusted_ml_dsa65_public_key: &key,
