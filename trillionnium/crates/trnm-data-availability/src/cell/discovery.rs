@@ -1476,11 +1476,9 @@ pub mod pq_reply_v2 {
                     assert_eq!(deadline, Some(original_deadline));
                     assert_eq!(fs::read(&hook_output).unwrap(), hook_bytes);
                     signal.set(true);
-                    while let Some(remaining) =
-                        original_deadline.checked_duration_since(Instant::now())
-                    {
-                        std::thread::sleep(remaining + Duration::from_millis(5));
-                    }
+                    let remaining =
+                        original_deadline.saturating_duration_since(Instant::now());
+                    std::thread::sleep(remaining + Duration::from_millis(5));
                     assert!(Instant::now() > original_deadline);
                 }),
                 || {
