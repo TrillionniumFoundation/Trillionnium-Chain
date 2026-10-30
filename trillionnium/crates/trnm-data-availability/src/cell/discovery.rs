@@ -1614,7 +1614,10 @@ pub mod pq_reply_v2 {
                 },
             )
             .unwrap();
-            assert!(observed.get(), "the post-link deadline case was not executed");
+            assert!(
+                observed.get(),
+                "the post-link deadline case was not executed"
+            );
             assert_eq!(late_manifest, manifest);
             assert_eq!(fs::read(&late_output).unwrap(), bytes);
             assert_eq!(late_report.verified_providers[0].sequence(), 12);
