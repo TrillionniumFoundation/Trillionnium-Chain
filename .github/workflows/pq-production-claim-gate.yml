@@ -8,13 +8,26 @@ on:
       - fix/pq-claim-required-ci-contract-20261030
       - audit/pq-w1-pinned-research-parameters-20261030
       - audit/pq-w1-provenance-strict-json-20261030
+      - audit/pq-w1-guest-source-ci-coverage-20261030
     paths:
       - .github/workflows/pq-production-claim-gate.yml
       - scripts/security/**
       - config/consensus-mainline.json
       - trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs
       - trillionnium/crates/trnm-data-availability/src/cell/discovery.rs
-      - trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json
+      - trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/**
+      - trillionnium/crates/trnm-crypto-primitives/src/pon_work/full_relation.rs
+      - trillionnium/crates/trnm-crypto-primitives/src/pon_work/full_relation_tests.rs
+  pull_request:
+    paths:
+      - .github/workflows/pq-production-claim-gate.yml
+      - scripts/security/**
+      - config/consensus-mainline.json
+      - trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs
+      - trillionnium/crates/trnm-data-availability/src/cell/discovery.rs
+      - trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/**
+      - trillionnium/crates/trnm-crypto-primitives/src/pon_work/full_relation.rs
+      - trillionnium/crates/trnm-crypto-primitives/src/pon_work/full_relation_tests.rs
   workflow_dispatch:
 permissions:
   contents: read
@@ -27,9 +40,10 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Check exact source HEAD
         shell: bash
-        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+        run: test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
       - name: Exercise adversarial PQ claim gate controls
         run: python3 -m unittest discover -s scripts/security -p 'test_pq_claim_gate.py' -v
       - name: Refuse any unreviewed PQ128 or unsafe production activation
