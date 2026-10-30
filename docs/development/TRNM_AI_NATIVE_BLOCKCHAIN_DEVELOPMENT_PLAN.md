@@ -8114,3 +8114,56 @@ blocked on those prior qualifications, actual PQ identity prebinding/source
 exit, retained liabilities/history and a release decision for concrete binaries.
 The two Drafts remain development continuations; component passes do not close
 these system exits.
+
+#### PN3 postbinding ESRCH component continuation (2026-10-30)
+
+The [postbinding evidence](../../evidence/pn-owner-recovery-20261030/postbind-esrch/README.md)
+retains the original Hepta `daa0209` public run `41030856547` failure on Chain
+`89218d8`: the round-one fresh budget-matched LoRA evaluation exited zero, but
+its original V4 constructor reported `ProcessLookupError` / `ESRCH` during
+`post-bind-double-frontier`. The later leader-only snapshot and terminal wait4
+do not supply the missing original worker identity or terminal-event proof.
+That historical model run remains failed.
+
+The narrow source continuation accepts a held nonleader task read's ESRCH only
+after every original worker has its complete original pidfd binding, unchanged
+held capabilities, namespace and birth identity. The same retained worker pidfd
+must positively report POLLIN without an error/invalid event. Before and after
+the remaining frontier, the roster must equal the original roster minus that
+one proved worker. The same single-loss constraint remains in force on later
+pending rechecks. Other losses, additions or revival are refused.
+The new `llm-owned-postbinding-terminal-pending-v1` record retains the original
+complete prebinding evidence and reservation; it does not set
+`baseline_qualified`, complete the interrupted postbinding frontier, measure
+zero RSS or prove group termination. The original 100 ms bound and exact owned
+wait4 CPU/RSS/exit checks still decide closure. Earlier-stage ESRCH, pidfd-open
+and fdinfo errors, leader/group loss and the existing ENOENT path keep their
+original behavior.
+
+The same final twelve-case component suite is RED on the unchanged `89218d8`
+worker source and GREEN on the continuation. Its native component actually
+opens the original task's proc status FD before worker exit, receives kernel
+ESRCH from the original read, observes that worker's real PIDFD_THREAD terminal
+event and roster removal, and uses the real supervisor, wait4 and resource
+receipts. A controlled State/PF_EXITING/no-mm field view stabilizes entry into
+the short acquisition stage; raw and transformed fields are retained. This is
+not a natural model-exit reproduction. Real exit 7, actual wait4 RSS above the
+component cap, and a group kept live beyond the original 100 ms remain failed.
+
+The original complete pilot Python entrypoint grows from 301 to 313 discovered
+tests through one explicit import: 202 execute successfully and the same 111
+environment-dependent cases remain skipped, including 104 requiring the exact
+controlled CPython 3.12.3 ABI and seven requiring the tensor opt-in. The local
+interpreter is CPython 3.12.14. Existing source-boundary 16 and CI-contract 96
+controls, the native source-inventory check and current-implementation projection
+check pass. The old V2/V3 and pilot production bytes, original observer tests,
+budgets and qualification flags are unchanged. These component observations do
+not replace the original full committed-source checks.
+
+The published Chain continuation and the paired Hepta source selection must
+receive new immutable source identities; older execution manifests remain
+unchanged. The actual original model host, three ordinary installed-parent or
+valid hold/no-update rounds, subsequent ordinary readback, complete effect
+recovery and source-paired native campaigns remain required on that new source.
+No model efficacy, installation acceptance, PN3 completion or release authority
+is granted by this component repair.
