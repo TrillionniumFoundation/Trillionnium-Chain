@@ -429,3 +429,321 @@ mod sequence_tests;
 
 #[cfg(all(test, unix))]
 mod equivocation_history_tests;
+
+// PCP2-only bounded research receiver. CDP1, CDP2 and any opportunistic
+// classic/PQ fallback are intentionally never accepted by this interface.
+pub mod pq_reply_v2 {
+    use super::*;
+    use std::collections::{BTreeMap, BTreeSet};
+    use trnm_crypto_primitives::pq_cell_provider::{
+        pq_cell_provider_key_id_v2, PqCellProviderExpectationV2, SignedPqCellProviderRecordV2,
+        PQ_CELL_PROVIDER_RECORD_V2_BYTES,
+    };
+
+    /// Both the key and replay floor MUST come from independent trusted policy,
+    /// NOT a record or a locally replayable provider database.
+    pub struct PqPinnedProviderV2<'a> {
+        pub signer_key_id: [u8; 32],
+        pub trusted_ml_dsa65_public_key: &'a [u8],
+        pub external_sequence_floor: u64,
+    }
+
+    /// A hint, not a capability to install, release, serve or execute anything.
+    #[derive(Clone, Debug, Eq, PartialEq)]
+    pub struct VerifiedPqDiscoveryProviderV2 {
+        signer_key_id: [u8; 32],
+        endpoint: SocketAddr,
+        sequence: u64,
+        expires_unix_seconds: u64,
+    }
+    impl VerifiedPqDiscoveryProviderV2 {
+        pub fn signer_key_id(&self) -> [u8; 32] {
+            self.signer_key_id
+        }
+        pub fn endpoint(&self) -> SocketAddr {
+            self.endpoint
+        }
+        pub fn sequence(&self) -> u64 {
+            self.sequence
+        }
+        pub fn expires_unix_seconds(&self) -> u64 {
+            self.expires_unix_seconds
+        }
+    }
+
+    /// Whole-reply fail-closed, with *all* inexpensive checks performed before
+    /// the first ML-DSA verification. Eight PCP2 records fit the original 32KiB
+    /// response ceiling (28641 bytes including the count). Not wired into
+    /// ordinary transport, directory persistence, FinalUse or network custody.
+    pub fn verify_pq_provider_reply_v2(
+        response: &[u8],
+        expected_request: CellDiscoveryRequestV1,
+        pinned_owners: &[PqPinnedProviderV2<'_>],
+        now_unix_seconds: u64,
+        addresses: &CellDiscoveryAddressPolicyV1,
+    ) -> CellResultV1<Vec<VerifiedPqDiscoveryProviderV2>> {
+        expected_request.validate()?;
+        addresses.validate()?;
+        require(
+            !response.is_empty() && response.len() <= MAX_DISCOVERY_RESPONSE_BYTES as usize,
+            "PQ bounded reply",
+        )?;
+        let count = usize::from(response[0]);
+        require(
+            (1..=MAX_DISCOVERED_PROVIDERS).contains(&count)
+                && response.len() == 1 + count * PQ_CELL_PROVIDER_RECORD_V2_BYTES,
+            "PQ PCP2-only reply count/length",
+        )?;
+        require(
+            !pinned_owners.is_empty() && pinned_owners.len() <= MAX_DISCOVERED_PROVIDERS,
+            "PQ bounded independent roster",
+        )?;
+        let encoded = expected_request.encode();
+        let request_pin: [u8; 192] = encoded
+            .as_slice()
+            .try_into()
+            .map_err(|_| CellErrorV1::Invalid("PQ request bytes"))?;
+
+        let mut trusted = BTreeMap::new();
+        for owner in pinned_owners {
+            let computed = pq_cell_provider_key_id_v2(owner.trusted_ml_dsa65_public_key)
+                .map_err(|_| CellErrorV1::Invalid("PQ pinned public key"))?;
+            require(
+                computed == owner.signer_key_id
+                    && trusted.insert(owner.signer_key_id, owner).is_none(),
+                "PQ duplicate/mismatched pinned owner",
+            )?;
+        }
+
+        let mut seen = BTreeSet::new();
+        let mut pending = Vec::with_capacity(count);
+        for bytes in response[1..].chunks_exact(PQ_CELL_PROVIDER_RECORD_V2_BYTES) {
+            let record = SignedPqCellProviderRecordV2::from_wire(bytes)
+                .map_err(|_| CellErrorV1::Invalid("PQ malformed PCP2"))?;
+            require(
+                record.statement.pinned_request == request_pin,
+                "PQ different request",
+            )?;
+            let owner = *trusted
+                .get(&record.signer_key_id)
+                .ok_or(CellErrorV1::Invalid("PQ unknown signer"))?;
+            require(
+                seen.insert(record.signer_key_id),
+                "PQ duplicate reply owner",
+            )?;
+            let endpoint = decode_endpoint(record.statement.endpoint)?;
+            addresses.check(endpoint)?;
+            pending.push((record, owner, endpoint));
+        }
+
+        let mut result = Vec::with_capacity(count);
+        for (record, owner, endpoint) in pending {
+            let expected = PqCellProviderExpectationV2 {
+                pinned_request: &request_pin,
+                trusted_ml_dsa65_public_key: owner.trusted_ml_dsa65_public_key,
+                last_accepted_sequence: owner.external_sequence_floor,
+                now_unix_seconds,
+            };
+            let verified = record
+                .verify_for_pinned_context(&expected)
+                .map_err(|_| CellErrorV1::Invalid("PQ signature/replay/time"))?;
+            result.push(VerifiedPqDiscoveryProviderV2 {
+                signer_key_id: record.signer_key_id,
+                endpoint,
+                sequence: verified.sequence(),
+                expires_unix_seconds: verified.expires_unix_seconds(),
+            });
+        }
+        Ok(result)
+    }
+
+    #[cfg(test)]
+    mod tests {
+        use super::*;
+        use ml_dsa::{KeyExport, KeyInit, Keypair, MlDsa65, SigningKey};
+        use trnm_crypto_primitives::pq_cell_provider::PqCellProviderStatementV2;
+
+        fn request() -> CellDiscoveryRequestV1 {
+            CellDiscoveryRequestV1 {
+                context: CellDiscoveryContextV1 {
+                    namespace: [1; 32],
+                    network: [2; 32],
+                    parameters: [3; 32],
+                    genesis: [4; 32],
+                },
+                cell_context: [5; 32],
+                manifest: [6; 32],
+            }
+        }
+        fn addresses() -> CellDiscoveryAddressPolicyV1 {
+            CellDiscoveryAddressPolicyV1::LoopbackDevOnly { ports: vec![31415] }
+        }
+        fn signed(seed: u8) -> (Vec<u8>, Vec<u8>, [u8; 32]) {
+            let key = SigningKey::<MlDsa65>::new_from_slice(&[seed; 32]).unwrap();
+            let pk = key.verifying_key().to_bytes().to_vec();
+            let id = pq_cell_provider_key_id_v2(&pk).unwrap();
+            let statement = PqCellProviderStatementV2 {
+                pinned_request: request().encode().try_into().unwrap(),
+                endpoint: endpoint_bytes("127.0.0.1:31415".parse().unwrap()),
+                sequence: 7,
+                issued_unix_seconds: 100,
+                expires_unix_seconds: 200,
+            };
+            let wire = SignedPqCellProviderRecordV2::sign(statement, &key)
+                .unwrap()
+                .to_wire();
+            (wire, pk, id)
+        }
+        fn reply(records: &[&[u8]]) -> Vec<u8> {
+            let mut output = vec![records.len() as u8];
+            for record in records {
+                output.extend_from_slice(record);
+            }
+            output
+        }
+
+        #[test]
+        fn actual_ml_dsa_positive_and_fail_closed_downgrade() {
+            let (wire, pk, id) = signed(42);
+            let pin = || PqPinnedProviderV2 {
+                signer_key_id: id,
+                trusted_ml_dsa65_public_key: &pk,
+                external_sequence_floor: 6,
+            };
+            let evaluate = |bytes: &[u8]| {
+                verify_pq_provider_reply_v2(bytes, request(), &[pin()], 150, &addresses())
+            };
+            let accepted = evaluate(&reply(&[&wire])).unwrap();
+            assert_eq!(accepted.len(), 1);
+            assert_eq!(accepted[0].signer_key_id(), id);
+            assert_eq!(accepted[0].sequence(), 7);
+            assert_eq!(accepted[0].expires_unix_seconds(), 200);
+            assert_eq!(
+                accepted[0].endpoint(),
+                "127.0.0.1:31415".parse::<SocketAddr>().unwrap()
+            );
+            assert!(evaluate(&reply(&[&vec![0; 335]])).is_err());
+            assert!(evaluate(&reply(&[&vec![0; 5532]])).is_err());
+            let mut other_magic = wire.clone();
+            other_magic[..4].copy_from_slice(b"CDP2");
+            assert!(evaluate(&reply(&[&other_magic])).is_err());
+            let mut corrupted = wire.clone();
+            *corrupted.last_mut().unwrap() ^= 1;
+            assert!(evaluate(&reply(&[&corrupted])).is_err());
+            assert!(evaluate(&reply(&[&wire, &wire])).is_err());
+            assert!(evaluate(&reply(&[wire.as_slice(); 9])).is_err());
+            assert!(evaluate(&[]).is_err());
+            assert_eq!(1 + 8 * PQ_CELL_PROVIDER_RECORD_V2_BYTES, 28641);
+            assert!(8 * PQ_CELL_PROVIDER_RECORD_V2_BYTES < MAX_DISCOVERY_RESPONSE_BYTES as usize);
+        }
+
+        #[test]
+        fn mixed_valid_and_invalid_providers_reject_whole_reply() {
+            let (first, pk1, id1) = signed(42);
+            let (second, pk2, id2) = signed(43);
+            let pins = || {
+                [
+                    PqPinnedProviderV2 {
+                        signer_key_id: id1,
+                        trusted_ml_dsa65_public_key: &pk1,
+                        external_sequence_floor: 6,
+                    },
+                    PqPinnedProviderV2 {
+                        signer_key_id: id2,
+                        trusted_ml_dsa65_public_key: &pk2,
+                        external_sequence_floor: 6,
+                    },
+                ]
+            };
+            let good = reply(&[&first, &second]);
+            assert_eq!(
+                verify_pq_provider_reply_v2(&good, request(), &pins(), 150, &addresses())
+                    .unwrap()
+                    .len(),
+                2
+            );
+            let mut invalid = second.clone();
+            *invalid.last_mut().unwrap() ^= 1;
+            assert!(verify_pq_provider_reply_v2(
+                &reply(&[&first, &invalid]),
+                request(),
+                &pins(),
+                150,
+                &addresses()
+            )
+            .is_err());
+            let mut wrong_request = request();
+            wrong_request.context.genesis[0] ^= 1;
+            assert!(verify_pq_provider_reply_v2(
+                &reply(&[&first]),
+                wrong_request,
+                &pins(),
+                150,
+                &addresses()
+            )
+            .is_err());
+            let bad_addresses =
+                CellDiscoveryAddressPolicyV1::LoopbackDevOnly { ports: vec![31416] };
+            assert!(verify_pq_provider_reply_v2(
+                &reply(&[&first]),
+                request(),
+                &pins(),
+                150,
+                &bad_addresses
+            )
+            .is_err());
+        }
+
+        #[test]
+        fn stale_key_substitution_and_expiry_never_fall_back() {
+            let (wire, pk, id) = signed(42);
+            let pin = PqPinnedProviderV2 {
+                signer_key_id: id,
+                trusted_ml_dsa65_public_key: &pk,
+                external_sequence_floor: 7,
+            };
+            assert!(verify_pq_provider_reply_v2(
+                &reply(&[&wire]),
+                request(),
+                &[pin],
+                150,
+                &addresses()
+            )
+            .is_err());
+            assert!(verify_pq_provider_reply_v2(
+                &reply(&[&wire]),
+                request(),
+                &[],
+                150,
+                &addresses()
+            )
+            .is_err());
+            let pin = PqPinnedProviderV2 {
+                signer_key_id: id,
+                trusted_ml_dsa65_public_key: &pk,
+                external_sequence_floor: 6,
+            };
+            assert!(verify_pq_provider_reply_v2(
+                &reply(&[&wire]),
+                request(),
+                &[pin],
+                200,
+                &addresses()
+            )
+            .is_err());
+            let wrong = [PqPinnedProviderV2 {
+                signer_key_id: id,
+                trusted_ml_dsa65_public_key: &[0; 1952],
+                external_sequence_floor: 6,
+            }];
+            assert!(verify_pq_provider_reply_v2(
+                &reply(&[&wire]),
+                request(),
+                &wrong,
+                150,
+                &addresses()
+            )
+            .is_err());
+        }
+    }
+}
