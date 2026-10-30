@@ -29,6 +29,9 @@ pub use pq_rollback_witness::{
     ExternalRecoveryExpectationV1, LocalRecoveryHeadV1, PqRecoveryWitnessError,
     PqRecoveryWitnessStatementV1, SignedPqRecoveryWitnessV1, MAX_PQ_RECOVERY_WITNESS_BYTES,
     PQ_RECOVERY_WITNESS_VERSION,
+    PqRecoveryQuorumPolicyV1, PqRecoveryQuorumErrorV1, PqRecoveryTrustedSignerV1,
+    ObservedPqRecoveryQuorumV1, verify_pq_recovery_quorum_v1,
+    MAX_PQ_RECOVERY_QUORUM_SIGNERS_V1,
 };
 pub use state::{
     AppliedCommandRecordV1, ApplyOutcome, AuthorityIdentityV1, AuthoritySetV1,
