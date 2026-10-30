@@ -659,6 +659,36 @@ pub mod pq_reply_v2 {
         pub fetch: super::super::CellFetchReportV1,
     }
 
+    // A single-use, nonrenewable lease: retain both the pre-verification
+    // anchor and the original session allocation when observing time again.
+    fn pq_fetch_deadline_v2(
+        original: Instant,
+        sampled_at: Instant,
+        wall: std::time::Duration,
+        checked_at: Instant,
+        checked_wall: std::time::Duration,
+        expires_unix_seconds: u64,
+    ) -> CellResultV1<Instant> {
+        let expires = std::time::Duration::from_secs(expires_unix_seconds);
+        let anchored_remaining = expires
+            .checked_sub(wall)
+            .filter(|remaining| !remaining.is_zero())
+            .ok_or(CellErrorV1::Invalid("PQ provider lease expired"))?;
+        let observed_remaining = expires
+            .checked_sub(checked_wall)
+            .filter(|remaining| !remaining.is_zero())
+            .ok_or(CellErrorV1::Invalid("PQ provider lease expired"))?;
+        let anchored = sampled_at
+            .checked_add(anchored_remaining)
+            .ok_or(CellErrorV1::Invalid("PQ provider lease overflow"))?;
+        let observed = checked_at
+            .checked_add(observed_remaining)
+            .ok_or(CellErrorV1::Invalid("PQ provider lease overflow"))?;
+        let deadline = original.min(anchored).min(observed);
+        require(checked_at < deadline, "PQ provider lease expired")?;
+        Ok(deadline)
+    }
+
     /// Research-only PCQ2/PCS2 -> pinned ML-DSA PCP2 -> real manifest/chunks
     /// -> create-only full Cell materialization, with one ORIGINAL allocation.
     ///
@@ -671,6 +701,11 @@ pub mod pq_reply_v2 {
     /// floors, Cell request and network address policy. This API does NOT
     /// provide externally durable replay protection, provider custody proofs,
     /// TLS identity, deployment selection, or Hepta FinalUse authorization.
+    ///
+    /// A successful lower-layer publication is not reclassified as timeout
+    /// after its final pre-publication checkpoint. Directory-sync or cleanup
+    /// failures can still return Err with a complete output already present;
+    /// Err does not imply output absence or grant installation/FinalUse rights.
     pub fn fetch_pq_discovered_cell_to_file_v2(
         store: &super::super::CellStoreV1,
         options: &CellDiscoveryOptionsV1,
@@ -726,14 +761,21 @@ pub mod pq_reply_v2 {
         // Count the actual ML-DSA verifications in the complete fetch path,
         // just as the standalone PCP2 query reports its authentication cost.
         discovery.record_validation_attempts = verified_providers.len();
+        // Resample after verification without renewing the original lease.
+        // A forward wall jump tightens it; a backward jump cannot extend it.
+        let checked_at = Instant::now();
+        let checked_wall = wall_now()?;
         let mut expiry = original_overall;
         let mut peers = Vec::with_capacity(verified_providers.len());
         for provider in &verified_providers {
-            let remaining = std::time::Duration::from_secs(provider.expires_unix_seconds())
-                .checked_sub(wall)
-                .ok_or(CellErrorV1::Invalid("PQ provider lease expired"))?;
-            require(!remaining.is_zero(), "PQ provider lease expired")?;
-            expiry = expiry.min(sampled_at + remaining);
+            expiry = pq_fetch_deadline_v2(
+                expiry,
+                sampled_at,
+                wall,
+                checked_at,
+                checked_wall,
+                provider.expires_unix_seconds(),
+            )?;
             peers.push(provider.endpoint());
         }
         require(
@@ -808,11 +850,15 @@ pub mod pq_reply_v2 {
     ) -> CellResultV1<CellRendezvousReportV1> {
         limits.validate()?;
         addresses.validate()?;
+        // Anchor lifetime and signed expiry before the up-front ML-DSA work.
+        // Monotonic first makes the wall-clock mapping conservative.
+        let started = Instant::now();
+        let started_wall = wall_now()?;
         let verified = verify_pq_provider_reply_v2(
             signed_reply,
             expected_request,
             pinned_owners,
-            wall_now()?.as_secs(),
+            started_wall.as_secs(),
             addresses,
         )?;
         let expires = verified
@@ -825,11 +871,17 @@ pub mod pq_reply_v2 {
             .as_slice()
             .try_into()
             .map_err(|_| CellErrorV1::Invalid("PQ request length"))?;
+        let lease = super::transport::PqReplyLeaseV2::new(
+            started,
+            started_wall,
+            expires,
+            limits.lifetime,
+        )?;
         let mut report = super::transport::serve_pq_reply_bytes_v2(
             listener,
             pin,
             signed_reply,
-            expires,
+            lease,
             shutdown,
             limits,
         )?;
@@ -1293,6 +1345,117 @@ pub mod pq_reply_v2 {
             )
             .is_err());
         }
+        #[test]
+        fn shared_fetch_lease_keeps_precise_anchor_and_original_budget() {
+            use std::time::Duration;
+            let start = Instant::now();
+            let wall = Duration::from_millis(100_750);
+            let checked = start + Duration::from_millis(500);
+            let original = start + Duration::from_secs(10);
+            assert_eq!(
+                pq_fetch_deadline_v2(
+                    original,
+                    start,
+                    wall,
+                    checked,
+                    Duration::from_millis(101_250),
+                    102,
+                )
+                .unwrap(),
+                start + Duration::from_millis(1250)
+            );
+            let capped = start + Duration::from_millis(900);
+            assert_eq!(
+                pq_fetch_deadline_v2(
+                    capped,
+                    start,
+                    wall,
+                    checked,
+                    Duration::from_millis(101_250),
+                    102,
+                )
+                .unwrap(),
+                capped
+            );
+            assert!(pq_fetch_deadline_v2(
+                original,
+                start,
+                wall,
+                start + Duration::from_secs(2),
+                wall,
+                102,
+            )
+            .is_err());
+        }
+
+        #[test]
+        fn shared_fetch_lease_forward_wall_shortens_backward_never_renews() {
+            use std::time::Duration;
+            let start = Instant::now();
+            let original = start + Duration::from_secs(30);
+            let checked = start + Duration::from_secs(1);
+            assert_eq!(
+                pq_fetch_deadline_v2(
+                    original,
+                    start,
+                    Duration::from_secs(100),
+                    checked,
+                    Duration::from_millis(109_500),
+                    110,
+                )
+                .unwrap(),
+                checked + Duration::from_millis(500)
+            );
+            assert_eq!(
+                pq_fetch_deadline_v2(
+                    original,
+                    start,
+                    Duration::from_secs(100),
+                    checked,
+                    Duration::from_secs(90),
+                    110,
+                )
+                .unwrap(),
+                start + Duration::from_secs(10)
+            );
+        }
+
+        #[test]
+        fn shared_fetch_lease_refuses_observed_expiry_and_exhausted_budget() {
+            use std::time::Duration;
+            let start = Instant::now();
+            let checked = start + Duration::from_secs(1);
+            for wall in [Duration::from_secs(110), Duration::from_secs(111)] {
+                assert!(pq_fetch_deadline_v2(
+                    start + Duration::from_secs(30),
+                    start,
+                    Duration::from_secs(100),
+                    checked,
+                    wall,
+                    110,
+                )
+                .is_err());
+            }
+            assert!(pq_fetch_deadline_v2(
+                checked,
+                start,
+                Duration::from_secs(100),
+                checked,
+                Duration::from_secs(101),
+                110,
+            )
+            .is_err());
+            assert!(pq_fetch_deadline_v2(
+                start + Duration::from_secs(30),
+                start,
+                Duration::from_secs(110),
+                checked,
+                Duration::from_secs(100),
+                110,
+            )
+            .is_err());
+        }
+
         #[test]
         fn pq_rendezvous_and_real_cell_fetch_share_one_original_budget() {
             use crate::cell::{
