@@ -1,11 +1,14 @@
 //! An explicit signed, immediate original tag22 lease edge. No source/class or
 //! matrix substitution, implicit discovery, historical rewrite or budget reset.
 use crate::operator_continuous_recipient::{declared_binding_digest, DeclaredBinding};
+use crate::operator_pq_auth::Profile;
 use crate::operator_task_policy::PolicyError;
 use serde::{Deserialize, Serialize};
 use trnm_protocol::qualified_work_task::lifecycle_v2::DemandLeaseV2;
+use trnm_protocol::qualified_work_task::pq_lifecycle_v5::DemandLeaseV5;
 type Result<T> = std::result::Result<T, PolicyError>;
 const DOMAIN: &[u8] = b"TRNM-RESTRICTED-CONTINUOUS-LEASE-EDGE1";
+const PQ_DOMAIN: &[u8] = b"TRNM/PoN/ContinuousLeaseEdge/PQ/v2\0";
 fn check(v: bool) -> Result<()> {
     if v {
         Ok(())
@@ -45,18 +48,46 @@ pub(crate) fn same_except_lease(old: &DeclaredBinding, new: &DeclaredBinding) ->
     normalized == *old
 }
 impl LeaseEdge {
-    fn lease(value: &str) -> Result<(Vec<u8>, DemandLeaseV2)> {
-        check(
-            value.len() == 2 * trnm_protocol::qualified_work_task::lifecycle_v2::DEMAND_LEASE_BYTES,
-        )?;
+    fn profile(&self) -> Result<Profile> {
+        match self.schema.as_str() {
+            "restricted-continuous-lease-edge-v1" => Ok(Profile::ClassicalV2),
+            "restricted-continuous-lease-edge-pq-v2" => Ok(Profile::PqV3),
+            _ => Err(PolicyError::NativeBinding),
+        }
+    }
+    fn lease(value: &str, profile: Profile) -> Result<(Vec<u8>, Lease)> {
+        let size = match profile {
+            Profile::ClassicalV2 => {
+                trnm_protocol::qualified_work_task::lifecycle_v2::DEMAND_LEASE_BYTES
+            }
+            Profile::PqV3 => {
+                trnm_protocol::qualified_work_task::pq_lifecycle_v5::DEMAND_LEASE_BYTES
+            }
+        };
+        check(value.len() == 2 * size)?;
         let raw = hex::decode(value).map_err(|_| PolicyError::Input)?;
         check(hex::encode(&raw) == value)?;
-        let lease = DemandLeaseV2::decode(&raw).map_err(|_| PolicyError::NativeBinding)?;
-        check(lease.encode().map_err(|_| PolicyError::NativeBinding)? == raw)?;
+        let lease = match profile {
+            Profile::ClassicalV2 => {
+                let lease = DemandLeaseV2::decode(&raw).map_err(|_| PolicyError::NativeBinding)?;
+                check(lease.encode().map_err(|_| PolicyError::NativeBinding)? == raw)?;
+                Lease::Classical(lease)
+            }
+            Profile::PqV3 => {
+                let lease = DemandLeaseV5::decode(&raw).map_err(|_| PolicyError::NativeBinding)?;
+                check(lease.encode().map_err(|_| PolicyError::NativeBinding)? == raw)?;
+                Lease::Pq(lease)
+            }
+        };
         Ok((raw, lease))
     }
+    /// Profile comes from the externally pinned Identity, never from lease bytes.
+    pub(crate) fn payload_for(&self, profile: Profile) -> Result<String> {
+        check(self.profile()? == profile)?;
+        self.payload()
+    }
     pub(crate) fn payload(&self) -> Result<String> {
-        check(self.schema == "restricted-continuous-lease-edge-v1")?;
+        let profile = self.profile()?;
         for h in [
             &self.actual_parent,
             &self.native_task,
@@ -67,11 +98,15 @@ impl LeaseEdge {
         ] {
             id(h)?;
         }
-        Self::lease(&self.old_complete_lease)?;
-        Self::lease(&self.new_complete_lease)?;
+        Self::lease(&self.old_complete_lease, profile)?;
+        Self::lease(&self.new_complete_lease, profile)?;
         let raw = serde_json::to_vec(self).map_err(|_| PolicyError::Input)?;
         check(raw.len() <= 4096)?;
-        let mut message = DOMAIN.to_vec();
+        let mut message = match profile {
+            Profile::ClassicalV2 => DOMAIN,
+            Profile::PqV3 => PQ_DOMAIN,
+        }
+        .to_vec();
         message.extend_from_slice(&(raw.len() as u32).to_le_bytes());
         message.extend_from_slice(&raw);
         Ok(crate::operator_task_policy::digest_bytes(&message))
@@ -82,8 +117,8 @@ impl LeaseEdge {
         new: &DeclaredBinding,
     ) -> Result<()> {
         self.payload()?;
-        let (old_raw, old_lease) = Self::lease(&self.old_complete_lease)?;
-        let (new_raw, new_lease) = Self::lease(&self.new_complete_lease)?;
+        let (old_raw, old_lease) = Self::lease(&self.old_complete_lease, self.profile()?)?;
+        let (new_raw, new_lease) = Self::lease(&self.new_complete_lease, self.profile()?)?;
         check(
             same_except_lease(old, new)
                 && old.task.native_task == self.native_task
@@ -93,15 +128,7 @@ impl LeaseEdge {
                 && crate::operator_task_policy::digest_bytes(&old_raw) == old.task.lease_sha256
                 && crate::operator_task_policy::digest_bytes(&new_raw) == new.task.lease_sha256
                 && old.task.lease_sha256 != new.task.lease_sha256
-                && old_lease.slot == new_lease.slot
-                && old_lease.purpose == new_lease.purpose
-                && old_lease.network == new_lease.network
-                && old_lease.parameters == new_lease.parameters
-                && old_lease.demand_id == new_lease.demand_id
-                && old_lease.requester == new_lease.requester
-                && old_lease.source == new_lease.source
-                && old_lease.generation == new_lease.generation
-                && old_lease.revision.checked_add(1) == Some(new_lease.revision),
+                && old_lease.successor(&new_lease),
         )
     }
     /// Byte equality against actual original Node state and the actual retained
@@ -122,6 +149,32 @@ impl LeaseEdge {
                 && crate::operator_task_policy::digest_bytes(actual_packet)
                     == self.renewal_packet_sha256,
         )
+    }
+}
+
+enum Lease {
+    Classical(DemandLeaseV2),
+    Pq(DemandLeaseV5),
+}
+impl Lease {
+    fn successor(&self, next: &Self) -> bool {
+        match (self, next) {
+            (Self::Classical(old), Self::Classical(new)) => {
+                old.slot == new.slot
+                    && old.purpose == new.purpose
+                    && old.network == new.network
+                    && old.parameters == new.parameters
+                    && old.demand_id == new.demand_id
+                    && old.requester == new.requester
+                    && old.source == new.source
+                    && old.generation == new.generation
+                    && old.revision.checked_add(1) == Some(new.revision)
+            }
+            (Self::Pq(old), Self::Pq(new)) => {
+                new.same_scope(old) && old.revision.checked_add(1) == Some(new.revision)
+            }
+            _ => false,
+        }
     }
 }
 

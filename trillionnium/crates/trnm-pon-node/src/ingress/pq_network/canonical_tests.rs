@@ -5,13 +5,13 @@ use trnm_mvcc_fee::pon_executor::pq_accounts_v2::{self as accounts, application_
 use trnm_protocol::pq_native_accounts_v2 as wire;
 use zeroize::Zeroizing;
 
-fn key(seed: u8) -> PqNativeSigningKey {
+pub(crate) fn key(seed: u8) -> PqNativeSigningKey {
     let seed = Zeroizing::new([seed; 32]);
     let spki = PqNativeSigningKey::public_spki_from_seed(&seed);
     let id = ml_dsa_65_key_id_from_spki(&spki).unwrap();
     PqNativeSigningKey::from_owned_seed(seed, id).unwrap()
 }
-fn setup() -> (Settings, Arc<PqNetworkPolicy>) {
+pub(crate) fn setup() -> (Settings, Arc<PqNetworkPolicy>) {
     let seeded: Vec<_> = [1, 2, 3]
         .into_iter()
         .map(|seed| accounts::GenesisAccount {
@@ -40,7 +40,7 @@ fn setup() -> (Settings, Arc<PqNetworkPolicy>) {
     );
     (settings, policy)
 }
-fn transfer(settings: &Settings) -> Vec<u8> {
+pub(crate) fn transfer(settings: &Settings) -> Vec<u8> {
     let payload = [
         key(2).public_key_id().as_slice(),
         &42_u64.to_le_bytes(),
@@ -214,9 +214,31 @@ fn pq6_payment_observer_replays_actual_settlement_and_refuses_reorg_and_wrong_bi
         assert!(node.native_payment_observation(&wrong).is_err());
     }
     drop(node);
-    let mut node = Node::open_with_pq_network(dir.path(), settings, 1, &policy).unwrap();
+    let mut node = Node::open_with_pq_network(dir.path(), settings.clone(), 1, &policy).unwrap();
     assert_eq!(node.native_payment_observation(&query).unwrap(), observed);
-    node.activate(first).unwrap();
+    // An ancestor locator cannot undo settled work. Only a genuinely heavier
+    // PoN fork may remove the settlement from the active branch.
+    assert_eq!(node.activate(first).unwrap(), settled);
+    assert_eq!(node.native_payment_observation(&query).unwrap(), observed);
+    let mut competing = first;
+    for height in [2, 3] {
+        let fork = node
+            .make_consensus_maintenance(
+                competing,
+                Vec::new(),
+                key(3).public_key_id(),
+                settings.genesis_time() + height * 10,
+                4096,
+            )
+            .unwrap();
+        competing = node.admit(&fork, super::super::now().unwrap()).unwrap();
+    }
+    assert_eq!(node.activate(competing).unwrap(), competing);
+    assert_eq!(node.packet(settled).unwrap().id().unwrap(), settled);
+    assert!(node.native_payment_observation(&query).is_err());
+    drop(node);
+    let node = Node::open_with_pq_network(dir.path(), settings, 1, &policy).unwrap();
+    assert_eq!(node.active().unwrap().0, competing);
     assert!(node.native_payment_observation(&query).is_err());
 }
 

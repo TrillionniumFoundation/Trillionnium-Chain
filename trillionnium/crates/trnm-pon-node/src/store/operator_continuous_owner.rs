@@ -28,6 +28,8 @@ pub(super) struct ContinuousOwner {
     active: Arc<Mutex<Option<Active>>>,
     startup_scope: String,
     sink: Arc<history::FaultSink>,
+    pq_startup: Option<Arc<crate::operator_pq_startup::PreparedStartup>>,
+    startup_import: Arc<AtomicBool>,
 }
 #[derive(Clone)]
 struct Active {
@@ -118,6 +120,16 @@ struct Binding {
     height: Option<u64>,
     pool: Option<Arc<crate::operator_continuous_pool::VerifiedSelection>>,
 }
+struct ContinuousStartupMaterial {
+    catalog: policy::HeldCatalog,
+    settings: Settings,
+    model: Vec<u8>,
+    input: Vec<u8>,
+    pq: Option<(
+        Arc<crate::operator_pq_startup::PreparedStartup>,
+        crate::ingress::pq_network::PqNetworkPolicy,
+    )>,
+}
 impl Binding {
     fn none() -> Self {
         Self {
@@ -127,10 +139,10 @@ impl Binding {
             pool: None,
         }
     }
-    fn packet(packet: &Packet) -> Result<Self> {
+    fn packet(packet: &Packet, profile: crate::operator_pq_auth::Profile) -> Result<Self> {
         Ok(Self {
             tx: Some(
-                crate::operator_mining_policy::transactions_sha256(&packet.transactions)
+                policy::transactions_sha256(profile, &packet.transactions)
                     .map_err(continuous_error)?,
             ),
             miner: Some(packet.header.miner),
@@ -140,6 +152,15 @@ impl Binding {
     }
 }
 impl ContinuousOwner {
+    pub(super) fn is_pq_startup_owner(&self) -> bool {
+        self.pq_startup.is_some()
+            && self.view.body.identity.profile() == Ok(crate::operator_pq_auth::Profile::PqV3)
+    }
+    fn importing_pq_startup(&self, active: &Active) -> bool {
+        self.is_pq_startup_owner()
+            && self.startup_import.load(Ordering::Acquire)
+            && active.permit.allocation.claim().purpose == "parent-reconcile"
+    }
     fn slot(&self) -> Result<Option<Active>> {
         Ok(self
             .active
@@ -588,6 +609,7 @@ impl Node {
             &inputs.expected_journal,
         )
         .map_err(continuous_error)?;
+        let pristine_journal = journal.pristine();
         if journal.pristine() {
             ensure(
                 inputs.lease_transition.is_none(),
@@ -725,7 +747,7 @@ impl Node {
                 .map_err(continuous_error)?
                 .checkpoint()
         };
-        let built = (|| -> Result<(policy::HeldCatalog, Settings, Vec<u8>, Vec<u8>)> {
+        let built = (|| -> Result<ContinuousStartupMaterial> {
             let catalog = policy::verify_catalog(&inputs, &startup, &|| {
                 progress().map_err(|_| crate::operator_task_policy::PolicyError::CpuUnknown)
             })
@@ -736,6 +758,59 @@ impl Node {
             let input = catalog
                 .read_role("input", 16384, &progress)
                 .map_err(continuous_error)?;
+            if view.body.identity.profile().map_err(continuous_error)?
+                == crate::operator_pq_auth::Profile::PqV3
+            {
+                let spec_raw = catalog
+                    .read_role(
+                        "spec",
+                        crate::operator_pq_startup::SPEC_BYTES as u64,
+                        &progress,
+                    )
+                    .map_err(continuous_error)?;
+                let spec = crate::operator_pq_startup::StartupSpec::decode(&spec_raw)?;
+                let settings = spec.settings()?;
+                let network = spec.network_policy(&settings)?;
+                let bootstrap = catalog
+                    .read_role(
+                        "bootstrap",
+                        crate::operator_pq_startup::BUNDLE_BYTES as u64,
+                        &progress,
+                    )
+                    .map_err(continuous_error)?;
+                let prepared =
+                    crate::operator_pq_startup::PreparedStartup::decode(&bootstrap, &settings)?;
+                ensure(
+                    view.body.identity.network == hex::encode(settings.network())
+                        && view.body.identity.parameters == hex::encode(settings.parameters())
+                        && view.body.declared_binding.task.native_task
+                            == hex::encode(prepared.task),
+                    "OWNER_CONTINUOUS_SETTINGS_CONTEXT",
+                )?;
+                if pristine_journal {
+                    ensure(
+                        !path.join("native.sqlite").exists()
+                            && view.body.actual_parent == hex::encode(prepared.head())
+                            && view.body.actual_generation == prepared.packets.len() as u64
+                            && view.body.declared_binding.task.lease_sha256
+                                == crate::operator_task_policy::digest_bytes(
+                                    &prepared
+                                        .lease
+                                        .encode()
+                                        .map_err(|_| "OWNER_CONTINUOUS_PQ_LEASE")?,
+                                ),
+                        "OWNER_CONTINUOUS_PQ_FRESH_STARTUP",
+                    )?;
+                }
+                progress()?;
+                return Ok(ContinuousStartupMaterial {
+                    catalog,
+                    settings,
+                    model,
+                    input,
+                    pq: Some((Arc::new(prepared), network)),
+                });
+            }
             let spec_raw = catalog
                 .read_role(
                     "spec",
@@ -762,15 +837,32 @@ impl Node {
                     && view.body.identity.parameters == hex::encode(settings.parameters()),
                 "OWNER_CONTINUOUS_SETTINGS_CONTEXT",
             )?;
-            Ok((catalog, settings, model, input))
+            Ok(ContinuousStartupMaterial {
+                catalog,
+                settings,
+                model,
+                input,
+                pq: None,
+            })
         })();
-        let (catalog, settings, model, input) = match built {
+        let ContinuousStartupMaterial {
+            catalog,
+            settings,
+            model,
+            input,
+            pq,
+        } = match built {
             Ok(v) => v,
             Err(error) => {
                 let _actual = operation.finish().map_err(continuous_error)?;
                 return Err(error);
             }
         };
+        let (pq_startup, pq_network) = match pq {
+            Some((prepared, network)) => (Some(prepared), Some(network)),
+            None => (None, None),
+        };
+        let startup_import = Arc::new(AtomicBool::new(pristine_journal && pq_startup.is_some()));
         let owner = ContinuousOwner {
             marker,
             view,
@@ -783,15 +875,42 @@ impl Node {
             active: Arc::new(Mutex::new(None)),
             startup_scope: operation.scope().to_owned(),
             sink,
+            pq_startup,
+            startup_import: startup_import.clone(),
         };
         let _scope = owner.enter(
-            reconcile,
+            reconcile.clone(),
             None,
             operation.checkpoint_handle().map_err(continuous_error)?,
             Binding::none(),
         )?;
-        Self::install_mining_marker(path, inputs.expected_uid, &owner.marker)?;
-        let opened = Self::open_inner(path, settings, 1, None, None, None, Some(owner));
+        let opened = (|| -> Result<Self> {
+            Self::install_mining_marker(path, inputs.expected_uid, &owner.marker)?;
+            if let Some(network) = pq_network {
+                let mut node = Self::open_selected(
+                    path,
+                    settings,
+                    1,
+                    None,
+                    NativeOwners {
+                        policy: None,
+                        mining: None,
+                        continuous: Some(owner),
+                        pq_network: Some(network.canonical().to_vec()),
+                    },
+                    StateBackend::PqContinuousV3,
+                    false,
+                )?;
+                node.validate_pq_network_ledger(&network)?;
+                node.complete_continuous_pq_startup(pristine_journal, &model, &input, &progress)?;
+                Ok(node)
+            } else {
+                Self::open_inner(path, settings, 1, None, None, None, Some(owner))
+            }
+        })();
+        // A completed or failed startup cannot retain this narrowly scoped
+        // catalogue permission for later admissions, even if a Node is retained.
+        startup_import.store(false, Ordering::Release);
         let settled = operation.finish().map_err(continuous_error)?;
         let node = opened?;
         ensure(
@@ -812,6 +931,101 @@ impl Node {
         )?;
         owner.ready()?;
         Ok((node, model, input))
+    }
+    fn complete_continuous_pq_startup(
+        &mut self,
+        fresh: bool,
+        model: &[u8],
+        input: &[u8],
+        progress: &impl Fn() -> Result<()>,
+    ) -> Result<()> {
+        let owner = self
+            .continuous_owner
+            .as_ref()
+            .ok_or("OWNER_CONTINUOUS_MODE_REQUIRED")?
+            .clone();
+        let startup = owner
+            .pq_startup
+            .as_ref()
+            .ok_or("OWNER_CONTINUOUS_PQ_STARTUP_REQUIRED")?;
+        let observed_now = crate::ingress::now()?;
+        if fresh {
+            ensure(
+                self.active()? == (self.settings.genesis(), 0),
+                "OWNER_CONTINUOUS_PQ_STARTUP_GENESIS",
+            )?;
+            for packet in &startup.packets {
+                progress()?;
+                let id = self.admit(packet, observed_now)?;
+                ensure(
+                    self.activate_observed(id, observed_now)? == id,
+                    "OWNER_CONTINUOUS_PQ_STARTUP_ACTIVATION",
+                )?;
+            }
+        }
+        for (id, expected) in startup.ids.iter().zip(&startup.encoded) {
+            progress()?;
+            let raw: Vec<u8> = self.db.query_row(
+                "SELECT packet FROM blocks WHERE id=?",
+                [id.as_slice()],
+                |row| row.get(0),
+            )?;
+            ensure(raw == *expected, "OWNER_CONTINUOUS_PQ_STARTUP_RETAINED")?;
+        }
+        let (tip, generation) = self.active()?;
+        ensure(
+            hex::encode(tip) == owner.view.body.actual_parent
+                && generation == owner.view.body.actual_generation,
+            "OWNER_CONTINUOUS_STARTUP_PAIR",
+        )?;
+        ensure(
+            crate::ancestry_index::contains(
+                &self.db,
+                self.ancestry_context()?,
+                tip,
+                startup.head(),
+                crate::ancestry_index::READ_SQL_BUDGET,
+                &mut |_| progress(),
+            )?,
+            "OWNER_CONTINUOUS_PQ_STARTUP_ANCESTRY",
+        )?;
+        let active = owner
+            .slot()?
+            .ok_or("OWNER_CONTINUOUS_RECONCILE_PURPOSE_REQUIRED")?;
+        // Re-resolves BOTH current account authorities and the live M06 task;
+        // expired, revoked, rotated or unregistered tasks fail cold startup.
+        self.continuous_task_binding(&active.permit, model, input)?;
+        progress()
+    }
+    fn continuous_lease_bytes(&self, parent: Hash, task: Hash, height: u64) -> Result<Vec<u8>> {
+        if self.settings.is_native_pq_application_v6() {
+            return pq_accounts_v2::tasks_v5::eligible_task(
+                &self.state_at(parent)?,
+                task,
+                height,
+                &self.settings.app,
+            )?
+            .lease()
+            .encode()
+            .map_err(|_| "OWNER_CONTINUOUS_PQ_LEASE".into());
+        }
+        ensure(
+            !self.settings.app.is_pq_account_profile(),
+            "OWNER_CONTINUOUS_TASK_PROFILE",
+        )?;
+        self.lifecycle_task_lease(parent, task, height)?
+            .encode()
+            .map_err(|_| "OWNER_CONTINUOUS_LEASE".into())
+    }
+    fn continuous_transactions_sha256(
+        &self,
+        raws: &[Vec<u8>],
+    ) -> std::result::Result<String, crate::operator_task_policy::PolicyError> {
+        let owner = self
+            .continuous_owner
+            .as_ref()
+            .ok_or(crate::operator_task_policy::PolicyError::ExternalContext)?;
+        policy::transactions_sha256(owner.view.body.identity.profile()?, raws)
     }
     pub fn refresh_operator_continuous_view(&mut self, inputs: policy::Inputs) -> Result<()> {
         ensure(
@@ -1006,9 +1220,19 @@ impl Node {
         )?;
         ContinuousScopeCheckpoint(a.clone()).check()?;
         let (tip, generation) = self.active()?;
+        let fresh_pq_genesis = o.importing_pq_startup(&a)
+            && tip == self.settings.genesis()
+            && generation == 0
+            && self
+                .db
+                .query_row("SELECT COUNT(*) FROM blocks", [], |row| {
+                    row.get::<_, u64>(0)
+                })?
+                == 1;
         ensure(
-            a.permit.allocation.claim().parent == hex::encode(tip)
-                && a.permit.allocation.claim().generation == generation,
+            fresh_pq_genesis
+                || (a.permit.allocation.claim().parent == hex::encode(tip)
+                    && a.permit.allocation.claim().generation == generation),
             "OWNER_CONTINUOUS_RECONCILE_PAIR",
         )?;
         let pending: u64 =
@@ -1035,6 +1259,17 @@ impl Node {
         o.ready()?;
         let encoded = packet.encode_for_settings(&self.settings)?;
         let sha = crate::operator_task_policy::digest_bytes(&encoded);
+        if let Some(active) = o.slot()? {
+            if o.importing_pq_startup(&active) {
+                ensure(
+                    o.pq_startup
+                        .as_ref()
+                        .is_some_and(|startup| startup.matches_packet(&encoded)),
+                    "OWNER_CONTINUOUS_PQ_STARTUP_PACKET",
+                )?;
+                return ContinuousScopeCheckpoint(active).check();
+            }
+        }
         ensure(
             hex::encode(packet.header.work_task) == o.view.body.declared_binding.task.native_task,
             "OWNER_CONTINUOUS_PACKET_TASK",
@@ -1086,6 +1321,15 @@ impl Node {
                 .slot()?
                 .ok_or("OWNER_CONTINUOUS_NATIVE_PURPOSE_REQUIRED")?;
             let c = a.permit.allocation.claim();
+            if o.importing_pq_startup(&a) {
+                ensure(
+                    o.pq_startup.as_ref().is_some_and(|startup| {
+                        startup.matches_execution(b.parent_id, b.miner, b.height, b.transactions)
+                    }),
+                    "OWNER_CONTINUOUS_PQ_STARTUP_EXECUTION",
+                )?;
+                return ContinuousScopeCheckpoint(a).check();
+            }
             if let Some(pool) = &a.pool {
                 ensure(
                     c.parent == hex::encode(b.parent_id)
@@ -1104,7 +1348,7 @@ impl Node {
                 ) && c.parent == hex::encode(b.parent_id)
                     && a.tx.as_deref()
                         == Some(
-                            crate::operator_mining_policy::transactions_sha256(b.transactions)
+                            self.continuous_transactions_sha256(b.transactions)
                                 .map_err(continuous_error)?
                                 .as_str(),
                         )
@@ -1124,6 +1368,32 @@ impl Node {
             let a = o
                 .slot()?
                 .ok_or("OWNER_CONTINUOUS_ACTIVATE_PURPOSE_REQUIRED")?;
+            if o.importing_pq_startup(&a) {
+                let startup = o
+                    .pq_startup
+                    .as_ref()
+                    .ok_or("OWNER_CONTINUOUS_PQ_STARTUP_REQUIRED")?;
+                let index = startup
+                    .ids
+                    .iter()
+                    .position(|id| *id == target)
+                    .ok_or("OWNER_CONTINUOUS_PQ_STARTUP_TARGET")?;
+                let packet = &startup.packets[index];
+                ensure(
+                    self.active()? == (packet.header.parent, index as u64),
+                    "OWNER_CONTINUOUS_PQ_STARTUP_PARENT",
+                )?;
+                let raw: Vec<u8> = self.db.query_row(
+                    "SELECT packet FROM blocks WHERE id=?",
+                    [target.as_slice()],
+                    |row| row.get(0),
+                )?;
+                ensure(
+                    raw == startup.encoded[index],
+                    "OWNER_CONTINUOUS_PQ_STARTUP_PACKET",
+                )?;
+                return ContinuousScopeCheckpoint(a).check();
+            }
             let p = a.paired_activate.as_ref().unwrap_or(&a.permit);
             ensure(
                 matches!(
@@ -1261,7 +1531,10 @@ impl Node {
             validation,
             Some(activation),
             observed.checkpoint_handle(),
-            Binding::packet(packet)?,
+            Binding::packet(
+                packet,
+                o.view.body.identity.profile().map_err(continuous_error)?,
+            )?,
         ) {
             Ok(value) => value,
             Err(error) => {
@@ -1309,14 +1582,11 @@ impl Node {
                 packet.header.height,
             )?
             .ok_or("OWNER_CONTINUOUS_COMPLETE_REGISTRATION_REQUIRED")?;
-        let lease = self
-            .lifecycle_task_lease(
-                packet.header.parent,
-                packet.header.work_task,
-                packet.header.height,
-            )?
-            .encode()
-            .map_err(|_| "OWNER_CONTINUOUS_LEASE")?;
+        let lease = self.continuous_lease_bytes(
+            packet.header.parent,
+            packet.header.work_task,
+            packet.header.height,
+        )?;
         check_actual_task_fields(
             t,
             manifest.purpose,
@@ -1336,10 +1606,7 @@ impl Node {
         let manifest = self
             .eligible_work_task(parent, task, height)?
             .ok_or("OWNER_CONTINUOUS_COMPLETE_REGISTRATION_REQUIRED")?;
-        let lease = self
-            .lifecycle_task_lease(parent, task, height)?
-            .encode()
-            .map_err(|_| "OWNER_CONTINUOUS_LEASE")?;
+        let lease = self.continuous_lease_bytes(parent, task, height)?;
         let (a, b) = derive_matrices(model, input).map_err(|_| "OWNER_CONTINUOUS_MATERIAL")?;
         let ab: Vec<u8> = a.iter().flat_map(|v| v.to_le_bytes()).collect();
         let bb: Vec<u8> = b.iter().flat_map(|v| v.to_le_bytes()).collect();
@@ -1401,7 +1668,8 @@ impl Node {
             .map_err(continuous_error)?;
         ensure(
             intent.exact_transactions_sha256
-                == crate::operator_mining_policy::transactions_sha256(&raws)
+                == self
+                    .continuous_transactions_sha256(&raws)
                     .map_err(continuous_error)?,
             "OWNER_CONTINUOUS_BATCH",
         )?;
@@ -1632,7 +1900,10 @@ impl Node {
             permit.clone(),
             None,
             checkpoint.clone(),
-            Binding::packet(&packet)?,
+            Binding::packet(
+                &packet,
+                o.view.body.identity.profile().map_err(continuous_error)?,
+            )?,
         )?;
         let progress = || {
             permit.progress().map_err(continuous_error)?;
@@ -1774,7 +2045,8 @@ impl Node {
             let admission = journal
                 .pool_admission(&hex::encode(group.id))
                 .map_err(continuous_error)?;
-            let raw_digest = crate::operator_mining_policy::transactions_sha256(&group.raws)
+            let raw_digest = self
+                .continuous_transactions_sha256(&group.raws)
                 .map_err(continuous_error)?;
             ensure(
                 admission.transactions_sha256 == raw_digest,
@@ -1917,7 +2189,10 @@ impl Node {
             allocation.body().identity == o.view.body.identity
                 && allocation.body().declared_binding == o.view.body.declared_binding
                 && c.purpose == "lease-reconcile"
-                && c.payload == edge.payload().map_err(continuous_error)?
+                && c.payload
+                    == edge
+                        .payload_for(o.view.body.identity.profile().map_err(continuous_error)?)
+                        .map_err(continuous_error)?
                 && c.parent == hex::encode(parent)
                 && c.generation == generation,
             "OWNER_CONTINUOUS_LEASE_PERMISSION",
@@ -1947,18 +2222,29 @@ impl Node {
                 "OWNER_CONTINUOUS_LEASE_PACKET_TASK",
             )?;
             let next_height = packet.header.height.checked_add(1).ok_or("HEIGHT")?;
-            let old = self
-                .lifecycle_task_lease(packet.header.parent, task, packet.header.height)?
-                .encode()
-                .map_err(|_| "OWNER_CONTINUOUS_LEASE")?;
+            let old =
+                self.continuous_lease_bytes(packet.header.parent, task, packet.header.height)?;
             checkpoint.checkpoint()?;
-            let new = self
-                .lifecycle_task_lease(parent, task, next_height)?
-                .encode()
-                .map_err(|_| "OWNER_CONTINUOUS_LEASE")?;
+            let new = self.continuous_lease_bytes(parent, task, next_height)?;
             let mut found = 0u64;
             for raw in &packet.transactions {
                 checkpoint.checkpoint()?;
+                if self.settings.is_native_pq_application_v6() {
+                    let envelope = trnm_protocol::pq_native_accounts_v2::UnverifiedEnvelope::decode_for_profile(raw,
+                        trnm_protocol::pq_native_accounts_v2::AccountProfile::ApplicationV6).map_err(|_| "OWNER_CONTINUOUS_PQ_LEASE_ENVELOPE")?;
+                    if envelope.kind == 22 {
+                        let renewal = trnm_protocol::qualified_work_task::pq_lifecycle_v5::AtomicRenewTaskV5::decode(envelope.payload).map_err(|_| "OWNER_CONTINUOUS_PQ_LEASE_RENEWAL")?;
+                        if renewal
+                            .successor
+                            .encode()
+                            .map_err(|_| "OWNER_CONTINUOUS_PQ_LEASE")?
+                            == new
+                        {
+                            found = found.checked_add(1).ok_or("OWNER_CONTINUOUS_LEASE_COUNT")?;
+                        }
+                    }
+                    continue;
+                }
                 let envelope =
                     Envelope::decode(raw).map_err(|_| "OWNER_CONTINUOUS_LEASE_ENVELOPE")?;
                 if envelope.tag == 22 {
@@ -2042,10 +2328,9 @@ impl Node {
             )
             .map_err(continuous_error)?,
             pool_context: hex::encode(batch.context),
-            transactions_sha256: crate::operator_mining_policy::transactions_sha256(
-                &batch.transactions,
-            )
-            .map_err(continuous_error)?,
+            transactions_sha256: self
+                .continuous_transactions_sha256(&batch.transactions)
+                .map_err(continuous_error)?,
             groups: batch.groups.iter().map(hex::encode).collect(),
         };
         let recorded = o
@@ -2072,8 +2357,9 @@ impl Node {
         };
         o.ready()?;
         ensure(o.slot()?.is_none(), "OWNER_CONTINUOUS_SCOPE_BUSY")?;
-        let digest =
-            crate::operator_mining_policy::transactions_sha256(raws).map_err(continuous_error)?;
+        let digest = self
+            .continuous_transactions_sha256(raws)
+            .map_err(continuous_error)?;
         let matches: Vec<_> = o
             .view
             .pool_selections
@@ -2279,7 +2565,8 @@ impl Node {
                 record.native_task == selected.body().native_task
                     && record.instance_class == owner.view.body.declared_binding.instance_class
                     && record.transactions_sha256
-                        == crate::operator_mining_policy::transactions_sha256(raws)
+                        == self
+                            .continuous_transactions_sha256(raws)
                             .map_err(continuous_error)?,
                 "OWNER_CONTINUOUS_RETAINED_TASK_CLASS",
             )?;
@@ -2351,7 +2638,7 @@ impl Node {
                 .record_pool_admission(
                     &active.permit.allocation.claim().operation,
                     hex::encode(group),
-                    crate::operator_mining_policy::transactions_sha256(raws)
+                    self.continuous_transactions_sha256(raws)
                         .map_err(continuous_error)?,
                 )
                 .map_err(continuous_error)
@@ -2372,7 +2659,10 @@ impl Node {
             .ok_or("OWNER_CONTINUOUS_MODE_REQUIRED")?
             .clone();
         let selection = self.continuous_selected_pool(operation_id)?;
-        command.check_selection(selection.body())?;
+        command.check_selection(
+            selection.body(),
+            o.view.body.identity.profile().map_err(continuous_error)?,
+        )?;
         let new_raws = command.new_bundle()?;
         let (context, limits) = match &command {
             Command::Enable { limits } => {

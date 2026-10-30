@@ -57,7 +57,9 @@ fn make(node: &Node, parent: Hash, transactions: Vec<Vec<u8>>) -> Packet {
 }
 fn open(path: &Path, backend: StateBackend) -> Node {
     match backend {
-        StateBackend::PqNetworkV2 => panic!("use the independently pinned PQ network fixture"),
+        StateBackend::PqNetworkV2 | StateBackend::PqContinuousV3 => {
+            panic!("use the independently pinned PQ network fixture")
+        }
         StateBackend::PermanentAccountGrowthV2 => {
             panic!("use the separately selected growth fixture")
         }
@@ -330,6 +332,74 @@ fn native_arithmetic_warm_cache_still_reads_external_tampering_and_matches_cold_
             "{action}"
         );
     }
+}
+
+#[test]
+fn pq_packet_readback_rejects_same_length_signature_corruption_and_rolls_back() {
+    use crate::ingress::pq_network::canonical_tests::{key, setup, transfer};
+
+    let (settings, policy) = setup();
+    let dir = tempfile::tempdir().unwrap();
+    let mut node = Node::open_with_pq_network(dir.path(), settings.clone(), 1, &policy).unwrap();
+    let packet = node
+        .make_consensus_maintenance(
+            settings.genesis(),
+            vec![transfer(&settings)],
+            key(1).public_key_id(),
+            settings.genesis_time() + 10,
+            4096,
+        )
+        .unwrap();
+    let original = packet.encode_for_settings(&settings).unwrap();
+    let mut corrupted = packet.clone();
+    *corrupted.transactions[0].last_mut().unwrap() ^= 1;
+    let corrupted_wire = corrupted.encode_for_settings(&settings).unwrap();
+    assert_eq!(corrupted_wire.len(), original.len());
+    assert_ne!(corrupted_wire, original);
+    assert_eq!(
+        Packet::decode_for_settings(&corrupted_wire, &settings)
+            .unwrap()
+            .id()
+            .unwrap(),
+        packet.id().unwrap(),
+        "header/trace identity alone cannot detect an altered signature payload"
+    );
+    let before = logical_rows(&node.db);
+    node.db
+        .execute_batch(&format!(
+            "CREATE TEMP TRIGGER corrupt_pq_packet AFTER INSERT ON blocks BEGIN UPDATE blocks SET packet=X'{}' WHERE id=NEW.id; END;",
+            hex::encode(&corrupted_wire)
+        ))
+        .unwrap();
+    let error = node
+        .admit(&packet, crate::ingress::now().unwrap())
+        .unwrap_err();
+    assert_eq!(error.kind(), ErrorKind::LocalStructure);
+    assert_eq!(logical_rows(&node.db), before);
+    assert_eq!(node.active().unwrap().0, settings.genesis());
+    node.db
+        .execute_batch("DROP TRIGGER corrupt_pq_packet")
+        .unwrap();
+    let id = node.admit(&packet, crate::ingress::now().unwrap()).unwrap();
+    assert_eq!(
+        node.packet(id)
+            .unwrap()
+            .encode_for_settings(&settings)
+            .unwrap(),
+        original
+    );
+    node.activate(id).unwrap();
+    drop(node);
+    let reopened = Node::open_with_pq_network(dir.path(), settings.clone(), 1, &policy).unwrap();
+    assert_eq!(reopened.active().unwrap().0, id);
+    assert_eq!(
+        reopened
+            .packet(id)
+            .unwrap()
+            .encode_for_settings(&settings)
+            .unwrap(),
+        original
+    );
 }
 
 #[test]

@@ -597,4 +597,4 @@ pub fn serve_pq_authenticated(
 mod tests;
 
 #[cfg(test)]
-mod canonical_tests;
+pub(crate) mod canonical_tests;

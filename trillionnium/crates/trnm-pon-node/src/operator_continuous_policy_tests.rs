@@ -158,6 +158,7 @@ pub(crate) fn mechanism_view_with_task(task: &str) -> VerifiedView {
 }
 pub(crate) fn mechanism_catalog() -> HeldCatalog {
     HeldCatalog {
+        domain: b"TRNM-RESTRICTED-NODE-CATALOG1",
         rows: Vec::new(),
         roles: Vec::new(),
         catalog_sha256: "11".repeat(32),

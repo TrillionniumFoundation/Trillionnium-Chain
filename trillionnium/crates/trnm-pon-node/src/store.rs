@@ -770,6 +770,7 @@ enum StateBackend {
     AuthenticatedV1,
     PermanentAccountGrowthV2,
     PqNetworkV2,
+    PqContinuousV3,
 }
 impl StateBackend {
     fn ddl(self) -> String {
@@ -777,7 +778,7 @@ impl StateBackend {
             Self::Legacy => ddl(),
             Self::AuthenticatedV1 => format!("{}{}", ddl(), native_authenticated::DDL),
             Self::PermanentAccountGrowthV2 => format!("{}{}", ddl(), growth::DDL),
-            Self::PqNetworkV2 => format!("{}{}", ddl(), pq_network::DDL),
+            Self::PqNetworkV2 | Self::PqContinuousV3 => format!("{}{}", ddl(), pq_network::DDL),
         }
     }
     fn selected_schema_id(self, settings: &Settings) -> Hash {
@@ -796,6 +797,7 @@ impl StateBackend {
             Self::AuthenticatedV1 => b"native-authenticated-branch-schema-v1",
             Self::PermanentAccountGrowthV2 => b"native-permanent-account-growth-schema-v2",
             Self::PqNetworkV2 => b"native-pq-network-owner-schema-v2",
+            Self::PqContinuousV3 => b"native-pq-continuous-owner-schema-v3",
         };
         hash(domain, &[self.ddl().as_bytes()])
     }
@@ -961,7 +963,7 @@ impl Node {
         self.storage_context()?;
         if trnm_mvcc_fee::pon_executor::pq_accounts_v2::enabled(&self.settings.app) {
             ensure(
-                self.state_backend == StateBackend::PqNetworkV2,
+                matches!(self.state_backend, StateBackend::PqNetworkV2 | StateBackend::PqContinuousV3),
                 "PQ_NETWORK_BACKEND",
             )?;
         }
@@ -969,7 +971,7 @@ impl Node {
     }
     pub(crate) fn require_classical_network_profile(&self) -> Result<()> {
         ensure(
-            self.state_backend != StateBackend::PqNetworkV2,
+            !matches!(self.state_backend, StateBackend::PqNetworkV2 | StateBackend::PqContinuousV3),
             "PQ_NETWORK_REQUIRED",
         )?;
         Ok(())
@@ -1227,7 +1229,7 @@ impl Node {
             )?;
         }
 
-        let pq_selected = state_backend == StateBackend::PqNetworkV2;
+        let pq_selected = matches!(state_backend, StateBackend::PqNetworkV2 | StateBackend::PqContinuousV3);
 
         ensure(pq_selected == pq_network.is_some(), "PQ_NETWORK_BACKEND")?;
         ensure(
@@ -1236,7 +1238,13 @@ impl Node {
         )?;
         ensure(
             !pq_selected
-                || (owner_policy.is_none() && mining_owner.is_none() && continuous_owner.is_none()),
+                || (owner_policy.is_none() && mining_owner.is_none()
+                    && match state_backend {
+                        StateBackend::PqNetworkV2 => continuous_owner.is_none(),
+                        StateBackend::PqContinuousV3 => continuous_owner.as_ref().is_some_and(|owner| owner.is_pq_startup_owner())
+                            && settings.is_native_pq_application_v6(),
+                        _ => false,
+                    }),
             "PQ_NETWORK_OWNER_COMBINATION",
         )?;
 
@@ -4205,7 +4213,7 @@ impl Node {
             self.delta_rows_with_progress(id, &mut || {
                 progress(ExecutionProgress::BeforeDurableCommit)
             })? == expected_deltas
-                && self.packet(id)?.encode()? == bytes,
+                && self.packet(id)?.encode_for_settings(&self.settings)? == bytes,
             "STORAGE_WRITE",
         )
         .map_err(Error::local_integrity)?;
