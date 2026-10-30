@@ -99,6 +99,23 @@ jobs:
           path: ${{ runner.temp }}/pinned-codeql-metadata-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.language }}/
           if-no-files-found: error
           retention-days: 30
+      - name: Collect original SARIF separately from the large analysis database
+        if: always()
+        run: |
+          set -euo pipefail
+          timeout --kill-after=5s 60s python3 scripts/ci/collect_pinned_codeql_metadata_v1.py \
+            --input "$RUNNER_TEMP/pinned-codeql-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-${{ matrix.language }}" \
+            --output "$RUNNER_TEMP/pinned-codeql-sarif-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-${{ matrix.language }}" \
+            --expected-head "$EXPECTED_HEAD" --language "${{ matrix.language }}" \
+            --run-id "$GITHUB_RUN_ID" --run-attempt "$GITHUB_RUN_ATTEMPT" --sarif-only
+      - name: Retain separately accessible original SARIF and source observations
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: pinned-codeql-sarif-${{ matrix.language }}-${{ env.EXPECTED_HEAD }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/pinned-codeql-sarif-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.language }}/
+          if-no-files-found: error
+          retention-days: 30
       - name: Retain original SARIF, BQRS, diagnostics and partial failures
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02

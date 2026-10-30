@@ -919,6 +919,15 @@ fn public_call(
     request: &ingress::Request,
     settings: &Settings,
 ) -> Result<ingress::public_v2::PublicReply> {
+    public_call_until(args, request, settings, None)
+}
+
+fn public_call_until(
+    args: &BTreeMap<String, String>,
+    request: &ingress::Request,
+    settings: &Settings,
+    deadline: Option<Instant>,
+) -> Result<ingress::public_v2::PublicReply> {
     if public_pool_profile(args) {
         let request = match request {
             ingress::Request::Submit { packet } => ingress::public_v3::Request::Submit {
@@ -931,7 +940,7 @@ fn public_call(
             },
             _ => return Err("PUBLIC_OPERATION".into()),
         };
-        let reply = public_pool_call(args, &request, settings)?;
+        let reply = public_pool_call_until(args, &request, settings, deadline)?;
         return Ok(ingress::public_v2::PublicReply {
             ok: reply.ok,
             value: reply.value,
@@ -942,7 +951,7 @@ fn public_call(
             identity_authority: reply.identity_authority,
         });
     }
-    ingress::public_v2::call_public_protected_v2(
+    ingress::public_v2::call_public_protected_v2_with_deadline(
         need(args, "--peer")?
             .parse()
             .map_err(|_| Error::from("PEER_ADDRESS"))?,
@@ -951,6 +960,7 @@ fn public_call(
         need(args, "--server-public")?,
         &public_identity(args)?,
         public_policy(args)?,
+        deadline,
     )
 }
 
@@ -958,6 +968,15 @@ fn public_pool_call(
     args: &BTreeMap<String, String>,
     request: &ingress::public_v3::Request,
     settings: &Settings,
+) -> Result<ingress::public_v3::PublicReply> {
+    public_pool_call_until(args, request, settings, None)
+}
+
+fn public_pool_call_until(
+    args: &BTreeMap<String, String>,
+    request: &ingress::public_v3::Request,
+    settings: &Settings,
+    deadline: Option<Instant>,
 ) -> Result<ingress::public_v3::PublicReply> {
     if !public_pool_profile(args) {
         return Err("PUBLIC_V3_REQUIRED".into());
@@ -969,17 +988,17 @@ fn public_pool_call(
     let mut pure_acknowledgement = None;
     let (reply, observations) = if public_pure_history_raw_profile(args) {
         let (reply, observations, ack) = ingress::public_v3::call_public_pure_history_raw(
-            address, request, settings, pinned, &identity, policy, None,
+            address, request, settings, pinned, &identity, policy, deadline,
         );
         pure_acknowledgement = Some(ack);
         (reply, observations)
     } else if pure_v2_profile(args) {
         ingress::public_v3::call_public_pure_pon_v2(
-            address, request, settings, pinned, &identity, policy, None,
+            address, request, settings, pinned, &identity, policy, deadline,
         )
     } else {
-        ingress::public_v3::call_public_protected_v3_with_metrics(
-            address, request, settings, pinned, &identity, policy,
+        ingress::public_v3::call_public_protected_v3_with_deadline(
+            address, request, settings, pinned, &identity, policy, deadline,
         )
     };
     if args.contains_key("--client-observations") {
@@ -992,6 +1011,31 @@ fn public_pool_call(
         eprintln!("{}", observation);
     }
     reply
+}
+
+fn import_public_sync_page_until(
+    node: &mut Node,
+    source: std::net::SocketAddr,
+    value: Value,
+    tip: trnm_protocol::pon_wire::Hash,
+    after: trnm_protocol::pon_wire::Hash,
+    deadline: Instant,
+) -> Result<(trnm_protocol::pon_wire::Hash, bool)> {
+    if Instant::now() >= deadline {
+        return Err("PUBLIC_CLIENT_DEADLINE".into());
+    }
+    let page: ingress::Page = serde_json::from_value(value)?;
+    let complete = page.complete;
+    let next = ingress::receive_public_page_from_until(
+        node,
+        source,
+        page,
+        tip,
+        after,
+        ingress::now()?,
+        deadline,
+    )?;
+    Ok((next, complete))
 }
 fn pool_policy(args: &BTreeMap<String, String>) -> Result<PoolLimits> {
     Ok(serde_json::from_slice(&read_owned_configuration(
@@ -2289,16 +2333,21 @@ fn run() -> Result<Value> {
                     if complete {
                         break;
                     }
+                    // One page shares the ORIGINAL public transport's 30s
+                    // upper bound across network and native import. Receiving
+                    // bytes, decoding or retrying may never renew this clock.
+                    let page_deadline = Instant::now() + Duration::from_secs(30);
                     if let Some(kernel) = &host_kernel {
                         kernel.verify()?;
                     }
-                    let reply = public_call(
+                    let reply = public_call_until(
                         &args,
                         &ingress::Request::History {
                             tip: hex::encode(tip),
                             after: hex::encode(cursor),
                         },
                         node.settings(),
+                        Some(page_deadline),
                     )?;
                     trials = trials
                         .checked_add(reply.solve_trials)
@@ -2306,18 +2355,19 @@ fn run() -> Result<Value> {
                     if !reply.ok {
                         return Err(format!("PUBLIC_REMOTE_REFUSED:{}", reply.value).into());
                     }
-                    let page: ingress::Page = serde_json::from_value(reply.value)?;
-                    complete = page.complete;
-                    cursor = ingress::receive_public_page_from(
+                    (cursor, complete) = import_public_sync_page_until(
                         &mut node,
                         address,
-                        page,
+                        reply.value,
                         tip,
                         cursor,
-                        ingress::now()?,
+                        page_deadline,
                     )?;
                     if let Some(kernel) = &host_kernel {
                         kernel.verify()?;
+                    }
+                    if Instant::now() >= page_deadline {
+                        return Err("PUBLIC_CLIENT_DEADLINE".into());
                     }
                 }
                 if !complete {
@@ -2352,25 +2402,50 @@ fn run() -> Result<Value> {
                     });
                 }
                 result
-            } else if let Some(authentication) = authenticated_client(&args)? {
-                let verified = ingress::sync_from_authenticated_durable(
-                    &mut node,
-                    address,
-                    tip,
-                    after,
-                    number(&args, "--pages", 256)? as usize,
-                    &authentication,
-                )?;
-                json!({"verified_tip":hex::encode(verified),"state":node.stats()?})
             } else {
-                let verified = ingress::sync_from(
-                    &mut node,
-                    address,
-                    tip,
-                    after,
-                    number(&args, "--pages", 256)? as usize,
-                )?;
-                json!({"verified_tip":hex::encode(verified),"state":node.stats()?})
+                let authentication = authenticated_client(&args)?;
+                let pages = number(&args, "--pages", 256)? as usize;
+                if !(1..=4096).contains(&pages) {
+                    return Err("SYNC_BUDGET".into());
+                }
+                let mut cursor = after;
+                let mut complete = false;
+                for _ in 0..pages {
+                    // Legacy transport originally had only 5s network phases.
+                    // This is the NEW finite per-page compatibility bound,
+                    // shared by network and import, never a whole-command cap.
+                    let page_deadline = Instant::now() + ingress::HISTORY_PAGE_COMPAT_BOUND;
+                    (cursor, complete) = match &authentication {
+                        Some(authentication) => {
+                            ingress::sync_page_from_authenticated_durable_until(
+                                &mut node,
+                                address,
+                                tip,
+                                cursor,
+                                authentication,
+                                page_deadline,
+                            )?
+                        }
+                        None => ingress::sync_page_from_until(
+                            &mut node,
+                            address,
+                            tip,
+                            cursor,
+                            page_deadline,
+                        )?,
+                    };
+                    if complete {
+                        break;
+                    }
+                }
+                if !complete {
+                    return Err(format!(
+                        "INCOMPLETE_HISTORY:page_budget:after={}",
+                        hex::encode(cursor)
+                    )
+                    .into());
+                }
+                json!({"verified_tip":hex::encode(cursor),"state":node.stats()?})
             }
         }
         "serve" => {
@@ -2887,6 +2962,37 @@ mod tests {
             assert!(priced_sync_context(&args));
             args.clear();
         }
+    }
+
+    #[test]
+    fn expired_public_sync_page_cannot_start_import_or_create_a_cpu_epoch() {
+        let settings = Settings::development(Some(ingress::now().unwrap() - 100)).unwrap();
+        let directory = tempfile::tempdir().unwrap();
+        let mut node = Node::open(directory.path(), settings.clone(), 1).unwrap();
+        let before = node.read_active().unwrap();
+        let page = ingress::Page {
+            schema: "pon-native-history-v1".into(),
+            network: hex::encode(settings.network()),
+            parameters: hex::encode(settings.parameters()),
+            genesis: hex::encode(settings.genesis()),
+            tip: hex::encode(settings.genesis()),
+            after: hex::encode(settings.genesis()),
+            packets: vec![],
+            next: hex::encode(settings.genesis()),
+            complete: true,
+        };
+        let error = import_public_sync_page_until(
+            &mut node,
+            "127.0.0.1:1".parse().unwrap(),
+            serde_json::to_value(page).unwrap(),
+            settings.genesis(),
+            settings.genesis(),
+            Instant::now(),
+        )
+        .unwrap_err();
+        assert_eq!(error.to_string(), "PUBLIC_CLIENT_DEADLINE");
+        assert_eq!(node.read_active().unwrap(), before);
+        assert!(node.public_service_cpu_domain().is_err());
     }
 
     #[test]

@@ -1002,6 +1002,7 @@ fn phase(
     let mut observers = Vec::new();
     let mut metrics = Vec::new();
     let epoch = support::monotonic();
+    verifier.bind_original_phase(epoch);
     for (listener, server) in listeners.into_iter().zip([first, second]) {
         assert_eq!(
             server.resource_profile(),

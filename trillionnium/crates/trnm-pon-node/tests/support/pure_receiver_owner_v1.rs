@@ -1121,6 +1121,7 @@ fn receiver_phase_inner(
         .call("arm", Duration::from_secs(5))
         .unwrap();
     let epoch = arm["epoch_monotonic_ns"].as_u64().unwrap();
+    verifier.bind_original_phase(epoch);
     // Identical phase-plus-cleanup deadline; IPC and final publication do not
     // gain a new five-second allowance after this one has expired.
     receiver.deadline = Instant::now()

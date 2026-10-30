@@ -1,0 +1,4719 @@
+{
+  "schema": "pon-pinned-codeql-semantic-extraction-v1",
+  "scope": "Retained creation-log observations only; no active-module, feature, platform, semantic-success or security qualification is inferred.",
+  "retained_logs": {
+    "stdout": {
+      "bytes": 106355,
+      "sha256": "0a233e70513168f356deba5310f3e7147c0910a7d628606ab7290120bd5a7f44"
+    },
+    "stderr": {
+      "bytes": 796,
+      "sha256": "abbf2c40929e4f47ac64de3788a8a27d7166890e5e43d9310f3e9b0a7c4f2ee1"
+    }
+  },
+  "diagnostic_line_count": 312,
+  "retained_diagnostic_count": 312,
+  "diagnostic_inventory_complete": true,
+  "diagnostic_limit": 10000,
+  "failure_markers": [
+    "failed to load workspace",
+    "macro expansion will be skipped",
+    "semantic analyzer unavailable"
+  ],
+  "marker_line_counts": {
+    "failed to load workspace": 1,
+    "macro expansion will be skipped": 311,
+    "semantic analyzer unavailable": 311
+  },
+  "reason_counts": {
+    "no manifest found": 11,
+    "not included as a module": 289,
+    "not loaded as its own module, probably included by `!include`": 7,
+    "unable to load manifest": 4
+  },
+  "unlocated_diagnostic_count": 1,
+  "affected_tracked_files": [
+    "evidence/pon-pq2-authority-capacity-20261027/capacity-01/probe-source.rs",
+    "evidence/pon-pq2-authority-capacity-20261027/capacity-02/probe-source.rs",
+    "evidence/pon-pq2-authority-capacity-20261027/capacity-03-final/probe-source.rs",
+    "evidence/pon-pq2-authority-capacity-20261027/capacity-04-linted/probe-source.rs",
+    "evidence/pon-pq2-authority-capacity-20261027/changed-tests-clippy-01/capacity-source.rs",
+    "evidence/pon-pq2-authority-capacity-20261027/native-patched-01/native-pq-v2-source.rs",
+    "evidence/pon-w1-native-v2-e9c4bb0-20261027/original-source/trillionnium/crates/trnm-crypto-primitives/examples/support/w1_material.rs",
+    "evidence/pon-w1-native-v2-e9c4bb0-20261027/original-source/trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+    "evidence/pon-w1-native-v2-e9c4bb0-20261027/original-source/trillionnium/crates/trnm-crypto-primitives/src/pon_work/low_rank_prefix.rs",
+    "evidence/pon-w1-native-v2-e9c4bb0-20261027/original-source/trillionnium/crates/trnm-pon-node/examples/pon_pure_cost_campaign.rs",
+    "evidence/pon-w1-real-header-64reuse-v2-original-20261026/original-v2-source-identical-399-and94/trillionnium/crates/trnm-pon-node/examples/pon_w1_real_header_reuse_v1.rs",
+    "evidence/pon-w1-real-header-64reuse-v2-original-20261026/original-v2-source-identical-399-and94/trillionnium/crates/trnm-pon-node/examples/support/w1_real_header_reuse_v1.rs",
+    "evidence/pon-worker-process-cleanup-esrch-20261026/local/before-command-runtime-exec.rs",
+    "evidence/pon-worker-process-cleanup-esrch-20261026/local/tests-only-before-production-fix.rs",
+    "formal/pon-nakamoto-v1/quantum_daa_native.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/platform_tests.rs",
+    "trillionnium/crates/trnm-executor/src/adaptive.rs",
+    "trillionnium/crates/trnm-executor/src/aggressive_profile.rs",
+    "trillionnium/crates/trnm-executor/src/conflict.rs",
+    "trillionnium/crates/trnm-executor/src/env_config.rs",
+    "trillionnium/crates/trnm-executor/src/reorder.rs",
+    "trillionnium/crates/trnm-executor/src/tests/conflict_tests.rs",
+    "trillionnium/crates/trnm-executor/src/tests/env_auto_tests.rs",
+    "trillionnium/crates/trnm-executor/src/tests/env_auto_tests/adaptive_decision_fail_closed_tests.rs",
+    "trillionnium/crates/trnm-executor/src/tests/env_auto_tests/adaptive_decision_hotspot_boundary_tests.rs",
+    "trillionnium/crates/trnm-executor/src/tests/env_auto_tests/adaptive_decision_sampling_tests.rs",
+    "trillionnium/crates/trnm-executor/src/tests/env_auto_tests/aggressive_env_knobs_tests.rs",
+    "trillionnium/crates/trnm-executor/src/tests/env_auto_tests/auto_numeric_parser_tests.rs",
+    "trillionnium/crates/trnm-executor/src/tests/env_auto_tests/mod.rs",
+    "trillionnium/crates/trnm-executor/src/tests/grouping_tests.rs",
+    "trillionnium/crates/trnm-mempool/src/admission_gate.rs",
+    "trillionnium/crates/trnm-mempool/src/demo.rs",
+    "trillionnium/crates/trnm-mempool/src/gate.rs",
+    "trillionnium/crates/trnm-mempool/src/gate/fairness.rs",
+    "trillionnium/crates/trnm-mempool/src/gate/retry_bookkeeping.rs",
+    "trillionnium/crates/trnm-mempool/src/gate/tests.rs",
+    "trillionnium/crates/trnm-mempool/src/gate/tests/basic_admission.rs",
+    "trillionnium/crates/trnm-mempool/src/gate/tests/fairness.rs",
+    "trillionnium/crates/trnm-mempool/src/gate/tests/fairness/deferral.rs",
+    "trillionnium/crates/trnm-mempool/src/gate/tests/fairness/partial_drain.rs",
+    "trillionnium/crates/trnm-mempool/src/gate/tests/fairness/reservation.rs",
+    "trillionnium/crates/trnm-mempool/src/gate/tests/fairness/spare_capacity.rs",
+    "trillionnium/crates/trnm-mempool/src/gate/tests/poisoned_retry.rs",
+    "trillionnium/crates/trnm-mempool/src/gate/tests/pop_ready_semantics.rs",
+    "trillionnium/crates/trnm-mempool/src/gate/tests/retry_bookkeeping.rs",
+    "trillionnium/crates/trnm-mempool/src/gate/tests/self_heal.rs",
+    "trillionnium/crates/trnm-mempool/src/gate/tests_support.rs",
+    "trillionnium/crates/trnm-mempool/src/lane_admit.rs",
+    "trillionnium/crates/trnm-mempool/src/lane_fairness.rs",
+    "trillionnium/crates/trnm-mempool/src/lane_pop_ready.rs",
+    "trillionnium/crates/trnm-mempool/src/lane_quota.rs",
+    "trillionnium/crates/trnm-mempool/src/lane_recovery/duplicate.rs",
+    "trillionnium/crates/trnm-mempool/src/lane_recovery/mod.rs",
+    "trillionnium/crates/trnm-mempool/src/lane_recovery/records.rs",
+    "trillionnium/crates/trnm-mempool/src/lane_spillover.rs",
+    "trillionnium/crates/trnm-mempool/src/tests.rs",
+    "trillionnium/crates/trnm-mempool/src/tests/admission_limits.rs",
+    "trillionnium/crates/trnm-mempool/src/tests/fairness_tests.rs",
+    "trillionnium/crates/trnm-mempool/src/tests/hard_stop_mode.rs",
+    "trillionnium/crates/trnm-mempool/src/tests/lane_bounds.rs",
+    "trillionnium/crates/trnm-mempool/src/tests/quota_tests.rs",
+    "trillionnium/crates/trnm-mempool/src/tests/recovery_tests.rs",
+    "trillionnium/crates/trnm-mempool/tests/lane_fairness_bound/drain_reset.rs",
+    "trillionnium/crates/trnm-mempool/tests/lane_fairness_bound/normal_latency.rs",
+    "trillionnium/crates/trnm-mempool/tests/lane_fairness_bound/spillover_and_reserve.rs",
+    "trillionnium/crates/trnm-mempool/tests/lane_free_ingress_throughput_bound/lane_free_ingress_throughput_bound_idempotency.rs",
+    "trillionnium/crates/trnm-mempool/tests/lane_free_ingress_throughput_bound/lane_free_ingress_throughput_bound_retry.rs",
+    "trillionnium/crates/trnm-mempool/tests/lane_free_ingress_throughput_bound/lane_free_ingress_throughput_bound_split.rs",
+    "trillionnium/crates/trnm-oracle/src/snapshot.rs",
+    "trillionnium/crates/trnm-oracle/src/tests/mod.rs",
+    "trillionnium/crates/trnm-oracle/src/tests/observed_report/formatting.rs",
+    "trillionnium/crates/trnm-oracle/src/tests/observed_report/mod.rs",
+    "trillionnium/crates/trnm-oracle/src/tests/observed_report/policy.rs",
+    "trillionnium/crates/trnm-oracle/src/tests/observed_report/validation.rs",
+    "trillionnium/crates/trnm-oracle/src/tests/policy.rs",
+    "trillionnium/crates/trnm-oracle/src/tests/shared.rs",
+    "trillionnium/crates/trnm-oracle/src/tests/snapshot.rs",
+    "trillionnium/crates/trnm-oracle/src/validation/policy.rs",
+    "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_01_types.rs",
+    "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_02_owner.rs",
+    "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_03_wal.rs",
+    "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_04_io_ack.rs",
+    "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_05_tests.rs",
+    "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_06_projection.rs",
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+    "trillionnium/crates/trnm-protocol/tests/support/native_pq_accounts_fixture.rs",
+    "trillionnium/crates/trnm-protocol/tests/support/native_pq_fixture.rs",
+    "trillionnium/crates/trnm-protocol/tests/support/native_pq_quota_fixture.rs",
+    "trillionnium/crates/trnm-protocol/tests/support/native_pq_task_fixture.rs",
+    "trillionnium/crates/trnm-protocol/tests/support/native_pq_task_fixture_v5.rs",
+    "trillionnium/crates/trnm-sqlite-io-boundary/src/unsupported.rs",
+    "trillionnium/crates/trnm-types/src/interop_identity/error.rs",
+    "trillionnium/crates/trnm-types/src/interop_identity/hashing.rs",
+    "trillionnium/crates/trnm-types/src/interop_identity/identity.rs",
+    "trillionnium/crates/trnm-types/src/interop_identity/identity/audit.rs",
+    "trillionnium/crates/trnm-types/src/interop_identity/identity/capability.rs",
+    "trillionnium/crates/trnm-types/src/interop_identity/identity/did_validation.rs",
+    "trillionnium/crates/trnm-types/src/interop_identity/normalize.rs",
+    "trillionnium/crates/trnm-types/src/interop_identity/settlement.rs",
+    "trillionnium/crates/trnm-types/src/interop_identity/tests/mod.rs",
+    "trillionnium/crates/trnm-types/src/interop_identity/tests/registry.rs",
+    "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/audit.rs",
+    "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/capability.rs",
+    "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/capability/activity_windows.rs",
+    "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/capability/issuance.rs",
+    "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/capability/renewal.rs",
+    "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/capability/renewal_error_paths.rs",
+    "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/capability/revocation.rs",
+    "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/did.rs",
+    "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/failure_paths.rs",
+    "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/failure_paths/controller_mismatch.rs",
+    "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/failure_paths/lifecycle_and_issue_inputs.rs",
+    "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/failure_paths/missing_subject_and_unknown_token.rs",
+    "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/failure_paths/renew_actor_sanitation.rs",
+    "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/failure_paths/revoke_actor_sanitation.rs",
+    "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/failure_paths/verify_actor_sanitation.rs",
+    "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/registry_core.rs",
+    "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/verify.rs",
+    "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/verify/controller.rs",
+    "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/verify/error_paths.rs",
+    "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/verify/happy_path.rs",
+    "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/verify/proof_claim_binding.rs",
+    "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement.rs",
+    "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement/error_paths.rs",
+    "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement/lifecycle.rs",
+    "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement/lifecycle/revert_reason_aliases.rs",
+    "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement/lifecycle/terminal_conflicts.rs",
+    "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement/lifecycle/terminal_reapply.rs",
+    "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement/route.rs",
+    "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement/status.rs",
+    "trillionnium/crates/trnm-types/src/relay/auth_envelope.rs",
+    "trillionnium/crates/trnm-types/src/relay/records.rs",
+    "trillionnium/crates/trnm-types/src/relay/verifier.rs",
+    "trillionnium/crates/trnm-types/tests/i3_did_revoke_cascade_same_height/i3_did_revoke_cascade_same_height_boundary.rs",
+    "trillionnium/crates/trnm-types/tests/i3_did_revoke_cascade_same_height/i3_did_revoke_cascade_same_height_replay.rs",
+    "trillionnium/crates/trnm-worker-agent/src/adapter.rs",
+    "trillionnium/crates/trnm-worker-agent/src/adapter_constants.rs",
+    "trillionnium/crates/trnm-worker-agent/src/adapter_error.rs",
+    "trillionnium/crates/trnm-worker-agent/src/adapter_error_models.rs",
+    "trillionnium/crates/trnm-worker-agent/src/adapter_error_ops.rs",
+    "trillionnium/crates/trnm-worker-agent/src/adapter_flow.rs",
+    "trillionnium/crates/trnm-worker-agent/src/adapter_model.rs",
+    "trillionnium/crates/trnm-worker-agent/src/adapter_parse.rs",
+    "trillionnium/crates/trnm-worker-agent/src/adapter_parse_hash.rs",
+    "trillionnium/crates/trnm-worker-agent/src/adapter_parse_normalization.rs",
+    "trillionnium/crates/trnm-worker-agent/src/adapter_parse_normalization/common.rs",
+    "trillionnium/crates/trnm-worker-agent/src/adapter_parse_normalization/compliance.rs",
+    "trillionnium/crates/trnm-worker-agent/src/adapter_parse_normalization/protocol/a2a_aliases.rs",
+    "trillionnium/crates/trnm-worker-agent/src/adapter_parse_normalization/protocol/mcp_aliases.rs",
+    "trillionnium/crates/trnm-worker-agent/src/adapter_parse_normalization/protocol/mod.rs",
+    "trillionnium/crates/trnm-worker-agent/src/adapter_parse_normalization/protocol/sanitization.rs",
+    "trillionnium/crates/trnm-worker-agent/src/adapter_parse_normalization/token_match.rs",
+    "trillionnium/crates/trnm-worker-agent/src/adapter_provenance.rs",
+    "trillionnium/crates/trnm-worker-agent/src/adapter_retry.rs",
+    "trillionnium/crates/trnm-worker-agent/src/adapter_retry_ops.rs",
+    "trillionnium/crates/trnm-worker-agent/src/adapter_retry_policy.rs",
+    "trillionnium/crates/trnm-worker-agent/src/assigned_runner.rs",
+    "trillionnium/crates/trnm-worker-agent/src/audit_export.rs",
+    "trillionnium/crates/trnm-worker-agent/src/audit_export_conversion.rs",
+    "trillionnium/crates/trnm-worker-agent/src/audit_export_format.rs",
+    "trillionnium/crates/trnm-worker-agent/src/audit_export_index.rs",
+    "trillionnium/crates/trnm-worker-agent/src/audit_export_types.rs",
+    "trillionnium/crates/trnm-worker-agent/src/audit_ops.rs",
+    "trillionnium/crates/trnm-worker-agent/src/audit_query.rs",
+    "trillionnium/crates/trnm-worker-agent/src/audit_render.rs",
+    "trillionnium/crates/trnm-worker-agent/src/command_runtime.rs",
+    "trillionnium/crates/trnm-worker-agent/src/command_runtime_parse.rs",
+    "trillionnium/crates/trnm-worker-agent/src/dispatch_assigned.rs",
+    "trillionnium/crates/trnm-worker-agent/src/dispatch_audit.rs",
+    "trillionnium/crates/trnm-worker-agent/src/dispatch_flush.rs",
+    "trillionnium/crates/trnm-worker-agent/src/dispatch_workflow.rs",
+    "trillionnium/crates/trnm-worker-agent/src/flush_submission/bookkeeping.rs",
+    "trillionnium/crates/trnm-worker-agent/src/flush_submission/receipt_update.rs",
+    "trillionnium/crates/trnm-worker-agent/src/flush_submission/retry_outcome.rs",
+    "trillionnium/crates/trnm-worker-agent/src/llm_retry.rs",
+    "trillionnium/crates/trnm-worker-agent/src/llm_runtime.rs",
+    "trillionnium/crates/trnm-worker-agent/src/llm_runtime_exec.rs",
+    "trillionnium/crates/trnm-worker-agent/src/llm_runtime_retry.rs",
+    "trillionnium/crates/trnm-worker-agent/src/llm_runtime_tx.rs",
+    "trillionnium/crates/trnm-worker-agent/src/proof_adapter_core.rs",
+    "trillionnium/crates/trnm-worker-agent/src/proof_adapter_factory.rs",
+    "trillionnium/crates/trnm-worker-agent/src/proof_adapter_factory_tests.rs",
+    "trillionnium/crates/trnm-worker-agent/src/proof_adapter_rules.rs",
+    "trillionnium/crates/trnm-worker-agent/src/proof_adapter_rules_tests.rs",
+    "trillionnium/crates/trnm-worker-agent/src/proof_adapter_selector.rs",
+    "trillionnium/crates/trnm-worker-agent/src/proof_adapter_selector_tests.rs",
+    "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests.rs",
+    "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_builder.rs",
+    "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_builder_accepts.rs",
+    "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_builder_separators.rs",
+    "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_normalization.rs",
+    "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_normalization_json.rs",
+    "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_normalization_label.rs",
+    "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_normalization_parse.rs",
+    "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_standard.rs",
+    "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_standard_noise.rs",
+    "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_standard_parse.rs",
+    "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_standard_verify.rs",
+    "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_tee.rs",
+    "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_zk.rs",
+    "trillionnium/crates/trnm-worker-agent/src/proof_adapter_utils.rs",
+    "trillionnium/crates/trnm-worker-agent/src/proof_adapter_utils_json.rs",
+    "trillionnium/crates/trnm-worker-agent/src/proof_adapter_utils_norm.rs",
+    "trillionnium/crates/trnm-worker-agent/src/proof_adapter_utils_tests.rs",
+    "trillionnium/crates/trnm-worker-agent/src/proof_adapter_verify.rs",
+    "trillionnium/crates/trnm-worker-agent/src/proof_adapter_verify_core.rs",
+    "trillionnium/crates/trnm-worker-agent/src/proof_adapter_verify_tests.rs",
+    "trillionnium/crates/trnm-worker-agent/src/proof_adapter_verify_tests_core.rs",
+    "trillionnium/crates/trnm-worker-agent/src/state.rs",
+    "trillionnium/crates/trnm-worker-agent/src/state_models.rs",
+    "trillionnium/crates/trnm-worker-agent/src/state_ops.rs",
+    "trillionnium/crates/trnm-worker-agent/src/state_persistence.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_command.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_command_config.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_command_llm.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_command_misc.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_command_parse.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_command_tee.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_command_timeout.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_flush.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_flush_ack.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_flush_ingress.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_flush_lock.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_flush_persist.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_flush_result.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_export.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_provider.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_reputation.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat_alias.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat_backward.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat_backward_compat.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat_backward_gating.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat_fail.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat_legacy.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat_legacy_normalize.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat_legacy_schema.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_v2.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_v2_schema.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_v2_schema_flatten.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_v2_schema_normalize.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_v2_sse.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_v2_streamable.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_v2_websocket.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_build.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_build_alias.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_build_alias_fingerprint.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_build_alias_protocol_profile.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_build_core.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_format.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_format_accept.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_format_detect.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_format_reject.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_markdown.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_markdown_base.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_markdown_normalize.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_core.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_core_label.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_core_request.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_core_request_normalized.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_core_request_provenance.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_core_schema.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_attach.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_attach_keep_v1.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_attach_reject.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_attach_tests.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_norm.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_norm_alias.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_norm_alias_future.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_norm_alias_variants.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_norm_alias_variants_base.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_norm_alias_variants_google.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_norm_misc.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_norm_misc_reject.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_norm_misc_websocket.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_query.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_fingerprint.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_fingerprint_compat.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_fingerprint_lookup.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_fingerprint_lookup_normalize.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_fingerprint_lookup_quotes.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_fingerprint_reject.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_output.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_task.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_attach.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_attach_ok.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_attach_reject.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_attach_reject_invalid.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_attach_reject_separators.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_label.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_norm.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_norm_boundary.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_norm_rejects.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_norm_separators.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_norm_tokens.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_status_parse.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_status.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_accept.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_accept_alias.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_accept_misc.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_accept_wrappers.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_accept_wrappers_delimiters.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_accept_wrappers_layers.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_accept_wrappers_quotes.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_accept_wrappers_unicode.rs",
+    "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_reject.rs"
+  ],
+  "diagnostics": [
+    {
+      "stream": "stdout",
+      "retained_log_line": 43,
+      "raw_line_sha256": "f692d3ee57236ccece994bf04465618d0a6646229929d5a91de648b71b008c45",
+      "source_path": "evidence/pon-pq2-authority-capacity-20261027/capacity-01/probe-source.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "no manifest found",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 44,
+      "raw_line_sha256": "8a701285e1aaf0726fd4ea705e111f349a6806c37b96017d700544799516d929",
+      "source_path": "evidence/pon-pq2-authority-capacity-20261027/capacity-02/probe-source.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "no manifest found",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 45,
+      "raw_line_sha256": "672965404a3cc4830fdbd6645e59d9d15a2a0d3b55a724311fd7bb8675922ffd",
+      "source_path": "evidence/pon-pq2-authority-capacity-20261027/capacity-03-final/probe-source.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "no manifest found",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 46,
+      "raw_line_sha256": "a5e72c8b6b964c67781f18ba9349b2d1f2be86fe4277bb26eecef5f2db285436",
+      "source_path": "evidence/pon-pq2-authority-capacity-20261027/capacity-04-linted/probe-source.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "no manifest found",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 47,
+      "raw_line_sha256": "062e085e714c243a75879b0db1089b6ed3989af91ef2b8dba44fe948c92e6551",
+      "source_path": "evidence/pon-pq2-authority-capacity-20261027/changed-tests-clippy-01/capacity-source.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "no manifest found",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 48,
+      "raw_line_sha256": "cb3e5d67e525c3dafcc95c10a1aa1285b39e882843113c9d30762893094fd8d9",
+      "source_path": "evidence/pon-pq2-authority-capacity-20261027/native-patched-01/native-pq-v2-source.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "no manifest found",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 49,
+      "raw_line_sha256": "6f1249742b3d360cdd42881f49fdbaea7649d1b276a6962fab4949d203d9d42f",
+      "source_path": "evidence/pon-w1-real-header-64reuse-v2-original-20261026/original-v2-source-identical-399-and94/trillionnium/crates/trnm-pon-node/examples/pon_w1_real_header_reuse_v1.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "no manifest found",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 50,
+      "raw_line_sha256": "97da9aaebd61d4656f0efef29005d5d5689d9bd774697044c3aa0d2be7dae00e",
+      "source_path": "evidence/pon-w1-real-header-64reuse-v2-original-20261026/original-v2-source-identical-399-and94/trillionnium/crates/trnm-pon-node/examples/support/w1_real_header_reuse_v1.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "no manifest found",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 51,
+      "raw_line_sha256": "ec6ba72a8acd3894d7176f17f38445adf0b1eb3b09928b26d21a5602538cda77",
+      "source_path": "evidence/pon-worker-process-cleanup-esrch-20261026/local/before-command-runtime-exec.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "no manifest found",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 52,
+      "raw_line_sha256": "8732e2ea13d9cee0c6cf72a91f43742c593dbd01ff5e2486488d4e2c20e2b347",
+      "source_path": "evidence/pon-worker-process-cleanup-esrch-20261026/local/tests-only-before-production-fix.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "no manifest found",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 53,
+      "raw_line_sha256": "7d991faad046ff229e2e056436b1debebfd1b63e59bb574b34be6e589b329757",
+      "source_path": "formal/pon-nakamoto-v1/quantum_daa_native.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "no manifest found",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 55,
+      "raw_line_sha256": "b8f0bfbbb4df0e95abb74e61b6408b8ec93054832a110c4de422a28a4c38d9cd",
+      "source_path": null,
+      "tracked_source": false,
+      "source_line": null,
+      "source_column": null,
+      "reason": null,
+      "failure_markers": [
+        "failed to load workspace"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 56,
+      "raw_line_sha256": "92b7cd464b53d8df6abddf89375f17ce1716ec18dee79889cca16ea3486cd790",
+      "source_path": "evidence/pon-w1-native-v2-e9c4bb0-20261027/original-source/trillionnium/crates/trnm-crypto-primitives/examples/support/w1_material.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "unable to load manifest",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 57,
+      "raw_line_sha256": "67afb3f3f44419eac8ddada419e80322a70d93b4e51af5cf25ff9321a173f220",
+      "source_path": "evidence/pon-w1-native-v2-e9c4bb0-20261027/original-source/trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "unable to load manifest",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 58,
+      "raw_line_sha256": "0a64c8f36569af9f5676ec81e73b4e237ce45cc56d4971653b0fba1682e7e302",
+      "source_path": "evidence/pon-w1-native-v2-e9c4bb0-20261027/original-source/trillionnium/crates/trnm-crypto-primitives/src/pon_work/low_rank_prefix.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "unable to load manifest",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 59,
+      "raw_line_sha256": "17760a0f6b97792d006d79fcf3c778cc0908ddbdb22875c4ff6e9a7c02bc9153",
+      "source_path": "evidence/pon-w1-native-v2-e9c4bb0-20261027/original-source/trillionnium/crates/trnm-pon-node/examples/pon_pure_cost_campaign.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "unable to load manifest",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 60,
+      "raw_line_sha256": "7e07f3301220e42f0a4309df95be05ea1ba39e7fa3e7fa391cfaf6702c8576de",
+      "source_path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/platform_tests.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 61,
+      "raw_line_sha256": "b72c79e99a8906eb7a020b4c539640f0326be38e768fc489bd2ffc5b8c83e04d",
+      "source_path": "trillionnium/crates/trnm-executor/src/adaptive.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 62,
+      "raw_line_sha256": "f24685869be7c65bcda69930dca9d4d5e6e268bb26298f7c13ede9703f63f7ab",
+      "source_path": "trillionnium/crates/trnm-executor/src/aggressive_profile.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 63,
+      "raw_line_sha256": "44d384f6f13329bbcdb2a01849e4e305347ce499ed153699b5415ea581ca9c81",
+      "source_path": "trillionnium/crates/trnm-executor/src/conflict.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 64,
+      "raw_line_sha256": "7ee6469ea90235257899f47b788b15f20072b2c4794b0e0110805866e828b10d",
+      "source_path": "trillionnium/crates/trnm-executor/src/env_config.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 65,
+      "raw_line_sha256": "7481b9cef237047faabfa71e5818c8930398377807e10e6c4ffe5407e8f232bc",
+      "source_path": "trillionnium/crates/trnm-executor/src/reorder.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 66,
+      "raw_line_sha256": "791dfab04dc95ca8b41fd518bda9aa5f9c36631ad8f95d41fc510f82496f5a56",
+      "source_path": "trillionnium/crates/trnm-executor/src/tests/conflict_tests.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 67,
+      "raw_line_sha256": "99ddfd6b3019cadda92a34fff430258401e9fb059ba03f01c92ed0a6f97d9907",
+      "source_path": "trillionnium/crates/trnm-executor/src/tests/env_auto_tests.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 68,
+      "raw_line_sha256": "bc8f42373ba466beb82a6959568d2d857e796baf970d840d46fc16f828cd8f88",
+      "source_path": "trillionnium/crates/trnm-executor/src/tests/env_auto_tests/adaptive_decision_fail_closed_tests.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 69,
+      "raw_line_sha256": "e805b374d52ff159dfba768ff40ed7653798d95c0df1194c974039e1c2e3f863",
+      "source_path": "trillionnium/crates/trnm-executor/src/tests/env_auto_tests/adaptive_decision_hotspot_boundary_tests.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 70,
+      "raw_line_sha256": "269ebc0ff9acdc7e1349182e49250a4df62c1e3e8b7971c1ed6cf45a59e0f251",
+      "source_path": "trillionnium/crates/trnm-executor/src/tests/env_auto_tests/adaptive_decision_sampling_tests.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 71,
+      "raw_line_sha256": "52b774994abc1c710b1f8ca8f8ab0504ec7bb8689b1ef4b769285a8bb4df508c",
+      "source_path": "trillionnium/crates/trnm-executor/src/tests/env_auto_tests/aggressive_env_knobs_tests.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 72,
+      "raw_line_sha256": "d5c1a99aa84798a17eee2ac1f5cefe9eed343853f6f52a6e48cb4a9f8db7b5b9",
+      "source_path": "trillionnium/crates/trnm-executor/src/tests/env_auto_tests/auto_numeric_parser_tests.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 73,
+      "raw_line_sha256": "d1939e938512bbcf88816bf1347f33d6978be7c2181cf3016270ad4f9be3ecbb",
+      "source_path": "trillionnium/crates/trnm-executor/src/tests/env_auto_tests/mod.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 74,
+      "raw_line_sha256": "52a649702ebf8248d7fd7bcab62cc280bdef06244489775ba28499a02c1ec4ff",
+      "source_path": "trillionnium/crates/trnm-executor/src/tests/grouping_tests.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 75,
+      "raw_line_sha256": "0105ccdf1b853cbf775adb50f6b6a69b90a15a35fb0fa48eeeb8cc9036e28c54",
+      "source_path": "trillionnium/crates/trnm-mempool/src/admission_gate.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 76,
+      "raw_line_sha256": "5a361ee81fe112635688ed6e01539bd35c79a999a21b4056b263e1d01b5ebea9",
+      "source_path": "trillionnium/crates/trnm-mempool/src/demo.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 77,
+      "raw_line_sha256": "79384ea7445cf1e50eaec0b4308f1109800c51cf8466652c0bf7e0eaca06fbaf",
+      "source_path": "trillionnium/crates/trnm-mempool/src/gate.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 78,
+      "raw_line_sha256": "f0efca10b5e483153980fa01e6dc74cb597180e2678e3c52d3a267983330d425",
+      "source_path": "trillionnium/crates/trnm-mempool/src/gate/fairness.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 79,
+      "raw_line_sha256": "b06930d0bee6fce81d7f282bac71c81ff3d46dd54a6602051d96bcd4a0399791",
+      "source_path": "trillionnium/crates/trnm-mempool/src/gate/retry_bookkeeping.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 80,
+      "raw_line_sha256": "8ccf954d89451b0e90f5698568938e0854b1d82f964c71f3afb8edc82dfd3a1f",
+      "source_path": "trillionnium/crates/trnm-mempool/src/gate/tests.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 81,
+      "raw_line_sha256": "d7c5aae41fca7a8626cb0d5bea01fdd0addcd9bfb61a5a21e7089f05f50f4b48",
+      "source_path": "trillionnium/crates/trnm-mempool/src/gate/tests/basic_admission.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 82,
+      "raw_line_sha256": "a14f9a1ea2aa7c3f9c0a823ff2c3fe8fda7a8a575542ddf376979275a4816daa",
+      "source_path": "trillionnium/crates/trnm-mempool/src/gate/tests/fairness.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 83,
+      "raw_line_sha256": "5c3850d25f291b337ffe0e140ad3200be20cfd436582fa6bacb31ba0c2c055a5",
+      "source_path": "trillionnium/crates/trnm-mempool/src/gate/tests/fairness/deferral.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 84,
+      "raw_line_sha256": "01184142780cbde22609ecd3e7b5da9c5d1fd2a1474b42b10381c6a429d48de2",
+      "source_path": "trillionnium/crates/trnm-mempool/src/gate/tests/fairness/partial_drain.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 85,
+      "raw_line_sha256": "729edeacdcda78b2848ce635eb89bc25c41647a09cc57124dd3df294a88be3e2",
+      "source_path": "trillionnium/crates/trnm-mempool/src/gate/tests/fairness/reservation.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 86,
+      "raw_line_sha256": "05e4e18694ec05aeff60ec8f42624aafa04d0b0bdfcb4a425a164047cd887f7d",
+      "source_path": "trillionnium/crates/trnm-mempool/src/gate/tests/fairness/spare_capacity.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 87,
+      "raw_line_sha256": "1437568c827ded4c43770a59c0062d912c92a29262e227fd837b4dd533c3e50e",
+      "source_path": "trillionnium/crates/trnm-mempool/src/gate/tests/poisoned_retry.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 88,
+      "raw_line_sha256": "81e7b5a9966f7052f118137f5f19addd625548e2580684902479152f5f543bd5",
+      "source_path": "trillionnium/crates/trnm-mempool/src/gate/tests/pop_ready_semantics.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 89,
+      "raw_line_sha256": "f82e3b0aa04afbd8602c2118abea8b50542ca588fac07ed1d4990543be210169",
+      "source_path": "trillionnium/crates/trnm-mempool/src/gate/tests/retry_bookkeeping.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 90,
+      "raw_line_sha256": "1cb73ab581f50d59e16093bd31c18b21a7d55f90d3c5f375aef92026a7c53af6",
+      "source_path": "trillionnium/crates/trnm-mempool/src/gate/tests/self_heal.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 91,
+      "raw_line_sha256": "842bc3bfb9a4e33285abc1c514fb709afc10219f54906e707f8c0536033da2fc",
+      "source_path": "trillionnium/crates/trnm-mempool/src/gate/tests_support.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 92,
+      "raw_line_sha256": "a6e23f6bf6e354911b82c1eef2f4a0bdd23b9fbabb27b1f201c3aa807ea243c9",
+      "source_path": "trillionnium/crates/trnm-mempool/src/lane_admit.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 93,
+      "raw_line_sha256": "50102fc9caa4c2483d3793455f09c207a19cc88d78fb9dbd5af94a6dbfd2fb49",
+      "source_path": "trillionnium/crates/trnm-mempool/src/lane_fairness.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 94,
+      "raw_line_sha256": "5d3f58ef776388ce499d533f93cc392bc5f640570794b6b6ed5b352afe2b0c7e",
+      "source_path": "trillionnium/crates/trnm-mempool/src/lane_pop_ready.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 95,
+      "raw_line_sha256": "dddeb9089921a577de7a762ee7647aaedd0531a1abc5e2ed290b98c2762b15c6",
+      "source_path": "trillionnium/crates/trnm-mempool/src/lane_quota.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 96,
+      "raw_line_sha256": "9022bfaa5a336a569e36d91499968c7aa72e45ecce5244d8ac3707d1dff36815",
+      "source_path": "trillionnium/crates/trnm-mempool/src/lane_recovery/duplicate.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 97,
+      "raw_line_sha256": "a5ba4d77389ce6ecdaecb5b9723d187cbfd66801c69f342b3876035394203e69",
+      "source_path": "trillionnium/crates/trnm-mempool/src/lane_recovery/mod.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 98,
+      "raw_line_sha256": "57c3b309b8b2fe96da88f1244cb67c8ef92f9bebc0a5cde2f1b7d4ff08a5b9f9",
+      "source_path": "trillionnium/crates/trnm-mempool/src/lane_recovery/records.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 99,
+      "raw_line_sha256": "5a0dd4df1100686cc9afc7e327d1c2d4f5a47ca9a7ea3844eb47078d96f29541",
+      "source_path": "trillionnium/crates/trnm-mempool/src/lane_spillover.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 100,
+      "raw_line_sha256": "b5efb831c122a554fc52ad3d6a7203ed2ad567c3865bb7e836ccfccc3428982c",
+      "source_path": "trillionnium/crates/trnm-mempool/src/tests.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 101,
+      "raw_line_sha256": "d43021412409738c3dbbbf30af07fcf811773d6bd3da16d4a3d5222f03c2e45a",
+      "source_path": "trillionnium/crates/trnm-mempool/src/tests/admission_limits.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 102,
+      "raw_line_sha256": "36088e0e1bf4de88b42fdc2b756828c4054a86906a8de7f04f842e4dd432ff55",
+      "source_path": "trillionnium/crates/trnm-mempool/src/tests/fairness_tests.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 103,
+      "raw_line_sha256": "fd548dc803f25a6cef49d07feed8cf57da9b3c07c78f57d8cef5cb345bba6db7",
+      "source_path": "trillionnium/crates/trnm-mempool/src/tests/hard_stop_mode.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 104,
+      "raw_line_sha256": "65ba5b8b828c26a5977a8de8ca96478ef725341b24f14b73bb091539954589d5",
+      "source_path": "trillionnium/crates/trnm-mempool/src/tests/lane_bounds.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 105,
+      "raw_line_sha256": "a82f33c2bf3e24330b270fb0c6cee97543736ce623b8e583cb5f852e64a83cdf",
+      "source_path": "trillionnium/crates/trnm-mempool/src/tests/quota_tests.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 106,
+      "raw_line_sha256": "5f00a09d9faef8a9d102e904738a38aade012af52afa28f733d3ac118fa07381",
+      "source_path": "trillionnium/crates/trnm-mempool/src/tests/recovery_tests.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 107,
+      "raw_line_sha256": "4ce9c571535721fd891e5dd730f93921139706e8bb4168fb40acc91eaf9f8125",
+      "source_path": "trillionnium/crates/trnm-mempool/tests/lane_fairness_bound/drain_reset.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 108,
+      "raw_line_sha256": "c848146492a877e426ec04ef600e0733b0f10a50ba6f082a242eee3910205505",
+      "source_path": "trillionnium/crates/trnm-mempool/tests/lane_fairness_bound/normal_latency.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 109,
+      "raw_line_sha256": "ccdecc0e19aec89d46902ebceac4fa589c355c89f70c7d72396033d703a154ce",
+      "source_path": "trillionnium/crates/trnm-mempool/tests/lane_fairness_bound/spillover_and_reserve.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 110,
+      "raw_line_sha256": "126e7680bc0f78b09028e9d1367a7a77fd92882b95af99d08d02ac75864eb93d",
+      "source_path": "trillionnium/crates/trnm-mempool/tests/lane_free_ingress_throughput_bound/lane_free_ingress_throughput_bound_idempotency.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 111,
+      "raw_line_sha256": "5b86cbbe3b6084b439525b3a2597c51c158157bd981c1a458dfb1a51bbb7a0b2",
+      "source_path": "trillionnium/crates/trnm-mempool/tests/lane_free_ingress_throughput_bound/lane_free_ingress_throughput_bound_retry.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 112,
+      "raw_line_sha256": "5798eaae399f7fba4417352d0f150146f0921da8ca60bc8fa8b1b2b1bf7d2957",
+      "source_path": "trillionnium/crates/trnm-mempool/tests/lane_free_ingress_throughput_bound/lane_free_ingress_throughput_bound_split.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 113,
+      "raw_line_sha256": "737637aaca399d9d036dddc6f1ecde7159bedc7f916c6c248be9e17f4ce591c6",
+      "source_path": "trillionnium/crates/trnm-oracle/src/snapshot.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 114,
+      "raw_line_sha256": "ff3be68c48e37bf2cd3aa78c56d8eb183c4d7861a088b7006bdc24b8979a6abc",
+      "source_path": "trillionnium/crates/trnm-oracle/src/tests/mod.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 115,
+      "raw_line_sha256": "fdf26189a72d4c401ee2b61b80726cfed93345d093e4e3d36f63777ee9977ce4",
+      "source_path": "trillionnium/crates/trnm-oracle/src/tests/observed_report/formatting.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 116,
+      "raw_line_sha256": "866a2f50984e582d011f95e14c45b8ee35cfec1e4660a05c914ec665be990369",
+      "source_path": "trillionnium/crates/trnm-oracle/src/tests/observed_report/mod.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 117,
+      "raw_line_sha256": "661e04e42d2300fbbc51e62fcff93abc38a475b695268865b7864f1c8bc2106d",
+      "source_path": "trillionnium/crates/trnm-oracle/src/tests/observed_report/policy.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 118,
+      "raw_line_sha256": "794883ee5f7505e71f2388d64e422aea4dac4d6c84e5f43f7f7cf5dec794efba",
+      "source_path": "trillionnium/crates/trnm-oracle/src/tests/observed_report/validation.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 119,
+      "raw_line_sha256": "f2d2b6ace40fded4a8758d11dee095767b4dd8eb348ea8970b6417b2a0d1c6b7",
+      "source_path": "trillionnium/crates/trnm-oracle/src/tests/policy.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 120,
+      "raw_line_sha256": "3c97e630ceac646ba56028e24a538102728bc9a8f17549e92ed79f9089c1311e",
+      "source_path": "trillionnium/crates/trnm-oracle/src/tests/shared.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 121,
+      "raw_line_sha256": "0e7b5fbd3f1ba616b20107eefa9f3b694a58b9a04eff07998786f3311c37bb16",
+      "source_path": "trillionnium/crates/trnm-oracle/src/tests/snapshot.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 122,
+      "raw_line_sha256": "d00f6b7f87ca0e328ad3d10a5f4dbc05eb7b427c0f3c6f5029443065cb12d29c",
+      "source_path": "trillionnium/crates/trnm-oracle/src/validation/policy.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 123,
+      "raw_line_sha256": "851c7843edc5d44f974cbad944ae168cdc11f6ba0633db2591c026bff6f8f2ce",
+      "source_path": "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_01_types.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not loaded as its own module, probably included by `!include`",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 124,
+      "raw_line_sha256": "fb88c5ba910408c6ca9a79ce70927d8ef777c92ba213aef1ca692d9fadc83fd5",
+      "source_path": "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_02_owner.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not loaded as its own module, probably included by `!include`",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 125,
+      "raw_line_sha256": "6851ed46897f91720643ee3838434a8a9a043e439bb812b98bbdfabd172ad81b",
+      "source_path": "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_03_wal.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not loaded as its own module, probably included by `!include`",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 126,
+      "raw_line_sha256": "723d7361659d5b13befa61217c64bb4b0d22051b5d407cb964b39f0cfb8af129",
+      "source_path": "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_04_io_ack.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not loaded as its own module, probably included by `!include`",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 127,
+      "raw_line_sha256": "0feb16890771e2b66186f859d6428495b3d57a2d2b8ee194e2d2dacf2a21dbf3",
+      "source_path": "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_05_tests.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not loaded as its own module, probably included by `!include`",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 128,
+      "raw_line_sha256": "0fd51d0f14b0bac9fd6438cb6dd0d249877d4ec0addf18e3dca5e81d797788bf",
+      "source_path": "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_06_projection.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not loaded as its own module, probably included by `!include`",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 129,
+      "raw_line_sha256": "62133450370cbbf434e08e915e6e7633725db87868b8b50def6ab9481f9714d2",
+      "source_path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not loaded as its own module, probably included by `!include`",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 130,
+      "raw_line_sha256": "df2d530cb70886f6029a1933e3b21e687385a942b56319f02fcec718b1c4228e",
+      "source_path": "trillionnium/crates/trnm-protocol/tests/support/native_pq_accounts_fixture.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 131,
+      "raw_line_sha256": "1f74f575bd76b6329814b4492b39949018656906145cfc81138e103c6e1c6cb2",
+      "source_path": "trillionnium/crates/trnm-protocol/tests/support/native_pq_fixture.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 132,
+      "raw_line_sha256": "b032a26e79e1f511f3ad05562c104394036b41235f3d910df1f1b2d68de206e5",
+      "source_path": "trillionnium/crates/trnm-protocol/tests/support/native_pq_quota_fixture.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 133,
+      "raw_line_sha256": "479a535b68323a0be065afe81fa1ad0ff824210ea3d7a6ddc19d801c10ca2b64",
+      "source_path": "trillionnium/crates/trnm-protocol/tests/support/native_pq_task_fixture.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 134,
+      "raw_line_sha256": "3845c77e36ecb002860ec821cc2853f82787658b7b8c88ddc30e601a3892e2e6",
+      "source_path": "trillionnium/crates/trnm-protocol/tests/support/native_pq_task_fixture_v5.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 135,
+      "raw_line_sha256": "e55eb22c9f08e813624058079ba2b4a1252c778ee5cfac4f25b12df8cec6d3bf",
+      "source_path": "trillionnium/crates/trnm-sqlite-io-boundary/src/unsupported.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 136,
+      "raw_line_sha256": "c8f772676cdaeebc4937417109ca4c49563be3b31b99e68414ce485e2851c356",
+      "source_path": "trillionnium/crates/trnm-types/src/interop_identity/error.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 137,
+      "raw_line_sha256": "c49320e39b5f6572f7bedb0d97d438dc7850405b0063e8dc98766e8a1c054580",
+      "source_path": "trillionnium/crates/trnm-types/src/interop_identity/hashing.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 138,
+      "raw_line_sha256": "5d6565f57ed183fc05051442687c0f8e14dc9614116d6e2b86aa66a698988228",
+      "source_path": "trillionnium/crates/trnm-types/src/interop_identity/identity.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 139,
+      "raw_line_sha256": "7f981628fe4e998ef5b50fdfb2c6b72109193c52c41a591f67bf72caabf7ee38",
+      "source_path": "trillionnium/crates/trnm-types/src/interop_identity/identity/audit.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 140,
+      "raw_line_sha256": "97bf1a78d3250af654b875d5dd40ebdb353e2063ae9288fc7b274c75f14aabdc",
+      "source_path": "trillionnium/crates/trnm-types/src/interop_identity/identity/capability.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 141,
+      "raw_line_sha256": "b7521c463cadd4f5367bc060db493b3aaeec2a49a3238245337ac80841e0d279",
+      "source_path": "trillionnium/crates/trnm-types/src/interop_identity/identity/did_validation.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 142,
+      "raw_line_sha256": "c07d66a3aaeb48b538fd7ee93616b8fa9a0590cf47e140f7a70eef7c01a9867d",
+      "source_path": "trillionnium/crates/trnm-types/src/interop_identity/normalize.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 143,
+      "raw_line_sha256": "167abdae0becd2b7b22c9e6912fc6ac7b5e3c71f8723bbc9eb82ea1003550888",
+      "source_path": "trillionnium/crates/trnm-types/src/interop_identity/settlement.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 144,
+      "raw_line_sha256": "76278b69ff5d9d8b0a9be567a54ad80f1ce724f702daae06b6c42ce075652cb0",
+      "source_path": "trillionnium/crates/trnm-types/src/interop_identity/tests/mod.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 145,
+      "raw_line_sha256": "0c47b3ac481649888850cc83d0b0bd8b779e86a6b8df6d4bf329f05dd858484d",
+      "source_path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 146,
+      "raw_line_sha256": "655b94d343f60e212a09d459ea49be80b4e62e22a0e30264c039e3223d1b3c3a",
+      "source_path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/audit.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 147,
+      "raw_line_sha256": "aa9cca46355147b1f36b780cbaf8e336e15ca4369b0a6fbb6b5e4d69e50e74dc",
+      "source_path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/capability.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 148,
+      "raw_line_sha256": "deff8fc3bcc7e3e47eaf5b682f27ef4687ceb312a6592345a1c6afb6724d22ac",
+      "source_path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/capability/activity_windows.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 149,
+      "raw_line_sha256": "442d7d4308bd9d24b7a8f8e9a1a5773bbd33520b53a7f068c5789aa317066552",
+      "source_path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/capability/issuance.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 150,
+      "raw_line_sha256": "f7e4febe306b389d17c748df79ca7d9d315712215d3fe70e1df707662156cf4f",
+      "source_path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/capability/renewal.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 151,
+      "raw_line_sha256": "78353573841f3e47357184a436190a3c3e44c41bfcac840ad9754579a820c463",
+      "source_path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/capability/renewal_error_paths.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 152,
+      "raw_line_sha256": "8af1e73cbb49468116fd7f9400003b597479eb245ac20d75bdcddf04e4c30c25",
+      "source_path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/capability/revocation.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 153,
+      "raw_line_sha256": "d5cf69cffb44b281afe37abbcda9cfa2779a301adf9285d3c0d5b0da0a5b1282",
+      "source_path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/did.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 154,
+      "raw_line_sha256": "584f2926576b438f47d778ca32ec1b8b3c86b6afc9f41b9bdee95a573af85424",
+      "source_path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/failure_paths.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 155,
+      "raw_line_sha256": "819a6cee79ac500941d560084d2179ab03ed72c1506ec07e98d205f0308b3130",
+      "source_path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/failure_paths/controller_mismatch.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 156,
+      "raw_line_sha256": "dc3ee12eead0eae12b0ccfd9891f996a18de4a0be7d1dd3f12fa0f7f9cd3382c",
+      "source_path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/failure_paths/lifecycle_and_issue_inputs.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 157,
+      "raw_line_sha256": "b2c8574dbe6da0b852469fab44e8fbe2cce6db61ca1a36c122775e1ea165c695",
+      "source_path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/failure_paths/missing_subject_and_unknown_token.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 158,
+      "raw_line_sha256": "6b7678cf1c6101621961a4e4b1378645b717cb4856c46c26681564e7672618a7",
+      "source_path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/failure_paths/renew_actor_sanitation.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 159,
+      "raw_line_sha256": "bdf9defdac0f2b2f3055de47039105a389ae5b7b1d3d718743ddc8add0692d22",
+      "source_path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/failure_paths/revoke_actor_sanitation.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 160,
+      "raw_line_sha256": "eac10077d11d4d3ab7914e5d8bb5932727aee25521c7448a74e8ad1308139213",
+      "source_path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/failure_paths/verify_actor_sanitation.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 161,
+      "raw_line_sha256": "ac2a0bff54db74796a268eaf8871d892dbd0f51baab85a314b4917a494153360",
+      "source_path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/registry_core.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 162,
+      "raw_line_sha256": "12508074ecbc69b2b8671e4e59517397855ac48487b0ed30e91dec30448b02b8",
+      "source_path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/verify.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 163,
+      "raw_line_sha256": "6c4f1bdaafca3855c778fa8a55533450d413324ee748712218afdabe31e46982",
+      "source_path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/verify/controller.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 164,
+      "raw_line_sha256": "c6818a5dd194a5140125c45b7a3ddc73c2a0f54dacb196b8eddffe65a3097cef",
+      "source_path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/verify/error_paths.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 165,
+      "raw_line_sha256": "86edb38dd2d85784cf86286549b3415d35fe07916578f9740021a58a390d90a3",
+      "source_path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/verify/happy_path.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 166,
+      "raw_line_sha256": "81681e65c5843685828703b6786582e6c78383118df51f0fefec61f13b6308d3",
+      "source_path": "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/verify/proof_claim_binding.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 167,
+      "raw_line_sha256": "8c4fcc573c909e1330485bbf49f926f9babbc5aa00dc401e2ca4f3a2fe920bdf",
+      "source_path": "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 168,
+      "raw_line_sha256": "80fb7ceb5684748d9be2e14aabf097fb463065cb08337ed6a4590f6920b82acd",
+      "source_path": "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement/error_paths.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 169,
+      "raw_line_sha256": "b2f9ac92c6b26a254f2cf38ca7f36d67741b4e921b7dbcb43b453be427ff34c6",
+      "source_path": "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement/lifecycle.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 170,
+      "raw_line_sha256": "8bd6fa92909a6334a8a241b443fd2ec19c6c9623e28b1f2cfef9b8a44cb9f101",
+      "source_path": "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement/lifecycle/revert_reason_aliases.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 171,
+      "raw_line_sha256": "8270ddce1faf5fca95f6f1411c7f5aa43d551b9d32a8a84a6b29ba6c7419407e",
+      "source_path": "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement/lifecycle/terminal_conflicts.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 172,
+      "raw_line_sha256": "8b6b5422a05bdd50d78597e0b6607590d83ed8db88170e950ea596a252156feb",
+      "source_path": "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement/lifecycle/terminal_reapply.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 173,
+      "raw_line_sha256": "5a7f66a847be6c81737a96e20ae14b276e2e68859024dee0fec42acdd1883249",
+      "source_path": "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement/route.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 174,
+      "raw_line_sha256": "05b4d48d890a2650ccbe56de2b97a357f8249d96d63230d09af845c4a9d76188",
+      "source_path": "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement/status.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 175,
+      "raw_line_sha256": "ec3e1e1a86ef7060a1d01cc7437fa72b9f2e0bf73e86c00727a49a6b6028f1f7",
+      "source_path": "trillionnium/crates/trnm-types/src/relay/auth_envelope.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 176,
+      "raw_line_sha256": "14fef793968f618ae69544c7df6b428c793e97ccd55d95de91240320acfc5df9",
+      "source_path": "trillionnium/crates/trnm-types/src/relay/records.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 177,
+      "raw_line_sha256": "27d616fb8c4a72cb9d927a0b974303ce3cb8950da110691832087dd5269edd8d",
+      "source_path": "trillionnium/crates/trnm-types/src/relay/verifier.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 178,
+      "raw_line_sha256": "23f840f314b9a56f1f32e10466b494f490d7d8cb643b454746b5474be723c5b2",
+      "source_path": "trillionnium/crates/trnm-types/tests/i3_did_revoke_cascade_same_height/i3_did_revoke_cascade_same_height_boundary.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 179,
+      "raw_line_sha256": "52eb9394a831dc263a0c43a2bb50c95281fa900f74676a7579d976be668d4d33",
+      "source_path": "trillionnium/crates/trnm-types/tests/i3_did_revoke_cascade_same_height/i3_did_revoke_cascade_same_height_replay.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 180,
+      "raw_line_sha256": "43c219116ffb8c80781f29d47b96615cd200c9a96ff72d764c593ad7b0addb1e",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/adapter.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 181,
+      "raw_line_sha256": "8ddd958937ce3a927dea91d25bb8c0ee809643b7516a76929cbecb7ecc73f54b",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/adapter_constants.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 182,
+      "raw_line_sha256": "48d332c0384c3298287d70f2551b405dff6dca2afd80c1269fc875af90e58b7a",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/adapter_error.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 183,
+      "raw_line_sha256": "b619639e41e576ac1e9b39fe09e33d44b05920676674719141b4acc9b0e3ada0",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/adapter_error_models.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 184,
+      "raw_line_sha256": "7c2a58a10989b7a16d3ae76b9b1353c92d2909398a4e6488db400df487754a5b",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/adapter_error_ops.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 185,
+      "raw_line_sha256": "d884eec3a6f67938c5fb52d40b51f916fa3e0fa779596fb30be0b91d3d10928c",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/adapter_flow.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 186,
+      "raw_line_sha256": "fafc5e353c10980aa68e9d05117ddf09af78fc5d85a9bb7e338845f1db15bbbe",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/adapter_model.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 187,
+      "raw_line_sha256": "d0dbfa050d8ecc84e7c27657b312828c5a9ec741953c42cfe926508c21e758f7",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/adapter_parse.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 188,
+      "raw_line_sha256": "0a884b255bc39e6bee0e493dece6d151912b33ecf2c7fe0d4311342b3411a2a5",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/adapter_parse_hash.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 189,
+      "raw_line_sha256": "6eaf8e8587271b2d9ee6c082f19148c6570ccae918be0a6064a6e9d770f09a10",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/adapter_parse_normalization.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 190,
+      "raw_line_sha256": "7ef074a5af1e2839a877d8e43585226bcfd08049f891d9b1c4200e1ecf304646",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/adapter_parse_normalization/common.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 191,
+      "raw_line_sha256": "428601ab45f1958aecc2e98ec43fd2e368641a81943bf5dc0a2300a4e6f85d65",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/adapter_parse_normalization/compliance.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 192,
+      "raw_line_sha256": "7a47627214b7a041e11ee1628f569f7ef6a274a7680b2ce0cf630325c1669254",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/adapter_parse_normalization/protocol/a2a_aliases.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 193,
+      "raw_line_sha256": "bbd44525fae9886ad13de3f9ad145160f5da69ac94903093db49f23bf952b743",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/adapter_parse_normalization/protocol/mcp_aliases.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 194,
+      "raw_line_sha256": "23c73616bbbbd21080637c8b4c27fcadb14e1243dd3799854f83ab73a0ae83bf",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/adapter_parse_normalization/protocol/mod.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 195,
+      "raw_line_sha256": "537b7ebb941d286147dbba083509946ac263ede615a62efc2ba0c792228b875e",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/adapter_parse_normalization/protocol/sanitization.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 196,
+      "raw_line_sha256": "b3159e801f904729c6b3589b6cc4ce17945a2bd7fa5961eeaf28a386644793df",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/adapter_parse_normalization/token_match.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 197,
+      "raw_line_sha256": "892b10794c00b0a9a1cc79e2cec2f233b97bdcccb2131399883c4b6b4b06a22e",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/adapter_provenance.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 198,
+      "raw_line_sha256": "cba4f271818c0093dce1d7c6b95aeac130c6d11de06aa85c5ae8d64a7d0db071",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/adapter_retry.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 199,
+      "raw_line_sha256": "4338978590e5164dceccf4cf5c2621ab1b9d691ad1fbe81f3b6087023f85031f",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/adapter_retry_ops.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 200,
+      "raw_line_sha256": "a7ee07d9da6c71c20cab6bab24e3f8b294fe6a5e03692f9fb1e24fa0d9097908",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/adapter_retry_policy.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 201,
+      "raw_line_sha256": "4f3117f6bcc7e960d39b9988088b4fa7bd4f9b7510342d63f8a6b472a5ce5003",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/assigned_runner.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 202,
+      "raw_line_sha256": "8ece555f4a6290ecafdab0d2f8723665a2e8a96a8be9f8f9fcc0fff6e658ac37",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/audit_export.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 203,
+      "raw_line_sha256": "c35a12db28cfad6dd7148c1fe2e12b8c3fbb8a6d58a16f88797ed40cc6e1a8c9",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/audit_export_conversion.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 204,
+      "raw_line_sha256": "68bf6ef5c0f52ddaa01ec95d4c8b38cd449487aadbb2b95d26e328421ff91b3c",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/audit_export_format.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 205,
+      "raw_line_sha256": "05ac5c407076cb7bf795bf0dc2cb1a5968af1ac8c22556eae381c778b4609526",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/audit_export_index.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 206,
+      "raw_line_sha256": "0ec974302c59fb4f32683f4db353cd9f1c10d05bbd715e9b2c411a7db424aebf",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/audit_export_types.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 207,
+      "raw_line_sha256": "881c113fb2ea3b96518c14482464596e739d6b857e944e789c357ae51f252231",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/audit_ops.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 208,
+      "raw_line_sha256": "bfe4529f573c08f9d24eb0dbd8c89b1281ac3b778b296b7a68e1a079189086a2",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/audit_query.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 209,
+      "raw_line_sha256": "9c57f8e10441100e4e95f7f5dd22284a087776db0036eb009bbf2c18014a6105",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/audit_render.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 210,
+      "raw_line_sha256": "2220eba864bd98fb6d50110e667595cb4f3af71e81d0b79e64b6edf0925cd251",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/command_runtime.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 211,
+      "raw_line_sha256": "d5d03018ff8450e342fb3f183515cf9a4d9f6500cc273c51c6e38275ad252e7c",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/command_runtime_parse.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 212,
+      "raw_line_sha256": "27ae98783918bf95ddaddf7d358e0f3b897cb9139b4d1b49d4c1b27db58b66f8",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/dispatch_assigned.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 213,
+      "raw_line_sha256": "6a953a2cb1b7223b0918e63476c6bc3e70d877670ecf99debcf7f241bee8ad4a",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/dispatch_audit.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 214,
+      "raw_line_sha256": "0e33544f571e3af467c697e443e27b68095d2359a38c5ff1182720817172ddda",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/dispatch_flush.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 215,
+      "raw_line_sha256": "8261223343398c07e4c42605385343eec72aaf83c6dbd0e985038003ab2b3b0d",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/dispatch_workflow.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 216,
+      "raw_line_sha256": "692f76e3ab6ddcdf691413dcae191890a6c13dcdb9868f67311905ac65da69bb",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/flush_submission/bookkeeping.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 217,
+      "raw_line_sha256": "034c3ee938f45f52615948451861ba7be26d8000cbc08c92b19007abbe6926e6",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/flush_submission/receipt_update.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 218,
+      "raw_line_sha256": "6c7e3c6c252a78842c3552dd74b2cf124382af57b2a96a87ed2fe0de51fdce79",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/flush_submission/retry_outcome.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 219,
+      "raw_line_sha256": "5e6e5ecdf372fc5e266f47a619d051a5ca72b635c9a7cc7675d9e9fcc57deebf",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/llm_retry.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 220,
+      "raw_line_sha256": "7adf0af3a9544cf51fffe52b39fd27c9ccc860e7fba9b187af4e38c31ac8386a",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/llm_runtime.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 221,
+      "raw_line_sha256": "472a758a2635de56dda4c5cd4d371f9f5bb3d549723cc88ce7ce866870cca5f5",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/llm_runtime_exec.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 222,
+      "raw_line_sha256": "ed45f68bb29c66829f11767ec940c4417c94248a79432bf07df3df7261247d64",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/llm_runtime_retry.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 223,
+      "raw_line_sha256": "95279d4e7cb3cd83dced77b3571efe076637487f6ef9f7f18b9a3f492afc9163",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/llm_runtime_tx.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 224,
+      "raw_line_sha256": "5dcdd372fedc20f1619ee1a3abbbc17880dd9fc1053a0cd8a0233c946f9dfe37",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_core.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 225,
+      "raw_line_sha256": "2ca80b0145d7c5dfebbad552ac26c322489f282fe933e9a365bfa8f31d21ea9f",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_factory.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 226,
+      "raw_line_sha256": "b00282090427e901cb50514e5b54835574b12aee1a641e24d06b003b27338b92",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_factory_tests.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 227,
+      "raw_line_sha256": "28444dd02cd9433084b344b4667d63f2be27756575c183fa453d20c7c2a2e508",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_rules.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 228,
+      "raw_line_sha256": "14525b04c7deb799cbfebb7794818d679275913e6ef6272d333a166cbd1ff85e",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_rules_tests.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 229,
+      "raw_line_sha256": "a8b9fea79fab739644be9a2c7fc87339588b1fad314217cfb9805ee02bce0e54",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_selector.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 230,
+      "raw_line_sha256": "a1358b03780c15279025281197580babb3a8307a9e952777d4044f1c5ce8dd76",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_selector_tests.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 231,
+      "raw_line_sha256": "86286dd9850f2a45f022f42c77a55829ab102bf65c796d4dbfc78be5663dfa28",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 232,
+      "raw_line_sha256": "68fb1ea8244d7b52d1d4ec090fb3e5a5344c0587871f710cabb1d021cef651c2",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_builder.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 233,
+      "raw_line_sha256": "8cd19788c1060260f0f9ef904f8677b99d8dc8745552e9efaaa0ec6cb20af02c",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_builder_accepts.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 234,
+      "raw_line_sha256": "41b7c2aa27d39d6654399df9c946880828358f79a738e03ed3f910782d44fce2",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_builder_separators.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 235,
+      "raw_line_sha256": "3f8254a13e306e4fcde7dabd1f8dcde0f1dcc0b79d2ea88b91b16d6e0ceff30b",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_normalization.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 236,
+      "raw_line_sha256": "6233c143f0f755010409c4efb63888df460a2e73eb24297ab800f434534113e1",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_normalization_json.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 237,
+      "raw_line_sha256": "947985885e1adb7ab97e9892914caba13a3878da6689f99865d47e69d77213e3",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_normalization_label.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 238,
+      "raw_line_sha256": "1f147783c28ddc123b159ec7255de3e566503386416468c5838ccef83bf10b26",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_normalization_parse.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 239,
+      "raw_line_sha256": "f58cd8ae1abb7c40e32afccdf80ed97d2faf8788a879255ca8aa428a7f01792c",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_standard.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 240,
+      "raw_line_sha256": "76421c8642b5769c49a05d33eabfa9246ee59c6c84ea5d2c17be9689d3e24c87",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_standard_noise.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 241,
+      "raw_line_sha256": "132c9c3a472f202d8afae6f36c18e4d317740c37937e8ffe643efbaa789275cb",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_standard_parse.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 242,
+      "raw_line_sha256": "5f9b8084096de3af999f7419714886dc6652d7a23527de6980f03e39d3434bc4",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_standard_verify.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 243,
+      "raw_line_sha256": "a014a563a3459c25cd7a42202740e1bd275dd33dec163496bbbb9f1e1b24f4e7",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_tee.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 244,
+      "raw_line_sha256": "5a5a9c4464906baee0d82fcc202c5f56475d9f732a75c1104e88f5fba5450675",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_zk.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 245,
+      "raw_line_sha256": "c7bd04b61f079173cef8694ca0e4ce6891c7210da657f5808721f80848397517",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_utils.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 246,
+      "raw_line_sha256": "a242d64e4de3489af4c5600c9890eadebb7444e19d8101b8fa40ac7f76cdc93e",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_utils_json.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 247,
+      "raw_line_sha256": "eeb235dbbce10b92dfc3854c1496e64908750dca57cc698eb08c37244997f385",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_utils_norm.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 248,
+      "raw_line_sha256": "694a2e04dc8505cdf3cb9aa6218e33e4ecca973254b824e4b1596a0ba29fc6fc",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_utils_tests.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 249,
+      "raw_line_sha256": "fce1a0294b3447bc801054b53c91605e39df31da9610b455449a46ee3af58909",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_verify.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 250,
+      "raw_line_sha256": "a048bf70bfac1b1c964778e0ef16dd35d1abee6b13abc9b1f65071151528f580",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_verify_core.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 251,
+      "raw_line_sha256": "0accef0aa622ff14dbbc6244576b995e45de2c298db689403074b61b9e054a00",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_verify_tests.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 252,
+      "raw_line_sha256": "2cb7abd63ca9f90ede81d53ddb80b769ea77b617496d2f1ddc9870f07ddc94fe",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/proof_adapter_verify_tests_core.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 253,
+      "raw_line_sha256": "08ff9eb958601dd2a6a256950a209a9a90e45db80933b95b8033c3302068a4fc",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/state.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 254,
+      "raw_line_sha256": "d09969137591ee1ea68a86f346f714240d871e65b231ea8c1ed770393d7b4157",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/state_models.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 255,
+      "raw_line_sha256": "fb663092886caa589db3ec4712c98b32f0a11e245bbce31089e13d5785339eb7",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/state_ops.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 256,
+      "raw_line_sha256": "399af2aaa6fac2886345537690bd1ca2e92c75a9135a17046ebd62b5d6514a43",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/state_persistence.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 257,
+      "raw_line_sha256": "668e075a0cce72ae01c4b1fac072994cdacdceae9062c0e1dd417c91174a1fe6",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 258,
+      "raw_line_sha256": "060a2eb71d06eb8081bc91a5a4c1cf7a359a081c95871914b64e769596fa0619",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_command.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 259,
+      "raw_line_sha256": "7f8c6ad8425244f3d1b3b2c4e007bc5c5c870e1306b5c886d63754abe4bb815f",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_command_config.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 260,
+      "raw_line_sha256": "8d3ccba36f9d7dd8b1e2b08a69b7fa98a5b91684d4536eb7d249ca12b12742ba",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_command_llm.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 261,
+      "raw_line_sha256": "52d4c392f478a9d14d6075196ed08faaa842a18bb0e652f4b8b1e02c984dd43d",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_command_misc.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 262,
+      "raw_line_sha256": "b3cc5a09f01b49e18cfeabd685ab18cbceca72f0d1e5bd73df28d85a574d1358",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_command_parse.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 263,
+      "raw_line_sha256": "237a0ee124f291ccf730fec8e0df5ef52c34027627118fb7f6ffc4e200c18b3e",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_command_tee.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 264,
+      "raw_line_sha256": "a3bf58126b753753cd7d3a6fb335c49069fa144b997c178bdf77ad394a358690",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_command_timeout.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 265,
+      "raw_line_sha256": "9fde0eaa6fc23d1455639e160a43568116c47c0be7411611ae074d16b6261991",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_flush.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 266,
+      "raw_line_sha256": "e356235fa512d4a07a3af230fc6b8cb54fe9c3c852c159be6e0d8d02d7853754",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_flush_ack.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 267,
+      "raw_line_sha256": "86a70ebccb300e048d5fcbcd37e552bf64fb86c45953af7f5cde5e8ad2b05642",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_flush_ingress.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 268,
+      "raw_line_sha256": "db91efd79c2bba608220cd7b167ebf4d4c7b442a2b11f3d6ee331cb0f5b54407",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_flush_lock.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 269,
+      "raw_line_sha256": "a578cc001f0cf5062d2936bd4a09e148302d8b57aa2a858432a8062f0757ad65",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_flush_persist.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 270,
+      "raw_line_sha256": "ced12806489539bc655c8192184f3540703f387482f939b7c2a67dbd310b60f0",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_flush_result.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 271,
+      "raw_line_sha256": "828e407296c64bec53bcb21218c9907e5cc99258f55ba5b0cb9a70a04392d516",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 272,
+      "raw_line_sha256": "571872490735f255da370bd44f0cc3ecc02dabb50aff3208155e63d176942ef3",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 273,
+      "raw_line_sha256": "e2b4edd84af4279aba3adec10b6c666a786620e860b815d253573ea7fbebf666",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_provider.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 274,
+      "raw_line_sha256": "a222aa46cb137b8a33d24f3ee84d0a24c4060ac6700c7ce2c0dfd29ee3a56a7f",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_reputation.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 275,
+      "raw_line_sha256": "ee3e190e1a4b72c4ffd8ee2ace932723f442602de9768da48646c2655915b6c3",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 276,
+      "raw_line_sha256": "c7a4d26f4c3b6a73d12f10f79e186d3a2078fdd62bde4a7e345ce1a3357c1ce8",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat_alias.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 277,
+      "raw_line_sha256": "682b4cc79643abd9e17ea5209d005d792806363cafd4e5d086678897d57d2308",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat_backward.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 278,
+      "raw_line_sha256": "c7516b01b59811c36f5d7c72c1b36045bcf39e29e40c0fced63cb89f51cc8a8b",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat_backward_compat.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 279,
+      "raw_line_sha256": "894db660dcd34d148db4972f41626bebf34c4f3ae59e5298c281bf2d7df1737a",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat_backward_gating.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 280,
+      "raw_line_sha256": "17ac719e500793dc236fbadf497033d35addf99596ecebe083ac8ba1137acceb",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat_fail.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 281,
+      "raw_line_sha256": "19690e4e39c67485879c8900885b2e7ceb78faaea9dc9eb3cef025a3284534d6",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat_legacy.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 282,
+      "raw_line_sha256": "8dd70100ba52f48912438096b3460f93e678c8a40d9d42f086f59c5c79165ff7",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat_legacy_normalize.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 283,
+      "raw_line_sha256": "323fe6ca980270eb5d993d6e98576e08de0a904dc9ef3fcf0f017edb8529ac87",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat_legacy_schema.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 284,
+      "raw_line_sha256": "19a328e44885f695bc3c78f7656354f8fd64dfeb0fa1247a0e4f814d96788be3",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_v2.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 285,
+      "raw_line_sha256": "7db8ac1420ad52d95406141a75a7be69f2d5e261ad48cf772f66569941f5f352",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_v2_schema.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 286,
+      "raw_line_sha256": "b5f13b6c7aafb24a359c7bbd489a108e3d49cf0702868bdef971c3991fdb3fda",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_v2_schema_flatten.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 287,
+      "raw_line_sha256": "cdd2871ce19eb439d206bb0ab850153e7e155993b1f97bc62ef5d1ed0b81cd5d",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_v2_schema_normalize.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 288,
+      "raw_line_sha256": "8937706859faaf22a215c804d60db523ced71e8c61e6db94c81c19faac45138f",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_v2_sse.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 289,
+      "raw_line_sha256": "c208be21ca69981181ecb23245c8157064bbe616f3c2df5980a6f999bf51bf1a",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_v2_streamable.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 290,
+      "raw_line_sha256": "48718ca31ae29f37c8b852fc1e7d7ab5a9499f9dbc1382f22d303e9ff3a6f855",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_v2_websocket.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 291,
+      "raw_line_sha256": "cb4ea5ba7d3a52e7f1b9a3c04edda5930fe21d5a284037533e7677c6f0af2771",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 292,
+      "raw_line_sha256": "06f4657519c843638cb06d907e8454d479193c905d878f577028a6c9913f5a9d",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_build.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 293,
+      "raw_line_sha256": "a6e26f7c44295d1925d8471cf799a26f12d35e01b7203a32202b6d72ffe78ca2",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_build_alias.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 294,
+      "raw_line_sha256": "249714e59a561738c44efdc95a8f3141412b6ee7c03cefff885db6cb8241f5f4",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_build_alias_fingerprint.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 295,
+      "raw_line_sha256": "56ad38beb8dbf23786d41f2950f9582607532838fb1cdef9de6d424f3168a711",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_build_alias_protocol_profile.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 296,
+      "raw_line_sha256": "429ad5c92ac8f6d4b585e9d88a34f4677bbb1f7749c9c6a00132cfcd61e83bc0",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_build_core.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 297,
+      "raw_line_sha256": "04435b214ae77030e16c38d5e7dbca1c53d266ba17b109dc0c975cde62ae35a4",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_format.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 298,
+      "raw_line_sha256": "49b6630efa702a4d60d3ac31c36f0cdab81f0a550266ffe311a783aed409d050",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_format_accept.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 299,
+      "raw_line_sha256": "97eb73fa82d5399f71fd78315f9807e0a3f5e68f6a4fbe19dee828c3d6cfaefa",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_format_detect.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 300,
+      "raw_line_sha256": "0b5515e45cee555474be74a51df43423f6159a03c40ec0aa4dbd5c48ebf45aa2",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_format_reject.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 301,
+      "raw_line_sha256": "92995b2a1b85286afd2d10aaa0fc2f2529d3fbda19922bcc378bad85fd62e487",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_markdown.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 302,
+      "raw_line_sha256": "04db61457089dfc15f267ee818cb77527fa0055faf478c87b52a51290455e76f",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_markdown_base.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 303,
+      "raw_line_sha256": "6e47cdc60d2cc7e5cd7d2adc3e2e030c2a61bf71411d695d9a562d5f5e51f3ab",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_markdown_normalize.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 304,
+      "raw_line_sha256": "43b9ace7b3a3b2c8accafee77f0220bcfe1a50f888ae7cbd91f6e88226b82508",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 305,
+      "raw_line_sha256": "03e70f1d4b7ff664c33a5097d4b3ebd406c51837fe46cf040ed6c670b339093c",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_core.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 306,
+      "raw_line_sha256": "7041514d0f88db4cd0b6f5a6576f629ad9ffddc416ea887b0a582e70a2980d3e",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_core_label.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 307,
+      "raw_line_sha256": "5c58b8751828d27f00cb24007ca19c7e7cdc2d4b75e5ad2aa682668f39d843cc",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_core_request.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 308,
+      "raw_line_sha256": "5a18c04677baae37e7a589594d477fe4128e38ef404f871d2edd69fa8fb07295",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_core_request_normalized.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 309,
+      "raw_line_sha256": "3e6d029654b4bff4486edce20916b8b38b7a32044347e189dce4780374e9f6d1",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_core_request_provenance.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 310,
+      "raw_line_sha256": "d2849489deb09e2e9c522b05e3cd128ec94fb9184be0d039aa6d80d11bcbcfc1",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_core_schema.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 311,
+      "raw_line_sha256": "3a0184f459ccdcf2ecfb80315204a181baf46f90d5469ddb9eeb528b34fb807d",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_attach.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 312,
+      "raw_line_sha256": "d79447afd806e4814c407c7410392923fee7b92b9a4d762556ec3f9268dfe0b7",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_attach_keep_v1.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 313,
+      "raw_line_sha256": "a3ee3fe528323803f480045ee1ae7543884638c7d15d8477dc27fe4f0ea23c5f",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_attach_reject.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 314,
+      "raw_line_sha256": "423676e4e997f8e8967ee3a078dd6d0f71a285395a526157c9230420dfc54332",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_attach_tests.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 315,
+      "raw_line_sha256": "b3f47e7a82551cecf0f7dbaf393cb548754e98106712ff9be9455a17c2cad44f",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_norm.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 316,
+      "raw_line_sha256": "de914dd1ed65053ff975d8a506fe6223f6683a5ccfaefe734b250f23efce35d8",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_norm_alias.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 317,
+      "raw_line_sha256": "655dfe2c18d6d9c14ccf405002b322d46818ce1237e8f02ec83f58bb681d3e2b",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_norm_alias_future.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 318,
+      "raw_line_sha256": "50a3edd6ee34c39d03034128a897a304e7d8c77cb3513dd00f256a32f8a7673d",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_norm_alias_variants.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 319,
+      "raw_line_sha256": "3d1da630b19ecd436d9641043c6616301f1fda7fd73eb07459ebb86265ec6b3c",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_norm_alias_variants_base.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 320,
+      "raw_line_sha256": "215bb973e01a8df96efd976927fb8ed0378af247dd6cd27c9c815cdc43bc5be5",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_norm_alias_variants_google.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 321,
+      "raw_line_sha256": "d39a725ee8a4c4c2e4f71691c3048e17f6294afead1001cddf78a4a59229ce0c",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_norm_misc.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 322,
+      "raw_line_sha256": "3dbceecafec0df078d097e6364bc44284521a092e018ffd3383ef077e95d3cde",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_norm_misc_reject.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 323,
+      "raw_line_sha256": "eec5551362ad0f769fc5f397aad5f78d121ac8c2ebc53a640095d32eb438c151",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_norm_misc_websocket.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 324,
+      "raw_line_sha256": "3be83591f3b524c141abab492cb261bedc7cacd2eee423362649fdf2e4ea9f35",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_query.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 325,
+      "raw_line_sha256": "87b27bd8f0e3e27bdcaea334ed6c5d47c0f0524e18a9dcb2d987887149b9d0e0",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_fingerprint.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 326,
+      "raw_line_sha256": "c5260d4ae7c47ac0b395e28d555843fe51095d27609ce0c2d87be69e480dc214",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_fingerprint_compat.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 327,
+      "raw_line_sha256": "7f22f83ce496f3ee97508f47f2fbffb25fcd62158c06d0cbded3dcf739ead174",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_fingerprint_lookup.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 328,
+      "raw_line_sha256": "1caf7763f24911e0376b3dca3cb17ef0ae1414ee0fad4fc3a9393a38388342e1",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_fingerprint_lookup_normalize.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 329,
+      "raw_line_sha256": "e0b01802bfdc7b6a925c0d9140c4a9f02c0dba94a8167de6a543576f68dd9f15",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_fingerprint_lookup_quotes.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 330,
+      "raw_line_sha256": "71ed13b3de285245e37c1f10d53406468ce4c302930691710b0fdbfe0385cde8",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_fingerprint_reject.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 331,
+      "raw_line_sha256": "c4cdd4c14b1a01f2978c8ab835f5e7559ff9a2db47c5ed2d638ddc1173101eb3",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_output.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 332,
+      "raw_line_sha256": "f9c46a588ed9276fbd9541f3a11871b3352fc16aec3e1ee9e3446902d8da452e",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_task.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 333,
+      "raw_line_sha256": "77c148c41eac6e8abc78969d7a05cb7b8ea12c8ccaa00bfca2b2e9ae6c13667d",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 334,
+      "raw_line_sha256": "26de431591e509a99da2507d589826ed40e8379ea86eb782b733db32d13fdcf9",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_attach.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 335,
+      "raw_line_sha256": "782d563e8a24ddfed8ee9e20bfe932e8842d50e2517072603a8db37b6aa1bb42",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_attach_ok.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 336,
+      "raw_line_sha256": "f906bae324924a1fd9fac8efd8b83a26aee0f79a722d6d09534f3f25f4c0671e",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_attach_reject.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 337,
+      "raw_line_sha256": "0fe45c55b04aa8041db4775a7197a561bf3f4a4cf40b0ef9654f9bdbbe9eada1",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_attach_reject_invalid.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 338,
+      "raw_line_sha256": "8b0ecb2b2fd437da43693099f5f69f7230f94d6baf1fa9cc144c391ffc8669ee",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_attach_reject_separators.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 339,
+      "raw_line_sha256": "c0693744ac98850fb07cd66c3d78f0d3b912dedc64db6313b0889936f646c3e2",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_label.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 340,
+      "raw_line_sha256": "235c44450f5a7114ee4a03b0641b7deb4ee75972ce4694ed63dac300230dd334",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_norm.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 341,
+      "raw_line_sha256": "594d06d51a3cd734fca24d7648cecd02598e28ffa388d160ee6749eec0dbcf09",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_norm_boundary.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 342,
+      "raw_line_sha256": "9e135a19ff237d4f781543ea31f12337dc515ff1c02077e5903423230328b966",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_norm_rejects.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 343,
+      "raw_line_sha256": "d28736652558b513bb5c30720f2fd44b7dcc5a2d9cc626c84cc0fef8786b48bb",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_norm_separators.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 344,
+      "raw_line_sha256": "c1193eba99e35dbbe950f82f4e244bb40f8374a15596dbdb39dc2667172d30f9",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_norm_tokens.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 345,
+      "raw_line_sha256": "770986cbd7d71961a49d31b07e97767246411cc9a070f9a681672d1f32cb2521",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_status_parse.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 346,
+      "raw_line_sha256": "5129573e79a84586cfc4c47ef1a9ce020633033841aeddbc31aea927be5bd2c9",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_status.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 347,
+      "raw_line_sha256": "e16998e146ff1eae4a1aa0255ff75e09638cf7044b3f0078fbd9fd9564491ff5",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_accept.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 348,
+      "raw_line_sha256": "d4ae24ca8e1d6385fd971e8017f86b833b9324ffbc4e137d36290a5d74310a13",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_accept_alias.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 349,
+      "raw_line_sha256": "d8aab5b9d5a1447c3f1a55d400a4f85ebccac34de3d8f2659298bbddf860a25d",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_accept_misc.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 350,
+      "raw_line_sha256": "fe19e9aeb272f38be9b879ab596682b1073019d43d932552baeff1a7d37f5810",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_accept_wrappers.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 351,
+      "raw_line_sha256": "f4f2a7a02e68a6861f55d0be673b66dd4e541ec1d131aee82c0aaf82a3d5249a",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_accept_wrappers_delimiters.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 352,
+      "raw_line_sha256": "e83fd305633eddabd6b5ae74dfa394ab59975129f4cb0b48872f1d5f57c8948f",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_accept_wrappers_layers.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 353,
+      "raw_line_sha256": "a4c7eb8804640af9ffc3e6cd1e6b42e2f699ef73b22e9a374bd60a7c99b89411",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_accept_wrappers_quotes.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 354,
+      "raw_line_sha256": "76b9abaacec8034864e38973fa8fce500655f8c3bedd9bd79a2b757ac6c613be",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_accept_wrappers_unicode.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    },
+    {
+      "stream": "stdout",
+      "retained_log_line": 355,
+      "raw_line_sha256": "6be933802211cc0eef8aa80433db1ed3f2964b6c0eca1b76cbcc18d183e114b5",
+      "source_path": "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_reject.rs",
+      "tracked_source": true,
+      "source_line": 1,
+      "source_column": 1,
+      "reason": "not included as a module",
+      "failure_markers": [
+        "semantic analyzer unavailable",
+        "macro expansion will be skipped"
+      ]
+    }
+  ],
+  "semantic_coverage_qualified": false,
+  "official_security_gate_qualified": false
+}

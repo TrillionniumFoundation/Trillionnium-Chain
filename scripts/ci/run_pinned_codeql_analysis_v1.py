@@ -28,6 +28,9 @@ PACKS = {"actions": "0.6.38", "python": "1.8.13", "rust": "0.1.45", "cpp": "1.9.
 QUERY_COUNTS = {"actions": 18, "python": 45, "rust": 37, "cpp": 61}
 LOG_LIMIT = 32 * 1024 * 1024
 SARIF_LIMIT = 128 * 1024 * 1024
+SEMANTIC_DIAGNOSTIC_LIMIT = 10000
+SEMANTIC_MARKERS = (b"semantic analyzer unavailable", b"failed to load workspace",
+                    b"macro expansion will be skipped")
 
 
 def require(ok, message):
@@ -172,6 +175,63 @@ def expected_inputs(paths, language):
     return {p for p in paths if Path(p).suffix in suffixes}
 
 
+def semantic_extraction_observations(streams, tracked, source_root):
+    """Locate retained semantic failures, including informational diagnostics.
+
+    Extraction success only establishes that a file entered the database. The
+    extractor can emit INFO-level semantic failures that SARIF does not retain
+    as warnings. This inventory never infers an active module from its path or
+    excuses archived, platform-specific or include!-composed source files.
+    """
+    require(set(streams) == {"stdout", "stderr"}, "both retained creation streams required")
+    require(all(type(raw) is bytes and len(raw) <= LOG_LIMIT for raw in streams.values()),
+            "creation stream bound")
+    tracked = set(tracked)
+    rows, reasons, markers, unlocated = [], collections.Counter(), collections.Counter(), 0
+    count = 0
+    ansi = re.compile(rb"\x1b\[[0-?]*[ -/]*[@-~]")
+    location = re.compile(r"(?P<path>[^\s\x00]+\.rs):(?P<line>[0-9]+):(?P<column>[0-9]+): "
+                          r"semantic analyzer unavailable \((?P<reason>[^\r\n]+)\):")
+    for stream, raw in streams.items():
+        for line_number, original in enumerate(raw.splitlines(), 1):
+            clean = ansi.sub(b"", original)
+            present = [marker for marker in SEMANTIC_MARKERS if marker in clean.lower()]
+            if not present:
+                continue
+            count += 1
+            markers.update(marker.decode("ascii") for marker in present)
+            text = clean.decode("utf-8", errors="replace")
+            match = location.search(text)
+            relative = None
+            if match:
+                try:
+                    relative = source_uri(match["path"], source_root)
+                except ValueError:
+                    pass
+                reasons[match["reason"]] += 1
+            if relative is None:
+                unlocated += 1
+            if len(rows) < SEMANTIC_DIAGNOSTIC_LIMIT:
+                rows.append({"stream": stream, "retained_log_line": line_number,
+                             "raw_line_sha256": hashlib.sha256(original).hexdigest(),
+                             "source_path": relative, "tracked_source": relative in tracked,
+                             "source_line": int(match["line"]) if match else None,
+                             "source_column": int(match["column"]) if match else None,
+                             "reason": match["reason"] if match else None,
+                             "failure_markers": [marker.decode("ascii") for marker in present]})
+    return {"schema": "pon-pinned-codeql-semantic-extraction-v1",
+            "scope": "Retained creation-log observations only; no active-module, feature, platform, semantic-success or security qualification is inferred.",
+            "retained_logs": {name: {"bytes": len(raw), "sha256": hashlib.sha256(raw).hexdigest()}
+                              for name, raw in streams.items()},
+            "diagnostic_line_count": count, "retained_diagnostic_count": len(rows),
+            "diagnostic_inventory_complete": count == len(rows), "diagnostic_limit": SEMANTIC_DIAGNOSTIC_LIMIT,
+            "failure_markers": sorted(markers), "marker_line_counts": dict(sorted(markers.items())),
+            "reason_counts": dict(sorted(reasons.items())), "unlocated_diagnostic_count": unlocated,
+            "affected_tracked_files": sorted({row["source_path"] for row in rows if row["tracked_source"]}),
+            "diagnostics": rows, "semantic_coverage_qualified": False,
+            "official_security_gate_qualified": False}
+
+
 def diagnostic_source(artifact, bases, source_root):
     base = artifact.get("uriBaseId")
     require(base is None or base == "%SRCROOT%", "unknown diagnostic source base")
@@ -250,7 +310,7 @@ def assess_sarif(sarif, language, tracked, source_root, category, cpp_context=No
             "error_diagnostics": errors, "finding_count": len(run["results"]),
             "findings_by_rule": dict(sorted(findings.items())),
             "extraction_coverage_complete": not missing and not warnings and not errors,
-            "coverage_scope": "Tracked language inputs; C/C++ includes only direct units or byte-bound original components in a successfully extracted generated unit; not independent header semantics or runtime build qualification.",
+            "coverage_scope": "Tracked language extraction inventory plus retained failures; direct extraction is not independent proof of semantic coverage. C/C++ includes only direct units or byte-bound original components in a successfully extracted generated unit; not independent header semantics or runtime build qualification.",
             "official_security_gate_qualified": False, "production_qualified": False}
 
 
@@ -376,6 +436,16 @@ def main():
         else:
             command.append("--build-mode=none")
         phase("create", command, 1200)
+        semantic = semantic_extraction_observations(
+            {stream: (output / f"create.{stream}.log").read_bytes() for stream in ("stdout", "stderr")},
+            tracked, ROOT)
+        write_new(output / "semantic-extraction.json", semantic)
+        result["semantic_extraction_observation"] = {
+            "file": "semantic-extraction.json", "sha256": digest(output / "semantic-extraction.json"),
+            "diagnostic_line_count": semantic["diagnostic_line_count"],
+            "diagnostic_inventory_complete": semantic["diagnostic_inventory_complete"],
+            "affected_tracked_file_count": len(semantic["affected_tracked_files"]),
+            "reason_counts": semantic["reason_counts"]}
         category = f"independent-artifact/{args.expected_head}/{args.language}/code-scanning"
         sarif = output / "analysis.sarif"
         phase("analyze", [executable, "database", "analyze", database, suite, "--no-download",
@@ -391,10 +461,8 @@ def main():
         context = parsed(cpp_build.raw(cpp_output / "context.json")) if args.language == "cpp" else None
         assessment = assess_sarif(parsed(sarif.read_bytes()), args.language, tracked, cpp_project or ROOT, category,
                                   context, cpp_output, analysis_root)
-        raw_create = (output / "create.stdout.log").read_bytes() + (output / "create.stderr.log").read_bytes()
-        markers = [marker for marker in (b"semantic analyzer unavailable", b"failed to load workspace", b"macro expansion will be skipped")
-                   if marker in raw_create.lower()]
-        assessment["semantic_extraction_failure_markers"] = [m.decode("ascii") for m in markers]
+        markers = semantic["failure_markers"]
+        assessment["semantic_extraction_failure_markers"] = markers
         assessment["extraction_coverage_complete"] &= not markers
         result.update(assessment, analysis_execution_complete=True, selected_query_count=len(final_queries),
                       sarif={"bytes": sarif.stat().st_size, "sha256": digest(sarif)})

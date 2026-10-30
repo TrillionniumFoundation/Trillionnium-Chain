@@ -262,11 +262,35 @@ impl RoleClient {
         request: &Request,
         protected: bool,
     ) -> Result<(Value, Option<Value>)> {
+        self.call_with_deadline(c, node, request, protected, None)
+    }
+    fn read_until(
+        &self,
+        c: &Config,
+        node: &mut Node,
+        request: &Request,
+        deadline: Instant,
+    ) -> Result<(Value, Option<Value>)> {
+        self.call_with_deadline(c, node, request, false, Some(deadline))
+    }
+    fn call_with_deadline(
+        &self,
+        c: &Config,
+        node: &mut Node,
+        request: &Request,
+        protected: bool,
+        deadline: Option<Instant>,
+    ) -> Result<(Value, Option<Value>)> {
+        ensure(!protected || deadline.is_none(), "ROLE_PROTECTED_DEADLINE")?;
         let address = c.peer.ok_or("PEER")?;
         match self {
             Self::Authenticated(client) => {
                 let value = if protected {
                     ingress::call_authenticated_durable_protected(node, address, request, client)?
+                } else if let Some(deadline) = deadline {
+                    ingress::call_authenticated_durable_until(
+                        node, address, request, client, deadline,
+                    )?
                 } else {
                     ingress::call_authenticated_durable(node, address, request, client)?
                 };
@@ -276,13 +300,14 @@ impl RoleClient {
                 identity,
                 server_public,
             } => {
-                let reply = ingress::public_v2::call_public_protected_v2(
+                let reply = ingress::public_v2::call_public_protected_v2_with_deadline(
                     address,
                     request,
                     node.settings(),
                     server_public,
                     identity,
                     ingress::public_v2::PublicPolicy::development(),
+                    deadline,
                 )?;
                 if !reply.ok {
                     return Err(format!("PUBLIC_REMOTE_REFUSED:{}", reply.value).into());
@@ -882,17 +907,23 @@ fn read_call(
     auth: &RoleClient,
     request: &Request,
     receipts: &mut Receipts,
+    deadline: Instant,
 ) -> Result<Value> {
     for attempt in 0..8 {
+        ensure(Instant::now() < deadline, "CONFIRMATION_TIMEOUT")?;
         let started = Instant::now();
-        match auth.call(c, node, request, false) {
+        match auth.read_until(c, node, request, deadline) {
             Ok((value, transport_cost)) => {
                 receipts.emit("read-attempt",json!({"request":request,"attempt":attempt,"success":true,"elapsed_ns":started.elapsed().as_nanos(),"transport_cost":transport_cost}))?;
+                ensure(Instant::now() < deadline, "CONFIRMATION_TIMEOUT")?;
                 return Ok(value);
             }
             Err(error) => {
                 receipts.emit("read-attempt",json!({"request":request,"attempt":attempt,"success":false,"elapsed_ns":started.elapsed().as_nanos(),"error":error.to_string()}))?;
-                thread::sleep(Duration::from_millis(c.poll_ms));
+                thread::sleep(
+                    Duration::from_millis(c.poll_ms)
+                        .min(deadline.saturating_duration_since(Instant::now())),
+                );
             }
         }
     }
@@ -905,24 +936,27 @@ fn sync_checked(
     tip: [u8; 32],
     mut after: [u8; 32],
     receipts: &mut Receipts,
+    deadline: Instant,
 ) -> Result<()> {
     for _ in 0..64 {
+        ensure(Instant::now() < deadline, "CONFIRMATION_TIMEOUT")?;
         let request = Request::History {
             tip: hex::encode(tip),
             after: hex::encode(after),
         };
         // Retry this exact request before allocating another nonce; a partial prefix
         // never substitutes a different Head for the durable pending History request.
-        let value = read_call(c, node, auth, &request, receipts)?;
+        let value = read_call(c, node, auth, &request, receipts, deadline)?;
         let page: ingress::Page = serde_json::from_value(value)?;
         let complete = page.complete;
-        after = ingress::receive_public_page_from(
+        after = ingress::receive_public_page_from_until(
             node,
             c.peer.ok_or("PEER")?,
             page,
             tip,
             after,
             ingress::now()?,
+            deadline,
         )?;
         if complete {
             return Ok(());
@@ -934,6 +968,9 @@ fn confirmer(c: &Config, receipts: &mut Receipts, secret: &str, resume: bool) ->
     let mut node = Node::open(&c.run_root.join("store"), settings(c)?, c.workers)?;
     let auth = client(c, secret)?;
     let started = Instant::now();
+    // The existing role timeout is one original absolute bound, shared by
+    // retry, network and import. Resume and subsequent pages never renew it.
+    let deadline = started + Duration::from_secs(c.timeout_seconds);
     let mut attempt = 0u64;
     let mut last_observation: Option<([u8; 32], usize, bool)> = None;
     if !resume {
@@ -947,7 +984,7 @@ fn confirmer(c: &Config, receipts: &mut Receipts, secret: &str, resume: bool) ->
                 matches!(request, Request::Head | Request::History { .. }),
                 "CONFIRMER_PENDING_OPERATION",
             )?;
-            let value = read_call(c, &mut node, &auth, &request, receipts)?;
+            let value = read_call(c, &mut node, &auth, &request, receipts, deadline)?;
             match request {
                 Request::Head => context_matches(node.settings(), &value)?,
                 Request::History { tip, after } => {
@@ -955,16 +992,17 @@ fn confirmer(c: &Config, receipts: &mut Receipts, secret: &str, resume: bool) ->
                     let after = digest(&after)?;
                     let page: ingress::Page = serde_json::from_value(value)?;
                     let complete = page.complete;
-                    let next = ingress::receive_public_page_from(
+                    let next = ingress::receive_public_page_from_until(
                         &mut node,
                         c.peer.ok_or("PEER")?,
                         page,
                         tip,
                         after,
                         ingress::now()?,
+                        deadline,
                     )?;
                     if !complete {
-                        sync_checked(c, &mut node, &auth, tip, next, receipts)?;
+                        sync_checked(c, &mut node, &auth, tip, next, receipts, deadline)?;
                     }
                 }
                 _ => unreachable!(),
@@ -972,16 +1010,16 @@ fn confirmer(c: &Config, receipts: &mut Receipts, secret: &str, resume: bool) ->
             receipts.emit("pending-read-recovered", json!({"state":node.stats()?}))?;
         }
     }
-    while started.elapsed() < Duration::from_secs(c.timeout_seconds) {
+    while Instant::now() < deadline {
         let iteration = Instant::now();
         attempt += 1;
         let observed = (|| -> Result<(Value, Vec<Value>, usize, bool)> {
-            let head = read_call(c, &mut node, &auth, &Request::Head, receipts)?;
+            let head = read_call(c, &mut node, &auth, &Request::Head, receipts, deadline)?;
             context_matches(node.settings(), &head)?;
             let tip = digest(head["tip"].as_str().ok_or("HEAD_TIP")?)?;
             let after = node.active()?.0;
             if tip != after {
-                sync_checked(c, &mut node, &auth, tip, after, receipts)?;
+                sync_checked(c, &mut node, &auth, tip, after, receipts, deadline)?;
             }
             let local = node.stats()?;
             for key in [
@@ -997,6 +1035,7 @@ fn confirmer(c: &Config, receipts: &mut Receipts, secret: &str, resume: bool) ->
             }
             if let Some((previous, count, done)) = last_observation {
                 if previous == tip {
+                    ensure(Instant::now() < deadline, "CONFIRMATION_TIMEOUT")?;
                     return Ok((local, Vec::new(), count, done));
                 }
             }
@@ -1025,14 +1064,17 @@ fn confirmer(c: &Config, receipts: &mut Receipts, secret: &str, resume: bool) ->
             }
             let done = local["height"] == (c.data_blocks + c.drain_blocks) as u64
                 && confirmed == c.data_blocks * c.transactions_per_block;
+            ensure(Instant::now() < deadline, "CONFIRMATION_TIMEOUT")?;
             last_observation = Some((tip, confirmed, done));
             Ok((local, batches, confirmed, done))
         })();
         match observed {
             Ok((state, batches, confirmed, done)) => {
                 retain_packets(c, &node)?;
+                ensure(Instant::now() < deadline, "CONFIRMATION_TIMEOUT")?;
                 receipts.emit("confirmer-observation",json!({"attempt":attempt,"success":true,"elapsed_ns":iteration.elapsed().as_nanos(),"state":state,"unchanged_tip":batches.is_empty() && state["height"] != 0,"local_confirmation_batches":batches,"local_confirmed_transfers":confirmed,"complete":done}))?;
                 if done {
+                    ensure(Instant::now() < deadline, "CONFIRMATION_TIMEOUT")?;
                     return receipts.emit("confirmer-complete",json!({"state":node.stats()?,"confirmed_transfers":confirmed,"client_start_to_full_verified_confirmation_ns":started.elapsed().as_nanos(),"latency_scope":"single client monotonic from observer startup, not per-transaction submission latency","independent_store_full_verification":true,"independent_operator":false}));
                 }
             }
@@ -1041,7 +1083,10 @@ fn confirmer(c: &Config, receipts: &mut Receipts, secret: &str, resume: bool) ->
                 return Err(error);
             }
         }
-        thread::sleep(Duration::from_millis(c.poll_ms));
+        thread::sleep(
+            Duration::from_millis(c.poll_ms)
+                .min(deadline.saturating_duration_since(Instant::now())),
+        );
     }
     Err("CONFIRMATION_TIMEOUT".into())
 }

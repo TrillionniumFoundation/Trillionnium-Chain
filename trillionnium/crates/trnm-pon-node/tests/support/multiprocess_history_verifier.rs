@@ -31,6 +31,38 @@ const MAX_REQUESTS: u64 = 132; // Original <=64 imports, <=64 confirmations, sna
 const PARENT: &str = host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT;
 pub(super) const PURE_CLIENT_PROFILE: &str = "pure-pon-fixed-host-client-v1";
 
+fn monotonic_deadline(absolute_ns: u64) -> Instant {
+    // Sample Instant first: conversion can only shorten the original Linux
+    // CLOCK_MONOTONIC bound, never add a new relative timeout to an old phase.
+    let sampled = Instant::now();
+    sampled + Duration::from_nanos(absolute_ns.saturating_sub(support::monotonic()))
+}
+
+fn await_response_file(
+    path: &Path,
+    deadline: Instant,
+    mut terminal: impl FnMut() -> Result<bool, String>,
+) -> Result<Value, String> {
+    loop {
+        if Instant::now() >= deadline {
+            return Err("VERIFIER_ORIGINAL_ABSOLUTE_DEADLINE".into());
+        }
+        if path.is_file() {
+            let value = read(path);
+            if Instant::now() >= deadline {
+                return Err("VERIFIER_ORIGINAL_ABSOLUTE_DEADLINE".into());
+            }
+            return Ok(value);
+        }
+        if terminal()? {
+            return Err("VERIFIER_EXITED_BEFORE_RESPONSE".into());
+        }
+        thread::sleep(
+            Duration::from_millis(2).min(deadline.saturating_duration_since(Instant::now())),
+        );
+    }
+}
+
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub(super) enum ExecutionProfile {
     Original,
@@ -192,6 +224,9 @@ pub(super) struct Verifier {
     spawned: Instant,
     resource_profile: ResourceProfile,
     execution_profile: ExecutionProfile,
+    // Set once by the explicit finite client. Neither later requests nor
+    // snapshot/finish may create a fresh wait window after this phase closes.
+    phase_deadlines: Option<(u64, u64)>,
 }
 impl Verifier {
     pub(super) fn start(
@@ -350,6 +385,7 @@ impl Verifier {
             spawned,
             resource_profile,
             execution_profile,
+            phase_deadlines: None,
         };
         publish(
             &path.join("launch.json"),
@@ -403,22 +439,25 @@ impl Verifier {
         verifier
     }
     fn wait_file(&mut self, path: &Path) -> Value {
-        let deadline = Instant::now() + Duration::from_secs(180);
-        while !path.is_file() {
-            assert!(
-                !self.child.terminal_observed().unwrap(),
-                "verifier exited before its real response; actor.log retained"
-            );
-            assert!(
-                Instant::now() < deadline,
-                "bounded verifier response wait; original phase deadline remains unchanged"
-            );
-            thread::sleep(Duration::from_millis(2));
-        }
-        read(path)
+        let deadline = self.phase_deadlines.map_or_else(
+            || Instant::now() + Duration::from_secs(180),
+            |(_, cleanup)| monotonic_deadline(cleanup),
+        );
+        await_response_file(path, deadline, || {
+            self.child.terminal_observed().map_err(|e| e.to_string())
+        })
+        .expect("original verifier boundary refused; actual raw IPC and actor.log retained")
     }
     fn call(&mut self, mut request: Value) -> Value {
         assert!(self.sequence < MAX_REQUESTS);
+        if let Some((business, cleanup)) = self.phase_deadlines {
+            let deadline = match request["operation"].as_str().unwrap() {
+                "import" | "confirmation" => business,
+                "snapshot" | "finish" => cleanup,
+                _ => panic!("closed verifier operation required"),
+            };
+            request["original_deadline_monotonic_ns"] = json!(deadline);
+        }
         request["sequence"] = json!(self.sequence);
         let raw = serde_json::to_vec(&request).unwrap();
         let request_sha256 = hex::encode(Sha256::digest(&raw));
@@ -438,6 +477,13 @@ impl Verifier {
     }
     pub(super) fn ready(&self) -> &Value {
         &self.ready
+    }
+    pub(super) fn bind_original_phase_deadlines(&mut self, business: u64, cleanup: u64) {
+        assert!(business < cleanup);
+        match self.phase_deadlines {
+            Some(original) => assert_eq!(original, (business, cleanup)),
+            None => self.phase_deadlines = Some((business, cleanup)),
+        }
     }
     pub(super) fn import(
         &mut self,
@@ -489,7 +535,10 @@ impl Verifier {
     pub(super) fn finish(mut self) -> Value {
         let response = self.call(json!({"operation":"finish"}));
         assert!(response["error"].is_null());
-        let deadline = Instant::now() + Duration::from_secs(10);
+        let deadline = self.phase_deadlines.map_or_else(
+            || Instant::now() + Duration::from_secs(10),
+            |(_, cleanup)| monotonic_deadline(cleanup),
+        );
         let mut launcher_wait4 = self.child.finish(deadline);
         let observed_on_time = Instant::now() < deadline;
         let launcher_observed_monotonic_ns = support::monotonic();
@@ -635,51 +684,87 @@ pub(super) fn run(job: &Value, path: &Path) -> Value {
         let call_started = Instant::now();
         let operation = request["operation"].as_str().unwrap();
         let epoch = request["epoch"].as_u64().unwrap_or(0);
+        let request_deadline = request["original_deadline_monotonic_ns"]
+            .as_u64()
+            .map(monotonic_deadline);
+        assert!(execution_profile != ExecutionProfile::PureClientV1 || request_deadline.is_some());
         let stamp = ClientOperationStamp::start(epoch);
-        let result: Result<Value, String> = match operation {
-            "import" => serde_json::from_value::<ingress::Page>(request["page"].clone())
-                .map_err(|error| error.to_string())
-                .and_then(|page| {
-                    let address: SocketAddr = request["source"].as_str().unwrap().parse().unwrap();
-                    let import = match resource_profile {
-                        ResourceProfile::Strict => ingress::receive_public_page_from,
-                        ResourceProfile::GraphFenceV1 => {
-                            ingress::receive_public_page_with_graph_resource_fence_v1
+        let result: Result<Value, String> = if request_deadline.is_some_and(|d| Instant::now() >= d)
+        {
+            Err("PUBLIC_REQUEST_DEADLINE".into())
+        } else {
+            match operation {
+                "import" => serde_json::from_value::<ingress::Page>(request["page"].clone())
+                    .map_err(|error| error.to_string())
+                    .and_then(|page| {
+                        let address: SocketAddr =
+                            request["source"].as_str().unwrap().parse().unwrap();
+                        if let Some(deadline) = request_deadline {
+                            let import = match resource_profile {
+                                ResourceProfile::Strict => ingress::receive_public_page_from_until,
+                                ResourceProfile::GraphFenceV1 => {
+                                    ingress::receive_public_page_with_graph_resource_fence_v1_until
+                                }
+                            };
+                            return import(
+                                &mut node,
+                                address,
+                                page,
+                                serde_json::from_value(request["tip"].clone()).unwrap(),
+                                serde_json::from_value(request["after"].clone()).unwrap(),
+                                request["clock"].as_u64().unwrap(),
+                                deadline,
+                            )
+                            .map(|hash| json!(hash))
+                            .map_err(|error| error.to_string());
                         }
-                    };
-                    import(
-                        &mut node,
-                        address,
-                        page,
-                        serde_json::from_value(request["tip"].clone()).unwrap(),
-                        serde_json::from_value(request["after"].clone()).unwrap(),
+                        let import = match resource_profile {
+                            ResourceProfile::Strict => ingress::receive_public_page_from,
+                            ResourceProfile::GraphFenceV1 => {
+                                ingress::receive_public_page_with_graph_resource_fence_v1
+                            }
+                        };
+                        import(
+                            &mut node,
+                            address,
+                            page,
+                            serde_json::from_value(request["tip"].clone()).unwrap(),
+                            serde_json::from_value(request["after"].clone()).unwrap(),
+                            request["clock"].as_u64().unwrap(),
+                        )
+                        .map(|hash| json!(hash))
+                        .map_err(|error| error.to_string())
+                    }),
+                "confirmation" => node
+                    .confirmation(
+                        serde_json::from_value(request["transaction"].clone()).unwrap(),
+                        serde_json::from_value(request["included"].clone()).unwrap(),
                         request["clock"].as_u64().unwrap(),
                     )
-                    .map(|hash| json!(hash))
-                    .map_err(|error| error.to_string())
-                }),
-            "confirmation" => node
-                .confirmation(
-                    serde_json::from_value(request["transaction"].clone()).unwrap(),
-                    serde_json::from_value(request["included"].clone()).unwrap(),
-                    request["clock"].as_u64().unwrap(),
-                )
-                .map(|observation| json!(observation))
-                .map_err(|error| error.to_string()),
-            "snapshot" => node
-                .read_active()
-                .and_then(|active| {
-                    let mut snapshot = json!({"active":active,
+                    .map(|observation| json!(observation))
+                    .map_err(|error| error.to_string()),
+                "snapshot" => node
+                    .read_active()
+                    .and_then(|active| {
+                        let mut snapshot = json!({"active":active,
                     "native_history_arithmetic":node.native_history_arithmetic_observation()});
-                    if execution_profile == ExecutionProfile::PureClientV1 {
-                        snapshot["active_height"] = json!(node.parent_height(active.0)?);
-                    }
-                    Ok(snapshot)
-                })
-                .map_err(|error| error.to_string()),
-            "finish" => Ok(json!({"closing_original_node":true})),
-            _ => panic!("unknown verifier operation"),
+                        if execution_profile == ExecutionProfile::PureClientV1 {
+                            snapshot["active_height"] = json!(node.parent_height(active.0)?);
+                        }
+                        Ok(snapshot)
+                    })
+                    .map_err(|error| error.to_string()),
+                "finish" => Ok(json!({"closing_original_node":true})),
+                _ => panic!("unknown verifier operation"),
+            }
         };
+        let result = result.and_then(|value| {
+            if request_deadline.is_some_and(|d| Instant::now() >= d) {
+                Err("PUBLIC_REQUEST_DEADLINE".to_owned())
+            } else {
+                Ok(value)
+            }
+        });
         if operation == "import" {
             lifeline_native::boundary(job, path, "after-public-import-before-response", || {
                 assert!(
@@ -804,4 +889,40 @@ fn client_execution_profile_has_no_implicit_pure_relabel() {
         ))
         .is_err());
     }
+}
+
+#[test]
+fn history_response_deadline_rejects_late_actual_file_without_renewal() {
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("response.json");
+    let writer_path = path.clone();
+    let deadline = Instant::now() + Duration::from_millis(5);
+    let writer = thread::spawn(move || {
+        thread::sleep(Duration::from_millis(25));
+        fs::write(writer_path, b"{\"actual_late_response\":true}").unwrap();
+    });
+    assert_eq!(
+        await_response_file(&path, deadline, || Ok(false)).unwrap_err(),
+        "VERIFIER_ORIGINAL_ABSOLUTE_DEADLINE"
+    );
+    writer.join().unwrap();
+    // A late but complete file cannot pass by skipping a polling loop, and a
+    // second observer cannot renew the original request's absolute bound.
+    assert_eq!(
+        await_response_file(&path, deadline, || Ok(false)).unwrap_err(),
+        "VERIFIER_ORIGINAL_ABSOLUTE_DEADLINE"
+    );
+    assert_eq!(read(&path)["actual_late_response"], true);
+}
+
+#[test]
+fn history_response_actual_owner_exit_is_not_a_success_or_a_fresh_wait() {
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("absent-response.json");
+    assert_eq!(
+        await_response_file(&path, Instant::now() + Duration::from_secs(1), || Ok(true))
+            .unwrap_err(),
+        "VERIFIER_EXITED_BEFORE_RESPONSE"
+    );
+    assert!(!path.exists());
 }

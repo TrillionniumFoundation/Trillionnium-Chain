@@ -450,6 +450,16 @@ struct PublicRequestDeadline {
     stop: Arc<AtomicBool>,
     cancelled: Arc<AtomicBool>,
 }
+enum LiveCpuWait {
+    Public(PublicRequestDeadline),
+    History,
+}
+#[derive(Clone, Copy)]
+enum HistoryCpuCheck {
+    CpuPoint,
+    ResourceBoundary,
+    Settlement,
+}
 impl PublicRequestDeadline {
     fn check(&self) -> Result<()> {
         super::task_alive(self.deadline, &self.stop, &self.cancelled)
@@ -628,8 +638,12 @@ impl LiveRequestCpu {
     }
     pub(super) fn observe(&self, remove: bool, enforce: bool) -> Result<()> {
         loop {
-            let Some(request) = self.observe_sample(remove, enforce)? else {
-                return Ok(());
+            let request = match self.observe_sample(remove, enforce, false, false)? {
+                None => return Ok(()),
+                Some(LiveCpuWait::Public(request)) => request,
+                Some(LiveCpuWait::History) => {
+                    return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+                }
             };
             // A complete W1 candidate keeps its original reservation and exact
             // continuation, rather than throwing away paid native work and
@@ -644,7 +658,13 @@ impl LiveRequestCpu {
             );
         }
     }
-    fn observe_sample(&self, remove: bool, enforce: bool) -> Result<Option<PublicRequestDeadline>> {
+    fn observe_sample(
+        &self,
+        remove: bool,
+        enforce: bool,
+        history_wait: bool,
+        restore_reserve: bool,
+    ) -> Result<Option<LiveCpuWait>> {
         // All two-lock paths use request -> global. Neither is held across a
         // Work replay, envelope, State/root calculation, join or SQL call.
         let mut state = match self.state.lock() {
@@ -657,6 +677,14 @@ impl LiveRequestCpu {
                 return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
             }
         };
+        ensure(
+            !history_wait || (enforce && !remove && state.public_request.is_none()),
+            "PUBLIC_MUTATION_CPU_UNAVAILABLE",
+        )?;
+        ensure(
+            !restore_reserve || history_wait,
+            "PUBLIC_MUTATION_CPU_UNAVAILABLE",
+        )?;
         if enforce && state.verified_completion {
             state
                 .public_request
@@ -704,6 +732,14 @@ impl LiveRequestCpu {
                         || !budget.completion_pending()
                         || total <= MUTATION_CPU_START_RESERVE_NS,
                     "PUBLIC_MUTATION_CPU_BUDGET",
+                )?;
+                // Before History's final measured sample, restore the already
+                // deducted reserve through ORIGINAL refill while this owner is
+                // still fully metered. It is not a second reservation or a
+                // forgiven tail. Actual finish still charges every residual.
+                ensure(
+                    !restore_reserve || budget.credit_ns >= 0,
+                    "PUBLIC_MUTATION_CPU_BUDGET",
                 )
             } else {
                 budget.record_final_live(Instant::now(), measured)
@@ -712,8 +748,14 @@ impl LiveRequestCpu {
         let mut wait = None;
         if let Err(error) = &result {
             if error.is(crate::ErrorCode::PublicMutationCpuBudget) {
-                if enforce && state.verified_completion && !state.refused {
-                    wait = state.public_request.clone();
+                if history_wait && !state.refused {
+                    // The private History caller retains this SAME operation,
+                    // its original start reserve and a fixed absolute deadline.
+                    // Waiting creates no completion priority, new reservation,
+                    // refund or permission to continue while the balance is low.
+                    wait = Some(LiveCpuWait::History);
+                } else if enforce && state.verified_completion && !state.refused {
+                    wait = state.public_request.clone().map(LiveCpuWait::Public);
                     if wait.is_none() {
                         state.unavailable = true;
                     }
@@ -740,6 +782,55 @@ impl LiveRequestCpu {
     }
     pub(super) fn checkpoint(&self) -> Result<()> {
         self.observe(false, true)
+    }
+    fn history_checkpoint(
+        &self,
+        deadline: Instant,
+        resource: &(dyn Fn() -> Result<()> + Sync),
+        check: HistoryCpuCheck,
+    ) -> Result<()> {
+        let restore_reserve = matches!(check, HistoryCpuCheck::Settlement);
+        let mut require_resource = !matches!(check, HistoryCpuCheck::CpuPoint);
+        loop {
+            ensure(Instant::now() < deadline, "PUBLIC_REQUEST_DEADLINE")?;
+            match self.observe_sample(false, true, true, restore_reserve)? {
+                // This explicit CPU point preserves the caller's original
+                // W1/N8 full-resource cadence. It cannot be used for a paid
+                // native boundary, decoding or settlement.
+                None if !require_resource => return Ok(()),
+                None => {
+                    // Sufficient credit is not a resource/cancellation verdict.
+                    // This callback runs inside the SAME live operation but
+                    // outside both CPU locks. Charge its actual CPU again
+                    // before authorizing the next expensive native step.
+                    resource()?;
+                    ensure(Instant::now() < deadline, "PUBLIC_REQUEST_DEADLINE")?;
+                    match self.observe_sample(false, true, true, restore_reserve)? {
+                        None => return Ok(()),
+                        Some(LiveCpuWait::History) => {}
+                        Some(LiveCpuWait::Public(_)) => {
+                            return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+                        }
+                    }
+                }
+                Some(LiveCpuWait::History) => {
+                    // A fresh caller/kernel check runs outside both CPU locks.
+                    // The next real thread sample includes all wait-management
+                    // CPU. Unknown measurements never reach this branch.
+                    resource()?;
+                    ensure(Instant::now() < deadline, "PUBLIC_REQUEST_DEADLINE")?;
+                }
+                Some(LiveCpuWait::Public(_)) => {
+                    return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+                }
+            }
+            // Even an ordinary CPU point must freshly recheck the full parent
+            // after cooperative waiting, before it can resume native work.
+            require_resource = true;
+            thread::sleep(
+                Duration::from_millis(5).min(deadline.saturating_duration_since(Instant::now())),
+            );
+        }
     }
     pub(super) fn finish_thread(&self) {
         let _ = self.observe(true, false);
@@ -1039,6 +1130,30 @@ impl ServiceMutationCpuCheckpoint {
     pub fn checkpoint(&self) -> Result<()> {
         self.live.checkpoint()
     }
+    pub(crate) fn history_checkpoint(
+        &self,
+        deadline: Instant,
+        resource: &(dyn Fn() -> Result<()> + Sync),
+    ) -> Result<()> {
+        self.live
+            .history_checkpoint(deadline, resource, HistoryCpuCheck::ResourceBoundary)
+    }
+    pub(crate) fn history_cpu_checkpoint(
+        &self,
+        deadline: Instant,
+        resource: &(dyn Fn() -> Result<()> + Sync),
+    ) -> Result<()> {
+        self.live
+            .history_checkpoint(deadline, resource, HistoryCpuCheck::CpuPoint)
+    }
+    pub(crate) fn history_settlement_checkpoint(
+        &self,
+        deadline: Instant,
+        resource: &(dyn Fn() -> Result<()> + Sync),
+    ) -> Result<()> {
+        self.live
+            .history_checkpoint(deadline, resource, HistoryCpuCheck::Settlement)
+    }
     pub(crate) fn same_operation(&self, other: &Self) -> bool {
         Arc::ptr_eq(&self.live, &other.live)
     }
@@ -1213,6 +1328,7 @@ impl ServiceMutationCpuDomain {
         drop(budget);
         result
     }
+
     /// Independent optional diagnostic object. The original observe() struct,
     /// JSON/schema and old evidence readers remain unchanged. No refill occurs.
     /// None retains unknown overflow, unaccounted CPU or a failed exact identity;

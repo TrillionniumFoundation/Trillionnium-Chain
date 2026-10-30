@@ -30,8 +30,9 @@ class MetadataControls(unittest.TestCase):
         path.write_bytes(raw)
         return path
 
-    def collect(self):
-        summary = collector.collect(self.source, self.output, HEAD, "rust", 40836515003, 1)
+    def collect(self, *, sarif_only=False):
+        summary = collector.collect(self.source, self.output, HEAD, "rust", 40836515003, 1,
+                                    sarif_only=sarif_only)
         manifest = json.loads((self.output / "manifest.json").read_bytes())
         self.assertFalse(summary["analysis_outcome_inferred"])
         self.assertFalse(manifest["analysis_outcome_inferred"])
@@ -40,7 +41,8 @@ class MetadataControls(unittest.TestCase):
         self.assertNotIn("passed", manifest)
         self.assertNotIn("finding_count", manifest)
         files = [p for p in self.output.rglob("*") if p.is_file()]
-        self.assertLess(sum(p.stat().st_size for p in files), collector.ARTIFACT_LIMIT)
+        self.assertLess(sum(p.stat().st_size for p in files),
+                        collector.SARIF_ARTIFACT_LIMIT if sarif_only else collector.ARTIFACT_LIMIT)
         return manifest, {row["source_path"]: row for row in manifest["files"]}
 
     def test_synthetic_failure_bytes_and_returncode_are_not_promoted(self):
@@ -234,6 +236,49 @@ class MetadataControls(unittest.TestCase):
             with self.subTest(head=head, language=language, run=run, attempt=attempt), self.assertRaises(ValueError):
                 collector.collect(self.source, self.output, head, language, run, attempt)
         self.assertFalse(self.output.exists())
+
+    def test_separate_sarif_retains_complete_bytes_above_metadata_limit(self):
+        raw = b'{"version":"2.1.0","runs":[]}' + b" " * collector.FULL_FILE_LIMIT
+        self.put("analysis/analysis.sarif", raw)
+        failure = b'{"passed":false,"finding_count":780,"extraction_coverage_complete":false}'
+        self.put("analysis/result.json", failure)
+        self.put("analysis/database/unlisted.bqrs", b"must stay in the original full artifact")
+        manifest, rows = self.collect(sarif_only=True)
+        self.assertEqual(manifest["schema"], collector.SARIF_SCHEMA)
+        self.assertEqual(set(rows), set(collector.SARIF_FILES))
+        row = rows["analysis/analysis.sarif"]
+        self.assertEqual(row["status"], "copied")
+        self.assertTrue(row["covers_retained_file"])
+        self.assertEqual((self.output / row["artifact_member"]).read_bytes(), raw)
+        self.assertEqual(row["sampled_bytes"], collector.fingerprint(raw))
+        self.assertEqual((self.output / rows["analysis/result.json"]["artifact_member"]).read_bytes(), failure)
+
+    def test_oversized_sarif_remains_refused_and_never_truncated(self):
+        source = self.put("analysis/analysis.sarif", b"{}").open("ab")
+        with source:
+            source.truncate(collector.SARIF_FILE_LIMIT + 1)
+        _, rows = self.collect(sarif_only=True)
+        row = rows["analysis/analysis.sarif"]
+        self.assertEqual(row["status"], "file_size_limit")
+        self.assertEqual(row["file_size_limit"], collector.SARIF_FILE_LIMIT)
+        self.assertNotIn("artifact_member", row)
+
+    def test_separate_sarif_still_refuses_links_and_records_missing_source(self):
+        external = self.base / "other.sarif"
+        external.write_bytes(b'{"runs":[]}')
+        (self.source / "analysis").mkdir()
+        (self.source / "analysis/analysis.sarif").symlink_to(external)
+        _, rows = self.collect(sarif_only=True)
+        self.assertEqual(rows["analysis/analysis.sarif"]["status"], "unsafe_or_unreadable")
+        self.assertEqual(rows["analysis/source-before.json"]["status"], "missing")
+
+    def test_sarif_profile_does_not_relax_other_json_size_bounds(self):
+        path = self.put("analysis/result.json", b"{}")
+        with path.open("ab") as file:
+            file.truncate(collector.FULL_FILE_LIMIT + 1)
+        _, rows = self.collect(sarif_only=True)
+        self.assertEqual(rows["analysis/result.json"]["status"], "file_size_limit")
+        self.assertEqual(rows["analysis/result.json"]["file_size_limit"], collector.FULL_FILE_LIMIT)
 
 
 if __name__ == "__main__":

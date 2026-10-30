@@ -7485,3 +7485,130 @@ fixed-Host execution is still a separate gate.
 Open-network honest service under the original pressure envelope, global
 effective-work cost assumptions, practical complete-proof economics, quantitative
 quantum security, independent acceptance and activation all remain OPEN.
+
+### System-safety continuation of the integrated candidate (2026-10-29, New York)
+
+This continuation starts from integrated candidate
+`1d11f875493f8125e36b9adceacb342df108e5e5` (PR #557), preserving its concurrent
+fresh-caller, proof and retained-failure changes on top of the originally audited
+`540d72356a921da31dde1113537382e5c0f0c4fd`. It preserves canonical
+bytes and domain separation, complete verification before atomic block/delta
+publication, verified heavier-chain recovery, generation/fence rechecks,
+reserve-before-execute accounting, original failures and Unknown observations,
+and non-rewindable local revocation and external-effect history. No production
+activation, consensus replacement, budget increase or security-gate waiver is
+part of this change. Whole-system acceptance remains **OPEN / NO_GO** until
+fresh exact-source native and security observations satisfy their original gates.
+
+#### History CPU continuation and the original absolute phase deadline
+
+The previous raw History failures remain failures, including
+[the integrated raw joint run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40932471986)
+and [the paired diagnostic run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40932471462).
+The new code retains the same Node-owned CPU domain, original start reserve,
+refill, burst and worker limits throughout each import operation. When a real,
+known observation exhausts current credit, the same reserved operation may wait
+for the original elapsed-time refill while checking its existing caller/resource
+boundary and absolute deadline. Unknown accounting never enters this path.
+Pre-settlement waiting remains inside that measured operation; final CPU is
+still sampled and debited exactly, and any remaining negative or unknown tail
+retains the original crash fence. No negative balance is clamped or refunded.
+
+Explicit `receive_public_page_from_until` and graph-resource equivalents carry
+the caller's absolute deadline across decode, W1, M06, activation and settlement.
+The first full resource observation is inside the original paid operation;
+cancellation still reaches actual settlement. CPU-only W1/graph checkpoints keep
+the original full-resource cadence. A checkpoint that waits for credit must
+recheck the full resource boundary before resuming native work.
+
+The public CLI captures its original 30-second transport bound before requesting
+a page and passes the same Instant through network I/O and import. Legacy
+native/authenticated transports previously had five-second I/O phases and no
+whole-page bound: they now have an explicitly new 30-second compatibility page
+ceiling, with every original phase clipped to the same remaining time. This is
+not described as a pre-existing legacy contract. No-deadline import wrappers use
+the same finite compatibility ceiling; they cannot themselves prove an earlier
+caller's network-plus-import deadline. The original two-second start-reserve
+wait remains unchanged and cannot extend any enclosing bound. Partial I/O,
+late complete responses and retries cannot renew an explicit caller deadline.
+The distributed example passes its existing role timeout through its original
+retry count and both import sites. A verified authenticated terminal still
+settles its original nonce/outbox facts even when the final caller check fails.
+
+The original finite campaign and pure History client pass their already-existing
+30-second phase deadline and 35-second cleanup deadline into the isolated actor
+and its IPC waits. The recent-batch literal source pin changes only for this
+one-line phase binding; the native selectors, payloads, thresholds and resource
+policy remain unchanged. The original cold/inactive fixture is not relaxed.
+
+Last-close verification and ordinary History marker removal now share the
+original CPU mutex. A concurrent cloned domain cannot start work between the
+quiescence observation and marker removal. This does not add durable recovery
+authority to an ordinary volatile domain or permit cold reconstruction of an
+unknown epoch. Tests retain the original cold/inactive-parent fixture and add
+known-refill, cancellation, absolute-deadline, Unknown, cloned-reservation and
+delayed-IPC controls. Shared-owner throughput/fairness still requires the original
+full native campaign; holding a Node owner during a bounded wait is not a new
+parallel-admission architecture.
+
+#### Active recovery modules and auditable CodeQL output
+
+The six `trnm-peer-lease` recovery fragments previously joined with `include!`
+are private Rust modules with explicit same-name public re-exports. Existing
+types, owner, WAL, ACK and projection behavior remain in the same authority.
+Independent token review found unchanged function bodies and all 35 constant /
+static initializers; only required sibling visibility, module placement and
+formatting changed. This removes a documented semantic-extraction obstacle in
+actual compiled recovery code. It does not establish that a later CodeQL run
+has complete coverage or that the remaining SSA/type-inference errors vanished.
+
+The pinned CodeQL workflow preserves its original version, query set, all-tracked
+source scope, findings and failure gates. It additionally uploads a bounded,
+separately downloadable original SARIF artifact, retaining the original complete
+database/BQRS artifact as well. The collector rejects changed files, links and
+oversized inputs rather than truncating them. A creation-log semantic index is
+saved before analysis, preserving INFO-level unavailable-module observations even
+if a later query fails. Artifact export remains distinct from security clearance.
+
+[The source-bound API triage](../../evidence/system-security-20261030/codeql-api-triage-540.json)
+retains all 780 results available through the official export at the original
+source: 757 hard-coded-value and 23 logging findings, across 73 hash-verified
+files. The record classifies contexts, not exploitability or automatic dismissal.
+The official API subset has the same counts as the original pinned scan, but
+identity with every result in the unavailable original 4.87 MB SARIF is **not
+proven**. That limitation is explicit in the record. One active CLI stdout path
+remains unresolved; deterministic tests, historical fixtures, overwritten output
+buffers, wire-length constants and container/panic model approximations are not
+silently suppressed. The
+[original semantic index](../../evidence/system-security-20261030/codeql-semantic-extraction-540.json)
+retains 311 unavailable-file observations and the workspace-load failure. Two SSA
+diagnostics and one type-inference error still lack a proven source location.
+
+#### Validation state when this continuation is proposed
+
+The unchanged-boundary preflight, 29 pinned-analysis reader controls, 26 metadata /
+SARIF collector controls, 96 CI-contract controls and 34 source-integrity negative
+controls passed locally. Rust 1.95.0 locked workspace/all-target compile checks
+passed before the final caller-deadline continuation. The six-module recovery
+refactor passed all 120 native `trnm-peer-lease` tests and all-target/all-feature
+strict Clippy, with no ignored peer-lease tests.
+
+Local original full-debug node builds retained their compiler/resource failures.
+A subsequent functional build disabled only local test debug symbols, retaining
+optimization, debug assertions, overflow checks and runtime resource budgets.
+Its broad `history_` selection recorded 109 passes, 19 failures and six ignored
+entries. The failures include specialized lifecycle/reorg/startup controls that
+require their exact-source runner pins; the local compiler loader guard also
+reported an unqualified duplicate path, which was corrected without changing the
+guard. This is not a whole-History pass or fixed-Host qualification. All ten new
+History CPU/close controls and the original activation cancellation/retry test
+passed in that run. The final caller-deadline socket controls still require their
+own fresh execution. Full sparse-checkout repository link verification correctly
+refused absent historical evidence; no missing evidence was fabricated.
+
+Fresh hosted jobs must run the original History V6, raw joint/pair, baseline,
+strict Clippy/formatting and CodeQL gates on the proposed immutable source. The
+independent [Hepta continuation](https://github.com/TrillionniumFoundation/hepta-private-ci/pull/4332)
+starts with the contract/durable-journal operation-binding repair and is a
+separate source candidate. It is not implicitly included in this Chain commit or
+treated as an arbitrary external HTTP exactly-once guarantee.

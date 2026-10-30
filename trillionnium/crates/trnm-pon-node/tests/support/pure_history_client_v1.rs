@@ -57,6 +57,14 @@ impl Client {
         }
     }
 
+    pub(super) fn bind_original_phase(&mut self, epoch: u64) {
+        if let Self::FixedHostV1(verifier) = self {
+            let business = epoch.checked_add(support::WINDOW_NS).unwrap();
+            let cleanup = business.checked_add(5_000_000_000).unwrap();
+            verifier.bind_original_phase_deadlines(business, cleanup);
+        }
+    }
+
     pub(super) fn import(
         &mut self,
         source: SocketAddr,

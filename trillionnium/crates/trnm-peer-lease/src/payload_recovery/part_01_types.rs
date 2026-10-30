@@ -18,33 +18,7 @@
 // bind both stores to a whole-node anti-rollback authority. Production and
 // consensus activation remain false.
 
-use std::{
-    collections::{BTreeMap, BTreeSet},
-    error::Error,
-    fmt,
-    fs::{self, File, OpenOptions},
-    io::{self, Read, Seek, SeekFrom, Write},
-    path::{Path, PathBuf},
-    sync::atomic::{AtomicU64, Ordering},
-};
-
-#[cfg(unix)]
-use std::os::unix::fs::{MetadataExt, OpenOptionsExt, PermissionsExt};
-
-use fs2::FileExt;
-use sha2::{Digest, Sha256};
-
-use crate::{
-    payload::{
-        payload_replay_generation_successor_v1, PayloadReplayDirectionV1,
-        PayloadReplayDirectoryIdentityV1, PayloadReplayFrameV1, PayloadReplayNamespaceV1,
-        PayloadReplayReceiptV1, PAYLOAD_REPLAY_MAX_PAYLOAD_BYTES_V1, PAYLOAD_REPLAY_MAX_RECORDS_V1,
-        PAYLOAD_REPLAY_MAX_TEMPORARY_FILES_V1, PAYLOAD_REPLAY_MAX_TEMPORARY_SCAN_ENTRIES_V1,
-        PAYLOAD_REPLAY_MAX_WAL_BYTES_V1,
-    },
-    protocol::PeerLeaseDirectionV1,
-    store::ensure_private_directory,
-};
+use super::*;
 
 pub const PAYLOAD_REPLAY_EXTERNAL_RECOVERY_OWNER_CANDIDATE_V1: bool = true;
 pub const PAYLOAD_REPLAY_CORE_ACK_LEDGER_CANDIDATE_V1: bool = true;
@@ -55,29 +29,29 @@ pub const PAYLOAD_REPLAY_RECOVERY_PRODUCTION_ACTIVATION_V1: bool = false;
 pub const PAYLOAD_REPLAY_RECOVERY_ENDPOINT_IDENTITY_SCHEMA_V1: &str =
     "trnm.payload-replay-recovery-endpoint-identity.v1";
 
-const LOG_MAGIC_V1: [u8; 8] = *b"TRNPRW01";
-const LOG_VERSION_V1: u8 = 1;
-const LOG_GENESIS_KIND_V1: u8 = 0;
-const LOG_FRAME_KIND_V1: u8 = 1;
-const HEAD_MAGIC_V1: [u8; 8] = *b"TRNPRH01";
-const HEAD_VERSION_V1: u8 = 1;
-const NAMESPACE_DOMAIN_V1: &[u8] = b"trnm.portable-g3.payload-replay.namespace.v1";
-const RECORD_DOMAIN_V1: &[u8] = b"trnm.portable-g3.payload-replay.record.v1";
-const HEAD_DOMAIN_V1: &[u8] = b"trnm.portable-g3.payload-replay.head.v1";
-const RECORD_PREFIX_BYTES_V1: usize = 348;
-const RECORD_BYTES_V1: usize = RECORD_PREFIX_BYTES_V1 + 32;
-const HEAD_PREFIX_BYTES_V1: usize = 84;
-const HEAD_BYTES_V1: usize = HEAD_PREFIX_BYTES_V1 + 32;
+pub(super) const LOG_MAGIC_V1: [u8; 8] = *b"TRNPRW01";
+pub(super) const LOG_VERSION_V1: u8 = 1;
+pub(super) const LOG_GENESIS_KIND_V1: u8 = 0;
+pub(super) const LOG_FRAME_KIND_V1: u8 = 1;
+pub(super) const HEAD_MAGIC_V1: [u8; 8] = *b"TRNPRH01";
+pub(super) const HEAD_VERSION_V1: u8 = 1;
+pub(super) const NAMESPACE_DOMAIN_V1: &[u8] = b"trnm.portable-g3.payload-replay.namespace.v1";
+pub(super) const RECORD_DOMAIN_V1: &[u8] = b"trnm.portable-g3.payload-replay.record.v1";
+pub(super) const HEAD_DOMAIN_V1: &[u8] = b"trnm.portable-g3.payload-replay.head.v1";
+pub(super) const RECORD_PREFIX_BYTES_V1: usize = 348;
+pub(super) const RECORD_BYTES_V1: usize = RECORD_PREFIX_BYTES_V1 + 32;
+pub(super) const HEAD_PREFIX_BYTES_V1: usize = 84;
+pub(super) const HEAD_BYTES_V1: usize = HEAD_PREFIX_BYTES_V1 + 32;
 
-const ACK_MAGIC_V1: [u8; 8] = *b"TRNPACK1";
-const ACK_VERSION_V1: u8 = 1;
-const ACK_DOMAIN_V1: &[u8] = b"trnm.portable-g1.payload-core-ack.v1";
-const ACK_PREFIX_BYTES_V1: usize = 156;
-const ACK_BYTES_V1: usize = ACK_PREFIX_BYTES_V1 + 32;
-const ACK_LOCK_NAME_V1: &str = ".payload-core-ack.lock-v1";
-const PRIVATE_FILE_MODE_V1: u32 = 0o600;
+pub(super) const ACK_MAGIC_V1: [u8; 8] = *b"TRNPACK1";
+pub(super) const ACK_VERSION_V1: u8 = 1;
+pub(super) const ACK_DOMAIN_V1: &[u8] = b"trnm.portable-g1.payload-core-ack.v1";
+pub(super) const ACK_PREFIX_BYTES_V1: usize = 156;
+pub(super) const ACK_BYTES_V1: usize = ACK_PREFIX_BYTES_V1 + 32;
+pub(super) const ACK_LOCK_NAME_V1: &str = ".payload-core-ack.lock-v1";
+pub(super) const PRIVATE_FILE_MODE_V1: u32 = 0o600;
 
-static TEMP_NONCE_V1: AtomicU64 = AtomicU64::new(0);
+pub(super) static TEMP_NONCE_V1: AtomicU64 = AtomicU64::new(0);
 
 /// A descriptor/path identity captured when the candidate recovery owner is
 /// opened.  The owner keeps the descriptor locked, but pathname operations
@@ -86,27 +60,27 @@ static TEMP_NONCE_V1: AtomicU64 = AtomicU64::new(0);
 /// artifact into the authority pathname while the original descriptor stays
 /// valid.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-struct AuthorityPathIdentityV1 {
+pub(super) struct AuthorityPathIdentityV1 {
     #[cfg(unix)]
-    device: u64,
+    pub(super) device: u64,
     #[cfg(unix)]
-    inode: u64,
+    pub(super) inode: u64,
     #[cfg(unix)]
-    uid: u32,
+    pub(super) uid: u32,
     #[cfg(unix)]
-    mode: u32,
+    pub(super) mode: u32,
     #[cfg(unix)]
-    nlink: u64,
+    pub(super) nlink: u64,
     #[cfg(not(unix))]
-    is_file: bool,
+    pub(super) is_file: bool,
     #[cfg(not(unix))]
-    is_directory: bool,
+    pub(super) is_directory: bool,
     #[cfg(not(unix))]
-    length: u64,
+    pub(super) length: u64,
 }
 
 impl AuthorityPathIdentityV1 {
-    fn from_metadata(metadata: &fs::Metadata) -> Self {
+    pub(super) fn from_metadata(metadata: &fs::Metadata) -> Self {
         #[cfg(unix)]
         {
             Self {
@@ -130,16 +104,16 @@ impl AuthorityPathIdentityV1 {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct PayloadReplayRecoveryTargetV1 {
-    record_index: u64,
-    record_hash: [u8; 32],
-    remote_id: [u8; 32],
-    direction: PayloadReplayDirectionV1,
-    session_id: [u8; 32],
-    generation: u64,
-    sequence: u64,
-    frame_kind: u8,
-    payload_len: u32,
-    frame_fingerprint: [u8; 32],
+    pub(super) record_index: u64,
+    pub(super) record_hash: [u8; 32],
+    pub(super) remote_id: [u8; 32],
+    pub(super) direction: PayloadReplayDirectionV1,
+    pub(super) session_id: [u8; 32],
+    pub(super) generation: u64,
+    pub(super) sequence: u64,
+    pub(super) frame_kind: u8,
+    pub(super) payload_len: u32,
+    pub(super) frame_fingerprint: [u8; 32],
 }
 
 impl PayloadReplayRecoveryTargetV1 {
@@ -188,7 +162,7 @@ impl PayloadReplayRecoveryTargetV1 {
         Ok(value)
     }
 
-    fn validate(self) -> Result<(), PayloadReplayRecoveryErrorV1> {
+    pub(super) fn validate(self) -> Result<(), PayloadReplayRecoveryErrorV1> {
         if self.record_index == 0
             || self.record_hash == [0; 32]
             || self.remote_id == [0; 32]
@@ -248,9 +222,9 @@ impl PayloadReplayRecoveryTargetV1 {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct PayloadReplayCoreAcknowledgementV1 {
-    target: PayloadReplayRecoveryTargetV1,
-    core_safety_revision: u64,
-    core_ack_digest: [u8; 32],
+    pub(super) target: PayloadReplayRecoveryTargetV1,
+    pub(super) core_safety_revision: u64,
+    pub(super) core_ack_digest: [u8; 32],
 }
 
 impl PayloadReplayCoreAcknowledgementV1 {
@@ -287,8 +261,8 @@ impl PayloadReplayCoreAcknowledgementV1 {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct PayloadReplayCoreAckReceiptV1 {
-    acknowledgement_hash: [u8; 32],
-    idempotent_replay: bool,
+    pub(super) acknowledgement_hash: [u8; 32],
+    pub(super) idempotent_replay: bool,
 }
 
 impl PayloadReplayCoreAckReceiptV1 {
@@ -412,13 +386,15 @@ impl From<io::Error> for PayloadReplayRecoveryErrorV1 {
     }
 }
 
-fn descriptor_identity(
+pub(super) fn descriptor_identity(
     file: &File,
 ) -> Result<AuthorityPathIdentityV1, PayloadReplayRecoveryErrorV1> {
     Ok(AuthorityPathIdentityV1::from_metadata(&file.metadata()?))
 }
 
-fn path_identity(path: &Path) -> Result<AuthorityPathIdentityV1, PayloadReplayRecoveryErrorV1> {
+pub(super) fn path_identity(
+    path: &Path,
+) -> Result<AuthorityPathIdentityV1, PayloadReplayRecoveryErrorV1> {
     let metadata = fs::symlink_metadata(path)?;
     if metadata.file_type().is_symlink() {
         return Err(PayloadReplayRecoveryErrorV1::InvalidRequest(
@@ -428,7 +404,7 @@ fn path_identity(path: &Path) -> Result<AuthorityPathIdentityV1, PayloadReplayRe
     Ok(AuthorityPathIdentityV1::from_metadata(&metadata))
 }
 
-fn verify_bound_file_identity(
+pub(super) fn verify_bound_file_identity(
     path: &Path,
     file: &File,
     expected: AuthorityPathIdentityV1,
@@ -444,7 +420,7 @@ fn verify_bound_file_identity(
     Ok(())
 }
 
-fn verify_bound_path_identity(
+pub(super) fn verify_bound_path_identity(
     path: &Path,
     expected: AuthorityPathIdentityV1,
 ) -> Result<(), PayloadReplayRecoveryErrorV1> {
@@ -461,7 +437,7 @@ fn verify_bound_path_identity(
     Ok(())
 }
 
-fn verify_bound_directory_identity(
+pub(super) fn verify_bound_directory_identity(
     path: &Path,
     directory: &File,
     expected: PayloadReplayDirectoryIdentityV1,

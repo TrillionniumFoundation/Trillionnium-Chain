@@ -491,6 +491,35 @@ impl Node {
         self.begin_ordinary_public_service_epoch()
     }
 
+    /// Only this standalone History owner's last-close path may use its live
+    /// CPU domain. Keep the exact quiescent arithmetic check and marker removal
+    /// under one CPU lock so a cloned handle cannot start in the observation
+    /// gap. Failure retains the original crash fence and grants no cold credit.
+    pub(crate) fn finish_remote_history_cpu_epoch(
+        &mut self,
+        domain: &ServiceMutationCpuDomain,
+        clean: bool,
+    ) -> Result<()> {
+        ensure(
+            self.public_service_cpu_domain()?.shares_domain_with(domain),
+            "OWNER_CONTINUOUS_SERVICE_CPU_DOMAIN",
+        )?;
+        if !clean {
+            return self.finish_ordinary_public_service_epoch(false);
+        }
+        match domain
+            .with_known_quiescent_history_close(|| self.finish_ordinary_public_service_epoch(true))
+        {
+            Ok(()) => Ok(()),
+            Err(error) => {
+                if self.public_service_epoch_listeners != 0 {
+                    self.finish_ordinary_public_service_epoch(false)?;
+                }
+                Err(error)
+            }
+        }
+    }
+
     /// Use one existing Node-owned budget for all remotely sourced History
     /// proof imports, including loopback and nonloopback sources. A standalone
     /// sync Node receives a COLD original CPU epoch, not the 2s diagnostic

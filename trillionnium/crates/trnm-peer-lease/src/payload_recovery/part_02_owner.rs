@@ -1,36 +1,38 @@
+use super::*;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
-struct PeerKeyV1 {
-    remote_id: [u8; 32],
-    direction: PeerLeaseDirectionV1,
+pub(super) struct PeerKeyV1 {
+    pub(super) remote_id: [u8; 32],
+    pub(super) direction: PeerLeaseDirectionV1,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-struct ReplayStateV1 {
-    session_id: [u8; 32],
-    generation: u64,
-    last_sequence: u64,
+pub(super) struct ReplayStateV1 {
+    pub(super) session_id: [u8; 32],
+    pub(super) generation: u64,
+    pub(super) last_sequence: u64,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-struct DecodedRecordV1 {
-    operation: u8,
-    index: u64,
-    namespace_digest: [u8; 32],
-    local_id: [u8; 32],
-    remote_id: [u8; 32],
-    direction: Option<PeerLeaseDirectionV1>,
-    epoch: u64,
-    peer_scope_id: [u8; 32],
-    run_id_hash: [u8; 32],
-    network_context_hash: [u8; 32],
-    session_id: [u8; 32],
-    generation: u64,
-    sequence: u64,
-    frame_kind: u8,
-    payload_len: u32,
-    frame_fingerprint: [u8; 32],
-    predecessor: [u8; 32],
-    record_hash: [u8; 32],
+pub(super) struct DecodedRecordV1 {
+    pub(super) operation: u8,
+    pub(super) index: u64,
+    pub(super) namespace_digest: [u8; 32],
+    pub(super) local_id: [u8; 32],
+    pub(super) remote_id: [u8; 32],
+    pub(super) direction: Option<PeerLeaseDirectionV1>,
+    pub(super) epoch: u64,
+    pub(super) peer_scope_id: [u8; 32],
+    pub(super) run_id_hash: [u8; 32],
+    pub(super) network_context_hash: [u8; 32],
+    pub(super) session_id: [u8; 32],
+    pub(super) generation: u64,
+    pub(super) sequence: u64,
+    pub(super) frame_kind: u8,
+    pub(super) payload_len: u32,
+    pub(super) frame_fingerprint: [u8; 32],
+    pub(super) predecessor: [u8; 32],
+    pub(super) record_hash: [u8; 32],
 }
 
 impl DecodedRecordV1 {
@@ -50,10 +52,10 @@ impl DecodedRecordV1 {
 }
 
 #[derive(Debug)]
-struct PayloadSnapshotV1 {
-    bytes: Vec<u8>,
-    last_hash: [u8; 32],
-    record_count: u64,
+pub(super) struct PayloadSnapshotV1 {
+    pub(super) bytes: Vec<u8>,
+    pub(super) last_hash: [u8; 32],
+    pub(super) record_count: u64,
 }
 
 impl PayloadSnapshotV1 {
@@ -75,10 +77,10 @@ impl PayloadSnapshotV1 {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-struct PayloadHeadV1 {
-    record_count: u64,
-    record_hash: [u8; 32],
-    namespace_digest: [u8; 32],
+pub(super) struct PayloadHeadV1 {
+    pub(super) record_count: u64,
+    pub(super) record_hash: [u8; 32],
+    pub(super) namespace_digest: [u8; 32],
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -264,14 +266,14 @@ impl PayloadJournalRecoveryV1 {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-struct AckFactsV1 {
-    namespace_digest: [u8; 32],
-    record_index: u64,
-    record_hash: [u8; 32],
-    frame_fingerprint: [u8; 32],
-    core_safety_revision: u64,
-    core_ack_digest: [u8; 32],
-    acknowledgement_hash: [u8; 32],
+pub(super) struct AckFactsV1 {
+    pub(super) namespace_digest: [u8; 32],
+    pub(super) record_index: u64,
+    pub(super) record_hash: [u8; 32],
+    pub(super) frame_fingerprint: [u8; 32],
+    pub(super) core_safety_revision: u64,
+    pub(super) core_ack_digest: [u8; 32],
+    pub(super) acknowledgement_hash: [u8; 32],
 }
 
 impl AckFactsV1 {
@@ -528,5 +530,24 @@ fn append_authority_identity(bytes: &mut Vec<u8>, identity: AuthorityPathIdentit
         bytes.push(u8::from(identity.is_file));
         bytes.push(u8::from(identity.is_directory));
         bytes.extend_from_slice(&identity.length.to_be_bytes());
+    }
+}
+
+impl PayloadReplayRecoveryOwnerV1 {
+    /// Produce a context-bound status snapshot for an external supervisor.
+    ///
+    /// The existing [`status`](Self::status) call performs endpoint identity
+    /// validation and complete WAL/target verification.  This method reuses
+    /// that path and adds a deterministic digest over the request binding and
+    /// observed state; it does not alter recovery or acknowledgement state.
+    pub fn status_projection(
+        &self,
+    ) -> Result<PayloadReplayRecoveryStatusProjectionV1, PayloadReplayRecoveryErrorV1> {
+        let status = self.status()?;
+        Ok(PayloadReplayRecoveryStatusProjectionV1::from_parts(
+            self.payload.namespace_digest,
+            self.target,
+            status,
+        ))
     }
 }

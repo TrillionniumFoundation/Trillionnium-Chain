@@ -1340,6 +1340,31 @@ pub fn call_public_protected_v2(
     caller: &DevelopmentIdentity,
     policy: PublicPolicy,
 ) -> Result<PublicReply> {
+    call_public_protected_v2_with_deadline(
+        address,
+        request,
+        settings,
+        pinned_server,
+        caller,
+        policy,
+        None,
+    )
+}
+
+/// A caller's original absolute deadline only clips the existing v2 transport
+/// limits. The ordinary wrapper retains its original phases and signed bytes.
+pub fn call_public_protected_v2_with_deadline(
+    address: SocketAddr,
+    request: &Request,
+    settings: &Settings,
+    pinned_server: &str,
+    caller: &DevelopmentIdentity,
+    policy: PublicPolicy,
+    outer_deadline: Option<Instant>,
+) -> Result<PublicReply> {
+    if let Some(deadline) = outer_deadline {
+        ensure(Instant::now() < deadline, "PUBLIC_CLIENT_DEADLINE")?;
+    }
     PublicPolicy::new(policy.bits, Duration::from_millis(policy.lifetime_ms))?;
     let raw = serde_json::to_vec(request)?;
     let op = request_op(request)?;
@@ -1351,8 +1376,20 @@ pub fn call_public_protected_v2(
         client_nonce: entropy()?,
     };
     Hello::parse(&hello.encode())?;
-    let total_deadline = Instant::now() + Duration::from_millis(OVERALL_MS);
-    let mut stream = TcpStream::connect_timeout(&address, Duration::from_secs(2))?;
+    let original_deadline = Instant::now() + Duration::from_millis(OVERALL_MS);
+    let total_deadline = outer_deadline
+        .map(|deadline| deadline.min(original_deadline))
+        .unwrap_or(original_deadline);
+    let connect_budget = if outer_deadline.is_some() {
+        total_deadline
+            .checked_duration_since(Instant::now())
+            .filter(|duration| !duration.is_zero())
+            .ok_or("PUBLIC_CLIENT_DEADLINE")?
+            .min(Duration::from_secs(2))
+    } else {
+        Duration::from_secs(2)
+    };
+    let mut stream = TcpStream::connect_timeout(&address, connect_budget)?;
     stream.set_read_timeout(Some(Duration::from_secs(5)))?;
     stream.set_write_timeout(Some(Duration::from_secs(5)))?;
     client_write(
@@ -1392,6 +1429,9 @@ pub fn call_public_protected_v2(
     let mut solved = None;
     for nonce in 0..1_048_576u64 {
         if nonce % 256 == 0 {
+            if outer_deadline.is_some() {
+                ensure(Instant::now() < total_deadline, "PUBLIC_CLIENT_DEADLINE")?;
+            }
             ensure(
                 started.elapsed() < Duration::from_millis(policy.lifetime_ms),
                 "PUBLIC_SOLVE_EXPIRED",
@@ -1453,6 +1493,9 @@ pub fn call_public_protected_v2(
     )?;
     verify_hex_strict(pinned_server, &r.message()?, &r.signature)
         .map_err(|_| "PUBLIC_RESPONSE_SIGNATURE")?;
+    if outer_deadline.is_some() {
+        ensure(Instant::now() < total_deadline, "PUBLIC_CLIENT_DEADLINE")?;
+    }
     Ok(PublicReply {
         ok: r.ok,
         value: r.value,
@@ -1580,6 +1623,142 @@ mod tests {
             assert!(Instant::now() < end, "actual reactor observation timed out");
             thread::sleep(Duration::from_millis(2));
         }
+    }
+
+    fn call_through_delayed_signed_response(
+        delay: Duration,
+        budget: Duration,
+    ) -> (Result<PublicReply>, usize) {
+        let directory = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(super::super::now().unwrap() - 100)).unwrap();
+        let node = Node::open(directory.path(), settings.clone(), 1).unwrap();
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let upstream = listener.local_addr().unwrap();
+        let stop = Arc::new(AtomicBool::new(false));
+        let signal = stop.clone();
+        let policy = PublicPolicy::new(8, Duration::from_secs(2)).unwrap();
+        let server = thread::spawn(move || {
+            serve_public_protected_v2(
+                listener,
+                node,
+                Duration::from_secs(5),
+                signal,
+                PublicServer::new(identity(71), policy).unwrap(),
+            )
+        });
+        let proxy = TcpListener::bind("127.0.0.1:0").unwrap();
+        let address = proxy.local_addr().unwrap();
+        proxy.set_nonblocking(true).unwrap();
+        let relay = thread::spawn(move || {
+            let accept_deadline = Instant::now() + Duration::from_secs(2);
+            let (mut downstream, _) = loop {
+                match proxy.accept() {
+                    Ok(value) => break value,
+                    Err(error) if error.kind() == std::io::ErrorKind::WouldBlock => {
+                        assert!(
+                            Instant::now() < accept_deadline,
+                            "real client connection required"
+                        );
+                        thread::sleep(Duration::from_millis(1));
+                    }
+                    Err(error) => panic!("actual proxy accept: {error}"),
+                }
+            };
+            let mut upstream = TcpStream::connect(upstream).unwrap();
+            upstream
+                .set_read_timeout(Some(Duration::from_secs(2)))
+                .unwrap();
+            let mut client_input = downstream.try_clone().unwrap();
+            let mut server_input = upstream.try_clone().unwrap();
+            thread::scope(|scope| {
+                let copy = scope.spawn(move || {
+                    let result = std::io::copy(&mut client_input, &mut server_input);
+                    let _ = server_input.shutdown(std::net::Shutdown::Write);
+                    result
+                });
+                let mut frames = 0;
+                loop {
+                    let mut prefix = [0u8; 4];
+                    if upstream.read_exact(&mut prefix).is_err() {
+                        break;
+                    }
+                    let length = u32::from_be_bytes(prefix) as usize;
+                    assert!(length > 0 && length <= MAX_RESPONSE);
+                    let mut body = vec![0; length];
+                    upstream.read_exact(&mut body).unwrap();
+                    frames += 1;
+                    // Cookie and ready remain untouched. Only the actual
+                    // original server's signed final Head response is delayed.
+                    if frames == 3 {
+                        thread::sleep(delay);
+                    }
+                    if downstream.write_all(&prefix).is_err()
+                        || downstream.write_all(&body).is_err()
+                    {
+                        break;
+                    }
+                }
+                let _ = downstream.shutdown(std::net::Shutdown::Both);
+                let _ = upstream.shutdown(std::net::Shutdown::Both);
+                let _ = copy.join().unwrap();
+                frames
+            })
+        });
+        let result = call_public_protected_v2_with_deadline(
+            address,
+            &Request::Head,
+            &settings,
+            identity(71).public_key(),
+            &identity(72),
+            policy,
+            Some(Instant::now() + budget),
+        );
+        let frames = relay.join().unwrap();
+        stop.store(true, Ordering::Release);
+        server.join().unwrap().unwrap();
+        (result, frames)
+    }
+
+    #[test]
+    fn original_v2_signed_response_shares_the_callers_absolute_page_deadline() {
+        let (on_time, frames) =
+            call_through_delayed_signed_response(Duration::from_millis(10), Duration::from_secs(2));
+        assert_eq!(frames, 3);
+        let on_time = on_time.unwrap();
+        assert!(on_time.ok);
+        assert_eq!(on_time.value["height"], 0);
+        let (late, frames) = call_through_delayed_signed_response(
+            Duration::from_secs(1),
+            Duration::from_millis(500),
+        );
+        assert_eq!(frames, 3, "the real server completed its signed response");
+        assert!(
+            late.is_err(),
+            "a late signed response must not renew the page deadline"
+        );
+    }
+
+    #[test]
+    fn expired_v2_outer_deadline_refuses_before_opening_a_socket() {
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        listener.set_nonblocking(true).unwrap();
+        let settings = Settings::development(Some(super::super::now().unwrap() - 100)).unwrap();
+        let error = call_public_protected_v2_with_deadline(
+            listener.local_addr().unwrap(),
+            &Request::Head,
+            &settings,
+            identity(71).public_key(),
+            &identity(72),
+            PublicPolicy::development(),
+            Some(Instant::now()),
+        )
+        .err()
+        .unwrap();
+        assert_eq!(error.to_string(), "PUBLIC_CLIENT_DEADLINE");
+        assert_eq!(
+            listener.accept().unwrap_err().kind(),
+            std::io::ErrorKind::WouldBlock
+        );
     }
     #[test]
     fn v2_refuses_non_loopback_before_starting_unmetered_full_w1() {
