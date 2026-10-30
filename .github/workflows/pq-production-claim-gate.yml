@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - fix/pq-production-claim-guard-20261030
+      - audit/pq-w1-proof-profile-failclosed-20261030
     paths:
       - .github/workflows/pq-production-claim-gate.yml
       - scripts/security/**
