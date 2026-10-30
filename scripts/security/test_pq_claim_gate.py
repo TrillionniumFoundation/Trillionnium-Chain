@@ -55,5 +55,40 @@ class ClaimGateTests(unittest.TestCase):
         self.assertIn("missing_source", self.kinds())
         self.assertIn("unreadable_proof_profile", self.kinds())
 
+    def test_unreviewed_pq128_flag_does_not_bypass_claim_gate(self):
+        import subprocess
+        import sys
+        path = self.root / module.PATHS["w1_backend"]
+        path.write_text(json.dumps({"pq_128_security_qualified": True}), encoding="utf-8")
+        self.assertIn("unreviewed_pq128_proof_claim", self.kinds())
+        self.assertFalse(module.inspect(self.root)["pq_chain_qualified"])
+        result = subprocess.run(
+            [sys.executable, str(SCRIPT), "--root", str(self.root), "--assert-unqualified"],
+            capture_output=True, text=True, check=False,
+        )
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("unreviewed_pq128_proof_claim", result.stdout)
+
+    def test_unreadable_classic_authority_is_fail_closed(self):
+        import subprocess
+        import sys
+        (self.root / module.PATHS["hepta_handoff"]).write_bytes(b"\\xff")
+        self.assertIn("unreadable_source", self.kinds())
+        result = subprocess.run(
+            [sys.executable, str(SCRIPT), "--root", str(self.root), "--assert-unqualified"],
+            capture_output=True, text=True, check=False,
+        )
+        self.assertEqual(result.returncode, 2)
+
+    def test_unqualified_baseline_remains_reported_without_false_failure(self):
+        import subprocess
+        import sys
+        result = subprocess.run(
+            [sys.executable, str(SCRIPT), "--root", str(self.root), "--assert-unqualified"],
+            capture_output=True, text=True, check=False,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("unqualified_proof", result.stdout)
+
 if __name__ == "__main__":
     unittest.main()
