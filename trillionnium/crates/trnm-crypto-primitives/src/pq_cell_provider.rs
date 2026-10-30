@@ -134,8 +134,7 @@ impl SignedPqCellProviderRecordV2 {
         let ep = &s.endpoint;
         let ip_canonical = match ep[0] {
             4 => ep[1..13].iter().all(|byte| *byte == 0),
-            6 => !(ep[1..11].iter().all(|byte| *byte == 0)
-                && ep[11..13] == [255, 255]),
+            6 => !(ep[1..11].iter().all(|byte| *byte == 0) && ep[11..13] == [255, 255]),
             _ => false,
         };
         if !ip_canonical || ep[17..19] == [0, 0] {
@@ -211,7 +210,9 @@ impl SignedPqCellProviderRecordV2 {
             return Err(PqCellProviderErrorV2::Replay);
         }
         if self.statement.issued_unix_seconds
-            > expected.now_unix_seconds.saturating_add(FUTURE_SKEW_SECONDS)
+            > expected
+                .now_unix_seconds
+                .saturating_add(FUTURE_SKEW_SECONDS)
             || expected.now_unix_seconds >= self.statement.expires_unix_seconds
         {
             return Err(PqCellProviderErrorV2::ExpiredOrFuture);
@@ -223,10 +224,8 @@ impl SignedPqCellProviderRecordV2 {
         // attacker-controlled signatures must not trigger expensive key work.
         let sig = Signature::<MlDsa65>::try_from(self.signature.as_slice())
             .map_err(|_| PqCellProviderErrorV2::InvalidSignatureEncoding)?;
-        let pk = EncodedVerifyingKey::<MlDsa65>::try_from(
-            expected.trusted_ml_dsa65_public_key,
-        )
-        .map_err(|_| PqCellProviderErrorV2::InvalidPublicKey)?;
+        let pk = EncodedVerifyingKey::<MlDsa65>::try_from(expected.trusted_ml_dsa65_public_key)
+            .map_err(|_| PqCellProviderErrorV2::InvalidPublicKey)?;
         if !VerifyingKey::<MlDsa65>::decode(&pk).verify_with_context(
             &self.signing_bytes(),
             &[],
@@ -270,10 +269,7 @@ mod tests {
             expires_unix_seconds: 1200,
         }
     }
-    fn expected<'a>(
-        key: &'a [u8],
-        pin: &'a [u8; 192],
-    ) -> PqCellProviderExpectationV2<'a> {
+    fn expected<'a>(key: &'a [u8], pin: &'a [u8; 192]) -> PqCellProviderExpectationV2<'a> {
         PqCellProviderExpectationV2 {
             pinned_request: pin,
             trusted_ml_dsa65_public_key: key,
@@ -293,7 +289,9 @@ mod tests {
         assert_eq!(PQ_CELL_PROVIDER_RECORD_V2_BYTES * 8 + 1, 28641);
         let received = SignedPqCellProviderRecordV2::from_wire(&wire).unwrap();
         assert_eq!(received, signed);
-        let checked = received.verify_for_pinned_context(&expected(&pk, &pin)).unwrap();
+        let checked = received
+            .verify_for_pinned_context(&expected(&pk, &pin))
+            .unwrap();
         assert_eq!(checked.endpoint_bytes(), &statement().endpoint);
         assert_eq!(checked.sequence(), 5);
     }
@@ -337,7 +335,9 @@ mod tests {
         let pin = request();
         let signed = SignedPqCellProviderRecordV2::sign(statement(), &sk).unwrap();
         let wire = signed.to_wire();
-        for offset in [0, 4, 35, 195, 196, 228, 240, 245, 247, 255, 263, 270, 271, 3579] {
+        for offset in [
+            0, 4, 35, 195, 196, 228, 240, 245, 247, 255, 263, 270, 271, 3579,
+        ] {
             let mut changed = wire.clone();
             changed[offset] ^= 1;
             assert!(
