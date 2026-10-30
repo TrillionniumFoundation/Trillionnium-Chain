@@ -1,0 +1,242 @@
+{
+  "recorded_utc": "2026-10-26T17:59:03.324272+00:00",
+  "archive": "original-source-and-review.tar.gz",
+  "bytes": 297342,
+  "sha256": "903ac09b18350cfe32014a43590db958cbfd1f577ebefe4e099c946637dda6b8",
+  "member_count": 46,
+  "uncompressed_bytes": 1493878,
+  "all_original_member_readback_exact": true,
+  "not_native_or_new_prepared_qualification": true,
+  "members": [
+    {
+      "member": "work/ci-follow/W1-2cb-legal-cost-and-amortization-readonly-audit-20261026-001/artifact-files.json",
+      "bytes": 9036,
+      "sha256": "7d8bb45e89b8825fbbb9597e3e7663f0b53e3c2d9980c4ab1e6f8f6b4287e9e8"
+    },
+    {
+      "member": "work/ci-follow/W1-2cb-legal-cost-and-amortization-readonly-audit-20261026-001/existing-evidence-coverage.json",
+      "bytes": 13356,
+      "sha256": "3202b147006f9b79cfcaadc8f7ef5d5ac6ce7b1bf83d36e7d658a02f98bb427c"
+    },
+    {
+      "member": "work/ci-follow/W1-2cb-legal-cost-and-amortization-readonly-audit-20261026-001/historical399-partial64-readback.json",
+      "bytes": 2256,
+      "sha256": "11e1f7b61109c29961ddc02bc0c4c11ade01a960b58ca88f25e0108e7e080de5"
+    },
+    {
+      "member": "work/ci-follow/W1-2cb-legal-cost-and-amortization-readonly-audit-20261026-001/preparation-history.json",
+      "bytes": 397,
+      "sha256": "54c7bd48898433b327cf4942a28a64c2001dda3c837969f104bdd7411ed72da5"
+    },
+    {
+      "member": "work/ci-follow/W1-2cb-legal-cost-and-amortization-readonly-audit-20261026-001/public-ingress-additional-source-pins.json",
+      "bytes": 1174,
+      "sha256": "0937f28e622a8ed7dd6b8a18d5d0378ae1a9322335f6b554c59cb5da458f54c1"
+    },
+    {
+      "member": "work/ci-follow/W1-2cb-legal-cost-and-amortization-readonly-audit-20261026-001/root-readonly-final-state.json",
+      "bytes": 241,
+      "sha256": "2e967c33cab6b7d9c9ca6d647248ba1e231b249fe047914defb8f8fada90aa39"
+    },
+    {
+      "member": "work/ci-follow/W1-2cb-legal-cost-and-amortization-readonly-audit-20261026-001/source/AGENTS.md",
+      "bytes": 1286,
+      "sha256": "3b856784057789dd600615f752364012d9ef8965d884352795b9590e0f121b91"
+    },
+    {
+      "member": "work/ci-follow/W1-2cb-legal-cost-and-amortization-readonly-audit-20261026-001/source/formal/pon-nakamoto-v1/work_oracle.py",
+      "bytes": 2944,
+      "sha256": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18"
+    },
+    {
+      "member": "work/ci-follow/W1-2cb-legal-cost-and-amortization-readonly-audit-20261026-001/source/scripts/ci/check_pon_w1_real_header_reuse_v1.py",
+      "bytes": 19325,
+      "sha256": "8cbba549285925cf82db9c9d6a8c7478e541374cb242bd8bfce2549e1348a12c"
+    },
+    {
+      "member": "work/ci-follow/W1-2cb-legal-cost-and-amortization-readonly-audit-20261026-001/source/scripts/run_pon_w1_real_header_reuse_v1.py",
+      "bytes": 24230,
+      "sha256": "f381c196651ff2da8aef1afa96eab7490f553c6021a5620fa50f46d227b21506"
+    },
+    {
+      "member": "work/ci-follow/W1-2cb-legal-cost-and-amortization-readonly-audit-20261026-001/source/trillionnium/crates/trnm-crypto-primitives/examples/pon_maintenance_cost.rs",
+      "bytes": 28108,
+      "sha256": "3310556fde267fdecbad1b2e8d0ff716a1ce536dbf755dee60a2124490bbf0c7"
+    },
+    {
+      "member": "work/ci-follow/W1-2cb-legal-cost-and-amortization-readonly-audit-20261026-001/source/trillionnium/crates/trnm-crypto-primitives/examples/pon_one_zero_locality_cost.rs",
+      "bytes": 27944,
+      "sha256": "e697d084bd7ee9f3e847649044b311220756c26e63bdaae05686cb5f23336617"
+    },
+    {
+      "member": "work/ci-follow/W1-2cb-legal-cost-and-amortization-readonly-audit-20261026-001/source/trillionnium/crates/trnm-crypto-primitives/examples/pon_reused_cost.rs",
+      "bytes": 26739,
+      "sha256": "9c361257f43d4a2dd1c37b5a5178b3dcdd28b0da41879410b282f14701e24aed"
+    },
+    {
+      "member": "work/ci-follow/W1-2cb-legal-cost-and-amortization-readonly-audit-20261026-001/source/trillionnium/crates/trnm-crypto-primitives/examples/pon_zero_locality_cost.rs",
+      "bytes": 26758,
+      "sha256": "d3f620c89c05b20a845d0df0207af349efbb637d7e3fc40d3f0a0a69718017ae"
+    },
+    {
+      "member": "work/ci-follow/W1-2cb-legal-cost-and-amortization-readonly-audit-20261026-001/source/trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts.rs",
+      "bytes": 12382,
+      "sha256": "66efd9327f84dab70dfc01365478ea0e3d3a8a196cb958301884432549d2d65f"
+    },
+    {
+      "member": "work/ci-follow/W1-2cb-legal-cost-and-amortization-readonly-audit-20261026-001/source/trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_one_zero.rs",
+      "bytes": 16879,
+      "sha256": "214552a72056e7b0a87e90f0e094cb2668a54de18bcf82e3eddc1896ab0b0031"
+    },
+    {
+      "member": "work/ci-follow/W1-2cb-legal-cost-and-amortization-readonly-audit-20261026-001/source/trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero.rs",
+      "bytes": 10436,
+      "sha256": "be1b375808d0923e3f938f1c4d23475a16bfe43bf665cb464d79d1dc9ef85f8f"
+    },
+    {
+      "member": "work/ci-follow/W1-2cb-legal-cost-and-amortization-readonly-audit-20261026-001/source/trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero_paired.rs",
+      "bytes": 22281,
+      "sha256": "0c9c4ddb772292efd0cf92dc174e8b2353b1e0f16f36df484a5e16b280316a0f"
+    },
+    {
+      "member": "work/ci-follow/W1-2cb-legal-cost-and-amortization-readonly-audit-20261026-001/source/trillionnium/crates/trnm-crypto-primitives/src/pon_work/facts.rs",
+      "bytes": 8100,
+      "sha256": "996c3bf296b5116612ef4906241eb24aa0cfdbb992951aebc6703246eb9eab1b"
+    },
+    {
+      "member": "work/ci-follow/W1-2cb-legal-cost-and-amortization-readonly-audit-20261026-001/source/trillionnium/crates/trnm-crypto-primitives/src/pon_work/integer_paired.rs",
+      "bytes": 5033,
+      "sha256": "fae34d70af6ac6fc61fb0e2e6f022df1548a333aaacd91eb83597e0174f41101"
+    },
+    {
+      "member": "work/ci-follow/W1-2cb-legal-cost-and-amortization-readonly-audit-20261026-001/source/trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_limb.rs",
+      "bytes": 17544,
+      "sha256": "500ef68601e2c27c735498312608eabe63d497643ee7803895eaefb9658bdde4"
+    },
+    {
+      "member": "work/ci-follow/W1-2cb-legal-cost-and-amortization-readonly-audit-20261026-001/source/trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_periodic.rs",
+      "bytes": 12611,
+      "sha256": "5fd27cac9ddad5c87a4623f25d2a97f488d16d8542d9402f59f621db33dfb9ac"
+    },
+    {
+      "member": "work/ci-follow/W1-2cb-legal-cost-and-amortization-readonly-audit-20261026-001/source/trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_prefix.rs",
+      "bytes": 26429,
+      "sha256": "a88ab5bccbc7085fd0c4823e574a6dfe48b18c9d5d70493b817b97cf0a106899"
+    },
+    {
+      "member": "work/ci-follow/W1-2cb-legal-cost-and-amortization-readonly-audit-20261026-001/source/trillionnium/crates/trnm-crypto-primitives/src/pon_work/paired_product.rs",
+      "bytes": 15194,
+      "sha256": "3facd5578e8f57b88722e2c3c9c7a19b3d6c3427f9dad22648a13254656a9bab"
+    },
+    {
+      "member": "work/ci-follow/W1-2cb-legal-cost-and-amortization-readonly-audit-20261026-001/source/trillionnium/crates/trnm-crypto-primitives/src/pon_work/structured.rs",
+      "bytes": 22800,
+      "sha256": "a0535365dc141d15d6e22242352f554d5ada6d31a02cd627f2eb92135704556c"
+    },
+    {
+      "member": "work/ci-follow/W1-2cb-legal-cost-and-amortization-readonly-audit-20261026-001/source/trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "bytes": 72027,
+      "sha256": "b6f9f406d6d3baefb606e5abfefaf157eb0c88e0f33a03bdbb97f4d700cd98be"
+    },
+    {
+      "member": "work/ci-follow/W1-2cb-legal-cost-and-amortization-readonly-audit-20261026-001/source/trillionnium/crates/trnm-crypto-primitives/src/qualified_work_task/lifecycle_v2.rs",
+      "bytes": 4044,
+      "sha256": "00e0c3ec2a9e51add5393a9b4ce6e6eb58de9d709fb63cd61d2a6b1681ef0a3e"
+    },
+    {
+      "member": "work/ci-follow/W1-2cb-legal-cost-and-amortization-readonly-audit-20261026-001/source/trillionnium/crates/trnm-crypto-primitives/src/qualified_work_task.rs",
+      "bytes": 8124,
+      "sha256": "20b4270df1efee5bd5c10c1434173eff21f53d5add3388f543032b6076009c5b"
+    },
+    {
+      "member": "work/ci-follow/W1-2cb-legal-cost-and-amortization-readonly-audit-20261026-001/source/trillionnium/crates/trnm-mvcc-fee/src/continuity_v1.rs",
+      "bytes": 13937,
+      "sha256": "f4f87ef5668ed09855765de42477cdd64aef42e70c41ec5701fb50939ac2c894"
+    },
+    {
+      "member": "work/ci-follow/W1-2cb-legal-cost-and-amortization-readonly-audit-20261026-001/source/trillionnium/crates/trnm-pon-node/examples/pon_w1_cost_matrix_v2.rs",
+      "bytes": 22157,
+      "sha256": "309b1571d714a1368abdc1f1529d6f77fcd11ee0e479d06500963f5fa1abe43e"
+    },
+    {
+      "member": "work/ci-follow/W1-2cb-legal-cost-and-amortization-readonly-audit-20261026-001/source/trillionnium/crates/trnm-pon-node/examples/pon_w1_real_header_reuse_v1.rs",
+      "bytes": 22761,
+      "sha256": "a644e367361598eba4cb4e920f38f62b81fe31abb2b977bdc28c3df7626c2030"
+    },
+    {
+      "member": "work/ci-follow/W1-2cb-legal-cost-and-amortization-readonly-audit-20261026-001/source/trillionnium/crates/trnm-pon-node/examples/support/w1_real_header_reuse_v1.rs",
+      "bytes": 5686,
+      "sha256": "7b72d963501d844e3fc046f3ad6b4fd18d8112539ab76962328a0f01727aa5f0"
+    },
+    {
+      "member": "work/ci-follow/W1-2cb-legal-cost-and-amortization-readonly-audit-20261026-001/source/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs",
+      "bytes": 62894,
+      "sha256": "09ad7b19094cfd874616296d0a8b671b4708e830e7ee4ed5fdac383749359bf0"
+    },
+    {
+      "member": "work/ci-follow/W1-2cb-legal-cost-and-amortization-readonly-audit-20261026-001/source/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_arithmetic.rs",
+      "bytes": 6847,
+      "sha256": "d0b69939710875b46a1182b00eceba98963ec7a502a126fbee61098253d5108b"
+    },
+    {
+      "member": "work/ci-follow/W1-2cb-legal-cost-and-amortization-readonly-audit-20261026-001/source/trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "bytes": 306086,
+      "sha256": "9bd94626542e98af1819b8c33e9398cd60c04ddb8e3071560f5867c41eef442e"
+    },
+    {
+      "member": "work/ci-follow/W1-2cb-legal-cost-and-amortization-readonly-audit-20261026-001/source/trillionnium/crates/trnm-pon-node/src/ingress.rs",
+      "bytes": 147394,
+      "sha256": "5d513444d90e3f8589fee0826264d7b318dfc3e4ae2db862053a90684c149f8f"
+    },
+    {
+      "member": "work/ci-follow/W1-2cb-legal-cost-and-amortization-readonly-audit-20261026-001/source/trillionnium/crates/trnm-pon-node/src/mining.rs",
+      "bytes": 41225,
+      "sha256": "d770ef0c0ed1fb91513415ed119dcb210174723281e0b798ed9ac7aae3d9425d"
+    },
+    {
+      "member": "work/ci-follow/W1-2cb-legal-cost-and-amortization-readonly-audit-20261026-001/source/trillionnium/crates/trnm-pon-node/src/store.rs",
+      "bytes": 309281,
+      "sha256": "48e3301d9a60ed62aed976249bf7816c2df94a19ab0a72273ba275feb8448df2"
+    },
+    {
+      "member": "work/ci-follow/W1-2cb-legal-cost-and-amortization-readonly-audit-20261026-001/source/trillionnium/crates/trnm-pon-node/tests/public_v3_identity_campaign.rs",
+      "bytes": 12537,
+      "sha256": "015b41f773ab5d4809f40b088507d910f86cd4d636f6ec48a015600753fa6665"
+    },
+    {
+      "member": "work/ci-follow/W1-2cb-legal-cost-and-amortization-readonly-audit-20261026-001/source/trillionnium/crates/trnm-pon-node/tests/support/identity_churn_limits.rs",
+      "bytes": 10803,
+      "sha256": "45d4d9bed9f07ad95b40fb5fb32f4f3bad1436f5bf889aa5255003a16dcde75a"
+    },
+    {
+      "member": "work/ci-follow/W1-2cb-legal-cost-and-amortization-readonly-audit-20261026-001/source/trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+      "bytes": 28831,
+      "sha256": "b98a5beb32e9ba9f24efbf123692ffcfda83b18ff88f803e3ab03712cde599ea"
+    },
+    {
+      "member": "work/ci-follow/W1-2cb-legal-cost-and-amortization-readonly-audit-20261026-001/source/trillionnium/crates/trnm-protocol/src/qualified_work_task.rs",
+      "bytes": 11899,
+      "sha256": "5a23c9241928e8e3a26279208ad54d71268714ffd8d58e6ce73bc4c9d8611c8e"
+    },
+    {
+      "member": "work/ci-follow/W1-2cb-legal-cost-and-amortization-readonly-audit-20261026-001/source-bound-audit-receipt.json",
+      "bytes": 27075,
+      "sha256": "667817652c6ea0a7702e68f33f8e23545b9db6fad219f71832a07345d2e45ffd"
+    },
+    {
+      "member": "work/ci-follow/W1-2cb-legal-cost-and-amortization-readonly-audit-20261026-001/source-locations.json",
+      "bytes": 5391,
+      "sha256": "4c84c26473c495effcefef5f17c69c63a65f948bb466ffa7e4c4a571982de651"
+    },
+    {
+      "member": "work/ci-follow/W1-2cb-legal-cost-and-amortization-readonly-audit-20261026-001/source-pins.json",
+      "bytes": 15986,
+      "sha256": "fec0ac16c73183c10fd9eb751368380158a434ae5cf752b14d6ace1e0ecc504b"
+    },
+    {
+      "member": "work/ci-follow/W1-2cb-legal-cost-and-amortization-readonly-audit-20261026-001/unregistered-zero-completion-order-addendum.json",
+      "bytes": 5410,
+      "sha256": "3048d5dbee019f941a44543eec9120c552f6f32b2a828e399c5ca77ea2794ae2"
+    }
+  ]
+}

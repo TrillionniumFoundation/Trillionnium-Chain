@@ -1,0 +1,1 @@
+{"complete_original_arm64_readback": "PASS", "compared_cohorts": 4032, "fixed_inputs_proof_streams_tickets_and_outcomes_equal": true, "actual_arm64_binary_retained": true, "new_miner_execution": false, "native_contexts": 509, "hardness_proved": false}

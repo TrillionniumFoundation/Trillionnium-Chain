@@ -1,0 +1,20 @@
+{
+  "schema": "pon-w1-actual-process-v1",
+  "command": [
+    "/tmp/pon-security-native-target/release/deps/pure_pon_pressure_v2-9834ea51138696ab",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "started_utc": "2026-10-30T01:27:18.456322+00:00",
+  "timeout_seconds": 240,
+  "source_sha": null,
+  "timed_out": false,
+  "consensus_authority": false,
+  "returncode": 0,
+  "wall_seconds": 2.749264363000293,
+  "user_cpu_seconds": 0.7098439999999999,
+  "system_cpu_seconds": 0.046109,
+  "max_waited_descendant_rss_kib": 18112,
+  "rss_scope": "maximum reported for the waited child family; not total cgroup peak",
+  "finished_utc": "2026-10-30T01:27:21.205633+00:00"
+}

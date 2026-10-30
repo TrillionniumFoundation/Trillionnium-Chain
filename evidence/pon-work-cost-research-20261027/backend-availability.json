@@ -1,0 +1,31 @@
+{
+  "schema": "trnm-p0-backend-availability-observation-v1",
+  "platform": "Linux-6.18.55-x86_64-with-glibc2.39",
+  "cpu_architecture": "x86_64",
+  "cached_package_observations": [
+    {
+      "root": "/tmp/hepta-cargo-home/registry/src/index.crates.io-1949cf8c6b5b557f",
+      "package_directories": 21,
+      "name_matches": []
+    },
+    {
+      "root": "/workspace/scratch/301262829a43/pon-build-inputs/native-unpacked/vendor",
+      "package_directories": 147,
+      "name_matches": []
+    },
+    {
+      "root": "/workspace/scratch/301262829a43/pon-build-inputs/original-unpacked/vendor",
+      "package_directories": 120,
+      "name_matches": []
+    }
+  ],
+  "rust_195_available": true,
+  "transparent_backend_integrated": false,
+  "complete_W1_arithmetization_integrated": false,
+  "succinct_proof_produced": false,
+  "proof_verification_measured": false,
+  "reason": "A native relation and execution witness are available. No transparent computation-proof backend or full W1 SHA256/field constraint implementation is integrated. Rust availability alone does not supply these components.",
+  "fri_commit_grinding_bits": 0,
+  "fri_query_grinding_bits": 0,
+  "independent_security_puzzle": false
+}

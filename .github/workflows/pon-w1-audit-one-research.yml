@@ -1,0 +1,109 @@
+name: PoN real W1 receiver case costs
+on:
+  pull_request:
+    paths:
+      - trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/**
+      - trillionnium/crates/trnm-crypto-primitives/src/pon_work/full_relation.rs
+      - scripts/ci/prepare_w1_audit_one_fixture.py
+      - scripts/ci/test_prepare_w1_audit_one_fixture.py
+      - evidence/pon-pure-security-20261030-rebuild/complete-w1/fixture-objects/**
+      - .github/workflows/pon-w1-audit-one-research.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: pon-w1-audit-one-${{ github.event.pull_request.head.sha || github.sha }}
+  cancel-in-progress: false
+jobs:
+  historical-receipt-cases:
+    name: exact host and real historical W1 cases (research only)
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      TRNM_EXPECTED_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      CARGO_BUILD_JOBS: "2"
+      CARGO_INCREMENTAL: "0"
+      CARGO_TERM_COLOR: never
+      PYTHONDONTWRITEBYTECODE: "1"
+      RUST_TEST_THREADS: "1"
+      RAYON_NUM_THREADS: "2"
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Reserve private output and bind source
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          out="$RUNNER_TEMP/w1-audit-one-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          work="$RUNNER_TEMP/w1-audit-one-build-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir "$out" "$work"
+          printf 'OUT=%s\nWORK=%s\n' "$out" "$work" >> "$GITHUB_ENV"
+          printf 'BACKEND=%s/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0\n' "$GITHUB_WORKSPACE" >> "$GITHUB_ENV"
+          printf 'CARGO_HOME=%s/cargo\nCARGO_TARGET_DIR=%s/host-target\n' "$work" "$work" >> "$GITHUB_ENV"
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$out/source-before.json"
+          bash scripts/project-preflight.sh --audit > "$out/preflight.log" 2>&1
+          printf 'Historical Composite receipt; no guest or prover execution. Positive prerequisite warms each verifier process. Finite source-bound observations; no public-ingress, throughput, minimum-work or PQ128 qualification.\n' > "$out/SCOPE.txt"
+      - name: Exercise bounded fixture and case-reader controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/test_prepare_w1_audit_one_fixture.py -v 2>&1 | tee "$OUT/fixture-controls.log"
+          python3 "$BACKEND/test_check_audit_one.py" -v 2>&1 | tee "$OUT/reader-controls.log"
+      - name: Restore only the pinned durable historical fixture
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 "$BACKEND/measure_step.py" --out "$OUT" --name fixture-restore --timeout 30 -- python3 scripts/ci/prepare_w1_audit_one_fixture.py --objects "$GITHUB_WORKSPACE/evidence/pon-pure-security-20261030-rebuild/complete-w1/fixture-objects" --out "$OUT/fixture"
+          cp "$OUT/fixture-restore.stdout.log" "$OUT/fixture-binding.json"
+      - name: Install pinned native toolchain without guest tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout --signal=TERM --kill-after=5s 120s rustup toolchain install 1.95.0 --profile minimal --component rustfmt,clippy
+          printf 'RUSTC=%s\n' "$(rustup which --toolchain 1.95.0 rustc)" >> "$GITHUB_ENV"
+          printf 'NATIVE_CARGO=%s\n' "$(rustup which --toolchain 1.95.0 cargo)" >> "$GITHUB_ENV"
+          printf '%s\n' "$(dirname "$(rustup which --toolchain 1.95.0 rustc)")" >> "$GITHUB_PATH"
+          rustc +1.95.0 -Vv > "$OUT/native-rustc.txt"
+      - name: Build and test only the exact locked host graph
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 "$BACKEND/measure_step.py" --out "$OUT" --name host-build --timeout 600 -- "$NATIVE_CARGO" build --release --locked --manifest-path "$BACKEND/Cargo.toml" -p trnm-w1-risc0-host
+          python3 "$BACKEND/measure_step.py" --out "$OUT" --name host-tests --timeout 180 -- "$NATIVE_CARGO" test --release --locked --manifest-path "$BACKEND/Cargo.toml" -p trnm-w1-risc0-host
+          python3 "$BACKEND/measure_step.py" --out "$OUT" --name host-clippy --timeout 300 -- "$NATIVE_CARGO" clippy --release --locked --manifest-path "$BACKEND/Cargo.toml" -p trnm-w1-risc0-host -p trnm-w1-guest-relation --all-targets -- -D warnings
+          "$NATIVE_CARGO" fmt --manifest-path "$BACKEND/Cargo.toml" --all -- --check
+          cp "$CARGO_TARGET_DIR/release/trnm-w1-risc0-host" "$OUT/verifier"
+          sha256sum "$OUT/verifier" > "$OUT/verifier-before.sha256"
+      - name: Retain the original complete audit on the real proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 "$BACKEND/measure_step.py" --out "$OUT" --name original-audit --timeout 45 -- "$OUT/verifier" audit "$OUT/fixture/guest.bin" "$OUT/fixture/input.bin" "$OUT/fixture/receipt.bin"
+      - name: Measure the eight fixed real cases
+        shell: bash
+        run: |
+          set -euo pipefail
+          for case in valid first_seal_tamper last_seal_tamper wrong_verifier_parameters wrong_statement_miner truncated_receipt trailing_receipt_bytes seal_length_allocation_bomb; do
+            name="case-${case//_/-}"
+            python3 "$BACKEND/measure_step.py" --out "$OUT" --name "$name" --timeout 45 -- "$OUT/verifier" audit-one "$OUT/fixture/guest.bin" "$OUT/fixture/input.bin" "$OUT/fixture/receipt.bin" "$case"
+            python3 "$BACKEND/check_audit_one.py" --record "$OUT/$name.stdout.log" --input "$OUT/fixture/input.bin" --receipt "$OUT/fixture/receipt.bin" > "$OUT/$name.binding.json"
+          done
+          sha256sum "$OUT/verifier" > "$OUT/verifier-after.sha256"
+          cmp "$OUT/verifier-before.sha256" "$OUT/verifier-after.sha256"
+      - name: Preserve exact source result even when an earlier phase failed
+        if: always()
+        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$OUT/source-after.json"
+      - name: Retain fixture binding, assets, executable, costs and failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: w1-audit-one-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/w1-audit-one-${{ github.run_id }}-${{ github.run_attempt }}/
+          if-no-files-found: error
+          retention-days: 30

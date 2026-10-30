@@ -1,0 +1,24 @@
+{
+  "schema": "pon-w1-actual-process-v1",
+  "command": [
+    "python3",
+    "-B",
+    "scripts/ci/prepare_w1_audit_one_fixture.py",
+    "--objects",
+    "evidence/pon-pure-security-20261030-rebuild/complete-w1/fixture-objects",
+    "--out",
+    "/tmp/pon-proof-rebuild/fixture-v2-final"
+  ],
+  "started_utc": "2026-10-30T01:41:06.403757+00:00",
+  "timeout_seconds": 30,
+  "source_sha": null,
+  "timed_out": false,
+  "consensus_authority": false,
+  "returncode": 1,
+  "wall_seconds": 0.1277205389997107,
+  "user_cpu_seconds": 0.035342,
+  "system_cpu_seconds": 0.016464,
+  "max_waited_descendant_rss_kib": 12032,
+  "rss_scope": "maximum reported for the waited child family; not total cgroup peak",
+  "finished_utc": "2026-10-30T01:41:06.531526+00:00"
+}

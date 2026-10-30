@@ -1,0 +1,117 @@
+{
+  "schema": "PN1-I02-shared-snapshot-r1-independent-source-review-v1",
+  "recorded_utc": "2026-10-26T15:05:36.085030+00:00",
+  "reviewer": "/root/pn1_checkpoint64_peer",
+  "scope": "Independent read-only production diff and current physical candidate files/old-preservation checks. No root/ROG application, import, compile, build, test or native execution.",
+  "base_head": "94b3fb60b7aa32c8bf5b7c8679d3c46a980b4060",
+  "base_tree": "da71738463a4d451e0b0246985dc69c7ab1f24fe",
+  "candidate_receipt": {
+    "path": "work/ci-follow/pn1-shared-snapshot-real-source-candidate-20261026-001/implementation-receipt.json",
+    "bytes": 9444,
+    "sha256": "9a6da6a8b65359d7e3ca3e0e3a252af2ae3644720b747705aa9ba748ac5986aa"
+  },
+  "full_patch": {
+    "path": "work/ci-follow/pn1-shared-snapshot-real-source-candidate-20261026-001/candidate.patch",
+    "bytes": 38405,
+    "sha256": "e675ce21ee6167f2fd00833e17a4190d980922204e241b392379c2f5f7aecfb3"
+  },
+  "production_patch": {
+    "path": "work/ci-follow/pn1-shared-snapshot-real-source-candidate-20261026-001/production-only.patch",
+    "bytes": 25364,
+    "sha256": "5c44e51ac3b03f391d76feab9f83bd277d991f8a4398acda29dcdd5ea46065ca"
+  },
+  "new_controls_patch": {
+    "path": "work/ci-follow/pn1-shared-snapshot-real-source-candidate-20261026-001/new-controls-only.patch",
+    "bytes": 13041,
+    "sha256": "23a13829b844781b7c5284173fe1092af984a91d6796dc6063db57225483f11a"
+  },
+  "candidate_sources": [
+    {
+      "path": "work/ci-follow/pn1-shared-snapshot-real-source-candidate-20261026-001/ownedsource/trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+      "bytes": 31858,
+      "sha256": "ad9e41b68379ec9e5aade1bc2339d2710c9128e142738488dec35eee20b5979f"
+    },
+    {
+      "path": "work/ci-follow/pn1-shared-snapshot-real-source-candidate-20261026-001/ownedsource/trillionnium/crates/trnm-pon-node/src/store.rs",
+      "bytes": 305713,
+      "sha256": "7441972c57980a00895b7588da1b60dcb330838319fb534008dd151cc3d92f3b"
+    },
+    {
+      "path": "work/ci-follow/pn1-shared-snapshot-real-source-candidate-20261026-001/ownedsource/trillionnium/crates/trnm-pon-node/src/store/public_reader.rs",
+      "bytes": 19088,
+      "sha256": "b8bf23dca2b77f9554c8a1b1fbe37d6e1a4580680ef3e52f077d045cd4d0f7b6"
+    },
+    {
+      "path": "work/ci-follow/pn1-shared-snapshot-real-source-candidate-20261026-001/ownedsource/trillionnium/crates/trnm-pon-node/src/store/shared_snapshot.rs",
+      "bytes": 10213,
+      "sha256": "c9d92fcdf514bb564beeb91424b8a15f3dd264008b3662dd8036b4b92db3b9bb"
+    },
+    {
+      "path": "work/ci-follow/pn1-shared-snapshot-real-source-candidate-20261026-001/ownedsource/trillionnium/crates/trnm-pon-node/src/store/shared_snapshot_tests.rs",
+      "bytes": 12348,
+      "sha256": "cb75a7885c62b8b70e052c79d3b370b7d9f3745528a861d2cc61a0a50c76f808"
+    }
+  ],
+  "independent_preservation_checks": {
+    "manifest_actual_pins_byte_compared_to_clean94": 478,
+    "old_Rust_test_files_reported": 467,
+    "store_inline_tail_actual_equal_bytes": 79958,
+    "store_inline_tail_sha256": "50b02979023fc2fe8b5c503190f2708229bb61df0e231dfa4de66baffdae6fd4",
+    "old_verify_with_lifts_body_byte_equal": true,
+    "no_original_assertion_or_resource_limit_changed": true
+  },
+  "blocking_findings": [
+    {
+      "id": "SHARED-NODE-INITIALIZER-MISSING",
+      "priority": 1,
+      "location": "trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs:325",
+      "classification": "Definite static type/compilation blocker, not executed compiler evidence.",
+      "problem": "Node now has required storage_layout/shared_storage_schema fields, but the existing production read_only_archive Ok(Node{...}) constructor omits both. The patch updated only open_selected_with_io initializer.",
+      "required_fix": "Explicit CanonicalJson layout and None schema cache in original readonly archive owner, preserving its legacy/migration guard and every retained test/assertion. Record successor patch rather than altering this original candidate."
+    },
+    {
+      "id": "SHARED-LATE-CALLBACK-GRAPH-WINDOW",
+      "priority": 1,
+      "location": "trillionnium/crates/trnm-pon-node/src/store/shared_snapshot.rs:load final progress() and raw/native recheck",
+      "classification": "Source-level same-connection counterexample; author independently acknowledged. No run or demonstrated production exploit is claimed.",
+      "problem": "After all actual materialization/fullState/account/history validation, final caller progress callback may delete/update a current archive_nodes row on this same SQL connection. Final encoded(sharedrow)==oldbytes and native_authenticated::load(record)==oldnative still both hold; private load returns the pre-mutation State despite currently missing/malformed graph. The existing new last-callback test only mutates sharedrecord, not COW graph.",
+      "counterexample": "Use an already-open SAVEPOINT/write transaction; in final callback DELETE archive_nodes WHERE id=native.accounts.node (or corrupt its data), leave both records unchanged and returnOk. A pinned transaction protects against concurrent other-connection commits, not this same-connection mutation.",
+      "required_fix": "After the last caller callback, perform actual current fullState/account/history validation without reopening a new mutable callback window, plus final record/schema/transaction consistency fence. Recheck outer state_at/read_active wrappers so a later callback does not reopen a stale-State window. Preserve original late-error propagation and charge all extra work to original budgets."
+    }
+  ],
+  "contract_scope_to_resolve": [
+    {
+      "id": "SHARED-HOT-OPTIONAL-INDEX-SCOPE",
+      "location": "store.rs state_at_in_current_snapshot active fastpath; shared_snapshot encoded WHERE block=?; storage_context/check_layout",
+      "problem": "Hot active State reads can return validated KV State without consulting an existing shared row; a corrupted shared block key moved from BLOB to same-byte TEXT is a query miss and can use original checked replay. Existing opener audit will reject these rows, but hot use does not audit all shared payloads/keys. Returned State may still be correct: this is not proof of consensus or State-integrity bypass.",
+      "required_clarification": "If malformed-present-index refusal applies only to the actually selected row, narrow the declaration explicitly. If it covers every present row/hot public State path, add bounded current key/layout and selected-row guards; do not claim the seven generic codec controls cover the real shared factory or active fastpath."
+    }
+  ],
+  "positive_checks": [
+    "New physical schema namespace binds old backend schema/newDDL/codec schema; normal CanonicalJson factories remain old schema/DDL. Original nativeIO factory selects SharedAccountsV1 internally without fixture/CLI/profile switch; old/mixed stores reject rather than auto-convert.",
+    "Root cache uses new storage_schema_id namespace; arithmetic caches are existing perNode pure arithmetic/exact-input caches, not validity verdicts.",
+    "Account materializer actually traverses current COW rows using original path/depth/hash/duplicate/seen/count/balance constraints; complete working partition and reconstructed accounts flow through original StateCommitment/account/history/continuity checks.",
+    "Shared snapshot strict canonical serde codec has deny_unknown_fields, schema/block/native record/digest/context binding and account/working partition separation; oversized BLOBs copied at mostMAX+1 and wrong SQL data types reject.",
+    "Production native account publish then shared save occurs in same original Immediate transaction. Snapshot is verified before optional64 pruning so lowheight legitimate fork may be pruned and still replay from original authoritative deltas. Countlimit/ignore-trigger controls are source candidates only.",
+    "New in_read_snapshot owns one read transaction when autocommit or borrows original writer transaction; rollback error cannot return a successfulState. Need final callback mutation/transaction consistency fix above."
+  ],
+  "validation_limits": [
+    "All code is uncompiled/unexecuted; static type expectations must not be presented as actual compiler diagnostics.",
+    "New seven controls are ordinary AuthV1 codec+manualDDL fixtures; actual held nativeIO factory, cold namespace, raw graph, samelease/caller/process, original4KiB/FULL/WAL and native readers remain unqualified.",
+    "Original 1024+256/655360/file/domain/CPU/AS/2s/resource assertions/readers/harnesses are preserved, so actual effects may still exceed caps/deadlines; do not increase them.",
+    "Full State materialization, repeated verification and cold audit of up to64 retained references are linear and can increase validation cost; no throughput or budget success is established.",
+    "PostCOMMIT checkpoint failure versus factual durable result/owner-health propagation remains separatelyOPEN. Explicit migration and an independent decoder for the new physical format remainOPEN. Old-format reader evidence cannot qualify it."
+  ],
+  "decision": "R1 is blocked from root integration until definite initializer and late same-connection graph issues are corrected and successor independently reviewed. Preserve this exact original candidate and all old failures.",
+  "source_modified": false,
+  "build_or_test_run": false,
+  "source_candidate_compiles": false,
+  "actual_compile_failure_observed": false,
+  "mechanism_qualified": false,
+  "whole_writer_qualified": false,
+  "original_three_FD_caller_qualified": false,
+  "independent_reader_qualified": false,
+  "full_W1_4097_qualified": false,
+  "task_complete": false,
+  "merge_ready": false
+}

@@ -1,0 +1,11 @@
+{
+  "schema": "history-exploratory-format-observation-v1",
+  "observed_returncode": 1,
+  "command_edition": "2024",
+  "actual_workspace_edition": "2021",
+  "mode": "--check",
+  "files_modified": false,
+  "interpretation": "Incorrect exploratory formatter edition; not a workspace-source qualification. The actual cargo fmt --all --check subsequently passed under repository configuration.",
+  "full_original_output_available": false,
+  "output_boundary": "Initial tool output was truncated; no complete historical log is invented."
+}

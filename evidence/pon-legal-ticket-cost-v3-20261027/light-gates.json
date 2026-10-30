@@ -1,0 +1,145 @@
+{
+  "steps": [
+    {
+      "name": "preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.2150789680017624,
+      "stdout_sha256": "d530477c05368361894e422b755690e72606299c5c51b1912b169430a68d895f",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "reader",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "scripts/ci/test_legal_ticket_cost_v3.py"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.3423121519954293,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "22d4692abf7ced53499adce9e390394bf8c9ed9dd4e337f030ea5dfb4672b7ef"
+    },
+    {
+      "name": "source-integrity",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 7.56932233000407,
+      "stdout_sha256": "dfdb509a9f3a028757004d60209b94b08a4461d99f7df677394645299a940865",
+      "stderr_sha256": "1b1b09ebf5a4f3134650be09d1bad5e2a5ecb4b03d0a81fa866406a84639775d"
+    },
+    {
+      "name": "metadata",
+      "argv": [
+        "cargo",
+        "metadata",
+        "--locked",
+        "--format-version",
+        "1",
+        "--manifest-path",
+        "trillionnium/Cargo.toml"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.24055954499635845,
+      "stdout_sha256": "e41b4370056370c56fd3fbfc0e4bd0a3cf83690902e7949051b2642fb42028e7",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "workspace_members": 26,
+      "packages": 173,
+      "lock_sha256": "3707ed772a9fd851638dca36e5b2472ac0657de65754480c448d3078107d9ff9"
+    },
+    {
+      "name": "fmt",
+      "argv": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 1,
+      "wall_seconds": 24.72870194999996,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "0bf66c2ab4e3b90f17517713e368aeae3f2fa15dc8fc01f2fc138dabe7b6f0d8"
+    },
+    {
+      "name": "inventory",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.1626912589999847,
+      "stdout_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "diff",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.035586981000960805,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "repository",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "scripts/ci/check_repository.py"
+      ],
+      "exit_code": 2,
+      "wall_seconds": 0.979755637999915,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e9d6779920685ac8631f9cfe3fc344fa5a64886cd36ed304305284c108a90361"
+    }
+  ],
+  "workflow_shell_syntax": [
+    {
+      "step": "Bind full source and actual native architecture",
+      "exit_code": 0,
+      "stderr": ""
+    },
+    {
+      "step": "Install pinned compiler",
+      "exit_code": 0,
+      "stderr": ""
+    },
+    {
+      "step": "Check unchanged graph and source contracts",
+      "exit_code": 0,
+      "stderr": ""
+    },
+    {
+      "step": "Build exact native driver and require strict Clippy",
+      "exit_code": 0,
+      "stderr": ""
+    },
+    {
+      "step": "Measure distinct legal first admissions and cold readback",
+      "exit_code": 0,
+      "stderr": ""
+    },
+    {
+      "step": "Verify final source even on failure",
+      "exit_code": 0,
+      "stderr": ""
+    },
+    {
+      "step": "Independently check all denominators and exclusive cost scopes",
+      "exit_code": 0,
+      "stderr": ""
+    }
+  ],
+  "native_build_or_campaign_executed": false
+}

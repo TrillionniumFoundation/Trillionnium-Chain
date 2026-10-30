@@ -1,0 +1,17 @@
+{
+  "schema": "pon-history-n8-readback-process-v1",
+  "command": [
+    "python",
+    "evidence/pon-pure-security-20261030-rebuild/history-n8-followup/reproduce_readback.py"
+  ],
+  "started_at_utc": "2026-10-30T01:29:03.725232+00:00",
+  "finished_at_utc": "2026-10-30T01:29:07.970683+00:00",
+  "wall_ns": 4245448771,
+  "exit_code": 0,
+  "stdout_bytes": 16355,
+  "stdout_sha256": "ff25daea2a684156cf708cd171c12c97416fc36f62400646350d7729e4a7f3e6",
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "script_sha256": "2768368072cbd42f8c3db5a782b25050124661e311b42e2cfc33e7166e5b0155",
+  "new_native_execution": false
+}

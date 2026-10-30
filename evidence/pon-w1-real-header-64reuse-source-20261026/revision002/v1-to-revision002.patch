@@ -1,0 +1,380 @@
+diff --git a/scripts/ci/check_pon_w1_real_header_reuse_v1.py b/scripts/ci/check_pon_w1_real_header_reuse_v1.py
+--- a/scripts/ci/check_pon_w1_real_header_reuse_v1.py
++++ b/scripts/ci/check_pon_w1_real_header_reuse_v1.py
+@@ -15,8 +15,8 @@
+ import sys
+ import time
+ 
+-PROFILE = 'pn1-pnh1-signed-zero-fixed-64-reuse-component-v1'
+-SCHEMA = 'pn1-pnh1-independent-relation-reader-v1'
++PROFILE = 'pn1-pnh1-signed-zero-fixed-64-reuse-component-v2'
++SCHEMA = 'pn1-pnh1-independent-relation-reader-v2'
+ POLICY = ('pn1-pnh1-frozen-zero-dispatch-v1:canonical-A=B=zero=>'
+           'blocked-zero-integer-paired;otherwise-refuse')
+ STREAM = b'TRNM-PON-W1-PNH1-64REUSE-STREAM-V1\0'
+@@ -26,6 +26,57 @@
+ def require(ok, why):
+     if not ok:
+         raise ValueError(why)
++
++
++def uint(value, why, minimum=0, maximum=(1 << 64) - 1):
++    require(type(value) is int and minimum <= value <= maximum, why)
++    return value
++
++
++def native_numbers(row):
++    """Explicit schema locations: packet.id is a hash, RPC.id is an integer.
++
++    bool is an int subclass and1.0 compares equal to1 in Python. Neither is a
++    JSON integer in this protocol. Real target_hit booleans remain booleans.
++    """
++    uint(row['sequence'], 'SEQUENCE_INTEGER')
++    kind = row['kind']
++    if kind == 'initialized':
++        uint(row['owner_pid'], 'OWNER_PID_INTEGER', minimum=1)
++        require(type(row['owner_birth']) is str and row['owner_birth'].isdigit(), 'OWNER_BIRTH_STRING')
++        uint(int(row['owner_birth']), 'OWNER_BIRTH_U64')
++        for key in ('as_soft', 'as_hard', 'fsize_soft', 'fsize_hard'):
++            uint(row['limits'][key], 'LIMIT_INTEGER:' + key, minimum=1)
++        for key in ('attempts', 'supported', 'wall_ns', 'cpu_ns'):
++            uint(row['selected_setup'][key], 'SETUP_INTEGER:' + key)
++        uint(row['production_template_make_calls'], 'TEMPLATE_CALLS_INTEGER')
++    elif kind in ('trial_started', 'trial_completed'):
++        uint(row['search'], 'SEARCH_INTEGER', maximum=63)
++        uint(row['ordinal'], 'ORDINAL_INTEGER', maximum=4095)
++        if kind == 'trial_completed':
++            uint(row['nonce'], 'NONCE_INTEGER')
++            require(type(row['target_hit']) is bool, 'TARGET_HIT_BOOL')
++    elif kind == 'response':
++        uint(row['id'], 'RPC_ID_INTEGER', maximum=65)
++        uint(row['operation_wall_ns'], 'OP_WALL_INTEGER')
++        uint(row['operation_cpu_ns'], 'OP_CPU_INTEGER', minimum=1)
++        data = row['data']
++        if row['op'] == 'initialize':
++            uint(data['owner_pid'], 'RESPONSE_OWNER_PID_INTEGER', minimum=1)
++            require(data['initialized'] is True, 'INITIALIZED_BOOL')
++            require(type(data['owner_birth']) is str and data['owner_birth'].isdigit(), 'RESPONSE_BIRTH_STRING')
++        elif row['op'] == 'search':
++            uint(data['search'], 'RESULT_SEARCH_INTEGER', maximum=63)
++            uint(data['first'], 'FIRST_NONCE_INTEGER')
++            uint(data['count_limit'], 'NONCE_LIMIT_INTEGER', minimum=1, maximum=4096)
++            uint(data['attempts'], 'ATTEMPTS_INTEGER', minimum=1, maximum=4096)
++            uint(data['setup_attempts'], 'SETUP_ATTEMPTS_INTEGER')
++            uint(data['supported_setups'], 'SUPPORTED_SETUPS_INTEGER')
++            for key in ('wall_ns', 'cpu_ns'):
++                uint(data['producer_acquisition'][key], 'ACQUISITION_INTEGER:' + key)
++        elif row['op'] == 'seal':
++            uint(data['searches'], 'TOTAL_SEARCHES_INTEGER', maximum=64)
++            uint(data['same_selected_setup_attempts'], 'TOTAL_SETUP_INTEGER')
+ 
+ 
+ def unique(pairs):
+@@ -57,7 +108,9 @@
+     raw = sys.stdin.buffer.readline(4097)
+     require(raw and raw.endswith(b'\n') and len(raw) <= 4096, 'REQUEST_BOUNDARY')
+     value = json.loads(raw, object_pairs_hook=unique)
+-    require(value == {'id': expected_id, 'op': expected_op}, 'REQUEST_ORDER')
++    require(type(value) is dict and set(value) == {'id', 'op'}, 'REQUEST_FIELDS')
++    require(uint(value['id'], 'REQUEST_ID_INTEGER', maximum=65) == expected_id
++            and value['op'] == expected_op, 'REQUEST_ORDER')
+ 
+ 
+ def packet(row, wire, oracle):
+@@ -92,13 +145,15 @@
+             require(row['schema'] == PROFILE and row['sequence'] == sequence, 'NATIVE_SEQUENCE')
+             require(row['kind'] != 'fatal', 'NATIVE_FATAL')
+             require(row['kind'] in ('initialized', 'trial_started', 'trial_completed', 'response'), 'UNKNOWN_EVENT')
++            native_numbers(row)
+             events.append(row)
+     initial = [r for r in events if r['kind'] == 'initialized']
+     require(len(initial) == 1, 'INITIALIZATION_COUNT')
+     initial = initial[0]
+     require(initial['owner_pid'] == pid and initial['owner_birth'] == birth, 'ACTUAL_OWNER_BINDING')
+     responses = [r for r in events if r['kind'] == 'response']
+-    require([r['id'] for r in responses] == list(range(66)), 'COMPLETE_RPC_SEQUENCE')
++    require([uint(r['id'], 'RESPONSE_ID_INTEGER', maximum=65) for r in responses]
++            == list(range(66)), 'COMPLETE_RPC_SEQUENCE')
+     require([r['op'] for r in responses] == ['initialize'] + ['search'] * 64 + ['seal'], 'OP_SEQUENCE')
+     for response in responses:
+         require(type(response['operation_cpu_ns']) is int and response['operation_cpu_ns'] > 0, 'CPU_CLOCK_GAP')
+@@ -187,6 +242,7 @@
+     request(65, 'seal')
+     seal = responses[-1]['data']
+     require(seal['native_component_completed'] is True and seal['searches'] == 64, 'NATIVE_SEAL')
++    uint(total_attempts, 'TOTAL_ATTEMPTS_INTEGER', minimum=64, maximum=64 * 4096)
+     require(seal['cold'] == verified and seal['same_selected_setup_attempts'] == 1, 'NATIVE_COLD_READBACK')
+     require(seal['scope'] == '64-same-parent-siblings-not-64-successive-parents', 'SCOPE')
+     emit({'kind': 'response', 'id': 65, 'op': 'seal', 'data': {
+diff --git a/scripts/run_pon_w1_real_header_reuse_v1.py b/scripts/run_pon_w1_real_header_reuse_v1.py
+--- a/scripts/run_pon_w1_real_header_reuse_v1.py
++++ b/scripts/run_pon_w1_real_header_reuse_v1.py
+@@ -24,8 +24,8 @@
+ 
+ from run_pon_w1_native_campaign import resource_observation, validate_resources
+ 
+-PROFILE = 'pn1-pnh1-signed-zero-fixed-64-reuse-component-v1'
+-READER = 'pn1-pnh1-independent-relation-reader-v1'
++PROFILE = 'pn1-pnh1-signed-zero-fixed-64-reuse-component-v2'
++READER = 'pn1-pnh1-independent-relation-reader-v2'
+ MIB = 1024 * 1024
+ TOTAL_SECONDS = 120
+ CALL_SECONDS = 2
+@@ -35,6 +35,11 @@
+ def require(ok, why):
+     if not ok:
+         raise ValueError(why)
++
++
++def uint(value, why, minimum=0, maximum=(1 << 64) - 1):
++    require(type(value) is int and minimum <= value <= maximum, why)
++    return value
+ 
+ 
+ def unique(pairs):
+@@ -108,6 +113,7 @@
+         self.stdout_bytes = self.stderr_bytes = 0
+         self.sequence = 0
+         self.pending = bytearray()
++        self.eof_observed = {'stdout': False, 'stderr': False}
+         self.responses = []
+         self.events = []
+         self.wait = None
+@@ -161,6 +167,7 @@
+             except BlockingIOError:
+                 continue
+             if not raw:
++                self.eof_observed[key.data] = True
+                 self.selector.unregister(key.fileobj)
+                 key.fileobj.close()
+                 continue
+@@ -185,14 +192,21 @@
+                 row = json.loads(line, object_pairs_hook=unique)
+                 require(row.get('schema') == self.schema, 'RPC_SCHEMA')
+                 if self.schema == PROFILE:
+-                    require(row.get('sequence') == self.sequence, 'NATIVE_SEQUENCE')
++                    require(uint(row.get('sequence'), 'NATIVE_SEQUENCE_TYPE') == self.sequence, 'NATIVE_SEQUENCE')
+                     self.sequence += 1
+                 require(row.get('kind') in ('response', 'initialized', 'trial_started', 'trial_completed', 'fatal'), 'RPC_KIND')
++                if row.get('kind') == 'response':
++                    uint(row.get('id'), 'RPC_FRAME_ID_INTEGER', maximum=65)
++                    if 'operation_wall_ns' in row:
++                        uint(row['operation_wall_ns'], 'RPC_WALL_INTEGER')
++                    if 'operation_cpu_ns' in row:
++                        uint(row['operation_cpu_ns'], 'RPC_CPU_INTEGER', minimum=1)
+                 rows.append(row)
+         self.reap_nonblocking()
+         return rows
+ 
+     def rpc(self, identifier, operation):
++        uint(identifier, 'RPC_REQUEST_ID')
+         # Authoritative deadline precedes event writing, stdin writing or any child marker.
+         release = time.monotonic()
+         end = min(self.deadline, release + CALL_SECONDS)
+@@ -213,31 +227,36 @@
+             for row in self.consume(min(0.01, remaining)):
+                 require(row['kind'] != 'fatal', 'CHILD_FATAL:' + str(row.get('error')))
+                 if row['kind'] == 'response':
+-                    require(offset == len(raw) and row.get('id') == identifier
++                    require(offset == len(raw) and uint(row.get('id'), 'RPC_RESPONSE_ID_TYPE') == identifier
+                             and row.get('op') == operation, 'RPC_RESPONSE_BINDING')
+                     require(time.monotonic() <= end, 'RPC_RETURN_PAST_ORIGINAL_DEADLINE')
+                     self.responses.append(row)
+                     self.log({'kind': 'response_received', 'id': identifier, 'op': operation,
+                               'release_to_response_seconds': time.monotonic() - release})
++                    require(time.monotonic() <= end, 'RPC_LOG_OR_FINALIZATION_PAST_ORIGINAL_DEADLINE')
+                     return row
+             require(self.wait is None, 'CHILD_EXIT_BEFORE_RESPONSE')
+ 
+     def finish(self):
++        end = min(self.deadline, time.monotonic() + CALL_SECONDS)
+         self.process.stdin.close()
+-        end = min(self.deadline, time.monotonic() + CALL_SECONDS)
+         while self.wait is None or self.selector.get_map():
+             require(time.monotonic() < end, 'TERMINAL_OR_DRAIN_DEADLINE')
+             require(not self.consume(min(0.01, end - time.monotonic())), 'EXTRA_TRAILING_EVENT')
+-        require(not self.pending and self.wait['returncode'] == 0, 'NATIVE_TERMINAL_FAILURE')
++        require(not self.pending and all(self.eof_observed.values())
++                and self.wait['returncode'] == 0, 'NATIVE_TERMINAL_FAILURE')
+         self.close_files()
++        require(time.monotonic() <= end, 'TERMINAL_CLOSE_OR_FSYNC_PAST_ORIGINAL_DEADLINE')
+         return self.wait
+ 
+     def abort(self):
+         if self.process is None:
+             self.close_files()
+             return {'launch_failed_before_pid': True, 'registered_process_terminal': None}
+-        # Kill only this task-owned session/process group. Never touch other services.
+-        if self.wait is None or self.selector.get_map():
++        # A real wait4 releases the leader PID/PGID lifetime. NEVER signal that
++        # numeric group afterward, even if inherited writers still hold pipes.
++        refused_after_reap = self.wait is not None and bool(self.selector.get_map())
++        if self.wait is None:
+             try:
+                 os.killpg(self.process.pid, signal.SIGKILL)
+                 self.kill_sent = True
+@@ -250,10 +269,26 @@
+             except Exception:
+                 # Keep the original error. Reaping is still attempted; no success is inferred.
+                 self.reap_nonblocking()
++            if self.wait is not None:
++                # Drain currently available bytes once more, without waiting for
++                # unregistered writers. After reap there is no safe group-signal
++                # capability; remaining streams/descendants stay UNKNOWN.
++                try:
++                    self.consume(0)
++                except Exception:
++                    pass
++                if not all(self.eof_observed.values()):
++                    break
++        eof_before_close = dict(self.eof_observed)
++        pending_before_close = len(self.pending)
++        complete_before_close = all(eof_before_close.values()) and not pending_before_close
+         self.close_files()
+         return {'kill_sent': self.kill_sent, 'actual_wait4': self.wait,
+                 'registered_process_terminal': self.wait is not None,
+-                'streams_complete': not self.selector.get_map() and not self.pending,
++                'streams_complete': True if complete_before_close else 'UNKNOWN-no-complete-EOF-before-close',
++                'eof_observed_before_close': eof_before_close,
++                'pending_bytes_before_close': pending_before_close,
++                'group_signal_refused_after_reap': refused_after_reap,
+                 'unregistered_descendant_terminal': 'UNKNOWN-not-a-whole-tree-census'}
+ 
+     def close_files(self):
+@@ -269,7 +304,9 @@
+         self.selector.close()
+ 
+ 
+-def inventory(output):
++def inventory(output, reserve_bytes=0, reserve_files=0):
++    uint(reserve_bytes, 'INVENTORY_RESERVE_BYTES', maximum=32 * MIB)
++    uint(reserve_files, 'INVENTORY_RESERVE_FILES', maximum=128)
+     files, total = [], 0
+     for directory, dirs, names in os.walk(output, followlinks=False):
+         require(len(dirs) + len(names) <= 128, 'INVENTORY_FANOUT')
+@@ -281,10 +318,54 @@
+             size = path.stat().st_size
+             require(size <= 16 * MIB, 'ORIGINAL_PARENT_FILE_CAP')
+             total += size
+-            require(total <= 32 * MIB and len(files) < 128, 'OBSERVED_AGGREGATE_OUTPUT_CAP')
++            require(total + reserve_bytes <= 32 * MIB
++                    and len(files) + 1 + reserve_files <= 128, 'OBSERVED_AGGREGATE_OUTPUT_CAP')
+             files.append({'path': str(path.relative_to(output)), 'bytes': size})
+-    return {'files': files, 'observed_bytes': total,
++    require(total + reserve_bytes <= 32 * MIB and len(files) + reserve_files <= 128,
++            'OBSERVED_AGGREGATE_OUTPUT_CAP')
++    return {'files': files, 'observed_bytes': total, 'reserved_bytes': reserve_bytes,
++            'reserved_files': reserve_files,
+             'scope': 'stable-post-reap-size-observation-not-filesystem-hardquota-or-physical-peak'}
++
++
++def seal_outputs(output, result, started, deadline):
++    try:
++        return _seal_outputs(output, result, started, deadline)
++    except Exception as error:
++        failure = ValueError('FINALIZATION_FAILURE:' + type(error).__name__ + ':' + str(error))
++        # Final output may already be at its cap. Preserve the original failure
++        # in the existing bounded outer stderr channel, without another file or
++        # replacing it with the later metadata-cap failure.
++        failure.first_error = result.get('first_error')
++        raise failure from error
++
++
++def _seal_outputs(output, result, started, deadline):
++    """Two immutable final records are INCLUDED in the original32MiB/128-file cap.
++
++    Each write_new is <=1MiB. Reserving2MiB/two files neither increases the cap
++    nor claims a physical quota. An absent/failed post-write inventory or nonzero
++    real outer exit invalidates the provisional records.
++    """
++    for name in ('owner-result.json', 'post-write-terminal.json'):
++        require(not (output / name).exists(), 'FINAL_RECEIPT_NAME_ALREADY_PRESENT')
++    before = inventory(output, reserve_bytes=2 * MIB, reserve_files=2)
++    result = dict(result)
++    result['final_receipt_reservation'] = before
++    result['elapsed_seconds_before_final_write'] = time.monotonic() - started
++    result['final_write_is_qualification'] = False
++    write_new(output / 'owner-result.json', result)
++    in_time = time.monotonic() <= deadline
++    write_new(output / 'post-write-terminal.json', {
++        'schema': PROFILE, 'component_execution_complete': result['component_execution_complete'] and in_time,
++        'provisional_requires_actual_exit_zero_and_postwrite_inventory': True,
++        'original_120_second_finalization_observed_before_write': in_time,
++        'elapsed_seconds': time.monotonic() - started, 'qualifying_execution_receipt': False,
++        'whole_work_hardness_qualified': False, 'merge_ready': False})
++    # Check the ACTUAL final files, not merely their reservations. Any failure
++    # raises and the real owner exits nonzero; provisional JSON is never enough.
++    inventory(output)
++    return 0 if result['component_execution_complete'] and in_time and time.monotonic() <= deadline else 1
+ 
+ 
+ def run(args):
+@@ -351,7 +432,7 @@
+         after = resource_observation()
+         validate_resources(after, 10)
+         write_new(output / 'resource-after.json', after)
+-        result['inventory'] = inventory(output)
++        result['inventory'] = inventory(output, reserve_bytes=2 * MIB, reserve_files=2)
+         require(time.monotonic() < deadline, 'WHOLE_120_SECONDS_INCLUDING_READER_AND_SEAL')
+         result['component_execution_complete'] = True
+     except Exception as error:
+@@ -369,19 +450,7 @@
+             event_file.flush()
+             os.fsync(event_file.fileno())
+             event_file.close()
+-        result['elapsed_seconds_before_final_write'] = time.monotonic() - started
+-        result['final_write_is_qualification'] = False
+-        write_new(output / 'owner-result.json', result)
+-    # Missing/late post-write seal cannot turn an earlier provisional record green.
+-    in_time = time.monotonic() <= deadline
+-    write_new(output / 'post-write-terminal.json', {
+-        'schema': PROFILE, 'component_execution_complete': result['component_execution_complete'] and in_time,
+-        'original_120_second_finalization_observed': in_time,
+-        'elapsed_seconds': time.monotonic() - started, 'qualifying_execution_receipt': False,
+-        'whole_work_hardness_qualified': False, 'merge_ready': False})
+-    # The provisional JSON alone is insufficient: the real outer exit must be0
+-    # and final wall time must remain within120s. Late final writes fail closed.
+-    return 0 if result['component_execution_complete'] and in_time and time.monotonic() <= deadline else 1
++    return seal_outputs(output, result, started, deadline)
+ 
+ 
+ def main():
+@@ -392,7 +461,16 @@
+     parser.add_argument('--expected-tree', required=True)
+     parser.add_argument('--output', type=Path, required=True)
+     args = parser.parse_args()
+-    return run(args)
++    try:
++        return run(args)
++    except Exception as error:
++        # No extra unbudgeted output file after final-cap failure. Preserve raw
++        # records and report a real nonzero outer exit/stream failure instead.
++        sys.stderr.write(json.dumps({'schema': PROFILE, 'finalization_failed': str(error),
++                                    'first_error': getattr(error, 'first_error', None),
++                                    'component_execution_complete': False,
++                                    'qualifying_execution_receipt': False, 'merge_ready': False}) + '\n')
++        return 1
+ 
+ 
+ if __name__ == '__main__':
+diff --git a/trillionnium/crates/trnm-pon-node/examples/pon_w1_real_header_reuse_v1.rs b/trillionnium/crates/trnm-pon-node/examples/pon_w1_real_header_reuse_v1.rs
+--- a/trillionnium/crates/trnm-pon-node/examples/pon_w1_real_header_reuse_v1.rs
++++ b/trillionnium/crates/trnm-pon-node/examples/pon_w1_real_header_reuse_v1.rs
+@@ -23,7 +23,7 @@
+ };
+ use trnm_pon_node::{development_public, Node, Packet, Settings};
+ use trnm_protocol::{
+-    pon_wire::{hash, Envelope, Hash, Header},
++    pon_wire::{hash, Envelope, Hash},
+     qualified_work_task::{
+         lifecycle_v2::{DemandLeaseV2, SignedLifecycleTaskV2},
+         lifecycle_v4::PROFILE as TASK_PROFILE,
+@@ -40,7 +40,7 @@
+         self.map_err(|e| io::Error::other(format!("{e:?}")).into())
+     }
+ }
+-const PROFILE: &str = "pn1-pnh1-signed-zero-fixed-64-reuse-component-v1";
++const PROFILE: &str = "pn1-pnh1-signed-zero-fixed-64-reuse-component-v2";
+ const POLICY: &str = "pn1-pnh1-frozen-zero-dispatch-v1:canonical-A=B=zero=>blocked-zero-integer-paired;otherwise-refuse";
+ const STREAM: &[u8] = b"TRNM-PON-W1-PNH1-64REUSE-STREAM-V1\0";
+ const SEARCHES: u64 = 64;

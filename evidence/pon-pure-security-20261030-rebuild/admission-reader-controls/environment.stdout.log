@@ -1,0 +1,10 @@
+{
+  "cryptography_version": "50.0.2",
+  "dependency_version_qualified": true,
+  "input_consistent": true,
+  "interpreter": "/tmp/pon-reader-env/bin/python",
+  "key_vector": "b3365953873098069d9cb0ae19cf24704699085bc396ef420c2312dfcf1d8d8a",
+  "python_version": "3.12.14",
+  "schema": "pon-pure-fresh-caller-reader-environment-v1",
+  "supply_chain_attestation": false
+}

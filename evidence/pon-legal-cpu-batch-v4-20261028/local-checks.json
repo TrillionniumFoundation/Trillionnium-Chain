@@ -1,0 +1,86 @@
+{
+  "schema": "legal-cpu-batch-local-checks-v4",
+  "checks": [
+    {
+      "name": "reader",
+      "argv": [
+        "python3",
+        "scripts/ci/test_legal_ticket_batch_v4.py"
+      ],
+      "returncode": 0,
+      "wall_seconds": 1.1368680099985795,
+      "log_sha256": "238c49f92602513662870b803b30163036029a4ae7e182b0078ec191eca6ed1e",
+      "log_bytes": 1128
+    },
+    {
+      "name": "source-controls",
+      "argv": [
+        "python3",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "returncode": 0,
+      "wall_seconds": 9.605835310998373,
+      "log_sha256": "55bd959274976cd5cbcc1a9199e468ba6ae24ccc5af627381dd7585808397ade",
+      "log_bytes": 5509
+    },
+    {
+      "name": "fmt",
+      "argv": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "returncode": 0,
+      "wall_seconds": 17.83799978499883,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log_bytes": 0
+    },
+    {
+      "name": "inventory",
+      "argv": [
+        "python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "returncode": 0,
+      "wall_seconds": 0.11336138600017875,
+      "log_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "log_bytes": 35
+    },
+    {
+      "name": "repository",
+      "argv": [
+        "python3",
+        "scripts/ci/check_repository.py"
+      ],
+      "returncode": 2,
+      "wall_seconds": 0.763419745999272,
+      "log_sha256": "e9d6779920685ac8631f9cfe3fc344fa5a64886cd36ed304305284c108a90361",
+      "log_bytes": 84
+    },
+    {
+      "name": "graph",
+      "argv": [
+        "cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1",
+        "--manifest-path",
+        "trillionnium/Cargo.toml"
+      ],
+      "returncode": 0,
+      "wall_seconds": 0.36021690399502404,
+      "log_sha256": "b63b99cf77a989be0dfcdcf249b1a0e008e4976d0b62b918ea5d19e52bc85340",
+      "log_bytes": 801025
+    }
+  ],
+  "native_build_executed": false,
+  "native_campaign_executed": false,
+  "strict_clippy_executed": false
+}

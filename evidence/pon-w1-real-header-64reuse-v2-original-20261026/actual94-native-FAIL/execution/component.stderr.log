@@ -1,0 +1,4 @@
+
+thread 'two_process_real_w1_prefix_and_pressure_native_io_component_v1' (3180658) panicked at crates/trnm-pon-node/tests/support/identity_churn_campaign_native_io_v1.rs:172:35:
+called `Result::unwrap()` on an `Err` value: Error { code: None, kind: LocalStructure, message: "STORAGE: disk I/O error", source: Some(SqliteFailure(Error { code: SystemIoFailure, extended_code: 10 }, Some("disk I/O error"))), request_history_budget: false }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace

@@ -1,0 +1,672 @@
+{
+  "omitted": "Original binaries and auxiliary per-process files remain in the fully hashed source CI artifacts; the complete aggregate reports and original metadata/logs are retained here.",
+  "retained": [
+    {
+      "path": "pq-63ae5018/run-1.report.json.gz",
+      "raw_bytes": 32070908,
+      "raw_sha256": "4b59688fa91ab41550aa99df564f9962543ac2290896e8ed75fad12066ca1074",
+      "source_entry": "run-1-raw/report.json",
+      "stored_bytes": 2787257,
+      "stored_sha256": "00e4125025eafd55479abdae222486b7fb8f814e9fc060a6b641049b699dc61a"
+    },
+    {
+      "path": "pq-63ae5018/run-2.report.json.gz",
+      "raw_bytes": 31587750,
+      "raw_sha256": "67935d4ea6c41b408ab3b47ef86258eb54b606a0e80bac7499f3945f56b4eac0",
+      "source_entry": "run-2-raw/report.json",
+      "stored_bytes": 2753076,
+      "stored_sha256": "1e8130267531e32f763a2841a1380e0e9a2b20712b76ab69f57a0839225672f1"
+    },
+    {
+      "path": "pq-63ae5018/run-3.report.json.gz",
+      "raw_bytes": 32239101,
+      "raw_sha256": "52938c9bb6d640bfc7281df881f9aaf14aea634e19c2e39038ecf8e2dde4ff6a",
+      "source_entry": "run-3-raw/report.json",
+      "stored_bytes": 2799421,
+      "stored_sha256": "ab22ef806b73ca1a82116c2a8043f7d30cd4439115a3b98559b16a586f642e5f"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:SCOPE.txt",
+      "raw_bytes": 303,
+      "raw_sha256": "ce6e78baf98f002f35edf9e67a9c04614f5ba357365acff42313d8dc18542ab9",
+      "source_entry": "SCOPE.txt"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:artifact-files.json",
+      "raw_bytes": 160510,
+      "raw_sha256": "a342e7ef3c286cb599860d929d1e5e7fcee2ebbb13fc13cd2f800417e4cfb95d",
+      "source_entry": "artifact-files.json"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:binary-before.json",
+      "raw_bytes": 594,
+      "raw_sha256": "a185002a5ca411878936d246a6da1f78af01a6879bb1fab4e6a4d69108a698fe",
+      "source_entry": "binary-before.json"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:build.stderr.log",
+      "raw_bytes": 3992,
+      "raw_sha256": "555fa33d9da40bf897a481121193b90ae6d511fe15403cc053d6dc5ee1c95cae",
+      "source_entry": "build.stderr.log"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:build.stdout.log",
+      "raw_bytes": 109215,
+      "raw_sha256": "7536913c38dc1a30fe3cbb28f1a2a26113a7300af193ab54a012646208117dc1",
+      "source_entry": "build.stdout.log"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:build.step.json",
+      "raw_bytes": 912,
+      "raw_sha256": "d931b417be36ee07e45f8b694bfe2f59e4c6f8a4d3ad632c9537df4bd57c2365",
+      "source_entry": "build.step.json"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:cargo-version.txt",
+      "raw_bytes": 336,
+      "raw_sha256": "bfd735e736b354adabe72cea24bc1b393488223889b6ab95e974fd8fb963552e",
+      "source_entry": "cargo-version.txt"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:dependency-fetch.log",
+      "raw_bytes": 3314,
+      "raw_sha256": "a812110c3cfeacaca79b11bcb6c8d83b4c946b0852cbf12864970f10be8f7a83",
+      "source_entry": "dependency-fetch.log"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:hardware.json",
+      "raw_bytes": 1903,
+      "raw_sha256": "f1c2a2532776bbb739e1cd9ec369ef4cfb958ac5abd46b3bc2be16dd5aa7bd8d",
+      "source_entry": "hardware.json"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:preflight.log",
+      "raw_bytes": 133,
+      "raw_sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0",
+      "source_entry": "preflight.log"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:resource-after-native.json",
+      "raw_bytes": 1527,
+      "raw_sha256": "0e112d8ff2c7593f8f833198cbc054917d01b47e4d7f39c2966dbe235a16720e",
+      "source_entry": "resource-after-native.json"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:resource-before-build.json",
+      "raw_bytes": 1502,
+      "raw_sha256": "f22de886116a56aab89c1649e06e9bcb6e728ee25386c6e02a677ab95df6de9d",
+      "source_entry": "resource-before-build.json"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:results.json",
+      "raw_bytes": 8055,
+      "raw_sha256": "8ec0d99b2127504df1ca552d310d0e546a210a30aea6cff13cbcdad48a967327",
+      "source_entry": "results.json"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:run-1-phase-readback.json",
+      "raw_bytes": 147639,
+      "raw_sha256": "6a858ce66393b61415ac2bf440323a0ea8508dc7a384235d815dfd4641360e00",
+      "source_entry": "run-1-phase-readback.json"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:run-1-raw/campaign-failure.json",
+      "raw_bytes": 337,
+      "raw_sha256": "9c387b3212912a90383a5f922fec87bc92d68758997aaf15e48ca3f99298fc75",
+      "source_entry": "run-1-raw/campaign-failure.json"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:run-1-resource-after.json",
+      "raw_bytes": 1527,
+      "raw_sha256": "d54ac4d86249a770ece41332e8d2aa21e32aee280ee59cfc750da0e41688a4f0",
+      "source_entry": "run-1-resource-after.json"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:run-1-resource-before.json",
+      "raw_bytes": 1526,
+      "raw_sha256": "0fb29a73c2a350443063e5f1e858ba1ef28442888494e94dece594b19084bc89",
+      "source_entry": "run-1-resource-before.json"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:run-1-result.json",
+      "raw_bytes": 1338,
+      "raw_sha256": "44004738cde4fd500c8372557d3aa381e30e6ffd716990e58d4b7c79104ddf7a",
+      "source_entry": "run-1-result.json"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:run-1-source-after.json",
+      "raw_bytes": 421,
+      "raw_sha256": "eaebb9849c6952d3a9ed020c1640d4c7b2df1ae7d7b33896c7c3572fc6ffa2ec",
+      "source_entry": "run-1-source-after.json"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:run-1.stderr.log",
+      "raw_bytes": 1615,
+      "raw_sha256": "2e70653e2e9693f6ffc6dcc909fb3afa9bb71b3db303c573c246d7aa0149dab9",
+      "source_entry": "run-1.stderr.log"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:run-1.stdout.log",
+      "raw_bytes": 271,
+      "raw_sha256": "766c256ca256a5caa13f4c32e7d2bb7c4db62c73afc0c3cf39ead4c66a32d7de",
+      "source_entry": "run-1.stdout.log"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:run-1.step.json",
+      "raw_bytes": 1013,
+      "raw_sha256": "2cb78256aaea63f77ac14ad1904692d56c2f92187cbffd13d3b73e91e95b8aa2",
+      "source_entry": "run-1.step.json"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:run-2-phase-readback.json",
+      "raw_bytes": 147646,
+      "raw_sha256": "cb677c90cf09db3549f2d33eace271c83fd532932eb828b79bd55a6161f8ffe3",
+      "source_entry": "run-2-phase-readback.json"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:run-2-resource-after.json",
+      "raw_bytes": 1527,
+      "raw_sha256": "5a2970418baa57eca5c13a733ef9ca1f8c0f0fb90a07b7904ec9dcfc4c2e94a4",
+      "source_entry": "run-2-resource-after.json"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:run-2-resource-before.json",
+      "raw_bytes": 1527,
+      "raw_sha256": "056410555b90b8802b51d379620a3b498e2eaf54d3df3bb2ab78267f9430de2b",
+      "source_entry": "run-2-resource-before.json"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:run-2-result.json",
+      "raw_bytes": 1330,
+      "raw_sha256": "6481152bba4863c60ed3c08b51c60d08bcfa5d7d699092a917f4621a0f927f18",
+      "source_entry": "run-2-result.json"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:run-2-source-after.json",
+      "raw_bytes": 421,
+      "raw_sha256": "eaebb9849c6952d3a9ed020c1640d4c7b2df1ae7d7b33896c7c3572fc6ffa2ec",
+      "source_entry": "run-2-source-after.json"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:run-2.stderr.log",
+      "raw_bytes": 935,
+      "raw_sha256": "39c505f9be9369f146f7f6036b8f52fddbb7c4eeccb4fbdf55b9ae28f305ae4f",
+      "source_entry": "run-2.stderr.log"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:run-2.stdout.log",
+      "raw_bytes": 181,
+      "raw_sha256": "fb1f3a2f463317eaaa3c872b85ee3c58db5346921d574864309a572bf47e1b09",
+      "source_entry": "run-2.stdout.log"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:run-2.step.json",
+      "raw_bytes": 1007,
+      "raw_sha256": "cff4227f2738063f7d7e1c95538b02794702b750bd3a7b4ef2b911b788022025",
+      "source_entry": "run-2.step.json"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:run-3-phase-readback.json",
+      "raw_bytes": 147655,
+      "raw_sha256": "bcb6cb4f9033501aba6c8b4881ef5f416cb05588964ebb23e3391acc4a337460",
+      "source_entry": "run-3-phase-readback.json"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:run-3-raw/campaign-failure.json",
+      "raw_bytes": 337,
+      "raw_sha256": "7020f7461e114dad027f78377862e4c90efe5d0e9f28b2aaf2b669598e7da29c",
+      "source_entry": "run-3-raw/campaign-failure.json"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:run-3-resource-after.json",
+      "raw_bytes": 1527,
+      "raw_sha256": "aaab367012e9a8c34cd004c7a29d3d88d4aa8cb9f0f345eee14e3dde7a799394",
+      "source_entry": "run-3-resource-after.json"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:run-3-resource-before.json",
+      "raw_bytes": 1527,
+      "raw_sha256": "4f44b941d685a8ec44f1ddf0e14f4e437c42a911cca868c2d449b9ba1ac4c7f9",
+      "source_entry": "run-3-resource-before.json"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:run-3-result.json",
+      "raw_bytes": 1338,
+      "raw_sha256": "de3deb86bc88cbe47b6937d7697a01942a211c87e6d35197940a37adf64f9943",
+      "source_entry": "run-3-result.json"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:run-3-source-after.json",
+      "raw_bytes": 421,
+      "raw_sha256": "eaebb9849c6952d3a9ed020c1640d4c7b2df1ae7d7b33896c7c3572fc6ffa2ec",
+      "source_entry": "run-3-source-after.json"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:run-3.stderr.log",
+      "raw_bytes": 1615,
+      "raw_sha256": "72492c8879b0a82fbbfa759be3e162a51c947ced53f3f1733e9ce72ffa31e110",
+      "source_entry": "run-3.stderr.log"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:run-3.stdout.log",
+      "raw_bytes": 271,
+      "raw_sha256": "60fee69fbf81a9ce60f857684171b5bccdb1f32fec4727b67b6700a9bbfd3bde",
+      "source_entry": "run-3.stdout.log"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:run-3.step.json",
+      "raw_bytes": 1013,
+      "raw_sha256": "5964fb00e01a6f424392f0acb024ab5ec7d6e7ad631b4a92478346153dea5b20",
+      "source_entry": "run-3.step.json"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:run-native-campaign.py",
+      "raw_bytes": 10812,
+      "raw_sha256": "5a7e518d285d46417ecf50141314bfab50df4bd879d0a74bf4f52b8146bd887f",
+      "source_entry": "run-native-campaign.py"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:rustc-version.txt",
+      "raw_bytes": 196,
+      "raw_sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+      "source_entry": "rustc-version.txt"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:source-after-native.json",
+      "raw_bytes": 421,
+      "raw_sha256": "eaebb9849c6952d3a9ed020c1640d4c7b2df1ae7d7b33896c7c3572fc6ffa2ec",
+      "source_entry": "source-after-native.json"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:source-after.json",
+      "raw_bytes": 421,
+      "raw_sha256": "eaebb9849c6952d3a9ed020c1640d4c7b2df1ae7d7b33896c7c3572fc6ffa2ec",
+      "source_entry": "source-after.json"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:source-after.log",
+      "raw_bytes": 421,
+      "raw_sha256": "eaebb9849c6952d3a9ed020c1640d4c7b2df1ae7d7b33896c7c3572fc6ffa2ec",
+      "source_entry": "source-after.log"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:source-before-build.json",
+      "raw_bytes": 421,
+      "raw_sha256": "eaebb9849c6952d3a9ed020c1640d4c7b2df1ae7d7b33896c7c3572fc6ffa2ec",
+      "source_entry": "source-before-build.json"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:source-before-campaigns.json",
+      "raw_bytes": 421,
+      "raw_sha256": "eaebb9849c6952d3a9ed020c1640d4c7b2df1ae7d7b33896c7c3572fc6ffa2ec",
+      "source_entry": "source-before-campaigns.json"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:source-before.json",
+      "raw_bytes": 421,
+      "raw_sha256": "eaebb9849c6952d3a9ed020c1640d4c7b2df1ae7d7b33896c7c3572fc6ffa2ec",
+      "source_entry": "source-before.json"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:systemd-run.log",
+      "raw_bytes": 6715,
+      "raw_sha256": "851a23e20dabd00237e301676db0e337e026a97e4d15db295465eb0f445f76a6",
+      "source_entry": "systemd-run.log"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:systemd-version.txt",
+      "raw_bytes": 330,
+      "raw_sha256": "24e682030f54829600ce9c96ef9d8be4297eb4cd1b11eca8fa7f83c5c4595fc7",
+      "source_entry": "systemd-version.txt"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:toolchain-install.log",
+      "raw_bytes": 257,
+      "raw_sha256": "5f75ffd1584354e30e6c4ead246d2a4807422b220697104064d8a7c296b79d22",
+      "source_entry": "toolchain-install.log"
+    },
+    {
+      "path": "pq-63ae5018/metadata-and-logs.tar.gz:unit-cleanup.log",
+      "raw_bytes": 150,
+      "raw_sha256": "2cf26a915976ba900bb216e568907f4e50cccb635373507adc206c7aaea2c2b2",
+      "source_entry": "unit-cleanup.log"
+    },
+    {
+      "path": "work-e9c4bb0d/run-1.report.json.gz",
+      "raw_bytes": 32540218,
+      "raw_sha256": "01e53bc8df2efbfb0c2fb902ab58767fbe4a4282c8cf2de95fd24063712a890e",
+      "source_entry": "run-1-raw/report.json",
+      "stored_bytes": 2798994,
+      "stored_sha256": "8491a68dd1eb79a8a39c1d5005cb1efeb45b98fba52d4d850b0a2be965bef101"
+    },
+    {
+      "path": "work-e9c4bb0d/run-2.report.json.gz",
+      "raw_bytes": 32339695,
+      "raw_sha256": "57311727663f2fd25539b07e7a19706451e39726606ba62d6e79549b379fc9ca",
+      "source_entry": "run-2-raw/report.json",
+      "stored_bytes": 2792328,
+      "stored_sha256": "92d0fe2309a9c83628d1ae033fede02ffbf7a2e9518d7594c65c53433d45884e"
+    },
+    {
+      "path": "work-e9c4bb0d/run-3.report.json.gz",
+      "raw_bytes": 32474130,
+      "raw_sha256": "e2e160e227fefff290ce71029a2a770ba47d2bec47d5461556b19bb7632c2bd9",
+      "source_entry": "run-3-raw/report.json",
+      "stored_bytes": 2795435,
+      "stored_sha256": "41f5a762c332761664cde742356ee4b4b803eda5bdad58401af2ce9cc185d312"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:SCOPE.txt",
+      "raw_bytes": 303,
+      "raw_sha256": "ce6e78baf98f002f35edf9e67a9c04614f5ba357365acff42313d8dc18542ab9",
+      "source_entry": "SCOPE.txt"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:artifact-files.json",
+      "raw_bytes": 160676,
+      "raw_sha256": "0824fac11ba33ebf5c496b7342569326b8f216d26d5d340403b47321393ad7d3",
+      "source_entry": "artifact-files.json"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:binary-before.json",
+      "raw_bytes": 594,
+      "raw_sha256": "2fb7a5c5d7f15aa0da454b5c59d32a3b81c0b5b34e72ae3e3303b1fdcbad36db",
+      "source_entry": "binary-before.json"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:build.stderr.log",
+      "raw_bytes": 3992,
+      "raw_sha256": "1308cb52d7ca11983bcf8ac4a96a5e6a83e9ed8833ae85436bff3c3dcba8084d",
+      "source_entry": "build.stderr.log"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:build.stdout.log",
+      "raw_bytes": 109215,
+      "raw_sha256": "b6ab701d5ebb104194f6c5eaf3d8ced5e504cf2779b7d99af17262ac4736d1da",
+      "source_entry": "build.stdout.log"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:build.step.json",
+      "raw_bytes": 911,
+      "raw_sha256": "6d10f28dab1491141405429731abc1a9d5ce90230971bec8b67c67fe0820b914",
+      "source_entry": "build.step.json"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:cargo-version.txt",
+      "raw_bytes": 336,
+      "raw_sha256": "bfd735e736b354adabe72cea24bc1b393488223889b6ab95e974fd8fb963552e",
+      "source_entry": "cargo-version.txt"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:dependency-fetch.log",
+      "raw_bytes": 3314,
+      "raw_sha256": "4affadfaad790ac8373586146c745ea17969b980c66b1647926f22f8943f967a",
+      "source_entry": "dependency-fetch.log"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:hardware.json",
+      "raw_bytes": 1900,
+      "raw_sha256": "ff15487096092738ff54f9a376cdd9efbf6551770d76d42c0e9755828af23874",
+      "source_entry": "hardware.json"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:preflight.log",
+      "raw_bytes": 133,
+      "raw_sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0",
+      "source_entry": "preflight.log"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:resource-after-native.json",
+      "raw_bytes": 1527,
+      "raw_sha256": "89e6629bc6a161ef1509f4029d202ee62a4851e05770fade6e6b24661a4a1800",
+      "source_entry": "resource-after-native.json"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:resource-before-build.json",
+      "raw_bytes": 1502,
+      "raw_sha256": "5ae338c802fbb2e7417f43011190b4a2a09245407c7d1cd52d1ca5331ec42c9d",
+      "source_entry": "resource-before-build.json"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:results.json",
+      "raw_bytes": 8056,
+      "raw_sha256": "2b1d4a1f2380755fd437be635dc0fa57963f63a423ca5897b6915c1702ae2e80",
+      "source_entry": "results.json"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:run-1-phase-readback.json",
+      "raw_bytes": 147708,
+      "raw_sha256": "d2860aceb1ca7d071a54e04f65df911e5c3d99eb5428381ef2af1e13caaa6aa9",
+      "source_entry": "run-1-phase-readback.json"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:run-1-raw/campaign-failure.json",
+      "raw_bytes": 337,
+      "raw_sha256": "82be515ef12e8954b6982c7a3984c30f221e0d3fb62a19397386a85cd97c3cea",
+      "source_entry": "run-1-raw/campaign-failure.json"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:run-1-resource-after.json",
+      "raw_bytes": 1527,
+      "raw_sha256": "42da64e8792660704cfac1bfd49c928d8a86a9a7532f3904b0ec41325dbb15ca",
+      "source_entry": "run-1-resource-after.json"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:run-1-resource-before.json",
+      "raw_bytes": 1526,
+      "raw_sha256": "f508a6081a8c7a31c0660064e82abb549830d497427ce47dfdc51ce8ab334f06",
+      "source_entry": "run-1-resource-before.json"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:run-1-result.json",
+      "raw_bytes": 1336,
+      "raw_sha256": "e8a9ad30928b5c82819b8e46f02dafc8252f39259e78838fe1be52e08e813f37",
+      "source_entry": "run-1-result.json"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:run-1-source-after.json",
+      "raw_bytes": 421,
+      "raw_sha256": "a9f2fded62e2adf3f88a21abf2155390643b0d8607d1bb36f55a7e270876a61e",
+      "source_entry": "run-1-source-after.json"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:run-1.stderr.log",
+      "raw_bytes": 1615,
+      "raw_sha256": "92e0125adf2d9a29fc09362f158741979895528e22f459a3d8c9e2b4b9766783",
+      "source_entry": "run-1.stderr.log"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:run-1.stdout.log",
+      "raw_bytes": 270,
+      "raw_sha256": "c54deb873b901cf96be053523dab592705827af9a023df27828d65360aa0d10b",
+      "source_entry": "run-1.stdout.log"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:run-1.step.json",
+      "raw_bytes": 1011,
+      "raw_sha256": "2fe85c77694c26f8193823972a540b954c6fc00281b39c60d5e9a1004c259d80",
+      "source_entry": "run-1.step.json"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:run-2-phase-readback.json",
+      "raw_bytes": 156649,
+      "raw_sha256": "705598504fe3f3fc19a277261384c51a3c80c163bf03209131d20fa18edd850c",
+      "source_entry": "run-2-phase-readback.json"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:run-2-raw/campaign-failure.json",
+      "raw_bytes": 337,
+      "raw_sha256": "5f41b90a350afccf5e81b563853170d44c63947b5bbfc794b8dd235656c677f3",
+      "source_entry": "run-2-raw/campaign-failure.json"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:run-2-resource-after.json",
+      "raw_bytes": 1527,
+      "raw_sha256": "458da3088e31b74c7bdee3838cee88ea28bcda218359a78992858273df175d4e",
+      "source_entry": "run-2-resource-after.json"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:run-2-resource-before.json",
+      "raw_bytes": 1527,
+      "raw_sha256": "8f7b8c0820b1a0ab1004e23bf81b2a623fc3dcc17e0b05a32a4adb006ffb5249",
+      "source_entry": "run-2-resource-before.json"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:run-2-result.json",
+      "raw_bytes": 1336,
+      "raw_sha256": "3dc3f1cbabac91284e68349ab939c59e0ba0bb6bd0b8fa6de3a39550f8305d8b",
+      "source_entry": "run-2-result.json"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:run-2-source-after.json",
+      "raw_bytes": 421,
+      "raw_sha256": "a9f2fded62e2adf3f88a21abf2155390643b0d8607d1bb36f55a7e270876a61e",
+      "source_entry": "run-2-source-after.json"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:run-2.stderr.log",
+      "raw_bytes": 1615,
+      "raw_sha256": "40b16e304b6f71603c345bf123ff7337a7f98287cda882af6da78489f886fdda",
+      "source_entry": "run-2.stderr.log"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:run-2.stdout.log",
+      "raw_bytes": 270,
+      "raw_sha256": "de398c4bd0119e7f91a2a89c50a2364d1a26710848b10e041b9defa8e1036d61",
+      "source_entry": "run-2.stdout.log"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:run-2.step.json",
+      "raw_bytes": 1011,
+      "raw_sha256": "8dac8d8e77c15ba271b4f27bfc76bd4a210ab77e7b2d7d2c99ae27e4e509cb50",
+      "source_entry": "run-2.step.json"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:run-3-phase-readback.json",
+      "raw_bytes": 147624,
+      "raw_sha256": "6c0b20ead9e73bf6f325632c963cf96b467c45a728a4bac9fa2dcc01e474075d",
+      "source_entry": "run-3-phase-readback.json"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:run-3-raw/campaign-failure.json",
+      "raw_bytes": 337,
+      "raw_sha256": "d6f594d380959981729ca27007fdc9453dc9efb943d9eefa65d0fb9f7dea7f93",
+      "source_entry": "run-3-raw/campaign-failure.json"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:run-3-resource-after.json",
+      "raw_bytes": 1527,
+      "raw_sha256": "dc47e138de6d1014d1148dd6b1217683c9adfbcc5bd65319b8443bcd30c6895a",
+      "source_entry": "run-3-resource-after.json"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:run-3-resource-before.json",
+      "raw_bytes": 1527,
+      "raw_sha256": "a15c6cd80cad6b453d66ac2ef492964f9df267feb4c6723a41160cffc71a441f",
+      "source_entry": "run-3-resource-before.json"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:run-3-result.json",
+      "raw_bytes": 1336,
+      "raw_sha256": "a7d051270ca78f4923a76b3bc129a44cb0853933d4a2b9590c439fd86dd24e8a",
+      "source_entry": "run-3-result.json"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:run-3-source-after.json",
+      "raw_bytes": 421,
+      "raw_sha256": "a9f2fded62e2adf3f88a21abf2155390643b0d8607d1bb36f55a7e270876a61e",
+      "source_entry": "run-3-source-after.json"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:run-3.stderr.log",
+      "raw_bytes": 1615,
+      "raw_sha256": "48e810487f9b715a4dec65a0141133ae797d67c7fa2761323e0ec1ecde8ee972",
+      "source_entry": "run-3.stderr.log"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:run-3.stdout.log",
+      "raw_bytes": 270,
+      "raw_sha256": "e0eedd6825245b3c6d967d61755bc27f092e7ffd85f4887411b59f164b3eef63",
+      "source_entry": "run-3.stdout.log"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:run-3.step.json",
+      "raw_bytes": 1011,
+      "raw_sha256": "eef7f7fc356911f52f8af60efc2ead6f1db16ac60c59baf0a6cdba94bbc13751",
+      "source_entry": "run-3.step.json"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:run-native-campaign.py",
+      "raw_bytes": 10812,
+      "raw_sha256": "5a7e518d285d46417ecf50141314bfab50df4bd879d0a74bf4f52b8146bd887f",
+      "source_entry": "run-native-campaign.py"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:rustc-version.txt",
+      "raw_bytes": 196,
+      "raw_sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+      "source_entry": "rustc-version.txt"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:source-after-native.json",
+      "raw_bytes": 421,
+      "raw_sha256": "a9f2fded62e2adf3f88a21abf2155390643b0d8607d1bb36f55a7e270876a61e",
+      "source_entry": "source-after-native.json"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:source-after.json",
+      "raw_bytes": 421,
+      "raw_sha256": "a9f2fded62e2adf3f88a21abf2155390643b0d8607d1bb36f55a7e270876a61e",
+      "source_entry": "source-after.json"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:source-after.log",
+      "raw_bytes": 421,
+      "raw_sha256": "a9f2fded62e2adf3f88a21abf2155390643b0d8607d1bb36f55a7e270876a61e",
+      "source_entry": "source-after.log"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:source-before-build.json",
+      "raw_bytes": 421,
+      "raw_sha256": "a9f2fded62e2adf3f88a21abf2155390643b0d8607d1bb36f55a7e270876a61e",
+      "source_entry": "source-before-build.json"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:source-before-campaigns.json",
+      "raw_bytes": 421,
+      "raw_sha256": "a9f2fded62e2adf3f88a21abf2155390643b0d8607d1bb36f55a7e270876a61e",
+      "source_entry": "source-before-campaigns.json"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:source-before.json",
+      "raw_bytes": 421,
+      "raw_sha256": "a9f2fded62e2adf3f88a21abf2155390643b0d8607d1bb36f55a7e270876a61e",
+      "source_entry": "source-before.json"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:systemd-run.log",
+      "raw_bytes": 6715,
+      "raw_sha256": "84f71173184742d51a78378538b0b94e01d6b80fcd857233e3c12fe9fd83d356",
+      "source_entry": "systemd-run.log"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:systemd-version.txt",
+      "raw_bytes": 330,
+      "raw_sha256": "24e682030f54829600ce9c96ef9d8be4297eb4cd1b11eca8fa7f83c5c4595fc7",
+      "source_entry": "systemd-version.txt"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:toolchain-install.log",
+      "raw_bytes": 257,
+      "raw_sha256": "5f75ffd1584354e30e6c4ead246d2a4807422b220697104064d8a7c296b79d22",
+      "source_entry": "toolchain-install.log"
+    },
+    {
+      "path": "work-e9c4bb0d/metadata-and-logs.tar.gz:unit-cleanup.log",
+      "raw_bytes": 150,
+      "raw_sha256": "c57896ba8098eb88ac05bf30efa8496a00a949c19b627ba16f7d78a7e643c470",
+      "source_entry": "unit-cleanup.log"
+    }
+  ],
+  "schema": "pon-original-native-campaign-ci-archive-v1"
+}

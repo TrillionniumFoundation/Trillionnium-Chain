@@ -1,0 +1,105 @@
+{
+  "archive": "first-development-check-original-failure.tar.gz",
+  "bytes": 32423,
+  "sha256": "9936a27161c8b89d20fa6bed399133e1c223ac2555d148e6816a2a91b62b9c68",
+  "original_members": 19,
+  "all_original_member_readback_exact": true,
+  "no_prepared_or_qualification_claim": true,
+  "members": [
+    {
+      "member": "work/ci-follow/pn1-transaction006-dev-typecheck-ff2ba31-20261026-001/admission.json",
+      "bytes": 5812,
+      "sha256": "a88019c27bd5fe342078ca876fa1f3e0610136c734e7c06d174f20c47ff3fbb3"
+    },
+    {
+      "member": "work/ci-follow/pn1-transaction006-dev-typecheck-ff2ba31-20261026-001/check/cargo-events.json",
+      "bytes": 118002,
+      "sha256": "4bcd6b27cfdc395c2f4f6658292fbd1c885a432da91d7d25a0a4378e8a811b5e"
+    },
+    {
+      "member": "work/ci-follow/pn1-transaction006-dev-typecheck-ff2ba31-20261026-001/check/initial-failure-receipt.json",
+      "bytes": 799,
+      "sha256": "1cc5cc7622976222a0de7e8d609f618979d78607aa39c5266dbfe1d7ab44b9cc"
+    },
+    {
+      "member": "work/ci-follow/pn1-transaction006-dev-typecheck-ff2ba31-20261026-001/check/preflight.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "work/ci-follow/pn1-transaction006-dev-typecheck-ff2ba31-20261026-001/check/preflight.stdout",
+      "bytes": 168,
+      "sha256": "63a5bf3b9fc8975dac9742c8f5f7f77a05a0ea5bf4d40403dcdb791778eb44a3"
+    },
+    {
+      "member": "work/ci-follow/pn1-transaction006-dev-typecheck-ff2ba31-20261026-001/check/resources-before.json",
+      "bytes": 3558,
+      "sha256": "f9e013efc381856c81cf19cdd046c1c7758c666f9eb62d58f4e474a8b40e421a"
+    },
+    {
+      "member": "work/ci-follow/pn1-transaction006-dev-typecheck-ff2ba31-20261026-001/check/result.json",
+      "bytes": 11690,
+      "sha256": "619ddef463c5971c6a0f960fb7bbdda40ec69446c3aa0fc4f1ec1a1a830a911e"
+    },
+    {
+      "member": "work/ci-follow/pn1-transaction006-dev-typecheck-ff2ba31-20261026-001/check/source-after.json",
+      "bytes": 2963,
+      "sha256": "d07343d68721ae449524ebc99ac379acb9b8d3bac503ca7a31d83c3731c9038f"
+    },
+    {
+      "member": "work/ci-follow/pn1-transaction006-dev-typecheck-ff2ba31-20261026-001/check/source-before.json",
+      "bytes": 2963,
+      "sha256": "d07343d68721ae449524ebc99ac379acb9b8d3bac503ca7a31d83c3731c9038f"
+    },
+    {
+      "member": "work/ci-follow/pn1-transaction006-dev-typecheck-ff2ba31-20261026-001/check/stderr.log",
+      "bytes": 2471,
+      "sha256": "3d9e788cb588758b7e1e11116d8dba0eafedd3ce6ec04944496d6dcf0dc7434f"
+    },
+    {
+      "member": "work/ci-follow/pn1-transaction006-dev-typecheck-ff2ba31-20261026-001/check/stdout.log",
+      "bytes": 95487,
+      "sha256": "493b1f8279a04342adf06ee3e86d538be579e218f0f262cdd8ec1e3767a85d13"
+    },
+    {
+      "member": "work/ci-follow/pn1-transaction006-dev-typecheck-ff2ba31-20261026-001/collector-reuse-source-only.json",
+      "bytes": 1374,
+      "sha256": "36c033cec1c9a71be4504877c85e9137d82fef9edc46bdecd3f1e663fce7c107"
+    },
+    {
+      "member": "work/ci-follow/pn1-transaction006-dev-typecheck-ff2ba31-20261026-001/dev-check-owner.py",
+      "bytes": 15842,
+      "sha256": "18f3cbea669501ec54b14235ae52bb6b637f5ddfefad4e477d87543bb1b99230"
+    },
+    {
+      "member": "work/ci-follow/pn1-transaction006-dev-typecheck-ff2ba31-20261026-001/durable-final-read-original.json",
+      "bytes": 1556,
+      "sha256": "5ccabd437822e34f13cfe5125908577b502dbad449f9b6a3ebdf7b917f968a29"
+    },
+    {
+      "member": "work/ci-follow/pn1-transaction006-dev-typecheck-ff2ba31-20261026-001/durable-start-original.json",
+      "bytes": 1525,
+      "sha256": "4e11f98b3c25f7b0353fb2d9233535587c1767d9c21747426bd1fee6e7313f76"
+    },
+    {
+      "member": "work/ci-follow/pn1-transaction006-dev-typecheck-ff2ba31-20261026-001/durable-start-request.json",
+      "bytes": 610,
+      "sha256": "d2ea17a62b0711efeacd53ef8a3c18917e61d2a032acf0cbf45182c5f15ad6fb"
+    },
+    {
+      "member": "work/ci-follow/pn1-transaction006-dev-typecheck-ff2ba31-20261026-001/durable-terminal-original.json",
+      "bytes": 671,
+      "sha256": "5fe0c8baf80ce35e2705f9ff7985769924b8be59dfb7174b56257eaf959c1082"
+    },
+    {
+      "member": "work/ci-follow/pn1-transaction006-dev-typecheck-ff2ba31-20261026-001/first-red-receipt.json",
+      "bytes": 7422,
+      "sha256": "7bf4da4faee4c513ececdcd36af4d24f820926998e65d32c3469ff23e1b2650c"
+    },
+    {
+      "member": "work/ci-follow/pn1-transaction006-dev-typecheck-ff2ba31-20261026-001/manifest.json",
+      "bytes": 2679,
+      "sha256": "0d00b8f6555113bf6ebfc21e04b77e0723c39115414178b8bc644509022562d1"
+    }
+  ]
+}

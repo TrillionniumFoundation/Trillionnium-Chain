@@ -1,0 +1,196 @@
+{
+  "schema": "pon-history-n8-files-v1",
+  "scope": "All current diagnostic deliverables except this self-manifest; original compressed bytes are separately bound by provenance.json.",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 9936,
+      "sha256": "6d206711c6c5ce85add75866d3cd3cde029c5a63475da5fa7fb48c4585424951"
+    },
+    {
+      "path": "github-artifact-metadata.json",
+      "bytes": 1224,
+      "sha256": "9e4f05824c2970cca8f46e2a6dce0ecdf1f40c6b9c6178f9b0b92342980553b5"
+    },
+    {
+      "path": "original/binary-before.json.gz",
+      "bytes": 371,
+      "sha256": "a0b86d7b04ea3f880a2474ee84cea417452b1503e75d07e5ff48a0974048bfdb"
+    },
+    {
+      "path": "original/hardware.json.gz",
+      "bytes": 765,
+      "sha256": "f90932d71b9e421e3bde3c4ec93df690946807da6370274672454da1f3e696ad"
+    },
+    {
+      "path": "original/resource-after-native.json.gz",
+      "bytes": 481,
+      "sha256": "f09a7acd0b44e90ddcbe5a26c7a14af889873acfa74967a4e5485370382d02f0"
+    },
+    {
+      "path": "original/resource-before-build.json.gz",
+      "bytes": 469,
+      "sha256": "ce02488367318653a66434108611d3c9393bd133f7a9b8af01723fb51ee6da2d"
+    },
+    {
+      "path": "original/results.json.gz",
+      "bytes": 3305,
+      "sha256": "8f07a7e38d0f1314e16e8f3484b0e55b723ccbaa9a31582132a15b1bb117d2da"
+    },
+    {
+      "path": "original/run-1-phase-readback.json.gz",
+      "bytes": 1021,
+      "sha256": "259025054b236ab8e50c5f6a355481a67393ed1ec1c2a86c566642878027292b"
+    },
+    {
+      "path": "original/run-1-raw/campaign-failure.json.gz",
+      "bytes": 404,
+      "sha256": "49b67d94be6a79a61bed4c24cb14a43e6a4c23d4885c4899c8502e291e5562ea"
+    },
+    {
+      "path": "original/run-1-raw/report.json.gz",
+      "bytes": 2929214,
+      "sha256": "a92c1c17b67fb3c2f613a3cb1df348071fd9d35cb5f9280d3f0546be78f81350"
+    },
+    {
+      "path": "original/run-1-result.json.gz",
+      "bytes": 667,
+      "sha256": "ae46fb6d3c42a153bbe219d8d5db40a62e6e084f256e1e7d21ee23fc949d89ed"
+    },
+    {
+      "path": "original/run-1-source-after.json.gz",
+      "bytes": 255,
+      "sha256": "08474d9594ed855aee714bc6c2e3fb206c6b6497d565cc71d8f0e02bab1e3282"
+    },
+    {
+      "path": "original/run-1-verifier-readback.json.gz",
+      "bytes": 657,
+      "sha256": "888c88c38e0a42b2921285238cb7c5f915ac0316bd1a66bad55896bbfa633728"
+    },
+    {
+      "path": "original/run-1.stderr.log.gz",
+      "bytes": 616,
+      "sha256": "b9d72684aa18c58c48fe281a2ff2279371b5ceb554a8b02aae9582b7180b1017"
+    },
+    {
+      "path": "original/run-1.stdout.log.gz",
+      "bytes": 177,
+      "sha256": "dd178f11d661b70e55213c6c2d06284e0cf85a6c813c0cc5dfbde920b48c5bec"
+    },
+    {
+      "path": "original/run-2-phase-readback.json.gz",
+      "bytes": 1020,
+      "sha256": "d07337d0704d7e81de028efeb591dab7d3fc19ffa3c6d48f6e3f76d7c6b70e7b"
+    },
+    {
+      "path": "original/run-2-raw/campaign-failure.json.gz",
+      "bytes": 404,
+      "sha256": "9de27752011a38a3ce54842e0ca1a26a78e1e7e858d26359ab93edc5b8f40132"
+    },
+    {
+      "path": "original/run-2-raw/report.json.gz",
+      "bytes": 2924025,
+      "sha256": "b71df75c7603be6d259f5b14eb37714dfb9d88b8e97335756bb83a594d252790"
+    },
+    {
+      "path": "original/run-2-result.json.gz",
+      "bytes": 665,
+      "sha256": "c48e751cef54533c0c3e43d3a043fa0105ca0d2440db08d0b79e806280af1499"
+    },
+    {
+      "path": "original/run-2-source-after.json.gz",
+      "bytes": 255,
+      "sha256": "08474d9594ed855aee714bc6c2e3fb206c6b6497d565cc71d8f0e02bab1e3282"
+    },
+    {
+      "path": "original/run-2-verifier-readback.json.gz",
+      "bytes": 658,
+      "sha256": "29c84dee3bc9d0cb3573a6c996589c6f48beb9453792c42a976f145d0dfedd20"
+    },
+    {
+      "path": "original/run-2.stderr.log.gz",
+      "bytes": 615,
+      "sha256": "20613f285d3cff0c8d2a9a21633d16ecb1c784941d39327d65276512fdcc524d"
+    },
+    {
+      "path": "original/run-2.stdout.log.gz",
+      "bytes": 178,
+      "sha256": "bc5365ef7219ac39dd978872003ad78a78b7292c847f46f0a382fd4c1f6ed115"
+    },
+    {
+      "path": "original/run-3-phase-readback.json.gz",
+      "bytes": 1022,
+      "sha256": "fa0535e641f7a06c4c6dc0e6a27e3ae7befbe7ed400ad2d079fd11e3bad94c95"
+    },
+    {
+      "path": "original/run-3-raw/campaign-failure.json.gz",
+      "bytes": 404,
+      "sha256": "0db3132394387da6051c097e617836afed93ea1f5951f4ed68b7ff56799a2c54"
+    },
+    {
+      "path": "original/run-3-raw/report.json.gz",
+      "bytes": 2927120,
+      "sha256": "6903cf6cc494562270e3311ebfaa05e39d15bbe1cc47d69c488fff5054293c09"
+    },
+    {
+      "path": "original/run-3-result.json.gz",
+      "bytes": 666,
+      "sha256": "af23c767f4cb4c3f4af077d430df60d416946dab75094f97380f4a460c949cf9"
+    },
+    {
+      "path": "original/run-3-source-after.json.gz",
+      "bytes": 255,
+      "sha256": "08474d9594ed855aee714bc6c2e3fb206c6b6497d565cc71d8f0e02bab1e3282"
+    },
+    {
+      "path": "original/run-3-verifier-readback.json.gz",
+      "bytes": 657,
+      "sha256": "f418ff00cc673015e51739d1216283d05096494fef7c5db3f7daf251f5a4894f"
+    },
+    {
+      "path": "original/run-3.stderr.log.gz",
+      "bytes": 616,
+      "sha256": "81a682b51add603136d9c9de7e80401c8a8eb57cb5e1b1bc4d6cb3127c37f1a0"
+    },
+    {
+      "path": "original/run-3.stdout.log.gz",
+      "bytes": 178,
+      "sha256": "243ef588281a852557c615be69e14463a6b10fb33d01ec298f524f39479a80be"
+    },
+    {
+      "path": "original/source-after-native.json.gz",
+      "bytes": 255,
+      "sha256": "08474d9594ed855aee714bc6c2e3fb206c6b6497d565cc71d8f0e02bab1e3282"
+    },
+    {
+      "path": "original/source-before.json.gz",
+      "bytes": 255,
+      "sha256": "08474d9594ed855aee714bc6c2e3fb206c6b6497d565cc71d8f0e02bab1e3282"
+    },
+    {
+      "path": "provenance.json",
+      "bytes": 16819,
+      "sha256": "54dc7781eb126238837d28c3df9d86df206eba82fb1a366ea90fa0a5c18e6f68"
+    },
+    {
+      "path": "readback-process.json",
+      "bytes": 675,
+      "sha256": "a2a6a36542c3914da1b4bf28cb9dba15ad56eea58020208e882d1bd370ff1c45"
+    },
+    {
+      "path": "readback.json",
+      "bytes": 16355,
+      "sha256": "ff25daea2a684156cf708cd171c12c97416fc36f62400646350d7729e4a7f3e6"
+    },
+    {
+      "path": "readback.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reproduce_readback.py",
+      "bytes": 11039,
+      "sha256": "2768368072cbd42f8c3db5a782b25050124661e311b42e2cfc33e7166e5b0155"
+    }
+  ]
+}

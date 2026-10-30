@@ -1,0 +1,2733 @@
+//! Local bounded queued facts, under the existing Node SQLite/lock owner. Neither
+//! typed admission nor this queue grants block execution, inclusion or confirmation.
+use super::{bytes32, ensure, Node};
+use crate::Result;
+use rusqlite::{params, OptionalExtension, TransactionBehavior};
+use serde::{Deserialize, Serialize};
+use std::collections::{BTreeMap, BTreeSet};
+use trnm_mempool::{
+    AdmissionReject, CanonicalSignerId, CanonicalTxDigest, IngressClass, ResourceLimits,
+    SignedAdmissionHooks, SignedEnvelopeMetadata, SignedEnvelopeView, TypedAdmissionGate,
+    TypedAdmitOutcome,
+};
+use trnm_mvcc_fee::pon_commitment::{
+    CacheLimits, CheckedExecutionParent, CheckedTransactionPrefix, CommitmentObservation,
+};
+use trnm_mvcc_fee::pon_executor::pq_accounts_v2 as pq2;
+use trnm_mvcc_fee::pon_executor::pq_native_v1 as pq;
+use trnm_mvcc_fee::pon_executor::{
+    self, Config, ExecutionControl, ExecutionError, ExecutionProgress, ExecutionWorkerAccounting,
+    PrefixContext, State,
+};
+use trnm_protocol::pon_wire::{hash, Envelope, Hash};
+use trnm_protocol::pq_native_accounts_v2 as pq2_wire;
+use trnm_protocol::pq_native_transfer_v1 as pq_wire;
+
+fn is_pq(cfg: &Config) -> bool {
+    pq::enabled(cfg) || pq2::enabled(cfg)
+}
+fn check_pq_signature(
+    state: &State,
+    raw: &[u8],
+    timestamp: u64,
+    cfg: &Config,
+) -> Result<(Hash, [u8; 48], Hash)> {
+    if pq2::enabled(cfg) {
+        let checked = pq2::prepare_signature(state, raw, timestamp, cfg)?;
+        pq2::validate_current_authority(state, raw, cfg)?;
+        Ok((checked.wire_id(), checked.statement_id(), checked.sender()))
+    } else {
+        let checked = pq::prepare_signature(raw, timestamp, cfg)?;
+        pq::validate_current_authority(state, raw, cfg)?;
+        Ok((checked.wire_id(), checked.statement_id(), checked.sender()))
+    }
+}
+fn validate_pq_block(
+    parent: &State,
+    raws: &[Vec<u8>],
+    miner: Hash,
+    timestamp: Option<u64>,
+    cfg: &Config,
+) -> Result<()> {
+    if pq2::enabled(cfg) {
+        Ok(pq2::validate_block(parent, raws, miner, timestamp, cfg)?)
+    } else {
+        Ok(pq::validate_block(parent, raws, miner, timestamp, cfg)?)
+    }
+}
+#[derive(Clone, Copy)]
+enum StatementQuery {
+    CountActive,
+    CountRemoved,
+    HasRemovedOrphan,
+    ReadPosition,
+    WasRemoved,
+    FindStatement,
+    InsertStatement,
+    ReadCommitted,
+    InsertRemoved,
+}
+fn statement_sql(cfg: &Config, query: StatementQuery) -> &'static str {
+    if pq2::tasks_v5_enabled(cfg) {
+        return match query {
+        StatementQuery::CountActive =>"SELECT COUNT(*) FROM local_pq_statements_v5",
+        StatementQuery::CountRemoved =>"SELECT COUNT(*) FROM local_pq_removed_statements_v5",
+        StatementQuery::HasRemovedOrphan =>"SELECT EXISTS(SELECT 1 FROM local_pq_removed_statements_v5 s LEFT JOIN local_pool_removals r ON r.ordinal=s.removal_ordinal WHERE r.ordinal IS NULL)",
+        StatementQuery::ReadPosition =>"SELECT statement FROM local_pq_statements_v5 WHERE group_id=? AND position=? AND length(statement)=48",
+        StatementQuery::WasRemoved =>"SELECT EXISTS(SELECT 1 FROM local_pq_removed_statements_v5 WHERE statement=?)",
+        StatementQuery::FindStatement =>"SELECT group_id,position FROM local_pq_statements_v5 WHERE statement=?",
+        StatementQuery::InsertStatement =>"INSERT INTO local_pq_statements_v5 VALUES(?,?,?)",
+        StatementQuery::ReadCommitted =>"SELECT r.digest,r.raw,s.statement FROM local_pool_rows r JOIN local_pq_statements_v5 s USING(group_id,position) WHERE r.group_id=? AND r.position=?",
+        StatementQuery::InsertRemoved =>"INSERT INTO local_pq_removed_statements_v5 VALUES(?,?)",
+        };
+    }
+    if pq2::tasks_v4_enabled(cfg) {
+        return match query {
+        StatementQuery::CountActive =>"SELECT COUNT(*) FROM local_pq_statements_v4",
+        StatementQuery::CountRemoved =>"SELECT COUNT(*) FROM local_pq_removed_statements_v4",
+        StatementQuery::HasRemovedOrphan =>"SELECT EXISTS(SELECT 1 FROM local_pq_removed_statements_v4 s LEFT JOIN local_pool_removals r ON r.ordinal=s.removal_ordinal WHERE r.ordinal IS NULL)",
+        StatementQuery::ReadPosition =>"SELECT statement FROM local_pq_statements_v4 WHERE group_id=? AND position=? AND length(statement)=48",
+        StatementQuery::WasRemoved =>"SELECT EXISTS(SELECT 1 FROM local_pq_removed_statements_v4 WHERE statement=?)",
+        StatementQuery::FindStatement =>"SELECT group_id,position FROM local_pq_statements_v4 WHERE statement=?",
+        StatementQuery::InsertStatement =>"INSERT INTO local_pq_statements_v4 VALUES(?,?,?)",
+        StatementQuery::ReadCommitted =>"SELECT r.digest,r.raw,s.statement FROM local_pool_rows r JOIN local_pq_statements_v4 s USING(group_id,position) WHERE r.group_id=? AND r.position=?",
+        StatementQuery::InsertRemoved =>"INSERT INTO local_pq_removed_statements_v4 VALUES(?,?)",
+        };
+    }
+    if pq2::quota_v3_enabled(cfg) {
+        return match query {
+        StatementQuery::CountActive =>"SELECT COUNT(*) FROM local_pq_statements_v3",
+        StatementQuery::CountRemoved =>"SELECT COUNT(*) FROM local_pq_removed_statements_v3",
+        StatementQuery::HasRemovedOrphan =>"SELECT EXISTS(SELECT 1 FROM local_pq_removed_statements_v3 s LEFT JOIN local_pool_removals r ON r.ordinal=s.removal_ordinal WHERE r.ordinal IS NULL)",
+        StatementQuery::ReadPosition =>"SELECT statement FROM local_pq_statements_v3 WHERE group_id=? AND position=? AND length(statement)=48",
+        StatementQuery::WasRemoved =>"SELECT EXISTS(SELECT 1 FROM local_pq_removed_statements_v3 WHERE statement=?)",
+        StatementQuery::FindStatement =>"SELECT group_id,position FROM local_pq_statements_v3 WHERE statement=?",
+        StatementQuery::InsertStatement =>"INSERT INTO local_pq_statements_v3 VALUES(?,?,?)",
+        StatementQuery::ReadCommitted =>"SELECT r.digest,r.raw,s.statement FROM local_pool_rows r JOIN local_pq_statements_v3 s USING(group_id,position) WHERE r.group_id=? AND r.position=?",
+        StatementQuery::InsertRemoved =>"INSERT INTO local_pq_removed_statements_v3 VALUES(?,?)",
+        };
+    }
+    match (pq2::enabled(cfg),query) {
+        (false,StatementQuery::CountActive)=>"SELECT COUNT(*) FROM local_pq_statements_v1",
+        (true,StatementQuery::CountActive)=>"SELECT COUNT(*) FROM local_pq_statements_v2",
+        (false,StatementQuery::CountRemoved)=>"SELECT COUNT(*) FROM local_pq_removed_statements_v1",
+        (true,StatementQuery::CountRemoved)=>"SELECT COUNT(*) FROM local_pq_removed_statements_v2",
+        (false,StatementQuery::HasRemovedOrphan)=>"SELECT EXISTS(SELECT 1 FROM local_pq_removed_statements_v1 s LEFT JOIN local_pool_removals r ON r.ordinal=s.removal_ordinal WHERE r.ordinal IS NULL)",
+        (true,StatementQuery::HasRemovedOrphan)=>"SELECT EXISTS(SELECT 1 FROM local_pq_removed_statements_v2 s LEFT JOIN local_pool_removals r ON r.ordinal=s.removal_ordinal WHERE r.ordinal IS NULL)",
+        (false,StatementQuery::ReadPosition)=>"SELECT statement FROM local_pq_statements_v1 WHERE group_id=? AND position=? AND length(statement)=48",
+        (true,StatementQuery::ReadPosition)=>"SELECT statement FROM local_pq_statements_v2 WHERE group_id=? AND position=? AND length(statement)=48",
+        (false,StatementQuery::WasRemoved)=>"SELECT EXISTS(SELECT 1 FROM local_pq_removed_statements_v1 WHERE statement=?)",
+        (true,StatementQuery::WasRemoved)=>"SELECT EXISTS(SELECT 1 FROM local_pq_removed_statements_v2 WHERE statement=?)",
+        (false,StatementQuery::FindStatement)=>"SELECT group_id,position FROM local_pq_statements_v1 WHERE statement=?",
+        (true,StatementQuery::FindStatement)=>"SELECT group_id,position FROM local_pq_statements_v2 WHERE statement=?",
+        (false,StatementQuery::InsertStatement)=>"INSERT INTO local_pq_statements_v1 VALUES(?,?,?)",
+        (true,StatementQuery::InsertStatement)=>"INSERT INTO local_pq_statements_v2 VALUES(?,?,?)",
+        (false,StatementQuery::ReadCommitted)=>"SELECT r.digest,r.raw,s.statement FROM local_pool_rows r JOIN local_pq_statements_v1 s USING(group_id,position) WHERE r.group_id=? AND r.position=?",
+        (true,StatementQuery::ReadCommitted)=>"SELECT r.digest,r.raw,s.statement FROM local_pool_rows r JOIN local_pq_statements_v2 s USING(group_id,position) WHERE r.group_id=? AND r.position=?",
+        (false,StatementQuery::InsertRemoved)=>"INSERT INTO local_pq_removed_statements_v1 VALUES(?,?)",
+        (true,StatementQuery::InsertRemoved)=>"INSERT INTO local_pq_removed_statements_v2 VALUES(?,?)",
+    }
+}
+
+pub const LOCAL_POOL_PROFILE: &str = "native-local-queued-pnx1-v2";
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct PoolLimits {
+    pub max_records: usize,
+    pub max_bytes: usize,
+    pub max_group_members: usize,
+    pub critical_reserve: usize,
+    pub max_removals: usize,
+    pub preview_miner: Hash,
+}
+impl PoolLimits {
+    pub(super) fn validate(&self) -> Result<()> {
+        ensure(
+            (1..=256).contains(&self.max_records)
+                && (1..=524288).contains(&self.max_bytes)
+                && (1..=16).contains(&self.max_group_members)
+                && self.max_group_members <= self.max_records
+                && self.critical_reserve < self.max_records
+                && (1..=4096).contains(&self.max_removals)
+                && self.preview_miner != [0; 32],
+            "POOL_LIMITS",
+        )
+    }
+}
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+pub enum PoolState {
+    Queued,
+    SequenceConsumed,
+    Expired,
+    Blocked,
+}
+impl PoolState {
+    fn code(&self) -> u8 {
+        match self {
+            Self::Queued => 0,
+            Self::SequenceConsumed => 1,
+            Self::Expired => 2,
+            Self::Blocked => 3,
+        }
+    }
+    fn decode(code: u8) -> Result<Self> {
+        match code {
+            0 => Ok(Self::Queued),
+            1 => Ok(Self::SequenceConsumed),
+            2 => Ok(Self::Expired),
+            3 => Ok(Self::Blocked),
+            _ => Err("POOL_STATE".into()),
+        }
+    }
+}
+#[derive(Debug, Clone, Serialize)]
+pub struct PoolGroupStatus {
+    pub group: String,
+    pub digests: Vec<String>,
+    pub state: PoolState,
+    pub reason: String,
+    pub raw_bytes: usize,
+}
+/// Fixed-size local diagnostics for cache eviction, never a revocation or finality proof.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+pub struct PoolGcSummary {
+    pub evicted_groups: u64,
+    pub evicted_records: u64,
+    pub evicted_raw_bytes: u64,
+    pub history_head: String,
+}
+#[derive(Debug, Clone, Serialize)]
+pub struct PoolStatus {
+    pub profile: &'static str,
+    pub context: String,
+    pub parent: String,
+    pub generation: u64,
+    pub checked_parent: Option<String>,
+    pub checked_generation: Option<u64>,
+    pub classification_current: bool,
+    pub retained_records: usize,
+    pub retained_bytes: usize,
+    pub local_removals: usize,
+    pub gc: PoolGcSummary,
+    pub groups: Vec<PoolGroupStatus>,
+    pub scope: &'static str,
+}
+#[derive(Debug, Clone, Serialize)]
+pub struct PoolReceipt {
+    pub group: String,
+    pub duplicate: bool,
+    pub state: PoolState,
+    /// Total reconstructed pending-prefix admissions, not just submitted members.
+    pub typed_gate_admissions: usize,
+    /// Total metadata popped from that actual M05 prefix queue.
+    pub typed_gate_ready_metadata: usize,
+    pub scope: &'static str,
+}
+#[derive(Debug, Clone)]
+pub struct PoolBatch {
+    pub parent: Hash,
+    pub generation: u64,
+    pub context: Hash,
+    pub preview_miner: Hash,
+    pub transactions: Vec<Vec<u8>>,
+    pub groups: Vec<Hash>,
+    pub typed_gate_admissions: usize,
+}
+
+struct Row {
+    digest: Hash,
+    sender: Hash,
+    nonce: u64,
+    expiry: u64,
+    raw: Vec<u8>,
+}
+struct Group {
+    id: Hash,
+    status: PoolState,
+    reason: String,
+    rows: Vec<Row>,
+}
+pub(super) struct ContinuousPoolGroupSnapshot {
+    pub id: Hash,
+    pub state: PoolState,
+    pub reason: String,
+    pub raws: Vec<Vec<u8>>,
+}
+/// Private immutable adapter: resources are derived from the existing command and
+/// byte fee, never a fabricated signed gas field or arbitrary-program cost claim.
+struct NativePoolView<'raw> {
+    raw: &'raw [u8],
+    // The PQ branch never constructs a legacy Ed25519 envelope.
+    legacy: Option<Envelope>,
+    pq_profile: Option<pq2_wire::AccountProfile>,
+    digest: CanonicalTxDigest,
+    signer: CanonicalSignerId,
+    fee: u64,
+    sender: Hash,
+    nonce: u64,
+    expiry: u64,
+    fee_limit: u64,
+    tag: u8,
+    statement: Option<[u8; 48]>,
+}
+fn max_body_bytes(cfg: &Config) -> usize {
+    if pq2::enabled(cfg) {
+        pq2_wire::MAX_BYTES
+    } else if pq::enabled(cfg) {
+        pq_wire::MAX_BYTES
+    } else {
+        2048
+    }
+}
+fn pool_profile(cfg: &Config) -> &'static str {
+    if pq2::quota_v3_enabled(cfg) {
+        "native-local-queued-npq3-v1"
+    } else if pq2::enabled(cfg) {
+        "native-local-queued-npq2-v1"
+    } else if pq::enabled(cfg) {
+        "native-local-queued-npq1-v1"
+    } else {
+        LOCAL_POOL_PROFILE
+    }
+}
+fn minimum_fee(tag: u8, bytes: usize, cfg: &Config) -> Result<u64> {
+    let base = if pq2::enabled(cfg) && tag >= pq2_wire::REGISTER {
+        cfg.params["native_pq_v2_base_fees"][tag.to_string()]
+            .as_u64()
+            .ok_or("POOL_TAG")?
+    } else {
+        *cfg.fees.get(usize::from(tag)).ok_or("POOL_TAG")?
+    };
+    let byte = cfg.params["byte_fee_units"].as_u64().ok_or("CONFIG")?;
+    base.checked_add((bytes as u64).checked_mul(byte).ok_or("POOL_FEE")?)
+        .ok_or_else(|| "POOL_FEE".into())
+}
+impl<'raw> NativePoolView<'raw> {
+    fn new(raw: &'raw [u8], cfg: &Config) -> Result<Self> {
+        ensure(
+            !raw.is_empty() && raw.len() <= max_body_bytes(cfg),
+            "POOL_BODY_LIMIT",
+        )?;
+        let (legacy, digest, sender, nonce, expiry, fee_limit, tag, statement) =
+            if pq2::enabled(cfg) {
+                let envelope = pq2::decode_for_config(raw, cfg)?;
+                ensure(
+                    envelope.common.context == pq2::context(cfg)?,
+                    "POOL_PQ2_CONTEXT",
+                )?;
+                (
+                    None,
+                    envelope.wire_id(),
+                    envelope.common.account,
+                    envelope.common.nonce,
+                    envelope.common.expires_at,
+                    envelope.common.max_fee,
+                    envelope.kind,
+                    Some(envelope.statement_id()),
+                )
+            } else if pq::enabled(cfg) {
+                let envelope =
+                    pq_wire::UnverifiedEnvelope::decode(raw).map_err(|_| "POOL_PQ_ENCODING")?;
+                let tx = envelope.transfer();
+                let statement = envelope
+                    .statement_id(pq::context(cfg)?)
+                    .map_err(|_| "POOL_PQ_CONTEXT")?;
+                (
+                    None,
+                    envelope.wire_id(),
+                    tx.sender,
+                    tx.nonce,
+                    tx.expires_at,
+                    tx.max_fee,
+                    1,
+                    Some(statement),
+                )
+            } else {
+                let tx = Envelope::decode(raw).map_err(|_| "POOL_ENCODING")?;
+                let facts = (
+                    tx.id().map_err(|_| "POOL_ENCODING")?,
+                    tx.sender,
+                    tx.nonce,
+                    tx.expiry,
+                    tx.fee_limit,
+                    tx.tag,
+                );
+                (
+                    Some(tx),
+                    facts.0,
+                    facts.1,
+                    facts.2,
+                    facts.3,
+                    facts.4,
+                    facts.5,
+                    None,
+                )
+            };
+        Ok(Self {
+            raw,
+            legacy,
+            pq_profile: pq2::enabled(cfg)
+                .then(|| pq2::account_profile(cfg))
+                .transpose()?,
+            digest: CanonicalTxDigest::from_bytes(digest).map_err(|_| "POOL_ENCODING")?,
+            signer: CanonicalSignerId::from_bytes(sender).map_err(|_| "POOL_SIGNER")?,
+            fee: minimum_fee(tag, raw.len(), cfg)?,
+            sender,
+            nonce,
+            expiry,
+            fee_limit,
+            tag,
+            statement,
+        })
+    }
+}
+impl SignedEnvelopeView for NativePoolView<'_> {
+    fn canonical_digest(&self) -> CanonicalTxDigest {
+        self.digest
+    }
+    fn canonical_signer_id(&self) -> std::result::Result<CanonicalSignerId, AdmissionReject> {
+        Ok(self.signer)
+    }
+    fn canonical_body(&self) -> &[u8] {
+        self.raw
+    }
+    fn nonce(&self) -> u64 {
+        self.nonce
+    }
+    fn fee_limit(&self) -> u128 {
+        u128::from(self.fee_limit)
+    }
+    fn resource_limits(&self) -> ResourceLimits {
+        ResourceLimits {
+            max_gas: self.fee,
+            max_bytes: self.raw.len() as u64,
+        }
+    }
+    fn validate_canonical(&self) -> std::result::Result<(), AdmissionReject> {
+        let valid = match &self.legacy {
+            Some(tx) => {
+                tx.encode().ok().as_deref() == Some(self.raw)
+                    && tx.id().ok() == Some(self.digest.as_bytes())
+                    && tx.sender == self.signer.as_bytes()
+            }
+            None if self.pq_profile.is_some() => pq2_wire::UnverifiedEnvelope::decode_for_profile(
+                self.raw,
+                self.pq_profile.expect("selected account profile"),
+            )
+            .is_ok_and(|envelope| {
+                envelope.wire_id() == self.digest.as_bytes()
+                    && envelope.common.account == self.signer.as_bytes()
+                    && envelope.common.nonce == self.nonce
+                    && envelope.common.expires_at == self.expiry
+                    && envelope.common.max_fee == self.fee_limit
+                    && envelope.kind == self.tag
+                    && Some(envelope.statement_id()) == self.statement
+            }),
+            None => pq_wire::UnverifiedEnvelope::decode(self.raw).is_ok_and(|envelope| {
+                let tx = envelope.transfer();
+                envelope.wire_id() == self.digest.as_bytes()
+                    && tx.sender == self.signer.as_bytes()
+                    && tx.nonce == self.nonce
+                    && tx.expires_at == self.expiry
+                    && tx.max_fee == self.fee_limit
+            }),
+        };
+        if valid {
+            Ok(())
+        } else {
+            Err(AdmissionReject::CanonicalValidationFailed)
+        }
+    }
+}
+/// Borrowed identities keep the actual parent and complete configuration immutable.
+/// A different allocation, even with equal bytes, requires a fresh native check.
+#[derive(Clone, Copy)]
+struct SignatureContext<'a> {
+    timestamp: Option<u64>,
+    height: u64,
+    parent: Hash,
+    state: &'a State,
+    cfg: &'a Config,
+}
+/// Minted only by a successful native main-envelope check in the real M05 hook.
+/// It proves no replay, lane, fee, funds, M06 or persistence decision. These private
+/// facts are retained only after the entire candidate's M05/M06 preview succeeds.
+struct CheckedNativeSignature<'a> {
+    context: SignatureContext<'a>,
+    raw: Vec<u8>,
+}
+impl CheckedNativeSignature<'_> {
+    fn matches(&self, context: SignatureContext<'_>, raw: &[u8]) -> bool {
+        self.context.timestamp == context.timestamp
+            && self.context.height == context.height
+            && self.context.parent == context.parent
+            && std::ptr::eq(self.context.state, context.state)
+            && std::ptr::eq(self.context.cfg, context.cfg)
+            && self.raw == raw
+    }
+}
+#[cfg(test)]
+thread_local! {
+    // Actual calls at the native M05 validation boundary, not inferred admissions.
+    static M05_MAIN_VALIDATIONS: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
+}
+struct Hooks<'a, 'reuse> {
+    context: SignatureContext<'a>,
+    reused: Option<&'reuse CheckedNativeSignature<'a>>,
+    checked: Option<CheckedNativeSignature<'a>>,
+    expected_nonce: u64,
+}
+impl SignedAdmissionHooks<NativePoolView<'_>> for Hooks<'_, '_> {
+    fn verify_signature(
+        &mut self,
+        view: &NativePoolView<'_>,
+        metadata: &SignedEnvelopeMetadata,
+    ) -> std::result::Result<(), AdmissionReject> {
+        let reused = self
+            .reused
+            .is_some_and(|checked| checked.matches(self.context, view.raw));
+        if !reused {
+            #[cfg(test)]
+            M05_MAIN_VALIDATIONS.with(|count| count.set(count.get() + 1));
+            if let Some(legacy) = &view.legacy {
+                let checked = pon_executor::validate_main_envelope(
+                    view.raw,
+                    self.context.height,
+                    self.context.cfg,
+                )
+                .map_err(|_| AdmissionReject::SignatureRejected)?;
+                if &checked != legacy {
+                    return Err(AdmissionReject::CanonicalValidationFailed);
+                }
+            } else {
+                let timestamp = self
+                    .context
+                    .timestamp
+                    .ok_or(AdmissionReject::SignatureRejected)?;
+                let (wire_id, statement_id, sender) =
+                    check_pq_signature(self.context.state, view.raw, timestamp, self.context.cfg)
+                        .map_err(|_| AdmissionReject::SignatureRejected)?;
+                if wire_id != view.digest.as_bytes()
+                    || sender != view.sender
+                    || Some(statement_id) != view.statement
+                {
+                    return Err(AdmissionReject::CanonicalValidationFailed);
+                }
+            }
+        }
+        if metadata.body() != view.raw
+            || metadata.digest() != view.digest
+            || metadata.signer_id() != view.signer
+        {
+            return Err(AdmissionReject::CanonicalValidationFailed);
+        }
+        if !reused {
+            self.checked = Some(CheckedNativeSignature {
+                context: self.context,
+                raw: view.raw.to_vec(),
+            });
+        }
+        Ok(())
+    }
+    fn check_replay(
+        &mut self,
+        metadata: &SignedEnvelopeMetadata,
+    ) -> std::result::Result<(), AdmissionReject> {
+        if metadata.nonce() != self.expected_nonce {
+            return Err(AdmissionReject::Replay);
+        }
+        Ok(())
+    }
+    fn recheck(
+        &mut self,
+        metadata: &SignedEnvelopeMetadata,
+    ) -> std::result::Result<(), AdmissionReject> {
+        if metadata.fee_limit() < u128::from(metadata.resource_limits().max_gas)
+            || metadata.resource_limits().max_bytes > max_body_bytes(self.context.cfg) as u64
+        {
+            return Err(AdmissionReject::RecheckFailed);
+        }
+        Ok(())
+    }
+}
+fn chain_nonce(state: &State, sender: Hash) -> Result<u64> {
+    match state.get(&format!("account:{}", hex::encode(sender))) {
+        None => Ok(0),
+        Some(value) => value["nonce"].as_u64().ok_or_else(|| "STATE_NONCE".into()),
+    }
+}
+/// Invocation-local exact raw bindings. No signature/state result is cached.
+/// Duplicate digests refuse before replacement, and ready bodies consume one binding.
+struct RawBindings<'a> {
+    remaining: BTreeMap<Hash, &'a [u8]>,
+    max_records: usize,
+}
+impl<'a> RawBindings<'a> {
+    fn new(max_records: usize) -> Self {
+        Self {
+            remaining: BTreeMap::new(),
+            max_records,
+        }
+    }
+    fn insert(&mut self, digest: Hash, raw: &'a [u8]) -> Result<()> {
+        ensure(
+            !self.remaining.contains_key(&digest),
+            "POOL_DUPLICATE_MEMBER",
+        )?;
+        ensure(self.remaining.len() < self.max_records, "POOL_RECORD_LIMIT")?;
+        self.remaining.insert(digest, raw);
+        Ok(())
+    }
+    fn consume(&mut self, digest: Hash, body: &[u8]) -> Result<()> {
+        let raw = self.remaining.remove(&digest).ok_or("POOL_TYPED_BINDING")?;
+        ensure(body == raw, "POOL_TYPED_BINDING")
+    }
+    fn is_empty(&self) -> bool {
+        self.remaining.is_empty()
+    }
+}
+/// Real M05 metadata and strict M06 whole-prefix execution, all against one parent.
+/// M05 lane capacity is reused; the durable owner preserves complete group order
+/// instead of pretending its lane pop order can split or reorder control bundles.
+fn validate_pending(
+    raws: &[Vec<u8>],
+    height: u64,
+    state: &State,
+    parent: Hash,
+    cfg: &Config,
+    limits: &PoolLimits,
+    node: &Node,
+) -> Result<usize> {
+    node.owner_preview_available()?;
+    let owner_permit = node.continuous_pool_validation_permit()?;
+    let progress = |_| {
+        owner_permit
+            .as_ref()
+            .map_or(Ok(()), |permit| permit.progress())
+    };
+    let control = ExecutionControl::new(&progress, &());
+    PendingPreview {
+        timestamp: node.pool_preview_timestamp(parent)?,
+        height,
+        state,
+        parent,
+        cfg,
+        limits,
+        node,
+        checked: None,
+        prefix: None,
+        signatures: Vec::new(),
+        parent_observation: None,
+        control: &control,
+        owner_permit: owner_permit.as_ref(),
+    }
+    .validate(raws)
+    .map_err(PoolPreviewError::into_error)
+}
+
+/// This value never escapes one owner operation. A checked prefix retains only
+/// same-block pre-reward scratch; completed outputs never become a new parent.
+enum PoolPreviewError {
+    Native(crate::Error),
+    Cancelled(crate::Error),
+}
+impl From<crate::Error> for PoolPreviewError {
+    fn from(error: crate::Error) -> Self {
+        Self::Native(error)
+    }
+}
+impl From<&str> for PoolPreviewError {
+    fn from(error: &str) -> Self {
+        Self::Native(error.into())
+    }
+}
+impl From<String> for PoolPreviewError {
+    fn from(error: String) -> Self {
+        Self::Native(error.into())
+    }
+}
+impl PoolPreviewError {
+    fn into_error(self) -> crate::Error {
+        match self {
+            Self::Native(error) | Self::Cancelled(error) => error,
+        }
+    }
+}
+struct PendingPreview<'state, 'operation> {
+    timestamp: Option<u64>,
+    height: u64,
+    state: &'state State,
+    parent: Hash,
+    cfg: &'state Config,
+    limits: &'operation PoolLimits,
+    node: &'operation Node,
+    checked: Option<CheckedExecutionParent<'state>>,
+    prefix: Option<CheckedTransactionPrefix<'state>>,
+    signatures: Vec<CheckedNativeSignature<'state>>,
+    parent_observation: Option<CommitmentObservation>,
+    control: &'operation ExecutionControl<'operation, crate::Error>,
+    owner_permit: Option<&'operation super::OwnerPoolPermit>,
+}
+impl PendingPreview<'_, '_> {
+    fn validate(&mut self, raws: &[Vec<u8>]) -> std::result::Result<usize, PoolPreviewError> {
+        self.node
+            .recheck_owner_pool(self.owner_permit)
+            .map_err(PoolPreviewError::Cancelled)?;
+        if let Some(permit) = self.owner_permit {
+            permit
+                .check_prefix(raws)
+                .map_err(PoolPreviewError::Cancelled)?;
+        }
+        let Self {
+            timestamp,
+            height,
+            state,
+            parent,
+            cfg,
+            limits,
+            node,
+            ..
+        } = *self;
+        let signature_context = SignatureContext {
+            timestamp,
+            height,
+            parent,
+            state,
+            cfg,
+        };
+        // A digest or matching suffix is insufficient: reuse requires the entire
+        // previously accepted raw prefix and the same immutable operation context.
+        // A mismatch selects full M05 checks, preserving their error precedence
+        // before the unchanged M06 PREFIX_BINDING check.
+        let reuse = if self.signatures.len() <= raws.len()
+            && self
+                .signatures
+                .iter()
+                .zip(raws)
+                .all(|(checked, raw)| checked.matches(signature_context, raw))
+        {
+            self.signatures.len()
+        } else {
+            0
+        };
+        let mut appended_signatures = Vec::with_capacity(raws.len() - reuse);
+        if is_pq(cfg) {
+            let total = raws.iter().try_fold(0_usize, |sum, raw| {
+                sum.checked_add(raw.len()).ok_or("POOL_BYTE_LIMIT")
+            })?;
+            ensure(
+                total <= limits.max_bytes && total <= pq_wire::MAX_TRANSACTION_BYTES,
+                "POOL_BYTE_LIMIT",
+            )?;
+        }
+        let mut gate = TypedAdmissionGate::new(
+            limits.max_records,
+            limits.critical_reserve,
+            max_body_bytes(cfg) as u64,
+        );
+        let mut next = BTreeMap::new();
+        let mut exhausted = BTreeSet::new();
+        let mut bindings = RawBindings::new(limits.max_records);
+        for (index, raw) in raws.iter().enumerate() {
+            (self.control.progress)(ExecutionProgress::BeforePrepare { index })
+                .map_err(PoolPreviewError::Cancelled)?;
+            let view = NativePoolView::new(raw, cfg)?;
+            bindings.insert(view.digest.as_bytes(), raw)?;
+            ensure(!exhausted.contains(&view.sender), "NONCE_OVERFLOW")?;
+            let expected = match next.get(&view.sender) {
+                Some(value) => *value,
+                None => chain_nonce(state, view.sender)?
+                    .checked_add(1)
+                    .ok_or("NONCE_OVERFLOW")?,
+            };
+            let mut hooks = Hooks {
+                context: signature_context,
+                reused: self.signatures.get(index).filter(|_| index < reuse),
+                checked: None,
+                expected_nonce: expected,
+            };
+            let class = if (14..=22).contains(&view.tag) {
+                IngressClass::Critical
+            } else {
+                IngressClass::Normal
+            };
+            match gate.admit_signed(&view, class, &mut hooks) {
+                TypedAdmitOutcome::Accepted => {}
+                TypedAdmitOutcome::Backpressured => return Err("POOL_BACKPRESSURED".into()),
+                TypedAdmitOutcome::Duplicate => return Err("POOL_DUPLICATE_MEMBER".into()),
+                TypedAdmitOutcome::Rejected(reason) => {
+                    return Err(format!("POOL_TYPED:{reason:?}").into())
+                }
+            }
+            if index >= reuse {
+                appended_signatures.push(hooks.checked.take().ok_or("POOL_TYPED_BINDING")?);
+            }
+            if let Some(successor) = expected.checked_add(1) {
+                next.insert(view.sender, successor);
+            } else {
+                exhausted.insert(view.sender);
+            }
+            (self.control.progress)(ExecutionProgress::AfterPrepare { index })
+                .map_err(PoolPreviewError::Cancelled)?;
+        }
+        let mut ready = 0;
+        while let Some(metadata) = gate.pop_ready() {
+            bindings.consume(metadata.digest().as_bytes(), metadata.body())?;
+            ready += 1;
+        }
+        ensure(
+            bindings.is_empty() && ready == raws.len(),
+            "POOL_TYPED_BINDING",
+        )?;
+        // Reserve before M06 can publish its new in-memory prefix. Afterwards,
+        // signature publication moves initialized values without allocating.
+        self.signatures.reserve(appended_signatures.len());
+        // Bind lazily after the first successful typed gate. Prefixes retain one
+        // immutable actual-parent binding and one same-block unfinalized state.
+        if self.checked.is_none() && self.prefix.is_none() {
+            let prior = node.cached_parent(parent)?;
+            let checked =
+                node.checked_commitment(state, node.record(parent)?.root, prior.as_ref())?;
+            self.parent_observation = Some(checked.observation.clone());
+            let binding = CheckedExecutionParent::bind(
+                state,
+                checked.root,
+                checked.snapshot.as_ref(),
+                CacheLimits::default(),
+            );
+            self.checked = Some(match binding {
+                Ok(binding) => binding,
+                Err("COMMITMENT_PARENT" | "COMMITMENT_ROOT") => {
+                    // Match execute_derived's defensive full-root retry, even though
+                    // the just-checked snapshot and immutable State normally agree.
+                    node.invalidate_commitment();
+                    CheckedExecutionParent::bind(
+                        state,
+                        node.record(parent)?.root,
+                        None,
+                        CacheLimits::default(),
+                    )?
+                }
+                Err(error) => return Err(error.into()),
+            });
+        }
+        // Preserve the existing diagnostic observation if execution itself fails.
+        *node.commitment_observation.borrow_mut() = self.parent_observation.clone();
+        if self.prefix.is_none() {
+            self.prefix = Some(
+                self.checked
+                    .take()
+                    .ok_or("POOL_PARENT_BINDING")?
+                    .into_prefix_with_control(
+                        PrefixContext {
+                            timestamp,
+                            height,
+                            miner: limits.preview_miner,
+                            parent_id: parent,
+                        },
+                        cfg,
+                        self.control,
+                    )
+                    .map_err(|error| match error {
+                        ExecutionError::Relation(error) => PoolPreviewError::Native(error.into()),
+                        ExecutionError::Cancelled(error) => PoolPreviewError::Cancelled(error),
+                    })?,
+            );
+        }
+        let output = self
+            .prefix
+            .as_mut()
+            .ok_or("POOL_PARENT_BINDING")?
+            .execute_with_control(raws, self.control)
+            .map_err(|error| match error {
+                ExecutionError::Relation(error) => PoolPreviewError::Native(error.into()),
+                ExecutionError::Cancelled(error) => PoolPreviewError::Cancelled(error),
+            })?;
+        *node.commitment_observation.borrow_mut() = Some(output.commitment.observation);
+        if reuse != self.signatures.len() {
+            self.signatures.clear();
+        }
+        self.signatures.append(&mut appended_signatures);
+        Ok(ready)
+    }
+}
+
+/// Actual parent reconstructed for this one pool owner call. Pool writes do not
+/// change this State. A new owner call must reconstruct and verify it again.
+struct PoolParent {
+    timestamp: Option<u64>,
+    id: Hash,
+    generation: u64,
+    height: u64,
+    root: Hash,
+    state: State,
+    // Owned outside Node so its immutable borrow can survive pool-only SQL writes.
+    cfg: Config,
+}
+
+struct PreviewBinding<'a> {
+    checked: Option<CheckedExecutionParent<'a>>,
+    prefix: Option<CheckedTransactionPrefix<'a>>,
+    signatures: Vec<CheckedNativeSignature<'a>>,
+    observation: Option<CommitmentObservation>,
+}
+
+impl Node {
+    /// Explicit opt-in on a fresh DDL identity; no import or migration of older pools.
+    pub fn enable_local_mempool(&mut self, limits: PoolLimits) -> Result<Hash> {
+        ensure(
+            !trnm_mvcc_fee::growth_profile_v2::enabled(&self.settings.app),
+            "GROWTH_REFERENCE_POOL_UNSUPPORTED",
+        )?;
+        self.namespace()?;
+        limits.validate()?;
+        if self.settings.is_native_pq() {
+            self.storage_context()?;
+            let parent = self.active()?.0;
+            validate_pq_block(
+                &self.state_at(parent)?,
+                &[],
+                limits.preview_miner,
+                self.pool_preview_timestamp(parent)?,
+                &self.settings.app,
+            )?;
+        }
+        let raw = serde_json::to_vec(&limits)?;
+        let context = hash(
+            pool_profile(&self.settings.app).as_bytes(),
+            &[
+                &self.settings.network(),
+                &self.settings.parameters(),
+                &self.settings.genesis(),
+                &raw,
+            ],
+        );
+        let owner_permit =
+            self.begin_owner_pool("enable-pool", std::slice::from_ref(&raw), context)?;
+        let old: Option<(Vec<u8>, Vec<u8>)> = self
+            .db
+            .query_row(
+                "SELECT context,limits FROM local_pool_metadata WHERE singleton=1",
+                [],
+                |r| Ok((r.get(0)?, r.get(1)?)),
+            )
+            .optional()?;
+        if let Some((saved, policy)) = old {
+            ensure(saved == context && policy == raw, "POOL_CONTEXT")?
+        } else if let Some(permit) = &owner_permit {
+            self.recheck_owner_pool(Some(permit))?;
+            let parent = bytes32(
+                hex::decode(&permit.facts.parent)
+                    .map_err(|_| crate::Error::from("OWNER_POOL_PARENT_HEX"))?,
+            )?;
+            let generation = permit.facts.generation;
+            let tx = self
+                .db
+                .transaction_with_behavior(TransactionBehavior::Immediate)?;
+            fence(&tx, parent, generation)?;
+            permit.progress()?;
+            tx.execute(
+                "INSERT INTO local_pool_metadata(singleton,context,limits) VALUES(1,?,?)",
+                params![context.as_slice(), raw],
+            )?;
+            permit.progress()?;
+            tx.commit()?;
+        } else {
+            self.db.execute(
+                "INSERT INTO local_pool_metadata(singleton,context,limits) VALUES(1,?,?)",
+                params![context.as_slice(), raw],
+            )?;
+        }
+        if let Some(permit) = &owner_permit {
+            let actual = self.pool_parent()?;
+            let progress = |_| permit.progress();
+            self.pool_reconcile_parent_with_control(
+                &limits,
+                &actual,
+                &ExecutionControl::new(&progress, &()),
+                Some(permit),
+            )?;
+        } else {
+            self.pool_reconcile()?;
+        }
+        Ok(context)
+    }
+    fn pool_policy(&self) -> Result<(Hash, PoolLimits)> {
+        ensure(
+            !trnm_mvcc_fee::growth_profile_v2::enabled(&self.settings.app),
+            "GROWTH_REFERENCE_POOL_UNSUPPORTED",
+        )?;
+        self.namespace()?;
+        if self.settings.is_native_pq() {
+            self.storage_context()?;
+        }
+        let (context, raw): (Vec<u8>, Vec<u8>) = self
+            .db
+            .query_row(
+                "SELECT context,limits FROM local_pool_metadata WHERE singleton=1",
+                [],
+                |r| Ok((r.get(0)?, r.get(1)?)),
+            )
+            .optional()?
+            .ok_or("POOL_NOT_ENABLED")?;
+        let limits: PoolLimits = serde_json::from_slice(&raw)?;
+        limits.validate()?;
+        ensure(serde_json::to_vec(&limits)? == raw, "POOL_POLICY")?;
+        let expected = hash(
+            pool_profile(&self.settings.app).as_bytes(),
+            &[
+                &self.settings.network(),
+                &self.settings.parameters(),
+                &self.settings.genesis(),
+                &raw,
+            ],
+        );
+        ensure(context == expected, "POOL_CONTEXT")?;
+        Ok((bytes32(context)?, limits))
+    }
+    pub(super) fn continuous_pool_configuration(&self) -> Result<(Hash, PoolLimits)> {
+        self.pool_policy()
+    }
+    pub(super) fn continuous_pool_actual_groups(
+        &self,
+        limits: &PoolLimits,
+    ) -> Result<Vec<(Hash, Vec<Vec<u8>>)>> {
+        Ok(self
+            .pool_groups(limits)?
+            .into_iter()
+            .map(|g| (g.id, g.rows.into_iter().map(|r| r.raw).collect()))
+            .collect())
+    }
+    pub(super) fn continuous_pool_group_snapshot(
+        &self,
+        limits: &PoolLimits,
+    ) -> Result<Vec<ContinuousPoolGroupSnapshot>> {
+        Ok(self
+            .pool_groups(limits)?
+            .into_iter()
+            .map(|g| ContinuousPoolGroupSnapshot {
+                id: g.id,
+                state: g.status,
+                reason: g.reason,
+                raws: g.rows.into_iter().map(|r| r.raw).collect(),
+            })
+            .collect())
+    }
+    /// Read actual bounded SQL groups, not a retained successor State. Search
+    /// checks the exact chosen queued prefix again in its own paid scope.
+    pub(super) fn continuous_pool_selected_raws(
+        &self,
+        limits: &PoolLimits,
+        selected: &[String],
+    ) -> Result<Vec<Vec<u8>>> {
+        let groups = self.pool_groups(limits)?;
+        let queued: Vec<_> = groups
+            .iter()
+            .filter(|g| g.status == PoolState::Queued)
+            .collect();
+        ensure(
+            selected.len() <= queued.len(),
+            "OWNER_CONTINUOUS_POOL_SELECTED",
+        )?;
+        let chosen = &queued[..selected.len()];
+        ensure(
+            chosen
+                .iter()
+                .map(|g| hex::encode(g.id))
+                .eq(selected.iter().cloned()),
+            "OWNER_CONTINUOUS_POOL_SELECTED",
+        )?;
+        Ok(chosen
+            .iter()
+            .flat_map(|g| g.rows.iter().map(|row| row.raw.clone()))
+            .collect())
+    }
+    fn pool_gc_snapshot(&self) -> Result<PoolGcSummary> {
+        let (groups, records, bytes, head): (Vec<u8>, Vec<u8>, Vec<u8>, Vec<u8>) = self.db.query_row(
+            "SELECT gc_groups,gc_records,gc_bytes,gc_head FROM local_pool_metadata WHERE singleton=1",
+            [], |r| Ok((r.get(0)?,r.get(1)?,r.get(2)?,r.get(3)?)),
+        )?;
+        let decode = |raw: Vec<u8>| -> Result<u64> {
+            Ok(u64::from_le_bytes(
+                raw.try_into().map_err(|_| "POOL_GC_STATE")?,
+            ))
+        };
+        let summary = PoolGcSummary {
+            evicted_groups: decode(groups)?,
+            evicted_records: decode(records)?,
+            evicted_raw_bytes: decode(bytes)?,
+            history_head: hex::encode(bytes32(head)?),
+        };
+        ensure(
+            (summary.evicted_groups == 0
+                && summary.evicted_records == 0
+                && summary.evicted_raw_bytes == 0)
+                == (summary.history_head == hex::encode([0u8; 32])),
+            "POOL_GC_STATE",
+        )?;
+        Ok(summary)
+    }
+    fn pool_groups(&self, limits: &PoolLimits) -> Result<Vec<Group>> {
+        let (total, raw_bytes): (usize, usize) = self.db.query_row(
+            "SELECT COUNT(*),COALESCE(SUM(length(raw)),0) FROM local_pool_rows",
+            [],
+            |r| Ok((r.get(0)?, r.get(1)?)),
+        )?;
+        ensure(
+            total <= limits.max_records && raw_bytes <= limits.max_bytes,
+            "POOL_STORAGE_LIMIT",
+        )?;
+        let mut statement = self
+            .db
+            .prepare("SELECT id,status,reason FROM local_pool_groups ORDER BY ordinal LIMIT ?")?;
+        let groups = statement
+            .query_map([limits.max_records as u32 + 1], |r| {
+                Ok((
+                    r.get::<_, Vec<u8>>(0)?,
+                    r.get::<_, u8>(1)?,
+                    r.get::<_, String>(2)?,
+                ))
+            })?
+            .collect::<std::result::Result<Vec<_>, _>>()?;
+        ensure(groups.len() <= limits.max_records, "POOL_STORAGE_LIMIT")?;
+        if self.settings.is_native_pq() {
+            let mapped: usize = self.db.query_row(
+                statement_sql(&self.settings.app, StatementQuery::CountActive),
+                [],
+                |r| r.get(0),
+            )?;
+            let removed: usize =
+                self.db
+                    .query_row("SELECT COUNT(*) FROM local_pool_removals", [], |r| r.get(0))?;
+            let removed_mapped: usize = self.db.query_row(
+                statement_sql(&self.settings.app, StatementQuery::CountRemoved),
+                [],
+                |r| r.get(0),
+            )?;
+            let orphaned: bool = self.db.query_row(
+                statement_sql(&self.settings.app, StatementQuery::HasRemovedOrphan),
+                [],
+                |r| r.get(0),
+            )?;
+            ensure(
+                mapped == total
+                    && removed_mapped == removed
+                    && !orphaned
+                    && removed <= limits.max_removals,
+                "POOL_PQ_STATEMENT_BINDING",
+            )?;
+        }
+        let mut out = Vec::new();
+        let mut count = 0;
+        let mut bytes = 0;
+        for (id, status, reason) in groups {
+            ensure(reason.len() <= 128, "POOL_STATE")?;
+            let mut stmt=self.db.prepare("SELECT digest,sender,nonce,expiry,fee_limit,raw,position FROM local_pool_rows WHERE group_id=? ORDER BY position")?;
+            let rows = stmt
+                .query_map([id.as_slice()], |r| {
+                    Ok((
+                        r.get::<_, Vec<u8>>(0)?,
+                        r.get::<_, Vec<u8>>(1)?,
+                        r.get::<_, Vec<u8>>(2)?,
+                        r.get::<_, Vec<u8>>(3)?,
+                        r.get::<_, Vec<u8>>(4)?,
+                        r.get::<_, Vec<u8>>(5)?,
+                        r.get::<_, u32>(6)?,
+                    ))
+                })?
+                .collect::<std::result::Result<Vec<_>, _>>()?;
+            ensure(
+                !rows.is_empty() && rows.len() <= limits.max_group_members,
+                "POOL_GROUP",
+            )?;
+            let mut decoded = Vec::new();
+            let mut ids = Vec::new();
+            for (expected_position, (digest, sender, nonce, expiry, fee_limit, raw, position)) in
+                rows.into_iter().enumerate()
+            {
+                ensure(
+                    position as usize == expected_position,
+                    "POOL_GROUP_POSITION",
+                )?;
+                let view = NativePoolView::new(&raw, &self.settings.app)?;
+                ensure(
+                    digest == view.digest.as_bytes()
+                        && sender == view.sender
+                        && nonce == view.nonce.to_le_bytes()
+                        && expiry == view.expiry.to_le_bytes()
+                        && fee_limit == view.fee_limit.to_le_bytes(),
+                    "POOL_STORAGE_BINDING",
+                )?;
+                if let Some(statement) = view.statement {
+                    let retained: Vec<u8> = self.db.query_row(
+                        statement_sql(&self.settings.app, StatementQuery::ReadPosition),
+                        params![id.as_slice(), position],
+                        |r| r.get(0),
+                    )?;
+                    ensure(retained == statement, "POOL_PQ_STATEMENT_BINDING")?;
+                }
+                count += 1;
+                bytes += raw.len();
+                ensure(
+                    count <= limits.max_records && bytes <= limits.max_bytes,
+                    "POOL_STORAGE_LIMIT",
+                )?;
+                ids.extend_from_slice(&digest);
+                decoded.push(Row {
+                    digest: bytes32(digest)?,
+                    sender: bytes32(sender)?,
+                    nonce: view.nonce,
+                    expiry: view.expiry,
+                    raw,
+                });
+            }
+            ensure(
+                hash(b"native-local-pool-group-v2", &[&ids]) == bytes32(id.clone())?,
+                "POOL_GROUP_BINDING",
+            )?;
+            out.push(Group {
+                id: bytes32(id)?,
+                status: PoolState::decode(status)?,
+                reason,
+                rows: decoded,
+            });
+        }
+        ensure(count == total && bytes == raw_bytes, "POOL_STORAGE_BINDING")?;
+        Ok(out)
+    }
+    /// Classification is branch-relative. SequenceConsumed does not assert that
+    /// this exact transaction was mined or confirmed; use normal chain observation.
+    pub fn pool_reconcile(&mut self) -> Result<PoolStatus> {
+        ensure(
+            self.mining_owner.is_none(),
+            "OWNER_MINING_POOL_PURPOSE_PENDING",
+        )?;
+        self.owner_pool_configured()?;
+        let (context, limits) = self.pool_policy()?;
+        let owner_permit = self.begin_owner_pool("reconcile", &[], context)?;
+        let actual = self.pool_parent()?;
+        let progress = |_| match &owner_permit {
+            Some(permit) => permit.progress(),
+            None => Ok(()),
+        };
+        self.pool_reconcile_parent_with_control(
+            &limits,
+            &actual,
+            &ExecutionControl::new(&progress, &()),
+            owner_permit.as_ref(),
+        )?;
+        self.pool_status_snapshot()
+    }
+    fn pool_preview_timestamp(&self, parent: Hash) -> Result<Option<u64>> {
+        if !self.settings.is_native_pq() {
+            return Ok(None);
+        }
+        let mut times: Vec<_> = self
+            .recent(parent)?
+            .into_iter()
+            .take(11)
+            .map(|pair| pair.0)
+            .collect();
+        ensure(!times.is_empty(), "UNKNOWN_PARENT")?;
+        times.sort_unstable();
+        Ok(Some(
+            times[times.len() / 2]
+                .checked_add(1)
+                .ok_or("PQ_PREVIEW_TIME_OVERFLOW")?,
+        ))
+    }
+    fn pool_parent(&self) -> Result<PoolParent> {
+        let (parent, generation) = self.active()?;
+        let height = self.parent_height(parent)?.checked_add(1).ok_or("HEIGHT")?;
+        let state = self.state_at(parent)?;
+        let root = self.record(parent)?.root;
+        Ok(PoolParent {
+            timestamp: self.pool_preview_timestamp(parent)?,
+            id: parent,
+            generation,
+            height,
+            root,
+            state,
+            cfg: self.settings.app.clone(),
+        })
+    }
+    fn pool_reconcile_parent_with_control<'a>(
+        &mut self,
+        limits: &PoolLimits,
+        actual: &'a PoolParent,
+        control: &ExecutionControl<'_, crate::Error>,
+        owner_permit: Option<&super::OwnerPoolPermit>,
+    ) -> Result<PreviewBinding<'a>> {
+        self.recheck_owner_pool(owner_permit)?;
+        let PoolParent {
+            id: parent,
+            generation,
+            height,
+            state,
+            ..
+        } = actual;
+        let (parent, generation, height) = (*parent, *generation, *height);
+        let groups = self.pool_groups(limits)?;
+        // Prior admission and current signed retained-group permission are both
+        // required before branch-relative status/State processing of each group.
+        for group in &groups {
+            let raws: Vec<_> = group.rows.iter().map(|row| row.raw.clone()).collect();
+            self.check_owner_pool_retained(owner_permit, &raws)?;
+        }
+        let mut accepted = Vec::new();
+        let mut preview = PendingPreview {
+            timestamp: actual.timestamp,
+            height,
+            state,
+            parent,
+            cfg: &actual.cfg,
+            limits,
+            node: self,
+            checked: None,
+            prefix: None,
+            signatures: Vec::new(),
+            parent_observation: None,
+            control,
+            owner_permit,
+        };
+        let mut updates = Vec::new();
+        for group in groups {
+            let (status, reason) = if group
+                .rows
+                .iter()
+                .any(|row| actual.timestamp.unwrap_or(height) > row.expiry)
+            {
+                (PoolState::Expired, "EXPIRED".to_owned())
+            } else if group
+                .rows
+                .iter()
+                .map(|row| chain_nonce(state, row.sender).map(|n| row.nonce <= n))
+                .collect::<Result<Vec<_>>>()?
+                .into_iter()
+                .any(|used| used)
+            {
+                (
+                    PoolState::SequenceConsumed,
+                    "ACTIVE_CHAIN_SEQUENCE_CONSUMED_NOT_INCLUSION_PROOF".to_owned(),
+                )
+            } else {
+                let previous_len = accepted.len();
+                accepted.extend(group.rows.into_iter().map(|row| row.raw));
+                match preview.validate(&accepted) {
+                    Ok(_) => (
+                        PoolState::Queued,
+                        "EXACT_PENDING_PREFIX_RECHECKED".to_owned(),
+                    ),
+                    Err(PoolPreviewError::Cancelled(error)) => return Err(error),
+                    Err(PoolPreviewError::Native(error)) => {
+                        // Roll back only this group's scratch raws. Later groups
+                        // see exactly the same accepted prefix as the old copy path.
+                        accepted.truncate(previous_len);
+                        (PoolState::Blocked, error.to_string())
+                    }
+                }
+            };
+            updates.push((group.id, status, reason));
+        }
+        // Release the Node borrow before the pool SQL transaction. The same-call
+        // binding retains checked original State and unfinalized prefix scratch;
+        // it grants no SQL, transaction or admission authority.
+        let binding = PreviewBinding {
+            checked: preview.checked.take(),
+            prefix: preview.prefix.take(),
+            signatures: std::mem::take(&mut preview.signatures),
+            observation: preview.parent_observation.take(),
+        };
+        drop(preview);
+        self.recheck_owner_pool(owner_permit)?;
+        (control.progress)(ExecutionProgress::BeforePersistence)?;
+        let tx = self
+            .db
+            .transaction_with_behavior(TransactionBehavior::Immediate)?;
+        fence(&tx, parent, generation)?;
+        for (index, (id, status, reason)) in updates.into_iter().enumerate() {
+            (control.progress)(ExecutionProgress::PersistenceDelta { index })?;
+            ensure(reason.len() <= 128, "POOL_STATE")?;
+            tx.execute(
+                "UPDATE local_pool_groups SET status=?,reason=? WHERE id=?",
+                params![status.code(), reason, id.as_slice()],
+            )?;
+        }
+        tx.execute("UPDATE local_pool_metadata SET checked_parent=?,checked_generation=? WHERE singleton=1",params![parent.as_slice(),generation])?;
+        (control.progress)(ExecutionProgress::BeforeDurableCommit)?;
+        tx.commit()?;
+        Ok(binding)
+    }
+    pub fn pool_status(&mut self) -> Result<PoolStatus> {
+        self.pool_reconcile()
+    }
+    /// Bounded read-only snapshot, with an explicit last-reconcile generation.
+    /// This never executes M06 and must not promote stale classifications.
+    pub fn pool_status_snapshot(&self) -> Result<PoolStatus> {
+        let (context, limits) = self.pool_policy()?;
+        let (parent, generation) = self.active()?;
+        let groups = self.pool_groups(&limits)?;
+        let mut count = 0;
+        let mut bytes = 0;
+        let statuses = groups
+            .into_iter()
+            .map(|group| {
+                count += group.rows.len();
+                let size = group.rows.iter().map(|row| row.raw.len()).sum();
+                bytes += size;
+                PoolGroupStatus {
+                    group: hex::encode(group.id),
+                    digests: group
+                        .rows
+                        .iter()
+                        .map(|row| hex::encode(row.digest))
+                        .collect(),
+                    state: group.status,
+                    reason: group.reason,
+                    raw_bytes: size,
+                }
+            })
+            .collect();
+        let removals: usize =
+            self.db
+                .query_row("SELECT COUNT(*) FROM local_pool_removals", [], |r| r.get(0))?;
+        ensure(removals <= limits.max_removals, "POOL_STORAGE_LIMIT")?;
+        let (checked, checked_generation): (Option<Vec<u8>>, Option<u64>) = self.db.query_row(
+            "SELECT checked_parent,checked_generation FROM local_pool_metadata WHERE singleton=1",
+            [],
+            |r| Ok((r.get(0)?, r.get(1)?)),
+        )?;
+        ensure(
+            checked.is_some() == checked_generation.is_some(),
+            "POOL_STATE",
+        )?;
+        let checked_parent = checked.map(bytes32).transpose()?;
+        let classification_current =
+            checked_parent == Some(parent) && checked_generation == Some(generation);
+        Ok(PoolStatus{profile:pool_profile(&self.settings.app),context:hex::encode(context),parent:hex::encode(parent),generation,
+            checked_parent:checked_parent.map(hex::encode),checked_generation,classification_current,
+            retained_records:count,retained_bytes:bytes,local_removals:removals,gc:self.pool_gc_snapshot()?,groups:statuses,
+            scope:"bounded local snapshot; classification belongs to checked_parent/generation and can be stale; no exact inclusion, confirmation, work or external effect authority"})
+    }
+    pub fn pool_submit(&mut self, raw: Vec<u8>) -> Result<PoolReceipt> {
+        self.pool_submit_bundle(vec![raw])
+    }
+    /// Atomic local group reservation. Block producers are not obligated to keep
+    /// separate transactions together; consensus atomic renewal uses V3 tag22.
+    pub fn pool_submit_bundle(&mut self, raws: Vec<Vec<u8>>) -> Result<PoolReceipt> {
+        self.pool_submit_bundle_with_accounting(raws, &())
+    }
+    pub(crate) fn pool_submit_bundle_with_accounting(
+        &mut self,
+        raws: Vec<Vec<u8>>,
+        worker_accounting: &dyn ExecutionWorkerAccounting,
+    ) -> Result<PoolReceipt> {
+        self.pool_submit_bundle_with_control(
+            raws,
+            &ExecutionControl::new(&|_| Ok(()), worker_accounting),
+        )
+    }
+    pub(crate) fn pool_submit_bundle_with_control(
+        &mut self,
+        raws: Vec<Vec<u8>>,
+        control: &ExecutionControl<'_, crate::Error>,
+    ) -> Result<PoolReceipt> {
+        self.owner_pool_configured()?;
+        let (context, limits) = self.pool_policy()?;
+        ensure(
+            !raws.is_empty() && raws.len() <= limits.max_group_members,
+            "POOL_GROUP_LIMIT",
+        )?;
+        ensure(
+            raws.iter()
+                .all(|raw| !raw.is_empty() && raw.len() <= max_body_bytes(&self.settings.app)),
+            "POOL_BODY_LIMIT",
+        )?;
+        let total: usize = raws.iter().map(Vec::len).sum();
+        ensure(total <= limits.max_bytes, "POOL_BYTE_LIMIT")?;
+        let owner_permit = self.begin_owner_pool("submit-bundle", &raws, context)?;
+        let progress = |point| {
+            (control.progress)(point)?;
+            if let Some(permit) = &owner_permit {
+                permit.progress()?;
+            }
+            Ok(())
+        };
+        let guarded_control = ExecutionControl::new(&progress, control.worker_accounting);
+        let control = &guarded_control;
+        let actual = self.pool_parent()?;
+        let binding = self.pool_reconcile_parent_with_control(
+            &limits,
+            &actual,
+            control,
+            owner_permit.as_ref(),
+        )?;
+        // Preserve the original reconcile snapshot checks and error precedence.
+        self.pool_status_snapshot()?;
+        let groups = self.pool_groups(&limits)?;
+        let views = raws
+            .iter()
+            .map(|raw| NativePoolView::new(raw, &self.settings.app))
+            .collect::<Result<Vec<_>>>()?;
+        // Authenticate every incoming signature before any duplicate result. A
+        // retained semantic duplicate is only a local receipt, not current queue
+        // eligibility; signature possession uses time 0 here, while the actual
+        // M05/M06 admission below enforces the branch preview Header timestamp.
+        if self.settings.is_native_pq() {
+            let mut statements = BTreeSet::new();
+            let mut retained_statements = Vec::new();
+            for (index, view) in views.iter().enumerate() {
+                (control.progress)(ExecutionProgress::BeforePrepare { index })?;
+                let (wire_id, statement_id, sender) =
+                    check_pq_signature(&actual.state, view.raw, 0, &actual.cfg)?;
+                let statement = view.statement.ok_or("POOL_PQ_STATEMENT")?;
+                ensure(
+                    statement_id == statement
+                        && wire_id == view.digest.as_bytes()
+                        && sender == view.sender,
+                    "POOL_PQ_BINDING",
+                )?;
+                ensure(statements.insert(statement), "POOL_PQ_DUPLICATE_STATEMENT")?;
+                let removed: bool = self.db.query_row(
+                    statement_sql(&self.settings.app, StatementQuery::WasRemoved),
+                    [statement.as_slice()],
+                    |r| r.get(0),
+                )?;
+                ensure(!removed, "POOL_REMOVED")?;
+                let retained: Option<(Vec<u8>, usize)> = self
+                    .db
+                    .query_row(
+                        statement_sql(&self.settings.app, StatementQuery::FindStatement),
+                        [statement.as_slice()],
+                        |r| Ok((r.get(0)?, r.get(1)?)),
+                    )
+                    .optional()?;
+                retained_statements.push(retained);
+                (control.progress)(ExecutionProgress::AfterPrepare { index })?;
+            }
+            if retained_statements.iter().any(Option::is_some) {
+                let (saved, _) = retained_statements[0]
+                    .as_ref()
+                    .ok_or("POOL_PQ_STATEMENT_ALREADY_RETAINED")?;
+                let group = groups
+                    .iter()
+                    .find(|group| group.id.as_slice() == saved)
+                    .ok_or("POOL_PQ_STATEMENT_BINDING")?;
+                ensure(
+                    group.rows.len() == views.len()
+                        && retained_statements.iter().enumerate().all(|(index, row)| {
+                            row.as_ref()
+                                .is_some_and(|(id, position)| id == saved && *position == index)
+                        }),
+                    "POOL_PQ_STATEMENT_ALREADY_RETAINED",
+                )?;
+                return Ok(PoolReceipt {group:hex::encode(group.id),duplicate:true,state:group.status.clone(),
+                    typed_gate_admissions:0,typed_gate_ready_metadata:0,
+                    scope:"actual incoming ML-DSA verified; same retained semantic group, no new M05 admission or current inclusion authority"});
+            }
+        }
+        let mut ids = Vec::new();
+        let mut unique = BTreeSet::new();
+        for view in &views {
+            ensure(
+                unique.insert(view.digest.as_bytes()),
+                "POOL_DUPLICATE_MEMBER",
+            )?;
+            ids.extend_from_slice(&view.digest.as_bytes());
+        }
+        let id = hash(b"native-local-pool-group-v2", &[&ids]);
+        for view in &views {
+            let removed: bool = self.db.query_row(
+                "SELECT EXISTS(SELECT 1 FROM local_pool_removals WHERE id=?)",
+                [view.digest.as_bytes().as_slice()],
+                |r| r.get(0),
+            )?;
+            ensure(!removed, "POOL_REMOVED")?;
+        }
+        if let Some(group) = groups.iter().find(|group| group.id == id) {
+            ensure(
+                group.rows.iter().map(|row| &row.raw).eq(raws.iter()),
+                "POOL_DIGEST_CONFLICT",
+            )?;
+            return Ok(PoolReceipt{group:hex::encode(id),duplicate:true,state:group.status.clone(),typed_gate_admissions:0,typed_gate_ready_metadata:0,scope:"exact retained duplicate; current local state only, no new admission or inclusion claim"});
+        }
+        let retained: usize = groups.iter().map(|g| g.rows.len()).sum();
+        let bytes: usize = groups
+            .iter()
+            .flat_map(|g| &g.rows)
+            .map(|r| r.raw.len())
+            .sum();
+        for group in &groups {
+            for row in &group.rows {
+                ensure(
+                    !unique.contains(&row.digest),
+                    "POOL_MEMBER_ALREADY_RETAINED",
+                )?;
+                if group.status == PoolState::Queued {
+                    ensure(
+                        !views
+                            .iter()
+                            .any(|view| view.sender == row.sender && view.nonce == row.nonce),
+                        "POOL_NONCE_CONFLICT",
+                    )?;
+                }
+            }
+        }
+        let (parent, generation) = self.active()?;
+        let record = self.record(parent)?;
+        let height = record.height.checked_add(1).ok_or("HEIGHT")?;
+        ensure(
+            (parent, generation, height) == (actual.id, actual.generation, actual.height),
+            "POOL_PARENT_CHANGED",
+        )?;
+        self.namespace()?;
+        ensure(record.root == actual.root, "ROOT")?;
+        let state = &actual.state;
+        // Admission-triggered cache GC is branch-relative and never creates an
+        // operator removal. A group classification can cover only one consumed
+        // member: every original member must independently be terminal here.
+        let mut kept_records = retained;
+        let mut kept_bytes = bytes;
+        let mut evictions = Vec::new();
+        for group in &groups {
+            if kept_records + raws.len() <= limits.max_records
+                && kept_bytes + total <= limits.max_bytes
+            {
+                break;
+            }
+            if !matches!(
+                group.status,
+                PoolState::SequenceConsumed | PoolState::Expired
+            ) {
+                continue;
+            }
+            let wholly_terminal = group
+                .rows
+                .iter()
+                .map(|row| {
+                    Ok(actual.timestamp.unwrap_or(height) > row.expiry
+                        || row.nonce <= chain_nonce(state, row.sender)?)
+                })
+                .collect::<Result<Vec<bool>>>()?
+                .into_iter()
+                .all(|terminal| terminal);
+            if wholly_terminal {
+                kept_records -= group.rows.len();
+                kept_bytes -= group.rows.iter().map(|row| row.raw.len()).sum::<usize>();
+                evictions.push(group);
+            }
+        }
+        ensure(
+            kept_records + raws.len() <= limits.max_records,
+            "POOL_RECORD_LIMIT",
+        )?;
+        ensure(kept_bytes + total <= limits.max_bytes, "POOL_BYTE_LIMIT")?;
+        let mut gc = self.pool_gc_snapshot()?;
+        let mut gc_head = bytes32(hex::decode(&gc.history_head).map_err(|_| "POOL_GC_STATE")?)?;
+        for group in &evictions {
+            let records = group.rows.len() as u64;
+            let bytes = group
+                .rows
+                .iter()
+                .map(|row| row.raw.len() as u64)
+                .sum::<u64>();
+            gc.evicted_groups = gc.evicted_groups.checked_add(1).ok_or("POOL_GC_OVERFLOW")?;
+            gc.evicted_records = gc
+                .evicted_records
+                .checked_add(records)
+                .ok_or("POOL_GC_OVERFLOW")?;
+            gc.evicted_raw_bytes = gc
+                .evicted_raw_bytes
+                .checked_add(bytes)
+                .ok_or("POOL_GC_OVERFLOW")?;
+            let digests: Vec<u8> = group.rows.iter().flat_map(|row| row.digest).collect();
+            gc_head = hash(
+                b"native-local-pool-terminal-cache-eviction-v2",
+                &[
+                    &gc_head,
+                    &context,
+                    &parent,
+                    &generation.to_le_bytes(),
+                    &group.id,
+                    &digests,
+                    &records.to_le_bytes(),
+                    &bytes.to_le_bytes(),
+                ],
+            );
+        }
+        let mut candidate: Vec<_> = groups
+            .iter()
+            .filter(|g| g.status == PoolState::Queued)
+            .flat_map(|g| g.rows.iter().map(|r| r.raw.clone()))
+            .collect();
+        candidate.extend(raws.clone());
+        let admitted = PendingPreview {
+            timestamp: actual.timestamp,
+            height,
+            state,
+            parent,
+            cfg: &actual.cfg,
+            limits: &limits,
+            node: self,
+            checked: binding.checked,
+            prefix: binding.prefix,
+            signatures: binding.signatures,
+            parent_observation: binding.observation,
+            control,
+            owner_permit: owner_permit.as_ref(),
+        }
+        .validate(&candidate)
+        .map_err(PoolPreviewError::into_error)?;
+        self.recheck_owner_pool(owner_permit.as_ref())?;
+        (control.progress)(ExecutionProgress::BeforePersistence)?;
+        let tx = self
+            .db
+            .transaction_with_behavior(TransactionBehavior::Immediate)?;
+        fence(&tx, parent, generation)?;
+        for (index, group) in evictions.into_iter().enumerate() {
+            (control.progress)(ExecutionProgress::PersistenceDelta { index })?;
+            tx.execute(
+                "DELETE FROM local_pool_groups WHERE id=?",
+                [group.id.as_slice()],
+            )?;
+        }
+        tx.execute("UPDATE local_pool_metadata SET gc_groups=?,gc_records=?,gc_bytes=?,gc_head=? WHERE singleton=1",
+            params![gc.evicted_groups.to_le_bytes().as_slice(),gc.evicted_records.to_le_bytes().as_slice(),
+                gc.evicted_raw_bytes.to_le_bytes().as_slice(),gc_head.as_slice()])?;
+        tx.execute("INSERT INTO local_pool_groups(id,status,reason) VALUES(?,0,'EXACT_PENDING_PREFIX_RECHECKED')",[id.as_slice()])?;
+        for (position, view) in views.iter().enumerate() {
+            (control.progress)(ExecutionProgress::PersistenceDelta { index: position })?;
+            tx.execute(
+                "INSERT INTO local_pool_rows VALUES(?,?,?,?,?,?,?,?)",
+                params![
+                    id.as_slice(),
+                    position as u32,
+                    view.digest.as_bytes().as_slice(),
+                    view.sender.as_slice(),
+                    view.nonce.to_le_bytes().as_slice(),
+                    view.expiry.to_le_bytes().as_slice(),
+                    view.fee_limit.to_le_bytes().as_slice(),
+                    view.raw
+                ],
+            )?;
+            if let Some(statement) = view.statement {
+                ensure(
+                    tx.execute(
+                        statement_sql(&self.settings.app, StatementQuery::InsertStatement),
+                        params![id.as_slice(), position as u32, statement.as_slice()],
+                    )? == 1,
+                    "POOL_PQ_STORAGE_WRITE",
+                )?;
+                let retained: (Vec<u8>, Vec<u8>, Vec<u8>) = tx.query_row(
+                    statement_sql(&self.settings.app, StatementQuery::ReadCommitted),
+                    params![id.as_slice(), position as u32],
+                    |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)),
+                )?;
+                ensure(
+                    retained.0 == view.digest.as_bytes()
+                        && retained.1 == view.raw
+                        && retained.2 == statement,
+                    "POOL_PQ_STORAGE_WRITE",
+                )?;
+            }
+        }
+        (control.progress)(ExecutionProgress::BeforeDurableCommit)?;
+        tx.commit()?;
+        self.record_continuous_pool_commit(id, &raws);
+        Ok(PoolReceipt{group:hex::encode(id),duplicate:false,state:PoolState::Queued,typed_gate_admissions:admitted,typed_gate_ready_metadata:admitted,scope:"M05 typed queue checks plus M06 local prefix preview, SQLite group commit and admission-triggered terminal cache eviction; no block execution, irreversible cache drop or confirmation authority"})
+    }
+    pub fn pool_mining_batch(
+        &mut self,
+        parent: Hash,
+        generation: u64,
+        max_records: usize,
+        max_bytes: usize,
+    ) -> Result<PoolBatch> {
+        self.owner_preview_available()?;
+        ensure(self.active()? == (parent, generation), "POOL_STALE_PARENT")?;
+        let (context, limits) = self.pool_policy()?;
+        ensure(
+            max_records > 0 && max_records <= 256 && max_bytes > 0 && max_bytes <= 524288,
+            "POOL_BATCH_LIMIT",
+        )?;
+        self.pool_reconcile()?;
+        let groups = self.pool_groups(&limits)?;
+        let mut raws = Vec::new();
+        let mut ids = Vec::new();
+        let mut bytes = 0;
+        for group in groups.into_iter().filter(|g| g.status == PoolState::Queued) {
+            let size: usize = group.rows.iter().map(|r| r.raw.len()).sum();
+            if raws.len() + group.rows.len() > max_records || bytes + size > max_bytes {
+                break;
+            }
+            bytes += size;
+            ids.push(group.id);
+            raws.extend(group.rows.into_iter().map(|r| r.raw));
+        }
+        let height = self.parent_height(parent)?.checked_add(1).ok_or("HEIGHT")?;
+        let typed = validate_pending(
+            &raws,
+            height,
+            &self.state_at(parent)?,
+            parent,
+            &self.settings.app,
+            &limits,
+            self,
+        )?;
+        ensure(self.active()? == (parent, generation), "POOL_STALE_PARENT")?;
+        Ok(PoolBatch {
+            parent,
+            generation,
+            context,
+            preview_miner: limits.preview_miner,
+            transactions: raws,
+            groups: ids,
+            typed_gate_admissions: typed,
+        })
+    }
+    /// Exact retained group/raw recheck immediately before the mining owner uses
+    /// a batch. A fence comparison alone never authenticates mutable batch fields.
+    pub fn pool_validate_batch(&mut self, batch: &PoolBatch) -> Result<usize> {
+        self.owner_preview_available()?;
+        ensure(self.pool_batch_is_current(batch)?, "POOL_STALE_PARENT")?;
+        let (_, limits) = self.pool_policy()?;
+        ensure(
+            batch.preview_miner == limits.preview_miner,
+            "POOL_BATCH_BINDING",
+        )?;
+        self.pool_reconcile()?;
+        let groups = self.pool_groups(&limits)?;
+        let queued: Vec<_> = groups
+            .iter()
+            .filter(|g| g.status == PoolState::Queued)
+            .collect();
+        ensure(batch.groups.len() <= queued.len(), "POOL_BATCH_BINDING")?;
+        let chosen = &queued[..batch.groups.len()];
+        ensure(
+            chosen.iter().map(|g| g.id).eq(batch.groups.iter().copied()),
+            "POOL_BATCH_BINDING",
+        )?;
+        let raws: Vec<_> = chosen
+            .iter()
+            .flat_map(|g| g.rows.iter().map(|r| r.raw.clone()))
+            .collect();
+        ensure(raws == batch.transactions, "POOL_BATCH_BINDING")?;
+        let height = self
+            .parent_height(batch.parent)?
+            .checked_add(1)
+            .ok_or("HEIGHT")?;
+        let admitted = validate_pending(
+            &raws,
+            height,
+            &self.state_at(batch.parent)?,
+            batch.parent,
+            &self.settings.app,
+            &limits,
+            self,
+        )?;
+        ensure(
+            self.active()? == (batch.parent, batch.generation),
+            "POOL_STALE_PARENT",
+        )?;
+        Ok(admitted)
+    }
+    /// Cheap generation/context fence only; pool_validate_batch performs exact raw
+    /// and current M05/M06 checks. Neither method authorizes chain activation.
+    pub fn pool_batch_is_current(&self, batch: &PoolBatch) -> Result<bool> {
+        let (context, _) = self.pool_policy()?;
+        Ok(context == batch.context && self.active()? == (batch.parent, batch.generation))
+    }
+    /// Explicit terminal pruning is local and monotonic, never a branch rollback.
+    /// Removed groups cannot be silently resurrected by resubmission or reorg.
+    pub fn pool_prune_terminal(&mut self, id: Hash) -> Result<()> {
+        self.owner_preview_available()?;
+        self.pool_reconcile()?;
+        let continuous = self.continuous_progress_snapshot()?;
+        let captured = if continuous.is_some() {
+            Some(self.active()?)
+        } else {
+            None
+        };
+        let (_, limits) = self.pool_policy()?;
+        let groups = self.pool_groups(&limits)?;
+        let group = groups.iter().find(|g| g.id == id).ok_or("POOL_GROUP")?;
+        ensure(group.status != PoolState::Queued, "POOL_PENDING")?;
+        let count: usize =
+            self.db
+                .query_row("SELECT COUNT(*) FROM local_pool_removals", [], |r| r.get(0))?;
+        ensure(
+            count + group.rows.len() <= limits.max_removals,
+            "POOL_REMOVAL_LIMIT",
+        )?;
+        let tx = self
+            .db
+            .transaction_with_behavior(TransactionBehavior::Immediate)?;
+        if let Some((parent, generation)) = captured {
+            fence(&tx, parent, generation)?;
+        }
+        for row in &group.rows {
+            if let Some(checkpoint) = &continuous {
+                checkpoint.check()?;
+            }
+            tx.execute("INSERT INTO local_pool_removals(id,group_id,reason) VALUES(?,?,'explicit-terminal-prune')",params![row.digest.as_slice(),id.as_slice()])?;
+            if self.settings.is_native_pq() {
+                let view = NativePoolView::new(&row.raw, &self.settings.app)?;
+                let statement = view.statement.ok_or("POOL_PQ_STATEMENT")?;
+                let ordinal: u64 = tx.query_row(
+                    "SELECT ordinal FROM local_pool_removals WHERE id=?",
+                    [row.digest.as_slice()],
+                    |r| r.get(0),
+                )?;
+                ensure(
+                    tx.execute(
+                        statement_sql(&self.settings.app, StatementQuery::InsertRemoved),
+                        params![statement.as_slice(), ordinal],
+                    )? == 1,
+                    "POOL_PQ_STORAGE_WRITE",
+                )?;
+            }
+        }
+        tx.execute("DELETE FROM local_pool_groups WHERE id=?", [id.as_slice()])?;
+        if let Some(checkpoint) = &continuous {
+            checkpoint.check()?;
+        }
+        tx.commit()?;
+        Ok(())
+    }
+}
+fn fence(db: &rusqlite::Transaction<'_>, parent: Hash, generation: u64) -> Result<()> {
+    let (tip, recorded): (Vec<u8>, u64) = db.query_row(
+        "SELECT tip,generation FROM active WHERE singleton=1",
+        [],
+        |r| Ok((r.get(0)?, r.get(1)?)),
+    )?;
+    ensure(tip == parent && recorded == generation, "POOL_STALE_PARENT")
+}
+
+#[cfg(test)]
+mod incremental_prefix_tests {
+    use super::*;
+    use std::sync::Mutex;
+    use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
+
+    fn transfer(node: &Node, account_sequence: u64, amount: u64) -> Vec<u8> {
+        let key = signing_key_from_hex(&hex::encode(hash(b"DEV-ONLY-KEY", &[&0u64.to_le_bytes()])))
+            .unwrap();
+        let mut payload = crate::development_public(2).unwrap().to_vec();
+        payload.extend(amount.to_le_bytes());
+        let mut tx = Envelope {
+            network: node.settings.network(),
+            sender: crate::development_public(0).unwrap(),
+            nonce: account_sequence,
+            expiry: 2000,
+            fee_limit: 1_000_000,
+            tag: 1,
+            payload,
+            signature: [0; 64],
+        };
+        tx.signature = hex::decode(sign_hex(&key, &tx.signing_digest().unwrap()))
+            .unwrap()
+            .try_into()
+            .unwrap();
+        tx.encode().unwrap()
+    }
+
+    #[test]
+    fn native_reconcile_and_submission_apply_each_retained_transaction_once_per_operation() {
+        let temp = tempfile::tempdir().unwrap();
+        let settings = crate::Settings::development(Some(1)).unwrap();
+        let mut node = Node::open(temp.path(), settings.clone(), 1).unwrap();
+        let miner = crate::development_public(3).unwrap();
+        node.enable_local_mempool(PoolLimits {
+            max_records: 32,
+            max_bytes: 65536,
+            max_group_members: 8,
+            critical_reserve: 0,
+            max_removals: 32,
+            preview_miner: miner,
+        })
+        .unwrap();
+        let original = node.read_active().unwrap();
+        let mut raws = Vec::new();
+        for nonce in 1..=6 {
+            let raw = transfer(&node, nonce, 1);
+            node.pool_submit_bundle(vec![raw.clone()]).unwrap();
+            raws.push(raw);
+        }
+        let stages = Mutex::new(Vec::new());
+        let progress = |point| {
+            stages.lock().unwrap().push(point);
+            Ok(())
+        };
+        let seventh = transfer(&node, 7, 1);
+        M05_MAIN_VALIDATIONS.with(|count| count.set(0));
+        node.pool_submit_bundle_with_control(
+            vec![seventh.clone()],
+            &ExecutionControl::new(&progress, &()),
+        )
+        .unwrap();
+        assert_eq!(M05_MAIN_VALIDATIONS.with(std::cell::Cell::get), 7);
+        raws.push(seventh);
+        let stages = stages.into_inner().unwrap();
+        // M05 still admits all 1+...+7 positions and preserves both cancellation
+        // points around each. M06 additionally prepares only its seven suffixes.
+        assert_eq!(
+            stages
+                .iter()
+                .filter(|p| matches!(p, ExecutionProgress::BeforePrepare { .. }))
+                .count(),
+            28 + 7
+        );
+        assert_eq!(
+            stages
+                .iter()
+                .filter(|p| **p == ExecutionProgress::AfterMandatory)
+                .count(),
+            1
+        );
+        let applied: Vec<_> = stages
+            .iter()
+            .filter_map(|p| {
+                if let ExecutionProgress::AfterApply { index } = p {
+                    Some(*index)
+                } else {
+                    None
+                }
+            })
+            .collect();
+        assert_eq!(applied, (0..7).collect::<Vec<_>>());
+        assert_eq!(node.read_active().unwrap(), original);
+
+        let (parent, generation) = node.active().unwrap();
+        M05_MAIN_VALIDATIONS.with(|count| count.set(0));
+        let batch = node
+            .pool_mining_batch(parent, generation, 32, 65536)
+            .unwrap();
+        // A new owner call rechecks all seven, then the selected mining batch
+        // independently checks all seven in its own bounded preview scope.
+        assert_eq!(M05_MAIN_VALIDATIONS.with(std::cell::Cell::get), 14);
+        assert_eq!(batch.transactions, raws);
+        let full =
+            pon_executor::execute(&original.2, &raws, 1, miner, parent, 1, &settings.app).unwrap();
+        let packet = node.make(parent, raws.clone(), miner, 11, 4096).unwrap();
+        assert_eq!(packet.header.state, full.root);
+        assert_eq!(
+            packet.header.receipts,
+            crate::sequence_root("receipts", &full.receipts)
+        );
+        let id = node.admit(&packet, 11).unwrap();
+        node.activate(id).unwrap();
+        assert_eq!(node.read_active().unwrap().2, full.state);
+        drop(node);
+        let mut reopened = Node::open(temp.path(), settings, 1).unwrap();
+        assert_eq!(reopened.read_active().unwrap().2, full.state);
+        assert!(reopened
+            .pool_reconcile()
+            .unwrap()
+            .groups
+            .iter()
+            .all(|g| g.state == PoolState::SequenceConsumed));
+    }
+
+    #[test]
+    fn cancelled_new_suffix_keeps_native_pool_and_nonce_available_for_retry() {
+        let temp = tempfile::tempdir().unwrap();
+        let mut node = Node::open(
+            temp.path(),
+            crate::Settings::development(Some(1)).unwrap(),
+            1,
+        )
+        .unwrap();
+        node.enable_local_mempool(PoolLimits {
+            max_records: 8,
+            max_bytes: 16384,
+            max_group_members: 8,
+            critical_reserve: 0,
+            max_removals: 8,
+            preview_miner: crate::development_public(3).unwrap(),
+        })
+        .unwrap();
+        for nonce in 1..=3 {
+            let raw = transfer(&node, nonce, 1);
+            node.pool_submit_bundle(vec![raw]).unwrap();
+        }
+        let original = node.read_active().unwrap();
+        let before = serde_json::to_value(node.pool_status_snapshot().unwrap()).unwrap();
+        let raw = transfer(&node, 4, 1);
+        let progress = |point| {
+            if point == (ExecutionProgress::AfterApply { index: 3 }) {
+                Err(crate::Error::from("CANCEL_NEW_SUFFIX"))
+            } else {
+                Ok(())
+            }
+        };
+        assert_eq!(
+            node.pool_submit_bundle_with_control(
+                vec![raw.clone()],
+                &ExecutionControl::new(&progress, &())
+            )
+            .unwrap_err()
+            .to_string(),
+            "CANCEL_NEW_SUFFIX"
+        );
+        assert_eq!(node.read_active().unwrap(), original);
+        assert_eq!(
+            serde_json::to_value(node.pool_status_snapshot().unwrap()).unwrap(),
+            before
+        );
+        let invalid = transfer(&node, 4, u64::MAX);
+        assert_eq!(
+            node.pool_submit_bundle(vec![invalid])
+                .unwrap_err()
+                .to_string(),
+            "FUNDS"
+        );
+        node.pool_submit_bundle(vec![raw]).unwrap();
+        assert_eq!(node.pool_status_snapshot().unwrap().retained_records, 4);
+        assert_eq!(node.read_active().unwrap(), original);
+    }
+
+    fn preview<'a, 'operation>(
+        node: &'operation Node,
+        actual: &'a PoolParent,
+        limits: &'operation PoolLimits,
+        control: &'operation ExecutionControl<'operation, crate::Error>,
+    ) -> PendingPreview<'a, 'operation> {
+        PendingPreview {
+            timestamp: actual.timestamp,
+            height: actual.height,
+            state: &actual.state,
+            parent: actual.id,
+            cfg: &actual.cfg,
+            limits,
+            node,
+            checked: None,
+            prefix: None,
+            signatures: Vec::new(),
+            parent_observation: None,
+            control,
+            owner_permit: None,
+        }
+    }
+
+    fn preview_limits() -> PoolLimits {
+        PoolLimits {
+            max_records: 32,
+            max_bytes: 65536,
+            max_group_members: 8,
+            critical_reserve: 0,
+            max_removals: 32,
+            preview_miner: crate::development_public(3).unwrap(),
+        }
+    }
+
+    fn alter(raw: &[u8], change: impl FnOnce(&mut Envelope)) -> Vec<u8> {
+        let mut tx = Envelope::decode(raw).unwrap();
+        change(&mut tx);
+        let key = signing_key_from_hex(&hex::encode(hash(b"DEV-ONLY-KEY", &[&0u64.to_le_bytes()])))
+            .unwrap();
+        tx.signature = hex::decode(sign_hex(&key, &tx.signing_digest().unwrap()))
+            .unwrap()
+            .try_into()
+            .unwrap();
+        tx.encode().unwrap()
+    }
+
+    #[test]
+    fn signature_reuse_requires_complete_raw_prefix_and_preserves_first_refusal() {
+        let temp = tempfile::tempdir().unwrap();
+        let node = Node::open(
+            temp.path(),
+            crate::Settings::development(Some(1)).unwrap(),
+            1,
+        )
+        .unwrap();
+        let actual = node.pool_parent().unwrap();
+        let limits = preview_limits();
+        let progress = |_| Ok(());
+        let control = ExecutionControl::new(&progress, &());
+        let mut cached = preview(&node, &actual, &limits, &control);
+        let base = vec![transfer(&node, 1, 1), transfer(&node, 2, 1)];
+        let third = transfer(&node, 3, 1);
+        assert_eq!(
+            cached
+                .validate(&base)
+                .map_err(PoolPreviewError::into_error)
+                .unwrap(),
+            2
+        );
+        let bad_signature = |raw: &[u8]| {
+            let mut tx = Envelope::decode(raw).unwrap();
+            tx.signature[63] ^= 1;
+            tx.encode().unwrap()
+        };
+        let append = |suffix: Vec<Vec<u8>>| {
+            let mut raws = base.clone();
+            raws.extend(suffix);
+            raws
+        };
+        let mut changed_prefix = base.clone();
+        changed_prefix[0] = transfer(&node, 1, 2);
+        let mut changed_signature = base.clone();
+        changed_signature[1] = bad_signature(&base[1]);
+        // The wire codec rejects zero nonce before M05 metadata can exist.
+        // Retain the deliberately malformed original bytes for that precedence.
+        let mut zero_nonce = bad_signature(&third);
+        zero_nonce[68..76].fill(0);
+        let cases = [
+            (append(vec![base[0].clone()]), "POOL_DUPLICATE_MEMBER", 0),
+            (append(vec![transfer(&node, 4, 1)]), "POOL_TYPED:Replay", 1),
+            (
+                append(vec![bad_signature(&third)]),
+                "POOL_TYPED:SignatureRejected",
+                1,
+            ),
+            (
+                append(vec![bad_signature(&transfer(&node, 4, 1))]),
+                "POOL_TYPED:SignatureRejected",
+                1,
+            ),
+            (append(vec![zero_nonce]), "POOL_ENCODING", 0),
+            (
+                append(vec![alter(&third, |tx| tx.fee_limit = 0)]),
+                "POOL_TYPED:RecheckFailed",
+                1,
+            ),
+            (append(vec![transfer(&node, 3, u64::MAX)]), "FUNDS", 1),
+            (
+                append(vec![third.clone(), transfer(&node, 4, u64::MAX)]),
+                "FUNDS",
+                2,
+            ),
+            (changed_prefix, "PREFIX_BINDING", 2),
+            (changed_signature, "POOL_TYPED:SignatureRejected", 2),
+            (
+                vec![base[1].clone(), base[0].clone()],
+                "POOL_TYPED:Replay",
+                1,
+            ),
+            (vec![base[0].clone()], "PREFIX_BINDING", 1),
+        ];
+        for (raws, expected, native_checks) in cases {
+            M05_MAIN_VALIDATIONS.with(|count| count.set(0));
+            let error = cached
+                .validate(&raws)
+                .map_err(PoolPreviewError::into_error)
+                .unwrap_err();
+            assert_eq!(error.to_string(), expected);
+            assert_eq!(
+                M05_MAIN_VALIDATIONS.with(std::cell::Cell::get),
+                native_checks
+            );
+            assert_eq!(cached.signatures.len(), 2);
+            assert_eq!(cached.prefix.as_ref().unwrap().len(), 2);
+            assert!(cached
+                .signatures
+                .iter()
+                .zip(&base)
+                .all(|(checked, raw)| checked.raw == *raw));
+            // The control keeps the same accepted M06 prefix but forces all M05
+            // native checks. The first refusal must match, including replacement
+            // prefixes for which a complete-block replay would have other semantics.
+            let mut fresh = preview(&node, &actual, &limits, &control);
+            fresh
+                .validate(&base)
+                .map_err(PoolPreviewError::into_error)
+                .unwrap();
+            fresh.signatures.clear();
+            assert_eq!(
+                fresh
+                    .validate(&raws)
+                    .map_err(PoolPreviewError::into_error)
+                    .unwrap_err()
+                    .to_string(),
+                expected
+            );
+        }
+        M05_MAIN_VALIDATIONS.with(|count| count.set(0));
+        assert_eq!(
+            cached
+                .validate(&append(vec![third]))
+                .map_err(PoolPreviewError::into_error)
+                .unwrap(),
+            3
+        );
+        assert_eq!(M05_MAIN_VALIDATIONS.with(std::cell::Cell::get), 1);
+        assert_eq!(cached.signatures.len(), 3);
+        assert_eq!(node.read_active().unwrap().2, actual.state);
+    }
+
+    #[test]
+    fn real_signature_witness_rebinds_parent_state_height_and_complete_config() {
+        let temp = tempfile::tempdir().unwrap();
+        let node = Node::open(
+            temp.path(),
+            crate::Settings::development(Some(1)).unwrap(),
+            1,
+        )
+        .unwrap();
+        let actual = node.pool_parent().unwrap();
+        let raw = transfer(&node, 1, 1);
+        let view = NativePoolView::new(&raw, &actual.cfg).unwrap();
+        assert_eq!(view.raw.as_ptr(), raw.as_ptr());
+        let context = SignatureContext {
+            timestamp: actual.timestamp,
+            height: actual.height,
+            parent: actual.id,
+            state: &actual.state,
+            cfg: &actual.cfg,
+        };
+        let mut hooks = Hooks {
+            context,
+            reused: None,
+            checked: None,
+            expected_nonce: 1,
+        };
+        assert_eq!(
+            TypedAdmissionGate::new(8, 0, 2048).admit_signed(
+                &view,
+                IngressClass::Normal,
+                &mut hooks
+            ),
+            TypedAdmitOutcome::Accepted
+        );
+        let checked = hooks.checked.take().unwrap();
+        let state_copy = actual.state.clone();
+        let config_copy = actual.cfg.clone();
+        let mut wrong_config = actual.cfg.clone();
+        wrong_config.network[0] ^= 1;
+        let contexts = [
+            (context, 0, TypedAdmitOutcome::Accepted),
+            (
+                SignatureContext {
+                    parent: [17; 32],
+                    ..context
+                },
+                1,
+                TypedAdmitOutcome::Accepted,
+            ),
+            (
+                SignatureContext {
+                    state: &state_copy,
+                    ..context
+                },
+                1,
+                TypedAdmitOutcome::Accepted,
+            ),
+            (
+                SignatureContext {
+                    cfg: &config_copy,
+                    ..context
+                },
+                1,
+                TypedAdmitOutcome::Accepted,
+            ),
+            (
+                SignatureContext {
+                    height: 2,
+                    ..context
+                },
+                1,
+                TypedAdmitOutcome::Accepted,
+            ),
+            (
+                SignatureContext {
+                    height: 2001,
+                    ..context
+                },
+                1,
+                TypedAdmitOutcome::Rejected(AdmissionReject::SignatureRejected),
+            ),
+            (
+                SignatureContext {
+                    cfg: &wrong_config,
+                    ..context
+                },
+                1,
+                TypedAdmitOutcome::Rejected(AdmissionReject::SignatureRejected),
+            ),
+        ];
+        for (context, count, expected) in contexts {
+            M05_MAIN_VALIDATIONS.with(|n| n.set(0));
+            let mut hooks = Hooks {
+                context,
+                reused: Some(&checked),
+                checked: None,
+                expected_nonce: 1,
+            };
+            assert_eq!(
+                TypedAdmissionGate::new(8, 0, 2048).admit_signed(
+                    &view,
+                    IngressClass::Normal,
+                    &mut hooks
+                ),
+                expected
+            );
+            assert_eq!(M05_MAIN_VALIDATIONS.with(std::cell::Cell::get), count);
+        }
+        // A valid signature fact cannot grant a different sequence or bypass
+        // the real capacity-before-signature precedence.
+        let mut hooks = Hooks {
+            context,
+            reused: Some(&checked),
+            checked: None,
+            expected_nonce: 2,
+        };
+        M05_MAIN_VALIDATIONS.with(|n| n.set(0));
+        assert_eq!(
+            TypedAdmissionGate::new(8, 0, 2048).admit_signed(
+                &view,
+                IngressClass::Normal,
+                &mut hooks
+            ),
+            TypedAdmitOutcome::Rejected(AdmissionReject::Replay)
+        );
+        assert_eq!(
+            TypedAdmissionGate::new(0, 0, 2048).admit_signed(
+                &view,
+                IngressClass::Normal,
+                &mut hooks
+            ),
+            TypedAdmitOutcome::Backpressured
+        );
+        assert_eq!(M05_MAIN_VALIDATIONS.with(std::cell::Cell::get), 0);
+    }
+
+    #[test]
+    fn signature_cache_survives_cancellation_and_unwind_without_publishing_suffix() {
+        let temp = tempfile::tempdir().unwrap();
+        let node = Node::open(
+            temp.path(),
+            crate::Settings::development(Some(1)).unwrap(),
+            1,
+        )
+        .unwrap();
+        let actual = node.pool_parent().unwrap();
+        let limits = preview_limits();
+        let base = vec![transfer(&node, 1, 1), transfer(&node, 2, 1)];
+        let mut extended = base.clone();
+        extended.push(transfer(&node, 3, 1));
+        let target = Mutex::new(None::<(ExecutionProgress, bool)>);
+        let progress = |point| {
+            let mode = *target.lock().unwrap();
+            if let Some((at, unwind)) = mode {
+                if point == at {
+                    assert!(!unwind, "test-only signature-prefix unwind");
+                    return Err(crate::Error::from("CANCEL_SIGNATURE_PREFIX"));
+                }
+            }
+            Ok(())
+        };
+        let control = ExecutionControl::new(&progress, &());
+        let mut cached = preview(&node, &actual, &limits, &control);
+        cached
+            .validate(&base)
+            .map_err(PoolPreviewError::into_error)
+            .unwrap();
+        for point in [
+            ExecutionProgress::BeforePrepare { index: 0 },
+            ExecutionProgress::AfterPrepare { index: 1 },
+            ExecutionProgress::AfterPrepare { index: 2 },
+            ExecutionProgress::AfterApply { index: 2 },
+            ExecutionProgress::BeforeOutput,
+        ] {
+            for unwind in [false, true] {
+                *target.lock().unwrap() = Some((point, unwind));
+                if unwind {
+                    assert!(std::panic::catch_unwind(std::panic::AssertUnwindSafe(
+                        || cached.validate(&extended)
+                    ))
+                    .is_err());
+                } else {
+                    match cached.validate(&extended) {
+                        Err(PoolPreviewError::Cancelled(error)) => {
+                            assert_eq!(error.to_string(), "CANCEL_SIGNATURE_PREFIX")
+                        }
+                        _ => panic!("cancellation must remain distinct from a protocol rejection"),
+                    }
+                }
+                assert_eq!(cached.signatures.len(), 2);
+                assert_eq!(cached.prefix.as_ref().unwrap().len(), 2);
+                *target.lock().unwrap() = None;
+                M05_MAIN_VALIDATIONS.with(|count| count.set(0));
+                assert_eq!(
+                    cached
+                        .validate(&base)
+                        .map_err(PoolPreviewError::into_error)
+                        .unwrap(),
+                    2
+                );
+                assert_eq!(M05_MAIN_VALIDATIONS.with(std::cell::Cell::get), 0);
+            }
+        }
+        M05_MAIN_VALIDATIONS.with(|count| count.set(0));
+        assert_eq!(
+            cached
+                .validate(&extended)
+                .map_err(PoolPreviewError::into_error)
+                .unwrap(),
+            3
+        );
+        assert_eq!(M05_MAIN_VALIDATIONS.with(std::cell::Cell::get), 1);
+        assert_eq!(node.read_active().unwrap().2, actual.state);
+    }
+
+    #[test]
+    #[ignore = "explicit M05/M06 component timing, not endpoint or public service acceptance"]
+    fn normal_m05_signature_reuse_component_timing() {
+        let temp = tempfile::tempdir().unwrap();
+        let node = Node::open(
+            temp.path(),
+            crate::Settings::development(Some(1)).unwrap(),
+            1,
+        )
+        .unwrap();
+        let actual = node.pool_parent().unwrap();
+        let limits = preview_limits();
+        let raws: Vec<_> = (1..=16).map(|nonce| transfer(&node, nonce, 1)).collect();
+        let progress = |_| Ok(());
+        let control = ExecutionControl::new(&progress, &());
+        let full = pon_executor::execute(
+            &actual.state,
+            &raws,
+            actual.height,
+            limits.preview_miner,
+            actual.id,
+            1,
+            &actual.cfg,
+        )
+        .unwrap();
+        let mut observations = Vec::new();
+        for sample in 0..6 {
+            for reuse in if sample % 2 == 0 {
+                [false, true]
+            } else {
+                [true, false]
+            } {
+                node.invalidate_commitment();
+                M05_MAIN_VALIDATIONS.with(|count| count.set(0));
+                let started = std::time::Instant::now();
+                let mut candidate = preview(&node, &actual, &limits, &control);
+                let mut admissions = 0;
+                for length in 1..=raws.len() {
+                    admissions += candidate
+                        .validate(&raws[..length])
+                        .map_err(PoolPreviewError::into_error)
+                        .unwrap();
+                    if !reuse {
+                        // Current-source repeated-check control, including the
+                        // cost of discarding its facts; not an older binary.
+                        candidate.signatures.clear();
+                    }
+                }
+                let elapsed_ns = started.elapsed().as_nanos();
+                let main_checks = M05_MAIN_VALIDATIONS.with(std::cell::Cell::get);
+                assert_eq!(main_checks, if reuse { 16 } else { 136 });
+                assert_eq!(admissions, 136);
+                // Complete independent full replay comparison remains outside
+                // these component timers. Both arms still execute every M06
+                // epilogue and complete state commitment inside the timers.
+                let output = candidate.prefix.as_mut().unwrap().execute(&raws).unwrap();
+                assert_eq!(output.output.state, full.state);
+                assert_eq!(output.output.root, full.root);
+                assert_eq!(output.output.receipts, full.receipts);
+                observations.push(serde_json::json!({
+                    "sample": sample, "reuse": reuse, "elapsed_ns": elapsed_ns,
+                    "m05_main_envelope_checks": main_checks, "typed_admissions": admissions,
+                    "complete_state_receipts_root_equal": true,
+                }));
+            }
+        }
+        println!(
+            "{}",
+            serde_json::json!({
+                "schema": "normal-m05-signature-reuse-component-timing-v1",
+                "signed_transactions": raws.len(), "growing_prefixes": raws.len(),
+                "state_keys": actual.state.len(), "samples_per_arm": 6,
+                "observations": observations,
+                "scope": "Current-source paired component: complete M05 typed gates plus incremental M06 previews, all epilogues and commitments; alternating repeated-check/reuse arms; excludes parent SQL read, config snapshot, pool persistence, locks, work proof, transport and physical isolation; fresh replay equality outside timers; main-check counters instrument actual M05 call sites and all timed envelopes have valid strict signatures",
+                "public_network_ready": false, "production_activation": false,
+            })
+        );
+    }
+}
+
+#[cfg(test)]
+mod owner_enable_fence_tests {
+    use super::*;
+
+    #[test]
+    fn captured_enable_fence_refuses_changed_parent_or_generation_before_metadata_write() {
+        for change_parent in [false, true] {
+            let directory = crate::operator_task_policy::tests::directory();
+            let mut node = Node::open(
+                directory.path(),
+                crate::Settings::development(Some(1)).unwrap(),
+                1,
+            )
+            .unwrap();
+            let captured = node.active().unwrap();
+            let changed_parent = if change_parent { [7; 32] } else { captured.0 };
+            let changed_generation = if change_parent {
+                captured.1
+            } else {
+                captured.1 + 1
+            };
+            // Simulate a distinct active-row writer between permit recheck and
+            // the metadata transaction. No network or proof is involved.
+            node.db
+                .execute(
+                    "UPDATE active SET tip=?,generation=? WHERE singleton=1",
+                    params![changed_parent.as_slice(), changed_generation],
+                )
+                .unwrap();
+            let actual = node.active().unwrap();
+            assert_ne!(actual, captured);
+            let tx = node
+                .db
+                .transaction_with_behavior(TransactionBehavior::Immediate)
+                .unwrap();
+            assert_eq!(
+                fence(&tx, captured.0, captured.1)
+                    .err()
+                    .unwrap()
+                    .to_string(),
+                "POOL_STALE_PARENT"
+            );
+            assert_eq!(
+                tx.query_row("SELECT COUNT(*) FROM local_pool_metadata", [], |row| row
+                    .get::<_, u64>(0))
+                    .unwrap(),
+                0
+            );
+            // Rebinding to the fresh active pair would pass this SQL fence,
+            // which is why a restricted enable must retain its permit pair.
+            assert!(fence(&tx, actual.0, actual.1).is_ok());
+        }
+    }
+}
+
+#[cfg(test)]
+mod binding_tests {
+    use super::*;
+
+    #[test]
+    fn exact_binding_consumes_each_body_once_in_any_ready_order() {
+        let mut bindings = RawBindings::new(2);
+        bindings.insert([1; 32], b"first exact raw").unwrap();
+        bindings.insert([2; 32], b"second exact raw").unwrap();
+        bindings.consume([2; 32], b"second exact raw").unwrap();
+        assert!(!bindings.is_empty());
+        bindings.consume([1; 32], b"first exact raw").unwrap();
+        assert!(bindings.is_empty());
+        assert!(bindings.consume([1; 32], b"first exact raw").is_err());
+    }
+
+    #[test]
+    fn duplicate_binding_cannot_replace_original_even_at_capacity() {
+        let mut bindings = RawBindings::new(1);
+        bindings.insert([1; 32], b"original").unwrap();
+        assert_eq!(
+            bindings
+                .insert([1; 32], b"mutated")
+                .unwrap_err()
+                .to_string(),
+            "POOL_DUPLICATE_MEMBER"
+        );
+        assert_eq!(bindings.remaining[&[1; 32]], b"original");
+        assert!(bindings.insert([2; 32], b"extra").is_err());
+        bindings.consume([1; 32], b"original").unwrap();
+        assert!(bindings.is_empty());
+    }
+
+    #[test]
+    fn unknown_digest_or_mutated_ready_body_refuses_without_success() {
+        let mut bindings = RawBindings::new(2);
+        bindings.insert([1; 32], b"original").unwrap();
+        bindings.insert([2; 32], b"remaining").unwrap();
+        assert!(bindings.consume([3; 32], b"original").is_err());
+        assert_eq!(bindings.remaining.len(), 2);
+        assert!(bindings.consume([1; 32], b"mutated").is_err());
+        assert!(!bindings.is_empty());
+        assert_eq!(bindings.remaining[&[2; 32]], b"remaining");
+    }
+
+    #[test]
+    #[ignore = "explicit normal component timing, not a service or work-cost qualification"]
+    fn normal_256_signed_raw_binding_component_timing() {
+        use std::time::Instant;
+        use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
+        let cfg = Config::installed().unwrap();
+        let key = signing_key_from_hex(&hex::encode(hash(b"DEV-ONLY-KEY", &[&0u64.to_le_bytes()])))
+            .unwrap();
+        let sender = crate::development_public(0).unwrap();
+        let mut raws = Vec::new();
+        for nonce in 1..=256 {
+            let mut payload = crate::development_public(2).unwrap().to_vec();
+            payload.extend(1u64.to_le_bytes());
+            let mut envelope = Envelope {
+                network: cfg.network,
+                sender,
+                nonce,
+                expiry: 2000,
+                fee_limit: 1_000_000,
+                tag: 1,
+                payload,
+                signature: [0; 64],
+            };
+            envelope.signature = hex::decode(sign_hex(&key, &envelope.signing_digest().unwrap()))
+                .unwrap()
+                .try_into()
+                .unwrap();
+            let raw = envelope.encode().unwrap();
+            pon_executor::validate_main_envelope(&raw, 1, &cfg).unwrap();
+            raws.push(raw);
+        }
+        let mut old_ns = Vec::new();
+        let mut indexed_ns = Vec::new();
+        for _ in 0..32 {
+            let stage = Instant::now();
+            let digests = raws
+                .iter()
+                .map(|raw| NativePoolView::new(raw, &cfg).unwrap().digest.as_bytes())
+                .collect::<Vec<_>>();
+            let mut remaining = BTreeSet::new();
+            for digest in &digests {
+                assert!(remaining.insert(*digest));
+            }
+            for (digest, body) in digests.iter().zip(&raws) {
+                assert!(remaining.remove(digest));
+                let raw = raws
+                    .iter()
+                    .find(|raw| {
+                        Envelope::decode(raw).ok().and_then(|tx| tx.id().ok()) == Some(*digest)
+                    })
+                    .unwrap();
+                assert_eq!(std::hint::black_box(body), raw);
+            }
+            assert!(remaining.is_empty());
+            old_ns.push(stage.elapsed().as_nanos());
+            let stage = Instant::now();
+            let mut bindings = RawBindings::new(256);
+            let digests = raws
+                .iter()
+                .map(|raw| {
+                    let view = NativePoolView::new(raw, &cfg).unwrap();
+                    bindings.insert(view.digest.as_bytes(), raw).unwrap();
+                    view.digest.as_bytes()
+                })
+                .collect::<Vec<_>>();
+            for (digest, body) in digests.into_iter().zip(&raws) {
+                bindings
+                    .consume(digest, std::hint::black_box(body))
+                    .unwrap();
+            }
+            assert!(bindings.is_empty());
+            indexed_ns.push(stage.elapsed().as_nanos());
+        }
+        println!(
+            "{}",
+            serde_json::json!({"schema":"normal-pending-raw-binding-timing-v1","signed_raws":256,"raw_bytes":raws.iter().map(Vec::len).sum::<usize>(),"samples":32,"old_scan_elapsed_ns":old_ns,"indexed_elapsed_ns":indexed_ns,"scope":"one invocation-local metadata binding component; real signatures checked before timing; excludes M05, M06, pool reconciliation, native work, SQLite, Node wait and service concurrency","public_network_ready":false,"production_activation":false})
+        );
+    }
+}

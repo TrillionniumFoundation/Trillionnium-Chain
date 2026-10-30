@@ -1,0 +1,7 @@
+
+running 9 tests
+test actual_pq_pool_m06_pon_sql_cold_open_and_heavier_fork_requeue ... ok
+test dual_key_rotation_preserves_actual_task_permissions_and_reorg_reauthorizes_original_pool ... ok
+test expiry_equal_header_time_mtp_preview_future_skew_and_overflow_are_explicit ... ok
+test explicit_namespace_old_codec_context_and_sql_schema_cannot_fall_back ... ok
+test full_4263_byte_rows_and_packet_have_actual_122_transfer_limit ... 

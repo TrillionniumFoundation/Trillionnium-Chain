@@ -1,0 +1,148 @@
+{
+  "recorded_utc": "2026-10-26T16:00:29.960847+00:00",
+  "schema": "PN1-I02-shared-authenticated-snapshot-source-candidate-v4",
+  "revision": "004; isolated source-only correction of two exact R3 review blockers",
+  "base_head": "94b3fb60b7aa32c8bf5b7c8679d3c46a980b4060",
+  "base_tree": "da71738463a4d451e0b0246985dc69c7ab1f24fe",
+  "branch": "docs/chain-audit-remediation-20261022",
+  "origin": "https://github.com/TrillionniumFoundation/Trillionnium-Chain.git",
+  "status": "M trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs\n M trillionnium/crates/trnm-pon-node/src/store.rs\n M trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs\n M trillionnium/crates/trnm-pon-node/src/store/public_reader.rs\n A trillionnium/crates/trnm-pon-node/src/store/shared_snapshot.rs\n A trillionnium/crates/trnm-pon-node/src/store/shared_snapshot_tests.rs",
+  "previous_candidate_sha256": "ea0e207133f824870fa7db675a02851063d62a20715f519fbdf627eef4b2fd8f",
+  "previous_receipt_sha256": "d5f2fe45798520128afb7b2ff92bf4dba56aee817e2a3dd1cb1c6c890925960f",
+  "r3_independent_review": {
+    "path": "work/ci-follow/pn1-shared-snapshot-r3-independent-source-review-20261026-001/independent-source-review.json",
+    "sha256": "cf481a04014fb4674a2abd8cc4e1bb1f585b164dbca12c693bb49ec59cf983d2"
+  },
+  "all_revision001_002_003_frozen_source_artifacts_receipts_preserved": true,
+  "root_ROG_sources_modified": false,
+  "build_test_native_commit_push_migration": false,
+  "artifacts": {
+    "candidate.patch": {
+      "bytes": 74976,
+      "sha256": "4cfe8246c691dd15ec200d5a2e2822cd9f0d4c28ea615725b10c29799b9d039c"
+    },
+    "production-only.patch": {
+      "bytes": 38359,
+      "sha256": "654699f95577e8077cc6742fe2a349988ea02a8a81f637de09b1646db742edbe"
+    },
+    "new-controls-only.patch": {
+      "bytes": 36617,
+      "sha256": "37d0da780cddd91dbce9c21f157f4df66fabc80d1ea0b710e97530703883ba05"
+    },
+    "revision003-to004-readable.diff": {
+      "bytes": 12609,
+      "sha256": "0ea47a208cebaa121c03f8d8e44d9ab932a70cc4dfbcfc76b41d5567c47d9f58"
+    },
+    "unchanged-original-tests-and-boundaries.json": {
+      "bytes": 97060,
+      "sha256": "1ef710cb834d83b66c366a8a8c31cd833d2767df3a9f7407ad34420e649acd9f"
+    },
+    "revision-start.json": {
+      "bytes": 4992,
+      "sha256": "5c9b5c7d666fbdecc41a80719461eb32a88ea5493148d98933a7cf8e09892e8d"
+    },
+    "source-authorizer-reference.json": {
+      "bytes": 858,
+      "sha256": "981099d77edff373d744463f064c7eae90be33d4daff47e23558fb227daad9c1"
+    }
+  },
+  "files": {
+    "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs": {
+      "bytes": 31858,
+      "sha256": "ad9e41b68379ec9e5aade1bc2339d2710c9128e142738488dec35eee20b5979f",
+      "lines": 869
+    },
+    "trillionnium/crates/trnm-pon-node/src/store.rs": {
+      "bytes": 309281,
+      "sha256": "48e3301d9a60ed62aed976249bf7816c2df94a19ab0a72273ba275feb8448df2",
+      "lines": 7624
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/public_reader.rs": {
+      "bytes": 19088,
+      "sha256": "b8bf23dca2b77f9554c8a1b1fbe37d6e1a4580680ef3e52f077d045cd4d0f7b6",
+      "lines": 540
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs": {
+      "bytes": 36109,
+      "sha256": "8e88d29a17db73d13ec65f9be591509134338d2a903aa3330375101e6a893feb",
+      "lines": 889
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/shared_snapshot.rs": {
+      "bytes": 18302,
+      "sha256": "07e82a521aaffa2c8c11dea85566dff970919124d248efb89adbd34ec5cfb152",
+      "lines": 478
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/shared_snapshot_tests.rs": {
+      "bytes": 35333,
+      "sha256": "b9e37990ffa3466299de40ffcbcc3254ae924f9eaeb33a49a095678da20c6fe3",
+      "lines": 976
+    }
+  },
+  "r3_findings_and_r4_source_changes": [
+    {
+      "finding": "Present unknown/genesis32B BLOB key passed type/size checks, target BLOB lookup returned None, hot path could reconstruct complete State while cold audit rejected damaged present index. Static finding, not executed.",
+      "change": "Bounded metadata scan adds main-qualified EXISTS joining main.blocks and persisted main.metadata genesis. Every retained shared key must match an existing block, not stored genesis, with positive integer height and non-null parent. Actual public storage_context independently binds persisted genesis metadata to Settings. Unknown/genesis shared keys now yield owner-fatal NATIVE_SHARED_KEY_DOMAIN before lookup and at final no-caller-callback checks. No API/signature/profile/old fixture change."
+    },
+    {
+      "finding": "New actual-factory supplemental test expected ATTACH success, but original NativeIoLease.finish authorizer always denies ATTACH and DETACH. It would panic before exercising namespace guard; this is a definite static control conflict, not an observed native run.",
+      "change": "Only that newly added control now expects actual SQLITE_AUTH/AuthorizationForStatementDenied for both commands, then reads unchanged actual active and historical States. Production authorizer remains byte-identical. Separate ordinary in-memory Connection source control exercises an actually attached schema and new namespace guard; it is explicitly not native factory qualification."
+    }
+  ],
+  "exact_scope_of_metadata_guard": {
+    "public_retained_rows": 64,
+    "public_rejecting_sentinel": 1,
+    "save_pending_rows": "Existing original private save still inserts one pending row, validates it with private limit65, then prunes and enforces original SNAPSHOT_LIMIT<=64 and typed64. No persistent/public/native cap enlargement; corrupt66 rejected. Production call remains inside original immediate writer transaction.",
+    "guard_values": "Only bounded typeof/conditional BLOB length and existence/domain boolean values are read, not all retained payloads. All table references in new scan are explicitly main-qualified.",
+    "not_all_payload_validation": "OPEN: membership join does not bind/decode every unselected retained payload or detect every relocation to another existing non-genesis key. Used selected records still require full canonical block/native binding, actual complete COW account traversal, State/root/continuity/history checks. Cold audit still traverses all retained rows. Do not report all present payload corruption as closed by this metadata guard."
+  },
+  "preserved_source_defenses": [
+    "R1 real readonly Node initializer CanonicalJson+None, old-format migration refusal, fresh local layout/schemaHash/codec/initintent; no migration.",
+    "Original ordinary AuthV1/full-JSON path and all original raw codec, trigger, dense64, old foreignUPDATE and generic4KiB assertions unchanged.",
+    "Actual final account graph/fullState/history revalidation after last user callback, used-anchor read set, present active-row validation, legitimate missing optional-index complete reconstruction.",
+    "Case-insensitive main-name TEMP shadow guard and rejection of attached schemas outside main/temp before authoritative reads and final no-caller-callback phases. Unrelated TEMP workspace remains allowed.",
+    "Actual sticky Root.receipt firstfailure/SQLcode/denied/secondary/quarantine/lifecycle health check; no SQLite SELECT or identity-only lease.check certificate."
+  ],
+  "controls_source_only": {
+    "R2_all_control_bytes_exact_prefix_preserved": true,
+    "R3_new_control_change": "Only successor004 corrects newly added ATTACH/DETACH expectation; immutable003 bytes and review remain preserved.",
+    "new_normal_controls": "Unknown and genesis keys preserve actual data bytes but private shared read must fail owner-fatal; rollback restores complete State. Ordinary no-authorizer in-memory connection verifies attached-schema guard. NOT_RUN.",
+    "new_actual_factory_controls": "Fresh real NativeIoOwner/original native Node factory; direct active and nonactive state_at reads and last-callback public read_active/state_at reject unknown/genesis key moves; rollback exact-State readback and closed healthy lease references. Existing actual-factory control asserts original authorizer rejection for ATTACH/DETACH and State readback. NOT_RUN.",
+    "selection": "Linux native supplements retain explicit #[ignore]. When explicitly selected, Unsupported/create/open remains unwrap failure, no early PASS. IGNORE/Unsupported/NOT_RUN never native qualification.",
+    "not_substitutes": "No new controls replace original exact3FD/native caller/readers/networkRPC/full4097 or resource/time assertions."
+  },
+  "preservation_proof": {
+    "old_Rust_test_files": 467,
+    "all_original_boundary_pins": 478,
+    "old_store_inline_test_tail_bytes": 79958,
+    "old_store_inline_test_tail_sha256": "50b02979023fc2fe8b5c503190f2708229bb61df0e231dfa4de66baffdae6fd4",
+    "all_previous_frozen_revisions": "source+allmanifest artifacts+receipts rehashed equal",
+    "original_caps": "4KiB/FULL/WAL,16MiB/file48MiB/root336MiBdomain,1024+256events655360bytes, originalseed/reader/samelease/FD/CPU/AS/2s/whole/cumulative deadlines unchanged"
+  },
+  "source_checks": {
+    "preflight_before_edit": 0,
+    "preflight_final": 0,
+    "diff_check": 0,
+    "source_formatter_2021": 0,
+    "typecheck_Clippy": "NOT_RUN",
+    "all_old_new_tests": "NOT_RUN",
+    "SQL_or_C_or_native_execution": "NOT_RUN",
+    "prepared_ELF_claim_results_reused": false
+  },
+  "open_requirements": [
+    "Independent review of exact004 hash required; no compiler, Clippy or test result.",
+    "Whole-table payload binding beyond metadata membership remains open; keep strong acceptance requirement, do not narrow it to obtain PASS.",
+    "Arbitrary same-connection COMMIT;BEGIN can preserve autocommit/total_changes/schema_version; these tuples are not unique borrowed-transaction identity. Authorizer/capability changes not implemented here.",
+    "PostCOMMIT durable fact versus checkpoint/storage-health API still open; no rollback/retry/refund conclusion.",
+    "New-format independent decoder and explicit migration execution unimplemented; no old-format qualification inheritance.",
+    "Repeated graph/history/metadata/receipt work must fit original2s/whole/cumulative budgets. No cost, cap-sufficiency, goodput or throughput prediction.",
+    "Original native exact source/caller/readers/fullpaid4097, PN0 Windows, ordinary Hepta model upgrade loop, persistent Cell release/repair and independent72hWAN remain unqualified."
+  ],
+  "mechanism_qualified": false,
+  "whole_writer_qualified": false,
+  "original_three_FD_caller_qualified": false,
+  "independent_reader_qualified": false,
+  "full_W1_4097_qualified": false,
+  "full_guard_enabled": false,
+  "task_complete": false,
+  "merge_ready": false
+}

@@ -1,0 +1,13 @@
+{
+  "archive": "raw-evidence.tar.gz",
+  "contains_actual_downloaded_adapter": true,
+  "credential_pattern_hits": 0,
+  "excludes": "reproducible public base weights, original CPU wheels, interpreter, SQLite stores/WAL/SHM, provider binary",
+  "generated_private_keys": false,
+  "members": 76,
+  "per_file_inventory": "FILE_INVENTORY.json inside archive",
+  "scope": "No installation, active service or ordinary-task qualification.",
+  "sha256": "c7f8ba4ffd816e6f2c286bc842f94f15204d3afcef2d75e08436cfe46711d17d",
+  "size": 906226,
+  "uncompressed_file_bytes": 1150714
+}

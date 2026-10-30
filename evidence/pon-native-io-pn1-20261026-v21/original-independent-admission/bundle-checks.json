@@ -1,0 +1,222 @@
+{
+  "schema": "actual399-prepared-inventory-and-current-object-readonly-checks-v1",
+  "all15_original_inventory_members_size_and_sha_match": true,
+  "inventory": {
+    "path": "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/pn1-v3-clean-source-public-qualification-20261026-001/prepared/artifact-files.json",
+    "bytes": 2477,
+    "sha256": "49945617a5911c49bc402bd74f008ab9e023aa35286613de26464d5fcefba12a"
+  },
+  "prepared": {
+    "path": "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/pn1-v3-clean-source-public-qualification-20261026-001/prepared/prepared.json",
+    "bytes": 11176,
+    "sha256": "924fd7428cdf079c2b91a6cdb4af9aabd9896e732e870420a0c3b4929b61a0ac"
+  },
+  "members": [
+    {
+      "bytes": 4803,
+      "path": "build.stderr.log",
+      "sha256": "92e3b781cacd0d2290a2180672b0c9b88c8e442279d984f1ceb599c81d821323",
+      "mode": "0o600",
+      "device": 2050,
+      "inode": 53533640
+    },
+    {
+      "bytes": 91780,
+      "path": "build.stdout.log",
+      "sha256": "7a7937e70dfd42b1e4d65eddc3698ba68f4e5677626b6769195fe29141897cac",
+      "mode": "0o600",
+      "device": 2050,
+      "inode": 53533639
+    },
+    {
+      "bytes": 1517,
+      "path": "build.step.json",
+      "sha256": "4927809a7b73df1dcdc0fb750745c02c356d7ed0bc54906ea5f9b8d062a33a1e",
+      "mode": "0o600",
+      "device": 2050,
+      "inode": 53533645
+    },
+    {
+      "bytes": 11176,
+      "path": "prepared.json",
+      "sha256": "924fd7428cdf079c2b91a6cdb4af9aabd9896e732e870420a0c3b4929b61a0ac",
+      "mode": "0o600",
+      "device": 2050,
+      "inode": 53533653
+    },
+    {
+      "bytes": 10582144,
+      "path": "public_v3_identity_campaign.bin",
+      "sha256": "38f34d7464fd808ceae92699d0dbaaba0b928c34d9498819e10f477cf8628a51",
+      "mode": "0o500",
+      "device": 2050,
+      "inode": 53533646
+    },
+    {
+      "bytes": 3259,
+      "path": "resource-after.json",
+      "sha256": "323a7e6f3e0281d5f6c2490887298763947221d4d5f258cdb32ca8027f160cfe",
+      "mode": "0o600",
+      "device": 2050,
+      "inode": 53533652
+    },
+    {
+      "bytes": 3244,
+      "path": "resource-before.json",
+      "sha256": "9269ec54dff97c22dd9621122bfb5bf1419d05b4009ef7559e23dbf0f3e9ea84",
+      "mode": "0o600",
+      "device": 2050,
+      "inode": 53533634
+    },
+    {
+      "bytes": 421,
+      "path": "source-after.json",
+      "sha256": "bbc0bff4fea4f2f4a541e31948fbe9f176554f4b033c17bb4841726d82b49477",
+      "mode": "0o600",
+      "device": 2050,
+      "inode": 53533651
+    },
+    {
+      "bytes": 0,
+      "path": "source-after.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "mode": "0o600",
+      "device": 2050,
+      "inode": 53533648
+    },
+    {
+      "bytes": 421,
+      "path": "source-after.stdout.log",
+      "sha256": "bbc0bff4fea4f2f4a541e31948fbe9f176554f4b033c17bb4841726d82b49477",
+      "mode": "0o600",
+      "device": 2050,
+      "inode": 53533647
+    },
+    {
+      "bytes": 902,
+      "path": "source-after.step.json",
+      "sha256": "1c628f281855038f1096d90342a882224db63aacd5a26e4ef8435c4bfe45fc78",
+      "mode": "0o600",
+      "device": 2050,
+      "inode": 53533650
+    },
+    {
+      "bytes": 421,
+      "path": "source-before.json",
+      "sha256": "bbc0bff4fea4f2f4a541e31948fbe9f176554f4b033c17bb4841726d82b49477",
+      "mode": "0o600",
+      "device": 2050,
+      "inode": 53533638
+    },
+    {
+      "bytes": 0,
+      "path": "source-before.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "mode": "0o600",
+      "device": 2050,
+      "inode": 53533636
+    },
+    {
+      "bytes": 421,
+      "path": "source-before.stdout.log",
+      "sha256": "bbc0bff4fea4f2f4a541e31948fbe9f176554f4b033c17bb4841726d82b49477",
+      "mode": "0o600",
+      "device": 2050,
+      "inode": 53533635
+    },
+    {
+      "bytes": 907,
+      "path": "source-before.step.json",
+      "sha256": "e3b697f66bb25beed0537525c2b37f4a0d2d8979d0d0676451d3e4d058df188f",
+      "mode": "0o600",
+      "device": 2050,
+      "inode": 53533637
+    }
+  ],
+  "physical_source_target_artifact": {
+    "path": "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/pn1-v3-clean-source-public-qualification-20261026-001/target/release/deps/public_v3_identity_campaign-19bfac7fcfb49be1",
+    "bytes": 10582144,
+    "sha256": "38f34d7464fd808ceae92699d0dbaaba0b928c34d9498819e10f477cf8628a51"
+  },
+  "frozen_binary": {
+    "path": "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/pn1-v3-clean-source-public-qualification-20261026-001/prepared/public_v3_identity_campaign.bin",
+    "bytes": 10582144,
+    "sha256": "38f34d7464fd808ceae92699d0dbaaba0b928c34d9498819e10f477cf8628a51"
+  },
+  "frozen_ELF_header": {
+    "magic": "7f454c46",
+    "class": 2,
+    "byteorder": 1,
+    "machine": 62,
+    "type": 3
+  },
+  "prepared_and_target_current_identity_matches": true,
+  "actual_native_abi_event": {
+    "reason": "build-script-executed",
+    "package_id": "path+file:///home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/pn1-v3-clean-source-public-qualification-20261026-001/ownedsource/trillionnium/crates/trnm-sqlite-io-boundary#0.1.0",
+    "linked_libs": [
+      "static=trnm_sqlite_layout_witness"
+    ],
+    "linked_paths": [
+      "native=/proc/self/fd/6/release/build/trnm-sqlite-io-boundary-c5a2d961f0916f84/out"
+    ],
+    "cfgs": [
+      "trnm_sqlite_layout_witness"
+    ],
+    "env": [
+      [
+        "TRNM_SQLITE3_BUILD_FENCE",
+        "sqlite-3.51.3-normal-native-linux-layout-v3"
+      ],
+      [
+        "TRNM_SQLITE3_AMALGAMATION_SHA256",
+        "9512509b1bccb7461f79bea8aad6280ae4699e925fa4804381b71f59e7efb0c5"
+      ]
+    ],
+    "out_dir": "/proc/self/fd/6/release/build/trnm-sqlite-io-boundary-c5a2d961f0916f84/out"
+  },
+  "C_witness_archived": [
+    {
+      "path": "actual-C-witness/db3b6bfb95261072-unix_layout_witness.o",
+      "bytes": 6008,
+      "sha256": "5aa17b5054b219377d6450e2f028e4ca4f978d1626cfcb232620210ced520471"
+    },
+    {
+      "path": "actual-C-witness/libtrnm_sqlite_layout_witness.a",
+      "bytes": 6360,
+      "sha256": "cb18ef835043678c3b7cfc6732c274ae066316e34fbfc40cf2e25fa7acb2908f"
+    },
+    {
+      "path": "actual-C-witness/trnm-witness-symbols.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "actual-C-witness/trnm-witness-symbols.stdout",
+      "bytes": 220,
+      "sha256": "37f7d8a71c793ab01ae5dd4a1308e269c5644c0e6501b498c5df9748c63aed8b"
+    }
+  ],
+  "nm_defined_global_symbols": [
+    "trnm_io_witness_compileoption",
+    "trnm_io_witness_layout",
+    "trnm_io_witness_source_id",
+    "trnm_io_witness_version"
+  ],
+  "nm_stderr_empty": true,
+  "nm_exit_status_not_separately_archived": "success is source-flow implied by cfg/fence after verify_witness_symbols; original nm streams and archive retained",
+  "runtime_C_function_values_measured_by_reviewer": false,
+  "claim_path": "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/pn1-v3-clean-source-public-qualification-20261026-001/component-execution-claim-v1-2050-53533633",
+  "prelaunch_claim_and_output_observed_absent": true,
+  "claim_and_output_exist_at_seal_after_authorized_parent_launch": [
+    true,
+    true
+  ],
+  "already_authorized_single_execute_job": "main/1a17864a6fe-96a-1231",
+  "source_head_tree": [
+    "399dd82608df72c71c502b8bda0aa95898794080",
+    "66ceec03cd2b67ae88a5662cf75e4ba80292cd2b"
+  ],
+  "source_clean": true,
+  "no_claim_or_execution_or_source_mutation_by_reviewer": true
+}

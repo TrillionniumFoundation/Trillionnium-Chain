@@ -1,0 +1,33 @@
+[
+  {
+    "name": "final-driver-fmt",
+    "argv": [
+      "/workspace/scratch/301262829a43/pon-build-inputs/unpacked/toolchain/bin/rustfmt",
+      "--edition",
+      "2021",
+      "--check",
+      "trillionnium/crates/trnm-pon-node/examples/pon_legal_ticket_cost_v3.rs"
+    ],
+    "exit_code": 0,
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "final-inventory",
+    "argv": [
+      "python3",
+      "scripts/refresh_distributed_source_inventory.py"
+    ],
+    "exit_code": 0,
+    "log_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+  },
+  {
+    "name": "final-diff",
+    "argv": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exit_code": 0,
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

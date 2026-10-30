@@ -1,0 +1,137 @@
+{
+  "schema": "pn1-pnh1-source-revision002-and-mechanism-controls-unqualified-v1",
+  "recorded_utc": "2026-10-26T11:51:35.079308+00:00",
+  "status": "SOURCE_FIXED_PYTHON_FD_CONTROLS_OBSERVED_NOT_W1_QUALIFIED",
+  "baseline_public_head": "4c8c2ee70d8aba1fc959900741e89335ddcd71f8",
+  "v1_frozen_inputs": {
+    "path": "v1-frozen-input-pins.json",
+    "bytes": 1280,
+    "sha256": "6d3c8183cbb8e30889c9eafc40b1c4f219d1e5317ec041821a2ac9a08a02caf3"
+  },
+  "source_files": [
+    {
+      "path": "candidate/scripts/ci/check_pon_w1_real_header_reuse_v1.py",
+      "bytes": 14568,
+      "sha256": "eb450efd71820e096bf81d91d64b71571c6da1d14e89c1d7fd391e569a3206a9"
+    },
+    {
+      "path": "candidate/scripts/run_pon_w1_real_header_reuse_v1.py",
+      "bytes": 23453,
+      "sha256": "90cbea6376be79569b61fd56f57fff677d9c8d1bcdfe2e21e414d8b1a43fd464"
+    },
+    {
+      "path": "candidate/trillionnium/crates/trnm-pon-node/examples/pon_w1_real_header_reuse_v1.rs",
+      "bytes": 20353,
+      "sha256": "d9fda08e06f087caac3eb175f2add128fc4a81929b3aec5a8001ad66344d84f1"
+    },
+    {
+      "path": "candidate/trillionnium/crates/trnm-pon-node/examples/support/w1_real_header_reuse_v1.rs",
+      "bytes": 5686,
+      "sha256": "7b72d963501d844e3fc046f3ad6b4fd18d8112539ab76962328a0f01727aa5f0"
+    }
+  ],
+  "patch": {
+    "path": "candidate.patch",
+    "bytes": 66526,
+    "sha256": "1c7c2a1d4eacebd531ed0279adecbb6052128469c4ac5d68b2816bad1a426271"
+  },
+  "delta_from_frozen_v1": {
+    "path": "v1-to-revision002.patch",
+    "bytes": 19915,
+    "sha256": "ec840919a6780072502e7ca8dd31161e13df72fc77d841f8fe8f34eba44a5824"
+  },
+  "semantic_checks": {
+    "path": "semantic-checks.json",
+    "bytes": 675,
+    "sha256": "10aa59fc515cac4dd95da43848f8122f054088511df07669ef662655b1f82239"
+  },
+  "tested_function_continuity": {
+    "path": "tested-function-continuity.json",
+    "bytes": 1625,
+    "sha256": "5bab80480f5ef2b2a4fc6f6ccf2a4a1f4d141c74e183f57cbf487f785f5d0620"
+  },
+  "mechanism_controls": {
+    "v1_original_suite_terminal": {
+      "path": "controls/v1-control-terminal.json",
+      "bytes": 254,
+      "sha256": "b760da4d415deab9ef963afddb1247ffecca5a0a83f03846525ab7f8028a3395"
+    },
+    "v1_original_RED_events": {
+      "path": "controls/v1-original-red/events.jsonl",
+      "bytes": 4385,
+      "sha256": "8ee9128303905eb222bba392eca55179c066ff2558ff4777537f446d632105f1"
+    },
+    "v1_harness_NameError_raw": {
+      "path": "controls/v1-original.stderr.log",
+      "bytes": 1549,
+      "sha256": "a7e483f1acaf92f2d121de8b0e68780e7c39587bc06f1e3827ff213df7ab55af"
+    },
+    "v2_fixed_suite_result": {
+      "path": "controls/v2-fixed-controls/result.json",
+      "bytes": 9063,
+      "sha256": "cec0ea40c4dc800d9ec3f1ac507f513c10dd556a3265a4f9ed5413ca051d1006"
+    },
+    "v2_fixed_terminal": {
+      "path": "controls/v2-control-terminal.json",
+      "bytes": 284,
+      "sha256": "b2f9892d6152c3b1efce1ece2c84b8b735ab22bf5c629b18e03e070f5d99bf34"
+    },
+    "final_owner_first_error_control": {
+      "path": "controls/v2-first-error.stdout.log",
+      "bytes": 518,
+      "sha256": "4651005d4384af11b78bdd94636056f5ef276a4e1ae3d2d550d0056af1946642"
+    },
+    "final_owner_first_error_terminal": {
+      "path": "controls/v2-first-error-control-terminal.json",
+      "bytes": 251,
+      "sha256": "9f937c5d8c767eb1563b6d4cbf1185fd7a6dc31f826bcd5181fa3830e157e2a5"
+    },
+    "new_v2_budget_ledger": {
+      "path": "controls/v2-budget-ledger.json",
+      "bytes": 1184,
+      "sha256": "62b4b2811af4c4339a1f8ba1db69b88da153fdaa6f5a2983fa361e9280df7e0f"
+    },
+    "v1_actual_exit": 1,
+    "v1_actual_elapsed_seconds": 13.283328251010971,
+    "v2_main_actual_exit": 0,
+    "v2_main_elapsed_seconds": 8.827459702995839,
+    "v2_additional_first_error_actual_exit": 0,
+    "v2_additional_elapsed_seconds": 0.09346402599476278,
+    "new_authorized_actual_spent_seconds": 8.920923728990601,
+    "combined_actual_spent_seconds": 22.204251980001573,
+    "combined_cap_seconds": 28.28332825101097,
+    "old_unused_budget_transferred_or_refunded": false,
+    "fix_controls_all_expected_mechanisms_observed": true,
+    "numeric_alias_mutants_rejected": 123,
+    "R3_delay_is_controlled_injection_not_historical_cause": true,
+    "R5_original_stale_signal_observed_but_not_executed": true,
+    "all8_fixture_children_real_reaped": true,
+    "whole_process_tree_census_proven": false
+  },
+  "cache_sideeffects": {
+    "path": "cache-sideeffects.json",
+    "bytes": 2533,
+    "sha256": "4bc52a9e04e58c971c89ffc2c396de709d73ed3c35c95330c190fc105736a5dc"
+  },
+  "findings_fixed_in_source": [
+    "PY01-close-not-EOF",
+    "PY02-final-two-records-reserved-and-post-write-inventory-in-original-cap",
+    "RS01-unused-Header-import",
+    "ROOT-R3-log-and-fsync-inside-original-deadline",
+    "ROOT-R4-exact-JSON-integer-types-and-bounds-preserve-bool-hit",
+    "ROOT-R5-never-signal-old-PGID-after-reap"
+  ],
+  "actual_Cargo_or_native_W1_or_formal_qualification_run": false,
+  "actual_Python_FD_mechanism_processes_run": true,
+  "source_binary_attestation": false,
+  "qualifying_execution_receipt": false,
+  "full_native64_pass": false,
+  "whole_W1_cost_or_hardware_or_threefd_or_full4097_qualified": false,
+  "all_owned_descendants_terminal": "UNKNOWN",
+  "merge_ready": false,
+  "task_complete": false,
+  "no_product_source_or_old_assertion_or_cap_changes_outside_revision002": true,
+  "interpreter_cache_metadata_sideeffects_disclosed": true,
+  "root_integration_or_ROG_or_outputs_authored": false,
+  "commit_or_push_by_this_agent": false
+}

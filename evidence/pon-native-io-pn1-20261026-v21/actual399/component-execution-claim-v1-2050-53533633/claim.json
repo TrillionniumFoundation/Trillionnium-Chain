@@ -1,0 +1,40 @@
+{
+  "administrator_deletion_resistance": false,
+  "binding": {
+    "binary_bytes": 10582144,
+    "binary_identity": {
+      "device": 2050,
+      "inode": 53533646
+    },
+    "binary_sha256": "38f34d7464fd808ceae92699d0dbaaba0b928c34d9498819e10f477cf8628a51",
+    "claim_identity": {
+      "device": 2050,
+      "inode": 51829606
+    },
+    "execution_identity": {
+      "device": 2050,
+      "inode": 51829605
+    },
+    "execution_root": "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/pn1-v3-clean-source-public-qualification-20261026-001/execution",
+    "head": "399dd82608df72c71c502b8bda0aa95898794080",
+    "inventory_sha256": "49945617a5911c49bc402bd74f008ab9e023aa35286613de26464d5fcefba12a",
+    "prepared_identity": {
+      "device": 2050,
+      "inode": 53533633
+    },
+    "prepared_root": "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/pn1-v3-clean-source-public-qualification-20261026-001/prepared",
+    "prepared_sha256": "924fd7428cdf079c2b91a6cdb4af9aabd9896e732e870420a0c3b4929b61a0ac",
+    "profile": "pn1-native-io-three-fd-component-v1",
+    "tree": "66ceec03cd2b67ae88a5662cf75e4ba80292cd2b"
+  },
+  "component_only": true,
+  "created_utc": "2026-10-26T13:27:06.146263+00:00",
+  "domain": "trnm-pon-native-io-three-fd-component-claim-v1",
+  "full_W1_4097_qualified": false,
+  "full_guard_enabled": false,
+  "independent_reader_qualified": false,
+  "merge_ready": false,
+  "original_three_FD_caller_qualified": false,
+  "schema": "pon-native-io-three-fd-component-claim-v1",
+  "whole_writer_qualified": false
+}

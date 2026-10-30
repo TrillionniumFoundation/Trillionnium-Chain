@@ -1,0 +1,16 @@
+{
+  "artifact": 12791521085,
+  "artifact_sha256": "5d1d8ecd25228103bdf1029a4899fda264d88579233780b70de6295481cc51da",
+  "error": "CONTINUITY_REWARD_QUEUE",
+  "fix_native_verdict": "NOT_RUN_AT_PREPARATION",
+  "job": 122622759390,
+  "original_tests_failed": 1,
+  "original_tests_ignored": 0,
+  "original_tests_passed": 15,
+  "p1_complete": false,
+  "production_activation": false,
+  "run": 40629640633,
+  "schema": "pq5-537-reward-frontier-fixture-observation-v1",
+  "source": "f9df02f1c0ade1866f2e0fbc2d7a6467339c8f82",
+  "tree": "fbe4cddb005064c651a628aa7cc9e4c5ead69373"
+}

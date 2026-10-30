@@ -1,0 +1,32 @@
+{
+  "schema": "independent-static-review-of-proc-ESRCH-whole-scan-retry-v1",
+  "recorded_utc": "2026-10-26T16:18:00.907534+00:00",
+  "observed_root_HEAD": "59abdfe8549e4a7df16b164f8ab5d1869489b409",
+  "observed_working_bytes_sha256": "356c3609bb7ce845ab8e82df2c3147019794cd0dc74abefb0aa02cb065c4ca82",
+  "observed_HEAD_bytes_sha256": "a56543aa94ad2ee7d073481e9686a47c1995365a2e59738ff79fc93a4b3adb99",
+  "public53fb_bytes_sha256": "a56543aa94ad2ee7d073481e9686a47c1995365a2e59738ff79fc93a4b3adb99",
+  "root_owned_kernel_counterexample_sha256": "c8390ee7b9005c99de0a0ec6dc41e19d3e6a862dfd927dcaa1d81097103e8a93",
+  "root_control_is_historical_CI_cause_proof": false,
+  "proposed_scope": "Only retry_malformed_proc_numbers error predicate: ParseIntError OR std::io::Error raw errno equals SRCH, and Instant::now()<original deadline. Retry entire reap_one_complete_scan; no identity None/terminal shortcut.",
+  "static_verdict": "ACCEPTABLE_WITH_EXACT_TYPE_AND_ORIGINAL_DEADLINE_CONDITIONS; actual changed source and compile/native tests not certified",
+  "reasoning": [
+    "read_bounded returns std::io::Error from actual /proc file open/read; an opened owned child stat FD can legally return ESRCH after its owner actually reaps it, as the independent root-owned control records.",
+    "child_ids lists children across all calling-process threads; a child owned by another collector can disappear after enumeration and before this collector has enough identity bytes to classify it as foreign. Retrying a complete ownership scan permits reclassification without pretending any child ended.",
+    "reap_one_complete_scan reacquires and verifies leader pid/parent/group and then retains starttime comparison; the original unreaped leader is NOWAIT-pinned until descendant cleanup returns, before child.wait_timeout.",
+    "Retriable std::io ESRCH never returns Ok by itself. Any partial scan result is discarded, and a fresh scan must pass owner identity, pidfd/child wait and no-found-descendant completion logic.",
+    "Direct rustix::io::Errno SRCH from pidfd_open/waitid is converted directly into anyhow::Error, not through std::io::Error; Rust Into conversions do not transitively choose Errno->io::Error->anyhow. It therefore must not be retried by this predicate.",
+    "Existing pidfd SRCH path still requires a second identity read. A live/reused PID rejects; only real absent old identity keeps found=true to force a full subsequent scan. If the second proc read itself produces std::io ESRCH, only a new complete scan is allowed.",
+    "CHILD/PERM/other errno, UTF8/shape/size/deadline/identity errors stay fail-closed. Bare ownership-changed and missing-owner errors are not std::io SRCH.",
+    "Existing original deadline is passed unchanged to every scan; sleep is bounded by remaining time, and expired error is returned. MAX_PROC_BYTES1MiB, CLEANUP_BUDGET1s and original3s nested-family calls are unchanged by predicate alone."
+  ],
+  "required_controls_for_root_actual_source": [
+    "Retain all existing malformed-number, wrong-owner, expired and concurrency assertions.",
+    "Actual opened child stat FD alive->owner wait0->read std::io ESRCH->whole-scan retry must be RED before predicate and qualify only via a fresh scan after fix.",
+    "Synthetic direct rustix::Errno::SRCH must execute one scan and fail, showing no implicit std::io widening.",
+    "std::io permission/other raw errno must execute one scan and fail.",
+    "Expired std::io ESRCH must fail after one scan without acquiring a fresh deadline.",
+    "Source/native source pin and tests after modification remain required; no historicCI failure closed by static review."
+  ],
+  "no_tests_build_fmt_or_source_modification_by_reviewer": true,
+  "public_failure_evidence_receipt": "work/ci-follow/paired-publication-gate-final-primary-refresh-20261026T1620Z-001/independent-publication-gate-and-new-failure-receipt.json"
+}

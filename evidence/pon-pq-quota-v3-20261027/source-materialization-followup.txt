@@ -1,0 +1,1 @@
+After all 165 missing non-evidence tracked blobs were restored and source-materialization.json written, optional subsequent codec-test edit failed with NameError: Path is not defined. The edit had not run. Repeated only that edit with pathlib imported.

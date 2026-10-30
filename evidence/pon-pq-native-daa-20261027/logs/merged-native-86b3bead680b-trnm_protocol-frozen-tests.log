@@ -1,0 +1,46 @@
+
+running 41 tests
+test pon_growth::tests::native_growth_v2_header_fixed_vector_and_domain_separation ... ok
+test pon_state::bulk_tests::bulk_collision_in_valid_prefix_keeps_original_error_precedence ... ok
+test pon_state::bulk_tests::bulk_complete_construction_cost_observation ... ignored, explicit full-build paired timing; not native Node throughput or public qualification
+test pon_state::bulk_tests::bulk_keeps_original_bounds_and_absent_empty_distinction ... ok
+test pon_state::bulk_tests::bulk_keeps_updates_inverse_and_failed_batch_snapshot_immutable ... ok
+test pon_state::bulk_tests::bulk_matches_insertion_shape_and_full_wire_at_size_edges ... ok
+test pon_state::bulk_tests::bulk_matches_original_every_divergence_depth_and_path_direction ... ok
+test pon_state::bulk_tests::bulk_nested_all_depths_matches_both_insertion_orders ... ok
+test pon_state::bulk_tests::bulk_real_65536_keys_preserves_every_leaf_and_original_root ... ok
+test pon_state::tests::all_deletions_return_empty_and_values_remain_bounded ... ok
+test pon_state::tests::compressed_roots_equal_independent_full_builder ... ok
+test pon_state::tests::failing_last_change_leaves_predecessor_and_content_unchanged ... ok
+test pon_state::tests::mixed_batches_match_full_builder_and_inverse_restores_predecessor ... ok
+test pon_state::tests::updates_deletes_and_empty_values_preserve_frozen_snapshots ... ok
+test pon_state::tests::wrong_root_duplicate_key_and_oversize_are_rejected ... ok
+test pon_wire::streamed_state_root_tests::state_empty_constants_match_all_depths_and_parallel_callers ... ok
+test pon_wire::streamed_state_root_tests::state_node_and_complete_root_paired_cost_observation ... ignored, explicit complete-root paired observation; not Node or WAN throughput
+test pon_wire::streamed_state_root_tests::state_node_single_buffer_matches_original_wire ... ok
+test pon_wire::streamed_state_root_tests::state_root_constants_do_not_cache_values_or_failures ... ok
+test pon_wire::streamed_state_root_tests::streamed_state_root_drops_each_owned_encoding_before_requesting_the_next ... ok
+test pon_wire::streamed_state_root_tests::streamed_state_root_preserves_original_sparse_tree_for_all_input_orders ... ok
+test pon_wire::streamed_state_root_tests::streamed_state_root_refuses_duplicate_limit_and_truncated_producer_errors ... ok
+test pon_wire::tests::account_archive_reference_root_matches_independent_vectors ... ok
+test pon_wire::tests::contribution_without_signed_round_is_not_revision3_wire ... ok
+test pon_wire::tests::every_tx_tag_has_an_exact_payload ... ok
+test pon_wire::tests::header_exact_and_context_bound ... ok
+test pon_wire::tests::release_payload_is_bounded_and_sorted ... ok
+test pon_wire::tests::sparse_root_is_order_independent_and_value_sensitive ... ok
+test pq_frame::tests::entire_statement_has_one_exact_canonical_preflight_binding ... ok
+test pq_frame::tests::malformed_spki_or_classical_key_never_binds_pq_identity ... ok
+test pq_frame::tests::old_devnet_transaction_size_cannot_hold_pq_signature ... ok
+test pq_frame::tests::pinned_mldsa_spki_identity_matches_independent_sha256_vector ... ok
+test pq_frame::tests::sha384_payload_commitment_matches_independent_python_oracle ... ok
+test pq_frame::tests::stale_payload_and_signature_size_refuse ... ok
+test pq_frame::tests::unverified_signature_change_never_grants_authority ... ok
+test pq_frame::tests::zero_lifetimes_bad_length_and_classical_downgrade_reject ... ok
+test pq_transfer::tests::alleged_signature_is_not_parser_authority_or_transaction_identity ... ok
+test pq_transfer::tests::exact_bounds_and_canonical_body_reject_before_signature_work ... ok
+test tests::identifiers_and_decimal_values_are_canonical ... ok
+test tests::object_namespaces_do_not_collide ... ok
+test tests::result_commitment_binds_every_field ... ok
+
+test result: ok. 39 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 41.57s
+

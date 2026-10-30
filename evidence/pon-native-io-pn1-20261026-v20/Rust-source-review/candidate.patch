@@ -1,0 +1,772 @@
+diff --git a/trillionnium/crates/trnm-sqlite-io-boundary/build.rs b/trillionnium/crates/trnm-sqlite-io-boundary/build.rs
+--- a/trillionnium/crates/trnm-sqlite-io-boundary/build.rs
++++ b/trillionnium/crates/trnm-sqlite-io-boundary/build.rs
+@@ -1,4 +1,7 @@
+ //! Fail-closed build fence for the exact private Unix layout witness.
++mod build_loader_paths;
++
++use build_loader_paths::{canonical_directory, LoaderPaths};
+ use sha2::{Digest, Sha256};
+ use std::collections::BTreeSet;
+ use std::env;
+@@ -15,7 +18,7 @@
+     "9512509b1bccb7461f79bea8aad6280ae4699e925fa4804381b71f59e7efb0c5";
+ const UPSTREAM_BUILD_SHA256: &str =
+     "239297962bfdc78cd420b44142ee6801d2fc9375bf8470207669f416446ebb9e";
+-const BUILD_FENCE: &str = "sqlite-3.51.3-normal-native-linux-layout-v2";
++const BUILD_FENCE: &str = "sqlite-3.51.3-normal-native-linux-layout-v3";
+ const NM_OUTPUT_BYTES: usize = 16 * 1024;
+ const NM_TIMEOUT: Duration = Duration::from_secs(20);
+ const WITNESS_GLOBALS: [&str; 4] = [
+@@ -168,21 +171,10 @@
+ // and admit only the optional base profile output Cargo adds for build/test.
+ // This is a path constraint, not a magic qualification token or a claim that
+ // this process can recover the parent's original environment provenance.
+-fn canonical_directory(path: &Path) -> Result<PathBuf, String> {
+-    if !path.is_absolute() {
+-        return Err("loader directory must be absolute".into());
+-    }
+-    let canonical = path
+-        .canonicalize()
+-        .map_err(|_| "loader directory missing")?;
+-    if canonical != path || !canonical.is_dir() {
+-        return Err("loader directory must be a canonical existing directory".into());
+-    }
+-    Ok(canonical)
+-}
+-
+-fn validate_cargo_loader_paths() -> Result<(), String> {
+-    let out = canonical_directory(Path::new(&required("OUT_DIR")?))?;
++fn validate_cargo_loader_paths() -> Result<LoaderPaths, String> {
++    let target = env::var_os("CARGO_TARGET_DIR");
++    let mut paths = LoaderPaths::capture(target.as_deref())?;
++    let out = paths.out_directory(Path::new(&required("OUT_DIR")?))?;
+     if out.file_name() != Some(OsStr::new("out")) {
+         return Err("unexpected Cargo OUT_DIR leaf".into());
+     }
+@@ -227,8 +219,9 @@
+         return Err("unexpected compiler layout".into());
+     }
+     let toolchain = bin.parent().ok_or("missing compiler toolchain root")?;
++    let target_deps = paths.target_directory(&profile.join("deps"))?;
+     let required: BTreeSet<PathBuf> = [
+-        canonical_directory(&profile.join("deps"))?,
++        target_deps.clone(),
+         canonical_directory(
+             &toolchain
+                 .join("lib")
+@@ -247,7 +240,8 @@
+     // build/test mode. This is one exact derived path, not any target subtree
+     // or arbitrary native dependency build output.
+     let mut allowed = required.clone();
+-    if !allowed.insert(canonical_directory(profile)?) {
++    let target_profile = paths.target_directory(profile)?;
++    if !allowed.insert(target_profile.clone()) {
+         return Err("base profile directory overlaps required loader set".into());
+     }
+     let value = env::var_os("LD_LIBRARY_PATH").ok_or("missing normal Cargo loader paths")?;
+@@ -258,7 +252,20 @@
+                 "extra Cargo loader directory: observed={path:?}; derived_normal={allowed:?}"
+             ));
+         }
+-        let path = canonical_directory(&path)?;
++        let path = match canonical_directory(&path) {
++            Ok(canonical) => canonical,
++            Err(canonical_error) => {
++                let canonical = paths
++                    .target_alias_directory(&path)
++                    .map_err(|_| canonical_error)?;
++                if canonical != target_deps && canonical != target_profile {
++                    return Err(
++                        "held loader alias is not the exact profile or deps directory".into(),
++                    );
++                }
++                canonical
++            }
++        };
+         if !allowed.contains(&path) || !seen.insert(path.clone()) {
+             return Err(format!("unknown or duplicate Cargo loader directory: observed={path:?}; derived_normal={allowed:?}"));
+         }
+@@ -266,11 +273,12 @@
+     if !required.is_subset(&seen) {
+         return Err("normal Cargo loader directory set incomplete".into());
+     }
+-    Ok(())
+-}
+-
+-fn reject_external_overrides() -> Result<(), String> {
+-    validate_cargo_loader_paths()?;
++    paths.validate()?;
++    Ok(paths)
++}
++
++fn reject_external_overrides() -> Result<LoaderPaths, String> {
++    let paths = validate_cargo_loader_paths()?;
+     // cc's unqualified, HOST_/TARGET_, and target-qualified flag/tool inputs
+     // are all rejected. A normal Cargo jobserver/OPT_LEVEL/DEBUG is retained.
+     // Empty variables do not add flags. pkg-config's literal zero is the
+@@ -339,6 +347,7 @@
+         "RUSTC_WRAPPER",
+         "RUSTC",
+         "OUT_DIR",
++        "CARGO_TARGET_DIR",
+         "PROFILE",
+         "LIBSQLITE3_FLAGS",
+         "CC",
+@@ -364,12 +373,14 @@
+     ] {
+         println!("cargo:rerun-if-env-changed={name}");
+     }
+-    Ok(())
++    paths.validate()?;
++    Ok(paths)
+ }
+ 
+ fn main() {
+     println!("cargo:rustc-check-cfg=cfg(trnm_sqlite_layout_witness)");
+     println!("cargo:rerun-if-changed=build.rs");
++    println!("cargo:rerun-if-changed=build_loader_paths.rs");
+     println!("cargo:rerun-if-changed=unix_layout_witness.c");
+     println!("cargo:rerun-if-env-changed=DEP_SQLITE3_INCLUDE");
+     println!("cargo:rerun-if-env-changed=HOST");
+@@ -402,7 +413,7 @@
+             "only native little-endian Linux x86_64/aarch64 GNU or musl builds are admitted".into(),
+         );
+     }
+-    reject_external_overrides()?;
++    let loader_paths = reject_external_overrides()?;
+     let include = PathBuf::from(required("DEP_SQLITE3_INCLUDE")?)
+         .canonicalize()
+         .map_err(|_| "dependency did not expose a real bundled include directory")?;
+@@ -462,12 +473,18 @@
+     if !(compiler.is_like_gnu() || compiler.is_like_clang()) {
+         return Err("only the normal GNU/Clang native C ABI is admitted".into());
+     }
++    loader_paths.validate()?;
+     cfg.try_compile("trnm_sqlite_layout_witness").map_err(|_| {
+         "the exact C layout witness did not compile; bounded API remains unsupported"
+     })?;
++    loader_paths.validate()?;
+     pin_text(&amalgamation, 9_390_466, AMALGAMATION_SHA256)?;
+     pin_text(&dependency.join("build.rs"), 33_727, UPSTREAM_BUILD_SHA256)?;
++    loader_paths.validate()?;
+     verify_witness_symbols(&PathBuf::from(required("OUT_DIR")?))?;
++    // Retain and revalidate the capability through C compile and nm; publish no
++    // qualifying cfg/fence until all original checks and this final check pass.
++    loader_paths.validate()?;
+     println!("cargo:rustc-cfg=trnm_sqlite_layout_witness");
+     println!("cargo:rustc-env=TRNM_SQLITE3_BUILD_FENCE={BUILD_FENCE}");
+     println!("cargo:rustc-env=TRNM_SQLITE3_AMALGAMATION_SHA256={AMALGAMATION_SHA256}");
+diff --git a/trillionnium/crates/trnm-sqlite-io-boundary/build_loader_paths.rs b/trillionnium/crates/trnm-sqlite-io-boundary/build_loader_paths.rs
+new file mode 100644
+--- /dev/null
++++ b/trillionnium/crates/trnm-sqlite-io-boundary/build_loader_paths.rs
+@@ -0,0 +1,326 @@
++//! Narrow build-time path admission for the original canonical Cargo layout.
++//!
++//! Linux additionally admits one inherited target-directory capability. This is
++//! a private, serialized build boundary, not a hostile same-UID filesystem sandbox.
++use std::ffi::OsStr;
++use std::path::{Path, PathBuf};
++
++// Keep the ordinary canonical-only route unchanged, including its refusals.
++pub fn canonical_directory(path: &Path) -> Result<PathBuf, String> {
++    if !path.is_absolute() {
++        return Err("loader directory must be absolute".into());
++    }
++    let canonical = path
++        .canonicalize()
++        .map_err(|_| "loader directory missing")?;
++    if canonical != path || !canonical.is_dir() {
++        return Err("loader directory must be a canonical existing directory".into());
++    }
++    Ok(canonical)
++}
++
++pub struct LoaderPaths {
++    #[cfg(target_os = "linux")]
++    held: Option<linux::HeldTarget>,
++}
++
++impl LoaderPaths {
++    pub fn capture(target: Option<&OsStr>) -> Result<Self, String> {
++        #[cfg(target_os = "linux")]
++        {
++            Ok(Self {
++                held: linux::HeldTarget::capture(target)?,
++            })
++        }
++        #[cfg(not(target_os = "linux"))]
++        {
++            if target.is_some_and(|value| value.to_string_lossy().starts_with("/proc/self/fd/")) {
++                return Err("held target aliases are admitted only on Linux".into());
++            }
++            Ok(Self {})
++        }
++    }
++
++    pub fn out_directory(&mut self, path: &Path) -> Result<PathBuf, String> {
++        #[cfg(target_os = "linux")]
++        if let Some(held) = &mut self.held {
++            return held.cargo_out_directory(path);
++        }
++        canonical_directory(path)
++    }
++
++    /// OUT_DIR and its derived target directories must belong to the captured
++    /// target even if Cargo happens to spell them as ordinary canonical paths.
++    pub fn target_directory(&mut self, path: &Path) -> Result<PathBuf, String> {
++        #[cfg(target_os = "linux")]
++        if let Some(held) = &mut self.held {
++            return held.directory(path, false);
++        }
++        canonical_directory(path)
++    }
++
++    /// Only the literal inherited alias may bypass canonical-only admission.
++    /// The caller must still restrict the result to profile and profile/deps.
++    pub fn target_alias_directory(&mut self, path: &Path) -> Result<PathBuf, String> {
++        #[cfg(target_os = "linux")]
++        if let Some(held) = &mut self.held {
++            return held.directory(path, true);
++        }
++        let _ = path;
++        Err("loader alias has no captured Linux target capability".into())
++    }
++
++    /// Retain this object and revalidate around actual compiler/nm use and
++    /// immediately before publishing the fresh build fence.
++    pub fn validate(&self) -> Result<(), String> {
++        #[cfg(target_os = "linux")]
++        if let Some(held) = &self.held {
++            held.validate()?;
++        }
++        Ok(())
++    }
++}
++
++#[cfg(target_os = "linux")]
++mod linux {
++    use super::canonical_directory;
++    use std::collections::BTreeMap;
++    use std::ffi::{OsStr, OsString};
++    use std::fs::{self, File, Metadata};
++    use std::os::fd::AsRawFd;
++    use std::os::unix::ffi::{OsStrExt, OsStringExt};
++    use std::os::unix::fs::MetadataExt;
++    use std::path::{Path, PathBuf};
++
++    struct DirectoryPin {
++        file: File,
++        device: u64,
++        inode: u64,
++    }
++
++    pub(super) struct HeldTarget {
++        advertised: PathBuf,
++        canonical: PathBuf,
++        file: File,
++        device: u64,
++        inode: u64,
++        owner: u32,
++        directories: BTreeMap<PathBuf, DirectoryPin>,
++    }
++
++    fn identity(metadata: &Metadata) -> (u64, u64) {
++        (metadata.dev(), metadata.ino())
++    }
++
++    fn proc_alias(file: &File) -> PathBuf {
++        PathBuf::from(format!("/proc/self/fd/{}", file.as_raw_fd()))
++    }
++
++    // Parse bytes before Path can normalize repeated separators or dot segments.
++    fn relative(path: &Path, root: &Path) -> Option<PathBuf> {
++        let bytes = path.as_os_str().as_bytes();
++        let base = root.as_os_str().as_bytes();
++        if bytes == base {
++            return Some(PathBuf::new());
++        }
++        let suffix = bytes.strip_prefix(base)?.strip_prefix(b"/")?;
++        if suffix.is_empty()
++            || suffix
++                .split(|byte| *byte == b'/')
++                .any(|part| part.is_empty() || part == b"." || part == b"..")
++        {
++            return None;
++        }
++        Some(PathBuf::from(OsString::from_vec(suffix.to_vec())))
++    }
++
++    impl HeldTarget {
++        pub(super) fn capture(target: Option<&OsStr>) -> Result<Option<Self>, String> {
++            let Some(target) = target else {
++                return Ok(None);
++            };
++            let prefix = b"/proc/self/fd/";
++            let bytes = target.as_bytes();
++            let Some(digits) = bytes.strip_prefix(prefix) else {
++                return Ok(None);
++            };
++            if digits.is_empty() || !digits.iter().all(u8::is_ascii_digit) {
++                return Err("target alias requires a literal decimal descriptor".into());
++            }
++            let number = std::str::from_utf8(digits)
++                .map_err(|_| "non-ASCII target descriptor")?
++                .parse::<i32>()
++                .map_err(|_| "target descriptor out of range")?;
++            if number < 3 || number.to_string().as_bytes() != digits {
++                return Err("target alias requires canonical decimal descriptor >=3".into());
++            }
++            let advertised = PathBuf::from(target);
++            // Safe procfs capture, followed by a real owned File duplication.
++            // Never take ownership of, close, or change the inherited descriptor.
++            let before = fs::metadata(&advertised).map_err(|_| "target descriptor unavailable")?;
++            let captured =
++                File::open(&advertised).map_err(|_| "cannot capture target directory")?;
++            let file = captured
++                .try_clone()
++                .map_err(|_| "cannot duplicate captured target")?;
++            let metadata = file.metadata().map_err(|_| "cannot stat captured target")?;
++            if identity(&before) != identity(&metadata) {
++                return Err("target descriptor changed during capture".into());
++            }
++            let canonical = advertised
++                .canonicalize()
++                .map_err(|_| "target alias missing")?;
++            canonical_directory(&canonical)?;
++            let owner = fs::metadata("/proc/self")
++                .map_err(|_| "process identity unavailable")?
++                .uid();
++            let result = Self {
++                advertised,
++                canonical,
++                device: metadata.dev(),
++                inode: metadata.ino(),
++                owner,
++                file,
++                directories: BTreeMap::new(),
++            };
++            result.validate()?;
++            Ok(Some(result))
++        }
++
++        fn root_metadata(&self, metadata: &Metadata) -> Result<(), String> {
++            if !metadata.is_dir()
++                || identity(metadata) != (self.device, self.inode)
++                || metadata.uid() != self.owner
++                || metadata.mode() & 0o7777 != 0o700
++            {
++                return Err("held target must retain its private0700 directory identity".into());
++            }
++            Ok(())
++        }
++
++        pub(super) fn validate(&self) -> Result<(), String> {
++            self.root_metadata(
++                &self
++                    .file
++                    .metadata()
++                    .map_err(|_| "held target stat failed")?,
++            )?;
++            let captured_alias = proc_alias(&self.file);
++            for path in [&self.advertised, &captured_alias, &self.canonical] {
++                if path
++                    .canonicalize()
++                    .map_err(|_| "held target path missing")?
++                    != self.canonical
++                {
++                    return Err("held target was renamed or redirected".into());
++                }
++                self.root_metadata(
++                    &fs::metadata(path).map_err(|_| "held target path stat failed")?,
++                )?;
++            }
++            for (canonical, pin) in &self.directories {
++                let relative =
++                    relative(canonical, &self.canonical).ok_or("foreign pinned target path")?;
++                if identity(
++                    &pin.file
++                        .metadata()
++                        .map_err(|_| "pinned directory stat failed")?,
++                ) != (pin.device, pin.inode)
++                    || proc_alias(&pin.file)
++                        .canonicalize()
++                        .map_err(|_| "pinned directory missing")?
++                        != *canonical
++                {
++                    return Err("pinned target directory was renamed or changed".into());
++                }
++                for path in [
++                    self.advertised.join(&relative),
++                    proc_alias(&self.file).join(&relative),
++                    canonical.clone(),
++                ] {
++                    let metadata = fs::metadata(&path).map_err(|_| "target component missing")?;
++                    if !metadata.is_dir()
++                        || metadata.uid() != self.owner
++                        || identity(&metadata) != (pin.device, pin.inode)
++                        || path
++                            .canonicalize()
++                            .map_err(|_| "target component missing")?
++                            != *canonical
++                    {
++                        return Err("target component was replaced or symlinked".into());
++                    }
++                }
++            }
++            Ok(())
++        }
++
++        pub(super) fn cargo_out_directory(&mut self, path: &Path) -> Result<PathBuf, String> {
++            let out = self.directory(path, false)?;
++            let relative = relative(&out, &self.canonical).ok_or("foreign Cargo OUT_DIR")?;
++            if relative.components().count() != 4 {
++                return Err("held OUT_DIR must be exactly target/profile/build/unit/out".into());
++            }
++            Ok(out)
++        }
++
++        pub(super) fn directory(
++            &mut self,
++            path: &Path,
++            alias_only: bool,
++        ) -> Result<PathBuf, String> {
++            self.validate()?;
++            let relative = relative(path, &self.advertised)
++                .or_else(|| {
++                    if alias_only {
++                        None
++                    } else {
++                        relative(path, &self.canonical)
++                    }
++                })
++                .ok_or("directory is not under the exact captured target spelling")?;
++            let expected = self.canonical.join(&relative);
++            if path
++                .canonicalize()
++                .map_err(|_| "target directory missing")?
++                != expected
++            {
++                return Err("target directory contains a symlink or redirected component".into());
++            }
++            // Keep every ancestor capability too: preserving the final out inode
++            // does not excuse replacing its profile/build/unit parent.
++            let mut prefix = PathBuf::new();
++            for part in relative.components() {
++                prefix.push(part.as_os_str());
++                let canonical = self.canonical.join(&prefix);
++                let file = File::open(proc_alias(&self.file).join(&prefix))
++                    .map_err(|_| "cannot capture target component")?;
++                let metadata = file
++                    .metadata()
++                    .map_err(|_| "target component stat failed")?;
++                if !metadata.is_dir() || metadata.uid() != self.owner {
++                    return Err("target component is not an owned directory".into());
++                }
++                if let Some(pin) = self.directories.get(&canonical) {
++                    if identity(&metadata) != (pin.device, pin.inode) {
++                        return Err("target component changed during admission".into());
++                    }
++                } else {
++                    self.directories.insert(
++                        canonical,
++                        DirectoryPin {
++                            file,
++                            device: metadata.dev(),
++                            inode: metadata.ino(),
++                        },
++                    );
++                }
++            }
++            self.validate()?;
++            Ok(expected)
++        }
++    }
++}
++
++#[cfg(all(test, target_os = "linux"))]
++#[path = "build_loader_paths_tests.rs"]
++mod tests;
+diff --git a/trillionnium/crates/trnm-sqlite-io-boundary/build_loader_paths_tests.rs b/trillionnium/crates/trnm-sqlite-io-boundary/build_loader_paths_tests.rs
+new file mode 100644
+--- /dev/null
++++ b/trillionnium/crates/trnm-sqlite-io-boundary/build_loader_paths_tests.rs
+@@ -0,0 +1,265 @@
++//! Real Linux/tmpfs directory-capability controls. Authored, NOT RUN.
++use super::{canonical_directory, LoaderPaths};
++use std::ffi::OsStr;
++use std::fs::{self, DirBuilder, File};
++use std::os::fd::AsRawFd;
++use std::os::unix::fs::{symlink, DirBuilderExt, MetadataExt, PermissionsExt};
++use std::path::{Path, PathBuf};
++use std::sync::atomic::{AtomicU64, Ordering};
++use std::time::{SystemTime, UNIX_EPOCH};
++
++const UNIT: &str = "trnm-sqlite-io-boundary-0123456789abcdef";
++static NEXT: AtomicU64 = AtomicU64::new(0);
++
++struct Fixture {
++    root: PathBuf,
++    original: Option<File>,
++    cleanup: Vec<PathBuf>,
++}
++
++impl Fixture {
++    fn new() -> Self {
++        let mounts = fs::read_to_string("/proc/self/mountinfo").expect("real Linux mount table");
++        assert!(
++            mounts.lines().any(|line| {
++                let Some((before, after)) = line.split_once(" - ") else {
++                    return false;
++                };
++                before.split_whitespace().nth(4) == Some("/dev/shm")
++                    && after.split_whitespace().next() == Some("tmpfs")
++            }),
++            "these controls require actual /dev/shm tmpfs; absence is not a PASS"
++        );
++        let nonce = SystemTime::now()
++            .duration_since(UNIX_EPOCH)
++            .unwrap()
++            .as_nanos();
++        let root = PathBuf::from(format!(
++            "/dev/shm/trnm-loader-fence-{}-{nonce}-{}",
++            std::process::id(),
++            NEXT.fetch_add(1, Ordering::Relaxed)
++        ));
++        DirBuilder::new().mode(0o700).create(&root).unwrap();
++        fs::create_dir_all(root.join("release/build").join(UNIT).join("out")).unwrap();
++        fs::create_dir(root.join("release/deps")).unwrap();
++        let original = Some(File::open(&root).unwrap());
++        Self {
++            cleanup: vec![root.clone()],
++            root,
++            original,
++        }
++    }
++
++    fn alias(&self) -> PathBuf {
++        PathBuf::from(format!(
++            "/proc/self/fd/{}",
++            self.original.as_ref().unwrap().as_raw_fd()
++        ))
++    }
++
++    fn out(&self) -> PathBuf {
++        self.root.join("release/build").join(UNIT).join("out")
++    }
++
++    fn alias_out(&self) -> PathBuf {
++        self.alias().join("release/build").join(UNIT).join("out")
++    }
++
++    fn capture(&self) -> LoaderPaths {
++        LoaderPaths::capture(Some(self.alias().as_os_str())).unwrap()
++    }
++}
++
++impl Drop for Fixture {
++    fn drop(&mut self) {
++        // Failure leaves the actual private fixture for the future control owner
++        // to inventory; this code never cleans another experiment or service.
++        if !std::thread::panicking() {
++            for root in &self.cleanup {
++                fs::remove_dir_all(root).unwrap();
++            }
++        }
++    }
++}
++
++#[test]
++fn exact_inherited_alias_and_same_root_canonical_paths_are_admitted() {
++    let f = Fixture::new();
++    let mut paths = f.capture();
++    assert_eq!(paths.out_directory(&f.alias_out()).unwrap(), f.out());
++    assert_eq!(
++        paths
++            .target_directory(&f.root.join("release/deps"))
++            .unwrap(),
++        f.root.join("release/deps")
++    );
++    assert_eq!(
++        paths
++            .target_alias_directory(&f.alias().join("release"))
++            .unwrap(),
++        f.root.join("release")
++    );
++    paths.validate().unwrap();
++}
++
++#[test]
++fn ordinary_canonical_route_keeps_its_original_behavior() {
++    let f = Fixture::new();
++    fs::set_permissions(&f.root, fs::Permissions::from_mode(0o755)).unwrap();
++    let mut paths = LoaderPaths::capture(Some(f.root.as_os_str())).unwrap();
++    assert_eq!(paths.target_directory(&f.out()).unwrap(), f.out());
++    let link = f.root.join("out-link");
++    symlink(f.out(), &link).unwrap();
++    assert!(canonical_directory(&link).is_err());
++    assert!(paths.target_alias_directory(&f.alias_out()).is_err());
++}
++
++#[test]
++fn descriptor_spelling_requires_exact_nonstdio_decimal() {
++    for value in [
++        "/proc/self/fd/",
++        "/proc/self/fd/00",
++        "/proc/self/fd/03",
++        "/proc/self/fd/+3",
++        "/proc/self/fd/-3",
++        "/proc/self/fd/3/",
++        "/proc/self/fd/3/x",
++        "/proc/self/fd/2147483648",
++        "/proc/self/fd/0",
++        "/proc/self/fd/1",
++        "/proc/self/fd/2",
++    ] {
++        assert!(
++            LoaderPaths::capture(Some(OsStr::new(value))).is_err(),
++            "{value}"
++        );
++    }
++}
++
++#[test]
++fn another_descriptor_is_refused_even_for_the_same_directory_inode() {
++    let f = Fixture::new();
++    let duplicate = f.original.as_ref().unwrap().try_clone().unwrap();
++    let other = PathBuf::from(format!("/proc/self/fd/{}", duplicate.as_raw_fd()));
++    assert_ne!(other, f.alias());
++    assert_eq!(
++        duplicate.metadata().unwrap().ino(),
++        f.original.as_ref().unwrap().metadata().unwrap().ino()
++    );
++    let mut paths = f.capture();
++    assert!(paths.target_directory(&other.join("release/deps")).is_err());
++    assert!(paths
++        .target_alias_directory(&other.join("release/deps"))
++        .is_err());
++}
++
++#[test]
++fn canonical_out_directory_cannot_come_from_a_different_target() {
++    let f = Fixture::new();
++    let foreign = Fixture::new();
++    let mut paths = f.capture();
++    assert!(canonical_directory(&foreign.out()).is_ok());
++    assert!(paths.out_directory(&foreign.out()).is_err());
++}
++
++#[test]
++fn a_nested_profile_with_the_right_suffix_is_not_the_held_cargo_root() {
++    let f = Fixture::new();
++    let nested = f
++        .root
++        .join("foreign/nested/release/build")
++        .join(UNIT)
++        .join("out");
++    fs::create_dir_all(&nested).unwrap();
++    let mut paths = f.capture();
++    assert!(canonical_directory(&nested).is_ok());
++    assert!(paths.out_directory(&nested).is_err());
++}
++
++#[test]
++fn literal_dot_empty_parent_and_trailing_components_are_refused() {
++    let f = Fixture::new();
++    let mut paths = f.capture();
++    for suffix in [
++        "release/./deps",
++        "release//deps",
++        "release/../release/deps",
++        "release/deps/",
++    ] {
++        let spelling = PathBuf::from(format!("{}/{suffix}", f.alias().display()));
++        assert!(spelling.canonicalize().is_ok());
++        assert!(paths.target_directory(&spelling).is_err(), "{spelling:?}");
++    }
++}
++
++#[test]
++fn a_child_symlink_is_not_a_target_directory() {
++    let f = Fixture::new();
++    let mut paths = f.capture();
++    paths.target_directory(&f.alias_out()).unwrap();
++    fs::remove_dir(f.root.join("release/deps")).unwrap();
++    symlink(f.root.join("release/build"), f.root.join("release/deps")).unwrap();
++    assert!(paths
++        .target_directory(&f.alias().join("release/deps"))
++        .is_err());
++}
++
++#[test]
++fn closing_the_original_descriptor_does_not_make_the_duplicate_authority_sufficient() {
++    let mut f = Fixture::new();
++    let mut paths = f.capture();
++    paths.target_directory(&f.alias_out()).unwrap();
++    drop(f.original.take());
++    assert!(paths.validate().is_err());
++}
++
++#[test]
++fn private_root_mode_must_remain0700() {
++    let f = Fixture::new();
++    let paths = f.capture();
++    fs::set_permissions(&f.root, fs::Permissions::from_mode(0o755)).unwrap();
++    assert!(paths.validate().is_err());
++}
++
++#[test]
++fn real_root_rename_and_replacement_cannot_retarget_the_capability() {
++    let mut f = Fixture::new();
++    let paths = f.capture();
++    let old_inode = f.original.as_ref().unwrap().metadata().unwrap().ino();
++    let moved = f.root.with_extension("moved");
++    assert!(!moved.exists());
++    fs::rename(&f.root, &moved).unwrap();
++    f.cleanup.push(moved);
++    DirBuilder::new().mode(0o700).create(&f.root).unwrap();
++    assert_eq!(
++        f.original.as_ref().unwrap().metadata().unwrap().ino(),
++        old_inode
++    );
++    assert_ne!(fs::metadata(&f.root).unwrap().ino(), old_inode);
++    assert!(paths.validate().is_err());
++}
++
++#[test]
++fn replacing_an_ancestor_is_refused_even_if_the_original_out_inode_is_moved_back() {
++    let f = Fixture::new();
++    let mut paths = f.capture();
++    paths.target_directory(&f.alias_out()).unwrap();
++    let old_out_inode = fs::metadata(f.out()).unwrap().ino();
++    let unit = f.root.join("release/build").join(UNIT);
++    let moved = unit.with_extension("moved");
++    fs::rename(&unit, &moved).unwrap();
++    fs::create_dir(&unit).unwrap();
++    fs::rename(moved.join("out"), unit.join("out")).unwrap();
++    assert_eq!(fs::metadata(f.out()).unwrap().ino(), old_out_inode);
++    assert!(paths.validate().is_err());
++}
++
++#[test]
++fn held_mode_does_not_open_an_unrelated_proc_alias_as_a_canonical_loader_path() {
++    let f = Fixture::new();
++    let file = File::open(Path::new("/dev/shm")).unwrap();
++    let path = PathBuf::from(format!("/proc/self/fd/{}", file.as_raw_fd()));
++    assert!(canonical_directory(&path).is_err());
++    let mut paths = f.capture();
++    assert!(paths.target_alias_directory(&path).is_err());
++}
+diff --git a/trillionnium/crates/trnm-sqlite-io-boundary/src/unix_abi.rs b/trillionnium/crates/trnm-sqlite-io-boundary/src/unix_abi.rs
+--- a/trillionnium/crates/trnm-sqlite-io-boundary/src/unix_abi.rs
++++ b/trillionnium/crates/trnm-sqlite-io-boundary/src/unix_abi.rs
+@@ -29,7 +29,7 @@
+ #[cfg(trnm_sqlite_layout_witness)]
+ const UNIX_VFS_NAME: &[u8] = b"unix\0";
+ #[cfg(trnm_sqlite_layout_witness)]
+-const BUILD_FENCE: &str = "sqlite-3.51.3-normal-native-linux-layout-v2";
++const BUILD_FENCE: &str = "sqlite-3.51.3-normal-native-linux-layout-v3";
+ #[cfg(trnm_sqlite_layout_witness)]
+ const AMALGAMATION_SHA256: &str =
+     "9512509b1bccb7461f79bea8aad6280ae4699e925fa4804381b71f59e7efb0c5";

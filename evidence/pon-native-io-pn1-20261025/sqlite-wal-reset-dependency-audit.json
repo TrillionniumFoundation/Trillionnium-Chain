@@ -1,0 +1,118 @@
+{
+  "schema": "pn1-sqlite-wal-reset-independent-dependency-audit-v1",
+  "as_of_utc": "2026-10-25T23:12:13.948221+00:00",
+  "source_scope": "Frozen native002 source; current live Node003/factory edits are not qualified by this audit",
+  "actions": {
+    "official_web_read": true,
+    "bounded_primary_raw_capture": true,
+    "local_source_read_only": true,
+    "repo_or_outputs_edit": false,
+    "native_build_test_or_reproducer": false,
+    "ssh_or_ci": false,
+    "upgrade_or_guard_change": false
+  },
+  "official_findings": {
+    "url": "https://sqlite.org/wal.html#walreset",
+    "bug": "WAL-reset checkpoint/writer race can corrupt a database by incorrectly preserving nBackfill across a WAL reset, causing later checkpoints to omit committed frames",
+    "version_scope_official_wording": "likely all versions 3.7.0 through 3.51.2",
+    "fixed_mainline": "3.51.3 and later (2026-03-13)",
+    "official_backports": [
+      {
+        "version": "3.44.6",
+        "version_checkin": "https://sqlite.org/src/info/863c171b76cd36e0",
+        "fix_checkin": "https://sqlite.org/src/info/2af8439a0c",
+        "notes": "official checkin context names the writer/checkpointer wraparound race; cherry pick omits testing infrastructure"
+      },
+      {
+        "version": "3.50.7",
+        "version_checkin": "https://sqlite.org/src/info/c7facf7ac58d2cda",
+        "fix_checkin": "https://sqlite.org/src/info/268c9da287"
+      }
+    ],
+    "necessary_exposure": "WAL mode; multiple connections to the same database in separate threads/processes; simultaneous writer reset and checkpointer start with the documented complete-checkpoint/reset/subsequent-commit sequence",
+    "full_sync": "synchronous=FULL does not alter the documented logical WAL-index race; official scope is not restricted to NORMAL",
+    "frequency": "officially rare and unusual; no project-specific probability inferred; official page records a non-test-hook reproducer as of 2026-08-24",
+    "cve": "No CVE asserted or inferred",
+    "fix_diff_custody": "No patch diff was acquired: the two ?diff=1 bodies are explicitly retained browser-verification responses. Checkin metadata and official release/WAL documentation were acquired; local exact vulnerable source was independently read."
+  },
+  "locked_dependency": {
+    "rusqlite": "0.32.1",
+    "libsqlite3_sys": "0.30.1 bundled",
+    "sqlite": "3.46.0",
+    "amalgamation_sha256": "c01235302fe80da901fb70c7622c39147e29d9f29b7f6eb746b23517f320c90d",
+    "amalgamation_sha3_256": "094429ea827fcd32275e767134bc6c7b9ea394a2c5a9e653dd0a0690b2c11358",
+    "matches_official_release_3_46_0_bytes": true,
+    "within_known_affected_version_range": true,
+    "project_patch_to_this_amalgamation_observed": false
+  },
+  "source_reachability": [
+    {
+      "path": "trnm-pon-node/src/store.rs:630,1279,1396; ingress/public_v3.rs:1818; store/public_reader.rs:428",
+      "surface": "supported ordinary Node",
+      "observed": "one owned writable db precedes owner File in drop order; owner.lock exclusive held during normal db lifetime; public service uses Mutex<Node>; separate public reader is READ_ONLY. Default WAL auto-checkpoint remains.",
+      "verdict": "SOURCE_MITIGATION_SEEN_NOT_BUG_REPRODUCED",
+      "limit": "A read-only observer alone is not proof of the concurrent writable/checkpointer trigger. Locked sqlite3WalCheckpoint returns READONLY for a readonly Wal. No exhaustive all-openers concurrency qualification performed."
+    },
+    {
+      "path": "trnm-data-availability/src/cell/cache_wal.rs:1,24,80,101,142; cell/store.rs:46,91,118",
+      "surface": "CellStoreV1 disposable byte cache",
+      "observed": "canonical same-cache writer-lock-v4 serializes supported writers under the original 5-second budget; each write performs configure and TRUNCATE before Immediate transaction; both writer and readonly connections disable checkpoint-on-close; writers disable auto-checkpoint and retain FULL.",
+      "verdict": "SOURCE_MITIGATION_SEEN",
+      "limit": "Only supported stable namespace clients participate. Arbitrary SQLite/filesystem clients are explicitly outside its contract. This is not a patched SQLite dependency or evidence for all other stores."
+    },
+    {
+      "path": "trnm-sqlite-io-boundary/src/owner.rs:42,80,195; src/sql.rs:69,141",
+      "surface": "new safe NativeIoLease factory and bounded VFS",
+      "observed": "Clone lease can open multiple writable connections to the same root. The mutex covers individual ledger/VFS callbacks, not complete commit/checkpoint/reset sequences. PASSIVE and automatic checkpoints are not excluded by the authorizer.",
+      "verdict": "DOCUMENTED_TRIGGER_CAPABILITY_PRESENT",
+      "limit": "No malicious/reliably exploitable schedule, actual corruption, race reproducer, or production original-service regression was executed or established."
+    },
+    {
+      "path": "trnm-data-availability/src/cell/retention.rs:133,149,202,1236,1265",
+      "surface": "CellRetentionStoreV1",
+      "observed": "one arena exclusive owner accompanies one WAL+FULL connection. Drop explicitly unlocks arena before Connection field destruction.",
+      "verdict": "PARTIAL_SINGLE_OWNER_MITIGATION_NOT_FULL_LIFETIME_PROOF",
+      "limit": "No actual reset-race reachability proved. Locked sqlite3WalClose holds a main-db EXCLUSIVE lock before its close-time checkpoint, so early arena unlock alone does not prove concurrent writes can interleave with that checkpoint."
+    },
+    {
+      "path": "trnm-pon-node/src/account_archive_prototype.rs:595,602,640; store/authenticated_state.rs:27,61",
+      "surface": "explicit research archive namespaces",
+      "observed": "separate WAL+FULL Connection factories without a same-file writer-owner fence in these openers; multiple instances can be requested by library callers.",
+      "verdict": "RESEARCH_API_TRIGGER_CAPABILITY_NOT_PRODUCTION_ATTACK_PROOF",
+      "limit": "These sources explicitly do not install a Node backend. No claim that original production consensus activates them."
+    }
+  ],
+  "risk_judgment": {
+    "known_data_integrity_dependency_issue": true,
+    "general_multi_connection_wal_durability_qualification_blocked": true,
+    "original_Node_native001_or002_failure_caused_by_wal_reset_proven": false,
+    "original_Node_003_must_stop_finite_interface_testing": false,
+    "current_merge_ready": false,
+    "full_4097_qualification": false,
+    "meaning": "Do not claim safe general concurrent-WAL durability or complete release dependency safety with the unchanged backend. Existing single-writer/serialized cache mitigations are scoped source observations, not a dependency fix. Preserve the current NO_GO; this audit does not revoke or certify any bounded finite interface control."
+  },
+  "next_under_PN1": [
+    "Choose an officially fixed SQLite lineage/backport through normal root/ROG dependency review; do not downgrade to 3.44.6 merely because that backport is listed.",
+    "Requalify exact amalgamation/source/build flags/ABI witness and update exact source pins together; the current c012/source-layout witness and Cell cache 3_046_000/padding bound deliberately reject silent substitutions.",
+    "Preserve original FULL, locks, quotas, SQL/assertions and 2s/30s limits. Re-run meaningful same-file multi-connection writer/checkpoint/close/integrity/cold-read controls on the fixed backend and its exact source; no test-count-only closure.",
+    "An alternative mitigation would need to enforce complete same-file writer/checkpointer serialization across every supported connection/auto-checkpoint/close path; a per-callback Arc ledger is insufficient. No such new mechanism is implemented or proposed as already complete here."
+  ],
+  "evidence": {
+    "primary_documents_and_checkins": 8,
+    "usable_primary_raw_bytes": 669584,
+    "browser_verification_responses": 2,
+    "all_html_bytes": 682364,
+    "local_source_pin_files": 14,
+    "archive_size_limit_bytes": 4194304,
+    "source_hashes": "source-pins.json; source-extra-pins.json",
+    "raw_body_classification": "raw-content-validation.json",
+    "native_reproducers": 0
+  },
+  "qualification": {
+    "dependency_repaired": false,
+    "corruption_observed": false,
+    "full_safe": false,
+    "merge_ready": false,
+    "task_complete": false
+  }
+}

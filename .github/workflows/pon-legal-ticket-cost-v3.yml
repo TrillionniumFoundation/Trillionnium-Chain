@@ -1,0 +1,104 @@
+name: Legal PoN first admission and cold readback costs
+on:
+  pull_request:
+    paths:
+      - .github/workflows/pon-legal-ticket-cost-v3.yml
+      - trillionnium/crates/trnm-pon-node/examples/pon_legal_ticket_cost_v3.rs
+      - scripts/ci/check_legal_ticket_cost_v3.py
+      - scripts/ci/test_legal_ticket_cost_v3.py
+permissions:
+  contents: read
+concurrency:
+  group: pon-legal-ticket-cost-v3-${{ github.event.pull_request.head.sha }}
+  cancel-in-progress: false
+jobs:
+  first-native-admission:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            machine: x86_64
+          - runner: ubuntu-24.04-arm
+            machine: aarch64
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 60
+    env:
+      CI: "true"
+      CARGO_INCREMENTAL: "0"
+      CARGO_BUILD_JOBS: "1"
+      CARGO_PROFILE_DEV_DEBUG: "0"
+      CARGO_PROFILE_TEST_DEBUG: "0"
+      RUSTUP_TOOLCHAIN: "1.95.0"
+      PYTHONDONTWRITEBYTECODE: "1"
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+      EXPECTED_MACHINE: ${{ matrix.machine }}
+    steps:
+      - name: Checkout exact candidate source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Bind full source and actual native architecture
+        run: |
+          set -euo pipefail
+          echo "CARGO_HOME=$RUNNER_TEMP/legal-ticket-v3-cargo" >> "$GITHUB_ENV"
+          echo "CARGO_TARGET_DIR=$RUNNER_TEMP/legal-ticket-v3-target" >> "$GITHUB_ENV"
+          echo "OUT=$RUNNER_TEMP/legal-ticket-v3-evidence" >> "$GITHUB_ENV"
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$EXPECTED_HEAD" --output "$RUNNER_TEMP/legal-ticket-v3-evidence/source-before.json"
+          bash scripts/project-preflight.sh --audit
+          python3 - <<'PY'
+          import json, os, platform
+          from pathlib import Path
+          machine=platform.machine()
+          if machine != os.environ['EXPECTED_MACHINE']:
+              raise SystemExit('native architecture mismatch; no emulation')
+          value=dict(machine=machine,platform=platform.platform(),affinity=sorted(os.sched_getaffinity(0)),
+                     cpu_count=os.cpu_count(),exclusive_host=False,hardware_authenticated=False,
+                     gpu_measured=False,energy_measured=False,hardware_batching_measured=False)
+          for name in ('cpu.max','memory.max','cpuset.cpus.effective'):
+              p=Path('/sys/fs/cgroup')/name
+              value[name]=p.read_text().strip() if p.is_file() else None
+          (Path(os.environ['RUNNER_TEMP'])/'legal-ticket-v3-evidence/host.json').write_text(json.dumps(value,indent=2)+'\n')
+          PY
+          lscpu --json > "$RUNNER_TEMP/legal-ticket-v3-evidence/lscpu.json"
+      - name: Install pinned compiler
+        run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt,clippy
+      - name: Check unchanged graph and source contracts
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/check_repository.py 2>&1 | tee "$OUT/repository.log"
+          python3 scripts/refresh_distributed_source_inventory.py --check 2>&1 | tee "$OUT/inventory.log"
+          python3 scripts/ci/test_ci_source_integrity.py 2>&1 | tee "$OUT/source-controls.log"
+          python3 scripts/ci/test_legal_ticket_cost_v3.py 2>&1 | tee "$OUT/reader-controls.log"
+          cargo metadata --locked --format-version 1 --manifest-path trillionnium/Cargo.toml > "$OUT/cargo-graph.json"
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee "$OUT/fmt.log"
+      - name: Build exact native driver and require strict Clippy
+        id: build
+        run: |
+          set -euo pipefail
+          cargo build --locked --profile test --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example pon_legal_ticket_cost_v3 2>&1 | tee "$OUT/build.log"
+          cargo clippy --locked --profile test --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example pon_legal_ticket_cost_v3 -- -D warnings 2>&1 | tee "$OUT/clippy.log"
+          cp "$CARGO_TARGET_DIR/debug/examples/pon_legal_ticket_cost_v3" "$OUT/pon_legal_ticket_cost_v3.${EXPECTED_MACHINE}"
+          sha256sum "$OUT/pon_legal_ticket_cost_v3.${EXPECTED_MACHINE}" > "$OUT/native-binary.sha256"
+      - name: Measure distinct legal first admissions and cold readback
+        id: campaign
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/capture_pure_pon_campaign.py --binary "$CARGO_TARGET_DIR/debug/examples/pon_legal_ticket_cost_v3" --output "$OUT/cost" --timeout 250
+      - name: Verify final source even on failure
+        id: source_after
+        if: always()
+        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$EXPECTED_HEAD" --output "$RUNNER_TEMP/legal-ticket-v3-evidence/source-after.json"
+      - name: Independently check all denominators and exclusive cost scopes
+        if: ${{ !cancelled() && steps.campaign.outcome == 'success' && steps.source_after.outcome == 'success' }}
+        run: python3 scripts/ci/check_legal_ticket_cost_v3.py --capture "$OUT/cost/capture.json" --expected-head "$EXPECTED_HEAD" --source-before "$OUT/source-before.json" --source-after "$OUT/source-after.json" --output "$OUT/cost/summary.json"
+      - name: Retain exact native executable and all observations including failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: legal-ticket-v3-${{ matrix.machine }}-${{ github.event.pull_request.head.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/legal-ticket-v3-evidence/
+          if-no-files-found: error
+          retention-days: 30

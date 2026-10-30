@@ -1,0 +1,10 @@
+{
+  "schema": "pon-observed-native-executable-v1",
+  "file": "binary/verifier-9fb009fbfe142fa9ed50de713bdd3ae57eba8568457981b6c8dd0388e6bd3755.gz",
+  "raw_bytes": 5983776,
+  "raw_sha256": "9fb009fbfe142fa9ed50de713bdd3ae57eba8568457981b6c8dd0388e6bd3755",
+  "gzip_bytes": 1787454,
+  "gzip_sha256": "7f580b8dc315a049cc54c04a8b74577ba8df47818a6a829934b2a001e20b28a2",
+  "decompression_checked": true,
+  "reproducible_build_proved": false
+}

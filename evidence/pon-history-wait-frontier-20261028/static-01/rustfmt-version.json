@@ -1,0 +1,14 @@
+{
+  "name": "rustfmt-version",
+  "argv": [
+    "rustfmt",
+    "--version"
+  ],
+  "returncode": 0,
+  "passed": true,
+  "elapsed_wall_seconds": 0.027941166001255624,
+  "raw_bytes": 45,
+  "raw_sha256": "21e923568a260155c34a6f780f9513d3962c088aa3bbe8c91ab5385f470547d1",
+  "gzip_bytes": 65,
+  "gzip_sha256": "046b96f3d9e5d5e26acb971aa9a312dcf7514c8d88ab16fe79a77a41719a9605"
+}

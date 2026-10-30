@@ -1,0 +1,18 @@
+{
+  "result": "PASS",
+  "schema": "trnm-pure-pon-cost-independent-readback-v1",
+  "raw_sha256": "5795397ad8c92219721fc5932739d5aadd29bac2cc01b14704b389d7197a207a",
+  "unique_full_python_relation_replays": 832,
+  "unique_winning_tickets": 60,
+  "measured_attempt_calls": 22356,
+  "measured_target_misses": 20796,
+  "measured_wins": 1560,
+  "unsupported_rows_retained": 927,
+  "rows": 1755,
+  "all_rows_accounted": true,
+  "repeated_nonce_paths_are_not_independent_samples": true,
+  "timing_authenticity_qualified": false,
+  "node_task_eligibility_checked": false,
+  "global_minimum_cost_proved": false,
+  "succinct_proof": false
+}

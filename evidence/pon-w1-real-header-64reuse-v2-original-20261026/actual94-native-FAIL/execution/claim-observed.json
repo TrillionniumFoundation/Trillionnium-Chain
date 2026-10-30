@@ -1,0 +1,40 @@
+{
+  "administrator_deletion_resistance": false,
+  "binding": {
+    "binary_bytes": 10595144,
+    "binary_identity": {
+      "device": 2050,
+      "inode": 187615
+    },
+    "binary_sha256": "c567e762034dc701c9e72c88fe9b7a6b198f2e235e76604dd7aba855c74c9527",
+    "claim_identity": {
+      "device": 2050,
+      "inode": 59432170
+    },
+    "execution_identity": {
+      "device": 2050,
+      "inode": 59432169
+    },
+    "execution_root": "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/pn1-checkpoint64-clean94-public-qualification-20261026-001/execution",
+    "head": "94b3fb60b7aa32c8bf5b7c8679d3c46a980b4060",
+    "inventory_sha256": "3b58039700f333224f0c62c9870d6c92d0b689e18b74cbe9b8c5dd3ca2e4d056",
+    "prepared_identity": {
+      "device": 2050,
+      "inode": 187606
+    },
+    "prepared_root": "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/pn1-checkpoint64-clean94-public-qualification-20261026-001/prepared",
+    "prepared_sha256": "a0f60210d0c46d9832c130b6e7ceb9582c0c8d1a81c89d239e5f871964054537",
+    "profile": "pn1-native-io-three-fd-component-v1",
+    "tree": "da71738463a4d451e0b0246985dc69c7ab1f24fe"
+  },
+  "component_only": true,
+  "created_utc": "2026-10-26T13:58:13.149744+00:00",
+  "domain": "trnm-pon-native-io-three-fd-component-claim-v1",
+  "full_W1_4097_qualified": false,
+  "full_guard_enabled": false,
+  "independent_reader_qualified": false,
+  "merge_ready": false,
+  "original_three_FD_caller_qualified": false,
+  "schema": "pon-native-io-three-fd-component-claim-v1",
+  "whole_writer_qualified": false
+}

@@ -1,0 +1,9 @@
+{
+  "utc": "2026-10-26T13:56:34.070273+00:00",
+  "owner_sha256": "0401fbd7fe5ac17725c2c281c27e6a0401ed423460dc822b2ef7e4d0ab0b75de",
+  "base_owner_sha256": "7346dc6b6f6dd89dd3cb84289a12c2bde3a986ec24d1f3ed48c0ff00de5bc2d3",
+  "prepared_sha256": "a0f60210d0c46d9832c130b6e7ceb9582c0c8d1a81c89d239e5f871964054537",
+  "inventory_sha256": "3b58039700f333224f0c62c9870d6c92d0b689e18b74cbe9b8c5dd3ca2e4d056",
+  "changes": "only actualnewpreparedhashes,H/T via actualadmission,priororiginal399terminalcharge,35+140=175<180,nonceprefix; originalCLI/resources/profile/asserts/caps/ownedInvocationID/unknownnostop/finalIOguards unchanged",
+  "not_run": true
+}

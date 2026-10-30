@@ -1,0 +1,84 @@
+"""Run only the unchanged size-bound test after its compile-time lint repair."""
+from pathlib import Path
+import hashlib
+import json
+import os
+import shutil
+import subprocess
+import uuid
+
+ROOT = Path(__file__).resolve().parent.parent
+SOURCE = ROOT / "pq-base5e"
+RAW = ROOT / "evidence"
+EXPECTED = "215fc89386a6375e8a2663774085c3a11b24e24e"
+TOOLCHAIN = ROOT.parent / "pon-build-inputs/unpacked/toolchain/bin"
+SELECTOR = "pq_frame::tests::old_devnet_transaction_size_cannot_hold_pq_signature"
+record = json.loads((RAW / "final-clippy-source-after.json").read_text())
+assert record["head"] == EXPECTED
+
+
+def sha(path):
+    value = hashlib.sha256()
+    with path.open("rb") as stream:
+        for block in iter(lambda: stream.read(1024 * 1024), b""):
+            value.update(block)
+    return value.hexdigest()
+
+
+def check_source():
+    assert subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=SOURCE, text=True).strip() == EXPECTED
+    for name, mode, blob, wanted in record["source_rows"]:
+        path = SOURCE / name
+        assert sha(path) == wanted and not path.is_symlink(), name
+        assert bool(path.stat().st_mode & 0o111) == (mode == "100755"), name
+
+
+check_source()
+env = dict(os.environ)
+env.update(PATH=str(TOOLCHAIN) + os.pathsep + env.get("PATH", ""),
+           RUSTC=str(TOOLCHAIN / "rustc"),
+           CARGO_HOME=str(ROOT.parent / "pon-build-inputs/native-cargo-home"),
+           CARGO_TARGET_DIR=str(ROOT / "target-native"), CARGO_BUILD_JOBS="1")
+command = [str(TOOLCHAIN / "cargo"), "test", "--offline", "--locked", "--message-format=json",
+           "--manifest-path", "trillionnium/Cargo.toml", "-p", "trnm-protocol",
+           "--all-features", "--lib", SELECTOR, "--", "--exact"]
+logpath = RAW / "const-assert-cargo.log"
+with logpath.open("w") as log:
+    built = subprocess.run(command, cwd=SOURCE, env=env, stdout=log, stderr=subprocess.STDOUT)
+result = {"source_commit": EXPECTED, "source_digest_sha256": record["source_digest_sha256"],
+          "command": command, "cargo_exit": built.returncode,
+          "cargo_log_sha256": sha(logpath), "full_repository_source_guard_passed": False}
+if built.returncode == 0:
+    executables = []
+    for line in logpath.read_text().splitlines():
+        try:
+            event = json.loads(line)
+        except ValueError:
+            continue
+        if event.get("reason") == "compiler-artifact" and event.get("profile", {}).get("test") and event.get("target", {}).get("name") == "trnm_protocol" and event.get("executable"):
+            executables.append(Path(event["executable"]))
+    assert len(executables) == 1, executables
+    original = executables[0]
+    digest = sha(original)
+    frozen = RAW / "frozen-binaries" / ("const-assert-" + uuid.uuid4().hex[:10] + "-" + digest[:16])
+    with original.open("rb") as incoming, frozen.open("xb") as outgoing:
+        shutil.copyfileobj(incoming, outgoing)
+    frozen.chmod(0o755)
+    assert sha(original) == sha(frozen) == digest
+    listing = subprocess.check_output([str(frozen), "--list"], text=True)
+    assert SELECTOR + ": test" in listing
+    testlog = RAW / "const-assert-frozen-test.log"
+    with testlog.open("w") as log:
+        ran = subprocess.run([str(frozen), SELECTOR, "--exact", "--test-threads=1"],
+                             cwd=SOURCE, stdout=log, stderr=subprocess.STDOUT)
+    assert sha(frozen) == digest
+    text = testlog.read_text()
+    assert "running 1 test" in text and "1 passed; 0 failed" in text, text
+    result.update(binary_name=frozen.name, binary_sha256=digest, binary_bytes=frozen.stat().st_size,
+                  test_exit=ran.returncode, test_log_sha256=sha(testlog),
+                  one_exact_test_executed=True)
+check_source()
+result["same_tracked_non_evidence_source"] = True
+(RAW / "const-assert-result.json").write_text(json.dumps(result, indent=2) + "\n")
+print(json.dumps(result, indent=2))
+raise SystemExit(built.returncode or result.get("test_exit", 1))

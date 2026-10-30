@@ -1,0 +1,5 @@
+{
+  "error": "KeyError:pins",
+  "cause": "root helper used prior preservation receipt schema;patch already applied, no compiler/native run had started",
+  "source_or_assertion_changes_for_this_correction": false
+}

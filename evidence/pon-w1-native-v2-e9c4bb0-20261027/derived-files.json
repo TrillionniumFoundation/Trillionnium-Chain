@@ -1,0 +1,32 @@
+{
+  "schema": "pon-w1-native-v2-lossless-derived-files-v1",
+  "files": [
+    {
+      "path": "derived/source-checked-consistency.json.gz",
+      "bytes": 32479,
+      "sha256": "1d057d75b2a479373c10fdc59c1d8ef53ef09965963f752d540281e960194fe4",
+      "uncompressed_name": "source-checked-consistency.json",
+      "uncompressed_bytes": 712216,
+      "uncompressed_sha256": "a5e37fc3e170071a17e722c9f47f0f39a75d45cc18172bbf3bcc5cd6791993f2"
+    },
+    {
+      "path": "derived/all-fixed-cohort-summary.json.gz",
+      "bytes": 96125,
+      "sha256": "e6e9161913f0c2dfc320a666363072c81dce1656b43bdd264faf1ac14fd89fb0",
+      "uncompressed_name": "all-fixed-cohort-summary.json",
+      "uncompressed_bytes": 1163026,
+      "uncompressed_sha256": "5217f85886620eedcc827ac91455a6eda1c133b35e59e5d02c7ef3a17693ed88"
+    },
+    {
+      "path": "derived/all-fixed-cohort-summary.csv.gz",
+      "bytes": 82129,
+      "sha256": "4eb508fc2068a4a7252dd0effdbf4ed283b61249bddaad309994efb5d4bcdb78",
+      "uncompressed_name": "all-fixed-cohort-summary.csv",
+      "uncompressed_bytes": 410010,
+      "uncompressed_sha256": "1cf273616fcea5bf05abf022bf5d77302c734a5475db464acb137d3cd0783bd9"
+    }
+  ],
+  "actual_readback_process": "readback-observation-002/terminal.json",
+  "raw_log_is_primary": true,
+  "new_native_execution": false
+}

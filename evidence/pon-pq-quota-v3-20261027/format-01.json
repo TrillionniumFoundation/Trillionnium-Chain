@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "cargo",
+    "fmt",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--all"
+  ],
+  "returncode": 1,
+  "wall_seconds": 22.637468617002014,
+  "stdout": "",
+  "stderr": "error: couldn't read `/workspace/scratch/3d4ec372c488/pq-quota-v3/trillionnium/crates/trnm-pon-node/tests/../../../../tests/fuzz/fuzz_targets/support/work_certificate.rs`: No such file or directory (os error 2)\n --> /workspace/scratch/3d4ec372c488/pq-quota-v3/trillionnium/crates/trnm-pon-node/tests/work_fuzz_semantics.rs:3:1\n  |\n3 | mod checks;\n  | ^^^^^^^^^^^\n\nError writing files: failed to resolve mod `checks`: /workspace/scratch/3d4ec372c488/pq-quota-v3/trillionnium/crates/trnm-pon-node/tests/../../../../tests/fuzz/fuzz_targets/support/work_certificate.rs does not exist\n"
+}

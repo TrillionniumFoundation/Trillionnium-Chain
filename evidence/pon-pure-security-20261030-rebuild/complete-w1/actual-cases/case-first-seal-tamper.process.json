@@ -1,0 +1,25 @@
+{
+  "schema": "pon-w1-actual-process-v1",
+  "command": [
+    "env",
+    "RAYON_NUM_THREADS=2",
+    "/tmp/pon-proof-rebuild/actual-cases/verifier",
+    "audit-one",
+    "/tmp/pon-proof-rebuild/fixture/guest.bin",
+    "/tmp/pon-proof-rebuild/fixture/input.bin",
+    "/tmp/pon-proof-rebuild/fixture/receipt.bin",
+    "first_seal_tamper"
+  ],
+  "started_utc": "2026-10-30T01:13:10.086312+00:00",
+  "timeout_seconds": 45,
+  "source_sha": null,
+  "timed_out": false,
+  "consensus_authority": false,
+  "returncode": 0,
+  "wall_seconds": 1.6206145969999852,
+  "user_cpu_seconds": 1.567415,
+  "system_cpu_seconds": 0.040716999999999996,
+  "max_waited_descendant_rss_kib": 83444,
+  "rss_scope": "maximum reported for the waited child family; not total cgroup peak",
+  "finished_utc": "2026-10-30T01:13:11.706963+00:00"
+}

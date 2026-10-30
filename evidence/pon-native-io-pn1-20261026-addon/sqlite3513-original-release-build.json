@@ -1,0 +1,61 @@
+{
+  "schema": "root-independent-original-release023-normal-build-review-v1",
+  "utc": "2026-10-26T03:19:31.855997+00:00",
+  "job_id": "1a176325fa6-96a-a62",
+  "actual_durable_state": "succeeded",
+  "actual_durable_exit": 0,
+  "actual_output_complete": true,
+  "files": [
+    {
+      "path": "work/ci-follow/sqlite3513-fresh-normal-validation-20261026-001/original-release-profile-no-run-023/result.json",
+      "bytes": 4000,
+      "sha256": "016cb1bdeaf1b255bf774e64e3bfaf48c3edde680a86735451cca30eb98387e0"
+    },
+    {
+      "path": "work/ci-follow/sqlite3513-fresh-normal-validation-20261026-001/original-release-profile-no-run-023/source-before.json",
+      "bytes": 3887,
+      "sha256": "2e84f0cef63041a16dd9caa2c5583777b3c1dd390c75cf9f7fd857141978e9fe"
+    },
+    {
+      "path": "work/ci-follow/sqlite3513-fresh-normal-validation-20261026-001/original-release-profile-no-run-023/source-after.json",
+      "bytes": 3887,
+      "sha256": "2e84f0cef63041a16dd9caa2c5583777b3c1dd390c75cf9f7fd857141978e9fe"
+    },
+    {
+      "path": "work/ci-follow/sqlite3513-fresh-normal-validation-20261026-001/original-release-profile-no-run-023/stdout.log",
+      "bytes": 146786,
+      "sha256": "dc51f8c292a474a61608b9a228313ba9a15788687dc6b12e02676691de9a0739"
+    },
+    {
+      "path": "work/ci-follow/sqlite3513-fresh-normal-validation-20261026-001/original-release-profile-no-run-023/stderr.log",
+      "bytes": 4033,
+      "sha256": "2a45103717673434d25fcfd61bc49ad1a356afc1905b2f9b185ae2d033b1377b"
+    }
+  ],
+  "22source_pins_before_after_equal": true,
+  "actual_ELF_hash_size_magic_rechecked": true,
+  "ELF": {
+    "path": "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/sqlite3513-fresh-normal-validation-20261026-001/fresh-target-001/release/deps/public_v3_identity_campaign-19bfac7fcfb49be1",
+    "bytes": 10134904,
+    "sha256": "227af6cbd7a00638c203717d9f7229e27374197f530753d5fcf7b08c1ad634df",
+    "compiler_profile": {
+      "opt_level": "3",
+      "debuginfo": 0,
+      "debug_assertions": false,
+      "overflow_checks": false,
+      "test": true
+    }
+  },
+  "original_release_profile_exact": true,
+  "original_twin_192MiB_arithmetic_bound_pass": true,
+  "projected_twin_bytes": 20269808,
+  "actual_prepared_or_execution_copies_created": false,
+  "clean_committed_preparation_qualified": false,
+  "original_three_FD_caller_qualified": false,
+  "full4097_or_model_or_windows_or_WAN_qualified": false,
+  "historical_failures_preserved": true,
+  "budget_or_profile_changes": false,
+  "review": "PASS_ORIGINAL_RELEASE_NORMAL_BUILD_ONLY",
+  "task_complete": false,
+  "merge_ready": false
+}

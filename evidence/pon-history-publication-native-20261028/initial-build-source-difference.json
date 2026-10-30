@@ -1,0 +1,10 @@
+{
+  "differences": [
+    "history-cargo-home/.global-cache",
+    "history-cargo-home/.package-cache",
+    "history-cargo-home/.package-cache-mutate"
+  ],
+  "native_compiler_exit": 0,
+  "source_stable_gate_failed": true,
+  "reason": "Cargo home was inside the source snapshot; final builds move it outside the repository"
+}

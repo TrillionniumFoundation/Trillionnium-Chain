@@ -1,0 +1,157 @@
+{
+  "schema": "PN1-I02-shared-snapshot-r2-independent-source-review-v1",
+  "recorded_utc": "2026-10-26T15:31:21.865577+00:00",
+  "reviewer": "/root/pn1_checkpoint64_peer",
+  "scope": "Read-only second source review; no candidate import, application, compile/test/native/SQL execution. Primary SQLite documentation consulted for name resolution.",
+  "receipt": {
+    "path": "work/ci-follow/pn1-shared-snapshot-real-source-candidate-20261026-002/implementation-receipt.json",
+    "bytes": 9730,
+    "sha256": "f979037abb018c84cf0ee1d0800692e6fa89e0a40d49baef6e68da0e691a529d"
+  },
+  "patch": {
+    "path": "work/ci-follow/pn1-shared-snapshot-real-source-candidate-20261026-002/candidate.patch",
+    "bytes": 55432,
+    "sha256": "231762394a8eec4f4815ab5e16184cee588755db80ae9d8eb214e88bab9995fc"
+  },
+  "production_patch": {
+    "path": "work/ci-follow/pn1-shared-snapshot-real-source-candidate-20261026-002/production-only.patch",
+    "bytes": 34695,
+    "sha256": "fd2872360036f8f87500aa1c79efd17be5756aefd153deac5de750d6e4affab0"
+  },
+  "sources": [
+    {
+      "path": "work/ci-follow/pn1-shared-snapshot-real-source-candidate-20261026-002/ownedsource/trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+      "bytes": 31858,
+      "sha256": "ad9e41b68379ec9e5aade1bc2339d2710c9128e142738488dec35eee20b5979f"
+    },
+    {
+      "path": "work/ci-follow/pn1-shared-snapshot-real-source-candidate-20261026-002/ownedsource/trillionnium/crates/trnm-pon-node/src/store.rs",
+      "bytes": 309155,
+      "sha256": "d6629cdc2056318cc232dbe498c0776c368437976184fe05faec8a469e64b13d"
+    },
+    {
+      "path": "work/ci-follow/pn1-shared-snapshot-real-source-candidate-20261026-002/ownedsource/trillionnium/crates/trnm-pon-node/src/store/public_reader.rs",
+      "bytes": 19088,
+      "sha256": "b8bf23dca2b77f9554c8a1b1fbe37d6e1a4580680ef3e52f077d045cd4d0f7b6"
+    },
+    {
+      "path": "work/ci-follow/pn1-shared-snapshot-real-source-candidate-20261026-002/ownedsource/trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs",
+      "bytes": 36109,
+      "sha256": "8e88d29a17db73d13ec65f9be591509134338d2a903aa3330375101e6a893feb"
+    },
+    {
+      "path": "work/ci-follow/pn1-shared-snapshot-real-source-candidate-20261026-002/ownedsource/trillionnium/crates/trnm-pon-node/src/store/shared_snapshot.rs",
+      "bytes": 14851,
+      "sha256": "fd329215446075bc94d06375142a5690eb8e8aea2d322661237fc38fc8059a53"
+    },
+    {
+      "path": "work/ci-follow/pn1-shared-snapshot-real-source-candidate-20261026-002/ownedsource/trillionnium/crates/trnm-pon-node/src/store/shared_snapshot_tests.rs",
+      "bytes": 19839,
+      "sha256": "495daca2d8b8e81c2a5a7e9f69ba05c389922bf212501414972139aacdeddf19"
+    }
+  ],
+  "preservation": {
+    "independently_checked_original_pin_count": 478,
+    "original_test_file_count": 467,
+    "original_store_inline_tail_bytes": 79958,
+    "old_seven_codec_controls_prefix_bytes": 12348,
+    "old_seven_codec_controls_prefix_equal": true,
+    "r1_original_implementation_receipt": {
+      "path": "work/ci-follow/pn1-shared-snapshot-real-source-candidate-20261026-001/implementation-receipt.json",
+      "bytes": 9444,
+      "sha256": "9a6da6a8b65359d7e3ca3e0e3a252af2ae3644720b747705aa9ba748ac5986aa"
+    }
+  },
+  "r1_findings_status": [
+    {
+      "id": "SHARED-NODE-INITIALIZER-MISSING",
+      "status": "SOURCE_FIXED_NOT_COMPILED",
+      "evidence": "growth_rehearsal read_only_archive now explicitly storage_layout CanonicalJson and shared_storage_schema None; factory initializer also sets both. No other real Node literal found."
+    },
+    {
+      "id": "SHARED-LATE-CALLBACK-GRAPH-WINDOW",
+      "status": "SOURCE_REMEDIATED_PENDING_ACTUAL_CONTROLS",
+      "evidence": "Private load after last caller progress invokes actual verify_state/full accountgraph and verify_history with internal no-op callbacks; outer public active and historical State wrappers also revalidate returned State and used anchor after caller callbacks, and then actual DDL/meta/lease health/namespace. Existing same-connection delete/update source counterexample is rejected by these actual reads, not only a digest."
+    },
+    {
+      "id": "SHARED-ACTIVE-PRESENT-ROW",
+      "status": "SOURCE_REMEDIATED_FOR_CORRUPT_MATCHING_BLOB_KEY_DATA_ONLY",
+      "evidence": "New verify_returned_state always attempts load of target active/historical row and compares fullState; legal absence still full KV/COW/history. Wrong-key query-miss issue below remains."
+    }
+  ],
+  "blocking_findings": [
+    {
+      "id": "SHARED-TYPED-KEY-MISS",
+      "priority": 1,
+      "status": "SOURCE_COUNTEREXAMPLE_ROOT_CONFIRMED_STRONG_CONTRACT_BLOCKER",
+      "locations": [
+        "shared_snapshot.rs check_layout",
+        "shared_snapshot.rs encoded WHERE block=?",
+        "shared_snapshot.rs verify_returned_state"
+      ],
+      "problem": "DDL BLOB affinity does not make primarykey values strictly BLOB. Updating an actual matching sharedrow block from BLOB to same-byte TEXT makes parameter-bound BLOB equality miss. check_layout checks only legacy snapshots counts; verify_returned_state treats None as legitimate pruning and can return State reconstructed from valid KV/COW/deltas. Cold audit subsequently rejects the nonBLOB key. This violates the requested strong present-corrupt-index contract; correctState from replay is not proof of this guard.",
+      "required_fix": "Bounded typed-key/layout guard before lookup and after last callback, preserving <=64 rows and all old limits; explicit real factory/public hot/historical negative controls for malformed SQL keys, distinct from legitimate missing index."
+    },
+    {
+      "id": "SHARED-TEMP-SHADOW",
+      "priority": 1,
+      "status": "DETERMINISTIC_SOURCE_COUNTEREXAMPLE_NOT_EXECUTED",
+      "locations": [
+        "shared_snapshot.rs encoded/load unqualified object names",
+        "store.rs schema() main sqlite_master only",
+        "shared_snapshot.rs PRAGMA schema_version main only"
+      ],
+      "problem": "SQLite unqualified names resolve TEMP first. Inside existing writer transaction or last same-connection callback, copy valid main sharedrows into a TEMP table named native_io_shared_snapshots, then corrupt the actual main row. Final helper reads the valid TEMP copy; main DDL/schemaVersion remain unchanged, final total_changes fence begins after the callback, and legal small main writes need not poison the VFS ledger. The same shadow technique applies to archive_nodes/native_state_commitments and can defeat a claim that final traversal read the actual persisted main graph.",
+      "attack_sequence": [
+        "For a small fixture, arrange memory TEMP storage or retain a small temp table below spill thresholds.",
+        "CREATE TEMP TABLE native_io_shared_snapshots AS SELECT * FROM main.native_io_shared_snapshots.",
+        "UPDATE main.native_io_shared_snapshots SET data=X'7b7d' WHERE block=actual_target.",
+        "ReturnOk from final callback or invoke the public read on this same connection while its writer transaction remains active.",
+        "Final unqualified load can validate old good TEMP data while main physical record is malformed; cold reopen without TEMP objects rejects main."
+      ],
+      "official_primary": "https://www.sqlite.org/lang_naming.html",
+      "required_fix": "Use explicit main-qualified authoritative objects or reject bounded case-insensitive TEMP shadows/attached aliases at initial and final no-callback fences; same-connection schema/PRAGMA controls must not be assumed trusted. Preserve legitimate unrelated temp spill/old controls."
+    }
+  ],
+  "sticky_health_review": {
+    "source_result": "Correct additional evidence source rather than cached SELECT success.",
+    "details": "NativeIoLease.receipt calls Root.cleanup_lock; that path latches cleanup/reentrant/callbackpanic flags, mutex poison and held-root identity failure into actual ledger. New storage_context checks failed/firstfailure/code/denied/secondary/lifecycle/quarantine state and preserves observed firstfailure/code in diagnostic. namespace before/after provides current identity check as well.",
+    "limit": "An observed healthy receipt is a linearization observation, not a promise against a later concurrent failure. PostCOMMIT durable result/health interface remains explicitlyOPEN."
+  },
+  "transaction_review": {
+    "positive": "in_read_snapshot begins an owned transaction when autocommit or borrows an existing one, rejects observable borrowed transaction loss; rollback error cannot return a State. final_read compares same-connection total_changes/autocommit only during final internal pure reads, not earlier accounting and not foreign data_version.",
+    "residual_open": "COMMIT;BEGIN IMMEDIATE inside a caller callback can replace a borrowed transaction while autocommit staysfalse and total_changes/schemaVersion remain unchanged. Later actual graph/State validation can validate current content but cannot restore an earlier transaction atomicity. This is an acknowledged capability-boundary limitation also present in arbitrary trusted-owner SQL callback assumptions, not a newly reproduced exploit. Do not claim unique transaction identity proved by tuple equality."
+  },
+  "actual_factory_control_review": {
+    "new_source_control": true,
+    "cfg_linux_explicit_ignore": true,
+    "unsupported_if_explicitly_selected": "unwrap failure, not earlyPASS",
+    "covered_as_source_only": [
+      "Actual fresh NativeIoOwner7roots and same factory SharedAccountsV1",
+      "Original4096/WAL observation",
+      "Matching-BLOB active/historical corruptdata rejection",
+      "Last-callback actualroot delete/update under existingwrite transaction",
+      "Legal missingoptional fullState/KV reconstruction",
+      "Samelease coldreopen and actualclosed handle references"
+    ],
+    "not_covered_or_pending": [
+      "Wrongtyped SQL key",
+      "TEMP shadow of authority tables",
+      "Sticky fault cached SELECT negative control",
+      "Crossconnection snapshot/transaction-boundary replacement",
+      "All execution: code has NOT_RUN status, exact ABI/resources/2s/nativecaller/full4097/decoder/migration still absent"
+    ]
+  },
+  "performance_and_acceptance_limits": "New repeated materialization/fullgraph/history passes, readset and actual RootReceipt copies can consume more CPU/memory. No compiler/Clippy/runtime/deadline/throughput success is inferred. All original4KiB/FULL/WAL/1024+256/655360/file/domain/CPU/VM/2s and expired-window rules remain decisive. Newformat independent decoder and explicitmigration/postCOMMIT interface remainOPEN.",
+  "decision": "R2 remains blocked by typed-key strong-contract and TEMP-shadow issues until a separately preserved successor is independently reviewed. R1 initializer and direct lategraph issues are source-corrected only, not empirically closed.",
+  "candidate_imported_or_executed": false,
+  "source_modified": false,
+  "actual_compile_or_SQL_reproduction_observed": false,
+  "mechanism_qualified": false,
+  "whole_writer_qualified": false,
+  "original_three_FD_caller_qualified": false,
+  "independent_reader_qualified": false,
+  "full_W1_4097_qualified": false,
+  "task_complete": false,
+  "merge_ready": false
+}

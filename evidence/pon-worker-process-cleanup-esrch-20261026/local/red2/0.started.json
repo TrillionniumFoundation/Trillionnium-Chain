@@ -1,0 +1,1 @@
+{"command": ["cargo", "test", "--locked", "-p", "trnm-worker-agent", "--bin", "trnm-worker-agent", "vanished_owned_proc_fd_requires_a_fresh_complete_scan", "--", "--nocapture", "--test-threads=1"], "pid": 3715667, "source_sha256": "cae73cf90941cc6015a918e0b66501c9d286276c28c600ffa51af053275d0947", "remaining_local_seconds": 489.1024842390034, "not_native_prepared": true}

@@ -1,0 +1,149 @@
+name: PoN ticket-first native cost research
+on:
+  pull_request:
+    paths:
+      - .github/workflows/pon-ticket-first-cost-v1.yml
+      - .cargo/**
+      - rust-toolchain.toml
+      - trillionnium/Cargo.toml
+      - trillionnium/Cargo.lock
+      - trillionnium/crates/trnm-crypto-primitives/**
+      - trillionnium/crates/trnm-pon-node/**
+      - trillionnium/crates/trnm-mvcc-fee/**
+      - trillionnium/crates/trnm-protocol/**
+      - trillionnium/crates/trnm-sqlite-io-boundary/**
+      - config/pon/**
+      - formal/pon-nakamoto-v1/*.py
+      - scripts/ci/capture_pure_pon_campaign.py
+      - scripts/ci/test_capture_ticket_first_release.py
+      - scripts/ci/run_pure_pon_admission_daa_v2.py
+      - scripts/ci/test_run_pure_pon_admission_daa_v2.py
+      - scripts/ci/check_legal_ticket_cost_v5.py
+      - scripts/ci/check_ticket_first_cost_v1.py
+      - scripts/ci/test_ticket_first_cost_v1.py
+      - scripts/ci/replay_ticket_first_w1_v1.py
+      - scripts/ci/test_replay_ticket_first_w1_v1.py
+      - scripts/ci/pure_pon_binary_archive_v1.py
+      - scripts/pon_w1_cost_matrix_reader.py
+      - scripts/read_original_native_campaign.py
+      - scripts/run_pon_w1_native_campaign.py
+      - scripts/pon_public_v3*.py
+permissions:
+  contents: read
+concurrency:
+  group: pon-ticket-first-v1-${{ github.event.pull_request.head.sha }}
+  cancel-in-progress: false
+jobs:
+  native-cost:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            machine: x86_64
+          - runner: ubuntu-24.04-arm
+            machine: aarch64
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 40
+    env:
+      CI: "true"
+      CARGO_INCREMENTAL: "0"
+      CARGO_BUILD_JOBS: "1"
+      RUSTUP_TOOLCHAIN: "1.95.0"
+      PYTHONDONTWRITEBYTECODE: "1"
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+      EXPECTED_MACHINE: ${{ matrix.machine }}
+    steps:
+      - name: Checkout exact candidate source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Bind source and host observation
+        run: |
+          set -euo pipefail
+          echo "CARGO_HOME=$RUNNER_TEMP/ticket-first-cargo" >> "$GITHUB_ENV"
+          echo "CARGO_TARGET_DIR=$RUNNER_TEMP/ticket-first-target" >> "$GITHUB_ENV"
+          echo "OUT=$RUNNER_TEMP/ticket-first-evidence" >> "$GITHUB_ENV"
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$EXPECTED_HEAD" --output "$RUNNER_TEMP/ticket-first-evidence/source-before.json"
+          bash scripts/project-preflight.sh --audit
+          python3 - <<'PY'
+          import json, os, platform
+          from pathlib import Path
+          if platform.machine() != os.environ['EXPECTED_MACHINE']:
+              raise SystemExit('native architecture mismatch; no emulation')
+          data = dict(machine=platform.machine(), platform=platform.platform(),
+                      affinity=sorted(os.sched_getaffinity(0)), cpu_count=os.cpu_count(),
+                      exclusive_host=False, hardware_authenticated=False,
+                      gpu_measured=False, energy_measured=False)
+          for name in ('cpu.max', 'memory.max', 'cpuset.cpus.effective'):
+              p = Path('/sys/fs/cgroup') / name
+              data[name] = p.read_text().strip() if p.is_file() else None
+          (Path(os.environ['RUNNER_TEMP']) / 'ticket-first-evidence/host.json').write_text(json.dumps(data, indent=2) + '\n')
+          PY
+      - name: Install pinned compiler
+        run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt,clippy
+      - name: Check source, graph, independent reader and formatting
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/check_repository.py 2>&1 | tee "$OUT/repository.log"
+          python3 scripts/refresh_distributed_source_inventory.py --check 2>&1 | tee "$OUT/inventory.log"
+          python3 scripts/ci/test_ci_source_integrity.py 2>&1 | tee "$OUT/source-controls.log"
+          python3 scripts/ci/test_capture_ticket_first_release.py 2>&1 | tee "$OUT/capture-controls.log"
+          python3 scripts/ci/test_ticket_first_cost_v1.py 2>&1 | tee "$OUT/reader-controls.log"
+          python3 scripts/ci/test_replay_ticket_first_w1_v1.py 2>&1 | tee "$OUT/independent-replay-controls.log"
+          cargo metadata --locked --format-version 1 --manifest-path trillionnium/Cargo.toml > "$OUT/cargo-graph.json"
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee "$OUT/fmt.log"
+      - name: Preserve complete old crypto tests and candidate cancellation controls
+        run: |
+          set -euo pipefail
+          cargo test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives --lib -- --nocapture 2>&1 | tee "$OUT/crypto.log"
+          cargo test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example pon_ticket_first_cost_v1 -- --nocapture 2>&1 | tee "$OUT/driver-controls.log"
+      - name: Build native driver and require strict Clippy
+        run: |
+          set -euo pipefail
+          cargo build --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example pon_ticket_first_cost_v1 2>&1 | tee "$OUT/build.log"
+          cargo clippy --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example pon_ticket_first_cost_v1 -- -D warnings 2>&1 | tee "$OUT/clippy.log"
+          cp "$CARGO_TARGET_DIR/release/examples/pon_ticket_first_cost_v1" "$OUT/pon_ticket_first_cost_v1.${EXPECTED_MACHINE}"
+          sha256sum "$OUT/pon_ticket_first_cost_v1.${EXPECTED_MACHINE}" > "$OUT/native-binary.sha256"
+      - name: Observe all six arms and complete first native admissions
+        id: campaign
+        run: python3 scripts/ci/capture_pure_pon_campaign.py --binary "$CARGO_TARGET_DIR/release/examples/pon_ticket_first_cost_v1" --output "$OUT/cost" --timeout 610 --build-profile ticket-first-release
+      - name: Verify final source even on failure
+        id: source_after
+        if: always()
+        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$EXPECTED_HEAD" --output "$RUNNER_TEMP/ticket-first-evidence/source-after.json"
+      - name: Independently check complete costs and paired packet bytes
+        id: cost_reader
+        if: ${{ !cancelled() && steps.campaign.outcome == 'success' && steps.source_after.outcome == 'success' }}
+        run: python3 scripts/ci/check_ticket_first_cost_v1.py --capture "$OUT/cost/capture.json" --expected-head "$EXPECTED_HEAD" --source-before "$OUT/source-before.json" --source-after "$OUT/source-after.json" --output "$OUT/cost/summary.json"
+      - name: Replay every distinct hit and miss with the independent complete W1 oracle
+        if: ${{ !cancelled() && steps.cost_reader.outcome == 'success' }}
+        timeout-minutes: 7
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          value = {"schema": "pon-ticket-first-independent-w1-input-v1", "datasets": [{
+              "label": os.environ["EXPECTED_MACHINE"],
+              "capture": "cost/capture.json",
+              "source_before": "source-before.json",
+              "source_after": "source-after.json",
+              "expected_head": os.environ["EXPECTED_HEAD"],
+          }]}
+          path = Path(os.environ["OUT"]) / "independent-w1-input.json"
+          with path.open("x") as stream:
+              json.dump(value, stream, indent=2)
+              stream.write("\n")
+          PY
+          python3 scripts/ci/replay_ticket_first_w1_v1.py --input-manifest "$OUT/independent-w1-input.json" --output "$OUT/independent-w1-replay" 2>&1 | tee "$OUT/independent-replay.log"
+      - name: Preserve binary, raw measurements and original failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ticket-first-v1-${{ matrix.machine }}-${{ github.event.pull_request.head.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/ticket-first-evidence/
+          if-no-files-found: error
+          retention-days: 30

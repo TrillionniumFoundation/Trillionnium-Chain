@@ -1,0 +1,23 @@
+{
+  "run": 40618450312,
+  "job": 122586349560,
+  "head": "c4d055d81a6f707fb28c9726821da4163b0057cb",
+  "tree": "46aebc307988116f2c85fc48beee32ad4a220215",
+  "build_exit_code": 101,
+  "error": "serde_json json! compile-time macro recursion limit while constructing cohort report",
+  "native_campaign_executed": false,
+  "first_failure_log_bytes": 117179,
+  "first_failure_log_sha256": "849ff114929fb703dc21572b7970fcd73006c63465238475b20debe9154184a5",
+  "gzip_sha256": "b5b27e0d2fb6e6246c17aad0b1f5325fabd54688b52ca2bd929545cc3c6afb1b",
+  "repair": "construct phase object separately after observed_outer; insert the five existing batch metadata fields separately into the same JSON object; unchanged fields, runtime limits, work, predicate and timing scopes",
+  "arm64": {
+    "job": 122586349919,
+    "build_exit_code": 101,
+    "native_campaign_executed": false,
+    "same_recursion_failure": true,
+    "log_bytes": 117583,
+    "log_sha256": "e424db4606a22cf0c70e940b4a43b854ba578527beb5ec595bc499191becc029",
+    "gzip_sha256": "3cc0f136feec116ca3ce697c55e709e03e8b98707835a77ddd85666d46107942"
+  },
+  "run_terminal": "failure"
+}

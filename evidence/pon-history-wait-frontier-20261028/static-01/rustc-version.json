@@ -1,0 +1,14 @@
+{
+  "name": "rustc-version",
+  "argv": [
+    "rustc",
+    "--version"
+  ],
+  "returncode": 0,
+  "passed": true,
+  "elapsed_wall_seconds": 0.019112306996248662,
+  "raw_bytes": 36,
+  "raw_sha256": "f4d034f5660bb49f22bfcba3f3445be67e25b704c193ff421b53863b4faee148",
+  "gzip_bytes": 56,
+  "gzip_sha256": "862f679803156cc779b7bf2e5f36c767205b30bb8029d6fcf02e3fd98edbcdb6"
+}

@@ -1,0 +1,27 @@
+{
+  "all_archived_raw_bytes_read_back_verified": true,
+  "archive": "pre-native04-final.tar.gz",
+  "archive_bytes": 424,
+  "archive_sha256": "6764d5e2a82aa7e191332d2c62ea705806cfbb211b6b9310a0619a249fe9d3df",
+  "executed_binaries_retained_outside_repository": [],
+  "failed_observations_reclassified": false,
+  "raw_files": [
+    {
+      "bytes": 0,
+      "path": "fmt.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 167,
+      "path": "preflight.log",
+      "sha256": "3dae4011cd0a63be95f76894e99ceb5325eec9237c8bcf0ee4951b63c758e291"
+    },
+    {
+      "bytes": 370,
+      "path": "results.json",
+      "sha256": "33b866c1e34777456b372800e691f295afd0088b697551d76050b2285c78a42c"
+    }
+  ],
+  "schema": "history-v6-completed-observation-archive-v1",
+  "source_directory": "/workspace/scratch/301262829a43/pon-pq-impl/history-v6-evidence/pre-native04-final"
+}

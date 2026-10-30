@@ -1,0 +1,368 @@
+{
+  "schema": "history-startup-source-audit-v1",
+  "scope": "source-only followup; implementation and native execution absent",
+  "frozen_parent_commit": "1521ae83831a060e2e8afeabeb130591dc783823",
+  "frozen_parent_tree": "73c47f12954a93c98a2ea9f026fbb769eabc6e4e",
+  "runtime_observed_commit": "8d7741028eb650f0600e61fcab46ff3d14b50767",
+  "runtime_binary_sha256": "136bbeb0b474dc9d0bcb3c254ab3bf21d47666f4fb4e04957752f69ea905729b",
+  "original_observation_path": "evidence/pon-history-publication-native-20261028/startup-capacity-observation.json",
+  "original_observation_sha256": "1424a7d420d0790527558abf80c8ddc26b3cad189d00cc9c3a6734aecc8fc0ef",
+  "original_startup_cpu": {
+    "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+    "owner_cpu_ns": 2087314423,
+    "scoped_worker_cpu_ns": 0,
+    "total_cpu_ns": 2087314423,
+    "live_paid_cpu_ns": 2086987006,
+    "residual_cpu_ns": 327417,
+    "spawned_workers": 0,
+    "started_workers": 0,
+    "finished_workers": 0,
+    "known_workers": 0,
+    "live_refused": true,
+    "accounting_unavailable": false
+  },
+  "original_local_burst_ns": 2000000000,
+  "original_native_suite_passed": false,
+  "new_native_executed": false,
+  "runtime_modified": false,
+  "per_function_cpu_measurements_available": false,
+  "saving_estimate": null,
+  "implementation_proposed_only": true,
+  "original_runtime_limits_unchanged": {
+    "burst_ns": 2000000000,
+    "fixture_operation_allowance_ns": 4000000000,
+    "full_native_suite_seconds": 600,
+    "parent_graph_snapshot_attempts": 4
+  },
+  "source_inputs": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/history_effect_v6.rs",
+      "git_blob": "a22479f21b0115adc4fcf01d9a36856dd6360633",
+      "sha256": "488be00cd008af49977fc3ef8c5720550935351a762ca7b0078c3fb56da0996f",
+      "bytes": 28313,
+      "sites": [
+        {
+          "exact_source_fragment": "pub fn open(",
+          "line_numbers": [
+            352
+          ]
+        },
+        {
+          "exact_source_fragment": "let progress = || {",
+          "line_numbers": [
+            395
+          ]
+        },
+        {
+          "exact_source_fragment": "fn checkpoint(&self)",
+          "line_numbers": [
+            110,
+            181
+          ]
+        },
+        {
+          "exact_source_fragment": "ServiceMutationCpuDomain::from_history_effect_v6_epoch",
+          "line_numbers": [
+            375
+          ]
+        },
+        {
+          "exact_source_fragment": "Settings::development_with_operator_checkpoint_tile(",
+          "line_numbers": [
+            438
+          ]
+        },
+        {
+          "exact_source_fragment": "Node::open_selected(",
+          "line_numbers": [
+            485
+          ]
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/operator_checkpoint_tile.rs",
+      "git_blob": "79ccf278155261b3bdd7043e2f98be94e324d2d0",
+      "sha256": "6642c695cfc8b0e570586b26997aafc71725725f7b586f5aa7cfaa2417afd339",
+      "bytes": 12723,
+      "sites": [
+        {
+          "exact_source_fragment": "pub fn replay(",
+          "line_numbers": [
+            48
+          ]
+        },
+        {
+          "exact_source_fragment": "Duration::from_secs(90)",
+          "line_numbers": [
+            88
+          ]
+        },
+        {
+          "exact_source_fragment": "pub fn prepare(",
+          "line_numbers": [
+            157
+          ]
+        },
+        {
+          "exact_source_fragment": "pub fn development_with_operator_checkpoint_tile(",
+          "line_numbers": [
+            287
+          ]
+        },
+        {
+          "exact_source_fragment": "pub(crate) fn replay_checkpoint_tile_material(",
+          "line_numbers": [
+            339
+          ]
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "git_blob": "ccc3d01d192eb80e2a837c5858c14e3ce4421ea9",
+      "sha256": "fd3b5c0ddcc39493c754a2b64174586ded7563ff6fe500e4de1865bf1ee0e86a",
+      "bytes": 302593,
+      "sites": [
+        {
+          "exact_source_fragment": "fn open_selected(",
+          "line_numbers": [
+            1096
+          ]
+        },
+        {
+          "exact_source_fragment": "settings.replay_checkpoint_tile_material()",
+          "line_numbers": [
+            1163
+          ]
+        },
+        {
+          "exact_source_fragment": "node.read_active()",
+          "line_numbers": [
+            1442,
+            1456,
+            5967,
+            5983,
+            6001,
+            6009,
+            6021,
+            6048,
+            6125,
+            6190,
+            6212,
+            6308,
+            6345,
+            6448,
+            6718,
+            6761,
+            6777,
+            6826,
+            6850,
+            6858,
+            6882,
+            6896,
+            6904,
+            6984,
+            7066,
+            7079,
+            7083,
+            7097,
+            7110,
+            7136,
+            7143,
+            7191,
+            7344,
+            7374,
+            7407,
+            7440
+          ]
+        },
+        {
+          "exact_source_fragment": "pub fn read_active_with_progress(",
+          "line_numbers": [
+            2623
+          ]
+        },
+        {
+          "exact_source_fragment": "pub fn recover(",
+          "line_numbers": [
+            5093
+          ]
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/operator_continuous_policy.rs",
+      "git_blob": "8d8ffce15a1e7373a236dad403537640aa2a12a9",
+      "sha256": "14b2f3f071c1f92d25ffcfa61548c73a5419afb8088feae12c5d104175502e60",
+      "bytes": 24904,
+      "sites": [
+        {
+          "exact_source_fragment": "pub(crate) struct HeldCatalog",
+          "line_numbers": [
+            412
+          ]
+        },
+        {
+          "exact_source_fragment": "pub(crate) fn read_role(",
+          "line_numbers": [
+            427
+          ]
+        },
+        {
+          "exact_source_fragment": "pub(crate) fn ready(",
+          "line_numbers": [
+            464
+          ]
+        },
+        {
+          "exact_source_fragment": "let mut buffer = [0u8; 65536]",
+          "line_numbers": [
+            444
+          ]
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs",
+      "git_blob": "1ef43d7d016faeaa8a9ec3781923c33f5176e490",
+      "sha256": "85faecd32e18de572994f1daa264f748d0db52806b47cd0c3cc96c043d6ef97f",
+      "bytes": 63851,
+      "sites": [
+        {
+          "exact_source_fragment": "pub fn finish(mut self)",
+          "line_numbers": [
+            971
+          ]
+        },
+        {
+          "exact_source_fragment": "pub struct ServiceMutationCpuCheckpoint",
+          "line_numbers": [
+            1029
+          ]
+        },
+        {
+          "exact_source_fragment": "pub(crate) fn from_history_effect_v6_epoch(",
+          "line_numbers": [
+            1058
+          ]
+        },
+        {
+          "exact_source_fragment": "pub(crate) fn await_startup_credit(",
+          "line_numbers": [
+            1106
+          ]
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/checkpoint_tile_material_v1.rs",
+      "git_blob": "35c08fc53966ef4ebafc8314485423da8fa147d0",
+      "sha256": "02a20d81ac0790f53725173cde6a0446c4aa4d278b4574be2b6fcd0225a18fdf",
+      "bytes": 27342,
+      "sites": [
+        {
+          "exact_source_fragment": "pub struct CheckedCheckpointTileMaterialV1",
+          "line_numbers": [
+            122
+          ]
+        },
+        {
+          "exact_source_fragment": "fn parse(",
+          "line_numbers": [
+            233
+          ]
+        },
+        {
+          "exact_source_fragment": "fn tensor_header(",
+          "line_numbers": [
+            260
+          ]
+        },
+        {
+          "exact_source_fragment": "fn activation(",
+          "line_numbers": [
+            366
+          ]
+        },
+        {
+          "exact_source_fragment": "pub fn derive_checkpoint_tile_material_v1",
+          "line_numbers": [
+            473
+          ]
+        },
+        {
+          "exact_source_fragment": "let mut buffer = vec![0; 1024 * 1024]",
+          "line_numbers": [
+            520
+          ]
+        },
+        {
+          "exact_source_fragment": "progress(n + 8)",
+          "line_numbers": [
+            512
+          ]
+        },
+        {
+          "exact_source_fragment": "progress(n + 8 + pos)",
+          "line_numbers": [
+            556
+          ]
+        },
+        {
+          "exact_source_fragment": "for bytes in tile.chunks_exact(2)",
+          "line_numbers": [
+            570
+          ]
+        },
+        {
+          "exact_source_fragment": "for bytes in hidden.chunks_exact(4)",
+          "line_numbers": [
+            581
+          ]
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/lib.rs",
+      "git_blob": "f83ac18cf01bae7b859c11542486718f76b20237",
+      "sha256": "472a1c63f50373991b9b659abc58a7e9a5842e1cef8516ea558b4f4ce2c48dc9",
+      "bytes": 31196,
+      "sites": [
+        {
+          "exact_source_fragment": "pub struct Settings",
+          "line_numbers": [
+            229
+          ]
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/history_effect_v6/storage.rs",
+      "git_blob": "8806400874abf10db61a9c17526b07f0e10308cb",
+      "sha256": "e10b453b45ff46281b182a42b744e3cf8e0759254b5ca0452df4c72f8a904517",
+      "bytes": 14740,
+      "sites": [
+        {
+          "exact_source_fragment": "pub(super) fn verify_known_markers(",
+          "line_numbers": [
+            112
+          ]
+        },
+        {
+          "exact_source_fragment": "LIMIT 257",
+          "line_numbers": [
+            124,
+            160
+          ]
+        },
+        {
+          "exact_source_fragment": "actual.len() <= 256",
+          "line_numbers": [
+            128
+          ]
+        }
+      ]
+    }
+  ]
+}

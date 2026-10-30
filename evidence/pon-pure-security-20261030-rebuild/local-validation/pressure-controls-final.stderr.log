@@ -1,0 +1,16 @@
+
+thread 'fresh_caller_namespace_binds_phase_actor_and_every_call' (78094) panicked at crates/trnm-pon-node/tests/pure_pon_pressure_v2.rs:54:38:
+explicit caller-mode boolean
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'history_verifier::client_execution_profile_has_no_implicit_pure_relabel' (78197) panicked at crates/trnm-pon-node/tests/support/multiprocess_history_verifier.rs:44:18:
+exact explicit client execution profile required
+
+thread 'history_verifier::client_execution_profile_has_no_implicit_pure_relabel' (78197) panicked at crates/trnm-pon-node/tests/support/multiprocess_history_verifier.rs:44:18:
+exact explicit client execution profile required
+
+thread 'history_verifier::client_execution_profile_has_no_implicit_pure_relabel' (78197) panicked at crates/trnm-pon-node/tests/support/multiprocess_history_verifier.rs:44:18:
+exact explicit client execution profile required
+
+thread 'history_verifier::client_execution_profile_has_no_implicit_pure_relabel' (78197) panicked at crates/trnm-pon-node/tests/support/multiprocess_history_verifier.rs:44:18:
+exact explicit client execution profile required

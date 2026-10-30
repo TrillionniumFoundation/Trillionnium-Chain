@@ -1,0 +1,11 @@
+
+running 1 test
+test command_runtime_exec::unix::descendant_owner::tests::vanished_owned_proc_fd_requires_a_fresh_complete_scan ... FAILED
+
+failures:
+
+failures:
+    command_runtime_exec::unix::descendant_owner::tests::vanished_owned_proc_fd_requires_a_fresh_complete_scan
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 372 filtered out; finished in 0.00s
+

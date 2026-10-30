@@ -1,0 +1,19 @@
+{
+  "authenticated_audit_rows": 0,
+  "authenticated_outbox_pending": 0,
+  "authenticated_outbox_sessions": 0,
+  "authenticated_pending": 0,
+  "authenticated_sessions": 0,
+  "chainwork_hex": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002",
+  "events": 1,
+  "generation": 1,
+  "genesis": "e71802f181974de1181f82f4249d1db542714247623e889d3dfedb263e1c2866",
+  "height": 1,
+  "network": "62b92044b29c6275931920860de4dd74a666ad03f140f07b107a2e2ac06e62d4",
+  "parameters": "5f6e99013f8750989889403b3928a7915c006296c9cae4b184c3d0c88a0053a4",
+  "production_activation": false,
+  "state_keys": 266,
+  "state_root": "0fd0c243d11beb79c14e8c29d0f97bd7d997f4c32d3fe4d8c2cdd958f1509346",
+  "stored_blocks": 2,
+  "tip": "151e847b19babc4d68f6b915051f96d0339233f21be208e336d39e47f012cab9"
+}

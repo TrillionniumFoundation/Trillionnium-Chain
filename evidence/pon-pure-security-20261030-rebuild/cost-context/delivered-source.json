@@ -1,0 +1,25 @@
+{
+  "schema": "pon-v5-rebuild-delivery-v1",
+  "basis_commit": "540d72356a921da31dde1113537382e5c0f0c4fd",
+  "old_source_blob": "15094f72a96abefbc4c1c48694d8fe2a69ec8e0f",
+  "files": [
+    {
+      "path": "scripts/ci/check_legal_ticket_cost_v5.py",
+      "bytes": 25719,
+      "sha256": "a8d6c0c48e044a1835b4eedabf5362872ef163ac85e09aa7b4f7d0a3a66d5b99"
+    },
+    {
+      "path": "scripts/ci/test_legal_ticket_cost_v5.py",
+      "bytes": 16590,
+      "sha256": "a3c44ef72b8f6d060ad45c88cac2bff5d90bed2aaeac44d975a17aea24310a1a"
+    },
+    {
+      "path": "scripts/ci/test_legal_ticket_cost_diagnostics_v1.py",
+      "bytes": 7924,
+      "sha256": "0b6ecc0e97a496c46dae1776790d30de7386ef4f2f0c2de7d3648a0cd5ac8bc9"
+    }
+  ],
+  "old_unpublished_source_recovered": false,
+  "proof_or_mining_executed": false,
+  "native_consensus_source_changed_by_this_lane": false
+}

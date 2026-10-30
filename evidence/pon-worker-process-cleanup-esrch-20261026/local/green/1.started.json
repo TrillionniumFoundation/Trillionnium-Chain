@@ -1,0 +1,1 @@
+{"command": ["cargo", "clippy", "--locked", "-p", "trnm-worker-agent", "--bin", "trnm-worker-agent", "--tests", "--", "-D", "warnings"], "pid": 3722290, "source_sha256": "f80c0a93d58f1d148bd553f0ceba9d5bc92bd58692942c31353406a6d1216a99", "remaining_local_seconds": 391.3811266999983, "not_native_prepared": true}

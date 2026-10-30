@@ -1,0 +1,20 @@
+test_actual_byte_rebinding_is_rejected (__main__.ReaderControls.test_actual_byte_rebinding_is_rejected) ... ok
+test_all_qualification_promotions_are_rejected (__main__.ReaderControls.test_all_qualification_promotions_are_rejected) ... ok
+test_caps_cannot_change_or_gain_float_aliases (__main__.ReaderControls.test_caps_cannot_change_or_gain_float_aliases) ... ok
+test_coordinated_input_hash_change_cannot_hide_bad_header_context (__main__.ReaderControls.test_coordinated_input_hash_change_cannot_hide_bad_header_context) ... ok
+test_duplicate_json_key_is_rejected (__main__.ReaderControls.test_duplicate_json_key_is_rejected) ... ok
+test_image_pin_and_shape_caps_remain_exact (__main__.ReaderControls.test_image_pin_and_shape_caps_remain_exact) ... ok
+test_matching_zero_targets_are_rejected (__main__.ReaderControls.test_matching_zero_targets_are_rejected) ... ok
+test_mutation_metadata_cannot_silently_change_valid_case (__main__.ReaderControls.test_mutation_metadata_cannot_silently_change_valid_case) ... ok
+test_receipt_outcome_cannot_be_relabelled (__main__.ReaderControls.test_receipt_outcome_cannot_be_relabelled) ... ok
+test_source_omission_duplicate_and_changed_hash_are_rejected (__main__.ReaderControls.test_source_omission_duplicate_and_changed_hash_are_rejected) ... ok
+test_statement_id_and_claimed_journal_are_independently_bound (__main__.ReaderControls.test_statement_id_and_claimed_journal_are_independently_bound) ... ok
+test_synthetic_metadata_pass_does_not_gain_proof_authority (__main__.ReaderControls.test_synthetic_metadata_pass_does_not_gain_proof_authority) ... ok
+test_timing_scope_cannot_include_unrelated_costs (__main__.ReaderControls.test_timing_scope_cannot_include_unrelated_costs) ... ok
+test_timings_reject_boolean_float_negative_and_missing_stages (__main__.ReaderControls.test_timings_reject_boolean_float_negative_and_missing_stages) ... ok
+test_wrong_record_kind_is_not_a_sample (__main__.ReaderControls.test_wrong_record_kind_is_not_a_sample) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 0.017s
+
+OK

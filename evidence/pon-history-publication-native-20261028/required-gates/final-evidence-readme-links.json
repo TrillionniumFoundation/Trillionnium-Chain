@@ -1,0 +1,18 @@
+{
+  "scope": "this evidence README only; canonical repository-wide gate remains separately recorded",
+  "passed": true,
+  "targets": [
+    "publication-source-manifest.json",
+    "native-binary-runtime-8d774102.gz",
+    "native-binary-runtime-8d774102.json",
+    "../../docs/protocol/pon-nakamoto-v1/details/SETTLED_EPOCH_RECOVERY_V1.md",
+    "epoch-window-summary.json",
+    "startup-capacity-observation.json",
+    "raw-native-initial-intermediate.tar.gz",
+    "raw-native-attempt-04-failed.tar.gz",
+    "raw-native-attempt-05-failed.tar.gz",
+    "raw-native-attempt-06-failed.tar.gz",
+    "raw-isolated-final-synced-failed.tar.gz",
+    "raw-settled-seven-window-success.tar.gz"
+  ]
+}

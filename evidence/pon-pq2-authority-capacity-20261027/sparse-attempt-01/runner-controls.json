@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "python3",
+    "scripts/ci/test_native_pq_accounts_v2_research.py"
+  ],
+  "returncode": 1,
+  "wall_seconds": 0.3668947090045549,
+  "source": "3be3d15d6bfb721f3c96848c235f17051eafbd51",
+  "scope": "isolated sparse source, execution of named Python checks only"
+}

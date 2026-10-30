@@ -1,0 +1,18 @@
+
+running 13 tests
+test tests::a_child_symlink_is_not_a_target_directory ... ok
+test tests::a_nested_profile_with_the_right_suffix_is_not_the_held_cargo_root ... ok
+test tests::another_descriptor_is_refused_even_for_the_same_directory_inode ... ok
+test tests::canonical_out_directory_cannot_come_from_a_different_target ... ok
+test tests::closing_the_original_descriptor_does_not_make_the_duplicate_authority_sufficient ... ok
+test tests::descriptor_spelling_requires_exact_nonstdio_decimal ... ok
+test tests::exact_inherited_alias_and_same_root_canonical_paths_are_admitted ... ok
+test tests::held_mode_does_not_open_an_unrelated_proc_alias_as_a_canonical_loader_path ... ok
+test tests::literal_dot_empty_parent_and_trailing_components_are_refused ... ok
+test tests::ordinary_canonical_route_keeps_its_original_behavior ... ok
+test tests::private_root_mode_must_remain0700 ... ok
+test tests::real_root_rename_and_replacement_cannot_retarget_the_capability ... ok
+test tests::replacing_an_ancestor_is_refused_even_if_the_original_out_inode_is_moved_back ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+

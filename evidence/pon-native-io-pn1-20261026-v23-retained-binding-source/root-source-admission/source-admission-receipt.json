@@ -1,0 +1,41 @@
+{
+  "schema": "PN1-root-exact-R5-source-admission-v1",
+  "root_parent": "2cb6368832f2deec28470141aeb8a815ebe99413",
+  "patch_sha256": "9881bfb6bd36f788aa6405552be16e0a9b1ee5e242b5c537ce41b84927b29bb1",
+  "checks": [
+    {
+      "name": "preflight",
+      "exit": 0,
+      "seconds": 0.08840676800173242
+    },
+    {
+      "name": "fmt-check",
+      "exit": 0,
+      "seconds": 17.724132916002418
+    },
+    {
+      "name": "metadata",
+      "exit": 0,
+      "seconds": 0.24313510899082758,
+      "workspace": 26,
+      "nodes": 155
+    }
+  ],
+  "candidate_files_exact": 7,
+  "old477pins_exact_and_plan_prefix_preserved": true,
+  "old467tests_and79958tail_unchanged": true,
+  "original64public65save_limit": true,
+  "record_layout_and_signed_domains_unchanged": true,
+  "normal_compilation_or_native_run": false,
+  "all_qualification_flags": false,
+  "security_open": [
+    "coordinated resealed unread native/snapshot internally consistent false state not globally authenticated",
+    "arbitraryCOMMITBEGIN",
+    "postCOMMIThealth",
+    "nativeperformance/resource/decoder/migration"
+  ],
+  "remaining_original_preparation_upper_bound_seconds": 164.257,
+  "no_original_prepare_or_budget_restart": true,
+  "first_helper_schema_failure_preserved": true,
+  "merge_ready": false
+}

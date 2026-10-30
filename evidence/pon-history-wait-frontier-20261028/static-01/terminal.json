@@ -1,0 +1,215 @@
+{
+  "schema": "history-wait-frontier-static-observation-v1",
+  "passed": true,
+  "same_source_before_after": true,
+  "source_files": 1620,
+  "frozen_parent_candidate_changed_paths": [],
+  "results": [
+    {
+      "name": "preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "returncode": 0,
+      "passed": true,
+      "elapsed_wall_seconds": 0.09144628200738225,
+      "raw_bytes": 179,
+      "raw_sha256": "20c9e61b1652b8eef6b7dfb77b33ef911c2852dfc15515b6e5c8c46215eb5ed1",
+      "gzip_bytes": 161,
+      "gzip_sha256": "cced66dd9f69273d97018862a0177d5b10031555655c7a54d81c3180ee79d281"
+    },
+    {
+      "name": "rustfmt-version",
+      "argv": [
+        "rustfmt",
+        "--version"
+      ],
+      "returncode": 0,
+      "passed": true,
+      "elapsed_wall_seconds": 0.027941166001255624,
+      "raw_bytes": 45,
+      "raw_sha256": "21e923568a260155c34a6f780f9513d3962c088aa3bbe8c91ab5385f470547d1",
+      "gzip_bytes": 65,
+      "gzip_sha256": "046b96f3d9e5d5e26acb971aa9a312dcf7514c8d88ab16fe79a77a41719a9605"
+    },
+    {
+      "name": "rustc-version",
+      "argv": [
+        "rustc",
+        "--version"
+      ],
+      "returncode": 0,
+      "passed": true,
+      "elapsed_wall_seconds": 0.019112306996248662,
+      "raw_bytes": 36,
+      "raw_sha256": "f4d034f5660bb49f22bfcba3f3445be67e25b704c193ff421b53863b4faee148",
+      "gzip_bytes": 56,
+      "gzip_sha256": "862f679803156cc779b7bf2e5f36c767205b30bb8029d6fcf02e3fd98edbcdb6"
+    },
+    {
+      "name": "workspace-format",
+      "argv": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--check",
+        "--manifest-path",
+        "trillionnium/Cargo.toml"
+      ],
+      "returncode": 0,
+      "passed": true,
+      "elapsed_wall_seconds": 25.064483688009204,
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gzip_bytes": 20,
+      "gzip_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "name": "runner-controls",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_history_effect_v6_native_runner.py",
+        "-v"
+      ],
+      "returncode": 0,
+      "passed": true,
+      "elapsed_wall_seconds": 1.31023108100635,
+      "raw_bytes": 1010,
+      "raw_sha256": "ebe3a1e60ea1d67b1c32506acd816ff78e00b7ac045fb5a8c99dcaffa380ffd2",
+      "gzip_bytes": 308,
+      "gzip_sha256": "50df3f9cb1626118081c4a35efd5846b8f84acb2ba62e0ff93cab6cb4d52ff9e"
+    },
+    {
+      "name": "guardian-controls",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_history_effect_v6_guard.py",
+        "-v"
+      ],
+      "returncode": 0,
+      "passed": true,
+      "elapsed_wall_seconds": 1.2334112399985315,
+      "raw_bytes": 3784,
+      "raw_sha256": "d1c12f7c92ac1a411d786b3c722cab32e49d71d86e1357b3ec27b208955d4fad",
+      "gzip_bytes": 913,
+      "gzip_sha256": "4b155fe355f1388f64a4061f4a5e8269f954fc4216e73f7fd5d7684244b94b47"
+    },
+    {
+      "name": "source-integrity-controls",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_ci_source_integrity.py",
+        "-v"
+      ],
+      "returncode": 0,
+      "passed": true,
+      "elapsed_wall_seconds": 5.858181553005124,
+      "raw_bytes": 6053,
+      "raw_sha256": "2b820973c4d39425128db0706b82cf7674a0205eecc5043150f5b5c8df4db0db",
+      "gzip_bytes": 1075,
+      "gzip_sha256": "df9781028ba360852c093ed97c1de78a016d84293dbfb4fe4d0d1f81f33a4e42"
+    },
+    {
+      "name": "project-boundary-controls",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_project_boundary.py",
+        "-v"
+      ],
+      "returncode": 0,
+      "passed": true,
+      "elapsed_wall_seconds": 12.503886695005349,
+      "raw_bytes": 2634,
+      "raw_sha256": "62a154b9ae44f43f885c7523a1201443043bcca4a06961dc4a47b15192048347",
+      "gzip_bytes": 582,
+      "gzip_sha256": "fc75d44bf6d52da5706b8530c91b3cbfb5616d1b37526b8812fac4cee23e139d"
+    },
+    {
+      "name": "distributed-inventory",
+      "argv": [
+        "python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "returncode": 0,
+      "passed": true,
+      "elapsed_wall_seconds": 0.08585448899248149,
+      "raw_bytes": 35,
+      "raw_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "gzip_bytes": 55,
+      "gzip_sha256": "b2ac584c0e9f95251d4fe5572e1692e11a8923a388dc7e7a4ebf112954435108"
+    },
+    {
+      "name": "locked-metadata",
+      "argv": [
+        "cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--no-deps",
+        "--format-version",
+        "1",
+        "--manifest-path",
+        "trillionnium/Cargo.toml"
+      ],
+      "returncode": 0,
+      "passed": true,
+      "elapsed_wall_seconds": 0.05929766500776168,
+      "raw_bytes": 152412,
+      "raw_sha256": "7709e28e7c53f405733b4a756ee7bae3e3ac63311c3b3d79070beda2b73f1f52",
+      "gzip_bytes": 8095,
+      "gzip_sha256": "3c3db3ea87f8cf13f1ab1508e8ad439af17e9df43ef90ea8483f7a3ecd45bffa",
+      "workspace_members": 25,
+      "packages": 25
+    },
+    {
+      "name": "whitespace",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "returncode": 0,
+      "passed": true,
+      "elapsed_wall_seconds": 0.1285900390066672,
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gzip_bytes": 20,
+      "gzip_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    }
+  ],
+  "node_compile": "NOT_RUN",
+  "node_clippy": "NOT_RUN",
+  "new_native_tests": "NOT_RUN",
+  "full_native_21_0_1": "NOT_RUN",
+  "native_budget_seconds": 600,
+  "original_burst_ns": 2000000000,
+  "original_scope_allowance_ns": 4000000000,
+  "maximum_parent_snapshots": 4,
+  "available_bytes_after": 158187520
+}

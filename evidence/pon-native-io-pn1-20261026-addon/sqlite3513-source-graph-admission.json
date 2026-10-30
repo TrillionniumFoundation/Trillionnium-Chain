@@ -1,0 +1,104 @@
+{
+  "schema": "SQLite-WAL-reset-fixed-source-and-lock-root-admission-v1",
+  "utc": "2026-10-26T00:56:38.795355+00:00",
+  "decision": "APPLY_FOR_FRESH_NORMAL_NATIVE_BUILD_ABI_AND_UNCHANGED_ORIGINAL_REGRESSIONS_ONLY",
+  "head": "630f871293e48588e0a1ceae7ceb64973d3ec31d",
+  "patch_sha256": "aab333442f1569d337fc20d1e6a10f2738753472d42661b2c973cc8bf157a4c3",
+  "changed_files": [
+    {
+      "path": "trillionnium/crates/trnm-data-availability/Cargo.toml",
+      "before_bytes": 810,
+      "before_sha256": "33b6cd0006d255bdf55487798f77ea3d43906b84bc472aef188e38d02ed2729b",
+      "after_bytes": 813,
+      "after_sha256": "ac7b746a17d04c12caa08a6b9bc522c6e00816ff3249d750217c3d7f033d6046"
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/Cargo.toml",
+      "before_bytes": 828,
+      "before_sha256": "2f2388c15cc64b1f4ab3ba024a19830ad039191469d3d7f0559836cbfc611a6b",
+      "after_bytes": 831,
+      "after_sha256": "9ee31227e4ff3e68be69ae650206ebcbfd212630d77f1bd854253579714675ff"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/Cargo.toml",
+      "before_bytes": 1159,
+      "before_sha256": "7cd8eee13663384e02d70bacace9b884b1aca64cf03007223a552dc329008f47",
+      "after_bytes": 1162,
+      "after_sha256": "9b3d7c4de848d69e254b8bcea7a135ca3543a7e2cda106cb25314df81d729fed"
+    },
+    {
+      "path": "trillionnium/crates/trnm-service-settlement/Cargo.toml",
+      "before_bytes": 610,
+      "before_sha256": "07f51485cc703f5dcf43ed489b6e78f5addf1ee959c4b97061eb8d4cc5b52ee2",
+      "after_bytes": 613,
+      "after_sha256": "cb75e2e683d8aa4e5dedbc3730f59f1b47d71378953985c53228607a750ddcb3"
+    },
+    {
+      "path": "trillionnium/crates/trnm-sqlite-io-boundary/Cargo.toml",
+      "before_bytes": 574,
+      "before_sha256": "335d0dd54fb0e65f4e8e462a25507c42ca2a18260ca45fa1d6e827334a015fe2",
+      "after_bytes": 577,
+      "after_sha256": "528b14fbe7d5347ef76521685d82b6076393c7da9cf9e7409000ea2b0fe4d3e7"
+    },
+    {
+      "path": "trillionnium/crates/trnm-state-import/Cargo.toml",
+      "before_bytes": 388,
+      "before_sha256": "67092ab5198b8cb9bebcbfe2e39b81c5dccc51af81a0a588702768b2148226f7",
+      "after_bytes": 391,
+      "after_sha256": "a9f20a7d3abcf6e09916f7be57d88b4cf5589e5cee05200bef145279e4da0231"
+    },
+    {
+      "path": "trillionnium/crates/trnm-task-kernel/Cargo.toml",
+      "before_bytes": 543,
+      "before_sha256": "d0fe886e531a7a93fc091a73befa4724c5348d7687afb35a69c070e649d2e537",
+      "after_bytes": 546,
+      "after_sha256": "31628676af7f3f047a96934dd2dae2750d3343fee37fed686adda7dbd6826b1b"
+    },
+    {
+      "path": "trillionnium/crates/trnm-sqlite-io-boundary/build.rs",
+      "before_bytes": 19684,
+      "before_sha256": "824ec568ba5c2722c31be7cc2124353366538e05e3a7ec0e81080185b1067b8f",
+      "after_bytes": 19728,
+      "after_sha256": "f77c38efdc948892438498d68b382c2e7361214ca34863b42d5050a1a92a8a00"
+    },
+    {
+      "path": "trillionnium/crates/trnm-sqlite-io-boundary/src/unix_abi.rs",
+      "before_bytes": 15767,
+      "before_sha256": "369293cf4da34558382ed2e258abe5161ad6166e6bec4b4f5bf3e07c2dabbd55",
+      "after_bytes": 15767,
+      "after_sha256": "364dc8c146a40e74e6c898c4e9e1eddbcb586bc757665c900347354fa7491ed0"
+    },
+    {
+      "path": "trillionnium/crates/trnm-sqlite-io-boundary/unix_layout_witness.c",
+      "before_bytes": 3256,
+      "before_sha256": "ee9a74a9d9125b62005b820820188bceb70cbb5e8c9154e5a22b0c3fc2e90d8b",
+      "after_bytes": 3256,
+      "after_sha256": "bddd540878f3f0badd609a6724e16c7e51fc3af648a67642c1d2e86f626f5959"
+    },
+    {
+      "path": "trillionnium/Cargo.lock",
+      "before_bytes": 31277,
+      "before_sha256": "fa592f8d831ba236793c0e7b6d782adb396f427c80a1416e8e7f5ac2c6bd5a54",
+      "after_bytes": 33668,
+      "after_sha256": "bc160b1cccc48093294e5df10bec77f426070df7c89c9f8c96c7b69dbfd36765"
+    }
+  ],
+  "upstream_package_commit": "2a1790a69107cd03dae85d501dcbdb11c5b32ef3",
+  "upstream_release": "rusqlite0.39.0/sys0.37.0/SQLite3.51.3",
+  "new_ABI_fence": "sqlite-3.51.3-normal-native-linux-layout-v2",
+  "official_SQLite_source_SHA3": "32d5424f97e0a7fc5ed2f6335afbb58be4e0298bd7117a34e39d345ff13d859e",
+  "complete_resolved_graph_nodes": 155,
+  "workspace_nodes": 26,
+  "registry_nodes": 129,
+  "full_graph_review_scope": "Minimum affected graph edges/checksums/target feature closure; new WASM deps remain unexecuted, no new release closure or broad vulnerability-free claim",
+  "old_3_46_ELF_witness_and_test_receipts_retained_as_history_only": true,
+  "new_C_layout_or_runtime_values_measured": false,
+  "normal_C_witness_and_native_qualification": false,
+  "all_original_assertions_and_caps_preserved": true,
+  "full_guard_enabled": false,
+  "full_4097_or_model_rounds_or_WAN_qualified": false,
+  "Hepta_modified": false,
+  "source_committed_or_pushed": false,
+  "merge_ready": false,
+  "task_complete": false
+}

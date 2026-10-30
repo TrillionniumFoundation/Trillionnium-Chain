@@ -1,0 +1,47 @@
+{
+  "all_archived_raw_bytes_read_back_verified": true,
+  "archive": "static-before-attempt03.tar.gz",
+  "archive_bytes": 5429,
+  "archive_sha256": "891eca13d441dfbc0ba7cf92255ce05bf47b4a21b68823c5ea562a05cc19aca9",
+  "executed_binaries_retained_outside_repository": [],
+  "failed_observations_reclassified": false,
+  "raw_files": [
+    {
+      "bytes": 6441,
+      "path": "blob-checks.json",
+      "sha256": "76d8df5b96d90707790865587ce4259c3a97943ab07bdb7da4716e896906384b"
+    },
+    {
+      "bytes": 15884,
+      "path": "ci-contract.log",
+      "sha256": "51c5bc28f5cdec05151832502a60809b5308dc319d1cc4be2da4f2971eb37a06"
+    },
+    {
+      "bytes": 0,
+      "path": "fmt.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 685,
+      "path": "initial-format-invocation.json",
+      "sha256": "110920d5cdd5857325a7fb7980186cc8f32afe907a6051e0b6b6ce8590d9783d"
+    },
+    {
+      "bytes": 167,
+      "path": "preflight.log",
+      "sha256": "3dae4011cd0a63be95f76894e99ceb5325eec9237c8bcf0ee4951b63c758e291"
+    },
+    {
+      "bytes": 962,
+      "path": "results.json",
+      "sha256": "5c5eadf8fd92265d8e4f127a91e23a3fb0af299793c1b5270fc86e9043d9a4b5"
+    },
+    {
+      "bytes": 6054,
+      "path": "source-integrity.log",
+      "sha256": "5c487862dc086834f69260dfb873e8d4e1397d8f8c2764c2ccdfaa54c2d6bb4c"
+    }
+  ],
+  "schema": "history-v6-completed-observation-archive-v1",
+  "source_directory": "/workspace/scratch/301262829a43/pon-pq-impl/history-v6-evidence/static-before-attempt03"
+}

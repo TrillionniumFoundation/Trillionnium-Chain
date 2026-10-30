@@ -1,0 +1,29 @@
+{
+  "archive_bytes": 80366759,
+  "archive_sha256": "bae22e7fab8f5475dc396a4225292f90e582a92558fecf1710e30da0b0d76ecc",
+  "artifact_id": 12784520070,
+  "assets": {
+    "guest.bin": {
+      "bytes": 291592,
+      "sha256": "b8f32cd9c1b1edbb0cde04acf9aab146b7ff1aeeeaee0188e4d6e80d077b0c0a"
+    },
+    "input.bin": {
+      "bytes": 49640,
+      "sha256": "4babd290b10f7a68be27c2adf3b97448bb7bef04dba8bcb97f914acf4ac69020"
+    },
+    "receipt.bin": {
+      "bytes": 15862780,
+      "sha256": "0a5336a797c51829ed25d4ec2f1a03f4f56fda4c737a230b493d4abbe96f0ec8"
+    }
+  },
+  "compressed_bytes": 14032963,
+  "consensus_authority": false,
+  "historical_zip_verified_this_run": false,
+  "new_proof_generated": false,
+  "object_manifest_sha256": "d2e5f3ca3a821e71644c3fb86f2e14a500332c54af15a3950b6a8ff49e270811",
+  "proof_verified": false,
+  "run_id": 40608715148,
+  "schema": "pon-w1-historical-fixture-binding-v2",
+  "source": "objects",
+  "source_sha": "a54dc7355f58f40784b5a71fe7e73c4062a14951"
+}

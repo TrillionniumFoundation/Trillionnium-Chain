@@ -1,0 +1,336 @@
+{
+  "schema": "pon-retained-history-baseline-provenance-v1",
+  "observed_at_utc": "2026-10-30T01:18:16.764773+00:00",
+  "scope": "Readback of existing historical CI output; no new native execution or performance claim. Selected source hashes are taken from the original committed object, not the concurrent working tree.",
+  "workflow_run_id": 40932471590,
+  "job_id": 123654214772,
+  "artifact_id": 12924656581,
+  "source_commit": "540d72356a921da31dde1113537382e5c0f0c4fd",
+  "archive_bytes": 76944883,
+  "archive_sha256": "0fdcd182ab9eb06f84c6cf3208f5cf8c138040dd80ed448d1b809d4da8cf1467",
+  "archive_retained_in_this_directory": false,
+  "entries": [
+    {
+      "archive_entry": "campaign/pressure-native/baseline.json",
+      "retained_path": "original/campaign/pressure-native/baseline.json.gz",
+      "raw_bytes": 1943386,
+      "raw_sha256": "b4bc0f6fac6b8fdf4da1a2914802b0c58aa64ec55e8d1e7655b625a8f21f02fc",
+      "compressed_bytes": 163989,
+      "compressed_sha256": "ab4701b81bfa008abb5cc92c866efbcaee61ee95174845bd188a19edc78eb5e5"
+    },
+    {
+      "archive_entry": "campaign/pressure-qualification.json",
+      "retained_path": "original/campaign/pressure-qualification.json.gz",
+      "raw_bytes": 4711,
+      "raw_sha256": "dffee64f2fc675bce5266a8b84139a84f3947d86ec83dbf8ef26437ad60bb042",
+      "compressed_bytes": 988,
+      "compressed_sha256": "dabb2198434e9da373a4e196cec104dba7bd1818da66c5524fb6dcd1fbb94e65"
+    },
+    {
+      "archive_entry": "campaign/pressure-native/baseline/independent-client/job.json",
+      "retained_path": "original/campaign/pressure-native/baseline/independent-client/job.json.gz",
+      "raw_bytes": 808127,
+      "raw_sha256": "f2e61a5f882c2c1b16c02a8b7a0bccb47c756f3ef0c0aa02bfce6b41e44710ec",
+      "compressed_bytes": 193313,
+      "compressed_sha256": "71b02df3da39add38105d8fbf0e2f04adb12ba1170a90de18d8672ccb312e306"
+    },
+    {
+      "archive_entry": "campaign/pressure-native/baseline/independent-client/ready.json",
+      "retained_path": "original/campaign/pressure-native/baseline/independent-client/ready.json.gz",
+      "raw_bytes": 8238,
+      "raw_sha256": "05c21e33eefcef46c3e0711f258f71c4e5feb48322611d7512260470301ce17e",
+      "compressed_bytes": 2905,
+      "compressed_sha256": "d5b1844e93fd88ce177045a0378058bed026461227bd72c6206c58d77093d860"
+    },
+    {
+      "archive_entry": "campaign/pressure-native/baseline/independent-client/report.json",
+      "retained_path": "original/campaign/pressure-native/baseline/independent-client/report.json.gz",
+      "raw_bytes": 22357,
+      "raw_sha256": "ee06c9a2ef5891a3c2e08940eb0f850610f29ce4883f98d18bd92f7f3ac4bec0",
+      "compressed_bytes": 3255,
+      "compressed_sha256": "afa13699cb719272212610f9404ba8a798eb02a583adcccab518377ae224de84"
+    },
+    {
+      "archive_entry": "campaign/pressure-native/baseline/independent-client/native/native.sqlite",
+      "retained_path": "original/campaign/pressure-native/baseline/independent-client/native/native.sqlite.gz",
+      "raw_bytes": 3350528,
+      "raw_sha256": "4cbc2b9ec7cbcb0be9a8684d7e81d9b4eb37aaba1c2d6e49bbef823403ee8990",
+      "compressed_bytes": 1409567,
+      "compressed_sha256": "d44e9c1c53d5207e4a6a9ee5c855951c0e733b96726f3a92b5b1f589d4ecff97"
+    },
+    {
+      "archive_entry": "campaign/pressure-native/baseline/independent-client/request-000.json",
+      "retained_path": "original/campaign/pressure-native/baseline/independent-client/request-000.json.gz",
+      "raw_bytes": 100300,
+      "raw_sha256": "eefaf21b3c2a4f09097eeb03f033da23c04c03fdb4b0464ca2d0417d64005042",
+      "compressed_bytes": 16952,
+      "compressed_sha256": "247b3a949d275380b8f5c260e6ff89003be3ed35fe86ebdaab0626e8018eecbe"
+    },
+    {
+      "archive_entry": "campaign/pressure-native/baseline/independent-client/request-001.json",
+      "retained_path": "original/campaign/pressure-native/baseline/independent-client/request-001.json.gz",
+      "raw_bytes": 99899,
+      "raw_sha256": "0ae7306bea25defed5be8bd0f1a9a59e5c173e7b397e11a14e1dabe3cba43ec8",
+      "compressed_bytes": 16792,
+      "compressed_sha256": "0f757e72aa891404702266a4c3a6ae1be2bfee0bd9cff5b97b1fb3fe8ae6af7f"
+    },
+    {
+      "archive_entry": "campaign/pressure-native/baseline/independent-client/request-002.json",
+      "retained_path": "original/campaign/pressure-native/baseline/independent-client/request-002.json.gz",
+      "raw_bytes": 99901,
+      "raw_sha256": "45cc43c7598f0d0915eec95382937b5a18d47da14387ea0b2e64416520db863f",
+      "compressed_bytes": 16800,
+      "compressed_sha256": "67a51036b73a406b2f30d3146c78f436c0975247b6b6973d644c8e3f362389e0"
+    },
+    {
+      "archive_entry": "campaign/pressure-native/baseline/independent-client/request-003.json",
+      "retained_path": "original/campaign/pressure-native/baseline/independent-client/request-003.json.gz",
+      "raw_bytes": 99898,
+      "raw_sha256": "1caa97be699e665dd60ebb6347d6a7babc9a9931cbecc1b719b26e80b41a6fa1",
+      "compressed_bytes": 16791,
+      "compressed_sha256": "c054b960b31e4d4e522f169787276f54861945b050f08ab7b69ece19c532d484"
+    },
+    {
+      "archive_entry": "campaign/pressure-native/baseline/independent-client/request-004.json",
+      "retained_path": "original/campaign/pressure-native/baseline/independent-client/request-004.json.gz",
+      "raw_bytes": 99898,
+      "raw_sha256": "4ccbefd7f5a2f3a82c80acff8aa23800504f51ca72cee6bf6d2a22ea0355e35d",
+      "compressed_bytes": 16796,
+      "compressed_sha256": "f9c1dbbd817e9d2b5144b2487495f9a19aefde45336b978425455ddce8e3c78f"
+    },
+    {
+      "archive_entry": "campaign/pressure-native/baseline/independent-client/request-005.json",
+      "retained_path": "original/campaign/pressure-native/baseline/independent-client/request-005.json.gz",
+      "raw_bytes": 99901,
+      "raw_sha256": "162ab99e5f6969c6f57039e0cbc7d6caee706ea2882f4149e69a774e5c8d3b51",
+      "compressed_bytes": 16796,
+      "compressed_sha256": "874bcf9d850649f402e540c36ac25a7774f03bdbf9b84555932a2513110e0afd"
+    },
+    {
+      "archive_entry": "campaign/pressure-native/baseline/independent-client/request-006.json",
+      "retained_path": "original/campaign/pressure-native/baseline/independent-client/request-006.json.gz",
+      "raw_bytes": 99900,
+      "raw_sha256": "8bd4b09ca2e14cef71f5394f71439a3d22ae520f7192a6862972fc0991fd58d8",
+      "compressed_bytes": 16791,
+      "compressed_sha256": "ca894cc3825e62bb4918b765982fbe9e660f1421fe6c3cb58506aadb6a5a328b"
+    },
+    {
+      "archive_entry": "campaign/pressure-native/baseline/independent-client/request-007.json",
+      "retained_path": "original/campaign/pressure-native/baseline/independent-client/request-007.json.gz",
+      "raw_bytes": 340,
+      "raw_sha256": "195a60297b6b9194ed9a8acdef9a3f750c34b361497ec9ab22ab7ebcc302b919",
+      "compressed_bytes": 234,
+      "compressed_sha256": "d40642c7d0d92bac372717d7f552c8e4154439fb34b4ff27658106289e0da7c1"
+    },
+    {
+      "archive_entry": "campaign/pressure-native/baseline/independent-client/request-008.json",
+      "retained_path": "original/campaign/pressure-native/baseline/independent-client/request-008.json.gz",
+      "raw_bytes": 37,
+      "raw_sha256": "ac1da2190b10570dec6fa6ab166340ff6bad6f9503beb0e752c86ffc9b24edcb",
+      "compressed_bytes": 57,
+      "compressed_sha256": "49de9f11f65c282e655937f1757e392352b9af6b95e664e66cadbf379e9e1535"
+    },
+    {
+      "archive_entry": "campaign/pressure-native/baseline/independent-client/request-009.json",
+      "retained_path": "original/campaign/pressure-native/baseline/independent-client/request-009.json.gz",
+      "raw_bytes": 35,
+      "raw_sha256": "e10fc4d05602b6641b890d377c82f12480beea5cdf3a8fe2d48ee8c912b22348",
+      "compressed_bytes": 55,
+      "compressed_sha256": "85b7928ad3250516b4b6a8892ef12649a82b70518f4d0b9ecad56a7bcb609191"
+    },
+    {
+      "archive_entry": "campaign/pressure-native/baseline/independent-client/response-000.json",
+      "retained_path": "original/campaign/pressure-native/baseline/independent-client/response-000.json.gz",
+      "raw_bytes": 1959,
+      "raw_sha256": "b116cd29470a7a9ca36563a4daf42a65bcea19c4d48ff7b7d3f8d5bf3dacc504",
+      "compressed_bytes": 977,
+      "compressed_sha256": "1929d7fcb53d3642dc2f169e31e96a590f4f2443cea465b26534d0af28de9992"
+    },
+    {
+      "archive_entry": "campaign/pressure-native/baseline/independent-client/response-001.json",
+      "retained_path": "original/campaign/pressure-native/baseline/independent-client/response-001.json.gz",
+      "raw_bytes": 1962,
+      "raw_sha256": "ad93c5203fec37e4dd24978a01c7851c3d90cafe8805815d720a78febb0900d8",
+      "compressed_bytes": 982,
+      "compressed_sha256": "dd953caaa2f46304bf65543d633c3749e5c76331c6889c11e40b2cf0909b4b95"
+    },
+    {
+      "archive_entry": "campaign/pressure-native/baseline/independent-client/response-002.json",
+      "retained_path": "original/campaign/pressure-native/baseline/independent-client/response-002.json.gz",
+      "raw_bytes": 1960,
+      "raw_sha256": "5e604d57573fa08809b1843cd0d5d1740e3ad1b5d69d8796b9d0e6423ac684f2",
+      "compressed_bytes": 977,
+      "compressed_sha256": "4efa021e0cb1f1105a1182458438658a01dd8cdf073c4b2b16a12366823b77bd"
+    },
+    {
+      "archive_entry": "campaign/pressure-native/baseline/independent-client/response-003.json",
+      "retained_path": "original/campaign/pressure-native/baseline/independent-client/response-003.json.gz",
+      "raw_bytes": 1960,
+      "raw_sha256": "36d3aee3d7fd44ef8d682c80a27e4532fc87a32b656e440526e73557d63bf0a5",
+      "compressed_bytes": 983,
+      "compressed_sha256": "8ab55e837813e0bb13c4531921da9b5187e42329e08bf81d8f6c64fb11d22b06"
+    },
+    {
+      "archive_entry": "campaign/pressure-native/baseline/independent-client/response-004.json",
+      "retained_path": "original/campaign/pressure-native/baseline/independent-client/response-004.json.gz",
+      "raw_bytes": 1963,
+      "raw_sha256": "ca3317b2636498de4582c2d0786205c61dae77084fdde40f5d1b45ae618a381b",
+      "compressed_bytes": 980,
+      "compressed_sha256": "86f19bdc86551ea7d8d21e351f10236b4432ad54a5470b8c66c04710c2437633"
+    },
+    {
+      "archive_entry": "campaign/pressure-native/baseline/independent-client/response-005.json",
+      "retained_path": "original/campaign/pressure-native/baseline/independent-client/response-005.json.gz",
+      "raw_bytes": 1963,
+      "raw_sha256": "1ef17140ee91c64651b9cecd66f74e12a5f5a4be0f192e88832336d3d6724a30",
+      "compressed_bytes": 979,
+      "compressed_sha256": "14c1b491e66a02779420349908b0264b7e5c9ec3403c61edfb76a600f3297ffe"
+    },
+    {
+      "archive_entry": "campaign/pressure-native/baseline/independent-client/response-006.json",
+      "retained_path": "original/campaign/pressure-native/baseline/independent-client/response-006.json.gz",
+      "raw_bytes": 1964,
+      "raw_sha256": "4c2b0ba9cde467e84c88c16b4284c8e903affac0582108627655ee902f81764d",
+      "compressed_bytes": 979,
+      "compressed_sha256": "6ccfb975da3827a561a808b0fafdad9f2bc3bb6aaa0e50791532c1da15b48f03"
+    },
+    {
+      "archive_entry": "campaign/pressure-native/baseline/independent-client/response-007.json",
+      "retained_path": "original/campaign/pressure-native/baseline/independent-client/response-007.json.gz",
+      "raw_bytes": 2840,
+      "raw_sha256": "2a89ce89ab71c4e876a68d9aa55c6a435fb3c00d16843af577e9d412a0364bf5",
+      "compressed_bytes": 1322,
+      "compressed_sha256": "d1daa6e86a6abb78dd7c01e228ee5942325dcfd937d413be9c195243e1d67510"
+    },
+    {
+      "archive_entry": "campaign/pressure-native/baseline/independent-client/response-008.json",
+      "retained_path": "original/campaign/pressure-native/baseline/independent-client/response-008.json.gz",
+      "raw_bytes": 114910,
+      "raw_sha256": "a15f3b66831fa6f8f5e8376e00e6166ceed5548689c9223d877c06626e39ad9a",
+      "compressed_bytes": 45817,
+      "compressed_sha256": "b3be96ba36b7807416b1ea986b7d056831ed117a295f324e71c72f73d3b53235"
+    },
+    {
+      "archive_entry": "campaign/pressure-native/baseline/independent-client/response-009.json",
+      "retained_path": "original/campaign/pressure-native/baseline/independent-client/response-009.json.gz",
+      "raw_bytes": 1853,
+      "raw_sha256": "2cf29b47f7ef457c802e6b27cd87c4cda3ac2f01159040f39524077813788f99",
+      "compressed_bytes": 906,
+      "compressed_sha256": "7a1aa42bd63c341ade0f134ff9e99b75b8de6f525637d4fffda57c240391170d"
+    }
+  ],
+  "source_files": [
+    {
+      "source_commit": "540d72356a921da31dde1113537382e5c0f0c4fd",
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "bytes": 335553,
+      "sha256": "a3ce1df52cb98519d11205a416ea8652699be3e46fda41d9728a11a5516dd475",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/540d72356a921da31dde1113537382e5c0f0c4fd/trillionnium/crates/trnm-pon-node/src/store.rs"
+    },
+    {
+      "source_commit": "540d72356a921da31dde1113537382e5c0f0c4fd",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+      "bytes": 89918,
+      "sha256": "31e810e6e796fa570bf6b99582100e1054cd83eea22150fc6f582b168daa5ab2",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/540d72356a921da31dde1113537382e5c0f0c4fd/trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs"
+    },
+    {
+      "source_commit": "540d72356a921da31dde1113537382e5c0f0c4fd",
+      "path": "trillionnium/crates/trnm-pon-node/src/native_progress.rs",
+      "bytes": 2723,
+      "sha256": "badfc827b74c1875a11e3880a9f861653751142b172f4076e62dfc6b267ba889",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/540d72356a921da31dde1113537382e5c0f0c4fd/trillionnium/crates/trnm-pon-node/src/native_progress.rs"
+    },
+    {
+      "source_commit": "540d72356a921da31dde1113537382e5c0f0c4fd",
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+      "bytes": 33989,
+      "sha256": "6c08abdeb8a8811f01a72b9034d2bc51bc9df1216cbcc7332087342fccd44627",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/540d72356a921da31dde1113537382e5c0f0c4fd/trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs"
+    },
+    {
+      "source_commit": "540d72356a921da31dde1113537382e5c0f0c4fd",
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_node_reader.rs",
+      "bytes": 2658,
+      "sha256": "ec5350aff6e8ea735e9bcc5d941e39850e60df0ae64e87a48db55c2ed193a554",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/540d72356a921da31dde1113537382e5c0f0c4fd/trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_node_reader.rs"
+    },
+    {
+      "source_commit": "540d72356a921da31dde1113537382e5c0f0c4fd",
+      "path": "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+      "bytes": 43136,
+      "sha256": "2fda284a6b263695698ce5d093385384b46c3b92ff96d0e3ccd7c7e20562dc9a",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/540d72356a921da31dde1113537382e5c0f0c4fd/trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs"
+    },
+    {
+      "source_commit": "540d72356a921da31dde1113537382e5c0f0c4fd",
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+      "bytes": 208782,
+      "sha256": "80191b7288ca1edcbf3b78ffa1cb4e2b2e75bf087ad7404d2ffd6485242bcbc5",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/540d72356a921da31dde1113537382e5c0f0c4fd/trillionnium/crates/trnm-pon-node/src/ingress.rs"
+    },
+    {
+      "source_commit": "540d72356a921da31dde1113537382e5c0f0c4fd",
+      "path": "trillionnium/crates/trnm-pon-node/tests/support/multiprocess_history_verifier.rs",
+      "bytes": 35168,
+      "sha256": "ef86331b40b1416630bc6c517340c55797d689e7b70434b2370af34cbe24bb3b",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/540d72356a921da31dde1113537382e5c0f0c4fd/trillionnium/crates/trnm-pon-node/tests/support/multiprocess_history_verifier.rs"
+    },
+    {
+      "source_commit": "540d72356a921da31dde1113537382e5c0f0c4fd",
+      "path": "trillionnium/crates/trnm-pon-node/tests/support/pure_history_client_v1.rs",
+      "bytes": 7624,
+      "sha256": "d5d9ca4a740cd184f82d9b0efaf12231a998e6c725cdc48b3aa0cc8b7390e89d",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/540d72356a921da31dde1113537382e5c0f0c4fd/trillionnium/crates/trnm-pon-node/tests/support/pure_history_client_v1.rs"
+    },
+    {
+      "source_commit": "540d72356a921da31dde1113537382e5c0f0c4fd",
+      "path": "trillionnium/crates/trnm-pon-node/tests/pure_pon_pressure_v2.rs",
+      "bytes": 53002,
+      "sha256": "c1917673606e9e77fb90df370eb7535c51cb3dfe4127a95259f9c76437c0d9f0",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/540d72356a921da31dde1113537382e5c0f0c4fd/trillionnium/crates/trnm-pon-node/tests/pure_pon_pressure_v2.rs"
+    },
+    {
+      "source_commit": "540d72356a921da31dde1113537382e5c0f0c4fd",
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_graph_resource_v1.rs",
+      "bytes": 12861,
+      "sha256": "b8bddc7ae3043fececa0de5f04d42a09db6cd76d8f9455e7dc4d406838474deb",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/540d72356a921da31dde1113537382e5c0f0c4fd/trillionnium/crates/trnm-pon-node/src/ingress/history_graph_resource_v1.rs"
+    },
+    {
+      "source_commit": "540d72356a921da31dde1113537382e5c0f0c4fd",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/history_graph_resource_v1.rs",
+      "bytes": 18024,
+      "sha256": "a64dd2ab2334aa96016719da100bc9f57ec678259de17782d4e088f159476d46",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/540d72356a921da31dde1113537382e5c0f0c4fd/trillionnium/crates/trnm-pon-node/src/store/history_graph_resource_v1.rs"
+    },
+    {
+      "source_commit": "540d72356a921da31dde1113537382e5c0f0c4fd",
+      "path": ".github/workflows/pon-history-epoch-v1-native.yml",
+      "bytes": 20572,
+      "sha256": "b33491ab85521b7917b11a9144509b2a119b2b8f4708f9c4558d2768c3c709f1",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/540d72356a921da31dde1113537382e5c0f0c4fd/.github/workflows/pon-history-epoch-v1-native.yml"
+    },
+    {
+      "source_commit": "540d72356a921da31dde1113537382e5c0f0c4fd",
+      "path": ".github/workflows/pon-native-campaign-qualification.yml",
+      "bytes": 29010,
+      "sha256": "66a2b12994764f30d69b882001e38fe9921bcef40034dd90de6c033541354d84",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/540d72356a921da31dde1113537382e5c0f0c4fd/.github/workflows/pon-native-campaign-qualification.yml"
+    },
+    {
+      "source_commit": "540d72356a921da31dde1113537382e5c0f0c4fd",
+      "path": ".github/workflows/pon-pure-history-raw-joint.yml",
+      "bytes": 31407,
+      "sha256": "9d4776e284663e6e6bf7c4176d8d74a0edcea8705d3bde4bbe8633e54037361e",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/540d72356a921da31dde1113537382e5c0f0c4fd/.github/workflows/pon-pure-history-raw-joint.yml"
+    },
+    {
+      "source_commit": "540d72356a921da31dde1113537382e5c0f0c4fd",
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs",
+      "bytes": 116155,
+      "sha256": "cbb498f0ff48b8a33422956330f54c384e0b652f5004699b1296cf7d201baf5e",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/540d72356a921da31dde1113537382e5c0f0c4fd/trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs"
+    }
+  ]
+}

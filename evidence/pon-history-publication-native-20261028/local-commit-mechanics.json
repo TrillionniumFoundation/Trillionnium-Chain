@@ -1,0 +1,9 @@
+{
+  "source_commit": "a3a651cdc6b5d51302fdce1ade0e15be7b2ce474",
+  "source_tree": "a082e06143b566b39144a78f676e3c871d9fe29f",
+  "parent": "6b40375d08265aa19e570756fc67cdffc163fb5e",
+  "ordinary_git_commit_failed": "historical evidence object 7f4d96ac57a7907f68f186f302da8082b215bd4e absent from inherited partial checkout",
+  "unchanged_historical_tree_references_preserved": true,
+  "source_tree_created_using": "git write-tree --missing-ok; git commit-tree; git update-ref with old-head compare",
+  "preflight_staged_passed": true
+}
