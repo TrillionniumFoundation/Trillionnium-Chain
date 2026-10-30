@@ -387,9 +387,7 @@ pub fn verify_pq_recovery_quorum_v1(
         || policy.chain_id.is_empty()
         || policy.chain_id.len() > 64
         || !policy.chain_id.bytes().all(|b| {
-            b.is_ascii_lowercase()
-                || b.is_ascii_digit()
-                || matches!(b, b'-' | b'_' | b'.' | b':')
+            b.is_ascii_lowercase() || b.is_ascii_digit() || matches!(b, b'-' | b'_' | b'.' | b':')
         })
         || policy.genesis == [0; 32]
         || policy.now_unix_s == 0
