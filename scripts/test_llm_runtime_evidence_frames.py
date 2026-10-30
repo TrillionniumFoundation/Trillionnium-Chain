@@ -4,6 +4,7 @@ import inspect
 import json
 import os
 from pathlib import Path
+import runpy
 import select
 import signal
 import struct
@@ -15,6 +16,13 @@ import unittest
 from unittest.mock import patch
 
 import llm_runtime_evidence_frames as frames
+
+
+def source_child_environment():
+    # A -c child has no parent script directory. Bind this actual tested source,
+    # including prospective-merge checkouts, before any inherited search path.
+    return dict(os.environ, PYTHONPATH=str(Path(__file__).resolve().parent),
+                PYTHONDONTWRITEBYTECODE='1')
 
 
 def records():
@@ -32,6 +40,41 @@ def wire(values=None):
 
 
 class EvidenceFrameTests(unittest.TestCase):
+    def test_child_script_imports_exact_source_from_an_unrelated_working_directory(self):
+        with tempfile.TemporaryDirectory() as directory:
+            # A fresh interpreter does not inherit unittest's sys.path. A CWD
+            # or PYTHONPATH decoy must not replace the module under test either.
+            (Path(directory)/'llm_runtime_evidence_frames.py').write_text(
+                "raise AssertionError('imported unrelated module')\n")
+            script = EvidenceWriterTests().script('print(f.__file__)')
+            for flags in ([], ['-I']):
+                with self.subTest(flags=flags):
+                    child = subprocess.run([sys.executable, *flags, '-c', script],
+                        cwd=directory, env=dict(os.environ, PYTHONPATH=directory),
+                        capture_output=True, text=True, timeout=3)
+                    self.assertEqual(child.returncode, 0, child.stderr)
+                    self.assertEqual(Path(child.stdout.strip()).resolve(),
+                                     Path(frames.__file__).resolve())
+
+    def test_child_import_binds_each_actual_checkout_over_stale_inherited_source(self):
+        with tempfile.TemporaryDirectory() as directory:
+            roots = [Path(directory)/name/'scripts' for name in ('head', 'prospective-merge')]
+            for root in roots:
+                root.mkdir(parents=True)
+                (root/Path(__file__).name).write_bytes(Path(__file__).read_bytes())
+                (root/'llm_runtime_evidence_frames.py').write_bytes(Path(frames.__file__).read_bytes())
+            for root, stale in (roots, roots[::-1]):
+                with self.subTest(source=root.name):
+                    helper = runpy.run_path(str(root/Path(__file__).name))['source_child_environment']
+                    inner = 'import llm_runtime_evidence_frames as f;print(f.__file__)'
+                    outer = ('import subprocess,sys\nsubprocess.run([sys.executable,"-c",'
+                             +repr(inner)+'],check=True)')
+                    with patch.dict(os.environ, PYTHONPATH=str(stale)):
+                        child = subprocess.run([sys.executable, '-c', outer], cwd=stale.parent,
+                            env=helper(), capture_output=True, text=True, timeout=5)
+                    self.assertEqual(child.returncode, 0, child.stderr)
+                    self.assertEqual(child.stdout.strip(), str(root/'llm_runtime_evidence_frames.py'))
+
     def with_signal_at(self, function, marker, predicate, mutation, call):
         lines, start = inspect.getsourcelines(function)
         target = start+next(index for index,line in enumerate(lines) if marker in line)
@@ -246,6 +289,7 @@ class EvidenceFrameTests(unittest.TestCase):
 class EvidenceWriterTests(unittest.TestCase):
     def script(self, suffix):
         return ('import os,sys,time,json,signal,threading\n'
+                f'sys.path.insert(0, {str(Path(__file__).resolve().parent)!r})\n'
                 'import llm_runtime_evidence_frames as f\n'
                 'values='+repr(records())+'\n'+suffix)
 
@@ -256,7 +300,7 @@ class EvidenceWriterTests(unittest.TestCase):
             # Smaller ordinary test pipe forces backpressure; production never resizes.
             self.assertEqual(fcntl.fcntl(write,fcntl.F_SETPIPE_SZ,4096),4096)
             child = subprocess.Popen([sys.executable, '-c', self.script(script)], stdout=write,
-                stderr=subprocess.PIPE, env=dict(os.environ, PYTHONDONTWRITEBYTECODE='1'))
+                stderr=subprocess.PIPE, env=source_child_environment())
             os.close(write); write = -1
             deadline = time.monotonic()+3
             poll = select.poll(); poll.register(read, select.POLLIN|select.POLLHUP)
@@ -332,7 +376,7 @@ s.emit(f.KINDS[0],values[0])
  f.borrow_evidence_stdout(time.monotonic_ns()+1_000_000_000,'payload')
 except f.EvidencePipeError:sys.exit(0)
 raise AssertionError('accepted regular file')
-""")], stdout=output, stderr=subprocess.PIPE, timeout=2)
+""")], stdout=output, stderr=subprocess.PIPE, timeout=2, env=source_child_environment())
             self.assertEqual(result.returncode,0,result.stderr)
 
     def test_read_endpoint_or_blocking_fifo_refuses_without_closing_borrowed_stdout(self):
@@ -344,7 +388,8 @@ raise AssertionError('accepted regular file')
 except f.EvidencePipeError:
  assert os.fstat(1);sys.exit(0)
 raise AssertionError('accepted endpoint')
-""")], stdout=read if direction=='read' else write,stderr=subprocess.PIPE,timeout=2)
+""")], stdout=read if direction=='read' else write,stderr=subprocess.PIPE,timeout=2,
+                    env=source_child_environment())
                 self.assertEqual(result.returncode,0,result.stderr)
             finally: os.close(read);os.close(write)
 
@@ -358,7 +403,7 @@ except BrokenPipeError:pass
 assert s.failed and os.fstat(1)
 try:s.emit(f.KINDS[0],values[0]);raise AssertionError('accepted retry')
 except f.EvidencePipeError:pass
-""")], stdout=write,stderr=subprocess.PIPE,timeout=2)
+""")], stdout=write,stderr=subprocess.PIPE,timeout=2,env=source_child_environment())
             self.assertEqual(result.returncode,0,result.stderr)
         finally: os.close(write)
 

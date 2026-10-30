@@ -1,0 +1,26 @@
+{
+  "command": [
+    "/usr/bin/python3",
+    "scripts/ci/verify_ci_source.py",
+    "--kind",
+    "head",
+    "--expected-head",
+    "ec0acdff5717b8f584b26f30f1162bd9bf1cc888"
+  ],
+  "complete_success": true,
+  "cwd": "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/pn1-public-component-source-SSH-prefetch-20261026-001/ownedsource",
+  "elapsed_ns": 25273020761,
+  "elapsed_seconds": 25.273020761,
+  "error": null,
+  "name": "source-before",
+  "outer_stage_timeout_seconds": 120,
+  "returncode": 0,
+  "stderr": "source-before.stderr.log",
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_truncated": false,
+  "stdout": "source-before.stdout.log",
+  "stdout_bytes": 421,
+  "stdout_sha256": "5653db3f25a44044d5765b24fc1fb0f1d1fe6813b6c6a917add207c443636390",
+  "stdout_truncated": false
+}

@@ -22,6 +22,7 @@ pub(crate) mod public_reader;
 mod root_rejection_cache;
 #[cfg(test)]
 mod root_rejection_cache_tests;
+mod shared_snapshot;
 pub mod storage_service;
 mod task_observation;
 use crate::{
@@ -70,6 +71,7 @@ use trnm_protocol::qualified_work_task::lifecycle_v4::PROFILE as OVERLAP_TASK_PR
 use trnm_protocol::qualified_work_task::{
     QualifiedWorkTask, SignedQualifiedWorkTask, TaskPurpose, SIGNED_TASK_BYTES,
 };
+use trnm_sqlite_io_boundary::{NativeIoLease, OwnedConnection};
 use trnm_transport::{
     AuthenticatedPeerFrameV0, CandidateP2pAdmissionV0, IoDigest32V0, PeerFrameSourceV0,
     PeerReplayRecoverySourceV0, PeerReplayStateV0, PeerSessionIdentityV0,
@@ -611,9 +613,25 @@ fn next_nonce_from_state(state: &State, sender: Hash) -> Result<u64> {
         .ok_or_else(|| "NONCE_OVERFLOW".into())
 }
 
+pub(crate) fn native_connection(
+    io: &Option<NativeIoLease>,
+    path: &Path,
+    flags: OpenFlags,
+) -> Result<OwnedConnection> {
+    if let Some(io) = io {
+        io.open(path, flags).map_err(|e| Error::from(e.to_string()))
+    } else {
+        Ok(OwnedConnection::legacy(Connection::open_with_flags(
+            path, flags,
+        )?))
+    }
+}
+
 /// One private native namespace; no reference subprocess or remote state setter exists.
 pub struct Node {
-    db: Connection,
+    db: OwnedConnection,
+    // Explicit candidate only: the default openers retain their legacy VFS.
+    native_io: Option<NativeIoLease>,
     owner: File,
     // Declared after db/owner so SQLite closes before private files are removed.
     // The guard also retains the existing source namespace's exclusive lock.
@@ -624,6 +642,10 @@ pub struct Node {
     settings: Settings,
     workers: usize,
     state_backend: StateBackend,
+    storage_layout: shared_snapshot::Layout,
+    // Source-derived DDL grammar only; actual SQL/schema is re-read on use.
+    // Ordinary full-JSON owners retain no additional schema cache.
+    shared_storage_schema: Option<BTreeMap<String, String>>,
     growth_epoch: Option<growth::Epoch>,
     #[cfg(test)]
     // Research reader's immutable source DDL, never a cached on-disk verdict.
@@ -691,6 +713,11 @@ impl StateBackend {
         };
         hash(domain, &[self.ddl().as_bytes()])
     }
+}
+struct NativeStoreOpening {
+    state_backend: StateBackend,
+    growth_observation_only: bool,
+    native_io: Option<NativeIoLease>,
 }
 struct NativeOwners {
     policy: Option<OwnerPolicy>,
@@ -844,6 +871,10 @@ pub struct ConfirmationBatch {
     pub distinct_bodies_checked: usize,
 }
 impl Node {
+    fn storage_schema_id(&self) -> Hash {
+        self.storage_layout
+            .schema_id(self.state_backend.selected_schema_id(&self.settings))
+    }
     /// Enable bounded volatile final-ROOT rejection reuse for this Node owner.
     /// Default is off; no CLI/profile/consensus or CPU-budget change is implied.
     /// Repeated calls cannot reset entries, TTL or a failed monotonic clock.
@@ -867,7 +898,7 @@ impl Node {
                     &self.settings.network(),
                     &self.settings.parameters(),
                     &self.settings.genesis(),
-                    &self.state_backend.selected_schema_id(&self.settings),
+                    &self.storage_schema_id(),
                     self.settings.task_profile().as_bytes(),
                 ],
             ),
@@ -877,6 +908,82 @@ impl Node {
     }
     pub fn open(path: &Path, settings: Settings, workers: usize) -> Result<Self> {
         Self::open_with_fault(path, settings, workers, None)
+    }
+    /// Fresh local PN1 I/O domain, never a consensus/profile activation.
+    /// All cold reopens must retain the same owner's lease. Other migration
+    /// destinations and external/default-VFS writers are not admitted.
+    pub fn open_with_native_io(
+        native_io: NativeIoLease,
+        settings: Settings,
+        workers: usize,
+    ) -> Result<Self> {
+        native_io.check().map_err(|e| Error::from(e.to_string()))?;
+        let path = native_io.directory();
+        ensure(!owner_marker_present(&path)?, "OWNER_TASK_POLICY_REQUIRED")?;
+        Self::open_selected_with_io(
+            &path,
+            settings,
+            workers,
+            None,
+            NativeOwners {
+                policy: None,
+                mining: None,
+                continuous: None,
+            },
+            NativeStoreOpening {
+                state_backend: StateBackend::Legacy,
+                growth_observation_only: false,
+                native_io: Some(native_io),
+            },
+        )
+    }
+    pub fn native_io_receipt(&self) -> Result<Option<trnm_sqlite_io_boundary::RootReceipt>> {
+        self.native_io
+            .as_ref()
+            .map(|io| io.receipt().map_err(|e| Error::from(e.to_string())))
+            .transpose()
+    }
+    /// The original PN1 campaign's AuthenticatedV1 backend in a fresh held I/O
+    /// domain. This preserves the original constructor's owners/backend/hook
+    /// selection; it does not downgrade the campaign to Legacy or authorize an
+    /// operator-policy namespace through an unrestricted constructor. This same
+    /// factory selects the versioned local shared-account snapshot layout;
+    /// header/work/State roots and the original4KiB WAL remain unchanged. Old or
+    /// mixed physical stores require explicit migration and are never converted.
+    pub fn open_with_authenticated_state_and_native_io(
+        native_io: NativeIoLease,
+        settings: Settings,
+        workers: usize,
+    ) -> Result<Self> {
+        Self::open_with_authenticated_state_and_native_io_and_fault(
+            native_io, settings, workers, None,
+        )
+    }
+    pub fn open_with_authenticated_state_and_native_io_and_fault(
+        native_io: NativeIoLease,
+        settings: Settings,
+        workers: usize,
+        hook: Option<&mut Hook<'_>>,
+    ) -> Result<Self> {
+        native_io.check().map_err(|e| Error::from(e.to_string()))?;
+        let path = native_io.directory();
+        ensure(!owner_marker_present(&path)?, "OWNER_TASK_POLICY_REQUIRED")?;
+        Self::open_selected_with_io(
+            &path,
+            settings,
+            workers,
+            hook,
+            NativeOwners {
+                policy: None,
+                mining: None,
+                continuous: None,
+            },
+            NativeStoreOpening {
+                state_backend: StateBackend::AuthenticatedV1,
+                growth_observation_only: false,
+                native_io: Some(native_io),
+            },
+        )
     }
     pub fn open_with_fault(
         path: &Path,
@@ -1057,11 +1164,41 @@ impl Node {
         path: &Path,
         settings: Settings,
         workers: usize,
-        mut hook: Option<&mut Hook<'_>>,
+        hook: Option<&mut Hook<'_>>,
         owners: NativeOwners,
         state_backend: StateBackend,
         growth_observation_only: bool,
     ) -> Result<Self> {
+        Self::open_selected_with_io(
+            path,
+            settings,
+            workers,
+            hook,
+            owners,
+            NativeStoreOpening {
+                state_backend,
+                growth_observation_only,
+                native_io: None,
+            },
+        )
+    }
+    fn open_selected_with_io(
+        path: &Path,
+        settings: Settings,
+        workers: usize,
+        mut hook: Option<&mut Hook<'_>>,
+        owners: NativeOwners,
+        opening: NativeStoreOpening,
+    ) -> Result<Self> {
+        let NativeStoreOpening {
+            state_backend,
+            growth_observation_only,
+            native_io,
+        } = opening;
+        if let Some(io) = &native_io {
+            io.check().map_err(|e| Error::from(e.to_string()))?;
+            ensure(path == io.directory(), "NATIVE_IO_HELD_ROOT")?;
+        }
         ensure(
             !authenticated_migration_pending(path)?,
             "NATIVE_STATE_MIGRATION_PENDING",
@@ -1112,12 +1249,20 @@ impl Node {
             fs::create_dir_all(path)?;
             fs::set_permissions(path, fs::Permissions::from_mode(0o700))?;
         }
-        let metadata = fs::symlink_metadata(path)?;
+        let metadata = if native_io.is_some() {
+            fs::metadata(path)?
+        } else {
+            fs::symlink_metadata(path)?
+        };
         ensure(
             metadata.is_dir() && !metadata.file_type().is_symlink(),
             "NAMESPACE",
         )?;
-        let directory = path.canonicalize()?;
+        let directory = if let Some(io) = &native_io {
+            io.directory()
+        } else {
+            path.canonicalize()?
+        };
         let dbpath = directory.join("native.sqlite");
         let marker = directory.join("initializing.json");
         ensure(
@@ -1145,10 +1290,14 @@ impl Node {
         owner
             .try_lock_exclusive()
             .map_err(|_| Error::from("WRITER_BUSY"))?;
+        let storage_layout =
+            shared_snapshot::Layout::for_opening(state_backend, native_io.as_ref());
         let ddl = state_backend.ddl();
         let schema_id = state_backend.selected_schema_id(&settings);
+        let storage_ddl = storage_layout.ddl(ddl);
+        let storage_schema_id = storage_layout.schema_id(schema_id);
         let expected = canonical(
-            &serde_json::json!({"schema":hex::encode(schema_id),"parameters":hex::encode(settings.parameters()),"genesis":hex::encode(settings.genesis())}),
+            &serde_json::json!({"schema":hex::encode(storage_schema_id),"parameters":hex::encode(settings.parameters()),"genesis":hex::encode(settings.genesis())}),
         )?;
         if !dbpath.exists() && !marker.exists() {
             for entry in fs::read_dir(&directory)? {
@@ -1175,15 +1324,21 @@ impl Node {
         if intent {
             ensure(fs::read(&marker)? == expected, "INITIALIZATION_CONTEXT")?;
         }
-        let expected_db = Connection::open_in_memory()?;
-        expected_db.execute_batch(&ddl)?;
+        let expected_db = if let Some(io) = &native_io {
+            io.open_in_memory()
+                .map_err(|e| Error::from(e.to_string()))?
+        } else {
+            OwnedConnection::legacy(Connection::open_in_memory()?)
+        };
+        expected_db.execute_batch(&storage_ddl)?;
         let expected_schema = schema(&expected_db)?;
         let mut initialized = false;
         let mut prior_inode = None;
         if dbpath.exists() {
             let m = fs::metadata(&dbpath)?;
             prior_inode = Some((m.dev(), m.ino()));
-            let probe = Connection::open_with_flags(
+            let probe = native_connection(
+                &native_io,
                 &dbpath,
                 OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NO_MUTEX,
             )?;
@@ -1204,7 +1359,7 @@ impl Node {
                     "OWNER_TASK_POLICY_REQUIRED",
                 )?;
                 for (key, value) in [
-                    ("schema", schema_id),
+                    ("schema", storage_schema_id),
                     ("parameters", settings.parameters()),
                     ("genesis", settings.genesis()),
                 ] {
@@ -1233,12 +1388,15 @@ impl Node {
             "GROWTH_PACKET_STATUS_EXISTING_STORE_REQUIRED",
         )?;
         let mut db = if growth_observation_only {
-            Connection::open_with_flags(
+            native_connection(
+                &native_io,
                 &dbpath,
                 OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NO_MUTEX,
             )?
+        } else if native_io.is_some() {
+            native_connection(&native_io, &dbpath, OpenFlags::default())?
         } else {
-            Connection::open(&dbpath)?
+            OwnedConnection::legacy(Connection::open(&dbpath)?)
         };
         let dm = fs::metadata(&dbpath)?;
         if let Some(previous) = prior_inode {
@@ -1253,14 +1411,27 @@ impl Node {
             db.execute_batch(
                 "PRAGMA trusted_schema=OFF; PRAGMA foreign_keys=ON; PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL;",
             )?;
+            if native_io.is_some() {
+                // The original 4KiB WAL and every held-inode/lifecycle limit stay
+                // intact. Earlier PASSIVE checkpoints permit real WAL-offset
+                // reuse; they never reset the lease, refund high water or drop
+                // events. Long readers or large transactions can still exceed
+                // the unchanged caps and must fail closed. This is a connection
+                // policy, not a physical WAL-size guarantee or a stored schema.
+                db.pragma_update(None, "wal_autocheckpoint", 64_i64)?;
+                let checkpoint_pages: i64 =
+                    db.query_row("PRAGMA wal_autocheckpoint", [], |row| row.get(0))?;
+                ensure(checkpoint_pages == 64, "NATIVE_IO_CHECKPOINT_POLICY")
+                    .map_err(Error::local_integrity)?;
+            }
         }
         if !initialized {
             ensure(intent, "INITIALIZATION_INTENT_REQUIRED")?;
             let tx = db.transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
-            tx.execute_batch(&ddl)?;
+            tx.execute_batch(&storage_ddl)?;
             cut(&mut hook, "init-schema")?;
             for (key, value) in [
-                ("schema", schema_id),
+                ("schema", storage_schema_id),
                 ("parameters", settings.parameters()),
                 ("genesis", settings.genesis()),
             ] {
@@ -1319,6 +1490,7 @@ impl Node {
         }
         let mut node = Self {
             db,
+            native_io,
             owner,
             growth_observer_snapshot: None,
             directory,
@@ -1327,6 +1499,8 @@ impl Node {
             settings,
             workers,
             state_backend,
+            storage_layout,
+            shared_storage_schema: storage_layout.is_shared().then(|| expected_schema.clone()),
             growth_epoch: None,
             #[cfg(test)]
             expected_schema,
@@ -1366,6 +1540,9 @@ impl Node {
                 &mut || Ok(()),
                 Some(&node.authenticated_arithmetic),
             )?;
+        }
+        if node.storage_layout.is_shared() {
+            shared_snapshot::audit(&node.db, &node.settings, &node.authenticated_arithmetic)?;
         }
         node.validate_authenticated_replay()?;
         node.validate_authenticated_outbox()?;
@@ -1973,7 +2150,12 @@ impl Node {
             !authenticated_migration_pending(&self.directory)?,
             "NATIVE_STATE_MIGRATION_PENDING",
         )?;
-        let meta = fs::symlink_metadata(&self.directory)?;
+        let meta = if let Some(io) = &self.native_io {
+            io.check().map_err(|e| Error::from(e.to_string()))?;
+            fs::metadata(&self.directory)?
+        } else {
+            fs::symlink_metadata(&self.directory)?
+        };
         ensure(
             meta.is_dir() && (meta.dev(), meta.ino()) == self.directory_id,
             "NAMESPACE_CHANGED",
@@ -1999,11 +2181,11 @@ impl Node {
         )
     }
     fn storage_context(&self) -> Result<()> {
+        if self.storage_layout.is_shared() {
+            shared_snapshot::check_authoritative_namespace(&self.db)?;
+        }
         for (key, expected) in [
-            (
-                "schema",
-                self.state_backend.selected_schema_id(&self.settings),
-            ),
+            ("schema", self.storage_schema_id()),
             ("parameters", self.settings.parameters()),
             ("genesis", self.settings.genesis()),
         ] {
@@ -2018,6 +2200,38 @@ impl Node {
                 "STORAGE_CONTEXT",
             )
             .map_err(Error::local_integrity)?;
+        }
+        if let Some(expected) = &self.shared_storage_schema {
+            ensure(schema(&self.db)? == *expected, "SCHEMA").map_err(Error::local_integrity)?;
+            shared_snapshot::check_layout(&self.db, &self.settings)?;
+            // Cached SQLite pages can satisfy SELECT after a sticky VFS fault.
+            // Observe the actual owned ledger rather than treating SQL success
+            // or the identity-only lease check as a storage-health certificate.
+            let receipt = self
+                .native_io
+                .as_ref()
+                .ok_or_else(|| Error::from("NATIVE_SHARED_IO_LEASE_MISSING").local_integrity())?
+                .receipt()
+                .map_err(|error| Error::from(error.to_string()).local_integrity())?;
+            let healthy = !receipt.failed
+                && receipt.first_failure.is_none()
+                && receipt.first_failure_sqlite_code.is_none()
+                && receipt.denied_operations == 0
+                && receipt.lifecycle_complete
+                && receipt.secondary_failures_complete
+                && receipt.secondary_failures.is_empty()
+                && receipt.quarantine_entries_complete
+                && receipt.quarantined_actual_states == 0
+                && receipt.quarantined_sqlite_codes.is_empty();
+            if !healthy {
+                return Err(Error::from(format!(
+                    "NATIVE_SHARED_IO_UNAVAILABLE:first={:?}:SQLCode={:?}:denied={}",
+                    receipt.first_failure,
+                    receipt.first_failure_sqlite_code,
+                    receipt.denied_operations,
+                ))
+                .local_integrity());
+            }
         }
         Ok(())
     }
@@ -2539,6 +2753,29 @@ impl Node {
         &self,
         progress: &mut dyn FnMut() -> Result<()>,
     ) -> Result<(Hash, u64, State)> {
+        if self.storage_layout.is_shared() {
+            return shared_snapshot::in_read_snapshot(&self.db, || {
+                let value = self.read_active_in_current_snapshot(progress)?;
+                shared_snapshot::final_read(&self.db, || {
+                    shared_snapshot::verify_returned_state(
+                        &self.db,
+                        &self.settings,
+                        value.0,
+                        &value.2,
+                        &self.authenticated_arithmetic,
+                    )?;
+                    self.storage_context()?;
+                    self.namespace()?;
+                    Ok(value)
+                })
+            });
+        }
+        self.read_active_in_current_snapshot(progress)
+    }
+    fn read_active_in_current_snapshot(
+        &self,
+        progress: &mut dyn FnMut() -> Result<()>,
+    ) -> Result<(Hash, u64, State)> {
         ensure(
             self.state_backend != StateBackend::PermanentAccountGrowthV2,
             "GROWTH_COMPLETE_STATE_UNAVAILABLE",
@@ -2550,6 +2787,9 @@ impl Node {
         });
         progress()?;
         self.namespace()?;
+        if self.storage_layout.is_shared() {
+            self.storage_context()?;
+        }
         let (tip, generation) = self.active()?;
         let slot = self.slot()?;
         let state = self.slot_state_with_progress(slot, progress)?;
@@ -2835,6 +3075,34 @@ impl Node {
         tip: Hash,
         progress: &mut dyn FnMut() -> Result<()>,
     ) -> Result<State> {
+        if self.storage_layout.is_shared() {
+            return shared_snapshot::in_read_snapshot(&self.db, || {
+                self.storage_context()?;
+                let mut reads = shared_snapshot::ReadSet::default();
+                let state = self.state_at_in_current_snapshot(tip, progress, Some(&mut reads))?;
+                shared_snapshot::final_read(&self.db, || {
+                    reads.verify(&self.db, &self.settings, &self.authenticated_arithmetic)?;
+                    shared_snapshot::verify_returned_state(
+                        &self.db,
+                        &self.settings,
+                        tip,
+                        &state,
+                        &self.authenticated_arithmetic,
+                    )?;
+                    self.storage_context()?;
+                    self.namespace()?;
+                    Ok(state)
+                })
+            });
+        }
+        self.state_at_in_current_snapshot(tip, progress, None)
+    }
+    fn state_at_in_current_snapshot(
+        &self,
+        tip: Hash,
+        progress: &mut dyn FnMut() -> Result<()>,
+        mut shared_reads: Option<&mut shared_snapshot::ReadSet>,
+    ) -> Result<State> {
         ensure(
             self.state_backend != StateBackend::PermanentAccountGrowthV2,
             "GROWTH_COMPLETE_STATE_UNAVAILABLE",
@@ -2854,19 +3122,43 @@ impl Node {
         let (mut state, mut commitment): (State, Option<CheckedCommitment>) = loop {
             progress()?;
             let row = self.record(cur)?;
-            if let Some(bytes) = self
-                .db
-                .query_row(
-                    "SELECT state FROM snapshots WHERE block=?",
-                    [cur.as_slice()],
-                    |r| r.get::<_, Vec<u8>>(0),
-                )
-                .optional()?
-            {
-                let state: State = serde_json::from_slice(&bytes)
-                    .map_err(|error| Error::from(error).local_integrity())?;
-                ensure(canonical(&state)? == bytes, "STATE_BYTES")
-                    .map_err(Error::local_integrity)?;
+            let snapshot = if self.storage_layout.is_shared() && cur != self.settings.genesis() {
+                let state = shared_snapshot::load(
+                    &self.db,
+                    &self.settings,
+                    cur,
+                    progress,
+                    &self.authenticated_arithmetic,
+                )?;
+                if state.is_some() {
+                    shared_reads
+                        .as_mut()
+                        .ok_or_else(|| {
+                            Error::from("NATIVE_SHARED_READ_SET_MISSING").local_integrity()
+                        })?
+                        .record(&self.db, cur)?;
+                }
+                state
+            } else {
+                let bytes: Option<Vec<u8>> = self
+                    .db
+                    .query_row(
+                        "SELECT state FROM snapshots WHERE block=?",
+                        [cur.as_slice()],
+                        |r| r.get(0),
+                    )
+                    .optional()?;
+                bytes
+                    .map(|bytes| -> Result<State> {
+                        let state: State = serde_json::from_slice(&bytes)
+                            .map_err(|error| Error::from(error).local_integrity())?;
+                        ensure(canonical(&state)? == bytes, "STATE_BYTES")
+                            .map_err(Error::local_integrity)?;
+                        Ok(state)
+                    })
+                    .transpose()?
+            };
+            if let Some(state) = snapshot {
                 continuity_v1::check_state(&state, row.height, &self.settings.app)
                     .map_err(|error| Error::from(error).local_integrity())?;
                 let commitment = self
@@ -3885,9 +4177,12 @@ impl Node {
         // These are disposable accelerators: retain the existing 64-row policy,
         // genesis anchor, full history/delta checks and post-write readback.
         // Legacy cadence remains unchanged; no validity verdict is cached.
-        if self.state_backend == StateBackend::AuthenticatedV1
-            || growth_profile_v2::enabled(&self.settings.app)
-            || h.height.is_multiple_of(128)
+        // The held native-IO layout writes its versioned shared snapshot only
+        // after the actual native account record exists in this SAME transaction.
+        if !self.storage_layout.is_shared()
+            && (self.state_backend == StateBackend::AuthenticatedV1
+                || growth_profile_v2::enabled(&self.settings.app)
+                || h.height.is_multiple_of(128))
         {
             ensure(
                 tx.execute(
@@ -3916,6 +4211,16 @@ impl Node {
                 &mut || progress(ExecutionProgress::BeforeDurableCommit),
                 Some(&self.authenticated_arithmetic),
             )?;
+            if self.storage_layout.is_shared() {
+                shared_snapshot::save(
+                    &tx,
+                    &self.settings,
+                    id,
+                    &output.state,
+                    &mut || progress(ExecutionProgress::BeforeDurableCommit),
+                    &self.authenticated_arithmetic,
+                )?;
+            }
         }
         // Re-read after every write/trigger, while rollback can still remove the
         // whole block. A snapshot cannot conceal an omitted canonical delta.

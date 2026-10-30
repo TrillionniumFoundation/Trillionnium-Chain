@@ -1,0 +1,4 @@
+   Compiling trnm-data-availability v0.1.0 (/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/trillionnium/crates/trnm-data-availability)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 11.66s
+     Running unittests src/lib.rs (/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/M09-streamed-runtime-materializer-root-candidate-20261027-001/native-target/debug/deps/trnm_data_availability-d51c549752eb9be4)
+error: test failed, to rerun pass `-p trnm-data-availability --lib`

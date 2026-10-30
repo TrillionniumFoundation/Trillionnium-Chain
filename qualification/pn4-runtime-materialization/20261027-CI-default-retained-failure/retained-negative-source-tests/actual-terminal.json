@@ -1,0 +1,9 @@
+{
+  "recorded_utc": "2026-10-27T06:50:58.775195+00:00",
+  "actual_process_wait": 0,
+  "seconds": 10.88701785300509,
+  "source_sha256": "8341e6186ea07caa97265481cb7b2f6e947ad528ce229dcab2babfdec4ba7b82",
+  "stderr_bytes": 5026,
+  "stderr_sha256": "104c9667f09e50f5b02f232bcf7d7de4c9978a003a5a36fe292bcf61ea07504f",
+  "source_only_not_141_crate_or_CI_failure_closure": true
+}

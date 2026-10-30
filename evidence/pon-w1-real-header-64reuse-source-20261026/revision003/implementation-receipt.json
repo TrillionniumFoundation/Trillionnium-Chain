@@ -1,0 +1,101 @@
+{
+  "schema": "pn1-pnh1-revision003-narrow-first-error-and-two-Rust-lints-v1",
+  "recorded_utc": "2026-10-26T12:10:51.942498+00:00",
+  "status": "SOURCE_FIXED_NEGATIVE_PYTHON_CONTROL_OBSERVED_NO_NATIVE_OR_TYPECHECK_QUALIFICATION",
+  "frozen_v2_inputs": {
+    "path": "v2-frozen-input-pins.json",
+    "bytes": 1201,
+    "sha256": "35a0d4f26a4af7a1409359611017da62bcf93448ffdb50c1a5f1f6c2b3c1d4d6"
+  },
+  "source_files": [
+    {
+      "path": "candidate/scripts/ci/check_pon_w1_real_header_reuse_v1.py",
+      "bytes": 14568,
+      "sha256": "eb450efd71820e096bf81d91d64b71571c6da1d14e89c1d7fd391e569a3206a9"
+    },
+    {
+      "path": "candidate/scripts/run_pon_w1_real_header_reuse_v1.py",
+      "bytes": 24230,
+      "sha256": "1d190fca2c2217e12ee6e2d5778703b075c2a37e0a2b71353059ab7153b9d561"
+    },
+    {
+      "path": "candidate/trillionnium/crates/trnm-pon-node/examples/pon_w1_real_header_reuse_v1.rs",
+      "bytes": 20343,
+      "sha256": "414ce8909db072f7fe511f69337735be2fe4b0b1c575e5cbfac56216c1d40748"
+    },
+    {
+      "path": "candidate/trillionnium/crates/trnm-pon-node/examples/support/w1_real_header_reuse_v1.rs",
+      "bytes": 5686,
+      "sha256": "7b72d963501d844e3fc046f3ad6b4fd18d8112539ab76962328a0f01727aa5f0"
+    }
+  ],
+  "patch": {
+    "path": "candidate.patch",
+    "bytes": 67313,
+    "sha256": "6a0f870a7f93b3adb1c285e484338d2e9f7737642a7407164f702e7ee594335e"
+  },
+  "delta_from_frozen_v2": {
+    "path": "revision002-to-revision003.patch",
+    "bytes": 2593,
+    "sha256": "8c0d066a14da829867624851e57fc511970ba5ced7cb0f33e4af0c2348da01d5"
+  },
+  "source_checks": {
+    "path": "semantic-checks.json",
+    "bytes": 542,
+    "sha256": "1705c898cc453b8677de95a8451689b8af6011d5973149d0d99508ba8c1cb53b"
+  },
+  "negative_control": {
+    "result": {
+      "path": "controls/actual-one-negative-control/result.json",
+      "bytes": 5291,
+      "sha256": "3ad3cdb0775d58a4d119af3c9126b30c849088e4ff7ec38e19f376358e6f2d1f"
+    },
+    "terminal": {
+      "path": "controls/terminal.json",
+      "bytes": 224,
+      "sha256": "a28cc9ece98566c29b6c3b8a5be60cd181252ce15f148611467277f7725db0c5"
+    },
+    "budget_carry": {
+      "path": "controls/budget-carry-ledger.json",
+      "bytes": 954,
+      "sha256": "85dfe140da7fa44d96ded12d8be42bca1403020dda02d13d00e77d48c1a8d1b7"
+    },
+    "actual_exit": 0,
+    "actual_elapsed_seconds": 0.13084511199849658,
+    "final_ECHILD": true,
+    "actual_Nice": 19,
+    "actual_AS": [
+      1073741824,
+      1073741824
+    ],
+    "fault_injection_cases": 6,
+    "new_authorized15s_total_spent": 9.051768840989098,
+    "v1_plus_new15s_total_spent": 22.33509709200007,
+    "original_v2_budget_ledger_unchanged": true,
+    "scope": "isolated exact finally AST on real files with controlled exceptions; not RPC/W1/native/payment/qualification"
+  },
+  "v2_Clippy_original_failure": {
+    "job": "main/1a17816e6b8-96a-11d4",
+    "actual_exit": 101,
+    "timed_out": false,
+    "output_complete": true,
+    "raw_stderr": {
+      "path": "v2-original-Clippy101/stderr.log",
+      "bytes": 6176,
+      "sha256": "2d16fc20ada4405a057c402c1c7a89ca2545b1d42f6993ecb8f69a32044fdccf"
+    },
+    "root_reported_build_budget_seconds_spent": 104.451,
+    "this_agent_started_or_repeated_diagnostic": false,
+    "frozen_v2_Rust_source_sha256": "d9fda08e06f087caac3eb175f2add128fc4a81929b3aec5a8001ad66344d84f1",
+    "fixes": "two direct Result returns, no lint suppression or semantics/assertion/cap changes"
+  },
+  "source_binary_attestation": false,
+  "qualifying_execution_receipt": false,
+  "actual_native64_pass": false,
+  "Rust_typecheck_or_Clippy_pass_this_revision": false,
+  "whole13_or_cost_or_hardware_or_threefd_or_full4097_qualified": false,
+  "all_owned_descendants_terminal": "UNKNOWN-not-a-whole-tree-census",
+  "merge_ready": false,
+  "task_complete": false,
+  "commit_push_ROG_service_or_profile_actions_by_this_agent": false
+}

@@ -25,6 +25,7 @@ import llm_runtime_exit_observation as proc
 _TOKEN = object()
 _ROOT = Path('/sys/fs/cgroup')
 _C = Path(__file__).with_name('llm_runtime_kernel_spawn.c')
+_RETIREMENT_C = Path(__file__).with_name('llm_runtime_retirement_slot.c')
 _FIXED = {'cpu.max': '400000 100000\n', 'cpu.max.burst': '0\n',
           'memory.swap.max': '0\n', 'pids.max': '256\n', 'cgroup.type': 'domain\n'}
 
@@ -83,7 +84,7 @@ def _digest(raw):
 
 def _sources():
     return {p.name: _digest(_bytes(p)) for p in
-        (_C, Path(__file__), Path(proc.__file__), Path(__file__).with_name('llm_runtime_pilot.py'),
+        (_C, _RETIREMENT_C, Path(__file__), Path(proc.__file__), Path(__file__).with_name('llm_runtime_pilot.py'),
          Path(__file__).with_name('llm_runtime_evidence_pipe.py'),
          Path(__file__).with_name('llm_runtime_evidence_frames.py'))}
 
@@ -109,6 +110,10 @@ class _Native:
             self.spawn.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_char_p, strings, strings,
                                    ctypes.POINTER(ctypes.c_int)]
             self.spawn.restype = ctypes.c_int
+            self.spawn_controller = self.library.trnm_kernel_controller_v1
+            self.spawn_controller.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int,
+                ctypes.c_char_p, strings, strings, ctypes.c_uint64, ctypes.POINTER(ctypes.c_int)]
+            self.spawn_controller.restype = ctypes.c_int
             self.close_handoff = self.library.trnm_kernel_close_v1
             self.close_handoff.argtypes = [ctypes.POINTER(ctypes.c_int), ctypes.c_uint]
             self.close_handoff.restype = ctypes.c_int
@@ -119,6 +124,22 @@ class _Native:
             self.prepare_pipe.argtypes = [ctypes.POINTER(ctypes.c_int), ctypes.POINTER(ctypes.c_int),
                 ctypes.POINTER(ctypes.c_uint64), ctypes.POINTER(ctypes.c_int)]
             self.prepare_pipe.restype = ctypes.c_int
+            self.prepare_retirement = self.library.trnm_kernel_retirement_prepare_v1
+            words = ctypes.POINTER(ctypes.c_uint64)
+            self.prepare_retirement.argtypes = [ctypes.c_int, words, ctypes.c_char_p,
+                ctypes.c_size_t, ctypes.c_uint64, words]
+            self.prepare_retirement.restype = ctypes.c_int
+            self.snapshot_retirement = self.library.trnm_kernel_retirement_snapshot_v1
+            self.snapshot_retirement.argtypes = [words]
+            self.snapshot_retirement.restype = ctypes.c_int
+            self.activate_retirement = self.library.trnm_kernel_retirement_activate_v1
+            slots = ctypes.POINTER(ctypes.c_int)
+            self.activate_retirement.argtypes = [ctypes.c_int, slots, slots, slots, words,
+                ctypes.c_uint64, words]
+            self.activate_retirement.restype = ctypes.c_int
+            self.retain_retirement = self.library.trnm_kernel_retirement_retain_v1
+            self.retain_retirement.argtypes = [words]
+            self.retain_retirement.restype = ctypes.c_int
         except BaseException:
             os.close(self.fd)
             raise
@@ -155,12 +176,14 @@ def build_controlled_native():
     """Explicit preparation, not automatic compilation or a caller-hash loader."""
     require(os.uname().sysname == 'Linux', 'kernel-linux-only')
     _native_rlock()  # Refuse unsupported ABI before source IO/compiler/memfd.
-    sources = _sources(); raw = _bytes(_C)
-    require(_digest(raw) == sources[_C.name], 'kernel-source-changed')
+    sources = _sources(); spawn, retirement = _bytes(_C), _bytes(_RETIREMENT_C)
+    require(_digest(spawn) == sources[_C.name] and
+        _digest(retirement) == sources[_RETIREMENT_C.name], 'kernel-source-changed')
+    raw = spawn+b'\n'+retirement
     with tempfile.TemporaryDirectory(prefix='trnm-controlled-build-') as temporary:
         output = Path(temporary)/'spawn.so'
         built = subprocess.run(['/usr/bin/cc', '-std=c11', '-shared', '-fPIC', '-O2',
-            '-Wall', '-Wextra', '-Werror', '-x', 'c', '-', '-o', str(output)],
+            '-Wall', '-Wextra', '-Werror', '-pthread', '-x', 'c', '-', '-o', str(output)],
             input=raw, capture_output=True, timeout=30)
         require(built.returncode == 0 and _sources() == sources, 'kernel-native-build')
         return _Native(_TOKEN, _bytes(output), sources)

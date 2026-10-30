@@ -1,0 +1,82 @@
+{
+  "schema": "SQLite3513-three-finite-controls-independent-complete-v1",
+  "utc": "2026-10-26T02:53:39.801284+00:00",
+  "source_vfs_sha256": "d26305c2bbdae0c93bf5fea7ce697df5967847e2d254d29eb720119620387e99",
+  "exact_dependency": "rusqlite0.39.0/libsqlite3-sys0.37.0/SQLite3.51.3 with fallible_uint restoring checked old semantics",
+  "featuregraph_sha256": "18574e2c9bfc10f883054752e057e3f9d18deaa056ed989d2163ffee852bb431",
+  "components": [
+    {
+      "component": "VFS",
+      "actual_job_id": "1a175f1b178-96a-8c7",
+      "receipt": {
+        "path": "work/ci-follow/sqlite3513-vfs-native-collector-candidate-20261026-003/native-execution-001/execution-receipt.json",
+        "bytes": 1891,
+        "sha256": "577687815d0f6f0c30cb8b5b540b6e9cf29da0e4b6cd398ea0135fe625da21bb"
+      },
+      "finite_native_pass": true,
+      "actual_native_elapsed_seconds": 5.585325341002317,
+      "source_before_after_continuity_complete": true,
+      "new_work_generated": false
+    },
+    {
+      "component": "Node",
+      "actual_job_id": "1a17600992d-96a-90f",
+      "receipt": {
+        "path": "work/ci-follow/sqlite3513-node-native-collector-candidate-20261026-004/native-execution-001/execution-receipt.json",
+        "bytes": 6287,
+        "sha256": "9424169704cb82c023b400034bd48fa94d13720c7541306ac30058af2d3f243c"
+      },
+      "finite_native_pass": true,
+      "actual_native_elapsed_seconds": 10.139624846000515,
+      "source_before_after_continuity_complete": true,
+      "new_work_generated": false
+    },
+    {
+      "component": "Held",
+      "actual_job_id": "1a17602d0a8-96a-919",
+      "receipt": {
+        "path": "work/ci-follow/sqlite3513-held-native-collector-candidate-20261026-004/native-execution-001/execution-receipt.json",
+        "bytes": 2188,
+        "sha256": "8fa713b7105898c0be9e1010e48be5b2bffa34c67f7c62b7fa16e53b43a78e6c"
+      },
+      "finite_native_pass": true,
+      "actual_native_elapsed_seconds": 10.505721846006054,
+      "source_before_after_continuity_complete": true,
+      "new_work_generated": false
+    }
+  ],
+  "VFS_original_assertions": "10 real children /89 RootReceipt rows;86healthy+3originalexpectedSQLite13",
+  "Node_original_assertions": "20metadata/27healthy RootReceipt,256transfers/1actualretainedproof/0newW1/original2s/singlejoin/sameleaseAuthV1cold",
+  "Held_original_assertions": "4realchildren/43metadata/18RootReceipt,3negativeactualowners0,heldrename/replacement and cold",
+  "original_VFS_red": "10actualterminals/3fail/80of89 retained unchanged at source before compat; no environment rerun or dropped assertions",
+  "diagnostic_native_or_actual_arg2_trace": false,
+  "rootcause_evidence": "exact upstream pinned call chain, original real failures and unchanged controls passing after two-predicate bounded reservation fix; no claim a direct argument trace",
+  "old_normal017_schema_retained": "legacy diagnostic label in build-only schema is historical; actual sourcehash is compat d263 and no diagnostic callback remains",
+  "uncommitted_overlay_not_published_head_or_actual_PR_preview_qualification": true,
+  "independent_VFS_review_sha256": "200087d6a1b66a512d7bb118218429599ae14aa3a3bb64e55406c1f04903ca21",
+  "independent_Node_review_sha256": "4cb8de283b8cc3644c787bca5aa5492dac7403775e12fe9f7c638057191a9768",
+  "independent_Held_review": {
+    "path": "work/ci-follow/sqlite3513-compat-held004-native-independent-review-20261026-001/independent-receipt.json",
+    "sha256": "3248dd6a4067fab0d08fb93c429e4dcf4f236404c1d1a4da70bc92da354b8f8e"
+  },
+  "original_Windows_W1_full4097_three_round_models_WAN_qualification": false,
+  "full_guard_enabled": false,
+  "task_complete": false,
+  "merge_ready": false,
+  "all_three_finite_native_independent_reviews_complete": true,
+  "Held_bucket_classification_limitation": {
+    "database_bytes": 8192,
+    "database_charged_to": "provenance (stricter cap)",
+    "intentional_symlink_target_bytes": 233,
+    "reported_sqlite_bucket_bytes": 233,
+    "actual_root_namespace_bytes": 8425,
+    "all_path_bytes_charged": true,
+    "classification_defect_not_fixed_or_hidden": true
+  },
+  "affected_workspace_compile_and_lints": {
+    "workspace_all_targets_locked_offline": "actualPASS0/159.296065776s",
+    "seven_consumer_strict_clippy_all_targets_Dwarnings": "actualPASS0/102.719908815s",
+    "last_readonly_format_check": "actualPASS0/18.188609s",
+    "release_original_profile_binary_size": "not yet measured; budget review pending, never substitute diagnostic ELF or increase original cap"
+  }
+}

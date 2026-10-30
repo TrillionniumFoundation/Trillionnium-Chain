@@ -42,6 +42,22 @@ def controlled_release(command, flags, payloads):
 
 
 class CellHandoffDeadlineTests(unittest.TestCase):
+    def test_database_cap_rejects_before_any_output_creation(self):
+        for value in ("0", "4096", "262145", "2199023259648"):
+            argv = [str(SCRIPT), "--cache-max-bytes", "67108864",
+                "--cache-max-chunks", "4096", "--cache-max-manifests", "256",
+                "--cache-max-db-bytes", value]
+            for key in ("chain", "hepta", "source-parent", "source-materials", "output",
+                        "python", "cell-bin", "just", "hepta-target"):
+                argv.extend(("--" + key, "/absent/controlled-cap-input"))
+            with self.subTest(value=value), mock.patch.object(sys, "argv", argv), \
+                    mock.patch.object(Path, "mkdir") as mkdir, \
+                    mock.patch.object(sys, "stderr", io.StringIO()):
+                with self.assertRaises(SystemExit) as rejected:
+                    handoff.main()
+                self.assertEqual(rejected.exception.code, 2)
+                mkdir.assert_not_called()
+
     def test_remaining_window_is_floored_and_request_never_exceeds_it(self):
         for now, expected in ((100.0, (35.0, 35000, 2000)),
                               (133.5, (1.5, 1500, 1500)),
@@ -94,7 +110,8 @@ class CellHandoffDeadlineTests(unittest.TestCase):
             arguments = {"chain": chain, "hepta": root / "hepta", "source-parent": parent_file,
                 "source-materials": materials, "output": output, "python": root / "python",
                 "cell-bin": cell_bin, "just": root / "just", "hepta-target": root / "hepta-target"}
-            argv = [str(SCRIPT)]
+            argv = [str(SCRIPT), "--cache-max-bytes", "67108864",
+                "--cache-max-chunks", "4096", "--cache-max-manifests", "256", "--cache-max-db-bytes", "134217728"]
             for key, value in arguments.items():
                 argv.extend(("--" + key, str(value)))
             clock, payloads, fetched_names = [100.0], {}, []
@@ -112,6 +129,10 @@ class CellHandoffDeadlineTests(unittest.TestCase):
 
             def controlled_run(command, **kwargs):
                 flags = dict(zip(command[2::2], command[3::2]))
+                for key, value in (("--cache-max-bytes", "67108864"),
+                                   ("--cache-max-chunks", "4096"),
+                                   ("--cache-max-manifests", "256"), ("--cache-max-db-bytes", "134217728")):
+                    self.assertEqual(flags[key], value)
                 if command[1] == "pack":
                     data = Path(flags["--input"]).read_bytes()
                     digest = actual_sha(Path(flags["--input"]))
@@ -204,7 +225,8 @@ class CellHandoffConsumerTests(unittest.TestCase):
         arguments = {"chain": chain, "hepta": root / "hepta", "source-parent": parent_file,
             "source-materials": materials, "output": output, "python": root / "python",
             "cell-bin": cell_bin, "just": root / "just", "hepta-target": root / "hepta-target"}
-        argv = [str(SCRIPT)]
+        argv = [str(SCRIPT), "--cache-max-bytes", "67108864",
+                "--cache-max-chunks", "4096", "--cache-max-manifests", "256", "--cache-max-db-bytes", "134217728"]
         for key, value in arguments.items():
             argv.extend(("--" + key, str(value)))
         payloads, native_calls, fetched_names = {}, [], []
@@ -214,6 +236,10 @@ class CellHandoffConsumerTests(unittest.TestCase):
                 native_calls.append(command)
                 return subprocess.CompletedProcess(command, 0)
             flags = dict(zip(command[2::2], command[3::2]))
+            for key, value in (("--cache-max-bytes", "67108864"),
+                               ("--cache-max-chunks", "4096"),
+                               ("--cache-max-manifests", "256"), ("--cache-max-db-bytes", "134217728")):
+                self.assertEqual(flags[key], value)
             if command[1] == "pack":
                 source = Path(flags["--input"])
                 digest = handoff.sha(source)

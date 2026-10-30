@@ -1,0 +1,72 @@
+{
+  "schema": "held-target-loader-fence-v3-source-candidate-manifest-v1",
+  "sealed_utc": "2026-10-26T12:25:22.128641+00:00",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 6355,
+      "sha256": "336dfc0d4d60ad7d9a99e6985aa92eeab03e18139497bd474fd6537c2c3a7156"
+    },
+    {
+      "path": "baseline/trillionnium/crates/trnm-sqlite-io-boundary/build.rs",
+      "bytes": 19728,
+      "sha256": "f77c38efdc948892438498d68b382c2e7361214ca34863b42d5050a1a92a8a00"
+    },
+    {
+      "path": "baseline/trillionnium/crates/trnm-sqlite-io-boundary/src/unix_abi.rs",
+      "bytes": 15767,
+      "sha256": "364dc8c146a40e74e6c898c4e9e1eddbcb586bc757665c900347354fa7491ed0"
+    },
+    {
+      "path": "baseline-pins.json",
+      "bytes": 696,
+      "sha256": "393e9e02a9b5770ac14d067745b6b9a7f752ddbcf18420e2db2d61498d70fe30"
+    },
+    {
+      "path": "candidate/trillionnium/crates/trnm-sqlite-io-boundary/build.rs",
+      "bytes": 20590,
+      "sha256": "eeb5102f07506ef674db1cd8e104860232d800bf5db1dc4ad6b745a63cc83a81"
+    },
+    {
+      "path": "candidate/trillionnium/crates/trnm-sqlite-io-boundary/build_loader_paths.rs",
+      "bytes": 12640,
+      "sha256": "dc45172b51a80b0ca07785fd4216f77dc22f3a915455284b7b01dcbcc94c5779"
+    },
+    {
+      "path": "candidate/trillionnium/crates/trnm-sqlite-io-boundary/build_loader_paths_tests.rs",
+      "bytes": 8760,
+      "sha256": "15cc5cda245d561023367cca7033d3c816bcc4554cb0f34cd5a4985c1bcf1366"
+    },
+    {
+      "path": "candidate/trillionnium/crates/trnm-sqlite-io-boundary/src/unix_abi.rs",
+      "bytes": 15767,
+      "sha256": "3accbcf63cd96b9f28933c33520a109ea8bd1228b5a5a364872eac931d26e5b2"
+    },
+    {
+      "path": "candidate.patch",
+      "bytes": 30198,
+      "sha256": "d5daee14476797e52cad17ca32cfcc8d27e809b43a1b2e8215f131a3bfa89be3"
+    },
+    {
+      "path": "implementation-receipt.json",
+      "bytes": 4058,
+      "sha256": "b67f5588db36b3e987140ad7fdbff8752f2f579eba303c9bc125b177c3da29ef"
+    },
+    {
+      "path": "original-failure-pins.json",
+      "bytes": 1087,
+      "sha256": "493e21465f2b07a2ecf849b7c03086167c898ac553a04bc473b0a015b10827c4"
+    },
+    {
+      "path": "preflight.json",
+      "bytes": 568,
+      "sha256": "cb371362dcc76efc14f68787cb0493120fdd4cff70dff3c2edb26c0fc3958e52"
+    },
+    {
+      "path": "static-checks.json",
+      "bytes": 1014,
+      "sha256": "c45d3c819cade0ca6cb43a51b2cf40d311d62d16bafad3a4579669842dd227a4"
+    }
+  ],
+  "manifest_itself_not_self_hashed": true
+}

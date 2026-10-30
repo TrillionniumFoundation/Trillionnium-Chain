@@ -61,7 +61,7 @@ impl Peer {
         let child_stop = stop.clone();
         let path = path.to_owned();
         let handle = thread::spawn(move || {
-            let store = CellStoreV1::open(&path).unwrap();
+            let store = CellStoreV1::open(&path, cache_config()).unwrap();
             serve_cells(
                 &listener,
                 &store,
@@ -102,6 +102,14 @@ impl Drop for Peer {
 fn fetch_args(cache: &Path, output: &Path, pinned: &str, peer: &str) -> Vec<String> {
     vec![
         "fetch".into(),
+        "--cache-max-bytes".into(),
+        "67108864".into(),
+        "--cache-max-chunks".into(),
+        "4096".into(),
+        "--cache-max-manifests".into(),
+        "256".into(),
+        "--cache-max-db-bytes".into(),
+        "134217728".into(),
         "--store".into(),
         cache.display().to_string(),
         "--manifest".into(),
@@ -119,7 +127,7 @@ fn fetch_args(cache: &Path, output: &Path, pinned: &str, peer: &str) -> Vec<Stri
 fn cli_delivers_real_uncached_bytes_with_seconds_and_subtwo_second_milliseconds() {
     let directory = tempfile::tempdir().unwrap();
     let origin_path = directory.path().join("origin.sqlite");
-    let origin = CellStoreV1::open(&origin_path).unwrap();
+    let origin = CellStoreV1::open(&origin_path, cache_config()).unwrap();
     let input = directory.path().join("input");
     let bytes = vec![7; 655];
     fs::write(&input, &bytes).unwrap();
@@ -235,5 +243,91 @@ fn cli_preserves_original_request_minimum_and_overall_must_cover_request() {
             String::from_utf8_lossy(&rejected.stderr)
         );
         assert!(!output.exists());
+    }
+}
+
+#[test]
+fn cli_requires_each_persistent_quota_before_creating_a_writer_cache() {
+    let directory = tempfile::tempdir().unwrap();
+    for missing in [
+        "--cache-max-bytes",
+        "--cache-max-chunks",
+        "--cache-max-manifests",
+        "--cache-max-db-bytes",
+    ] {
+        let cache = directory.path().join(missing);
+        let output = directory.path().join(format!("{missing}-output"));
+        let mut args = fetch_args(&cache, &output, &digest_hex([1; 32]), "");
+        let index = args.iter().position(|value| value == missing).unwrap();
+        args.drain(index..index + 2);
+        args.extend(["--seconds".into(), "3".into()]);
+        let rejected = cli(&args);
+        assert!(!rejected.status.success());
+        assert!(String::from_utf8_lossy(&rejected.stderr).contains(missing));
+        assert!(!cache.exists());
+        assert!(!output.exists());
+    }
+}
+
+#[test]
+fn cli_manifest_reads_persisted_caps_and_cannot_create_a_missing_cache() {
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("cache.sqlite");
+    let cache = CellStoreV1::open(&path, cache_config()).unwrap();
+    let source = directory.path().join("source");
+    fs::write(&source, b"finite persisted cache").unwrap();
+    let manifest = cache
+        .pack_file(
+            &source,
+            CellContextV1 {
+                family: "quota-cli-v2".into(),
+                base: [1; 32],
+                parent: [2; 32],
+                tokenizer: [3; 32],
+                layout: [4; 32],
+                runtime: [5; 32],
+            },
+            16_384,
+        )
+        .unwrap();
+    let before = cache.cache_usage().unwrap();
+    let output = directory.path().join("wire");
+    let args = vec![
+        "manifest".into(),
+        "--store".into(),
+        path.display().to_string(),
+        "--manifest".into(),
+        digest_hex(manifest.id()),
+        "--output".into(),
+        output.display().to_string(),
+    ];
+    let read = cli(&args);
+    assert!(
+        read.status.success(),
+        "{}",
+        String::from_utf8_lossy(&read.stderr)
+    );
+    assert_eq!(fs::read(output).unwrap(), manifest.encode());
+    assert_eq!(cache.cache_usage().unwrap(), before);
+    let missing = directory.path().join("missing.sqlite");
+    let mut args = args;
+    args[2] = missing.display().to_string();
+    args[6] = directory
+        .path()
+        .join("missing-output")
+        .display()
+        .to_string();
+    let refused = cli(&args);
+    assert!(!refused.status.success());
+    assert!(!missing.exists());
+}
+
+// Explicit finite fixture quota; covers the existing <=32MiB commit fixtures.
+fn cache_config() -> trnm_data_availability::cell::CellCacheConfigV4 {
+    trnm_data_availability::cell::CellCacheConfigV4 {
+        max_database_bytes: 128 * 1024 * 1024,
+        max_logical_bytes: 64 * 1024 * 1024,
+        max_chunk_rows: 4096,
+        max_manifest_rows: 256,
     }
 }

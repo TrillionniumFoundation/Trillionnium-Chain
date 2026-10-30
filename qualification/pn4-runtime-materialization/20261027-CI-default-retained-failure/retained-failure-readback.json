@@ -1,0 +1,71 @@
+{
+  "schema": "pn4-runtime-local-CI-default-retained-failure-v1",
+  "recorded_utc": "2026-10-27T06:56:56.380974+00:00",
+  "role": "LOCAL_SOURCE_STAGE_EVIDENCE_NOT_HOSTED_CI_RELEASE_LOADER_OR_MODEL_QUALIFICATION",
+  "published_parent": "c96022b897c1235fdbdbfcfa32764403511c6aab",
+  "original_CI_default": {
+    "variable": "RUST_TEST_THREADS",
+    "value": "1",
+    "source": "original-CI-harness.sh",
+    "original_default_retained": true
+  },
+  "original_tests_byte_identical": {
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs": "c36a09c69b05c143653b5081f3ef8c35d172e732721d283edb33366043313cfd",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/sequence_tests.rs": "ba85b6bd81f2109e54af2878c31f0b75e5c3600d0f17eec861778efd3c4e1bd3"
+  },
+  "initial_parallel_failure": {
+    "tests": 141,
+    "passed": 139,
+    "failed": 2,
+    "ignored": 0,
+    "retained_in": "../20261027-source-stage/source-stage-readback.json"
+  },
+  "complete_crate_using_original_CI_thread_default": {
+    "actual_process_wait_exit": 101,
+    "seconds": 180.274179186,
+    "tests": 141,
+    "passed": 140,
+    "failed": 1,
+    "ignored": 0,
+    "failed_original_function": "cell::discovery::sequence_tests::tcp_newer_same_endpoint_short_ttl_expires_mid_manifest_without_publication",
+    "error": "announcement unwrap: Io(UnexpectedEof: discovery truncated reply)",
+    "raw": "full-crate-CI-thread-default/001-full-data-availability-crate-under-original-CI-thread-default/stdout.original",
+    "original_cause_proven": false,
+    "failure_closed": false
+  },
+  "same_original_function_isolated_syscall_diagnostic": {
+    "actual_process_wait_exit": 0,
+    "seconds": 2.46512199,
+    "passed": 1,
+    "filtered": 140,
+    "assertions_and_timeout_unchanged": true,
+    "raw_trace": "isolated-syscall-diagnostic/network-and-durability-syscalls.original.strace",
+    "trace_is_passing_attempt_not_original_failure": true,
+    "historical_causality_or_fix_proven": false
+  },
+  "retained_negative_source_integrity_tests": {
+    "actual_process_wait_exit": 0,
+    "passed": 34,
+    "raw": "retained-negative-source-tests/stderr.original"
+  },
+  "unchanged_exact_Cargo_graph": {
+    "actual_process_wait_exit": 0,
+    "nodes": 155,
+    "workspace_members": 26,
+    "lock_sha256": "ecad80dd8b0b4b18df5d0e5f4ab2d71f47cffbade4fb963dfb871d93396a16d8",
+    "raw": "exact-unchanged-graph/actual-graph-readback.json"
+  },
+  "strict_all_target_Clippy_and_six_new_runtime_controls": "PASS_AS_RECORDED_IN_PREVIOUS_SOURCE_STAGE_ONLY",
+  "all_original_assertions_numeric_resource_deadlines_and_failure_evidence_retained": true,
+  "no_complete_crate_retry_until_green": true,
+  "full_runtime_fit": false,
+  "held_real_loader": false,
+  "ordinary_I10": false,
+  "persistent_custody_repair": false,
+  "independent_72h_WAN": false,
+  "mechanism_closed": false,
+  "benefit_demonstrated": false,
+  "task_complete": false,
+  "merge_ready": false,
+  "decision": "NO_GO"
+}

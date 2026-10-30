@@ -1,0 +1,35 @@
+{
+  "finished_utc": "2026-10-27T06:48:39.762290+00:00",
+  "results": [
+    {
+      "started_utc": "2026-10-27T06:45:38.809259+00:00",
+      "pid": 845712,
+      "birth": "845712 (cargo) R 845669 845669 845669 0 -1 4194304 12 0 0 0 0 0 0 0 30 10 1 0 16120480 18915328 0 18446744073709551615 98925813956608 98925831426220 140730385245280 0 0 0 0 0 0 0 0 0 17 7 0 0 0 0 0 98925833524128 98925834535844 98926715645952 140730385254190 140730385254246 140730385254246 140730385256409 0\n",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-data-availability"
+      ],
+      "finished_utc": "2026-10-27T06:48:39.082202+00:00",
+      "actual_process_wait_exit": 101,
+      "seconds": 180.274179186,
+      "raw": {
+        "stdout.original": {
+          "bytes": 15353,
+          "sha256": "fe7e0b66feded3d7e7fa6d3f2d0ae0cfd60d1b709cd0479cfe572a06c54a7b97"
+        },
+        "stderr.original": {
+          "bytes": 613,
+          "sha256": "f15cd0fb23c9ca67f06ad19cfc5803f85516f4160a78f9b44d9e3251e39ead01"
+        }
+      },
+      "merge_ready": false
+    }
+  ],
+  "actual_final_child_wait_exit": 101,
+  "source_stage_only": true,
+  "merge_ready": false
+}

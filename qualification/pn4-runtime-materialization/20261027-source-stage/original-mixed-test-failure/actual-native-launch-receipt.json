@@ -1,0 +1,19 @@
+{
+  "recorded_utc": "2026-10-27T06:23:48.465515+00:00",
+  "command": [
+    "systemd-run",
+    "--user",
+    "--unit=m09-streamed-runtime-native-source-validation-20261027-001",
+    "--property=Type=exec",
+    "--property=CPUQuota=200%",
+    "--property=MemoryMax=2G",
+    "--property=MemorySwapMax=0",
+    "--property=TasksMax=256",
+    "--property=Nice=10",
+    "--setenv=PATH=/home/qian-qi/.cargo/bin:/usr/local/bin:/usr/bin:/bin",
+    "/usr/bin/python3",
+    "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/M09-streamed-runtime-materializer-root-candidate-20261027-001/run_durable_native_validation_once.py"
+  ],
+  "actual_launch_wait_exit": 0,
+  "launch_not_test_result": true
+}

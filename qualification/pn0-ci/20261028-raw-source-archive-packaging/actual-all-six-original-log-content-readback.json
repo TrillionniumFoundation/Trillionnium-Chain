@@ -1,0 +1,78 @@
+{
+  "logs": [
+    {
+      "job_id": 122687511727,
+      "bytes": 101217,
+      "sha256": "e4bda883a3a826906befa58c55c4866e59dabef52229f1208caf0bb7d1ee6bbc",
+      "primary_error_lines": [
+        "2026-10-28T07:26:33.5193566Z Repository check failed: broken link qualification/pn4-runtime-materialization/20261027-platform-gating-RED-and-fix/original-GNU-RED/actual-source-at-original-Windows-GNU-RED/docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md -> ../../config/consensus-mainline.json",
+        "2026-10-28T07:26:33.5364006Z ##[error]Process completed with exit code 2."
+      ],
+      "artifact_ids": [
+        12799132323
+      ]
+    },
+    {
+      "job_id": 122687511631,
+      "bytes": 101039,
+      "sha256": "bda8753ab921ecc90870b4e317875d5694576852fcd138bba067fd8a44916308",
+      "primary_error_lines": [
+        "2026-10-28T07:26:36.7931987Z Repository check failed: broken link qualification/pn4-runtime-materialization/20261027-platform-gating-RED-and-fix/original-GNU-RED/actual-source-at-original-Windows-GNU-RED/docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md -> ../../config/consensus-mainline.json",
+        "2026-10-28T07:26:36.8068761Z ##[error]Process completed with exit code 2."
+      ],
+      "artifact_ids": [
+        12799635698
+      ]
+    },
+    {
+      "job_id": 122687511802,
+      "bytes": 110098,
+      "sha256": "b571933eb076edf8d77b3e7609026b3e5d45f0cc9a0de7c35da4cb9c3d941144",
+      "primary_error_lines": [
+        "2026-10-28T07:28:21.5846088Z FAILED (errors=1)",
+        "2026-10-28T07:28:21.6012539Z ##[error]Process completed with exit code 1."
+      ],
+      "artifact_ids": [
+        12798783807
+      ]
+    },
+    {
+      "job_id": 122687511747,
+      "bytes": 88421,
+      "sha256": "ea37f367cbaafd969c620cdc521e83d2247e37aa1e27dcb27ab36e1fcb0a9174",
+      "primary_error_lines": [
+        "2026-10-28T07:26:24.2265774Z Repository check failed: broken link qualification/pn4-runtime-materialization/20261027-platform-gating-RED-and-fix/original-GNU-RED/actual-source-at-original-Windows-GNU-RED/docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md -> ../../config/consensus-mainline.json",
+        "2026-10-28T07:26:24.2411290Z ##[error]Process completed with exit code 2."
+      ],
+      "artifact_ids": [
+        12798613212
+      ]
+    },
+    {
+      "job_id": 122687511663,
+      "bytes": 93293,
+      "sha256": "8c5c69a61fa876ed884215cf384f21d48c48e03f772711aea071fbb5a8feb25d",
+      "primary_error_lines": [
+        "2026-10-28T07:26:32.8907365Z Repository check failed: broken link qualification/pn4-runtime-materialization/20261027-platform-gating-RED-and-fix/original-GNU-RED/actual-source-at-original-Windows-GNU-RED/docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md -> ../../config/consensus-mainline.json",
+        "2026-10-28T07:26:32.9077932Z ##[error]Process completed with exit code 2."
+      ],
+      "artifact_ids": [
+        12799007915
+      ]
+    },
+    {
+      "job_id": 122687511402,
+      "bytes": 105144,
+      "sha256": "d1d41eb752dd69e0c8799a287175778a8af5ddae85fdd7e0bcfa40bc1393dbf7",
+      "primary_error_lines": [
+        "2026-10-28T07:27:56.8801907Z FAILED (errors=1)",
+        "2026-10-28T07:27:56.8925946Z ##[error]Process completed with exit code 1."
+      ],
+      "artifact_ids": [
+        12798703996
+      ]
+    }
+  ],
+  "original_logs_lossless": true,
+  "no_actual_job_retry": true
+}

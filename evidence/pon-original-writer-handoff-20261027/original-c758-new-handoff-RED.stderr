@@ -1,0 +1,24 @@
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/Chain-004-trusted-owner-bootstrap-source-candidate-20261027-001/run-finite-test-phase.py", line 19, in <module>
+    import test_pon_outer_owner_handoff as new
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/Chain-004-trusted-owner-bootstrap-source-candidate-20261027-001/baseline-source/scripts/ci/test_pon_outer_owner_handoff.py", line 18, in <module>
+    import run_pon_identity_churn as collector
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/Chain-004-trusted-owner-bootstrap-source-candidate-20261027-001/baseline-source/scripts/run_pon_identity_churn.py", line 27, in <module>
+    from run_pon_root_supplement import exact_source
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/Chain-004-trusted-owner-bootstrap-source-candidate-20261027-001/baseline-source/scripts/run_pon_root_supplement.py", line 25, in <module>
+    from read_original_native_campaign import depletion, integer
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/Chain-004-trusted-owner-bootstrap-source-candidate-20261027-001/baseline-source/scripts/read_original_native_campaign.py", line 28, in <module>
+    from contract_wire import H, header_decode, header_encode
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/Chain-004-trusted-owner-bootstrap-source-candidate-20261027-001/baseline-source/formal/pon-nakamoto-v1/contract_wire.py", line 18, in <module>
+    SCHEMA=read_config('config/pon/ledger-v1.json')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/Chain-004-trusted-owner-bootstrap-source-candidate-20261027-001/baseline-source/formal/pon-nakamoto-v1/contract_wire.py", line 17, in read_config
+    return json.loads((ROOT/path).read_text(),object_pairs_hook=unique)
+                      ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/pathlib.py", line 1029, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/pathlib.py", line 1015, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/Chain-004-trusted-owner-bootstrap-source-candidate-20261027-001/baseline-source/config/pon/ledger-v1.json'

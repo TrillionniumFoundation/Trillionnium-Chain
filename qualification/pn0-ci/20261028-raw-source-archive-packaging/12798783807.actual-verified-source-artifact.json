@@ -1,0 +1,23 @@
+{
+  "artifact_id": 12798783807,
+  "recorded_utc": "2026-10-28T07:48:14.773062+00:00",
+  "http_status": 200,
+  "bytes": 422,
+  "sha256": "766e5d6d5c85ea2975612c1921070b79fcb351f2aa2816e13b1ab5ebacc871fc",
+  "official_digest_matches": true,
+  "CRC_verified": true,
+  "source": {
+    "base": "57c1ed545d067937cbd7aaa7570d5f22123265e6",
+    "candidate": "5a2a0ec55ab954e624ecdb77a9a5c866ac0c4708",
+    "kind": "prospective-merge",
+    "prospective_merge": "28805aa4467eb68b7ba45972a65edb941d4f250e",
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "28805aa4467eb68b7ba45972a65edb941d4f250e",
+    "tested_tree": "dd977529ae96e5879995bf92e4ec3df437e8c65d",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 736876713,
+    "tracked_entries": 5784,
+    "tracked_worktree_verified": true
+  },
+  "source_identity_is_not_execution": true
+}

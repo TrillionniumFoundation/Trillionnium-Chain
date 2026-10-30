@@ -1,0 +1,45 @@
+{
+  "schema": "PN1-root-exact-R4-source-admission-v1",
+  "root_parent": "e8fe2adfea99f6388c8bd5cc6a97ed35ea2f2fd8",
+  "candidate_base": "94b3fb60b7aa32c8bf5b7c8679d3c46a980b4060",
+  "candidate_patch_sha256": "4cfe8246c691dd15ec200d5a2e2822cd9f0d4c28ea615725b10c29799b9d039c",
+  "six_candidate_source_files_exact": true,
+  "original_file_pins_exact": 477,
+  "only_old_pin_exception": {
+    "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "reason": "e8 legitimate existing W1 plan append; entire94plan exact prefix retained"
+  },
+  "old467Rusttestfiles_and79958inline_testtail_unchanged": true,
+  "checks": [
+    {
+      "name": "preflight",
+      "exit_code": 0,
+      "seconds": 0.08885548599937465
+    },
+    {
+      "name": "fmt-check",
+      "exit_code": 0,
+      "seconds": 17.631414863993996
+    },
+    {
+      "name": "metadata",
+      "exit_code": 0,
+      "seconds": 0.2659472599916626,
+      "workspace_members": 26,
+      "resolved_nodes": 155
+    }
+  ],
+  "security_open": [
+    "known valid pruned key relocation can masquerade as missing until cold audit",
+    "arbitrary sameconnection COMMIT BEGIN transaction continuity",
+    "postCOMMIT durability versus health outcome",
+    "complete unselected payload binding",
+    "actual native latency/capacity/strictClippy/reader/full4097"
+  ],
+  "normal_release_compiled": false,
+  "native_executed": false,
+  "whole_writer_qualified": false,
+  "full_guard_enabled": false,
+  "task_complete": false,
+  "merge_ready": false
+}

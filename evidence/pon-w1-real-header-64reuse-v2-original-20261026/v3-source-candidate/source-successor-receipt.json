@@ -1,0 +1,89 @@
+{
+  "all_actual_verification_pending": [
+    "independent review",
+    "exactsource clean integration",
+    "normalrelease typecheck/Clippy/fmt",
+    "actual64 native+oracle+ordinary recover/cold states original120RPC2s"
+  ],
+  "base_paths": {
+    "scripts/ci/check_pon_w1_real_header_reuse_v1.py": {
+      "bytes": 14568,
+      "git_blob": "7eee320df779655cc9585de200aa179d73acc2e4",
+      "sha256": "eb450efd71820e096bf81d91d64b71571c6da1d14e89c1d7fd391e569a3206a9"
+    },
+    "scripts/run_pon_w1_real_header_reuse_v1.py": {
+      "bytes": 24230,
+      "git_blob": "6fd2f4b625110471e6a8c131cef45cb6168550a0",
+      "sha256": "1d190fca2c2217e12ee6e2d5778703b075c2a37e0a2b71353059ab7153b9d561"
+    },
+    "trillionnium/crates/trnm-pon-node/examples/pon_w1_real_header_reuse_v1.rs": {
+      "bytes": 20343,
+      "git_blob": "866476e493574c1fd83a2ff9aabf5daeab70a049",
+      "sha256": "414ce8909db072f7fe511f69337735be2fe4b0b1c575e5cbfac56216c1d40748"
+    },
+    "trillionnium/crates/trnm-pon-node/examples/support/w1_real_header_reuse_v1.rs": {
+      "bytes": 5686,
+      "git_blob": "79bb7c08655a13c6dedb5ba11a599de72bbcae01",
+      "sha256": "7b72d963501d844e3fc046f3ad6b4fd18d8112539ab76962328a0f01727aa5f0"
+    }
+  },
+  "baseline_head": "94b3fb60b7aa32c8bf5b7c8679d3c46a980b4060",
+  "baseline_tree": "da71738463a4d451e0b0246985dc69c7ab1f24fe",
+  "candidate_paths": {
+    "scripts/ci/check_pon_w1_real_header_reuse_v1.py": {
+      "bytes": 19325,
+      "sha256": "8cbba549285925cf82db9c9d6a8c7478e541374cb242bd8bfce2549e1348a12c"
+    },
+    "scripts/run_pon_w1_real_header_reuse_v1.py": {
+      "bytes": 24230,
+      "sha256": "f381c196651ff2da8aef1afa96eab7490f553c6021a5620fa50f46d227b21506"
+    },
+    "trillionnium/crates/trnm-pon-node/examples/pon_w1_real_header_reuse_v1.rs": {
+      "bytes": 22746,
+      "sha256": "1a9209045cf9d735a3ec7d32d4b4697ab387c13c9406950f3002212a9cb6866d"
+    },
+    "trillionnium/crates/trnm-pon-node/examples/support/w1_real_header_reuse_v1.rs": {
+      "bytes": 5686,
+      "sha256": "7b72d963501d844e3fc046f3ad6b4fd18d8112539ab76962328a0f01727aa5f0"
+    }
+  },
+  "changed_paths": [
+    "scripts/ci/check_pon_w1_real_header_reuse_v1.py",
+    "scripts/run_pon_w1_real_header_reuse_v1.py",
+    "trillionnium/crates/trnm-pon-node/examples/pon_w1_real_header_reuse_v1.rs"
+  ],
+  "current_PR_or_fullscope_qualified": false,
+  "fresh_profile": "pn1-pnh1-signed-zero-fixed-64-reuse-component-v3",
+  "fresh_reader": "pn1-pnh1-independent-relation-reader-v3",
+  "full4097_qualified": false,
+  "merge_ready": false,
+  "native64_passed": false,
+  "oracle_passed": false,
+  "original_v2_failure_receipt": {
+    "path": "work/ci-follow/W1-clean399-real64-cold-recovery-readonly-investigation-20261026-001/failure-cause-receipt.json",
+    "sha256": "1a48dd159247cb5dbe0856610fd334e56756c409925eaf356c3cd27b40b39e5c",
+    "status": "FAIL preserved; independent reader NOT_RUN"
+  },
+  "patch": {
+    "bytes": 12034,
+    "sha256": "d5d88db612ab1e4abb769483f95f42977e6b05adda54eaa263ca3a8015dadee6"
+  },
+  "qualifying_execution_receipt": false,
+  "recorded_utc": "2026-10-26T14:28:20.845134+00:00",
+  "schema": "pn1-w1-v3-ordinary-recovery-source-successor-receipt-v1",
+  "source_binary_attestation": false,
+  "source_only_checks": {
+    "Python_AST_parsed": true,
+    "Rust_search_function_bytes_unchanged": true,
+    "all64_cold_packet_state_assertions_preserved": true,
+    "both_original_hot_and_cold_assertion_expressions_preserved": true,
+    "controller_entire_code_except_two_receipt_domains_unchanged": true,
+    "no_candidate_import_or_helper_execution": true,
+    "ordinary_recover_between_original_assertions": true,
+    "support_registry_math_unchanged": true
+  },
+  "state": "SOURCE_ONLY_NOT_BUILT_NOT_RUN",
+  "support_unchanged": true,
+  "task_complete": false,
+  "whole_work_hardness_qualified": false
+}

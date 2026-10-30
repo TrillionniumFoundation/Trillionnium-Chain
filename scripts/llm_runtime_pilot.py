@@ -870,6 +870,46 @@ class _OwnedChildCleanupRequired(RuntimeError):
         self.child, self.receipt = child, receipt
 
 
+_AGGREGATE_TERMINAL_CODES = (
+    'aggregate-charge-retained',
+    'aggregate-closed-or-sticky',
+    'aggregate-counter-bound',
+    'aggregate-counter-filename',
+    'aggregate-counter-snapshot-changed',
+    'aggregate-cpu-counter-missing',
+    'aggregate-descendants-or-dying',
+    'aggregate-dying-charge',
+    'aggregate-exact-owned-wait4-required',
+    'aggregate-limits-changed',
+    'aggregate-not-empty',
+    'aggregate-parent-participants-or-dying',
+    'aggregate-path-or-fd-replaced',
+    'aggregate-private-fact',
+    'aggregate-source-or-owner-moved',
+    'aggregate-unit-identity',
+    'aggregate-unit-observation',
+    'evidence-pipe-child-owner',
+    'evidence-pipe-close-or-log-state',
+    'evidence-pipe-eof-unknown',
+    'evidence-pipe-exact-wait4-required',
+    'evidence-pipe-fd-direction',
+    'evidence-pipe-fd-flags',
+    'evidence-pipe-fd-replaced',
+    'evidence-pipe-guard',
+    'evidence-pipe-owner',
+    'evidence-pipe-parent-log',
+    'evidence-pipe-reported-context',
+    'evidence-pipe-slot-replaced',
+    'kernel-file-bound',
+    'kernel-file-type',
+    'kernel-native-lifecycle-busy',
+    'kernel-native-owner-thread',
+    'kernel-owned-close-failed',
+    'kernel-source-changed',
+    'kernel-source-file',
+)
+
+
 class _Wait4Child(subprocess.Popen):
     """One direct Linux child, exclusively reaped by the calls below.
 
@@ -881,12 +921,23 @@ class _Wait4Child(subprocess.Popen):
     def __init__(self, *args, **kwargs):
         self.kernel_operation = kwargs.pop('_controlled_operation', None)
         aggregate_operation = kwargs.pop('_aggregate_operation', None)
+        host_controller = kwargs.pop('_host_controller_operation', None)
+        if host_controller is not None:
+            from llm_runtime_host_controller import _HostControllerOperation
+            require(self.kernel_operation is None and aggregate_operation is None and
+                type(host_controller) is _HostControllerOperation, 'HOST_CONTROLLER_SPAWN_INTERFACE')
+            self.kernel_operation = host_controller
         self._counter_error_type = self._counter_diagnostic_type = None
         self.kernel_counter_diagnostic = None
         self.kernel_counter_diagnostic_projection_failed = False
+        self._terminal_budget_error_type = None
+        self._terminal_budget_codes = ()
+        self.kernel_tiny_terminal_code = None
+        self.kernel_terminal_code_projection_failed = False
         if aggregate_operation is not None:
             from llm_runtime_kernel_aggregate import (_AggregateOperation, AggregateCounterError,
-                _CounterDiagnostic, _RAW)
+                _CounterDiagnostic, _RAW, _CHARGE_COUNTER_FILES)
+            from llm_runtime_kernel_owned import KernelBudgetError
             require(self.kernel_operation is None and type(aggregate_operation) is _AggregateOperation,
                     'AGGREGATE_SPAWN_INTERFACE')
             self.kernel_operation = aggregate_operation
@@ -895,7 +946,10 @@ class _Wait4Child(subprocess.Popen):
             self._counter_error_type, self._counter_diagnostic_type = AggregateCounterError, _CounterDiagnostic
             self._counter_filenames = tuple('aggregate/'+name for name in _RAW) + ('unit/cgroup.stat',)
             self._counter_reasons = ('aggregate-counter-format', 'aggregate-counter-overflow',
-                                     'aggregate-counter-fields', 'aggregate-counter-scalar')
+                'aggregate-counter-fields', 'aggregate-counter-scalar', 'aggregate-charge-retained')
+            self._charge_counter_filenames = _CHARGE_COUNTER_FILES
+            self._terminal_budget_error_type = KernelBudgetError
+            self._terminal_budget_codes = _AGGREGATE_TERMINAL_CODES
             pipe = getattr(aggregate_operation, 'evidence_pipe', None)
             if pipe is not None:
                 from llm_runtime_evidence_pipe import _EvidencePipeOwner
@@ -931,7 +985,7 @@ class _Wait4Child(subprocess.Popen):
                 except OSError as error:
                     raise _Wait4Unsupported('pidfd capability cleanup unavailable') from error
         if self.kernel_operation is not None:
-            if aggregate_operation is None:
+            if aggregate_operation is None and host_controller is None:
                 from llm_runtime_kernel_owned import _ControlledOperation
                 require(type(self.kernel_operation) is _ControlledOperation, 'KERNEL_SPAWN_INTERFACE')
             require(len(args) == 1 and
@@ -976,8 +1030,28 @@ class _Wait4Child(subprocess.Popen):
         self.termination_fd = descriptor if descriptor >= 0 else None
 
     def _close_kernel_handoff(self, mask):
+        if mask & 2 and self._retains_C_wait_owner():
+            raise self._kernel_cleanup_required
         error = self.kernel_operation.native.close_handoff(self._kernel_handoff, mask)
         if error: raise OSError(error, 'kernel-handoff-close')
+
+    def _retains_C_wait_owner(self):
+        role = getattr(self, '_aggregate_wait_role', None)
+        if role is None:
+            return False  # Ordinary and C-only cleanup retain their original behavior.
+        try:
+            from llm_runtime_host_aggregate import _ControllerWaitRole
+            if (type(role) is not _ControllerWaitRole or role.child is not self or
+                    role.launch._wait_role is not role or role.launch.operation is not self.kernel_operation or
+                    role.launch is not self.kernel_operation._aggregate or
+                    role.launch.native is not self.kernel_operation.native or
+                    role.launch.operation.spawn_owner is not self or
+                    role.launch.operation.native.operation is not self.kernel_operation):
+                raise self._kernel_cleanup_required
+            role.launch.native._lock_for_owner()  # PID/concrete Thread; no IO/new owner.
+        except BaseException:
+            raise self._kernel_cleanup_required
+        return True  # Retention only; no boolean can release or authorize this role.
 
     def _rollback_kernel_handoff(self):
         self._close_kernel_handoff(12)
@@ -991,13 +1065,23 @@ class _Wait4Child(subprocess.Popen):
         if self.observation_error is None:
             self.observation_error = message
 
+    def _retain_kernel_terminal_code(self, error):
+        if self.kernel_tiny_terminal_code is not None or type(error) is not self._terminal_budget_error_type:
+            return
+        values = error.args
+        if (type(values) is tuple and len(values) == 1 and type(values[0]) is str and
+                len(values[0]) <= 128 and values[0] in self._terminal_budget_codes):
+            self.kernel_tiny_terminal_code = values[0]  # Original fixed string only.
+
     def _retain_kernel_counter_diagnostic(self, error):
         if type(error) is not self._counter_error_type:
             return
         value = error.counter_diagnostic
         if (type(value) is self._counter_diagnostic_type and type(value.filename) is str and
                 type(value.raw) is str and type(value.reason) is str and len(value.raw) <= 65536 and
-                value.filename in self._counter_filenames and value.reason in self._counter_reasons):
+                value.filename in self._counter_filenames and value.reason in self._counter_reasons and
+                (value.reason != 'aggregate-charge-retained' or
+                    value.filename in self._charge_counter_filenames)):
             self.kernel_counter_diagnostic = value  # Existing immutable strings only.
 
     def reap(self, options=os.WNOHANG):
@@ -1090,6 +1174,9 @@ class _Wait4Child(subprocess.Popen):
     def signal_owned(self, signum):
         if self.owned_exit_observed:
             return
+        if self._retains_C_wait_owner():
+            self.fail('kernel-C-wait-owner-retained')
+            return  # C may already own A, even if the G write raised a pending exception.
         try:
             if self.termination_fd is not None:
                 signal.pidfd_send_signal(self.termination_fd, signum)
@@ -1111,7 +1198,11 @@ class _Wait4Child(subprocess.Popen):
         except BaseException as failure:
             self.fail('kernel-terminal-tiny-evidence-unavailable')
             try:
-                self.kernel_tiny_terminal_failure = type(failure).__name__[:64]
+                if getattr(self, 'kernel_tiny_terminal_failure', None) is None:
+                    self.kernel_tiny_terminal_failure = type(failure).__name__[:64]
+                    self._retain_kernel_terminal_code(failure)
+            except BaseException: self.kernel_terminal_code_projection_failed = True
+            try:
                 self._retain_kernel_counter_diagnostic(failure)
             except BaseException: self.kernel_counter_diagnostic_projection_failed = True
         finally:
@@ -1128,6 +1219,14 @@ class _Wait4Child(subprocess.Popen):
 
     def finish(self):
         try:
+            if self._retains_C_wait_owner():
+                # One original exact WNOHANG observation, no TERM/KILL, grace
+                # window, waitpid substitution or forgetting the C handoff.
+                if not self.reaped and not self.no_waitable_child_observed:
+                    self.reap()
+                if not self.reaped:
+                    self.fail('kernel-C-wait-owner-retained')
+                return
             if self.owned_exit_observed and not self.reap_resolved:
                 if self.reap() == 'unknown':
                     self.cleanup_reap()
@@ -1162,7 +1261,8 @@ class _Wait4Child(subprocess.Popen):
                             # Optional evidence cannot replace the first cause
                             # or escape past the original pidfd-close below.
                             self.kernel_counter_diagnostic_projection_failed = True
-            if self.termination_fd is not None and self.reap_resolved:
+            if (self.termination_fd is not None and self.reap_resolved and
+                    not self._retains_C_wait_owner()):
                 try:
                     if getattr(self, '_kernel_handoff', None) is not None:
                         self._close_kernel_handoff(2)
@@ -1710,6 +1810,8 @@ def supervise(command, directory, budget, *, exit_observation=None, _controlled_
             received_bytes=pipe_owner.frames.received, first_error=pipe_owner.frames.failure,
             error_fragment_hex=pipe_owner.frames.fragment.hex(), eof=pipe_owner.eof,
             terminal_failure_type=getattr(process,'kernel_tiny_terminal_failure',None),
+            terminal_failure_code=getattr(process,'kernel_tiny_terminal_code',None),
+            terminal_code_projection_failed=True if getattr(process,'kernel_terminal_code_projection_failed',False) else None,
             terminal_io_closed=True if pipe_owner.terminal_complete else None, authority=False)
     if pipe_writer is None: save(directory/'supervisor.json', result)
     else: pipe_writer.emit('inner-supervisor',dict(result=result,owned_child_pid=process.pid,supervisor_pid=os.getpid()))

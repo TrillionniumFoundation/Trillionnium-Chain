@@ -1,0 +1,323 @@
+{
+  "schema": "pn1-real-header-revision002-python-independent-static-and-control-evidence-review-v1",
+  "observed_utc": "2026-10-26T12:02:13.878295+00:00",
+  "reviewer": "/root/supervisor_ci_resume/doc_evidence_pin_review",
+  "parallel_evidence_reviewer": "/root/supervisor_ci_resume/doc_evidence_pin_review/rev002_controls_pins",
+  "decision": "CHANGES_REQUIRED_REMAINING_FIRST_ERROR_FINAL_EVENT_FILE_BYPASS",
+  "scope": "Read-only static review of frozen revision002 Python owner/reader, six fixes, first-error microfix and retained mechanism evidence. No candidate import/execution, control rerun, compiler/native/CI/ROG/outputs action. Rust type/API review is separate and not inherited here.",
+  "input_pins": [
+    {
+      "path": "work/ci-follow/PN1-real-header-fixed-dispatcher-64reuse-source-candidate-20261026-001/revision-002/implementation-receipt.json",
+      "bytes": 5542,
+      "sha256": "ec6b62d57cae70cc22737bc2afe53aaa16c7e7b041957edfb2c4ed23db672188"
+    },
+    {
+      "path": "work/ci-follow/PN1-real-header-fixed-dispatcher-64reuse-source-candidate-20261026-001/revision-002/manifest.json",
+      "bytes": 90136,
+      "sha256": "39ed7f1acee7db79b492b51bc5a8011599a474080ec833f091c6e1f4e26433fa"
+    },
+    {
+      "path": "work/ci-follow/PN1-real-header-fixed-dispatcher-64reuse-source-candidate-20261026-001/revision-002/candidate.patch",
+      "bytes": 66526,
+      "sha256": "1c7c2a1d4eacebd531ed0279adecbb6052128469c4ac5d68b2816bad1a426271"
+    },
+    {
+      "path": "work/ci-follow/PN1-real-header-fixed-dispatcher-64reuse-source-candidate-20261026-001/revision-002/v1-to-revision002.patch",
+      "bytes": 19915,
+      "sha256": "ec840919a6780072502e7ca8dd31161e13df72fc77d841f8fe8f34eba44a5824"
+    },
+    {
+      "path": "work/ci-follow/PN1-real-header-fixed-dispatcher-64reuse-source-candidate-20261026-001/revision-002/README.md",
+      "bytes": 5492,
+      "sha256": "9ba78cdbaef05fe4fd846aa01b526673b40fc19d614be45596de59735375ed5d"
+    },
+    {
+      "path": "work/ci-follow/PN1-real-header-fixed-dispatcher-64reuse-source-candidate-20261026-001/revision-002/semantic-checks.json",
+      "bytes": 675,
+      "sha256": "10aa59fc515cac4dd95da43848f8122f054088511df07669ef662655b1f82239"
+    },
+    {
+      "path": "work/ci-follow/PN1-real-header-fixed-dispatcher-64reuse-source-candidate-20261026-001/revision-002/tested-function-continuity.json",
+      "bytes": 1625,
+      "sha256": "5bab80480f5ef2b2a4fc6f6ccf2a4a1f4d141c74e183f57cbf487f785f5d0620"
+    },
+    {
+      "path": "work/ci-follow/PN1-real-header-fixed-dispatcher-64reuse-source-candidate-20261026-001/revision-002/v1-frozen-input-pins.json",
+      "bytes": 1280,
+      "sha256": "6d3c8183cbb8e30889c9eafc40b1c4f219d1e5317ec041821a2ac9a08a02caf3"
+    },
+    {
+      "path": "work/ci-follow/PN1-real-header-fixed-dispatcher-64reuse-source-candidate-20261026-001/revision-002/cache-sideeffects.json",
+      "bytes": 2533,
+      "sha256": "4bc52a9e04e58c971c89ffc2c396de709d73ed3c35c95330c190fc105736a5dc"
+    },
+    {
+      "path": "work/ci-follow/PN1-real-header-fixed-dispatcher-64reuse-source-candidate-20261026-001/revision-002/controls/v1-control-terminal.json",
+      "bytes": 254,
+      "sha256": "b760da4d415deab9ef963afddb1247ffecca5a0a83f03846525ab7f8028a3395"
+    },
+    {
+      "path": "work/ci-follow/PN1-real-header-fixed-dispatcher-64reuse-source-candidate-20261026-001/revision-002/controls/v1-original-red/events.jsonl",
+      "bytes": 4385,
+      "sha256": "8ee9128303905eb222bba392eca55179c066ff2558ff4777537f446d632105f1"
+    },
+    {
+      "path": "work/ci-follow/PN1-real-header-fixed-dispatcher-64reuse-source-candidate-20261026-001/revision-002/controls/v1-original.stderr.log",
+      "bytes": 1549,
+      "sha256": "a7e483f1acaf92f2d121de8b0e68780e7c39587bc06f1e3827ff213df7ab55af"
+    },
+    {
+      "path": "work/ci-follow/PN1-real-header-fixed-dispatcher-64reuse-source-candidate-20261026-001/revision-002/controls/v2-control-terminal.json",
+      "bytes": 284,
+      "sha256": "b2f9892d6152c3b1efce1ece2c84b8b735ab22bf5c629b18e03e070f5d99bf34"
+    },
+    {
+      "path": "work/ci-follow/PN1-real-header-fixed-dispatcher-64reuse-source-candidate-20261026-001/revision-002/controls/v2-fixed-controls/result.json",
+      "bytes": 9063,
+      "sha256": "cec0ea40c4dc800d9ec3f1ac507f513c10dd556a3265a4f9ed5413ca051d1006"
+    },
+    {
+      "path": "work/ci-follow/PN1-real-header-fixed-dispatcher-64reuse-source-candidate-20261026-001/revision-002/controls/v2-first-error-control-terminal.json",
+      "bytes": 251,
+      "sha256": "9f937c5d8c767eb1563b6d4cbf1185fd7a6dc31f826bcd5181fa3830e157e2a5"
+    },
+    {
+      "path": "work/ci-follow/PN1-real-header-fixed-dispatcher-64reuse-source-candidate-20261026-001/revision-002/controls/v2-first-error.stdout.log",
+      "bytes": 518,
+      "sha256": "4651005d4384af11b78bdd94636056f5ef276a4e1ae3d2d550d0056af1946642"
+    },
+    {
+      "path": "work/ci-follow/PN1-real-header-fixed-dispatcher-64reuse-source-candidate-20261026-001/revision-002/controls/v2-budget-ledger.json",
+      "bytes": 1184,
+      "sha256": "62b4b2811af4c4339a1f8ba1db69b88da153fdaa6f5a2983fa361e9280df7e0f"
+    }
+  ],
+  "final_source_pins": [
+    {
+      "path": "work/ci-follow/PN1-real-header-fixed-dispatcher-64reuse-source-candidate-20261026-001/revision-002/candidate/scripts/ci/check_pon_w1_real_header_reuse_v1.py",
+      "bytes": 14568,
+      "sha256": "eb450efd71820e096bf81d91d64b71571c6da1d14e89c1d7fd391e569a3206a9"
+    },
+    {
+      "path": "work/ci-follow/PN1-real-header-fixed-dispatcher-64reuse-source-candidate-20261026-001/revision-002/candidate/scripts/run_pon_w1_real_header_reuse_v1.py",
+      "bytes": 23453,
+      "sha256": "90cbea6376be79569b61fd56f57fff677d9c8d1bcdfe2e21e414d8b1a43fd464"
+    },
+    {
+      "path": "work/ci-follow/PN1-real-header-fixed-dispatcher-64reuse-source-candidate-20261026-001/revision-002/candidate/trillionnium/crates/trnm-pon-node/examples/pon_w1_real_header_reuse_v1.rs",
+      "bytes": 20353,
+      "sha256": "d9fda08e06f087caac3eb175f2add128fc4a81929b3aec5a8001ad66344d84f1"
+    },
+    {
+      "path": "work/ci-follow/PN1-real-header-fixed-dispatcher-64reuse-source-candidate-20261026-001/revision-002/candidate/trillionnium/crates/trnm-pon-node/examples/support/w1_real_header_reuse_v1.rs",
+      "bytes": 5686,
+      "sha256": "7b72d963501d844e3fc046f3ad6b4fd18d8112539ab76962328a0f01727aa5f0"
+    }
+  ],
+  "baseline_separate_oracles_and_resource_API": [
+    {
+      "path": "work/ci-follow/PN1-real-header-fixed-dispatcher-64reuse-source-candidate-20261026-001/baseline/formal/pon-nakamoto-v1/contract_wire.py",
+      "bytes": 8924,
+      "sha256": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6"
+    },
+    {
+      "path": "work/ci-follow/PN1-real-header-fixed-dispatcher-64reuse-source-candidate-20261026-001/baseline/formal/pon-nakamoto-v1/work_oracle.py",
+      "bytes": 2944,
+      "sha256": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18"
+    },
+    {
+      "path": "work/ci-follow/PN1-real-header-fixed-dispatcher-64reuse-source-candidate-20261026-001/baseline/scripts/run_pon_w1_native_campaign.py",
+      "bytes": 17265,
+      "sha256": "eff0930837331f08882a0d69a6909e8f8dda2b23dad58cf0e6bc60d175f0a431"
+    }
+  ],
+  "full_manifest_readback": {
+    "listed_members": 462,
+    "verified_bytes": 101060481,
+    "all_SHA_and_sizes_exact": true,
+    "no_missing_or_unlisted_except_manifest_itself": true
+  },
+  "findings": [
+    {
+      "id": "REV002-PY03",
+      "priority": "P2",
+      "file": "work/ci-follow/PN1-real-header-fixed-dispatcher-64reuse-source-candidate-20261026-001/revision-002/candidate/scripts/run_pon_w1_real_header_reuse_v1.py",
+      "lines": [
+        448,
+        453
+      ],
+      "related_lines": [
+        331,
+        340,
+        464,
+        472
+      ],
+      "title": "Event-file finalization bypasses the new original-first-error wrapper",
+      "evidence": "run() stores the first work/RPC failure in result[first_error], then unconditionally flushes/fsyncs/closes event_file in its finally block. An exception at lines450-452 exits run before return seal_outputs(...). Therefore seal_outputs cannot attach that result.first_error to this exception, and main emits getattr(error,first_error,None), which is None for the ordinary OSError.",
+      "concrete_failure_path": "An original RPC timeout is caught and retained in result, actors are aborted, then parent-events.jsonl fsync raises EIO/ENOSPC. No owner-result has yet been written; outer stderr reports the later file error with first_error:null. The process fails closed but the original error provenance is lost.",
+      "control_coverage": "The final-owner supplemental negative control invokes seal_outputs for a metadata reservation refusal. It does not call run or inject failure in the event_file finally block, so its pass cannot close this branch.",
+      "required_change": "In a separately frozen revision, preserve/attach the original result.first_error across event_file flush/fsync/close failures too, retain cleanup/finalization diagnostics separately, and keep the same caps/no-extra-file/nonzero behavior. Do not alter revision002 in place.",
+      "root_and_author_notified_before_seal": true
+    }
+  ],
+  "fix_dispositions": [
+    {
+      "id": "PY01",
+      "status": "STATIC_FIX_ACCEPTABLE",
+      "owner_lines": [
+        116,
+        169,
+        172,
+        282,
+        292
+      ],
+      "result": "Only actual empty pipe reads set EOF flags. EOF and pending-byte evidence are frozen before closing; no observed EOF remains explicit UNKNOWN rather than completion."
+    },
+    {
+      "id": "PY02",
+      "status": "STATIC_FIX_ACCEPTABLE",
+      "owner_lines": [
+        307,
+        328,
+        343,
+        368,
+        435,
+        435
+      ],
+      "result": "Two1MiB receipts/two file slots are reserved inside original32MiB/128-file cap. Both are immutable and the actual final directory is checked after writing. A cap/final-write failure returns nonzero; provisional JSON alone is insufficient."
+    },
+    {
+      "id": "ROOT-R3",
+      "status": "STATIC_FIX_ACCEPTABLE",
+      "owner_lines": [
+        208,
+        237,
+        240,
+        250,
+        350,
+        368
+      ],
+      "result": "Parent2s origin precedes logging/request writing; response log completion is checked again. finish starts its timer before stdin-close and checks after close/fsync. Global120s is retained through final writes and post-write inventory; no new timing allowance is introduced. Blocking syscalls are observed after return rather than preempted by this Python code."
+    },
+    {
+      "id": "ROOT-R4",
+      "status": "STATIC_FIX_ACCEPTABLE_FOR_DECLARED_LOCATIONS",
+      "owner_lines": [
+        40,
+        42,
+        193,
+        203
+      ],
+      "reader_lines": [
+        31,
+        79,
+        107,
+        113,
+        138,
+        165,
+        244,
+        246
+      ],
+      "result": "Exact int type and location/u64 bounds reject JSON bool/float aliases for declared numeric fields. target_hit remains an actual bool; binary Header integers still come from the separate wire decoder. Packet reconstruction and full all-attempt proof/miss/first-hit/stream/winner checks remain intact."
+    },
+    {
+      "id": "ROOT-R5",
+      "status": "STATIC_SAFE_REFUSAL_ACCEPTABLE_WITH_UNKNOWN",
+      "owner_lines": [
+        252,
+        292
+      ],
+      "result": "Once actual wait4 has reaped the leader, abort never calls killpg on its old numeric group. Available bytes may be drained; unresolved inherited writers/streams and unregistered descendants remain UNKNOWN. This is not WNOWAIT or a physical whole-tree terminal census."
+    },
+    {
+      "id": "RS01",
+      "status": "SEPARATE_RUST_REVIEW_ONLY",
+      "result": "Source receipt records removal of unused Header import and freshv2 namespace; no Rust typecheck/native result is supplied by this Python review."
+    },
+    {
+      "id": "FIRST_ERROR_MICROFIX",
+      "status": "PARTIAL_FIX_REMAINING_P2",
+      "owner_lines": [
+        331,
+        340,
+        448,
+        472
+      ],
+      "result": "Metadata seal exceptions now carry original first_error to existing stderr without an extra file. REV002-PY03 remains outside that wrapper."
+    }
+  ],
+  "namespace_and_qualification": {
+    "component_profile": "pn1-pnh1-signed-zero-fixed-64-reuse-component-v2",
+    "reader_schema": "pn1-pnh1-independent-relation-reader-v2",
+    "stored_or_RPC_v1_not_silently_relabelled": true,
+    "PNH1_PNW1_and_signed_lifecycle_grammar_unchanged": true,
+    "same_parent_siblings_not_successive_parents": true,
+    "independent_signature_or_parent_state_execution": false,
+    "source_binary_attestation": false,
+    "qualifying_execution_receipt": false,
+    "whole_tree_terminal": "UNKNOWN",
+    "full_native64_or_whole13_or_hardware_or_threeFD_or4097_or_WAN_qualified": false
+  },
+  "control_scope": {
+    "v1": {
+      "elapsed_seconds": 13.283328251010971,
+      "exit_code": 1,
+      "original_five_RED_event_groups_and_NameError_raw_retained": true,
+      "not_rerun_or_promoted": true
+    },
+    "v2_main": {
+      "elapsed_seconds": 8.827459702995839,
+      "exit_code": 0,
+      "actually_controlled_owner": {
+        "path": "work/ci-follow/PN1-real-header-fixed-dispatcher-64reuse-source-candidate-20261026-001/revision-002/controls/tested-source-v2-initial/scripts/run_pon_w1_real_header_reuse_v1.py",
+        "bytes": 22800,
+        "sha256": "58241951368febc5daaca4ab174cf3b4e95ec7b355d52031320200b6ef3d57f9"
+      },
+      "initial_source_not_final_whole_source": true
+    },
+    "initial_to_final_AST_continuity": {
+      "six_methods": {
+        "consume": "e00616ae49805fb229a81bbc141ff28437d774e90fa31c83a234a9655f3d8d7c",
+        "rpc": "68cdeea4072ffb8f3f6cc8032372b0cc5c98581551032da450313ce38275e7f1",
+        "finish": "c3fadc109f39969c0f46a62f1582750007181f7bb96963d264ef0d0cda452228",
+        "abort": "1c03d6a727a58ed393a8f84687ac13e678ad38464ce142e06409110d7c19a127",
+        "close_files": "d2e7d329ddc9417a8ddf16085b809660b47b37c205043e221707d3cc3f3b3212",
+        "reap_nonblocking": "16950b0cfa742aee6db8f78618cfc77c4120d5c8afafb933d256778b74386d13"
+      },
+      "initial_seal_equals_final_renamed_core": true,
+      "packet_reconstruction_same_as_frozen_v1": true,
+      "does_not_confer_whole_source_execution_qualification": true
+    },
+    "v2_final_first_error_negative": {
+      "elapsed_seconds": 0.09346402599476278,
+      "exit_code": 0,
+      "pins_final_owner_sha256": "90cbea6376be79569b61fd56f57fff677d9c8d1bcdfe2e21e414d8b1a43fd464",
+      "scope": "seal_outputs metadata-reservation failure only; not run(), final-event-file failure, complete profile or native64."
+    },
+    "numeric_alias_mutants": 123,
+    "numeric_schema_locations": 41,
+    "real_bool_hit_retained": true,
+    "real_fixture_children_waited": 8,
+    "real_fixture_child_wait_scope": "Four per v1/v2 suite, exact PID/birth/wait reaped records; not a whole-process-tree census.",
+    "new_authorized_actual_seconds": 8.920923728990601,
+    "old_actual_seconds_retained": 13.283328251010971,
+    "combined_actual_seconds": 22.204251980001573,
+    "combined_cap_seconds": 28.28332825101097,
+    "old_unused_budget_refunded_or_transferred": false,
+    "R3_delay_is_controlled_injection_not_historical_cause": true,
+    "R5_original_stale_signal_spied_and_refused_not_executed": true,
+    "cache_metadata_sideeffects_disclosed_and_frozen": true,
+    "reviewer_reran_or_imported_controls": false
+  },
+  "operations": {
+    "read_only_text_hash_AST": true,
+    "product_source_imported_executed_or_edited": false,
+    "controls_build_Cargo_native_CI_ROG_SSH_or_outputs_actions": false,
+    "new_independent_review_receipt_only": true,
+    "frozen_revision002_unchanged": true
+  },
+  "full_guard_enabled": false,
+  "qualifying_execution_receipt": false,
+  "merge_ready": false,
+  "task_complete": false
+}

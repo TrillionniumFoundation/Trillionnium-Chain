@@ -1,0 +1,24 @@
+{
+  "schema": "strict-mechanism-suite-budget-v1",
+  "suite_wall_budget_seconds": 15,
+  "each_case_wall_cap_seconds": 15,
+  "parent_AS_bytes": 1073741824,
+  "nice": 19,
+  "stdout_cap_bytes": 1048576,
+  "stderr_cap_bytes": 1048576,
+  "scope": "Python-FD controls only; no native W1/Cargo",
+  "spent_seconds": 13.283328251010971,
+  "attempts": [
+    {
+      "version": "v1",
+      "actual_pid": 2402700,
+      "actual_birth": "9220903",
+      "actual_exit": 1,
+      "actual_elapsed_seconds": 13.283328251010971,
+      "real_wait_reaped": true,
+      "stdout_bytes": 0,
+      "stderr_bytes": 1549,
+      "original_source_unchanged": true
+    }
+  ]
+}

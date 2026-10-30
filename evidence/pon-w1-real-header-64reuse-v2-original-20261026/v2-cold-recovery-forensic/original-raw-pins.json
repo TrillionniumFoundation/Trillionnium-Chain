@@ -1,0 +1,38 @@
+{
+  "native-run-001/native.stderr.log": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "native-run-001/native.stdout.jsonl": {
+    "bytes": 6814164,
+    "sha256": "3317cdeb9bcf3d5e5b8d93eb0b4f110fb652f8fb3a285e227892f73fe56219f0"
+  },
+  "native-run-001/owner-result.json": {
+    "bytes": 70759,
+    "sha256": "535aa9b87924cdf6d265b58b75c88d1aa4e7fd5254fa3c704efbbead080994a7"
+  },
+  "native-run-001/parent-events.jsonl": {
+    "bytes": 23321,
+    "sha256": "c609ee208dec6c82f9936e818a63915af7d4a673c9c848c022a23d22895f0599"
+  },
+  "native-run-001/post-write-terminal.json": {
+    "bytes": 361,
+    "sha256": "523f71bd81fc32403ea8a2cf7ff045a7ca9fba921daeaecae38825676d943188"
+  },
+  "run-owned-001/durable-start-original.json": {
+    "bytes": 1486,
+    "sha256": "12d9f4cab0f9112a3daf597b4adfddbca830d45fdda259e42de4df434568ddd7"
+  },
+  "run-owned-001/durable-terminal-original.json": {
+    "bytes": 631,
+    "sha256": "f38e5274427efc213e55d0d0f151fd053b037244bf796f3f4169d5bf7190d399"
+  },
+  "run-owned-001/execute-owner-result.json": {
+    "bytes": 14419,
+    "sha256": "f4fac234da994c4e0f05b3d874f0332053d4715082514a1fd441633eabc717bc"
+  },
+  "run-owned-001/owner.py": {
+    "bytes": 11332,
+    "sha256": "b1c2630c1227b3e5f7ac246e9ba66ecb1ca7601c017fde2d6081df9567231e2f"
+  }
+}

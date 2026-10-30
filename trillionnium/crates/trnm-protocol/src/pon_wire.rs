@@ -36,6 +36,19 @@ pub fn account_archive_branch_hash(left: Hash, right: Hash) -> Hash {
     Sha256::digest(encoded).into()
 }
 
+// The full SHA state includes the 77-byte input count and its buffered bytes.
+// Only the compiled empty-left child enters this prefix; every actual right
+// subtree is still rebuilt below. This is arithmetic, not an account verdict.
+fn account_archive_empty_left_prefix(left: &Hash) -> Sha256 {
+    let mut encoded = [0u8; 77];
+    encoded[..41].copy_from_slice(b"TRNM-PON1\0\x19\0account-archive-branch-v1\x20\0\0\0");
+    encoded[41..73].copy_from_slice(left);
+    encoded[73..].copy_from_slice(&32u32.to_le_bytes());
+    let mut prefix = Sha256::new();
+    prefix.update(encoded);
+    prefix
+}
+
 /// Complete reference rebuild of the existing account-archive sparse relation.
 /// No source, storage, execution or admission authority is implied. Profile
 /// owners enforce their own finite account count and monetary limits.
@@ -67,7 +80,18 @@ pub fn account_archive_root_from_accounts(
     if rows.windows(2).any(|pair| pair[0].0 == pair[1].0) {
         return Err(WireError::KeyCollision);
     }
-    fn subtree(rows: &[(Hash, Hash)], depth: usize, empty: &[Hash; 257]) -> Hash {
+    // Initialize after EMPTY, whose construction retains the original branch
+    // function. The table contains public grammar constants only, never rows.
+    static EMPTY_LEFT: std::sync::OnceLock<[Sha256; 256]> = std::sync::OnceLock::new();
+    let empty_left = EMPTY_LEFT.get_or_init(|| {
+        std::array::from_fn(|depth| account_archive_empty_left_prefix(&empty[depth + 1]))
+    });
+    fn subtree(
+        rows: &[(Hash, Hash)],
+        depth: usize,
+        empty: &[Hash; 257],
+        empty_left: &[Sha256; 256],
+    ) -> Hash {
         if rows.is_empty() {
             return empty[depth];
         }
@@ -75,12 +99,18 @@ pub fn account_archive_root_from_accounts(
             return rows[0].1;
         }
         let split = rows.partition_point(|row| row.0[depth / 8] & (128 >> (depth % 8)) == 0);
+        if split == 0 {
+            let right = subtree(rows, depth + 1, empty, empty_left);
+            let mut digest = empty_left[depth].clone();
+            digest.update(right);
+            return digest.finalize().into();
+        }
         account_archive_branch_hash(
-            subtree(&rows[..split], depth + 1, empty),
-            subtree(&rows[split..], depth + 1, empty),
+            subtree(&rows[..split], depth + 1, empty, empty_left),
+            subtree(&rows[split..], depth + 1, empty, empty_left),
         )
     }
-    Ok(subtree(&rows, 0, empty))
+    Ok(subtree(&rows, 0, empty, empty_left))
 }
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Header {
@@ -424,6 +454,90 @@ fn state_root_from_hashes(mut leaves: Vec<(Hash, Hash)>) -> Result<Hash, WireErr
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn account_archive_empty_left_prefix_keeps_original_hash_grammar() {
+        let mut empty = hash(b"account-archive-empty-v1", &[]);
+        for depth in (0u64..256).rev() {
+            for right in [
+                [0; 32],
+                [255; 32],
+                empty,
+                hash(b"test-account-right", &[&depth.to_le_bytes()]),
+            ] {
+                let mut actual = account_archive_empty_left_prefix(&empty);
+                actual.update(right);
+                let actual: Hash = actual.finalize().into();
+                assert_eq!(
+                    actual,
+                    hash(b"account-archive-branch-v1", &[&empty, &right])
+                );
+            }
+            empty = hash(b"account-archive-branch-v1", &[&empty, &empty]);
+        }
+    }
+
+    #[test]
+    fn account_archive_reference_root_matches_complete_generic_rebuild() {
+        fn reference(rows: &[(Hash, Hash)], depth: usize, empty: &[Hash; 257]) -> Hash {
+            if rows.is_empty() {
+                return empty[depth];
+            }
+            if depth == 256 {
+                return rows[0].1;
+            }
+            let split = rows.partition_point(|row| row.0[depth / 8] & (128 >> (depth % 8)) == 0);
+            hash(
+                b"account-archive-branch-v1",
+                &[
+                    &reference(&rows[..split], depth + 1, empty),
+                    &reference(&rows[split..], depth + 1, empty),
+                ],
+            )
+        }
+        let mut empty = [[0; 32]; 257];
+        empty[256] = hash(b"account-archive-empty-v1", &[]);
+        for depth in (0..256).rev() {
+            empty[depth] = hash(
+                b"account-archive-branch-v1",
+                &[&empty[depth + 1], &empty[depth + 1]],
+            );
+        }
+        for count in [0u64, 1, 2, 8, 17] {
+            let accounts: Vec<_> = (0..count)
+                .map(|index| {
+                    (
+                        hash(b"test-account-owner", &[&index.to_le_bytes()]),
+                        index * 7,
+                        index * 3,
+                    )
+                })
+                .collect();
+            let mut rows: Vec<_> = accounts
+                .iter()
+                .map(|(owner, balance, nonce)| {
+                    (
+                        hash(b"account-archive-key-v1", &[owner]),
+                        hash(
+                            b"account-archive-leaf-v1",
+                            &[owner, &balance.to_le_bytes(), &nonce.to_le_bytes()],
+                        ),
+                    )
+                })
+                .collect();
+            rows.sort_unstable_by_key(|row| row.0);
+            assert_eq!(
+                account_archive_root_from_accounts(accounts.iter().copied()).unwrap(),
+                reference(&rows, 0, &empty)
+            );
+            let mut reverse = accounts.clone();
+            reverse.reverse();
+            assert_eq!(
+                account_archive_root_from_accounts(reverse).unwrap(),
+                reference(&rows, 0, &empty)
+            );
+        }
+    }
+
     #[test]
     fn account_archive_reference_root_matches_independent_vectors() {
         assert_eq!(

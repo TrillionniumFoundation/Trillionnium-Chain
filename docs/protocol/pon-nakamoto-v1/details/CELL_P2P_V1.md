@@ -169,8 +169,73 @@ artifact format before public distribution.
 
 ## Cache integrity and publication
 
-`CellStoreV1` uses a separate SQLite namespace with application ID `0x54434c31`
-and schema version 1. A populated foreign database is refused. New manifests
+`CellStoreV1` uses the fresh TCL4 SQLite namespace, application ID `0x54434c34`
+and schema version 4. Old TCL1/TCL2/TCL3 and populated foreign databases are refused;
+opening never resets or migrates them. Each writable open requires an exact
+persisted `CellCacheConfigV4`: finite logical bytes, chunk rows, manifest
+rows and main-database image bytes. The last cap is 4096-aligned, from 256KiB
+to 2TiB; every writer sets and reads back `max_page_count` at fixed 4096-byte
+page size. Cold readers/writers refuse wrong page sizes, excessive page counts
+or oversized main-file tails without truncation. This bounds supported SQLite
+DB images/file length, not allocated blocks or guaranteed backing capacity. Logical bytes count every live chunk payload, manifest wire and 32-byte
+content key. Atomic insert/update/delete triggers enforce that one whole-cache
+allowance across pack, direct puts, batch fetch, discovery and retention rehydration.
+Same-hash UPSERTs charge only the size difference; a failed eight-chunk transaction
+rolls back its rows and allowance together. Reopening checks complete table/trigger
+definitions and bounded actual SUM/COUNT against the counters without repairing
+them. Catalog validation copies at most the expected object count plus one, guards
+string byte lengths before copying and inspects every object regardless of its
+name prefix. Only the two exact primary-key automatic indexes are accepted, with
+their original type/name/table and genuinely NULL SQL; an oversized non-NULL SQL
+value cannot become an accepted NULL. The foreign-database check stops at its
+first object, including an internal object left by a previously used database. A failed download keeps its committed verified prefix charged. Read-only
+serving loads these persisted limits and holds no query snapshot across socket I/O.
+Actual corrupt-cache deletion returns only logical cache allowance. It does not
+retire a paid duty, release native funding or prove that filesystem blocks were freed.
+
+The TCL4 writer gate bounds supported cache WAL growth across independent
+processes without treating a checkpoint threshold as a quota. Initialization,
+manifest/chunk UPSERTs, the original eight-chunk transaction and corrupt-cache
+DELETE share one zero-byte, OS-locked `-writer-lock-v4` identity. Canonical parent
+paths share the lock; the owner-controlled namespace must not be replaced,
+renamed or aliased while open. Unix opens reject observed symlinks and hard links.
+Old writers cannot open the new application/schema; there is no in-place TCL3
+migration or protection against arbitrary external SQLite writes.
+
+Before every mutation, the owner requires a complete TRUNCATE checkpoint and
+an actual zero-length WAL. A pinned reader that prevents that checkpoint returns
+`CELL_CACHE_WRITER_BUSY` before the batch changes rows or counters. Releasing the
+reader permits the same original batch to retry. The gate shares the existing
+five-second writer-contention allowance with SQLite through one absolute budget;
+the checkpoint itself refuses immediately on a held reader. Filesystem and SQLite
+calls remain cooperative, so this is not a hard elapsed-time guarantee.
+
+Every connection disables close-time checkpoints, every writer disables automatic
+checkpoints and dirty-page spill, and `synchronous=FULL` remains required. Only
+this writer gate checkpoints. For the locked bundled SQLite 3.46.0 backend, one
+transaction from an empty WAL has at most one frame per main-image page plus up
+to 16 FULL-sync padding frames. With main cap `C` and 4096-byte pages, the WAL
+file-length allowance is `32 + (C/4096 + 16) * 4120` bytes. Its separate SHM
+allowance is `32768 * (1 + ceil((C/4096 + 16)/4096))` bytes, conservatively allowing
+the shorter first wal-index region. Existing oversized sidecars are refused;
+post-write checks are invariant diagnostics, not the preventive limit. Prevention
+comes from serialized zero-WAL admission and the spill-free bounded transaction.
+A backend-version substitution fails closed pending new qualification.
+
+These are logical file-length bounds, not allocated-block reservation, guaranteed
+free space, a filesystem/global quota, or I05 funding. New-cache rollback-journal
+creation, SQLite memory/temp peaks, caller temporary/output files, block allocation
+and other stores remain separate resource owners and open exits. Materialized
+output is bounded only by its caller's declared payload contract. The immutable
+TCL3 control still demonstrates WAL 449112 > main cap 262144; its original writes,
+retries and greater-than assertion are preserved in a test-only historical owner.
+
+Official SQLite contracts describe [TRUNCATE checkpoint completion](https://sqlite.org/pragma.html#pragma_wal_checkpoint),
+[dirty-page spill](https://sqlite.org/pragma.html#pragma_cache_spill) and
+[single-transaction WAL behavior](https://sqlite.org/wal.html#avoiding_excessively_large_wal_files).
+FULL sector-padding and wal-index capacity are also checked against the exact
+locked SQLite amalgamation; no `journal_size_limit` or automatic checkpoint is
+used as a hard cap. New manifests
 are persisted only after full decoding and pinned-ID comparison. New chunks
 are persisted only after length and SHA256 verification. Each cache read checks
 the bytes again. A corrupt disposable chunk is removed and becomes a missing
@@ -214,10 +279,17 @@ output path. Its optional `--max-response-bytes N` sets the response budget;
 the bounded default is `2 * max-bytes + 2097152 + 9 * max-connections`.
 Its successful `trnm.cell.fetch.v1` JSON adds `received_response_bytes` and
 `max_response_bytes` without changing existing payload counters. These local
-report additions do not change TCM1, TCQ1, TCS1 or the cache schema.
+report additions do not change TCM1, TCQ1 or TCS1; the separately bounded local
+cache uses the fresh TCL4/schema4 namespace described above.
 `verify` rechecks a complete local version. `manifest` exports the
 canonical pinned manifest for the existing release owner. No command implicitly
 discovers a model, changes its authority or activates a consensus profile.
+
+Every writable command (`pack`, `fetch`, `verify`, `prepare-release`,
+`fetch-release`, `verify-release`) also requires `--cache-max-bytes N
+--cache-max-chunks N --cache-max-manifests N --cache-max-db-bytes N`. Reuse the same exact limits for
+that cache on every invocation; a per-member payload budget is not a new cache
+allowance. `serve` and `manifest` use only an existing read-only TCL4 cache.
 
 `fetch-release --store DB --release-file ROOT --release HEX --peers IP:PORT,IP:PORT
 --output ABSENT_MARKER --max-bytes N --max-chunks N --max-response-bytes N
@@ -225,10 +297,20 @@ discovers a model, changes its authority or activates a consensus profile.
 uses the same store, root, pinned release ID and total byte/chunk/time budgets
 without a network call. The new CLI reports have distinct
 `trnm.cell.release.fetch.v1` and `trnm.cell.release.verify.v1` identities. TCM1,
-TCQ1, TCS1 and the existing cache schema are unchanged. The root is supplied
+TCQ1 and TCS1 are unchanged; only the local cache schema is TCL4. The root is supplied
 locally; this increment does not add public root discovery.
 
 ## Executable acceptance
+
+The [TCL4 three-host relay](../../../../evidence/pon-upgrade-implementation-20261018/native-rounds/cell-tcl4-release-three-host-20261024/SCOPE.md)
+executes the existing configured-peer path with all271,178,816 public model
+bytes and266 chunks. The release build completes the two120s fetch windows in
+33.255s and38.782s, with the original supplier stopped before the second hop.
+The consumer rehashes all eight material files; no loader or model forward runs.
+The preceding development-build deadline failure is retained separately. Both
+attempts use the same finite TCL4 caps and unchanged27 driver assertions. This
+does not close the funded retention, physical/global storage or public-discovery
+obligations below.
 
 `cargo test --locked --manifest-path trillionnium/Cargo.toml -p
 trnm-data-availability --lib cell::` contains actual TCP and disk tests for:
@@ -266,17 +348,46 @@ trnm-data-availability --lib cell::` contains actual TCP and disk tests for:
   complete-payload digest before publication, and never replaces an existing
   output. The combined network-to-file success path returns the exact bytes.
 
+The same existing native suite includes [TCL4 cache admission controls](../../../../trillionnium/crates/trnm-data-availability/src/cell/cache_budget_tests.rs)
+and [complete catalog controls](../../../../trillionnium/crates/trnm-data-availability/src/cell/cache_catalog_tests.rs):
+exact byte/row boundaries and full-cache dedup, two real concurrent writers,
+atomic eight-row rollback, cross-reopen immutable limits, retained verified
+prefixes after a later quota refusal, actual corrupt-row deletion, bounded
+catalog/counter/trigger validation, reserved-prefix trigger refusal and exact
+automatic-index identity/NULL SQL checks.
+Writable and read-only cold-open failures preserve the original database.
+The existing [CLI controls](../../../../trillionnium/crates/trnm-data-availability/tests/cell_fetch_deadline_cli.rs)
+require every writer cap before cache creation and prohibit read-only manifest
+export from creating a missing cache. The existing M12 [native paid-storage controls](../../../../trillionnium/crates/trnm-pon-node/src/store/storage_service/cache_quota_tests.rs)
+require actual cache deletion and rehydration quota refusal to leave the original
+paid obligation, retained-byte target, funding row and budget report unchanged.
+These controls execute through the existing workspace matrix; they do not replace
+its retained tests or establish hard physical storage bounds.
+
 Loopback tests establish byte and failure semantics. Cross-host delivery and
 actual loader receipts must name their source, model, hosts and failures; neither
 case establishes independent operators, arbitrary large-model loading or a
 permissionless storage network by itself.
 
+The later [controlled original-owner observation](../../../../evidence/pon-upgrade-implementation-20261018/native-rounds/real-model-owner-controlled-20261025/SCOPE.md)
+actually loads the eight TCL4 peer-fetched upstream files in Hepta `07731d31`.
+Its unchanged signed neural read and verified terminal unload case passes in
+17.753s under the original per-operation bounds. The adapter comes from the
+separate controlled parameter lineage. This advances configured-peer material
+testing from bytes to a real model forward, without qualifying a selected
+complete release, CURRENT installation, funded storage or the three-round loop.
+
 ## PN3 release closure and real loader interface
 
 This is I09 of the
 [sole plan](../../../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md).
-The TCM1 configured-peer pilot above is implemented; the release closure,
-ordinary loader integration and public storage duties below are target work.
+The TCM1 configured-peer pilot above and a fixed-profile eleven-material
+controlled byte closure are implemented. The latter [source-bound observation](../../../../evidence/pon-upgrade-implementation-20261018/native-rounds/real-model-owner-controlled-20261025/i09-eleven-material-controlled-20261026.json)
+on Chain `915f933c` / Hepta `da4a920` passes the original signed native case
+using all eleven objects from one loopback peer. Its overall handoff still fails
+at I10 selected installation. General selected dependency closure, ordinary
+loader/I10 integration, full runtime closure and public storage duties below
+remain target work; the target message names are not new exported APIs.
 Reuse the existing chunk/store/fetch owner rather than add another weight store.
 P1 closure/loader integration is a required delivery for the P0 PN3 full-loop
 gate; completing only its P0 interface prerequisites cannot close that gate.
@@ -333,6 +444,34 @@ Missing dependencies never yield a complete result. The release owner validates
 closure completeness and the safe loader validates formats/shapes without remote
 code import before the existing FinalUse owner can admit the selected generation.
 
+The following **target interface**, still to be implemented and versioned, makes
+that seam reviewable. These are semantic message names, not new exported APIs,
+current CLI fields or authority owners.
+
+| Message / owner | Required typed contract |
+| --- | --- |
+| `ResolveReleaseRequest` / M10 -> M09 | Original operation and attempt, closure codec/domain/ID, model profile, selected generation, mandatory object set and a single shared resource reservation. Mutable tags are resolved by M10 before this request. |
+| `ResolveReleaseResult` / M09 -> M10/Hepta | Same operation/closure/generation, `Complete`, `Incomplete`, `Refused` or `Unknown`; verified object IDs, absent IDs, actual suppliers/counters, materialization identities and completion/readback status. Only a fresh complete closure may return `Complete`. |
+| `AdmitReleaseRequest` / M10 -> existing Hepta owners | Complete byte result plus independently current release/withdrawal, compatibility, resource and installation authority. M09 supplies no authority token. |
+| `LoadedReleaseReadback` / actual Hepta runtime -> M17 | Installed closure and generation, actual base/tokenizer/router/Cell hashes, loader/runtime profile, next task identity and its result. A fetch receipt or intended configuration is insufficient. |
+
+Target error categories are `InvalidClosure`, `UnsupportedCodec`,
+`IncompatibleProfile`, `MissingDependency`, `Unavailable`, `IntegrityFailure`,
+`BudgetExhausted`, `DeadlineExceeded`, `PublicationConflict`, `Withdrawn` and
+`UnknownEffect`. Every result preserves the original identity and consumed
+reservation; errors do not replenish it. After publication may have begun,
+`UnknownEffect` permits only exact-target verification/reconciliation. A new
+attempt needs explicit remaining authority and budget; it cannot blindly repeat
+the effect, silently replace the output or obtain a fresh reservation by rename.
+
+Before closure implementation, M10/M09 and the Hepta loader owner jointly freeze
+the new codec's canonical byte order, hash domain, supported algorithms and
+maximum byte/object/depth/fanout/active-set limits. Define independent vectors
+for empty/oversized lists, cycles, aliases, conflicting dimensions and duplicate
+dependencies. All size arithmetic is checked before allocation. The closure
+also freezes reconstruction order and maximum delta depth; loading cannot follow
+an unbounded parent chain. Existing TCM1/TCR1 parsers and identities remain exact.
+
 Implement local SSD -> RAM -> device-memory staging and bounded prefetch through
 the actual neuron runtime. Bind cached tensors/features to exact content and local
 generation, and count download, full hash, disk, deserialization and transfer to
@@ -360,6 +499,21 @@ all closure members. Freeze cold/warm latency, memory, sample-count and completi
 targets before the run; undersampled p99 remains unknown. Weight MB/s, cache hit
 rate and model-load latency are separate from unique client-confirmed chain TPS.
 
+The PN3 freeze record must contain numeric payload/dependency counts, chunk
+distribution, total cold bytes, cache state, concurrency, link rate/RTT/loss,
+disk/runtime/device profile, deadlines, every resource ceiling and sample count.
+Select limits from the intended deployment envelope and an independently retained
+baseline, then sign/hash that record before candidate measurement. Lower bounds
+such as bytes/link-rate inform the target; a failed run cannot choose its own
+new limit. Publish complete and incomplete cohorts separately, with raw duration
+samples, quantile method and the preselected confidence interval. Require at
+least 100 completed samples before reporting a measured p99; this floor alone
+does not establish confidence, and inadequate cohorts keep the target unqualified.
+Completed-sample quantiles are conditional on completion: retain all attempted
+requests and failure/timeout censoring denominators, never invent a completion
+duration for an unresolved attempt or claim an all-attempt p99 from survivors.
+This is a target measurement rule, not a new claim about the two existing relay samples.
+
 ## PN5 swarm discovery, storage and repair target
 
 BitTorrent-style content addressing, multi-source pieces, resumable verified
@@ -371,6 +525,16 @@ release's complete reachable dependency closure, not the union of all cached
 Cells in the network. Local inference still needs the active weights and KV/
 activation memory. Remote execution of missing layers is a separate compute,
 privacy and latency protocol, not implemented by P2P byte fetch.
+
+BitTorrent v2 wire compatibility, a DHT and persistent request multiplexing are
+**reviewable PN5 adapter options**, not selected replacements for TCQ1/TCS1 or
+the development rendezvous. Benchmark them against the current serial and
+four-worker configurations using the same release, cached prefix, hosts, network
+faults, concurrency and total budgets. Record setup cost, verified useful MB/s,
+time to complete the least-available mandatory object, CPU/RSS/disk cost and
+honest service under flash crowds; higher raw socket throughput alone fails the
+comparison. A rare-piece scheduler must use bounded observations and queues;
+untrusted availability claims cannot create unbounded probes or work.
 
 Deliver discovery after PN3 works with configured providers. Use a separately
 versioned peer/provider envelope with bounded TTL, candidate count, lookup hops,

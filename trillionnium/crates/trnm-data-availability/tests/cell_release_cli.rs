@@ -61,7 +61,7 @@ impl Peer {
         let child_stop = stop.clone();
         let path = path.to_owned();
         let handle = thread::spawn(move || {
-            let store = CellStoreV1::open(&path).unwrap();
+            let store = CellStoreV1::open(&path, cache_config()).unwrap();
             serve_cells(
                 &listener,
                 &store,
@@ -109,6 +109,14 @@ fn fetch_args(
 ) -> Vec<String> {
     [
         "fetch-release".into(),
+        "--cache-max-bytes".into(),
+        "67108864".into(),
+        "--cache-max-chunks".into(),
+        "4096".into(),
+        "--cache-max-manifests".into(),
+        "256".into(),
+        "--cache-max-db-bytes".into(),
+        "134217728".into(),
         "--store".into(),
         cache.display().to_string(),
         "--release-file".into(),
@@ -137,7 +145,7 @@ fn fetch_args(
 fn cli_pins_release_and_shares_budgets_before_create_only_completion() {
     let directory = tempfile::tempdir().unwrap();
     let origin_path = directory.path().join("origin.sqlite");
-    let origin = CellStoreV1::open(&origin_path).unwrap();
+    let origin = CellStoreV1::open(&origin_path, cache_config()).unwrap();
     let context = CellContextV1 {
         family: "release-cli-v1".into(),
         base: [1; 32],
@@ -235,6 +243,14 @@ fn cli_pins_release_and_shares_budgets_before_create_only_completion() {
 
     let verify = cli(&[
         "verify-release".into(),
+        "--cache-max-bytes".into(),
+        "67108864".into(),
+        "--cache-max-chunks".into(),
+        "4096".into(),
+        "--cache-max-manifests".into(),
+        "256".into(),
+        "--cache-max-db-bytes".into(),
+        "134217728".into(),
         "--store".into(),
         cache.display().to_string(),
         "--release-file".into(),
@@ -265,6 +281,14 @@ fn prepare_args(
 ) -> Vec<String> {
     [
         "prepare-release".into(),
+        "--cache-max-bytes".into(),
+        "67108864".into(),
+        "--cache-max-chunks".into(),
+        "4096".into(),
+        "--cache-max-manifests".into(),
+        "256".into(),
+        "--cache-max-db-bytes".into(),
+        "134217728".into(),
         "--store".into(),
         store.display().to_string(),
         "--manifests".into(),
@@ -285,7 +309,7 @@ fn prepare_args(
 fn cli_release_preparation_rejects_incomplete_incompatible_and_over_budget_sets() {
     let directory = tempfile::tempdir().unwrap();
     let origin_path = directory.path().join("origin.sqlite");
-    let origin = CellStoreV1::open(&origin_path).unwrap();
+    let origin = CellStoreV1::open(&origin_path, cache_config()).unwrap();
     let context = CellContextV1 {
         family: "prepare-cli-v1".into(),
         base: [1; 32],
@@ -357,4 +381,14 @@ fn cli_release_preparation_rejects_incomplete_incompatible_and_over_budget_sets(
     assert!(!retry.status.success());
     assert!(String::from_utf8_lossy(&retry.stderr).contains("release marker exists"));
     assert_eq!(fs::read(&output).unwrap(), canonical.encode());
+}
+
+// Explicit finite fixture quota; covers the existing <=32MiB commit fixtures.
+fn cache_config() -> trnm_data_availability::cell::CellCacheConfigV4 {
+    trnm_data_availability::cell::CellCacheConfigV4 {
+        max_database_bytes: 128 * 1024 * 1024,
+        max_logical_bytes: 64 * 1024 * 1024,
+        max_chunk_rows: 4096,
+        max_manifest_rows: 256,
+    }
 }

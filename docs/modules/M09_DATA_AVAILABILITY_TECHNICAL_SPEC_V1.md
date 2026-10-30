@@ -48,6 +48,17 @@ the shared actual-write budget charges partial failed responses. Worker errors
 stop intake and all admitted threads are joined. The serial default remains;
 these controls do not qualify public fairness or independent custody.
 
+PN3's optional `smollm-signed-read-v1` handoff profile exports the same eleven
+TCM1 objects and TCR1 release with a separate bounded declaration. The Hepta
+consumer owns model interpretation and must independently reconstruct every
+original manifest from received bytes before using its existing signed native
+owner. M09 supplies no selected CURRENT or installation authority. The default
+handoff refusal and original 35-second transfer/readback deadline remain;
+the [source-bound eleven-material controlled load/query/terminal-unload](../../evidence/pon-upgrade-implementation-20261018/native-rounds/real-model-owner-controlled-20261025/i09-eleven-material-controlled-20261026.json)
+has now been observed through the original owner. The overall handoff still
+fails at unavailable I10 selected installation; ordinary next-task readback and
+complete product acceptance remain required.
+
 **Atomic/commit boundary:** Retention obligations separate from self-contained historical work certificates.
 
 ## M09.ArtifactIdentity
@@ -84,6 +95,54 @@ These exact functions contain executable assertions. The registry only checks bi
 Parameter substitution, hostile object formats, unavailable custodians and expired shared bases.
 
 Physical-host copies and source-path loss are tested by a scoped campaign; geographic independence, renewal and long-retention responsibility remain unaccepted.
+
+The existing Cell cache uses fresh TCL4/schema4 with mandatory immutable finite
+logical-byte/chunk-row/manifest-row limits and a main-DB image/file-length cap.
+Every writer reapplies and reads back the persisted cap at fixed 4096-byte pages;
+old TCL1/TCL2/TCL3, wrong pages, oversized images and tails fail closed without migration. All ordinary puts and corrupt-cache
+deletes share atomic persisted accounting; exact cold reopen checks full schema
+and actual bounded occupancy. This PN3/PN4 cache allowance is independent of I05
+paid retention, native funding and the 4096 retained obligation identities.
+Supported writers now share a zero-WAL admission gate across processes: complete
+TRUNCATE before mutation, disabled dirty-page spill, unchanged FULL sync and one
+bounded original transaction. A long reader causes pre-write refusal; the same
+batch retries after release. WAL and SHM file lengths have separate derived caps
+from the immutable main-image cap, including FULL sector padding. The frozen TCL3
+449112-byte WAL counterexample remains a historical control. Allocated-block
+reservation, new-cache rollback journal, memory/temp/output peaks and global I05
+funding remain open; these file-length caps are not total-disk quotas. See the existing
+[Cell contract](../protocol/pon-nakamoto-v1/details/CELL_P2P_V1.md).
+
+### PN3/PN4/PN5 interface and acceptance obligations
+
+These are target obligations inside the existing PN0–PN6 plan and I05/I09/I10
+interfaces. The current TCM1/TCR1 byte path, TCL4 cache, development rendezvous
+and v1 single-manifest retention contract remain their separate implemented
+components; none already implements a complete neural release-closure codec.
+
+| Existing stage / owner seam | Required implementation and exit |
+| --- | --- |
+| PN3 / M10 -> M09 -> Hepta loader -> M17 | Version the complete closure and finite `ResolveReleaseRequest/Result`; bind family/base/tokenizer/layout/shape/dtype/quantization/runtime/router, mandatory Cells/dependencies and selected generation. Reject cycles, absent mandatory bytes and incompatible loaders. Each adopted round requires verified cross-node retrieval, safe installation and next-task loaded-hash readback; no-update reads back the retained parent. The three-round mechanical loop still needs a separate successful cross-node I09/I10 installation cohort including origin loss. |
+| PN4 / M09 <-> M12 | Version release-wide funded duty, byte-time tariff, renewal/repair reservation and unknown-effect reconciliation. Reserve physical capacity before ACK; retain original effect/payment fences across restart/reorg. Cache completion is no duty or payment receipt. |
+| PN5 / M09/M14 -> M17 | Qualify finite discovery, independent replicas, shared-budget repair and complete-release service during the at-least-72-hour WAN campaign. Initial target is three independent complete replicas; all promised releases must meet the frozen threshold and deadlines. |
+
+The exact target messages, errors and codec compatibility rules live in the
+[Cell interface](../protocol/pon-nakamoto-v1/details/CELL_P2P_V1.md#pn3-release-closure-and-real-loader-interface),
+[discovery seam](../development/specs/pon/CELL_PROVIDER_DISCOVERY_DEV_V1.md#pn5-extension-seam--target-not-the-dev-v1-codec)
+and [retention duty](../development/specs/pon/CELL_RETENTION_V1.md#pn4pn5-release-wide-duty-interface--target).
+Implement canonical vectors and negative cross-version refusal before plumbing
+the loader or network adapter. Unknown publication/repair outcomes permit only
+exact-target reconciliation; retries do not reset reservation or authorization.
+
+Freeze workload/source/profile, numeric latency/resource/sample thresholds and
+failure matrix before measurement. Report verified MB/s, complete-release
+availability, cold/warm loader latency, repair debt and unique confirmed chain
+TPS separately. Compare persistent connections, bounded rare-piece scheduling,
+BT v2/DHT or erasure coding only against the same workload and original budgets;
+they remain reviewed options until selected, implemented and qualified. GC must
+preserve all lease/reorg/rollback roots and shared dependencies. Model integrity,
+availability, quality and local installation remain four independently checked
+claims, with failed cohorts preserved under their actual source identities.
 
 ## Current source and verification
 

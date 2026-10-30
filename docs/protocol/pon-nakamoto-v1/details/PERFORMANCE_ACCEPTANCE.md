@@ -62,6 +62,52 @@ Low-conflict and single-hot-key workloads must produce the same deterministic ro
 quota partitions and bounded settlement batches are candidates, not measured gains in
 this increment. Any such optimization must preserve escrow, nonce, fee and reorg semantics.
 
+### PN1/PN2 measured optimization order
+
+M15 supplies one frozen end-to-end workload; M01/M04/M06/M07/M08/M13 expose
+their existing stage boundaries and M17 retains raw results. This is an
+implementation order within PN1/PN2, with PN3/PN5 consumers, not another roadmap.
+For each comparison freeze the source pair, binary/profile, state backend,
+targets, account/history sizes, touched keys, shared-key conflicts, offered
+load, resource limits, confirmation policy, repetitions and stop rules. Changed
+code requires its own source/binary identity; unchanged mathematical workload
+and resource/decision rules make it a comparison, not identical source evidence.
+
+| Order / owners | Interface or optimization to deliver | Acceptance before proceeding |
+| --- | --- | --- |
+| Profile first / M01/M04/M06/M07/M15 | Separate decode, owner wait, parent/task lookup, full W1, execution, root/witness reads, durable commit, response and client import | Trace inclusive and nested CPU separately; expose queue/refusal/failure denominators, cold/warm cache state and actual disk/WAL peaks. Do not sum nested spans. |
+| Bound state/history / M00/M06/M07/M08/M13 | I03/I04 authenticated parent, complete mandatory touched set and bounded witnesses; transactional generation fences and retained COW roots | Compare against complete-State reference roots; conservation, nonce, reorg and crash/cold audit still pass. At fixed touched set W, publish increasing accounts A/history H curves and identify remaining full-read or O(H) work. |
+| Parallel preparation / M05/M06 | Conflict-aware execution and witness/hash preparation outside one atomic durable publication point | Same root/error/cancellation semantics at 1/2/4/8 workers for disjoint, shared-sponsor and single-hot-key loads; no lost debit, double effect or new unbounded queue. |
+| Batch and pipeline / M04/M05/M07/M15 | Bounded block/receipt batching, propagation and commit amortization with original operation identities | Charge full batch validation/availability and confirmation drain; isolate head-of-line delay, stale work, retry amplification and crash/reorg costs. A root commitment does not verify its members. |
+| Data path / M09/M14 and Hepta runtime | Existing Cell fetch/store plus bounded prefetch, complete hash/closure/loader and SSD/RAM/device staging | Report complete-release cold/warm costs and loaded hashes under the same total budget; faster TCP alone cannot close install or inference latency. |
+| Ordering alternative / M02/M04/M17 | Only after propagation/stale work dominates, compare current ordering with explicitly specified parallel-block/DAG candidates | Same W1, workload, validation, DA, conflict and recovery assumptions; retain implementation status and changed trust model. No paper TPS or DAG simulation qualifies production consensus. |
+
+For every measured cohort report four distinct denominators: unique valid
+client-confirmed transactions per elapsed campaign second; evaluated/eligible
+model candidates per unit time and total cost; complete verified release bytes
+per second; ordinary inference latency/tokens per second. Preparation, accepted
+requests, included transactions, confirmations and model installations are
+separate counters. Label the common warm-up/setup boundary and include failed,
+stale, pending, cancelled and unknown outcomes in their planned cohorts.
+
+Register numerical goodput, completion, p95/p99, queue, memory, disk and recovery
+objectives before the experiment, including acceptable nonregression margins
+and statistical comparison rule. Preserve raw per-request monotonic timestamps,
+transaction/release/operation identities and block correlation. At least 100
+completed independent block observations resolve an empirical block p99; this
+is a resolution floor, not a confidence guarantee, and eight transactions in
+one block are not eight independent samples. Report censoring and insufficient
+samples explicitly. A load sweep must expose its offered rate, achieved rate,
+backlog slope, failures and all saturation/stop observations; select no capacity
+number from a failed faster run or from survivor-only latency.
+
+An optimization passes only its preregistered improvement/nonregression rule
+and all applicable correctness, resource and failure gates on the same workload.
+No measured improvement may come from raising limits, changing the work/target
+distribution, deleting history, dropping mandatory checks or shortening final
+confirmation. PN5 then repeats accepted complete paths under its independent
+WAN and fault envelope; finite local speedup remains a development result.
+
 ## P1.4 Independent acceptance package
 
 A reviewer receives frozen configs, exact algorithms/byte offsets, vectors generated by a

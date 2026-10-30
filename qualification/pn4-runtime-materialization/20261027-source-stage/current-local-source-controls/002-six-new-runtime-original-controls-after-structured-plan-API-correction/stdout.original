@@ -1,0 +1,11 @@
+
+running 6 tests
+test cell::runtime_root::tests::real_peer_cannot_renew_exhausted_connection_budget_between_segments ... ok
+test cell::runtime_root::tests::real_peer_streams_file_larger_than_cache_with_one_original_transport ... ok
+test cell::runtime_root::tests::roles_paths_context_and_coverage_cannot_be_relabelled_implicitly ... ok
+test cell::runtime_root::tests::reconstructs_original_bytes_and_retires_only_disposable_rows ... ok
+test cell::runtime_root::tests::unknown_cost_and_metadata_peak_refuse_before_destructive_cache_consumption ... ok
+test cell::runtime_root::tests::segment_success_cannot_publish_a_wrong_whole_file_or_refund_attempt ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 135 filtered out; finished in 2.55s
+

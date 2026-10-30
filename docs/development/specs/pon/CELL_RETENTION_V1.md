@@ -150,6 +150,52 @@ renewal policy. Test operators and multiple keys on one machine cannot establish
 independent custody. Source-preserving migration and governed activation remain
 separate PN6 gates.
 
+### PN4/PN5 release-wide duty interface — target
+
+Extending a single-manifest duty to a complete model release is existing I05/I09
+work, not an implemented field in this v1 contract or TCR1. M10 supplies the
+validated versioned closure; M09 owns bytes/duties, M12 owns the original funded
+operation and settlement, and M17 records actual readback. A content hash proves
+identity, a successful retrieval proves scoped availability, evaluation owns
+model quality, and the existing Hepta owners alone admit CURRENT/FinalUse.
+
+| Target message | Required immutable input / observable output |
+| --- | --- |
+| `ReserveReleaseDuty` | Original operation/funding claim, closure ID and complete reachable object set, provider/failure-domain declaration, physical byte and byte-time reservation, start/expiry, price/currency/rounding and renewal/repair owner. Return the exact committed duty or a typed refusal before ACK. |
+| `ReadReleaseDuty` | Original duty and observation window. Return per-object actual retrieval/readback, corruption/missing set, reserved/consumed resources, current funding ancestry and `Observed`, `Degraded`, `Expired` or `Unknown`; an advertisement is insufficient. |
+| `RepairReleaseDuty` | Original duty, separately funded repair identity, permitted target set, shared byte/CPU/disk/connection deadline reservation and successor terms. Return exact rewritten/readback bytes and unresolved debt; an interrupted write reconciles its original identity only. |
+| `RenewOrRetireDuty` | Exact old duty, current funding/height observation and separately authorized successor. Return durable renewal/retirement status; an unknown effect cannot implicitly free capacity, refund or re-dispatch. |
+
+The target codec must bind lease extension and cancellation separately from
+immutable original terms. Define errors for invalid closure/funding, insufficient
+physical reservation, expired/conflicting duty, lost replica, integrity failure,
+budget/deadline exhaustion and unknown effect. A budget allowance, ACK, local
+inventory or historical payment row cannot be reinterpreted as available coins.
+Settlement uses the ordinary ledger transition and ancestry readback; the chain
+cannot retroactively undo a completed copy or restore an expired physical slot.
+
+GC/archival target roots include every retained release, unexpired acknowledged
+duty, pending/unknown effect, successor handoff, and the versions required by the
+declared reorg/rollback horizon. Traverse the full dependency closure with checked
+bounds, then recheck roots and duty versions atomically before deletion. Unknown
+root/funding state refuses deletion. Cache LRU may evict disposable copies, but
+cannot reclaim a promised replica or shared base. Revocation prevents admission;
+it does not authorize erasing an unexpired storage obligation or published history.
+
+Before PN5, freeze numeric per-release replica threshold (initial target: three
+independent complete replicas), retrieval and repair deadlines, probe/sample
+schedule, reservation caps, tariff, renewal lead time and maximum repair debt.
+Measure two retained versions sharing a base plus one distinct dependency; lose
+the author and one provider, interrupt repair, exhaust funding, fail renewal,
+restart and reorganize around expiry/GC. A pass requires complete release
+retrieval and restoration to three independent domains within the frozen limits,
+zero deletion of reachable promised objects, and exact nonduplicated accounting.
+Fail/Unknown duties stay explicit even when aggregate stored bytes look healthy.
+Byte-time price and growth/archival funding must cover the declared duration;
+all-version storage cannot be inferred from a finite cache or indefinite seeding.
+Encryption keys, authorized export and key rotation have separate owners; neither
+a retention ACK nor repair grants decryption rights or promises remote deletion.
+
 ## Verification entry points
 
 The tests exercise actual allocated files, cold opens, native signed task escrows,

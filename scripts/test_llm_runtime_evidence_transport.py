@@ -15,8 +15,12 @@ import llm_runtime_kernel_owned as kernel
 import llm_runtime_evidence_pipe as transport
 import llm_runtime_pilot as runtime
 import test_llm_runtime_evidence_pipe as ownership
+from test_llm_runtime_evidence_frames import source_child_environment
 
-PAYLOAD = """import os,sys,resource
+# Each real child needs the exact source directory; unittest's in-process
+# import path is not inherited by either python -c interpreter.
+IMPORT_SOURCE = f'import sys\nsys.path.insert(0, {str(Path(__file__).resolve().parent)!r})\n'
+PAYLOAD = IMPORT_SOURCE + """import os,sys,resource
 from pathlib import Path
 import llm_runtime_evidence_frames as f
 pages=bytearray(1048576);pages[0]=1
@@ -25,7 +29,7 @@ f.borrow_evidence_stdout(int(sys.argv[1]),'payload').emit(f.KINDS[0],dict(
  anonymous_bytes=len(pages),iterations=1,checksum=1,own_peak_rss_kib=resource.getrusage(0).ru_maxrss,
  model_loaded=False,descendants_spawned=False))
 """
-WRAPPER = """import os,sys
+WRAPPER = IMPORT_SOURCE + """import os,sys
 from pathlib import Path
 import llm_runtime_evidence_frames as f
 import llm_runtime_pilot as r
@@ -55,7 +59,7 @@ class EvidenceTransportTests(unittest.TestCase):
         def spawn(group,output,exe,argv,environment,slots):
             # Test-only ordinary spawn; actual native INTO_CGROUP is NOT_RUN.
             child=subprocess.Popen([os.fsdecode(value) for value in argv if value],
-                stdout=output,stderr=subprocess.STDOUT)
+                stdout=output,stderr=subprocess.STDOUT,env=source_child_environment())
             self.children.append(child)
             slots[:]=(child.pid,os.pidfd_open(child.pid),-1,-1)
             return 0

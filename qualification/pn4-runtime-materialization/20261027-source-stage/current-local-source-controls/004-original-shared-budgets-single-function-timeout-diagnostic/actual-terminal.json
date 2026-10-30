@@ -1,0 +1,31 @@
+{
+  "started_utc": "2026-10-27T06:37:47.692894+00:00",
+  "pid": 747886,
+  "birth": "747886 (cargo) R 746145 746145 746145 0 -1 4194304 17 0 0 0 0 0 0 0 30 10 1 0 16073368 18915328 0 18446744073709551615 104414188666880 104414206136492 140728839650640 0 0 0 0 0 0 0 0 0 17 37 0 0 0 0 0 104414208234400 104414209246116 104415248830464 140728839657173 140728839657348 140728839657348 140728839659481 0\n",
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "-p",
+    "trnm-data-availability",
+    "--lib",
+    "cell::discovery::tests::discovery_and_cell_requests_share_original_connection_and_actual_byte_budgets",
+    "--",
+    "--exact"
+  ],
+  "finished_utc": "2026-10-27T06:37:50.264470+00:00",
+  "actual_process_wait_exit": 0,
+  "seconds": 2.57326999,
+  "raw": {
+    "stdout.original": {
+      "bytes": 228,
+      "sha256": "d48e2a7267af623492f659be25482e1bb4c03a53aa8386621daf4ce4755a7972"
+    },
+    "stderr.original": {
+      "bytes": 335,
+      "sha256": "7c4469cc33ad2922847796ff414c4f168be00df01648e833ce6c58df5167f4fc"
+    }
+  },
+  "merge_ready": false
+}

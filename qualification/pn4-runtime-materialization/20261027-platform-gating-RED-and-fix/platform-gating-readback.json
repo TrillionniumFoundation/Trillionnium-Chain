@@ -1,0 +1,108 @@
+{
+  "schema": "pn4-platform-gating-actual-source-repair-v1",
+  "recorded_utc": "2026-10-27T07:14:12.304707+00:00",
+  "role": "LOCAL_SOURCE_VALIDATION_NOT_WINDOWS_NATIVE_OR_RELEASE_QUALIFICATION",
+  "source_parent": "c96022b897c1235fdbdbfcfa32764403511c6aab",
+  "original_GNU_cross_Clippy": {
+    "actual_wait_exit": 101,
+    "seconds": 77.090908821,
+    "error": "retire_consumed_runtime_segment is never used: -D dead-code implied by -D warnings",
+    "full_raw": "original-GNU-RED/001-Windows-GNU-all-target-strict-Clippy-before-cfg-fix/stderr.original",
+    "source_preimages_preserved": true
+  },
+  "source_change": "One cfg(unix) on private runtime retirement helper, matching its existing cfg(unix) consumer; no warning suppression.",
+  "source_fix_proof": "cfg-source-fix/actual-exact-source-fix-readback.json",
+  "actual_after_fix_steps": [
+    {
+      "command": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-data-availability",
+        "--all-targets",
+        "--target",
+        "x86_64-pc-windows-gnu",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "actual_wait_exit": 0,
+      "seconds": 20.596952057
+    },
+    {
+      "command": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-data-availability",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "actual_wait_exit": 0,
+      "seconds": 28.844289397
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-data-availability",
+        "cell::runtime_root::tests::"
+      ],
+      "actual_wait_exit": 0,
+      "seconds": 36.06261686
+    },
+    {
+      "command": [
+        "python3",
+        "../scripts/ci/test_ci_source_integrity.py"
+      ],
+      "actual_wait_exit": 0,
+      "seconds": 10.906497136
+    },
+    {
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "actual_wait_exit": 0,
+      "seconds": 17.723126227
+    }
+  ],
+  "new_runtime_native_controls": {
+    "passed": 6,
+    "failed": 0,
+    "ignored": 0,
+    "filtered_original_library_cases": 135
+  },
+  "original_negative_source_integrity_tests_passed": 34,
+  "original_assertions_limits_and_failures_preserved": true,
+  "complete_141_crate_original_CI_thread_default_still_FAIL": {
+    "passed": 140,
+    "failed": 1,
+    "ignored": 0,
+    "evidence": "../20261027-CI-default-retained-failure/retained-failure-readback.json",
+    "remaining_short_TTL_discovery_failure_closed": false
+  },
+  "no_complete_crate_retry_to_green": true,
+  "Windows_native_four_lane_isolation_qualified": false,
+  "held_real_loader": false,
+  "ordinary_I09_I10": false,
+  "persistent_custody_repair": false,
+  "independent72hWAN": false,
+  "mechanism_closed": false,
+  "benefit_demonstrated": false,
+  "task_complete": false,
+  "merge_ready": false
+}

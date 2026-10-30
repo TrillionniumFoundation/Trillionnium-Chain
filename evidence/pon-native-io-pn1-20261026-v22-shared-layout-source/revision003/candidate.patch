@@ -1,0 +1,1696 @@
+diff --git a/trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs b/trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs
+index d4327221f..5b09b2e47 100644
+--- a/trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs
++++ b/trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs
+@@ -449,6 +449,72 @@ fn child_with_lifts(
+     Ok(out)
+ }
+ 
++/// Recover every actual account from one retained root. The result is local to
++/// this read operation: neither a caller digest nor a previous successful audit
++/// can stand in for the current SQL bytes and complete graph traversal.
++pub(crate) fn materialize_accounts(
++    db: &Connection,
++    root: &Root,
++    progress: &mut dyn FnMut() -> Result<()>,
++    lifts: Option<&LiftCache>,
++) -> Result<BTreeMap<Hash, Account>> {
++    let empty = empty_hashes();
++    let mut reader = NodeReader::new(db);
++    let node = root
++        .node
++        .map(|id| reader.load(id, lifts))
++        .transpose()
++        .map_err(storage)?;
++    crate::ensure(
++        root.count <= 65_536
++            && root.node.is_none() == (root.count == 0)
++            && node.as_ref().map_or(empty[0], |node| {
++                lifts.map_or_else(|| node.lift(0, &empty), |cache| cache.lift(node, 0))
++            }) == root.digest,
++        "NATIVE_ACCOUNT_ROOT",
++    )
++    .map_err(Error::local_integrity)?;
++    let mut stack = node.into_iter().collect::<Vec<_>>();
++    let mut seen = BTreeSet::new();
++    let mut retained = BTreeMap::new();
++    let mut balance = 0u64;
++    while let Some(node) = stack.pop() {
++        progress()?;
++        crate::ensure(
++            seen.insert(node.id) && seen.len() <= 131_071,
++            "NATIVE_ACCOUNT_GRAPH",
++        )
++        .map_err(Error::local_integrity)?;
++        match node.kind {
++            Kind::Leaf(owner, value) => {
++                crate::ensure(
++                    retained.insert(owner, value).is_none(),
++                    "NATIVE_ACCOUNT_DUPLICATE",
++                )
++                .map_err(Error::local_integrity)?;
++                balance = balance
++                    .checked_add(value.balance)
++                    .ok_or_else(|| Error::from("NATIVE_ACCOUNT_BALANCE").local_integrity())?;
++            }
++            Kind::Fork { .. } => {
++                stack.push(
++                    child_with_lifts(&mut reader, &node, true, &empty, lifts).map_err(storage)?,
++                );
++                stack.push(
++                    child_with_lifts(&mut reader, &node, false, &empty, lifts).map_err(storage)?,
++                );
++            }
++        }
++    }
++    crate::ensure(
++        retained.len() as u64 == root.count && balance == root.balance,
++        "NATIVE_ACCOUNT_STATE",
++    )
++    .map_err(Error::local_integrity)?;
++    progress()?;
++    Ok(retained)
++}
++
+ /// An opaque point-query binding to one actual native block. It makes no claim
+ /// of a separately persisted AccountArchive checkpoint or archive ancestry.
+ pub(crate) fn query_checkpoint(
+diff --git a/trillionnium/crates/trnm-pon-node/src/store.rs b/trillionnium/crates/trnm-pon-node/src/store.rs
+index f5ca5883a..fadc0f4c1 100644
+--- a/trillionnium/crates/trnm-pon-node/src/store.rs
++++ b/trillionnium/crates/trnm-pon-node/src/store.rs
+@@ -22,6 +22,7 @@ pub(crate) mod public_reader;
+ mod root_rejection_cache;
+ #[cfg(test)]
+ mod root_rejection_cache_tests;
++mod shared_snapshot;
+ pub mod storage_service;
+ mod task_observation;
+ use crate::{
+@@ -641,6 +642,10 @@ pub struct Node {
+     settings: Settings,
+     workers: usize,
+     state_backend: StateBackend,
++    storage_layout: shared_snapshot::Layout,
++    // Source-derived DDL grammar only; actual SQL/schema is re-read on use.
++    // Ordinary full-JSON owners retain no additional schema cache.
++    shared_storage_schema: Option<BTreeMap<String, String>>,
+     growth_epoch: Option<growth::Epoch>,
+     #[cfg(test)]
+     // Research reader's immutable source DDL, never a cached on-disk verdict.
+@@ -866,6 +871,10 @@ pub struct ConfirmationBatch {
+     pub distinct_bodies_checked: usize,
+ }
+ impl Node {
++    fn storage_schema_id(&self) -> Hash {
++        self.storage_layout
++            .schema_id(self.state_backend.selected_schema_id(&self.settings))
++    }
+     /// Enable bounded volatile final-ROOT rejection reuse for this Node owner.
+     /// Default is off; no CLI/profile/consensus or CPU-budget change is implied.
+     /// Repeated calls cannot reset entries, TTL or a failed monotonic clock.
+@@ -889,7 +898,7 @@ impl Node {
+                     &self.settings.network(),
+                     &self.settings.parameters(),
+                     &self.settings.genesis(),
+-                    &self.state_backend.selected_schema_id(&self.settings),
++                    &self.storage_schema_id(),
+                     self.settings.task_profile().as_bytes(),
+                 ],
+             ),
+@@ -937,7 +946,10 @@ impl Node {
+     /// The original PN1 campaign's AuthenticatedV1 backend in a fresh held I/O
+     /// domain. This preserves the original constructor's owners/backend/hook
+     /// selection; it does not downgrade the campaign to Legacy or authorize an
+-    /// operator-policy namespace through an unrestricted constructor.
++    /// operator-policy namespace through an unrestricted constructor. This same
++    /// factory selects the versioned local shared-account snapshot layout;
++    /// header/work/State roots and the original4KiB WAL remain unchanged. Old or
++    /// mixed physical stores require explicit migration and are never converted.
+     pub fn open_with_authenticated_state_and_native_io(
+         native_io: NativeIoLease,
+         settings: Settings,
+@@ -1278,8 +1290,10 @@ impl Node {
+         owner
+             .try_lock_exclusive()
+             .map_err(|_| Error::from("WRITER_BUSY"))?;
+-        let ddl = state_backend.ddl();
+-        let schema_id = state_backend.selected_schema_id(&settings);
++        let storage_layout =
++            shared_snapshot::Layout::for_opening(state_backend, native_io.as_ref());
++        let ddl = storage_layout.ddl(state_backend.ddl());
++        let schema_id = storage_layout.schema_id(state_backend.selected_schema_id(&settings));
+         let expected = canonical(
+             &serde_json::json!({"schema":hex::encode(schema_id),"parameters":hex::encode(settings.parameters()),"genesis":hex::encode(settings.genesis())}),
+         )?;
+@@ -1483,6 +1497,8 @@ impl Node {
+             settings,
+             workers,
+             state_backend,
++            storage_layout,
++            shared_storage_schema: storage_layout.is_shared().then(|| expected_schema.clone()),
+             growth_epoch: None,
+             #[cfg(test)]
+             expected_schema,
+@@ -1523,6 +1539,9 @@ impl Node {
+                 Some(&node.authenticated_arithmetic),
+             )?;
+         }
++        if node.storage_layout.is_shared() {
++            shared_snapshot::audit(&node.db, &node.settings, &node.authenticated_arithmetic)?;
++        }
+         node.validate_authenticated_replay()?;
+         node.validate_authenticated_outbox()?;
+         node.validate_native_budget_records_v1()?;
+@@ -2160,11 +2179,11 @@ impl Node {
+         )
+     }
+     fn storage_context(&self) -> Result<()> {
++        if self.storage_layout.is_shared() {
++            shared_snapshot::check_authoritative_namespace(&self.db)?;
++        }
+         for (key, expected) in [
+-            (
+-                "schema",
+-                self.state_backend.selected_schema_id(&self.settings),
+-            ),
++            ("schema", self.storage_schema_id()),
+             ("parameters", self.settings.parameters()),
+             ("genesis", self.settings.genesis()),
+         ] {
+@@ -2180,6 +2199,38 @@ impl Node {
+             )
+             .map_err(Error::local_integrity)?;
+         }
++        if let Some(expected) = &self.shared_storage_schema {
++            ensure(schema(&self.db)? == *expected, "SCHEMA").map_err(Error::local_integrity)?;
++            shared_snapshot::check_layout(&self.db, &self.settings)?;
++            // Cached SQLite pages can satisfy SELECT after a sticky VFS fault.
++            // Observe the actual owned ledger rather than treating SQL success
++            // or the identity-only lease check as a storage-health certificate.
++            let receipt = self
++                .native_io
++                .as_ref()
++                .ok_or_else(|| Error::from("NATIVE_SHARED_IO_LEASE_MISSING").local_integrity())?
++                .receipt()
++                .map_err(|error| Error::from(error.to_string()).local_integrity())?;
++            let healthy = !receipt.failed
++                && receipt.first_failure.is_none()
++                && receipt.first_failure_sqlite_code.is_none()
++                && receipt.denied_operations == 0
++                && receipt.lifecycle_complete
++                && receipt.secondary_failures_complete
++                && receipt.secondary_failures.is_empty()
++                && receipt.quarantine_entries_complete
++                && receipt.quarantined_actual_states == 0
++                && receipt.quarantined_sqlite_codes.is_empty();
++            if !healthy {
++                return Err(Error::from(format!(
++                    "NATIVE_SHARED_IO_UNAVAILABLE:first={:?}:SQLCode={:?}:denied={}",
++                    receipt.first_failure,
++                    receipt.first_failure_sqlite_code,
++                    receipt.denied_operations,
++                ))
++                .local_integrity());
++            }
++        }
+         Ok(())
+     }
+     fn check_persisted_state(
+@@ -2699,6 +2750,29 @@ impl Node {
+     pub fn read_active_with_progress(
+         &self,
+         progress: &mut dyn FnMut() -> Result<()>,
++    ) -> Result<(Hash, u64, State)> {
++        if self.storage_layout.is_shared() {
++            return shared_snapshot::in_read_snapshot(&self.db, || {
++                let value = self.read_active_in_current_snapshot(progress)?;
++                shared_snapshot::final_read(&self.db, || {
++                    shared_snapshot::verify_returned_state(
++                        &self.db,
++                        &self.settings,
++                        value.0,
++                        &value.2,
++                        &self.authenticated_arithmetic,
++                    )?;
++                    self.storage_context()?;
++                    self.namespace()?;
++                    Ok(value)
++                })
++            });
++        }
++        self.read_active_in_current_snapshot(progress)
++    }
++    fn read_active_in_current_snapshot(
++        &self,
++        progress: &mut dyn FnMut() -> Result<()>,
+     ) -> Result<(Hash, u64, State)> {
+         ensure(
+             self.state_backend != StateBackend::PermanentAccountGrowthV2,
+@@ -2711,6 +2785,9 @@ impl Node {
+         });
+         progress()?;
+         self.namespace()?;
++        if self.storage_layout.is_shared() {
++            self.storage_context()?;
++        }
+         let (tip, generation) = self.active()?;
+         let slot = self.slot()?;
+         let state = self.slot_state_with_progress(slot, progress)?;
+@@ -2995,6 +3072,34 @@ impl Node {
+         &self,
+         tip: Hash,
+         progress: &mut dyn FnMut() -> Result<()>,
++    ) -> Result<State> {
++        if self.storage_layout.is_shared() {
++            return shared_snapshot::in_read_snapshot(&self.db, || {
++                self.storage_context()?;
++                let mut reads = shared_snapshot::ReadSet::default();
++                let state = self.state_at_in_current_snapshot(tip, progress, Some(&mut reads))?;
++                shared_snapshot::final_read(&self.db, || {
++                    reads.verify(&self.db, &self.settings, &self.authenticated_arithmetic)?;
++                    shared_snapshot::verify_returned_state(
++                        &self.db,
++                        &self.settings,
++                        tip,
++                        &state,
++                        &self.authenticated_arithmetic,
++                    )?;
++                    self.storage_context()?;
++                    self.namespace()?;
++                    Ok(state)
++                })
++            });
++        }
++        self.state_at_in_current_snapshot(tip, progress, None)
++    }
++    fn state_at_in_current_snapshot(
++        &self,
++        tip: Hash,
++        progress: &mut dyn FnMut() -> Result<()>,
++        mut shared_reads: Option<&mut shared_snapshot::ReadSet>,
+     ) -> Result<State> {
+         ensure(
+             self.state_backend != StateBackend::PermanentAccountGrowthV2,
+@@ -3015,19 +3120,43 @@ impl Node {
+         let (mut state, mut commitment): (State, Option<CheckedCommitment>) = loop {
+             progress()?;
+             let row = self.record(cur)?;
+-            if let Some(bytes) = self
+-                .db
+-                .query_row(
+-                    "SELECT state FROM snapshots WHERE block=?",
+-                    [cur.as_slice()],
+-                    |r| r.get::<_, Vec<u8>>(0),
+-                )
+-                .optional()?
+-            {
+-                let state: State = serde_json::from_slice(&bytes)
+-                    .map_err(|error| Error::from(error).local_integrity())?;
+-                ensure(canonical(&state)? == bytes, "STATE_BYTES")
+-                    .map_err(Error::local_integrity)?;
++            let snapshot = if self.storage_layout.is_shared() && cur != self.settings.genesis() {
++                let state = shared_snapshot::load(
++                    &self.db,
++                    &self.settings,
++                    cur,
++                    progress,
++                    &self.authenticated_arithmetic,
++                )?;
++                if state.is_some() {
++                    shared_reads
++                        .as_mut()
++                        .ok_or_else(|| {
++                            Error::from("NATIVE_SHARED_READ_SET_MISSING").local_integrity()
++                        })?
++                        .record(&self.db, cur)?;
++                }
++                state
++            } else {
++                let bytes: Option<Vec<u8>> = self
++                    .db
++                    .query_row(
++                        "SELECT state FROM snapshots WHERE block=?",
++                        [cur.as_slice()],
++                        |r| r.get(0),
++                    )
++                    .optional()?;
++                bytes
++                    .map(|bytes| -> Result<State> {
++                        let state: State = serde_json::from_slice(&bytes)
++                            .map_err(|error| Error::from(error).local_integrity())?;
++                        ensure(canonical(&state)? == bytes, "STATE_BYTES")
++                            .map_err(Error::local_integrity)?;
++                        Ok(state)
++                    })
++                    .transpose()?
++            };
++            if let Some(state) = snapshot {
+                 continuity_v1::check_state(&state, row.height, &self.settings.app)
+                     .map_err(|error| Error::from(error).local_integrity())?;
+                 let commitment = self
+@@ -4046,9 +4175,12 @@ impl Node {
+         // These are disposable accelerators: retain the existing 64-row policy,
+         // genesis anchor, full history/delta checks and post-write readback.
+         // Legacy cadence remains unchanged; no validity verdict is cached.
+-        if self.state_backend == StateBackend::AuthenticatedV1
+-            || growth_profile_v2::enabled(&self.settings.app)
+-            || h.height.is_multiple_of(128)
++        // The held native-IO layout writes its versioned shared snapshot only
++        // after the actual native account record exists in this SAME transaction.
++        if !self.storage_layout.is_shared()
++            && (self.state_backend == StateBackend::AuthenticatedV1
++                || growth_profile_v2::enabled(&self.settings.app)
++                || h.height.is_multiple_of(128))
+         {
+             ensure(
+                 tx.execute(
+@@ -4077,6 +4209,16 @@ impl Node {
+                 &mut || progress(ExecutionProgress::BeforeDurableCommit),
+                 Some(&self.authenticated_arithmetic),
+             )?;
++            if self.storage_layout.is_shared() {
++                shared_snapshot::save(
++                    &tx,
++                    &self.settings,
++                    id,
++                    &output.state,
++                    &mut || progress(ExecutionProgress::BeforeDurableCommit),
++                    &self.authenticated_arithmetic,
++                )?;
++            }
+         }
+         // Re-read after every write/trigger, while rollback can still remove the
+         // whole block. A snapshot cannot conceal an omitted canonical delta.
+diff --git a/trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs b/trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs
+index f6b0d7536..525701cd3 100644
+--- a/trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs
++++ b/trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs
+@@ -333,6 +333,8 @@ fn read_only_archive(directory: &Path, settings: Settings, backend: StateBackend
+         settings,
+         workers: 1,
+         state_backend: backend,
++        storage_layout: crate::store::shared_snapshot::Layout::CanonicalJson,
++        shared_storage_schema: None,
+         growth_epoch: None,
+         #[cfg(test)]
+         expected_schema,
+diff --git a/trillionnium/crates/trnm-pon-node/src/store/public_reader.rs b/trillionnium/crates/trnm-pon-node/src/store/public_reader.rs
+index aea9599ac..3684dba3c 100644
+--- a/trillionnium/crates/trnm-pon-node/src/store/public_reader.rs
++++ b/trillionnium/crates/trnm-pon-node/src/store/public_reader.rs
+@@ -303,7 +303,8 @@ impl Node {
+         ready(&self.db, &mut budget, progress)?;
+         context_values(
+             &self.db,
+-            self.state_backend.schema_id(),
++            self.storage_layout
++                .schema_id(self.state_backend.schema_id()),
+             self.settings.parameters(),
+             self.settings.genesis(),
+             &self.expected_schema,
+@@ -323,7 +324,9 @@ impl Node {
+             owner: self.owner.try_clone()?,
+             schema: self.expected_schema.clone(),
+             context: self.ancestry_context(),
+-            schema_id: self.state_backend.schema_id(),
++            schema_id: self
++                .storage_layout
++                .schema_id(self.state_backend.schema_id()),
+             active: selected,
+             active_record,
+             slot,
+@@ -353,7 +356,10 @@ impl Node {
+         ensure(
+             self.directory_id == read.pin.directory_id
+                 && self.database_id == read.pin.database_id
+-                && self.state_backend.schema_id() == read.pin.schema_id
++                && self
++                    .storage_layout
++                    .schema_id(self.state_backend.schema_id())
++                    == read.pin.schema_id
+                 && self.settings.network() == read.pin.context.network,
+             "STORAGE_CONTEXT",
+         )
+diff --git a/trillionnium/crates/trnm-pon-node/src/store/shared_snapshot.rs b/trillionnium/crates/trnm-pon-node/src/store/shared_snapshot.rs
+new file mode 100644
+index 000000000..6ed245013
+--- /dev/null
++++ b/trillionnium/crates/trnm-pon-node/src/store/shared_snapshot.rs
+@@ -0,0 +1,474 @@
++//! Local physical layout for the held native-IO AuthenticatedV1 owner.
++//!
++//! Consensus, complete State validation and the original caller do not change.
++//! Retained account bytes already live in the authenticated COW graph. A local
++//! snapshot refers to that actual native record and stores the complete working
++//! partition; reads materialize ALL accounts before the original State checks.
++use super::{bytes32, canonical, native_authenticated, StateBackend};
++use crate::account_archive_prototype::native_store;
++use crate::{ensure, Error, Result, Settings};
++use rusqlite::{params, Connection, OptionalExtension};
++use serde::{Deserialize, Serialize};
++use trnm_mvcc_fee::{continuity_v1, pon_executor::State};
++use trnm_protocol::pon_wire::{hash, Hash};
++use trnm_sqlite_io_boundary::{NativeIoLease, FILE_BYTES};
++
++const DDL: &str =
++    "CREATE TABLE native_io_shared_snapshots(block BLOB PRIMARY KEY,data BLOB NOT NULL);";
++const SCHEMA: &str = "native-io-shared-authenticated-snapshot-v1";
++const MAX_BYTES: usize = FILE_BYTES as usize;
++const RETAINED: usize = 64;
++
++#[derive(Clone, Copy, Debug, PartialEq, Eq)]
++pub(super) enum Layout {
++    CanonicalJson,
++    SharedAccountsV1,
++}
++impl Layout {
++    pub(super) fn for_opening(backend: StateBackend, io: Option<&NativeIoLease>) -> Self {
++        if backend == StateBackend::AuthenticatedV1 && io.is_some() {
++            Self::SharedAccountsV1
++        } else {
++            Self::CanonicalJson
++        }
++    }
++    pub(super) fn is_shared(self) -> bool {
++        self == Self::SharedAccountsV1
++    }
++    pub(super) fn ddl(self, base: String) -> String {
++        match self {
++            Self::CanonicalJson => base,
++            Self::SharedAccountsV1 => format!("{base}{DDL}"),
++        }
++    }
++    pub(super) fn schema_id(self, base: Hash) -> Hash {
++        match self {
++            Self::CanonicalJson => base,
++            Self::SharedAccountsV1 => hash(
++                b"native-io-shared-authenticated-branch-schema-v1",
++                &[&base, DDL.as_bytes(), SCHEMA.as_bytes()],
++            ),
++        }
++    }
++}
++
++/// Only main is authoritative. Keep unrelated TEMP workspace/spill objects,
++/// but never let an unqualified legacy verifier resolve a shadow of main.
++pub(super) fn check_authoritative_namespace(db: &Connection) -> Result<()> {
++    let mut databases = db.prepare("PRAGMA database_list")?;
++    let mut rows = databases.query([])?;
++    while let Some(row) = rows.next()? {
++        let name: String = row.get(1)?;
++        ensure(
++            name == "main" || name == "temp",
++            "NATIVE_SHARED_ATTACHED_SCHEMA",
++        )
++        .map_err(Error::local_integrity)?;
++    }
++    let shadow: bool = db.query_row(
++        "SELECT EXISTS(SELECT 1 FROM temp.sqlite_master t JOIN main.sqlite_master m ON t.name=m.name COLLATE NOCASE)",
++        [],
++        |row| row.get(0),
++    )?;
++    ensure(!shadow, "NATIVE_SHARED_AUTHORITY_SHADOW").map_err(Error::local_integrity)
++}
++
++/// Examine metadata, never copy arbitrary row payloads. A lookup by BLOB must
++/// not mistake an existing same-byte TEXT key for a legally absent index.
++/// Normal reads allow 64 rows plus one rejecting sentinel. Only save's same
++/// transaction may validate its one pending row before the original64 prune.
++fn check_typed_rows(db: &Connection, limit: usize) -> Result<()> {
++    let mut statement = db.prepare("SELECT typeof(block),CASE WHEN typeof(block)='blob' THEN length(block) ELSE -1 END,typeof(data),CASE WHEN typeof(data)='blob' THEN length(data) ELSE -1 END FROM main.native_io_shared_snapshots LIMIT ?")?;
++    let mut rows = statement.query([limit + 1])?;
++    let mut count = 0usize;
++    while let Some(row) = rows.next()? {
++        count += 1;
++        ensure(count <= limit, "SNAPSHOT_LIMIT").map_err(Error::local_integrity)?;
++        ensure(
++            row.get::<_, String>(0)? == "blob"
++                && row.get::<_, i64>(1)? == 32
++                && row.get::<_, String>(2)? == "blob"
++                && (1..=MAX_BYTES as i64).contains(&row.get::<_, i64>(3)?),
++            "NATIVE_SHARED_TYPED_RECORD",
++        )
++        .map_err(Error::local_integrity)?;
++    }
++    Ok(())
++}
++
++pub(super) fn check_layout(db: &Connection, settings: &Settings) -> Result<()> {
++    check_authoritative_namespace(db)?;
++    check_typed_rows(db, RETAINED)?;
++    let (all, genesis): (u64, u64) = db.query_row(
++        "SELECT (SELECT COUNT(*) FROM main.snapshots),(SELECT COUNT(*) FROM main.snapshots WHERE block=?)",
++        [settings.genesis().as_slice()],
++        |row| Ok((row.get(0)?, row.get(1)?)),
++    )?;
++    ensure(all == 1 && genesis == 1, "NATIVE_SHARED_MIXED_LAYOUT").map_err(Error::local_integrity)
++}
++
++#[derive(Serialize, Deserialize)]
++#[serde(deny_unknown_fields)]
++struct Snapshot {
++    schema: String,
++    id: Hash,
++    block: Hash,
++    native_commitment: Hash,
++    working: State,
++}
++impl Snapshot {
++    fn digest(&self, settings: &Settings) -> Result<Hash> {
++        Ok(hash(
++            b"native-io-shared-authenticated-snapshot-v1",
++            &[
++                &settings.network(),
++                &settings.parameters(),
++                &settings.genesis(),
++                &self.block,
++                &self.native_commitment,
++                &canonical(&self.working)?,
++            ],
++        ))
++    }
++}
++
++/// Borrow an existing writer transaction or own one complete read snapshot.
++/// A failed rollback is owner-fatal and never authorizes a successful State.
++pub(super) fn in_read_snapshot<T>(db: &Connection, run: impl FnOnce() -> Result<T>) -> Result<T> {
++    if !db.is_autocommit() {
++        let result = run();
++        if db.is_autocommit() {
++            return Err(match result {
++                Err(first) => {
++                    Error::local_replay_source("NATIVE_SHARED_READ_TRANSACTION_LOST", first)
++                }
++                Ok(_) => Error::from("NATIVE_SHARED_READ_TRANSACTION_LOST").local_integrity(),
++            });
++        }
++        return result;
++    }
++    let read = db.unchecked_transaction()?;
++    let result = run();
++    match (result, read.rollback()) {
++        (Ok(value), Ok(())) => Ok(value),
++        (Err(first), Ok(())) => Err(first),
++        (Ok(_), Err(cleanup)) => Err(Error::local_replay_source(
++            "NATIVE_SHARED_READ_ROLLBACK",
++            cleanup,
++        )),
++        (Err(first), Err(cleanup)) => Err(Error::local_replay_source(
++            "NATIVE_SHARED_READ_ROLLBACK",
++            ReadCleanupFailure { first, cleanup },
++        )),
++    }
++}
++/// These observations cover same-connection side effects only, never foreign
++/// data_version or a storage-health verdict. Actual full graph/State checks
++/// still run. Take this fence AFTER the final caller callback so legitimate
++/// earlier accounting is not mistaken for a write by this final read phase.
++pub(super) fn final_read<T>(db: &Connection, run: impl FnOnce() -> Result<T>) -> Result<T> {
++    check_authoritative_namespace(db)?;
++    let before = (db.total_changes(), db.is_autocommit());
++    let result = run()?;
++    check_authoritative_namespace(db)?;
++    ensure(
++        (db.total_changes(), db.is_autocommit()) == before,
++        "NATIVE_SHARED_FINAL_READ_MUTATION",
++    )
++    .map_err(Error::local_integrity)?;
++    Ok(result)
++}
++
++#[derive(Debug)]
++struct ReadCleanupFailure {
++    first: Error,
++    cleanup: rusqlite::Error,
++}
++impl std::fmt::Display for ReadCleanupFailure {
++    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
++        write!(f, "first error: {}; rollback: {}", self.first, self.cleanup)
++    }
++}
++impl std::error::Error for ReadCleanupFailure {
++    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
++        Some(&self.first)
++    }
++}
++
++pub(super) fn save(
++    db: &Connection,
++    settings: &Settings,
++    block: Hash,
++    state: &State,
++    progress: &mut dyn FnMut() -> Result<()>,
++    cache: &native_authenticated::ArithmeticCache,
++) -> Result<()> {
++    check_authoritative_namespace(db)?;
++    check_typed_rows(db, RETAINED)?;
++    ensure(block != settings.genesis(), "NATIVE_SHARED_GENESIS").map_err(Error::local_integrity)?;
++    let native = native_authenticated::load(db, block)?;
++    let mut snapshot = Snapshot {
++        schema: SCHEMA.into(),
++        id: [0; 32],
++        block,
++        native_commitment: native.id,
++        working: state
++            .iter()
++            .filter(|(key, _)| !key.starts_with("account:"))
++            .map(|(key, value)| (key.clone(), value.clone()))
++            .collect(),
++    };
++    snapshot.id = snapshot.digest(settings)?;
++    let bytes = canonical(&snapshot)?;
++    ensure(bytes.len() <= MAX_BYTES, "NATIVE_SHARED_SNAPSHOT_LIMIT")
++        .map_err(Error::local_integrity)?;
++    ensure(
++        db.execute(
++            "INSERT INTO native_io_shared_snapshots VALUES(?,?)",
++            params![block.as_slice(), bytes],
++        )? == 1,
++        "NATIVE_SHARED_SNAPSHOT_WRITE",
++    )
++    .map_err(Error::local_integrity)?;
++    // Verify the just-inserted row before pruning: a valid low-height fork
++    // snapshot may itself fall outside the retained64 optional index window.
++    ensure(
++        load_with_limit(db, settings, block, progress, cache, RETAINED + 1)?.as_ref()
++            == Some(state),
++        "NATIVE_SHARED_SNAPSHOT_WRITE",
++    )
++    .map_err(Error::local_integrity)?;
++    db.execute("DELETE FROM native_io_shared_snapshots WHERE block NOT IN (SELECT s.block FROM native_io_shared_snapshots s JOIN blocks b ON b.id=s.block ORDER BY b.height DESC,b.id LIMIT 64)", [])?;
++    let count: u64 = db.query_row(
++        "SELECT COUNT(*) FROM native_io_shared_snapshots",
++        [],
++        |row| row.get(0),
++    )?;
++    ensure(count <= RETAINED as u64, "SNAPSHOT_LIMIT").map_err(Error::local_integrity)?;
++    check_authoritative_namespace(db)?;
++    check_typed_rows(db, RETAINED)
++}
++
++pub(super) fn load(
++    db: &Connection,
++    settings: &Settings,
++    block: Hash,
++    progress: &mut dyn FnMut() -> Result<()>,
++    cache: &native_authenticated::ArithmeticCache,
++) -> Result<Option<State>> {
++    load_with_limit(db, settings, block, progress, cache, RETAINED)
++}
++fn load_with_limit(
++    db: &Connection,
++    settings: &Settings,
++    block: Hash,
++    progress: &mut dyn FnMut() -> Result<()>,
++    cache: &native_authenticated::ArithmeticCache,
++    limit: usize,
++) -> Result<Option<State>> {
++    let schema_version: u64 = db.query_row("PRAGMA main.schema_version", [], |row| row.get(0))?;
++    let autocommit = db.is_autocommit();
++    progress()?;
++    let bytes = encoded_with_limit(db, block, limit)?;
++    let Some(bytes) = bytes else {
++        // A pruned OPTIONAL index uses the original checked delta replay.
++        return Ok(None);
++    };
++    ensure(bytes.len() <= MAX_BYTES, "NATIVE_SHARED_SNAPSHOT_LIMIT")
++        .map_err(Error::local_integrity)?;
++    let snapshot: Snapshot =
++        serde_json::from_slice(&bytes).map_err(|error| Error::from(error).local_integrity())?;
++    ensure(
++        canonical(&snapshot)? == bytes
++            && snapshot.schema == SCHEMA
++            && snapshot.block == block
++            && block != settings.genesis()
++            && snapshot.id == snapshot.digest(settings)?
++            && snapshot
++                .working
++                .keys()
++                .all(|key| !key.starts_with("account:")),
++        "NATIVE_SHARED_SNAPSHOT_RECORD",
++    )
++    .map_err(Error::local_integrity)?;
++    let native = native_authenticated::load(db, block)?;
++    ensure(
++        snapshot.native_commitment == native.id,
++        "NATIVE_SHARED_SNAPSHOT_BINDING",
++    )
++    .map_err(Error::local_integrity)?;
++    let accounts =
++        native_store::materialize_accounts(db, &native.accounts, progress, Some(&cache.lifts))?;
++    let mut state = snapshot.working;
++    for (owner, account) in accounts {
++        progress()?;
++        ensure(
++            state
++                .insert(
++                    format!("account:{}", hex::encode(owner)),
++                    serde_json::to_value(account)?,
++                )
++                .is_none(),
++            "NATIVE_SHARED_SNAPSHOT_PARTITION",
++        )
++        .map_err(Error::local_integrity)?;
++    }
++    continuity_v1::check_state(&state, native.height, &settings.app)
++        .map_err(|error| Error::from(error).local_integrity())?;
++    native_authenticated::verify_state_with_cache(
++        db,
++        settings,
++        block,
++        &state,
++        progress,
++        Some(cache),
++    )?;
++    native_authenticated::verify_history_with_cache(db, settings, block, progress, Some(cache))?;
++    progress()?;
++    final_read(db, || {
++        // A caller callback can mutate this SAME SQLite connection even inside a
++        // pinned read snapshot. Re-read the actual complete graph/State/history
++        // after its last invocation; no caller callback crosses this final fence.
++        native_authenticated::verify_state_with_cache(
++            db,
++            settings,
++            block,
++            &state,
++            &mut || Ok(()),
++            Some(cache),
++        )?;
++        native_authenticated::verify_history_with_cache(
++            db,
++            settings,
++            block,
++            &mut || Ok(()),
++            Some(cache),
++        )?;
++        // Preserve current raw row identity after the last caller callback. A
++        // malformed or replaced present record is never a pruned-index fallback.
++        ensure(
++            encoded_with_limit(db, block, limit)?.as_ref() == Some(&bytes)
++                && native_authenticated::load(db, block)? == native
++                && db.query_row::<u64, _, _>("PRAGMA main.schema_version", [], |row| row.get(0))?
++                    == schema_version
++                && db.is_autocommit() == autocommit,
++            "NATIVE_SHARED_SNAPSHOT_CHANGED",
++        )
++        .map_err(Error::local_integrity)?;
++        Ok(Some(state))
++    })
++}
++
++fn encoded(db: &Connection, block: Hash) -> Result<Option<Vec<u8>>> {
++    encoded_with_limit(db, block, RETAINED)
++}
++fn encoded_with_limit(db: &Connection, block: Hash, limit: usize) -> Result<Option<Vec<u8>>> {
++    check_authoritative_namespace(db)?;
++    check_typed_rows(db, limit)?;
++    Ok(db
++        .prepare_cached("SELECT CASE WHEN typeof(data)='blob' AND length(data)>?1 THEN substr(data,1,?2) ELSE data END FROM main.native_io_shared_snapshots WHERE block=?3")?
++        .query_row(params![MAX_BYTES, MAX_BYTES + 1, block.as_slice()], |row| row.get(0))
++        .optional()?)
++}
++
++/// Only the one actual shared anchor used by this state_at operation is held.
++/// Raw row identity is additional provenance, never a graph-verification result.
++#[derive(Default)]
++pub(super) struct ReadSet(Vec<(Hash, Vec<u8>)>);
++impl ReadSet {
++    pub(super) fn record(&mut self, db: &Connection, block: Hash) -> Result<()> {
++        ensure(self.0.is_empty(), "NATIVE_SHARED_READ_SET_LIMIT")
++            .map_err(Error::local_integrity)?;
++        let bytes = encoded(db, block)?
++            .ok_or_else(|| Error::from("NATIVE_SHARED_SNAPSHOT_CHANGED").local_integrity())?;
++        ensure(bytes.len() <= MAX_BYTES, "NATIVE_SHARED_SNAPSHOT_LIMIT")
++            .map_err(Error::local_integrity)?;
++        self.0.push((block, bytes));
++        Ok(())
++    }
++    pub(super) fn verify(
++        &self,
++        db: &Connection,
++        settings: &Settings,
++        cache: &native_authenticated::ArithmeticCache,
++    ) -> Result<()> {
++        for (block, bytes) in &self.0 {
++            ensure(
++                encoded(db, *block)?.as_ref() == Some(bytes),
++                "NATIVE_SHARED_SNAPSHOT_CHANGED",
++            )
++            .map_err(Error::local_integrity)?;
++            ensure(
++                load(db, settings, *block, &mut || Ok(()), cache)?.is_some(),
++                "NATIVE_SHARED_SNAPSHOT_CHANGED",
++            )
++            .map_err(Error::local_integrity)?;
++            ensure(
++                encoded(db, *block)?.as_ref() == Some(bytes),
++                "NATIVE_SHARED_SNAPSHOT_CHANGED",
++            )
++            .map_err(Error::local_integrity)?;
++        }
++        Ok(())
++    }
++}
++
++/// Last complete read fence for a returned State, including the ACTIVE fast path.
++/// A missing optional index is permitted; a malformed present row is an error.
++/// Every call hereafter is internal: no caller callback can alter the graph
++/// between its final actual revalidation and returning this State.
++pub(super) fn verify_returned_state(
++    db: &Connection,
++    settings: &Settings,
++    block: Hash,
++    state: &State,
++    cache: &native_authenticated::ArithmeticCache,
++) -> Result<()> {
++    if let Some(retained) = load(db, settings, block, &mut || Ok(()), cache)? {
++        ensure(retained == *state, "NATIVE_SHARED_SNAPSHOT_STATE")
++            .map_err(Error::local_integrity)?;
++    }
++    native_authenticated::verify_state_with_cache(
++        db,
++        settings,
++        block,
++        state,
++        &mut || Ok(()),
++        Some(cache),
++    )?;
++    native_authenticated::verify_history_with_cache(
++        db,
++        settings,
++        block,
++        &mut || Ok(()),
++        Some(cache),
++    )
++}
++
++pub(super) fn audit(
++    db: &Connection,
++    settings: &Settings,
++    cache: &native_authenticated::ArithmeticCache,
++) -> Result<()> {
++    in_read_snapshot(db, || {
++        check_layout(db, settings)?;
++        let rows: Vec<Vec<u8>> = db
++            .prepare("SELECT block FROM native_io_shared_snapshots ORDER BY block LIMIT 65")?
++            .query_map([], |row| row.get(0))?
++            .collect::<rusqlite::Result<_>>()?;
++        ensure(rows.len() <= RETAINED, "SNAPSHOT_LIMIT").map_err(Error::local_integrity)?;
++        for raw in rows {
++            let block = bytes32(raw).map_err(Error::local_integrity)?;
++            ensure(
++                load(db, settings, block, &mut || Ok(()), cache)?.is_some(),
++                "NATIVE_SHARED_SNAPSHOT_MISSING",
++            )
++            .map_err(Error::local_integrity)?;
++        }
++        Ok(())
++    })
++}
++
++#[cfg(test)]
++#[path = "shared_snapshot_tests.rs"]
++mod tests;
+diff --git a/trillionnium/crates/trnm-pon-node/src/store/shared_snapshot_tests.rs b/trillionnium/crates/trnm-pon-node/src/store/shared_snapshot_tests.rs
+new file mode 100644
+index 000000000..c039616a0
+--- /dev/null
++++ b/trillionnium/crates/trnm-pon-node/src/store/shared_snapshot_tests.rs
+@@ -0,0 +1,776 @@
++//! Actual SQLite codec/reference controls, not held-FD campaign qualification.
++//! The normal AuthV1 fixture retains its original full-JSON snapshots. These
++//! tests exercise new shared records against real admitted native COW nodes;
++//! the unchanged native-IO campaign must separately qualify the factory route.
++use super::*;
++use crate::store::Node;
++use crate::{development_public, Packet};
++use serde_json::json;
++
++struct Fixture {
++    node: Node,
++    directory: tempfile::TempDir,
++    block: Hash,
++    state: State,
++}
++fn packet(node: &Node, parent: Hash, miner: u64, time: u64) -> Packet {
++    node.make_consensus_maintenance(
++        parent,
++        vec![],
++        development_public(miner).unwrap(),
++        time,
++        4096,
++    )
++    .unwrap()
++}
++fn fixture() -> Fixture {
++    let directory = tempfile::tempdir().unwrap();
++    let settings = Settings::development_with_profiles(
++        Some(1),
++        "native-public-evaluation-dev-v1",
++        continuity_v1::PROFILE,
++    )
++    .unwrap();
++    let mut node = Node::open_with_authenticated_state(directory.path(), settings, 1).unwrap();
++    let packet = packet(&node, node.settings.genesis(), 0, 11);
++    let block = node.admit(&packet, 100_000).unwrap();
++    let state = node.state_at(block).unwrap();
++    node.db.execute_batch(DDL).unwrap();
++    save(
++        &node.db,
++        &node.settings,
++        block,
++        &state,
++        &mut || Ok(()),
++        &node.authenticated_arithmetic,
++    )
++    .unwrap();
++    Fixture {
++        node,
++        directory,
++        block,
++        state,
++    }
++}
++fn read(f: &Fixture) -> Result<Option<State>> {
++    in_read_snapshot(&f.node.db, || {
++        load(
++            &f.node.db,
++            &f.node.settings,
++            f.block,
++            &mut || Ok(()),
++            &f.node.authenticated_arithmetic,
++        )
++    })
++}
++
++#[test]
++fn shared_records_materialize_complete_state_and_never_store_account_values_twice() {
++    let f = fixture();
++    assert_eq!(read(&f).unwrap(), Some(f.state.clone()));
++    let bytes: Vec<u8> = f
++        .node
++        .db
++        .query_row(
++            "SELECT data FROM native_io_shared_snapshots WHERE block=?",
++            [f.block.as_slice()],
++            |row| row.get(0),
++        )
++        .unwrap();
++    let stored: Snapshot = serde_json::from_slice(&bytes).unwrap();
++    assert!(stored
++        .working
++        .keys()
++        .all(|key| !key.starts_with("account:")));
++    assert!(f.state.keys().any(|key| key.starts_with("account:")));
++    f.node
++        .db
++        .execute("DELETE FROM native_io_shared_snapshots", [])
++        .unwrap();
++    assert_eq!(read(&f).unwrap(), None);
++    assert_eq!(f.node.state_at(f.block).unwrap(), f.state);
++}
++
++#[test]
++fn shared_records_reject_resealed_wrong_context_partition_and_raw_codec_damage() {
++    let f = fixture();
++    let bytes: Vec<u8> = f
++        .node
++        .db
++        .query_row(
++            "SELECT data FROM native_io_shared_snapshots WHERE block=?",
++            [f.block.as_slice()],
++            |row| row.get(0),
++        )
++        .unwrap();
++    for which in 0..8 {
++        f.node.db.execute_batch("SAVEPOINT corrupt_shared").unwrap();
++        let mut value: Snapshot = serde_json::from_slice(&bytes).unwrap();
++        match which {
++            0 => value.block = [7; 32],
++            1 => value.native_commitment = [8; 32],
++            2 => {
++                value
++                    .working
++                    .insert("unexpected-working-key".into(), json!(1));
++            }
++            3 => {
++                value.working.insert(
++                    format!("account:{}", hex::encode([1; 32])),
++                    json!({"balance":0,"nonce":0}),
++                );
++            }
++            4 => value.schema = "foreign-format".into(),
++            5..=7 => {}
++            _ => unreachable!(),
++        }
++        value.id = value.digest(&f.node.settings).unwrap();
++        let bad = match which {
++            5 => [bytes.clone(), b" ".to_vec()].concat(),
++            6 => bytes[..bytes.len() - 1].to_vec(),
++            7 => {
++                let mut value = serde_json::to_value(&value).unwrap();
++                value["foreign-field"] = json!(1);
++                canonical(&value).unwrap()
++            }
++            _ => canonical(&value).unwrap(),
++        };
++        f.node
++            .db
++            .execute("UPDATE native_io_shared_snapshots SET data=?", [bad])
++            .unwrap();
++        assert!(read(&f).unwrap_err().requires_owner_stop(), "case {which}");
++        f.node
++            .db
++            .execute_batch("ROLLBACK TO corrupt_shared; RELEASE corrupt_shared")
++            .unwrap();
++        assert_eq!(read(&f).unwrap(), Some(f.state.clone()));
++    }
++    f.node
++        .db
++        .execute_batch(
++            "SAVEPOINT wrong_type; UPDATE native_io_shared_snapshots SET data=CAST(data AS TEXT)",
++        )
++        .unwrap();
++    assert!(read(&f).unwrap_err().requires_owner_stop());
++    f.node
++        .db
++        .execute_batch("ROLLBACK TO wrong_type; RELEASE wrong_type")
++        .unwrap();
++    let record = native_authenticated::load(&f.node.db, f.block).unwrap();
++    f.node.db.execute_batch("SAVEPOINT missing_node").unwrap();
++    f.node
++        .db
++        .execute(
++            "DELETE FROM archive_nodes WHERE id=?",
++            [record.accounts.node.unwrap().as_slice()],
++        )
++        .unwrap();
++    assert!(read(&f).unwrap_err().requires_owner_stop());
++    f.node
++        .db
++        .execute_batch("ROLLBACK TO missing_node; RELEASE missing_node")
++        .unwrap();
++    assert_eq!(read(&f).unwrap(), Some(f.state.clone()));
++}
++
++#[test]
++fn shared_insert_and_late_storage_faults_roll_back_the_same_transaction() {
++    for trigger in [
++        "CREATE TEMP TRIGGER shared_fault BEFORE INSERT ON native_io_shared_snapshots BEGIN SELECT RAISE(IGNORE); END;",
++        "CREATE TEMP TRIGGER shared_fault AFTER INSERT ON native_io_shared_snapshots BEGIN UPDATE native_io_shared_snapshots SET data=X'7b7d' WHERE block=NEW.block; END;",
++        "CREATE TEMP TRIGGER shared_fault AFTER INSERT ON native_io_shared_snapshots BEGIN DELETE FROM archive_nodes; END;",
++        "CREATE TEMP TRIGGER shared_fault AFTER INSERT ON native_io_shared_snapshots BEGIN DELETE FROM snapshots; END;",
++    ] {
++        let f = fixture();
++        f.node
++            .db
++            .execute("DELETE FROM native_io_shared_snapshots", [])
++            .unwrap();
++        let before_nodes: u64 = f
++            .node
++            .db
++            .query_row("SELECT COUNT(*) FROM archive_nodes", [], |r| r.get(0))
++            .unwrap();
++        f.node.db.execute_batch(trigger).unwrap();
++        let write = f.node.db.unchecked_transaction().unwrap();
++        assert!(
++            save(
++                &write,
++                &f.node.settings,
++                f.block,
++                &f.state,
++                &mut || Ok(()),
++                &f.node.authenticated_arithmetic
++            )
++            .is_err()
++        );
++        write.rollback().unwrap();
++        assert_eq!(
++            f.node
++                .db
++                .query_row::<u64, _, _>("SELECT COUNT(*) FROM archive_nodes", [], |r| r.get(0))
++                .unwrap(),
++            before_nodes
++        );
++        assert_eq!(
++            f.node
++                .db
++                .query_row::<u64, _, _>(
++                    "SELECT COUNT(*) FROM native_io_shared_snapshots",
++                    [],
++                    |r| r.get(0)
++                )
++                .unwrap(),
++            0
++        );
++        assert_eq!(f.node.state_at(f.block).unwrap(), f.state);
++    }
++}
++
++#[test]
++fn shared_fork_records_reconstruct_after_all_codec_connections_close() {
++    let mut f = fixture();
++    let fork = packet(&f.node, f.node.settings.genesis(), 1, 12);
++    let fork_id = f.node.admit(&fork, 100_000).unwrap();
++    let fork_state = f.node.state_at(fork_id).unwrap();
++    save(
++        &f.node.db,
++        &f.node.settings,
++        fork_id,
++        &fork_state,
++        &mut || Ok(()),
++        &f.node.authenticated_arithmetic,
++    )
++    .unwrap();
++    assert_eq!(read(&f).unwrap(), Some(f.state.clone()));
++    let settings = f.node.settings.clone();
++    let original = f.block;
++    let original_state = f.state.clone();
++    drop(f.node);
++    let db = Connection::open(f.directory.path().join("native.sqlite")).unwrap();
++    let cache = native_authenticated::ArithmeticCache::default();
++    for (id, expected) in [(original, original_state), (fork_id, fork_state)] {
++        assert_eq!(
++            in_read_snapshot(&db, || load(&db, &settings, id, &mut || Ok(()), &cache)).unwrap(),
++            Some(expected)
++        );
++    }
++}
++
++#[test]
++fn shared_final_record_mutation_is_not_a_successful_state_read() {
++    let f = fixture();
++    let mut calls = 0usize;
++    load(
++        &f.node.db,
++        &f.node.settings,
++        f.block,
++        &mut || {
++            calls += 1;
++            Ok(())
++        },
++        &f.node.authenticated_arithmetic,
++    )
++    .unwrap();
++    let mut index = 0usize;
++    let error = load(
++        &f.node.db,
++        &f.node.settings,
++        f.block,
++        &mut || {
++            index += 1;
++            if index == calls {
++                f.node
++                    .db
++                    .execute("UPDATE native_io_shared_snapshots SET data=X'7b7d'", [])?;
++            }
++            Ok(())
++        },
++        &f.node.authenticated_arithmetic,
++    )
++    .unwrap_err();
++    assert_eq!(error.to_string(), "NATIVE_SHARED_SNAPSHOT_CHANGED");
++    assert!(error.requires_owner_stop());
++}
++
++#[test]
++fn shared_pruning_suppression_keeps_the_original_64_index_limit_atomic() {
++    let mut f = fixture();
++    let mut parent = f.block;
++    f.node.activate(parent).unwrap();
++    for height in 2..=64 {
++        let packet = packet(&f.node, parent, 0, 1 + height * 10);
++        parent = f.node.admit(&packet, 100_000).unwrap();
++        f.node.activate(parent).unwrap();
++        let state = f.node.state_at(parent).unwrap();
++        save(
++            &f.node.db,
++            &f.node.settings,
++            parent,
++            &state,
++            &mut || Ok(()),
++            &f.node.authenticated_arithmetic,
++        )
++        .unwrap();
++    }
++    let packet = packet(&f.node, parent, 0, 651);
++    let id = f.node.admit(&packet, 100_000).unwrap();
++    let state = f.node.state_at(id).unwrap();
++    f.node.db.execute_batch("CREATE TEMP TRIGGER refuse_shared_prune BEFORE DELETE ON native_io_shared_snapshots BEGIN SELECT RAISE(IGNORE); END;").unwrap();
++    let write = f.node.db.unchecked_transaction().unwrap();
++    let error = save(
++        &write,
++        &f.node.settings,
++        id,
++        &state,
++        &mut || Ok(()),
++        &f.node.authenticated_arithmetic,
++    )
++    .unwrap_err();
++    assert_eq!(error.to_string(), "SNAPSHOT_LIMIT");
++    assert!(error.requires_owner_stop());
++    write.rollback().unwrap();
++    assert_eq!(
++        f.node
++            .db
++            .query_row::<u64, _, _>("SELECT COUNT(*) FROM native_io_shared_snapshots", [], |r| r
++                .get(0))
++            .unwrap(),
++        64
++    );
++    f.node
++        .db
++        .execute_batch("DROP TRIGGER refuse_shared_prune")
++        .unwrap();
++    save(
++        &f.node.db,
++        &f.node.settings,
++        id,
++        &state,
++        &mut || Ok(()),
++        &f.node.authenticated_arithmetic,
++    )
++    .unwrap();
++    assert_eq!(
++        f.node
++            .db
++            .query_row::<u64, _, _>("SELECT COUNT(*) FROM native_io_shared_snapshots", [], |r| r
++                .get(0))
++            .unwrap(),
++        64
++    );
++}
++
++#[test]
++fn shared_owner_layout_rejects_mixed_legacy_rows_and_missing_genesis() {
++    let f = fixture();
++    // This codec fixture deliberately includes the ordinary owner's child JSON
++    // row. A real shared-format owner must reject that mixed physical layout.
++    let error = check_layout(&f.node.db, &f.node.settings).unwrap_err();
++    assert_eq!(error.to_string(), "NATIVE_SHARED_MIXED_LAYOUT");
++    assert!(error.requires_owner_stop());
++    f.node
++        .db
++        .execute(
++            "DELETE FROM snapshots WHERE block!=?",
++            [f.node.settings.genesis().as_slice()],
++        )
++        .unwrap();
++    check_layout(&f.node.db, &f.node.settings).unwrap();
++    f.node.db.execute("DELETE FROM snapshots", []).unwrap();
++    assert!(check_layout(&f.node.db, &f.node.settings)
++        .unwrap_err()
++        .requires_owner_stop());
++}
++
++#[test]
++fn shared_final_graph_mutation_in_same_transaction_never_returns_old_materialization() {
++    for corrupt in [false, true] {
++        let f = fixture();
++        let native = native_authenticated::load(&f.node.db, f.block).unwrap();
++        let root = native.accounts.node.unwrap();
++        let before = encoded(&f.node.db, f.block).unwrap();
++        let write = f.node.db.unchecked_transaction().unwrap();
++        let mut calls = 0usize;
++        load(
++            &write,
++            &f.node.settings,
++            f.block,
++            &mut || {
++                calls += 1;
++                Ok(())
++            },
++            &f.node.authenticated_arithmetic,
++        )
++        .unwrap();
++        let mut index = 0usize;
++        let error = load(
++            &write,
++            &f.node.settings,
++            f.block,
++            &mut || {
++                index += 1;
++                if index == calls {
++                    if corrupt {
++                        f.node.db.execute(
++                            "UPDATE archive_nodes SET data=X'7b7d' WHERE id=?",
++                            [root.as_slice()],
++                        )?;
++                    } else {
++                        f.node
++                            .db
++                            .execute("DELETE FROM archive_nodes WHERE id=?", [root.as_slice()])?;
++                    }
++                }
++                Ok(())
++            },
++            &f.node.authenticated_arithmetic,
++        )
++        .unwrap_err();
++        assert!(error.requires_owner_stop());
++        assert_eq!(encoded(&f.node.db, f.block).unwrap(), before);
++        assert_eq!(
++            native_authenticated::load(&f.node.db, f.block).unwrap(),
++            native
++        );
++        write.rollback().unwrap();
++        assert_eq!(read(&f).unwrap(), Some(f.state.clone()));
++    }
++}
++
++/// Explicit native-ABI supplement. Ignore/Unsupported is NEVER qualification:
++/// the qualified owner must actually execute this exact test under original
++/// resource limits; the original campaign/fixture remains a separate gate.
++#[cfg(target_os = "linux")]
++#[test]
++#[ignore = "requires actual qualified native-IO owner; NOT_RUN/Unsupported is not PASS"]
++fn actual_shared_factory_active_row_graph_callbacks_and_same_lease_cold_read() {
++    let directory = tempfile::tempdir().unwrap();
++    let owner = trnm_sqlite_io_boundary::NativeIoOwner::create(std::array::from_fn(|i| {
++        directory.path().join(format!("root-{i}"))
++    }))
++    .unwrap();
++    let lease = owner.lease(0).unwrap();
++    let settings = Settings::development_with_profiles(
++        Some(1),
++        "native-public-evaluation-dev-v1",
++        continuity_v1::PROFILE,
++    )
++    .unwrap();
++    let mut node =
++        Node::open_with_authenticated_state_and_native_io(lease.clone(), settings.clone(), 1)
++            .unwrap();
++    assert_eq!(node.storage_layout, Layout::SharedAccountsV1);
++    assert_eq!(
++        node.db
++            .query_row::<i64, _, _>("PRAGMA page_size", [], |r| r.get(0))
++            .unwrap(),
++        4096
++    );
++    assert_eq!(
++        node.db
++            .query_row::<String, _, _>("PRAGMA journal_mode", [], |r| r.get(0))
++            .unwrap(),
++        "wal"
++    );
++    let work = packet(&node, settings.genesis(), 0, 11);
++    let id = node.admit(&work, 100_000).unwrap();
++    node.activate(id).unwrap();
++    let expected = node.read_active().unwrap();
++    node.db
++        .execute_batch("SAVEPOINT actual_bad_active")
++        .unwrap();
++    node.db
++        .execute(
++            "UPDATE native_io_shared_snapshots SET data=X'7b7d' WHERE block=?",
++            [id.as_slice()],
++        )
++        .unwrap();
++    assert!(node.read_active().unwrap_err().requires_owner_stop());
++    assert!(node.state_at(id).unwrap_err().requires_owner_stop());
++    node.db
++        .execute_batch("ROLLBACK TO actual_bad_active; RELEASE actual_bad_active")
++        .unwrap();
++    assert_eq!(node.read_active().unwrap(), expected);
++    let native = native_authenticated::load(&node.db, id).unwrap();
++    for corrupt in [false, true] {
++        let write = node.db.unchecked_transaction().unwrap();
++        let mut calls = 0usize;
++        node.read_active_with_progress(&mut || {
++            calls += 1;
++            Ok(())
++        })
++        .unwrap();
++        let mut index = 0usize;
++        let error = node
++            .read_active_with_progress(&mut || {
++                index += 1;
++                if index == calls {
++                    let root = native.accounts.node.unwrap();
++                    if corrupt {
++                        node.db.execute(
++                            "UPDATE archive_nodes SET data=X'7b7d' WHERE id=?",
++                            [root.as_slice()],
++                        )?;
++                    } else {
++                        node.db
++                            .execute("DELETE FROM archive_nodes WHERE id=?", [root.as_slice()])?;
++                    }
++                }
++                Ok(())
++            })
++            .unwrap_err();
++        assert!(error.requires_owner_stop());
++        write.rollback().unwrap();
++        assert_eq!(node.read_active().unwrap(), expected);
++    }
++    let second = packet(&node, id, 0, 21);
++    let historical = node.admit(&second, 100_000).unwrap();
++    let historical_state = node.state_at(historical).unwrap();
++    node.db
++        .execute_batch("SAVEPOINT actual_bad_historical")
++        .unwrap();
++    node.db
++        .execute(
++            "UPDATE native_io_shared_snapshots SET data=X'7b7d' WHERE block=?",
++            [historical.as_slice()],
++        )
++        .unwrap();
++    assert!(node.state_at(historical).unwrap_err().requires_owner_stop());
++    node.db
++        .execute_batch("ROLLBACK TO actual_bad_historical; RELEASE actual_bad_historical")
++        .unwrap();
++    assert_eq!(node.state_at(historical).unwrap(), historical_state);
++    let historical_record = native_authenticated::load(&node.db, historical).unwrap();
++    let write = node.db.unchecked_transaction().unwrap();
++    let mut calls = 0usize;
++    node.state_at_with_progress(historical, &mut || {
++        calls += 1;
++        Ok(())
++    })
++    .unwrap();
++    let mut index = 0usize;
++    let error = node
++        .state_at_with_progress(historical, &mut || {
++            index += 1;
++            if index == calls {
++                node.db.execute(
++                    "DELETE FROM archive_nodes WHERE id=?",
++                    [historical_record.accounts.node.unwrap().as_slice()],
++                )?;
++            }
++            Ok(())
++        })
++        .unwrap_err();
++    assert!(error.requires_owner_stop());
++    write.rollback().unwrap();
++    assert_eq!(node.state_at(historical).unwrap(), historical_state);
++    node.activate(historical).unwrap();
++    let expected = node.read_active().unwrap();
++    node.db
++        .execute(
++            "DELETE FROM native_io_shared_snapshots WHERE block=?",
++            [historical.as_slice()],
++        )
++        .unwrap();
++    assert_eq!(node.read_active().unwrap(), expected);
++    assert_eq!(node.state_at(historical).unwrap(), expected.2);
++    drop(node);
++    let reopened =
++        Node::open_with_authenticated_state_and_native_io(lease.clone(), settings, 1).unwrap();
++    assert_eq!(reopened.read_active().unwrap(), expected);
++    drop(reopened);
++    let terminal = lease.receipt().unwrap();
++    assert!(!terminal.failed && terminal.lifecycle_complete);
++    assert!(terminal
++        .objects
++        .iter()
++        .all(|r| r.handles == 0 && r.pending_opens == 0 && r.shm_references == 0));
++}
++
++#[test]
++fn shared_same_byte_text_key_is_damage_not_optional_absence() {
++    let f = fixture();
++    let write = f.node.db.unchecked_transaction().unwrap();
++    assert_eq!(
++        write.execute(
++            "UPDATE main.native_io_shared_snapshots SET block=CAST(block AS TEXT) WHERE block=?",
++            [f.block.as_slice()],
++        ).unwrap(),
++        1
++    );
++    let unchanged: Vec<u8> = write
++        .query_row(
++            "SELECT CAST(block AS BLOB) FROM main.native_io_shared_snapshots",
++            [],
++            |r| r.get(0),
++        )
++        .unwrap();
++    assert_eq!(unchanged.as_slice(), f.block.as_slice());
++    let error = read(&f).unwrap_err();
++    assert_eq!(error.to_string(), "NATIVE_SHARED_TYPED_RECORD");
++    assert!(error.requires_owner_stop());
++    write.rollback().unwrap();
++    assert_eq!(read(&f).unwrap(), Some(f.state));
++}
++
++/// R3 negative controls use the actual production factory and public reads.
++/// This opt-in supplement has no successful Unsupported/NOT_RUN path and never
++/// replaces the original native caller, resource limits or independent reader.
++#[cfg(target_os = "linux")]
++#[test]
++#[ignore = "requires actual qualified native-IO owner; NOT_RUN/Unsupported is not PASS"]
++fn actual_shared_factory_wrong_key_and_authority_shadow_are_owner_fatal() {
++    let directory = tempfile::tempdir().unwrap();
++    let owner = trnm_sqlite_io_boundary::NativeIoOwner::create(std::array::from_fn(|i| {
++        directory.path().join(format!("root-{i}"))
++    }))
++    .unwrap();
++    let lease = owner.lease(0).unwrap();
++    let settings = Settings::development_with_profiles(
++        Some(1),
++        "native-public-evaluation-dev-v1",
++        continuity_v1::PROFILE,
++    )
++    .unwrap();
++    let mut node =
++        Node::open_with_authenticated_state_and_native_io(lease.clone(), settings.clone(), 1)
++            .unwrap();
++    let first = packet(&node, settings.genesis(), 0, 11);
++    let active = node.admit(&first, 100_000).unwrap();
++    node.activate(active).unwrap();
++    let second = packet(&node, active, 0, 21);
++    let historical = node.admit(&second, 100_000).unwrap();
++    let expected = node.read_active().unwrap();
++    let historical_state = node.state_at(historical).unwrap();
++    for block in [active, historical] {
++        let write = node.db.unchecked_transaction().unwrap();
++        assert_eq!(write.execute(
++            "UPDATE main.native_io_shared_snapshots SET block=CAST(block AS TEXT) WHERE block=?",
++            [block.as_slice()],
++        ).unwrap(), 1);
++        let unchanged: Vec<u8> = write.query_row(
++            "SELECT CAST(block AS BLOB) FROM main.native_io_shared_snapshots WHERE typeof(block)='text'",
++            [], |r| r.get(0),
++        ).unwrap();
++        assert_eq!(unchanged.as_slice(), block.as_slice());
++        assert!(node.read_active().unwrap_err().requires_owner_stop());
++        assert!(node.state_at(block).unwrap_err().requires_owner_stop());
++        write.rollback().unwrap();
++        assert_eq!(node.read_active().unwrap(), expected);
++        assert_eq!(node.state_at(historical).unwrap(), historical_state);
++    }
++    for block in [active, historical] {
++        let write = node.db.unchecked_transaction().unwrap();
++        let mut calls = 0usize;
++        node.state_at_with_progress(block, &mut || {
++            calls += 1;
++            Ok(())
++        })
++        .unwrap();
++        let mut index = 0usize;
++        let error = node.state_at_with_progress(block, &mut || {
++            index += 1;
++            if index == calls {
++                node.db.execute(
++                    "UPDATE main.native_io_shared_snapshots SET block=CAST(block AS TEXT) WHERE block=?",
++                    [block.as_slice()],
++                )?;
++            }
++            Ok(())
++        }).unwrap_err();
++        assert!(error.requires_owner_stop());
++        write.rollback().unwrap();
++        assert_eq!(node.read_active().unwrap(), expected);
++    }
++    // Keep unrelated TEMP workspace available. The explicit memory setting is
++    // only this supplemental control's setup, never a campaign/profile change.
++    node.db.execute_batch("PRAGMA temp_store=MEMORY; CREATE TEMP TABLE unrelated_workspace(value INTEGER); INSERT INTO unrelated_workspace VALUES(1);").unwrap();
++    assert_eq!(node.read_active().unwrap(), expected);
++    assert_eq!(node.state_at(historical).unwrap(), historical_state);
++    for table in [
++        "native_io_shared_snapshots",
++        "archive_nodes",
++        "native_state_commitments",
++    ] {
++        for historical_read in [false, true] {
++            let block = if historical_read { historical } else { active };
++            let record = native_authenticated::load(&node.db, block).unwrap();
++            let write = node.db.unchecked_transaction().unwrap();
++            let mut calls = 0usize;
++            if historical_read {
++                node.state_at_with_progress(block, &mut || {
++                    calls += 1;
++                    Ok(())
++                })
++                .unwrap();
++            } else {
++                node.read_active_with_progress(&mut || {
++                    calls += 1;
++                    Ok(())
++                })
++                .unwrap();
++            }
++            let mut index = 0usize;
++            let mut progress = || -> Result<()> {
++                index += 1;
++                if index == calls {
++                    node.db.execute_batch(&format!(
++                        "CREATE TEMP TABLE {} AS SELECT * FROM main.{table}",
++                        table.to_ascii_uppercase(),
++                    ))?;
++                    match table {
++                        "archive_nodes" => {
++                            node.db.execute(
++                                "DELETE FROM main.archive_nodes WHERE id=?",
++                                [record.accounts.node.unwrap().as_slice()],
++                            )?;
++                        }
++                        "native_state_commitments" => {
++                            node.db.execute(
++                                "UPDATE main.native_state_commitments SET data=X'7b7d' WHERE block=?",
++                                [block.as_slice()],
++                            )?;
++                        }
++                        _ => {
++                            node.db.execute(
++                                "UPDATE main.native_io_shared_snapshots SET data=X'7b7d' WHERE block=?",
++                                [block.as_slice()],
++                            )?;
++                        }
++                    }
++                }
++                Ok(())
++            };
++            let error = if historical_read {
++                node.state_at_with_progress(block, &mut progress)
++                    .unwrap_err()
++            } else {
++                node.read_active_with_progress(&mut progress).unwrap_err()
++            };
++            assert_eq!(error.to_string(), "NATIVE_SHARED_AUTHORITY_SHADOW");
++            assert!(error.requires_owner_stop());
++            write.rollback().unwrap();
++            assert_eq!(node.read_active().unwrap(), expected);
++            assert_eq!(node.state_at(historical).unwrap(), historical_state);
++        }
++    }
++    node.db
++        .execute_batch("ATTACH ':memory:' AS unrelated_attached")
++        .unwrap();
++    assert!(node.read_active().unwrap_err().requires_owner_stop());
++    assert!(node.state_at(historical).unwrap_err().requires_owner_stop());
++    node.db
++        .execute_batch("DETACH unrelated_attached; DROP TABLE temp.unrelated_workspace")
++        .unwrap();
++    assert_eq!(node.read_active().unwrap(), expected);
++    assert_eq!(node.state_at(historical).unwrap(), historical_state);
++    drop(node);
++    let terminal = lease.receipt().unwrap();
++    assert!(!terminal.failed && terminal.lifecycle_complete);
++    assert!(terminal
++        .objects
++        .iter()
++        .all(|r| r.handles == 0 && r.pending_opens == 0 && r.shm_references == 0));
++}

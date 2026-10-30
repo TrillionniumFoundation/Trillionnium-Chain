@@ -1,0 +1,24 @@
+{
+  "schema": "held-target-loader-fence-original-claimed-execution-failure-pins-v1",
+  "utc": "2026-10-26T12:25:22.128641+00:00",
+  "files": [
+    {
+      "path": "work/ci-follow/pn1-V19-new-clean-source-prepare-owner-preparation-20261026-001/execution/component.stdout.log",
+      "bytes": 285,
+      "sha256": "ba0ec26b56a1b167259c05928e5ecfd4097fbeae24a914a0e6812dd2ffdb825c"
+    },
+    {
+      "path": "work/ci-follow/pn1-V19-new-clean-source-prepare-owner-preparation-20261026-001/execution/component.stderr.log",
+      "bytes": 441,
+      "sha256": "7770ce582ed33853f61c166d970c270e04ddfd8cfc393a93eab21c6e214791ac"
+    },
+    {
+      "path": "work/ci-follow/pn1-V19-new-clean-source-prepare-owner-preparation-20261026-001/execution/outer-terminal.json",
+      "bytes": 1058,
+      "sha256": "4b686677cb4c10ecd1655fdec3ccd3011c577531227109f5e8f1981a9f2480d1"
+    }
+  ],
+  "retained_failure": "COMPONENT_NATIVE_NONZERO / PRIVATE_ABI_UNSUPPORTED: loader directory must be a canonical existing directory",
+  "old_execution_claim_must_not_be_reused": true,
+  "files_read_only": true
+}

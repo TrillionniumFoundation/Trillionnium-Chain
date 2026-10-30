@@ -367,6 +367,68 @@ future external controller must bind the live original unit before main exit
 and obtain authoritative final identity/empty/limits/counters before release.
 Preheld FDs do not guarantee that observation beats manager pruning. No such
 outer controller/settlement protocol is implemented by this close slice.
+The fresh [host namespace preparation](llm_runtime_host_scope.py) uses the
+original manager request for a scope S and a create-only delegate-owned H below
+it. S -> H -> observer migration empties each parent before distributing domain
+controllers. Only H receives the real depth2/descendants4 hard bound; the
+manager's S topology files are not silently written or treated as bounded.
+S/H are each capped at 17GiB/500%/272 tasks, with O1GiB/100%/16 and the original
+U16GiB/400%/256 partition. C128MiB/100%/16 and A8GiB/300%/240 stay unchanged.
+The original owner is retained before any request; ambiguous or failed requests
+cannot retry, stop/delete the scope or close its owned FDs as a successful
+retirement. This remains a trusted preparatory interface, without C birth,
+whole-U terminal observation or money authority. The
+[twenty-nine controls](test_llm_runtime_host_scope.py) retain all twenty-two preceding controls and exercise bounded real
+transport and ordinary-FD/mock-manager layouts, including immutable retained-slot
+comparison under controlled bookkeeping mutations. They do not establish native
+scope admission.
+A separate [exact378 native attempt](../evidence/pon-upgrade-implementation-20261018/native-rounds/host-namespace-pristine-failure-20261023/SCOPE.md)
+failed `host-operation-not-pristine` and remains UNKNOWN. Its original
+job/invocation/owner and stored groups/FDs were retained; neither the failing
+role/counter nor resource return was proved. The diagnostic successor preserves
+each original empty/zero condition and short-circuit read order, recording the
+first returned role/field/raw without rereading. Its bounded error message marks
+any raw truncation and includes the complete-value length/hash; the immutable
+first-failure tuple keeps the full bounded raw. Actual exit status remains
+UNKNOWN, planned exit is only intent, and no diagnostic test closes pristine or
+authorizes reuse of the old cap/unit. A new native experiment requires separate
+independent review and GO under the same PN4 plan.
+The [exact-e6 first-read observation](../evidence/pon-upgrade-implementation-20261018/native-rounds/host-memcg-phase-boundary-20261023/SCOPE.md)
+records U `memory.current=258048\n`, still UNKNOWN. Linux7 child-memcg statistics
+can be charged to parent U when C/A directories are created. The byte
+composition is unproved; these charges are not exempted or subtracted. The
+original full-layout mode and seven pristine predicates remain intact.
+The opt-in `prepare_fresh_host_leaf()` returns the same original owner;
+`admit_fresh_leaf()` creates only S/H/observer/U and actually verifies fresh leaf
+U. Its private fact is bound to that owner/source/generation/original identities,
+not caller claims, and refuses copying/serialization. `consume_fresh_leaf(fact)`
+rechecks once, returns None and retains the consumed fact; it creates no C/A or
+authority. Unknown outcomes retain the original slots with no second admission.
+Factory owner/generation faults close before effects; a cleanup fault returns the
+same original cap through `KernelOwnedCloseRequired`. Seven added ordinary-file/
+mock-manager controls are contract evidence only.
+The next source-only phase is explicitly `prepare_fresh_child_groups()` on that
+same cap after consumption, followed by `verify_child_preparation()`. It performs
+real create-only C/A directory setup and exact original limits/readback, retaining
+the same manager/native/FD owner. U current/peak include all C/A metadata and
+must stay within16GiB, with zero swap/tasks/CPU usage/memory events. C/A alone
+retain the original seven-zero checks. Success returns None, keeps `_ready=False`
+and supplies no spawn/Qualified/KernelBudget fact; this is not the old production
+adapter's absent controller-owner capability. Uncertain partial setup records
+the first error and attempted role on the same cap, prohibits retry/close/removal
+and retains every original held slot. Ordinary-file/mock-manager controls do not
+prove native C/A preparation. Actual O->C->A parent wait4 binding and drain are
+still required; the old service/current-controller constructor is incompatible
+with this scope/O-in-observer layout and is not reused.
+The existing PN4 plan owns the next C/A birth, authoritative exits, ordered
+retirement and actual zero-charge/dying-free terminal requirements. They remain
+OPEN. The original eight-second fact deadline is unchanged; blocking removal
+cannot be presented as a hard eight-second return. A future asynchronous effect
+slot must be singular, bounded and permanently retained by the original owner
+on UNKNOWN, with no reentry/release/refund. This slice supplies no such primitive.
+Pre-migration O memory stays charged to its original cgroup; the new ceilings
+therefore do not bound all O RSS or settle its original host baseline.
+
 Those facts neither qualify this new in-process source nor supply whole-unit
 empty/inode reconciliation. `memory.peak/events` measure cgroup charge, not
 physical RSS; shared-page ownership, escaping same-UID code, ancestor expenses,
@@ -507,6 +569,22 @@ native-internal signal interruption is not established. Small ordinary child
 controls test frame writing/backpressure and expired-deadline refusal without
 any unit or valid group. These controls prove no charge
 attribution/zero, and do not qualify a model, Store/FinalUse or resource release.
+
+For tiny evidence only, the first live aggregate terminal transition can now
+observe delayed kernel charge teardown until the already-configured original
+absolute 8s deadline. It waits only for exact memory/swap charge-retained errors,
+with at most 801 reconciliation attempts plus the unchanged final snapshot,
+and sleeps of at most 10ms or the remaining time. All other
+failures remain immediate and sticky. The original owner, held pidfd, exact
+wait4, source/limits, empty/no-dying groups, zero memory/swap and equal complete
+counter snapshots are still required before publishing a private fact, inside
+that same deadline. The original blocking system-observation timeout and cleanup
+can leave a failure tail beyond eight seconds; that cannot publish a timely fact.
+No failed capability is retried, counter reset/reclaim or
+limit change occurs, and non-tiny terminal paths do not wait. The retained
+`83ca245b` failure is unchanged; later diagnostic zero is not its success receipt.
+The 66 mandatory ordinary-owner controls in the existing cleanup CI establish
+neither real aggregate acceptance nor outer reconciliation/refund/model results.
 
 The ordinary merge with source `8caf5387` preserves its inherited runtime,
 persistent neural-read worker and default reconciliation helpers, alongside the

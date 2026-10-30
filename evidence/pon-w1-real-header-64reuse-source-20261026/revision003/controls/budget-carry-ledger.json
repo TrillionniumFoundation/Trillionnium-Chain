@@ -1,0 +1,25 @@
+{
+  "schema": "same-authorized-new15s-mechanism-budget-carry-into-revision003-v1",
+  "immutable_v2_ledger_sha256": "62b4b2811af4c4339a1f8ba1db69b88da153fdaa6f5a2983fa361e9280df7e0f",
+  "original_v1_spent_seconds": 13.283328251010971,
+  "new15s_already_spent_seconds": 8.920923728990601,
+  "remaining_before_this_one_control_seconds": 6.079076271009399,
+  "authorized_new_budget_seconds": 15,
+  "original_unspent_not_transferred": 1.7166717489890289,
+  "one_control_attempts": [
+    {
+      "actual_pid": 2545631,
+      "actual_birth": "9422239",
+      "actual_exit": 0,
+      "actual_elapsed_seconds": 0.13084511199849658,
+      "actual_wait_reaped": true,
+      "final_ECHILD": true,
+      "stdout_bytes": 348,
+      "stderr_bytes": 0
+    }
+  ],
+  "new15s_total_actual_spent_seconds": 9.051768840989098,
+  "all_v1_plus_new15s_actual_spent_seconds": 22.33509709200007,
+  "remaining_after_control_seconds": 5.948231159010902,
+  "budget_respected": true
+}

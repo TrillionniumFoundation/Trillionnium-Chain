@@ -50,7 +50,7 @@ jobs:
           python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$out/source.json"
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs)" = 5daaa4461859d2dbe1f0fc91c32b03e606e0dbbf
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs)" = 2a4cfe2dd66692cfd27bc99948ee1d509ebb9dbf
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs)" = d4327221fe1af4d0479915371634bdbf6e9cf4c1
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs)" = 5b09b2e473dbba311a398e9ed77d2b619eaa906c
           bash scripts/project-preflight.sh --audit
       - name: Install pinned native compiler and lint tools
         run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
@@ -123,7 +123,7 @@ jobs:
           cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib account_archive_prototype::native_store::batch_tests -- --show-output --test-threads=1 2>&1 | tee "$OUT/batch.log"
           grep -E '^test result: ok\. [1-9][0-9]* passed; 0 failed;' "$OUT/batch.log"
           cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib authenticated_migration -- --show-output --test-threads=1 2>&1 | tee "$OUT/migration.log"
-          grep -E '^test result: ok\. 29 passed; 0 failed; 0 ignored;' "$OUT/migration.log"
+          grep -E '^test result: ok\. 35 passed; 0 failed; 0 ignored;' "$OUT/migration.log"
       - name: Require exact work arithmetic and unchanged full-profile public service
         shell: bash
         run: |

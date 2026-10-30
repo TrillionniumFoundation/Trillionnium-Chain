@@ -1,0 +1,24 @@
+{
+  "started_utc": "2026-10-27T07:25:13.329657+00:00",
+  "pid": 1293243,
+  "birth": "1293243 (python3) R 1293242 1293241 1293241 0 -1 4194304 29 0 0 0 0 0 0 0 20 0 1 0 16357932 9584640 102 18446744073709551615 4325376 7352253 140734938990560 0 0 0 0 0 0 0 0 0 17 28 0 0 0 0 0 10653128 12216448 386863104 140734938995187 140734938995268 140734938995268 140734939000807 0\n",
+  "command": [
+    "python3",
+    "scripts/ci/test_public_readiness_evidence.py",
+    "NativeDurableSchemaTests",
+    "-v"
+  ],
+  "finished_utc": "2026-10-27T07:28:56.681248+00:00",
+  "actual_wait_exit": 0,
+  "seconds": 223.353081596,
+  "raw": {
+    "fixed-source-class.stdout.original": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "fixed-source-class.stderr.original": {
+      "bytes": 2770,
+      "sha256": "82372feb0dc41418aaa4f78bccef4066c655ad0cae3083e1ba8311af7882be29"
+    }
+  }
+}

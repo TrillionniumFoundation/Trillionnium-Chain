@@ -1,0 +1,216 @@
+{
+  "schema": "immutable-source-stage-evidence-manifest-v1",
+  "files": [
+    {
+      "path": "original-GNU-RED/001-Windows-GNU-all-target-strict-Clippy-before-cfg-fix/actual-start.json",
+      "bytes": 630,
+      "sha256": "7fb46b4caf98976b44e9fc13b2bada0105691cbb13818f07abc7c63ae5a951c9"
+    },
+    {
+      "path": "original-GNU-RED/001-Windows-GNU-all-target-strict-Clippy-before-cfg-fix/actual-terminal.json",
+      "bytes": 1054,
+      "sha256": "9ee81cc430f351cd599a41f1e27dd0f11ef3fb023e5eb0c7b53928b7db253f19"
+    },
+    {
+      "path": "original-GNU-RED/001-Windows-GNU-all-target-strict-Clippy-before-cfg-fix/stderr.original",
+      "bytes": 2650,
+      "sha256": "7cca604f4616c99c67d6bfeeb0a8aef1d29e2adf37c80179db653782ca19f40c"
+    },
+    {
+      "path": "original-GNU-RED/001-Windows-GNU-all-target-strict-Clippy-before-cfg-fix/stdout.original",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "original-GNU-RED/actual-native-runner-start.json",
+      "bytes": 635,
+      "sha256": "d6c0eadabef02953d59d3e156e051180021172d188c5cfbd14cf1faa7b282700"
+    },
+    {
+      "path": "original-GNU-RED/actual-native-runner-terminal.json",
+      "bytes": 1355,
+      "sha256": "42cd159d9378cbd69b64d5e0ec0f9a3bf30817b194a942f78b8f214e2d6712eb"
+    },
+    {
+      "path": "original-GNU-RED/actual-source-at-original-Windows-GNU-RED/config/portability-inventory-v1.json",
+      "bytes": 30218,
+      "sha256": "ad6df812d3369e06099d14fddeaedbad1d334c28492898effaa7c073ab4c2e31"
+    },
+    {
+      "path": "original-GNU-RED/actual-source-at-original-Windows-GNU-RED/docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "bytes": 380673,
+      "sha256": "5f0c044e8c4fd7860756e7663fde70028470c7865c42cc23e41bd8328b1ad582"
+    },
+    {
+      "path": "original-GNU-RED/actual-source-at-original-Windows-GNU-RED/trillionnium/crates/trnm-data-availability/src/cell/runtime_root.rs",
+      "bytes": 19142,
+      "sha256": "1a313ea51f080c81d640c00aa947a080fbe81b0c5bae93765052e6bf44168050"
+    },
+    {
+      "path": "original-GNU-RED/actual-source-at-original-Windows-GNU-RED/trillionnium/crates/trnm-data-availability/src/cell/runtime_root_tests.rs",
+      "bytes": 12314,
+      "sha256": "e2efe1dc3f6669de484df67e58744b17ad738a35e504e9a7c1c36610abe8d378"
+    },
+    {
+      "path": "original-GNU-RED/actual-source-at-original-Windows-GNU-RED/trillionnium/crates/trnm-data-availability/src/cell/store.rs",
+      "bytes": 19863,
+      "sha256": "c2940adb239c83dddcdcb4f5198fa557ebf6660225dd20441360f0d22cdac274"
+    },
+    {
+      "path": "original-GNU-RED/actual-source-at-original-Windows-GNU-RED/trillionnium/crates/trnm-data-availability/src/cell.rs",
+      "bytes": 3969,
+      "sha256": "b7ffc860146e7a25c3c88315013151b0d043d6ab73a62a5def493e234602c3dc"
+    },
+    {
+      "path": "original-GNU-RED/actual-unit-launch.stderr",
+      "bytes": 129,
+      "sha256": "7169346d3b7e3b4e0bcf55652a40a36c37e8f04284659e05f8c75595d5ddb55a"
+    },
+    {
+      "path": "original-GNU-RED/actual-unit-launch.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "original-GNU-RED/native-validation-plan.json",
+      "bytes": 3367,
+      "sha256": "447908f0c3ead855cbd74c19b71dfcf630a6fb1779ea56c92e8ffc4b482c4672"
+    },
+    {
+      "path": "cfg-source-fix/001-Windows-GNU-all-target-strict-Clippy-after-cfg-fix/actual-start.json",
+      "bytes": 623,
+      "sha256": "49c096b169d099b91d9536e23c9fb6f7209691910193f22144fb7fbfd652366b"
+    },
+    {
+      "path": "cfg-source-fix/001-Windows-GNU-all-target-strict-Clippy-after-cfg-fix/actual-terminal.json",
+      "bytes": 1044,
+      "sha256": "6f2976fafaac09b9bfcf565ec354d6764576a5040e4962a8b995d0de917658cf"
+    },
+    {
+      "path": "cfg-source-fix/001-Windows-GNU-all-target-strict-Clippy-after-cfg-fix/stderr.original",
+      "bytes": 599,
+      "sha256": "c55dd03ffa8d87fd5c0657405b2f7023fab8688b7015ff697f9cfa7ff1a41d6d"
+    },
+    {
+      "path": "cfg-source-fix/001-Windows-GNU-all-target-strict-Clippy-after-cfg-fix/stdout.original",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "cfg-source-fix/002-Linux-all-target-strict-Clippy-after-cfg-fix/actual-start.json",
+      "bytes": 584,
+      "sha256": "da3de5e89321305e2c64355ae4fe389e996a45b62b9f2bf3ce1e1f6de4236c4f"
+    },
+    {
+      "path": "cfg-source-fix/002-Linux-all-target-strict-Clippy-after-cfg-fix/actual-terminal.json",
+      "bytes": 1005,
+      "sha256": "424d15a91f10642e20dbbc722168a8b3380a8949d09a2022b2574afe70203076"
+    },
+    {
+      "path": "cfg-source-fix/002-Linux-all-target-strict-Clippy-after-cfg-fix/stderr.original",
+      "bytes": 282,
+      "sha256": "3dbd7b5dd731ed91d0e80a111f166bf43887bc47d7adcd7b49958080031fe1cf"
+    },
+    {
+      "path": "cfg-source-fix/002-Linux-all-target-strict-Clippy-after-cfg-fix/stdout.original",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "cfg-source-fix/003-Linux-six-native-runtime-controls-after-cfg-fix/actual-start.json",
+      "bytes": 561,
+      "sha256": "5046e234c88f1cd52da4915d1a4fba263eb702af9f20675e284f78bec8dc542f"
+    },
+    {
+      "path": "cfg-source-fix/003-Linux-six-native-runtime-controls-after-cfg-fix/actual-terminal.json",
+      "bytes": 985,
+      "sha256": "dd5cb681808cc7747c00d9b680db5c1ebfa6c8fd57eda20e0300bbaa3e022356"
+    },
+    {
+      "path": "cfg-source-fix/003-Linux-six-native-runtime-controls-after-cfg-fix/stderr.original",
+      "bytes": 2149,
+      "sha256": "f41ed21bc453fef425714edc8a41928d77be9db8d4b719f1e7d3ad6e4c824208"
+    },
+    {
+      "path": "cfg-source-fix/003-Linux-six-native-runtime-controls-after-cfg-fix/stdout.original",
+      "bytes": 1433,
+      "sha256": "fdf90c998cd585617fcf38709021ba75e8ea9f92daab1a8b8fec267815e56e5d"
+    },
+    {
+      "path": "cfg-source-fix/004-retained-negative-source-integrity-after-cfg-fix/actual-start.json",
+      "bytes": 457,
+      "sha256": "ca5924a7bfa335cfe2ab94928ae3fc38e59d30057d59942aaf7e583948cb18c2"
+    },
+    {
+      "path": "cfg-source-fix/004-retained-negative-source-integrity-after-cfg-fix/actual-terminal.json",
+      "bytes": 881,
+      "sha256": "ed4eaa47c487f7e2f861526747f89581df34bf428ad8741054d26cfa6867bc80"
+    },
+    {
+      "path": "cfg-source-fix/004-retained-negative-source-integrity-after-cfg-fix/stderr.original",
+      "bytes": 5026,
+      "sha256": "d1e24c42071b82c84df410bf51e47f43d6803d49bfed490dd2c9d3762f397eea"
+    },
+    {
+      "path": "cfg-source-fix/004-retained-negative-source-integrity-after-cfg-fix/stdout.original",
+      "bytes": 484,
+      "sha256": "7cf649aa54b837bb6967e363d50ebc38b280b730999fa198e527f3e5471ce19c"
+    },
+    {
+      "path": "cfg-source-fix/005-Rust-formatter-check-after-cfg-fix/actual-start.json",
+      "bytes": 490,
+      "sha256": "dc1a2ffd911e437a9943062eb8b4e74141ae81e497cc45a32815da35630f2943"
+    },
+    {
+      "path": "cfg-source-fix/005-Rust-formatter-check-after-cfg-fix/actual-terminal.json",
+      "bytes": 909,
+      "sha256": "8cfaf4cf05037ad38188d5c5604e7c219a7e57f4f1d9d8906ba0555377d5414b"
+    },
+    {
+      "path": "cfg-source-fix/005-Rust-formatter-check-after-cfg-fix/stderr.original",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "cfg-source-fix/005-Rust-formatter-check-after-cfg-fix/stdout.original",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "cfg-source-fix/actual-exact-source-fix-readback.json",
+      "bytes": 835,
+      "sha256": "3de1b45e76b5098e6472c296c5c5aa8abdd02008c2799970791d13be6945a061"
+    },
+    {
+      "path": "cfg-source-fix/actual-native-runner-start.json",
+      "bytes": 657,
+      "sha256": "b45c2fe9d35b35cc4013ece7d9782c63e0bae58e032553f9c9fd93d414bb1145"
+    },
+    {
+      "path": "cfg-source-fix/actual-native-runner-terminal.json",
+      "bytes": 5559,
+      "sha256": "c74a89be05bfe437d5dd98ce4ac7469d2044a7f5d3bf5ce4b5fbf1ae8b0d0202"
+    },
+    {
+      "path": "cfg-source-fix/actual-unit-launch.stderr",
+      "bytes": 129,
+      "sha256": "083a188fbcc91c6dbc30bbd23a07fdd9825ea472539c105be5d1841fab412eab"
+    },
+    {
+      "path": "cfg-source-fix/actual-unit-launch.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "cfg-source-fix/native-validation-plan.json",
+      "bytes": 4614,
+      "sha256": "eff78c5071b780b166bac268bd5ac97dd712b5a12932bf62fc9847d235a1566e"
+    },
+    {
+      "path": "platform-gating-readback.json",
+      "bytes": 2973,
+      "sha256": "1574dd2f3df70e90db0b3d1ff078e933b0d672844500256f8f74d0dad6e46322"
+    }
+  ],
+  "original_failures_retained": true
+}

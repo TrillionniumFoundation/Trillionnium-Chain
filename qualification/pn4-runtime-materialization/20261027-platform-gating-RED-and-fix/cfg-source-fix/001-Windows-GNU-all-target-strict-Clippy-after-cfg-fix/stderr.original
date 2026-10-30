@@ -1,0 +1,13 @@
+    Checking trnm-data-availability v0.1.0 (/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/trillionnium/crates/trnm-data-availability)
+    Checking errno v0.3.14
+   Compiling serde_derive v1.0.228
+    Checking fastrand v2.3.0
+    Checking once_cell v1.21.4
+    Checking itoa v1.0.18
+    Checking memchr v2.8.0
+    Checking serde_json v1.0.149
+    Checking tempfile v3.27.0
+    Checking serde v1.0.228
+    Checking rustix v1.1.4
+    Checking hex v0.4.3
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 20.42s

@@ -1,0 +1,31 @@
+{
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "-p",
+    "trnm-worker-agent",
+    "--bin",
+    "trnm-worker-agent",
+    "--",
+    "--test-threads=1"
+  ],
+  "exit_code": 0,
+  "timed_out": false,
+  "violation": null,
+  "seconds": 12.724731440990581,
+  "actual_child_reaped": true,
+  "source_sha256": "f80c0a93d58f1d148bd553f0ceba9d5bc92bd58692942c31353406a6d1216a99",
+  "files": [
+    {
+      "name": "0.stdout.log",
+      "bytes": 39516,
+      "sha256": "bc3244ae88f9ed5bd825cd96ffa592189a29ec99d019bc8400c93d4451795a9b"
+    },
+    {
+      "name": "0.stderr.log",
+      "bytes": 515,
+      "sha256": "92a6b0bd79b0505c5d03e09570ea3b6dd789761d6b82559f743c18481eda4ca0"
+    }
+  ]
+}

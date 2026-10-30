@@ -180,6 +180,7 @@ impl Node {
         target: &Path,
         requested_bytes: u64,
     ) -> Result<GrowthStorageReservationV2> {
+        ensure(self.native_io.is_none(), "NATIVE_IO_MIGRATION_UNSUPPORTED")?;
         ensure(
             (MIN_GROWTH_RESERVATION_BYTES..=MAX_GROWTH_RESERVATION_BYTES)
                 .contains(&requested_bytes),
@@ -271,6 +272,7 @@ impl Node {
         storage_namespace: &str,
         target: &Path,
     ) -> Result<GrowthStorageReservationV2> {
+        ensure(self.native_io.is_none(), "NATIVE_IO_MIGRATION_UNSUPPORTED")?;
         let plan = self.prepare_growth_profile_migration_v2(binding)?;
         let (tip, generation, _) = self.read_active()?;
         ensure(
@@ -333,6 +335,9 @@ impl Node {
         destination: &Path,
         progress: &(impl Fn(AuthenticatedMigrationProgress) -> Result<()> + Sync),
     ) -> Result<AuthenticatedMigrationReceipt> {
+        // This explicit seven-root I/O domain cannot authorize an unrelated
+        // destination or silently reopen it using the process default VFS.
+        ensure(self.native_io.is_none(), "NATIVE_IO_MIGRATION_UNSUPPORTED")?;
         ensure(
             matches!(self.state_backend, StateBackend::Legacy),
             "AUTHENTICATED_MIGRATION_SOURCE_PROFILE",

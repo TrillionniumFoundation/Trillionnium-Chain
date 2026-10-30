@@ -96,7 +96,7 @@ fn fixture(path: &Path) -> (CellManifestV1, Vec<u8>, PathBuf) {
     let input = path.join("actual-cell-input");
     fs::write(&input, &bytes).unwrap();
     let store_path = path.join("origin.sqlite");
-    let store = CellStoreV1::open(&store_path).unwrap();
+    let store = CellStoreV1::open(&store_path, cache_config()).unwrap();
     let manifest = store.pack_file(&input, cell_context(), 16_384).unwrap();
     (manifest, bytes, store_path)
 }
@@ -115,7 +115,7 @@ impl Peer {
         let stop = shutdown.clone();
         let path = path.to_owned();
         let handle = thread::spawn(move || {
-            let store = CellStoreV1::open(&path)?;
+            let store = CellStoreV1::open(&path, cache_config())?;
             serve_cells(&listener, &store, &stop, bounds)
         });
         Self {
@@ -447,7 +447,7 @@ fn tcp_two_bootstraps_newer_owner_sequence_never_dials_superseded_endpoint() {
         assert_eq!(receipt.connection_attempts, 1);
         assert_eq!(receipt.received_response_bytes, 41);
     }
-    let consumer = CellStoreV1::open(&temp.path().join("consumer.sqlite")).unwrap();
+    let consumer = CellStoreV1::open(&temp.path().join("consumer.sqlite"), cache_config()).unwrap();
     let directory =
         CellProviderDirectoryV1::open(&temp.path().join("consumer-directory.sqlite"), context())
             .unwrap();
@@ -515,7 +515,7 @@ fn tcp_newer_same_endpoint_short_ttl_expires_mid_manifest_without_publication() 
         &[proxy.address],
     );
     let addresses = policy(&[proxy.address, first.address, second.address]);
-    let consumer = CellStoreV1::open(&temp.path().join("consumer.sqlite")).unwrap();
+    let consumer = CellStoreV1::open(&temp.path().join("consumer.sqlite"), cache_config()).unwrap();
     let directory =
         CellProviderDirectoryV1::open(&temp.path().join("consumer-directory.sqlite"), context())
             .unwrap();
@@ -606,7 +606,7 @@ fn tcp_equal_sequence_endpoint_equivocation_disqualifies_the_identity_without_an
     for (value, bootstrap) in [(&original, first.address), (&conflicting, second.address)] {
         announce_cell_provider(value, bootstrap, &addresses, limits(), deadline()).unwrap();
     }
-    let consumer = CellStoreV1::open(&temp.path().join("consumer")).unwrap();
+    let consumer = CellStoreV1::open(&temp.path().join("consumer"), cache_config()).unwrap();
     let directory =
         CellProviderDirectoryV1::open(&temp.path().join("consumer-directory"), context()).unwrap();
     let options = CellDiscoveryOptionsV1 {
@@ -644,4 +644,14 @@ fn tcp_equal_sequence_endpoint_equivocation_disqualifies_the_identity_without_an
         first_dials, 0,
         "an equivocated owner must not retain its first endpoint as a candidate"
     );
+}
+
+// Explicit finite fixture quota; covers the existing <=32MiB commit fixtures.
+fn cache_config() -> crate::cell::CellCacheConfigV4 {
+    crate::cell::CellCacheConfigV4 {
+        max_database_bytes: 128 * 1024 * 1024,
+        max_logical_bytes: 64 * 1024 * 1024,
+        max_chunk_rows: 4096,
+        max_manifest_rows: 256,
+    }
 }

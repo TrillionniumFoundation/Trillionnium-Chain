@@ -1,0 +1,599 @@
+test_actual_held_io_bridge_preserves_the_independent_legacy_schema (__main__.NativeDurableSchemaTests.test_actual_held_io_bridge_preserves_the_independent_legacy_schema) ... ERROR
+test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) ... 
+  test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (label='ddl-unselected') ... FAIL
+  test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (label='schema-unselected') ... FAIL
+  test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (label='nested-pair') ... FAIL
+  test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='let state_backend = StateBackend::AuthenticatedV1;') ... FAIL
+  test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='let settings = settings;') ... FAIL
+  test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='let (settings, _) = (settings, ());') ... FAIL
+  test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='let ddl = StateBackend::AuthenticatedV1.ddl();') ... FAIL
+  test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='let mut ddl = StateBackend::AuthenticatedV1.ddl();') ... FAIL
+  test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='let ddl: String = StateBackend::AuthenticatedV1.ddl();') ... FAIL
+  test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='let schema_id: Hash = StateBackend::AuthenticatedV1.schema_id();') ... FAIL
+  test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='let (ddl, schema_id) = (StateBackend::AuthenticatedV1.ddl(), StateBackend::AuthenticatedV1.schema_id());') ... FAIL
+  test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='let (state_backend, _) = (StateBackend::AuthenticatedV1, ());') ... FAIL
+  test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='state_backend = StateBackend::AuthenticatedV1;') ... FAIL
+  test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='ddl = StateBackend::AuthenticatedV1.ddl();') ... FAIL
+  test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='schema_id = StateBackend::AuthenticatedV1.schema_id();') ... FAIL
+  test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='schema_id[0] = 0;') ... FAIL
+test_backend_decoys_and_historical_hash_cannot_authorize_bad_active_mapping (__main__.NativeDurableSchemaTests.test_backend_decoys_and_historical_hash_cannot_authorize_bad_active_mapping) ... ERROR
+test_backend_domains_and_composition_fail_closed (__main__.NativeDurableSchemaTests.test_backend_domains_and_composition_fail_closed) ... ok
+test_current_backend_returns_the_exact_preserved_legacy_bytes (__main__.NativeDurableSchemaTests.test_current_backend_returns_the_exact_preserved_legacy_bytes) ... ERROR
+test_growth_selection_is_exact_without_widening_legacy_evidence (__main__.NativeDurableSchemaTests.test_growth_selection_is_exact_without_widening_legacy_evidence) ... 
+  test_growth_selection_is_exact_without_widening_legacy_evidence (__main__.NativeDurableSchemaTests.test_growth_selection_is_exact_without_widening_legacy_evidence) (label='default-instead-selected') ... FAIL
+  test_growth_selection_is_exact_without_widening_legacy_evidence (__main__.NativeDurableSchemaTests.test_growth_selection_is_exact_without_widening_legacy_evidence) (label='bypassed-backend') ... FAIL
+  test_growth_selection_is_exact_without_widening_legacy_evidence (__main__.NativeDurableSchemaTests.test_growth_selection_is_exact_without_widening_legacy_evidence) (label='ignored-settings') ... FAIL
+test_held_io_bridge_refuses_changed_fields_effects_or_nested_delegation (__main__.NativeDurableSchemaTests.test_held_io_bridge_refuses_changed_fields_effects_or_nested_delegation) ... ok
+test_held_io_nested_decoy_duplicate_and_string_binding_are_refused (__main__.NativeDurableSchemaTests.test_held_io_nested_decoy_duplicate_and_string_binding_are_refused) ... 
+  test_held_io_nested_decoy_duplicate_and_string_binding_are_refused (__main__.NativeDurableSchemaTests.test_held_io_nested_decoy_duplicate_and_string_binding_are_refused) (replacement='if false { let ddl = state_backend.ddl();\n        let schema_id = state_backend.selected_schema_id(&settings); }') ... FAIL
+  test_held_io_nested_decoy_duplicate_and_string_binding_are_refused (__main__.NativeDurableSchemaTests.test_held_io_nested_decoy_duplicate_and_string_binding_are_refused) (replacement='let NOTE: &str = "let ddl = state_backend.ddl();\\n        let schema_id = state_backend.selected_schema_id(&settings);";') ... FAIL
+  test_held_io_nested_decoy_duplicate_and_string_binding_are_refused (__main__.NativeDurableSchemaTests.test_held_io_nested_decoy_duplicate_and_string_binding_are_refused) (replacement='let NOTE: &str = r###"let ddl = state_backend.ddl();\n        let schema_id = state_backend.selected_schema_id(&settings);"###;') ... FAIL
+  test_held_io_nested_decoy_duplicate_and_string_binding_are_refused (__main__.NativeDurableSchemaTests.test_held_io_nested_decoy_duplicate_and_string_binding_are_refused) (replacement='/* let ddl = state_backend.ddl();\n        let schema_id = state_backend.selected_schema_id(&settings); */') ... FAIL
+  test_held_io_nested_decoy_duplicate_and_string_binding_are_refused (__main__.NativeDurableSchemaTests.test_held_io_nested_decoy_duplicate_and_string_binding_are_refused) (replacement='let ddl = state_backend.ddl();\n        let schema_id = state_backend.schema_id();') ... FAIL
+test_held_io_parameter_field_and_destructure_join_is_exact (__main__.NativeDurableSchemaTests.test_held_io_parameter_field_and_destructure_join_is_exact) ... ok
+test_historical_literal_v1_and_inline_composed_v2_stay_supported (__main__.NativeDurableSchemaTests.test_historical_literal_v1_and_inline_composed_v2_stay_supported) ... ok
+test_legacy_and_authenticated_openers_cannot_enable_growth_observation_mode (__main__.NativeDurableSchemaTests.test_legacy_and_authenticated_openers_cannot_enable_growth_observation_mode) ... ok
+test_permanent_growth_mapping_is_exact_without_qualifying_its_storage (__main__.NativeDurableSchemaTests.test_permanent_growth_mapping_is_exact_without_qualifying_its_storage) ... ERROR
+test_permanent_growth_table_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_permanent_growth_table_cannot_be_inserted_into_legacy_literals) ... 
+  test_permanent_growth_table_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_permanent_growth_table_cannot_be_inserted_into_legacy_literals) (name='growth_states', index=False) ... FAIL
+  test_permanent_growth_table_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_permanent_growth_table_cannot_be_inserted_into_legacy_literals) (name='growth_states', index=True) ... FAIL
+  test_permanent_growth_table_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_permanent_growth_table_cannot_be_inserted_into_legacy_literals) (name='GrOwTh_StAtEs', index=False) ... FAIL
+  test_permanent_growth_table_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_permanent_growth_table_cannot_be_inserted_into_legacy_literals) (name='GrOwTh_StAtEs', index=True) ... FAIL
+test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables (__main__.NativeDurableSchemaTests.test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables) ... 
+  test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables (__main__.NativeDurableSchemaTests.test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables) (name='archive_nodes', index=False) ... FAIL
+  test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables (__main__.NativeDurableSchemaTests.test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables) (name='archive_nodes', index=True) ... FAIL
+  test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables (__main__.NativeDurableSchemaTests.test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables) (name='native_state_commitments', index=False) ... FAIL
+  test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables (__main__.NativeDurableSchemaTests.test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables) (name='native_state_commitments', index=True) ... FAIL
+  test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables (__main__.NativeDurableSchemaTests.test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables) (name='ArChIvE_NoDeS', index=False) ... FAIL
+  test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables (__main__.NativeDurableSchemaTests.test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables) (name='ArChIvE_NoDeS', index=True) ... FAIL
+test_selected_settings_cannot_be_mutated_through_fields_or_borrowed (__main__.NativeDurableSchemaTests.test_selected_settings_cannot_be_mutated_through_fields_or_borrowed) ... 
+  test_selected_settings_cannot_be_mutated_through_fields_or_borrowed (__main__.NativeDurableSchemaTests.test_selected_settings_cannot_be_mutated_through_fields_or_borrowed) (statement='settings.app.params["work_task_profile"] = serde_json::json!("legacy-task-v1");') ... FAIL
+  test_selected_settings_cannot_be_mutated_through_fields_or_borrowed (__main__.NativeDurableSchemaTests.test_selected_settings_cannot_be_mutated_through_fields_or_borrowed) (statement='settings.app.params["work_task_profile"][0] = serde_json::json!(0);') ... FAIL
+  test_selected_settings_cannot_be_mutated_through_fields_or_borrowed (__main__.NativeDurableSchemaTests.test_selected_settings_cannot_be_mutated_through_fields_or_borrowed) (statement='settings.app = settings.app.clone();') ... FAIL
+  test_selected_settings_cannot_be_mutated_through_fields_or_borrowed (__main__.NativeDurableSchemaTests.test_selected_settings_cannot_be_mutated_through_fields_or_borrowed) (statement='let alias = &mut settings;') ... FAIL
+  test_selected_settings_cannot_be_mutated_through_fields_or_borrowed (__main__.NativeDurableSchemaTests.test_selected_settings_cannot_be_mutated_through_fields_or_borrowed) (statement='let alias = &mut settings.app;') ... FAIL
+  test_selected_settings_cannot_be_mutated_through_fields_or_borrowed (__main__.NativeDurableSchemaTests.test_selected_settings_cannot_be_mutated_through_fields_or_borrowed) (statement='let alias = &mut (settings.app);') ... FAIL
+
+======================================================================
+ERROR: test_actual_held_io_bridge_preserves_the_independent_legacy_schema (__main__.NativeDurableSchemaTests.test_actual_held_io_bridge_preserves_the_independent_legacy_schema)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 868, in test_actual_held_io_bridge_preserves_the_independent_legacy_schema
+    ddl,domain = self.extract(self.current)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 599, in extract
+    return check.native_durable_schema(self.root)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/check_public_readiness_evidence.py", line 382, in native_durable_schema
+    require(len(bindings) == 1 and direct(selected,bindings[0].start()),
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/check_public_readiness_evidence.py", line 31, in require
+    raise ValueError(message)
+ValueError: durable backend selected schema
+
+======================================================================
+ERROR: test_backend_decoys_and_historical_hash_cannot_authorize_bad_active_mapping (__main__.NativeDurableSchemaTests.test_backend_decoys_and_historical_hash_cannot_authorize_bad_active_mapping)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 822, in test_backend_decoys_and_historical_hash_cannot_authorize_bad_active_mapping
+    expected = self.extract(self.current)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 599, in extract
+    return check.native_durable_schema(self.root)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/check_public_readiness_evidence.py", line 382, in native_durable_schema
+    require(len(bindings) == 1 and direct(selected,bindings[0].start()),
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/check_public_readiness_evidence.py", line 31, in require
+    raise ValueError(message)
+ValueError: durable backend selected schema
+
+======================================================================
+ERROR: test_current_backend_returns_the_exact_preserved_legacy_bytes (__main__.NativeDurableSchemaTests.test_current_backend_returns_the_exact_preserved_legacy_bytes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 637, in test_current_backend_returns_the_exact_preserved_legacy_bytes
+    ddl,domain = self.extract(self.current)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 599, in extract
+    return check.native_durable_schema(self.root)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/check_public_readiness_evidence.py", line 382, in native_durable_schema
+    require(len(bindings) == 1 and direct(selected,bindings[0].start()),
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/check_public_readiness_evidence.py", line 31, in require
+    raise ValueError(message)
+ValueError: durable backend selected schema
+
+======================================================================
+ERROR: test_permanent_growth_mapping_is_exact_without_qualifying_its_storage (__main__.NativeDurableSchemaTests.test_permanent_growth_mapping_is_exact_without_qualifying_its_storage)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 678, in test_permanent_growth_mapping_is_exact_without_qualifying_its_storage
+    ddl,domain = self.extract(self.current)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 599, in extract
+    return check.native_durable_schema(self.root)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/check_public_readiness_evidence.py", line 382, in native_durable_schema
+    require(len(bindings) == 1 and direct(selected,bindings[0].start()),
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/check_public_readiness_evidence.py", line 31, in require
+    raise ValueError(message)
+ValueError: durable backend selected schema
+
+======================================================================
+FAIL: test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (label='ddl-unselected')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 736, in test_actual_opener_and_selected_schema_bindings_cannot_be_replaced
+    self.extract(self.replace_once(self.current,before,after))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 602, in replace_once
+    self.assertEqual(source.count(before),1,'source control must target exactly one occurrence: '+before)
+AssertionError: 0 != 1 : source control must target exactly one occurrence: let ddl = state_backend.ddl();
+
+======================================================================
+FAIL: test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (label='schema-unselected')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 736, in test_actual_opener_and_selected_schema_bindings_cannot_be_replaced
+    self.extract(self.replace_once(self.current,before,after))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 602, in replace_once
+    self.assertEqual(source.count(before),1,'source control must target exactly one occurrence: '+before)
+AssertionError: 0 != 1 : source control must target exactly one occurrence: let schema_id = state_backend.selected_schema_id(&settings);
+
+======================================================================
+FAIL: test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (label='nested-pair')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 736, in test_actual_opener_and_selected_schema_bindings_cannot_be_replaced
+    self.extract(self.replace_once(self.current,before,after))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 602, in replace_once
+    self.assertEqual(source.count(before),1,'source control must target exactly one occurrence: '+before)
+AssertionError: 0 != 1 : source control must target exactly one occurrence: let ddl = state_backend.ddl();
+        let schema_id = state_backend.selected_schema_id(&settings);
+
+======================================================================
+FAIL: test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='let state_backend = StateBackend::AuthenticatedV1;')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 754, in test_actual_opener_and_selected_schema_bindings_cannot_be_replaced
+    self.extract(self.replace_once(self.current,pair,pair+'\n        '+statement))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 602, in replace_once
+    self.assertEqual(source.count(before),1,'source control must target exactly one occurrence: '+before)
+AssertionError: 0 != 1 : source control must target exactly one occurrence: let ddl = state_backend.ddl();
+        let schema_id = state_backend.selected_schema_id(&settings);
+
+======================================================================
+FAIL: test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='let settings = settings;')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 754, in test_actual_opener_and_selected_schema_bindings_cannot_be_replaced
+    self.extract(self.replace_once(self.current,pair,pair+'\n        '+statement))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 602, in replace_once
+    self.assertEqual(source.count(before),1,'source control must target exactly one occurrence: '+before)
+AssertionError: 0 != 1 : source control must target exactly one occurrence: let ddl = state_backend.ddl();
+        let schema_id = state_backend.selected_schema_id(&settings);
+
+======================================================================
+FAIL: test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='let (settings, _) = (settings, ());')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 754, in test_actual_opener_and_selected_schema_bindings_cannot_be_replaced
+    self.extract(self.replace_once(self.current,pair,pair+'\n        '+statement))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 602, in replace_once
+    self.assertEqual(source.count(before),1,'source control must target exactly one occurrence: '+before)
+AssertionError: 0 != 1 : source control must target exactly one occurrence: let ddl = state_backend.ddl();
+        let schema_id = state_backend.selected_schema_id(&settings);
+
+======================================================================
+FAIL: test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='let ddl = StateBackend::AuthenticatedV1.ddl();')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 754, in test_actual_opener_and_selected_schema_bindings_cannot_be_replaced
+    self.extract(self.replace_once(self.current,pair,pair+'\n        '+statement))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 602, in replace_once
+    self.assertEqual(source.count(before),1,'source control must target exactly one occurrence: '+before)
+AssertionError: 0 != 1 : source control must target exactly one occurrence: let ddl = state_backend.ddl();
+        let schema_id = state_backend.selected_schema_id(&settings);
+
+======================================================================
+FAIL: test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='let mut ddl = StateBackend::AuthenticatedV1.ddl();')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 754, in test_actual_opener_and_selected_schema_bindings_cannot_be_replaced
+    self.extract(self.replace_once(self.current,pair,pair+'\n        '+statement))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 602, in replace_once
+    self.assertEqual(source.count(before),1,'source control must target exactly one occurrence: '+before)
+AssertionError: 0 != 1 : source control must target exactly one occurrence: let ddl = state_backend.ddl();
+        let schema_id = state_backend.selected_schema_id(&settings);
+
+======================================================================
+FAIL: test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='let ddl: String = StateBackend::AuthenticatedV1.ddl();')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 754, in test_actual_opener_and_selected_schema_bindings_cannot_be_replaced
+    self.extract(self.replace_once(self.current,pair,pair+'\n        '+statement))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 602, in replace_once
+    self.assertEqual(source.count(before),1,'source control must target exactly one occurrence: '+before)
+AssertionError: 0 != 1 : source control must target exactly one occurrence: let ddl = state_backend.ddl();
+        let schema_id = state_backend.selected_schema_id(&settings);
+
+======================================================================
+FAIL: test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='let schema_id: Hash = StateBackend::AuthenticatedV1.schema_id();')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 754, in test_actual_opener_and_selected_schema_bindings_cannot_be_replaced
+    self.extract(self.replace_once(self.current,pair,pair+'\n        '+statement))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 602, in replace_once
+    self.assertEqual(source.count(before),1,'source control must target exactly one occurrence: '+before)
+AssertionError: 0 != 1 : source control must target exactly one occurrence: let ddl = state_backend.ddl();
+        let schema_id = state_backend.selected_schema_id(&settings);
+
+======================================================================
+FAIL: test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='let (ddl, schema_id) = (StateBackend::AuthenticatedV1.ddl(), StateBackend::AuthenticatedV1.schema_id());')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 754, in test_actual_opener_and_selected_schema_bindings_cannot_be_replaced
+    self.extract(self.replace_once(self.current,pair,pair+'\n        '+statement))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 602, in replace_once
+    self.assertEqual(source.count(before),1,'source control must target exactly one occurrence: '+before)
+AssertionError: 0 != 1 : source control must target exactly one occurrence: let ddl = state_backend.ddl();
+        let schema_id = state_backend.selected_schema_id(&settings);
+
+======================================================================
+FAIL: test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='let (state_backend, _) = (StateBackend::AuthenticatedV1, ());')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 754, in test_actual_opener_and_selected_schema_bindings_cannot_be_replaced
+    self.extract(self.replace_once(self.current,pair,pair+'\n        '+statement))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 602, in replace_once
+    self.assertEqual(source.count(before),1,'source control must target exactly one occurrence: '+before)
+AssertionError: 0 != 1 : source control must target exactly one occurrence: let ddl = state_backend.ddl();
+        let schema_id = state_backend.selected_schema_id(&settings);
+
+======================================================================
+FAIL: test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='state_backend = StateBackend::AuthenticatedV1;')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 754, in test_actual_opener_and_selected_schema_bindings_cannot_be_replaced
+    self.extract(self.replace_once(self.current,pair,pair+'\n        '+statement))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 602, in replace_once
+    self.assertEqual(source.count(before),1,'source control must target exactly one occurrence: '+before)
+AssertionError: 0 != 1 : source control must target exactly one occurrence: let ddl = state_backend.ddl();
+        let schema_id = state_backend.selected_schema_id(&settings);
+
+======================================================================
+FAIL: test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='ddl = StateBackend::AuthenticatedV1.ddl();')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 754, in test_actual_opener_and_selected_schema_bindings_cannot_be_replaced
+    self.extract(self.replace_once(self.current,pair,pair+'\n        '+statement))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 602, in replace_once
+    self.assertEqual(source.count(before),1,'source control must target exactly one occurrence: '+before)
+AssertionError: 0 != 1 : source control must target exactly one occurrence: let ddl = state_backend.ddl();
+        let schema_id = state_backend.selected_schema_id(&settings);
+
+======================================================================
+FAIL: test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='schema_id = StateBackend::AuthenticatedV1.schema_id();')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 754, in test_actual_opener_and_selected_schema_bindings_cannot_be_replaced
+    self.extract(self.replace_once(self.current,pair,pair+'\n        '+statement))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 602, in replace_once
+    self.assertEqual(source.count(before),1,'source control must target exactly one occurrence: '+before)
+AssertionError: 0 != 1 : source control must target exactly one occurrence: let ddl = state_backend.ddl();
+        let schema_id = state_backend.selected_schema_id(&settings);
+
+======================================================================
+FAIL: test_actual_opener_and_selected_schema_bindings_cannot_be_replaced (__main__.NativeDurableSchemaTests.test_actual_opener_and_selected_schema_bindings_cannot_be_replaced) (statement='schema_id[0] = 0;')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 754, in test_actual_opener_and_selected_schema_bindings_cannot_be_replaced
+    self.extract(self.replace_once(self.current,pair,pair+'\n        '+statement))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 602, in replace_once
+    self.assertEqual(source.count(before),1,'source control must target exactly one occurrence: '+before)
+AssertionError: 0 != 1 : source control must target exactly one occurrence: let ddl = state_backend.ddl();
+        let schema_id = state_backend.selected_schema_id(&settings);
+
+======================================================================
+FAIL: test_growth_selection_is_exact_without_widening_legacy_evidence (__main__.NativeDurableSchemaTests.test_growth_selection_is_exact_without_widening_legacy_evidence) (label='default-instead-selected')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 811, in test_growth_selection_is_exact_without_widening_legacy_evidence
+    self.extract(self.replace_once(self.current,before,after))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 602, in replace_once
+    self.assertEqual(source.count(before),1,'source control must target exactly one occurrence: '+before)
+AssertionError: 0 != 1 : source control must target exactly one occurrence: let schema_id = state_backend.selected_schema_id(&settings);
+
+======================================================================
+FAIL: test_growth_selection_is_exact_without_widening_legacy_evidence (__main__.NativeDurableSchemaTests.test_growth_selection_is_exact_without_widening_legacy_evidence) (label='bypassed-backend')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 811, in test_growth_selection_is_exact_without_widening_legacy_evidence
+    self.extract(self.replace_once(self.current,before,after))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 602, in replace_once
+    self.assertEqual(source.count(before),1,'source control must target exactly one occurrence: '+before)
+AssertionError: 0 != 1 : source control must target exactly one occurrence: let schema_id = state_backend.selected_schema_id(&settings);
+
+======================================================================
+FAIL: test_growth_selection_is_exact_without_widening_legacy_evidence (__main__.NativeDurableSchemaTests.test_growth_selection_is_exact_without_widening_legacy_evidence) (label='ignored-settings')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 811, in test_growth_selection_is_exact_without_widening_legacy_evidence
+    self.extract(self.replace_once(self.current,before,after))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 602, in replace_once
+    self.assertEqual(source.count(before),1,'source control must target exactly one occurrence: '+before)
+AssertionError: 0 != 1 : source control must target exactly one occurrence: let schema_id = state_backend.selected_schema_id(&settings);
+
+======================================================================
+FAIL: test_held_io_nested_decoy_duplicate_and_string_binding_are_refused (__main__.NativeDurableSchemaTests.test_held_io_nested_decoy_duplicate_and_string_binding_are_refused) (replacement='if false { let ddl = state_backend.ddl();\n        let schema_id = state_backend.selected_schema_id(&settings); }')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 932, in test_held_io_nested_decoy_duplicate_and_string_binding_are_refused
+    self.extract(self.replace_once(self.current,pair,replacement))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 602, in replace_once
+    self.assertEqual(source.count(before),1,'source control must target exactly one occurrence: '+before)
+AssertionError: 0 != 1 : source control must target exactly one occurrence: let ddl = state_backend.ddl();
+        let schema_id = state_backend.selected_schema_id(&settings);
+
+======================================================================
+FAIL: test_held_io_nested_decoy_duplicate_and_string_binding_are_refused (__main__.NativeDurableSchemaTests.test_held_io_nested_decoy_duplicate_and_string_binding_are_refused) (replacement='let NOTE: &str = "let ddl = state_backend.ddl();\\n        let schema_id = state_backend.selected_schema_id(&settings);";')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 932, in test_held_io_nested_decoy_duplicate_and_string_binding_are_refused
+    self.extract(self.replace_once(self.current,pair,replacement))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 602, in replace_once
+    self.assertEqual(source.count(before),1,'source control must target exactly one occurrence: '+before)
+AssertionError: 0 != 1 : source control must target exactly one occurrence: let ddl = state_backend.ddl();
+        let schema_id = state_backend.selected_schema_id(&settings);
+
+======================================================================
+FAIL: test_held_io_nested_decoy_duplicate_and_string_binding_are_refused (__main__.NativeDurableSchemaTests.test_held_io_nested_decoy_duplicate_and_string_binding_are_refused) (replacement='let NOTE: &str = r###"let ddl = state_backend.ddl();\n        let schema_id = state_backend.selected_schema_id(&settings);"###;')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 932, in test_held_io_nested_decoy_duplicate_and_string_binding_are_refused
+    self.extract(self.replace_once(self.current,pair,replacement))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 602, in replace_once
+    self.assertEqual(source.count(before),1,'source control must target exactly one occurrence: '+before)
+AssertionError: 0 != 1 : source control must target exactly one occurrence: let ddl = state_backend.ddl();
+        let schema_id = state_backend.selected_schema_id(&settings);
+
+======================================================================
+FAIL: test_held_io_nested_decoy_duplicate_and_string_binding_are_refused (__main__.NativeDurableSchemaTests.test_held_io_nested_decoy_duplicate_and_string_binding_are_refused) (replacement='/* let ddl = state_backend.ddl();\n        let schema_id = state_backend.selected_schema_id(&settings); */')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 932, in test_held_io_nested_decoy_duplicate_and_string_binding_are_refused
+    self.extract(self.replace_once(self.current,pair,replacement))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 602, in replace_once
+    self.assertEqual(source.count(before),1,'source control must target exactly one occurrence: '+before)
+AssertionError: 0 != 1 : source control must target exactly one occurrence: let ddl = state_backend.ddl();
+        let schema_id = state_backend.selected_schema_id(&settings);
+
+======================================================================
+FAIL: test_held_io_nested_decoy_duplicate_and_string_binding_are_refused (__main__.NativeDurableSchemaTests.test_held_io_nested_decoy_duplicate_and_string_binding_are_refused) (replacement='let ddl = state_backend.ddl();\n        let schema_id = state_backend.schema_id();')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 932, in test_held_io_nested_decoy_duplicate_and_string_binding_are_refused
+    self.extract(self.replace_once(self.current,pair,replacement))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 602, in replace_once
+    self.assertEqual(source.count(before),1,'source control must target exactly one occurrence: '+before)
+AssertionError: 0 != 1 : source control must target exactly one occurrence: let ddl = state_backend.ddl();
+        let schema_id = state_backend.selected_schema_id(&settings);
+
+======================================================================
+FAIL: test_permanent_growth_table_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_permanent_growth_table_cannot_be_inserted_into_legacy_literals) (name='growth_states', index=False)
+----------------------------------------------------------------------
+ValueError: durable backend selected schema
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 712, in test_permanent_growth_table_cannot_be_inserted_into_legacy_literals
+    with self.subTest(name=name,index=index is not None),self.assertRaisesRegex(ValueError,'tables in legacy durable schema'):
+AssertionError: "tables in legacy durable schema" does not match "durable backend selected schema"
+
+======================================================================
+FAIL: test_permanent_growth_table_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_permanent_growth_table_cannot_be_inserted_into_legacy_literals) (name='growth_states', index=True)
+----------------------------------------------------------------------
+ValueError: durable backend selected schema
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 712, in test_permanent_growth_table_cannot_be_inserted_into_legacy_literals
+    with self.subTest(name=name,index=index is not None),self.assertRaisesRegex(ValueError,'tables in legacy durable schema'):
+AssertionError: "tables in legacy durable schema" does not match "durable backend selected schema"
+
+======================================================================
+FAIL: test_permanent_growth_table_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_permanent_growth_table_cannot_be_inserted_into_legacy_literals) (name='GrOwTh_StAtEs', index=False)
+----------------------------------------------------------------------
+ValueError: durable backend selected schema
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 712, in test_permanent_growth_table_cannot_be_inserted_into_legacy_literals
+    with self.subTest(name=name,index=index is not None),self.assertRaisesRegex(ValueError,'tables in legacy durable schema'):
+AssertionError: "tables in legacy durable schema" does not match "durable backend selected schema"
+
+======================================================================
+FAIL: test_permanent_growth_table_cannot_be_inserted_into_legacy_literals (__main__.NativeDurableSchemaTests.test_permanent_growth_table_cannot_be_inserted_into_legacy_literals) (name='GrOwTh_StAtEs', index=True)
+----------------------------------------------------------------------
+ValueError: durable backend selected schema
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 712, in test_permanent_growth_table_cannot_be_inserted_into_legacy_literals
+    with self.subTest(name=name,index=index is not None),self.assertRaisesRegex(ValueError,'tables in legacy durable schema'):
+AssertionError: "tables in legacy durable schema" does not match "durable backend selected schema"
+
+======================================================================
+FAIL: test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables (__main__.NativeDurableSchemaTests.test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables) (name='archive_nodes', index=False)
+----------------------------------------------------------------------
+ValueError: durable backend selected schema
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 846, in test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables
+    with self.subTest(name=name,index=index is not None),self.assertRaisesRegex(ValueError,'authenticated tables in legacy durable schema'):
+AssertionError: "authenticated tables in legacy durable schema" does not match "durable backend selected schema"
+
+======================================================================
+FAIL: test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables (__main__.NativeDurableSchemaTests.test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables) (name='archive_nodes', index=True)
+----------------------------------------------------------------------
+ValueError: durable backend selected schema
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 846, in test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables
+    with self.subTest(name=name,index=index is not None),self.assertRaisesRegex(ValueError,'authenticated tables in legacy durable schema'):
+AssertionError: "authenticated tables in legacy durable schema" does not match "durable backend selected schema"
+
+======================================================================
+FAIL: test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables (__main__.NativeDurableSchemaTests.test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables) (name='native_state_commitments', index=False)
+----------------------------------------------------------------------
+ValueError: durable backend selected schema
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 846, in test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables
+    with self.subTest(name=name,index=index is not None),self.assertRaisesRegex(ValueError,'authenticated tables in legacy durable schema'):
+AssertionError: "authenticated tables in legacy durable schema" does not match "durable backend selected schema"
+
+======================================================================
+FAIL: test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables (__main__.NativeDurableSchemaTests.test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables) (name='native_state_commitments', index=True)
+----------------------------------------------------------------------
+ValueError: durable backend selected schema
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 846, in test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables
+    with self.subTest(name=name,index=index is not None),self.assertRaisesRegex(ValueError,'authenticated tables in legacy durable schema'):
+AssertionError: "authenticated tables in legacy durable schema" does not match "durable backend selected schema"
+
+======================================================================
+FAIL: test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables (__main__.NativeDurableSchemaTests.test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables) (name='ArChIvE_NoDeS', index=False)
+----------------------------------------------------------------------
+ValueError: durable backend selected schema
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 846, in test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables
+    with self.subTest(name=name,index=index is not None),self.assertRaisesRegex(ValueError,'authenticated tables in legacy durable schema'):
+AssertionError: "authenticated tables in legacy durable schema" does not match "durable backend selected schema"
+
+======================================================================
+FAIL: test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables (__main__.NativeDurableSchemaTests.test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables) (name='ArChIvE_NoDeS', index=True)
+----------------------------------------------------------------------
+ValueError: durable backend selected schema
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 846, in test_schema_literals_must_be_direct_items_and_cannot_include_authenticated_tables
+    with self.subTest(name=name,index=index is not None),self.assertRaisesRegex(ValueError,'authenticated tables in legacy durable schema'):
+AssertionError: "authenticated tables in legacy durable schema" does not match "durable backend selected schema"
+
+======================================================================
+FAIL: test_selected_settings_cannot_be_mutated_through_fields_or_borrowed (__main__.NativeDurableSchemaTests.test_selected_settings_cannot_be_mutated_through_fields_or_borrowed) (statement='settings.app.params["work_task_profile"] = serde_json::json!("legacy-task-v1");')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 784, in test_selected_settings_cannot_be_mutated_through_fields_or_borrowed
+    self.extract(self.replace_once(changed,pair,statement+'\n        '+pair))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 602, in replace_once
+    self.assertEqual(source.count(before),1,'source control must target exactly one occurrence: '+before)
+AssertionError: 0 != 1 : source control must target exactly one occurrence: let ddl = state_backend.ddl();
+        let schema_id = state_backend.selected_schema_id(&settings);
+
+======================================================================
+FAIL: test_selected_settings_cannot_be_mutated_through_fields_or_borrowed (__main__.NativeDurableSchemaTests.test_selected_settings_cannot_be_mutated_through_fields_or_borrowed) (statement='settings.app.params["work_task_profile"][0] = serde_json::json!(0);')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 784, in test_selected_settings_cannot_be_mutated_through_fields_or_borrowed
+    self.extract(self.replace_once(changed,pair,statement+'\n        '+pair))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 602, in replace_once
+    self.assertEqual(source.count(before),1,'source control must target exactly one occurrence: '+before)
+AssertionError: 0 != 1 : source control must target exactly one occurrence: let ddl = state_backend.ddl();
+        let schema_id = state_backend.selected_schema_id(&settings);
+
+======================================================================
+FAIL: test_selected_settings_cannot_be_mutated_through_fields_or_borrowed (__main__.NativeDurableSchemaTests.test_selected_settings_cannot_be_mutated_through_fields_or_borrowed) (statement='settings.app = settings.app.clone();')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 784, in test_selected_settings_cannot_be_mutated_through_fields_or_borrowed
+    self.extract(self.replace_once(changed,pair,statement+'\n        '+pair))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 602, in replace_once
+    self.assertEqual(source.count(before),1,'source control must target exactly one occurrence: '+before)
+AssertionError: 0 != 1 : source control must target exactly one occurrence: let ddl = state_backend.ddl();
+        let schema_id = state_backend.selected_schema_id(&settings);
+
+======================================================================
+FAIL: test_selected_settings_cannot_be_mutated_through_fields_or_borrowed (__main__.NativeDurableSchemaTests.test_selected_settings_cannot_be_mutated_through_fields_or_borrowed) (statement='let alias = &mut settings;')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 784, in test_selected_settings_cannot_be_mutated_through_fields_or_borrowed
+    self.extract(self.replace_once(changed,pair,statement+'\n        '+pair))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 602, in replace_once
+    self.assertEqual(source.count(before),1,'source control must target exactly one occurrence: '+before)
+AssertionError: 0 != 1 : source control must target exactly one occurrence: let ddl = state_backend.ddl();
+        let schema_id = state_backend.selected_schema_id(&settings);
+
+======================================================================
+FAIL: test_selected_settings_cannot_be_mutated_through_fields_or_borrowed (__main__.NativeDurableSchemaTests.test_selected_settings_cannot_be_mutated_through_fields_or_borrowed) (statement='let alias = &mut settings.app;')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 784, in test_selected_settings_cannot_be_mutated_through_fields_or_borrowed
+    self.extract(self.replace_once(changed,pair,statement+'\n        '+pair))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 602, in replace_once
+    self.assertEqual(source.count(before),1,'source control must target exactly one occurrence: '+before)
+AssertionError: 0 != 1 : source control must target exactly one occurrence: let ddl = state_backend.ddl();
+        let schema_id = state_backend.selected_schema_id(&settings);
+
+======================================================================
+FAIL: test_selected_settings_cannot_be_mutated_through_fields_or_borrowed (__main__.NativeDurableSchemaTests.test_selected_settings_cannot_be_mutated_through_fields_or_borrowed) (statement='let alias = &mut (settings.app);')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 784, in test_selected_settings_cannot_be_mutated_through_fields_or_borrowed
+    self.extract(self.replace_once(changed,pair,statement+'\n        '+pair))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/scripts/ci/test_public_readiness_evidence.py", line 602, in replace_once
+    self.assertEqual(source.count(before),1,'source control must target exactly one occurrence: '+before)
+AssertionError: 0 != 1 : source control must target exactly one occurrence: let ddl = state_backend.ddl();
+        let schema_id = state_backend.selected_schema_id(&settings);
+
+----------------------------------------------------------------------
+Ran 15 tests in 117.560s
+
+FAILED (failures=40, errors=4)

@@ -1,0 +1,223 @@
+{
+  "schema": "trnm-pn4-runtime-materialization-retained-source-stage-files-v1",
+  "files": {
+    "current-local-source-controls/001-strict-all-target-data-availability-Clippy/actual-start.json": {
+      "bytes": 579,
+      "sha256": "071bab06c8efbb2f7b1036ad1e841c0ee828db44838c12dadfed2f19ea5dc646"
+    },
+    "current-local-source-controls/001-strict-all-target-data-availability-Clippy/actual-terminal.json": {
+      "bytes": 999,
+      "sha256": "bb7a550917afd730c293cb085804efff490311bf9da94f6d0f17085d15410dcc"
+    },
+    "current-local-source-controls/001-strict-all-target-data-availability-Clippy/stderr.original": {
+      "bytes": 281,
+      "sha256": "f01e4ec5b11b04fb98cbd2de9c1c1f3da1aeaf34c29911d6be68813a58cad17a"
+    },
+    "current-local-source-controls/001-strict-all-target-data-availability-Clippy/stdout.original": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "current-local-source-controls/002-six-new-runtime-original-controls-after-structured-plan-API-correction/actual-start.json": {
+      "bytes": 568,
+      "sha256": "4430707bfa20d517567d999ebde3626412f6a1116b6574c09a7282ea2f878bd2"
+    },
+    "current-local-source-controls/002-six-new-runtime-original-controls-after-structured-plan-API-correction/actual-terminal.json": {
+      "bytes": 991,
+      "sha256": "411aadef90ff393d6bff173bf14c9fe56cf4e03b5046db4343479a9edca3783c"
+    },
+    "current-local-source-controls/002-six-new-runtime-original-controls-after-structured-plan-API-correction/stderr.original": {
+      "bytes": 545,
+      "sha256": "f093df189c947e902bc2929c2eb95a27ab371342647ace96a0e57c43750b5956"
+    },
+    "current-local-source-controls/002-six-new-runtime-original-controls-after-structured-plan-API-correction/stdout.original": {
+      "bytes": 755,
+      "sha256": "9ac007147da2edcc37886d27b7be1a13350f510c8808a39ad68a00f36ddd6fc3"
+    },
+    "current-local-source-controls/003-original-equal-sequence-single-function-timeout-diagnostic/actual-start.json": {
+      "bytes": 683,
+      "sha256": "a77f2f129acc93b0907915d4d80b65ef70c54f81fad914711891f6fb18ca9ce8"
+    },
+    "current-local-source-controls/003-original-equal-sequence-single-function-timeout-diagnostic/actual-terminal.json": {
+      "bytes": 1105,
+      "sha256": "c344b020fcc61030f37b873a9d5e6916d7cd6328f7d9239ffdbf43e2d8df753e"
+    },
+    "current-local-source-controls/003-original-equal-sequence-single-function-timeout-diagnostic/stderr.original": {
+      "bytes": 335,
+      "sha256": "7c4469cc33ad2922847796ff414c4f168be00df01648e833ce6c58df5167f4fc"
+    },
+    "current-local-source-controls/003-original-equal-sequence-single-function-timeout-diagnostic/stdout.original": {
+      "bytes": 243,
+      "sha256": "cedae2b5b7909836c8489427787c07a309501eb64b1dc015617891e29f913c04"
+    },
+    "current-local-source-controls/004-original-shared-budgets-single-function-timeout-diagnostic/actual-start.json": {
+      "bytes": 668,
+      "sha256": "a7997e355acd34ea2ead565b52183871841fecdd2faa3c8d698a1b9d31850986"
+    },
+    "current-local-source-controls/004-original-shared-budgets-single-function-timeout-diagnostic/actual-terminal.json": {
+      "bytes": 1089,
+      "sha256": "3c194b6b083cb703598cbee415745b73a82de32e1a43d4f6f72dae6696899676"
+    },
+    "current-local-source-controls/004-original-shared-budgets-single-function-timeout-diagnostic/stderr.original": {
+      "bytes": 335,
+      "sha256": "7c4469cc33ad2922847796ff414c4f168be00df01648e833ce6c58df5167f4fc"
+    },
+    "current-local-source-controls/004-original-shared-budgets-single-function-timeout-diagnostic/stdout.original": {
+      "bytes": 228,
+      "sha256": "d48e2a7267af623492f659be25482e1bb4c03a53aa8386621daf4ce4755a7972"
+    },
+    "current-local-source-controls/actual-native-runner-start.json": {
+      "bytes": 632,
+      "sha256": "f4b44021e635986334ac4a46364c6949412cf735f0a71b7356822d6db2991855"
+    },
+    "current-local-source-controls/actual-native-runner-terminal.json": {
+      "bytes": 4842,
+      "sha256": "2f7025990a8e64e944c51db577bbf16346af0cd391d71d054f38b1f9bdd56c4e"
+    },
+    "current-local-source-controls/native-validation-plan.json": {
+      "bytes": 4377,
+      "sha256": "8bcf9a0d0a0cd6e1a17d3784d58c2e9b3f3bbac17bff40c5baa0d6f270114fed"
+    },
+    "first-strict-lint-failure/001-strict-all-target-data-availability-Clippy/actual-start.json": {
+      "bytes": 574,
+      "sha256": "e20458dc8f4eb764bc944994d52ee81183c39a56555faae740a753fafefba979"
+    },
+    "first-strict-lint-failure/001-strict-all-target-data-availability-Clippy/actual-terminal.json": {
+      "bytes": 998,
+      "sha256": "3287f35c5c89e0d7cbb03910d0756cc874c3375a8e0c2ca747487ca61f7facb6"
+    },
+    "first-strict-lint-failure/001-strict-all-target-data-availability-Clippy/stderr.original": {
+      "bytes": 1955,
+      "sha256": "16bdb63eddb515cd28e609fc74834537e727549ea610af74886d5fbf214fd1ab"
+    },
+    "first-strict-lint-failure/001-strict-all-target-data-availability-Clippy/stdout.original": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "first-strict-lint-failure/actual-native-runner-start.json": {
+      "bytes": 630,
+      "sha256": "bfde73ada8f60e849725cfa53170b57ca0e5fa52573f0b62287e4d7333b1ef02"
+    },
+    "first-strict-lint-failure/actual-native-runner-terminal.json": {
+      "bytes": 1291,
+      "sha256": "a5199e2c4fbfa321b0f802614d2bdce3c1f75d61f7e0a3b03d74add57d384915"
+    },
+    "first-strict-lint-failure/native-validation-plan.json": {
+      "bytes": 3693,
+      "sha256": "bbfc3e1dc101e0fff583b384d6887a3a50c630e726adff2c9cdad2faa7d04c2c"
+    },
+    "original-mixed-test-failure/001-original-whole-data-availability-crate-tests-plus-new-runtime-controls/actual-start.json": {
+      "bytes": 516,
+      "sha256": "d14f48ec0d7e539a3a01ba5ecdaec7093b8a37b7570a7eabdde07a394e7109ad"
+    },
+    "original-mixed-test-failure/001-original-whole-data-availability-crate-tests-plus-new-runtime-controls/actual-terminal.json": {
+      "bytes": 945,
+      "sha256": "48a33261ba16a5f7513a8ccc29948b09e149776c5d32ac0915e860872b3b99ed"
+    },
+    "original-mixed-test-failure/001-original-whole-data-availability-crate-tests-plus-new-runtime-controls/stderr.original": {
+      "bytes": 2564,
+      "sha256": "44e43ed5c401c11c0139be80502ca9e8e2a36607c6e123730872436ae8bf909e"
+    },
+    "original-mixed-test-failure/001-original-whole-data-availability-crate-tests-plus-new-runtime-controls/stdout.original": {
+      "bytes": 16032,
+      "sha256": "1ffae8ece7d5de6a9d0c918c25c7dd1a48068be537ef6572b629916d5109fe10"
+    },
+    "original-mixed-test-failure/actual-native-launch-receipt.json": {
+      "bytes": 735,
+      "sha256": "3cace004df9e8dd9538cc11f847e32a5c2b4b53e1c533765f5390ceb8b3bb531"
+    },
+    "original-mixed-test-failure/actual-native-runner-start.json": {
+      "bytes": 628,
+      "sha256": "ac404bddd086d87bfad0ff4ae2fca9fff0817bb527d916282041fb60b95b67c8"
+    },
+    "original-mixed-test-failure/actual-native-runner-terminal.json": {
+      "bytes": 1222,
+      "sha256": "141650c9e35ce91cab3430e7979031cb256dafaba7b19436463f56c9e0973fdd"
+    },
+    "original-mixed-test-failure/actual-root-source-application.json": {
+      "bytes": 1593,
+      "sha256": "59bbef08c83695a2ddf424f87bb9ac8695056d658260af897309eed54851e329"
+    },
+    "original-mixed-test-failure/inventory.before.original.json": {
+      "bytes": 29999,
+      "sha256": "f7d78133b7e374b4044c6a5012e19e6b39c050459a8340d9d4b7fedcee9a4db4"
+    },
+    "original-mixed-test-failure/native-validation-plan.json": {
+      "bytes": 2430,
+      "sha256": "78d1efa286f7f8d88a0467541000a46eeba8a5cb7f84518f175ea201de308f95"
+    },
+    "original-mixed-test-failure/root-source-stage-and-preserved-draft.json": {
+      "bytes": 931,
+      "sha256": "a5ef1ad3e2e8a616ea77d0102cf6454ccbca3793c976adb195678a0d57653b4f"
+    },
+    "preflight.stderr.original": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "preflight.stdout.original": {
+      "bytes": 168,
+      "sha256": "63a5bf3b9fc8975dac9742c8f5f7f77a05a0ea5bf4d40403dcdb791778eb44a3"
+    },
+    "source-at-original-mixed-RED/config/portability-inventory-v1.json": {
+      "bytes": 30217,
+      "sha256": "5f793f286d77c0182e2e31ff813741cc013ebc2843fcc5e4ca3ec1f1ad7486a1"
+    },
+    "source-at-original-mixed-RED/docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": {
+      "bytes": 377470,
+      "sha256": "ab1185665574d1cf31c85a9f695e4da5f4f1726b44737e4e3b6d49c9ffaab079"
+    },
+    "source-at-original-mixed-RED/trillionnium/crates/trnm-data-availability/src/cell/runtime_root.rs": {
+      "bytes": 18847,
+      "sha256": "e5b22651e023db1be6f89119f8090ba0b184ed9d583eee8628e6d9ddc6e953ae"
+    },
+    "source-at-original-mixed-RED/trillionnium/crates/trnm-data-availability/src/cell/runtime_root_tests.rs": {
+      "bytes": 11758,
+      "sha256": "a5e28df90c31f5236fa2640726a763ad515ae8517aeaca4facfe3738f4952e99"
+    },
+    "source-at-original-mixed-RED/trillionnium/crates/trnm-data-availability/src/cell/store.rs": {
+      "bytes": 19863,
+      "sha256": "c2940adb239c83dddcdcb4f5198fa557ebf6660225dd20441360f0d22cdac274"
+    },
+    "source-at-original-mixed-RED/trillionnium/crates/trnm-data-availability/src/cell.rs": {
+      "bytes": 3950,
+      "sha256": "b3ac2fae76cdec957a0e3ac49f471b6c6061f58ca7bf8c42319873a332a60b58"
+    },
+    "source-stage-readback.json": {
+      "bytes": 4081,
+      "sha256": "e29ea01fb7782cf222d5c4e5c42ee26855e0dfe51f993bbc088c8074e4992262"
+    },
+    "structured-plan-lint-failure/001-strict-all-target-data-availability-Clippy/actual-start.json": {
+      "bytes": 580,
+      "sha256": "11da975a291d8b2bd313988c04720b9d2d17aa59e20c0ad968a5285072b3b53a"
+    },
+    "structured-plan-lint-failure/001-strict-all-target-data-availability-Clippy/actual-terminal.json": {
+      "bytes": 1004,
+      "sha256": "a18ba83873576fea0ba86f71c00d166bad708e31f8ce38982bdaf9ecc53c0ee8"
+    },
+    "structured-plan-lint-failure/001-strict-all-target-data-availability-Clippy/stderr.original": {
+      "bytes": 1075,
+      "sha256": "24697154fb192671c7e77836cec71b2f5bbbe6989a781223be53e0ef588dd0ca"
+    },
+    "structured-plan-lint-failure/001-strict-all-target-data-availability-Clippy/stdout.original": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "structured-plan-lint-failure/actual-native-runner-start.json": {
+      "bytes": 632,
+      "sha256": "4746e9fc31a04f225dc5d315a49174c837b2bfef443fad87c116f24b7b80db96"
+    },
+    "structured-plan-lint-failure/actual-native-runner-terminal.json": {
+      "bytes": 1297,
+      "sha256": "50e8c67cc7b9b568c128663e71ef33014d0a669d98437e2d29d91fa39dc242f5"
+    },
+    "structured-plan-lint-failure/before-source-pins.json": {
+      "bytes": 1249,
+      "sha256": "b52cfad871154c4ba9457dd34de1347858a78e332bdd6a876392db4e54fb9105"
+    },
+    "structured-plan-lint-failure/native-validation-plan.json": {
+      "bytes": 3930,
+      "sha256": "275482aa30b79be9ecdaa2be415668745fb9520722daddcf06d7da0ab54da35f"
+    }
+  },
+  "historical_failures_retained": true,
+  "native_or_merge_qualification": false
+}

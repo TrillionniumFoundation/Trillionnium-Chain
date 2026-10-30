@@ -27,6 +27,7 @@ case "${1:?required job}" in
     python3 scripts/ci/test_run_pon_w1_native_campaign.py
     python3 scripts/ci/test_pon_w1_cost_matrix_reader.py
     python3 scripts/ci/test_llm_cell_handoff_deadline.py
+    python3 scripts/test_llm_cell_release.py
     python3 scripts/ci/test_read_original_native_campaign.py \
       --artifact-dir evidence/pon-upgrade-implementation-20261018/native-rounds/chain-pr327-original-campaign-39694587963 \
       --expected-manifest-sha256 12406cc156e57c130fa14af2b50b386031ec3640ce7f0234ed5bc9f0a700aac3 \
@@ -68,6 +69,8 @@ case "${1:?required job}" in
     python3 scripts/test_llm_runtime_exit_observation.py
     python3 scripts/test_llm_inherited_runtime.py
     python3 scripts/test_llm_neural_read_worker.py
+    python3 scripts/test_llm_runtime_parent_step_v2.py
+    python3 scripts/test_llm_runtime_parent_step_task_v2.py
     python3 formal/pon-nakamoto-v1/test_reward_budget_oracle.py
     python3 formal/pon-nakamoto-v1/test_model_attribution.py
     python3 formal/pon-nakamoto-v1/test_model_evolution_oracle.py -v

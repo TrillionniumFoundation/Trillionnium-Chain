@@ -1,0 +1,20 @@
+    Checking trnm-data-availability v0.1.0 (/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/trillionnium/crates/trnm-data-availability)
+    Checking fastrand v2.3.0
+    Checking memchr v2.8.0
+    Checking once_cell v1.21.4
+    Checking itoa v1.0.18
+    Checking serde_json v1.0.149
+    Checking tempfile v3.27.0
+    Checking serde v1.0.228
+    Checking hex v0.4.3
+error: this call to `clone` can be replaced with `std::slice::from_ref`
+   --> crates/trnm-data-availability/src/cell/runtime_root_tests.rs:220:9
+    |
+220 |         &[file.clone()],
+    |         ^^^^^^^^^^^^^^^ help: try: `std::slice::from_ref(&file)`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.95.0/index.html#cloned_ref_to_slice_refs
+    = note: `-D clippy::cloned-ref-to-slice-refs` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::cloned_ref_to_slice_refs)]`
+
+error: could not compile `trnm-data-availability` (lib test) due to 1 previous error

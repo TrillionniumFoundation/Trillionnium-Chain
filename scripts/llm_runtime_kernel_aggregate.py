@@ -11,10 +11,12 @@ import stat
 import subprocess
 from types import MappingProxyType
 from typing import NamedTuple
+from time import monotonic_ns, sleep
 
 import llm_runtime_kernel_owned as kernel
 
 _TOKEN = object()
+_CHARGE_COUNTER_FILES = ('aggregate/memory.current', 'aggregate/memory.swap.current')
 _PARENT_MEMORY = 16*1024**3
 _RAW = ('memory.current', 'memory.swap.current', 'memory.peak', 'memory.events',
         'cpu.stat', 'cgroup.events', 'cgroup.stat', 'pids.current', 'cgroup.procs')
@@ -36,8 +38,14 @@ class AggregateCounterError(kernel.KernelBudgetError):
     def __init__(self, code, filename, raw):
         _counter_input(raw, filename)
         require(type(code) is str and code in ('aggregate-counter-format',
-            'aggregate-counter-overflow', 'aggregate-counter-fields', 'aggregate-counter-scalar'),
+            'aggregate-counter-overflow', 'aggregate-counter-fields', 'aggregate-counter-scalar',
+            'aggregate-not-fresh', 'aggregate-charge-retained'),
             'aggregate-counter-reason')
+        require(code != 'aggregate-not-fresh' or filename in
+            ('aggregate/memory.peak', 'aggregate/cpu.stat', 'aggregate/memory.events'),
+            'aggregate-freshness-filename')
+        require(code != 'aggregate-charge-retained' or filename in _CHARGE_COUNTER_FILES,
+            'aggregate-charge-filename')
         super().__init__(code)
         self._counter_diagnostic = _CounterDiagnostic(filename, raw, code)
 
@@ -90,9 +98,9 @@ def _raw(fd):
             'aggregate-descendants-or-dying')
     require(all(value == 0 for key, value in tree.items() if key.startswith('nr_dying_')),
             'aggregate-dying-charge')
-    require(_scalar(raw['memory.current'], 'aggregate/memory.current') == 0 and
-            _scalar(raw['memory.swap.current'], 'aggregate/memory.swap.current') == 0,
-            'aggregate-charge-retained')
+    for name in ('memory.current', 'memory.swap.current'):
+        _counter_require(_scalar(raw[name], 'aggregate/'+name) == 0,
+            'aggregate-charge-retained', 'aggregate/'+name, raw[name])
     _scalar(raw['memory.peak'], 'aggregate/memory.peak')
     _numbers(raw['memory.events'], 'aggregate/memory.events')
     require('usage_usec' in _numbers(raw['cpu.stat'], 'aggregate/cpu.stat'), 'aggregate-cpu-counter-missing')
@@ -182,9 +190,14 @@ class _AggregateOperation:
                 require(signature[0] == kernel._ROOT.stat().st_dev and
                     info['mnt_id'].strip() == mount[0], 'aggregate-shadow-mount')
             initial = _raw(self.nodes[0][1])
-            require(_scalar(initial['memory.peak'], 'aggregate/memory.peak') == 0 and
-                all(value == 0 for name in ('cpu.stat', 'memory.events')
-                    for value in _numbers(initial[name], 'aggregate/'+name).values()), 'aggregate-not-fresh')
+            _counter_require(_scalar(initial['memory.peak'], 'aggregate/memory.peak') == 0,
+                'aggregate-not-fresh', 'aggregate/memory.peak', initial['memory.peak'])
+            for name in ('cpu.stat', 'memory.events'):
+                # nr_periods counts elapsed bandwidth intervals, not CPU use.
+                # Keep every other counter, including unknown fields, at zero.
+                _counter_require(all(value == 0 or (name == 'cpu.stat' and key == 'nr_periods')
+                    for key, value in _numbers(initial[name], 'aggregate/'+name).items()),
+                    'aggregate-not-fresh', 'aggregate/'+name, initial[name])
             self._verify_locked()
         except BaseException:
             try: self._close_locked(owner)
@@ -279,28 +292,70 @@ class _AggregateOperation:
                 from llm_runtime_pilot import _Wait4Child
                 self._verify_locked()
                 child = self.spawn_owner
-                require(type(child) is _Wait4Child and child.kernel_operation is self and
-                    self.child == (pid, pidfd, kernel.proc._signature(pidfd)) and child.pid == pid and
-                    child.termination_fd == pidfd and child.reaped and child.reap_resolved and
-                    child.owned_exit_observed and not child.no_waitable_child_observed and
-                    child.cleanup_method == 'wait4' and child.observation_error is None and
-                    type(child.waited_cpu_ns) is int and child.waited_cpu_ns >= 0 and
-                    type(child.returncode) is int,
-                    'aggregate-exact-owned-wait4-required')
+                def verify_child():
+                    require(self.spawn_owner is child and type(child) is _Wait4Child and
+                        child.kernel_operation is self and
+                        self.child == (pid, pidfd, kernel.proc._signature(pidfd)) and child.pid == pid and
+                        child.termination_fd == pidfd and child.reaped and child.reap_resolved and
+                        child.owned_exit_observed and not child.no_waitable_child_observed and
+                        child.cleanup_method == 'wait4' and child.observation_error is None and
+                        type(child.waited_cpu_ns) is int and child.waited_cpu_ns >= 0 and
+                        type(child.returncode) is int,
+                        'aggregate-exact-owned-wait4-required')
+                verify_child()
                 pipe = getattr(self, 'evidence_pipe', None)
                 if pipe is not None:
                     from llm_runtime_evidence_pipe import _EvidencePipeOwner
                     require(type(pipe) is _EvidencePipeOwner and pipe.capability is self,
                             'evidence-pipe-owner')
                     pipe._finish_locked(child)
-                raw = _raw(self.nodes[0][1])
+                deadline = pipe.deadline_ns if pipe is not None else None
+                last_charge = None
+                def within_deadline():
+                    if pipe is not None:
+                        require(type(deadline) is int and pipe.deadline_ns == deadline,
+                            'aggregate-terminal-original-deadline')
+                        if monotonic_ns() >= deadline:
+                            if last_charge is not None:
+                                raise last_charge
+                            require(False, 'aggregate-terminal-original-deadline')
+                # Reconcile only this first, still-live terminal transition.
+                # Kernel charge teardown may lag exact wait4. Never renew the
+                # original supervise deadline or revisit a sticky failed owner.
+                for attempt in range(801):
+                    within_deadline()
+                    if attempt:
+                        self._verify_locked()
+                        within_deadline()
+                    try:
+                        raw = _raw(self.nodes[0][1])
+                    except AggregateCounterError as failure:
+                        if (type(failure) is not AggregateCounterError or pipe is None or attempt == 800 or
+                            failure.counter_diagnostic.reason != 'aggregate-charge-retained' or
+                            failure.counter_diagnostic.filename not in _CHARGE_COUNTER_FILES):
+                            raise
+                        last_charge = failure
+                        within_deadline()
+                        remaining = deadline - monotonic_ns()
+                        if remaining <= 0:
+                            raise
+                        sleep(min(0.01, remaining / 10**9))
+                        within_deadline()
+                        continue
+                    within_deadline()
+                    break
                 self._verify_locked()
+                within_deadline()
+                verify_child()
                 require(raw == _raw(self.nodes[0][1]), 'aggregate-counter-snapshot-changed')
+                within_deadline()
+                verify_child()
                 fact = _TerminalAggregateFact(_TOKEN, raw, child.waited_cpu_ns, child.returncode, self)
                 result = dict(scope='controlled-aggregate-mechanics-v2-charge-not-RSS', counters=raw,
                     aggregate_observed=True, supervisor_exit_code=child.returncode,
                     outer_reconciliation='UNKNOWN', reservation='RETAINED',
                     authorization=False, adoption=False)
+                within_deadline()
                 self.fact = fact
                 return result
             except BaseException:

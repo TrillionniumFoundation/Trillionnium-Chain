@@ -83,7 +83,7 @@ def _darwin_only_exited_leader(child):
 
 
 def run_bounded(argv, data, *, timeout=30.0, stdout_limit=32*1024*1024,
-                stderr_limit=65536, cwd=None, env=None):
+                stderr_limit=65536, cwd=None, env=None, executable_fd=None, pass_fds=()):
     if not argv or not isinstance(data,bytes) or type(timeout) not in (int,float):
         raise ValueError('NATIVE_PROCESS_ARGUMENT')
     try:timeout=float(timeout)
@@ -94,10 +94,23 @@ def run_bounded(argv, data, *, timeout=30.0, stdout_limit=32*1024*1024,
         raise ValueError('NATIVE_PROCESS_LIMIT')
     if not all(hasattr(os,name) for name in ('waitid','P_PID','WEXITED','WNOHANG','WNOWAIT','CLD_EXITED','CLD_KILLED','CLD_DUMPED','killpg')):
         raise ValueError('NATIVE_PROCESS_PLATFORM')
+    spawn_options={}
+    if executable_fd is not None or pass_fds:
+        if (not sys.platform.startswith('linux')
+                or (executable_fd is not None and (type(executable_fd) is not int or executable_fd<0))
+                or type(pass_fds) is not tuple
+                or any(type(fd) is not int or fd<0 for fd in pass_fds)):
+            raise ValueError('NATIVE_PROCESS_FD_ARGUMENT')
+        inherited=(() if executable_fd is None else (executable_fd,))+pass_fds
+        for fd in inherited:os.fstat(fd)
+        spawn_options=dict(pass_fds=tuple(sorted(set(inherited))))
+        if executable_fd is not None:
+            spawn_options['executable']='/proc/self/fd/'+str(executable_fd)
     deadline=time.monotonic()+timeout
     try:
         child=subprocess.Popen(argv,stdin=subprocess.PIPE,stdout=subprocess.PIPE,
-                               stderr=subprocess.PIPE,start_new_session=True,cwd=cwd,env=env)
+                               stderr=subprocess.PIPE,start_new_session=True,cwd=cwd,env=env,
+                               **spawn_options)
     except OSError as error:
         raise ValueError('NATIVE_EXECUTOR_UNAVAILABLE')from error
     buffers={'stdout':bytearray(),'stderr':bytearray()}

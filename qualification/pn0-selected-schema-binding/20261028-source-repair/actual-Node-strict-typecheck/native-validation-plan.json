@@ -1,0 +1,78 @@
+{
+  "recorded_utc": "2026-10-27T07:25:14.679835+00:00",
+  "role": "NODE_ACTUAL_SELECTED_BASE_BINDINGS_TYPECHECK_NO_NATIVE_PREPARE_OR_W1_BUDGET_USE",
+  "root": "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026",
+  "source": {
+    "trillionnium/crates/trnm-pon-node/src/store.rs": {
+      "bytes": 309395,
+      "sha256": "1ea65f5827d3f617651747803505bcfa1fe34097612705513ada53c6f8296a45"
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/shared_snapshot.rs": {
+      "bytes": 19260,
+      "sha256": "a84c63e80e88b60826671de2430753bf12289a15c0cde699ef6fcd4521788a70"
+    },
+    "scripts/ci/check_public_readiness_evidence.py": {
+      "bytes": 56828,
+      "sha256": "01da9c348bf097bbe53a9aa90c1668bceb6ef11e79dd21ec1eb46538491fd07b"
+    },
+    "scripts/ci/test_public_readiness_evidence.py": {
+      "bytes": 66568,
+      "sha256": "366cd40b562634b7cc608263d3945798d630baa8b0830c9c30c8925573e26366"
+    }
+  },
+  "Cargo_lock_sha256": "ecad80dd8b0b4b18df5d0e5f4ab2d71f47cffbade4fb963dfb871d93396a16d8",
+  "steps": [
+    {
+      "name": "001-Node-all-target-strict-Clippy-for-real-base-bindings",
+      "argv": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-pon-node",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ]
+    },
+    {
+      "name": "002-all-Rust-format-check",
+      "argv": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ]
+    }
+  ],
+  "resources": {
+    "CPUQuota": "200%",
+    "MemoryMax": "2G",
+    "MemorySwapMax": "0",
+    "TasksMax": 256,
+    "Nice": 10,
+    "cargo_build_jobs": 1
+  },
+  "original_assertions_numeric_resource_caps_and_timeout_controls_unchanged": true,
+  "no_full_952_truth_rerun_or_original_budget_reset": true,
+  "source_stage_not_I09_or_I10_or_72hWAN": true,
+  "merge_ready": false,
+  "target": "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/M09-streamed-runtime-materializer-root-candidate-20261027-001/native-target",
+  "diagnostics_do_not_close_original_parallel_failure": true,
+  "original_discovery_tests_byte_identical_to_published_c960": {
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs": "c36a09c69b05c143653b5081f3ef8c35d172e732721d283edb33366043313cfd",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/sequence_tests.rs": "ba85b6bd81f2109e54af2878c31f0b75e5c3600d0f17eec861778efd3c4e1bd3"
+  },
+  "preserved_strict_lint_RED": [
+    "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/M09-structured-plan-Clippy-source-correction-20261027-001/actual-native-runner-terminal.json",
+    "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/M09-strict-lint-and-original-discovery-timeout-diagnosis-20261027-001/actual-native-runner-terminal.json"
+  ],
+  "not_Windows_native_or_security_execution": true,
+  "actual_original_failure_evidence_retained": "work/ci-follow/M09-Windows-GNU-strict-source-validation-before-Unix-helper-gating-20261027-001",
+  "source_fix": "Gate private Unix runtime cache-retirement helper with same cfg(unix) as its only consumer; no dead-code suppression or Windows isolation claim.",
+  "native_execution_or_source_owner_gate_qualified": false,
+  "all_original_failure_budgets_not_reopened": true
+}

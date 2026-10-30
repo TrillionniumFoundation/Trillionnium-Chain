@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import re
 from pathlib import Path
 import tomllib
@@ -71,6 +72,7 @@ CURRENT_READER_COMMANDS = (
     'python3 scripts/ci/test_pon_w1_cost_matrix_reader.py',
     'python3 scripts/ci/test_pon_public_v3_policy_read.py',
     'python3 scripts/ci/test_llm_cell_handoff_deadline.py',
+    'python3 scripts/test_llm_cell_release.py',
 )
 LLM_RUNTIME_TESTS = (
     '    python3 scripts/test_llm_runtime_rss_owner.py\n'
@@ -78,6 +80,56 @@ LLM_RUNTIME_TESTS = (
     '    python3 scripts/test_llm_inherited_runtime.py\n'
     '    python3 scripts/test_llm_neural_read_worker.py\n'
 )
+LLM_INITIAL_V2_BYTE_TESTS = (
+    '    python3 scripts/test_llm_runtime_parent_step_v2.py\n'
+    '    python3 scripts/test_llm_runtime_parent_step_task_v2.py\n'
+)
+
+MODEL_RUNTIME_TRIGGER_PATHS = '''      - config/pon/**
+      - scripts/llm_*.py
+      - scripts/test_llm_*.py
+      - scripts/ci/ci_job.sh
+      - scripts/ci/check_ci_contract.py
+      - scripts/ci/test_ci_contract.py
+      - scripts/ci/check_model_runtime_unit_log.py
+      - scripts/ci/model-runtime-cpu-requirements.txt
+'''
+
+MODEL_RUNTIME_ENV_STEP = '''      - name: Prepare pinned CPU-only model unit dependencies
+        id: runtime_deps
+        if: ${{ always() && steps.source.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -c 'import platform,sys; assert sys.version_info[:2] == (3,12) and platform.system() == "Linux" and platform.machine() in {"x86_64","aarch64"}'
+          test ! -e "$RUNNER_TEMP/model-runtime-unit-env"
+          test ! -L "$RUNNER_TEMP/model-runtime-unit-env"
+          python3 -m venv "$RUNNER_TEMP/model-runtime-unit-env"
+          "$RUNNER_TEMP/model-runtime-unit-env/bin/python" -m pip --isolated install --disable-pip-version-check --no-cache-dir --only-binary=:all: --require-hashes --index-url https://pypi.org/simple --retries 0 --timeout 30 -r scripts/ci/model-runtime-cpu-requirements.txt --report "$RUNNER_TEMP/parent-evidence/model-runtime-install.json"
+          "$RUNNER_TEMP/model-runtime-unit-env/bin/python" -m pip check
+          "$RUNNER_TEMP/model-runtime-unit-env/bin/python" -m pip freeze --all > "$RUNNER_TEMP/parent-evidence/model-runtime-packages.txt"
+'''
+
+MODEL_RUNTIME_TEST_STEP = '''      - name: Execute all original small Tensor and candidate-observer controls
+        if: ${{ always() && steps.runtime_deps.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          export HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1
+          status=0
+          for spec in initial_trainable_setup_v2 runtime_candidate_observation_v1; do
+            if ! "$RUNNER_TEMP/model-runtime-unit-env/bin/python" -B "scripts/test_llm_${spec}.py" 2>&1 | tee "$RUNNER_TEMP/parent-evidence/${spec}.log"; then
+              status=1
+            fi
+          done
+          "$RUNNER_TEMP/model-runtime-unit-env/bin/python" -B scripts/ci/check_model_runtime_unit_log.py --suite setup --log "$RUNNER_TEMP/parent-evidence/initial_trainable_setup_v2.log" > "$RUNNER_TEMP/parent-evidence/unit-setup-readback.json" || status=1
+          "$RUNNER_TEMP/model-runtime-unit-env/bin/python" -B scripts/ci/check_model_runtime_unit_log.py --suite observer --log "$RUNNER_TEMP/parent-evidence/runtime_candidate_observation_v1.log" > "$RUNNER_TEMP/parent-evidence/unit-observer-readback.json" || status=1
+          exit "$status"
+'''
+
+MODEL_PARENT_ORIGINAL_SHA256 = 'a2fb71f718810d4365df5c877fd84432553d2788f50f32762a90a08c571f6fea'
+MODEL_RUNTIME_REQUIREMENTS_SHA256 = '178b2fe89a7bf58f2d127b195d82e4fa9b5c19d93cb3526d8789edf3df901017'
+
 ORIGINAL_CAMPAIGN_READER = r'''    python3 scripts/ci/test_read_original_native_campaign.py \
       --artifact-dir evidence/pon-upgrade-implementation-20261018/native-rounds/chain-pr327-original-campaign-39694587963 \
       --expected-manifest-sha256 12406cc156e57c130fa14af2b50b386031ec3640ce7f0234ed5bc9f0a700aac3 \
@@ -217,6 +269,8 @@ PROTOCOL_CONTRACT_BLOCK = '''    python3 scripts/ci/run_from_zero_native.py --ou
     python3 scripts/test_llm_runtime_exit_observation.py
     python3 scripts/test_llm_inherited_runtime.py
     python3 scripts/test_llm_neural_read_worker.py
+    python3 scripts/test_llm_runtime_parent_step_v2.py
+    python3 scripts/test_llm_runtime_parent_step_task_v2.py
     python3 formal/pon-nakamoto-v1/test_reward_budget_oracle.py
     python3 formal/pon-nakamoto-v1/test_model_attribution.py
     python3 formal/pon-nakamoto-v1/test_model_evolution_oracle.py -v
@@ -279,6 +333,10 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
                     for command in code_lines(LLM_RUNTIME_TESTS)),
             'runtime owner, exit, inheritance and neural worker controls must retain their straight-line command sequence exactly once after pilot, parent material and parent step in protocol-contract')
     reward_budgets = '    python3 formal/pon-nakamoto-v1/test_reward_budget_oracle.py\n'
+    require(LLM_RUNTIME_TESTS + LLM_INITIAL_V2_BYTE_TESTS + reward_budgets in lanes['protocol-contract']
+            and all(code_lines(script).count(command) == 1
+                    for command in code_lines(LLM_INITIAL_V2_BYTE_TESTS)),
+            'both V2 byte/task suites must execute once after original runtime controls and before reward budgets')
     require(reward_budgets in lanes['protocol-contract'] and script.count(reward_budgets) == 1,
             'five-lane reward budget controls must execute exactly once in protocol-contract')
     require(code_lines(lanes['protocol-contract']).count(GSC2_SYNTHETIC_ORACLE.strip()) == 1
@@ -355,7 +413,24 @@ def require(ok: bool, message: str) -> None:
         raise ValueError('CI contract: ' + message)
 
 
+def check_model_runtime_registration(root: Path) -> None:
+    text = (root / '.github/workflows/pon-model-parent-acceptance.yml').read_text()
+    for block in (MODEL_RUNTIME_TRIGGER_PATHS, MODEL_RUNTIME_ENV_STEP, MODEL_RUNTIME_TEST_STEP):
+        require(text.count(block) == 1, 'exact unconditional-architecture model unit registration block')
+    new_archive = 'git archive HEAD formal/pon-nakamoto-v1 config scripts >'
+    require(text.count(new_archive) == 1, 'original source replay includes actual unit callers')
+    original = text.replace(MODEL_RUNTIME_TRIGGER_PATHS, '').replace(
+        MODEL_RUNTIME_ENV_STEP + MODEL_RUNTIME_TEST_STEP, '').replace(
+        new_archive, 'git archive HEAD formal/pon-nakamoto-v1 config >')
+    require(hashlib.sha256(original.encode()).hexdigest() == MODEL_PARENT_ORIGINAL_SHA256,
+            'all original model-parent workflow bytes,15min,matrix,formal/source/artifact steps remain exact')
+    requirements = (root / 'scripts/ci/model-runtime-cpu-requirements.txt').read_bytes()
+    require(hashlib.sha256(requirements).hexdigest() == MODEL_RUNTIME_REQUIREMENTS_SHA256,
+            'exact reviewed CPU-only hash-pinned runtime dependency closure')
+
+
 def validate(root: Path = ROOT) -> dict:
+    check_model_runtime_registration(root)
     text = (root / WORKFLOW).read_text()
     body = text.split('\njobs:\n', 1)
     require(len(body) == 2, 'one explicit jobs mapping required')
@@ -363,7 +438,8 @@ def validate(root: Path = ROOT) -> dict:
     jobs = dict(pairs)
     required = json.loads((root / 'config/repository-policy-v1.json').read_text())['required_check_names']
     require(len(jobs) == len(pairs) and set(jobs) == set(required) |
-            {'prospective-merge', 'cross-arch-cost', 'cross-arch-cost-consistency'},
+            {'prospective-merge', 'cross-arch-cost', 'cross-arch-cost-consistency',
+             'rust-baseline-shards', 'prospective-rust-shards', 'prospective-rust-baseline'},
             'required head jobs, separate merge matrix and actual cross-architecture costs must remain explicit')
     require('continue-on-error' not in text and 'pull_request_target' not in text and
             'contents: write' not in text and 'self-hosted' not in text,
@@ -376,7 +452,7 @@ def validate(root: Path = ROOT) -> dict:
                 '          persist-credentials: false\n' in block and
                 '          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}\n' in block,
                 name + ' immutable credential-free checkout')
-        if name != 'cross-arch-cost-consistency':
+        if name not in {'cross-arch-cost-consistency', 'rust-baseline', 'prospective-rust-baseline'}:
             require(block.count('name: Set isolated Cargo paths after runner allocation') == 1,
                     name + ' runner-stage isolation')
             require(block.count('"$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"') == 2,
@@ -384,10 +460,10 @@ def validate(root: Path = ROOT) -> dict:
         require('uses: ' + UPLOAD in block and '        if: always()\n' in block and
                 '          if-no-files-found: error\n' in block,
                 name + ' retained observations on success and failure')
-        if name != 'prospective-merge':
+        if name not in {'prospective-merge', 'prospective-rust-shards', 'prospective-rust-baseline'}:
             require(block.count('verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA"') == 2,
                     name + ' exact head before and after execution')
-        if name in required:
+        if name in set(required) - {'rust-baseline'}:
             require(not re.search(r'^    if:', block, re.M), name + ' cannot be conditionally skipped')
             require('        run: bash scripts/ci/ci_job.sh ' + name + '\n' in block,
                     name + ' must execute its actual lane')
@@ -450,8 +526,8 @@ def validate(root: Path = ROOT) -> dict:
     require("    if: github.event_name == 'pull_request'\n" in merge, 'merge lane event boundary')
     require('      fail-fast: false\n' in merge, 'all merge lanes retain their outcomes')
     lanes = re.search(r'^        lane: \[([^\]]+)\]$', merge, re.M)
-    require(lanes is not None and {p.strip() for p in lanes[1].split(',')} == set(required),
-            'prospective merge must execute the same five lanes')
+    require(lanes is not None and {p.strip() for p in lanes[1].split(',')} == set(required) - {'rust-baseline'},
+            'prospective merge retains four lanes; required Rust uses its separate fail-closed fan-in')
     for line in ['TRNM_EXPECTED_SOURCE_SHA: ${{ github.sha }}',
                  'TRNM_EXPECTED_CANDIDATE_SHA: ${{ github.event.pull_request.head.sha }}',
                  'TRNM_EXPECTED_BASE_SHA: ${{ github.event.pull_request.base.sha }}']:
@@ -461,11 +537,57 @@ def validate(root: Path = ROOT) -> dict:
     require(merge.count(command) == 2, 'merge parents and source checked before and after execution')
     require('        run: bash scripts/ci/ci_job.sh "${{ matrix.lane }}"\n' in merge,
             'merge uses actual lane execution, not only a source checker')
+    # Both required names remain real jobs, even when a dependency failed or
+    # was cancelled/skipped. A receipt cannot replace the aggregate job result.
+    for kind, worker, fanin in [('head', 'rust-baseline-shards', 'rust-baseline'),
+                                ('prospective-merge', 'prospective-rust-shards', 'prospective-rust-baseline')]:
+        work, gate = jobs[worker], jobs[fanin]
+        for block in (work, gate):
+            require(re.findall(r'^    timeout-minutes: (.+)$', block, re.M) == ['180'],
+                    'each Rust shard and fan-in retains its original 180-minute budget')
+        event = "github.event_name == 'pull_request'"
+        conditions = re.findall(r'^    if: (.+)$', work, re.M)
+        require(conditions == ([event] if kind == 'prospective-merge' else []), 'Rust shard event boundary')
+        condition = "${{ always() && " + event + " }}" if kind == 'prospective-merge' else 'always()'
+        require(re.findall(r'^    if: (.+)$', gate, re.M) == [condition] and
+                re.findall(r'^    needs: (.+)$', gate, re.M) == [worker], 'Rust fan-in must run after all outcomes')
+        require(re.findall(r'^    name: (.+)$', gate, re.M) ==
+                ['prospective-merge (rust-baseline)' if kind == 'prospective-merge' else 'rust-baseline'],
+                'original required Rust check name')
+        require('      fail-fast: false\n      matrix:\n        shard: [runtime, quality]\n' in work and
+                '    strategy:' not in gate, 'both required Rust shards execute without fail-fast')
+        args = '--kind head --candidate "$TRNM_EXPECTED_SOURCE_SHA" --tested "$TRNM_EXPECTED_SOURCE_SHA"'
+        if kind == 'prospective-merge':
+            args = '--kind prospective-merge --candidate "$TRNM_EXPECTED_CANDIDATE_SHA" --base "$TRNM_EXPECTED_BASE_SHA" --tested "$TRNM_EXPECTED_SOURCE_SHA"'
+            for block in (work, gate):
+                for line in ['TRNM_EXPECTED_SOURCE_SHA: ${{ github.sha }}',
+                             'TRNM_EXPECTED_CANDIDATE_SHA: ${{ github.event.pull_request.head.sha }}',
+                             'TRNM_EXPECTED_BASE_SHA: ${{ github.event.pull_request.base.sha }}']:
+                    require('      ' + line + '\n' in block, 'Rust shard merge identity')
+                require(block.count(command) == 2, 'Rust merge checked before and after')
+        run = 'python3 scripts/ci/rust_baseline_shards.py run ' + args + ' --shard "${{ matrix.shard }}" --output "$RUNNER_TEMP/ci-observations/rust-shard.json"'
+        check = 'python3 scripts/ci/rust_baseline_shards.py check ' + args + ' --inputs "$RUNNER_TEMP/rust-shards" --dependency-result "$TRNM_RUST_SHARD_RESULT" --output "$RUNNER_TEMP/ci-observations/rust-fanin.json"'
+        require('      - name: Run retained Rust shard\n        run: ' + run + '\n' in work and
+                work.count('rust_baseline_shards.py ') == 1, 'real retained Rust shard execution')
+        require('      - name: Require both successful exact-source Rust shards\n        if: always()\n        run: ' + check + '\n' in gate and
+                gate.count('rust_baseline_shards.py ') == 1 and
+                '      TRNM_RUST_SHARD_RESULT: ${{ needs.' + worker + '.result }}\n' in gate,
+                'Rust fan-in must require dependency success and exact receipts after failure')
+        artifact = 'rust-shard-' + kind + '-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}'
+        require('          name: rust-observations-' + kind + '-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}-${{ matrix.shard }}\n' in work and
+                '          path: ${{ runner.temp }}/ci-observations/\n' in work and
+                '          path: |\n            ${{ runner.temp }}/ci-observations/rust-shard.json\n            ${{ runner.temp }}/ci-observations/rust-shard.sh\n' in work,
+                'full native evidence retained separately from lightweight fan-in proof')
+        require('          name: ' + artifact + '-${{ matrix.shard }}\n' in work and
+                '          pattern: ' + artifact + '-*\n' in gate and
+                'uses: ' + DOWNLOAD in gate and '          path: ${{ runner.temp }}/rust-shards/\n' in gate and
+                '          merge-multiple: false\n' in gate, 'distinct current-source current-attempt shard artifacts')
     script = (root / 'scripts/ci/ci_job.sh').read_text()
     check_independent_conformance(script, set(required))
     require('    python3 scripts/ci/run_fuzz_smoke.py\n' in script,
             'instrumented fuzz execution missing')
-    require(SIGNED_STATE_PYTHON in jobs['rust-baseline'] and
+    require(all(SIGNED_STATE_PYTHON in jobs[name] for name in
+                ('rust-baseline-shards', 'prospective-rust-shards')) and
             "if: matrix.lane == 'protocol-contract' || matrix.lane == 'external-evidence-contract' || matrix.lane == 'rust-baseline'" in merge,
             'both Rust lanes require the pinned isolated signed-state oracle dependencies')
     require('    python3 scripts/ci/run_supply_chain.py\n' in script,
@@ -497,7 +619,8 @@ def validate(root: Path = ROOT) -> dict:
             'source-bound mixed-service campaign and retained refusal checks missing')
     require(jobs['fuzz-smoke'].count('run: bash scripts/ci/install_ci_tools.sh fuzz') == 1 and
             merge.count('run: bash scripts/ci/install_ci_tools.sh fuzz') == 1, 'pinned fuzz installation missing')
-    require(jobs['rust-baseline'].count('run: bash scripts/ci/install_ci_tools.sh supply-chain') == 1 and
+    require(all(jobs[name].count('run: bash scripts/ci/install_ci_tools.sh supply-chain') == 1 for name in
+                ('rust-baseline-shards', 'prospective-rust-shards')) and
             merge.count('run: bash scripts/ci/install_ci_tools.sh supply-chain') == 1,
             'pinned dependency auditor installation missing')
     versions = dict(line.split('=', 1) for line in (root / 'scripts/ci/tool-versions.env').read_text().splitlines()

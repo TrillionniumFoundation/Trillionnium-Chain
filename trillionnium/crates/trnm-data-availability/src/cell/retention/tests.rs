@@ -29,7 +29,7 @@ fn material(directory: &Path, size: usize) -> (CellStoreV1, CellManifestV1, Vec<
         .collect::<Vec<_>>();
     let input = directory.join("input");
     fs::write(&input, &bytes).unwrap();
-    let cache = CellStoreV1::open(&directory.join("cache.sqlite")).unwrap();
+    let cache = CellStoreV1::open(&directory.join("cache.sqlite"), cache_config()).unwrap();
     let manifest = cache
         .pack_file(
             &input,
@@ -118,7 +118,7 @@ fn corrupt_payload_and_failed_repair_keep_duty_and_irreversible_byte_cost() {
     let (cache, manifest, _) = material(dir.path(), 5000);
     let path = dir.path().join("retention");
     let cfg = config(1, 8192);
-    let empty = CellStoreV1::open(&dir.path().join("empty.sqlite")).unwrap();
+    let empty = CellStoreV1::open(&dir.path().join("empty.sqlite"), cache_config()).unwrap();
     let mut store = CellRetentionStoreV1::create(&path, cfg.clone()).unwrap();
     store.reserve(contract(1, &manifest)).unwrap();
     store.acknowledge([1; 32], &cache, deadline()).unwrap();
@@ -200,7 +200,7 @@ fn lost_repair_ack_reconciles_actual_bytes_without_second_write_or_charge() {
         .unwrap();
     drop(store);
     let mut store = CellRetentionStoreV1::open(&path, cfg).unwrap();
-    let empty = CellStoreV1::open(&dir.path().join("empty.sqlite")).unwrap();
+    let empty = CellStoreV1::open(&dir.path().join("empty.sqlite"), cache_config()).unwrap();
     let result = store
         .repair([1; 32], [101; 32], &empty, deadline())
         .unwrap();
@@ -311,7 +311,7 @@ fn retained_origin_bytes_rehydrate_existing_peer_protocol_after_cache_loss() {
     fs::remove_file(dir.path().join("cache.sqlite")).unwrap();
     fs::remove_file(dir.path().join("input")).unwrap();
     let peer_path = dir.path().join("repaired-cache.sqlite");
-    let peer = CellStoreV1::open(&peer_path).unwrap();
+    let peer = CellStoreV1::open(&peer_path, cache_config()).unwrap();
     store.populate_cache([1; 32], &peer, deadline()).unwrap();
     drop(peer);
     let listener = TcpListener::bind("127.0.0.1:0").unwrap();
@@ -327,10 +327,10 @@ fn retained_origin_bytes_rehydrate_existing_peer_protocol_after_cache_loss() {
         max_response_bytes: 262_144,
     };
     let server = thread::spawn(move || {
-        let peer = CellStoreV1::open(&peer_path).unwrap();
+        let peer = CellStoreV1::open(&peer_path, cache_config()).unwrap();
         serve_cells(&listener, &peer, &stop, limits).unwrap()
     });
-    let consumer = CellStoreV1::open(&dir.path().join("consumer.sqlite")).unwrap();
+    let consumer = CellStoreV1::open(&dir.path().join("consumer.sqlite"), cache_config()).unwrap();
     let received = fetch_cell(&consumer, manifest.id(), &[address], limits);
     shutdown.store(true, Ordering::Release);
     server.join().unwrap();
@@ -372,7 +372,7 @@ fn real_process_death_after_payload_sync_recovers_ack_without_origin_or_new_capa
         .unwrap();
     assert_eq!(status.code(), Some(91));
     fs::remove_file(dir.path().join("input")).unwrap();
-    let empty = CellStoreV1::open(&dir.path().join("empty.sqlite")).unwrap();
+    let empty = CellStoreV1::open(&dir.path().join("empty.sqlite"), cache_config()).unwrap();
     let path = dir.path().join("retention");
     let mut store = CellRetentionStoreV1::open(&path, config(1, 8192)).unwrap();
     assert_eq!(store.required_row([1; 32]).unwrap().status, 0);
@@ -396,7 +396,7 @@ fn real_process_death_after_payload_sync_recovers_ack_without_origin_or_new_capa
 fn initial_partial_copy_cannot_be_redispatched_under_the_same_obligation() {
     let dir = tempfile::tempdir().unwrap();
     let (cache, manifest, bytes) = material(dir.path(), 37_000);
-    let partial = CellStoreV1::open(&dir.path().join("partial.sqlite")).unwrap();
+    let partial = CellStoreV1::open(&dir.path().join("partial.sqlite"), cache_config()).unwrap();
     let first = &manifest.chunks()[0];
     partial
         .put_chunk(first, &bytes[..first.size as usize])
@@ -453,7 +453,7 @@ fn successful_noop_repair_keeps_its_identity_after_later_target_damage() {
 fn interrupted_initial_copy_keeps_full_charge_and_requires_a_separate_repair() {
     let dir = tempfile::tempdir().unwrap();
     let (cache, manifest, bytes) = material(dir.path(), 37_000);
-    let partial = CellStoreV1::open(&dir.path().join("partial.sqlite")).unwrap();
+    let partial = CellStoreV1::open(&dir.path().join("partial.sqlite"), cache_config()).unwrap();
     let first = &manifest.chunks()[0];
     partial
         .put_chunk(first, &bytes[..first.size as usize])
@@ -959,4 +959,14 @@ fn sqlite_like_wildcard_cannot_hide_a_user_trigger_at_repair_or_reopen() {
     let cold_rejected = CellRetentionStoreV1::open(&path, cfg).is_err();
     assert!(live_rejected && payload_unchanged && cold_rejected,
         "noninternal trigger bypass: live_rejected={live_rejected}, payload_unchanged={payload_unchanged}, cold_rejected={cold_rejected}");
+}
+
+// Explicit finite fixture quota; covers the existing <=32MiB commit fixtures.
+fn cache_config() -> crate::cell::CellCacheConfigV4 {
+    crate::cell::CellCacheConfigV4 {
+        max_database_bytes: 128 * 1024 * 1024,
+        max_logical_bytes: 64 * 1024 * 1024,
+        max_chunk_rows: 4096,
+        max_manifest_rows: 256,
+    }
 }

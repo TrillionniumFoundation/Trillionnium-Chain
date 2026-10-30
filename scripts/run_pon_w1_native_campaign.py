@@ -26,6 +26,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.dont_write_bytecode = True
 sys.path.insert(0, str(ROOT / 'formal/pon-nakamoto-v1'))
 from bounded_process import ProcessFailure, run_bounded
+from pon_identity_outer_owner import require
 
 GRID = (
     ('w1-seed1', 3, 32, 1, '7f' + 'ff' * 31, 1),
@@ -44,11 +45,6 @@ BUILD_ENV = ('RUSTC', 'CARGO_BUILD_RUSTC', 'RUSTFLAGS', 'CARGO_ENCODED_RUSTFLAGS
              'CARGO_PROFILE_RELEASE_CODEGEN_UNITS', 'CARGO_PROFILE_RELEASE_DEBUG',
              'CARGO_PROFILE_RELEASE_DEBUG_ASSERTIONS', 'CARGO_PROFILE_RELEASE_OVERFLOW_CHECKS',
              'CARGO_PROFILE_RELEASE_PANIC', 'CARGO_PROFILE_RELEASE_INCREMENTAL')
-
-
-def require(value, message):
-    if not value:
-        raise ValueError(message)
 
 
 def validate_build_environment(env):

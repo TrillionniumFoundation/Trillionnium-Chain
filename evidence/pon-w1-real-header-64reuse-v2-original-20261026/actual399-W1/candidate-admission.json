@@ -1,0 +1,110 @@
+{
+  "budget": {
+    "diagnostic_320_not_refunded": true,
+    "expired_formal_absolute_window_claimed": false,
+    "new_entire_owner_maximum_seconds": 280,
+    "original_W1_build_seconds": 600,
+    "original_W1_run120_separate_untouched": true,
+    "original_formal_absolute_build_window_previously_started": false,
+    "per_substep_timeout": "min(cap, actual absolute remaining minus35s finalization reserve)",
+    "previous_two_diagnostic_allocations_conservatively_charged_seconds": 320,
+    "whole_success_requires_actual_outer_terminal_and_elapsed": true
+  },
+  "full_guard_enabled": false,
+  "merge_ready": false,
+  "owner": {
+    "bytes": 21825,
+    "path": "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/W1-clean399-normal-release-actual-build-20261026-001/owner.py",
+    "sha256": "f05dd9145d3462f09b61628583d04ee7f5d194c581b8c39cf7e0f90624083c0e"
+  },
+  "qualifying_execution_receipt": false,
+  "recorded_utc": "2026-10-26T13:52:43.858571+00:00",
+  "remaining_acceptance": [
+    "Independent static review before root launch.",
+    "Fresh output directory and actualNice10/CPU4/16GiB guard.",
+    "Actual Cargo JSON, unique normal release example, heldFD6/nativeABI binding, real wait/reap, readonly ELF hash.",
+    "Preserve all original PN1 package members and old target ELF hashes before and after.",
+    "Actual final stdout/fsync/close and authoritative outer exit0/no timeout/outputcomplete/wall<=280.",
+    "A build observation alone does not close real64 reuse, minimum known cost, all13 kernels, fairness, threeFD, or4097."
+  ],
+  "required_launch": {
+    "CPUQuota": "400%",
+    "CPUQuotaPeriodSec": "100ms",
+    "KillMode": "control-group",
+    "MemoryMax": 17179869184,
+    "RuntimeMaxSec": 270,
+    "TimeoutStopSec": 5,
+    "absolute_Nice": 10,
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/W1-clean399-normal-release-actual-build-20261026-001/owner.py"
+    ],
+    "new_nonce_unit": true,
+    "note": "Inner270+stop5 is stricter; outer full280 including launch/cleanup remains mandatory. Relative os.nice is not qualification.",
+    "only_root_launches_after_new94_PN1_prepare_terminal_and_no_parallel_Cargo": true,
+    "outer_durable_job_maximum_seconds": 280,
+    "outer_full_observed_wall_seconds_maximum": 280
+  },
+  "schema": "pn1-w1-clean399-build-owner-source-admission-v1",
+  "scope": {
+    "W1_native64_started": false,
+    "calls_native_step": false,
+    "calls_public_prepare": false,
+    "creates_PN1_claim": false,
+    "frozen_ELF_normal_profile_test": false,
+    "native_abi_event_cache_must_be_honestly_labelled": true,
+    "new_W1_top_level_receipt_domain": true,
+    "physical_or_instantaneous_target_quota_claimed": false,
+    "uses_only_pinned_BuildStop_and_ComponentIO_owned_step_low_layers": true
+  },
+  "source": {
+    "head": "399dd82608df72c71c502b8bda0aa95898794080",
+    "path": "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/pn1-v3-clean-source-public-qualification-20261026-001/ownedsource",
+    "sample_is_not_current94_or_published_PR_qualification": true,
+    "tree": "66ceec03cd2b67ae88a5662cf75e4ba80292cd2b"
+  },
+  "source_binary_attestation": false,
+  "source_only_checks": {
+    "AST_parse": true,
+    "candidate_imported_or_executed": false,
+    "literal_low_level_source_sha_checks": {
+      "formal/pon-nakamoto-v1/bounded_process.py": {
+        "actual": "da175430a6b669d3e7d40fe7ec0e7bc00fe6e992cc2d4d443af07209b4013815",
+        "expected": "da175430a6b669d3e7d40fe7ec0e7bc00fe6e992cc2d4d443af07209b4013815"
+      },
+      "scripts/ci/check_pon_identity_churn.py": {
+        "actual": "7000380737367657292f2e7cc6f779dde8ce64eaaebf5c196de733caf9ffbe71",
+        "expected": "7000380737367657292f2e7cc6f779dde8ce64eaaebf5c196de733caf9ffbe71"
+      },
+      "scripts/read_original_native_campaign.py": {
+        "actual": "9f7b088084f089e298e8bb66e07009c7cc844a4197bc06b33d7bf33f86ba93ff",
+        "expected": "9f7b088084f089e298e8bb66e07009c7cc844a4197bc06b33d7bf33f86ba93ff"
+      },
+      "scripts/run_pon_identity_churn.py": {
+        "actual": "177bdbdf505299693618e4060cb65a4c8a46cf1ec5c85414a38d04accdd139cf",
+        "expected": "177bdbdf505299693618e4060cb65a4c8a46cf1ec5c85414a38d04accdd139cf"
+      },
+      "scripts/run_pon_native_io_component.py": {
+        "actual": "c5e8d582d2b53411b15114c6c7fd03b618f5ce3c79ee25bc198dd372857bbc65",
+        "expected": "c5e8d582d2b53411b15114c6c7fd03b618f5ce3c79ee25bc198dd372857bbc65"
+      },
+      "scripts/run_pon_w1_native_campaign.py": {
+        "actual": "eff0930837331f08882a0d69a6909e8f8dda2b23dad58cf0e6bc60d175f0a431",
+        "expected": "eff0930837331f08882a0d69a6909e8f8dda2b23dad58cf0e6bc60d175f0a431"
+      }
+    },
+    "preflight_or_Cargo_or_native_run_by_this_review": false
+  },
+  "state": "SOURCE_CANDIDATE_NOT_RUN",
+  "target": {
+    "identity": {
+      "device": 2050,
+      "inode": 54057931
+    },
+    "mode": "incremental-sequential-cache-reuse-not-fresh",
+    "old_PN1_prepared_and_consumed_claim_unchanged": true,
+    "path": "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/pn1-v3-clean-source-public-qualification-20261026-001/target"
+  },
+  "task_complete": false
+}

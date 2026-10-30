@@ -1,0 +1,30 @@
+{
+  "recorded_utc": "2026-10-28T07:45:33.244964+00:00",
+  "schema": "trnm-qualification-original-log-storage-v1",
+  "domain": "trnm.qualification.original-log-storage.v1",
+  "original_diff_check_wait": 2,
+  "original_diff_check_stdout": "qualification/pn0-ci/20261028-raw-source-archive-packaging/122687511631.full-job-log.original.txt:555: trailing whitespace.\n+2026-10-28T07:26:20.8391328Z \nqualification/pn0-ci/20261028-raw-source-archive-packaging/122687511631.full-job-log.original.txt:559: trailing whitespace.\n+2026-10-28T07:26:20.8394184Z \nqualification/pn0-ci/20261028-raw-source-archive-packaging/122687511631.full-job-log.original.txt:562: trailing whitespace.\n+2026-10-28T07:26:20.8394864Z \nqualification/pn0-ci/20261028-raw-source-archive-packaging/122687511631.full-job-log.original.txt:564: trailing whitespace.\n+2026-10-28T07:26:20.8395088Z \nqualification/pn0-ci/20261028-raw-source-archive-packaging/122687511631.full-job-log.original.txt:566: trailing whitespace.\n+2026-10-28T07:26:20.8395303Z \nqualification/pn0-ci/20261028-raw-source-archive-packaging/122687511631.full-job-log.original.txt:568: trailing whitespace.\n+2026-10-28T07:26:20.8395802Z \nqualification/pn0-ci/20261028-raw-source-archive-packaging/122687511631.full-job-log.original.txt:570: trailing whitespace.\n+2026-10-28T07:26:20.8396208Z \nqualification/pn0-ci/20261028-raw-source-archive-packaging/122687511631.full-job-log.original.txt:723: trailing whitespace.\n+2026-10-28T07:26:33.6610078Z \nqualification/pn0-ci/20261028-raw-source-archive-packaging/122687511631.full-job-log.original.txt:726: trailing whitespace.\n+2026-10-28T07:26:33.6610618Z \nqualification/pn0-ci/20261028-raw-source-archive-packaging/122687511727.full-job-log.original.txt:590: trailing whitespace.\n+2026-10-28T07:26:18.5671015Z \nqualification/pn0-ci/20261028-raw-source-archive-packaging/122687511727.full-job-log.original.txt:594: trailing whitespace.\n+2026-10-28T07:26:18.5674050Z \nqualification/pn0-ci/20261028-raw-source-archive-packaging/122687511727.full-job-log.original.txt:597: trailing whitespace.\n+2026-10-28T07:26:18.5675673Z \nqualification/pn0-ci/20261028-raw-source-archive-packaging/122687511727.full-job-log.original.txt:599: trailing whitespace.\n+2026-10-28T07:26:18.5676161Z \nqualification/pn0-ci/20261028-raw-source-archive-packaging/122687511727.full-job-log.original.txt:601: trailing whitespace.\n+2026-10-28T07:26:18.5676614Z \nqualification/pn0-ci/20261028-raw-source-archive-packaging/122687511727.full-job-log.original.txt:603: trailing whitespace.\n+2026-10-28T07:26:18.5676983Z \nqualification/pn0-ci/20261028-raw-source-archive-packaging/122687511727.full-job-log.original.txt:605: trailing whitespace.\n+2026-10-28T07:26:18.5677918Z \nqualification/pn0-ci/20261028-raw-source-archive-packaging/122687511727.full-job-log.original.txt:750: trailing whitespace.\n+2026-10-28T07:26:29.0805387Z \nqualification/pn0-ci/20261028-raw-source-archive-packaging/122687511727.full-job-log.original.txt:753: trailing whitespace.\n+2026-10-28T07:26:29.0806207Z \n",
+  "original_diff_check_stderr": "",
+  "reason": "Original Actions blank log lines include timestamp followed by one space; preserve those bytes inside the original JSON envelope rather than modifying raw data or weakening whitespace rules.",
+  "lossless_logs": [
+    {
+      "job_id": 122687511727,
+      "format": "Original connector JSON envelope, lossless UTF8 decoded full log payload in structuredContent.content",
+      "path": "qualification/pn0-ci/20261028-raw-source-archive-packaging/122687511727.full-job-log-tool-result.original.json",
+      "decoded_bytes": 101217,
+      "decoded_sha256": "e4bda883a3a826906befa58c55c4866e59dabef52229f1208caf0bb7d1ee6bbc",
+      "working_raw_plaintext_retained": "work/ci-follow/Chain-5a2-original-external-contract-job-terminal-readonly-20261028-001/122687511727.full-job-log.original.txt",
+      "original_log_bytes_not_stripped_normalized_or_edited": true
+    },
+    {
+      "job_id": 122687511631,
+      "format": "Original connector JSON envelope, lossless UTF8 decoded full log payload in structuredContent.content",
+      "path": "qualification/pn0-ci/20261028-raw-source-archive-packaging/122687511631.full-job-log-tool-result.original.json",
+      "decoded_bytes": 101039,
+      "decoded_sha256": "bda8753ab921ecc90870b4e317875d5694576852fcd138bba067fd8a44916308",
+      "working_raw_plaintext_retained": "work/ci-follow/Chain-5a2-original-external-contract-job-terminal-readonly-20261028-001/122687511631.full-job-log.original.txt",
+      "original_log_bytes_not_stripped_normalized_or_edited": true
+    }
+  ],
+  "no_whitespace_policy_or_gitattributes_changed": true
+}

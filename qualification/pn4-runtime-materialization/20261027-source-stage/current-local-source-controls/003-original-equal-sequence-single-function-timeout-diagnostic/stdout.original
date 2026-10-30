@@ -1,0 +1,6 @@
+
+running 1 test
+test cell::discovery::sequence_tests::tcp_equal_sequence_endpoint_equivocation_disqualifies_the_identity_without_any_dial ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 140 filtered out; finished in 1.18s
+

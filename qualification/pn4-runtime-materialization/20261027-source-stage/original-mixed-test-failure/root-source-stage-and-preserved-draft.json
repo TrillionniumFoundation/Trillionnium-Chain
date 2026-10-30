@@ -1,0 +1,16 @@
+{
+  "recorded_utc": "2026-10-27T06:20:02.678393+00:00",
+  "role": "M09_STORAGE_CONSUMER_ONLY_NOT_I09_RUNTIME_OR_I10_MODEL_QUALIFICATION",
+  "root_parent": "c96022b897c1235fdbdbfcfa32764403511c6aab",
+  "prior_author_status": "not running in actual collaboration inventory; unfrozen scratch preserved",
+  "preflight_exit": 0,
+  "known_source_issues_corrected": [
+    "Plan validation checks original deadline and metadata budget while scanning segments.",
+    "Reserve filesystem-reported allocation granularity for each destination file instead of hard-coded 4096-byte extents.",
+    "Add actual peer transfer beyond consumer cache and actual global connection-exhaustion negative control."
+  ],
+  "full_runtime_loader_threat_model_not_weakened": true,
+  "new_namespace": "hepta.smollm-runtime-files.v1 and TRRV1 create-only reservation",
+  "no_production_guard_or_old_acceptance_change": true,
+  "native_tests_not_yet_run": true
+}

@@ -111,7 +111,7 @@ impl Peer {
         let stop = shutdown.clone();
         let path = path.to_owned();
         let handle = thread::spawn(move || {
-            let store = CellStoreV1::open(&path)?;
+            let store = CellStoreV1::open(&path, cache_config())?;
             serve_cells(&listener, &store, &stop, limits())
         });
         Self {
@@ -188,7 +188,7 @@ fn fixture(path: &Path) -> (CellStoreV1, CellManifestV1, Vec<u8>, PathBuf) {
         .collect();
     fs::write(&input, &bytes).unwrap();
     let store_path = path.join("origin.sqlite");
-    let store = CellStoreV1::open(&store_path).unwrap();
+    let store = CellStoreV1::open(&store_path, cache_config()).unwrap();
     let manifest = store.pack_file(&input, cell_context(), 16_384).unwrap();
     (store, manifest, bytes, store_path)
 }
@@ -211,7 +211,7 @@ fn tcp_bootstrap_discovers_unconfigured_providers_and_repairs_after_origin_exit(
     let a_path = temp.path().join("a.sqlite");
     let b_path = temp.path().join("b.sqlite");
     for path in [&a_path, &b_path] {
-        let replica = CellStoreV1::open(path).unwrap();
+        let replica = CellStoreV1::open(path, cache_config()).unwrap();
         let (received, report) =
             fetch_cell(&replica, manifest.id(), &[publisher.address], limits()).unwrap();
         assert_eq!(received, manifest);
@@ -248,7 +248,7 @@ fn tcp_bootstrap_discovers_unconfigured_providers_and_repairs_after_origin_exit(
     fs::remove_file(origin_path).unwrap();
     corrupt_chunk(&a_path, &manifest);
     let consumer_path = temp.path().join("consumer.sqlite");
-    let consumer = CellStoreV1::open(&consumer_path).unwrap();
+    let consumer = CellStoreV1::open(&consumer_path, cache_config()).unwrap();
     let directory =
         CellProviderDirectoryV1::open(&temp.path().join("client-directory.sqlite"), context())
             .unwrap();
@@ -331,7 +331,8 @@ fn discovery_and_cell_requests_share_original_connection_and_actual_byte_budgets
             context(),
         )
         .unwrap();
-        let store = CellStoreV1::open(&temp.path().join(format!("store-{name}"))).unwrap();
+        let store =
+            CellStoreV1::open(&temp.path().join(format!("store-{name}")), cache_config()).unwrap();
         let output = temp.path().join(format!("no-output-{name}"));
         let mut bounded = limits();
         if bytes_only {
@@ -406,7 +407,7 @@ fn first_manifest_read_preserves_cold_warm_status_and_exact_rejection_counts() {
         .unwrap();
     }
     drop(absent);
-    let consumer = CellStoreV1::open(&temp.path().join("consumer")).unwrap();
+    let consumer = CellStoreV1::open(&temp.path().join("consumer"), cache_config()).unwrap();
     // Verified chunks exist, but the manifest is genuinely absent. Thus the
     // one rejected Cell response is only the initial manifest attempt.
     for chunk in manifest.chunks() {
@@ -489,7 +490,7 @@ fn cached_advertisements_cannot_replace_an_actual_bootstrap_reply() {
     )
     .unwrap();
     drop(failed);
-    let store = CellStoreV1::open(&temp.path().join("consumer")).unwrap();
+    let store = CellStoreV1::open(&temp.path().join("consumer"), cache_config()).unwrap();
     let output = temp.path().join("no-output");
     let options = CellDiscoveryOptionsV1 {
         request: pin,
@@ -603,7 +604,7 @@ fn explicit_scopes_reject_loopback_linklocal_multicast_mapped_and_unlisted_ports
     trap.set_nonblocking(true).unwrap();
     let directory =
         CellProviderDirectoryV1::open(&temp.path().join("directory"), context()).unwrap();
-    let store = CellStoreV1::open(&temp.path().join("store")).unwrap();
+    let store = CellStoreV1::open(&temp.path().join("store"), cache_config()).unwrap();
     let options = CellDiscoveryOptionsV1 {
         request: request([10; 32]),
         bootstraps: vec![trap.local_addr().unwrap()],
@@ -1122,5 +1123,15 @@ fn four_bootstraps_exhaust_exact_eight_attempts_and_64_validation_slots_without_
     assert_eq!(directory.usage().unwrap().retained_identities, 0);
     for worker in workers {
         worker.join().unwrap();
+    }
+}
+
+// Explicit finite fixture quota; covers the existing <=32MiB commit fixtures.
+fn cache_config() -> crate::cell::CellCacheConfigV4 {
+    crate::cell::CellCacheConfigV4 {
+        max_database_bytes: 128 * 1024 * 1024,
+        max_logical_bytes: 64 * 1024 * 1024,
+        max_chunk_rows: 4096,
+        max_manifest_rows: 256,
     }
 }

@@ -1,0 +1,7 @@
+Running as unit: pn1-ec0-public-component-prepare-20261026-001.service; invocation ID: 2a4b01b0a3d640ada2d1aeb9e4c815e5
+Finished with result: exit-code
+Main processes terminated with: code=exited/status=1
+Service runtime: 1min 28.882s
+CPU time consumed: 2min 4.042s
+Memory peak: 3.0M
+Memory swap peak: 0B

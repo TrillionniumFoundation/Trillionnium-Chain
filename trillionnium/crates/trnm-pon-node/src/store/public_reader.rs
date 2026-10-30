@@ -14,6 +14,7 @@ use std::{
     path::PathBuf,
 };
 use trnm_protocol::pon_wire::{hash, Hash};
+use trnm_sqlite_io_boundary::NativeIoLease;
 
 const MAXIMUM_PACKET: usize = 1_048_576;
 
@@ -55,6 +56,7 @@ impl SqlBudget {
 }
 
 struct Pin {
+    native_io: Option<NativeIoLease>,
     directory: PathBuf,
     directory_id: (u64, u64),
     database_id: (u64, u64),
@@ -212,7 +214,12 @@ impl Pin {
             !super::authenticated_migration_pending(&self.directory)?,
             "NATIVE_STATE_MIGRATION_PENDING",
         )?;
-        let dir = fs::symlink_metadata(&self.directory)?;
+        let dir = if let Some(io) = &self.native_io {
+            io.check().map_err(|e| Error::from(e.to_string()))?;
+            fs::metadata(&self.directory)?
+        } else {
+            fs::symlink_metadata(&self.directory)?
+        };
         ensure(
             dir.is_dir() && (dir.dev(), dir.ino()) == self.directory_id,
             "NAMESPACE_CHANGED",
@@ -296,7 +303,8 @@ impl Node {
         ready(&self.db, &mut budget, progress)?;
         context_values(
             &self.db,
-            self.state_backend.schema_id(),
+            self.storage_layout
+                .schema_id(self.state_backend.schema_id()),
             self.settings.parameters(),
             self.settings.genesis(),
             &self.expected_schema,
@@ -309,13 +317,16 @@ impl Node {
         let slot = self.slot()?;
         let external_version = external_version(&self.db, &mut budget, progress)?;
         let pin = Pin {
+            native_io: self.native_io.clone(),
             directory: self.directory.clone(),
             directory_id: self.directory_id,
             database_id: self.database_id,
             owner: self.owner.try_clone()?,
             schema: self.expected_schema.clone(),
             context: self.ancestry_context(),
-            schema_id: self.state_backend.schema_id(),
+            schema_id: self
+                .storage_layout
+                .schema_id(self.state_backend.schema_id()),
             active: selected,
             active_record,
             slot,
@@ -345,7 +356,10 @@ impl Node {
         ensure(
             self.directory_id == read.pin.directory_id
                 && self.database_id == read.pin.database_id
-                && self.state_backend.schema_id() == read.pin.schema_id
+                && self
+                    .storage_layout
+                    .schema_id(self.state_backend.schema_id())
+                    == read.pin.schema_id
                 && self.settings.network() == read.pin.context.network,
             "STORAGE_CONTEXT",
         )
@@ -416,8 +430,9 @@ impl PublicHistorySnapshot {
     ) -> Result<PublicHistoryRead> {
         progress(self.budget.used)?;
         self.pin.namespace()?;
-        let db = Connection::open_with_flags(
-            self.pin.directory.join("native.sqlite"),
+        let db = super::native_connection(
+            &self.pin.native_io,
+            &self.pin.directory.join("native.sqlite"),
             OpenFlags::SQLITE_OPEN_READ_ONLY
                 | OpenFlags::SQLITE_OPEN_NO_MUTEX
                 | OpenFlags::SQLITE_OPEN_NOFOLLOW,
