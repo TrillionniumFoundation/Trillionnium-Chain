@@ -124,7 +124,7 @@ impl HeptaArtifactAdmissionV1 {
         CanonicalCbor::canonical_bytes(self)
     }
 
-    fn decode(decoder: &mut Decoder<'_>) -> Result<Self, CanonicalDecodeError> {
+    pub(crate) fn decode(decoder: &mut Decoder<'_>) -> Result<Self, CanonicalDecodeError> {
         decoder.array(18)?;
         let version = decoder.uint()?;
         if version != HEPTA_HANDOFF_VERSION as u64 {

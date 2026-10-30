@@ -8,6 +8,7 @@
 mod canonical;
 mod command;
 mod hepta_handoff;
+mod pq_hepta_handoff;
 mod state;
 mod types;
 
@@ -18,6 +19,10 @@ pub use command::{AuthorityRole, SignedResearchCommandV1, SignedResearchCommandV
 pub use hepta_handoff::{
     HeptaArtifactAdmissionV1, HeptaHandoffError, SignedHeptaAdmissionV1, HEPTA_HANDOFF_VERSION,
     MAX_HANDOFF_ENVELOPE_BYTES, MAX_HANDOFF_PAYLOAD_BYTES,
+};
+pub use pq_hepta_handoff::{
+    PqHeptaHandoffError, SignedPqHeptaAdmissionV2, MAX_PQ_HEPTA_ENVELOPE_BYTES,
+    ML_DSA_65_KEY_BYTES, ML_DSA_65_SIG_BYTES, PQ_HEPTA_HANDOFF_VERSION,
 };
 pub use state::{
     AppliedCommandRecordV1, ApplyOutcome, AuthorityIdentityV1, AuthoritySetV1,
