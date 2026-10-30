@@ -12,8 +12,13 @@ use std::{
 };
 
 mod directory;
+mod pq_v2;
 mod transport;
 pub use directory::{CellProviderDirectoryUsageV1, CellProviderDirectoryV1};
+pub use pq_v2::{
+    verify_pcp2_provider_hint_v2, PqCellProviderExpectationM09V2,
+    VerifiedPqCellProviderHintM09V2,
+};
 pub use transport::{
     announce_cell_provider, fetch_discovered_cell_to_file, serve_cell_rendezvous,
     CellDiscoveryFetchReportV1, CellDiscoveryObservationV1, CellDiscoveryOptionsV1,
