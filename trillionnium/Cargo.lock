@@ -2123,12 +2123,14 @@ dependencies = [
  "fs2",
  "hex",
  "libc",
+ "ml-dsa",
  "rusqlite",
  "rustix",
  "serde",
  "serde_json",
  "sha2",
  "tempfile",
+ "trnm-crypto-primitives",
 ]
 
 [[package]]

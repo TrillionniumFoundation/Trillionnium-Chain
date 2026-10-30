@@ -23,8 +23,10 @@ fs2 = "0.4"
 libc = "0.2"
 rusqlite = { version = "=0.39.0", features = ["bundled", "fallible_uint"] }
 sha2 = "0.10"
+trnm-crypto-primitives = { version = "=0.1.0", path = "../trnm-crypto-primitives" }
 
 [dev-dependencies]
+ml-dsa = { version = "=0.1.1", default-features = false, features = ["alloc"] }
 hex = "0.4"
 rustix = { version = "1.1.4", features = ["time", "net"] }
 serde = { version = "1", features = ["derive"] }
