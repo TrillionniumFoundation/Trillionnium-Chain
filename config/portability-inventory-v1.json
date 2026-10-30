@@ -638,6 +638,7 @@
         "scripts/llm_runtime_exit_worker_observation.py",
         "scripts/test_llm_runtime_exit_initial_pending.py",
         "scripts/test_llm_runtime_exit_binding_pending.py",
+        "scripts/test_llm_runtime_exit_post_binding_retirement.py",
         "scripts/test_llm_runtime_kernel_owned.py",
         "scripts/test_llm_runtime_kernel_close.py",
         "scripts/llm_runtime_kernel_aggregate.py",

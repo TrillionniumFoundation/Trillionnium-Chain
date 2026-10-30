@@ -8,9 +8,8 @@ use trnm_mvcc_fee::pon_commitment::{CommitmentMethod, FullRootReason};
 use trnm_pon_node::{development_public, ingress, Node, Result, Settings};
 use trnm_protocol::pon_wire::{hash, Envelope, Hash};
 
-mod source_inventory {
-    include!("support/distributed_source_inventory.rs");
-}
+#[path = "support/distributed_source_inventory.rs"]
+mod source_inventory;
 
 fn source() -> Result<Value> {
     let entries: Vec<_> = source_inventory::FILES

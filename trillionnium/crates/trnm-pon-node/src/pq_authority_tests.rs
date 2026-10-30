@@ -20,6 +20,59 @@ fn scope() -> PqAuthorizationScope {
 }
 
 #[test]
+fn nonpersistent_backends_cannot_reset_real_pq_replay_consumption() {
+    let mut replayed = Vec::new();
+    for target in [
+        ":memory:",
+        "",
+        "file::memory:",
+        "file:pq-ephemeral-owner?mode=memory&cache=private",
+        "file:/pq-ephemeral-owner?vfs=memdb",
+    ] {
+        let path = Path::new(target);
+        match PqAuthorizationOwner::open(path, scope()) {
+            Err(PqOwnerError::StoreIdentity) => {}
+            Err(error) => panic!("unexpected backend refusal for {target:?}: {error}"),
+            Ok(mut owner) => {
+                // Use the real ML-DSA fixture to demonstrate the lost replay
+                // record, rather than treating a successful open as authority.
+                let first = owner.record_authorization(FIRST, PAYLOAD, 3999).unwrap();
+                assert_eq!(first.sequence(), 1);
+                drop(owner);
+                let mut reopened = PqAuthorizationOwner::open(path, scope()).unwrap();
+                let replay = reopened.record_authorization(FIRST, PAYLOAD, 3999).unwrap();
+                assert_eq!(replay, first);
+                replayed.push(target);
+            }
+        }
+    }
+    assert!(
+        replayed.is_empty(),
+        "ephemeral backends granted the same real authorization after reopen: {replayed:?}"
+    );
+}
+
+#[test]
+#[cfg(unix)]
+fn disk_backing_with_memory_like_filename_keeps_real_replay_guard() {
+    let temp = tempfile::tempdir().unwrap();
+    let path = temp.path().join(":memory:");
+    let mut owner = PqAuthorizationOwner::open(&path, scope()).unwrap();
+    owner.record_authorization(FIRST, PAYLOAD, 3999).unwrap();
+    assert!(path.is_file());
+    drop(owner);
+    let mut reopened = PqAuthorizationOwner::open(&path, scope()).unwrap();
+    assert!(reopened.record_authorization(FIRST, PAYLOAD, 3999).is_err());
+    assert_eq!(
+        reopened
+            .record_authorization(SECOND, PAYLOAD, 3999)
+            .unwrap()
+            .sequence(),
+        2
+    );
+}
+
+#[test]
 fn three_real_pq_operations_survive_reopen_without_nonce_rewind() {
     let temp = tempfile::tempdir().unwrap();
     let path = temp.path().join("pq.sqlite");

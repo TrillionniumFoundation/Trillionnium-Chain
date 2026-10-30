@@ -1,0 +1,15 @@
+{
+  "schema": "collected-unit-empty-controls-v1",
+  "started_unix_ns": 1793333881513186064,
+  "ended_unix_ns": 1793333882552516299,
+  "exit_code": 0,
+  "source_stable": true,
+  "source_sha256": {
+    "scripts/ci/check_collected_unit_empty_v1.py": "32be50ebab8c492d52a024e5b06a0b00c3cc44c5c58332217a74d20fbcf957c0",
+    "scripts/ci/test_collected_unit_empty_v1.py": "a381a50302ffb6d07bc33cbfd7b6f7993b679fe4be36abc3bf0d23d8b63c13ed"
+  },
+  "log_sha256": "aed7aff9761988160258ad7dfc8d9d779446a282780901b6569657d3a522984d",
+  "real_shell_trap_exit_combinations": 36,
+  "host_systemd_invoked": false,
+  "hosted_validation": "pending; historical fb7 cleanup failures retained"
+}

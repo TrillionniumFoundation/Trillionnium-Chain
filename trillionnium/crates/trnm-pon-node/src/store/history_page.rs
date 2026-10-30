@@ -200,6 +200,7 @@ impl Node {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::store::compiled_source;
     use crate::{development_public, ErrorCode, Settings};
     use serde_json::{json, Value};
     use sha2::{Digest, Sha256};
@@ -211,10 +212,6 @@ mod tests {
     };
     use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
     use trnm_protocol::pon_wire::{hash, Envelope};
-
-    mod compiled_source {
-        include!("../../examples/support/distributed_source_inventory.rs");
-    }
 
     const CLOCK: u64 = 1_000_000;
 

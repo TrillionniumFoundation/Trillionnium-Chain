@@ -1,8 +1,10 @@
-fn bounded_count(value: usize) -> u32 {
+use super::*;
+
+pub(super) fn bounded_count(value: usize) -> u32 {
     u32::try_from(value).unwrap_or(u32::MAX)
 }
 
-fn namespace_digest(namespace: PayloadReplayNamespaceV1) -> [u8; 32] {
+pub(super) fn namespace_digest(namespace: PayloadReplayNamespaceV1) -> [u8; 32] {
     let mut hasher = Sha256::new();
     hasher.update(NAMESPACE_DOMAIN_V1);
     hasher.update(namespace.local_id());
@@ -29,7 +31,7 @@ fn head_digest(prefix: &[u8]) -> [u8; 32] {
     hasher.finalize().into()
 }
 
-fn read_snapshot(
+pub(super) fn read_snapshot(
     file: &mut File,
     namespace: PayloadReplayNamespaceV1,
     expected_namespace_digest: [u8; 32],
@@ -198,7 +200,7 @@ fn verify_frame_record(
     Ok(())
 }
 
-fn decode_record(bytes: &[u8]) -> Result<DecodedRecordV1, PayloadReplayRecoveryErrorV1> {
+pub(super) fn decode_record(bytes: &[u8]) -> Result<DecodedRecordV1, PayloadReplayRecoveryErrorV1> {
     if bytes.len() != RECORD_BYTES_V1
         || bytes[..8] != LOG_MAGIC_V1
         || bytes[8] != LOG_VERSION_V1
@@ -242,7 +244,7 @@ fn decode_record(bytes: &[u8]) -> Result<DecodedRecordV1, PayloadReplayRecoveryE
     })
 }
 
-fn read_head_with_identity(
+pub(super) fn read_head_with_identity(
     path: &Path,
 ) -> Result<(PayloadHeadV1, AuthorityPathIdentityV1), PayloadReplayRecoveryErrorV1> {
     let mut file = open_private_file(path, false)?;
@@ -276,7 +278,7 @@ fn read_head_with_identity(
     ))
 }
 
-fn encode_head(
+pub(super) fn encode_head(
     record_count: u64,
     record_hash: [u8; 32],
     namespace_digest: [u8; 32],
@@ -292,7 +294,7 @@ fn encode_head(
     bytes.try_into().expect("fixed payload replay head")
 }
 
-fn persist_head(
+pub(super) fn persist_head(
     path: &Path,
     directory: &File,
     record_count: u64,
@@ -316,7 +318,7 @@ fn persist_head(
     Ok(())
 }
 
-fn scan_head_temporaries(
+pub(super) fn scan_head_temporaries(
     payload_path: &Path,
 ) -> Result<Vec<PathBuf>, PayloadReplayRecoveryErrorV1> {
     let parent = payload_path
@@ -359,7 +361,7 @@ fn scan_head_temporaries(
     Ok(paths)
 }
 
-fn quarantine_temporaries(
+pub(super) fn quarantine_temporaries(
     directory: &File,
     paths: &[PathBuf],
 ) -> Result<(), PayloadReplayRecoveryErrorV1> {

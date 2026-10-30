@@ -42,9 +42,24 @@ def sample(depleted=False):
             'settlement_discard_ns': 0, 'remaining_paid_credit_ns': credit,
             'stored_credit_ns': credit, 'booked_reservation_ns': 0,
             'live_debited_cpu_ns': 0, 'settlement_residual_cpu_ns': debit,
+            'settled_full_cpu_ns': debit,
             'live_owners': 0, 'unsettled_known_live_cpu_ns': 0,
         },
     }}}
+
+
+def live_sample(remaining=50_000_000, owners=1, live=50_000_000):
+    value = sample(True)
+    flow = value['meter']['Ok']['actual_flow']
+    paid = 2_000_000_000 - remaining
+    flow.update(remaining_paid_credit_ns=remaining, paid_cpu_debit_ns=paid,
+                stored_credit_ns=remaining - owners * 100_000_000,
+                booked_reservation_ns=owners * 100_000_000, live_owners=owners,
+                live_debited_cpu_ns=live, settlement_residual_cpu_ns=paid - live,
+                settled_full_cpu_ns=paid - live, unsettled_known_live_cpu_ns=live)
+    value['meter']['Ok']['meter']['in_flight'] = owners
+    value['meter']['Ok']['depleted'] = remaining < 100_000_000 and paid > 1_900_000_000
+    return value
 
 
 def completion():
@@ -301,6 +316,7 @@ class PureHistoryReader(unittest.TestCase):
         altered = sample(True)
         flow = altered['meter']['Ok']['actual_flow']
         flow['paid_cpu_debit_ns'] = flow['settlement_residual_cpu_ns'] = 2_100_000_000
+        flow['settled_full_cpu_ns'] = 2_100_000_000
         flow['remaining_paid_credit_ns'] = flow['stored_credit_ns'] = -100_000_000
         with self.assertRaises(ValueError):
             reader.actual_depletion(altered)
@@ -315,6 +331,115 @@ class PureHistoryReader(unittest.TestCase):
                         report['phases'][0][section][key] = invalid
                         with self.assertRaises(ValueError):
                             self.read(root, report)
+
+    def test_live_reservation_preserves_signed_stored_credit_and_paid_depletion(self):
+        for remaining, owners, live, depleted in [
+            (50_000_000, 1, 50_000_000, True),
+            (0, 1, 100_000_000, True),
+            (150_000_000, 2, 50_000_000, False),
+        ]:
+            with self.subTest(remaining=remaining, owners=owners):
+                value = live_sample(remaining, owners, live)
+                original = copy.deepcopy(value)
+                self.assertLess(value['meter']['Ok']['actual_flow']['stored_credit_ns'], 0)
+                self.assertIs(reader.actual_depletion(value), depleted)
+                self.assertEqual(value, original)
+        # These two public observations take separate locks. Only actual_flow's
+        # own reservation/owner tuple is atomic; a prior meter is not that tuple.
+        value = live_sample()
+        value['meter']['Ok']['meter']['in_flight'] = 0
+        self.assertTrue(reader.actual_depletion(value))
+
+    def test_real_paid_deficit_stays_rejected_with_an_exact_live_escrow_identity(self):
+        value = live_sample(-1, 1, 100_000_001)
+        flow = value['meter']['Ok']['actual_flow']
+        self.assertEqual(flow['initial_credit_ns'] - flow['paid_cpu_debit_ns'], -1)
+        self.assertEqual(flow['stored_credit_ns'] + flow['booked_reservation_ns'], -1)
+        self.assertEqual(flow['live_debited_cpu_ns'] + flow['settlement_residual_cpu_ns'],
+                         flow['settled_full_cpu_ns'] + flow['unsettled_known_live_cpu_ns'])
+        with self.assertRaises(ValueError):
+            reader.actual_depletion(value)
+
+    def test_reservation_requires_the_original_owner_count_and_full_start_quantum(self):
+        for owners, booked in [(0, 100_000_000), (1, 0), (1, 200_000_000),
+                               (2, 100_000_000), (3, 300_000_000)]:
+            with self.subTest(owners=owners, booked=booked):
+                value = live_sample(500_000_000)
+                flow = value['meter']['Ok']['actual_flow']
+                flow.update(live_owners=owners, booked_reservation_ns=booked,
+                            stored_credit_ns=flow['remaining_paid_credit_ns'] - booked)
+                # Keep the separately observed meter valid so the forged flow,
+                # including its third owner, must fail its own exact invariant.
+                value['meter']['Ok']['meter']['in_flight'] = 1
+                self.assertGreaterEqual(flow['stored_credit_ns'], 0)
+                with self.assertRaises(ValueError):
+                    reader.actual_depletion(value)
+        for invalid in (False, -50_000_000.0, -(1 << 127) - 1, 1 << 127):
+            with self.subTest(stored_credit=invalid):
+                value = live_sample()
+                value['meter']['Ok']['actual_flow']['stored_credit_ns'] = invalid
+                with self.assertRaises(ValueError):
+                    reader.actual_depletion(value)
+        value = live_sample(150_000_000, 2)
+        self.assertFalse(reader.actual_depletion(value))
+        value['meter']['Ok']['depleted'] = True
+        with self.assertRaises(ValueError):
+            reader.actual_depletion(value)
+        value = live_sample()
+        value['meter']['Ok']['meter']['in_flight'] = 3
+        with self.assertRaises(ValueError):
+            reader.actual_depletion(value)
+
+    def test_actual_cpu_attribution_and_unsigned_counter_bounds_remain_exact(self):
+        for key in ('settled_full_cpu_ns', 'unsettled_known_live_cpu_ns'):
+            with self.subTest(key=key):
+                value = live_sample(500_000_000)
+                value['meter']['Ok']['actual_flow'][key] += 1
+                with self.assertRaises(ValueError):
+                    reader.actual_depletion(value)
+        value = sample(True)
+        flow = value['meter']['Ok']['actual_flow']
+        # Equal fabricated additions preserve the old credit equality.
+        flow['credited_refill_ns'] = flow['settlement_discard_ns'] = 1 << 64
+        with self.assertRaises(ValueError):
+            reader.actual_depletion(value)
+        value = sample(True)
+        flow = value['meter']['Ok']['actual_flow']
+        # An algebraically balanced closed owner cannot retain live CPU.
+        flow.update(live_debited_cpu_ns=1, settlement_residual_cpu_ns=1_949_999_999,
+                    settled_full_cpu_ns=1_949_999_999, unsettled_known_live_cpu_ns=1)
+        with self.assertRaises(ValueError):
+            reader.actual_depletion(value)
+
+    def test_full_report_retains_signed_live_credit_without_qualifying_original_red(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            report, _ = fixture(root)
+            report['phases'][1]['budget_samples'] = [live_sample()]
+            report['phases'][1]['genuine_budget_depletion_observed'] = True
+            original = copy.deepcopy(report)
+            result = self.read(root, report)
+            self.assertEqual(result['phases'][1]['actual_depletion_samples'], 1)
+            self.assertFalse(result['original_criteria_met'])
+            self.assertFalse(result['production_qualified'])
+            self.assertEqual(report, original)
+            for owners, live in ((1, 50_000_000), (2, 150_000_000)):
+                with self.subTest(outstanding_final_owners=owners):
+                    outstanding = live_sample(50_000_000, owners, live)['meter']['Ok']
+                    # Every accounting identity is valid for this live sample.
+                    # Only the terminal gate may refuse its unclosed owners;
+                    # an inconsistent reservation would mask that requirement.
+                    reader.actual_flow(outstanding['actual_flow'])
+                    altered = copy.deepcopy(report)
+                    phase = altered['phases'][1]
+                    phase['final_actual_flow'] = outstanding['actual_flow']
+                    phase['final_meter'] = outstanding['meter']
+                    with self.assertRaisesRegex(ValueError, 'actual closed paid owner and complete settlement required'):
+                        reader.phase_bindings(phase)
+                    # read() rehashes the whole report and retains the native
+                    # IPC fixtures, so this cannot pass via an earlier refusal.
+                    with self.assertRaisesRegex(ValueError, 'actual closed paid owner and complete settlement required'):
+                        self.read(root, altered)
 
     def test_duplicate_json_report_cannot_hide_an_earlier_profile(self):
         with tempfile.TemporaryDirectory() as temporary:

@@ -1,0 +1,418 @@
+{
+  "archive": "/dev/shm/trnm-system-safety-20261030/raw-history-b23-fence.zip",
+  "archive_sha256": "754e3cd072d14f608051898a6e00a13469c51f73e75e4ae6fa38ef8a761e54f0",
+  "candidate_reader_sha256": "eb75cb3d850d8469bf80577fe561091bf280e62afc23de50d18bdd42a8b2c98f",
+  "elapsed_seconds": 3.4462563220004085,
+  "history_reader_sha256": "5bebc27eff6c2813db82e74c7dde3d84247a2d7049db788bff602f0c2fd2a610",
+  "history_resource_profile": "history-account-graph-resource-fence-v1",
+  "native_executed": false,
+  "original_artifact_modified": false,
+  "original_binary_sha256": "aa0670cdc85fa600327b0ef55e6653a8f09d82125bf8d3cfcaa3620262cc5c40",
+  "original_reader_sha256": "833f082d391d65d21a096a7da9625e2f370816aeed8ef2e7f8a1c58c6c962f5a",
+  "original_source_unchanged": true,
+  "original_workflow_complete_success": false,
+  "production_qualified": false,
+  "readback_members_sha256": "30b06ffc0733d4cca195aee5fe888818331fa7d08a48048919cb3a8f4b360aa8",
+  "runs": [
+    {
+      "number": 1,
+      "original_native_returncode": 101,
+      "original_recorded_result": {
+        "complete_success": false,
+        "number": 1,
+        "original_criteria_met": false,
+        "report_directory": "run-1-raw",
+        "report_validation_failure": "actual full receiver/verifier state equality required",
+        "step": {
+          "command": [
+            "/home/runner/.cargo/bin/cargo",
+            "+1.95.0",
+            "test",
+            "--locked",
+            "--offline",
+            "--release",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--test",
+            "public_v3_multiprocess",
+            "separate_process_pure_history_raw_graph_fence_campaign",
+            "--",
+            "--exact",
+            "--ignored",
+            "--nocapture",
+            "--test-threads=1"
+          ],
+          "complete_success": false,
+          "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+          "elapsed_ns": 103155874553,
+          "elapsed_seconds": 103.155874553,
+          "error": null,
+          "name": "run-1",
+          "outer_stage_timeout_seconds": 600,
+          "returncode": 101,
+          "stderr": "run-1.stderr.log",
+          "stderr_bytes": 1615,
+          "stderr_sha256": "34201d7f20edae313293a94d38197f6a5e165a531f9f8ba6cac66325bcf15adc",
+          "stderr_truncated": false,
+          "stdout": "run-1.stdout.log",
+          "stdout_bytes": 271,
+          "stdout_sha256": "862884feecbd748b2670057e2fbc3d8b76d0dd61d6b53c3b4b8ca47ac4f0d156",
+          "stdout_truncated": false
+        }
+      },
+      "outer_cgroup": "/system.slice/trnm-native-campaign-41007753791-1.service",
+      "readers": {
+        "candidate": {
+          "error": "actual full receiver/verifier state equality required",
+          "error_type": "ValueError",
+          "readback_completed": false
+        },
+        "original": {
+          "error": "actual full receiver/verifier state equality required",
+          "error_type": "ValueError",
+          "readback_completed": false
+        }
+      },
+      "report_sha256": "ffc22366488016c9d1deccdc03d87dff1503493d86a4943710b2aff3fde72869"
+    },
+    {
+      "number": 2,
+      "original_native_returncode": 0,
+      "original_recorded_result": {
+        "complete_success": false,
+        "number": 2,
+        "original_criteria_met": false,
+        "report_directory": "run-2-raw",
+        "report_validation_failure": "exact nonnegative integer required",
+        "step": {
+          "command": [
+            "/home/runner/.cargo/bin/cargo",
+            "+1.95.0",
+            "test",
+            "--locked",
+            "--offline",
+            "--release",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--test",
+            "public_v3_multiprocess",
+            "separate_process_pure_history_raw_graph_fence_campaign",
+            "--",
+            "--exact",
+            "--ignored",
+            "--nocapture",
+            "--test-threads=1"
+          ],
+          "complete_success": true,
+          "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+          "elapsed_ns": 103306035654,
+          "elapsed_seconds": 103.306035654,
+          "error": null,
+          "name": "run-2",
+          "outer_stage_timeout_seconds": 600,
+          "returncode": 0,
+          "stderr": "run-2.stderr.log",
+          "stderr_bytes": 935,
+          "stderr_sha256": "4409f0df1868c2a3368023f61eef9b3e59d874c5e973e94d56cdc6e5282fd70b",
+          "stderr_truncated": false,
+          "stdout": "run-2.stdout.log",
+          "stdout_bytes": 182,
+          "stdout_sha256": "c8fe2e37c177bc9ff5a52aa3844c6d360be0a3fbffdeea99194d42200d67dc9b",
+          "stdout_truncated": false
+        }
+      },
+      "outer_cgroup": "/system.slice/trnm-native-campaign-41007753791-1.service",
+      "readers": {
+        "candidate": {
+          "readback_completed": true,
+          "result": {
+            "history_resource_profile": "history-account-graph-resource-fence-v1",
+            "native_history": {
+              "complete": true,
+              "history_resource_profile": "history-account-graph-resource-fence-v1",
+              "original_four_cpu_outer_budget_changed": false,
+              "phases": [
+                {
+                  "all_ipc_bytes_read_back": true,
+                  "call_process_cpu_ns": 4675868322,
+                  "cgroup": "/trnmponpublic.slice/trnm-campaign-verifier-5412-566815468474.service",
+                  "confirmation_count": 3,
+                  "cost_scopes_are_nested_not_additive": true,
+                  "history_resource_profile": "history-account-graph-resource-fence-v1",
+                  "import_count": 21,
+                  "independent_host_authentication": false,
+                  "mode": "baseline",
+                  "original_outer_cgroup": "/system.slice/trnm-native-campaign-41007753791-1.service",
+                  "pid": 5432,
+                  "process_cpu_since_start_ns": 5356816244,
+                  "production_qualification": false,
+                  "request_count": 26,
+                  "schema": "native-public-history-verifier-graph-fence-process-v1",
+                  "setup_process_cpu_ns": 571776078,
+                  "whole_fixed_parent_cpu_ns": 5355574000,
+                  "whole_verifier_process_cpu_ns": 5345731083
+                },
+                {
+                  "all_ipc_bytes_read_back": true,
+                  "call_process_cpu_ns": 5066735780,
+                  "cgroup": "/trnmponpublic.slice/trnm-campaign-verifier-5412-599840632193.service",
+                  "confirmation_count": 3,
+                  "cost_scopes_are_nested_not_additive": true,
+                  "history_resource_profile": "history-account-graph-resource-fence-v1",
+                  "import_count": 21,
+                  "independent_host_authentication": false,
+                  "mode": "from-zero",
+                  "original_outer_cgroup": "/system.slice/trnm-native-campaign-41007753791-1.service",
+                  "pid": 5449,
+                  "process_cpu_since_start_ns": 5730035531,
+                  "production_qualification": false,
+                  "request_count": 26,
+                  "schema": "native-public-history-verifier-graph-fence-process-v1",
+                  "setup_process_cpu_ns": 557801139,
+                  "whole_fixed_parent_cpu_ns": 5728584000,
+                  "whole_verifier_process_cpu_ns": 5717559737
+                },
+                {
+                  "all_ipc_bytes_read_back": true,
+                  "call_process_cpu_ns": 5059361213,
+                  "cgroup": "/trnmponpublic.slice/trnm-campaign-verifier-5412-633019400479.service",
+                  "confirmation_count": 3,
+                  "cost_scopes_are_nested_not_additive": true,
+                  "history_resource_profile": "history-account-graph-resource-fence-v1",
+                  "import_count": 21,
+                  "independent_host_authentication": false,
+                  "mode": "late-product",
+                  "original_outer_cgroup": "/system.slice/trnm-native-campaign-41007753791-1.service",
+                  "pid": 5522,
+                  "process_cpu_since_start_ns": 5728877057,
+                  "production_qualification": false,
+                  "request_count": 26,
+                  "schema": "native-public-history-verifier-graph-fence-process-v1",
+                  "setup_process_cpu_ns": 568512964,
+                  "whole_fixed_parent_cpu_ns": 5727396000,
+                  "whole_verifier_process_cpu_ns": 5717424993
+                }
+              ],
+              "schema": "native-public-history-verifier-three-phase-readback-v1"
+            },
+            "original_criteria_met": true,
+            "phases": [
+              {
+                "actual_depletion_samples": 0,
+                "actual_zero_search_calls": 42,
+                "budget_samples": 598,
+                "mode": "baseline",
+                "original_phase_criteria_met": true
+              },
+              {
+                "actual_depletion_samples": 351,
+                "actual_zero_search_calls": 3071,
+                "budget_samples": 590,
+                "mode": "from-zero",
+                "original_phase_criteria_met": true
+              },
+              {
+                "actual_depletion_samples": 381,
+                "actual_zero_search_calls": 2733,
+                "budget_samples": 591,
+                "mode": "late-product",
+                "original_phase_criteria_met": true
+              }
+            ],
+            "production_qualified": false,
+            "protected_evidence_substitution_allowed": false,
+            "public_resource_policy": {
+              "lifetime_ms": 2000,
+              "policy_id": "bf409dae237253a2ce14152c54198ed06e824e709763946e9c84e68e894eee58",
+              "schema": "public-pure-history-raw-resource-observation-v1",
+              "ticket_bits": 0,
+              "transport_profile": "public-pure-pon-history-raw-development-v1"
+            },
+            "schema": "pure-history-raw-independent-readback-v1",
+            "source_report_sha256": "a7a926f76e47b0c56ccc41884790511f64da7478e4d3adacedc56ce44bed1c2f"
+          }
+        },
+        "original": {
+          "error": "exact nonnegative integer required",
+          "error_type": "ValueError",
+          "readback_completed": false
+        }
+      },
+      "report_sha256": "a7a926f76e47b0c56ccc41884790511f64da7478e4d3adacedc56ce44bed1c2f"
+    },
+    {
+      "number": 3,
+      "original_native_returncode": 0,
+      "original_recorded_result": {
+        "complete_success": false,
+        "number": 3,
+        "original_criteria_met": false,
+        "report_directory": "run-3-raw",
+        "report_validation_failure": "exact nonnegative integer required",
+        "step": {
+          "command": [
+            "/home/runner/.cargo/bin/cargo",
+            "+1.95.0",
+            "test",
+            "--locked",
+            "--offline",
+            "--release",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--test",
+            "public_v3_multiprocess",
+            "separate_process_pure_history_raw_graph_fence_campaign",
+            "--",
+            "--exact",
+            "--ignored",
+            "--nocapture",
+            "--test-threads=1"
+          ],
+          "complete_success": true,
+          "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+          "elapsed_ns": 102839133654,
+          "elapsed_seconds": 102.839133654,
+          "error": null,
+          "name": "run-3",
+          "outer_stage_timeout_seconds": 600,
+          "returncode": 0,
+          "stderr": "run-3.stderr.log",
+          "stderr_bytes": 935,
+          "stderr_sha256": "bfcb9d985fde8cc865d70c8c53d0d49c19e5d5025f68fcddd4084f6bc4fef042",
+          "stderr_truncated": false,
+          "stdout": "run-3.stdout.log",
+          "stdout_bytes": 182,
+          "stdout_sha256": "c7332f9e1cb5eec11bee23c09c2212a5fc0528edfe2ab21cdbf89692aa754c1a",
+          "stdout_truncated": false
+        }
+      },
+      "outer_cgroup": "/system.slice/trnm-native-campaign-41007753791-1.service",
+      "readers": {
+        "candidate": {
+          "readback_completed": true,
+          "result": {
+            "history_resource_profile": "history-account-graph-resource-fence-v1",
+            "native_history": {
+              "complete": true,
+              "history_resource_profile": "history-account-graph-resource-fence-v1",
+              "original_four_cpu_outer_budget_changed": false,
+              "phases": [
+                {
+                  "all_ipc_bytes_read_back": true,
+                  "call_process_cpu_ns": 4642811450,
+                  "cgroup": "/trnmponpublic.slice/trnm-campaign-verifier-5630-671554050135.service",
+                  "confirmation_count": 3,
+                  "cost_scopes_are_nested_not_additive": true,
+                  "history_resource_profile": "history-account-graph-resource-fence-v1",
+                  "import_count": 21,
+                  "independent_host_authentication": false,
+                  "mode": "baseline",
+                  "original_outer_cgroup": "/system.slice/trnm-native-campaign-41007753791-1.service",
+                  "pid": 5650,
+                  "process_cpu_since_start_ns": 5299736500,
+                  "production_qualification": false,
+                  "request_count": 26,
+                  "schema": "native-public-history-verifier-graph-fence-process-v1",
+                  "setup_process_cpu_ns": 548711143,
+                  "whole_fixed_parent_cpu_ns": 5298382000,
+                  "whole_verifier_process_cpu_ns": 5289142767
+                },
+                {
+                  "all_ipc_bytes_read_back": true,
+                  "call_process_cpu_ns": 5045438099,
+                  "cgroup": "/trnmponpublic.slice/trnm-campaign-verifier-5630-704432046856.service",
+                  "confirmation_count": 3,
+                  "cost_scopes_are_nested_not_additive": true,
+                  "history_resource_profile": "history-account-graph-resource-fence-v1",
+                  "import_count": 21,
+                  "independent_host_authentication": false,
+                  "mode": "from-zero",
+                  "original_outer_cgroup": "/system.slice/trnm-native-campaign-41007753791-1.service",
+                  "pid": 5669,
+                  "process_cpu_since_start_ns": 5695255378,
+                  "production_qualification": false,
+                  "request_count": 26,
+                  "schema": "native-public-history-verifier-graph-fence-process-v1",
+                  "setup_process_cpu_ns": 550365809,
+                  "whole_fixed_parent_cpu_ns": 5693737000,
+                  "whole_verifier_process_cpu_ns": 5684085410
+                },
+                {
+                  "all_ipc_bytes_read_back": true,
+                  "call_process_cpu_ns": 5036188243,
+                  "cgroup": "/trnmponpublic.slice/trnm-campaign-verifier-5630-737599964509.service",
+                  "confirmation_count": 3,
+                  "cost_scopes_are_nested_not_additive": true,
+                  "history_resource_profile": "history-account-graph-resource-fence-v1",
+                  "import_count": 21,
+                  "independent_host_authentication": false,
+                  "mode": "late-product",
+                  "original_outer_cgroup": "/system.slice/trnm-native-campaign-41007753791-1.service",
+                  "pid": 5732,
+                  "process_cpu_since_start_ns": 5689763983,
+                  "production_qualification": false,
+                  "request_count": 26,
+                  "schema": "native-public-history-verifier-graph-fence-process-v1",
+                  "setup_process_cpu_ns": 553101766,
+                  "whole_fixed_parent_cpu_ns": 5687885000,
+                  "whole_verifier_process_cpu_ns": 5677790083
+                }
+              ],
+              "schema": "native-public-history-verifier-three-phase-readback-v1"
+            },
+            "original_criteria_met": true,
+            "phases": [
+              {
+                "actual_depletion_samples": 0,
+                "actual_zero_search_calls": 42,
+                "budget_samples": 598,
+                "mode": "baseline",
+                "original_phase_criteria_met": true
+              },
+              {
+                "actual_depletion_samples": 327,
+                "actual_zero_search_calls": 3134,
+                "budget_samples": 590,
+                "mode": "from-zero",
+                "original_phase_criteria_met": true
+              },
+              {
+                "actual_depletion_samples": 377,
+                "actual_zero_search_calls": 2746,
+                "budget_samples": 591,
+                "mode": "late-product",
+                "original_phase_criteria_met": true
+              }
+            ],
+            "production_qualified": false,
+            "protected_evidence_substitution_allowed": false,
+            "public_resource_policy": {
+              "lifetime_ms": 2000,
+              "policy_id": "bf409dae237253a2ce14152c54198ed06e824e709763946e9c84e68e894eee58",
+              "schema": "public-pure-history-raw-resource-observation-v1",
+              "ticket_bits": 0,
+              "transport_profile": "public-pure-pon-history-raw-development-v1"
+            },
+            "schema": "pure-history-raw-independent-readback-v1",
+            "source_report_sha256": "b84bea432def7cd78187bfd98093a2e5d4e9ce1f35588ef28c35f10d20daca5c"
+          }
+        },
+        "original": {
+          "error": "exact nonnegative integer required",
+          "error_type": "ValueError",
+          "readback_completed": false
+        }
+      },
+      "report_sha256": "b84bea432def7cd78187bfd98093a2e5d4e9ce1f35588ef28c35f10d20daca5c"
+    }
+  ],
+  "scope": "independent readback of original b23 retained bytes; not native execution, a new source run, or qualification",
+  "source": "b23c0ef85f058507185b2ccb404a5d648e447c06",
+  "tree": "cbb7f34ef9a84df3653f4d3adbe57725b7740a37"
+}

@@ -1,0 +1,102 @@
+[
+  {
+    "workflow": "pon-history-epoch-v1-native.yml",
+    "yaml_parsed": true,
+    "original_unit_declarations_unchanged": true,
+    "all_systemd_run_commands_byte_identical": true,
+    "systemd_run_commands": 1,
+    "command_sha256": [
+      "3071e45186796d10e80410a425ed7d7839571c9c50c941bab6e8fe0b7b4ec8a2"
+    ],
+    "runtime_limits": [
+      "1860s"
+    ],
+    "timeout_stop": [
+      "20s"
+    ],
+    "kill_modes": [
+      "control-group"
+    ],
+    "root_workflow_unchanged": true
+  },
+  {
+    "workflow": "pon-native-campaign-qualification.yml",
+    "yaml_parsed": true,
+    "original_unit_declarations_unchanged": true,
+    "all_systemd_run_commands_byte_identical": true,
+    "systemd_run_commands": 3,
+    "command_sha256": [
+      "9ea04d96ba45372b1d707b12c2b60a644a5b6f91793e002072b8d3372ffa18ce",
+      "85c7603f6f92a72991ad969cbd0c46dd19fa0e7ed25df180d5de2d84ea3dfa0c",
+      "9ab940b4844685e0344ed1b60033631b0ae0dc47d6d227b24481c4564f95a980"
+    ],
+    "runtime_limits": [
+      "120s",
+      "4200s",
+      "600s"
+    ],
+    "timeout_stop": [
+      "20s",
+      "20s",
+      "20s"
+    ],
+    "kill_modes": [
+      "control-group",
+      "control-group",
+      "control-group"
+    ],
+    "root_workflow_unchanged": true
+  },
+  {
+    "workflow": "pon-pure-admission-daa-v2.yml",
+    "yaml_parsed": true,
+    "original_unit_declarations_unchanged": true,
+    "all_systemd_run_commands_byte_identical": true,
+    "systemd_run_commands": 2,
+    "command_sha256": [
+      "6357fdb75082c2aed492a5389cc3d9ba04bc657100a49b688e0cc328c9c9b396",
+      "1f6179ede5dc6eed0c886321a81b88f532ac251b83ec562737a98b0e8f340275"
+    ],
+    "runtime_limits": [
+      "120s",
+      "4800s"
+    ],
+    "timeout_stop": [
+      "20s",
+      "20s"
+    ],
+    "kill_modes": [
+      "control-group",
+      "control-group"
+    ],
+    "root_workflow_unchanged": true
+  },
+  {
+    "workflow": "pon-pure-history-raw-joint.yml",
+    "yaml_parsed": true,
+    "original_unit_declarations_unchanged": true,
+    "all_systemd_run_commands_byte_identical": true,
+    "systemd_run_commands": 3,
+    "command_sha256": [
+      "9ea04d96ba45372b1d707b12c2b60a644a5b6f91793e002072b8d3372ffa18ce",
+      "85c7603f6f92a72991ad969cbd0c46dd19fa0e7ed25df180d5de2d84ea3dfa0c",
+      "9ab940b4844685e0344ed1b60033631b0ae0dc47d6d227b24481c4564f95a980"
+    ],
+    "runtime_limits": [
+      "120s",
+      "4200s",
+      "600s"
+    ],
+    "timeout_stop": [
+      "20s",
+      "20s",
+      "20s"
+    ],
+    "kill_modes": [
+      "control-group",
+      "control-group",
+      "control-group"
+    ],
+    "root_workflow_unchanged": true
+  }
+]

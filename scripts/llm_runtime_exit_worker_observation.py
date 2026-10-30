@@ -7,6 +7,8 @@ classification still precedes worker-pidfd binding and later retirement proof.
 If a proved original worker vanishes during binding, a separate pending state
 retains that complete prebinding proof and every partial capability. It still
 requires the original timed owned wait4; missing pidfd/leader reads never qualify.
+A held task read's ESRCH is eligible only after all original worker bindings,
+with that worker's retained pidfd terminal event and no other roster loss.
 No state measures zero RSS or physical release. The leader always needs procfs.
 """
 import contextvars
@@ -46,15 +48,17 @@ class _InitialTerminalPending:
 
 class _BindingTaskMissing(Exception):
     """Only a proved original task's held-directory read may raise this."""
-    def __init__(self, task, component, phase, error_errno):
+    def __init__(self, task, component, phase, error_errno, terminal_event=None):
         self.task, self.component, self.phase = task, component, phase
         self.error_errno = error_errno
+        self.terminal_event = terminal_event
 
 
 class _BindingTerminalPending:
-    """Incomplete pidfd acquisition; never a worker terminal-event proof."""
-    def __init__(self, interruption, prebinding_record):
+    """Incomplete acquisition; never group completion or resource evidence."""
+    def __init__(self, interruption, prebinding_record, terminal_event=None):
         self.interruption, self.prebinding_record = interruption, prebinding_record
+        self.terminal_event = terminal_event
 
 
 class WorkerPidfdObservation(base.ExitOnlyObservation):
@@ -279,6 +283,40 @@ class WorkerPidfdObservation(base.ExitOnlyObservation):
         base._require(time.monotonic_ns() < self.sample_started_ns + MAX_DRAIN_NS,
                       'exit-worker-deadline')
 
+    def _postbinding_terminal_event(self, name):
+        # Nomination by ESRCH grants nothing. Every original worker must already
+        # have completed its real binding; this one retained pidfd must now
+        # positively prove termination. The incomplete frontier stays pending.
+        expected = set(self.names) - {str(self.visible)}
+        base._require(not self.failed and not self.baseline_qualified and
+            self.prebinding_record is not None and not self.initial_capture.pending and
+            self.acquisition_phase in ('post-bind-double-frontier', 'worker-pidfd-recheck') and
+            name in expected and set(self.bindings) == set(self.thread_fds) ==
+            set(self.thread_signatures) == expected and
+            set(self.task_fds) == set(self.task_signatures) == set(self.names),
+            'exit-worker-retirement-ineligible')
+        for task in expected:
+            binding = self.bindings[task]
+            base._require(binding['namespace'] == self.initial_capture.statuses[task]['namespace'] and
+                binding['starttime'] == self.baseline_starts[task] ==
+                self.initial_capture.validated[task]['starttime'], 'exit-worker-pidfd-binding')
+        self._owner()
+        self._deadline()
+        descriptor = self.thread_fds[name]
+        poller = select.poll()
+        poller.register(descriptor, select.POLLIN)
+        events = poller.poll(0)
+        allowed = select.POLLIN | select.POLLHUP
+        base._require(len(events) == 1 and events[0][0] == descriptor and
+            events[0][1] & select.POLLIN and not events[0][1] & ~allowed,
+            'exit-worker-terminal-event-unavailable')
+        self._owner()
+        self._deadline()
+        return dict(task=name, terminal_observed_ns=time.monotonic_ns(), revents=events[0][1],
+            original_starttime=self.bindings[name]['starttime'],
+            original_namespace=list(self.bindings[name]['namespace']), read_errno=errno.ESRCH,
+            scope='this original bound worker terminal event; not a complete frontier, group exit or RSS release')
+
     def _task_read(self, name, component):
         acquiring = (self.prebinding_record is not None and not self.baseline_qualified and
             self.acquisition_phase in ('worker-pidfd-bind', 'post-bind-double-frontier',
@@ -291,6 +329,10 @@ class WorkerPidfdObservation(base.ExitOnlyObservation):
         except OSError as error:
             if acquiring and error.errno == errno.ENOENT and int(name) != self.visible:
                 raise _BindingTaskMissing(name, component, self.acquisition_phase, error.errno) from error
+            if (acquiring and error.errno == errno.ESRCH and int(name) != self.visible and
+                    self.acquisition_phase in ('post-bind-double-frontier', 'worker-pidfd-recheck')):
+                event = self._postbinding_terminal_event(name)
+                raise _BindingTaskMissing(name, component, self.acquisition_phase, error.errno, event) from error
             raise
 
     def _fields(self, name, count, shrinking):
@@ -368,14 +410,26 @@ class WorkerPidfdObservation(base.ExitOnlyObservation):
         # actually lost this original nonleader, without additions or revival.
         base._require(error.task not in names and error.task in self.initial_capture.retired,
                       'exit-worker-frontier-change')
+        if error.terminal_event is not None:
+            self._postbinding_roster(error.task)
         self._initial_interruption(error.task, 'binding-' + error.component,
                                    error_errno=error.error_errno)
         self._initial_frontier()
+        if error.terminal_event is not None:
+            self._postbinding_roster(error.task)
         self.binding_pending = _BindingTerminalPending(dict(task=error.task,
             component=error.component, phase=error.phase, error_errno=error.error_errno),
-            self.prebinding_record)
+            self.prebinding_record, error.terminal_event)
         self.acquisition_phase = 'binding-terminal-pending'
         return self._binding_pending_record()
+
+    def _postbinding_roster(self, task):
+        # This narrow transition proves only one newly missing worker, even if
+        # the original group had more. Other losses need their own evidence.
+        capture = self.initial_capture
+        expected = tuple(name for name in self.names if name != task)
+        base._require(capture.active_names == expected and capture.retired == {task} and
+                      capture.count == len(expected), 'exit-worker-frontier-change')
 
     def _binding_pending_record(self):
         base._require(type(self.binding_pending) is _BindingTerminalPending,
@@ -390,6 +444,11 @@ class WorkerPidfdObservation(base.ExitOnlyObservation):
             retained_thread_pidfds=len(self.thread_fds),
             scope='incomplete V4 binding after a complete double frontier; reservation retained; '
                   'not worker terminal-event proof, zero RSS or release; original timed owned wait4 required')
+        if self.binding_pending.terminal_event is not None:
+            record.update(schema='llm-owned-postbinding-terminal-pending-v1',
+                bound_worker_terminal_event=dict(self.binding_pending.terminal_event),
+                scope='one original bound worker terminal event; incomplete postbinding frontier; '
+                      'reservation retained; not group exit, zero RSS or release; original timed owned wait4 required')
         return record
 
     def _bind_workers(self):
@@ -511,6 +570,8 @@ class WorkerPidfdObservation(base.ExitOnlyObservation):
         try:
             if self.initial_capture.pending:
                 self._initial_frontier()
+                if self.binding_pending is not None and self.binding_pending.terminal_event is not None:
+                    self._postbinding_roster(self.binding_pending.terminal_event['task'])
                 return (self._binding_pending_record() if self.binding_pending is not None
                         else self._initial_record())
             if not self.baseline_qualified:

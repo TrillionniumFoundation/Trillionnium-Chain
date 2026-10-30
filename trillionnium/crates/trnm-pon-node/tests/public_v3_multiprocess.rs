@@ -861,6 +861,7 @@ fn phase(
         .collect();
     let epoch = support::monotonic();
     let end = epoch + WINDOW_SECONDS * 1_000_000_000;
+    verifier.bind_original_phase_deadlines(end, end + 5_000_000_000);
     let temporary_marker = path.join("start.tmp.json");
     support::write_new(&temporary_marker, &json!({"epoch_ns":epoch,"end_ns":end}));
     fs::rename(&temporary_marker, &marker).unwrap();
@@ -1046,8 +1047,11 @@ fn phase(
     // Keep the fixed hostile window running after business, never drain first and
     // then retroactively count a recovery confirmation as overlap.
     let cleanup_deadline = Instant::now()
-        + Duration::from_nanos(end.saturating_sub(support::monotonic()))
-        + Duration::from_secs(5);
+        + Duration::from_nanos(
+            end.checked_add(5_000_000_000)
+                .unwrap()
+                .saturating_sub(support::monotonic()),
+        );
     let children: Vec<_> = actors
         .into_iter()
         .map(|actor| actor.finish(cleanup_deadline))

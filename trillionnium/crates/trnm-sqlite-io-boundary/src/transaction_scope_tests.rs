@@ -213,3 +213,107 @@ fn dropping_scopes_does_not_drop_or_reinstall_the_connection_observer() {
     }
     db.close().unwrap();
 }
+
+#[test]
+fn actual_write_snapshot_requires_same_live_main_writer() {
+    let db = Connection::open_in_memory().unwrap();
+    db.execute_batch("CREATE TABLE facts(value); INSERT INTO facts VALUES(1)")
+        .unwrap();
+    assert!(TransactionScope::capture(&db)
+        .unwrap()
+        .same_write_snapshot(&db)
+        .is_err());
+    db.execute_batch("BEGIN; SELECT * FROM facts").unwrap();
+    assert!(TransactionScope::capture(&db)
+        .unwrap()
+        .same_write_snapshot(&db)
+        .is_err());
+    db.execute_batch("ROLLBACK; BEGIN IMMEDIATE").unwrap();
+    let scope = TransactionScope::capture(&db).unwrap();
+    assert!(scope.same_write_snapshot(&db).unwrap());
+    let other = Connection::open_in_memory().unwrap();
+    assert!(scope.same_write_snapshot(&other).is_err());
+    assert!(scope.same_write_snapshot(&db).unwrap());
+    let _: i64 = db
+        .query_row("SELECT value FROM facts", [], |r| r.get(0))
+        .unwrap();
+    assert!(scope.same_write_snapshot(&db).unwrap());
+    db.execute_batch("COMMIT; BEGIN IMMEDIATE").unwrap();
+    assert!(scope.same_write_snapshot(&db).is_err());
+    db.execute_batch("ROLLBACK").unwrap();
+}
+
+#[test]
+fn executed_write_epoch_catches_no_row_failed_and_reversed_schema_writes() {
+    for command in [
+        "UPDATE facts SET value=2 WHERE 0",
+        "UPDATE facts SET value=2",
+        "INSERT INTO facts VALUES(1)",
+        "CREATE TEMP VIEW transient AS SELECT value FROM facts; DROP VIEW transient",
+    ] {
+        let db = Connection::open_in_memory().unwrap();
+        db.execute_batch(
+            "CREATE TABLE facts(value UNIQUE); INSERT INTO facts VALUES(1); BEGIN IMMEDIATE",
+        )
+        .unwrap();
+        let scope = TransactionScope::capture(&db).unwrap();
+        let _ = db.execute_batch(command);
+        // The old scope never promised to reject ordinary writes.
+        scope.unchanged().unwrap();
+        assert!(!scope.same_write_snapshot(&db).unwrap(), "{command}");
+        db.execute_batch("ROLLBACK").unwrap();
+    }
+}
+
+#[test]
+fn prepared_write_execution_is_counted_but_explain_is_not_a_write() {
+    let db = Connection::open_in_memory().unwrap();
+    db.execute_batch("CREATE TABLE facts(value); BEGIN IMMEDIATE")
+        .unwrap();
+    let mut update = db
+        .prepare_cached("UPDATE facts SET value=1 WHERE 0")
+        .unwrap();
+    let scope = TransactionScope::capture(&db).unwrap();
+    {
+        let mut explain = db.prepare("EXPLAIN UPDATE facts SET value=1").unwrap();
+        let mut rows = explain.query([]).unwrap();
+        while rows.next().unwrap().is_some() {}
+    }
+    assert!(scope.same_write_snapshot(&db).unwrap());
+    update.execute([]).unwrap();
+    assert!(!scope.same_write_snapshot(&db).unwrap());
+    let scope = TransactionScope::capture(&db).unwrap();
+    update.execute([]).unwrap();
+    assert!(!scope.same_write_snapshot(&db).unwrap());
+    db.execute_batch("ROLLBACK").unwrap();
+}
+
+#[test]
+fn write_snapshot_rejects_savepoint_aba_and_sticky_observer_failures() {
+    let db = Connection::open_in_memory().unwrap();
+    db.execute_batch("BEGIN IMMEDIATE").unwrap();
+    let scope = TransactionScope::capture(&db).unwrap();
+    db.execute_batch("SAVEPOINT inner_scope; ROLLBACK TO inner_scope; RELEASE inner_scope")
+        .unwrap();
+    assert!(scope.same_write_snapshot(&db).is_err());
+    let scope = TransactionScope::capture(&db).unwrap();
+    assert!(scope.same_write_snapshot(&db).unwrap());
+    // Keep the real observer-corruption control in this original FFI owner.
+    // The Node crate retains its forbid(unsafe_code) boundary unchanged.
+    unsafe { ffi::sqlite3_trace_v2(db.handle(), 0, None, ptr::null_mut()) };
+    assert!(scope.same_write_snapshot(&db).is_err());
+    assert!(TransactionScope::capture(&db).is_err());
+    db.execute_batch("ROLLBACK").unwrap();
+
+    let db = Connection::open_in_memory().unwrap();
+    db.execute_batch("BEGIN IMMEDIATE").unwrap();
+    let scope = TransactionScope::capture(&db).unwrap();
+    unsafe { &*scope.observer }
+        .writes
+        .store(u64::MAX, Ordering::SeqCst);
+    db.execute_batch("CREATE TABLE writes_overflow(value)")
+        .unwrap();
+    assert!(scope.same_write_snapshot(&db).is_err());
+    assert!(TransactionScope::capture(&db).is_err());
+    db.execute_batch("ROLLBACK").unwrap();
+}

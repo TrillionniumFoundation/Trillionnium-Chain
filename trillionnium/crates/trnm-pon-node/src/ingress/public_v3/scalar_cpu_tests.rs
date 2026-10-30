@@ -9,6 +9,195 @@ fn consume_real_cpu() {
     std::hint::black_box(value);
 }
 
+fn one_reserve_domain(freeze_refill: bool) -> ServiceMutationCpuDomain {
+    // Unit arithmetic boundary, explicitly recorded in the original flow;
+    // this is not a production constructor or a cold-restart entitlement.
+    let domain = ServiceMutationCpuDomain::standalone();
+    {
+        let mut budget = domain.budget.lock().unwrap();
+        budget.credit_ns = i128::from(MUTATION_CPU_START_RESERVE_NS);
+        budget.flow = Some(CpuFlow::new(budget.credit_ns));
+        if freeze_refill {
+            budget.updated += Duration::from_secs(60);
+        }
+    }
+    domain
+}
+
+#[test]
+fn history_cpu_points_preserve_full_resource_cadence_but_paid_boundaries_check() {
+    let domain = ServiceMutationCpuDomain::standalone();
+    let operation = domain.begin().unwrap();
+    let checkpoint = operation.checkpoint_handle();
+    let calls = AtomicU64::new(0);
+    let resource = || {
+        assert_eq!(domain.observe()?.in_flight, 1);
+        calls.fetch_add(1, Ordering::Relaxed);
+        Ok(())
+    };
+    let deadline = Instant::now() + Duration::from_secs(2);
+    checkpoint
+        .history_cpu_checkpoint(deadline, &resource)
+        .unwrap();
+    checkpoint
+        .history_cpu_checkpoint(deadline, &resource)
+        .unwrap();
+    assert_eq!(calls.load(Ordering::Relaxed), 0);
+    checkpoint.history_checkpoint(deadline, &resource).unwrap();
+    assert_eq!(calls.load(Ordering::Relaxed), 1);
+    checkpoint
+        .history_cpu_checkpoint(deadline, &resource)
+        .unwrap();
+    assert_eq!(calls.load(Ordering::Relaxed), 1);
+    let receipt = operation.finish();
+    assert!(!receipt.accounting_unavailable);
+    let flow = domain.observe_actual_flow().unwrap().unwrap();
+    assert_eq!(flow.paid_cpu_debit_ns, receipt.total_cpu_ns.unwrap());
+    assert_eq!(flow.live_owners, 0);
+}
+
+#[test]
+fn history_cpu_point_that_must_wait_checks_full_cancellation_and_keeps_actual_debt() {
+    let domain = one_reserve_domain(true);
+    let operation = domain.begin().unwrap();
+    // Spend actual thread CPU beyond this recorded single-reserve boundary.
+    // The unit clock fixture freezes refill; no invented CPU receipt is used.
+    let stamp = ThreadCpuStamp::start().unwrap();
+    while stamp.clone().finish().unwrap() <= MUTATION_CPU_START_RESERVE_NS + 1_000_000 {
+        consume_real_cpu();
+    }
+    let calls = AtomicU64::new(0);
+    let error = operation
+        .checkpoint_handle()
+        .history_cpu_checkpoint(Instant::now() + Duration::from_secs(2), &|| {
+            calls.fetch_add(1, Ordering::Relaxed);
+            Err("TEST_HISTORY_CPU_POINT_WAIT_CANCELLED".into())
+        })
+        .unwrap_err();
+    assert_eq!(error.to_string(), "TEST_HISTORY_CPU_POINT_WAIT_CANCELLED");
+    assert_eq!(calls.load(Ordering::Relaxed), 1);
+    let receipt = operation.finish();
+    assert!(!receipt.accounting_unavailable);
+    let flow = domain.observe_actual_flow().unwrap().unwrap();
+    assert_eq!(flow.paid_cpu_debit_ns, receipt.total_cpu_ns.unwrap());
+    assert_eq!(flow.credited_refill_ns, 0);
+    assert_eq!(flow.live_owners, 0);
+    assert!(flow.stored_credit_ns < 0);
+    assert!(domain
+        .begin()
+        .err()
+        .unwrap()
+        .is(crate::ErrorCode::PublicMutationCpuBudget));
+}
+
+#[test]
+fn history_settlement_wait_keeps_one_reserve_and_charges_actual_wait_management_cpu() {
+    let domain = one_reserve_domain(false);
+    let operation = domain.begin().unwrap();
+    consume_real_cpu();
+    operation
+        .checkpoint_handle()
+        .history_settlement_checkpoint(Instant::now() + Duration::from_secs(2), &|| Ok(()))
+        .unwrap();
+    let before_finish = domain.observe_actual_flow().unwrap().unwrap();
+    assert_eq!(before_finish.live_owners, 1);
+    assert_eq!(
+        before_finish.booked_reservation_ns,
+        MUTATION_CPU_START_RESERVE_NS
+    );
+    assert!(before_finish.stored_credit_ns >= 0);
+    assert!(before_finish.live_debited_cpu_ns > 0);
+    let receipt = operation.finish();
+    assert!(!receipt.accounting_unavailable);
+    let after = domain.observe_actual_flow().unwrap().unwrap();
+    assert_eq!(after.live_owners, 0);
+    assert_eq!(after.booked_reservation_ns, 0);
+    assert_eq!(after.paid_cpu_debit_ns, receipt.total_cpu_ns.unwrap());
+    assert_eq!(after.settled_full_cpu_ns, receipt.total_cpu_ns.unwrap());
+    assert!(after.balance_identity_verified);
+}
+
+#[test]
+fn history_refill_wait_cancellation_preserves_exact_original_operation_and_debits() {
+    let domain = one_reserve_domain(true);
+    let operation = domain.begin().unwrap();
+    consume_real_cpu();
+    let calls = AtomicU64::new(0);
+    let error = operation
+        .checkpoint_handle()
+        .history_settlement_checkpoint(Instant::now() + Duration::from_secs(2), &|| {
+            calls.fetch_add(1, Ordering::Relaxed);
+            Err("TEST_HISTORY_WAIT_CANCELLED".into())
+        })
+        .unwrap_err();
+    assert_eq!(error.to_string(), "TEST_HISTORY_WAIT_CANCELLED");
+    assert_eq!(calls.load(Ordering::Relaxed), 1);
+    let pending = domain.observe_actual_flow().unwrap().unwrap();
+    assert!(pending.stored_credit_ns < 0);
+    assert_eq!(pending.live_owners, 1);
+    assert_eq!(pending.credited_refill_ns, 0);
+    let receipt = operation.finish();
+    assert!(!receipt.accounting_unavailable);
+    let settled = domain.observe_actual_flow().unwrap().unwrap();
+    assert_eq!(settled.paid_cpu_debit_ns, receipt.total_cpu_ns.unwrap());
+    assert_eq!(settled.credited_refill_ns, 0);
+    assert_eq!(settled.live_owners, 0);
+}
+
+#[test]
+fn history_wait_expired_deadline_never_renews_or_runs_resource_callback() {
+    let domain = one_reserve_domain(true);
+    let operation = domain.begin().unwrap();
+    let calls = AtomicU64::new(0);
+    let expired = Instant::now();
+    let error = operation
+        .checkpoint_handle()
+        .history_settlement_checkpoint(expired, &|| {
+            calls.fetch_add(1, Ordering::Relaxed);
+            Ok(())
+        })
+        .unwrap_err();
+    assert!(error.is(crate::ErrorCode::PublicRequestDeadline));
+    assert_eq!(calls.load(Ordering::Relaxed), 0);
+    let receipt = operation.finish();
+    assert!(!receipt.accounting_unavailable);
+    assert_eq!(
+        domain
+            .observe_actual_flow()
+            .unwrap()
+            .unwrap()
+            .credited_refill_ns,
+        0
+    );
+}
+
+#[test]
+fn history_unknown_sample_cannot_enter_cooperative_refill_or_create_clean_settlement() {
+    let domain = one_reserve_domain(true);
+    let operation = domain.begin().unwrap();
+    operation
+        .live
+        .fail_next_sample
+        .store(true, Ordering::Release);
+    let calls = AtomicU64::new(0);
+    let error = operation
+        .checkpoint_handle()
+        .history_settlement_checkpoint(Instant::now() + Duration::from_secs(2), &|| {
+            calls.fetch_add(1, Ordering::Relaxed);
+            Ok(())
+        })
+        .unwrap_err();
+    assert!(error.is(crate::ErrorCode::PublicMutationCpuUnavailable));
+    assert_eq!(calls.load(Ordering::Relaxed), 0);
+    assert!(operation.finish().accounting_unavailable);
+    assert!(domain.observe_actual_flow().unwrap().is_none());
+    assert!(domain
+        .begin()
+        .err()
+        .unwrap()
+        .is(crate::ErrorCode::PublicMutationCpuUnavailable));
+}
+
 #[test]
 fn cloned_shared_domain_preserves_two_actual_owner_start_ceiling() {
     let domain = ServiceMutationCpuDomain::standalone();

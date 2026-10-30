@@ -99,7 +99,8 @@ def original_meter(meter):
     require(type(meter['accounting_unavailable']) is bool, 'actual accounting-availability flag required')
     require(meter['burst_ns'] == 2_000_000_000
             and meter['refill_ns_per_second'] == 250_000_000
-            and meter['start_reserve_ns'] == 100_000_000 and meter['worker_limit'] == 2,
+            and meter['start_reserve_ns'] == 100_000_000 and meter['worker_limit'] == 2
+            and meter['in_flight'] <= 2,
             'original paid CPU budget must remain unchanged')
 
 
@@ -107,15 +108,29 @@ def actual_flow(flow):
     require(flow is not None and flow['balance_identity_verified'] is True,
             'actual paid CPU conservation observation required')
     for key in ('initial_credit_ns', 'credited_refill_ns', 'paid_cpu_debit_ns',
-                'settlement_discard_ns', 'remaining_paid_credit_ns', 'stored_credit_ns',
+                'settlement_discard_ns', 'remaining_paid_credit_ns',
                 'booked_reservation_ns', 'live_debited_cpu_ns', 'settlement_residual_cpu_ns',
-                'live_owners', 'unsettled_known_live_cpu_ns'):
-        integer(flow[key])
+                'settled_full_cpu_ns', 'live_owners', 'unsettled_known_live_cpu_ns'):
+        require(integer(flow[key]) < 1 << 64, 'actual CPU counter exceeds original integer range')
+    # The original owner books each full start quantum until final settlement,
+    # while live samples debit actual CPU immediately. Its stored i128 balance
+    # can therefore be negative with nonnegative paid credit. Preserve it;
+    # never clamp debt, spend a reservation as CPU, or forgive a paid deficit.
+    require(type(flow['stored_credit_ns']) is int
+            and -(1 << 127) <= flow['stored_credit_ns'] < 1 << 127,
+            'exact signed original stored credit required')
     require(flow['initial_credit_ns'] == 2_000_000_000, 'original initial paid credit required')
+    require(flow['remaining_paid_credit_ns'] <= 2_000_000_000
+            and flow['live_owners'] <= 2
+            and flow['booked_reservation_ns'] == flow['live_owners'] * 100_000_000,
+            'original paid credit cap and owned start reservations required')
     require(flow['initial_credit_ns'] + flow['credited_refill_ns'] - flow['paid_cpu_debit_ns']
             - flow['settlement_discard_ns'] == flow['remaining_paid_credit_ns']
             == flow['stored_credit_ns'] + flow['booked_reservation_ns'], 'actual credit identity mismatch')
-    require(flow['paid_cpu_debit_ns'] == flow['live_debited_cpu_ns'] + flow['settlement_residual_cpu_ns'],
+    require(flow['paid_cpu_debit_ns'] == flow['live_debited_cpu_ns'] + flow['settlement_residual_cpu_ns']
+            == flow['settled_full_cpu_ns'] + flow['unsettled_known_live_cpu_ns']
+            and flow['unsettled_known_live_cpu_ns'] <= flow['live_debited_cpu_ns']
+            and (flow['live_owners'] != 0 or flow['unsettled_known_live_cpu_ns'] == 0),
             'actual paid debit identity mismatch')
 
 

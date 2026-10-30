@@ -16,9 +16,8 @@ use trnm_protocol::{
     pon_wire::{hash, Envelope, Hash},
     qualified_work_task::lifecycle_v4::{AtomicRenewTaskV4, PROFILE},
 };
-mod source_inventory {
-    include!("support/distributed_source_inventory.rs");
-}
+#[path = "support/distributed_source_inventory.rs"]
+mod source_inventory;
 fn ensure(ok: bool, message: &str) -> Result<()> {
     if ok {
         Ok(())

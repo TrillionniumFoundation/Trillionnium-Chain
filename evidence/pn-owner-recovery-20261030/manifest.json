@@ -1,0 +1,165 @@
+{
+  "adopted_parallel_parent": "24b265834daea34947adbb5903d887e3f6043838",
+  "archives": [
+    {
+      "archive": "pq-owner-original-evidence.tar.gz",
+      "bytes": 13373,
+      "members": {
+        "clippy-canonical.log": {
+          "bytes": 189,
+          "sha256": "9807f4287076082ab249e76bc79d16c5fa40050424d9b84d4d101c2e0e627304"
+        },
+        "clippy.log": {
+          "bytes": 3237,
+          "sha256": "29a78eec673609f4986b1e0791b78ef2810f81db29550811c03422b0bd3ac17e"
+        },
+        "evidence.json": {
+          "bytes": 8755,
+          "sha256": "d0624c8eede32eacea15153af9c2a1dcd2a8829645e5e144eb8c8b89f0035e34"
+        },
+        "green-pq_authority.rs": {
+          "bytes": 11830,
+          "sha256": "031d0843aaad922cd9f1ab966ccc4a1625d03cfcf8eae4960abf33619bd633c8"
+        },
+        "green-pq_authority_tests.rs": {
+          "bytes": 16486,
+          "sha256": "fc26abc9c26c9fea81ded8c2b450589f720f5e85e23e84bee4bbf7d8d5d6350b"
+        },
+        "green.log": {
+          "bytes": 2915,
+          "sha256": "e1e0c1d18a7e4e3f5fccd54422541fdc96049320685b0146f92426a9002600a4"
+        },
+        "owned-change.patch": {
+          "bytes": 4305,
+          "sha256": "530f87f67290f7c691bdf433c117af1897c245eb2fa63de6239e0990195ccaaf"
+        },
+        "preflight-canonical.log": {
+          "bytes": 163,
+          "sha256": "a2a7cd19b87367f319c8e7833e551c3178933d07af270bbcba3f8f5fbf9c9e31"
+        },
+        "preflight.log": {
+          "bytes": 163,
+          "sha256": "a2a7cd19b87367f319c8e7833e551c3178933d07af270bbcba3f8f5fbf9c9e31"
+        },
+        "red-pq_authority.rs": {
+          "bytes": 11427,
+          "sha256": "c611db4c63ca8bd678d042d6f733a4227e288dac949229383715968619854990"
+        },
+        "red-pq_authority_tests.rs": {
+          "bytes": 16528,
+          "sha256": "d4121b2daa50c737afc125361e73097967ab09ccd7dc4a2e3d1dd12d3244dab5"
+        },
+        "red-source.sha256": {
+          "bytes": 246,
+          "sha256": "1f73dab2242c6811ed57b7c862137a6c7b89e519fe1e6b3b1052a751fb376529"
+        },
+        "red-tests.patch": {
+          "bytes": 2341,
+          "sha256": "5c62088cdd566d060ff0b1965f641fe9917d1dc6b70d7785f5fa653de7d00121"
+        },
+        "red.log": {
+          "bytes": 10146,
+          "sha256": "4ddcc4ec4cc07220a88895504621ee40f8b5a238cf02105b172b01986547de9b"
+        },
+        "rustfmt.log": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "sha256": "2ffabbdb20e91a19ce4f1c7c562ea64b043f88a6e7257f95acdc68ae881fd6d3"
+    },
+    {
+      "archive": "history-independent-readback.tar.gz",
+      "bytes": 79324,
+      "members": {
+        "baseline.log": {
+          "bytes": 1736,
+          "sha256": "12cc47c8738a0b592f7743e7026c3032c0e2e8d2c5322001b74269a0e5cbc743"
+        },
+        "green.log": {
+          "bytes": 2539,
+          "sha256": "7d5a090ac8de12470831c1960e44fe90b872705e61a00f4df3fd8cf7d49b6559"
+        },
+        "local-reader-before-convergence.patch": {
+          "bytes": 7974,
+          "sha256": "be1f457abcc3cd65065e85372ee4e23464353756defbd49e9c32cf7a367f3b10"
+        },
+        "native-history-reader-regression.log": {
+          "bytes": 920,
+          "sha256": "a8cac1480d6c7f463aafffa03fcef2609deff125b38ca9348c06fc271f3b9d8d"
+        },
+        "original-artifact-files.json": {
+          "bytes": 286714,
+          "sha256": "adcc291f0f790856c28ccf4b6a6dda014a35353ccd084f77a6754f1b2be46676"
+        },
+        "original-binary-before.json": {
+          "bytes": 595,
+          "sha256": "f9c59e30f226258650504d354a958669d1f674ae3970d95956eb3a0976e9ea6d"
+        },
+        "original-flow-observations.json": {
+          "bytes": 3253,
+          "sha256": "8e3ae14cdd89324237472433de7c7a92d884066d958162d17e0fda01d4a34cb4"
+        },
+        "original-replay-after.json": {
+          "bytes": 10448,
+          "sha256": "b4f809f322f59336c662fbaf4adc79c6b0db7af24c227320307b6f40db71f949"
+        },
+        "original-replay-before.json": {
+          "bytes": 783,
+          "sha256": "3ba57352656b39cb1d51172de085c97fea7d8a9e92650df9fcc7cfe63c6b8a56"
+        },
+        "original-results.json": {
+          "bytes": 12690,
+          "sha256": "b80fe2ad150a5ac6316e368f6543c81e306a0f879e54b50e046e8fe67c459774"
+        },
+        "original-source-before.json": {
+          "bytes": 421,
+          "sha256": "4f8ac57d36cdd3ae429a1536a676f99f192a585d08d2f0fd25d72dab4423e8e5"
+        },
+        "reader-accounting-receipts.json": {
+          "bytes": 2509,
+          "sha256": "7348242278f5389b240fd0c63b9f425ddf9abf2a41cdd4b2f994cedf992d356e"
+        },
+        "red.log": {
+          "bytes": 17758,
+          "sha256": "34cca09e0ecdb1c3778f1b4e147c75c82f45b1d3ec40cdbb5e6d2b6b1e3a8920"
+        },
+        "remote-24b-reader-controls.log": {
+          "bytes": 2529,
+          "sha256": "c1673fb66faa363101862ad42961987e40bf96136e9a4ccee0eed288a9d06921"
+        },
+        "remote-24b-review.json": {
+          "bytes": 11538,
+          "sha256": "c5fe9c440815153227cf979549a6e10c21f4f9db3cc3524da7a62eff4910e197"
+        }
+      },
+      "sha256": "2526d925f4a6536c0b8bac087973dc82410c41f83bb4f4b2412ea082deabc2ec"
+    },
+    {
+      "archive": "terminal-settlement-controls.tar.gz",
+      "bytes": 1985,
+      "members": {
+        "terminal-regression-14-tests.log": {
+          "bytes": 2795,
+          "sha256": "53a82a75a1dccdb7a7cf10ab4f93fe60e6a939875dca5515a766efdd7b43e5a1"
+        },
+        "terminal-regression-receipts.json": {
+          "bytes": 1278,
+          "sha256": "f55834b9f0980fa99270d7e8d88a33cfd46fddbb4fd38a2f44ffb7cb80edeb15"
+        },
+        "terminal-regression.patch": {
+          "bytes": 1929,
+          "sha256": "584d1b4620d12ae4a5f0347921f192e48983f5955381277fdf4af85f472e99e9"
+        }
+      },
+      "sha256": "b32e6b2acf7819ebbdc9746cf797ab1443a0860837390c9ea9594ba79545f98a"
+    }
+  ],
+  "new_native_history_campaign": false,
+  "original_native_parent": "b23c0ef85f058507185b2ccb404a5d648e447c06",
+  "production_activation": false,
+  "schema": "pn-owner-recovery-development-evidence-v1",
+  "scope": "Local PQ owner correctness and independent historical History readback only; see README and each original receipt.",
+  "whole_chain_post_quantum_qualified": false,
+  "whole_system_qualified": false
+}

@@ -15,6 +15,8 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 [manifest](plan-manifest-v1.toml); [snapshot](CURRENT_SNAPSHOT_V1.json);
 [applicability](../architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md).
 
+Latest owner-recovery checkpoint: [2026-10-30 continuation](#pn-owner-recovery-continuation--2026-10-30-utc).
+
 ## 0. One authority and explicit retirement
 
 This is the one active engineering plan. It owns sequence, work boundaries and integration
@@ -7485,3 +7487,683 @@ fixed-Host execution is still a separate gate.
 Open-network honest service under the original pressure envelope, global
 effective-work cost assumptions, practical complete-proof economics, quantitative
 quantum security, independent acceptance and activation all remain OPEN.
+
+### System-safety continuation of the integrated candidate (2026-10-29, New York)
+
+This continuation starts from integrated candidate
+`1d11f875493f8125e36b9adceacb342df108e5e5` (PR #557), preserving its concurrent
+fresh-caller, proof and retained-failure changes on top of the originally audited
+`540d72356a921da31dde1113537382e5c0f0c4fd`. It preserves canonical
+bytes and domain separation, complete verification before atomic block/delta
+publication, verified heavier-chain recovery, generation/fence rechecks,
+reserve-before-execute accounting, original failures and Unknown observations,
+and non-rewindable local revocation and external-effect history. No production
+activation, consensus replacement, budget increase or security-gate waiver is
+part of this change. Whole-system acceptance remains **OPEN / NO_GO** until
+fresh exact-source native and security observations satisfy their original gates.
+
+#### History CPU continuation and the original absolute phase deadline
+
+The previous raw History failures remain failures, including
+[the integrated raw joint run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40932471986)
+and [the paired diagnostic run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40932471462).
+The new code retains the same Node-owned CPU domain, original start reserve,
+refill, burst and worker limits throughout each import operation. When a real,
+known observation exhausts current credit, the same reserved operation may wait
+for the original elapsed-time refill while checking its existing caller/resource
+boundary and absolute deadline. Unknown accounting never enters this path.
+Pre-settlement waiting remains inside that measured operation; final CPU is
+still sampled and debited exactly, and any remaining negative or unknown tail
+retains the original crash fence. No negative balance is clamped or refunded.
+
+Explicit `receive_public_page_from_until` and graph-resource equivalents carry
+the caller's absolute deadline across decode, W1, M06, activation and settlement.
+The first full resource observation is inside the original paid operation;
+cancellation still reaches actual settlement. CPU-only W1/graph checkpoints keep
+the original full-resource cadence. A checkpoint that waits for credit must
+recheck the full resource boundary before resuming native work.
+
+The public CLI captures its original 30-second transport bound before requesting
+a page and passes the same Instant through network I/O and import. Legacy
+native/authenticated transports previously had five-second I/O phases and no
+whole-page bound: they now have an explicitly new 30-second compatibility page
+ceiling, with every original phase clipped to the same remaining time. This is
+not described as a pre-existing legacy contract. No-deadline import wrappers use
+the same finite compatibility ceiling; they cannot themselves prove an earlier
+caller's network-plus-import deadline. The original two-second start-reserve
+wait remains unchanged and cannot extend any enclosing bound. Partial I/O,
+late complete responses and retries cannot renew an explicit caller deadline.
+The distributed example passes its existing role timeout through its original
+retry count and both import sites. A verified authenticated terminal still
+settles its original nonce/outbox facts even when the final caller check fails.
+
+The original finite campaign and pure History client pass their already-existing
+30-second phase deadline and 35-second cleanup deadline into the isolated actor
+and its IPC waits. The recent-batch literal source pin changes only for this
+one-line phase binding; the native selectors, payloads, thresholds and resource
+policy remain unchanged. The original cold/inactive fixture is not relaxed.
+
+Last-close verification and ordinary History marker removal now share the
+original CPU mutex. A concurrent cloned domain cannot start work between the
+quiescence observation and marker removal. This does not add durable recovery
+authority to an ordinary volatile domain or permit cold reconstruction of an
+unknown epoch. Tests retain the original cold/inactive-parent fixture and add
+known-refill, cancellation, absolute-deadline, Unknown, cloned-reservation and
+delayed-IPC controls. Shared-owner throughput/fairness still requires the original
+full native campaign; holding a Node owner during a bounded wait is not a new
+parallel-admission architecture.
+
+#### Active recovery modules and auditable CodeQL output
+
+The six `trnm-peer-lease` recovery fragments previously joined with `include!`
+are private Rust modules with explicit same-name public re-exports. Existing
+types, owner, WAL, ACK and projection behavior remain in the same authority.
+Independent token review found unchanged function bodies and all 35 constant /
+static initializers; only required sibling visibility, module placement and
+formatting changed. This removes a documented semantic-extraction obstacle in
+actual compiled recovery code. It does not establish that a later CodeQL run
+has complete coverage or that the remaining SSA/type-inference errors vanished.
+
+The pinned CodeQL workflow preserves its original version, query set, all-tracked
+source scope, findings and failure gates. It additionally uploads a bounded,
+separately downloadable original SARIF artifact, retaining the original complete
+database/BQRS artifact as well. The collector rejects changed files, links and
+oversized inputs rather than truncating them. A creation-log semantic index is
+saved before analysis, preserving INFO-level unavailable-module observations even
+if a later query fails. Artifact export remains distinct from security clearance.
+
+[The source-bound API triage](../../evidence/system-security-20261030/codeql-api-triage-540.json)
+retains all 780 results available through the official export at the original
+source: 757 hard-coded-value and 23 logging findings, across 73 hash-verified
+files. The record classifies contexts, not exploitability or automatic dismissal.
+The official API subset has the same counts as the original pinned scan, but
+identity with every result in the unavailable original 4.87 MB SARIF is **not
+proven**. That limitation is explicit in the record. One active CLI stdout path
+remains unresolved; deterministic tests, historical fixtures, overwritten output
+buffers, wire-length constants and container/panic model approximations are not
+silently suppressed. The
+[original semantic index](../../evidence/system-security-20261030/codeql-semantic-extraction-540.json)
+retains 311 unavailable-file observations and the workspace-load failure. Two SSA
+diagnostics and one type-inference error still lack a proven source location.
+
+#### Validation state when this continuation is proposed
+
+The unchanged-boundary preflight, 29 pinned-analysis reader controls, 26 metadata /
+SARIF collector controls, 96 CI-contract controls and 34 source-integrity negative
+controls passed locally. Rust 1.95.0 locked workspace/all-target compile checks
+passed before the final caller-deadline continuation. The six-module recovery
+refactor passed all 120 native `trnm-peer-lease` tests and all-target/all-feature
+strict Clippy, with no ignored peer-lease tests.
+
+Local original full-debug node builds retained their compiler/resource failures.
+A subsequent functional build disabled only local test debug symbols, retaining
+optimization, debug assertions, overflow checks and runtime resource budgets.
+Its broad `history_` selection recorded 109 passes, 19 failures and six ignored
+entries. The failures include specialized lifecycle/reorg/startup controls that
+require their exact-source runner pins; the local compiler loader guard also
+reported an unqualified duplicate path, which was corrected without changing the
+guard. This is not a whole-History pass or fixed-Host qualification. All nine new
+History CPU/close controls and the original activation cancellation/retry test
+passed in that run. The final caller-deadline socket controls still require their
+own fresh execution. Full sparse-checkout repository link verification correctly
+refused absent historical evidence; no missing evidence was fabricated.
+
+Fresh hosted jobs must run the original History V6, raw joint/pair, baseline,
+strict Clippy/formatting and CodeQL gates on the proposed immutable source. The
+independent [Hepta continuation](https://github.com/TrillionniumFoundation/hepta-private-ci/pull/4332)
+starts with the contract/durable-journal operation-binding repair and is a
+separate source candidate. It is not implicitly included in this Chain commit or
+treated as an arbitrary external HTTP exactly-once guarantee.
+
+### System-safety follow-up after exact fb7 observations (2026-10-30 UTC)
+
+This follows the immutable PR #558 source
+`fb7e12bd2a02ee0805dff6a053edc904ad2198c6`, tree
+`eb0b11a8e827acd251cf8577715eb1a501ee0743`. It remains a draft continuation of
+PR #557, not a merge or activation. Original failures and independent gates
+remain authoritative; whole-system acceptance remains **OPEN / NO_GO**.
+
+#### Actual recovery and ordinary-business observations
+
+At fb7, all four original
+[History V6 lanes](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40995210625)
+completed successfully: native recovery, physical graph-resource mutations,
+lifecycle, and reorg continuation. The
+[focused native integration](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40995210573)
+also passed. The
+[raw History joint campaign](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40995210492)
+and the original ordinary campaign nevertheless failed. Those are different
+claims and remain different outcomes.
+
+The retained raw artifacts have identical source, executable, inputs and original
+limits. In the fence baseline, each of three runs completed 19 of 20 attempted
+imports and two of three required confirmations before the original deadline.
+Every strict phase completed six of seven attempted imports and zero required
+confirmations; the seventh import reached activation and then retained its actual
+deadline failure. All strict verifier children exited normally, and receiver
+live owners, unsettled CPU and reservations were zero. Those terminal facts do
+not make the failed business result successful.
+
+For the first six identical decoded pages, all of which completed in both
+profiles, strict import CPU was 3.18--3.30 times the fence observation. Whole-run
+totals contain different completed work and are not used as that comparison.
+Nested graph/admission/activation timings are not summed. Strict does not run the
+N8 graph observer, so its zero N8 counters do not mean resource checks were absent.
+The exact source, artifact, executable and raw-file digests are retained in
+[the first readback](../../evidence/system-security-20261030/raw-history-fb7-readback-summary.json)
+and [the paired comparison](../../evidence/system-security-20261030/raw-history-fb7-strict-vs-fence-summary.json).
+Readback is not a new execution or a speedup qualification.
+
+#### Same-transaction verification reuse and original cleanup deadlines
+
+The follow-up reuses at most the child and genesis graph results inside one
+original `BEGIN IMMEDIATE` CanonicalJson admission transaction. It captures the
+real SQLite connection/transaction owner before callbacks and writes. The
+existing observer now also counts actually executed non-readonly statements,
+including no-op, failed and reversed writes. This does not turn the ordinary
+read-scope identity API into a generic immutability certificate.
+
+Only the ordinary writer can retain `post_write_schema`, derived from executing
+source DDL in a fresh in-memory database. The read-only migration archive keeps
+`None`; its test-only observation of the actual catalog never becomes a production
+baseline. SharedAccounts continues through full verification. A missing source
+baseline also preserves the original full-verification path.
+
+After the last native write, trusted `writable_schema=RESET` is executed through
+completion before the first full graph. Source grammar, main/temp catalog,
+rootpages, attached databases and relevant connection configuration are checked.
+This closes the demonstrated parsed-schema/rootpage/cached-VM split. Each reuse
+still rereads complete State and Record and performs the complete commitment
+comparison; an account-root-only match is insufficient. A mutation disables future
+reuse, and mutation after a consumed result is a sticky refusal. The final outer
+callback and resource boundary are checked before the receipt is discarded; the
+original owner remains checked after the known effect-marker write and before
+commit, on success and failure. No receipt is persisted or reused across a new
+transaction, connection, reorg or reopen.
+
+The three original campaign/receiver cleanup bindings now compute the remaining
+time until the original phase end plus five seconds. Expiry cannot mint a fresh
+five-second allowance. Original CPU reserves/refill/debt, Host limits, worker
+counts, transport windows, Strict/N8 cadence and business success criteria remain.
+The new graph reuse has no throughput qualification until the same original
+strict campaign runs on its immutable source.
+
+#### Exact outer-service collection facts
+
+The fb7 fixed-parent slice cleanup and outer service collection are separate
+facts. Raw logs show an already collected service followed by an unconditional
+name-only `systemctl stop`, returning exit 5. A successful lifeline could hide that
+failure; a failed create could also cause the trap to stop a foreign same-name
+service. These failures are retained in
+[the original cleanup review](../../evidence/system-security-20261030/unit-cleanup-reviewed-triage.json).
+
+Six such traps in the raw, qualification, admission/DAA and epoch workflows now
+observe collection without acquiring stop/kill/unlink authority. Their nine
+original `systemd-run` commands, names, resource limits, RuntimeMaxSec,
+TimeoutStopSec, KillMode and `--wait --collect` remain unchanged. The observer
+requires successful fresh local-system manager queries, a real cgroup-v2 path
+absence, no-follow runtime-path absence, a typed empty unit-file result and a
+second manager observation. Nonzero commands, diagnostics, permission errors,
+invalid bytes, timeouts, output overflow and residual objects remain unresolved.
+Known presence permits only bounded re-observation. Query limits are three
+seconds per command and fifteen seconds overall; they grant no additional native
+work budget and are not a hard-real-time kernel guarantee.
+
+Both original and cleanup exit statuses remain in artifacts. Original failures
+stay failures; successful work with unresolved collection also fails the step.
+Cancellation that leaves a service is reported as unresolved and remains governed
+by the original systemd service owner's limits. This is a sequential local absence
+observation, not InvocationID ownership or hostile-host authentication. The
+different fixed-parent receiver protocol is not rewritten by this change.
+
+#### Exact SARIF, active modules and remaining security gates
+
+The new pinned fb7 scan retained its complete original SARIF separately. It still
+reported 780 findings: 757 hard-coded-value and 23 logging results. Six active
+peer-lease fragments now have explicit successful extraction notifications and
+no corresponding original include failure. Overall coverage is still incomplete:
+305 affected files / 306 diagnostic lines remain, including the unlocated workspace
+failure. The retained classification distinguishes 282 files outside the current
+Linux module graph, five active cross-crate test fixtures, two other-platform
+branches, the active source inventory, fourteen historical evidence sources and
+one standalone formal fragment. This is not an exclusion or a waiver.
+
+All four emitted flows and seventeen source locations for the active CLI stdout
+alert were reviewed. That exact alert does not establish credential disclosure:
+the observed paths carry public metadata or control flow, and the private identity
+does not serialize its secret. This disposition does not clear every logging site
+or the other findings. Raw results remain unchanged in
+[the reviewed triage](../../evidence/system-security-20261030/codeql-fb7-reviewed-triage.json)
+and the retained original SARIF/metadata archives.
+
+This follow-up removes nine active inventory `include!` wrappers, using one shared
+private test module in the lib target and private modules in the other targets.
+It requests the pinned Rust extractor's actual `CARGO_ALL_TARGETS` environment
+option, strips inherited extractor overrides, and records a separately bounded
+extractor-resolution diagnostic. The original CodeQL version, 37-query suite,
+analysis limits, tracked-source scope, findings and coverage refusal remain.
+Requested all-target extraction is not a claim of complete new coverage.
+
+An independent original cargo-deny gate also failed: bincode, derivative and paste
+are marked unmaintained, and tracing-subscriber 0.2.25 has the ANSI log-injection
+advisory. The retained all-feature dependency paths belong to the existing optional
+complete-proof research graph. Removing the feature, relaxing the advisory policy
+or silently changing proof/receipt encodings is not a repair. These remain open;
+they are not four more entries in the 780 SARIF results.
+
+#### Candidate verification and handoff
+
+The recent workflow's stale snapshot count is corrected from 20 to the actual 22.
+Its full native-authenticated module has 74 tests at this source, including the
+four previously uncounted existing controls and fourteen new adversarial controls.
+The original release-only cost observation still has its original explicit
+create-new artifact path. The SQLite owner suite is independently connected to
+all four recent lanes so an earlier cargo-deny failure cannot prevent its thirteen
+transaction/trace controls from executing. Twenty literal source pins, the new
+path triggers, and the original source/merge verification remain enforced.
+
+The final ordinary-writer production field passed all fourteen new native
+adversarial controls; the unchanged SQLite owner files passed all thirteen native
+transaction controls. The final locked workspace/all-target/all-feature strict
+Clippy and Rust formatting passed. Outer-unit controls passed 21 tests, CI
+contracts passed 96, source-integrity negatives passed 34, and the unchanged
+CodeQL diagnostic/metadata controls passed 29 and 26 respectively. Local Rust
+functional builds disabled only debug symbols; they do not qualify release costs.
+The broader local native-module run remains 73 passed / one failed because that
+invocation lacked the original explicit release-cost artifact path. It is not
+reported as a full 74-test pass.
+
+All local executions, including compiler failures, failed assertions, missing
+benchmark configuration, source-changing format/fix invocations and zero-test
+filters, are retained with source hashes in
+[the execution index](../../evidence/system-security-20261030/local-executions.json).
+Successful local functional controls do not substitute for fresh hosted release,
+fixed-Host, cross-architecture, CodeQL or full ordinary-business gates.
+
+The paired Hepta PR #4332 separately retains immutable provider-operation binding,
+original Unknown observations, original key/wire recovery, actual owner fences,
+same-attempt late-ACK reconciliation and fresh chain-membership checks. Its final
+pair must name this continuation's actual immutable source and ordered merge
+parents; the earlier fallback pair at Chain 147bae is not this candidate.
+
+### 2026-10-30 exact-source b23 follow-up: original escrow observations
+
+This continuation records the actual hosted results of
+`b23c0ef85f058507185b2ccb404a5d648e447c06`, tree
+`cbb7f34ef9a84df3653f4d3adbe57725b7740a37`, and its actual ordered merge
+`3c72efa27dab7f4f435dd3728293790dff7bbe13`. It keeps the original failed
+campaigns and official-scan uncertainty. Whole-system acceptance remains
+**OPEN / NO_GO**.
+
+#### Actual hosted progress and remaining ordinary-business failures
+
+[Recent acceptance run 41007754007](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41007754007)
+passed in all four x86_64/ARM64 and head/prospective-merge lanes. The actual
+release native-authenticated suite passed all 74 controls, including the fourteen
+new transaction/schema adversarial controls; the separate original SQLite owner
+suite passed all thirteen. The previous local 73/1 debug invocation remains an
+original failure, not a rewritten pass.
+
+[Raw History run 41007753791](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41007753791)
+still failed both profiles. The strict profile completed six imports and failed
+the seventh complete page at the original 30-second deadline in all nine phases,
+with zero in-window confirmations. The graph-fence profile completed 21/21
+imports and all three confirmations in eight of nine phases. Run 1 late-product
+completed 20/21 imports and two confirmations; its last page began at
+27.945743 seconds and returned the original deadline failure at 30.015471 seconds.
+The successful late-product runs completed their third confirmation at 29.923329
+and 29.519161 seconds, so these observations do not establish comfortable margin.
+
+The actual outer cleanup result is now `original_exit=1, cleanup_exit=0` for
+both failed campaigns; each separate controller-death lifeline records 0/0.
+All eighteen verifier phases retain clean node close without parent-forced kill.
+Successful cleanup never overrides failed ordinary business.
+
+The [same-page cost readback](../../evidence/system-security-20261030/escrow-reader-followup/raw-history-b23-cost-readback-summary.json)
+binds the original binary, pages, source and raw artifact hashes. In the matched
+first six pages, b23 strict CPU is 13.20–15.17% lower than the corresponding fb7
+observation and fence CPU is 37.86–43.54% lower. These are observed cross-run
+comparisons, not a claim that every CPU difference is caused by the patch.
+Actual fence graph entries fall from 48 to 36, node bodies from 74,064 to 61,692,
+and full graph resource checks from 9,408 to 7,824; maximum node window remains
+eight and before-commit checks remain six. The unchanged strict checks still
+consume enough work to prevent the first confirmation. Nested CPU scopes are not
+added, and an unused strict N8 observer is not described as absent kernel checks.
+
+The separate [four-second protocol evidence](../../evidence/system-security-20261030/escrow-reader-followup/protocol-b23-readback-summary.json)
+also remains failed: the head pressure case reaches real full-state confirmation
+at 4.171532 seconds, 171.532 ms late; the merge pressure case imports only three
+of seven pages and retains the genesis active tip. Their named test processes
+exit zero and Hosts close cleanly, but those facts do not satisfy
+`CONFIRMATION_TARGET`. The four-second fixture and thirty-second isolated
+campaign remain distinct observations.
+
+#### Preserve signed stored credit; reject actual deficit and forged escrow
+
+The raw reader had an additional contract error. The unchanged original owner
+and [public-pool contract](../protocol/pon-nakamoto-v1/details/PUBLIC_POOL_INTAKE_V3.md)
+define the following simultaneous `actual_flow` observations:
+
+```text
+paid = live_debited + settlement_residual
+     = settled_full + unsettled_known_live
+remaining_paid = initial + credited_refill - paid - settlement_discard
+booked = live_owners * original_100ms_start_reserve
+stored = remaining_paid - booked
+```
+
+A full original reservation remains booked until its one final settlement, while
+actual live CPU is debited immediately. Therefore stored credit can legitimately
+be negative while actual remaining paid credit is nonnegative. This behavior is
+already explicitly tested by the Rust owner. Changing the runtime to clamp the
+stored value or return its reservation early would change that original contract.
+
+All 5,336 samples in the original b23 fence artifact satisfy the existing
+same-flow identities and original owner limits. There are 473 negative stored
+observations; the lowest corresponding actual remaining credit is 52,303,708 ns.
+The previous reader rejected these signed fields before evaluating their original
+escrow relationship. The correction preserves every original numeric value,
+permits only an exact bounded signed i128 stored value, and strengthens validation
+of the existing invariants: actual remaining paid credit stays in [0, 2 s],
+owners cannot exceed two, booked reservations must be exactly the original
+100 ms per owner, both paid-CPU decompositions must agree, original unsigned
+counters must fit u64, and a closed owner cannot retain unsettled live CPU.
+A real paid deficit remains rejected even with a perfectly balanced escrow
+equation.
+
+The outer `meter` and `actual_flow` observations are separately locked; the
+reader deliberately does not invent cross-snapshot equality. The original ZIP
+contains a real meter-owner 0 to flow-owner 1 interleaving. Only the complete
+owner/escrow tuple inside the same `actual_flow` is required to be simultaneous.
+Neither a consistent third-party JSON object nor this diagnostic shadow creates
+runtime authority. Original source, binary, IPC and artifact binding remain
+mandatory, and the unchanged runtime retains actual debt and Unknown telemetry.
+Samples also do not prove that an uninterruptible interval never temporarily
+overshoots between cooperative checkpoints.
+
+The original reader fails four of the five new adversarial test methods. The
+corrected complete reader passes **14/14**, including all original nine controls.
+A root-checkout repeat also passes **14/14**, CI contracts **96/96**, and source
+integrity negatives **34/34**, all source-stable. The original workflow's exact
+reader count changes from nine to fourteen; profiles, native selectors, CPU
+limits, reservation/refill constants and both original business windows do not
+change.
+
+[Original-artifact comparison](../../evidence/system-security-20261030/escrow-reader-followup/candidate-original-artifact-readback.json)
+retains the full raw ZIP hash and 532 report/IPC member hashes. With the corrected
+reader, the original b23 runs 2 and 3 complete the full readback and retain their
+native finite criteria; run 1 still fails the identical full-state-equality check.
+This is new interpretation of preserved b23 bytes, **not a new native run**, and
+does not change the original workflow's failed conclusion or establish production
+qualification.
+
+#### Security observations are still not closed
+
+The [new Rust CodeQL readback](../../evidence/system-security-20261030/escrow-reader-followup/codeql-result-review.json)
+binds [run 41007753676](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41007753676).
+Create and all 37 selected queries execute successfully with the requested
+all-targets option, but the result is still failed: 780 findings (757
+hard-coded-value and 23 logging), 304 affected tracked files and 305 diagnostics
+including one unlocated workspace failure, plus retained type/SSA consistency
+errors. Only one previous include-related affected path disappears. A recorded
+all-targets request does not establish complete semantic extraction, and 780 is
+not a count of demonstrated exploits.
+
+[Exact-source export run 41007753865](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41007753865)
+ends at its original bounded deadline without a stable authenticated official
+analysis. Its retained result has `target_pr_gate_authenticated=false`,
+`complete=false` and `verdict=null`; it is neither official gate success nor a
+demonstrated vulnerability verdict.
+
+The independent all-features dependency policy still reports bincode 1.3.3,
+derivative 2.2.0 and paste 1.0.15 as unmaintained, and tracing-subscriber 0.2.25
+for its published logging advisory. These four are not the CodeQL finding count.
+A possible smallest maintenance change is at the original ark-relations logging
+dependency; codec and macro replacements additionally need original-byte,
+generic-bound and proof compatibility controls. No dependency exclusion, blind
+SDK migration or receipt/profile change is included here.
+
+The raw records, genuine red/green reader controls, unchanged-byte comparisons
+and new hosted observations are retained under
+[the follow-up evidence directory](../../evidence/system-security-20261030/escrow-reader-followup).
+The paired Hepta continuation has separately completed its original contracts/
+evidence provider suite (74), full automation suite (128), four real late-ACK
+controls and four full Agentd HTTP controls. Those local component results do
+not qualify a new cross-repository head/merge tuple; the pair still requires
+explicit immutable source/base/ordered-merge binding and its original hosted
+gates.
+
+### PN owner recovery continuation — 2026-10-30 UTC
+
+This continues the existing PN0–PN6 sequence and M00–M17 ownership. It does not
+replace the original acceptance gates or qualify the whole system. The frozen
+starting sources were Chain b23c0ef85f058507185b2ccb404a5d648e447c06 and Hepta
+6850ae0ca6191b0afa436b00403c059d58ca2893. Concurrent Chain publication
+24b265834daea34947adbb5903d887e3f6043838 was fetched and adopted by fast-forward;
+its stronger original-credit reader and retained evidence were preserved.
+
+[The owner-recovery evidence index](../../evidence/pn-owner-recovery-20261030/README.md)
+contains byte-hashed original RED/GREEN logs and independent historical readback.
+The actual source pair is bound by the subsequently published Hepta execution
+profile and its runtime candidate-tuple receipts; these starting hashes do not
+stand in for that later pair or its applicable source/merge executions.
+
+| Stage | Concrete continuation | Remaining original exit |
+| --- | --- | --- |
+| PN0 | Preserve concurrent 24b source; carry the two verified PQ files forward; version the ordinary Hepta source selection rather than reuse the old branch-name fallback. | Actual published source/base/merge tuples, complete source/config/binary receipts and applicable full gates. The binary/diverse research workflows retain their own frozen historical experiments and are not silently certified by the ordinary V3 pair. |
+| PN1 | TPQ1 rejects actual SQLite ephemeral main backing before authorization consumption. Real ML-DSA RED: 13 pass/one failure; GREEN: all 14 selected owner tests pass. | W1 statement correctness, effective work cost, honest service under the original attack envelope, all authorization surfaces and independent cryptographic review remain distinct obligations. |
+| PN2 | Adopt the parallel signed stored-credit reader without changing native accounting, deadlines or full-state predicates. Add balanced one/two-owner terminal controls inside its existing fourteen-test roster. | Strict History still needs the original complete business campaign; long-history/incremental-state, cold-sync, deep-reorg, disk-fault and independent-readback acceptance remain open. |
+| PN3 | The ordinary model workflows use a separately versioned closed source selection; historical profile/source identities remain immutable. | Three real installed-parent/evaluation/download/install/next-task cycles, with beneficial release and valid no-update reported separately. Source selection tests do not establish efficacy. |
+| PN4 | Hepta's existing AutomationStore verifies original step/fence and exact intent/payload in the same SQLite transaction as recovery observation append. The first native package selection passed all 103 tests. | Complete typed provider-operation persistence, legacy unresolved reconciliation, actual Agentd integration and loss/reorg/economic gates must have their own current-source evidence. No late Unknown becomes an invented absence or retry. |
+| PN5 | Keep the original independent-operator, custody, fault-cohort and at-least-72-hour prerequisites. | Three real independent administrators/failure domains, joint PN1–PN4 acceptance and the frozen full WAN campaign are still required; this local session provides none of those independence/duration claims. |
+| PN6 | Keep the existing versioned migration and release owners and false activation flags. | Full PQ identity/source-exit migration, retained liabilities/revocation/history, all prior qualifications and an actual release decision for the selected binaries. |
+
+#### Bounded fixes and explicit limits
+
+SQLite FULL synchronization does not persist an in-memory authorization owner.
+The new backing check queries the actual opened main database, covering temporary
+files, `:memory:`, memory URI modes and memdb VFS without rejecting an ordinary
+disk basename. It uses the existing error, schema, signature domain and sequence
+transaction. It is not a defense against restoring an entire old database copy
+or proof that the remaining classical paths have become post-quantum.
+
+Independent review of the original b23 graph-fence artifact verified all 1,575
+member hashes and all 5,336 CPU samples, including 473 legitimate negative stored
+balances backed by original reservations. Runs two and three pass the adopted
+reader; run one still fails full receiver/verifier state equality. These are
+historical readback results, not a fresh native campaign or an erased CI failure.
+The additional terminal controls prove that balanced live credit still cannot
+satisfy completed settlement. The production reader bytes remain those of 24b.
+
+The original native PQ selection filtered 887 unrelated library cases. Scoped
+strict Clippy and rustfmt passed; the retained SQLite I/O build-script warning
+and cached canonical-compiler follow-up remain explicitly unqualified for I/O.
+A functional owner test, lint pass or evidence index does not replace the
+original fresh-build I/O, full-workspace, cross-architecture or public gates.
+
+### PN transaction-local readback and durable effect recovery — 2026-10-30 UTC
+
+This is the next bounded continuation on Chain
+`a38d770966c65ad34c9d5e55f3c2917c2e3bda0f` and Hepta
+`f874d948a38c119e57b1368adab79437956acd78`. These are the adopted parents, not
+substitutes for the actual subsequently published heads, ordered merges or
+execution receipts. The existing M00–M17 ownership and all PN0–PN6 exit
+conditions remain authoritative. No activation or qualification flag changes.
+
+#### PN2: reuse only original verified graphs in the same write transaction
+
+The original admission readback can now retain four bounded roles: child,
+genesis, the fully verified child's parent and the active tip read by the
+original Node owner. Parent nomination occurs only after the original complete
+child verification; active nomination uses the already-read tip. Neither
+nomination performs discovery SQL, creates a verification receipt, replaces a
+previously nominated role or renews an invalidated scope. A fifth unrelated root
+is not retained.
+
+Each hit still reads current State/Record/delta data, computes the original full
+State commitment and performs the original block/parent/Record comparisons.
+The original SQLite connection, transaction, write-epoch and schema checks remain
+binding. Writes invalidate the whole scope; a mutation after a consumed hit
+refuses the owning operation. The active reader checks the consumed scope after
+its final callback and tip/generation/slot comparison, before publishing its
+active commitment view. The final admission keeps the corresponding consumed
+check before its existing effect-marker write. Shared-storage and no-receipt
+paths retain their original behavior.
+
+The [parent/active readback evidence](../../evidence/pn-owner-recovery-20261030/parent-active-readback/README.md)
+retains the exact source, original failures and commands. The qualified native
+RED has one passing and two failing controls: duplicate parent graph traversal
+is five rather than four, and a final active-reader callback can otherwise return
+stale success after a controlled KV write. The new GREEN controls pass all three.
+The complete original release `--include-ignored` selection passes **77/77**, with
+zero failed or ignored tests, including the original create-new retained-delta
+cost output. The retained cost control has no speed threshold and does not
+measure the new parent/active reuse or whole-Node State/History throughput.
+The earlier debug selection remains **76 passed / one ignored**; it is not
+relabelled as the release cost gate. The original owner/snapshot
+selection passes 22 and the combined-source PQ owner selection passes 14.
+
+The fresh canonical debug and release builds retain the unchanged
+`sqlite-3.51.3-normal-native-linux-layout-v3` build fence. Package-scoped Clippy
+with the original all-targets/all-features flags and `-D warnings` passes.
+The earlier unqualified
+exploratory build, corrected cold-reopen test assumption, and interrupted native
+compilation remain separate original records. This controlled build observation
+does not establish power-loss recovery, arbitrary-host I/O qualification or
+bit-for-bit reproduction across independent machines.
+
+This change removes repeated graph work within one existing transaction. It
+does not eliminate the full-State hot path or tip-to-genesis History work and
+does not establish a throughput multiplier. The independent original `24b`
+strict campaign readback still fails all nine phases. Its first-window
+confirmation and nested cost observations are preserved without adding nested
+CPU intervals. The subsequent actual `a38` strict and graph-fence hosted
+campaigns also remain failed; old `b23` reader successes do not replace them.
+Every new published source still needs its own original business and attack
+campaign, long-history/growing-account cases, cold sync, deep reorg, disk faults
+and independent readback.
+
+#### PN4: preserve original effects through stale owners and old writers
+
+The paired Hepta continuation validates the original immutable step/fence and
+exact intent/payload inside the same `BEGIN IMMEDIATE` transaction before
+persisting recovery observations. A stale owner cannot first append a terminal
+fact and only then fail settlement.
+
+Published migration 21 remains unchanged. New migration 22 explicitly labels
+new compatible appends on the four effect tables. Real already-open older
+connections that omit the new columns cannot append through the new guard.
+Legacy unresolved attempts without complete operation binding remain Unknown;
+they cannot acquire an invented replacement operation or fabricated absence.
+Existing complete v21 bindings retain their original operation, and complete
+older terminal evidence remains readable. Exact SQLite column metadata is also
+checked on reopen, closing the demonstrated default-value catalog bypass while
+preserving the original migration bytes and trigger checks.
+
+The final AutomationStore package selection passes **134/134**. Earlier 129 and
+133 results are overlapping stages, not additional independent passing cases.
+The original native REDs, one earlier flaky fixture execution and its exact
+transaction-scoping repair remain retained. The typed provider ACK stores what
+the adapter observed; it has no provider signature. Preserving a v21 binding
+does not retroactively prove that the older implementation never lost an ACK.
+
+Agentd reconciliation may observe the original operation after lease expiry;
+new dispatch still requires the live owner lease. Six actual HTTP controls pass,
+including an exact POST-then-GET history after AutomationStore close/reopen and
+zero dispatch under an expired lease with an otherwise live grant. The selected
+restart is not a whole Agentd process restart. Repeated terminal observation
+performs no additional GET. The separate final-use owner rejects FIFO config
+before it can block its constructor; its six selected native V2 controls pass.
+Neither result closes full reorg, payment, refund, custody, repair or economic
+budget obligations.
+
+#### PN0, PN1 and PN3–PN6: preserve the remaining actual exits
+
+The ordinary Hepta execution source is a new closed V3 selection; the historical
+V1/V2 source identities, model profile, plan and target remain immutable. The
+published pair must bind its actual source/base/ordered merge, with all 33 source
+inputs reverified. A separate four-lane effect-recovery job executes x64/ARM64
+and actual head/merge controls even when the joint business job fails. Identical
+trees never substitute for execution of the actual commit in that job. This
+source selection grants no model compatibility or installation authority.
+
+The immediate PR bases remain `fix/chain-native-convergence-20261029` and
+`fix/hepta-final-use-mldsa65-v2-20261029`. Their actual prospective merges qualify
+only those named base/source pairs. They are not current-main integration
+receipts; the upstream Draft stacks and actual main merge parents must remain
+explicitly tracked before a main or release decision.
+
+PN1 still requires W1 statement correctness, effective computation cost and
+honest service under the original complete attack envelope as separate proofs.
+The local PQ-owner and FIFO fixes do not replace classical identity, transport,
+finality or Cell authorization surfaces. Production authority clocks, durable
+frontiers, complete PQ migration and independent cryptographic review remain
+open.
+
+The local environment does not satisfy the original frozen model-host/runtime
+prerequisites. Source-selection tests and controlled Cell handoff do not prove
+three real installed-parent, frozen-evaluation, complete-download, ordinary
+installation and subsequent-task cycles. Beneficial release and valid no-update
+must still be reported separately. Public model material is not treated as a
+missing private credential.
+
+PN5 still needs three real independent operators/failure domains and the frozen
+at-least-72-hour experiment with each fault cohort meeting its original target.
+Several hosted runners do not establish operator independence. PN6 remains
+blocked on those prior qualifications, actual PQ identity prebinding/source
+exit, retained liabilities/history and a release decision for concrete binaries.
+The two Drafts remain development continuations; component passes do not close
+these system exits.
+
+#### PN3 postbinding ESRCH component continuation (2026-10-30)
+
+The [postbinding evidence](../../evidence/pn-owner-recovery-20261030/postbind-esrch/README.md)
+retains the original Hepta `daa0209` public run `41030856547` failure on Chain
+`89218d8`: the round-one fresh budget-matched LoRA evaluation exited zero, but
+its original V4 constructor reported `ProcessLookupError` / `ESRCH` during
+`post-bind-double-frontier`. The later leader-only snapshot and terminal wait4
+do not supply the missing original worker identity or terminal-event proof.
+That historical model run remains failed.
+
+The narrow source continuation accepts a held nonleader task read's ESRCH only
+after every original worker has its complete original pidfd binding, unchanged
+held capabilities, namespace and birth identity. The same retained worker pidfd
+must positively report POLLIN without an error/invalid event. Before and after
+the remaining frontier, the roster must equal the original roster minus that
+one proved worker. The same single-loss constraint remains in force on later
+pending rechecks. Other losses, additions or revival are refused.
+The new `llm-owned-postbinding-terminal-pending-v1` record retains the original
+complete prebinding evidence and reservation; it does not set
+`baseline_qualified`, complete the interrupted postbinding frontier, measure
+zero RSS or prove group termination. The original 100 ms bound and exact owned
+wait4 CPU/RSS/exit checks still decide closure. Earlier-stage ESRCH, pidfd-open
+and fdinfo errors, leader/group loss and the existing ENOENT path keep their
+original behavior.
+
+The same final twelve-case component suite is RED on the unchanged `89218d8`
+worker source and GREEN on the continuation. Its native component actually
+opens the original task's proc status FD before worker exit, receives kernel
+ESRCH from the original read, observes that worker's real PIDFD_THREAD terminal
+event and roster removal, and uses the real supervisor, wait4 and resource
+receipts. A controlled State/PF_EXITING/no-mm field view stabilizes entry into
+the short acquisition stage; raw and transformed fields are retained. This is
+not a natural model-exit reproduction. Real exit 7, actual wait4 RSS above the
+component cap, and a group kept live beyond the original 100 ms remain failed.
+
+The original complete pilot Python entrypoint grows from 301 to 313 discovered
+tests through one explicit import: 202 execute successfully and the same 111
+environment-dependent cases remain skipped, including 104 requiring the exact
+controlled CPython 3.12.3 ABI and seven requiring the tensor opt-in. The local
+interpreter is CPython 3.12.14. Existing source-boundary 16 and CI-contract 96
+controls, the native source-inventory check and current-implementation projection
+check pass. The old V2/V3 and pilot production bytes, original observer tests,
+budgets and qualification flags are unchanged. These component observations do
+not replace the original full committed-source checks.
+
+The published Chain continuation and the paired Hepta source selection must
+receive new immutable source identities; older execution manifests remain
+unchanged. The actual original model host, three ordinary installed-parent or
+valid hold/no-update rounds, subsequent ordinary readback, complete effect
+recovery and source-paired native campaigns remain required on that new source.
+No model efficacy, installation acceptance, PN3 completion or release authority
+is granted by this component repair.

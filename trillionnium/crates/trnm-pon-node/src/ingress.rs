@@ -1852,16 +1852,57 @@ fn serve_inner(
 }
 
 pub fn call(address: SocketAddr, request: &Request) -> Result<Value> {
-    let mut stream = TcpStream::connect_timeout(&address, Duration::from_secs(5))?;
-    stream.set_nodelay(true)?;
+    call_with_outer_deadline(address, request, None)
+}
+
+/// Clip the original five-second network phases to one caller-owned deadline.
+/// The ordinary call has no new whole-call bound and keeps its original limits.
+pub fn call_until(address: SocketAddr, request: &Request, deadline: Instant) -> Result<Value> {
+    call_with_outer_deadline(address, request, Some(deadline))
+}
+
+fn legacy_client_deadline(deadline: Option<Instant>) -> Result<()> {
+    ensure(
+        deadline.is_none_or(|deadline| Instant::now() < deadline),
+        "FRAME_DEADLINE",
+    )
+}
+
+fn legacy_client_phase_deadline(deadline: Option<Instant>) -> Instant {
+    let phase = Instant::now() + Duration::from_secs(5);
+    deadline.map_or(phase, |deadline| deadline.min(phase))
+}
+
+fn legacy_client_connect(address: SocketAddr, deadline: Option<Instant>) -> Result<TcpStream> {
+    let timeout = legacy_client_phase_deadline(deadline)
+        .checked_duration_since(Instant::now())
+        .filter(|duration| !duration.is_zero())
+        .ok_or("FRAME_DEADLINE")?;
+    let stream = TcpStream::connect_timeout(&address, timeout)?;
     stream.set_read_timeout(Some(Duration::from_secs(5)))?;
     stream.set_write_timeout(Some(Duration::from_secs(5)))?;
-    write_frame(&mut stream, &serde_json::to_vec(request)?)?;
-    let bytes = read_frame(&mut stream)?;
+    Ok(stream)
+}
+
+fn call_with_outer_deadline(
+    address: SocketAddr,
+    request: &Request,
+    deadline: Option<Instant>,
+) -> Result<Value> {
+    legacy_client_deadline(deadline)?;
+    let mut stream = legacy_client_connect(address, deadline)?;
+    stream.set_nodelay(true)?;
+    write_frame_deadline(
+        &mut stream,
+        &serde_json::to_vec(request)?,
+        legacy_client_phase_deadline(deadline),
+    )?;
+    let bytes = read_frame_deadline(&mut stream, legacy_client_phase_deadline(deadline))?;
     let value: Value = serde_json::from_slice(&bytes)?;
     if let Some(error) = value.get("error") {
         return Err(format!("REMOTE:{error}").into());
     }
+    legacy_client_deadline(deadline)?;
     Ok(value)
 }
 
@@ -1929,7 +1970,34 @@ pub fn call_authenticated(
     client: &AuthenticatedClient,
     replay_nonce: &mut u64,
 ) -> Result<Value> {
-    call_authenticated_inner(address, request, settings, client, replay_nonce, false)
+    call_authenticated_inner(
+        address,
+        request,
+        settings,
+        client,
+        replay_nonce,
+        false,
+        None,
+    )
+}
+
+pub fn call_authenticated_until(
+    address: SocketAddr,
+    request: &Request,
+    settings: &Settings,
+    client: &AuthenticatedClient,
+    replay_nonce: &mut u64,
+    deadline: Instant,
+) -> Result<Value> {
+    call_authenticated_inner(
+        address,
+        request,
+        settings,
+        client,
+        replay_nonce,
+        false,
+        Some(deadline),
+    )
 }
 pub fn call_authenticated_protected(
     address: SocketAddr,
@@ -1938,7 +2006,7 @@ pub fn call_authenticated_protected(
     client: &AuthenticatedClient,
     replay_nonce: &mut u64,
 ) -> Result<Value> {
-    call_authenticated_inner(address, request, settings, client, replay_nonce, true)
+    call_authenticated_inner(address, request, settings, client, replay_nonce, true, None)
 }
 fn call_authenticated_inner(
     address: SocketAddr,
@@ -1947,19 +2015,19 @@ fn call_authenticated_inner(
     client: &AuthenticatedClient,
     replay_nonce: &mut u64,
     protected: bool,
+    deadline: Option<Instant>,
 ) -> Result<Value> {
+    legacy_client_deadline(deadline)?;
     let nonce = *replay_nonce;
     let bytes = authenticated_request_bytes(settings, client, nonce, request.clone())?;
     let envelope: AuthenticatedRequest = serde_json::from_slice(&bytes)?;
     let request_digest =
         request_authority_digest(&envelope.session, envelope.replay_nonce, &envelope.request)?;
-    let mut stream = TcpStream::connect_timeout(&address, Duration::from_secs(5))?;
-    stream.set_read_timeout(Some(Duration::from_secs(5)))?;
-    stream.set_write_timeout(Some(Duration::from_secs(5)))?;
+    let mut stream = legacy_client_connect(address, deadline)?;
     let profile = if protected {
         write_protected_request_bound(&mut stream, request, &bytes)?
     } else {
-        write_frame(&mut stream, &bytes)?;
+        write_frame_deadline(&mut stream, &bytes, legacy_client_phase_deadline(deadline))?;
         None
     };
     let response = if protected {
@@ -1972,7 +2040,7 @@ fn call_authenticated_inner(
             profile,
         )?
     } else {
-        read_frame(&mut stream)?
+        read_frame_deadline(&mut stream, legacy_client_phase_deadline(deadline))?
     };
     let (terminal, ok, value) =
         verify_authenticated_response(&response, &envelope.session, nonce, request_digest)?;
@@ -1980,6 +2048,9 @@ fn call_authenticated_inner(
         *replay_nonce = nonce.checked_add(1).ok_or("AUTH_REPLAY_OVERFLOW")?;
     }
     if ok {
+        // A verified terminal response retains its original nonce effect even
+        // if verification completed too late to qualify the caller's result.
+        legacy_client_deadline(deadline)?;
         return Ok(value);
     }
     let error = value
@@ -2061,7 +2132,19 @@ pub fn call_authenticated_durable(
     request: &Request,
     client: &AuthenticatedClient,
 ) -> Result<Value> {
-    call_authenticated_durable_inner(node, address, request, client, false)
+    call_authenticated_durable_inner(node, address, request, client, false, None)
+}
+
+/// The exact durable request is still retained before network I/O. A deadline
+/// failure cannot erase pending bytes or undo a verified terminal response.
+pub fn call_authenticated_durable_until(
+    node: &mut Node,
+    address: SocketAddr,
+    request: &Request,
+    client: &AuthenticatedClient,
+    deadline: Instant,
+) -> Result<Value> {
+    call_authenticated_durable_inner(node, address, request, client, false, Some(deadline))
 }
 pub fn call_authenticated_durable_protected(
     node: &mut Node,
@@ -2069,7 +2152,7 @@ pub fn call_authenticated_durable_protected(
     request: &Request,
     client: &AuthenticatedClient,
 ) -> Result<Value> {
-    call_authenticated_durable_inner(node, address, request, client, true)
+    call_authenticated_durable_inner(node, address, request, client, true, None)
 }
 fn call_authenticated_durable_inner(
     node: &mut Node,
@@ -2077,7 +2160,9 @@ fn call_authenticated_durable_inner(
     request: &Request,
     client: &AuthenticatedClient,
     protected: bool,
+    deadline: Option<Instant>,
 ) -> Result<Value> {
+    legacy_client_deadline(deadline)?;
     let settings = node.settings().clone();
     let session = authenticated_session(
         &settings,
@@ -2106,13 +2191,15 @@ fn call_authenticated_durable_inner(
             verified
         }
     };
-    let mut stream = TcpStream::connect_timeout(&address, Duration::from_secs(5))?;
-    stream.set_read_timeout(Some(Duration::from_secs(5)))?;
-    stream.set_write_timeout(Some(Duration::from_secs(5)))?;
+    let mut stream = legacy_client_connect(address, deadline)?;
     let profile = if protected {
         write_protected_request_bound(&mut stream, request, &verified.wire)?
     } else {
-        write_frame(&mut stream, &verified.wire)?;
+        write_frame_deadline(
+            &mut stream,
+            &verified.wire,
+            legacy_client_phase_deadline(deadline),
+        )?;
         None
     };
     let response = if protected {
@@ -2125,7 +2212,7 @@ fn call_authenticated_durable_inner(
             profile,
         )?
     } else {
-        read_frame(&mut stream)?
+        read_frame_deadline(&mut stream, legacy_client_phase_deadline(deadline))?
     };
     let (terminal, ok, value) = verify_authenticated_response(
         &response,
@@ -2137,6 +2224,7 @@ fn call_authenticated_durable_inner(
         node.finish_authenticated_outbound(verified.frame)?;
     }
     if ok {
+        legacy_client_deadline(deadline)?;
         return Ok(value);
     }
     let error = value
@@ -2167,21 +2255,83 @@ pub(crate) fn history_kernel_work_checkpoint(
 /// Begin work from the original Node-owned CPU domain. A fresh standalone
 /// History Node begins with ZERO credit and earns the original start quantum
 /// only through the original refill. This is bounded waiting, not extra credit.
-fn begin_history_import_cpu(
+fn begin_history_import_cpu_until(
     domain: &public_v3::ServiceMutationCpuDomain,
+    deadline: Instant,
 ) -> Result<public_v3::ServiceMutationCpuOperation> {
-    let deadline = Instant::now() + Duration::from_secs(2);
+    // There is no paid operation yet: do not invoke KernelBudget/Epoch/SQL
+    // probes here. Only the original deadline and bounded reserve attempt run
+    // while cold credit is earned. The acquired operation checks resources
+    // before native work, and that result always reaches its exact finish.
     loop {
+        ensure(Instant::now() < deadline, "PUBLIC_REQUEST_DEADLINE")?;
         match domain.begin() {
             Ok(operation) => return Ok(operation),
             Err(error)
                 if error.is(crate::ErrorCode::PublicMutationCpuBudget)
                     && Instant::now() < deadline =>
             {
-                thread::sleep(Duration::from_millis(2));
+                thread::sleep(
+                    Duration::from_millis(2)
+                        .min(deadline.saturating_duration_since(Instant::now())),
+                );
             }
             Err(error) => return Err(error),
         }
+    }
+}
+
+#[cfg(test)]
+fn begin_history_import_cpu(
+    domain: &public_v3::ServiceMutationCpuDomain,
+) -> Result<public_v3::ServiceMutationCpuOperation> {
+    begin_history_import_cpu_until(domain, Instant::now() + Duration::from_secs(2))
+}
+
+/// Private scheduling view of one original History operation. Every wait uses
+/// the same enclosing page deadline; later checkpoints cannot renew it.
+/// Workers retain the original operation's CPU registration.
+struct HistoryCpuOperation<'a> {
+    operation: public_v3::ServiceMutationCpuOperation,
+    deadline: Instant,
+    resource: &'a (dyn Fn() -> Result<()> + Sync),
+}
+impl HistoryCpuOperation<'_> {
+    fn checkpoint(&self) -> Result<()> {
+        self.checkpoint_handle().checkpoint()
+    }
+    fn cpu_checkpoint(&self) -> Result<()> {
+        self.checkpoint_handle().cpu_checkpoint()
+    }
+    fn checkpoint_handle(&self) -> HistoryCpuCheckpoint<'_> {
+        HistoryCpuCheckpoint {
+            checkpoint: self.operation.checkpoint_handle(),
+            deadline: self.deadline,
+            resource: self.resource,
+        }
+    }
+    fn worker_accounting(&self) -> &dyn trnm_mvcc_fee::pon_executor::ExecutionWorkerAccounting {
+        self.operation.worker_accounting()
+    }
+    fn prepare_settlement(&self) -> Result<()> {
+        self.operation
+            .checkpoint_handle()
+            .history_settlement_checkpoint(self.deadline, self.resource)
+    }
+}
+struct HistoryCpuCheckpoint<'a> {
+    checkpoint: public_v3::ServiceMutationCpuCheckpoint,
+    deadline: Instant,
+    resource: &'a (dyn Fn() -> Result<()> + Sync),
+}
+impl HistoryCpuCheckpoint<'_> {
+    fn checkpoint(&self) -> Result<()> {
+        self.checkpoint
+            .history_checkpoint(self.deadline, self.resource)
+    }
+    fn cpu_checkpoint(&self) -> Result<()> {
+        self.checkpoint
+            .history_cpu_checkpoint(self.deadline, self.resource)
     }
 }
 
@@ -2192,11 +2342,29 @@ fn begin_history_import_cpu(
 fn metered_history_operation<T>(
     node: &mut Node,
     domain: &public_v3::ServiceMutationCpuDomain,
-    native: impl FnOnce(&mut Node, &public_v3::ServiceMutationCpuOperation) -> Result<T>,
+    deadline: Instant,
+    resource: &(dyn Fn() -> Result<()> + Sync),
+    native: impl FnOnce(&mut Node, &HistoryCpuOperation<'_>) -> Result<T>,
 ) -> Result<T> {
-    let operation = begin_history_import_cpu(domain)?;
-    let outcome = native(node, &operation);
-    let receipt = operation.finish();
+    let operation = HistoryCpuOperation {
+        operation: begin_history_import_cpu_until(
+            domain,
+            deadline.min(Instant::now() + Duration::from_secs(2)),
+        )?,
+        deadline,
+        resource,
+    };
+    // The first full resource/cancellation observation is inside the original
+    // paid interval. An error skips native work, never skips original finish.
+    let outcome = operation
+        .checkpoint()
+        .and_then(|()| native(node, &operation));
+    // All cooperative tail-management CPU belongs to this SAME still-live
+    // operation. The final sample/refund below remains the original exact
+    // settlement; no unmetered loop follows it to manufacture a clean close.
+    let outcome =
+        history_graph_resource_v1::preserve_native(outcome, operation.prepare_settlement());
+    let receipt = operation.operation.finish();
     let accounting_unavailable = receipt.accounting_unavailable;
     #[cfg(test)]
     if node.history_graph_resource_before_commit_hook.is_some() {
@@ -2214,17 +2382,25 @@ fn metered_history_operation<T>(
 fn metered_history_operation_with_boundary<T>(
     node: &mut Node,
     domain: &public_v3::ServiceMutationCpuDomain,
+    deadline: Instant,
+    resource_checkpoint: &(dyn Fn() -> Result<()> + Sync),
     resource: Option<&(dyn Fn() -> Result<()> + Sync)>,
-    native: impl FnOnce(&mut Node, &public_v3::ServiceMutationCpuOperation) -> Result<T>,
+    native: impl FnOnce(&mut Node, &HistoryCpuOperation<'_>) -> Result<T>,
 ) -> Result<T> {
     match resource {
-        None => metered_history_operation(node, domain, native),
-        Some(check) => metered_history_operation(node, domain, |owner, operation| {
-            let result = native(owner, operation);
-            // The new explicit policy always fully checks the current resource
-            // boundary before original CPU settlement, including error returns.
-            history_graph_resource_v1::preserve_native(result, check())
-        }),
+        None => metered_history_operation(node, domain, deadline, resource_checkpoint, native),
+        Some(check) => metered_history_operation(
+            node,
+            domain,
+            deadline,
+            resource_checkpoint,
+            |owner, operation| {
+                let result = native(owner, operation);
+                // The new explicit policy always fully checks the current resource
+                // boundary before original CPU settlement, including error returns.
+                history_graph_resource_v1::preserve_native(result, check())
+            },
+        ),
     }
 }
 
@@ -2233,65 +2409,77 @@ fn metered_history_packet(
     domain: &public_v3::ServiceMutationCpuDomain,
     packet: &Packet,
     clock: u64,
+    deadline: Instant,
     resource_checkpoint: &(impl Fn() -> Result<()> + Sync),
     graph_counters: Option<&history_graph_resource_v1::SharedCounters>,
 ) -> Result<Hash> {
     let settlement =
         graph_counters.map(|_| resource_checkpoint as &(dyn Fn() -> Result<()> + Sync));
-    metered_history_operation_with_boundary(node, domain, settlement, |owner, operation| {
-        let progress = operation.checkpoint_handle();
-        let cpu = || progress.checkpoint();
-        let mut strict = || {
-            cpu()?;
-            resource_checkpoint()
-        };
-        let mut graph = graph_counters.map(|counts| {
-            history_graph_resource_v1::GraphProgress::new(
-                &cpu,
-                resource_checkpoint,
-                Arc::clone(counts),
-            )
-        });
-        #[cfg(test)]
-        if let Some(graph) = &mut graph {
-            graph.set_before_commit_hook(owner.history_graph_resource_before_commit_hook.clone());
-        }
-        let native_progress: &mut dyn crate::native_progress::NativeProgress = match &mut graph {
-            Some(graph) => graph,
-            None => &mut strict,
-        };
-        let result = (|| {
-            progress.checkpoint()?;
-            resource_checkpoint()?;
-            let execution_progress = |_phase| {
-                progress.checkpoint()?;
+    metered_history_operation_with_boundary(
+        node,
+        domain,
+        deadline,
+        resource_checkpoint,
+        settlement,
+        |owner, operation| {
+            let progress = operation.checkpoint_handle();
+            let cpu = || progress.cpu_checkpoint();
+            let mut strict = || {
+                cpu()?;
                 resource_checkpoint()
             };
-            let control = trnm_mvcc_fee::pon_executor::ExecutionControl::new(
-                &execution_progress,
-                operation.worker_accounting(),
-            );
-            owner.admit_history_packet_with_native_control(
-                packet,
-                clock,
-                &mut |point| {
-                    progress.checkpoint()?;
-                    if history_kernel_work_checkpoint(point) {
-                        resource_checkpoint()?;
-                    }
-                    Ok(())
-                },
-                &control,
-                native_progress,
-            )
-        })();
-        match &graph {
-            Some(graph) => history_graph_resource_v1::preserve_native(result, graph.complete()),
-            None => result,
-        }
-    })
+            let mut graph = graph_counters.map(|counts| {
+                history_graph_resource_v1::GraphProgress::new(
+                    &cpu,
+                    resource_checkpoint,
+                    Arc::clone(counts),
+                )
+            });
+            #[cfg(test)]
+            if let Some(graph) = &mut graph {
+                graph.set_before_commit_hook(
+                    owner.history_graph_resource_before_commit_hook.clone(),
+                );
+            }
+            let native_progress: &mut dyn crate::native_progress::NativeProgress = match &mut graph
+            {
+                Some(graph) => graph,
+                None => &mut strict,
+            };
+            let result = (|| {
+                progress.checkpoint()?;
+                resource_checkpoint()?;
+                let execution_progress = |_phase| {
+                    progress.cpu_checkpoint()?;
+                    resource_checkpoint()
+                };
+                let control = trnm_mvcc_fee::pon_executor::ExecutionControl::new(
+                    &execution_progress,
+                    operation.worker_accounting(),
+                );
+                owner.admit_history_packet_with_native_control(
+                    packet,
+                    clock,
+                    &mut |point| {
+                        progress.cpu_checkpoint()?;
+                        if history_kernel_work_checkpoint(point) {
+                            resource_checkpoint()?;
+                        }
+                        Ok(())
+                    },
+                    &control,
+                    native_progress,
+                )
+            })();
+            match &graph {
+                Some(graph) => history_graph_resource_v1::preserve_native(result, graph.complete()),
+                None => result,
+            }
+        },
+    )
 }
 
+#[cfg(test)]
 fn receive_page(
     node: &mut Node,
     domain: &public_v3::ServiceMutationCpuDomain,
@@ -2310,6 +2498,7 @@ fn receive_page(
         clock,
         resource_checkpoint,
         None,
+        Instant::now() + HISTORY_PAGE_COMPAT_BOUND,
     )
 }
 
@@ -2323,7 +2512,9 @@ fn receive_page_with_resource_profile(
     clock: u64,
     kernel_checkpoint: impl Fn() -> Result<()> + Sync,
     graph_parent: Option<Value>,
+    deadline: Instant,
 ) -> Result<Hash> {
+    ensure(Instant::now() < deadline, "PUBLIC_REQUEST_DEADLINE")?;
     ensure(
         page.schema == "pon-native-history-v1"
             && page.network == hex::encode(node.settings().network())
@@ -2372,6 +2563,7 @@ fn receive_page_with_resource_profile(
         })?;
     }
     let resource_checkpoint = || {
+        ensure(Instant::now() < deadline, "PUBLIC_REQUEST_DEADLINE")?;
         if let (Some(epoch), Some(counters)) = (&graph_epoch, &graph_counters) {
             let binding = history_graph_resource_v1::measured_binding(counters, || epoch.verify());
             let kernel = history_graph_resource_v1::measured_kernel(counters, &kernel_checkpoint);
@@ -2391,6 +2583,8 @@ fn receive_page_with_resource_profile(
         let (packets, next) = metered_history_operation_with_boundary(
             node,
             domain,
+            deadline,
+            &resource_checkpoint,
             settlement,
             |_owner, operation| {
                 operation.checkpoint()?;
@@ -2420,6 +2614,7 @@ fn receive_page_with_resource_profile(
                 domain,
                 packet,
                 clock,
+                deadline,
                 &resource_checkpoint,
                 graph_counters.as_ref(),
             )?;
@@ -2431,6 +2626,8 @@ fn receive_page_with_resource_profile(
             metered_history_operation_with_boundary(
                 node,
                 domain,
+                deadline,
+                &resource_checkpoint,
                 settlement,
                 |owner, operation| {
                     operation.checkpoint()?;
@@ -2438,7 +2635,7 @@ fn receive_page_with_resource_profile(
                     // An activation walks ancestors and may apply multiple durable
                     // reorganization steps. Keep the ORIGINAL operation and Host
                     // fence live inside that work, not just around the outer call.
-                    let cpu = || operation.checkpoint();
+                    let cpu = || operation.cpu_checkpoint();
                     let activated = if let Some(counters) = &graph_counters {
                         let mut graph = history_graph_resource_v1::GraphProgress::new(
                             &cpu,
@@ -2500,7 +2697,7 @@ fn receive_page_with_resource_profile(
             let clean = domain.observe().ok().is_some_and(|state| {
                 state.in_flight == 0 && !state.accounting_unavailable && state.stored_credit_ns >= 0
             }) && domain.observe_actual_flow().ok().flatten().is_some();
-            node.finish_ordinary_public_service_epoch(clean)?;
+            node.finish_remote_history_cpu_epoch(domain, clean)?;
             if !clean {
                 // The original active metadata marker intentionally remains.
                 // Native success may already be durable; refuse only to qualify
@@ -2528,6 +2725,7 @@ fn receive_page_with_resource_profile(
 /// W1 replay. A caller cannot bypass the guard by calling the addressless
 /// parser from another crate or by supplying a fake already-verified work
 /// token. Only the full native Node determines consensus validity.
+#[cfg(test)]
 pub(crate) fn receive_page_from(
     node: &mut Node,
     source: SocketAddr,
@@ -2536,23 +2734,59 @@ pub(crate) fn receive_page_from(
     after: Hash,
     clock: u64,
 ) -> Result<Hash> {
+    receive_page_from_until(
+        node,
+        source,
+        page,
+        tip,
+        after,
+        clock,
+        Instant::now() + HISTORY_PAGE_COMPAT_BOUND,
+    )
+}
+
+fn receive_page_from_until(
+    node: &mut Node,
+    source: SocketAddr,
+    page: Page,
+    tip: Hash,
+    after: Hash,
+    clock: u64,
+    deadline: Instant,
+) -> Result<Hash> {
+    ensure(Instant::now() < deadline, "PUBLIC_REQUEST_DEADLINE")?;
     let host_kernel = crate::host_kernel_parent::require_for_listener(source)?;
     if let Some(kernel) = &host_kernel {
         kernel.verify()?;
     }
     let domain = node.remote_history_cpu_domain()?;
-    let native = receive_page(node, &domain, page, tip, after, clock, || {
-        if let Some(kernel) = &host_kernel {
-            kernel.verify()?;
-        }
-        Ok(())
-    });
+    let native = receive_page_with_resource_profile(
+        node,
+        &domain,
+        page,
+        tip,
+        after,
+        clock,
+        || {
+            if let Some(kernel) = &host_kernel {
+                kernel.verify()?;
+            }
+            Ok(())
+        },
+        None,
+        deadline,
+    );
     // A completed native admission cannot be undone by a post-verification
     // host fault. That fault still makes the overall synchronization fail.
-    if let Some(kernel) = &host_kernel {
-        kernel.verify()?;
-    }
-    native
+    history_graph_resource_v1::preserve_native(
+        native,
+        (|| {
+            if let Some(kernel) = &host_kernel {
+                kernel.verify()?;
+            }
+            ensure(Instant::now() < deadline, "PUBLIC_REQUEST_DEADLINE")
+        })(),
+    )
 }
 /// Public History import is untrusted even when a local TCP proxy carries
 /// remote packets through a loopback address. No external caller can select
@@ -2570,6 +2804,31 @@ pub fn receive_public_page_from(
     after: Hash,
     clock: u64,
 ) -> Result<Hash> {
+    receive_public_page_from_until(
+        node,
+        source,
+        page,
+        tip,
+        after,
+        clock,
+        Instant::now() + HISTORY_PAGE_COMPAT_BOUND,
+    )
+}
+
+/// Import within the caller's ORIGINAL absolute request deadline. It clips
+/// decoding, start-credit waits, W1, execution, activation and paid settlement.
+/// No packet, retry or response renews it, and the mandatory Host guard remains
+/// identical to the bounded compatibility entry above.
+pub fn receive_public_page_from_until(
+    node: &mut Node,
+    source: SocketAddr,
+    page: Page,
+    tip: Hash,
+    after: Hash,
+    clock: u64,
+    deadline: Instant,
+) -> Result<Hash> {
+    ensure(Instant::now() < deadline, "PUBLIC_REQUEST_DEADLINE")?;
     // The ORIGINAL fixed administrator-owned Host parent is required even
     // for a loopback source: a caller's socket address is not provenance.
     let kernel = crate::host_kernel_parent::require_host_kernel_budget(
@@ -2579,10 +2838,21 @@ pub fn receive_public_page_from(
     .ok_or("PUBLIC_HOST_KERNEL_REQUIRED")?;
     kernel.verify()?;
     let domain = node.remote_history_cpu_domain()?;
-    let native = receive_page(node, &domain, page, tip, after, clock, || kernel.verify());
+    let native = receive_page_with_resource_profile(
+        node,
+        &domain,
+        page,
+        tip,
+        after,
+        clock,
+        || kernel.verify(),
+        None,
+        deadline,
+    );
     // Do not convert an already committed block into an invalid work proof
     // when the last local Host owner observation fails.
     kernel.verify()?;
+    ensure(Instant::now() < deadline, "PUBLIC_REQUEST_DEADLINE")?;
     native
 }
 
@@ -2599,6 +2869,30 @@ pub fn receive_public_page_with_graph_resource_fence_v1(
     after: Hash,
     clock: u64,
 ) -> Result<Hash> {
+    receive_public_page_with_graph_resource_fence_v1_until(
+        node,
+        source,
+        page,
+        tip,
+        after,
+        clock,
+        Instant::now() + HISTORY_PAGE_COMPAT_BOUND,
+    )
+}
+
+/// The explicit graph profile with the caller's same original absolute
+/// deadline. The profile's binding, resource cadence and cold-crash refusal
+/// remain unchanged; only a bounded cooperative wait is permitted.
+pub fn receive_public_page_with_graph_resource_fence_v1_until(
+    node: &mut Node,
+    source: SocketAddr,
+    page: Page,
+    tip: Hash,
+    after: Hash,
+    clock: u64,
+    deadline: Instant,
+) -> Result<Hash> {
+    ensure(Instant::now() < deadline, "PUBLIC_REQUEST_DEADLINE")?;
     node.require_history_graph_resource_ordinary()?;
     let kernel = crate::host_kernel_parent::require_host_kernel_budget(
         source,
@@ -2617,9 +2911,16 @@ pub fn receive_public_page_with_graph_resource_fence_v1(
         clock,
         || kernel.verify(),
         Some(parent),
+        deadline,
     );
     // A failure here still cannot undo a previously durable native effect.
-    history_graph_resource_v1::preserve_native(native, kernel.verify())
+    history_graph_resource_v1::preserve_native(
+        native,
+        (|| {
+            kernel.verify()?;
+            ensure(Instant::now() < deadline, "PUBLIC_REQUEST_DEADLINE")
+        })(),
+    )
 }
 
 /// Resume only a known settled close retained by this SAME live ordinary Node.
@@ -2708,38 +3009,28 @@ pub fn receive_public_owned_history_from(
     Ok(result)
 }
 
-pub fn sync_from(
+/// Newly finite page limit for compatibility APIs that previously had no
+/// whole-page bound. This is a NEW 30s cap, not an expansion of an original
+/// two-second page budget: two seconds remains only the original reserve wait.
+/// Legacy connect/write/read phases retain their own original five-second caps.
+/// An import-only wrapper starts this clock at entry and cannot claim an
+/// end-to-end network/import bound. Production callers capture one deadline
+/// before I/O and pass it through the explicit *_until APIs. This changes no
+/// CPU allowance and adds no whole-sync deadline.
+pub const HISTORY_PAGE_COMPAT_BOUND: Duration = Duration::from_secs(30);
+
+fn sync_pages_with(
     node: &mut Node,
-    address: SocketAddr,
-    tip: Hash,
     mut after: Hash,
     page_budget: usize,
+    mut page: impl FnMut(&mut Node, Hash, Instant) -> Result<(Hash, bool)>,
 ) -> Result<Hash> {
     ensure((1..=4096).contains(&page_budget), "SYNC_BUDGET")?;
-    // Every WAN page may contain 16 untrusted W1 proofs. The same fixed,
-    // administrator-owned host cgroup used by V3 must already contain this
-    // actual sync thread; no new per-peer budget or consensus authority.
-    let host_kernel = crate::host_kernel_parent::require_for_listener(address)?;
     for _ in 0..page_budget {
-        if let Some(kernel) = &host_kernel {
-            kernel.verify()?;
-        }
-        let request = Request::History {
-            tip: hex::encode(tip),
-            after: hex::encode(after),
-        };
-        let mut stream = TcpStream::connect_timeout(&address, Duration::from_secs(5))?;
-        stream.set_read_timeout(Some(Duration::from_secs(5)))?;
-        stream.set_write_timeout(Some(Duration::from_secs(5)))?;
-        write_frame(&mut stream, &serde_json::to_vec(&request)?)?;
-        let page: Page = serde_json::from_slice(&read_frame(&mut stream)?)?;
-        let complete = page.complete;
-        after = receive_page_from(node, address, page, tip, after, now()?)?;
-        // Resource-counter/membership failure does not roll back any already
-        // admitted native block; it makes this sync result unqualified.
-        if let Some(kernel) = &host_kernel {
-            kernel.verify()?;
-        }
+        // Capture before any page I/O. No response, packet or import renews it.
+        let deadline = Instant::now() + HISTORY_PAGE_COMPAT_BOUND;
+        let (next, complete) = page(node, after, deadline)?;
+        after = next;
         if complete {
             return Ok(after);
         }
@@ -2749,99 +3040,152 @@ pub fn sync_from(
         hex::encode(after)
     )
     .into())
+}
+
+fn sync_history_page_until(
+    node: &mut Node,
+    address: SocketAddr,
+    tip: Hash,
+    after: Hash,
+    deadline: Instant,
+    fetch: impl FnOnce(&mut Node, &Request, Instant) -> Result<Value>,
+) -> Result<(Hash, bool)> {
+    ensure(Instant::now() < deadline, "PUBLIC_REQUEST_DEADLINE")?;
+    // Preserve the existing legacy require_for_listener policy. The separate
+    // public import API continues to require its mandatory fixed Host parent.
+    let host_kernel = crate::host_kernel_parent::require_for_listener(address)?;
+    if let Some(kernel) = &host_kernel {
+        kernel.verify()?;
+    }
+    let request = Request::History {
+        tip: hex::encode(tip),
+        after: hex::encode(after),
+    };
+    let value = fetch(node, &request, deadline)?;
+    ensure(Instant::now() < deadline, "PUBLIC_REQUEST_DEADLINE")?;
+    let page: Page = serde_json::from_value(value)?;
+    let complete = page.complete;
+    let next = receive_page_from_until(node, address, page, tip, after, now()?, deadline)?;
+    // A post-check cannot undo native effects; it refuses this sync result.
+    if let Some(kernel) = &host_kernel {
+        kernel.verify()?;
+    }
+    ensure(Instant::now() < deadline, "PUBLIC_REQUEST_DEADLINE")?;
+    Ok((next, complete))
+}
+
+/// Fetch and import one legacy page within the caller's absolute deadline.
+/// Every network phase is also clipped by its original five-second maximum.
+pub fn sync_page_from_until(
+    node: &mut Node,
+    address: SocketAddr,
+    tip: Hash,
+    after: Hash,
+    deadline: Instant,
+) -> Result<(Hash, bool)> {
+    sync_history_page_until(
+        node,
+        address,
+        tip,
+        after,
+        deadline,
+        |_, request, deadline| call_until(address, request, deadline),
+    )
+}
+
+pub fn sync_from(
+    node: &mut Node,
+    address: SocketAddr,
+    tip: Hash,
+    after: Hash,
+    page_budget: usize,
+) -> Result<Hash> {
+    sync_pages_with(node, after, page_budget, |node, after, deadline| {
+        sync_page_from_until(node, address, tip, after, deadline)
+    })
+}
+
+pub fn sync_page_from_authenticated_until(
+    node: &mut Node,
+    address: SocketAddr,
+    tip: Hash,
+    after: Hash,
+    client: &AuthenticatedClient,
+    replay_nonce: &mut u64,
+    deadline: Instant,
+) -> Result<(Hash, bool)> {
+    sync_history_page_until(
+        node,
+        address,
+        tip,
+        after,
+        deadline,
+        |node, request, deadline| {
+            call_authenticated_until(
+                address,
+                request,
+                node.settings(),
+                client,
+                replay_nonce,
+                deadline,
+            )
+        },
+    )
 }
 
 pub fn sync_from_authenticated(
     node: &mut Node,
     address: SocketAddr,
     tip: Hash,
-    mut after: Hash,
+    after: Hash,
     page_budget: usize,
     client: &AuthenticatedClient,
     replay_nonce: &mut u64,
 ) -> Result<Hash> {
-    ensure((1..=4096).contains(&page_budget), "SYNC_BUDGET")?;
-    // Every WAN page may contain 16 untrusted W1 proofs. The same fixed,
-    // administrator-owned host cgroup used by V3 must already contain this
-    // actual sync thread; no new per-peer budget or consensus authority.
-    let host_kernel = crate::host_kernel_parent::require_for_listener(address)?;
-    let settings = node.settings().clone();
-    for _ in 0..page_budget {
-        if let Some(kernel) = &host_kernel {
-            kernel.verify()?;
-        }
-        let value = call_authenticated(
+    sync_pages_with(node, after, page_budget, |node, after, deadline| {
+        sync_page_from_authenticated_until(
+            node,
             address,
-            &Request::History {
-                tip: hex::encode(tip),
-                after: hex::encode(after),
-            },
-            &settings,
+            tip,
+            after,
             client,
             replay_nonce,
-        )?;
-        let page: Page = serde_json::from_value(value)?;
-        let complete = page.complete;
-        after = receive_page_from(node, address, page, tip, after, now()?)?;
-        // Resource-counter/membership failure does not roll back any already
-        // admitted native block; it makes this sync result unqualified.
-        if let Some(kernel) = &host_kernel {
-            kernel.verify()?;
-        }
-        if complete {
-            return Ok(after);
-        }
-    }
-    Err(format!(
-        "INCOMPLETE_HISTORY:page_budget:after={}",
-        hex::encode(after)
+            deadline,
+        )
+    })
+}
+
+pub fn sync_page_from_authenticated_durable_until(
+    node: &mut Node,
+    address: SocketAddr,
+    tip: Hash,
+    after: Hash,
+    client: &AuthenticatedClient,
+    deadline: Instant,
+) -> Result<(Hash, bool)> {
+    sync_history_page_until(
+        node,
+        address,
+        tip,
+        after,
+        deadline,
+        |node, request, deadline| {
+            call_authenticated_durable_until(node, address, request, client, deadline)
+        },
     )
-    .into())
 }
 
 pub fn sync_from_authenticated_durable(
     node: &mut Node,
     address: SocketAddr,
     tip: Hash,
-    mut after: Hash,
+    after: Hash,
     page_budget: usize,
     client: &AuthenticatedClient,
 ) -> Result<Hash> {
-    ensure((1..=4096).contains(&page_budget), "SYNC_BUDGET")?;
-    // Every WAN page may contain 16 untrusted W1 proofs. The same fixed,
-    // administrator-owned host cgroup used by V3 must already contain this
-    // actual sync thread; no new per-peer budget or consensus authority.
-    let host_kernel = crate::host_kernel_parent::require_for_listener(address)?;
-    for _ in 0..page_budget {
-        if let Some(kernel) = &host_kernel {
-            kernel.verify()?;
-        }
-        let value = call_authenticated_durable(
-            node,
-            address,
-            &Request::History {
-                tip: hex::encode(tip),
-                after: hex::encode(after),
-            },
-            client,
-        )?;
-        let page: Page = serde_json::from_value(value)?;
-        let complete = page.complete;
-        after = receive_page_from(node, address, page, tip, after, now()?)?;
-        // Resource-counter/membership failure does not roll back any already
-        // admitted native block; it makes this sync result unqualified.
-        if let Some(kernel) = &host_kernel {
-            kernel.verify()?;
-        }
-        if complete {
-            return Ok(after);
-        }
-    }
-    Err(format!(
-        "INCOMPLETE_HISTORY:page_budget:after={}",
-        hex::encode(after)
-    )
-    .into())
+    sync_pages_with(node, after, page_budget, |node, after, deadline| {
+        sync_page_from_authenticated_durable_until(node, address, tip, after, client, deadline)
+    })
 }
 
 #[cfg(all(test, target_os = "linux"))]
@@ -2851,6 +3195,206 @@ mod history_activation_tests;
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn legacy_page_deadline_spans_real_socket_response_and_original_cold_reserve() {
+        for (delay, budget, expected) in [
+            (Duration::from_millis(10), Duration::from_secs(2), 0),
+            (Duration::from_millis(250), Duration::from_millis(450), 1),
+            (Duration::from_millis(500), Duration::from_millis(100), 2),
+        ] {
+            let settings = Settings::development(Some(now().unwrap() - 100)).unwrap();
+            let server_dir = tempfile::tempdir().unwrap();
+            let client_dir = tempfile::tempdir().unwrap();
+            let mut server_node = Node::open(server_dir.path(), settings.clone(), 1).unwrap();
+            let mut client_node = Node::open(client_dir.path(), settings.clone(), 1).unwrap();
+            let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+            let address = listener.local_addr().unwrap();
+            listener.set_nonblocking(true).unwrap();
+            let server = thread::spawn(move || {
+                let accept_deadline = Instant::now() + Duration::from_secs(2);
+                let (mut stream, _) = loop {
+                    match listener.accept() {
+                        Ok(value) => break value,
+                        Err(error) if error.kind() == std::io::ErrorKind::WouldBlock => {
+                            assert!(Instant::now() < accept_deadline);
+                            thread::sleep(Duration::from_millis(1));
+                        }
+                        Err(error) => panic!("actual legacy accept: {error}"),
+                    }
+                };
+                let request: Request =
+                    serde_json::from_slice(&read_frame(&mut stream).unwrap()).unwrap();
+                assert!(matches!(request, Request::History { .. }));
+                let value = dispatch(&mut server_node, request, &mut |_| Ok(())).unwrap();
+                // This is a real original native History response, not a
+                // fabricated verifier or a successful import substitute.
+                thread::sleep(delay);
+                let _ = write_frame(&mut stream, &serde_json::to_vec(&value).unwrap());
+                value
+            });
+            let result = sync_page_from_until(
+                &mut client_node,
+                address,
+                settings.genesis(),
+                settings.genesis(),
+                Instant::now() + budget,
+            );
+            assert_eq!(server.join().unwrap()["complete"], true);
+            assert_eq!(client_node.read_active().unwrap().0, settings.genesis());
+            match expected {
+                0 => {
+                    assert_eq!(result.unwrap(), (settings.genesis(), true));
+                    let domain = client_node.public_service_cpu_domain().unwrap();
+                    assert!(
+                        domain
+                            .observe_actual_flow()
+                            .unwrap()
+                            .unwrap()
+                            .settled_full_cpu_ns
+                            > 0
+                    );
+                }
+                1 => {
+                    assert_eq!(result.unwrap_err().to_string(), "PUBLIC_REQUEST_DEADLINE");
+                    // The page arrived, but its original remaining time could
+                    // not earn the SAME cold start reserve. Import gets no new
+                    // two-second wait and never enters unreserved native work.
+                    let domain = client_node.public_service_cpu_domain().unwrap();
+                    let state = domain.observe().unwrap();
+                    assert_eq!(state.in_flight, 0);
+                    assert!(!state.accounting_unavailable);
+                    let flow = domain.observe_actual_flow().unwrap().unwrap();
+                    assert_eq!(flow.booked_reservation_ns, 0);
+                    assert_eq!(flow.settled_full_cpu_ns, 0);
+                }
+                2 => {
+                    assert!(result.is_err());
+                    assert!(client_node.public_service_cpu_domain().is_err());
+                }
+                _ => unreachable!(),
+            }
+        }
+    }
+
+    #[test]
+    fn expired_legacy_page_refuses_all_transports_before_socket_or_outbox_reservation() {
+        let settings = Settings::development(Some(now().unwrap() - 100)).unwrap();
+        let directory = tempfile::tempdir().unwrap();
+        let mut node = Node::open(directory.path(), settings.clone(), 1).unwrap();
+        let (_, client) = authentication_fixture(&settings);
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        listener.set_nonblocking(true).unwrap();
+        let address = listener.local_addr().unwrap();
+        let expired = Instant::now();
+        let tip = settings.genesis();
+        let mut nonce = 1;
+        assert_eq!(
+            sync_page_from_until(&mut node, address, tip, tip, expired)
+                .unwrap_err()
+                .to_string(),
+            "PUBLIC_REQUEST_DEADLINE"
+        );
+        assert_eq!(
+            sync_page_from_authenticated_until(
+                &mut node, address, tip, tip, &client, &mut nonce, expired
+            )
+            .unwrap_err()
+            .to_string(),
+            "PUBLIC_REQUEST_DEADLINE"
+        );
+        assert_eq!(
+            sync_page_from_authenticated_durable_until(
+                &mut node, address, tip, tip, &client, expired
+            )
+            .unwrap_err()
+            .to_string(),
+            "PUBLIC_REQUEST_DEADLINE"
+        );
+        assert_eq!(
+            call_authenticated_durable_until(&mut node, address, &Request::Head, &client, expired)
+                .unwrap_err()
+                .to_string(),
+            "FRAME_DEADLINE"
+        );
+        assert_eq!(nonce, 1);
+        assert!(pending_authenticated_request(&node, &client)
+            .unwrap()
+            .is_none());
+        assert!(node.public_service_cpu_domain().is_err());
+        assert_eq!(
+            listener.accept().unwrap_err().kind(),
+            std::io::ErrorKind::WouldBlock
+        );
+    }
+
+    #[test]
+    fn legacy_absolute_deadline_is_not_renewed_by_real_partial_response_bytes() {
+        let settings = Settings::development(Some(now().unwrap() - 100)).unwrap();
+        let directory = tempfile::tempdir().unwrap();
+        let mut node = Node::open(directory.path(), settings, 1).unwrap();
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let address = listener.local_addr().unwrap();
+        listener.set_nonblocking(true).unwrap();
+        let sender = thread::spawn(move || {
+            let accept_deadline = Instant::now() + Duration::from_secs(2);
+            let (mut stream, _) = loop {
+                match listener.accept() {
+                    Ok(value) => break value,
+                    Err(error) if error.kind() == std::io::ErrorKind::WouldBlock => {
+                        assert!(Instant::now() < accept_deadline);
+                        thread::sleep(Duration::from_millis(1));
+                    }
+                    Err(error) => panic!("actual partial-response accept: {error}"),
+                }
+            };
+            let request: Request =
+                serde_json::from_slice(&read_frame(&mut stream).unwrap()).unwrap();
+            let value = dispatch(&mut node, request, &mut |_| Ok(())).unwrap();
+            let bytes = serde_json::to_vec(&value).unwrap();
+            assert!(bytes.len() > 100);
+            let cleanup = Instant::now() + Duration::from_secs(2);
+            stream.set_nodelay(true).unwrap();
+            stream
+                .set_write_timeout(Some(Duration::from_millis(50)))
+                .unwrap();
+            stream
+                .write_all(&(bytes.len() as u32).to_be_bytes())
+                .unwrap();
+            let mut sent = 0;
+            for byte in bytes {
+                if Instant::now() >= cleanup || stream.write_all(&[byte]).is_err() {
+                    break;
+                }
+                sent += 1;
+                thread::sleep(
+                    Duration::from_millis(10)
+                        .min(cleanup.saturating_duration_since(Instant::now())),
+                );
+            }
+            sent
+        });
+        let started = Instant::now();
+        let result = call_until(
+            address,
+            &Request::Head,
+            started + Duration::from_millis(200),
+        );
+        let elapsed = started.elapsed();
+        assert!(
+            result.is_err(),
+            "partial bytes cannot renew the original request deadline"
+        );
+        assert!(
+            elapsed < Duration::from_secs(1),
+            "must not wait for the sender's separate cleanup bound"
+        );
+        assert!(
+            sender.join().unwrap() >= 2,
+            "the real socket delivered repeated partial frames"
+        );
+    }
 
     #[cfg(target_os = "linux")]
     #[test]
@@ -5141,6 +5685,98 @@ mod tests {
         assert_eq!(node.stats().unwrap()["authenticated_outbox_pending"], 1);
         assert!(call_authenticated_durable(&mut node, address, &Request::Head, &client,).is_err());
         assert_eq!(node.stats().unwrap()["authenticated_outbox_pending"], 1);
+    }
+
+    #[test]
+    fn legacy_deadline_keeps_exact_durable_wire_after_delayed_real_terminal_response() {
+        let server_dir = tempfile::tempdir().unwrap();
+        let client_dir = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(now().unwrap() - 100)).unwrap();
+        let (server_auth, client) = authentication_fixture(&settings);
+        let server_node = Node::open(server_dir.path(), settings.clone(), 1).unwrap();
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let upstream_address = listener.local_addr().unwrap();
+        let stop = Arc::new(AtomicBool::new(false));
+        let signal = stop.clone();
+        let server = thread::spawn(move || {
+            serve_authenticated(
+                listener,
+                server_node,
+                Duration::from_secs(10),
+                signal,
+                server_auth,
+            )
+        });
+        let proxy = TcpListener::bind("127.0.0.1:0").unwrap();
+        let address = proxy.local_addr().unwrap();
+        proxy.set_nonblocking(true).unwrap();
+        let relay = thread::spawn(move || {
+            let accept_deadline = Instant::now() + Duration::from_secs(2);
+            let (mut downstream, _) = loop {
+                match proxy.accept() {
+                    Ok(value) => break value,
+                    Err(error) if error.kind() == std::io::ErrorKind::WouldBlock => {
+                        assert!(Instant::now() < accept_deadline);
+                        thread::sleep(Duration::from_millis(1));
+                    }
+                    Err(error) => panic!("actual durable relay accept: {error}"),
+                }
+            };
+            let wire = read_frame(&mut downstream).unwrap();
+            let mut upstream =
+                TcpStream::connect_timeout(&upstream_address, Duration::from_secs(2)).unwrap();
+            write_frame(&mut upstream, &wire).unwrap();
+            let response = read_frame(&mut upstream).unwrap();
+            // Delay an actual signed terminal response from the original
+            // server. The timeout must retain the original outbox bytes.
+            thread::sleep(Duration::from_millis(500));
+            let _ = write_frame(&mut downstream, &response);
+            (wire, response)
+        });
+        let mut node = Node::open(client_dir.path(), settings.clone(), 1).unwrap();
+        assert!(call_authenticated_durable_until(
+            &mut node,
+            address,
+            &Request::Head,
+            &client,
+            Instant::now() + Duration::from_millis(200),
+        )
+        .is_err());
+        let (wire, response) = relay.join().unwrap();
+        let verified = outbound_authenticated_request(&wire, &settings, &client).unwrap();
+        let (terminal, ok, _) = verify_authenticated_response(
+            &response,
+            &verified.session,
+            verified.frame.replay_nonce(),
+            verified.request_digest,
+        )
+        .unwrap();
+        assert!(
+            terminal && ok,
+            "original server really completed the signed Head"
+        );
+        let (_, retained) = node
+            .authenticated_outbound_reservation(transport_session(&verified.session).unwrap())
+            .unwrap();
+        assert_eq!(retained.as_deref(), Some(wire.as_slice()));
+        drop(node);
+        let mut node = Node::open(client_dir.path(), settings, 1).unwrap();
+        let value = call_authenticated_durable_until(
+            &mut node,
+            upstream_address,
+            &Request::Head,
+            &client,
+            Instant::now() + Duration::from_secs(2),
+        )
+        .unwrap();
+        assert_eq!(value["height"], 0);
+        assert!(pending_authenticated_request(&node, &client)
+            .unwrap()
+            .is_none());
+        stop.store(true, Ordering::Release);
+        let metrics = server.join().unwrap().unwrap();
+        assert_eq!(metrics.authenticated_requests, 2);
+        assert_eq!(metrics.replayed_responses, 1);
     }
 
     #[test]

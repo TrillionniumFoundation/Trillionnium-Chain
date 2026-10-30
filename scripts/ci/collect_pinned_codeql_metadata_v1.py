@@ -20,22 +20,29 @@ import stat
 import time
 
 SCHEMA = "pon-pinned-codeql-bounded-metadata-v1"
+SARIF_SCHEMA = "pon-pinned-codeql-bounded-sarif-v1"
 FULL_FILE_LIMIT = 2 * 1024 * 1024
+SARIF_FILE_LIMIT = 128 * 1024 * 1024
+SARIF_ARTIFACT_LIMIT = 136 * 1024 * 1024
 JSON_TOTAL_LIMIT = 16 * 1024 * 1024
 TAIL_LIMIT = 128 * 1024
 TAIL_TOTAL_LIMIT = 8 * 1024 * 1024
 MANIFEST_LIMIT = 1024 * 1024
 ARTIFACT_LIMIT = 32 * 1024 * 1024
 READ_SECONDS = 30
-PHASES = ("version", "packs", "queries", "project-toolchain", "extractor-toolchain", "create", "analyze")
+PHASES = ("version", "packs", "queries", "project-toolchain", "extractor-options",
+          "extractor-toolchain", "create", "analyze")
 JSON_FILES = (
     "source-checkout.json", "source-final.json", "analysis/result.json",
     "analysis/source-before.json", "analysis/source-after.json",
     *(f"analysis/{phase}.execution.json" for phase in PHASES),
     "analysis/queries-before.json", "analysis/queries-after.json",
+    "analysis/semantic-extraction.json",
     "analysis/cpp-scope/build/context.json",
     "analysis/cpp-source-copy-before.json", "analysis/cpp-source-copy-after.json",
 )
+SARIF_FILES = ("analysis/analysis.sarif", "analysis/result.json",
+               "analysis/source-before.json", "analysis/source-after.json")
 LOG_FILES = (
     "runner.log", "reader-controls.log", "metadata-reader-controls.log",
     "rust-toolchain.log", "rust-extractor-toolchain.log",
@@ -131,7 +138,8 @@ def strict_json(data):
                parse_constant=lambda _: (_ for _ in ()).throw(ValueError("nonfinite JSON")))
 
 
-def observe(root, relative, *, tail, remaining, deadline):
+def observe(root, relative, *, tail, remaining, deadline, full_file_limit=None):
+    full_file_limit = FULL_FILE_LIMIT if full_file_limit is None else full_file_limit
     row = {"source_path": relative, "representation": "tail_of_retained_file" if tail else "original_json_bytes"}
     if time.monotonic() >= deadline:
         return {**row, "status": "read_deadline_exceeded"}, None
@@ -145,8 +153,8 @@ def observe(root, relative, *, tail, remaining, deadline):
         row["retained_file_bytes_observed"] = before.st_size
         if not stat.S_ISREG(before.st_mode) or before.st_nlink != 1:
             return {**row, "status": "not_single_link_regular_file"}, None
-        if not tail and before.st_size > FULL_FILE_LIMIT:
-            return {**row, "status": "file_size_limit", "file_size_limit": FULL_FILE_LIMIT}, None
+        if not tail and before.st_size > full_file_limit:
+            return {**row, "status": "file_size_limit", "file_size_limit": full_file_limit}, None
         count = min(before.st_size, TAIL_LIMIT) if tail else before.st_size
         if count > remaining:
             return {**row, "status": "aggregate_size_limit", "remaining_category_bytes": remaining}, None
@@ -179,7 +187,7 @@ def observe(root, relative, *, tail, remaining, deadline):
         os.close(descriptor)
 
 
-def collect(source, output, expected_head, language, run_id, run_attempt):
+def collect(source, output, expected_head, language, run_id, run_attempt, *, sarif_only=False):
     require(re.fullmatch(r"[0-9a-f]{40}", expected_head) is not None, "full expected source SHA required")
     require(language in ("actions", "python", "rust", "cpp"), "known analysis language required")
     require(type(run_id) is int and type(run_attempt) is int and 0 < run_id < 2**64
@@ -187,7 +195,13 @@ def collect(source, output, expected_head, language, run_id, run_attempt):
     require(source.is_absolute() and output.is_absolute() and ".." not in source.parts
             and ".." not in output.parts and not output.is_relative_to(source)
             and not source.is_relative_to(output), "separate absolute diagnostic directories required")
-    require(len(set(JSON_FILES + LOG_FILES)) == len(JSON_FILES + LOG_FILES), "unique fixed diagnostic inventory")
+    require(type(sarif_only) is bool, "explicit artifact profile required")
+    json_files = SARIF_FILES if sarif_only else JSON_FILES
+    log_files = () if sarif_only else LOG_FILES
+    schema = SARIF_SCHEMA if sarif_only else SCHEMA
+    json_budget = SARIF_FILE_LIMIT + 3 * FULL_FILE_LIMIT if sarif_only else JSON_TOTAL_LIMIT
+    artifact_limit = SARIF_ARTIFACT_LIMIT if sarif_only else ARTIFACT_LIMIT
+    require(len(set(json_files + log_files)) == len(json_files + log_files), "unique fixed diagnostic inventory")
     parent = directory(output.parent)
     try:
         os.mkdir(output.name, 0o700, dir_fd=parent)
@@ -205,36 +219,39 @@ def collect(source, output, expected_head, language, run_id, run_attempt):
         deadline = time.monotonic() + READ_SECONDS
         rows = []
         totals = {"json": 0, "tails": 0}
-        for tail, names, budget, category in ((False, JSON_FILES, JSON_TOTAL_LIMIT, "json"),
-                                             (True, LOG_FILES, TAIL_TOTAL_LIMIT, "tails")):
+        for tail, names, budget, category in ((False, json_files, json_budget, "json"),
+                                             (True, log_files, TAIL_TOTAL_LIMIT, "tails")):
             for relative in names:
                 if root is None:
                     row, data = {"source_path": relative, "representation": "tail_of_retained_file" if tail else "original_json_bytes",
                                  **root_error}, None
                 else:
-                    row, data = observe(root, relative, tail=tail, remaining=budget - totals[category], deadline=deadline)
+                    limit = SARIF_FILE_LIMIT if relative == "analysis/analysis.sarif" else FULL_FILE_LIMIT
+                    row, data = observe(root, relative, tail=tail, remaining=budget - totals[category],
+                                        deadline=deadline, full_file_limit=limit)
                 if data is not None:
                     member = ("tails/" + relative + ".tail") if tail else ("raw/" + relative)
                     write_file(destination, member, data)
                     row["artifact_member"] = member
                     totals[category] += len(data)
                 rows.append(row)
-        result = {"schema": SCHEMA, "requested_source": {"expected_head": expected_head, "language": language,
+        result = {"schema": schema, "requested_source": {"expected_head": expected_head, "language": language,
                   "run_id": run_id, "run_attempt": run_attempt}, "input_root": str(source),
                   "inventory_collected": True, "analysis_outcome_inferred": False,
                   "official_security_gate_qualified": False, "production_qualified": False,
                   "scope": "Fixed raw diagnostic inventory only. Missing, refused or oversized files remain explicit. Tails describe retained file bytes; phase JSON retains any upstream stream truncation. No complete process stream, scan coverage, finding count or security verdict is inferred.",
-                  "limits": {"json_file_bytes": FULL_FILE_LIMIT, "json_total_bytes": JSON_TOTAL_LIMIT,
+                  "limits": {"json_file_bytes": FULL_FILE_LIMIT, "json_total_bytes": json_budget,
+                             "sarif_file_bytes": SARIF_FILE_LIMIT if sarif_only else None,
                              "log_tail_bytes": TAIL_LIMIT, "log_tail_total_bytes": TAIL_TOTAL_LIMIT,
-                             "manifest_bytes": MANIFEST_LIMIT, "artifact_bytes": ARTIFACT_LIMIT,
+                             "manifest_bytes": MANIFEST_LIMIT, "artifact_bytes": artifact_limit,
                              "cooperative_read_seconds": READ_SECONDS},
                   "payload_bytes": totals, "statuses": dict(collections.Counter(row["status"] for row in rows)),
                   "files": rows}
         encoded = (json.dumps(result, indent=2, allow_nan=False) + "\n").encode()
-        require(len(encoded) <= MANIFEST_LIMIT and sum(totals.values()) + len(encoded) < ARTIFACT_LIMIT,
+        require(len(encoded) <= MANIFEST_LIMIT and sum(totals.values()) + len(encoded) < artifact_limit,
                 "bounded metadata artifact limit exceeded")
         write_file(destination, "manifest.json", encoded)
-        return {"schema": SCHEMA, "manifest": fingerprint(encoded), "payload_bytes": totals,
+        return {"schema": schema, "manifest": fingerprint(encoded), "payload_bytes": totals,
                 "statuses": result["statuses"], "analysis_outcome_inferred": False,
                 "official_security_gate_qualified": False}
     finally:
@@ -251,8 +268,11 @@ def main():
     parser.add_argument("--language", choices=("actions", "python", "rust", "cpp"), required=True)
     parser.add_argument("--run-id", type=int, required=True)
     parser.add_argument("--run-attempt", type=int, required=True)
+    parser.add_argument("--sarif-only", action="store_true",
+                        help="Retain original bounded SARIF and source observations in a separate artifact; no verdict inference")
     args = parser.parse_args()
-    print(json.dumps(collect(args.input, args.output, args.expected_head, args.language, args.run_id, args.run_attempt), allow_nan=False))
+    print(json.dumps(collect(args.input, args.output, args.expected_head, args.language, args.run_id,
+                             args.run_attempt, sarif_only=args.sarif_only), allow_nan=False))
     return 0
 
 

@@ -1,4 +1,6 @@
-fn encode_ack(
+use super::*;
+
+pub(super) fn encode_ack(
     namespace_digest: [u8; 32],
     acknowledgement: PayloadReplayCoreAcknowledgementV1,
 ) -> [u8; ACK_BYTES_V1] {
@@ -60,7 +62,7 @@ fn decode_ack(bytes: &[u8]) -> Result<AckFactsV1, PayloadReplayRecoveryErrorV1> 
     })
 }
 
-fn ack_path(root: &Path, target: PayloadReplayRecoveryTargetV1) -> PathBuf {
+pub(super) fn ack_path(root: &Path, target: PayloadReplayRecoveryTargetV1) -> PathBuf {
     root.join(format!(
         "ack-{:020}-{}.v1",
         target.record_index,
@@ -68,7 +70,7 @@ fn ack_path(root: &Path, target: PayloadReplayRecoveryTargetV1) -> PathBuf {
     ))
 }
 
-fn ack_temp_path(final_path: &Path) -> PathBuf {
+pub(super) fn ack_temp_path(final_path: &Path) -> PathBuf {
     let name = final_path
         .file_name()
         .and_then(|value| value.to_str())
@@ -80,7 +82,7 @@ fn ack_temp_path(final_path: &Path) -> PathBuf {
     ))
 }
 
-fn write_ack_temp(
+pub(super) fn write_ack_temp(
     path: &Path,
     bytes: &[u8; ACK_BYTES_V1],
 ) -> Result<File, PayloadReplayRecoveryErrorV1> {
@@ -93,7 +95,7 @@ fn write_ack_temp(
     Ok(file)
 }
 
-fn read_ack_if_present(
+pub(super) fn read_ack_if_present(
     root: &Path,
     namespace_digest: [u8; 32],
     target: PayloadReplayRecoveryTargetV1,
@@ -112,7 +114,9 @@ fn read_ack_if_present(
     }
 }
 
-fn scan_ack_temporaries(root: &Path) -> Result<Vec<PathBuf>, PayloadReplayRecoveryErrorV1> {
+pub(super) fn scan_ack_temporaries(
+    root: &Path,
+) -> Result<Vec<PathBuf>, PayloadReplayRecoveryErrorV1> {
     let mut paths = Vec::new();
     let mut scanned = 0_usize;
     for entry in fs::read_dir(root)? {
@@ -156,7 +160,7 @@ fn private_ack_temporary_mode(metadata: &fs::Metadata) -> bool {
     }
 }
 
-fn read_ack(
+pub(super) fn read_ack(
     path: &Path,
     namespace_digest: [u8; 32],
     target: PayloadReplayRecoveryTargetV1,
@@ -182,12 +186,15 @@ fn read_ack(
     Ok(decoded)
 }
 
-fn sidecar_path(path: &Path, suffix: &str) -> Result<PathBuf, PayloadReplayRecoveryErrorV1> {
+pub(super) fn sidecar_path(
+    path: &Path,
+    suffix: &str,
+) -> Result<PathBuf, PayloadReplayRecoveryErrorV1> {
     let name = utf8_filename(path, "payload replay filename")?;
     Ok(path.with_file_name(format!(".{name}.{suffix}")))
 }
 
-fn utf8_filename<'a>(
+pub(super) fn utf8_filename<'a>(
     path: &'a Path,
     reason: &'static str,
 ) -> Result<&'a str, PayloadReplayRecoveryErrorV1> {
@@ -196,7 +203,7 @@ fn utf8_filename<'a>(
         .ok_or(PayloadReplayRecoveryErrorV1::InvalidRequest(reason))
 }
 
-fn private_parent(path: &Path) -> Result<(File, PathBuf), PayloadReplayRecoveryErrorV1> {
+pub(super) fn private_parent(path: &Path) -> Result<(File, PathBuf), PayloadReplayRecoveryErrorV1> {
     let parent = path
         .parent()
         .ok_or(PayloadReplayRecoveryErrorV1::InvalidRequest(
@@ -217,7 +224,7 @@ fn private_parent(path: &Path) -> Result<(File, PathBuf), PayloadReplayRecoveryE
     Ok((File::open(&parent)?, parent))
 }
 
-fn private_directory(path: &Path) -> Result<File, PayloadReplayRecoveryErrorV1> {
+pub(super) fn private_directory(path: &Path) -> Result<File, PayloadReplayRecoveryErrorV1> {
     let metadata = fs::symlink_metadata(path)?;
     if metadata.file_type().is_symlink()
         || !metadata.is_dir()
@@ -232,7 +239,7 @@ fn private_directory(path: &Path) -> Result<File, PayloadReplayRecoveryErrorV1> 
     File::open(path).map_err(PayloadReplayRecoveryErrorV1::Io)
 }
 
-fn map_peer_lease_error(error: crate::PeerLeaseErrorV1) -> PayloadReplayRecoveryErrorV1 {
+pub(super) fn map_peer_lease_error(error: crate::PeerLeaseErrorV1) -> PayloadReplayRecoveryErrorV1 {
     match error {
         crate::PeerLeaseErrorV1::InvalidRequest(reason)
         | crate::PeerLeaseErrorV1::Protocol(reason) => {
@@ -245,7 +252,7 @@ fn map_peer_lease_error(error: crate::PeerLeaseErrorV1) -> PayloadReplayRecovery
     }
 }
 
-fn open_private_lock(
+pub(super) fn open_private_lock(
     path: &Path,
 ) -> Result<(File, AuthorityPathIdentityV1), PayloadReplayRecoveryErrorV1> {
     let mut options = OpenOptions::new();
@@ -258,7 +265,10 @@ fn open_private_lock(
     Ok((file, identity))
 }
 
-fn open_private_file(path: &Path, writable: bool) -> Result<File, PayloadReplayRecoveryErrorV1> {
+pub(super) fn open_private_file(
+    path: &Path,
+    writable: bool,
+) -> Result<File, PayloadReplayRecoveryErrorV1> {
     let metadata = fs::symlink_metadata(path)?;
     if !metadata.is_file() || !private_file_mode(&metadata) {
         return Err(PayloadReplayRecoveryErrorV1::InvalidRequest(
@@ -287,7 +297,7 @@ fn open_private_file(path: &Path, writable: bool) -> Result<File, PayloadReplayR
     Ok(file)
 }
 
-fn validate_private_file(file: &File) -> Result<(), PayloadReplayRecoveryErrorV1> {
+pub(super) fn validate_private_file(file: &File) -> Result<(), PayloadReplayRecoveryErrorV1> {
     let metadata = file.metadata()?;
     if !metadata.is_file() || !private_file_mode(&metadata) {
         return Err(PayloadReplayRecoveryErrorV1::InvalidRequest(
@@ -297,7 +307,7 @@ fn validate_private_file(file: &File) -> Result<(), PayloadReplayRecoveryErrorV1
     Ok(())
 }
 
-fn try_lock(
+pub(super) fn try_lock(
     file: &File,
     busy: PayloadReplayRecoveryErrorV1,
 ) -> Result<(), PayloadReplayRecoveryErrorV1> {
@@ -308,7 +318,7 @@ fn try_lock(
     }
 }
 
-fn set_private_options(options: &mut OpenOptions) {
+pub(super) fn set_private_options(options: &mut OpenOptions) {
     #[cfg(unix)]
     {
         options.mode(PRIVATE_FILE_MODE_V1);
@@ -316,7 +326,7 @@ fn set_private_options(options: &mut OpenOptions) {
     }
 }
 
-fn private_parent_mode(metadata: &fs::Metadata) -> bool {
+pub(super) fn private_parent_mode(metadata: &fs::Metadata) -> bool {
     #[cfg(unix)]
     {
         metadata.permissions().mode() & 0o077 == 0
@@ -329,7 +339,7 @@ fn private_parent_mode(metadata: &fs::Metadata) -> bool {
     }
 }
 
-fn private_file_mode(metadata: &fs::Metadata) -> bool {
+pub(super) fn private_file_mode(metadata: &fs::Metadata) -> bool {
     #[cfg(unix)]
     {
         metadata.nlink() == 1

@@ -74,6 +74,54 @@ class AnalysisControls(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "unknown diagnostic level"):
             self.assess(value)
 
+    def test_info_semantic_failures_are_located_without_excusing_source_classes(self):
+        lines = [
+            b"[build-stdout] \x1b[32m INFO\x1b[0m /source/current.rs:1:1: semantic analyzer unavailable (not included as a module): macro expansion will be skipped.",
+            b"[build-stdout] WARN /source/evidence/original.rs:2:3: semantic analyzer unavailable (no manifest found): macro expansion will be skipped.",
+            b"ERROR failed to load workspace for /source/evidence/Cargo.toml",
+        ]
+        streams = {"stdout": b"\n".join(lines), "stderr": b""}
+        result = reader.semantic_extraction_observations(streams, ["current.rs", "evidence/original.rs"], Path("/source"))
+        self.assertEqual(result["diagnostic_line_count"], 3)
+        self.assertTrue(result["diagnostic_inventory_complete"])
+        self.assertEqual(result["affected_tracked_files"], ["current.rs", "evidence/original.rs"])
+        self.assertEqual(result["reason_counts"], {"no manifest found": 1, "not included as a module": 1})
+        self.assertEqual(result["unlocated_diagnostic_count"], 1)
+        self.assertEqual(result["diagnostics"][1]["source_line"], 2)
+        self.assertEqual(result["diagnostics"][1]["source_column"], 3)
+        self.assertFalse(result["semantic_coverage_qualified"])
+        self.assertFalse(result["official_security_gate_qualified"])
+
+    def test_unmapped_and_unknown_semantic_failure_still_remain_failures(self):
+        lines = [
+            b"/source/../elsewhere.rs:1:1: semantic analyzer unavailable (unknown future reason): macro expansion will be skipped.",
+            b"SEMANTIC ANALYZER UNAVAILABLE without a source location",
+        ]
+        result = reader.semantic_extraction_observations(
+            {"stdout": b"\n".join(lines), "stderr": b""}, ["elsewhere.rs"], Path("/source"))
+        self.assertEqual(result["affected_tracked_files"], [])
+        self.assertEqual(result["marker_line_counts"]["semantic analyzer unavailable"], 2)
+        self.assertIsNone(result["diagnostics"][0]["source_path"])
+        self.assertEqual(result["unlocated_diagnostic_count"], 2)
+        self.assertEqual(result["reason_counts"], {"unknown future reason": 1})
+        self.assertTrue(result["failure_markers"])
+
+    def test_semantic_inventory_bound_never_erases_failure_counts(self):
+        raw = b"failed to load workspace\n" * 4
+        with patch.object(reader, "SEMANTIC_DIAGNOSTIC_LIMIT", 2):
+            result = reader.semantic_extraction_observations({"stdout": raw, "stderr": b""}, [], Path("/source"))
+        self.assertEqual(result["diagnostic_line_count"], 4)
+        self.assertEqual(result["retained_diagnostic_count"], 2)
+        self.assertFalse(result["diagnostic_inventory_complete"])
+        self.assertEqual(result["marker_line_counts"], {"failed to load workspace": 4})
+
+    def test_empty_log_inventory_does_not_certify_semantics(self):
+        result = reader.semantic_extraction_observations({"stdout": b"", "stderr": b""}, ["current.rs"], Path("/source"))
+        self.assertEqual(result["failure_markers"], [])
+        self.assertFalse(result["semantic_coverage_qualified"])
+        with self.assertRaisesRegex(ValueError, "both retained"):
+            reader.semantic_extraction_observations({"stdout": b""}, [], Path("/source"))
+
     def test_cpp_components_need_actual_generated_extraction(self):
         # Pure association control: the real compilation-context reader is
         # tested independently on retained native artifacts, not fabricated here.
@@ -350,7 +398,12 @@ class AnalysisControls(unittest.TestCase):
                             patch.object(reader.subprocess, "check_output", return_value=b"current.rs\0"), \
                             patch.object(reader, "query_bindings", return_value=[]), \
                             patch.object(reader, "host_memory_observation", return_value={"observed": False, "fixture": True}), \
-                            patch.dict(reader.os.environ, {"CODEQL_RAM": "1", "CODEQL_THREADS": "99"}), \
+                            patch.dict(reader.os.environ, {
+                                "CODEQL_RAM": "1", "CODEQL_THREADS": "99",
+                                reader.RUST_ALL_TARGETS_ENV: "false",
+                                "CODEQL_EXTRACTOR_RUST_OPTION_CARGO_FEATURES": "default",
+                                "CODEQL_RUST_EXTRACTOR_OPTION_CARGO_CFG_OVERRIDES": "-test",
+                                "CODEQL_TEST_SECRET": "fixture credential must not be forwarded"}), \
                             patch.dict(sys.modules), patch("sys.argv", argv), patch("sys.stdout", io.StringIO()):
                         self.assertEqual(reader.main(), 1)
                     result = json.loads((output / "result.json").read_text())
@@ -364,13 +417,33 @@ class AnalysisControls(unittest.TestCase):
                     for arguments, environment, budget in calls:
                         self.assertEqual(environment["CODEQL_RAM"], str(expected_ram))
                         self.assertEqual(environment["CODEQL_THREADS"], "2")
+                        self.assertNotIn("CODEQL_TEST_SECRET", environment)
+                        self.assertNotIn("CODEQL_EXTRACTOR_RUST_OPTION_CARGO_FEATURES", environment)
+                        self.assertNotIn("CODEQL_RUST_EXTRACTOR_OPTION_CARGO_CFG_OVERRIDES", environment)
+                        self.assertEqual(environment.get(reader.RUST_ALL_TARGETS_ENV),
+                                         "true" if language == "rust" else None)
                         if arguments[1:3] in (["database", "create"], ["database", "analyze"]):
                             self.assertEqual([a for a in arguments if a.startswith("--ram=")], [f"--ram={expected_ram}"])
                             self.assertEqual([a for a in arguments if a.startswith("--threads=")], ["--threads=2"])
                             self.assertEqual(budget, 1200)
+                    expected_environment = {"CODEQL_RAM": str(expected_ram), "CODEQL_THREADS": "2"}
+                    if language == "rust":
+                        expected_environment[reader.RUST_ALL_TARGETS_ENV] = "true"
+                        self.assertTrue(result["rust_all_targets_requested"])
+                        options = [phase for phase in result["phases"] if phase["name"] == "extractor-options"]
+                        self.assertEqual(len(options), 1)
+                        self.assertEqual(options[0]["wall_budget_seconds"], 30)
+                        self.assertEqual(options[0]["argv"][1:],
+                                         ["resolve", "extractor", "--language=rust", "--format=betterjson"])
+                    else:
+                        self.assertNotIn("rust_all_targets_requested", result)
                     for phase in result["phases"]:
-                        self.assertEqual(phase["codeql_environment"], {"CODEQL_RAM": str(expected_ram), "CODEQL_THREADS": "2"})
+                        self.assertEqual(phase["codeql_environment"], expected_environment)
                     if failing_phase == "analyze":
+                        # A later evaluator failure must not hide the already
+                        # observed extraction context.
+                        self.assertTrue((output / "semantic-extraction.json").is_file())
+                        self.assertIn("semantic_extraction_observation", result)
                         self.assertIn(f"codeql/{language}-queries@{reader.PACKS[language]}:codeql-suites/{language}-code-scanning.qls",
                                       result["phases"][-1]["argv"])
                         self.assertIn("--no-download", result["phases"][-1]["argv"])
