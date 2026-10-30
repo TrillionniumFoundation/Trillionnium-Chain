@@ -514,6 +514,69 @@ pub(super) fn exchange_pq_v2(
     Ok(reply)
 }
 
+/// A nonrenewable monotonic cap for one signed-reply service lifetime.
+pub(super) struct PqReplyLeaseV2 {
+    expiry: Duration,
+    deadline: Instant,
+    closed: bool,
+}
+
+impl PqReplyLeaseV2 {
+    pub(super) fn new(
+        started: Instant,
+        started_wall: Duration,
+        expires_unix_seconds: u64,
+        lifetime: Duration,
+    ) -> CellResultV1<Self> {
+        let expiry = Duration::from_secs(expires_unix_seconds);
+        let remaining = expiry
+            .checked_sub(started_wall)
+            .filter(|duration| !duration.is_zero())
+            .ok_or(CellErrorV1::Invalid("PQ provider signed reply expired"))?;
+        let deadline = started
+            .checked_add(remaining)
+            .zip(started.checked_add(lifetime))
+            .map(|(lease, service)| lease.min(service))
+            .ok_or(CellErrorV1::Invalid("PQ reply deadline overflow"))?;
+        Ok(Self {
+            expiry,
+            deadline,
+            closed: false,
+        })
+    }
+
+    fn refresh(&mut self, now: Instant, wall: Duration) -> CellResultV1<Instant> {
+        require(!self.closed, "PQ provider signed reply expired")?;
+        // A failed observation is terminal, even if the caller later retries
+        // after the wall clock moves backwards before a denial write.
+        self.closed = true;
+        let remaining = self
+            .expiry
+            .checked_sub(wall)
+            .filter(|duration| !duration.is_zero())
+            .ok_or(CellErrorV1::Invalid("PQ provider signed reply expired"))?;
+        let observed = now
+            .checked_add(remaining)
+            .ok_or(CellErrorV1::Invalid("PQ reply deadline overflow"))?;
+        // Never renew the original lifetime or any previously shortened lease.
+        self.deadline = self.deadline.min(observed);
+        require(now < self.deadline, "PQ provider signed reply expired")?;
+        self.closed = false;
+        Ok(self.deadline)
+    }
+
+    fn refresh_now(&mut self) -> CellResultV1<Instant> {
+        let now = Instant::now();
+        match wall_now() {
+            Ok(wall) => self.refresh(now, wall),
+            Err(error) => {
+                self.closed = true;
+                Err(error)
+            }
+        }
+    }
+}
+
 /// Bounded, read-only research PCP2 rendezvous using already authenticated
 /// operator-selected reply bytes. No CDQ1/CDS1 fallback, announce, SQLite write,
 /// self-asserted trust-root registration or independent replay witness is created.
@@ -522,7 +585,7 @@ pub(super) fn serve_pq_reply_bytes_v2(
     listener: &TcpListener,
     expected_request: [u8; 192],
     reply: &[u8],
-    expires_unix_seconds: u64,
+    mut lease: PqReplyLeaseV2,
     shutdown: &AtomicBool,
     limits: CellRendezvousLimitsV1,
 ) -> CellResultV1<CellRendezvousReportV1> {
@@ -535,21 +598,22 @@ pub(super) fn serve_pq_reply_bytes_v2(
                     * trnm_crypto_primitives::pq_cell_provider::PQ_CELL_PROVIDER_RECORD_V2_BYTES,
         "PQ serving bounded PCP2 bytes",
     )?;
+    lease.refresh_now()?;
     listener.set_nonblocking(true)?;
-    let overall = Instant::now() + limits.lifetime;
     let mut report = CellRendezvousReportV1::default();
     while !shutdown.load(Ordering::Relaxed)
         && report.connections < limits.max_connections
-        && Instant::now() < overall
+        && Instant::now() < lease.deadline
     {
         // A once-valid signed provider hint never extends its own expiry.
-        if wall_now()?.as_secs() >= expires_unix_seconds {
+        let now = Instant::now();
+        if lease.refresh(now, wall_now()?).is_err() {
             break;
         }
         match listener.accept() {
             Ok((mut stream, _source)) => {
                 report.connections += 1;
-                let deadline = overall.min(Instant::now() + limits.request_timeout);
+                let mut deadline = lease.deadline.min(Instant::now() + limits.request_timeout);
                 let outcome = (|| -> CellResultV1<()> {
                     let mut header = [0; 7];
                     network::read_deadline(&mut stream, &mut header, deadline, None)?;
@@ -562,10 +626,7 @@ pub(super) fn serve_pq_reply_bytes_v2(
                     let mut actual = [0; 192];
                     network::read_deadline(&mut stream, &mut actual, deadline, None)?;
                     require(actual == expected_request, "PQ pinned request mismatch")?;
-                    require(
-                        wall_now()?.as_secs() < expires_unix_seconds,
-                        "PQ provider signed reply expired",
-                    )?;
+                    deadline = deadline.min(lease.refresh_now()?);
                     check_deadline(deadline)
                 })();
                 let mut frame = b"PCS2".to_vec();
@@ -581,7 +642,17 @@ pub(super) fn serve_pq_reply_bytes_v2(
                         frame.extend(0u32.to_be_bytes());
                     }
                 }
-                let _ = network::write_deadline(&mut stream, &frame, deadline);
+                // Refresh immediately before either success or denial output.
+                // Even a slow write retains the earliest signed expiry cap.
+                let now = Instant::now();
+                let Ok(current_deadline) = lease.refresh(now, wall_now()?) else {
+                    break;
+                };
+                let _ = network::write_deadline(
+                    &mut stream,
+                    &frame,
+                    deadline.min(current_deadline),
+                );
             }
             Err(error) if error.kind() == io::ErrorKind::WouldBlock => {
                 thread::sleep(Duration::from_millis(5))
@@ -591,6 +662,123 @@ pub(super) fn serve_pq_reply_bytes_v2(
         }
     }
     Ok(report)
+}
+
+#[cfg(test)]
+mod pq_reply_lease_tests {
+    use super::*;
+
+    #[test]
+    fn observed_expiry_permanently_closes_lease_despite_wall_rollback() {
+        let anchor = Instant::now();
+        let mut lease = PqReplyLeaseV2::new(
+            anchor,
+            Duration::from_secs(100),
+            110,
+            Duration::from_secs(20),
+        )
+        .unwrap();
+        // A forward wall jump expires the lease before the original mono cap.
+        assert!(lease
+            .refresh(anchor + Duration::from_secs(1), Duration::from_secs(110))
+            .is_err());
+        // Models the pre-output retry after request handling recorded refusal.
+        assert!(lease
+            .refresh(anchor + Duration::from_secs(2), Duration::from_secs(101))
+            .is_err());
+        assert!(lease
+            .refresh(anchor + Duration::from_secs(3), Duration::from_secs(102))
+            .is_err());
+    }
+
+    #[test]
+    fn precise_lease_charges_startup_verification_and_caps_slow_io() {
+        let anchor = Instant::now();
+        let mut lease = PqReplyLeaseV2::new(
+            anchor,
+            Duration::from_millis(100_750),
+            101,
+            Duration::from_secs(10),
+        )
+        .unwrap();
+        let now = anchor + Duration::from_millis(100);
+        let cap = lease.refresh(now, Duration::from_millis(100_850)).unwrap();
+        assert_eq!(cap, anchor + Duration::from_millis(250));
+        // Production applies this same min to both request reads and writes.
+        assert_eq!(cap.min(now + Duration::from_secs(2)), cap);
+        assert_eq!(
+            cap.min(now + Duration::from_millis(50)),
+            anchor + Duration::from_millis(150)
+        );
+        assert!(lease
+            .refresh(anchor + Duration::from_millis(250), Duration::from_secs(101))
+            .is_err());
+    }
+
+    #[test]
+    fn forward_clock_shortening_survives_later_backward_clock() {
+        let anchor = Instant::now();
+        let mut lease = PqReplyLeaseV2::new(
+            anchor,
+            Duration::from_millis(100_750),
+            101,
+            Duration::from_secs(10),
+        )
+        .unwrap();
+        assert_eq!(
+            lease
+                .refresh(anchor + Duration::from_millis(100), Duration::from_millis(100_950))
+                .unwrap(),
+            anchor + Duration::from_millis(150)
+        );
+        assert_eq!(
+            lease
+                .refresh(anchor + Duration::from_millis(120), Duration::from_secs(90))
+                .unwrap(),
+            anchor + Duration::from_millis(150)
+        );
+        assert!(lease
+            .refresh(anchor + Duration::from_millis(150), Duration::from_secs(90))
+            .is_err());
+    }
+
+    #[test]
+    fn original_service_lifetime_and_expired_wall_fail_closed() {
+        let anchor = Instant::now();
+        let mut lease = PqReplyLeaseV2::new(
+            anchor,
+            Duration::from_secs(100),
+            200,
+            Duration::from_millis(150),
+        )
+        .unwrap();
+        assert_eq!(
+            lease
+                .refresh(anchor + Duration::from_millis(100), Duration::from_millis(100_100))
+                .unwrap(),
+            anchor + Duration::from_millis(150)
+        );
+        assert!(lease
+            .refresh(anchor + Duration::from_millis(150), Duration::from_millis(100_150))
+            .is_err());
+        for expiry in [99, 100] {
+            assert!(PqReplyLeaseV2::new(
+                anchor,
+                Duration::from_secs(100),
+                expiry,
+                Duration::from_secs(10),
+            )
+            .is_err());
+        }
+        let mut forward = PqReplyLeaseV2::new(
+            anchor,
+            Duration::from_secs(100),
+            101,
+            Duration::from_secs(10),
+        )
+        .unwrap();
+        assert!(forward.refresh(anchor, Duration::from_secs(102)).is_err());
+    }
 }
 
 fn read_response(

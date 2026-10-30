@@ -645,11 +645,15 @@ pub mod pq_reply_v2 {
     ) -> CellResultV1<CellRendezvousReportV1> {
         limits.validate()?;
         addresses.validate()?;
+        // Anchor lifetime and signed expiry before the up-front ML-DSA work.
+        // Monotonic first makes the wall-clock mapping conservative.
+        let started = Instant::now();
+        let started_wall = wall_now()?;
         let verified = verify_pq_provider_reply_v2(
             signed_reply,
             expected_request,
             pinned_owners,
-            wall_now()?.as_secs(),
+            started_wall.as_secs(),
             addresses,
         )?;
         let expires = verified
@@ -662,11 +666,17 @@ pub mod pq_reply_v2 {
             .as_slice()
             .try_into()
             .map_err(|_| CellErrorV1::Invalid("PQ request length"))?;
+        let lease = super::transport::PqReplyLeaseV2::new(
+            started,
+            started_wall,
+            expires,
+            limits.lifetime,
+        )?;
         let mut report = super::transport::serve_pq_reply_bytes_v2(
             listener,
             pin,
             signed_reply,
-            expires,
+            lease,
             shutdown,
             limits,
         )?;
