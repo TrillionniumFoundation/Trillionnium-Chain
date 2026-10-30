@@ -531,6 +531,20 @@ pub mod pq_reply_v2 {
                 seen.insert(record.signer_key_id),
                 "PQ duplicate reply owner",
             )?;
+            // Preserve the PCP2 primitive's exact five-second future skew,
+            // but check every record's replay/time *before any expensive*
+            // ML-DSA verification. The primitive repeats these checks as the
+            // authoritative final authentication boundary.
+            require(
+                record.statement.sequence > owner.external_sequence_floor,
+                "PQ batch stale external replay floor",
+            )?;
+            require(
+                record.statement.issued_unix_seconds
+                    <= now_unix_seconds.saturating_add(5)
+                    && now_unix_seconds < record.statement.expires_unix_seconds,
+                "PQ batch expired/future record",
+            )?;
             let endpoint = decode_endpoint(record.statement.endpoint)?;
             addresses.check(endpoint)?;
             pending.push((record, owner, endpoint));
@@ -789,6 +803,64 @@ pub mod pq_reply_v2 {
                 &bad_addresses
             )
             .is_err());
+        }
+
+        #[test]
+        fn late_stale_or_expired_record_preflights_before_early_bad_signature() {
+            let (mut first, pk1, id1) = signed(42);
+            let (second, pk2, id2) = signed(43);
+            *first.last_mut().unwrap() ^= 1;
+            let stale_roster = [
+                PqPinnedProviderV2 {
+                    signer_key_id: id1,
+                    trusted_ml_dsa65_public_key: &pk1,
+                    external_sequence_floor: 6,
+                },
+                PqPinnedProviderV2 {
+                    signer_key_id: id2,
+                    trusted_ml_dsa65_public_key: &pk2,
+                    external_sequence_floor: 7,
+                },
+            ];
+            let stale = verify_pq_provider_reply_v2(
+                &reply(&[&first, &second]),
+                request(),
+                &stale_roster,
+                150,
+                &addresses(),
+            );
+            assert!(matches!(
+                stale,
+                Err(CellErrorV1::Invalid("PQ batch stale external replay floor"))
+            ));
+
+            let mut expired = second.clone();
+            // PCP2 fixed expires field, 263..271. The signature becomes
+            // invalid, so this control also proves priority over ML-DSA.
+            expired[263..271].copy_from_slice(&140u64.to_be_bytes());
+            let current_roster = [
+                PqPinnedProviderV2 {
+                    signer_key_id: id1,
+                    trusted_ml_dsa65_public_key: &pk1,
+                    external_sequence_floor: 6,
+                },
+                PqPinnedProviderV2 {
+                    signer_key_id: id2,
+                    trusted_ml_dsa65_public_key: &pk2,
+                    external_sequence_floor: 6,
+                },
+            ];
+            let expired_result = verify_pq_provider_reply_v2(
+                &reply(&[&first, &expired]),
+                request(),
+                &current_roster,
+                150,
+                &addresses(),
+            );
+            assert!(matches!(
+                expired_result,
+                Err(CellErrorV1::Invalid("PQ batch expired/future record"))
+            ));
         }
 
         #[test]
