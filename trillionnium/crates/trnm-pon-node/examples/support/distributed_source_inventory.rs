@@ -6147,6 +6147,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-research-protocol/src/pq_hepta_handoff.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-research-protocol/src/pq_hepta_handoff.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-research-protocol/src/state.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -6158,6 +6165,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-research-protocol/src/types.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-research-protocol/tests/pq_hepta_handoff_v2.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-research-protocol/tests/pq_hepta_handoff_v2.rs"
         )),
     ),
     (
