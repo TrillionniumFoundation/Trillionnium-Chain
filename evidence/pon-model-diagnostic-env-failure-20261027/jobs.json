@@ -1,0 +1,113 @@
+{
+  "total_count": 1,
+  "jobs": [
+    {
+      "id": 122127272384,
+      "run_id": 40485837206,
+      "workflow_name": "PoN original model controls diagnostic",
+      "head_branch": "fix/chain-model-runtime-diagnostic-20261027",
+      "run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40485837206",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOTty1_c8AAAAcb1pJwA",
+      "head_sha": "abe552b6d2a408adbf82e27c817b4f914a7322a2",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/122127272384",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40485837206/job/122127272384",
+      "status": "completed",
+      "conclusion": "failure",
+      "created_at": "2026-10-27T10:05:55Z",
+      "started_at": "2026-10-27T10:05:59Z",
+      "completed_at": "2026-10-27T10:06:12Z",
+      "name": "original-five-role-diagnostic",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-27T10:05:59Z",
+          "completed_at": "2026-10-27T10:06:00Z"
+        },
+        {
+          "name": "Checkout exact diagnostic source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-27T10:06:00Z",
+          "completed_at": "2026-10-27T10:06:08Z"
+        },
+        {
+          "name": "Bind source and a fresh diagnostic directory",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 3,
+          "started_at": "2026-10-27T10:06:08Z",
+          "completed_at": "2026-10-27T10:06:10Z"
+        },
+        {
+          "name": "Obtain the original pinned public model and CPU environment",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 4,
+          "started_at": "2026-10-27T10:06:10Z",
+          "completed_at": "2026-10-27T10:06:10Z"
+        },
+        {
+          "name": "Run the original frozen five-participant owner",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 5,
+          "started_at": "2026-10-27T10:06:10Z",
+          "completed_at": "2026-10-27T10:06:10Z"
+        },
+        {
+          "name": "Retain source, resource observations and exact partial results",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 6,
+          "started_at": "2026-10-27T10:06:10Z",
+          "completed_at": "2026-10-27T10:06:10Z"
+        },
+        {
+          "name": "Preserve compact raw diagnostic evidence",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 7,
+          "started_at": "2026-10-27T10:06:10Z",
+          "completed_at": "2026-10-27T10:06:10Z"
+        },
+        {
+          "name": "Preserve actual learned model bytes separately",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 8,
+          "started_at": "2026-10-27T10:06:10Z",
+          "completed_at": "2026-10-27T10:06:10Z"
+        },
+        {
+          "name": "Post Checkout exact diagnostic source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16,
+          "started_at": "2026-10-27T10:06:10Z",
+          "completed_at": "2026-10-27T10:06:10Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 17,
+          "started_at": "2026-10-27T10:06:10Z",
+          "completed_at": "2026-10-27T10:06:10Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/122127272384",
+      "labels": [
+        "ubuntu-24.04"
+      ],
+      "runner_id": 1000264558,
+      "runner_name": "GitHub Actions 1000264558",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    }
+  ]
+}

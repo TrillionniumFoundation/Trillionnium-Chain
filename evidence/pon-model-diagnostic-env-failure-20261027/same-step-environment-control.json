@@ -1,0 +1,34 @@
+{
+  "actual_same_shell_red_then_green": {
+    "after": {
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": ""
+    },
+    "before": {
+      "exit_code": 1,
+      "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"<frozen os>\", line 714, in __getitem__\nKeyError: 'MODEL_DIAGNOSTIC_OUT'\n",
+      "stdout": ""
+    },
+    "next_step": {
+      "exit_code": 0,
+      "same_output_path": true,
+      "stderr": "",
+      "stdout": ""
+    }
+  },
+  "job_minutes": 15,
+  "model_execution_performed": false,
+  "model_step_minutes": 10,
+  "ordinary_installation_qualified": false,
+  "parent": "abe552b6d2a408adbf82e27c817b4f914a7322a2",
+  "result": "PASS",
+  "schema": "pon-ci-preparation-repair-observation-v1",
+  "unchanged_pins_and_production_validator": {
+    "config/pon/model-family-smollm2-135m-v1.json": "0837bbfb31f3f2b9a8731545c9f742aee1ebd32daed392a936a3ec9719537e52",
+    "scripts/ci/model-runtime-cpu-requirements.txt": "178b2fe89a7bf58f2d127b195d82e4fa9b5c19d93cb3526d8789edf3df901017",
+    "scripts/ci/prepare_model_cloud_inputs.py": "337122f5ad441cfa4919b13f4bbc415f07e70abe0102a7febc2845139866c3b7",
+    "scripts/llm_runtime_pilot.py": "65ccc6454befd96fa5ce1f5bdde2c56cb6cbb741cf495b8d24a758039f99f755",
+    "scripts/llm_runtime_release.py": "e13a3fa6e4d70d08b88595defbad0e65ac3b4a208226000f3fed597869c5b39c"
+  }
+}

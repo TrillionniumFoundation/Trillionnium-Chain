@@ -1,0 +1,46 @@
+{
+  "schema": "pon-w1-fixture-packaging-source-v2",
+  "clean_whole_checkout_attested": false,
+  "files": [
+    {
+      "path": "scripts/ci/prepare_w1_audit_one_fixture.py",
+      "bytes": 13391,
+      "sha256": "b66b5b68513a5922158c0c66aa9f27b7e3c5a535b90e82376376f4e9654a9a09"
+    },
+    {
+      "path": "scripts/ci/test_prepare_w1_audit_one_fixture.py",
+      "bytes": 15063,
+      "sha256": "f17136bb859184198f86de078b77ddb2f2cac1ce8a5cd1ebb562b992d49635cc"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/measure_step.py",
+      "bytes": 3886,
+      "sha256": "fc50e34439887cd734390184cc73a78e196baa12939ea6a0cb1b642df05e00cd"
+    },
+    {
+      "path": "evidence/pon-pure-security-20261030-rebuild/complete-w1/fixture-objects/286ec10c307a80343892bbd4b63fa612ea84a5b96dd986ea1142efe0952782c5.gz.part",
+      "bytes": 6906979,
+      "sha256": "286ec10c307a80343892bbd4b63fa612ea84a5b96dd986ea1142efe0952782c5"
+    },
+    {
+      "path": "evidence/pon-pure-security-20261030-rebuild/complete-w1/fixture-objects/3110497b22927e6cd522b2af988ced45e2e83b7a5fdc539d8f9d79c9c2812a5c.gz",
+      "bytes": 111927,
+      "sha256": "3110497b22927e6cd522b2af988ced45e2e83b7a5fdc539d8f9d79c9c2812a5c"
+    },
+    {
+      "path": "evidence/pon-pure-security-20261030-rebuild/complete-w1/fixture-objects/b2efce56e8cbc2b2987511a2f2ea9e5e8fb41c3544b7cc51160ef6a3e02861c3.gz",
+      "bytes": 14057,
+      "sha256": "b2efce56e8cbc2b2987511a2f2ea9e5e8fb41c3544b7cc51160ef6a3e02861c3"
+    },
+    {
+      "path": "evidence/pon-pure-security-20261030-rebuild/complete-w1/fixture-objects/dfa0e6f7a5117456451fbf4e834d41b7608b868f3f0173addfc9c8b9e763665c.gz.part",
+      "bytes": 7000000,
+      "sha256": "dfa0e6f7a5117456451fbf4e834d41b7608b868f3f0173addfc9c8b9e763665c"
+    },
+    {
+      "path": "evidence/pon-pure-security-20261030-rebuild/complete-w1/fixture-objects/manifest.json",
+      "bytes": 2617,
+      "sha256": "4ade4ba17028906e74cd4ad9289a5aa2d8e9e16e9c1aee65a5ee968f22951f20"
+    }
+  ]
+}

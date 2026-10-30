@@ -1,0 +1,2 @@
+# Process output is retained byte-for-byte, including trailing blank lines.
+**/*.log -text -whitespace

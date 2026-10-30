@@ -21,6 +21,7 @@
 mod codec;
 mod engine;
 mod error;
+pub mod native_budget;
 mod store;
 mod types;
 

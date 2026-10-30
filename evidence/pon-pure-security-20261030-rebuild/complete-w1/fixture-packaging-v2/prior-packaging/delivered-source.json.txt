@@ -1,0 +1,72 @@
+{
+  "schema": "pon-proof-delivered-source-v1",
+  "publication_commit": "enclosing Git commit",
+  "native_execution_binding": "native/source-before.json and native/source-after.json",
+  "files": [
+    {
+      "path": ".github/workflows/pon-w1-audit-one-research.yml",
+      "bytes": 6811,
+      "sha256": "5adf6bf751a3e2a3bc4f7bd5c0bd64afc1452947d9811c1559593652f9090e15"
+    },
+    {
+      "path": "scripts/ci/prepare_w1_audit_one_fixture.py",
+      "bytes": 10753,
+      "sha256": "ed246e2c3891b31c1f57565a352b747b4d70483ce7f70cbf8d294360daf3ebf5"
+    },
+    {
+      "path": "scripts/ci/test_prepare_w1_audit_one_fixture.py",
+      "bytes": 9914,
+      "sha256": "3f858e665ab6894f682c59d767af5629f55e2280b8e2d93d4554b717e2c6cd76"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/README.md",
+      "bytes": 11322,
+      "sha256": "62e07a50e1e678217f56b258cbaa51780ef656a2c2fb29152f9c0ec722e49d11"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/main.rs",
+      "bytes": 17128,
+      "sha256": "152a2ddebcd88aabd73b852c1768c9d9f51066810d808874de9f08ea59cf0fbc"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/claimed_context.rs",
+      "bytes": 3932,
+      "sha256": "782161a11f96afae927f40ee9225f3e8a39a876371cb7708fc26445a7b645be8"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/audit_one.rs",
+      "bytes": 11828,
+      "sha256": "0dd42e44a8c9295f276d263603c9985bfcb6c6b7391a8bc3ce9c052f5f0a2802"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/check_audit_one.py",
+      "bytes": 13037,
+      "sha256": "1e65011b0d14173da05280ec769ae1850545a51bda4277fd71492fc4af8351ab"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_check_audit_one.py",
+      "bytes": 8158,
+      "sha256": "204ff6f0c69ebcc67b123ac002bef48b4336375b60a939e320034a7d458af5aa"
+    },
+    {
+      "path": "evidence/pon-pure-security-20261030-rebuild/complete-w1/fixture-objects/0503d0e802eebd8ca0c5cfd5f54d66085c7dfe3f1fb4f523d568809c0a3b0056.gz",
+      "bytes": 13906979,
+      "sha256": "0503d0e802eebd8ca0c5cfd5f54d66085c7dfe3f1fb4f523d568809c0a3b0056"
+    },
+    {
+      "path": "evidence/pon-pure-security-20261030-rebuild/complete-w1/fixture-objects/3110497b22927e6cd522b2af988ced45e2e83b7a5fdc539d8f9d79c9c2812a5c.gz",
+      "bytes": 111927,
+      "sha256": "3110497b22927e6cd522b2af988ced45e2e83b7a5fdc539d8f9d79c9c2812a5c"
+    },
+    {
+      "path": "evidence/pon-pure-security-20261030-rebuild/complete-w1/fixture-objects/b2efce56e8cbc2b2987511a2f2ea9e5e8fb41c3544b7cc51160ef6a3e02861c3.gz",
+      "bytes": 14057,
+      "sha256": "b2efce56e8cbc2b2987511a2f2ea9e5e8fb41c3544b7cc51160ef6a3e02861c3"
+    },
+    {
+      "path": "evidence/pon-pure-security-20261030-rebuild/complete-w1/fixture-objects/manifest.json",
+      "bytes": 1705,
+      "sha256": "d2e5f3ca3a821e71644c3fb86f2e14a500332c54af15a3950b6a8ff49e270811"
+    }
+  ]
+}

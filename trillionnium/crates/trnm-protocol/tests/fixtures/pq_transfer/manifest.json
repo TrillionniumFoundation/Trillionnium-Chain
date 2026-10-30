@@ -1,0 +1,28 @@
+{
+  "algorithm": "ML-DSA-65",
+  "crypto_backend": "cryptography 50.0.2",
+  "files": {
+    "duplicate-hint.bin": "46f01e89cdf39dcb3e504c624f2c3ae0ea76c89fb369fbcb0e85ae62b6b9cf88",
+    "generation-two.bin": "d6f2c69275591ef759cb8d2b77880bb855dfe53977b69c56720cf76c2e60f079",
+    "low-fee.bin": "85119bd42572728d2dfaacbfeb67d1183eabba270b24f3dbb06120fc32871710",
+    "nonce-two.bin": "1df61fd446189ad629b5e7ca17b74e990372674a6efa7f8d3d47962f14f9ec3e",
+    "public.der": "0fb9557e08a03348d149977dcd9182af2981168a122107ea6a7e136c75774d61",
+    "same-statement-second-signature.bin": "8bda8203ce6c1d2e18b1efd18c2b777ff080d49e6ac30640cbc65b5710f0e973",
+    "transfer.bin": "461a34c3aec6b6c48cf18b2379f790f3599950986ffe7a8cf17353a0adc7ed1d",
+    "wrong-network.bin": "702e7850ead2cd849f46ed37e92df6209bf31a0cd504b4f16eed9804c70875bf",
+    "wrong-public.der": "ffdcae40714f150ec1c1641a73d0e19450da333756c78e0c719eed3a05ce2fe4",
+    "wrong-purpose.bin": "f3a2ba069369d3bb2de80502c6c35736bdf7a0a0417d8702f03a051f1c05d712"
+  },
+  "network": "a1f3e08f24683f76c619e4ef395271425cb6485452c53bf1aa2bac9e7bf2da62",
+  "openssl_backend": "OpenSSL 4.0.3 29 Sep 2026",
+  "private_keys_written": false,
+  "production_activation": false,
+  "public_key_bytes": 1974,
+  "schema": "native-pq-public-fixtures-v1",
+  "sender": "f26cfc4364d69f72da79bf4e34b03d43066c6795ec62dde292b2c8b521adc02c",
+  "signature_bytes": 3309,
+  "source_fixture_encoding": "hex_public_bytes",
+  "source_native_head": "4b6b8a91b6dfe41fbd7f40f40b359d535c2c4251",
+  "source_pq_head": "6f4b9cae0dafcb0e6bc171e2aa9b8f630e74eca6",
+  "storage_encoding": "raw_binary"
+}

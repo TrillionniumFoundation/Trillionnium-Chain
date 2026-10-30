@@ -1,0 +1,11 @@
+
+running 6 tests
+test consensus::tests::aligned_division_matches_original_for_wide_arbitrary_operands ... ok
+test consensus::tests::aligned_division_preserves_all_512_shift_and_limb_boundaries ... ok
+test consensus::tests::aligned_required_work_and_retarget_match_original_arithmetic ... ok
+test consensus::tests::exact_extreme_work_and_overflow ... ok
+test consensus::tests::full_width_division_matches_small_and_high_operands ... ok
+test consensus::tests::time_deferred_is_not_consensus_invalidity ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 864 filtered out; finished in 0.20s
+

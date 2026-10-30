@@ -1,0 +1,180 @@
+{
+  "recorded_utc": "2026-10-26T17:06:07.290277+00:00",
+  "schema": "PN1-I02-shared-authenticated-snapshot-source-candidate-v5",
+  "revision": "005; retained codec/key/context/native+working binding; no runtime qualification",
+  "base_head": "2cb6368832f2deec28470141aeb8a815ebe99413",
+  "base_tree": "780a3d23bc92e6399386e06b90891f4dec7cd3a2",
+  "branch": "docs/chain-audit-remediation-20261022",
+  "origin": "https://github.com/TrillionniumFoundation/Trillionnium-Chain.git",
+  "patch_base_note": "candidate.patch is the complete incremental005 source change against clean current2cb, where exact004 was already integrated by59abdfe. It is not a replacement94-based004 patch. Root must reread live HEAD and preserve concurrent changes.",
+  "status": "M trillionnium/crates/trnm-pon-node/src/store/shared_snapshot.rs\n A trillionnium/crates/trnm-pon-node/src/store/shared_snapshot_binding.rs\n M trillionnium/crates/trnm-pon-node/src/store/shared_snapshot_tests.rs",
+  "previous_candidate_sha256": "4cfe8246c691dd15ec200d5a2e2822cd9f0d4c28ea615725b10c29799b9d039c",
+  "previous_receipt_sha256": "557bfa2c65d91669a449da2999e9e6c8ecb5108aef12252e4b7a7b18bcdf9688",
+  "all_prior001_002_003_004_frozen_source_artifact_receipt_bytes_preserved": true,
+  "root_ROG_modified": false,
+  "source_only_no_build_test_native_commit_push": true,
+  "artifacts": {
+    "candidate.patch": {
+      "bytes": 17977,
+      "sha256": "9881bfb6bd36f788aa6405552be16e0a9b1ee5e242b5c537ce41b84927b29bb1"
+    },
+    "production-only.patch": {
+      "bytes": 7834,
+      "sha256": "9afd1b802ffc8c22196552b64241ff777be4549bef513bead8f97b1df7b16421"
+    },
+    "new-controls-only.patch": {
+      "bytes": 10143,
+      "sha256": "261f9e0d3f2142988d3d234544d992660f5013590061b24c6d5397cfd9c19faf"
+    },
+    "revision004-to005-readable.diff": {
+      "bytes": 19792,
+      "sha256": "fa4ab84507972b6e44e9ccb7adb01aed99613c24c3880cce44a081935cc8e940"
+    },
+    "unchanged-original-tests-and-boundaries.json": {
+      "bytes": 97518,
+      "sha256": "9428a5514a0063b455db1ee990e3b156aeb1b4c5ea2cf14fef42076a4c6e7878"
+    },
+    "revision-start.json": {
+      "bytes": 6797,
+      "sha256": "bfe0b37b884f72a6800c515966c330ff17e681928ffa643c9db8e382c4bd00b3"
+    },
+    "cargo-metadata-source-graph-only.stdout": {
+      "bytes": 795781,
+      "sha256": "d152c90e051002327cd2b5b206547907159cb80067713adbbe7061c993a3dee8"
+    }
+  },
+  "files": {
+    "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs": {
+      "bytes": 31858,
+      "sha256": "ad9e41b68379ec9e5aade1bc2339d2710c9128e142738488dec35eee20b5979f",
+      "lines": 869
+    },
+    "trillionnium/crates/trnm-pon-node/src/store.rs": {
+      "bytes": 309281,
+      "sha256": "48e3301d9a60ed62aed976249bf7816c2df94a19ab0a72273ba275feb8448df2",
+      "lines": 7624
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/public_reader.rs": {
+      "bytes": 19088,
+      "sha256": "b8bf23dca2b77f9554c8a1b1fbe37d6e1a4580680ef3e52f077d045cd4d0f7b6",
+      "lines": 540
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs": {
+      "bytes": 36109,
+      "sha256": "8e88d29a17db73d13ec65f9be591509134338d2a903aa3330375101e6a893feb",
+      "lines": 889
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/shared_snapshot.rs": {
+      "bytes": 17737,
+      "sha256": "723b8bbcb1008e217396843961ad94bf1404ee87baffe8b1e808401047f31029",
+      "lines": 461
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/shared_snapshot_tests.rs": {
+      "bytes": 44330,
+      "sha256": "4b27079b57b12fb50d7bb0b5eb34c1ae27356179ae5d567b465881bfbc709514",
+      "lines": 1253
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/shared_snapshot_binding.rs": {
+      "bytes": 3429,
+      "sha256": "caaf72e07d926e04ea6193ec4ef1f0c866d62f46cf58aa696a9a0ff89dbaab6d",
+      "lines": 79
+    }
+  },
+  "finding": "Known-but-absent optional index key K is already an existing non-genesis main.blocks row. Moving active/historical shared SQL key A to K leaves canonical payload embeddedblock A. R4 membership/type checks accepted K, queryA becameNone and could return complete KV/COW State. Original failure evidence and R4 independent review remain preserved.",
+  "source_change": {
+    "new_private_module": "shared_snapshot_binding.rs,79lines; shared_snapshot.rs now461lines. A single decoder is used for retained scanning and actual selected record parsing; no second format, new Settings/profile or public API.",
+    "retained_stream": "After main/TEMP/attached-schema and original typed/key-domain/count metadata checks, stream at most64 public rows or65 private pending-save rows, with one rejecting sentinel. SELECT main block and original16MiB+1 bounded payload into one per-row Vec, decode and drop before next row; no Vec of all payloads.",
+    "codec": "Require complete canonical Snapshot bytes, existing schema, SQL key==embeddedblock, non-genesis, original context-derived snapshot digest, complete working map contains no account key.",
+    "actual_native_record_binding": "Load actual current native record for exact SQL key through unchanged native_authenticated::load, then require native_commitment==record.id, native.state schema/network/parameters/genesis equal original Settings, non_account_count equals actual working.len, non_account_root equals recomputed original pon_executor::root of complete working map.",
+    "no_trust_promotion": "A native record self-digest remains an untrusted local observation. This decoder exports no Verified/authority/cached-validity value. Account graph, native block/packet/delta/history and complete State authentication for all UNSELECTED records are not performed by this binding guard.",
+    "selected_full_state": "Actual selected load still materializes ALL account nodes and invokes original continuity_v1, verify_state_with_cache and verify_history_with_cache, then original no-user-callback actual graph/State/history and raw/native/schema/autocommit fence. These existing blocks are byte-preserved except one added retained binding call after the fence."
+  },
+  "success_exit_coverage": [
+    {
+      "path": "load_with_limit before lookup",
+      "guard": "After caller progress callback, binding::check(settings,limit) scans every present record before BLOB lookup."
+    },
+    {
+      "path": "load_with_limit optionalNone",
+      "guard": "Explicit second binding::check immediately before early returnNone, without caller callback crossing final check. A moved known-key row cannot count as legal missing index."
+    },
+    {
+      "path": "load_with_limit Some",
+      "guard": "After final caller callback, original actual graph/fullState/history revalidation and raw record fence remain; then final retained binding::check with no user callbacks before Some."
+    },
+    {
+      "path": "public read_active/state_at active/historical/cache/no-anchor",
+      "guard": "Existing outer final_read calls verify_returned_state->load plus final storage_context->check_layout->binding::check. Empty ReadSet does not bypass it. A nonempty ReadSet still verifies actual selected anchor and raw identity using original load; error paths never authorize State."
+    },
+    {
+      "path": "cold audit",
+      "guard": "check_layout first binds every present codec/working record; original audit still load/materialize/fullverify each retained record."
+    },
+    {
+      "path": "save",
+      "guard": "Before INSERT bind retained64. Existing postINSERT actual complete-State validation uses private65 only, then original ordered prune/SNAPSHOT_LIMIT64 and final binding64. No public/persistent cap increase."
+    }
+  ],
+  "private_API_and_mechanical_impact": {
+    "public_Node_API_and_original_caller": "unchanged",
+    "Settings_parameters_and_consensus_domains": "unchanged",
+    "stored_DDL_SCHEMA_Snapshot_fields_canonical_digest": "exact bytes preserved from004/current2cb; stronger read validation only",
+    "encoded_ReadSet_signatures": "unchanged; raw byte helper grants no successful State. Every public successful shared path reaches final Settings-aware binding guard.",
+    "existing_shared_tests": "No existing test line removed or modified; one call inserted into existing real factory native test, and two default normal codec tests plus helpers appended. No new ignore/default-skip annotation, testUnsupported guard or fixture/profile replacement."
+  },
+  "source_controls_NOT_RUN": [
+    "Codec fixture actually admits, stores then legally deletes one optional fork index and confirms known full State readback; unchanged payload moved from source key to this known pruned key must be owner-fatal on direct or final-callback load.",
+    "An optionalNone target must reject another present record with resealed foreign schema/native binding/working count/root/context or noncanonical raw bytes. Actual complete working map root/count recomputation is exercised; no digest-only claim.",
+    "Existing actual NativeIoOwner/original native Node factory control is extended: actual fork admitted, its optional index deleted and original public complete state_at readback succeeds. Moving active/historical payload to this known absent key then fails public read_active/state_at and missing-target reads; last-callback relocation also fails; rollback restores exact prior States.",
+    "Native supplements remain the same existing3 explicit opt-in tests; ignore count3->3 and actualfactory test count3->3. No new defaultskip; existing Unsupported selected remains fatal. No old assertions, resources or original harness steps changed."
+  ],
+  "preservation": {
+    "original_Rust_test_files": 467,
+    "original_boundary_pins_exact": 477,
+    "original_sole_plan": "Old94 full prefix retained in root2cb append, new005 does not modify it; current sole plan byte-equal base2cb. Total478 original boundary pins accounted for.",
+    "store_original_inline_test_tail_bytes": 79958,
+    "all_existing_R4_shared_control_removed_lines": 0,
+    "original_complete_selected_verifier_span": "byte equal after removing exactly newly added binding::check line",
+    "all_old_cases_and_historical_failures": "001-004 source+patches+receipts fully rehashed, immutable; old rawSQLite/CI failures unchanged"
+  },
+  "unchanged_limits": {
+    "page_and_sync": "Original4096/FULL/WAL",
+    "retention": "64 public/retained;65 only existing same production save transaction transient validation;66 rejected",
+    "ledger": "Original1024+256 events655360bytes, no drop/hash-only evidence/refund",
+    "storage": "Original16MiB/file48MiB/root336MiBdomain and prepared/output limits",
+    "process": "Originalseed/actor/caller/3FD/samelease/2s call/CPU/AS/whole/cumulative deadlines unchanged",
+    "memory_and_CPU_unknown": "Streaming limits simultaneously owned payloads, but parsed BTreeMap/serde/canonical/root copies, SQLite caches and actual peak memory/time remain unmeasured. Work is O(sum retained payload+native record bytes) per guard, repeated per original read path, all charged to original limits. No new aggregate payload cap or throughput/time/cap-sufficiency prediction."
+  },
+  "source_checks": {
+    "preflight_before_edit": 0,
+    "preflight_final_after_graph": 0,
+    "Rust2021_formatter": 0,
+    "git_diff_check": 0,
+    "Cargo_metadata_locked_offline": "exit0,26workspace/155resolved nodes; source graph only, not compilation or nativeC qualification",
+    "typecheck_strictClippy": "NOT_RUN",
+    "all_normal_native_tests": "NOT_RUN",
+    "launch_build_native_oracle": "NOT_RUN"
+  },
+  "original_PN1_build_budget": {
+    "known_charge_seconds": "1035.743",
+    "remaining_seconds": "164.257",
+    "unchanged_prepare_path": "NOT_RUN; fresh target + fixed1200 child/validator cannot provide safe short deadline or reuse existing cache as original qualification",
+    "diagnostic90s": "NOT_RUN per root; not burning weaker diagnostic or borrowing expired W1 window"
+  },
+  "still_OPEN": [
+    "Independent source review of exact005 required; no compiler/Clippy/test/native result.",
+    "All unselected complete account/COW/native block/packet/delta/history and monetary/application State authentication remainOPEN. Raw record selfdigest plus working binding does not certify them. Do not declare full-table safety or complete fixed security contract.",
+    "Same-connection arbitrary COMMIT;BEGIN transaction replacement cannot be proven absent by autocommit/total_changes/schema_version; no new authorizer/capability boundary implemented.",
+    "PostCOMMIT durable fact versus sticky checkpoint/storage-health API remainsOPEN; no rollback/retry/refund from error.",
+    "New physical format independent decoder and explicit migration execution remainOPEN; no conversion of old failed stores.",
+    "Real samelease/original3FD/native owner/readers/fullpaid4097 and original2s/whole/resource success remainOPEN. All other PN0-PN6/Windows/Hepta model/custody/WAN gates remainOPEN."
+  ],
+  "mechanism_qualified": false,
+  "whole_writer_qualified": false,
+  "original_three_FD_caller_qualified": false,
+  "independent_reader_qualified": false,
+  "full_W1_4097_qualified": false,
+  "full_guard_enabled": false,
+  "task_complete": false,
+  "merge_ready": false
+}

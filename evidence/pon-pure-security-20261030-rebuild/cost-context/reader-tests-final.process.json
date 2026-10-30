@@ -1,0 +1,23 @@
+{
+  "schema": "pon-v5-reader-test-process-v1",
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-B",
+    "/workspace/scratch/f4a65c4581e7/pon-security-work/scripts/ci/test_legal_ticket_cost_v5.py"
+  ],
+  "returncode": 0,
+  "started_utc": "2026-10-30T01:06:53.388824+00:00",
+  "finished_utc": "2026-10-30T01:07:08.664618+00:00",
+  "wall_seconds": 15.275812649000045,
+  "source_before": {
+    "scripts/ci/check_legal_ticket_cost_v5.py": "a8d6c0c48e044a1835b4eedabf5362872ef163ac85e09aa7b4f7d0a3a66d5b99",
+    "scripts/ci/test_legal_ticket_cost_v5.py": "a3c44ef72b8f6d060ad45c88cac2bff5d90bed2aaeac44d975a17aea24310a1a",
+    "scripts/ci/test_legal_ticket_cost_diagnostics_v1.py": "0b6ecc0e97a496c46dae1776790d30de7386ef4f2f0c2de7d3648a0cd5ac8bc9"
+  },
+  "source_after": {
+    "scripts/ci/check_legal_ticket_cost_v5.py": "a8d6c0c48e044a1835b4eedabf5362872ef163ac85e09aa7b4f7d0a3a66d5b99",
+    "scripts/ci/test_legal_ticket_cost_v5.py": "a3c44ef72b8f6d060ad45c88cac2bff5d90bed2aaeac44d975a17aea24310a1a",
+    "scripts/ci/test_legal_ticket_cost_diagnostics_v1.py": "0b6ecc0e97a496c46dae1776790d30de7386ef4f2f0c2de7d3648a0cd5ac8bc9"
+  },
+  "native_work_or_admission_executed": false
+}

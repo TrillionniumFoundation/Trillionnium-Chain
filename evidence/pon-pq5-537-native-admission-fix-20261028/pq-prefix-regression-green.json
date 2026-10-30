@@ -1,0 +1,36 @@
+{
+  "schema": "pq5-prefix-regression-observation-v1",
+  "phase": "GREEN",
+  "source_scope": "one original-parent whole-prefix validation fix, unchanged real-signature regression and fixture",
+  "production_base_commit": "c974a4ccfb2ed76b77c654e11899519a9b95d38f",
+  "test_and_fixture_equal_red_bytes": true,
+  "cargo_exit": 0,
+  "compiled": true,
+  "native_passed": 1,
+  "native_failed": 0,
+  "ignored": 0,
+  "filtered": 16,
+  "native_wall_seconds": 0.82,
+  "all_test_assertions_executed": true,
+  "source_files": {
+    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs": {
+      "sha256": "c2a45a80ef667fc3b63bd416e8679f0d8833fb92ccbc626dfbf54bf5bbe87c5b",
+      "bytes": 135992
+    },
+    "trillionnium/crates/trnm-mvcc-fee/tests/pq5_task_renewal.rs": {
+      "sha256": "85e7257ce74dc33ff99e452d022f1bc8422ec4c09f535405d03a775973347db6",
+      "bytes": 47220
+    },
+    "trillionnium/crates/trnm-protocol/tests/support/native_pq_task_fixture_v5.rs": {
+      "sha256": "10965472e239a3026a4225dd060fcc27e238d24fbffe5360084d05e559b6cfaf",
+      "bytes": 7408
+    }
+  },
+  "production_diff": "diff --git a/trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs b/trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs\nindex ba7d13dab..7bf1fbc4d 100644\n--- a/trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs\n+++ b/trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs\n@@ -3072,8 +3072,10 @@ impl TransactionPrefix {\n             self.context.timestamp,\n             &self.config,\n         )?;\n+        // Recheck the complete prefix against its original block parent.\n+        // Suffix application below still checks the current staged authority.\n         pq_accounts_v2::validate_block(\n-            &self.state,\n+            self.pq2_signature_parent.as_deref().unwrap_or(&self.state),\n             transactions,\n             self.context.miner,\n             self.context.timestamp,\n",
+  "log": {
+    "filename": "pq-prefix-regression-green.log",
+    "sha256": "ca429f76b7996b90e63e52af8dfc9672bcc652aa74b154c4aca2685f5df32b3d",
+    "bytes": 652
+  },
+  "full_native_pq_gate_qualified_by_this_single_test": false
+}

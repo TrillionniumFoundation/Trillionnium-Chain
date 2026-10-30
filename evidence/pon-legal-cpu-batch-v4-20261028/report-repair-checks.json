@@ -1,0 +1,35 @@
+[
+  {
+    "name": "report-repair-reader",
+    "argv": [
+      "python3",
+      "scripts/ci/test_legal_ticket_batch_v4.py"
+    ],
+    "returncode": 0,
+    "seconds": 2.6707547510013683
+  },
+  {
+    "name": "report-repair-inventory",
+    "argv": [
+      "python3",
+      "scripts/refresh_distributed_source_inventory.py",
+      "--check"
+    ],
+    "returncode": 0,
+    "seconds": 0.13168629199208226
+  },
+  {
+    "name": "report-repair-fmt",
+    "argv": [
+      "cargo",
+      "fmt",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "returncode": 0,
+    "seconds": 42.530390296000405
+  }
+]

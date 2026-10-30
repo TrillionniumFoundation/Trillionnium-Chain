@@ -1,0 +1,328 @@
+{
+  "base_local_commit": "a1815707d29d424a8ec89d3701a7cf914572a416",
+  "base_remote_commit": "1d4778507e1e99ab54cca72b7c26b6ec2ff33344",
+  "base_tree": "a7ac9da2199e8a9024c0daca800f0bd5ffef5c05",
+  "cargo_locked_metadata": {
+    "nodes": 173,
+    "packages": 173,
+    "workspace_members": 26
+  },
+  "checks": {
+    "ci-contract-frozen": {
+      "actual_exit_code": 0,
+      "actual_test_count": null,
+      "elapsed_ns": 120964248,
+      "final_inventory_differences": {},
+      "observation": "checks/ci-contract-frozen.json",
+      "scope_join": "exact final inventoried source",
+      "sha256": "ad3b3f4333ac69e5f4e76fdba0b45829d2ec01db5b62bf618d81a3ef36a469bf",
+      "source_unchanged_during_observation": true,
+      "timeout_seconds": 120
+    },
+    "evidence-sources-final": {
+      "actual_exit_code": 0,
+      "actual_test_count": 38,
+      "elapsed_ns": 2488563720,
+      "final_inventory_differences": {
+        ".github/workflows/pon-recent-batch-acceptance.yml": {
+          "at_observation": "74ddeffa58add0d54a5d7ae8f800d2cad45eedf0f1f42acd5c9f3d69172ee076",
+          "final": "e8fa631bf1d09d8ed8a96595ea27ee05743c33c573692a8e8d6ed4d410f9169e"
+        },
+        "trillionnium/crates/trnm-mvcc-fee/tests/pq5_task_renewal.rs": {
+          "at_observation": "68f938e4826adbe580119c81e032917f371a19db4934206b1d051ef6a8286cf0",
+          "final": "c9729922d6c5732bb982dd2b51cb97d9f615b18c5e4ce97420cb40097d8d8ed2"
+        }
+      },
+      "observation": "checks/evidence-sources-final.json",
+      "scope_join": "only later integration-test strengthening and reviewed workflow literals; relevant checker/graph/inventory inputs are unchanged",
+      "sha256": "d6199775ad506f2be4fc50072ee5c5781f01adc39a58bd9e7f6c464be60cabcf",
+      "source_unchanged_during_observation": true,
+      "timeout_seconds": 120
+    },
+    "fmt-frozen": {
+      "actual_exit_code": 0,
+      "actual_test_count": null,
+      "elapsed_ns": 28520651077,
+      "final_inventory_differences": {},
+      "observation": "checks/fmt-frozen.json",
+      "scope_join": "exact final inventoried source",
+      "sha256": "b5ba7c9352a88d68c02e4dde2213a540565a7ecdadef8ea88388740515eae593",
+      "source_unchanged_during_observation": true,
+      "timeout_seconds": 120
+    },
+    "inventory-final": {
+      "actual_exit_code": 0,
+      "actual_test_count": null,
+      "elapsed_ns": 122760749,
+      "final_inventory_differences": {
+        ".github/workflows/pon-recent-batch-acceptance.yml": {
+          "at_observation": "74ddeffa58add0d54a5d7ae8f800d2cad45eedf0f1f42acd5c9f3d69172ee076",
+          "final": "e8fa631bf1d09d8ed8a96595ea27ee05743c33c573692a8e8d6ed4d410f9169e"
+        },
+        "trillionnium/crates/trnm-mvcc-fee/tests/pq5_task_renewal.rs": {
+          "at_observation": "68f938e4826adbe580119c81e032917f371a19db4934206b1d051ef6a8286cf0",
+          "final": "c9729922d6c5732bb982dd2b51cb97d9f615b18c5e4ce97420cb40097d8d8ed2"
+        }
+      },
+      "observation": "checks/inventory-final.json",
+      "scope_join": "only later integration-test strengthening and reviewed workflow literals; relevant checker/graph/inventory inputs are unchanged",
+      "sha256": "02d0abcf2a5301c0f7290edd47edc6bca2b2f6febab55e296c8221561cbc928d",
+      "source_unchanged_during_observation": true,
+      "timeout_seconds": 60
+    },
+    "legacy-reader-frozen": {
+      "actual_exit_code": 0,
+      "actual_test_count": 76,
+      "elapsed_ns": 147457588090,
+      "final_inventory_differences": {},
+      "observation": "checks/legacy-reader-frozen.json",
+      "scope_join": "exact final inventoried source",
+      "sha256": "0fac6e04b8e45c12750e2d17ec4e74c9459bcba032ae0b0f3e1ac79d631e5282",
+      "source_unchanged_during_observation": true,
+      "timeout_seconds": 600
+    },
+    "locked-graph-final": {
+      "actual_exit_code": 0,
+      "actual_test_count": null,
+      "elapsed_ns": 278442940,
+      "final_inventory_differences": {
+        ".github/workflows/pon-recent-batch-acceptance.yml": {
+          "at_observation": "74ddeffa58add0d54a5d7ae8f800d2cad45eedf0f1f42acd5c9f3d69172ee076",
+          "final": "e8fa631bf1d09d8ed8a96595ea27ee05743c33c573692a8e8d6ed4d410f9169e"
+        },
+        "trillionnium/crates/trnm-mvcc-fee/tests/pq5_task_renewal.rs": {
+          "at_observation": "68f938e4826adbe580119c81e032917f371a19db4934206b1d051ef6a8286cf0",
+          "final": "c9729922d6c5732bb982dd2b51cb97d9f615b18c5e4ce97420cb40097d8d8ed2"
+        }
+      },
+      "observation": "checks/locked-graph-final.json",
+      "scope_join": "only later integration-test strengthening and reviewed workflow literals; relevant checker/graph/inventory inputs are unchanged",
+      "sha256": "35ba286ff0adf97fd73ad9c02e395850af806d696024752d560ef047450215ee",
+      "source_unchanged_during_observation": true,
+      "timeout_seconds": 120
+    },
+    "new-gate-readers-frozen": {
+      "actual_exit_code": 0,
+      "actual_test_count": 12,
+      "elapsed_ns": 121148105,
+      "final_inventory_differences": {},
+      "observation": "checks/new-gate-readers-frozen.json",
+      "scope_join": "exact final inventoried source",
+      "sha256": "3cae099f2858908dfae9568a1d64eddcc219d5b676d10627e9d3e302c00b3e0e",
+      "source_unchanged_during_observation": true,
+      "timeout_seconds": 60
+    },
+    "preflight-final": {
+      "actual_exit_code": 0,
+      "actual_test_count": null,
+      "elapsed_ns": 210909160,
+      "final_inventory_differences": {
+        ".github/workflows/pon-recent-batch-acceptance.yml": {
+          "at_observation": "74ddeffa58add0d54a5d7ae8f800d2cad45eedf0f1f42acd5c9f3d69172ee076",
+          "final": "e8fa631bf1d09d8ed8a96595ea27ee05743c33c573692a8e8d6ed4d410f9169e"
+        },
+        "trillionnium/crates/trnm-mvcc-fee/tests/pq5_task_renewal.rs": {
+          "at_observation": "68f938e4826adbe580119c81e032917f371a19db4934206b1d051ef6a8286cf0",
+          "final": "c9729922d6c5732bb982dd2b51cb97d9f615b18c5e4ce97420cb40097d8d8ed2"
+        }
+      },
+      "observation": "checks/preflight-final.json",
+      "scope_join": "only later integration-test strengthening and reviewed workflow literals; relevant checker/graph/inventory inputs are unchanged",
+      "sha256": "9ca5d53f61f943c3dc85e50cdb921df3fe82ac3685fc2a28d72156e3de9083b8",
+      "source_unchanged_during_observation": true,
+      "timeout_seconds": 120
+    },
+    "retained-gate-readers-frozen": {
+      "actual_exit_code": 0,
+      "actual_test_count": 10,
+      "elapsed_ns": 121562784,
+      "final_inventory_differences": {},
+      "observation": "checks/retained-gate-readers-frozen.json",
+      "scope_join": "exact final inventoried source",
+      "sha256": "2305ab45c8f09945b4c8a00833a4dab9fbd995ff3b79b0fba670b79b5181653f",
+      "source_unchanged_during_observation": true,
+      "timeout_seconds": 60
+    },
+    "source-negatives-final": {
+      "actual_exit_code": 0,
+      "actual_test_count": 34,
+      "elapsed_ns": 5201296065,
+      "final_inventory_differences": {
+        ".github/workflows/pon-recent-batch-acceptance.yml": {
+          "at_observation": "74ddeffa58add0d54a5d7ae8f800d2cad45eedf0f1f42acd5c9f3d69172ee076",
+          "final": "e8fa631bf1d09d8ed8a96595ea27ee05743c33c573692a8e8d6ed4d410f9169e"
+        },
+        "trillionnium/crates/trnm-mvcc-fee/tests/pq5_task_renewal.rs": {
+          "at_observation": "68f938e4826adbe580119c81e032917f371a19db4934206b1d051ef6a8286cf0",
+          "final": "c9729922d6c5732bb982dd2b51cb97d9f615b18c5e4ce97420cb40097d8d8ed2"
+        }
+      },
+      "observation": "checks/source-negatives-final.json",
+      "scope_join": "only later integration-test strengthening and reviewed workflow literals; relevant checker/graph/inventory inputs are unchanged",
+      "sha256": "168cc268a70fc83582736ba28ae5662e0d55c6e945e722d7315c5385068247b7",
+      "source_unchanged_during_observation": true,
+      "timeout_seconds": 120
+    }
+  },
+  "failed_observations_retained": [
+    "metadata/trnm_mvcc_fee-lib-tests01.json",
+    "metadata/trnm_protocol-lib-clippy01.json",
+    "metadata/trnm_pon_node-native_pq_v5-clippytests02.json",
+    "checks/ci-contract-final.json",
+    "checks/full-source-fence-sparse.json"
+  ],
+  "full_source_guard": "REFUSE: index hides tracked worktree entries",
+  "full_source_guard_was_not_relaxed": true,
+  "metadata_clippy_targets": [
+    {
+      "exit_code": 0,
+      "inputs_sha256": "a6d8b7f8d555be6b61700f77a94c1ee62fe4506eabb8d698055402b9b9eb77cb",
+      "label": "trnm_protocol-lib-clippy02",
+      "noninput_integration_files_changed": {
+        "trillionnium/crates/trnm-mvcc-fee/tests/pq5_task_renewal.rs": {
+          "at_observation": "50097ed61934def06be54cad7a38fe83d6e1dc0d62ca87d29a2fad6bd6a56de0",
+          "final": "c9729922d6c5732bb982dd2b51cb97d9f615b18c5e4ce97420cb40097d8d8ed2"
+        },
+        "trillionnium/crates/trnm-pon-node/tests/native_pq_v5.rs": {
+          "at_observation": "6f119e20474c0295c04b300e939209d8260bfbfd150c453e9e2826c90adb27e3",
+          "final": "10b6e96a2c7fb5120494c63acff3ac79c46c9051e620a0ad633dd38da6fa8b10"
+        }
+      },
+      "result": "metadata/trnm_protocol-lib-clippy02.json",
+      "result_sha256": "b64b52e37fc69fb03b0458db491e3c6fa50da7461dc560ea292196d79af9d70a",
+      "scope": "metadata-only strict Clippy; runtime/target input bytes exact; no native execution or full Cargo/all-features qualification",
+      "wall_seconds": 1.521552493009949
+    },
+    {
+      "exit_code": 0,
+      "inputs_sha256": "0eaf884f9c495a309b64e8708bf2e337e5fd37d6716e9c9894e5b3f7704fb4c7",
+      "label": "trnm_crypto_primitives-lib-clippy02",
+      "noninput_integration_files_changed": {
+        "trillionnium/crates/trnm-mvcc-fee/tests/pq5_task_renewal.rs": {
+          "at_observation": "50097ed61934def06be54cad7a38fe83d6e1dc0d62ca87d29a2fad6bd6a56de0",
+          "final": "c9729922d6c5732bb982dd2b51cb97d9f615b18c5e4ce97420cb40097d8d8ed2"
+        },
+        "trillionnium/crates/trnm-pon-node/tests/native_pq_v5.rs": {
+          "at_observation": "6f119e20474c0295c04b300e939209d8260bfbfd150c453e9e2826c90adb27e3",
+          "final": "10b6e96a2c7fb5120494c63acff3ac79c46c9051e620a0ad633dd38da6fa8b10"
+        }
+      },
+      "result": "metadata/trnm_crypto_primitives-lib-clippy02.json",
+      "result_sha256": "3a50e4c46b23da747d9c9aea9b7a735aabf0f32f24bd87e63373d804a00c3c18",
+      "scope": "metadata-only strict Clippy; runtime/target input bytes exact; no native execution or full Cargo/all-features qualification",
+      "wall_seconds": 1.901538388003246
+    },
+    {
+      "exit_code": 0,
+      "inputs_sha256": "f4f3a949b3035f9d2ce945a023ae3b168ef072bf3a18b9155bb664c74be7b4cd",
+      "label": "trnm_mvcc_fee-lib-clippy02",
+      "noninput_integration_files_changed": {
+        "trillionnium/crates/trnm-mvcc-fee/tests/pq5_task_renewal.rs": {
+          "at_observation": "50097ed61934def06be54cad7a38fe83d6e1dc0d62ca87d29a2fad6bd6a56de0",
+          "final": "c9729922d6c5732bb982dd2b51cb97d9f615b18c5e4ce97420cb40097d8d8ed2"
+        },
+        "trillionnium/crates/trnm-pon-node/tests/native_pq_v5.rs": {
+          "at_observation": "6f119e20474c0295c04b300e939209d8260bfbfd150c453e9e2826c90adb27e3",
+          "final": "10b6e96a2c7fb5120494c63acff3ac79c46c9051e620a0ad633dd38da6fa8b10"
+        }
+      },
+      "result": "metadata/trnm_mvcc_fee-lib-clippy02.json",
+      "result_sha256": "645fff470b8864d1c4036d527b88a0d3bf13f270386e6f53e71ceed9462e9f28",
+      "scope": "metadata-only strict Clippy; runtime/target input bytes exact; no native execution or full Cargo/all-features qualification",
+      "wall_seconds": 7.927804103994276
+    },
+    {
+      "exit_code": 0,
+      "inputs_sha256": "b51fe437f0d641e976280a659b29e3e0ef0b7e5af89c873aab9495b0f2a94dca",
+      "label": "trnm_pon_node-lib-clippy02",
+      "noninput_integration_files_changed": {
+        "trillionnium/crates/trnm-mvcc-fee/tests/pq5_task_renewal.rs": {
+          "at_observation": "50097ed61934def06be54cad7a38fe83d6e1dc0d62ca87d29a2fad6bd6a56de0",
+          "final": "c9729922d6c5732bb982dd2b51cb97d9f615b18c5e4ce97420cb40097d8d8ed2"
+        },
+        "trillionnium/crates/trnm-pon-node/tests/native_pq_v5.rs": {
+          "at_observation": "6f119e20474c0295c04b300e939209d8260bfbfd150c453e9e2826c90adb27e3",
+          "final": "10b6e96a2c7fb5120494c63acff3ac79c46c9051e620a0ad633dd38da6fa8b10"
+        }
+      },
+      "result": "metadata/trnm_pon_node-lib-clippy02.json",
+      "result_sha256": "4ae2bd24ead70d85ca4c9317f3c9e684caae6e0c324ee27759b15b35a5adb86b",
+      "scope": "metadata-only strict Clippy; runtime/target input bytes exact; no native execution or full Cargo/all-features qualification",
+      "wall_seconds": 28.227269715003786
+    },
+    {
+      "exit_code": 0,
+      "inputs_sha256": "04cbef804e9220f31312a9015470d937bd403a39c9b7a6353aef07a0f899f4f8",
+      "label": "trnm_protocol-lib-clippytests02",
+      "noninput_integration_files_changed": {
+        "trillionnium/crates/trnm-mvcc-fee/tests/pq5_task_renewal.rs": {
+          "at_observation": "50097ed61934def06be54cad7a38fe83d6e1dc0d62ca87d29a2fad6bd6a56de0",
+          "final": "c9729922d6c5732bb982dd2b51cb97d9f615b18c5e4ce97420cb40097d8d8ed2"
+        },
+        "trillionnium/crates/trnm-pon-node/tests/native_pq_v5.rs": {
+          "at_observation": "6f119e20474c0295c04b300e939209d8260bfbfd150c453e9e2826c90adb27e3",
+          "final": "10b6e96a2c7fb5120494c63acff3ac79c46c9051e620a0ad633dd38da6fa8b10"
+        }
+      },
+      "result": "metadata/trnm_protocol-lib-clippytests02.json",
+      "result_sha256": "d2482641fd66fec40b69156d0060c5bb0ccbb383eaba805a72ce77252be3a334",
+      "scope": "metadata-only strict Clippy; runtime/target input bytes exact; no native execution or full Cargo/all-features qualification",
+      "wall_seconds": 2.081179793996853
+    },
+    {
+      "exit_code": 0,
+      "inputs_sha256": "50567b1470bb210fdc88da3f729ca5e825703ecdcae8beeea4de605d245229fa",
+      "label": "trnm_mvcc_fee-lib-clippytests02",
+      "noninput_integration_files_changed": {
+        "trillionnium/crates/trnm-mvcc-fee/tests/pq5_task_renewal.rs": {
+          "at_observation": "50097ed61934def06be54cad7a38fe83d6e1dc0d62ca87d29a2fad6bd6a56de0",
+          "final": "c9729922d6c5732bb982dd2b51cb97d9f615b18c5e4ce97420cb40097d8d8ed2"
+        },
+        "trillionnium/crates/trnm-pon-node/tests/native_pq_v5.rs": {
+          "at_observation": "6f119e20474c0295c04b300e939209d8260bfbfd150c453e9e2826c90adb27e3",
+          "final": "10b6e96a2c7fb5120494c63acff3ac79c46c9051e620a0ad633dd38da6fa8b10"
+        }
+      },
+      "result": "metadata/trnm_mvcc_fee-lib-clippytests02.json",
+      "result_sha256": "8673b544b34f2208d29d0e3b92414b7c716bb360b376a8a7c3c2d55dd6ca61ee",
+      "scope": "metadata-only strict Clippy; runtime/target input bytes exact; no native execution or full Cargo/all-features qualification",
+      "wall_seconds": 11.284028086010949
+    },
+    {
+      "exit_code": 0,
+      "inputs_sha256": "7f6884e2c662f67e1482310b23faa8a3b0c7479011aa2766d4cdfe5e793108a1",
+      "label": "trnm_mvcc_fee-pq5_task_renewal-clippytests04",
+      "noninput_integration_files_changed": {},
+      "result": "metadata/trnm_mvcc_fee-pq5_task_renewal-clippytests04.json",
+      "result_sha256": "7332afb25581ae07e9f50e59c50dd1bdfb5869da3292da9a8f42cd9e8f966562",
+      "scope": "metadata-only strict Clippy; runtime/target input bytes exact; no native execution or full Cargo/all-features qualification",
+      "wall_seconds": 1.159341521008173
+    },
+    {
+      "exit_code": 0,
+      "inputs_sha256": "5e9b8dac0212d85cf30704120f24a81ac8547523a6f2662ac9b974daee6a15f2",
+      "label": "trnm_pon_node-native_pq_v5-clippytests03",
+      "noninput_integration_files_changed": {
+        "trillionnium/crates/trnm-mvcc-fee/tests/pq5_task_renewal.rs": {
+          "at_observation": "68f938e4826adbe580119c81e032917f371a19db4934206b1d051ef6a8286cf0",
+          "final": "c9729922d6c5732bb982dd2b51cb97d9f615b18c5e4ce97420cb40097d8d8ed2"
+        }
+      },
+      "result": "metadata/trnm_pon_node-native_pq_v5-clippytests03.json",
+      "result_sha256": "54f436663934ec020f7e946468e47116adf788df94087971618db355e8bef844",
+      "scope": "metadata-only strict Clippy; runtime/target input bytes exact; no native execution or full Cargo/all-features qualification",
+      "wall_seconds": 0.5661539989960147
+    }
+  ],
+  "metadata_targets_passed": 8,
+  "native_scope": "complete V5 Cargo build, tests, real W1 and all-targets/all-features Clippy require hosted execution",
+  "native_status": "NOT_RUN_RESOURCE_STOP",
+  "native_tests_executed": 0,
+  "new_markdown_links": {
+    "count": 11,
+    "observation": "checks/markdown-links-final.json",
+    "result": "PASS",
+    "sha256": "bab5e301858373e1da95b5e6d740ade1d587c606952e6977dd4e43757b64e513"
+  },
+  "schema": "npq5-local-validation-summary-v1"
+}

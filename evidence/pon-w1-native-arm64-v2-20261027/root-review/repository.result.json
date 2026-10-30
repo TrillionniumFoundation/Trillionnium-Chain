@@ -1,0 +1,9 @@
+{
+  "name": "repository",
+  "command": [
+    "python",
+    "scripts/ci/check_repository.py"
+  ],
+  "exit_code": 2,
+  "elapsed_ns": 1643239704
+}

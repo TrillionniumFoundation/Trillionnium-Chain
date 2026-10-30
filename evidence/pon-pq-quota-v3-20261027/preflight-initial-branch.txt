@@ -1,0 +1,1 @@
+Initial read-only project preflight on feat/chain-pq-quota-v3-20261027 failed: not an allowed development branch. No source edits/builds were made. Branch renamed to feature/chain-pq-quota-v3-20261027; original development regex unchanged.

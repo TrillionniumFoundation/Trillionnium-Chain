@@ -1,0 +1,81 @@
+{
+  "schema": "system-safety-retained-readback-v1",
+  "source_head": "fb7e12bd2a02ee0805dff6a053edc904ad2198c6",
+  "notes": [
+    "Readback and review do not create new native executions or change original failure states.",
+    "Original hosted artifact archives have been verified by digest; analysis summaries keep their exact source, binary, run and artifact identities.",
+    "Outer-unit controls exercise bounded subprocesses and extracted real shell traps; fresh hosted systemd observations still belong to the proposed source."
+  ],
+  "files": [
+    {
+      "path": "raw-history-fb7-readback-summary.json",
+      "bytes": 55904,
+      "sha256": "fafbfc014883c48704085666dd37fc046af5abf35189acf4a76b6d9193724e73"
+    },
+    {
+      "path": "raw-history-fb7-strict-vs-fence-summary.json",
+      "bytes": 235514,
+      "sha256": "accb342d74940fd9880aca7949e1d3216a1a4af5796c1869e254022826c8c384"
+    },
+    {
+      "path": "unit-cleanup-reviewed-triage.json",
+      "bytes": 24842,
+      "sha256": "d5406398b997ef33c1044c7049b867d501c442ae25d78c8ea1394762bc521000"
+    },
+    {
+      "path": "codeql-fb7-reviewed-triage.json",
+      "bytes": 675768,
+      "sha256": "79acff7b5fe2672d209a2688cd7a2c45b6f94de7c7f21a87ea8a2acc53a39fe3"
+    },
+    {
+      "path": "codeql-rust-fb7-sarif.zip",
+      "bytes": 146272,
+      "sha256": "d0dfc844595895d064d34da865affe5f1f4c8254e7451516f44e7ae89aa7f594"
+    },
+    {
+      "path": "codeql-rust-fb7-metadata.zip",
+      "bytes": 53850,
+      "sha256": "f9f32919dfeb65ea3541c1a7125410c7d1dcfbfe0d7bee25e531b872fca63fdb"
+    },
+    {
+      "path": "baseline-quality-fb7.zip",
+      "bytes": 548598,
+      "sha256": "a0b52b4ed2c34481340065323b2d7ad40b171c075eace90535de655fde2c400e"
+    },
+    {
+      "path": "outer-cleanup-python-controls.json",
+      "bytes": 674,
+      "sha256": "a530d49a6bf1e32ff59cbea9c324e5f090f02323822038d2e4a6d49c362e52c6"
+    },
+    {
+      "path": "outer-cleanup-python-controls.log",
+      "bytes": 3278,
+      "sha256": "aed7aff9761988160258ad7dfc8d9d779446a282780901b6569657d3a522984d"
+    },
+    {
+      "path": "outer-cleanup-original-trap-red-controls.json",
+      "bytes": 5413,
+      "sha256": "76a93e597469e110fe2d32f74c959f4ec4c91a5b1a2374c32a22aff93b011e5f"
+    },
+    {
+      "path": "outer-cleanup-workflow-boundary-review.json",
+      "bytes": 2602,
+      "sha256": "367f9eb81efe5a750b1cfda35218e475d4ce469bc50304198a22b2f43b90c10f"
+    },
+    {
+      "path": "outer-cleanup-workflow-trigger-and-control-review.json",
+      "bytes": 1977,
+      "sha256": "4e382b10744ec41d4a1a0f178cf1011903de4493fe821e8e415562e8cc0bc17e"
+    },
+    {
+      "path": "outer-cleanup-patch-manifest.json",
+      "bytes": 2045,
+      "sha256": "cf061c35762b0eb03ebc32b84ba4b3cd0e9652d73795cffeb9d3f46cecc093ce"
+    },
+    {
+      "path": "chain-final-readonly-release-review.json",
+      "bytes": 10326,
+      "sha256": "5f055b8cab5e515bd2a213084eaef887cae15939e8a2fcde36de83e464907dbd"
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "files": [
+    {
+      "path": ".github/workflows/pon-history-epoch-v1-native.yml",
+      "before_sha256": "b33491ab85521b7917b11a9144509b2a119b2b8f4708f9c4558d2768c3c709f1",
+      "after_sha256": "1cbf86c4cd2b82f7ad704ccf6f74485316efb01c0eb6044eb243d592aaacb9dc",
+      "bytes": 21526,
+      "lines": 415
+    },
+    {
+      "path": ".github/workflows/pon-native-campaign-qualification.yml",
+      "before_sha256": "66a2b12994764f30d69b882001e38fe9921bcef40034dd90de6c033541354d84",
+      "after_sha256": "60cb0185565ac03686136e57cdc990af522c6c4845d739fcfe623071864f61db",
+      "bytes": 30258,
+      "lines": 534
+    },
+    {
+      "path": ".github/workflows/pon-pure-admission-daa-v2.yml",
+      "before_sha256": "613f9b406a8a82539629c259263fdea1b94ecaf89d9fba7d2a25985e9dade35a",
+      "after_sha256": "b1308f01e6f512a98ee29f508c2c0f1c02ece2be77e31f4afcfa1d4ef26ce7af",
+      "bytes": 9472,
+      "lines": 177
+    },
+    {
+      "path": ".github/workflows/pon-pure-history-raw-joint.yml",
+      "before_sha256": "9d4776e284663e6e6bf7c4176d8d74a0edcea8705d3bde4bbe8633e54037361e",
+      "after_sha256": "aa4b5c8142afab95929574f3292faec16fac97f20888c7caec0248852f93f5da",
+      "bytes": 32655,
+      "lines": 566
+    },
+    {
+      "path": "scripts/ci/check_collected_unit_empty_v1.py",
+      "before_sha256": null,
+      "after_sha256": "32be50ebab8c492d52a024e5b06a0b00c3cc44c5c58332217a74d20fbcf957c0",
+      "bytes": 11062,
+      "lines": 241
+    },
+    {
+      "path": "scripts/ci/test_collected_unit_empty_v1.py",
+      "before_sha256": null,
+      "after_sha256": "a381a50302ffb6d07bc33cbfd7b6f7993b679fe4be36abc3bf0d23d8b63c13ed",
+      "bytes": 16072,
+      "lines": 300
+    }
+  ],
+  "patch_sha256": "635aeea396bb56ea6457b314c8cb1d48a51929996469958749d0588345884ca4",
+  "status": "frozen; independent read-only review complete; 21 Python controls pass; hosted pending",
+  "independent_review": "pon_consensus: no new blocking issue; fresh sequential local absence only, not InvocationID authority or OS hard-real-time guarantee"
+}

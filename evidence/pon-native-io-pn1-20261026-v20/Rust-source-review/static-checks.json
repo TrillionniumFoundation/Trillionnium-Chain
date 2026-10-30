@@ -1,0 +1,23 @@
+{
+  "schema": "held-target-loader-fence-v3-static-source-invariants-v1",
+  "utc": "2026-10-26T12:25:22.128641+00:00",
+  "checks": {
+    "canonical_only_function_body_retained_byte_for_byte": true,
+    "original_nm_bound_parser_and_four_global_checks_byte_identical": true,
+    "source_pin_checker_byte_identical": true,
+    "original_external_override_policy_byte_identical": true,
+    "original_C_witness_source_and_all_flags_byte_identical": true,
+    "runtime_ABI_changed_only_v2_to_v3_fence": true,
+    "three_required_one_optional_count_checks_retained": true,
+    "no_Cargo_manifest_lock_or_dependency_change": true,
+    "Linux_cfg_only_FD_implementation": true,
+    "nonLinux_FD_alias_refusal_present": true,
+    "no_new_unsafe_Rust_or_raw_FD_ownership": true,
+    "thirteen_real_filesystem_control_sources": true
+  },
+  "actual_preflight_exit": 0,
+  "actual_rustfmt_exit": 0,
+  "controls": "NOT_RUN",
+  "Cargo_typecheck_Clippy_or_native": "NOT_RUN",
+  "source_checks_are_not_runtime_qualification": true
+}

@@ -1,0 +1,37 @@
+--- a/trillionnium/crates/trnm-sqlite-io-boundary/src/sql.rs
++++ b/trillionnium/crates/trnm-sqlite-io-boundary/src/sql.rs
+@@ -3,7 +3,7 @@
+ use crate::{BoundaryError, Result};
+ use rusqlite::Connection;
+ #[cfg(target_os = "linux")]
+-use rusqlite::{ffi, OpenFlags};
++use rusqlite::{config::DbConfig, ffi, DatabaseName, OpenFlags};
+ #[cfg(target_os = "linux")]
+ use std::ffi::{c_char, c_int, c_void, CStr};
+ use std::ops::Deref;
+@@ -89,6 +89,25 @@
+         self.finish(connection)
+     }
+     fn finish(&self, connection: Connection) -> Result<OwnedConnection> {
++        // A last read-only WAL connection cannot acquire the write lock used
++        // by SQLite's optional close-time checkpoint. Configure this before
++        // any schema/read access; writer checkpoint and FULL sync stay intact.
++        if connection
++            .is_readonly(DatabaseName::Main)
++            .map_err(|e| BoundaryError(e.to_string()))?
++        {
++            let configured = connection
++                .set_db_config(DbConfig::SQLITE_DBCONFIG_NO_CKPT_ON_CLOSE, true)
++                .map_err(|e| BoundaryError(e.to_string()))?;
++            let observed = connection
++                .db_config(DbConfig::SQLITE_DBCONFIG_NO_CKPT_ON_CLOSE)
++                .map_err(|e| BoundaryError(e.to_string()))?;
++            if !configured || !observed {
++                return Err(BoundaryError(
++                    "read-only close checkpoint configuration was not retained".into(),
++                ));
++            }
++        }
+         // SAFETY: this live owned handle is not exposed or concurrently used.
+         // The callback has static lifetime and owns no borrowed user data.
+         let rc = unsafe {

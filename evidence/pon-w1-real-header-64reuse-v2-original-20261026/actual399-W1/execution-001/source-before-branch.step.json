@@ -1,0 +1,40 @@
+{
+  "command": [
+    "git",
+    "-c",
+    "core.hooksPath=/dev/null",
+    "-c",
+    "core.fsmonitor=false",
+    "branch",
+    "--show-current"
+  ],
+  "complete_success": true,
+  "cwd": "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/pn1-v3-clean-source-public-qualification-20261026-001/ownedsource",
+  "elapsed_ns": 3276535,
+  "elapsed_seconds": 0.003276535,
+  "error": null,
+  "name": "source-before-branch",
+  "native_process_owner": {
+    "birth_ticks": 10089525,
+    "failed_spawn_streams_closed": null,
+    "failure": null,
+    "observed_ppid": 3189008,
+    "original_identity_alive_after_wait": false,
+    "pid": 3189049,
+    "python_pid": 3189008,
+    "reaped": true,
+    "schema": "pon-native-io-component-child-owner-v1",
+    "spawn_count": 1,
+    "wait_returncode": 0
+  },
+  "outer_stage_timeout_seconds": 10,
+  "returncode": 0,
+  "stderr": "source-before-branch.stderr.log",
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_truncated": false,
+  "stdout": "source-before-branch.stdout.log",
+  "stdout_bytes": 38,
+  "stdout_sha256": "9d5c74207b40d2d13a79de8dcb502be4afc8404af4d1b356646885b445fd9c91",
+  "stdout_truncated": false
+}

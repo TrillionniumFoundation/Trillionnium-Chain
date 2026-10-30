@@ -1,0 +1,15 @@
+[package]
+name = "trnm-w1-guest-relation"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+# The shared source's native unit-test module uses the original M01 kernels.
+# Run those tests in the parent workspace. This adapter has no duplicate kernel.
+[lib]
+test = false
+doctest = false
+bench = false
+
+[dependencies]
+sha2 = "=0.10.6"

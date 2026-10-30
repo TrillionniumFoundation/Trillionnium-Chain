@@ -1,0 +1,197 @@
+{
+  "actual_consumer_bytes": [
+    {
+      "manifest": "b0f81fcbbf67a09fa727e292b1954d5812d014a8f2411335b2ff4c7965e826ce",
+      "name": "base/README.md",
+      "sha256": "4f97533ad95b1b2fea15fbc075c01b94578ebdd7c8138888fa43fa3abd530dc4",
+      "size": 6772
+    },
+    {
+      "manifest": "e972411398c2add1e278e4d9826f3dac88914b03d04ccd6f318988c4a393f5b7",
+      "name": "base/config.json",
+      "sha256": "8eb740e8bbe4cff95ea7b4588d17a2432deb16e8075bc5828ff7ba9be94d982a",
+      "size": 861
+    },
+    {
+      "manifest": "35734e3519c70ef5694f74d895f45687b82a67935ee3b90303b6a230f74835fe",
+      "name": "base/generation_config.json",
+      "sha256": "87b916edaaab66b3899b9d0dd0752727dff6666686da0504d89ae0a6e055a013",
+      "size": 132
+    },
+    {
+      "manifest": "7ce4f5527917926e341944c533b33335c2af6b514f84d591c7b12f0b21a7acb0",
+      "name": "base/model.safetensors",
+      "sha256": "5af571cbf074e6d21a03528d2330792e532ca608f24ac70a143f6b369968ab8c",
+      "size": 269060552
+    },
+    {
+      "manifest": "df4114a853fd348088693bbf737535ddd8536f13f7b51203a3883f3a5f49cda0",
+      "name": "base/special_tokens_map.json",
+      "sha256": "2b7379f3ae813529281a5c602bc5a11c1d4e0a99107aaa597fe936c1e813ca52",
+      "size": 655
+    },
+    {
+      "manifest": "74ba9101fd4c11196fedda171f5adacb2e1b87024cc4f4b39753bbbe5c4868a7",
+      "name": "base/tokenizer.json",
+      "sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+      "size": 2104556
+    },
+    {
+      "manifest": "ec0c9462d1e79f3afd6329c4d0f59e79492c1ff24000af3c7ee9c8518dcdd523",
+      "name": "base/tokenizer_config.json",
+      "sha256": "4ec77d44f62efeb38d7e044a1db318f6a939438425312dfa333b8382dbad98df",
+      "size": 3764
+    },
+    {
+      "manifest": "c80211d1185ff37f40706584da3d010d7c24c345e661f1439d82ea31dde88d24",
+      "name": "base/material-manifest.json",
+      "sha256": "6e6a76d478f28906566c1cc8db9ef767922b7a215c9f795da8d845e965c59f0c",
+      "size": 1263
+    },
+    {
+      "manifest": "c05cec73fa41dd4656b3bd17bd6883ebb762b6431d4855ec95d75c46325a7f07",
+      "name": "adapter/target-contract.json",
+      "sha256": "8aa74f728c428a3cb27f3651a9af9ac0c4cf02cbe894995d219079f6b1cf01ca",
+      "size": 56809
+    },
+    {
+      "manifest": "4244b0fdf4056b205585e37d4fbe2d1c6ee46bca32247419a65943f831a1401c",
+      "name": "adapter/wrapped-adapter.json",
+      "sha256": "3ed5b3af01dd4072565fda7c2b8df7077893633410a0b1182c04dd08d532870b",
+      "size": 20962
+    },
+    {
+      "manifest": "644c7f4dfe8654b6bdd640e84473225c2a3564e2bef3e22518eeb2e4a06b9ac3",
+      "name": "adapter/artifact.safetensors",
+      "sha256": "eaa627e8937afa9f23fb8ab97c89d03f8e59748c6016cd610772bc594f81a90b",
+      "size": 933544
+    }
+  ],
+  "backend_cost": {
+    "child_cpu_ns": 33798063000,
+    "exit_code": 0,
+    "memory_scope": "sampled_peak_rss_bytes is direct-child 50ms RSS; waited_child_peak_rss_bytes is exact owned-child Linux wait4 ru_maxrss in KiB times 1024, a maximum single-process high-water with inherited waited-descendant accounting; neither is simultaneous process-tree RSS",
+    "observed_wall_ns": 29929171552,
+    "outcome": "success",
+    "sampled_peak_rss_bytes": 1134002176,
+    "waited_child_peak_rss_bytes": 1147097088
+  },
+  "backend_readback": {
+    "actual_receipt_sha256": "fe2e8fefbf9fdefd2ea35874cbedbb669db49ba083924c8e9216d68d3bc6d01f",
+    "caller_sha256": "b58aa10da372018a92430d827cd391249365262dbcdcd47e87680b77fa7efeb0",
+    "command": [
+      "/workspace/scratch/301262829a43/pon-hepta-impl/model-env-3123-offline/bin/python",
+      "/workspace/scratch/301262829a43/pon-hepta-impl/chain-native-c96022/scripts/llm_inherited_runtime.py",
+      "infer",
+      "--materials",
+      "/workspace/scratch/301262829a43/pon-hepta-impl/real-model-run-001/cell-handoff-fixed-serving-004/consumer-materials",
+      "--parent",
+      "/workspace/scratch/301262829a43/pon-hepta-impl/real-model-run-001/cell-handoff-fixed-serving-004/consumer-parent/parent-material.json",
+      "--parent-sha256",
+      "3050a3dd37c72e350339313973621312e2b002c687b3242b85b6a4052e9ba146",
+      "--input",
+      "/workspace/scratch/301262829a43/pon-hepta-impl/real-model-run-001/cell004-next-request.json",
+      "--input-sha256",
+      "082a87e04da09411b962b58e60b7b76050c3d744b8e6d8d6ef7750d3525cdd08",
+      "--operation-id",
+      "post-fetch-readback-001",
+      "--output",
+      "/workspace/scratch/301262829a43/pon-hepta-impl/real-model-run-001/post-cell004-backend-readback",
+      "--threads",
+      "2",
+      "--steps",
+      "10"
+    ],
+    "decoded_outputs": [
+      "yes"
+    ],
+    "exit_code": 0,
+    "generated_tokens": 8,
+    "handoff_sha256": "ed6236648a9be967155bb0e386f294ff30b9bb15a4873017a4ec9e2d707b4e70",
+    "hepta_final_use": false,
+    "loaded_adapter": "d3b3e79ee9432f467881b9b7fd5eef1c6d2908da6fce73de9fd786f541094dc6",
+    "model_quality_qualified": false,
+    "ordinary_installation": false,
+    "ordinary_task_used": false,
+    "original_backend_sources": {
+      "llm_adapter_contract.py": "e46311a08584ad7becfc56cd0b699d9bc6921adcfe39319e50aa14faa984ced5",
+      "llm_inherited_runtime.py": "1c356c4e8e9a114ac7b6348cac4bed9a6fc72d53ce71ce00139c3deed8733596",
+      "llm_parent_material.py": "5396d72c4730aea2d271b55a8404f6eaba64dc57f91343537710c28f7686b43c",
+      "llm_runtime_pilot.py": "65ccc6454befd96fa5ce1f5bdde2c56cb6cbb741cf495b8d24a758039f99f755",
+      "model-family-smollm2-135m-v1.json": "0837bbfb31f3f2b9a8731545c9f742aee1ebd32daed392a936a3ec9719537e52"
+    },
+    "original_handoff_unavailable_failure_preserved": true,
+    "outcome": "backend-forward-observed",
+    "outer_wall_ns": 30822501251,
+    "public_reward_eligible": false,
+    "schema": "controlled-post-cell-backend-readback-observation-v1",
+    "scope": "actual-downloaded-candidate-backend-forward-not-ordinary-installation-or-task",
+    "source_chain": "c96022b897c1235fdbdbfcfa32764403511c6aab",
+    "supervisor_sha256": "c1e72d43989b09ed33d45004256fe24b150fa50c7bf0eb1ff355f5452eca93b6"
+  },
+  "binary_sha256": "e9b71c605cb15f37dc6522a19fffc428f455381122b76ba051c4e7d3ba3b2bb1",
+  "chain_runtime_source": "c96022b897c1235fdbdbfcfa32764403511c6aab",
+  "controller_error": "native Hepta consumer UNAVAILABLE; owner receipt UNVERIFIED: no supported consumer or receipt contract is shipped",
+  "controller_exit_code": 1,
+  "controller_wall_ns": 70002815486,
+  "driver_sha256": "fe55b3d15ce6e85bbbc8fda53187ae27bc9308d5179c92b3af9dc3136eaf24ca",
+  "full_I10_result": "OPEN",
+  "hepta_source_inspected": "e1537d7deea32f29ec9612c0a7b90655b14aa904",
+  "independent_operators": false,
+  "merge_ready": false,
+  "model_benefit_established": false,
+  "native_fetch": {
+    "cached_chunks": 0,
+    "cells": 11,
+    "chunks": 269,
+    "connection_attempts": 280,
+    "downloaded_bytes": 272189870,
+    "downloaded_chunks": 269,
+    "max_response_bytes": 555919116,
+    "payload_bytes": 272189870,
+    "received_response_bytes": 272204670,
+    "rejected_responses": 0,
+    "release": "0c3b841b42f507129d24bb3f335c90756e8057fb06883c9bf62d3100bfdd0cfd",
+    "schema": "trnm.cell.release.fetch.v1",
+    "suppliers": 1
+  },
+  "ordinary_installation_qualified": false,
+  "ordinary_task_used": false,
+  "previous_003_cause": "UNDETERMINED",
+  "previous_003_unchanged_sha256": "e7594fdf57973068db7fbc36cff7ca9e29ce8814574bb84a753bb1eb3f427c5b",
+  "provider_build_source": "57fbdfeead5cfa1436eeef0d1691ee9933246d4d",
+  "provider_evidence_head": "86a3ff97b5caf7af7a2406cf9079049ae11927ef",
+  "provider_observation": {
+    "malformed_stdout_lines": [],
+    "network_failure_cause_inferred": false,
+    "observation": "observed",
+    "reports": [
+      {
+        "report": {
+          "completed": 280,
+          "connections": 280,
+          "overloaded": 0,
+          "peak_active_workers": 2,
+          "schema": "trnm.cell.serve.bounded.v1",
+          "sent_response_bytes": 272204670
+        },
+        "stdout_line": 2
+      }
+    ],
+    "schema": "cell-native-provider-serve-observation-v1",
+    "source": "server-stdout.log"
+  },
+  "release": "0c3b841b42f507129d24bb3f335c90756e8057fb06883c9bf62d3100bfdd0cfd",
+  "runtime_execution_closure_qualified": false,
+  "schema": "pon-cell004-backend-readback-observation-v1",
+  "task_complete": false,
+  "transfer": {
+    "all_members_verified": true,
+    "clock": "monotonic",
+    "elapsed_seconds": 25.90642755100089,
+    "limit_seconds": 35,
+    "schema": "cell-native-aggregate-transfer-v2",
+    "scope": "listener announced through aggregate TCR1 fetch, cache-only materialization and final consumer readback; excludes packing, release preparation, provider drain and Hepta load",
+    "within_original_deadline": true
+  }
+}

@@ -1,0 +1,298 @@
+{
+  "launch_transport": {
+    "utc": "2026-10-24T13:44:00.683423+00:00",
+    "argv": [
+      "ssh",
+      "-o",
+      "BatchMode=yes",
+      "-o",
+      "ConnectTimeout=10",
+      "-o",
+      "StrictHostKeyChecking=yes",
+      "-o",
+      "UpdateHostKeys=no",
+      "-o",
+      "ControlMaster=no",
+      "-o",
+      "ControlPath=none",
+      "-o",
+      "ServerAliveInterval=5",
+      "-o",
+      "ServerAliveCountMax=2",
+      "desktop-ts",
+      "nohup /usr/bin/python3.12 -I -B /home/qian-qi/Documents/Codex/2026-10-22/pon-controlled-qualification/work/host-child-groups-native-20261024T134248Z-ee0d0d35dd97/native_host_probe.py --source-root /home/qian-qi/Documents/Codex/2026-10-22/pon-controlled-qualification/work/host-child-groups-native-20261024T134248Z-ee0d0d35dd97/source --manifest /home/qian-qi/Documents/Codex/2026-10-22/pon-controlled-qualification/work/host-child-groups-native-20261024T134248Z-ee0d0d35dd97/source-manifest.json --output /home/qian-qi/Documents/Codex/2026-10-22/pon-controlled-qualification/work/host-child-groups-native-20261024T134248Z-ee0d0d35dd97/evidence --admit-once --prepare-child-groups </dev/null >/dev/null 2>&1 &\nprobe_launch_pid=$!\nprintf '%s\\n' \"$probe_launch_pid\"\n"
+    ],
+    "owned_local_client_pid": 720739,
+    "client_exit_status": 0,
+    "original_O_exit_status": "UNKNOWN",
+    "duration_seconds": 0.28832897200481966,
+    "stop_reason": null,
+    "stdout_bytes": 8,
+    "stderr_bytes": 0,
+    "stdout_sha256": "36e4b9e22d1335458a7ad907b9c8c90fa2dff71ecf999b6ccab44744afc66bc3",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "exports": [
+    {
+      "index": 0,
+      "planned_offset_seconds": 0,
+      "actual_started_offset_seconds": 0.28873866799403913,
+      "transport_status": 0,
+      "stop_reason": null,
+      "disposition": {
+        "actual_exit_status": "UNKNOWN",
+        "evidence_durability": "NOT_PROVEN",
+        "money_return": false,
+        "namespace_observation": "UNKNOWN",
+        "probe_completion": "NOT_PROVEN",
+        "reasons": [
+          "MISSING_OR_CONFLICTING_CHILD_PROFILE:02-native-namespace-observation.json",
+          "MISSING_OR_CONFLICTING_CHILD_PROFILE:03-evidence-window.json",
+          "MISSING_OR_CONFLICTING_CHILD_PROFILE:04-ordinary-exit-intent.json",
+          "CONFLICTING_CHILD_PREPARATION",
+          "MISSING_OR_INCOMPLETE:02-native-namespace-observation.json",
+          "MISSING_OR_INCOMPLETE:03-evidence-window.json",
+          "MISSING_OR_INCOMPLETE:04-ordinary-exit-intent.json",
+          "CONFLICTING_PREPARED_CHILD_GROUPS"
+        ],
+        "resource_return_proven": false,
+        "whole_u_terminal": false
+      }
+    },
+    {
+      "index": 1,
+      "planned_offset_seconds": 5,
+      "actual_started_offset_seconds": 5.00028425900382,
+      "transport_status": 0,
+      "stop_reason": null,
+      "disposition": {
+        "actual_exit_status": "UNKNOWN",
+        "evidence_durability": "NOT_PROVEN",
+        "money_return": false,
+        "namespace_observation": "UNKNOWN",
+        "probe_completion": "NOT_PROVEN",
+        "reasons": [
+          "MISSING_OR_CONFLICTING_CHILD_PROFILE:04-ordinary-exit-intent.json",
+          "MISSING_OR_INCOMPLETE:04-ordinary-exit-intent.json"
+        ],
+        "resource_return_proven": false,
+        "whole_u_terminal": false
+      }
+    },
+    {
+      "index": 2,
+      "planned_offset_seconds": 10,
+      "actual_started_offset_seconds": 10.000324777007336,
+      "transport_status": 0,
+      "stop_reason": null,
+      "disposition": {
+        "actual_exit_status": "UNKNOWN",
+        "evidence_durability": "NOT_PROVEN",
+        "money_return": false,
+        "namespace_observation": "UNKNOWN",
+        "probe_completion": "NOT_PROVEN",
+        "reasons": [
+          "MISSING_OR_CONFLICTING_CHILD_PROFILE:04-ordinary-exit-intent.json",
+          "MISSING_OR_INCOMPLETE:04-ordinary-exit-intent.json"
+        ],
+        "resource_return_proven": false,
+        "whole_u_terminal": false
+      }
+    },
+    {
+      "index": 3,
+      "planned_offset_seconds": 15,
+      "actual_started_offset_seconds": 15.000289546995191,
+      "transport_status": 0,
+      "stop_reason": null,
+      "disposition": {
+        "actual_exit_status": "UNKNOWN",
+        "evidence_durability": "NOT_PROVEN",
+        "money_return": false,
+        "namespace_observation": "UNKNOWN",
+        "probe_completion": "NOT_PROVEN",
+        "reasons": [
+          "MISSING_OR_CONFLICTING_CHILD_PROFILE:04-ordinary-exit-intent.json",
+          "MISSING_OR_INCOMPLETE:04-ordinary-exit-intent.json"
+        ],
+        "resource_return_proven": false,
+        "whole_u_terminal": false
+      }
+    },
+    {
+      "index": 4,
+      "planned_offset_seconds": 20,
+      "actual_started_offset_seconds": 20.00029514997732,
+      "transport_status": 0,
+      "stop_reason": null,
+      "disposition": {
+        "actual_exit_status": "UNKNOWN",
+        "evidence_durability": "NOT_PROVEN",
+        "money_return": false,
+        "namespace_observation": "UNKNOWN",
+        "probe_completion": "NOT_PROVEN",
+        "reasons": [
+          "MISSING_OR_CONFLICTING_CHILD_PROFILE:04-ordinary-exit-intent.json",
+          "MISSING_OR_INCOMPLETE:04-ordinary-exit-intent.json"
+        ],
+        "resource_return_proven": false,
+        "whole_u_terminal": false
+      }
+    },
+    {
+      "index": 5,
+      "planned_offset_seconds": 25,
+      "actual_started_offset_seconds": 25.000307549024,
+      "transport_status": 0,
+      "stop_reason": null,
+      "disposition": {
+        "actual_exit_status": "UNKNOWN",
+        "evidence_durability": "NOT_PROVEN",
+        "money_return": false,
+        "namespace_observation": "UNKNOWN",
+        "probe_completion": "NOT_PROVEN",
+        "reasons": [
+          "MISSING_OR_CONFLICTING_CHILD_PROFILE:04-ordinary-exit-intent.json",
+          "MISSING_OR_INCOMPLETE:04-ordinary-exit-intent.json"
+        ],
+        "resource_return_proven": false,
+        "whole_u_terminal": false
+      }
+    },
+    {
+      "index": 6,
+      "planned_offset_seconds": 30,
+      "actual_started_offset_seconds": 30.000361869984772,
+      "transport_status": 0,
+      "stop_reason": null,
+      "disposition": {
+        "actual_exit_status": "UNKNOWN",
+        "evidence_durability": "NOT_PROVEN",
+        "money_return": false,
+        "namespace_observation": "UNKNOWN",
+        "probe_completion": "NOT_PROVEN",
+        "reasons": [
+          "MISSING_OR_CONFLICTING_CHILD_PROFILE:04-ordinary-exit-intent.json",
+          "MISSING_OR_INCOMPLETE:04-ordinary-exit-intent.json"
+        ],
+        "resource_return_proven": false,
+        "whole_u_terminal": false
+      }
+    },
+    {
+      "index": 7,
+      "planned_offset_seconds": 35,
+      "actual_started_offset_seconds": 35.00029682199238,
+      "transport_status": 0,
+      "stop_reason": null,
+      "disposition": {
+        "actual_exit_status": "UNKNOWN",
+        "evidence_durability": "NOT_PROVEN",
+        "money_return": false,
+        "namespace_observation": "UNKNOWN",
+        "probe_completion": "NOT_PROVEN",
+        "reasons": [
+          "MISSING_OR_CONFLICTING_CHILD_PROFILE:04-ordinary-exit-intent.json",
+          "MISSING_OR_INCOMPLETE:04-ordinary-exit-intent.json"
+        ],
+        "resource_return_proven": false,
+        "whole_u_terminal": false
+      }
+    },
+    {
+      "index": 8,
+      "planned_offset_seconds": 40,
+      "actual_started_offset_seconds": 40.00034158397466,
+      "transport_status": 0,
+      "stop_reason": null,
+      "disposition": {
+        "actual_exit_status": "UNKNOWN",
+        "evidence_durability": "NOT_PROVEN",
+        "money_return": false,
+        "namespace_observation": "UNKNOWN",
+        "probe_completion": "NOT_PROVEN",
+        "reasons": [
+          "MISSING_OR_CONFLICTING_CHILD_PROFILE:04-ordinary-exit-intent.json",
+          "MISSING_OR_INCOMPLETE:04-ordinary-exit-intent.json"
+        ],
+        "resource_return_proven": false,
+        "whole_u_terminal": false
+      }
+    },
+    {
+      "index": 9,
+      "planned_offset_seconds": 45,
+      "actual_started_offset_seconds": 45.000350671005435,
+      "transport_status": 0,
+      "stop_reason": null,
+      "disposition": {
+        "actual_exit_status": "UNKNOWN",
+        "evidence_durability": "NOT_PROVEN",
+        "money_return": false,
+        "namespace_observation": "UNKNOWN",
+        "probe_completion": "NOT_PROVEN",
+        "reasons": [
+          "MISSING_OR_CONFLICTING_CHILD_PROFILE:04-ordinary-exit-intent.json",
+          "MISSING_OR_INCOMPLETE:04-ordinary-exit-intent.json"
+        ],
+        "resource_return_proven": false,
+        "whole_u_terminal": false
+      }
+    },
+    {
+      "index": 10,
+      "planned_offset_seconds": 50,
+      "actual_started_offset_seconds": 50.000284150999505,
+      "transport_status": 0,
+      "stop_reason": null,
+      "disposition": {
+        "actual_exit_status": "UNKNOWN",
+        "evidence_durability": "NOT_PROVEN",
+        "money_return": false,
+        "namespace_observation": "UNKNOWN",
+        "probe_completion": "NOT_PROVEN",
+        "reasons": [
+          "MISSING_OR_CONFLICTING_CHILD_PROFILE:04-ordinary-exit-intent.json",
+          "MISSING_OR_INCOMPLETE:04-ordinary-exit-intent.json"
+        ],
+        "resource_return_proven": false,
+        "whole_u_terminal": false
+      }
+    },
+    {
+      "index": 11,
+      "planned_offset_seconds": 65,
+      "actual_started_offset_seconds": 65.00030509999488,
+      "transport_status": 0,
+      "stop_reason": null,
+      "disposition": {
+        "actual_exit_status": "UNKNOWN",
+        "evidence_durability": "NOT_PROVEN",
+        "money_return": false,
+        "namespace_observation": "CHILD_GROUPS_OBSERVED_ONLY",
+        "probe_completion": "NOT_PROVEN",
+        "reasons": [],
+        "resource_return_proven": false,
+        "whole_u_terminal": false
+      }
+    }
+  ],
+  "exports_count": 12,
+  "conservative_across_all_samples": "UNKNOWN",
+  "last_export_disposition": {
+    "actual_exit_status": "UNKNOWN",
+    "evidence_durability": "NOT_PROVEN",
+    "money_return": false,
+    "namespace_observation": "CHILD_GROUPS_OBSERVED_ONLY",
+    "probe_completion": "NOT_PROVEN",
+    "reasons": [],
+    "resource_return_proven": false,
+    "whole_u_terminal": false
+  },
+  "actual_exit_status": "UNKNOWN",
+  "probe_completion": "NOT_PROVEN",
+  "whole_u_terminal": false,
+  "funding_or_resource_return_proven": false,
+  "no_native_process_birth_training_model_install_activation": true,
+  "no_remote_kill_stop_delete_reset_rollback_retry": true
+}

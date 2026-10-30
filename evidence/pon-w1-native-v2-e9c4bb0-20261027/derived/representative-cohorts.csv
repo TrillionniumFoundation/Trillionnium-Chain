@@ -1,0 +1,11 @@
+material,target,horizon,reuse,rounds,strategy,setup_count,attempts,winners,exhausted,native_accepted_calls,cpu_ns_per_win_including_failed_searches,producer_cpu_over_prepared_general,eligibility_scope
+zero,7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff,256,True,2,blocked-zero,2,1013,511,1,0,780153.205479452,0.8799687748142752,primitive-only; no native task/reward qualification
+zero-left-rank-one-right,7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff,256,True,2,blocked-one-zero-rank-one,2,1062,509,3,0,884295.5206286837,0.9490558373286253,primitive-only; no native task/reward qualification
+rank-one,7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff,256,True,2,structured,2,1034,510,2,0,904919.2470588235,0.9950066968600478,primitive-only; no native task/reward qualification
+genesis-maintenance,7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff,256,True,2,maintenance-split-limb,2,1055,509,3,509,903603.3870333988,0.9709985579577283,native maintenance admission calls in this fixture
+full-rank-field,7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff,256,True,2,prepared-general,2,993,511,1,0,870306.4735812133,1.0,primitive-only; no native task/reward qualification
+zero,07ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff,256,True,2,blocked-zero,2,3673,120,392,0,12153011.041666666,0.8904583442773143,primitive-only; no native task/reward qualification
+zero-left-rank-one-right,07ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff,256,True,2,blocked-one-zero-rank-one,2,3655,115,397,0,13476055.330434782,0.9516880511161446,primitive-only; no native task/reward qualification
+rank-one,07ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff,256,True,2,prepared-general,2,3696,125,387,0,13180683.16,1.0,primitive-only; no native task/reward qualification
+genesis-maintenance,07ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff,256,True,2,maintenance-split-limb,2,3671,119,393,0,13333531.781512605,0.9658978181099075,primitive-only; no native task/reward qualification
+full-rank-field,07ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff,256,True,2,prepared-general,2,3610,130,382,0,12375441.853846153,1.0,primitive-only; no native task/reward qualification

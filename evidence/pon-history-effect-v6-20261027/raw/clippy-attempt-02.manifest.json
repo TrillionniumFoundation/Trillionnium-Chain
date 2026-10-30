@@ -1,0 +1,32 @@
+{
+  "all_archived_raw_bytes_read_back_verified": true,
+  "archive": "clippy-attempt-02.tar.gz",
+  "archive_bytes": 160117,
+  "archive_sha256": "d37eadacffd3e4913f1ab24a1e8c5d90bb04ab7715c69d26a5ca50e4ea5fa3f3",
+  "executed_binaries_retained_outside_repository": [],
+  "failed_observations_reclassified": false,
+  "raw_files": [
+    {
+      "bytes": 1404,
+      "path": "clippy.log",
+      "sha256": "d5481ec4a837d96da5d675b362926e00747f7d9ec10256652a100a0fc41f9d15"
+    },
+    {
+      "bytes": 1688,
+      "path": "receipt.json",
+      "sha256": "974cd99383be945cd7eb01d188010fb4af154d2ec6e92eb5126609c7f0c40900"
+    },
+    {
+      "bytes": 220796,
+      "path": "source-after.json",
+      "sha256": "2a33612d335200bb43a4ebd32f2fff8748020611d0a24a83bba3cebf058495d4"
+    },
+    {
+      "bytes": 220796,
+      "path": "source-before.json",
+      "sha256": "2a33612d335200bb43a4ebd32f2fff8748020611d0a24a83bba3cebf058495d4"
+    }
+  ],
+  "schema": "history-v6-completed-observation-archive-v1",
+  "source_directory": "/workspace/scratch/301262829a43/pon-pq-impl/history-v6-evidence/clippy-attempt-02"
+}

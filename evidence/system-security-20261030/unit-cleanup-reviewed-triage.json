@@ -1,0 +1,543 @@
+{
+  "schema": "review-only-outer-unit-cleanup-triage-v1",
+  "scope": "read-only original hosted fb7 artifact triage; no root source changes, native builds, service calls, or original evidence rewrites",
+  "archives": [
+    {
+      "archive": "raw-history-fb7-strict.zip",
+      "archive_bytes": 52320246,
+      "archive_sha256": "8660bcd9c9adcdbde42fa1774eb7a4b24b2bce15f5c4ac1d0708d9759115d446",
+      "checked_members": {
+        "unit-cleanup.log": {
+          "bytes": 150,
+          "sha256": "a1ed88d0ebced4e55fcdb447e1a64c69e7018a9c2acbe6593758a2dd74fd5cf4",
+          "matches_original_artifact_manifest": true
+        },
+        "lifeline-unit-cleanup.log": {
+          "bytes": 166,
+          "sha256": "890fb2c06a3a279587a1b33172b08546d10a23791ea29c2b8672337b3d2fde72",
+          "matches_original_artifact_manifest": true
+        },
+        "systemd-run.log": {
+          "bytes": 10513,
+          "sha256": "14a2e34bc89985e0aca127ede4d14c849c9df5c146f3488320506b40a6c08ef7",
+          "matches_original_artifact_manifest": true
+        },
+        "verifier-lifeline-systemd.log": {
+          "bytes": 506,
+          "sha256": "eb45b73803a9095b3c0b1e359d5c9984511912a624ee49525d80eb796456a823",
+          "matches_original_artifact_manifest": true
+        },
+        "systemd-version.txt": {
+          "bytes": 330,
+          "sha256": "cf7dc29fdb4b56cfd2f816bef4e11c0ac1834630ce29aa4b75b00ae9ac1b1a76",
+          "matches_original_artifact_manifest": true
+        },
+        "fixed-parent-provision.json": {
+          "bytes": 5411,
+          "sha256": "53808ccea582c83eb25bec562e6831fbcd1e819fa69c7b18a4c52859c46a1c47",
+          "matches_original_artifact_manifest": true
+        },
+        "fixed-parent-cleanup.json": {
+          "bytes": 3498,
+          "sha256": "d0a46dc7e123af1e68a725e9d7fbac9e792f76f39d4b64000b07fc2e9397e171",
+          "matches_original_artifact_manifest": true
+        },
+        "fixed-parent-real-probe.json": {
+          "bytes": 12655,
+          "sha256": "72291794a38c0ec86b1c77136e1773321cb0da0b8cd2299fb09bf624531ec717",
+          "matches_original_artifact_manifest": true
+        },
+        "fixed-parent-probe-cleanup.json": {
+          "bytes": 344,
+          "sha256": "a33faa920910a33869af409f15b7145ec7db2ef739de3cb2a2f9be44af79bca8",
+          "matches_original_artifact_manifest": true
+        },
+        "fixed-parent-reader-controls.log": {
+          "bytes": 768,
+          "sha256": "65ad59dbb3c31df199fe9ed77b1dfe4b7c3339933fc40ae7fa18bf0f6e54ff31",
+          "matches_original_artifact_manifest": true
+        },
+        "results.json": {
+          "bytes": 12711,
+          "sha256": "65eff66206127f133f1cab0489f2d0c02bae7f0b97186401aaa15bd54c19f9cf",
+          "matches_original_artifact_manifest": true
+        },
+        "source-before.json": {
+          "bytes": 421,
+          "sha256": "512f8a644cf8c79eb22346fdde5896f5ddfe383d97a2560abd1173bb95dafcc8",
+          "matches_original_artifact_manifest": true
+        }
+      },
+      "source": {
+        "base": null,
+        "candidate": "fb7e12bd2a02ee0805dff6a053edc904ad2198c6",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "fb7e12bd2a02ee0805dff6a053edc904ad2198c6",
+        "tested_tree": "eb0b11a8e827acd251cf8577715eb1a501ee0743",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 962189954,
+        "tracked_entries": 7437,
+        "tracked_worktree_verified": true
+      },
+      "native_status": {
+        "complete_success": false,
+        "failure": "ORIGINAL_THREE_RUN_CAMPAIGN_FAILED",
+        "finalization_failures": [],
+        "history_resource_profile": "strict-every-native-checkpoint-v1"
+      },
+      "terminal_events": {
+        "systemd-run.log": [
+          "Running as unit: trnm-native-campaign-40995210492-1.service",
+          "Finished with result: exit-code",
+          "Main processes terminated with: code=exited/status=1",
+          "Service runtime: 11min 34.836s",
+          "CPU time consumed: 13min 49.847s",
+          "Memory peak: 3.7M",
+          "Memory swap peak: 0B"
+        ],
+        "verifier-lifeline-systemd.log": [
+          "Running as unit: trnm-native-history-lifeline-40995210492-1.service",
+          "Finished with result: success",
+          "Main processes terminated with: code=exited/status=0",
+          "Service runtime: 7.894s",
+          "CPU time consumed: 7.266s",
+          "Memory peak: 3.7M",
+          "Memory swap peak: 0B"
+        ]
+      },
+      "raw_outer_cleanup": {
+        "unit-cleanup.log": "Failed to stop trnm-native-campaign-40995210492-1.service: Unit trnm-native-campaign-40995210492-1.service not loaded.\noriginal_exit=1\ncleanup_exit=5\n",
+        "lifeline-unit-cleanup.log": "Failed to stop trnm-native-history-lifeline-40995210492-1.service: Unit trnm-native-history-lifeline-40995210492-1.service not loaded.\noriginal_exit=0\ncleanup_exit=5\n"
+      },
+      "fixed_parent_lease_identity": {
+        "device": 29,
+        "exclusive_creation": true,
+        "inode": 1601,
+        "owner": "40995210492.1",
+        "path": "/run/systemd/system/trnmponpublic.slice",
+        "schema": "history-fixed-parent-root-lease-v2",
+        "sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+        "uid": 0,
+        "unit": "trnmponpublic.slice"
+      },
+      "fixed_parent_provisioned": true,
+      "fixed_parent_cleanup": {
+        "action": "cleanup",
+        "cleanup": {
+          "cleanup_does_not_change_native_completion_or_failed_run": true,
+          "owned_runtime_unit_removed": true,
+          "post_stop_state": {
+            "ActiveState": "inactive",
+            "CPUQuotaPerSecUSec": "250ms",
+            "CPUQuotaPeriodUSec": "100ms",
+            "ControlGroup": "",
+            "DropInPaths": "",
+            "FragmentPath": "/run/systemd/system/trnmponpublic.slice",
+            "Id": "trnmponpublic.slice",
+            "Job": "",
+            "LoadState": "loaded",
+            "MemoryMax": "2147483648",
+            "MemorySwapMax": "0",
+            "Names": "trnmponpublic.slice",
+            "SubState": "dead",
+            "TasksMax": "256",
+            "Transient": "no"
+          },
+          "pre_cleanup_counters": {
+            "cgroup.events": "populated 0\nfrozen 0",
+            "cpu.stat": "usage_usec 67580593\nuser_usec 17748368\nsystem_usec 49832224\nnice_usec 17905000\ncore_sched.force_idle_usec 0\nnr_periods 2934\nnr_throttled 2682\nthrottled_usec 197768732\nnr_bursts 0\nburst_usec 0",
+            "memory.current": "34107392",
+            "pids.current": "0"
+          },
+          "pre_cleanup_state": {
+            "ActiveState": "active",
+            "CPUQuotaPerSecUSec": "250ms",
+            "CPUQuotaPeriodUSec": "100ms",
+            "ControlGroup": "/trnmponpublic.slice",
+            "DropInPaths": "",
+            "FragmentPath": "/run/systemd/system/trnmponpublic.slice",
+            "Id": "trnmponpublic.slice",
+            "Job": "",
+            "LoadState": "loaded",
+            "MemoryMax": "2147483648",
+            "MemorySwapMax": "0",
+            "Names": "trnmponpublic.slice",
+            "SubState": "active",
+            "TasksMax": "256",
+            "Transient": "no"
+          },
+          "unit": "trnmponpublic.slice"
+        },
+        "complete_success": true,
+        "events": [
+          {
+            "argv": [
+              "systemctl",
+              "show",
+              "trnmponpublic.slice",
+              "--property=Id,Names,LoadState,FragmentPath,DropInPaths,ActiveState,SubState,ControlGroup,Transient,Job,CPUQuotaPerSecUSec,CPUQuotaPeriodUSec,MemoryMax,MemorySwapMax,TasksMax"
+            ],
+            "exit_code": 0,
+            "stderr": "",
+            "stdout": "ControlGroup=/trnmponpublic.slice\nCPUQuotaPerSecUSec=250ms\nCPUQuotaPeriodUSec=100ms\nMemoryMax=2147483648\nMemorySwapMax=0\nTasksMax=256\nId=trnmponpublic.slice\nNames=trnmponpublic.slice\nLoadState=loaded\nActiveState=active\nSubState=active\nFragmentPath=/run/systemd/system/trnmponpublic.slice\nDropInPaths=\nJob=\nTransient=no\n"
+          },
+          {
+            "argv": [
+              "systemctl",
+              "stop",
+              "trnmponpublic.slice"
+            ],
+            "exit_code": 0,
+            "stderr": "",
+            "stdout": ""
+          },
+          {
+            "argv": [
+              "systemctl",
+              "show",
+              "trnmponpublic.slice",
+              "--property=Id,Names,LoadState,FragmentPath,DropInPaths,ActiveState,SubState,ControlGroup,Transient,Job,CPUQuotaPerSecUSec,CPUQuotaPeriodUSec,MemoryMax,MemorySwapMax,TasksMax"
+            ],
+            "exit_code": 0,
+            "stderr": "",
+            "stdout": "ControlGroup=\nCPUQuotaPerSecUSec=250ms\nCPUQuotaPeriodUSec=100ms\nMemoryMax=2147483648\nMemorySwapMax=0\nTasksMax=256\nId=trnmponpublic.slice\nNames=trnmponpublic.slice\nLoadState=loaded\nActiveState=inactive\nSubState=dead\nFragmentPath=/run/systemd/system/trnmponpublic.slice\nDropInPaths=\nJob=\nTransient=no\n"
+          },
+          {
+            "argv": [
+              "systemctl",
+              "daemon-reload"
+            ],
+            "exit_code": 0,
+            "stderr": "",
+            "stdout": ""
+          }
+        ],
+        "fixed_parent_is_a_ceiling_not_physical_reservation": true,
+        "outer_four_cpu_budget_unchanged": true,
+        "root_only_lease_is_authority": true,
+        "schema": "history-fixed-parent-fixture-v2"
+      },
+      "probe_negative_controls": [
+        {
+          "control": "duplicate-live-creation-refused",
+          "error": "refuse an existing configured unit or drop-in"
+        },
+        {
+          "control": "forged-evidence-copy-refused",
+          "error": "receipt differs from root-only lease"
+        }
+      ],
+      "probe_already_cleaned": {
+        "action": "cleanup-probe",
+        "cleanup": {
+          "no_owned_lease": true,
+          "no_unit_mutated": true
+        },
+        "complete_success": true,
+        "events": [],
+        "fixed_parent_is_a_ceiling_not_physical_reservation": true,
+        "outer_four_cpu_budget_unchanged": true,
+        "root_only_lease_is_authority": true,
+        "schema": "history-fixed-parent-fixture-v2"
+      }
+    },
+    {
+      "archive": "raw-history-fb7-fence.zip",
+      "archive_bytes": 67035138,
+      "archive_sha256": "75d579b2b7e8f9138e7a8015e2da10bd387be0d2c2e5feca50035f11b7c0f3b7",
+      "checked_members": {
+        "unit-cleanup.log": {
+          "bytes": 150,
+          "sha256": "a1ed88d0ebced4e55fcdb447e1a64c69e7018a9c2acbe6593758a2dd74fd5cf4",
+          "matches_original_artifact_manifest": true
+        },
+        "lifeline-unit-cleanup.log": {
+          "bytes": 166,
+          "sha256": "890fb2c06a3a279587a1b33172b08546d10a23791ea29c2b8672337b3d2fde72",
+          "matches_original_artifact_manifest": true
+        },
+        "systemd-run.log": {
+          "bytes": 10588,
+          "sha256": "cfa1e0bbd6ede6e5de694c1ab98bffaf9fa18c4125f3e2180307a4b5a4961965",
+          "matches_original_artifact_manifest": true
+        },
+        "verifier-lifeline-systemd.log": {
+          "bytes": 506,
+          "sha256": "2e56c06c109528afc47949d050549e5f5708d1577b901ef657e54f6ea0ebb3c4",
+          "matches_original_artifact_manifest": true
+        },
+        "systemd-version.txt": {
+          "bytes": 330,
+          "sha256": "cf7dc29fdb4b56cfd2f816bef4e11c0ac1834630ce29aa4b75b00ae9ac1b1a76",
+          "matches_original_artifact_manifest": true
+        },
+        "fixed-parent-provision.json": {
+          "bytes": 5411,
+          "sha256": "366b1620e298a55a93110c1b3f49d3bfa62939ed336c5c3629f74e3475452b19",
+          "matches_original_artifact_manifest": true
+        },
+        "fixed-parent-cleanup.json": {
+          "bytes": 3498,
+          "sha256": "3806c916b3224e6e823e6b4f95e39d4e82084390033731dd626f1ad365a87c81",
+          "matches_original_artifact_manifest": true
+        },
+        "fixed-parent-real-probe.json": {
+          "bytes": 12655,
+          "sha256": "01ca86febcf2c10ced7f467c942cb23db4162acc8ee503a064f616686a74a350",
+          "matches_original_artifact_manifest": true
+        },
+        "fixed-parent-probe-cleanup.json": {
+          "bytes": 344,
+          "sha256": "a33faa920910a33869af409f15b7145ec7db2ef739de3cb2a2f9be44af79bca8",
+          "matches_original_artifact_manifest": true
+        },
+        "fixed-parent-reader-controls.log": {
+          "bytes": 768,
+          "sha256": "65ad59dbb3c31df199fe9ed77b1dfe4b7c3339933fc40ae7fa18bf0f6e54ff31",
+          "matches_original_artifact_manifest": true
+        },
+        "results.json": {
+          "bytes": 12737,
+          "sha256": "db73791dea83592fc165cefb262336100ae3c461c396fa85269b523acc2c992e",
+          "matches_original_artifact_manifest": true
+        },
+        "source-before.json": {
+          "bytes": 421,
+          "sha256": "512f8a644cf8c79eb22346fdde5896f5ddfe383d97a2560abd1173bb95dafcc8",
+          "matches_original_artifact_manifest": true
+        }
+      },
+      "source": {
+        "base": null,
+        "candidate": "fb7e12bd2a02ee0805dff6a053edc904ad2198c6",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "fb7e12bd2a02ee0805dff6a053edc904ad2198c6",
+        "tested_tree": "eb0b11a8e827acd251cf8577715eb1a501ee0743",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 962189954,
+        "tracked_entries": 7437,
+        "tracked_worktree_verified": true
+      },
+      "native_status": {
+        "complete_success": false,
+        "failure": "ORIGINAL_THREE_RUN_CAMPAIGN_FAILED",
+        "finalization_failures": [],
+        "history_resource_profile": "history-account-graph-resource-fence-v1"
+      },
+      "terminal_events": {
+        "systemd-run.log": [
+          "Running as unit: trnm-native-campaign-40995210492-1.service; invocation ID: 4276df7a385f439a9a4be30d1896fd1a",
+          "Finished with result: exit-code",
+          "Main processes terminated with: code=exited/status=1",
+          "Service runtime: 11min 20.107s",
+          "CPU time consumed: 13min 29.611s",
+          "Memory peak: 3.0M",
+          "Memory swap peak: 0B"
+        ],
+        "verifier-lifeline-systemd.log": [
+          "Running as unit: trnm-native-history-lifeline-40995210492-1.service",
+          "Finished with result: success",
+          "Main processes terminated with: code=exited/status=0",
+          "Service runtime: 7.853s",
+          "CPU time consumed: 7.226s",
+          "Memory peak: 3.7M",
+          "Memory swap peak: 0B"
+        ]
+      },
+      "raw_outer_cleanup": {
+        "unit-cleanup.log": "Failed to stop trnm-native-campaign-40995210492-1.service: Unit trnm-native-campaign-40995210492-1.service not loaded.\noriginal_exit=1\ncleanup_exit=5\n",
+        "lifeline-unit-cleanup.log": "Failed to stop trnm-native-history-lifeline-40995210492-1.service: Unit trnm-native-history-lifeline-40995210492-1.service not loaded.\noriginal_exit=0\ncleanup_exit=5\n"
+      },
+      "fixed_parent_lease_identity": {
+        "device": 29,
+        "exclusive_creation": true,
+        "inode": 1580,
+        "owner": "40995210492.1",
+        "path": "/run/systemd/system/trnmponpublic.slice",
+        "schema": "history-fixed-parent-root-lease-v2",
+        "sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622",
+        "uid": 0,
+        "unit": "trnmponpublic.slice"
+      },
+      "fixed_parent_provisioned": true,
+      "fixed_parent_cleanup": {
+        "action": "cleanup",
+        "cleanup": {
+          "cleanup_does_not_change_native_completion_or_failed_run": true,
+          "owned_runtime_unit_removed": true,
+          "post_stop_state": {
+            "ActiveState": "inactive",
+            "CPUQuotaPerSecUSec": "250ms",
+            "CPUQuotaPeriodUSec": "100ms",
+            "ControlGroup": "",
+            "DropInPaths": "",
+            "FragmentPath": "/run/systemd/system/trnmponpublic.slice",
+            "Id": "trnmponpublic.slice",
+            "Job": "",
+            "LoadState": "loaded",
+            "MemoryMax": "2147483648",
+            "MemorySwapMax": "0",
+            "Names": "trnmponpublic.slice",
+            "SubState": "dead",
+            "TasksMax": "256",
+            "Transient": "no"
+          },
+          "pre_cleanup_counters": {
+            "cgroup.events": "populated 0\nfrozen 0",
+            "cpu.stat": "usage_usec 58178196\nuser_usec 26225823\nsystem_usec 31952373\nnice_usec 26292000\ncore_sched.force_idle_usec 0\nnr_periods 2872\nnr_throttled 2278\nthrottled_usec 166617038\nnr_bursts 0\nburst_usec 0",
+            "memory.current": "47812608",
+            "pids.current": "0"
+          },
+          "pre_cleanup_state": {
+            "ActiveState": "active",
+            "CPUQuotaPerSecUSec": "250ms",
+            "CPUQuotaPeriodUSec": "100ms",
+            "ControlGroup": "/trnmponpublic.slice",
+            "DropInPaths": "",
+            "FragmentPath": "/run/systemd/system/trnmponpublic.slice",
+            "Id": "trnmponpublic.slice",
+            "Job": "",
+            "LoadState": "loaded",
+            "MemoryMax": "2147483648",
+            "MemorySwapMax": "0",
+            "Names": "trnmponpublic.slice",
+            "SubState": "active",
+            "TasksMax": "256",
+            "Transient": "no"
+          },
+          "unit": "trnmponpublic.slice"
+        },
+        "complete_success": true,
+        "events": [
+          {
+            "argv": [
+              "systemctl",
+              "show",
+              "trnmponpublic.slice",
+              "--property=Id,Names,LoadState,FragmentPath,DropInPaths,ActiveState,SubState,ControlGroup,Transient,Job,CPUQuotaPerSecUSec,CPUQuotaPeriodUSec,MemoryMax,MemorySwapMax,TasksMax"
+            ],
+            "exit_code": 0,
+            "stderr": "",
+            "stdout": "ControlGroup=/trnmponpublic.slice\nCPUQuotaPerSecUSec=250ms\nCPUQuotaPeriodUSec=100ms\nMemoryMax=2147483648\nMemorySwapMax=0\nTasksMax=256\nId=trnmponpublic.slice\nNames=trnmponpublic.slice\nLoadState=loaded\nActiveState=active\nSubState=active\nFragmentPath=/run/systemd/system/trnmponpublic.slice\nDropInPaths=\nJob=\nTransient=no\n"
+          },
+          {
+            "argv": [
+              "systemctl",
+              "stop",
+              "trnmponpublic.slice"
+            ],
+            "exit_code": 0,
+            "stderr": "",
+            "stdout": ""
+          },
+          {
+            "argv": [
+              "systemctl",
+              "show",
+              "trnmponpublic.slice",
+              "--property=Id,Names,LoadState,FragmentPath,DropInPaths,ActiveState,SubState,ControlGroup,Transient,Job,CPUQuotaPerSecUSec,CPUQuotaPeriodUSec,MemoryMax,MemorySwapMax,TasksMax"
+            ],
+            "exit_code": 0,
+            "stderr": "",
+            "stdout": "ControlGroup=\nCPUQuotaPerSecUSec=250ms\nCPUQuotaPeriodUSec=100ms\nMemoryMax=2147483648\nMemorySwapMax=0\nTasksMax=256\nId=trnmponpublic.slice\nNames=trnmponpublic.slice\nLoadState=loaded\nActiveState=inactive\nSubState=dead\nFragmentPath=/run/systemd/system/trnmponpublic.slice\nDropInPaths=\nJob=\nTransient=no\n"
+          },
+          {
+            "argv": [
+              "systemctl",
+              "daemon-reload"
+            ],
+            "exit_code": 0,
+            "stderr": "",
+            "stdout": ""
+          }
+        ],
+        "fixed_parent_is_a_ceiling_not_physical_reservation": true,
+        "outer_four_cpu_budget_unchanged": true,
+        "root_only_lease_is_authority": true,
+        "schema": "history-fixed-parent-fixture-v2"
+      },
+      "probe_negative_controls": [
+        {
+          "control": "duplicate-live-creation-refused",
+          "error": "refuse an existing configured unit or drop-in"
+        },
+        {
+          "control": "forged-evidence-copy-refused",
+          "error": "receipt differs from root-only lease"
+        }
+      ],
+      "probe_already_cleaned": {
+        "action": "cleanup-probe",
+        "cleanup": {
+          "no_owned_lease": true,
+          "no_unit_mutated": true
+        },
+        "complete_success": true,
+        "events": [],
+        "fixed_parent_is_a_ceiling_not_physical_reservation": true,
+        "outer_four_cpu_budget_unchanged": true,
+        "root_only_lease_is_authority": true,
+        "schema": "history-fixed-parent-fixture-v2"
+      }
+    }
+  ],
+  "inspected_source": [
+    {
+      "path": ".github/workflows/pon-pure-history-raw-joint.yml",
+      "sha256": "9d4776e284663e6e6bf7c4176d8d74a0edcea8705d3bde4bbe8633e54037361e",
+      "matches_pinned_fb7": true
+    },
+    {
+      "path": ".github/workflows/pon-native-campaign-qualification.yml",
+      "sha256": "66a2b12994764f30d69b882001e38fe9921bcef40034dd90de6c033541354d84",
+      "matches_pinned_fb7": true
+    },
+    {
+      "path": "scripts/ci/history_fixed_parent_v2.py",
+      "sha256": "05ea488bb5f12c955a482a2af4234b36f9566e84783cf50c4c9e388fc79bf80a",
+      "matches_pinned_fb7": true
+    },
+    {
+      "path": "scripts/ci/test_history_fixed_parent_v2.py",
+      "sha256": "24d06d27411368651f58f2cf972dad2eb8374afadf035042c908e29c912766f3",
+      "matches_pinned_fb7": true
+    }
+  ],
+  "root_cause": "Both outer services run under systemd-run --wait --pipe --collect. The command records termination before EXIT trap unconditionally calls systemctl stop on the collected service. That redundant stop reports not-loaded exit 5.",
+  "independent_failure": "EXIT trap records cleanup_status but exits only original_status. In both lifeline lanes original_status=0 masks cleanup_status=5. Native campaign original_status=1 remains failed for its own original acceptance failure.",
+  "authority_boundary": "The fixed-parent root lease authorizes only trnmponpublic.slice and derived probe slice. It is not authority for either outer .service. Name uniqueness/comment alone is not proof authorizing a stop after StartTransientUnit failed or name was reused.",
+  "evidence_limit": "Pinned artifacts prove service terminal messages and manager not-loaded errors, but do not retain a post-cleanup manager+kernel-cgroup absence observation for the two outer services. Fixed-parent pids.current=0/populated=0 and owned runtime slice removal do not close that distinct outer-service gap.",
+  "minimal_candidate": {
+    "scope": "Replace the redundant name-only stop after --wait --collect with bounded read-only absence verification; keep actual fixed-parent owner cleanup unchanged.",
+    "required_observations": [
+      "Successful machine-readable manager query for the exact validated run/attempt/role unit, no loaded matching unit or job",
+      "Expected system.slice service cgroup absent, using actual lstat/ENOENT rather than treating permission/I/O errors as missing",
+      "Transient runtime unit file absent; any ambiguity or residual object fails without stop/kill/unlink",
+      "Record original native status and cleanup-verification status separately; success requires both zero; preserve original nonzero status and all raw evidence"
+    ],
+    "interruption": "If cancellation leaves a live unit, absence check fails and does not touch an object whose ownership was not proved. Completing an active-unit stop requires an original-owner creation/invocation fence, not an artifact receipt or unit name. Do not claim this read-only predicate proves that cleanup succeeded in that case.",
+    "prohibited_shortcuts": [
+      "No || true or blanket acceptance of exit 5",
+      "No systemctl is-active nonzero treated as absence",
+      "No use of fixed-parent slice cleanup receipt as outer-service authority",
+      "No stop/kill of existing foreign/reused unit",
+      "No relaxation of native timing/resource/confirmation gates"
+    ]
+  },
+  "suggested_controls": [
+    "Actual --wait --collect service exits 0: absent manager/cgroup/transient file, cleanup success",
+    "Actual --wait --collect service exits nonzero: absence success, original nonzero retained",
+    "Original status 0 plus cleanup check error: overall nonzero",
+    "Bus disconnected, timeout, access denied, malformed or truncated properties: fail, never absent",
+    "Same exact unit name already active/configured or start fails due collision: zero stop/kill/unlink calls",
+    "Kernel cgroup remains populated, empty-but-not-removed, or replaced symlink: fail/finite wait, never delete by name",
+    "Repeated invocation after successful collection: read-only absence success, original statuses unchanged",
+    "INT/TERM before unit exit: retained cleanup failure unless original owner is positively proven and stops the matching invocation"
+  ],
+  "official_systemd_255_reference": "https://www.freedesktop.org/software/systemd/man/255/systemd-run.html",
+  "existing_gate_states_changed": false
+}

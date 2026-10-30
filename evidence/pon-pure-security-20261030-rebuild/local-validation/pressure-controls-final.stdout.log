@@ -1,0 +1,40 @@
+
+running 35 tests
+test fixed_parent::fixed_parent_receiver_phase_v1 ... ignored, one of three separately owned fixed-parent observation phases; root fixture required
+test fixed_parent::native_fixed_parent_descriptor_rejects_ordinary_files ... ok
+test fresh_caller_namespace_binds_phase_actor_and_every_call ... ok
+test history_verifier::client_execution_profile_has_no_implicit_pure_relabel ... ok
+test history_verifier::lifeline::linux::tests::actual_owner_death_terminates_all_threads_despite_retained_stream_peer ... ok
+test history_verifier::lifeline::linux::tests::already_dead_owner_is_refused_before_the_scope_starts ... ok
+test history_verifier::lifeline::linux::tests::eof_terminates_helper_while_controller_process_is_still_alive ... ok
+test history_verifier::lifeline::linux::tests::helper_entry ... ignored, actual process helper; only its parent test supplies private capabilities
+test history_verifier::lifeline::linux::tests::prequeued_capability_survives_exec_and_allows_normal_exit ... ok
+test history_verifier::lifeline::linux::tests::unexpected_data_after_arming_cannot_keep_the_helper_running ... ok
+test history_verifier::lifeline::linux::tests::wrong_or_missing_kernel_descriptor_refuses_before_scope ... ok
+test history_verifier::lifeline_native::controller_death_after_actual_node_open_removes_verifier ... ignored, requires the original administrator-provisioned fixed History parent; mandatory dedicated CI lane
+test history_verifier::lifeline_native::controller_death_after_actual_public_import_removes_verifier ... ignored, requires the original administrator-provisioned fixed History parent; mandatory dedicated CI lane
+test history_verifier::lifeline_native::controller_death_after_run_return_before_report_removes_verifier ... ignored, requires the original administrator-provisioned fixed History parent; mandatory dedicated CI lane
+test history_verifier::lifeline_native::controller_entry ... ignored, owned native controller helper; only the exact parent controls provide its immutable job
+test history_verifier::owned_actor_entry ... ignored, exact isolated fixed-Host actor; only an owned immutable job may dispatch
+test native_active_position_keeps_block_height_distinct_from_generation ... ok
+test native_actor_terminal_observation_preserves_the_only_wait4_reap ... ok
+test native_actor_wait4_preserves_whole_lifetime_and_single_reap ... ok
+test native_attacker_cost_retains_unissued_preparations_and_unknown_cpu ... ok
+test native_call_window_refuses_late_entry_without_extending_deadlines ... ok
+test native_child_ownership_probe_distinguishes_live_zombie_and_reaped ... ok
+test pure_pon_cold_shared_domain_fresh_caller_pressure_fixed_host_client_v1 ... ignored, fresh caller with original fixed Host client; original finite service gates remain
+test pure_pon_cold_shared_domain_fresh_caller_pressure_v1 ... ignored, fresh caller per phase/actor/call; original finite windows and failures retained
+test pure_pon_cold_shared_domain_pressure_fixed_host_client_v1 ... ignored, new explicit fixed-Host client composition; original 30-second windows and all failures remain
+test pure_pon_cold_shared_domain_pressure_v2 ... ignored, 90-second separate-process pure-PoN pressure campaign; retains failed observations
+test pure_pressure_process_cost_child_entry ... ignored, exact subprocess fixture for the wait4 owner control
+test pure_pressure_v2_actor_entry ... ignored, subprocess entry; immutable job supplied by the named parent campaign
+test receiver_owner::native_receiver_ipc_deadline_retains_partial_frame ... ok
+test receiver_owner::native_receiver_owner_isolation_and_shutdown ... ok
+test receiver_owner::native_receiver_ready_deadline_retains_partial_prefix_and_body ... ok
+test receiver_owner::native_receiver_terminal_failure_retains_partial_without_inventing_report ... ok
+test receiver_owner::receiver_process_entry ... ignored, exact receiver subprocess entry; invoked only by the independent supplement/control
+test receiver_owner::whole_receiver_owner_pressure_fixed_host_client_v1 ... ignored, new independent receiver and fixed-Host client composition; original finite gates remain
+test receiver_owner::whole_receiver_owner_pressure_v1 ... ignored, independent 90-second receiver subprocess supplement; original campaign is separate
+
+test result: ok. 19 passed; 0 failed; 16 ignored; 0 measured; 0 filtered out; finished in 2.70s
+

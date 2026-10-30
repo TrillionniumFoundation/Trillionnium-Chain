@@ -1,0 +1,112 @@
+{
+  "schema": "pon-v5-synthetic-reader-red-green-v1",
+  "observed_utc": "2026-10-30T01:05:39.946103+00:00",
+  "cases": [
+    {
+      "case": "positive",
+      "old": {
+        "accepted": true,
+        "error": null
+      },
+      "hardened": {
+        "accepted": true,
+        "error": null
+      },
+      "synthetic_rows_sha256": "630ab4b83861bde56ee725981e5eeb15f7bf63ab1a7e2d740cc45c219fe74aa5"
+    },
+    {
+      "case": "coordinated_challenges",
+      "old": {
+        "accepted": true,
+        "error": null
+      },
+      "hardened": {
+        "accepted": false,
+        "error": "attempt challenge differs from canonical nonce header"
+      },
+      "synthetic_rows_sha256": "2744c2d4944bdba807daed75bd17cca7d352a48a89695d1ec9f8f3858cf0415d"
+    },
+    {
+      "case": "coordinated_header_magic",
+      "old": {
+        "accepted": true,
+        "error": null
+      },
+      "hardened": {
+        "accepted": false,
+        "error": "native header version"
+      },
+      "synthetic_rows_sha256": "6b549cbc0d4954982a3211a0233bb7ae84d57333338fcd5dd46436a1210851c7"
+    },
+    {
+      "case": "coordinated_target",
+      "old": {
+        "accepted": true,
+        "error": null
+      },
+      "hardened": {
+        "accepted": false,
+        "error": "original nonzero target"
+      },
+      "synthetic_rows_sha256": "eb393a6b7780aa518295849615177934156333ac4d5f2c2ef5eb1635101cd108"
+    },
+    {
+      "case": "coordinated_task",
+      "old": {
+        "accepted": true,
+        "error": null
+      },
+      "hardened": {
+        "accepted": false,
+        "error": "original native task/transactions"
+      },
+      "synthetic_rows_sha256": "5d4efaaf081af5cb943ba42895a5bf7092307a1266454b9535ae8f31ec77fe57"
+    },
+    {
+      "case": "coordinated_state_with_rehashed_challenges",
+      "old": {
+        "accepted": true,
+        "error": null
+      },
+      "hardened": {
+        "accepted": false,
+        "error": "original fixed native template"
+      },
+      "synthetic_rows_sha256": "cc01b3890b67916e63d2bb7fe0afc2a5f3c3853bea0936c3c7d11f222a11c691"
+    },
+    {
+      "case": "coordinated_short_packet",
+      "old": {
+        "accepted": true,
+        "error": null
+      },
+      "hardened": {
+        "accepted": false,
+        "error": "complete original packet bytes"
+      },
+      "synthetic_rows_sha256": "a40e43b4638dd845befd526b2bf82b1c65a37400bd7d983eec102ab5b1b85f04"
+    },
+    {
+      "case": "coordinated_late_missed_challenge",
+      "old": {
+        "accepted": true,
+        "error": null
+      },
+      "hardened": {
+        "accepted": false,
+        "error": "attempt challenge differs from canonical nonce header"
+      },
+      "synthetic_rows_sha256": "2b4b6efe3e23f84b8fdc6217ced81d3e9eab9285cee4832ed5bbe22fb6b40882"
+    }
+  ],
+  "source_sha256": {
+    "evidence/pon-pure-security-20261030-rebuild/cost-context/original-reader.py.txt": "e5d725c336e54b2c64dda7e58bc960045025f7e5f949d78f6b295e05839a76c4",
+    "scripts/ci/check_legal_ticket_cost_v5.py": "a8d6c0c48e044a1835b4eedabf5362872ef163ac85e09aa7b4f7d0a3a66d5b99",
+    "scripts/ci/test_legal_ticket_cost_v5.py": "a3c44ef72b8f6d060ad45c88cac2bff5d90bed2aaeac44d975a17aea24310a1a",
+    "evidence/pon-pure-security-20261030-rebuild/cost-context/reproduce_reader_counterexamples.py": "db06644e898051f460789c63054d93281140e76711a5fa913472c42113e83dd4"
+  },
+  "old_reader_source_commit": "540d72356a921da31dde1113537382e5c0f0c4fd",
+  "native_work_or_admission_executed": false,
+  "synthetic_records_are_cost_measurements": false,
+  "demonstrates_forged_valid_native_work": false
+}

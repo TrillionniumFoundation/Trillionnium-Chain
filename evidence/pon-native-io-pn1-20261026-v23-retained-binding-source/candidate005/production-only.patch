@@ -1,0 +1,178 @@
+diff --git a/trillionnium/crates/trnm-pon-node/src/store/shared_snapshot.rs b/trillionnium/crates/trnm-pon-node/src/store/shared_snapshot.rs
+index 9987546ca..6d3d43794 100644
+--- a/trillionnium/crates/trnm-pon-node/src/store/shared_snapshot.rs
++++ b/trillionnium/crates/trnm-pon-node/src/store/shared_snapshot.rs
+@@ -19,6 +19,9 @@ const SCHEMA: &str = "native-io-shared-authenticated-snapshot-v1";
+ const MAX_BYTES: usize = FILE_BYTES as usize;
+ const RETAINED: usize = 64;
+ 
++#[path = "shared_snapshot_binding.rs"]
++mod binding;
++
+ #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+ pub(super) enum Layout {
+     CanonicalJson,
+@@ -101,8 +104,7 @@ fn check_typed_rows(db: &Connection, limit: usize) -> Result<()> {
+ }
+ 
+ pub(super) fn check_layout(db: &Connection, settings: &Settings) -> Result<()> {
+-    check_authoritative_namespace(db)?;
+-    check_typed_rows(db, RETAINED)?;
++    binding::check(db, settings, RETAINED)?;
+     let (all, genesis): (u64, u64) = db.query_row(
+         "SELECT (SELECT COUNT(*) FROM main.snapshots),(SELECT COUNT(*) FROM main.snapshots WHERE block=?)",
+         [settings.genesis().as_slice()],
+@@ -207,8 +209,7 @@ pub(super) fn save(
+     progress: &mut dyn FnMut() -> Result<()>,
+     cache: &native_authenticated::ArithmeticCache,
+ ) -> Result<()> {
+-    check_authoritative_namespace(db)?;
+-    check_typed_rows(db, RETAINED)?;
++    binding::check(db, settings, RETAINED)?;
+     ensure(block != settings.genesis(), "NATIVE_SHARED_GENESIS").map_err(Error::local_integrity)?;
+     let native = native_authenticated::load(db, block)?;
+     let mut snapshot = Snapshot {
+@@ -249,8 +250,7 @@ pub(super) fn save(
+         |row| row.get(0),
+     )?;
+     ensure(count <= RETAINED as u64, "SNAPSHOT_LIMIT").map_err(Error::local_integrity)?;
+-    check_authoritative_namespace(db)?;
+-    check_typed_rows(db, RETAINED)
++    binding::check(db, settings, RETAINED)
+ }
+ 
+ pub(super) fn load(
+@@ -273,34 +273,16 @@ fn load_with_limit(
+     let schema_version: u64 = db.query_row("PRAGMA main.schema_version", [], |row| row.get(0))?;
+     let autocommit = db.is_autocommit();
+     progress()?;
++    binding::check(db, settings, limit)?;
+     let bytes = encoded_with_limit(db, block, limit)?;
+     let Some(bytes) = bytes else {
+-        // A pruned OPTIONAL index uses the original checked delta replay.
++        // Absence is optional, but every PRESENT row must still be bound. In
++        // particular, moving this row to a known pruned key is not absence.
++        // No caller callback crosses this last check before returning None.
++        binding::check(db, settings, limit)?;
+         return Ok(None);
+     };
+-    ensure(bytes.len() <= MAX_BYTES, "NATIVE_SHARED_SNAPSHOT_LIMIT")
+-        .map_err(Error::local_integrity)?;
+-    let snapshot: Snapshot =
+-        serde_json::from_slice(&bytes).map_err(|error| Error::from(error).local_integrity())?;
+-    ensure(
+-        canonical(&snapshot)? == bytes
+-            && snapshot.schema == SCHEMA
+-            && snapshot.block == block
+-            && block != settings.genesis()
+-            && snapshot.id == snapshot.digest(settings)?
+-            && snapshot
+-                .working
+-                .keys()
+-                .all(|key| !key.starts_with("account:")),
+-        "NATIVE_SHARED_SNAPSHOT_RECORD",
+-    )
+-    .map_err(Error::local_integrity)?;
+-    let native = native_authenticated::load(db, block)?;
+-    ensure(
+-        snapshot.native_commitment == native.id,
+-        "NATIVE_SHARED_SNAPSHOT_BINDING",
+-    )
+-    .map_err(Error::local_integrity)?;
++    let (snapshot, native) = binding::decode(db, settings, block, &bytes)?;
+     let accounts =
+         native_store::materialize_accounts(db, &native.accounts, progress, Some(&cache.lifts))?;
+     let mut state = snapshot.working;
+@@ -359,6 +341,7 @@ fn load_with_limit(
+             "NATIVE_SHARED_SNAPSHOT_CHANGED",
+         )
+         .map_err(Error::local_integrity)?;
++        binding::check(db, settings, limit)?;
+         Ok(Some(state))
+     })
+ }
+diff --git a/trillionnium/crates/trnm-pon-node/src/store/shared_snapshot_binding.rs b/trillionnium/crates/trnm-pon-node/src/store/shared_snapshot_binding.rs
+new file mode 100644
+index 000000000..19b093379
+--- /dev/null
++++ b/trillionnium/crates/trnm-pon-node/src/store/shared_snapshot_binding.rs
+@@ -0,0 +1,79 @@
++//! Bounded retained-record codec and working-partition binding.
++//!
++//! This is not authentication of unselected accounts or history. The selected
++//! load still materializes the real COW graph and runs the complete State and
++//! history verifiers. A raw native record's self-digest grants no trust here.
++use super::{
++    bytes32, canonical, check_authoritative_namespace, check_typed_rows, native_authenticated,
++    Snapshot, MAX_BYTES, SCHEMA,
++};
++use crate::account_archive_execution::state_witness::COMMITMENT_SCHEMA;
++use crate::{ensure, Error, Result, Settings};
++use rusqlite::{params, Connection};
++use trnm_mvcc_fee::pon_executor;
++use trnm_protocol::pon_wire::Hash;
++
++/// Decode one bounded row against its actual SQL key and native record. These
++/// checks bind local observations; only the original full verifiers authorize
++/// a complete State. Never export a trusted commitment/cached-validity value.
++pub(super) fn decode(
++    db: &Connection,
++    settings: &Settings,
++    block: Hash,
++    bytes: &[u8],
++) -> Result<(Snapshot, native_authenticated::Record)> {
++    (|| {
++        ensure(bytes.len() <= MAX_BYTES, "NATIVE_SHARED_SNAPSHOT_LIMIT")?;
++        let snapshot: Snapshot = serde_json::from_slice(bytes)?;
++        ensure(
++            canonical(&snapshot)?.as_slice() == bytes
++                && snapshot.schema == SCHEMA
++                && snapshot.block == block
++                && block != settings.genesis()
++                && snapshot.id == snapshot.digest(settings)?
++                && snapshot
++                    .working
++                    .keys()
++                    .all(|key| !key.starts_with("account:")),
++            "NATIVE_SHARED_SNAPSHOT_RECORD",
++        )?;
++        let native = native_authenticated::load(db, block)?;
++        ensure(
++            snapshot.native_commitment == native.id
++                && native.state.schema == COMMITMENT_SCHEMA
++                && native.state.network == settings.network()
++                && native.state.parameters == settings.parameters()
++                && native.state.genesis == settings.genesis()
++                && native.state.non_account_count == snapshot.working.len() as u64
++                && native.state.non_account_root
++                    == pon_executor::root(&snapshot.working).map_err(Error::from)?,
++            "NATIVE_SHARED_SNAPSHOT_BINDING",
++        )?;
++        Ok((snapshot, native))
++    })()
++    .map_err(Error::local_integrity)
++}
++
++/// Stream every retained record, never a Vec of all payloads. The original
++/// per-file bound and64 retained rows (65 only during save) do not increase.
++/// The final no-caller-callback read phases call this even for optional None.
++pub(super) fn check(db: &Connection, settings: &Settings, limit: usize) -> Result<()> {
++    (|| {
++        check_authoritative_namespace(db)?;
++        check_typed_rows(db, limit)?;
++        let mut statement = db.prepare(
++            "SELECT block,substr(data,1,?1) FROM main.native_io_shared_snapshots LIMIT ?2",
++        )?;
++        let mut rows = statement.query(params![MAX_BYTES + 1, limit + 1])?;
++        let mut count = 0usize;
++        while let Some(row) = rows.next()? {
++            count += 1;
++            ensure(count <= limit, "SNAPSHOT_LIMIT")?;
++            let block = bytes32(row.get(0)?)?;
++            let bytes: Vec<u8> = row.get(1)?;
++            decode(db, settings, block, &bytes)?;
++        }
++        Ok(())
++    })()
++    .map_err(Error::local_integrity)
++}

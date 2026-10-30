@@ -1,0 +1,67 @@
+{
+  "all_archived_raw_bytes_read_back_verified": true,
+  "archive": "static-before-attempt04.tar.gz",
+  "archive_bytes": 5247,
+  "archive_sha256": "99253cdc53e65e6f6059d9b2917cd9f8a209c74adbfa8859fa8c48e50e5bdd80",
+  "executed_binaries_retained_outside_repository": [],
+  "failed_observations_reclassified": false,
+  "raw_files": [
+    {
+      "bytes": 6064,
+      "path": "blob-checks.json",
+      "sha256": "732bf495b348a646a6e12917e583c2591cadfdee2f594e0fc4609d9a20fcea5a"
+    },
+    {
+      "bytes": 211,
+      "path": "ci-contract.json",
+      "sha256": "3d149366c8f82338b2969b1b9e1abe1d34ed8e119925d476ad268853890a0f25"
+    },
+    {
+      "bytes": 15884,
+      "path": "ci-contract.log",
+      "sha256": "dda076e590bc5ccd07d85441fc931968dd675c0d5bbbb4e6ed42382defe243f8"
+    },
+    {
+      "bytes": 194,
+      "path": "fmt.json",
+      "sha256": "d0d252ed837b70727518a324f3647d2c702375fc706e9aebbe6be4e32f96adf5"
+    },
+    {
+      "bytes": 0,
+      "path": "fmt.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 35,
+      "path": "inventory.log",
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    },
+    {
+      "bytes": 278,
+      "path": "pins-and-inventory.json",
+      "sha256": "54ca4d0d7eaffc38ac8879e3b5477eda8d7115fe24352b4bac05d7d94921eb0e"
+    },
+    {
+      "bytes": 128,
+      "path": "preflight.json",
+      "sha256": "9ed58938c62ef9af908cb7054e3fa711c9de71d8e2233f0b3b098ed4d4d0de1e"
+    },
+    {
+      "bytes": 167,
+      "path": "preflight.log",
+      "sha256": "3dae4011cd0a63be95f76894e99ceb5325eec9237c8bcf0ee4951b63c758e291"
+    },
+    {
+      "bytes": 219,
+      "path": "source-integrity.json",
+      "sha256": "e8fdeb559b04412f7c4cea068773a498c43edbf90338fb1b35de9a6a5abe9fed"
+    },
+    {
+      "bytes": 6054,
+      "path": "source-integrity.log",
+      "sha256": "e75673d43d018c03d9e577ca137d71754bd8b1b904d095f72b1210a3c7695d9f"
+    }
+  ],
+  "schema": "history-v6-completed-observation-archive-v1",
+  "source_directory": "/workspace/scratch/301262829a43/pon-pq-impl/history-v6-evidence/static-before-attempt04"
+}

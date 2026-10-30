@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "cargo",
+    "fmt",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--all",
+    "--",
+    "--check"
+  ],
+  "exit_code": 0,
+  "wall_seconds": 42.73714672600181,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "fix": "Keep the original Rust 2021 edition; use Option::is_some_and instead of a 2024-only let chain. The first formatter refusal is retained."
+}

@@ -1,0 +1,23 @@
+{
+  "name": "locked-metadata",
+  "argv": [
+    "cargo",
+    "metadata",
+    "--locked",
+    "--offline",
+    "--no-deps",
+    "--format-version",
+    "1",
+    "--manifest-path",
+    "trillionnium/Cargo.toml"
+  ],
+  "returncode": 0,
+  "passed": true,
+  "elapsed_wall_seconds": 0.05929766500776168,
+  "raw_bytes": 152412,
+  "raw_sha256": "7709e28e7c53f405733b4a756ee7bae3e3ac63311c3b3d79070beda2b73f1f52",
+  "gzip_bytes": 8095,
+  "gzip_sha256": "3c3db3ea87f8cf13f1ab1508e8ad439af17e9df43ef90ea8483f7a3ecd45bffa",
+  "workspace_members": 25,
+  "packages": 25
+}

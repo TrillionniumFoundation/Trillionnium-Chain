@@ -1,0 +1,108 @@
+{
+  "base": "1116ae390e4ed408ab0899e13aec5d1f90f2192c",
+  "entries": [
+    {
+      "bytes": 5444,
+      "path": "runners/run_native.py",
+      "sha256": "1efca861fb60ceb02a787d84d19a98148e1f699b83ef89f4331ba9e36f4a06ee"
+    },
+    {
+      "bytes": 2623,
+      "path": "runners/run_clippy.py",
+      "sha256": "490cfc8f46c70fa69f46d0958a0e3277966ba092af3fc98706d18a61773355fd"
+    },
+    {
+      "bytes": 2880,
+      "path": "runners/run_retained.py",
+      "sha256": "f9893ac37e2b5214305a4ba51952da05450eef32dc52cb21678da0343c5b6630"
+    },
+    {
+      "bytes": 2878,
+      "path": "runners/archive_attempt.py",
+      "sha256": "1a3cd8bcc8e5e4d39bbef7ad098ef338f027bb53d159e29044d961bbdd0ae69f"
+    },
+    {
+      "bytes": 5211,
+      "path": "runners/attempt01-02-runner-reconstruction.py",
+      "sha256": "134f9fed2796c1d38349247669e70bd04558d5efb7a7dd5efbab289999369725"
+    },
+    {
+      "bytes": 820,
+      "path": "runners/runner-provenance.json",
+      "sha256": "a8c855d27bc3676c842e524f1b88617fde6945ca2ac769d607d6851a4181e325"
+    },
+    {
+      "archive_sha256": "bb1b51a062276cec7931ac84239ad6bc2ca937a1a9b5fbc673ec8be36b91c9e5",
+      "bytes": 1713,
+      "path": "raw/attempt-01.manifest.json",
+      "sha256": "1858a643dea270e2761c42d20c52185fabe956390e7abe8390c7d8d6b8a27a9b"
+    },
+    {
+      "archive_sha256": "e410e7d54cad21f18ee0766e5f8901d0bfc854df0018592783b1f0a69d65b785",
+      "bytes": 20469,
+      "path": "raw/attempt-02.manifest.json",
+      "sha256": "552122da306ee5a1f22acffddb4e66b13a1ff03e11cf5e269fc6ea76e9ba7da1"
+    },
+    {
+      "archive_sha256": "9625c51e0788834f4811b772756d3538a50c43a7f73996321ccfa39e0b648de7",
+      "bytes": 22681,
+      "path": "raw/attempt-03.manifest.json",
+      "sha256": "08c994969e2e1c603e3522e54c6bf94365ae6f285494c4f3df87d154b69b7202"
+    },
+    {
+      "archive_sha256": "10136afd409012ebe367273468769305da78c112e3f772c3dd5e29e7f68084a1",
+      "bytes": 1100,
+      "path": "raw/clippy-attempt-01.manifest.json",
+      "sha256": "b94504b34130b6311d70e803959a15c82a4a7f6d6623e23663da99622f29ace1"
+    },
+    {
+      "archive_sha256": "d37eadacffd3e4913f1ab24a1e8c5d90bb04ab7715c69d26a5ca50e4ea5fa3f3",
+      "bytes": 1100,
+      "path": "raw/clippy-attempt-02.manifest.json",
+      "sha256": "22978355e81d40715fec516cbb76be740d9d5117e82852a2484b2f244d1138d5"
+    },
+    {
+      "archive_sha256": "7cff554eddf2968c95cff23af88349cbb1b9096d418f9af610ddc49c98fa5db4",
+      "bytes": 1263,
+      "path": "raw/clippy-attempt-03.manifest.json",
+      "sha256": "625b086283d10e36cb944ddcbf8dbb3e41a7185c93a26b9654f2a33697373fd1"
+    },
+    {
+      "archive_sha256": "8b8bd5c4677e3a703fd619e6615fcf5e9cba0cecbe91dd4d4fecdda0a7b55254",
+      "bytes": 1318,
+      "path": "raw/observer-component-01.manifest.json",
+      "sha256": "ea220225c8ea6cc699e90e51ca74951eb91bf08237d2c89b8cb21d3ba4d92d25"
+    },
+    {
+      "archive_sha256": "f2e02eee40d6b4c814e32995739c1cb717ef252bbb08d3560286ad78590164aa",
+      "bytes": 1616,
+      "path": "raw/observer-component-02.manifest.json",
+      "sha256": "7d510580ab908d1db73c560caf78e9779b057f99f25fe2172c14325e4d2dc446"
+    },
+    {
+      "archive_sha256": "6764d5e2a82aa7e191332d2c62ea705806cfbb211b6b9310a0619a249fe9d3df",
+      "bytes": 930,
+      "path": "raw/pre-native04-final.manifest.json",
+      "sha256": "5cb28fe9b28ce374a45e1b39ce7f6e2acf7ddeeb5648b3fb704dfc1f3e7cbddc"
+    },
+    {
+      "archive_sha256": "891eca13d441dfbc0ba7cf92255ce05bf47b4a21b68823c5ea562a05cc19aca9",
+      "bytes": 1562,
+      "path": "raw/static-before-attempt03.manifest.json",
+      "sha256": "c7c7f5a4a41e20649c2e9a2ea38057b8b4057dce1e5357f02191df2ed40f470b"
+    },
+    {
+      "archive_sha256": "99253cdc53e65e6f6059d9b2917cd9f8a209c74adbfa8859fa8c48e50e5bdd80",
+      "bytes": 2150,
+      "path": "raw/static-before-attempt04.manifest.json",
+      "sha256": "999f7261a9d38b93c1c62af83b87a7a9ebefeda0b8dd65d2b1d3aa52b6d56350"
+    }
+  ],
+  "native_latest_actual": "attempt03: 4 passed, 2 failed, 1 ignored helper",
+  "native_next_attempt": "attempt04 not yet started at index creation",
+  "observer_components": "two runs, each 3 passed; not Native evidence",
+  "production_qualified": false,
+  "schema": "history-v6-source-only-draft-observation-index-v1",
+  "strict_clippy": "PASS with source stable; prior two failures retained",
+  "whole_history_p0_complete": false
+}

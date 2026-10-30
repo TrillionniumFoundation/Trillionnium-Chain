@@ -1,0 +1,24 @@
+{
+  "schema": "pon-history-n8-artifact-metadata-v1",
+  "retrieved_at_utc": "2026-10-30T01:30:42.893Z",
+  "scope": "GitHub connector artifact metadata retrieved during this readback; archive digest was checked after download. No signed temporary download URL is retained.",
+  "artifact": {
+    "id": 12922584378,
+    "name": "pon-pure-history-raw-history-account-graph-resource-fence-v1-x64-head-release-540d72356a921da31dde1113537382e5c0f0c4fd-1",
+    "size_in_bytes": 76626593,
+    "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/12922584378",
+    "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/12922584378/zip",
+    "expired": false,
+    "created_at": "2026-10-29T18:46:56Z",
+    "expires_at": "2026-11-28T18:46:51Z",
+    "updated_at": "2026-10-29T18:46:56Z",
+    "digest": "sha256:87f5f7b1486b66d963c41228557f80f000d68295791012bb318321f9c1d07f50",
+    "workflow_run": {
+      "id": 40932471986,
+      "repository_id": 1323087357,
+      "head_repository_id": 1323087357,
+      "head_branch": "fix/chain-native-convergence-20261029",
+      "head_sha": "540d72356a921da31dde1113537382e5c0f0c4fd"
+    }
+  }
+}

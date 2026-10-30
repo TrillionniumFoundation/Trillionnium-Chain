@@ -1,0 +1,219 @@
+{
+  "schema": "pon-expiry-correction-validation-archive-v1",
+  "archive": "expiry-correction-validation.tar.gz",
+  "archive_bytes": 56579,
+  "archive_sha256": "f914dba740d8a5c0b796d7134562ad78de7980ba87fc2d5b70219527561bed0d",
+  "files": [
+    {
+      "path": "focused/binary.json",
+      "bytes": 442,
+      "sha256": "4d1ba2dbd7e698134a98960eb60267ab4bd9ec2572ff996e855b29db2f779351"
+    },
+    {
+      "path": "focused/build-unit.stderr.log",
+      "bytes": 179,
+      "sha256": "a49ef25e91bf2cfaf36b082273c0be936eb0b7801aac271dbcc5b9e1d07d6f2a"
+    },
+    {
+      "path": "focused/build-unit.stdout.log",
+      "bytes": 93557,
+      "sha256": "99fbde6c4cc9cd13fb89d53e0a0402efab5e8c3993e5d963ee8bf0b839faedc1"
+    },
+    {
+      "path": "focused/build-unit.step.json",
+      "bytes": 865,
+      "sha256": "3de9b104cb0677df6ba1efd3cbcc8b56f56b8847bcfd69cc9e2daaee71dfb70e"
+    },
+    {
+      "path": "focused/diff-check.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "focused/diff-check.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "focused/diff-check.step.json",
+      "bytes": 653,
+      "sha256": "6129695769547d1014112fb3d9479b180719407385ca262e8839ff9fdc1ea459"
+    },
+    {
+      "path": "focused/expiry-boundaries-and-original-tcp.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "focused/expiry-boundaries-and-original-tcp.stdout.log",
+      "bytes": 427,
+      "sha256": "1f14f3fb884ac0d79079394c47f5fcd753336d3ab2b82417d05389cd68eecac7"
+    },
+    {
+      "path": "focused/expiry-boundaries-and-original-tcp.step.json",
+      "bytes": 1117,
+      "sha256": "3e468f32a069a068115b8e7653b87b5e20dcd780a5fc85ca022bd066981acc76"
+    },
+    {
+      "path": "focused/format.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "focused/format.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "focused/format.step.json",
+      "bytes": 713,
+      "sha256": "e5fa55598ea6daffc35467a5db45d08d6abb2729c9097fc28f4aa486207504e7"
+    },
+    {
+      "path": "focused/inventory.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "focused/inventory.stdout.log",
+      "bytes": 35,
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    },
+    {
+      "path": "focused/inventory.step.json",
+      "bytes": 698,
+      "sha256": "438b4b7bc3b7b288c4c6c4d36d915f65252764c9339e48ea5ea80086ff6261ad"
+    },
+    {
+      "path": "focused/native-verdict.json",
+      "bytes": 304,
+      "sha256": "d407d5b2f1bc9dea3416850cc9e5bfc3731764896c0d2b16c4b05379add2a1bd"
+    },
+    {
+      "path": "focused/preflight.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "focused/preflight.stdout.log",
+      "bytes": 172,
+      "sha256": "2db605bdea3f573d94271fa2229e28326dddc8576c7ef4224afdb87521421961"
+    },
+    {
+      "path": "focused/preflight.step.json",
+      "bytes": 675,
+      "sha256": "1e13f65e35aa86ee617fe7d07280bca5fabeb2fe170350566e926bf5e6da02b1"
+    },
+    {
+      "path": "focused/results.json",
+      "bytes": 6922,
+      "sha256": "0dc94595415a88e554832e1397c57dea4c8fc4bf086b046c986cc5633e848206"
+    },
+    {
+      "path": "focused/source.diff",
+      "bytes": 7004,
+      "sha256": "b44a4f6439162470d1cc117821debeab646a550e22c9be8bcf04185d504eb70d"
+    },
+    {
+      "path": "focused/source.json",
+      "bytes": 532,
+      "sha256": "dfee7b5d7733a4ae094595da7b70987690ac62d5314f8b0e5a3589d15d534f9b"
+    },
+    {
+      "path": "focused/strict-clippy.stderr.log",
+      "bytes": 180,
+      "sha256": "ead78a9ab4107cb13fc224d77918dd3b6ad98867961d9361b2d98e398e8f8a6b"
+    },
+    {
+      "path": "focused/strict-clippy.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "focused/strict-clippy.step.json",
+      "bytes": 874,
+      "sha256": "14d975b2d69c26c656389a3d0d52231e332e612a21d535a6e278c25435ce7fed"
+    },
+    {
+      "path": "compatibility/binary.json",
+      "bytes": 442,
+      "sha256": "4d1ba2dbd7e698134a98960eb60267ab4bd9ec2572ff996e855b29db2f779351"
+    },
+    {
+      "path": "compatibility/native-verdict.json",
+      "bytes": 298,
+      "sha256": "e9144585c2e0f8a2b9d0d83ecda65014f595a3346a20c13649acb1b1820c0e60"
+    },
+    {
+      "path": "compatibility/process.json",
+      "bytes": 845,
+      "sha256": "19e59bd12a990ad7f37948810af16390d182d6bb4e8cbafc26c09bb820280dae"
+    },
+    {
+      "path": "compatibility/runtime-host-compatibility.stderr.log",
+      "bytes": 1571,
+      "sha256": "3fb9a86879371576bcb90294c4cd2f62260717313f405bdf7e8757819eb93b76"
+    },
+    {
+      "path": "compatibility/runtime-host-compatibility.stdout.log",
+      "bytes": 745747,
+      "sha256": "eacc006777db93a1a8e01d4b8703e19c0dcbfa991a80785a8079219a6df985c1"
+    },
+    {
+      "path": "compatibility/runtime-host-compatibility.step.json",
+      "bytes": 845,
+      "sha256": "19e59bd12a990ad7f37948810af16390d182d6bb4e8cbafc26c09bb820280dae"
+    }
+  ],
+  "source": {
+    "schema": "pon-expiry-correction-source-v1",
+    "base_commit": "c2364a5864face5e828140e557915f4380f97512",
+    "source_file": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+    "source_sha256": "764e9cca6d1c42b4e40e811f84b678aa856d5a80ff1400cc47b0b5d0a9830b3e",
+    "diff_sha256": "b44a4f6439162470d1cc117821debeab646a550e22c9be8bcf04185d504eb70d",
+    "stored_schema_changed": false,
+    "signed_domain_changed": false,
+    "runtime_deadline_or_budget_changed": false,
+    "old_tcp_test_condition_or_deadline_changed": false
+  },
+  "focused_test_profile_verdict": {
+    "name": "expiry-boundaries-and-original-tcp",
+    "nonempty_test_pass": true,
+    "process_complete_success": true,
+    "qualified": true,
+    "schema": "pon-native-test-verdict-v1",
+    "terminal_summary": {
+      "failed": 0,
+      "filtered_out": 736,
+      "ignored": 0,
+      "measured": 0,
+      "passed": 3
+    }
+  },
+  "compatibility_test_profile_verdict": {
+    "name": "runtime-host-compatibility",
+    "nonempty_test_pass": true,
+    "process_complete_success": true,
+    "qualified": true,
+    "schema": "pon-native-test-verdict-v1",
+    "terminal_summary": {
+      "failed": 0,
+      "filtered_out": 556,
+      "ignored": 0,
+      "measured": 0,
+      "passed": 183
+    }
+  },
+  "strict_release_clippy_passed": true,
+  "test_profile_overrides": {
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_PROFILE_TEST_DEBUG": "0"
+  },
+  "these_native_tests_are_release_profile": false,
+  "old_tcp_test_conditions_and_deadlines_unchanged": true,
+  "complete_success": true,
+  "prior_exact_head_failure_preserved": "exact-head-c2364a5-validation.json",
+  "pressure_repeated": false,
+  "public_fairness_qualified": false,
+  "production_activation": false
+}

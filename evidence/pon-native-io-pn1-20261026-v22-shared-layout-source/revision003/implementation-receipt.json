@@ -1,0 +1,140 @@
+{
+  "recorded_utc": "2026-10-26T15:47:37.585106+00:00",
+  "schema": "PN1-I02-shared-authenticated-snapshot-source-candidate-v3",
+  "revision": "003; source-only response to independent r2 wrong-key and TEMP-authority blockers",
+  "base_head": "94b3fb60b7aa32c8bf5b7c8679d3c46a980b4060",
+  "base_tree": "da71738463a4d451e0b0246985dc69c7ab1f24fe",
+  "branch": "docs/chain-audit-remediation-20261022",
+  "origin": "https://github.com/TrillionniumFoundation/Trillionnium-Chain.git",
+  "status": "M trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs\n M trillionnium/crates/trnm-pon-node/src/store.rs\n M trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs\n M trillionnium/crates/trnm-pon-node/src/store/public_reader.rs\n A trillionnium/crates/trnm-pon-node/src/store/shared_snapshot.rs\n A trillionnium/crates/trnm-pon-node/src/store/shared_snapshot_tests.rs",
+  "previous_revision_receipt_sha256": "f979037abb018c84cf0ee1d0800692e6fa89e0a40d49baef6e68da0e691a529d",
+  "previous_candidate_sha256": "231762394a8eec4f4815ab5e16184cee588755db80ae9d8eb214e88bab9995fc",
+  "revision001_and002_all_frozen_source_patch_and_receipt_bytes_preserved": true,
+  "root_ROG_sources_modified": false,
+  "commit_push_build_test_native_or_migration": false,
+  "artifacts": {
+    "candidate.patch": {
+      "bytes": 66697,
+      "sha256": "ea0e207133f824870fa7db675a02851063d62a20715f519fbdf627eef4b2fd8f"
+    },
+    "production-only.patch": {
+      "bytes": 37888,
+      "sha256": "231da5ee83e24e0d04ca64667cad315910e1c29ed91110d271a0948b7a272ad6"
+    },
+    "new-controls-only.patch": {
+      "bytes": 28809,
+      "sha256": "5bf1b46e07b28c9f875c356fddb5e61b3a0aaa03b6adf0ec561ea8c031820a4d"
+    },
+    "revision002-to003-readable.diff": {
+      "bytes": 18658,
+      "sha256": "fd70180d2cfb5f44685e5be64f29640112e6390beafe2e8920bb4178bf7f4410"
+    },
+    "unchanged-original-tests-and-boundaries.json": {
+      "bytes": 96890,
+      "sha256": "a9fa39dfa25402bb2ed5efc7706ff643385e07a69ae28eaab95b15d96c9e0dfa"
+    },
+    "revision-start.json": {
+      "bytes": 5674,
+      "sha256": "72b88e7a93aa91430ae384c11b32b5581f5ca36b8734bbf058da3842120e5331"
+    }
+  },
+  "files": {
+    "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs": {
+      "bytes": 31858,
+      "sha256": "ad9e41b68379ec9e5aade1bc2339d2710c9128e142738488dec35eee20b5979f",
+      "lines": 869
+    },
+    "trillionnium/crates/trnm-pon-node/src/store.rs": {
+      "bytes": 309281,
+      "sha256": "48e3301d9a60ed62aed976249bf7816c2df94a19ab0a72273ba275feb8448df2",
+      "lines": 7624
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/public_reader.rs": {
+      "bytes": 19088,
+      "sha256": "b8bf23dca2b77f9554c8a1b1fbe37d6e1a4580680ef3e52f077d045cd4d0f7b6",
+      "lines": 540
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs": {
+      "bytes": 36109,
+      "sha256": "8e88d29a17db73d13ec65f9be591509134338d2a903aa3330375101e6a893feb",
+      "lines": 889
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/shared_snapshot.rs": {
+      "bytes": 17835,
+      "sha256": "ad2e279ec98eb8eb71a86b7e31c9b6762d0d938c5721bd5c070f443cb14ba926",
+      "lines": 474
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/shared_snapshot_tests.rs": {
+      "bytes": 27725,
+      "sha256": "160fed913510a1984f1732eee0eac1d6c9a7c0410f9e68082b019f0590e29260",
+      "lines": 776
+    }
+  },
+  "r2_source_findings_and_r3_repairs": [
+    {
+      "finding": "A same-byte BLOB-to-TEXT shared block key misses a BLOB bound SELECT and was treated as legitimately absent optional index. This is an independent static counterexample, not an executed result.",
+      "repair": "New metadata-only scan checks EVERY retained shared row key is BLOB length32 and data is nonempty BLOB within original MAX_BYTES before lookup. Normal public reads accept at most64 rows plus a rejecting sentinel, and repeat the check through encoded reads and final production storage_context after last caller callback. Wrong type cannot become None; genuinely absent row still requires original full State/COW/history reconstruction."
+    },
+    {
+      "finding": "Unqualified SQLite table names resolve TEMP before main. Last same-connection callback could copy a valid shared/native/COW table into same-name TEMP then corrupt main; r2 final main schema cookie did not expose TEMP shadow. Static counterexample, not native execution.",
+      "repair": "New-layout authoritative namespace guard rejects case-insensitive same-name TEMP objects joined against main.sqlite_master and any attached schema outside main/temp. Invoked before storage_context metadata access, save, shared encoded lookup, layout checks, and before/after every final no-caller-callback read phase. Shared row metadata/lookup/layout and schema_version explicitly select main. Existing common/native verifier SQL remains unchanged and cannot resolve conflicting TEMP objects after this guard. Non-conflicting TEMP workspace/spill remains permitted."
+    }
+  ],
+  "row_scan_bounds": {
+    "public_retained": 64,
+    "public_rejecting_sentinel": 1,
+    "pending_production_save": "Existing save already inserts one pending row before its actual complete-State validation and64-row prune, to validate low-height forks that may themselves be pruned. The private load_with_limit allows exactly65 only inside this save validation; one additional rejecting sentinel bounds corruption detection. Original final SNAPSHOT_LIMIT and final typed scan enforce <=64. This does not permit65 retained rows, add a public API/profile selector or enlarge any original resource cap.",
+    "metadata_only": "Reads typeof and conditional BLOB length scalars, never copies arbitrary keys or data during scan. Non-BLOB values do not trigger length(TEXT) traversal. Actual selected payload still obeys original MAX_BYTES and full canonical codec validation.",
+    "safety_scope": "Production save is inside its existing immediate writer transaction. Normal-codec private helper controls are not production/native transaction qualification."
+  },
+  "preserved_r1_r2_repairs": [
+    "Readonly old archive Node initializer explicitly CanonicalJson+None; original native-IO migration guard unchanged.",
+    "Full actual account-node/State/history validation after last caller callback; raw shared/native record fencing is additional provenance, never substitute.",
+    "Actual public active/state_at paths reject malformed present used records, allow genuinely absent optional index only under complete validation, and retain historical-anchor read set.",
+    "Actual NativeIoLease Root.receipt sticky health is checked, not identity-only lease.check or SQLite SELECT success; original ledger/caps untouched."
+  ],
+  "new_source_controls": {
+    "all_revision002_controls_exact_byte_prefix_preserved": true,
+    "normal_codec": "Same-byte key CAST to TEXT retains original CAST-back BLOB bytes but private shared read must return owner-fatal NATIVE_SHARED_TYPED_RECORD; rollback restores valid read. NOT_RUN.",
+    "actual_factory_public_paths": "Fresh actual NativeIoOwner and original authenticated native-IO Node factory; active and nonactive state_at wrong-key failures, final-callback key mutation failures; final-callback uppercase TEMP shadows of shared table/archive_nodes/native_state_commitments with actual main damage through public read_active and state_at; legitimate unrelated TEMP workspace accepted; auxiliary ATTACH rejected. Original native API/caller/profile untouched. NOT_RUN.",
+    "explicit_native_selection": "New Linux supplemental test follows existing explicit native-ABI #[ignore] dispatch. If selected, Unsupported/create/open is unwrap failure. IGNORE, Unsupported, NOT_RUN and normal-codec tests NEVER qualify native execution.",
+    "not_equivalent": "No new controls claim original3FD writer, independent reader, network RPC, paid4097 or whole-execution qualification."
+  },
+  "unchanged_proof": {
+    "old_tracked_Rust_test_files": 467,
+    "old_store_inline_test_tail_bytes": 79958,
+    "old_controls_from002": "exact byte prefix preserved",
+    "old_Cargo_AGENTS_harness_dual_readers_VFS_ledger_migration_guard_plan": "byte-equal pins in artifact",
+    "limits": "Original4KiB/FULL/WAL,16MiB/file48MiB/root336MiBdomain,1024+256events655360bytes, originalFD/samelease/CPU/AS/2s/whole/cumulative budgets unchanged"
+  },
+  "transaction_and_health_limits": {
+    "arbitrary_same_connection_txn_control": "OPEN: COMMIT; BEGIN IMMEDIATE can preserve is_autocommit=false, schema_version and total_changes. These tuples do not prove borrowed writer transaction identity. R3 does not add authorizer/capability boundaries or quietly claim protection against arbitrary caller transaction replacement.",
+    "postcommit": "OPEN: postCOMMIT durable fact versus checkpoint/storage health remains separate; snapshot codec and namespace guards do not turn committed failure into rollback/retry/refund.",
+    "actual_current_validation": "Current actual complete graph/State/history, correct main namespace, record bindings and actual sticky Root receipt remain mandatory, even when auxiliary transaction observations match."
+  },
+  "source_checks": {
+    "preflight_before_edit": 0,
+    "preflight_final": 0,
+    "diff_check_final": 0,
+    "source_only_rustfmt_2021": 0,
+    "typecheck_Clippy": "NOT_RUN",
+    "all_old_new_tests": "NOT_RUN",
+    "actual_C_or_native": "NOT_RUN; no old claim/prepared/ELF/results inherited"
+  },
+  "remaining": [
+    "Independent peer review of exact003 patch and source hashes required before root application.",
+    "No compiler/Clippy/test result; source formatting is not typechecking.",
+    "Metadata scans, multiple full account/history traversals and Root receipt copies remain charged to unchanged2s/whole/cumulative deadlines. No throughput, cap-sufficiency or PASS prediction.",
+    "New-format independent decoder and explicit migration execution remain unimplemented; old-format tests do not certify new physical layout.",
+    "All original native caller/readers/full4097, Windows, Hepta three-round model, persistent Cell custody and independent72hWAN gates remain open."
+  ],
+  "primary_SQLite_namespace_reference": "https://www.sqlite.org/lang_naming.html",
+  "mechanism_qualified": false,
+  "whole_writer_qualified": false,
+  "original_three_FD_caller_qualified": false,
+  "independent_reader_qualified": false,
+  "full_W1_4097_qualified": false,
+  "full_guard_enabled": false,
+  "task_complete": false,
+  "merge_ready": false
+}

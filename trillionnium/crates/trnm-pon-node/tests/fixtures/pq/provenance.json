@@ -1,0 +1,14 @@
+{
+  "schema": "trnm-native-pq-local-owner-fixtures-v1",
+  "test_key_only": true,
+  "seed_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+  "source": "cryptography 50.0.2 MLDSA65PrivateKey; independent OpenSSL implementation",
+  "payload_hex": "6e6174697665205051206c6f63616c20617574686f72697a6174696f6e206578706572696d656e74",
+  "sha256": {
+    "operation1.bin": "160f6dd9a2fada07c34aff2f3cbaa66b362659d9a7d680a3bd1c58d75fd2ce10",
+    "operation3.bin": "e8aa498c3074a6c1480a6aa3ed8d2892235abfbf6851479a837a1d3db6ebd545",
+    "operation1_randomized.bin": "5f8c86e4870380bc9e2e482be3c797b0e27518dd06898c4b0a21239dd02d4bf2",
+    "operation2.bin": "45040707589e0e0858d0210e6aac4cc2a48d3ed4cabf012236897ca06e1135ea",
+    "public.der": "b8b62131bfbe84433efb2273d7f5b87f7a22854a2cfd366fc2aead86d837c52d"
+  }
+}

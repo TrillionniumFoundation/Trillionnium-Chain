@@ -1,0 +1,9 @@
+{
+  "schema": "history-startup-material-actual-local-binary-v1",
+  "raw_bytes": 9247296,
+  "raw_sha256": "9efdbbe37cb235b40c77c4e719ed404aef3c76e591686f299632ec415d53c860",
+  "gzip_bytes": 2619293,
+  "gzip_sha256": "7bbb34ac3cf2b5019bc0837efe5e52e99b055e4aff373122060429f999028be8",
+  "node_binary": false,
+  "reconstruction_readback_passed": true
+}

@@ -177,12 +177,23 @@ pub enum RelayAuthError {
     MissingRequiredField {
         field: &'static str,
     },
+    ChainMismatch {
+        expected: String,
+        got: String,
+    },
+    ReplayStateCapacityExceeded,
+    OversizedField {
+        field: &'static str,
+    },
 }
 
 impl RelayAuthError {
     pub fn stable_code(&self) -> &'static str {
         match self {
             RelayAuthError::BadSig => "BadSig",
+            RelayAuthError::ChainMismatch { .. } => "ChainMismatch",
+            RelayAuthError::ReplayStateCapacityExceeded => "ReplayStateCapacityExceeded",
+            RelayAuthError::OversizedField { .. } => "OversizedField",
             RelayAuthError::Replay { .. } => "Replay",
             RelayAuthError::SeqRegression { .. } => "SeqRegression",
             RelayAuthError::SeqGap { .. } => "SeqGap",
@@ -204,6 +215,24 @@ impl fmt::Display for RelayAuthError {
             RelayAuthError::BadSig => {
                 write!(f, "signature verify failed (code={})", self.stable_code())
             }
+            RelayAuthError::ChainMismatch { expected, got } => write!(
+                f,
+                "chain mismatch: expected={} got={} (code={})",
+                expected,
+                got,
+                self.stable_code()
+            ),
+            RelayAuthError::ReplayStateCapacityExceeded => write!(
+                f,
+                "relay replay state capacity exceeded (code={})",
+                self.stable_code()
+            ),
+            RelayAuthError::OversizedField { field } => write!(
+                f,
+                "relay field too large: {} (code={})",
+                field,
+                self.stable_code()
+            ),
             RelayAuthError::SeqRegression { last_seq, got_seq } => write!(
                 f,
                 "seq regression: last_seq={} got_seq={} (code={})",
@@ -263,31 +292,57 @@ impl fmt::Display for RelayAuthError {
 
 impl std::error::Error for RelayAuthError {}
 
-#[derive(Debug, Clone)]
+const MAX_RELAY_REPLAY_ENTRIES: usize = 100_000;
+const MAX_RELAY_TEXT_FIELD_BYTES: usize = 256;
+const MAX_RELAY_PAYLOAD_BYTES: usize = 2 * 1024 * 1024;
+
 pub struct RelayAuthVerifier {
     max_skew_ms: u128,
     allow_legacy_v0: bool,
+    expected_chain_id: Option<String>,
     last_seq: HashMap<(String, String, String, String), u64>,
     seen_nonce: HashSet<(String, String, String, String, String)>,
 }
 
 impl RelayAuthVerifier {
+    /// Creates a verifier with the current, chain-bound protocol only.
+    ///
+    /// Legacy v0 envelopes do not bind `chain_id` into their signature and
+    /// therefore must never be accepted by the production default: a captured
+    /// legacy envelope could otherwise be replayed on another chain.
     pub fn new(max_skew_ms: u128) -> Self {
-        Self {
-            max_skew_ms,
-            allow_legacy_v0: true,
-            last_seq: HashMap::new(),
-            seen_nonce: HashSet::new(),
-        }
+        Self::strict(max_skew_ms)
     }
 
     pub fn strict(max_skew_ms: u128) -> Self {
         Self {
             max_skew_ms,
             allow_legacy_v0: false,
+            expected_chain_id: None,
             last_seq: HashMap::new(),
             seen_nonce: HashSet::new(),
         }
+    }
+
+    /// Creates a verifier bound to one explicit chain identity.
+    pub fn for_chain(max_skew_ms: u128, expected_chain_id: impl Into<String>) -> Self {
+        Self {
+            max_skew_ms,
+            allow_legacy_v0: false,
+            expected_chain_id: Some(expected_chain_id.into()),
+            last_seq: HashMap::new(),
+            seen_nonce: HashSet::new(),
+        }
+    }
+
+    /// Legacy v0 compatibility is intentionally disabled.
+    ///
+    /// v0 signatures do not authenticate `chain_id`, so comparing an
+    /// unauthenticated envelope field with configuration cannot prevent a
+    /// captured envelope from being rewritten and replayed on another chain.
+    /// Keep this constructor for source compatibility, but fail closed.
+    pub fn legacy_compatible(max_skew_ms: u128, _expected_chain_id: impl Into<String>) -> Self {
+        Self::strict(max_skew_ms)
     }
 
     fn verify_envelope_fields(
@@ -325,6 +380,25 @@ impl RelayAuthVerifier {
             if is_current && env.chain_id.trim() != env.chain_id {
                 return Err(RelayAuthError::MissingRequiredField { field: "chain_id" });
             }
+            if is_current {
+                let Some(expected_chain_id) = self.expected_chain_id.as_deref() else {
+                    return Err(RelayAuthError::MissingRequiredField { field: "chain_id" });
+                };
+                if env.chain_id != expected_chain_id {
+                    return Err(RelayAuthError::ChainMismatch {
+                        expected: expected_chain_id.to_string(),
+                        got: env.chain_id.clone(),
+                    });
+                }
+            }
+            if is_legacy {
+                let Some(expected_chain_id) = self.expected_chain_id.as_deref() else {
+                    return Err(RelayAuthError::MissingRequiredField { field: "chain_id" });
+                };
+                if env.chain_id != expected_chain_id {
+                    return Err(RelayAuthError::MissingRequiredField { field: "chain_id" });
+                }
+            }
             if env.session_id.trim().is_empty() {
                 return Err(RelayAuthError::MissingRequiredField {
                     field: "session_id",
@@ -354,6 +428,15 @@ impl RelayAuthVerifier {
             if value.trim().is_empty() || value.trim() != value || value.contains('|') {
                 return Err(RelayAuthError::MissingRequiredField { field });
             }
+            if value.len() > MAX_RELAY_TEXT_FIELD_BYTES {
+                return Err(RelayAuthError::OversizedField { field });
+            }
+        }
+        if env.payload.len() > MAX_RELAY_PAYLOAD_BYTES {
+            return Err(RelayAuthError::OversizedField { field: "payload" });
+        }
+        if env.sig.len() > MAX_RELAY_TEXT_FIELD_BYTES {
+            return Err(RelayAuthError::OversizedField { field: "sig" });
         }
         if is_current && env.chain_id.contains('|') {
             return Err(RelayAuthError::MissingRequiredField { field: "chain_id" });
@@ -415,6 +498,15 @@ impl RelayAuthVerifier {
                     got_seq: env.seq,
                 });
             }
+        } else if env.seq != 1 {
+            // A fresh verifier has no authenticated checkpoint. Do not let a
+            // captured high-sequence envelope seed state and permanently block
+            // the legitimate beginning of a session. Persisted resume checkpoints
+            // must be restored before accepting any later sequence.
+            return Err(RelayAuthError::SeqGap {
+                expected_seq: 1,
+                got_seq: env.seq,
+            });
         }
 
         let nonce_key = (
@@ -428,6 +520,11 @@ impl RelayAuthVerifier {
             return Err(RelayAuthError::Replay {
                 nonce: env.nonce.clone(),
             });
+        }
+        if self.last_seq.len() >= MAX_RELAY_REPLAY_ENTRIES
+            || self.seen_nonce.len() >= MAX_RELAY_REPLAY_ENTRIES
+        {
+            return Err(RelayAuthError::ReplayStateCapacityExceeded);
         }
 
         self.last_seq.insert(seq_key, env.seq);
@@ -491,7 +588,7 @@ mod tests {
     #[test]
     fn relay_auth_verify_pass() {
         let key = "sender-key";
-        let mut verifier = RelayAuthVerifier::new(120_000);
+        let mut verifier = RelayAuthVerifier::for_chain(120_000, "trnm-mainnet");
         let env = sample_env(1, "nonce-1", 1_730_000_000_000, key);
 
         let ok = verifier.verify(&env, 1_730_000_000_050, |e| e.sign_for_test(key) == e.sig);
@@ -501,7 +598,7 @@ mod tests {
     #[test]
     fn relay_auth_verify_fail_bad_signature() {
         let key = "sender-key";
-        let mut verifier = RelayAuthVerifier::new(120_000);
+        let mut verifier = RelayAuthVerifier::for_chain(120_000, "trnm-mainnet");
         let mut env = sample_env(1, "nonce-1", 1_730_000_000_000, key);
         env.sig = "bad-signature".to_string();
 
@@ -514,7 +611,7 @@ mod tests {
     #[test]
     fn relay_auth_verify_replay_nonce_rejected() {
         let key = "sender-key";
-        let mut verifier = RelayAuthVerifier::new(120_000);
+        let mut verifier = RelayAuthVerifier::for_chain(120_000, "trnm-mainnet");
         let env1 = sample_env(1, "nonce-dup", 1_730_000_000_000, key);
         let env2 = sample_env(2, "nonce-dup", 1_730_000_000_100, key);
 
@@ -531,7 +628,7 @@ mod tests {
     #[test]
     fn relay_auth_allows_same_nonce_for_different_senders() {
         let key = "sender-key";
-        let mut verifier = RelayAuthVerifier::new(120_000);
+        let mut verifier = RelayAuthVerifier::for_chain(120_000, "trnm-mainnet");
 
         let env1 = sample_env(1, "nonce-shared", 1_730_000_000_000, key);
 
@@ -550,11 +647,11 @@ mod tests {
     #[test]
     fn relay_auth_allows_same_nonce_for_different_task_ids() {
         let key = "sender-key";
-        let mut verifier = RelayAuthVerifier::new(120_000);
+        let mut verifier = RelayAuthVerifier::for_chain(120_000, "trnm-mainnet");
 
         let env1 = sample_env(1, "nonce-shared", 1_730_000_000_000, key);
 
-        let mut env2 = sample_env(2, "nonce-shared", 1_730_000_000_050, key);
+        let mut env2 = sample_env(1, "nonce-shared", 1_730_000_000_050, key);
         env2.task_id = "task-2".to_string();
         env2.sig = env2.sign_for_test(key);
 
@@ -569,9 +666,9 @@ mod tests {
     #[test]
     fn relay_auth_verify_seq_regression_rejected() {
         let key = "sender-key";
-        let mut verifier = RelayAuthVerifier::new(120_000);
-        let env1 = sample_env(3, "nonce-1", 1_730_000_000_000, key);
-        let env2 = sample_env(2, "nonce-2", 1_730_000_000_100, key);
+        let mut verifier = RelayAuthVerifier::for_chain(120_000, "trnm-mainnet");
+        let env1 = sample_env(1, "nonce-1", 1_730_000_000_000, key);
+        let env2 = sample_env(1, "nonce-2", 1_730_000_000_100, key);
 
         verifier
             .verify(&env1, 1_730_000_000_200, |e| e.sign_for_test(key) == e.sig)
@@ -584,9 +681,21 @@ mod tests {
     }
 
     #[test]
+    fn relay_auth_first_sequence_must_start_at_one() {
+        let key = "sender-key";
+        let mut verifier = RelayAuthVerifier::for_chain(120_000, "trnm-mainnet");
+        let env = sample_env(3, "nonce-first-gap", 1_730_000_000_000, key);
+
+        let err = verifier
+            .verify(&env, 1_730_000_000_050, |e| e.sign_for_test(key) == e.sig)
+            .unwrap_err();
+        assert_eq!(err.stable_code(), "SeqGap");
+    }
+
+    #[test]
     fn relay_auth_verify_time_skew_rejected() {
         let key = "sender-key";
-        let mut verifier = RelayAuthVerifier::new(120_000);
+        let mut verifier = RelayAuthVerifier::for_chain(120_000, "trnm-mainnet");
         let env = sample_env(1, "nonce-1", 1_730_000_000_000, key);
 
         let err = verifier
@@ -598,7 +707,7 @@ mod tests {
     #[test]
     fn relay_auth_verify_bad_version_rejected() {
         let key = "sender-key";
-        let mut verifier = RelayAuthVerifier::new(120_000);
+        let mut verifier = RelayAuthVerifier::for_chain(120_000, "trnm-mainnet");
         let mut env = sample_env(1, "nonce-1", 1_730_000_000_000, key);
         env.version = "p2p-v9.9".to_string();
         env.sig = env.sign_for_test(key);
@@ -612,7 +721,7 @@ mod tests {
     #[test]
     fn relay_auth_verify_unsupported_type_rejected() {
         let key = "sender-key";
-        let mut verifier = RelayAuthVerifier::new(120_000);
+        let mut verifier = RelayAuthVerifier::for_chain(120_000, "trnm-mainnet");
         let mut env = sample_env(1, "nonce-1", 1_730_000_000_000, key);
         env.msg_type = "WEIRD_TYPE".to_string();
         env.sig = env.sign_for_test(key);
@@ -626,7 +735,7 @@ mod tests {
     #[test]
     fn relay_auth_verify_rejects_noncanonical_chain_id_whitespace() {
         let key = "sender-key";
-        let mut verifier = RelayAuthVerifier::new(120_000);
+        let mut verifier = RelayAuthVerifier::for_chain(120_000, "trnm-mainnet");
         let mut env = sample_env(1, "nonce-1", 1_730_000_000_000, key);
         env.chain_id = " trnm-mainnet".to_string();
         env.sig = env.sign_for_test(key);
@@ -640,7 +749,7 @@ mod tests {
     #[test]
     fn relay_auth_verify_rejects_noncanonical_session_id_whitespace() {
         let key = "sender-key";
-        let mut verifier = RelayAuthVerifier::new(120_000);
+        let mut verifier = RelayAuthVerifier::for_chain(120_000, "trnm-mainnet");
         let mut env = sample_env(1, "nonce-1", 1_730_000_000_000, key);
         env.session_id = "sess-1 ".to_string();
         env.sig = env.sign_for_test(key);
@@ -738,7 +847,7 @@ mod tests {
         assert_eq!(cases.len(), 12);
 
         for (name, env, now_ms, want_code) in cases {
-            let mut verifier = RelayAuthVerifier::new(120_000);
+            let mut verifier = RelayAuthVerifier::for_chain(120_000, "trnm-mainnet");
             let baseline1 = sample_env(1, "nonce-base-1", 1_730_000_000_000, key);
             let baseline2 = sample_env(2, "nonce-base-2", 1_730_000_000_100, key);
             verifier
@@ -760,16 +869,118 @@ mod tests {
     }
 
     #[test]
-    fn relay_auth_legacy_v0_compat_allowed_by_default() {
+    fn relay_auth_legacy_v0_compat_is_disabled_fail_closed() {
         let key = "sender-key";
-        let mut verifier = RelayAuthVerifier::new(120_000);
+        let mut verifier = RelayAuthVerifier::legacy_compatible(120_000, "trnm-devnet-v1");
         let mut env = sample_env(1, "nonce-legacy-1", 1_730_000_000_000, key);
+        env.version = RelayAuthEnvelope::LEGACY_SPEC_VERSION.to_string();
+        env.chain_id = "trnm-devnet-v1".to_string();
+        env.sig = env.sign_for_test_legacy_v0(key);
+
+        let err = verifier
+            .verify(&env, 1_730_000_000_050, |e| e.verify_test_sig_compat(key))
+            .unwrap_err();
+        assert_eq!(err.stable_code(), "BadVersion");
+    }
+
+    #[test]
+    fn relay_auth_legacy_v0_invalid_chain_binding_fails_closed() {
+        let key = "sender-key";
+        for invalid_chain_id in ["", " ", "trnm|mainnet"] {
+            let mut verifier = RelayAuthVerifier::legacy_compatible(120_000, invalid_chain_id);
+            let mut env = sample_env(1, "nonce-legacy-invalid-binding", 1_730_000_000_000, key);
+            env.version = RelayAuthEnvelope::LEGACY_SPEC_VERSION.to_string();
+            env.chain_id = invalid_chain_id.to_string();
+            env.sig = env.sign_for_test_legacy_v0(key);
+
+            let err = verifier
+                .verify(&env, 1_730_000_000_050, |e| e.verify_test_sig_compat(key))
+                .unwrap_err();
+            assert_eq!(
+                err.stable_code(),
+                "BadVersion",
+                "chain_id={invalid_chain_id:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn relay_auth_legacy_v0_rejected_by_default() {
+        let key = "sender-key";
+        let mut verifier = RelayAuthVerifier::for_chain(120_000, "trnm-mainnet");
+        let now_ms = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .expect("system clock must be after unix epoch")
+            .as_millis();
+        let mut env = sample_env(1, "nonce-legacy-default", now_ms, key);
         env.version = RelayAuthEnvelope::LEGACY_SPEC_VERSION.to_string();
         env.chain_id.clear();
         env.sig = env.sign_for_test_legacy_v0(key);
 
-        let ok = verifier.verify(&env, 1_730_000_000_050, |e| e.verify_test_sig_compat(key));
-        assert!(ok.is_ok());
+        let err = verifier
+            .verify(&env, now_ms + 50, |e| e.verify_test_sig_compat(key))
+            .unwrap_err();
+        assert_eq!(err.stable_code(), "BadVersion");
+    }
+
+    #[test]
+    fn relay_auth_rejects_oversized_replay_fields() {
+        let key = "sender-key";
+        let mut verifier = RelayAuthVerifier::for_chain(120_000, "trnm-mainnet");
+        let mut env = sample_env(1, "nonce-oversized", 1_730_000_000_000, key);
+        env.nonce = "n".repeat(MAX_RELAY_TEXT_FIELD_BYTES + 1);
+        env.sig = env.sign_for_test(key);
+        let err = verifier
+            .verify(&env, 1_730_000_000_050, |e| e.sign_for_test(key) == e.sig)
+            .unwrap_err();
+        assert_eq!(err.stable_code(), "OversizedField");
+
+        let mut env = sample_env(1, "nonce-large-payload", 1_730_000_000_000, key);
+        env.payload = vec![b'x'; MAX_RELAY_PAYLOAD_BYTES + 1];
+        let err = verifier
+            .verify(&env, 1_730_000_000_050, |e| e.sign_for_test(key) == e.sig)
+            .unwrap_err();
+        assert_eq!(err.stable_code(), "OversizedField");
+    }
+
+    #[test]
+    fn relay_auth_replay_state_fails_closed_at_capacity() {
+        let key = "sender-key";
+        let mut verifier = RelayAuthVerifier::for_chain(120_000, "trnm-mainnet");
+        for seq in 1..=MAX_RELAY_REPLAY_ENTRIES {
+            let env = sample_env(
+                seq as u64,
+                &format!("nonce-capacity-{seq}"),
+                1_730_000_000_000 + seq as u128,
+                key,
+            );
+            verifier
+                .verify(&env, 1_730_000_000_050 + seq as u128, |e| {
+                    e.sign_for_test(key) == e.sig
+                })
+                .expect("entry below replay capacity should verify");
+        }
+        let env = sample_env(
+            (MAX_RELAY_REPLAY_ENTRIES + 1) as u64,
+            "nonce-capacity-overflow",
+            1_730_100_000_000,
+            key,
+        );
+        let err = verifier
+            .verify(&env, 1_730_100_000_050, |e| e.sign_for_test(key) == e.sig)
+            .unwrap_err();
+        assert_eq!(err.stable_code(), "ReplayStateCapacityExceeded");
+    }
+
+    #[test]
+    fn relay_auth_new_without_chain_binding_rejects_current_envelopes() {
+        let key = "sender-key";
+        let mut verifier = RelayAuthVerifier::new(120_000);
+        let env = sample_env(1, "nonce-unbound", 1_730_000_000_000, key);
+        let err = verifier
+            .verify(&env, 1_730_000_000_050, |e| e.sign_for_test(key) == e.sig)
+            .unwrap_err();
+        assert_eq!(err.stable_code(), "MissingRequiredField");
     }
 
     #[test]
@@ -790,20 +1001,20 @@ mod tests {
     #[test]
     fn relay_auth_cross_chain_replay_rejected_by_domain_signature() {
         let key = "sender-key";
-        let mut verifier = RelayAuthVerifier::new(120_000);
+        let mut verifier = RelayAuthVerifier::for_chain(120_000, "trnm-mainnet");
         let mut env = sample_env(1, "nonce-cross-chain", 1_730_000_000_000, key);
         env.chain_id = "trnm-otherchain".to_string();
 
         let err = verifier
             .verify(&env, 1_730_000_000_050, |e| e.sign_for_test(key) == e.sig)
             .unwrap_err();
-        assert_eq!(err.stable_code(), "BadSig");
+        assert_eq!(err.stable_code(), "ChainMismatch");
     }
 
     #[test]
     fn relay_auth_missing_required_fields_rejected() {
         let key = "sender-key";
-        let mut verifier = RelayAuthVerifier::new(120_000);
+        let mut verifier = RelayAuthVerifier::for_chain(120_000, "trnm-mainnet");
 
         let mut missing_chain = sample_env(1, "nonce-miss-1", 1_730_000_000_000, key);
         missing_chain.chain_id.clear();
@@ -828,7 +1039,7 @@ mod tests {
     #[test]
     fn relay_auth_rejects_delimiter_injection_in_signed_fields() {
         let key = "sender-key";
-        let mut verifier = RelayAuthVerifier::new(120_000);
+        let mut verifier = RelayAuthVerifier::for_chain(120_000, "trnm-mainnet");
         let mut env = sample_env(1, "nonce|poison", 1_730_000_000_000, key);
         env.sig = env.sign_for_test(key);
 
@@ -841,7 +1052,7 @@ mod tests {
     #[test]
     fn relay_auth_wrong_domain_signature_rejected() {
         let key = "sender-key";
-        let mut verifier = RelayAuthVerifier::new(120_000);
+        let mut verifier = RelayAuthVerifier::for_chain(120_000, "trnm-mainnet");
         let mut env = sample_env(1, "nonce-domain-1", 1_730_000_000_000, key);
         env.sig = env.sign_for_test_legacy_v0(key);
 

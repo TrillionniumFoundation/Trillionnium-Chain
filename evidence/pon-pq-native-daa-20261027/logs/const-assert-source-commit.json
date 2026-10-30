@@ -1,0 +1,8 @@
+{
+  "commit": "215fc89386a6375e8a2663774085c3a11b24e24e",
+  "tree": "cac89f52cdea915a00bfeeef01f3f482038fa01f",
+  "parent": "99be553ea80bee137b0bcc3b67d8786348547256",
+  "changed_path": "trillionnium/crates/trnm-protocol/src/pq_frame.rs",
+  "change_scope": "test-only const assertion; no production algorithm or gate relaxation",
+  "remote_write": false
+}

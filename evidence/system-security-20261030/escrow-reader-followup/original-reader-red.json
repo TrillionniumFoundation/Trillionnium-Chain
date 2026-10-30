@@ -1,0 +1,20 @@
+{
+  "scope": "synthetic reader controls only; production reader unchanged",
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-B",
+    "-m",
+    "unittest",
+    "-v",
+    "test_read_pure_history_raw_campaign_v1.PureHistoryReader.test_live_reservation_preserves_signed_stored_credit_and_paid_depletion",
+    "test_read_pure_history_raw_campaign_v1.PureHistoryReader.test_real_paid_deficit_stays_rejected_with_an_exact_live_escrow_identity",
+    "test_read_pure_history_raw_campaign_v1.PureHistoryReader.test_reservation_requires_the_original_owner_count_and_full_start_quantum",
+    "test_read_pure_history_raw_campaign_v1.PureHistoryReader.test_actual_cpu_attribution_and_unsigned_counter_bounds_remain_exact",
+    "test_read_pure_history_raw_campaign_v1.PureHistoryReader.test_full_report_retains_signed_live_credit_without_qualifying_original_red"
+  ],
+  "returncode": 1,
+  "elapsed_seconds": 0.0777897860025405,
+  "reader_sha256": "833f082d391d65d21a096a7da9625e2f370816aeed8ef2e7f8a1c58c6c962f5a",
+  "test_sha256": "6f89f4469113d750841ad823163b1e53fddfb9e4dd118664caf778871ffc0446",
+  "log_sha256": "8d38e353250be3b8c459918b51de6bdfdfbb34b548add4672cdc37400a7698cb"
+}

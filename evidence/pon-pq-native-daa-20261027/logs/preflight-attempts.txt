@@ -1,0 +1,8 @@
+2026-10-27 source-only input attempts before edits:
+1. cwd root-evidence/candidate: bash scripts/project-preflight.sh
+exit 127: script absent in partial evidence checkout.
+2. cwd consensus-evidence/dev: bash scripts/project-preflight.sh
+exit 128: fatal: not a git repository.
+Full project preflight remains required on the root agent's assembled exact #498 checkout.
+No preflight checks have been disabled or rewritten.
+

@@ -1,0 +1,3 @@
+   Compiling trnm-w1-risc0-host v0.1.0 (/workspace/scratch/f4a65c4581e7/pon-security-work/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host)
+    Finished `release` profile [optimized] target(s) in 13.55s
+     Running unittests src/main.rs (/tmp/pon-proof-target/release/deps/trnm_w1_risc0_host-bb58298fe70a05eb)

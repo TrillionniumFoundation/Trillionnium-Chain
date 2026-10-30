@@ -1,0 +1,31 @@
+test_archive_checks_each_asset_hash_after_zip_pin (__main__.FixtureControls.test_archive_checks_each_asset_hash_after_zip_pin) ... ok
+test_archive_does_not_overwrite_existing_output (__main__.FixtureControls.test_archive_does_not_overwrite_existing_output) ... ok
+test_archive_rejects_absolute_entry (__main__.FixtureControls.test_archive_rejects_absolute_entry) ... ok
+test_archive_rejects_duplicate_members (__main__.FixtureControls.test_archive_rejects_duplicate_members) ... ok
+test_archive_rejects_oversized_member_count (__main__.FixtureControls.test_archive_rejects_oversized_member_count) ... ok
+test_archive_rejects_symlink_file (__main__.FixtureControls.test_archive_rejects_symlink_file) ... ok
+test_archive_rejects_symlink_member (__main__.FixtureControls.test_archive_rejects_symlink_member) ... ok
+test_archive_rejects_total_expansion (__main__.FixtureControls.test_archive_rejects_total_expansion) ... ok
+test_archive_rejects_traversal_even_for_unselected_entry (__main__.FixtureControls.test_archive_rejects_traversal_even_for_unselected_entry) ... ok
+test_archive_requires_exact_root_asset (__main__.FixtureControls.test_archive_requires_exact_root_asset) ... ok
+test_archive_requires_whole_zip_hash (__main__.FixtureControls.test_archive_requires_whole_zip_hash) ... ok
+test_archive_round_trip_is_not_proof_verification (__main__.FixtureControls.test_archive_round_trip_is_not_proof_verification) ... ok
+test_cli_requires_exactly_one_explicit_source (__main__.FixtureControls.test_cli_requires_exactly_one_explicit_source) ... ok
+test_object_rejects_changed_compressed_bytes (__main__.FixtureControls.test_object_rejects_changed_compressed_bytes) ... ok
+test_object_rejects_changed_raw_hash_after_compressed_pin (__main__.FixtureControls.test_object_rejects_changed_raw_hash_after_compressed_pin) ... ok
+test_object_rejects_directory_symlink (__main__.FixtureControls.test_object_rejects_directory_symlink) ... ok
+test_object_rejects_expansion_past_declared_asset (__main__.FixtureControls.test_object_rejects_expansion_past_declared_asset) ... ok
+test_object_rejects_extra_entry (__main__.FixtureControls.test_object_rejects_extra_entry) ... ok
+test_object_rejects_fifo_without_blocking (__main__.FixtureControls.test_object_rejects_fifo_without_blocking) ... ok
+test_object_rejects_missing_entry (__main__.FixtureControls.test_object_rejects_missing_entry) ... ok
+test_object_rejects_symlink_data (__main__.FixtureControls.test_object_rejects_symlink_data) ... ok
+test_object_rejects_trailing_bytes_with_consistent_outer_hash (__main__.FixtureControls.test_object_rejects_trailing_bytes_with_consistent_outer_hash) ... ok
+test_object_rejects_truncated_gzip_with_consistent_outer_hash (__main__.FixtureControls.test_object_rejects_truncated_gzip_with_consistent_outer_hash) ... ok
+test_object_rejects_two_members_with_consistent_outer_hash (__main__.FixtureControls.test_object_rejects_two_members_with_consistent_outer_hash) ... ok
+test_object_requires_exact_manifest (__main__.FixtureControls.test_object_requires_exact_manifest) ... ok
+test_object_round_trip_keeps_zip_check_false (__main__.FixtureControls.test_object_round_trip_keeps_zip_check_false) ... ok
+
+----------------------------------------------------------------------
+Ran 26 tests in 0.130s
+
+OK

@@ -1,0 +1,39 @@
+{
+  "scripts/run_pon_identity_churn.py": {
+    "original_sha": "177bdbdf505299693618e4060cb65a4c8a46cf1ec5c85414a38d04accdd139cf",
+    "candidate_sha": "80cded15e1136d77b7276fcc0ce3405138f3d64c1d6ab5c7df18b0af55ac68aa",
+    "all_assertion_AST_equal": true,
+    "old_test_names_equal": true
+  },
+  "scripts/run_pon_native_io_component.py": {
+    "original_sha": "c5e8d582d2b53411b15114c6c7fd03b618f5ce3c79ee25bc198dd372857bbc65",
+    "candidate_sha": "fede3c624155313dae785f91257a81f1be5eda66d93e37c35a0c71c7742afe28",
+    "all_assertion_AST_equal": true,
+    "old_test_names_equal": true
+  },
+  "scripts/run_pon_w1_native_campaign.py": {
+    "original_sha": "eff0930837331f08882a0d69a6909e8f8dda2b23dad58cf0e6bc60d175f0a431",
+    "candidate_sha": "e6ac1fda21445f30e9ed9add70cabcac24634441533105d56330cf4a550bf2f9",
+    "all_assertion_AST_equal": true,
+    "old_test_names_equal": true
+  },
+  "scripts/ci/test_pon_identity_churn.py": {
+    "original_sha": "dcacec86ea80b40dd750f8abbd48148f344e106d7673b343576bff3f8f302571",
+    "candidate_sha": "e169e2bbe1f7bf0c800b13dafb0d8fc840a9b670661ce63a5d721f093df72fa5",
+    "all_assertion_AST_equal": true,
+    "old_test_names_equal": true
+  },
+  "original_public_main_AST_exact": true,
+  "original_test_count": 89,
+  "new_finite_tests": [
+    "test_writer_module_has_only_standard_library_imports",
+    "test_same_live_writer_keeps_all_prior_bytes_and_reservations",
+    "test_narrow_prior_reservation_refuses_before_any_output_or_handoff",
+    "test_wrong_root_closed_owner_and_wrong_version_never_fall_back",
+    "test_visible_root_replacement_refuses_same_path_owner",
+    "test_reexecuting_identical_owner_bytes_does_not_create_same_class",
+    "test_public_p1_reuses_exact_io_and_keeps_unimplemented_guard",
+    "test_public_p1_rejects_other_io_before_source_or_child",
+    "test_public_p3_inherits_same_live_writer_and_refuses_invalid_target"
+  ]
+}

@@ -1,3 +1,5 @@
+use super::*;
+
 // Deterministic, target-bound status projection for the external recovery
 // owner.
 //
@@ -36,7 +38,7 @@ pub struct PayloadReplayRecoveryStatusProjectionV1 {
 }
 
 impl PayloadReplayRecoveryStatusProjectionV1 {
-    fn from_parts(
+    pub(super) fn from_parts(
         namespace_digest: [u8; 32],
         target: PayloadReplayRecoveryTargetV1,
         status: PayloadReplayRecoveryStatusV1,
@@ -310,25 +312,6 @@ fn take_u64(
     field: &'static str,
 ) -> Result<u64, PayloadReplayRecoveryErrorV1> {
     Ok(u64::from_be_bytes(take_array::<8>(bytes, cursor, field)?))
-}
-
-impl PayloadReplayRecoveryOwnerV1 {
-    /// Produce a context-bound status snapshot for an external supervisor.
-    ///
-    /// The existing [`status`](Self::status) call performs endpoint identity
-    /// validation and complete WAL/target verification.  This method reuses
-    /// that path and adds a deterministic digest over the request binding and
-    /// observed state; it does not alter recovery or acknowledgement state.
-    pub fn status_projection(
-        &self,
-    ) -> Result<PayloadReplayRecoveryStatusProjectionV1, PayloadReplayRecoveryErrorV1> {
-        let status = self.status()?;
-        Ok(PayloadReplayRecoveryStatusProjectionV1::from_parts(
-            self.payload.namespace_digest,
-            self.target,
-            status,
-        ))
-    }
 }
 
 const PROJECTION_MAGIC_V1: [u8; 8] = *b"TRNPRSP1";

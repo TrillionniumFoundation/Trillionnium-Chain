@@ -1,0 +1,16 @@
+{
+  "schema": "pon-w1-actual-artifact-readback-process-v1",
+  "command": [
+    "python3",
+    "/workspace/scratch/301262829a43/pon-work-impl/integration/cost-evidence-e9c4bb0/evidence/pon-w1-native-v2-e9c4bb0-20261027/readback.py",
+    "--out",
+    "/workspace/scratch/301262829a43/pon-work-impl/ci-v2-focused-e9c4bb0-run40490909605/bundle-readback-001"
+  ],
+  "started_utc": "2026-10-27T12:20:37.474679+00:00",
+  "wall_seconds": 3.6516179050013307,
+  "returncode": 0,
+  "reader_sha256": "03a66bacf44537663fd9056b78dd3c38f5a19069fad616b05241550f010edf60",
+  "stdout_sha256": "48df9e47031e658bad05f73b4fc91e059799c206b7941da57076805aad79ab99",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "repeats_mining_or_proof_generation": false
+}

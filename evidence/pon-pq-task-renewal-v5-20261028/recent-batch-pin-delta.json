@@ -1,0 +1,16 @@
+{
+  "schema": "npq5-reviewed-two-pin-delta-v1",
+  "base_local": "a1815707d29d424a8ec89d3701a7cf914572a416",
+  "base_remote": "1d4778507e1e99ab54cca72b7c26b6ec2ff33344",
+  "review_sha256": "8de39a98ca6caae6e8bdcf516eb6e1d0e0c8a9afada819e6e1232b14e1b2299f",
+  "before_sha256": "74ddeffa58add0d54a5d7ae8f800d2cad45eedf0f1f42acd5c9f3d69172ee076",
+  "after_sha256": "e8fa631bf1d09d8ed8a96595ea27ee05743c33c573692a8e8d6ed4d410f9169e",
+  "original_guard_count": 16,
+  "unchanged_guards": 14,
+  "all_other_bytes_exact": true,
+  "runtime_review_scope": [
+    "Read-only independent review of these two exact diffs, not a qualification of the entire NPQ5 implementation.",
+    "No native execution, proof generation, hardware benchmark, or source mutation was performed by this review.",
+    "NPQ4 hosted success belongs to its own source and is not NPQ5 native qualification."
+  ]
+}

@@ -1,0 +1,6 @@
+test_actual_cold_python_and_original_wheel_bytes_roundtrip (__main__.RuntimeMaterialTests.test_actual_cold_python_and_original_wheel_bytes_roundtrip) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.441s
+
+OK

@@ -1,0 +1,577 @@
+[
+  {
+    "kind": "quota",
+    "source": {
+      "commit": "a1e40747746772d1326bb3e656aec4ba10440147",
+      "source_state": "committed-clean",
+      "tracked_bytes": 783702659,
+      "tracked_entries": 5951,
+      "tracked_worktree_verified": true,
+      "tree": "f90cd9f63fce5fb785061419c9cb12b57ae24873"
+    },
+    "tests": {
+      "m00": {
+        "passed": 46,
+        "failed": 0,
+        "ignored": 2,
+        "measured": 0,
+        "filtered_out": 0
+      },
+      "m06": {
+        "passed": 88,
+        "failed": 0,
+        "ignored": 6,
+        "measured": 0,
+        "filtered_out": 0
+      },
+      "native-quota": {
+        "passed": 5,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0
+      },
+      "quota-authority": {
+        "passed": 8,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0
+      },
+      "retained-authority-capacity": {
+        "passed": 2,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0
+      },
+      "retained-pq1": {
+        "passed": 6,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0
+      },
+      "retained-pq2": {
+        "passed": 9,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0
+      }
+    },
+    "native_binary": {
+      "bytes": 11056432,
+      "sha256": "2ed1ac77438d346f3994d8c77c4ec5b0e58e23fb4cbdbf15cdb8699533f92a03",
+      "gzip_sha256": "b61ad79faa291d4d02656f846a9b0483773f53d02d4bfae63a7d262de1164616"
+    },
+    "observations": [
+      {
+        "command": [
+          "rustc",
+          "+1.95.0",
+          "-vV"
+        ],
+        "wall_seconds": 1.938563449,
+        "returncode": 0
+      },
+      {
+        "command": [
+          "bash",
+          "scripts/project-preflight.sh",
+          "--audit"
+        ],
+        "wall_seconds": 1.919784793,
+        "returncode": 0
+      },
+      {
+        "command": [
+          "python3",
+          "scripts/ci/test_ci_source_integrity.py"
+        ],
+        "wall_seconds": 4.433180592,
+        "returncode": 0
+      },
+      {
+        "command": [
+          "python3",
+          "scripts/refresh_distributed_source_inventory.py",
+          "--check"
+        ],
+        "wall_seconds": 1.935785832,
+        "returncode": 0
+      },
+      {
+        "command": [
+          "cargo",
+          "+1.95.0",
+          "metadata",
+          "--locked",
+          "--format-version",
+          "1",
+          "--manifest-path",
+          "trillionnium/Cargo.toml"
+        ],
+        "wall_seconds": 3.985886251,
+        "returncode": 0
+      },
+      {
+        "command": [
+          "cargo",
+          "+1.95.0",
+          "fmt",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "wall_seconds": 13.972532003,
+        "returncode": 0
+      },
+      {
+        "command": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-protocol",
+          "--lib",
+          "--",
+          "--show-output",
+          "--test-threads=1"
+        ],
+        "wall_seconds": 31.420368823,
+        "returncode": 0
+      },
+      {
+        "command": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-mvcc-fee",
+          "--lib",
+          "--",
+          "--show-output",
+          "--test-threads=1"
+        ],
+        "wall_seconds": 92.681093982,
+        "returncode": 0
+      },
+      {
+        "command": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-mvcc-fee",
+          "--test",
+          "pq3_quota_authority",
+          "--",
+          "--show-output",
+          "--test-threads=1"
+        ],
+        "wall_seconds": 32.983628661,
+        "returncode": 0
+      },
+      {
+        "command": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-mvcc-fee",
+          "--test",
+          "pq2_authority_capacity",
+          "--",
+          "--show-output",
+          "--test-threads=1"
+        ],
+        "wall_seconds": 14.855933394,
+        "returncode": 0
+      },
+      {
+        "command": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--test",
+          "native_pq_v3",
+          "--",
+          "--show-output",
+          "--test-threads=1"
+        ],
+        "wall_seconds": 186.718844004,
+        "returncode": 0
+      },
+      {
+        "command": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--test",
+          "native_pq_v2",
+          "--",
+          "--show-output",
+          "--test-threads=1"
+        ],
+        "wall_seconds": 38.617832299,
+        "returncode": 0
+      },
+      {
+        "command": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--test",
+          "native_pq_v1",
+          "--",
+          "--show-output",
+          "--test-threads=1"
+        ],
+        "wall_seconds": 21.013782268,
+        "returncode": 0
+      },
+      {
+        "command": [
+          "cargo",
+          "+1.95.0",
+          "clippy",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-protocol",
+          "-p",
+          "trnm-mvcc-fee",
+          "-p",
+          "trnm-pon-node",
+          "--all-targets",
+          "--all-features",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "wall_seconds": 77.891363455,
+        "returncode": 0
+      }
+    ],
+    "test_log_summaries": {
+      "run/m00.log": [
+        "test result: ok. 46 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 11.45s"
+      ],
+      "run/m06.log": [
+        "test result: ok. 88 passed; 0 failed; 6 ignored; 0 measured; 0 filtered out; finished in 21.08s"
+      ],
+      "run/native-quota.log": [
+        "test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 40.48s"
+      ],
+      "run/quota-authority.log": [
+        "test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.91s"
+      ],
+      "run/retained-authority-capacity.log": [
+        "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 10.94s"
+      ],
+      "run/retained-pq1.log": [
+        "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 15.39s"
+      ],
+      "run/retained-pq2.log": [
+        "test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 31.66s"
+      ]
+    },
+    "archive_and_input_hashes_verified": true,
+    "complete_cargo_workspace_qualified": false,
+    "p1_complete": false
+  },
+  {
+    "kind": "accounts",
+    "source": {
+      "commit": "a1e40747746772d1326bb3e656aec4ba10440147",
+      "source_state": "committed-clean",
+      "tracked_bytes": 783702659,
+      "tracked_entries": 5951,
+      "tracked_worktree_verified": true,
+      "tree": "f90cd9f63fce5fb785061419c9cb12b57ae24873"
+    },
+    "tests": {
+      "authority-capacity": {
+        "passed": 2,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0
+      },
+      "m00": {
+        "passed": 46,
+        "failed": 0,
+        "ignored": 2,
+        "measured": 0,
+        "filtered_out": 0
+      },
+      "m06": {
+        "passed": 88,
+        "failed": 0,
+        "ignored": 6,
+        "measured": 0,
+        "filtered_out": 0
+      },
+      "native-pq": {
+        "passed": 9,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0
+      },
+      "retained-pq1": {
+        "passed": 6,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered_out": 0
+      }
+    },
+    "native_binary": {
+      "bytes": 11160896,
+      "sha256": "2e1d76baf0d3db1074242e4df54befaebf824d4a9c3024d7fc1f7acf966c204a",
+      "gzip_sha256": "452c16c876f4bfd9dc2cb08561faeeb7f1605cdb0d5b473c5195fe5084c33c36"
+    },
+    "observations": [
+      {
+        "command": [
+          "rustc",
+          "+1.95.0",
+          "-vV"
+        ],
+        "wall_seconds": 1.909766197,
+        "returncode": 0
+      },
+      {
+        "command": [
+          "cargo",
+          "+1.95.0",
+          "-Vv"
+        ],
+        "wall_seconds": 1.914537105,
+        "returncode": 0
+      },
+      {
+        "command": [
+          "bash",
+          "scripts/project-preflight.sh",
+          "--audit"
+        ],
+        "wall_seconds": 1.954527358,
+        "returncode": 0
+      },
+      {
+        "command": [
+          "python3",
+          "scripts/ci/test_ci_source_integrity.py"
+        ],
+        "wall_seconds": 4.501492006,
+        "returncode": 0
+      },
+      {
+        "command": [
+          "python3",
+          "scripts/refresh_distributed_source_inventory.py",
+          "--check"
+        ],
+        "wall_seconds": 1.98014251,
+        "returncode": 0
+      },
+      {
+        "command": [
+          "cargo",
+          "+1.95.0",
+          "metadata",
+          "--locked",
+          "--format-version",
+          "1",
+          "--manifest-path",
+          "trillionnium/Cargo.toml"
+        ],
+        "wall_seconds": 4.040176453,
+        "returncode": 0
+      },
+      {
+        "command": [
+          "cargo",
+          "+1.95.0",
+          "fmt",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "wall_seconds": 14.245624921,
+        "returncode": 0
+      },
+      {
+        "command": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-protocol",
+          "--lib",
+          "--",
+          "--show-output",
+          "--test-threads=1"
+        ],
+        "wall_seconds": 32.836211541,
+        "returncode": 0
+      },
+      {
+        "command": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-mvcc-fee",
+          "--lib",
+          "--",
+          "--show-output",
+          "--test-threads=1"
+        ],
+        "wall_seconds": 110.869973848,
+        "returncode": 0
+      },
+      {
+        "command": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-mvcc-fee",
+          "--test",
+          "pq2_authority_capacity",
+          "--",
+          "--show-output",
+          "--test-threads=1"
+        ],
+        "wall_seconds": 39.070862352,
+        "returncode": 0
+      },
+      {
+        "command": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--test",
+          "native_pq_v2",
+          "--",
+          "--show-output",
+          "--test-threads=1"
+        ],
+        "wall_seconds": 187.673840598,
+        "returncode": 0
+      },
+      {
+        "command": [
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--test",
+          "native_pq_v1",
+          "--",
+          "--show-output",
+          "--test-threads=1"
+        ],
+        "wall_seconds": 21.226949253,
+        "returncode": 0
+      },
+      {
+        "command": [
+          "cargo",
+          "+1.95.0",
+          "clippy",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-protocol",
+          "-p",
+          "trnm-mvcc-fee",
+          "-p",
+          "trnm-pon-node",
+          "--all-targets",
+          "--all-features",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "wall_seconds": 88.130941724,
+        "returncode": 0
+      }
+    ],
+    "test_log_summaries": {
+      "run/authority-capacity.log": [
+        "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 10.97s"
+      ],
+      "run/m00.log": [
+        "test result: ok. 46 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 11.51s"
+      ],
+      "run/m06.log": [
+        "test result: ok. 88 passed; 0 failed; 6 ignored; 0 measured; 0 filtered out; finished in 21.10s"
+      ],
+      "run/native-pq.log": [
+        "test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 31.84s"
+      ],
+      "run/retained-pq1.log": [
+        "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 15.41s"
+      ]
+    },
+    "archive_and_input_hashes_verified": true,
+    "complete_cargo_workspace_qualified": false,
+    "p1_complete": false
+  }
+]

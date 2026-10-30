@@ -1,0 +1,115 @@
+--- a/trillionnium/crates/trnm-pon-node/src/pq_authority_tests.rs
++++ b/trillionnium/crates/trnm-pon-node/src/pq_authority_tests.rs
+@@ -171,3 +171,112 @@
+         1
+     );
+ }
++
++#[test]
++fn silent_insert_ignore_is_rejected_before_granting_authority() {
++    let temp = tempfile::tempdir().unwrap();
++    let path = temp.path().join("pq.sqlite");
++    let mut owner = PqAuthorizationOwner::open(&path, scope()).unwrap();
++    let other = Connection::open(&path).unwrap();
++    other
++        .execute_batch(
++            "CREATE TRIGGER ignore_insert BEFORE INSERT ON pq_authorizations_v1
++         BEGIN SELECT RAISE(IGNORE); END;",
++        )
++        .unwrap();
++    let result = owner.record_authorization(FIRST, PAYLOAD, 3999);
++    let sequence: i64 = other
++        .query_row("SELECT sequence FROM main.pq_owner_v1", [], |r| r.get(0))
++        .unwrap();
++    let rows: i64 = other
++        .query_row("SELECT count(*) FROM main.pq_authorizations_v1", [], |r| {
++            r.get(0)
++        })
++        .unwrap();
++    assert!(
++        result.is_err(),
++        "issued a record with sequence={sequence}, stored rows={rows}"
++    );
++    assert_eq!((sequence, rows), (0, 0));
++    other.execute_batch("DROP TRIGGER ignore_insert").unwrap();
++    assert_eq!(
++        owner
++            .record_authorization(FIRST, PAYLOAD, 3999)
++            .unwrap()
++            .sequence(),
++        1
++    );
++}
++
++#[test]
++fn temporary_tables_cannot_redirect_a_durable_authorization() {
++    let temp = tempfile::tempdir().unwrap();
++    let path = temp.path().join("pq.sqlite");
++    let mut owner = PqAuthorizationOwner::open(&path, scope()).unwrap();
++    owner
++        .database
++        .execute_batch(
++            "CREATE TEMP TABLE pq_owner_v1 AS SELECT * FROM main.pq_owner_v1;
++         CREATE TEMP TABLE pq_authorizations_v1 AS SELECT * FROM main.pq_authorizations_v1;",
++        )
++        .unwrap();
++    let result = owner.record_authorization(FIRST, PAYLOAD, 3999);
++    let main_sequence: i64 = owner
++        .database
++        .query_row("SELECT sequence FROM main.pq_owner_v1", [], |r| r.get(0))
++        .unwrap();
++    assert!(
++        result.is_err(),
++        "issued a record while durable sequence={main_sequence}"
++    );
++    assert_eq!(main_sequence, 0);
++    owner
++        .database
++        .execute_batch("DROP TABLE temp.pq_owner_v1; DROP TABLE temp.pq_authorizations_v1;")
++        .unwrap();
++    drop(owner);
++    let mut owner = PqAuthorizationOwner::open(&path, scope()).unwrap();
++    assert_eq!(
++        owner
++            .record_authorization(FIRST, PAYLOAD, 3999)
++            .unwrap()
++            .sequence(),
++        1
++    );
++}
++
++#[test]
++fn counter_reset_trigger_cannot_make_one_signature_replayable() {
++    let temp = tempfile::tempdir().unwrap();
++    let mut owner = PqAuthorizationOwner::open(&temp.path().join("pq.sqlite"), scope()).unwrap();
++    owner
++        .database
++        .execute_batch(
++            "CREATE TRIGGER reset_sequence AFTER INSERT ON pq_authorizations_v1 BEGIN
++         UPDATE pq_owner_v1 SET sequence=0;
++         DELETE FROM pq_authorizations_v1;
++         END;",
++        )
++        .unwrap();
++    assert!(
++        owner.record_authorization(FIRST, PAYLOAD, 3999).is_err(),
++        "reset trigger allowed first signature to grant authority"
++    );
++    assert!(owner
++        .record_authorization(FIRST_RANDOMIZED, PAYLOAD, 3999)
++        .is_err());
++    owner
++        .database
++        .execute_batch("DROP TRIGGER reset_sequence")
++        .unwrap();
++    assert_eq!(
++        owner
++            .record_authorization(FIRST, PAYLOAD, 3999)
++            .unwrap()
++            .sequence(),
++        1
++    );
++    assert!(owner
++        .record_authorization(FIRST_RANDOMIZED, PAYLOAD, 3999)
++        .is_err());
++}

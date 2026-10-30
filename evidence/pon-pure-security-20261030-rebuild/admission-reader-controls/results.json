@@ -1,0 +1,189 @@
+{
+  "base_commit": "540d72356a921da31dde1113537382e5c0f0c4fd",
+  "complete_success": true,
+  "created_utc": "2026-10-30T01:16:24.194435+00:00",
+  "fixed_host_campaign_observed": false,
+  "native_pressure_campaign_observed": false,
+  "production_qualified": false,
+  "public_fairness_qualified": false,
+  "schema": "pon-admission-reader-controls-20261030-rebuild-v1",
+  "scope": "Fresh actual Python environment and synthetic parser/driver controls only. Does not recover missing prior local observations or qualify native finite pressure.",
+  "source_after": {
+    ".github/workflows/pon-pure-admission-daa-v2.yml": {
+      "bytes": 8672,
+      "sha256": "613f9b406a8a82539629c259263fdea1b94ecaf89d9fba7d2a25985e9dade35a"
+    },
+    "formal/pon-nakamoto-v1/requirements.txt": {
+      "bytes": 128,
+      "sha256": "ae117e781e1420b46bfc2c4b9a550da3fe3f98ff9cbe868192036d34c342aed5"
+    },
+    "scripts/ci/check_pure_pon_fresh_caller_v1.py": {
+      "bytes": 9735,
+      "sha256": "6979921db9edf5d10856c8ca38beba59d49df483eebe727f8894c33cbcbf88f9"
+    },
+    "scripts/ci/check_pure_pon_pressure_v2.py": {
+      "bytes": 37383,
+      "sha256": "250bd0bbeacab71cb8117e7b70feb69c90e3fb35620d1798935db465b55f03d3"
+    },
+    "scripts/ci/read_pure_fixed_host_client_v1.py": {
+      "bytes": 7345,
+      "sha256": "91d15bbeae56ce0a5eeb11d191e2b39cb19ee285b8d08162a8638d303a877d8e"
+    },
+    "scripts/ci/run_pure_pon_admission_daa_v2.py": {
+      "bytes": 27897,
+      "sha256": "b20bd191ac6d8de036a6f94a8ad069d72ec0cb061d77945d96e8c90729b8226e"
+    },
+    "scripts/ci/test_check_pure_pon_fresh_caller_v1.py": {
+      "bytes": 7922,
+      "sha256": "4786b8fc57f485fc4cb91153978141a15660e9bd0b96ae40d1c15cdba1d0e6ec"
+    },
+    "scripts/ci/test_check_pure_pon_pressure_v2.py": {
+      "bytes": 33470,
+      "sha256": "9ee38835490b09172439da16f9edba9d607503ce079baadcd432b6c784f8ae4a"
+    },
+    "scripts/ci/test_read_pure_fixed_host_client_v1.py": {
+      "bytes": 14351,
+      "sha256": "f8568ec5f68e39f236b00a08b768a80f2bfef273aac5bfc5e8be8a63cbc94c02"
+    },
+    "scripts/ci/test_run_pure_pon_admission_daa_v2.py": {
+      "bytes": 16009,
+      "sha256": "b023fdd6a5cd3382c4a9d0b2043a599c1a405ca521fd124e6d435c95e1038210"
+    },
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs": {
+      "bytes": 321763,
+      "sha256": "a78d65f9c83b66f72590b9fb24bc0fa6ca26fbab19cab947172aad1022b6a728"
+    },
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs": {
+      "bytes": 43114,
+      "sha256": "bee5ffbf1a3b9def78c444fd452fb7d2eafc301c91b9bc15eb81b0474bfc8b16"
+    },
+    "trillionnium/crates/trnm-pon-node/tests/pure_pon_pressure_v2.rs": {
+      "bytes": 55981,
+      "sha256": "00f61b4123d326d91e5d5b7973ef0f71e55190838af2cb3e7ad5cf562a5d9658"
+    },
+    "trillionnium/crates/trnm-pon-node/tests/support/pure_history_client_v1.rs": {
+      "bytes": 7756,
+      "sha256": "f96b0fcf4f8e345f777336804f6dbd3017518899fd26c0a50c81da67eae23eca"
+    },
+    "trillionnium/crates/trnm-pon-node/tests/support/pure_pressure_v2.rs": {
+      "bytes": 33316,
+      "sha256": "27b4a5ca19f90153c317b4a7ef4790c08b16fa6a612bd12f8be0e6ada2ed4911"
+    },
+    "trillionnium/crates/trnm-pon-node/tests/support/pure_receiver_owner_v1.rs": {
+      "bytes": 58323,
+      "sha256": "ea4109f4468ff1d1cc97d51a8f8411459e383256dbe730ccdf4235c690d165f3"
+    }
+  },
+  "source_before": {
+    ".github/workflows/pon-pure-admission-daa-v2.yml": {
+      "bytes": 8672,
+      "sha256": "613f9b406a8a82539629c259263fdea1b94ecaf89d9fba7d2a25985e9dade35a"
+    },
+    "formal/pon-nakamoto-v1/requirements.txt": {
+      "bytes": 128,
+      "sha256": "ae117e781e1420b46bfc2c4b9a550da3fe3f98ff9cbe868192036d34c342aed5"
+    },
+    "scripts/ci/check_pure_pon_fresh_caller_v1.py": {
+      "bytes": 9735,
+      "sha256": "6979921db9edf5d10856c8ca38beba59d49df483eebe727f8894c33cbcbf88f9"
+    },
+    "scripts/ci/check_pure_pon_pressure_v2.py": {
+      "bytes": 37383,
+      "sha256": "250bd0bbeacab71cb8117e7b70feb69c90e3fb35620d1798935db465b55f03d3"
+    },
+    "scripts/ci/read_pure_fixed_host_client_v1.py": {
+      "bytes": 7345,
+      "sha256": "91d15bbeae56ce0a5eeb11d191e2b39cb19ee285b8d08162a8638d303a877d8e"
+    },
+    "scripts/ci/run_pure_pon_admission_daa_v2.py": {
+      "bytes": 27897,
+      "sha256": "b20bd191ac6d8de036a6f94a8ad069d72ec0cb061d77945d96e8c90729b8226e"
+    },
+    "scripts/ci/test_check_pure_pon_fresh_caller_v1.py": {
+      "bytes": 7922,
+      "sha256": "4786b8fc57f485fc4cb91153978141a15660e9bd0b96ae40d1c15cdba1d0e6ec"
+    },
+    "scripts/ci/test_check_pure_pon_pressure_v2.py": {
+      "bytes": 33470,
+      "sha256": "9ee38835490b09172439da16f9edba9d607503ce079baadcd432b6c784f8ae4a"
+    },
+    "scripts/ci/test_read_pure_fixed_host_client_v1.py": {
+      "bytes": 14351,
+      "sha256": "f8568ec5f68e39f236b00a08b768a80f2bfef273aac5bfc5e8be8a63cbc94c02"
+    },
+    "scripts/ci/test_run_pure_pon_admission_daa_v2.py": {
+      "bytes": 16009,
+      "sha256": "b023fdd6a5cd3382c4a9d0b2043a599c1a405ca521fd124e6d435c95e1038210"
+    },
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs": {
+      "bytes": 321763,
+      "sha256": "a78d65f9c83b66f72590b9fb24bc0fa6ca26fbab19cab947172aad1022b6a728"
+    },
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs": {
+      "bytes": 43114,
+      "sha256": "bee5ffbf1a3b9def78c444fd452fb7d2eafc301c91b9bc15eb81b0474bfc8b16"
+    },
+    "trillionnium/crates/trnm-pon-node/tests/pure_pon_pressure_v2.rs": {
+      "bytes": 55981,
+      "sha256": "00f61b4123d326d91e5d5b7973ef0f71e55190838af2cb3e7ad5cf562a5d9658"
+    },
+    "trillionnium/crates/trnm-pon-node/tests/support/pure_history_client_v1.rs": {
+      "bytes": 7756,
+      "sha256": "f96b0fcf4f8e345f777336804f6dbd3017518899fd26c0a50c81da67eae23eca"
+    },
+    "trillionnium/crates/trnm-pon-node/tests/support/pure_pressure_v2.rs": {
+      "bytes": 33316,
+      "sha256": "27b4a5ca19f90153c317b4a7ef4790c08b16fa6a612bd12f8be0e6ada2ed4911"
+    },
+    "trillionnium/crates/trnm-pon-node/tests/support/pure_receiver_owner_v1.rs": {
+      "bytes": 58323,
+      "sha256": "ea4109f4468ff1d1cc97d51a8f8411459e383256dbe730ccdf4235c690d165f3"
+    }
+  },
+  "source_unchanged": true,
+  "steps": [
+    {
+      "command": [
+        "/tmp/pon-reader-env/bin/python",
+        "-B",
+        "scripts/ci/check_pure_pon_fresh_caller_v1.py",
+        "--check-environment"
+      ],
+      "complete_success": true,
+      "cwd": "/workspace/scratch/f4a65c4581e7/pon-security-work",
+      "elapsed_ns": 64895150,
+      "name": "environment",
+      "returncode": 0,
+      "started_utc": "2026-10-30T01:16:15.973923+00:00",
+      "stderr": "environment.stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "environment.stdout.log",
+      "stdout_sha256": "fcd1d52482de13b3c0455a08ab2f63da5cff127c8724a325ed7b01fe54579344"
+    },
+    {
+      "actual_reported_tests": 66,
+      "command": [
+        "/tmp/pon-reader-env/bin/python",
+        "-B",
+        "-m",
+        "unittest",
+        "-v",
+        "test_check_pure_pon_fresh_caller_v1",
+        "test_read_pure_fixed_host_client_v1",
+        "test_run_pure_pon_admission_daa_v2",
+        "test_check_pure_pon_pressure_v2"
+      ],
+      "complete_success": true,
+      "cwd": "/workspace/scratch/f4a65c4581e7/pon-security-work/scripts/ci",
+      "elapsed_ns": 8153265512,
+      "name": "reader-controls",
+      "returncode": 0,
+      "started_utc": "2026-10-30T01:16:16.039010+00:00",
+      "stderr": "reader-controls.stderr.log",
+      "stderr_sha256": "3a9da9b0455113dca5de907b1660c001aec94314112ac13f0b3e461ef07cc600",
+      "stdout": "reader-controls.stdout.log",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "working_tree_patch_under_review": true
+}

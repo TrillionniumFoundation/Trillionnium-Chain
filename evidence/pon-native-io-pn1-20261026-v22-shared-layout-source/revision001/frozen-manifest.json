@@ -1,0 +1,61 @@
+{
+  "receipt": {
+    "path": "implementation-receipt.json",
+    "bytes": 9444,
+    "sha256": "9a6da6a8b65359d7e3ca3e0e3a252af2ae3644720b747705aa9ba748ac5986aa"
+  },
+  "artifacts": {
+    "candidate.patch": {
+      "bytes": 38405,
+      "sha256": "e675ce21ee6167f2fd00833e17a4190d980922204e241b392379c2f5f7aecfb3"
+    },
+    "production-only.patch": {
+      "bytes": 25364,
+      "sha256": "5c44e51ac3b03f391d76feab9f83bd277d991f8a4398acda29dcdd5ea46065ca"
+    },
+    "new-controls-only.patch": {
+      "bytes": 13041,
+      "sha256": "23a13829b844781b7c5284173fe1092af984a91d6796dc6063db57225483f11a"
+    },
+    "unchanged-original-tests-and-boundaries.json": {
+      "bytes": 96859,
+      "sha256": "fb6f0167eb721343f48cb448b05f63fcb15416ae55b7c394143fc25e3ac325c5"
+    },
+    "preflight-receipt.json": {
+      "bytes": 1700,
+      "sha256": "01d11fd299ca36d77ad058fe1c9c643e71ac6cb38f327d71e5f9fb2c056d6385"
+    }
+  },
+  "files": {
+    "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs": {
+      "bytes": 31858,
+      "sha256": "ad9e41b68379ec9e5aade1bc2339d2710c9128e142738488dec35eee20b5979f",
+      "base_sha256": "402fa2acbee954bbde3cc1ea391add90c22b4bf15f215106a27c1d45eba26351",
+      "lines": 869
+    },
+    "trillionnium/crates/trnm-pon-node/src/store.rs": {
+      "bytes": 305713,
+      "sha256": "7441972c57980a00895b7588da1b60dcb330838319fb534008dd151cc3d92f3b",
+      "base_sha256": "61953b312c62a5045b9ac87a4a97789a82177a0013140a2c93ccdf7332a88231",
+      "lines": 7546
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/public_reader.rs": {
+      "bytes": 19088,
+      "sha256": "b8bf23dca2b77f9554c8a1b1fbe37d6e1a4580680ef3e52f077d045cd4d0f7b6",
+      "base_sha256": "a7f837f4450c1f6565e61a303f5449c0f692c59b69db970d1791377a61312afb",
+      "lines": 540
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/shared_snapshot.rs": {
+      "bytes": 10213,
+      "sha256": "c9d92fcdf514bb564beeb91424b8a15f3dd264008b3662dd8036b4b92db3b9bb",
+      "base_sha256": null,
+      "lines": 283
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/shared_snapshot_tests.rs": {
+      "bytes": 12348,
+      "sha256": "cb75a7885c62b8b70e052c79d3b370b7d9f3745528a861d2cc61a0a50c76f808",
+      "base_sha256": null,
+      "lines": 385
+    }
+  }
+}

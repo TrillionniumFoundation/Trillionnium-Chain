@@ -1,0 +1,4166 @@
+{
+  "best_observed_cold_legal_method": "maintenance-limb",
+  "honest_preparation_cpu_ns": 3116915969,
+  "honest_preparation_wall_ns": 3145654169,
+  "input": {
+    "bytes": 29137889,
+    "report": "/home/runner/work/_temp/pon-native-campaign-39694587963-1/run-1-raw/report.json",
+    "sha256": "669a338e9f7e2c8d60e5c499cd12da2a695d348ca835cae771577d6a783067ac"
+  },
+  "native_economics_complete": true,
+  "native_finite_experiment_criteria_met": true,
+  "phases": [
+    {
+      "actor_reports_successful_without_cap_or_kill": true,
+      "attack_calls": {
+        "acknowledged_after_window": 0,
+        "acknowledged_on_time": 0,
+        "all_calls_returned_after_window": 0,
+        "attempts": 0,
+        "calling_process_cpu_ns": {
+          "known_count": 0,
+          "max_ns": null,
+          "mean_known_ns": null,
+          "min_ns": null,
+          "p50_nearest_rank_ns": null,
+          "p95_nearest_rank_ns": null,
+          "sum_known_ns": 0,
+          "unknown_count": 0
+        },
+        "elapsed_wall_ns": {
+          "known_count": 0,
+          "max_ns": null,
+          "mean_known_ns": null,
+          "min_ns": null,
+          "p50_nearest_rank_ns": null,
+          "p95_nearest_rank_ns": null,
+          "sum_known_ns": 0,
+          "unknown_count": 0
+        },
+        "errors": {},
+        "on_time_unique_packet_indices": [],
+        "refusals": {},
+        "status_counts": {}
+      },
+      "attacker_processes_ready": 0,
+      "attacker_processes_requested": 0,
+      "confirmation_rounds": [
+        {
+          "confirmed_inside_pressure_window": true,
+          "ended_ns": 3202279877,
+          "paid_credit_depletion_observed_during_round": false,
+          "receiver_hostile_work_rejected_during_round": false,
+          "round": 0,
+          "started_ns": 1001005726
+        },
+        {
+          "confirmed_inside_pressure_window": true,
+          "ended_ns": 7229671868,
+          "paid_credit_depletion_observed_during_round": false,
+          "receiver_hostile_work_rejected_during_round": false,
+          "round": 1,
+          "started_ns": 5001093446
+        },
+        {
+          "confirmed_inside_pressure_window": true,
+          "ended_ns": 11293846446,
+          "paid_credit_depletion_observed_during_round": false,
+          "receiver_hostile_work_rejected_during_round": false,
+          "round": 2,
+          "started_ns": 9001981663
+        }
+      ],
+      "confirmed_rounds": 3,
+      "final_actual_flow": {
+        "balance_identity_verified": true,
+        "booked_reservation_ns": 0,
+        "credited_refill_ns": 1553639038,
+        "discarded_refill_ns": 895288206,
+        "initial_credit_ns": 2000000000,
+        "live_debited_cpu_ns": 2063393011,
+        "live_owners": 0,
+        "paid_cpu_debit_ns": 2063418681,
+        "remaining_paid_credit_ns": 1490220357,
+        "schema": "public-v3-local-actual-cpu-flow-v1",
+        "settled_full_cpu_ns": 2063418681,
+        "settlement_discard_ns": 0,
+        "settlement_residual_cpu_ns": 25670,
+        "stored_credit_ns": 1490220357,
+        "unsettled_known_live_cpu_ns": 0
+      },
+      "final_cpu_meter": {
+        "accounting_unavailable": false,
+        "burst_ns": 2000000000,
+        "in_flight": 0,
+        "refill_ns_per_second": 250000000,
+        "schema": "public-v3-local-stored-cpu-budget-v1",
+        "start_reserve_ns": 100000000,
+        "stored_credit_ns": 1490220357,
+        "worker_limit": 2
+      },
+      "genuine_budget_depletion_observed": false,
+      "history": {
+        "acknowledged_after_window": 0,
+        "acknowledged_on_time": 21,
+        "all_calls_returned_after_window": 0,
+        "attempts": 21,
+        "calling_process_cpu_ns": {
+          "known_count": 21,
+          "max_ns": 3175356,
+          "mean_known_ns": {
+            "denominator": 21,
+            "numerator": 54916659
+          },
+          "min_ns": 2389264,
+          "p50_nearest_rank_ns": 2627066,
+          "p95_nearest_rank_ns": 2822077,
+          "sum_known_ns": 54916659,
+          "unknown_count": 0
+        },
+        "elapsed_wall_ns": {
+          "known_count": 21,
+          "max_ns": 12556844,
+          "mean_known_ns": {
+            "denominator": 21,
+            "numerator": 249655149
+          },
+          "min_ns": 10511204,
+          "p50_nearest_rank_ns": 11992275,
+          "p95_nearest_rank_ns": 12517164,
+          "sum_known_ns": 249655149,
+          "unknown_count": 0
+        },
+        "errors": {},
+        "on_time_unique_packet_indices": [],
+        "refusals": {},
+        "status_counts": {
+          "ok": 21
+        }
+      },
+      "mode": "baseline",
+      "native_phase_criteria_met": true,
+      "native_service_outcome": {
+        "Ok": {
+          "abandoned_tasks": 0,
+          "accepted_connections": 42,
+          "body_bytes_received": 2084553,
+          "capacity_refusals": 0,
+          "challenge_budget_refusals": 0,
+          "cleanup_scans": 1474,
+          "completed_pool_status": 0,
+          "completed_pool_submit": 0,
+          "completed_read": 21,
+          "completed_submit": 21,
+          "connections_closed_on_shutdown": 0,
+          "delivered_response_frames": 42,
+          "disconnected_await_requests": 0,
+          "disconnected_before_enqueue": 0,
+          "enqueued_after_backpressure": 0,
+          "executor_refusals": 0,
+          "expired_connections": 0,
+          "expired_phase_counts": {},
+          "issued_challenges": 42,
+          "lane_capacity_refusals": 0,
+          "mutating_grants_after_shutdown": 0,
+          "mutation_cpu_charged_ns": 2063418681,
+          "mutation_cpu_clock_failures": 0,
+          "mutation_cpu_credit_ns_after_shutdown": 1490220357,
+          "mutation_cpu_debt_ns_after_shutdown": 0,
+          "mutation_cpu_in_flight_after_shutdown": 0,
+          "mutation_cpu_refusals": 0,
+          "mutation_cpu_reservations": 21,
+          "mutation_cpu_unavailable_after_shutdown": false,
+          "mutation_dispatch_excluding_work_cpu_ns": 2032204547,
+          "mutation_full_work_cpu_ns": 31214134,
+          "output_reserved_bytes_after_shutdown": 0,
+          "output_serialization_failures": 0,
+          "paid_body_capacity_refusals": 0,
+          "paid_body_reserved_bytes_after_shutdown": 0,
+          "parse_refusals": 0,
+          "peak_connections": 1,
+          "peak_mutating_grants": 1,
+          "peak_output_reserved_bytes": 8404992,
+          "peak_paid_body_bytes": 298335,
+          "peak_pending_challenge": 1,
+          "peak_pending_enqueue": 1,
+          "peak_pending_grant": 1,
+          "peak_read_grants": 1,
+          "peak_spent": 14,
+          "pending_challenge_closed": 0,
+          "pending_challenge_entered": 42,
+          "pending_challenge_granted": 42,
+          "pending_challenge_wait_ns": 47926481,
+          "pending_grant_closed": 0,
+          "pending_grant_entered": 42,
+          "pending_grant_granted": 42,
+          "pending_grant_wait_ns": 45510318,
+          "pool_submit_failed": 0,
+          "pool_submit_finished": 0,
+          "pool_submit_ns": 0,
+          "pool_submit_started": 0,
+          "preface_refusals": 0,
+          "queue_backpressure_events": 0,
+          "queue_refusals": 0,
+          "queue_wait_ns": 45057730,
+          "read_grants_after_shutdown": 0,
+          "replay_refusals": 0,
+          "response_bytes_written": 2127553,
+          "response_write_failures": 0,
+          "retained_phase_errors": {},
+          "signature_refusals": 0,
+          "spent_capacity_refusals": 0,
+          "spent_reservations": 42,
+          "tasks_dequeued": 42,
+          "tasks_enqueued": 42,
+          "tasks_skipped_before_dispatch": 0,
+          "ticket_refusals": 0,
+          "unknown_caller_durable_rows": 0,
+          "unpaid_pressure_cancel_requests": 0,
+          "unpaid_pressure_connections_closed": 0,
+          "work_failed": 0,
+          "work_finished": 21,
+          "work_ns": 31222884,
+          "work_started": 21
+        }
+      },
+      "native_verifier_errors": [],
+      "observations_available": true,
+      "observed_confirmation_rounds": 3,
+      "receiver": {
+        "accepted_connections_seen": 42,
+        "all_retained_records": {
+          "dispatch_outcomes": {
+            "accepted": 42
+          },
+          "dispatch_thread_cpu_ns": {
+            "known_count": 42,
+            "max_ns": 104169574,
+            "mean_known_ns": {
+              "denominator": 42,
+              "numerator": 2079495893
+            },
+            "min_ns": 506565,
+            "p50_nearest_rank_ns": 1259790,
+            "p95_nearest_rank_ns": 102313684,
+            "sum_known_ns": 2079495893,
+            "unknown_count": 0
+          },
+          "full_work_outcomes": {
+            "accepted": 21,
+            "unknown": 21
+          },
+          "full_work_thread_cpu_ns": {
+            "known_count": 21,
+            "max_ns": 1517149,
+            "mean_known_ns": {
+              "denominator": 21,
+              "numerator": 31214134
+            },
+            "min_ns": 1453050,
+            "p50_nearest_rank_ns": 1487684,
+            "p95_nearest_rank_ns": 1515887,
+            "sum_known_ns": 31214134,
+            "unknown_count": 0
+          },
+          "record_complete": 42,
+          "record_observation_failed": 0,
+          "records": 42,
+          "submit_phase_measurements_available": true,
+          "submit_phases": [
+            {
+              "completed": 21,
+              "not_started": 21,
+              "outcomes": {
+                "accepted": 21
+              },
+              "phase": "decode",
+              "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+              "slots": 42,
+              "started": 21,
+              "thread_cpu_ns": {
+                "known_count": 21,
+                "max_ns": 529237,
+                "mean_known_ns": {
+                  "denominator": 21,
+                  "numerator": 9096596
+                },
+                "min_ns": 366654,
+                "p50_nearest_rank_ns": 428329,
+                "p95_nearest_rank_ns": 509751,
+                "sum_known_ns": 9096596,
+                "unknown_count": 0
+              },
+              "unfinished": 0,
+              "wall_ns": {
+                "known_count": 21,
+                "max_ns": 528906,
+                "mean_known_ns": {
+                  "denominator": 21,
+                  "numerator": 9090746
+                },
+                "min_ns": 366203,
+                "p50_nearest_rank_ns": 428038,
+                "p95_nearest_rank_ns": 509470,
+                "sum_known_ns": 9090746,
+                "unknown_count": 0
+              }
+            },
+            {
+              "completed": 21,
+              "not_started": 21,
+              "outcomes": {
+                "accepted": 21
+              },
+              "phase": "context_owner_wait",
+              "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+              "slots": 42,
+              "started": 21,
+              "thread_cpu_ns": {
+                "known_count": 21,
+                "max_ns": 2415,
+                "mean_known_ns": {
+                  "denominator": 21,
+                  "numerator": 36156
+                },
+                "min_ns": 1602,
+                "p50_nearest_rank_ns": 1673,
+                "p95_nearest_rank_ns": 1824,
+                "sum_known_ns": 36156,
+                "unknown_count": 0
+              },
+              "unfinished": 0,
+              "wall_ns": {
+                "known_count": 21,
+                "max_ns": 2454,
+                "mean_known_ns": {
+                  "denominator": 21,
+                  "numerator": 36526
+                },
+                "min_ns": 1613,
+                "p50_nearest_rank_ns": 1694,
+                "p95_nearest_rank_ns": 1843,
+                "sum_known_ns": 36526,
+                "unknown_count": 0
+              }
+            },
+            {
+              "completed": 21,
+              "not_started": 21,
+              "outcomes": {
+                "accepted": 21
+              },
+              "phase": "context",
+              "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+              "slots": 42,
+              "started": 21,
+              "thread_cpu_ns": {
+                "known_count": 21,
+                "max_ns": 797718,
+                "mean_known_ns": {
+                  "denominator": 21,
+                  "numerator": 10999982
+                },
+                "min_ns": 250397,
+                "p50_nearest_rank_ns": 532493,
+                "p95_nearest_rank_ns": 745139,
+                "sum_known_ns": 10999982,
+                "unknown_count": 0
+              },
+              "unfinished": 0,
+              "wall_ns": {
+                "known_count": 21,
+                "max_ns": 797127,
+                "mean_known_ns": {
+                  "denominator": 21,
+                  "numerator": 10989285
+                },
+                "min_ns": 249876,
+                "p50_nearest_rank_ns": 532043,
+                "p95_nearest_rank_ns": 744618,
+                "sum_known_ns": 10989285,
+                "unknown_count": 0
+              }
+            },
+            {
+              "completed": 21,
+              "not_started": 21,
+              "outcomes": {
+                "accepted": 21
+              },
+              "phase": "work",
+              "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+              "slots": 42,
+              "started": 21,
+              "thread_cpu_ns": {
+                "known_count": 21,
+                "max_ns": 1519574,
+                "mean_known_ns": {
+                  "denominator": 21,
+                  "numerator": 31266299
+                },
+                "min_ns": 1455484,
+                "p50_nearest_rank_ns": 1490089,
+                "p95_nearest_rank_ns": 1518341,
+                "sum_known_ns": 31266299,
+                "unknown_count": 0
+              },
+              "unfinished": 0,
+              "wall_ns": {
+                "known_count": 21,
+                "max_ns": 1519594,
+                "mean_known_ns": {
+                  "denominator": 21,
+                  "numerator": 31272106
+                },
+                "min_ns": 1455506,
+                "p50_nearest_rank_ns": 1490100,
+                "p95_nearest_rank_ns": 1518372,
+                "sum_known_ns": 31272106,
+                "unknown_count": 0
+              }
+            },
+            {
+              "completed": 21,
+              "not_started": 21,
+              "outcomes": {
+                "accepted": 21
+              },
+              "phase": "admission_owner_wait",
+              "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+              "slots": 42,
+              "started": 21,
+              "thread_cpu_ns": {
+                "known_count": 21,
+                "max_ns": 1803,
+                "mean_known_ns": {
+                  "denominator": 21,
+                  "numerator": 31560
+                },
+                "min_ns": 1463,
+                "p50_nearest_rank_ns": 1483,
+                "p95_nearest_rank_ns": 1523,
+                "sum_known_ns": 31560,
+                "unknown_count": 0
+              },
+              "unfinished": 0,
+              "wall_ns": {
+                "known_count": 21,
+                "max_ns": 2044,
+                "mean_known_ns": {
+                  "denominator": 21,
+                  "numerator": 31761
+                },
+                "min_ns": 1442,
+                "p50_nearest_rank_ns": 1493,
+                "p95_nearest_rank_ns": 1543,
+                "sum_known_ns": 31761,
+                "unknown_count": 0
+              }
+            },
+            {
+              "completed": 21,
+              "not_started": 21,
+              "outcomes": {
+                "accepted": 21
+              },
+              "phase": "admission",
+              "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+              "slots": 42,
+              "started": 21,
+              "thread_cpu_ns": {
+                "known_count": 21,
+                "max_ns": 88458105,
+                "mean_known_ns": {
+                  "denominator": 21,
+                  "numerator": 1757812329
+                },
+                "min_ns": 79301158,
+                "p50_nearest_rank_ns": 84016203,
+                "p95_nearest_rank_ns": 87218566,
+                "sum_known_ns": 1757812329,
+                "unknown_count": 0
+              },
+              "unfinished": 0,
+              "wall_ns": {
+                "known_count": 21,
+                "max_ns": 88887715,
+                "mean_known_ns": {
+                  "denominator": 21,
+                  "numerator": 1769948952
+                },
+                "min_ns": 79845232,
+                "p50_nearest_rank_ns": 84496755,
+                "p95_nearest_rank_ns": 88675873,
+                "sum_known_ns": 1769948952,
+                "unknown_count": 0
+              }
+            },
+            {
+              "completed": 21,
+              "not_started": 21,
+              "outcomes": {
+                "accepted": 21
+              },
+              "phase": "submit_result",
+              "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+              "slots": 42,
+              "started": 21,
+              "thread_cpu_ns": {
+                "known_count": 21,
+                "max_ns": 12934211,
+                "mean_known_ns": {
+                  "denominator": 21,
+                  "numerator": 253833951
+                },
+                "min_ns": 11135206,
+                "p50_nearest_rank_ns": 12014627,
+                "p95_nearest_rank_ns": 12873818,
+                "sum_known_ns": 253833951,
+                "unknown_count": 0
+              },
+              "unfinished": 0,
+              "wall_ns": {
+                "known_count": 21,
+                "max_ns": 13170823,
+                "mean_known_ns": {
+                  "denominator": 21,
+                  "numerator": 260284023
+                },
+                "min_ns": 11556658,
+                "p50_nearest_rank_ns": 12261808,
+                "p95_nearest_rank_ns": 13158862,
+                "sum_known_ns": 260284023,
+                "unknown_count": 0
+              }
+            }
+          ],
+          "terminal_phase_counts": {
+            "response": 42
+          }
+        },
+        "by_observed_body_role": {
+          "client_history": {
+            "dispatch_outcomes": {
+              "accepted": 21
+            },
+            "dispatch_thread_cpu_ns": {
+              "known_count": 21,
+              "max_ns": 1259790,
+              "mean_known_ns": {
+                "denominator": 21,
+                "numerator": 16077212
+              },
+              "min_ns": 506565,
+              "p50_nearest_rank_ns": 780144,
+              "p95_nearest_rank_ns": 973866,
+              "sum_known_ns": 16077212,
+              "unknown_count": 0
+            },
+            "full_work_outcomes": {
+              "unknown": 21
+            },
+            "full_work_thread_cpu_ns": {
+              "known_count": 0,
+              "max_ns": null,
+              "mean_known_ns": null,
+              "min_ns": null,
+              "p50_nearest_rank_ns": null,
+              "p95_nearest_rank_ns": null,
+              "sum_known_ns": 0,
+              "unknown_count": 0
+            },
+            "record_complete": 21,
+            "record_observation_failed": 0,
+            "records": 21,
+            "submit_phase_measurements_available": true,
+            "submit_phases": [
+              {
+                "completed": 0,
+                "not_started": 21,
+                "outcomes": {},
+                "phase": "decode",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 21,
+                "started": 0,
+                "thread_cpu_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                }
+              },
+              {
+                "completed": 0,
+                "not_started": 21,
+                "outcomes": {},
+                "phase": "context_owner_wait",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 21,
+                "started": 0,
+                "thread_cpu_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                }
+              },
+              {
+                "completed": 0,
+                "not_started": 21,
+                "outcomes": {},
+                "phase": "context",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 21,
+                "started": 0,
+                "thread_cpu_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                }
+              },
+              {
+                "completed": 0,
+                "not_started": 21,
+                "outcomes": {},
+                "phase": "work",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 21,
+                "started": 0,
+                "thread_cpu_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                }
+              },
+              {
+                "completed": 0,
+                "not_started": 21,
+                "outcomes": {},
+                "phase": "admission_owner_wait",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 21,
+                "started": 0,
+                "thread_cpu_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                }
+              },
+              {
+                "completed": 0,
+                "not_started": 21,
+                "outcomes": {},
+                "phase": "admission",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 21,
+                "started": 0,
+                "thread_cpu_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                }
+              },
+              {
+                "completed": 0,
+                "not_started": 21,
+                "outcomes": {},
+                "phase": "submit_result",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 21,
+                "started": 0,
+                "thread_cpu_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                }
+              }
+            ],
+            "terminal_phase_counts": {
+              "response": 21
+            }
+          },
+          "honest_submit": {
+            "dispatch_outcomes": {
+              "accepted": 21
+            },
+            "dispatch_thread_cpu_ns": {
+              "known_count": 21,
+              "max_ns": 104169574,
+              "mean_known_ns": {
+                "denominator": 21,
+                "numerator": 2063418681
+              },
+              "min_ns": 92790384,
+              "p50_nearest_rank_ns": 98655390,
+              "p95_nearest_rank_ns": 102390288,
+              "sum_known_ns": 2063418681,
+              "unknown_count": 0
+            },
+            "full_work_outcomes": {
+              "accepted": 21
+            },
+            "full_work_thread_cpu_ns": {
+              "known_count": 21,
+              "max_ns": 1517149,
+              "mean_known_ns": {
+                "denominator": 21,
+                "numerator": 31214134
+              },
+              "min_ns": 1453050,
+              "p50_nearest_rank_ns": 1487684,
+              "p95_nearest_rank_ns": 1515887,
+              "sum_known_ns": 31214134,
+              "unknown_count": 0
+            },
+            "record_complete": 21,
+            "record_observation_failed": 0,
+            "records": 21,
+            "submit_phase_measurements_available": true,
+            "submit_phases": [
+              {
+                "completed": 21,
+                "not_started": 0,
+                "outcomes": {
+                  "accepted": 21
+                },
+                "phase": "decode",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 21,
+                "started": 21,
+                "thread_cpu_ns": {
+                  "known_count": 21,
+                  "max_ns": 529237,
+                  "mean_known_ns": {
+                    "denominator": 21,
+                    "numerator": 9096596
+                  },
+                  "min_ns": 366654,
+                  "p50_nearest_rank_ns": 428329,
+                  "p95_nearest_rank_ns": 509751,
+                  "sum_known_ns": 9096596,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 21,
+                  "max_ns": 528906,
+                  "mean_known_ns": {
+                    "denominator": 21,
+                    "numerator": 9090746
+                  },
+                  "min_ns": 366203,
+                  "p50_nearest_rank_ns": 428038,
+                  "p95_nearest_rank_ns": 509470,
+                  "sum_known_ns": 9090746,
+                  "unknown_count": 0
+                }
+              },
+              {
+                "completed": 21,
+                "not_started": 0,
+                "outcomes": {
+                  "accepted": 21
+                },
+                "phase": "context_owner_wait",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 21,
+                "started": 21,
+                "thread_cpu_ns": {
+                  "known_count": 21,
+                  "max_ns": 2415,
+                  "mean_known_ns": {
+                    "denominator": 21,
+                    "numerator": 36156
+                  },
+                  "min_ns": 1602,
+                  "p50_nearest_rank_ns": 1673,
+                  "p95_nearest_rank_ns": 1824,
+                  "sum_known_ns": 36156,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 21,
+                  "max_ns": 2454,
+                  "mean_known_ns": {
+                    "denominator": 21,
+                    "numerator": 36526
+                  },
+                  "min_ns": 1613,
+                  "p50_nearest_rank_ns": 1694,
+                  "p95_nearest_rank_ns": 1843,
+                  "sum_known_ns": 36526,
+                  "unknown_count": 0
+                }
+              },
+              {
+                "completed": 21,
+                "not_started": 0,
+                "outcomes": {
+                  "accepted": 21
+                },
+                "phase": "context",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 21,
+                "started": 21,
+                "thread_cpu_ns": {
+                  "known_count": 21,
+                  "max_ns": 797718,
+                  "mean_known_ns": {
+                    "denominator": 21,
+                    "numerator": 10999982
+                  },
+                  "min_ns": 250397,
+                  "p50_nearest_rank_ns": 532493,
+                  "p95_nearest_rank_ns": 745139,
+                  "sum_known_ns": 10999982,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 21,
+                  "max_ns": 797127,
+                  "mean_known_ns": {
+                    "denominator": 21,
+                    "numerator": 10989285
+                  },
+                  "min_ns": 249876,
+                  "p50_nearest_rank_ns": 532043,
+                  "p95_nearest_rank_ns": 744618,
+                  "sum_known_ns": 10989285,
+                  "unknown_count": 0
+                }
+              },
+              {
+                "completed": 21,
+                "not_started": 0,
+                "outcomes": {
+                  "accepted": 21
+                },
+                "phase": "work",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 21,
+                "started": 21,
+                "thread_cpu_ns": {
+                  "known_count": 21,
+                  "max_ns": 1519574,
+                  "mean_known_ns": {
+                    "denominator": 21,
+                    "numerator": 31266299
+                  },
+                  "min_ns": 1455484,
+                  "p50_nearest_rank_ns": 1490089,
+                  "p95_nearest_rank_ns": 1518341,
+                  "sum_known_ns": 31266299,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 21,
+                  "max_ns": 1519594,
+                  "mean_known_ns": {
+                    "denominator": 21,
+                    "numerator": 31272106
+                  },
+                  "min_ns": 1455506,
+                  "p50_nearest_rank_ns": 1490100,
+                  "p95_nearest_rank_ns": 1518372,
+                  "sum_known_ns": 31272106,
+                  "unknown_count": 0
+                }
+              },
+              {
+                "completed": 21,
+                "not_started": 0,
+                "outcomes": {
+                  "accepted": 21
+                },
+                "phase": "admission_owner_wait",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 21,
+                "started": 21,
+                "thread_cpu_ns": {
+                  "known_count": 21,
+                  "max_ns": 1803,
+                  "mean_known_ns": {
+                    "denominator": 21,
+                    "numerator": 31560
+                  },
+                  "min_ns": 1463,
+                  "p50_nearest_rank_ns": 1483,
+                  "p95_nearest_rank_ns": 1523,
+                  "sum_known_ns": 31560,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 21,
+                  "max_ns": 2044,
+                  "mean_known_ns": {
+                    "denominator": 21,
+                    "numerator": 31761
+                  },
+                  "min_ns": 1442,
+                  "p50_nearest_rank_ns": 1493,
+                  "p95_nearest_rank_ns": 1543,
+                  "sum_known_ns": 31761,
+                  "unknown_count": 0
+                }
+              },
+              {
+                "completed": 21,
+                "not_started": 0,
+                "outcomes": {
+                  "accepted": 21
+                },
+                "phase": "admission",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 21,
+                "started": 21,
+                "thread_cpu_ns": {
+                  "known_count": 21,
+                  "max_ns": 88458105,
+                  "mean_known_ns": {
+                    "denominator": 21,
+                    "numerator": 1757812329
+                  },
+                  "min_ns": 79301158,
+                  "p50_nearest_rank_ns": 84016203,
+                  "p95_nearest_rank_ns": 87218566,
+                  "sum_known_ns": 1757812329,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 21,
+                  "max_ns": 88887715,
+                  "mean_known_ns": {
+                    "denominator": 21,
+                    "numerator": 1769948952
+                  },
+                  "min_ns": 79845232,
+                  "p50_nearest_rank_ns": 84496755,
+                  "p95_nearest_rank_ns": 88675873,
+                  "sum_known_ns": 1769948952,
+                  "unknown_count": 0
+                }
+              },
+              {
+                "completed": 21,
+                "not_started": 0,
+                "outcomes": {
+                  "accepted": 21
+                },
+                "phase": "submit_result",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 21,
+                "started": 21,
+                "thread_cpu_ns": {
+                  "known_count": 21,
+                  "max_ns": 12934211,
+                  "mean_known_ns": {
+                    "denominator": 21,
+                    "numerator": 253833951
+                  },
+                  "min_ns": 11135206,
+                  "p50_nearest_rank_ns": 12014627,
+                  "p95_nearest_rank_ns": 12873818,
+                  "sum_known_ns": 253833951,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 21,
+                  "max_ns": 13170823,
+                  "mean_known_ns": {
+                    "denominator": 21,
+                    "numerator": 260284023
+                  },
+                  "min_ns": 11556658,
+                  "p50_nearest_rank_ns": 12261808,
+                  "p95_nearest_rank_ns": 13158862,
+                  "sum_known_ns": 260284023,
+                  "unknown_count": 0
+                }
+              }
+            ],
+            "terminal_phase_counts": {
+              "response": 21
+            }
+          }
+        },
+        "capacity": 16384,
+        "counter_overflow": false,
+        "measurement_failures": 0,
+        "native_observer_complete": true,
+        "records_not_retained": 0,
+        "schema": "public-v3-local-request-resource-observation-v2"
+      },
+      "receiver_and_verifier_setup_cpu_ns": 1102486981,
+      "receiver_and_verifier_setup_wall_ns": 1118499636,
+      "receiver_client_state_equal": true,
+      "scheduled_confirmation_rounds": 3,
+      "startup_or_campaign_error": null,
+      "state_backend": "authenticated-v1",
+      "submissions": {
+        "acknowledged_after_window": 0,
+        "acknowledged_on_time": 21,
+        "all_calls_returned_after_window": 0,
+        "attempts": 21,
+        "calling_process_cpu_ns": {
+          "known_count": 21,
+          "max_ns": 110791648,
+          "mean_known_ns": {
+            "denominator": 21,
+            "numerator": 2180774352
+          },
+          "min_ns": 97683108,
+          "p50_nearest_rank_ns": 103950046,
+          "p95_nearest_rank_ns": 108832436,
+          "sum_known_ns": 2180774352,
+          "unknown_count": 0
+        },
+        "elapsed_wall_ns": {
+          "known_count": 21,
+          "max_ns": 116764915,
+          "mean_known_ns": {
+            "denominator": 21,
+            "numerator": 2326170646
+          },
+          "min_ns": 106009218,
+          "p50_nearest_rank_ns": 111437550,
+          "p95_nearest_rank_ns": 115048424,
+          "sum_known_ns": 2326170646,
+          "unknown_count": 0
+        },
+        "errors": {},
+        "on_time_unique_packet_indices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20
+        ],
+        "refusals": {},
+        "status_counts": {
+          "ok": 21
+        }
+      },
+      "unobserved_scheduled_rounds": 0,
+      "whole_parent_phase_cpu_ns": 8560430703,
+      "whole_parent_phase_wall_ns": 31185376074,
+      "window_seconds": 30
+    },
+    {
+      "actor_reports_successful_without_cap_or_kill": true,
+      "attack_calls": {
+        "acknowledged_after_window": 0,
+        "acknowledged_on_time": 0,
+        "all_calls_returned_after_window": 23,
+        "attempts": 3539,
+        "calling_process_cpu_ns": {
+          "known_count": 3539,
+          "max_ns": 1261653,
+          "mean_known_ns": {
+            "denominator": 3539,
+            "numerator": 3113086399
+          },
+          "min_ns": 597064,
+          "p50_nearest_rank_ns": 877465,
+          "p95_nearest_rank_ns": 1017178,
+          "sum_known_ns": 3113086399,
+          "unknown_count": 0
+        },
+        "elapsed_wall_ns": {
+          "known_count": 3539,
+          "max_ns": 672439552,
+          "mean_known_ns": {
+            "denominator": 3539,
+            "numerator": 719147960051
+          },
+          "min_ns": 9822912,
+          "p50_nearest_rank_ns": 200765480,
+          "p95_nearest_rank_ns": 217798491,
+          "sum_known_ns": 719147960051,
+          "unknown_count": 0
+        },
+        "errors": {
+          "FRAME_DEADLINE": 4,
+          "IO: Resource temporarily unavailable (os error 11)": 19
+        },
+        "on_time_unique_packet_indices": [],
+        "refusals": {
+          "WORK:Transcript": 3516
+        },
+        "status_counts": {
+          "error": 23,
+          "refused": 3516
+        }
+      },
+      "attacker_processes_ready": 24,
+      "attacker_processes_requested": 24,
+      "confirmation_rounds": [
+        {
+          "confirmed_inside_pressure_window": true,
+          "ended_ns": 4036604999,
+          "paid_credit_depletion_observed_during_round": false,
+          "receiver_hostile_work_rejected_during_round": true,
+          "round": 0,
+          "started_ns": 1001520442
+        },
+        {
+          "confirmed_inside_pressure_window": true,
+          "ended_ns": 8095971403,
+          "paid_credit_depletion_observed_during_round": false,
+          "receiver_hostile_work_rejected_during_round": true,
+          "round": 1,
+          "started_ns": 5000310106
+        },
+        {
+          "confirmed_inside_pressure_window": true,
+          "ended_ns": 12220243113,
+          "paid_credit_depletion_observed_during_round": true,
+          "receiver_hostile_work_rejected_during_round": true,
+          "round": 2,
+          "started_ns": 9000070585
+        }
+      ],
+      "confirmed_rounds": 3,
+      "final_actual_flow": {
+        "balance_identity_verified": true,
+        "booked_reservation_ns": 0,
+        "credited_refill_ns": 7495993909,
+        "discarded_refill_ns": 17495935,
+        "initial_credit_ns": 2000000000,
+        "live_debited_cpu_ns": 9391711294,
+        "live_owners": 0,
+        "paid_cpu_debit_ns": 9395438466,
+        "remaining_paid_credit_ns": 100555443,
+        "schema": "public-v3-local-actual-cpu-flow-v1",
+        "settled_full_cpu_ns": 9395438466,
+        "settlement_discard_ns": 0,
+        "settlement_residual_cpu_ns": 3727172,
+        "stored_credit_ns": 100555443,
+        "unsettled_known_live_cpu_ns": 0
+      },
+      "final_cpu_meter": {
+        "accounting_unavailable": false,
+        "burst_ns": 2000000000,
+        "in_flight": 0,
+        "refill_ns_per_second": 250000000,
+        "schema": "public-v3-local-stored-cpu-budget-v1",
+        "start_reserve_ns": 100000000,
+        "stored_credit_ns": 100555443,
+        "worker_limit": 2
+      },
+      "genuine_budget_depletion_observed": true,
+      "history": {
+        "acknowledged_after_window": 0,
+        "acknowledged_on_time": 21,
+        "all_calls_returned_after_window": 0,
+        "attempts": 21,
+        "calling_process_cpu_ns": {
+          "known_count": 21,
+          "max_ns": 23048833,
+          "mean_known_ns": {
+            "denominator": 21,
+            "numerator": 161128665
+          },
+          "min_ns": 3131604,
+          "p50_nearest_rank_ns": 6100604,
+          "p95_nearest_rank_ns": 21536721,
+          "sum_known_ns": 161128665,
+          "unknown_count": 0
+        },
+        "elapsed_wall_ns": {
+          "known_count": 21,
+          "max_ns": 15002854,
+          "mean_known_ns": {
+            "denominator": 21,
+            "numerator": 269734109
+          },
+          "min_ns": 11545575,
+          "p50_nearest_rank_ns": 12770739,
+          "p95_nearest_rank_ns": 14695737,
+          "sum_known_ns": 269734109,
+          "unknown_count": 0
+        },
+        "errors": {},
+        "on_time_unique_packet_indices": [],
+        "refusals": {},
+        "status_counts": {
+          "ok": 21
+        }
+      },
+      "mode": "from-zero",
+      "native_phase_criteria_met": true,
+      "native_service_outcome": {
+        "Ok": {
+          "abandoned_tasks": 4,
+          "accepted_connections": 3581,
+          "body_bytes_received": 352429288,
+          "capacity_refusals": 0,
+          "challenge_budget_refusals": 0,
+          "cleanup_scans": 1458,
+          "completed_pool_status": 0,
+          "completed_pool_submit": 0,
+          "completed_read": 21,
+          "completed_submit": 21,
+          "connections_closed_on_shutdown": 0,
+          "delivered_response_frames": 3558,
+          "disconnected_await_requests": 7,
+          "disconnected_before_enqueue": 3,
+          "enqueued_after_backpressure": 2432,
+          "executor_refusals": 3518,
+          "expired_connections": 0,
+          "expired_phase_counts": {},
+          "issued_challenges": 3581,
+          "lane_capacity_refusals": 0,
+          "mutating_grants_after_shutdown": 0,
+          "mutation_cpu_charged_ns": 9395438466,
+          "mutation_cpu_clock_failures": 0,
+          "mutation_cpu_credit_ns_after_shutdown": 100555443,
+          "mutation_cpu_debt_ns_after_shutdown": 0,
+          "mutation_cpu_in_flight_after_shutdown": 0,
+          "mutation_cpu_refusals": 0,
+          "mutation_cpu_reservations": 3538,
+          "mutation_cpu_unavailable_after_shutdown": false,
+          "mutation_dispatch_excluding_work_cpu_ns": 4854703219,
+          "mutation_full_work_cpu_ns": 4540735247,
+          "output_reserved_bytes_after_shutdown": 0,
+          "output_serialization_failures": 0,
+          "paid_body_capacity_refusals": 0,
+          "paid_body_reserved_bytes_after_shutdown": 0,
+          "parse_refusals": 6,
+          "peak_connections": 25,
+          "peak_mutating_grants": 8,
+          "peak_output_reserved_bytes": 8601600,
+          "peak_paid_body_bytes": 2387172,
+          "peak_pending_challenge": 24,
+          "peak_pending_enqueue": 6,
+          "peak_pending_grant": 17,
+          "peak_read_grants": 1,
+          "peak_spent": 266,
+          "pending_challenge_closed": 0,
+          "pending_challenge_entered": 3581,
+          "pending_challenge_granted": 3581,
+          "pending_challenge_wait_ns": 320043237259,
+          "pending_grant_closed": 10,
+          "pending_grant_entered": 3581,
+          "pending_grant_granted": 3571,
+          "pending_grant_wait_ns": 214588877395,
+          "pool_submit_failed": 0,
+          "pool_submit_finished": 0,
+          "pool_submit_ns": 0,
+          "pool_submit_started": 0,
+          "preface_refusals": 0,
+          "queue_backpressure_events": 72043,
+          "queue_refusals": 0,
+          "queue_wait_ns": 88470181756,
+          "read_grants_after_shutdown": 0,
+          "replay_refusals": 0,
+          "response_bytes_written": 4901677,
+          "response_write_failures": 0,
+          "retained_phase_errors": {
+            "body": 6,
+            "queue": 3,
+            "solution": 10,
+            "work": 4
+          },
+          "signature_refusals": 0,
+          "spent_capacity_refusals": 0,
+          "spent_reservations": 3581,
+          "tasks_dequeued": 3562,
+          "tasks_enqueued": 3562,
+          "tasks_skipped_before_dispatch": 2,
+          "ticket_refusals": 0,
+          "unknown_caller_durable_rows": 0,
+          "unpaid_pressure_cancel_requests": 0,
+          "unpaid_pressure_connections_closed": 0,
+          "work_failed": 3517,
+          "work_finished": 3538,
+          "work_ns": 4552996456,
+          "work_started": 3538
+        }
+      },
+      "native_verifier_errors": [],
+      "observations_available": true,
+      "observed_confirmation_rounds": 3,
+      "receiver": {
+        "accepted_connections_seen": 3581,
+        "all_retained_records": {
+          "dispatch_outcomes": {
+            "accepted": 42,
+            "rejected": 3517,
+            "unknown": 22
+          },
+          "dispatch_thread_cpu_ns": {
+            "known_count": 3559,
+            "max_ns": 109268567,
+            "mean_known_ns": {
+              "denominator": 3559,
+              "numerator": 9411990173
+            },
+            "min_ns": 452845,
+            "p50_nearest_rank_ns": 2042459,
+            "p95_nearest_rank_ns": 2506705,
+            "sum_known_ns": 9411990173,
+            "unknown_count": 0
+          },
+          "full_work_outcomes": {
+            "accepted": 21,
+            "rejected": 3517,
+            "unknown": 43
+          },
+          "full_work_thread_cpu_ns": {
+            "known_count": 3538,
+            "max_ns": 2059300,
+            "mean_known_ns": {
+              "denominator": 3538,
+              "numerator": 4540735247
+            },
+            "min_ns": 957486,
+            "p50_nearest_rank_ns": 1253027,
+            "p95_nearest_rank_ns": 1584856,
+            "sum_known_ns": 4540735247,
+            "unknown_count": 0
+          },
+          "record_complete": 3581,
+          "record_observation_failed": 0,
+          "records": 3581,
+          "submit_phase_measurements_available": true,
+          "submit_phases": [
+            {
+              "completed": 3538,
+              "not_started": 43,
+              "outcomes": {
+                "accepted": 3538
+              },
+              "phase": "decode",
+              "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+              "slots": 3581,
+              "started": 3538,
+              "thread_cpu_ns": {
+                "known_count": 3538,
+                "max_ns": 940644,
+                "mean_known_ns": {
+                  "denominator": 3538,
+                  "numerator": 1320315447
+                },
+                "min_ns": 269572,
+                "p50_nearest_rank_ns": 358990,
+                "p95_nearest_rank_ns": 547752,
+                "sum_known_ns": 1320315447,
+                "unknown_count": 0
+              },
+              "unfinished": 0,
+              "wall_ns": {
+                "known_count": 3538,
+                "max_ns": 1235765,
+                "mean_known_ns": {
+                  "denominator": 3538,
+                  "numerator": 1320176932
+                },
+                "min_ns": 269443,
+                "p50_nearest_rank_ns": 358728,
+                "p95_nearest_rank_ns": 550597,
+                "sum_known_ns": 1320176932,
+                "unknown_count": 0
+              }
+            },
+            {
+              "completed": 3538,
+              "not_started": 43,
+              "outcomes": {
+                "accepted": 3538
+              },
+              "phase": "context_owner_wait",
+              "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+              "slots": 3581,
+              "started": 3538,
+              "thread_cpu_ns": {
+                "known_count": 3538,
+                "max_ns": 175667,
+                "mean_known_ns": {
+                  "denominator": 3538,
+                  "numerator": 8664570
+                },
+                "min_ns": 1473,
+                "p50_nearest_rank_ns": 2013,
+                "p95_nearest_rank_ns": 2725,
+                "sum_known_ns": 8664570,
+                "unknown_count": 0
+              },
+              "unfinished": 0,
+              "wall_ns": {
+                "known_count": 3538,
+                "max_ns": 24913059,
+                "mean_known_ns": {
+                  "denominator": 3538,
+                  "numerator": 205507447
+                },
+                "min_ns": 1473,
+                "p50_nearest_rank_ns": 2014,
+                "p95_nearest_rank_ns": 2735,
+                "sum_known_ns": 205507447,
+                "unknown_count": 0
+              }
+            },
+            {
+              "completed": 3538,
+              "not_started": 43,
+              "outcomes": {
+                "accepted": 3538
+              },
+              "phase": "context",
+              "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+              "slots": 3581,
+              "started": 3538,
+              "thread_cpu_ns": {
+                "known_count": 3538,
+                "max_ns": 798159,
+                "mean_known_ns": {
+                  "denominator": 3538,
+                  "numerator": 1390637779
+                },
+                "min_ns": 207397,
+                "p50_nearest_rank_ns": 385619,
+                "p95_nearest_rank_ns": 513307,
+                "sum_known_ns": 1390637779,
+                "unknown_count": 0
+              },
+              "unfinished": 0,
+              "wall_ns": {
+                "known_count": 3538,
+                "max_ns": 797558,
+                "mean_known_ns": {
+                  "denominator": 3538,
+                  "numerator": 1389512418
+                },
+                "min_ns": 207057,
+                "p50_nearest_rank_ns": 385309,
+                "p95_nearest_rank_ns": 513027,
+                "sum_known_ns": 1389512418,
+                "unknown_count": 0
+              }
+            },
+            {
+              "completed": 3538,
+              "not_started": 43,
+              "outcomes": {
+                "accepted": 21,
+                "rejected": 3517
+              },
+              "phase": "work",
+              "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+              "slots": 3581,
+              "started": 3538,
+              "thread_cpu_ns": {
+                "known_count": 3538,
+                "max_ns": 2061956,
+                "mean_known_ns": {
+                  "denominator": 3538,
+                  "numerator": 4550395136
+                },
+                "min_ns": 961874,
+                "p50_nearest_rank_ns": 1255742,
+                "p95_nearest_rank_ns": 1587220,
+                "sum_known_ns": 4550395136,
+                "unknown_count": 0
+              },
+              "unfinished": 0,
+              "wall_ns": {
+                "known_count": 3538,
+                "max_ns": 8518478,
+                "mean_known_ns": {
+                  "denominator": 3538,
+                  "numerator": 4562075623
+                },
+                "min_ns": 1159843,
+                "p50_nearest_rank_ns": 1256003,
+                "p95_nearest_rank_ns": 1594405,
+                "sum_known_ns": 4562075623,
+                "unknown_count": 0
+              }
+            },
+            {
+              "completed": 21,
+              "not_started": 3560,
+              "outcomes": {
+                "accepted": 21
+              },
+              "phase": "admission_owner_wait",
+              "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+              "slots": 3581,
+              "started": 21,
+              "thread_cpu_ns": {
+                "known_count": 21,
+                "max_ns": 2024,
+                "mean_known_ns": {
+                  "denominator": 21,
+                  "numerator": 32610
+                },
+                "min_ns": 1473,
+                "p50_nearest_rank_ns": 1513,
+                "p95_nearest_rank_ns": 2003,
+                "sum_known_ns": 32610,
+                "unknown_count": 0
+              },
+              "unfinished": 0,
+              "wall_ns": {
+                "known_count": 21,
+                "max_ns": 2024,
+                "mean_known_ns": {
+                  "denominator": 21,
+                  "numerator": 32683
+                },
+                "min_ns": 1463,
+                "p50_nearest_rank_ns": 1513,
+                "p95_nearest_rank_ns": 1994,
+                "sum_known_ns": 32683,
+                "unknown_count": 0
+              }
+            },
+            {
+              "completed": 21,
+              "not_started": 3560,
+              "outcomes": {
+                "accepted": 21
+              },
+              "phase": "admission",
+              "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+              "slots": 3581,
+              "started": 21,
+              "thread_cpu_ns": {
+                "known_count": 21,
+                "max_ns": 93116605,
+                "mean_known_ns": {
+                  "denominator": 21,
+                  "numerator": 1800082781
+                },
+                "min_ns": 81506693,
+                "p50_nearest_rank_ns": 85992237,
+                "p95_nearest_rank_ns": 88434540,
+                "sum_known_ns": 1800082781,
+                "unknown_count": 0
+              },
+              "unfinished": 0,
+              "wall_ns": {
+                "known_count": 21,
+                "max_ns": 94623977,
+                "mean_known_ns": {
+                  "denominator": 21,
+                  "numerator": 1811270112
+                },
+                "min_ns": 81925456,
+                "p50_nearest_rank_ns": 86345789,
+                "p95_nearest_rank_ns": 88966991,
+                "sum_known_ns": 1811270112,
+                "unknown_count": 0
+              }
+            },
+            {
+              "completed": 21,
+              "not_started": 3560,
+              "outcomes": {
+                "accepted": 21
+              },
+              "phase": "submit_result",
+              "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+              "slots": 3581,
+              "started": 21,
+              "thread_cpu_ns": {
+                "known_count": 21,
+                "max_ns": 13746437,
+                "mean_known_ns": {
+                  "denominator": 21,
+                  "numerator": 257045982
+                },
+                "min_ns": 11394802,
+                "p50_nearest_rank_ns": 12081370,
+                "p95_nearest_rank_ns": 13657430,
+                "sum_known_ns": 257045982,
+                "unknown_count": 0
+              },
+              "unfinished": 0,
+              "wall_ns": {
+                "known_count": 21,
+                "max_ns": 14141116,
+                "mean_known_ns": {
+                  "denominator": 21,
+                  "numerator": 263457764
+                },
+                "min_ns": 11701537,
+                "p50_nearest_rank_ns": 12443450,
+                "p95_nearest_rank_ns": 13992650,
+                "sum_known_ns": 263457764,
+                "unknown_count": 0
+              }
+            }
+          ],
+          "terminal_phase_counts": {
+            "body": 6,
+            "queue": 3,
+            "response": 3558,
+            "solution": 10,
+            "work": 4
+          }
+        },
+        "by_observed_body_role": {
+          "attack_submit": {
+            "dispatch_outcomes": {
+              "rejected": 3517,
+              "unknown": 22
+            },
+            "dispatch_thread_cpu_ns": {
+              "known_count": 3517,
+              "max_ns": 3477440,
+              "mean_known_ns": {
+                "denominator": 3517,
+                "numerator": 7286692541
+              },
+              "min_ns": 1686344,
+              "p50_nearest_rank_ns": 2042459,
+              "p95_nearest_rank_ns": 2458755,
+              "sum_known_ns": 7286692541,
+              "unknown_count": 0
+            },
+            "full_work_outcomes": {
+              "rejected": 3517,
+              "unknown": 22
+            },
+            "full_work_thread_cpu_ns": {
+              "known_count": 3517,
+              "max_ns": 2059300,
+              "mean_known_ns": {
+                "denominator": 3517,
+                "numerator": 4509025513
+              },
+              "min_ns": 957486,
+              "p50_nearest_rank_ns": 1252877,
+              "p95_nearest_rank_ns": 1583634,
+              "sum_known_ns": 4509025513,
+              "unknown_count": 0
+            },
+            "record_complete": 3539,
+            "record_observation_failed": 0,
+            "records": 3539,
+            "submit_phase_measurements_available": true,
+            "submit_phases": [
+              {
+                "completed": 3517,
+                "not_started": 22,
+                "outcomes": {
+                  "accepted": 3517
+                },
+                "phase": "decode",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 3539,
+                "started": 3517,
+                "thread_cpu_ns": {
+                  "known_count": 3517,
+                  "max_ns": 940644,
+                  "mean_known_ns": {
+                    "denominator": 3517,
+                    "numerator": 1311949235
+                  },
+                  "min_ns": 269572,
+                  "p50_nearest_rank_ns": 358799,
+                  "p95_nearest_rank_ns": 547752,
+                  "sum_known_ns": 1311949235,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 3517,
+                  "max_ns": 1235765,
+                  "mean_known_ns": {
+                    "denominator": 3517,
+                    "numerator": 1311816245
+                  },
+                  "min_ns": 269443,
+                  "p50_nearest_rank_ns": 358629,
+                  "p95_nearest_rank_ns": 550597,
+                  "sum_known_ns": 1311816245,
+                  "unknown_count": 0
+                }
+              },
+              {
+                "completed": 3517,
+                "not_started": 22,
+                "outcomes": {
+                  "accepted": 3517
+                },
+                "phase": "context_owner_wait",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 3539,
+                "started": 3517,
+                "thread_cpu_ns": {
+                  "known_count": 3517,
+                  "max_ns": 175667,
+                  "mean_known_ns": {
+                    "denominator": 3517,
+                    "numerator": 8628513
+                  },
+                  "min_ns": 1473,
+                  "p50_nearest_rank_ns": 2013,
+                  "p95_nearest_rank_ns": 2725,
+                  "sum_known_ns": 8628513,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 3517,
+                  "max_ns": 24913059,
+                  "mean_known_ns": {
+                    "denominator": 3517,
+                    "numerator": 205471268
+                  },
+                  "min_ns": 1473,
+                  "p50_nearest_rank_ns": 2014,
+                  "p95_nearest_rank_ns": 2735,
+                  "sum_known_ns": 205471268,
+                  "unknown_count": 0
+                }
+              },
+              {
+                "completed": 3517,
+                "not_started": 22,
+                "outcomes": {
+                  "accepted": 3517
+                },
+                "phase": "context",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 3539,
+                "started": 3517,
+                "thread_cpu_ns": {
+                  "known_count": 3517,
+                  "max_ns": 637619,
+                  "mean_known_ns": {
+                    "denominator": 3517,
+                    "numerator": 1379536302
+                  },
+                  "min_ns": 207397,
+                  "p50_nearest_rank_ns": 385458,
+                  "p95_nearest_rank_ns": 510953,
+                  "sum_known_ns": 1379536302,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 3517,
+                  "max_ns": 636888,
+                  "mean_known_ns": {
+                    "denominator": 3517,
+                    "numerator": 1378422312
+                  },
+                  "min_ns": 207057,
+                  "p50_nearest_rank_ns": 385129,
+                  "p95_nearest_rank_ns": 510793,
+                  "sum_known_ns": 1378422312,
+                  "unknown_count": 0
+                }
+              },
+              {
+                "completed": 3517,
+                "not_started": 22,
+                "outcomes": {
+                  "rejected": 3517
+                },
+                "phase": "work",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 3539,
+                "started": 3517,
+                "thread_cpu_ns": {
+                  "known_count": 3517,
+                  "max_ns": 2061956,
+                  "mean_known_ns": {
+                    "denominator": 3517,
+                    "numerator": 4518633794
+                  },
+                  "min_ns": 961874,
+                  "p50_nearest_rank_ns": 1255552,
+                  "p95_nearest_rank_ns": 1586528,
+                  "sum_known_ns": 4518633794,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 3517,
+                  "max_ns": 8518478,
+                  "mean_known_ns": {
+                    "denominator": 3517,
+                    "numerator": 4530313899
+                  },
+                  "min_ns": 1159843,
+                  "p50_nearest_rank_ns": 1255683,
+                  "p95_nearest_rank_ns": 1594405,
+                  "sum_known_ns": 4530313899,
+                  "unknown_count": 0
+                }
+              },
+              {
+                "completed": 0,
+                "not_started": 3539,
+                "outcomes": {},
+                "phase": "admission_owner_wait",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 3539,
+                "started": 0,
+                "thread_cpu_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                }
+              },
+              {
+                "completed": 0,
+                "not_started": 3539,
+                "outcomes": {},
+                "phase": "admission",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 3539,
+                "started": 0,
+                "thread_cpu_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                }
+              },
+              {
+                "completed": 0,
+                "not_started": 3539,
+                "outcomes": {},
+                "phase": "submit_result",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 3539,
+                "started": 0,
+                "thread_cpu_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                }
+              }
+            ],
+            "terminal_phase_counts": {
+              "body": 6,
+              "queue": 3,
+              "response": 3516,
+              "solution": 10,
+              "work": 4
+            }
+          },
+          "client_history": {
+            "dispatch_outcomes": {
+              "accepted": 21
+            },
+            "dispatch_thread_cpu_ns": {
+              "known_count": 21,
+              "max_ns": 1382778,
+              "mean_known_ns": {
+                "denominator": 21,
+                "numerator": 16551707
+              },
+              "min_ns": 452845,
+              "p50_nearest_rank_ns": 779273,
+              "p95_nearest_rank_ns": 1205368,
+              "sum_known_ns": 16551707,
+              "unknown_count": 0
+            },
+            "full_work_outcomes": {
+              "unknown": 21
+            },
+            "full_work_thread_cpu_ns": {
+              "known_count": 0,
+              "max_ns": null,
+              "mean_known_ns": null,
+              "min_ns": null,
+              "p50_nearest_rank_ns": null,
+              "p95_nearest_rank_ns": null,
+              "sum_known_ns": 0,
+              "unknown_count": 0
+            },
+            "record_complete": 21,
+            "record_observation_failed": 0,
+            "records": 21,
+            "submit_phase_measurements_available": true,
+            "submit_phases": [
+              {
+                "completed": 0,
+                "not_started": 21,
+                "outcomes": {},
+                "phase": "decode",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 21,
+                "started": 0,
+                "thread_cpu_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                }
+              },
+              {
+                "completed": 0,
+                "not_started": 21,
+                "outcomes": {},
+                "phase": "context_owner_wait",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 21,
+                "started": 0,
+                "thread_cpu_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                }
+              },
+              {
+                "completed": 0,
+                "not_started": 21,
+                "outcomes": {},
+                "phase": "context",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 21,
+                "started": 0,
+                "thread_cpu_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                }
+              },
+              {
+                "completed": 0,
+                "not_started": 21,
+                "outcomes": {},
+                "phase": "work",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 21,
+                "started": 0,
+                "thread_cpu_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                }
+              },
+              {
+                "completed": 0,
+                "not_started": 21,
+                "outcomes": {},
+                "phase": "admission_owner_wait",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 21,
+                "started": 0,
+                "thread_cpu_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                }
+              },
+              {
+                "completed": 0,
+                "not_started": 21,
+                "outcomes": {},
+                "phase": "admission",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 21,
+                "started": 0,
+                "thread_cpu_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                }
+              },
+              {
+                "completed": 0,
+                "not_started": 21,
+                "outcomes": {},
+                "phase": "submit_result",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 21,
+                "started": 0,
+                "thread_cpu_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                }
+              }
+            ],
+            "terminal_phase_counts": {
+              "response": 21
+            }
+          },
+          "honest_submit": {
+            "dispatch_outcomes": {
+              "accepted": 21
+            },
+            "dispatch_thread_cpu_ns": {
+              "known_count": 21,
+              "max_ns": 109268567,
+              "mean_known_ns": {
+                "denominator": 21,
+                "numerator": 2108745925
+              },
+              "min_ns": 95160706,
+              "p50_nearest_rank_ns": 100762302,
+              "p95_nearest_rank_ns": 104273950,
+              "sum_known_ns": 2108745925,
+              "unknown_count": 0
+            },
+            "full_work_outcomes": {
+              "accepted": 21
+            },
+            "full_work_thread_cpu_ns": {
+              "known_count": 21,
+              "max_ns": 1604512,
+              "mean_known_ns": {
+                "denominator": 21,
+                "numerator": 31709734
+              },
+              "min_ns": 1451226,
+              "p50_nearest_rank_ns": 1498254,
+              "p95_nearest_rank_ns": 1584856,
+              "sum_known_ns": 31709734,
+              "unknown_count": 0
+            },
+            "record_complete": 21,
+            "record_observation_failed": 0,
+            "records": 21,
+            "submit_phase_measurements_available": true,
+            "submit_phases": [
+              {
+                "completed": 21,
+                "not_started": 0,
+                "outcomes": {
+                  "accepted": 21
+                },
+                "phase": "decode",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 21,
+                "started": 21,
+                "thread_cpu_ns": {
+                  "known_count": 21,
+                  "max_ns": 633231,
+                  "mean_known_ns": {
+                    "denominator": 21,
+                    "numerator": 8366212
+                  },
+                  "min_ns": 340214,
+                  "p50_nearest_rank_ns": 380299,
+                  "p95_nearest_rank_ns": 519870,
+                  "sum_known_ns": 8366212,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 21,
+                  "max_ns": 632820,
+                  "mean_known_ns": {
+                    "denominator": 21,
+                    "numerator": 8360687
+                  },
+                  "min_ns": 339994,
+                  "p50_nearest_rank_ns": 380149,
+                  "p95_nearest_rank_ns": 519579,
+                  "sum_known_ns": 8360687,
+                  "unknown_count": 0
+                }
+              },
+              {
+                "completed": 21,
+                "not_started": 0,
+                "outcomes": {
+                  "accepted": 21
+                },
+                "phase": "context_owner_wait",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 21,
+                "started": 21,
+                "thread_cpu_ns": {
+                  "known_count": 21,
+                  "max_ns": 2264,
+                  "mean_known_ns": {
+                    "denominator": 21,
+                    "numerator": 36057
+                  },
+                  "min_ns": 1603,
+                  "p50_nearest_rank_ns": 1663,
+                  "p95_nearest_rank_ns": 1913,
+                  "sum_known_ns": 36057,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 21,
+                  "max_ns": 2254,
+                  "mean_known_ns": {
+                    "denominator": 21,
+                    "numerator": 36179
+                  },
+                  "min_ns": 1592,
+                  "p50_nearest_rank_ns": 1654,
+                  "p95_nearest_rank_ns": 1924,
+                  "sum_known_ns": 36179,
+                  "unknown_count": 0
+                }
+              },
+              {
+                "completed": 21,
+                "not_started": 0,
+                "outcomes": {
+                  "accepted": 21
+                },
+                "phase": "context",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 21,
+                "started": 21,
+                "thread_cpu_ns": {
+                  "known_count": 21,
+                  "max_ns": 798159,
+                  "mean_known_ns": {
+                    "denominator": 21,
+                    "numerator": 11101477
+                  },
+                  "min_ns": 259053,
+                  "p50_nearest_rank_ns": 591153,
+                  "p95_nearest_rank_ns": 766219,
+                  "sum_known_ns": 11101477,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 21,
+                  "max_ns": 797558,
+                  "mean_known_ns": {
+                    "denominator": 21,
+                    "numerator": 11090106
+                  },
+                  "min_ns": 258682,
+                  "p50_nearest_rank_ns": 590401,
+                  "p95_nearest_rank_ns": 765598,
+                  "sum_known_ns": 11090106,
+                  "unknown_count": 0
+                }
+              },
+              {
+                "completed": 21,
+                "not_started": 0,
+                "outcomes": {
+                  "accepted": 21
+                },
+                "phase": "work",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 21,
+                "started": 21,
+                "thread_cpu_ns": {
+                  "known_count": 21,
+                  "max_ns": 1607147,
+                  "mean_known_ns": {
+                    "denominator": 21,
+                    "numerator": 31761342
+                  },
+                  "min_ns": 1453671,
+                  "p50_nearest_rank_ns": 1500758,
+                  "p95_nearest_rank_ns": 1587220,
+                  "sum_known_ns": 31761342,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 21,
+                  "max_ns": 1607108,
+                  "mean_known_ns": {
+                    "denominator": 21,
+                    "numerator": 31761724
+                  },
+                  "min_ns": 1453701,
+                  "p50_nearest_rank_ns": 1500770,
+                  "p95_nearest_rank_ns": 1587261,
+                  "sum_known_ns": 31761724,
+                  "unknown_count": 0
+                }
+              },
+              {
+                "completed": 21,
+                "not_started": 0,
+                "outcomes": {
+                  "accepted": 21
+                },
+                "phase": "admission_owner_wait",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 21,
+                "started": 21,
+                "thread_cpu_ns": {
+                  "known_count": 21,
+                  "max_ns": 2024,
+                  "mean_known_ns": {
+                    "denominator": 21,
+                    "numerator": 32610
+                  },
+                  "min_ns": 1473,
+                  "p50_nearest_rank_ns": 1513,
+                  "p95_nearest_rank_ns": 2003,
+                  "sum_known_ns": 32610,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 21,
+                  "max_ns": 2024,
+                  "mean_known_ns": {
+                    "denominator": 21,
+                    "numerator": 32683
+                  },
+                  "min_ns": 1463,
+                  "p50_nearest_rank_ns": 1513,
+                  "p95_nearest_rank_ns": 1994,
+                  "sum_known_ns": 32683,
+                  "unknown_count": 0
+                }
+              },
+              {
+                "completed": 21,
+                "not_started": 0,
+                "outcomes": {
+                  "accepted": 21
+                },
+                "phase": "admission",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 21,
+                "started": 21,
+                "thread_cpu_ns": {
+                  "known_count": 21,
+                  "max_ns": 93116605,
+                  "mean_known_ns": {
+                    "denominator": 21,
+                    "numerator": 1800082781
+                  },
+                  "min_ns": 81506693,
+                  "p50_nearest_rank_ns": 85992237,
+                  "p95_nearest_rank_ns": 88434540,
+                  "sum_known_ns": 1800082781,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 21,
+                  "max_ns": 94623977,
+                  "mean_known_ns": {
+                    "denominator": 21,
+                    "numerator": 1811270112
+                  },
+                  "min_ns": 81925456,
+                  "p50_nearest_rank_ns": 86345789,
+                  "p95_nearest_rank_ns": 88966991,
+                  "sum_known_ns": 1811270112,
+                  "unknown_count": 0
+                }
+              },
+              {
+                "completed": 21,
+                "not_started": 0,
+                "outcomes": {
+                  "accepted": 21
+                },
+                "phase": "submit_result",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 21,
+                "started": 21,
+                "thread_cpu_ns": {
+                  "known_count": 21,
+                  "max_ns": 13746437,
+                  "mean_known_ns": {
+                    "denominator": 21,
+                    "numerator": 257045982
+                  },
+                  "min_ns": 11394802,
+                  "p50_nearest_rank_ns": 12081370,
+                  "p95_nearest_rank_ns": 13657430,
+                  "sum_known_ns": 257045982,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 21,
+                  "max_ns": 14141116,
+                  "mean_known_ns": {
+                    "denominator": 21,
+                    "numerator": 263457764
+                  },
+                  "min_ns": 11701537,
+                  "p50_nearest_rank_ns": 12443450,
+                  "p95_nearest_rank_ns": 13992650,
+                  "sum_known_ns": 263457764,
+                  "unknown_count": 0
+                }
+              }
+            ],
+            "terminal_phase_counts": {
+              "response": 21
+            }
+          }
+        },
+        "capacity": 16384,
+        "counter_overflow": false,
+        "measurement_failures": 0,
+        "native_observer_complete": true,
+        "records_not_retained": 0,
+        "schema": "public-v3-local-request-resource-observation-v2"
+      },
+      "receiver_and_verifier_setup_cpu_ns": 1098517106,
+      "receiver_and_verifier_setup_wall_ns": 1115662001,
+      "receiver_client_state_equal": true,
+      "scheduled_confirmation_rounds": 3,
+      "startup_or_campaign_error": null,
+      "state_backend": "authenticated-v1",
+      "submissions": {
+        "acknowledged_after_window": 0,
+        "acknowledged_on_time": 21,
+        "all_calls_returned_after_window": 0,
+        "attempts": 21,
+        "calling_process_cpu_ns": {
+          "known_count": 21,
+          "max_ns": 198431838,
+          "mean_known_ns": {
+            "denominator": 21,
+            "numerator": 3835291349
+          },
+          "min_ns": 173857993,
+          "p50_nearest_rank_ns": 181045665,
+          "p95_nearest_rank_ns": 191855447,
+          "sum_known_ns": 3835291349,
+          "unknown_count": 0
+        },
+        "elapsed_wall_ns": {
+          "known_count": 21,
+          "max_ns": 304740326,
+          "mean_known_ns": {
+            "denominator": 21,
+            "numerator": 4743721975
+          },
+          "min_ns": 201768911,
+          "p50_nearest_rank_ns": 209534060,
+          "p95_nearest_rank_ns": 303133315,
+          "sum_known_ns": 4743721975,
+          "unknown_count": 0
+        },
+        "errors": {},
+        "on_time_unique_packet_indices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20
+        ],
+        "refusals": {},
+        "status_counts": {
+          "ok": 21
+        }
+      },
+      "unobserved_scheduled_rounds": 0,
+      "whole_parent_phase_cpu_ns": 19707303674,
+      "whole_parent_phase_wall_ns": 31400922193,
+      "window_seconds": 30
+    },
+    {
+      "actor_reports_successful_without_cap_or_kill": true,
+      "attack_calls": {
+        "acknowledged_after_window": 0,
+        "acknowledged_on_time": 0,
+        "all_calls_returned_after_window": 24,
+        "attempts": 2827,
+        "calling_process_cpu_ns": {
+          "known_count": 2827,
+          "max_ns": 1756415,
+          "mean_known_ns": {
+            "denominator": 2827,
+            "numerator": 2622306893
+          },
+          "min_ns": 468665,
+          "p50_nearest_rank_ns": 920307,
+          "p95_nearest_rank_ns": 1083370,
+          "sum_known_ns": 2622306893,
+          "unknown_count": 0
+        },
+        "elapsed_wall_ns": {
+          "known_count": 2827,
+          "max_ns": 741386155,
+          "mean_known_ns": {
+            "denominator": 2827,
+            "numerator": 719261687535
+          },
+          "min_ns": 3105342,
+          "p50_nearest_rank_ns": 241705618,
+          "p95_nearest_rank_ns": 672853980,
+          "sum_known_ns": 719261687535,
+          "unknown_count": 0
+        },
+        "errors": {
+          "FRAME_DEADLINE": 4,
+          "IO: Resource temporarily unavailable (os error 11)": 20
+        },
+        "on_time_unique_packet_indices": [],
+        "refusals": {
+          "WORK:Product": 2803
+        },
+        "status_counts": {
+          "error": 24,
+          "refused": 2803
+        }
+      },
+      "attacker_processes_ready": 24,
+      "attacker_processes_requested": 24,
+      "confirmation_rounds": [
+        {
+          "confirmed_inside_pressure_window": true,
+          "ended_ns": 4207409093,
+          "paid_credit_depletion_observed_during_round": false,
+          "receiver_hostile_work_rejected_during_round": true,
+          "round": 0,
+          "started_ns": 1002012771
+        },
+        {
+          "confirmed_inside_pressure_window": true,
+          "ended_ns": 8235259843,
+          "paid_credit_depletion_observed_during_round": true,
+          "receiver_hostile_work_rejected_during_round": true,
+          "round": 1,
+          "started_ns": 5000150563
+        },
+        {
+          "confirmed_inside_pressure_window": true,
+          "ended_ns": 15102746429,
+          "paid_credit_depletion_observed_during_round": true,
+          "receiver_hostile_work_rejected_during_round": true,
+          "round": 2,
+          "started_ns": 9000812278
+        }
+      ],
+      "confirmed_rounds": 3,
+      "final_actual_flow": {
+        "balance_identity_verified": true,
+        "booked_reservation_ns": 0,
+        "credited_refill_ns": 7499345496,
+        "discarded_refill_ns": 15487154,
+        "initial_credit_ns": 2000000000,
+        "live_debited_cpu_ns": 9392921104,
+        "live_owners": 0,
+        "paid_cpu_debit_ns": 9396298995,
+        "remaining_paid_credit_ns": 103046501,
+        "schema": "public-v3-local-actual-cpu-flow-v1",
+        "settled_full_cpu_ns": 9396298995,
+        "settlement_discard_ns": 0,
+        "settlement_residual_cpu_ns": 3377891,
+        "stored_credit_ns": 103046501,
+        "unsettled_known_live_cpu_ns": 0
+      },
+      "final_cpu_meter": {
+        "accounting_unavailable": false,
+        "burst_ns": 2000000000,
+        "in_flight": 0,
+        "refill_ns_per_second": 250000000,
+        "schema": "public-v3-local-stored-cpu-budget-v1",
+        "start_reserve_ns": 100000000,
+        "stored_credit_ns": 103046501,
+        "worker_limit": 2
+      },
+      "genuine_budget_depletion_observed": true,
+      "history": {
+        "acknowledged_after_window": 0,
+        "acknowledged_on_time": 21,
+        "all_calls_returned_after_window": 0,
+        "attempts": 21,
+        "calling_process_cpu_ns": {
+          "known_count": 21,
+          "max_ns": 28000259,
+          "mean_known_ns": {
+            "denominator": 21,
+            "numerator": 177716738
+          },
+          "min_ns": 2999353,
+          "p50_nearest_rank_ns": 6700087,
+          "p95_nearest_rank_ns": 26938018,
+          "sum_known_ns": 177716738,
+          "unknown_count": 0
+        },
+        "elapsed_wall_ns": {
+          "known_count": 21,
+          "max_ns": 15572975,
+          "mean_known_ns": {
+            "denominator": 21,
+            "numerator": 275979643
+          },
+          "min_ns": 11490773,
+          "p50_nearest_rank_ns": 13165271,
+          "p95_nearest_rank_ns": 15419473,
+          "sum_known_ns": 275979643,
+          "unknown_count": 0
+        },
+        "errors": {},
+        "on_time_unique_packet_indices": [],
+        "refusals": {},
+        "status_counts": {
+          "ok": 21
+        }
+      },
+      "mode": "late-product",
+      "native_phase_criteria_met": true,
+      "native_service_outcome": {
+        "Ok": {
+          "abandoned_tasks": 3,
+          "accepted_connections": 2869,
+          "body_bytes_received": 281624448,
+          "capacity_refusals": 0,
+          "challenge_budget_refusals": 0,
+          "cleanup_scans": 1448,
+          "completed_pool_status": 0,
+          "completed_pool_submit": 0,
+          "completed_read": 21,
+          "completed_submit": 21,
+          "connections_closed_on_shutdown": 0,
+          "delivered_response_frames": 2845,
+          "disconnected_await_requests": 8,
+          "disconnected_before_enqueue": 5,
+          "enqueued_after_backpressure": 1972,
+          "executor_refusals": 2804,
+          "expired_connections": 0,
+          "expired_phase_counts": {},
+          "issued_challenges": 2869,
+          "lane_capacity_refusals": 0,
+          "mutating_grants_after_shutdown": 0,
+          "mutation_cpu_charged_ns": 9396298995,
+          "mutation_cpu_clock_failures": 0,
+          "mutation_cpu_credit_ns_after_shutdown": 103046501,
+          "mutation_cpu_debt_ns_after_shutdown": 0,
+          "mutation_cpu_in_flight_after_shutdown": 0,
+          "mutation_cpu_refusals": 0,
+          "mutation_cpu_reservations": 2825,
+          "mutation_cpu_unavailable_after_shutdown": false,
+          "mutation_dispatch_excluding_work_cpu_ns": 4872291111,
+          "mutation_full_work_cpu_ns": 4524007884,
+          "output_reserved_bytes_after_shutdown": 0,
+          "output_serialization_failures": 0,
+          "paid_body_capacity_refusals": 0,
+          "paid_body_reserved_bytes_after_shutdown": 0,
+          "parse_refusals": 4,
+          "peak_connections": 25,
+          "peak_mutating_grants": 8,
+          "peak_output_reserved_bytes": 8536064,
+          "peak_paid_body_bytes": 2387172,
+          "peak_pending_challenge": 24,
+          "peak_pending_enqueue": 6,
+          "peak_pending_grant": 17,
+          "peak_read_grants": 1,
+          "peak_spent": 264,
+          "pending_challenge_closed": 0,
+          "pending_challenge_entered": 2869,
+          "pending_challenge_granted": 2869,
+          "pending_challenge_wait_ns": 184758444244,
+          "pending_grant_closed": 11,
+          "pending_grant_entered": 2868,
+          "pending_grant_granted": 2857,
+          "pending_grant_wait_ns": 341233455531,
+          "pool_submit_failed": 0,
+          "pool_submit_finished": 0,
+          "pool_submit_ns": 0,
+          "pool_submit_started": 0,
+          "preface_refusals": 0,
+          "queue_backpressure_events": 83308,
+          "queue_refusals": 0,
+          "queue_wait_ns": 99104763170,
+          "read_grants_after_shutdown": 0,
+          "replay_refusals": 0,
+          "response_bytes_written": 4330711,
+          "response_write_failures": 0,
+          "retained_phase_errors": {
+            "body": 4,
+            "queue": 5,
+            "solution": 12,
+            "work": 3
+          },
+          "signature_refusals": 0,
+          "spent_capacity_refusals": 0,
+          "spent_reservations": 2868,
+          "tasks_dequeued": 2848,
+          "tasks_enqueued": 2848,
+          "tasks_skipped_before_dispatch": 2,
+          "ticket_refusals": 0,
+          "unknown_caller_durable_rows": 0,
+          "unpaid_pressure_cancel_requests": 0,
+          "unpaid_pressure_connections_closed": 0,
+          "work_failed": 2804,
+          "work_finished": 2825,
+          "work_ns": 4531871313,
+          "work_started": 2825
+        }
+      },
+      "native_verifier_errors": [],
+      "observations_available": true,
+      "observed_confirmation_rounds": 3,
+      "receiver": {
+        "accepted_connections_seen": 2869,
+        "all_retained_records": {
+          "dispatch_outcomes": {
+            "accepted": 42,
+            "rejected": 2804,
+            "unknown": 23
+          },
+          "dispatch_thread_cpu_ns": {
+            "known_count": 2846,
+            "max_ns": 119443020,
+            "mean_known_ns": {
+              "denominator": 2846,
+              "numerator": 9413855544
+            },
+            "min_ns": 561827,
+            "p50_nearest_rank_ns": 2509660,
+            "p95_nearest_rank_ns": 3172366,
+            "sum_known_ns": 9413855544,
+            "unknown_count": 0
+          },
+          "full_work_outcomes": {
+            "accepted": 21,
+            "rejected": 2804,
+            "unknown": 44
+          },
+          "full_work_thread_cpu_ns": {
+            "known_count": 2825,
+            "max_ns": 2719140,
+            "mean_known_ns": {
+              "denominator": 2825,
+              "numerator": 4524007884
+            },
+            "min_ns": 780555,
+            "p50_nearest_rank_ns": 1564357,
+            "p95_nearest_rank_ns": 2029826,
+            "sum_known_ns": 4524007884,
+            "unknown_count": 0
+          },
+          "record_complete": 2869,
+          "record_observation_failed": 0,
+          "records": 2869,
+          "submit_phase_measurements_available": true,
+          "submit_phases": [
+            {
+              "completed": 2825,
+              "not_started": 44,
+              "outcomes": {
+                "accepted": 2825
+              },
+              "phase": "decode",
+              "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+              "slots": 2869,
+              "started": 2825,
+              "thread_cpu_ns": {
+                "known_count": 2825,
+                "max_ns": 901021,
+                "mean_known_ns": {
+                  "denominator": 2825,
+                  "numerator": 1232101809
+                },
+                "min_ns": 337880,
+                "p50_nearest_rank_ns": 423179,
+                "p95_nearest_rank_ns": 585441,
+                "sum_known_ns": 1232101809,
+                "unknown_count": 0
+              },
+              "unfinished": 0,
+              "wall_ns": {
+                "known_count": 2825,
+                "max_ns": 947023,
+                "mean_known_ns": {
+                  "denominator": 2825,
+                  "numerator": 1231659610
+                },
+                "min_ns": 337810,
+                "p50_nearest_rank_ns": 422839,
+                "p95_nearest_rank_ns": 586054,
+                "sum_known_ns": 1231659610,
+                "unknown_count": 0
+              }
+            },
+            {
+              "completed": 2825,
+              "not_started": 44,
+              "outcomes": {
+                "accepted": 2825
+              },
+              "phase": "context_owner_wait",
+              "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+              "slots": 2869,
+              "started": 2825,
+              "thread_cpu_ns": {
+                "known_count": 2825,
+                "max_ns": 118982,
+                "mean_known_ns": {
+                  "denominator": 2825,
+                  "numerator": 7771929
+                },
+                "min_ns": 1483,
+                "p50_nearest_rank_ns": 2254,
+                "p95_nearest_rank_ns": 3056,
+                "sum_known_ns": 7771929,
+                "unknown_count": 0
+              },
+              "unfinished": 0,
+              "wall_ns": {
+                "known_count": 2825,
+                "max_ns": 4176545,
+                "mean_known_ns": {
+                  "denominator": 2825,
+                  "numerator": 189204080
+                },
+                "min_ns": 1483,
+                "p50_nearest_rank_ns": 2255,
+                "p95_nearest_rank_ns": 3076,
+                "sum_known_ns": 189204080,
+                "unknown_count": 0
+              }
+            },
+            {
+              "completed": 2825,
+              "not_started": 44,
+              "outcomes": {
+                "accepted": 2825
+              },
+              "phase": "context",
+              "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+              "slots": 2869,
+              "started": 2825,
+              "thread_cpu_ns": {
+                "known_count": 2825,
+                "max_ns": 886523,
+                "mean_known_ns": {
+                  "denominator": 2825,
+                  "numerator": 1358667305
+                },
+                "min_ns": 219920,
+                "p50_nearest_rank_ns": 490184,
+                "p95_nearest_rank_ns": 585843,
+                "sum_known_ns": 1358667305,
+                "unknown_count": 0
+              },
+              "unfinished": 0,
+              "wall_ns": {
+                "known_count": 2825,
+                "max_ns": 1544779,
+                "mean_known_ns": {
+                  "denominator": 2825,
+                  "numerator": 1359523492
+                },
+                "min_ns": 219590,
+                "p50_nearest_rank_ns": 489733,
+                "p95_nearest_rank_ns": 588197,
+                "sum_known_ns": 1359523492,
+                "unknown_count": 0
+              }
+            },
+            {
+              "completed": 2825,
+              "not_started": 44,
+              "outcomes": {
+                "accepted": 21,
+                "rejected": 2804
+              },
+              "phase": "work",
+              "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+              "slots": 2869,
+              "started": 2825,
+              "thread_cpu_ns": {
+                "known_count": 2825,
+                "max_ns": 2722667,
+                "mean_known_ns": {
+                  "denominator": 2825,
+                  "numerator": 4532101593
+                },
+                "min_ns": 784783,
+                "p50_nearest_rank_ns": 1567073,
+                "p95_nearest_rank_ns": 2033161,
+                "sum_known_ns": 4532101593,
+                "unknown_count": 0
+              },
+              "unfinished": 0,
+              "wall_ns": {
+                "known_count": 2825,
+                "max_ns": 3266713,
+                "mean_known_ns": {
+                  "denominator": 2825,
+                  "numerator": 4539425201
+                },
+                "min_ns": 1442250,
+                "p50_nearest_rank_ns": 1567604,
+                "p95_nearest_rank_ns": 2037720,
+                "sum_known_ns": 4539425201,
+                "unknown_count": 0
+              }
+            },
+            {
+              "completed": 21,
+              "not_started": 2848,
+              "outcomes": {
+                "accepted": 21
+              },
+              "phase": "admission_owner_wait",
+              "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+              "slots": 2869,
+              "started": 21,
+              "thread_cpu_ns": {
+                "known_count": 21,
+                "max_ns": 1973,
+                "mean_known_ns": {
+                  "denominator": 21,
+                  "numerator": 32581
+                },
+                "min_ns": 1473,
+                "p50_nearest_rank_ns": 1523,
+                "p95_nearest_rank_ns": 1653,
+                "sum_known_ns": 32581,
+                "unknown_count": 0
+              },
+              "unfinished": 0,
+              "wall_ns": {
+                "known_count": 21,
+                "max_ns": 1973,
+                "mean_known_ns": {
+                  "denominator": 21,
+                  "numerator": 32700
+                },
+                "min_ns": 1473,
+                "p50_nearest_rank_ns": 1533,
+                "p95_nearest_rank_ns": 1663,
+                "sum_known_ns": 32700,
+                "unknown_count": 0
+              }
+            },
+            {
+              "completed": 21,
+              "not_started": 2848,
+              "outcomes": {
+                "accepted": 21
+              },
+              "phase": "admission",
+              "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+              "slots": 2869,
+              "started": 21,
+              "thread_cpu_ns": {
+                "known_count": 21,
+                "max_ns": 101681076,
+                "mean_known_ns": {
+                  "denominator": 21,
+                  "numerator": 1912684687
+                },
+                "min_ns": 86339095,
+                "p50_nearest_rank_ns": 90344523,
+                "p95_nearest_rank_ns": 94819898,
+                "sum_known_ns": 1912684687,
+                "unknown_count": 0
+              },
+              "unfinished": 0,
+              "wall_ns": {
+                "known_count": 21,
+                "max_ns": 103541974,
+                "mean_known_ns": {
+                  "denominator": 21,
+                  "numerator": 1924204653
+                },
+                "min_ns": 86798185,
+                "p50_nearest_rank_ns": 90748210,
+                "p95_nearest_rank_ns": 95234024,
+                "sum_known_ns": 1924204653,
+                "unknown_count": 0
+              }
+            },
+            {
+              "completed": 21,
+              "not_started": 2848,
+              "outcomes": {
+                "accepted": 21
+              },
+              "phase": "submit_result",
+              "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+              "slots": 2869,
+              "started": 21,
+              "thread_cpu_ns": {
+                "known_count": 21,
+                "max_ns": 15108697,
+                "mean_known_ns": {
+                  "denominator": 21,
+                  "numerator": 290159887
+                },
+                "min_ns": 12535557,
+                "p50_nearest_rank_ns": 13690651,
+                "p95_nearest_rank_ns": 15021192,
+                "sum_known_ns": 290159887,
+                "unknown_count": 0
+              },
+              "unfinished": 0,
+              "wall_ns": {
+                "known_count": 21,
+                "max_ns": 15353178,
+                "mean_known_ns": {
+                  "denominator": 21,
+                  "numerator": 296150775
+                },
+                "min_ns": 12835361,
+                "p50_nearest_rank_ns": 13948471,
+                "p95_nearest_rank_ns": 15333912,
+                "sum_known_ns": 296150775,
+                "unknown_count": 0
+              }
+            }
+          ],
+          "terminal_phase_counts": {
+            "body": 4,
+            "queue": 5,
+            "response": 2845,
+            "solution": 12,
+            "work": 3
+          }
+        },
+        "by_observed_body_role": {
+          "attack_submit": {
+            "dispatch_outcomes": {
+              "rejected": 2804,
+              "unknown": 23
+            },
+            "dispatch_thread_cpu_ns": {
+              "known_count": 2804,
+              "max_ns": 4219339,
+              "mean_known_ns": {
+                "denominator": 2804,
+                "numerator": 7139089062
+              },
+              "min_ns": 2088004,
+              "p50_nearest_rank_ns": 2509660,
+              "p95_nearest_rank_ns": 3089070,
+              "sum_known_ns": 7139089062,
+              "unknown_count": 0
+            },
+            "full_work_outcomes": {
+              "rejected": 2804,
+              "unknown": 23
+            },
+            "full_work_thread_cpu_ns": {
+              "known_count": 2804,
+              "max_ns": 2719140,
+              "mean_known_ns": {
+                "denominator": 2804,
+                "numerator": 4491893783
+              },
+              "min_ns": 780555,
+              "p50_nearest_rank_ns": 1564448,
+              "p95_nearest_rank_ns": 2030286,
+              "sum_known_ns": 4491893783,
+              "unknown_count": 0
+            },
+            "record_complete": 2827,
+            "record_observation_failed": 0,
+            "records": 2827,
+            "submit_phase_measurements_available": true,
+            "submit_phases": [
+              {
+                "completed": 2804,
+                "not_started": 23,
+                "outcomes": {
+                  "accepted": 2804
+                },
+                "phase": "decode",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 2827,
+                "started": 2804,
+                "thread_cpu_ns": {
+                  "known_count": 2804,
+                  "max_ns": 901021,
+                  "mean_known_ns": {
+                    "denominator": 2804,
+                    "numerator": 1223607115
+                  },
+                  "min_ns": 337880,
+                  "p50_nearest_rank_ns": 423460,
+                  "p95_nearest_rank_ns": 586404,
+                  "sum_known_ns": 1223607115,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 2804,
+                  "max_ns": 947023,
+                  "mean_known_ns": {
+                    "denominator": 2804,
+                    "numerator": 1223171873
+                  },
+                  "min_ns": 337810,
+                  "p50_nearest_rank_ns": 423029,
+                  "p95_nearest_rank_ns": 586253,
+                  "sum_known_ns": 1223171873,
+                  "unknown_count": 0
+                }
+              },
+              {
+                "completed": 2804,
+                "not_started": 23,
+                "outcomes": {
+                  "accepted": 2804
+                },
+                "phase": "context_owner_wait",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 2827,
+                "started": 2804,
+                "thread_cpu_ns": {
+                  "known_count": 2804,
+                  "max_ns": 118982,
+                  "mean_known_ns": {
+                    "denominator": 2804,
+                    "numerator": 7730252
+                  },
+                  "min_ns": 1483,
+                  "p50_nearest_rank_ns": 2254,
+                  "p95_nearest_rank_ns": 3056,
+                  "sum_known_ns": 7730252,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 2804,
+                  "max_ns": 4176545,
+                  "mean_known_ns": {
+                    "denominator": 2804,
+                    "numerator": 189162131
+                  },
+                  "min_ns": 1483,
+                  "p50_nearest_rank_ns": 2264,
+                  "p95_nearest_rank_ns": 3076,
+                  "sum_known_ns": 189162131,
+                  "unknown_count": 0
+                }
+              },
+              {
+                "completed": 2804,
+                "not_started": 23,
+                "outcomes": {
+                  "accepted": 2804
+                },
+                "phase": "context",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 2827,
+                "started": 2804,
+                "thread_cpu_ns": {
+                  "known_count": 2804,
+                  "max_ns": 856327,
+                  "mean_known_ns": {
+                    "denominator": 2804,
+                    "numerator": 1345508736
+                  },
+                  "min_ns": 219920,
+                  "p50_nearest_rank_ns": 489863,
+                  "p95_nearest_rank_ns": 580632,
+                  "sum_known_ns": 1345508736,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 2804,
+                  "max_ns": 1544779,
+                  "mean_known_ns": {
+                    "denominator": 2804,
+                    "numerator": 1346377266
+                  },
+                  "min_ns": 219590,
+                  "p50_nearest_rank_ns": 489493,
+                  "p95_nearest_rank_ns": 582777,
+                  "sum_known_ns": 1346377266,
+                  "unknown_count": 0
+                }
+              },
+              {
+                "completed": 2804,
+                "not_started": 23,
+                "outcomes": {
+                  "rejected": 2804
+                },
+                "phase": "work",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 2827,
+                "started": 2804,
+                "thread_cpu_ns": {
+                  "known_count": 2804,
+                  "max_ns": 2722667,
+                  "mean_known_ns": {
+                    "denominator": 2804,
+                    "numerator": 4499933875
+                  },
+                  "min_ns": 784783,
+                  "p50_nearest_rank_ns": 1567423,
+                  "p95_nearest_rank_ns": 2033422,
+                  "sum_known_ns": 4499933875,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 2804,
+                  "max_ns": 3266713,
+                  "mean_known_ns": {
+                    "denominator": 2804,
+                    "numerator": 4507256874
+                  },
+                  "min_ns": 1442250,
+                  "p50_nearest_rank_ns": 1567794,
+                  "p95_nearest_rank_ns": 2039765,
+                  "sum_known_ns": 4507256874,
+                  "unknown_count": 0
+                }
+              },
+              {
+                "completed": 0,
+                "not_started": 2827,
+                "outcomes": {},
+                "phase": "admission_owner_wait",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 2827,
+                "started": 0,
+                "thread_cpu_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                }
+              },
+              {
+                "completed": 0,
+                "not_started": 2827,
+                "outcomes": {},
+                "phase": "admission",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 2827,
+                "started": 0,
+                "thread_cpu_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                }
+              },
+              {
+                "completed": 0,
+                "not_started": 2827,
+                "outcomes": {},
+                "phase": "submit_result",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 2827,
+                "started": 0,
+                "thread_cpu_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                }
+              }
+            ],
+            "terminal_phase_counts": {
+              "body": 4,
+              "queue": 5,
+              "response": 2803,
+              "solution": 12,
+              "work": 3
+            }
+          },
+          "client_history": {
+            "dispatch_outcomes": {
+              "accepted": 21
+            },
+            "dispatch_thread_cpu_ns": {
+              "known_count": 21,
+              "max_ns": 1184830,
+              "mean_known_ns": {
+                "denominator": 21,
+                "numerator": 17556549
+              },
+              "min_ns": 561827,
+              "p50_nearest_rank_ns": 850476,
+              "p95_nearest_rank_ns": 1124828,
+              "sum_known_ns": 17556549,
+              "unknown_count": 0
+            },
+            "full_work_outcomes": {
+              "unknown": 21
+            },
+            "full_work_thread_cpu_ns": {
+              "known_count": 0,
+              "max_ns": null,
+              "mean_known_ns": null,
+              "min_ns": null,
+              "p50_nearest_rank_ns": null,
+              "p95_nearest_rank_ns": null,
+              "sum_known_ns": 0,
+              "unknown_count": 0
+            },
+            "record_complete": 21,
+            "record_observation_failed": 0,
+            "records": 21,
+            "submit_phase_measurements_available": true,
+            "submit_phases": [
+              {
+                "completed": 0,
+                "not_started": 21,
+                "outcomes": {},
+                "phase": "decode",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 21,
+                "started": 0,
+                "thread_cpu_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                }
+              },
+              {
+                "completed": 0,
+                "not_started": 21,
+                "outcomes": {},
+                "phase": "context_owner_wait",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 21,
+                "started": 0,
+                "thread_cpu_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                }
+              },
+              {
+                "completed": 0,
+                "not_started": 21,
+                "outcomes": {},
+                "phase": "context",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 21,
+                "started": 0,
+                "thread_cpu_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                }
+              },
+              {
+                "completed": 0,
+                "not_started": 21,
+                "outcomes": {},
+                "phase": "work",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 21,
+                "started": 0,
+                "thread_cpu_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                }
+              },
+              {
+                "completed": 0,
+                "not_started": 21,
+                "outcomes": {},
+                "phase": "admission_owner_wait",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 21,
+                "started": 0,
+                "thread_cpu_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                }
+              },
+              {
+                "completed": 0,
+                "not_started": 21,
+                "outcomes": {},
+                "phase": "admission",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 21,
+                "started": 0,
+                "thread_cpu_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                }
+              },
+              {
+                "completed": 0,
+                "not_started": 21,
+                "outcomes": {},
+                "phase": "submit_result",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 21,
+                "started": 0,
+                "thread_cpu_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 0,
+                  "max_ns": null,
+                  "mean_known_ns": null,
+                  "min_ns": null,
+                  "p50_nearest_rank_ns": null,
+                  "p95_nearest_rank_ns": null,
+                  "sum_known_ns": 0,
+                  "unknown_count": 0
+                }
+              }
+            ],
+            "terminal_phase_counts": {
+              "response": 21
+            }
+          },
+          "honest_submit": {
+            "dispatch_outcomes": {
+              "accepted": 21
+            },
+            "dispatch_thread_cpu_ns": {
+              "known_count": 21,
+              "max_ns": 119443020,
+              "mean_known_ns": {
+                "denominator": 21,
+                "numerator": 2257209933
+              },
+              "min_ns": 101396926,
+              "p50_nearest_rank_ns": 106722326,
+              "p95_nearest_rank_ns": 112508568,
+              "sum_known_ns": 2257209933,
+              "unknown_count": 0
+            },
+            "full_work_outcomes": {
+              "accepted": 21
+            },
+            "full_work_thread_cpu_ns": {
+              "known_count": 21,
+              "max_ns": 1615453,
+              "mean_known_ns": {
+                "denominator": 21,
+                "numerator": 32114101
+              },
+              "min_ns": 1456466,
+              "p50_nearest_rank_ns": 1550362,
+              "p95_nearest_rank_ns": 1578324,
+              "sum_known_ns": 32114101,
+              "unknown_count": 0
+            },
+            "record_complete": 21,
+            "record_observation_failed": 0,
+            "records": 21,
+            "submit_phase_measurements_available": true,
+            "submit_phases": [
+              {
+                "completed": 21,
+                "not_started": 0,
+                "outcomes": {
+                  "accepted": 21
+                },
+                "phase": "decode",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 21,
+                "started": 21,
+                "thread_cpu_ns": {
+                  "known_count": 21,
+                  "max_ns": 508028,
+                  "mean_known_ns": {
+                    "denominator": 21,
+                    "numerator": 8494694
+                  },
+                  "min_ns": 353459,
+                  "p50_nearest_rank_ns": 400978,
+                  "p95_nearest_rank_ns": 480166,
+                  "sum_known_ns": 8494694,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 21,
+                  "max_ns": 507607,
+                  "mean_known_ns": {
+                    "denominator": 21,
+                    "numerator": 8487737
+                  },
+                  "min_ns": 353249,
+                  "p50_nearest_rank_ns": 400356,
+                  "p95_nearest_rank_ns": 479614,
+                  "sum_known_ns": 8487737,
+                  "unknown_count": 0
+                }
+              },
+              {
+                "completed": 21,
+                "not_started": 0,
+                "outcomes": {
+                  "accepted": 21
+                },
+                "phase": "context_owner_wait",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 21,
+                "started": 21,
+                "thread_cpu_ns": {
+                  "known_count": 21,
+                  "max_ns": 2695,
+                  "mean_known_ns": {
+                    "denominator": 21,
+                    "numerator": 41677
+                  },
+                  "min_ns": 1613,
+                  "p50_nearest_rank_ns": 1873,
+                  "p95_nearest_rank_ns": 2524,
+                  "sum_known_ns": 41677,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 21,
+                  "max_ns": 2705,
+                  "mean_known_ns": {
+                    "denominator": 21,
+                    "numerator": 41949
+                  },
+                  "min_ns": 1623,
+                  "p50_nearest_rank_ns": 1884,
+                  "p95_nearest_rank_ns": 2524,
+                  "sum_known_ns": 41949,
+                  "unknown_count": 0
+                }
+              },
+              {
+                "completed": 21,
+                "not_started": 0,
+                "outcomes": {
+                  "accepted": 21
+                },
+                "phase": "context",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 21,
+                "started": 21,
+                "thread_cpu_ns": {
+                  "known_count": 21,
+                  "max_ns": 886523,
+                  "mean_known_ns": {
+                    "denominator": 21,
+                    "numerator": 13158569
+                  },
+                  "min_ns": 272598,
+                  "p50_nearest_rank_ns": 682743,
+                  "p95_nearest_rank_ns": 871896,
+                  "sum_known_ns": 13158569,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 21,
+                  "max_ns": 885871,
+                  "mean_known_ns": {
+                    "denominator": 21,
+                    "numerator": 13146226
+                  },
+                  "min_ns": 272168,
+                  "p50_nearest_rank_ns": 681982,
+                  "p95_nearest_rank_ns": 871214,
+                  "sum_known_ns": 13146226,
+                  "unknown_count": 0
+                }
+              },
+              {
+                "completed": 21,
+                "not_started": 0,
+                "outcomes": {
+                  "accepted": 21
+                },
+                "phase": "work",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 21,
+                "started": 21,
+                "thread_cpu_ns": {
+                  "known_count": 21,
+                  "max_ns": 1617847,
+                  "mean_known_ns": {
+                    "denominator": 21,
+                    "numerator": 32167718
+                  },
+                  "min_ns": 1458891,
+                  "p50_nearest_rank_ns": 1552855,
+                  "p95_nearest_rank_ns": 1581258,
+                  "sum_known_ns": 32167718,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 21,
+                  "max_ns": 1617878,
+                  "mean_known_ns": {
+                    "denominator": 21,
+                    "numerator": 32168327
+                  },
+                  "min_ns": 1458921,
+                  "p50_nearest_rank_ns": 1552866,
+                  "p95_nearest_rank_ns": 1581270,
+                  "sum_known_ns": 32168327,
+                  "unknown_count": 0
+                }
+              },
+              {
+                "completed": 21,
+                "not_started": 0,
+                "outcomes": {
+                  "accepted": 21
+                },
+                "phase": "admission_owner_wait",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 21,
+                "started": 21,
+                "thread_cpu_ns": {
+                  "known_count": 21,
+                  "max_ns": 1973,
+                  "mean_known_ns": {
+                    "denominator": 21,
+                    "numerator": 32581
+                  },
+                  "min_ns": 1473,
+                  "p50_nearest_rank_ns": 1523,
+                  "p95_nearest_rank_ns": 1653,
+                  "sum_known_ns": 32581,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 21,
+                  "max_ns": 1973,
+                  "mean_known_ns": {
+                    "denominator": 21,
+                    "numerator": 32700
+                  },
+                  "min_ns": 1473,
+                  "p50_nearest_rank_ns": 1533,
+                  "p95_nearest_rank_ns": 1663,
+                  "sum_known_ns": 32700,
+                  "unknown_count": 0
+                }
+              },
+              {
+                "completed": 21,
+                "not_started": 0,
+                "outcomes": {
+                  "accepted": 21
+                },
+                "phase": "admission",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 21,
+                "started": 21,
+                "thread_cpu_ns": {
+                  "known_count": 21,
+                  "max_ns": 101681076,
+                  "mean_known_ns": {
+                    "denominator": 21,
+                    "numerator": 1912684687
+                  },
+                  "min_ns": 86339095,
+                  "p50_nearest_rank_ns": 90344523,
+                  "p95_nearest_rank_ns": 94819898,
+                  "sum_known_ns": 1912684687,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 21,
+                  "max_ns": 103541974,
+                  "mean_known_ns": {
+                    "denominator": 21,
+                    "numerator": 1924204653
+                  },
+                  "min_ns": 86798185,
+                  "p50_nearest_rank_ns": 90748210,
+                  "p95_nearest_rank_ns": 95234024,
+                  "sum_known_ns": 1924204653,
+                  "unknown_count": 0
+                }
+              },
+              {
+                "completed": 21,
+                "not_started": 0,
+                "outcomes": {
+                  "accepted": 21
+                },
+                "phase": "submit_result",
+                "scope": "entered slots only; unentered slots are counted separately, not zero CPU",
+                "slots": 21,
+                "started": 21,
+                "thread_cpu_ns": {
+                  "known_count": 21,
+                  "max_ns": 15108697,
+                  "mean_known_ns": {
+                    "denominator": 21,
+                    "numerator": 290159887
+                  },
+                  "min_ns": 12535557,
+                  "p50_nearest_rank_ns": 13690651,
+                  "p95_nearest_rank_ns": 15021192,
+                  "sum_known_ns": 290159887,
+                  "unknown_count": 0
+                },
+                "unfinished": 0,
+                "wall_ns": {
+                  "known_count": 21,
+                  "max_ns": 15353178,
+                  "mean_known_ns": {
+                    "denominator": 21,
+                    "numerator": 296150775
+                  },
+                  "min_ns": 12835361,
+                  "p50_nearest_rank_ns": 13948471,
+                  "p95_nearest_rank_ns": 15333912,
+                  "sum_known_ns": 296150775,
+                  "unknown_count": 0
+                }
+              }
+            ],
+            "terminal_phase_counts": {
+              "response": 21
+            }
+          }
+        },
+        "capacity": 16384,
+        "counter_overflow": false,
+        "measurement_failures": 0,
+        "native_observer_complete": true,
+        "records_not_retained": 0,
+        "schema": "public-v3-local-request-resource-observation-v2"
+      },
+      "receiver_and_verifier_setup_cpu_ns": 1146871866,
+      "receiver_and_verifier_setup_wall_ns": 1161388762,
+      "receiver_client_state_equal": true,
+      "scheduled_confirmation_rounds": 3,
+      "startup_or_campaign_error": null,
+      "state_backend": "authenticated-v1",
+      "submissions": {
+        "acknowledged_after_window": 0,
+        "acknowledged_on_time": 21,
+        "all_calls_returned_after_window": 0,
+        "attempts": 21,
+        "calling_process_cpu_ns": {
+          "known_count": 21,
+          "max_ns": 246629654,
+          "mean_known_ns": {
+            "denominator": 21,
+            "numerator": 4433326017
+          },
+          "min_ns": 190589589,
+          "p50_nearest_rank_ns": 204846410,
+          "p95_nearest_rank_ns": 240055611,
+          "sum_known_ns": 4433326017,
+          "unknown_count": 0
+        },
+        "elapsed_wall_ns": {
+          "known_count": 21,
+          "max_ns": 691486183,
+          "mean_known_ns": {
+            "denominator": 21,
+            "numerator": 7568121138
+          },
+          "min_ns": 204833844,
+          "p50_nearest_rank_ns": 212144951,
+          "p95_nearest_rank_ns": 687089166,
+          "sum_known_ns": 7568121138,
+          "unknown_count": 0
+        },
+        "errors": {},
+        "on_time_unique_packet_indices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20
+        ],
+        "refusals": {},
+        "status_counts": {
+          "ok": 21
+        }
+      },
+      "unobserved_scheduled_rounds": 0,
+      "whole_parent_phase_cpu_ns": 19707118649,
+      "whole_parent_phase_wall_ns": 31389927737,
+      "window_seconds": 30
+    }
+  ],
+  "schema": "pon-public-v3-multiprocess-phase-derivation-v1",
+  "scope": {
+    "acknowledgments_are_not_confirmations": true,
+    "business_tps_capacity": null,
+    "cpu_excludes_reactor_authentication_and_response_signing": true,
+    "cpu_intervals_are_nested_not_additive": true,
+    "fixed_confirmation_denominator_per_phase": 3,
+    "host_or_source_authentication_performed": false,
+    "production_qualification": false,
+    "reader_runs_native_admission": false,
+    "submit_phase_cpu_excludes_scoped_workers": true,
+    "unknown_cpu_is_not_zero": true,
+    "v1_missing_phase_measurements_are_not_reconstructed": true
+  },
+  "state_backend": "authenticated-v1"
+}

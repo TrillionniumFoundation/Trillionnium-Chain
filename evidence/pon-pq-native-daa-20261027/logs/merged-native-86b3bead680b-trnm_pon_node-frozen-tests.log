@@ -1,0 +1,17 @@
+
+running 12 tests
+test pq_authority::tests::changed_schema_is_not_an_identically_pinned_owner ... ok
+test pq_authority::tests::changed_scope_unrelated_database_and_classical_inputs_are_rejected ... ok
+test pq_authority::tests::counter_reset_trigger_cannot_make_one_signature_replayable ... ok
+test pq_authority::tests::missing_or_corrupt_tip_is_rejected_without_resetting_sequence ... ok
+test pq_authority::tests::real_sqlite_full_failure_rolls_back_sequence_and_record_together ... ok
+test pq_authority::tests::scope_identity_is_rechecked_in_the_actual_write_transaction ... ok
+test pq_authority::tests::signature_randomness_cannot_replay_one_operation ... ok
+test pq_authority::tests::silent_insert_ignore_is_rejected_before_granting_authority ... ok
+test pq_authority::tests::temporary_tables_cannot_redirect_a_durable_authorization ... ok
+test pq_authority::tests::three_real_pq_operations_survive_reopen_without_nonce_rewind ... ok
+test pq_authority::tests::two_connections_cannot_consume_the_same_sequence ... ok
+test pq_authority::tests::unexpected_abort_trigger_is_rejected_without_consuming_sequence ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 723 filtered out; finished in 1.57s
+

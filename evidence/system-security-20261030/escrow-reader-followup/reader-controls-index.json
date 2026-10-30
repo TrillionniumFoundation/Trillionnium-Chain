@@ -1,0 +1,61 @@
+{
+  "scope": "Original RED, source-stable final Python controls, and the original scratch-workspace readback helper; no new native execution or rewrite of historical failures. The retained helper is an execution record with its original workspace assumptions, not a standalone production entrypoint.",
+  "archive_sha256": "557c7f61df01b69fa124b1822115d251c2c3b156f365729f9354f00f7db258a1",
+  "members": [
+    {
+      "name": "original-reader-red.log",
+      "bytes": 19189,
+      "sha256": "8d38e353250be3b8c459918b51de6bdfdfbb34b548add4672cdc37400a7698cb"
+    },
+    {
+      "name": "final-reader-controls.log",
+      "bytes": 113,
+      "sha256": "1d51077450bc498339a7cb3bdfba5ce1a0cd3ae87c22366b81de83ccce978c2e"
+    },
+    {
+      "name": "reader-contract-correction.patch",
+      "bytes": 11064,
+      "sha256": "c4af74afb9cb81da21edde11428c4428e9d697a1a1ad5b46d2bf255cd7357d57"
+    },
+    {
+      "name": "chain-signed-escrow-reader-controls.json",
+      "bytes": 1205,
+      "sha256": "f162c8072339f4470b9d4b687b4536f55a7572e2be94e7719b475079b58d1906"
+    },
+    {
+      "name": "chain-signed-escrow-reader-controls.log",
+      "bytes": 2375,
+      "sha256": "03471264c0cecb2f5f01bb4b81991182994397033add0432b8c79334f031c345"
+    },
+    {
+      "name": "chain-signed-escrow-ci-contracts.json",
+      "bytes": 1173,
+      "sha256": "bd3251fc079826d39dc37635886c0915f7676a3c40c97b6972de9534eeaaa99c"
+    },
+    {
+      "name": "chain-signed-escrow-ci-contracts.log",
+      "bytes": 16069,
+      "sha256": "1bb926173d276f703a127cfe9999111a36dd70ba0565532cfe890719da682d4b"
+    },
+    {
+      "name": "chain-signed-escrow-source-integrity.json",
+      "bytes": 1181,
+      "sha256": "0fcccf5eb755a7e707d1119f76b41d7c4c8304b4994fa369d9bd1ae1686dae47"
+    },
+    {
+      "name": "chain-signed-escrow-source-integrity.log",
+      "bytes": 5509,
+      "sha256": "a52d5fb73ba9dc72e4b14b49faa3f242099877b31ccfa875c82d3f66629f36df"
+    },
+    {
+      "name": "replay_original_artifact.py",
+      "bytes": 6965,
+      "sha256": "ded2912db8876aaadf31496fb1889678b8060201fc9b6c0be6fa639bddbed461"
+    },
+    {
+      "name": "original-source-manifest.json",
+      "bytes": 675,
+      "sha256": "b62cd3a01fc19fa2254603b8b868b6d1a8a5656f953b8fb36b83e1be217775e2"
+    }
+  ]
+}

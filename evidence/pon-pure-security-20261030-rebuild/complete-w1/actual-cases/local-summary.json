@@ -1,0 +1,121 @@
+{
+  "schema": "pon-w1-local-cases-v1",
+  "single_observations_not_medians": true,
+  "shared_host": true,
+  "cases": [
+    {
+      "case": "valid",
+      "receiver": {
+        "accepted": true,
+        "bounded_preflight_and_sdk_decode_wall_ns": 9411498,
+        "decoded_receipt_drop_wall_ns": 12298,
+        "last_stage": "strict_verify",
+        "outcome": "verified",
+        "reason": null,
+        "receiver_total_wall_ns": 1332826232,
+        "strict_verify_wall_ns": 1323402146
+      },
+      "metadata_reader_returncode": 0
+    },
+    {
+      "case": "first_seal_tamper",
+      "receiver": {
+        "accepted": false,
+        "bounded_preflight_and_sdk_decode_wall_ns": 11174049,
+        "decoded_receipt_drop_wall_ns": 12579,
+        "last_stage": "strict_verify",
+        "outcome": "verification_failed",
+        "reason": "verification indicates proof is invalid",
+        "receiver_total_wall_ns": 57424247,
+        "strict_verify_wall_ns": 46237369
+      },
+      "metadata_reader_returncode": 0
+    },
+    {
+      "case": "last_seal_tamper",
+      "receiver": {
+        "accepted": false,
+        "bounded_preflight_and_sdk_decode_wall_ns": 12297948,
+        "decoded_receipt_drop_wall_ns": 13500,
+        "last_stage": "strict_verify",
+        "outcome": "verification_failed",
+        "reason": "verification indicates proof is invalid",
+        "receiver_total_wall_ns": 1187393954,
+        "strict_verify_wall_ns": 1175082226
+      },
+      "metadata_reader_returncode": 0
+    },
+    {
+      "case": "wrong_verifier_parameters",
+      "receiver": {
+        "accepted": false,
+        "bounded_preflight_and_sdk_decode_wall_ns": 8839573,
+        "decoded_receipt_drop_wall_ns": 5508,
+        "last_stage": "strict_verify",
+        "outcome": "verification_failed",
+        "reason": "segment proof parameters differ from the fixed backend profile",
+        "receiver_total_wall_ns": 30613254,
+        "strict_verify_wall_ns": 21767983
+      },
+      "metadata_reader_returncode": 0
+    },
+    {
+      "case": "wrong_statement_miner",
+      "receiver": {
+        "accepted": false,
+        "bounded_preflight_and_sdk_decode_wall_ns": 8743137,
+        "decoded_receipt_drop_wall_ns": 8132,
+        "last_stage": "strict_verify",
+        "outcome": "verification_failed",
+        "reason": "public journal does not match the complete bound W1 statement",
+        "receiver_total_wall_ns": 26058207,
+        "strict_verify_wall_ns": 17306758
+      },
+      "metadata_reader_returncode": 0
+    },
+    {
+      "case": "truncated_receipt",
+      "receiver": {
+        "accepted": false,
+        "bounded_preflight_and_sdk_decode_wall_ns": 14692,
+        "decoded_receipt_drop_wall_ns": null,
+        "last_stage": "bounded_preflight_or_sdk_decode",
+        "outcome": "malformed_encoding",
+        "reason": "Malformed certificate encoding: truncated field",
+        "receiver_total_wall_ns": 14742,
+        "strict_verify_wall_ns": null
+      },
+      "metadata_reader_returncode": 0
+    },
+    {
+      "case": "trailing_receipt_bytes",
+      "receiver": {
+        "accepted": false,
+        "bounded_preflight_and_sdk_decode_wall_ns": 16244,
+        "decoded_receipt_drop_wall_ns": null,
+        "last_stage": "bounded_preflight_or_sdk_decode",
+        "outcome": "malformed_encoding",
+        "reason": "Malformed certificate encoding: trailing certificate bytes",
+        "receiver_total_wall_ns": 16314,
+        "strict_verify_wall_ns": null
+      },
+      "metadata_reader_returncode": 0
+    },
+    {
+      "case": "seal_length_allocation_bomb",
+      "receiver": {
+        "accepted": false,
+        "bounded_preflight_and_sdk_decode_wall_ns": 5398,
+        "decoded_receipt_drop_wall_ns": null,
+        "last_stage": "bounded_preflight_or_sdk_decode",
+        "outcome": "refused_not_evaluated",
+        "reason": "Refused (not evaluated): segment seal word budget",
+        "receiver_total_wall_ns": 5468,
+        "strict_verify_wall_ns": null
+      },
+      "metadata_reader_returncode": 0
+    }
+  ],
+  "public_ingress_qualified": false,
+  "consensus_authority": false
+}

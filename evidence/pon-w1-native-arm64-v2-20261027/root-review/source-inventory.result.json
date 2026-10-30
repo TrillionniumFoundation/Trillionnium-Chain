@@ -1,0 +1,10 @@
+{
+  "name": "source-inventory",
+  "command": [
+    "python",
+    "scripts/refresh_distributed_source_inventory.py",
+    "--check"
+  ],
+  "exit_code": 0,
+  "elapsed_ns": 461260601
+}

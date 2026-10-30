@@ -1,0 +1,107 @@
+[
+  {
+    "bytes": 20343,
+    "excerpts": [
+      {
+        "end": 340,
+        "start": 317,
+        "text": "317:     let mut node = Node::open_with_authenticated_state(path, settings.clone(), 1)?;\n318:     let before = node.read_active()?;\n319:     let denied = make(&node, settings.genesis(), vec![], &permit, &zero)\n320:         .err()\n321:         .ok_or(\"UNREGISTERED_TASK_ACCEPTED\")?\n322:         .to_string();\n323:     require(\n324:         denied == \"TASK\" && node.read_active()? == before,\n325:         \"UNREGISTERED_TASK_NEGATIVE\",\n326:     )?;\n327:     let registration = make(\n328:         &node,\n329:         settings.genesis(),\n330:         vec![\n331:             transaction(&settings, 2, 18, lease.encode().diag()?)?,\n332:             transaction(&settings, 0, 21, signed.encode().diag()?)?,\n333:         ],\n334:         &admission(&boot.signed, &boot.lease, &base, 1)?,\n335:         &base,\n336:     )?;\n337:     same_relation(&registration)?;\n338:     let parent = node.admit(&registration, CLOCK)?;\n339:     node.activate(parent)?;\n340:     let template = make(&node, parent, vec![], &permit, &zero)?;"
+      },
+      {
+        "end": 478,
+        "start": 423,
+        "text": "423:             break;\n424:         }\n425:     }\n426:     let acquisition = json!({\"cpu_ns\":before.zip(cpu()).and_then(|(a,b)|b.checked_sub(a)),\"wall_ns\":start.elapsed().as_nanos()});\n427:     let packet = found.ok_or(\"NONCE_BUDGET_EXHAUSTED\")?;\n428:     same_relation(&packet)?;\n429:     let id = context.node.admit(&packet, CLOCK)?;\n430:     require(id == packet.id()?, \"ADMISSION_ID\")?;\n431:     require(\n432:         sha(&serde_json::to_vec(\n433:             &context.node.state_at(context.parent)?,\n434:         )?) == context.parent_state_sha,\n435:         \"PARENT_STATE_CHANGED\",\n436:     )?;\n437:     let encoded = sha(&packet.encode().diag()?);\n438:     let state = sha(&serde_json::to_vec(&context.node.state_at(id)?)?);\n439:     context.admitted.push((id, encoded.clone(), state.clone()));\n440:     Ok(\n441:         json!({\"search\":index,\"first\":first,\"count_limit\":ATTEMPTS,\"attempts\":attempts,\"stream_sha256\":hex::encode(stream.finalize()),\n442:         \"packet\":packet_value(&packet)?,\"admission_id\":hex::encode(id),\"state_sha256\":state,\n443:         \"producer_acquisition\":acquisition,\"setup_attempts\":context.registry.setup_attempts,\n444:         \"supported_setups\":context.registry.supported_setups,\"ordinary_node_admission\":true,\n445:         \"rust_scalar_reference_uses_shared_verifier_flow\":true,\"independent_python_relation\":\"not-yet-run\"}),\n446:     )\n447: }\n448: fn seal(mut context: Context, path: &Path) -> Result<Value> {\n449:     require(\n450:         context.admitted.len() == SEARCHES as usize\n451:             && context.registry.setup_attempts == 1\n452:             && context.registry.supported_setups == 1,\n453:         \"COHORT_INCOMPLETE\",\n454:     )?;\n455:     let before = context.node.read_active()?;\n456:     require(\n457:         before.0 == context.parent && before.1 == 1,\n458:         \"SIBLING_SCOPE_ACTIVE_PARENT\",\n459:     )?;\n460:     drop(context.node);\n461:     context.node = Node::open_with_authenticated_state(path, context.settings.clone(), 1)?;\n462:     require(context.node.read_active()? == before, \"COLD_ACTIVE_STATE\")?;\n463:     let mut cold = Vec::new();\n464:     for (id, encoded, state) in &context.admitted {\n465:         require(\n466:             sha(&context.node.packet(*id)?.encode().diag()?) == *encoded,\n467:             \"COLD_PACKET\",\n468:         )?;\n469:         require(\n470:             sha(&serde_json::to_vec(&context.node.state_at(*id)?)?) == *state,\n471:             \"COLD_STATE\",\n472:         )?;\n473:         cold.push(json!({\"id\":hex::encode(id),\"encoded_sha256\":encoded,\"state_sha256\":state}));\n474:     }\n475:     Ok(\n476:         json!({\"native_component_completed\":true,\"searches\":SEARCHES,\"same_selected_setup_attempts\":context.registry.setup_attempts,\n477:         \"scope\":\"64-same-parent-siblings-not-64-successive-parents\",\"cold\":cold,\n478:         \"independent_python_relation\":\"not-yet-run\",\"ordinary_public_service_paid_envelope\":false,"
+      }
+    ],
+    "git_blob": "866476e493574c1fd83a2ff9aabf5daeab70a049",
+    "head": "399dd82608df72c71c502b8bda0aa95898794080",
+    "path": "trillionnium/crates/trnm-pon-node/examples/pon_w1_real_header_reuse_v1.rs",
+    "sha256": "414ce8909db072f7fe511f69337735be2fe4b0b1c575e5cbfac56216c1d40748"
+  },
+  {
+    "bytes": 301847,
+    "excerpts": [
+      {
+        "end": 1016,
+        "start": 989,
+        "text": "989:     pub fn open_with_authenticated_state(\n990:         path: &Path,\n991:         settings: Settings,\n992:         workers: usize,\n993:     ) -> Result<Self> {\n994:         Self::open_with_authenticated_state_and_fault(path, settings, workers, None)\n995:     }\n996:     pub fn open_with_authenticated_state_and_fault(\n997:         path: &Path,\n998:         settings: Settings,\n999:         workers: usize,\n1000:         hook: Option<&mut Hook<'_>>,\n1001:     ) -> Result<Self> {\n1002:         ensure(!owner_marker_present(path)?, \"OWNER_TASK_POLICY_REQUIRED\")?;\n1003:         Self::open_selected(\n1004:             path,\n1005:             settings,\n1006:             workers,\n1007:             hook,\n1008:             NativeOwners {\n1009:                 policy: None,\n1010:                 mining: None,\n1011:                 continuous: None,\n1012:             },\n1013:             StateBackend::AuthenticatedV1,\n1014:             false,\n1015:         )\n1016:     }"
+      },
+      {
+        "end": 1519,
+        "start": 1495,
+        "text": "1495:             // Complete-State reference budget records cannot be silently ignored\n1496:             // by this backend. Validate/refuse them before any growth recovery.\n1497:             node.validate_native_budget_records_v1()?;\n1498:             node.growth_cold_open(!growth_observation_only)?;\n1499:             // Settings retain the immutable genesis input for exact reopen. Hot\n1500:             // execution never clones this bootstrap State or the full account set.\n1501:             return Ok(node);\n1502:         }\n1503:         node.read_active()?;\n1504:         if node.state_backend == StateBackend::AuthenticatedV1 {\n1505:             native_authenticated::verify_history_with_cache(\n1506:                 &node.db,\n1507:                 &node.settings,\n1508:                 node.active()?.0,\n1509:                 &mut || Ok(()),\n1510:                 Some(&node.authenticated_arithmetic),\n1511:             )?;\n1512:         }\n1513:         node.validate_authenticated_replay()?;\n1514:         node.validate_authenticated_outbox()?;\n1515:         node.validate_native_budget_records_v1()?;\n1516:         node.recover()?;\n1517:         node.read_active()?;\n1518:         crate::ancestry_index::validate_tip(&node.db, node.ancestry_context(), node.active()?.0)?;\n1519:         Ok(node)"
+      },
+      {
+        "end": 2685,
+        "start": 2677,
+        "text": "2677:     pub fn read_active(&self) -> Result<(Hash, u64, State)> {\n2678:         ensure(\n2679:             self.state_backend != StateBackend::PermanentAccountGrowthV2,\n2680:             \"GROWTH_COMPLETE_STATE_UNAVAILABLE\",\n2681:         )?;\n2682:         self.read_active_with_progress(&mut || Ok(()))\n2683:     }\n2684:     /// Rechecks actual KV bytes and root, with cancellation at most 256 rows apart.\n2685:     /// Root arithmetic is still bounded by the state limit and checked as one stage."
+      },
+      {
+        "end": 2740,
+        "start": 2716,
+        "text": "2716:         )?;\n2717:         if self.state_backend == StateBackend::AuthenticatedV1 {\n2718:             native_authenticated::verify_state_with_cache(\n2719:                 &self.db,\n2720:                 &self.settings,\n2721:                 tip,\n2722:                 &state,\n2723:                 progress,\n2724:                 Some(&self.authenticated_arithmetic),\n2725:             )?;\n2726:         }\n2727:         progress()?;\n2728:         ensure(\n2729:             self.active()? == (tip, generation) && self.slot()? == slot,\n2730:             \"STALE_VIEW\",\n2731:         )?;\n2732:         self.publish_commitment(tip, generation, slot, prepared);\n2733:         Ok((tip, generation, state))\n2734:     }\n2735:     fn ready(&self) -> Result<()> {\n2736:         self.namespace()?;\n2737:         let done: Option<bool> = self\n2738:             .db\n2739:             .query_row(\"SELECT done FROM reorg WHERE singleton=1\", [], |r| r.get(0))\n2740:             .optional()?;"
+      },
+      {
+        "end": 4798,
+        "start": 4716,
+        "text": "4716:     pub fn activate(&mut self, target: Hash) -> Result<Hash> {\n4717:         if self.state_backend == StateBackend::PermanentAccountGrowthV2 {\n4718:             return self.growth_activate(target);\n4719:         }\n4720:         self.activate_with_fault(target, None)\n4721:     }\n4722:     pub fn activate_with_fault(\n4723:         &mut self,\n4724:         target: Hash,\n4725:         hook: Option<&mut Hook<'_>>,\n4726:     ) -> Result<Hash> {\n4727:         self.activate_with_fault_and_progress(target, hook, &mut || Ok(()))\n4728:     }\n4729:     fn activate_with_fault_and_progress(\n4730:         &mut self,\n4731:         target: Hash,\n4732:         mut hook: Option<&mut Hook<'_>>,\n4733:         progress: &mut dyn FnMut() -> Result<()>,\n4734:     ) -> Result<Hash> {\n4735:         progress()?;\n4736:         if self.state_backend == StateBackend::PermanentAccountGrowthV2 {\n4737:             ensure(hook.is_none(), \"GROWTH_USE_PROGRESS_HOOK\")?;\n4738:             let progress = RefCell::new(progress);\n4739:             return self.growth_activate_with_progress(target, &|_| (progress.borrow_mut())());\n4740:         }\n4741:         self.continuous_activation_gate(target)?;\n4742:         self.mining_activation_gate(target)?;\n4743:         self.namespace()?;\n4744:         self.resume_intent_with_progress(&mut hook, progress)?;\n4745:         let (old, g) = self.active()?;\n4746:         if self.record(target)?.work <= self.record(old)?.work {\n4747:             return Ok(old);\n4748:         }\n4749:         let next = g\n4750:             .checked_add(1)\n4751:             .filter(|v| *v <= i64::MAX as u64)\n4752:             .ok_or(\"GENERATION\")?;\n4753:         if self.record(target)?.parent == Some(old) && hook.is_none() {\n4754:             let slot = self.slot()?;\n4755:             progress()?;\n4756:             let prior = self.cached_parent(old)?;\n4757:             progress()?;\n4758:             let mut staged = None;\n4759:             self.atomic_with_progress(progress, |progress| {\n4760:                 self.apply_delta_with_progress(target, slot, false, progress)?;\n4761:                 let state = self.slot_state_with_progress(slot, progress)?;\n4762:                 continuity_v1::check_state(&state, self.record(target)?.height, &self.settings.app)\n4763:                     .map_err(|error| Error::from(error).local_integrity())?;\n4764:                 progress()?;\n4765:                 staged = Some(self.checked_commitment(\n4766:                     &state,\n4767:                     self.record(target)?.root,\n4768:                     prior.as_ref(),\n4769:                 )?);\n4770:                 progress()?;\n4771:                 ensure(\n4772:                     self.db.execute(\n4773:                         \"UPDATE active SET tip=?,generation=? WHERE singleton=1\",\n4774:                         params![target.as_slice(), next],\n4775:                     )? == 1,\n4776:                     \"STORAGE_WRITE\",\n4777:                 )\n4778:                 .map_err(Error::local_integrity)?;\n4779:                 ensure(\n4780:                     self.db.execute(\n4781:                         \"INSERT INTO events VALUES(?,0,1,?)\",\n4782:                         params![next, target.as_slice()],\n4783:                     )? == 1,\n4784:                     \"STORAGE_WRITE\",\n4785:                 )\n4786:                 .map_err(Error::local_integrity)?;\n4787:                 ensure(\n4788:                     self.active()? == (target, next) && self.slot()? == slot,\n4789:                     \"GENERATION\",\n4790:                 )\n4791:                 .map_err(Error::local_integrity)?;\n4792:                 self.check_events_with_progress(next, &[(0, 1, target)], progress)?;\n4793:                 Ok(())\n4794:             })?;\n4795:             ensure(\n4796:                 self.active()? == (target, next) && self.slot()? == slot,\n4797:                 \"GENERATION\",\n4798:             )"
+      },
+      {
+        "end": 5138,
+        "start": 5118,
+        "text": "5118:     pub fn recover(&mut self) -> Result<Hash> {\n5119:         if self.state_backend == StateBackend::PermanentAccountGrowthV2 {\n5120:             return self.growth_recover();\n5121:         }\n5122:         if let Some(tip) = self.continuous_recovery_unchanged()? {\n5123:             return Ok(tip);\n5124:         }\n5125:         if let Some(tip) = self.mining_recovery_unchanged()? {\n5126:             return Ok(tip);\n5127:         }\n5128:         self.invalidate_commitment();\n5129:         self.namespace()?;\n5130:         self.resume_intent(&mut None)?;\n5131:         let best: Vec<u8> = self.db.query_row(\n5132:             \"SELECT id FROM blocks ORDER BY chainwork DESC,height,id LIMIT 1\",\n5133:             [],\n5134:             |r| r.get(0),\n5135:         )?;\n5136:         self.activate(bytes32(best)?)\n5137:     }\n5138:     pub fn check_observed_history(&self, tip: Hash, observed_now: u64) -> Result<()> {"
+      }
+    ],
+    "git_blob": "1377aabf81a8accb87b1b2e10c5c3f243af4acde",
+    "head": "399dd82608df72c71c502b8bda0aa95898794080",
+    "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+    "sha256": "f0c272ea999dc3430bb9b6f7599ccf2c93ba88d48c83aa23b93e73db4eceb9db"
+  },
+  {
+    "bytes": 19171,
+    "excerpts": [
+      {
+        "end": 55,
+        "start": 40,
+        "text": "40: \n41: ## Fork recovery\n42: \n43: A real fork records exact ordered detach and attach steps and copies to one staging\n44: slot. Each delta and cursor advancement commits together. Check expected old values,\n45: recompute target root, then atomically publish tip/generation/slot/events and retire old\n46: physical slots. Existing readers retain their SQLite snapshots. The eight original\n47: cuts remain: intent; two detach cuts; three attach cuts; before-publish; published.\n48: No partially changed state is published as a coherent root.\n49: \n50: `recover` first completes the exact existing intent, then inspects the indexed set of\n51: fully verified stored tips. A strictly heavier tip is activated even if a process died\n52: between `admit` and `activate`. Equal work leaves the current tip unchanged. A peer's\n53: claimed work total never becomes an indexed authoritative block record.\n54: \n55: ## Beyond4096 and bounded cache retention"
+      },
+      {
+        "end": 209,
+        "start": 193,
+        "text": "193: this includes an admission committed before its activation intent. Equal work retains\n194: the current chain. Corrupt generation, steps, root or delta preconditions remain fenced.\n195: \n196: Reconstruction spools ancestor identities on disk and checks snapshots/deltas/roots;\n197: retention is not a finality threshold. Full maps/root computations and long history\n198: remain resource costs. No Hepta operation journal, provider effect or user database is\n199: inside this chain namespace or its undo transaction.\n200: \n201: ### Metadata-only native ancestry access\n202: \n203: The existing native owner now separates metadata retrieval from full packet retrieval.\n204: Ancestry/DAA/current-clock traversal uses block-ID-bound header projections, while work\n205: admission and queried transaction inclusion still check complete packets. No stored\n206: schema, genesis, reward, rollback or root rule changes. This removes repeated Rust-side\n207: packet materialization but does not turn the complete-state root into persistent\n208: incremental authenticated storage or qualify physical power loss.\n209: "
+      }
+    ],
+    "git_blob": "e246e49a7a78100eca98d4245b19fc47288d4813",
+    "head": "399dd82608df72c71c502b8bda0aa95898794080",
+    "path": "docs/protocol/pon-nakamoto-v1/details/STATE_RECOVERY.md",
+    "sha256": "4ab96272cf46c5e6c79cfc857ab404254147e96c187dd4d20b1b983677c7fd0c"
+  },
+  {
+    "bytes": 13266,
+    "excerpts": [
+      {
+        "end": 365,
+        "start": 351,
+        "text": "351:         )\n352:         .unwrap_or(fork);\n353:         let active = node.read_active().unwrap();\n354:         assert_eq!(active.0, revoked);\n355:         assert_eq!(active.2[&slot_key(1).unwrap()][\"status\"], \"revoked\");\n356:         assert_eq!(active.2[&slot_key(1).unwrap()][\"output_count\"], 0);\n357:         let expired_branch = node.state_at(fork).unwrap();\n358:         drop(node);\n359:         let reopened = Node::open(dir.path(), s, 1).unwrap();\n360:         // Cold recovery selects the heavier durable branch. Mathematical cache\n361:         // reuse must not alter either branch's previously checked lease state.\n362:         assert_eq!(reopened.read_active().unwrap().0, recovered_tip);\n363:         assert_eq!(reopened.state_at(revoked).unwrap(), active.2);\n364:         assert_eq!(reopened.state_at(fork).unwrap(), expired_branch);\n365:         reject(&reopened, revoked, &new_permit, &zero, \"TASK\");"
+      }
+    ],
+    "git_blob": "a6abcd4ee69bfe09480e5d4c70d07f27db22e163",
+    "head": "399dd82608df72c71c502b8bda0aa95898794080",
+    "path": "trillionnium/crates/trnm-pon-node/tests/zero_task_preparation_lifecycle.rs",
+    "sha256": "01f1a27fd5dbaff7232a53f8b15a573737b5f68bf27a78a91f9b8d2810bff53b"
+  },
+  {
+    "bytes": 129241,
+    "excerpts": [
+      {
+        "end": 29,
+        "start": 22,
+        "text": "22: pub const QUALIFIED_DEMANDS: u64 = 16;\n23: \n24: pub mod growth;\n25: \n26: pub type State = BTreeMap<String, Value>;\n27: pub type Result<T> = std::result::Result<T, &'static str>;\n28: /// Optional computation-input gate for semantic account point accesses. The\n29: /// callback itself conveys no proof, signature, parent or admission authority."
+      }
+    ],
+    "git_blob": "978875f185912385f9fa9f8bd847273dc72d7b9c",
+    "head": "399dd82608df72c71c502b8bda0aa95898794080",
+    "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+    "sha256": "630b0f6b01fbd157df433eed80c969c105d629b4128d410e372220a262040416"
+  }
+]

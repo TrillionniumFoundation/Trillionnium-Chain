@@ -1,0 +1,90 @@
+{
+  "schema": "pon-pure-local-first-checks-v1",
+  "scope": "Actual first attempts; retain sparse-checkout repository failure, offline cache miss, and strict Clippy failure. Source commits are recorded per command group. No aggregate PASS is granted.",
+  "files": [
+    {
+      "path": "checks.json",
+      "sha256": "fada672e1fbd25e3429bf5e446f1e8b6f60251e9dcfe2336edd415704b70df2b",
+      "bytes": 1764,
+      "uncompressed_sha256": "fada672e1fbd25e3429bf5e446f1e8b6f60251e9dcfe2336edd415704b70df2b"
+    },
+    {
+      "path": "ci-contract.log",
+      "sha256": "9dc9c460bfb8a0da9730ff9e6acc8d76cbdf3bfd873c933e273c775ada8233b3",
+      "bytes": 123,
+      "uncompressed_sha256": "9dc9c460bfb8a0da9730ff9e6acc8d76cbdf3bfd873c933e273c775ada8233b3"
+    },
+    {
+      "path": "cost-reader-negatives.log",
+      "sha256": "241cc9082c83d984731b53f41545cad3c6b096bfe0c9fb86a478828ea495fcbc",
+      "bytes": 105,
+      "uncompressed_sha256": "241cc9082c83d984731b53f41545cad3c6b096bfe0c9fb86a478828ea495fcbc"
+    },
+    {
+      "path": "crypto-protocol-clippy.json",
+      "sha256": "0bba20007007fc01facaa8656d5ab6710472180f7a4abb538ea3d34e52e2ea1d",
+      "bytes": 385,
+      "uncompressed_sha256": "0bba20007007fc01facaa8656d5ab6710472180f7a4abb538ea3d34e52e2ea1d"
+    },
+    {
+      "path": "crypto-protocol-clippy.log",
+      "sha256": "2353b5672da95a6647c3e60d463e0edfef92c47de78958350f0b6e16f5246b48",
+      "bytes": 2418,
+      "uncompressed_sha256": "2353b5672da95a6647c3e60d463e0edfef92c47de78958350f0b6e16f5246b48"
+    },
+    {
+      "path": "fmt.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "graph-fmt-checks.json",
+      "sha256": "b5507d1dd361a6bde9e4be6ce8b61d8089623613a91f8f87624a6092154dbb32",
+      "bytes": 652,
+      "uncompressed_sha256": "b5507d1dd361a6bde9e4be6ce8b61d8089623613a91f8f87624a6092154dbb32"
+    },
+    {
+      "path": "graph-online-result.json",
+      "sha256": "d26b1c9477c4a76c3da57b32d4e816e66afd370ea5ec44548a25358c94f865c9",
+      "bytes": 339,
+      "uncompressed_sha256": "d26b1c9477c4a76c3da57b32d4e816e66afd370ea5ec44548a25358c94f865c9"
+    },
+    {
+      "path": "graph-online.json.gz",
+      "sha256": "8757d2952f5ee7a8f5de4acd620233935d0c99b97bc1688e07e8a49ed066e784",
+      "bytes": 65039,
+      "uncompressed_sha256": "f6873792c1ef2136b600f323ead8aeef07b0ea6b4ab1f9a6effe7472e11283c3"
+    },
+    {
+      "path": "graph-online.stderr",
+      "sha256": "e95aeadf4037a855af8073ca288b435ec75bb884aa1fbaa61ced39cfb0970450",
+      "bytes": 1637,
+      "uncompressed_sha256": "e95aeadf4037a855af8073ca288b435ec75bb884aa1fbaa61ced39cfb0970450"
+    },
+    {
+      "path": "graph.log",
+      "sha256": "48c333efb94dd71cc7562f6d2deb238b53737f523d6725bd8bb088d0709755c9",
+      "bytes": 122,
+      "uncompressed_sha256": "48c333efb94dd71cc7562f6d2deb238b53737f523d6725bd8bb088d0709755c9"
+    },
+    {
+      "path": "inventory.log",
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "bytes": 35,
+      "uncompressed_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    },
+    {
+      "path": "repository.log",
+      "sha256": "e9d6779920685ac8631f9cfe3fc344fa5a64886cd36ed304305284c108a90361",
+      "bytes": 84,
+      "uncompressed_sha256": "e9d6779920685ac8631f9cfe3fc344fa5a64886cd36ed304305284c108a90361"
+    },
+    {
+      "path": "source-negatives.log",
+      "sha256": "11ef63740ec1be56aaf93a31069ce16aab4359bb8ba398cbac7be4c0d9e410c9",
+      "bytes": 5509,
+      "uncompressed_sha256": "11ef63740ec1be56aaf93a31069ce16aab4359bb8ba398cbac7be4c0d9e410c9"
+    }
+  ]
+}

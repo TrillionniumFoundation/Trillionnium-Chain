@@ -1,0 +1,56 @@
+   Compiling trnm-mvcc-fee v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-mvcc-fee)
+    Finished `test` profile [unoptimized] target(s) in 30.86s
+     Running tests/pq5_task_renewal.rs (/home/runner/work/_temp/native-pq5-target/debug/deps/pq5_task_renewal-467784b2d835bccf)
+
+running 16 tests
+test actual_signed_nonce_previous_statement_and_parent_lease_bindings_refuse_cross_branch_replay ... ok
+test actual_two_state_owners_charge_two_proofs_and_retain_five_bounded_witness_leaves ... ok
+test atomic_all_five_fragment_boundaries_and_mixed_statement_bytes_fail_cold_authorization ... ok
+test atomic_renewal_bad_each_proof_role_account_nonce_branch_or_prior_spends_nothing ... ok
+test atomic_renewal_exact_codec_two_real_proofs_five_chunks_and_old_profile_refusal ... ok
+test either_bad_inner_or_outer_proof_wrong_account_and_wrong_source_never_spend_nonce_or_fee ... ok
+test full_32_task_slot_capacity_counts_64_real_proofs_and_never_enlarges_state_values ... ok
+test legacy_commands_old_profiles_wrong_material_and_unsigned_inner_wrappers_are_refused ... ok
+test missing_reordered_duplicate_oversized_and_other_task_witness_fragments_cannot_authorize ... ok
+test open_register_and_revoke_register_pairs_refuse_both_block_orders_without_partial_effects ... ok
+test renew_rotate_revoke_and_register_pairs_refuse_both_orders_then_use_current_authority ... ok
+test renewal_block_may_credit_verified_parent_output_without_granting_pending_future_work ... ok
+test renewal_rejects_expired_gap_wrong_revision_changed_scope_and_changed_material_atomically ... ok
+test requester_only_renewal_is_cold_valid_but_awaits_new_source_and_preserves_past_output ... FAILED
+test retired_registration_cannot_authorize_work_and_current_dual_proofs_restore_the_same_meter ... ok
+test source_and_requester_rotations_exclude_task_use_in_both_orders_then_accept_current_keys ... ok
+
+successes:
+
+successes:
+    actual_signed_nonce_previous_statement_and_parent_lease_bindings_refuse_cross_branch_replay
+    actual_two_state_owners_charge_two_proofs_and_retain_five_bounded_witness_leaves
+    atomic_all_five_fragment_boundaries_and_mixed_statement_bytes_fail_cold_authorization
+    atomic_renewal_bad_each_proof_role_account_nonce_branch_or_prior_spends_nothing
+    atomic_renewal_exact_codec_two_real_proofs_five_chunks_and_old_profile_refusal
+    either_bad_inner_or_outer_proof_wrong_account_and_wrong_source_never_spend_nonce_or_fee
+    full_32_task_slot_capacity_counts_64_real_proofs_and_never_enlarges_state_values
+    legacy_commands_old_profiles_wrong_material_and_unsigned_inner_wrappers_are_refused
+    missing_reordered_duplicate_oversized_and_other_task_witness_fragments_cannot_authorize
+    open_register_and_revoke_register_pairs_refuse_both_block_orders_without_partial_effects
+    renew_rotate_revoke_and_register_pairs_refuse_both_orders_then_use_current_authority
+    renewal_block_may_credit_verified_parent_output_without_granting_pending_future_work
+    renewal_rejects_expired_gap_wrong_revision_changed_scope_and_changed_material_atomically
+    retired_registration_cannot_authorize_work_and_current_dual_proofs_restore_the_same_meter
+    source_and_requester_rotations_exclude_task_use_in_both_orders_then_accept_current_keys
+
+failures:
+
+---- requester_only_renewal_is_cold_valid_but_awaits_new_source_and_preserves_past_output stdout ----
+
+thread 'requester_only_renewal_is_cold_valid_but_awaits_new_source_and_preserves_past_output' (6608) panicked at crates/trnm-mvcc-fee/tests/pq5_task_renewal.rs:864:55:
+called `Result::unwrap()` on an `Err` value: "CONTINUITY_REWARD_QUEUE"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    requester_only_renewal_is_cold_valid_but_awaits_new_source_and_preserves_past_output
+
+test result: FAILED. 15 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 12.30s
+
+error: test failed, to rerun pass `-p trnm-mvcc-fee --test pq5_task_renewal`

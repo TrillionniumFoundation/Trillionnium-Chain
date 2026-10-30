@@ -1,0 +1,25 @@
+{
+  "schema": "pon-v5-historical-compatibility-v1",
+  "fresh_readback_completed_utc": "2026-10-30T01:06:53.387790+00:00",
+  "unchanged_original_aggregates": {
+    "cohorts": 144,
+    "fresh_stores": 144,
+    "first_admission_calls": 11772,
+    "distinct_fixture_packet_ids_across_paired_cohorts": 654
+  },
+  "searches": 11844,
+  "attempts": 22590,
+  "hits": 11772,
+  "misses": 10818,
+  "distinct_original_templates": 1,
+  "seed_nonce": 3,
+  "hardened_summary_sha256": "95684567549f36104762cd4e6e365eb9fb26a8ac04aca338cc6132b15ce515a2",
+  "new_mining_or_admission_run": false,
+  "native_full_transcript_replay": false,
+  "old_unpublished_local_evidence_recovered": false,
+  "all_original_summary_fields_unchanged": true,
+  "original_summary_fields": 25,
+  "added_summary_fields": [
+    "context_binding"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "command": [
+    "bash",
+    "scripts/project-preflight.sh",
+    "--dev"
+  ],
+  "cwd": "work/ci-follow/pn1-v3-clean-source-public-qualification-20261026-001/ownedsource",
+  "actual_tool_observed_exit_code": 0,
+  "actual_tool_observed_output": {
+    "result": "PASS",
+    "mode": "--dev",
+    "project": "trillionnium-chain",
+    "packages": 26,
+    "branch": "docs/chain-audit-remediation-20261022",
+    "remote_policy_mutated": false
+  },
+  "scope": "read-only existing399 development-boundary check;94 AGENTS same bytes;not94source qualification",
+  "Cargo_or_native_or_tests": false
+}

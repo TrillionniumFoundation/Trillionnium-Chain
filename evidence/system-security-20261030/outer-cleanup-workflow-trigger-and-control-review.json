@@ -1,0 +1,66 @@
+[
+  {
+    "workflow": "pon-history-epoch-v1-native.yml",
+    "dependency_path_filters": {
+      "scripts/ci/check_collected_unit_empty_v1.py": [
+        "scripts/ci/check_collected_unit_empty_v1.py"
+      ],
+      "scripts/ci/test_collected_unit_empty_v1.py": [
+        "scripts/ci/test_collected_unit_empty_v1.py"
+      ],
+      "formal/pon-nakamoto-v1/bounded_process.py": [
+        "formal/pon-nakamoto-v1/bounded_process.py"
+      ]
+    },
+    "prior_native_control_gates": 1,
+    "guarded_traps": 1
+  },
+  {
+    "workflow": "pon-native-campaign-qualification.yml",
+    "dependency_path_filters": {
+      "scripts/ci/check_collected_unit_empty_v1.py": [
+        "scripts/ci/check_collected_unit_empty_v1.py"
+      ],
+      "scripts/ci/test_collected_unit_empty_v1.py": [
+        "scripts/ci/test_collected_unit_empty_v1.py"
+      ],
+      "formal/pon-nakamoto-v1/bounded_process.py": [
+        "formal/pon-nakamoto-v1/bounded_process*.py"
+      ]
+    },
+    "prior_native_control_gates": 1,
+    "guarded_traps": 2
+  },
+  {
+    "workflow": "pon-pure-admission-daa-v2.yml",
+    "dependency_path_filters": {
+      "scripts/ci/check_collected_unit_empty_v1.py": [
+        "scripts/ci/**"
+      ],
+      "scripts/ci/test_collected_unit_empty_v1.py": [
+        "scripts/ci/**"
+      ],
+      "formal/pon-nakamoto-v1/bounded_process.py": [
+        "formal/pon-nakamoto-v1/bounded_process.py"
+      ]
+    },
+    "prior_native_control_gates": 1,
+    "guarded_traps": 1
+  },
+  {
+    "workflow": "pon-pure-history-raw-joint.yml",
+    "dependency_path_filters": {
+      "scripts/ci/check_collected_unit_empty_v1.py": [
+        "scripts/ci/check_collected_unit_empty_v1.py"
+      ],
+      "scripts/ci/test_collected_unit_empty_v1.py": [
+        "scripts/ci/test_collected_unit_empty_v1.py"
+      ],
+      "formal/pon-nakamoto-v1/bounded_process.py": [
+        "formal/pon-nakamoto-v1/bounded_process*.py"
+      ]
+    },
+    "prior_native_control_gates": 1,
+    "guarded_traps": 2
+  }
+]

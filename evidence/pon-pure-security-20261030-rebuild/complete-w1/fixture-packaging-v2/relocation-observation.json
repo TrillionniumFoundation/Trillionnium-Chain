@@ -1,0 +1,10 @@
+{
+  "schema": "pon-w1-packaging-local-relocation-v1",
+  "initial_rename_result": "OSError [Errno 18] Invalid cross-device link",
+  "initial_rename_changed_source": false,
+  "recovery": "copy exact bytes to scratch, check both SHA256, then remove monolithic object from final tree",
+  "whole_gzip_sha256": "0503d0e802eebd8ca0c5cfd5f54d66085c7dfe3f1fb4f523d568809c0a3b0056",
+  "backup_bytes": 13906979,
+  "monolithic_receipt_in_final_tree": false,
+  "proof_generated": false
+}

@@ -1,0 +1,11 @@
+Diff in /workspace/scratch/f4a65c4581e7/pon-security-work/trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs:18:
+ mod producer_candidate_tests;
+ pub mod public_product;
+ pub mod rejection_cache;
+-pub mod structured;
+ #[cfg(test)]
+ mod statement_boundaries;
++pub mod structured;
+ #[cfg(feature = "transparent-w1-admission-research")]
+ pub mod transparent_admission;
+ 

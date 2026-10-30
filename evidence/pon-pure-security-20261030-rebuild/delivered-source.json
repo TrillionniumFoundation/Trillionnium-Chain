@@ -1,0 +1,152 @@
+{
+  "schema": "pon-pure-security-rebuild-delivered-source-v1",
+  "base_commit": "540d72356a921da31dde1113537382e5c0f0c4fd",
+  "scope": "changed non-evidence files in this delivery; no whole-commit execution attribution",
+  "files": [
+    {
+      "path": ".github/workflows/pon-pure-admission-daa-v2.yml",
+      "bytes": 8672,
+      "sha256": "613f9b406a8a82539629c259263fdea1b94ecaf89d9fba7d2a25985e9dade35a"
+    },
+    {
+      "path": ".github/workflows/pon-w1-audit-one-research.yml",
+      "bytes": 6811,
+      "sha256": "5adf6bf751a3e2a3bc4f7bd5c0bd64afc1452947d9811c1559593652f9090e15"
+    },
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "bytes": 584283,
+      "sha256": "e1ea0942a406d37cda4195f75d315edc70e8dcf405c3c4ff947e3e2f2189d525"
+    },
+    {
+      "path": "scripts/ci/check_legal_ticket_cost_v5.py",
+      "bytes": 25719,
+      "sha256": "a8d6c0c48e044a1835b4eedabf5362872ef163ac85e09aa7b4f7d0a3a66d5b99"
+    },
+    {
+      "path": "scripts/ci/check_pure_pon_fresh_caller_v1.py",
+      "bytes": 9735,
+      "sha256": "6979921db9edf5d10856c8ca38beba59d49df483eebe727f8894c33cbcbf88f9"
+    },
+    {
+      "path": "scripts/ci/prepare_w1_audit_one_fixture.py",
+      "bytes": 13391,
+      "sha256": "b66b5b68513a5922158c0c66aa9f27b7e3c5a535b90e82376376f4e9654a9a09"
+    },
+    {
+      "path": "scripts/ci/read_pure_fixed_host_client_v1.py",
+      "bytes": 7345,
+      "sha256": "91d15bbeae56ce0a5eeb11d191e2b39cb19ee285b8d08162a8638d303a877d8e"
+    },
+    {
+      "path": "scripts/ci/run_pure_pon_admission_daa_v2.py",
+      "bytes": 27897,
+      "sha256": "b20bd191ac6d8de036a6f94a8ad069d72ec0cb061d77945d96e8c90729b8226e"
+    },
+    {
+      "path": "scripts/ci/test_check_pure_pon_fresh_caller_v1.py",
+      "bytes": 7922,
+      "sha256": "4786b8fc57f485fc4cb91153978141a15660e9bd0b96ae40d1c15cdba1d0e6ec"
+    },
+    {
+      "path": "scripts/ci/test_legal_ticket_cost_diagnostics_v1.py",
+      "bytes": 7924,
+      "sha256": "0b6ecc0e97a496c46dae1776790d30de7386ef4f2f0c2de7d3648a0cd5ac8bc9"
+    },
+    {
+      "path": "scripts/ci/test_legal_ticket_cost_v5.py",
+      "bytes": 16590,
+      "sha256": "a3c44ef72b8f6d060ad45c88cac2bff5d90bed2aaeac44d975a17aea24310a1a"
+    },
+    {
+      "path": "scripts/ci/test_prepare_w1_audit_one_fixture.py",
+      "bytes": 15063,
+      "sha256": "f17136bb859184198f86de078b77ddb2f2cac1ce8a5cd1ebb562b992d49635cc"
+    },
+    {
+      "path": "scripts/ci/test_read_pure_fixed_host_client_v1.py",
+      "bytes": 14351,
+      "sha256": "f8568ec5f68e39f236b00a08b768a80f2bfef273aac5bfc5e8be8a63cbc94c02"
+    },
+    {
+      "path": "scripts/ci/test_run_pure_pon_admission_daa_v2.py",
+      "bytes": 16009,
+      "sha256": "b023fdd6a5cd3382c4a9d0b2043a599c1a405ca521fd124e6d435c95e1038210"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/README.md",
+      "bytes": 11539,
+      "sha256": "064171836393a7cc92c113c1299e4bca1003013327c204c04ef8f8b966d63b07"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/check_audit_one.py",
+      "bytes": 13037,
+      "sha256": "1e65011b0d14173da05280ec769ae1850545a51bda4277fd71492fc4af8351ab"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/audit_one.rs",
+      "bytes": 11828,
+      "sha256": "0dd42e44a8c9295f276d263603c9985bfcb6c6b7391a8bc3ce9c052f5f0a2802"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/claimed_context.rs",
+      "bytes": 3932,
+      "sha256": "782161a11f96afae927f40ee9225f3e8a39a876371cb7708fc26445a7b645be8"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/main.rs",
+      "bytes": 17128,
+      "sha256": "152a2ddebcd88aabd73b852c1768c9d9f51066810d808874de9f08ea59cf0fbc"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_check_audit_one.py",
+      "bytes": 8158,
+      "sha256": "204ff6f0c69ebcc67b123ac002bef48b4336375b60a939e320034a7d458af5aa"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "bytes": 77194,
+      "sha256": "bdfca33adb3b2255ca338f8bceeb6d1111ba3f5977a8306858e08e152a14fe37"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/statement_boundaries.rs",
+      "bytes": 5504,
+      "sha256": "4e03678b595de74ec6556c6b1db8c1ea2230dd0660d7c7a97a910c142bd1a496"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "bytes": 341407,
+      "sha256": "81943b9ea1818a68b78ddf258a77d2a05f645127acad03cb359a88ed21988348"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "bytes": 321763,
+      "sha256": "a78d65f9c83b66f72590b9fb24bc0fa6ca26fbab19cab947172aad1022b6a728"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs",
+      "bytes": 43114,
+      "sha256": "bee5ffbf1a3b9def78c444fd452fb7d2eafc301c91b9bc15eb81b0474bfc8b16"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/pure_pon_pressure_v2.rs",
+      "bytes": 55981,
+      "sha256": "00f61b4123d326d91e5d5b7973ef0f71e55190838af2cb3e7ad5cf562a5d9658"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/support/pure_history_client_v1.rs",
+      "bytes": 7756,
+      "sha256": "f96b0fcf4f8e345f777336804f6dbd3017518899fd26c0a50c81da67eae23eca"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/support/pure_pressure_v2.rs",
+      "bytes": 33316,
+      "sha256": "27b4a5ca19f90153c317b4a7ef4790c08b16fa6a612bd12f8be0e6ada2ed4911"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/support/pure_receiver_owner_v1.rs",
+      "bytes": 58897,
+      "sha256": "a89c66d710518853b2fca261758c9f64d196967f83cd3f961d1ab975a20998e5"
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "budget_seconds": 600,
+  "child_ownership": "direct subprocess with new session; only owned PID/process group signalled",
+  "command": [
+    "/workspace/scratch/301262829a43/pon-build-inputs/unpacked/toolchain/bin/cargo",
+    "clippy",
+    "--offline",
+    "--locked",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--config",
+    "profile.test.package.trnm-pon-node.opt-level=0",
+    "-p",
+    "trnm-pon-node",
+    "--lib",
+    "--tests",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "deadline_policy": "terminal-observation-must-not-exceed-budget",
+  "disk_after": {
+    "available_bytes": 400871424,
+    "free_bytes": 2135633920
+  },
+  "disk_before": {
+    "available_bytes": 782929920,
+    "free_bytes": 2517692416
+  },
+  "elapsed_seconds": 274.09005697599787,
+  "finished_unix": 1793148392.3763528,
+  "free_floor_bytes": 268435456,
+  "log_limit_bytes": 33554432,
+  "log_sha256": "ed7a9faf47ee25c420e0d266717287cfc821ff3b210d70ec4b6989e684347d70",
+  "max_rss_kib": 1321588,
+  "native_returncode": 0,
+  "outcome": "EXIT_ZERO",
+  "owned_namespace_pid": 14,
+  "passed": true,
+  "reported_system_seconds": 30.37479,
+  "reported_user_seconds": 240.871291,
+  "samples_sha256": "97008f2bcc0e5cde036095e5159359bc205348e3af691892710620a58b460522",
+  "started_unix": 1793148118.2862928,
+  "terminal_observed_elapsed_seconds": 274.0898975500022,
+  "termination_reason": null,
+  "uid": 0,
+  "wait4_status": 0
+}
