@@ -131,10 +131,14 @@ fn signing_domain_bytes_and_canonical_input_have_no_implicit_authority() {
         .is_err());
     mutated = signed.clone();
     mutated.sequence += 1;
-    assert!(mutated.verify_for_recovery(&expected(&pk, &head())).is_err());
+    assert!(mutated
+        .verify_for_recovery(&expected(&pk, &head()))
+        .is_err());
     mutated = signed.clone();
     mutated.public_key[0] ^= 1;
-    assert!(mutated.verify_for_recovery(&expected(&pk, &head())).is_err());
+    assert!(mutated
+        .verify_for_recovery(&expected(&pk, &head()))
+        .is_err());
 
     let original = signed.canonical_bytes();
     for n in [0, 1, 15, original.len() - 1] {
