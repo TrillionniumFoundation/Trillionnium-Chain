@@ -5,6 +5,7 @@ on:
       - fix/pq-pcp2-batch-cheap-replay-expiry-preflight-20261030
       - fix/pq-pcp2-one-budget-discovery-fetch-20261030
       - fix/pq-pcp2-publish-deadline-result-20261030
+      - fix/pq-pcp2-roster-preflight-verified-cost-20261030
   workflow_dispatch:
 permissions:
   contents: read
