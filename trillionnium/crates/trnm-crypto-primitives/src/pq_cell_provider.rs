@@ -379,7 +379,7 @@ mod tests {
         shape.expires_unix_seconds = shape.issued_unix_seconds + 301;
         assert!(SignedPqCellProviderRecordV2::sign(shape, &key()).is_err());
         shape = statement();
-        shape.pinned_request[4..36].fill(0);
+        shape.pinned_request[32..64].fill(0);
         assert!(SignedPqCellProviderRecordV2::sign(shape, &key()).is_err());
     }
 
