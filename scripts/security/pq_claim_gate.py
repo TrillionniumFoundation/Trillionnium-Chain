@@ -7,6 +7,7 @@ complete authority inventory and external acceptance are still required.
 Self-asserted W1 PQ-128 flags are refused, not treated as external review.
 """
 import argparse
+import hashlib
 import json
 from pathlib import Path
 
@@ -99,6 +100,38 @@ def load_unique_json(path: Path) -> dict:
                       object_pairs_hook=require_unique,
                       parse_constant=reject_nonstandard_number)
 
+def verify_frozen_w1_guest_bytes(root: Path, blockers: list) -> None:
+    """Bind the known research manifest to actual local guest source bytes.
+
+    This does not attest a RISC Zero proof or the external build toolchain.
+    All eight allowed relative paths and expected hashes are independently
+    frozen above; the guest cannot self-authorize a changed digest map.
+    """
+    manifest_directory = Path(PATHS["w1_backend"]).parent
+    trusted_root = root.resolve()
+    for source_rel, expected in PINNED_W1_RESEARCH_PARAMETERS["guest_source_sha256"].items():
+        path = root / manifest_directory / source_rel
+        try:
+            resolved = path.resolve(strict=True)
+            if not resolved.is_relative_to(trusted_root):
+                blockers.append({
+                    "kind": "escaped_w1_guest_source", "path": str(path),
+                })
+                continue
+            observed = hashlib.sha256(resolved.read_bytes()).hexdigest()
+        except (OSError, RuntimeError):
+            blockers.append({
+                "kind": "unreadable_w1_guest_source", "path": str(path),
+            })
+            continue
+        if observed != expected:
+            blockers.append({
+                "kind": "w1_guest_source_digest_mismatch",
+                "path": str(path),
+                "source": source_rel,
+            })
+
+
 def inspect(root: Path) -> dict:
     blockers = []
     for label, rel in PATHS.items():
@@ -140,6 +173,7 @@ def inspect(root: Path) -> dict:
                                 "path": rel,
                                 "field": field,
                             })
+                    verify_frozen_w1_guest_bytes(root, blockers)
                 # A truthful pq_128=false is not enough: a changed receipt
                 # type or a permissive fallback could silently weaken the
                 # research proof boundary while the public flags remain false.
@@ -204,6 +238,8 @@ def main():
         "invalid_production_flag_type", "unreviewed_pq128_proof_claim",
         "duplicate_proof_json_member", "duplicate_consensus_json_member",
         "unreviewed_w1_research_parameter_change",
+        "unreadable_w1_guest_source", "escaped_w1_guest_source",
+        "w1_guest_source_digest_mismatch",
         "unsupported_proof_receipt_kind", "invalid_proof_policy_flag_type",
         "unsafe_proof_policy_enabled",
         "production_claim_requires_independent_pq_review") for item in report["known_open_findings"]):

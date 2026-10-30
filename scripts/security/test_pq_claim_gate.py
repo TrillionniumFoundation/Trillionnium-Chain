@@ -29,6 +29,15 @@ class ClaimGateTests(unittest.TestCase):
             else:
                 target.write_text(json.dumps({f: False for f in module.PRODUCTION_FLAGS}), encoding="utf-8")
 
+        # Original source-bound fixture: no synthetic preimage can pass the
+        # SHA-256 manifest gate. Copy the unchanged, real pinned guest bytes.
+        for source_rel in module.PINNED_W1_RESEARCH_PARAMETERS["guest_source_sha256"]:
+            relative = Path(module.PATHS["w1_backend"]).parent / source_rel
+            original = (SCRIPT.parents[2] / relative).resolve()
+            destination = (self.root / relative).resolve()
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            destination.write_bytes(original.read_bytes())
+
     def kinds(self):
         return {row["kind"] for row in module.inspect(self.root)["known_open_findings"]}
 
@@ -289,6 +298,50 @@ class ClaimGateTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout)
         self.assertIn("unqualified_proof", result.stdout)
 
+
+    def test_actual_w1_guest_bytes_not_only_declared_manifest_are_pinned(self):
+        import subprocess
+        import sys
+
+        original_relative = "guest/src/main.rs"
+        relative = Path(module.PATHS["w1_backend"]).parent / original_relative
+        source = self.root / relative
+        baseline = source.read_bytes()
+
+        def assert_cli_rejects(kind):
+            self.assertIn(kind, self.kinds())
+            result = subprocess.run(
+                [sys.executable, str(SCRIPT), "--root", str(self.root),
+                 "--assert-unqualified"], capture_output=True,
+                text=True, check=False,
+            )
+            self.assertEqual(result.returncode, 2, result.stdout)
+
+        # Changing the actual relation bytes with an untouched, truthfully
+        # unqualified W1 manifest must still fail before any PQ status claim.
+        source.write_bytes(baseline + b"\\n")
+        assert_cli_rejects("w1_guest_source_digest_mismatch")
+        source.write_bytes(baseline)
+
+        # A missing file is not permitted to inherit a prior digest.
+        source.unlink()
+        assert_cli_rejects("unreadable_w1_guest_source")
+        source.write_bytes(baseline)
+
+        # A path redirected outside the reviewed tree is not an identity.
+        source.unlink()
+        source.symlink_to("/etc/hosts")
+        assert_cli_rejects("escaped_w1_guest_source")
+        source.unlink()
+        source.write_bytes(baseline)
+
+        result = subprocess.run(
+            [sys.executable, str(SCRIPT), "--root", str(self.root),
+             "--assert-unqualified"], capture_output=True,
+            text=True, check=False,
+        )
+        self.assertEqual(result.returncode, 0, result.stdout)
+        self.assertIn("unqualified_proof", result.stdout)
 
     def test_w1_guest_source_and_toolchain_provenance_change_refused(self):
         import subprocess
