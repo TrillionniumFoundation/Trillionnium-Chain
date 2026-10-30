@@ -127,7 +127,21 @@ impl SignedPqRecoveryWitnessV1 {
         &self,
         trusted: &ExternalRecoveryExpectationV1<'_>,
     ) -> Result<(), PqRecoveryWitnessError> {
+        self.preflight_for_recovery(trusted)?;
+        self.verify_signature()
+    }
+
+    // No ML-DSA verification or key expansion here. In a quorum, check every
+    // provided witness for cheap context and shape errors before verifying any
+    // signatures, including invalid extra witnesses.
+    fn preflight_for_recovery(
+        &self,
+        trusted: &ExternalRecoveryExpectationV1<'_>,
+    ) -> Result<(), PqRecoveryWitnessError> {
         self.check_shape()?;
+        if self.signature.len() != SIGNATURE_BYTES {
+            return Err(PqRecoveryWitnessError::InvalidSignatureEncoding);
+        }
         if trusted.trusted_ml_dsa65_public_key.len() != PUBLIC_KEY_BYTES
             || trusted.genesis == [0; 32]
             || trusted.outstanding_challenge == [0; 32]
@@ -158,6 +172,10 @@ impl SignedPqRecoveryWitnessV1 {
         if self.observed != *trusted.actual_local {
             return Err(PqRecoveryWitnessError::LocalRollbackOrDivergence);
         }
+        Ok(())
+    }
+
+    fn verify_signature(&self) -> Result<(), PqRecoveryWitnessError> {
         let signature = Signature::<MlDsa65>::try_from(self.signature.as_slice())
             .map_err(|_| PqRecoveryWitnessError::InvalidSignatureEncoding)?;
         let encoded = EncodedVerifyingKey::<MlDsa65>::try_from(self.public_key.as_slice())
@@ -421,7 +439,15 @@ pub fn verify_pq_recovery_quorum_v1(
     if receipts.len() > roster.len() {
         return Err(PqRecoveryQuorumErrorV1::UntrustedWitness);
     }
+    // A minority of witnesses cannot authorize recovery; do not spend any
+    // signature-verification work before rejecting it.
+    if receipts.len() < policy.threshold {
+        return Err(PqRecoveryQuorumErrorV1::InsufficientQuorum);
+    }
     let mut seen = [false; MAX_PQ_RECOVERY_QUORUM_SIGNERS_V1];
+    // First preflight the entire batch. One forged early signature must not
+    // force ML-DSA work before a later cheap replay, expiry, duplicate or
+    // out-of-roster rejection can be discovered.
     for receipt in receipts {
         let index = roster
             .iter()
@@ -442,10 +468,13 @@ pub fn verify_pq_recovery_quorum_v1(
             now_unix_s: policy.now_unix_s,
             actual_local: policy.actual_local,
         };
-        receipt.verify_for_recovery(&expectation)?;
+        receipt.preflight_for_recovery(&expectation)?;
     }
-    if receipts.len() < policy.threshold {
-        return Err(PqRecoveryQuorumErrorV1::InsufficientQuorum);
+    // Every presented witness has passed the complete cheap policy preflight.
+    // Now, and only now, perform the costly ML-DSA signature checks. A
+    // signature failure still rejects the whole batch, not just one signer.
+    for receipt in receipts {
+        receipt.verify_signature()?;
     }
     Ok(ObservedPqRecoveryQuorumV1 {
         verified_signers: receipts.len(),
