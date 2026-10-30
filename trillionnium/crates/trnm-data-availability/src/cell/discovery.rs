@@ -608,7 +608,6 @@ pub mod pq_reply_v2 {
         Ok((providers, observation))
     }
 
-
     /// Experimental, in-memory PCP2-only service. All source records must have
     /// been signed beforehand; this function authenticates them against an
     /// independently supplied roster *before* accepting any network clients.
@@ -875,7 +874,6 @@ pub mod pq_reply_v2 {
             }
         }
 
-
         #[test]
         fn actual_readonly_pq_rendezvous_accepts_pinned_proof_and_refuses_cdq1() {
             use std::io::{Read, Write};
@@ -959,20 +957,39 @@ pub mod pq_reply_v2 {
             assert_eq!(providers.len(), 1);
             assert_eq!(providers[0].sequence(), 11);
             assert_eq!(observation.connection_attempts, 1);
-            assert_eq!(observation.received_response_bytes, (response.len() + 9) as u64);
+            assert_eq!(
+                observation.received_response_bytes,
+                (response.len() + 9) as u64
+            );
 
             let mut legacy = TcpStream::connect(bootstrap).unwrap();
-            legacy.set_read_timeout(Some(Duration::from_secs(2))).unwrap();
+            legacy
+                .set_read_timeout(Some(Duration::from_secs(2)))
+                .unwrap();
             let mut query = b"CDQ1".to_vec();
             query.push(1);
             query.extend(192u16.to_be_bytes());
             query.extend(request().encode());
             legacy.write_all(&query).unwrap();
             let mut header = [0; 9];
-            legacy.read_exact(&mut header).unwrap();
-            assert_eq!(&header[..4], b"PCS2");
-            assert_eq!(header[4], 1);
-            assert_eq!(&header[5..], &[0; 4]);
+            // A server may reset a refused classical connection while the
+            // unconsumed legacy request body is still in its TCP receive queue.
+            // Explicit PCS2 denial *or* connection reset/EOF is a rejection.
+            match legacy.read_exact(&mut header) {
+                Ok(()) => {
+                    assert_eq!(&header[..4], b"PCS2");
+                    assert_eq!(header[4], 1);
+                    assert_eq!(&header[5..], &[0; 4]);
+                }
+                Err(error)
+                    if matches!(
+                        error.kind(),
+                        std::io::ErrorKind::ConnectionReset
+                            | std::io::ErrorKind::UnexpectedEof
+                            | std::io::ErrorKind::ConnectionAborted
+                    ) => {}
+                Err(error) => panic!("unexpected legacy refusal error: {error}"),
+            }
 
             let served = server.join().unwrap();
             assert_eq!(served.connections, 2);
