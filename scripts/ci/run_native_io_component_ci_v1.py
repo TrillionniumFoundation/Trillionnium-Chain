@@ -91,6 +91,7 @@ def stage(fd, name, command, seconds):
 
 
 def run(args):
+    component.select_profile(getattr(args, 'profile', component.PROFILE))
     out, target, cargo = map(component.canonical, (args.out, args.target_dir, args.cargo))
     component.digest(args.expected_head, 40)
     component.digest(args.expected_tree, 40)
@@ -98,7 +99,7 @@ def run(args):
         and not out.is_relative_to(target) and not target.is_relative_to(out),
         'CI_DISJOINT_FRESH_PATHS_REQUIRED')
     parent, fd = component.new_directory(out)
-    result = dict(schema=SCHEMA, profile=component.PROFILE, component_only=True,
+    result = dict(schema=component.protocol().ci_schema, profile=component.protocol().profile, component_only=True,
         expected_head=args.expected_head, expected_tree=args.expected_tree,
         original_control_plan=component.PLAN, original_build_seconds=component.BUILD_SECONDS,
         original_collector_seconds=component.RUN_SECONDS, reader_seconds=READER_SECONDS,
@@ -110,7 +111,7 @@ def run(args):
             'full independent-reader, 4097 identity, public fairness, model, merge or production qualification',
         **component.component_flags())
     prepared, execution = out/'prepared', out/'execution'
-    common = ['--profile', component.PROFILE, '--expected-head', args.expected_head,
+    common = ['--profile', component.protocol().profile, '--expected-head', args.expected_head,
         '--expected-tree', args.expected_tree]
     collector = [sys.executable, '-B', str(ROOT/'scripts/run_pon_native_io_component.py')]
     try:
@@ -125,7 +126,7 @@ def run(args):
         pin, value = document(prepared/'prepared.json')
         inventory, _ = document(prepared/'artifact-files.json', component.CAPS['inventory_bytes'])
         result['documents'].update(prepared=pin, prepared_inventory=inventory)
-        require(value['schema'] == component.PREPARED and value['profile'] == component.PROFILE
+        require(value['schema'] == component.protocol().prepared and value['profile'] == component.protocol().profile
             and value['head'] == args.expected_head and value['tree'] == args.expected_tree
             and value['capture_complete'] is True and value['selector_executed'] is False
             and value['failure'] is None, 'CI_REAL_PUBLIC_PREPARATION_REQUIRED')
@@ -138,19 +139,20 @@ def run(args):
         execution_pin, value = document(execution/'results.json')
         executed_inventory, _ = document(execution/'artifact-files.json', component.CAPS['inventory_bytes'])
         result['documents'].update(execution=execution_pin, execution_inventory=executed_inventory)
-        require(value['schema'] == component.EXECUTION and value['complete_success'] is True
+        require(value['schema'] == component.protocol().execution and value['complete_success'] is True
             and value['selector_executed'] is True and value['failure'] is None,
             'CI_REAL_PUBLIC_EXECUTION_REQUIRED')
         no_full_qualification(value)
         row, raw = stage(fd, 'readback', [sys.executable, '-B',
-            str(ROOT/'scripts/ci/check_pon_native_io_component.py'), '--out', str(execution),
+            str(ROOT/'scripts/ci/check_pon_native_io_component.py'),
+            '--profile', component.protocol().profile, '--out', str(execution),
             '--prepared', str(prepared/'prepared.json'), '--inventory-sha256', executed_inventory['sha256'],
             '--prepared-sha256', pin['sha256'], '--prepared-inventory-sha256', inventory['sha256'],
             '--expected-head', args.expected_head, '--expected-tree', args.expected_tree], READER_SECONDS)
         result['stages'].append(row)
         require(row['process_complete'], 'CI_ORIGINAL_HOST_READBACK_FAILED')
         readback = component.strict_json(raw)
-        require(readback['schema'] == reader.SCHEMA and readback['profile'] == component.PROFILE
+        require(readback['schema'] == component.protocol().readback_schema and readback['profile'] == component.protocol().profile
             and readback['mechanism_readback_complete'] is True, 'CI_FINITE_READBACK_REQUIRED')
         component.typed([readback['prefix_paid_unique'], readback['final_paid_unique'],
             readback['actual_used_Node_roles']], [2, 6, [0, 5, 6]])
@@ -177,10 +179,11 @@ def run(args):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--profile', choices=tuple(component.PROTOCOLS), default=component.PROFILE)
     for name in ('out', 'target-dir', 'cargo'): parser.add_argument('--'+name, required=True, type=Path)
     for name in ('expected-head', 'expected-tree'): parser.add_argument('--'+name, required=True)
     result = run(parser.parse_args())
-    print(json.dumps(dict(schema=SCHEMA, component_only=True,
+    print(json.dumps(dict(schema=component.protocol().ci_schema, profile=component.protocol().profile, component_only=True,
         complete_success=result['complete_success'], failure=result['failure'],
         full_route_ready=False, **component.component_flags()), sort_keys=True))
     return 0 if result['complete_success'] else 1

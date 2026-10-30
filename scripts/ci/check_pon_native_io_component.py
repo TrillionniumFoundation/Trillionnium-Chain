@@ -120,7 +120,7 @@ def child_terminal(value, code):
 
 
 def first_dispatch(bundle, dispatch, caller, native_pid, binary):
-    require(dispatch['schema'] == component.DISPATCH and dispatch['domain'] == component.DOMAIN
+    require(dispatch['schema'] == component.protocol().dispatch and dispatch['domain'] == component.protocol().domain
         and dispatch['component_only'] is True, 'COMPONENT_FIRST_DISPATCH_DOMAIN')
     descriptors = [positive(dispatch[key], 3, 2**31-1)
         for key in ('executable_fd', 'execution_directory_fd', 'cwd_directory_fd')]
@@ -157,7 +157,7 @@ def first_dispatch(bundle, dispatch, caller, native_pid, binary):
 
 
 def seed_facts(value):
-    require(value['schema'] == component.NATIVE_SCHEMA
+    require(value['schema'] == component.protocol().native_schema
         and len(value['seed_packets']) == 4 and len(value['business_packets']) == 21,
         'COMPONENT_ORIGINAL_PREPARATION_DENOMINATOR')
     positive(value['cpu_ns'], 1)
@@ -338,13 +338,46 @@ def root_lifecycle(row):
     positive(row['callback_operations'], observed_admissions, 2**64-1)
 
 
+def reservation_report_bindings(value, indices):
+    """Bind each V2 stage's storage metadata before its actual inode replay.
+
+    This checks consistency only. root_terminal still requires the real PID,
+    held root/file identities, complete reservation history and actual bytes.
+    """
+    require(component.protocol() is component.V2, 'RESERVATION_V2_REPORT_PROFILE_REQUIRED')
+    require(type(indices) is tuple and all(type(index) is int for index in indices)
+            and indices in ((0,), (5, 6)), 'RESERVATION_V2_FIXED_STAGE_ROLES')
+    require(type(value) is dict and {'schema', 'native_io_storage_profile',
+            'native_io_terminals_healthy_closed', 'native_io_terminal_roots'} <= set(value),
+            'RESERVATION_V2_REPORT_FIELDS')
+    same(value['schema'], component.protocol().native_schema)
+    same(value['native_io_storage_profile'], component.protocol().storage_profile)
+    same(value['native_io_terminals_healthy_closed'], True)
+    roots = value['native_io_terminal_roots']
+    require(type(roots) is list and len(roots) == len(indices)
+            and all(type(root) is dict and 'index' in root for root in roots),
+            'RESERVATION_V2_STAGE_ROOT_CENSUS')
+    same([root['index'] for root in roots], list(indices))
+    return roots
+
+
 def root_terminal(bundle, role, native_pid, layout):
     exact_fields(role, ('index', 'role', 'registered_vfs', 'receipt'),
                  'COMPONENT_ROOT_ROLE_EXACT_FIELDS')
     index = positive(role['index'], 0, 6)
     require(index in ROLES and role['role'] == ROLES[index], 'COMPONENT_ACTUAL_USED_NODE_ROLE')
     row = role['receipt']
-    exact_fields(row, ROOT_FIELDS, 'COMPONENT_ROOT_EXACT_FIELDS')
+    is_v2 = component.protocol() is component.V2
+    if is_v2:
+        from check_pon_native_io_reservation_v2 import check_root
+        check_root(row)
+        same(layout['schema'], component.protocol().storage_profile)
+        same(layout['sqlite_domain'], component.protocol().root_schema)
+        same(layout['owner_pid'], native_pid)
+        same(role['registered_vfs'], 'trnm-pn1-owned-inode-reservation-v2-'
+             + str(native_pid) + '-' + str(index + 1))
+    else:
+        exact_fields(row, ROOT_FIELDS, 'COMPONENT_ROOT_EXACT_FIELDS')
     positive(row['owner_pid'], 1, 2**32-1)
     positive(row['root_device'], 0, 2**64-1)
     positive(row['root_inode'], 1, 2**64-1)
@@ -353,7 +386,7 @@ def root_terminal(bundle, role, native_pid, layout):
     same(row['denied_operations'], 0)
     same(row['quarantined_actual_states'], 0)
     for key in ('secondary_failures', 'quarantined_sqlite_codes'): same(row[key], [])
-    require(row['schema'] == 'pn1-owned-sqlite-real-inode-v1'
+    require(row['schema'] == component.protocol().root_schema
         and row['owner_pid'] == native_pid and row['logical_bytes_limit'] == 48*MIB
         and row['retained_object_limit'] == 3 and row['failed'] is False
         and row['first_failure'] is row['first_failure_sqlite_code'] is None
@@ -368,7 +401,8 @@ def root_terminal(bundle, role, native_pid, layout):
     same(declared['index'], index)
     same(declared['root_dev_ino'], [row['root_device'], row['root_inode']])
     same(declared['registered_vfs'], role['registered_vfs'])
-    root_lifecycle(row)
+    if not is_v2:
+        root_lifecycle(row)
     linked = set()
     for obj in row['objects']:
         if obj['linked']:
@@ -412,7 +446,7 @@ def durable_packets(bundle, directory, facts):
 
 
 def phase_readback(bundle, value, facts, caller, executable, native_pid, resources):
-    require(value['schema'] == component.NATIVE_SCHEMA and value['kind'] == 'phase'
+    require(value['schema'] == component.protocol().native_schema and value['kind'] == 'phase'
         and value['mode'] == MODE and value['parent_pid'] == native_pid,
         'COMPONENT_FINITE_PHASE_IDENTITY')
     same(value['plan'], component.PLAN)
@@ -423,7 +457,7 @@ def phase_readback(bundle, value, facts, caller, executable, native_pid, resourc
         start, end = positive(value[stage+'_epoch_ns']), positive(value[stage+'_end_ns'])
         same(end-start, component.PLAN[stage+'_seconds']*1_000_000_000)
         same(bundle.json(PHASE+stage+'-start.json'),
-             dict(schema=component.NATIVE_SCHEMA, epoch_ns=start, end_ns=end))
+             dict(schema=component.protocol().native_schema, epoch_ns=start, end_ns=end))
     previous = original.flow(value['initial_flow'], settled=True)
     initial_work, post_prefix_work, final_work = [
         original.completion_work_observation(value[key])
@@ -557,7 +591,7 @@ def validate(folder, inventory_sha, prepared_path, prepared_sha, prepared_invent
         fd = held_directory(folder)
         bundle = component.ComponentBundle(folder, inventory_sha, directory_fd=fd, kind='execute')
         result = bundle.json('results.json')
-        require(result['schema'] == component.EXECUTION and result['profile'] == component.PROFILE
+        require(result['schema'] == component.protocol().execution and result['profile'] == component.protocol().profile
             and result['complete_success'] is result['selector_executed'] is True
             and result['failure'] is None and result['component_readback_complete'] is False,
             'COMPONENT_COMPLETE_PRODUCER_PROCESS_REQUIRED')
@@ -576,9 +610,9 @@ def validate(folder, inventory_sha, prepared_path, prepared_sha, prepared_invent
         terminal = strict_json(checked_member(claim_fd, 'terminal.json', retain=True)[1])
         same(claim, bundle.json('claim-observed.json'))
         same(terminal, bundle.json('claim-terminal-observed.json'))
-        require(link['schema'] == component.LINK and link['domain'] == component.DOMAIN
-            and claim['schema'] == component.CLAIM and terminal['schema'] == component.TERMINAL
-            and claim['domain'] == terminal['domain'] == component.DOMAIN,
+        require(link['schema'] == component.protocol().link and link['domain'] == component.protocol().domain
+            and claim['schema'] == component.protocol().claim and terminal['schema'] == component.protocol().terminal
+            and claim['domain'] == terminal['domain'] == component.protocol().domain,
             'COMPONENT_ORIGINAL_CLAIM_DOMAIN')
         binding = dict(source.binding, execution_root=str(folder),
             execution_identity=identity(os.fstat(bundle.fd)), claim_identity=identity(os.fstat(claim_fd)))
@@ -604,11 +638,11 @@ def validate(folder, inventory_sha, prepared_path, prepared_sha, prepared_invent
         same(step, result['step'])
         native_pid = child_terminal(step['native_process_owner'], 0)
         same(step['command'], [str(folder/'frozen'/(component.TARGET+'.bin')), '--exact',
-             component.SELECTOR, '--ignored', '--nocapture', '--test-threads=1'])
+             component.protocol().selector, '--ignored', '--nocapture', '--test-threads=1'])
         same(step['outer_stage_timeout_seconds'], component.RUN_SECONDS)
         stdout = bundle.raw(step['stdout']).decode('utf-8')
         require(len(re.findall(r'^running 1 test$', stdout, re.M)) == 1
-            and re.search(r'^test '+component.SELECTOR+r' \.\.\. ok$', stdout, re.M)
+            and re.search(r'^test '+component.protocol().selector+r' \.\.\. ok$', stdout, re.M)
             and len(re.findall(r'^test result:', stdout, re.M)) == 1
             and re.search(r'^test result: ok\. 1 passed; 0 failed; 0 ignored;', stdout, re.M),
             'COMPONENT_EXACT_ORIGINAL_FINITE_SELECTOR_REQUIRED')
@@ -628,7 +662,7 @@ def validate(folder, inventory_sha, prepared_path, prepared_sha, prepared_invent
         for label in ('inputs', 'source', 'resources'):
             same(result['post_observations'][label], dict(success=True, failure=None))
         top, plan = bundle.json('raw/report.json'), bundle.json('raw/plan.json')
-        require(top['schema'] == component.NATIVE_SCHEMA and top['native_mechanism_complete'] is True,
+        require(top['schema'] == component.protocol().native_schema and top['native_mechanism_complete'] is True,
                 'COMPONENT_NATIVE_MECHANISM_INCOMPLETE')
         same(top['plan'], component.PLAN)
         flags(top)
@@ -645,13 +679,17 @@ def validate(folder, inventory_sha, prepared_path, prepared_sha, prepared_invent
         pids = phase_readback(bundle, phase, facts,
             dict(value=plan['execution_caller'], raw_root=step['fd_dispatch']['actual_raw_root']),
             executable, native_pid, resources)
-        roles = bundle.json('raw/preparation.json')['native_io_terminal_roots']+phase['native_io_terminal_roots']
+        preparation = bundle.json('raw/preparation.json')
+        if component.protocol() is component.V2:
+            roles = reservation_report_bindings(preparation, (0,)) + reservation_report_bindings(phase, (5, 6))
+        else:
+            roles = preparation['native_io_terminal_roots']+phase['native_io_terminal_roots']
         same(sorted(root_terminal(bundle, row, native_pid, top['native_io_storage']) for row in roles), [0, 5, 6])
         durable_packets(bundle, 'raw/honest-miner', facts)
         for index in (5, 6): durable_packets(bundle, 'raw/'+ROLES[index], facts[:4])
         bundle.recheck()
         source.recheck()
-        return dict(schema=SCHEMA, profile=component.PROFILE, mechanism_readback_complete=True,
+        return dict(schema=component.protocol().readback_schema, profile=component.protocol().profile, mechanism_readback_complete=True,
             actual_parent_pid=native_pid, actual_actor_pids=pids, actual_used_Node_roles=[0, 5, 6],
             prefix_paid_unique=2, final_paid_unique=6, ledger=ledger,
             scope='retained original finite local component; trusted operator/toolchain/input, no host attestation',
@@ -665,11 +703,13 @@ def validate(folder, inventory_sha, prepared_path, prepared_sha, prepared_invent
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--profile', choices=tuple(component.PROTOCOLS), default=component.PROFILE)
     for name in ('out', 'prepared'):
         parser.add_argument('--'+name, type=Path, required=True)
     for name in ('inventory-sha256', 'prepared-sha256', 'prepared-inventory-sha256', 'expected-head', 'expected-tree'):
         parser.add_argument('--'+name, required=True)
     args = parser.parse_args()
+    component.select_profile(args.profile)
     print(json.dumps(validate(component.canonical(args.out), args.inventory_sha256,
         component.canonical(args.prepared), args.prepared_sha256, args.prepared_inventory_sha256,
         args.expected_head, args.expected_tree), sort_keys=True))

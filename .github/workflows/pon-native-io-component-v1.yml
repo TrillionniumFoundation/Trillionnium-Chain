@@ -1,4 +1,4 @@
-name: PoN finite native-I/O component
+name: PoN finite native-I/O reservation component v2
 on:
   pull_request:
     paths:
@@ -17,7 +17,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   component:
-    name: existing finite component only (${{ matrix.arch }})
+    name: explicit reservation-v2 finite component (${{ matrix.arch }})
     strategy:
       fail-fast: false
       matrix:
@@ -46,7 +46,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          out="$RUNNER_TEMP/native-io-component-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-${{ matrix.arch }}"
+          out="$RUNNER_TEMP/native-io-reservation-component-v2-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-${{ matrix.arch }}"
           mkdir -m 700 "$out"
           printf 'OUT=%s\n' "$out" >> "$GITHUB_ENV"
           printf 'CARGO_HOME=%s/cargo-native-io-%s-%s-%s\n' "$RUNNER_TEMP" "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" '${{ matrix.arch }}' >> "$GITHUB_ENV"
@@ -55,7 +55,7 @@ jobs:
           tree="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["tested_tree"])' "$out/source-before.json")"
           printf 'EXPECTED_TREE=%s\n' "$tree" >> "$GITHUB_ENV"
           bash scripts/project-preflight.sh --audit 2>&1 | tee "$out/preflight.log"
-          printf '%s\n' 'Component only: existing public prepare, one execution, and original-host reader. Full route remains false. Two actors, two prefix and six final paid identities; no 4097-capacity, full writer/caller/reader, public fairness, model, merge or production qualification. Copied archive inodes cannot authenticate original runtime objects. Original collector resources, Plan and internal deadlines are unchanged.' > "$out/SCOPE.txt"
+          printf '%s\n' 'Explicit reservation-v2 component only: same public prepare, one execution, and original-host reader. Full route remains false. Two actors, two prefix and six final paid identities; no 4097-capacity, full writer/caller/reader, public fairness, model, merge or production qualification. Copied archive inodes cannot authenticate original runtime objects. Fixed 64-KiB logical reservations; original byte/object/event caps, collector resources, Plan and internal deadlines are unchanged. Original V1 selector, schema and failure evidence remain available separately.' > "$out/SCOPE.txt"
       - name: Check reader and one-shot orchestration counterexamples
         shell: bash
         run: |
@@ -70,7 +70,7 @@ jobs:
           rustc +1.95.0 -Vv > "$OUT/rustc-version.txt"
           cargo +1.95.0 -Vv > "$OUT/cargo-version.txt"
           cargo +1.95.0 fetch --locked --manifest-path trillionnium/Cargo.toml --target '${{ matrix.target }}' 2>&1 | tee "$OUT/fetch.log"
-      - name: Run original public preparation, one component and same-host strict reader
+      - name: Run explicit reservation-v2 public preparation, one component and same-host strict reader
         shell: bash
         run: |
           set -euo pipefail
@@ -123,6 +123,7 @@ jobs:
             --setenv="PATH=$PATH" --setenv="CARGO_HOME=$CARGO_HOME" \
             --setenv="RUSTUP_HOME=$(rustup show home)" --setenv=PYTHONDONTWRITEBYTECODE=1 \
             /usr/bin/python3 -B scripts/ci/run_native_io_component_ci_v1.py \
+            --profile pn1-native-io-three-fd-reservation-component-v2 \
             --out "$OUT/component" --target-dir "$TARGET" --cargo "$(command -v cargo)" \
             --expected-head "$EXPECTED_HEAD" --expected-tree "$EXPECTED_TREE" 2>&1 | tee "$OUT/component.log"
       - name: Retain final source verification even for failed or partial runs
@@ -135,7 +136,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: pon-native-io-component-only-${{ matrix.arch }}-${{ env.EXPECTED_HEAD }}-${{ github.run_attempt }}
+          name: pon-native-io-reservation-component-v2-${{ matrix.arch }}-${{ env.EXPECTED_HEAD }}-${{ github.run_attempt }}
           path: ${{ env.OUT }}
           if-no-files-found: error
           retention-days: 30

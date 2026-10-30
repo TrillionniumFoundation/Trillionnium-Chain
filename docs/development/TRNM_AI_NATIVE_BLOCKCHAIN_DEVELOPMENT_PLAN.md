@@ -5805,3 +5805,59 @@ consumption roots. No cheapest-work bound, public fairness, model efficacy,
 whole-chain post-quantum claim or production activation follows. The new
 evidence/documentation commit must receive its own source checks and CI; these
 H5 executions retain their actual tested identity.
+
+### I: versioned finite native-I/O reservations
+
+The next source candidate applies the independently reviewed reservation-v2
+handoff, patch SHA-256
+`70994ee79ead808d3e286ca24762b8e2ab2881ad158717bc310e6187d79e3b5c`,
+to the clean H6 source. It preserves the original V1 API, selector, domains,
+exact-growth accounting and failed observations. In particular, the original
+[G finite component run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40984057075)
+remains a failure: both architectures exhausted the original lifecycle admission
+margin. A new profile must establish its own acceptance.
+
+V2 reserves logical inode growth in fixed 64-KiB quanta before delegation.
+Endpoints are checked before rounding; an observed post-I/O length cannot
+silently create credit. The only initial existing-inode admission is an
+explicit, linked, pre-I/O bind. Original limits remain: 16 MiB per inode,
+three retained objects and 48 MiB per root, seven roots, 1,024 ordinary and
+256 cleanup events, 512 bytes per event and 655,360 serialized event bytes.
+The same process-wide owner claim and permanent registration slots cover V1
+and V2. A deleted but still-open object keeps its reservation until closure.
+
+For three fixed inode generations, at most 768 increasing growth reservations
+can fill their three byte caps. This does not bound an unlimited sequence of
+open, close, recreation or adversarial churn; lifecycle admission still fails
+at its original evidence margin. Exact event replay means exact reservation
+state and recorded lifecycle transitions, not a persisted event for every I/O
+callback. Logical reservations are not allocated-block quotas or authentication
+against a hostile local operator.
+
+The public finite V2 profile keeps the original Plan, 1,200-second build,
+180-second collector, resource contract and three inherited input descriptors.
+Its once-bound profile cannot switch after a default V1 API use. Preparation,
+storage profile, closed-root health and stage roles are explicitly bound; the
+strict reader replays the global event sequence and checks the eight-event
+admission margin at each admission action. The two independently discovered
+impossible histories remain retained counterexamples: excess admission after
+ordinary-event exhaustion and an existing named inode claimed as unlinked.
+
+The initial clean I0 commit is a source candidate, not native acceptance.
+Required fresh checks include all original library controls plus ten new
+reservation controls, one real SQLite small-write/cold-reopen/growth-refusal
+test, both original ignored finite parent controls and their 10/4 child cases,
+the retained selector inventory, original preregistration assertions, complete
+workspace strict lint/formatting and the Python/source controls. Existing
+ignored parent tests must actually be invoked; compilation or ignored counts
+do not demonstrate execution. Each accepted native phase binds its clean
+source and actual executable before and after use, with failures preserved.
+
+Local tests may reuse the inventoried warm target. The actual public 3-FD
+preparer must still create its own fresh target and prove the original host
+resource conditions. If those conditions are unavailable locally, the exact
+failure stays explicit and the versioned x64/ARM64 workflow remains the next
+execution route. No fallback resource record or relaxed deadline is allowed.
+Full writer/caller/independent-reader qualification, 4,097-identity capacity,
+public fairness, model efficacy, merge readiness and production activation
+remain false.

@@ -11,6 +11,8 @@ from __future__ import annotations
 import argparse
 import errno
 from copy import deepcopy
+from dataclasses import dataclass
+from types import MappingProxyType
 import hashlib
 import json
 import os
@@ -62,6 +64,73 @@ FULL_FLAGS = ('whole_writer_qualified', 'original_three_FD_caller_qualified',
 CLAIM_BYTES = 16 * 1024
 BUILD_SECONDS, RUN_SECONDS = 1200, 180
 TARGET_BYTES, TARGET_RESERVE = 6 * 1024**3, 512 * MIB
+
+
+@dataclass(frozen=True)
+class Protocol:
+    profile: str
+    domain: str
+    prepared: str
+    inventory: str
+    execution: str
+    claim: str
+    terminal: str
+    dispatch: str
+    link: str
+    selector: str
+    native_schema: str
+    claim_prefix: str
+    root_schema: str
+    storage_profile: str
+    readback_schema: str
+    ci_schema: str
+
+# Immutable allowlist: a version is selected once before any collection/readback.
+# No profile admits changes to Plan, actors, budgets, resources or deadlines.
+V1 = Protocol(PROFILE, DOMAIN, PREPARED, INVENTORY, EXECUTION, CLAIM, TERMINAL,
+    DISPATCH, LINK, SELECTOR, NATIVE_SCHEMA, 'component-execution-claim-v1-',
+    'pn1-owned-sqlite-real-inode-v1', 'pn1-full4097-seven-held-roots-real-inode-v1',
+    'pon-native-io-three-fd-component-readback-v1', 'pon-native-io-component-ci-v1')
+PROFILE_V2 = 'pn1-native-io-three-fd-reservation-component-v2'
+V2 = Protocol(PROFILE_V2, 'trnm-pon-native-io-three-fd-reservation-claim-v2',
+    'pon-native-io-three-fd-reservation-prepared-v2',
+    'pon-native-io-three-fd-reservation-inventory-v2',
+    'pon-native-io-three-fd-reservation-execution-v2',
+    'pon-native-io-three-fd-reservation-claim-v2',
+    'pon-native-io-three-fd-reservation-terminal-v2',
+    'pon-native-io-three-fd-reservation-dispatch-v2',
+    'pon-native-io-three-fd-reservation-link-v2',
+    'two_process_real_w1_prefix_and_pressure_native_io_reservation_component_v2',
+    'native-public-v3-identity-churn-native-io-reservation-v2',
+    'component-reservation-execution-claim-v2-', 'pn1-owned-sqlite-reservation-v2',
+    'pn1-finite-seven-held-roots-reservation-v2',
+    'pon-native-io-three-fd-reservation-readback-v2', 'pon-native-io-reservation-component-ci-v2')
+PROTOCOLS = MappingProxyType({V1.profile: V1, V2.profile: V2})
+_selected = None
+_profile_lock = threading.Lock()
+
+
+def select_profile(name):
+    """Explicit process-wide one-time choice; never infer from untrusted receipts."""
+    global _selected
+    require(type(name) is str and name in PROTOCOLS, 'COMPONENT_UNKNOWN_PROFILE')
+    selected = PROTOCOLS[name]
+    with _profile_lock:
+        require(_selected is None or _selected is selected, 'COMPONENT_PROFILE_ALREADY_BOUND')
+        _selected = selected
+    return selected
+
+
+def protocol():
+    # First historical API use binds V1, so a retained V1 object cannot later
+    # acquire a V2 claim/dispatch name in this process. CLI entry points bind
+    # their explicit profile before opening any output or starting child/watch
+    # threads. Do not call select_profile while holding this non-reentrant lock.
+    global _selected
+    with _profile_lock:
+        if _selected is None:
+            _selected = V1
+        return _selected
 
 
 def typed(actual, expected):
@@ -152,7 +221,7 @@ def validate_origin(origin, root, root_fd, parent_fd):
 
 
 class ComponentBundle(Bundle):
-    """New schema over the original no-follow held member reader; not V2 input."""
+    """Explicit finite schema over held files; never a full-campaign V2 input."""
     def __init__(self, root, expected, *, directory_fd, kind):
         self.fd = os.dup(directory_fd)
         try:
@@ -161,7 +230,7 @@ class ComponentBundle(Bundle):
             raw = self._read('artifact-files.json', CAPS['inventory_bytes'])
             require(hashlib.sha256(raw).hexdigest() == digest(expected), 'COMPONENT_INVENTORY_SHA_CHANGED')
             value = strict_json(raw)
-            require(value['schema'] == INVENTORY and value['profile'] == PROFILE and value['kind'] == kind,
+            require(value['schema'] == protocol().inventory and value['profile'] == protocol().profile and value['kind'] == kind,
                     'COMPONENT_INVENTORY_DOMAIN_REQUIRED')
             require(type(value['files']) is list and 0 < len(value['files']) <= 200_000,
                     'COMPONENT_BOUNDED_COMPLETE_INVENTORY_REQUIRED')
@@ -232,11 +301,11 @@ def native_abi_build(rows, binding):
 
 def validate_preparation(bundle, head, tree):
     value = bundle.json('prepared.json')
-    require(value['schema'] == PREPARED and value['profile'] == PROFILE
+    require(value['schema'] == protocol().prepared and value['profile'] == protocol().profile
         and value['capture_complete'] is True and value['selector_executed'] is False
         and value['failure'] is None and value['head'] == digest(head, 40)
         and value['tree'] == digest(tree, 40) and value['runner_sha256'] == sha(__file__)
-        and value['selector'] == SELECTOR and value['build_seconds'] == BUILD_SECONDS
+        and value['selector'] == protocol().selector and value['build_seconds'] == BUILD_SECONDS
         and value['collector_seconds'] == RUN_SECONDS, 'REAL_COMPONENT_PREPARATION_REQUIRED')
     typed(value['plan'], PLAN)
     typed(value['evidence_caps'], CAPS)
@@ -363,7 +432,7 @@ class PreparedComponent:
             info = os.fstat(self.binary_fd)
             require(stat.S_ISREG(info.st_mode) and info.st_uid == os.geteuid() and info.st_nlink == 1
                 and info.st_mode & 0o222 == 0, 'COMPONENT_READONLY_OWNED_BINARY_REQUIRED')
-            self.binding = dict(profile=PROFILE, head=head, tree=tree, prepared_sha256=document_sha256,
+            self.binding = dict(profile=protocol().profile, head=head, tree=tree, prepared_sha256=document_sha256,
                 inventory_sha256=inventory_sha256, binary_sha256=self.value['binary']['sha256'],
                 binary_bytes=self.value['binary']['bytes'], prepared_root=str(self.root),
                 prepared_identity=owned_directory(self.bundle.fd), binary_identity=identity(info))
@@ -496,7 +565,7 @@ class ComponentIO(CollectorIO):
         super().__init__(output, 'v2', writer=writer)
 
     def native_step(self, command, env, dispatch):
-        typed(dispatch['schema'], DISPATCH)
+        typed(dispatch['schema'], protocol().dispatch)
         require(dispatch['execution_identity'] == identity(os.fstat(self.writer.fd))
             and dispatch['actual_raw_root'] == env['TRNM_IDENTITY_CAMPAIGN_DIR'], 'COMPONENT_HELD_DISPATCH_REQUIRED')
         return self.owned_step('component', command, env, RUN_SECONDS,
@@ -557,7 +626,7 @@ class ComponentIO(CollectorIO):
                 # kernel PID/birth/wait scalars. Each error uses <=2048 JSON
                 # bytes; this context fits the unchanged terminal reservation.
                 self.writer.failure_context = dict(
-                    schema='pon-native-io-component-owned-step-failure-v1', profile=PROFILE,
+                    schema='pon-native-io-component-owned-step-failure-v1', profile=protocol().profile,
                     name=str(name)[:128], returncode=row['returncode'], child_error=child_error,
                     child_error_truncated=child_truncated, publication_error=publication_error,
                     publication_error_truncated=publication_truncated,
@@ -579,11 +648,11 @@ class ComponentIO(CollectorIO):
 
 def claim_name(source):
     original = source.value['origin']['root_identity']
-    return 'component-execution-claim-v1-' + str(original['device']) + '-' + str(original['inode'])
+    return protocol().claim_prefix + str(original['device']) + '-' + str(original['inode'])
 
 
 class ComponentClaim:
-    """Only used after public component preparation admission; never a V2 binder."""
+    """Admitted finite preparation only; never a full-campaign V2 claim binder."""
     def __init__(self, io, source):
         self.io, self.source = io, source
         self.fd = self.exe = self.cwd = self.parent_fd = None
@@ -624,11 +693,11 @@ class ComponentClaim:
             self.exe_identity = identity(os.fstat(self.exe))
             self.cwd_identity = identity(os.fstat(self.cwd))
             io.bound_cwd_fd = self.cwd
-            self.value = dict(schema=CLAIM, domain=DOMAIN, binding=self.binding,
+            self.value = dict(schema=protocol().claim, domain=protocol().domain, binding=self.binding,
                 created_utc=now(), component_only=True, administrator_deletion_resistance=False, **component_flags())
             self.claim_pin = self.external('claim.json', self.value, self.tokens[0])
             io.writer.json('claim-observed.json', self.value, reservation=self.tokens[1])
-            self.link = dict(schema=LINK, domain=DOMAIN, binding=self.binding,
+            self.link = dict(schema=protocol().link, domain=protocol().domain, binding=self.binding,
                 prepared_root=str(source.root), prepared_sha256=source.binding['prepared_sha256'],
                 inventory_sha256=source.binding['inventory_sha256'], claim_root=str(source.root.with_name(claim_name(source))),
                 claim_pin=self.claim_pin, component_only=True, **component_flags())
@@ -675,9 +744,9 @@ class ComponentClaim:
         self.attempted = True
         self.check()
         root = '/proc/self/fd/'+str(self.io.writer.fd)
-        env = dict(env, TRNM_IDENTITY_CAMPAIGN_DIR=root+'/raw', TRNM_IDENTITY_COMPONENT_PROFILE=PROFILE)
-        command = [str(self.io.output/'frozen'/(TARGET+'.bin')), '--exact', SELECTOR, '--ignored', '--nocapture', '--test-threads=1']
-        dispatch = dict(schema=DISPATCH, domain=DOMAIN, component_only=True,
+        env = dict(env, TRNM_IDENTITY_CAMPAIGN_DIR=root+'/raw', TRNM_IDENTITY_COMPONENT_PROFILE=protocol().profile)
+        command = [str(self.io.output/'frozen'/(TARGET+'.bin')), '--exact', protocol().selector, '--ignored', '--nocapture', '--test-threads=1']
+        dispatch = dict(schema=protocol().dispatch, domain=protocol().domain, component_only=True,
             executable_fd=self.exe, executable_identity=self.exe_identity,
             executable_sha256=self.source.binding['binary_sha256'], executable_bytes=self.source.binding['binary_bytes'],
             execution_directory_fd=self.io.writer.fd, execution_identity=self.binding['execution_identity'],
@@ -695,7 +764,7 @@ class ComponentClaim:
         if self.fd is None or not hasattr(self, 'binding'):
             self.io.writer.poison(failure or 'COMPONENT_CLAIM_ACQUISITION_INCOMPLETE')
             return
-        terminal = dict(schema=TERMINAL, domain=DOMAIN, binding=self.binding,
+        terminal = dict(schema=protocol().terminal, domain=protocol().domain, binding=self.binding,
             claim_sha256=None if self.claim_pin is None else self.claim_pin['sha256'], dispatch_attempted=self.attempted,
             child_owner_called=self.ran, child_exit_observed=code is not None, returncode=code,
             native_owner_success=bool(success), failure=failure, **component_flags())
@@ -730,7 +799,7 @@ def seal(io, kind, filename, value, success, source=None, claim=None):
         files = files_at(io.writer.fd)
         require('artifact-files.json' not in files, 'COMPONENT_INVENTORY_ALREADY_EXISTS')
         rows = [dict(path=name, **pin) for name,pin in sorted(files.items())]
-        manifest = dict(schema=INVENTORY, profile=PROFILE, kind=kind, files=rows)
+        manifest = dict(schema=protocol().inventory, profile=protocol().profile, kind=kind, files=rows)
         size = sum(len(piece) for piece in json_chunks(manifest))
         if source is None:
             evidence_ledger_v2(files, size, CAPS, strict=False, preparation_only=True)
@@ -902,7 +971,7 @@ class BuildStop:
                 clipped = False
             child_error, child_clipped = bounded_context_error(step.get('error') if type(step) is dict else None)
             writer.failure_context = dict(
-                schema='pon-native-io-component-owned-step-failure-v1', profile=PROFILE,
+                schema='pon-native-io-component-owned-step-failure-v1', profile=protocol().profile,
                 name='build', returncode=step.get('returncode') if type(step) is dict else None,
                 child_error=child_error, child_error_truncated=child_clipped,
                 native_process_owner=owner, native_owner_failure_truncated=clipped,
@@ -991,13 +1060,14 @@ def capture_built_binary(io, target_fd, declared_target, advertised):
 
 
 def prepare(args, io):
+    require(args.profile == protocol().profile, 'COMPONENT_EXPLICIT_PROFILE_REQUIRED')
     env = environment()
     target = canonical(args.target_dir)
     require(not target.is_relative_to(ROOT) and not target.is_relative_to(io.output)
         and not io.output.is_relative_to(target), 'COMPONENT_ISOLATED_FRESH_TARGET_REQUIRED')
-    value = dict(schema=PREPARED, profile=PROFILE, head=args.expected_head, tree=args.expected_tree,
+    value = dict(schema=protocol().prepared, profile=protocol().profile, head=args.expected_head, tree=args.expected_tree,
         created_utc=now(), capture_complete=False, selector_executed=False, failure=None,
-        plan=PLAN, evidence_caps=CAPS, selector=SELECTOR, build_seconds=BUILD_SECONDS,
+        plan=PLAN, evidence_caps=CAPS, selector=protocol().selector, build_seconds=BUILD_SECONDS,
         collector_seconds=RUN_SECONDS, runner_sha256=sha(__file__), **component_flags())
     target_parent = target_fd = None
     try:
@@ -1058,10 +1128,11 @@ def prepare(args, io):
 
 
 def execute(args, io):
+    require(args.profile == protocol().profile, 'COMPONENT_EXPLICIT_PROFILE_REQUIRED')
     env = environment()
-    value = dict(schema=EXECUTION, profile=PROFILE, head=args.expected_head, tree=args.expected_tree,
+    value = dict(schema=protocol().execution, profile=protocol().profile, head=args.expected_head, tree=args.expected_tree,
         started_utc=now(), complete_success=False, selector_executed=False, failure=None,
-        plan=PLAN, evidence_caps=CAPS, selector=SELECTOR, prepared_sha256=args.prepared_sha256,
+        plan=PLAN, evidence_caps=CAPS, selector=protocol().selector, prepared_sha256=args.prepared_sha256,
         inventory_sha256=args.prepared_inventory_sha256, runner_sha256=sha(__file__),
         component_reader_required=True, component_readback_complete=False, **component_flags())
     source = claim = None
@@ -1103,7 +1174,7 @@ def execute(args, io):
                         context = io.writer.failure_context
                         if (type(context) is dict
                             and context.get('schema') == 'pon-native-io-component-owned-step-failure-v1'
-                            and context.get('profile') == PROFILE and context.get('name') == 'component'):
+                            and context.get('profile') == protocol().profile and context.get('name') == 'component'):
                             observed_step = context
                             value['failed_step_observation'] = deepcopy(context)
                     terminal_errors = claim.finish(value['complete_success'],
@@ -1122,7 +1193,7 @@ def execute(args, io):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('mode', choices=('prepare', 'execute'))
-    parser.add_argument('--profile', choices=(PROFILE,), required=True)
+    parser.add_argument('--profile', choices=tuple(PROTOCOLS), required=True)
     parser.add_argument('--out', type=Path, required=True)
     parser.add_argument('--expected-head', required=True)
     parser.add_argument('--expected-tree', required=True)
@@ -1132,6 +1203,7 @@ def main():
     parser.add_argument('--prepared-sha256')
     parser.add_argument('--prepared-inventory-sha256')
     args = parser.parse_args()
+    select_profile(args.profile)
     digest(args.expected_head, 40); digest(args.expected_tree, 40)
     validate_source(source_snapshot(), args.expected_head, args.expected_tree)
     environment()

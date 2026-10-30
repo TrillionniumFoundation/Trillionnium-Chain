@@ -28,6 +28,12 @@ impl NativeIoOwner {
     pub fn create_at(_parents: [(File, OsString); ROOT_COUNT]) -> Result<Self> {
         unsupported()
     }
+    pub fn create_with_reservation_v2(_paths: [PathBuf; ROOT_COUNT]) -> Result<Self> {
+        unsupported()
+    }
+    pub fn create_at_with_reservation_v2(_parents: [(File, OsString); ROOT_COUNT]) -> Result<Self> {
+        unsupported()
+    }
     pub fn lease(&self, _index: usize) -> Result<NativeIoLease> {
         unsupported()
     }

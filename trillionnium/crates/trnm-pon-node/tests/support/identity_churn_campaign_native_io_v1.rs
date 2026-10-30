@@ -4,7 +4,7 @@ use super::{
     controller_native_io_v1,
     evidence::{self, Budget},
     exec_identity, identity_work as work, limits,
-    native_io_v1::{self, SCHEMA},
+    native_io_v1::{self, Profile},
     plan::{Mode, Plan},
     support,
 };
@@ -13,6 +13,7 @@ use std::{io, path::Path, time::Instant};
 use trnm_pon_node::{development_public, Node};
 const TERMINAL_BYTES: u64 = 64 * 1024;
 struct Owner<'a> {
+    profile: Profile,
     path: &'a Path,
     metadata: Budget,
     terminal: Budget,
@@ -20,9 +21,10 @@ struct Owner<'a> {
     completed: bool,
 }
 impl<'a> Owner<'a> {
-    fn new(path: &'a Path, root_limit: u64, preparation_limit: u64) -> Self {
+    fn new(path: &'a Path, root_limit: u64, preparation_limit: u64, profile: Profile) -> Self {
         assert!(root_limit > TERMINAL_BYTES);
         Self {
+            profile,
             path,
             metadata: Budget::new(root_limit - TERMINAL_BYTES),
             terminal: Budget::new(TERMINAL_BYTES),
@@ -34,7 +36,7 @@ impl<'a> Owner<'a> {
         if self.terminal.used == 0 {
             self.terminal.write(
                 &self.path.join("cap-terminal.json"),
-                &json!({"schema":SCHEMA,"kind":"campaign-terminal","reason":reason,"extra":extra,
+                &json!({"schema":self.profile.schema(),"kind":"campaign-terminal","reason":reason,"extra":extra,
                 "observed_ns":support::monotonic(),"full_campaign_qualified":false}),
                 TERMINAL_BYTES,
             )?;
@@ -111,7 +113,15 @@ fn mechanism_complete(phases: &[Value], plan: &Plan) -> bool {
     })
 }
 pub fn run(plan: Plan) -> io::Result<Value> {
+    run_with_profile(plan, Profile::ExactV1)
+}
+/// Separate finite entry; no caller can select a full V2 reservation campaign.
+pub fn run_reservation_v2() -> io::Result<Value> {
+    run_with_profile(Plan::control(), Profile::ReservationV2)
+}
+fn run_with_profile(plan: Plan, profile: Profile) -> io::Result<Value> {
     plan.validate();
+    let schema = profile.schema();
     // Unlike the legacy V2 entry, this profile requires all original three
     // Python inputs even for a finite control. No arbitrary path fallback.
     let installed = limits::install(false)?;
@@ -120,17 +130,17 @@ pub fn run(plan: Plan) -> io::Result<Value> {
     let raw = caller_output.create_child_directory(std::ffi::OsStr::new("raw"))?;
     let actual_path = raw.path();
     let path = actual_path.as_path();
-    let mut owner = Owner::new(path, limits::ROOT_NATIVE_BYTES, 8 * evidence::MIB);
+    let mut owner = Owner::new(path, limits::ROOT_NATIVE_BYTES, 8 * evidence::MIB, profile);
     owner.save("process-limits.json", &installed)?;
-    let mut layout =
-        native_io_v1::Layout::create(raw.try_clone_directory()?).inspect_err(|error| {
+    let mut layout = native_io_v1::Layout::create_for(raw.try_clone_directory()?, profile)
+        .inspect_err(|error| {
             let _ = owner.fail(
                 "native-io-fresh-layout",
                 json!({"error":error.to_string(),
             "full_W1_4097_qualified":false,"complete_terminal_RootReceipts_preserved":false}),
             );
         })?;
-    owner.save("plan.json",&json!({"schema":SCHEMA,"plan":plan,"public_resource_policy":support::policy_observation(),
+    owner.save("plan.json",&json!({"schema":schema,"plan":plan,"public_resource_policy":support::policy_observation(),
         "evidence_limits":limits::descriptor(),"capacity_required":4096,"fresh_post_capacity_required":1,
         "pressure_coverage_percent":90,"maximum_non_depleted_gap_ns":1_000_000_000_u64,
         "prefix_budget_status":"predeclared-collection-budget-not-a-completion-upper-bound",
@@ -173,7 +183,7 @@ pub fn run(plan: Plan) -> io::Result<Value> {
             business.push(p);
         }
         assert_eq!(business[0].header.parent, seed[3].id().unwrap());
-        let preparation = json!({"schema":SCHEMA,"seed_packets":seed.iter().map(|p|hex::encode(p.encode().unwrap())).collect::<Vec<_>>(),
+        let preparation = json!({"schema":schema,"seed_packets":seed.iter().map(|p|hex::encode(p.encode().unwrap())).collect::<Vec<_>>(),
             "business_packets":business.iter().map(|p|hex::encode(p.encode().unwrap())).collect::<Vec<_>>(),
             "cpu_ns":work::elapsed(prepare_cpu),"wall_ns":prepare_start.elapsed().as_nanos(),"node_search_attempt_counts":null,
             "scope":"actual signed 1024-transfer seed and 21-block parent-linked business; Node unexposed search counts stay unknown"});
@@ -184,13 +194,13 @@ pub fn run(plan: Plan) -> io::Result<Value> {
     let (seed, business, preparation) = match prepared {
         Ok(value) => value,
         Err(payload) => {
-            let failure = json!({"schema":SCHEMA,"kind":"preparation-error",
+            let failure = json!({"schema":schema,"kind":"preparation-error",
                 "error":"original Node/preparation panic; original stderr and failure retained"});
             // This is the same original 8MiB owner, never a new allowance. If
             // its bytes/I/O fail, the independent original 64KiB terminal says
             // complete snapshots are unavailable; the original panic remains.
-            let saved = native_io_v1::root_snapshot(0, &miner_lease)
-                .and_then(|row| native_io_v1::report(&failure, vec![row]))
+            let saved = native_io_v1::root_snapshot_for(profile, 0, &miner_lease)
+                .and_then(|row| native_io_v1::report_for(profile, &failure, vec![row]))
                 .and_then(|row| owner.prepare(&row));
             let _ = owner.fail("native-io-preparation-panicked", json!({
                 "original_panic_preserved":true,"terminal_receipt_file_written":saved.is_ok(),
@@ -198,9 +208,10 @@ pub fn run(plan: Plan) -> io::Result<Value> {
             std::panic::resume_unwind(payload);
         }
     };
-    let miner_terminal = native_io_v1::root_snapshot(0, &miner_lease)?;
+    let miner_terminal = native_io_v1::root_snapshot_for(profile, 0, &miner_lease)?;
     let miner_terminal_error = native_io_v1::terminal_error(&miner_terminal);
-    let preparation_with_io = native_io_v1::report(&preparation, vec![miner_terminal])?;
+    let preparation_with_io =
+        native_io_v1::report_for(profile, &preparation, vec![miner_terminal])?;
     owner.prepare(&preparation_with_io)?;
     let preparation_reference =
         native_io_v1::file_reference(&path.join("preparation.json"), 8 * evidence::MIB)?;
@@ -222,7 +233,7 @@ pub fn run(plan: Plan) -> io::Result<Value> {
     for mode in modes {
         if stopped {
             phases.push(
-                json!({"schema":SCHEMA,"kind":"phase-not-started","mode":mode,
+                json!({"schema":schema,"kind":"phase-not-started","mode":mode,
             "error":"not-started-after-failed-v2-owner"}),
             );
             continue;
@@ -241,10 +252,10 @@ pub fn run(plan: Plan) -> io::Result<Value> {
         let result = match outcome {
             Ok(Ok(value)) => value,
             Ok(Err(error)) => {
-                json!({"schema":SCHEMA,"kind":"phase-error","mode":mode,"error":error.to_string()})
+                json!({"schema":schema,"kind":"phase-error","mode":mode,"error":error.to_string()})
             }
             Err(_) => {
-                json!({"schema":SCHEMA,"kind":"phase-error","mode":mode,"error":"native phase panicked; partial files retained"})
+                json!({"schema":schema,"kind":"phase-error","mode":mode,"error":"native phase panicked; partial files retained"})
             }
         };
         stopped = result.get("error").is_some()
@@ -279,7 +290,7 @@ pub fn run(plan: Plan) -> io::Result<Value> {
         );
     })?;
     let native_mechanism_complete = !stopped && mechanism_complete(&phases, &plan);
-    let report = json!({"schema":SCHEMA,"kind":"campaign","plan":plan,"preparation_file":"preparation.json",
+    let report = json!({"schema":schema,"kind":"campaign","plan":plan,"preparation_file":"preparation.json",
         "phases":phases.iter().map(|p|json!({"mode":p["mode"],"file":format!("{}/report.json",p["mode"].as_str().unwrap()),"error":p.get("error"),"native_io_receipt_reference":p.get("native_io_receipt_reference")})).collect::<Vec<_>>(),
         "native_mechanism_complete":native_mechanism_complete,"external_reader_required":true,"finite_service_qualified":false,
         "cost_status":"FULL_ATTEMPTS_RETAINED_GLOBAL_COST_UNPROVEN","work_hardness_accepted":false,"independent_operators":false,
