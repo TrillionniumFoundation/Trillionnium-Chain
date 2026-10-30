@@ -4,7 +4,8 @@
     "base_one_changes_from_nonprogress_to_rejection": true,
     "counterexample_full_crate_execution": false,
     "counterexample_receipt_sha256": "9975b591ac4b1cbc90509575c42e790f6200ef7afd50c7da6a4b555b8752756d",
-    "full_crate_native_validation_pending": true,
+    "full_crate_native_validation_pending": false,
+    "full_crate_regression_controls_passed": 3,
     "n_zero_or_one_original_returns_preserved": true,
     "new_full_crate_regression_controls": 3,
     "nontrivial_input_requires_base_at_least": 2,
@@ -78,6 +79,67 @@
       "sha256": "2903ce8dffecdc4ec1022f37e71436a538d81132fdba34fb3d8eba8d11ad1e40",
       "url": "https://raw.githubusercontent.com/arkworks-rs/algebra/7ad88c46e859a94ab8e0b19fd8a217c3dc472f1c/Cargo.toml"
     }
+  },
+  "fresh_current_native_observation": {
+    "consumer_examples_only_compiled": 17,
+    "consumer_integration_ignored_or_filtered": 0,
+    "doc_tests_passed": 42,
+    "evidence_directory": "evidence/pon-owned-parent-native-c7cf03f1-20261030",
+    "filtered_unit_tests": 0,
+    "full_supply_or_security_acceptance": false,
+    "github_same_tree_commit": "2c1898d239b6f5565e3ac681e4274e8e88f42403",
+    "guest_syscall_functionality_qualified": false,
+    "ignored_doc_tests": 0,
+    "ignored_unit_tests": 0,
+    "local_tested_commit": "c7cf03f18e0985ba5c542bf756eaa9189ab73a97",
+    "nested_expander_trials_passed": 6,
+    "no_default_library_check_passed": true,
+    "original_consumer_integration_tests": {
+      "qualified_task_lifecycle_v2": 4,
+      "qualified_work_task": 5
+    },
+    "original_expander_vectors_executed": 60,
+    "production_activation": false,
+    "public_fairness_qualified": false,
+    "receipts": [
+      {
+        "phase": "H5-native-ark-ff",
+        "sha256": "637dcc87c50a9b6c7ba99aad06a1d6e2d446fe5d1893869146ee9b5d84de0730"
+      },
+      {
+        "phase": "H5-doc-ark-ff",
+        "sha256": "c1831043704d52eef894050d59ebb25be40651d852e76984fb7c89337bd6f7af"
+      },
+      {
+        "phase": "H5-no-default-ark-ff",
+        "sha256": "0a24451a66acd78f96a391bee6c053b1abf7a66112d07868c9c19e1abc9df835"
+      },
+      {
+        "phase": "H5-six-native-ark-ff",
+        "sha256": "bf76dbd0de1abac1392ef646ddbe8c9c776abd5d2cd7aaa8f51c5423c3272470"
+      },
+      {
+        "phase": "H5-strict-three",
+        "sha256": "693a05bd96127b051bfcd99350ee9ad5a4833d716951fae4bf1fa919c0d37e99"
+      },
+      {
+        "phase": "H5-workspace-strict",
+        "sha256": "13de2e08bcb653f1c00f784834c5a05c4ee73adf5d5ef8ced8f928e16df81ddd"
+      },
+      {
+        "phase": "H5-workspace-format",
+        "sha256": "0ff3236db170e3ec11bd3c17547006e1fb7bd3d26b03e34dd301ee46934f11d1"
+      }
+    ],
+    "retained_unit_tests_passed": 28,
+    "rust_toolchain": "1.95.0",
+    "six_package_all_target_all_feature_union_build_passed": true,
+    "six_package_native_library_suites_passed": true,
+    "tested_tree": "8a5663d8f866372c1a59b587f18fa70b96d45ea9",
+    "three_parent_all_target_all_feature_build_passed": true,
+    "whole_chain_post_quantum_qualified": false,
+    "workspace_format_passed": true,
+    "workspace_release_all_target_all_feature_strict_clippy_passed": true
   },
   "fresh_prior_native_observation": {
     "current_lint_proposal_validated": false,
@@ -454,9 +516,9 @@
     ],
     "features_removed": false,
     "maintained_rust_version": "1.95",
-    "native_validation_pending": true,
+    "native_validation_pending": false,
     "notes": [
-      "Three integer ceiling expressions use overflow-safe div_ceil; extreme inputs no longer incur the previous numerator+rounding overflow. Valid published expander vectors require native revalidation.",
+      "Three integer ceiling expressions use overflow-safe div_ceil; extreme inputs no longer incur the previous numerator+rounding overflow. All 60 original expander vectors passed in both H5 parent and six-package native suites.",
       "Only private expander DST type is renamed Dst; H2C-OVERSIZE-DST- bytes are unchanged.",
       "Elided lifetimes, redundant borrow/cast/conversion cleanup retain the same operations.",
       "x86 asm addcarry/subborrow branches still call the same intrinsics; obsolete unsafe wrappers removed for the explicit maintained Rust1.95 baseline."
@@ -469,7 +531,7 @@
       "clone_contract": "A Clone-only generic helper keeps the actual Clone contract invocation; one exact equality assertion is added.",
       "expander_variants": "Private enum variants change spelling; no string literal, JSON tag, original fixture or original test name changes.",
       "fft_item_order": "Two unchanged FftField impl blocks precede the original unchanged test modules.",
-      "native_validation_pending": true,
+      "native_validation_pending": false,
       "new_ignore_or_lint_allow": false,
       "new_test_cases_in_this_step": 0,
       "reflexivity_checks": "Explicit PartialEq::eq calls retain both original reflexive checks."
@@ -481,6 +543,7 @@
   "test_oracle_maintenance": {
     "actual_red_observed": true,
     "canonical_arithmetic_assertion_precedes_oracle_assertion": true,
+    "complete_green_validation_passed": true,
     "fixed_distinct_inputs": [
       1,
       2,
@@ -504,7 +567,7 @@
       4
     ],
     "original_source_sha256": "a768e392cef35e746cfb786afbeec5a88b8266175c1a7df63bb521f363f56af8",
-    "phase": "minimal expected-pair repair awaiting complete GREEN validation",
+    "phase": "actual deterministic RED retained; selected GREEN and complete retained suites passed, including final H5 consumer union",
     "production_arithmetic_changed": false,
     "red_failure_assertion": "oracle == canonical, after actual == canonical passed",
     "red_failure_source_line": 744,

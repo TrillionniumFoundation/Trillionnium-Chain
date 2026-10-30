@@ -1,0 +1,48 @@
+{
+  "all_restored_bytes_compared_to_originals": true,
+  "archive_integrity_not_global_qualification": true,
+  "argv": [
+    "python3",
+    "-B",
+    "/workspace/scratch/0db0c44c1fb0/pon-resume/H-native-evidence-publication-20261030/verify_native_evidence.py",
+    "--root",
+    "/workspace/scratch/0db0c44c1fb0/pon-resume/H-native-evidence-publication-20261030",
+    "--extract",
+    "/workspace/scratch/0db0c44c1fb0/pon-resume/H-native-evidence-roundtrip-20261030"
+  ],
+  "current_repository_source_checked_by_this_roundtrip": false,
+  "decoder_observation": {
+    "extracted": true,
+    "integrity_only_not_test_acceptance": true,
+    "schema": "pon-owned-parent-raw-evidence-integrity-result-v1",
+    "verified_bytes": 2922160,
+    "verified_files": 701
+  },
+  "files": {
+    "index.json": {
+      "bytes": 509653,
+      "sha256": "0416ca483cfcfa4a84533b31a7242b58575a5f2a292048b2096a2fd4a01bf28c"
+    },
+    "integrity.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "integrity.stdout.log": {
+      "bytes": 177,
+      "sha256": "d2da1846cdc711bc035b3ae374f09203fa244cbd08e486e1ece21fe0383a2d36"
+    },
+    "summary.json": {
+      "bytes": 43136,
+      "sha256": "6fd011231ac5ba026e4074b2ea13f4243a10352cf92800057ed4f9589faca99b"
+    },
+    "verify_native_evidence.py": {
+      "bytes": 4787,
+      "sha256": "d2eb80db37a1d0da06689ec6dc96101afeddc4c130ff5791275e31e58d29da1e"
+    }
+  },
+  "restored_original_bytes": 2922160,
+  "restored_original_files": 701,
+  "returncode": 0,
+  "schema": "pon-owned-parent-native-archive-roundtrip-v1",
+  "source_native_execution_performed_by_this_roundtrip": false
+}

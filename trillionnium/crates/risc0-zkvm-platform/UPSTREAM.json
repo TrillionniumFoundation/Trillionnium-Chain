@@ -8,6 +8,65 @@
     "url": "https://static.crates.io/crates/risc0-zkvm-platform/risc0-zkvm-platform-2.2.3.crate"
   },
   "consensus_authority": false,
+  "fresh_current_native_observation": {
+    "consumer_examples_only_compiled": 17,
+    "consumer_integration_ignored_or_filtered": 0,
+    "doc_tests_passed": 1,
+    "evidence_directory": "evidence/pon-owned-parent-native-c7cf03f1-20261030",
+    "filtered_unit_tests": 0,
+    "full_supply_or_security_acceptance": false,
+    "github_same_tree_commit": "2c1898d239b6f5565e3ac681e4274e8e88f42403",
+    "guest_syscall_functionality_qualified": false,
+    "ignored_doc_tests": 0,
+    "ignored_unit_tests": 0,
+    "local_tested_commit": "c7cf03f18e0985ba5c542bf756eaa9189ab73a97",
+    "no_default_library_check_passed": true,
+    "original_consumer_integration_tests": {
+      "qualified_task_lifecycle_v2": 4,
+      "qualified_work_task": 5
+    },
+    "production_activation": false,
+    "public_fairness_qualified": false,
+    "receipts": [
+      {
+        "phase": "H5-native-risc0-zkvm-platform",
+        "sha256": "777c9b0f80fd40327738d431a8955f15420c6e63e387bc781548aa750649d33c"
+      },
+      {
+        "phase": "H5-doc-risc0-zkvm-platform",
+        "sha256": "3010b536dc128d0075069c386235957221dfa49b0cf54f3c607b309e53cd5c61"
+      },
+      {
+        "phase": "H5-no-default-risc0-zkvm-platform",
+        "sha256": "bc75a15b1d06fce2e2973af564a0053f915e46d40f48188fbeb54f4c6e63e1c0"
+      },
+      {
+        "phase": "H5-six-native-risc0-zkvm-platform",
+        "sha256": "3655d0974cee600eb5bb06524c2cd4f9ecb9d32822939ad7d56c48d76b69fcc7"
+      },
+      {
+        "phase": "H5-strict-three",
+        "sha256": "693a05bd96127b051bfcd99350ee9ad5a4833d716951fae4bf1fa919c0d37e99"
+      },
+      {
+        "phase": "H5-workspace-strict",
+        "sha256": "13de2e08bcb653f1c00f784834c5a05c4ee73adf5d5ef8ced8f928e16df81ddd"
+      },
+      {
+        "phase": "H5-workspace-format",
+        "sha256": "0ff3236db170e3ec11bd3c17547006e1fb7bd3d26b03e34dd301ee46934f11d1"
+      }
+    ],
+    "retained_unit_tests_passed": 0,
+    "rust_toolchain": "1.95.0",
+    "six_package_all_target_all_feature_union_build_passed": true,
+    "six_package_native_library_suites_passed": true,
+    "tested_tree": "8a5663d8f866372c1a59b587f18fa70b96d45ea9",
+    "three_parent_all_target_all_feature_build_passed": true,
+    "whole_chain_post_quantum_qualified": false,
+    "workspace_format_passed": true,
+    "workspace_release_all_target_all_feature_strict_clippy_passed": true
+  },
   "fresh_prior_native_observation": {
     "current_lint_proposal_validated": false,
     "doc_tests_passed": 1,

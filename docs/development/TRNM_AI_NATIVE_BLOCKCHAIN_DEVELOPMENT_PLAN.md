@@ -5761,3 +5761,47 @@ The H4 all-feature production-library strict check progressed to the retained ar
 The [versioned original-result review](../../evidence/pon-codeql-security-review-c96c2b3-20261030/README.md) preserves all 322 Rust result identities, source locations and false qualification flags. Actual G [four-language CI](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40984057072) verifies the narrow metric repair: C++ 15 and Rust 14 exact conversions, Actions/Python zero, with every original result, rule, diagnostic and invocation retained. All four official publishers still fail because default setup blocks advanced CodeQL uploads. The [exact-source exporter](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40984057251) also failed at its original deadline; settings and gates remain unchanged.
 
 The manual per-result groups are 297 fixed test values, one public adversarial research nonce, one fully overwritten entropy buffer, 15 vector-operation sink-model reports, seven public test diagnostics and one mixed CLI flow. Every original alert remains; classification is not dismissal. The CLI report exposes 13 named sources but only four expanded flows, and its finite runtime canary exercise remains pending. All 85 extraction warnings remain in the denominator: 74 literal-macro warnings, eight archived-source context warnings, one retained assembly-macro warning and two internal Phi warnings. A separately prepared upstream macro backport has not yet demonstrated a reduced warning count. Security, semantic coverage and official publication remain open.
+
+#### H5 final native acceptance and retained execution originals
+
+The final maintenance source is local `c7cf03f18e0985ba5c542bf756eaa9189ab73a97`,
+tree `8a5663d8f866372c1a59b587f18fa70b96d45ea9`, materialized on GitHub as
+[`2c1898d239b6f5565e3ac681e4274e8e88f42403`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/2c1898d239b6f5565e3ac681e4274e8e88f42403).
+The commit metadata differs; the complete trees match. The earlier strict
+maintenance and adicity repair trees are preserved in the same ancestry at
+[`f3b6ccb6c4e3fae058ffeac86e443fc22927ab07`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/f3b6ccb6c4e3fae058ffeac86e443fc22927ab07)
+and [`8d69af83f1df2ba3e1418fce68432f075725b19c`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/8d69af83f1df2ba3e1418fce68432f075725b19c).
+
+[The retained execution evidence](../../evidence/pon-owned-parent-native-c7cf03f1-20261030/README.md)
+contains lossless byte encodings of the actual commands, stdout/stderr, source
+observations, native inventories and readers. Original RED, strict-lint and
+reader failures remain identifiable; they are not converted into passes.
+Large build products are not included, and the evidence inventory identifies
+any omitted large source/metadata records by digest and scope.
+
+| Actual H5 scope | Result | Boundary |
+| --- | --- | --- |
+| Three complete parent all-target/all-feature release build | PASS | Original published package identity/features retained |
+| ark-ff native library suite | 28 outer cases; six nested trials/60 original vectors PASS | Includes the fixed test oracle and three base-boundary controls |
+| rrs-lib native library suite | 15 PASS | Twelve original tests plus three reader/decoded-divu controls |
+| platform native library suite | Zero original unit tests | No guest syscall functional qualification |
+| Parent documentation/no-default checks | 42/1/2 doctests; all three no-default checks PASS | No ignored doctest |
+| Six-package union and library executions | trnm-crypto 138 PASS + one original parent-invoked helper ignore; relations 6; ark-crypto 47; ark-ff 28 plus six/60; rrs 15; platform 0 | Original three should-panic cases and helper-ignore reason bound by the reader |
+| Existing consumer integration suites | qualified_work_task 5; qualified_task_lifecycle_v2 4 PASS | Zero ignored/filtered/failed; seventeen test-disabled examples only compiled |
+| Complete workspace release/all-target/all-feature strict Clippy and formatting | PASS | No added lint allowances or excluded package/feature |
+| Exact source, ownership, generated inventory and documentation links | PASS | Source before/after equal; 16 boundary and 34 source-integrity negative controls PASS |
+
+Every H5 native phase binds the same clean source pair before and after execution.
+The integration executables were selected from the recorded compiler artifacts;
+their hashes were first observed in the integration phase and are not falsely
+represented as earlier build-time hashes. Strict workspace receipt SHA-256 is
+`13de2e08bcb653f1c00f784834c5a05c4ee73adf5d5ef8ced8f928e16df81ddd`; formatting is
+`0ff3236db170e3ec11bd3c17547006e1fb7bd3d26b03e34dd301ee46934f11d1`.
+
+This closes the stated H5 host maintenance checks, including the new adicity
+regressions. It does not close the supply policy: the remaining RISC0 SDK parents,
+Apple path, independent W1 lock and externally supplied prover remain separate
+consumption roots. No cheapest-work bound, public fairness, model efficacy,
+whole-chain post-quantum claim or production activation follows. The new
+evidence/documentation commit must receive its own source checks and CI; these
+H5 executions retain their actual tested identity.

@@ -1,0 +1,1349 @@
+{
+  "actual_tested_commit": "c7cf03f18e0985ba5c542bf756eaa9189ab73a97",
+  "actual_tested_tree": "8a5663d8f866372c1a59b587f18fa70b96d45ea9",
+  "aggregate_creation_runs_no_native_or_current_source_verifier": true,
+  "all_workspace_native_test_suites_executed": false,
+  "ark_nested_trials": 6,
+  "ark_original_vectors": 60,
+  "build_artifacts": {
+    "H5-six-union-build": {
+      "other_compiled_targets": [
+        {
+          "kind": [
+            "test"
+          ],
+          "name": "qualified_work_task",
+          "test": true
+        },
+        {
+          "kind": [
+            "example"
+          ],
+          "name": "pon_producer_comparison",
+          "test": false
+        },
+        {
+          "kind": [
+            "example"
+          ],
+          "name": "pon_prepared_cost",
+          "test": false
+        },
+        {
+          "kind": [
+            "example"
+          ],
+          "name": "pon_pure_rejection_tail_campaign",
+          "test": false
+        },
+        {
+          "kind": [
+            "example"
+          ],
+          "name": "pon_rejection_cost",
+          "test": false
+        },
+        {
+          "kind": [
+            "example"
+          ],
+          "name": "pon_tiled_io",
+          "test": false
+        },
+        {
+          "kind": [
+            "example"
+          ],
+          "name": "pon_zero_locality_cost",
+          "test": false
+        },
+        {
+          "kind": [
+            "example"
+          ],
+          "name": "pon_cost",
+          "test": false
+        },
+        {
+          "kind": [
+            "example"
+          ],
+          "name": "pon_one_zero_locality_cost",
+          "test": false
+        },
+        {
+          "kind": [
+            "example"
+          ],
+          "name": "pon_work",
+          "test": false
+        },
+        {
+          "kind": [
+            "test"
+          ],
+          "name": "qualified_task_lifecycle_v2",
+          "test": true
+        },
+        {
+          "kind": [
+            "example"
+          ],
+          "name": "pon_w1_complete_relation",
+          "test": false
+        },
+        {
+          "kind": [
+            "example"
+          ],
+          "name": "pon_adversarial_cost",
+          "test": false
+        },
+        {
+          "kind": [
+            "example"
+          ],
+          "name": "pon_work_io",
+          "test": false
+        },
+        {
+          "kind": [
+            "example"
+          ],
+          "name": "pon_maintenance_cost",
+          "test": false
+        },
+        {
+          "kind": [
+            "example"
+          ],
+          "name": "pon_zero_io",
+          "test": false
+        },
+        {
+          "kind": [
+            "example"
+          ],
+          "name": "pon_one_zero_io",
+          "test": false
+        },
+        {
+          "kind": [
+            "example"
+          ],
+          "name": "pon_reused_cost",
+          "test": false
+        },
+        {
+          "kind": [
+            "example"
+          ],
+          "name": "pon_paired_io",
+          "test": false
+        }
+      ],
+      "packages": {
+        "ark-crypto-primitives": {
+          "binary": {
+            "actual": {
+              "bytes": 5041016,
+              "path": "/workspace/scratch/0db0c44c1fb0/target-owned-parent-resume/release/deps/ark_crypto_primitives-fcc4b1dcbdef0932",
+              "sha256": "c17f34c20362c52c4fb7f1408d019a419e91a971cdb74d0fab803c88aaca7ef5"
+            },
+            "retained": {
+              "bytes": 5041016,
+              "path": "/workspace/scratch/0db0c44c1fb0/pon-resume/H-native-20261030/H5-six-union-build/ark-crypto-primitives.actual-elf",
+              "sha256": "c17f34c20362c52c4fb7f1408d019a419e91a971cdb74d0fab803c88aaca7ef5"
+            }
+          },
+          "features": [
+            "ark-r1cs-std",
+            "asm",
+            "commitment",
+            "crh",
+            "default",
+            "encryption",
+            "hashbrown",
+            "merkle_tree",
+            "merlin",
+            "parallel",
+            "prf",
+            "print-trace",
+            "r1cs",
+            "rayon",
+            "signature",
+            "snark",
+            "sponge",
+            "std",
+            "tracing"
+          ]
+        },
+        "ark-ff": {
+          "binary": {
+            "actual": {
+              "bytes": 2539104,
+              "path": "/workspace/scratch/0db0c44c1fb0/target-owned-parent-resume/release/deps/ark_ff-41bbb735f155e691",
+              "sha256": "234f37872737c83dc5eb02c9a70ec203d280a3e98d9c679a0c9eed52e6ba1d7c"
+            },
+            "retained": {
+              "bytes": 2539104,
+              "path": "/workspace/scratch/0db0c44c1fb0/pon-resume/H-native-20261030/H5-six-union-build/ark-ff.actual-elf",
+              "sha256": "234f37872737c83dc5eb02c9a70ec203d280a3e98d9c679a0c9eed52e6ba1d7c"
+            }
+          },
+          "features": [
+            "asm",
+            "default",
+            "parallel",
+            "rayon",
+            "std"
+          ]
+        },
+        "ark-relations": {
+          "binary": {
+            "actual": {
+              "bytes": 1297680,
+              "path": "/workspace/scratch/0db0c44c1fb0/target-owned-parent-resume/release/deps/ark_relations-3d37938b0817dc13",
+              "sha256": "a15d44921abb691c5b0f7d1a87a36765cff427f95151dae7862ddbc1dd22639b"
+            },
+            "retained": {
+              "bytes": 1297680,
+              "path": "/workspace/scratch/0db0c44c1fb0/pon-resume/H-native-20261030/H5-six-union-build/ark-relations.actual-elf",
+              "sha256": "a15d44921abb691c5b0f7d1a87a36765cff427f95151dae7862ddbc1dd22639b"
+            }
+          },
+          "features": [
+            "default",
+            "std",
+            "tracing-subscriber"
+          ]
+        },
+        "risc0-zkvm-platform": {
+          "binary": {
+            "actual": {
+              "bytes": 1053520,
+              "path": "/workspace/scratch/0db0c44c1fb0/target-owned-parent-resume/release/deps/risc0_zkvm_platform-3a2d89c2d0c91d76",
+              "sha256": "11a924bb269a9d36b8e6cd15450ae44fc1b2f3dfe3e2125417db1e4c498e962c"
+            },
+            "retained": {
+              "bytes": 1053520,
+              "path": "/workspace/scratch/0db0c44c1fb0/pon-resume/H-native-20261030/H5-six-union-build/risc0-zkvm-platform.actual-elf",
+              "sha256": "11a924bb269a9d36b8e6cd15450ae44fc1b2f3dfe3e2125417db1e4c498e962c"
+            }
+          },
+          "features": [
+            "default",
+            "entrypoint",
+            "export-getrandom",
+            "export-libm",
+            "export-syscalls",
+            "getrandom",
+            "heap-embedded-alloc",
+            "panic-handler",
+            "rust-runtime",
+            "sys-args",
+            "sys-getenv",
+            "unstable"
+          ]
+        },
+        "rrs-lib": {
+          "binary": {
+            "actual": {
+              "bytes": 1147600,
+              "path": "/workspace/scratch/0db0c44c1fb0/target-owned-parent-resume/release/deps/rrs_lib-d10a4f4fc5f5fd8b",
+              "sha256": "c58532f7c10329e3d47e75b97e666147088f0506699204b7b3de073f97babac6"
+            },
+            "retained": {
+              "bytes": 1147600,
+              "path": "/workspace/scratch/0db0c44c1fb0/pon-resume/H-native-20261030/H5-six-union-build/rrs-lib.actual-elf",
+              "sha256": "c58532f7c10329e3d47e75b97e666147088f0506699204b7b3de073f97babac6"
+            }
+          },
+          "features": []
+        },
+        "trnm-crypto-primitives": {
+          "binary": {
+            "actual": {
+              "bytes": 7733768,
+              "path": "/workspace/scratch/0db0c44c1fb0/target-owned-parent-resume/release/deps/trnm_crypto_primitives-8eb9a0393d240afa",
+              "sha256": "0e233a134100445460c1dafc8545411f86c9a668fc820ccfe8e6f22d9204df82"
+            },
+            "retained": {
+              "bytes": 7733768,
+              "path": "/workspace/scratch/0db0c44c1fb0/pon-resume/H-native-20261030/H5-six-union-build/trnm-crypto-primitives.actual-elf",
+              "sha256": "0e233a134100445460c1dafc8545411f86c9a668fc820ccfe8e6f22d9204df82"
+            }
+          },
+          "features": [
+            "transparent-w1-admission-research"
+          ]
+        }
+      },
+      "proc_macros": [
+        {
+          "binary": {
+            "actual": {
+              "bytes": 765152,
+              "path": "/workspace/scratch/0db0c44c1fb0/target-owned-parent-resume/release/deps/libpastey-3d5c6959658742ee.so",
+              "sha256": "e3643758b7d25fedb302ed7a2db90d6d74c0df15d2ec309581a8834492b5ab33"
+            },
+            "retained": {
+              "bytes": 765152,
+              "path": "/workspace/scratch/0db0c44c1fb0/pon-resume/H-native-20261030/H5-six-union-build/pastey-0.actual-so",
+              "sha256": "e3643758b7d25fedb302ed7a2db90d6d74c0df15d2ec309581a8834492b5ab33"
+            }
+          },
+          "compiler_artifact": {
+            "executable": null,
+            "features": [],
+            "filenames": [
+              "/workspace/scratch/0db0c44c1fb0/target-owned-parent-resume/release/deps/libpastey-3d5c6959658742ee.so"
+            ],
+            "fresh": true,
+            "manifest_path": "/workspace/scratch/0db0c44c1fb0/rust-tools/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/pastey-0.2.3/Cargo.toml",
+            "package_id": "registry+https://github.com/rust-lang/crates.io-index#pastey@0.2.3",
+            "profile": {
+              "debug_assertions": false,
+              "debuginfo": 0,
+              "opt_level": "0",
+              "overflow_checks": false,
+              "test": false
+            },
+            "reason": "compiler-artifact",
+            "target": {
+              "crate_types": [
+                "proc-macro"
+              ],
+              "doc": true,
+              "doctest": true,
+              "edition": "2018",
+              "kind": [
+                "proc-macro"
+              ],
+              "name": "pastey",
+              "src_path": "/workspace/scratch/0db0c44c1fb0/rust-tools/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/pastey-0.2.3/src/lib.rs",
+              "test": true
+            }
+          }
+        }
+      ]
+    },
+    "H5-three-build": {
+      "other_compiled_targets": [],
+      "packages": {
+        "ark-ff": {
+          "binary": {
+            "actual": {
+              "bytes": 2537464,
+              "path": "/workspace/scratch/0db0c44c1fb0/target-owned-parent-resume/release/deps/ark_ff-da327c9433580ca9",
+              "sha256": "a118947f20dc72a4b93cf5a09c408478ae5521b801fb7e4dff098a70b54f9b77"
+            },
+            "retained": {
+              "bytes": 2537464,
+              "path": "/workspace/scratch/0db0c44c1fb0/pon-resume/H-native-20261030/H5-three-build/ark-ff.actual-elf",
+              "sha256": "a118947f20dc72a4b93cf5a09c408478ae5521b801fb7e4dff098a70b54f9b77"
+            }
+          },
+          "features": [
+            "asm",
+            "default",
+            "parallel",
+            "rayon",
+            "std"
+          ]
+        },
+        "risc0-zkvm-platform": {
+          "binary": {
+            "actual": {
+              "bytes": 1053520,
+              "path": "/workspace/scratch/0db0c44c1fb0/target-owned-parent-resume/release/deps/risc0_zkvm_platform-2527515f945311f4",
+              "sha256": "984fdb6f5af6849a2e4ba582ea2cf34b9d9b4a8cdcaad3df6193b86426dc3490"
+            },
+            "retained": {
+              "bytes": 1053520,
+              "path": "/workspace/scratch/0db0c44c1fb0/pon-resume/H-native-20261030/H5-three-build/risc0-zkvm-platform.actual-elf",
+              "sha256": "984fdb6f5af6849a2e4ba582ea2cf34b9d9b4a8cdcaad3df6193b86426dc3490"
+            }
+          },
+          "features": [
+            "default",
+            "entrypoint",
+            "export-getrandom",
+            "export-libm",
+            "export-syscalls",
+            "getrandom",
+            "heap-embedded-alloc",
+            "panic-handler",
+            "rust-runtime",
+            "sys-args",
+            "sys-getenv",
+            "unstable"
+          ]
+        },
+        "rrs-lib": {
+          "binary": {
+            "actual": {
+              "bytes": 1147600,
+              "path": "/workspace/scratch/0db0c44c1fb0/target-owned-parent-resume/release/deps/rrs_lib-d10a4f4fc5f5fd8b",
+              "sha256": "c58532f7c10329e3d47e75b97e666147088f0506699204b7b3de073f97babac6"
+            },
+            "retained": {
+              "bytes": 1147600,
+              "path": "/workspace/scratch/0db0c44c1fb0/pon-resume/H-native-20261030/H5-three-build/rrs-lib.actual-elf",
+              "sha256": "c58532f7c10329e3d47e75b97e666147088f0506699204b7b3de073f97babac6"
+            }
+          },
+          "features": []
+        }
+      },
+      "proc_macros": [
+        {
+          "binary": {
+            "actual": {
+              "bytes": 765152,
+              "path": "/workspace/scratch/0db0c44c1fb0/target-owned-parent-resume/release/deps/libpastey-3d5c6959658742ee.so",
+              "sha256": "e3643758b7d25fedb302ed7a2db90d6d74c0df15d2ec309581a8834492b5ab33"
+            },
+            "retained": {
+              "bytes": 765152,
+              "path": "/workspace/scratch/0db0c44c1fb0/pon-resume/H-native-20261030/H5-three-build/pastey-0.actual-so",
+              "sha256": "e3643758b7d25fedb302ed7a2db90d6d74c0df15d2ec309581a8834492b5ab33"
+            }
+          },
+          "compiler_artifact": {
+            "executable": null,
+            "features": [],
+            "filenames": [
+              "/workspace/scratch/0db0c44c1fb0/target-owned-parent-resume/release/deps/libpastey-3d5c6959658742ee.so"
+            ],
+            "fresh": true,
+            "manifest_path": "/workspace/scratch/0db0c44c1fb0/rust-tools/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/pastey-0.2.3/Cargo.toml",
+            "package_id": "registry+https://github.com/rust-lang/crates.io-index#pastey@0.2.3",
+            "profile": {
+              "debug_assertions": false,
+              "debuginfo": 0,
+              "opt_level": "0",
+              "overflow_checks": false,
+              "test": false
+            },
+            "reason": "compiler-artifact",
+            "target": {
+              "crate_types": [
+                "proc-macro"
+              ],
+              "doc": true,
+              "doctest": true,
+              "edition": "2018",
+              "kind": [
+                "proc-macro"
+              ],
+              "name": "pastey",
+              "src_path": "/workspace/scratch/0db0c44c1fb0/rust-tools/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/pastey-0.2.3/src/lib.rs",
+              "test": true
+            }
+          }
+        }
+      ]
+    }
+  },
+  "completed_final_stages": {
+    "H5-doc-ark-ff": {
+      "mode": "command",
+      "receipt": {
+        "bytes": 3561,
+        "path": "/workspace/scratch/0db0c44c1fb0/pon-resume/H-native-20261030/H5-doc-ark-ff/result.json",
+        "sha256": "c1831043704d52eef894050d59ebb25be40651d852e76984fb7c89337bd6f7af"
+      },
+      "returncodes": [
+        0,
+        0
+      ],
+      "source_before_equals_after": true
+    },
+    "H5-doc-risc0-zkvm-platform": {
+      "mode": "command",
+      "receipt": {
+        "bytes": 3627,
+        "path": "/workspace/scratch/0db0c44c1fb0/pon-resume/H-native-20261030/H5-doc-risc0-zkvm-platform/result.json",
+        "sha256": "3010b536dc128d0075069c386235957221dfa49b0cf54f3c607b309e53cd5c61"
+      },
+      "returncodes": [
+        0,
+        0
+      ],
+      "source_before_equals_after": true
+    },
+    "H5-doc-rrs-lib": {
+      "mode": "command",
+      "receipt": {
+        "bytes": 3567,
+        "path": "/workspace/scratch/0db0c44c1fb0/pon-resume/H-native-20261030/H5-doc-rrs-lib/result.json",
+        "sha256": "8255806efd0a0f258042dc39ba15367a3fc52738130ba67bb4811ab7a38c8701"
+      },
+      "returncodes": [
+        0,
+        0
+      ],
+      "source_before_equals_after": true
+    },
+    "H5-format": {
+      "mode": "command",
+      "receipt": {
+        "bytes": 3455,
+        "path": "/workspace/scratch/0db0c44c1fb0/pon-resume/H-native-20261030/H5-format/result.json",
+        "sha256": "16f0c9f25c6399672c428d306991bd969b2b12a5af02cacf921582577d075f97"
+      },
+      "returncodes": [
+        0,
+        0
+      ],
+      "source_before_equals_after": true
+    },
+    "H5-native-ark-ff": {
+      "mode": "native",
+      "receipt": {
+        "bytes": 12861,
+        "path": "/workspace/scratch/0db0c44c1fb0/pon-resume/H-native-20261030/H5-native-ark-ff/result.json",
+        "sha256": "637dcc87c50a9b6c7ba99aad06a1d6e2d446fe5d1893869146ee9b5d84de0730"
+      },
+      "returncodes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "source_before_equals_after": true
+    },
+    "H5-native-risc0-zkvm-platform": {
+      "mode": "native",
+      "receipt": {
+        "bytes": 8085,
+        "path": "/workspace/scratch/0db0c44c1fb0/pon-resume/H-native-20261030/H5-native-risc0-zkvm-platform/result.json",
+        "sha256": "777c9b0f80fd40327738d431a8955f15420c6e63e387bc781548aa750649d33c"
+      },
+      "returncodes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "source_before_equals_after": true
+    },
+    "H5-native-rrs-lib": {
+      "mode": "native",
+      "receipt": {
+        "bytes": 8444,
+        "path": "/workspace/scratch/0db0c44c1fb0/pon-resume/H-native-20261030/H5-native-rrs-lib/result.json",
+        "sha256": "f8ad44c043986ae26f1dd9a628f861e82b6a8e9246269898559f8e9043bd6081"
+      },
+      "returncodes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "source_before_equals_after": true
+    },
+    "H5-no-default-ark-ff": {
+      "mode": "command",
+      "receipt": {
+        "bytes": 3596,
+        "path": "/workspace/scratch/0db0c44c1fb0/pon-resume/H-native-20261030/H5-no-default-ark-ff/result.json",
+        "sha256": "0a24451a66acd78f96a391bee6c053b1abf7a66112d07868c9c19e1abc9df835"
+      },
+      "returncodes": [
+        0,
+        0
+      ],
+      "source_before_equals_after": true
+    },
+    "H5-no-default-risc0-zkvm-platform": {
+      "mode": "command",
+      "receipt": {
+        "bytes": 3661,
+        "path": "/workspace/scratch/0db0c44c1fb0/pon-resume/H-native-20261030/H5-no-default-risc0-zkvm-platform/result.json",
+        "sha256": "bc75a15b1d06fce2e2973af564a0053f915e46d40f48188fbeb54f4c6e63e1c0"
+      },
+      "returncodes": [
+        0,
+        0
+      ],
+      "source_before_equals_after": true
+    },
+    "H5-no-default-rrs-lib": {
+      "mode": "command",
+      "receipt": {
+        "bytes": 3602,
+        "path": "/workspace/scratch/0db0c44c1fb0/pon-resume/H-native-20261030/H5-no-default-rrs-lib/result.json",
+        "sha256": "77a1edabb0a1cbf667814ec615bd34a99ce9eb7236c43b66ae60f5bb12391c16"
+      },
+      "returncodes": [
+        0,
+        0
+      ],
+      "source_before_equals_after": true
+    },
+    "H5-six-integration-qualified_task_lifecycle_v2": {
+      "mode": "native-integration",
+      "receipt": {
+        "bytes": 9751,
+        "path": "/workspace/scratch/0db0c44c1fb0/pon-resume/H-native-20261030/H5-six-integration-qualified_task_lifecycle_v2/result.json",
+        "sha256": "67473540f1a05af229c4e34a75f9ed11c11125eb7aaf467f2cf2c4b120a937a2"
+      },
+      "returncodes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "source_before_equals_after": true
+    },
+    "H5-six-integration-qualified_work_task": {
+      "mode": "native-integration",
+      "receipt": {
+        "bytes": 9870,
+        "path": "/workspace/scratch/0db0c44c1fb0/pon-resume/H-native-20261030/H5-six-integration-qualified_work_task/result.json",
+        "sha256": "c92df054e152c36084feb30cfd3403772395f59a4eea427aa41b8674e8b8e7d0"
+      },
+      "returncodes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "source_before_equals_after": true
+    },
+    "H5-six-native-ark-crypto-primitives": {
+      "mode": "native",
+      "receipt": {
+        "bytes": 13452,
+        "path": "/workspace/scratch/0db0c44c1fb0/pon-resume/H-native-20261030/H5-six-native-ark-crypto-primitives/result.json",
+        "sha256": "0c93a1644c9787ed17c4d643bab0f53f6e0c842a0d9c07d9412bc907c3510aa4"
+      },
+      "returncodes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "source_before_equals_after": true
+    },
+    "H5-six-native-ark-ff": {
+      "mode": "native",
+      "receipt": {
+        "bytes": 12896,
+        "path": "/workspace/scratch/0db0c44c1fb0/pon-resume/H-native-20261030/H5-six-native-ark-ff/result.json",
+        "sha256": "bf76dbd0de1abac1392ef646ddbe8c9c776abd5d2cd7aaa8f51c5423c3272470"
+      },
+      "returncodes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "source_before_equals_after": true
+    },
+    "H5-six-native-ark-relations": {
+      "mode": "native",
+      "receipt": {
+        "bytes": 8266,
+        "path": "/workspace/scratch/0db0c44c1fb0/pon-resume/H-native-20261030/H5-six-native-ark-relations/result.json",
+        "sha256": "a1c5b8a17772a49567284622c4630900e730b062a2fefbf6e72e38415d8f2169"
+      },
+      "returncodes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "source_before_equals_after": true
+    },
+    "H5-six-native-risc0-zkvm-platform": {
+      "mode": "native",
+      "receipt": {
+        "bytes": 8121,
+        "path": "/workspace/scratch/0db0c44c1fb0/pon-resume/H-native-20261030/H5-six-native-risc0-zkvm-platform/result.json",
+        "sha256": "3655d0974cee600eb5bb06524c2cd4f9ecb9d32822939ad7d56c48d76b69fcc7"
+      },
+      "returncodes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "source_before_equals_after": true
+    },
+    "H5-six-native-rrs-lib": {
+      "mode": "native",
+      "receipt": {
+        "bytes": 8479,
+        "path": "/workspace/scratch/0db0c44c1fb0/pon-resume/H-native-20261030/H5-six-native-rrs-lib/result.json",
+        "sha256": "6c69188469637dc07412c3ce789e94e1e9783149a0d34af0c14c439ca437c22b"
+      },
+      "returncodes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "source_before_equals_after": true
+    },
+    "H5-six-native-trnm-crypto-primitives": {
+      "mode": "native",
+      "receipt": {
+        "bytes": 23999,
+        "path": "/workspace/scratch/0db0c44c1fb0/pon-resume/H-native-20261030/H5-six-native-trnm-crypto-primitives/result.json",
+        "sha256": "890b21ba836572568093e778d7698b26aeb94ff9685ec01ea5e66593488b87ef"
+      },
+      "returncodes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "source_before_equals_after": true
+    },
+    "H5-six-union-build": {
+      "mode": "build",
+      "receipt": {
+        "bytes": 43611,
+        "path": "/workspace/scratch/0db0c44c1fb0/pon-resume/H-native-20261030/H5-six-union-build/result.json",
+        "sha256": "63cbd85238ec48526d6e1d7faa89d064836ca00e3f0b17b6b1347e7184dec994"
+      },
+      "returncodes": [
+        0,
+        0
+      ],
+      "source_before_equals_after": true
+    },
+    "H5-strict-three": {
+      "mode": "command",
+      "receipt": {
+        "bytes": 3742,
+        "path": "/workspace/scratch/0db0c44c1fb0/pon-resume/H-native-20261030/H5-strict-three/result.json",
+        "sha256": "693a05bd96127b051bfcd99350ee9ad5a4833d716951fae4bf1fa919c0d37e99"
+      },
+      "returncodes": [
+        0,
+        0
+      ],
+      "source_before_equals_after": true
+    },
+    "H5-three-build": {
+      "mode": "build",
+      "receipt": {
+        "bytes": 11750,
+        "path": "/workspace/scratch/0db0c44c1fb0/pon-resume/H-native-20261030/H5-three-build/result.json",
+        "sha256": "23988a66081fcc5100b27b99cbd155e552796af9b08ba803562fa693ef194881"
+      },
+      "returncodes": [
+        0,
+        0
+      ],
+      "source_before_equals_after": true
+    },
+    "H5-workspace-format": {
+      "mode": "command",
+      "receipt": {
+        "bytes": 3494,
+        "path": "/workspace/scratch/0db0c44c1fb0/pon-resume/H-native-20261030/H5-workspace-format/result.json",
+        "sha256": "0ff3236db170e3ec11bd3c17547006e1fb7bd3d26b03e34dd301ee46934f11d1"
+      },
+      "returncodes": [
+        0,
+        0
+      ],
+      "source_before_equals_after": true
+    },
+    "H5-workspace-strict": {
+      "mode": "command",
+      "receipt": {
+        "bytes": 3672,
+        "path": "/workspace/scratch/0db0c44c1fb0/pon-resume/H-native-20261030/H5-workspace-strict/result.json",
+        "sha256": "13de2e08bcb653f1c00f784834c5a05c4ee73adf5d5ef8ced8f928e16df81ddd"
+      },
+      "returncodes": [
+        0,
+        0
+      ],
+      "source_before_equals_after": true
+    }
+  },
+  "consensus_qualified": false,
+  "current_msrv": "1.95",
+  "doctests": {
+    "H5-doc-ark-ff": {
+      "failed": 0,
+      "filtered_out": 0,
+      "ignored": 0,
+      "measured": 0,
+      "passed": 42
+    },
+    "H5-doc-risc0-zkvm-platform": {
+      "failed": 0,
+      "filtered_out": 0,
+      "ignored": 0,
+      "measured": 0,
+      "passed": 1
+    },
+    "H5-doc-rrs-lib": {
+      "failed": 0,
+      "filtered_out": 0,
+      "ignored": 0,
+      "measured": 0,
+      "passed": 2
+    }
+  },
+  "exact_source_observed_before_after_every_native_phase": true,
+  "example_harnesses_compiled_not_executed": 17,
+  "ignored_child_note": "The retained ambient_dev_mode_child is explicitly invoked by the passing parent subprocess test.",
+  "integration_elf_hash_first_observed_at_integration_phase_not_retroactively_at_build": true,
+  "integration_passes": {
+    "qualified_task_lifecycle_v2": 4,
+    "qualified_work_task": 5
+  },
+  "library_suites": {
+    "H5-native-ark-ff": {
+      "binary": {
+        "actual": {
+          "bytes": 2537464,
+          "path": "/workspace/scratch/0db0c44c1fb0/target-owned-parent-resume/release/deps/ark_ff-da327c9433580ca9",
+          "sha256": "a118947f20dc72a4b93cf5a09c408478ae5521b801fb7e4dff098a70b54f9b77"
+        },
+        "retained": {
+          "bytes": 2537464,
+          "path": "/workspace/scratch/0db0c44c1fb0/pon-resume/H-native-20261030/H5-three-build/ark-ff.actual-elf",
+          "sha256": "a118947f20dc72a4b93cf5a09c408478ae5521b801fb7e4dff098a70b54f9b77"
+        }
+      },
+      "features": [
+        "asm",
+        "default",
+        "parallel",
+        "rayon",
+        "std"
+      ],
+      "nested_trials": {
+        "expand_message_xmd_SHA256_256.json": "ok",
+        "expand_message_xmd_SHA256_38.json": "ok",
+        "expand_message_xmd_SHA512_38.json": "ok",
+        "expand_message_xof_SHAKE128_256.json": "ok",
+        "expand_message_xof_SHAKE128_36.json": "ok",
+        "expand_message_xof_SHAKE256_36.json": "ok"
+      },
+      "original_ignored": [],
+      "should_panic_names": [
+        "const_helpers::tests::test_mul_buffer_soundness"
+      ],
+      "terminals": [
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 6,
+          "verdict": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 28,
+          "verdict": "ok"
+        }
+      ],
+      "vectors": 60
+    },
+    "H5-native-risc0-zkvm-platform": {
+      "binary": {
+        "actual": {
+          "bytes": 1053520,
+          "path": "/workspace/scratch/0db0c44c1fb0/target-owned-parent-resume/release/deps/risc0_zkvm_platform-2527515f945311f4",
+          "sha256": "984fdb6f5af6849a2e4ba582ea2cf34b9d9b4a8cdcaad3df6193b86426dc3490"
+        },
+        "retained": {
+          "bytes": 1053520,
+          "path": "/workspace/scratch/0db0c44c1fb0/pon-resume/H-native-20261030/H5-three-build/risc0-zkvm-platform.actual-elf",
+          "sha256": "984fdb6f5af6849a2e4ba582ea2cf34b9d9b4a8cdcaad3df6193b86426dc3490"
+        }
+      },
+      "features": [
+        "default",
+        "entrypoint",
+        "export-getrandom",
+        "export-libm",
+        "export-syscalls",
+        "getrandom",
+        "heap-embedded-alloc",
+        "panic-handler",
+        "rust-runtime",
+        "sys-args",
+        "sys-getenv",
+        "unstable"
+      ],
+      "nested_trials": {},
+      "original_ignored": [],
+      "should_panic_names": [],
+      "terminals": [
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 0,
+          "verdict": "ok"
+        }
+      ],
+      "vectors": 0
+    },
+    "H5-native-rrs-lib": {
+      "binary": {
+        "actual": {
+          "bytes": 1147600,
+          "path": "/workspace/scratch/0db0c44c1fb0/target-owned-parent-resume/release/deps/rrs_lib-d10a4f4fc5f5fd8b",
+          "sha256": "c58532f7c10329e3d47e75b97e666147088f0506699204b7b3de073f97babac6"
+        },
+        "retained": {
+          "bytes": 1147600,
+          "path": "/workspace/scratch/0db0c44c1fb0/pon-resume/H-native-20261030/H5-three-build/rrs-lib.actual-elf",
+          "sha256": "c58532f7c10329e3d47e75b97e666147088f0506699204b7b3de073f97babac6"
+        }
+      },
+      "features": [],
+      "nested_trials": {},
+      "original_ignored": [],
+      "should_panic_names": [],
+      "terminals": [
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 15,
+          "verdict": "ok"
+        }
+      ],
+      "vectors": 0
+    },
+    "H5-six-integration-qualified_task_lifecycle_v2": {
+      "binary": {
+        "actual": {
+          "bytes": 1394976,
+          "path": "/workspace/scratch/0db0c44c1fb0/target-owned-parent-resume/release/deps/qualified_task_lifecycle_v2-1f8af0bdf684892d",
+          "sha256": "30f21289ac977cc00e4f91cb0866cb76afe2b4b0cc197727aa0c0971e14189af"
+        },
+        "retained": {
+          "bytes": 1394976,
+          "path": "/workspace/scratch/0db0c44c1fb0/pon-resume/H-native-20261030/H5-six-integration-qualified_task_lifecycle_v2/qualified_task_lifecycle_v2.actual-elf",
+          "sha256": "30f21289ac977cc00e4f91cb0866cb76afe2b4b0cc197727aa0c0971e14189af"
+        }
+      },
+      "features": [
+        "transparent-w1-admission-research"
+      ],
+      "nested_trials": {},
+      "original_ignored": [],
+      "should_panic_names": [],
+      "terminals": [
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 4,
+          "verdict": "ok"
+        }
+      ],
+      "vectors": 0
+    },
+    "H5-six-integration-qualified_work_task": {
+      "binary": {
+        "actual": {
+          "bytes": 1434984,
+          "path": "/workspace/scratch/0db0c44c1fb0/target-owned-parent-resume/release/deps/qualified_work_task-4db3fd2d74b551b5",
+          "sha256": "f48d7af88bed13d30cff6858275ebcf41cf7bb8d219340b68ab27759ae857e57"
+        },
+        "retained": {
+          "bytes": 1434984,
+          "path": "/workspace/scratch/0db0c44c1fb0/pon-resume/H-native-20261030/H5-six-integration-qualified_work_task/qualified_work_task.actual-elf",
+          "sha256": "f48d7af88bed13d30cff6858275ebcf41cf7bb8d219340b68ab27759ae857e57"
+        }
+      },
+      "features": [
+        "transparent-w1-admission-research"
+      ],
+      "nested_trials": {},
+      "original_ignored": [],
+      "should_panic_names": [],
+      "terminals": [
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 5,
+          "verdict": "ok"
+        }
+      ],
+      "vectors": 0
+    },
+    "H5-six-native-ark-crypto-primitives": {
+      "binary": {
+        "actual": {
+          "bytes": 5041016,
+          "path": "/workspace/scratch/0db0c44c1fb0/target-owned-parent-resume/release/deps/ark_crypto_primitives-fcc4b1dcbdef0932",
+          "sha256": "c17f34c20362c52c4fb7f1408d019a419e91a971cdb74d0fab803c88aaca7ef5"
+        },
+        "retained": {
+          "bytes": 5041016,
+          "path": "/workspace/scratch/0db0c44c1fb0/pon-resume/H-native-20261030/H5-six-union-build/ark-crypto-primitives.actual-elf",
+          "sha256": "c17f34c20362c52c4fb7f1408d019a419e91a971cdb74d0fab803c88aaca7ef5"
+        }
+      },
+      "features": [
+        "ark-r1cs-std",
+        "asm",
+        "commitment",
+        "crh",
+        "default",
+        "encryption",
+        "hashbrown",
+        "merkle_tree",
+        "merlin",
+        "parallel",
+        "prf",
+        "print-trace",
+        "r1cs",
+        "rayon",
+        "signature",
+        "snark",
+        "sponge",
+        "std",
+        "tracing"
+      ],
+      "nested_trials": {},
+      "original_ignored": [],
+      "should_panic_names": [
+        "crh::bowe_hopwood::constraints::test::test_input_size_check",
+        "merkle_tree::tests::constraints::byte_mt_tests::bad_root_test",
+        "merkle_tree::tests::constraints::field_mt_tests::bad_root_test"
+      ],
+      "terminals": [
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 47,
+          "verdict": "ok"
+        }
+      ],
+      "vectors": 0
+    },
+    "H5-six-native-ark-ff": {
+      "binary": {
+        "actual": {
+          "bytes": 2539104,
+          "path": "/workspace/scratch/0db0c44c1fb0/target-owned-parent-resume/release/deps/ark_ff-41bbb735f155e691",
+          "sha256": "234f37872737c83dc5eb02c9a70ec203d280a3e98d9c679a0c9eed52e6ba1d7c"
+        },
+        "retained": {
+          "bytes": 2539104,
+          "path": "/workspace/scratch/0db0c44c1fb0/pon-resume/H-native-20261030/H5-six-union-build/ark-ff.actual-elf",
+          "sha256": "234f37872737c83dc5eb02c9a70ec203d280a3e98d9c679a0c9eed52e6ba1d7c"
+        }
+      },
+      "features": [
+        "asm",
+        "default",
+        "parallel",
+        "rayon",
+        "std"
+      ],
+      "nested_trials": {
+        "expand_message_xmd_SHA256_256.json": "ok",
+        "expand_message_xmd_SHA256_38.json": "ok",
+        "expand_message_xmd_SHA512_38.json": "ok",
+        "expand_message_xof_SHAKE128_256.json": "ok",
+        "expand_message_xof_SHAKE128_36.json": "ok",
+        "expand_message_xof_SHAKE256_36.json": "ok"
+      },
+      "original_ignored": [],
+      "should_panic_names": [
+        "const_helpers::tests::test_mul_buffer_soundness"
+      ],
+      "terminals": [
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 6,
+          "verdict": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 28,
+          "verdict": "ok"
+        }
+      ],
+      "vectors": 60
+    },
+    "H5-six-native-ark-relations": {
+      "binary": {
+        "actual": {
+          "bytes": 1297680,
+          "path": "/workspace/scratch/0db0c44c1fb0/target-owned-parent-resume/release/deps/ark_relations-3d37938b0817dc13",
+          "sha256": "a15d44921abb691c5b0f7d1a87a36765cff427f95151dae7862ddbc1dd22639b"
+        },
+        "retained": {
+          "bytes": 1297680,
+          "path": "/workspace/scratch/0db0c44c1fb0/pon-resume/H-native-20261030/H5-six-union-build/ark-relations.actual-elf",
+          "sha256": "a15d44921abb691c5b0f7d1a87a36765cff427f95151dae7862ddbc1dd22639b"
+        }
+      },
+      "features": [
+        "default",
+        "std",
+        "tracing-subscriber"
+      ],
+      "nested_trials": {},
+      "original_ignored": [],
+      "should_panic_names": [],
+      "terminals": [
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 6,
+          "verdict": "ok"
+        }
+      ],
+      "vectors": 0
+    },
+    "H5-six-native-risc0-zkvm-platform": {
+      "binary": {
+        "actual": {
+          "bytes": 1053520,
+          "path": "/workspace/scratch/0db0c44c1fb0/target-owned-parent-resume/release/deps/risc0_zkvm_platform-3a2d89c2d0c91d76",
+          "sha256": "11a924bb269a9d36b8e6cd15450ae44fc1b2f3dfe3e2125417db1e4c498e962c"
+        },
+        "retained": {
+          "bytes": 1053520,
+          "path": "/workspace/scratch/0db0c44c1fb0/pon-resume/H-native-20261030/H5-six-union-build/risc0-zkvm-platform.actual-elf",
+          "sha256": "11a924bb269a9d36b8e6cd15450ae44fc1b2f3dfe3e2125417db1e4c498e962c"
+        }
+      },
+      "features": [
+        "default",
+        "entrypoint",
+        "export-getrandom",
+        "export-libm",
+        "export-syscalls",
+        "getrandom",
+        "heap-embedded-alloc",
+        "panic-handler",
+        "rust-runtime",
+        "sys-args",
+        "sys-getenv",
+        "unstable"
+      ],
+      "nested_trials": {},
+      "original_ignored": [],
+      "should_panic_names": [],
+      "terminals": [
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 0,
+          "verdict": "ok"
+        }
+      ],
+      "vectors": 0
+    },
+    "H5-six-native-rrs-lib": {
+      "binary": {
+        "actual": {
+          "bytes": 1147600,
+          "path": "/workspace/scratch/0db0c44c1fb0/target-owned-parent-resume/release/deps/rrs_lib-d10a4f4fc5f5fd8b",
+          "sha256": "c58532f7c10329e3d47e75b97e666147088f0506699204b7b3de073f97babac6"
+        },
+        "retained": {
+          "bytes": 1147600,
+          "path": "/workspace/scratch/0db0c44c1fb0/pon-resume/H-native-20261030/H5-six-union-build/rrs-lib.actual-elf",
+          "sha256": "c58532f7c10329e3d47e75b97e666147088f0506699204b7b3de073f97babac6"
+        }
+      },
+      "features": [],
+      "nested_trials": {},
+      "original_ignored": [],
+      "should_panic_names": [],
+      "terminals": [
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 15,
+          "verdict": "ok"
+        }
+      ],
+      "vectors": 0
+    },
+    "H5-six-native-trnm-crypto-primitives": {
+      "binary": {
+        "actual": {
+          "bytes": 7733768,
+          "path": "/workspace/scratch/0db0c44c1fb0/target-owned-parent-resume/release/deps/trnm_crypto_primitives-8eb9a0393d240afa",
+          "sha256": "0e233a134100445460c1dafc8545411f86c9a668fc820ccfe8e6f22d9204df82"
+        },
+        "retained": {
+          "bytes": 7733768,
+          "path": "/workspace/scratch/0db0c44c1fb0/pon-resume/H-native-20261030/H5-six-union-build/trnm-crypto-primitives.actual-elf",
+          "sha256": "0e233a134100445460c1dafc8545411f86c9a668fc820ccfe8e6f22d9204df82"
+        }
+      },
+      "features": [
+        "transparent-w1-admission-research"
+      ],
+      "nested_trials": {},
+      "original_ignored": [
+        "pon_work::transparent_admission::tests::ambient_dev_mode_child"
+      ],
+      "should_panic_names": [],
+      "terminals": [
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 1,
+          "measured": 0,
+          "passed": 138,
+          "verdict": "ok"
+        }
+      ],
+      "vectors": 0
+    }
+  },
+  "limits": [
+    "Linux native host execution only; platform zero-case harness does not qualify guest syscalls or GPU paths.",
+    "Full feature union covers the six explicitly selected packages. Workspace Clippy compiles the complete workspace; it is not execution of every workspace test suite.",
+    "The standalone W1 workspace and external r0vm tool were not rebuilt or qualified by these main-workspace checks.",
+    "The deterministic RED/GREEN repairs a shared test oracle; it does not demonstrate a production arithmetic defect.",
+    "The predeclared k=1 timeout is a finite observation of included actual source, not a proof of remote exploitability.",
+    "No result closes consensus work-cost fairness, WAN service, full-chain PQ, model evolution, or the remaining supply-chain blockers."
+  ],
+  "no_new_test_ignores_or_lint_allows_added": true,
+  "original_case_preservation": {
+    "ark-ff": {
+      "added_case_names": [
+        "fields::models::cubic_extension::cube_ext_tests::test_from_base_prime_field_elements_distinct_coefficients",
+        "fields::utils::tests::test_k_adicity_rejects_base_one_instead_of_entering_nonprogress_loop",
+        "fields::utils::tests::test_k_adicity_rejects_zero_base_when_division_is_required",
+        "fields::utils::tests::test_k_adicity_valid_bases_and_original_small_input_returns"
+      ],
+      "current_outer_cases": 28,
+      "missing_original_names": [],
+      "original_outer_cases": 24
+    },
+    "risc0-zkvm-platform": {
+      "added_case_names": [],
+      "current_outer_cases": 0,
+      "missing_original_names": [],
+      "original_outer_cases": 0
+    },
+    "rrs-lib": {
+      "added_case_names": [
+        "memories::tests::test_read_to_memory_does_not_prefetch_after_failed_write",
+        "memories::tests::test_read_to_memory_retries_interrupted_and_preserves_read_error",
+        "tests::test_decoded_divu_zero_and_boundary_divisors"
+      ],
+      "current_outer_cases": 15,
+      "missing_original_names": [],
+      "original_outer_cases": 12
+    }
+  },
+  "original_failures_retained_in_archive": true,
+  "original_top_level_ignored_child": 1,
+  "physical_hardware_authenticated": false,
+  "post_quantum_whole_chain_qualified": false,
+  "previous_1_75_claim_not_preserved_for_maintained_manifest": true,
+  "production_qualification": false,
+  "public_fairness_qualified": false,
+  "repeated_three_package_runs_are_not_additional_unique_cases": true,
+  "root_readonly_source_controls_receipt": {
+    "bytes": 5603,
+    "path": "/workspace/scratch/0db0c44c1fb0/resume-delivery/H5-source-controls/result.json",
+    "sha256": "7c595c23dac88d70ce98e0d3f4c18d5120493af2488be2ba6ff0ed2762419016"
+  },
+  "schema": "h-owned-parent-final-native-summary-v1",
+  "six_package_library_passes": {
+    "ark-crypto-primitives": 47,
+    "ark-ff": 28,
+    "ark-relations": 6,
+    "risc0-zkvm-platform": 0,
+    "rrs-lib": 15,
+    "trnm-crypto-primitives": 138
+  },
+  "strict_clippy": {
+    "H5-strict-three": {
+      "argv": [
+        "/workspace/scratch/0db0c44c1fb0/rust-tools/cargo/bin/cargo",
+        "+1.95.0",
+        "clippy",
+        "--manifest-path",
+        "/workspace/scratch/0db0c44c1fb0/chain-current/trillionnium/Cargo.toml",
+        "--release",
+        "--locked",
+        "--offline",
+        "--all-targets",
+        "--all-features",
+        "--message-format=json",
+        "-p",
+        "ark-ff",
+        "-p",
+        "risc0-zkvm-platform",
+        "-p",
+        "rrs-lib",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "elapsed_seconds": 10.258973459000117,
+      "returncode": 0,
+      "structured_warning_or_error_diagnostics": 0
+    },
+    "H5-workspace-strict": {
+      "argv": [
+        "/workspace/scratch/0db0c44c1fb0/rust-tools/cargo/bin/cargo",
+        "+1.95.0",
+        "clippy",
+        "--manifest-path",
+        "/workspace/scratch/0db0c44c1fb0/chain-current/trillionnium/Cargo.toml",
+        "--workspace",
+        "--release",
+        "--locked",
+        "--offline",
+        "--all-targets",
+        "--all-features",
+        "--message-format=json",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "elapsed_seconds": 216.3983160509997,
+      "returncode": 0,
+      "structured_warning_or_error_diagnostics": 0
+    }
+  },
+  "supply_chain_qualified": false,
+  "three_parent_no_default_library_checks_passed": true,
+  "whole_workspace_strict_and_format_passed": true,
+  "zero_case_platform_harness_is_functional_qualification": false
+}
