@@ -15,6 +15,8 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 [manifest](plan-manifest-v1.toml); [snapshot](CURRENT_SNAPSHOT_V1.json);
 [applicability](../architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md).
 
+Latest owner-recovery checkpoint: [2026-10-30 continuation](#pn-owner-recovery-continuation--2026-10-30-utc).
+
 ## 0. One authority and explicit retirement
 
 This is the one active engineering plan. It owns sequence, work boundaries and integration
@@ -7930,3 +7932,51 @@ controls and four full Agentd HTTP controls. Those local component results do
 not qualify a new cross-repository head/merge tuple; the pair still requires
 explicit immutable source/base/ordered-merge binding and its original hosted
 gates.
+
+### PN owner recovery continuation — 2026-10-30 UTC
+
+This continues the existing PN0–PN6 sequence and M00–M17 ownership. It does not
+replace the original acceptance gates or qualify the whole system. The frozen
+starting sources were Chain b23c0ef85f058507185b2ccb404a5d648e447c06 and Hepta
+6850ae0ca6191b0afa436b00403c059d58ca2893. Concurrent Chain publication
+24b265834daea34947adbb5903d887e3f6043838 was fetched and adopted by fast-forward;
+its stronger original-credit reader and retained evidence were preserved.
+
+[The owner-recovery evidence index](../../evidence/pn-owner-recovery-20261030/README.md)
+contains byte-hashed original RED/GREEN logs and independent historical readback.
+The actual source pair is bound by the subsequently published Hepta execution
+profile and its runtime candidate-tuple receipts; these starting hashes do not
+stand in for that later pair or its applicable source/merge executions.
+
+| Stage | Concrete continuation | Remaining original exit |
+| --- | --- | --- |
+| PN0 | Preserve concurrent 24b source; carry the two verified PQ files forward; version the ordinary Hepta source selection rather than reuse the old branch-name fallback. | Actual published source/base/merge tuples, complete source/config/binary receipts and applicable full gates. The binary/diverse research workflows retain their own frozen historical experiments and are not silently certified by the ordinary V3 pair. |
+| PN1 | TPQ1 rejects actual SQLite ephemeral main backing before authorization consumption. Real ML-DSA RED: 13 pass/one failure; GREEN: all 14 selected owner tests pass. | W1 statement correctness, effective work cost, honest service under the original attack envelope, all authorization surfaces and independent cryptographic review remain distinct obligations. |
+| PN2 | Adopt the parallel signed stored-credit reader without changing native accounting, deadlines or full-state predicates. Add balanced one/two-owner terminal controls inside its existing fourteen-test roster. | Strict History still needs the original complete business campaign; long-history/incremental-state, cold-sync, deep-reorg, disk-fault and independent-readback acceptance remain open. |
+| PN3 | The ordinary model workflows use a separately versioned closed source selection; historical profile/source identities remain immutable. | Three real installed-parent/evaluation/download/install/next-task cycles, with beneficial release and valid no-update reported separately. Source selection tests do not establish efficacy. |
+| PN4 | Hepta's existing AutomationStore verifies original step/fence and exact intent/payload in the same SQLite transaction as recovery observation append. The first native package selection passed all 103 tests. | Complete typed provider-operation persistence, legacy unresolved reconciliation, actual Agentd integration and loss/reorg/economic gates must have their own current-source evidence. No late Unknown becomes an invented absence or retry. |
+| PN5 | Keep the original independent-operator, custody, fault-cohort and at-least-72-hour prerequisites. | Three real independent administrators/failure domains, joint PN1–PN4 acceptance and the frozen full WAN campaign are still required; this local session provides none of those independence/duration claims. |
+| PN6 | Keep the existing versioned migration and release owners and false activation flags. | Full PQ identity/source-exit migration, retained liabilities/revocation/history, all prior qualifications and an actual release decision for the selected binaries. |
+
+#### Bounded fixes and explicit limits
+
+SQLite FULL synchronization does not persist an in-memory authorization owner.
+The new backing check queries the actual opened main database, covering temporary
+files, `:memory:`, memory URI modes and memdb VFS without rejecting an ordinary
+disk basename. It uses the existing error, schema, signature domain and sequence
+transaction. It is not a defense against restoring an entire old database copy
+or proof that the remaining classical paths have become post-quantum.
+
+Independent review of the original b23 graph-fence artifact verified all 1,575
+member hashes and all 5,336 CPU samples, including 473 legitimate negative stored
+balances backed by original reservations. Runs two and three pass the adopted
+reader; run one still fails full receiver/verifier state equality. These are
+historical readback results, not a fresh native campaign or an erased CI failure.
+The additional terminal controls prove that balanced live credit still cannot
+satisfy completed settlement. The production reader bytes remain those of 24b.
+
+The original native PQ selection filtered 887 unrelated library cases. Scoped
+strict Clippy and rustfmt passed; the retained SQLite I/O build-script warning
+and cached canonical-compiler follow-up remain explicitly unqualified for I/O.
+A functional owner test, lint pass or evidence index does not replace the
+original fresh-build I/O, full-workspace, cross-architecture or public gates.

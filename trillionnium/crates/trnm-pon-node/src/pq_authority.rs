@@ -170,8 +170,9 @@ fn check_store(database: &Connection, identity: &[u8; 48]) -> Result<i64, PqOwne
 }
 
 impl PqAuthorizationOwner {
-    /// Open a fresh or identically pinned TPQ1 owner. An existing unrelated SQLite
-    /// file and a changed scope are rejected, never silently initialized/reset.
+    /// Open a fresh or identically pinned TPQ1 owner backed by a database file.
+    /// Ephemeral backends, an existing unrelated SQLite file and a changed scope
+    /// are rejected, never silently initialized/reset.
     pub fn open(path: &Path, scope: PqAuthorizationScope) -> Result<Self, PqOwnerError> {
         if !(1..=6).contains(&scope.purpose)
             || scope.network == [0; 32]
@@ -193,6 +194,12 @@ impl PqAuthorizationOwner {
         commitment.update(&scope.public_key_spki);
         let identity: [u8; 48] = commitment.finalize().into();
         let mut database = Connection::open(path)?;
+        // Inspect SQLite's actual main backing, including URI/VFS selection.
+        // FULL synchronization cannot make an in-memory or temporary owner keep
+        // its consumed operation sequence after the connection closes.
+        if database.path().is_none_or(str::is_empty) {
+            return Err(PqOwnerError::StoreIdentity);
+        }
         database.busy_timeout(Duration::from_secs(1))?;
         database.pragma_update(None, "synchronous", "FULL")?;
         let transaction = database.transaction_with_behavior(TransactionBehavior::Immediate)?;

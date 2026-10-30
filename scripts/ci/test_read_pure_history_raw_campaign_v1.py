@@ -423,6 +423,23 @@ class PureHistoryReader(unittest.TestCase):
             self.assertFalse(result['original_criteria_met'])
             self.assertFalse(result['production_qualified'])
             self.assertEqual(report, original)
+            for owners, live in ((1, 50_000_000), (2, 150_000_000)):
+                with self.subTest(outstanding_final_owners=owners):
+                    outstanding = live_sample(50_000_000, owners, live)['meter']['Ok']
+                    # Every accounting identity is valid for this live sample.
+                    # Only the terminal gate may refuse its unclosed owners;
+                    # an inconsistent reservation would mask that requirement.
+                    reader.actual_flow(outstanding['actual_flow'])
+                    altered = copy.deepcopy(report)
+                    phase = altered['phases'][1]
+                    phase['final_actual_flow'] = outstanding['actual_flow']
+                    phase['final_meter'] = outstanding['meter']
+                    with self.assertRaisesRegex(ValueError, 'actual closed paid owner and complete settlement required'):
+                        reader.phase_bindings(phase)
+                    # read() rehashes the whole report and retains the native
+                    # IPC fixtures, so this cannot pass via an earlier refusal.
+                    with self.assertRaisesRegex(ValueError, 'actual closed paid owner and complete settlement required'):
+                        self.read(root, altered)
 
     def test_duplicate_json_report_cannot_hide_an_earlier_profile(self):
         with tempfile.TemporaryDirectory() as temporary:
