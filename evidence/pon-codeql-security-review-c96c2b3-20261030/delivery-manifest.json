@@ -1,0 +1,41 @@
+{
+  "all_original_findings_retained": true,
+  "files": [
+    {
+      "bytes": 89429,
+      "path": "F-to-G-findings-map.json",
+      "sha256": "2dc939c04c8d47675ccc450e8be572e9f2ef7e2d388c2f37969a0e848ab7d4c5"
+    },
+    {
+      "bytes": 7091,
+      "path": "README.md",
+      "sha256": "6b7a8124324bd7c85e26481f8f2886ce342e28a43bad3ae741c2e359dec1d183"
+    },
+    {
+      "bytes": 13439,
+      "path": "codeql-G-publication-receipt.json",
+      "sha256": "9852f4d0b57155f05fb8a27c031a40afc71121a2fad1822e8f267b0e26a5131d"
+    },
+    {
+      "bytes": 3756,
+      "path": "review-provenance.json",
+      "sha256": "e9e6b2b45e1dea8e00902914e7504ecc41224ccb986297af28680a236f852b7e"
+    },
+    {
+      "bytes": 2215,
+      "path": "rust-diagnostic-review.json",
+      "sha256": "a55fa6eb32606993607401b56cfe5d0fbfa51db28d5a19d983c6d98d958e4d69"
+    },
+    {
+      "bytes": 442598,
+      "path": "rust-triage-322.json",
+      "sha256": "e475e4191c932130f87d1e889ae4609424b546cdeb9f1269a9c0bb1517412945"
+    }
+  ],
+  "native_or_codeql_executed": false,
+  "originals_remain_in_official_run_artifacts": true,
+  "repository_worktree_modified": false,
+  "schema": "pon-codeql-review-github-delivery-v1",
+  "security_qualified": false,
+  "suggested_repository_directory": "evidence/pon-codeql-security-review-c96c2b3-20261030"
+}

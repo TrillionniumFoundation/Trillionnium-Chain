@@ -1,34 +1,40 @@
 use crate::{biginteger::BigInteger, UniformRand};
 use num_bigint::BigUint;
 
+// Exercise the Clone contract even for BigInteger implementations that
+// also implement Copy.
+fn clone_for_contract<T: Clone>(value: &T) -> T {
+    value.clone()
+}
+
 // Test elementary math operations for BigInteger.
 fn biginteger_arithmetic_test<B: BigInteger>(a: B, b: B, zero: B, max: B) {
     // zero == zero
-    assert_eq!(zero, zero);
+    assert!(<B as PartialEq>::eq(&zero, &zero));
 
     // zero.is_zero() == true
-    assert_eq!(zero.is_zero(), true);
+    assert!(zero.is_zero());
 
     // a == a
-    assert_eq!(a, a);
+    assert!(<B as PartialEq>::eq(&a, &a));
 
     // a + 0 = a
     let mut a0_add = a;
     let carry = a0_add.add_with_carry(&zero);
     assert_eq!(a0_add, a);
-    assert_eq!(carry, false);
+    assert!(!carry);
 
     // a - 0 = a
     let mut a0_sub = a;
     let borrow = a0_sub.sub_with_borrow(&zero);
     assert_eq!(a0_sub, a);
-    assert_eq!(borrow, false);
+    assert!(!borrow);
 
     // a - a = 0
     let mut aa_sub = a;
     let borrow = aa_sub.sub_with_borrow(&a);
     assert_eq!(aa_sub, zero);
-    assert_eq!(borrow, false);
+    assert!(!borrow);
 
     // a + b = b + a
     let mut ab_add = a;
@@ -113,9 +119,9 @@ fn biginteger_shr<B: BigInteger>() {
     // Test null bits
     let a = B::rand(&mut rng);
     let b = a >> 3;
-    assert_eq!(b.get_bit(B::NUM_LIMBS * 64 - 1), false);
-    assert_eq!(b.get_bit(B::NUM_LIMBS * 64 - 2), false);
-    assert_eq!(b.get_bit(B::NUM_LIMBS * 64 - 3), false);
+    assert!(!b.get_bit(B::NUM_LIMBS * 64 - 1));
+    assert!(!b.get_bit(B::NUM_LIMBS * 64 - 2));
+    assert!(!b.get_bit(B::NUM_LIMBS * 64 - 3));
 }
 
 fn biginteger_shl<B: BigInteger>() {
@@ -134,9 +140,9 @@ fn biginteger_shl<B: BigInteger>() {
     // Test null bits
     let a = B::rand(&mut rng);
     let b = a << 3;
-    assert_eq!(b.get_bit(0), false);
-    assert_eq!(b.get_bit(1), false);
-    assert_eq!(b.get_bit(2), false);
+    assert!(!b.get_bit(0));
+    assert!(!b.get_bit(1));
+    assert!(!b.get_bit(2));
 }
 
 // Test for BigInt's bitwise operations
@@ -173,7 +179,8 @@ fn biginteger_bitwise_ops_test<B: BigInteger>() {
     // Testing a and a and b.
     let a = B::rand(&mut rng);
     let b = B::rand(&mut rng);
-    let b_clone = b.clone();
+    let b_clone = clone_for_contract(&b);
+    assert_eq!(b_clone, b);
     let and_ab = a & b;
     assert_eq!(and_ab & b_clone, a & b);
 

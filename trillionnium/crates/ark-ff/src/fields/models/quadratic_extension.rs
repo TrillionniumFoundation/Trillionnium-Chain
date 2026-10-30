@@ -769,6 +769,24 @@ where
     }
 }
 
+impl<P: QuadExtConfig> FftField for QuadExtField<P>
+where
+    P::BaseField: FftField,
+{
+    const GENERATOR: Self = Self::new(P::BaseField::GENERATOR, P::BaseField::ZERO);
+    const TWO_ADICITY: u32 = P::BaseField::TWO_ADICITY;
+    const TWO_ADIC_ROOT_OF_UNITY: Self =
+        Self::new(P::BaseField::TWO_ADIC_ROOT_OF_UNITY, P::BaseField::ZERO);
+    const SMALL_SUBGROUP_BASE: Option<u32> = P::BaseField::SMALL_SUBGROUP_BASE;
+    const SMALL_SUBGROUP_BASE_ADICITY: Option<u32> = P::BaseField::SMALL_SUBGROUP_BASE_ADICITY;
+    const LARGE_SUBGROUP_ROOT_OF_UNITY: Option<Self> =
+        if let Some(x) = P::BaseField::LARGE_SUBGROUP_ROOT_OF_UNITY {
+            Some(Self::new(x, P::BaseField::ZERO))
+        } else {
+            None
+        };
+}
+
 #[cfg(test)]
 mod quad_ext_tests {
     use super::*;
@@ -823,22 +841,4 @@ mod quad_ext_tests {
             );
         }
     }
-}
-
-impl<P: QuadExtConfig> FftField for QuadExtField<P>
-where
-    P::BaseField: FftField,
-{
-    const GENERATOR: Self = Self::new(P::BaseField::GENERATOR, P::BaseField::ZERO);
-    const TWO_ADICITY: u32 = P::BaseField::TWO_ADICITY;
-    const TWO_ADIC_ROOT_OF_UNITY: Self =
-        Self::new(P::BaseField::TWO_ADIC_ROOT_OF_UNITY, P::BaseField::ZERO);
-    const SMALL_SUBGROUP_BASE: Option<u32> = P::BaseField::SMALL_SUBGROUP_BASE;
-    const SMALL_SUBGROUP_BASE_ADICITY: Option<u32> = P::BaseField::SMALL_SUBGROUP_BASE_ADICITY;
-    const LARGE_SUBGROUP_ROOT_OF_UNITY: Option<Self> =
-        if let Some(x) = P::BaseField::LARGE_SUBGROUP_ROOT_OF_UNITY {
-            Some(Self::new(x, P::BaseField::ZERO))
-        } else {
-            None
-        };
 }

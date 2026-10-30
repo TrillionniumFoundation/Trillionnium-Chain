@@ -1,0 +1,97 @@
+{
+  "allowlist_added": false,
+  "cli_result": {
+    "F_result_index_zero_based": 315,
+    "G_result_index_zero_based": 315,
+    "expanded_code_flows_in_original_sarif": 4,
+    "expanded_flows_are_public_account_paths": true,
+    "named_sources": 13,
+    "raw_secret_serialization_path_found_in_inspected_source": false,
+    "runtime_canary_executed": false,
+    "secret_identity_named_source_lines": [
+      537,
+      563,
+      845
+    ],
+    "universal_information_flow_proven": false
+  },
+  "disclosure_scope": "Public repository source, original run/artifact identifiers and digests only; no credentials, signed artifact URLs or private key values.",
+  "official_dismissals_added": false,
+  "pinned_upstream_model": {
+    "bytes": 1483859,
+    "exact_raw_bytes_verified_against_git_blob": true,
+    "git_blob": "f46620623290c030c65e45dd5c699d67fa8d5597",
+    "inspected_sink_lines": [
+      8758,
+      8759,
+      8766,
+      8767
+    ],
+    "original_review_cache_had_one_extra_final_newline": true,
+    "path": "rust/ql/lib/ext/generated/modelgenerator/rust.model.yml",
+    "ref": "codeql-cli/v2.27.3",
+    "repository": "github/codeql",
+    "sha256": "2265b1655d1cb7c667f24f1f249998629f18627f446a0fc0bfef844960710283",
+    "source_uri": "https://github.com/github/codeql/blob/codeql-cli/v2.27.3/rust/ql/lib/ext/generated/modelgenerator/rust.model.yml#L8758-L8767"
+  },
+  "schema": "pon-codeql-manual-review-source-provenance-v1",
+  "security_qualified": false,
+  "source_manifest_original_sha256": "3f83d441765c45ec3b85825c13d5f32c2a35e709b9f2d2f604413f492dec4ccb",
+  "supplementary_source_files": [
+    {
+      "bytes": 2167,
+      "path": "trillionnium/crates/trnm-task-kernel/src/lib.rs",
+      "sha256": "235abe77de9c7bc6597bb466a9fee1e83c8a50bdd83109b70e83431a1114b54e"
+    },
+    {
+      "bytes": 19949,
+      "path": "trillionnium/crates/trnm-pon-node/src/operator_pool_policy.rs",
+      "sha256": "d7b2936bcc985fae84c5bcc0730cc580ab9d5e848295b9808454eac57eb439bc"
+    },
+    {
+      "bytes": 52579,
+      "path": "trillionnium/crates/trnm-pon-node/src/store/authenticated_migration.rs",
+      "sha256": "555efe4bda4262a809d2cc748f691a9e1b6388ff92e234e0db073df67dd0f8b0"
+    },
+    {
+      "bytes": 2799,
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth_reference.rs",
+      "sha256": "3634033f3c980cfc9cd63e8847c52972fa19fa83c85e7ccb93dc031068712902"
+    },
+    {
+      "bytes": 15448,
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_budget.rs",
+      "sha256": "24c97cbf350062ee1454959e0680f55d1fd5efb35a860c33a884bd4d68e70d2d"
+    },
+    {
+      "bytes": 26851,
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth.rs",
+      "sha256": "4cc82598fcc7ce1837ca5d4fcd6689706cd11ef6fb1240a573db78671ef50fab"
+    },
+    {
+      "bytes": 3030,
+      "path": "trillionnium/crates/trnm-pon-node/src/store/funding.rs",
+      "sha256": "7cd7a6155e35d413ba1b31678a3e36c6d9f18bc2d6b49f3e9032a0146f34bc11"
+    },
+    {
+      "bytes": 16630,
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/full_relation.rs",
+      "sha256": "ed51cb82d417d35a0f8af636422d10abff913c868032dc3e414af63f30449c97"
+    },
+    {
+      "bytes": 7932,
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/lib.rs",
+      "sha256": "d6ae49a10db8a749dc13c0915b38702508d936e56656cfb2c866d830799bd9b2"
+    },
+    {
+      "bytes": 99247,
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v2.rs",
+      "sha256": "cf387b53656da9dc617665ba9114d75a6e68267cd09fa093d0ae336857e8d2c9"
+    },
+    {
+      "bytes": 314565,
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "sha256": "764e9cca6d1c42b4e40e811f84b678aa856d5a80ff1400cc47b0b5d0a9830b3e"
+    }
+  ]
+}

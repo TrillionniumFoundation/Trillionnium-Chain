@@ -1,0 +1,329 @@
+{
+  "F_original": {
+    "archive_sha256": "eb0702848633441a4acd3364604b729f5bba05e2b34bd991bcf8dba5a7881d93",
+    "artifact_id": 12898798527,
+    "commit": "7d54a36c9e760f8edab6544c69c153dad2626eab",
+    "run_id": 40877800722,
+    "sarif_sha256": "15ef65e713271bcd56977945d6fcd04047e993a0ef35aa4ca166d4a1be88a57b",
+    "tree": "8a5964aec47b2bf2b6f34216c0096b56ebe6facd"
+  },
+  "G_original_sarif_sha256": "5c4bafafb2022aad833518a43ccf3dfc0db317af0a07e75ad44ae5f7879352a6",
+  "all_322_results_retained_and_mapped": true,
+  "analysis_reexecuted_by_this_review": false,
+  "commit": "c96c2b3e24ba354b4abcb842ca6a6a019c442b73",
+  "comparison_only_normalization": "Every artifactLocation.index is first checked against the respective run artifacts[index].location.uri and then omitted only in comparison copies. No SARIF is modified.",
+  "coverage_gate_modified": false,
+  "export": {
+    "conclusion": "failure",
+    "decoded_utf8_log_bytes": 97525,
+    "decoded_utf8_log_sha256": "9ddfdc94cdfdca11f18008d0edc132a6f171ec2e56c40d4accce4b72b4a5eb16",
+    "failed_step": "Export exact PR analyses with the existing read-only token",
+    "job_id": 123830758951,
+    "original_error": "CodeQL analyses/checks did not complete and stabilize before the deadline",
+    "run_id": 40984057251,
+    "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40984057251"
+  },
+  "languages": [
+    {
+      "all_results_rules_diagnostics_and_invocations_preserved": true,
+      "archive_and_all_member_integrity_verified": true,
+      "archive_bytes": 458583,
+      "archive_sha256": "602ac6c7888271c2c356bee4428fdec94caaef9c46084f49cad29c46a2d304d4",
+      "artifact_id": 12946184652,
+      "artifact_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40984057072/artifacts/12946184652",
+      "error_diagnostics": 0,
+      "extraction_coverage_complete": false,
+      "finding_count": 322,
+      "findings_by_rule": {
+        "rust/cleartext-logging": 23,
+        "rust/hard-coded-cryptographic-value": 299
+      },
+      "language": "rust",
+      "later_postprocessing_step_failed_due_to_upload_outcome": true,
+      "local_analysis_complete": true,
+      "local_analysis_gate_passed": false,
+      "metric_number_normalizations": 14,
+      "official_action_outcome": "failure",
+      "official_job_id": 123835002656,
+      "official_job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40984057072/job/123835002656",
+      "official_processed_sarif": {
+        "bytes": 3830270,
+        "sha256": "9d93f9b3c880af82499316effce3ffe28fc3cb957f9a03d2a7dc0d7f9768f09c"
+      },
+      "official_security_gate_qualified": false,
+      "original_sarif": {
+        "bytes": 3830298,
+        "sha256": "5c4bafafb2022aad833518a43ccf3dfc0db317af0a07e75ad44ae5f7879352a6"
+      },
+      "phases": [
+        {
+          "complete": true,
+          "name": "version",
+          "returncode": 0
+        },
+        {
+          "complete": true,
+          "name": "packs",
+          "returncode": 0
+        },
+        {
+          "complete": true,
+          "name": "queries",
+          "returncode": 0
+        },
+        {
+          "complete": true,
+          "name": "project-toolchain",
+          "returncode": 0
+        },
+        {
+          "complete": true,
+          "name": "extractor-toolchain",
+          "returncode": 0
+        },
+        {
+          "complete": true,
+          "name": "create",
+          "returncode": 0
+        },
+        {
+          "complete": true,
+          "name": "analyze",
+          "returncode": 0
+        }
+      ],
+      "postprocessing_member": "publication-rust/official-postprocessing-verification.json",
+      "postprocessing_sha256": "8129fd01cca12100d0e383c0e4c100e27059b9e6aaa89d36f4c1589d38389356",
+      "result_member": "publication-rust/original/result.json",
+      "result_sha256": "3fe9fc5dcd1368827e24e8ab2d1e9a1bb415cab775c537026b3545ac207cc758",
+      "retained_decoded_job_log_sha256": "db83b955ed35e73cc072edb1d90ad3b04006263744d1946f9f195acbfa53f72b",
+      "selected_query_count": 37,
+      "service_rejection": "CodeQL analyses from advanced configurations cannot be processed when the default setup is enabled",
+      "source_before_after_equal": true,
+      "source_before_after_sha256": "3bfae7c3a2e8acea43125a877b26f8956a6562c47b488eb79ff93820a8c6ceff",
+      "warning_diagnostics": 85
+    },
+    {
+      "all_results_rules_diagnostics_and_invocations_preserved": true,
+      "archive_and_all_member_integrity_verified": true,
+      "archive_bytes": 733024,
+      "archive_sha256": "dd77478b9c96ac77b95aec1230573ac6770737dacc9312e7e12134611de38396",
+      "artifact_id": 12946781756,
+      "artifact_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40984057072/artifacts/12946781756",
+      "error_diagnostics": 0,
+      "extraction_coverage_complete": true,
+      "finding_count": 0,
+      "findings_by_rule": {},
+      "language": "cpp",
+      "later_postprocessing_step_failed_due_to_upload_outcome": true,
+      "local_analysis_complete": true,
+      "local_analysis_gate_passed": true,
+      "metric_number_normalizations": 15,
+      "official_action_outcome": "failure",
+      "official_job_id": 123835002707,
+      "official_job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40984057072/job/123835002707",
+      "official_processed_sarif": {
+        "bytes": 228901,
+        "sha256": "af287bf6f1173aed934c5619ef756d86e8e5dd0f42f91ef28ec2f635fa21fb01"
+      },
+      "official_security_gate_qualified": false,
+      "original_sarif": {
+        "bytes": 492829,
+        "sha256": "0a4df8cfca8f200bad761780f233cb4a91e89675a9c573cc3640eecbcdeef8d3"
+      },
+      "phases": [
+        {
+          "complete": true,
+          "name": "version",
+          "returncode": 0
+        },
+        {
+          "complete": true,
+          "name": "packs",
+          "returncode": 0
+        },
+        {
+          "complete": true,
+          "name": "queries",
+          "returncode": 0
+        },
+        {
+          "complete": true,
+          "name": "project-toolchain",
+          "returncode": 0
+        },
+        {
+          "complete": true,
+          "name": "create",
+          "returncode": 0
+        },
+        {
+          "complete": true,
+          "name": "analyze",
+          "returncode": 0
+        }
+      ],
+      "postprocessing_member": "publication-cpp/official-postprocessing-verification.json",
+      "postprocessing_sha256": "b0a539029f6fb83f64652b659408a52639272a2ea0efb99543f1117f4585f2c6",
+      "result_member": "publication-cpp/original/result.json",
+      "result_sha256": "e911922dbf0da6736fdedbdba5188ea4ef35d463e2e027c0761b5d7723f702c0",
+      "retained_decoded_job_log_sha256": "174c30bfd14202f8549b8f2063c5ee881feadab88913cb3bae2eb34f8ed748f5",
+      "selected_query_count": 61,
+      "service_rejection": "CodeQL analyses from advanced configurations cannot be processed when the default setup is enabled",
+      "source_before_after_equal": true,
+      "source_before_after_sha256": "3bfae7c3a2e8acea43125a877b26f8956a6562c47b488eb79ff93820a8c6ceff",
+      "warning_diagnostics": 0
+    },
+    {
+      "all_results_rules_diagnostics_and_invocations_preserved": true,
+      "archive_and_all_member_integrity_verified": true,
+      "archive_bytes": 117388,
+      "archive_sha256": "3b9837afd3fd531090a715e090a5d8cefac462a05595878112a9e44940bfd555",
+      "artifact_id": 12946323778,
+      "artifact_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40984057072/artifacts/12946323778",
+      "error_diagnostics": 0,
+      "extraction_coverage_complete": true,
+      "finding_count": 0,
+      "findings_by_rule": {},
+      "language": "actions",
+      "later_postprocessing_step_failed_due_to_upload_outcome": true,
+      "local_analysis_complete": true,
+      "local_analysis_gate_passed": true,
+      "metric_number_normalizations": 0,
+      "official_action_outcome": "failure",
+      "official_job_id": 123835002844,
+      "official_job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40984057072/job/123835002844",
+      "official_processed_sarif": {
+        "bytes": 300251,
+        "sha256": "9e66d0377b82b107cfb5fe7c18ac81bd2b5c841dd4244da262ba8e06235b7605"
+      },
+      "official_security_gate_qualified": false,
+      "original_sarif": {
+        "bytes": 300251,
+        "sha256": "9e66d0377b82b107cfb5fe7c18ac81bd2b5c841dd4244da262ba8e06235b7605"
+      },
+      "phases": [
+        {
+          "complete": true,
+          "name": "version",
+          "returncode": 0
+        },
+        {
+          "complete": true,
+          "name": "packs",
+          "returncode": 0
+        },
+        {
+          "complete": true,
+          "name": "queries",
+          "returncode": 0
+        },
+        {
+          "complete": true,
+          "name": "create",
+          "returncode": 0
+        },
+        {
+          "complete": true,
+          "name": "analyze",
+          "returncode": 0
+        }
+      ],
+      "postprocessing_member": "publication-actions/official-postprocessing-verification.json",
+      "postprocessing_sha256": "267efeaa7009890b034ca36a604c8b48e3433d58e333d049232e241504ff5d00",
+      "result_member": "publication-actions/original/result.json",
+      "result_sha256": "bdc3d3baa4d21c06be3eee306655a83aa5ab9f7f1d2a5aa00b13b8f0aaf06818",
+      "retained_decoded_job_log_sha256": "d4ec20b8f936bbc8b089eb8c6f1f464c69071b53f84a3a2e77d4129bde37ff26",
+      "selected_query_count": 18,
+      "service_rejection": "CodeQL analyses from advanced configurations cannot be processed when the default setup is enabled",
+      "source_before_after_equal": true,
+      "source_before_after_sha256": "3bfae7c3a2e8acea43125a877b26f8956a6562c47b488eb79ff93820a8c6ceff",
+      "warning_diagnostics": 0
+    },
+    {
+      "all_results_rules_diagnostics_and_invocations_preserved": true,
+      "archive_and_all_member_integrity_verified": true,
+      "archive_bytes": 112995,
+      "archive_sha256": "f89253f61dc9ce2ff39f192da29ef6552e5ce449758553710426705aa0161892",
+      "artifact_id": 12946293957,
+      "artifact_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40984057072/artifacts/12946293957",
+      "error_diagnostics": 0,
+      "extraction_coverage_complete": true,
+      "finding_count": 0,
+      "findings_by_rule": {},
+      "language": "python",
+      "later_postprocessing_step_failed_due_to_upload_outcome": true,
+      "local_analysis_complete": true,
+      "local_analysis_gate_passed": true,
+      "metric_number_normalizations": 0,
+      "official_action_outcome": "failure",
+      "official_job_id": 123835002675,
+      "official_job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40984057072/job/123835002675",
+      "official_processed_sarif": {
+        "bytes": 341430,
+        "sha256": "18b2252e385530e49ab0f91de824f04288873fde757b6c3e390d8d408ae78897"
+      },
+      "official_security_gate_qualified": false,
+      "original_sarif": {
+        "bytes": 341430,
+        "sha256": "18b2252e385530e49ab0f91de824f04288873fde757b6c3e390d8d408ae78897"
+      },
+      "phases": [
+        {
+          "complete": true,
+          "name": "version",
+          "returncode": 0
+        },
+        {
+          "complete": true,
+          "name": "packs",
+          "returncode": 0
+        },
+        {
+          "complete": true,
+          "name": "queries",
+          "returncode": 0
+        },
+        {
+          "complete": true,
+          "name": "create",
+          "returncode": 0
+        },
+        {
+          "complete": true,
+          "name": "analyze",
+          "returncode": 0
+        }
+      ],
+      "postprocessing_member": "publication-python/official-postprocessing-verification.json",
+      "postprocessing_sha256": "ecf943ced5fca1b52969461836bfa3f2d4ef49436b505eb87bc73ab038246a08",
+      "result_member": "publication-python/original/result.json",
+      "result_sha256": "951876aaca87aaf553251cda4bee4f9cd4020ae6ab900bdd32abac947ee62c14",
+      "retained_decoded_job_log_sha256": "150fd67d1b190e05fda05ec1b1f113c12aeceeebdedb40db32dc79083beddc02",
+      "selected_query_count": 45,
+      "service_rejection": "CodeQL analyses from advanced configurations cannot be processed when the default setup is enabled",
+      "source_before_after_equal": true,
+      "source_before_after_sha256": "3bfae7c3a2e8acea43125a877b26f8956a6562c47b488eb79ff93820a8c6ceff",
+      "warning_diagnostics": 0
+    }
+  ],
+  "original_sarif_or_alerts_modified": false,
+  "queries_or_models_modified": false,
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "repository_settings_read_or_changed": false,
+  "run_conclusion": "failure",
+  "run_id": 40984057072,
+  "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40984057072",
+  "schema": "pon-codeql-G-four-language-original-publication-review-v1",
+  "security_or_coverage_or_publication_qualified": false,
+  "source_capture": {
+    "kind": "head",
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "c96c2b3e24ba354b4abcb842ca6a6a019c442b73",
+    "tested_tree": "74b69713a50e61a52e2232855f1a19c567f1e6e1",
+    "tracked_bytes": 820597856,
+    "tracked_entries": 6263,
+    "tracked_worktree_verified": true
+  },
+  "tree": "74b69713a50e61a52e2232855f1a19c567f1e6e1"
+}

@@ -52,8 +52,8 @@ fn expander() {
 
 #[derive(Copy, Clone)]
 pub enum ExpID {
-    XMD(HashID),
-    XOF(XofID),
+    Xmd(HashID),
+    Xof(XofID),
 }
 
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -71,11 +71,11 @@ pub enum XofID {
 
 fn do_test(data: ExpanderVector) -> Result<(), Failed> {
     let exp_id = match data.hash.as_str() {
-        "SHA256" => ExpID::XMD(HashID::SHA256),
-        "SHA384" => ExpID::XMD(HashID::SHA384),
-        "SHA512" => ExpID::XMD(HashID::SHA512),
-        "SHAKE128" => ExpID::XOF(XofID::SHAKE128),
-        "SHAKE256" => ExpID::XOF(XofID::SHAKE256),
+        "SHA256" => ExpID::Xmd(HashID::SHA256),
+        "SHA384" => ExpID::Xmd(HashID::SHA384),
+        "SHA512" => ExpID::Xmd(HashID::SHA512),
+        "SHAKE128" => ExpID::Xof(XofID::SHAKE128),
+        "SHAKE256" => ExpID::Xof(XofID::SHAKE256),
         _ => unimplemented!(),
     };
     let exp = get_expander(exp_id, data.dst.as_bytes(), data.k);
@@ -98,7 +98,7 @@ fn get_expander(id: ExpID, _dst: &[u8], k: usize) -> Box<dyn Expander> {
     let dst = _dst.to_vec();
 
     match id {
-        ExpID::XMD(h) => match h {
+        ExpID::Xmd(h) => match h {
             HashID::SHA256 => Box::new(ExpanderXmd {
                 hasher: PhantomData::<Sha256>,
                 block_size: 64,
@@ -115,7 +115,7 @@ fn get_expander(id: ExpID, _dst: &[u8], k: usize) -> Box<dyn Expander> {
                 dst,
             }),
         },
-        ExpID::XOF(x) => match x {
+        ExpID::Xof(x) => match x {
             XofID::SHAKE128 => Box::new(ExpanderXof {
                 xofer: PhantomData::<Shake128>,
                 k,

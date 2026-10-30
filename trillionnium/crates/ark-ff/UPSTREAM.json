@@ -100,8 +100,10 @@
     "doc/katex-header.html",
     "src/biginteger/arithmetic.rs",
     "src/biginteger/mod.rs",
+    "src/biginteger/tests.rs",
     "src/fields/fft_friendly.rs",
     "src/fields/field_hashers/expander/mod.rs",
+    "src/fields/field_hashers/expander/tests.rs",
     "src/fields/field_hashers/mod.rs",
     "src/fields/mod.rs",
     "src/fields/models/cubic_extension.rs",
@@ -415,7 +417,7 @@
       },
       {
         "path": "src/fields/models/cubic_extension.rs",
-        "sha256": "b2ad0b6947a2a6ffaea3d5517209a8b0da30364f194026692d0dfe7a710eb7e1"
+        "sha256": "62ea1250da84fa512861fc2e280cf6d879a66a407d0eec53702d801df1dd8ebf"
       },
       {
         "path": "src/fields/models/fp/mod.rs",
@@ -427,7 +429,7 @@
       },
       {
         "path": "src/fields/models/quadratic_extension.rs",
-        "sha256": "1cbff8085334ee9ede40216d0549e4e2b5e51ac07d3125e26e00307458de6548"
+        "sha256": "3be1a86d25ede4729f6f8f970125863136a1ca41b1a8586fd38bdaf9ce9a9463"
       },
       {
         "path": "src/fields/prime.rs",
@@ -440,6 +442,14 @@
       {
         "path": "src/fields/utils.rs",
         "sha256": "649ae3f5bfdf45c14e4c183d284bb7d8ec8ef756792f9a0496d96a2822e3020a"
+      },
+      {
+        "path": "src/biginteger/tests.rs",
+        "sha256": "9109a39d6b37340f5eaacc6ac30eab56196a87dba7387f990b2d77133296b23b"
+      },
+      {
+        "path": "src/fields/field_hashers/expander/tests.rs",
+        "sha256": "076a750e56a7fca3a42cbcded4e883e713a8343054b1cba7cab4f219c607aed2"
       }
     ],
     "features_removed": false,
@@ -454,6 +464,17 @@
     "observed_original_errors": 43,
     "original_rust_1_75_compatibility_claimed": false,
     "original_tests_removed": false,
+    "retained_test_repairs": {
+      "boolean_assertions": "Ten boolean assertions retain original predicates.",
+      "clone_contract": "A Clone-only generic helper keeps the actual Clone contract invocation; one exact equality assertion is added.",
+      "expander_variants": "Private enum variants change spelling; no string literal, JSON tag, original fixture or original test name changes.",
+      "fft_item_order": "Two unchanged FftField impl blocks precede the original unchanged test modules.",
+      "native_validation_pending": true,
+      "new_ignore_or_lint_allow": false,
+      "new_test_cases_in_this_step": 0,
+      "reflexivity_checks": "Explicit PartialEq::eq calls retain both original reflexive checks."
+    },
+    "retained_test_target_errors_observed": 17,
     "source_baseline_commit": "bda9a45940a66529b9842228f813ac9ea0d2392f"
   },
   "supply_gate_closed": false,
