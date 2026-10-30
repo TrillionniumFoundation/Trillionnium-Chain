@@ -18,12 +18,22 @@ fn head() -> LocalRecoveryHeadV1 {
 }
 fn witness(sk: &SigningKey<MlDsa65>) -> SignedPqRecoveryWitnessV1 {
     SignedPqRecoveryWitnessV1::sign(
-        CHAIN.into(), DID.into(), [4; 32], head(),
-        19, [5; 32], 1000, 1150, sk,
+        CHAIN.into(),
+        DID.into(),
+        [4; 32],
+        head(),
+        19,
+        [5; 32],
+        1000,
+        1150,
+        sk,
     )
     .unwrap()
 }
-fn expected<'a>(key: &'a [u8], local: &'a LocalRecoveryHeadV1) -> ExternalRecoveryExpectationV1<'a> {
+fn expected<'a>(
+    key: &'a [u8],
+    local: &'a LocalRecoveryHeadV1,
+) -> ExternalRecoveryExpectationV1<'a> {
     ExternalRecoveryExpectationV1 {
         chain_id: CHAIN,
         witness_did: DID,
@@ -41,7 +51,8 @@ fn fresh_independently_pinned_witness_can_confirm_exact_recovery_state() {
     let sk = key();
     let pk = sk.verifying_key().to_bytes().to_vec();
     let original = witness(&sk);
-    let parsed = SignedPqRecoveryWitnessV1::from_canonical_bytes(&original.canonical_bytes()).unwrap();
+    let parsed =
+        SignedPqRecoveryWitnessV1::from_canonical_bytes(&original.canonical_bytes()).unwrap();
     assert_eq!(parsed.canonical_bytes(), original.canonical_bytes());
     assert!(parsed.canonical_bytes().len() < MAX_PQ_RECOVERY_WITNESS_BYTES);
     parsed.verify_for_recovery(&expected(&pk, &head())).unwrap();
@@ -81,13 +92,19 @@ fn challenge_sequence_lifetime_and_classic_key_downgrade_refuse() {
 
     let mut e = expected(&pk, &local);
     e.last_external_sequence = 19;
-    assert!(matches!(signed.verify_for_recovery(&e), Err(PqRecoveryWitnessError::StaleSequence)));
+    assert!(matches!(
+        signed.verify_for_recovery(&e),
+        Err(PqRecoveryWitnessError::StaleSequence)
+    ));
     e = expected(&pk, &local);
     e.outstanding_challenge = [0x44; 32];
     assert!(signed.verify_for_recovery(&e).is_err());
     e = expected(&pk, &local);
     e.now_unix_s = 1151;
-    assert!(matches!(signed.verify_for_recovery(&e), Err(PqRecoveryWitnessError::TimeWindow)));
+    assert!(matches!(
+        signed.verify_for_recovery(&e),
+        Err(PqRecoveryWitnessError::TimeWindow)
+    ));
     e = expected(&pk, &local);
     e.now_unix_s = 999;
     assert!(signed.verify_for_recovery(&e).is_err());
@@ -109,7 +126,9 @@ fn signing_domain_bytes_and_canonical_input_have_no_implicit_authority() {
     let signed = witness(&sk);
     let mut mutated = signed.clone();
     mutated.signature[0] ^= 1;
-    assert!(mutated.verify_for_recovery(&expected(&pk, &head())).is_err());
+    assert!(mutated
+        .verify_for_recovery(&expected(&pk, &head()))
+        .is_err());
     mutated = signed.clone();
     mutated.sequence += 1;
     assert!(mutated.verify_for_recovery(&expected(&pk, &head())).is_err());
@@ -128,9 +147,10 @@ fn signing_domain_bytes_and_canonical_input_have_no_implicit_authority() {
     wrong_version[1] = 2;
     assert!(SignedPqRecoveryWitnessV1::from_canonical_bytes(&wrong_version).is_err());
     assert!(matches!(
-        SignedPqRecoveryWitnessV1::from_canonical_bytes(
-            &vec![0; MAX_PQ_RECOVERY_WITNESS_BYTES + 1]
-        ),
+        SignedPqRecoveryWitnessV1::from_canonical_bytes(&vec![
+            0;
+            MAX_PQ_RECOVERY_WITNESS_BYTES + 1
+        ]),
         Err(PqRecoveryWitnessError::WireTooLarge)
     ));
 }

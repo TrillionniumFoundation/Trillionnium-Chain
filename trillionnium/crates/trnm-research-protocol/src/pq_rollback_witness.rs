@@ -145,9 +145,7 @@ impl SignedPqRecoveryWitnessV1 {
         if self.sequence <= trusted.last_external_sequence {
             return Err(PqRecoveryWitnessError::StaleSequence);
         }
-        if trusted.now_unix_s < self.issued_unix_s
-            || trusted.now_unix_s > self.expires_unix_s
-        {
+        if trusted.now_unix_s < self.issued_unix_s || trusted.now_unix_s > self.expires_unix_s {
             return Err(PqRecoveryWitnessError::TimeWindow);
         }
         if self.observed != *trusted.actual_local {
@@ -190,9 +188,10 @@ impl SignedPqRecoveryWitnessV1 {
             ]
             .contains(&[0; 32])
             || self.issued_unix_s == 0
-            || self.expires_unix_s.checked_sub(self.issued_unix_s).is_none_or(|ttl| {
-                ttl == 0 || ttl > MAX_WITNESS_TTL_SECONDS
-            })
+            || self
+                .expires_unix_s
+                .checked_sub(self.issued_unix_s)
+                .is_none_or(|ttl| ttl == 0 || ttl > MAX_WITNESS_TTL_SECONDS)
         {
             return Err(PqRecoveryWitnessError::InvalidShape);
         }
