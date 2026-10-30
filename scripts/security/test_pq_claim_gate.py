@@ -72,7 +72,7 @@ class ClaimGateTests(unittest.TestCase):
     def test_unreadable_classic_authority_is_fail_closed(self):
         import subprocess
         import sys
-        (self.root / module.PATHS["hepta_handoff"]).write_bytes(b"\\xff")
+        (self.root / module.PATHS["hepta_handoff"]).write_bytes(b"\xff")
         self.assertIn("unreadable_source", self.kinds())
         result = subprocess.run(
             [sys.executable, str(SCRIPT), "--root", str(self.root), "--assert-unqualified"],
