@@ -371,8 +371,8 @@ pub fn batch_inversion_and_mul<F: Field>(v: &mut [F], coeff: &F) {
     let num_elem_per_thread = max(num_elems / num_cpus_available, min_elements_per_thread);
 
     // Batch invert in parallel, without copying the vector
-    v.par_chunks_mut(num_elem_per_thread).for_each(|mut chunk| {
-        serial_batch_inversion_and_mul(&mut chunk, coeff);
+    v.par_chunks_mut(num_elem_per_thread).for_each(|chunk| {
+        serial_batch_inversion_and_mul(chunk, coeff);
     });
 }
 
@@ -400,7 +400,8 @@ fn serial_batch_inversion_and_mul<F: Field>(v: &mut [F], coeff: &F) {
     tmp *= coeff;
 
     // Second pass: iterate backwards to compute inverses
-    for (f, s) in v.iter_mut()
+    for (f, s) in v
+        .iter_mut()
         // Backwards
         .rev()
         // Ignore normalized elements

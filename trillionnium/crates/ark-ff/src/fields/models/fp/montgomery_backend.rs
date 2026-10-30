@@ -89,7 +89,7 @@ pub trait MontConfig<const N: usize>: 'static + Sync + Send + Sized {
                 // Thus we can set MSB to `carry` to get the correct result of (MODULUS + 1) // 2:
                 result.0[N - 1] |= (carry as u64) << 63;
                 Some(result.divide_by_2_round_down())
-            },
+            }
             false => None,
         }
     };

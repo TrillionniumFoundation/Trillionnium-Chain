@@ -503,7 +503,7 @@ impl<P: CubicExtConfig> Distribution<CubicExtField<P>> for Standard {
     }
 }
 
-impl<'a, P: CubicExtConfig> Add<&'a CubicExtField<P>> for CubicExtField<P> {
+impl<P: CubicExtConfig> Add<&CubicExtField<P>> for CubicExtField<P> {
     type Output = Self;
 
     #[inline]
@@ -513,7 +513,7 @@ impl<'a, P: CubicExtConfig> Add<&'a CubicExtField<P>> for CubicExtField<P> {
     }
 }
 
-impl<'a, P: CubicExtConfig> Sub<&'a CubicExtField<P>> for CubicExtField<P> {
+impl<P: CubicExtConfig> Sub<&CubicExtField<P>> for CubicExtField<P> {
     type Output = Self;
 
     #[inline]
@@ -523,7 +523,7 @@ impl<'a, P: CubicExtConfig> Sub<&'a CubicExtField<P>> for CubicExtField<P> {
     }
 }
 
-impl<'a, P: CubicExtConfig> Mul<&'a CubicExtField<P>> for CubicExtField<P> {
+impl<P: CubicExtConfig> Mul<&CubicExtField<P>> for CubicExtField<P> {
     type Output = Self;
 
     #[inline]
@@ -533,7 +533,7 @@ impl<'a, P: CubicExtConfig> Mul<&'a CubicExtField<P>> for CubicExtField<P> {
     }
 }
 
-impl<'a, P: CubicExtConfig> Div<&'a CubicExtField<P>> for CubicExtField<P> {
+impl<P: CubicExtConfig> Div<&CubicExtField<P>> for CubicExtField<P> {
     type Output = Self;
 
     #[inline]
@@ -545,7 +545,7 @@ impl<'a, P: CubicExtConfig> Div<&'a CubicExtField<P>> for CubicExtField<P> {
 
 impl_additive_ops_from_ref!(CubicExtField, CubicExtConfig);
 impl_multiplicative_ops_from_ref!(CubicExtField, CubicExtConfig);
-impl<'a, P: CubicExtConfig> AddAssign<&'a Self> for CubicExtField<P> {
+impl<P: CubicExtConfig> AddAssign<&Self> for CubicExtField<P> {
     #[inline]
     fn add_assign(&mut self, other: &Self) {
         self.c0.add_assign(&other.c0);
@@ -554,7 +554,7 @@ impl<'a, P: CubicExtConfig> AddAssign<&'a Self> for CubicExtField<P> {
     }
 }
 
-impl<'a, P: CubicExtConfig> SubAssign<&'a Self> for CubicExtField<P> {
+impl<P: CubicExtConfig> SubAssign<&Self> for CubicExtField<P> {
     #[inline]
     fn sub_assign(&mut self, other: &Self) {
         self.c0.sub_assign(&other.c0);
@@ -563,7 +563,7 @@ impl<'a, P: CubicExtConfig> SubAssign<&'a Self> for CubicExtField<P> {
     }
 }
 
-impl<'a, P: CubicExtConfig> MulAssign<&'a Self> for CubicExtField<P> {
+impl<P: CubicExtConfig> MulAssign<&Self> for CubicExtField<P> {
     #[inline]
     #[allow(clippy::many_single_char_names)]
     fn mul_assign(&mut self, other: &Self) {
@@ -593,7 +593,7 @@ impl<'a, P: CubicExtConfig> MulAssign<&'a Self> for CubicExtField<P> {
     }
 }
 
-impl<'a, P: CubicExtConfig> DivAssign<&'a Self> for CubicExtField<P> {
+impl<P: CubicExtConfig> DivAssign<&Self> for CubicExtField<P> {
     #[inline]
     fn div_assign(&mut self, other: &Self) {
         self.mul_assign(&other.inverse().unwrap());
@@ -781,8 +781,7 @@ mod cube_ext_tests {
                 random_coeffs.push(Fq::rand(&mut test_rng()));
             }
 
-            let (expected_0, expected_1, expected_2) =
-                fq6_test_expected_components(&random_coeffs);
+            let (expected_0, expected_1, expected_2) = fq6_test_expected_components(&random_coeffs);
             let expected = Fq6::new(expected_0, expected_1, expected_2);
 
             let actual = Fq6::from_base_prime_field_elems(random_coeffs).unwrap();

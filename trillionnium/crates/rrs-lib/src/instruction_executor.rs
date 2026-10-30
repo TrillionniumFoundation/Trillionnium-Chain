@@ -415,7 +415,7 @@ impl<'a, M: Memory> InstructionProcessor for InstructionExecutor<'a, M> {
     make_alu_op_reg_fn! {mulhsu, |a, b| (sign_extend_u32(a).wrapping_mul(b as i64) >> 32) as u32}
 
     make_alu_op_reg_fn! {div, |a, b| if b == 0 {u32::MAX} else {((a as i32).wrapping_div(b as i32)) as u32}}
-    make_alu_op_reg_fn! {divu, |a, b| if b == 0 {u32::MAX} else {a / b}}
+    make_alu_op_reg_fn! {divu, |a, b| a.checked_div(b).unwrap_or(u32::MAX)}
     make_alu_op_reg_fn! {rem, |a, b| if b == 0 {a} else {((a as i32).wrapping_rem(b as i32)) as u32}}
     make_alu_op_reg_fn! {remu, |a, b| if b == 0 {a} else {a % b}}
 

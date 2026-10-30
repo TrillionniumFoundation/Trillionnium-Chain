@@ -137,13 +137,13 @@ impl<F: crate::Field> SqrtPrecomputation<F> {
                     debug_assert!(!matches!(elem.legendre(), LegendreSymbol::QuadraticResidue));
                     None
                 }
-            },
+            }
             Self::Case3Mod4 {
                 modulus_plus_one_div_four,
             } => {
                 let result = elem.pow(modulus_plus_one_div_four.as_ref());
                 (result.square() == *elem).then_some(result)
-            },
+            }
         }
     }
 }

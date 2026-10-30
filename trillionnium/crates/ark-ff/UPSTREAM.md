@@ -24,3 +24,9 @@ One terminal empty line is removed from `doc/katex-header.html`; its original me
 The original commented dev declarations are restored from the exact upstream workspace. The unused commented blake2 entry remains provenance. The cubic test-oracle defect is still present here: a fixed-distinct-input control must establish actual RED before the shared expected pair is corrected. A failed build or canonical arithmetic assertion does not count as that RED. The complete expander suite must run from the package directory without filtering its six nested trials or 60 original vectors.
 
 The source adoption base is `c96c2b3e24ba354b4abcb842ca6a6a019c442b73`. The separate W1 guest workspace is unchanged. This initial adoption preserves the original Rust sources and test data; later test-oracle or lint maintenance must be recorded independently.
+
+## Recorded native and strict-lint maintenance
+
+The restored original suite and the subsequent oracle-control suite executed on clean source; exact tested trees, counts and failed strict-lint observations are retained in `UPSTREAM.json`. The proposed lint maintenance has not yet completed its own native validation. All original test names, vectors and feature definitions remain. No new lint allowance is introduced.
+
+The maintained active manifest now requires Rust 1.95. The original Rust 1.75 manifest remains provenance, without a compatibility claim for this maintained copy. Existing x86 carry/borrow intrinsics remain selected by the original feature/target guards; only obsolete unsafe wrappers are removed. The private expander type spelling changes, while its domain-separation bytes remain identical. Three integer ceiling expressions avoid the previous intermediate-overflow boundary. The cubic change fixes the shared test oracle after an actual deterministic failure; it does not establish a production field-algorithm defect.

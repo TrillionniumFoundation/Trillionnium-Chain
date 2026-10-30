@@ -8,6 +8,19 @@
     "url": "https://static.crates.io/crates/rrs-lib/rrs-lib-0.1.0.crate"
   },
   "consensus_authority": false,
+  "fresh_prior_native_observation": {
+    "current_lint_proposal_validated": false,
+    "doc_tests_passed": 2,
+    "full_supply_or_security_acceptance": false,
+    "github_same_tree_commit": "17067e146de0fa956b319540212a10b09950a8d7",
+    "ignored_doc_tests": 0,
+    "ignored_unit_tests": 0,
+    "local_tested_commit": "bda9a45940a66529b9842228f813ac9ea0d2392f",
+    "no_default_library_check_passed": true,
+    "retained_unit_tests_passed": 12,
+    "strict_clippy_errors": 13,
+    "tested_tree": "cedcd94802a1f61aeb1012629b0190aba0b73c6b"
+  },
   "maintained_macro_package": {
     "bytes": 20361,
     "package": "pastey",
@@ -19,9 +32,12 @@
   "maintenance": "keep the original paste source alias and resolve the real maintained pastey package at =0.2.3",
   "modified_original_members": [
     "Cargo.toml",
-    "README.md"
+    "README.md",
+    "src/instruction_executor.rs",
+    "src/instruction_formats.rs",
+    "src/lib.rs",
+    "src/memories.rs"
   ],
-  "native_or_cargo_validation": false,
   "original_Cargo_toml_orig_is_unchanged_provenance": true,
   "original_git_provenance": {
     "git": {
@@ -90,7 +106,7 @@
       "sha256": "2e92bce6da080a5d75a2cc9ec6bf7cadd1c9b6de191167b564f68890b6f4e0fc"
     }
   ],
-  "original_rust_and_test_sources_unchanged": true,
+  "original_rust_and_test_sources_unchanged": false,
   "package": "rrs-lib",
   "preparation_whitespace_changes": [
     {
@@ -104,6 +120,41 @@
   "production_activation": false,
   "schema": "pon-maintained-parent-adoption-v1",
   "source_base_commit": "c96c2b3e24ba354b4abcb842ca6a6a019c442b73",
+  "strict_lint_maintenance": {
+    "allow_or_expect_added": false,
+    "candidate_source_files": [
+      {
+        "path": "src/instruction_executor.rs",
+        "sha256": "534e9b45c3591e3a595fb7131f003435d7b6c09e1ba377d0254ba748c72186f9"
+      },
+      {
+        "path": "src/instruction_formats.rs",
+        "sha256": "d05a67b8f4e4d6b6319fa3a6aecd791b7f9ff7f822a24e532f62f92d93c357f5"
+      },
+      {
+        "path": "src/lib.rs",
+        "sha256": "ba63a0b55684d7dca57c1314eee884d02544c82cbba133e5d2a25d778041f4c7"
+      },
+      {
+        "path": "src/memories.rs",
+        "sha256": "173dc8a82f83309328d18f4ff48d888f01ab79efc89f8ef8cd05eed5e968ebec"
+      }
+    ],
+    "features_removed": false,
+    "native_validation_pending": true,
+    "new_regression_controls": [
+      "reader consumes no byte beyond a failed memory write",
+      "Interrupted retry and original read error",
+      "actual decoded divu divisor-zero and boundary results"
+    ],
+    "notes": [
+      "The reader continues consuming one byte at a time, retrying Interrupted, preserving errors and original address arithmetic; no buffered read-ahead.",
+      "Unsigned divu checked_div retains divisor-zero u32::MAX and is covered through actual decoder/executor in a new test."
+    ],
+    "observed_original_errors": 13,
+    "original_tests_removed": false,
+    "source_baseline_commit": "bda9a45940a66529b9842228f813ac9ea0d2392f"
+  },
   "supplemental_upstream_license": {
     "bytes": 10173,
     "git_blob_sha1": "d9a10c0d8e868ebf8da0b3dc95bb0be634c34bfe",

@@ -237,4 +237,34 @@ mod tests {
             Err(InstructionException::IllegalInstruction(0x54, 0))
         );
     }
+
+    #[test]
+    fn test_decoded_divu_zero_and_boundary_divisors() {
+        // divu x3, x1, x2: exercise the retained instruction decoder and executor.
+        let instruction = 0x0220_d1b3;
+        for (dividend, divisor, expected) in [
+            (0, 0, u32::MAX),
+            (u32::MAX, 0, u32::MAX),
+            (u32::MAX, 1, u32::MAX),
+            (u32::MAX, 2, 0x7fff_ffff),
+            (1, u32::MAX, 0),
+            (u32::MAX, u32::MAX, 1),
+        ] {
+            let mut hart = HartState::new();
+            hart.registers[1] = dividend;
+            hart.registers[2] = divisor;
+            let mut memory = memories::VecMemory::new(Vec::new());
+            let mut executor = InstructionExecutor {
+                hart_state: &mut hart,
+                mem: &mut memory,
+            };
+            assert_eq!(
+                process_instruction(&mut executor, instruction),
+                Some(Ok(false))
+            );
+            assert_eq!(executor.hart_state.registers[3], expected);
+            assert_eq!(executor.hart_state.last_register_write, Some(3));
+            assert_eq!(executor.hart_state.pc, 0);
+        }
+    }
 }

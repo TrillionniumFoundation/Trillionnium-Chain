@@ -234,7 +234,7 @@
       "package": "ark-ff",
       "module": "M01",
       "path": "trillionnium/crates/ark-ff",
-      "role": "Complete maintained ark-ff 0.5.0 component; remove unused direct paste dependency, retain finite-field implementation and restore original test requirements; no proof-security qualification.",
+      "role": "Complete maintained ark-ff 0.5.0 component; unused paste removal, restored original tests, observed cubic test-oracle repair and recorded Rust 1.95 lint maintenance; no proof-security qualification.",
       "consensus_authority": false,
       "production_activation": false
     },
@@ -250,7 +250,7 @@
       "package": "rrs-lib",
       "module": "M01",
       "path": "trillionnium/crates/rrs-lib",
-      "role": "Complete maintained rrs-lib 0.1.0 component using the real pastey 0.2.3 package; retain RISC-V simulation implementation and tests; no consensus authority.",
+      "role": "Complete maintained rrs-lib 0.1.0 component using real pastey 0.2.3; explicit byte-consumption and decoded-division controls accompany strict lint maintenance; no consensus authority.",
       "consensus_authority": false,
       "production_activation": false
     }

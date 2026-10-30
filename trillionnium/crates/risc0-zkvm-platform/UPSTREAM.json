@@ -8,6 +8,19 @@
     "url": "https://static.crates.io/crates/risc0-zkvm-platform/risc0-zkvm-platform-2.2.3.crate"
   },
   "consensus_authority": false,
+  "fresh_prior_native_observation": {
+    "current_lint_proposal_validated": false,
+    "doc_tests_passed": 1,
+    "full_supply_or_security_acceptance": false,
+    "github_same_tree_commit": "17067e146de0fa956b319540212a10b09950a8d7",
+    "ignored_doc_tests": 0,
+    "ignored_unit_tests": 0,
+    "local_tested_commit": "bda9a45940a66529b9842228f813ac9ea0d2392f",
+    "no_default_library_check_passed": true,
+    "retained_unit_tests_passed": 0,
+    "strict_clippy_errors": 0,
+    "tested_tree": "cedcd94802a1f61aeb1012629b0190aba0b73c6b"
+  },
   "maintained_macro_package": {
     "bytes": 20361,
     "package": "pastey",
@@ -20,7 +33,6 @@
   "modified_original_members": [
     "Cargo.toml"
   ],
-  "native_or_cargo_validation": false,
   "original_Cargo_toml_orig_is_unchanged_provenance": true,
   "original_git_provenance": {
     "git": {

@@ -187,7 +187,6 @@ impl JType {
 }
 
 #[cfg(test)]
-
 mod tests {
     use super::*;
 
@@ -435,7 +434,7 @@ mod tests {
         assert_eq!(
             UType::new(0xfffff037),
             UType {
-                imm: (0xfffff000 as u32) as i32,
+                imm: 0xfffff000_u32 as i32,
                 rd: 0,
             }
         );

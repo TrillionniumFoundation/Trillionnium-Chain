@@ -566,7 +566,7 @@ impl<const N: usize> Ord for BigInt<N> {
             let a = &self.0[N - i - 1];
             let b = &other.0[N - i - 1];
             match a.cmp(b) {
-                Ordering::Equal => {},
+                Ordering::Equal => {}
                 order => return order,
             };
         }
@@ -662,15 +662,11 @@ impl<const N: usize> TryFrom<BigUint> for BigInt<N> {
         } else {
             let mut limbs = [0u64; N];
 
-            bytes
-                .chunks(8)
-                .into_iter()
-                .enumerate()
-                .for_each(|(i, chunk)| {
-                    let mut chunk_padded = [0u8; 8];
-                    chunk_padded[..chunk.len()].copy_from_slice(chunk);
-                    limbs[i] = u64::from_le_bytes(chunk_padded)
-                });
+            bytes.chunks(8).enumerate().for_each(|(i, chunk)| {
+                let mut chunk_padded = [0u8; 8];
+                chunk_padded[..chunk.len()].copy_from_slice(chunk);
+                limbs[i] = u64::from_le_bytes(chunk_padded)
+            });
 
             Ok(Self(limbs))
         }

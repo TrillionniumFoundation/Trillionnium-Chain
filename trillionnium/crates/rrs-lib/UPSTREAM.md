@@ -24,3 +24,9 @@ One terminal empty line is removed from `README.md`; its original member hash re
 The archive did not contain a standalone license file. `LICENSE` is an explicitly supplemental copy from the exact upstream Git commit recorded by the archive, with its URL, Git blob and SHA-256 bound separately. It is not represented as an original archive member.
 
 The source adoption base is `c96c2b3e24ba354b4abcb842ca6a6a019c442b73`. The separate W1 guest workspace is unchanged. This initial adoption preserves the original Rust sources and test data; later test-oracle or lint maintenance must be recorded independently.
+
+## Recorded native and strict-lint maintenance
+
+The restored original suite and the subsequent oracle-control suite executed on clean source; exact tested trees, counts and failed strict-lint observations are retained in `UPSTREAM.json`. The proposed lint maintenance has not yet completed its own native validation. All original test names, vectors and feature definitions remain. No new lint allowance is introduced.
+
+The reader still consumes one byte at a time, retries Interrupted and preserves all other errors and address arithmetic. It deliberately does not add read-ahead before a memory write that may fail. Unsigned division still yields u32::MAX for divisor zero. Three new controls exercise the reader position/error and the actual instruction decoder/executor; their native results are still pending.

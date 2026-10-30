@@ -1,5 +1,5 @@
 {
-  "active_manifest_sha256": "0b3de2cd5a2b5b7c671b7cbe4984e960f8a70b5e7e36b015ab8bb3b97c462928",
+  "active_manifest_sha256": "81c8c94cab6c24f8851b071b0709d9fbe50ea3b4c7a4e150ff72779107a2263a",
   "all_original_features_preserved": true,
   "archive": {
     "bytes": 73609,
@@ -63,13 +63,38 @@
       "url": "https://raw.githubusercontent.com/arkworks-rs/algebra/7ad88c46e859a94ab8e0b19fd8a217c3dc472f1c/Cargo.toml"
     }
   },
+  "fresh_prior_native_observation": {
+    "current_lint_proposal_validated": false,
+    "doc_tests_passed": 42,
+    "full_supply_or_security_acceptance": false,
+    "github_same_tree_commit": "17067e146de0fa956b319540212a10b09950a8d7",
+    "ignored_doc_tests": 0,
+    "ignored_unit_tests": 0,
+    "local_tested_commit": "bda9a45940a66529b9842228f813ac9ea0d2392f",
+    "nested_expander_trials": 6,
+    "no_default_library_check_passed": true,
+    "original_expander_vectors": 60,
+    "retained_unit_tests_passed": 25,
+    "strict_clippy_errors": 43,
+    "tested_tree": "cedcd94802a1f61aeb1012629b0190aba0b73c6b"
+  },
   "maintenance": "remove the unused direct paste dependency and restore the original test dependency requirements",
   "modified_original_members": [
     "Cargo.toml",
     "doc/katex-header.html",
-    "src/fields/models/cubic_extension.rs"
+    "src/biginteger/arithmetic.rs",
+    "src/biginteger/mod.rs",
+    "src/fields/fft_friendly.rs",
+    "src/fields/field_hashers/expander/mod.rs",
+    "src/fields/field_hashers/mod.rs",
+    "src/fields/mod.rs",
+    "src/fields/models/cubic_extension.rs",
+    "src/fields/models/fp/mod.rs",
+    "src/fields/models/fp/montgomery_backend.rs",
+    "src/fields/models/quadratic_extension.rs",
+    "src/fields/prime.rs",
+    "src/fields/sqrt.rs"
   ],
-  "native_or_cargo_validation": false,
   "original_Cargo_toml_orig_is_unchanged_provenance": true,
   "original_git_provenance": {
     "git": {
@@ -339,6 +364,76 @@
   "production_activation": false,
   "schema": "pon-maintained-parent-adoption-v1",
   "source_base_commit": "c96c2b3e24ba354b4abcb842ca6a6a019c442b73",
+  "strict_lint_maintenance": {
+    "allow_or_expect_added": false,
+    "candidate_source_files": [
+      {
+        "path": "Cargo.toml",
+        "sha256": "81c8c94cab6c24f8851b071b0709d9fbe50ea3b4c7a4e150ff72779107a2263a"
+      },
+      {
+        "path": "src/biginteger/arithmetic.rs",
+        "sha256": "d6528a880f4012d53bdc946ae9b389f4b42cbd3d8e2218e9b9396cb9d7b49b3e"
+      },
+      {
+        "path": "src/biginteger/mod.rs",
+        "sha256": "3a1fd350e00ced1b2ec6c85224a7da19599c5b9136a2d6868dee089e08cba506"
+      },
+      {
+        "path": "src/fields/fft_friendly.rs",
+        "sha256": "ba7beb66107cc2cccca7c3e4d7f0539889ad3310bd79899532da7e1bb48af0dd"
+      },
+      {
+        "path": "src/fields/field_hashers/expander/mod.rs",
+        "sha256": "a130c67812faa0a540bf38fa3739097bb2fb9a4427d933d4b23c5d18b4e9b08f"
+      },
+      {
+        "path": "src/fields/field_hashers/mod.rs",
+        "sha256": "39d8eb9b8336a92920b293dc42e064b7ef2051cae499e49cf89d91b264e0e7da"
+      },
+      {
+        "path": "src/fields/mod.rs",
+        "sha256": "70e1d4f5abcad09bb40367357ea40f9a93dd9203540e17859a9c43742d23abe9"
+      },
+      {
+        "path": "src/fields/models/cubic_extension.rs",
+        "sha256": "b2ad0b6947a2a6ffaea3d5517209a8b0da30364f194026692d0dfe7a710eb7e1"
+      },
+      {
+        "path": "src/fields/models/fp/mod.rs",
+        "sha256": "16cddf103243ecc312f01f717beb5c5edf6de7b2c13e4c2553b4587a6091a31f"
+      },
+      {
+        "path": "src/fields/models/fp/montgomery_backend.rs",
+        "sha256": "e01f7104b155c280e9dcd59e48500c5eed45f1189d4bd89e0de14edfd0912577"
+      },
+      {
+        "path": "src/fields/models/quadratic_extension.rs",
+        "sha256": "1cbff8085334ee9ede40216d0549e4e2b5e51ac07d3125e26e00307458de6548"
+      },
+      {
+        "path": "src/fields/prime.rs",
+        "sha256": "895ed720a64c2b2b53c98de9e15f2eb0d0f641c2518865b93eb91e760db6d125"
+      },
+      {
+        "path": "src/fields/sqrt.rs",
+        "sha256": "75d0b4d3e5a99d3a09030e7a19e9e4fa5813ef2bb4a2415127e1f7529901524b"
+      }
+    ],
+    "features_removed": false,
+    "maintained_rust_version": "1.95",
+    "native_validation_pending": true,
+    "notes": [
+      "Three integer ceiling expressions use overflow-safe div_ceil; extreme inputs no longer incur the previous numerator+rounding overflow. Valid published expander vectors require native revalidation.",
+      "Only private expander DST type is renamed Dst; H2C-OVERSIZE-DST- bytes are unchanged.",
+      "Elided lifetimes, redundant borrow/cast/conversion cleanup retain the same operations.",
+      "x86 asm addcarry/subborrow branches still call the same intrinsics; obsolete unsafe wrappers removed for the explicit maintained Rust1.95 baseline."
+    ],
+    "observed_original_errors": 43,
+    "original_rust_1_75_compatibility_claimed": false,
+    "original_tests_removed": false,
+    "source_baseline_commit": "bda9a45940a66529b9842228f813ac9ea0d2392f"
+  },
   "supply_gate_closed": false,
   "test_oracle_maintenance": {
     "actual_red_observed": true,
@@ -351,7 +446,9 @@
       5,
       6
     ],
-    "green_validation_executed": false,
+    "green_selected_test_passed": true,
+    "green_source_commit": "bda9a45940a66529b9842228f813ac9ea0d2392f",
+    "green_validation_executed": true,
     "initial_fixed_source_sha256": "7bd28a812d7410034ce94d783741ee572e83c9abcddc1322f758303b754d3031",
     "maintained_shared_third_pair": [
       4,

@@ -10,23 +10,30 @@ use std::io::Read;
 
 /// Read bytes from an [std::io::Read] into a [Memory] starting at the given address
 pub fn read_to_memory(
-    reader: impl Read,
+    mut reader: impl Read,
     memory: &mut impl Memory,
     start_addr: u32,
 ) -> io::Result<()> {
     let mut write_addr = start_addr;
-    for b in reader.bytes() {
-        let b = b?;
-        if !memory.write_mem(write_addr, MemAccessSize::Byte, b as u32) {
-            return Err(io::Error::new(
-                io::ErrorKind::Other,
-                format!("Could not write byte at address 0x{:08x}", write_addr),
-            ));
+    let mut byte = [0u8; 1];
+    loop {
+        // Memory may reject any write. Do not prefetch bytes from the caller's
+        // reader beyond the byte whose write fails. Retry Interrupted exactly
+        // as Read::bytes does, and preserve every other read error.
+        match reader.read(&mut byte) {
+            Ok(0) => return Ok(()),
+            Ok(_) => {}
+            Err(error) if error.kind() == io::ErrorKind::Interrupted => continue,
+            Err(error) => return Err(error),
+        }
+        if !memory.write_mem(write_addr, MemAccessSize::Byte, u32::from(byte[0])) {
+            return Err(io::Error::other(format!(
+                "Could not write byte at address 0x{:08x}",
+                write_addr
+            )));
         }
         write_addr += 1;
     }
-
-    Ok(())
 }
 
 /// [Vec] backed memory.
@@ -145,13 +152,9 @@ impl MemorySpace {
 
     // Gets the memory region that covers an address if it exists.
     fn get_memory_region_by_addr(&mut self, addr: u32) -> Option<&mut MemoryRegion> {
-        for memory_region in self.memory_regions.iter_mut() {
-            if (addr >= memory_region.base) && (addr < (memory_region.base + memory_region.size)) {
-                return Some(memory_region);
-            }
-        }
-
-        None
+        self.memory_regions.iter_mut().find(|memory_region| {
+            (addr >= memory_region.base) && (addr < (memory_region.base + memory_region.size))
+        })
     }
 
     /// Add an inner memory.
@@ -245,17 +248,11 @@ mod tests {
             Some(0xbaadf00d)
         );
 
-        assert_eq!(test_mem.write_mem(0x7, MemAccessSize::Byte, 0xff), true);
+        assert!(test_mem.write_mem(0x7, MemAccessSize::Byte, 0xff));
 
-        assert_eq!(
-            test_mem.write_mem(0x2, MemAccessSize::HalfWord, 0xaaaaface),
-            true
-        );
+        assert!(test_mem.write_mem(0x2, MemAccessSize::HalfWord, 0xaaaaface));
 
-        assert_eq!(
-            test_mem.write_mem(0x1, MemAccessSize::Byte, 0x1234abcd),
-            true
-        );
+        assert!(test_mem.write_mem(0x1, MemAccessSize::Byte, 0x1234abcd));
 
         assert_eq!(
             test_mem.read_mem(0x0, MemAccessSize::Word),
@@ -269,7 +266,7 @@ mod tests {
 
         assert_eq!(test_mem.read_mem(0x8, MemAccessSize::Word), None);
 
-        assert_eq!(test_mem.write_mem(0x8, MemAccessSize::Word, 0x0), false);
+        assert!(!test_mem.write_mem(0x8, MemAccessSize::Word, 0x0));
     }
 
     struct TestMemory;
@@ -341,15 +338,9 @@ mod tests {
             Some(0x44444444)
         );
 
-        assert_eq!(
-            test_mem_space.write_mem(0x208, MemAccessSize::Word, 0xffffffff),
-            true
-        );
+        assert!(test_mem_space.write_mem(0x208, MemAccessSize::Word, 0xffffffff));
 
-        assert_eq!(
-            test_mem_space.write_mem(0x20c, MemAccessSize::Word, 0xffffffff),
-            false
-        );
+        assert!(!test_mem_space.write_mem(0x20c, MemAccessSize::Word, 0xffffffff));
 
         assert_eq!(test_mem_space.read_mem(0x108, MemAccessSize::Word), None);
 
@@ -404,5 +395,55 @@ mod tests {
             ),
             "\"Could not write byte at address 0x00000010\""
         );
+    }
+
+    #[test]
+    fn test_read_to_memory_does_not_prefetch_after_failed_write() {
+        let mut reader = io::Cursor::new(vec![0x11, 0x22, 0x33, 0x44]);
+        let mut memory = VecMemory::new(vec![0]);
+        let error = read_to_memory(&mut reader, &mut memory, 3).unwrap_err();
+        assert_eq!(error.kind(), io::ErrorKind::Other);
+        assert_eq!(
+            error.to_string(),
+            "Could not write byte at address 0x00000004"
+        );
+        assert_eq!(reader.position(), 2);
+        assert_eq!(memory.mem, vec![0x1100_0000]);
+        let mut remaining = Vec::new();
+        reader.read_to_end(&mut remaining).unwrap();
+        assert_eq!(remaining, vec![0x33, 0x44]);
+    }
+
+    #[test]
+    fn test_read_to_memory_retries_interrupted_and_preserves_read_error() {
+        struct InterruptedThenError {
+            calls: usize,
+        }
+        impl Read for InterruptedThenError {
+            fn read(&mut self, output: &mut [u8]) -> io::Result<usize> {
+                if output.is_empty() {
+                    return Ok(0);
+                }
+                self.calls += 1;
+                match self.calls {
+                    1 => Err(io::Error::new(io::ErrorKind::Interrupted, "retry")),
+                    2 => {
+                        output[0] = 0xab;
+                        Ok(1)
+                    }
+                    _ => Err(io::Error::new(
+                        io::ErrorKind::PermissionDenied,
+                        "original read failure",
+                    )),
+                }
+            }
+        }
+        let mut reader = InterruptedThenError { calls: 0 };
+        let mut memory = VecMemory::new(vec![0]);
+        let error = read_to_memory(&mut reader, &mut memory, 0).unwrap_err();
+        assert_eq!(error.kind(), io::ErrorKind::PermissionDenied);
+        assert_eq!(error.to_string(), "original read failure");
+        assert_eq!(reader.calls, 3);
+        assert_eq!(memory.mem, vec![0xab]);
     }
 }
