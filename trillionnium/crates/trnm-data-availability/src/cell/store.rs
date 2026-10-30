@@ -421,6 +421,10 @@ impl CellStoreV1 {
             super::tests::before_materialize_publication(deadline);
             check_deadline()?;
             fs::hard_link(&temporary, output)?;
+            // Test an actual scheduler pause *after* create-only publication.
+            // Production never has a post-publication timeout checkpoint.
+            #[cfg(test)]
+            super::tests::after_materialize_publication(deadline);
             File::open(parent)?.sync_all()?;
             Ok(())
         })();
