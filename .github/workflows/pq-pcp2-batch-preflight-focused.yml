@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - fix/pq-pcp2-batch-cheap-replay-expiry-preflight-20261030
+      - fix/pq-pcp2-one-budget-discovery-fetch-20261030
   workflow_dispatch:
 permissions:
   contents: read
@@ -31,7 +32,7 @@ jobs:
           python3 scripts/refresh_distributed_source_inventory.py --check
       - name: Rustfmt original gate
         run: cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check
-      - name: Whole-batch cheap replay/expiry and real TCP controls
+      - name: Whole-batch PCP2 and one-budget end-to-end real Cell controls
         run: cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-data-availability --lib cell::discovery::pq_reply_v2::tests -- --test-threads=1
       - name: Original discovery controls
         run: cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-data-availability --lib cell::discovery::tests -- --test-threads=1
