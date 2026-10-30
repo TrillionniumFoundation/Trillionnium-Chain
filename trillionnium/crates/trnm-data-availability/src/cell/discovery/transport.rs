@@ -514,7 +514,6 @@ pub(super) fn exchange_pq_v2(
     Ok(reply)
 }
 
-
 /// Bounded, read-only research PCP2 rendezvous using already authenticated
 /// operator-selected reply bytes. No CDQ1/CDS1 fallback, announce, SQLite write,
 /// self-asserted trust-root registration or independent replay witness is created.
