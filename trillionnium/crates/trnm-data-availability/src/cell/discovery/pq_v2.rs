@@ -95,6 +95,54 @@ pub fn verify_pcp2_provider_hint_v2(
     })
 }
 
+#[derive(Clone, Copy)]
+struct PqLeaseClockSample {
+    monotonic: Instant,
+    wall: Duration,
+}
+
+impl PqLeaseClockSample {
+    fn read() -> CellResultV1<Self> {
+        // Sample monotonic first: sampling delay may shorten, never extend,
+        // the signed wall-clock lease when mapped onto the monotonic clock.
+        let monotonic = Instant::now();
+        let wall = wall_now()?;
+        Ok(Self { monotonic, wall })
+    }
+}
+
+fn pcp2_lease_deadline(
+    started: PqLeaseClockSample,
+    current: PqLeaseClockSample,
+    expires_unix_seconds: u64,
+    budget_deadline: Instant,
+) -> CellResultV1<Instant> {
+    let expiry = Duration::from_secs(expires_unix_seconds);
+    let lifetime = expiry
+        .checked_sub(started.wall)
+        .filter(|duration| !duration.is_zero())
+        .ok_or(CellErrorV1::Invalid("PQ provider lease expired"))?;
+    let lease_deadline = started
+        .monotonic
+        .checked_add(lifetime)
+        .ok_or(CellErrorV1::Invalid("PQ provider lease deadline overflow"))?;
+    let current_lifetime = expiry
+        .checked_sub(current.wall)
+        .filter(|duration| !duration.is_zero())
+        .ok_or(CellErrorV1::Invalid("PQ provider lease expired"))?;
+    let current_deadline = current
+        .monotonic
+        .checked_add(current_lifetime)
+        .ok_or(CellErrorV1::Invalid("PQ provider lease deadline overflow"))?;
+    let deadline = budget_deadline.min(lease_deadline).min(current_deadline);
+    // A backward wall-clock adjustment cannot rebase the original lease.
+    // A forward adjustment shortens the deadline, or refuses if expired.
+    if current.monotonic >= deadline {
+        return Err(CellErrorV1::Invalid("PQ provider lease expired"));
+    }
+    Ok(deadline)
+}
+
 /// Explicit owner-selected PCP2 -> real content-addressed Cell byte fetch.
 ///
 /// This does NOT discover providers on the network or grant authority by itself:
@@ -113,20 +161,19 @@ pub fn fetch_pcp2_authenticated_cell_to_file(
     limits.validate()?;
     // Do not allow the caller to replay a previously trusted timestamp when
     // the local wall clock has passed the signed hint's expiration.
-    let wall = wall_now()?.as_secs();
-    if wall.abs_diff(expectation.now_unix_seconds) > 5 {
+    let started = PqLeaseClockSample::read()?;
+    let budget_deadline = original_deadline.min(started.monotonic + limits.overall_timeout);
+    check_deadline(budget_deadline)?;
+    if started.wall.as_secs().abs_diff(expectation.now_unix_seconds) > 5 {
         return Err(CellErrorV1::Invalid("PQ provider trusted time stale"));
     }
     let hint = verify_pcp2_provider_hint_v2(signed_hint_wire, expectation)?;
-    let lifetime = hint
-        .expires_unix_seconds()
-        .checked_sub(wall)
-        .filter(|seconds| *seconds > 0)
-        .ok_or(CellErrorV1::Invalid("PQ provider lease expired"))?;
-    let started = Instant::now();
-    let overall = original_deadline
-        .min(started + limits.overall_timeout)
-        .min(started + Duration::from_secs(lifetime));
+    let overall = pcp2_lease_deadline(
+        started,
+        PqLeaseClockSample::read()?,
+        hint.expires_unix_seconds(),
+        budget_deadline,
+    )?;
     check_deadline(overall)?;
     let requests_left = AtomicU64::new(limits.max_connections);
     let responses = ResponseBudget::new(limits.max_response_bytes);
@@ -168,6 +215,96 @@ mod tests {
     use crate::cell::discovery::CellDiscoveryContextV1;
     use ml_dsa::{KeyExport, KeyInit, Keypair, MlDsa65, SigningKey};
     use trnm_crypto_primitives::pq_cell_provider::PqCellProviderStatementV2;
+
+    #[test]
+    fn lease_deadline_preserves_fraction_and_charges_verification_time() {
+        let anchor = Instant::now();
+        let started = PqLeaseClockSample {
+            monotonic: anchor,
+            wall: Duration::from_millis(100_750),
+        };
+        let current = PqLeaseClockSample {
+            monotonic: anchor + Duration::from_millis(100),
+            wall: Duration::from_millis(100_850),
+        };
+        assert_eq!(
+            pcp2_lease_deadline(started, current, 101, anchor + Duration::from_secs(10))
+                .unwrap(),
+            anchor + Duration::from_millis(250)
+        );
+        let expired = PqLeaseClockSample {
+            monotonic: anchor + Duration::from_millis(250),
+            wall: Duration::from_secs(101),
+        };
+        assert!(pcp2_lease_deadline(started, expired, 101, anchor + Duration::from_secs(10))
+            .is_err());
+    }
+
+    #[test]
+    fn lease_deadline_clock_jumps_never_extend_original_anchor() {
+        let anchor = Instant::now();
+        let started = PqLeaseClockSample {
+            monotonic: anchor,
+            wall: Duration::from_millis(100_750),
+        };
+        let backward = PqLeaseClockSample {
+            monotonic: anchor + Duration::from_millis(100),
+            wall: Duration::from_secs(90),
+        };
+        let budget = anchor + Duration::from_secs(10);
+        assert_eq!(
+            pcp2_lease_deadline(started, backward, 101, budget).unwrap(),
+            anchor + Duration::from_millis(250)
+        );
+        let slow = PqLeaseClockSample {
+            monotonic: anchor + Duration::from_millis(300),
+            ..backward
+        };
+        assert!(pcp2_lease_deadline(started, slow, 101, budget).is_err());
+        let forward = PqLeaseClockSample {
+            wall: Duration::from_secs(102),
+            ..backward
+        };
+        assert!(pcp2_lease_deadline(started, forward, 101, budget).is_err());
+        let forward_before_expiry = PqLeaseClockSample {
+            wall: Duration::from_millis(100_950),
+            ..backward
+        };
+        assert_eq!(
+            pcp2_lease_deadline(started, forward_before_expiry, 101, budget).unwrap(),
+            anchor + Duration::from_millis(150)
+        );
+    }
+
+    #[test]
+    fn lease_deadline_keeps_caller_and_timeout_caps() {
+        let anchor = Instant::now();
+        let started = PqLeaseClockSample {
+            monotonic: anchor,
+            wall: Duration::from_secs(100),
+        };
+        let current = PqLeaseClockSample {
+            monotonic: anchor + Duration::from_millis(100),
+            wall: Duration::from_millis(100_100),
+        };
+        for (caller_ms, timeout_ms) in [(150, 200), (200, 150)] {
+            let budget = (anchor + Duration::from_millis(caller_ms))
+                .min(anchor + Duration::from_millis(timeout_ms));
+            assert_eq!(
+                pcp2_lease_deadline(started, current, 200, budget).unwrap(),
+                anchor + Duration::from_millis(150)
+            );
+            let elapsed = PqLeaseClockSample {
+                monotonic: anchor + Duration::from_millis(150),
+                ..current
+            };
+            assert!(pcp2_lease_deadline(started, elapsed, 200, budget).is_err());
+        }
+        for expiry in [99, 100] {
+            assert!(pcp2_lease_deadline(started, current, expiry, anchor + Duration::from_secs(10))
+                .is_err());
+        }
+    }
 
     fn request() -> CellDiscoveryRequestV1 {
         let mut six = [[0u8; 32]; 6];
