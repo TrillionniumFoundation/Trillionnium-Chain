@@ -307,7 +307,11 @@ mod tests {
         // End-to-end guard: an off-policy signed endpoint and a deliberately
         // malformed pinned key must refuse before key expansion or any dial,
         // even when a real Cell server is listening on that signed endpoint.
-        let denied_port = if endpoint.port() == 31235 { 31236 } else { 31235 };
+        let denied_port = if endpoint.port() == 31235 {
+            31236
+        } else {
+            31235
+        };
         let denied = CellDiscoveryAddressPolicyV1::LoopbackDevOnly {
             ports: vec![denied_port],
         };
