@@ -1,0 +1,300 @@
+{
+  "adopted_parent": "a38d770966c65ad34c9d5e55f3c2917c2e3bda0f",
+  "archive": {
+    "bytes": 193644,
+    "path": "parent-active-readback.tar.gz",
+    "sha256": "504e50c86bab35b26ceaad8bb50794156bd662523d8607c1d49535cf729ba8d6"
+  },
+  "exclusions": "Three native executable gzip files are retained separately in the complete evidence bundle and identified by original and compressed SHA256 in the included receipts.",
+  "files": [
+    {
+      "bytes": 23472,
+      "path": "applied-formatted.patch",
+      "sha256": "32df9f210af418e625577ad49e9d79832d8a704a295092f2a1b12a5d3220b242"
+    },
+    {
+      "bytes": 23764,
+      "path": "candidate/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback_tests.rs",
+      "sha256": "a99580d385ec69862ddfb0db4800bbb30bfa830cd487695aab3329a628096169"
+    },
+    {
+      "bytes": 101809,
+      "path": "candidate/trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+      "sha256": "89b59ddcc6e14e4b7cf75ed5ad9b567e127581815e528acb25d56ed078f57020"
+    },
+    {
+      "bytes": 342241,
+      "path": "candidate/trillionnium/crates/trnm-pon-node/src/store.rs",
+      "sha256": "3261a265a01f3a858dd5c84e2bfa508776290f09fed07205fe28f174152f14cf"
+    },
+    {
+      "bytes": 10909,
+      "path": "candidate-production.patch",
+      "sha256": "592f1cd1b16dbfee2475be60e1e3275d4affbdfc9ee32650f71a8ebf9639ec58"
+    },
+    {
+      "bytes": 591,
+      "path": "canonical-boundary-build-output.json",
+      "sha256": "af86258fca6ff3456961c25c1a85564e127e8ddf68160c1e28b19a3b68590550"
+    },
+    {
+      "bytes": 4896,
+      "path": "canonical-build-script-output.log",
+      "sha256": "cea75ffca74e74539319bdbb995b3e5df6c57eac069bad0629daaaf0e1848172"
+    },
+    {
+      "bytes": 796,
+      "path": "cargo-canonical.sh",
+      "sha256": "cf56794d12393923df2166388d19b8e23597d7f2d90e7d75b7d402725ebba4de"
+    },
+    {
+      "bytes": 323,
+      "path": "clippy-all-targets-all-features.log",
+      "sha256": "67e1c6232ce060bce3d49c1cda8dee56f40e6d4853b7c21626a2463ad7b710b2"
+    },
+    {
+      "bytes": 71,
+      "path": "current-implementation-check.log",
+      "sha256": "431e373353829a7aa76abab6c3a606519c90290e2dc0909202c9a9f4cab92be3"
+    },
+    {
+      "bytes": 0,
+      "path": "diff-five-owned-check.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 341727,
+      "path": "distributed-source-inventory-before.rs",
+      "sha256": "9931cc29a910df2102ffaee23cba0ab1704cb55fb4acd30838e8aa98cd6decc2"
+    },
+    {
+      "bytes": 669,
+      "path": "distributed-source-inventory-receipt.json",
+      "sha256": "428c8f965cbf4fa686087939cecb6eb0314631cd6d8c78cdd9c90209818a4568"
+    },
+    {
+      "bytes": 1077,
+      "path": "distributed-source-inventory.patch",
+      "sha256": "8cba86cec93ef3dc1509a6691ca9f82f0cdb4dd9c6cd4114aaa6a34cacd1a930"
+    },
+    {
+      "bytes": 20383,
+      "path": "final-evidence-manifest.json",
+      "sha256": "0042a3bfb0c897c49e630809f8e9e3142cf6c82160642c7bf0c52ee5e83070ed"
+    },
+    {
+      "bytes": 24549,
+      "path": "final-five-path.patch",
+      "sha256": "1fb5702715fd00add6ba20491474b31615cfaf451662574b7e7c7b857f722a1e"
+    },
+    {
+      "bytes": 0,
+      "path": "final-patch-readback-check.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1953,
+      "path": "functional-evidence.json",
+      "sha256": "5ac6a4526961bd4375bfe8aee110b1447ca8cf468576173c80d5f17a405f84ec"
+    },
+    {
+      "bytes": 9981,
+      "path": "green-canonical-native-authenticated-roster.log",
+      "sha256": "230568be6f68075a4b0ea02c5f0d30b61b5c8c08b5f32eb3c8193479095b97fd"
+    },
+    {
+      "bytes": 1133,
+      "path": "green-source-hashes.json",
+      "sha256": "2f36159f2025decd579e6bf295069a44d419ca5fa2b3ed46b7785daa8ebb1484"
+    },
+    {
+      "bytes": 1259,
+      "path": "green.log",
+      "sha256": "8d35f4c553d4b17a2068904ca7d220bc6574bd4c27f096006e6f29ac449c474c"
+    },
+    {
+      "bytes": 1044,
+      "path": "independent-applied-source-review.json",
+      "sha256": "220cd4eb571cd5e8f0793ecb7194929a8a78a76a28cf933916a64d47299adf1d"
+    },
+    {
+      "bytes": 749,
+      "path": "independent-final-source-review.json",
+      "sha256": "51b631fa3278452c0b8aa9776b8ca0b91b648a5a0ac2bd6c24eb226019980f20"
+    },
+    {
+      "bytes": 35,
+      "path": "inventory-check.log",
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    },
+    {
+      "bytes": 35,
+      "path": "inventory-refresh.log",
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    },
+    {
+      "bytes": 24849,
+      "path": "native-authenticated-functional.log",
+      "sha256": "90f5cb030408699f63de4031f2d7ad41009b166eaa52ce4119e2ebb729d91ab7"
+    },
+    {
+      "bytes": 28760,
+      "path": "native-authenticated-release-including-cost.log",
+      "sha256": "213543df5e3f4d123d23a2d652dbb9ca0c88a3af26ed425a664dc4ec657f62a7"
+    },
+    {
+      "bytes": 12182,
+      "path": "native-owner-snapshot-functional.log",
+      "sha256": "ccb752cd29b09177c31fa896afc7118493c22fdf2bb1f53481de6deeeff26355"
+    },
+    {
+      "bytes": 2769,
+      "path": "pq-owner-current-source.log",
+      "sha256": "5b8794c2408b766f12236cb16d6ff3c9c4791689b545ca2de7e7d5f05d448742"
+    },
+    {
+      "bytes": 163,
+      "path": "preflight-apply-green.log",
+      "sha256": "a2a7cd19b87367f319c8e7833e551c3178933d07af270bbcba3f8f5fbf9c9e31"
+    },
+    {
+      "bytes": 163,
+      "path": "preflight-before.log",
+      "sha256": "a2a7cd19b87367f319c8e7833e551c3178933d07af270bbcba3f8f5fbf9c9e31"
+    },
+    {
+      "bytes": 163,
+      "path": "preflight-clippy.log",
+      "sha256": "a2a7cd19b87367f319c8e7833e551c3178933d07af270bbcba3f8f5fbf9c9e31"
+    },
+    {
+      "bytes": 163,
+      "path": "preflight-final-readonly.log",
+      "sha256": "a2a7cd19b87367f319c8e7833e551c3178933d07af270bbcba3f8f5fbf9c9e31"
+    },
+    {
+      "bytes": 163,
+      "path": "preflight-green.log",
+      "sha256": "a2a7cd19b87367f319c8e7833e551c3178933d07af270bbcba3f8f5fbf9c9e31"
+    },
+    {
+      "bytes": 163,
+      "path": "preflight-inventory.log",
+      "sha256": "a2a7cd19b87367f319c8e7833e551c3178933d07af270bbcba3f8f5fbf9c9e31"
+    },
+    {
+      "bytes": 163,
+      "path": "preflight-original-controls.log",
+      "sha256": "a2a7cd19b87367f319c8e7833e551c3178933d07af270bbcba3f8f5fbf9c9e31"
+    },
+    {
+      "bytes": 163,
+      "path": "preflight-red-canonical-retry.log",
+      "sha256": "a2a7cd19b87367f319c8e7833e551c3178933d07af270bbcba3f8f5fbf9c9e31"
+    },
+    {
+      "bytes": 163,
+      "path": "preflight-red-canonical.log",
+      "sha256": "a2a7cd19b87367f319c8e7833e551c3178933d07af270bbcba3f8f5fbf9c9e31"
+    },
+    {
+      "bytes": 163,
+      "path": "preflight-release.log",
+      "sha256": "a2a7cd19b87367f319c8e7833e551c3178933d07af270bbcba3f8f5fbf9c9e31"
+    },
+    {
+      "bytes": 565,
+      "path": "red-canonical-binary-receipt.json",
+      "sha256": "e31b5f4e75c981116ce725650539f2937699c24474ffc8333dbf39ae6dc94fe8"
+    },
+    {
+      "bytes": 762,
+      "path": "red-canonical-native-authenticated-roster.json",
+      "sha256": "6873a8d29a4a77b05ad48c90e109200eca3af99a2b5cf9e06ca3030349843e35"
+    },
+    {
+      "bytes": 9981,
+      "path": "red-canonical-native-authenticated-roster.log",
+      "sha256": "230568be6f68075a4b0ea02c5f0d30b61b5c8c08b5f32eb3c8193479095b97fd"
+    },
+    {
+      "bytes": 7032,
+      "path": "red-canonical-retry.log",
+      "sha256": "2111930543b11689387a1077d97ab6f0fb043b66b135144046fbcb6c4b9f1e0f"
+    },
+    {
+      "bytes": 10025,
+      "path": "red-canonical-source/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_parent_readback_tests.rs",
+      "sha256": "49caa7af2ac19ded5a37602e9301d1ec88f4a347f4799287c215d48ef1a92966"
+    },
+    {
+      "bytes": 100795,
+      "path": "red-canonical-source/trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+      "sha256": "0bfd88d7b211cc75d0617fe32a971fbdb3bda7e80bc9c10825055d99c71a0e2b"
+    },
+    {
+      "bytes": 318,
+      "path": "red-canonical-source-hashes.json",
+      "sha256": "4c644a06a223942cfdec105ee2df9fc4e5b648c2c7f75e6248ec089e1c34952a"
+    },
+    {
+      "bytes": 2729,
+      "path": "red-canonical.log",
+      "sha256": "74e2dcdd9f6fc630911cc634628a4177765dd6953529f0d492f311013b836670"
+    },
+    {
+      "bytes": 9332,
+      "path": "red-initial-source/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_parent_readback_tests.rs",
+      "sha256": "0a4a173620693dbda6cac2e34c7ccbdce0e59ceaa271a10ca524a7deaff0aacd"
+    },
+    {
+      "bytes": 100795,
+      "path": "red-initial-source/trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+      "sha256": "0bfd88d7b211cc75d0617fe32a971fbdb3bda7e80bc9c10825055d99c71a0e2b"
+    },
+    {
+      "bytes": 318,
+      "path": "red-source-hashes.json",
+      "sha256": "12078c61a9a5e5b4f90358a02ca4a896151b805e230b8091361d50299c44c38f"
+    },
+    {
+      "bytes": 12657,
+      "path": "red.log",
+      "sha256": "953d62c76a42c40e63df1530ade96a9b589dab120b05eddac17592eff3327336"
+    },
+    {
+      "bytes": 759,
+      "path": "release-binary-receipt.json",
+      "sha256": "27b8b6173c65f4d8711805f45999044caf42bc1f06856f1a5277007ae8b2407d"
+    },
+    {
+      "bytes": 4898,
+      "path": "release-canonical-build-script-output.log",
+      "sha256": "eddedddf39a3c8f1e2662851078c5e2d78d65ad018f152e7165aebea2d65f3cc"
+    },
+    {
+      "bytes": 1163,
+      "path": "retained-delta-cost-release-receipt.json",
+      "sha256": "c353e1f542a472c65397b6c61e64ca4d6cd38aa6f9309547595d904836e75ad9"
+    },
+    {
+      "bytes": 6995,
+      "path": "retained-delta-cost-release.jsonl",
+      "sha256": "6642d7ae35148bb0e4c5f5b919d6c028d67caa23cb66f4a235d6d4dfdadff0d0"
+    },
+    {
+      "bytes": 0,
+      "path": "rustfmt-five-owned-check.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 37,
+      "path": "scoped-boundary-clean.log",
+      "sha256": "fb6e7a9f20efe7f12889b1d6b6e5d760737579ba1a739ec496c0c65500f22e5a"
+    }
+  ],
+  "production_activation": false,
+  "qualified": false,
+  "schema": "trnm-pn2-parent-active-readback-small-archive-v1",
+  "scope": "Local native component RED/GREEN, unchanged release77 including original observation-only cost control, strict package lint; no full PN2 or throughput qualification."
+}

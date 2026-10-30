@@ -24,6 +24,8 @@ pub(crate) use arithmetic_cache::ArithmeticCache;
 mod history_arithmetic;
 pub(crate) use history_arithmetic::HistoryStage;
 #[cfg(test)]
+mod post_write_parent_readback_tests;
+#[cfg(test)]
 mod post_write_readback_tests;
 
 pub(crate) const DDL: &str = "CREATE TABLE archive_nodes(id BLOB PRIMARY KEY,data BLOB NOT NULL);\nCREATE TABLE native_state_commitments(block BLOB PRIMARY KEY,data BLOB NOT NULL);";
@@ -120,7 +122,9 @@ fn readback_schema(db: &Connection) -> Result<Option<ReadbackSchema>> {
     Ok(Some(rows.collect::<rusqlite::Result<_>>()?))
 }
 
-/// Two graph results inside one original CanonicalJson admission transaction.
+/// At most four named graph results inside one original CanonicalJson admission
+/// transaction: child, genesis, that verified child's parent and the actual
+/// active tip nominated by the existing Node reader. Nomination is not proof.
 /// This is never retained by Node, serialized, cloned or used as commit/recovery
 /// authority. Every use still loads current SQL State/records/deltas and runs
 /// the ORIGINAL complete(settings, current State) comparison before this graph
@@ -131,8 +135,8 @@ pub(super) struct PostWriteReadback<'db> {
     scope: TransactionScope<'db>,
     context: [Hash; 3],
     schema: ReadbackSchema,
-    ids: [Hash; 2],
-    graphs: [Option<Record>; 2],
+    ids: [Option<Hash>; 4],
+    graphs: [Option<Record>; 4],
     enabled: bool,
     consumed: bool,
     #[cfg(test)]
@@ -191,8 +195,8 @@ impl<'db> PostWriteReadback<'db> {
                 settings.genesis(),
             ],
             schema,
-            ids: [child, settings.genesis()],
-            graphs: [None, None],
+            ids: [Some(child), Some(settings.genesis()), None, None],
+            graphs: [None, None, None, None],
             enabled: true,
             consumed: false,
             #[cfg(test)]
@@ -210,7 +214,7 @@ impl<'db> PostWriteReadback<'db> {
         }
         if !same || self.enabled && readback_schema(db)?.as_ref() != Some(&self.schema) {
             self.enabled = false;
-            self.graphs = [None, None];
+            self.graphs = [None, None, None, None];
             // A previous caller has already consumed a successful graph hit.
             // Merely disabling FUTURE hits cannot validate its result after a
             // later outer callback writes. The owning transaction must refuse.
@@ -223,6 +227,16 @@ impl<'db> PostWriteReadback<'db> {
 
     pub(super) fn validate_consumed(&mut self, db: &Connection) -> Result<()> {
         self.current(db).map(|_| ())
+    }
+
+    /// Only the original Node active reader supplies this already-read tip.
+    /// The slot is immutable after its first nomination and receives no graph
+    /// until the ORIGINAL complete-State/record/graph verification succeeds.
+    pub(super) fn nominate_active(&mut self, db: &Connection, block: Hash) -> Result<()> {
+        if self.current(db)? && self.ids[3].is_none() {
+            self.ids[3] = Some(block);
+        }
+        Ok(())
     }
 
     fn matches(&mut self, db: &Connection, settings: &Settings, record: &Record) -> Result<bool> {
@@ -239,7 +253,7 @@ impl<'db> PostWriteReadback<'db> {
         Ok(self
             .ids
             .iter()
-            .position(|id| *id == record.block)
+            .position(|id| *id == Some(record.block))
             .is_some_and(|index| self.graphs[index].as_ref() == Some(record)))
     }
 
@@ -247,8 +261,15 @@ impl<'db> PostWriteReadback<'db> {
         // Called only AFTER the original successful graph, its Exit and the
         // final caller callback. A mutation during that validation mints none.
         if self.current(db)? {
-            if let Some(index) = self.ids.iter().position(|id| *id == record.block) {
-                self.graphs[index] = Some(record);
+            // Nominate the parent only from the fully verified child Record.
+            // This introduces no earlier SQL read, validation or error order.
+            if self.ids[0] == Some(record.block) && self.ids[2].is_none() {
+                self.ids[2] = record.parent;
+            }
+            for (id, graph) in self.ids.iter().zip(&mut self.graphs) {
+                if *id == Some(record.block) {
+                    *graph = Some(record.clone());
+                }
             }
         }
         Ok(())

@@ -7980,3 +7980,137 @@ strict Clippy and rustfmt passed; the retained SQLite I/O build-script warning
 and cached canonical-compiler follow-up remain explicitly unqualified for I/O.
 A functional owner test, lint pass or evidence index does not replace the
 original fresh-build I/O, full-workspace, cross-architecture or public gates.
+
+### PN transaction-local readback and durable effect recovery — 2026-10-30 UTC
+
+This is the next bounded continuation on Chain
+`a38d770966c65ad34c9d5e55f3c2917c2e3bda0f` and Hepta
+`f874d948a38c119e57b1368adab79437956acd78`. These are the adopted parents, not
+substitutes for the actual subsequently published heads, ordered merges or
+execution receipts. The existing M00–M17 ownership and all PN0–PN6 exit
+conditions remain authoritative. No activation or qualification flag changes.
+
+#### PN2: reuse only original verified graphs in the same write transaction
+
+The original admission readback can now retain four bounded roles: child,
+genesis, the fully verified child's parent and the active tip read by the
+original Node owner. Parent nomination occurs only after the original complete
+child verification; active nomination uses the already-read tip. Neither
+nomination performs discovery SQL, creates a verification receipt, replaces a
+previously nominated role or renews an invalidated scope. A fifth unrelated root
+is not retained.
+
+Each hit still reads current State/Record/delta data, computes the original full
+State commitment and performs the original block/parent/Record comparisons.
+The original SQLite connection, transaction, write-epoch and schema checks remain
+binding. Writes invalidate the whole scope; a mutation after a consumed hit
+refuses the owning operation. The active reader checks the consumed scope after
+its final callback and tip/generation/slot comparison, before publishing its
+active commitment view. The final admission keeps the corresponding consumed
+check before its existing effect-marker write. Shared-storage and no-receipt
+paths retain their original behavior.
+
+The [parent/active readback evidence](../../evidence/pn-owner-recovery-20261030/parent-active-readback/README.md)
+retains the exact source, original failures and commands. The qualified native
+RED has one passing and two failing controls: duplicate parent graph traversal
+is five rather than four, and a final active-reader callback can otherwise return
+stale success after a controlled KV write. The new GREEN controls pass all three.
+The complete original release `--include-ignored` selection passes **77/77**, with
+zero failed or ignored tests, including the original create-new retained-delta
+cost output. The retained cost control has no speed threshold and does not
+measure the new parent/active reuse or whole-Node State/History throughput.
+The earlier debug selection remains **76 passed / one ignored**; it is not
+relabelled as the release cost gate. The original owner/snapshot
+selection passes 22 and the combined-source PQ owner selection passes 14.
+
+The fresh canonical debug and release builds retain the unchanged
+`sqlite-3.51.3-normal-native-linux-layout-v3` build fence. Package-scoped Clippy
+with the original all-targets/all-features flags and `-D warnings` passes.
+The earlier unqualified
+exploratory build, corrected cold-reopen test assumption, and interrupted native
+compilation remain separate original records. This controlled build observation
+does not establish power-loss recovery, arbitrary-host I/O qualification or
+bit-for-bit reproduction across independent machines.
+
+This change removes repeated graph work within one existing transaction. It
+does not eliminate the full-State hot path or tip-to-genesis History work and
+does not establish a throughput multiplier. The independent original `24b`
+strict campaign readback still fails all nine phases. Its first-window
+confirmation and nested cost observations are preserved without adding nested
+CPU intervals. The subsequent actual `a38` strict and graph-fence hosted
+campaigns also remain failed; old `b23` reader successes do not replace them.
+Every new published source still needs its own original business and attack
+campaign, long-history/growing-account cases, cold sync, deep reorg, disk faults
+and independent readback.
+
+#### PN4: preserve original effects through stale owners and old writers
+
+The paired Hepta continuation validates the original immutable step/fence and
+exact intent/payload inside the same `BEGIN IMMEDIATE` transaction before
+persisting recovery observations. A stale owner cannot first append a terminal
+fact and only then fail settlement.
+
+Published migration 21 remains unchanged. New migration 22 explicitly labels
+new compatible appends on the four effect tables. Real already-open older
+connections that omit the new columns cannot append through the new guard.
+Legacy unresolved attempts without complete operation binding remain Unknown;
+they cannot acquire an invented replacement operation or fabricated absence.
+Existing complete v21 bindings retain their original operation, and complete
+older terminal evidence remains readable. Exact SQLite column metadata is also
+checked on reopen, closing the demonstrated default-value catalog bypass while
+preserving the original migration bytes and trigger checks.
+
+The final AutomationStore package selection passes **134/134**. Earlier 129 and
+133 results are overlapping stages, not additional independent passing cases.
+The original native REDs, one earlier flaky fixture execution and its exact
+transaction-scoping repair remain retained. The typed provider ACK stores what
+the adapter observed; it has no provider signature. Preserving a v21 binding
+does not retroactively prove that the older implementation never lost an ACK.
+
+Agentd reconciliation may observe the original operation after lease expiry;
+new dispatch still requires the live owner lease. Six actual HTTP controls pass,
+including an exact POST-then-GET history after AutomationStore close/reopen and
+zero dispatch under an expired lease with an otherwise live grant. The selected
+restart is not a whole Agentd process restart. Repeated terminal observation
+performs no additional GET. The separate final-use owner rejects FIFO config
+before it can block its constructor; its six selected native V2 controls pass.
+Neither result closes full reorg, payment, refund, custody, repair or economic
+budget obligations.
+
+#### PN0, PN1 and PN3–PN6: preserve the remaining actual exits
+
+The ordinary Hepta execution source is a new closed V3 selection; the historical
+V1/V2 source identities, model profile, plan and target remain immutable. The
+published pair must bind its actual source/base/ordered merge, with all 33 source
+inputs reverified. A separate four-lane effect-recovery job executes x64/ARM64
+and actual head/merge controls even when the joint business job fails. Identical
+trees never substitute for execution of the actual commit in that job. This
+source selection grants no model compatibility or installation authority.
+
+The immediate PR bases remain `fix/chain-native-convergence-20261029` and
+`fix/hepta-final-use-mldsa65-v2-20261029`. Their actual prospective merges qualify
+only those named base/source pairs. They are not current-main integration
+receipts; the upstream Draft stacks and actual main merge parents must remain
+explicitly tracked before a main or release decision.
+
+PN1 still requires W1 statement correctness, effective computation cost and
+honest service under the original complete attack envelope as separate proofs.
+The local PQ-owner and FIFO fixes do not replace classical identity, transport,
+finality or Cell authorization surfaces. Production authority clocks, durable
+frontiers, complete PQ migration and independent cryptographic review remain
+open.
+
+The local environment does not satisfy the original frozen model-host/runtime
+prerequisites. Source-selection tests and controlled Cell handoff do not prove
+three real installed-parent, frozen-evaluation, complete-download, ordinary
+installation and subsequent-task cycles. Beneficial release and valid no-update
+must still be reported separately. Public model material is not treated as a
+missing private credential.
+
+PN5 still needs three real independent operators/failure domains and the frozen
+at-least-72-hour experiment with each fault cohort meeting its original target.
+Several hosted runners do not establish operator independence. PN6 remains
+blocked on those prior qualifications, actual PQ identity prebinding/source
+exit, retained liabilities/history and a release decision for concrete binaries.
+The two Drafts remain development continuations; component passes do not close
+these system exits.

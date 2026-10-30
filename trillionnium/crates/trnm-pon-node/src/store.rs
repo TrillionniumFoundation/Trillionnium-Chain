@@ -2502,6 +2502,15 @@ impl Node {
         state: &State,
         progress: &mut dyn NativeProgress,
     ) -> Result<()> {
+        self.check_persisted_state_with_readback(id, state, progress, None)
+    }
+    fn check_persisted_state_with_readback(
+        &self,
+        id: Hash,
+        state: &State,
+        progress: &mut dyn NativeProgress,
+        readback: Option<&mut native_authenticated::PostWriteReadback<'_>>,
+    ) -> Result<()> {
         let record = self.record(id).map_err(Error::local_integrity)?;
         continuity_v1::check_state(state, record.height, &self.settings.app)
             .map_err(|error| Error::from(error).local_integrity())?;
@@ -2523,13 +2532,14 @@ impl Node {
         };
         ensure(actual_root == record.root, "ROOT").map_err(Error::local_integrity)?;
         if self.state_backend == StateBackend::AuthenticatedV1 {
-            native_authenticated::verify_state_with_native_progress(
+            native_authenticated::verify_state_with_readback(
                 &self.db,
                 &self.settings,
                 id,
                 state,
                 progress,
                 Some(&self.authenticated_arithmetic),
+                readback,
             )?;
         }
         Ok(())
@@ -2549,7 +2559,7 @@ impl Node {
     fn check_active_before_commit_with_readback(
         &self,
         progress: &mut dyn NativeProgress,
-        readback: Option<&mut native_authenticated::PostWriteReadback<'_>>,
+        mut readback: Option<&mut native_authenticated::PostWriteReadback<'_>>,
     ) -> Result<()> {
         progress.checkpoint()?;
         self.namespace()?;
@@ -2561,7 +2571,15 @@ impl Node {
         let selected = self.active()?;
         let slot = self.slot()?;
         let state = self.slot_state_with_progress(slot, progress)?;
-        self.check_persisted_state(selected.0, &state, progress)?;
+        if let Some(scope) = readback.as_deref_mut() {
+            scope.nominate_active(&self.db, selected.0)?;
+        }
+        self.check_persisted_state_with_readback(
+            selected.0,
+            &state,
+            progress,
+            readback.as_deref_mut(),
+        )?;
         crate::ancestry_index::validate_tip(&self.db, self.ancestry_context(), selected.0)
             .map_err(Error::local_integrity)?;
         if self.state_backend == StateBackend::AuthenticatedV1 {
@@ -2571,14 +2589,18 @@ impl Node {
                 selected.0,
                 progress,
                 Some(&self.authenticated_arithmetic),
-                readback,
+                readback.as_deref_mut(),
             )?;
         }
         ensure(
             self.active()? == selected && self.slot()? == slot,
             "GENERATION",
         )
-        .map_err(Error::local_integrity)
+        .map_err(Error::local_integrity)?;
+        if let Some(scope) = readback {
+            scope.validate_consumed(&self.db)?;
+        }
+        Ok(())
     }
     fn record(&self, id: Hash) -> Result<Record> {
         let row = self
@@ -3072,6 +3094,13 @@ impl Node {
         &self,
         progress: &mut dyn NativeProgress,
     ) -> Result<(Hash, u64, State)> {
+        self.read_active_in_current_snapshot_with_readback(progress, None)
+    }
+    fn read_active_in_current_snapshot_with_readback(
+        &self,
+        progress: &mut dyn NativeProgress,
+        mut readback: Option<&mut native_authenticated::PostWriteReadback<'_>>,
+    ) -> Result<(Hash, u64, State)> {
         ensure(
             self.state_backend != StateBackend::PermanentAccountGrowthV2,
             "GROWTH_COMPLETE_STATE_UNAVAILABLE",
@@ -3103,13 +3132,17 @@ impl Node {
             prior.as_ref(),
         )?;
         if self.state_backend == StateBackend::AuthenticatedV1 {
-            native_authenticated::verify_state_with_native_progress(
+            if let Some(scope) = readback.as_deref_mut() {
+                scope.nominate_active(&self.db, tip)?;
+            }
+            native_authenticated::verify_state_with_readback(
                 &self.db,
                 &self.settings,
                 tip,
                 &state,
                 progress,
                 Some(&self.authenticated_arithmetic),
+                readback.as_deref_mut(),
             )?;
         }
         progress.checkpoint()?;
@@ -3117,6 +3150,12 @@ impl Node {
             self.active()? == (tip, generation) && self.slot()? == slot,
             "STALE_VIEW",
         )?;
+        // The original final callback can write KV without changing tip/slot.
+        // A consumed graph must remain in its SAME write epoch before the
+        // active commitment view is published to this Node.
+        if let Some(scope) = readback {
+            scope.validate_consumed(&self.db)?;
+        }
         self.publish_commitment(tip, generation, slot, prepared);
         Ok((tip, generation, state))
     }
@@ -3443,7 +3482,13 @@ impl Node {
         });
         progress.checkpoint()?;
         if tip == self.active()?.0 {
-            return Ok(self.read_active_with_native_progress(progress)?.2);
+            return Ok(match readback {
+                Some(scope) => {
+                    self.read_active_in_current_snapshot_with_readback(progress, Some(scope))?
+                        .2
+                }
+                None => self.read_active_with_native_progress(progress)?.2,
+            });
         }
         let mut path = tempfile::tempfile()?;
         let mut count = 0u64;
@@ -4772,12 +4817,19 @@ impl Node {
             )
             .map_err(Error::local_integrity)?;
             ensure(
-                self.state_at_with_progress(
-                    h.parent,
-                    &mut TypedNativeProgress(|point| {
+                {
+                    let mut progress = TypedNativeProgress(|point| {
                         guarded_native(ExecutionProgress::BeforeDurableCommit, point)
-                    }),
-                )? == prior
+                    });
+                    match publication_readback.as_mut() {
+                        Some(readback) => self.state_at_with_post_write_readback(
+                            h.parent,
+                            &mut progress,
+                            readback,
+                        )?,
+                        None => self.state_at_with_progress(h.parent, &mut progress)?,
+                    }
+                } == prior
                     && {
                         let mut progress = TypedNativeProgress(|point| {
                             guarded_native(ExecutionProgress::BeforeDurableCommit, point)

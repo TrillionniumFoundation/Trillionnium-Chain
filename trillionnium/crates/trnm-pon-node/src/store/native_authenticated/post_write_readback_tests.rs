@@ -131,7 +131,11 @@ fn actual_child_and_genesis_reuse_preserves_full_state_and_original_readback() {
     )
     .unwrap();
     assert_eq!(counts.enters, 2);
-    assert!(readback.graphs.iter().all(Option::is_some));
+    assert!(readback.graphs[0].is_some() && readback.graphs[1].is_some());
+    assert!(
+        readback.ids[3].is_none(),
+        "no active owner read has nominated a tip"
+    );
     let boundaries = counts.boundaries;
     let actual_child = f
         .node
