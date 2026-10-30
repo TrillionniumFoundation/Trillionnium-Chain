@@ -260,7 +260,12 @@ fn duplicate_or_disjoint_witness_identities_never_count_toward_quorum() {
         Err(PqRecoveryQuorumErrorV1::UntrustedWitness)
     ));
     assert!(verify_pq_recovery_quorum_v1(
-        &[receipts[0].clone(), receipts[1].clone(), receipts[2].clone(), receipts[0].clone()],
+        &[
+            receipts[0].clone(),
+            receipts[1].clone(),
+            receipts[2].clone(),
+            receipts[0].clone(),
+        ],
         &policy,
     )
     .is_err());
@@ -311,26 +316,21 @@ fn freshness_rollback_key_swap_and_invalid_extra_fail_closed() {
     let local = head();
     let mut roster = quorum_roster(&keys);
     roster[0].last_external_sequence = 30;
-    assert!(verify_pq_recovery_quorum_v1(
-        &receipts[..2],
-        &quorum_policy(&roster, &local),
-    )
-    .is_err());
+    assert!(
+        verify_pq_recovery_quorum_v1(&receipts[..2], &quorum_policy(&roster, &local),).is_err()
+    );
     roster[0].last_external_sequence = 29;
     roster[1].outstanding_challenge = [42; 32];
-    assert!(verify_pq_recovery_quorum_v1(
-        &receipts[..2],
-        &quorum_policy(&roster, &local),
-    )
-    .is_err());
+    assert!(
+        verify_pq_recovery_quorum_v1(&receipts[..2], &quorum_policy(&roster, &local),).is_err()
+    );
     roster[1].outstanding_challenge = [11; 32];
     let mut rolled_back = local;
     rolled_back.effect_journal_head[0] ^= 1;
-    assert!(verify_pq_recovery_quorum_v1(
-        &receipts[..2],
-        &quorum_policy(&roster, &rolled_back),
-    )
-    .is_err());
+    assert!(
+        verify_pq_recovery_quorum_v1(&receipts[..2], &quorum_policy(&roster, &rolled_back),)
+            .is_err()
+    );
 
     let mut swapped = receipts[1].clone();
     swapped.public_key = keys[0].clone();
