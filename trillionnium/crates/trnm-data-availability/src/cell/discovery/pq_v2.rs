@@ -201,8 +201,6 @@ mod tests {
         (record.to_wire(), signer.verifying_key().to_bytes().to_vec())
     }
 
-
-
     #[test]
     fn pcp2_pinned_owner_fetches_actual_verified_cell_bytes_without_classic_discovery() {
         use crate::cell::{serve_cells, CellCacheConfigV4, CellContextV1};
