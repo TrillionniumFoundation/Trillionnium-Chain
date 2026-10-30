@@ -683,9 +683,7 @@ pub mod pq_reply_v2 {
             assert!(evaluate(&reply(&[wire.as_slice(); 9])).is_err());
             assert!(evaluate(&[]).is_err());
             assert_eq!(1 + 8 * PQ_CELL_PROVIDER_RECORD_V2_BYTES, 28641);
-            assert!(
-                8 * PQ_CELL_PROVIDER_RECORD_V2_BYTES < MAX_DISCOVERY_RESPONSE_BYTES as usize
-            );
+            assert!(8 * PQ_CELL_PROVIDER_RECORD_V2_BYTES < MAX_DISCOVERY_RESPONSE_BYTES as usize);
         }
 
         #[test]
