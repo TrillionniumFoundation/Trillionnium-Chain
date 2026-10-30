@@ -447,6 +447,70 @@ pub(super) fn exchange(
     )?;
     Ok(wire)
 }
+
+/// Disjoint, opt-in PCP2 inquiry. The V1 CDQ1/CDS1 frame and its stricter
+/// 2,681-byte reply limit are deliberately untouched: no classic fallback.
+pub(super) fn exchange_pq_v2(
+    peer: SocketAddr,
+    body: &[u8],
+    transport: &RequestContext<'_>,
+    observation: &mut CellDiscoveryObservationV1,
+) -> CellResultV1<Vec<u8>> {
+    const PCP2_REPLY_LIMIT: usize =
+        1 + MAX_DISCOVERED_PROVIDERS
+            * trnm_crypto_primitives::pq_cell_provider::PQ_CELL_PROVIDER_RECORD_V2_BYTES;
+    require(body.len() == 192, "PQ framed request length")?;
+    check_deadline(transport.overall)?;
+    require(
+        observation.connection_attempts < MAX_DISCOVERY_CONNECTIONS
+            && observation.received_response_bytes < MAX_DISCOVERY_RESPONSE_BYTES,
+        "PQ discovery original network allowance",
+    )?;
+    transport
+        .requests_left
+        .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |left| {
+            left.checked_sub(1)
+        })
+        .map_err(|_| CellErrorV1::Invalid("PQ discovery connection budget"))?;
+    observation.connection_attempts += 1;
+    let deadline = transport.overall.min(Instant::now() + transport.timeout);
+    let mut stream = TcpStream::connect_timeout(&peer, network::remaining(deadline)?)?;
+    let mut query = b"PCQ2".to_vec();
+    query.push(1);
+    query.extend((body.len() as u16).to_be_bytes());
+    query.extend(body);
+    network::write_deadline(&mut stream, &query, deadline)?;
+    let mut header = [0; 9];
+    read_response(
+        &mut stream,
+        &mut header,
+        deadline,
+        transport.responses,
+        observation,
+    )?;
+    require(&header[..4] == b"PCS2", "PQ discovery wrong response version")?;
+    require(header[4] == 0, "PQ discovery refused response")?;
+    let length = u32::from_be_bytes(
+        header[5..]
+            .try_into()
+            .map_err(|_| CellErrorV1::Invalid("PQ framed length"))?,
+    ) as usize;
+    require(
+        length > 0 && length <= PCP2_REPLY_LIMIT
+            && length + header.len() <= MAX_DISCOVERY_RESPONSE_BYTES as usize,
+        "PQ framed reply bounded length",
+    )?;
+    let mut reply = vec![0; length];
+    read_response(
+        &mut stream,
+        &mut reply,
+        deadline,
+        transport.responses,
+        observation,
+    )?;
+    Ok(reply)
+}
+
 fn read_response(
     stream: &mut TcpStream,
     mut bytes: &mut [u8],

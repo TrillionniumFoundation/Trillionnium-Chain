@@ -1,0 +1,42 @@
+name: PQ PCP2 framed bootstrap exact-head native checks
+on:
+  push:
+    branches:
+      - fix/pq-cell-provider-framed-probe-20261030
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  pq-framed:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 40
+    env:
+      CARGO_INCREMENTAL: "0"
+      RUST_TEST_THREADS: "1"
+    steps:
+      - name: Checkout exact pushed source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Install pinned Rust
+        run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+      - name: Source and cold inventory
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "${GITHUB_SHA}" --output "${RUNNER_TEMP}/pq-framed-source.json"
+          python3 scripts/refresh_distributed_source_inventory.py --check
+      - name: Strict fmt
+        run: cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+      - name: Real native PCP2 signed TCP and malicious legacy frame tests
+        run: cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-data-availability --lib cell::discovery::pq_reply_v2::tests -- --test-threads=1
+      - name: Original CDP1 discovery regression
+        run: cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-data-availability --lib cell::discovery::tests -- --test-threads=1
+      - name: Strict Clippy
+        run: cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-data-availability --all-targets -- -D warnings
+      - name: No source mutation
+        if: always()
+        run: test -z "$(git status --porcelain=v1)"
