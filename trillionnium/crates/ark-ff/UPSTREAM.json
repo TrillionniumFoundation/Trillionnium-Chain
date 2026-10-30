@@ -66,7 +66,8 @@
   "maintenance": "remove the unused direct paste dependency and restore the original test dependency requirements",
   "modified_original_members": [
     "Cargo.toml",
-    "doc/katex-header.html"
+    "doc/katex-header.html",
+    "src/fields/models/cubic_extension.rs"
   ],
   "native_or_cargo_validation": false,
   "original_Cargo_toml_orig_is_unchanged_provenance": true,
@@ -324,7 +325,7 @@
       "sha256": "9eeaf05cf3012bdf68d386dc9470f473a528680a19105db3d85cfea6600a68c4"
     }
   ],
-  "original_rust_and_test_sources_unchanged": true,
+  "original_rust_and_test_sources_unchanged": false,
   "package": "ark-ff",
   "preparation_whitespace_changes": [
     {
@@ -339,6 +340,28 @@
   "schema": "pon-maintained-parent-adoption-v1",
   "source_base_commit": "c96c2b3e24ba354b4abcb842ca6a6a019c442b73",
   "supply_gate_closed": false,
+  "test_oracle_maintenance": {
+    "actual_red_observed": false,
+    "canonical_arithmetic_assertion_precedes_oracle_assertion": true,
+    "fixed_distinct_inputs": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "original_random_draw_order_retained": true,
+    "original_random_test_retained": true,
+    "original_shared_third_pair": [
+      3,
+      4
+    ],
+    "original_source_sha256": "a768e392cef35e746cfb786afbeec5a88b8266175c1a7df63bb521f363f56af8",
+    "phase": "distinct-input counterexample awaiting actual RED",
+    "production_arithmetic_changed": false,
+    "red_source_sha256": "49ccfd5745b9f54ec0bbddb322b68c6b1cdbb9e37e14261768f076cfc0d33890"
+  },
   "version": "0.5.0",
   "workspace_adoption": {
     "initial_lock_sha256": "9466cc1073f80c72ef978e1dde66171a9375afa2575f202eb36a314ef37b3cbc",

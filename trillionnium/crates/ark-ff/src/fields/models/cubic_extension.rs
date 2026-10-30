@@ -708,6 +708,42 @@ mod cube_ext_tests {
         mnt6_753::Fq3,
     };
 
+    fn fq6_test_expected_components(random_coeffs: &[Fq]) -> (Fq2, Fq2, Fq2) {
+        let expected_0 = Fq2::new(random_coeffs[0], random_coeffs[1]);
+        let expected_1 = Fq2::new(random_coeffs[2], random_coeffs[3]);
+        let expected_2 = Fq2::new(random_coeffs[3], random_coeffs[4]);
+        (expected_0, expected_1, expected_2)
+    }
+
+    #[test]
+    fn test_from_base_prime_field_elements_distinct_coefficients() {
+        let coefficients: [Fq; 6] = [
+            Fq::from(1u64),
+            Fq::from(2u64),
+            Fq::from(3u64),
+            Fq::from(4u64),
+            Fq::from(5u64),
+            Fq::from(6u64),
+        ];
+        assert_eq!(Fq6::extension_degree(), 6);
+        for (index, left) in coefficients.iter().enumerate() {
+            for right in &coefficients[index + 1..] {
+                assert_ne!(left, right);
+            }
+        }
+        let canonical = Fq6::new(
+            Fq2::new(coefficients[0], coefficients[1]),
+            Fq2::new(coefficients[2], coefficients[3]),
+            Fq2::new(coefficients[4], coefficients[5]),
+        );
+        let actual = Fq6::from_base_prime_field_elems(coefficients.iter().copied()).unwrap();
+        assert_eq!(actual, canonical);
+        // The retained original test uses these same oracle components.
+        let components = fq6_test_expected_components(&coefficients);
+        let oracle = Fq6::new(components.0, components.1, components.2);
+        assert_eq!(oracle, canonical);
+    }
+
     #[test]
     fn test_norm_for_towers() {
         // First, test the simple fp3
@@ -745,9 +781,8 @@ mod cube_ext_tests {
                 random_coeffs.push(Fq::rand(&mut test_rng()));
             }
 
-            let expected_0 = Fq2::new(random_coeffs[0], random_coeffs[1]);
-            let expected_1 = Fq2::new(random_coeffs[2], random_coeffs[3]);
-            let expected_2 = Fq2::new(random_coeffs[3], random_coeffs[4]);
+            let (expected_0, expected_1, expected_2) =
+                fq6_test_expected_components(&random_coeffs);
             let expected = Fq6::new(expected_0, expected_1, expected_2);
 
             let actual = Fq6::from_base_prime_field_elems(random_coeffs).unwrap();
