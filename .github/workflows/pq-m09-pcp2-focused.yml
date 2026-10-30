@@ -1,0 +1,57 @@
+name: PQ M09 compact PCP2 native boundary
+on:
+  push:
+    branches:
+      - fix/pq-m09-pcp2-verified-boundary-20261030
+    paths:
+      - .github/workflows/pq-m09-pcp2-focused.yml
+      - trillionnium/crates/trnm-data-availability/**
+      - trillionnium/crates/trnm-crypto-primitives/src/pq_cell_provider.rs
+      - trillionnium/Cargo.lock
+      - trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  pq-m09-bridge:
+    name: M09 pinned PCP2 (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 50
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, ubuntu-24.04-arm]
+    env:
+      CARGO_INCREMENTAL: "0"
+      CARGO_TERM_COLOR: never
+      RUST_TEST_THREADS: "1"
+    steps:
+      - name: Checkout exact pushed source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Install pinned Rust formatter and Clippy
+        run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+      - name: Bind head and deterministic native inventory
+        shell: bash
+        run: |
+          set -euo pipefail
+          git rev-parse HEAD
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "${GITHUB_SHA}" --output "${RUNNER_TEMP}/pq-m09-source.json"
+          python3 scripts/refresh_distributed_source_inventory.py --check
+      - name: Source formatting
+        run: cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+      - name: Actual M09 PCP2 positive and adversarial tests
+        run: cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-data-availability pq_v2 -- --test-threads=1
+      - name: Preserve M01 PCP2 signature controls
+        run: cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives pq_cell_provider -- --test-threads=1
+      - name: Original M09 unit regression
+        run: cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-data-availability --lib -- --test-threads=1
+      - name: Strict M09 Clippy
+        run: cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-data-availability --all-targets -- -D warnings
+      - name: Verify unchanged worktree
+        if: always()
+        shell: bash
+        run: test -z "$(git status --porcelain=v1)"
