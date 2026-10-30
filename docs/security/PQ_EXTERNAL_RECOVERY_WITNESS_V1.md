@@ -50,3 +50,18 @@ power-failure qualification is claimed.
 Focused cases live in the existing
 `trillionnium/crates/trnm-research-protocol/tests/pq_rollback_witness_v1.rs`.
 The original four witness tests and historic Hepta tests remain unchanged.
+
+## Whole-batch cheap policy preflight (research extension)
+
+The quorum verifier now rejects insufficient count, unknown or duplicate
+signers, invalid roster context, stale sequence, expired/future timestamps,
+malformed signature length, and local recovery-head mismatch for **all**
+supplied receipts before invoking any ML-DSA verifier. A forged first signature
+must not impose PQ verification cost when a later receipt has an inexpensive
+policy error. Once the entire batch passes this preflight, every signed
+statement must still pass actual ML-DSA verification; no witness may be
+silently ignored or treated as authority from shape alone.
+
+This reduces one avoidable denial-of-service cost class; it is **not** a
+measured ingress capacity guarantee, independent witness storage, live
+cold-recovery integration, PQ-128 proof, or whole-chain qualification.
