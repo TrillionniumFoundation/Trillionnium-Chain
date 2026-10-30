@@ -429,3 +429,379 @@ mod sequence_tests;
 
 #[cfg(all(test, unix))]
 mod equivocation_history_tests;
+// Opt-in research verifier. CDP1 remains a classical development protocol;
+// neither wire is automatically accepted by the other's parser, and no
+// discovery advertisement grants artifact release or FinalUse authority.
+pub use pq_v2::{
+    pq_cell_provider_key_id_v2, CellPqProviderRecordV2, CellPqProviderStatementV2,
+    CELL_PQ_PROVIDER_RECORD_BYTES_V2, CELL_PQ_PROVIDER_PROFILE_V2,
+};
+
+mod pq_v2 {
+    use super::{
+        canonical_endpoint, decode_endpoint, endpoint_bytes, require, CellDigestV1,
+        CellDiscoveryAddressPolicyV1, CellDiscoveryRequestV1, CellErrorV1, CellResultV1, Input,
+        FUTURE_SKEW_SECONDS, MAX_TTL_SECONDS,
+    };
+    use ml_dsa::{
+        EncodedVerifyingKey, KeyExport, Keypair, MlDsa65, Signature, SignatureEncoding, Signer,
+        SigningKey, VerifyingKey,
+    };
+    use sha2::{Digest, Sha256};
+    use std::net::SocketAddr;
+
+    pub const CELL_PQ_PROVIDER_PROFILE_V2: &str = "cell-provider-discovery-pq-research-v2";
+    const KEY_BYTES: usize = 1952;
+    const SIGNATURE_BYTES: usize = 3309;
+    pub const CELL_PQ_PROVIDER_RECORD_BYTES_V2: usize =
+        4 + 192 + 32 + 19 + 3 * 8 + KEY_BYTES + SIGNATURE_BYTES;
+    const SIGNING_DOMAIN: &[u8] = b"trnm.cell-provider-discovery.ml-dsa65.v2\0";
+    const KEY_ID_DOMAIN: &[u8] = b"trnm.cell-provider-identity.ml-dsa65.v2\0";
+
+    pub fn pq_cell_provider_key_id_v2(public_key: &[u8]) -> CellResultV1<CellDigestV1> {
+        require(public_key.len() == KEY_BYTES, "PQ discovery public key length")?;
+        let mut hash = Sha256::new();
+        hash.update(KEY_ID_DOMAIN);
+        hash.update(public_key);
+        Ok(hash.finalize().into())
+    }
+
+    #[derive(Clone, Debug, Eq, PartialEq)]
+    pub struct CellPqProviderStatementV2 {
+        pub request: CellDiscoveryRequestV1,
+        /// Stable key fingerprint, not an authority delegated by the record.
+        pub owner_key_id: CellDigestV1,
+        pub endpoint: SocketAddr,
+        pub sequence: u64,
+        pub issued_unix_seconds: u64,
+        pub expires_unix_seconds: u64,
+    }
+
+    /// Self-signed routing hint; it is not independently authorized until
+    /// verify_pinned is called with an owner-selected key and replay frontier.
+    #[derive(Clone, Debug, Eq, PartialEq)]
+    pub struct CellPqProviderRecordV2 {
+        statement: CellPqProviderStatementV2,
+        public_key: Vec<u8>,
+        signature: Vec<u8>,
+    }
+
+    impl CellPqProviderRecordV2 {
+        pub fn sign(
+            statement: CellPqProviderStatementV2,
+            key: &SigningKey<MlDsa65>,
+        ) -> CellResultV1<Self> {
+            let public_key = key.verifying_key().to_bytes().to_vec();
+            let mut record = Self {
+                statement,
+                public_key,
+                signature: Vec::new(),
+            };
+            record.check_statement()?;
+            let signature: Signature<MlDsa65> = key.sign(&record.signing_bytes());
+            record.signature = signature.to_vec();
+            Ok(record)
+        }
+
+        pub fn statement(&self) -> &CellPqProviderStatementV2 {
+            &self.statement
+        }
+
+        fn unsigned_bytes(&self) -> Vec<u8> {
+            let mut out = Vec::with_capacity(CELL_PQ_PROVIDER_RECORD_BYTES_V2);
+            out.extend_from_slice(b"CDP2");
+            out.extend(self.statement.request.encode());
+            out.extend(self.statement.owner_key_id);
+            out.extend(endpoint_bytes(self.statement.endpoint));
+            for value in [
+                self.statement.sequence,
+                self.statement.issued_unix_seconds,
+                self.statement.expires_unix_seconds,
+            ] {
+                out.extend(value.to_be_bytes());
+            }
+            out.extend(&self.public_key);
+            out
+        }
+
+        fn signing_bytes(&self) -> Vec<u8> {
+            let mut out = SIGNING_DOMAIN.to_vec();
+            out.extend(self.unsigned_bytes());
+            out
+        }
+
+        pub fn encode(&self) -> Vec<u8> {
+            let mut out = self.unsigned_bytes();
+            out.extend(&self.signature);
+            out
+        }
+
+        /// Bounded untrusted parsing only; DOES NOT authenticate the owner.
+        /// CDP1 and padded/extended records cannot be interpreted as CDP2.
+        pub fn decode(bytes: &[u8]) -> CellResultV1<Self> {
+            require(
+                bytes.len() == CELL_PQ_PROVIDER_RECORD_BYTES_V2,
+                "PQ discovery record length",
+            )?;
+            let mut input = Input(bytes);
+            require(input.take::<4>()? == *b"CDP2", "PQ discovery version")?;
+            let request = CellDiscoveryRequestV1::decode(&input.take::<192>()?)?;
+            let owner_key_id = input.take()?;
+            let endpoint = decode_endpoint(input.take()?)?;
+            let sequence = u64::from_be_bytes(input.take()?);
+            let issued_unix_seconds = u64::from_be_bytes(input.take()?);
+            let expires_unix_seconds = u64::from_be_bytes(input.take()?);
+            let public_key = input.take::<KEY_BYTES>()?.to_vec();
+            let signature = input.take::<SIGNATURE_BYTES>()?.to_vec();
+            let record = Self {
+                statement: CellPqProviderStatementV2 {
+                    request,
+                    owner_key_id,
+                    endpoint,
+                    sequence,
+                    issued_unix_seconds,
+                    expires_unix_seconds,
+                },
+                public_key,
+                signature,
+            };
+            record.check_statement()?;
+            require(record.encode() == bytes, "PQ discovery canonical wire")?;
+            Ok(record)
+        }
+
+        fn check_statement(&self) -> CellResultV1<()> {
+            let s = &self.statement;
+            s.request.validate()?;
+            require(
+                s.sequence > 0 && s.endpoint.port() != 0 && canonical_endpoint(s.endpoint),
+                "PQ discovery sequence/endpoint",
+            )?;
+            require(
+                s.expires_unix_seconds
+                    .checked_sub(s.issued_unix_seconds)
+                    .is_some_and(|ttl| (1..=MAX_TTL_SECONDS).contains(&ttl)),
+                "PQ discovery TTL",
+            )?;
+            require(
+                s.owner_key_id != [0; 32]
+                    && s.owner_key_id == pq_cell_provider_key_id_v2(&self.public_key)?,
+                "PQ discovery owner key binding",
+            )
+        }
+
+        /// Trusted inputs MUST come from independent owner policy, never from
+        /// this wire or a replayable copy of the same local directory.
+        /// A successful signature still proves neither endpoint control nor
+        /// custody, payment, release approval, installation or FinalUse.
+        pub fn verify_pinned(
+            &self,
+            expected_request: CellDiscoveryRequestV1,
+            trusted_public_key: &[u8],
+            last_accepted_sequence: u64,
+            now_unix_seconds: u64,
+            addresses: &CellDiscoveryAddressPolicyV1,
+        ) -> CellResultV1<()> {
+            self.check_statement()?;
+            require(
+                self.statement.request == expected_request,
+                "PQ discovery trusted request",
+            )?;
+            require(
+                trusted_public_key.len() == KEY_BYTES
+                    && self.public_key == trusted_public_key,
+                "PQ discovery independently pinned owner",
+            )?;
+            require(
+                self.statement.sequence > last_accepted_sequence,
+                "PQ discovery replay frontier",
+            )?;
+            require(
+                self.statement.issued_unix_seconds
+                    <= now_unix_seconds.saturating_add(FUTURE_SKEW_SECONDS)
+                    && now_unix_seconds < self.statement.expires_unix_seconds,
+                "PQ discovery time window",
+            )?;
+            addresses.check(self.statement.endpoint)?;
+            require(
+                self.signature.len() == SIGNATURE_BYTES,
+                "PQ discovery signature length",
+            )?;
+            // Cheap context, time, key, replay and address rejection precedes
+            // costly ML-DSA public-matrix expansion and signature verification.
+            let signature = Signature::<MlDsa65>::try_from(self.signature.as_slice())
+                .map_err(|_| CellErrorV1::Invalid("PQ discovery signature encoding"))?;
+            let encoded = EncodedVerifyingKey::<MlDsa65>::try_from(self.public_key.as_slice())
+                .map_err(|_| CellErrorV1::Invalid("PQ discovery key encoding"))?;
+            require(
+                VerifyingKey::<MlDsa65>::decode(&encoded).verify_with_context(
+                    &self.signing_bytes(),
+                    &[],
+                    &signature,
+                ),
+                "PQ discovery ML-DSA signature",
+            )
+        }
+    }
+
+    #[cfg(test)]
+    mod tests {
+        use super::*;
+        use crate::cell::discovery::{
+            CellDiscoveryContextV1, CellProviderRecordV1, CellProviderStatementV1,
+        };
+        use ml_dsa::KeyInit;
+
+        fn key(seed: u8) -> SigningKey<MlDsa65> {
+            SigningKey::<MlDsa65>::new_from_slice(&[seed; 32]).unwrap()
+        }
+
+        fn request() -> CellDiscoveryRequestV1 {
+            CellDiscoveryRequestV1 {
+                context: CellDiscoveryContextV1 {
+                    namespace: [1; 32],
+                    network: [2; 32],
+                    parameters: [3; 32],
+                    genesis: [4; 32],
+                },
+                cell_context: [5; 32],
+                manifest: [6; 32],
+            }
+        }
+
+        fn addresses() -> CellDiscoveryAddressPolicyV1 {
+            CellDiscoveryAddressPolicyV1::LoopbackDevOnly { ports: vec![31415] }
+        }
+
+        fn signed(seed: u8) -> CellPqProviderRecordV2 {
+            let sk = key(seed);
+            let public_key = sk.verifying_key().to_bytes().to_vec();
+            let statement = CellPqProviderStatementV2 {
+                request: request(),
+                owner_key_id: pq_cell_provider_key_id_v2(&public_key).unwrap(),
+                endpoint: "127.0.0.1:31415".parse().unwrap(),
+                sequence: 7,
+                issued_unix_seconds: 100,
+                expires_unix_seconds: 200,
+            };
+            CellPqProviderRecordV2::sign(statement, &sk).unwrap()
+        }
+
+        #[test]
+        fn real_ml_dsa_signed_record_roundtrips_only_with_independent_owner_pin() {
+            let original = signed(42);
+            let bytes = original.encode();
+            assert_eq!(bytes.len(), CELL_PQ_PROVIDER_RECORD_BYTES_V2);
+            let decoded = CellPqProviderRecordV2::decode(&bytes).unwrap();
+            assert_eq!(decoded, original);
+            let pinned = key(42).verifying_key().to_bytes().to_vec();
+            decoded
+                .verify_pinned(request(), &pinned, 6, 150, &addresses())
+                .unwrap();
+            // A different, genuinely signed owner is not a substitute for
+            // the independently selected key.
+            let forged = signed(43);
+            assert!(forged
+                .verify_pinned(request(), &pinned, 6, 150, &addresses())
+                .is_err());
+            assert!(decoded
+                .verify_pinned(request(), &[0; 32], 6, 150, &addresses())
+                .is_err());
+        }
+
+        #[test]
+        fn classical_wire_and_padded_forged_versions_do_not_downgrade() {
+            let ed = ed25519_dalek::SigningKey::from_bytes(&[13; 32]);
+            let old = CellProviderRecordV1::sign(
+                CellProviderStatementV1 {
+                    request: request(),
+                    owner: ed.verifying_key().to_bytes(),
+                    endpoint: "127.0.0.1:31415".parse().unwrap(),
+                    sequence: 7,
+                    issued_unix_seconds: 100,
+                    expires_unix_seconds: 200,
+                },
+                &ed,
+            )
+            .unwrap()
+            .encode();
+            assert_eq!(old.len(), super::super::CELL_PROVIDER_RECORD_BYTES_V1);
+            assert!(CellPqProviderRecordV2::decode(&old).is_err());
+            let mut padded = old;
+            padded.resize(CELL_PQ_PROVIDER_RECORD_BYTES_V2, 0);
+            assert!(CellPqProviderRecordV2::decode(&padded).is_err());
+            let mut wrong = signed(42).encode();
+            wrong[3] = b'1';
+            assert!(CellPqProviderRecordV2::decode(&wrong).is_err());
+        }
+
+        #[test]
+        fn replay_context_time_address_and_every_signed_field_fail_closed() {
+            let original = signed(42);
+            let pinned = key(42).verifying_key().to_bytes().to_vec();
+            assert!(original
+                .verify_pinned(request(), &pinned, 7, 150, &addresses())
+                .is_err());
+            assert!(original
+                .verify_pinned(request(), &pinned, u64::MAX, 150, &addresses())
+                .is_err());
+            for now in [94, 200, 201] {
+                assert!(original
+                    .verify_pinned(request(), &pinned, 6, now, &addresses())
+                    .is_err());
+            }
+            let mut foreign = request();
+            foreign.context.network[0] ^= 1;
+            assert!(original
+                .verify_pinned(foreign, &pinned, 6, 150, &addresses())
+                .is_err());
+            let wrong_port = CellDiscoveryAddressPolicyV1::LoopbackDevOnly {
+                ports: vec![31416],
+            };
+            assert!(original
+                .verify_pinned(request(), &pinned, 6, 150, &wrong_port)
+                .is_err());
+
+            let bytes = original.encode();
+            for offset in [4, 80, 193, 200, 223, 241, 263, 500, 2222, 2223, 3000, 5531] {
+                let mut mutated = bytes.clone();
+                mutated[offset] ^= 1;
+                assert!(
+                    CellPqProviderRecordV2::decode(&mutated)
+                        .and_then(|item| {
+                            item.verify_pinned(request(), &pinned, 6, 150, &addresses())
+                        })
+                        .is_err(),
+                    "tamper byte {offset}",
+                );
+            }
+        }
+
+        #[test]
+        fn malformed_length_and_untrusted_self_signed_wires_are_not_authority() {
+            let bytes = signed(42).encode();
+            for end in [0, 1, 32, 335, CELL_PQ_PROVIDER_RECORD_BYTES_V2 - 1] {
+                assert!(CellPqProviderRecordV2::decode(&bytes[..end]).is_err());
+            }
+            let mut extra = bytes.clone();
+            extra.push(0);
+            assert!(CellPqProviderRecordV2::decode(&extra).is_err());
+            let pinned = key(42).verifying_key().to_bytes().to_vec();
+            let mut wrong_key = signed(42);
+            wrong_key.public_key[0] ^= 1;
+            assert!(wrong_key
+                .verify_pinned(request(), &pinned, 6, 150, &addresses())
+                .is_err());
+            let mut wrong_owner = signed(42);
+            wrong_owner.statement.owner_key_id[0] ^= 1;
+            assert!(wrong_owner
+                .verify_pinned(request(), &pinned, 6, 150, &addresses())
+                .is_err());
+            let mut wrong_sig = signed(42);
+            wrong_sig.signature[0] ^= 1;
+            assert!(wrong_sig
+                .verify_pinned(request(), &pinned, 6, 150, &addresses())
+                .is_err());
+        }
+    }
+}
