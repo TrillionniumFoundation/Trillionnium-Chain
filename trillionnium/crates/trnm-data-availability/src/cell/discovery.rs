@@ -634,25 +634,29 @@ pub mod pq_reply_v2 {
             assert!(evaluate(&reply(&[&wire; 9])).is_err());
             assert!(evaluate(&[]).is_err());
             assert_eq!(1 + 8 * PQ_CELL_PROVIDER_RECORD_V2_BYTES, 28641);
-            assert!(1 + 8 * PQ_CELL_PROVIDER_RECORD_V2_BYTES <= MAX_DISCOVERY_RESPONSE_BYTES as usize);
+            assert!(
+                1 + 8 * PQ_CELL_PROVIDER_RECORD_V2_BYTES <= MAX_DISCOVERY_RESPONSE_BYTES as usize
+            );
         }
 
         #[test]
         fn mixed_valid_and_invalid_providers_reject_whole_reply() {
             let (first, pk1, id1) = signed(42);
             let (second, pk2, id2) = signed(43);
-            let pins = || [
-                PqPinnedProviderV2 {
-                    signer_key_id: id1,
-                    trusted_ml_dsa65_public_key: &pk1,
-                    external_sequence_floor: 6,
-                },
-                PqPinnedProviderV2 {
-                    signer_key_id: id2,
-                    trusted_ml_dsa65_public_key: &pk2,
-                    external_sequence_floor: 6,
-                },
-            ];
+            let pins = || {
+                [
+                    PqPinnedProviderV2 {
+                        signer_key_id: id1,
+                        trusted_ml_dsa65_public_key: &pk1,
+                        external_sequence_floor: 6,
+                    },
+                    PqPinnedProviderV2 {
+                        signer_key_id: id2,
+                        trusted_ml_dsa65_public_key: &pk2,
+                        external_sequence_floor: 6,
+                    },
+                ]
+            };
             let good = reply(&[&first, &second]);
             assert_eq!(
                 verify_pq_provider_reply_v2(&good, request(), &pins(), 150, &addresses())
@@ -680,9 +684,8 @@ pub mod pq_reply_v2 {
                 &addresses()
             )
             .is_err());
-            let bad_addresses = CellDiscoveryAddressPolicyV1::LoopbackDevOnly {
-                ports: vec![31416],
-            };
+            let bad_addresses =
+                CellDiscoveryAddressPolicyV1::LoopbackDevOnly { ports: vec![31416] };
             assert!(verify_pq_provider_reply_v2(
                 &reply(&[&first]),
                 request(),
