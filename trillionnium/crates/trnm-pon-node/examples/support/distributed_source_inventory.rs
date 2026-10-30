@@ -6154,6 +6154,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-research-protocol/src/pq_rollback_witness.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-research-protocol/src/pq_rollback_witness.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-research-protocol/src/state.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -6172,6 +6179,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-research-protocol/tests/pq_hepta_handoff_v2.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-research-protocol/tests/pq_rollback_witness_v1.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-research-protocol/tests/pq_rollback_witness_v1.rs"
         )),
     ),
     (

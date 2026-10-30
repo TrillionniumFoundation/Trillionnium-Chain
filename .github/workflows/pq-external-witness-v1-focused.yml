@@ -1,0 +1,55 @@
+name: PQ external recovery witness focused native verification
+on:
+  push:
+    branches:
+      - fix/pq-external-rollback-witness-v1-20261030
+    paths:
+      - .github/workflows/pq-external-witness-v1-focused.yml
+      - trillionnium/crates/trnm-research-protocol/**
+      - trillionnium/Cargo.lock
+      - trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  pq-rollback-witness:
+    name: PQ recovery and legacy guard (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 40
+    env:
+      CARGO_INCREMENTAL: "0"
+      CARGO_TERM_COLOR: never
+      RUST_TEST_THREADS: "1"
+    steps:
+      - name: Check out exact pushed source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Install pinned toolchain
+        run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+      - name: Bind source and cold inventory
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "${GITHUB_SHA}" --output "${RUNNER_TEMP}/pq-witness-source.json"
+          python3 scripts/refresh_distributed_source_inventory.py --check
+      - name: Exact code formatting
+        run: cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+      - name: Run real PQ rollback witness and adversarial controls
+        run: cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-research-protocol --test pq_rollback_witness_v1 -- --test-threads=1
+      - name: Preserve Hepta PQ handoff controls
+        run: cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-research-protocol --test pq_hepta_handoff_v2 -- --test-threads=1
+      - name: Preserve legacy V1 controls
+        run: cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-research-protocol --test protocol_v1 -- --test-threads=1
+      - name: Strict scoped Clippy
+        run: cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-research-protocol --all-targets -- -D warnings
+      - name: Ensure source was not mutated by tests
+        if: always()
+        shell: bash
+        run: test -z "$(git status --porcelain=v1)"
