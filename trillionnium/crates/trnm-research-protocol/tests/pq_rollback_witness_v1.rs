@@ -365,3 +365,64 @@ fn no_valid_quorum_from_expired_or_conflicting_signed_state() {
     )
     .is_err());
 }
+
+#[test]
+fn whole_batch_cheap_rejections_preempt_invalid_early_signature() {
+    let (keys, receipts) = quorum_fixture();
+    let local = head();
+    let roster = quorum_roster(&keys);
+    let policy = quorum_policy(&roster, &local);
+
+    let mut forged = receipts[0].clone();
+    forged.signature[0] ^= 1;
+
+    // A single forged receipt cannot meet 2-of-3, without expensive verify.
+    assert!(matches!(
+        verify_pq_recovery_quorum_v1(&[forged.clone()], &policy),
+        Err(PqRecoveryQuorumErrorV1::InsufficientQuorum)
+    ));
+
+    // A late cheap replay rejection must win over the first forged
+    // signature. The signed second record is deliberately modified as data.
+    let mut stale = receipts[1].clone();
+    stale.sequence = roster[1].last_external_sequence;
+    assert!(matches!(
+        verify_pq_recovery_quorum_v1(&[forged.clone(), stale], &policy),
+        Err(PqRecoveryQuorumErrorV1::Witness(
+            PqRecoveryWitnessError::StaleSequence
+        ))
+    ));
+
+    let mut expired = receipts[1].clone();
+    expired.expires_unix_s = 1099;
+    assert!(matches!(
+        verify_pq_recovery_quorum_v1(&[forged.clone(), expired], &policy),
+        Err(PqRecoveryQuorumErrorV1::Witness(
+            PqRecoveryWitnessError::TimeWindow
+        ))
+    ));
+
+    let mut unknown = receipts[1].clone();
+    unknown.witness_did = "did:trnm:unknown-witness".into();
+    assert!(matches!(
+        verify_pq_recovery_quorum_v1(&[forged.clone(), unknown], &policy),
+        Err(PqRecoveryQuorumErrorV1::UntrustedWitness)
+    ));
+
+    let mut short_signature = receipts[1].clone();
+    short_signature.signature.pop();
+    assert!(matches!(
+        verify_pq_recovery_quorum_v1(&[forged.clone(), short_signature], &policy),
+        Err(PqRecoveryQuorumErrorV1::Witness(
+            PqRecoveryWitnessError::InvalidSignatureEncoding
+        ))
+    ));
+
+    // A valid-looking batch still verifies every cryptographic signature.
+    assert!(matches!(
+        verify_pq_recovery_quorum_v1(&[forged, receipts[1].clone()], &policy),
+        Err(PqRecoveryQuorumErrorV1::Witness(
+            PqRecoveryWitnessError::InvalidSignature
+        ))
+    ));
+}
