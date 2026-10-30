@@ -548,3 +548,23 @@ jobs:
           path: ${{ runner.temp }}/ci-observations/
           if-no-files-found: error
           retention-days: 30
+
+  pq-claim-json-uniqueness:
+    name: pq-claim-json-uniqueness
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          persist-credentials: false
+      - name: Verify immutable source identity
+        run: test "$(git rev-parse HEAD)" = "$TRNM_EXPECTED_SOURCE_SHA"
+      - name: Run adversarial PQ safety claim controls
+        run: python3 -B -m unittest discover -s scripts/security -p 'test_pq_claim_gate.py' -v
+      - name: Require truthful non-qualified W1 / consensus claims
+        run: python3 -B scripts/security/pq_claim_gate.py --root . --assert-unqualified
+      - name: Verify tracked source remained unchanged
+        if: always()
+        run: test -z "$(git status --porcelain=v1)"
