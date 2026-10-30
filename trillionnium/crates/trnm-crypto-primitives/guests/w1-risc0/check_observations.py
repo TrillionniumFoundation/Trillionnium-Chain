@@ -9,6 +9,8 @@ from pathlib import Path
 import re
 import stat
 
+from proof_observer_v1 import COST_PROFILE, ORIGINAL_PROFILE, profile_budget
+
 
 UNSUPPORTED_AUTHORITY_FLAGS = frozenset({
     "pq128_qualified", "pq_128_security_qualified", "public_ingress_qualified",
@@ -84,11 +86,17 @@ def bounded_raw(path, cap):
         os.close(fd)
 
 
-def validate_process_schema(name, process, out, require_proof_observer=False):
+def validate_process_schema(name, process, out, require_proof_observer=False,
+                            proof_profile=ORIGINAL_PROFILE):
+    budget = profile_budget(proof_profile)
+    cost_only = proof_profile == COST_PROFILE
+    if cost_only:
+        require(require_proof_observer, "cost-only profile requires explicit proof observer")
     require(type(process) is dict, "process object")
     namespace = process.get("schema")
     require(namespace == "pon-w1-actual-process-v1"
-            or name == "prove" and namespace == "pon-w1-observed-process-v2",
+            or name == "prove" and namespace == (
+                "pon-w1-cost-observed-process-v1" if cost_only else "pon-w1-observed-process-v2"),
             "unsupported process schema for " + name)
     if namespace == "pon-w1-actual-process-v1":
         legacy_fields = {"schema", "command", "started_utc", "finished_utc", "timeout_seconds", "source_sha",
@@ -104,7 +112,12 @@ def validate_process_schema(name, process, out, require_proof_observer=False):
               "max_waited_descendant_rss_kib", "rss_scope", "cpu_scope", "supplement",
               "supplement_sha256", "family_capture_complete", "complete_family_cpu_seconds",
               "consensus_authority"}
+    if cost_only:
+        fields |= {"proof_profile", "original_5400s_budget_passed"}
     require(set(process) == fields, "observed process fields")
+    if cost_only:
+        require(process["proof_profile"] == COST_PROFILE and process["original_5400s_budget_passed"] is False,
+                "cost-only process cannot qualify original budget")
     require(process["cpu_scope"] == "direct host wait4 only; adopted rows separate; total family unknown"
             and process["rss_scope"] == "direct host wait4, potentially including descendants it waited; not whole-family peak",
             "observed process CPU/RSS scope")
@@ -121,7 +134,8 @@ def validate_process_schema(name, process, out, require_proof_observer=False):
     require(type(command) is list and len(command) == 7 and all(type(arg) is str for arg in command)
             and Path(command[0]).name == "trnm-w1-risc0-host" and command[1] == "prove"
             and command[5] == "18" and type(process["timeout_seconds"]) is int
-            and process["timeout_seconds"] == 5400, "observed original proof profile")
+            and process["timeout_seconds"] == budget,
+            "observed cost-only proof profile" if cost_only else "observed original proof profile")
     for field in ("user_cpu_seconds", "system_cpu_seconds"):
         value = process[field]
         require(value is None or type(value) in (int, float) and math.isfinite(value) and value >= 0,
@@ -131,8 +145,16 @@ def validate_process_schema(name, process, out, require_proof_observer=False):
     raw = bounded_raw(out / "prove.observer.json", 256 * 1024)
     require(hashlib.sha256(raw).hexdigest() == process["supplement_sha256"], "observer supplement hash")
     observed = decode_json(raw)
-    require(type(observed) is dict and observed.get("schema") == "pon-w1-proof-process-observer-v1",
+    require(type(observed) is dict and observed.get("schema") == (
+                "pon-w1-cost-proof-process-observer-v1" if cost_only else "pon-w1-proof-process-observer-v1"),
             "observer supplement namespace")
+    if cost_only:
+        require(observed.get("proof_profile") == COST_PROFILE
+                and observed.get("original_5400s_budget_passed") is False,
+                "cost-only observer cannot qualify original budget")
+    else:
+        require(not ({"proof_profile", "original_5400s_budget_passed"} & set(observed)),
+                "original observer cannot contain cost-only profile metadata")
     for field in ("command", "source_sha", "started_utc", "finished_utc", "timeout_seconds",
                   "returncode", "timed_out", "wall_seconds"):
         require(type(observed.get(field)) is type(process[field]) and observed[field] == process[field],
@@ -185,7 +207,8 @@ def validate_process_schema(name, process, out, require_proof_observer=False):
         require(len(raw) == item["bytes"] and hashlib.sha256(raw).hexdigest() == item.get("sha256"),
                 "observer stream raw binding")
     sample = observed.get("samples")
-    require(type(sample) is dict and type(sample.get("count")) is int and 0 < sample["count"] <= 1082
+    maximum_samples = 2882 if cost_only else 1082
+    require(type(sample) is dict and type(sample.get("count")) is int and 0 < sample["count"] <= maximum_samples
             and type(sample.get("bytes")) is int and 0 <= sample["bytes"] <= SAMPLE_CAP,
             "observer sample bound")
     raw = bounded_raw(out / "prove.process-samples.jsonl", SAMPLE_CAP)
@@ -225,7 +248,12 @@ def main():
     parser.add_argument("--build-only", action="store_true")
     parser.add_argument("--require-proof-observer", action="store_true",
                         help="this workflow's prove record must use the explicitly bound v2 observer")
+    parser.add_argument("--proof-profile", choices=(ORIGINAL_PROFILE, COST_PROFILE),
+                        default=ORIGINAL_PROFILE,
+                        help="explicit cost-only acceptance does not qualify the original 5400s budget")
     args = parser.parse_args()
+    require(args.proof_profile == ORIGINAL_PROFILE or (args.require_proof_observer and not args.build_only),
+            "cost-only profile requires the full explicit proof observer check")
     out = args.out
     manifest = load(out / "backend-manifest.json")
     validate_manifest(manifest)
@@ -243,7 +271,7 @@ def main():
                     for name in ["native-execute", "execute", "prove", "verify", "audit"]}
     processes = {name: load(out / f"{name}.process.json") for name in observations}
     for name, process in processes.items():
-        validate_process_schema(name, process, out, args.require_proof_observer)
+        validate_process_schema(name, process, out, args.require_proof_observer, args.proof_profile)
         require(type(process["returncode"]) is int and process["returncode"] == 0
                 and process["timed_out"] is False, f"failed actual {name}")
     native, executed, proved, verified, audited = (observations[name] for name in observations)
@@ -279,9 +307,15 @@ def main():
                          "98-bit classical conjectured backend claim, not a quantum-bit estimate",
                          "quantum Fiat-Shamir, Poseidon2, Merkle, FRI and multi-target analysis remain separate",
                          "CPU/wall samples under this runner load are observations, not throughput or service guarantees"]}
+    if args.proof_profile == COST_PROFILE:
+        result.update(schema="pon-complete-w1-cost-observation-v1",
+                      proof_profile=COST_PROFILE, original_5400s_budget_passed=False)
     (out / "checked-observation.json").write_text(json.dumps(result, indent=2) + "\n")
-    print(json.dumps({"real_proof_verified": True, "negative_controls": len(cases),
-                      "public_ingress_qualified": False, "pq128_qualified": False}))
+    summary = {"real_proof_verified": True, "negative_controls": len(cases),
+               "public_ingress_qualified": False, "pq128_qualified": False}
+    if args.proof_profile == COST_PROFILE:
+        summary.update(proof_profile=COST_PROFILE, original_5400s_budget_passed=False)
+    print(json.dumps(summary))
 
 
 if __name__ == "__main__":
