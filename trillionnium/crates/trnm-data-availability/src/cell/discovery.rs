@@ -588,6 +588,10 @@ pub mod pq_reply_v2 {
         expected_request.validate()?;
         addresses.validate()?;
         addresses.check(bootstrap)?;
+        require(
+            !pinned_owners.is_empty() && pinned_owners.len() <= MAX_DISCOVERED_PROVIDERS,
+            "PQ bounded independent roster",
+        )?;
         limits.validate()?;
         let overall = original_deadline.min(Instant::now() + limits.overall_timeout);
         check_deadline(overall)?;
@@ -667,6 +671,10 @@ pub mod pq_reply_v2 {
         )?;
         let bootstrap = options.bootstraps[0];
         addresses.check(bootstrap)?;
+        require(
+            !pinned_owners.is_empty() && pinned_owners.len() <= MAX_DISCOVERED_PROVIDERS,
+            "PQ bounded independent roster",
+        )?;
         limits.validate()?;
         let original_overall = original_deadline.min(Instant::now() + limits.overall_timeout);
         check_deadline(original_overall)?;
@@ -700,6 +708,9 @@ pub mod pq_reply_v2 {
             wall.as_secs(),
             addresses,
         )?;
+        // Count the actual ML-DSA verifications in the complete fetch path,
+        // just as the standalone PCP2 query reports its authentication cost.
+        discovery.record_validation_attempts = verified_providers.len();
         let mut expiry = original_overall;
         let mut peers = Vec::with_capacity(verified_providers.len());
         for provider in &verified_providers {
@@ -1408,6 +1419,44 @@ pub mod pq_reply_v2 {
                 trusted_ml_dsa65_public_key: &trusted_key,
                 external_sequence_floor: 11,
             }];
+            // An absent external PQ roster MUST fail before opening even a
+            // TCP connection. This listener intentionally has no responder:
+            // before the fix, the request times out instead of failing on
+            // independently pinned authority, consuming the caller budget.
+            let silent_listener = TcpListener::bind("127.0.0.1:0").unwrap();
+            let silent_bootstrap = silent_listener.local_addr().unwrap();
+            let silent_policy = CellDiscoveryAddressPolicyV1::LoopbackDevOnly {
+                ports: vec![silent_bootstrap.port()],
+            };
+            let silent_options = CellDiscoveryOptionsV1 {
+                request: expected_request,
+                bootstraps: vec![silent_bootstrap],
+                addresses: silent_policy.clone(),
+            };
+            assert!(matches!(
+                query_pq_provider_from_bootstrap_v2(
+                    silent_bootstrap,
+                    expected_request,
+                    &[],
+                    &silent_policy,
+                    limits(64),
+                    Instant::now() + Duration::from_secs(10),
+                ),
+                Err(CellErrorV1::Invalid("PQ bounded independent roster"))
+            ));
+            assert!(matches!(
+                fetch_pq_discovered_cell_to_file_v2(
+                    &consumer,
+                    &silent_options,
+                    &[],
+                    limits(64),
+                    Instant::now() + Duration::from_secs(10),
+                    &output,
+                ),
+                Err(CellErrorV1::Invalid("PQ bounded independent roster"))
+            ));
+            assert!(!output.exists());
+
             // One permitted connection is consumed by PCQ2. A second Cell
             // request MUST fail; accidentally composing two independent
             // sessions would instead reset the allowance and succeed.
@@ -1451,6 +1500,7 @@ pub mod pq_reply_v2 {
             assert_eq!(fs::read(&output).unwrap(), bytes);
             assert!(!observation.manifest_initial_cache_hit);
             assert_eq!(observation.discovery.connection_attempts, 1);
+            assert_eq!(observation.discovery.record_validation_attempts, 1);
             assert!(observation.fetch.connection_attempts > 1);
             assert_eq!(observation.fetch.downloaded_bytes, bytes.len() as u64);
             assert_eq!(observation.verified_providers.len(), 1);
@@ -1496,6 +1546,7 @@ pub mod pq_reply_v2 {
             assert_eq!(late_manifest, manifest);
             assert_eq!(fs::read(&late_output).unwrap(), bytes);
             assert_eq!(late_report.verified_providers[0].sequence(), 12);
+            assert_eq!(late_report.discovery.record_validation_attempts, 1);
 
             shutdown_bootstrap.store(true, Ordering::Relaxed);
             shutdown_cell.store(true, Ordering::Relaxed);
