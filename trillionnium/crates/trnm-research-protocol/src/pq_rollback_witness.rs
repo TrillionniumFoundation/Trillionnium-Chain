@@ -43,6 +43,20 @@ pub struct ExternalRecoveryExpectationV1<'a> {
     pub actual_local: &'a LocalRecoveryHeadV1,
 }
 
+/// Signed facts assembled by the external observer before ML-DSA signing.
+/// This value is data only; it does not prove the observer is independent.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct PqRecoveryWitnessStatementV1 {
+    pub chain_id: String,
+    pub witness_did: String,
+    pub genesis: Digest32,
+    pub observed: LocalRecoveryHeadV1,
+    pub sequence: u64,
+    pub challenge: Digest32,
+    pub issued_unix_s: u64,
+    pub expires_unix_s: u64,
+}
+
 /// A signed external observation. The signer and signature alone do NOT
 /// establish external independence, physical durability or finality.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -85,26 +99,19 @@ pub enum PqRecoveryWitnessError {
 
 impl SignedPqRecoveryWitnessV1 {
     pub fn sign(
-        chain_id: String,
-        witness_did: String,
-        genesis: Digest32,
-        observed: LocalRecoveryHeadV1,
-        sequence: u64,
-        challenge: Digest32,
-        issued_unix_s: u64,
-        expires_unix_s: u64,
+        statement: PqRecoveryWitnessStatementV1,
         key: &SigningKey<MlDsa65>,
     ) -> Result<Self, PqRecoveryWitnessError> {
         let mut witness = Self {
-            chain_id,
-            witness_did,
+            chain_id: statement.chain_id,
+            witness_did: statement.witness_did,
             public_key: key.verifying_key().to_bytes().to_vec(),
-            genesis,
-            observed,
-            sequence,
-            challenge,
-            issued_unix_s,
-            expires_unix_s,
+            genesis: statement.genesis,
+            observed: statement.observed,
+            sequence: statement.sequence,
+            challenge: statement.challenge,
+            issued_unix_s: statement.issued_unix_s,
+            expires_unix_s: statement.expires_unix_s,
             signature: Vec::new(),
         };
         witness.check_shape()?;

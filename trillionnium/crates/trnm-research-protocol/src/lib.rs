@@ -27,7 +27,8 @@ pub use pq_hepta_handoff::{
 };
 pub use pq_rollback_witness::{
     ExternalRecoveryExpectationV1, LocalRecoveryHeadV1, PqRecoveryWitnessError,
-    SignedPqRecoveryWitnessV1, MAX_PQ_RECOVERY_WITNESS_BYTES, PQ_RECOVERY_WITNESS_VERSION,
+    PqRecoveryWitnessStatementV1, SignedPqRecoveryWitnessV1, MAX_PQ_RECOVERY_WITNESS_BYTES,
+    PQ_RECOVERY_WITNESS_VERSION,
 };
 pub use state::{
     AppliedCommandRecordV1, ApplyOutcome, AuthorityIdentityV1, AuthoritySetV1,

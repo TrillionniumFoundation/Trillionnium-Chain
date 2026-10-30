@@ -18,14 +18,16 @@ fn head() -> LocalRecoveryHeadV1 {
 }
 fn witness(sk: &SigningKey<MlDsa65>) -> SignedPqRecoveryWitnessV1 {
     SignedPqRecoveryWitnessV1::sign(
-        CHAIN.into(),
-        DID.into(),
-        [4; 32],
-        head(),
-        19,
-        [5; 32],
-        1000,
-        1150,
+        PqRecoveryWitnessStatementV1 {
+            chain_id: CHAIN.into(),
+            witness_did: DID.into(),
+            genesis: [4; 32],
+            observed: head(),
+            sequence: 19,
+            challenge: [5; 32],
+            issued_unix_s: 1000,
+            expires_unix_s: 1150,
+        },
         sk,
     )
     .unwrap()
