@@ -3,7 +3,7 @@
   "source_identity": "derive-from-git-at-verification",
   "development_target": "pon-nakamoto-v1",
   "stage": "invariant-driven-native-application-candidate",
-  "workspace_packages": 26,
+  "workspace_packages": 31,
   "runtime_implemented": false,
   "production_consensus_activation": false,
   "module_maturity": "config/pon/module-maturity-v1.json",

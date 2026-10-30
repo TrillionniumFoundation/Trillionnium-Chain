@@ -87,6 +87,89 @@ fn every_header_byte_and_external_task_target_and_witness_are_bound() {
 }
 
 #[test]
+fn inconsistent_header_task_and_target_refuse_before_receipt_processing() {
+    let (wire, expected) = sample();
+    let (input, raw) = parts(&wire).unwrap();
+    let pnw1 = &input[STATEMENT_BYTES..];
+    let invalid_receipt = 0u32.to_le_bytes();
+    // This control reaches the receipt grammar, while the impossible statements
+    // below must refuse even earlier, independently of the supplied receipt.
+    assert_eq!(
+        verify_bound(&frame(input, &invalid_receipt), &expected)
+            .unwrap_err()
+            .to_string(),
+        "only actual Succinct receipts"
+    );
+    for (bad_task, bad_target, error, relation_error) in [
+        (
+            true,
+            false,
+            "W1_CERTIFICATE_HEADER_TASK",
+            full_relation::RelationError::HeaderTask,
+        ),
+        (
+            false,
+            true,
+            "W1_CERTIFICATE_HEADER_TARGET",
+            full_relation::RelationError::HeaderTarget,
+        ),
+        (
+            true,
+            true,
+            "W1_CERTIFICATE_HEADER_TASK",
+            full_relation::RelationError::HeaderTask,
+        ),
+    ] {
+        let mut header = Header::decode(expected.header_bytes()).unwrap();
+        if bad_task {
+            header.work_task[0] ^= 1;
+        }
+        if bad_target {
+            header.target[0] ^= 1;
+        }
+        let inconsistent = PublicStatement::bind(
+            &header.encode(),
+            expected.expected_task(),
+            expected.expected_target(),
+            pnw1,
+        )
+        .unwrap();
+        let mut forged_input = input.to_vec();
+        forged_input[..STATEMENT_BYTES].copy_from_slice(&inconsistent.encode());
+        // The previously available cheap proof filter accepts these inputs;
+        // the complete guest relation nevertheless rejects before W1 replay.
+        super::super::precheck_proof_statement(
+            header.challenge(),
+            inconsistent.expected_task(),
+            inconsistent.expected_target(),
+            pnw1,
+        )
+        .unwrap();
+        assert_eq!(
+            full_relation::execute_input(&forged_input).unwrap_err(),
+            relation_error
+        );
+        // External context mismatch still takes precedence over the new check.
+        assert_eq!(
+            verify_bound(&wire, &inconsistent).unwrap_err().to_string(),
+            "W1_CERTIFICATE_CONTEXT"
+        );
+        let mut rebound: Receipt = bounds::decode(raw).unwrap();
+        rebound.journal.bytes = full_relation::unverified_claimed_journal(&forged_input).unwrap();
+        let rebound_raw = bounds::encode(&rebound).unwrap();
+        bounds::preflight(&rebound_raw).unwrap();
+        for receipt in [invalid_receipt.as_slice(), rebound_raw.as_slice()] {
+            assert_eq!(
+                verify_bound(&frame(&forged_input, receipt), &inconsistent)
+                    .unwrap_err()
+                    .to_string(),
+                error
+            );
+        }
+    }
+}
+
+#[test]
 fn false_received_claim_cannot_reuse_a_valid_proof_even_with_rebound_journal() {
     let (wire, expected) = sample();
     let (input, raw) = parts(&wire).unwrap();
@@ -103,9 +186,9 @@ fn false_received_claim_cannot_reuse_a_valid_proof_even_with_rebound_journal() {
     )
     .unwrap();
     forged_input[..STATEMENT_BYTES].copy_from_slice(&forged_expected.encode());
-    let mut receipt: Receipt = bincode::deserialize(raw).unwrap();
+    let mut receipt: Receipt = bounds::decode(raw).unwrap();
     receipt.journal.bytes = full_relation::unverified_claimed_journal(&forged_input).unwrap();
-    let forged = frame(&forged_input, &bincode::serialize(&receipt).unwrap());
+    let forged = frame(&forged_input, &bounds::encode(&receipt).unwrap());
     assert_eq!(
         verify_bound(&forged, &forged_expected)
             .unwrap_err()
@@ -118,12 +201,12 @@ fn false_received_claim_cannot_reuse_a_valid_proof_even_with_rebound_journal() {
 fn actual_seal_corruption_is_rejected_by_the_cryptographic_verifier() {
     let (wire, expected) = sample();
     let (input, raw) = parts(&wire).unwrap();
-    let mut receipt: Receipt = bincode::deserialize(raw).unwrap();
+    let mut receipt: Receipt = bounds::decode(raw).unwrap();
     let InnerReceipt::Succinct(proof) = &mut receipt.inner else {
         panic!("actual Succinct")
     };
     proof.seal[40] ^= 1;
-    let corrupted = frame(input, &bincode::serialize(&receipt).unwrap());
+    let corrupted = frame(input, &bounds::encode(&receipt).unwrap());
     // Encoding is still in the fixed bounded grammar; cryptography must reject.
     bounds::preflight(parts(&corrupted).unwrap().1).unwrap();
     assert_eq!(
@@ -211,14 +294,10 @@ fn allocation_prefixes_foreign_kinds_parameters_and_trailing_data_refuse() {
     let mut trailing = wire.clone();
     trailing.push(0);
     assert!(verify_bound(&trailing, &expected).is_err());
-    let mut receipt: Receipt = bincode::deserialize(raw).unwrap();
+    let mut receipt: Receipt = bounds::decode(raw).unwrap();
     let InnerReceipt::Succinct(proof) = &mut receipt.inner else {
         panic!("actual Succinct")
     };
     proof.verifier_parameters = Digest::ZERO;
-    assert!(verify_bound(
-        &frame(input, &bincode::serialize(&receipt).unwrap()),
-        &expected
-    )
-    .is_err());
+    assert!(verify_bound(&frame(input, &bounds::encode(&receipt).unwrap()), &expected).is_err());
 }

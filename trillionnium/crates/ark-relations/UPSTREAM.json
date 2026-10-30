@@ -1,0 +1,148 @@
+{
+  "activation_or_qualification_granted": false,
+  "all_original_features_preserved": true,
+  "changed_original_files_at_initial_import": [
+    {
+      "maintained_sha256": "26a0e12b2f015e0448d46df7421b6be3b278f124ce818831c9922b68c0552c4b",
+      "original_sha256": "3b6d7a63a6fc48149583d79065f269e6374d34e3ef959896a719570c9f6b3469",
+      "path": "Cargo.toml"
+    },
+    {
+      "maintained_sha256": "a825f0b0af756312298b70daa81000b989780f7a4d9aca8fe6c96984b270c412",
+      "original_sha256": "c2d8aaadbcd1fdfa0a5aab22496d2838cf0d8b41b8eb5d4ec315f4d94abb3b93",
+      "path": "src/r1cs/trace.rs"
+    }
+  ],
+  "checksum_source": "Original exact E Cargo.lock, matched to the retained published archive and every imported member.",
+  "complete_published_bytes": 90852,
+  "complete_published_file_count": 11,
+  "complete_published_files": [
+    {
+      "bytes": 103,
+      "mode": 420,
+      "path": ".cargo_vcs_info.json",
+      "sha256": "e63e77d6bc019b6b36abd5a49c0509e69c7964e682e60a3c8d12cb24af860c4a"
+    },
+    {
+      "bytes": 1711,
+      "mode": 420,
+      "path": "Cargo.toml",
+      "sha256": "3b6d7a63a6fc48149583d79065f269e6374d34e3ef959896a719570c9f6b3469"
+    },
+    {
+      "bytes": 839,
+      "mode": 420,
+      "path": "Cargo.toml.orig",
+      "sha256": "a2a0f0e9c1b1637d83fa67025a8f963209713adc039b100743347a790cff6bf7"
+    },
+    {
+      "bytes": 10847,
+      "mode": 420,
+      "path": "LICENSE-APACHE",
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "bytes": 1046,
+      "mode": 420,
+      "path": "LICENSE-MIT",
+      "sha256": "8f71659370c5268d9a1dc962a46232540e8fca63462586d8efaa95aab492a208"
+    },
+    {
+      "bytes": 408,
+      "mode": 420,
+      "path": "src/lib.rs",
+      "sha256": "a15c08f7ccd3a54c96d30600252c0ed0d9532d705dcf1d4fd856bc26df6f9211"
+    },
+    {
+      "bytes": 45310,
+      "mode": 420,
+      "path": "src/r1cs/constraint_system.rs",
+      "sha256": "44a49ab6366a70dcc60f1b7a67b224e32b3b4b211d42180f1d5cf686f23fff71"
+    },
+    {
+      "bytes": 2060,
+      "mode": 420,
+      "path": "src/r1cs/error.rs",
+      "sha256": "a5c680f162cffce9e060473c0b78ae5eb3de981dd83d3ca2e485a67b6c0924e3"
+    },
+    {
+      "bytes": 13552,
+      "mode": 420,
+      "path": "src/r1cs/impl_lc.rs",
+      "sha256": "2e995941280e184469364c66a0178b67a6f36fdaffec07af09a8aaf404c954b3"
+    },
+    {
+      "bytes": 4407,
+      "mode": 420,
+      "path": "src/r1cs/mod.rs",
+      "sha256": "9ea1937bfcc567aa952e96a9c31cebd53f80f5d8629c0e58ce4047041e5d5a6c"
+    },
+    {
+      "bytes": 10569,
+      "mode": 420,
+      "path": "src/r1cs/trace.rs",
+      "sha256": "c2d8aaadbcd1fdfa0a5aab22496d2838cf0d8b41b8eb5d4ec315f4d94abb3b93"
+    }
+  ],
+  "consensus_authority": false,
+  "historical_original_manifest": "Cargo.toml.orig is unchanged published provenance. Cargo uses the maintained Cargo.toml.",
+  "license_expression_retained": "MIT/Apache-2.0",
+  "local_maintenance": [
+    "Pin optional tracing-subscriber to =0.3.23; keep default-features=false.",
+    "Rename the empty Layer::new_span callback to on_new_span; preserve filtering/downcast/trace behavior.",
+    "Update tracing API documentation links to 0.3.23.",
+    "Set publish=false and explicit M01 metadata; do not rename the original package or claim a new upstream release."
+  ],
+  "local_version_is_not_a_new_registry_release": true,
+  "module_owner": "M01",
+  "original_source_or_tests_removed": false,
+  "package": "ark-relations",
+  "production_activation": false,
+  "published_archive_bytes": 21501,
+  "published_archive_sha256": "ec46ddc93e7af44bcab5230937635b06fb5744464dd6a7e7b083e80ebd274384",
+  "published_archive_url": "https://static.crates.io/crates/ark-relations/ark-relations-0.5.1.crate",
+  "registry": "https://github.com/rust-lang/crates.io-index",
+  "reviewed_upstream_proposal": {
+    "backport_scope": "The reviewed proposal targeted ark 0.4. Only the callback/dependency migration is backported; ark 0.5.1 arithmetic and public features remain.",
+    "head": "a7b31d5c1513c1d96bf9861d48a87b83f03b28d2",
+    "status_at_review": "closed, unmerged",
+    "url": "https://github.com/arkworks-rs/snark/pull/373"
+  },
+  "schema": "trnm-maintained-upstream-package-v1",
+  "shared_registry_cache_modified": false,
+  "strict_lint_maintenance": {
+    "base_repository_commit": "6506da1902f6fd85142d0249e861e58cc11e179e",
+    "behavior_fix": {
+      "enum_layout_changed": false,
+      "maintained_order": [
+        "Zero",
+        "One",
+        "Instance(index ascending)",
+        "Witness(index ascending)",
+        "SymbolicLc(index ascending)"
+      ],
+      "old_contradiction": "Zero < One and One < Zero both returned Less",
+      "old_native_counterexamples": "Two controls failed; compactify retained 12 entries for 11 distinct variables.",
+      "one_total_implementation": "Ord::cmp; PartialOrd delegates without recursion",
+      "only_changed_directed_comparison": "One versus Zero: Less becomes Greater",
+      "scope": "Variable ordering and dependent linear-combination compactification"
+    },
+    "controls": "src/r1cs/ordering_tests.rs: all variants, boundary indices, equality, both directions, transitivity, compactify coefficient preservation, and a transformer borrowing local state.",
+    "equivalent_repairs": [
+      "Remove unused/needless lifetimes, redundant borrows and iterator conversions.",
+      "Name callback types with explicit borrowed object lifetimes; do not introduce static bounds.",
+      "Use Option::is_some_and for the existing false-on-None predicates."
+    ],
+    "minimum_compiler_claim": "Repository Rust 1.95; no promise about the original older compiler range.",
+    "validation_scope": "Precommit native failures and passing observations are retained separately; exact committed source and complete repository gates remain required."
+  },
+  "upstream_repository": "https://github.com/arkworks-rs/snark",
+  "upstream_vcs": {
+    "git": {
+      "sha1": "b34f11d670c2667de3eda6e33daed8027f35043e"
+    },
+    "path_in_vcs": "relations"
+  },
+  "upstream_version": "0.5.1",
+  "validation_scope": "Source import and maintenance only; exact-source builds, original tests, strict Clippy and all dependency-policy categories require separate actual evidence."
+}

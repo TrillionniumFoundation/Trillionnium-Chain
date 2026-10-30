@@ -61,7 +61,12 @@ jobs:
               "observations": observed, "missing_means_unlimited": False,
               "resource_qualification": False}, indent=2) + "\n")
           PY
-          printf 'Full 64x64/r8/512-tile W1; real local Composite STARK. Research backend only; quantitative security must use the pinned parameter analysis. No PQ128 or public-ingress qualification, no consensus activation. Failures remain failures.\n' > "$out/SCOPE.txt"
+          printf 'Full 64x64/r8/512-tile W1; real local Composite STARK. Proof step requests four Rayon workers in a separately named research profile; original two-worker failures remain failures. The full workload, segment power 18, 5400-second proof deadline and all verification/negative controls remain. Thread request and affinity are observations, not an enforced whole-process resource bound or a speedup claim. Research backend only; quantitative security must use the pinned parameter analysis. No PQ128 or public-ingress qualification, no consensus activation. Failures remain failures.\n' > "$out/SCOPE.txt"
+      - name: Reject unsupported manifest authority before native work
+        run: |
+          set -euo pipefail
+          python3 "$BACKEND/test_check_observations.py" -v 2>&1 | tee "$OUT/observer-controls.log"
+          python3 "$BACKEND/test_proof_observer_v1.py" -v 2>&1 | tee "$OUT/process-observer-controls.log"
       - name: Install pinned native toolchain
         run: |
           set -euo pipefail
@@ -94,14 +99,43 @@ jobs:
           rm -rf "$WORK/backend/guest-compiler" "$WORK/guest-target"
       - name: Execute the full pinned W1 image
         run: python3 "$BACKEND/measure_step.py" --out "$OUT" --name execute --timeout 300 -- "$CARGO_TARGET_DIR/release/trnm-w1-risc0-host" execute "$WORK/backend/tools/r0vm" "$OUT/guest.bin" "$OUT/input.bin" 18
-      - name: Produce actual transparent proof with no development receipt
-        run: python3 "$BACKEND/measure_step.py" --out "$OUT" --name prove --timeout 5400 -- "$CARGO_TARGET_DIR/release/trnm-w1-risc0-host" prove "$WORK/backend/tools/r0vm" "$OUT/guest.bin" "$OUT/input.bin" 18 "$OUT/receipt.bin"
+      - name: Produce full transparent proof with four requested Rayon workers
+        env:
+          RAYON_NUM_THREADS: "4"
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY_PROFILE'
+          import json, os
+          from pathlib import Path
+          requested = os.environ["RAYON_NUM_THREADS"]
+          if requested != "4":
+              raise SystemExit("unexpected four-worker proof request")
+          record = {
+              "schema": "pon-w1-four-worker-request-v1",
+              "profile": "full-w1-composite-rayon4-research-v1",
+              "source_sha": os.environ["TRNM_EXPECTED_SOURCE_SHA"],
+              "requested_rayon_workers": int(requested),
+              "observed_request_process_affinity": sorted(os.sched_getaffinity(0)),
+              "observed_os_cpu_count": os.cpu_count(),
+              "affinity_is_cpu_quota": False,
+              "actual_backend_worker_count_measured": False,
+              "total_process_threads_bounded": False,
+              "resource_qualification": False,
+              "original_two_worker_profile_qualified": False,
+              "proof_qualification": False,
+          }
+          with (Path(os.environ["OUT"]) / "prove.thread-request-v1.json").open("x") as stream:
+              json.dump(record, stream, indent=2, sort_keys=True, allow_nan=False)
+              stream.write("\n")
+          PY_PROFILE
+          python3 "$BACKEND/measure_step.py" --out "$OUT" --name prove --timeout 5400 --observe-proof -- "$CARGO_TARGET_DIR/release/trnm-w1-risc0-host" prove "$WORK/backend/tools/r0vm" "$OUT/guest.bin" "$OUT/input.bin" 18 "$OUT/receipt.bin"
       - name: Independently verify and attack the actual proof
         run: |
           set -euo pipefail
           python3 "$BACKEND/measure_step.py" --out "$OUT" --name verify --timeout 900 -- "$CARGO_TARGET_DIR/release/trnm-w1-risc0-host" verify "$OUT/guest.bin" "$OUT/input.bin" "$OUT/receipt.bin"
           python3 "$BACKEND/measure_step.py" --out "$OUT" --name audit --timeout 900 -- "$CARGO_TARGET_DIR/release/trnm-w1-risc0-host" audit "$OUT/guest.bin" "$OUT/input.bin" "$OUT/receipt.bin"
-          python3 "$BACKEND/check_observations.py" --out "$OUT"
+          python3 "$BACKEND/check_observations.py" --out "$OUT" --require-proof-observer
       - name: Verify source did not change
         if: always()
         run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$OUT/source-after.json"

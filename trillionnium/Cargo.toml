@@ -1,6 +1,11 @@
 [workspace]
 resolver = "2"
 members = [
+  "crates/ark-ff",
+  "crates/risc0-zkvm-platform",
+  "crates/rrs-lib",
+  "crates/ark-relations",
+  "crates/ark-crypto-primitives",
   "crates/trnm-audit-events",
   "crates/trnm-governance-guard",
   "crates/trnm-escrow-vault",
@@ -76,3 +81,12 @@ overflow-checks = true
 opt-level = 3
 debug-assertions = true
 overflow-checks = true
+
+# Complete, inventoried upstream sources maintained under the M01 owner.
+# Original names/versions/licenses/features are retained; publishing is disabled.
+[patch.crates-io]
+ark-relations = { path = "crates/ark-relations" }
+ark-crypto-primitives = { path = "crates/ark-crypto-primitives" }
+ark-ff = { path = "crates/ark-ff" }
+risc0-zkvm-platform = { path = "crates/risc0-zkvm-platform" }
+rrs-lib = { path = "crates/rrs-lib" }

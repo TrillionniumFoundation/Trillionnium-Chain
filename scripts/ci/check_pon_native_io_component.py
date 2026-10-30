@@ -36,6 +36,26 @@ SCHEMA = 'pon-native-io-three-fd-component-readback-v1'
 MODE = 'fresh-identities'
 PHASE = 'raw/' + MODE + '/'
 ROLES = {0: 'honest-miner', 5: MODE+'/receiver', 6: MODE+'/independent-client'}
+ROOT_FIELDS = tuple(('schema owner_pid root_device root_inode logical_bytes_limit '
+    'retained_object_limit high_water_sum retained_logical_bytes_peak retained_objects_peak '
+    'objects failed first_failure first_failure_sqlite_code secondary_failures '
+    'secondary_failures_complete callback_operations denied_operations '
+    'allocated_blocks_hard_cap_implemented lifecycle cleanup_lifecycle lifecycle_complete '
+    'lifecycle_serialized_bytes lifecycle_serialized_bytes_cap quarantined_actual_states '
+    'quarantined_sqlite_codes quarantine_entries_complete').split())
+# This is the Serialize field order of LifecycleReceipt, not the enclosing
+# inventory's sorted JSON order. Ledger::record charges each compact event.
+EVENT_FIELDS = tuple(('sequence action generation basename device inode linked handles '
+    'pending_opens shm_references high_water_bytes actual_last_bytes').split())
+OBJECT_FIELDS = tuple(('generation device inode basename linked handles pending_opens '
+    'shm_references high_water_bytes actual_last_bytes actual_last_allocated_blocks_512 '
+    'reserved_pending_open').split())
+ORDINARY_ACTIONS = frozenset(('reserve-open', 'bind-real-inode', 'reserve-growth',
+    'reserve-handle', 'opened', 'shm-reference'))
+HEALTHY_CLEANUP_ACTIONS = frozenset(('underlying-close', 'underlying-shm-unmap', 'unlinked'))
+REF_FIELDS = ('handles', 'pending_opens', 'shm_references')
+SQLITE_NAMES = frozenset(('native.sqlite', 'native.sqlite-journal',
+    'native.sqlite-wal', 'native.sqlite-shm'))
 
 
 def same(actual, expected):
@@ -100,7 +120,7 @@ def child_terminal(value, code):
 
 
 def first_dispatch(bundle, dispatch, caller, native_pid, binary):
-    require(dispatch['schema'] == component.DISPATCH and dispatch['domain'] == component.DOMAIN
+    require(dispatch['schema'] == component.protocol().dispatch and dispatch['domain'] == component.protocol().domain
         and dispatch['component_only'] is True, 'COMPONENT_FIRST_DISPATCH_DOMAIN')
     descriptors = [positive(dispatch[key], 3, 2**31-1)
         for key in ('executable_fd', 'execution_directory_fd', 'cwd_directory_fd')]
@@ -137,7 +157,7 @@ def first_dispatch(bundle, dispatch, caller, native_pid, binary):
 
 
 def seed_facts(value):
-    require(value['schema'] == component.NATIVE_SCHEMA
+    require(value['schema'] == component.protocol().native_schema
         and len(value['seed_packets']) == 4 and len(value['business_packets']) == 21,
         'COMPONENT_ORIGINAL_PREPARATION_DENOMINATOR')
     positive(value['cpu_ns'], 1)
@@ -162,11 +182,211 @@ def seed_facts(value):
     return facts
 
 
+def exact_fields(value, fields, reason):
+    require(type(value) is dict and set(value) == set(fields), reason)
+
+
+def root_object_fields(value):
+    positive(value['generation'], 1, 2**64-1)
+    name = value['basename']
+    require(type(name) is str and 0 < len(name.encode('utf-8')) <= 96
+        and (name in SQLITE_NAMES or re.fullmatch(r'trnm-temp-[A-Za-z0-9-]+', name)),
+        'COMPONENT_ROOT_OBJECT_BASENAME')
+    require(type(value['linked']) is bool, 'COMPONENT_ROOT_LINKED_TYPE')
+    for field in REF_FIELDS: positive(value[field], 0, 32)
+    require(value['handles'] + value['pending_opens'] <= 32,
+            'COMPONENT_ROOT_HANDLE_CAP')
+    if name != 'native.sqlite-shm':
+        same(value['shm_references'], 0)
+    else:
+        same([value['handles'], value['pending_opens']], [0, 0])
+    positive(value['actual_last_bytes'], 0, 16*MIB)
+    positive(value['high_water_bytes'], value['actual_last_bytes'], 16*MIB)
+    require((value['device'] is None) == (value['inode'] is None),
+            'COMPONENT_ROOT_PARTIAL_INODE')
+    if value['device'] is not None:
+        positive(value['device'], 0, 2**64-1)
+        positive(value['inode'], 1, 2**64-1)
+
+
+def root_lifecycle(row):
+    """Reconcile the existing healthy ledger's recorded state, without inventing I/O.
+
+    bind() deliberately does not emit an event for an already bound inode. Such
+    observations may refresh actual size and high water between events. They
+    cannot change the recorded generation/inode or handle/reference balances.
+    Consequently peaks are checked against observed lower bounds; this is not
+    a new all-write, physical-allocation or hostile-host authentication claim.
+    """
+    ordinary, cleanup = row['lifecycle'], row['cleanup_lifecycle']
+    require(type(ordinary) is list and type(cleanup) is list
+        and len(ordinary) <= 1024 and len(cleanup) <= 256,
+        'COMPONENT_ORIGINAL_LIFECYCLE_BOUNDS')
+    events, charged = [], 0
+    for series, actions in ((ordinary, ORDINARY_ACTIONS), (cleanup, HEALTHY_CLEANUP_ACTIONS)):
+        previous_sequence = -1
+        for event in series:
+            exact_fields(event, EVENT_FIELDS, 'COMPONENT_LIFECYCLE_EXACT_FIELDS')
+            positive(event['sequence'], 0, 1279)
+            require(event['sequence'] > previous_sequence
+                and type(event['action']) is str and event['action'] in actions,
+                'COMPONENT_LIFECYCLE_ACTION_OR_ORDER')
+            previous_sequence = event['sequence']
+            root_object_fields(event)
+            size = len(json.dumps({key:event[key] for key in EVENT_FIELDS},
+                ensure_ascii=False, separators=(',', ':'), allow_nan=False).encode('utf-8'))
+            require(size <= 512, 'COMPONENT_LIFECYCLE_EVENT_BYTES')
+            charged += size
+            events.append(event)
+    same(positive(row['lifecycle_serialized_bytes'], 0, 655360), charged)
+    same(row['lifecycle_serialized_bytes_cap'], 655360)
+    events.sort(key=lambda event: event['sequence'])
+    same([event['sequence'] for event in events], list(range(len(events))))
+    active, generations, peak_objects, peak_bytes = {}, 0, 0, 0
+    observed_admissions = 0
+    for event in events:
+        action, generation = event['action'], event['generation']
+        if action == 'reserve-open':
+            generations += 1
+            same(generation, generations)
+            require(len(active) < 3 and not any(old['linked']
+                and old['basename'] == event['basename'] for old in active.values()),
+                'COMPONENT_LIFECYCLE_RESERVED_SLOT_OR_NAME')
+            same([event[key] for key in ('device', 'inode', 'linked', *REF_FIELDS,
+                'high_water_bytes', 'actual_last_bytes')], [None, None, True, 0, 0, 0, 0, 0])
+            state = dict(event, reserved_pending_open=True)
+            observed_admissions += 1
+        else:
+            require(generation in active, 'COMPONENT_LIFECYCLE_UNKNOWN_OR_COLLECTED_GENERATION')
+            old = active[generation]
+            same(event['basename'], old['basename'])
+            require(event['high_water_bytes'] >= old['high_water_bytes']
+                and (old['linked'] or event['linked'] is False),
+                'COMPONENT_LIFECYCLE_REWOUND_OR_RELINKED')
+            expected_refs = [old[key] for key in REF_FIELDS]
+            if action == 'bind-real-inode':
+                require(old['device'] is None and event['device'] is not None,
+                        'COMPONENT_LIFECYCLE_FIRST_INODE_BIND')
+                same(event['high_water_bytes'], max(old['high_water_bytes'], event['actual_last_bytes']))
+            else:
+                same([event['device'], event['inode']], [old['device'], old['inode']])
+                if old['device'] is None:
+                    same(event['actual_last_bytes'], 0)
+                    same(event['linked'], True)
+            if action == 'reserve-handle':
+                expected_refs[1] += 1
+                observed_admissions += 1
+            elif action == 'opened':
+                require(old['pending_opens'] > 0 and event['device'] is not None,
+                        'COMPONENT_LIFECYCLE_OPEN_WITHOUT_RESERVATION')
+                expected_refs[0] += 1
+                expected_refs[1] -= 1
+            elif action == 'shm-reference':
+                same(event['basename'], 'native.sqlite-shm')
+                expected_refs[2] += 1
+            elif action == 'underlying-close':
+                require(old['handles'] > 0, 'COMPONENT_LIFECYCLE_UNOWNED_CLOSE')
+                expected_refs[0] -= 1
+            elif action == 'underlying-shm-unmap':
+                require(old['shm_references'] > 0, 'COMPONENT_LIFECYCLE_UNOWNED_UNMAP')
+                expected_refs[2] -= 1
+            elif action == 'unlinked':
+                same(event['linked'], False)
+            elif action == 'reserve-growth':
+                require(event['high_water_bytes'] > old['high_water_bytes'],
+                        'COMPONENT_LIFECYCLE_NON_GROWTH_RECORD')
+                observed_admissions += 1
+            same([event[key] for key in REF_FIELDS], expected_refs)
+            state = dict(event, reserved_pending_open=(old['reserved_pending_open']
+                and action != 'bind-real-inode'))
+        active[generation] = state
+        ids = [(entry['device'], entry['inode']) for entry in active.values()
+            if entry['device'] is not None]
+        require(len(ids) == len(set(ids)), 'COMPONENT_LIFECYCLE_RETAINED_INODE_ALIAS')
+        peak_objects = max(peak_objects, len(active))
+        peak_bytes = max(peak_bytes, sum(entry['high_water_bytes'] for entry in active.values()))
+        if action in HEALTHY_CLEANUP_ACTIONS:
+            main_refs = sum(entry['handles'] + entry['pending_opens']
+                for entry in active.values() if entry['basename'] == 'native.sqlite')
+            active = {key:entry for key,entry in active.items() if not (
+                entry['linked'] is False and entry['reserved_pending_open'] is False
+                and all(entry[field] == 0 for field in REF_FIELDS)
+                and (entry['basename'] != 'native.sqlite' or main_refs == 0))}
+    objects = row['objects']
+    require(type(objects) is list and len(objects) <= 3, 'COMPONENT_ROOT_OBJECTS_BOUND')
+    seen, high_water = set(), 0
+    for obj in objects:
+        exact_fields(obj, OBJECT_FIELDS, 'COMPONENT_ROOT_OBJECT_EXACT_FIELDS')
+        root_object_fields(obj)
+        positive(obj['actual_last_allocated_blocks_512'], 0, 2**64-1)
+        require(obj['reserved_pending_open'] is False and obj['device'] is not None
+            and obj['generation'] in active and obj['generation'] not in seen,
+            'COMPONENT_PENDING_OR_UNRECORDED_ROOT_OBJECT')
+        seen.add(obj['generation'])
+        old = active[obj['generation']]
+        for key in ('generation', 'device', 'inode', 'basename', 'linked',
+                *REF_FIELDS, 'reserved_pending_open'):
+            same(obj[key], old[key])
+        same([obj[key] for key in REF_FIELDS], [0, 0, 0])
+        require(obj['high_water_bytes'] >= old['high_water_bytes'],
+                'COMPONENT_ROOT_FINAL_HIGH_WATER_REWIND')
+        high_water += obj['high_water_bytes']
+    same(seen, set(active))
+    same(positive(row['high_water_sum'], 0, 48*MIB), high_water)
+    same(positive(row['retained_objects_peak'], 0, 3), peak_objects)
+    positive(row['retained_logical_bytes_peak'], max(peak_bytes, high_water), 48*MIB)
+    positive(row['callback_operations'], observed_admissions, 2**64-1)
+
+
+def reservation_report_bindings(value, indices):
+    """Bind each V2 stage's storage metadata before its actual inode replay.
+
+    This checks consistency only. root_terminal still requires the real PID,
+    held root/file identities, complete reservation history and actual bytes.
+    """
+    require(component.protocol() is component.V2, 'RESERVATION_V2_REPORT_PROFILE_REQUIRED')
+    require(type(indices) is tuple and all(type(index) is int for index in indices)
+            and indices in ((0,), (5, 6)), 'RESERVATION_V2_FIXED_STAGE_ROLES')
+    require(type(value) is dict and {'schema', 'native_io_storage_profile',
+            'native_io_terminals_healthy_closed', 'native_io_terminal_roots'} <= set(value),
+            'RESERVATION_V2_REPORT_FIELDS')
+    same(value['schema'], component.protocol().native_schema)
+    same(value['native_io_storage_profile'], component.protocol().storage_profile)
+    same(value['native_io_terminals_healthy_closed'], True)
+    roots = value['native_io_terminal_roots']
+    require(type(roots) is list and len(roots) == len(indices)
+            and all(type(root) is dict and 'index' in root for root in roots),
+            'RESERVATION_V2_STAGE_ROOT_CENSUS')
+    same([root['index'] for root in roots], list(indices))
+    return roots
+
+
 def root_terminal(bundle, role, native_pid, layout):
+    exact_fields(role, ('index', 'role', 'registered_vfs', 'receipt'),
+                 'COMPONENT_ROOT_ROLE_EXACT_FIELDS')
     index = positive(role['index'], 0, 6)
     require(index in ROLES and role['role'] == ROLES[index], 'COMPONENT_ACTUAL_USED_NODE_ROLE')
     row = role['receipt']
-    require(row['schema'] == 'pn1-owned-sqlite-real-inode-v1'
+    is_v2 = component.protocol() is component.V2
+    if is_v2:
+        from check_pon_native_io_reservation_v2 import check_root
+        check_root(row)
+        same(layout['schema'], component.protocol().storage_profile)
+        same(layout['sqlite_domain'], component.protocol().root_schema)
+        same(layout['owner_pid'], native_pid)
+        same(role['registered_vfs'], 'trnm-pn1-owned-inode-reservation-v2-'
+             + str(native_pid) + '-' + str(index + 1))
+    else:
+        exact_fields(row, ROOT_FIELDS, 'COMPONENT_ROOT_EXACT_FIELDS')
+    positive(row['owner_pid'], 1, 2**32-1)
+    positive(row['root_device'], 0, 2**64-1)
+    positive(row['root_inode'], 1, 2**64-1)
+    same(row['logical_bytes_limit'], 48*MIB)
+    same(row['retained_object_limit'], 3)
+    same(row['denied_operations'], 0)
+    same(row['quarantined_actual_states'], 0)
+    for key in ('secondary_failures', 'quarantined_sqlite_codes'): same(row[key], [])
+    require(row['schema'] == component.protocol().root_schema
         and row['owner_pid'] == native_pid and row['logical_bytes_limit'] == 48*MIB
         and row['retained_object_limit'] == 3 and row['failed'] is False
         and row['first_failure'] is row['first_failure_sqlite_code'] is None
@@ -181,29 +401,20 @@ def root_terminal(bundle, role, native_pid, layout):
     same(declared['index'], index)
     same(declared['root_dev_ino'], [row['root_device'], row['root_inode']])
     same(declared['registered_vfs'], role['registered_vfs'])
-    require(len(row['objects']) <= positive(row['retained_objects_peak'], 0, 3)
-        and positive(row['retained_logical_bytes_peak'], 0, 48*MIB) >= row['high_water_sum'],
-        'COMPONENT_ROOT_RETAINED_OBJECT_PEAK')
-    high_water = 0
+    if not is_v2:
+        root_lifecycle(row)
+    linked = set()
     for obj in row['objects']:
-        same([obj[k] for k in ('handles', 'pending_opens', 'shm_references')], [0, 0, 0])
-        require(obj['reserved_pending_open'] is False and type(obj['linked']) is bool,
-                'COMPONENT_PENDING_ROOT_OBJECT')
-        size = positive(obj['actual_last_bytes'], 0, 16*MIB)
-        high_water += positive(obj['high_water_bytes'], size, 16*MIB)
         if obj['linked']:
             path = 'raw/'+ROLES[index]+'/'+obj['basename']
-            require(path in bundle.files and bundle.files[path]['bytes'] == size,
+            linked.add(path)
+            require(path in bundle.files and bundle.files[path]['bytes'] == obj['actual_last_bytes'],
                     'COMPONENT_LINKED_ROOT_BYTES_MISMATCH')
             original.live_original_identity(bundle, path,
                 dict(device=obj['device'], inode=obj['inode']), False)
-    same(high_water, row['high_water_sum'])
-    require(len(row['lifecycle']) <= 1024 and len(row['cleanup_lifecycle']) <= 256
-        and positive(row['lifecycle_serialized_bytes']) <= row['lifecycle_serialized_bytes_cap'] == 655360,
-        'COMPONENT_ORIGINAL_LIFECYCLE_BOUNDS')
-    events = row['lifecycle']+row['cleanup_lifecycle']
-    sequences = [positive(event['sequence']) for event in events]
-    same(sorted(sequences), list(range(len(events))))
+    prefix = 'raw/'+ROLES[index]+'/'
+    same({name for name in bundle.files if name.startswith(prefix)
+        and name != prefix+'owner.lock'}, linked)
     return index
 
 
@@ -235,7 +446,7 @@ def durable_packets(bundle, directory, facts):
 
 
 def phase_readback(bundle, value, facts, caller, executable, native_pid, resources):
-    require(value['schema'] == component.NATIVE_SCHEMA and value['kind'] == 'phase'
+    require(value['schema'] == component.protocol().native_schema and value['kind'] == 'phase'
         and value['mode'] == MODE and value['parent_pid'] == native_pid,
         'COMPONENT_FINITE_PHASE_IDENTITY')
     same(value['plan'], component.PLAN)
@@ -246,7 +457,7 @@ def phase_readback(bundle, value, facts, caller, executable, native_pid, resourc
         start, end = positive(value[stage+'_epoch_ns']), positive(value[stage+'_end_ns'])
         same(end-start, component.PLAN[stage+'_seconds']*1_000_000_000)
         same(bundle.json(PHASE+stage+'-start.json'),
-             dict(schema=component.NATIVE_SCHEMA, epoch_ns=start, end_ns=end))
+             dict(schema=component.protocol().native_schema, epoch_ns=start, end_ns=end))
     previous = original.flow(value['initial_flow'], settled=True)
     initial_work, post_prefix_work, final_work = [
         original.completion_work_observation(value[key])
@@ -380,7 +591,7 @@ def validate(folder, inventory_sha, prepared_path, prepared_sha, prepared_invent
         fd = held_directory(folder)
         bundle = component.ComponentBundle(folder, inventory_sha, directory_fd=fd, kind='execute')
         result = bundle.json('results.json')
-        require(result['schema'] == component.EXECUTION and result['profile'] == component.PROFILE
+        require(result['schema'] == component.protocol().execution and result['profile'] == component.protocol().profile
             and result['complete_success'] is result['selector_executed'] is True
             and result['failure'] is None and result['component_readback_complete'] is False,
             'COMPONENT_COMPLETE_PRODUCER_PROCESS_REQUIRED')
@@ -399,9 +610,9 @@ def validate(folder, inventory_sha, prepared_path, prepared_sha, prepared_invent
         terminal = strict_json(checked_member(claim_fd, 'terminal.json', retain=True)[1])
         same(claim, bundle.json('claim-observed.json'))
         same(terminal, bundle.json('claim-terminal-observed.json'))
-        require(link['schema'] == component.LINK and link['domain'] == component.DOMAIN
-            and claim['schema'] == component.CLAIM and terminal['schema'] == component.TERMINAL
-            and claim['domain'] == terminal['domain'] == component.DOMAIN,
+        require(link['schema'] == component.protocol().link and link['domain'] == component.protocol().domain
+            and claim['schema'] == component.protocol().claim and terminal['schema'] == component.protocol().terminal
+            and claim['domain'] == terminal['domain'] == component.protocol().domain,
             'COMPONENT_ORIGINAL_CLAIM_DOMAIN')
         binding = dict(source.binding, execution_root=str(folder),
             execution_identity=identity(os.fstat(bundle.fd)), claim_identity=identity(os.fstat(claim_fd)))
@@ -427,11 +638,11 @@ def validate(folder, inventory_sha, prepared_path, prepared_sha, prepared_invent
         same(step, result['step'])
         native_pid = child_terminal(step['native_process_owner'], 0)
         same(step['command'], [str(folder/'frozen'/(component.TARGET+'.bin')), '--exact',
-             component.SELECTOR, '--ignored', '--nocapture', '--test-threads=1'])
+             component.protocol().selector, '--ignored', '--nocapture', '--test-threads=1'])
         same(step['outer_stage_timeout_seconds'], component.RUN_SECONDS)
         stdout = bundle.raw(step['stdout']).decode('utf-8')
         require(len(re.findall(r'^running 1 test$', stdout, re.M)) == 1
-            and re.search(r'^test '+component.SELECTOR+r' \.\.\. ok$', stdout, re.M)
+            and re.search(r'^test '+component.protocol().selector+r' \.\.\. ok$', stdout, re.M)
             and len(re.findall(r'^test result:', stdout, re.M)) == 1
             and re.search(r'^test result: ok\. 1 passed; 0 failed; 0 ignored;', stdout, re.M),
             'COMPONENT_EXACT_ORIGINAL_FINITE_SELECTOR_REQUIRED')
@@ -451,7 +662,7 @@ def validate(folder, inventory_sha, prepared_path, prepared_sha, prepared_invent
         for label in ('inputs', 'source', 'resources'):
             same(result['post_observations'][label], dict(success=True, failure=None))
         top, plan = bundle.json('raw/report.json'), bundle.json('raw/plan.json')
-        require(top['schema'] == component.NATIVE_SCHEMA and top['native_mechanism_complete'] is True,
+        require(top['schema'] == component.protocol().native_schema and top['native_mechanism_complete'] is True,
                 'COMPONENT_NATIVE_MECHANISM_INCOMPLETE')
         same(top['plan'], component.PLAN)
         flags(top)
@@ -468,13 +679,17 @@ def validate(folder, inventory_sha, prepared_path, prepared_sha, prepared_invent
         pids = phase_readback(bundle, phase, facts,
             dict(value=plan['execution_caller'], raw_root=step['fd_dispatch']['actual_raw_root']),
             executable, native_pid, resources)
-        roles = bundle.json('raw/preparation.json')['native_io_terminal_roots']+phase['native_io_terminal_roots']
+        preparation = bundle.json('raw/preparation.json')
+        if component.protocol() is component.V2:
+            roles = reservation_report_bindings(preparation, (0,)) + reservation_report_bindings(phase, (5, 6))
+        else:
+            roles = preparation['native_io_terminal_roots']+phase['native_io_terminal_roots']
         same(sorted(root_terminal(bundle, row, native_pid, top['native_io_storage']) for row in roles), [0, 5, 6])
         durable_packets(bundle, 'raw/honest-miner', facts)
         for index in (5, 6): durable_packets(bundle, 'raw/'+ROLES[index], facts[:4])
         bundle.recheck()
         source.recheck()
-        return dict(schema=SCHEMA, profile=component.PROFILE, mechanism_readback_complete=True,
+        return dict(schema=component.protocol().readback_schema, profile=component.protocol().profile, mechanism_readback_complete=True,
             actual_parent_pid=native_pid, actual_actor_pids=pids, actual_used_Node_roles=[0, 5, 6],
             prefix_paid_unique=2, final_paid_unique=6, ledger=ledger,
             scope='retained original finite local component; trusted operator/toolchain/input, no host attestation',
@@ -488,11 +703,13 @@ def validate(folder, inventory_sha, prepared_path, prepared_sha, prepared_invent
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--profile', choices=tuple(component.PROTOCOLS), default=component.PROFILE)
     for name in ('out', 'prepared'):
         parser.add_argument('--'+name, type=Path, required=True)
     for name in ('inventory-sha256', 'prepared-sha256', 'prepared-inventory-sha256', 'expected-head', 'expected-tree'):
         parser.add_argument('--'+name, required=True)
     args = parser.parse_args()
+    component.select_profile(args.profile)
     print(json.dumps(validate(component.canonical(args.out), args.inventory_sha256,
         component.canonical(args.prepared), args.prepared_sha256, args.prepared_inventory_sha256,
         args.expected_head, args.expected_tree), sort_keys=True))

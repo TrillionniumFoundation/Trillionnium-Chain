@@ -1,0 +1,42 @@
+{
+  "categories": [
+    {
+      "candidate": "Complete ark-ff-macros0.5.0 narrow parse_string invisible-group compatibility backport from2733e8fe5636d0cf750deb3c8cbb5b8dc9f729b5",
+      "count": 74,
+      "reduction_observed": false,
+      "scope": "37 expected expression plus37 to_sign_and_limbs ERROR"
+    },
+    {
+      "count": 8,
+      "fixed": false,
+      "reason": "Archived standalone original .rs evidence is scanned without the complete original dependency/manifest environment; not active runtime missing code. Restoring compilable original contexts or independently bounded artifact semantic coverage requires a reviewed approach; do not delete/rename/ignore paths simply to hide diagnostics.",
+      "scope": "4 unable to load manifest +4 no manifest found"
+    },
+    {
+      "count": 1,
+      "fixed": false,
+      "reason": "Extractor support for the retained assembly macro is incomplete in this report; real compiler/strictlint success cannot establish semantic extraction coverage. Do not disable asm feature just to hide this diagnostic.",
+      "scope": "ark_std::arch::asm macro expansion"
+    },
+    {
+      "count": 2,
+      "fixed": false,
+      "reason": "Analyzer internal IR invariant warnings; original diagnostic carries no actionable code location. Need exact extractor log/reproducer or upstream correction, not application-source changes guessed from message.",
+      "scope": "Phi node less than two inputs / Phi less than2 immediately prior references"
+    }
+  ],
+  "codeql_reexecuted": false,
+  "counts": {
+    "Phi has less than 2 immediately prior references": 1,
+    "Phi node has less than two inputs": 1,
+    "expected expression": 37,
+    "macro expansion failed for 'ark_std::arch::asm'": 1,
+    "macro expansion failed: the macro '$crate::ark_ff_macros::to_sign_and_limbs' expands to ERROR but a Expr was expected": 37,
+    "semantic analyzer unavailable (no manifest found)": 4,
+    "semantic analyzer unavailable (unable to load manifest)": 4
+  },
+  "coverage_qualified": false,
+  "original_diagnostics": 85,
+  "original_diagnostics_sha256": "cbb13685ac670cc1eb04b572e4dd388a4e06178680bb6ae79b8ea1f2dabeca1e",
+  "schema": "pon-codeql-F-diagnostic-rootcause-map-v1"
+}

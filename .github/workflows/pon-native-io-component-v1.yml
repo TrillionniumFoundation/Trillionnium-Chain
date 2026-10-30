@@ -1,0 +1,142 @@
+name: PoN finite native-I/O reservation component v2
+on:
+  pull_request:
+    paths:
+      - .github/workflows/pon-native-io-component-v1.yml
+      - scripts/**
+      - formal/pon-nakamoto-v1/**
+      - trillionnium/**
+      - config/**
+      - .cargo/**
+      - rust-toolchain.toml
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: pon-native-io-component-${{ github.event.pull_request.head.sha || github.sha }}
+  cancel-in-progress: false
+jobs:
+  component:
+    name: explicit reservation-v2 finite component (${{ matrix.arch }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            arch: x64
+            target: x86_64-unknown-linux-gnu
+          - runner: ubuntu-24.04-arm
+            arch: arm64
+            target: aarch64-unknown-linux-gnu
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 45
+    env:
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+      CARGO_INCREMENTAL: "0"
+      CARGO_BUILD_JOBS: "2"
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - name: Checkout immutable component candidate without persistent credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.EXPECTED_HEAD }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Reserve fresh evidence and retain exact source
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/native-io-reservation-component-v2-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-${{ matrix.arch }}"
+          mkdir -m 700 "$out"
+          printf 'OUT=%s\n' "$out" >> "$GITHUB_ENV"
+          printf 'CARGO_HOME=%s/cargo-native-io-%s-%s-%s\n' "$RUNNER_TEMP" "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" '${{ matrix.arch }}' >> "$GITHUB_ENV"
+          printf 'TARGET=%s/target-native-io-%s-%s-%s\n' "$RUNNER_TEMP" "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" '${{ matrix.arch }}' >> "$GITHUB_ENV"
+          python3 -B scripts/ci/verify_ci_source.py --kind head --expected-head "$EXPECTED_HEAD" --output "$out/source-before.json"
+          tree="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["tested_tree"])' "$out/source-before.json")"
+          printf 'EXPECTED_TREE=%s\n' "$tree" >> "$GITHUB_ENV"
+          bash scripts/project-preflight.sh --audit 2>&1 | tee "$out/preflight.log"
+          printf '%s\n' 'Explicit reservation-v2 component only: same public prepare, one execution, and original-host reader. Full route remains false. Two actors, two prefix and six final paid identities; no 4097-capacity, full writer/caller/reader, public fairness, model, merge or production qualification. Copied archive inodes cannot authenticate original runtime objects. Fixed 64-KiB logical reservations; original byte/object/event caps, collector resources, Plan and internal deadlines are unchanged. Original V1 selector, schema and failure evidence remain available separately.' > "$out/SCOPE.txt"
+      - name: Check reader and one-shot orchestration counterexamples
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s scripts/ci -p 'test_pon_native_io_*.py' -v > "$OUT/component-controls.log" 2>&1
+          python3 -B -m unittest discover -s scripts/ci -p 'test_run_native_io_component_ci_v1.py' -v > "$OUT/controller-controls.log" 2>&1
+      - name: Install source-pinned compiler and fetch locked dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          rustup toolchain install 1.95.0 --profile minimal 2>&1 | tee "$OUT/toolchain.log"
+          rustc +1.95.0 -Vv > "$OUT/rustc-version.txt"
+          cargo +1.95.0 -Vv > "$OUT/cargo-version.txt"
+          cargo +1.95.0 fetch --locked --manifest-path trillionnium/Cargo.toml --target '${{ matrix.target }}' 2>&1 | tee "$OUT/fetch.log"
+      - name: Run explicit reservation-v2 public preparation, one component and same-host strict reader
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -d /run/systemd/system
+          test -f /sys/fs/cgroup/cgroup.controllers
+          systemd-run --version > "$OUT/systemd-version.txt"
+          nonce="$(cat /proc/sys/kernel/random/uuid)"
+          unit="trnm-native-io-component-$nonce.service"
+          description="Owned finite PoN native-I/O component $nonce"
+          state="$(sudo -n systemctl show "$unit" --property=LoadState --value)"
+          printf 'unit=%s\ndescription=%s\noriginal_load_state=%s\n' "$unit" "$description" "$state" > "$OUT/unit-identity.log"
+          test "$state" = not-found
+          cleanup() {
+            original_status=$?
+            trap - EXIT INT TERM
+            set +e
+            state="$(sudo -n systemctl show "$unit" --property=LoadState --value 2>> "$OUT/unit-cleanup.log")"
+            query_status=$?
+            cleanup_status=0
+            if test "$query_status" -ne 0; then
+              cleanup_status=1
+            elif test "$state" != not-found; then
+              observed="$(sudo -n systemctl show "$unit" --property=Description --value 2>> "$OUT/unit-cleanup.log")"
+              if test "$observed" = "$description"; then
+                sudo -n systemctl stop "$unit" >> "$OUT/unit-cleanup.log" 2>&1
+                cleanup_status=$?
+              else
+                printf 'refused_foreign_or_replaced_unit\n' >> "$OUT/unit-cleanup.log"
+                cleanup_status=1
+              fi
+            fi
+            printf 'original_exit=%s\ncleanup_exit=%s\n' "$original_status" "$cleanup_status" >> "$OUT/unit-cleanup.log"
+            if test "$original_status" -eq 0 && test "$cleanup_status" -ne 0; then exit "$cleanup_status"; fi
+            exit "$original_status"
+          }
+          trap cleanup EXIT
+          trap 'exit 130' INT
+          trap 'exit 143' TERM
+          # Disposable owned unit only; no existing unit, global limits or
+          # permissions are changed. This outer cleanup watchdog does not
+          # extend the original 1200s build or 180s native collector deadlines.
+          sudo -n systemd-run --unit="$unit" --description="$description" --wait --pipe --collect \
+            --service-type=exec --expand-environment=no \
+            --uid="$(id -u)" --gid="$(id -g)" --working-directory="$GITHUB_WORKSPACE" \
+            --property=CPUAccounting=yes --property=MemoryAccounting=yes \
+            --property=CPUQuota=400% --property=CPUQuotaPeriodSec=100ms \
+            --property=MemoryMax=17179869184 --property=Nice=10 \
+            --property=KillMode=control-group --property=TimeoutStopSec=20s \
+            --property=RuntimeMaxSec=1800s \
+            --setenv="PATH=$PATH" --setenv="CARGO_HOME=$CARGO_HOME" \
+            --setenv="RUSTUP_HOME=$(rustup show home)" --setenv=PYTHONDONTWRITEBYTECODE=1 \
+            /usr/bin/python3 -B scripts/ci/run_native_io_component_ci_v1.py \
+            --profile pn1-native-io-three-fd-reservation-component-v2 \
+            --out "$OUT/component" --target-dir "$TARGET" --cargo "$(command -v cargo)" \
+            --expected-head "$EXPECTED_HEAD" --expected-tree "$EXPECTED_TREE" 2>&1 | tee "$OUT/component.log"
+      - name: Retain final source verification even for failed or partial runs
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B scripts/ci/verify_ci_source.py --kind head --expected-head "$EXPECTED_HEAD" --output "$OUT/source-after.json" > "$OUT/source-after.log" 2>&1
+      - name: Upload original finite component evidence including failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: pon-native-io-reservation-component-v2-${{ matrix.arch }}-${{ env.EXPECTED_HEAD }}-${{ github.run_attempt }}
+          path: ${{ env.OUT }}
+          if-no-files-found: error
+          retention-days: 30

@@ -36,6 +36,10 @@ pub use unsupported::{registered_receipt, NativeIoLease, NativeIoOwner};
 pub use vfs::registered_receipt;
 
 pub const DOMAIN: &str = "pn1-owned-sqlite-real-inode-v1";
+/// Separate evidence domain for fixed-size logical growth reservations.
+/// This does not describe allocated blocks or increase any original limit.
+pub const RESERVATION_DOMAIN_V2: &str = "pn1-owned-sqlite-reservation-v2";
+pub const GROWTH_QUANTUM_BYTES_V2: u64 = 64 * 1024;
 pub const ROOT_COUNT: usize = 7;
 pub const OBJECTS_PER_ROOT: usize = 3;
 pub const FILE_BYTES: u64 = 16 * 1024 * 1024;

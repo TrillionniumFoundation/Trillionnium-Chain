@@ -22,6 +22,8 @@ def main():
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--name", required=True)
     parser.add_argument("--timeout", type=int, required=True)
+    parser.add_argument("--observe-proof", action="store_true",
+                        help="explicit 5400s prove-only diagnostic owner; original predicates unchanged")
     parser.add_argument("command", nargs=argparse.REMAINDER)
     args = parser.parse_args()
     if not re.fullmatch(r"[a-z0-9][a-z0-9-]*", args.name):
@@ -31,6 +33,9 @@ def main():
     command = args.command[1:] if args.command[:1] == ["--"] else args.command
     if not command:
         raise SystemExit("missing actual command")
+    if args.observe_proof:
+        from proof_observer_v1 import observed_prove
+        raise SystemExit(observed_prove(command, args.out, args.name, args.timeout))
     args.out.mkdir(parents=True, exist_ok=True)
     report_path = args.out / f"{args.name}.process.json"
     report = {"schema": "pon-w1-actual-process-v1", "command": command,

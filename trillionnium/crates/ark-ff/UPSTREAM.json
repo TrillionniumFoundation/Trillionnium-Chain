@@ -1,0 +1,595 @@
+{
+  "active_manifest_sha256": "81c8c94cab6c24f8851b071b0709d9fbe50ea3b4c7a4e150ff72779107a2263a",
+  "adicity_boundary_repair": {
+    "base_one_changes_from_nonprogress_to_rejection": true,
+    "counterexample_full_crate_execution": false,
+    "counterexample_receipt_sha256": "9975b591ac4b1cbc90509575c42e790f6200ef7afd50c7da6a4b555b8752756d",
+    "full_crate_native_validation_pending": false,
+    "full_crate_regression_controls_passed": 3,
+    "n_zero_or_one_original_returns_preserved": true,
+    "new_full_crate_regression_controls": 3,
+    "nontrivial_input_requires_base_at_least": 2,
+    "normal_base_progress": "Each successful division reduces n by at least two; no more than 63 divisions for an input u64 and base >= 2.",
+    "observed_original_counterexample": "standalone harness includes the actual original utils.rs; normal bases passed; base one with input two entered and did not return within the predeclared three-second deadline",
+    "original_source_sha256": "9f98bdbe94404245b9a6b3634470e3dbfc9aca511daa3bff126028e4c8ea40e4",
+    "remote_exploitability_established": false,
+    "source_baseline_commit": "12e1b2a074868219e2423e2564c3c96594a46bc3",
+    "zero_base_panic_message_changes": true,
+    "zero_base_still_rejected_for_n_greater_than_one": true
+  },
+  "all_original_features_preserved": true,
+  "archive": {
+    "bytes": 73609,
+    "prior_pinned_archive_hash_matched": true,
+    "sha256": "a177aba0ed1e0fbb62aa9f6d0502e9b46dad8c2eab04c14258a1212d2557ea70",
+    "url": "https://static.crates.io/crates/ark-ff/ark-ff-0.5.0.crate"
+  },
+  "consensus_authority": false,
+  "dev_dependency_restoration": {
+    "blake2_omitted_reason": "No original source or doctest references it; commented original manifest declaration is preserved.",
+    "dependencies": {
+      "ark-test-curves": {
+        "default-features": false,
+        "features": [
+          "bls12_381_curve",
+          "mnt6_753",
+          "secp256k1"
+        ],
+        "version": "0.5.0"
+      },
+      "hex": {
+        "version": "0.4"
+      },
+      "libtest-mimic": {
+        "version": "0.8.1"
+      },
+      "serde": {
+        "version": "1.0"
+      },
+      "serde_derive": {
+        "version": "1.0"
+      },
+      "serde_json": {
+        "version": "1.0"
+      },
+      "sha2": {
+        "default-features": false,
+        "version": "0.10"
+      },
+      "sha3": {
+        "default-features": false,
+        "version": "0.10"
+      }
+    },
+    "dependency_resolution_executed": true,
+    "upstream_original_member": {
+      "bytes": 1431,
+      "git_blob_sha1": "510cba0821a38965f31ed178c4b312e22be1b60f",
+      "historical_pinned_sha256_matched": false,
+      "name": "ark-ff-Cargo.toml",
+      "provenance_note": "The exact upstream VCS member equals the original crate Cargo.toml.orig; an obsolete local historical pin is not reused as acceptance.",
+      "sha256": "efb6843102eddbaf9a60ecb42a9231995bf69cb1c133fdd846c509e2b9d712f8",
+      "url": "https://raw.githubusercontent.com/arkworks-rs/algebra/7ad88c46e859a94ab8e0b19fd8a217c3dc472f1c/ff/Cargo.toml"
+    },
+    "upstream_workspace": {
+      "bytes": 2839,
+      "git_blob_sha1": "00ffc7f84172f07d50355bc1cc55832883d5eeb9",
+      "historical_pinned_sha256_matched": true,
+      "name": "ark-workspace-Cargo.toml",
+      "sha256": "2903ce8dffecdc4ec1022f37e71436a538d81132fdba34fb3d8eba8d11ad1e40",
+      "url": "https://raw.githubusercontent.com/arkworks-rs/algebra/7ad88c46e859a94ab8e0b19fd8a217c3dc472f1c/Cargo.toml"
+    }
+  },
+  "fresh_current_native_observation": {
+    "consumer_examples_only_compiled": 17,
+    "consumer_integration_ignored_or_filtered": 0,
+    "doc_tests_passed": 42,
+    "evidence_directory": "evidence/pon-owned-parent-native-c7cf03f1-20261030",
+    "filtered_unit_tests": 0,
+    "full_supply_or_security_acceptance": false,
+    "github_same_tree_commit": "2c1898d239b6f5565e3ac681e4274e8e88f42403",
+    "guest_syscall_functionality_qualified": false,
+    "ignored_doc_tests": 0,
+    "ignored_unit_tests": 0,
+    "local_tested_commit": "c7cf03f18e0985ba5c542bf756eaa9189ab73a97",
+    "nested_expander_trials_passed": 6,
+    "no_default_library_check_passed": true,
+    "original_consumer_integration_tests": {
+      "qualified_task_lifecycle_v2": 4,
+      "qualified_work_task": 5
+    },
+    "original_expander_vectors_executed": 60,
+    "production_activation": false,
+    "public_fairness_qualified": false,
+    "receipts": [
+      {
+        "phase": "H5-native-ark-ff",
+        "sha256": "637dcc87c50a9b6c7ba99aad06a1d6e2d446fe5d1893869146ee9b5d84de0730"
+      },
+      {
+        "phase": "H5-doc-ark-ff",
+        "sha256": "c1831043704d52eef894050d59ebb25be40651d852e76984fb7c89337bd6f7af"
+      },
+      {
+        "phase": "H5-no-default-ark-ff",
+        "sha256": "0a24451a66acd78f96a391bee6c053b1abf7a66112d07868c9c19e1abc9df835"
+      },
+      {
+        "phase": "H5-six-native-ark-ff",
+        "sha256": "bf76dbd0de1abac1392ef646ddbe8c9c776abd5d2cd7aaa8f51c5423c3272470"
+      },
+      {
+        "phase": "H5-strict-three",
+        "sha256": "693a05bd96127b051bfcd99350ee9ad5a4833d716951fae4bf1fa919c0d37e99"
+      },
+      {
+        "phase": "H5-workspace-strict",
+        "sha256": "13de2e08bcb653f1c00f784834c5a05c4ee73adf5d5ef8ced8f928e16df81ddd"
+      },
+      {
+        "phase": "H5-workspace-format",
+        "sha256": "0ff3236db170e3ec11bd3c17547006e1fb7bd3d26b03e34dd301ee46934f11d1"
+      }
+    ],
+    "retained_unit_tests_passed": 28,
+    "rust_toolchain": "1.95.0",
+    "six_package_all_target_all_feature_union_build_passed": true,
+    "six_package_native_library_suites_passed": true,
+    "tested_tree": "8a5663d8f866372c1a59b587f18fa70b96d45ea9",
+    "three_parent_all_target_all_feature_build_passed": true,
+    "whole_chain_post_quantum_qualified": false,
+    "workspace_format_passed": true,
+    "workspace_release_all_target_all_feature_strict_clippy_passed": true
+  },
+  "fresh_prior_native_observation": {
+    "current_lint_proposal_validated": false,
+    "doc_tests_passed": 42,
+    "full_supply_or_security_acceptance": false,
+    "github_same_tree_commit": "17067e146de0fa956b319540212a10b09950a8d7",
+    "ignored_doc_tests": 0,
+    "ignored_unit_tests": 0,
+    "local_tested_commit": "bda9a45940a66529b9842228f813ac9ea0d2392f",
+    "nested_expander_trials": 6,
+    "no_default_library_check_passed": true,
+    "original_expander_vectors": 60,
+    "retained_unit_tests_passed": 25,
+    "strict_clippy_errors": 43,
+    "tested_tree": "cedcd94802a1f61aeb1012629b0190aba0b73c6b"
+  },
+  "maintenance": "remove the unused direct paste dependency and restore the original test dependency requirements",
+  "modified_original_members": [
+    "Cargo.toml",
+    "doc/katex-header.html",
+    "src/biginteger/arithmetic.rs",
+    "src/biginteger/mod.rs",
+    "src/biginteger/tests.rs",
+    "src/fields/fft_friendly.rs",
+    "src/fields/field_hashers/expander/mod.rs",
+    "src/fields/field_hashers/expander/tests.rs",
+    "src/fields/field_hashers/mod.rs",
+    "src/fields/mod.rs",
+    "src/fields/models/cubic_extension.rs",
+    "src/fields/models/fp/mod.rs",
+    "src/fields/models/fp/montgomery_backend.rs",
+    "src/fields/models/quadratic_extension.rs",
+    "src/fields/prime.rs",
+    "src/fields/sqrt.rs",
+    "src/fields/utils.rs"
+  ],
+  "original_Cargo_toml_orig_is_unchanged_provenance": true,
+  "original_git_provenance": {
+    "git": {
+      "sha1": "7ad88c46e859a94ab8e0b19fd8a217c3dc472f1c"
+    },
+    "path_in_vcs": "ff"
+  },
+  "original_members": [
+    {
+      "bytes": 96,
+      "mode": 420,
+      "path": ".cargo_vcs_info.json",
+      "sha256": "c07766c06f96a942a7b956a2958288247eea80e3520d63903f622b23349b270e"
+    },
+    {
+      "bytes": 2222,
+      "mode": 420,
+      "path": "Cargo.toml",
+      "sha256": "9bdcbbbc524008af18e9a6c603fd05b32ed824b0166c8b055bf8d6431d719aa4"
+    },
+    {
+      "bytes": 1431,
+      "mode": 420,
+      "path": "Cargo.toml.orig",
+      "sha256": "efb6843102eddbaf9a60ecb42a9231995bf69cb1c133fdd846c509e2b9d712f8"
+    },
+    {
+      "bytes": 10846,
+      "mode": 420,
+      "path": "LICENSE-APACHE",
+      "sha256": "e8d77d4bbe96e1b46ec0f40d1f12e19825e718c764bb3e9a695633ade9289f9e"
+    },
+    {
+      "bytes": 1046,
+      "mode": 420,
+      "path": "LICENSE-MIT",
+      "sha256": "8f71659370c5268d9a1dc962a46232540e8fca63462586d8efaa95aab492a208"
+    },
+    {
+      "bytes": 9695,
+      "mode": 420,
+      "path": "README.md",
+      "sha256": "b932130489849f68ae93d40ecdabcbac2cc68ea7da8c6fc7ef54a91df9313d76"
+    },
+    {
+      "bytes": 1366,
+      "mode": 420,
+      "path": "doc/katex-header.html",
+      "sha256": "741ce1df1b199c5805275491e03fa65d1e296261f8da10947c63dda17ef3640c"
+    },
+    {
+      "bytes": 7850,
+      "mode": 420,
+      "path": "src/biginteger/arithmetic.rs",
+      "sha256": "170dbcbdd5c95801a641443eb7b26f36fd2a21637b3f97df6102f69c922b6614"
+    },
+    {
+      "bytes": 35874,
+      "mode": 420,
+      "path": "src/biginteger/mod.rs",
+      "sha256": "c60c0273dc11e5c697e117b174761828bdec9763f8b636efbeec9f14216cd475"
+    },
+    {
+      "bytes": 7846,
+      "mode": 420,
+      "path": "src/biginteger/tests.rs",
+      "sha256": "47f4c0d8c986fc8df9db5093e42795aad9951b5c6ab5f2ee804c3231f2be518f"
+    },
+    {
+      "bytes": 2280,
+      "mode": 420,
+      "path": "src/bits.rs",
+      "sha256": "b2d90dee41a62b3872d0576d24b2afd4303d44e872b50e1d941f69d196175041"
+    },
+    {
+      "bytes": 8968,
+      "mode": 420,
+      "path": "src/const_helpers.rs",
+      "sha256": "bb70cd52452e1e6a4e294f27152a604e831555670b04eb26e6027ae3c38369b7"
+    },
+    {
+      "bytes": 10250,
+      "mode": 420,
+      "path": "src/fields/arithmetic.rs",
+      "sha256": "9cc441f4a067d58c2e5d3b6df2ffb4451e178ed8d7828946130b18dcbeac57ca"
+    },
+    {
+      "bytes": 4787,
+      "mode": 420,
+      "path": "src/fields/cyclotomic.rs",
+      "sha256": "8652b1b0286bd5e2ff5cae2869c766989e5957e4e1fef3569670af1bdc0a310e"
+    },
+    {
+      "bytes": 3468,
+      "mode": 420,
+      "path": "src/fields/fft_friendly.rs",
+      "sha256": "6adc108ac7bce2685ae0fd03b0ed5c0ea6f788550e09039ae14dcb9bc44760d5"
+    },
+    {
+      "bytes": 4802,
+      "mode": 420,
+      "path": "src/fields/field_hashers/expander/mod.rs",
+      "sha256": "10e2552538bb6db4e123d304fa5f01333fbfbfb641199ad5a01310b9e3479a29"
+    },
+    {
+      "bytes": 9947,
+      "mode": 420,
+      "path": "src/fields/field_hashers/expander/testdata/expand_message_xmd_SHA256_256.json",
+      "sha256": "80091f7b5a512629b2e0be984f7d292e6fffe1bf988f67a046bc46d37e953259"
+    },
+    {
+      "bytes": 9969,
+      "mode": 420,
+      "path": "src/fields/field_hashers/expander/testdata/expand_message_xmd_SHA256_38.json",
+      "sha256": "3b25eccae95ec06a261ea6cedc81520236e74823cfcbe0afe8c02bdf2983f63b"
+    },
+    {
+      "bytes": 11249,
+      "mode": 420,
+      "path": "src/fields/field_hashers/expander/testdata/expand_message_xmd_SHA512_38.json",
+      "sha256": "55eb8283ada87be852449e5f02b27889ab6720bfa25b09a32ea30884b834c31e"
+    },
+    {
+      "bytes": 8649,
+      "mode": 420,
+      "path": "src/fields/field_hashers/expander/testdata/expand_message_xof_SHAKE128_256.json",
+      "sha256": "5241a4a3dee2402ab4e884017f6ffe16b56ce222f8936270d613cb97e313e1ec"
+    },
+    {
+      "bytes": 8589,
+      "mode": 420,
+      "path": "src/fields/field_hashers/expander/testdata/expand_message_xof_SHAKE128_36.json",
+      "sha256": "a7657317eb13858cfbe625f1f7de1ca963a1d0ddd693ccdd7954623d6f8399bb"
+    },
+    {
+      "bytes": 8589,
+      "mode": 420,
+      "path": "src/fields/field_hashers/expander/testdata/expand_message_xof_SHAKE256_36.json",
+      "sha256": "89be377de1061f877e278f98af06cb6a408ecd4fbba08a76df11fbacb3011d76"
+    },
+    {
+      "bytes": 3588,
+      "mode": 420,
+      "path": "src/fields/field_hashers/expander/tests.rs",
+      "sha256": "5e5bdbf8748e431e54fa836d56b56a1ec4f1ce47f7996ee25b61a69c796f2f79"
+    },
+    {
+      "bytes": 4478,
+      "mode": 420,
+      "path": "src/fields/field_hashers/mod.rs",
+      "sha256": "52b8f68d369647ceeac62c15eb525c1c3d9cf543a4eba3c42187f593cd7d5c2f"
+    },
+    {
+      "bytes": 21596,
+      "mode": 420,
+      "path": "src/fields/mod.rs",
+      "sha256": "7682fb988cac7d275808231a94032f485b57854ab307f0af4ef92eea01eb3685"
+    },
+    {
+      "bytes": 24968,
+      "mode": 420,
+      "path": "src/fields/models/cubic_extension.rs",
+      "sha256": "a768e392cef35e746cfb786afbeec5a88b8266175c1a7df63bb521f363f56af8"
+    },
+    {
+      "bytes": 30639,
+      "mode": 420,
+      "path": "src/fields/models/fp/mod.rs",
+      "sha256": "ca75e60c8d11492404ae8888e06bd71a042d568b8f6b9c044c93bb4562c036bc"
+    },
+    {
+      "bytes": 31135,
+      "mode": 420,
+      "path": "src/fields/models/fp/montgomery_backend.rs",
+      "sha256": "c99d628fb0487830572402c766a0463098e3d6d8b7fe288b7fad45a3bf6d3373"
+    },
+    {
+      "bytes": 7821,
+      "mode": 420,
+      "path": "src/fields/models/fp12_2over3over2.rs",
+      "sha256": "2bed5c4f699a6624d00eef36364408ffdedea9296f0af031f39f443713ca6aca"
+    },
+    {
+      "bytes": 5288,
+      "mode": 420,
+      "path": "src/fields/models/fp2.rs",
+      "sha256": "999f09c561bafc92c923b1af6c866fc474f60f35a7d6f7d7c2dcfca5ef8db6ba"
+    },
+    {
+      "bytes": 4006,
+      "mode": 420,
+      "path": "src/fields/models/fp3.rs",
+      "sha256": "24af34896bdf19c7a355db94e372b8474f6f2ed2a5be3466ed6ed448f23b0e92"
+    },
+    {
+      "bytes": 2443,
+      "mode": 420,
+      "path": "src/fields/models/fp4.rs",
+      "sha256": "9a26d47f79f26b63bdfce668027071c93f5f7733e48f116f8df627287ab1a936"
+    },
+    {
+      "bytes": 3959,
+      "mode": 420,
+      "path": "src/fields/models/fp6_2over3.rs",
+      "sha256": "f59268f53475fa96a9e4f690741a378231e59f89a11f581411a111c983d8e8c9"
+    },
+    {
+      "bytes": 4548,
+      "mode": 420,
+      "path": "src/fields/models/fp6_3over2.rs",
+      "sha256": "8d6c8a3031ea013188182ce288aa19bb0bcc25a52f39a29d32e3948d249c782d"
+    },
+    {
+      "bytes": 416,
+      "mode": 420,
+      "path": "src/fields/models/mod.rs",
+      "sha256": "cb00d25dfadd721cba244fb5c5c56f42e24ff36b4694143212f3391b45773a01"
+    },
+    {
+      "bytes": 27650,
+      "mode": 420,
+      "path": "src/fields/models/quadratic_extension.rs",
+      "sha256": "3be7611a5416776baca2ee491c2def1172e096bc86efa44b9352afe28eed184d"
+    },
+    {
+      "bytes": 3992,
+      "mode": 420,
+      "path": "src/fields/prime.rs",
+      "sha256": "0986e75ae42ae3a0ffedc4ca2986afa6a89bd23879c6f48b3536bc349a74cfd1"
+    },
+    {
+      "bytes": 5195,
+      "mode": 420,
+      "path": "src/fields/sqrt.rs",
+      "sha256": "ed0c9a9f1cbb337e8c0bf7db312b70b5451635b830fa7287a577fef28e629bcd"
+    },
+    {
+      "bytes": 309,
+      "mode": 420,
+      "path": "src/fields/utils.rs",
+      "sha256": "9f98bdbe94404245b9a6b3634470e3dbfc9aca511daa3bff126028e4c8ea40e4"
+    },
+    {
+      "bytes": 1048,
+      "mode": 420,
+      "path": "src/lib.rs",
+      "sha256": "7cbd1dc008f4296e10f445bb49960b030e871382fa9cdfc6d0ae3409dd116f44"
+    },
+    {
+      "bytes": 2139,
+      "mode": 420,
+      "path": "src/to_field_vec.rs",
+      "sha256": "9eeaf05cf3012bdf68d386dc9470f473a528680a19105db3d85cfea6600a68c4"
+    }
+  ],
+  "original_rust_and_test_sources_unchanged": false,
+  "package": "ark-ff",
+  "preparation_whitespace_changes": [
+    {
+      "change": "remove exactly one terminal empty line",
+      "maintained_sha256": "63938246607ac92b8ef4cb930f9ef0b01a1340d28f37c39fdad2e9eb545ee3e8",
+      "original_sha256": "741ce1df1b199c5805275491e03fa65d1e296261f8da10947c63dda17ef3640c",
+      "path": "doc/katex-header.html"
+    }
+  ],
+  "prior_pruned_native_results_reused": false,
+  "production_activation": false,
+  "schema": "pon-maintained-parent-adoption-v1",
+  "source_base_commit": "c96c2b3e24ba354b4abcb842ca6a6a019c442b73",
+  "strict_lint_maintenance": {
+    "additional_rust_1_95_lint_errors_observed": 2,
+    "allow_or_expect_added": false,
+    "candidate_source_files": [
+      {
+        "path": "Cargo.toml",
+        "sha256": "81c8c94cab6c24f8851b071b0709d9fbe50ea3b4c7a4e150ff72779107a2263a"
+      },
+      {
+        "path": "src/biginteger/arithmetic.rs",
+        "sha256": "d6528a880f4012d53bdc946ae9b389f4b42cbd3d8e2218e9b9396cb9d7b49b3e"
+      },
+      {
+        "path": "src/biginteger/mod.rs",
+        "sha256": "5a6012c37a7d3ebbfaf0c9dfd7d369980db48b515ae0f513f2abe191c504fc33"
+      },
+      {
+        "path": "src/fields/fft_friendly.rs",
+        "sha256": "ba7beb66107cc2cccca7c3e4d7f0539889ad3310bd79899532da7e1bb48af0dd"
+      },
+      {
+        "path": "src/fields/field_hashers/expander/mod.rs",
+        "sha256": "a130c67812faa0a540bf38fa3739097bb2fb9a4427d933d4b23c5d18b4e9b08f"
+      },
+      {
+        "path": "src/fields/field_hashers/mod.rs",
+        "sha256": "39d8eb9b8336a92920b293dc42e064b7ef2051cae499e49cf89d91b264e0e7da"
+      },
+      {
+        "path": "src/fields/mod.rs",
+        "sha256": "70e1d4f5abcad09bb40367357ea40f9a93dd9203540e17859a9c43742d23abe9"
+      },
+      {
+        "path": "src/fields/models/cubic_extension.rs",
+        "sha256": "62ea1250da84fa512861fc2e280cf6d879a66a407d0eec53702d801df1dd8ebf"
+      },
+      {
+        "path": "src/fields/models/fp/mod.rs",
+        "sha256": "16cddf103243ecc312f01f717beb5c5edf6de7b2c13e4c2553b4587a6091a31f"
+      },
+      {
+        "path": "src/fields/models/fp/montgomery_backend.rs",
+        "sha256": "e01f7104b155c280e9dcd59e48500c5eed45f1189d4bd89e0de14edfd0912577"
+      },
+      {
+        "path": "src/fields/models/quadratic_extension.rs",
+        "sha256": "3be1a86d25ede4729f6f8f970125863136a1ca41b1a8586fd38bdaf9ce9a9463"
+      },
+      {
+        "path": "src/fields/prime.rs",
+        "sha256": "895ed720a64c2b2b53c98de9e15f2eb0d0f641c2518865b93eb91e760db6d125"
+      },
+      {
+        "path": "src/fields/sqrt.rs",
+        "sha256": "75d0b4d3e5a99d3a09030e7a19e9e4fa5813ef2bb4a2415127e1f7529901524b"
+      },
+      {
+        "path": "src/fields/utils.rs",
+        "sha256": "649ae3f5bfdf45c14e4c183d284bb7d8ec8ef756792f9a0496d96a2822e3020a"
+      },
+      {
+        "path": "src/biginteger/tests.rs",
+        "sha256": "9109a39d6b37340f5eaacc6ac30eab56196a87dba7387f990b2d77133296b23b"
+      },
+      {
+        "path": "src/fields/field_hashers/expander/tests.rs",
+        "sha256": "076a750e56a7fca3a42cbcded4e883e713a8343054b1cba7cab4f219c607aed2"
+      }
+    ],
+    "features_removed": false,
+    "maintained_rust_version": "1.95",
+    "native_validation_pending": false,
+    "notes": [
+      "Three integer ceiling expressions use overflow-safe div_ceil; extreme inputs no longer incur the previous numerator+rounding overflow. All 60 original expander vectors passed in both H5 parent and six-package native suites.",
+      "Only private expander DST type is renamed Dst; H2C-OVERSIZE-DST- bytes are unchanged.",
+      "Elided lifetimes, redundant borrow/cast/conversion cleanup retain the same operations.",
+      "x86 asm addcarry/subborrow branches still call the same intrinsics; obsolete unsafe wrappers removed for the explicit maintained Rust1.95 baseline."
+    ],
+    "observed_original_errors": 43,
+    "original_rust_1_75_compatibility_claimed": false,
+    "original_tests_removed": false,
+    "retained_test_repairs": {
+      "boolean_assertions": "Ten boolean assertions retain original predicates.",
+      "clone_contract": "A Clone-only generic helper keeps the actual Clone contract invocation; one exact equality assertion is added.",
+      "expander_variants": "Private enum variants change spelling; no string literal, JSON tag, original fixture or original test name changes.",
+      "fft_item_order": "Two unchanged FftField impl blocks precede the original unchanged test modules.",
+      "native_validation_pending": false,
+      "new_ignore_or_lint_allow": false,
+      "new_test_cases_in_this_step": 0,
+      "reflexivity_checks": "Explicit PartialEq::eq calls retain both original reflexive checks."
+    },
+    "retained_test_target_errors_observed": 17,
+    "source_baseline_commit": "bda9a45940a66529b9842228f813ac9ea0d2392f"
+  },
+  "supply_gate_closed": false,
+  "test_oracle_maintenance": {
+    "actual_red_observed": true,
+    "canonical_arithmetic_assertion_precedes_oracle_assertion": true,
+    "complete_green_validation_passed": true,
+    "fixed_distinct_inputs": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "green_selected_test_passed": true,
+    "green_source_commit": "bda9a45940a66529b9842228f813ac9ea0d2392f",
+    "green_validation_executed": true,
+    "initial_fixed_source_sha256": "7bd28a812d7410034ce94d783741ee572e83c9abcddc1322f758303b754d3031",
+    "maintained_shared_third_pair": [
+      4,
+      5
+    ],
+    "original_random_draw_order_retained": true,
+    "original_random_test_retained": true,
+    "original_shared_third_pair": [
+      3,
+      4
+    ],
+    "original_source_sha256": "a768e392cef35e746cfb786afbeec5a88b8266175c1a7df63bb521f363f56af8",
+    "phase": "actual deterministic RED retained; selected GREEN and complete retained suites passed, including final H5 consumer union",
+    "production_arithmetic_changed": false,
+    "red_failure_assertion": "oracle == canonical, after actual == canonical passed",
+    "red_failure_source_line": 744,
+    "red_filtered_tests": 24,
+    "red_native_exit_code": 101,
+    "red_receipt_sha256": "feed27b7b3d5576d1ef791a078449083c0c5f2664f5f8f900a6db60be0605a7a",
+    "red_selected_tests": 1,
+    "red_source_sha256": "49ccfd5745b9f54ec0bbddb322b68c6b1cdbb9e37e14261768f076cfc0d33890",
+    "red_tested_commit": "4d064d59bcfeb1475b629b21d95aeec389a6f5e8",
+    "red_tested_tree": "e3640e28929df3eb3dd2b681675dee751e64dd3b"
+  },
+  "version": "0.5.0",
+  "workspace_adoption": {
+    "initial_lock_sha256": "9466cc1073f80c72ef978e1dde66171a9375afa2575f202eb36a314ef37b3cbc",
+    "metadata_receipt_sha256": "1325e5ba118ee42211cb4777c9ea6c98b43be3d95cacda1841f6491366faae1b",
+    "native_validation_executed_at_adoption": false,
+    "original_test_sources_preserved_at_adoption": true,
+    "previous_registry_versions_changed": 0,
+    "root_lock_resolution_executed": true,
+    "root_member": true,
+    "same_name_crates_io_patch": true,
+    "standalone_w1_workspace_changed": false
+  },
+  "workspace_owner_metadata": "M01; complete source owned in the primary workspace and portability inventory"
+}

@@ -229,6 +229,16 @@ def grover_success(nonce_bits: int, marked: int, iterations: int) -> float:
         return 0.0
     if marked == domain:
         return 1.0
+    if marked * 2 == domain:
+        return 0.5
+    if marked * 2 > domain:
+        # Preserve a small unmarked set before converting to binary64. Direct
+        # marked/domain can round to 1 (e.g. 2^64-1 marked), losing a phase
+        # difference that many iterations amplify. For odd 2*k+1 the original
+        # sin^2((2*k+1)*(pi/2-delta)) is exactly cos^2((2*k+1)*delta).
+        # This remains a floating-point conditional model, not a security bound.
+        angle = math.asin(math.sqrt((domain - marked) / domain))
+        return math.cos((2 * iterations + 1) * angle) ** 2
     angle = math.asin(math.sqrt(marked / domain))
     return math.sin((2 * iterations + 1) * angle) ** 2
 

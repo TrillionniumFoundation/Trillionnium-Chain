@@ -288,3 +288,37 @@ fn two_process_real_w1_prefix_and_pressure_native_io_component_v1() {
         assert_eq!(report[flag], false, "{flag}: {report}");
     }
 }
+
+#[test]
+#[ignore = "explicit reservation-v2 finite component; requires original source-bound preparation and three Python input FDs"]
+fn two_process_real_w1_prefix_and_pressure_native_io_reservation_component_v2() {
+    assert_eq!(
+        std::env::var("TRNM_IDENTITY_COMPONENT_PROFILE").as_deref(),
+        Ok("pn1-native-io-three-fd-reservation-component-v2")
+    );
+    let report = campaign_native_io_v1::run_reservation_v2()
+        .expect("reservation-v2 finite component; retain every original failure and partial");
+    assert_eq!(
+        report["schema"],
+        "native-public-v3-identity-churn-native-io-reservation-v2"
+    );
+    assert_eq!(report["native_mechanism_complete"], true, "{report}");
+    assert_eq!(
+        report["plan"],
+        serde_json::to_value(plan::Plan::control()).unwrap()
+    );
+    assert_eq!(
+        report["native_io_storage"]["sqlite_domain"],
+        trnm_sqlite_io_boundary::RESERVATION_DOMAIN_V2
+    );
+    for flag in [
+        "finite_service_qualified",
+        "whole_writer_qualified",
+        "original_three_FD_caller_qualified",
+        "independent_reader_qualified",
+        "full_W1_4097_qualified",
+        "merge_ready",
+    ] {
+        assert_eq!(report[flag], false, "{flag}: {report}");
+    }
+}

@@ -7,7 +7,7 @@ use super::{
     exec_identity::{create_directory, Caller, Dispatch, Held},
     honest, limits,
     logs::Logs,
-    native_io_v1::{self, SCHEMA},
+    native_io_v1::{self, Profile},
     plan::{Job, Mode, Plan},
     samples::Samples,
     support,
@@ -36,15 +36,17 @@ fn read(path: &Path) -> Option<Value> {
 }
 const TERMINAL_BYTES: u64 = 64 * 1024;
 struct PhaseOwner<'a> {
+    profile: Profile,
     path: &'a Path,
     metadata: Budget,
     terminal: Budget,
     completed: bool,
 }
 impl<'a> PhaseOwner<'a> {
-    fn new(path: &'a Path, limit: u64) -> Self {
+    fn new(path: &'a Path, limit: u64, profile: Profile) -> Self {
         assert!(limit > TERMINAL_BYTES);
         Self {
+            profile,
             path,
             metadata: Budget::new(limit - TERMINAL_BYTES),
             terminal: Budget::new(TERMINAL_BYTES),
@@ -55,7 +57,7 @@ impl<'a> PhaseOwner<'a> {
         if self.terminal.used == 0 {
             self.terminal.write(
                 &self.path.join("terminal.json"),
-                &json!({"schema":SCHEMA,"kind":"phase-terminal","reason":reason,"extra":extra,
+                &json!({"schema":self.profile.schema(),"kind":"phase-terminal","reason":reason,"extra":extra,
                     "observed_ns":support::monotonic(),"full_campaign_qualified":false,
                     "complete_terminal_RootReceipts_preserved":false}),
                 TERMINAL_BYTES,
@@ -226,6 +228,8 @@ pub fn phase(
     plan: &Plan,
     execution: &Caller,
 ) -> io::Result<Value> {
+    let profile = native_io.profile();
+    let schema = profile.schema();
     if native_io.mode() != mode {
         return Err(io::Error::other("precreated native I/O phase mode changed"));
     }
@@ -234,7 +238,7 @@ pub fn phase(
     // no repeated mkdir, adoption of preexisting paths or string reopening.
     let actual_path = phase_directory.path();
     let path = actual_path.as_path();
-    let mut evidence_owner = PhaseOwner::new(path, limits::PHASE_BYTES);
+    let mut evidence_owner = PhaseOwner::new(path, limits::PHASE_BYTES, profile);
     let outcome = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
         phase_work(
             &native_io,
@@ -248,11 +252,16 @@ pub fn phase(
     }));
     // Every owned actor/service/Node has returned or unwound before these
     // actual terminal snapshots. Existing errors/partials/caps are retained.
-    let snapshots = native_io_v1::root_snapshot(native_io.receiver_index(), native_io.receiver())
-        .and_then(|receiver| {
-            native_io_v1::root_snapshot(native_io.receiver_index() + 1, native_io.verifier())
+    let snapshots =
+        native_io_v1::root_snapshot_for(profile, native_io.receiver_index(), native_io.receiver())
+            .and_then(|receiver| {
+                native_io_v1::root_snapshot_for(
+                    profile,
+                    native_io.receiver_index() + 1,
+                    native_io.verifier(),
+                )
                 .map(|verifier| vec![receiver, verifier])
-        });
+            });
     enum OriginalOutcome {
         Success,
         Error(io::Error),
@@ -261,11 +270,11 @@ pub fn phase(
     let (mut report, original_outcome) = match outcome {
         Ok(Ok(value)) => (value, OriginalOutcome::Success),
         Ok(Err(error)) => (
-            json!({"schema":SCHEMA,"kind":"phase-error","mode":mode,"error":error.to_string()}),
+            json!({"schema":schema,"kind":"phase-error","mode":mode,"error":error.to_string()}),
             OriginalOutcome::Error(error),
         ),
         Err(payload) => (
-            json!({"schema":SCHEMA,"kind":"phase-error","mode":mode,
+            json!({"schema":schema,"kind":"phase-error","mode":mode,
                 "error":"original native phase panic; original stderr and failure retained"}),
             OriginalOutcome::Panic(payload),
         ),
@@ -278,7 +287,7 @@ pub fn phase(
         Err(error) => vec![format!("actual terminal snapshots unavailable: {error}")],
     };
     let saved = snapshots
-        .and_then(|roots| native_io_v1::report(&report, roots))
+        .and_then(|roots| native_io_v1::report_for(profile, &report, roots))
         .and_then(|value| evidence_owner.save("report.json", &value));
     if let Err(error) = &saved {
         let _ = evidence_owner.fail("native-io-terminal-evidence", json!({"error":error.to_string(),
@@ -314,6 +323,7 @@ fn phase_work(
     execution: &Caller,
     evidence_owner: &mut PhaseOwner<'_>,
 ) -> io::Result<Value> {
+    let schema = native_io.profile().schema();
     let mode = native_io.mode();
     let phase_directory = native_io.directory();
     let actual_path = phase_directory.path();
@@ -436,7 +446,7 @@ fn phase_work(
                     .observe_credit_freshness()
                     .map_err(|e| e.to_string());
                 let observation_ended_ns = support::monotonic();
-                let row = json!({"schema":SCHEMA,"kind":"sample","index":count,"observation_started_ns":observation_started_ns,
+                let row = json!({"schema":schema,"kind":"sample","index":count,"observation_started_ns":observation_started_ns,
                 "observation_ended_ns":observation_ended_ns,"meter":meter.as_ref().ok(),"actual_flow":flow.as_ref().ok().and_then(|v|v.as_ref()),
                 "completion_work":work.as_ref().ok(),"credit_freshness":fresh.as_ref().ok().and_then(|v|v.as_ref()),
                 "query_results":{"meter":meter,"actual_flow":flow,"completion_work":work,"credit_freshness":fresh}});
@@ -453,7 +463,7 @@ fn phase_work(
     let prefix_end = prefix_epoch + plan.prefix_seconds * 1_000_000_000;
     evidence_owner.save(
         "prefix-start.json",
-        &json!({"schema":SCHEMA,"epoch_ns":prefix_epoch,"end_ns":prefix_end}),
+        &json!({"schema":schema,"epoch_ns":prefix_epoch,"end_ns":prefix_end}),
     )?;
     while support::monotonic() < prefix_end
         && actors.iter().any(|a| {
@@ -469,7 +479,7 @@ fn phase_work(
     let end = epoch + plan.pressure_seconds * 1_000_000_000;
     evidence_owner.save(
         "pressure-start.json",
-        &json!({"schema":SCHEMA,"epoch_ns":epoch,"end_ns":end}),
+        &json!({"schema":schema,"epoch_ns":epoch,"end_ns":end}),
     )?;
     let honest = honest::rounds(
         address,
@@ -561,7 +571,7 @@ fn phase_work(
                 .as_ref()
                 .is_ok_and(|m| m.mutation_cpu_charged_ns == f.paid_cpu_debit_ns)
     });
-    let mut report = json!({"schema":SCHEMA,"kind":"phase","mode":mode,"plan":plan,"parent_pid":std::process::id(),"controller_cgroup":controller_cgroup,
+    let mut report = json!({"schema":schema,"kind":"phase","mode":mode,"plan":plan,"parent_pid":std::process::id(),"controller_cgroup":controller_cgroup,
         "source_commit":source_commit,"source_tree":source_tree,"binary_sha256":binary,"actor_readiness":ready,"children":children,
         "prefix_epoch_ns":prefix_epoch,"prefix_end_ns":prefix_end,"pressure_epoch_ns":epoch,"pressure_end_ns":end,
         "initial_work":initial_work,"initial_flow":initial_flow,"post_prefix_work":post_prefix_work,"post_prefix_flow":post_prefix_flow});

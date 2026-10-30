@@ -1,0 +1,13 @@
+{
+  "schema": "pon-owned-parent-root-import-verification-v1",
+  "publication_manifest_sha256": "1f520fc06ab2df790ce8fafd3eb6543f25cb128827eb42cfd1652bfda79deeab",
+  "publication_files": 25,
+  "publication_bytes": 4599725,
+  "raw_files": 701,
+  "raw_bytes": 2922160,
+  "independent_reconstruction_equals_every_original": true,
+  "fetched_github_commit_trees_equal_all_six_local_execution_trees": true,
+  "all_six_remote_commits_descend_from_published_G": true,
+  "native_execution_by_this_import": false,
+  "global_qualification_granted": false
+}

@@ -76,8 +76,14 @@ impl Registration {
         root.check().map_err(crate::owner::code_error)?;
         let base = unsafe { ffi::sqlite3_vfs_find(c"unix".as_ptr()) };
         unix_abi::validate_base(base).map_err(BoundaryError)?;
+        let version = root
+            .lock()
+            .map_err(crate::owner::code_error)?
+            .policy()
+            .vfs_version();
         let name = CString::new(format!(
-            "trnm-pn1-owned-inode-v1-{}-{}",
+            "trnm-pn1-owned-inode-{}-{}-{}",
+            version,
             root.pid,
             root.index + 1,
         ))
@@ -482,7 +488,7 @@ unsafe extern "C" fn open(
         }
         let slot = ledger.reserve_open(&leaf, main)?;
         if let Some(stat) = root.stat_name(&leaf)? {
-            ledger.bind(
+            ledger.observe_existing_before_io(
                 slot,
                 crate::owner::identity(&stat),
                 u64::try_from(stat.st_size).map_err(|_| ffi::SQLITE_IOERR_FSTAT)?,
@@ -988,7 +994,7 @@ unsafe extern "C" fn shm_map(
             // unixOpenSharedMemory may open/truncate to three bytes even when
             // bExtend=0. Every first map reserves a real object BEFORE delegation.
             if let Some(stat) = state.registration.root.stat_name("native.sqlite-shm")? {
-                ledger.bind(
+                ledger.observe_existing_before_io(
                     slot,
                     crate::owner::identity(&stat),
                     u64::try_from(stat.st_size).map_err(|_| ffi::SQLITE_IOERR_FSTAT)?,
@@ -1151,7 +1157,7 @@ unsafe extern "C" fn delete(
         }
         let slot = if let Some(stat) = registration.root.stat_name(leaf)? {
             let slot = ledger.reserve_open(leaf, false)?;
-            ledger.bind(
+            ledger.observe_existing_before_io(
                 slot,
                 crate::owner::identity(&stat),
                 u64::try_from(stat.st_size).map_err(|_| ffi::SQLITE_IOERR_FSTAT)?,

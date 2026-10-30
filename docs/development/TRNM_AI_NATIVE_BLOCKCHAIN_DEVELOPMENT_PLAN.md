@@ -4700,3 +4700,1164 @@ The [V4 experiment](../protocol/pon-nakamoto-v1/details/LEGAL_CPU_BATCH_COST_V4.
 ### 2026-10-28 — legal CPU batch V4 report construction repair
 
 The first exact-source x86-64 hosted build at c4d055d81a6f707fb28c9726821da4163b0057cb failed before native execution on the large serde_json macro recursion expansion. The unchanged phase object is now constructed separately after the outer observation and inserted into the same report. No compiler recursion attribute, runtime budget, complete W1 work, predicate, packet output, accounting scope or acceptance control changes. The original job log and hash are retained in evidence/pon-legal-cpu-batch-v4-20261028; both original native architecture lanes still need real terminal results.
+
+### PN1/I01-I02 — complete producer and attacker cost continuation (2026-10-28)
+
+This continuation starts from `0f04de8ee26b1871ef95653dda51df220660bd4a` inside
+the existing M01/M02/M03/M04/M15/M17 owners. Required-work accumulation, target
+arithmetic, equal-work nonreplacement, DAA, maintenance eligibility, zero useful
+maintenance credit and probabilistic finality remain unchanged. Statement
+correctness, computational-cost qualification and honest public service retain
+three separate verdicts. Model evaluation or a finite experiment grants none of
+the other authorities.
+
+The original prepared generic and maintenance-limb producers now additionally
+offer an opaque borrowed `ProducerCandidate`. It retains the exact task prefix,
+challenge and fully computed transcript. Every candidate still evaluates all
+noise and 512 transcript tiles. The candidate can expose its ticket before a
+49,188-byte proof is materialized. Winning assembly has its own real
+`BeforeProof` cancellation boundary; it creates bytes only, never `VerifiedWork`.
+The existing `prove` callbacks, error order, arithmetic, wire bytes and default
+verifier are retained. The independent 898-observation / 56-cancellation legacy
+control passed against the original implementation before this refactor.
+
+The new [six-arm native driver](../../trillionnium/crates/trnm-pon-node/examples/pon_ticket_first_cost_v1.rs)
+separates legacy assembly, candidate assembly on every attempt, and assembly only
+for target hits for each of the two kernels. Two paired rounds, four actual
+horizons (1/8/64/256), fresh/retained setup and six arms produce 96 fresh stores.
+The seed-two nonce windows are disjoint from the old V5 fixture. Complete missed
+attempts, actual setup, first native admission and ordinary cold packet readback
+remain in the recorded cost scopes. A missed candidate's canonical proof hash
+is streamed from the fixed prefix and real trace without allocating its full
+proof; it is not mislabeled as a serialized or independently verified miss.
+The [independent reader](../../scripts/ci/check_ticket_first_cost_v1.py) checks
+paired raw records and distinguishes allocation changes from avoided miss
+serialization. The new 600/610-second observation is separate from the unchanged
+V3/V4/V5 campaigns. Source controls alone do not establish a performance gain.
+Bounded, flushed write-ahead records retain completed trial observations when a
+cohort fails; successful readback reconciles their exact sequence and clocks
+against the complete stdout records. Missing or inconsistent records cannot
+qualify a surviving subset. Exclusive phase costs, the enclosing cohort and the
+whole native process remain distinct; final cleanup, serialization and producer
+destruction are included only in the whole-process capture. The explicit new
+release capture identity cannot relabel an old test-profile observation.
+
+The original V5 reader now rejects inconsistent per-trial challenge/proof/ticket
+or cold packet records even if the producer repeats the same claimed stream
+digest. Actual old x86_64 artifact 12834526404 and aarch64 artifact 12834666223
+were reread with their original source/capture bindings: all 144 cohorts per host
+pass, and the original summaries remain byte-value equivalent as JSON. Four
+in-memory substitutions accepted by the old reader are rejected by the new
+reader. These are historical-byte rechecks, not current-source native runs.
+Optional [paired diagnostics](../../scripts/ci/legal_ticket_cost_diagnostics_v1.py)
+retain both rounds, all failed-search cost and unknown CPU. They reuse the
+existing conditional work-share sensitivity and do not calibrate the DAA model,
+infer independent hosts, or assert a global minimum from two shared-host rounds.
+
+The original pressure harness additionally writes a separately named
+`pon-pure-attacker-cost-v1` sidecar per actor. It includes preparations that cross
+the original phase deadline or never enter the original client call. An enclosing
+thread-CPU interval covers the actor entry through loop exit; nested stage
+measurements are never added again. Unknown CPU remains unknown. Process launch,
+other threads and final evidence publication are explicitly outside that scope.
+The [cost reader](../../scripts/ci/check_pure_pon_attacker_cost_v1.py) requires
+complete records and exact links to the old calls without changing the old v3
+service verdict. Original 30-second phases, two-second calls, actor/request
+bounds, resource policy and historical failures remain authoritative. Missing
+sidecars cannot be backfilled as a historical cost pass.
+A create-only parent manifest binds each original actor report and cost sidecar
+by exact byte length, SHA256, terminal and counts after the old joins, service
+stop and report construction. Fixed-path no-follow regular-file reads and a
+separate bounded observation deadline preserve the original attack windows.
+The reader rejects even same-length coordinated deletion of an unissued final
+preparation with rewritten summaries. CPU-versus-monotonic checks are consistency
+diagnostics only. Initial template search counts remain explicitly unobserved;
+neither the local clocks nor jointly forged host files acquire physical
+authentication from these bindings.
+
+The optional transparent-proof admission host also rejects impossible
+header/task/target contexts before decoding and cryptographically verifying the
+receipt. The frozen guest, proof grammar and native work authority are unchanged;
+this is a research API rejection-cost improvement, not live proof intake or
+evidence that forged work was previously accepted.
+
+At this source freeze, exact-committed-source native qualification, strict
+Clippy, complete pressure costs and the six-arm measurements are **NOT_RUN**.
+Working-tree controls do not substitute for those verdicts; exact-source results
+must be read from their raw records. Public stranger/Sybil fairness, whole receiver-owner
+costs, optimal CPU/GPU/FPGA/ASIC and energy bounds, quantum effective work,
+independent WAN service, beneficial model releases and production activation
+remain **OPEN / NO_GO**. Original finite passes and failures retain their own
+source/profile identities; no fallback consensus or new development roadmap is
+introduced.
+
+
+### PN1/I01-I02 — exact A readback and blocker continuation (2026-10-29)
+
+The preceding source-freeze NOT_RUN labels are superseded only for exact source
+`8018eb875aaf2cc1f74b33232b5c9197e94bfea4` by its completed local observations and
+[original x86_64/aarch64 cost run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40815302333)
+and [original pressure run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40815302237).
+Each complete six-arm capture retained 96 cohorts, 16,404 attempted observations,
+7,860 repeated first-admission calls, 36 exhausted searches and 655 distinct
+winning packet contexts. Repetition across paired arms is not new work, rewards
+or independent confirmations. The representative retained-preparation,
+horizon-256 pair reduced proof materializations from 1,089 to 509, while keeping
+all 1,089 complete W1 attempts; the three shared-host observations did not show a
+stable total CPU advantage. The default miner remains unchanged.
+
+The original three 30-second pressure phases with 24 actors in each attack phase
+completed on both hosted architectures, with three honest rounds per phase.
+They remain finite loopback observations. The x86_64 correct-product/false-trace
+phase retained 2,271 preparations and 2,270 client calls; the final unissued
+preparation is part of cost evidence. The original CodeQL export failed during
+transport after empty analysis observations. That is an incomplete security
+export, not a clean scan or a proved GitHub permission diagnosis. None of these
+A-source artifacts is reassigned to later source, binaries or resource owners.
+
+#### Complete independent W1 arithmetic
+
+The separate [offline replay](../../scripts/ci/replay_ticket_first_w1_v1.py)
+uses the unchanged scalar `work_oracle.evaluate` for all recorded unique inputs.
+It replays noise, all 512 transcript tiles, trace and product for wins, target
+misses and exhausted searches. Calling the existing target-checking `verify`
+would incorrectly skip missed work, so that entry is deliberately not used.
+The dictionary key contains the task, challenge and full canonical prefix bytes.
+The frozen complete capture contains 1,367 unique inputs: 655 winners, 688 misses
+before a winner and 24 exhausted-search misses, each observed in all twelve
+arm/setup pairings. Multiple captures can share arithmetic only when their
+complete input sets agree; shared replay is not independent host execution.
+
+An explicitly synthetic mutation of one actual A-source miss changed all twelve
+paired traces and consistently rebuilt the ticket/proof/stream/journal hashes.
+The original structural cost reader accepted it; the unchanged scalar oracle
+and new complete replay rejected it. Original raw artifacts remain untouched.
+A developmental replay over the local, x86_64 and aarch64 A captures completed
+all 1,367 evaluations and covered 49,212 raw observations in 120.858697 seconds.
+Its exact helper snapshot predates the final output-cap addition and is retained
+separately. Those timings measure offline verification, never native mining.
+The final helper has an independent cooperative 300-second limit, bounded input
+roster, 16-KiB journal lines, an 8-MiB journal and a 16-MiB receipt. It reserves
+failure-terminal space and retains incomplete observations. Blocking file I/O
+and an in-progress scalar evaluation are not claimed to be preempted.
+
+The original [cost workflow](../../.github/workflows/pon-ticket-first-cost-v1.yml)
+adds this independent readback after its original successful reader, with a
+separate seven-minute step. Original native 600/610-second limits, six-arm
+semantics, summaries and qualification flags remain unchanged. Statement
+correctness does not certify the recorded machine, cheapest legal strategy,
+energy cost, quantum resistance or public service.
+
+#### Actual executable retention and complete process observations
+
+The [create-only binary archive](../../scripts/ci/pure_pon_binary_archive_v1.py)
+retains the actual six original pressure executables, after the native stages,
+with complete build/source associations and independent copied-byte readback.
+Fixed no-follow directory traversal, regular-file checks, before/after identity,
+a 64-MiB per-file bound, a 192-MiB total bound and a separate 30-second cooperative
+copy budget constrain this evidence step. Missing binaries, changed source bytes,
+partial copies and failed campaigns remain failures. An archived executable does
+not authenticate a physical host or prove that it was executed.
+
+The pressure harness uses one parent-owned `wait4` reaper per original actor.
+It retains startup-through-exit user/system CPU, peak RSS, exit status and
+monotonic spawn/reap brackets. The existing two-millisecond polling and absolute
+five-second cleanup deadline remain. A known reaped or ECHILD child is not killed
+again through a possibly reused PID. The separate process sidecar binds final
+report, thread-cost, log and process-family bytes; its
+[independent reader](../../scripts/ci/check_pure_pon_process_cost_v1.py) compares
+nested CPU scopes with explicit clock precision tolerance, without adding them
+together. Missing CPU or process-family observations remain unknown.
+
+Process-family evidence records bounded per-thread Linux child lists and actual
+RUSAGE_SELF/RUSAGE_CHILDREN. A stable empty list is an observed quiescent state,
+not hostile-host authentication; terminated descendants count only when actually
+waited for. Waited-child CPU is nested inside Linux wait4 usage. Peak RSS is not
+a summed or simultaneous process-tree memory peak. Original service verdicts,
+request limits, attack windows, deadlines and fixed-parent qualification remain
+separate from these cost observations.
+
+The separately named [receiver-owner supplement](../../trillionnium/crates/trnm-pon-node/tests/support/pure_receiver_owner_v1.rs)
+places the real Node, two protected reactors and their worker threads in one
+fresh child process. The honest client, sampler and 24 attacker siblings stay
+in the parent or separate processes. Its own three 30-second phases, two-second
+calls and fixed cleanup deadline preserve the declared experiment. Private
+bounded observation IPC, startup, final publication and teardown are included
+in receiver wait4 cost. Only this temporary child sets its local subreaper
+attribute; no deployed receiver or parent setting changes. Joined reactors,
+dropped Node ownership and final per-thread child observations must agree with
+the actual reaped terminal. An existing fixed public parent is inspected
+read-only, if available; no stand-in is provisioned. Its aggregate counters
+include other members and are not exclusive receiver CPU. A new-namespace
+reader retains the original campaign's separate verdict and never reclassifies
+this supplemental campaign as an original-run or public-fairness qualification.
+
+The local development environment did not expose per-thread procfs `children`
+files. Their ENOENT records remain unknown, not empty child lists. A separate
+`pon-child-ownership-probe-v1` records one non-reaping Linux waitid with P_ALL,
+WEXITED, WNOHANG, WNOWAIT and __WALL, together with unchanged SIG_DFL and absent
+SA_NOCLDWAIT before/after observations. Only the actual -1/ECHILD result can
+observe no eligible children at that probe; zero-event success, an observed
+zombie, other errors and signal-policy uncertainty cannot. Live-child,
+repeated-zombie and post-reap controls exercise these distinctions using real
+processes. The reader identifies the evidence method and retains the original
+procfs status. The probe does not consume the child's wait4 record, count CPU
+again, replace worker joins, cover CLONE_PARENT causal siblings or authenticate
+a kernel or complete historical cost. See the
+[Linux wait interface](https://man7.org/linux/man-pages/man2/waitpid.2.html).
+
+Independent review found that per-call socket timeouts did not bound a whole
+prefix/payload exchange by the fixed cleanup deadline. The supplemental IPC now
+recomputes the same absolute remaining budget around each actual read/write,
+retains partial frames, and refuses late completion. The reader binds arm's
+epoch to that request's clock bracket and rejects stop completion or receiver
+reap after phase-plus-five-second cleanup. The earlier accepted synthetic
+clock counterexamples and actual startup/procfs control failures are retained.
+No original campaign budget or failed observation is rewritten.
+
+#### Unsupported authority and numerical-model controls
+
+The [complete-proof observation checker](../../trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/check_observations.py)
+now compares the entire artifact backend manifest with its source-owned manifest
+using typed canonical JSON, and refuses duplicate keys, nonfinite values and
+unsupported PQ/activation/Groth16/fake/remote-proving flags. Historical actual
+build-only bytes supply the positive control; ten manifest mutations accepted
+by the exact A checker are rejected after this change. This is source/build
+identity evidence and does not claim a newly generated or verified proof.
+These controls run before native work in the existing proof workflow. The
+public-readiness checker keeps the same unsupported-authority boundary.
+
+The complete public-readiness regression also exposed an existing source
+contract mismatch: the A-source opener already delegates through
+`shared_snapshot::Layout`, while its evidence reader still required the older
+direct bindings. Both the exact A reader and the initial candidate failed this
+positive case. The reader now recognizes only the exact held-I/O None bridge,
+module binding and identity mapper. Path/attribute substitutions, nested or
+string/comment decoys, unknown mapper bodies, rebinding and shared-table
+pollution remain rejected. No Rust storage owner changes. The ordinary legacy
+DDL remains 4,775 bytes with raw SHA256
+`ce0de86674de23181ef1f6fb59f357f94971feeaee0c5503f065dbf45bb5c964`;
+its separately domain-derived schema ID remains
+`8c2627fa0b06e51742e7e6d40662c61d4b4727e810abc02b24634a8a817dc0e0`
+under `native-branch-schema-v2`. This finite source contract is not a general
+Rust semantic proof or native storage qualification.
+
+The conditional Grover model previously rounded a nearly full 64-bit marked
+set to probability one before amplifying the phase. For 2^64-1 marked points and
+one billion iterations it reported about 0.9999999999998794 instead of the
+independent 100-digit decimal value 0.7983866285855264. The complement expression
+preserves the small unmarked set, and the half-domain case is exactly one half.
+An independent Chebyshev-doubling oracle supplies boundary controls; original
+input ceilings stay fixed. This remains a floating-point conditional model,
+not a measured quantum oracle, general numerical-error theorem or security bound.
+
+#### CodeQL evidence failures remain distinct from security findings
+
+The [read-only exporter](../../scripts/export_codeql_analysis.py) adds separately
+named, bounded-category request-failure observations. HTTP status, DNS/TLS/
+connection/timeout/protocol categories and deadline observations are retained
+without exception text, response bodies or signed URLs. A malformed-response
+counterexample showed that the original HTTPException path could leak an
+unrelated signed-URL sentinel through generic error text; this path is now
+converted to the same safe failure handling. The original request timeout,
+overall deadline, no-retry policy, exact source/PR bindings and security verdict
+are unchanged. Diagnostic controls cannot supply a missing CodeQL analysis.
+
+#### Remaining qualification boundaries
+
+These changes close specific reader, retention and measurement defects only
+after their own committed-source controls and native observations complete.
+They do not close cheapest-legal-algorithm/hardware/energy research, arbitrary
+Sybil arrival fairness, the fixed public kernel parent, independent operators
+and preregistered WAN service, beneficial model releases, whole-chain PQ128 or
+production governance. Related PQ4/PQ5 and transparent-proof candidates retain
+their own branches and evidence until explicitly reviewed and integrated. The
+existing PN0–PN6 production exits remain **OPEN / NO_GO**.
+
+### PN1/I02 — fixed-parent custody and actual static analysis (2026-10-29)
+
+This continuation retains source
+`504ccfe6bc4aa504f4a67f73c16040fca5b8e10e` (B), its original failures and all
+earlier qualification boundaries. New fixture and reader controls must be
+verified on their own committed source. A local control, a complete scan and a
+passing host-fixture observation have different scopes; none enables PN0–PN6.
+
+#### Partial process observations retain positive evidence
+
+The [process reader](../../scripts/ci/check_pure_pon_process_cost_v1.py) previously
+returned early when a per-thread census was incomplete. A counterexample based
+on an actual B partial census retained one successful row containing a child PID
+and another row with ENOENT, but supplied an incorrect empty aggregate. The old
+local predicates ignored the positive row and accepted the separate ECHILD
+quiescence claim. This was a reader-semantic defect, not a demonstration that
+modified bytes bypassed an unchanged parent SHA-256 binding.
+
+The reader now checks the saved before-thread row coverage and the union of all
+successful child reads before that early return, and checks the same association
+at the independent probe entry point. A changing or unavailable after-thread set
+remains a partial observation. Unknown usage is not zero, and the independent
+ECHILD basis cannot override an actually observed child. The directory negative
+control also reseals its synthetic parent bindings and still rejects the
+contradictory census. Precommit process/receiver/attacker controls passed 24/23/24;
+six original B local/x64/ARM process and receiver outputs remained byte-identical.
+The x64 receiver's original qualification exit remained 1.
+
+#### The original x64 failure is not erased
+
+The [B pressure run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40825729556)
+retains the failed x64 from-zero receiver supplement. Its 597 samples include
+36 with the original freshness upper bound below the 100 ms reservation, but
+those samples have cumulative paid debit at most 706,710,672 ns. The 409 samples
+with paid debit above 1.9 seconds have a minimum freshness upper bound of
+198,714,857 ns. No sample satisfies the unchanged conjunction. All three honest
+confirmation rounds and their measured hostile overlap passed. These point
+samples neither prove a continuous-time absence of depletion nor establish an
+invalid-block acceptance attack. An upper bound is not a lower bound on actual
+credit. The B fixed-parent observation was unavailable, so these B measurements
+must not be described as running inside the fixed 0.25-CPU kernel parent.
+
+The new fixed-parent experiment keeps the 128/s challenge profile, 0.25-CPU/s
+paid refill, 24 hostile actors, 30-second phases and two-second calls. It reports
+three distinct outcomes: fixture custody/resource observations, honest service,
+and the original paid-depletion predicate. A kernel ceiling over all receiver
+work also covers reactors, parsing and observation IPC; therefore a 0.25-CPU
+whole-receiver ceiling does not promise that paid W1 debit will continuously
+exceed a 0.25-CPU/s refill. Finite-window CFS accounting, initial/carry credit and
+discarded refill require their own bounds. No quota reduction or predicate change
+is used to manufacture the missing depletion witness.
+
+#### A separate, owned fixed-parent experiment
+
+The separate [fixture owner](../../scripts/ci/run_pure_pon_fixed_parent_v1.py) is
+restricted to a disposable GitHub-hosted systemd/cgroup-v2 runner. It refuses an
+existing fixed parent or unit. The runtime-only transient slice keeps the exact
+original ceilings: `cpu.max=25000 100000`, zero CPU burst, 2 GiB memory, zero swap
+and 256 tasks. The unit's nonce/InvocationID, root-owned parent/leaf identities,
+boot ID, resource files, memberships and cumulative counters are retained.
+
+One root-opened `cgroup.procs` descriptor intentionally grants migration into
+the owned leaf. No root/common-ancestor write permission or capability is given
+to the running service. The trusted pre-exec hook writes only zero to migrate
+itself; the kernel descriptor capability is broader than a write-zero-only rule.
+The descriptor is close-on-exec, and the controller drops its copy before
+starting honest clients, sampler and hostile actors. The receiver stays its
+controller's direct child for the original wait4 accounting. Three independent
+phase controllers reuse the same parent and immutable prepared inputs; this
+has a fresh schema and is not the old 90-second campaign. Fork/pre-migration CPU
+remains in wait4 and is explicitly outside the cgroup interval.
+
+Only owned, identity-matching, empty assets may be removed. Controller nonzero
+exit, reap errors, truncated capture and failed ownership cleanup refuse
+qualification. The parent is sampled before process-group cleanup so that a
+later signal cannot conceal receiver residue. Root unit identities and held
+directory identities are rechecked during partial-creation cleanup as well.
+These are finite custody observations, not independent-operator or physical-host
+authentication. A positive kernel-parent result requires the real new CI run;
+local ordinary-file refusal and IPC controls cannot supply it.
+The [new disposable-host workflow](../../.github/workflows/pon-fixed-parent-receiver-v1.yml)
+is separate from both original campaigns. It retains the exact compiler's Cargo
+artifact record, two real short controls, binary bytes, original controller IPC,
+root-held file bindings and independent reader output. Its success condition is
+the new host fixture only; the original finite paid-depletion predicate is
+reported separately and the previous failed x64 sample remains failed.
+
+The receiver startup handshake now shares one absolute deadline across partial
+prefix and body reads, reusing the established control-channel deadline owner.
+The original 180-second readiness budget is unchanged. Two new actual native
+controls passed before commit: ordinary files cannot serve as migration
+descriptors, and delayed/partial readiness frames cannot restart their deadline.
+Release/all-features interface compilation and strict Clippy also passed. These
+precommit observations remain distinct from committed-source qualification.
+The new sidecar brackets the actual deadline-arm operation with monotonic
+observations, rather than incorrectly using process-spawn completion as its
+exact start. The 180-second value and original read deadline remain unchanged.
+
+#### Actual CodeQL execution is separate from the existing security gate
+
+The [pinned analysis workflow](../../.github/workflows/pon-pinned-codeql-analysis-v1.yml)
+executes the unmodified official CodeQL 2.27.3 code-scanning suites and retains
+SARIF, every selected query's BQRS, query bytes, source checks, extraction
+diagnostics and failures. It uses `contents: read`, no persistent checkout
+credentials and no `security-events` writes. The original exporter/default
+setup and its failed or missing security verdict are unchanged. Findings remain
+findings even when query execution completes.
+
+The official Linux64 bundle is pinned to 558,869,612 bytes and SHA-256
+`5e7607e1b721728955e31f5402d460ad227cbd2ffed0d4cc610116755796150e`.
+Original query packs are Actions 0.6.38, Python 1.8.13, Rust 0.1.45 and C++ 1.9.2.
+The [analysis owner/reader](../../scripts/ci/run_pinned_codeql_analysis_v1.py)
+uses the retained bounded process owner, fixed outer phase deadlines, a fresh
+database and source checks on both success and failure. Its thread/RAM options
+are CLI hints, not a claimed process-family hard resource ceiling.
+
+Independent local B execution completed 18 Actions queries over all 19 tracked
+workflows and 45 Python queries over all 384 tracked Python files, with no
+reported findings or warning/error diagnostics in those two runs. First Rust
+extraction returned exit zero but could not load any of its four discovered
+workspaces; all 1,038 Rust inputs lacked semantic analysis. Its 37 queries and
+186 hard-coded-cryptographic-value findings are retained as partial results,
+with original severity and traces. First C/C++ execution completed 61 queries
+with zero findings but successfully extracted only two of three tracked C
+translation units. Neither partial result qualifies complete security analysis.
+
+The exact official extractor
+[toolchain selector](https://github.com/github/codeql/blob/a1575b98a8cc19bcfa7bb6cb41be688cb3dae65c/rust/extractor/src/toolchain.rs)
+selects Rust 1.99.0 for non-nightly projects; its configuration explicitly enables
+that toolchain's automatic installation. Diagnostic forwarding retained actual
+child commands trying to install 1.99.0 when it was unavailable, while direct
+project 1.95.0 Cargo metadata succeeded. Adding only 1.95.0 `rust-src` did not
+repair that failure. The independent workflow therefore installs the official
+extractor dependency separately. The project/default runtime compiler remains
+1.95.0; an analyzer's newer compiler must not be described as native-runtime
+validation of another toolchain. Old partial databases and failed observations
+remain retained until a new, unchanged-source extraction proves its own coverage.
+
+Installing the official 1.99.0 analysis dependency recovered real main-workspace
+semantic loading, but did not establish full archived-source or macro coverage.
+That extraction retained 33 warning/error lines and 299 semantic-failure marker
+lines, including incomplete historical workspaces and guest macro expansion.
+Its subsequent original-query run exited 100 inside CodeQL's relation-cache
+reader: a recorded 3,562-byte relation produced a 5,787-byte read. Eleven of 37
+diagnostic/metric BQRS files completed; 26 query results and the new SARIF were
+absent. No new security-query result or zero-finding result is inferred. The
+original failed database, cache sample and logs remain retained. Resource
+observations showed neither OOM nor sampled disk exhaustion; the underlying
+cache failure cause is not established by the generic exception wording.
+
+The [C analysis compiler](../../scripts/ci/build_pinned_codeql_cpp_v1.py) explicitly
+reconstructs the original two-fragment native translation unit as the unchanged
+spawn bytes, one LF, then unchanged retirement bytes. Byte ranges, line offsets,
+source hashes and generated-file bytes are checked independently. Named-file
+input replaces stdin only for analysis; path/line-sensitive predefined macros
+are refused. The SQLite analysis uses the exact original 0.37.0 registry
+amalgamation/build-source pins, witness input, include macro, 20 explicit defines
+and optimization setting. Both original recipe owners are hash-bound; changed
+owners require review. These analysis compilations do not execute a native
+library or publish the production SQLite build fence, whose loader-override
+refusals are unchanged.
+
+The C context is not itself extraction coverage. A composed input counts only
+when the original SARIF diagnostics actually name the exact, byte-verified
+generated unit; the witness still requires its own direct successful extraction.
+The independent context reader checks all four actual command phases, their
+logs, completion statuses and compiler output bindings. No missing fragment,
+query result or diagnostic is waived to make the analysis green.
+The first manual compilation and all 61 original queries completed, but its
+generated unit was outside the declared analysis root: the official successful
+file diagnostics named only the witness, and independent readback correctly
+retained 1/3 tracked-source coverage. That zero-finding partial result remains.
+The new runner instead uses one narrow analysis directory containing only an
+exact tracked-source copy and the generated build directory. All copied files
+are compared byte-for-byte by independent hashes before and after extraction;
+symlinks, special files, omissions and extra files are refused. Database/tools
+stay outside that root. Diagnostic URI bases and the project/generated prefixes
+remain explicit, separately checked mappings, not a blanket coverage waiver.
+
+Reader negative controls retain two additional counterexamples: a configuration
+error cannot be hidden behind successful execution, and a foreign SARIF URI base
+cannot relabel another source tree as current-source coverage. Missing tools
+retain a false terminal and both available source observations. Zero findings,
+exit zero or a selected-query count alone cannot substitute for actual coverage.
+
+#### Additional exact-B cost readback
+
+The [complete legal-cost run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40825729541)
+and [ARM v2 run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40825729599)
+were downloaded with their original GitHub sizes/digests. Independent readback
+checked seven actual ELF files, unchanged original summaries, 128 paired
+full-outer-cost ratios and the v2 compiled source bindings. Each x64/ARM V5 run
+retains 144 cohorts, nine supported legal producers, four horizons, 11,772 first
+admissions and 654 distinct paired fixture packets. The ARM v2 run retains all
+4,032 cohorts, 702,232 attempts and 58,916 exhausted searches.
+
+The V4 CLI's original absolute packet destination correctly refused a relocated
+local archive. That refusal remains; the subsequent explicitly mapped offline
+readback used the original semantic and packet-byte readers without modifying
+capture metadata. Full outer cost includes admission and storage work and must
+not be called a universal marginal mining cost. No new native cost run or full
+failed-transcript replay is inferred from this structural readback. Global
+cheapest-work bounds, accelerator/energy qualification, arbitrary public Sybil
+fairness, independent WAN operation, beneficial Hepta releases, whole-chain
+PQ128 and production governance remain **OPEN / NO_GO**.
+
+### PN0/PN1/PN5 — retained CI failures and narrow follow-up (2026-10-29)
+
+Exact source `39e865f453926a2b86565bf69e197a621e74b93c`, tree
+`c6101eb1832d76cd2e09f947b6593fbaed8bf98f`, completed 391 local Python
+controls and 332 actual native tests. The local 26-step native record includes
+both locked Cargo graphs, release formatting, strict workspace/all-target/
+all-feature Clippy, the original pressure and separate receiver-owner runs,
+retained actual executables and the complete independent W1 arithmetic replay.
+Before/after source observations agree on all 6,179 tracked entries and
+819,750,990 bytes. These are local observations under the recorded inherited
+resource envelope; they do not authenticate hardware or qualify public service.
+The same source's [public PoN CI](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40836515063)
+completed successfully on both hosted architectures. The earlier exact-B x64
+paid-depletion failure remains an original failed sample; new successes never
+rewrite it or establish a universal work-cost or fairness bound.
+
+#### Fixed-parent setup: typed absence and temporal evidence
+
+Both architectures of the [first owned-parent run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40836515148)
+stopped at the second manager command, before unit creation or a pressure phase.
+`systemctl list-unit-files` returned status 1 with empty stdout/stderr for no
+matching files. This is a query-contract error in the fixture, not an observed
+resource-parent permission failure or a completed failed depletion experiment.
+The original artifact ZIPs, both actual ELF files, Cargo build identities,
+manager outputs and false qualification records are retained and independently
+hash-checked. No historical command output is rewritten.
+
+The follow-up uses systemd's read-only `ListUnitFilesByPatterns` D-Bus method
+with an empty state filter and the one exact owned unit name. Absence requires
+integer exit status zero, no command error, the exact typed `a(ss) 0` reply and
+empty stderr. A missing method, timeout, malformed reply, populated result or
+nonzero status remains a failure; there is no compatibility fallback. The
+loaded-unit query, filesystem checks, `StartTransientUnit(mode="fail")`, exact
+identity/resource checks, single owned lifecycle and safe cleanup remain.
+The offline reader requires unique absence commands before creation and
+consistent nonnegative integer monotonic intervals in actual execution order.
+A retained counterexample moved the absence query's recorded time after creation
+and recomputed the outer binding. List order alone had accepted it; the new
+reader rejects that contradiction. This is an evidence-reader defect, not a
+claim that the original runner executed commands concurrently or out of order.
+
+Python controls cannot demonstrate a real parent creation, migration descriptor,
+phase process, accounting interval or cleanup. The new committed source needs
+its own two-architecture hosted execution with the original service predicates.
+The challenge rate, paid CPU refill, actor count, phase duration, call deadlines
+and all public/production qualification boundaries remain unchanged.
+
+#### Separately accessible CodeQL diagnostics
+
+The [first pinned CodeQL run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40836515003)
+completed Actions, Python and C/C++ successfully; Rust failed. Its original Rust
+artifact is 843,326,935 bytes, above the connected artifact downloader's
+536,870,912-byte limit. The downloader refused it and returned no download URL.
+The job log alone does not identify Rust's internal failure. The preceding
+local exact-B relation-cache error must not be assigned to this different
+hosted run without its original execution record.
+
+Independent readback of the three accessible original artifacts verified all
+124 original query/BQRS bindings: Actions 18 queries over 21 workflow inputs,
+Python 45 over 391 inputs, and C/C++ 61 over three original inputs. The C scope
+retains one directly extracted witness plus two original fragments covered by
+the byte-verified composed translation unit. Source-copy bytes/modes, actual
+compilation records, original diagnostics and official query identities were
+checked; these three SARIFs contain zero findings and no warning/error
+diagnostics. This limited successful analysis is not a Rust result or a
+whole-repository security clearance.
+
+A separate bounded metadata artifact now retains a fixed diagnostic inventory:
+original source/result/phase JSON and explicitly partial log tails. It records
+missing, oversized, unsafe, changing and unreadable files; each retained tail
+has its observed original file size, byte interval and sample hash. JSON files
+are limited individually and in aggregate; log tails have their own bounds,
+and the entire artifact is below 32 MiB. Reads refuse symlinks, non-regular
+files and multiple hard links, use a cooperative deadline and have a separate
+outer workflow timeout. The inventory does not infer analysis success,
+coverage, findings or security clearance. A successful diagnostic collection
+cannot turn a failed scan into a passing scan.
+
+The original large artifact, complete available SARIF/BQRS/diagnostic files,
+original official suites, analyzer version, phase budgets and source checks are
+retained. No security-events write, finding suppression, query removal, default
+branch policy change or substitute required gate is introduced. The new small
+artifact makes future failures reviewable through the existing authorized
+connector; it does not recover unread bytes of the previous Rust artifact.
+
+#### Cell TCP fixture initializes before publishing an address
+
+Exact B's required prospective-merge runtime failed
+`tcp_two_bootstraps_newer_owner_sequence_never_dials_superseded_endpoint` with
+`WouldBlock`, `phase=response-header`, after the fixed 200 ms request allowance.
+The original failure is retained. Its log alone does not prove the historical
+cause or show that a superseded endpoint was dialed.
+
+The test fixture previously opened the real Cell store in its worker after
+returning a listener address. The follow-up validates the existing limits,
+finishes the store open and sets nonblocking mode before spawning the worker
+and publishing its address. Store initialization retains its existing bounded
+writer setup. A real SQLite file with an incorrect cache namespace now fails
+synchronously; the former fixture returned a peer before that failure. The
+negative control uses no sleep, retry or scheduling assumption. The fixed
+200 ms request limit, ten-second overall allowance and all real stale/current
+connection assertions remain. All 136 data-availability library tests passed
+on the precommit Rust snapshot. This fixes premature publication, not arbitrary
+host scheduling delays; exact-source hosted runtime acceptance remains separate.
+
+#### Newly observed upstream dependency and proof gates remain open
+
+Both exact-B required-quality lanes rejected four original dependency graph
+entries: `bincode 1.3.3` (`RUSTSEC-2025-0141`), `derivative 2.2.0`
+(`RUSTSEC-2024-0388`), `paste 1.0.15` (`RUSTSEC-2024-0436`) and
+`tracing-subscriber 0.2.25` (`RUSTSEC-2025-0055`). The first three advisories
+report unmaintained packages; the fourth concerns ANSI injection in logging.
+The current tracing dependency has default features disabled and no enabled
+formatter path in the observed graph. This narrows the demonstrated exposure
+but does not waive the unchanged dependency gate. The fuzz graph passed. These
+main-workspace manifests and lockfile were unchanged by exact B and C.
+
+The current published RISC Zero 3.0.6 and inspected newer upstream source still
+introduce parts of this graph. A narrow maintenance route would require real
+parent-crate changes: ark-relations' tracing API/dependency, a complete derivative
+to educe backport, and seven parent manifests using the maintained pastey package.
+It must preserve algorithms, features, provenance, licenses and exact graphs.
+Renaming old package source, removing proof features or adding advisory ignores
+would not establish maintenance or close the security requirement.
+
+The bounded proof receipt codec requires separate compatibility evidence. The
+main succinct receipt and standalone composite host use different accepted
+structures and limits. Switching the serialization beneath the same wire magic
+without real receipt compatibility tests would introduce a new verifier risk.
+Removing a direct main-workspace dependency would also not eliminate bincode
+inside the standalone SDK client. No such change is silently counted as done.
+
+The [exact-B complete-proof experiment](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40825729537)
+retains native/guest agreement for 13,364,385 user cycles and 62 segments, followed
+by the actual 5,400-second prove timeout and no receipt. Its observed waited-child
+CPU is not complete descendant CPU accounting, and its resource qualification
+is false. It proves neither successful cryptographic W1 verification nor a
+lower bound on proving cost. Global cheapest-work and accelerator/energy bounds,
+arbitrary Sybil service, complete proof qualification, independent WAN custody,
+beneficial Hepta releases, whole-chain PQ128 and governed activation remain
+**OPEN / NO_GO** until their distinct original acceptance evidence exists.
+
+### PN0/PN1 — exact-D failures carried into the next candidate (2026-10-29)
+
+Exact D `bd7a9511eb69d77bf448f72232ab9ed66d6cc176`, tree
+`fc7879cc21b8f748338880edd246dbd457ff235a`, completed 432 Python controls
+and all 24 declared control/check steps. Its separate eight-step native record
+completed all 136 data-availability library tests, locked main/fuzz graphs,
+release formatting and strict workspace/all-target/all-feature Clippy. Both
+records independently verified unchanged source before/after on all 6,181
+tracked entries and 819,800,777 bytes. This does not represent every workspace
+test or a successful hosted qualification.
+
+#### Owned-parent membership formatting: actual migration succeeded
+
+The [exact-D fixed-parent run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40840801235)
+passed the typed absence query and actually created the owned parent on both
+architectures. Original receiver observations show the process and all its
+threads in `0::/trnmponpublic.slice/owned-….group`, with the migration descriptor
+absent and the fixed-parent guard observing the intended group. The Rust
+expectation incorrectly omitted the slash after `0::` because
+`Path::strip_prefix("/sys/fs/cgroup")` returns a relative path. Strict role
+verification therefore rejected the receiver after approximately two
+milliseconds. The parent retained its original 180-second readiness deadline;
+no phase was armed and no 30-second stress observation took place. Owned cleanup
+completed. These samples do not support a permission/migration failure theory.
+
+A shared Rust formatter now restores the absolute hierarchy slash for both
+receiver entry and parent-side role checks. The existing native descriptor
+control retains its original ordinary-file refusal and adds the two original
+D path vectors, an actual `/proc/self/cgroup` round trip, and adjacent-prefix
+refusal. A rebound Python counterexample continues to reject an expected or
+observed membership string with the slash removed. No membership, descriptor,
+privilege, service, budget or cleanup requirement is relaxed.
+
+The original two ZIPs, build/ELF identities, native short controls, all 57 present
+binding rows and all 43 missing rows are retained. Independent invocation of the
+exact-D reader still exits 1 and reproduces each original summary byte-for-byte.
+The initial HTTP 503 download failure is separately retained; the later transport
+retry did not rerun a hosted experiment. New actual host execution is required
+on the next committed source to test this formatting correction.
+
+#### Small diagnostics exposed the actual Rust allocation failure
+
+All four small diagnostic artifacts from the [exact-D CodeQL run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40840801599)
+were accessible and independently checked against their public artifact sizes
+and digests, fixed member inventory, source records, phase JSON and retained log
+byte intervals. Actions, Python and C/C++ producer records report completed
+analysis; this small-artifact readback does not pretend to reopen their full
+SARIF/BQRS inputs. Those artifacts remain separately available.
+
+The 25,960-byte Rust diagnostic archive retains the complete 18,219-byte analyzer
+stderr with the same SHA as the original phase. Creation completed in about
+196.455 seconds with status 0; analysis exited 99 after about 347.951 seconds,
+before the original 1,200-second deadline. The actual errors identify Java heap
+and off-heap allocation exhaustion, including a Java heap maximum of 1,080 MiB.
+This is query-engine allocation failure, not evidence of an OS OOM kill or the
+same failure as B's local relation-cache error. C's inaccessible large Rust
+artifact still has an unknown internal cause.
+
+Only Rust's explicit analysis RAM hint changes from 4,096 to 8,192 MiB. One
+language-specific configuration feeds the create/analyze argv, `CODEQL_RAM`
+environment, phase records and result. Other languages remain at 4,096 MiB;
+two threads, official suites, no-download analysis, source scope, before/after
+bindings and both 1,200-second phase deadlines remain. The declared public
+`ubuntu-24.04` runner has a documented 16 GB memory class, but CLI hints are not
+hard process-family limits. A bounded `/proc/meminfo` snapshot records actual
+readable values without certifying cgroup capacity or future availability.
+
+The failed D extraction also retains 299 semantic-unavailable markers. Logs
+report only twelve diagnostic/summary queries completed and no completed
+security query. More evaluator memory may repair execution; it does not waive
+semantic coverage, supply a missing SARIF, dismiss a finding or authenticate the
+original official security gate. The new source must produce its own original
+analysis artifacts and undergo independent readback.
+
+#### Complete W1 proof: bounded progress and actual process observations
+
+The old 5,400-second proof timeout has genuinely empty stdout/stderr and no
+receipt. The pinned SDK's `--port` interface returns after the entire prove call;
+the host previously printed only after strict verification, serialization and
+file synchronization. The new optional observer therefore records a separate
+bounded host phase journal at entry/return of the SDK call, strict verifier,
+codec and receipt write. Its event vocabulary contains fixed labels only, not
+proof contents or exception payloads. Partial journals remain partial. Host
+`Instant` values have their own epoch and are not subtracted from the owner's
+monotonic timestamps. A journal write failure cannot hide an earlier SDK or
+verification error or promote a printed success to a successful process exit.
+
+An explicit `--observe-proof` path retains the original full W1, Composite/
+Poseidon2 profile, segment power 18, fixed input/image, no-development/no-remote
+requirements and 5,400-second work deadline. A narrow held-ELF exec shim
+preserves the SDK's `--version` stdout protocol; only `--port` redirects backend
+progress into separate capped pipes. The real backend replaces the shim in the
+same PID. The host's machine-readable stdout remains separate. Executable
+before/after identities, actual sampled executable images and file descriptors
+are observations; they are not compiler or physical-hardware attestations.
+
+The process owner retains an unreaped leader, uses non-reaping exit observation,
+signals its owned process group before reaping, and records one actual direct
+`wait4` result plus separately adopted child rows. Current incomplete cleanup
+is a failure. Historical process-family completeness remains unknown even after
+successful finite cleanup. Sampled process CPU ticks are not added to nested
+wait4 totals. Unreadable, missing, racing or bounded-out process/cgroup evidence
+remains explicit; no inferred whole-family CPU or memory peak is reported.
+Logging, hashing and sampling overhead stays inside the measured outer work
+scope and its original deadline. Cleanup keeps its existing separate finite
+allowance; cooperative checks are not hard real-time kernel-I/O guarantees.
+
+Because direct wait4 and the old observer-parent `RUSAGE_CHILDREN` difference
+have different meanings, the new process record uses
+`pon-w1-observed-process-v2`. Historical process-v1 records and failed artifacts
+are not rewritten. The new workflow explicitly requires the proof observer;
+legacy compatibility must not allow a changed schema label to bypass required
+sidecar/source/phase checks. None of these observations substitutes for an actual
+receipt, independent verification, all original negative proof controls or a
+quantitative security argument. Complete proof, whole-chain PQ128 and public
+service qualification remain separate open requirements.
+
+The original native pressure schedule has also been independently checked:
+its shared monotonic epoch is consistent, actors start within milliseconds, and
+honest rounds are deliberately scheduled at 1/5/9 seconds while pressure lasts
+30 seconds. C's first depletion at 14.56-14.87 seconds follows its third completed
+round. No time-origin defect was found. A separately named, predeclared late-round
+supplement could test this coverage gap; no such experiment is counted as run,
+and moving honest CPU work cannot assume the old depletion trajectory persists.
+The original schedules, samples and failed overlap predicates remain intact.
+
+Before publication, the next candidate's real standalone host/client dependency
+graph, strict all-target Clippy and eight actual host tests passed with unchanged
+selected backend source and a retained test ELF. Two real node controls checked
+the cgroup formatter and the original absolute readiness deadline. These are
+explicit precommit observations, not exact-commit qualification. The 59 parent
+reader, 25 CodeQL, 17 process-owner and 13 proof-reader controls also passed in
+their retained author runs; independent reviews retained the original rejected
+counterexamples. None of these short tests executes the full W1 prover.
+
+### Maintained dependency and finite native-I/O continuation — 2026-10-29
+
+The exact-E source remains `974932be6dcfe830ce1ce92d58cb10e89cb8358d`.
+Its [fresh full-W1 run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40845715591)
+ended at the original 5,400-second deadline without a receipt. Sustained sampled
+CPU and backend progress establish activity, not completed proofs or a complete
+process-family resource bound. The [original quality gate](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40845715590)
+also refused the main dependency graph. These remain failed observations.
+
+#### Fixed public receipt bytes with a maintained internal decoder
+
+The optional M01 transparent-admission verifier removes its direct bincode
+dependency. Its complete fixed-width grammar first checks the entire receipt,
+variable lengths, supported variants and exact end without creating a proof
+container. A second pass translates only validated enum and length widths into
+the official SDK's Borsh representation. Ordinary integer and digest bytes,
+metadata and claim branches are retained. The maintained SDK deserializer and
+original strict cryptographic verifier consume that internal representation.
+There is no format detection or fallback accepting Borsh as public wire.
+
+PWAI0001 framing, the 1 MiB certificate limit, input binding, image, control root,
+join identifier, po2 and verifier-parameter checks are unchanged. The conversion
+adds a grammar traversal and at most 998,920 logical temporary-buffer bytes;
+this is not an overall allocator, heap or RSS bound. Reverse encoding exists
+only in tests so the original typed tampering controls need no bincode dev
+dependency. The separate standalone SDK client graph still needs maintenance.
+
+The real Succinct fixture has independently matched original artifact
+`12804405518` from [run 40659377917](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40659377917),
+produced by `bc053e24a590a4d07ad79e2ea065d190223d4426`. Its 273,338-byte
+certificate SHA-256 is
+`9c370089ba5203b9a8559b900c975778425839f4ccfa171387bdfb0853a3e5c9`;
+the 223,682-byte receipt SHA-256 is
+`d2f8a217f58e3917315a0cba6a3010c813ac8934328b662f151fb936d0341b3e`.
+This historical proof is available for new-consumer verification; it was not
+generated by this continuation. Byte round trips do not establish cryptographic
+validity. Real positive verification, original negative controls, full crate
+tests and strict Clippy remain required on the new source.
+
+#### Complete upstream components with explicit local maintenance
+
+The workspace owns complete published `ark-relations` 0.5.1 and
+`ark-crypto-primitives` 0.5.0 components under M01. Original package names,
+versions, licenses, source, public features and tests are retained, with
+publishing disabled. Cargo patches select these inventoried sources. Each
+component's `UPSTREAM.json` binds the archive and original members;
+`UPSTREAM.md` describes maintenance. Registry caches are not edited.
+
+The relations component pins tracing-subscriber 0.3.23 and migrates its empty
+`Layer::new_span` callback to `on_new_span`. Its own filtering/trace behavior is
+retained; compatibility with the old external 0.2 trait is not promised.
+The crypto component migrates all fifteen derivative sites to educe 0.6 with
+their explicit generic bounds. That derive migration retains the arithmetic and
+serialization algorithms. The additional ordering, API and boundary repairs
+below have their own explicit behavior and compatibility scope.
+Complete workspace membership also selects upstream test dependencies. Initial
+lock resolution exposed Criterion 0.4's atty dependency; the retained development
+dependency is upgraded to Criterion 0.8.2 with its default features and all
+original tests, rather than applying an advisory exception.
+
+All-feature/all-target tests, doc tests, strict Clippy, no-default-feature library
+checks and both actual dependency graphs remain separate requirements. This
+source does not close the remaining paste parents or standalone SDK graph.
+No license, advisory, source policy, platform feature or test is excluded to
+make a gate pass.
+
+#### Native-I/O reader and the existing finite public route
+
+Predicate-level counterexamples showed that the old reader accepted unknown
+lifecycle actions, incorrect serialized-byte charges and event inodes
+inconsistent with final objects. The reader now checks exact fields, original
+Rust serialization charges, contiguous sequences, generation and reference
+transitions, final objects and original-host inode bindings. Repeated healthy
+binds may refresh sizes without an event; these observations establish lower
+bounds, not complete write accounting. Synthetic predicate controls do not
+qualify a native component.
+
+A narrow workflow invokes the existing public prepare entry, exactly one finite
+component execution and the strict reader on the same host. It retains the
+original Plan, 1,200-second build and 180-second collector deadlines,
+four-CPU/16-GiB policy and Nice 10. A disposable uniquely named unit provides
+bounded cleanup; failures and partial outputs remain artifacts. Source binding
+and complete command outcomes determine the result. Copied ZIP inode numbers
+cannot authenticate a different host's files.
+
+This route has two actors, two prefix paid identities and six final paid
+identities. `full_route_ready` and all full-qualification flags remain false.
+It does not establish the 4,097-identity campaign, all writers/callers, arbitrary
+Sybil fairness, independent WAN operation, consensus hardness, beneficial model
+evolution or whole-chain quantum resistance. New source and test results go
+through the existing draft integration PR. Production activation and historical
+failed evidence remain unchanged.
+
+#### Real ordering repair and explicit maintenance compatibility
+
+Strict all-target/all-feature Clippy exposed a real `Variable` ordering defect
+in the imported relations component: the old comparison reported both
+`Zero < One` and `One < Zero`. An actual red native control also showed that
+`LinearCombination::compactify` left twelve entries for eleven distinct
+duplicated representative variables. The maintained implementation defines one
+total order in `Ord`, with `PartialOrd` delegating to it: zero, one, instance,
+witness, symbolic linear combination, and then the original within-kind index
+order. The original failing execution is retained. This changes the defective
+comparison and its downstream sorting behavior; it is not merely a lint edit.
+Enum layout and public encodings do not change. No forgery of the main Succinct
+verification path has been established from this defect.
+
+The remaining strict maintenance has explicit compatibility limits. The two
+`FromFieldElementsGadget` input methods accept slices; existing ordinary
+`&Vec` calls coerce, but external trait implementations and exact function
+pointer signatures require migration. Signed integer absorption uses unsigned
+magnitude so the five signed minimum values have their mathematical field
+values even with overflow checking; original little-endian integer bytes are
+unchanged. Boundary controls cover MIN, MAX, -1, 0 and 1 for all five widths.
+Private closure type aliases retain borrowed lifetimes. Iterator changes retain
+the original indices, valid-input operation order and features.
+
+The declared `asm` feature really forwards to `ark-ff/asm`; it is not an empty
+feature silencing generated `cfg` diagnostics. Full-feature workspace builds
+can consequently change shared field code generation. Montgomery assembly has
+its original x86_64/BMI2/ADX conditions, while carry/borrow intrinsics also have
+x86_64 feature branches. No target ISA flags are added. Both maintained-package
+tests and actual main-verifier consumer tests must be repeated for the new
+feature union, with the original cross-architecture CI still required. Archive
+hashes and original-member hashes in `UPSTREAM.json` remain provenance of the
+upstream inputs, not hashes of the locally maintained files.
+
+#### Publish original CodeQL findings through a separate, bounded job
+
+The previous pinned analysis produced retained SARIF but did not publish it to
+the official code-scanning service. The analysis job keeps read-only permissions.
+A separate same-repository PR job receives only the permissions needed to read
+the same-run artifact and upload security events; it executes no native build,
+query, guest or prover. Fork and Dependabot events do not use this write job.
+The official upload action is fixed to an immutable commit. Exact head and PR
+head ref are explicit, and the original SHA-containing category is retained.
+
+Publication accepts a completed, source-stable scan even when its original
+finding or semantic-coverage verdict is false. It does not turn that verdict
+green. Original result, SARIF and before/after source observations are retained
+byte for byte. The helper verifies a fixed, bounded file set, the original
+query count, category, result count and exact Git blobs. Before fingerprinting,
+the existing source verifier independently checks the publisher's actual full
+tracked worktree. A new empty official-action temporary directory supplies no
+PR diff filter.
+
+C++ analysis copies use `project/` source prefixes. Only artifact locations with
+exact Git-blob and original-copy bindings may lose that prefix. The generated
+translation unit retains its original absolute analysis URI, its two original
+byte-bound source components, and an explicit untracked-source qualification.
+A reversible typed-JSON comparison requires every other field to remain
+unchanged. The official postprocessed payload may only add the documented line
+fingerprint; original findings, severity, rules, invocation diagnostics and
+existing fingerprints must remain. The raw upload payload and failures are
+retained separately. An action result and SARIF ID are observations, not an
+independent official security-gate qualification.
+
+The original export deadline, query/model definitions, Rust findings and
+coverage requirements are unchanged. Actual official ingestion, exact-source
+export and repository default-setup compatibility remain requirements for the
+new GitHub run. No administrative setting is assumed or changed.
+
+### F terminal evidence and bounded publication repair
+
+The published candidate remains
+[`7d54a36c9e760f8edab6544c69c153dad2626eab`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/7d54a36c9e760f8edab6544c69c153dad2626eab),
+tree `8a5964aec47b2bf2b6f34216c0096b56ebe6facd`, in the existing draft
+integration PR. Its actual
+[required baseline](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40877800724)
+has completed both native runtime lanes successfully: the candidate head and
+prospective merge `a691f00fe2ae222756b3ac559d56ecfcd754ab51` use that same
+tree. The newly retrieved small runtime receipts report passing outcomes and
+matching before/after source. This readback does not claim to have reread the
+separate large runtime output archives. Both quality lanes and their dependent
+fan-in remain failed; successful runtime execution does not waive them.
+
+The [fresh F complete-W1 run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40877800719)
+also failed. Its original process record reports the unchanged 5,400-second
+deadline, exit 124 and 5,400.188153 seconds of wall time. The retained artifact
+contains no receipt; proof verification and the negative proof audit did not
+execute. All 55 members of the newly retrieved 306,070-byte artifact were
+CRC/hash checked, with ZIP SHA-256
+`d72cc4495a4bbe4b408140f7968cd48e2c76883e2cc10cbf8a0d5f32a1b099df`.
+This is a real timeout, not successful proof generation.
+
+#### Exact metric serialization in the CodeQL publisher
+
+The [actual F publication run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40877800722)
+retains the original four language bundles and the official action's processed
+SARIF. The C++ and Rust comparison failures arise from respectively 15 and 14
+changes at `runs[*].properties.metricResults[*].value`: an exact integral JSON
+float such as `100.0` is serialized as the integer `100`. This narrow repair
+allows only that path, direction, finite mathematical equality and the
+JavaScript safe-integer range. A second Decimal parse checks the original token
+exactly, preventing binary-float rounding from hiding a changed fraction.
+
+The complete typed comparison still rejects all other field changes. Existing
+fingerprints are checked before restoring comparison copies, and permitted
+metric conversions are explicitly recorded. Both original byte streams remain
+intact. All original findings, rules, diagnostics and invocations must survive;
+the Rust scan's 322 findings and failed semantic-coverage verdict are not made
+clean by successful packaging. Data-only replay and its control tests are not
+new scans, uploads or official security-gate qualification.
+
+All four actual F uploads were rejected because repository default setup is
+enabled. The [official exporter](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40877800709)
+retained 39 polls with empty analysis lists; its last 20 polls contained a
+completed, neutral exact-F CodeQL check reporting a SARIF processing error.
+Its final result remains incomplete and unauthenticated. This is no longer
+described merely as a missing check. GitHub's
+[documented default-setup behavior](https://docs.github.com/en/code-security/reference/code-scanning/troubleshoot-analysis-errors/results-different-than-expected)
+blocks advanced CodeQL uploads. No administrator setting, branch target,
+required gate, finding, coverage rule or upload identity is changed by this
+repair. Official ingestion and the original security gate remain open.
+
+#### Four requested Rayon workers for the next complete-W1 experiment
+
+The next proof step explicitly requests four Rayon workers under the separate
+`full-w1-composite-rayon4-research-v1` observation profile. Other steps retain
+their original two-worker environment. The workload remains the complete
+64-by-64/r8/512-tile W1 relation, with the same pinned guest image, local
+Composite/Poseidon2 backend, segment power 18, original 5,400-second proof
+deadline, strict verifier and complete negative audit. No development receipt,
+remote prover or alternative proof kind is admitted.
+
+The step retains its requested environment, exact source and observed caller
+CPU affinity in `prove.thread-request-v1.json`, and rejects a request other
+than four before launching the proof. That record is descriptive; the existing
+proof reader does not use it as a replacement acceptance predicate. The
+unchanged observer retains actual process evidence and unknown family/resource
+limits. Requested Rayon workers are not total process threads or a CPU quota.
+Affinity is not an enforced resource boundary, and a faster run or a particular
+memory peak is not assumed. The public runner's
+[documented resource class](https://docs.github.com/en/actions/reference/runners/github-hosted-runners)
+does not replace actual resource observations. A future result belongs to this
+new worker-request configuration; the original two-worker failures remain
+failures. Proof completion, public service, model benefit, whole-chain quantum
+resistance and production activation remain distinct requirements.
+
+Workspace maintenance removed an unpublished local CPU-parent experiment and
+its execution originals. It was never part of the published F tree. Those old
+local observations are not reused as current-source acceptance: the complete
+parent sources, provenance and executable verification must be restored from
+their immutable upstream inputs and run again before their own publication.
+
+### H: complete CPU-parent source adoption and fresh native verification
+
+The next bounded adoption starts from published G
+[`c96c2b3e24ba354b4abcb842ca6a6a019c442b73`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/c96c2b3e24ba354b4abcb842ca6a6a019c442b73),
+tree `74b69713a50e61a52e2232855f1a19c567f1e6e1`. It owns the complete
+`ark-ff 0.5.0`, `risc0-zkvm-platform 2.2.3` and `rrs-lib 0.1.0` sources under
+M01 in the primary workspace. Each published archive, original member and
+supplemental license is hash-bound in its retained `UPSTREAM.json`.
+The 73 prepared files total 547,404 bytes before repository integration; two
+independent readers verified that handoff. Original Rust sources and test data
+are preserved at this initial adoption. Neither prior pruned native results nor
+a source-only inventory is fresh executable acceptance.
+
+The active `ark-ff` manifest removes its unused direct `paste` dependency and
+restores the original upstream test requirements, including all six nested
+expander trials and 60 vectors. The other two manifests preserve their original
+source alias while resolving the real maintained package `pastey =0.2.3`.
+Original package names, versions, licenses and features remain; publishing is
+disabled. The primary workspace uses same-name patches and a 31-package source
+inventory. The standalone W1 workspace and its locked graph are unchanged.
+Remaining SDK parents and platform-specific dependencies still need their own
+adoption and gates; this change does not declare the supply gate clean.
+
+Fresh validation must first compile and run the retained original suites on a
+clean source commit. The cubic-extension test's expected third pair must then
+be reproduced with six distinct fixed inputs: canonical arithmetic must pass,
+and the original expected-pair assertion must actually fail. A build failure
+does not satisfy that control. Only after that RED may the shared test oracle
+change from indices `[3],[4]` to `[4],[5]`. That repair concerns a test oracle,
+not a demonstrated production field-arithmetic defect. Original random tests
+remain. Full unit, documentation, feature-union, no-default, formatting, strict
+lint and actual consumer checks require separate fresh observations.
+
+Host compilation of the platform package, especially a suite with zero original
+tests, does not demonstrate guest syscall behavior. All-feature exports must be
+checked against the actual consumer link scope. New source adoption or passing
+native checks do not establish proof completion, cheapest-work hardness,
+public service fairness, model efficacy, whole-chain quantum resistance or
+production activation. Every unresolved gate remains open.
+
+Initial all-feature Cargo metadata and a subsequent locked offline fetch completed successfully. The primary lock SHA-256 is `9466cc1073f80c72ef978e1dde66171a9375afa2575f202eb36a314ef37b3cbc`. Three same-version registry identities become owned paths; nine new registry dependencies restore the real test/macro/optional allocator graph. Existing package versions do not change. The original `libtest-mimic ^0.8.1` requirement resolves to `0.8.2`. No compile, native test or supply-policy acceptance is inferred from metadata.
+
+The fresh H0 baseline on local commit `93f467a292e6035076c21c33b20bec085b3a910c`, tree `85db97ca32aba9110e77687e3c9e2b24e9ecd8e8`, compiled all three original packages with all targets/features in release mode. Actual original suites passed: ark-ff 24 outer tests plus six nested expander trials/60 vectors; rrs-lib 12 tests; platform zero tests. There were no ignored or filtered unit tests. The baseline receipt SHA-256 is `34655352efcb0dce4a28b5873b328f87bddac163ba5806b631e680e18b416833`. Earlier strict external-reader refusals of legitimate should-panic and uncaptured trace formatting remain separate records; the accepted batch was rerun after the reader controls passed. The next clean commit introduces only the shared original test oracle and the fixed-distinct control; its actual RED must still execute.
+
+The deterministic control actually failed on local RED commit `4d064d59bcfeb1475b629b21d95aeec389a6f5e8`, tree `e3640e28929df3eb3dd2b681675dee751e64dd3b`, after a successful rebuild. The selected native test exited 101 at the final `oracle == canonical` assertion (line 744); the preceding actual-arithmetic/canonical assertion and distinct-input checks passed. One selected test failed and 24 were intentionally filtered for this isolated counterexample. Receipt SHA-256: `feed27b7b3d5576d1ef791a078449083c0c5f2664f5f8f900a6db60be0605a7a`. The next change only corrects the shared test expected pair from `[3],[4]` to `[4],[5]`; selected GREEN and the complete retained suites must now run. The failed RED remains part of the evidence.
+
+The H2 corrected source (`bda9a45940a66529b9842228f813ac9ea0d2392f`, tree `cedcd94802a1f61aeb1012629b0190aba0b73c6b`) passed actual selected GREEN, all retained unit suites (ark-ff 25 outer plus six/60 nested vectors; rrs-lib 12; platform zero), 42/1/2 documentation tests and all three no-default library checks. All ignored counts are zero. Strict Clippy found 43 ark-ff and 13 rrs-lib errors; the separate platform check passed. The subsequent read-only formatting check also failed. Those original failures are retained. The next bounded repair preserves tests/features and adds no lint allowances. It explicitly raises the maintained ark-ff compiler requirement to Rust 1.95, retains the same carry/borrow intrinsics and hash-domain bytes, records the ceiling-overflow boundary, preserves one-byte reader consumption without prefetch, and adds three actual reader/decoded-divu regression controls. Its new source still requires fresh native validation.
+
+The original, deterministic-RED and corrected source trees are also retained as GitHub commit objects, with their full tree identities preserved: [original adoption](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/4ee136e2693768b9df1b22b8b7df003414838435), [actual-RED source](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/7dbbab0c92659b2984f72e55bdc4f6bfdfc508f5), and [oracle-corrected source](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/17067e146de0fa956b319540212a10b09950a8d7). Local execution commit IDs and GitHub materialized commit IDs differ in commit metadata; the recorded complete trees are identical. Publication does not turn any retained failure into a pass.
+
+On H3 (`12e1b2a074868219e2423e2564c3c96594a46bc3`), formatting and the rrs-lib all-target/all-feature strict check passed. Rust 1.95 exposed two further ark-ff divisibility lints. Review found that blindly replacing `%` with `is_multiple_of` would also change divisor-zero behavior, and the original `k_adicity(1, n > 1)` makes no progress. An external harness included the exact original `utils.rs` (SHA-256 `9f98bdbe94404245b9a6b3634470e3dbfc9aca511daa3bff126028e4c8ea40e4`), passed normal base controls, and observed the base-one/input-two call fail to return by the predeclared three-second deadline. Only the newly created process group was terminated. Receipt SHA-256: `9975b591ac4b1cbc90509575c42e790f6200ef7afd50c7da6a4b555b8752756d`. This is a bounded included-source observation, not full-crate qualification or established remote exploitability. The maintained helper explicitly requires base >= 2 for n > 1, keeps n <= 1 returns, and adds three full-crate controls; their new native acceptance is pending.
+
+The H4 all-feature production-library strict check progressed to the retained ark-ff test target, which exposed 17 further original test lints; the actual failure is retained. The bounded test repair keeps both reflexivity checks, the actual Clone invocation, all original test names, both complete FFT definitions/test-module bodies, all six expander fixture files and all hash/JSON label bytes. It adds no ignored test or lint allowance. Full strict checking and the actual retained suites remain required on the resulting source.
+
+#### G official CodeQL evidence and complete context review
+
+The [versioned original-result review](../../evidence/pon-codeql-security-review-c96c2b3-20261030/README.md) preserves all 322 Rust result identities, source locations and false qualification flags. Actual G [four-language CI](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40984057072) verifies the narrow metric repair: C++ 15 and Rust 14 exact conversions, Actions/Python zero, with every original result, rule, diagnostic and invocation retained. All four official publishers still fail because default setup blocks advanced CodeQL uploads. The [exact-source exporter](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40984057251) also failed at its original deadline; settings and gates remain unchanged.
+
+The manual per-result groups are 297 fixed test values, one public adversarial research nonce, one fully overwritten entropy buffer, 15 vector-operation sink-model reports, seven public test diagnostics and one mixed CLI flow. Every original alert remains; classification is not dismissal. The CLI report exposes 13 named sources but only four expanded flows, and its finite runtime canary exercise remains pending. All 85 extraction warnings remain in the denominator: 74 literal-macro warnings, eight archived-source context warnings, one retained assembly-macro warning and two internal Phi warnings. A separately prepared upstream macro backport has not yet demonstrated a reduced warning count. Security, semantic coverage and official publication remain open.
+
+#### H5 final native acceptance and retained execution originals
+
+The final maintenance source is local `c7cf03f18e0985ba5c542bf756eaa9189ab73a97`,
+tree `8a5663d8f866372c1a59b587f18fa70b96d45ea9`, materialized on GitHub as
+[`2c1898d239b6f5565e3ac681e4274e8e88f42403`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/2c1898d239b6f5565e3ac681e4274e8e88f42403).
+The commit metadata differs; the complete trees match. The earlier strict
+maintenance and adicity repair trees are preserved in the same ancestry at
+[`f3b6ccb6c4e3fae058ffeac86e443fc22927ab07`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/f3b6ccb6c4e3fae058ffeac86e443fc22927ab07)
+and [`8d69af83f1df2ba3e1418fce68432f075725b19c`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/8d69af83f1df2ba3e1418fce68432f075725b19c).
+
+[The retained execution evidence](../../evidence/pon-owned-parent-native-c7cf03f1-20261030/README.md)
+contains lossless byte encodings of the actual commands, stdout/stderr, source
+observations, native inventories and readers. Original RED, strict-lint and
+reader failures remain identifiable; they are not converted into passes.
+Large build products are not included, and the evidence inventory identifies
+any omitted large source/metadata records by digest and scope.
+
+| Actual H5 scope | Result | Boundary |
+| --- | --- | --- |
+| Three complete parent all-target/all-feature release build | PASS | Original published package identity/features retained |
+| ark-ff native library suite | 28 outer cases; six nested trials/60 original vectors PASS | Includes the fixed test oracle and three base-boundary controls |
+| rrs-lib native library suite | 15 PASS | Twelve original tests plus three reader/decoded-divu controls |
+| platform native library suite | Zero original unit tests | No guest syscall functional qualification |
+| Parent documentation/no-default checks | 42/1/2 doctests; all three no-default checks PASS | No ignored doctest |
+| Six-package union and library executions | trnm-crypto 138 PASS + one original parent-invoked helper ignore; relations 6; ark-crypto 47; ark-ff 28 plus six/60; rrs 15; platform 0 | Original three should-panic cases and helper-ignore reason bound by the reader |
+| Existing consumer integration suites | qualified_work_task 5; qualified_task_lifecycle_v2 4 PASS | Zero ignored/filtered/failed; seventeen test-disabled examples only compiled |
+| Complete workspace release/all-target/all-feature strict Clippy and formatting | PASS | No added lint allowances or excluded package/feature |
+| Exact source, ownership, generated inventory and documentation links | PASS | Source before/after equal; 16 boundary and 34 source-integrity negative controls PASS |
+
+Every H5 native phase binds the same clean source pair before and after execution.
+The integration executables were selected from the recorded compiler artifacts;
+their hashes were first observed in the integration phase and are not falsely
+represented as earlier build-time hashes. Strict workspace receipt SHA-256 is
+`13de2e08bcb653f1c00f784834c5a05c4ee73adf5d5ef8ced8f928e16df81ddd`; formatting is
+`0ff3236db170e3ec11bd3c17547006e1fb7bd3d26b03e34dd301ee46934f11d1`.
+
+This closes the stated H5 host maintenance checks, including the new adicity
+regressions. It does not close the supply policy: the remaining RISC0 SDK parents,
+Apple path, independent W1 lock and externally supplied prover remain separate
+consumption roots. No cheapest-work bound, public fairness, model efficacy,
+whole-chain post-quantum claim or production activation follows. The new
+evidence/documentation commit must receive its own source checks and CI; these
+H5 executions retain their actual tested identity.
+
+### I: versioned finite native-I/O reservations
+
+The next source candidate applies the independently reviewed reservation-v2
+handoff, patch SHA-256
+`70994ee79ead808d3e286ca24762b8e2ab2881ad158717bc310e6187d79e3b5c`,
+to the clean H6 source. It preserves the original V1 API, selector, domains,
+exact-growth accounting and failed observations. In particular, the original
+[G finite component run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40984057075)
+remains a failure: both architectures exhausted the original lifecycle admission
+margin. A new profile must establish its own acceptance.
+
+V2 reserves logical inode growth in fixed 64-KiB quanta before delegation.
+Endpoints are checked before rounding; an observed post-I/O length cannot
+silently create credit. The only initial existing-inode admission is an
+explicit, linked, pre-I/O bind. Original limits remain: 16 MiB per inode,
+three retained objects and 48 MiB per root, seven roots, 1,024 ordinary and
+256 cleanup events, 512 bytes per event and 655,360 serialized event bytes.
+The same process-wide owner claim and permanent registration slots cover V1
+and V2. A deleted but still-open object keeps its reservation until closure.
+
+For three fixed inode generations, at most 768 increasing growth reservations
+can fill their three byte caps. This does not bound an unlimited sequence of
+open, close, recreation or adversarial churn; lifecycle admission still fails
+at its original evidence margin. Exact event replay means exact reservation
+state and recorded lifecycle transitions, not a persisted event for every I/O
+callback. Logical reservations are not allocated-block quotas or authentication
+against a hostile local operator.
+
+The public finite V2 profile keeps the original Plan, 1,200-second build,
+180-second collector, resource contract and three inherited input descriptors.
+Its once-bound profile cannot switch after a default V1 API use. Preparation,
+storage profile, closed-root health and stage roles are explicitly bound; the
+strict reader replays the global event sequence and checks the eight-event
+admission margin at each admission action. The two independently discovered
+impossible histories remain retained counterexamples: excess admission after
+ordinary-event exhaustion and an existing named inode claimed as unlinked.
+
+The initial clean I0 commit is a source candidate, not native acceptance.
+Required fresh checks include all original library controls plus ten new
+reservation controls, one real SQLite small-write/cold-reopen/growth-refusal
+test, both original ignored finite parent controls and their 10/4 child cases,
+the retained selector inventory, original preregistration assertions, complete
+workspace strict lint/formatting and the Python/source controls. Existing
+ignored parent tests must actually be invoked; compilation or ignored counts
+do not demonstrate execution. Each accepted native phase binds its clean
+source and actual executable before and after use, with failures preserved.
+
+Local tests may reuse the inventoried warm target. The actual public 3-FD
+preparer must still create its own fresh target and prove the original host
+resource conditions. If those conditions are unavailable locally, the exact
+failure stays explicit and the versioned x64/ARM64 workflow remains the next
+execution route. No fallback resource record or relaxed deadline is allowed.
+Full writer/caller/independent-reader qualification, 4,097-identity capacity,
+public fairness, model efficacy, merge readiness and production activation
+remain false.

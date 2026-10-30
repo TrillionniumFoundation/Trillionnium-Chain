@@ -1,0 +1,217 @@
+{
+  "active_manifest_sha256": "e4bb3990ed1b2394c5a7146e62f5065df8fc8b927acd416337a273c258f3f111",
+  "all_original_features_preserved": true,
+  "archive": {
+    "bytes": 17367,
+    "prior_pinned_archive_hash_matched": true,
+    "sha256": "2eb37a97ff7e8e4ee1b2a1c43ec143b4887759883c343507af9e4787a57914cd",
+    "url": "https://static.crates.io/crates/risc0-zkvm-platform/risc0-zkvm-platform-2.2.3.crate"
+  },
+  "consensus_authority": false,
+  "fresh_current_native_observation": {
+    "consumer_examples_only_compiled": 17,
+    "consumer_integration_ignored_or_filtered": 0,
+    "doc_tests_passed": 1,
+    "evidence_directory": "evidence/pon-owned-parent-native-c7cf03f1-20261030",
+    "filtered_unit_tests": 0,
+    "full_supply_or_security_acceptance": false,
+    "github_same_tree_commit": "2c1898d239b6f5565e3ac681e4274e8e88f42403",
+    "guest_syscall_functionality_qualified": false,
+    "ignored_doc_tests": 0,
+    "ignored_unit_tests": 0,
+    "local_tested_commit": "c7cf03f18e0985ba5c542bf756eaa9189ab73a97",
+    "no_default_library_check_passed": true,
+    "original_consumer_integration_tests": {
+      "qualified_task_lifecycle_v2": 4,
+      "qualified_work_task": 5
+    },
+    "production_activation": false,
+    "public_fairness_qualified": false,
+    "receipts": [
+      {
+        "phase": "H5-native-risc0-zkvm-platform",
+        "sha256": "777c9b0f80fd40327738d431a8955f15420c6e63e387bc781548aa750649d33c"
+      },
+      {
+        "phase": "H5-doc-risc0-zkvm-platform",
+        "sha256": "3010b536dc128d0075069c386235957221dfa49b0cf54f3c607b309e53cd5c61"
+      },
+      {
+        "phase": "H5-no-default-risc0-zkvm-platform",
+        "sha256": "bc75a15b1d06fce2e2973af564a0053f915e46d40f48188fbeb54f4c6e63e1c0"
+      },
+      {
+        "phase": "H5-six-native-risc0-zkvm-platform",
+        "sha256": "3655d0974cee600eb5bb06524c2cd4f9ecb9d32822939ad7d56c48d76b69fcc7"
+      },
+      {
+        "phase": "H5-strict-three",
+        "sha256": "693a05bd96127b051bfcd99350ee9ad5a4833d716951fae4bf1fa919c0d37e99"
+      },
+      {
+        "phase": "H5-workspace-strict",
+        "sha256": "13de2e08bcb653f1c00f784834c5a05c4ee73adf5d5ef8ced8f928e16df81ddd"
+      },
+      {
+        "phase": "H5-workspace-format",
+        "sha256": "0ff3236db170e3ec11bd3c17547006e1fb7bd3d26b03e34dd301ee46934f11d1"
+      }
+    ],
+    "retained_unit_tests_passed": 0,
+    "rust_toolchain": "1.95.0",
+    "six_package_all_target_all_feature_union_build_passed": true,
+    "six_package_native_library_suites_passed": true,
+    "tested_tree": "8a5663d8f866372c1a59b587f18fa70b96d45ea9",
+    "three_parent_all_target_all_feature_build_passed": true,
+    "whole_chain_post_quantum_qualified": false,
+    "workspace_format_passed": true,
+    "workspace_release_all_target_all_feature_strict_clippy_passed": true
+  },
+  "fresh_prior_native_observation": {
+    "current_lint_proposal_validated": false,
+    "doc_tests_passed": 1,
+    "full_supply_or_security_acceptance": false,
+    "github_same_tree_commit": "17067e146de0fa956b319540212a10b09950a8d7",
+    "ignored_doc_tests": 0,
+    "ignored_unit_tests": 0,
+    "local_tested_commit": "bda9a45940a66529b9842228f813ac9ea0d2392f",
+    "no_default_library_check_passed": true,
+    "retained_unit_tests_passed": 0,
+    "strict_clippy_errors": 0,
+    "tested_tree": "cedcd94802a1f61aeb1012629b0190aba0b73c6b"
+  },
+  "maintained_macro_package": {
+    "bytes": 20361,
+    "package": "pastey",
+    "prior_pinned_archive_hash_matched": true,
+    "sha256": "2ee67f1008b1ba2321834326597b8e186293b049a023cdef258527550b9935b4",
+    "url": "https://static.crates.io/crates/pastey/pastey-0.2.3.crate",
+    "version": "0.2.3"
+  },
+  "maintenance": "keep the original paste source alias and resolve the real maintained pastey package at =0.2.3",
+  "modified_original_members": [
+    "Cargo.toml"
+  ],
+  "original_Cargo_toml_orig_is_unchanged_provenance": true,
+  "original_git_provenance": {
+    "git": {
+      "sha1": "8c215e2f4ccdd935f0517bf05d90f1ae032840a9"
+    },
+    "path_in_vcs": "risc0/zkvm/platform"
+  },
+  "original_members": [
+    {
+      "bytes": 113,
+      "mode": 420,
+      "path": ".cargo_vcs_info.json",
+      "sha256": "d890212d867c48df45f2ebf7302a59eb0b71cd92a52635ee6f091ab951a6bf0c"
+    },
+    {
+      "bytes": 6844,
+      "mode": 420,
+      "path": "Cargo.lock",
+      "sha256": "cd09f2743761f0e7630e5442a378fc0f404d6af9d1bea69b5e555556e4bf769e"
+    },
+    {
+      "bytes": 2389,
+      "mode": 420,
+      "path": "Cargo.toml",
+      "sha256": "6e621265e3b308f5e348a47e0dded03e2b4aa99b31a298fea0c5678d0bc9545a"
+    },
+    {
+      "bytes": 1782,
+      "mode": 420,
+      "path": "Cargo.toml.orig",
+      "sha256": "fd970e8458c62282398362700fa2f14679f7b0be8fd92dd0c2d8640a92763b8c"
+    },
+    {
+      "bytes": 123,
+      "mode": 420,
+      "path": "README.md",
+      "sha256": "ee7317870cefc7873451dc583253076b667ebec38eb47e9d7391f88221b807e6"
+    },
+    {
+      "bytes": 3692,
+      "mode": 420,
+      "path": "src/getrandom.rs",
+      "sha256": "d1de7881224b20cab7aeed4f7c268757414163be6088a1d8c73dd11cca5a833e"
+    },
+    {
+      "bytes": 3985,
+      "mode": 420,
+      "path": "src/heap/bump.rs",
+      "sha256": "6b17333bf2c8080248a77401e224c83be5a4ab6955a5987df3fcd4d149715e8c"
+    },
+    {
+      "bytes": 1575,
+      "mode": 420,
+      "path": "src/heap/embedded.rs",
+      "sha256": "b113164db6acf381db6b358f494c51d0e54ce411bfd74418c48f2de6b461c383"
+    },
+    {
+      "bytes": 1552,
+      "mode": 420,
+      "path": "src/heap/mod.rs",
+      "sha256": "de4cf0b48f840f9bb5b4a7ce744488a115e26fc3a34dfdf82639e9b35734c7cc"
+    },
+    {
+      "bytes": 1816,
+      "mode": 420,
+      "path": "src/lib.rs",
+      "sha256": "83bc7423fd72c21a3a3866f67d44db26cf7d00186455defdc901f5f18342db1a"
+    },
+    {
+      "bytes": 9502,
+      "mode": 420,
+      "path": "src/libm_extern.rs",
+      "sha256": "ca03290e17a3dd7a5031fc629781a3c2a40bb297fbd19b4182af9ba9d37d8480"
+    },
+    {
+      "bytes": 1126,
+      "mode": 420,
+      "path": "src/memory.rs",
+      "sha256": "a79e00addb2b1ea69632ffcff2a95a3e25686d525b3536403f2def7140b6ee5c"
+    },
+    {
+      "bytes": 2505,
+      "mode": 420,
+      "path": "src/rust_rt.rs",
+      "sha256": "c57828346f9b434da6938b161c4bb3124b2c689483dffc7e407893a7de222391"
+    },
+    {
+      "bytes": 35852,
+      "mode": 420,
+      "path": "src/syscall.rs",
+      "sha256": "c4ed91f981b4b14daf0ac998e45773a7ff4ab3cb7766a0f9f7af216c6ce9cc3c"
+    }
+  ],
+  "original_rust_and_test_sources_unchanged": true,
+  "package": "risc0-zkvm-platform",
+  "preparation_whitespace_changes": [],
+  "prior_pruned_native_results_reused": false,
+  "production_activation": false,
+  "schema": "pon-maintained-parent-adoption-v1",
+  "source_base_commit": "c96c2b3e24ba354b4abcb842ca6a6a019c442b73",
+  "supplemental_upstream_license": {
+    "bytes": 10174,
+    "git_blob_sha1": "f433b1a53f5b830a205fd2df78e2b34974656c7b",
+    "part_of_original_crate_archive": false,
+    "path": "LICENSE",
+    "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594",
+    "url": "https://raw.githubusercontent.com/risc0/risc0/8c215e2f4ccdd935f0517bf05d90f1ae032840a9/LICENSE"
+  },
+  "supply_gate_closed": false,
+  "version": "2.2.3",
+  "workspace_adoption": {
+    "initial_lock_sha256": "9466cc1073f80c72ef978e1dde66171a9375afa2575f202eb36a314ef37b3cbc",
+    "metadata_receipt_sha256": "1325e5ba118ee42211cb4777c9ea6c98b43be3d95cacda1841f6491366faae1b",
+    "native_validation_executed_at_adoption": false,
+    "original_test_sources_preserved_at_adoption": true,
+    "previous_registry_versions_changed": 0,
+    "root_lock_resolution_executed": true,
+    "root_member": true,
+    "same_name_crates_io_patch": true,
+    "standalone_w1_workspace_changed": false
+  },
+  "workspace_owner_metadata": "M01; complete source owned in the primary workspace and portability inventory"
+}

@@ -13,10 +13,47 @@ use std::{
     os::unix::fs::{MetadataExt, OpenOptionsExt},
     path::Path,
 };
-use trnm_sqlite_io_boundary::{NativeIoLease, NativeIoOwner, RootReceipt, DOMAIN, ROOT_COUNT};
+use trnm_sqlite_io_boundary::{
+    NativeIoLease, NativeIoOwner, RootReceipt, DOMAIN, GROWTH_QUANTUM_BYTES_V2,
+    RESERVATION_DOMAIN_V2, ROOT_COUNT,
+};
 
 pub const SCHEMA: &str = "native-public-v3-identity-churn-native-io-v1";
 pub const STORAGE_PROFILE: &str = "pn1-full4097-seven-held-roots-real-inode-v1";
+
+/// A fixed storage/evidence contract, selected by a distinct public test entry.
+/// This does not change actors, work, deadlines or any resource/evidence cap.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum Profile {
+    ExactV1,
+    ReservationV2,
+}
+impl Profile {
+    pub fn schema(self) -> &'static str {
+        match self {
+            Self::ExactV1 => SCHEMA,
+            Self::ReservationV2 => "native-public-v3-identity-churn-native-io-reservation-v2",
+        }
+    }
+    pub fn storage_profile(self) -> &'static str {
+        match self {
+            Self::ExactV1 => STORAGE_PROFILE,
+            Self::ReservationV2 => "pn1-finite-seven-held-roots-reservation-v2",
+        }
+    }
+    pub fn sqlite_domain(self) -> &'static str {
+        match self {
+            Self::ExactV1 => DOMAIN,
+            Self::ReservationV2 => RESERVATION_DOMAIN_V2,
+        }
+    }
+    fn quantum(self) -> Option<u64> {
+        match self {
+            Self::ExactV1 => None,
+            Self::ReservationV2 => Some(GROWTH_QUANTUM_BYTES_V2),
+        }
+    }
+}
 
 fn ensure(value: bool, message: &str) -> io::Result<()> {
     if value {
@@ -31,6 +68,7 @@ pub fn full_route_ready() -> bool {
     false
 }
 pub struct Layout {
+    profile: Profile,
     raw: Held,
     phases: [Held; 3],
     _owner: NativeIoOwner,
@@ -38,6 +76,7 @@ pub struct Layout {
     phase_claimed: [bool; 3],
 }
 pub struct Phase<'a> {
+    profile: Profile,
     mode: Mode,
     directory: &'a Held,
     receiver: &'a NativeIoLease,
@@ -45,6 +84,9 @@ pub struct Phase<'a> {
     receiver_index: usize,
 }
 impl Phase<'_> {
+    pub fn profile(&self) -> Profile {
+        self.profile
+    }
     pub fn mode(&self) -> Mode {
         self.mode
     }
@@ -63,6 +105,9 @@ impl Phase<'_> {
 }
 impl Layout {
     pub fn create(raw: Held) -> io::Result<Self> {
+        Self::create_for(raw, Profile::ExactV1)
+    }
+    pub fn create_for(raw: Held, profile: Profile) -> io::Result<Self> {
         let phases = [
             raw.create_child_directory(OsStr::new(Mode::HonestOnly.name()))?,
             raw.create_child_directory(OsStr::new(Mode::ReplayOnly.name()))?,
@@ -99,7 +144,11 @@ impl Layout {
         let parents = parents
             .try_into()
             .map_err(|_| io::Error::other("exact seven held role parents required"))?;
-        let owner = NativeIoOwner::create_at(parents).map_err(io::Error::other)?;
+        let owner = match profile {
+            Profile::ExactV1 => NativeIoOwner::create_at(parents),
+            Profile::ReservationV2 => NativeIoOwner::create_at_with_reservation_v2(parents),
+        }
+        .map_err(io::Error::other)?;
         let leases: [NativeIoLease; ROOT_COUNT] = (0..ROOT_COUNT)
             .map(|index| owner.lease(index).map_err(io::Error::other))
             .collect::<io::Result<Vec<_>>>()?
@@ -115,6 +164,7 @@ impl Layout {
             "seven distinct real root inodes required",
         )?;
         Ok(Self {
+            profile,
             raw,
             phases,
             _owner: owner,
@@ -138,6 +188,7 @@ impl Layout {
         self.phase_claimed[index] = true; // Failure also consumes this phase.
         let receiver_index = 1 + 2 * index;
         Ok(Phase {
+            profile: self.profile,
             mode,
             directory: &self.phases[index],
             receiver: &self.leases[receiver_index],
@@ -146,7 +197,7 @@ impl Layout {
         })
     }
     pub fn summary(&self) -> Value {
-        json!({"schema":STORAGE_PROFILE,"sqlite_domain":DOMAIN,"owner_pid":std::process::id(),
+        json!({"schema":self.profile.storage_profile(),"sqlite_domain":self.profile.sqlite_domain(),"owner_pid":std::process::id(),
             "raw_capability":self.raw.identity,"phase_claims_consumed":self.phase_claimed,"phase_capabilities":self.phases.iter().map(|p|&p.identity).collect::<Vec<_>>(),
             "roles":self.leases.iter().enumerate().map(|(index,lease)|json!({"index":index,"role":limits::NODE_ROOTS[index],
                 "root_dev_ino":lease.identity(),"registered_vfs":lease.vfs_name()})).collect::<Vec<_>>(),
@@ -159,7 +210,10 @@ impl Layout {
         // At most one full RootReceipt is cloned at a time; this neither drains
         // nor resets the 1024/256 lifecycle or the three retained inode slots.
         for (index, lease) in self.leases.iter().enumerate() {
-            closed_root(index, lease)?;
+            let row = root_snapshot_for(self.profile, index, lease)?;
+            if let Some(error) = terminal_error(&row) {
+                return Err(io::Error::other(error));
+            }
         }
         Ok(())
     }
@@ -180,10 +234,18 @@ pub fn closed_root(index: usize, lease: &NativeIoLease) -> io::Result<RoleReceip
     Ok(row)
 }
 pub fn root_snapshot(index: usize, lease: &NativeIoLease) -> io::Result<RoleReceipt> {
+    root_snapshot_for(Profile::ExactV1, index, lease)
+}
+pub fn root_snapshot_for(
+    profile: Profile,
+    index: usize,
+    lease: &NativeIoLease,
+) -> io::Result<RoleReceipt> {
     let receipt = lease.receipt().map_err(io::Error::other)?;
     ensure(
         index < ROOT_COUNT
-            && receipt.schema == DOMAIN
+            && receipt.schema == profile.sqlite_domain()
+            && receipt.growth_reservation_quantum_bytes == profile.quantum()
             && receipt.owner_pid == std::process::id()
             && (receipt.root_device, receipt.root_inode) == lease.identity(),
         "actual root role/PID/inode required",
@@ -235,6 +297,20 @@ pub struct NativeReport<'a> {
     pub full_w1_4097_qualified: bool,
 }
 pub fn report<'a>(original: &'a Value, roots: Vec<RoleReceipt>) -> io::Result<NativeReport<'a>> {
+    report_for(Profile::ExactV1, original, roots)
+}
+pub fn report_for<'a>(
+    profile: Profile,
+    original: &'a Value,
+    roots: Vec<RoleReceipt>,
+) -> io::Result<NativeReport<'a>> {
+    ensure(
+        roots.iter().all(|root| {
+            root.receipt.schema == profile.sqlite_domain()
+                && root.receipt.growth_reservation_quantum_bytes == profile.quantum()
+        }),
+        "mixed native storage evidence domains forbidden",
+    )?;
     ensure(
         !roots.is_empty() && roots.len() <= 2,
         "stream at most preparation1 or phase2 full root receipts",
@@ -242,7 +318,7 @@ pub fn report<'a>(original: &'a Value, roots: Vec<RoleReceipt>) -> io::Result<Na
     let healthy_closed = roots.iter().all(|root| terminal_error(root).is_none());
     Ok(NativeReport {
         original_workload_report: original,
-        native_io_storage_profile: STORAGE_PROFILE,
+        native_io_storage_profile: profile.storage_profile(),
         native_io_terminal_roots: roots,
         native_io_terminals_healthy_closed: healthy_closed,
         whole_writer_qualified: false,
