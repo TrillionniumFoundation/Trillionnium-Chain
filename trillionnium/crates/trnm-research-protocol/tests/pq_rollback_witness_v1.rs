@@ -160,3 +160,208 @@ fn signing_domain_bytes_and_canonical_input_have_no_implicit_authority() {
         Err(PqRecoveryWitnessError::WireTooLarge)
     ));
 }
+
+const QUORUM_DIDS: [&str; 3] = [
+    "did:trnm:recovery-quorum-a",
+    "did:trnm:recovery-quorum-b",
+    "did:trnm:recovery-quorum-c",
+];
+
+fn quorum_fixture() -> (Vec<Vec<u8>>, Vec<SignedPqRecoveryWitnessV1>) {
+    let mut keys = Vec::new();
+    let mut receipts = Vec::new();
+    for (i, witness_did) in QUORUM_DIDS.iter().enumerate() {
+        let sk = SigningKey::<MlDsa65>::new_from_slice(&[51 + i as u8; 32]).unwrap();
+        keys.push(sk.verifying_key().to_bytes().to_vec());
+        receipts.push(
+            SignedPqRecoveryWitnessV1::sign(
+                PqRecoveryWitnessStatementV1 {
+                    chain_id: CHAIN.into(),
+                    witness_did: (*witness_did).into(),
+                    genesis: [4; 32],
+                    observed: head(),
+                    sequence: 30 + i as u64,
+                    challenge: [10 + i as u8; 32],
+                    issued_unix_s: 1000,
+                    expires_unix_s: 1150,
+                },
+                &sk,
+            )
+            .unwrap(),
+        );
+    }
+    (keys, receipts)
+}
+
+fn quorum_roster(keys: &[Vec<u8>]) -> Vec<PqRecoveryTrustedSignerV1<'_>> {
+    (0..3)
+        .map(|i| PqRecoveryTrustedSignerV1 {
+            witness_did: QUORUM_DIDS[i],
+            trusted_ml_dsa65_public_key: &keys[i],
+            last_external_sequence: 29 + i as u64,
+            outstanding_challenge: [10 + i as u8; 32],
+        })
+        .collect()
+}
+
+fn quorum_policy<'a>(
+    roster: &'a [PqRecoveryTrustedSignerV1<'a>],
+    local: &'a LocalRecoveryHeadV1,
+) -> PqRecoveryQuorumPolicyV1<'a> {
+    PqRecoveryQuorumPolicyV1 {
+        chain_id: CHAIN,
+        genesis: [4; 32],
+        now_unix_s: 1100,
+        actual_local: local,
+        roster,
+        threshold: 2,
+    }
+}
+
+#[test]
+fn two_of_three_distinct_pq_witnesses_confirm_exact_state_only() {
+    let (keys, receipts) = quorum_fixture();
+    let roster = quorum_roster(&keys);
+    let local = head();
+    let policy = quorum_policy(&roster, &local);
+    assert_eq!(
+        verify_pq_recovery_quorum_v1(&receipts[..2], &policy)
+            .unwrap()
+            .verified_signers(),
+        2
+    );
+    assert_eq!(
+        verify_pq_recovery_quorum_v1(&receipts, &policy)
+            .unwrap()
+            .verified_signers(),
+        3
+    );
+    assert!(matches!(
+        verify_pq_recovery_quorum_v1(&receipts[..1], &policy),
+        Err(PqRecoveryQuorumErrorV1::InsufficientQuorum)
+    ));
+}
+
+#[test]
+fn duplicate_or_disjoint_witness_identities_never_count_toward_quorum() {
+    let (keys, receipts) = quorum_fixture();
+    let local = head();
+    let roster = quorum_roster(&keys);
+    let policy = quorum_policy(&roster, &local);
+    let repeated = vec![receipts[0].clone(), receipts[0].clone()];
+    assert!(matches!(
+        verify_pq_recovery_quorum_v1(&repeated, &policy),
+        Err(PqRecoveryQuorumErrorV1::DuplicateWitness)
+    ));
+    let mut outsider = receipts[1].clone();
+    outsider.witness_did = "did:trnm:untrusted".into();
+    assert!(matches!(
+        verify_pq_recovery_quorum_v1(&[receipts[0].clone(), outsider], &policy),
+        Err(PqRecoveryQuorumErrorV1::UntrustedWitness)
+    ));
+    assert!(verify_pq_recovery_quorum_v1(
+        &[
+            receipts[0].clone(),
+            receipts[1].clone(),
+            receipts[2].clone(),
+            receipts[0].clone(),
+        ],
+        &policy,
+    )
+    .is_err());
+    let mut dup_did = quorum_roster(&keys);
+    dup_did[1].witness_did = QUORUM_DIDS[0];
+    assert!(matches!(
+        verify_pq_recovery_quorum_v1(&receipts[..2], &quorum_policy(&dup_did, &local)),
+        Err(PqRecoveryQuorumErrorV1::DuplicateRosterIdentity)
+    ));
+    let mut dup_key = quorum_roster(&keys);
+    dup_key[1].trusted_ml_dsa65_public_key = &keys[0];
+    assert!(matches!(
+        verify_pq_recovery_quorum_v1(&receipts[..2], &quorum_policy(&dup_key, &local)),
+        Err(PqRecoveryQuorumErrorV1::DuplicateRosterIdentity)
+    ));
+}
+
+#[test]
+fn one_of_three_policy_or_untrusted_roster_cannot_weaken_recovery() {
+    let (keys, receipts) = quorum_fixture();
+    let local = head();
+    let roster = quorum_roster(&keys);
+    let mut policy = quorum_policy(&roster, &local);
+    policy.threshold = 1;
+    assert!(matches!(
+        verify_pq_recovery_quorum_v1(&receipts[..2], &policy),
+        Err(PqRecoveryQuorumErrorV1::InvalidPolicy)
+    ));
+    policy.threshold = 4;
+    assert!(verify_pq_recovery_quorum_v1(&receipts[..2], &policy).is_err());
+    policy.threshold = 2;
+    policy.genesis = [0; 32];
+    assert!(verify_pq_recovery_quorum_v1(&receipts[..2], &policy).is_err());
+
+    let mut bad_roster = quorum_roster(&keys);
+    bad_roster[0].trusted_ml_dsa65_public_key = &[9; 32];
+    assert!(matches!(
+        verify_pq_recovery_quorum_v1(&receipts[..2], &quorum_policy(&bad_roster, &local)),
+        Err(PqRecoveryQuorumErrorV1::InvalidPolicy)
+    ));
+    let empty: [PqRecoveryTrustedSignerV1<'_>; 0] = [];
+    assert!(verify_pq_recovery_quorum_v1(&[], &quorum_policy(&empty, &local)).is_err());
+}
+
+#[test]
+fn freshness_rollback_key_swap_and_invalid_extra_fail_closed() {
+    let (keys, receipts) = quorum_fixture();
+    let local = head();
+    let mut roster = quorum_roster(&keys);
+    roster[0].last_external_sequence = 30;
+    assert!(
+        verify_pq_recovery_quorum_v1(&receipts[..2], &quorum_policy(&roster, &local),).is_err()
+    );
+    roster[0].last_external_sequence = 29;
+    roster[1].outstanding_challenge = [42; 32];
+    assert!(
+        verify_pq_recovery_quorum_v1(&receipts[..2], &quorum_policy(&roster, &local),).is_err()
+    );
+    roster[1].outstanding_challenge = [11; 32];
+    let mut rolled_back = local;
+    rolled_back.effect_journal_head[0] ^= 1;
+    assert!(
+        verify_pq_recovery_quorum_v1(&receipts[..2], &quorum_policy(&roster, &rolled_back),)
+            .is_err()
+    );
+
+    let mut swapped = receipts[1].clone();
+    swapped.public_key = keys[0].clone();
+    assert!(verify_pq_recovery_quorum_v1(
+        &[receipts[0].clone(), swapped],
+        &quorum_policy(&roster, &local),
+    )
+    .is_err());
+    let mut invalid_extra = receipts[2].clone();
+    invalid_extra.signature[0] ^= 1;
+    assert!(verify_pq_recovery_quorum_v1(
+        &[receipts[0].clone(), receipts[1].clone(), invalid_extra],
+        &quorum_policy(&roster, &local),
+    )
+    .is_err());
+}
+
+#[test]
+fn no_valid_quorum_from_expired_or_conflicting_signed_state() {
+    let (keys, receipts) = quorum_fixture();
+    let local = head();
+    let roster = quorum_roster(&keys);
+    let mut policy = quorum_policy(&roster, &local);
+    policy.now_unix_s = 1151;
+    assert!(verify_pq_recovery_quorum_v1(&receipts[..2], &policy).is_err());
+
+    let mut divergent = receipts[1].clone();
+    divergent.observed.height += 1;
+    assert!(verify_pq_recovery_quorum_v1(
+        &[receipts[0].clone(), divergent],
+        &quorum_policy(&roster, &local),
+    )
+    .is_err());
+}

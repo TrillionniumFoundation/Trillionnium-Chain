@@ -313,3 +313,141 @@ impl CanonicalCbor for SignedPqRecoveryWitnessV1 {
         e.bytes(&self.signature);
     }
 }
+
+/// A bounded roster of independently *pinned* recovery witnesses. This is
+/// not itself evidence that the keys are held by independent operators.
+pub const MAX_PQ_RECOVERY_QUORUM_SIGNERS_V1: usize = 16;
+
+/// Caller-owned, out-of-band authority: these values must never be recovered
+/// exclusively from the potentially rolled-back database.
+#[derive(Clone, Copy)]
+pub struct PqRecoveryTrustedSignerV1<'a> {
+    pub witness_did: &'a str,
+    pub trusted_ml_dsa65_public_key: &'a [u8],
+    pub last_external_sequence: u64,
+    pub outstanding_challenge: Digest32,
+}
+
+/// This policy is obtained from independently retained configuration and
+/// monotonic floors. A majority threshold guarantees signer-set intersection
+/// only while the roster itself is held fixed.
+pub struct PqRecoveryQuorumPolicyV1<'a> {
+    pub chain_id: &'a str,
+    pub genesis: Digest32,
+    pub now_unix_s: u64,
+    pub actual_local: &'a LocalRecoveryHeadV1,
+    pub roster: &'a [PqRecoveryTrustedSignerV1<'a>],
+    pub threshold: usize,
+}
+
+#[derive(Debug, Error)]
+pub enum PqRecoveryQuorumErrorV1 {
+    #[error("invalid or non-majority recovery quorum policy")]
+    InvalidPolicy,
+    #[error("duplicate witness DID or ML-DSA key in pinned quorum roster")]
+    DuplicateRosterIdentity,
+    #[error("untrusted or excessive witness receipt")]
+    UntrustedWitness,
+    #[error("duplicate receipt for one pinned witness")]
+    DuplicateWitness,
+    #[error("not enough distinct, valid post-quantum witness receipts")]
+    InsufficientQuorum,
+    #[error(transparent)]
+    Witness(#[from] PqRecoveryWitnessError),
+}
+
+/// A read-only quorum observation, NOT permission to install, spend, finalize,
+/// replay effects, or advance an external monotonic counter.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ObservedPqRecoveryQuorumV1 {
+    verified_signers: usize,
+}
+
+impl ObservedPqRecoveryQuorumV1 {
+    pub fn verified_signers(&self) -> usize {
+        self.verified_signers
+    }
+}
+
+/// Reject mixed contexts, forged keys, duplicate signers, stale or conflicting
+/// observations, malformed policies and non-majority thresholds. Every
+/// presented receipt must verify; invalid extras cannot be silently ignored.
+///
+/// The caller MUST independently persist each accepted witness high-water
+/// sequence and consume the one-time challenges *before* granting any local
+/// recovery capability. This function deliberately performs neither action.
+pub fn verify_pq_recovery_quorum_v1(
+    receipts: &[SignedPqRecoveryWitnessV1],
+    policy: &PqRecoveryQuorumPolicyV1<'_>,
+) -> Result<ObservedPqRecoveryQuorumV1, PqRecoveryQuorumErrorV1> {
+    let roster = policy.roster;
+    if !(2..=MAX_PQ_RECOVERY_QUORUM_SIGNERS_V1).contains(&roster.len())
+        || policy.threshold <= roster.len() / 2
+        || policy.threshold > roster.len()
+        || policy.chain_id.is_empty()
+        || policy.chain_id.len() > 64
+        || !policy.chain_id.bytes().all(|b| {
+            b.is_ascii_lowercase() || b.is_ascii_digit() || matches!(b, b'-' | b'_' | b'.' | b':')
+        })
+        || policy.genesis == [0; 32]
+        || policy.now_unix_s == 0
+        || policy.actual_local.owner_generation == 0
+        || [
+            policy.actual_local.tip,
+            policy.actual_local.state_root,
+            policy.actual_local.effect_journal_head,
+        ]
+        .contains(&[0; 32])
+    {
+        return Err(PqRecoveryQuorumErrorV1::InvalidPolicy);
+    }
+    for (index, member) in roster.iter().enumerate() {
+        if !(5..=192).contains(&member.witness_did.len())
+            || !member.witness_did.starts_with("did:")
+            || !member.witness_did.bytes().all(|b| b.is_ascii_graphic())
+            || member.trusted_ml_dsa65_public_key.len() != PUBLIC_KEY_BYTES
+            || member.last_external_sequence == u64::MAX
+            || member.outstanding_challenge == [0; 32]
+        {
+            return Err(PqRecoveryQuorumErrorV1::InvalidPolicy);
+        }
+        if roster[..index].iter().any(|previous| {
+            previous.witness_did == member.witness_did
+                || previous.trusted_ml_dsa65_public_key == member.trusted_ml_dsa65_public_key
+        }) {
+            return Err(PqRecoveryQuorumErrorV1::DuplicateRosterIdentity);
+        }
+    }
+    if receipts.len() > roster.len() {
+        return Err(PqRecoveryQuorumErrorV1::UntrustedWitness);
+    }
+    let mut seen = [false; MAX_PQ_RECOVERY_QUORUM_SIGNERS_V1];
+    for receipt in receipts {
+        let index = roster
+            .iter()
+            .position(|member| member.witness_did == receipt.witness_did)
+            .ok_or(PqRecoveryQuorumErrorV1::UntrustedWitness)?;
+        if seen[index] {
+            return Err(PqRecoveryQuorumErrorV1::DuplicateWitness);
+        }
+        seen[index] = true;
+        let member = &roster[index];
+        let expectation = ExternalRecoveryExpectationV1 {
+            chain_id: policy.chain_id,
+            witness_did: member.witness_did,
+            trusted_ml_dsa65_public_key: member.trusted_ml_dsa65_public_key,
+            genesis: policy.genesis,
+            outstanding_challenge: member.outstanding_challenge,
+            last_external_sequence: member.last_external_sequence,
+            now_unix_s: policy.now_unix_s,
+            actual_local: policy.actual_local,
+        };
+        receipt.verify_for_recovery(&expectation)?;
+    }
+    if receipts.len() < policy.threshold {
+        return Err(PqRecoveryQuorumErrorV1::InsufficientQuorum);
+    }
+    Ok(ObservedPqRecoveryQuorumV1 {
+        verified_signers: receipts.len(),
+    })
+}
