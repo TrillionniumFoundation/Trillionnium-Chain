@@ -26,12 +26,11 @@ pub use pq_hepta_handoff::{
     ML_DSA_65_KEY_BYTES, ML_DSA_65_SIG_BYTES, PQ_HEPTA_HANDOFF_VERSION,
 };
 pub use pq_rollback_witness::{
-    ExternalRecoveryExpectationV1, LocalRecoveryHeadV1, PqRecoveryWitnessError,
-    PqRecoveryWitnessStatementV1, SignedPqRecoveryWitnessV1, MAX_PQ_RECOVERY_WITNESS_BYTES,
+    verify_pq_recovery_quorum_v1, ExternalRecoveryExpectationV1, LocalRecoveryHeadV1,
+    ObservedPqRecoveryQuorumV1, PqRecoveryQuorumErrorV1, PqRecoveryQuorumPolicyV1,
+    PqRecoveryTrustedSignerV1, PqRecoveryWitnessError, PqRecoveryWitnessStatementV1,
+    SignedPqRecoveryWitnessV1, MAX_PQ_RECOVERY_QUORUM_SIGNERS_V1, MAX_PQ_RECOVERY_WITNESS_BYTES,
     PQ_RECOVERY_WITNESS_VERSION,
-    PqRecoveryQuorumPolicyV1, PqRecoveryQuorumErrorV1, PqRecoveryTrustedSignerV1,
-    ObservedPqRecoveryQuorumV1, verify_pq_recovery_quorum_v1,
-    MAX_PQ_RECOVERY_QUORUM_SIGNERS_V1,
 };
 pub use state::{
     AppliedCommandRecordV1, ApplyOutcome, AuthorityIdentityV1, AuthoritySetV1,
