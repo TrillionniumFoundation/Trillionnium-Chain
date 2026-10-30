@@ -456,9 +456,8 @@ pub(super) fn exchange_pq_v2(
     transport: &RequestContext<'_>,
     observation: &mut CellDiscoveryObservationV1,
 ) -> CellResultV1<Vec<u8>> {
-    const PCP2_REPLY_LIMIT: usize =
-        1 + MAX_DISCOVERED_PROVIDERS
-            * trnm_crypto_primitives::pq_cell_provider::PQ_CELL_PROVIDER_RECORD_V2_BYTES;
+    const PCP2_REPLY_LIMIT: usize = 1 + MAX_DISCOVERED_PROVIDERS
+        * trnm_crypto_primitives::pq_cell_provider::PQ_CELL_PROVIDER_RECORD_V2_BYTES;
     require(body.len() == 192, "PQ framed request length")?;
     check_deadline(transport.overall)?;
     require(
@@ -488,7 +487,10 @@ pub(super) fn exchange_pq_v2(
         transport.responses,
         observation,
     )?;
-    require(&header[..4] == b"PCS2", "PQ discovery wrong response version")?;
+    require(
+        &header[..4] == b"PCS2",
+        "PQ discovery wrong response version",
+    )?;
     require(header[4] == 0, "PQ discovery refused response")?;
     let length = u32::from_be_bytes(
         header[5..]
@@ -496,7 +498,8 @@ pub(super) fn exchange_pq_v2(
             .map_err(|_| CellErrorV1::Invalid("PQ framed length"))?,
     ) as usize;
     require(
-        length > 0 && length <= PCP2_REPLY_LIMIT
+        length > 0
+            && length <= PCP2_REPLY_LIMIT
             && length + header.len() <= MAX_DISCOVERY_RESPONSE_BYTES as usize,
         "PQ framed reply bounded length",
     )?;
