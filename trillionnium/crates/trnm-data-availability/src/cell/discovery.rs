@@ -608,6 +608,52 @@ pub mod pq_reply_v2 {
         Ok((providers, observation))
     }
 
+    /// Experimental, in-memory PCP2-only service. All source records must have
+    /// been signed beforehand; this function authenticates them against an
+    /// independently supplied roster *before* accepting any network clients.
+    /// It does not register owners, durably record nonce/replay floors, serve
+    /// Cell bytes, bind TLS identities or authorize model installation.
+    ///
+    /// After starting, changed external roster or witness state is not observed
+    /// automatically. Deployments MUST revalidate/restart on any revocation.
+    pub fn serve_pq_cell_rendezvous_v2(
+        listener: &std::net::TcpListener,
+        expected_request: CellDiscoveryRequestV1,
+        signed_reply: &[u8],
+        pinned_owners: &[PqPinnedProviderV2<'_>],
+        addresses: &CellDiscoveryAddressPolicyV1,
+        shutdown: &std::sync::atomic::AtomicBool,
+        limits: CellRendezvousLimitsV1,
+    ) -> CellResultV1<CellRendezvousReportV1> {
+        limits.validate()?;
+        addresses.validate()?;
+        let verified = verify_pq_provider_reply_v2(
+            signed_reply,
+            expected_request,
+            pinned_owners,
+            wall_now()?.as_secs(),
+            addresses,
+        )?;
+        let expires = verified
+            .iter()
+            .map(VerifiedPqDiscoveryProviderV2::expires_unix_seconds)
+            .min()
+            .ok_or(CellErrorV1::Invalid("PQ no signed providers"))?;
+        let encoded_request = expected_request.encode();
+        let pin: [u8; 192] = encoded_request
+            .as_slice()
+            .try_into()
+            .map_err(|_| CellErrorV1::Invalid("PQ request length"))?;
+        super::transport::serve_pq_reply_bytes_v2(
+            listener,
+            pin,
+            signed_reply,
+            expires,
+            shutdown,
+            limits,
+        )
+    }
+
     #[cfg(test)]
     mod tests {
         use super::*;
@@ -826,6 +872,129 @@ pub mod pq_reply_v2 {
                     assert!(answer.is_err(), "classical CDS1 response downgraded PCP2");
                 }
             }
+        }
+
+        #[test]
+        fn actual_readonly_pq_rendezvous_accepts_pinned_proof_and_refuses_cdq1() {
+            use std::io::{Read, Write};
+            use std::net::{TcpListener, TcpStream};
+            use std::sync::atomic::AtomicBool;
+            use std::thread;
+            use std::time::Duration;
+
+            let now = wall_now().unwrap().as_secs();
+            let key = SigningKey::<MlDsa65>::new_from_slice(&[73; 32]).unwrap();
+            let pk = key.verifying_key().to_bytes().to_vec();
+            let signer_id = pq_cell_provider_key_id_v2(&pk).unwrap();
+            let wire = SignedPqCellProviderRecordV2::sign(
+                PqCellProviderStatementV2 {
+                    pinned_request: request().encode().try_into().unwrap(),
+                    endpoint: endpoint_bytes("127.0.0.1:31415".parse().unwrap()),
+                    sequence: 11,
+                    issued_unix_seconds: now - 1,
+                    expires_unix_seconds: now + 60,
+                },
+                &key,
+            )
+            .unwrap()
+            .to_wire();
+            let response = reply(&[&wire]);
+
+            let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+            let bootstrap = listener.local_addr().unwrap();
+            let policy = CellDiscoveryAddressPolicyV1::LoopbackDevOnly {
+                ports: vec![bootstrap.port(), 31415],
+            };
+            let server_policy = policy.clone();
+            let server_pk = pk.clone();
+            let serve_limits = CellRendezvousLimitsV1 {
+                request_timeout: Duration::from_secs(2),
+                lifetime: Duration::from_secs(6),
+                max_connections: 2,
+            };
+            let expected_response = response.clone();
+            let server = thread::spawn(move || {
+                let pinned = [PqPinnedProviderV2 {
+                    signer_key_id: signer_id,
+                    trusted_ml_dsa65_public_key: &server_pk,
+                    external_sequence_floor: 10,
+                }];
+                let shutdown = AtomicBool::new(false);
+                serve_pq_cell_rendezvous_v2(
+                    &listener,
+                    request(),
+                    &expected_response,
+                    &pinned,
+                    &server_policy,
+                    &shutdown,
+                    serve_limits,
+                )
+                .unwrap()
+            });
+
+            let pinned = [PqPinnedProviderV2 {
+                signer_key_id: signer_id,
+                trusted_ml_dsa65_public_key: &pk,
+                external_sequence_floor: 10,
+            }];
+            let fetch_limits = super::super::super::CellPeerLimitsV1 {
+                request_timeout: Duration::from_secs(2),
+                overall_timeout: Duration::from_secs(4),
+                max_cell_bytes: 1024,
+                parallelism: 1,
+                max_connections: 2,
+                max_response_bytes: MAX_DISCOVERY_RESPONSE_BYTES,
+            };
+            let (providers, observation) = query_pq_provider_from_bootstrap_v2(
+                bootstrap,
+                request(),
+                &pinned,
+                &policy,
+                fetch_limits,
+                Instant::now() + Duration::from_secs(5),
+            )
+            .unwrap();
+            assert_eq!(providers.len(), 1);
+            assert_eq!(providers[0].sequence(), 11);
+            assert_eq!(observation.connection_attempts, 1);
+            assert_eq!(
+                observation.received_response_bytes,
+                (response.len() + 9) as u64
+            );
+
+            let mut legacy = TcpStream::connect(bootstrap).unwrap();
+            legacy
+                .set_read_timeout(Some(Duration::from_secs(2)))
+                .unwrap();
+            let mut query = b"CDQ1".to_vec();
+            query.push(1);
+            query.extend(192u16.to_be_bytes());
+            query.extend(request().encode());
+            legacy.write_all(&query).unwrap();
+            let mut header = [0; 9];
+            // A server may reset a refused classical connection while the
+            // unconsumed legacy request body is still in its TCP receive queue.
+            // Explicit PCS2 denial *or* connection reset/EOF is a rejection.
+            match legacy.read_exact(&mut header) {
+                Ok(()) => {
+                    assert_eq!(&header[..4], b"PCS2");
+                    assert_eq!(header[4], 1);
+                    assert_eq!(&header[5..], &[0; 4]);
+                }
+                Err(error)
+                    if matches!(
+                        error.kind(),
+                        std::io::ErrorKind::ConnectionReset
+                            | std::io::ErrorKind::UnexpectedEof
+                            | std::io::ErrorKind::ConnectionAborted
+                    ) => {}
+                Err(error) => panic!("unexpected legacy refusal error: {error}"),
+            }
+
+            let served = server.join().unwrap();
+            assert_eq!(served.connections, 2);
+            assert_eq!(served.rejected_requests, 1);
+            assert_eq!(served.record_validation_attempts, 0);
         }
 
         #[test]
