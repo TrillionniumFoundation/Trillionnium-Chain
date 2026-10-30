@@ -1,5 +1,21 @@
 {
   "active_manifest_sha256": "81c8c94cab6c24f8851b071b0709d9fbe50ea3b4c7a4e150ff72779107a2263a",
+  "adicity_boundary_repair": {
+    "base_one_changes_from_nonprogress_to_rejection": true,
+    "counterexample_full_crate_execution": false,
+    "counterexample_receipt_sha256": "9975b591ac4b1cbc90509575c42e790f6200ef7afd50c7da6a4b555b8752756d",
+    "full_crate_native_validation_pending": true,
+    "n_zero_or_one_original_returns_preserved": true,
+    "new_full_crate_regression_controls": 3,
+    "nontrivial_input_requires_base_at_least": 2,
+    "normal_base_progress": "Each successful division reduces n by at least two; no more than 63 divisions for an input u64 and base >= 2.",
+    "observed_original_counterexample": "standalone harness includes the actual original utils.rs; normal bases passed; base one with input two entered and did not return within the predeclared three-second deadline",
+    "original_source_sha256": "9f98bdbe94404245b9a6b3634470e3dbfc9aca511daa3bff126028e4c8ea40e4",
+    "remote_exploitability_established": false,
+    "source_baseline_commit": "12e1b2a074868219e2423e2564c3c96594a46bc3",
+    "zero_base_panic_message_changes": true,
+    "zero_base_still_rejected_for_n_greater_than_one": true
+  },
   "all_original_features_preserved": true,
   "archive": {
     "bytes": 73609,
@@ -93,7 +109,8 @@
     "src/fields/models/fp/montgomery_backend.rs",
     "src/fields/models/quadratic_extension.rs",
     "src/fields/prime.rs",
-    "src/fields/sqrt.rs"
+    "src/fields/sqrt.rs",
+    "src/fields/utils.rs"
   ],
   "original_Cargo_toml_orig_is_unchanged_provenance": true,
   "original_git_provenance": {
@@ -365,6 +382,7 @@
   "schema": "pon-maintained-parent-adoption-v1",
   "source_base_commit": "c96c2b3e24ba354b4abcb842ca6a6a019c442b73",
   "strict_lint_maintenance": {
+    "additional_rust_1_95_lint_errors_observed": 2,
     "allow_or_expect_added": false,
     "candidate_source_files": [
       {
@@ -377,7 +395,7 @@
       },
       {
         "path": "src/biginteger/mod.rs",
-        "sha256": "3a1fd350e00ced1b2ec6c85224a7da19599c5b9136a2d6868dee089e08cba506"
+        "sha256": "5a6012c37a7d3ebbfaf0c9dfd7d369980db48b515ae0f513f2abe191c504fc33"
       },
       {
         "path": "src/fields/fft_friendly.rs",
@@ -418,6 +436,10 @@
       {
         "path": "src/fields/sqrt.rs",
         "sha256": "75d0b4d3e5a99d3a09030e7a19e9e4fa5813ef2bb4a2415127e1f7529901524b"
+      },
+      {
+        "path": "src/fields/utils.rs",
+        "sha256": "649ae3f5bfdf45c14e4c183d284bb7d8ec8ef756792f9a0496d96a2822e3020a"
       }
     ],
     "features_removed": false,
