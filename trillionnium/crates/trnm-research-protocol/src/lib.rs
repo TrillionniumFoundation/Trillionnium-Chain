@@ -21,8 +21,8 @@ pub use hepta_handoff::{
     MAX_HANDOFF_ENVELOPE_BYTES, MAX_HANDOFF_PAYLOAD_BYTES,
 };
 pub use pq_hepta_handoff::{
-    ML_DSA_65_KEY_BYTES, ML_DSA_65_SIG_BYTES, MAX_PQ_HEPTA_ENVELOPE_BYTES,
-    PQ_HEPTA_HANDOFF_VERSION, PqHeptaHandoffError, SignedPqHeptaAdmissionV2,
+    PqHeptaHandoffError, SignedPqHeptaAdmissionV2, MAX_PQ_HEPTA_ENVELOPE_BYTES,
+    ML_DSA_65_KEY_BYTES, ML_DSA_65_SIG_BYTES, PQ_HEPTA_HANDOFF_VERSION,
 };
 pub use state::{
     AppliedCommandRecordV1, ApplyOutcome, AuthorityIdentityV1, AuthoritySetV1,

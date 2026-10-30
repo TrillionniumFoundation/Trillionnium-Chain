@@ -3,7 +3,10 @@
 //! owner/withdrawal snapshot. V1 Ed25519 identity is never a PQ authority.
 use crate::canonical::{CanonicalCbor, CanonicalDecodeError, Decoder, Encoder, CANONICAL_ENCODING};
 use crate::hepta_handoff::{HeptaArtifactAdmissionV1, HeptaHandoffError};
-use ml_dsa::{EncodedVerifyingKey, KeyExport, Keypair, MlDsa65, Signature, SignatureEncoding, Signer, SigningKey, VerifyingKey};
+use ml_dsa::{
+    EncodedVerifyingKey, KeyExport, Keypair, MlDsa65, Signature, SignatureEncoding, Signer,
+    SigningKey, VerifyingKey,
+};
 use thiserror::Error;
 
 pub const PQ_HEPTA_HANDOFF_VERSION: u8 = 2;
@@ -46,11 +49,18 @@ pub enum PqHeptaHandoffError {
 }
 
 impl SignedPqHeptaAdmissionV2 {
-    pub fn sign(chain_id: String, signer_did: String, admission: HeptaArtifactAdmissionV1,
-        key: &SigningKey<MlDsa65>) -> Result<Self, PqHeptaHandoffError> {
+    pub fn sign(
+        chain_id: String,
+        signer_did: String,
+        admission: HeptaArtifactAdmissionV1,
+        key: &SigningKey<MlDsa65>,
+    ) -> Result<Self, PqHeptaHandoffError> {
         let mut item = Self {
-            chain_id, signer_did, public_key: key.verifying_key().to_bytes().to_vec(),
-            admission, signature: Vec::new(),
+            chain_id,
+            signer_did,
+            public_key: key.verifying_key().to_bytes().to_vec(),
+            admission,
+            signature: Vec::new(),
         };
         item.check_shape()?;
         let sig: Signature<MlDsa65> = key.sign(&item.signing_bytes());
@@ -74,14 +84,20 @@ impl SignedPqHeptaAdmissionV2 {
     }
 
     fn check_shape(&self) -> Result<(), PqHeptaHandoffError> {
-        if self.chain_id.is_empty() || self.chain_id.len() > 64 ||
-            !self.chain_id.bytes().all(|b| b.is_ascii_lowercase() || b.is_ascii_digit() ||
-                matches!(b, b'-' | b'_' | b'.' | b':')) {
+        if self.chain_id.is_empty()
+            || self.chain_id.len() > 64
+            || !self.chain_id.bytes().all(|b| {
+                b.is_ascii_lowercase()
+                    || b.is_ascii_digit()
+                    || matches!(b, b'-' | b'_' | b'.' | b':')
+            })
+        {
             return Err(PqHeptaHandoffError::InvalidChain);
         }
-        if !(5..=192).contains(&self.signer_did.len()) ||
-            !self.signer_did.starts_with("did:") ||
-            !self.signer_did.bytes().all(|b| b.is_ascii_graphic()) {
+        if !(5..=192).contains(&self.signer_did.len())
+            || !self.signer_did.starts_with("did:")
+            || !self.signer_did.bytes().all(|b| b.is_ascii_graphic())
+        {
             return Err(PqHeptaHandoffError::InvalidDid);
         }
         if self.public_key.len() != ML_DSA_65_KEY_BYTES {
@@ -102,8 +118,11 @@ impl SignedPqHeptaAdmissionV2 {
             .map_err(|_| PqHeptaHandoffError::InvalidSignatureEncoding)?;
         let encoded = EncodedVerifyingKey::<MlDsa65>::try_from(self.public_key.as_slice())
             .map_err(|_| PqHeptaHandoffError::InvalidKey)?;
-        if !VerifyingKey::<MlDsa65>::decode(&encoded)
-            .verify_with_context(&self.signing_bytes(), &[], &signature) {
+        if !VerifyingKey::<MlDsa65>::decode(&encoded).verify_with_context(
+            &self.signing_bytes(),
+            &[],
+            &signature,
+        ) {
             return Err(PqHeptaHandoffError::InvalidSignature);
         }
         Ok(())
@@ -112,9 +131,14 @@ impl SignedPqHeptaAdmissionV2 {
     /// All expectations MUST be obtained independently from the current
     /// Hepta Control authority, not copied from received untrusted bytes.
     /// This returns no capability to install, replay, release or spend.
-    pub fn verify_for_context(&self, trusted_chain: &str, trusted_did: &str,
-        trusted_ml_dsa65_key: &[u8], trusted_admission: &HeptaArtifactAdmissionV1,
-        now_unix_s: u64) -> Result<(), PqHeptaHandoffError> {
+    pub fn verify_for_context(
+        &self,
+        trusted_chain: &str,
+        trusted_did: &str,
+        trusted_ml_dsa65_key: &[u8],
+        trusted_admission: &HeptaArtifactAdmissionV1,
+        now_unix_s: u64,
+    ) -> Result<(), PqHeptaHandoffError> {
         trusted_admission.validate_at(now_unix_s)?;
         if trusted_ml_dsa65_key.len() != ML_DSA_65_KEY_BYTES {
             return Err(PqHeptaHandoffError::InvalidKey);
@@ -134,7 +158,9 @@ impl SignedPqHeptaAdmissionV2 {
         self.verify_self_signature()
     }
 
-    pub fn canonical_bytes(&self) -> Vec<u8> { CanonicalCbor::canonical_bytes(self) }
+    pub fn canonical_bytes(&self) -> Vec<u8> {
+        CanonicalCbor::canonical_bytes(self)
+    }
 
     /// Parses a self-signed statement; DO NOT grant owner authority on this
     /// result. Call verify_for_context with real owner-selected expectations.
@@ -165,7 +191,13 @@ impl SignedPqHeptaAdmissionV2 {
         }
         let signature = signature.to_vec();
         d.finish()?;
-        let item = Self { chain_id, signer_did, public_key, admission, signature };
+        let item = Self {
+            chain_id,
+            signer_did,
+            public_key,
+            admission,
+            signature,
+        };
         if item.canonical_bytes() != bytes {
             return Err(CanonicalDecodeError::NonCanonicalRoundTrip.into());
         }
