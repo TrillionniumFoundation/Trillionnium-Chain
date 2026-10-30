@@ -160,7 +160,7 @@ fn registration(
         layer: QualifiedWorkTask::layer_id(model_id),
         input: hash(b"qualified-task-input-v1", &[&input]),
         recipe: QualifiedWorkTask::recipe_id(),
-        matrix_task: pon_work::task_key_id(&a, &b).unwrap(),
+        matrix_task: pon_work::task_id(&a, &b).unwrap(),
         availability_manifest: lease.availability_manifest,
         availability_root: lease.availability_root,
         authorization_scope: lease.authorization_scope,
@@ -314,7 +314,7 @@ fn fixture_kind(next_kind: u8) -> Fixture {
         sign_command(&settings, 1, &transfer, 3, &[&requester])
     };
     let next = producer
-        .make_with_task(
+        .make_with_registered_material(
             producer.active().unwrap().0,
             vec![next_command],
             key_id(&evaluator),
@@ -402,6 +402,17 @@ fn inputs(
     parent: Hash,
     generation: u64,
 ) -> (policy::Inputs, Outside) {
+    inputs_with_search(f, sequence, prior, head, parent, generation, &[])
+}
+fn inputs_with_search(
+    f: &Fixture,
+    sequence: u64,
+    prior: Option<&Outside>,
+    head: history::Anchor,
+    parent: Hash,
+    generation: u64,
+    search_transactions: &[Vec<u8>],
+) -> (policy::Inputs, Outside) {
     let now = crate::operator_task_policy::now_ns().unwrap();
     let until = now + 300_000_000_000;
     let (materials, catalog_hash) = catalog(f);
@@ -460,7 +471,7 @@ fn inputs(
     let intent = crate::operator_mining_policy::SearchIntent {
         miner: hex::encode(key_id(&key(13))),
         timestamp: 1003,
-        exact_transactions_sha256: policy::pq_transactions_sha256(&[]).unwrap(),
+        exact_transactions_sha256: policy::pq_transactions_sha256(search_transactions).unwrap(),
         exact_group_ids: Vec::new(),
         nonce_first: 1,
         nonce_count: 256,
@@ -509,7 +520,7 @@ fn inputs(
         c.allocation.cpu_ns = 30_000_000_000;
         c.allocation.material_bytes = 2_000_000;
         c.allocation.da_bytes = 2_000_000;
-        c.operation = recipient::operation_key_id(&identity, c).unwrap();
+        c.operation = recipient::operation_id(&identity, c).unwrap();
         if purpose == "search" {
             search = c.operation.clone();
         }
@@ -607,6 +618,133 @@ fn open(f: &Fixture, inputs: policy::Inputs) -> Node {
     )
     .unwrap()
     .0
+}
+
+fn open_controller(
+    f: &Fixture,
+    input: policy::Inputs,
+) -> crate::operator_continuous_controller::Controller {
+    use crate::operator_continuous_controller::{Controller, OutsideLaunch};
+    use serde_json::json;
+    let identity = input.view_authority.identity.clone();
+    let allocations: Vec<_> = input.allocations.iter().map(|row| json!({"raw":row.raw,"authority":{
+        "identity":row.authority.identity,"expected":row.authority.expected,"expected_envelope_sha256":row.authority.expected_envelope_sha256,
+        "latest_allocator_sequence":row.authority.latest_allocator_sequence,"latest_allocator_digest":row.authority.latest_allocator_digest}})).collect();
+    let budget = input.budget_authority.as_ref().map(|authority| json!({"identity":authority.identity,"expected":authority.expected,
+        "envelope_sha256":authority.envelope_sha256,"latest_sequence":authority.latest_sequence,"latest_digest":authority.latest_digest}));
+    let materials: Vec<_> = input
+        .materials
+        .iter()
+        .map(|row| json!({"role":row.role,"path":row.path,"bytes":row.bytes,"sha256":row.sha256}))
+        .collect();
+    let value = json!({"schema":"restricted-owner-continuous-launch-pq-v3","source_commit":identity.source_commit,
+        "node_policy_source":identity.node_policy_source,"registry2_package":identity.registry2_package,
+        "store":f.root.path().join("consumer"),"maximum_steps":32,"wall_seconds":180,"receiver_service":null,
+        "inputs":{"raw_view":input.raw_view,"view_authority":{"identity":input.view_authority.identity,
+            "expected":input.view_authority.expected,"envelope_sha256":input.view_authority.envelope_sha256,
+            "latest_sequence":input.view_authority.latest_sequence,"latest_digest":input.view_authority.latest_digest},
+            "raw_budget":input.raw_budget,"budget_authority":budget,"allocations":allocations,"journal_path":input.journal_path,
+            "expected_uid":input.expected_uid,"expected_journal":input.expected_journal,"materials":materials,
+            "lease_transition":null,"known_unclean_restart":null}});
+    let raw = serde_json::to_vec(&value).unwrap();
+    let path = f.root.path().join(format!(
+        "launch-{}.json",
+        input.view_authority.latest_sequence
+    ));
+    fs::write(&path, &raw).unwrap();
+    fs::set_permissions(&path, fs::Permissions::from_mode(0o600)).unwrap();
+    let digest = digest_bytes(&raw);
+    Controller::open_pinned(
+        OutsideLaunch {
+            path: &path,
+            sha256: &digest,
+            registry_key: &identity.registry_key,
+            task_key: &identity.task_key,
+            source_commit: &identity.source_commit,
+            node_policy_source: &identity.node_policy_source,
+            registry2_package: &identity.registry2_package,
+        },
+        Instant::now(),
+    )
+    .unwrap()
+}
+
+#[test]
+fn pq_continuous_real_controller_nonempty_search_receiver_restart_and_wire_limits() {
+    use serde_json::json;
+    let f = fixture();
+    let (input, outside) = inputs_with_search(
+        &f,
+        1,
+        None,
+        history::Anchor::empty(),
+        boot(&f),
+        2,
+        &f.next.transactions,
+    );
+    let mut controller = open_controller(&f, input);
+    let mut old_wire = f.next.transactions[0].clone();
+    old_wire[3] = b'5';
+    old_wire[4] = 5;
+    let dual = PreparedStartup::decode(&f.bundle.encode().unwrap(), &f.settings)
+        .unwrap()
+        .packets[1]
+        .transactions[0]
+        .clone();
+    for transactions in [
+        vec!["00".repeat(2048)],
+        vec![hex::encode(old_wire)],
+        vec!["00".repeat(16385)],
+        vec![hex::encode(&f.next.transactions[0]); 65],
+        vec![hex::encode(&dual); 33],
+    ] {
+        let refusal = controller.apply(&serde_json::to_vec(&json!({"purpose":"search","operation_id":outside.search,"transactions":transactions})).unwrap()).unwrap();
+        assert!(refusal["native_error"].is_string(), "{refusal}");
+        assert_eq!(refusal["control_frame_recorded"], true);
+        assert_eq!(refusal["parent"], hex::encode(boot(&f)));
+    }
+    let search = controller
+        .apply(
+            &serde_json::to_vec(&json!({"purpose":"search","operation_id":outside.search,
+        "transactions":f.next.transactions.iter().map(hex::encode).collect::<Vec<_>>()}))
+            .unwrap(),
+        )
+        .unwrap();
+    assert!(search["native_error"].is_null(), "{search}");
+    assert!(
+        search["result"]["search"]["native_error"].is_null(),
+        "{search}"
+    );
+    let produced = Packet::decode_for_settings(
+        &hex::decode(search["result"]["packet"].as_str().unwrap()).unwrap(),
+        &f.settings,
+    )
+    .unwrap();
+    assert_eq!(produced.transactions, f.next.transactions);
+    assert_eq!(
+        produced.header.work_task,
+        f.registration.manifest.matrix_task
+    );
+    let received = controller.apply(&serde_json::to_vec(&json!({"purpose":"receiver-validation","packet":hex::encode(f.next.encode_for_settings(&f.settings).unwrap())})).unwrap()).unwrap();
+    assert!(
+        received["native_error"].is_null() && received["result"]["native_error"].is_null(),
+        "{received}"
+    );
+    let activated = controller.apply(&serde_json::to_vec(&json!({"purpose":"activate","block":hex::encode(f.next.id().unwrap()),"receiver":true})).unwrap()).unwrap();
+    assert!(
+        activated["native_error"].is_null() && activated["result"]["native_error"].is_null(),
+        "{activated}"
+    );
+    assert_eq!(activated["parent"], hex::encode(f.next.id().unwrap()));
+    let closed = controller.close().unwrap();
+    let head = serde_json::from_value(closed["checkpoint"]["journal_head"].clone()).unwrap();
+    drop(controller);
+    let (input, _) = inputs(&f, 2, Some(&outside), head, f.next.id().unwrap(), 3);
+    let mut reopened = open_controller(&f, input);
+    let status = reopened.apply(br#"{"purpose":"read-head"}"#).unwrap();
+    assert!(status["native_error"].is_null(), "{status}");
+    assert_eq!(status["parent"], hex::encode(f.next.id().unwrap()));
+    reopened.close().unwrap();
 }
 
 #[test]

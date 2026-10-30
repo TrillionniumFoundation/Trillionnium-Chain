@@ -138,7 +138,7 @@ fn opaque_tree_retention_caps_payload_charge_and_preserves_cold_borrow_behavior(
     cache.offer(&settings, Some(&initial));
     let guard = cache.material.borrow();
     let retained = guard.as_ref().unwrap();
-    assert!(retained.snapshot.payload_bytes() <= MAX_PAYLOAD_BYTES);
+    assert!(retained.payload_bytes() <= MAX_PAYLOAD_BYTES);
     assert!(retained.charged <= MAX_RETAINED_CHARGE_BYTES);
     let before = cache.counters.get();
     cache.offer(&settings, None);

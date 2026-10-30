@@ -1,6 +1,8 @@
 //! Exact development wire contract. Decoded values are NOT signature-verified authority.
 use sha2::{Digest, Sha256};
 use std::collections::BTreeMap;
+mod state_root_arithmetic;
+pub use state_root_arithmetic::{StateRootArithmetic, StateRootArithmeticObservation};
 pub type Hash = [u8; 32];
 pub const HEADER_BYTES: usize = 318;
 pub const MAX_TX_BYTES: usize = 2048;

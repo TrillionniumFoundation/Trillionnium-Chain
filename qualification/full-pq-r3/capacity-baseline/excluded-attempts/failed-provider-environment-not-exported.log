@@ -1,0 +1,140 @@
+   Compiling version_check v0.9.5
+   Compiling typenum v1.20.1
+   Compiling proc-macro2 v1.0.106
+   Compiling quote v1.0.45
+   Compiling unicode-ident v1.0.24
+   Compiling cfg-if v1.0.4
+   Compiling syn v2.0.117
+   Compiling generic-array v0.14.7
+   Compiling shlex v1.3.0
+   Compiling find-msvc-tools v0.1.9
+   Compiling cc v1.2.59
+   Compiling zeroize v1.8.2
+   Compiling pkg-config v0.3.32
+   Compiling vcpkg v0.2.15
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling cmov v0.5.4
+   Compiling ctutils v0.4.6
+   Compiling digest v0.10.7
+   Compiling semver v1.0.27
+   Compiling zerocopy v0.8.48
+   Compiling cpufeatures v0.2.17
+   Compiling libc v0.2.184
+   Compiling rustc_version v0.4.1
+   Compiling hybrid-array v0.4.15
+   Compiling ahash v0.8.12
+   Compiling equivalent v1.0.2
+   Compiling hashbrown v0.16.1
+   Compiling bitflags v2.11.0
+   Compiling winnow v1.0.4
+   Compiling serde_core v1.0.228
+   Compiling once_cell v1.21.4
+   Compiling toml_parser v1.1.3+spec-1.1.0
+   Compiling indexmap v2.13.1
+   Compiling curve25519-dalek v4.1.3
+   Compiling sha2 v0.10.9
+   Compiling toml_datetime v1.1.1+spec-1.1.0
+   Compiling autocfg v1.5.1
+   Compiling num-traits v0.2.19
+   Compiling toml_edit v0.25.13+spec-1.1.0
+   Compiling crypto-common v0.2.2
+   Compiling libsqlite3-sys v0.30.1
+   Compiling openssl-sys v0.9.117
+   Compiling curve25519-dalek-derive v0.1.1
+   Compiling cfg_aliases v0.2.2
+   Compiling subtle v2.6.1
+   Compiling signature v2.2.0
+   Compiling ed25519 v2.2.3
+   Compiling borsh v1.8.0
+   Compiling digest v0.11.3
+   Compiling hashbrown v0.14.5
+   Compiling proc-macro-crate v3.5.0
+   Compiling serde v1.0.228
+   Compiling thiserror v1.0.69
+   Compiling borsh-derive v1.8.0
+   Compiling hashlink v0.9.1
+   Compiling ed25519-dalek v2.2.0
+   Compiling serde_derive v1.0.228
+   Compiling thiserror-impl v1.0.69
+   Compiling keccak v0.2.2
+   Compiling anyhow v1.0.103
+   Compiling smallvec v1.15.1
+   Compiling openssl v0.10.81
+   Compiling zmij v1.0.21
+   Compiling sponge-cursor v0.1.0
+   Compiling fallible-iterator v0.3.0
+   Compiling fallible-streaming-iterator v0.1.9
+   Compiling foreign-types-shared v0.1.1
+   Compiling foreign-types v0.3.2
+   Compiling rusqlite v0.32.1
+   Compiling shake v0.1.0
+   Compiling module-lattice v0.2.3
+   Compiling signature v3.0.0
+   Compiling openssl-macros v0.1.1
+   Compiling serde_json v1.0.149
+   Compiling hex v0.4.3
+   Compiling trnm-protocol v0.1.0 (/workspace/scratch/52b001730263/chain-pq-capacity-r3/trillionnium/crates/trnm-protocol)
+   Compiling ml-dsa v0.1.1
+   Compiling memchr v2.8.0
+   Compiling itoa v1.0.18
+   Compiling getrandom v0.4.2
+   Compiling rustix v1.1.4
+   Compiling trnm-crypto-primitives v0.1.0 (/workspace/scratch/52b001730263/chain-pq-capacity-r3/trillionnium/crates/trnm-crypto-primitives)
+   Compiling linux-raw-sys v0.12.1
+   Compiling trnm-task-kernel v0.1.0 (/workspace/scratch/52b001730263/chain-pq-capacity-r3/trillionnium/crates/trnm-task-kernel)
+   Compiling trnm-verification-profiles v0.1.0 (/workspace/scratch/52b001730263/chain-pq-capacity-r3/trillionnium/crates/trnm-verification-profiles)
+   Compiling fs2 v0.4.3
+   Compiling fastrand v2.3.0
+   Compiling tempfile v3.27.0
+   Compiling trnm-data-availability v0.1.0 (/workspace/scratch/52b001730263/chain-pq-capacity-r3/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-mvcc-fee v0.1.0 (/workspace/scratch/52b001730263/chain-pq-capacity-r3/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-service-settlement v0.1.0 (/workspace/scratch/52b001730263/chain-pq-capacity-r3/trillionnium/crates/trnm-service-settlement)
+   Compiling trnm-mempool v0.1.0 (/workspace/scratch/52b001730263/chain-pq-capacity-r3/trillionnium/crates/trnm-mempool)
+   Compiling trnm-transport v0.1.0 (/workspace/scratch/52b001730263/chain-pq-capacity-r3/trillionnium/crates/trnm-transport)
+   Compiling trnm-pon-node v0.1.0 (/workspace/scratch/52b001730263/chain-pq-capacity-r3/trillionnium/crates/trnm-pon-node)
+error[E0599]: no function or associated item named `private_key_from_seed` found for struct `PKey<_>` in the current scope
+   --> crates/trnm-pon-node/src/ingress/pq_network/tests.rs:11:21
+    |
+ 11 |     let key = PKey::private_key_from_seed(None, KeyType::ML_DSA_65, None, &[seed; 32]).unwrap();
+    |                     ^^^^^^^^^^^^^^^^^^^^^ function or associated item not found in `PKey<_>`
+    |
+note: if you're trying to build a new `PKey<_>` consider using one of the following associated functions:
+      PKey::<T>::from_rsa
+      PKey::<T>::from_dsa
+      PKey::<T>::from_dh
+      PKey::<T>::from_dhx
+      and 23 others
+   --> /tmp/pq-r3-cargo/registry/src/index.crates.io-1949cf8c6b5b557f/openssl-0.10.81/src/pkey.rs:514:5
+    |
+514 |     pub fn from_rsa(rsa: Rsa<T>) -> Result<PKey<T>, ErrorStack> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+527 |     pub fn from_dsa(dsa: Dsa<T>) -> Result<PKey<T>, ErrorStack> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+539 |     pub fn from_dh(dh: Dh<T>) -> Result<PKey<T>, ErrorStack> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+550 |     pub fn from_dhx(dh: Dh<T>) -> Result<PKey<T>, ErrorStack> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+help: there is an associated function `private_key_from_der` with a similar name
+   --> /tmp/pq-r3-cargo/registry/src/index.crates.io-1949cf8c6b5b557f/openssl-0.10.81/src/macros.rs:108:9
+    |
+108 |           pub fn $n(der: &[u8]) -> Result<$t, crate::error::ErrorStack> {
+    |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+   ::: /tmp/pq-r3-cargo/registry/src/index.crates.io-1949cf8c6b5b557f/openssl-0.10.81/src/pkey.rs:766:5
+    |
+766 | /     from_der! {
+767 | |         /// Decodes a DER-encoded private key.
+768 | |         ///
+769 | |         /// This function will attempt to automatically detect the underlying key format, and
+...   |
+775 | |         ffi::d2i_AutoPrivateKey
+776 | |     }
+    | |_____- in this macro invocation
+    = note: this error originates in the macro `from_der` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+For more information about this error, try `rustc --explain E0599`.
+error: could not compile `trnm-pon-node` (lib test) due to 1 previous error
