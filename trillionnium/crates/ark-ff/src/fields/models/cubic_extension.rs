@@ -711,7 +711,7 @@ mod cube_ext_tests {
     fn fq6_test_expected_components(random_coeffs: &[Fq]) -> (Fq2, Fq2, Fq2) {
         let expected_0 = Fq2::new(random_coeffs[0], random_coeffs[1]);
         let expected_1 = Fq2::new(random_coeffs[2], random_coeffs[3]);
-        let expected_2 = Fq2::new(random_coeffs[3], random_coeffs[4]);
+        let expected_2 = Fq2::new(random_coeffs[4], random_coeffs[5]);
         (expected_0, expected_1, expected_2)
     }
 
