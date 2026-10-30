@@ -651,16 +651,21 @@ pub mod pq_reply_v2 {
     /// TLS identity, deployment selection, or Hepta FinalUse authorization.
     pub fn fetch_pq_discovered_cell_to_file_v2(
         store: &super::super::CellStoreV1,
-        bootstrap: SocketAddr,
-        expected_request: CellDiscoveryRequestV1,
+        options: &CellDiscoveryOptionsV1,
         pinned_owners: &[PqPinnedProviderV2<'_>],
-        addresses: &CellDiscoveryAddressPolicyV1,
         limits: super::super::CellPeerLimitsV1,
         original_deadline: Instant,
         output: &std::path::Path,
     ) -> CellResultV1<(super::super::CellManifestV1, PqDiscoveredCellFetchReportV2)> {
+        let expected_request = options.request;
+        let addresses = &options.addresses;
         expected_request.validate()?;
         addresses.validate()?;
+        require(
+            options.bootstraps.len() == 1,
+            "PQ exactly one independent bootstrap",
+        )?;
+        let bootstrap = options.bootstraps[0];
         addresses.check(bootstrap)?;
         limits.validate()?;
         let original_overall = original_deadline.min(Instant::now() + limits.overall_timeout);
@@ -1386,6 +1391,11 @@ pub mod pq_reply_v2 {
             let consumer_path = dir.path().join("pq-consumer.sqlite");
             let consumer = CellStoreV1::open(&consumer_path, config()).unwrap();
             let output = dir.path().join("pq-complete-model");
+            let options = CellDiscoveryOptionsV1 {
+                request: expected_request,
+                bootstraps: vec![bootstrap],
+                addresses: addresses.clone(),
+            };
             let current = [PqPinnedProviderV2 {
                 signer_key_id: key_id,
                 trusted_ml_dsa65_public_key: &trusted_key,
@@ -1396,10 +1406,8 @@ pub mod pq_reply_v2 {
             // sessions would instead reset the allowance and succeed.
             assert!(fetch_pq_discovered_cell_to_file_v2(
                 &consumer,
-                bootstrap,
-                expected_request,
+                &options,
                 &current,
-                &addresses,
                 limits(1),
                 Instant::now() + Duration::from_secs(10),
                 &output,
@@ -1414,10 +1422,8 @@ pub mod pq_reply_v2 {
             }];
             assert!(fetch_pq_discovered_cell_to_file_v2(
                 &consumer,
-                bootstrap,
-                expected_request,
+                &options,
                 &stale,
-                &addresses,
                 limits(64),
                 Instant::now() + Duration::from_secs(10),
                 &output,
@@ -1427,10 +1433,8 @@ pub mod pq_reply_v2 {
 
             let (completed, observation) = fetch_pq_discovered_cell_to_file_v2(
                 &consumer,
-                bootstrap,
-                expected_request,
+                &options,
                 &current,
-                &addresses,
                 limits(64),
                 Instant::now() + Duration::from_secs(10),
                 &output,
