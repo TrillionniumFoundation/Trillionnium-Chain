@@ -62,7 +62,9 @@ class ClaimGateTests(unittest.TestCase):
         import subprocess
         import sys
         path = self.root / module.PATHS["w1_backend"]
-        path.write_text(json.dumps({"pq_128_security_qualified": True}), encoding="utf-8")
+        profile = json.loads(path.read_text(encoding="utf-8"))
+        profile["pq_128_security_qualified"] = True
+        path.write_text(json.dumps(profile), encoding="utf-8")
         self.assertIn("unreviewed_pq128_proof_claim", self.kinds())
         self.assertFalse(module.inspect(self.root)["pq_chain_qualified"])
         result = subprocess.run(
@@ -70,7 +72,10 @@ class ClaimGateTests(unittest.TestCase):
             capture_output=True, text=True, check=False,
         )
         self.assertEqual(result.returncode, 2)
-        self.assertIn("unreviewed_pq128_proof_claim", result.stdout)
+        self.assertEqual(
+            {item["kind"] for item in json.loads(result.stdout)["known_open_findings"]},
+            {"classical_authority", "unreviewed_pq128_proof_claim"},
+        )
 
     def test_unreadable_classic_authority_is_fail_closed(self):
         import subprocess
@@ -93,44 +98,96 @@ class ClaimGateTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("unqualified_proof", result.stdout)
 
-    def test_malformed_flag_types_and_non_object_profiles_are_refused(self):
+    def test_malformed_proof_types_and_non_object_profile_are_refused(self):
         import subprocess
         import sys
 
-        def assert_cli_refuses():
+        proof = self.root / module.PATHS["w1_backend"]
+        baseline = json.loads(proof.read_text(encoding="utf-8"))
+
+        def assert_cli_refuses(expected):
             result = subprocess.run(
                 [sys.executable, str(SCRIPT), "--root", str(self.root), "--assert-unqualified"],
                 capture_output=True, text=True, check=False,
             )
             self.assertEqual(result.returncode, 2, result.stdout)
-
-        proof = self.root / module.PATHS["w1_backend"]
-        consensus = self.root / module.PATHS["consensus"]
-        original_consensus = json.loads(consensus.read_text(encoding="utf-8"))
+            report = json.loads(result.stdout)
+            expected_kinds = {"classical_authority", expected}
+            self.assertEqual(
+                {item["kind"] for item in report["known_open_findings"]},
+                expected_kinds,
+            )
+            self.assertFalse(report["pq_chain_qualified"])
 
         for bad_value in (1, "true", None):
-            proof.write_text(
-                json.dumps({"pq_128_security_qualified": bad_value}), encoding="utf-8"
-            )
-            self.assertIn("invalid_proof_qualification_flag_type", self.kinds())
-            assert_cli_refuses()
-        proof.write_text(json.dumps({"pq_128_security_qualified": False}), encoding="utf-8")
-
-        for bad_value in (1, "false", None):
-            wrong = dict(original_consensus)
-            wrong["production_candidate"] = bad_value
-            consensus.write_text(json.dumps(wrong), encoding="utf-8")
-            self.assertIn("invalid_production_flag_type", self.kinds())
-            assert_cli_refuses()
-
-        consensus.write_text(json.dumps(original_consensus), encoding="utf-8")
+            with self.subTest(bad_value=bad_value):
+                proof.write_text(
+                    json.dumps({**baseline, "pq_128_security_qualified": bad_value}),
+                    encoding="utf-8",
+                )
+                self.assertIn("invalid_proof_qualification_flag_type", self.kinds())
+                assert_cli_refuses("invalid_proof_qualification_flag_type")
         proof.write_text("[]", encoding="utf-8")
         self.assertIn("invalid_proof_profile_shape", self.kinds())
-        assert_cli_refuses()
-        proof.write_text(json.dumps({"pq_128_security_qualified": False}), encoding="utf-8")
-        consensus.write_text("[]", encoding="utf-8")
-        self.assertIn("invalid_consensus_profile_shape", self.kinds())
-        assert_cli_refuses()
+        assert_cli_refuses("invalid_proof_profile_shape")
+        proof.write_text(json.dumps(baseline), encoding="utf-8")
+
+    def test_all_production_flags_refuse_in_isolation_with_valid_proof(self):
+        import subprocess
+        import sys
+
+        consensus = self.root / module.PATHS["consensus"]
+        baseline = json.loads(consensus.read_text(encoding="utf-8"))
+        # Keep setUp's complete Composite/exact-false W1 fixture unchanged.
+        # An unrelated proof failure must not mask a broken consensus CLI gate.
+        proof = self.root / module.PATHS["w1_backend"]
+        original_proof = proof.read_bytes()
+
+        def assert_cli(expected=None):
+            result = subprocess.run(
+                [sys.executable, str(SCRIPT), "--root", str(self.root), "--assert-unqualified"],
+                capture_output=True, text=True, check=False,
+            )
+            self.assertEqual(result.returncode, 0 if expected is None else 2, result.stdout)
+            report = json.loads(result.stdout)
+            expected_kinds = {"classical_authority", "unqualified_proof"}
+            if expected is not None:
+                expected_kinds.add(expected)
+            self.assertEqual(
+                {item["kind"] for item in report["known_open_findings"]},
+                expected_kinds,
+            )
+            self.assertFalse(report["pq_chain_qualified"])
+            self.assertEqual(proof.read_bytes(), original_proof)
+
+        assert_cli()
+        for flag in module.PRODUCTION_FLAGS:
+            cases = [(True, "production_claim_requires_independent_pq_review")]
+            cases.extend(
+                (value, "invalid_production_flag_type")
+                for value in (None, 0, 1, "false", "true", [], {})
+            )
+            for value, expected in cases:
+                with self.subTest(flag=flag, value=value):
+                    consensus.write_text(json.dumps({**baseline, flag: value}), encoding="utf-8")
+                    self.assertIn(expected, self.kinds())
+                    assert_cli(expected)
+            with self.subTest(flag=flag, missing=True):
+                missing = dict(baseline)
+                del missing[flag]
+                consensus.write_text(json.dumps(missing), encoding="utf-8")
+                self.assertIn("invalid_production_flag_type", self.kinds())
+                assert_cli("invalid_production_flag_type")
+            consensus.write_text(json.dumps(baseline), encoding="utf-8")
+            assert_cli()
+
+        for value in ([], None, 0, "invalid", True):
+            with self.subTest(non_object=value):
+                consensus.write_text(json.dumps(value), encoding="utf-8")
+                self.assertIn("invalid_consensus_profile_shape", self.kinds())
+                assert_cli("invalid_consensus_profile_shape")
+        consensus.write_text(json.dumps(baseline), encoding="utf-8")
+        assert_cli()
 
     def test_proof_receipt_and_all_fallback_switches_fail_closed(self):
         import subprocess
