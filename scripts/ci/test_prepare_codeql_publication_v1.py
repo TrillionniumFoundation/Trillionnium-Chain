@@ -149,6 +149,124 @@ class Controls(unittest.TestCase):
             with self.subTest(field=field), self.assertRaisesRegex(ValueError, "more than"):
                 p.compare_postprocessed(p.serialized(doc()), p.serialized(processed))
 
+    def metric_raw(self, number):
+        value = doc()
+        value["runs"][0]["properties"] = {"metricResults": [
+            {"ruleId": "unchanged-metric", "value": "RAW_METRIC_NUMBER"}]}
+        return p.serialized(value).replace(b'"RAW_METRIC_NUMBER"', number.encode("ascii"))
+
+    def test_metric_exact_safe_integer_spellings_are_recorded(self):
+        cases = (("100.0", "100"), ("1e2", "100"), ("-100.0", "-100"),
+                 ("0.0", "0"), ("-0.0", "0"),
+                 ("9007199254740991.0", "9007199254740991"),
+                 ("-9007199254740991.0", "-9007199254740991"))
+        for old, new in cases:
+            with self.subTest(old=old, new=new):
+                left, right = self.metric_raw(old), self.metric_raw(new)
+                observation = p.compare_postprocessed(left, right)
+                self.assertEqual(observation["metric_number_serializations"], [{
+                    "pointer": "/runs/0/properties/metricResults/0/value",
+                    "original_decimal": str(p.Decimal(old)), "processed_integer": int(new)}])
+                self.assertEqual(observation["publication_sarif"], p.digest(left))
+                self.assertEqual(observation["official_postprocessed_sarif"], p.digest(right))
+                self.assertIs(observation["official_security_gate_qualified"], False)
+                self.assertIs(observation["production_qualified"], False)
+
+    def test_metric_noninteger_and_exact_decimal_value_changes_rejected(self):
+        cases = (("100.0", "101"), ("100.5", "100"), ("-100.0", "100"),
+                 ("1e-400", "0"), ("9007199254740990.5", "9007199254740990"),
+                 ("-9007199254740990.5", "-9007199254740990"),
+                 ("9007199254740991.1", "9007199254740991"))
+        for old, new in cases:
+            with self.subTest(old=old, new=new), self.assertRaisesRegex(ValueError, "exact finite"):
+                p.compare_postprocessed(self.metric_raw(old), self.metric_raw(new))
+
+    def test_metric_unsafe_integer_range_and_nonfinite_rejected(self):
+        for old, new in (("9007199254740992.0", "9007199254740992"),
+                         ("-9007199254740992.0", "-9007199254740992"),
+                         ("1e309", "0"), ("-1e309", "0"),
+                         ("NaN", "0"), ("Infinity", "0"), ("-Infinity", "0")):
+            with self.subTest(old=old, new=new), self.assertRaises(ValueError):
+                p.compare_postprocessed(self.metric_raw(old), self.metric_raw(new))
+
+    def test_metric_bool_string_null_and_reverse_type_changes_rejected(self):
+        for old, new in (("1.0", "true"), ("false", "0"), ("true", "1"),
+                         ("1", "1.0"), ('"1.0"', "1"), ("1.0", '"1"'),
+                         ("null", "0"), ("1.0", "null")):
+            with self.subTest(old=old, new=new), self.assertRaisesRegex(ValueError, "more than"):
+                p.compare_postprocessed(self.metric_raw(old), self.metric_raw(new))
+
+    def test_metric_exception_does_not_apply_to_other_paths(self):
+        for where in ("run-property", "result-property", "notification-property"):
+            original = doc()
+            if where == "run-property":
+                target = original["runs"][0]
+                target["properties"] = {"anotherMetric": {"value": 100.0}}
+                route = ("properties", "anotherMetric", "value")
+            elif where == "result-property":
+                target = original["runs"][0]["results"][0]
+                target["properties"] = {"metricResults": [{"value": 100.0}]}
+                route = ("properties", "metricResults", 0, "value")
+            else:
+                target = original["runs"][0]["invocations"][0]["toolExecutionNotifications"][0]
+                target["properties"] = {"metricResults": [{"value": 100.0}]}
+                route = ("properties", "metricResults", 0, "value")
+            left = p.serialized(original)
+            for component in route[:-1]:
+                target = target[component]
+            target[route[-1]] = 100
+            with self.subTest(where=where), self.assertRaisesRegex(ValueError, "more than"):
+                p.compare_postprocessed(left, p.serialized(original))
+
+    def test_exact_decimal_changes_cannot_hide_behind_equal_binary_floats(self):
+        old, new = "0.1000000000000000001", "0.1000000000000000002"
+        self.assertEqual(float(old), float(new))
+        with self.assertRaisesRegex(ValueError, "more than"):
+            p.compare_postprocessed(self.metric_raw(old), self.metric_raw(new))
+        # The same guarantee holds when original fingerprint values are restored.
+        left = doc()
+        left["runs"][0]["results"][0]["partialFingerprints"] = {"old": "EXACT_NUMBER"}
+        left = p.serialized(left)
+        with self.assertRaisesRegex(ValueError, "existing fingerprint"):
+            p.compare_postprocessed(left.replace(b'"EXACT_NUMBER"', old.encode()),
+                                    left.replace(b'"EXACT_NUMBER"', new.encode()))
+
+    def test_metric_normalization_does_not_hide_other_changes(self):
+        left = self.metric_raw("100.0")
+        for changed in ("metric-rule", "metric-added", "metric-removed", "metric-value-missing",
+                        "findings", "diagnostics", "category", "severity"):
+            right = json.loads(self.metric_raw("100"))
+            run = right["runs"][0]
+            metric = run["properties"]["metricResults"][0]
+            if changed == "metric-rule":
+                metric["ruleId"] = "different"
+            elif changed == "metric-added":
+                run["properties"]["metricResults"].append(copy.deepcopy(metric))
+            elif changed == "metric-removed":
+                run["properties"]["metricResults"] = []
+            elif changed == "metric-value-missing":
+                del metric["value"]
+            elif changed == "findings":
+                run["results"] = []
+            elif changed == "diagnostics":
+                run["invocations"][0]["toolExecutionNotifications"] = []
+            elif changed == "category":
+                run["automationDetails"]["id"] = "changed/"
+            else:
+                run["results"][0]["level"] = "none"
+            with self.subTest(changed=changed), self.assertRaises(ValueError):
+                p.compare_postprocessed(left, p.serialized(right))
+
+    def test_metric_serialization_and_additive_fingerprint_remain_separate(self):
+        left = self.metric_raw("100.0")
+        right = json.loads(self.metric_raw("100"))
+        right["runs"][0]["results"][0]["partialFingerprints"] = {"primaryLocationLineHash": "abc:1"}
+        observation = p.compare_postprocessed(left, p.serialized(right))
+        self.assertEqual(len(observation["additive_fingerprints"]), 1)
+        self.assertEqual(len(observation["metric_number_serializations"]), 1)
+        self.assertIs(observation["all_results_rules_diagnostics_and_invocations_preserved"], True)
+        self.assertIs(observation["official_security_gate_qualified"], False)
+
 
 if __name__ == "__main__":
     unittest.main()

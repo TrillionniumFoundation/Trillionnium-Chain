@@ -6,9 +6,11 @@ coverage policy, the original runner result, or the official export predicate.
 """
 import argparse
 import copy
+from decimal import Decimal
 import gzip
 import hashlib
 import json
+import math
 import os
 from pathlib import Path, PurePosixPath
 import re
@@ -41,9 +43,9 @@ def pairs(items):
         result[key] = value
     return result
 
-def loads(raw):
+def loads(raw, *, parse_float=float):
     require(len(raw) <= LIMIT, "publication JSON byte cap")
-    return json.loads(raw, object_pairs_hook=pairs,
+    return json.loads(raw, object_pairs_hook=pairs, parse_float=parse_float,
                       parse_constant=lambda value: (_ for _ in ()).throw(ValueError("non-finite JSON")))
 
 def canonical(value):
@@ -336,8 +338,61 @@ def derive(raws, git, head, language, run_id, attempt):
                 "physical_authentication": False}
     return publication, manifest
 
+def exact_json_equal(left, right):
+    """Compare a second Decimal parse without binary-float value collapse."""
+    if type(left) is not type(right):
+        return False
+    if type(left) is dict:
+        return (left.keys() == right.keys()
+                and all(exact_json_equal(value, right[key]) for key, value in left.items()))
+    if type(left) is list:
+        return (len(left) == len(right)
+                and all(exact_json_equal(a, b) for a, b in zip(left, right)))
+    if type(left) is Decimal:
+        return left.is_finite() and right.is_finite() and left == right
+    return left == right
+
+
+def restore_metric_integer_spellings(left, right, exact_left, exact_right):
+    """Allow only exact safe-integer serialization at SARIF metric value paths.
+
+    The official JavaScript action serializes, for example, 100.0 as 100.
+    Decimal is required: binary float can round a non-integer token to an
+    integer before this check. No other numeric field receives this exception.
+    Only comparison copies are restored; both original byte streams stay intact.
+    """
+    changes = []
+    for ri, (old_run, new_run) in enumerate(zip(left["runs"], right["runs"])):
+        old_properties, new_properties = old_run.get("properties", {}), new_run.get("properties", {})
+        if type(old_properties) is not dict or type(new_properties) is not dict:
+            continue
+        old_metrics, new_metrics = old_properties.get("metricResults"), new_properties.get("metricResults")
+        if type(old_metrics) is not list or type(new_metrics) is not list:
+            continue
+        require(len(old_metrics) == len(new_metrics), "metric result count changed")
+        for mi, (old_metric, new_metric) in enumerate(zip(old_metrics, new_metrics)):
+            require(type(old_metric) is dict and type(new_metric) is dict, "metric result type changed")
+            old_value, new_value = old_metric.get("value"), new_metric.get("value")
+            if type(old_value) is not float or type(new_value) is not int:
+                continue
+            precise_old = exact_left["runs"][ri]["properties"]["metricResults"][mi]["value"]
+            precise_new = exact_right["runs"][ri]["properties"]["metricResults"][mi]["value"]
+            require(type(precise_old) is Decimal and type(precise_new) is int
+                    and math.isfinite(old_value) and precise_old.is_finite()
+                    and -(2**53 - 1) <= new_value <= 2**53 - 1
+                    and precise_old == precise_new,
+                    "metric number is not an exact finite safe-integer serialization")
+            changes.append({"pointer": f"/runs/{ri}/properties/metricResults/{mi}/value",
+                            "original_decimal": str(precise_old),
+                            "processed_integer": new_value})
+            new_metric["value"] = old_value
+            exact_right["runs"][ri]["properties"]["metricResults"][mi]["value"] = precise_old
+    return changes
+
+
 def compare_postprocessed(publication, processed):
     left, right = loads(publication), loads(processed)
+    exact_left, exact_right = loads(publication, parse_float=Decimal), loads(processed, parse_float=Decimal)
     require(type(right.get("runs")) is list and len(right["runs"]) == len(left["runs"]), "upload run count changed")
     additions = []
     for ri, (old_run, new_run) in enumerate(zip(left["runs"], right["runs"])):
@@ -346,6 +401,10 @@ def compare_postprocessed(publication, processed):
             before, after = old.get("partialFingerprints", {}), new.get("partialFingerprints", {})
             require(type(before) is dict and type(after) is dict, "fingerprint type")
             require(all(k in after and after[k] == v for k, v in before.items()), "existing fingerprint changed")
+            precise_before = exact_left["runs"][ri]["results"][i].get("partialFingerprints", {})
+            precise_after = exact_right["runs"][ri]["results"][i].get("partialFingerprints", {})
+            require(all(k in precise_after and exact_json_equal(v, precise_after[k])
+                        for k, v in precise_before.items()), "existing fingerprint changed")
             extra = set(after) - set(before)
             require(extra <= {"primaryLocationLineHash"}
                     and all(type(after[k]) is str and re.fullmatch(r"[0-9a-f]+:[1-9][0-9]*", after[k]) for k in extra),
@@ -354,11 +413,17 @@ def compare_postprocessed(publication, processed):
                 additions.append({"run": ri, "result": i, "added": {k: after[k] for k in extra}})
             if "partialFingerprints" in old:
                 new["partialFingerprints"] = copy.deepcopy(before)
+                exact_right["runs"][ri]["results"][i]["partialFingerprints"] = copy.deepcopy(
+                    exact_left["runs"][ri]["results"][i]["partialFingerprints"])
             else:
                 new.pop("partialFingerprints", None)
-    require(canonical(left) == canonical(right), "official postprocessing changed more than additive fingerprints")
+                exact_right["runs"][ri]["results"][i].pop("partialFingerprints", None)
+    number_changes = restore_metric_integer_spellings(left, right, exact_left, exact_right)
+    require(exact_json_equal(exact_left, exact_right) and canonical(left) == canonical(right),
+            "official postprocessing changed more than additive fingerprints and exact metric number serialization")
     return {"schema": "pon-codeql-publication-postprocessing-v1", "publication_sarif": digest(publication),
             "official_postprocessed_sarif": digest(processed), "additive_fingerprints": additions,
+            "metric_number_serializations": number_changes,
             "all_results_rules_diagnostics_and_invocations_preserved": True,
             "official_security_gate_qualified": False, "production_qualified": False}
 

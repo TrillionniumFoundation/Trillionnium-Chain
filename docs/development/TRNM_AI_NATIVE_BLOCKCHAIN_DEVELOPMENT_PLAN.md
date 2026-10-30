@@ -5618,3 +5618,86 @@ The original export deadline, query/model definitions, Rust findings and
 coverage requirements are unchanged. Actual official ingestion, exact-source
 export and repository default-setup compatibility remain requirements for the
 new GitHub run. No administrative setting is assumed or changed.
+
+### F terminal evidence and bounded publication repair
+
+The published candidate remains
+[`7d54a36c9e760f8edab6544c69c153dad2626eab`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/7d54a36c9e760f8edab6544c69c153dad2626eab),
+tree `8a5964aec47b2bf2b6f34216c0096b56ebe6facd`, in the existing draft
+integration PR. Its actual
+[required baseline](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40877800724)
+has completed both native runtime lanes successfully: the candidate head and
+prospective merge `a691f00fe2ae222756b3ac559d56ecfcd754ab51` use that same
+tree. The newly retrieved small runtime receipts report passing outcomes and
+matching before/after source. This readback does not claim to have reread the
+separate large runtime output archives. Both quality lanes and their dependent
+fan-in remain failed; successful runtime execution does not waive them.
+
+The [fresh F complete-W1 run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40877800719)
+also failed. Its original process record reports the unchanged 5,400-second
+deadline, exit 124 and 5,400.188153 seconds of wall time. The retained artifact
+contains no receipt; proof verification and the negative proof audit did not
+execute. All 55 members of the newly retrieved 306,070-byte artifact were
+CRC/hash checked, with ZIP SHA-256
+`d72cc4495a4bbe4b408140f7968cd48e2c76883e2cc10cbf8a0d5f32a1b099df`.
+This is a real timeout, not successful proof generation.
+
+#### Exact metric serialization in the CodeQL publisher
+
+The [actual F publication run](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40877800722)
+retains the original four language bundles and the official action's processed
+SARIF. The C++ and Rust comparison failures arise from respectively 15 and 14
+changes at `runs[*].properties.metricResults[*].value`: an exact integral JSON
+float such as `100.0` is serialized as the integer `100`. This narrow repair
+allows only that path, direction, finite mathematical equality and the
+JavaScript safe-integer range. A second Decimal parse checks the original token
+exactly, preventing binary-float rounding from hiding a changed fraction.
+
+The complete typed comparison still rejects all other field changes. Existing
+fingerprints are checked before restoring comparison copies, and permitted
+metric conversions are explicitly recorded. Both original byte streams remain
+intact. All original findings, rules, diagnostics and invocations must survive;
+the Rust scan's 322 findings and failed semantic-coverage verdict are not made
+clean by successful packaging. Data-only replay and its control tests are not
+new scans, uploads or official security-gate qualification.
+
+All four actual F uploads were rejected because repository default setup is
+enabled. The [official exporter](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40877800709)
+retained 39 polls with empty analysis lists; its last 20 polls contained a
+completed, neutral exact-F CodeQL check reporting a SARIF processing error.
+Its final result remains incomplete and unauthenticated. This is no longer
+described merely as a missing check. GitHub's
+[documented default-setup behavior](https://docs.github.com/en/code-security/reference/code-scanning/troubleshoot-analysis-errors/results-different-than-expected)
+blocks advanced CodeQL uploads. No administrator setting, branch target,
+required gate, finding, coverage rule or upload identity is changed by this
+repair. Official ingestion and the original security gate remain open.
+
+#### Four requested Rayon workers for the next complete-W1 experiment
+
+The next proof step explicitly requests four Rayon workers under the separate
+`full-w1-composite-rayon4-research-v1` observation profile. Other steps retain
+their original two-worker environment. The workload remains the complete
+64-by-64/r8/512-tile W1 relation, with the same pinned guest image, local
+Composite/Poseidon2 backend, segment power 18, original 5,400-second proof
+deadline, strict verifier and complete negative audit. No development receipt,
+remote prover or alternative proof kind is admitted.
+
+The step retains its requested environment, exact source and observed caller
+CPU affinity in `prove.thread-request-v1.json`, and rejects a request other
+than four before launching the proof. That record is descriptive; the existing
+proof reader does not use it as a replacement acceptance predicate. The
+unchanged observer retains actual process evidence and unknown family/resource
+limits. Requested Rayon workers are not total process threads or a CPU quota.
+Affinity is not an enforced resource boundary, and a faster run or a particular
+memory peak is not assumed. The public runner's
+[documented resource class](https://docs.github.com/en/actions/reference/runners/github-hosted-runners)
+does not replace actual resource observations. A future result belongs to this
+new worker-request configuration; the original two-worker failures remain
+failures. Proof completion, public service, model benefit, whole-chain quantum
+resistance and production activation remain distinct requirements.
+
+Workspace maintenance removed an unpublished local CPU-parent experiment and
+its execution originals. It was never part of the published F tree. Those old
+local observations are not reused as current-source acceptance: the complete
+parent sources, provenance and executable verification must be restored from
+their immutable upstream inputs and run again before their own publication.
