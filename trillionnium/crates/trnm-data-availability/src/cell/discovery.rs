@@ -618,6 +618,10 @@ pub mod pq_reply_v2 {
             wall_now()?.as_secs(),
             addresses,
         )?;
+        // A successful PCP2 reply verified exactly one real ML-DSA signature
+        // per returned record. Do not return a misleading zero cost count.
+        // Failed calls still return Err and need separate failure telemetry.
+        observation.record_validation_attempts = providers.len();
         check_deadline(overall)?;
         Ok((providers, observation))
     }
@@ -658,14 +662,18 @@ pub mod pq_reply_v2 {
             .as_slice()
             .try_into()
             .map_err(|_| CellErrorV1::Invalid("PQ request length"))?;
-        super::transport::serve_pq_reply_bytes_v2(
+        let mut report = super::transport::serve_pq_reply_bytes_v2(
             listener,
             pin,
             signed_reply,
             expires,
             shutdown,
             limits,
-        )
+        )?;
+        // The entire signed roster was genuinely ML-DSA verified once before
+        // listening. Count that original work even if clients were denied.
+        report.record_validation_attempts = verified.len();
+        Ok(report)
     }
 
     #[cfg(test)]
@@ -939,6 +947,7 @@ pub mod pq_reply_v2 {
                     assert_eq!(verified.len(), 1);
                     assert_eq!(verified[0].signer_key_id(), id);
                     assert_eq!(observed.connection_attempts, 1);
+                    assert_eq!(observed.record_validation_attempts, 1);
                     assert_eq!(observed.received_response_bytes, (wire.len() + 9) as u64);
                 } else {
                     assert!(answer.is_err(), "classical CDS1 response downgraded PCP2");
@@ -1029,6 +1038,7 @@ pub mod pq_reply_v2 {
             assert_eq!(providers.len(), 1);
             assert_eq!(providers[0].sequence(), 11);
             assert_eq!(observation.connection_attempts, 1);
+            assert_eq!(observation.record_validation_attempts, 1);
             assert_eq!(
                 observation.received_response_bytes,
                 (response.len() + 9) as u64
@@ -1066,7 +1076,7 @@ pub mod pq_reply_v2 {
             let served = server.join().unwrap();
             assert_eq!(served.connections, 2);
             assert_eq!(served.rejected_requests, 1);
-            assert_eq!(served.record_validation_attempts, 0);
+            assert_eq!(served.record_validation_attempts, 1);
         }
 
         #[test]
