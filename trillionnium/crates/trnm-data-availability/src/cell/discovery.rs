@@ -557,6 +557,57 @@ pub mod pq_reply_v2 {
         Ok(result)
     }
 
+    /// One explicitly configured bootstrap, distinct PCP2 frame, original
+    /// caller deadline and shared received-byte accounting. The external
+    /// replay frontier remains caller-owned: this probe does not publish Cell
+    /// custody, select a release, persist a roster or install a Hepta model.
+    pub fn query_pq_provider_from_bootstrap_v2(
+        bootstrap: SocketAddr,
+        expected_request: CellDiscoveryRequestV1,
+        pinned_owners: &[PqPinnedProviderV2<'_>],
+        addresses: &CellDiscoveryAddressPolicyV1,
+        limits: super::super::CellPeerLimitsV1,
+        original_deadline: Instant,
+    ) -> CellResultV1<(
+        Vec<VerifiedPqDiscoveryProviderV2>,
+        CellDiscoveryObservationV1,
+    )> {
+        expected_request.validate()?;
+        addresses.validate()?;
+        addresses.check(bootstrap)?;
+        limits.validate()?;
+        let overall = original_deadline.min(Instant::now() + limits.overall_timeout);
+        check_deadline(overall)?;
+        let requests_left = std::sync::atomic::AtomicU64::new(1);
+        let responses = super::super::network::ResponseBudget::new(
+            limits.max_response_bytes.min(MAX_DISCOVERY_RESPONSE_BYTES),
+        );
+        let context = super::super::network::RequestContext {
+            timeout: limits.request_timeout,
+            overall,
+            requests_left: &requests_left,
+            responses: &responses,
+            peer_failures: Default::default(),
+        };
+        let mut observation = CellDiscoveryObservationV1::default();
+        let reply = super::transport::exchange_pq_v2(
+            bootstrap,
+            &expected_request.encode(),
+            &context,
+            &mut observation,
+        )?;
+        check_deadline(overall)?;
+        let providers = verify_pq_provider_reply_v2(
+            &reply,
+            expected_request,
+            pinned_owners,
+            wall_now()?.as_secs(),
+            addresses,
+        )?;
+        check_deadline(overall)?;
+        Ok((providers, observation))
+    }
+
     #[cfg(test)]
     mod tests {
         use super::*;
@@ -692,6 +743,89 @@ pub mod pq_reply_v2 {
                 &bad_addresses
             )
             .is_err());
+        }
+
+        #[test]
+        fn actual_tcp_pcp2_probe_authenticates_while_classical_frame_fails() {
+            use std::io::{Read, Write};
+            use std::net::TcpListener;
+            use std::thread;
+            use std::time::Duration;
+
+            let now = wall_now().unwrap().as_secs();
+            let key = SigningKey::<MlDsa65>::new_from_slice(&[71; 32]).unwrap();
+            let pk = key.verifying_key().to_bytes().to_vec();
+            let id = pq_cell_provider_key_id_v2(&pk).unwrap();
+            let record = SignedPqCellProviderRecordV2::sign(
+                PqCellProviderStatementV2 {
+                    pinned_request: request().encode().try_into().unwrap(),
+                    endpoint: endpoint_bytes("127.0.0.1:31415".parse().unwrap()),
+                    sequence: 7,
+                    issued_unix_seconds: now - 1,
+                    expires_unix_seconds: now + 120,
+                },
+                &key,
+            )
+            .unwrap()
+            .to_wire();
+            let wire = reply(&[&record]);
+            let limits = super::super::super::CellPeerLimitsV1 {
+                request_timeout: Duration::from_secs(3),
+                overall_timeout: Duration::from_secs(5),
+                max_cell_bytes: 1024,
+                parallelism: 1,
+                max_connections: 1,
+                max_response_bytes: MAX_DISCOVERY_RESPONSE_BYTES,
+            };
+            let pin = [PqPinnedProviderV2 {
+                signer_key_id: id,
+                trusted_ml_dsa65_public_key: &pk,
+                external_sequence_floor: 6,
+            }];
+
+            for (response_magic, should_pass) in [(*b"PCS2", true), (*b"CDS1", false)] {
+                let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+                let peer = listener.local_addr().unwrap();
+                let mut ports = vec![31415, peer.port()];
+                ports.sort_unstable();
+                ports.dedup();
+                let policy = CellDiscoveryAddressPolicyV1::LoopbackDevOnly { ports };
+                let actual_reply = wire.clone();
+                let server = thread::spawn(move || {
+                    let (mut stream, _) = listener.accept().unwrap();
+                    let mut frame = [0; 7];
+                    stream.read_exact(&mut frame).unwrap();
+                    assert_eq!(&frame[..4], b"PCQ2");
+                    assert_eq!(frame[4], 1);
+                    assert_eq!(u16::from_be_bytes([frame[5], frame[6]]), 192);
+                    let mut request_bytes = [0; 192];
+                    stream.read_exact(&mut request_bytes).unwrap();
+                    assert_eq!(request_bytes.as_slice(), request().encode());
+                    let mut response = response_magic.to_vec();
+                    response.push(0);
+                    response.extend((actual_reply.len() as u32).to_be_bytes());
+                    response.extend(actual_reply);
+                    stream.write_all(&response).unwrap();
+                });
+                let answer = query_pq_provider_from_bootstrap_v2(
+                    peer,
+                    request(),
+                    &pin,
+                    &policy,
+                    limits,
+                    Instant::now() + Duration::from_secs(6),
+                );
+                server.join().unwrap();
+                if should_pass {
+                    let (verified, observed) = answer.unwrap();
+                    assert_eq!(verified.len(), 1);
+                    assert_eq!(verified[0].signer_key_id(), id);
+                    assert_eq!(observed.connection_attempts, 1);
+                    assert_eq!(observed.received_response_bytes, (wire.len() + 9) as u64);
+                } else {
+                    assert!(answer.is_err(), "classical CDS1 response downgraded PCP2");
+                }
+            }
         }
 
         #[test]
