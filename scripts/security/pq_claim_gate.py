@@ -40,7 +40,11 @@ def inspect(root: Path) -> dict:
         elif label == "w1_backend":
             try:
                 profile = json.loads(file.read_text(encoding="utf-8"))
-                if profile.get("pq_128_security_qualified") is True:
+                if not isinstance(profile, dict):
+                    blockers.append({"kind": "invalid_proof_profile_shape", "path": rel})
+                elif type(profile.get("pq_128_security_qualified")) is not bool:
+                    blockers.append({"kind": "invalid_proof_qualification_flag_type", "path": rel})
+                elif profile["pq_128_security_qualified"] is True:
                     # A self-set flag is not an independently reviewed
                     # quantum-security proof. Refuse promotion until an
                     # external assessment with pinned parameters exists.
@@ -54,9 +58,16 @@ def inspect(root: Path) -> dict:
     if config_path.is_file():
         try:
             config = json.loads(config_path.read_text(encoding="utf-8"))
-            production = {flag: config.get(flag) for flag in PRODUCTION_FLAGS}
-            if any(value is True for value in production.values()):
-                blockers.append({"kind": "production_claim_requires_independent_pq_review", "path": PATHS["consensus"]})
+            if not isinstance(config, dict):
+                blockers.append({"kind": "invalid_consensus_profile_shape", "path": PATHS["consensus"]})
+            else:
+                production = {flag: config.get(flag) for flag in PRODUCTION_FLAGS}
+                # JSON numbers and strings must never be coerced to a boolean
+                # activation decision by some other consumer.
+                if any(type(value) is not bool for value in production.values()):
+                    blockers.append({"kind": "invalid_production_flag_type", "path": PATHS["consensus"]})
+                if any(value is True for value in production.values()):
+                    blockers.append({"kind": "production_claim_requires_independent_pq_review", "path": PATHS["consensus"]})
         except (ValueError, OSError, UnicodeError):
             blockers.append({"kind": "unreadable_consensus_profile", "path": PATHS["consensus"]})
     return {
@@ -79,7 +90,9 @@ def main():
     print(json.dumps(report, indent=2, sort_keys=True))
     if args.assert_unqualified and any(item["kind"] in (
         "missing_source", "unreadable_source", "unreadable_proof_profile",
-        "unreadable_consensus_profile", "unreviewed_pq128_proof_claim",
+        "unreadable_consensus_profile", "invalid_proof_profile_shape",
+        "invalid_proof_qualification_flag_type", "invalid_consensus_profile_shape",
+        "invalid_production_flag_type", "unreviewed_pq128_proof_claim",
         "production_claim_requires_independent_pq_review") for item in report["known_open_findings"]):
         raise SystemExit(2)
 
