@@ -21,7 +21,10 @@ class ClaimGateTests(unittest.TestCase):
             if key in module.CLASSICAL_MARKERS:
                 target.write_text(" ".join(module.CLASSICAL_MARKERS[key]), encoding="utf-8")
             elif key == "w1_backend":
-                target.write_text(json.dumps({"pq_128_security_qualified": False}), encoding="utf-8")
+                profile = {"pq_128_security_qualified": False,
+                           "proof_receipt_kind": module.RESEARCH_PROOF_RECEIPT_KIND}
+                profile.update({flag: False for flag in module.PROOF_RESEARCH_ONLY_FALSE_FLAGS})
+                target.write_text(json.dumps(profile), encoding="utf-8")
             else:
                 target.write_text(json.dumps({f: False for f in module.PRODUCTION_FLAGS}), encoding="utf-8")
 
@@ -128,6 +131,55 @@ class ClaimGateTests(unittest.TestCase):
         consensus.write_text("[]", encoding="utf-8")
         self.assertIn("invalid_consensus_profile_shape", self.kinds())
         assert_cli_refuses()
+
+    def test_proof_receipt_and_all_fallback_switches_fail_closed(self):
+        import subprocess
+        import sys
+        proof = self.root / module.PATHS["w1_backend"]
+        baseline = json.loads(proof.read_text(encoding="utf-8"))
+
+        def refuses(expected):
+            self.assertIn(expected, self.kinds())
+            result = subprocess.run(
+                [sys.executable, str(SCRIPT), "--root", str(self.root), "--assert-unqualified"],
+                capture_output=True, text=True, check=False,
+            )
+            self.assertEqual(result.returncode, 2, result.stdout)
+
+        # Even with pq_128_security_qualified=false, a Groth16 or Fake
+        # receipt must not silently enter this Composite-only profile.
+        for receipt in ("Groth16", "Fake", "", None):
+            with self.subTest(receipt=receipt):
+                proof.write_text(json.dumps({**baseline, "proof_receipt_kind": receipt}),
+                                 encoding="utf-8")
+                refuses("unsupported_proof_receipt_kind")
+        proof.write_text(json.dumps(baseline), encoding="utf-8")
+
+        for flag in module.PROOF_RESEARCH_ONLY_FALSE_FLAGS:
+            with self.subTest(flag=flag, value=True):
+                proof.write_text(json.dumps({**baseline, flag: True}), encoding="utf-8")
+                refuses("unsafe_proof_policy_enabled")
+                self.assertTrue(any(
+                    item.get("field") == flag and item["kind"] == "unsafe_proof_policy_enabled"
+                    for item in module.inspect(self.root)["known_open_findings"]
+                ))
+            for bad_value in (1, "false", None):
+                with self.subTest(flag=flag, bad_value=bad_value):
+                    proof.write_text(json.dumps({**baseline, flag: bad_value}),
+                                     encoding="utf-8")
+                    refuses("invalid_proof_policy_flag_type")
+            with self.subTest(flag=flag, missing=True):
+                missing = dict(baseline)
+                del missing[flag]
+                proof.write_text(json.dumps(missing), encoding="utf-8")
+                refuses("invalid_proof_policy_flag_type")
+        proof.write_text(json.dumps(baseline), encoding="utf-8")
+        baseline_result = subprocess.run(
+            [sys.executable, str(SCRIPT), "--root", str(self.root), "--assert-unqualified"],
+            capture_output=True, text=True, check=False,
+        )
+        self.assertEqual(baseline_result.returncode, 0, baseline_result.stdout)
+        self.assertIn("unqualified_proof", baseline_result.stdout)
 
 if __name__ == "__main__":
     unittest.main()
