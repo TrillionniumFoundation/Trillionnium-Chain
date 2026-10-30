@@ -5701,3 +5701,45 @@ its execution originals. It was never part of the published F tree. Those old
 local observations are not reused as current-source acceptance: the complete
 parent sources, provenance and executable verification must be restored from
 their immutable upstream inputs and run again before their own publication.
+
+### H: complete CPU-parent source adoption and fresh native verification
+
+The next bounded adoption starts from published G
+[`c96c2b3e24ba354b4abcb842ca6a6a019c442b73`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/c96c2b3e24ba354b4abcb842ca6a6a019c442b73),
+tree `74b69713a50e61a52e2232855f1a19c567f1e6e1`. It owns the complete
+`ark-ff 0.5.0`, `risc0-zkvm-platform 2.2.3` and `rrs-lib 0.1.0` sources under
+M01 in the primary workspace. Each published archive, original member and
+supplemental license is hash-bound in its retained `UPSTREAM.json`.
+The 73 prepared files total 547,404 bytes before repository integration; two
+independent readers verified that handoff. Original Rust sources and test data
+are preserved at this initial adoption. Neither prior pruned native results nor
+a source-only inventory is fresh executable acceptance.
+
+The active `ark-ff` manifest removes its unused direct `paste` dependency and
+restores the original upstream test requirements, including all six nested
+expander trials and 60 vectors. The other two manifests preserve their original
+source alias while resolving the real maintained package `pastey =0.2.3`.
+Original package names, versions, licenses and features remain; publishing is
+disabled. The primary workspace uses same-name patches and a 31-package source
+inventory. The standalone W1 workspace and its locked graph are unchanged.
+Remaining SDK parents and platform-specific dependencies still need their own
+adoption and gates; this change does not declare the supply gate clean.
+
+Fresh validation must first compile and run the retained original suites on a
+clean source commit. The cubic-extension test's expected third pair must then
+be reproduced with six distinct fixed inputs: canonical arithmetic must pass,
+and the original expected-pair assertion must actually fail. A build failure
+does not satisfy that control. Only after that RED may the shared test oracle
+change from indices `[3],[4]` to `[4],[5]`. That repair concerns a test oracle,
+not a demonstrated production field-arithmetic defect. Original random tests
+remain. Full unit, documentation, feature-union, no-default, formatting, strict
+lint and actual consumer checks require separate fresh observations.
+
+Host compilation of the platform package, especially a suite with zero original
+tests, does not demonstrate guest syscall behavior. All-feature exports must be
+checked against the actual consumer link scope. New source adoption or passing
+native checks do not establish proof completion, cheapest-work hardness,
+public service fairness, model efficacy, whole-chain quantum resistance or
+production activation. Every unresolved gate remains open.
+
+Initial all-feature Cargo metadata and a subsequent locked offline fetch completed successfully. The primary lock SHA-256 is `9466cc1073f80c72ef978e1dde66171a9375afa2575f202eb36a314ef37b3cbc`. Three same-version registry identities become owned paths; nine new registry dependencies restore the real test/macro/optional allocator graph. Existing package versions do not change. The original `libtest-mimic ^0.8.1` requirement resolves to `0.8.2`. No compile, native test or supply-policy acceptance is inferred from metadata.

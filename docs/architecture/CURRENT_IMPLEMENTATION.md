@@ -7,7 +7,7 @@ Regenerate with `python3 scripts/ci/report_current_implementation.py --write`;
 the repository checker rejects stale output. Historical measurements retain their original source.
 
 Selected target: `pon-nakamoto-v1`. Registered stage: `invariant-driven-native-application-candidate`.
-Actual inventoried workspace: **28 packages**;
+Actual inventoried workspace: **31 packages**;
 registered procedures: **39**.
 
 ## Implementation inventory
@@ -18,7 +18,7 @@ A zero product-entrypoint count does not mean that the native development CLI is
 | Module | Procedures by implementation kind | Native package owner | Product entrypoints | Product integrated | Independent accepted |
 |---|---|---|---:|---|---|
 | M00 | pure-component: 2 | `trnm-protocol`, `trnm-types` | 0 | false | false |
-| M01 | native-component-with-reference-caller: 1; native-development-owner: 1 | `ark-crypto-primitives`, `ark-relations`, `trnm-crypto-primitives`, `trnm-governance-guard` | 0 | false | false |
+| M01 | native-component-with-reference-caller: 1; native-development-owner: 1 | `ark-crypto-primitives`, `ark-ff`, `ark-relations`, `risc0-zkvm-platform`, `rrs-lib`, `trnm-crypto-primitives`, `trnm-governance-guard` | 0 | false | false |
 | M02 | native-development-owner: 2 | responsibility owned by composition | 0 | false | false |
 | M03 | native-development-owner: 1; reference-owner: 1 | `trnm-checkpoint-store`, `trnm-checkpoint-types` | 0 | false | false |
 | M04 | native-development-owner: 3 | `trnm-peer-lease`, `trnm-transport` | 0 | false | false |

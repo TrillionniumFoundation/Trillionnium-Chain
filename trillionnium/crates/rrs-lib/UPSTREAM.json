@@ -1,0 +1,129 @@
+{
+  "active_manifest_sha256": "fd378e2abc6c344f1ef261fed2bb1d9fdd7d44184a8837b64944cac6b05a8c04",
+  "all_original_features_preserved": true,
+  "archive": {
+    "bytes": 13574,
+    "prior_pinned_archive_hash_matched": true,
+    "sha256": "b4382d3af3a4ebdae7f64ba6edd9114fff92c89808004c4943b393377a25d001",
+    "url": "https://static.crates.io/crates/rrs-lib/rrs-lib-0.1.0.crate"
+  },
+  "consensus_authority": false,
+  "maintained_macro_package": {
+    "bytes": 20361,
+    "package": "pastey",
+    "prior_pinned_archive_hash_matched": true,
+    "sha256": "2ee67f1008b1ba2321834326597b8e186293b049a023cdef258527550b9935b4",
+    "url": "https://static.crates.io/crates/pastey/pastey-0.2.3.crate",
+    "version": "0.2.3"
+  },
+  "maintenance": "keep the original paste source alias and resolve the real maintained pastey package at =0.2.3",
+  "modified_original_members": [
+    "Cargo.toml",
+    "README.md"
+  ],
+  "native_or_cargo_validation": false,
+  "original_Cargo_toml_orig_is_unchanged_provenance": true,
+  "original_git_provenance": {
+    "git": {
+      "sha1": "7f93313d11d936698cff72caab9bd5b034fc8658"
+    }
+  },
+  "original_members": [
+    {
+      "bytes": 74,
+      "mode": 420,
+      "path": ".cargo_vcs_info.json",
+      "sha256": "53924207d9e31daf3e0244425db1b859777cd53006450fc1c5725ccd6f4b7ea8"
+    },
+    {
+      "bytes": 1029,
+      "mode": 420,
+      "path": "Cargo.toml",
+      "sha256": "201154c974ab86d29389b5425e8734017b4dbca2af3f3e81af13329bad9a6ae1"
+    },
+    {
+      "bytes": 571,
+      "mode": 420,
+      "path": "Cargo.toml.orig",
+      "sha256": "5a65c19b1022b2567cf252b39ae42bd95e5291c287a97216e29c105f8fc18047"
+    },
+    {
+      "bytes": 2733,
+      "mode": 420,
+      "path": "README.md",
+      "sha256": "7dd5c08abe6da0ef5949a7f6334208e8ee27f2dea9d3c821264cc09d9603043f"
+    },
+    {
+      "bytes": 14570,
+      "mode": 420,
+      "path": "src/instruction_executor.rs",
+      "sha256": "ff3baeee62fd32ace902efa5b196fdb1d3700671d58bba520a41e4c9424365e7"
+    },
+    {
+      "bytes": 10635,
+      "mode": 420,
+      "path": "src/instruction_formats.rs",
+      "sha256": "c30907a46836c8befec8fa8aaca38cf42136f737a297ffb52dc66c16dc7ba47a"
+    },
+    {
+      "bytes": 14326,
+      "mode": 420,
+      "path": "src/instruction_string_outputter.rs",
+      "sha256": "c767dfcc3912d24fc086b66f6e8bbb188fd16574eba79d8a0fe885e2d528c861"
+    },
+    {
+      "bytes": 10681,
+      "mode": 420,
+      "path": "src/lib.rs",
+      "sha256": "40347e5d697724a4e12f2598f3c521ccb41e3954dd6d158bd078f62a0984aa55"
+    },
+    {
+      "bytes": 12241,
+      "mode": 420,
+      "path": "src/memories.rs",
+      "sha256": "1cabe49fb0a2c7079408633fd308b3cedd899dba75baf473a1bffa4e42891815"
+    },
+    {
+      "bytes": 6528,
+      "mode": 420,
+      "path": "src/process_instruction.rs",
+      "sha256": "2e92bce6da080a5d75a2cc9ec6bf7cadd1c9b6de191167b564f68890b6f4e0fc"
+    }
+  ],
+  "original_rust_and_test_sources_unchanged": true,
+  "package": "rrs-lib",
+  "preparation_whitespace_changes": [
+    {
+      "change": "remove exactly one terminal empty line",
+      "maintained_sha256": "6bc28f356e7e3c89bd364b42bb386aa92d991610cc5ca80b46bf2b9823b9e89d",
+      "original_sha256": "7dd5c08abe6da0ef5949a7f6334208e8ee27f2dea9d3c821264cc09d9603043f",
+      "path": "README.md"
+    }
+  ],
+  "prior_pruned_native_results_reused": false,
+  "production_activation": false,
+  "schema": "pon-maintained-parent-adoption-v1",
+  "source_base_commit": "c96c2b3e24ba354b4abcb842ca6a6a019c442b73",
+  "supplemental_upstream_license": {
+    "bytes": 10173,
+    "git_blob_sha1": "d9a10c0d8e868ebf8da0b3dc95bb0be634c34bfe",
+    "part_of_original_crate_archive": false,
+    "path": "LICENSE",
+    "sha256": "a6cba85bc92e0cff7a450b1d873c0eaa2e9fc96bf472df0247a26bec77bf3ff9",
+    "url": "https://raw.githubusercontent.com/GregAC/rrs/7f93313d11d936698cff72caab9bd5b034fc8658/LICENSE"
+  },
+  "supply_gate_closed": false,
+  "version": "0.1.0",
+  "workspace_adoption": {
+    "initial_lock_sha256": "9466cc1073f80c72ef978e1dde66171a9375afa2575f202eb36a314ef37b3cbc",
+    "metadata_receipt_sha256": "1325e5ba118ee42211cb4777c9ea6c98b43be3d95cacda1841f6491366faae1b",
+    "native_validation_executed_at_adoption": false,
+    "original_test_sources_preserved_at_adoption": true,
+    "previous_registry_versions_changed": 0,
+    "root_lock_resolution_executed": true,
+    "root_member": true,
+    "same_name_crates_io_patch": true,
+    "standalone_w1_workspace_changed": false
+  },
+  "workspace_owner_metadata": "M01; complete source owned in the primary workspace and portability inventory"
+}

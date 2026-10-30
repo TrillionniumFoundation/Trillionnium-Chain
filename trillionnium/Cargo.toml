@@ -1,6 +1,9 @@
 [workspace]
 resolver = "2"
 members = [
+  "crates/ark-ff",
+  "crates/risc0-zkvm-platform",
+  "crates/rrs-lib",
   "crates/ark-relations",
   "crates/ark-crypto-primitives",
   "crates/trnm-audit-events",
@@ -84,3 +87,6 @@ overflow-checks = true
 [patch.crates-io]
 ark-relations = { path = "crates/ark-relations" }
 ark-crypto-primitives = { path = "crates/ark-crypto-primitives" }
+ark-ff = { path = "crates/ark-ff" }
+risc0-zkvm-platform = { path = "crates/risc0-zkvm-platform" }
+rrs-lib = { path = "crates/rrs-lib" }

@@ -218,7 +218,7 @@
       "package": "ark-relations",
       "module": "M01",
       "path": "trillionnium/crates/ark-relations",
-      "role": "Complete maintained ark-relations 0.5.1 upstream component with tracing-subscriber 0.3 callback migration; no consensus or proof-security qualification.",
+      "role": "Complete maintained ark-relations 0.5.1 component with tracing-subscriber 0.3 callbacks and explicit Variable total ordering; no consensus or proof-security qualification.",
       "consensus_authority": false,
       "production_activation": false
     },
@@ -226,7 +226,31 @@
       "package": "ark-crypto-primitives",
       "module": "M01",
       "path": "trillionnium/crates/ark-crypto-primitives",
-      "role": "Complete maintained ark-crypto-primitives 0.5.0 upstream component with derivative-to-educe migration and unchanged arithmetic/serialization; no consensus or proof-security qualification.",
+      "role": "Complete maintained ark-crypto-primitives 0.5.0 component with educe migration, slice gadget APIs, signed-minimum overflow repair and actual asm feature forwarding; see retained provenance and controls for semantic scope.",
+      "consensus_authority": false,
+      "production_activation": false
+    },
+    {
+      "package": "ark-ff",
+      "module": "M01",
+      "path": "trillionnium/crates/ark-ff",
+      "role": "Complete maintained ark-ff 0.5.0 component; remove unused direct paste dependency, retain finite-field implementation and restore original test requirements; no proof-security qualification.",
+      "consensus_authority": false,
+      "production_activation": false
+    },
+    {
+      "package": "risc0-zkvm-platform",
+      "module": "M01",
+      "path": "trillionnium/crates/risc0-zkvm-platform",
+      "role": "Complete maintained risc0-zkvm-platform 2.2.3 component using the real pastey 0.2.3 package; all original features retained, host validation is not guest syscall qualification.",
+      "consensus_authority": false,
+      "production_activation": false
+    },
+    {
+      "package": "rrs-lib",
+      "module": "M01",
+      "path": "trillionnium/crates/rrs-lib",
+      "role": "Complete maintained rrs-lib 0.1.0 component using the real pastey 0.2.3 package; retain RISC-V simulation implementation and tests; no consensus authority.",
       "consensus_authority": false,
       "production_activation": false
     }

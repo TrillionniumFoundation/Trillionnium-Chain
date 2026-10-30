@@ -89,7 +89,13 @@
         "trillionnium/crates/ark-relations/src/lib.rs",
         "trillionnium/crates/ark-relations/UPSTREAM.json",
         "trillionnium/crates/ark-crypto-primitives/src/lib.rs",
-        "trillionnium/crates/ark-crypto-primitives/UPSTREAM.json"
+        "trillionnium/crates/ark-crypto-primitives/UPSTREAM.json",
+        "trillionnium/crates/ark-ff/src/lib.rs",
+        "trillionnium/crates/ark-ff/UPSTREAM.json",
+        "trillionnium/crates/risc0-zkvm-platform/src/lib.rs",
+        "trillionnium/crates/risc0-zkvm-platform/UPSTREAM.json",
+        "trillionnium/crates/rrs-lib/src/lib.rs",
+        "trillionnium/crates/rrs-lib/UPSTREAM.json"
       ],
       "test_classes": [
         "InteropTests",
@@ -100,7 +106,10 @@
         "trnm-crypto-primitives",
         "trnm-governance-guard",
         "ark-relations",
-        "ark-crypto-primitives"
+        "ark-crypto-primitives",
+        "ark-ff",
+        "risc0-zkvm-platform",
+        "rrs-lib"
       ],
       "implementation_scope": "native-candidate-and-executable-spec",
       "native_product_integrated": false,
