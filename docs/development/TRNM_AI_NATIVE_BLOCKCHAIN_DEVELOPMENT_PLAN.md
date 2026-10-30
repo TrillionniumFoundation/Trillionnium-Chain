@@ -4708,3 +4708,33 @@ independent kernel token do not compose that fence. Repeated reads, hashes or a
 lease number cannot replace the actual owner guard. Full runtime/dependency/
 custody/repair, three real upgrade-and-next-task rounds with NoGain rejection,
 Windows, paid W1 and independent WAN remain OPEN / NO_GO. No budgets are reset.
+
+### PN0 — complete account-root arithmetic and original runtime gate (2026-10-29)
+
+The exact fc749 prospective runtime job exceeded its original 180-minute limit
+after reaching 65,536 ordinary signed accounts. It has no completed 65,537-account
+boundary or cold-reopen receipt; the fan-in correctly refused the cancelled
+shard. Preserve its full logs, artifacts and original assertions. The same-tree
+head success does not qualify that preview or a later source.
+
+The protocol owner's complete account-root rebuild now reuses only each depth's
+fixed empty-left SHA prefix. A cloned full hasher retains the original 77-byte
+prefix, including both part lengths, before adding the actual right subtree.
+Every supplied account is still hashed, sorted and checked for duplicate paths;
+all nonempty-left branches and the original domains, limits and root bytes stay
+with the existing grammar. No source, account, storage or authority verdict is
+cached, and initialization cannot reenter the empty-table constructor.
+
+This removes repeated constant compression work. One local, work-only paired
+observation used the actual release library and rustc 1.95.0: six alternating
+warm pairs at each of 128 and 512 accounts gave median new/original process-CPU
+ratios of 0.7645 and 0.7741. All 56 complete-root calls retained equal digests.
+The owning release unit suite passed 31 tests, with its two original ignored
+observations excluded; strict Clippy also passed. These small arithmetic samples
+do not establish Node throughput, hardware fairness or original CI wall time.
+Narrow checks do not close the original 180-minute runtime failure.
+The complete ordinary-genesis growth, interruption,
+recovery and cold-reopen tests remain required on the exact new source. Do not
+change their account counts, workflow, time/resource bounds or guards. All paid
+W1, Windows, model, persistent-custody and independent WAN requirements remain
+OPEN / NO_GO; no validation or provider budget is reset.
