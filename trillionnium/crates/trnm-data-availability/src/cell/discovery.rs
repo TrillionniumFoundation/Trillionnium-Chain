@@ -434,7 +434,7 @@ mod equivocation_history_tests;
 // discovery advertisement grants artifact release or FinalUse authority.
 pub use pq_v2::{
     pq_cell_provider_key_id_v2, CellPqProviderRecordV2, CellPqProviderStatementV2,
-    CELL_PQ_PROVIDER_RECORD_BYTES_V2, CELL_PQ_PROVIDER_PROFILE_V2,
+    CELL_PQ_PROVIDER_PROFILE_V2, CELL_PQ_PROVIDER_RECORD_BYTES_V2,
 };
 
 mod pq_v2 {
@@ -459,7 +459,10 @@ mod pq_v2 {
     const KEY_ID_DOMAIN: &[u8] = b"trnm.cell-provider-identity.ml-dsa65.v2\0";
 
     pub fn pq_cell_provider_key_id_v2(public_key: &[u8]) -> CellResultV1<CellDigestV1> {
-        require(public_key.len() == KEY_BYTES, "PQ discovery public key length")?;
+        require(
+            public_key.len() == KEY_BYTES,
+            "PQ discovery public key length",
+        )?;
         let mut hash = Sha256::new();
         hash.update(KEY_ID_DOMAIN);
         hash.update(public_key);
@@ -608,8 +611,7 @@ mod pq_v2 {
                 "PQ discovery trusted request",
             )?;
             require(
-                trusted_public_key.len() == KEY_BYTES
-                    && self.public_key == trusted_public_key,
+                trusted_public_key.len() == KEY_BYTES && self.public_key == trusted_public_key,
                 "PQ discovery independently pinned owner",
             )?;
             require(
@@ -755,9 +757,7 @@ mod pq_v2 {
             assert!(original
                 .verify_pinned(foreign, &pinned, 6, 150, &addresses())
                 .is_err());
-            let wrong_port = CellDiscoveryAddressPolicyV1::LoopbackDevOnly {
-                ports: vec![31416],
-            };
+            let wrong_port = CellDiscoveryAddressPolicyV1::LoopbackDevOnly { ports: vec![31416] };
             assert!(original
                 .verify_pinned(request(), &pinned, 6, 150, &wrong_port)
                 .is_err());
