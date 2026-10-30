@@ -73,6 +73,11 @@ pub fn verify_pcp2_provider_hint_v2(
         .map_err(|_| CellErrorV1::Invalid("PQ Cell owner request length"))?;
     let record = SignedPqCellProviderRecordV2::from_wire(wire)
         .map_err(|_| CellErrorV1::Invalid("PQ Cell provider wire"))?;
+    // Preserve parallel #568: policy-denied endpoints are refused before
+    // expensive ML-DSA key expansion. This untrusted preflight may REJECT only;
+    // no endpoint is returned or dialed until independently pinned verification.
+    let endpoint = decode_endpoint(record.statement.endpoint)?;
+    expectation.addresses.check(endpoint)?;
     let verified = record
         .verify_for_pinned_context(&PqCellProviderExpectationV2 {
             pinned_request: &pinned_request,
@@ -81,8 +86,8 @@ pub fn verify_pcp2_provider_hint_v2(
             now_unix_seconds: expectation.now_unix_seconds,
         })
         .map_err(|_| CellErrorV1::Invalid("PQ Cell provider authority/signature"))?;
-    let endpoint = decode_endpoint(*verified.endpoint_bytes())?;
-    expectation.addresses.check(endpoint)?;
+    // The verifier signed exactly the endpoint bytes preflighted above.
+    debug_assert_eq!(*verified.endpoint_bytes(), record.statement.endpoint);
     Ok(VerifiedPqCellProviderHintM09V2 {
         endpoint,
         sequence: verified.sequence(),
@@ -299,6 +304,38 @@ mod tests {
         };
         let consumer = CellStoreV1::open(&dir.path().join("consumer.sqlite"), config()).unwrap();
         let output = dir.path().join("verified-weights");
+        // End-to-end guard: an off-policy signed endpoint and a deliberately
+        // malformed pinned key must refuse before key expansion or any dial,
+        // even when a real Cell server is listening on that signed endpoint.
+        let denied_port = if endpoint.port() == 31235 {
+            31236
+        } else {
+            31235
+        };
+        let denied = CellDiscoveryAddressPolicyV1::LoopbackDevOnly {
+            ports: vec![denied_port],
+        };
+        let invalid_key = [0u8; 1];
+        let cheap_denial = PqCellProviderExpectationM09V2 {
+            request,
+            trusted_ml_dsa65_public_key: &invalid_key,
+            last_accepted_sequence: 6,
+            now_unix_seconds: now,
+            addresses: &denied,
+        };
+        let denied_result = fetch_pcp2_authenticated_cell_to_file(
+            &consumer,
+            &record.to_wire(),
+            &cheap_denial,
+            limits(),
+            Instant::now() + Duration::from_secs(10),
+            &output,
+        );
+        assert_eq!(
+            denied_result.unwrap_err().to_string(),
+            "cell: discovery outbound address denied"
+        );
+        assert!(!output.exists());
         let mut tampered = record.to_wire();
         tampered[3550] ^= 1;
         assert!(fetch_pcp2_authenticated_cell_to_file(
@@ -402,5 +439,64 @@ mod tests {
         let mut extended = wire;
         extended.push(0);
         assert!(verify_pcp2_provider_hint_v2(&extended, &expectation).is_err());
+    }
+
+    #[test]
+    fn off_policy_malicious_signature_is_rejected_before_pq_key_work() {
+        let request = request();
+        let (wire, key) = signed_wire(request);
+        let allowed = CellDiscoveryAddressPolicyV1::LoopbackDevOnly { ports: vec![31234] };
+        let denied = CellDiscoveryAddressPolicyV1::LoopbackDevOnly { ports: vec![31235] };
+        let mut forged = wire.clone();
+        forged[271] ^= 1; // Signature, not a structural header.
+        let invalid_key = [0u8; 1];
+        let denied_expectation = PqCellProviderExpectationM09V2 {
+            request,
+            trusted_ml_dsa65_public_key: &invalid_key,
+            last_accepted_sequence: 4,
+            now_unix_seconds: 1100,
+            addresses: &denied,
+        };
+        assert_eq!(
+            verify_pcp2_provider_hint_v2(&forged, &denied_expectation)
+                .unwrap_err()
+                .to_string(),
+            "cell: discovery outbound address denied"
+        );
+        let valid_expectation = PqCellProviderExpectationM09V2 {
+            request,
+            trusted_ml_dsa65_public_key: &key,
+            last_accepted_sequence: 4,
+            now_unix_seconds: 1100,
+            addresses: &allowed,
+        };
+        assert_eq!(
+            verify_pcp2_provider_hint_v2(&forged, &valid_expectation)
+                .unwrap_err()
+                .to_string(),
+            "cell: PQ Cell provider authority/signature"
+        );
+        let policy_denied = PqCellProviderExpectationM09V2 {
+            addresses: &denied,
+            ..valid_expectation
+        };
+        assert_eq!(
+            verify_pcp2_provider_hint_v2(&wire, &policy_denied)
+                .unwrap_err()
+                .to_string(),
+            "cell: discovery outbound address denied"
+        );
+        assert_eq!(
+            verify_pcp2_provider_hint_v2(&wire, &valid_expectation)
+                .unwrap()
+                .sequence(),
+            5
+        );
+        assert_eq!(
+            verify_pcp2_provider_hint_v2(&wire[..335], &denied_expectation)
+                .unwrap_err()
+                .to_string(),
+            "cell: PQ Cell provider wire"
+        );
     }
 }
