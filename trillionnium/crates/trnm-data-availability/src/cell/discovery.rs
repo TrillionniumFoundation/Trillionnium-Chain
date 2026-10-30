@@ -540,8 +540,7 @@ pub mod pq_reply_v2 {
                 "PQ batch stale external replay floor",
             )?;
             require(
-                record.statement.issued_unix_seconds
-                    <= now_unix_seconds.saturating_add(5)
+                record.statement.issued_unix_seconds <= now_unix_seconds.saturating_add(5)
                     && now_unix_seconds < record.statement.expires_unix_seconds,
                 "PQ batch expired/future record",
             )?;
@@ -664,8 +663,7 @@ pub mod pq_reply_v2 {
         addresses.validate()?;
         addresses.check(bootstrap)?;
         limits.validate()?;
-        let original_overall =
-            original_deadline.min(Instant::now() + limits.overall_timeout);
+        let original_overall = original_deadline.min(Instant::now() + limits.overall_timeout);
         check_deadline(original_overall)?;
 
         let requests_left = std::sync::atomic::AtomicU64::new(limits.max_connections);
@@ -728,8 +726,7 @@ pub mod pq_reply_v2 {
                 &transport,
             )?;
         require(
-            cell_discovery_context_digest(manifest.context())?
-                == expected_request.cell_context,
+            cell_discovery_context_digest(manifest.context())? == expected_request.cell_context,
             "PQ discovered Cell context mismatch",
         )?;
         let (manifest, mut fetch) = super::super::network::fetch_cell_in_session(
@@ -1457,6 +1454,5 @@ pub mod pq_reply_v2 {
             assert!(rendezvous_thread.join().unwrap().connections >= 3);
             assert!(cell_thread.join().unwrap() > 0);
         }
-
     }
 }
