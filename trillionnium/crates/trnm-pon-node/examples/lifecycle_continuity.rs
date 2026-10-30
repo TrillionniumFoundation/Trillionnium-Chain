@@ -22,9 +22,8 @@ use trnm_protocol::{
     },
 };
 
-mod source_inventory {
-    include!("support/distributed_source_inventory.rs");
-}
+#[path = "support/distributed_source_inventory.rs"]
+mod source_inventory;
 const POLICY: &str = "native-public-evaluation-dev-v1";
 const RENEW_HEIGHT: u64 = 900;
 const MIN_BLOCKS: u64 = 1005;

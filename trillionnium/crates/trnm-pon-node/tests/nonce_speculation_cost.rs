@@ -13,9 +13,8 @@ use std::{
 use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
 use trnm_pon_node::{development_public, Node, Settings};
 use trnm_protocol::pon_wire::{hash, Envelope};
-mod compiled_source {
-    include!("../examples/support/distributed_source_inventory.rs");
-}
+#[path = "../examples/support/distributed_source_inventory.rs"]
+mod compiled_source;
 
 fn transactions(settings: &Settings, senders: u64) -> Vec<Vec<u8>> {
     (0..256)

@@ -51,8 +51,14 @@ class MetadataControls(unittest.TestCase):
         result = b'{"analysis_execution_complete":false,"finding_count":null,"failure":{"code":"synthetic failure"}}\n'
         self.put("analysis/analyze.execution.json", phase)
         self.put("analysis/result.json", result)
+        options = b'{"name":"extractor-options","complete":true,"returncode":0}\n'
+        inventory = b'{"extractor_options":{"cargo_target":{"type":"string"}}}\n'
+        self.put("analysis/extractor-options.execution.json", options)
+        self.put("analysis/extractor-options.stdout.log", inventory)
         manifest, rows = self.collect()
-        for name, raw in (("analysis/analyze.execution.json", phase), ("analysis/result.json", result)):
+        for name, raw in (("analysis/analyze.execution.json", phase), ("analysis/result.json", result),
+                          ("analysis/extractor-options.execution.json", options),
+                          ("analysis/extractor-options.stdout.log", inventory)):
             self.assertEqual((self.output / rows[name]["artifact_member"]).read_bytes(), raw)
             self.assertEqual(rows[name]["sampled_bytes"], collector.fingerprint(raw))
         self.assertTrue(manifest["inventory_collected"])

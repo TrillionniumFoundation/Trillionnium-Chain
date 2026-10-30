@@ -40,6 +40,9 @@ on:
       - scripts/ci/test_history_graph_resource_native_v1.py
       - scripts/ci/read_native_history_verifier.py
       - scripts/ci/test_native_history_verifier.py
+      - scripts/ci/check_collected_unit_empty_v1.py
+      - formal/pon-nakamoto-v1/bounded_process.py
+      - scripts/ci/test_collected_unit_empty_v1.py
       - .github/workflows/pon-history-epoch-v1-native.yml
   workflow_dispatch:
     inputs:
@@ -313,6 +316,13 @@ jobs:
           python3 -m unittest discover -s scripts/ci -p test_history_fixed_parent_v2.py -v 2>&1 | tee "$OUT/fixed-parent-controls.log"
           grep -E '^Ran 4 tests in ' "$OUT/fixed-parent-controls.log"
           grep -x OK "$OUT/fixed-parent-controls.log"
+      - name: Require read-only collected-unit absence controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B scripts/ci/test_collected_unit_empty_v1.py -v 2>&1 | tee "$OUT/collected-unit-empty-controls.log"
+          grep -E '^Ran 21 tests in ' "$OUT/collected-unit-empty-controls.log"
+          grep -x OK "$OUT/collected-unit-empty-controls.log"
       - name: Provision only this run's root-leased original fixed parent
         shell: bash
         run: |
@@ -332,9 +342,15 @@ jobs:
             original_status=$?
             trap - EXIT INT TERM
             set +e
-            sudo -n systemctl stop "$unit" >> "$OUT/outer-cleanup.log" 2>&1
+            # systemd owns termination/collection. A failed create may be a foreign name.
+            # Observe only; a live or unreadable unit remains a cleanup failure.
+            /usr/bin/python3 -B "$GITHUB_WORKSPACE/scripts/ci/check_collected_unit_empty_v1.py" \
+              --unit "$unit" > "$OUT/outer-cleanup.json" 2>> "$OUT/outer-cleanup.log"
             cleanup_status=$?
             printf 'original_exit=%s\ncleanup_exit=%s\n' "$original_status" "$cleanup_status" >> "$OUT/outer-cleanup.log"
+            if test "$original_status" -eq 0 && test "$cleanup_status" -ne 0; then
+              exit "$cleanup_status"
+            fi
             exit "$original_status"
           }
           trap cleanup EXIT

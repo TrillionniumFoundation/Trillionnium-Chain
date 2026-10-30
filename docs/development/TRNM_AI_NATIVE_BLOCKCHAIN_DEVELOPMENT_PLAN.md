@@ -7600,7 +7600,7 @@ Its broad `history_` selection recorded 109 passes, 19 failures and six ignored
 entries. The failures include specialized lifecycle/reorg/startup controls that
 require their exact-source runner pins; the local compiler loader guard also
 reported an unqualified duplicate path, which was corrected without changing the
-guard. This is not a whole-History pass or fixed-Host qualification. All ten new
+guard. This is not a whole-History pass or fixed-Host qualification. All nine new
 History CPU/close controls and the original activation cancellation/retry test
 passed in that run. The final caller-deadline socket controls still require their
 own fresh execution. Full sparse-checkout repository link verification correctly
@@ -7612,3 +7612,174 @@ independent [Hepta continuation](https://github.com/TrillionniumFoundation/hepta
 starts with the contract/durable-journal operation-binding repair and is a
 separate source candidate. It is not implicitly included in this Chain commit or
 treated as an arbitrary external HTTP exactly-once guarantee.
+
+### System-safety follow-up after exact fb7 observations (2026-10-30 UTC)
+
+This follows the immutable PR #558 source
+`fb7e12bd2a02ee0805dff6a053edc904ad2198c6`, tree
+`eb0b11a8e827acd251cf8577715eb1a501ee0743`. It remains a draft continuation of
+PR #557, not a merge or activation. Original failures and independent gates
+remain authoritative; whole-system acceptance remains **OPEN / NO_GO**.
+
+#### Actual recovery and ordinary-business observations
+
+At fb7, all four original
+[History V6 lanes](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40995210625)
+completed successfully: native recovery, physical graph-resource mutations,
+lifecycle, and reorg continuation. The
+[focused native integration](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40995210573)
+also passed. The
+[raw History joint campaign](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40995210492)
+and the original ordinary campaign nevertheless failed. Those are different
+claims and remain different outcomes.
+
+The retained raw artifacts have identical source, executable, inputs and original
+limits. In the fence baseline, each of three runs completed 19 of 20 attempted
+imports and two of three required confirmations before the original deadline.
+Every strict phase completed six of seven attempted imports and zero required
+confirmations; the seventh import reached activation and then retained its actual
+deadline failure. All strict verifier children exited normally, and receiver
+live owners, unsettled CPU and reservations were zero. Those terminal facts do
+not make the failed business result successful.
+
+For the first six identical decoded pages, all of which completed in both
+profiles, strict import CPU was 3.18--3.30 times the fence observation. Whole-run
+totals contain different completed work and are not used as that comparison.
+Nested graph/admission/activation timings are not summed. Strict does not run the
+N8 graph observer, so its zero N8 counters do not mean resource checks were absent.
+The exact source, artifact, executable and raw-file digests are retained in
+[the first readback](../../evidence/system-security-20261030/raw-history-fb7-readback-summary.json)
+and [the paired comparison](../../evidence/system-security-20261030/raw-history-fb7-strict-vs-fence-summary.json).
+Readback is not a new execution or a speedup qualification.
+
+#### Same-transaction verification reuse and original cleanup deadlines
+
+The follow-up reuses at most the child and genesis graph results inside one
+original `BEGIN IMMEDIATE` CanonicalJson admission transaction. It captures the
+real SQLite connection/transaction owner before callbacks and writes. The
+existing observer now also counts actually executed non-readonly statements,
+including no-op, failed and reversed writes. This does not turn the ordinary
+read-scope identity API into a generic immutability certificate.
+
+Only the ordinary writer can retain `post_write_schema`, derived from executing
+source DDL in a fresh in-memory database. The read-only migration archive keeps
+`None`; its test-only observation of the actual catalog never becomes a production
+baseline. SharedAccounts continues through full verification. A missing source
+baseline also preserves the original full-verification path.
+
+After the last native write, trusted `writable_schema=RESET` is executed through
+completion before the first full graph. Source grammar, main/temp catalog,
+rootpages, attached databases and relevant connection configuration are checked.
+This closes the demonstrated parsed-schema/rootpage/cached-VM split. Each reuse
+still rereads complete State and Record and performs the complete commitment
+comparison; an account-root-only match is insufficient. A mutation disables future
+reuse, and mutation after a consumed result is a sticky refusal. The final outer
+callback and resource boundary are checked before the receipt is discarded; the
+original owner remains checked after the known effect-marker write and before
+commit, on success and failure. No receipt is persisted or reused across a new
+transaction, connection, reorg or reopen.
+
+The three original campaign/receiver cleanup bindings now compute the remaining
+time until the original phase end plus five seconds. Expiry cannot mint a fresh
+five-second allowance. Original CPU reserves/refill/debt, Host limits, worker
+counts, transport windows, Strict/N8 cadence and business success criteria remain.
+The new graph reuse has no throughput qualification until the same original
+strict campaign runs on its immutable source.
+
+#### Exact outer-service collection facts
+
+The fb7 fixed-parent slice cleanup and outer service collection are separate
+facts. Raw logs show an already collected service followed by an unconditional
+name-only `systemctl stop`, returning exit 5. A successful lifeline could hide that
+failure; a failed create could also cause the trap to stop a foreign same-name
+service. These failures are retained in
+[the original cleanup review](../../evidence/system-security-20261030/unit-cleanup-reviewed-triage.json).
+
+Six such traps in the raw, qualification, admission/DAA and epoch workflows now
+observe collection without acquiring stop/kill/unlink authority. Their nine
+original `systemd-run` commands, names, resource limits, RuntimeMaxSec,
+TimeoutStopSec, KillMode and `--wait --collect` remain unchanged. The observer
+requires successful fresh local-system manager queries, a real cgroup-v2 path
+absence, no-follow runtime-path absence, a typed empty unit-file result and a
+second manager observation. Nonzero commands, diagnostics, permission errors,
+invalid bytes, timeouts, output overflow and residual objects remain unresolved.
+Known presence permits only bounded re-observation. Query limits are three
+seconds per command and fifteen seconds overall; they grant no additional native
+work budget and are not a hard-real-time kernel guarantee.
+
+Both original and cleanup exit statuses remain in artifacts. Original failures
+stay failures; successful work with unresolved collection also fails the step.
+Cancellation that leaves a service is reported as unresolved and remains governed
+by the original systemd service owner's limits. This is a sequential local absence
+observation, not InvocationID ownership or hostile-host authentication. The
+different fixed-parent receiver protocol is not rewritten by this change.
+
+#### Exact SARIF, active modules and remaining security gates
+
+The new pinned fb7 scan retained its complete original SARIF separately. It still
+reported 780 findings: 757 hard-coded-value and 23 logging results. Six active
+peer-lease fragments now have explicit successful extraction notifications and
+no corresponding original include failure. Overall coverage is still incomplete:
+305 affected files / 306 diagnostic lines remain, including the unlocated workspace
+failure. The retained classification distinguishes 282 files outside the current
+Linux module graph, five active cross-crate test fixtures, two other-platform
+branches, the active source inventory, fourteen historical evidence sources and
+one standalone formal fragment. This is not an exclusion or a waiver.
+
+All four emitted flows and seventeen source locations for the active CLI stdout
+alert were reviewed. That exact alert does not establish credential disclosure:
+the observed paths carry public metadata or control flow, and the private identity
+does not serialize its secret. This disposition does not clear every logging site
+or the other findings. Raw results remain unchanged in
+[the reviewed triage](../../evidence/system-security-20261030/codeql-fb7-reviewed-triage.json)
+and the retained original SARIF/metadata archives.
+
+This follow-up removes nine active inventory `include!` wrappers, using one shared
+private test module in the lib target and private modules in the other targets.
+It requests the pinned Rust extractor's actual `CARGO_ALL_TARGETS` environment
+option, strips inherited extractor overrides, and records a separately bounded
+extractor-resolution diagnostic. The original CodeQL version, 37-query suite,
+analysis limits, tracked-source scope, findings and coverage refusal remain.
+Requested all-target extraction is not a claim of complete new coverage.
+
+An independent original cargo-deny gate also failed: bincode, derivative and paste
+are marked unmaintained, and tracing-subscriber 0.2.25 has the ANSI log-injection
+advisory. The retained all-feature dependency paths belong to the existing optional
+complete-proof research graph. Removing the feature, relaxing the advisory policy
+or silently changing proof/receipt encodings is not a repair. These remain open;
+they are not four more entries in the 780 SARIF results.
+
+#### Candidate verification and handoff
+
+The recent workflow's stale snapshot count is corrected from 20 to the actual 22.
+Its full native-authenticated module has 74 tests at this source, including the
+four previously uncounted existing controls and fourteen new adversarial controls.
+The original release-only cost observation still has its original explicit
+create-new artifact path. The SQLite owner suite is independently connected to
+all four recent lanes so an earlier cargo-deny failure cannot prevent its thirteen
+transaction/trace controls from executing. Twenty literal source pins, the new
+path triggers, and the original source/merge verification remain enforced.
+
+The final ordinary-writer production field passed all fourteen new native
+adversarial controls; the unchanged SQLite owner files passed all thirteen native
+transaction controls. The final locked workspace/all-target/all-feature strict
+Clippy and Rust formatting passed. Outer-unit controls passed 21 tests, CI
+contracts passed 96, source-integrity negatives passed 34, and the unchanged
+CodeQL diagnostic/metadata controls passed 29 and 26 respectively. Local Rust
+functional builds disabled only debug symbols; they do not qualify release costs.
+The broader local native-module run remains 73 passed / one failed because that
+invocation lacked the original explicit release-cost artifact path. It is not
+reported as a full 74-test pass.
+
+All local executions, including compiler failures, failed assertions, missing
+benchmark configuration, source-changing format/fix invocations and zero-test
+filters, are retained with source hashes in
+[the execution index](../../evidence/system-security-20261030/local-executions.json).
+Successful local functional controls do not substitute for fresh hosted release,
+fixed-Host, cross-architecture, CodeQL or full ordinary-business gates.
+
+The paired Hepta PR #4332 separately retains immutable provider-operation binding,
+original Unknown observations, original key/wire recovery, actual owner fences,
+same-attempt late-ACK reconciliation and fresh chain-membership checks. Its final
+pair must name this continuation's actual immutable source and ordered merge
+parents; the earlier fallback pair at Chain 147bae is not this candidate.

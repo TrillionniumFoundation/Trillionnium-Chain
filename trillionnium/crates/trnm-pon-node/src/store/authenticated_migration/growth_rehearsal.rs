@@ -339,6 +339,7 @@ fn read_only_archive(directory: &Path, settings: Settings, backend: StateBackend
         shared_storage_schema: None,
         pq_storage_schema: None,
         growth_epoch: None,
+        post_write_schema: None,
         #[cfg(test)]
         expected_schema,
         #[cfg(test)]

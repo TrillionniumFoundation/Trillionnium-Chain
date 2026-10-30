@@ -398,7 +398,12 @@ class AnalysisControls(unittest.TestCase):
                             patch.object(reader.subprocess, "check_output", return_value=b"current.rs\0"), \
                             patch.object(reader, "query_bindings", return_value=[]), \
                             patch.object(reader, "host_memory_observation", return_value={"observed": False, "fixture": True}), \
-                            patch.dict(reader.os.environ, {"CODEQL_RAM": "1", "CODEQL_THREADS": "99"}), \
+                            patch.dict(reader.os.environ, {
+                                "CODEQL_RAM": "1", "CODEQL_THREADS": "99",
+                                reader.RUST_ALL_TARGETS_ENV: "false",
+                                "CODEQL_EXTRACTOR_RUST_OPTION_CARGO_FEATURES": "default",
+                                "CODEQL_RUST_EXTRACTOR_OPTION_CARGO_CFG_OVERRIDES": "-test",
+                                "CODEQL_TEST_SECRET": "fixture credential must not be forwarded"}), \
                             patch.dict(sys.modules), patch("sys.argv", argv), patch("sys.stdout", io.StringIO()):
                         self.assertEqual(reader.main(), 1)
                     result = json.loads((output / "result.json").read_text())
@@ -412,12 +417,28 @@ class AnalysisControls(unittest.TestCase):
                     for arguments, environment, budget in calls:
                         self.assertEqual(environment["CODEQL_RAM"], str(expected_ram))
                         self.assertEqual(environment["CODEQL_THREADS"], "2")
+                        self.assertNotIn("CODEQL_TEST_SECRET", environment)
+                        self.assertNotIn("CODEQL_EXTRACTOR_RUST_OPTION_CARGO_FEATURES", environment)
+                        self.assertNotIn("CODEQL_RUST_EXTRACTOR_OPTION_CARGO_CFG_OVERRIDES", environment)
+                        self.assertEqual(environment.get(reader.RUST_ALL_TARGETS_ENV),
+                                         "true" if language == "rust" else None)
                         if arguments[1:3] in (["database", "create"], ["database", "analyze"]):
                             self.assertEqual([a for a in arguments if a.startswith("--ram=")], [f"--ram={expected_ram}"])
                             self.assertEqual([a for a in arguments if a.startswith("--threads=")], ["--threads=2"])
                             self.assertEqual(budget, 1200)
+                    expected_environment = {"CODEQL_RAM": str(expected_ram), "CODEQL_THREADS": "2"}
+                    if language == "rust":
+                        expected_environment[reader.RUST_ALL_TARGETS_ENV] = "true"
+                        self.assertTrue(result["rust_all_targets_requested"])
+                        options = [phase for phase in result["phases"] if phase["name"] == "extractor-options"]
+                        self.assertEqual(len(options), 1)
+                        self.assertEqual(options[0]["wall_budget_seconds"], 30)
+                        self.assertEqual(options[0]["argv"][1:],
+                                         ["resolve", "extractor", "--language=rust", "--format=betterjson"])
+                    else:
+                        self.assertNotIn("rust_all_targets_requested", result)
                     for phase in result["phases"]:
-                        self.assertEqual(phase["codeql_environment"], {"CODEQL_RAM": str(expected_ram), "CODEQL_THREADS": "2"})
+                        self.assertEqual(phase["codeql_environment"], expected_environment)
                     if failing_phase == "analyze":
                         # A later evaluator failure must not hide the already
                         # observed extraction context.

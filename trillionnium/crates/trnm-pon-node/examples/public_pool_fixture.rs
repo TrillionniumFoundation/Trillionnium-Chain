@@ -13,9 +13,8 @@ use trnm_protocol::{
     qualified_work_task::lifecycle_v4::{AtomicRenewTaskV4, PROFILE},
 };
 
-mod source_inventory {
-    include!("support/distributed_source_inventory.rs");
-}
+#[path = "support/distributed_source_inventory.rs"]
+mod source_inventory;
 fn signature(who: u64, message: &[u8]) -> Result<[u8; 64]> {
     let key = signing_key_from_hex(&hex::encode(hash(b"DEV-ONLY-KEY", &[&who.to_le_bytes()])))
         .map_err(|_| "DEVELOPMENT_KEY")?;

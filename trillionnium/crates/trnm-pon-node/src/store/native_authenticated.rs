@@ -14,13 +14,17 @@ use crate::{consensus, ensure, sequence_root, Error, Result, Settings};
 use rusqlite::{params, Connection, OptionalExtension};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
+use std::collections::BTreeMap;
 use trnm_mvcc_fee::pon_executor::{root, State};
 use trnm_protocol::pon_wire::{hash, Hash};
+use trnm_sqlite_io_boundary::TransactionScope;
 
 mod arithmetic_cache;
 pub(crate) use arithmetic_cache::ArithmeticCache;
 mod history_arithmetic;
 pub(crate) use history_arithmetic::HistoryStage;
+#[cfg(test)]
+mod post_write_readback_tests;
 
 pub(crate) const DDL: &str = "CREATE TABLE archive_nodes(id BLOB PRIMARY KEY,data BLOB NOT NULL);\nCREATE TABLE native_state_commitments(block BLOB PRIMARY KEY,data BLOB NOT NULL);";
 pub(crate) const RECORD_SCHEMA: &str = "pon-native-authenticated-state-record-v1";
@@ -75,6 +79,195 @@ impl Record {
             ))?],
         ))
     }
+}
+
+type ReadbackSchema = Vec<(String, String, String, String, i64, Option<String>)>;
+
+fn readback_schema(db: &Connection) -> Result<Option<ReadbackSchema>> {
+    // A configuration change is not necessarily an executed write: SQLite
+    // applies some PRAGMAs at prepare time. Never qualify writable catalog mode.
+    let writable: bool = db.query_row("PRAGMA writable_schema", [], |row| row.get(0))?;
+    if writable {
+        return Ok(None);
+    }
+    let mut databases = db.prepare("PRAGMA database_list")?;
+    let mut rows = databases.query([])?;
+    while let Some(row) = rows.next()? {
+        let name: String = row.get(1)?;
+        if name != "main" && name != "temp" {
+            return Ok(None);
+        }
+    }
+    let temp_objects: u64 = db.query_row("SELECT COUNT(*) FROM temp.sqlite_master", [], |row| {
+        row.get(0)
+    })?;
+    if temp_objects != 0 {
+        return Ok(None);
+    }
+    let mut statement = db.prepare(
+        "SELECT 'main',type,name,tbl_name,rootpage,sql FROM main.sqlite_master UNION ALL SELECT 'temp',type,name,tbl_name,rootpage,sql FROM temp.sqlite_master ORDER BY 1,2,3",
+    )?;
+    let rows = statement.query_map([], |row| {
+        Ok((
+            row.get(0)?,
+            row.get(1)?,
+            row.get(2)?,
+            row.get(3)?,
+            row.get(4)?,
+            row.get(5)?,
+        ))
+    })?;
+    Ok(Some(rows.collect::<rusqlite::Result<_>>()?))
+}
+
+/// Two graph results inside one original CanonicalJson admission transaction.
+/// This is never retained by Node, serialized, cloned or used as commit/recovery
+/// authority. Every use still loads current SQL State/records/deltas and runs
+/// the ORIGINAL complete(settings, current State) comparison before this graph
+/// result can match. Its Record binds the full State commitment, not just an
+/// account root. Writes disable reuse for the remainder of this local scope.
+pub(super) struct PostWriteReadback<'db> {
+    db: &'db Connection,
+    scope: TransactionScope<'db>,
+    context: [Hash; 3],
+    schema: ReadbackSchema,
+    ids: [Hash; 2],
+    graphs: [Option<Record>; 2],
+    enabled: bool,
+    consumed: bool,
+    #[cfg(test)]
+    hits: usize,
+}
+
+impl<'db> PostWriteReadback<'db> {
+    fn new(
+        db: &'db Connection,
+        settings: &Settings,
+        child: Hash,
+        original_owner: &TransactionScope<'_>,
+        expected_schema: &BTreeMap<String, String>,
+    ) -> Result<Option<Self>> {
+        // The first scope predates all callbacks/writes in THIS transaction. Its
+        // write count may differ, but its actual connection/transaction cannot.
+        original_owner
+            .same_write_snapshot(db)
+            .map_err(readback_scope_error)?;
+        if readback_schema(db)?.is_none() || super::schema(db)? != *expected_schema {
+            return Ok(None);
+        }
+        // A prior writable_schema edit can leave the parsed schema and cached
+        // SELECTs on an old rootpage while sqlite_master already reports a new
+        // one. Comparing catalog rows alone would wrongly certify that split.
+        // In pinned SQLite 3.51.3 RESET clears parsed schemas at prepare time;
+        // executing its OP_Expire through DONE also expires all cached VMs.
+        // Normalize BEFORE the first full graph and the new write baseline.
+        // No catalog bytes change. A later prepare-only RESET can then only
+        // reload the SAME catalog while the original writer and no-write epoch
+        // hold. This applies only to the original ordinary-table Node schema,
+        // not arbitrary views, virtual tables, UDFs or attached databases.
+        db.execute_batch("PRAGMA writable_schema=RESET")
+            .map_err(|error| Error::from(error).local_integrity())?;
+        let scope = TransactionScope::capture(db).map_err(readback_scope_error)?;
+        let schema = readback_schema(db)?;
+        original_owner
+            .same_write_snapshot(db)
+            .map_err(readback_scope_error)?;
+        if !scope
+            .same_write_snapshot(db)
+            .map_err(readback_scope_error)?
+            || super::schema(db)? != *expected_schema
+        {
+            return Ok(None);
+        }
+        let Some(schema) = schema else {
+            return Ok(None);
+        };
+        Ok(Some(Self {
+            db,
+            scope,
+            context: [
+                settings.network(),
+                settings.parameters(),
+                settings.genesis(),
+            ],
+            schema,
+            ids: [child, settings.genesis()],
+            graphs: [None, None],
+            enabled: true,
+            consumed: false,
+            #[cfg(test)]
+            hits: 0,
+        }))
+    }
+
+    fn current(&mut self, db: &Connection) -> Result<bool> {
+        let same = self
+            .scope
+            .same_write_snapshot(db)
+            .map_err(readback_scope_error)?;
+        if self.consumed && !self.enabled {
+            return Err(Error::from("NATIVE_POST_WRITE_CHANGED").local_integrity());
+        }
+        if !same || self.enabled && readback_schema(db)?.as_ref() != Some(&self.schema) {
+            self.enabled = false;
+            self.graphs = [None, None];
+            // A previous caller has already consumed a successful graph hit.
+            // Merely disabling FUTURE hits cannot validate its result after a
+            // later outer callback writes. The owning transaction must refuse.
+            if self.consumed {
+                return Err(Error::from("NATIVE_POST_WRITE_CHANGED").local_integrity());
+            }
+        }
+        Ok(self.enabled)
+    }
+
+    pub(super) fn validate_consumed(&mut self, db: &Connection) -> Result<()> {
+        self.current(db).map(|_| ())
+    }
+
+    fn matches(&mut self, db: &Connection, settings: &Settings, record: &Record) -> Result<bool> {
+        if !self.current(db)?
+            || self.context
+                != [
+                    settings.network(),
+                    settings.parameters(),
+                    settings.genesis(),
+                ]
+        {
+            return Ok(false);
+        }
+        Ok(self
+            .ids
+            .iter()
+            .position(|id| *id == record.block)
+            .is_some_and(|index| self.graphs[index].as_ref() == Some(record)))
+    }
+
+    fn remember(&mut self, db: &Connection, record: Record) -> Result<()> {
+        // Called only AFTER the original successful graph, its Exit and the
+        // final caller callback. A mutation during that validation mints none.
+        if self.current(db)? {
+            if let Some(index) = self.ids.iter().position(|id| *id == record.block) {
+                self.graphs[index] = Some(record);
+            }
+        }
+        Ok(())
+    }
+
+    fn finish<T>(&self, result: Result<T>) -> Result<T> {
+        // Even a native cancellation/error cannot hide a replaced transaction.
+        match self.scope.same_write_snapshot(self.db) {
+            Ok(_) => result,
+            Err(error) => Err(match result {
+                Ok(_) => readback_scope_error(error),
+                Err(first) => Error::local_replay_source("NATIVE_POST_WRITE_SCOPE", first),
+            }),
+        }
+    }
+}
+
+pub(super) fn readback_scope_error(error: trnm_sqlite_io_boundary::BoundaryError) -> Error {
+    Error::local_replay_source("NATIVE_POST_WRITE_SCOPE", error)
 }
 
 struct NativeBlock {
@@ -659,29 +852,90 @@ pub(crate) fn verify_state_with_native_progress(
     progress: &mut dyn NativeProgress,
     cache: Option<&ArithmeticCache>,
 ) -> Result<()> {
-    let _measurement = cache.map(|cache| cache.history.observe(HistoryStage::VerifyState));
-    progress.checkpoint()?;
-    let record = load_observed(db, block, cache.map(|cache| (settings, cache)))?;
-    verify_record(db, settings, &record, progress, cache)?;
-    local(ensure(
-        record.state
-            == match cache {
-                Some(cache) => cache.complete(settings, state)?,
-                None => complete(settings, state)?,
-            },
-        "NATIVE_STATE_ROOT",
-    ))?;
-    {
-        let _measurement = cache.map(|cache| cache.history.observe(HistoryStage::AccountGraph));
-        native_store::verify_with_lifts_native_progress(
-            db,
-            &record.accounts,
-            state,
-            progress,
-            cache.map(|c| &c.lifts),
-        )?;
+    verify_state_with_readback(db, settings, block, state, progress, cache, None)
+}
+
+pub(super) fn verify_state_with_readback(
+    db: &Connection,
+    settings: &Settings,
+    block: Hash,
+    state: &State,
+    progress: &mut dyn NativeProgress,
+    cache: Option<&ArithmeticCache>,
+    mut readback: Option<&mut PostWriteReadback<'_>>,
+) -> Result<()> {
+    let result = (|| {
+        let _measurement = cache.map(|cache| cache.history.observe(HistoryStage::VerifyState));
+        progress.checkpoint()?;
+        if let Some(scope) = readback.as_deref_mut() {
+            scope.current(db)?;
+        }
+        let record = load_observed(db, block, cache.map(|cache| (settings, cache)))?;
+        verify_record(db, settings, &record, progress, cache)?;
+        // This ORIGINAL full-State derivation is mandatory even on a graph
+        // receipt hit. The existing arithmetic cache compares all canonical
+        // current State bytes; account-root equality alone never qualifies.
+        local(ensure(
+            record.state
+                == match cache {
+                    Some(cache) => cache.complete(settings, state)?,
+                    None => complete(settings, state)?,
+                },
+            "NATIVE_STATE_ROOT",
+        ))?;
+        let reused = match readback.as_deref_mut() {
+            Some(scope) => scope.matches(db, settings, &record)?,
+            None => false,
+        };
+        if !reused {
+            verify_account_graph(db, &record, state, progress, cache)?;
+        }
+        // Keep the original boundary resource/cancellation call. A receipt
+        // creates no synthetic AccountGraph events; remaining real traversals
+        // retain every original node and strict/N8 physical fence.
+        progress.checkpoint()?;
+        if let Some(scope) = readback.as_deref_mut() {
+            if reused {
+                if !scope.matches(db, settings, &record)? {
+                    // A final callback wrote after the match. Reuse is sticky
+                    // disabled; run the ORIGINAL complete verifier on the
+                    // current rows without any receipt, never renew authority.
+                    return verify_state_with_native_progress(
+                        db, settings, block, state, progress, cache,
+                    );
+                }
+                scope.consumed = true;
+                #[cfg(test)]
+                {
+                    scope.hits += 1;
+                }
+            } else {
+                scope.remember(db, record)?;
+            }
+        }
+        Ok(())
+    })();
+    match readback {
+        Some(scope) => scope.finish(result),
+        None => result,
     }
-    progress.checkpoint()
+}
+
+fn verify_account_graph(
+    db: &Connection,
+    record: &Record,
+    state: &State,
+    progress: &mut dyn NativeProgress,
+    cache: Option<&ArithmeticCache>,
+) -> Result<()> {
+    let _measurement = cache.map(|cache| cache.history.observe(HistoryStage::AccountGraph));
+    native_store::verify_with_lifts_native_progress(
+        db,
+        &record.accounts,
+        state,
+        progress,
+        cache.map(|c| &c.lifts),
+    )
 }
 
 /// Seal and verify every delta record needed to reconstruct a retained branch.
@@ -714,6 +968,17 @@ pub(crate) fn verify_history_with_native_progress(
     progress: &mut dyn NativeProgress,
     cache: Option<&ArithmeticCache>,
 ) -> Result<()> {
+    verify_history_with_readback(db, settings, block, progress, cache, None)
+}
+
+pub(super) fn verify_history_with_readback(
+    db: &Connection,
+    settings: &Settings,
+    block: Hash,
+    progress: &mut dyn NativeProgress,
+    cache: Option<&ArithmeticCache>,
+    readback: Option<&mut PostWriteReadback<'_>>,
+) -> Result<()> {
     let _measurement = cache.map(|cache| cache.history.observe(HistoryStage::VerifyHistory));
     let mut current = block;
     let mut expected_height = None;
@@ -742,8 +1007,8 @@ pub(crate) fn verify_history_with_native_progress(
                     canonical(&state)? == bytes && state == settings.initial,
                     "NATIVE_STATE_GENESIS",
                 ))?;
-                return verify_state_with_native_progress(
-                    db, settings, current, &state, progress, cache,
+                return verify_state_with_readback(
+                    db, settings, current, &state, progress, cache, readback,
                 );
             }
         }
@@ -809,12 +1074,14 @@ pub(crate) fn publish_with_cache(
         after,
         &mut || progress(),
         cache,
+        None,
     )
+    .map(|_| ())
 }
 
 #[allow(clippy::too_many_arguments)]
-pub(crate) fn publish_with_native_progress(
-    db: &Connection,
+pub(super) fn publish_with_native_progress<'db>(
+    db: &'db Connection,
     settings: &Settings,
     parent: Hash,
     block: Hash,
@@ -822,7 +1089,8 @@ pub(crate) fn publish_with_native_progress(
     after: &State,
     progress: &mut dyn NativeProgress,
     cache: Option<&ArithmeticCache>,
-) -> Result<()> {
+    original_owner: Option<(&TransactionScope<'_>, &BTreeMap<String, String>)>,
+) -> Result<Option<PostWriteReadback<'db>>> {
     let _measurement = cache.map(|cache| cache.history.observe(HistoryStage::Publish));
     verify_state_with_native_progress(db, settings, parent, before, progress, cache)?;
     let parent_record = load_observed(db, parent, cache.map(|cache| (settings, cache)))?;
@@ -861,8 +1129,30 @@ pub(crate) fn publish_with_native_progress(
         delta_root: delta_root_with_progress(&rows, progress)?,
     };
     save(db, &mut record)?;
-    verify_state_with_native_progress(db, settings, block, after, progress, cache)?;
-    verify_history_with_native_progress(db, settings, block, progress, cache)
+    // Only the CanonicalJson caller supplies its original pre-write owner
+    // scope. The receipt epoch starts AFTER the final native record write and
+    // BEFORE the first complete child graph verification.
+    let mut readback = original_owner
+        .map(|(owner, expected)| PostWriteReadback::new(db, settings, block, owner, expected))
+        .transpose()?
+        .flatten();
+    let result = verify_state_with_readback(
+        db,
+        settings,
+        block,
+        after,
+        progress,
+        cache,
+        readback.as_mut(),
+    )
+    .and_then(|()| {
+        verify_history_with_readback(db, settings, block, progress, cache, readback.as_mut())
+    });
+    match &readback {
+        Some(scope) => scope.finish(result)?,
+        None => result?,
+    }
+    Ok(readback)
 }
 
 #[cfg(test)]

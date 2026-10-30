@@ -31,6 +31,7 @@ SARIF_LIMIT = 128 * 1024 * 1024
 SEMANTIC_DIAGNOSTIC_LIMIT = 10000
 SEMANTIC_MARKERS = (b"semantic analyzer unavailable", b"failed to load workspace",
                     b"macro expansion will be skipped")
+RUST_ALL_TARGETS_ENV = "CODEQL_EXTRACTOR_RUST_OPTION_CARGO_ALL_TARGETS"
 
 
 def require(ok, message):
@@ -364,11 +365,24 @@ def main():
     for key in list(environment):
         if any(part in key.upper() for part in ("TOKEN", "PASSWORD", "SECRET", "CREDENTIAL", "AUTHORIZATION")):
             environment.pop(key)
+        elif key.startswith(("CODEQL_EXTRACTOR_RUST_", "CODEQL_RUST_EXTRACTOR_")):
+            # Ambient feature/cfg/target overrides must not narrow the recorded
+            # source analysis. The pinned runner supplies its own options below.
+            environment.pop(key)
+    if args.language == "rust":
+        # The 2.27.3 extractor's config.rs accepts this environment field and
+        # defaults it to false; codeql-extractor.yml does not expose a CLI
+        # cargo_all_targets option. This expands Cargo target loading only.
+        # Actual semantic diagnostics still decide whether coverage is complete.
+        environment[RUST_ALL_TARGETS_ENV] = "true"
+        result["rust_all_targets_requested"] = True
 
     def phase(name, argv, budget):
         started = time.monotonic()
         record = {"name": name, "argv": list(map(str, argv)), "wall_budget_seconds": budget,
-                  "codeql_environment": {key: environment[key] for key in ("CODEQL_THREADS", "CODEQL_RAM")}}
+                  "codeql_environment": {key: environment[key] for key in
+                                         ("CODEQL_THREADS", "CODEQL_RAM", RUST_ALL_TARGETS_ENV)
+                                         if key in environment}}
         try:
             capture = bounded.run_bounded(record["argv"], b"", cwd=ROOT, env=environment,
                                           timeout=budget, stdout_limit=LOG_LIMIT, stderr_limit=LOG_LIMIT)
@@ -427,6 +441,8 @@ def main():
         if args.language in ("rust", "cpp"):
             phase("project-toolchain", ["rustup", "run", "1.95.0", "rustc", "-Vv"], 30)
         if args.language == "rust":
+            phase("extractor-options", [executable, "resolve", "extractor",
+                                        "--language=rust", "--format=betterjson"], 30)
             phase("extractor-toolchain", ["rustup", "run", "1.99.0", "rustc", "-Vv"], 30)
             command.append("--extractor-option=rust.cargo_target_dir=" + str(output / "cargo-target"))
         if args.language == "cpp":

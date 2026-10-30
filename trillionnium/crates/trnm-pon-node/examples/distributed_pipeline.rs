@@ -21,9 +21,8 @@ use trnm_pon_node::{
     Node, Packet, Result, Settings,
 };
 use trnm_protocol::pon_wire::{hash, Envelope};
-mod source_inventory {
-    include!("support/distributed_source_inventory.rs");
-}
+#[path = "support/distributed_source_inventory.rs"]
+mod source_inventory;
 
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]

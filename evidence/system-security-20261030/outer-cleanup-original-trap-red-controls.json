@@ -1,0 +1,142 @@
+{
+  "schema": "outer-unit-cleanup-original-negative-controls-v1",
+  "host_systemd_called": false,
+  "method": "Execute actual old EXIT traps with a shell-local sudo capture; no actual systemctl is executed.",
+  "count": 12,
+  "masked_cleanup_failures": 6,
+  "foreign_name_stop_attempts": 6,
+  "cases": [
+    {
+      "workflow": "pon-history-epoch-v1-native.yml",
+      "trap": 1,
+      "original_exit": 0,
+      "synthetic_cleanup_exit": 5,
+      "actual_returncode": 0,
+      "attempted_command": "-n systemctl stop trnm-native-campaign-40995210492-1.service",
+      "log": "synthetic manager status\noriginal_exit=0\ncleanup_exit=5\n",
+      "masked_cleanup_failure": true,
+      "name_stop_after_failed_create": false
+    },
+    {
+      "workflow": "pon-history-epoch-v1-native.yml",
+      "trap": 1,
+      "original_exit": 1,
+      "synthetic_cleanup_exit": 0,
+      "actual_returncode": 1,
+      "attempted_command": "-n systemctl stop trnm-native-campaign-40995210492-1.service",
+      "log": "synthetic manager status\noriginal_exit=1\ncleanup_exit=0\n",
+      "masked_cleanup_failure": false,
+      "name_stop_after_failed_create": true
+    },
+    {
+      "workflow": "pon-native-campaign-qualification.yml",
+      "trap": 1,
+      "original_exit": 0,
+      "synthetic_cleanup_exit": 5,
+      "actual_returncode": 0,
+      "attempted_command": "-n systemctl stop trnm-native-campaign-40995210492-1.service",
+      "log": "synthetic manager status\noriginal_exit=0\ncleanup_exit=5\n",
+      "masked_cleanup_failure": true,
+      "name_stop_after_failed_create": false
+    },
+    {
+      "workflow": "pon-native-campaign-qualification.yml",
+      "trap": 1,
+      "original_exit": 1,
+      "synthetic_cleanup_exit": 0,
+      "actual_returncode": 1,
+      "attempted_command": "-n systemctl stop trnm-native-campaign-40995210492-1.service",
+      "log": "synthetic manager status\noriginal_exit=1\ncleanup_exit=0\n",
+      "masked_cleanup_failure": false,
+      "name_stop_after_failed_create": true
+    },
+    {
+      "workflow": "pon-native-campaign-qualification.yml",
+      "trap": 2,
+      "original_exit": 0,
+      "synthetic_cleanup_exit": 5,
+      "actual_returncode": 0,
+      "attempted_command": "-n systemctl stop trnm-native-campaign-40995210492-1.service",
+      "log": "synthetic manager status\noriginal_exit=0\ncleanup_exit=5\n",
+      "masked_cleanup_failure": true,
+      "name_stop_after_failed_create": false
+    },
+    {
+      "workflow": "pon-native-campaign-qualification.yml",
+      "trap": 2,
+      "original_exit": 1,
+      "synthetic_cleanup_exit": 0,
+      "actual_returncode": 1,
+      "attempted_command": "-n systemctl stop trnm-native-campaign-40995210492-1.service",
+      "log": "synthetic manager status\noriginal_exit=1\ncleanup_exit=0\n",
+      "masked_cleanup_failure": false,
+      "name_stop_after_failed_create": true
+    },
+    {
+      "workflow": "pon-pure-admission-daa-v2.yml",
+      "trap": 1,
+      "original_exit": 0,
+      "synthetic_cleanup_exit": 5,
+      "actual_returncode": 0,
+      "attempted_command": "-n systemctl stop trnm-native-campaign-40995210492-1.service",
+      "log": "synthetic manager status\noriginal_exit=0\ncleanup_exit=5\n",
+      "masked_cleanup_failure": true,
+      "name_stop_after_failed_create": false
+    },
+    {
+      "workflow": "pon-pure-admission-daa-v2.yml",
+      "trap": 1,
+      "original_exit": 1,
+      "synthetic_cleanup_exit": 0,
+      "actual_returncode": 1,
+      "attempted_command": "-n systemctl stop trnm-native-campaign-40995210492-1.service",
+      "log": "synthetic manager status\noriginal_exit=1\ncleanup_exit=0\n",
+      "masked_cleanup_failure": false,
+      "name_stop_after_failed_create": true
+    },
+    {
+      "workflow": "pon-pure-history-raw-joint.yml",
+      "trap": 1,
+      "original_exit": 0,
+      "synthetic_cleanup_exit": 5,
+      "actual_returncode": 0,
+      "attempted_command": "-n systemctl stop trnm-native-campaign-40995210492-1.service",
+      "log": "synthetic manager status\noriginal_exit=0\ncleanup_exit=5\n",
+      "masked_cleanup_failure": true,
+      "name_stop_after_failed_create": false
+    },
+    {
+      "workflow": "pon-pure-history-raw-joint.yml",
+      "trap": 1,
+      "original_exit": 1,
+      "synthetic_cleanup_exit": 0,
+      "actual_returncode": 1,
+      "attempted_command": "-n systemctl stop trnm-native-campaign-40995210492-1.service",
+      "log": "synthetic manager status\noriginal_exit=1\ncleanup_exit=0\n",
+      "masked_cleanup_failure": false,
+      "name_stop_after_failed_create": true
+    },
+    {
+      "workflow": "pon-pure-history-raw-joint.yml",
+      "trap": 2,
+      "original_exit": 0,
+      "synthetic_cleanup_exit": 5,
+      "actual_returncode": 0,
+      "attempted_command": "-n systemctl stop trnm-native-campaign-40995210492-1.service",
+      "log": "synthetic manager status\noriginal_exit=0\ncleanup_exit=5\n",
+      "masked_cleanup_failure": true,
+      "name_stop_after_failed_create": false
+    },
+    {
+      "workflow": "pon-pure-history-raw-joint.yml",
+      "trap": 2,
+      "original_exit": 1,
+      "synthetic_cleanup_exit": 0,
+      "actual_returncode": 1,
+      "attempted_command": "-n systemctl stop trnm-native-campaign-40995210492-1.service",
+      "log": "synthetic manager status\noriginal_exit=1\ncleanup_exit=0\n",
+      "masked_cleanup_failure": false,
+      "name_stop_after_failed_create": true
+    }
+  ]
+}

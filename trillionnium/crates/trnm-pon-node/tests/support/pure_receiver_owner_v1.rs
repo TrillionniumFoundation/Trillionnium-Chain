@@ -1125,8 +1125,13 @@ fn receiver_phase_inner(
     // Identical phase-plus-cleanup deadline; IPC and final publication do not
     // gain a new five-second allowance after this one has expired.
     receiver.deadline = Instant::now()
-        + Duration::from_nanos((epoch + WINDOW_NS).saturating_sub(support::monotonic()))
-        + Duration::from_secs(5);
+        + Duration::from_nanos(
+            epoch
+                .checked_add(WINDOW_NS)
+                .and_then(|end| end.checked_add(5_000_000_000))
+                .unwrap()
+                .saturating_sub(support::monotonic()),
+        );
     let sample_control = control.clone();
     let sampler = thread::spawn(move || {
         let mut samples = Vec::new();

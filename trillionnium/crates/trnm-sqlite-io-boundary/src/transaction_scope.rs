@@ -15,6 +15,7 @@ struct Observer {
     connection: *mut ffi::sqlite3,
     pid: u32,
     controls: AtomicU64,
+    writes: AtomicU64,
     statements: AtomicU64,
     failed: AtomicBool,
 }
@@ -26,6 +27,7 @@ pub struct TransactionScope<'db> {
     connection: &'db Connection,
     observer: *mut Observer,
     controls: u64,
+    writes: u64,
 }
 
 impl<'db> TransactionScope<'db> {
@@ -39,10 +41,12 @@ impl<'db> TransactionScope<'db> {
         // SAFETY: client data is owned by this borrowed live connection. The
         // private key is not exposed through SQL. See install/destroy below.
         let controls = unsafe { &*observer }.controls.load(Ordering::SeqCst);
+        let writes = unsafe { &*observer }.writes.load(Ordering::SeqCst);
         Ok(Self {
             connection,
             observer,
             controls,
+            writes,
         })
     }
 
@@ -63,6 +67,33 @@ impl<'db> TransactionScope<'db> {
             return Err(error("executed transaction control crossed read scope"));
         }
         Ok(())
+    }
+
+    /// A narrow observation inside the same actual main WRITE transaction.
+    /// False means some potentially writing SQL executed since capture, even
+    /// a failed/no-row statement or DDL later reversed. Transaction/observer
+    /// replacement is an error, never an ordinary cache miss. Existing users of
+    /// `unchanged` retain their original transaction-control-only contract.
+    ///
+    /// This is not a general SQLite or filesystem immutability certificate:
+    /// readonly connection controls, prepare-time PRAGMA effects and indirect
+    /// UDF/virtual-table effects still require the caller's closed SQL graph,
+    /// fresh namespace/schema checks and original owner/storage fences.
+    pub fn same_write_snapshot(&self, expected: &Connection) -> Result<bool> {
+        if !std::ptr::eq(self.connection, expected) {
+            return Err(error("write snapshot belongs to another connection"));
+        }
+        self.unchanged()?;
+        // SAFETY: this is the same borrowed live handle checked by unchanged;
+        // the main schema name is a static nul-terminated C string.
+        let handle = unsafe { self.connection.handle() };
+        if unsafe { ffi::sqlite3_get_autocommit(handle) } != 0
+            || unsafe { ffi::sqlite3_txn_state(handle, c"main".as_ptr()) } != ffi::SQLITE_TXN_WRITE
+        {
+            return Err(error("original main write transaction is not active"));
+        }
+        // SAFETY: unchanged checked the original connection-owned observer.
+        Ok(unsafe { &*self.observer }.writes.load(Ordering::SeqCst) == self.writes)
     }
 }
 
@@ -103,6 +134,7 @@ pub(crate) fn install(connection: &Connection) -> Result<()> {
         connection: handle,
         pid: std::process::id(),
         controls: AtomicU64::new(0),
+        writes: AtomicU64::new(0),
         statements: AtomicU64::new(0),
         failed: AtomicBool::new(false),
     }));
@@ -193,6 +225,13 @@ unsafe extern "C" fn trace(
     // EXPLAIN compiles transaction opcodes but does not execute those controls.
     if unsafe { ffi::sqlite3_stmt_isexplain(statement) } != 0 {
         return 0;
+    }
+    // Count attempted execution, not prepare-time authorization or row counts.
+    // DDL, no-row writes and later rollback may leave total_changes unchanged.
+    // Transaction controls with readonly=true are still tracked independently
+    // below. A write-count overflow is the original sticky observer failure.
+    if unsafe { ffi::sqlite3_stmt_readonly(statement) } == 0 {
+        increment(&state.writes, &state.failed);
     }
     let sql = unsafe { ffi::sqlite3_sql(statement) };
     if sql.is_null() {

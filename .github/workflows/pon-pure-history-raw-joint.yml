@@ -23,6 +23,8 @@ on:
       - scripts/ci/test_history_fixed_parent_v2.py
       - scripts/project-preflight.sh
       - scripts/ci/verify_ci_source.py
+      - scripts/ci/check_collected_unit_empty_v1.py
+      - scripts/ci/test_collected_unit_empty_v1.py
       - .github/workflows/pon-native-campaign-qualification.yml
   workflow_dispatch:
 permissions:
@@ -101,6 +103,13 @@ jobs:
           python3 -B scripts/ci/test_history_fixed_parent_v2.py 2>&1 | tee "$OUT/fixed-parent-reader-controls.log"
           grep -E '^Ran 4 tests in ' "$OUT/fixed-parent-reader-controls.log"
           grep -x 'OK' "$OUT/fixed-parent-reader-controls.log"
+      - name: Require read-only collected-unit absence controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B scripts/ci/test_collected_unit_empty_v1.py -v 2>&1 | tee "$OUT/collected-unit-empty-controls.log"
+          grep -E '^Ran 21 tests in ' "$OUT/collected-unit-empty-controls.log"
+          grep -x OK "$OUT/collected-unit-empty-controls.log"
       - name: Exercise real fresh-slice creation and exclusive cleanup before native work
         shell: bash
         run: |
@@ -421,11 +430,16 @@ jobs:
           cleanup() {
             original_status=$?
             trap - EXIT INT TERM
-            # Only this workflow's uniquely named transient unit is stopped.
             set +e
-            sudo -n systemctl stop "$unit" >> "$OUT/unit-cleanup.log" 2>&1
+            # systemd owns termination/collection. A failed create may be a foreign name.
+            # Observe only; a live or unreadable unit remains a cleanup failure.
+            /usr/bin/python3 -B "$GITHUB_WORKSPACE/scripts/ci/check_collected_unit_empty_v1.py" \
+              --unit "$unit" > "$OUT/unit-cleanup.json" 2>> "$OUT/unit-cleanup.log"
             cleanup_status=$?
             printf 'original_exit=%s\ncleanup_exit=%s\n' "$original_status" "$cleanup_status" >> "$OUT/unit-cleanup.log"
+            if test "$original_status" -eq 0 && test "$cleanup_status" -ne 0; then
+              exit "$cleanup_status"
+            fi
             exit "$original_status"
           }
           trap cleanup EXIT
@@ -465,9 +479,15 @@ jobs:
             original_status=$?
             trap - EXIT INT TERM
             set +e
-            sudo -n systemctl stop "$unit" >> "$OUT/lifeline-unit-cleanup.log" 2>&1
+            # systemd owns termination/collection. A failed create may be a foreign name.
+            # Observe only; a live or unreadable unit remains a cleanup failure.
+            /usr/bin/python3 -B "$GITHUB_WORKSPACE/scripts/ci/check_collected_unit_empty_v1.py" \
+              --unit "$unit" > "$OUT/lifeline-unit-cleanup.json" 2>> "$OUT/lifeline-unit-cleanup.log"
             cleanup_status=$?
             printf 'original_exit=%s\ncleanup_exit=%s\n' "$original_status" "$cleanup_status" >> "$OUT/lifeline-unit-cleanup.log"
+            if test "$original_status" -eq 0 && test "$cleanup_status" -ne 0; then
+              exit "$cleanup_status"
+            fi
             exit "$original_status"
           }
           trap cleanup EXIT

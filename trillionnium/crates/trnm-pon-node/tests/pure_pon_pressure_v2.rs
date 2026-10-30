@@ -1169,8 +1169,13 @@ fn phase(
     // The original fixed window runs to completion. Cleanup may join cancelled
     // tasks, but it never counts recovery as an on-time business confirmation.
     let cleanup = Instant::now()
-        + Duration::from_nanos((epoch + WINDOW_NS).saturating_sub(support::monotonic()))
-        + Duration::from_secs(5);
+        + Duration::from_nanos(
+            epoch
+                .checked_add(WINDOW_NS)
+                .and_then(|end| end.checked_add(5_000_000_000))
+                .unwrap()
+                .saturating_sub(support::monotonic()),
+        );
     let (actors, actor_process_costs): (Vec<_>, Vec<_>) = actors
         .into_iter()
         .map(|a| a.finish_with_process_cost(cleanup))

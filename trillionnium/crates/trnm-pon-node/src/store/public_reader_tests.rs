@@ -1,4 +1,5 @@
 use super::*;
+use crate::store::compiled_source;
 use crate::{development_public, Settings};
 use serde_json::json;
 use sha2::{Digest, Sha256};
@@ -11,9 +12,6 @@ use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
 use trnm_protocol::pon_wire::Envelope;
 
 const CLOCK: u64 = 1_000_000;
-mod compiled_source {
-    include!("../../examples/support/distributed_source_inventory.rs");
-}
 
 fn transfer(settings: &Settings, nonce: u64) -> Vec<u8> {
     let key =

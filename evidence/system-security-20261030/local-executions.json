@@ -1,0 +1,1408 @@
+{
+  "schema": "system-safety-local-executions-v1",
+  "repository": "chain",
+  "scope": "Original local functional, lint, format, reader and failed execution records. No hosted fixed-Host or production qualification is inferred.",
+  "interpretation": [
+    "Every selected completed execution is retained, including compile errors, failed tests, zero-test filters, source-mutating runs and resource failures.",
+    "A formatter or fix tool may exit zero and change source; the driver correctly records source_stable=false rather than an immutable-source pass.",
+    "Only an exit-zero, source-stable execution with the required actual tests can support its scoped claim. Broad historical failures remain failures.",
+    "Per-execution source_before/source_after include the base commit and exact changed-file hashes; these are not whole-commit hosted checks."
+  ],
+  "archive": {
+    "path": "local-executions.tar.gz",
+    "bytes": 74692,
+    "sha256": "98b5dc604b9014177a80c6bbfbc001da08e87779ae371ed2f9477f02d98c49f8"
+  },
+  "executions": [
+    {
+      "name": "chain-all-targets-check-1d11",
+      "command": [
+        "cargo",
+        "check",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets"
+      ],
+      "recorded_status": "passed",
+      "exit_code": 0,
+      "source_stable": true,
+      "elapsed_seconds": 57.56195154299712,
+      "source_head": "1d11f875493f8125e36b9adceacb342df108e5e5",
+      "files": [
+        {
+          "path": "chain-all-targets-check-1d11.json",
+          "bytes": 7888,
+          "sha256": "71e7cdbda4cc026d8d4213f8a0750af019a88adc79c574f4843a96f5e8d5ea76"
+        },
+        {
+          "path": "chain-all-targets-check-1d11.log",
+          "bytes": 1094,
+          "sha256": "87d53776b3e4b2574d23631a6e36da4ddeb688bd24a1cbfec57cf928b3ca9be4"
+        }
+      ]
+    },
+    {
+      "name": "chain-all-targets-check",
+      "command": [
+        "cargo",
+        "check",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets"
+      ],
+      "recorded_status": "passed",
+      "exit_code": 0,
+      "source_stable": true,
+      "elapsed_seconds": 120.71030048999819,
+      "source_head": "540d72356a921da31dde1113537382e5c0f0c4fd",
+      "files": [
+        {
+          "path": "chain-all-targets-check.json",
+          "bytes": 7889,
+          "sha256": "8e080fa6c3467014f72291d2d46ac8f9f582b62436d905e48f65c29096e97833"
+        },
+        {
+          "path": "chain-all-targets-check.log",
+          "bytes": 7369,
+          "sha256": "7d6a762864ea5b43354b03a81da88b1a0b3c1f1bcaa2b42499018ff9f8131a56"
+        }
+      ]
+    },
+    {
+      "name": "chain-cleanup-ci-contracts",
+      "command": [
+        "python",
+        "scripts/ci/test_ci_contract.py"
+      ],
+      "recorded_status": "passed",
+      "exit_code": 0,
+      "source_stable": true,
+      "elapsed_seconds": 4.172582218998286,
+      "source_head": "fb7e12bd2a02ee0805dff6a053edc904ad2198c6",
+      "files": [
+        {
+          "path": "chain-cleanup-ci-contracts.json",
+          "bytes": 1814,
+          "sha256": "dd0b07ed08c265772bdc396363594dccf9d298e36fa0382df4def59c7ebdbd06"
+        },
+        {
+          "path": "chain-cleanup-ci-contracts.log",
+          "bytes": 16069,
+          "sha256": "202a4b9d98b7b6f8af128714158551de24b8359205056badc7fa547166e74752"
+        }
+      ]
+    },
+    {
+      "name": "chain-cleanup-format",
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "recorded_status": "passed",
+      "exit_code": 0,
+      "source_stable": true,
+      "elapsed_seconds": 10.876281517997995,
+      "source_head": "fb7e12bd2a02ee0805dff6a053edc904ad2198c6",
+      "files": [
+        {
+          "path": "chain-cleanup-format.json",
+          "bytes": 1879,
+          "sha256": "3a15f61af9c9f3671da03b7af1c87b2bf2536e6d4fb3f75a48d8b50289427cdf"
+        },
+        {
+          "path": "chain-cleanup-format.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    {
+      "name": "chain-cleanup-source-negatives",
+      "command": [
+        "python",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "recorded_status": "passed",
+      "exit_code": 0,
+      "source_stable": true,
+      "elapsed_seconds": 2.439533748998656,
+      "source_head": "fb7e12bd2a02ee0805dff6a053edc904ad2198c6",
+      "files": [
+        {
+          "path": "chain-cleanup-source-negatives.json",
+          "bytes": 1822,
+          "sha256": "5ed8a97c1b43e5090b1ae478af34db0f898e72235522524f6e70bd32fcae32ac"
+        },
+        {
+          "path": "chain-cleanup-source-negatives.log",
+          "bytes": 5509,
+          "sha256": "20971dc2e28d2e31a870ab6b79089209bd4733e7988802ba878611d71092f744"
+        }
+      ]
+    },
+    {
+      "name": "chain-codeql-target-context-controls",
+      "command": [
+        "python",
+        "scripts/ci/test_pinned_codeql_analysis_v1.py"
+      ],
+      "recorded_status": "passed",
+      "exit_code": 0,
+      "source_stable": true,
+      "elapsed_seconds": 0.110891714997706,
+      "source_head": "fb7e12bd2a02ee0805dff6a053edc904ad2198c6",
+      "files": [
+        {
+          "path": "chain-codeql-target-context-controls.json",
+          "bytes": 2824,
+          "sha256": "565f1e6a5e1efc9393c08db2cf57316d55df535b7fded448ddf2d6b60b3bb6a6"
+        },
+        {
+          "path": "chain-codeql-target-context-controls.log",
+          "bytes": 376,
+          "sha256": "650cc5ec7a6d21dd83dc141e7c81c0d708191ec742d7ae44a4b4c4c59c5aee10"
+        }
+      ]
+    },
+    {
+      "name": "chain-codeql-target-metadata-controls",
+      "command": [
+        "python",
+        "scripts/ci/test_collect_pinned_codeql_metadata_v1.py"
+      ],
+      "recorded_status": "passed",
+      "exit_code": 0,
+      "source_stable": true,
+      "elapsed_seconds": 0.12482203599938657,
+      "source_head": "fb7e12bd2a02ee0805dff6a053edc904ad2198c6",
+      "files": [
+        {
+          "path": "chain-codeql-target-metadata-controls.json",
+          "bytes": 2834,
+          "sha256": "01f49e183d2b4d08a4e8f7f085fdb5118fa37b9d81810a75fd1c54a997b189b6"
+        },
+        {
+          "path": "chain-codeql-target-metadata-controls.log",
+          "bytes": 125,
+          "sha256": "10b3e861795c8daff3d5c95ecd2118ed4fbf734abbd9f41f36c45852ec9d5738"
+        }
+      ]
+    },
+    {
+      "name": "chain-collected-unit-ci-contracts",
+      "command": [
+        "python",
+        "scripts/ci/test_ci_contract.py"
+      ],
+      "recorded_status": "passed",
+      "exit_code": 0,
+      "source_stable": true,
+      "elapsed_seconds": 4.842347641999368,
+      "source_head": "fb7e12bd2a02ee0805dff6a053edc904ad2198c6",
+      "files": [
+        {
+          "path": "chain-collected-unit-ci-contracts.json",
+          "bytes": 8696,
+          "sha256": "f16b56b96fd9cdb8b3041a525d95ea5dd19b0ed25555e6b9250b85bceb8e2f18"
+        },
+        {
+          "path": "chain-collected-unit-ci-contracts.log",
+          "bytes": 16069,
+          "sha256": "6c6bc5dc248a6ddd7ac8291881bf3a3329adb684a87dd1f8d7db56e04626cf7d"
+        }
+      ]
+    },
+    {
+      "name": "chain-collected-unit-empty-native-controls",
+      "command": [
+        "python",
+        "scripts/ci/test_collected_unit_empty_v1.py",
+        "-v"
+      ],
+      "recorded_status": "passed",
+      "exit_code": 0,
+      "source_stable": true,
+      "elapsed_seconds": 1.0073734510006034,
+      "source_head": "fb7e12bd2a02ee0805dff6a053edc904ad2198c6",
+      "files": [
+        {
+          "path": "chain-collected-unit-empty-native-controls.json",
+          "bytes": 8719,
+          "sha256": "20cb5ea1e880572929ec773688c4010bcd2db94aad613430f9648653d7cb3ca3"
+        },
+        {
+          "path": "chain-collected-unit-empty-native-controls.log",
+          "bytes": 3278,
+          "sha256": "40eee58dbd42a01000f14f0d266c4c3fcd71c2eb99465b0bde8552c0a62f709b"
+        }
+      ]
+    },
+    {
+      "name": "chain-collected-unit-source-negatives",
+      "command": [
+        "python",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "recorded_status": "passed",
+      "exit_code": 0,
+      "source_stable": true,
+      "elapsed_seconds": 2.664142523000919,
+      "source_head": "fb7e12bd2a02ee0805dff6a053edc904ad2198c6",
+      "files": [
+        {
+          "path": "chain-collected-unit-source-negatives.json",
+          "bytes": 8704,
+          "sha256": "50386d7a0d726147f040af40fb35361974d93e0a1c238d82b0b19602daac5729"
+        },
+        {
+          "path": "chain-collected-unit-source-negatives.log",
+          "bytes": 5509,
+          "sha256": "1110a7dfe78568a3260db976df8c634829a6ee62d8297d455cd3a2fbb1076373"
+        }
+      ]
+    },
+    {
+      "name": "chain-deadline-native-controls",
+      "command": [
+        "env",
+        "CARGO_PROFILE_TEST_DEBUG=0",
+        "cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--",
+        "--test-threads=1",
+        "ingress::tests::legacy_",
+        "ingress::tests::expired_legacy_",
+        "ingress::public_v2::tests::original_v2_signed_response_",
+        "ingress::public_v2::tests::expired_v2_outer_",
+        "--nocapture"
+      ],
+      "recorded_status": "failed",
+      "exit_code": 101,
+      "source_stable": true,
+      "elapsed_seconds": 197.2500337149977,
+      "source_head": "1d11f875493f8125e36b9adceacb342df108e5e5",
+      "files": [
+        {
+          "path": "chain-deadline-native-controls.json",
+          "bytes": 9254,
+          "sha256": "169ffb0cab006a9067abb3de3275468898723b729eeb146f096e850351ca2c37"
+        },
+        {
+          "path": "chain-deadline-native-controls.log",
+          "bytes": 3619,
+          "sha256": "a697e65397d00e70e1168270c1f909bbbe2b5f15beb9d7d1e39a645ad9ddcef4"
+        }
+      ]
+    },
+    {
+      "name": "chain-deadline-native-controls2",
+      "command": [
+        "env",
+        "CARGO_PROFILE_TEST_DEBUG=0",
+        "cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--",
+        "--test-threads=1",
+        "ingress::tests::legacy_",
+        "ingress::tests::expired_legacy_",
+        "ingress::public_v2::tests::original_v2_signed_response_",
+        "ingress::public_v2::tests::expired_v2_outer_",
+        "--nocapture"
+      ],
+      "recorded_status": "passed",
+      "exit_code": 0,
+      "source_stable": true,
+      "elapsed_seconds": 378.6720470680011,
+      "source_head": "fb7e12bd2a02ee0805dff6a053edc904ad2198c6",
+      "files": [
+        {
+          "path": "chain-deadline-native-controls2.json",
+          "bytes": 772,
+          "sha256": "225b151047d2e43f809c31b7217096a7bfd50b282b833abffb017d5bc8b4d542"
+        },
+        {
+          "path": "chain-deadline-native-controls2.log",
+          "bytes": 1047,
+          "sha256": "9641f5011e49bc20a4ee89b941e9efef0db5b5bc38981acbeb86ac251174c715"
+        }
+      ]
+    },
+    {
+      "name": "chain-final-all-targets-check",
+      "command": [
+        "cargo",
+        "check",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features"
+      ],
+      "recorded_status": "passed",
+      "exit_code": 0,
+      "source_stable": true,
+      "elapsed_seconds": 143.50563820499883,
+      "source_head": "1d11f875493f8125e36b9adceacb342df108e5e5",
+      "files": [
+        {
+          "path": "chain-final-all-targets-check.json",
+          "bytes": 8717,
+          "sha256": "0c4fcb30c13427b92a0f324418db2473fe8b7833075895dd8d11dfec53b05317"
+        },
+        {
+          "path": "chain-final-all-targets-check.log",
+          "bytes": 9395,
+          "sha256": "b824804e6875daf5bf80739dc2f63f93696f00ccf5898de84cc23db884aa9e3e"
+        }
+      ]
+    },
+    {
+      "name": "chain-final-followup-format",
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "recorded_status": "passed",
+      "exit_code": 0,
+      "source_stable": true,
+      "elapsed_seconds": 11.101552596999682,
+      "source_head": "fb7e12bd2a02ee0805dff6a053edc904ad2198c6",
+      "files": [
+        {
+          "path": "chain-final-followup-format.json",
+          "bytes": 9091,
+          "sha256": "840137d06cf9b9469394480cff6b3e685c1e7d779a4276d271909d7b54a4e2f2"
+        },
+        {
+          "path": "chain-final-followup-format.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    {
+      "name": "chain-final-format",
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "recorded_status": "failed",
+      "exit_code": 1,
+      "source_stable": true,
+      "elapsed_seconds": 12.146043125998403,
+      "source_head": "1d11f875493f8125e36b9adceacb342df108e5e5",
+      "files": [
+        {
+          "path": "chain-final-format.json",
+          "bytes": 8675,
+          "sha256": "ece766de4c8bb315946cb7adf05c2ac1756741f709d969d05c8d1fb57851fea8"
+        },
+        {
+          "path": "chain-final-format.log",
+          "bytes": 377,
+          "sha256": "944b7f28bea769186a7047ec07b1a1ac8632a6c4e15a90e93dce9fc299e68ea2"
+        }
+      ]
+    },
+    {
+      "name": "chain-final-format2",
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "recorded_status": "passed",
+      "exit_code": 0,
+      "source_stable": true,
+      "elapsed_seconds": 12.046566557000915,
+      "source_head": "1d11f875493f8125e36b9adceacb342df108e5e5",
+      "files": [
+        {
+          "path": "chain-final-format2.json",
+          "bytes": 8947,
+          "sha256": "e446058825a04f681f6e45b0b3afb0829d0d3abcbdfce8230bd673a158bc485b"
+        },
+        {
+          "path": "chain-final-format2.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    {
+      "name": "chain-final-production-writer-native",
+      "command": [
+        "env",
+        "CARGO_PROFILE_TEST_DEBUG=0",
+        "cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "store::native_authenticated::post_write_readback_tests",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "recorded_status": "passed",
+      "exit_code": 0,
+      "source_stable": true,
+      "elapsed_seconds": 348.79233548699995,
+      "source_head": "fb7e12bd2a02ee0805dff6a053edc904ad2198c6",
+      "files": [
+        {
+          "path": "chain-final-production-writer-native.json",
+          "bytes": 9274,
+          "sha256": "784dfa64246f963186c45599b53ad1399b2674a941a89eed8b7dea7453a6da12"
+        },
+        {
+          "path": "chain-final-production-writer-native.log",
+          "bytes": 2381,
+          "sha256": "e3d52bd70579d52f3af13d1da50e34317349fe220e540ccab1b44f5135c01395"
+        }
+      ]
+    },
+    {
+      "name": "chain-final-strict-clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "recorded_status": "passed",
+      "exit_code": 0,
+      "source_stable": true,
+      "elapsed_seconds": 159.47234926500096,
+      "source_head": "1d11f875493f8125e36b9adceacb342df108e5e5",
+      "files": [
+        {
+          "path": "chain-final-strict-clippy.json",
+          "bytes": 8754,
+          "sha256": "90977ad689d56d4be0978b1c97048e3f8d9687a206c25b5739b038c689a770e0"
+        },
+        {
+          "path": "chain-final-strict-clippy.log",
+          "bytes": 3515,
+          "sha256": "9fde72bdbcc52cf77b7b24f21452d6aed9cec1e67eb4846caac79e7b6a0fdb74"
+        }
+      ]
+    },
+    {
+      "name": "chain-final-writer-format",
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "recorded_status": "passed",
+      "exit_code": 0,
+      "source_stable": true,
+      "elapsed_seconds": 12.126970235000044,
+      "source_head": "fb7e12bd2a02ee0805dff6a053edc904ad2198c6",
+      "files": [
+        {
+          "path": "chain-final-writer-format.json",
+          "bytes": 9091,
+          "sha256": "804ef472df118ba5b981af0861fffa8bd3e0c21152edb8a28eab54d3cb92aeb7"
+        },
+        {
+          "path": "chain-final-writer-format.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    {
+      "name": "chain-followup-ci-contracts",
+      "command": [
+        "python",
+        "scripts/ci/test_ci_contract.py"
+      ],
+      "recorded_status": "passed",
+      "exit_code": 0,
+      "source_stable": true,
+      "elapsed_seconds": 4.630138585001987,
+      "source_head": "fb7e12bd2a02ee0805dff6a053edc904ad2198c6",
+      "files": [
+        {
+          "path": "chain-followup-ci-contracts.json",
+          "bytes": 7192,
+          "sha256": "d7f6a7bf02cdb78161d539de2dec18dcc98640a69d4d142f6bfbab98cbd75ab7"
+        },
+        {
+          "path": "chain-followup-ci-contracts.log",
+          "bytes": 16069,
+          "sha256": "a37d3e47ffd112b23fcae8873e56543fd8ea99eb748a3f752038aca70857176c"
+        }
+      ]
+    },
+    {
+      "name": "chain-followup-format-check",
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "recorded_status": "passed",
+      "exit_code": 0,
+      "source_stable": true,
+      "elapsed_seconds": 11.843033382003341,
+      "source_head": "fb7e12bd2a02ee0805dff6a053edc904ad2198c6",
+      "files": [
+        {
+          "path": "chain-followup-format-check.json",
+          "bytes": 7257,
+          "sha256": "6e0379a94859ec4456c80f0341e7e3d2ab01ac538241023d7ee56809c162c1d1"
+        },
+        {
+          "path": "chain-followup-format-check.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    {
+      "name": "chain-followup-format-check2",
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "recorded_status": "passed",
+      "exit_code": 0,
+      "source_stable": true,
+      "elapsed_seconds": 13.25323206900066,
+      "source_head": "fb7e12bd2a02ee0805dff6a053edc904ad2198c6",
+      "files": [
+        {
+          "path": "chain-followup-format-check2.json",
+          "bytes": 7256,
+          "sha256": "65cfbea372d4ab6f990437ee1c28e06abbf2ad426f340c00f7aa7f66b9a6190d"
+        },
+        {
+          "path": "chain-followup-format-check2.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    {
+      "name": "chain-followup-full-native-authenticated",
+      "command": [
+        "env",
+        "CARGO_PROFILE_TEST_DEBUG=0",
+        "cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "store::native_authenticated::",
+        "--",
+        "--include-ignored",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "recorded_status": "failed",
+      "exit_code": 101,
+      "source_stable": true,
+      "elapsed_seconds": 356.02656680299697,
+      "source_head": "fb7e12bd2a02ee0805dff6a053edc904ad2198c6",
+      "files": [
+        {
+          "path": "chain-followup-full-native-authenticated.json",
+          "bytes": 7444,
+          "sha256": "c1979ac7eb9c420b34b4f1d2d90a36cb683ad772a64e42432814f1daa065c387"
+        },
+        {
+          "path": "chain-followup-full-native-authenticated.log",
+          "bytes": 24759,
+          "sha256": "eba680d8b4b7d64c2c12c9b7d695f082ed962865a7ff841cf563be8fd7e3d659"
+        }
+      ]
+    },
+    {
+      "name": "chain-followup-source-integrity",
+      "command": [
+        "python",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "recorded_status": "passed",
+      "exit_code": 0,
+      "source_stable": true,
+      "elapsed_seconds": 2.722070851999888,
+      "source_head": "fb7e12bd2a02ee0805dff6a053edc904ad2198c6",
+      "files": [
+        {
+          "path": "chain-followup-source-integrity.json",
+          "bytes": 7200,
+          "sha256": "30eed973781fea66c4b0be437616e4e458cd74e255d2037d5b286dd02f7c6c17"
+        },
+        {
+          "path": "chain-followup-source-integrity.log",
+          "bytes": 5509,
+          "sha256": "45a2ca7060dfcc55ce8aadcce27b7d08ac95ee52af26814d1e5e03afface8bec"
+        }
+      ]
+    },
+    {
+      "name": "chain-followup-strict-clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "recorded_status": "failed",
+      "exit_code": 101,
+      "source_stable": true,
+      "elapsed_seconds": 54.87836394899932,
+      "source_head": "fb7e12bd2a02ee0805dff6a053edc904ad2198c6",
+      "files": [
+        {
+          "path": "chain-followup-strict-clippy.json",
+          "bytes": 7337,
+          "sha256": "a0c93c0e2beba3641d9269be10ade1e47bf2e7358da3e5aba2ce6e60b233e72b"
+        },
+        {
+          "path": "chain-followup-strict-clippy.log",
+          "bytes": 5589,
+          "sha256": "bdae0fe57ecedde5f6405f8f8b04dce07baec024fd5e5d4a5f62ca7adcb5c76f"
+        }
+      ]
+    },
+    {
+      "name": "chain-followup-strict-clippy2",
+      "command": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "recorded_status": "failed",
+      "exit_code": 101,
+      "source_stable": true,
+      "elapsed_seconds": 12.198682693000592,
+      "source_head": "fb7e12bd2a02ee0805dff6a053edc904ad2198c6",
+      "files": [
+        {
+          "path": "chain-followup-strict-clippy2.json",
+          "bytes": 8842,
+          "sha256": "79d2c8ba76a5bec74cdd534a102723abf6654f608eb296255089fdad4b098713"
+        },
+        {
+          "path": "chain-followup-strict-clippy2.log",
+          "bytes": 498,
+          "sha256": "21b92219d6754d3d3484f56e0e517f933d51b479657aa764d422ee449e2a61de"
+        }
+      ]
+    },
+    {
+      "name": "chain-followup-strict-clippy3",
+      "command": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "recorded_status": "failed",
+      "exit_code": 101,
+      "source_stable": true,
+      "elapsed_seconds": 19.503597402996093,
+      "source_head": "fb7e12bd2a02ee0805dff6a053edc904ad2198c6",
+      "files": [
+        {
+          "path": "chain-followup-strict-clippy3.json",
+          "bytes": 9172,
+          "sha256": "4bc080bfe204a2f4446109a779153751ff7903bfda31e8f367a5e717428b05f0"
+        },
+        {
+          "path": "chain-followup-strict-clippy3.log",
+          "bytes": 985,
+          "sha256": "13e48cd9e79506c19d84f0b7b2f4260cd3fa9ef1bea3033e36b2530c15ffede7"
+        }
+      ]
+    },
+    {
+      "name": "chain-followup-strict-clippy4",
+      "command": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "recorded_status": "failed",
+      "exit_code": 101,
+      "source_stable": true,
+      "elapsed_seconds": 84.44926813500206,
+      "source_head": "fb7e12bd2a02ee0805dff6a053edc904ad2198c6",
+      "files": [
+        {
+          "path": "chain-followup-strict-clippy4.json",
+          "bytes": 9171,
+          "sha256": "da819d123832db1167e16612a905839485a4b5c509402b86de16deb032ec83a9"
+        },
+        {
+          "path": "chain-followup-strict-clippy4.log",
+          "bytes": 2990,
+          "sha256": "0f6ffd1c94f78c4610b24b03fcc7f3876e64133ccbe9b295c8b654476ad7d5dc"
+        }
+      ]
+    },
+    {
+      "name": "chain-followup-strict-clippy5",
+      "command": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "recorded_status": "passed",
+      "exit_code": 0,
+      "source_stable": true,
+      "elapsed_seconds": 107.44269089499721,
+      "source_head": "fb7e12bd2a02ee0805dff6a053edc904ad2198c6",
+      "files": [
+        {
+          "path": "chain-followup-strict-clippy5.json",
+          "bytes": 9170,
+          "sha256": "cb01c234e285c45c299616c925d3ed65d50134abe9340883bf08d3f571c67ce9"
+        },
+        {
+          "path": "chain-followup-strict-clippy5.log",
+          "bytes": 2687,
+          "sha256": "92e92f6e37079aa8e3f652991928f935adeaf80a501fa203a09c7ae15f8f5459"
+        }
+      ]
+    },
+    {
+      "name": "chain-history-functional-debug0",
+      "command": [
+        "env",
+        "CARGO_PROFILE_TEST_DEBUG=0",
+        "cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "history_",
+        "--",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "recorded_status": "failed",
+      "exit_code": 101,
+      "source_stable": false,
+      "elapsed_seconds": 981.4265859070001,
+      "source_head": "1d11f875493f8125e36b9adceacb342df108e5e5",
+      "files": [
+        {
+          "path": "chain-history-functional-debug0.json",
+          "bytes": 8267,
+          "sha256": "9e0484abf17e38416e32e89aa85496f13043739c47818b87a4575b1229f32336"
+        },
+        {
+          "path": "chain-history-functional-debug0.log",
+          "bytes": 139117,
+          "sha256": "814193df0f64b84973201636d9205dcd7ffdbb51e8d85ce344839c96528fd910"
+        }
+      ]
+    },
+    {
+      "name": "chain-ipc-deadline-controls",
+      "command": [
+        "env",
+        "CARGO_PROFILE_TEST_DEBUG=0",
+        "cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "public_v3_multiprocess",
+        "history_response_",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "recorded_status": "passed",
+      "exit_code": 0,
+      "source_stable": true,
+      "elapsed_seconds": 30.29821050100145,
+      "source_head": "fb7e12bd2a02ee0805dff6a053edc904ad2198c6",
+      "files": [
+        {
+          "path": "chain-ipc-deadline-controls.json",
+          "bytes": 2055,
+          "sha256": "a338fc1efaec721d6823a95de4a76a7fd1bacad871b40d0de824f6a65d095e09"
+        },
+        {
+          "path": "chain-ipc-deadline-controls.log",
+          "bytes": 641,
+          "sha256": "e85f3450fdbc8a140ce95a52aa4205772dfd2e603baffaa218fd795c207062c2"
+        }
+      ]
+    },
+    {
+      "name": "chain-main-expired-page",
+      "command": [
+        "env",
+        "CARGO_PROFILE_TEST_DEBUG=0",
+        "cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--bin",
+        "trnm-pon-node",
+        "tests::expired_public_sync_page_cannot_start_import_or_create_a_cpu_epoch",
+        "--",
+        "--exact",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "recorded_status": "passed",
+      "exit_code": 0,
+      "source_stable": true,
+      "elapsed_seconds": 163.8405776740001,
+      "source_head": "fb7e12bd2a02ee0805dff6a053edc904ad2198c6",
+      "files": [
+        {
+          "path": "chain-main-expired-page.json",
+          "bytes": 2116,
+          "sha256": "cb62a2e00469f827f86bd4d270394f6a4ac9a9617e1831cff3ec84a4d5479584"
+        },
+        {
+          "path": "chain-main-expired-page.log",
+          "bytes": 512,
+          "sha256": "7f00e92d50159b55ffd2094e26800db2d5a93aacba4edc4c2e401544ec2461c6"
+        }
+      ]
+    },
+    {
+      "name": "chain-peer-lease-native",
+      "command": [
+        "env",
+        "CARGO_PROFILE_TEST_DEBUG=0",
+        "cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-peer-lease",
+        "--all-features",
+        "--",
+        "--test-threads=1"
+      ],
+      "recorded_status": "passed",
+      "exit_code": 0,
+      "source_stable": true,
+      "elapsed_seconds": 16.993257808000635,
+      "source_head": "1d11f875493f8125e36b9adceacb342df108e5e5",
+      "files": [
+        {
+          "path": "chain-peer-lease-native.json",
+          "bytes": 8500,
+          "sha256": "3656da98d81199e9a874d53a263d95a16260596559a1f242736ddfa8202cb787"
+        },
+        {
+          "path": "chain-peer-lease-native.log",
+          "bytes": 13859,
+          "sha256": "dd7a5e6a215d578698dea48fd86efd7b1db5bade7706a8300c758e46cc4737d1"
+        }
+      ]
+    },
+    {
+      "name": "chain-peer-lease-strict-clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-peer-lease",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "recorded_status": "passed",
+      "exit_code": 0,
+      "source_stable": true,
+      "elapsed_seconds": 6.416925335997803,
+      "source_head": "1d11f875493f8125e36b9adceacb342df108e5e5",
+      "files": [
+        {
+          "path": "chain-peer-lease-strict-clippy.json",
+          "bytes": 8479,
+          "sha256": "5e216ff2d66d94f030e0a5aa356bdde3fce5b9794cc706ac842598154a10b64a"
+        },
+        {
+          "path": "chain-peer-lease-strict-clippy.log",
+          "bytes": 441,
+          "sha256": "4d522e9a97a5065552773cff42463161cf8ca4a1c8ff315ae22bf97cfbe69471"
+        }
+      ]
+    },
+    {
+      "name": "chain-postwrite-adversarial-native-final",
+      "command": [
+        "env",
+        "CARGO_PROFILE_TEST_DEBUG=0",
+        "cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "store::native_authenticated::post_write_readback_tests",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "recorded_status": "failed",
+      "exit_code": 101,
+      "source_stable": true,
+      "elapsed_seconds": 346.9613575359981,
+      "source_head": "fb7e12bd2a02ee0805dff6a053edc904ad2198c6",
+      "files": [
+        {
+          "path": "chain-postwrite-adversarial-native-final.json",
+          "bytes": 7441,
+          "sha256": "7871be24c090cf13707edd655c318899d87710fe6e443f07a6195d0af1aa48f7"
+        },
+        {
+          "path": "chain-postwrite-adversarial-native-final.log",
+          "bytes": 3679,
+          "sha256": "e957321e551a56c023930f7e081a1d1eda75bad5055bcfcb5c951553e8e7cee1"
+        }
+      ]
+    },
+    {
+      "name": "chain-postwrite-adversarial-native",
+      "command": [
+        "env",
+        "CARGO_PROFILE_TEST_DEBUG=0",
+        "cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "store::native_authenticated::post_write_readback_tests",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "recorded_status": "failed",
+      "exit_code": 101,
+      "source_stable": true,
+      "elapsed_seconds": 22.503277383999375,
+      "source_head": "fb7e12bd2a02ee0805dff6a053edc904ad2198c6",
+      "files": [
+        {
+          "path": "chain-postwrite-adversarial-native.json",
+          "bytes": 4536,
+          "sha256": "fccfb825663021dec3eb247315bc7dedc2580070232a85f8987068a3646c0a57"
+        },
+        {
+          "path": "chain-postwrite-adversarial-native.log",
+          "bytes": 775,
+          "sha256": "a7bf67661522dbedc1ddbf788282d69cd4fcc61c9938d7e558e8ea1ad16c6e11"
+        }
+      ]
+    },
+    {
+      "name": "chain-sqlite-qualified-clean",
+      "command": [
+        "cargo",
+        "clean",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-sqlite-io-boundary"
+      ],
+      "recorded_status": "passed",
+      "exit_code": 0,
+      "source_stable": true,
+      "elapsed_seconds": 0.07700711500001489,
+      "source_head": "1d11f875493f8125e36b9adceacb342df108e5e5",
+      "files": [
+        {
+          "path": "chain-sqlite-qualified-clean.json",
+          "bytes": 8393,
+          "sha256": "6dcdb6dd8a84dfa5d462b36ad0c3c48e0fdb032fe097e54aa5aa40f3b0394ea6"
+        },
+        {
+          "path": "chain-sqlite-qualified-clean.log",
+          "bytes": 37,
+          "sha256": "e076f38b9620a7c997f31b6e565a7e40e23f8a46073c0360d15a81fa4c25d611"
+        }
+      ]
+    },
+    {
+      "name": "chain-write-snapshot-native-final",
+      "command": [
+        "env",
+        "CARGO_PROFILE_TEST_DEBUG=0",
+        "cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-sqlite-io-boundary",
+        "--lib",
+        "transaction_scope::tests",
+        "--",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "recorded_status": "passed",
+      "exit_code": 0,
+      "source_stable": true,
+      "elapsed_seconds": 0.6366429810004774,
+      "source_head": "fb7e12bd2a02ee0805dff6a053edc904ad2198c6",
+      "files": [
+        {
+          "path": "chain-write-snapshot-native-final.json",
+          "bytes": 7420,
+          "sha256": "1a240908c1dcc4234cee4cd767feb25f100ea2ba9d581d8f14dbc342b2bd3e92"
+        },
+        {
+          "path": "chain-write-snapshot-native-final.log",
+          "bytes": 1795,
+          "sha256": "6558493412e5e6152ecd796c910bca1216a01ce2b774c4857a94e0e16b078db6"
+        }
+      ]
+    },
+    {
+      "name": "chain-write-snapshot-native",
+      "command": [
+        "env",
+        "CARGO_PROFILE_TEST_DEBUG=0",
+        "cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-sqlite-io-boundary",
+        "--lib",
+        "transaction_scope::tests",
+        "--",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "recorded_status": "passed",
+      "exit_code": 0,
+      "source_stable": true,
+      "elapsed_seconds": 7.119666487000359,
+      "source_head": "fb7e12bd2a02ee0805dff6a053edc904ad2198c6",
+      "files": [
+        {
+          "path": "chain-write-snapshot-native.json",
+          "bytes": 4513,
+          "sha256": "783f7b8e18ba8dcb1044810f661f083c101a0d9da31e1e8ec72b498d4b479944"
+        },
+        {
+          "path": "chain-write-snapshot-native.log",
+          "bytes": 2005,
+          "sha256": "d9628b94b5b9ed6bc534bcb2086b9f8485938dd33599881925d3dc6257c48c14"
+        }
+      ]
+    },
+    {
+      "name": "history-cold-original",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "native_inactive_page_parents_use_checked_material_without_early_activation",
+        "--",
+        "--nocapture"
+      ],
+      "recorded_status": "failed",
+      "exit_code": 101,
+      "source_stable": false,
+      "elapsed_seconds": 19.82373287000155,
+      "source_head": "540d72356a921da31dde1113537382e5c0f0c4fd",
+      "files": [
+        {
+          "path": "history-cold-original.json",
+          "bytes": 6615,
+          "sha256": "071d1eb55ae0a745b83f54f3597dcc1a354822211011604b8f654c7c54a5e8c6"
+        },
+        {
+          "path": "history-cold-original.log",
+          "bytes": 650,
+          "sha256": "3b243b914821494783610a010b3a421168eb212d9da21383c6cf489012dc889d"
+        }
+      ]
+    },
+    {
+      "name": "history-cold-original2",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "native_inactive_page_parents_use_checked_material_without_early_activation",
+        "--",
+        "--nocapture"
+      ],
+      "recorded_status": "failed",
+      "exit_code": 101,
+      "source_stable": false,
+      "elapsed_seconds": 94.95530090900138,
+      "source_head": "540d72356a921da31dde1113537382e5c0f0c4fd",
+      "files": [
+        {
+          "path": "history-cold-original2.json",
+          "bytes": 6758,
+          "sha256": "3c9eae208c7a6554e4155876db4746905bba043f6a2130fd68f7275ac147093a"
+        },
+        {
+          "path": "history-cold-original2.log",
+          "bytes": 3359,
+          "sha256": "4b2cb0a35bfef59f373b0a0012fa10234bcb8886b7e5381d8364dcbefae88c52"
+        }
+      ]
+    },
+    {
+      "name": "peer-lease-compile",
+      "command": [
+        "cargo",
+        "check",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-peer-lease",
+        "--all-targets",
+        "--all-features"
+      ],
+      "recorded_status": "failed",
+      "exit_code": 101,
+      "source_stable": false,
+      "elapsed_seconds": 8.655026286000066,
+      "source_head": "540d72356a921da31dde1113537382e5c0f0c4fd",
+      "files": [
+        {
+          "path": "peer-lease-compile.json",
+          "bytes": 3982,
+          "sha256": "3a0f2603d33b943dbda32cc5b5777c48cd5cbb6facc7379617fbdb087bbc0d03"
+        },
+        {
+          "path": "peer-lease-compile.log",
+          "bytes": 2706,
+          "sha256": "33fe89b35afc12ae683c9d0d0bec18e03f9c04793a4577182c02a72a283a70f1"
+        }
+      ]
+    },
+    {
+      "name": "peer-lease-compile2",
+      "command": [
+        "cargo",
+        "check",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-peer-lease",
+        "--all-targets",
+        "--all-features"
+      ],
+      "recorded_status": "passed",
+      "exit_code": 0,
+      "source_stable": true,
+      "elapsed_seconds": 2.0725041709993093,
+      "source_head": "540d72356a921da31dde1113537382e5c0f0c4fd",
+      "files": [
+        {
+          "path": "peer-lease-compile2.json",
+          "bytes": 5333,
+          "sha256": "01d96919a2bb8851454f3cab81d9e1cc8c092b44fdb3cae02e05d2dd65c67b09"
+        },
+        {
+          "path": "peer-lease-compile2.log",
+          "bytes": 318,
+          "sha256": "6bcc199654a90a2148b32efb45b4210ee5cbb0f1c6f25d6a3cd31854e2a658eb"
+        }
+      ]
+    },
+    {
+      "name": "reclaim-failed-chain-target",
+      "command": [
+        "cargo",
+        "clean",
+        "--manifest-path",
+        "trillionnium/Cargo.toml"
+      ],
+      "recorded_status": "passed",
+      "exit_code": 0,
+      "source_stable": true,
+      "elapsed_seconds": 0.05389432100128033,
+      "source_head": "540d72356a921da31dde1113537382e5c0f0c4fd",
+      "files": [
+        {
+          "path": "reclaim-failed-chain-target.json",
+          "bytes": 6730,
+          "sha256": "ac163ecc268685bc78056886e971809746d81d0ff167490a9bbe1b981ba35be7"
+        },
+        {
+          "path": "reclaim-failed-chain-target.log",
+          "bytes": 40,
+          "sha256": "7ace44829c036ebf79deace1bb892fa07decb1f3661d3a308838ce601a11bd83"
+        }
+      ]
+    },
+    {
+      "name": "sqlite-build-cache-clean",
+      "command": [
+        "cargo",
+        "clean",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-sqlite-io-boundary"
+      ],
+      "recorded_status": "passed",
+      "exit_code": 0,
+      "source_stable": true,
+      "elapsed_seconds": 0.047014252999360906,
+      "source_head": "540d72356a921da31dde1113537382e5c0f0c4fd",
+      "files": [
+        {
+          "path": "sqlite-build-cache-clean.json",
+          "bytes": 6486,
+          "sha256": "27899aa18315a4bb14fe0862ed61426e118aea18954f6ccdbc497cbf4872328d"
+        },
+        {
+          "path": "sqlite-build-cache-clean.log",
+          "bytes": 37,
+          "sha256": "34d395fe5be3de281ba955811efa1135433259b038a23d60a192f672dee9c957"
+        }
+      ]
+    }
+  ]
+}

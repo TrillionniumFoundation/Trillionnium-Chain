@@ -2,6 +2,9 @@
 pub mod authenticated_migration;
 pub(crate) mod authenticated_state;
 pub mod capacity_observation;
+#[cfg(test)]
+#[path = "../examples/support/distributed_source_inventory.rs"]
+mod compiled_source;
 pub mod evaluation_observation;
 pub mod evaluation_round_observation;
 mod funding;
@@ -688,13 +691,16 @@ pub struct Node {
     state_backend: StateBackend,
     storage_layout: shared_snapshot::Layout,
     // Source-derived DDL grammar only; actual SQL/schema is re-read on use.
-    // Ordinary full-JSON owners retain no additional schema cache.
+    // This optional copy belongs only to the shared-layout owner.
     shared_storage_schema: Option<BTreeMap<String, String>>,
     // Frozen source grammar, not an on-disk authorization verdict.
     pq_storage_schema: Option<BTreeMap<String, String>>,
     growth_epoch: Option<growth::Epoch>,
+    // Only the ordinary writer's source DDL can support post-write reuse.
+    // Read-only archive owners retain None and use full verification.
+    post_write_schema: Option<BTreeMap<String, String>>,
     #[cfg(test)]
-    // Research reader's immutable source DDL, never a cached on-disk verdict.
+    // Test-only reader binding; never the production post-write baseline.
     expected_schema: BTreeMap<String, String>,
     #[cfg(test)]
     // Fault injection only; the production public endpoint always uses1024.
@@ -1727,7 +1733,10 @@ impl Node {
             pq_storage_schema: pq_explicit.map(|_| expected_schema.clone()),
             growth_epoch: None,
             #[cfg(test)]
-            expected_schema,
+            expected_schema: expected_schema.clone(),
+            post_write_schema: (state_backend == StateBackend::AuthenticatedV1
+                && !storage_layout.is_shared())
+            .then_some(expected_schema),
             #[cfg(test)]
             public_history_test_sql_limit: None,
             #[cfg(test)]
@@ -2535,6 +2544,13 @@ impl Node {
         &self,
         progress: &mut dyn NativeProgress,
     ) -> Result<()> {
+        self.check_active_before_commit_with_readback(progress, None)
+    }
+    fn check_active_before_commit_with_readback(
+        &self,
+        progress: &mut dyn NativeProgress,
+        readback: Option<&mut native_authenticated::PostWriteReadback<'_>>,
+    ) -> Result<()> {
         progress.checkpoint()?;
         self.namespace()?;
         self.storage_context()?;
@@ -2549,12 +2565,13 @@ impl Node {
         crate::ancestry_index::validate_tip(&self.db, self.ancestry_context(), selected.0)
             .map_err(Error::local_integrity)?;
         if self.state_backend == StateBackend::AuthenticatedV1 {
-            native_authenticated::verify_history_with_native_progress(
+            native_authenticated::verify_history_with_readback(
                 &self.db,
                 &self.settings,
                 selected.0,
                 progress,
                 Some(&self.authenticated_arithmetic),
+                readback,
             )?;
         }
         ensure(
@@ -3372,7 +3389,8 @@ impl Node {
             return shared_snapshot::in_read_snapshot(&self.db, || {
                 self.storage_context()?;
                 let mut reads = shared_snapshot::ReadSet::default();
-                let state = self.state_at_in_current_snapshot(tip, progress, Some(&mut reads))?;
+                let state =
+                    self.state_at_in_current_snapshot(tip, progress, Some(&mut reads), None)?;
                 shared_snapshot::final_read(&self.db, || {
                     reads.verify(&self.db, &self.settings, &self.authenticated_arithmetic)?;
                     shared_snapshot::verify_returned_state(
@@ -3388,13 +3406,31 @@ impl Node {
                 })
             });
         }
-        self.state_at_in_current_snapshot(tip, progress, None)
+        self.state_at_in_current_snapshot(tip, progress, None, None)
+    }
+    fn state_at_with_post_write_readback(
+        &self,
+        tip: Hash,
+        progress: &mut dyn NativeProgress,
+        readback: &mut native_authenticated::PostWriteReadback<'_>,
+    ) -> Result<State> {
+        ensure(
+            self.state_backend == StateBackend::AuthenticatedV1 && !self.storage_layout.is_shared(),
+            "NATIVE_POST_WRITE_LAYOUT",
+        )
+        .map_err(Error::local_integrity)?;
+        let state = self.state_at_in_current_snapshot(tip, progress, None, Some(&mut *readback))?;
+        // state_at has its own original final callback AFTER the inner graph
+        // verifier. A mutation there must not return a consumed stale result.
+        readback.validate_consumed(&self.db)?;
+        Ok(state)
     }
     fn state_at_in_current_snapshot(
         &self,
         tip: Hash,
         progress: &mut dyn NativeProgress,
         mut shared_reads: Option<&mut shared_snapshot::ReadSet>,
+        mut readback: Option<&mut native_authenticated::PostWriteReadback<'_>>,
     ) -> Result<State> {
         ensure(
             self.state_backend != StateBackend::PermanentAccountGrowthV2,
@@ -3458,13 +3494,14 @@ impl Node {
                     .checked_historical_commitment(cur, &state, row.root, None)?
                     .snapshot;
                 if self.state_backend == StateBackend::AuthenticatedV1 {
-                    native_authenticated::verify_state_with_native_progress(
+                    native_authenticated::verify_state_with_readback(
                         &self.db,
                         &self.settings,
                         cur,
                         &state,
                         progress,
                         Some(&self.authenticated_arithmetic),
+                        readback.as_deref_mut(),
                     )?;
                 }
                 break (state, commitment);
@@ -3512,13 +3549,14 @@ impl Node {
             continuity_v1::check_state(&state, self.record(id)?.height, &self.settings.app)
                 .map_err(|error| Error::from(error).local_integrity())?;
             if self.state_backend == StateBackend::AuthenticatedV1 {
-                native_authenticated::verify_state_with_native_progress(
+                native_authenticated::verify_state_with_readback(
                     &self.db,
                     &self.settings,
                     id,
                     &state,
                     progress,
                     Some(&self.authenticated_arithmetic),
+                    readback.as_deref_mut(),
                 )?;
             }
         }
@@ -4616,134 +4654,183 @@ impl Node {
             &self.db,
             rusqlite::TransactionBehavior::Immediate,
         )?;
-        ensure(
-            tx.execute(
-                "INSERT INTO blocks VALUES(?,?,?,?,?,?)",
-                params![
-                    id.as_slice(),
-                    h.parent.as_slice(),
-                    h.height,
-                    work.bytes().as_slice(),
-                    &bytes,
-                    h.state.as_slice()
-                ],
-            )? == 1,
-            "STORAGE_WRITE",
-        )
-        .map_err(Error::local_integrity)?;
-        let inserted_ancestry = crate::ancestry_index::insert(&tx, index_context, id)?;
-        let mut expected_deltas = Vec::new();
-        {
-            let mut insert = tx.prepare_cached("INSERT INTO deltas VALUES(?,?,?,?)")?;
-            for (index, key) in keys.into_iter().enumerate() {
-                progress(ExecutionProgress::PersistenceDelta { index })?;
-                let before = prior.get(key).map(canonical).transpose()?;
-                let after = output.state.get(key).map(canonical).transpose()?;
-                if before != after {
-                    ensure(
-                        insert.execute(params![id.as_slice(), key, &before, &after])? == 1,
-                        "STORAGE_WRITE",
-                    )
-                    .map_err(Error::local_integrity)?;
-                    expected_deltas.push((key.clone(), before, after));
-                }
-            }
-        }
-        // Authenticated admission otherwise reconstructs the just-written state
-        // from genesis, verifying every intermediate complete account tree.
-        // Keep an ordinary canonical snapshot for each admitted native block.
-        // These are disposable accelerators: retain the existing 64-row policy,
-        // genesis anchor, full history/delta checks and post-write readback.
-        // Legacy cadence remains unchanged; no validity verdict is cached.
-        // The held native-IO layout writes its versioned shared snapshot only
-        // after the actual native account record exists in this SAME transaction.
-        if !self.storage_layout.is_shared()
-            && (self.state_backend == StateBackend::AuthenticatedV1
-                || growth_profile_v2::enabled(&self.settings.app)
-                || h.height.is_multiple_of(128))
-        {
+        // The existing connection-local observer starts before any callback or
+        // write in this transaction. A later post-write receipt cannot replace
+        // this original owner with a callback's COMMIT/BEGIN or savepoint ABA.
+        let original_readback_owner = (self.state_backend == StateBackend::AuthenticatedV1
+            && !self.storage_layout.is_shared())
+        .then(|| {
+            trnm_sqlite_io_boundary::TransactionScope::capture(&tx)
+                .map_err(native_authenticated::readback_scope_error)
+        })
+        .transpose()?;
+        let transaction_result: Result<()> = (|| {
             ensure(
                 tx.execute(
-                    "INSERT INTO snapshots VALUES(?,?)",
-                    params![id.as_slice(), canonical(&output.state)?],
+                    "INSERT INTO blocks VALUES(?,?,?,?,?,?)",
+                    params![
+                        id.as_slice(),
+                        h.parent.as_slice(),
+                        h.height,
+                        work.bytes().as_slice(),
+                        &bytes,
+                        h.state.as_slice()
+                    ],
                 )? == 1,
                 "STORAGE_WRITE",
             )
             .map_err(Error::local_integrity)?;
-            tx.execute("DELETE FROM snapshots WHERE block!=? AND block NOT IN (SELECT snapshots.block FROM snapshots JOIN blocks ON blocks.id=snapshots.block ORDER BY blocks.height DESC,blocks.id LIMIT 64)",[self.settings.genesis.as_slice()])?;
-            let retained: u64 = tx.query_row(
-                "SELECT COUNT(*) FROM snapshots WHERE block!=?",
-                [self.settings.genesis.as_slice()],
-                |row| row.get(0),
-            )?;
-            ensure(retained <= 64, "SNAPSHOT_LIMIT").map_err(Error::local_integrity)?;
-        }
-        if self.state_backend == StateBackend::AuthenticatedV1 {
-            native_authenticated::publish_with_native_progress(
-                &tx,
-                &self.settings,
-                h.parent,
-                id,
-                &prior,
-                &output.state,
-                &mut TypedNativeProgress(|point| {
-                    guarded_native(ExecutionProgress::BeforeDurableCommit, point)
-                }),
-                Some(&self.authenticated_arithmetic),
-            )?;
-            if self.storage_layout.is_shared() {
-                shared_snapshot::save(
+            let inserted_ancestry = crate::ancestry_index::insert(&tx, index_context, id)?;
+            let mut expected_deltas = Vec::new();
+            {
+                let mut insert = tx.prepare_cached("INSERT INTO deltas VALUES(?,?,?,?)")?;
+                for (index, key) in keys.into_iter().enumerate() {
+                    progress(ExecutionProgress::PersistenceDelta { index })?;
+                    let before = prior.get(key).map(canonical).transpose()?;
+                    let after = output.state.get(key).map(canonical).transpose()?;
+                    if before != after {
+                        ensure(
+                            insert.execute(params![id.as_slice(), key, &before, &after])? == 1,
+                            "STORAGE_WRITE",
+                        )
+                        .map_err(Error::local_integrity)?;
+                        expected_deltas.push((key.clone(), before, after));
+                    }
+                }
+            }
+            // Authenticated admission otherwise reconstructs the just-written state
+            // from genesis, verifying every intermediate complete account tree.
+            // Keep an ordinary canonical snapshot for each admitted native block.
+            // These are disposable accelerators: retain the existing 64-row policy,
+            // genesis anchor, full history/delta checks and post-write readback.
+            // Legacy cadence remains unchanged; snapshots store complete State,
+            // not a persisted validity verdict.
+            // The held native-IO layout writes its versioned shared snapshot only
+            // after the actual native account record exists in this SAME transaction.
+            if !self.storage_layout.is_shared()
+                && (self.state_backend == StateBackend::AuthenticatedV1
+                    || growth_profile_v2::enabled(&self.settings.app)
+                    || h.height.is_multiple_of(128))
+            {
+                ensure(
+                    tx.execute(
+                        "INSERT INTO snapshots VALUES(?,?)",
+                        params![id.as_slice(), canonical(&output.state)?],
+                    )? == 1,
+                    "STORAGE_WRITE",
+                )
+                .map_err(Error::local_integrity)?;
+                tx.execute("DELETE FROM snapshots WHERE block!=? AND block NOT IN (SELECT snapshots.block FROM snapshots JOIN blocks ON blocks.id=snapshots.block ORDER BY blocks.height DESC,blocks.id LIMIT 64)",[self.settings.genesis.as_slice()])?;
+                let retained: u64 = tx.query_row(
+                    "SELECT COUNT(*) FROM snapshots WHERE block!=?",
+                    [self.settings.genesis.as_slice()],
+                    |row| row.get(0),
+                )?;
+                ensure(retained <= 64, "SNAPSHOT_LIMIT").map_err(Error::local_integrity)?;
+            }
+            let mut publication_readback = None;
+            if self.state_backend == StateBackend::AuthenticatedV1 {
+                publication_readback = native_authenticated::publish_with_native_progress(
                     &tx,
                     &self.settings,
+                    h.parent,
                     id,
+                    &prior,
                     &output.state,
                     &mut TypedNativeProgress(|point| {
                         guarded_native(ExecutionProgress::BeforeDurableCommit, point)
                     }),
-                    &self.authenticated_arithmetic,
+                    Some(&self.authenticated_arithmetic),
+                    original_readback_owner
+                        .as_ref()
+                        .zip(self.post_write_schema.as_ref()),
                 )?;
+                if self.storage_layout.is_shared() {
+                    shared_snapshot::save(
+                        &tx,
+                        &self.settings,
+                        id,
+                        &output.state,
+                        &mut TypedNativeProgress(|point| {
+                            guarded_native(ExecutionProgress::BeforeDurableCommit, point)
+                        }),
+                        &self.authenticated_arithmetic,
+                    )?;
+                }
             }
-        }
-        // Re-read after every write/trigger, while rollback can still remove the
-        // whole block. A snapshot cannot conceal an omitted canonical delta.
-        ensure(
-            self.delta_rows_with_progress(
-                id,
-                &mut TypedNativeProgress(|point| {
-                    guarded_native(ExecutionProgress::BeforeDurableCommit, point)
-                }),
-            )? == expected_deltas
-                && self.settings.encode_packet(&self.packet(id)?)? == bytes,
-            "STORAGE_WRITE",
-        )
-        .map_err(Error::local_integrity)?;
-        ensure(
-            self.state_at_with_progress(
-                h.parent,
-                &mut TypedNativeProgress(|point| {
-                    guarded_native(ExecutionProgress::BeforeDurableCommit, point)
-                }),
-            )? == prior
-                && self.state_at_with_progress(
+            // Re-read after every write/trigger, while rollback can still remove the
+            // whole block. A snapshot cannot conceal an omitted canonical delta.
+            ensure(
+                self.delta_rows_with_progress(
                     id,
                     &mut TypedNativeProgress(|point| {
                         guarded_native(ExecutionProgress::BeforeDurableCommit, point)
                     }),
-                )? == output.state,
-            "STORAGE_WRITE",
-        )
-        .map_err(Error::local_integrity)?;
-        crate::ancestry_index::verify_inserted(&tx, index_context, &inserted_ancestry)
+                )? == expected_deltas
+                    && self.settings.encode_packet(&self.packet(id)?)? == bytes,
+                "STORAGE_WRITE",
+            )
             .map_err(Error::local_integrity)?;
-        self.check_active_before_commit_with_progress(&mut TypedNativeProgress(|point| {
-            guarded_native(ExecutionProgress::BeforeDurableCommit, point)
-        }))?;
-        guarded_native(
-            ExecutionProgress::BeforeDurableCommit,
-            NativeProgressPoint::BeforeCommit,
-        )?;
-        self.check_history_graph_resource_before_commit()?;
-        self.history_effect_admission_marker(&tx, packet)?;
+            ensure(
+                self.state_at_with_progress(
+                    h.parent,
+                    &mut TypedNativeProgress(|point| {
+                        guarded_native(ExecutionProgress::BeforeDurableCommit, point)
+                    }),
+                )? == prior
+                    && {
+                        let mut progress = TypedNativeProgress(|point| {
+                            guarded_native(ExecutionProgress::BeforeDurableCommit, point)
+                        });
+                        let child = match publication_readback.as_mut() {
+                            Some(readback) => {
+                                self.state_at_with_post_write_readback(id, &mut progress, readback)?
+                            }
+                            None => self.state_at_with_progress(id, &mut progress)?,
+                        };
+                        child == output.state
+                    },
+                "STORAGE_WRITE",
+            )
+            .map_err(Error::local_integrity)?;
+            crate::ancestry_index::verify_inserted(&tx, index_context, &inserted_ancestry)
+                .map_err(Error::local_integrity)?;
+            self.check_active_before_commit_with_readback(
+                &mut TypedNativeProgress(|point| {
+                    guarded_native(ExecutionProgress::BeforeDurableCommit, point)
+                }),
+                publication_readback.as_mut(),
+            )?;
+            guarded_native(
+                ExecutionProgress::BeforeDurableCommit,
+                NativeProgressPoint::BeforeCommit,
+            )?;
+            self.check_history_graph_resource_before_commit()?;
+            // The last original callback can still invalidate an earlier hit.
+            // Close the consuming scope only AFTER all those callbacks, and
+            // BEFORE the known effect-marker INSERT. No receipt crosses it.
+            if let Some(readback) = publication_readback.as_mut() {
+                readback.validate_consumed(&tx)?;
+            }
+            drop(publication_readback);
+            self.history_effect_admission_marker(&tx, packet)?;
+            Ok(())
+        })();
+        // Check the ORIGINAL owner on success AND failure. This detects an
+        // already-executed replacement; it is not a COMMIT veto or an undo of
+        // a malicious callback's committed facts. Ordinary writes are allowed.
+        let transaction_result = match original_readback_owner
+            .as_ref()
+            .map(|owner| owner.same_write_snapshot(&tx))
+            .transpose()
+        {
+            Ok(_) => transaction_result,
+            Err(error) => Err(match transaction_result {
+                Ok(()) => native_authenticated::readback_scope_error(error),
+                Err(first) => Error::local_replay_source("NATIVE_POST_WRITE_SCOPE", first),
+            }),
+        };
+        transaction_result?;
         tx.commit()?;
         // No cancellation fence after commit: the native durable fact stays true.
         Ok(id)

@@ -30,7 +30,8 @@ TAIL_TOTAL_LIMIT = 8 * 1024 * 1024
 MANIFEST_LIMIT = 1024 * 1024
 ARTIFACT_LIMIT = 32 * 1024 * 1024
 READ_SECONDS = 30
-PHASES = ("version", "packs", "queries", "project-toolchain", "extractor-toolchain", "create", "analyze")
+PHASES = ("version", "packs", "queries", "project-toolchain", "extractor-options",
+          "extractor-toolchain", "create", "analyze")
 JSON_FILES = (
     "source-checkout.json", "source-final.json", "analysis/result.json",
     "analysis/source-before.json", "analysis/source-after.json",
