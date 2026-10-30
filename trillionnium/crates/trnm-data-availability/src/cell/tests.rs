@@ -716,6 +716,7 @@ type PublicationHook = Box<dyn FnOnce(Option<std::time::Instant>)>;
 thread_local! {
     static FETCH_DEADLINE: std::cell::Cell<Option<std::time::Instant>> = const { std::cell::Cell::new(None) };
     static PUBLICATION_HOOK: std::cell::RefCell<Option<PublicationHook>> = const { std::cell::RefCell::new(None) };
+    static POST_PUBLICATION_HOOK: std::cell::RefCell<Option<PublicationHook>> = const { std::cell::RefCell::new(None) };
 }
 
 pub(super) fn observe_fetch_deadline(deadline: std::time::Instant) {
@@ -739,6 +740,31 @@ fn with_publication_hook<T>(hook: PublicationHook, run: impl FnOnce() -> T) -> T
     }
     PUBLICATION_HOOK.with(|slot| assert!(slot.borrow_mut().replace(hook).is_none()));
     FETCH_DEADLINE.set(None);
+    let _reset = Reset;
+    run()
+}
+
+// The already published, verified Cell must not be falsely returned as a
+// deadline failure solely because a scheduler pause delays directory sync or
+// post-publication cleanup. This hook never runs in production.
+pub(super) fn after_materialize_publication(deadline: Option<std::time::Instant>) {
+    let hook = POST_PUBLICATION_HOOK.with(|slot| slot.borrow_mut().take());
+    if let Some(hook) = hook {
+        hook(deadline);
+    }
+}
+
+pub(super) fn with_post_publication_hook<T>(
+    hook: Box<dyn FnOnce(Option<std::time::Instant>)>,
+    run: impl FnOnce() -> T,
+) -> T {
+    struct Reset;
+    impl Drop for Reset {
+        fn drop(&mut self) {
+            let _ = POST_PUBLICATION_HOOK.with(|slot| slot.borrow_mut().take());
+        }
+    }
+    POST_PUBLICATION_HOOK.with(|slot| assert!(slot.borrow_mut().replace(hook).is_none()));
     let _reset = Reset;
     run()
 }
