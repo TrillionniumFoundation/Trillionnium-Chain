@@ -64,6 +64,11 @@ pub fn verify_pcp2_provider_hint_v2(
         .map_err(|_| CellErrorV1::Invalid("PQ Cell owner request length"))?;
     let record = SignedPqCellProviderRecordV2::from_wire(wire)
         .map_err(|_| CellErrorV1::Invalid("PQ Cell provider wire"))?;
+    // A policy-denied endpoint needs no expensive ML-DSA verification. The
+    // endpoint is still UNTRUSTED at this stage: this is a refusal-only
+    // preflight, never a routing hint or evidence of signed authority.
+    let endpoint = decode_endpoint(record.statement.endpoint)?;
+    expectation.addresses.check(endpoint)?;
     let verified = record
         .verify_for_pinned_context(&PqCellProviderExpectationV2 {
             pinned_request: &pinned_request,
@@ -72,8 +77,9 @@ pub fn verify_pcp2_provider_hint_v2(
             now_unix_seconds: expectation.now_unix_seconds,
         })
         .map_err(|_| CellErrorV1::Invalid("PQ Cell provider authority/signature"))?;
-    let endpoint = decode_endpoint(*verified.endpoint_bytes())?;
-    expectation.addresses.check(endpoint)?;
+    // The verified bytes are the same fields preflighted above. No endpoint
+    // escapes this function until ML-DSA and the independent owner pins pass.
+    debug_assert_eq!(*verified.endpoint_bytes(), record.statement.endpoint);
     Ok(VerifiedPqCellProviderHintM09V2 {
         endpoint,
         sequence: verified.sequence(),
@@ -199,5 +205,66 @@ mod tests {
         let mut extended = wire;
         extended.push(0);
         assert!(verify_pcp2_provider_hint_v2(&extended, &expectation).is_err());
+    }
+
+    #[test]
+    fn off_policy_malicious_signature_is_rejected_before_pq_key_work() {
+        let request = request();
+        let (wire, key) = signed_wire(request);
+        let permitted = CellDiscoveryAddressPolicyV1::LoopbackDevOnly { ports: vec![31234] };
+        let denied = CellDiscoveryAddressPolicyV1::LoopbackDevOnly { ports: vec![31235] };
+        let mut forged = wire.clone();
+        forged[271] ^= 1; // Actual signature bytes, not header or shape.
+        let untrusted_key = [0u8; 1];
+        let rejected = PqCellProviderExpectationM09V2 {
+            request,
+            trusted_ml_dsa65_public_key: &untrusted_key,
+            last_accepted_sequence: 4,
+            now_unix_seconds: 1100,
+            addresses: &denied,
+        };
+        // Even invalid key bytes do not cause key expansion: policy denial is
+        // deterministic, cheap, and strictly refusal-only.
+        assert_eq!(
+            verify_pcp2_provider_hint_v2(&forged, &rejected)
+                .unwrap_err()
+                .to_string(),
+            "cell: discovery outbound address denied"
+        );
+        let allowed_bad_signature = PqCellProviderExpectationM09V2 {
+            request,
+            trusted_ml_dsa65_public_key: &key,
+            last_accepted_sequence: 4,
+            now_unix_seconds: 1100,
+            addresses: &permitted,
+        };
+        assert_eq!(
+            verify_pcp2_provider_hint_v2(&forged, &allowed_bad_signature)
+                .unwrap_err()
+                .to_string(),
+            "cell: PQ Cell provider authority/signature"
+        );
+        // An authentic signature is STILL refused when address policy denies.
+        let denied_valid_signature = PqCellProviderExpectationM09V2 {
+            addresses: &denied,
+            ..allowed_bad_signature
+        };
+        assert_eq!(
+            verify_pcp2_provider_hint_v2(&wire, &denied_valid_signature)
+                .unwrap_err()
+                .to_string(),
+            "cell: discovery outbound address denied"
+        );
+        // The valid, pinned, allowed case remains usable.
+        let hint = verify_pcp2_provider_hint_v2(&wire, &allowed_bad_signature).unwrap();
+        assert_eq!(hint.endpoint(), "127.0.0.1:31234".parse().unwrap());
+        assert_eq!(hint.sequence(), 5);
+        // Preflight must not mask a structurally wrong record as a valid PCP2.
+        assert_eq!(
+            verify_pcp2_provider_hint_v2(&wire[..335], &rejected)
+                .unwrap_err()
+                .to_string(),
+            "cell: PQ Cell provider wire"
+        );
     }
 }

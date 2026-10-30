@@ -1,0 +1,51 @@
+name: PQ M09 off-policy signature preflight (research)
+on:
+  push:
+    branches:
+      - fix/pq-m09-offpolicy-preflight-20261030
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  off-policy-pcp2:
+    name: preflight and native regressions (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 50
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, ubuntu-24.04-arm]
+    env:
+      CARGO_INCREMENTAL: "0"
+      CARGO_TERM_COLOR: never
+      RUST_TEST_THREADS: "1"
+    steps:
+      - name: Checkout exact commit
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Install pinned Rust 1.95.0
+        run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+      - name: Bind to exact head and distributed source inventory
+        shell: bash
+        run: |
+          set -euo pipefail
+          git rev-parse HEAD
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "${GITHUB_SHA}" --output "${RUNNER_TEMP}/pq-m09-preflight-source.json"
+          python3 scripts/refresh_distributed_source_inventory.py --check
+      - name: Source formatting, original unchanged standard
+        run: cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+      - name: PCP2 preflight plus original M09 positive and adversarial controls
+        run: cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-data-availability --lib cell::discovery::pq_v2::tests -- --test-threads=1
+      - name: Retain cryptographic PCP2 M01 tests
+        run: cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives pq_cell_provider -- --test-threads=1
+      - name: Original M09 discovery regression
+        run: cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-data-availability --lib cell::discovery::tests -- --test-threads=1
+      - name: Strict all-target Clippy, original warnings policy
+        run: cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-data-availability --all-targets -- -D warnings
+      - name: No generated or uncommitted changes
+        if: always()
+        shell: bash
+        run: test -z "$(git status --porcelain=v1)"
