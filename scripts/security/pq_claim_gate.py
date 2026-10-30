@@ -44,7 +44,14 @@ def inspect(root: Path) -> dict:
     if config_path.is_file():
         try:
             config = json.loads(config_path.read_text(encoding="utf-8"))
+            if not isinstance(config, dict):
+                raise ValueError("consensus profile must be an object")
             production = {flag: config.get(flag) for flag in PRODUCTION_FLAGS}
+            invalid_flags = [flag for flag in PRODUCTION_FLAGS
+                             if flag not in config or type(config[flag]) is not bool]
+            if invalid_flags:
+                blockers.append({"kind": "invalid_production_flags", "path": PATHS["consensus"],
+                                 "fields": invalid_flags})
             if any(value is True for value in production.values()):
                 blockers.append({"kind": "production_claim_requires_independent_pq_review", "path": PATHS["consensus"]})
         except (ValueError, OSError):
@@ -69,6 +76,7 @@ def main():
     print(json.dumps(report, indent=2, sort_keys=True))
     if args.assert_unqualified and any(item["kind"] in (
         "missing_source", "unreadable_proof_profile", "unreadable_consensus_profile",
+        "invalid_production_flags",
         "production_claim_requires_independent_pq_review") for item in report["known_open_findings"]):
         raise SystemExit(2)
 

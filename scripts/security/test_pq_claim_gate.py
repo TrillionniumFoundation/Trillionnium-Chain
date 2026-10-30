@@ -1,6 +1,8 @@
 """Negative controls for the conservative PQ readiness claim gate."""
 import importlib.util
 import json
+import subprocess
+import sys
 from pathlib import Path
 import tempfile
 import unittest
@@ -27,6 +29,50 @@ class ClaimGateTests(unittest.TestCase):
 
     def kinds(self):
         return {row["kind"] for row in module.inspect(self.root)["known_open_findings"]}
+
+    def assert_consensus_result(self, profile, expected_exit, expected_kind=None):
+        path = self.root / module.PATHS["consensus"]
+        path.write_text(json.dumps(profile), encoding="utf-8")
+        report = module.inspect(self.root)
+        self.assertIs(report["pq_chain_qualified"], False)
+        if expected_kind is not None:
+            self.assertIn(expected_kind, {row["kind"] for row in report["known_open_findings"]})
+        result = subprocess.run(
+            [sys.executable, str(SCRIPT), "--root", str(self.root), "--assert-unqualified"],
+            capture_output=True, text=True, check=False, timeout=30,
+        )
+        self.assertEqual(result.returncode, expected_exit, result.stderr)
+        self.assertEqual(json.loads(result.stdout), report)
+
+    def test_all_four_false_flags_pass_cli_without_qualifying_chain(self):
+        self.assert_consensus_result({flag: False for flag in module.PRODUCTION_FLAGS}, 0)
+
+    def test_each_missing_flag_fails_report_and_cli(self):
+        for missing in module.PRODUCTION_FLAGS:
+            with self.subTest(missing=missing):
+                profile = {flag: False for flag in module.PRODUCTION_FLAGS if flag != missing}
+                self.assert_consensus_result(profile, 2, "invalid_production_flags")
+        self.assert_consensus_result({}, 2, "invalid_production_flags")
+
+    def test_each_wrong_type_flag_fails_report_and_cli(self):
+        for flag in module.PRODUCTION_FLAGS:
+            for value in [None, 0, 1, "false", "true", [], {}]:
+                with self.subTest(flag=flag, value=value):
+                    profile = {name: False for name in module.PRODUCTION_FLAGS}
+                    profile[flag] = value
+                    self.assert_consensus_result(profile, 2, "invalid_production_flags")
+
+    def test_each_true_flag_fails_report_and_cli(self):
+        for flag in module.PRODUCTION_FLAGS:
+            with self.subTest(flag=flag):
+                profile = {name: False for name in module.PRODUCTION_FLAGS}
+                profile[flag] = True
+                self.assert_consensus_result(profile, 2, "production_claim_requires_independent_pq_review")
+
+    def test_non_object_consensus_fails_report_and_cli(self):
+        for profile in [None, False, 0, "false", []]:
+            with self.subTest(profile=profile):
+                self.assert_consensus_result(profile, 2, "unreadable_consensus_profile")
 
     def test_current_classical_authority_and_proof_remain_open(self):
         self.assertIn("classical_authority", self.kinds())
