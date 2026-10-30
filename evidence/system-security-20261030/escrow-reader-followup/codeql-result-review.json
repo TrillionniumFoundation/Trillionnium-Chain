@@ -1,0 +1,226 @@
+{
+  "schema": "independent-b23c-codeql-review-v1",
+  "reviewed_utc": "2026-10-30 05:39:14 UTC",
+  "scope": "Read-only review of small original artifact ZIPs; no rerun, source mutation, query suppression, or official security-gate authentication.",
+  "run_id": 41007753676,
+  "job_id": 123906399702,
+  "candidate": "b23c0ef85f058507185b2ccb404a5d648e447c06",
+  "artifacts": [
+    {
+      "id": 12956334571,
+      "file": "codeql-rust-metadata-b23c.zip",
+      "bytes": 56341,
+      "sha256": "eafe9a99c54b7e1d5637cb42871b057a4a39dc652acf21664e40f8aa1669e162"
+    },
+    {
+      "id": 12956961696,
+      "file": "codeql-rust-sarif-b23c.zip",
+      "bytes": 135604,
+      "sha256": "15f835191f4dbad39260c9140d50039ce7981a0501aaa02fe72a9b55c45e67dc"
+    }
+  ],
+  "result": {
+    "expected_head": "b23c0ef85f058507185b2ccb404a5d648e447c06",
+    "analysis_execution_complete": true,
+    "source_stable": true,
+    "passed": false,
+    "official_security_gate_qualified": false,
+    "production_qualified": false,
+    "query_or_model_changes": false,
+    "rust_all_targets_requested": true,
+    "tracked_input_count": 1141,
+    "successful_tracked_inputs": 1141,
+    "finding_count": 780,
+    "findings_by_rule": {
+      "rust/cleartext-logging": 23,
+      "rust/hard-coded-cryptographic-value": 757
+    },
+    "extraction_coverage_complete": false,
+    "coverage_scope": "Tracked language extraction inventory plus retained failures; direct extraction is not independent proof of semantic coverage. C/C++ includes only direct units or byte-bound original components in a successfully extracted generated unit; not independent header semantics or runtime build qualification.",
+    "selected_query_count": 37
+  },
+  "phases": [
+    {
+      "name": "version",
+      "returncode": 0,
+      "complete": true,
+      "elapsed_seconds": 0.6792318060000042,
+      "wall_budget_seconds": 30,
+      "codeql_environment": {
+        "CODEQL_THREADS": "2",
+        "CODEQL_RAM": "8192",
+        "CODEQL_EXTRACTOR_RUST_OPTION_CARGO_ALL_TARGETS": "true"
+      }
+    },
+    {
+      "name": "packs",
+      "returncode": 0,
+      "complete": true,
+      "elapsed_seconds": 1.0031993479999954,
+      "wall_budget_seconds": 30,
+      "codeql_environment": {
+        "CODEQL_THREADS": "2",
+        "CODEQL_RAM": "8192",
+        "CODEQL_EXTRACTOR_RUST_OPTION_CARGO_ALL_TARGETS": "true"
+      }
+    },
+    {
+      "name": "queries",
+      "returncode": 0,
+      "complete": true,
+      "elapsed_seconds": 1.180824592999997,
+      "wall_budget_seconds": 30,
+      "codeql_environment": {
+        "CODEQL_THREADS": "2",
+        "CODEQL_RAM": "8192",
+        "CODEQL_EXTRACTOR_RUST_OPTION_CARGO_ALL_TARGETS": "true"
+      }
+    },
+    {
+      "name": "project-toolchain",
+      "returncode": 0,
+      "complete": true,
+      "elapsed_seconds": 0.013307177999990927,
+      "wall_budget_seconds": 30,
+      "codeql_environment": {
+        "CODEQL_THREADS": "2",
+        "CODEQL_RAM": "8192",
+        "CODEQL_EXTRACTOR_RUST_OPTION_CARGO_ALL_TARGETS": "true"
+      }
+    },
+    {
+      "name": "extractor-options",
+      "returncode": 0,
+      "complete": true,
+      "elapsed_seconds": 1.0058323619999925,
+      "wall_budget_seconds": 30,
+      "codeql_environment": {
+        "CODEQL_THREADS": "2",
+        "CODEQL_RAM": "8192",
+        "CODEQL_EXTRACTOR_RUST_OPTION_CARGO_ALL_TARGETS": "true"
+      }
+    },
+    {
+      "name": "extractor-toolchain",
+      "returncode": 0,
+      "complete": true,
+      "elapsed_seconds": 0.012654882999996175,
+      "wall_budget_seconds": 30,
+      "codeql_environment": {
+        "CODEQL_THREADS": "2",
+        "CODEQL_RAM": "8192",
+        "CODEQL_EXTRACTOR_RUST_OPTION_CARGO_ALL_TARGETS": "true"
+      }
+    },
+    {
+      "name": "create",
+      "returncode": 0,
+      "complete": true,
+      "elapsed_seconds": 247.80274655299996,
+      "wall_budget_seconds": 1200,
+      "codeql_environment": {
+        "CODEQL_THREADS": "2",
+        "CODEQL_RAM": "8192",
+        "CODEQL_EXTRACTOR_RUST_OPTION_CARGO_ALL_TARGETS": "true"
+      }
+    },
+    {
+      "name": "analyze",
+      "returncode": 0,
+      "complete": true,
+      "elapsed_seconds": 538.9764199620001,
+      "wall_budget_seconds": 1200,
+      "codeql_environment": {
+        "CODEQL_THREADS": "2",
+        "CODEQL_RAM": "8192",
+        "CODEQL_EXTRACTOR_RUST_OPTION_CARGO_ALL_TARGETS": "true"
+      }
+    }
+  ],
+  "sarif_recount": {
+    "rust/hard-coded-cryptographic-value": 757,
+    "rust/cleartext-logging": 23
+  },
+  "semantic": {
+    "diagnostic_line_count": 305,
+    "retained_diagnostic_count": 305,
+    "diagnostic_inventory_complete": true,
+    "reason_counts": {
+      "no manifest found": 11,
+      "not included as a module": 289,
+      "unable to load manifest": 4
+    },
+    "unlocated_diagnostic_count": 1,
+    "semantic_coverage_qualified": false
+  },
+  "affected_tracked_file_count": 304,
+  "previous_fb7_counts": {
+    "affected_tracked_file_count": 305,
+    "diagnostic_line_count": 306,
+    "reason_counts": {
+      "no manifest found": 11,
+      "not included as a module": 289,
+      "not loaded as its own module, probably included by `!include`": 1,
+      "unable to load manifest": 4
+    }
+  },
+  "diagnostic_paths_removed": [
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs"
+  ],
+  "diagnostic_paths_added": [],
+  "error_diagnostics": [
+    {
+      "message": {
+        "text": "Ill-formed type mention"
+      },
+      "level": "error",
+      "descriptor": {
+        "id": "rust/diagnostics/type-inference-consistency-counts",
+        "index": 1
+      },
+      "properties": {
+        "formattedMessage": {
+          "text": "Ill-formed type mention"
+        }
+      }
+    },
+    {
+      "message": {
+        "text": "Phi node has less than two inputs"
+      },
+      "level": "error",
+      "descriptor": {
+        "id": "rust/diagnostics/ssa-consistency-counts",
+        "index": 9
+      },
+      "properties": {
+        "formattedMessage": {
+          "text": "Phi node has less than two inputs"
+        }
+      }
+    },
+    {
+      "message": {
+        "text": "Phi has less than 2 immediately prior references"
+      },
+      "level": "error",
+      "descriptor": {
+        "id": "rust/diagnostics/ssa-consistency-counts",
+        "index": 9
+      },
+      "properties": {
+        "formattedMessage": {
+          "text": "Phi has less than 2 immediately prior references"
+        }
+      }
+    }
+  ],
+  "interpretation": [
+    "The distributed_source_inventory private-module change removed exactly that file from the retained semantic failure inventory.",
+    "The all-targets request is recorded for every phase, but all 289 not-in-module diagnostics remain; no test-fixture coverage recovery is inferred.",
+    "All 1141 tracked inputs have direct successful extraction records while 304 files still lack semantic analyzers; the former is not a semantic/security pass.",
+    "Three type-inference/SSA error diagnostics remain without source locations in this result; no active-code owner is invented.",
+    "The 780-result count matches fb7, but this review did not individually diff or re-adjudicate every finding.",
+    "No prior direct check-runs observation is used to infer an official aggregate check or security verdict."
+  ]
+}

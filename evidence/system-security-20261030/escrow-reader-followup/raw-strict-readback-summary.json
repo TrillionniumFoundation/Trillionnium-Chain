@@ -1,0 +1,244 @@
+{
+  "source": "b23c0ef85f058507185b2ccb404a5d648e447c06",
+  "artifact_id": 12955709514,
+  "zip_sha256": "9ddcb99efef3a07a04abf229da77022f5134ca1f059935ec57296b11a129c7cc",
+  "scope": "Readback of original exact-source artifact, not native re-execution",
+  "phases": [
+    {
+      "run": 1,
+      "mode": "baseline",
+      "path": "run-1-raw/baseline.json",
+      "bytes": 2484921,
+      "sha256": "1517c849390dfeeab6989042b6e24c4b2fd7f86a5561c6c130d939fa195c3136",
+      "criteria": false,
+      "equal": false,
+      "confirmed": 0,
+      "verifier_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ],
+      "verifier_keys": [
+        "client_native_history_arithmetic_after",
+        "client_native_history_arithmetic_before",
+        "history",
+        "history_resource_profile",
+        "history_verifier_process",
+        "native_history_arithmetic_after",
+        "native_history_arithmetic_before",
+        "pure_history_acknowledgements_verified",
+        "receiver_and_verifier_setup_cpu_ns",
+        "receiver_and_verifier_setup_wall_ns",
+        "verifier_errors"
+      ]
+    },
+    {
+      "run": 1,
+      "mode": "late-product",
+      "path": "run-1-raw/late-product.json",
+      "bytes": 13082000,
+      "sha256": "040bc78471ab880cefe5552b03ce253bd18f2f0e1ff350100c8f8cb0ca7a65f6",
+      "criteria": false,
+      "equal": false,
+      "confirmed": 0,
+      "verifier_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ],
+      "verifier_keys": [
+        "client_native_history_arithmetic_after",
+        "client_native_history_arithmetic_before",
+        "history",
+        "history_resource_profile",
+        "history_verifier_process",
+        "native_history_arithmetic_after",
+        "native_history_arithmetic_before",
+        "pure_history_acknowledgements_verified",
+        "receiver_and_verifier_setup_cpu_ns",
+        "receiver_and_verifier_setup_wall_ns",
+        "verifier_errors"
+      ]
+    },
+    {
+      "run": 1,
+      "mode": "from-zero",
+      "path": "run-1-raw/from-zero.json",
+      "bytes": 14605918,
+      "sha256": "631adfe254d0d549420e35cf136a607a9179a1f5d5165a3dcadad367461ccd7b",
+      "criteria": false,
+      "equal": false,
+      "confirmed": 0,
+      "verifier_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ],
+      "verifier_keys": [
+        "client_native_history_arithmetic_after",
+        "client_native_history_arithmetic_before",
+        "history",
+        "history_resource_profile",
+        "history_verifier_process",
+        "native_history_arithmetic_after",
+        "native_history_arithmetic_before",
+        "pure_history_acknowledgements_verified",
+        "receiver_and_verifier_setup_cpu_ns",
+        "receiver_and_verifier_setup_wall_ns",
+        "verifier_errors"
+      ]
+    },
+    {
+      "run": 2,
+      "mode": "baseline",
+      "path": "run-2-raw/baseline.json",
+      "bytes": 2486167,
+      "sha256": "a21bfd986694d72ae9eac98be1ba635bb25a4f437cf87b056abb25e28936ce76",
+      "criteria": false,
+      "equal": false,
+      "confirmed": 0,
+      "verifier_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ],
+      "verifier_keys": [
+        "client_native_history_arithmetic_after",
+        "client_native_history_arithmetic_before",
+        "history",
+        "history_resource_profile",
+        "history_verifier_process",
+        "native_history_arithmetic_after",
+        "native_history_arithmetic_before",
+        "pure_history_acknowledgements_verified",
+        "receiver_and_verifier_setup_cpu_ns",
+        "receiver_and_verifier_setup_wall_ns",
+        "verifier_errors"
+      ]
+    },
+    {
+      "run": 2,
+      "mode": "late-product",
+      "path": "run-2-raw/late-product.json",
+      "bytes": 13078979,
+      "sha256": "092b24ddeaefaa101de5c1d238c8b06b7cb647981a1f50e40da2e040c74a6ef4",
+      "criteria": false,
+      "equal": false,
+      "confirmed": 0,
+      "verifier_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ],
+      "verifier_keys": [
+        "client_native_history_arithmetic_after",
+        "client_native_history_arithmetic_before",
+        "history",
+        "history_resource_profile",
+        "history_verifier_process",
+        "native_history_arithmetic_after",
+        "native_history_arithmetic_before",
+        "pure_history_acknowledgements_verified",
+        "receiver_and_verifier_setup_cpu_ns",
+        "receiver_and_verifier_setup_wall_ns",
+        "verifier_errors"
+      ]
+    },
+    {
+      "run": 2,
+      "mode": "from-zero",
+      "path": "run-2-raw/from-zero.json",
+      "bytes": 14503278,
+      "sha256": "c0c7f5d729d2012e64f6b3e16b0b2868a205a8966a7e1f9dd8a5136609afbbaf",
+      "criteria": false,
+      "equal": false,
+      "confirmed": 0,
+      "verifier_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ],
+      "verifier_keys": [
+        "client_native_history_arithmetic_after",
+        "client_native_history_arithmetic_before",
+        "history",
+        "history_resource_profile",
+        "history_verifier_process",
+        "native_history_arithmetic_after",
+        "native_history_arithmetic_before",
+        "pure_history_acknowledgements_verified",
+        "receiver_and_verifier_setup_cpu_ns",
+        "receiver_and_verifier_setup_wall_ns",
+        "verifier_errors"
+      ]
+    },
+    {
+      "run": 3,
+      "mode": "baseline",
+      "path": "run-3-raw/baseline.json",
+      "bytes": 2482243,
+      "sha256": "20a93f54d3444698314febf09c099a83d1fd8edc07ad2db67f772e17cc75df1e",
+      "criteria": false,
+      "equal": false,
+      "confirmed": 0,
+      "verifier_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ],
+      "verifier_keys": [
+        "client_native_history_arithmetic_after",
+        "client_native_history_arithmetic_before",
+        "history",
+        "history_resource_profile",
+        "history_verifier_process",
+        "native_history_arithmetic_after",
+        "native_history_arithmetic_before",
+        "pure_history_acknowledgements_verified",
+        "receiver_and_verifier_setup_cpu_ns",
+        "receiver_and_verifier_setup_wall_ns",
+        "verifier_errors"
+      ]
+    },
+    {
+      "run": 3,
+      "mode": "late-product",
+      "path": "run-3-raw/late-product.json",
+      "bytes": 12903338,
+      "sha256": "80c4017d50f1cbdc0618a1f887db2d2a33a7e724b9e152b907697c0ce0843a44",
+      "criteria": false,
+      "equal": false,
+      "confirmed": 0,
+      "verifier_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ],
+      "verifier_keys": [
+        "client_native_history_arithmetic_after",
+        "client_native_history_arithmetic_before",
+        "history",
+        "history_resource_profile",
+        "history_verifier_process",
+        "native_history_arithmetic_after",
+        "native_history_arithmetic_before",
+        "pure_history_acknowledgements_verified",
+        "receiver_and_verifier_setup_cpu_ns",
+        "receiver_and_verifier_setup_wall_ns",
+        "verifier_errors"
+      ]
+    },
+    {
+      "run": 3,
+      "mode": "from-zero",
+      "path": "run-3-raw/from-zero.json",
+      "bytes": 14311466,
+      "sha256": "373319694cbd872b6fbfd241e0119244c8eba7fd21632b09bdce0c2e9761515a",
+      "criteria": false,
+      "equal": false,
+      "confirmed": 0,
+      "verifier_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ],
+      "verifier_keys": [
+        "client_native_history_arithmetic_after",
+        "client_native_history_arithmetic_before",
+        "history",
+        "history_resource_profile",
+        "history_verifier_process",
+        "native_history_arithmetic_after",
+        "native_history_arithmetic_before",
+        "pure_history_acknowledgements_verified",
+        "receiver_and_verifier_setup_cpu_ns",
+        "receiver_and_verifier_setup_wall_ns",
+        "verifier_errors"
+      ]
+    }
+  ],
+  "unit_cleanup": "original_exit=1\ncleanup_exit=0\n",
+  "lifeline_cleanup": "original_exit=0\ncleanup_exit=0\n"
+}

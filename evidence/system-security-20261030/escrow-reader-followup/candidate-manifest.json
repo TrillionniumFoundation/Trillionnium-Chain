@@ -1,0 +1,47 @@
+{
+  "base_source": "b23c0ef85f058507185b2ccb404a5d648e447c06",
+  "scope": "scratch-only candidate; original repository unchanged; no native execution",
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "/workspace/scratch/2d493d612b0b/system-safety-validation/raw-cpu-reader-candidate-b23/scripts/ci",
+    "-p",
+    "test_read_pure_history_raw_campaign_v1.py"
+  ],
+  "returncode": 0,
+  "unique_tests": 14,
+  "elapsed_seconds": 0.7935702239992679,
+  "source_stable": true,
+  "original_source_unchanged": true,
+  "git_apply_check_exit": 0,
+  "workflow_exact_count": 14,
+  "files": [
+    {
+      "path": "scripts/ci/read_pure_history_raw_campaign_v1.py",
+      "original_sha256": "833f082d391d65d21a096a7da9625e2f370816aeed8ef2e7f8a1c58c6c962f5a",
+      "candidate_sha256": "eb75cb3d850d8469bf80577fe561091bf280e62afc23de50d18bdd42a8b2c98f",
+      "original_bytes": 15724,
+      "candidate_bytes": 16845
+    },
+    {
+      "path": "scripts/ci/test_read_pure_history_raw_campaign_v1.py",
+      "original_sha256": "58c0b36c49f13f393fc130fc5ce95e1548229f7c956c1477981d55139a840c2f",
+      "candidate_sha256": "d00bc80d9a821c34ed2eb3e9405f32063a3d8badccf149fda007fd49dc0828fe",
+      "original_bytes": 17648,
+      "candidate_bytes": 23643
+    },
+    {
+      "path": ".github/workflows/pon-pure-history-raw-joint.yml",
+      "original_sha256": "aa4b5c8142afab95929574f3292faec16fac97f20888c7caec0248852f93f5da",
+      "candidate_sha256": "a879b227ec0d8298eb260511c088f3178e762f23851f6fef9fe5fc13140bac48",
+      "original_bytes": 32655,
+      "candidate_bytes": 32656
+    }
+  ],
+  "patch_sha256": "c4af74afb9cb81da21edde11428c4428e9d697a1a1ad5b46d2bf255cd7357d57",
+  "log_sha256": "1d51077450bc498339a7cb3bdfba5ce1a0cd3ae87c22366b81de83ccce978c2e"
+}

@@ -7783,3 +7783,150 @@ original Unknown observations, original key/wire recovery, actual owner fences,
 same-attempt late-ACK reconciliation and fresh chain-membership checks. Its final
 pair must name this continuation's actual immutable source and ordered merge
 parents; the earlier fallback pair at Chain 147bae is not this candidate.
+
+### 2026-10-30 exact-source b23 follow-up: original escrow observations
+
+This continuation records the actual hosted results of
+`b23c0ef85f058507185b2ccb404a5d648e447c06`, tree
+`cbb7f34ef9a84df3653f4d3adbe57725b7740a37`, and its actual ordered merge
+`3c72efa27dab7f4f435dd3728293790dff7bbe13`. It keeps the original failed
+campaigns and official-scan uncertainty. Whole-system acceptance remains
+**OPEN / NO_GO**.
+
+#### Actual hosted progress and remaining ordinary-business failures
+
+[Recent acceptance run 41007754007](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41007754007)
+passed in all four x86_64/ARM64 and head/prospective-merge lanes. The actual
+release native-authenticated suite passed all 74 controls, including the fourteen
+new transaction/schema adversarial controls; the separate original SQLite owner
+suite passed all thirteen. The previous local 73/1 debug invocation remains an
+original failure, not a rewritten pass.
+
+[Raw History run 41007753791](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41007753791)
+still failed both profiles. The strict profile completed six imports and failed
+the seventh complete page at the original 30-second deadline in all nine phases,
+with zero in-window confirmations. The graph-fence profile completed 21/21
+imports and all three confirmations in eight of nine phases. Run 1 late-product
+completed 20/21 imports and two confirmations; its last page began at
+27.945743 seconds and returned the original deadline failure at 30.015471 seconds.
+The successful late-product runs completed their third confirmation at 29.923329
+and 29.519161 seconds, so these observations do not establish comfortable margin.
+
+The actual outer cleanup result is now `original_exit=1, cleanup_exit=0` for
+both failed campaigns; each separate controller-death lifeline records 0/0.
+All eighteen verifier phases retain clean node close without parent-forced kill.
+Successful cleanup never overrides failed ordinary business.
+
+The [same-page cost readback](../../evidence/system-security-20261030/escrow-reader-followup/raw-history-b23-cost-readback-summary.json)
+binds the original binary, pages, source and raw artifact hashes. In the matched
+first six pages, b23 strict CPU is 13.20–15.17% lower than the corresponding fb7
+observation and fence CPU is 37.86–43.54% lower. These are observed cross-run
+comparisons, not a claim that every CPU difference is caused by the patch.
+Actual fence graph entries fall from 48 to 36, node bodies from 74,064 to 61,692,
+and full graph resource checks from 9,408 to 7,824; maximum node window remains
+eight and before-commit checks remain six. The unchanged strict checks still
+consume enough work to prevent the first confirmation. Nested CPU scopes are not
+added, and an unused strict N8 observer is not described as absent kernel checks.
+
+The separate [four-second protocol evidence](../../evidence/system-security-20261030/escrow-reader-followup/protocol-b23-readback-summary.json)
+also remains failed: the head pressure case reaches real full-state confirmation
+at 4.171532 seconds, 171.532 ms late; the merge pressure case imports only three
+of seven pages and retains the genesis active tip. Their named test processes
+exit zero and Hosts close cleanly, but those facts do not satisfy
+`CONFIRMATION_TARGET`. The four-second fixture and thirty-second isolated
+campaign remain distinct observations.
+
+#### Preserve signed stored credit; reject actual deficit and forged escrow
+
+The raw reader had an additional contract error. The unchanged original owner
+and [public-pool contract](../protocol/pon-nakamoto-v1/details/PUBLIC_POOL_INTAKE_V3.md)
+define the following simultaneous `actual_flow` observations:
+
+```text
+paid = live_debited + settlement_residual
+     = settled_full + unsettled_known_live
+remaining_paid = initial + credited_refill - paid - settlement_discard
+booked = live_owners * original_100ms_start_reserve
+stored = remaining_paid - booked
+```
+
+A full original reservation remains booked until its one final settlement, while
+actual live CPU is debited immediately. Therefore stored credit can legitimately
+be negative while actual remaining paid credit is nonnegative. This behavior is
+already explicitly tested by the Rust owner. Changing the runtime to clamp the
+stored value or return its reservation early would change that original contract.
+
+All 5,336 samples in the original b23 fence artifact satisfy the existing
+same-flow identities and original owner limits. There are 473 negative stored
+observations; the lowest corresponding actual remaining credit is 52,303,708 ns.
+The previous reader rejected these signed fields before evaluating their original
+escrow relationship. The correction preserves every original numeric value,
+permits only an exact bounded signed i128 stored value, and strengthens validation
+of the existing invariants: actual remaining paid credit stays in [0, 2 s],
+owners cannot exceed two, booked reservations must be exactly the original
+100 ms per owner, both paid-CPU decompositions must agree, original unsigned
+counters must fit u64, and a closed owner cannot retain unsettled live CPU.
+A real paid deficit remains rejected even with a perfectly balanced escrow
+equation.
+
+The outer `meter` and `actual_flow` observations are separately locked; the
+reader deliberately does not invent cross-snapshot equality. The original ZIP
+contains a real meter-owner 0 to flow-owner 1 interleaving. Only the complete
+owner/escrow tuple inside the same `actual_flow` is required to be simultaneous.
+Neither a consistent third-party JSON object nor this diagnostic shadow creates
+runtime authority. Original source, binary, IPC and artifact binding remain
+mandatory, and the unchanged runtime retains actual debt and Unknown telemetry.
+Samples also do not prove that an uninterruptible interval never temporarily
+overshoots between cooperative checkpoints.
+
+The original reader fails four of the five new adversarial test methods. The
+corrected complete reader passes **14/14**, including all original nine controls.
+A root-checkout repeat also passes **14/14**, CI contracts **96/96**, and source
+integrity negatives **34/34**, all source-stable. The original workflow's exact
+reader count changes from nine to fourteen; profiles, native selectors, CPU
+limits, reservation/refill constants and both original business windows do not
+change.
+
+[Original-artifact comparison](../../evidence/system-security-20261030/escrow-reader-followup/candidate-original-artifact-readback.json)
+retains the full raw ZIP hash and 532 report/IPC member hashes. With the corrected
+reader, the original b23 runs 2 and 3 complete the full readback and retain their
+native finite criteria; run 1 still fails the identical full-state-equality check.
+This is new interpretation of preserved b23 bytes, **not a new native run**, and
+does not change the original workflow's failed conclusion or establish production
+qualification.
+
+#### Security observations are still not closed
+
+The [new Rust CodeQL readback](../../evidence/system-security-20261030/escrow-reader-followup/codeql-result-review.json)
+binds [run 41007753676](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41007753676).
+Create and all 37 selected queries execute successfully with the requested
+all-targets option, but the result is still failed: 780 findings (757
+hard-coded-value and 23 logging), 304 affected tracked files and 305 diagnostics
+including one unlocated workspace failure, plus retained type/SSA consistency
+errors. Only one previous include-related affected path disappears. A recorded
+all-targets request does not establish complete semantic extraction, and 780 is
+not a count of demonstrated exploits.
+
+[Exact-source export run 41007753865](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41007753865)
+ends at its original bounded deadline without a stable authenticated official
+analysis. Its retained result has `target_pr_gate_authenticated=false`,
+`complete=false` and `verdict=null`; it is neither official gate success nor a
+demonstrated vulnerability verdict.
+
+The independent all-features dependency policy still reports bincode 1.3.3,
+derivative 2.2.0 and paste 1.0.15 as unmaintained, and tracing-subscriber 0.2.25
+for its published logging advisory. These four are not the CodeQL finding count.
+A possible smallest maintenance change is at the original ark-relations logging
+dependency; codec and macro replacements additionally need original-byte,
+generic-bound and proof compatibility controls. No dependency exclusion, blind
+SDK migration or receipt/profile change is included here.
+
+The raw records, genuine red/green reader controls, unchanged-byte comparisons
+and new hosted observations are retained under
+[the follow-up evidence directory](../../evidence/system-security-20261030/escrow-reader-followup).
+The paired Hepta continuation has separately completed its original contracts/
+evidence provider suite (74), full automation suite (128), four real late-ACK
+controls and four full Agentd HTTP controls. Those local component results do
+not qualify a new cross-repository head/merge tuple; the pair still requires
+explicit immutable source/base/ordered-merge binding and its original hosted
+gates.

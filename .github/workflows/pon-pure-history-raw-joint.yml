@@ -314,7 +314,7 @@ jobs:
               result['pure_reader_controls'] = reader_control
               reader_output = (out / reader_control['stderr']).read_text(errors='replace')
               bounds.require(reader_control['complete_success']
-                  and re.search(r'^Ran 9 tests in ', reader_output, re.MULTILINE)
+                  and re.search(r'^Ran 14 tests in ', reader_output, re.MULTILINE)
                   and re.search(r'^OK$', reader_output, re.MULTILINE), 'PURE_READER_NEGATIVES_REQUIRED')
               source_observation('source-before-campaigns.json')
               for number in range(1, 4):
