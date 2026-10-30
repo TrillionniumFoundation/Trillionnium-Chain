@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - fix/pq-m09-pcp2-verified-boundary-20261030
+      - fix/pq-m09-pcp2-authenticated-fetch-20261030
     paths:
       - .github/workflows/pq-m09-pcp2-focused.yml
       - trillionnium/crates/trnm-data-availability/**
