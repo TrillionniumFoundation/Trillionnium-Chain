@@ -33,6 +33,30 @@ PROOF_RESEARCH_ONLY_FALSE_FLAGS = (
 )
 RESEARCH_PROOF_RECEIPT_KIND = "Composite"
 
+# Frozen research identity, not a PQ128 endorsement. Changing any of these
+# proof-relation, backend, FRI or transcript assumptions requires a separately
+# reviewed versioned research profile; a silent manifest edit must fail CI.
+PINNED_W1_RESEARCH_PARAMETERS = {
+    "schema": "pon-w1-risc0-research-backend-v1",
+    "status": "research-only-not-consensus-qualified",
+    "backend": "risc0-zkvm",
+    "backend_version": "3.0.6",
+    "backend_source_commit": "1cc70cf05033a79ebc90f07c679cb4bd1cd301b9",
+    "guest_image_id": "3ea1bcbf7900a32be73d7e78102de085562893732473667e1f3af07e585696b4",
+    "guest_raw_elf_sha256": "651d8efabd091811fbf11b78e80793a4acb02b3c2eec95260373c58636d774b5",
+    "guest_program_sha256": "b8f32cd9c1b1edbb0cde04acf9aab146b7ff1aeeeaee0188e4d6e80d077b0c0a",
+    "work_profile": "pon-matmul-transcript-64-v1",
+    "work_n": 64,
+    "work_r": 8,
+    "work_q": 4294967291,
+    "work_intermediate_tiles": 512,
+    "work_transcript_hash": "SHA-256",
+    "proof_commitment_hash": "Poseidon2",
+    "proof_fri_queries": 50,
+    "proof_fri_inverse_rate": 4,
+    "backend_claimed_conjectured_security_bits": 98,
+}
+
 class DuplicateJSONMemberError(ValueError):
     """Refuse cross-parser ambiguous JSON, including nested duplicate members."""
     pass
@@ -77,6 +101,18 @@ def inspect(root: Path) -> dict:
                     blockers.append({"kind": "unreviewed_pq128_proof_claim", "path": rel})
                 else:
                     blockers.append({"kind": "unqualified_proof", "path": rel})
+                # Flag consistency alone does not freeze a proof system.
+                # Reject missing, changed and type-confused security-relevant
+                # parameters before the original research profile is reused.
+                if isinstance(profile, dict):
+                    for field, expected in PINNED_W1_RESEARCH_PARAMETERS.items():
+                        observed = profile.get(field)
+                        if type(observed) is not type(expected) or observed != expected:
+                            blockers.append({
+                                "kind": "unreviewed_w1_research_parameter_change",
+                                "path": rel,
+                                "field": field,
+                            })
                 # A truthful pq_128=false is not enough: a changed receipt
                 # type or a permissive fallback could silently weaken the
                 # research proof boundary while the public flags remain false.
@@ -140,6 +176,7 @@ def main():
         "invalid_proof_qualification_flag_type", "invalid_consensus_profile_shape",
         "invalid_production_flag_type", "unreviewed_pq128_proof_claim",
         "duplicate_proof_json_member", "duplicate_consensus_json_member",
+        "unreviewed_w1_research_parameter_change",
         "unsupported_proof_receipt_kind", "invalid_proof_policy_flag_type",
         "unsafe_proof_policy_enabled",
         "production_claim_requires_independent_pq_review") for item in report["known_open_findings"]):
