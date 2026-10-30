@@ -540,8 +540,7 @@ pub mod pq_reply_v2 {
                 "PQ batch stale external replay floor",
             )?;
             require(
-                record.statement.issued_unix_seconds
-                    <= now_unix_seconds.saturating_add(5)
+                record.statement.issued_unix_seconds <= now_unix_seconds.saturating_add(5)
                     && now_unix_seconds < record.statement.expires_unix_seconds,
                 "PQ batch expired/future record",
             )?;
@@ -624,6 +623,139 @@ pub mod pq_reply_v2 {
         observation.record_validation_attempts = providers.len();
         check_deadline(overall)?;
         Ok((providers, observation))
+    }
+
+    /// A received PCP2 provider hint is only a routing hint; even a completely
+    /// retrieved, hashed Cell cannot authorize release, installation or FinalUse.
+    /// The independent Control owner must durably advance the returned provider
+    /// sequence frontier before any operation that depends on its freshness.
+    #[derive(Clone, Debug, Eq, PartialEq)]
+    pub struct PqDiscoveredCellFetchReportV2 {
+        pub discovery: CellDiscoveryObservationV1,
+        pub verified_providers: Vec<VerifiedPqDiscoveryProviderV2>,
+        pub manifest_initial_cache_hit: bool,
+        pub fetch: super::super::CellFetchReportV1,
+    }
+
+    /// Research-only PCQ2/PCS2 -> pinned ML-DSA PCP2 -> real manifest/chunks
+    /// -> create-only full Cell materialization, with one ORIGINAL allocation.
+    ///
+    /// Unlike separately calling query_pq_provider_from_bootstrap_v2 and a Cell
+    /// fetch API, this cannot silently reset connection, response-byte or
+    /// overall-time budgets between discovery and content retrieval. It never
+    /// falls back to CDQ1/CDP1 or the competing CDP2 research format.
+    ///
+    /// The caller supplies the independently trusted owner roster, replay
+    /// floors, Cell request and network address policy. This API does NOT
+    /// provide externally durable replay protection, provider custody proofs,
+    /// TLS identity, deployment selection, or Hepta FinalUse authorization.
+    pub fn fetch_pq_discovered_cell_to_file_v2(
+        store: &super::super::CellStoreV1,
+        options: &CellDiscoveryOptionsV1,
+        pinned_owners: &[PqPinnedProviderV2<'_>],
+        limits: super::super::CellPeerLimitsV1,
+        original_deadline: Instant,
+        output: &std::path::Path,
+    ) -> CellResultV1<(super::super::CellManifestV1, PqDiscoveredCellFetchReportV2)> {
+        let expected_request = options.request;
+        let addresses = &options.addresses;
+        expected_request.validate()?;
+        addresses.validate()?;
+        require(
+            options.bootstraps.len() == 1,
+            "PQ exactly one independent bootstrap",
+        )?;
+        let bootstrap = options.bootstraps[0];
+        addresses.check(bootstrap)?;
+        limits.validate()?;
+        let original_overall = original_deadline.min(Instant::now() + limits.overall_timeout);
+        check_deadline(original_overall)?;
+
+        let requests_left = std::sync::atomic::AtomicU64::new(limits.max_connections);
+        let responses = super::super::network::ResponseBudget::new(limits.max_response_bytes);
+        let transport = super::super::network::RequestContext {
+            timeout: limits.request_timeout,
+            overall: original_overall,
+            requests_left: &requests_left,
+            responses: &responses,
+            peer_failures: Default::default(),
+        };
+        let mut discovery = CellDiscoveryObservationV1::default();
+        let response = super::transport::exchange_pq_v2(
+            bootstrap,
+            &expected_request.encode(),
+            &transport,
+            &mut discovery,
+        )?;
+        check_deadline(original_overall)?;
+
+        // Compute an Instant lease from the actual observed wall clock,
+        // including subsecond time. Never restart the original budget.
+        let sampled_at = Instant::now();
+        let wall = wall_now()?;
+        let verified_providers = verify_pq_provider_reply_v2(
+            &response,
+            expected_request,
+            pinned_owners,
+            wall.as_secs(),
+            addresses,
+        )?;
+        let mut expiry = original_overall;
+        let mut peers = Vec::with_capacity(verified_providers.len());
+        for provider in &verified_providers {
+            let remaining = std::time::Duration::from_secs(provider.expires_unix_seconds())
+                .checked_sub(wall)
+                .ok_or(CellErrorV1::Invalid("PQ provider lease expired"))?;
+            require(!remaining.is_zero(), "PQ provider lease expired")?;
+            expiry = expiry.min(sampled_at + remaining);
+            peers.push(provider.endpoint());
+        }
+        require(
+            !peers.is_empty() && peers.iter().collect::<BTreeSet<_>>().len() == peers.len(),
+            "PQ duplicate or missing provider endpoint",
+        )?;
+        check_deadline(expiry)?;
+        let transport = super::super::network::RequestContext {
+            overall: expiry,
+            ..transport
+        };
+
+        // The first real network/cache read is observed, not simulated. Its
+        // original request/byte consumption is shared with the final fetch.
+        let (manifest, initial_rejected, manifest_initial_cache_hit) =
+            super::super::network::fetch_manifest_observed(
+                store,
+                expected_request.manifest,
+                &peers,
+                limits,
+                &transport,
+            )?;
+        require(
+            cell_discovery_context_digest(manifest.context())? == expected_request.cell_context,
+            "PQ discovered Cell context mismatch",
+        )?;
+        let (manifest, mut fetch) = super::super::network::fetch_cell_in_session(
+            store,
+            expected_request.manifest,
+            &peers,
+            limits,
+            &transport,
+            Some(output),
+        )?;
+        // The common fetch observes the second manifest cache read; preserve
+        // the rejected responses of the first read without double-counting
+        // bytes or connections.
+        fetch.rejected_responses += initial_rejected;
+        check_deadline(transport.overall)?;
+        Ok((
+            manifest,
+            PqDiscoveredCellFetchReportV2 {
+                discovery,
+                verified_providers,
+                manifest_initial_cache_hit,
+                fetch,
+            },
+        ))
     }
 
     /// Experimental, in-memory PCP2-only service. All source records must have
@@ -1129,6 +1261,202 @@ pub mod pq_reply_v2 {
                 &addresses()
             )
             .is_err());
+        }
+        #[test]
+        fn pq_rendezvous_and_real_cell_fetch_share_one_original_budget() {
+            use crate::cell::{
+                serve_cells, CellCacheConfigV4, CellContextV1, CellPeerLimitsV1, CellStoreV1,
+            };
+            use std::{
+                fs,
+                net::TcpListener,
+                sync::{
+                    atomic::{AtomicBool, Ordering},
+                    Arc,
+                },
+                thread,
+                time::Duration,
+            };
+
+            fn config() -> CellCacheConfigV4 {
+                CellCacheConfigV4 {
+                    max_database_bytes: 128 * 1024 * 1024,
+                    max_logical_bytes: 64 * 1024 * 1024,
+                    max_chunk_rows: 4096,
+                    max_manifest_rows: 256,
+                }
+            }
+            fn limits(connections: u64) -> CellPeerLimitsV1 {
+                CellPeerLimitsV1 {
+                    request_timeout: Duration::from_secs(2),
+                    overall_timeout: Duration::from_secs(10),
+                    max_cell_bytes: 1_048_576,
+                    parallelism: 2,
+                    max_connections: connections,
+                    max_response_bytes: 4 * 1_048_576,
+                }
+            }
+
+            let dir = tempfile::tempdir().unwrap();
+            let source_path = dir.path().join("pq-source.sqlite");
+            let source = CellStoreV1::open(&source_path, config()).unwrap();
+            let original = dir.path().join("pq-model-source");
+            let bytes = vec![0xA5u8; 40_000];
+            fs::write(&original, &bytes).unwrap();
+            let manifest = source
+                .pack_file(
+                    &original,
+                    CellContextV1 {
+                        family: "pcp2-one-budget-e2e-v1".into(),
+                        base: [51; 32],
+                        parent: [52; 32],
+                        tokenizer: [53; 32],
+                        layout: [54; 32],
+                        runtime: [55; 32],
+                    },
+                    16_384,
+                )
+                .unwrap();
+
+            let cell_listener = TcpListener::bind("127.0.0.1:0").unwrap();
+            let cell_endpoint = cell_listener.local_addr().unwrap();
+            let bootstrap_listener = TcpListener::bind("127.0.0.1:0").unwrap();
+            let bootstrap = bootstrap_listener.local_addr().unwrap();
+            let mut ports = vec![cell_endpoint.port(), bootstrap.port()];
+            ports.sort_unstable();
+            ports.dedup();
+            let addresses = CellDiscoveryAddressPolicyV1::LoopbackDevOnly { ports };
+            let expected_request = CellDiscoveryRequestV1 {
+                context: CellDiscoveryContextV1 {
+                    namespace: [1; 32],
+                    network: [2; 32],
+                    parameters: [3; 32],
+                    genesis: [4; 32],
+                },
+                cell_context: cell_discovery_context_digest(manifest.context()).unwrap(),
+                manifest: manifest.id(),
+            };
+
+            let signer = SigningKey::<MlDsa65>::new_from_slice(&[76; 32]).unwrap();
+            let trusted_key = signer.verifying_key().to_bytes().to_vec();
+            let key_id = pq_cell_provider_key_id_v2(&trusted_key).unwrap();
+            let now = wall_now().unwrap().as_secs();
+            let record = SignedPqCellProviderRecordV2::sign(
+                PqCellProviderStatementV2 {
+                    pinned_request: expected_request.encode().try_into().unwrap(),
+                    endpoint: endpoint_bytes(cell_endpoint),
+                    sequence: 12,
+                    issued_unix_seconds: now.saturating_sub(1),
+                    expires_unix_seconds: now + 90,
+                },
+                &signer,
+            )
+            .unwrap();
+            let signed_bytes = record.to_wire();
+            let packet = reply(&[&signed_bytes]);
+            let shutdown_cell = Arc::new(AtomicBool::new(false));
+            let cell_stop = shutdown_cell.clone();
+            let source_name = source_path.clone();
+            let cell_thread = thread::spawn(move || {
+                let owner = CellStoreV1::open(&source_name, config()).unwrap();
+                serve_cells(&cell_listener, &owner, &cell_stop, limits(64)).unwrap()
+            });
+
+            let shutdown_bootstrap = Arc::new(AtomicBool::new(false));
+            let bootstrap_stop = shutdown_bootstrap.clone();
+            let server_key = trusted_key.clone();
+            let server_policy = addresses.clone();
+            let rendezvous_thread = thread::spawn(move || {
+                let approved = [PqPinnedProviderV2 {
+                    signer_key_id: key_id,
+                    trusted_ml_dsa65_public_key: &server_key,
+                    external_sequence_floor: 11,
+                }];
+                serve_pq_cell_rendezvous_v2(
+                    &bootstrap_listener,
+                    expected_request,
+                    &packet,
+                    &approved,
+                    &server_policy,
+                    &bootstrap_stop,
+                    CellRendezvousLimitsV1 {
+                        request_timeout: Duration::from_secs(2),
+                        lifetime: Duration::from_secs(10),
+                        max_connections: 4,
+                    },
+                )
+                .unwrap()
+            });
+
+            let consumer_path = dir.path().join("pq-consumer.sqlite");
+            let consumer = CellStoreV1::open(&consumer_path, config()).unwrap();
+            let output = dir.path().join("pq-complete-model");
+            let options = CellDiscoveryOptionsV1 {
+                request: expected_request,
+                bootstraps: vec![bootstrap],
+                addresses: addresses.clone(),
+            };
+            let current = [PqPinnedProviderV2 {
+                signer_key_id: key_id,
+                trusted_ml_dsa65_public_key: &trusted_key,
+                external_sequence_floor: 11,
+            }];
+            // One permitted connection is consumed by PCQ2. A second Cell
+            // request MUST fail; accidentally composing two independent
+            // sessions would instead reset the allowance and succeed.
+            assert!(fetch_pq_discovered_cell_to_file_v2(
+                &consumer,
+                &options,
+                &current,
+                limits(1),
+                Instant::now() + Duration::from_secs(10),
+                &output,
+            )
+            .is_err());
+            assert!(!output.exists());
+
+            let stale = [PqPinnedProviderV2 {
+                signer_key_id: key_id,
+                trusted_ml_dsa65_public_key: &trusted_key,
+                external_sequence_floor: 12,
+            }];
+            assert!(fetch_pq_discovered_cell_to_file_v2(
+                &consumer,
+                &options,
+                &stale,
+                limits(64),
+                Instant::now() + Duration::from_secs(10),
+                &output,
+            )
+            .is_err());
+            assert!(!output.exists());
+
+            let (completed, observation) = fetch_pq_discovered_cell_to_file_v2(
+                &consumer,
+                &options,
+                &current,
+                limits(64),
+                Instant::now() + Duration::from_secs(10),
+                &output,
+            )
+            .unwrap();
+            assert_eq!(completed, manifest);
+            assert_eq!(fs::read(&output).unwrap(), bytes);
+            assert!(!observation.manifest_initial_cache_hit);
+            assert_eq!(observation.discovery.connection_attempts, 1);
+            assert!(observation.fetch.connection_attempts > 1);
+            assert_eq!(observation.fetch.downloaded_bytes, bytes.len() as u64);
+            assert_eq!(observation.verified_providers.len(), 1);
+            assert_eq!(observation.verified_providers[0].sequence(), 12);
+            assert!(
+                observation.fetch.received_response_bytes
+                    > observation.discovery.received_response_bytes
+            );
+
+            shutdown_bootstrap.store(true, Ordering::Relaxed);
+            shutdown_cell.store(true, Ordering::Relaxed);
+            assert!(rendezvous_thread.join().unwrap().connections >= 3);
+            assert!(cell_thread.join().unwrap() > 0);
         }
     }
 }
