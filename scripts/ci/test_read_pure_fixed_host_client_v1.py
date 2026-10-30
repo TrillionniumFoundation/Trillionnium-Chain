@@ -25,6 +25,8 @@ def put(path, value):
 def fixture(root, experiment="pure-pressure"):
     report, ipc = original.graph_fixture(root, owner.STRICT_PROFILE)
     prepared = pressure_fixture.prepared()
+    if experiment == "fresh-caller-pressure":
+        prepared["schema"] = reader.fresh.SCHEMA
     seed_tip = reader.pressure.packet(reader.pressure.raw_hex(prepared["seed"][-1]))["id"]
     phases = report["phases"]
     for phase, data, name in zip(phases, ipc, reader.pressure.PHASES):
@@ -33,6 +35,8 @@ def fixture(root, experiment="pure-pressure"):
             old.rename(root / name)
             data["directory"] = root / name / "independent-client"
         phase["phase"] = name
+        if experiment == "fresh-caller-pressure":
+            phase["schema"] = reader.fresh.SCHEMA
         phase["client_execution_profile"] = owner.PURE_CLIENT_PROFILE
         phase["epoch_monotonic_ns"] = 1
         phase["addresses"] = ["127.0.0.1:5001", "127.0.0.1:5002"]
@@ -67,8 +71,10 @@ def fixture(root, experiment="pure-pressure"):
             "controller_capability_prequeued": True, "owner_death_control": None,
             "history_resource_profile": owner.STRICT_PROFILE, "collect_on_exit": True,
         }
-    manifest = {"schema": (reader.pressure.SCHEMA if experiment == "pure-pressure"
-                           else "pon-pure-receiver-owner-campaign-v1"),
+    schemas = {"pure-pressure": reader.pressure.SCHEMA,
+               "fresh-caller-pressure": reader.fresh.SCHEMA,
+               "receiver-owner-supplement": "pon-pure-receiver-owner-campaign-v1"}
+    manifest = {"schema": schemas[experiment],
                 "phases": [{"phase": name, "file": name + ".json"}
                            for name in reader.pressure.PHASES]}
     composition = {"schema": reader.COMPOSITION_SCHEMA,
@@ -97,7 +103,7 @@ def flush(root, data):
 
 
 class PureFixedHostClientControls(unittest.TestCase):
-    def test_two_explicit_compositions_keep_scope_separate(self):
+    def test_explicit_compositions_keep_scope_separate(self):
         for experiment in reader.EXPERIMENTS:
             with self.subTest(experiment=experiment), tempfile.TemporaryDirectory() as temporary:
                 root = Path(temporary)
@@ -108,6 +114,17 @@ class PureFixedHostClientControls(unittest.TestCase):
                 self.assertFalse(result["full_receiver_state_equality_claimed"])
                 self.assertTrue(result["original_service_predicates_still_required"])
                 self.assertEqual(len(result["phases"]), 3)
+
+    def test_fresh_caller_composition_cannot_relabel_legacy_raw_inputs(self):
+        for kind in ("manifest", "prepared", "phase"):
+            with self.subTest(kind=kind), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                data = fixture(root, "fresh-caller-pressure")
+                value = data["report"]["phases"][0] if kind == "phase" else data[kind]
+                value["schema"] = reader.pressure.SCHEMA
+                flush(root, data)
+                with self.assertRaisesRegex(ValueError, "namespace"):
+                    reader.check_directory(root, original.BINARY, original.OUTER, "fresh-caller-pressure")
 
     def test_new_composition_does_not_relabel_original_owner_schema(self):
         with tempfile.TemporaryDirectory() as temporary:

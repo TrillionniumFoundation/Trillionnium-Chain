@@ -1,0 +1,495 @@
+{
+  "actor_count": 0,
+  "archive_sha256": "0fdcd182ab9eb06f84c6cf3208f5cf8c138040dd80ed448d1b809d4da8cf1467",
+  "artifact_id": 12924656581,
+  "client_execution_profile": "pure-pon-fixed-host-client-v1",
+  "confirmation_measurement": {
+    "ended_ns": 45065185552,
+    "history_graph_resource": {
+      "cold_epoch_recovery_granted": false,
+      "counters": {
+        "before_commit_checks": 0,
+        "binding_checks": 0,
+        "binding_failed_checks": 0,
+        "graph_aborts": 0,
+        "graph_completed_node_bodies": 0,
+        "graph_entries": 0,
+        "graph_exits": 0,
+        "graph_full_resource_checks": 0,
+        "graph_max_node_window": 0,
+        "graph_node_checkpoints": 0,
+        "imports": 0,
+        "imports_closed": 0,
+        "imports_failed": 0,
+        "kernel_checks": 0,
+        "kernel_cpu_known_calls": 0,
+        "kernel_cpu_ns": 0,
+        "kernel_cpu_unknown_calls": 0,
+        "kernel_failed_checks": 0,
+        "kernel_wall_ns": 0,
+        "native_cpu_checkpoints": 0,
+        "scope_failures": 0,
+        "unfinished_scopes": 0
+      },
+      "live_known_close_pending": false,
+      "maximum_node_bodies_between_full_checks": 8,
+      "observation_is_authority": false,
+      "profile": "history-account-graph-resource-fence-v1",
+      "schema": "ordinary-history-graph-resource-observation-v1",
+      "scope": "cumulative explicit v1 imports on this actual Node; kernel counts/CPU cover instrumented INNER fresh KernelBudget::verify calls only, not all checker executions; excludes entry open/identity, outer final checks, epoch open/final-close checks, binding SQL and timing overhead; nested in import CPU",
+      "strict_path_is_separate": true,
+      "wall_clock_revocation_bound_claimed": false
+    },
+    "history_resource_profile": "strict-every-native-checkpoint-v1",
+    "process_cpu_ns": 58701016,
+    "process_id": 8291,
+    "process_wall_ns": 202745757,
+    "scope": "actual isolated verifier thread and entire verifier process; process includes scoped workers; both nested in whole-parent cgroup, not parent orchestration CPU",
+    "sequence": 7,
+    "started_ns": 44862455349,
+    "thread_cpu_ns": 58694206,
+    "thread_cpu_observation_available": true,
+    "wall_ns": 202730484
+  },
+  "database_bytes": 3350528,
+  "database_sha256": "4cbc2b9ec7cbcb0be9a8684d7e81d9b4eb37aaba1c2d6e49bbef823403ee8990",
+  "history_resource_profile": "strict-every-native-checkpoint-v1",
+  "idealized_quarter_cpu_import_wall_ns": 41366548736,
+  "idealized_thirty_second_cpu_allowance_ns": 7500000000,
+  "import_and_confirmation_cpu_sum_ns": 10400338200,
+  "import_cpu_sum_ns": 10341637184,
+  "imports": [
+    {
+      "complete_page": false,
+      "ended_ns": 7672008777,
+      "network_response_wall_ns": 12196868,
+      "process_cpu_ns": 1061764206,
+      "process_wall_ns": 4537685522,
+      "sequence": 0,
+      "started_ns": 3134336233,
+      "wall_ns": 4537672753
+    },
+    {
+      "complete_page": false,
+      "ended_ns": 11872990517,
+      "network_response_wall_ns": 11803399,
+      "process_cpu_ns": 1050051657,
+      "process_wall_ns": 4185570718,
+      "sequence": 1,
+      "started_ns": 7687433890,
+      "wall_ns": 4185556837
+    },
+    {
+      "complete_page": false,
+      "ended_ns": 16159357136,
+      "network_response_wall_ns": 11960863,
+      "process_cpu_ns": 1060653485,
+      "process_wall_ns": 4270785245,
+      "sequence": 2,
+      "started_ns": 11888585813,
+      "wall_ns": 4270771454
+    },
+    {
+      "complete_page": false,
+      "ended_ns": 20366140934,
+      "network_response_wall_ns": 12638568,
+      "process_cpu_ns": 1055115795,
+      "process_wall_ns": 4189306112,
+      "sequence": 3,
+      "started_ns": 16176847931,
+      "wall_ns": 4189293163
+    },
+    {
+      "complete_page": false,
+      "ended_ns": 24568793037,
+      "network_response_wall_ns": 11982767,
+      "process_cpu_ns": 1051796922,
+      "process_wall_ns": 4187223303,
+      "sequence": 4,
+      "started_ns": 20381587640,
+      "wall_ns": 4187205477
+    },
+    {
+      "complete_page": false,
+      "ended_ns": 28851044506,
+      "network_response_wall_ns": 12464940,
+      "process_cpu_ns": 1057198570,
+      "process_wall_ns": 4266768608,
+      "sequence": 5,
+      "started_ns": 24584293975,
+      "wall_ns": 4266751031
+    },
+    {
+      "complete_page": true,
+      "ended_ns": 44857505655,
+      "network_response_wall_ns": 12124511,
+      "process_cpu_ns": 4005056549,
+      "process_wall_ns": 15990904888,
+      "sequence": 6,
+      "started_ns": 28866615338,
+      "wall_ns": 15990890457
+    }
+  ],
+  "new_native_execution": false,
+  "post_setup_through_snapshot_decode_deltas": {
+    "borrow_conflicts": 0,
+    "bounded_probe_refusals": 124,
+    "calls": 127571,
+    "exact_hits": 127426,
+    "original_decodes": 145,
+    "retained": 21
+  },
+  "post_setup_through_snapshot_stage_deltas": {
+    "account_graph": {
+      "calls": 85,
+      "cpu_ns": 9240268480,
+      "wall_ns": 36511421590
+    },
+    "activation": {
+      "calls": 1,
+      "cpu_ns": 2939621550,
+      "wall_ns": 11761546211
+    },
+    "admission": {
+      "calls": 7,
+      "cpu_ns": 6203724773,
+      "wall_ns": 24807448414
+    },
+    "complete_commitment": {
+      "calls": 92,
+      "cpu_ns": 109040257,
+      "wall_ns": 258407664
+    },
+    "complete_state_root": {
+      "calls": 26,
+      "cpu_ns": 17008031,
+      "wall_ns": 17063287
+    },
+    "delta": {
+      "calls": 235,
+      "cpu_ns": 112569118,
+      "wall_ns": 363822918
+    },
+    "execute": {
+      "calls": 7,
+      "cpu_ns": 22249649,
+      "wall_ns": 22263276
+    },
+    "execution_parent_binding": {
+      "calls": 7,
+      "cpu_ns": 6615508,
+      "wall_ns": 6628757
+    },
+    "packet": {
+      "calls": 242,
+      "cpu_ns": 10775058,
+      "wall_ns": 11070026
+    },
+    "persisted_state_root": {
+      "calls": 72,
+      "cpu_ns": 21192130,
+      "wall_ns": 170944244
+    },
+    "publish": {
+      "calls": 7,
+      "cpu_ns": 2248981312,
+      "wall_ns": 8999219164
+    },
+    "read_active": {
+      "calls": 4,
+      "cpu_ns": 398173236,
+      "wall_ns": 1565267200
+    },
+    "record": {
+      "calls": 431,
+      "cpu_ns": 5371052,
+      "wall_ns": 80941115
+    },
+    "state_at": {
+      "calls": 21,
+      "cpu_ns": 3331354009,
+      "wall_ns": 13033045638
+    },
+    "verify_history": {
+      "calls": 23,
+      "cpu_ns": 127204918,
+      "wall_ns": 351995953
+    },
+    "verify_state": {
+      "calls": 85,
+      "cpu_ns": 9368587910,
+      "wall_ns": 36891073921
+    }
+  },
+  "retained_database_account_roots": [
+    {
+      "account_balance": 40000000,
+      "account_count": 4,
+      "account_digest": "0d1ffa631f50dadf0d47d002b1ff241ae64b5659ef6edbbbf96e3c007ca70d16",
+      "account_map_entries": 4,
+      "account_map_sha256": "47b567b70fe626a7c6a4f935ed379559ef3c1ba73c0d04bce095493d22ffc6e9",
+      "account_node": "52b3e853aeaf687e20cac0a62158a65fae340d7f66299c76dbfe545ff27dcffa",
+      "block": "e71802f181974de1181f82f4249d1db542714247623e889d3dfedb263e1c2866",
+      "height": 0,
+      "record_bytes_sha256": "feca8198ced6acd7c5df83cbdce1ca87098b589b9c82fe502460ac7139a8f19d",
+      "state_bytes": 3986,
+      "state_bytes_sha256": "9e42c7f1f791520649729ea00c57c0a66ada2a10453bb280073ac2f42d01897f"
+    },
+    {
+      "account_balance": 39923456,
+      "account_count": 260,
+      "account_digest": "3d907c7da2596a9666eee1d9d583eef88def24430ba40fbe6b97f8cdc856cbd4",
+      "account_map_entries": 260,
+      "account_map_sha256": "6b00cfc6b342bede62adb6e1b7ae956f4c024d04618690f9cf9b31d1b7f84a5b",
+      "account_node": "ea7b4a7a2dba8f267a78d11b47d234bd063b5191ba0f830417c576eab7ab69cd",
+      "block": "286a06febbe50d9146a3342b72ad7d0dd8e996cbfdec854131ce79d33b6f0f8b",
+      "height": 1,
+      "record_bytes_sha256": "966d8a0b248feabce0daa25a690f29945eaad0fc3f91d1d2ef2aff255aa63382",
+      "state_bytes": 29511,
+      "state_bytes_sha256": "0b5cb84fa010f1cac49222973e979f28b37bc417fd8b24932d7da4eeaa5935e2"
+    },
+    {
+      "account_balance": 39846912,
+      "account_count": 516,
+      "account_digest": "5616996767e50e8adcf3a5ebcc2dbd56ad317bc26a05d297223480fbee12c149",
+      "account_map_entries": 516,
+      "account_map_sha256": "04e5f08f0a5baaff0f721681fff1c4c89caffd7aff4350855e76842650d15e93",
+      "account_node": "e344c95680d964eb7e2e283deb9ad101532ab8267c99d1c5543aef276c6c2167",
+      "block": "b9b34c4fb3651d8334f59518104e6312ec1ce81672cb8e3255040eaf4cd21afc",
+      "height": 2,
+      "record_bytes_sha256": "9cc5381fed3bf672dc552a42f0ee3ad097c0f5742c09e9af1e4a9cda32623559",
+      "state_bytes": 55035,
+      "state_bytes_sha256": "7a9ad22ae0a5f42e420853e56f58cda22f9afd7672b7434cf24b9ef7c128b563"
+    },
+    {
+      "account_balance": 39770368,
+      "account_count": 772,
+      "account_digest": "a26e565f204531d35a5c4613b097c53d73b7571eadf5b0a31df6a58a7304ae3b",
+      "account_map_entries": 772,
+      "account_map_sha256": "864755b0aa353b14f0036522e6b7bb002a12cf3a4a97fcc5b9ebb35b6b0da444",
+      "account_node": "44582b0720cb4588715e8b902a0832db54e57df037738bdfdf79b76a9d1b1b1f",
+      "block": "967fd049f2d10a6941e680fa20fd6bf9cfacff6e277d6d3d5486e1527150adbe",
+      "height": 3,
+      "record_bytes_sha256": "b711f09642b6775ad99c6adbd8fc0cd17c498488198b267c07ea0a91c850a721",
+      "state_bytes": 80559,
+      "state_bytes_sha256": "075c6139a2e1cfc51f876514093e8b641af73756802646c35411004925a235a5"
+    },
+    {
+      "account_balance": 39693824,
+      "account_count": 1028,
+      "account_digest": "b5c858011c6a6e074c4f72cec99ead5fd6a17ae0a855e8aa181906e3bcee4687",
+      "account_map_entries": 1028,
+      "account_map_sha256": "a2325160e0257d60d83ae7bdb8cb7b52e2b749d84e1ff7d4200c4d947b0e3588",
+      "account_node": "dfc824e692023dbc9d0d39fd9b78caa56d85e41c1261c7648ac99ee8409db3cf",
+      "block": "7fb94e99cf64c2c418bf25476abc40b43d79af47a00014c964f4f75f3850b276",
+      "height": 4,
+      "record_bytes_sha256": "6a8226c05bb156cedaea349211501b4fb46629d1f939c669aee69ea5bd302c43",
+      "state_bytes": 106084,
+      "state_bytes_sha256": "27389f7d24d8c91b88eec51b75fe120c3b735165e972798c453bcf660768d508"
+    },
+    {
+      "account_balance": 39693525,
+      "account_count": 1028,
+      "account_digest": "40d8b857329f3fc483c92ada559f1275d9a2ba6d6e836be5f6a1ed7c30558757",
+      "account_map_entries": 1028,
+      "account_map_sha256": "cb6497918daf64749e5e8011f1dae3867502179a5389fcd403a2326d362e9f39",
+      "account_node": "3c25ca5d74d68c8baca3e864458d4bba4ed466040d0fcbb0f92f0c34c419fc53",
+      "block": "341a8398b8ecc9d0b384c323cc39905b590edab472fc84378c905e8936b41c2f",
+      "height": 5,
+      "record_bytes_sha256": "e8252160c25078bc18a5c047756a0fdb9070a94b641c171fbc729dd4649a53a2",
+      "state_bytes": 106263,
+      "state_bytes_sha256": "07967afb4def7b3d2958998ba5fe0d4452ff10193fe4781dd0a905442039a896"
+    },
+    {
+      "account_balance": 39693525,
+      "account_count": 1028,
+      "account_digest": "40d8b857329f3fc483c92ada559f1275d9a2ba6d6e836be5f6a1ed7c30558757",
+      "account_map_entries": 1028,
+      "account_map_sha256": "cb6497918daf64749e5e8011f1dae3867502179a5389fcd403a2326d362e9f39",
+      "account_node": "3c25ca5d74d68c8baca3e864458d4bba4ed466040d0fcbb0f92f0c34c419fc53",
+      "block": "17d498d1bae26273690d03e44c53a0c3ddc174509bf0d77cc6f2e0037b9dc7b5",
+      "height": 6,
+      "record_bytes_sha256": "289a67f07a9cb599266912ae78c6599ab0383efc1dc3e70282c7bb5ab273b53a",
+      "state_bytes": 106442,
+      "state_bytes_sha256": "9f669e7a306ecd49c4daea4020a459884752de55e0ab153655794d2375084676"
+    },
+    {
+      "account_balance": 39693525,
+      "account_count": 1028,
+      "account_digest": "40d8b857329f3fc483c92ada559f1275d9a2ba6d6e836be5f6a1ed7c30558757",
+      "account_map_entries": 1028,
+      "account_map_sha256": "cb6497918daf64749e5e8011f1dae3867502179a5389fcd403a2326d362e9f39",
+      "account_node": "3c25ca5d74d68c8baca3e864458d4bba4ed466040d0fcbb0f92f0c34c419fc53",
+      "block": "d211160127edf2af9c1673c7a0c46b7d1f55004a9cedda82c5794091edbf49e4",
+      "height": 7,
+      "record_bytes_sha256": "01443f5ed338b8d74867932b011ec1609adba2fc092f9d6a9f3b9608969251ad",
+      "state_bytes": 106621,
+      "state_bytes_sha256": "2047104e29e3d724d9ae0d253cd0d4d31b9f94bf8e26dc3141a2df35f2aecc62"
+    },
+    {
+      "account_balance": 39693525,
+      "account_count": 1028,
+      "account_digest": "40d8b857329f3fc483c92ada559f1275d9a2ba6d6e836be5f6a1ed7c30558757",
+      "account_map_entries": 1028,
+      "account_map_sha256": "cb6497918daf64749e5e8011f1dae3867502179a5389fcd403a2326d362e9f39",
+      "account_node": "3c25ca5d74d68c8baca3e864458d4bba4ed466040d0fcbb0f92f0c34c419fc53",
+      "block": "3b3de9deba86b960fa95379d1a54335cb78fa00426c59f3ec3656e85bb3286fa",
+      "height": 8,
+      "record_bytes_sha256": "6d14eacd24def46644a96b39367fa7a9e7bc7fe9b29d4b7180d4ca23cd5125c8",
+      "state_bytes": 106800,
+      "state_bytes_sha256": "20e88a50ffe34d6a47504da2ccbfeca7e570704d1b48d726f9e35849b7199400"
+    },
+    {
+      "account_balance": 39693525,
+      "account_count": 1028,
+      "account_digest": "40d8b857329f3fc483c92ada559f1275d9a2ba6d6e836be5f6a1ed7c30558757",
+      "account_map_entries": 1028,
+      "account_map_sha256": "cb6497918daf64749e5e8011f1dae3867502179a5389fcd403a2326d362e9f39",
+      "account_node": "3c25ca5d74d68c8baca3e864458d4bba4ed466040d0fcbb0f92f0c34c419fc53",
+      "block": "25ec124d93dd7d933085eadeeff66e9863215089c4e792f0bcfc97d4245e2cbb",
+      "height": 9,
+      "record_bytes_sha256": "90c1a714486819ba522b79c5bd5e20d6e309749dc72579ebdd3a7157c4d4d19a",
+      "state_bytes": 106979,
+      "state_bytes_sha256": "9da39e6b3c2d4077914c184f2038215c7626ce7bd4b1dd67b2a24c4a54c3670a"
+    },
+    {
+      "account_balance": 39693525,
+      "account_count": 1028,
+      "account_digest": "40d8b857329f3fc483c92ada559f1275d9a2ba6d6e836be5f6a1ed7c30558757",
+      "account_map_entries": 1028,
+      "account_map_sha256": "cb6497918daf64749e5e8011f1dae3867502179a5389fcd403a2326d362e9f39",
+      "account_node": "3c25ca5d74d68c8baca3e864458d4bba4ed466040d0fcbb0f92f0c34c419fc53",
+      "block": "d78a8439a6ac829c43d6a043aff63c82aa18314c99f2d27bc911acf74a843dae",
+      "height": 10,
+      "record_bytes_sha256": "c03e1336a28c503d16a25bdb2091a0e04b61b23b8e3f60b55cf82443db3e71fe",
+      "state_bytes": 107158,
+      "state_bytes_sha256": "e3f19aa80ece6880d6649c3ddfa1e78208b346e1de5d7093e23414be22aeb449"
+    },
+    {
+      "account_balance": 39693525,
+      "account_count": 1028,
+      "account_digest": "40d8b857329f3fc483c92ada559f1275d9a2ba6d6e836be5f6a1ed7c30558757",
+      "account_map_entries": 1028,
+      "account_map_sha256": "cb6497918daf64749e5e8011f1dae3867502179a5389fcd403a2326d362e9f39",
+      "account_node": "3c25ca5d74d68c8baca3e864458d4bba4ed466040d0fcbb0f92f0c34c419fc53",
+      "block": "0ca4f91915db165484fc6ab56546874049b56cf826cfcbb740d695684bfec5e4",
+      "height": 11,
+      "record_bytes_sha256": "e3d67420ebd861fb66852c66f3f17267dd69f5228523328528bae4b930c987b2",
+      "state_bytes": 107337,
+      "state_bytes_sha256": "07a872700c93db279088cba8b00ea9359b1a6682dfed1848056780d21811766c"
+    }
+  ],
+  "retained_entry_hashes_verified": 26,
+  "rounds": [
+    {
+      "confirmed_inside_pressure_window": false,
+      "depletion_observed_during_round": false,
+      "ended_ns": 45067188843,
+      "hostile_after": {
+        "ended_ns": 45067187991,
+        "rejections": [],
+        "started_ns": 45067144045
+      },
+      "hostile_before": {
+        "ended_ns": 1001952969,
+        "rejections": [],
+        "started_ns": 1001920791
+      },
+      "included_block": "341a8398b8ecc9d0b384c323cc39905b590edab472fc84378c905e8936b41c2f",
+      "observation": {
+        "active_generation": 5,
+        "confirmed": true,
+        "depth": 6,
+        "execution_authority": false,
+        "finalized": false,
+        "genesis": "e71802f181974de1181f82f4249d1db542714247623e889d3dfedb263e1c2866",
+        "included_block": "341a8398b8ecc9d0b384c323cc39905b590edab472fc84378c905e8936b41c2f",
+        "included_height": 5,
+        "network": "62b92044b29c6275931920860de4dd74a666ad03f140f07b107a2e2ac06e62d4",
+        "observed_height": 11,
+        "observed_now": 1793299772,
+        "observed_tip": "0ca4f91915db165484fc6ab56546874049b56cf826cfcbb740d695684bfec5e4",
+        "parameters": "5f6e99013f8750989889403b3928a7915c006296c9cae4b184c3d0c88a0053a4",
+        "policy": "installed-depth-and-required-work",
+        "reorged": false,
+        "required_work_delta": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c",
+        "transaction": "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21",
+        "work_delta": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c"
+      },
+      "overlapping_attack_calls": 0,
+      "round": 0,
+      "scheduled_ns": 1000000000,
+      "started_ns": 1001920030,
+      "tip": "0ca4f91915db165484fc6ab56546874049b56cf826cfcbb740d695684bfec5e4",
+      "transaction": "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+    }
+  ],
+  "schema": "pon-retained-history-baseline-readback-v1",
+  "scope": "Readback of historical CI output. Cumulative native stage deltas include confirmation and final snapshot as well as imports. Stage timings are nested and not additive. No new native execution, graph replay, timing measurement, independent host attestation or optimization result.",
+  "setup_process_cpu_ns": 659748870,
+  "setup_wall_ns": 2555883404,
+  "snapshot_measurement": {
+    "ended_ns": 896789114518,
+    "history_graph_resource": {
+      "cold_epoch_recovery_granted": false,
+      "counters": {
+        "before_commit_checks": 0,
+        "binding_checks": 0,
+        "binding_failed_checks": 0,
+        "graph_aborts": 0,
+        "graph_completed_node_bodies": 0,
+        "graph_entries": 0,
+        "graph_exits": 0,
+        "graph_full_resource_checks": 0,
+        "graph_max_node_window": 0,
+        "graph_node_checkpoints": 0,
+        "imports": 0,
+        "imports_closed": 0,
+        "imports_failed": 0,
+        "kernel_checks": 0,
+        "kernel_cpu_known_calls": 0,
+        "kernel_cpu_ns": 0,
+        "kernel_cpu_unknown_calls": 0,
+        "kernel_failed_checks": 0,
+        "kernel_wall_ns": 0,
+        "native_cpu_checkpoints": 0,
+        "scope_failures": 0,
+        "unfinished_scopes": 0
+      },
+      "live_known_close_pending": false,
+      "maximum_node_bodies_between_full_checks": 8,
+      "observation_is_authority": false,
+      "profile": "history-account-graph-resource-fence-v1",
+      "schema": "ordinary-history-graph-resource-observation-v1",
+      "scope": "cumulative explicit v1 imports on this actual Node; kernel counts/CPU cover instrumented INNER fresh KernelBudget::verify calls only, not all checker executions; excludes entry open/identity, outer final checks, epoch open/final-close checks, binding SQL and timing overhead; nested in import CPU",
+      "strict_path_is_separate": true,
+      "wall_clock_revocation_bound_claimed": false
+    },
+    "history_resource_profile": "strict-every-native-checkpoint-v1",
+    "process_cpu_ns": 16560365,
+    "process_id": 8291,
+    "process_wall_ns": 65097835,
+    "scope": "actual isolated verifier thread and entire verifier process; process includes scoped workers; both nested in whole-parent cgroup, not parent orchestration CPU",
+    "sequence": 8,
+    "started_ns": 896724028872,
+    "thread_cpu_ns": 16552674,
+    "thread_cpu_observation_available": true,
+    "wall_ns": 65085687
+  },
+  "source_commit": "540d72356a921da31dde1113537382e5c0f0c4fd",
+  "source_inferred_walk_decomposition": {
+    "activation_state_checks": 27,
+    "admission_state_checks": 56,
+    "confirmation_and_snapshot_state_checks": 2,
+    "genesis_accounts": 4,
+    "genesis_walks": 23,
+    "non_genesis_accounts": 1028,
+    "non_genesis_walks": 62,
+    "predicted_node_loads": 127571,
+    "scope": "Caller mapping from original source, cross-checked against cumulative counts; not a per-call measured trace or an optimized run."
+  },
+  "whole_verifier_process_cpu_ns": 11106807033,
+  "whole_verifier_wall_ns": 47756134761,
+  "window_ns": 30000000000,
+  "workflow_run_id": 40932471590
+}

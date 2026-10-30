@@ -7398,3 +7398,90 @@ The follow-up updates that one expected blob, retaining all other pins,
 original selectors, budgets and source checks. This does not turn the failed
 run into an executed native result. Its later log-glob cleanup refusal is
 also retained; subsequent acceptance requires a new exact-source run.
+
+### PN1/I01-I02 — pure PoN security continuation rebuilt on current integration (2026-10-29)
+
+The continuation is rebuilt on `540d72356a921da31dde1113537382e5c0f0c4fd` after
+the previous unpublished local workspace became unavailable. Its missing
+measurements are not recreated or counted. New source, tests, real proof
+verification and independently checked historical readbacks are retained in
+[the rebuilt evidence](../../evidence/pon-pure-security-20261030-rebuild/README.md).
+The evidence namespace uses 2026-10-30 UTC; this heading uses America/New_York.
+Current integration changes, including the worker binding race and recent-batch
+source-pin correction, remain present.
+
+Pure PoN Nakamoto fork choice, full work validation, 512-bit required chainwork,
+strictly heavier reorganization and the original W1 relation remain. No stake,
+quality/evaluator weight, independent Hashcash gate, automatic committee/hash
+fallback or production activation is introduced. Three new native controls
+retain exact scalar-error precedence, correct-product/false-trace replay for
+fresh challenges, and the replay required after 65th-challenge cache eviction.
+These expose residual rejection cost rather than claiming forged-block acceptance
+or a new verifier speedup.
+
+The explicit fresh-caller supplement derives a key for each phase/actor/sequence
+inside original measured actor work. Observer v4 records a caller only after
+the real request signature succeeds; the original observer stays v3. The
+independent reader reconstructs the key, request and body, requires 65 actually
+authenticated hostile identities per attack phase, and conjuncts the unchanged
+original pressure criteria. It does not certify unrestricted Sybil fairness.
+Both hosted architectures use the pinned interpreter and original fixed-Host
+limits. The driver retains 15 original native gates and adds four native gates
+plus four reader/environment gates. Ordinary old campaign/reader failures remain
+failures without skipping the supplemental campaigns. Missing/malformed receiver
+terminal output now preserves actual partial observations, including already
+collected actor results and single-reap wait4 costs, then still fails.
+
+The V5 cost reader now binds the original fixed profile, nonzero target, full
+seed-header digest, every nonce challenge including misses, and exact 49,508-byte
+winning packets. All existing pairing, roster, budget, timing, exhaustion and
+cold-recovery predicates remain. Seven coordinated metadata mutations accepted
+by the old reader are refused. The recovered historical 144-cohort capture keeps
+all 25 original summary fields unchanged. This is stronger evidence binding,
+not independent full genesis replay, current native campaign execution, or a
+proof that an observed solver is globally cheapest.
+
+The complete-W1 host checks claimed task/target and zero target before receipt
+I/O. Its guest, image, complete relation, original strict verifier and bounds
+are unchanged. The eight fixed audit-one cases all require an actual positive
+verification prerequisite. A rebuilt host verified the original 15,862,780-byte
+Composite receipt and refused all seven mutations. Single warm-verifier receiver
+observations were 1332.826232 ms for valid and 1187.393954 ms for a late-seal
+mutation. The timer includes bounded decode, strict verification and destruction;
+whole-process costs and exclusions are separately retained. These are not the
+older Succinct experiment, cold-start costs, a new proof generation, an admission
+speedup or a practical-security verdict. The durable exact fixture and read-only
+CI remove reliance on expiring artifact downloads; the Python metadata reader
+does not independently verify the STARK or authenticate timings.
+
+The actual strict History baseline at this integration source is independently
+retained as a failure with no attackers: first depth-six confirmation at
+45.067188843 seconds exceeds 30 seconds. Seven imports use 10.341637184 CPU
+seconds under a quarter-CPU quota. From ready through the final snapshot,
+including the separate confirmation and snapshot calls, nested account-graph
+counters show 85 full traversals and 9.240268480 CPU seconds despite
+127,426/127,571 decode-cache hits. This interval differs from the seven imports.
+The raw SQLite and IPC records support repeated graph verification as a concrete
+bottleneck. Nested timing is not added to process CPU, and no unverified
+same-root cache or weakened persistence/resource check is introduced.
+
+The separate existing N8 pure-raw History profile has bounded positive evidence:
+three historical runs complete all 27 confirmations within 30 seconds, with
+full receiver/client State equality and actual typed node/resource counters.
+All six hostile phases nevertheless fail the required sampled paid-credit-
+depletion and business-overlap predicates; the three whole campaigns remain
+failed. Different campaign/resource profiles do not transfer qualification or
+establish a causal speedup factor.
+
+Fresh local checks include 130 M01 tests, six consensus tests, 183 public-ingress
+tests, 19 pressure/receiver controls, 30 V5 reader controls, 66 admission-reader
+controls, 17 standalone proof-host tests, all-target/all-feature crypto/node
+strict Clippy, source-integrity negatives, the exact locked workspace graph,
+formatting and source inventory. The two-caller rerun is already part of the
+183; 16 long/subprocess pressure entries were intentionally ignored in the local
+control invocation. This shared host has no systemd, so exact-head hosted
+fixed-Host execution is still a separate gate.
+
+Open-network honest service under the original pressure envelope, global
+effective-work cost assumptions, practical complete-proof economics, quantitative
+quantum security, independent acceptance and activation all remain OPEN.

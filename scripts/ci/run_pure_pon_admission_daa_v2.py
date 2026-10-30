@@ -34,6 +34,11 @@ NATIVE_GATES = frozenset({"transparent-complete-proof", "pure-runtime", "pure-cl
                           "receiver-ipc-deadline-contract", "receiver-owner-contract",
                           "pure-pressure", "receiver-owner-supplement"})
 CLIENT_READER_GATES = frozenset({"pure-client-reader", "receiver-client-reader"})
+FRESH_NATIVE_GATES = frozenset({"authenticated-caller-observation-contract",
+                               "fresh-caller-namespace-contract", "fresh-caller-pressure",
+                               "receiver-terminal-failure-contract"})
+FRESH_READER_GATES = frozenset({"fresh-caller-environment", "fresh-caller-reader-controls",
+                               "fresh-caller-reader", "fresh-caller-client-reader"})
 BUILD_OVERRIDES = frozenset(bounds.BUILD_ENV) | {
     "RUSTDOC", "RUSTDOCFLAGS", "CARGO_ENCODED_RUSTDOCFLAGS", "RUSTC_BOOTSTRAP",
     "RUSTC_FORCE_UNSTABLE", "CARGO_BUILD_RUSTDOC", "CARGO_BUILD_RUSTDOCFLAGS",
@@ -115,18 +120,26 @@ def native_verdict(name, process_row, stdout):
             "qualified": process_row["complete_success"] and nonempty}
 
 
-def campaign_success(steps, verdicts):
+def reader_command(command, fresh_callers=False):
+    if fresh_callers and command and command[0] == "python3":
+        return [sys.executable, *command[1:]]
+    return command
+
+
+def campaign_success(steps, verdicts, fresh_callers=False):
+    native_gates = NATIVE_GATES | (FRESH_NATIVE_GATES if fresh_callers else frozenset())
+    reader_gates = CLIENT_READER_GATES | (FRESH_READER_GATES if fresh_callers else frozenset())
     names = [verdict["name"] for verdict in verdicts]
-    client_readers = [row.get("name") for row in steps if row.get("name") in CLIENT_READER_GATES]
+    client_readers = [row.get("name") for row in steps if row.get("name") in reader_gates]
     return (bool(steps) and all(row["complete_success"] is True for row in steps)
-            and len(client_readers) == len(CLIENT_READER_GATES)
-            and set(client_readers) == CLIENT_READER_GATES
-            and len(names) == len(NATIVE_GATES) and set(names) == NATIVE_GATES
+            and len(client_readers) == len(reader_gates)
+            and set(client_readers) == reader_gates
+            and len(names) == len(native_gates) and set(names) == native_gates
             and all(verdict["qualified"] is True for verdict in verdicts))
 
 
-def terminal_success(steps, verdicts, failure, finalization_failures):
-    return (campaign_success(steps, verdicts) and failure is None
+def terminal_success(steps, verdicts, failure, finalization_failures, fresh_callers=False):
+    return (campaign_success(steps, verdicts, fresh_callers) and failure is None
             and not finalization_failures)
 
 
@@ -163,6 +176,8 @@ def main():
     parser.add_argument("--cargo", required=True, type=Path)
     parser.add_argument("--expected-head", required=True)
     parser.add_argument("--client-execution-profile", required=True, choices=[fixed_client.PROFILE])
+    parser.add_argument("--fresh-caller-supplement", action="store_true",
+                        help="add fresh identities and independent v4 caller/body readback; retain every original gate")
     args = parser.parse_args()
     out, target = args.output.resolve(), args.target.resolve()
     bounds.require(not out.is_relative_to(ROOT) and not target.is_relative_to(ROOT)
@@ -171,12 +186,15 @@ def main():
     validate_build_environment(os.environ)
     validate_cargo_configuration(os.environ)
     out.mkdir(parents=True, exist_ok=False)
-    result = {"schema": "pon-pure-admission-daa-fixed-client-v1", "expected_head": args.expected_head,
+    result = {"schema": ("pon-pure-admission-daa-fresh-caller-v1" if args.fresh_caller_supplement
+                          else "pon-pure-admission-daa-fixed-client-v1"), "expected_head": args.expected_head,
               "client_execution_profile": args.client_execution_profile,
               "started_utc": datetime.now(timezone.utc).isoformat(), "steps": [], "binaries": {},
               "native_verdicts": [], "toolchain_observation": None,
-              "required_native_gates": sorted(NATIVE_GATES),
-              "required_client_reader_gates": sorted(CLIENT_READER_GATES),
+              "required_native_gates": sorted(NATIVE_GATES | (
+                  FRESH_NATIVE_GATES if args.fresh_caller_supplement else frozenset())),
+              "required_client_reader_gates": sorted(CLIENT_READER_GATES | (
+                  FRESH_READER_GATES if args.fresh_caller_supplement else frozenset())),
               "source_before": None, "source_after": None, "failure": None,
               "finalization_failures": [], "complete_success": False,
               "automatic_retries": 0, "pressure_phase_seconds": 30,
@@ -192,7 +210,8 @@ def main():
     cargo = [str(args.cargo), "+1.95.0"]
 
     def step(name, command, timeout, environment=None):
-        row = bounds.run_step(out, name, command, environment or env, timeout=timeout)
+        row = bounds.run_step(out, name, reader_command(command, args.fresh_caller_supplement),
+                              environment or env, timeout=timeout)
         result["steps"].append(row)
         return row
 
@@ -215,6 +234,13 @@ def main():
         resources = bounds.resource_observation()
         bounds.write_new(out / "resources-before.json", resources)
         bounds.validate_resources(resources, 10)
+        if args.fresh_caller_supplement:
+            dependency = step("fresh-caller-environment",
+                              ["python3", "scripts/ci/check_pure_pon_fresh_caller_v1.py",
+                               "--check-environment", "--output", str(out / "fresh-caller-environment.json")], 30)
+            bounds.require(dependency["complete_success"], "FRESH_CALLER_READER_ENVIRONMENT_REQUIRED")
+            step("fresh-caller-reader-controls",
+                 ["python3", "scripts/ci/test_check_pure_pon_fresh_caller_v1.py"], 180)
         compiler = step("rustc-version", [str(args.cargo.parent / "rustup"), "run", TOOLCHAIN,
                                          "rustc", "-Vv"], 30)
         cargo_version = step("cargo-version", [*cargo, "-Vv"], 30)
@@ -263,6 +289,12 @@ def main():
             native("transparent-complete-proof", "trnm_crypto_primitives", ["pon_work::transparent_admission::"])
         if node["complete_success"]:
             native("pure-runtime", "trnm_pon_node", ["ingress::public_v3::", "host_kernel_parent::"])
+            if args.fresh_caller_supplement:
+                native("authenticated-caller-observation-contract", "trnm_pon_node", ["authenticated_caller"])
+                native("fresh-caller-namespace-contract", "pure_pon_pressure_v2",
+                       ["--exact", "fresh_caller_namespace_binds_phase_actor_and_every_call"])
+                native("receiver-terminal-failure-contract", "pure_pon_pressure_v2",
+                       ["--exact", "receiver_owner::native_receiver_terminal_failure_retains_partial_without_inventing_report"])
             native("pure-cli", "pure_pon_cli", [])
             native("native-confirmation-risk", "pon_confirmation_risk_v1", [])
             native("pressure-observation-contract", "pure_pon_pressure_v2",
@@ -325,11 +357,27 @@ def main():
             step("receiver-owner-reader", ["python3", "scripts/ci/check_pure_pon_receiver_owner_v1.py",
                  str(out / "receiver-owner-native"), "--output", str(out / "receiver-owner-observation-v2.json"),
                  "--require-qualified", "--require-observed-cpu", "--require-quiescent-descendants"], 120)
+            if args.fresh_caller_supplement:
+                # This additional native campaign is not a retry or a replacement
+                # for either original failure. Its raw namespace is independent.
+                fresh_env = dict(env, TRNM_PURE_PRESSURE_V2_OUT=str(out / "fresh-caller-native"))
+                native("fresh-caller-pressure", "pure_pon_pressure_v2",
+                       ["--exact", fixed_client.EXPERIMENTS["fresh-caller-pressure"], "--ignored"],
+                       600, fresh_env)
+                step("fresh-caller-reader", ["python3", "scripts/ci/check_pure_pon_fresh_caller_v1.py",
+                     str(out / "fresh-caller-native"), "--output", str(out / "fresh-caller-qualification.json"),
+                     "--require-qualified"], 180)
+                step("fresh-caller-client-reader", ["python3", "scripts/ci/read_pure_fixed_host_client_v1.py",
+                     str(out / "fresh-caller-native"), "--experiment", "fresh-caller-pressure",
+                     "--binary-sha256", result["binaries"]["pure_pon_pressure_v2"]["sha256"],
+                     "--outer-cgroup", resources["cgroup"],
+                     "--output", str(out / "fresh-caller-client-readback-v1.json")], 120)
         # Static validation runs after the pressure, never competes with it.
         step("strict-clippy", [*cargo, "clippy", "--release", "--locked", "--offline",
              "--manifest-path", "trillionnium/Cargo.toml", "-p", "trnm-crypto-primitives",
              "-p", "trnm-pon-node", "--all-targets", "--all-features", "--", "-D", "warnings"], 1800)
-        result["complete_success"] = campaign_success(result["steps"], result["native_verdicts"])
+        result["complete_success"] = campaign_success(result["steps"], result["native_verdicts"],
+                                                      args.fresh_caller_supplement)
     except (OSError, ValueError, KeyError, TypeError, subprocess.SubprocessError) as error:
         result["failure"] = str(error)
     finally:
@@ -358,7 +406,8 @@ def main():
         except (OSError, ValueError, KeyError, TypeError) as error:
             result["finalization_failures"].append(str(error))
         result["complete_success"] = terminal_success(
-            result["steps"], result["native_verdicts"], result["failure"], result["finalization_failures"])
+            result["steps"], result["native_verdicts"], result["failure"], result["finalization_failures"],
+            args.fresh_caller_supplement)
         result["completed_utc"] = datetime.now(timezone.utc).isoformat()
         bounds.write_new(out / "results.json", result)
         print(json.dumps(result, sort_keys=True))

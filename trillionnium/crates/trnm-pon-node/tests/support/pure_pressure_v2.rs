@@ -623,6 +623,18 @@ pub fn now() -> u64 {
 pub fn identity(seed: u8) -> DevelopmentIdentity {
     DevelopmentIdentity::from_secret_hex(&hex::encode([seed; 32])).unwrap()
 }
+pub fn fresh_caller(phase: &str, actor: u64, sequence: u64) -> DevelopmentIdentity {
+    assert!(matches!(phase, "from-zero" | "correct-product-false-trace"));
+    DevelopmentIdentity::from_secret_hex(&hex::encode(hash(
+        b"pure-pressure-fresh-caller-v1",
+        &[
+            phase.as_bytes(),
+            &actor.to_le_bytes(),
+            &sequence.to_le_bytes(),
+        ],
+    )))
+    .unwrap()
+}
 pub fn policy() -> public_v3::PublicPolicy {
     public_v3::PublicPolicy::pure_pon(Duration::from_secs(2)).unwrap()
 }
@@ -722,6 +734,31 @@ pub fn call_with_entry_observation(
     who: u8,
     epoch: u64,
 ) -> (Option<Value>, u64) {
+    call_with_caller_observation(address, settings, request, epoch, false, || identity(who))
+}
+
+pub fn call_with_fresh_caller_entry_observation(
+    address: SocketAddr,
+    settings: &Settings,
+    request: public_v3::Request,
+    phase: &str,
+    actor: u64,
+    sequence: u64,
+    epoch: u64,
+) -> (Option<Value>, u64) {
+    call_with_caller_observation(address, settings, request, epoch, true, || {
+        fresh_caller(phase, actor, sequence)
+    })
+}
+
+fn call_with_caller_observation(
+    address: SocketAddr,
+    settings: &Settings,
+    request: public_v3::Request,
+    epoch: u64,
+    record_caller: bool,
+    make_caller: impl FnOnce() -> DevelopmentIdentity,
+) -> (Option<Value>, u64) {
     // Call arguments can take time to construct after the caller's loop
     // check. Check the original phase again here, before any client API.
     let anchor = Instant::now();
@@ -732,12 +769,15 @@ pub fn call_with_entry_observation(
         started,
         |deadline, started_ns, deadline_ns| {
             let start_cpu = thread_cpu();
+            // Key generation belongs to the original measured call and absolute
+            // deadline, including a fresh key for every opted-in attempt.
+            let caller = make_caller();
             let (reply, metrics) = public_v3::call_public_pure_pon_v2(
                 address,
                 &request,
                 settings,
                 identity(71).public_key(),
-                &identity(who),
+                &caller,
                 policy(),
                 Some(deadline),
             );
@@ -750,10 +790,14 @@ pub fn call_with_entry_observation(
                 ),
                 Err(error) => ("error", None, Some(error.to_string())),
             };
-            json!({"started_ns":started_ns,"ended_ns":ended.saturating_sub(epoch),
+            let mut row = json!({"started_ns":started_ns,"ended_ns":ended.saturating_sub(epoch),
             "deadline_ns":deadline_ns,
             "thread_cpu_ns":cpu_delta(start_cpu),"status":status,"response":response,"error":error,
-            "body_digest":hex::encode(body_digest(&request)),"metrics":metrics})
+            "body_digest":hex::encode(body_digest(&request)),"metrics":metrics});
+            if record_caller {
+                row["caller_public_key"] = json!(caller.public_key());
+            }
+            row
         },
     );
     (result, started)

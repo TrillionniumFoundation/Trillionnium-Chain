@@ -547,6 +547,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/audit_one.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/audit_one.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/claimed_context.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/claimed_context.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/main.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -747,6 +761,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work/statement_boundaries.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/src/pon_work/statement_boundaries.rs"
         )),
     ),
     (

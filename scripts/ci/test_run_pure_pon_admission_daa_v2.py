@@ -177,6 +177,45 @@ class NativeCompletionControls(unittest.TestCase):
                 self.assertFalse(runner.terminal_success(changed, verdicts, None, []))
 
 
+class FreshCallerSupplementControls(unittest.TestCase):
+    def test_new_gates_are_additive_and_old_mode_remains_explicit(self):
+        readers = runner.CLIENT_READER_GATES | runner.FRESH_READER_GATES
+        steps = [{"name": name, "complete_success": True} for name in sorted(readers)]
+        names = runner.NATIVE_GATES | runner.FRESH_NATIVE_GATES
+        verdicts = [runner.native_verdict(name, steps[0], summary()) for name in sorted(names)]
+        self.assertTrue(runner.terminal_success(steps, verdicts, None, [], True))
+        self.assertFalse(runner.terminal_success(steps, verdicts, None, []))
+        for name in names:
+            with self.subTest(missing_native=name):
+                self.assertFalse(runner.terminal_success(
+                    steps, [row for row in verdicts if row["name"] != name], None, [], True))
+        for name in readers:
+            with self.subTest(missing_reader=name):
+                self.assertFalse(runner.terminal_success(
+                    [row for row in steps if row["name"] != name], verdicts, None, [], True))
+
+    def test_fresh_pass_cannot_hide_original_failure_or_duplicate_gate(self):
+        steps = [{"name": name, "complete_success": True}
+                 for name in sorted(runner.CLIENT_READER_GATES | runner.FRESH_READER_GATES)]
+        verdicts = [runner.native_verdict(name, steps[0], summary())
+                    for name in sorted(runner.NATIVE_GATES | runner.FRESH_NATIVE_GATES)]
+        for name in ("pure-pressure", "receiver-owner-supplement", "fresh-caller-pressure"):
+            changed = deepcopy(verdicts)
+            next(row for row in changed if row["name"] == name)["qualified"] = False
+            self.assertFalse(runner.terminal_success(steps, changed, None, [], True))
+        self.assertFalse(runner.terminal_success(steps + [steps[0]], verdicts, None, [], True))
+        self.assertFalse(runner.terminal_success(steps, verdicts + [verdicts[0]], None, [], True))
+        self.assertFalse(runner.terminal_success(steps, verdicts, "failed", [], True))
+        self.assertFalse(runner.terminal_success(steps, verdicts, None, ["source changed"], True))
+
+    def test_opt_in_readers_use_the_actual_probed_interpreter(self):
+        command = ["python3", "scripts/ci/check_pure_pon_fresh_caller_v1.py", "--check-environment"]
+        self.assertEqual(runner.reader_command(command), command)
+        self.assertEqual(runner.reader_command(command, True), [runner.sys.executable, *command[1:]])
+        self.assertEqual(runner.reader_command(["cargo", "test"], True), ["cargo", "test"])
+        self.assertEqual(command[0], "python3")
+
+
 class CargoArtifactControls(unittest.TestCase):
     def test_only_complete_release_builds_with_bounded_executable_paths_are_collected(self):
         with tempfile.TemporaryDirectory() as temporary:

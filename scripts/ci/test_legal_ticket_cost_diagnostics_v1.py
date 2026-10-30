@@ -5,7 +5,7 @@ import unittest
 
 from check_legal_ticket_cost_v5 import RECURRING, summed
 from legal_ticket_cost_diagnostics_v1 import SCHEMA, derive
-from test_legal_ticket_cost_v5 import control, exhausted_control
+from test_legal_ticket_cost_v5 import control, exhausted_control, fixture_challenge
 
 
 def pair(report, horizon=1, reuse=False, strategy="maintenance-limb"):
@@ -86,8 +86,9 @@ class PairedDiagnostics(unittest.TestCase):
             miss.update(ticket="ff" * 32, target_hit=False)
             winner["trial"] = 1
             winner["nonce"] += 1
+            winner["challenge"] = fixture_challenge(winner["nonce"])
             row["searches"][0]["trials"] = [miss, winner]
-            row.update(target="03" * 32, attempts=2)
+            row.update(attempts=2)
             row["phases"]["all_attempt_generation"] = {"wall_ns": 2, "process_cpu_ns": 2}
             row["all_exclusive_phases"] = summed(row["phases"].values())
             row["recurring_producer_encode_admission"] = summed(row["phases"][name] for name in RECURRING)

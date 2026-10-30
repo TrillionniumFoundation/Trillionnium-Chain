@@ -1,0 +1,21 @@
+{
+  "schema": "pon-w1-actual-process-v1",
+  "command": [
+    "/tmp/pon-security-native-target/release/deps/trnm_pon_node-b99e06fffd4c528a",
+    "authenticated_caller",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "started_utc": "2026-10-30T01:27:21.289008+00:00",
+  "timeout_seconds": 120,
+  "source_sha": null,
+  "timed_out": false,
+  "consensus_authority": false,
+  "returncode": 0,
+  "wall_seconds": 0.12313565299973561,
+  "user_cpu_seconds": 0.00885899999999995,
+  "system_cpu_seconds": 0.008871000000000004,
+  "max_waited_descendant_rss_kib": 18112,
+  "rss_scope": "maximum reported for the waited child family; not total cgroup peak",
+  "finished_utc": "2026-10-30T01:27:21.412181+00:00"
+}

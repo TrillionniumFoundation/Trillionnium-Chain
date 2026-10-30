@@ -2570,6 +2570,9 @@ fn serve_public_protected_v3_inner(
                                         .signature_refusals += 1;
                                     return Err("PUBLIC_CALLER_SIGNATURE".into());
                                 }
+                                if let Some(observation) = &conn.observation {
+                                    observation.authenticated_caller(&cookie.caller);
+                                }
                                 if let Err(e) = spent.reserve(
                                     cookie.id()?,
                                     cookie.expires_tick_ms,
@@ -3767,6 +3770,63 @@ mod tests {
             assert!(Instant::now() < end, "actual reactor observation timed out");
             thread::sleep(Duration::from_millis(2));
         }
+    }
+    #[test]
+    fn authenticated_caller_observation_requires_real_signature_on_tcp() {
+        let directory = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(super::super::now().unwrap() - 100)).unwrap();
+        let owner = shared(Node::open(directory.path(), settings, 1).unwrap());
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let address = listener.local_addr().unwrap();
+        let stop = Arc::new(AtomicBool::new(false));
+        let signal = stop.clone();
+        let observer = PublicRequestObserver::new_with_authenticated_callers(2).unwrap();
+        let records = observer.clone();
+        let metrics = Arc::new(Mutex::new(PublicMetrics::default()));
+        let counters = metrics.clone();
+        let policy = PublicPolicy::new(8, Duration::from_secs(2)).unwrap();
+        let worker = thread::spawn(move || {
+            serve_public_protected_v3_with_request_observer(
+                listener,
+                owner,
+                Duration::from_secs(8),
+                signal,
+                PublicServer::new(identity(71), policy).unwrap(),
+                counters,
+                records,
+            )
+            .unwrap()
+        });
+        let raw = serde_json::to_vec(&Request::Head).unwrap();
+        let mut claimed = hello(2, raw.len());
+        claimed.digest = hash(b"public-request-body-v3", &[&raw]);
+        // The Hello claims caller 72, but caller 73 signs the real server's
+        // challenge. A received Hello/body digest is not authentication.
+        assert!(paid_grant(address, claimed, &identity(73), policy).is_err());
+        wait_metric(&metrics, |value| value.signature_refusals == 1);
+        let mut socket = paid_grant(address, claimed, &identity(72), policy).unwrap();
+        client_write(&mut socket, &raw, Instant::now() + Duration::from_secs(2)).unwrap();
+        let response =
+            client_frame(&mut socket, 16384, Instant::now() + Duration::from_secs(2)).unwrap();
+        assert!(serde_json::from_slice::<Response>(&response).unwrap().ok);
+        stop.store(true, Ordering::Release);
+        worker.join().unwrap();
+        let snapshot = observer.snapshot();
+        assert_eq!(
+            snapshot.schema,
+            "public-v3-local-request-resource-observation-v4"
+        );
+        assert_eq!(snapshot.records.len(), 2);
+        assert!(snapshot.records[0].body_digest.is_some());
+        assert!(snapshot.records[0].authenticated_caller.is_none());
+        assert_eq!(
+            snapshot.records[1].authenticated_caller.as_deref(),
+            Some(identity(72).public_key())
+        );
+        assert!(snapshot
+            .records
+            .iter()
+            .all(|row| row.complete && !row.observation_failed));
     }
     #[test]
     fn request_observer_matches_independent_client_received_signed_frame_lengths() {

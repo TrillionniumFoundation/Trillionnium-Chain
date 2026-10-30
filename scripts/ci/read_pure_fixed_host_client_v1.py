@@ -15,6 +15,7 @@ import json
 from pathlib import Path
 
 import check_pure_pon_pressure_v2 as pressure
+import check_pure_pon_fresh_caller_v1 as fresh
 from check_pure_pon_attacker_cost_v1 import parse_raw
 import read_native_history_verifier as owner
 
@@ -23,6 +24,7 @@ RESULT_SCHEMA = "pon-pure-fixed-host-client-readback-v1"
 PROFILE = owner.PURE_CLIENT_PROFILE
 EXPERIMENTS = {
     "pure-pressure": "pure_pon_cold_shared_domain_pressure_fixed_host_client_v1",
+    "fresh-caller-pressure": "pure_pon_cold_shared_domain_fresh_caller_pressure_fixed_host_client_v1",
     "receiver-owner-supplement": "receiver_owner::whole_receiver_owner_pressure_fixed_host_client_v1",
 }
 require = owner.require
@@ -57,8 +59,8 @@ def check_directory(directory, binary_sha256, outer_cgroup, experiment):
     manifest, manifest_sha = phase_file(directory / "campaign.json")
     require(owner.digest(composition["campaign_sha256"]) == manifest_sha,
             "composition must bind actual original campaign bytes")
-    expected_schema = (pressure.SCHEMA if experiment == "pure-pressure"
-                       else "pon-pure-receiver-owner-campaign-v1")
+    expected_schema = {"pure-pressure": pressure.SCHEMA, "fresh-caller-pressure": fresh.SCHEMA,
+                       "receiver-owner-supplement": "pon-pure-receiver-owner-campaign-v1"}[experiment]
     require(manifest["schema"] == expected_schema, "original data-layout namespace required")
     expected = list(pressure.PHASES)
     require([row["phase"] for row in composition["phases"]] == expected
@@ -66,7 +68,7 @@ def check_directory(directory, binary_sha256, outer_cgroup, experiment):
             and [row["phase"] for row in manifest["phases"]] == expected,
             "complete ordered original three phases required")
     prepared = pressure.load(directory / "preparation.json")
-    pressure.preparation(prepared)
+    pressure.preparation(fresh.original_contract(prepared) if experiment == "fresh-caller-pressure" else prepared)
     seed_tip = pressure.packet(pressure.raw_hex(prepared["seed"][-1]))["id"]
     rows = []
     for binding in composition["phases"]:
@@ -74,6 +76,8 @@ def check_directory(directory, binary_sha256, outer_cgroup, experiment):
         phase, sha = phase_file(directory / binding["file"])
         require(phase["phase"] == name and owner.digest(binding["sha256"]) == sha,
                 "composition must bind exact ordered raw phase bytes")
+        if experiment == "fresh-caller-pressure":
+            fresh.original_contract(phase)
         phase_directory = directory / name
         native_directory = phase_directory / "independent-client"
         require(phase_directory.is_dir() and not phase_directory.is_symlink()

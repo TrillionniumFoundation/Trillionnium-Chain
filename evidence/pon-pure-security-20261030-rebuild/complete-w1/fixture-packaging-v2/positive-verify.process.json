@@ -1,0 +1,24 @@
+{
+  "schema": "pon-w1-actual-process-v1",
+  "command": [
+    "env",
+    "RAYON_NUM_THREADS=2",
+    "/tmp/pon-proof-rebuild/actual-cases/verifier",
+    "verify",
+    "/tmp/pon-proof-rebuild/fixture-v2/guest.bin",
+    "/tmp/pon-proof-rebuild/fixture-v2/input.bin",
+    "/tmp/pon-proof-rebuild/fixture-v2/receipt.bin"
+  ],
+  "started_utc": "2026-10-30T01:38:59.816948+00:00",
+  "timeout_seconds": 30,
+  "source_sha": null,
+  "timed_out": false,
+  "consensus_authority": false,
+  "returncode": 0,
+  "wall_seconds": 3.727610743000241,
+  "user_cpu_seconds": 1.6076929999999998,
+  "system_cpu_seconds": 0.040341999999999996,
+  "max_waited_descendant_rss_kib": 36776,
+  "rss_scope": "maximum reported for the waited child family; not total cgroup peak",
+  "finished_utc": "2026-10-30T01:39:03.544604+00:00"
+}

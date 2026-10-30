@@ -1,0 +1,58 @@
+{
+  "schema": "pon-rebuild-local-validation-summary-v1",
+  "base_commit": "540d72356a921da31dde1113537382e5c0f0c4fd",
+  "source_scope": "uncommitted rebuilt candidate; exact source identities retained separately",
+  "native": {
+    "crypto_default_release": {
+      "passed": 130,
+      "failed": 0,
+      "ignored": 0
+    },
+    "consensus": {
+      "passed": 6,
+      "failed": 0
+    },
+    "public_ingress": {
+      "passed": 183,
+      "failed": 0
+    },
+    "pressure_controls_after_final_retention_fix": {
+      "passed": 19,
+      "failed": 0,
+      "ignored": 16
+    },
+    "authenticated_caller_rerun": {
+      "passed": 2,
+      "already_in_public_ingress_count": true
+    }
+  },
+  "python_controls": {
+    "source_integrity": 34,
+    "project_boundary": 16,
+    "risk_model": 23,
+    "quantum_daa": 7,
+    "quantum_daa_native_parity_executed": 3
+  },
+  "main_clippy": {
+    "passed": true,
+    "packages": [
+      "trnm-crypto-primitives",
+      "trnm-pon-node"
+    ],
+    "release": true,
+    "all_features": true,
+    "all_targets": true,
+    "locked": true,
+    "offline": true,
+    "deny_warnings": true
+  },
+  "cargo_metadata_workspace_packages": 26,
+  "main_lockfile_sha256": "9daaf7ce63bfcab58efc8e08ca5134bfba9c97ec7e615cd6ad80e54be30b64cb",
+  "main_lockfile_unchanged": true,
+  "native_fixed_host_campaign_executed": false,
+  "production_qualified": false,
+  "quantum_security_qualified": false,
+  "global_work_cost_lower_bound_proved": false,
+  "main_cargo_resolved_linux_default_nodes": 132,
+  "main_cargo_resolved_linux_all_feature_nodes": 227
+}

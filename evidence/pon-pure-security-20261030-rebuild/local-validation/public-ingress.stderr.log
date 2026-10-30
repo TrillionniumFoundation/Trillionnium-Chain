@@ -1,0 +1,30 @@
+
+thread '<unnamed>' (68685) panicked at crates/trnm-pon-node/src/ingress/public_v3/intake.rs:330:13:
+test-only lease poison
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread '<unnamed>' (68688) panicked at crates/trnm-pon-node/src/ingress/public_v3/intake.rs:460:13:
+test-only lock poison
+
+thread '<unnamed>' (68801) panicked at crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs:1060:13:
+injected observation writer failure
+
+thread 'ingress::public_v3::request_observation::tests::submit_phase_outcomes_are_bounded_and_keep_abandoned_measurements_unknown' (68820) panicked at crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs:676:13:
+observation must retain unfinished admission
+
+thread 'ingress::public_v3::scalar_cpu::metered_fact_tests::panic_fences_shared_budget_without_rewriting_native_history' (68991) panicked at crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_metered_fact_tests.rs:350:17:
+assertion `left == right` failed: injected W1 callback unwind
+  left: 1
+ right: 0
+
+thread '<unnamed>' (69028) panicked at crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_tests.rs:83:17:
+controlled actual worker unwind
+
+thread 'pon-exec-0' (69182) panicked at crates/trnm-pon-node/src/ingress/public_v3.rs:5563:41:
+genuine test worker unwind
+
+thread '<unnamed>' (69284) panicked at crates/trnm-pon-node/src/ingress/public_v3.rs:4859:13:
+controlled request registry poison
+
+thread '<unnamed>' (69506) panicked at crates/trnm-pon-node/src/ingress/public_v3.rs:6024:13:
+controlled poison

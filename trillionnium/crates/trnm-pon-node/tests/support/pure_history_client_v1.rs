@@ -159,6 +159,9 @@ pub(super) fn write_composition(root: &Path, mode: ClientMode, experiment: &str)
     }
     let selector = match experiment {
         "pure-pressure" => "pure_pon_cold_shared_domain_pressure_fixed_host_client_v1",
+        "fresh-caller-pressure" => {
+            "pure_pon_cold_shared_domain_fresh_caller_pressure_fixed_host_client_v1"
+        }
         "receiver-owner-supplement" => {
             "receiver_owner::whole_receiver_owner_pressure_fixed_host_client_v1"
         }

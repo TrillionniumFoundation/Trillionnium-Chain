@@ -1,0 +1,19 @@
+{
+  "schema": "pon-workflow-syntax-v1",
+  "workflow": ".github/workflows/pon-w1-audit-one-research.yml",
+  "bash_blocks_checked": 8,
+  "permissions": {
+    "contents": "read"
+  },
+  "steps": [
+    "Reserve private output and bind source",
+    "Exercise bounded fixture and case-reader controls",
+    "Restore only the pinned durable historical fixture",
+    "Install pinned native toolchain without guest tools",
+    "Build and test only the exact locked host graph",
+    "Retain the original complete audit on the real proof",
+    "Measure the eight fixed real cases",
+    "Preserve exact source result even when an earlier phase failed"
+  ],
+  "hosted_workflow_executed_by_check": false
+}

@@ -1,0 +1,6 @@
+{
+  "schema": "pon-w1-local-object-removal-observation-v1",
+  "monolithic_object_reappeared_after_prior_tool_return": true,
+  "cause_identified": false,
+  "removed_again_before_final_restoration": true
+}

@@ -750,6 +750,80 @@ fn capture_receiver(
     Ok(())
 }
 
+fn receiver_report_or_retain_failure(
+    path: &Path,
+    phase: &str,
+    partial: impl FnOnce() -> Value,
+) -> io::Result<Value> {
+    match file_binding(path, "receiver-report.json", REPORT_LIMIT).and_then(|(_, raw)| parsed(&raw))
+    {
+        Ok(report) => Ok(report),
+        Err(cause) => {
+            // Missing/malformed terminal output is not a successful receiver
+            // report. Retain the actual controller-side observations before
+            // the enclosing failure path unwinds and closes its owned child.
+            support::write_new(
+                &path.join("receiver-report-failure-v1.json"),
+                &json!({"schema":"pon-pure-receiver-report-failure-v1", "phase":phase,
+                    "error":cause.to_string(),"error_kind":format!("{:?}", cause.kind()),
+                    "partial_controller_observations":partial(),
+                    "receiver_report_available":false,"finite_qualification":false,
+                    "original_campaign_qualification":false,"physical_authentication":false,
+                    "public_fairness_qualified":false,"production_qualified":false,
+                    "work_hardness_qualified":false,"installation_authorized":false}),
+            );
+            Err(cause)
+        }
+    }
+}
+
+#[test]
+fn native_receiver_terminal_failure_retains_partial_without_inventing_report() {
+    for malformed in [false, true] {
+        let path = tempfile::tempdir().unwrap();
+        if malformed {
+            fs::write(path.path().join("receiver-report.json"), b"{truncated").unwrap();
+        }
+        let partial = json!({"scope":"synthetic parser control only", "rounds":[{"ended_ns":45_000_000_000u64}],
+            "receiver_wait4":{"exit_success":false},"original_window_ns":WINDOW_NS,
+            "actors":[{"pid":321,"exit_success":false,"parent_forced_kill":false}],
+            "actor_process_costs":[{"pid":321,"successful_reaps":1,"exit_success":false,
+                "rusage":{"total_cpu_ns":123456}}]});
+        let result = receiver_report_or_retain_failure(path.path(), "baseline", || partial.clone());
+        assert!(result.is_err());
+        let retained: Value = serde_json::from_slice(
+            &fs::read(path.path().join("receiver-report-failure-v1.json")).unwrap(),
+        )
+        .unwrap();
+        assert_eq!(retained["partial_controller_observations"], partial);
+        assert_eq!(
+            retained["partial_controller_observations"]["actors"],
+            partial["actors"]
+        );
+        assert_eq!(
+            retained["partial_controller_observations"]["actor_process_costs"],
+            partial["actor_process_costs"]
+        );
+        assert_eq!(retained["finite_qualification"], false);
+        assert_eq!(retained["receiver_report_available"], false);
+        assert_ne!(retained["schema"], PHASE_SCHEMA);
+        if !malformed {
+            assert!(!path.path().join("receiver-report.json").exists());
+        }
+    }
+    let path = tempfile::tempdir().unwrap();
+    let valid = json!({"schema":NODE_SCHEMA, "scope":"synthetic parser control only"});
+    support::write_new(&path.path().join("receiver-report.json"), &valid);
+    assert_eq!(
+        receiver_report_or_retain_failure(path.path(), "baseline", || panic!(
+            "valid report must not synthesize failure"
+        ))
+        .unwrap(),
+        valid
+    );
+    assert!(!path.path().join("receiver-report-failure-v1.json").exists());
+}
+
 #[test]
 fn native_receiver_ready_deadline_retains_partial_prefix_and_body() {
     let mut observations = Vec::new();
@@ -1195,8 +1269,16 @@ fn receiver_phase_inner(
     if let Err(e) = captured {
         errors.push(e.to_string());
     }
-    let (_, raw) = file_binding(path, "receiver-report.json", REPORT_LIMIT).unwrap();
-    let mut report = parsed(&raw).unwrap();
+    let mut report = receiver_report_or_retain_failure(path, mode, || json!({
+        "parent_pid":std::process::id(),"receiver_pid":receiver_pid,
+        "receiver_wait4":cost,"actors":actors,"actor_process_costs":actor_process_costs,
+        "submissions":submissions,"history":histories,
+        "rounds":rounds,"samples":samples,"errors":errors,
+        "original_window_ns":WINDOW_NS,"original_actor_call_cap":CALL_CAP,
+        "client_execution_profile":if client_mode == pure_history_client::ClientMode::FixedHostV1 {
+            history_verifier::PURE_CLIENT_PROFILE
+        } else { "original-outer" }
+    })).unwrap_or_else(|cause| panic!("receiver terminal report unavailable; actual partial observations retained: {cause}"));
     for round in &mut rounds {
         let a = round["started_ns"].as_u64().unwrap();
         let b = round["ended_ns"].as_u64().unwrap();

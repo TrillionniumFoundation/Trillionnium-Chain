@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/workspace/scratch/f4a65c4581e7/pon-security-work/scripts/ci/prepare_w1_audit_one_fixture.py", line 254, in <module>
+    main()
+  File "/workspace/scratch/f4a65c4581e7/pon-security-work/scripts/ci/prepare_w1_audit_one_fixture.py", line 248, in main
+    result = (restore_objects(args.objects, args.out) if args.objects is not None
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f4a65c4581e7/pon-security-work/scripts/ci/prepare_w1_audit_one_fixture.py", line 150, in restore_objects
+    require(entry.name in expected_names and entry.name not in seen,
+  File "/workspace/scratch/f4a65c4581e7/pon-security-work/scripts/ci/prepare_w1_audit_one_fixture.py", line 43, in require
+    raise ValueError(message)
+ValueError: unexpected object-directory entry

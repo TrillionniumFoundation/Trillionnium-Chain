@@ -19,6 +19,8 @@ mod producer_candidate_tests;
 pub mod public_product;
 pub mod rejection_cache;
 pub mod structured;
+#[cfg(test)]
+mod statement_boundaries;
 #[cfg(feature = "transparent-w1-admission-research")]
 pub mod transparent_admission;
 

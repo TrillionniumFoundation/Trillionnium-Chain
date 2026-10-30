@@ -1,0 +1,77 @@
+{
+  "assets": {
+    "guest.bin": {
+      "bytes": 291592,
+      "object": {
+        "bytes": 111927,
+        "chunks": [
+          {
+            "bytes": 111927,
+            "file": "3110497b22927e6cd522b2af988ced45e2e83b7a5fdc539d8f9d79c9c2812a5c.gz",
+            "sha256": "3110497b22927e6cd522b2af988ced45e2e83b7a5fdc539d8f9d79c9c2812a5c"
+          }
+        ],
+        "sha256": "3110497b22927e6cd522b2af988ced45e2e83b7a5fdc539d8f9d79c9c2812a5c"
+      },
+      "sha256": "b8f32cd9c1b1edbb0cde04acf9aab146b7ff1aeeeaee0188e4d6e80d077b0c0a"
+    },
+    "input.bin": {
+      "bytes": 49640,
+      "object": {
+        "bytes": 14057,
+        "chunks": [
+          {
+            "bytes": 14057,
+            "file": "b2efce56e8cbc2b2987511a2f2ea9e5e8fb41c3544b7cc51160ef6a3e02861c3.gz",
+            "sha256": "b2efce56e8cbc2b2987511a2f2ea9e5e8fb41c3544b7cc51160ef6a3e02861c3"
+          }
+        ],
+        "sha256": "b2efce56e8cbc2b2987511a2f2ea9e5e8fb41c3544b7cc51160ef6a3e02861c3"
+      },
+      "sha256": "4babd290b10f7a68be27c2adf3b97448bb7bef04dba8bcb97f914acf4ac69020"
+    },
+    "receipt.bin": {
+      "bytes": 15862780,
+      "object": {
+        "bytes": 13906979,
+        "chunks": [
+          {
+            "bytes": 7000000,
+            "file": "dfa0e6f7a5117456451fbf4e834d41b7608b868f3f0173addfc9c8b9e763665c.gz.part",
+            "sha256": "dfa0e6f7a5117456451fbf4e834d41b7608b868f3f0173addfc9c8b9e763665c"
+          },
+          {
+            "bytes": 6906979,
+            "file": "286ec10c307a80343892bbd4b63fa612ea84a5b96dd986ea1142efe0952782c5.gz.part",
+            "sha256": "286ec10c307a80343892bbd4b63fa612ea84a5b96dd986ea1142efe0952782c5"
+          }
+        ],
+        "sha256": "0503d0e802eebd8ca0c5cfd5f54d66085c7dfe3f1fb4f523d568809c0a3b0056"
+      },
+      "sha256": "0a5336a797c51829ed25d4ec2f1a03f4f56fda4c737a230b493d4abbe96f0ec8"
+    }
+  },
+  "chunking": {
+    "max_chunk_bytes": 7000000,
+    "max_chunks_per_object": 2,
+    "ordered_concatenation": "original-gzip-bytes"
+  },
+  "compression": {
+    "format": "gzip",
+    "level": 9,
+    "mtime": 0,
+    "single_member": true
+  },
+  "historical_origin": {
+    "archive_bytes": 80366759,
+    "archive_sha256": "bae22e7fab8f5475dc396a4225292f90e582a92558fecf1710e30da0b0d76ecc",
+    "artifact_id": 12784520070,
+    "repository": "TrillionniumFoundation/Trillionnium-Chain",
+    "run_id": 40608715148,
+    "source_sha": "a54dc7355f58f40784b5a71fe7e73c4062a14951"
+  },
+  "historical_zip_verified_when_reading_objects": false,
+  "new_proof_generated": false,
+  "proof_verified_by_manifest": false,
+  "schema": "pon-w1-durable-gzip-objects-v2"
+}

@@ -23,6 +23,18 @@ PHASES = ("directory", "node_open", "bootstrap_material", "template_acquisition"
           "first_native_admission", "node_close", "cold_node_open", "cold_packet_readback",
           "cold_node_close")
 RECURRING = ("producer_setup", "all_attempt_generation", "packet_encoding", "first_native_admission")
+ROOT = Path(__file__).resolve().parents[2]
+GENESIS_TIMESTAMP = 1_800_010_000
+EVALUATION_PROFILE = "native-public-evaluation-dev-v1"
+TASK_PROFILE = "consensus-maintenance-continuity-dev-v1"
+PACKET_BYTES = 318 + 2 + 49188
+# The original no-override V5 driver deterministically mines the same seed
+# template in every fresh store. This pins that complete native fixture rather
+# than treating agreement between attacker-controlled arms as independent proof.
+# Source: run 40845715652, x64 artifact 12884798290, source 974932be6dcfe830ce1ce92d58cb10e89cb8358d,
+# cost/stdout.jsonl.gz, cohort.native_template_header. Full application/genesis
+# execution is NOT independently repeated by this standard-library reader.
+NATIVE_TEMPLATE_SHA256 = "a6b5eb9020a41796ccd885b6c3051a4b12585e77c35269e26dcfc7ab6a4c4204"
 
 
 def require(value, message):
@@ -67,6 +79,78 @@ def hex_value(value, length):
     require(isinstance(value, str) and len(value) == length and
             all(c in "0123456789abcdef" for c in value), "hex identity")
     return value
+
+
+def pon_hash(tag, *parts):
+    tag = tag.encode("ascii")
+    digest = hashlib.sha256(b"TRNM-PON1\0" + len(tag).to_bytes(2, "little") + tag)
+    for part in parts:
+        digest.update(len(part).to_bytes(4, "little"))
+        digest.update(part)
+    return digest.digest()
+
+
+def fixed_work_context():
+    """Derive the original Settings profile commitments, not an observed arm."""
+    def config(name):
+        return parsed((ROOT / "config/pon" / name).read_bytes())
+
+    def canonical(value):
+        return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=True).encode()
+
+    params = config("devnet-v1.json")
+    evaluation = config("public-evaluation-native-v1.json")
+    continuity = config("continuity-v1.json")
+    registry = config("qualified-task-lifecycle-v4.json")
+    work = config("work-profile-v1.json")
+    require(params["consensus_revision"] == 3 and params["production_activation"] is False
+            and evaluation["id"] == EVALUATION_PROFILE and evaluation["storage_revision"] == 2
+            and evaluation["production_activation"] is False
+            and continuity["id"] == TASK_PROFILE and continuity["consensus_revision"] == 12
+            and continuity["production_eligible"] is False and continuity["hardness_accepted"] is False
+            and registry["id"] == "signed-task-lifecycle-dev-v4" and registry["consensus_revision"] == 9
+            and work["n"] == 64 and work["proof_bytes"] == 49188, "original frozen profile")
+    params.update(evaluation["genesis_overrides"])
+    params.update(
+        evaluation_policy_hash=pon_hash("evaluation-policy", canonical(evaluation)).hex(),
+        consensus_revision=12, work_task_profile=TASK_PROFILE,
+        continuity_policy_hash=pon_hash("consensus-maintenance-continuity-policy-v1", canonical(continuity)).hex(),
+        qualified_task_registry_hash=pon_hash("qualified-task-registry-v4", canonical(registry)).hex(),
+        genesis_timestamp=GENESIS_TIMESTAMP,
+        chain_label=f"trnm-pon-task-lifecycle-wall-devnet-12-{EVALUATION_PROFILE}-{GENESIS_TIMESTAMP}-evaluation-storage2")
+    target = bytes.fromhex(hex_value(params["initial_target_hex"], 64))
+    require(target == bytes.fromhex("7f" + "ff" * 31)
+            and target.hex() == params["pow_limit_hex"], "original nonzero target")
+    matrices = [b"".join(((scale * i + offset) % modulus).to_bytes(4, "little")
+                         for i in range(4096))
+                for scale, offset, modulus in ((13, 17, 257), (29, 31, 263))]
+    return dict(network=pon_hash("network", params["chain_label"].encode("ascii")),
+                parameters=pon_hash("parameters", canonical(params), canonical(config("ledger-v1.json")),
+                                    canonical(work), canonical(config("model-family-v1.json"))),
+                target=target, task=pon_hash("task", *matrices))
+
+
+def checked_template(row, context):
+    raw = bytes.fromhex(hex_value(row["native_template_header"], 636))
+    require(raw[:6] == b"PNH1\x01\x00", "native header version")
+    require(raw[6:38] == context["network"] and raw[38:70] == context["parameters"],
+            "original native context")
+    require(raw[70:102].hex() == row["parent"] and int.from_bytes(raw[102:110], "little") == 1
+            and int.from_bytes(raw[110:118], "little") == GENESIS_TIMESTAMP + 11,
+            "original native parent/height/time")
+    require(raw[118:150] == context["target"] and row["target"] == context["target"].hex(),
+            "original nonzero target")
+    require(raw[182:214] == pon_hash("transactions-empty")
+            and raw[278:310] == context["task"] and row["task"] == context["task"].hex(),
+            "original native task/transactions")
+    require(hashlib.sha256(raw).hexdigest() == NATIVE_TEMPLATE_SHA256,
+            "original fixed native template")
+    return raw
+
+
+def attempt_challenge(template, nonce):
+    require(type(nonce) is int and 0 <= nonce < 1 << 64, "nonce encoding")
+    return pon_hash("challenge", template[:-8] + nonce.to_bytes(8, "little")).hex()
 
 
 def read_rows(path):
@@ -135,6 +219,8 @@ def validate(rows):
                 rotation = (horizon_index + int(reuse)) % len(arms)
                 arms = arms[rotation:] + arms[:rotation]
                 expected_order.extend((round_id, horizon, reuse, arm) for arm in arms)
+    context = fixed_work_context()
+    work_per_ticket = (1 << 256) // (int.from_bytes(context["target"], "big") + 1)
     groups, observed, paired, paired_records, global_ids = [], set(), {}, {}, set()
     for position, row in enumerate(rows[1:-1]):
         require(row["kind"] == "cohort" and row["status"] == "complete", "cohort status")
@@ -155,7 +241,7 @@ def validate(rows):
                 row["producer_setup_calls"] == (1 if row["reuse"] else horizon), "setup/search plan")
         for name in ("parent", "target", "task", "stream_sha256"):
             hex_value(row[name], 64)
-        hex_value(row["native_template_header"], 636)
+        template = checked_template(row, context)
         identity = (row["parent"], row["target"], row["task"], row["native_template_header"], row["stream_sha256"])
         pair_key = (row["round"], horizon)
         require(pair_key not in paired or paired[pair_key] == identity, "paired complete source stream")
@@ -180,6 +266,8 @@ def validate(rows):
                         "disjoint fixed nonce window")
                 for name in ("challenge", "proof_sha256", "ticket"):
                     hex_value(trial[name], 64)
+                require(trial["challenge"] == attempt_challenge(template, trial["nonce"]),
+                        "attempt challenge differs from canonical nonce header")
                 hit = bytes.fromhex(trial["ticket"]) <= bytes.fromhex(row["target"])
                 require(type(trial["target_hit"]) is bool and trial["target_hit"] == hit and
                         hit == (search["won"] and j == len(trials) - 1), "original ticket predicate")
@@ -189,6 +277,7 @@ def validate(rows):
                     require(packet not in ids, "duplicate fast-path admission")
                     ids.add(packet)
                     admitted_bytes[packet] = number(trial["packet_bytes"])
+                    require(admitted_bytes[packet] == PACKET_BYTES, "complete original packet bytes")
                     admission.append(timing(trial["native_admission"]))
                     wins += 1
                 else:
@@ -258,6 +347,20 @@ def validate(rows):
             "all_constructor_roster": list(ALL_ARMS), "actual_legal_producer_roster": list(ARMS),
             "first_admission_calls": sum(r["winners"] for r in groups),
             "distinct_fixture_packet_ids_across_paired_cohorts": len(global_ids),
+            "context_binding": {
+                "schema": "pon-legal-ticket-fixed-context-v1",
+                "network": context["network"].hex(), "parameters": context["parameters"].hex(),
+                "task": context["task"].hex(), "target": context["target"].hex(),
+                "genesis_timestamp": GENESIS_TIMESTAMP, "template_sha256": NATIVE_TEMPLATE_SHA256,
+                "all_recorded_nonce_challenges_recomputed": True,
+                "complete_seed_template_matches_original_native_fixture": True,
+                "required_work_per_ticket": work_per_ticket,
+                "conditional_sibling_work_units_across_repeated_cohorts":
+                    work_per_ticket * sum(r["winners"] for r in groups),
+                "repeated_sibling_observations_are_chainwork_credit": False,
+                "independent_genesis_application_replay": False,
+                "full_work_transcripts_replayed": False,
+                "native_consensus_admission_reexecuted": False},
             "groups": groups, "comparisons": comparisons,
             "settings_setup": timing(begin["settings_setup"]),
             "global_support_probe": probes,

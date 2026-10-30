@@ -1,0 +1,11 @@
+{
+  "schema": "pon-rebuild-recovery-scope-v1",
+  "recorded_utc": "2026-10-30T01:14:31.729488+00:00",
+  "current_baseline": "540d72356a921da31dde1113537382e5c0f0c4fd",
+  "previous_reported_local_commit": "bb358a91adaaea757a5e3633fb920bd86ebb03f7",
+  "previous_reported_local_tree": "20ae8c7fc17d973cb63affb69a36943c3f0cba88",
+  "previous_local_checkout_and_measurement_files_recovered": false,
+  "new_observations_are_reexecuted": true,
+  "previous_unrecovered_timings_recreated": false,
+  "authority_from_recovery_record": false
+}

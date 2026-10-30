@@ -40,6 +40,46 @@ use trnm_pon_node::{
 use trnm_protocol::pon_wire::{hash, Header};
 
 const SCHEMA: &str = "pon-pure-pressure-v3";
+const FRESH_CALLER_SCHEMA: &str = "pon-pure-pressure-fresh-caller-v1";
+fn pressure_schema(fresh_callers: bool) -> &'static str {
+    if fresh_callers {
+        FRESH_CALLER_SCHEMA
+    } else {
+        SCHEMA
+    }
+}
+
+fn fresh_caller_mode(job: &Value) -> bool {
+    job.get("fresh_callers")
+        .map(|value| value.as_bool().expect("explicit caller-mode boolean"))
+        .unwrap_or(false)
+}
+
+#[test]
+fn fresh_caller_namespace_binds_phase_actor_and_every_call() {
+    assert!(!fresh_caller_mode(&json!({})));
+    assert!(fresh_caller_mode(&json!({"fresh_callers":true})));
+    assert!(
+        std::panic::catch_unwind(|| fresh_caller_mode(&json!({"fresh_callers":"true"}))).is_err()
+    );
+    let mut keys = BTreeSet::new();
+    for phase in ["from-zero", "correct-product-false-trace"] {
+        for actor in 0..ATTACKERS as u64 {
+            for sequence in 0..CALL_CAP as u64 {
+                assert!(keys.insert(
+                    support::fresh_caller(phase, actor, sequence)
+                        .public_key()
+                        .to_owned()
+                ));
+            }
+        }
+    }
+    assert_eq!(keys.len(), 2 * ATTACKERS * CALL_CAP);
+    assert_eq!(
+        support::fresh_caller("from-zero", 0, 0).public_key(),
+        "b3365953873098069d9cb0ae19cf24704699085bc396ef420c2312dfcf1d8d8a"
+    );
+}
 
 #[test]
 #[ignore = "exact subprocess fixture for the wait4 owner control"]
@@ -421,6 +461,14 @@ fn native_call_window_refuses_late_entry_without_extending_deadlines() {
 }
 
 fn prepare(root: &Path, settings: &Settings) -> (Vec<Packet>, Vec<Packet>) {
+    prepare_with_caller_mode(root, settings, false)
+}
+
+fn prepare_with_caller_mode(
+    root: &Path,
+    settings: &Settings,
+    fresh_callers: bool,
+) -> (Vec<Packet>, Vec<Packet>) {
     let started = Instant::now();
     let cpu = support::thread_cpu();
     let mut miner =
@@ -474,7 +522,7 @@ fn prepare(root: &Path, settings: &Settings) -> (Vec<Packet>, Vec<Packet>) {
     }
     support::write_new(
         &root.join("preparation.json"),
-        &json!({"schema":SCHEMA,
+        &json!({"schema":pressure_schema(fresh_callers),
         "seed_transfers":1024,"seed_blocks":4,"business_blocks":21,
         "thread_cpu_ns":support::cpu_delta(cpu),"wall_ns":started.elapsed().as_nanos(),
         "seed":seed.iter().map(|p|hex::encode(p.encode().unwrap())).collect::<Vec<_>>(),
@@ -488,6 +536,7 @@ fn attack(job: &Value, path: &Path) -> Value {
     assert_eq!(job["policy"], support::policy_observation());
     let actor = job["actor"].as_u64().unwrap();
     let mode = job["mode"].as_str().unwrap();
+    let fresh_callers = fresh_caller_mode(job);
     assert!(matches!(mode, "from-zero" | "correct-product-false-trace"));
     let template = Header::decode(&hex::decode(job["header"].as_str().unwrap()).unwrap()).unwrap();
     let transactions: Vec<Vec<u8>> = job["transactions"]
@@ -579,15 +628,22 @@ fn attack(job: &Value, path: &Path) -> Value {
         let (call, call_entry) = if phase_gate >= epoch + WINDOW_NS {
             (None, None)
         } else {
-            let (call, entry) = support::call_with_entry_observation(
-                address,
-                &settings,
-                Request::Submit {
-                    packet: hex::encode(&raw),
-                },
-                80 + ((actor * 37 + sequence) % 150) as u8,
-                epoch,
-            );
+            let request = Request::Submit {
+                packet: hex::encode(&raw),
+            };
+            let (call, entry) = if fresh_callers {
+                support::call_with_fresh_caller_entry_observation(
+                    address, &settings, request, mode, actor, sequence, epoch,
+                )
+            } else {
+                support::call_with_entry_observation(
+                    address,
+                    &settings,
+                    request,
+                    80 + ((actor * 37 + sequence) % 150) as u8,
+                    epoch,
+                )
+            };
             (call, Some(entry))
         };
         // Retain the final preparation even if either original phase gate
@@ -794,7 +850,7 @@ fn pure_pressure_v2_actor_entry() {
     };
     support::write_new(
         &path.parent().unwrap().join("report.json"),
-        &json!({"schema":SCHEMA,"result":value,"error":error}),
+        &json!({"schema":pressure_schema(fresh_caller_mode(&job)),"result":value,"error":error}),
     );
     support::write_new(
         &path
@@ -868,6 +924,7 @@ fn phase(
     business: &[Packet],
     mode: &str,
     client_mode: pure_history_client::ClientMode,
+    fresh_callers: bool,
 ) -> Value {
     fs::create_dir(path).unwrap();
     let mut receiver =
@@ -902,13 +959,17 @@ fn phase(
     let mut actors = Vec::new();
     if mode != "baseline" {
         for actor in 0..ATTACKERS {
-            actors.push(support::Actor::spawn(
-                &path.join(format!("actor-{actor}")),
-                json!({
+            let mut job = json!({
                 "actor":actor,"mode":mode,"address":addresses[actor%2].to_string(),
                 "header":hex::encode(business[0].header.encode()),
                 "transactions":business[0].transactions.iter().map(hex::encode).collect::<Vec<_>>(),
-                "start_path":path.join("start.json"),"policy":support::policy_observation()}),
+                "start_path":path.join("start.json"),"policy":support::policy_observation()});
+            if fresh_callers {
+                job["fresh_callers"] = json!(true);
+            }
+            actors.push(support::Actor::spawn(
+                &path.join(format!("actor-{actor}")),
+                job,
             ));
         }
     }
@@ -946,7 +1007,12 @@ fn phase(
             server.resource_profile(),
             support::policy().pure_admission_v2_id()
         );
-        let observer = PublicRequestObserver::new(16_384).unwrap();
+        let observer = if fresh_callers {
+            PublicRequestObserver::new_with_authenticated_callers(16_384)
+        } else {
+            PublicRequestObserver::new(16_384)
+        }
+        .unwrap();
         let meter = Arc::new(Mutex::new(public_v3::PublicMetrics::default()));
         observers.push(observer.clone());
         metrics.push(meter.clone());
@@ -1145,7 +1211,7 @@ fn phase(
         active_position(&owner.lock().unwrap());
     let (client_tip, client_height, client_generation) = verifier.snapshot_position();
     let client_process = verifier.finish();
-    let mut report = json!({"schema":SCHEMA,"phase":mode,"epoch_monotonic_ns":epoch,"window_ns":WINDOW_NS,
+    let mut report = json!({"schema":pressure_schema(fresh_callers),"phase":mode,"epoch_monotonic_ns":epoch,"window_ns":WINDOW_NS,
         "policy":support::policy_observation(),"listeners":2,"shared_cpu_domain":shared,
         "ready_actors":if mode=="baseline" {0}else{ATTACKERS},
         "initial_budget":initial_budget,"initial_flow":initial_flow,"initial_admission":initial_admission,
@@ -1178,22 +1244,34 @@ fn phase(
 #[test]
 #[ignore = "90-second separate-process pure-PoN pressure campaign; retains failed observations"]
 fn pure_pon_cold_shared_domain_pressure_v2() {
-    run_pressure_campaign(pure_history_client::ClientMode::OriginalOuter);
+    run_pressure_campaign(pure_history_client::ClientMode::OriginalOuter, false);
 }
 
 #[test]
 #[ignore = "new explicit fixed-Host client composition; original 30-second windows and all failures remain"]
 fn pure_pon_cold_shared_domain_pressure_fixed_host_client_v1() {
-    run_pressure_campaign(pure_history_client::ClientMode::FixedHostV1);
+    run_pressure_campaign(pure_history_client::ClientMode::FixedHostV1, false);
 }
 
-fn run_pressure_campaign(client_mode: pure_history_client::ClientMode) {
+#[test]
+#[ignore = "fresh caller per phase/actor/call; original finite windows and failures retained"]
+fn pure_pon_cold_shared_domain_fresh_caller_pressure_v1() {
+    run_pressure_campaign(pure_history_client::ClientMode::OriginalOuter, true);
+}
+
+#[test]
+#[ignore = "fresh caller with original fixed Host client; original finite service gates remain"]
+fn pure_pon_cold_shared_domain_fresh_caller_pressure_fixed_host_client_v1() {
+    run_pressure_campaign(pure_history_client::ClientMode::FixedHostV1, true);
+}
+
+fn run_pressure_campaign(client_mode: pure_history_client::ClientMode, fresh_callers: bool) {
     let output = PathBuf::from(
         std::env::var_os("TRNM_PURE_PRESSURE_V2_OUT").expect("create-only output path"),
     );
     fs::create_dir(&output).unwrap();
     let settings = support::settings();
-    let (seed, business) = prepare(&output, &settings);
+    let (seed, business) = prepare_with_caller_mode(&output, &settings, fresh_callers);
     let mut summaries = Vec::new();
     for mode in ["baseline", "from-zero", "correct-product-false-trace"] {
         eprintln!("pure-PoN v2: {mode}, fixed 30s, cold shared CPU epoch, two listeners");
@@ -1204,6 +1282,7 @@ fn run_pressure_campaign(client_mode: pure_history_client::ClientMode) {
             &business,
             mode,
             client_mode,
+            fresh_callers,
         );
         support::write_new(&output.join(format!("{mode}.json")), &report);
         summaries.push(json!({"phase":mode,"file":format!("{mode}.json"),
@@ -1212,14 +1291,22 @@ fn run_pressure_campaign(client_mode: pure_history_client::ClientMode) {
     }
     support::write_new(
         &output.join("campaign.json"),
-        &json!({"schema":SCHEMA,
+        &json!({"schema":pressure_schema(fresh_callers),
         "window_ns":WINDOW_NS,"attackers":ATTACKERS,"actor_call_cap":CALL_CAP,"rounds":ROUNDS,
         "policy":support::policy_observation(),"phases":summaries,
         "scope":"finite same-host separate processes; independent History replay and signed 6-depth confirmation; diagnostic observations are not CPU authenticity or arbitrary-Sybil fairness",
         "public_fairness_qualified":false,"production_qualified":false,"work_hardness_qualified":false,
         "installation_authorized":false}),
     );
-    pure_history_client::write_composition(&output, client_mode, "pure-pressure");
+    pure_history_client::write_composition(
+        &output,
+        client_mode,
+        if fresh_callers {
+            "fresh-caller-pressure"
+        } else {
+            "pure-pressure"
+        },
+    );
     assert!(summaries.iter().all(|s|s["all_rounds_confirmed"]==true),
         "finite service failed; complete evidence retained; independent reader checks pressure/depletion/overlap");
 }

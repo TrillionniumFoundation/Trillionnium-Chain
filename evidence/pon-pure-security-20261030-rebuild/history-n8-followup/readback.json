@@ -1,0 +1,526 @@
+{
+  "archive_sha256": "87f5f7b1486b66d963c41228557f80f000d68295791012bb318321f9c1d07f50",
+  "artifact_id": 12922584378,
+  "binary_sha256": "123c08a3390569da3cd05441a4357f8dc601552413759cace7f77192e20efa64",
+  "history_resource_profile": "history-account-graph-resource-fence-v1",
+  "hostile_phases_missing_required_depletion": 6,
+  "in_window_depth_six_confirmations": 27,
+  "new_native_execution": false,
+  "original_three_run_campaign_passed": false,
+  "passing_original_baseline_phases": 3,
+  "phase_count": 9,
+  "phases": [
+    {
+      "actual_depletion_samples": 0,
+      "attack_calls_overlapping_each_round": [
+        0,
+        0,
+        0
+      ],
+      "attackers_ready": 0,
+      "budget_sample_count": 599,
+      "call_process_cpu_ns": 5800153166,
+      "confirmation_depths": [
+        6,
+        6,
+        6
+      ],
+      "confirmation_times_ns": [
+        9577915622,
+        17771617073,
+        26180082007
+      ],
+      "failing_original_requirements": [],
+      "full_work_accepted": 21,
+      "full_work_failed": 0,
+      "graph_resource_counters": {
+        "before_commit_checks": 48,
+        "binding_checks": 77178,
+        "binding_failed_checks": 0,
+        "graph_aborts": 0,
+        "graph_completed_node_bodies": 370383,
+        "graph_entries": 249,
+        "graph_exits": 249,
+        "graph_full_resource_checks": 47076,
+        "graph_max_node_window": 8,
+        "graph_node_checkpoints": 370383,
+        "imports": 21,
+        "imports_closed": 21,
+        "imports_failed": 0,
+        "kernel_checks": 77178,
+        "kernel_cpu_known_calls": 77178,
+        "kernel_cpu_ns": 3625153647,
+        "kernel_cpu_unknown_calls": 0,
+        "kernel_failed_checks": 0,
+        "kernel_wall_ns": 14675932128,
+        "native_cpu_checkpoints": 378184,
+        "scope_failures": 0,
+        "unfinished_scopes": 0
+      },
+      "maximum_observed_paid_cpu_debit_ns": 1418773674,
+      "minimum_observed_paid_credit_ns": 1656637945,
+      "mode": "baseline",
+      "reported_full_state_equality": true,
+      "reported_original_phase_criteria_met": true,
+      "run": 1
+    },
+    {
+      "actual_depletion_samples": 0,
+      "attack_calls_overlapping_each_round": [
+        1221,
+        1083,
+        1114
+      ],
+      "attackers_ready": 24,
+      "budget_sample_count": 591,
+      "call_process_cpu_ns": 5493999259,
+      "confirmation_depths": [
+        6,
+        6,
+        6
+      ],
+      "confirmation_times_ns": [
+        10458395298,
+        18842221888,
+        27464329723
+      ],
+      "failing_original_requirements": [
+        "observed genuine paid-credit depletion",
+        "paid-credit depletion overlapping at least one signed round"
+      ],
+      "full_work_accepted": 21,
+      "full_work_failed": 3819,
+      "graph_resource_counters": {
+        "before_commit_checks": 48,
+        "binding_checks": 77178,
+        "binding_failed_checks": 0,
+        "graph_aborts": 0,
+        "graph_completed_node_bodies": 370383,
+        "graph_entries": 249,
+        "graph_exits": 249,
+        "graph_full_resource_checks": 47076,
+        "graph_max_node_window": 8,
+        "graph_node_checkpoints": 370383,
+        "imports": 21,
+        "imports_closed": 21,
+        "imports_failed": 0,
+        "kernel_checks": 77178,
+        "kernel_cpu_known_calls": 77178,
+        "kernel_cpu_ns": 3477383511,
+        "kernel_cpu_unknown_calls": 0,
+        "kernel_failed_checks": 0,
+        "kernel_wall_ns": 14094173032,
+        "native_cpu_checkpoints": 378184,
+        "scope_failures": 0,
+        "unfinished_scopes": 0
+      },
+      "maximum_observed_paid_cpu_debit_ns": 7904205002,
+      "minimum_observed_paid_credit_ns": 1196881696,
+      "mode": "from-zero",
+      "reported_full_state_equality": true,
+      "reported_original_phase_criteria_met": false,
+      "run": 1
+    },
+    {
+      "actual_depletion_samples": 0,
+      "attack_calls_overlapping_each_round": [
+        1143,
+        1097,
+        1086
+      ],
+      "attackers_ready": 24,
+      "budget_sample_count": 592,
+      "call_process_cpu_ns": 5318390531,
+      "confirmation_depths": [
+        6,
+        6,
+        6
+      ],
+      "confirmation_times_ns": [
+        9851976580,
+        18343953326,
+        26745982205
+      ],
+      "failing_original_requirements": [
+        "observed genuine paid-credit depletion",
+        "paid-credit depletion overlapping at least one signed round"
+      ],
+      "full_work_accepted": 21,
+      "full_work_failed": 3820,
+      "graph_resource_counters": {
+        "before_commit_checks": 48,
+        "binding_checks": 77178,
+        "binding_failed_checks": 0,
+        "graph_aborts": 0,
+        "graph_completed_node_bodies": 370383,
+        "graph_entries": 249,
+        "graph_exits": 249,
+        "graph_full_resource_checks": 47076,
+        "graph_max_node_window": 8,
+        "graph_node_checkpoints": 370383,
+        "imports": 21,
+        "imports_closed": 21,
+        "imports_failed": 0,
+        "kernel_checks": 77178,
+        "kernel_cpu_known_calls": 77178,
+        "kernel_cpu_ns": 3457287776,
+        "kernel_cpu_unknown_calls": 0,
+        "kernel_failed_checks": 0,
+        "kernel_wall_ns": 13615369989,
+        "native_cpu_checkpoints": 378184,
+        "scope_failures": 0,
+        "unfinished_scopes": 0
+      },
+      "maximum_observed_paid_cpu_debit_ns": 8409948628,
+      "minimum_observed_paid_credit_ns": 963126582,
+      "mode": "late-product",
+      "reported_full_state_equality": true,
+      "reported_original_phase_criteria_met": false,
+      "run": 1
+    },
+    {
+      "actual_depletion_samples": 0,
+      "attack_calls_overlapping_each_round": [
+        0,
+        0,
+        0
+      ],
+      "attackers_ready": 0,
+      "budget_sample_count": 599,
+      "call_process_cpu_ns": 4901764281,
+      "confirmation_depths": [
+        6,
+        6,
+        6
+      ],
+      "confirmation_times_ns": [
+        8093903568,
+        15003254019,
+        22002793236
+      ],
+      "failing_original_requirements": [],
+      "full_work_accepted": 21,
+      "full_work_failed": 0,
+      "graph_resource_counters": {
+        "before_commit_checks": 48,
+        "binding_checks": 77178,
+        "binding_failed_checks": 0,
+        "graph_aborts": 0,
+        "graph_completed_node_bodies": 370383,
+        "graph_entries": 249,
+        "graph_exits": 249,
+        "graph_full_resource_checks": 47076,
+        "graph_max_node_window": 8,
+        "graph_node_checkpoints": 370383,
+        "imports": 21,
+        "imports_closed": 21,
+        "imports_failed": 0,
+        "kernel_checks": 77178,
+        "kernel_cpu_known_calls": 77178,
+        "kernel_cpu_ns": 3283658855,
+        "kernel_cpu_unknown_calls": 0,
+        "kernel_failed_checks": 0,
+        "kernel_wall_ns": 13071714513,
+        "native_cpu_checkpoints": 378184,
+        "scope_failures": 0,
+        "unfinished_scopes": 0
+      },
+      "maximum_observed_paid_cpu_debit_ns": 1023950250,
+      "minimum_observed_paid_credit_ns": 1756156539,
+      "mode": "baseline",
+      "reported_full_state_equality": true,
+      "reported_original_phase_criteria_met": true,
+      "run": 2
+    },
+    {
+      "actual_depletion_samples": 0,
+      "attack_calls_overlapping_each_round": [
+        1106,
+        1048,
+        1096
+      ],
+      "attackers_ready": 24,
+      "budget_sample_count": 592,
+      "call_process_cpu_ns": 5169030794,
+      "confirmation_depths": [
+        6,
+        6,
+        6
+      ],
+      "confirmation_times_ns": [
+        9563832804,
+        17673286291,
+        26158316875
+      ],
+      "failing_original_requirements": [
+        "observed genuine paid-credit depletion",
+        "paid-credit depletion overlapping at least one signed round"
+      ],
+      "full_work_accepted": 21,
+      "full_work_failed": 3819,
+      "graph_resource_counters": {
+        "before_commit_checks": 48,
+        "binding_checks": 77178,
+        "binding_failed_checks": 0,
+        "graph_aborts": 0,
+        "graph_completed_node_bodies": 370383,
+        "graph_entries": 249,
+        "graph_exits": 249,
+        "graph_full_resource_checks": 47076,
+        "graph_max_node_window": 8,
+        "graph_node_checkpoints": 370383,
+        "imports": 21,
+        "imports_closed": 21,
+        "imports_failed": 0,
+        "kernel_checks": 77178,
+        "kernel_cpu_known_calls": 77178,
+        "kernel_cpu_ns": 3364236775,
+        "kernel_cpu_unknown_calls": 0,
+        "kernel_failed_checks": 0,
+        "kernel_wall_ns": 13310573190,
+        "native_cpu_checkpoints": 378184,
+        "scope_failures": 0,
+        "unfinished_scopes": 0
+      },
+      "maximum_observed_paid_cpu_debit_ns": 7177585609,
+      "minimum_observed_paid_credit_ns": 1694436962,
+      "mode": "from-zero",
+      "reported_full_state_equality": true,
+      "reported_original_phase_criteria_met": false,
+      "run": 2
+    },
+    {
+      "actual_depletion_samples": 0,
+      "attack_calls_overlapping_each_round": [
+        1094,
+        1071,
+        1086
+      ],
+      "attackers_ready": 24,
+      "budget_sample_count": 592,
+      "call_process_cpu_ns": 5184650557,
+      "confirmation_depths": [
+        6,
+        6,
+        6
+      ],
+      "confirmation_times_ns": [
+        9466223071,
+        17760168692,
+        26161575489
+      ],
+      "failing_original_requirements": [
+        "observed genuine paid-credit depletion",
+        "paid-credit depletion overlapping at least one signed round"
+      ],
+      "full_work_accepted": 21,
+      "full_work_failed": 3819,
+      "graph_resource_counters": {
+        "before_commit_checks": 48,
+        "binding_checks": 77178,
+        "binding_failed_checks": 0,
+        "graph_aborts": 0,
+        "graph_completed_node_bodies": 370383,
+        "graph_entries": 249,
+        "graph_exits": 249,
+        "graph_full_resource_checks": 47076,
+        "graph_max_node_window": 8,
+        "graph_node_checkpoints": 370383,
+        "imports": 21,
+        "imports_closed": 21,
+        "imports_failed": 0,
+        "kernel_checks": 77178,
+        "kernel_cpu_known_calls": 77178,
+        "kernel_cpu_ns": 3391522428,
+        "kernel_cpu_unknown_calls": 0,
+        "kernel_failed_checks": 0,
+        "kernel_wall_ns": 13674405150,
+        "native_cpu_checkpoints": 378184,
+        "scope_failures": 0,
+        "unfinished_scopes": 0
+      },
+      "maximum_observed_paid_cpu_debit_ns": 8208260374,
+      "minimum_observed_paid_credit_ns": 1114993943,
+      "mode": "late-product",
+      "reported_full_state_equality": true,
+      "reported_original_phase_criteria_met": false,
+      "run": 2
+    },
+    {
+      "actual_depletion_samples": 0,
+      "attack_calls_overlapping_each_round": [
+        0,
+        0,
+        0
+      ],
+      "attackers_ready": 0,
+      "budget_sample_count": 599,
+      "call_process_cpu_ns": 4914473654,
+      "confirmation_depths": [
+        6,
+        6,
+        6
+      ],
+      "confirmation_times_ns": [
+        8087030339,
+        14880504652,
+        22079731984
+      ],
+      "failing_original_requirements": [],
+      "full_work_accepted": 21,
+      "full_work_failed": 0,
+      "graph_resource_counters": {
+        "before_commit_checks": 48,
+        "binding_checks": 77178,
+        "binding_failed_checks": 0,
+        "graph_aborts": 0,
+        "graph_completed_node_bodies": 370383,
+        "graph_entries": 249,
+        "graph_exits": 249,
+        "graph_full_resource_checks": 47076,
+        "graph_max_node_window": 8,
+        "graph_node_checkpoints": 370383,
+        "imports": 21,
+        "imports_closed": 21,
+        "imports_failed": 0,
+        "kernel_checks": 77178,
+        "kernel_cpu_known_calls": 77178,
+        "kernel_cpu_ns": 3290909955,
+        "kernel_cpu_unknown_calls": 0,
+        "kernel_failed_checks": 0,
+        "kernel_wall_ns": 13292940134,
+        "native_cpu_checkpoints": 378184,
+        "scope_failures": 0,
+        "unfinished_scopes": 0
+      },
+      "maximum_observed_paid_cpu_debit_ns": 1018604937,
+      "minimum_observed_paid_credit_ns": 1758042263,
+      "mode": "baseline",
+      "reported_full_state_equality": true,
+      "reported_original_phase_criteria_met": true,
+      "run": 3
+    },
+    {
+      "actual_depletion_samples": 0,
+      "attack_calls_overlapping_each_round": [
+        1116,
+        1071,
+        1151
+      ],
+      "attackers_ready": 24,
+      "budget_sample_count": 591,
+      "call_process_cpu_ns": 5329633288,
+      "confirmation_depths": [
+        6,
+        6,
+        6
+      ],
+      "confirmation_times_ns": [
+        9642702306,
+        17933192060,
+        26846951111
+      ],
+      "failing_original_requirements": [
+        "observed genuine paid-credit depletion",
+        "paid-credit depletion overlapping at least one signed round"
+      ],
+      "full_work_accepted": 21,
+      "full_work_failed": 3820,
+      "graph_resource_counters": {
+        "before_commit_checks": 48,
+        "binding_checks": 77178,
+        "binding_failed_checks": 0,
+        "graph_aborts": 0,
+        "graph_completed_node_bodies": 370383,
+        "graph_entries": 249,
+        "graph_exits": 249,
+        "graph_full_resource_checks": 47076,
+        "graph_max_node_window": 8,
+        "graph_node_checkpoints": 370383,
+        "imports": 21,
+        "imports_closed": 21,
+        "imports_failed": 0,
+        "kernel_checks": 77178,
+        "kernel_cpu_known_calls": 77178,
+        "kernel_cpu_ns": 3408629355,
+        "kernel_cpu_unknown_calls": 0,
+        "kernel_failed_checks": 0,
+        "kernel_wall_ns": 14215078128,
+        "native_cpu_checkpoints": 378184,
+        "scope_failures": 0,
+        "unfinished_scopes": 0
+      },
+      "maximum_observed_paid_cpu_debit_ns": 7414392912,
+      "minimum_observed_paid_credit_ns": 1588841702,
+      "mode": "from-zero",
+      "reported_full_state_equality": true,
+      "reported_original_phase_criteria_met": false,
+      "run": 3
+    },
+    {
+      "actual_depletion_samples": 0,
+      "attack_calls_overlapping_each_round": [
+        1092,
+        1073,
+        1100
+      ],
+      "attackers_ready": 24,
+      "budget_sample_count": 592,
+      "call_process_cpu_ns": 5190379387,
+      "confirmation_depths": [
+        6,
+        6,
+        6
+      ],
+      "confirmation_times_ns": [
+        9459558418,
+        17758275522,
+        26274131072
+      ],
+      "failing_original_requirements": [
+        "observed genuine paid-credit depletion",
+        "paid-credit depletion overlapping at least one signed round"
+      ],
+      "full_work_accepted": 21,
+      "full_work_failed": 3819,
+      "graph_resource_counters": {
+        "before_commit_checks": 48,
+        "binding_checks": 77178,
+        "binding_failed_checks": 0,
+        "graph_aborts": 0,
+        "graph_completed_node_bodies": 370383,
+        "graph_entries": 249,
+        "graph_exits": 249,
+        "graph_full_resource_checks": 47076,
+        "graph_max_node_window": 8,
+        "graph_node_checkpoints": 370383,
+        "imports": 21,
+        "imports_closed": 21,
+        "imports_failed": 0,
+        "kernel_checks": 77178,
+        "kernel_cpu_known_calls": 77178,
+        "kernel_cpu_ns": 3378642443,
+        "kernel_cpu_unknown_calls": 0,
+        "kernel_failed_checks": 0,
+        "kernel_wall_ns": 12923854941,
+        "native_cpu_checkpoints": 378184,
+        "scope_failures": 0,
+        "unfinished_scopes": 0
+      },
+      "maximum_observed_paid_cpu_debit_ns": 8173534609,
+      "minimum_observed_paid_credit_ns": 1179692190,
+      "mode": "late-product",
+      "reported_full_state_equality": true,
+      "reported_original_phase_criteria_met": false,
+      "run": 3
+    }
+  ],
+  "production_qualified": false,
+  "retained_entry_hashes_verified": 31,
+  "schema": "pon-retained-history-n8-readback-v1",
+  "scope": "Readback of exact historical aggregate reports and their original independent-reader summaries. Recomputes timing sums, graph counters, sampled depletion and reported predicates; does not newly re-run native work, inspect every original IPC file, independently re-verify State equality, or establish a cross-profile speedup. Nested CPU scopes are not additive. No continuous absence-of-depletion claim follows from finite samples.",
+  "source_commit": "540d72356a921da31dde1113537382e5c0f0c4fd",
+  "source_tree": "37abfb254dd598226651cd0da42a78aa0560e23e",
+  "work_profile": "pure-history-raw-v1",
+  "workflow_run_id": 40932471986
+}

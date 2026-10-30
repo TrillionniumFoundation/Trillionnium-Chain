@@ -115,7 +115,7 @@ cargo +1.95.0 test --release --locked --manifest-path "$backend/Cargo.toml" \
   -p trnm-w1-risc0-host
 ```
 
-The host supports `bake`, `execute`, `prove`, `verify` and `audit`. `bake` wraps the raw ELF in the official v3
+The host supports `bake`, `execute`, `prove`, `verify`, `audit` and `audit-one`. `bake` wraps the raw ELF in the official v3
 program container and compatibility kernel. All later commands require the
 manifest's actual image ID. A different compilation must be reviewed and pinned
 before acceptance. The example fixture uses an all-`ff` research target and
@@ -130,6 +130,47 @@ gates. `measure_step.py` gives each command a separate process observation and
 terminates only its own process group on timeout. `check_observations.py` requires
 the actual native journal, real positive proof, independent verification and all
 adversarial controls. Uploading a workflow alone is not proof evidence.
+
+## One-case receiver observations
+
+The verification commands now reject mismatching header task/target and a zero
+expected target before opening the receipt. These are public consistency checks;
+they do not authenticate a task, a parent, work or a proof. The original guest,
+complete relation, image, strict verifier and proof-production limit are unchanged.
+
+`audit-one <elf> <fixed-input> <receipt> <case>` accepts exactly eight case names:
+`valid`, `first_seal_tamper`, `last_seal_tamper`, `wrong_verifier_parameters`,
+`wrong_statement_miner`, `truncated_receipt`, `trailing_receipt_bytes`, and
+`seal_length_allocation_bomb`. Every invocation first verifies the actual
+original proof, then measures the selected encoded case through bounded
+preflight/SDK decode, strict verification and decoded-receipt destruction.
+Non-executed verification/drop stages are null, never fabricated zero costs.
+
+The positive prerequisite warms the verifier. Its time and the case construction
+time are separate. Expected-journal/context preparation, file I/O, source/byte
+hashing, error formatting, output and process startup are outside the receiver
+timer; the process-owner record includes the complete command's costs. These
+are finite observations, not cold-start or network-service guarantees.
+
+[`check_audit_one.py`](check_audit_one.py) independently binds source and input
+bytes, reproduces the claimed journal and recorded byte changes, and checks
+exact limits, types, timing accounting and the fixed expected outcome. It does
+not reverify a STARK, reconstruct SDK seal/parameter positions or remeasure
+time. Its synthetic control records cannot gain proof authority.
+
+The additive [case-cost workflow](../../../../../.github/workflows/pon-w1-audit-one-research.yml)
+explicitly restores pinned compressed objects from the repository, builds and
+tests the locked host, and runs the original audit plus all eight cases. It has
+only `contents: read` permission and does not run a prover. The fixture loader
+requires exactly one of `--objects` and `--archive`; there is no fallback.
+Object mode uses the exact v2 manifest: each ordered chunk is at most 7,000,000
+bytes, with at most two chunks per gzip stream. It checks each chunk and the
+original whole gzip and raw hashes/lengths, with the original 32 MiB compressed
+and 64 MiB expanded aggregate caps. It never claims to have freshly checked the
+historical ZIP. The ZIP mode retains a fixed whole-archive
+hash and exact root assets. The [rebuild evidence](../../../../../evidence/pon-pure-security-20261030-rebuild/complete-w1/README.md)
+contains recovered historical input bytes and newly executed results, without
+claiming recovery of the lost prior local measurements.
 
 ## Performance interpretation
 

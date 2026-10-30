@@ -12,6 +12,8 @@ use std::path::Path;
 use std::time::Instant;
 use trnm_w1_guest_relation::full_relation;
 
+mod audit_one;
+mod claimed_context;
 mod receipt_bounds;
 use receipt_bounds::{BoundaryError, MAX_RECEIPT_BYTES};
 mod phase_journal;
@@ -306,17 +308,19 @@ fn run(args: &[String], journal: &mut PhaseJournal) -> Result<()> {
         println!("{{\"schema\":\"pon-w1-risc0-research-v1\",\"operation\":\"bake\",\"program_bytes\":{},\"image_id\":\"{}\",\"cryptographic_proof_verified\":false,\"consensus_authority\":false}}", program.len(), image_id);
         return Ok(());
     }
-    if args[1] == "verify" || args[1] == "audit" {
-        ensure!(args.len() == 5, "verify <elf> <fixed-input> <receipt>");
+    if matches!(args[1].as_str(), "verify" | "audit" | "audit-one") {
+        ensure!(args.len() == if args[1] == "audit-one" { 6 } else { 5 },
+                "verify/audit <elf> <fixed-input> <receipt>; audit-one additionally requires a fixed case");
         let elf = bounded_read(Path::new(&args[2]), MAX_ELF_BYTES)?;
         require_pinned_image(&elf)?;
         let input = bounded_read(Path::new(&args[3]), full_relation::INPUT_BYTES)?;
-        let expected_journal =
-            full_relation::unverified_claimed_journal(&input).map_err(|e| anyhow!("{e:?}"))?;
-        let statement =
-            full_relation::PublicStatement::decode(&input[..full_relation::STATEMENT_BYTES])
-                .map_err(|e| anyhow!("{e:?}"))?;
+        // Public consistency is checked before opening the untrusted receipt.
+        // It grants no proof, work, task-eligibility or consensus authority.
+        let (statement, expected_journal) = claimed_context::prepare(&input)?;
         let encoded = bounded_read(Path::new(&args[4]), MAX_RECEIPT_BYTES)?;
+        if args[1] == "audit-one" {
+            return audit_one::run(&elf, &input, &encoded, &args[5]);
+        }
         let started = Instant::now();
         let receipt = deserialize_receipt(&encoded)?;
         if args[1] == "audit" {
