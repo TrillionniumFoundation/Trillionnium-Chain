@@ -745,7 +745,6 @@ pub mod pq_reply_v2 {
             .is_err());
         }
 
-
         #[test]
         fn actual_tcp_pcp2_probe_authenticates_while_classical_frame_fails() {
             use std::io::{Read, Write};
