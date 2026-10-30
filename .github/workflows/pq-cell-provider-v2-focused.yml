@@ -1,0 +1,52 @@
+name: PQ Cell provider V2 focused native verification
+on:
+  push:
+    branches:
+      - fix/pq-cell-provider-pinned-v2-20261030
+    paths:
+      - .github/workflows/pq-cell-provider-v2-focused.yml
+      - trillionnium/crates/trnm-data-availability/**
+      - trillionnium/Cargo.lock
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  pq-cell-discovery:
+    name: pinned ML-DSA provider (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 40
+    env:
+      CARGO_INCREMENTAL: "0"
+      CARGO_TERM_COLOR: never
+      RUST_TEST_THREADS: "1"
+    steps:
+      - name: Check out exact pushed source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Install pinned toolchain
+        run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+      - name: Verify exact checked out source
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "${GITHUB_SHA}" --output "${RUNNER_TEMP}/pq-cell-provider-source.json"
+          python3 scripts/refresh_distributed_source_inventory.py --check
+      - name: Check formatting without relaxing checks
+        run: cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+      - name: New real ML-DSA positive and adversarial controls
+        run: cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-data-availability --lib cell::discovery::pq_v2::tests -- --test-threads=1
+      - name: Preserve existing classical development discovery controls
+        run: cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-data-availability --lib cell::discovery::tests -- --test-threads=1
+      - name: Strict package Clippy
+        run: cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-data-availability --all-targets -- -D warnings
+      - name: Verify no source files were rewritten
+        if: always()
+        shell: bash
+        run: test -z "$(git status --porcelain=v1)"
