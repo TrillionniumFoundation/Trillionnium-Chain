@@ -23,6 +23,7 @@ class ClaimGateTests(unittest.TestCase):
             elif key == "w1_backend":
                 profile = {"pq_128_security_qualified": False,
                            "proof_receipt_kind": module.RESEARCH_PROOF_RECEIPT_KIND}
+                profile.update(module.PINNED_W1_RESEARCH_PARAMETERS)
                 profile.update({flag: False for flag in module.PROOF_RESEARCH_ONLY_FALSE_FLAGS})
                 target.write_text(json.dumps(profile), encoding="utf-8")
             else:
@@ -222,6 +223,64 @@ class ClaimGateTests(unittest.TestCase):
         refuses("duplicate_proof_json_member", "algorithm")
         proof.write_text(baseline_proof, encoding="utf-8")
 
+        result = subprocess.run(
+            [sys.executable, str(SCRIPT), "--root", str(self.root),
+             "--assert-unqualified"],
+            capture_output=True, text=True, check=False,
+        )
+        self.assertEqual(result.returncode, 0, result.stdout)
+        self.assertIn("unqualified_proof", result.stdout)
+
+    def test_w1_research_security_parameter_changes_require_review(self):
+        import subprocess
+        import sys
+
+        proof = self.root / module.PATHS["w1_backend"]
+        baseline = json.loads(proof.read_text(encoding="utf-8"))
+
+        def refuse(field, changed):
+            modified = dict(baseline)
+            if changed is None:
+                modified.pop(field)
+            else:
+                modified[field] = changed
+            proof.write_text(json.dumps(modified), encoding="utf-8")
+            findings = [
+                f for f in module.inspect(self.root)["known_open_findings"]
+                if f["kind"] == "unreviewed_w1_research_parameter_change"
+            ]
+            self.assertTrue(any(f["field"] == field for f in findings), findings)
+            result = subprocess.run(
+                [sys.executable, str(SCRIPT), "--root", str(self.root),
+                 "--assert-unqualified"],
+                capture_output=True, text=True, check=False,
+            )
+            self.assertEqual(result.returncode, 2, result.stdout)
+
+        # A false PQ128 flag does not make silently weakened FRI, swapped
+        # transcript/commitment hash, different backend or guest executable safe.
+        changed = {
+            "proof_fri_queries": 1,
+            "proof_fri_inverse_rate": 2,
+            "work_transcript_hash": "SHA-1",
+            "proof_commitment_hash": "SHA-256",
+            "backend_version": "3.0.7",
+            "backend_source_commit": "0" * 40,
+            "guest_image_id": "0" * 64,
+            "guest_program_sha256": "0" * 64,
+            "work_n": 32,
+            "backend_claimed_conjectured_security_bits": 128,
+        }
+        for field, value in changed.items():
+            with self.subTest(field=field, value=value):
+                refuse(field, value)
+        # Python considers True == 1; strict source types must not.
+        with self.subTest(field="work_r", value=True):
+            refuse("work_r", True)
+        with self.subTest(field="proof_fri_queries", missing=True):
+            refuse("proof_fri_queries", None)
+
+        proof.write_text(json.dumps(baseline), encoding="utf-8")
         result = subprocess.run(
             [sys.executable, str(SCRIPT), "--root", str(self.root),
              "--assert-unqualified"],
