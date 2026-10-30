@@ -514,6 +514,86 @@ pub(super) fn exchange_pq_v2(
     Ok(reply)
 }
 
+
+/// Bounded, read-only research PCP2 rendezvous using already authenticated
+/// operator-selected reply bytes. No CDQ1/CDS1 fallback, announce, SQLite write,
+/// self-asserted trust-root registration or independent replay witness is created.
+/// The caller MUST preverify exact signed bytes and independently trusted keys.
+pub(super) fn serve_pq_reply_bytes_v2(
+    listener: &TcpListener,
+    expected_request: [u8; 192],
+    reply: &[u8],
+    expires_unix_seconds: u64,
+    shutdown: &AtomicBool,
+    limits: CellRendezvousLimitsV1,
+) -> CellResultV1<CellRendezvousReportV1> {
+    limits.validate()?;
+    require(
+        !reply.is_empty()
+            && reply.len() <= MAX_DISCOVERY_RESPONSE_BYTES as usize
+            && reply.len()
+                <= 1 + MAX_DISCOVERED_PROVIDERS
+                    * trnm_crypto_primitives::pq_cell_provider::PQ_CELL_PROVIDER_RECORD_V2_BYTES,
+        "PQ serving bounded PCP2 bytes",
+    )?;
+    listener.set_nonblocking(true)?;
+    let overall = Instant::now() + limits.lifetime;
+    let mut report = CellRendezvousReportV1::default();
+    while !shutdown.load(Ordering::Relaxed)
+        && report.connections < limits.max_connections
+        && Instant::now() < overall
+    {
+        // A once-valid signed provider hint never extends its own expiry.
+        if wall_now()?.as_secs() >= expires_unix_seconds {
+            break;
+        }
+        match listener.accept() {
+            Ok((mut stream, _source)) => {
+                report.connections += 1;
+                let deadline = overall.min(Instant::now() + limits.request_timeout);
+                let outcome = (|| -> CellResultV1<()> {
+                    let mut header = [0; 7];
+                    network::read_deadline(&mut stream, &mut header, deadline, None)?;
+                    require(
+                        &header[..4] == b"PCQ2"
+                            && header[4] == 1
+                            && u16::from_be_bytes([header[5], header[6]]) == 192,
+                        "PQ only PCQ2 query version",
+                    )?;
+                    let mut actual = [0; 192];
+                    network::read_deadline(&mut stream, &mut actual, deadline, None)?;
+                    require(actual == expected_request, "PQ pinned request mismatch")?;
+                    require(
+                        wall_now()?.as_secs() < expires_unix_seconds,
+                        "PQ provider signed reply expired",
+                    )?;
+                    check_deadline(deadline)
+                })();
+                let mut frame = b"PCS2".to_vec();
+                match outcome {
+                    Ok(()) => {
+                        frame.push(0);
+                        frame.extend((reply.len() as u32).to_be_bytes());
+                        frame.extend(reply);
+                    }
+                    Err(_) => {
+                        report.rejected_requests += 1;
+                        frame.push(1);
+                        frame.extend(0u32.to_be_bytes());
+                    }
+                }
+                let _ = network::write_deadline(&mut stream, &frame, deadline);
+            }
+            Err(error) if error.kind() == io::ErrorKind::WouldBlock => {
+                thread::sleep(Duration::from_millis(5))
+            }
+            Err(error) if error.kind() == io::ErrorKind::Interrupted => (),
+            Err(error) => return Err(error.into()),
+        }
+    }
+    Ok(report)
+}
+
 fn read_response(
     stream: &mut TcpStream,
     mut bytes: &mut [u8],
