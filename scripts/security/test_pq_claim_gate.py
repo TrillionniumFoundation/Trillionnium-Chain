@@ -289,5 +289,80 @@ class ClaimGateTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout)
         self.assertIn("unqualified_proof", result.stdout)
 
+
+    def test_w1_guest_source_and_toolchain_provenance_change_refused(self):
+        import subprocess
+        import sys
+
+        proof = self.root / module.PATHS["w1_backend"]
+        baseline_text = proof.read_text(encoding="utf-8")
+        baseline = json.loads(baseline_text)
+        cases = {
+            "official_linux_tools_sha256": "0" * 64,
+            "guest_compiler_release": "r0.1.97.1",
+            "official_linux_guest_compiler_archive_sha256": "0" * 64,
+            "sha256_guest_accelerator_commit": "0" * 40,
+            "compatibility_kernel_crate": "risc0-zkos-v1compat = 0.0.0",
+            "guest_relation_source_commit": "0" * 40,
+            "guest_source_sha256": {
+                **baseline["guest_source_sha256"], "Cargo.lock": "0" * 64
+            },
+            "guest_native_differential_source": "src/changed.rs",
+            "proof_grinding_review_scope": "independently-audited",
+        }
+        for field, altered in cases.items():
+            with self.subTest(field=field):
+                changed = dict(baseline)
+                changed[field] = altered
+                proof.write_text(json.dumps(changed), encoding="utf-8")
+                findings = module.inspect(self.root)["known_open_findings"]
+                self.assertTrue(any(
+                    item["kind"] == "unreviewed_w1_research_parameter_change"
+                    and item.get("field") == field for item in findings
+                ), findings)
+                run = subprocess.run(
+                    [sys.executable, str(SCRIPT), "--root", str(self.root),
+                     "--assert-unqualified"],
+                    capture_output=True, text=True, check=False,
+                )
+                self.assertEqual(run.returncode, 2, run.stdout)
+        proof.write_text(baseline_text, encoding="utf-8")
+        run = subprocess.run(
+            [sys.executable, str(SCRIPT), "--root", str(self.root),
+             "--assert-unqualified"],
+            capture_output=True, text=True, check=False,
+        )
+        self.assertEqual(run.returncode, 0, run.stdout)
+        self.assertIn("unqualified_proof", run.stdout)
+
+    def test_nonstandard_json_nan_infinity_refused_even_in_future_fields(self):
+        import subprocess
+        import sys
+
+        for label, expected_kind in (
+            ("w1_backend", "unreadable_proof_profile"),
+            ("consensus", "unreadable_consensus_profile"),
+        ):
+            path = self.root / module.PATHS[label]
+            original = path.read_text(encoding="utf-8")
+            self.assertTrue(original.rstrip().endswith("}"))
+            for token in ("NaN", "Infinity", "-Infinity"):
+                with self.subTest(label=label, token=token):
+                    # The candidate still has truthful PQ=false flags, but
+                    # default json.loads historically accepted these non-JSON
+                    # numbers. Such bytes cannot cross a policy trust boundary.
+                    altered = original.rstrip()[:-1] + (
+                        ',"unreviewed_future_policy":' + token + "}"
+                    )
+                    path.write_text(altered, encoding="utf-8")
+                    self.assertIn(expected_kind, self.kinds())
+                    run = subprocess.run(
+                        [sys.executable, str(SCRIPT), "--root", str(self.root),
+                         "--assert-unqualified"],
+                        capture_output=True, text=True, check=False,
+                    )
+                    self.assertEqual(run.returncode, 2, run.stdout)
+            path.write_text(original, encoding="utf-8")
+
 if __name__ == "__main__":
     unittest.main()

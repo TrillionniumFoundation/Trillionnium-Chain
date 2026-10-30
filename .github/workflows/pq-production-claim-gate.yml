@@ -7,6 +7,7 @@ on:
       - audit/pq-json-duplicate-member-refusal-20261030
       - fix/pq-claim-required-ci-contract-20261030
       - audit/pq-w1-pinned-research-parameters-20261030
+      - audit/pq-w1-provenance-strict-json-20261030
     paths:
       - .github/workflows/pq-production-claim-gate.yml
       - scripts/security/**

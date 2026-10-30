@@ -45,6 +45,26 @@ PINNED_W1_RESEARCH_PARAMETERS = {
     "guest_image_id": "3ea1bcbf7900a32be73d7e78102de085562893732473667e1f3af07e585696b4",
     "guest_raw_elf_sha256": "651d8efabd091811fbf11b78e80793a4acb02b3c2eec95260373c58636d774b5",
     "guest_program_sha256": "b8f32cd9c1b1edbb0cde04acf9aab146b7ff1aeeeaee0188e4d6e80d077b0c0a",
+    "backend_source_url": "https://github.com/risc0/risc0/tree/1cc70cf05033a79ebc90f07c679cb4bd1cd301b9",
+    "official_linux_tools_sha256": "615d961bfb81d318db5071d7548389c850e324ac7f421c075176daf26082a60a",
+    "guest_compiler_release": "r0.1.97.0",
+    "official_linux_guest_compiler_archive_sha256": "100b597d605b706bec94e1d32bfaaf5851df8d75173f986d4b56a3e90916be53",
+    "sha256_guest_accelerator_commit": "7fd6900c4f637bd15ee2642dfa77110f8f1ad065",
+    "guest_relation_source_commit": None,
+    "compatibility_kernel_crate": "risc0-zkos-v1compat = 2.2.3",
+    "proof_grinding_review_scope": "pinned core, zkp prover/verifier, zkvm and rv32im/recursion circuit source; not an independent cryptographic audit",
+    "guest_source_sha256": {
+        "../../src/pon_work/full_relation.rs": "ed51cb82d417d35a0f8af636422d10abff913c868032dc3e414af63f30449c97",
+        "relation/src/lib.rs": "afe2f2cb5a0605eae3b6cd643e4a7bbb09fa0b0fe4db36fd2fe1155875152fb7",
+        "relation/src/parameters.rs": "53d9d680fe76ac57203e10c7642b5add2da07dd05f2c76d036d59cb420360428",
+        "guest/src/main.rs": "02567b1388b074138c2993bc5769692bff0d81ddc1207f2091df91dfc1d8f22e",
+        "Cargo.toml": "315b2227e5dc453328a4627727911ebcf4df7ada2d024dacd838d4864faf3861",
+        "guest/Cargo.toml": "c750dd4c1551df139880dda3583c6f1af27b3d01e3aadfc6a84441c06710104c",
+        "relation/Cargo.toml": "d54c76ef1f5d5a5682ad63e1b3d9afb87b869551d113ff0718bdd0d6904faeb5",
+        "Cargo.lock": "b3bb8518308ee9a175d878e5cafaab269be20f2bf990ec3fbb4d6e49bf110996",
+    },
+    "guest_native_differential_source": "../../src/pon_work/full_relation_tests.rs",
+    "guest_relation_source_identity": "exact SHA-256 entries in guest_source_sha256; optimization and thin adapter pending review",
     "work_profile": "pon-matmul-transcript-64-v1",
     "work_n": 64,
     "work_r": 8,
@@ -70,7 +90,14 @@ def load_unique_json(path: Path) -> dict:
             result[name] = value
         return result
 
-    return json.loads(path.read_text(encoding="utf-8"), object_pairs_hook=require_unique)
+    def reject_nonstandard_number(token):
+        # Python accepts NaN/Infinity by default; RFC 8259 JSON does not.
+        # A different authority/consensus parser could reject or reinterpret it.
+        raise ValueError(f"non-standard JSON numeric constant: {token}")
+
+    return json.loads(path.read_text(encoding="utf-8"),
+                      object_pairs_hook=require_unique,
+                      parse_constant=reject_nonstandard_number)
 
 def inspect(root: Path) -> dict:
     blockers = []
