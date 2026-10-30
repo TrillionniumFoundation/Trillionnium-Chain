@@ -557,7 +557,6 @@ pub mod pq_reply_v2 {
         Ok(result)
     }
 
-
     /// One explicitly configured bootstrap, distinct PCP2 frame, original
     /// caller deadline and shared received-byte accounting. The external
     /// replay frontier remains caller-owned: this probe does not publish Cell
@@ -569,7 +568,10 @@ pub mod pq_reply_v2 {
         addresses: &CellDiscoveryAddressPolicyV1,
         limits: super::super::CellPeerLimitsV1,
         original_deadline: Instant,
-    ) -> CellResultV1<(Vec<VerifiedPqDiscoveryProviderV2>, CellDiscoveryObservationV1)> {
+    ) -> CellResultV1<(
+        Vec<VerifiedPqDiscoveryProviderV2>,
+        CellDiscoveryObservationV1,
+    )> {
         expected_request.validate()?;
         addresses.validate()?;
         addresses.check(bootstrap)?;
