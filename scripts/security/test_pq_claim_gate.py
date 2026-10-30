@@ -181,5 +181,54 @@ class ClaimGateTests(unittest.TestCase):
         self.assertEqual(baseline_result.returncode, 0, baseline_result.stdout)
         self.assertIn("unqualified_proof", baseline_result.stdout)
 
+    def test_duplicate_json_members_cannot_hide_unsafe_pq_or_consensus_flags(self):
+        import subprocess
+        import sys
+
+        proof = self.root / module.PATHS["w1_backend"]
+        consensus = self.root / module.PATHS["consensus"]
+        baseline_proof = proof.read_text(encoding="utf-8")
+        baseline_consensus = consensus.read_text(encoding="utf-8")
+
+        def refuses(kind, member):
+            matches = [finding for finding in
+                       module.inspect(self.root)["known_open_findings"]
+                       if finding["kind"] == kind]
+            self.assertEqual([finding["member"] for finding in matches], [member])
+            result = subprocess.run(
+                [sys.executable, str(SCRIPT), "--root", str(self.root),
+                 "--assert-unqualified"],
+                capture_output=True, text=True, check=False,
+            )
+            self.assertEqual(result.returncode, 2, result.stdout)
+            self.assertIn(kind, result.stdout)
+
+        # A first-wins consumer sees unsafe true; Python's default
+        # last-wins parser previously let the false duplicate bypass this gate.
+        proof.write_text('{"pq_128_security_qualified": true,' +
+                         baseline_proof[1:], encoding="utf-8")
+        refuses("duplicate_proof_json_member", "pq_128_security_qualified")
+        proof.write_text(baseline_proof, encoding="utf-8")
+
+        consensus.write_text('{"release_ready": true,' +
+                             baseline_consensus[1:], encoding="utf-8")
+        refuses("duplicate_consensus_json_member", "release_ready")
+        consensus.write_text(baseline_consensus, encoding="utf-8")
+
+        # No ambiguity is allowed even inside a nested future policy object.
+        proof.write_text('{"future_policy":{"algorithm":"Groth16",'
+                         '"algorithm":"Composite"},' + baseline_proof[1:],
+                         encoding="utf-8")
+        refuses("duplicate_proof_json_member", "algorithm")
+        proof.write_text(baseline_proof, encoding="utf-8")
+
+        result = subprocess.run(
+            [sys.executable, str(SCRIPT), "--root", str(self.root),
+             "--assert-unqualified"],
+            capture_output=True, text=True, check=False,
+        )
+        self.assertEqual(result.returncode, 0, result.stdout)
+        self.assertIn("unqualified_proof", result.stdout)
+
 if __name__ == "__main__":
     unittest.main()

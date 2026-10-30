@@ -33,6 +33,21 @@ PROOF_RESEARCH_ONLY_FALSE_FLAGS = (
 )
 RESEARCH_PROOF_RECEIPT_KIND = "Composite"
 
+class DuplicateJSONMemberError(ValueError):
+    """Refuse cross-parser ambiguous JSON, including nested duplicate members."""
+    pass
+
+def load_unique_json(path: Path) -> dict:
+    def require_unique(pairs):
+        result = {}
+        for name, value in pairs:
+            if name in result:
+                raise DuplicateJSONMemberError(name)
+            result[name] = value
+        return result
+
+    return json.loads(path.read_text(encoding="utf-8"), object_pairs_hook=require_unique)
+
 def inspect(root: Path) -> dict:
     blockers = []
     for label, rel in PATHS.items():
@@ -50,7 +65,7 @@ def inspect(root: Path) -> dict:
                 blockers.append({"kind": "classical_authority", "path": rel})
         elif label == "w1_backend":
             try:
-                profile = json.loads(file.read_text(encoding="utf-8"))
+                profile = load_unique_json(file)
                 if not isinstance(profile, dict):
                     blockers.append({"kind": "invalid_proof_profile_shape", "path": rel})
                 elif type(profile.get("pq_128_security_qualified")) is not bool:
@@ -76,13 +91,16 @@ def inspect(root: Path) -> dict:
                         elif value:
                             blockers.append({"kind": "unsafe_proof_policy_enabled",
                                              "path": rel, "field": flag})
+            except DuplicateJSONMemberError as err:
+                blockers.append({"kind": "duplicate_proof_json_member",
+                                 "path": rel, "member": str(err)})
             except (ValueError, OSError, UnicodeError):
                 blockers.append({"kind": "unreadable_proof_profile", "path": rel})
     config_path = root / PATHS["consensus"]
     production = {}
     if config_path.is_file():
         try:
-            config = json.loads(config_path.read_text(encoding="utf-8"))
+            config = load_unique_json(config_path)
             if not isinstance(config, dict):
                 blockers.append({"kind": "invalid_consensus_profile_shape", "path": PATHS["consensus"]})
             else:
@@ -93,6 +111,9 @@ def inspect(root: Path) -> dict:
                     blockers.append({"kind": "invalid_production_flag_type", "path": PATHS["consensus"]})
                 if any(value is True for value in production.values()):
                     blockers.append({"kind": "production_claim_requires_independent_pq_review", "path": PATHS["consensus"]})
+        except DuplicateJSONMemberError as err:
+            blockers.append({"kind": "duplicate_consensus_json_member",
+                             "path": PATHS["consensus"], "member": str(err)})
         except (ValueError, OSError, UnicodeError):
             blockers.append({"kind": "unreadable_consensus_profile", "path": PATHS["consensus"]})
     return {
@@ -118,6 +139,7 @@ def main():
         "unreadable_consensus_profile", "invalid_proof_profile_shape",
         "invalid_proof_qualification_flag_type", "invalid_consensus_profile_shape",
         "invalid_production_flag_type", "unreviewed_pq128_proof_claim",
+        "duplicate_proof_json_member", "duplicate_consensus_json_member",
         "unsupported_proof_receipt_kind", "invalid_proof_policy_flag_type",
         "unsafe_proof_policy_enabled",
         "production_claim_requires_independent_pq_review") for item in report["known_open_findings"]):
