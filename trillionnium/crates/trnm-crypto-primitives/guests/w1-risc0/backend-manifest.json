@@ -33,6 +33,7 @@
   "production_consensus_activation": false,
   "guest_source_sha256": {
     "../../src/pon_work/full_relation.rs": "ed51cb82d417d35a0f8af636422d10abff913c868032dc3e414af63f30449c97",
+    "../../src/pon_work/full_relation_tests.rs": "3c85efae06acc62d5fdbce3d8b1e0f8a65e59675da0a6e741885952ccaad513b",
     "relation/src/lib.rs": "afe2f2cb5a0605eae3b6cd643e4a7bbb09fa0b0fe4db36fd2fe1155875152fb7",
     "relation/src/parameters.rs": "53d9d680fe76ac57203e10c7642b5add2da07dd05f2c76d036d59cb420360428",
     "guest/src/main.rs": "02567b1388b074138c2993bc5769692bff0d81ddc1207f2091df91dfc1d8f22e",

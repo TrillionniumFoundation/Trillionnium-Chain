@@ -417,5 +417,56 @@ class ClaimGateTests(unittest.TestCase):
                     self.assertEqual(run.returncode, 2, run.stdout)
             path.write_text(original, encoding="utf-8")
 
+
+    def test_native_differential_source_bytes_are_covered(self):
+        import subprocess
+        import sys
+
+        source_rel = "../../src/pon_work/full_relation_tests.rs"
+        expected = "3c85efae06acc62d5fdbce3d8b1e0f8a65e59675da0a6e741885952ccaad513b"
+        self.assertEqual(
+            module.PINNED_W1_RESEARCH_PARAMETERS["guest_source_sha256"][source_rel],
+            expected,
+        )
+        source = self.root / Path(module.PATHS["w1_backend"]).parent / source_rel
+        baseline = source.read_bytes()
+        source.write_bytes(baseline + b"\n// unreviewed differential drift\n")
+        self.assertIn("w1_guest_source_digest_mismatch", self.kinds())
+        rejected = subprocess.run(
+            [sys.executable, str(SCRIPT), "--root", str(self.root),
+             "--assert-unqualified"],
+            capture_output=True, text=True, check=False,
+        )
+        self.assertEqual(rejected.returncode, 2, rejected.stdout)
+        source.write_bytes(baseline)
+        original = subprocess.run(
+            [sys.executable, str(SCRIPT), "--root", str(self.root),
+             "--assert-unqualified"],
+            capture_output=True, text=True, check=False,
+        )
+        self.assertEqual(original.returncode, 0, original.stdout)
+        self.assertIn("unqualified_proof", original.stdout)
+
+    def test_actual_w1_source_changes_trigger_the_claim_workflow(self):
+        workflow = (SCRIPT.parents[2] / ".github/workflows/pq-production-claim-gate.yml")
+        definition = workflow.read_text(encoding="utf-8")
+        self.assertIn("  pull_request:\n", definition)
+        self.assertIn(
+            "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/**",
+            definition,
+        )
+        self.assertIn(
+            "trillionnium/crates/trnm-crypto-primitives/src/pon_work/full_relation.rs",
+            definition,
+        )
+        self.assertIn(
+            "trillionnium/crates/trnm-crypto-primitives/src/pon_work/full_relation_tests.rs",
+            definition,
+        )
+        self.assertIn(
+            "ref: ${{ github.event.pull_request.head.sha || github.sha }}",
+            definition,
+        )
+
 if __name__ == "__main__":
     unittest.main()
