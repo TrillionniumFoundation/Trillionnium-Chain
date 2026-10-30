@@ -452,9 +452,7 @@ pub mod pq_reply_v2 {
     // Its cheap shape, key-ID binding and uniqueness must be checked BEFORE
     // opening any PCP2 TCP connection (including a silent malicious bootstrap).
     // This cannot establish external custody, revocation or durable replay.
-    fn preflight_pq_owner_roster_v2(
-        pinned_owners: &[PqPinnedProviderV2<'_>],
-    ) -> CellResultV1<()> {
+    fn preflight_pq_owner_roster_v2(pinned_owners: &[PqPinnedProviderV2<'_>]) -> CellResultV1<()> {
         require(
             !pinned_owners.is_empty() && pinned_owners.len() <= MAX_DISCOVERED_PROVIDERS,
             "PQ bounded independent roster",
