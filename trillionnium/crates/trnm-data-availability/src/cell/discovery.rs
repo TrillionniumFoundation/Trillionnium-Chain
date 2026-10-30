@@ -746,7 +746,12 @@ pub mod pq_reply_v2 {
         // the rejected responses of the first read without double-counting
         // bytes or connections.
         fetch.rejected_responses += initial_rejected;
-        check_deadline(transport.overall)?;
+        // fetch_cell_in_session already enforces this original deadline for
+        // every network/cache operation and at the LAST pre-publication check.
+        // Its durable create-only file may legitimately finish directory sync
+        // and cleanup after that checkpoint. Rechecking here would return a
+        // timeout *after* publishing the complete file, making the result
+        // disagree with the materialized terminal fact.
         Ok((
             manifest,
             PqDiscoveredCellFetchReportV2 {
@@ -1268,8 +1273,10 @@ pub mod pq_reply_v2 {
                 serve_cells, CellCacheConfigV4, CellContextV1, CellPeerLimitsV1, CellStoreV1,
             };
             use std::{
+                cell::Cell,
                 fs,
                 net::TcpListener,
+                rc::Rc,
                 sync::{
                     atomic::{AtomicBool, Ordering},
                     Arc,
@@ -1453,9 +1460,49 @@ pub mod pq_reply_v2 {
                     > observation.discovery.received_response_bytes
             );
 
+            // A verified Cell can finish the non-preemptible directory sync
+            // after the original deadline. The last mandatory time check is
+            // BEFORE the hard link, not after publishing the terminal file.
+            // The original code returned Err("...deadline") here despite the
+            // complete output already being visible, a false failure.
+            let late_output = dir.path().join("pq-complete-after-link");
+            let observed = Rc::new(Cell::new(false));
+            let signal = observed.clone();
+            let hook_output = late_output.clone();
+            let hook_bytes = bytes.clone();
+            let original_deadline = Instant::now() + Duration::from_secs(3);
+            let (late_manifest, late_report) = crate::cell::tests::with_post_publication_hook(
+                Box::new(move |deadline| {
+                    assert_eq!(deadline, Some(original_deadline));
+                    assert_eq!(fs::read(&hook_output).unwrap(), hook_bytes);
+                    signal.set(true);
+                    while let Some(remaining) =
+                        original_deadline.checked_duration_since(Instant::now())
+                    {
+                        std::thread::sleep(remaining + Duration::from_millis(5));
+                    }
+                    assert!(Instant::now() > original_deadline);
+                }),
+                || {
+                    fetch_pq_discovered_cell_to_file_v2(
+                        &consumer,
+                        &options,
+                        &current,
+                        limits(64),
+                        original_deadline,
+                        &late_output,
+                    )
+                },
+            )
+            .unwrap();
+            assert!(observed.get(), "the post-link deadline case was not executed");
+            assert_eq!(late_manifest, manifest);
+            assert_eq!(fs::read(&late_output).unwrap(), bytes);
+            assert_eq!(late_report.verified_providers[0].sequence(), 12);
+
             shutdown_bootstrap.store(true, Ordering::Relaxed);
             shutdown_cell.store(true, Ordering::Relaxed);
-            assert!(rendezvous_thread.join().unwrap().connections >= 3);
+            assert!(rendezvous_thread.join().unwrap().connections >= 4);
             assert!(cell_thread.join().unwrap() > 0);
         }
     }
