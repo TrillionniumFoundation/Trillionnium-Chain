@@ -531,6 +531,20 @@ pub mod pq_reply_v2 {
                 seen.insert(record.signer_key_id),
                 "PQ duplicate reply owner",
             )?;
+            // Preserve the PCP2 primitive's exact five-second future skew,
+            // but check every record's replay/time *before any expensive*
+            // ML-DSA verification. The primitive repeats these checks as the
+            // authoritative final authentication boundary.
+            require(
+                record.statement.sequence > owner.external_sequence_floor,
+                "PQ batch stale external replay floor",
+            )?;
+            require(
+                record.statement.issued_unix_seconds
+                    <= now_unix_seconds.saturating_add(5)
+                    && now_unix_seconds < record.statement.expires_unix_seconds,
+                "PQ batch expired/future record",
+            )?;
             let endpoint = decode_endpoint(record.statement.endpoint)?;
             addresses.check(endpoint)?;
             pending.push((record, owner, endpoint));
@@ -604,6 +618,10 @@ pub mod pq_reply_v2 {
             wall_now()?.as_secs(),
             addresses,
         )?;
+        // A successful PCP2 reply verified exactly one real ML-DSA signature
+        // per returned record. Do not return a misleading zero cost count.
+        // Failed calls still return Err and need separate failure telemetry.
+        observation.record_validation_attempts = providers.len();
         check_deadline(overall)?;
         Ok((providers, observation))
     }
@@ -644,14 +662,18 @@ pub mod pq_reply_v2 {
             .as_slice()
             .try_into()
             .map_err(|_| CellErrorV1::Invalid("PQ request length"))?;
-        super::transport::serve_pq_reply_bytes_v2(
+        let mut report = super::transport::serve_pq_reply_bytes_v2(
             listener,
             pin,
             signed_reply,
             expires,
             shutdown,
             limits,
-        )
+        )?;
+        // The entire signed roster was genuinely ML-DSA verified once before
+        // listening. Count that original work even if clients were denied.
+        report.record_validation_attempts = verified.len();
+        Ok(report)
     }
 
     #[cfg(test)]
@@ -792,6 +814,64 @@ pub mod pq_reply_v2 {
         }
 
         #[test]
+        fn late_stale_or_expired_record_preflights_before_early_bad_signature() {
+            let (mut first, pk1, id1) = signed(42);
+            let (second, pk2, id2) = signed(43);
+            *first.last_mut().unwrap() ^= 1;
+            let stale_roster = [
+                PqPinnedProviderV2 {
+                    signer_key_id: id1,
+                    trusted_ml_dsa65_public_key: &pk1,
+                    external_sequence_floor: 6,
+                },
+                PqPinnedProviderV2 {
+                    signer_key_id: id2,
+                    trusted_ml_dsa65_public_key: &pk2,
+                    external_sequence_floor: 7,
+                },
+            ];
+            let stale = verify_pq_provider_reply_v2(
+                &reply(&[&first, &second]),
+                request(),
+                &stale_roster,
+                150,
+                &addresses(),
+            );
+            assert!(matches!(
+                stale,
+                Err(CellErrorV1::Invalid("PQ batch stale external replay floor"))
+            ));
+
+            let mut expired = second.clone();
+            // PCP2 fixed expires field, 263..271. The signature becomes
+            // invalid, so this control also proves priority over ML-DSA.
+            expired[263..271].copy_from_slice(&140u64.to_be_bytes());
+            let current_roster = [
+                PqPinnedProviderV2 {
+                    signer_key_id: id1,
+                    trusted_ml_dsa65_public_key: &pk1,
+                    external_sequence_floor: 6,
+                },
+                PqPinnedProviderV2 {
+                    signer_key_id: id2,
+                    trusted_ml_dsa65_public_key: &pk2,
+                    external_sequence_floor: 6,
+                },
+            ];
+            let expired_result = verify_pq_provider_reply_v2(
+                &reply(&[&first, &expired]),
+                request(),
+                &current_roster,
+                150,
+                &addresses(),
+            );
+            assert!(matches!(
+                expired_result,
+                Err(CellErrorV1::Invalid("PQ batch expired/future record"))
+            ));
+        }
+
+        #[test]
         fn actual_tcp_pcp2_probe_authenticates_while_classical_frame_fails() {
             use std::io::{Read, Write};
             use std::net::TcpListener;
@@ -867,6 +947,7 @@ pub mod pq_reply_v2 {
                     assert_eq!(verified.len(), 1);
                     assert_eq!(verified[0].signer_key_id(), id);
                     assert_eq!(observed.connection_attempts, 1);
+                    assert_eq!(observed.record_validation_attempts, 1);
                     assert_eq!(observed.received_response_bytes, (wire.len() + 9) as u64);
                 } else {
                     assert!(answer.is_err(), "classical CDS1 response downgraded PCP2");
@@ -957,6 +1038,7 @@ pub mod pq_reply_v2 {
             assert_eq!(providers.len(), 1);
             assert_eq!(providers[0].sequence(), 11);
             assert_eq!(observation.connection_attempts, 1);
+            assert_eq!(observation.record_validation_attempts, 1);
             assert_eq!(
                 observation.received_response_bytes,
                 (response.len() + 9) as u64
@@ -994,7 +1076,7 @@ pub mod pq_reply_v2 {
             let served = server.join().unwrap();
             assert_eq!(served.connections, 2);
             assert_eq!(served.rejected_requests, 1);
-            assert_eq!(served.record_validation_attempts, 0);
+            assert_eq!(served.record_validation_attempts, 1);
         }
 
         #[test]
