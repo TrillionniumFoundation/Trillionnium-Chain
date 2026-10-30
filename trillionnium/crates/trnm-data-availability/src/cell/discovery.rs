@@ -448,6 +448,27 @@ pub mod pq_reply_v2 {
         pub external_sequence_floor: u64,
     }
 
+    // The caller's roster is an authority input, not an untrusted reply field.
+    // Its cheap shape, key-ID binding and uniqueness must be checked BEFORE
+    // opening any PCP2 TCP connection (including a silent malicious bootstrap).
+    // This cannot establish external custody, revocation or durable replay.
+    fn preflight_pq_owner_roster_v2(pinned_owners: &[PqPinnedProviderV2<'_>]) -> CellResultV1<()> {
+        require(
+            !pinned_owners.is_empty() && pinned_owners.len() <= MAX_DISCOVERED_PROVIDERS,
+            "PQ bounded independent roster",
+        )?;
+        let mut seen = BTreeSet::new();
+        for owner in pinned_owners {
+            let computed = pq_cell_provider_key_id_v2(owner.trusted_ml_dsa65_public_key)
+                .map_err(|_| CellErrorV1::Invalid("PQ pinned public key"))?;
+            require(
+                computed == owner.signer_key_id && seen.insert(owner.signer_key_id),
+                "PQ duplicate/mismatched pinned owner",
+            )?;
+        }
+        Ok(())
+    }
+
     /// A hint, not a capability to install, release, serve or execute anything.
     #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct VerifiedPqDiscoveryProviderV2 {
@@ -588,10 +609,7 @@ pub mod pq_reply_v2 {
         expected_request.validate()?;
         addresses.validate()?;
         addresses.check(bootstrap)?;
-        require(
-            !pinned_owners.is_empty() && pinned_owners.len() <= MAX_DISCOVERED_PROVIDERS,
-            "PQ bounded independent roster",
-        )?;
+        preflight_pq_owner_roster_v2(pinned_owners)?;
         limits.validate()?;
         let overall = original_deadline.min(Instant::now() + limits.overall_timeout);
         check_deadline(overall)?;
@@ -671,10 +689,7 @@ pub mod pq_reply_v2 {
         )?;
         let bootstrap = options.bootstraps[0];
         addresses.check(bootstrap)?;
-        require(
-            !pinned_owners.is_empty() && pinned_owners.len() <= MAX_DISCOVERED_PROVIDERS,
-            "PQ bounded independent roster",
-        )?;
+        preflight_pq_owner_roster_v2(pinned_owners)?;
         limits.validate()?;
         let original_overall = original_deadline.min(Instant::now() + limits.overall_timeout);
         check_deadline(original_overall)?;
@@ -1457,6 +1472,63 @@ pub mod pq_reply_v2 {
             ));
             assert!(!output.exists());
 
+            // Even a nonempty caller roster is unusable if its independently
+            // pinned key is malformed, its key-ID does not match that key, or
+            // an identity is duplicated. Refuse these before dialing the
+            // silent bootstrap; an error from TCP timeout is NOT acceptable.
+            let wrong_id = [PqPinnedProviderV2 {
+                signer_key_id: [0; 32],
+                trusted_ml_dsa65_public_key: &trusted_key,
+                external_sequence_floor: 11,
+            }];
+            let short_key = [9u8; 7];
+            let wrong_length = [PqPinnedProviderV2 {
+                signer_key_id: key_id,
+                trusted_ml_dsa65_public_key: &short_key,
+                external_sequence_floor: 11,
+            }];
+            let duplicated = [
+                PqPinnedProviderV2 {
+                    signer_key_id: key_id,
+                    trusted_ml_dsa65_public_key: &trusted_key,
+                    external_sequence_floor: 11,
+                },
+                PqPinnedProviderV2 {
+                    signer_key_id: key_id,
+                    trusted_ml_dsa65_public_key: &trusted_key,
+                    external_sequence_floor: 11,
+                },
+            ];
+            for (roster, expected_error) in [
+                (&wrong_id[..], "PQ duplicate/mismatched pinned owner"),
+                (&wrong_length[..], "PQ pinned public key"),
+                (&duplicated[..], "PQ duplicate/mismatched pinned owner"),
+            ] {
+                assert!(matches!(
+                    query_pq_provider_from_bootstrap_v2(
+                        silent_bootstrap,
+                        expected_request,
+                        roster,
+                        &silent_policy,
+                        limits(64),
+                        Instant::now() + Duration::from_secs(10),
+                    ),
+                    Err(CellErrorV1::Invalid(reason)) if reason == expected_error
+                ));
+                assert!(matches!(
+                    fetch_pq_discovered_cell_to_file_v2(
+                        &consumer,
+                        &silent_options,
+                        roster,
+                        limits(64),
+                        Instant::now() + Duration::from_secs(10),
+                        &output,
+                    ),
+                    Err(CellErrorV1::Invalid(reason)) if reason == expected_error
+                ));
+                assert!(!output.exists());
+            }
+
             // One permitted connection is consumed by PCQ2. A second Cell
             // request MUST fail; accidentally composing two independent
             // sessions would instead reset the allowance and succeed.
@@ -1542,7 +1614,10 @@ pub mod pq_reply_v2 {
                 },
             )
             .unwrap();
-            assert!(observed.get(), "the post-link deadline case was not executed");
+            assert!(
+                observed.get(),
+                "the post-link deadline case was not executed"
+            );
             assert_eq!(late_manifest, manifest);
             assert_eq!(fs::read(&late_output).unwrap(), bytes);
             assert_eq!(late_report.verified_providers[0].sequence(), 12);
