@@ -170,14 +170,14 @@ const QUORUM_DIDS: [&str; 3] = [
 fn quorum_fixture() -> (Vec<Vec<u8>>, Vec<SignedPqRecoveryWitnessV1>) {
     let mut keys = Vec::new();
     let mut receipts = Vec::new();
-    for i in 0..3 {
+    for (i, witness_did) in QUORUM_DIDS.iter().enumerate() {
         let sk = SigningKey::<MlDsa65>::new_from_slice(&[51 + i as u8; 32]).unwrap();
         keys.push(sk.verifying_key().to_bytes().to_vec());
         receipts.push(
             SignedPqRecoveryWitnessV1::sign(
                 PqRecoveryWitnessStatementV1 {
                     chain_id: CHAIN.into(),
-                    witness_did: QUORUM_DIDS[i].into(),
+                    witness_did: (*witness_did).into(),
                     genesis: [4; 32],
                     observed: head(),
                     sequence: 30 + i as u64,
