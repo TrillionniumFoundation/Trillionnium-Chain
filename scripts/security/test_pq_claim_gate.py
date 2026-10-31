@@ -128,6 +128,98 @@ class ClaimGateTests(unittest.TestCase):
                                 module.main()
                 self.assertEqual(caught.exception.code, 2)
 
+    def test_reviewed_classical_authority_snapshot_is_not_reduced(self):
+        # Independent expectations: removing a key from all three production
+        # dictionaries at once must not silently shrink the trusted audit.
+        reviewed = {
+            "hepta_handoff": (
+                "trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs",
+                "hepta_artifact_admission_v1"),
+            "cell_discovery": (
+                "trillionnium/crates/trnm-data-availability/src/cell/discovery.rs",
+                "cell_provider_advertising_v1"),
+            "da_auth": (
+                "trillionnium/crates/trnm-data-availability/src/types.rs",
+                "data_availability_committee_batch_author_attestation_v1"),
+            "da_retrieval": (
+                "trillionnium/crates/trnm-data-availability/src/retrieval.rs",
+                "data_availability_retrieval_request_and_response_v1"),
+            "transport_ingress": (
+                "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+                "allowlisted_development_node_transport"),
+            "legacy_transfer": (
+                "trillionnium/crates/trnm-types/src/transfer.rs",
+                "transfer_transaction_signature"),
+            "native_m06_envelope": (
+                "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+                "native_m06_pnx1_classical_signature_profile"),
+            "research_command": (
+                "trillionnium/crates/trnm-research-protocol/src/command.rs",
+                "research_command_nakama_hepta_authority"),
+            "research_state": (
+                "trillionnium/crates/trnm-research-protocol/src/state.rs",
+                "research_state_classical_nakama_hepta_authority_set"),
+            "task_store": (
+                "trillionnium/crates/trnm-task-kernel/src/store.rs",
+                "agent_market_controller_session_auth"),
+            "service_settlement": (
+                "trillionnium/crates/trnm-service-settlement/src/engine.rs",
+                "bilateral_settlement_authorization"),
+        }
+        self.assertEqual(set(module.CLASSICAL_MARKERS), set(reviewed))
+        self.assertEqual(set(module.CLASSICAL_BOUNDARY_ROLES), set(reviewed))
+        self.assertEqual(
+            {name: (module.PATHS[name], module.CLASSICAL_BOUNDARY_ROLES[name])
+             for name in module.CLASSICAL_MARKERS},
+            reviewed,
+        )
+
+    def test_unqualified_baseline_is_complete_unique_and_not_a_production_claim(self):
+        from contextlib import redirect_stdout
+        from io import StringIO
+        import sys
+        from unittest import mock
+
+        base = module.inspect(self.root)
+        self.assertFalse(module.has_unreviewed_findings(base))
+        findings = base["known_open_findings"]
+        classical = next(row for row in findings if row["kind"] == "classical_authority")
+        proof = next(row for row in findings if row["kind"] == "unqualified_proof")
+        cases = {
+            "empty_findings": {**base, "known_open_findings": []},
+            "missing_classical": {
+                **base, "known_open_findings": [
+                    x for x in findings if x is not classical]},
+            "duplicated_classical": {
+                **base, "known_open_findings": findings + [classical]},
+            "wrong_classical_role": {
+                **base, "known_open_findings": [
+                    {**x, "boundary": "different-root"} if x is classical else x
+                    for x in findings]},
+            "missing_proof": {
+                **base, "known_open_findings": [
+                    x for x in findings if x is not proof]},
+            "duplicated_proof": {
+                **base, "known_open_findings": findings + [proof]},
+            "unreviewed_activation": {
+                **base, "production_flags": {
+                    **base["production_flags"], "release_ready": True}},
+            "missing_activation_field": {
+                **base, "production_flags": {"production_candidate": False}},
+            "wrong_schema": {**base, "schema": "unreviewed-audit-v2"},
+        }
+        for name, report in cases.items():
+            with self.subTest(case=name):
+                self.assertTrue(module.has_unreviewed_findings(report))
+                with mock.patch.object(module, "inspect", return_value=report):
+                    with mock.patch.object(sys, "argv", [
+                        str(SCRIPT), "--root", str(self.root), "--assert-unqualified"
+                    ]):
+                        with redirect_stdout(StringIO()):
+                            with self.assertRaises(SystemExit) as caught:
+                                module.main()
+                self.assertEqual(caught.exception.code, 2)
+
     def test_redirected_checkout_source_refused_even_with_identical_valid_bytes(self):
         import subprocess
         import sys

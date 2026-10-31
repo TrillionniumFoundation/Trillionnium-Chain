@@ -394,17 +394,50 @@ def inspect(root: Path) -> dict:
     }
 
 def has_unreviewed_findings(report: dict) -> bool:
-    """Default-deny newly introduced audit findings or accidental PQ claims."""
+    """Accept only the complete, explicitly unqualified known audit baseline.
+
+    A truncated, duplicated, or forged "classical_authority" finding is not a
+    green result. Absence of evidence cannot prove an authority was migrated.
+    """
+    if not isinstance(report, dict) or report.get("schema") != "trnm-pq-claim-audit-v1":
+        return True
     if any(report.get(field) is not False for field in UNQUALIFIED_ASSERTIONS):
+        return True
+    production = report.get("production_flags")
+    if (not isinstance(production, dict)
+            or set(production) != set(PRODUCTION_FLAGS)
+            or any(production[flag] is not False for flag in PRODUCTION_FLAGS)):
         return True
     findings = report.get("known_open_findings")
     if not isinstance(findings, list):
         return True
-    return any(
-        not isinstance(item, dict)
-        or item.get("kind") not in EXPECTED_UNQUALIFIED_FINDINGS
-        for item in findings
-    )
+    if set(CLASSICAL_MARKERS) != set(CLASSICAL_BOUNDARY_ROLES):
+        return True
+    expected = {
+        (PATHS[name], CLASSICAL_BOUNDARY_ROLES[name]) for name in CLASSICAL_MARKERS
+    }
+    observed = set()
+    proof_seen = False
+    for item in findings:
+        if not isinstance(item, dict):
+            return True
+        kind = item.get("kind")
+        if kind == "classical_authority":
+            path, role = item.get("path"), item.get("boundary")
+            if not isinstance(path, str) or not isinstance(role, str):
+                return True
+            identity = (path, role)
+            if identity not in expected or identity in observed:
+                return True
+            observed.add(identity)
+        elif kind == "unqualified_proof":
+            if item.get("path") != PATHS["w1_backend"] or proof_seen:
+                return True
+            proof_seen = True
+        else:
+            # Includes unknown future findings and all broken-source reports.
+            return True
+    return observed != expected or not proof_seen
 
 
 def main():

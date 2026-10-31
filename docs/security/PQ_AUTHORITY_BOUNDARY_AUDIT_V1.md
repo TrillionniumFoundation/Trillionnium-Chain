@@ -75,3 +75,15 @@ The two source paths now trigger the focused claim workflow on both push
 and PR, and inherit every known classical-marker positive and single-marker
 removal negative test. Gate A remains open until real owner/caller/revision
 proof and independently managed PQ identity are established.
+
+## Do not accept a truncated unqualified finding report
+
+The claim-gate assertion now requires **all 11 reviewed classical path+role
+observations exactly once**, plus the one W1 `unqualified_proof` observation
+at the pinned manifest path. Empty, missing, duplicated, role-swapped or
+unexpected findings refuse `--assert-unqualified`. It also checks the
+report schema and all four explicit false production flags rather than relying
+only on inspector-generated error messages. An independent test snapshot
+prevents simultaneously deleting one boundary from the source map and role
+map and silently reducing coverage. This validates only a conservative
+NO_GO audit report, never a cryptographic PQ authorization decision.
