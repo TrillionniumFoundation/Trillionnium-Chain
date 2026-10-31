@@ -28,7 +28,7 @@ class ClaimGateTests(unittest.TestCase):
                 target.write_text(json.dumps(profile), encoding="utf-8")
             elif key == "consensus":
                 profile = dict(module.PINNED_CONSENSUS_UNQUALIFIED_PARAMETERS)
-                profile["native_application_scope"] = "unit-test-research-only"
+                profile["native_application_scope"] = module.PINNED_NATIVE_APPLICATION_SCOPE
                 profile.update({f: False for f in module.PRODUCTION_FLAGS})
                 target.write_text(json.dumps(profile), encoding="utf-8")
             else:
@@ -475,6 +475,23 @@ class ClaimGateTests(unittest.TestCase):
         missing = dict(baseline)
         del missing["native_application_scope"]
         refuses(missing, "invalid_consensus_scope")
+        # A syntactically valid nonempty string can assert an unreviewed
+        # production profile, even while every existing production flag is false.
+        for scope in (
+            "production-activated",
+            "publicly-qualified",
+            "profile-gated-native-ledger-model-evidence-and-recovery-publicly-qualified",
+            "research-only",
+        ):
+            with self.subTest(unreviewed_scope=scope):
+                refuses({**baseline, "native_application_scope": scope},
+                        "unreviewed_consensus_scope_change",
+                        "native_application_scope")
+        # Replacing the scope with a non-string is an independent shape error.
+        for scope in (None, True, [], {}, 0, ""):
+            with self.subTest(invalid_scope=scope):
+                refuses({**baseline, "native_application_scope": scope},
+                        "invalid_consensus_scope")
 
         consensus.write_text(json.dumps(baseline), encoding="utf-8")
         result = subprocess.run(
