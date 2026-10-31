@@ -410,6 +410,11 @@ impl PqClient {
             !budget.is_zero() && budget <= Duration::from_secs(10),
             "PQ_NETWORK_CLIENT_BUDGET",
         )?;
+        // PNQ2 is authenticated plaintext for explicitly local development.
+        // The server already refuses non-loopback listeners; the public client
+        // must enforce the same boundary before a signed payload reaches a
+        // caller-selected remote TCP endpoint (or leaks across a public route).
+        ensure(address.ip().is_loopback(), "PQ_NETWORK_LOOPBACK_ONLY")?;
         let end = Instant::now() + budget;
         let mut stream = TcpStream::connect_timeout(&address, budget)?;
         super::write_frame_deadline(&mut stream, prepared.wire(), end)?;
