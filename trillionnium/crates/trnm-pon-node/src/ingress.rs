@@ -367,6 +367,14 @@ pub fn authenticated_session(
     server: &str,
     generation: u64,
 ) -> Result<AuthSession> {
+    // This shared constructor is used by both the classical client signer and
+    // the classical server verifier. Never let either endpoint manufacture or
+    // accept an Ed25519 session under a Settings-selected PQ account profile.
+    // The PNQ2 transport owns the separate pinned ML-DSA session namespace.
+    ensure(
+        !settings.app.is_pq_account_profile(),
+        "AUTH_CLASSICAL_FOR_PQ_PROFILE",
+    )?;
     ensure(
         (1..=i64::MAX as u64).contains(&generation),
         "AUTH_GENERATION",
