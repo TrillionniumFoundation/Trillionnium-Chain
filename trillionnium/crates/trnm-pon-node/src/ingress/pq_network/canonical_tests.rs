@@ -388,3 +388,34 @@ fn declared_oversize_is_rejected_before_body_allocation_and_survives_reopen() {
     assert_eq!(status["ingress_bytes"], 0);
     assert_eq!(status["inbound_signature_attempts"], 0);
 }
+
+#[test]
+fn classic_authenticated_session_is_rejected_for_pq_only_settings() {
+    let (pq_settings, _) = setup();
+    let client = crate::ingress::DevelopmentIdentity::from_secret_hex(&hex::encode([7; 32]))
+        .unwrap();
+    let server = crate::ingress::DevelopmentIdentity::from_secret_hex(&hex::encode([8; 32]))
+        .unwrap();
+    let error = crate::ingress::authenticated_session(
+        &pq_settings,
+        client.public_key(),
+        server.public_key(),
+        1,
+    )
+    .unwrap_err();
+    assert!(
+        error.to_string().contains("AUTH_CLASSICAL_FOR_PQ_PROFILE"),
+        "{error}"
+    );
+
+    // The negative gate must not disable the explicitly separate classical
+    // development mode, whose existing Ed25519 authentication stays unchanged.
+    let legacy = Settings::development(Some(super::super::now().unwrap() - 100)).unwrap();
+    assert!(crate::ingress::authenticated_session(
+        &legacy,
+        client.public_key(),
+        server.public_key(),
+        1,
+    )
+    .is_ok());
+}
