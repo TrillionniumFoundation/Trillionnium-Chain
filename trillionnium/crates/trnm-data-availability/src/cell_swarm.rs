@@ -31,22 +31,11 @@ fn digest(tag: &[u8], parts: &[&[u8]]) -> CellSwarmDigestV0 {
     hash.finalize().into()
 }
 
-fn chunk_digest(
-    descriptor: &CellSwarmDescriptorV0,
-    index: usize,
-    bytes: &[u8],
-) -> CellSwarmDigestV0 {
-    let number = u32::try_from(index).expect("validated chunk index");
-    digest(
-        b"chunk",
-        &[
-            &descriptor.network,
-            &descriptor.release_root,
-            &descriptor.cell_id,
-            &number.to_be_bytes(),
-            bytes,
-        ],
-    )
+// Chunk IDs are identities of bytes, not the release which happens to refer to
+// those bytes. The ordered Merkle root and pinned manifest bind positions,
+// network/release/Cell context and the whole payload separately.
+fn chunk_digest(bytes: &[u8]) -> CellSwarmDigestV0 {
+    digest(b"chunk-content", &[bytes])
 }
 
 fn content_digest(descriptor: &CellSwarmDescriptorV0, bytes: &[u8]) -> CellSwarmDigestV0 {
@@ -177,7 +166,7 @@ impl CellSwarmManifestV0 {
         descriptor.chunk_hashes = content
             .chunks(chunk_bytes as usize)
             .enumerate()
-            .map(|(i, bytes)| chunk_digest(&descriptor, i, bytes))
+            .map(chunk_digest)
             .collect();
         Self::checked(descriptor)
     }
@@ -261,7 +250,7 @@ impl CellSwarmAssemblerV0 {
                 Err(CellSwarmErrorV0::ConflictingChunk)
             };
         }
-        if chunk_digest(&self.manifest.descriptor, index, bytes)
+        if chunk_digest(bytes)
             != self.manifest.descriptor.chunk_hashes[index]
         {
             return Err(CellSwarmErrorV0::BadChunk);
@@ -394,5 +383,59 @@ mod tests {
             CellSwarmManifestV0::from_descriptor(bad, id).unwrap_err(),
             CellSwarmErrorV0::InvalidDescriptor
         );
+    }
+
+    #[test]
+    fn identical_bytes_reuse_chunk_ids_across_releases_but_not_manifest_authority() {
+        let (first, bytes) = fixture();
+        let second =
+            CellSwarmManifestV0::from_bytes([4; 32], [5; 32], [6; 32], 4, bytes).unwrap();
+        assert_eq!(
+            first.descriptor().chunk_hashes,
+            second.descriptor().chunk_hashes
+        );
+        assert_ne!(
+            first.descriptor().content_digest,
+            second.descriptor().content_digest
+        );
+        assert_ne!(first.id(), second.id());
+        assert_eq!(
+            CellSwarmManifestV0::from_descriptor(second.descriptor().clone(), first.id())
+                .unwrap_err(),
+            CellSwarmErrorV0::IncorrectPin
+        );
+
+        let id = second.id();
+        let mut assembler = CellSwarmAssemblerV0::new(second, id).unwrap();
+        for (index, chunk) in bytes.chunks(4).enumerate() {
+            assert_eq!(assembler.offer(index, chunk), Ok(true));
+        }
+        assert_eq!(assembler.finish().unwrap().bytes(), bytes);
+    }
+
+    #[test]
+    fn duplicate_content_ids_still_respect_pinned_chunk_positions() {
+        let bytes = b"abcdwxyzabcd";
+        let manifest =
+            CellSwarmManifestV0::from_bytes([1; 32], [2; 32], [3; 32], 4, bytes).unwrap();
+        assert_eq!(
+            manifest.descriptor().chunk_hashes[0],
+            manifest.descriptor().chunk_hashes[2]
+        );
+        assert_ne!(
+            manifest.descriptor().chunk_hashes[0],
+            manifest.descriptor().chunk_hashes[1]
+        );
+
+        let id = manifest.id();
+        let mut assembler = CellSwarmAssemblerV0::new(manifest, id).unwrap();
+        assert_eq!(
+            assembler.offer(0, b"wxyz"),
+            Err(CellSwarmErrorV0::BadChunk)
+        );
+        assert_eq!(assembler.offer(0, b"abcd"), Ok(true));
+        assert_eq!(assembler.offer(1, b"wxyz"), Ok(true));
+        assert_eq!(assembler.offer(2, b"abcd"), Ok(true));
+        assert_eq!(assembler.finish().unwrap().bytes(), bytes);
     }
 }

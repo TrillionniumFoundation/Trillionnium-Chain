@@ -48,3 +48,20 @@ Focused verification (from the repository root):
 ```sh
 cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-data-availability cell_swarm -- --nocapture
 ```
+
+
+### Cross-release chunk reuse (research-only)
+
+Chunk digests now commit to bytes alone using a dedicated content domain.
+The same Base/Cell piece reused in two releases can have one content ID.
+The separately pinned manifest still commits to the **ordered** chunk list,
+network, release root, Cell ID, exact length, chunk width and whole-content
+digest. Identical chunk IDs do not confer a different model-release authority.
+
+This refines the unactivated experimental V0 identity: old expected manifest
+IDs must not be reinterpreted or silently migrated. Prior pins fail closed.
+The new tests compare distinct-release manifests and reject incorrect chunk
+positions even when other positions reuse identical bytes.
+
+No DHT, live networking, erasure repair, custody, independent operator,
+ML-DSA channel, FinalUse, PQ128 qualification or activation is implemented.
