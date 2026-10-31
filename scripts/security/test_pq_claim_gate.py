@@ -299,6 +299,48 @@ class ClaimGateTests(unittest.TestCase):
         self.assertIn("unqualified_proof", result.stdout)
 
 
+    def test_extra_w1_policy_fields_require_review_even_when_pq128_is_false(self):
+        import subprocess
+        import sys
+
+        proof = self.root / module.PATHS["w1_backend"]
+        baseline = proof.read_text(encoding="utf-8")
+        declared = json.loads(baseline)
+        self.assertEqual(set(declared), module.ALLOWED_W1_RESEARCH_FIELDS)
+
+        # None of these names is currently approved in the research schema.
+        # A future prover could interpret one as an active override.
+        for field, value in (
+            ("proof_fri_queries_override", 1),
+            ("receipt_verification_mode", "Groth16"),
+            ("external_pq_attestation", True),
+        ):
+            with self.subTest(field=field):
+                changed = dict(declared)
+                changed[field] = value
+                proof.write_text(json.dumps(changed), encoding="utf-8")
+                self.assertTrue(any(
+                    finding["kind"] == "unreviewed_w1_research_field"
+                    and finding.get("field") == field
+                    for finding in module.inspect(self.root)["known_open_findings"]
+                ))
+                result = subprocess.run(
+                    [sys.executable, str(SCRIPT), "--root", str(self.root),
+                     "--assert-unqualified"],
+                    capture_output=True, text=True, check=False,
+                )
+                self.assertEqual(result.returncode, 2, result.stdout)
+                self.assertIn("unreviewed_w1_research_field", result.stdout)
+
+        proof.write_text(baseline, encoding="utf-8")
+        result = subprocess.run(
+            [sys.executable, str(SCRIPT), "--root", str(self.root),
+             "--assert-unqualified"],
+            capture_output=True, text=True, check=False,
+        )
+        self.assertEqual(result.returncode, 0, result.stdout)
+        self.assertIn("unqualified_proof", result.stdout)
+
     def test_actual_w1_guest_bytes_not_only_declared_manifest_are_pinned(self):
         import subprocess
         import sys
