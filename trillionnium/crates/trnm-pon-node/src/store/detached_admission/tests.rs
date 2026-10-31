@@ -542,16 +542,62 @@ fn assert_custom_genesis_held_schedule_and_cpu_owner(authenticated: bool) {
     let arithmetic_before = node.authenticated_arithmetic.observation();
     let owner = Mutex::new(node);
     let end = Instant::now() + std::time::Duration::from_secs(10);
-    let result = crate::ingress::dispatch_shared_with_metered_w1(
+    // Inspect the exact shared scalar-CPU epoch without mutating credit.
+    // Observations are optional diagnostics: a missing/unknown meter remains
+    // unknown, and the original dispatch/unwrap still decides acceptance.
+    let cpu_budget_before = original.observe().ok();
+    let cpu_flow_before = original.observe_actual_flow().ok().flatten();
+    let dispatch_start = Instant::now();
+    let attempt = crate::ingress::dispatch_shared_with_metered_w1(
         &owner,
         crate::ingress::Request::Submit {
             packet: hex::encode(candidate.encode().unwrap()),
         },
         &original,
         &|| ensure(Instant::now() < end, "PUBLIC_REQUEST_DEADLINE"),
-    )
-    .unwrap();
+    );
+    // Preserve the original acceptance assertion below, including its failure.
+    // Previously the unwrap above panicked before the original arithmetic
+    // evidence could be printed for >8 MiB parent state. Capture actual
+    // post-dispatch accounting without retrying, increasing CPU credit, or
+    // using an unmetered execution path.
+    let elapsed_ns = dispatch_start.elapsed().as_nanos();
+    let cpu_budget_after = original.observe().ok();
+    let cpu_flow_after = original.observe_actual_flow().ok().flatten();
     let arithmetic_after = owner.lock().unwrap().authenticated_arithmetic.observation();
+    let unchanged_on_refusal = if attempt.is_err() {
+        // Even a damaged readback must not hide the original typed CPU
+        // refusal. Unknown is null, never treated as a verified equality.
+        owner
+            .lock()
+            .ok()
+            .and_then(|node| node.read_active().ok())
+            .map(|actual| actual == before)
+    } else {
+        None
+    };
+    println!(
+        "{}",
+        serde_json::json!({
+            "schema": "native-large-parent-original-dispatch-diagnostic-v1",
+            "authenticated_backend": authenticated,
+            "complete_key_utf8_and_canonical_value_bytes": actual_payload,
+            "observed_held_capacity_lower_bound_bytes": observed_payload_bytes,
+            "dispatch_elapsed_ns": elapsed_ns.to_string(),
+            "original_dispatch_result": attempt.as_ref().map(|_| "ok").map_err(ToString::to_string),
+            "active_state_unchanged_on_refusal": unchanged_on_refusal,
+            "cpu_budget_before": cpu_budget_before,
+            "cpu_budget_after": cpu_budget_after,
+            "actual_cpu_flow_before": cpu_flow_before,
+            "actual_cpu_flow_after": cpu_flow_after,
+            "arithmetic_before": &arithmetic_before,
+            "arithmetic_after": &arithmetic_after,
+            "measurement_scope": "actual original metered dispatch; observation after outcome, no alternative execution, refill or altered acceptance"
+        })
+    );
+    // This remains the original strict business gate: a budget refusal is
+    // still an actual failing native test, not a qualified success.
+    let result = attempt.unwrap();
     println!(
         "{}",
         serde_json::json!({"schema":"native-large-parent-arithmetic-stages-v1", "authenticated_backend":authenticated, "before":arithmetic_before, "after":arithmetic_after, "measurement_scope":"existing stage counters sampled outside the original paid CPU operation; no budget or schedule changes"})
