@@ -117,6 +117,7 @@ def inspect(root: Path) -> dict:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--root', type=Path, default=ROOT)
+    parser.add_argument('--summary-only', action='store_true')
     args = parser.parse_args()
     try:
         report = inspect(args.root)
