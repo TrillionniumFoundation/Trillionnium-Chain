@@ -124,6 +124,8 @@ def main() -> int:
     except AuditError as error:
         print(json.dumps({'status': 'REFUSE', 'reason': str(error)}), file=sys.stderr)
         return 2
+    if args.summary_only:
+        report.pop('findings')
     print(json.dumps(report, sort_keys=True, separators=(',', ':')))
     return 0
 
