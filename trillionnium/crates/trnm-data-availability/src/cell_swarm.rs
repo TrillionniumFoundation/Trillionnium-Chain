@@ -384,16 +384,20 @@ mod tests {
             CellSwarmErrorV0::InvalidDescriptor
         );
     }
+
     #[test]
     fn identical_bytes_reuse_chunk_ids_across_releases_but_not_manifest_authority() {
         let (first, bytes) = fixture();
-        let second = CellSwarmManifestV0::from_bytes([4; 32], [5; 32], [6; 32], 4, bytes)
-            .unwrap();
+        let second =
+            CellSwarmManifestV0::from_bytes([4; 32], [5; 32], [6; 32], 4, bytes).unwrap();
         assert_eq!(
             first.descriptor().chunk_hashes,
             second.descriptor().chunk_hashes
         );
-        assert_ne!(first.descriptor().content_digest, second.descriptor().content_digest);
+        assert_ne!(
+            first.descriptor().content_digest,
+            second.descriptor().content_digest
+        );
         assert_ne!(first.id(), second.id());
         assert_eq!(
             CellSwarmManifestV0::from_descriptor(second.descriptor().clone(), first.id())
@@ -414,16 +418,24 @@ mod tests {
         let bytes = b"abcdwxyzabcd";
         let manifest =
             CellSwarmManifestV0::from_bytes([1; 32], [2; 32], [3; 32], 4, bytes).unwrap();
-        assert_eq!(manifest.descriptor().chunk_hashes[0], manifest.descriptor().chunk_hashes[2]);
-        assert_ne!(manifest.descriptor().chunk_hashes[0], manifest.descriptor().chunk_hashes[1]);
+        assert_eq!(
+            manifest.descriptor().chunk_hashes[0],
+            manifest.descriptor().chunk_hashes[2]
+        );
+        assert_ne!(
+            manifest.descriptor().chunk_hashes[0],
+            manifest.descriptor().chunk_hashes[1]
+        );
 
         let id = manifest.id();
         let mut assembler = CellSwarmAssemblerV0::new(manifest, id).unwrap();
-        assert_eq!(assembler.offer(0, b"wxyz"), Err(CellSwarmErrorV0::BadChunk));
+        assert_eq!(
+            assembler.offer(0, b"wxyz"),
+            Err(CellSwarmErrorV0::BadChunk)
+        );
         assert_eq!(assembler.offer(0, b"abcd"), Ok(true));
         assert_eq!(assembler.offer(1, b"wxyz"), Ok(true));
         assert_eq!(assembler.offer(2, b"abcd"), Ok(true));
         assert_eq!(assembler.finish().unwrap().bytes(), bytes);
     }
-
 }
