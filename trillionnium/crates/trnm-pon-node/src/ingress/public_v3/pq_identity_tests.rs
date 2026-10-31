@@ -24,6 +24,80 @@ fn server() -> PublicServer {
 }
 
 #[test]
+fn pq_only_account_profile_rejects_classical_public_v3_client_before_connection() {
+    use std::collections::BTreeSet;
+    use trnm_mvcc_fee::pon_executor::pq_accounts_v2::{
+        application_v6::ApplicationPolicy, GenesisAccount,
+    };
+    let now = crate::ingress::now().unwrap();
+    let accounts: Vec<_> = [81u8, 82, 83]
+        .into_iter()
+        .map(|n| GenesisAccount {
+            spki: identity(n).public_spki().to_vec(),
+            balance: 1_000_000,
+        })
+        .collect();
+    let policy = ApplicationPolicy {
+        evaluators: accounts
+            .iter()
+            .take(2)
+            .map(|account| ml_dsa_65_key_id_from_spki(&account.spki).unwrap())
+            .collect::<BTreeSet<_>>(),
+        evaluation_profile: trnm_mvcc_fee::public_evaluation::PROFILE.into(),
+        model_profile: "linear-expert-dev-v1".into(),
+    };
+    let settings = Settings::native_pq_application_v6(&accounts, now - 100, &policy).unwrap();
+    let classical = DevelopmentIdentity::from_secret_hex(&hex::encode([72; 32])).unwrap();
+    // TCP port zero has no server. Any IO error instead of the exact profile
+    // refusal would prove the client reached a network operation too early.
+    let unopened: SocketAddr = "127.0.0.1:0".parse().unwrap();
+    for request in [
+        Request::Head,
+        Request::History {
+            tip: hex::encode(settings.genesis()),
+            after: hex::encode(settings.genesis()),
+        },
+    ] {
+        let (result, metrics) = call_public_protected_v3_with_deadline(
+            unopened,
+            &request,
+            &settings,
+            classical.public_key(),
+            &classical,
+            PublicPolicy::new(8, Duration::from_secs(2)).unwrap(),
+            None,
+        );
+        let error = result.unwrap_err();
+        assert!(
+            error
+                .to_string()
+                .contains("PUBLIC_CLASSICAL_FOR_PQ_PROFILE"),
+            "{error}"
+        );
+        assert_eq!(metrics.failed_stage, Some(PublicClientStage::Construction));
+        assert_eq!(metrics.solution_trials, 0);
+        assert!(!metrics.solution_found);
+    }
+    // The existing classical development client still proceeds to local
+    // socket IO (and rejects this deliberately unopened destination).
+    let classic = Settings::development(Some(now - 100)).unwrap();
+    let (result, metrics) = call_public_protected_v3_with_deadline(
+        unopened,
+        &Request::Head,
+        &classic,
+        classical.public_key(),
+        &classical,
+        PublicPolicy::new(8, Duration::from_secs(2)).unwrap(),
+        None,
+    );
+    let error = result.unwrap_err();
+    assert!(!error
+        .to_string()
+        .contains("PUBLIC_CLASSICAL_FOR_PQ_PROFILE"));
+    assert_eq!(metrics.failed_stage, Some(PublicClientStage::Challenge));
+}
+
+#[test]
 fn pq_history_real_three_party_messages_are_strict_and_old_wire_is_refused() {
     let settings = Settings::development(Some(1)).unwrap();
     let caller = identity(72);

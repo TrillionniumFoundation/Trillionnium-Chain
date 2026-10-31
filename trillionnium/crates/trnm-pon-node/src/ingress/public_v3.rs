@@ -3041,6 +3041,14 @@ fn call_public_authenticated(
             pq == server_pin.is_pq() && pq == matches!(client_profile, ClientProfile::PqHistoryV4),
             "PUBLIC_OPERATION_PROFILE",
         )?;
+        // Server-side profile isolation already refuses classical V3 under a
+        // PQ-only Node. Apply the same rule in the exported client *before*
+        // generating a challenge or opening a TCP connection. Otherwise a
+        // caller can transmit classical credentials using PQ account settings.
+        ensure(
+            pq || !settings.app.is_pq_account_profile(),
+            "PUBLIC_CLASSICAL_FOR_PQ_PROFILE",
+        )?;
         PublicPolicy::new(policy.bits, Duration::from_millis(policy.lifetime_ms))?;
         let raw = serde_json::to_vec(request)?;
         let op = request_op(request)?;
