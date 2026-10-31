@@ -74,6 +74,64 @@ class W1StructuredCostTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "unknown work family"):
             cost.matrices("fabricated-fast-proof")
 
+    def test_structured_legal_proofs_match_every_reference_byte(self):
+        # Six genuine W1 proofs including both challenge-dependent traces.
+        for family in cost.STRUCTURED_LEGAL_FAMILIES:
+            a, b = cost.matrices(family)
+            for trial in (0, 1):
+                with self.subTest(family=family, trial=trial):
+                    challenge = H("adversarial-work-cost-v1", family.encode(),
+                                  trial.to_bytes(4, "little"))
+                    ordinary = w1.prove(challenge, a, b)
+                    legal = cost.prove_legal_structured(challenge, a, b, family)
+                    self.assertEqual(legal, ordinary)
+                    self.assertEqual(len(legal), w1.PROOF_BYTES)
+                    _, product = w1.verify(challenge, w1.task_id(a, b),
+                                           b"\xff" * 32, legal)
+                    self.assertEqual(product, w1.mm(a, b, w1.N, w1.N, w1.N))
+
+    def test_structured_solver_rejects_mislabeled_non_structural_input(self):
+        a, b = cost.matrices("zero")
+        a[0] = 1
+        challenge = H("invalid-structure")
+        with self.assertRaisesRegex(ValueError, "unreviewed structured"):
+            cost.prove_legal_structured(challenge, a, b, "zero")
+        with self.assertRaises(ValueError):
+            cost.prove_legal_structured(challenge, a, b, "dense")
+        with self.assertRaisesRegex(ValueError, "invalid challenge"):
+            cost.prove_legal_structured(b"\0" * 31, a, b, "zero")
+
+    def test_report_distinguishes_legal_cost_from_forged_ticket(self):
+        report = cost.run(trials=1)
+        self.assertEqual(len(report["observations"]), 4)
+        for row in report["observations"]:
+            if row["family"] in cost.STRUCTURED_LEGAL_FAMILIES:
+                self.assertGreater(row["legal_structured_prover_cpu_ns"], 0)
+                self.assertIs(row["legal_structured_proof_byte_identical"], True)
+            else:
+                self.assertIsNone(row["legal_structured_prover_cpu_ns"])
+                self.assertIsNone(row["legal_structured_proof_byte_identical"])
+        self.assertIs(report["fastest_adversarial_valid_solver_qualified"], False)
+        self.assertIs(report["pq128_security_qualified"], False)
+
+    def test_honest_winning_denominators_exclude_forged_tickets(self):
+        report = cost.run(trials=1)
+        rows = report["observations"]
+        self.assertEqual(report["sampled_valid_proof_attempts"], len(rows))
+        self.assertEqual(report["sampled_valid_devnet_winners"], sum(
+            row["valid_winning_ticket_at_devnet_target"] for row in rows))
+        self.assertEqual(report["sampled_structured_proof_attempts"], sum(
+            row["legal_structured_proof_byte_identical"] is True for row in rows))
+        self.assertEqual(report["sampled_structured_devnet_winners"], sum(
+            row["legal_structured_proof_byte_identical"] is True
+            and row["valid_winning_ticket_at_devnet_target"] for row in rows))
+        self.assertLessEqual(report["sampled_structured_devnet_winners"],
+                             report["sampled_structured_proof_attempts"])
+        self.assertLessEqual(report["sampled_valid_devnet_winners"],
+                             report["sampled_valid_proof_attempts"])
+        self.assertIs(report["hardness_lower_bound_proven"], False)
+        self.assertIs(report["pq128_security_qualified"], False)
+
     def test_highest_difficulty_has_no_forged_half_range_ticket(self):
         with self.assertRaisesRegex(AssertionError, "bounded half-range"):
             cost.forge_ticket_only(H("no-ticket"), b"\0" * 32, b"\xff" * 32)
