@@ -1,7 +1,7 @@
 use super::*;
 use crate::pon_executor::{self as exec, BlockExecution, ExecutionControl};
 #[path = "../../../../trnm-protocol/tests/support/native_pq_task_fixture_v5.rs"]
-mod fixture;
+pub(super) mod fixture;
 use fixture::{Key, Witness};
 
 fn execute(parent: &State, cfg: &Config, height: u64, rows: &[Vec<u8>]) -> State {
