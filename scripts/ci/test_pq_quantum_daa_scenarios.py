@@ -28,13 +28,18 @@ class TestQuantumDaaScenario(unittest.TestCase):
         fast = report['fast_timestamp_hypothesis']['epochs']
         ordinary = report['nominal_timestamp_reference']['epochs']
         self.assertEqual(len(fast), 4)
-        self.assertEqual(fast[0]['target_hex'], ordinary[0]['target_hex'])
-        self.assertGreater(fast[1]['chainwork'], ordinary[1]['chainwork'])
-        self.assertGreater(fast[2]['chainwork'], fast[1]['chainwork'])
-        # Actual target arithmetic floors at each epoch: do not call it exact x4.
-        parent_target = int(fast[0]['target_hex'], 16)
-        self.assertEqual(int(fast[0]['next_target_hex'], 16),
+        self.assertEqual(fast[0]['start_target_hex'], ordinary[0]['start_target_hex'])
+        # First boundary is block 16, not block 17. Fifteen blocks keep the
+        # initial target; block 16 uses the prior 16 timestamps incl. genesis.
+        self.assertGreater(fast[0]['boundary_chainwork'], ordinary[0]['boundary_chainwork'])
+        self.assertGreater(fast[1]['boundary_chainwork'], fast[0]['boundary_chainwork'])
+        parent_target = int(fast[0]['start_target_hex'], 16)
+        self.assertEqual(int(fast[0]['boundary_target_hex'], 16),
                          parent_target * 38 // 150)
+        self.assertEqual(fast[0]['epoch_chainwork'],
+                         15 * 2 + fast[0]['boundary_chainwork'])
+        self.assertEqual(fast[0]['retarget_boundary_height'], 16)
+        self.assertEqual(fast[1]['retarget_boundary_height'], 32)
         self.assertGreater(fast[-1]['cumulative_chainwork'],
                            ordinary[-1]['cumulative_chainwork'])
         self.assertFalse(report['same_wall_clock_or_mining_budget'])
