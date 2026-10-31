@@ -152,3 +152,26 @@ failure-load limits, reorg/cold recovery, external-operator evidence. This
 is a source-bound *inventory/negative-claim* improvement, not an enabled
 signature verification policy, native test, production release or whole-chain
 PQ128 qualification. #562 Gates A-F remain NO-GO.
+
+
+## Source-byte freeze for all seventeen reviewed authority paths (follow-on)
+
+The previous boundary audit matched representative Rust strings, so changing
+an authentication call or its surrounding control flow while keeping all old
+markers could still produce the accepted unqualified baseline. Source-string
+presence is not itself a source review. At the **exact** parent #613 HEAD
+`298f09505bebbf1b7befcd725a1b90e04c15548b`, 11 classical and six
+injected/delegated authority files are now pinned by raw-source SHA-256 in
+`scripts/security/pq_claim_gate.py`. Any changed bytes (including a refactor
+or a retained-marker comment-only edit) produce
+`unreviewed_authority_source_digest_change`; the standalone
+`--assert-unqualified` must refuse them until explicit re-audit and repinning.
+
+The negative suite independently checks all checked-out source SHA-256 bytes,
+mutation of each source with markers preserved, genuine CLI rejection, and
+restoration of the previously accepted **NO_GO** baseline. Pinned file digests
+are neither a PQ cryptographic authority nor proof that their callers are
+reachable, safe, or installed in a binary. This does not replace source-to-binary
+reproducibility, quantum-work bounds, externally operated rollback anchors,
+W1 qualification, or any of #562 Gates A–F. A signature-policy or runtime
+change still requires positive and adversarial tests before deployment.
