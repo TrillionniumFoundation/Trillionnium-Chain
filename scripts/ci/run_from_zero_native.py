@@ -28,6 +28,7 @@ sys.path.insert(0, str(ROOT / 'formal/pon-nakamoto-v1'))
 from contract_wire import H, header_decode, tx_decode
 TARGET = 'public_v3_from_zero'
 SOURCE = 'trillionnium/crates/trnm-pon-node/tests/' + TARGET + '.rs'
+FORMAT_SUPPORT = 'trillionnium/crates/trnm-pon-node/examples/support/w1_from_zero.rs'
 TESTS = (
     'caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct',
     'from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection',
@@ -67,6 +68,25 @@ def select_binary(lines: list[str]) -> Path:
                 paths.append(path.resolve())
     require(len(paths) == 1, 'EXACT_NEW_NATIVE_TEST_BINARY_REQUIRED')
     return paths[0]
+
+
+
+def stage_format_copy(test_source: Path, support_source: Path, out: Path) -> Path:
+    """Preserve the original #[path] module layout in a disposable rustfmt copy.
+
+    Flattening the test into out/formatted.rs loses ../examples/support and
+    gives rustfmt a false missing-module error. This is only diagnostic:
+    cargo fmt --check and all real native acceptance gates are unchanged.
+    """
+    root = out / 'format-copy-source'
+    tests = root / 'tests'
+    support = root / 'examples' / 'support'
+    tests.mkdir(parents=True, exist_ok=True)
+    support.mkdir(parents=True, exist_ok=True)
+    staged = tests / test_source.name
+    shutil.copyfile(test_source, staged)
+    shutil.copyfile(support_source, support / support_source.name)
+    return staged
 
 
 # Bounded report consistency, not a second W1/state oracle or public qualification.
@@ -770,10 +790,12 @@ def run(out: Path) -> dict:
         result['cargo'] = subprocess.check_output(['cargo', '-V'], text=True, timeout=30).strip()
         result['build_env'] = {key: os.environ.get(key) for key in (
             'CARGO_BUILD_JOBS', 'CARGO_TARGET_DIR', 'RUSTFLAGS', 'CARGO_ENCODED_RUSTFLAGS')}
-        # A copy gives a reproducible formatting repair without changing checkout.
-        shutil.copyfile(ROOT / SOURCE, out / 'formatted.rs')
+        # Stage the actual relative #[path] module before formatting the copy.
+        # The original checkout and authoritative cargo fmt --check stay untouched.
+        format_source = stage_format_copy(ROOT / SOURCE, ROOT / FORMAT_SUPPORT, out)
         result['format_copy'] = run_child(
-            ['rustfmt', '--edition', '2021', str(out / 'formatted.rs')], out / 'format-copy', 60)
+            ['rustfmt', '--edition', '2021', str(format_source)], out / 'format-copy', 60)
+        shutil.copyfile(format_source, out / 'formatted.rs')
         require(result['format_copy']['timed_out'] is False, 'NATIVE_TIMEOUT_STOPS_CAMPAIGN')
         result['format'] = run_child(
             ['cargo', 'fmt', '--manifest-path', 'trillionnium/Cargo.toml', '--all', '--', '--check'],
