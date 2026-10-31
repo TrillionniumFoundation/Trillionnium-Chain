@@ -2,12 +2,31 @@
 """Negative boundary tests. A pass is not consensus or independent acceptance."""
 from __future__ import annotations
 import copy,json,pathlib,shutil,tempfile,unittest
-from check_repository import ROOT,Invalid,check,graph_acyclic,no_promotion,unique
+from check_repository import ROOT,Invalid,check,graph_acyclic,no_promotion,unique,check_mainline_consensus_research_claim
 
 class EvidenceBoundaryTests(unittest.TestCase):
     def test_current_claims_are_unactivated(self):
         no_promotion(json.loads((ROOT/'config/consensus-mainline.json').read_text()))
         no_promotion(json.loads((ROOT/'config/pon-nakamoto-v1.json').read_text()))
+    def test_mainline_consensus_is_a_frozen_nonproduction_declaration(self):
+        truth=json.loads((ROOT/'config/consensus-mainline.json').read_text())
+        check_mainline_consensus_research_claim(truth)
+        cases=[
+            ('activation_alias',lambda d:d.update(whole_chain_post_quantum=True)),
+            ('scope_drift',lambda d:d.update(native_application_scope='production-active')),
+            ('stage_drift',lambda d:d.update(stage='production-mainline')),
+            ('missing_scope',lambda d:d.pop('native_application_scope')),
+            ('missing_flag',lambda d:d.pop('work_profile_qualified')),
+            ('coerced_false',lambda d:d.update(production_candidate=0)),
+            ('string_null',lambda d:d.update(active_consensus_implementation='null')),
+            ('new_unknown_field',lambda d:d.update(new_policy_revision='unreviewed')),
+        ]
+        for name,mutate in cases:
+            with self.subTest(case=name):
+                changed=dict(truth)
+                mutate(changed)
+                with self.assertRaises(Invalid):
+                    check_mainline_consensus_research_claim(changed)
     def test_no_runtime_claim(self):
         with self.assertRaises(Invalid):no_promotion({'runtime_implemented':True})
     def test_no_release_from_nested_report(self):
@@ -75,6 +94,12 @@ class RepositoryMutants(unittest.TestCase):
         finally:p.rmdir()
     def test_missing_runtime_claim_is_not_false_evidence(self):
         self.reject_json('config/consensus-mainline.json',lambda d:d.pop('runtime_implemented'))
+    def test_unreviewed_consensus_alias_cannot_ride_a_false_flag(self):
+        self.reject_json('config/consensus-mainline.json',
+                         lambda d:d.update(whole_chain_post_quantum=True))
+    def test_research_scope_cannot_silently_be_renamed_production(self):
+        self.reject_json('config/consensus-mainline.json',
+                         lambda d:d.update(native_application_scope='production-active'))
     def test_missing_implementation_axis(self):
         self.reject_json('config/pon-nakamoto-v1.json',lambda d:d['implementation'].pop('independent_security_accepted'))
     def test_unknown_implementation_axis(self):
