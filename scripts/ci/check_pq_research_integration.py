@@ -138,6 +138,29 @@ NATIVE_REQUIRED_PATHS = frozenset((
 # not make TCD content addressing, M12 readback or a migration rehearsal a PQ
 # authorization scheme. They retain their original independently selected owners.
 CONVERGENCE_REQUIRED_PATHS = frozenset((
+    # The existing History readback owner is now part of this candidate too.
+    # Its SQLite observer and exact dependency graph are security-relevant even
+    # though neither is a PQ signature implementation or a release approval.
+    "config/portability-inventory-v1.json",
+    "trillionnium/Cargo.toml",
+    "tests/fuzz/Cargo.toml",
+    "tests/fuzz/Cargo.lock",
+    "trillionnium/crates/trnm-sqlite-io-boundary/Cargo.toml",
+    "trillionnium/crates/trnm-sqlite-io-boundary/build.rs",
+    "trillionnium/crates/trnm-sqlite-io-boundary/build_loader_paths.rs",
+    "trillionnium/crates/trnm-sqlite-io-boundary/unix_layout_witness.c",
+    "trillionnium/crates/trnm-sqlite-io-boundary/src/lib.rs",
+    "trillionnium/crates/trnm-sqlite-io-boundary/src/ledger.rs",
+    "trillionnium/crates/trnm-sqlite-io-boundary/src/owner.rs",
+    "trillionnium/crates/trnm-sqlite-io-boundary/src/sql.rs",
+    "trillionnium/crates/trnm-sqlite-io-boundary/src/transaction_scope.rs",
+    "trillionnium/crates/trnm-sqlite-io-boundary/src/unix_abi.rs",
+    "trillionnium/crates/trnm-sqlite-io-boundary/src/unsupported.rs",
+    "trillionnium/crates/trnm-sqlite-io-boundary/src/vfs.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/reorg_cancellation.rs",
     "config/systemd/trnmponpublic.slice",
     "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
     "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs",
@@ -201,6 +224,48 @@ CONVERGENCE_REQUIRED_PATHS = frozenset((
     "trillionnium/crates/trnm-pon-node/src/store/storage_service.rs",
     "trillionnium/crates/trnm-pon-node/src/store/storage_service/tests.rs",
     "trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs",
+))
+# Reused model research and SQLite controls keep their own qualification
+# boundaries; source coverage never turns their observations into acceptance.
+CONVERGENCE_REQUIRED_PATHS |= frozenset((
+    "config/pon/binary-diverse60-training-v3.json",
+    "docs/protocol/pon-nakamoto-v1/details/CELL_P2P_V1.md",
+    "scripts/ci/model-runtime-cpu-requirements.txt",
+    "scripts/ci/run_cross_arch_cost.py",
+    "scripts/llm_answer_eos_research_v3.py",
+    "scripts/llm_answer_eos_task_research_v4.py",
+    "scripts/llm_binary_answer_observed_v2.py",
+    "scripts/llm_binary_diverse60_observed_v3.py",
+    "scripts/llm_cell_release.py",
+    "scripts/llm_initial_trainable_setup_v2.py",
+    "scripts/llm_runtime_candidate_observation_v1.py",
+    "scripts/llm_runtime_exit_worker_observation.py",
+    "scripts/llm_runtime_observed_execution_v1.py",
+    "scripts/llm_runtime_parent_step.py",
+    "scripts/llm_runtime_parent_step_task_v2.py",
+    "scripts/llm_runtime_parent_step_v2.py",
+    "scripts/llm_runtime_release.py",
+    "scripts/test_llm_answer_eos_loss_v3.py",
+    "scripts/test_llm_answer_eos_research_v3.py",
+    "scripts/test_llm_answer_eos_task_research_v4.py",
+    "scripts/test_llm_binary_answer_observed_v2.py",
+    "scripts/test_llm_binary_diverse60_observed_v3.py",
+    "scripts/test_llm_cell_release.py",
+    "scripts/test_llm_initial_trainable_setup_v2.py",
+    "scripts/test_llm_runtime_candidate_observation_v1.py",
+    "scripts/test_llm_runtime_exit_worker_observation.py",
+    "scripts/test_llm_runtime_observed_execution_v1.py",
+    "scripts/test_llm_runtime_parent_step_task_v2.py",
+    "scripts/test_llm_runtime_parent_step_v2.py",
+    "scripts/test_llm_runtime_release.py",
+    "trillionnium/crates/trnm-data-availability/src/cell/cache_budget.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/cache_wal.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/cache_wal_tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/store.rs",
+    "trillionnium/crates/trnm-sqlite-io-boundary/build_loader_paths_tests.rs",
+    "trillionnium/crates/trnm-sqlite-io-boundary/src/transaction_scope_tests.rs",
+    "trillionnium/crates/trnm-sqlite-io-boundary/tests/native_held_directory_v1.rs",
+    "trillionnium/crates/trnm-sqlite-io-boundary/tests/native_public_api_v2.rs",
 ))
 NATIVE_REQUIRED_PATHS |= CONVERGENCE_REQUIRED_PATHS
 NATIVE_FALSE = frozenset((

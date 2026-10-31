@@ -52,6 +52,9 @@ def attempt_binding(value):
 
 def preflight(value):
     """All exact-context/byte checks precede model imports and output creation."""
+    if type(value) is dict and value.get('schema') in ('llm-runtime-parent-step-input-v2', 'llm-runtime-parent-step-input-v3', 'llm-runtime-parent-step-input-v4', 'llm-runtime-parent-step-observed-input-v1', 'llm-runtime-parent-step-binary-observed-input-v2', 'llm-runtime-parent-step-binary-diverse60-observed-input-v3'):
+        from llm_runtime_parent_step_v2 import preflight as preflight_v2
+        return preflight_v2(value)
     closed(value, 'schema scope attempt_id operation experiment source files parent candidate output flags')
     runtime.require(value['schema'] == SCHEMA and value['scope'] == SCOPE and
                     value['flags'] == FALSES and all(v is False for v in value['flags'].values()),
@@ -138,6 +141,9 @@ def preflight(value):
 
 def verify_completion(value):
     """Check fixed-child local readback; this is not independent execution proof."""
+    if type(value) is dict and value.get('schema') in ('llm-runtime-parent-step-input-v2', 'llm-runtime-parent-step-input-v3', 'llm-runtime-parent-step-input-v4', 'llm-runtime-parent-step-observed-input-v1', 'llm-runtime-parent-step-binary-observed-input-v2', 'llm-runtime-parent-step-binary-diverse60-observed-input-v3'):
+        from llm_runtime_parent_step_v2 import verify_completion as verify_v2
+        return verify_v2(value)
     plan, _, _, _, _, _, summary = preflight(value)
     directory = Path(value['output'])
     raw = parent.read_regular(directory / 'actual-receipt.json', MAX_INPUT)
@@ -225,6 +231,9 @@ def copy_factors(model, contract, factors, expected_adapter, torch):
 
 def child(args):
     value = read_object(args.parent_step_input)
+    if type(value) is dict and value.get('schema') in ('llm-runtime-parent-step-input-v2', 'llm-runtime-parent-step-input-v3', 'llm-runtime-parent-step-input-v4', 'llm-runtime-parent-step-observed-input-v1', 'llm-runtime-parent-step-binary-observed-input-v2', 'llm-runtime-parent-step-binary-diverse60-observed-input-v3'):
+        from llm_runtime_parent_step_v2 import child as child_v2
+        return child_v2(args, value)
     runtime.require(runtime.identity(value) == digest(args.expected_parent_step_input),
                     'PARENT_STEP_INPUT_PIN')
     runtime.require(str(Path(args.materials).absolute()) == value['files']['materials'] and
@@ -298,6 +307,21 @@ def child(args):
 
 
 def run(args):
+    if getattr(args, 'initial_setup_profile', None) is not None:
+        from llm_runtime_parent_step_v2 import run as run_v2
+        return run_v2(args)
+    runtime.require(not getattr(args, 'parent_material', None) and
+                    not getattr(args, 'parent_material_sha256', None) and
+                    not getattr(args, 'research_plan', None) and
+                    not getattr(args, 'research_plan_sha256', None) and
+                    not getattr(args, 'observation_plan', None) and
+                    not getattr(args, 'observation_plan_sha256', None) and
+                    not getattr(args, 'binary_plan', None) and
+                    not getattr(args, 'binary_plan_sha256', None) and
+                    not getattr(args, 'diverse_plan', None) and
+                    not getattr(args, 'diverse_plan_sha256', None) and
+                    not getattr(args, 'diverse_training_data', None) and
+                    not getattr(args, 'diverse_training_data_sha256', None), 'PARENT_V2_ARGUMENTS')
     files = {name: str(Path(getattr(args, name)).absolute()) for name in
         ('materials', 'plan', 'parent_contract', 'parent_adapter', 'parent_artifact')}
     files['candidate_directory'] = str(Path(args.candidate_directory).absolute()) if args.candidate_directory else None
@@ -336,6 +360,8 @@ def run(args):
 
 def add_parser(commands):
     parser = commands.add_parser('parent-step', description=__doc__)
+    from llm_runtime_parent_step_v2 import add_arguments
+    add_arguments(parser)
     for name in ('materials', 'plan', 'expected-plan', 'output', 'attempt-id', 'parent-contract',
                  'parent-adapter', 'parent-artifact', 'expected-contract', 'expected-parent-adapter',
                  'expected-parent-file-sha256'):

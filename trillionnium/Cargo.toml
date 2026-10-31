@@ -26,6 +26,7 @@ members = [
   "crates/trnm-verification-profiles",
   "crates/trnm-transport",
   "crates/trnm-pon-node",
+  "crates/trnm-sqlite-io-boundary",
 ]
 
 [workspace.package]

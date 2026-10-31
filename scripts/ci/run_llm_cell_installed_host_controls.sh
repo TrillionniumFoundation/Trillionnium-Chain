@@ -13,9 +13,37 @@ if [[ $EUID -eq 0 || $task_cell != /* || $task_host != /* || ! -x $task_cell || 
   exit 2
 fi
 task_scripts=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)
-task_fixture=$(sudo -n mktemp -d /opt/hepta-cell-installed-test.XXXXXXXX)
+# Hosted images may deliberately make /opt writable by the runner. Check the
+# actual original caller's permissions before asking the installer to create a
+# fixture; changing a parent directory's owner/mode would alter the host policy.
+task_parent=$(python3 - <<'PY'
+import json
+import os
+from pathlib import Path
+import stat
+import sys
+
+parent = Path("/usr/lib")
+if os.geteuid() == 0 or os.access not in os.supports_effective_ids:
+    raise SystemExit("NOT_CONFIGURED: original nonroot effective-identity checks required")
+if parent.resolve(strict=True) != parent:
+    raise SystemExit("NOT_CONFIGURED: installed fixture parent must be canonical")
+observed = []
+for directory in (parent, *parent.parents):
+    info = directory.stat(follow_symlinks=False)
+    writable = os.access(directory, os.W_OK, effective_ids=True)
+    observed.append(dict(path=str(directory), uid=info.st_uid,
+                         mode=oct(stat.S_IMODE(info.st_mode)), caller_writable=writable))
+    if not stat.S_ISDIR(info.st_mode) or info.st_uid != 0 or info.st_mode & 0o022 or writable:
+        print(json.dumps(dict(scope="temporary-installed-fixture-parent", ancestors=observed)), file=sys.stderr)
+        raise SystemExit("NOT_CONFIGURED: installed fixture ancestors must be root-owned and caller-nonwritable")
+print(json.dumps(dict(scope="temporary-installed-fixture-parent", ancestors=observed)), file=sys.stderr)
+print(parent)
+PY
+)
+task_fixture=$(sudo -n mktemp -d "$task_parent/hepta-cell-installed-test.XXXXXXXX")
 case "$task_fixture" in
-  /opt/hepta-cell-installed-test.????????) ;;
+  "$task_parent"/hepta-cell-installed-test.????????) ;;
   *) echo "unexpected newly created fixture path" >&2; exit 2 ;;
 esac
 cleanup_fixture() {

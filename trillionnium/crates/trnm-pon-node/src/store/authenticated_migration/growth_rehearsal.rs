@@ -338,6 +338,7 @@ fn read_only_archive(directory: &Path, settings: Settings, backend: StateBackend
         growth_epoch: None,
         #[cfg(test)]
         expected_schema,
+        post_write_schema: None,
         #[cfg(test)]
         public_history_test_sql_limit: None,
         #[cfg(test)]

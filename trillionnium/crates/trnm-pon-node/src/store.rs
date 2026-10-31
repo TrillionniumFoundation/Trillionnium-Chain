@@ -727,6 +727,9 @@ pub struct Node {
     #[cfg(test)]
     // Research reader's immutable source DDL, never a cached on-disk verdict.
     expected_schema: BTreeMap<String, String>,
+    // Immutable source DDL for the existing ordinary authenticated writer.
+    // No SQL/schema observation from a prior operation is an authority here.
+    post_write_schema: Option<BTreeMap<String, String>>,
     #[cfg(test)]
     // Fault injection only; the production public endpoint always uses1024.
     public_history_test_sql_limit: Option<u64>,
@@ -1512,7 +1515,9 @@ impl Node {
             state_backend,
             growth_epoch: None,
             #[cfg(test)]
-            expected_schema,
+            expected_schema: expected_schema.clone(),
+            post_write_schema: (state_backend == StateBackend::AuthenticatedV1)
+                .then_some(expected_schema),
             #[cfg(test)]
             public_history_test_sql_limit: None,
             #[cfg(test)]
@@ -2219,6 +2224,15 @@ impl Node {
         state: &State,
         progress: &mut dyn FnMut() -> Result<()>,
     ) -> Result<()> {
+        self.check_persisted_state_with_readback(id, state, progress, None)
+    }
+    fn check_persisted_state_with_readback(
+        &self,
+        id: Hash,
+        state: &State,
+        progress: &mut dyn FnMut() -> Result<()>,
+        readback: Option<&mut native_authenticated::PostWriteReadback<'_>>,
+    ) -> Result<()> {
         let record = self.record(id).map_err(Error::local_integrity)?;
         continuity_v1::check_state(state, record.height, &self.settings.app)
             .map_err(|error| Error::from(error).local_integrity())?;
@@ -2234,13 +2248,14 @@ impl Node {
         };
         ensure(actual_root == record.root, "ROOT").map_err(Error::local_integrity)?;
         if self.state_backend == StateBackend::AuthenticatedV1 {
-            native_authenticated::verify_state_with_cache(
+            native_authenticated::verify_state_with_readback(
                 &self.db,
                 &self.settings,
                 id,
                 state,
                 progress,
                 Some(&self.authenticated_arithmetic),
+                readback,
             )?;
         }
         Ok(())
@@ -2255,6 +2270,13 @@ impl Node {
         &self,
         progress: &mut dyn FnMut() -> Result<()>,
     ) -> Result<()> {
+        self.check_active_before_commit_with_readback(progress, None)
+    }
+    fn check_active_before_commit_with_readback(
+        &self,
+        progress: &mut dyn FnMut() -> Result<()>,
+        mut readback: Option<&mut native_authenticated::PostWriteReadback<'_>>,
+    ) -> Result<()> {
         progress()?;
         self.namespace()?;
         self.storage_context()?;
@@ -2265,23 +2287,36 @@ impl Node {
         let selected = self.active()?;
         let slot = self.slot()?;
         let state = self.slot_state_with_progress(slot, progress)?;
-        self.check_persisted_state(selected.0, &state, progress)?;
+        if let Some(scope) = readback.as_deref_mut() {
+            scope.nominate_active(&self.db, selected.0)?;
+        }
+        self.check_persisted_state_with_readback(
+            selected.0,
+            &state,
+            progress,
+            readback.as_deref_mut(),
+        )?;
         crate::ancestry_index::validate_tip(&self.db, self.ancestry_context()?, selected.0)
             .map_err(Error::local_integrity)?;
         if self.state_backend == StateBackend::AuthenticatedV1 {
-            native_authenticated::verify_history_with_cache(
+            native_authenticated::verify_history_with_readback(
                 &self.db,
                 &self.settings,
                 selected.0,
                 progress,
                 Some(&self.authenticated_arithmetic),
+                readback.as_deref_mut(),
             )?;
         }
         ensure(
             self.active()? == selected && self.slot()? == slot,
             "GENERATION",
         )
-        .map_err(Error::local_integrity)
+        .map_err(Error::local_integrity)?;
+        if let Some(scope) = readback {
+            scope.validate_consumed(&self.db)?;
+        }
+        Ok(())
     }
     fn record(&self, id: Hash) -> Result<Record> {
         let row = self
@@ -2718,6 +2753,13 @@ impl Node {
         &self,
         progress: &mut dyn FnMut() -> Result<()>,
     ) -> Result<(Hash, u64, State)> {
+        self.read_active_with_readback(progress, None)
+    }
+    fn read_active_with_readback(
+        &self,
+        progress: &mut dyn FnMut() -> Result<()>,
+        mut readback: Option<&mut native_authenticated::PostWriteReadback<'_>>,
+    ) -> Result<(Hash, u64, State)> {
         ensure(
             self.state_backend != StateBackend::PermanentAccountGrowthV2,
             "GROWTH_COMPLETE_STATE_UNAVAILABLE",
@@ -2746,13 +2788,17 @@ impl Node {
             prior.as_ref(),
         )?;
         if self.state_backend == StateBackend::AuthenticatedV1 {
-            native_authenticated::verify_state_with_cache(
+            if let Some(scope) = readback.as_deref_mut() {
+                scope.nominate_active(&self.db, tip)?;
+            }
+            native_authenticated::verify_state_with_readback(
                 &self.db,
                 &self.settings,
                 tip,
                 &state,
                 progress,
                 Some(&self.authenticated_arithmetic),
+                readback.as_deref_mut(),
             )?;
         }
         progress()?;
@@ -2760,6 +2806,9 @@ impl Node {
             self.active()? == (tip, generation) && self.slot()? == slot,
             "STALE_VIEW",
         )?;
+        if let Some(scope) = readback {
+            scope.validate_consumed(&self.db)?;
+        }
         self.publish_commitment(tip, generation, slot, prepared);
         Ok((tip, generation, state))
     }
@@ -3022,6 +3071,14 @@ impl Node {
         tip: Hash,
         progress: &mut dyn FnMut() -> Result<()>,
     ) -> Result<State> {
+        self.state_at_with_readback(tip, progress, None)
+    }
+    fn state_at_with_readback(
+        &self,
+        tip: Hash,
+        progress: &mut dyn FnMut() -> Result<()>,
+        mut readback: Option<&mut native_authenticated::PostWriteReadback<'_>>,
+    ) -> Result<State> {
         ensure(
             self.state_backend != StateBackend::PermanentAccountGrowthV2,
             "GROWTH_COMPLETE_STATE_UNAVAILABLE",
@@ -3033,7 +3090,7 @@ impl Node {
         });
         progress()?;
         if tip == self.active()?.0 {
-            return Ok(self.read_active_with_progress(progress)?.2);
+            return Ok(self.read_active_with_readback(progress, readback)?.2);
         }
         let mut path = tempfile::tempfile()?;
         let mut count = 0u64;
@@ -3060,13 +3117,14 @@ impl Node {
                     .checked_historical_commitment(cur, &state, row.root, None)?
                     .snapshot;
                 if self.state_backend == StateBackend::AuthenticatedV1 {
-                    native_authenticated::verify_state_with_cache(
+                    native_authenticated::verify_state_with_readback(
                         &self.db,
                         &self.settings,
                         cur,
                         &state,
                         progress,
                         Some(&self.authenticated_arithmetic),
+                        readback.as_deref_mut(),
                     )?;
                 }
                 break (state, commitment);
@@ -3114,17 +3172,21 @@ impl Node {
             continuity_v1::check_state(&state, self.record(id)?.height, &self.settings.app)
                 .map_err(|error| Error::from(error).local_integrity())?;
             if self.state_backend == StateBackend::AuthenticatedV1 {
-                native_authenticated::verify_state_with_cache(
+                native_authenticated::verify_state_with_readback(
                     &self.db,
                     &self.settings,
                     id,
                     &state,
                     progress,
                     Some(&self.authenticated_arithmetic),
+                    readback.as_deref_mut(),
                 )?;
             }
         }
         progress()?;
+        if let Some(scope) = readback {
+            scope.validate_consumed(&self.db)?;
+        }
         Ok(state)
     }
     fn recent(&self, mut parent: Hash) -> Result<Vec<(u64, Hash)>> {
@@ -4117,120 +4179,159 @@ impl Node {
             &self.db,
             rusqlite::TransactionBehavior::Immediate,
         )?;
-        if let Some(fence) = detached_fence {
-            // BEGIN IMMEDIATE excludes foreign SQLite writers before the last
-            // epoch/context check. An out-of-lock result is never authorized by
-            // an earlier counter read followed by an unprotected write gap.
-            fence.validate(self, &packet)?;
-        }
-        ensure(
-            tx.execute(
-                "INSERT INTO blocks VALUES(?,?,?,?,?,?)",
-                params![
-                    id.as_slice(),
-                    h.parent.as_slice(),
-                    h.height,
-                    work.bytes().as_slice(),
-                    &bytes,
-                    h.state.as_slice()
-                ],
-            )? == 1,
-            "STORAGE_WRITE",
-        )
-        .map_err(Error::local_integrity)?;
-        let inserted_ancestry = crate::ancestry_index::insert(&tx, index_context, id)?;
-        let mut expected_deltas = Vec::new();
-        {
-            let mut insert = tx.prepare_cached("INSERT INTO deltas VALUES(?,?,?,?)")?;
-            for (index, key) in keys.into_iter().enumerate() {
-                progress(ExecutionProgress::PersistenceDelta { index })?;
-                let before_value = prior.get(key);
-                let after_value = output.state.get(key);
-                // Both complete States have already passed the original
-                // canonical root/execution checks. Equal JSON values have
-                // identical canonical bytes, so unchanged cells need no
-                // duplicate serialization merely to discover an empty delta.
-                // Keep each row's control checkpoint and every original
-                // transactional delta, packet and full-State readback below.
-                if before_value == after_value {
-                    continue;
-                }
-                let before = before_value.map(canonical).transpose()?;
-                let after = after_value.map(canonical).transpose()?;
-                if before != after {
-                    ensure(
-                        insert.execute(params![id.as_slice(), key, &before, &after])? == 1,
-                        "STORAGE_WRITE",
-                    )
-                    .map_err(Error::local_integrity)?;
-                    expected_deltas.push((key.clone(), before, after));
-                }
+        // This is the existing c165 executed-transaction owner, captured before
+        // any callback or write. total_changes alone cannot detect an ABA or DDL.
+        let original_readback_owner = self
+            .post_write_schema
+            .as_ref()
+            .map(|_| {
+                trnm_sqlite_io_boundary::TransactionScope::capture(&tx)
+                    .map_err(native_authenticated::readback_scope_error)
+            })
+            .transpose()?;
+        let transaction_result: Result<()> = (|| {
+            if let Some(fence) = detached_fence {
+                // BEGIN IMMEDIATE excludes foreign SQLite writers before the last
+                // epoch/context check. An out-of-lock result is never authorized by
+                // an earlier counter read followed by an unprotected write gap.
+                fence.validate(self, &packet)?;
             }
-        }
-        // Authenticated admission otherwise reconstructs the just-written state
-        // from genesis, verifying every intermediate complete account tree.
-        // Keep an ordinary canonical snapshot for each admitted native block.
-        // These are disposable accelerators: retain the existing 64-row policy,
-        // genesis anchor, full history/delta checks and post-write readback.
-        // Legacy cadence remains unchanged; no validity verdict is cached.
-        if self.state_backend == StateBackend::AuthenticatedV1
-            || growth_profile_v2::enabled(&self.settings.app)
-            || h.height.is_multiple_of(128)
-        {
             ensure(
                 tx.execute(
-                    "INSERT INTO snapshots VALUES(?,?)",
-                    params![id.as_slice(), canonical(&output.state)?],
+                    "INSERT INTO blocks VALUES(?,?,?,?,?,?)",
+                    params![
+                        id.as_slice(),
+                        h.parent.as_slice(),
+                        h.height,
+                        work.bytes().as_slice(),
+                        &bytes,
+                        h.state.as_slice()
+                    ],
                 )? == 1,
                 "STORAGE_WRITE",
             )
             .map_err(Error::local_integrity)?;
-            tx.execute("DELETE FROM snapshots WHERE block!=? AND block NOT IN (SELECT snapshots.block FROM snapshots JOIN blocks ON blocks.id=snapshots.block ORDER BY blocks.height DESC,blocks.id LIMIT 64)",[self.settings.genesis.as_slice()])?;
-            let retained: u64 = tx.query_row(
-                "SELECT COUNT(*) FROM snapshots WHERE block!=?",
-                [self.settings.genesis.as_slice()],
-                |row| row.get(0),
-            )?;
-            ensure(retained <= 64, "SNAPSHOT_LIMIT").map_err(Error::local_integrity)?;
-        }
-        if self.state_backend == StateBackend::AuthenticatedV1 {
-            native_authenticated::publish_with_cache(
-                &tx,
-                &self.settings,
-                h.parent,
-                id,
-                &prior,
-                &output.state,
-                &mut || progress(ExecutionProgress::BeforeDurableCommit),
-                Some(&self.authenticated_arithmetic),
-            )?;
-        }
-        // Re-read after every write/trigger, while rollback can still remove the
-        // whole block. A snapshot cannot conceal an omitted canonical delta.
-        ensure(
-            self.delta_rows_with_progress(id, &mut || {
-                progress(ExecutionProgress::BeforeDurableCommit)
-            })? == expected_deltas
-                && self.packet(id)?.encode_for_settings(&self.settings)? == bytes,
-            "STORAGE_WRITE",
-        )
-        .map_err(Error::local_integrity)?;
-        ensure(
-            self.state_at_with_progress(h.parent, &mut || {
-                progress(ExecutionProgress::BeforeDurableCommit)
-            })? == prior
-                && self.state_at_with_progress(id, &mut || {
+            let inserted_ancestry = crate::ancestry_index::insert(&tx, index_context, id)?;
+            let mut expected_deltas = Vec::new();
+            {
+                let mut insert = tx.prepare_cached("INSERT INTO deltas VALUES(?,?,?,?)")?;
+                for (index, key) in keys.into_iter().enumerate() {
+                    progress(ExecutionProgress::PersistenceDelta { index })?;
+                    let before_value = prior.get(key);
+                    let after_value = output.state.get(key);
+                    // Both complete States have already passed the original
+                    // canonical root/execution checks. Equal JSON values have
+                    // identical canonical bytes, so unchanged cells need no
+                    // duplicate serialization merely to discover an empty delta.
+                    // Keep each row's control checkpoint and every original
+                    // transactional delta, packet and full-State readback below.
+                    if before_value == after_value {
+                        continue;
+                    }
+                    let before = before_value.map(canonical).transpose()?;
+                    let after = after_value.map(canonical).transpose()?;
+                    if before != after {
+                        ensure(
+                            insert.execute(params![id.as_slice(), key, &before, &after])? == 1,
+                            "STORAGE_WRITE",
+                        )
+                        .map_err(Error::local_integrity)?;
+                        expected_deltas.push((key.clone(), before, after));
+                    }
+                }
+            }
+            // Authenticated admission otherwise reconstructs the just-written state
+            // from genesis, verifying every intermediate complete account tree.
+            // Keep an ordinary canonical snapshot for each admitted native block.
+            // These are disposable accelerators: retain the existing 64-row policy,
+            // genesis anchor, full history/delta checks and post-write readback.
+            // Legacy cadence remains unchanged; no validity verdict is cached.
+            if self.state_backend == StateBackend::AuthenticatedV1
+                || growth_profile_v2::enabled(&self.settings.app)
+                || h.height.is_multiple_of(128)
+            {
+                ensure(
+                    tx.execute(
+                        "INSERT INTO snapshots VALUES(?,?)",
+                        params![id.as_slice(), canonical(&output.state)?],
+                    )? == 1,
+                    "STORAGE_WRITE",
+                )
+                .map_err(Error::local_integrity)?;
+                tx.execute("DELETE FROM snapshots WHERE block!=? AND block NOT IN (SELECT snapshots.block FROM snapshots JOIN blocks ON blocks.id=snapshots.block ORDER BY blocks.height DESC,blocks.id LIMIT 64)",[self.settings.genesis.as_slice()])?;
+                let retained: u64 = tx.query_row(
+                    "SELECT COUNT(*) FROM snapshots WHERE block!=?",
+                    [self.settings.genesis.as_slice()],
+                    |row| row.get(0),
+                )?;
+                ensure(retained <= 64, "SNAPSHOT_LIMIT").map_err(Error::local_integrity)?;
+            }
+            let mut publication_readback = None;
+            if self.state_backend == StateBackend::AuthenticatedV1 {
+                publication_readback = native_authenticated::publish_with_readback(
+                    &tx,
+                    &self.settings,
+                    h.parent,
+                    id,
+                    &prior,
+                    &output.state,
+                    &mut || progress(ExecutionProgress::BeforeDurableCommit),
+                    Some(&self.authenticated_arithmetic),
+                    original_readback_owner
+                        .as_ref()
+                        .zip(self.post_write_schema.as_ref()),
+                )?;
+            }
+            // Re-read after every write/trigger, while rollback can still remove the
+            // whole block. A snapshot cannot conceal an omitted canonical delta.
+            ensure(
+                self.delta_rows_with_progress(id, &mut || {
                     progress(ExecutionProgress::BeforeDurableCommit)
-                })? == output.state,
-            "STORAGE_WRITE",
-        )
-        .map_err(Error::local_integrity)?;
-        crate::ancestry_index::verify_inserted(&tx, index_context, &inserted_ancestry)
+                })? == expected_deltas
+                    && self.packet(id)?.encode_for_settings(&self.settings)? == bytes,
+                "STORAGE_WRITE",
+            )
             .map_err(Error::local_integrity)?;
-        self.check_active_before_commit_with_progress(&mut || {
-            progress(ExecutionProgress::BeforeDurableCommit)
-        })?;
-        progress(ExecutionProgress::BeforeDurableCommit)?;
+            ensure(
+                self.state_at_with_readback(
+                    h.parent,
+                    &mut || progress(ExecutionProgress::BeforeDurableCommit),
+                    publication_readback.as_mut(),
+                )? == prior
+                    && self.state_at_with_readback(
+                        id,
+                        &mut || progress(ExecutionProgress::BeforeDurableCommit),
+                        publication_readback.as_mut(),
+                    )? == output.state,
+                "STORAGE_WRITE",
+            )
+            .map_err(Error::local_integrity)?;
+            crate::ancestry_index::verify_inserted(&tx, index_context, &inserted_ancestry)
+                .map_err(Error::local_integrity)?;
+            self.check_active_before_commit_with_readback(
+                &mut || progress(ExecutionProgress::BeforeDurableCommit),
+                publication_readback.as_mut(),
+            )?;
+            progress(ExecutionProgress::BeforeDurableCommit)?;
+            if let Some(scope) = publication_readback.as_mut() {
+                scope.validate_consumed(&tx)?;
+            }
+            Ok(())
+        })();
+        // Check the original writer on success and failure. A scope detects a
+        // callback's executed transaction replacement; it cannot undo its COMMIT.
+        let transaction_result = match original_readback_owner
+            .as_ref()
+            .map(|owner| owner.same_write_snapshot(&tx))
+            .transpose()
+        {
+            Ok(_) => transaction_result,
+            Err(error) => Err(match transaction_result {
+                Ok(()) => native_authenticated::readback_scope_error(error),
+                Err(first) => Error::local_replay_source("NATIVE_POST_WRITE_SCOPE", first),
+            }),
+        };
+        transaction_result?;
         tx.commit()?;
         // No cancellation fence after commit: the native durable fact stays true.
         Ok(id)

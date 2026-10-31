@@ -1404,3 +1404,64 @@ fn completed_effect_readback_requires_exact_history_and_original_chain() {
     assert_eq!(observed, owner.anchor);
     assert_eq!(store.report().unwrap(), report);
 }
+
+#[test]
+fn completed_effect_readback_rejects_stale_or_changed_owner_after_restart() {
+    let (directory, mut store, mut owner, _policy, claim) = setup(NativeBudgetLaneV1::Storage);
+    let stale = owner.clone();
+    owner.advance(6);
+    store.reserve(&mut owner, claim.clone()).unwrap();
+    store
+        .begin_effect_in_window(&mut owner, claim.claim, [80; 32], [81; 32], 5, 20)
+        .unwrap();
+    store
+        .complete_effect(claim.claim, [80; 32], [82; 32])
+        .unwrap();
+    let report = store.report().unwrap();
+
+    for reopen in [false, true] {
+        if reopen {
+            drop(store);
+            store =
+                NativeBudgetStoreV1::open(&directory.path().join("budget.sqlite"), configuration())
+                    .unwrap();
+        }
+        for field in 0..4 {
+            let mut wrong = owner.clone();
+            match field {
+                // An earlier real owner snapshot is still stale after the
+                // effect completes and its journal is reopened.
+                0 => wrong = stale.clone(),
+                1 => wrong.anchor.block[0] ^= 1,
+                2 => wrong.anchor.state_root[0] ^= 1,
+                // A height that could retire the physical obligation cannot
+                // be substituted without a new owner generation.
+                _ => wrong.anchor.height = 20,
+            }
+            assert!(matches!(
+                store.reobserve_completed_effect(
+                    &mut wrong,
+                    claim.claim,
+                    [80; 32],
+                    [81; 32],
+                    Some((5, 20)),
+                    [82; 32],
+                ),
+                Err(NativeBudgetErrorV1::Invalid("BUDGET_STALE_OWNER_SNAPSHOT"))
+            ));
+            assert_eq!(store.report().unwrap(), report);
+        }
+        let observed = store
+            .reobserve_completed_effect(
+                &mut owner,
+                claim.claim,
+                [80; 32],
+                [81; 32],
+                Some((5, 20)),
+                [82; 32],
+            )
+            .unwrap();
+        assert_eq!(observed, owner.anchor);
+        assert_eq!(store.report().unwrap(), report);
+    }
+}

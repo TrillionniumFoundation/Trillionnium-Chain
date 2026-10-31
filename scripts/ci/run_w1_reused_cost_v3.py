@@ -17,7 +17,8 @@ import sys
 from ci_observation import ROOT, digest, receipt_root, source
 from check_cross_arch_cost import (ARCHITECTURES, COST_BUILD_TIMEOUT_SECONDS,
     COST_CAMPAIGN_TIMEOUT_SECONDS, COST_IDENTITY_TIMEOUT_SECONDS, elf_machine)
-from run_cross_arch_cost import capture
+from run_cross_arch_cost import (build_environment_overrides, capture,
+    cargo_configuration_snapshot, require_cargo_configuration)
 
 sys.path.insert(0, str(ROOT / "scripts"))
 from pon_w1_reused_cost_reader_v3 import FALSE_FLAGS, SELECTOR, analyze
@@ -33,17 +34,19 @@ def main():
     spec = ARCHITECTURES[args.arch]
     output = receipt_root("w1-actual-reuse-v3")
     observations = []
-    report = {"schema": "trnm-w1-actual-reuse-execution-v3", "result": "FAIL",
+    report = {"schema": "trnm-w1-actual-reuse-execution-v4", "result": "FAIL",
         "execution_context": "local-native-preflight" if args.local else "github-hosted",
         "architecture": args.arch, "build_profile": "release", "compiler_channel": "1.95.0",
         "target": spec["target"], "observations": observations, "source_before": None,
+        "cargo_configuration_before": None, "cargo_configuration_after": None,
+        "cargo_configuration_changed": False, "default_release_configuration_checked": False,
         "runner_context": {key: os.environ.get(key) for key in (
             "GITHUB_RUN_ID", "GITHUB_RUN_ATTEMPT", "GITHUB_JOB", "GITHUB_REPOSITORY",
             "GITHUB_EVENT_NAME", "RUNNER_ARCH", "RUNNER_OS", "RUNNER_NAME", "ImageOS", "ImageVersion",
             "TRNM_COST_RUNNER_LABEL")}, **FALSE_FLAGS}
 
     def checked(command, name, timeout=COST_IDENTITY_TIMEOUT_SECONDS):
-        result = capture(command, output, name, timeout=timeout)
+        result = capture(command, output, name, timeout=timeout, cwd=ROOT)
         observations.append(result)
         if result["exit_code"] != 0 or result["timed_out"]:
             raise ValueError(name + " failed; retain original stdout/stderr and status")
@@ -60,13 +63,12 @@ def main():
                 or not os.environ.get("GITHUB_RUN_ID", "").isdigit()
                 or not os.environ.get("GITHUB_RUN_ATTEMPT", "").isdigit()):
             raise ValueError("actual hosted runner context required; use --local for preflight")
-        overrides = {key: value for key, value in os.environ.items() if value and (
-            key in {"RUSTFLAGS", "CARGO_ENCODED_RUSTFLAGS", "RUSTC_WRAPPER", "RUSTC_WORKSPACE_WRAPPER",
-                    "RUSTC", "RUSTC_BOOTSTRAP"} or key.startswith("CARGO_PROFILE_RELEASE_")
-            or key.startswith("CARGO_TARGET_") and key != "CARGO_TARGET_DIR")}
+        overrides = build_environment_overrides(dict(os.environ))
         report["build_environment_overrides"] = overrides
         if overrides:
             raise ValueError("original release compiler/target contract forbids overrides")
+        report["cargo_configuration_before"] = cargo_configuration_snapshot(ROOT, dict(os.environ))
+        require_cargo_configuration(report["cargo_configuration_before"])
         checked(["uname", "-a"], "uname")
         checked(["rustc", "+1.95.0", "-vV"], "rustc")
         checked(["cargo", "+1.95.0", "--version"], "cargo")
@@ -95,6 +97,18 @@ def main():
         report["error"] = str(error)
         print(str(error), file=sys.stderr)
     finally:
+        if report["cargo_configuration_before"] is not None:
+            try:
+                report["cargo_configuration_after"] = cargo_configuration_snapshot(ROOT, dict(os.environ))
+                require_cargo_configuration(report["cargo_configuration_after"])
+                report["cargo_configuration_changed"] = (
+                    report["cargo_configuration_before"] != report["cargo_configuration_after"])
+                if report["cargo_configuration_changed"]:
+                    raise ValueError("Cargo configuration changed during execution")
+                report["default_release_configuration_checked"] = True
+            except (OSError, ValueError) as error:
+                report["cargo_configuration_error"] = str(error)
+                report["result"] = "FAIL"
         try:
             report["source_after"] = source()
         except (OSError, ValueError, subprocess.SubprocessError) as error:
