@@ -133,6 +133,17 @@ class TestClaimGuard(unittest.TestCase):
         self.put(DEVNET, b'{"production_activation":false,"production_activation":false}')
         self.refused()
 
+    def test_nonfinite_and_nonstandard_json_numbers_refused(self):
+        # Unused configuration fields must not launder invalid JSON into HOLD.
+        # Both Python extensions (NaN/Infinity) and exponent overflow (1e999)
+        # otherwise deserialize successfully and look like valid research data.
+        original = json.dumps(self.configs[CONFIG]).encode()
+        self.assertTrue(original.endswith(b'}'))
+        for literal in (b'NaN', b'Infinity', b'-Infinity', b'1e999', b'-1e999'):
+            with self.subTest(literal=literal):
+                self.put(CONFIG, original[:-1] + b',"untrusted_probe":' + literal + b'}')
+                self.refused()
+
     def test_symlink_source_refused(self):
         path = self.root / GATES['authorization'][0]
         path.unlink()
