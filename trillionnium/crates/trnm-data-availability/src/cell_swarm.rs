@@ -312,7 +312,9 @@ mod tests {
             CellSwarmManifestV0::from_descriptor(manifest.descriptor().clone(), id).unwrap();
         let mut assembler = CellSwarmAssemblerV0::new(reconstructed, id).unwrap();
         for index in [4, 1, 3, 0, 2] {
-            assert!(assembler.offer(index, &bytes[index * 4..(index * 4 + 4).min(bytes.len())]).unwrap());
+            let start = index * 4;
+            let end = (start + 4).min(bytes.len());
+            assert!(assembler.offer(index, &bytes[start..end]).unwrap());
         }
         assert_eq!(assembler.received(), 5);
         let verified = assembler.finish().unwrap();
@@ -354,7 +356,9 @@ mod tests {
             Err(CellSwarmErrorV0::InvalidChunk)
         );
         for index in 1..5 {
-            assert!(assembler.offer(index, &bytes[index * 4..(index * 4 + 4).min(bytes.len())]).unwrap());
+            let start = index * 4;
+            let end = (start + 4).min(bytes.len());
+            assert!(assembler.offer(index, &bytes[start..end]).unwrap());
         }
         assert_eq!(assembler.finish().unwrap().bytes(), bytes);
     }
