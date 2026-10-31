@@ -7,8 +7,10 @@ complete authority inventory and external acceptance are still required.
 Self-asserted W1 PQ-128 flags are refused, not treated as external review.
 """
 import argparse
+import decimal
 import hashlib
 import json
+import math
 import os
 from pathlib import Path
 
@@ -268,9 +270,21 @@ def load_unique_json(path: Path) -> dict:
         # A different authority/consensus parser could reject or reinterpret it.
         raise ValueError(f"non-standard JSON numeric constant: {token}")
 
+    def reject_ambiguous_float(token):
+        # parse_constant does not see syntactically valid JSON exponents.
+        # Binary64 can silently interpret 1e309 as infinity, or 1e-99999
+        # as zero. Refuse both rather than comparing different policy values.
+        value = float(token)
+        if not math.isfinite(value):
+            raise ValueError(f"non-finite JSON float: {token}")
+        if value == 0.0 and not decimal.Decimal(token).is_zero():
+            raise ValueError(f"underflowed JSON float: {token}")
+        return value
+
     return json.loads(path.read_text(encoding="utf-8"),
                       object_pairs_hook=require_unique,
-                      parse_constant=reject_nonstandard_number)
+                      parse_constant=reject_nonstandard_number,
+                      parse_float=reject_ambiguous_float)
 
 def verify_frozen_w1_guest_bytes(root: Path, blockers: list) -> None:
     """Bind the known research manifest to actual local guest source bytes.
