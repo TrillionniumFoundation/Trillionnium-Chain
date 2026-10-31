@@ -131,6 +131,26 @@ impl SignedPqRecoveryWitnessV1 {
         self.verify_signature()
     }
 
+    /// Read a caller-trusted clock *after* ML-DSA verification. The previous
+    /// preflight snapshot may expire while cryptographic work is in progress.
+    /// This grants no recovery authority, nor a monotonic-sequence write.
+    /// The callback must read fresh independent time, not witness data.
+    pub fn verify_for_recovery_with_fresh_time(
+        &self,
+        trusted: &ExternalRecoveryExpectationV1<'_>,
+        after_verify_unix_s: impl FnOnce() -> u64,
+    ) -> Result<(), PqRecoveryWitnessError> {
+        self.verify_for_recovery(trusted)?;
+        let post_verify_unix_s = after_verify_unix_s();
+        if post_verify_unix_s < trusted.now_unix_s
+            || post_verify_unix_s < self.issued_unix_s
+            || post_verify_unix_s >= self.expires_unix_s
+        {
+            return Err(PqRecoveryWitnessError::TimeWindow);
+        }
+        Ok(())
+    }
+
     // No ML-DSA verification or key expansion here. In a quorum, check every
     // provided witness for cheap context and shape errors before verifying any
     // signatures, including invalid extra witnesses.
@@ -483,4 +503,29 @@ pub fn verify_pq_recovery_quorum_v1(
     Ok(ObservedPqRecoveryQuorumV1 {
         verified_signers: receipts.len(),
     })
+}
+
+/// Check all quorum signatures against the cached initial time, then require
+/// a fresh trusted time reading before returning an observation. Any clock
+/// rollback or expiry of even one supplied receipt rejects the whole quorum.
+/// Recovery owners must independently persist sequence floors, consume the
+/// one-use challenges, and recheck State and effect-journal ownership.
+pub fn verify_pq_recovery_quorum_with_fresh_time_v1(
+    receipts: &[SignedPqRecoveryWitnessV1],
+    policy: &PqRecoveryQuorumPolicyV1<'_>,
+    after_verify_unix_s: impl FnOnce() -> u64,
+) -> Result<ObservedPqRecoveryQuorumV1, PqRecoveryQuorumErrorV1> {
+    let observed = verify_pq_recovery_quorum_v1(receipts, policy)?;
+    let post_verify_unix_s = after_verify_unix_s();
+    if post_verify_unix_s < policy.now_unix_s
+        || receipts.iter().any(|receipt| {
+            post_verify_unix_s < receipt.issued_unix_s
+                || post_verify_unix_s >= receipt.expires_unix_s
+        })
+    {
+        return Err(PqRecoveryQuorumErrorV1::Witness(
+            PqRecoveryWitnessError::TimeWindow,
+        ));
+    }
+    Ok(observed)
 }

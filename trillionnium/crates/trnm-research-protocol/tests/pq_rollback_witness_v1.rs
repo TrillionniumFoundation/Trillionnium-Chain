@@ -463,3 +463,80 @@ fn whole_batch_cheap_rejections_preempt_invalid_early_signature() {
         ))
     ));
 }
+
+#[test]
+fn postverification_trusted_time_rejects_expiry_and_backward_clock() {
+    let sk = key();
+    let pk = sk.verifying_key().to_bytes().to_vec();
+    let local = head();
+    let signed = witness(&sk);
+    let mut context = expected(&pk, &local);
+    context.now_unix_s = 1149;
+    signed
+        .verify_for_recovery_with_fresh_time(&context, || 1149)
+        .unwrap();
+    for after in [1148, 1150] {
+        assert!(matches!(
+            signed.verify_for_recovery_with_fresh_time(&context, || after),
+            Err(PqRecoveryWitnessError::TimeWindow)
+        ));
+    }
+
+    let (keys, receipts) = quorum_fixture();
+    let roster = quorum_roster(&keys);
+    let mut policy = quorum_policy(&roster, &local);
+    policy.now_unix_s = 1149;
+    assert_eq!(
+        verify_pq_recovery_quorum_with_fresh_time_v1(&receipts[..2], &policy, || 1149)
+            .unwrap()
+            .verified_signers(),
+        2
+    );
+    for after in [1148, 1150] {
+        assert!(matches!(
+            verify_pq_recovery_quorum_with_fresh_time_v1(&receipts[..2], &policy, || after),
+            Err(PqRecoveryQuorumErrorV1::Witness(
+                PqRecoveryWitnessError::TimeWindow
+            ))
+        ));
+    }
+}
+
+#[test]
+fn postverification_time_read_follows_real_signature_checks() {
+    let sk = key();
+    let pk = sk.verifying_key().to_bytes().to_vec();
+    let local = head();
+    let mut signed = witness(&sk);
+    signed.signature[0] ^= 1;
+    let mut single_clock_called = false;
+    assert!(matches!(
+        signed.verify_for_recovery_with_fresh_time(&expected(&pk, &local), || {
+            single_clock_called = true;
+            1101
+        }),
+        Err(PqRecoveryWitnessError::InvalidSignature)
+    ));
+    assert!(!single_clock_called);
+
+    let (keys, receipts) = quorum_fixture();
+    let roster = quorum_roster(&keys);
+    let policy = quorum_policy(&roster, &local);
+    let mut first = receipts[0].clone();
+    first.signature[0] ^= 1;
+    let mut quorum_clock_called = false;
+    assert!(matches!(
+        verify_pq_recovery_quorum_with_fresh_time_v1(
+            &[first, receipts[1].clone()],
+            &policy,
+            || {
+                quorum_clock_called = true;
+                1101
+            },
+        ),
+        Err(PqRecoveryQuorumErrorV1::Witness(
+            PqRecoveryWitnessError::InvalidSignature
+        ))
+    ));
+    assert!(!quorum_clock_called);
+}
