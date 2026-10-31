@@ -75,7 +75,8 @@ def one_case(name: str, trial: int, target: bytes) -> dict:
     start = time.process_time_ns()
     proof = w1.prove(challenge, a, b)
     honest_ns = time.process_time_ns() - start
-    assert len(proof) == WORK_PROFILE["proof_bytes"] == w1.PROOF_BYTES
+    if len(proof) != WORK_PROFILE["proof_bytes"] or len(proof) != w1.PROOF_BYTES:
+        raise ValueError("unexpected W1 proof byte length")
 
     start = time.process_time_ns()
     _ticket, actual_product = w1.verify(challenge, task, b"\xff" * 32, proof)
@@ -89,13 +90,15 @@ def one_case(name: str, trial: int, target: bytes) -> dict:
             a[i * w1.N + k] * b[k * w1.N + j]
             for k in range(w1.N)
         ) % w1.Q
-        assert actual_product[i * w1.N + j] == independent
+        if actual_product[i * w1.N + j] != independent:
+            raise ValueError("independent output-coordinate mismatch")
 
     start = time.process_time_ns()
     forged_trace, guesses = forge_ticket_only(challenge, target, proof[-32:])
     cheap_ns = time.process_time_ns() - start
     invalid = proof[:-32] + forged_trace
-    assert H("ticket", challenge, forged_trace) <= target
+    if H("ticket", challenge, forged_trace) > target:
+        raise ValueError("ticket-only input did not qualify")
     start = time.process_time_ns()
     rejection = None
     try:
