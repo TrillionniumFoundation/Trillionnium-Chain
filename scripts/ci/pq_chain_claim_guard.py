@@ -30,6 +30,7 @@ GATES = {
         'trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs',
         'trillionnium/crates/trnm-pon-node/src/ingress.rs',
         'trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs',
+        'trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs',
         'trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs',
     ),
     'proof_pq128': (
