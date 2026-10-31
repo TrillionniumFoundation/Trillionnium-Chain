@@ -292,3 +292,38 @@ Never use a callback that accepts a string only because its hex shape matches.
 Exact new `trnm-types/src/relay.rs` source SHA-256: `50a41e5135cc5f1d1c2edd0afd1b8452180751b2e3488eb3c6af4c182a5a56c5`.
 Parent #624 `87312a78...` is historical only. All six #562 gates
 and P0 #596 remain OPEN; whole-chain PQ128/public/production = NO_GO.
+
+## Relay SHA-256 rejection-cost ordering (separate Gate E child of #625)
+
+The previous exported relay receiver recomputed SHA-256 over up to 2 MiB of
+untrusted payload in `verify_envelope_fields` before its timestamp, sequence,
+nonce-replay and capacity preflight. Repeating a known stale/replayed envelope
+could therefore trigger full payload hashing even when the signature callback
+was correctly skipped. This is a *research candidate* source-level cost gap,
+not a measured network exploit or evidence of a deployed production caller.
+
+This child first rejects malformed SHA-256 hexadecimal **shape** (exactly 64
+lowercase ASCII hex bytes) at fixed cheap cost, then checks trusted initial
+time and replay/sequence/capacity without mutating state. Actual SHA-256 over
+the bounded payload runs only for a fresh, in-order, not-yet-replayed candidate,
+**before** the caller's existing signature callback and before any nonce or
+sequence commit. Even a correctly shaped forged hash still fails with
+`PayloadHashMismatch`. Previously accepted canonical envelopes and all
+signature/chain/domain/replay policy remain unchanged. Mixed-invalidity error
+precedence is intentionally cheap-first; both violations are rejected.
+
+The new real Rust regression uses a 2 MiB envelope, forges its payload with
+the same claimed hash, then asserts that a previously authenticated replay
+returns `SeqRegression` and an expired in-order envelope returns `TimeSkew`.
+It separately asserts malformed and incorrect digest refusal before any
+signature callback, plus recovery on the same previously unused nonce/seq
+with correct bytes. Error ordering establishes the intended code path;
+there is **not** a measured SHA-256 benchmark or independently operated
+performance receipt.
+
+Exact reviewed `trnm-types/src/relay.rs` SHA-256: `de09a8fd0f79d430c23236346738551edc6b855bb6154e4df7fb63b857b6b943`.
+This hash is pinned in the fail-closed source audit; #625's prior
+`50a41e5135cc...` applies only to its historical parent. This change adds
+no ML-DSA verifier, PQ ownership/roster, network deployment, persistent
+monotonic replay, quantum-mining bound, STARK qualification, production
+activation or whole-chain PQ certification. #562 A–F remain NO_GO.
