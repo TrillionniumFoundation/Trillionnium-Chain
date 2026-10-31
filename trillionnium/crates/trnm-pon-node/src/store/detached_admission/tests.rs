@@ -566,7 +566,13 @@ fn assert_custom_genesis_held_schedule_and_cpu_owner(authenticated: bool) {
     let cpu_flow_after = original.observe_actual_flow().ok().flatten();
     let arithmetic_after = owner.lock().unwrap().authenticated_arithmetic.observation();
     let unchanged_on_refusal = if attempt.is_err() {
-        Some(owner.lock().unwrap().read_active().unwrap() == before)
+        // Even a damaged readback must not hide the original typed CPU
+        // refusal. Unknown is null, never treated as a verified equality.
+        owner
+            .lock()
+            .ok()
+            .and_then(|node| node.read_active().ok())
+            .map(|actual| actual == before)
     } else {
         None
     };
