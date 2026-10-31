@@ -89,7 +89,9 @@ fn backend_name(backend: StateBackend) -> Result<&'static str> {
         StateBackend::Legacy => Ok("legacy"),
         StateBackend::AuthenticatedV1 => Ok("authenticated-v1"),
         StateBackend::PermanentAccountGrowthV2 => Err("GROWTH_REHEARSAL_SOURCE_PROFILE".into()),
-        StateBackend::PqNetworkV2 | StateBackend::PqContinuousV3 => Err("GROWTH_REHEARSAL_SOURCE_PROFILE".into()),
+        StateBackend::PqNetworkV2 | StateBackend::PqContinuousV3 => {
+            Err("GROWTH_REHEARSAL_SOURCE_PROFILE".into())
+        }
     }
 }
 fn schema_id() -> Hash {
