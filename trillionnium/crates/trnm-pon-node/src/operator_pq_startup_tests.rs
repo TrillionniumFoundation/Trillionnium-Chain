@@ -307,7 +307,7 @@ fn fixture_kind(next_kind: u8) -> Fixture {
     } else {
         let transfer = [
             key_id(&evaluator).as_slice(),
-            7_u64.to_be_bytes().as_slice(),
+            7_u64.to_le_bytes().as_slice(),
             0_u16.to_be_bytes().as_slice(),
         ]
         .concat();
