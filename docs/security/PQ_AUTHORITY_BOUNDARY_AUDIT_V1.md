@@ -12,7 +12,9 @@ The candidate snapshot is based on the exact #593 head `6ec0bc9274cce37a83642686
 | DA full-range retrieval | `trillionnium/crates/trnm-data-availability/src/retrieval.rs` | Strict Ed25519 requester and responder receipts | Bind independent PQ requester and responder authority, epoch, replay and roster freshness without V1 fallback |
 | Node authenticated ingress | `trillionnium/crates/trnm-pon-node/src/ingress.rs` | Development peer allowlist + `verify_hex_strict` from Ed25519 primitive | Record real listener and dispatch authorization; enforce independently owned PQ identities, no legacy fallback |
 | Transfer transaction | `trillionnium/crates/trnm-types/src/transfer.rs` | `TransferTx` accepts `ed25519` signature scheme and address derivation | Versioned, domain-separated PQ native transaction, nonce and reorg/rollback ownership rules |
+| Native M06 PNX1 application envelope | `trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs` | `prepare` selects PQ2/PQ1 only under their installed profile; otherwise `Envelope` is checked with classical `verify_hex_strict` | Trace selected genesis profile and all ordinary call sites; prove PQ-only selection never accepts PNX1, including restart/reorg/downgrade cases |
 | Research command | `trillionnium/crates/trnm-research-protocol/src/command.rs` | `SignedResearchCommandV1` with Ed25519 Nakama/Hepta role | Replace authority-root verification and revoke old authorization at activation epoch |
+| Research state authorization | `trillionnium/crates/trnm-research-protocol/src/state.rs` | `ResearchProtocolState::apply` validates `SignedResearchCommandV1` then permits Nakama/Hepta public keys via `self.authorities.authorizes` | Pin an independent PQ authority registry and version/epoch; verify all state apply/handoff callers and refuse old signed commands after PQ activation |
 | Agent market task store | `trillionnium/crates/trnm-task-kernel/src/store.rs` | Ed25519 session/controller verification | PQ owner/session binding, replay, provenance and final-use checks on actual dispatch path |
 | Bilateral settlement | `trillionnium/crates/trnm-service-settlement/src/engine.rs` | `SIGNATURE_SCHEME_ED25519_V1`, registered bilateral keys | PQ provider+consumer settlement, independent registry, failure/reorg and anti-downgrade tests |
 
@@ -50,3 +52,38 @@ fatal by default**, including an accidental change of the report's
 negative PQ/authority/security assertions. Future audit work must
 explicitly review and classify a new kind before it can be ignored.
 This guard is not an externally audited PQ trust root or a runtime gate.
+
+## Native M06 and research state owner decisions (additional Gate A coverage)
+
+The previous source-bound inventory missed an **ordinary native M06 admission
+decision**, not just an imported Ed25519 helper: `pon_executor::prepare`
+checks PQ2 and PQ1 configuration first, but reaches `verify_hex_strict` on
+legacy PNX1 when both installed PQ profiles are disabled. The separate
+`validate_main_envelope` entry also calls that preparation path.
+This is a development-profile fallback, **not evidence of a PQ-mode bypass
+or an activated public listener**; qualification requires a concrete
+genesis-profile/caller trace and adversarial cross-profile execution.
+
+`ResearchProtocolState::apply` checks the signed
+command and then authorizes its Nakama/Hepta signer against a stored
+classic public-key roster. Tracking `command.rs` alone was not a complete
+trust-root audit, because a separately stored authority set and its caller
+are part of the decision. This still does not prove deployed
+governance or model FinalUse authority.
+
+The two source paths now trigger the focused claim workflow on both push
+and PR, and inherit every known classical-marker positive and single-marker
+removal negative test. Gate A remains open until real owner/caller/revision
+proof and independently managed PQ identity are established.
+
+## Do not accept a truncated unqualified finding report
+
+The claim-gate assertion now requires **all 11 reviewed classical path+role
+observations exactly once**, plus the one W1 `unqualified_proof` observation
+at the pinned manifest path. Empty, missing, duplicated, role-swapped or
+unexpected findings refuse `--assert-unqualified`. It also checks the
+report schema and all four explicit false production flags rather than relying
+only on inspector-generated error messages. An independent test snapshot
+prevents simultaneously deleting one boundary from the source map and role
+map and silently reducing coverage. This validates only a conservative
+NO_GO audit report, never a cryptographic PQ authorization decision.

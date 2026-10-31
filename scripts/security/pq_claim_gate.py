@@ -19,7 +19,9 @@ PATHS = {
     "da_retrieval": "trillionnium/crates/trnm-data-availability/src/retrieval.rs",
     "transport_ingress": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
     "legacy_transfer": "trillionnium/crates/trnm-types/src/transfer.rs",
+    "native_m06_envelope": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
     "research_command": "trillionnium/crates/trnm-research-protocol/src/command.rs",
+    "research_state": "trillionnium/crates/trnm-research-protocol/src/state.rs",
     "task_store": "trillionnium/crates/trnm-task-kernel/src/store.rs",
     "service_settlement": "trillionnium/crates/trnm-service-settlement/src/engine.rs",
     "w1_backend": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json",
@@ -37,7 +39,12 @@ CLASSICAL_MARKERS = {
                      "verify_strict("),
     "transport_ingress": ("verify_hex_strict", "fn authenticate_request("),
     "legacy_transfer": ("ed25519_dalek", 'algo != "ed25519"', "impl TransferTx"),
+    "native_m06_envelope": ("pub fn validate_main_envelope(",
+                            "if pq_accounts_v2::enabled(cfg) {",
+                            "if pq_native_v1::enabled(cfg) {", "verify_hex_strict("),
     "research_command": ("ed25519_dalek", "SignedResearchCommandV1"),
+    "research_state": ("pub fn authorizes_identity(", "signed.validate()?;",
+                       "self.authorities.authorizes(signed)"),
     "task_store": ("ed25519_dalek", "verify_strict("),
     "service_settlement": ("SIGNATURE_SCHEME_ED25519_V1", "verify_signature_entry("),
 }
@@ -50,7 +57,9 @@ CLASSICAL_BOUNDARY_ROLES = {
     "da_retrieval": "data_availability_retrieval_request_and_response_v1",
     "transport_ingress": "allowlisted_development_node_transport",
     "legacy_transfer": "transfer_transaction_signature",
+    "native_m06_envelope": "native_m06_pnx1_classical_signature_profile",
     "research_command": "research_command_nakama_hepta_authority",
+    "research_state": "research_state_classical_nakama_hepta_authority_set",
     "task_store": "agent_market_controller_session_auth",
     "service_settlement": "bilateral_settlement_authorization",
 }
@@ -385,17 +394,50 @@ def inspect(root: Path) -> dict:
     }
 
 def has_unreviewed_findings(report: dict) -> bool:
-    """Default-deny newly introduced audit findings or accidental PQ claims."""
+    """Accept only the complete, explicitly unqualified known audit baseline.
+
+    A truncated, duplicated, or forged "classical_authority" finding is not a
+    green result. Absence of evidence cannot prove an authority was migrated.
+    """
+    if not isinstance(report, dict) or report.get("schema") != "trnm-pq-claim-audit-v1":
+        return True
     if any(report.get(field) is not False for field in UNQUALIFIED_ASSERTIONS):
+        return True
+    production = report.get("production_flags")
+    if (not isinstance(production, dict)
+            or set(production) != set(PRODUCTION_FLAGS)
+            or any(production[flag] is not False for flag in PRODUCTION_FLAGS)):
         return True
     findings = report.get("known_open_findings")
     if not isinstance(findings, list):
         return True
-    return any(
-        not isinstance(item, dict)
-        or item.get("kind") not in EXPECTED_UNQUALIFIED_FINDINGS
-        for item in findings
-    )
+    if set(CLASSICAL_MARKERS) != set(CLASSICAL_BOUNDARY_ROLES):
+        return True
+    expected = {
+        (PATHS[name], CLASSICAL_BOUNDARY_ROLES[name]) for name in CLASSICAL_MARKERS
+    }
+    observed = set()
+    proof_seen = False
+    for item in findings:
+        if not isinstance(item, dict):
+            return True
+        kind = item.get("kind")
+        if kind == "classical_authority":
+            path, role = item.get("path"), item.get("boundary")
+            if not isinstance(path, str) or not isinstance(role, str):
+                return True
+            identity = (path, role)
+            if identity not in expected or identity in observed:
+                return True
+            observed.add(identity)
+        elif kind == "unqualified_proof":
+            if item.get("path") != PATHS["w1_backend"] or proof_seen:
+                return True
+            proof_seen = True
+        else:
+            # Includes unknown future findings and all broken-source reports.
+            return True
+    return observed != expected or not proof_seen
 
 
 def main():
