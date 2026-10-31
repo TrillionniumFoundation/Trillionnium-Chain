@@ -50,6 +50,9 @@ GATES = {
     'migration_and_rollback': (
         'trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration.rs',
         'trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/directory.rs',
+        'scripts/ci/pq_external_rollback_oracle.py',
+        'scripts/ci/test_pq_external_rollback_oracle.py',
+        'docs/security/PQ_EXTERNAL_ROLLBACK_WITNESS_REFERENCE_20261031.md',
     ),
     'capacity_and_invalid_input': (
         'trillionnium/crates/trnm-protocol/src/pq_frame.rs',
