@@ -116,7 +116,7 @@ class ClaimGateTests(unittest.TestCase):
         )
         self.assertEqual(restored.returncode, 0, restored.stdout)
 
-    def test_six_delegated_authority_roots_are_explicit(self):
+    def test_seven_delegated_authority_roots_are_explicit(self):
         # Include string-actor identity, signed admission, release, and migration
         # callouts as well as the original governance and control-plan guards.
         # None of these traits or string comparisons independently proves PQ.
@@ -145,6 +145,10 @@ class ClaimGateTests(unittest.TestCase):
                 "trillionnium/crates/trnm-types/src/interop_identity.rs",
                 "interop_did_capability_external_actor_authentication",
             ),
+            "relay_auth": (
+                "trillionnium/crates/trnm-types/src/relay.rs",
+                "relay_callback_authentication_and_test_signature_exposure",
+            ),
         }
         self.assertEqual(set(module.DELEGATED_MARKERS), set(expected))
         self.assertEqual(set(module.DELEGATED_BOUNDARY_ROLES), set(expected))
@@ -162,6 +166,53 @@ class ClaimGateTests(unittest.TestCase):
                     and row["path"] == path and row["boundary"] == role
                     for row in report["known_open_findings"]
                 ))
+
+    def test_exported_relay_callback_and_test_signer_remain_unqualified(self):
+        # This is the actually exported trnm-types relay implementation. Its
+        # verification closure is chosen by a caller, not PQ-pinned here.
+        # The SHA-256 test-signature helper is public but is NOT authority.
+        import subprocess
+        import sys
+
+        source = SCRIPT.parents[2] / module.PATHS["relay_auth"]
+        actual = source.read_text(encoding="utf-8")
+        exports = (SCRIPT.parents[2] /
+                   "trillionnium/crates/trnm-types/src/lib.rs").read_text(encoding="utf-8")
+        self.assertIn("pub use relay::{", exports)
+        self.assertIn("RelayAuthVerifier,", exports)
+        self.assertIn("pub fn new(max_skew_ms: u128) -> Self {\n        Self::strict(max_skew_ms)", actual)
+        self.assertIn("pub fn legacy_compatible(", actual)
+        self.assertIn("allow_legacy_v0: false,", actual)
+        self.assertIn("pub fn verify_test_sig_compat(", actual)
+        self.assertIn("verify_signature: impl Fn(&RelayAuthEnvelope) -> bool", actual)
+        report = module.inspect(self.root)
+        self.assertTrue(any(row["kind"] == "delegated_authority"
+                            and row["path"] == module.PATHS["relay_auth"]
+                            for row in report["known_open_findings"]))
+
+        # Changing even one byte of the reviewed legacy-refusal control
+        # without updating the independently pinned source must fail CLI.
+        selected = self.root / module.PATHS["relay_auth"]
+        original = selected.read_bytes()
+        edited = original.replace(b"allow_legacy_v0: false,",
+                                  b"allow_legacy_v0: true,", 1)
+        self.assertNotEqual(edited, original)
+        selected.write_bytes(edited)
+        try:
+            report = module.inspect(self.root)
+            self.assertIn("unreviewed_authority_source_digest_change",
+                          {row["kind"] for row in report["known_open_findings"]})
+            refusal = subprocess.run(
+                [sys.executable, str(SCRIPT), "--root", str(self.root),
+                 "--assert-unqualified"],
+                capture_output=True, text=True, check=False,
+            )
+            self.assertEqual(refusal.returncode, 2, refusal.stdout)
+            self.assertIn("unreviewed_authority_source_digest_change",
+                          refusal.stdout)
+        finally:
+            selected.write_bytes(original)
+        self.assertFalse(module.has_unreviewed_findings(module.inspect(self.root)))
 
     def test_delegated_identity_change_and_forged_report_fail_closed(self):
         import subprocess
