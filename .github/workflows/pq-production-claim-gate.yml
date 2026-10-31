@@ -12,6 +12,7 @@ on:
       - audit/pq-w1-closed-manifest-schema-20261030
       - audit/pq-classical-boundary-drift-refusal-20261030
       - audit/pq-da-classical-auth-default-deny-20261030
+      - audit/pq-native-m06-research-state-authority-20261030
     paths:
       - .github/workflows/pq-production-claim-gate.yml
       - scripts/security/**
