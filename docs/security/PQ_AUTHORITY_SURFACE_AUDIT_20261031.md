@@ -41,3 +41,9 @@ This is a first audit artifact to make the missing inventory visible, not a clai
 The initial source inventory excluded crate Rust files outside \`src\`: build scripts, examples, benches, integration tests, and nonstandard folders. These may be executable or may generate authority-related code. The scanner now reads all \`*.rs\` files under \`trillionnium/crates\` and retains the same 1 MiB-per-file and 20,000-file limits. It also recognizes additional classical and PQ indicator spellings. Adversarial fixtures exercise five distinct non-src source locations, a non-src symlink and invalid UTF-8, with explicit refusal.
 
 A successful scan still **does not** prove any input reaches a production effect sink, establish PQ-128, inspect linked C/Python/Go code or expanded macros, or qualify a trust root. Test-only hits and dead code remain unreviewed indicators. The six-domain security claim is still **HOLD / UNQUALIFIED** and production activation remains false.
+
+## 2026-10-31 P0 fail-closed directory coverage
+
+An `os.walk` scan without `onerror` can silently skip an unreadable *unreviewed* subtree and return an incomplete authority inventory even when all ten curated sources remain available. Checking only the `crates` directory also misses an ancestor symlink at `trillionnium`. Both are **evidence-completeness failures**, not demonstrated chain exploits. The scanner now refuses a symlink at the supplied root, `trillionnium` or `crates`, and rejects any directory enumeration error instead of treating unseen files as absent. Authored test fixtures cover a symlinked ancestor and a deterministic injected `PermissionError` (works even as root).
+
+This source-only improvement does not make directory reads atomic under a hostile filesystem namespace, trace source aliases or C/Go/Python, identify live effect sinks, prove a PQ trust root or qualify the chain. Keep the six-domain HOLD and no production activation.
