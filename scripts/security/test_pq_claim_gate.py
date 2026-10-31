@@ -49,10 +49,10 @@ class ClaimGateTests(unittest.TestCase):
         return {row["kind"] for row in module.inspect(self.root)["known_open_findings"]}
 
 
-    def test_governance_and_control_delegated_roots_are_explicit(self):
-        # GovernanceGuard only compares caller strings to local role sets;
-        # LocalPlanGuard invokes a verifier supplied by the host. Neither
-        # interface alone authenticates a PQ root or proves production use.
+    def test_six_delegated_authority_roots_are_explicit(self):
+        # Include string-actor identity, signed admission, release, and migration
+        # callouts as well as the original governance and control-plan guards.
+        # None of these traits or string comparisons independently proves PQ.
         expected = {
             "governance_guard": (
                 "trillionnium/crates/trnm-governance-guard/src/lib.rs",
@@ -61,6 +61,22 @@ class ClaimGateTests(unittest.TestCase):
             "control_plane": (
                 "trillionnium/crates/trnm-control-plane/src/lib.rs",
                 "control_plane_injected_plan_signature_verifier",
+            ),
+            "release_bundle": (
+                "trillionnium/crates/trnm-release-bundle/src/lib.rs",
+                "release_bundle_host_injected_signature_trust_root",
+            ),
+            "state_import": (
+                "trillionnium/crates/trnm-state-import/src/lib.rs",
+                "state_migration_finality_checkpoint_and_cutover_signers",
+            ),
+            "mempool_admission": (
+                "trillionnium/crates/trnm-mempool/src/typed_admission.rs",
+                "mempool_canonical_signer_and_pending_nonce_authority",
+            ),
+            "interop_identity": (
+                "trillionnium/crates/trnm-types/src/interop_identity.rs",
+                "interop_did_capability_external_actor_authentication",
             ),
         }
         self.assertEqual(set(module.DELEGATED_MARKERS), set(expected))
@@ -115,6 +131,35 @@ class ClaimGateTests(unittest.TestCase):
                     **baseline, "known_open_findings": altered,
                 }))
         self.assertFalse(module.has_unreviewed_findings(module.inspect(self.root)))
+
+    def test_new_release_migration_identity_signature_marker_drift_refuses(self):
+        # Last-marker drift is independent of the first-marker failures.
+        # A change to just one authorization call site cannot silently appear
+        # as a clean No-Go inventory even if the original trait remains.
+        import subprocess
+        import sys
+
+        for key in ("release_bundle", "state_import",
+                    "mempool_admission", "interop_identity"):
+            with self.subTest(key=key):
+                path = self.root / module.PATHS[key]
+                original = path.read_text(encoding="utf-8")
+                last = module.DELEGATED_MARKERS[key][-1]
+                self.assertIn(last, original)
+                path.write_text(original.replace(last, "unreviewed-callsite", 1),
+                                encoding="utf-8")
+                try:
+                    report = module.inspect(self.root)
+                    self.assertFalse(report["pq_chain_qualified"])
+                    self.assertIn("unreviewed_delegated_authority_boundary_change",
+                                  {row["kind"] for row in report["known_open_findings"]})
+                    result = subprocess.run(
+                        [sys.executable, str(SCRIPT), "--root", str(self.root),
+                         "--assert-unqualified"],
+                        capture_output=True, text=True, check=False)
+                    self.assertEqual(result.returncode, 2, result.stdout)
+                finally:
+                    path.write_text(original, encoding="utf-8")
 
     def test_delegated_governance_sources_always_trigger_claim_gate(self):
         definition = (SCRIPT.parents[2] /
