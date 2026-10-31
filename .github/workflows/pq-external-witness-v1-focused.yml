@@ -6,6 +6,7 @@ on:
       - fix/pq-recovery-quorum-failclosed-20261030
       - fix/pq-recovery-quorum-batch-preflight-20261030
       - fix/pq-recovery-witness-expiry-exclusive-20261030
+      - fix/pq-recovery-postverify-trusted-clock-20261030
     paths:
       - .github/workflows/pq-external-witness-v1-focused.yml
       - trillionnium/crates/trnm-research-protocol/**
