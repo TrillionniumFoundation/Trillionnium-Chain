@@ -3252,7 +3252,7 @@ impl TransactionPrefix {
                 self.context.height,
                 self.context.timestamp,
                 &self.config,
-                &signatures,
+                signatures,
                 self.pq_signature_parent.as_deref().or(Some(&self.state)),
             ));
             progress(ExecutionProgress::AfterPrepare { index })
