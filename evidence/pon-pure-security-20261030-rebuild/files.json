@@ -11,8 +11,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 12600,
-      "sha256": "e9ce9aa709578547de320d0adbe5b2c4119f92b68f08d58881077f420076ca2b"
+      "bytes": 13237,
+      "sha256": "fe9b1cb35c664e539e89fd1b37ef7f2f2b1eeaa5c23fa568e6cd7e5b2cfcc825"
     },
     {
       "path": "admission-reader-controls/environment.stderr.log",
@@ -1246,8 +1246,8 @@
     },
     {
       "path": "local-validation/README.md",
-      "bytes": 4049,
-      "sha256": "48b5c02c165d982f4837224a6f67d749a36fc22bc28eae54ebe369ed73b11a97"
+      "bytes": 4549,
+      "sha256": "a56373a4a2e821b26c085dae8e6fdae9f853bc74ca415f8e3a9392a59335409a"
     },
     {
       "path": "local-validation/authenticated-caller-final.process.json",

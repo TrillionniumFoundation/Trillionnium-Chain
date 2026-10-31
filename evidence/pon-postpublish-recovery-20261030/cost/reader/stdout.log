@@ -1,0 +1,1 @@
+{"row_validation_result": "PASS", "records": 146, "cohorts": 144, "searches": 11844, "attempts": 22590, "first_admissions": 11772, "misses": 10818, "exhausted_searches": 72, "distinct_paired_packet_ids": 654, "original_full_cli_capture_verdict_reproduced": false, "new_native_execution": false}

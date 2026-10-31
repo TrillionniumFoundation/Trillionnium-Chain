@@ -1,0 +1,33 @@
+{
+  "schema": "pon-proof-ci-recovery-binding-v1",
+  "recovered_at_utc": "2026-10-30T17:28:48.919140+00:00",
+  "observed_execution_commit": "1d11f875493f8125e36b9adceacb342df108e5e5",
+  "observed_execution_tree": "64b82137eebeb96b572abc62e5fce39af3593200",
+  "run_id": 40988668868,
+  "job_id": 123845534943,
+  "artifact_id": 12947349925,
+  "zip_bytes": 15912715,
+  "zip_sha256": "8fc5e5d914ab2fa99b2b68388837c056fe4a347cc5636d3a12d7be3d96438131",
+  "zip_member_count": 61,
+  "zip_expanded_bytes": 22289086,
+  "zip_retained": false,
+  "exact_small_original_files_retained": 57,
+  "fixture_raw_bytes_retained": false,
+  "fixture_manifest": "../../pon-pure-security-20261030-rebuild/complete-w1/fixture-objects/manifest.json",
+  "verifier_gzip": {
+    "path": "binary/verifier-eb79ac747509af6cf7942e26ca7ce74e3c0f74e944ae291129e8e319d8c50b43.gz",
+    "bytes": 1787512,
+    "sha256": "41dbb44f484b8d68397cc05d8e3c6bccf342cfed8166cf3917b9ebd6c8a02929",
+    "git_blob": "a8e5381079d01c3bbf140cb831f84f576c2673da",
+    "raw_bytes": 5990744,
+    "raw_sha256": "eb79ac747509af6cf7942e26ca7ce74e3c0f74e944ae291129e8e319d8c50b43",
+    "compresslevel": 9,
+    "mtime": 0,
+    "filename": "",
+    "exact_raw_round_trip": true
+  },
+  "new_native_execution": false,
+  "new_proof_generation": false,
+  "prior_unpublished_72_file_snapshot_recreated": false,
+  "scope": "New recovery from the exact original CI artifact after environment loss. The original 1d11 native observations are retained without relabeling them as new execution; the lost unpublished directory is not claimed to be restored."
+}

@@ -56,6 +56,7 @@ jobs:
           mkdir "$out"
           echo "OUT=$out" >> "$GITHUB_ENV"
           echo "CARGO_HOME=$RUNNER_TEMP/pure-admission-cargo" >> "$GITHUB_ENV"
+          echo "RUSTUP_HOME=$RUNNER_TEMP/pure-admission-rustup-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-${{ matrix.arch }}" >> "$GITHUB_ENV"
           echo "CARGO_TARGET_DIR=$RUNNER_TEMP/pure-admission-target" >> "$GITHUB_ENV"
           python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$EXPECTED_HEAD" --output "$out/source-checkout.json"
           bash scripts/project-preflight.sh --audit

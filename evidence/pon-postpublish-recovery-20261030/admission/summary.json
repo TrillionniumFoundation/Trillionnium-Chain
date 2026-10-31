@@ -1,0 +1,836 @@
+{
+  "arm64": {
+    "error": "Rustup partially installed toolchain / bin/cargo-clippy conflict",
+    "job_id": 123845534628,
+    "native_campaigns_attempted": 0,
+    "outcome": "setup-failed-before-native",
+    "reader_environment": {
+      "cryptography_version": "50.0.2",
+      "dependency_version_qualified": true,
+      "input_consistent": true,
+      "interpreter": "/home/runner/work/_temp/pure-admission-reader-40988668819-1-arm64/bin/python",
+      "key_vector": "b3365953873098069d9cb0ae19cf24704699085bc396ef420c2312dfcf1d8d8a",
+      "python_version": "3.12.3",
+      "schema": "pon-pure-fresh-caller-reader-environment-v1",
+      "supply_chain_attestation": false
+    }
+  },
+  "driver_exception": null,
+  "driver_finalization_failures": [],
+  "finite_qualification": false,
+  "fresh_caller_coverage": [
+    {
+      "authenticated_connection_rows": 14,
+      "authenticated_distinct_attack_callers": 0,
+      "fresh_caller_coverage_qualified": true,
+      "honest_bodies_with_authenticated_acceptance": 7,
+      "honest_bodies_with_authenticated_dispatch": 7,
+      "honest_submission_attempts": 7,
+      "honest_submission_outcomes": {
+        "error": 0,
+        "ok": 7,
+        "refused": 0
+      },
+      "honest_submission_retries": 0,
+      "minimum_authenticated_distinct_attack_callers": 0,
+      "offered_distinct_attack_callers": 0,
+      "offered_honest_bodies": 7,
+      "on_time_honest_successful_calls": 7,
+      "phase": "baseline",
+      "planned_honest_bodies": 21,
+      "preauthentication_connection_rows": 0,
+      "unoffered_honest_bodies": 14
+    },
+    {
+      "authenticated_connection_rows": 3729,
+      "authenticated_distinct_attack_callers": 3715,
+      "fresh_caller_coverage_qualified": true,
+      "honest_bodies_with_authenticated_acceptance": 7,
+      "honest_bodies_with_authenticated_dispatch": 7,
+      "honest_submission_attempts": 7,
+      "honest_submission_outcomes": {
+        "error": 0,
+        "ok": 7,
+        "refused": 0
+      },
+      "honest_submission_retries": 0,
+      "minimum_authenticated_distinct_attack_callers": 65,
+      "offered_distinct_attack_callers": 3738,
+      "offered_honest_bodies": 7,
+      "on_time_honest_successful_calls": 7,
+      "phase": "from-zero",
+      "planned_honest_bodies": 21,
+      "preauthentication_connection_rows": 23,
+      "unoffered_honest_bodies": 14
+    },
+    {
+      "authenticated_connection_rows": 2848,
+      "authenticated_distinct_attack_callers": 2834,
+      "fresh_caller_coverage_qualified": true,
+      "honest_bodies_with_authenticated_acceptance": 7,
+      "honest_bodies_with_authenticated_dispatch": 7,
+      "honest_submission_attempts": 7,
+      "honest_submission_outcomes": {
+        "error": 0,
+        "ok": 7,
+        "refused": 0
+      },
+      "honest_submission_retries": 0,
+      "minimum_authenticated_distinct_attack_callers": 65,
+      "offered_distinct_attack_callers": 2834,
+      "offered_honest_bodies": 7,
+      "on_time_honest_successful_calls": 7,
+      "phase": "correct-product-false-trace",
+      "planned_honest_bodies": 21,
+      "preauthentication_connection_rows": 0,
+      "unoffered_honest_bodies": 14
+    }
+  ],
+  "fresh_fixed_host_reader": {
+    "client_boundary_complete": true,
+    "client_execution_profile": "pure-pon-fixed-host-client-v1",
+    "cost_scopes_are_nested_not_additive": true,
+    "experiment": "fresh-caller-pressure",
+    "full_receiver_state_equality_claimed": false,
+    "independent_host_authentication": false,
+    "input_consistent": true,
+    "installation_authorized": false,
+    "native_actor_wait4_claimed": false,
+    "original_service_predicates_still_required": true,
+    "phases": [
+      {
+        "all_ipc_bytes_read_back": true,
+        "call_process_cpu_ns": 7401955655,
+        "cgroup": "/trnmponpublic.slice/trnm-campaign-verifier-8633-849759780967.service",
+        "client_execution_profile": "pure-pon-fixed-host-client-v1",
+        "confirmation_count": 1,
+        "cost_scopes_are_nested_not_additive": true,
+        "full_receiver_state_equality_claimed": false,
+        "history_resource_profile": "strict-every-native-checkpoint-v1",
+        "import_count": 7,
+        "independent_host_authentication": false,
+        "launcher_wait4": {
+          "cpu_observed": true,
+          "exit_success": true,
+          "max_rss_kib": 36140,
+          "parent_forced_kill": false,
+          "pid": 8635,
+          "system_cpu_ns": 9678000,
+          "total_cpu_ns": 13175000,
+          "user_cpu_ns": 3497000
+        },
+        "native_actor_wait4_claimed": false,
+        "original_outer_cgroup": "/system.slice/trnm-pure-admission-daa-40988668819-1-x64.service",
+        "phase": "baseline",
+        "pid": 8637,
+        "process_cpu_since_start_ns": 7905904338,
+        "production_qualification": false,
+        "request_count": 10,
+        "schema": "native-public-history-pure-client-process-v1",
+        "setup_process_cpu_ns": 474546333,
+        "whole_fixed_parent_cpu_ns": 7904529000,
+        "whole_verifier_process_cpu_ns": 7895329577
+      },
+      {
+        "all_ipc_bytes_read_back": true,
+        "call_process_cpu_ns": 7618326767,
+        "cgroup": "/trnmponpublic.slice/trnm-campaign-verifier-8633-884557620696.service",
+        "client_execution_profile": "pure-pon-fixed-host-client-v1",
+        "confirmation_count": 1,
+        "cost_scopes_are_nested_not_additive": true,
+        "full_receiver_state_equality_claimed": false,
+        "history_resource_profile": "strict-every-native-checkpoint-v1",
+        "import_count": 7,
+        "independent_host_authentication": false,
+        "launcher_wait4": {
+          "cpu_observed": true,
+          "exit_success": true,
+          "max_rss_kib": 65680,
+          "parent_forced_kill": false,
+          "pid": 8654,
+          "system_cpu_ns": 7721000,
+          "total_cpu_ns": 12593000,
+          "user_cpu_ns": 4872000
+        },
+        "native_actor_wait4_claimed": false,
+        "original_outer_cgroup": "/system.slice/trnm-pure-admission-daa-40988668819-1-x64.service",
+        "phase": "from-zero",
+        "pid": 8656,
+        "process_cpu_since_start_ns": 8123080927,
+        "production_qualification": false,
+        "request_count": 10,
+        "schema": "native-public-history-pure-client-process-v1",
+        "setup_process_cpu_ns": 468274063,
+        "whole_fixed_parent_cpu_ns": 8121916000,
+        "whole_verifier_process_cpu_ns": 8112212607
+      },
+      {
+        "all_ipc_bytes_read_back": true,
+        "call_process_cpu_ns": 7561181558,
+        "cgroup": "/trnmponpublic.slice/trnm-campaign-verifier-8633-921899657704.service",
+        "client_execution_profile": "pure-pon-fixed-host-client-v1",
+        "confirmation_count": 1,
+        "cost_scopes_are_nested_not_additive": true,
+        "full_receiver_state_equality_claimed": false,
+        "history_resource_profile": "strict-every-native-checkpoint-v1",
+        "import_count": 7,
+        "independent_host_authentication": false,
+        "launcher_wait4": {
+          "cpu_observed": true,
+          "exit_success": true,
+          "max_rss_kib": 250328,
+          "parent_forced_kill": false,
+          "pid": 8789,
+          "system_cpu_ns": 7079000,
+          "total_cpu_ns": 12306000,
+          "user_cpu_ns": 5227000
+        },
+        "native_actor_wait4_claimed": false,
+        "original_outer_cgroup": "/system.slice/trnm-pure-admission-daa-40988668819-1-x64.service",
+        "phase": "correct-product-false-trace",
+        "pid": 8791,
+        "process_cpu_since_start_ns": 8063134680,
+        "production_qualification": false,
+        "request_count": 10,
+        "schema": "native-public-history-pure-client-process-v1",
+        "setup_process_cpu_ns": 462678589,
+        "whole_fixed_parent_cpu_ns": 8062037000,
+        "whole_verifier_process_cpu_ns": 8052216902
+      }
+    ],
+    "production_qualified": false,
+    "public_fairness_qualified": false,
+    "schema": "pon-pure-fixed-host-client-readback-v1",
+    "work_hardness_qualified": false
+  },
+  "fresh_original_pressure_qualification": {
+    "finite_qualification": false,
+    "input_consistent": true,
+    "installation_authorized": false,
+    "phases": [
+      {
+        "actors_healthy": true,
+        "actual_paid_cpu_ns": 527172399,
+        "arithmetic_fact_hits": 0,
+        "attack_calls": 0,
+        "attack_observations_without_completed_arithmetic": 0,
+        "attack_transcript_entries": 0,
+        "attack_transcripts_completed": 0,
+        "depletion_basis": "same-lock flow with original refill projection and full-sample-interval upper bound; not continuous whole-round exhaustion",
+        "depletion_samples": 0,
+        "finite_qualification": false,
+        "fixed_64_slot_churn_qualified": false,
+        "fixed_64_slot_churn_required": false,
+        "fresh_challenges_actually_published": 0,
+        "phase": "baseline",
+        "pressure_and_depletion_qualified": true,
+        "pressure_and_depletion_required": false,
+        "rounds": [
+          {
+            "actual_pressure_overlap": false,
+            "attack_calls_including_physical_tails_overlapping": 0,
+            "attack_calls_overlapping": 0,
+            "confirmed": false,
+            "new_receiver_hostile_rejections": 0,
+            "on_time_history_and_independent_verification": true,
+            "paid_depletion_inside_round": false,
+            "qualified_confirmation": false,
+            "receiver_hostile_dispatch_cpu_increase_ns": 0,
+            "round": 0,
+            "seven_submissions_inside_original_call_deadlines": true
+          }
+        ],
+        "service_qualified": false
+      },
+      {
+        "actors_healthy": true,
+        "actual_paid_cpu_ns": 4877540174,
+        "arithmetic_fact_hits": 0,
+        "attack_calls": 3738,
+        "attack_observations_without_completed_arithmetic": 3738,
+        "attack_transcript_entries": 0,
+        "attack_transcripts_completed": 0,
+        "depletion_basis": "same-lock flow with original refill projection and full-sample-interval upper bound; not continuous whole-round exhaustion",
+        "depletion_samples": 0,
+        "finite_qualification": false,
+        "fixed_64_slot_churn_qualified": false,
+        "fixed_64_slot_churn_required": false,
+        "fresh_challenges_actually_published": 0,
+        "phase": "from-zero",
+        "pressure_and_depletion_qualified": false,
+        "pressure_and_depletion_required": true,
+        "rounds": [
+          {
+            "actual_pressure_overlap": true,
+            "attack_calls_including_physical_tails_overlapping": 3620,
+            "attack_calls_overlapping": 3620,
+            "confirmed": false,
+            "new_receiver_hostile_rejections": 3595,
+            "on_time_history_and_independent_verification": true,
+            "paid_depletion_inside_round": false,
+            "qualified_confirmation": false,
+            "receiver_hostile_dispatch_cpu_increase_ns": 4269576163,
+            "round": 0,
+            "seven_submissions_inside_original_call_deadlines": true
+          }
+        ],
+        "service_qualified": false
+      },
+      {
+        "actors_healthy": true,
+        "actual_paid_cpu_ns": 7403342704,
+        "arithmetic_fact_hits": 0,
+        "attack_calls": 2834,
+        "attack_observations_without_completed_arithmetic": 23,
+        "attack_transcript_entries": 2811,
+        "attack_transcripts_completed": 2811,
+        "depletion_basis": "same-lock flow with original refill projection and full-sample-interval upper bound; not continuous whole-round exhaustion",
+        "depletion_samples": 401,
+        "finite_qualification": false,
+        "fixed_64_slot_churn_qualified": true,
+        "fixed_64_slot_churn_required": true,
+        "fresh_challenges_actually_published": 2811,
+        "phase": "correct-product-false-trace",
+        "pressure_and_depletion_qualified": false,
+        "pressure_and_depletion_required": true,
+        "rounds": [
+          {
+            "actual_pressure_overlap": true,
+            "attack_calls_including_physical_tails_overlapping": 2767,
+            "attack_calls_overlapping": 2767,
+            "confirmed": false,
+            "new_receiver_hostile_rejections": 2745,
+            "on_time_history_and_independent_verification": true,
+            "paid_depletion_inside_round": true,
+            "qualified_confirmation": false,
+            "receiver_hostile_dispatch_cpu_increase_ns": 6762687245,
+            "round": 0,
+            "seven_submissions_inside_original_call_deadlines": true
+          }
+        ],
+        "service_qualified": false
+      }
+    ],
+    "production_qualified": false,
+    "public_fairness_qualified": false,
+    "schema": "pon-pure-pressure-qualification-v3",
+    "scope": "Fixed 24-actor, two-listener, shared cold CPU epoch; 30s phases and original 2s calls. Local monotonic clocks and CPU observations, not authenticity, unlimited-Sybil fairness, WAN throughput, work hardness or installation authority.",
+    "work_hardness_qualified": false
+  },
+  "fresh_phases": [
+    {
+      "errors": [],
+      "history_import_count": 7,
+      "history_import_process_cpu_total_ns": 7348780296,
+      "last_history_import": {
+        "process_cpu_ns": 2833703217,
+        "process_wall_ns": 11362025858,
+        "thread_cpu_ns": 2833697708,
+        "wall_ns": 11362003435
+      },
+      "phase": "baseline",
+      "rounds": [
+        {
+          "confirmed_inside_pressure_window": false,
+          "depletion_observed_during_round": false,
+          "ended_ns": 32189797667,
+          "observed_depth": 6,
+          "round": 0,
+          "started_ns": 1001063436
+        }
+      ],
+      "window_ns": 30000000000
+    },
+    {
+      "errors": [],
+      "history_import_count": 7,
+      "history_import_process_cpu_total_ns": 7565979511,
+      "last_history_import": {
+        "process_cpu_ns": 2913820090,
+        "process_wall_ns": 11601339337,
+        "thread_cpu_ns": 2913814793,
+        "wall_ns": 11601329673
+      },
+      "phase": "from-zero",
+      "rounds": [
+        {
+          "confirmed_inside_pressure_window": false,
+          "depletion_observed_during_round": false,
+          "ended_ns": 34270335206,
+          "observed_depth": 6,
+          "round": 0,
+          "started_ns": 1001089736
+        }
+      ],
+      "window_ns": 30000000000
+    },
+    {
+      "errors": [],
+      "history_import_count": 7,
+      "history_import_process_cpu_total_ns": 7508060860,
+      "last_history_import": {
+        "process_cpu_ns": 2894057241,
+        "process_wall_ns": 11536088586,
+        "thread_cpu_ns": 2894051091,
+        "wall_ns": 11536078801
+      },
+      "phase": "correct-product-false-trace",
+      "rounds": [
+        {
+          "confirmed_inside_pressure_window": false,
+          "depletion_observed_during_round": true,
+          "ended_ns": 34852993307,
+          "observed_depth": 6,
+          "round": 0,
+          "started_ns": 1000681106
+        }
+      ],
+      "window_ns": 30000000000
+    }
+  ],
+  "head": "1d11f875493f8125e36b9adceacb342df108e5e5",
+  "mandatory_reader_gates": [
+    {
+      "complete_success": true,
+      "name": "fresh-caller-client-reader",
+      "returncode": 0
+    },
+    {
+      "complete_success": true,
+      "name": "fresh-caller-environment",
+      "returncode": 0
+    },
+    {
+      "complete_success": false,
+      "name": "fresh-caller-reader",
+      "returncode": 1
+    },
+    {
+      "complete_success": true,
+      "name": "fresh-caller-reader-controls",
+      "returncode": 0
+    },
+    {
+      "complete_success": true,
+      "name": "pure-client-reader",
+      "returncode": 0
+    },
+    {
+      "complete_success": false,
+      "name": "receiver-client-reader",
+      "returncode": 1
+    }
+  ],
+  "native_campaigns": [
+    {
+      "elapsed_ns": 112343986905,
+      "name": "pure-pressure",
+      "outer_stage_timeout_seconds": 600,
+      "returncode": 101
+    },
+    {
+      "elapsed_ns": 113427210643,
+      "name": "receiver-owner-supplement",
+      "outer_stage_timeout_seconds": 600,
+      "returncode": 101
+    },
+    {
+      "elapsed_ns": 112116150989,
+      "name": "fresh-caller-pressure",
+      "outer_stage_timeout_seconds": 600,
+      "returncode": 101
+    }
+  ],
+  "native_gates": {
+    "attempted": 19,
+    "failed": 3,
+    "passed": 16
+  },
+  "original_baseline": {
+    "errors": [],
+    "history_import_count": 7,
+    "history_import_process_cpu_total_ns": 7257389532,
+    "last_history_import": {
+      "process_cpu_ns": 2844300120,
+      "process_wall_ns": 11406756045,
+      "thread_cpu_ns": 2844293350,
+      "wall_ns": 11406743117
+    },
+    "phase": "baseline",
+    "rounds": [
+      {
+        "confirmed_inside_pressure_window": false,
+        "depletion_observed_during_round": false,
+        "ended_ns": 31786640876,
+        "observed_depth": 6,
+        "round": 0,
+        "started_ns": 1001890302
+      }
+    ],
+    "window_ns": 30000000000
+  },
+  "original_fixed_host_reader": {
+    "client_boundary_complete": true,
+    "client_execution_profile": "pure-pon-fixed-host-client-v1",
+    "cost_scopes_are_nested_not_additive": true,
+    "experiment": "pure-pressure",
+    "full_receiver_state_equality_claimed": false,
+    "independent_host_authentication": false,
+    "input_consistent": true,
+    "installation_authorized": false,
+    "native_actor_wait4_claimed": false,
+    "original_service_predicates_still_required": true,
+    "phases": [
+      {
+        "all_ipc_bytes_read_back": true,
+        "call_process_cpu_ns": 7310732740,
+        "cgroup": "/trnmponpublic.slice/trnm-campaign-verifier-8288-602680917864.service",
+        "client_execution_profile": "pure-pon-fixed-host-client-v1",
+        "confirmation_count": 1,
+        "cost_scopes_are_nested_not_additive": true,
+        "full_receiver_state_equality_claimed": false,
+        "history_resource_profile": "strict-every-native-checkpoint-v1",
+        "import_count": 7,
+        "independent_host_authentication": false,
+        "launcher_wait4": {
+          "cpu_observed": true,
+          "exit_success": true,
+          "max_rss_kib": 35740,
+          "parent_forced_kill": false,
+          "pid": 8290,
+          "system_cpu_ns": 9767000,
+          "total_cpu_ns": 12713000,
+          "user_cpu_ns": 2946000
+        },
+        "native_actor_wait4_claimed": false,
+        "original_outer_cgroup": "/system.slice/trnm-pure-admission-daa-40988668819-1-x64.service",
+        "phase": "baseline",
+        "pid": 8292,
+        "process_cpu_since_start_ns": 7811642290,
+        "production_qualification": false,
+        "request_count": 10,
+        "schema": "native-public-history-pure-client-process-v1",
+        "setup_process_cpu_ns": 470749875,
+        "whole_fixed_parent_cpu_ns": 7810416000,
+        "whole_verifier_process_cpu_ns": 7800181731
+      },
+      {
+        "all_ipc_bytes_read_back": true,
+        "call_process_cpu_ns": 7622367320,
+        "cgroup": "/trnmponpublic.slice/trnm-campaign-verifier-8288-637254182317.service",
+        "client_execution_profile": "pure-pon-fixed-host-client-v1",
+        "confirmation_count": 1,
+        "cost_scopes_are_nested_not_additive": true,
+        "full_receiver_state_equality_claimed": false,
+        "history_resource_profile": "strict-every-native-checkpoint-v1",
+        "import_count": 7,
+        "independent_host_authentication": false,
+        "launcher_wait4": {
+          "cpu_observed": true,
+          "exit_success": true,
+          "max_rss_kib": 65656,
+          "parent_forced_kill": false,
+          "pid": 8318,
+          "system_cpu_ns": 9035000,
+          "total_cpu_ns": 12505000,
+          "user_cpu_ns": 3470000
+        },
+        "native_actor_wait4_claimed": false,
+        "original_outer_cgroup": "/system.slice/trnm-pure-admission-daa-40988668819-1-x64.service",
+        "phase": "from-zero",
+        "pid": 8320,
+        "process_cpu_since_start_ns": 8130800647,
+        "production_qualification": false,
+        "request_count": 10,
+        "schema": "native-public-history-pure-client-process-v1",
+        "setup_process_cpu_ns": 471278628,
+        "whole_fixed_parent_cpu_ns": 8129513000,
+        "whole_verifier_process_cpu_ns": 8119716331
+      },
+      {
+        "all_ipc_bytes_read_back": true,
+        "call_process_cpu_ns": 7587516614,
+        "cgroup": "/trnmponpublic.slice/trnm-campaign-verifier-8288-674520752563.service",
+        "client_execution_profile": "pure-pon-fixed-host-client-v1",
+        "confirmation_count": 1,
+        "cost_scopes_are_nested_not_additive": true,
+        "full_receiver_state_equality_claimed": false,
+        "history_resource_profile": "strict-every-native-checkpoint-v1",
+        "import_count": 7,
+        "independent_host_authentication": false,
+        "launcher_wait4": {
+          "cpu_observed": true,
+          "exit_success": true,
+          "max_rss_kib": 247524,
+          "parent_forced_kill": false,
+          "pid": 8391,
+          "system_cpu_ns": 10074000,
+          "total_cpu_ns": 12921000,
+          "user_cpu_ns": 2847000
+        },
+        "native_actor_wait4_claimed": false,
+        "original_outer_cgroup": "/system.slice/trnm-pure-admission-daa-40988668819-1-x64.service",
+        "phase": "correct-product-false-trace",
+        "pid": 8393,
+        "process_cpu_since_start_ns": 8101909436,
+        "production_qualification": false,
+        "request_count": 10,
+        "schema": "native-public-history-pure-client-process-v1",
+        "setup_process_cpu_ns": 472463983,
+        "whole_fixed_parent_cpu_ns": 8100956000,
+        "whole_verifier_process_cpu_ns": 8090821330
+      }
+    ],
+    "production_qualified": false,
+    "public_fairness_qualified": false,
+    "schema": "pon-pure-fixed-host-client-readback-v1",
+    "work_hardness_qualified": false
+  },
+  "original_qualification": {
+    "finite_qualification": false,
+    "input_consistent": true,
+    "installation_authorized": false,
+    "phases": [
+      {
+        "actors_healthy": true,
+        "actual_paid_cpu_ns": 513780274,
+        "arithmetic_fact_hits": 0,
+        "attack_calls": 0,
+        "attack_observations_without_completed_arithmetic": 0,
+        "attack_transcript_entries": 0,
+        "attack_transcripts_completed": 0,
+        "depletion_basis": "same-lock flow with original refill projection and full-sample-interval upper bound; not continuous whole-round exhaustion",
+        "depletion_samples": 0,
+        "finite_qualification": false,
+        "fixed_64_slot_churn_qualified": false,
+        "fixed_64_slot_churn_required": false,
+        "fresh_challenges_actually_published": 0,
+        "phase": "baseline",
+        "pressure_and_depletion_qualified": true,
+        "pressure_and_depletion_required": false,
+        "rounds": [
+          {
+            "actual_pressure_overlap": false,
+            "attack_calls_including_physical_tails_overlapping": 0,
+            "attack_calls_overlapping": 0,
+            "confirmed": false,
+            "new_receiver_hostile_rejections": 0,
+            "on_time_history_and_independent_verification": true,
+            "paid_depletion_inside_round": false,
+            "qualified_confirmation": false,
+            "receiver_hostile_dispatch_cpu_increase_ns": 0,
+            "round": 0,
+            "seven_submissions_inside_original_call_deadlines": true
+          }
+        ],
+        "service_qualified": false
+      },
+      {
+        "actors_healthy": true,
+        "actual_paid_cpu_ns": 5047038681,
+        "arithmetic_fact_hits": 0,
+        "attack_calls": 3726,
+        "attack_observations_without_completed_arithmetic": 3726,
+        "attack_transcript_entries": 0,
+        "attack_transcripts_completed": 0,
+        "depletion_basis": "same-lock flow with original refill projection and full-sample-interval upper bound; not continuous whole-round exhaustion",
+        "depletion_samples": 0,
+        "finite_qualification": false,
+        "fixed_64_slot_churn_qualified": false,
+        "fixed_64_slot_churn_required": false,
+        "fresh_challenges_actually_published": 0,
+        "phase": "from-zero",
+        "pressure_and_depletion_qualified": false,
+        "pressure_and_depletion_required": true,
+        "rounds": [
+          {
+            "actual_pressure_overlap": true,
+            "attack_calls_including_physical_tails_overlapping": 3608,
+            "attack_calls_overlapping": 3608,
+            "confirmed": false,
+            "new_receiver_hostile_rejections": 3583,
+            "on_time_history_and_independent_verification": true,
+            "paid_depletion_inside_round": false,
+            "qualified_confirmation": false,
+            "receiver_hostile_dispatch_cpu_increase_ns": 4419600132,
+            "round": 0,
+            "seven_submissions_inside_original_call_deadlines": true
+          }
+        ],
+        "service_qualified": false
+      },
+      {
+        "actors_healthy": true,
+        "actual_paid_cpu_ns": 7403867614,
+        "arithmetic_fact_hits": 0,
+        "attack_calls": 2719,
+        "attack_observations_without_completed_arithmetic": 23,
+        "attack_transcript_entries": 2696,
+        "attack_transcripts_completed": 2695,
+        "depletion_basis": "same-lock flow with original refill projection and full-sample-interval upper bound; not continuous whole-round exhaustion",
+        "depletion_samples": 397,
+        "finite_qualification": false,
+        "fixed_64_slot_churn_qualified": true,
+        "fixed_64_slot_churn_required": true,
+        "fresh_challenges_actually_published": 2695,
+        "phase": "correct-product-false-trace",
+        "pressure_and_depletion_qualified": false,
+        "pressure_and_depletion_required": true,
+        "rounds": [
+          {
+            "actual_pressure_overlap": true,
+            "attack_calls_including_physical_tails_overlapping": 2655,
+            "attack_calls_overlapping": 2655,
+            "confirmed": false,
+            "new_receiver_hostile_rejections": 2632,
+            "on_time_history_and_independent_verification": true,
+            "paid_depletion_inside_round": true,
+            "qualified_confirmation": false,
+            "receiver_hostile_dispatch_cpu_increase_ns": 6725722991,
+            "round": 0,
+            "seven_submissions_inside_original_call_deadlines": true
+          }
+        ],
+        "service_qualified": false
+      }
+    ],
+    "production_qualified": false,
+    "public_fairness_qualified": false,
+    "schema": "pon-pure-pressure-qualification-v3",
+    "scope": "Fixed 24-actor, two-listener, shared cold CPU epoch; 30s phases and original 2s calls. Local monotonic clocks and CPU observations, not authenticity, unlimited-Sybil fairness, WAN throughput, work hardness or installation authority.",
+    "work_hardness_qualified": false
+  },
+  "original_sources": {
+    "base": null,
+    "candidate": "1d11f875493f8125e36b9adceacb342df108e5e5",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "1d11f875493f8125e36b9adceacb342df108e5e5",
+    "tested_tree": "64b82137eebeb96b572abc62e5fce39af3593200",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 960706544,
+    "tracked_entries": 7435,
+    "tracked_worktree_verified": true
+  },
+  "pq128_qualified": false,
+  "production_qualified": false,
+  "public_fairness_qualified": false,
+  "reader_environment": {
+    "cryptography_version": "50.0.2",
+    "dependency_version_qualified": true,
+    "input_consistent": true,
+    "interpreter": "/home/runner/work/_temp/pure-admission-reader-40988668819-1-x64/bin/python",
+    "key_vector": "b3365953873098069d9cb0ae19cf24704699085bc396ef420c2312dfcf1d8d8a",
+    "python_version": "3.12.3",
+    "schema": "pon-pure-fresh-caller-reader-environment-v1",
+    "supply_chain_attestation": false
+  },
+  "receiver_owner_baseline": {
+    "errors": [],
+    "history_import_count": 7,
+    "history_import_process_cpu_total_ns": 7364781970,
+    "last_history_import": {
+      "process_cpu_ns": 2840758376,
+      "process_wall_ns": 11365502231,
+      "thread_cpu_ns": 2840752558,
+      "wall_ns": 11365488862
+    },
+    "phase": "baseline",
+    "rounds": [
+      {
+        "confirmed_inside_pressure_window": false,
+        "depletion_observed_during_round": false,
+        "ended_ns": 32197815436,
+        "observed_depth": 6,
+        "round": 0,
+        "started_ns": 1001085799
+      }
+    ],
+    "window_ns": 30000000000
+  },
+  "receiver_owner_qualification": {
+    "actor_cpu_observation_complete": false,
+    "actor_descendants_quiescent_observed": false,
+    "error": "[Errno 2] No such file or directory: 'correct-product-false-trace.json'",
+    "fixed_parent_provisioned": false,
+    "input_consistent": false,
+    "installation_authorized": false,
+    "nested_actor_thread_cpu_observation_complete": false,
+    "original_campaign_qualification": false,
+    "parent_byte_bindings_verified": false,
+    "physical_authentication": false,
+    "production_qualified": false,
+    "public_fairness_qualified": false,
+    "receiver_descendants_quiescent_observed": false,
+    "receiver_lifetime_cost_observed": false,
+    "schema": "pon-pure-receiver-owner-observation-v2",
+    "supplemental_finite_qualification": false,
+    "work_hardness_qualified": false
+  },
+  "receiver_partial_failure": {
+    "actor_count": 24,
+    "actor_wait4_count": 24,
+    "all_actor_successful_reaps_one": true,
+    "error": "No such file or directory (os error 2)",
+    "errors": [
+      "RECEIVER_IPC_ABSOLUTE_DEADLINE"
+    ],
+    "finite_qualification": false,
+    "receiver_wait4": {
+      "error": null,
+      "exit_success": false,
+      "parent_forced_kill": true,
+      "parent_pid": 8466,
+      "physical_authentication": false,
+      "pid": 8561,
+      "raw_wait_status": 9,
+      "reap_finished_monotonic_ns": 846187313840,
+      "reap_started_monotonic_ns": 846182560385,
+      "rusage": {
+        "input_blocks": 0,
+        "involuntary_context_switches": 68,
+        "major_faults": 0,
+        "max_rss_kib": 174424,
+        "minor_faults": 11833,
+        "output_blocks": 15760,
+        "system_cpu_ns": 3979993000,
+        "system_microseconds": 979993,
+        "system_seconds": 3,
+        "total_cpu_ns": 10837811000,
+        "user_cpu_ns": 6857818000,
+        "user_microseconds": 857818,
+        "user_seconds": 6,
+        "voluntary_context_switches": 210754
+      },
+      "schema": "pon-child-wait4-cost-v1",
+      "scope": "Linux wait4 resource usage for the exact reaped child, including startup, all child threads, final output and process teardown, and any waited-descendant usage included by the kernel. Excludes parent and unrelated sibling processes; nested thread observations are not added to this enclosing total.",
+      "spawn_finished_monotonic_ns": 808398341701,
+      "spawn_started_monotonic_ns": 808398091892,
+      "successful_reaps": 1,
+      "wait4_calls": 2
+    }
+  },
+  "recounted_caller_body_joins": [
+    {
+      "authenticated_distinct_attack_callers": 0,
+      "offered_distinct_attack_callers": 0,
+      "phase": "baseline"
+    },
+    {
+      "authenticated_distinct_attack_callers": 3715,
+      "offered_distinct_attack_callers": 3738,
+      "phase": "from-zero"
+    },
+    {
+      "authenticated_distinct_attack_callers": 2834,
+      "offered_distinct_attack_callers": 2834,
+      "phase": "correct-product-false-trace"
+    }
+  ],
+  "run_id": 40988668819,
+  "schema": "pon-admission-recovered-ci-readback-v1",
+  "scope": "Readback of original CI bytes. Counts original caller/body joins but does not independently derive keys, verify signatures, authenticate the CI host, rerun native code, or remeasure time. Nested CPU scopes are not additive. The retained CI reader independently derived keys with pinned cryptography50.0.2.",
+  "tree": "64b82137eebeb96b572abc62e5fce39af3593200",
+  "work_hardness_qualified": false
+}

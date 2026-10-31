@@ -1,0 +1,28 @@
+{
+  "schema": "pon-proof-ci-recovery-scope-check-v1",
+  "frozen_complete_w1_manifest_sha256": "9d8874267816233cd2b7a42d9fcf820992322f5a0d3a80292617cf1b1680e6d4",
+  "frozen_entries_unchanged": 136,
+  "exact_original_files_compared_with_recovered_zip": 57,
+  "local_document_links": [
+    "github-run.json",
+    "github-jobs.json",
+    "github-artifacts.json",
+    "github-job.log",
+    "original/source-before.json",
+    "original/source-after.json",
+    "original-files.json",
+    "readback.stdout.json",
+    "original/original-audit.stdout.log",
+    "archive-members.json",
+    "../../pon-pure-security-20261030-rebuild/complete-w1/fixture-objects/manifest.json",
+    "original/fixture-binding.json",
+    "../../pon-pure-security-20261030-rebuild/complete-w1/README.md",
+    "recovery-binding.json",
+    "readback.py",
+    "readback.process.json",
+    "files.json"
+  ],
+  "actual_readback_returncode": 0,
+  "native_execution_in_recovery": false,
+  "prior_unpublished_snapshot_recreated": false
+}

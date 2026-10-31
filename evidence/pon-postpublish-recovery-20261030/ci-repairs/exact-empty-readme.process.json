@@ -1,0 +1,23 @@
+{
+  "schema": "pon-followup-real-process-observation-v1",
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-m",
+    "unittest",
+    "test_repository.RepositoryMutants.test_owner_cleared_readme_exact_empty"
+  ],
+  "cwd": "/workspace/scratch/f4a65c4581e7/pon-security-work",
+  "start_unix_ns": 1793381410274493471,
+  "elapsed_monotonic_ns": 17113068479,
+  "exit_code": 0,
+  "source_scope": "working candidate; not a clean committed-source receipt",
+  "source_parent": "00cb41115c9b3ea4a67f513a087d226390e3de0c",
+  "stdout": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr": {
+    "bytes": 99,
+    "sha256": "2cbe5e637af92494fbf41d93f5b39724d78ed37fe4d7eb622e3ca4e2067b9494"
+  }
+}

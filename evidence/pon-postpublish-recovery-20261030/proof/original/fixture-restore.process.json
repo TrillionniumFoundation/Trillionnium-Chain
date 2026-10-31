@@ -1,0 +1,23 @@
+{
+  "schema": "pon-w1-actual-process-v1",
+  "command": [
+    "python3",
+    "scripts/ci/prepare_w1_audit_one_fixture.py",
+    "--objects",
+    "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/evidence/pon-pure-security-20261030-rebuild/complete-w1/fixture-objects",
+    "--out",
+    "/home/runner/work/_temp/w1-audit-one-40988668868-1/fixture"
+  ],
+  "started_utc": "2026-10-30T01:55:53.702520+00:00",
+  "timeout_seconds": 30,
+  "source_sha": "1d11f875493f8125e36b9adceacb342df108e5e5",
+  "timed_out": false,
+  "consensus_authority": false,
+  "returncode": 0,
+  "wall_seconds": 0.2143572020000022,
+  "user_cpu_seconds": 0.114255,
+  "system_cpu_seconds": 0.051663,
+  "max_waited_descendant_rss_kib": 63604,
+  "rss_scope": "maximum reported for the waited child family; not total cgroup peak",
+  "finished_utc": "2026-10-30T01:55:53.916900+00:00"
+}

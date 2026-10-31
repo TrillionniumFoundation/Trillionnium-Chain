@@ -1,0 +1,11 @@
+{
+  "name": "native-v5-binary",
+  "git_blob_oid": "93c4e04b5cbf8c4ae180f2258f26a4af06475f68",
+  "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs/93c4e04b5cbf8c4ae180f2258f26a4af06475f68",
+  "started_at_utc": "2026-10-30T17:27:52.957402+00:00",
+  "requested_accept": "application/vnd.github.raw+json",
+  "success": false,
+  "error_type": "URLError",
+  "error": "<urlopen error [Errno 1] Operation not permitted>",
+  "finished_at_utc": "2026-10-30T17:27:52.961339+00:00"
+}

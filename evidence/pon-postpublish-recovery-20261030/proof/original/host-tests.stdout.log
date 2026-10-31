@@ -1,0 +1,22 @@
+
+running 17 tests
+test audit_one::tests::arbitrary_case_names_cannot_select_an_implicit_default ... ok
+test audit_one::tests::mutation_reporting_refuses_unbounded_changes ... ok
+test audit_one::tests::sha256_metadata_matches_the_standard_empty_and_abc_vectors ... ok
+test claimed_context::tests::consistent_context_does_not_authenticate_false_work ... ok
+test claimed_context::tests::exact_length_and_header_codec_are_still_required ... ok
+test claimed_context::tests::matching_zero_target_is_refused ... ok
+test claimed_context::tests::mismatching_target_is_refused ... ok
+test claimed_context::tests::mismatching_task_is_refused ... ok
+test claimed_context::tests::witness_commitment_is_still_bound ... ok
+test phase_journal::tests::dynamic_payloads_and_unbounded_events_are_refused ... ok
+test phase_journal::tests::exclusive_file_and_terminal_are_enforced ... ok
+test receipt_bounds::tests::bounded_sdk_shape_does_not_authenticate_a_synthetic_claim ... ok
+test receipt_bounds::tests::empty_seal_is_stopped_before_the_sdk_direct_index ... ok
+test receipt_bounds::tests::every_truncation_and_a_trailing_byte_fail_without_sdk_parsing ... ok
+test receipt_bounds::tests::every_variable_length_is_checked_before_sdk_allocation ... ok
+test receipt_bounds::tests::proof_dimensions_and_total_cycle_budget_are_independent_limits ... ok
+test receipt_bounds::tests::unsupported_receipt_kinds_never_enter_generic_deserialization ... ok
+
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+

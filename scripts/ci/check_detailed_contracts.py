@@ -69,7 +69,8 @@ def validate(root):
     fail(not re.search(r'Preserve historical CEV0/CEV1 decoders|decoders in explicit legacy dispatch',m00,re.I),'retired decoder requirement')
     boundary=load('PROJECT_BOUNDARY.json')['repository']
     fail(boundary['required_pull_request_reviews']==0 and boundary['require_code_owner_review']is False and boundary['require_last_push_approval']is False,'review policy contradicts owner-approved remote settings')
-    fail(file('README.md').read_bytes()==b'\n','owner-cleared root README changed')
+    # Main dd6e1c3 records the owner's cleared homepage as an exact zero-byte file.
+    fail(file('README.md').read_bytes()==b'','owner-cleared root README changed')
     from report_module_evidence import validate_contract
     validate_contract(root)
     return {'modules':18,'typed_operations':sum(len(r['operations'])for r in rows),'wire_tags':12,'native_product_accepted':False,'independent_accepted':False}

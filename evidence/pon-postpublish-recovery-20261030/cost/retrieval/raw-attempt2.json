@@ -1,0 +1,23 @@
+{
+  "name": "native-v5-stdout",
+  "git_blob_oid": "581b49bfef116c952903c6519c9f179c4cdd6214",
+  "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs/581b49bfef116c952903c6519c9f179c4cdd6214",
+  "started_at_utc": "2026-10-30T17:28:27.076540+00:00",
+  "requested_accept": "application/vnd.github.raw+json",
+  "attempt": 2,
+  "execution_permission": "require_escalated",
+  "inherited_proxy_and_tls_verification_preserved": true,
+  "status": 200,
+  "content_type": "application/octet-stream",
+  "response_bytes": 4637185,
+  "transport_shape": "raw Git blob bytes",
+  "bytes": 4637185,
+  "sha256": "6781436c5acfc932df0aac3d46ee1f04c9e987158d87d74f107ed542529dbe7d",
+  "computed_git_blob_oid": "581b49bfef116c952903c6519c9f179c4cdd6214",
+  "expected_sha256": "6781436c5acfc932df0aac3d46ee1f04c9e987158d87d74f107ed542529dbe7d",
+  "sha256_matches": true,
+  "git_oid_matches": true,
+  "saved_path": "/tmp/recovery-cost/native-v5-stdout.gz",
+  "success": true,
+  "finished_at_utc": "2026-10-30T17:28:27.705781+00:00"
+}

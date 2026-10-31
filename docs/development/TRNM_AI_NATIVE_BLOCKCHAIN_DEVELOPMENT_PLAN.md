@@ -7477,7 +7477,8 @@ Fresh local checks include 130 M01 tests, six consensus tests, 183 public-ingres
 tests, 19 pressure/receiver controls, 30 V5 reader controls, 66 admission-reader
 controls, 17 standalone proof-host tests, all-target/all-feature crypto/node
 strict Clippy, source-integrity negatives, the exact locked workspace graph,
-formatting and source inventory. The two-caller rerun is already part of the
+and source inventory. The originally reported formatting pass is corrected in
+the follow-up below. The two-caller rerun is already part of the
 183; 16 long/subprocess pressure entries were intentionally ignored in the local
 control invocation. This shared host has no systemd, so exact-head hosted
 fixed-Host execution is still a separate gate.
@@ -7485,3 +7486,84 @@ fixed-Host execution is still a separate gate.
 Open-network honest service under the original pressure envelope, global
 effective-work cost assumptions, practical complete-proof economics, quantitative
 quantum security, independent acceptance and activation all remain OPEN.
+
+## 2026-10-30 UTC: published PoN CI follow-up and interrupted delivery recovery
+
+The executed source remains `1d11f875493f8125e36b9adceacb342df108e5e5`
+(tree `64b82137eebeb96b572abc62e5fce39af3593200`). Its complete proof
+receiver CI passed; its original x64 finite-service campaigns failed, including
+no-attacker baselines above the unchanged 30-second deadline. Both V5 CI lanes
+stopped at formatting before native campaigns. Admission ARM stopped during
+compiler installation; it did not run a native campaign. These observations
+must not be relabeled as results of this follow-up.
+
+The small code follow-up moves only the test-only `statement_boundaries` module
+declaration to rustfmt order and isolates admission `RUSTUP_HOME` by run, attempt
+and architecture. It keeps Rust 1.95.0, original components, matrix, commands,
+quotas, deadlines and acceptance predicates. The earlier formatting pass claim
+was a reporting error: a shell sequence continued after a formatter failure.
+The existing local evidence READMEs are corrected, with native observations and
+old failures kept in their own scopes.
+
+The actual main commit `dd6e1c3cbeacbdc532b0679297835b3a0aac78f0` cleared the
+root README from one LF byte to zero bytes. This follow-up is composed over the
+reviewed GitHub merge `00cb41115c9b3ea4a67f513a087d226390e3de0c`, whose ordered
+parents are that main commit and `1d11f875`. The detailed contract now requires
+exactly the owner's zero-byte README; a focused real-module control rejects LF,
+space, UTF-8 BOM and restored homepage text. No ordered-parent source gate is
+weakened to accommodate the earlier stale event base.
+
+An interrupted GitHub tree publication was followed by a workspace reset. The
+unpublished local commit `a756b947a14cdb60dee7683be3880a489b805eca` and tree
+`d7db41c36cd94e86f0a7f0a2b5adbebeebd53184` are not recoverable as current
+GitHub objects; their local manifests and process receipts must not be invented
+from conversation summaries. Recovery starts from published source and actual
+GitHub artifacts. Independently recovered raw bytes and new readbacks will be
+recorded separately, without pretending that the lost local snapshot survived.
+
+Public-network honest service, effective-work resource assumptions, practical
+complete-proof economics, quantitative quantum security, independent acceptance
+and production activation remain OPEN. No hashcash, stake, quality weight, BFT
+vote, deadline extension or reduced relation is introduced by this follow-up.
+
+The [new focused controls](../../evidence/pon-postpublish-recovery-20261030/ci-repairs/README.md)
+passed the exact-empty README control, all 34 original source-integrity negatives
+and workflow shell syntax. These are working-candidate observations, not native
+campaigns or hosted ARM setup acceptance.
+
+## 2026-10-30 UTC: recovered original PoN observations
+
+The [new recovery record](../../evidence/pon-postpublish-recovery-20261030/README.md)
+retains original published-head admission and proof CI artifacts, recovered V5
+Git blobs, and fresh readbacks with explicit limitations. This is a new capture
+from surviving originals, not the unavailable prior local snapshot.
+
+Original x64 admission actually ran all three campaigns and failed their finite
+service predicates. No-attacker depth-six endpoints were 31.786640876 seconds
+(original), 32.189797667 seconds (fresh callers), and 32.197815436 seconds
+(receiver-owner), all beyond 30 seconds. Fresh actors supplied 3,715 and 2,834
+authenticated distinct identities; false-trace recorded 401 depletion samples,
+2,811 fresh published challenges and 64-slot churn. Twenty-four processes rotate
+those keys; these are not independent-operator counts. A receiver-owner missing
+terminal retains all 24 actor and parent wait4 records, without synthesizing a
+success. ARM had a Rustup installation conflict and attempted no native campaign.
+
+The original complete-proof receiver CI on `1d11f875` passed. It verified the
+actual Composite proof, rejected the original 16 mutations and produced eight
+real receiver cases. Valid verification was 1272.364197 ms; last-seal rejection
+was 1256.471868 ms. These are single warmed observations, with original process
+scopes and complete source guards. Recovery reran metadata/byte readback only.
+
+The recovered V5 JSONL has 146 rows and 144 cohorts. A fresh invocation of the
+unchanged pinned row-validation functions accepts 11,844 searches, 22,590 attempts,
+11,772 first admissions, 10,818 misses and 72 exhaustions. Across paired cohorts
+there are 654 distinct packet IDs. Raw terminal time is 388.323648870 seconds.
+The lost outer capture, complete build/source guards and original reader process
+were not recreated. Matching embedded driver and lock hashes is narrower than
+attesting the whole historical execution source. Original hosted V5 still failed
+formatting before native execution; these results must remain separate.
+
+The local repair commit is `2d74588c1b7333751bbb555ff6a038d5a1f4fe23`, based on
+the actual reviewed merge. Interrupted subsequent API writes have no success
+receipt and are not counted as remote publication or later-source CI acceptance.
+All qualification and activation limits above remain unchanged.

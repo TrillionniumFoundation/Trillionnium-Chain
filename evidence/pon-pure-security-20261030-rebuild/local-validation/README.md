@@ -6,6 +6,14 @@ measurements from the unavailable earlier local commit. Rust 1.95.0, the existin
 locked dependencies and the pinned Python reader environment were installed
 again. The setup logs and initial failures are retained.
 
+Formatting correction: the enclosing README's original pass statement was
+incorrect. A shell sequence continued after the formatter failed; a later
+successful command concealed that exit status. The published `1d11f875` V5 and
+branch CI formatting checks also failed. The follow-up moves one test-module
+declaration to the formatter's required order. This correction does not change
+the native test or Clippy observations below, and a later formatting result
+does not become an earlier-source pass.
+
 The host is shared. Its reported cgroup limits are eight CPU equivalents and
 8 GiB memory; it has no systemd manager. No fixed-Host qualification campaign is
 claimed from this environment. Native TCP controls use real local sockets.

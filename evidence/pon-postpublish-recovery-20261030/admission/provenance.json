@@ -1,0 +1,47 @@
+{
+  "api_metadata_encoding": "UTF-8 normalized JSON of the connector structuredContent; semantic API data, not raw HTTP response bytes.",
+  "head": "1d11f875493f8125e36b9adceacb342df108e5e5",
+  "job_log_encoding": "Exact connector-decoded text encoded as UTF-8 then losslessly gzip-compressed, without adding or removing whitespace.",
+  "job_logs": [
+    {
+      "bytes": 18232,
+      "decoded_log_bytes": 99292,
+      "decoded_log_sha256": "7d89ecf8c67d6483c11db80c314371364a66578ace043641a0487f101dc50bc9",
+      "encoding": "gzip of exact connector-decoded UTF-8; original whitespace preserved",
+      "file": "logs/arm64-job.log.gz",
+      "sha256": "def91661f0e90424120e3f4d62fe90fa4691326126f2165bf1478f8cbf01e0ba"
+    },
+    {
+      "bytes": 32346,
+      "decoded_log_bytes": 174459,
+      "decoded_log_sha256": "12dbe383d1898e9db630bb9920deaa1987c1ffd46ed54fc51564c8bb6b607842",
+      "encoding": "gzip of exact connector-decoded UTF-8; original whitespace preserved",
+      "file": "logs/x64-job.log.gz",
+      "sha256": "b74b95b72fe55d73b36a3a0fcf5ba0d5bfb47db01d502d2b8c95a5f6c221a8b9"
+    }
+  ],
+  "lost_local_commit_recovered": false,
+  "lost_local_snapshot_recovered": false,
+  "native_rerun": false,
+  "original_archives": {
+    "arm64": {
+      "artifact_id": 12947808903,
+      "bytes": 28003,
+      "job_id": 123845534628,
+      "sha256": "35bd0454c8f700e1488290ee03496bf28052e4716f6fb0218ef240c81bd73426"
+    },
+    "x64": {
+      "artifact_id": 12949190541,
+      "bytes": 98015214,
+      "job_id": 123845534896,
+      "sha256": "0cba4a65b534be04492764bd6ba0b67c81712e23e154c0e1643bebc40e4e4a37"
+    }
+  },
+  "recovered_at_utc": "2026-10-30T17:31:09.227474+00:00",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "run_attempt": 1,
+  "run_id": 40988668819,
+  "schema": "pon-admission-postpublish-recovery-v1",
+  "scope": "Fresh download of surviving original GitHub CI artifacts and connector metadata/logs after the local environment reset. Original artifact member bytes are retained, with new selection packaging and readback. No old local receipt is reconstructed from a summary.",
+  "tree": "64b82137eebeb96b572abc62e5fce39af3593200"
+}

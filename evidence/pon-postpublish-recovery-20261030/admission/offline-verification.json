@@ -1,0 +1,15 @@
+{
+  "actual_record_caller_body_join_counts": [
+    3715,
+    2834
+  ],
+  "arm64_original_archive_verified": true,
+  "finite_qualification": false,
+  "full_x64_original_archive_rechecked": false,
+  "native_rerun": false,
+  "schema": "pon-admission-recovery-verification-v1",
+  "selected_original_members_verified": 45,
+  "signature_verification_rerun": false,
+  "source_records_agree": true,
+  "summary_consistent": true
+}

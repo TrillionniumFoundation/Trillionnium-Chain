@@ -196,7 +196,8 @@ be respected. See [the strict baseline](history-baseline/README.md) and
 | Source-integrity negatives / project-boundary controls | 34 / 16 passed |
 | Risk model / quantum-DAA controls | 23 / 7 passed; all three native parity checks executed |
 | Main locked Cargo metadata | 26 packages; no manifest or lockfile modification |
-| Source inventory and Rust formatting | Passed |
+| Source inventory | Passed |
+| Rust formatting | Original pass claim corrected: hosted V5 and branch checks on `1d11f875` failed at module ordering; corrected in the later follow-up |
 
 Counts describe distinct suites, not an aggregate security score. Repeated
 controls and earlier checkpoints are not added to inflate a total. Raw local
@@ -204,6 +205,13 @@ logs, process scopes and source observations are in
 [local-validation](local-validation/README.md); each other lane has its own
 manifest and reproduction instructions. The initial typo in a source-control
 command and the original failed artifact download remain recorded.
+
+Formatting erratum: the earlier local shell continued after a nonzero formatter
+result, so its later successful command did not establish a formatting pass.
+The actual [V5 CI refusal](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40988668738)
+is retained as a failure. Reordering the test-only `statement_boundaries`
+declaration does not change work validation or native proof behavior. A new
+CI result must be attributed to its own source, not backfilled into `1d11f875`.
 
 This host lacks systemd, so the fixed-Host x64/ARM campaigns were not run here.
 They require the actual hosted physical resource envelope. Their new exact-head

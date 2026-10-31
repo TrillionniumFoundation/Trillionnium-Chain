@@ -1,0 +1,25 @@
+{
+  "schema": "pon-w1-actual-process-v1",
+  "command": [
+    "/home/runner/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "test",
+    "--release",
+    "--locked",
+    "--manifest-path",
+    "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/Cargo.toml",
+    "-p",
+    "trnm-w1-risc0-host"
+  ],
+  "started_utc": "2026-10-30T01:57:33.432311+00:00",
+  "timeout_seconds": 180,
+  "source_sha": "1d11f875493f8125e36b9adceacb342df108e5e5",
+  "timed_out": false,
+  "consensus_authority": false,
+  "returncode": 0,
+  "wall_seconds": 58.364170895,
+  "user_cpu_seconds": 105.10148,
+  "system_cpu_seconds": 9.813061,
+  "max_waited_descendant_rss_kib": 572200,
+  "rss_scope": "maximum reported for the waited child family; not total cgroup peak",
+  "finished_utc": "2026-10-30T01:58:31.796506+00:00"
+}

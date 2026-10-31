@@ -92,6 +92,18 @@ class RepositoryMutants(unittest.TestCase):
         self.reject_json('config/pon/module-maturity-v1.json',lambda d:d['modules'][2].update(native_product_integrated=True))
     def test_review_policy_matches_owner_decision(self):
         self.reject_json('PROJECT_BOUNDARY.json',lambda d:d['repository'].update(required_pull_request_reviews=2))
+    def test_owner_cleared_readme_exact_empty(self):
+        from check_detailed_contracts import validate as validate_details
+        path=self.root/'README.md';old=path.read_bytes()
+        self.assertEqual(old,b'')
+        self.assertEqual(validate_details(self.root)['modules'],18)
+        try:
+            for replacement in (b'\n',b' ',b'\xef\xbb\xbf',b'# Restored homepage\n'):
+                with self.subTest(replacement=replacement):
+                    path.write_bytes(replacement)
+                    with self.assertRaisesRegex(ValueError,'owner-cleared root README changed'):
+                        validate_details(self.root)
+        finally:path.write_bytes(old)
     def test_missing_native_contract_test_is_rejected(self):
         self.reject_json('config/pon/module-contracts-v1.json',lambda d:d['modules'][0].update(test_classes=['DoesNotExist']))
     def test_wrong_fork_choice(self):
