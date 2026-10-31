@@ -767,24 +767,26 @@ class NativeDurableSchemaTests(unittest.TestCase):
     def test_backend_generations_cannot_mix_or_downgrade(self):
         source = self.historical_backend()
         index = 'const DDL: &str = "'+PRE_LIFECYCLE_INDEX_DDL+'";'
-        guard = '#[cfg(feature = "pq-native-openssl")]'
-        variant = guard+'\n    PqNetworkV1,'
-        ddl = guard+'\n            Self::PqNetworkV1 => format!("{}{}", ddl(), pq_network::DDL),'
-        domain = guard+'\n            Self::PqNetworkV1 => b"native-pq-network-owner-schema-v1",'
-        # A remaining implementation, owner field or module keeps selection on
-        # the complete PQ contract; malformed PQ cannot retry the old template.
-        for removed in [(variant,), (ddl,), (domain,), (variant,ddl,domain)]:
+        variant = '    PqNetworkV2,\n    PqContinuousV3,'
+        ddl = 'Self::PqNetworkV2 | Self::PqContinuousV3 => format!("{}{}", ddl(), pq_network::DDL),'
+        domain_v2 = 'Self::PqNetworkV2 => b"native-pq-network-owner-schema-v2",'
+        domain_v3 = 'Self::PqContinuousV3 => b"native-pq-continuous-owner-schema-v3",'
+        # Missing *either* version or a domain cannot be rescued by the old
+        # three-arm layout, by a V1 alias or by an orphan PQ owner/module.
+        for removed in [(variant,), (ddl,), (domain_v2,), (domain_v3,),
+                        (variant,ddl,domain_v2,domain_v3)]:
             changed = self.current
             for arm in removed:
                 changed = self.replace_once(changed,arm,'')
             with self.subTest(removed=removed),self.assertRaisesRegex(ValueError,'durable backend'):
                 self.extract(changed)
         for added in ('\nmod pq_network {}\n', '\nfn retain(_: PqNetworkV1) {}\n',
+                      '\nfn retain(_: PqNetworkV2) {}\n',
                       '\nstruct Owners { pq_network: Option<Vec<u8>> }\n'):
             with self.subTest(added=added),self.assertRaisesRegex(ValueError,'durable backend variants'):
                 self.extract(source+added,index)
         for before,after in [
-            ('PermanentAccountGrowthV2,\n}', 'PermanentAccountGrowthV2,\n'+variant+'\n}'),
+            ('PermanentAccountGrowthV2,\n}', 'PermanentAccountGrowthV2,\n    PqNetworkV2,\n    PqContinuousV3,\n}'),
             ('Self::Legacy => ddl(),','Self::Legacy => ddl(),\n'+ddl),
             ('continuous: continuous_owner,','continuous: continuous_owner, pq_network: None,'),
         ]:
@@ -906,42 +908,54 @@ class NativeDurableSchemaTests(unittest.TestCase):
         self.assertEqual(domain,'native-branch-schema-v2')
         self.assertEqual(len(ddl.encode()),5404)
         self.assertNotRegex(ddl,r'pq_network_peer_v1|pq_network_request_v1')
-        pq = 'b"native-pq-network-owner-schema-v1"'
-        arm = 'Self::PqNetworkV1 => format!("{}{}", ddl(), pq_network::DDL),'
-        mutations = [
-            ('domain-legacy',pq,'b"native-branch-schema-v2"'),
-            ('domain-authenticated',pq,'b"native-authenticated-branch-schema-v1"'),
-            ('domain-growth',pq,'b"native-permanent-account-growth-schema-v2"'),
-            ('domain-unknown',pq,'b"native-pq-network-owner-schema-unknown"'),
-            ('domain-literal-space',pq,'b"native-pq-network-owner- schema-v1"'),
-            ('pq-omitted',arm,'Self::PqNetworkV1 => ddl(),'),
-            ('pq-authenticated',arm,'Self::PqNetworkV1 => format!("{}{}", ddl(), native_authenticated::DDL),'),
-            ('pq-reversed',arm,'Self::PqNetworkV1 => format!("{}{}", pq_network::DDL, ddl()),'),
-            ('pq-format',arm,'Self::PqNetworkV1 => format!("{} {}", ddl(), pq_network::DDL),'),
-            ('pq-format-arity',arm,'Self::PqNetworkV1 => format!("{}", ddl(), pq_network::DDL),'),
-            ('pq-wildcard',arm,'_ => format!("{}{}", ddl(), pq_network::DDL),'),
-            ('legacy-pq','Self::Legacy => ddl(),','Self::Legacy => format!("{}{}", ddl(), pq_network::DDL),'),
-        ]
-        for label,before,after in mutations:
+        arm = 'Self::PqNetworkV2 | Self::PqContinuousV3 => format!("{}{}", ddl(), pq_network::DDL),'
+        domains = (
+            ('v2','b"native-pq-network-owner-schema-v2"'),
+            ('v3','b"native-pq-continuous-owner-schema-v3"'),
+        )
+        for label,pq in domains:
+            for mutation,after in [
+                ('legacy','b"native-branch-schema-v2"'),
+                ('authenticated','b"native-authenticated-branch-schema-v1"'),
+                ('growth','b"native-permanent-account-growth-schema-v2"'),
+                ('unknown',pq.replace('-v'+label[-1]+'"','-unknown"')),
+                ('literal-space',pq.replace('owner-schema','owner- schema')),
+            ]:
+                with self.subTest(domain=label,mutation=mutation),self.assertRaisesRegex(ValueError,'durable backend'):
+                    self.extract(self.replace_once(self.current,pq,after))
+        for label,after in [
+            ('pq-omitted','Self::PqNetworkV2 | Self::PqContinuousV3 => ddl(),'),
+            ('pq-authenticated','Self::PqNetworkV2 | Self::PqContinuousV3 => format!("{}{}", ddl(), native_authenticated::DDL),'),
+            ('pq-reversed','Self::PqNetworkV2 | Self::PqContinuousV3 => format!("{}{}", pq_network::DDL, ddl()),'),
+            ('pq-format','Self::PqNetworkV2 | Self::PqContinuousV3 => format!("{} {}", ddl(), pq_network::DDL),'),
+            ('pq-format-arity','Self::PqNetworkV2 | Self::PqContinuousV3 => format!("{}", ddl(), pq_network::DDL),'),
+            ('pq-only-v2','Self::PqNetworkV2 => format!("{}{}", ddl(), pq_network::DDL),'),
+            ('pq-v1','Self::PqNetworkV1 => format!("{}{}", ddl(), pq_network::DDL),'),
+            ('pq-wildcard','_ => format!("{}{}", ddl(), pq_network::DDL),'),
+        ]:
             with self.subTest(label=label),self.assertRaisesRegex(ValueError,'durable backend'):
-                self.extract(self.replace_once(self.current,before,after))
+                self.extract(self.replace_once(self.current,arm,after))
+        with self.assertRaisesRegex(ValueError,'durable backend'):
+            self.extract(self.replace_once(self.current,'Self::Legacy => ddl(),',
+                                           'Self::Legacy => format!("{}{}", ddl(), pq_network::DDL),'))
 
-    def test_pq_feature_guards_and_ordinary_owner_inputs_are_exact(self):
-        guard = '#[cfg(feature = "pq-native-openssl")]'
+    def test_pq_unconditional_backend_and_ordinary_owner_inputs_are_exact(self):
+        # Adding a feature gate to any V2/V3 backend arm makes its storage
+        # domain conditional while the selected owner still assumes it exists.
+        # The exact source contract deliberately rejects all such alterations.
         arms = [
-            ('variant',guard+'\n    PqNetworkV1,'),
-            ('ddl',guard+'\n            Self::PqNetworkV1 => format!("{}{}", ddl(), pq_network::DDL),'),
-            ('domain',guard+'\n            Self::PqNetworkV1 => b"native-pq-network-owner-schema-v1",'),
+            ('variant-v2','    PqNetworkV2,'),
+            ('variant-v3','    PqContinuousV3,'),
+            ('ddl','            Self::PqNetworkV2 | Self::PqContinuousV3 => format!("{}{}", ddl(), pq_network::DDL),'),
+            ('domain-v2','            Self::PqNetworkV2 => b"native-pq-network-owner-schema-v2",'),
+            ('domain-v3','            Self::PqContinuousV3 => b"native-pq-continuous-owner-schema-v3",'),
         ]
         for label,arm in arms:
-            for mutation,replacement in [
-                ('wrong-feature',arm.replace('pq-native-openssl','unapproved-native-feature')),
-                ('missing-guard',arm.replace(guard,'')),
-                ('inverted-guard',arm.replace(guard,'#[cfg(not(feature = "pq-native-openssl"))]')),
-                ('broadened-guard',arm.replace(guard,'#[cfg(any(feature = "pq-native-openssl", test))]')),
-            ]:
-                with self.subTest(arm=label,mutation=mutation),self.assertRaisesRegex(ValueError,'durable backend'):
-                    self.extract(self.replace_once(self.current,arm,replacement))
+            for feature in ('pq-native-openssl', 'unknown-feature'):
+                with self.subTest(arm=label,feature=feature),self.assertRaisesRegex(ValueError,'durable backend'):
+                    changed = self.replace_once(self.current,arm,
+                                                '#[cfg(feature = "'+feature+'")]\n'+arm)
+                    self.extract(changed)
         for name,end_marker in [('open_inner','    fn open_selected('),
                                  ('open_with_authenticated_state_and_fault','    /// Explicit local operator policy')]:
             start = self.current.index('fn '+name+'(')
@@ -953,7 +967,11 @@ class NativeDurableSchemaTests(unittest.TestCase):
                     self.extract(self.replace_once(self.current,opener,changed))
 
     def test_pq_tables_cannot_be_inserted_into_legacy_literals(self):
-        for name in ('pq_network_peer_v1','pq_network_request_v1','Pq_NeTwOrK_PeEr_V1','Pq_NeTwOrK_ReQuEsT_V1'):
+        for name in ('pq_network_peer_v1','pq_network_request_v1',
+                     'pq_network_resource_v2','pq_network_peer_v2','pq_network_request_v2',
+                     'Pq_NeTwOrK_PeEr_V1','Pq_NeTwOrK_ReQuEsT_V1',
+                     'Pq_NeTwOrK_ReSoUrCe_V2','Pq_NeTwOrK_ReQuEsT_V2',
+                     'pq_network_future_owner_v99'):
             extension = 'CREATE TABLE '+name+'(id BLOB PRIMARY KEY,data BLOB NOT NULL);'
             literal = 'const DDL: &str = "'+extension+'";'
             v1 = literal+'fn open() { hash(b"native-branch-schema-v1", &[DDL.as_bytes()]); }'
@@ -1103,7 +1121,9 @@ class NativeDurableSchemaTests(unittest.TestCase):
         for decoy in ['mod historical { '+literal+' }','ignored!('+literal+');','ignored!['+literal+'];']:
             with self.subTest(decoy=decoy),self.assertRaisesRegex(ValueError,'durable schema literal DDL'):
                 self.extract(decoy+'\nuse other::DDL;\n'+opener)
-        for name in ['archive_nodes','native_state_commitments','ArChIvE_NoDeS']:
+        for name in ['archive_nodes','native_state_commitments','ArChIvE_NoDeS',
+                     'pq_network_resource_v2','pq_network_peer_v2','pq_network_request_v2',
+                     'Pq_NeTwOrK_FuTuRe_OwNeR_V99']:
             extension = 'CREATE TABLE '+name+'(id BLOB PRIMARY KEY,data BLOB NOT NULL);'
             sources = [
                 (literal.replace('CREATE TABLE exact',extension+'CREATE TABLE exact')+opener,None),
