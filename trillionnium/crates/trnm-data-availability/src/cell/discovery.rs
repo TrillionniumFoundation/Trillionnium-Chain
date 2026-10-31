@@ -1024,7 +1024,9 @@ pub mod pq_reply_v2 {
             for observed in [Duration::from_secs(200), Duration::from_millis(200_001)] {
                 assert!(matches!(
                     require_current_pq_provider_leases_v2(&verified, observed),
-                    Err(CellErrorV1::Invalid("PQ post-verify provider lease expired"))
+                    Err(CellErrorV1::Invalid(
+                    "PQ post-verify provider lease expired"
+                ))
                 ));
             }
             let mut later = verified[0].clone();
@@ -1036,7 +1038,9 @@ pub mod pq_reply_v2 {
                     &[verified[0].clone(), later],
                     Duration::from_secs(200),
                 ),
-                Err(CellErrorV1::Invalid("PQ post-verify provider lease expired"))
+                Err(CellErrorV1::Invalid(
+                        "PQ post-verify provider lease expired"
+                    ))
             ));
         }
 
