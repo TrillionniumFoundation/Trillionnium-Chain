@@ -9,6 +9,7 @@ Self-asserted W1 PQ-128 flags are refused, not treated as external review.
 import argparse
 import hashlib
 import json
+import os
 from pathlib import Path
 
 PATHS = {
@@ -144,10 +145,16 @@ def verify_frozen_w1_guest_bytes(root: Path, blockers: list) -> None:
     manifest_directory = Path(PATHS["w1_backend"]).parent
     trusted_root = root.resolve()
     for source_rel, expected in PINNED_W1_RESEARCH_PARAMETERS["guest_source_sha256"].items():
-        path = root / manifest_directory / source_rel
+        path = trusted_root / manifest_directory / source_rel
         try:
             resolved = path.resolve(strict=True)
-            if not resolved.is_relative_to(trusted_root):
+            # Frozen guest bytes must be *real* checked-out source objects,
+            # not a symlink to byte-identical content elsewhere in the tree.
+            # abspath normalizes the legitimate ../../ source references;
+            # resolve additionally follows symlinks. A mismatch is a redirect.
+            lexical = Path(os.path.abspath(path))
+            if (not resolved.is_relative_to(trusted_root)
+                    or resolved != lexical or not resolved.is_file()):
                 blockers.append({
                     "kind": "escaped_w1_guest_source", "path": str(path),
                 })
