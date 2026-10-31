@@ -118,6 +118,76 @@ jobs:
           path: ${{ runner.temp }}/ci-observations/
           if-no-files-found: error
           retention-days: 30
+  cross-arch-w1-reuse-v3:
+    name: W1 actual reuse V3 (${{ matrix.arch }}, ${{ matrix.source }})
+    if: github.event_name == 'pull_request'
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 155
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [x64, arm64]
+        source: [head, prospective-merge]
+        include:
+          - arch: x64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+    env:
+      TRNM_COST_RUNNER_LABEL: ${{ matrix.runner }}
+      TRNM_COST_SOURCE_KIND: ${{ matrix.source }}
+      TRNM_EXPECTED_SOURCE_SHA: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+      TRNM_EXPECTED_CANDIDATE_SHA: ${{ github.event.pull_request.head.sha }}
+      TRNM_EXPECTED_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify V3 exact source and ordered merge before execution
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(--kind "$TRNM_COST_SOURCE_KIND" --expected-head "$TRNM_EXPECTED_CANDIDATE_SHA")
+          if test "$TRNM_COST_SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$TRNM_EXPECTED_BASE_SHA" --expected-merge "$TRNM_EXPECTED_SOURCE_SHA")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$RUNNER_TEMP/ci-observations/source-before.json"
+      - name: Check original repository boundary before native V3 build
+        run: bash scripts/project-preflight.sh --audit
+      - name: Set isolated Cargo paths after runner allocation
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf 'CARGO_HOME=%s/cargo-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
+          printf 'CARGO_TARGET_DIR=%s/target-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
+          printf 'TRNM_CI_RECEIPT_DIR=%s/ci-observations\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+      - name: Install pinned native release compiler
+        run: rustup toolchain install 1.95.0 --profile minimal
+      - name: Install matching native formatter
+        run: rustup component add --toolchain 1.95.0 rustfmt
+      - name: Execute the complete native W1 actual reuse V3 grid
+        run: python3 scripts/ci/run_w1_reused_cost_v3.py --arch "${{ matrix.arch }}"
+      - name: Verify V3 exact source and ordered merge after execution
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(--kind "$TRNM_COST_SOURCE_KIND" --expected-head "$TRNM_EXPECTED_CANDIDATE_SHA")
+          if test "$TRNM_COST_SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$TRNM_EXPECTED_BASE_SHA" --expected-merge "$TRNM_EXPECTED_SOURCE_SHA")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$RUNNER_TEMP/ci-observations/source-after.json"
+      - name: Retain V3 costs including all failed observations
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: w1-reuse-v3-${{ matrix.source }}-${{ matrix.arch }}-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/ci-observations/
+          if-no-files-found: error
+          retention-days: 30
   cross-arch-cost-consistency:
     name: cross-arch-cost-consistency
     needs: cross-arch-cost

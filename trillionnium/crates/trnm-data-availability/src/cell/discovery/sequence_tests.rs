@@ -467,7 +467,18 @@ fn tcp_two_bootstraps_newer_owner_sequence_never_dials_superseded_endpoint() {
         deadline(),
         &output,
     )
-    .unwrap();
+    .unwrap_or_else(|error| {
+        // Diagnostic only: this nonblocking snapshot does not wait for the trap
+        // thread or extend the original request or overall deadline.
+        panic!(
+            "original discovery fetch failed: {error:?}; current={current_address}; \
+             stale={}; bootstrap_first={}; bootstrap_second={}; stale_accepted_snapshot={}",
+            stale.address,
+            first.address,
+            second.address,
+            stale.accepted.load(Ordering::Relaxed),
+        )
+    });
     assert_eq!(received, manifest);
     assert_eq!(fs::read(&output).unwrap(), bytes);
     assert_current_sequence(&directory, pin, 2);

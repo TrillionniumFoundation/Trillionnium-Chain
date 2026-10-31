@@ -392,6 +392,107 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
                     check_independent_conformance(script, self.lanes)
 
 
+class W1ReuseV3LaneTests(unittest.TestCase):
+    """Small real source-owner controls; no native work/cost observation."""
+
+    def test_v3_lane_is_additive_and_keeps_all_four_exact_source_cells(self):
+        report = validate(ROOT)
+        self.assertEqual(report['native_cost_architectures'], 2)
+        self.assertEqual(report['w1_actual_reuse_v3_cells'], 4)
+        text = (ROOT / '.github/workflows/trnm-required-baseline.yml').read_text()
+        self.assertEqual(text.count('  cross-arch-w1-reuse-v3:\n'), 1)
+        self.assertEqual(text.count('run: python3 scripts/ci/run_w1_reused_cost_v3.py'), 1)
+
+    def test_v3_cannot_skip_rename_rebudget_or_substitute_local_observation(self):
+        from check_ci_contract import W1_REUSE_V3_JOB, check_w1_reuse_v3
+        for old, new in (
+            ('arch: [x64, arm64]', 'arch: [x64]'),
+            ('source: [head, prospective-merge]', 'source: [head]'),
+            ('      fail-fast: false', '      fail-fast: true'),
+            ('    timeout-minutes: 155', '    timeout-minutes: 180'),
+            ("    if: github.event_name == 'pull_request'", '    if: false'),
+            ('--expected-base "$TRNM_EXPECTED_BASE_SHA" ', ''),
+            ('--expected-merge "$TRNM_EXPECTED_SOURCE_SHA"', '--expected-merge "$TRNM_EXPECTED_CANDIDATE_SHA"'),
+            ('--output "$RUNNER_TEMP/ci-observations/source-after.json"', '--output /tmp/old-source.json'),
+            ('run: python3 scripts/ci/run_w1_reused_cost_v3.py', 'run: true # python3 scripts/ci/run_w1_reused_cost_v3.py'),
+            ('run_w1_reused_cost_v3.py --arch', 'run_w1_reused_cost_v3.py --local --arch'),
+            ('run: bash scripts/project-preflight.sh --audit', 'run: true # bash scripts/project-preflight.sh --audit'),
+            ('      - name: Check original repository boundary before native V3 build\n        run: bash scripts/project-preflight.sh --audit\n', ''),
+            ('rustup toolchain install 1.95.0', 'rustup toolchain install stable'),
+            ('        if: always()\n', ''),
+            ('name: w1-reuse-v3-${{ matrix.source }}-', 'name: cost-'),
+            ('          if-no-files-found: error', '          if-no-files-found: ignore'),
+        ):
+            with self.subTest(old=old, new=new):
+                self.assertIn(old, W1_REUSE_V3_JOB)
+                with self.assertRaisesRegex(ValueError, 'four exact W1 V3'):
+                    check_w1_reuse_v3(W1_REUSE_V3_JOB.replace(old, new, 1).split('\n', 1)[1])
+        for changed in ('', W1_REUSE_V3_JOB * 2):
+            with self.assertRaises(ValueError):
+                check_w1_reuse_v3(changed)
+
+    def test_actual_v3_source_shell_binds_head_ordered_merge_and_unchanged_bytes(self):
+        import json
+        import os
+        import re
+        import textwrap
+
+        workflow = (ROOT / '.github/workflows/trnm-required-baseline.yml').read_text()
+        block = workflow.split('  cross-arch-w1-reuse-v3:\n', 1)[1].split('\n  cross-arch-cost-consistency:', 1)[0]
+        commands = re.findall(r'        run: \|\n(.*?)(?=      - name:)', block, re.S)
+        before, after = [textwrap.dedent(value) for value in commands if 'verify_ci_source.py' in value]
+        with tempfile.TemporaryDirectory(prefix='w1-v3-source-shell-') as temporary:
+            directory = Path(temporary)
+            checkout, output = directory / 'repo', directory / 'receipts'
+            (checkout / 'scripts/ci').mkdir(parents=True)
+            output.mkdir()
+            shutil.copyfile(ROOT / 'scripts/ci/verify_ci_source.py', checkout / 'scripts/ci/verify_ci_source.py')
+
+            def git(*args):
+                return subprocess.check_output(['git', *args], cwd=checkout, text=True, stderr=subprocess.DEVNULL).strip()
+
+            git('init', '-q', '-b', 'base')
+            git('config', 'user.name', 'W1 V3 source test')
+            git('config', 'user.email', 'source-test@example.invalid')
+            (checkout / 'actual').write_text('base\n')
+            git('add', '.')
+            git('commit', '-qm', 'base')
+            base = git('rev-parse', 'HEAD')
+            git('checkout', '-qb', 'candidate')
+            (checkout / 'actual').write_text('candidate\n')
+            git('commit', '-am', 'candidate', '-q')
+            head = git('rev-parse', 'HEAD')
+            env = dict(os.environ, RUNNER_TEMP=str(output), PYTHONDONTWRITEBYTECODE='1',
+                       TRNM_COST_SOURCE_KIND='head', TRNM_EXPECTED_CANDIDATE_SHA=head,
+                       TRNM_EXPECTED_BASE_SHA=base, TRNM_EXPECTED_SOURCE_SHA=head)
+
+            def run(command):
+                return subprocess.run(['bash', '-euo', 'pipefail', '-c', command], cwd=checkout,
+                                      env=env, text=True, capture_output=True)
+
+            self.assertEqual(run(before).returncode, 0)
+            initial = json.loads((output / 'ci-observations/source-before.json').read_text())
+            self.assertEqual(initial['tested_commit'], head)
+            self.assertTrue(initial['tracked_worktree_verified'])
+            (checkout / 'actual').write_text('tampered\n')
+            self.assertNotEqual(run(after).returncode, 0)
+            git('checkout', '--', 'actual')
+            self.assertEqual(run(after).returncode, 0)
+            git('checkout', '-q', 'base')
+            git('merge', '--no-ff', '-qm', 'actual ordered merge', 'candidate')
+            merge = git('rev-parse', 'HEAD')
+            env.update(TRNM_COST_SOURCE_KIND='prospective-merge', TRNM_EXPECTED_SOURCE_SHA=merge)
+            self.assertEqual(run(before).returncode, 0)
+            merged = json.loads((output / 'ci-observations/source-before.json').read_text())
+            self.assertEqual(merged['tested_commit'], merge)
+            self.assertEqual(merged['candidate'], head)
+            self.assertEqual(merged['base'], base)
+            env['TRNM_EXPECTED_BASE_SHA'] = head
+            self.assertNotEqual(run(after).returncode, 0)
+            env['TRNM_EXPECTED_BASE_SHA'] = base
+            self.assertEqual(run(after).returncode, 0)
+
+
 class CiContractTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

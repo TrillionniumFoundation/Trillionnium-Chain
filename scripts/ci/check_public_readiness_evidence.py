@@ -262,7 +262,7 @@ def native_durable_schema(root):
     def legacy(ddl, domain):
         # Source binding does not authorize widening this evidence contract.
         # These tables have their own full-state/commitment/node verification.
-        require(not re.search(r'\b(?:archive_nodes|native_state_commitments|growth_states|pq_network_peer_v1|pq_network_request_v1)\b',ddl,re.I),
+        require(not re.search(r'\b(?:archive_nodes|native_state_commitments|growth_states|pq_network_[a-z0-9_]+)\b',ddl,re.I),
                 'authenticated tables in legacy durable schema')
         return ddl,domain
     code = rust_code(source)
@@ -275,13 +275,30 @@ def native_durable_schema(root):
         if re.search(r'\bStateBackend\b',code):
             # Select this branch first. A bad current mapping cannot fall back
             # to a historical inline hash elsewhere in the same source file.
-            # These are two closed source contracts, not a retry after failure.
+            # These are closed source contracts, not a retry after failure.
             # Scan all code tokens (without evaluating cfg) so a removed enum
             # arm cannot hide a remaining PQ implementation, module or owner.
-            has_pq = re.search(r'\b(?:PqNetworkV1|pq_network)\b',code) is not None
+            canonical_pq = re.search(r'\b(?:PqNetworkV2|PqContinuousV3)\b',code) is not None
+            old_pq = re.search(r'\bPqNetworkV1\b',code) is not None
+            require(not (canonical_pq and old_pq), 'durable backend mixed PQ generations')
+            has_pq = canonical_pq or old_pq or re.search(r'\bpq_network\b',code) is not None
+            pq_variants, pq_ddl, pq_domains, pq_formats = '', '', [], []
+            if canonical_pq:
+                pq_variants = 'PqNetworkV2, PqContinuousV3,'
+                pq_ddl = 'Self::PqNetworkV2 | Self::PqContinuousV3 => format!("{}{}", ddl(), pq_network::DDL),'
+                pq_domains = [('PqNetworkV2','native-pq-network-owner-schema-v2'),
+                              ('PqContinuousV3','native-pq-continuous-owner-schema-v3')]
+                pq_formats = [r'PqNetworkV2\s*\|\s*Self::PqContinuousV3']
+            elif has_pq:
+                pq_variants = '#[cfg(feature = "pq-native-openssl")] PqNetworkV1,'
+                pq_ddl = '#[cfg(feature = "pq-native-openssl")] Self::PqNetworkV1 => format!("{}{}", ddl(), pq_network::DDL),'
+                pq_domains = [('PqNetworkV1','native-pq-network-owner-schema-v1')]
+                pq_formats = ['PqNetworkV1']
+            pq_domain_arms = ''.join(
+                ('' if canonical_pq else '#[cfg(feature = "pq-native-openssl")]')+
+                'Self::'+variant+' => b"'+expected+'",' for variant,expected in pq_domains)
             variants = body(source,'enum','StateBackend')
-            layout(variants,'Legacy, AuthenticatedV1, PermanentAccountGrowthV2,'+
-                   ('#[cfg(feature = "pq-native-openssl")] PqNetworkV1,' if has_pq else ''),
+            layout(variants,'Legacy, AuthenticatedV1, PermanentAccountGrowthV2,'+pq_variants,
                    'durable backend variants')
             implementation = body(source,'impl','StateBackend')
             layout(implementation, '''
@@ -290,10 +307,7 @@ def native_durable_schema(root):
                         Self::Legacy => ddl(),
                         Self::AuthenticatedV1 => format!("{}{}", ddl(), native_authenticated::DDL),
                         Self::PermanentAccountGrowthV2 => format!("{}{}", ddl(), growth::DDL),
-            '''+('''
-                        #[cfg(feature = "pq-native-openssl")]
-                        Self::PqNetworkV1 => format!("{}{}", ddl(), pq_network::DDL),
-            ''' if has_pq else '')+'''
+            '''+pq_ddl+'''
                     }
                 }
                 fn selected_schema_id(self, settings: &Settings) -> Hash {
@@ -311,10 +325,7 @@ def native_durable_schema(root):
                         Self::Legacy => b"native-branch-schema-v2",
                         Self::AuthenticatedV1 => b"native-authenticated-branch-schema-v1",
                         Self::PermanentAccountGrowthV2 => b"native-permanent-account-growth-schema-v2",
-            '''+('''
-                        #[cfg(feature = "pq-native-openssl")]
-                        Self::PqNetworkV1 => b"native-pq-network-owner-schema-v1",
-            ''' if has_pq else '')+'''
+            '''+pq_domain_arms+'''
                     };
                     hash(domain, &[self.ddl().as_bytes()])
                 }
@@ -324,19 +335,18 @@ def native_durable_schema(root):
             domain = body(implementation,'fn','schema_id')
             # rust_code masks literal payloads. Layout alone therefore cannot
             # authenticate which feature guards each optional PQ item.
-            if has_pq:
+            if has_pq and not canonical_pq:
                 for name, section in [('variants',variants), ('ddl',backend_ddl), ('domain',domain)]:
                     require(value(section,r'#\s*\[\s*cfg\s*\(\s*feature\s*=') == 'pq-native-openssl',
                             'durable backend feature '+name)
-            for variant in ('AuthenticatedV1', 'PermanentAccountGrowthV2')+(('PqNetworkV1',) if has_pq else ()):
+            for variant in ['AuthenticatedV1', 'PermanentAccountGrowthV2']+pq_formats:
                 require(value(backend_ddl,r'\bSelf::'+variant+r'\s*=>\s*format!\s*\(') == '{}{}',
                         'durable backend composition '+variant)
             require(value(selected_domain,r'\bhash\s*\(\s*b') == 'native-growth-reference-branch-schema-v2',
                     'durable growth schema domain')
             for variant, expected in [('Legacy','native-branch-schema-v2'),
                                       ('AuthenticatedV1','native-authenticated-branch-schema-v1'),
-                                      ('PermanentAccountGrowthV2','native-permanent-account-growth-schema-v2')]+(
-                                      [('PqNetworkV1','native-pq-network-owner-schema-v1')] if has_pq else []):
+                                      ('PermanentAccountGrowthV2','native-permanent-account-growth-schema-v2')]+pq_domains:
                 require(value(domain,r'\bSelf::'+variant+r'\s*=>\s*b') == expected,
                         'durable backend domain '+variant)
             node = body(source,'impl','Node')

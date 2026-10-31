@@ -138,6 +138,11 @@ NATIVE_REQUIRED_PATHS = frozenset((
 # not make TCD content addressing, M12 readback or a migration rehearsal a PQ
 # authorization scheme. They retain their original independently selected owners.
 CONVERGENCE_REQUIRED_PATHS = frozenset((
+    ".github/workflows/trnm-required-baseline.yml",
+    ".github/workflows/pon-recent-batch-acceptance.yml",
+    ".github/workflows/pon-branch-encoding-acceptance.yml",
+    "scripts/ci/check_public_readiness_evidence.py",
+    "scripts/ci/test_public_readiness_evidence.py",
     "docs/development/specs/pon/W1_ACTUAL_REUSE_OBSERVATION_V3.md",
     "scripts/ci/run_w1_reused_cost_v3.py",
     "scripts/ci/test_run_w1_reused_cost_v3.py",
@@ -175,6 +180,7 @@ CONVERGENCE_REQUIRED_PATHS = frozenset((
     "trillionnium/crates/trnm-research-protocol/tests/hepta_handoff_pq.rs",
     "trillionnium/crates/trnm-data-availability/src/cell/closure.rs",
     "trillionnium/crates/trnm-data-availability/src/cell/closure_tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/sequence_tests.rs",
     "trillionnium/crates/trnm-data-availability/src/cell/manifest.rs",
     "trillionnium/crates/trnm-data-availability/src/cell/network.rs",
     "trillionnium/crates/trnm-data-availability/src/cell/release.rs",

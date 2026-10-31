@@ -1,13 +1,11 @@
 //! Adversarial integration tests run real ML-DSA and the original M06 owner.
+use super::task_fixture_v5 as fixture;
 use super::*;
 use crate::{pon_executor as exec, public_evaluation as evaluation};
 use exec::{BlockExecution, ExecutionControl};
+use fixture::{Key, Witness};
 use std::sync::atomic::{AtomicUsize, Ordering};
 use trnm_crypto_primitives::{pon_work, qualified_work_task::TaskMaterial};
-#[allow(dead_code)]
-#[path = "../../../../trnm-protocol/tests/support/native_pq_task_fixture_v5.rs"]
-mod fixture;
-use fixture::{Key, Witness};
 
 struct Harness {
     cfg: Config,
