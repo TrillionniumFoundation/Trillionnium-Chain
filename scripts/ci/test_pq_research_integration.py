@@ -10,7 +10,8 @@ import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from check_pq_research_integration import (
-    IntegrityError, NATIVE_FALSE, NATIVE_REQUIRED_PATHS, NATIVE_V2_EXPECTED, check,
+    CONVERGENCE_REQUIRED_PATHS, IntegrityError, NATIVE_FALSE,
+    NATIVE_REQUIRED_PATHS, NATIVE_V2_EXPECTED, check,
 )
 
 REQUIRED = (
@@ -209,6 +210,10 @@ class CorpusGateTests(unittest.TestCase):
             "trillionnium/crates/trnm-data-availability/tests/pq_unpinned.rs",
             "trillionnium/crates/trnm-crypto-primitives/examples/pq_unpinned.rs",
             "trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/pq_unpinned.py",
+            "trillionnium/crates/trnm-research-protocol/src/pq_unpinned.rs",
+            "trillionnium/crates/trnm-research-protocol/tests/pq_unpinned.rs",
+            "trillionnium/crates/trnm-service-settlement/src/pq_unpinned.rs",
+            "trillionnium/crates/trnm-service-settlement/tests/pq_unpinned.rs",
         ):
             with self.subTest(path=name):
                 path = self.root / name
@@ -239,6 +244,8 @@ class CorpusGateTests(unittest.TestCase):
             "trillionnium/crates/trnm-pon-node/src/operator_pq_unpinned.rs",
             "trillionnium/crates/trnm-data-availability/src/cell/pq/hidden.rs",
             "trillionnium/crates/trnm-data-availability/src/bin/cell_pq/hidden.rs",
+            "trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq/hidden.rs",
+            "trillionnium/crates/trnm-service-settlement/src/pq_owner/retire.rs",
         ):
             with self.subTest(path=name):
                 path = self.root / name
@@ -365,6 +372,39 @@ class CorpusGateTests(unittest.TestCase):
                 self.save()
                 with self.assertRaisesRegex(IntegrityError, "PNQ2 bounded-profile"):
                     check(self.root)
+
+    def test_non_pq_named_owner_dependencies_cannot_be_dropped_and_repinned(self):
+        original = copy.deepcopy(self.manifest)
+        for name in CONVERGENCE_REQUIRED_PATHS:
+            with self.subTest(path=name):
+                self.manifest = copy.deepcopy(original)
+                self.manifest['required_paths'].remove(name)
+                del self.manifest['pinned_blobs'][name]
+                self.save()
+                with self.assertRaises(IntegrityError):
+                    check(self.root)
+        self.manifest = original
+        self.save()
+        self.assertFalse(check(self.root)['cryptographic_acceptance'])
+
+    def test_convergence_owner_source_changes_cannot_reuse_prior_pins(self):
+        for name in (
+            'trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs',
+            'trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs',
+            'trillionnium/crates/trnm-pon-node/src/store/storage_service.rs',
+            'trillionnium/crates/trnm-service-settlement/src/native_budget.rs',
+            'trillionnium/crates/trnm-data-availability/src/cell/closure.rs',
+            'trillionnium/crates/trnm-data-availability/src/cell/retention.rs',
+            'trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs',
+            'trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs',
+        ):
+            with self.subTest(path=name):
+                path = self.root / name
+                original = path.read_bytes()
+                path.write_bytes(original + b'changed owner source')
+                with self.assertRaisesRegex(IntegrityError, 'changed source'):
+                    check(self.root)
+                path.write_bytes(original)
 
     def test_native_evidence_must_exist_but_never_grants_acceptance(self):
         report = self.manifest["native_network_owner_slice_v2"]["evidence"]

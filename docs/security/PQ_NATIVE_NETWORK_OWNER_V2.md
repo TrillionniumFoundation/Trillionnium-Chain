@@ -3,7 +3,7 @@
 Status: **HOLD / no production activation**. This is an implementation contract
 under the existing development plan, not a second roadmap or acceptance report.
 The current source and executed validation are recorded separately in
-[the V6 reconstruction qualification](../../qualification/full-pq-v6-r2/README.md).
+[the R3 qualification record](../../qualification/full-pq-r3/README.md).
 The preceding [PNQ1 contract](PQ_NATIVE_NETWORK_OWNER_V1.md) is historical and
 does not describe this candidate's active transport provider or wire.
 
@@ -64,11 +64,19 @@ remain false.
 
 The following are not accepted by this contract:
 
-- continuous checkpoint owner plus NPQ6: the protected catalog, non-circular
-  bootstrap, TaskV5 lease transition and original Journal initialization need
-  one reviewed construction; the existing owner combination remains denied;
-- research archive plus PQ application, and classic CLI/public-submit automatic
-  parent recovery plus PQ application: explicit rejection is not migration;
+- production acceptance of continuous checkpoint owner plus NPQ6: the explicit
+  [PqContinuousV3 construction](PQ_CONTINUOUS_STARTUP_V3.md) now implements a
+  fresh protected catalog, non-circular signed bootstrap, TaskV5 lease transition
+  and original Journal initialization. The generic mixed-owner opener remains
+  denied; this separate construction is not arbitrary-fork recovery, an upgrade
+  of an existing namespace, or independently accepted unattended operation;
+- research archive plus PQ application: `AuthenticatedStateArchive` rejects the
+  unsupported application profile before opening SQLite or invoking progress;
+  empty paths and existing database/WAL bytes are preserved. The retained
+  archive execution and packet binding remain classical, so this refusal does
+  not complete archive migration;
+- classic CLI/public-submit automatic parent recovery plus PQ application:
+  explicit rejection is not migration;
 - production confidentiality, PQ TLS endpoint identity, public WAN availability,
   physical rollback resistance, quantum-effective PoN hardness or proof-system
   security;

@@ -39,7 +39,7 @@ impl PqPublicIdentity {
     }
 }
 pub(super) enum SigningIdentity {
-    Classical(DevelopmentIdentity),
+    Classical(Box<DevelopmentIdentity>),
     Pq(Box<PqPublicIdentity>),
 }
 impl SigningIdentity {

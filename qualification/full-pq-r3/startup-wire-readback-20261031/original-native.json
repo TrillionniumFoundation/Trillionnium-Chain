@@ -1,0 +1,33 @@
+{
+  "schema": "trnm-pq-startup-wire-readback-execution-v1",
+  "base_sha": "bbc511c7942de24b75054d1b4c3e5d0e4f4a5ab3",
+  "label": "original-native",
+  "command": [
+    "/tmp/pq-r3-rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "test",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--offline",
+    "--locked",
+    "--release",
+    "-p",
+    "trnm-pon-node",
+    "--all-features",
+    "--lib",
+    "operator_pq_startup::tests",
+    "--",
+    "--test-threads=1"
+  ],
+  "exit_code": 101,
+  "elapsed_seconds": 442.06558469300217,
+  "log_sha256": "403e32c730ffbf49ffffa0e8594a2f5678b183afc17a4805334e465443055ef6",
+  "input_sha256": {
+    "trillionnium/Cargo.lock": "420b25c7cdf17e04be7c9f4e33b85fd026f8f464de7d9f4b3ea101faec228691",
+    "trillionnium/Cargo.toml": "18bfd6f65c0bd8a033b2faa266e1f668a1aa80d808c24d3edaef82559f42b988",
+    "trillionnium/crates/trnm-pon-node/src/operator_pq_startup_tests.rs": "4cf6ffdf81e2f1aa226726f46b2649f1a24abd3c0b601d69632a77a65341a30f",
+    "config/pon/pq-cross-branch-corpus-v1.json": "92d1951604faf466b582f9d5ab0c63b35ad6a73580c9ada45fae4015145f2f26"
+  },
+  "inputs_unchanged_during_execution": true,
+  "scope": "seven original native startup tests; not full Node or whole-chain qualification",
+  "production_activation": false
+}

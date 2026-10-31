@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""Controlled TCP dependency download; the native Hepta consumer is unavailable.
+"""Controlled TCP dependency download with an explicit original Cell-v2 host.
 
 This creates evidence, not independent evaluation, product qualification or a
 release decision. All source and destination directories must be explicit. The
-finite producer exits before the unavailable consumer boundary. Transport
-completion cannot establish I10; this command deliberately fails closed there.
+default original-v1 producer exits at the unavailable consumer boundary. The
+explicit cell-host-v2 mode requires an independently pinned owner configuration
+and execs the existing ordinary daemon; transport completion never establishes I10.
 All six writer CLI entries use fresh TCL4/schema4 caches and the same immutable
 caps. The main-image cap also derives supported WAL/SHM file-length allowances;
 a pinned cache reader can refuse before mutation. Old TCL3 caches are not migrated.
@@ -19,6 +20,7 @@ import os
 from pathlib import Path
 import selectors
 import subprocess
+import sys
 import time
 
 
@@ -49,13 +51,16 @@ def remaining_fetch_budget(deadline: float) -> tuple[float, int, int]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    # Retain the original absolute-path invocation arguments. Hepta, Python,
-    # just and target paths do not enable an unshipped native consumer.
+    # Retain original invocation compatibility. Only the explicit v2 owner
+    # configuration selects its already deployed, independently pinned daemon.
     for name in ("chain", "hepta", "source-parent", "source-materials", "output",
                  "python", "cell-bin", "just", "hepta-target"):
         parser.add_argument(f"--{name}", type=Path, required=True)
     for name in ("cache-max-bytes", "cache-max-chunks", "cache-max-manifests", "cache-max-db-bytes"):
         parser.add_argument(f"--{name}", type=int, required=True)
+    parser.add_argument("--consumer-mode", choices=("original-v1", "cell-host-v2"), default="original-v1")
+    parser.add_argument("--handoff-config", type=Path)
+    parser.add_argument("--handoff-config-sha256")
     args = parser.parse_args()
     if min(args.cache_max_bytes, args.cache_max_chunks, args.cache_max_manifests, args.cache_max_db_bytes) <= 0:
         parser.error("cache limits must be positive and finite")
@@ -68,7 +73,23 @@ def main() -> None:
     for value in (value for value in vars(args).values() if isinstance(value, Path)):
         if not value.is_absolute():
             parser.error("all paths must be absolute")
-    args.output.mkdir(mode=0o700, parents=False, exist_ok=False)
+    plan = None
+    if args.consumer_mode == "cell-host-v2":
+        import llm_cell_host_handoff as cell_host
+        try:
+            plan = cell_host.load(args.handoff_config, args.handoff_config_sha256, args.output, os.environ)
+        except (ValueError, OSError, KeyError, TypeError, AttributeError) as error:
+            status = "NOT_CONFIGURED" if isinstance(error, cell_host.NotConfigured) else "REJECTED"
+            print(json.dumps({"schema": cell_host.SCHEMA, "status": status, "error": str(error)}), file=sys.stderr)
+            raise SystemExit(2) from error
+    elif args.handoff_config is not None or args.handoff_config_sha256 is not None:
+        parser.error("handoff owner inputs require explicit cell-host-v2 mode")
+    try:
+        args.output.mkdir(mode=0o700, parents=False, exist_ok=False)
+    except BaseException:
+        if plan is not None:
+            plan.close()
+        raise
     started = time.monotonic()
     evidence = {
         "schema": "pon-smollm-cell-native-handoff-v1", "status": "running",
@@ -78,7 +99,17 @@ def main() -> None:
         "native_consumer_status": "UNAVAILABLE", "native_receipt_status": "UNVERIFIED",
         "cell_binary_sha256": sha(args.cell_bin), "members": [],
     }
+    if plan is not None:
+        evidence.update(schema=plan.value["schema"], native_consumer_status="CONFIGURED_NOT_STARTED",
+            scope="one-host-controlled-tcp-complete-TCD1-to-original-cell-v2-host",
+            owner_configuration_sha256=args.handoff_config_sha256,
+            host_configuration_sha256=plan.value["host"]["sha256"],
+            host_executable_sha256=plan.value["executable"]["sha256"],
+            authentication_profile=plan.value["authentication"]["profile"],
+            execution_profile=plan.execution_profile,
+            installation_observed=False, final_use_observed=False)
     server = None
+    exec_requested = False
     try:
         family_path = args.chain / "config/pon/model-family-smollm2-135m-v1.json"
         family = json.loads(family_path.read_text())
@@ -136,6 +167,7 @@ def main() -> None:
         total_bytes = sum(member["pack"]["bytes"] for member in evidence["members"])
         total_chunks = sum(member["pack"]["chunks"] for member in evidence["members"])
         release_file = args.output / "source-release.tcr1"
+        preparation_deadline = time.monotonic() + 120 if plan is not None else None
         command = [str(args.cell_bin), "prepare-release", *cache_limits, "--store", str(producer),
             "--manifests", ",".join(member["pack"]["manifest"] for member in evidence["members"]),
             "--output", str(release_file), "--max-bytes", str(total_bytes),
@@ -149,6 +181,10 @@ def main() -> None:
                 or release["payload_bytes"] != total_bytes
                 or release["chunks"] != total_chunks):
             raise ValueError("prepared release differs from the declared complete set")
+        closure_file = None
+        if plan is not None:
+            closure_file = cell_host.prepare(plan, args, family, parent, evidence["members"],
+                release_file, release, producer, preparation_deadline)
         # A bounded retry allowance covers response headers and all manifests.
         # These limits are shared across the release, not reset for each cell.
         connection_budget = 2 * (total_chunks + len(members))
@@ -156,6 +192,11 @@ def main() -> None:
         evidence["release"] = {"prepare": release, "source_file": str(release_file),
             "source_sha256": sha(release_file), "max_response_bytes": response_budget,
             "max_connections": connection_budget, "selection_authority": False}
+        if plan is not None:
+            evidence["release"].update(closure_file=str(closure_file),
+                closure_sha256=plan.host["dependency_closure"]["sha256"],
+                closure_id=plan.host["dependency_closure_id"],
+                selected_generation=plan.value["generation"], loader_profile=plan.value["loader_profile"])
         if consumer.exists():
             raise ValueError("controlled consumer store must initially be absent")
         evidence["release"]["consumer_initially_absent"] = True
@@ -178,6 +219,9 @@ def main() -> None:
             transfer = {"schema": "cell-native-aggregate-transfer-v2", "clock": "monotonic",
                 "limit_seconds": 35, "all_members_verified": False,
                 "scope": "listener announced through aggregate TCR1 fetch, cache-only materialization and final consumer readback; excludes packing, release preparation, provider drain and Hepta load"}
+            if plan is not None:
+                transfer.update(schema="cell-native-aggregate-transfer-v3",
+                    scope="listener announced through aggregate TCD1 fetch, cache-only materialization and final consumer readback; excludes packing, release preparation, provider drain and original Hepta startup")
             evidence["transfer"] = transfer
             try:
                 remaining, overall_ms, request_ms = remaining_fetch_budget(transfer_deadline)
@@ -189,12 +233,30 @@ def main() -> None:
                     "--overall-ms", str(overall_ms), "--request-ms", str(request_ms),
                     "--max-response-bytes", str(response_budget),
                     "--max-connections", str(connection_budget), "--parallelism", "2"]
+                if plan is not None:
+                    complete_release = Path(plan.host["dependency_closure"]["path"])
+                    command = [str(args.cell_bin), "fetch-closure", *cache_limits,
+                        *plan.auth, "--store", str(consumer), "--closure-file", str(closure_file),
+                        "--closure", plan.host["dependency_closure_id"],
+                        "--loader-generation", str(plan.value["generation"]),
+                        "--loader-profile", plan.value["loader_profile"],
+                        "--required-roles", "base,tokenizer,adapter,configuration",
+                        "--peers", address, "--output", str(complete_release),
+                        "--max-bytes", str(total_bytes), "--max-chunks", str(total_chunks),
+                        "--overall-ms", str(overall_ms), "--request-ms", str(request_ms),
+                        "--max-response-bytes", str(response_budget),
+                        "--max-connections", str(connection_budget), "--parallelism", "2"]
+                    for key in ("family", "base", "parent", "tokenizer", "layout", "runtime"):
+                        command.extend(("--" + key, plan.value["context"][key]))
                 fetched = subprocess.run(command, capture_output=True, text=True,
                     timeout=remaining + 2)
-                (args.output / "fetch-release.log").write_text(fetched.stdout + fetched.stderr)
+                fetch_log = "fetch-closure.log" if plan is not None else "fetch-release.log"
+                (args.output / fetch_log).write_text(fetched.stdout + fetched.stderr)
                 fetched.check_returncode()
                 result = json.loads(fetched.stdout)
-                if (result["schema"] != "trnm.cell.release.fetch.v1"
+                expected_schema = "trnm.cell.closure.fetch.v1" if plan is not None else "trnm.cell.release.fetch.v1"
+                expected_marker_sha = plan.host["dependency_closure"]["sha256"] if plan is not None else evidence["release"]["source_sha256"]
+                if (result["schema"] != expected_schema
                         or result["release"] != release["release"]
                         or result["cells"] != len(members)
                         or result["payload_bytes"] != total_bytes
@@ -202,8 +264,12 @@ def main() -> None:
                         or result["cached_chunks"] + result["downloaded_chunks"] != total_chunks
                         or result["received_response_bytes"] > response_budget
                         or result["connection_attempts"] > connection_budget
-                        or sha(complete_release) != evidence["release"]["source_sha256"]):
+                        or sha(complete_release) != expected_marker_sha):
                     raise ValueError("aggregate release completion differs from pinned set or budget")
+                if plan is not None and (result["closure"] != plan.host["dependency_closure_id"]
+                        or result["generation"] != plan.value["generation"]
+                        or result["selection_authority"] is not False or result["use_authority"] is not False):
+                    raise ValueError("native closure observation differs from independent loader pins")
                 evidence["release"]["fetch"] = result
                 evidence["release"]["completion_file"] = str(complete_release)
                 # Any cache hits in the aggregate acquisition arise within this
@@ -270,11 +336,16 @@ def main() -> None:
         write_json(consumer_parent, parent)
         evidence["source_parent_sha256"] = sha(args.source_parent)
         evidence["consumer_parent_sha256"] = sha(consumer_parent)
-        # No supported native consumer or owner-receipt contract is shipped.
-        # Do not invoke an unknown selector, parse arbitrary JSON as authority,
-        # or invent success fields for a future I10 implementation.
-        raise RuntimeError("native Hepta consumer UNAVAILABLE; owner receipt UNVERIFIED: "
-                           "no supported consumer or receipt contract is shipped")
+        if plan is not None:
+            cell_host.publish(Path(plan.host["sidecar"]["path"]), plan.sidecar)
+            evidence.update(status="transport-complete-handoff-pending",
+                native_consumer_status="EXEC_REQUESTED", native_receipt_status="UNVERIFIED")
+            exec_requested = True
+        else:
+            # The original mode retains its original unavailable boundary.
+            # It cannot select v2 from an arbitrary report or infer admission.
+            raise RuntimeError("native Hepta consumer UNAVAILABLE; owner receipt UNVERIFIED: "
+                               "no supported consumer or receipt contract is shipped")
     except BaseException as error:
         evidence["status"] = "failed"
         evidence["error"] = str(error)
@@ -291,6 +362,19 @@ def main() -> None:
         evidence["elapsed_seconds"] = time.monotonic() - started
         write_json(args.output / "handoff.json", evidence)
         print(json.dumps({"status": evidence["status"], "report": str(args.output / "handoff.json")}))
+        sys.stdout.flush()
+        if plan is not None and not exec_requested:
+            plan.close()
+    if exec_requested:
+        try:
+            plan.exec_owner()
+        except BaseException as error:
+            write_json(args.output / "host-exec-failure.json", {"schema": plan.value["schema"],
+                "status": "failed", "error": str(error), "installation_observed": False,
+                "final_use_observed": False})
+            raise
+        finally:
+            plan.close()
 
 
 if __name__ == "__main__":

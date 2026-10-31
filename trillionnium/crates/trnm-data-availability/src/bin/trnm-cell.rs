@@ -1,6 +1,7 @@
 //! Explicit configured-peer cell cache pilot. This executable cannot publish a
 //! Chain release, change CURRENT, or authorize model execution.
 
+mod cell_closure;
 mod cell_pq;
 
 use std::{
@@ -29,7 +30,7 @@ use trnm_protocol::pq_frame::ml_dsa_65_key_id_from_spki;
 type Result<T> = std::result::Result<T, Box<dyn Error>>;
 
 const USAGE: &str = "trnm-cell: finite configured-peer content cache (no model authority)
-Writers (pack,fetch,verify,prepare-release,fetch-release,verify-release) also require --cache-max-bytes N --cache-max-chunks N --cache-max-manifests N --cache-max-db-bytes N. Persisted TCL4/schema4 caps must match on every reopen; the main DB image cap derives separate WAL/SHM file-length caps; held readers can refuse writes before mutation. No allocated-block reservation or journal/TEMP/output/global-disk quota is claimed.
+Writers (pack,fetch,verify,prepare-release,fetch-release,fetch-closure,verify-release) also require --cache-max-bytes N --cache-max-chunks N --cache-max-manifests N --cache-max-db-bytes N. Persisted TCL4/schema4 caps must match on every reopen; the main DB image cap derives separate WAL/SHM file-length caps; held readers can refuse writes before mutation. No allocated-block reservation or journal/TEMP/output/global-disk quota is claimed.
 pack --store DB --input FILE --family FAMILY --base HEX --parent HEX --tokenizer HEX --layout HEX --runtime HEX [--chunk-bytes 1048576]
 serve --store DB --bind IP:PORT --seconds N [--request-ms 2000] [--max-connections 8192] [--bounded-workers 1..4 --max-served-bytes N]
 fetch --store DB --manifest HEX --peers IP:PORT,IP:PORT --output ABSENT_FILE --max-bytes N (--seconds N | --overall-ms N) [--parallelism 2] [--request-ms 2000] [--max-connections 32768] [--max-response-bytes N]
@@ -41,6 +42,8 @@ prepare-release --store DB --manifests HEX,HEX --output ABSENT_TCR1 --max-bytes 
 fetch-release --store DB --release-file OWNER_TCR1 --release HEX --peers IP:PORT,IP:PORT --output ABSENT_MARKER --max-bytes N --max-chunks N (--seconds N | --overall-ms N) --max-response-bytes N [--parallelism 2] [--request-ms 2000] [--max-connections 32768]
   One aggregate reservation covers all declared members. Output is the exact TCR1 completion marker, not weights or use authority.
 verify-release --store DB --release-file OWNER_TCR1 --release HEX --max-bytes N --max-chunks N (--seconds N | --overall-ms N)
+fetch-closure --authentication-profile PROFILE --store DB --closure-file OWNER_TCD1 --closure HEX --loader-generation N --loader-profile HEX --required-roles base,tokenizer --family FAMILY --base HEX --parent HEX --tokenizer HEX --layout HEX --runtime HEX --peers IP:PORT,IP:PORT --output ABSENT_TCD1 --max-bytes N --max-chunks N (--seconds N | --overall-ms N) --max-response-bytes N [--parallelism 2] [--request-ms 2000] [--max-connections 32768]
+  Explicit content-cache-v1 or cell-pq-v2; owner closure id/context/profile/generation are independent inputs. PQ authenticates the embedded TCR1 only. The TCD1 id must be pinned by the original owner separately. No Hepta install/use authority.
   PQ fetch-release/verify-release: --authentication-profile cell-pq-v2 --pq-authorization CPR2 --pq-signer-spki DER --pq-signer-key-id HEX --pq-generation N --pq-sequence N --pq-network HEX --pq-parameters HEX --pq-key-not-before UNIX --pq-key-expires UNIX [--pq-key-revoked-at UNIX]
   Host key pins/lifetimes and current sequence are independent of peer data. Authentication precedes cache open/dial; its expiry clamps the original aggregate deadline.
 pq-key-public --pq-seed-file PRIVATE_RAW32 --output ABSENT_DER
@@ -77,6 +80,7 @@ fn run() -> Result<()> {
         "manifest" => manifest(&mut args),
         "prepare-release" => prepare_release(&mut args),
         "fetch-release" => fetch_release(&mut args),
+        "fetch-closure" => cell_closure::fetch(&mut args),
         "verify-release" => verify_release(&mut args),
         _ => Err(CellErrorV1::Invalid("unknown command; use --help").into()),
     }

@@ -5,89 +5,23 @@ mod w1_from_zero;
 #[path = "../../trnm-crypto-primitives/examples/support/w1_material.rs"]
 mod w1_material;
 
-use serde::Serialize;
+#[path = "support/w1_cost_producers.rs"]
+mod w1_cost_producers;
+
 use serde_json::{json, Value};
-use sha2::{Digest, Sha256};
-use std::{hint::black_box, io::Write, thread, time::Instant};
+use std::{hint::black_box, io::Write};
 use trnm_crypto_primitives::pon_work::{
     self,
-    blocked_one_zero::BlockedOneZeroRankOnePreparedTask,
-    blocked_zero::BlockedZeroPreparedTask,
-    blocked_zero_paired::BlockedZeroPairedPreparedTask,
     facts::{FactCounters, FactError, WorkFactCache, MAX_FACT_SLOTS},
-    maintenance_limb::MaintenanceLimbPreparedTask,
-    maintenance_periodic::MaintenancePeriodicPreparedTask,
-    maintenance_prefix::{MaintenanceIntegerPairedPreparedTask, MaintenancePrefixPreparedTask},
-    paired_product::PairedPreparedTask,
-    structured::{StructuredPreparedTask, TileKernel, TiledPreparedTask},
-    Hash, PreparedTask, VerifiedWork, WorkError, CELLS, PROOF_BYTES, Q,
+    Hash, VerifiedWork, WorkError, CELLS, PROOF_BYTES, Q,
 };
+use w1_cost_producers::{raw, sha, Clock, Producer, Result, Search, Timing, Trial, Winner, ARMS};
 
-type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 const SCHEMA: &str = "pon-w1-all-producers-cost-v2";
 const SAMPLES: u64 = 8;
 const LIMIT: u64 = 4096;
 const SEED: u64 = 0;
-const ARMS: [&str; 13] = [
-    "scalar-original",
-    "prepared-generic",
-    "prepared-structured",
-    "tiled-classical",
-    "tiled-strassen-one-level",
-    "paired-product",
-    "blocked-zero",
-    "blocked-zero-integer-paired",
-    "blocked-one-zero-rank-one",
-    "maintenance-periodic",
-    "maintenance-integer-paired",
-    "maintenance-prefix",
-    "maintenance-limb",
-];
 
-struct Clock {
-    wall: Instant,
-    cpu: Option<u64>,
-    owner: thread::ThreadId,
-}
-impl Clock {
-    fn start() -> Self {
-        Self {
-            wall: Instant::now(),
-            cpu: cpu(),
-            owner: thread::current().id(),
-        }
-    }
-    fn finish(self) -> Timing {
-        Timing {
-            wall_ns: u64::try_from(self.wall.elapsed().as_nanos()).ok(),
-            cpu_ns: if self.owner == thread::current().id() {
-                self.cpu.and_then(|start| cpu()?.checked_sub(start))
-            } else {
-                None
-            },
-        }
-    }
-}
-#[derive(Clone, Copy, Serialize)]
-struct Timing {
-    cpu_ns: Option<u64>,
-    wall_ns: Option<u64>,
-}
-#[cfg(target_os = "linux")]
-fn cpu() -> Option<u64> {
-    use rustix::time::{clock_gettime_dynamic, ClockId, DynamicClockId};
-    let stamp = clock_gettime_dynamic(DynamicClockId::Known(ClockId::ThreadCPUTime)).ok()?;
-    let seconds = u64::try_from(stamp.tv_sec).ok()?;
-    let nanos = u64::try_from(stamp.tv_nsec).ok()?;
-    if nanos >= 1_000_000_000 {
-        return None;
-    }
-    seconds.checked_mul(1_000_000_000)?.checked_add(nanos)
-}
-#[cfg(not(target_os = "linux"))]
-fn cpu() -> Option<u64> {
-    None
-}
 fn emit(mut row: Value) -> Result<()> {
     row.as_object_mut()
         .ok_or("COST_RECORD_OBJECT")?
@@ -97,12 +31,6 @@ fn emit(mut row: Value) -> Result<()> {
     stdout.write_all(b"\n")?;
     stdout.flush()?;
     Ok(())
-}
-fn sha(bytes: &[u8]) -> String {
-    hex::encode(Sha256::digest(bytes))
-}
-fn raw(matrix: &[u32]) -> Vec<u8> {
-    matrix.iter().flat_map(|n| n.to_le_bytes()).collect()
 }
 fn target() -> Hash {
     let mut value = [255; 32];
@@ -121,119 +49,10 @@ fn challenge(task: Hash, sample: u64, nonce: u64) -> Hash {
     )
 }
 
-enum Producer {
-    Scalar(Vec<u32>, Vec<u32>),
-    Generic(Box<PreparedTask>),
-    Structured(Box<StructuredPreparedTask>),
-    Tiled(Box<TiledPreparedTask>),
-    Paired(Box<PairedPreparedTask>),
-    Zero(Box<BlockedZeroPreparedTask>),
-    ZeroPaired(Box<BlockedZeroPairedPreparedTask>),
-    OneZero(Box<BlockedOneZeroRankOnePreparedTask>),
-    Periodic(Box<MaintenancePeriodicPreparedTask>),
-    Integer(Box<MaintenanceIntegerPairedPreparedTask>),
-    Prefix(Box<MaintenancePrefixPreparedTask>),
-    Limb(Box<MaintenanceLimbPreparedTask>),
-}
-impl Producer {
-    fn new(index: usize, a: &[u32], b: &[u32]) -> std::result::Result<Option<Self>, WorkError> {
-        Ok(match index {
-            0 => {
-                pon_work::task_id(a, b)?;
-                Some(Self::Scalar(a.to_vec(), b.to_vec()))
-            }
-            1 => Some(Self::Generic(Box::new(PreparedTask::new(a, b)?))),
-            2 => StructuredPreparedTask::new(a, b)?.map(|t| Self::Structured(Box::new(t))),
-            3 | 4 => Some(Self::Tiled(Box::new(TiledPreparedTask::new(
-                a,
-                b,
-                if index == 3 {
-                    TileKernel::Classical
-                } else {
-                    TileKernel::StrassenOneLevel
-                },
-            )?))),
-            5 => Some(Self::Paired(Box::new(PairedPreparedTask::new(a, b)?))),
-            6 => BlockedZeroPreparedTask::new(a, b)?.map(|t| Self::Zero(Box::new(t))),
-            7 => BlockedZeroPairedPreparedTask::new(a, b)?.map(|t| Self::ZeroPaired(Box::new(t))),
-            8 => BlockedOneZeroRankOnePreparedTask::new(a, b)?.map(|t| Self::OneZero(Box::new(t))),
-            9 => MaintenancePeriodicPreparedTask::new(a, b)?.map(|t| Self::Periodic(Box::new(t))),
-            10 => {
-                MaintenanceIntegerPairedPreparedTask::new(a, b)?.map(|t| Self::Integer(Box::new(t)))
-            }
-            11 => MaintenancePrefixPreparedTask::new(a, b)?.map(|t| Self::Prefix(Box::new(t))),
-            12 => MaintenanceLimbPreparedTask::new(a, b)?.map(|t| Self::Limb(Box::new(t))),
-            _ => return Err(WorkError::Task),
-        })
-    }
-    fn prove(&self, value: Hash) -> std::result::Result<Vec<u8>, WorkError> {
-        match self {
-            Self::Scalar(a, b) => pon_work::prove(value, a, b),
-            Self::Generic(t) => t.prove(value),
-            Self::Structured(t) => t.prove(value),
-            Self::Tiled(t) => t.prove(value),
-            Self::Paired(t) => t.prove(value),
-            Self::Zero(t) => t.prove(value),
-            Self::ZeroPaired(t) => t.prove(value),
-            Self::OneZero(t) => t.prove(value),
-            Self::Periodic(t) => t.prove(value),
-            Self::Integer(t) => t.prove(value),
-            Self::Prefix(t) => t.prove(value),
-            Self::Limb(t) => t.prove(value),
-        }
-    }
-}
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
-struct Trial {
-    nonce: u64,
-    challenge: String,
-    trace: String,
-    ticket: String,
-    proof_sha256: Option<String>,
-    target_hit: bool,
-}
-#[derive(Clone, PartialEq, Eq)]
-struct Winner {
-    challenge: Hash,
-    proof: Vec<u8>,
-}
-struct Search {
-    attempts: Vec<Trial>,
-    winner: Option<Winner>,
-}
 fn legal_search(producer: &Producer, task: Hash, sample: u64, limit: u64) -> Result<Search> {
-    let mut result = Search {
-        attempts: Vec::new(),
-        winner: None,
-    };
-    for nonce in 0..limit {
-        let context = challenge(task, sample, nonce);
-        let proof = producer
-            .prove(context)
-            .map_err(|e| format!("GENERATION:{e:?}"))?;
-        if proof.len() != PROOF_BYTES {
-            return Err("GENERATED_PROOF_LENGTH".into());
-        }
-        let trace = &proof[PROOF_BYTES - 32..];
-        let ticket = pon_work::hash(b"ticket", &[&context, trace]);
-        let hit = ticket <= target();
-        result.attempts.push(Trial {
-            nonce,
-            challenge: hex::encode(context),
-            trace: hex::encode(trace),
-            ticket: hex::encode(ticket),
-            proof_sha256: Some(sha(&proof)),
-            target_hit: hit,
-        });
-        if hit {
-            result.winner = Some(Winner {
-                challenge: context,
-                proof,
-            });
-            break;
-        }
-    }
-    Ok(result)
+    w1_cost_producers::search(producer, target(), limit, |nonce| {
+        challenge(task, sample, nonce)
+    })
 }
 fn producer_row(
     material: &w1_material::Material,
@@ -598,5 +417,119 @@ mod tests {
             (cache.counters().full_replays, cache.counters().hits),
             (2, 1)
         );
+    }
+
+    #[test]
+    fn all_thirteen_preparations_reused_across_challenges_preserve_full_w1() {
+        // This closes a reuse-correctness gap in the thirteen-arm diagnostic.
+        // It is not an observed [1,8,64]-winner cost cohort or a hardness bound.
+        // The fixed V2 campaign, original target, attempt limit and reader are
+        // unchanged; no cost acceptance is inferred from this native test.
+        let mut materials = w1_material::materials(None, None).unwrap();
+        let rank_one: Vec<_> = (0..CELLS)
+            .map(|i| ((i / 64 + 1) * (i % 64 + 2)) as u32)
+            .collect();
+        materials.extend([
+            w1_material::Material {
+                name: "one-zero-left-rank-one",
+                source: "synthetic-fixture",
+                a: vec![0; CELLS],
+                b: rank_one.clone(),
+            },
+            w1_material::Material {
+                name: "one-zero-right-rank-one",
+                source: "synthetic-fixture",
+                a: rank_one,
+                b: vec![0; CELLS],
+            },
+        ]);
+        for material in materials {
+            let task = pon_work::task_id(&material.a, &material.b).unwrap();
+            let original = Producer::new(0, &material.a, &material.b).unwrap().unwrap();
+            let reference: Vec<_> = (0..3)
+                .map(|sample| legal_search(&original, task, sample, LIMIT).unwrap())
+                .collect();
+            for searched in &reference {
+                let winner = searched
+                    .winner
+                    .as_ref()
+                    .expect("bounded fixed-fixture winner");
+                pon_work::verify_reference(winner.challenge, task, target(), &winner.proof)
+                    .unwrap();
+            }
+            assert_ne!(
+                reference[0].winner.as_ref().unwrap().challenge,
+                reference[1].winner.as_ref().unwrap().challenge
+            );
+            for (index, arm) in ARMS.iter().enumerate() {
+                let expected_supported = match index {
+                    0 | 1 | 3 | 4 | 5 => true,
+                    2 => matches!(
+                        material.name,
+                        "zero"
+                            | "identity"
+                            | "rank-one"
+                            | "sparse-diagonal"
+                            | "one-zero-left-rank-one"
+                            | "one-zero-right-rank-one"
+                    ),
+                    6 | 7 => material.name == "zero",
+                    8 => material.name.starts_with("one-zero-"),
+                    _ => material.name == "continuity-maintenance-v1",
+                };
+                // A single actual constructor stays alive across independent
+                // searches. No reconstruction or generic fallback masks reuse.
+                let prepared = Producer::new(index, &material.a, &material.b).unwrap();
+                assert_eq!(
+                    prepared.is_some(),
+                    expected_supported,
+                    "{}/{arm} support",
+                    material.name
+                );
+                let Some(prepared) = prepared else {
+                    continue;
+                };
+                for (sample, baseline) in reference.iter().enumerate() {
+                    let observed = legal_search(&prepared, task, sample as u64, LIMIT).unwrap();
+                    assert_eq!(
+                        observed.attempts, baseline.attempts,
+                        "{}/{arm}/{sample}: every target miss and complete proof commitment",
+                        material.name
+                    );
+                    let winner = observed.winner.as_ref().unwrap();
+                    let expected = baseline.winner.as_ref().unwrap();
+                    assert_eq!(winner.challenge, expected.challenge);
+                    assert_eq!(winner.proof, expected.proof);
+                    pon_work::verify(winner.challenge, task, target(), &winner.proof).unwrap();
+                }
+            }
+            let winner = reference[0].winner.as_ref().unwrap();
+            let changed = wrong_product(&winner.proof).proof.unwrap();
+            pon_work::precheck_proof_statement(winner.challenge, task, target(), &changed).unwrap();
+            assert_eq!(
+                pon_work::verify(winner.challenge, task, target(), &changed).unwrap_err(),
+                WorkError::Product
+            );
+            // Find a distinct context that passes the original cheap ticket
+            // gate using the retained trace. A task-level preparation never
+            // turns that earlier challenge's proof into a new Work capability.
+            let other = (0..LIMIT)
+                .map(|nonce| challenge(task, 1000, nonce))
+                .find(|context| {
+                    *context != winner.challenge
+                        && pon_work::precheck_proof_statement(
+                            *context,
+                            task,
+                            target(),
+                            &winner.proof,
+                        )
+                        .is_ok()
+                })
+                .expect("bounded distinct-context ticket");
+            assert_eq!(
+                pon_work::verify(other, task, target(), &winner.proof).unwrap_err(),
+                WorkError::Transcript
+            );
+        }
     }
 }

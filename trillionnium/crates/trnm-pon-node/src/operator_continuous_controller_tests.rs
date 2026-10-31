@@ -1,6 +1,13 @@
 use super::*;
 use std::os::unix::fs::{symlink, PermissionsExt};
 #[test]
+fn continuous_classical_search_decoder_keeps_original_2048_byte_limit() {
+    let settings = crate::Settings::development(Some(1)).unwrap();
+    assert!(search_transactions(&["00".repeat(2048)], &settings).is_ok());
+    assert!(search_transactions(&["00".repeat(2049)], &settings).is_err());
+    assert!(search_transactions(&vec!["00".repeat(159); 257], &settings).is_err());
+}
+#[test]
 fn mode4_control_unit_structs_reject_extra_duplicate_and_unknown_fields() {
     for raw in [
         r#"{"purpose":"cancel-epoch","refund":true}"#,

@@ -1,0 +1,812 @@
+{
+  "schema": "pn0-source-profile-compatibility-review-v1",
+  "status": "HOLD",
+  "kind": "source and configuration review; not acceptance or runtime configuration",
+  "chain_candidate": {
+    "official_input_heads": [
+      "622f9d50f081f6807408e401b790a7c7255b8f08",
+      "6e43cae914e3fe16b6439539dc5d00ff01952f13"
+    ],
+    "official_common_base": "bbc511c7942de24b75054d1b4c3e5d0e4f4a5ab3",
+    "local_runtime_overlay": "current reviewed working source; individual blobs below",
+    "final_commit": null,
+    "final_tree": null,
+    "lock_and_binary_manifest": null
+  },
+  "hepta_candidate": {
+    "source_commit": "39775e10083ebfb3df63a587375b4be7d493b109",
+    "pr": 4497,
+    "predecessor_pr": 4491,
+    "later_overlay_or_final_commit": "b93b7c3fc58d088baad281389547264894e864ef",
+    "original_pair_chain_source": "c16507147b65285ea94dead22d3b93c5db7295af",
+    "original_pair_chain_base": "1d11f875493f8125e36b9adceacb342df108e5e5",
+    "original_pair_chain_merge": "d1b8ae970bb5e014b6feaa49030823e1d8228c90",
+    "original_pair_is_current_unified_chain": false,
+    "excluded_unmerged_pq_candidate": {
+      "pr": 4368,
+      "head": "a575cf03e2bc871a2f48021859c03ace806421c8"
+    },
+    "reviewed_runtime_successor_commit": "3ba22376cc496d9bb1129ad0fa1146b32f1f73d8",
+    "reviewed_runtime_successor_scope": "Same original startup deadline and cancellation across queue, Cell scan, FinalUse and physical load; native outcomes not asserted.",
+    "reviewed_cell_image_gate_commit": "b93b7c3fc58d088baad281389547264894e864ef",
+    "reviewed_cell_image_gate_tree": "2bebc6dc248af4f6f0b3b358e35295794a1f8b46",
+    "reviewed_cell_image_gate_scope": "Cell-v2 preflight refuses anonymous or non-reopenable native images before aliases/owner work; original helper dispatch and owner-v1 behavior retained. Local formatting/source checks are not native admission or ordinary sandbox-route acceptance; prior missing-dependency/TCP failures remain failures."
+  },
+  "official_chain_divergence": {
+    "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/compare/bbc511c7942de24b75054d1b4c3e5d0e4f4a5ab3...c16507147b65285ea94dead22d3b93c5db7295af",
+    "status": "diverged",
+    "ahead_by": 130,
+    "behind_by": 189,
+    "total_commits": 130,
+    "base_commit": "bbc511c7942de24b75054d1b4c3e5d0e4f4a5ab3",
+    "merge_base_commit": "4b6b8a91b6dfe41fbd7f40f40b359d535c2c4251"
+  },
+  "evidence_rules": [
+    "Pin final source commit/tree, locks, binaries and protected runtime profiles together; source identity alone does not close PN0.",
+    "Report source-head and base-merge lanes separately; original #4497 paired c165 history is not the new unified source.",
+    "Retain native failures, SIGKILL, missing executions and profile refusals with exact applicable source; null evidence is not PASS.",
+    "A single binary containing multiple owners does not make incompatible backend/profile selections composable.",
+    "Treat component behavior and intentionally rejected combinations separately; no total or aggregate overrides an unsupported combination.",
+    "Do not mix ordinary cell-v2 Ed25519 FinalUse with the separate V2 ML-DSA API or the unmerged #4368 source.",
+    "Later runtime edits invalidate relevant inspected blobs and need their own results; fill the final source and current native result fields before use.",
+    "Hepta 39775... remains the requested baseline; reviewed runtime successor 3ba22376... is recorded separately. Results from either head apply only to their actual tested source.",
+    "Hepta b93 image-gate source and the producer v2 sealed/v3 protected-installed profiles are recorded separately. A rejected anonymous image, a successful ELF argv probe, source hashes or a different deployment profile cannot become ordinary-host installation/task/model acceptance."
+  ],
+  "matrix": [
+    {
+      "id": "M01",
+      "surface": "PNQ2 transport and NPQ6 application are independent selections",
+      "actual_profile": "native-pq-network-owner-v2; PqNetworkV2; optionally pon-native-pq-application-v6 / NPQ6-PQP6",
+      "selected_entry": "Node::open_with_pq_network",
+      "required_configuration": "Protected Settings, exact peer SPKIs/generation and PqNetworkPolicy; fresh incompatible SQLite namespace. Canonical ML-DSA availability or Cargo feature selection alone does not choose either owner.",
+      "refusal_boundary": "PQ_NETWORK_CONTEXT / PQ_NETWORK_BACKEND / PQ_NETWORK_OWNER_COMBINATION / PQ_ACCOUNT_REQUIRES_PQ_NETWORK_OWNER; no wire-prefix negotiation.",
+      "source_assessment": "Explicit standalone transport source exists, including permitted classical-ledger transport use. The reverse classical-transport/PQ-account combination is rejected. Confidentiality/WAN/whole-chain acceptance absent.",
+      "source_refs": [
+        "C1",
+        "C2",
+        "C3"
+      ],
+      "regression_source_selectors": [],
+      "current_native_evidence": {
+        "result": "UNQUALIFIED_COMBINED_PAIR",
+        "log": null,
+        "chain_tested_commit": null,
+        "hepta_tested_commit": null,
+        "binary_digests": null,
+        "profile_and_feature_set": null
+      }
+    },
+    {
+      "id": "M02",
+      "surface": "Classical clients or fallback into a PQ-selected account/owner",
+      "actual_profile": "V1/V2 and classical V3 client routes versus PQ Settings/backend",
+      "selected_entry": "authenticated_session, call_protected, V2/V3 clients, ordinary sync/outbox constructors",
+      "required_configuration": "Keep original classical profile only on its own selected owner. Settings-aware refusal and owner-aware refusal are separate checks.",
+      "refusal_boundary": "AUTH_CLASSICAL_FOR_PQ_PROFILE before classical work/sign/connect; PQ_NETWORK_REQUIRED for recorded PQ network owner even with a classical ledger.",
+      "source_assessment": "Intentional rejection, not migrated client capability. Explicit PQ transport paths remain separate.",
+      "source_refs": [
+        "C1",
+        "C3"
+      ],
+      "regression_source_selectors": [
+        "ingress::pq_network::canonical_tests"
+      ],
+      "current_native_evidence": {
+        "result": "UNQUALIFIED_COMBINED_PAIR",
+        "log": null,
+        "chain_tested_commit": null,
+        "hepta_tested_commit": null,
+        "binary_digests": null,
+        "profile_and_feature_set": null
+      }
+    },
+    {
+      "id": "M03",
+      "surface": "Native permanent account growth",
+      "actual_profile": "PermanentAccountGrowthV2; consensus-maintenance-continuity-dev-v1; fresh growth context",
+      "selected_entry": "Settings::with_permanent_account_growth_v2; Node growth opener",
+      "required_configuration": "Continuity task profile with no existing state_profile/operator bootstrap/material/checkpoint tile selection; exact growth limits and fresh namespace.",
+      "refusal_boundary": "GROWTH_PROFILE_SOURCE / GROWTH_PROFILE / GROWTH_PROFILE_BACKEND; growth opener carries no PQ or continuous owner.",
+      "source_assessment": "Standalone growth source is present. Native-growth plus NPQ6/PqContinuousV3 is not a supported same-backend composition; do not relabel the separate growth and PQ tests as one profile passing.",
+      "source_refs": [
+        "C1",
+        "C4",
+        "C5"
+      ],
+      "regression_source_selectors": [],
+      "current_native_evidence": {
+        "result": "UNQUALIFIED_COMBINED_PAIR",
+        "log": null,
+        "chain_tested_commit": null,
+        "hepta_tested_commit": null,
+        "binary_digests": null,
+        "profile_and_feature_set": null
+      }
+    },
+    {
+      "id": "M04",
+      "surface": "Original continuous owner, classical selection",
+      "actual_profile": "Original protected continuous identity/launch and Legacy backend",
+      "selected_entry": "Node::open_operator_continuous_checkpoint; Controller::open_pinned / operator-continuous",
+      "required_configuration": "Exact outside launch, source/package pins, role keys, parent/generation, original signed task/catalog and durable Journal/CPU owner.",
+      "refusal_boundary": "OWNER_MODE_AMBIGUOUS; wrong protected context, lease, settings, journal frontier or retained owner marker refuse; generic PQ opener cannot adopt the continuous namespace.",
+      "source_assessment": "Existing independently selected continuous owner is retained. It is neither arbitrary History authority nor implicit PQ selection.",
+      "source_refs": [
+        "C1",
+        "C6",
+        "C7"
+      ],
+      "regression_source_selectors": [],
+      "current_native_evidence": {
+        "result": "UNQUALIFIED_COMBINED_PAIR",
+        "log": null,
+        "chain_tested_commit": null,
+        "hepta_tested_commit": null,
+        "binary_digests": null,
+        "profile_and_feature_set": null
+      }
+    },
+    {
+      "id": "M05",
+      "surface": "Explicit continuous NPQ6 startup",
+      "actual_profile": "restricted-continuous-identity-pq-v3; restricted-owner-continuous-launch-pq-v3; PqContinuousV3; NPQ6/PQP6",
+      "selected_entry": "Original continuous opener selecting private PreparedStartup from protected catalog",
+      "required_configuration": "Public-only StartupSpec fixes genesis first. StartupBundle contains exactly two real consecutive OPEN/REGISTER work packets. Require independent PQ role pins, policy, original allocations, journal, fresh namespace and current lease.",
+      "refusal_boundary": "OWNER_CONTINUOUS_PQ_FRESH_STARTUP / OWNER_CONTINUOUS_SETTINGS_CONTEXT / PQ_NETWORK_OWNER_COMBINATION; generic PqNetworkV2 and classical openers do not reopen this namespace.",
+      "source_assessment": "Source-implemented distinct construction. It is not native-growth, old-state migration, general fork recovery or independently accepted unattended operation.",
+      "source_refs": [
+        "C1",
+        "C6",
+        "C7"
+      ],
+      "regression_source_selectors": [
+        "operator_pq_startup_tests::pq_continuous_real_bootstrap_receiver_and_cold_reopen_keep_state_fees_work_and_local_revocation",
+        "operator_pq_startup_tests::pq_continuous_real_controller_nonempty_search_receiver_restart_and_wire_limits"
+      ],
+      "current_native_evidence": {
+        "result": "UNQUALIFIED_COMBINED_PAIR",
+        "log": null,
+        "chain_tested_commit": null,
+        "hepta_tested_commit": null,
+        "binary_digests": null,
+        "profile_and_feature_set": null
+      }
+    },
+    {
+      "id": "M06",
+      "surface": "Continuous History single complete extension",
+      "actual_profile": "Exclusive owner with current independently signed receiver-validation / receiver-activate pair",
+      "selected_entry": "history_import::receive -> receive_owned_continuous_history_packet",
+      "required_configuration": "page.complete=true; exactly one packet; page.next=tip; after=current active parent; original generation and exact raw-packet digest match both signed allocations; durable operation IDs, delegated nonce window and one original resource interval.",
+      "refusal_boundary": "OWNER_CONTINUOUS_HISTORY_DURABLE_REQUIRED for incomplete/multi-packet/shared paths; OWNER_CONTINUOUS_PARENT_CHANGED / RECEIVER_PAIR / OPERATION_USED and native packet/task/Work/M06 gates.",
+      "source_assessment": "Narrow receiver source is implemented. It does not grant general History discovery, arbitrary fork replay or a new authentication channel. PPH4/PPS4 paid History transport remains its own policy/CPU path, not PNQ2 replay accounting.",
+      "source_refs": [
+        "C6",
+        "C8",
+        "C9",
+        "C18"
+      ],
+      "regression_source_selectors": [
+        "operator_pq_startup_tests::pq_continuous_history_exact_pair_shares_one_durable_scope_and_cold_reopens",
+        "operator_pq_startup_tests::pq_continuous_history_unselected_pages_and_shared_poller_cannot_spend_claims",
+        "operator_pq_startup_tests::pq_continuous_history_signed_invalid_work_settles_and_cannot_replay_claim",
+        "operator_pq_startup_tests::pq_continuous_history_cancel_after_durable_start_settles_original_interval",
+        "operator_pq_startup_tests::pq_continuous_history_unfinished_scope_keeps_unknown_debt_on_cold_open",
+        "operator_pq_startup_tests::pq_continuous_history_postcommit_cancel_preserves_packet_and_recovery_hold"
+      ],
+      "current_native_evidence": {
+        "result": "UNQUALIFIED_COMBINED_PAIR",
+        "log": null,
+        "chain_tested_commit": null,
+        "hepta_tested_commit": null,
+        "binary_digests": null,
+        "profile_and_feature_set": null
+      }
+    },
+    {
+      "id": "M07",
+      "surface": "Research authenticated archive with PQ application",
+      "actual_profile": "AuthenticatedStateArchive retained classical execution binding",
+      "selected_entry": "AuthenticatedStateArchive::open / open_with_progress",
+      "required_configuration": "Use supported non-PQ application only; existing data/WAL namespace remains unchanged on refusal.",
+      "refusal_boundary": "Error::UnsupportedProfile before opening SQLite or invoking progress for a PQ account profile.",
+      "source_assessment": "Explicit unsupported composition. A correct refusal is not PQ archive migration or broad automatic parent recovery.",
+      "source_refs": [
+        "C10"
+      ],
+      "regression_source_selectors": [],
+      "current_native_evidence": {
+        "result": "UNQUALIFIED_COMBINED_PAIR",
+        "log": null,
+        "chain_tested_commit": null,
+        "hepta_tested_commit": null,
+        "binary_digests": null,
+        "profile_and_feature_set": null
+      }
+    },
+    {
+      "id": "M08",
+      "surface": "TCD content retrieval",
+      "actual_profile": "fetch-closure --authentication-profile content-cache-v1; TCD1/TCR1/TCM1/TCL4",
+      "selected_entry": "trnm-cell fetch-closure -> fetch_closure_to_file",
+      "required_configuration": "Explicit trusted closure id, loader profile/generation, context, required roles, configured peers and original cache/deadline/byte/chunk budgets.",
+      "refusal_boundary": "Missing/unknown authentication profile; closure loader context, malformed graph/path/membership/role; TCM/payload/hash/resource failure. Admission precedes writable cache and dial.",
+      "source_assessment": "Content-checked retrieval source exists. Completion marker is not release selection, lease, payment, CURRENT or FinalUse. This is not a DHT/all-model-all-version availability guarantee.",
+      "source_refs": [
+        "C11",
+        "C12",
+        "C13",
+        "C14"
+      ],
+      "regression_source_selectors": [
+        "trnm-data-availability::tests::cell_closure_cli",
+        "trnm-data-availability::cell::closure_tests"
+      ],
+      "current_native_evidence": {
+        "result": "UNQUALIFIED_COMBINED_PAIR",
+        "log": null,
+        "chain_tested_commit": null,
+        "hepta_tested_commit": null,
+        "binary_digests": null,
+        "profile_and_feature_set": null
+      }
+    },
+    {
+      "id": "M09",
+      "surface": "TCD retrieval with explicit PQ release authentication",
+      "actual_profile": "fetch-closure --authentication-profile cell-pq-v2; CPR2 authenticates embedded TCR1",
+      "selected_entry": "ReleaseAuthentication::parse / verify, then same original fetch path",
+      "required_configuration": "Independent signer SPKI/key-id, current generation/sequence/network/parameters/lifetime pins plus an independently trusted TCD id/context. Authentication expiry clamps the original deadline.",
+      "refusal_boundary": "Bad or expired CPR2 / wrong signer or context refuse before cache open/dial; no fallback into content-cache-v1.",
+      "source_assessment": "PQ signature covers embedded TCR1, not arbitrary TCD wrapper metadata or Hepta use authority. New protected TCD pins are still required.",
+      "source_refs": [
+        "C11",
+        "C12",
+        "C13",
+        "C14"
+      ],
+      "regression_source_selectors": [],
+      "current_native_evidence": {
+        "result": "UNQUALIFIED_COMBINED_PAIR",
+        "log": null,
+        "chain_tested_commit": null,
+        "hepta_tested_commit": null,
+        "binary_digests": null,
+        "profile_and_feature_set": null
+      }
+    },
+    {
+      "id": "M10",
+      "surface": "Ordinary Hepta cell-v2 host",
+      "actual_profile": "Linux hepta-neural-agentd --host-format cell-v2; hepta-smollm-cognitive-cell-host-v2",
+      "selected_entry": "load_smollm_cognitive_cell_host_inputs_v2 -> prepare_smollm_cell_neural_agentd_v2",
+      "required_configuration": "Independently pinned protected host file, original owner-v1 fields, sidecar and TCD byte hashes, TCD id and operation id. Original descriptor FD/CURRENT/selector first; actual fixed 11-object bytes/TCM/TCR and independent exact TCD reconstruction follow. In reviewed successor 3ba22376, the original 120-second startup execution is created before blocking queueing and shared with Cell scan, FinalUse and physical load; only remaining milliseconds reach durable load admission. On Hepta b93, the actual Cell-v2 image must also reopen to the same device/inode as /proc/self/exe before aliases, dotenv, threads or original owner work.",
+      "refusal_boundary": "Wrong/missing schema/field/hash/op/protected file; wrong current generation/profile/member/role or any changed TCD byte; no retry as owner-v1; cancellation/error terminates the same path. Expired/cancelled material checks cannot become model admission; blocked OS reads retain their original owner until returning, then reject late results. Anonymous/non-reopenable Cell-v2 images are rejected by the explicit preflight; original helper dispatch and owner-v1 remain first/unchanged.",
+      "source_assessment": "Source-composed ordinary loader for this exact narrow profile. It does not select arbitrary peer-supplied code or grant installation, future learning, PQ or production acceptance. Small bounded metadata reads remain cooperative; no immediate OS preemption or fresh time allowance is claimed.",
+      "source_refs": [
+        "H1",
+        "H2",
+        "H3",
+        "H4",
+        "H5",
+        "H12",
+        "H13",
+        "H14",
+        "H15"
+      ],
+      "regression_source_selectors": [
+        "smollm_cognitive_process_tests::cell_host_rejects_schema_field_pin_operation_and_local_file_rebinding",
+        "smollm_cell_dependency_tests::every_changed_wire_byte_cannot_be_reauthorized_by_changing_its_self_hash",
+        "smollm_cell_dependency_tests::exact_plan_refuses_wrong_current_generation_profile_missing_member_and_readme_alias"
+      ],
+      "current_native_evidence": {
+        "result": "UNQUALIFIED_COMBINED_PAIR",
+        "log": null,
+        "chain_tested_commit": null,
+        "hepta_tested_commit": null,
+        "binary_digests": null,
+        "profile_and_feature_set": null
+      }
+    },
+    {
+      "id": "M11",
+      "surface": "Original installation, CURRENT and ordinary inference FinalUse",
+      "actual_profile": "hepta.agentd.cognitive-bootstrap.v3 / published_neural_product_qualification_v1; FinalUse authorizer v1 selected by the ordinary host",
+      "selected_entry": "load_neural_cognitive_process_bootstrap_v1 -> with_evaluated_neural_cognitive_bootstrap -> UnixFinalUseAuthorizer::open",
+      "required_configuration": "Original product qualification and selected parameter FD; CURRENT/selector identity and generation; resource grant, durable inference journal; independent Unix issuer UID/key/revocation owner.",
+      "refusal_boundary": "Qualification, CURRENT, selector, resource or issuer failure refuses before physical use. Ordinary host opens FinalUseAuthorizerConfig with 32-byte verifying_key; FinalUseAuthority::open_state_dir selects Ed25519V1.",
+      "source_assessment": "Original owner path remains authoritative. Ordinary cell-v2 is not PQ FinalUse despite separate ML-DSA code existing in the same source. Cache markers cannot substitute for installation/use permission. The ordinary host consumes/replays the existing selected descriptor; it does not publish a new artifact or mutate CURRENT merely because Cell bytes passed.",
+      "source_refs": [
+        "H3",
+        "H6",
+        "H7",
+        "H9",
+        "H10"
+      ],
+      "regression_source_selectors": [],
+      "current_native_evidence": {
+        "result": "UNQUALIFIED_COMBINED_PAIR",
+        "log": null,
+        "chain_tested_commit": null,
+        "hepta_tested_commit": null,
+        "binary_digests": null,
+        "profile_and_feature_set": null
+      }
+    },
+    {
+      "id": "M12",
+      "surface": "Separate Hepta ML-DSA FinalUse API",
+      "actual_profile": "FinalUseMlDsa65AuthorizerConfigV2; explicit open_ml_dsa65_v2",
+      "selected_entry": "UnixFinalUseAuthorizer::open_ml_dsa65_v2",
+      "required_configuration": "Explicit V2 host selection, independent AuthorityClock and AuthorityFrontierStore, current issuer key roster and protected namespace.",
+      "refusal_boundary": "Wrong V2 schema/key generation/frontier or cross-profile signatures refuse; no V1 fallback.",
+      "source_assessment": "API exists in #4497, but ordinary cell-v2 calls open, not open_ml_dsa65_v2. Do not splice #4368 a575... results into #4497 or infer end-to-end PQ from availability of this module.",
+      "source_refs": [
+        "H3",
+        "H6",
+        "H8"
+      ],
+      "regression_source_selectors": [],
+      "current_native_evidence": {
+        "result": "UNQUALIFIED_COMBINED_PAIR",
+        "log": null,
+        "chain_tested_commit": null,
+        "hepta_tested_commit": null,
+        "binary_digests": null,
+        "profile_and_feature_set": null
+      }
+    },
+    {
+      "id": "M13",
+      "surface": "Retirement and reorg reconciliation",
+      "actual_profile": "Original M06 observation -> exact completed M12 effect -> M09 retention",
+      "selected_entry": "Node::retire_native_cell -> NativeBudgetStoreV1::reobserve_completed_effect",
+      "required_configuration": "Original trusted M12 journal, exact claim/operation/effect/window/receipt and same chain context, then current chain height. Reorg may remove funding without erasing prior local effect.",
+      "refusal_boundary": "BUDGET_COMPLETED_EFFECT_BINDING / context/source mismatch; unknown intent cannot release physical capacity.",
+      "source_assessment": "Reconciliation source is narrower than finality or remote authorization. No second ledger; reservation is not money; TCR1 does not identify an untrusted caller-supplied journal.",
+      "source_refs": [
+        "C15",
+        "C16"
+      ],
+      "regression_source_selectors": [],
+      "current_native_evidence": {
+        "result": "UNQUALIFIED_COMBINED_PAIR",
+        "log": null,
+        "chain_tested_commit": null,
+        "hepta_tested_commit": null,
+        "binary_digests": null,
+        "profile_and_feature_set": null
+      }
+    },
+    {
+      "id": "M14",
+      "surface": "PN6 source-preserving rehearsal",
+      "actual_profile": "native-growth-migration-rehearsal-v2; isolated destination and READ_ONLY cold source verification",
+      "selected_entry": "rehearse_growth_migration_v2; verify_growth_rehearsal_v2",
+      "required_configuration": "Quiescent exact supported source, source-preserving archive/checkpoint, original retained histories and no external owner invocation.",
+      "refusal_boundary": "Wrong source/schema/context/pending stage/readback refuses; migration_executed, old_work_promoted, consensus_activation, production_enabled and external_journals_imported remain false.",
+      "source_assessment": "Local rehearsal cannot close PN0-PN5, migrate external M09/M12/revocation journals or authorize deployment.",
+      "source_refs": [
+        "C17"
+      ],
+      "regression_source_selectors": [],
+      "current_native_evidence": {
+        "result": "UNQUALIFIED_COMBINED_PAIR",
+        "log": null,
+        "chain_tested_commit": null,
+        "hepta_tested_commit": null,
+        "binary_digests": null,
+        "profile_and_feature_set": null
+      }
+    },
+    {
+      "id": "M15",
+      "surface": "Explicit Chain producer v2: sealed ELF handoff and ordinary Cell-v2 image refusal",
+      "actual_profile": "--consumer-mode cell-host-v2; pon-smollm-cell-host-handoff-v2 selects sealed-elf-v1 only; explicit content-cache-v1 or cell-pq-v2. The default original-v1 keeps its unavailable-consumer boundary.",
+      "selected_entry": "run_llm_cell_native_handoff.main; llm_cell_host_handoff.load / prepare / Plan.exec_owner",
+      "required_configuration": "Independently pinned handoff JSON, complete original host JSON, native ELF SHA-256, original canonical workspace/Fleet environment, selected generation, loader profile, context, six worker sources and exact eleven-file TCM1/TCR1/TCD1 plus sidecar pins. Linux sealed-memfd support is mandatory. PQ uses snapshots of the initially pinned CPR2/SPKI bytes in this fresh private 0700 run, with create-only 0600 files. Enclosing directories, the producer/Python startup, original CODEX_HOME configuration, system PT_INTERP/shared libraries and host remain trusted. The original protected descriptor, CURRENT/selector, resource grant, journal and Unix FinalUse owners are still required.",
+      "refusal_boundary": "Missing original inputs or sealing support returns NOT_CONFIGURED without mutable-path execution; malformed schema/pins/path/context/profile/generation/membership rejects. Any LD_* or GLIBC_TUNABLES key, including an empty value, rejects before owner reads and is checked again on the exact environment snapshot used for exec. Native expired/withdrawn/wrong-binding PQ authorization rejects without content fallback. One 120-second release-preparation deadline includes native manifest export and snapshot/TCD fsync; one 35-second transfer deadline includes aggregate fetch, cache-only materialization and final readback. Late completion never opens handoff. Hepta keeps its separate original shared 120-second startup/cancellation budget and owner refusals.",
+      "source_assessment": "The producer has exact data and main-ELF handoff boundaries, not a new install/use authority. The native loopback and ELF argv controls do not establish mechanical model inference, installation, ordinary follow-up tasks or learning. Hepta b93 explicitly rejects the anonymous image before dotenv, aliases, threads and original owner work: current_exe() cannot supply its original reopenable helper path. A raw /proc/<host-pid>/fd replacement alone does not survive the existing fresh PID namespace and /proc. This rejected configuration is not repaired by selecting a different profile implicitly. No sandbox permission is weakened, no CURRENT is written, and the ordinary FinalUse route remains Ed25519.",
+      "source_refs": [
+        "C19",
+        "C20",
+        "C11",
+        "C12",
+        "C13",
+        "C14",
+        "H1",
+        "H3",
+        "H6",
+        "H12",
+        "H13",
+        "H14",
+        "H15",
+        "H16"
+      ],
+      "regression_source_selectors": [
+        "scripts/ci/test_llm_cell_host_handoff.py::MissingOwnerTests",
+        "scripts/ci/test_llm_cell_host_handoff.py::NativeProducerTests",
+        "scripts/ci/test_llm_cell_handoff_deadline.py",
+        "cell_host_cli::actual_cell_daemon_rejects_anonymous_image_before_aliases_but_keeps_old_dispatch"
+      ],
+      "current_native_evidence": {
+        "result": "UNQUALIFIED_COMBINED_PAIR",
+        "log": null,
+        "chain_tested_commit": null,
+        "hepta_tested_commit": null,
+        "binary_digests": null,
+        "profile_and_feature_set": null
+      }
+    },
+    {
+      "id": "M16",
+      "surface": "Explicit Chain producer v3: protected root-installed ELF to the ordinary Cell-v2 host",
+      "actual_profile": "--consumer-mode cell-host-v2; pon-smollm-cell-host-handoff-v3; execution_profile=protected-installed-elf-v1; independent explicit content-cache-v1 or cell-pq-v2. No v2 field inference or failure fallback.",
+      "selected_entry": "llm_cell_host_handoff.load / Plan.exec_owner; llm_cell_installed_executable.prepare / require_subject / verify_installed_path; Hepta Cell-v2 preflight",
+      "required_configuration": "All independent owner/data/source pins and original Fleet/workspace/descriptor/CURRENT/selector/FinalUse requirements from M15. A Linux caller has one nonzero real/effective/saved/fs UID and zero effective/permitted/ambient/inheritable capabilities. The selected regular bounded nlink=1 ELF and each canonical ancestor are root-owned and not caller-writable; no SUID/SGID or file capabilities. The original file is independently hashed and its FD retained; subject/path identity is checked again before exec. The native Cell-v2 entry reopens its current path and matches device/inode to /proc/self/exe before original owners. Trusted root installation must create and retain protected version inodes and paths; the system loader/libraries and host are still trusted.",
+      "refusal_boundary": "v2 with a v3 execution field, v3 without its explicit field, and any unknown profile reject. Root or mixed UID state, active/inheritable/permitted capabilities, caller-writable/non-root-owned ancestry or image, aliasing, file privilege bits/capabilities, wrong hash or changed path/FD identity reject. Missing credential/xattr observation is unavailable. The original 120-second preparation, 35-second aggregate transfer and separate shared 120-second Hepta startup limits and PQ no-fallback admission remain unchanged. Non-reopenable actual images refuse before aliases/owners; original helper dispatch and sandbox policy remain unchanged.",
+      "source_assessment": "This is a distinct trusted-root-installed execution configuration, not the anonymous sealed image and not cryptographic immutability against the installer. No combined model/installation/ordinary-task/sandbox acceptance has been established. Local filesystem ownership does not satisfy its root-installation prerequisites; that absence is not a positive deployment test. Sealed ELF/argv probe results cannot be reused as an installed-profile success. No new Fleet, grant, issuer, CURRENT state, qualification or receipt is created, and ordinary FinalUse is still Ed25519.",
+      "source_refs": [
+        "C19",
+        "C20",
+        "C21",
+        "C11",
+        "C12",
+        "C13",
+        "C14",
+        "H1",
+        "H3",
+        "H6",
+        "H12",
+        "H13",
+        "H14",
+        "H15",
+        "H16"
+      ],
+      "regression_source_selectors": [
+        "scripts/ci/test_llm_cell_host_handoff.py",
+        "scripts/ci/test_llm_cell_installed_host.py",
+        "cell_host_cli::actual_cell_daemon_rejects_anonymous_image_before_aliases_but_keeps_old_dispatch"
+      ],
+      "current_native_evidence": {
+        "result": "UNQUALIFIED_COMBINED_PAIR",
+        "log": null,
+        "chain_tested_commit": null,
+        "hepta_tested_commit": null,
+        "binary_digests": null,
+        "profile_and_feature_set": null
+      }
+    }
+  ],
+  "inspected_sources": {
+    "C1": {
+      "repository": "chain",
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "inspected_git_blob": "5ae4fac349f81f5187b39c31bea483af066395b5",
+      "inspected_sha256": "28da28552090900dab90a56a9287752e181d2a702c4eabe3fcdd5891ba4ee487",
+      "line_hint": 1196,
+      "symbol_or_anchor": "fn open_selected(",
+      "review_note": "Concurrent execute_derived call reshaped to ExecutionRequest; open_selected profile/refusal contract unchanged after targeted diff review."
+    },
+    "C2": {
+      "repository": "chain",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/pq_network.rs",
+      "inspected_git_blob": "ede508f29d840fbd93a37a91008dfcbed3259360",
+      "inspected_sha256": "89979e3299d8eb5f9a5c22e1006e2fe23bd35e3cc164091fe673fed3b1a23f6e",
+      "line_hint": 51,
+      "symbol_or_anchor": "pub fn open_with_pq_network("
+    },
+    "C3": {
+      "repository": "chain",
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+      "inspected_git_blob": "94f4a4b39613b0a33f9f03114b790a5d43b6a939",
+      "inspected_sha256": "775f1a26484934ba6fc1293abf347bd1c75a6921f84b385af1402b153a225374",
+      "line_hint": 369,
+      "symbol_or_anchor": "fn require_classical_network_settings("
+    },
+    "C4": {
+      "repository": "chain",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth/profile.rs",
+      "inspected_git_blob": "d1e736cd2ef339a20dad95627c17cf755d64c54c",
+      "inspected_sha256": "c4197341c2d9a96b603e07e9bd43525c3b88ed6265d381ad223662b456925257",
+      "line_hint": 13,
+      "symbol_or_anchor": "pub fn with_permanent_account_growth_v2("
+    },
+    "C5": {
+      "repository": "chain",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth.rs",
+      "inspected_git_blob": "5673080d64cfc4bce08a344dcd538d300471e880",
+      "inspected_sha256": "941046fefa96e7b9dfa3f322c73d27864c0cff91c333cfe521cb1e846f6cf097",
+      "line_hint": 229,
+      "symbol_or_anchor": "fn open_growth_selected("
+    },
+    "C6": {
+      "repository": "chain",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs",
+      "inspected_git_blob": "760a42821a86cf57d7241b36be477a9277fdbf2d",
+      "inspected_sha256": "0e52ceeeaf0b59a9677eeda4e920c4272828f9eb6fe035bc9fdfb342089bcc81",
+      "line_hint": 1884,
+      "symbol_or_anchor": "pub(crate) fn receive_owned_continuous_history_packet("
+    },
+    "C7": {
+      "repository": "chain",
+      "path": "trillionnium/crates/trnm-pon-node/src/operator_pq_startup.rs",
+      "inspected_git_blob": "ca9f28a796c99844fa2c20d97165d3a93a3e6024",
+      "inspected_sha256": "b44ceb2a9e435a68f7331262f01f9ae32b98cc05dc11385969b5e3278c2a1bc3",
+      "line_hint": 31,
+      "symbol_or_anchor": "pub struct StartupSpec"
+    },
+    "C8": {
+      "repository": "chain",
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+      "inspected_git_blob": "dfc16ae144ba209d7d77be7e3cd8ec5ab0c71877",
+      "inspected_sha256": "fb8fedb376d60ce07ed33f81178de4f39aa3d0f7abc94a2e814b8cba46748bfc",
+      "line_hint": 332,
+      "symbol_or_anchor": "pub(super) fn receive("
+    },
+    "C9": {
+      "repository": "chain",
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/pq_identity.rs",
+      "inspected_git_blob": "d7f588a3c7137279bccd9010c3318033a4032d12",
+      "inspected_sha256": "3a863bcb72652c5f0eb0b85833595856b8f51a78e50b30fef684c0cc5a0c6ca2",
+      "line_hint": 8,
+      "symbol_or_anchor": "pub const PQ_HISTORY_PROFILE"
+    },
+    "C10": {
+      "repository": "chain",
+      "path": "trillionnium/crates/trnm-pon-node/src/authenticated_state_archive.rs",
+      "inspected_git_blob": "b204df6a1323c9c9db1e5db687497da9c0744783",
+      "inspected_sha256": "17ef7e3cbf9b2e57719a4b764b9489a68cbfa2941c891fcd7a8a7573b4cc5afc",
+      "line_hint": 322,
+      "symbol_or_anchor": "fn require_supported_profile("
+    },
+    "C11": {
+      "repository": "chain",
+      "path": "trillionnium/crates/trnm-data-availability/src/bin/cell_closure/mod.rs",
+      "inspected_git_blob": "054bac05c3ef64c231e426f1c017285673a559a1",
+      "inspected_sha256": "914f5dbe1ee409be10252a73d61d50c4a7af3953bb92e5489fe85feed204a89b",
+      "line_hint": 14,
+      "symbol_or_anchor": "pub(super) fn fetch("
+    },
+    "C12": {
+      "repository": "chain",
+      "path": "trillionnium/crates/trnm-data-availability/src/bin/trnm-cell.rs",
+      "inspected_git_blob": "3263d525a60d4543fdef3309b26d5bc1357fd6db",
+      "inspected_sha256": "057c6c7f3f729649716a5bf7ca05651d5be39590a833a0268a593e62e5daa464",
+      "line_hint": 391,
+      "symbol_or_anchor": "enum ReleaseAuthentication"
+    },
+    "C13": {
+      "repository": "chain",
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/closure.rs",
+      "inspected_git_blob": "072edd68a39dcb69969d9e74954628d18f7d7d07",
+      "inspected_sha256": "72188669d94263583b5a716748e253f3a09eca09b93f0295bfb56f29a647307d",
+      "line_hint": 205,
+      "symbol_or_anchor": "pub fn verify_for_loader("
+    },
+    "C14": {
+      "repository": "chain",
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/release.rs",
+      "inspected_git_blob": "d01dd1f6faac1dfaf3c3ce03d588608c3e9169fb",
+      "inspected_sha256": "8af04441d160ace37760f1e06d94e71aabdd9daf02739de75bd00f4d77e71143",
+      "line_hint": 58,
+      "symbol_or_anchor": "pub fn fetch_closure_to_file("
+    },
+    "C15": {
+      "repository": "chain",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/storage_service.rs",
+      "inspected_git_blob": "48062d074584e8b49bcf06623207fdc92aef1e50",
+      "inspected_sha256": "e4efb7babaca1f12b8327e26e8171ae81b09aabd34ca3ddb75b81002ed725288",
+      "line_hint": 336,
+      "symbol_or_anchor": "pub fn retire_native_cell("
+    },
+    "C16": {
+      "repository": "chain",
+      "path": "trillionnium/crates/trnm-service-settlement/src/native_budget.rs",
+      "inspected_git_blob": "2cc37bada4a6d68b9ce21d3d471006fdc3b5ffe7",
+      "inspected_sha256": "a778efd8d6f0295f2e26ed2a8cbda77d7b3d120fef75d826ed98246509798782",
+      "line_hint": 994,
+      "symbol_or_anchor": "pub fn reobserve_completed_effect("
+    },
+    "C17": {
+      "repository": "chain",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs",
+      "inspected_git_blob": "77a624a812e160eb44b9ea453c3471c83b57e9aa",
+      "inspected_sha256": "3945f9b8ec8ccf91edfc967b50db3d0ca8fb44772476c1904451a05810b6bfbb",
+      "line_hint": 607,
+      "symbol_or_anchor": "pub fn verify_growth_rehearsal_v2("
+    },
+    "C18": {
+      "repository": "chain",
+      "path": "trillionnium/crates/trnm-pon-node/src/operator_pq_startup_tests.rs",
+      "inspected_git_blob": "80e747c9db26eae011813255f88b901b5007f6b9",
+      "inspected_sha256": "90bb3278347cde99eff739499ae85f560bf654d44d3afd91b57b6a9668b92a87",
+      "line_hint": 720,
+      "symbol_or_anchor": "fn pq_continuous_history_exact_pair_shares_one_durable_scope_and_cold_reopens("
+    },
+    "H1": {
+      "repository": "hepta",
+      "path": "codex-rs/hepta-infer-worker-host/src/bin/hepta-neural-agentd.rs",
+      "inspected_git_blob": "b7d93351cf035bc45f6b8c300edd19f8a42953c2",
+      "inspected_sha256": "98194ff8f9879d859639c6cd2df007f0a63699fc2cd7fde4020338e5dcdb2923",
+      "line_hint": 68,
+      "symbol_or_anchor": "let host_format =",
+      "inspected_commit": "b93b7c3fc58d088baad281389547264894e864ef",
+      "pinned_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/b93b7c3fc58d088baad281389547264894e864ef/codex-rs/hepta-infer-worker-host/src/bin/hepta-neural-agentd.rs#L68"
+    },
+    "H2": {
+      "repository": "hepta",
+      "path": "codex-rs/hepta-infer-worker-host/src/smollm_cognitive_process.rs",
+      "inspected_git_blob": "dc805d672dca0da97eee8927d832792f00cacbdb",
+      "inspected_sha256": "86dc419d78406625a0e22b6f4bad23fa9d8347bac1453b76443a8d8d5507feac",
+      "line_hint": 90,
+      "symbol_or_anchor": "pub fn load_smollm_cognitive_cell_host_inputs_v2(",
+      "inspected_commit": "b93b7c3fc58d088baad281389547264894e864ef",
+      "pinned_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/b93b7c3fc58d088baad281389547264894e864ef/codex-rs/hepta-infer-worker-host/src/smollm_cognitive_process.rs#L90"
+    },
+    "H3": {
+      "repository": "hepta",
+      "path": "codex-rs/hepta-infer-worker-host/src/smollm_cognitive_host.rs",
+      "inspected_git_blob": "2122a8198f4e5aa418059b074990fc790a002c83",
+      "inspected_sha256": "0324ab01fc9d2f2fba1aff563816aa240e44478a7094c5dd0db3abeed623bfd9",
+      "line_hint": 264,
+      "symbol_or_anchor": "UnixFinalUseAuthorizer::open(",
+      "inspected_commit": "b93b7c3fc58d088baad281389547264894e864ef",
+      "pinned_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/b93b7c3fc58d088baad281389547264894e864ef/codex-rs/hepta-infer-worker-host/src/smollm_cognitive_host.rs#L264"
+    },
+    "H4": {
+      "repository": "hepta",
+      "path": "codex-rs/hepta-infer-worker-host/src/smollm_cell_material.rs",
+      "inspected_git_blob": "caf8df7fb967152ef4e3a5e710b4b1072f4a8e35",
+      "inspected_sha256": "ac53436ec37ce2a8c228ab184291167092f91c7f157f215f6c2dddba5937db41",
+      "line_hint": 192,
+      "symbol_or_anchor": "pub(crate) fn verify_controlled_cell_material_v2(",
+      "inspected_commit": "b93b7c3fc58d088baad281389547264894e864ef",
+      "pinned_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/b93b7c3fc58d088baad281389547264894e864ef/codex-rs/hepta-infer-worker-host/src/smollm_cell_material.rs#L192"
+    },
+    "H5": {
+      "repository": "hepta",
+      "path": "codex-rs/hepta-infer-worker-host/src/smollm_cell_dependency.rs",
+      "inspected_git_blob": "785df305855851322330c84fcaeb976540fb4668",
+      "inspected_sha256": "ef5288e9247181ccdde90d8450d0f7fa0958b141f7918abfcd99f240c0bec913",
+      "line_hint": 23,
+      "symbol_or_anchor": "pub(super) fn verify(",
+      "inspected_commit": "b93b7c3fc58d088baad281389547264894e864ef",
+      "pinned_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/b93b7c3fc58d088baad281389547264894e864ef/codex-rs/hepta-infer-worker-host/src/smollm_cell_dependency.rs#L23"
+    },
+    "H6": {
+      "repository": "hepta",
+      "path": "codex-rs/hepta-infer-worker-host/src/final_use_authorizer.rs",
+      "inspected_git_blob": "ccc71fe7cf6a20146f4ff3dbca5d3db1322375b6",
+      "inspected_sha256": "e59683305e474cc8118125d661e3a7634723ef37b2e6e6a1a9fc2abd82a14156",
+      "line_hint": 72,
+      "symbol_or_anchor": "pub fn open(config_path:",
+      "inspected_commit": "b93b7c3fc58d088baad281389547264894e864ef",
+      "pinned_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/b93b7c3fc58d088baad281389547264894e864ef/codex-rs/hepta-infer-worker-host/src/final_use_authorizer.rs#L72"
+    },
+    "H7": {
+      "repository": "hepta",
+      "path": "codex-rs/hepta-contracts/src/final_use.rs",
+      "inspected_git_blob": "ab321161cb0f190ea818614691fe4d1333b92063",
+      "inspected_sha256": "a79db5397fa7da372fd24b400639e7fff583a32b19c3f8319eb1c39658fbb28a",
+      "line_hint": 368,
+      "symbol_or_anchor": "pub fn open_state_dir(",
+      "inspected_commit": "b93b7c3fc58d088baad281389547264894e864ef",
+      "pinned_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/b93b7c3fc58d088baad281389547264894e864ef/codex-rs/hepta-contracts/src/final_use.rs#L368"
+    },
+    "H8": {
+      "repository": "hepta",
+      "path": "codex-rs/hepta-infer-worker-host/src/final_use_authorizer_ml_dsa65_v2.rs",
+      "inspected_git_blob": "e96782fc2e37a81526b9b1b4c9fe6e410e82df71",
+      "inspected_sha256": "dfb8202277b190cf9efdf063f5d3ea82ef9515a53e4fd8c6db8bc1ac730bbcd0",
+      "line_hint": 33,
+      "symbol_or_anchor": "pub fn open_ml_dsa65_v2(",
+      "inspected_commit": "b93b7c3fc58d088baad281389547264894e864ef",
+      "pinned_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/b93b7c3fc58d088baad281389547264894e864ef/codex-rs/hepta-infer-worker-host/src/final_use_authorizer_ml_dsa65_v2.rs#L33"
+    },
+    "H9": {
+      "repository": "hepta",
+      "path": "codex-rs/hepta-agentd/src/cognitive_neural_bootstrap.rs",
+      "inspected_git_blob": "71f05f723c559e70e2f8c95a42872b1fed4dc0ef",
+      "inspected_sha256": "93c5bca1dd15be448a19e35b8b0c2f4737b383d6f6b87585db5020ae4dcb301b",
+      "line_hint": 97,
+      "symbol_or_anchor": "pub fn load_neural_cognitive_process_bootstrap_v1(",
+      "inspected_commit": "b93b7c3fc58d088baad281389547264894e864ef",
+      "pinned_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/b93b7c3fc58d088baad281389547264894e864ef/codex-rs/hepta-agentd/src/cognitive_neural_bootstrap.rs#L97"
+    },
+    "H10": {
+      "repository": "hepta",
+      "path": "codex-rs/hepta-agentd/src/config.rs",
+      "inspected_git_blob": "89c3d1e64322c8847a8facc03eaba3e0d11c0c47",
+      "inspected_sha256": "8161a063506d4ec1d59dfae529835e72faea27d2950e2cc62b6b2133a2cea280",
+      "line_hint": 363,
+      "symbol_or_anchor": "pub fn with_evaluated_neural_cognitive_bootstrap(",
+      "inspected_commit": "b93b7c3fc58d088baad281389547264894e864ef",
+      "pinned_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/b93b7c3fc58d088baad281389547264894e864ef/codex-rs/hepta-agentd/src/config.rs#L363"
+    },
+    "H11": {
+      "repository": "hepta",
+      "path": ".github/workflows/hepta-pon-native-pair.yml",
+      "inspected_git_blob": "bbafce899ad4e946771f9f2f8fb53c49389d5f5c",
+      "inspected_sha256": "76d4644be98f2a3745a6c06554c1eff3bc4bf52889736ec9cb78777300ea9018",
+      "line_hint": 110,
+      "symbol_or_anchor": "CHAIN_SOURCE_SHA:",
+      "inspected_commit": "b93b7c3fc58d088baad281389547264894e864ef",
+      "pinned_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/b93b7c3fc58d088baad281389547264894e864ef/.github/workflows/hepta-pon-native-pair.yml#L110"
+    },
+    "H12": {
+      "repository": "hepta",
+      "path": "codex-rs/hepta-infer-worker-host/src/smollm_neural_startup.rs",
+      "inspected_git_blob": "866b78e34a864d9729a2680ef0ed567a1dac5c57",
+      "inspected_sha256": "2a33f5bea040ed47b1841b6bd5a81c08f6b31ff9e350dc39493e0eb3e4d0b117",
+      "line_hint": 9,
+      "symbol_or_anchor": "pub(crate) struct SmolLmStartupExecutionV1",
+      "inspected_commit": "b93b7c3fc58d088baad281389547264894e864ef",
+      "pinned_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/b93b7c3fc58d088baad281389547264894e864ef/codex-rs/hepta-infer-worker-host/src/smollm_neural_startup.rs#L9"
+    },
+    "H13": {
+      "repository": "hepta",
+      "path": "codex-rs/hepta-infer-worker-host/src/smollm_cell_wire.rs",
+      "inspected_git_blob": "fad64bcfd65f87022eab2e99adeda075d98f5eb2",
+      "inspected_sha256": "7ba4def2c8ecde97065840a31d6094bd30d834dd7557b971b8de42bf17f20bf6",
+      "line_hint": 67,
+      "symbol_or_anchor": "pub(super) fn measure(",
+      "inspected_commit": "b93b7c3fc58d088baad281389547264894e864ef",
+      "pinned_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/b93b7c3fc58d088baad281389547264894e864ef/codex-rs/hepta-infer-worker-host/src/smollm_cell_wire.rs#L67"
+    },
+    "H14": {
+      "repository": "hepta",
+      "path": "codex-rs/hepta-infer-worker-host/src/smollm_neural_read.rs",
+      "inspected_git_blob": "1615db1fdb555a210a73f8e382143ec560e0140d",
+      "inspected_sha256": "67d00889ef6149211321dc21e86e65c838e08d936e1e88e9694ccf921369f66a",
+      "line_hint": 430,
+      "symbol_or_anchor": "fn start_physical(",
+      "inspected_commit": "b93b7c3fc58d088baad281389547264894e864ef",
+      "pinned_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/b93b7c3fc58d088baad281389547264894e864ef/codex-rs/hepta-infer-worker-host/src/smollm_neural_read.rs#L430"
+    },
+    "C19": {
+      "repository": "chain",
+      "path": "scripts/llm_cell_host_handoff.py",
+      "inspected_git_blob": "bf21fb8436f0afaf94ee9eb0002d68681a1fef03",
+      "inspected_sha256": "2534091e68dc5d2325c6db2f96e1d0ec473d8fa3c7149ec84897500c29ae157e",
+      "line_hint": 247,
+      "symbol_or_anchor": "def load("
+    },
+    "C20": {
+      "repository": "chain",
+      "path": "scripts/run_llm_cell_native_handoff.py",
+      "inspected_git_blob": "8647ff3d02eaf7e92a9138e736482b611ed82fa6",
+      "inspected_sha256": "785a058e24fbb9afbbc46ae10f92aa5748199f5bbc06d6812c05cfd10ce54a39",
+      "line_hint": 52,
+      "symbol_or_anchor": "def main()"
+    },
+    "C21": {
+      "repository": "chain",
+      "path": "scripts/llm_cell_installed_executable.py",
+      "inspected_git_blob": "b6625349f84de58f2168924bd57f6422f727f61a",
+      "inspected_sha256": "e65dbd0c7998b25ceaf362581c42714d483ba8b29a6a9e15b5da968ae4f66231",
+      "line_hint": 84,
+      "symbol_or_anchor": "def prepare("
+    },
+    "H15": {
+      "repository": "hepta",
+      "path": "codex-rs/arg0/src/lib.rs",
+      "inspected_git_blob": "54cfe2b5f714d139ebdeca62bbdfac20eaa75746",
+      "inspected_sha256": "3ec00c8788007a5227d6aef456fb2709bb9e739c80bd913549fc3d499fd1a27c",
+      "line_hint": 243,
+      "symbol_or_anchor": "pub fn arg0_dispatch_or_else_with_preflight<",
+      "inspected_commit": "b93b7c3fc58d088baad281389547264894e864ef",
+      "pinned_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/b93b7c3fc58d088baad281389547264894e864ef/codex-rs/arg0/src/lib.rs#L243"
+    },
+    "H16": {
+      "repository": "hepta",
+      "path": "codex-rs/linux-sandbox/src/bwrap.rs",
+      "inspected_git_blob": "11e8e612af3cc4245a537fae18199acc74075a3b",
+      "inspected_sha256": "bfce8aa44048b2441a7c02b301fe7366ae1b8b9ddd8ff8518711cd874a9e749e",
+      "line_hint": 268,
+      "symbol_or_anchor": "fn create_bwrap_flags_full_filesystem(",
+      "inspected_commit": "b93b7c3fc58d088baad281389547264894e864ef",
+      "pinned_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/b93b7c3fc58d088baad281389547264894e864ef/codex-rs/linux-sandbox/src/bwrap.rs#L268"
+    }
+  }
+}

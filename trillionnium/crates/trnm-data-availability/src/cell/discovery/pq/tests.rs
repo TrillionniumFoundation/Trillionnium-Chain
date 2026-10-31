@@ -162,11 +162,11 @@ fn actual_mldsa_record_rejects_every_changed_field_classic_and_trailing_wire() {
 fn randomized_signatures_preserve_semantic_high_water_and_original_durable_bytes() {
     let tmp = tempfile::tempdir().unwrap();
     let path = tmp.path().join("directory");
-    let now = wall_now().unwrap().as_secs();
+    let issued_at = wall_now().unwrap().as_secs();
     let endpoint = "127.0.0.1:19001".parse().unwrap();
     let request = request([10; 32]);
     let directory = CellProviderDirectoryV2::open(&path, context(), keys()).unwrap();
-    let first = record(request, endpoint, 1, now, false);
+    let first = record(request, endpoint, 1, issued_at, false);
     let mut second = first.clone();
     // FIPS204 pure prefix (0,empty-context-length) with independent nonzero rnd.
     // This is a test of randomized wire equivalence, not a runtime fallback.
@@ -180,6 +180,9 @@ fn randomized_signatures_preserve_semantic_high_water_and_original_durable_bytes
     assert_ne!(first.encode(), second.encode());
     assert_eq!(first, second);
     assert_eq!(first.digest(), second.digest());
+    // Open commits a real wall-clock high water; request time is sampled after
+    // opening and signing, even when preparation crosses a second boundary.
+    let now = wall_now().unwrap().as_secs();
     for candidate in [&first, &second] {
         candidate
             .verify_at(request, now, &policy(&[endpoint]), directory.keys())
@@ -208,12 +211,13 @@ fn randomized_signatures_preserve_semantic_high_water_and_original_durable_bytes
 fn fresh_schema_commits_key_roster_and_never_rewinds_with_expiry_or_restart() {
     let tmp = tempfile::tempdir().unwrap();
     let path = tmp.path().join("directory");
-    let now = wall_now().unwrap().as_secs();
+    let issued_at = wall_now().unwrap().as_secs();
     let endpoint = "127.0.0.1:19001".parse().unwrap();
     let request = request([10; 32]);
-    let first = record(request, endpoint, 1, now, false);
-    let withdrawal = record(request, endpoint, 2, now, true);
+    let first = record(request, endpoint, 1, issued_at, false);
+    let withdrawal = record(request, endpoint, 2, issued_at, true);
     let directory = CellProviderDirectoryV2::open(&path, context(), keys()).unwrap();
+    let now = wall_now().unwrap().as_secs();
     for candidate in [&first, &withdrawal] {
         candidate
             .verify_at(request, now, &policy(&[endpoint]), directory.keys())

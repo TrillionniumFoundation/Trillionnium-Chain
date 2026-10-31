@@ -264,6 +264,37 @@ pub fn root(state: &State) -> Result<Hash> {
     })
 }
 
+/// Optional bounded tree arithmetic over the complete actual State. This is a
+/// root calculation, not a checked execution-parent or admission capability.
+/// No root claim, partial update or caller-produced leaf hash can enter it.
+/// Keep the independent original `root` above unchanged as the reference.
+pub fn root_with_arithmetic(
+    state: &State,
+    arithmetic: &mut trnm_protocol::pon_wire::StateRootArithmetic,
+) -> Result<Hash> {
+    // The complete canonical pass must still precede every wire bound. In
+    // particular, a late invalid number wins over an early oversized key.
+    for value in state.values() {
+        validate_canonical(value)?;
+    }
+    if state.len() > 65_536 {
+        return Err("LIMIT");
+    }
+    arithmetic
+        .root_from_entries(state.iter().map(|(key, value)| {
+            serde_json::to_vec(value)
+                .map(|bytes| (key.as_bytes(), bytes))
+                .map_err(|_| "NONCANONICAL")
+        }))
+        .map_err(|error| match error {
+            StateRootInputError::Input(error) => error,
+            StateRootInputError::Wire(_) => "LIMIT",
+        })
+}
+
+#[cfg(test)]
+mod root_arithmetic_tests;
+
 /// Consensus-profile selected root. The historical root function and every old
 /// profile retain their complete grammar, error order and 65,536-key boundary.
 pub fn root_for_config(state: &State, cfg: &Config) -> Result<Hash> {
@@ -3221,7 +3252,7 @@ impl TransactionPrefix {
                 self.context.height,
                 self.context.timestamp,
                 &self.config,
-                &signatures,
+                signatures,
                 self.pq_signature_parent.as_deref().or(Some(&self.state)),
             ));
             progress(ExecutionProgress::AfterPrepare { index })

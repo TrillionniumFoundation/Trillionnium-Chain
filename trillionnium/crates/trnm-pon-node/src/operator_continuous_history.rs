@@ -1047,7 +1047,7 @@ impl Index {
             Event::LeaseWitness { body } => {
                 self.ready()?;
                 id(&body.operation)?;
-                let payload = body.edge.payload()?;
+                let payload = body.edge.payload_for(identity.profile()?)?;
                 check(
                     self.lease_witnesses.len() < MAX_CLAIMS
                         && !self.lease_witnesses.contains_key(&body.operation),

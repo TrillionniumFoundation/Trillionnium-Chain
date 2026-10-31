@@ -204,7 +204,10 @@ fn admit_packet(
     clock: u64,
     control: &Control<'_>,
     activate: Option<Hash>,
-) -> Result<(Hash, bool)> {
+) -> Result<(Hash, bool, Option<Hash>)> {
+    if let Some(tip) = activate {
+        ensure(tip == packet.id()?, "PAGE_COMPLETE")?;
+    }
     let owns_node_mutex = matches!(owner, Owner::Shared(_));
     metered(cpu, control, |operation| {
         let progress = operation.checkpoint_handle();
@@ -227,10 +230,10 @@ fn admit_packet(
             Ok((existing, permit, node.settings().clone()))
         })?;
         if let Some(id) = existing {
-            if let Some(tip) = activate {
-                activate_packet(owner, tip, clock, control, operation)?;
-            }
-            return Ok((id, false));
+            let active = activate
+                .map(|tip| activate_packet(owner, tip, clock, control, operation))
+                .transpose()?;
+            return Ok((id, false, active));
         }
         let checked = WorkCheckedPacket::verify_with_progress(packet, &mut |point| {
             control.alive()?;
@@ -289,12 +292,14 @@ fn admit_packet(
         };
         // Test-only cut is after the actual native COMMIT, before CPU settle.
         cut("admitted");
-        if let Some(tip) = activate {
+        let active = if let Some(tip) = activate {
             // Final activation keeps the original admission operation and
             // deadline. It does not start a new reservation after paid W1.
-            activate_packet(owner, tip, clock, control, operation)?;
-        }
-        Ok((id, true))
+            Some(activate_packet(owner, tip, clock, control, operation)?)
+        } else {
+            None
+        };
+        Ok((id, true, active))
     })
 }
 
@@ -304,11 +309,11 @@ fn activate_packet(
     clock: u64,
     control: &Control<'_>,
     operation: &public_v3::ServiceMutationCpuOperation,
-) -> Result<()> {
+) -> Result<Hash> {
     let owns_node_mutex = matches!(owner, Owner::Shared(_));
     let checkpoint = || operation.history_checkpoint(owns_node_mutex, &|| control.check());
     checkpoint()?;
-    owner.with(control, |node| {
+    let active = owner.with(control, |node| {
         node.activate_observed_with_termination(
             tip,
             clock,
@@ -320,7 +325,8 @@ fn activate_packet(
         )
     })?;
     cut("activated");
-    checkpoint()
+    checkpoint()?;
+    Ok(active)
 }
 
 pub(super) fn receive(
@@ -331,10 +337,37 @@ pub(super) fn receive(
     clock: u64,
     control: Control<'_>,
 ) -> Result<Hash> {
-    let settings = owner.with(&control, |node| {
+    let (settings, continuous) = owner.with(&control, |node| {
         validate_page(node.settings(), &page, tip, after)?;
-        Ok(node.settings().clone())
+        Ok((node.settings().clone(), node.is_continuous()))
     })?;
+    if continuous {
+        // The exclusive owner may use its exact signed receiver pair for one
+        // complete extension. General pages and the shared discovery poller
+        // still need their own durable History authority and remain closed.
+        ensure(
+            matches!(owner, Owner::Exclusive(_))
+                && page.complete
+                && page.packets.len() == 1
+                && page.next == hex::encode(tip),
+            "OWNER_CONTINUOUS_HISTORY_DURABLE_REQUIRED",
+        )?;
+        let text = &page.packets[0];
+        ensure(
+            text.len() <= 2_097_152
+                && text.len().is_multiple_of(2)
+                && text
+                    .bytes()
+                    .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b)),
+            "PACKET_HEX",
+        )?;
+        let raw = hex::decode(text).map_err(|_| crate::Error::from("PACKET_HEX"))?;
+        return owner.with(&control, |node| {
+            node.receive_owned_continuous_history_packet(&raw, tip, after, clock, &|| {
+                control.check()
+            })
+        });
+    }
     scoped(&mut owner, &control, |owner, cpu| {
         let (packets, next) = metered(cpu, &control, |operation| {
             let mut packets = Vec::with_capacity(page.packets.len());
@@ -378,11 +411,50 @@ pub(crate) fn admit_shared_packet(
     packet: Packet,
     deadline: Instant,
     resource: &(dyn Fn() -> Result<()> + Sync),
-) -> Result<bool> {
+    activate: Option<Hash>,
+) -> Result<(bool, Option<Hash>)> {
+    if let Some(tip) = activate {
+        ensure(tip == packet.id()?, "PAGE_COMPLETE")?;
+    }
     let control = Control { deadline, resource };
     let mut owner = Owner::Shared(node);
+    owner.with(&control, |node| {
+        ensure(
+            !node.is_continuous(),
+            "OWNER_CONTINUOUS_HISTORY_DURABLE_REQUIRED",
+        )?;
+        node.public_service_cpu_domain()?;
+        Ok(())
+    })?;
     scoped(&mut owner, &control, |owner, cpu| {
-        admit_packet(owner, cpu, packet, now()?, &control, None).map(|(_, inserted)| inserted)
+        admit_packet(owner, cpu, packet, now()?, &control, activate)
+            .map(|(_, inserted, active)| (inserted, active))
+    })
+}
+
+/// Complete a previously admitted locator using the original service account,
+/// durable History epoch and caller deadline. No proof work or new CPU domain
+/// is created for an empty page or a known Head response.
+pub(crate) fn complete_shared(
+    node: &Mutex<Node>,
+    tip: Hash,
+    deadline: Instant,
+    resource: &(dyn Fn() -> Result<()> + Sync),
+) -> Result<Hash> {
+    let control = Control { deadline, resource };
+    let mut owner = Owner::Shared(node);
+    owner.with(&control, |node| {
+        ensure(
+            !node.is_continuous(),
+            "OWNER_CONTINUOUS_HISTORY_DURABLE_REQUIRED",
+        )?;
+        node.public_service_cpu_domain()?;
+        Ok(())
+    })?;
+    scoped(&mut owner, &control, |owner, cpu| {
+        metered(cpu, &control, |operation| {
+            activate_packet(owner, tip, now()?, &control, operation)
+        })
     })
 }
 

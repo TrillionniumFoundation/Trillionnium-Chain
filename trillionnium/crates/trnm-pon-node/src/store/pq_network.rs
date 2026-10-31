@@ -81,7 +81,10 @@ impl Node {
         self.namespace()?;
         self.storage_context()?;
         ensure(
-            self.state_backend == StateBackend::PqNetworkV2 && policy.matches(&self.settings),
+            matches!(
+                self.state_backend,
+                StateBackend::PqNetworkV2 | StateBackend::PqContinuousV3
+            ) && policy.matches(&self.settings),
             "PQ_NETWORK_BACKEND",
         )?;
         let recorded: Vec<u8> = self.db.query_row(

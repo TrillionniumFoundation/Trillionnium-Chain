@@ -53,6 +53,77 @@ REJECTION_COMPARE_STEP = '''      - name: Check actual rejection stages and pair
         if: always()
         run: python3 scripts/pon_work_rejection_report.py --compare "$RUNNER_TEMP/cost-inputs/cost-x64-$TRNM_EXPECTED_SOURCE_SHA-$GITHUB_RUN_ATTEMPT/work-rejection" "$RUNNER_TEMP/cost-inputs/cost-arm64-$TRNM_EXPECTED_SOURCE_SHA-$GITHUB_RUN_ATTEMPT/work-rejection" --expected-source "$TRNM_EXPECTED_SOURCE_SHA" --expected-run "$GITHUB_RUN_ID" --expected-attempt "$GITHUB_RUN_ATTEMPT" --out "$RUNNER_TEMP/ci-observations/work-rejection-comparison"
 '''
+W1_REUSE_V3_JOB = r'''  cross-arch-w1-reuse-v3:
+    name: W1 actual reuse V3 (${{ matrix.arch }}, ${{ matrix.source }})
+    if: github.event_name == 'pull_request'
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 155
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [x64, arm64]
+        source: [head, prospective-merge]
+        include:
+          - arch: x64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+    env:
+      TRNM_COST_RUNNER_LABEL: ${{ matrix.runner }}
+      TRNM_COST_SOURCE_KIND: ${{ matrix.source }}
+      TRNM_EXPECTED_SOURCE_SHA: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+      TRNM_EXPECTED_CANDIDATE_SHA: ${{ github.event.pull_request.head.sha }}
+      TRNM_EXPECTED_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify V3 exact source and ordered merge before execution
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(--kind "$TRNM_COST_SOURCE_KIND" --expected-head "$TRNM_EXPECTED_CANDIDATE_SHA")
+          if test "$TRNM_COST_SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$TRNM_EXPECTED_BASE_SHA" --expected-merge "$TRNM_EXPECTED_SOURCE_SHA")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$RUNNER_TEMP/ci-observations/source-before.json"
+      - name: Check original repository boundary before native V3 build
+        run: bash scripts/project-preflight.sh --audit
+      - name: Set isolated Cargo paths after runner allocation
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf 'CARGO_HOME=%s/cargo-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
+          printf 'CARGO_TARGET_DIR=%s/target-%s\n' "$RUNNER_TEMP" "$GITHUB_JOB" >> "$GITHUB_ENV"
+          printf 'TRNM_CI_RECEIPT_DIR=%s/ci-observations\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+      - name: Install pinned native release compiler
+        run: rustup toolchain install 1.95.0 --profile minimal
+      - name: Install matching native formatter
+        run: rustup component add --toolchain 1.95.0 rustfmt
+      - name: Execute the complete native W1 actual reuse V3 grid
+        run: python3 scripts/ci/run_w1_reused_cost_v3.py --arch "${{ matrix.arch }}"
+      - name: Verify V3 exact source and ordered merge after execution
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(--kind "$TRNM_COST_SOURCE_KIND" --expected-head "$TRNM_EXPECTED_CANDIDATE_SHA")
+          if test "$TRNM_COST_SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$TRNM_EXPECTED_BASE_SHA" --expected-merge "$TRNM_EXPECTED_SOURCE_SHA")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$RUNNER_TEMP/ci-observations/source-after.json"
+      - name: Retain V3 costs including all failed observations
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: w1-reuse-v3-${{ matrix.source }}-${{ matrix.arch }}-${{ env.TRNM_EXPECTED_SOURCE_SHA }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/ci-observations/
+          if-no-files-found: error
+          retention-days: 30
+'''
 CONTINUITY_BUILD = '    cargo build --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-protocol -p trnm-crypto-primitives -p trnm-mvcc-fee --examples\n'
 CONTINUITY_ORIGINAL = '    TRNM_CONTINUITY_BINARY="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/continuity_vectors")" python3 formal/pon-nakamoto-v1/test_continuity.py -v\n'
 CONTINUITY_TRANSITIONS = '    TRNM_CONTINUITY_TRANSITIONS_BINARY="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/continuity_transition_vectors")" python3 formal/pon-nakamoto-v1/test_continuity_transitions.py -v\n'
@@ -70,6 +141,8 @@ COST_BOUNDARY_READERS = ('    python3 scripts/ci/test_pon_w1_budget_readers.py -
                          '    python3 scripts/ci/test_run_pon_w1_native_campaign.py\n')
 CURRENT_READER_COMMANDS = (
     'python3 scripts/ci/test_pon_w1_cost_matrix_reader.py',
+    'python3 scripts/ci/test_pon_w1_reused_cost_reader_v3.py',
+    'python3 scripts/ci/test_run_w1_reused_cost_v3.py',
     'python3 scripts/ci/test_pon_public_v3_policy_read.py',
     'python3 scripts/ci/test_llm_cell_handoff_deadline.py',
 )
@@ -251,6 +324,10 @@ PROTOCOL_CONTRACT_BLOCK = '''    python3 scripts/ci/run_from_zero_host.py -- pyt
     TRNM_NATIVE_EXECUTOR="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_execute" TRNM_EXECUTION_WORKERS=8 python3 formal/pon-nakamoto-v1/test_contracts.py
     TRNM_NATIVE_MODE=release python3 formal/pon-nakamoto-v1/test_interop.py
     TRNM_NATIVE_MODE=release python3 scripts/ci/test_pon_accepted_block.py
+    cargo build --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-data-availability --bin trnm-cell
+    trnm_cell_handoff_binary="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/trnm-cell")"
+    test -x "$trnm_cell_handoff_binary"
+    TRNM_CELL_BIN="$trnm_cell_handoff_binary" python3 scripts/ci/test_llm_cell_host_handoff.py -v
 '''
 
 
@@ -383,6 +460,13 @@ def check_from_zero_host_callsites(root: Path) -> None:
             'required repository-truth retains public Host CI refusal controls')
 
 
+def check_w1_reuse_v3(block: str) -> None:
+    # This explicit observation lane cannot replace any retained work/cost gate.
+    # Exact steps bind the original runner, budgets and fail-closed raw reader.
+    require(block == W1_REUSE_V3_JOB.split("\n", 1)[1],
+            'four exact W1 V3 head/merge native lanes with retained failure artifacts')
+
+
 def validate(root: Path = ROOT) -> dict:
     check_from_zero_host_callsites(root)
     text = (root / WORKFLOW).read_text()
@@ -393,14 +477,15 @@ def validate(root: Path = ROOT) -> dict:
     required = json.loads((root / 'config/repository-policy-v1.json').read_text())['required_check_names']
     require(len(jobs) == len(pairs) and set(jobs) == set(required) |
             {'prospective-merge', 'cross-arch-cost', 'cross-arch-cost-consistency',
-             'rust-baseline-shards', 'prospective-rust-shards', 'prospective-rust-baseline'},
+             'rust-baseline-shards', 'prospective-rust-shards', 'prospective-rust-baseline',
+             'cross-arch-w1-reuse-v3'},
             'required head jobs, separate merge matrix and actual cross-architecture costs must remain explicit')
     require('continue-on-error' not in text and 'pull_request_target' not in text and
             'contents: write' not in text and 'self-hosted' not in text,
             'untrusted source may not gain privilege or discard failures')
     require('  contents: read\n' in text, 'read-only repository permission')
     for name, block in jobs.items():
-        expected_runner = '${{ matrix.runner }}' if name == 'cross-arch-cost' else 'ubuntu-24.04'
+        expected_runner = '${{ matrix.runner }}' if name in {'cross-arch-cost', 'cross-arch-w1-reuse-v3'} else 'ubuntu-24.04'
         require('    runs-on: ' + expected_runner + '\n' in block, name + ' hosted runner')
         require('uses: ' + CHECKOUT in block and '          fetch-depth: 0\n' in block and
                 '          persist-credentials: false\n' in block and
@@ -414,13 +499,15 @@ def validate(root: Path = ROOT) -> dict:
         require('uses: ' + UPLOAD in block and '        if: always()\n' in block and
                 '          if-no-files-found: error\n' in block,
                 name + ' retained observations on success and failure')
-        if name not in {'prospective-merge', 'prospective-rust-shards', 'prospective-rust-baseline'}:
+        if name not in {'prospective-merge', 'prospective-rust-shards', 'prospective-rust-baseline',
+                        'cross-arch-w1-reuse-v3'}:
             require(block.count('verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA"') == 2,
                     name + ' exact head before and after execution')
         if name in set(required) - {'rust-baseline'}:
             require(not re.search(r'^    if:', block, re.M), name + ' cannot be conditionally skipped')
             require('        run: bash scripts/ci/ci_job.sh ' + name + '\n' in block,
                     name + ' must execute its actual lane')
+    check_w1_reuse_v3(jobs['cross-arch-w1-reuse-v3'])
     costs = jobs['cross-arch-cost']
     require(not re.search(r'^    if:', costs, re.M), 'native architecture execution cannot be skipped')
     require(f'    timeout-minutes: {COST_JOB_TIMEOUT_MINUTES}\n' in costs and
@@ -596,7 +683,8 @@ def validate(root: Path = ROOT) -> dict:
         require(key not in resolved or package['version'] in resolved[key],
                 'fuzz must instrument the same shared dependency versions as the native lockfile: ' + package['name'])
     return {'head_jobs': len(required), 'merge_lanes': len(required),
-            'native_cost_architectures': 2, 'artifact_comparison_jobs': 1, 'tests_executed': False}
+            'native_cost_architectures': 2, 'artifact_comparison_jobs': 1,
+            'w1_actual_reuse_v3_cells': 4, 'tests_executed': False}
 
 
 if __name__ == '__main__':

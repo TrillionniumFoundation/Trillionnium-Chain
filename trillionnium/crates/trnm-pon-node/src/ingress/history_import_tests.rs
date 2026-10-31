@@ -65,6 +65,160 @@ fn fixture() -> (tempfile::TempDir, Settings, Node, Packet, u64) {
 }
 
 #[test]
+fn pinned_completion_requires_existing_owner_and_expired_completion_cannot_mint_one() {
+    let (_directory, settings, node, packet, _clock) = fixture();
+    let owner = Mutex::new(node);
+    let error = admit_shared_packet(
+        &owner,
+        packet,
+        Instant::now() + Duration::from_secs(10),
+        &|| Ok(()),
+        Some(settings.genesis()),
+    )
+    .unwrap_err();
+    assert_eq!(error.to_string(), "PAGE_COMPLETE");
+    assert!(owner.lock().unwrap().public_service_cpu_domain().is_err());
+    let error = complete_shared(
+        &owner,
+        settings.genesis(),
+        Instant::now() + Duration::from_secs(10),
+        &|| Ok(()),
+    )
+    .unwrap_err();
+    assert_eq!(error.to_string(), "OWNER_PUBLIC_SERVICE_DOMAIN_UNBOUND");
+    assert!(owner.lock().unwrap().public_service_cpu_domain().is_err());
+    let error =
+        complete_shared(&owner, settings.genesis(), Instant::now(), &|| Ok(())).unwrap_err();
+    assert!(error.is(crate::ErrorCode::PublicRequestDeadline));
+    assert!(owner.lock().unwrap().public_service_cpu_domain().is_err());
+    assert_eq!(
+        owner.lock().unwrap().read_active().unwrap().0,
+        settings.genesis()
+    );
+}
+
+#[test]
+fn pinned_final_packet_and_known_completion_keep_one_owner_without_repeating_w1() {
+    let (_directory, settings, mut node, packet, _clock) = fixture();
+    let original = public_v3::ServiceMutationCpuDomain::standalone();
+    node.bind_public_service_cpu_domain(&original).unwrap();
+    let owner = Mutex::new(node);
+    let w1 = Arc::new(AtomicUsize::new(0));
+    let activations = Arc::new(AtomicUsize::new(0));
+    let observed_w1 = w1.clone();
+    let observed_activations = activations.clone();
+    let observed_cpu = original.clone();
+    OBSERVER.with(|hook| {
+        *hook.borrow_mut() = Some(Box::new(move |stage| {
+            if stage == "w1" {
+                observed_w1.fetch_add(1, Ordering::SeqCst);
+            }
+            if stage == "activation_progress" {
+                observed_activations.fetch_add(1, Ordering::SeqCst);
+                assert_eq!(observed_cpu.observe().unwrap().in_flight, 1);
+            }
+        }))
+    });
+    let id = packet.id().unwrap();
+    let end = Instant::now() + Duration::from_secs(10);
+    let admitted = admit_shared_packet(&owner, packet.clone(), end, &|| Ok(()), Some(id));
+    assert_eq!(admitted.unwrap(), (true, Some(id)));
+    let verified = w1.load(Ordering::SeqCst);
+    assert!(verified > 0);
+    assert!(activations.load(Ordering::SeqCst) > 0);
+    assert_eq!(
+        original
+            .observe_completion_work()
+            .unwrap()
+            .retained_identities,
+        1
+    );
+    assert_eq!(complete_shared(&owner, id, end, &|| Ok(())).unwrap(), id);
+    assert_eq!(
+        admit_shared_packet(&owner, packet, end, &|| Ok(()), Some(id)).unwrap(),
+        (false, Some(id))
+    );
+    OBSERVER.with(|hook| *hook.borrow_mut() = None);
+    assert_eq!(w1.load(Ordering::SeqCst), verified);
+    assert_eq!(
+        original
+            .observe_completion_work()
+            .unwrap()
+            .retained_identities,
+        1
+    );
+    assert_eq!(original.observe().unwrap().in_flight, 0);
+    assert!(!original.observe().unwrap().accounting_unavailable);
+    let node = owner.lock().unwrap();
+    assert!(node
+        .public_service_cpu_domain()
+        .unwrap()
+        .shares_domain_with(&original));
+    assert_eq!(node.active().unwrap().0, id);
+    assert_ne!(id, settings.genesis());
+}
+
+#[test]
+fn pinned_activation_failure_keeps_committed_packet_and_retry_does_not_repeat_w1() {
+    let (_directory, settings, mut node, packet, _clock) = fixture();
+    let original = public_v3::ServiceMutationCpuDomain::standalone();
+    node.bind_public_service_cpu_domain(&original).unwrap();
+    let owner = Mutex::new(node);
+    let fail_activation = Arc::new(std::sync::atomic::AtomicBool::new(false));
+    let w1 = Arc::new(AtomicUsize::new(0));
+    let observed_failure = fail_activation.clone();
+    let observed_w1 = w1.clone();
+    OBSERVER.with(|hook| {
+        *hook.borrow_mut() = Some(Box::new(move |stage| {
+            if stage == "w1" {
+                observed_w1.fetch_add(1, Ordering::SeqCst);
+            }
+            if stage == "admitted" {
+                observed_failure.store(true, Ordering::SeqCst);
+            }
+        }))
+    });
+    let id = packet.id().unwrap();
+    let end = Instant::now() + Duration::from_secs(10);
+    let refused = admit_shared_packet(
+        &owner,
+        packet.clone(),
+        end,
+        &|| {
+            ensure(
+                !fail_activation.load(Ordering::SeqCst),
+                "PUBLIC_REQUEST_DEADLINE",
+            )
+        },
+        Some(id),
+    );
+    assert!(refused
+        .unwrap_err()
+        .is(crate::ErrorCode::PublicRequestDeadline));
+    assert_eq!(owner.lock().unwrap().packet(id).unwrap().id().unwrap(), id);
+    assert_eq!(
+        owner.lock().unwrap().active().unwrap().0,
+        settings.genesis()
+    );
+    let verified = w1.load(Ordering::SeqCst);
+    assert!(verified > 0);
+    fail_activation.store(false, Ordering::SeqCst);
+    let retried = admit_shared_packet(&owner, packet, end, &|| Ok(()), Some(id));
+    OBSERVER.with(|hook| *hook.borrow_mut() = None);
+    assert_eq!(retried.unwrap(), (false, Some(id)));
+    assert_eq!(w1.load(Ordering::SeqCst), verified);
+    assert_eq!(
+        original
+            .observe_completion_work()
+            .unwrap()
+            .retained_identities,
+        1
+    );
+    assert_eq!(original.observe().unwrap().in_flight, 0);
+    assert_eq!(owner.lock().unwrap().active().unwrap().0, id);
+}
+
+#[test]
 fn expired_history_never_starts_an_epoch_or_a_cpu_account() {
     let (_directory, settings, node, packet, clock) = fixture();
     let owner = Mutex::new(node);
