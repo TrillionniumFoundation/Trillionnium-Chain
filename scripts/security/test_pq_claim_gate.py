@@ -1066,7 +1066,7 @@ class ClaimGateTests(unittest.TestCase):
         self.assertEqual(run.returncode, 0, run.stdout)
         self.assertIn("unqualified_proof", run.stdout)
 
-    def test_nonstandard_json_nan_infinity_refused_even_in_future_fields(self):
+    def test_ambiguous_json_numeric_values_refused_even_in_future_fields(self):
         import subprocess
         import sys
 
@@ -1077,11 +1077,13 @@ class ClaimGateTests(unittest.TestCase):
             path = self.root / module.PATHS[label]
             original = path.read_text(encoding="utf-8")
             self.assertTrue(original.rstrip().endswith("}"))
-            for token in ("NaN", "Infinity", "-Infinity"):
+            for token in ("NaN", "Infinity", "-Infinity",
+                          "1e309", "-1e309", "1e-99999", "-1e-99999"):
                 with self.subTest(label=label, token=token):
                     # The candidate still has truthful PQ=false flags, but
-                    # default json.loads historically accepted these non-JSON
-                    # numbers. Such bytes cannot cross a policy trust boundary.
+                    # Python accepts non-JSON constants and silently rounds
+                    # extreme valid exponents to infinity or zero. Neither
+                    # may cross the proof/consensus policy trust boundary.
                     altered = original.rstrip()[:-1] + (
                         ',"unreviewed_future_policy":' + token + "}"
                     )
@@ -1095,6 +1097,19 @@ class ClaimGateTests(unittest.TestCase):
                     self.assertEqual(run.returncode, 2, run.stdout)
             path.write_text(original, encoding="utf-8")
 
+
+    def test_finite_json_float_values_keep_their_original_meaning(self):
+        path = self.root / "policy-float-control.json"
+        for token, expected in (
+            ("1.25", 1.25),
+            ("1e-8", 1e-8),
+            ("0e-99999", 0.0),
+            ("-0.0", -0.0),
+            ("5e-324", 5e-324),
+        ):
+            with self.subTest(token=token):
+                path.write_text('{"risk":' + token + "}", encoding="utf-8")
+                self.assertEqual(module.load_unique_json(path)["risk"], expected)
 
     def test_native_differential_source_bytes_are_covered(self):
         import subprocess
