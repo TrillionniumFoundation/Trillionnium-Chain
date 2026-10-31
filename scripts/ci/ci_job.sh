@@ -5,6 +5,12 @@ case "${1:?required job}" in
   repository-truth)
     bash scripts/project-preflight.sh --audit
     python3 scripts/ci/test_project_boundary.py
+    # A passing HOLD check does not certify whole-chain PQ or PQ-128.
+    python3 scripts/ci/test_pq_chain_claim_guard.py
+    python3 -m unittest discover -s scripts/ci -p 'test_pq_authority_surface_scan.py' -v
+    python3 scripts/ci/pq_authority_surface_scan.py --summary-only
+    python3 -m unittest discover -s scripts/ci -p 'test_pq_quantum_daa_scenarios.py' -v
+    python3 scripts/ci/pq_chain_claim_guard.py
     python3 scripts/ci/check_repository.py
     python3 scripts/refresh_distributed_source_inventory.py --check
     python3 scripts/ci/test_repository.py
@@ -27,6 +33,8 @@ case "${1:?required job}" in
     python3 scripts/ci/test_pon_v3_cookie_cpu_study.py
     python3 scripts/ci/test_run_pon_w1_native_campaign.py
     python3 scripts/ci/test_pon_w1_cost_matrix_reader.py
+    python3 scripts/ci/test_pon_w1_reused_cost_reader_v3.py
+    python3 scripts/ci/test_run_w1_reused_cost_v3.py
     python3 scripts/ci/test_llm_cell_handoff_deadline.py
     python3 scripts/ci/test_read_original_native_campaign.py \
       --artifact-dir evidence/pon-upgrade-implementation-20261018/native-rounds/chain-pr327-original-campaign-39694587963 \
@@ -102,6 +110,10 @@ case "${1:?required job}" in
     TRNM_NATIVE_EXECUTOR="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_execute" TRNM_EXECUTION_WORKERS=8 python3 formal/pon-nakamoto-v1/test_contracts.py
     TRNM_NATIVE_MODE=release python3 formal/pon-nakamoto-v1/test_interop.py
     TRNM_NATIVE_MODE=release python3 scripts/ci/test_pon_accepted_block.py
+    cargo build --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-data-availability --bin trnm-cell
+    trnm_cell_handoff_binary="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/trnm-cell")"
+    test -x "$trnm_cell_handoff_binary"
+    TRNM_CELL_BIN="$trnm_cell_handoff_binary" python3 scripts/ci/test_llm_cell_host_handoff.py -v
     ;;
   fuzz-smoke)
     python3 scripts/ci/test_repository.py

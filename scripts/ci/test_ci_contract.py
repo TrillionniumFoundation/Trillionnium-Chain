@@ -65,11 +65,31 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
     def test_actual_lane_preserves_quorum_reference_and_retained_vector_checks(self):
         check_independent_conformance(self.script, self.lanes)
 
+    def test_cell_host_native_handoff_cannot_skip_build_or_use_an_unbound_binary(self):
+        commands = (
+            '    cargo build --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-data-availability --bin trnm-cell\n',
+            '    trnm_cell_handoff_binary="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/trnm-cell")"\n',
+            '    test -x "$trnm_cell_handoff_binary"\n',
+            '    TRNM_CELL_BIN="$trnm_cell_handoff_binary" python3 scripts/ci/test_llm_cell_host_handoff.py -v\n',
+        )
+        for command in commands:
+            self.assertEqual(self.script.count(command), 1)
+            for replacement in ('', command * 2, '    if false; then\n' + command + '    fi\n',
+                                '    true # ' + command.lstrip(), command.rstrip() + ' || true\n'):
+                with self.subTest(command=command, replacement=replacement):
+                    with self.assertRaises(ValueError):
+                        check_independent_conformance(self.script.replace(command, replacement), self.lanes)
+        unbound = self.script.replace('TRNM_CELL_BIN="$trnm_cell_handoff_binary" ', '')
+        with self.assertRaises(ValueError):
+            check_independent_conformance(unbound, self.lanes)
+
     def test_current_readers_and_runtime_controls_cannot_be_missing_duplicated_stubbed_or_moved(self):
         # Independent inventory: removing a required command from the checker
         # must not silently remove that command's negative coverage as well.
         paths = (
             'scripts/ci/test_pon_w1_cost_matrix_reader.py',
+            'scripts/ci/test_pon_w1_reused_cost_reader_v3.py',
+            'scripts/ci/test_run_w1_reused_cost_v3.py',
             'scripts/ci/test_pon_public_v3_policy_read.py',
             'scripts/ci/test_llm_cell_handoff_deadline.py',
             'scripts/test_llm_runtime_rss_owner.py',

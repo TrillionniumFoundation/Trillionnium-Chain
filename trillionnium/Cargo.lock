@@ -1220,6 +1220,9 @@ dependencies = [
  "serde_json",
  "sha2",
  "thiserror",
+ "trnm-crypto-primitives",
+ "trnm-protocol",
+ "zeroize",
 ]
 
 [[package]]

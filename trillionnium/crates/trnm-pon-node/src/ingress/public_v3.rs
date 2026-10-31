@@ -3034,6 +3034,9 @@ fn call_public_authenticated(
     let mut phase = PublicClientStage::Construction;
     let mut metrics = PublicClientMetrics::default();
     let result = (|| -> Result<PublicReply> {
+        if !pq {
+            super::require_classical_network_settings(settings)?;
+        }
         if let Some(deadline) = outer_deadline {
             ensure(Instant::now() < deadline, "PUBLIC_CLIENT_DEADLINE")?;
         }

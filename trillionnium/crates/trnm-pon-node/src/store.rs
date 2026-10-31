@@ -963,7 +963,10 @@ impl Node {
         self.storage_context()?;
         if trnm_mvcc_fee::pon_executor::pq_accounts_v2::enabled(&self.settings.app) {
             ensure(
-                matches!(self.state_backend, StateBackend::PqNetworkV2 | StateBackend::PqContinuousV3),
+                matches!(
+                    self.state_backend,
+                    StateBackend::PqNetworkV2 | StateBackend::PqContinuousV3
+                ),
                 "PQ_NETWORK_BACKEND",
             )?;
         }
@@ -971,7 +974,10 @@ impl Node {
     }
     pub(crate) fn require_classical_network_profile(&self) -> Result<()> {
         ensure(
-            !matches!(self.state_backend, StateBackend::PqNetworkV2 | StateBackend::PqContinuousV3),
+            !matches!(
+                self.state_backend,
+                StateBackend::PqNetworkV2 | StateBackend::PqContinuousV3
+            ),
             "PQ_NETWORK_REQUIRED",
         )?;
         Ok(())
@@ -1229,7 +1235,10 @@ impl Node {
             )?;
         }
 
-        let pq_selected = matches!(state_backend, StateBackend::PqNetworkV2 | StateBackend::PqContinuousV3);
+        let pq_selected = matches!(
+            state_backend,
+            StateBackend::PqNetworkV2 | StateBackend::PqContinuousV3
+        );
 
         ensure(pq_selected == pq_network.is_some(), "PQ_NETWORK_BACKEND")?;
         ensure(
@@ -1238,11 +1247,16 @@ impl Node {
         )?;
         ensure(
             !pq_selected
-                || (owner_policy.is_none() && mining_owner.is_none()
+                || (owner_policy.is_none()
+                    && mining_owner.is_none()
                     && match state_backend {
                         StateBackend::PqNetworkV2 => continuous_owner.is_none(),
-                        StateBackend::PqContinuousV3 => continuous_owner.as_ref().is_some_and(|owner| owner.is_pq_startup_owner())
-                            && settings.is_native_pq_application_v6(),
+                        StateBackend::PqContinuousV3 => {
+                            continuous_owner
+                                .as_ref()
+                                .is_some_and(|owner| owner.is_pq_startup_owner())
+                                && settings.is_native_pq_application_v6()
+                        }
                         _ => false,
                     }),
             "PQ_NETWORK_OWNER_COMBINATION",
@@ -2483,25 +2497,9 @@ impl Node {
     fn execute_derived(
         &self,
         actual: &State,
-        parent: Hash,
-        transactions: &[Vec<u8>],
-        height: u64,
-        timestamp: u64,
-        miner: Hash,
-        workers: usize,
+        block: ExecutionRequest<'_>,
     ) -> Result<trnm_mvcc_fee::pon_commitment::StagedOutput> {
-        self.execute_derived_with_progress(
-            actual,
-            ExecutionRequest {
-                timestamp: Some(timestamp),
-                transactions,
-                height,
-                miner,
-                parent_id: parent,
-                workers,
-            },
-            &|_| Ok(()),
-        )
+        self.execute_derived_with_progress(actual, block, &|_| Ok(()))
     }
     fn execute_derived_with_progress(
         &self,
@@ -4658,12 +4656,14 @@ impl Node {
         let task = pon_work::task_id(a, b).map_err(|_| Error::from("WORK_TASK"))?;
         let executed = self.execute_derived(
             actual,
-            parent,
-            &transactions,
-            height,
-            timestamp,
-            miner,
-            self.workers,
+            ExecutionRequest {
+                parent_id: parent,
+                transactions: &transactions,
+                height,
+                timestamp: Some(timestamp),
+                miner,
+                workers: self.workers,
+            },
         )?;
         let mut output = executed.output;
         let commitment = executed.commitment;

@@ -998,9 +998,18 @@ impl Node {
         progress()
     }
     fn continuous_lease_bytes(&self, parent: Hash, task: Hash, height: u64) -> Result<Vec<u8>> {
+        self.continuous_lease_bytes_with_progress(parent, task, height, &mut || Ok(()))
+    }
+    fn continuous_lease_bytes_with_progress(
+        &self,
+        parent: Hash,
+        task: Hash,
+        height: u64,
+        progress: &mut dyn FnMut() -> Result<()>,
+    ) -> Result<Vec<u8>> {
         if self.settings.is_native_pq_application_v6() {
             return pq_accounts_v2::tasks_v5::eligible_task(
-                &self.state_at(parent)?,
+                &self.state_at_with_progress(parent, progress)?,
                 task,
                 height,
                 &self.settings.app,
@@ -1013,9 +1022,15 @@ impl Node {
             !self.settings.app.is_pq_account_profile(),
             "OWNER_CONTINUOUS_TASK_PROFILE",
         )?;
-        self.lifecycle_task_lease(parent, task, height)?
-            .encode()
-            .map_err(|_| "OWNER_CONTINUOUS_LEASE".into())
+        qualified_task_lifecycle::eligible_task(
+            &self.state_at_with_progress(parent, progress)?,
+            task,
+            height,
+            &self.settings.app,
+        )?
+        .lease()
+        .encode()
+        .map_err(|_| "OWNER_CONTINUOUS_LEASE".into())
     }
     fn continuous_transactions_sha256(
         &self,
@@ -1557,6 +1572,14 @@ impl Node {
         self.continuous_actual_packet_binding(&active.permit, packet)
     }
     fn continuous_actual_packet_binding(&self, p: &Permit, packet: &Packet) -> Result<()> {
+        self.continuous_actual_packet_binding_with_progress(p, packet, &mut || Ok(()))
+    }
+    fn continuous_actual_packet_binding_with_progress(
+        &self,
+        p: &Permit,
+        packet: &Packet,
+        progress: &mut dyn FnMut() -> Result<()>,
+    ) -> Result<()> {
         let c = p.allocation.claim();
         let t = &p.view.body.declared_binding.task;
         ensure(
@@ -1576,16 +1599,18 @@ impl Node {
         )
         .map_err(|error| Error::from(format!("WORK:{error:?}")))?;
         let manifest = self
-            .eligible_work_task(
+            .eligible_work_task_with_progress(
                 packet.header.parent,
                 packet.header.work_task,
                 packet.header.height,
+                progress,
             )?
             .ok_or("OWNER_CONTINUOUS_COMPLETE_REGISTRATION_REQUIRED")?;
-        let lease = self.continuous_lease_bytes(
+        let lease = self.continuous_lease_bytes_with_progress(
             packet.header.parent,
             packet.header.work_task,
             packet.header.height,
+            progress,
         )?;
         check_actual_task_fields(
             t,
@@ -1852,6 +1877,148 @@ impl Node {
     ) -> Result<OwnedMutationResult> {
         self.continuous_validate(packet, None, "receiver-validation", observed_now)
     }
+    /// Import one complete History extension explicitly selected by the current
+    /// receiver view. Both existing claims are durable before packet decoding,
+    /// State, W1 or M06; validation and activation share the ORIGINAL interval.
+    /// This is not authority to discover or replay an arbitrary History fork.
+    pub(crate) fn receive_owned_continuous_history_packet(
+        &mut self,
+        raw: &[u8],
+        tip: Hash,
+        after: Hash,
+        observed_now: u64,
+        resource: &(dyn Fn() -> Result<()> + Sync),
+    ) -> Result<Hash> {
+        resource()?;
+        ensure(raw.len() <= 1_048_576, "PACKET_LIMIT")?;
+        let o = self
+            .continuous_owner
+            .as_ref()
+            .ok_or("OWNER_CONTINUOUS_MODE_REQUIRED")?
+            .clone();
+        o.ready()?;
+        ensure(o.slot()?.is_none(), "OWNER_CONTINUOUS_SCOPE_BUSY")?;
+        let (parent, generation) = self.active()?;
+        ensure(
+            after == parent
+                && o.view.body.actual_parent == hex::encode(parent)
+                && o.view.body.actual_generation == generation,
+            "OWNER_CONTINUOUS_PARENT_CHANGED",
+        )?;
+        // Bounded bytes identify an independently signed allocation; this
+        // digest does not certify the packet or issue a native Work receipt.
+        let digest = crate::operator_task_policy::digest_bytes(raw);
+        let validation = o
+            .view
+            .permission("receiver-validation", &digest)
+            .map_err(continuous_error)?;
+        let activation = o
+            .view
+            .permission("receiver-activate", &digest)
+            .map_err(continuous_error)?;
+        let v = validation.claim();
+        let a = activation.claim();
+        ensure(
+            v.parent == hex::encode(parent)
+                && v.generation == generation
+                && v.parent == a.parent
+                && v.generation == a.generation
+                && v.native_task == a.native_task
+                && v.instance_class == a.instance_class
+                && v.task_binding == a.task_binding,
+            "OWNER_CONTINUOUS_RECEIVER_PAIR",
+        )?;
+        {
+            let journal = o
+                .journal
+                .lock()
+                .map_err(|_| "OWNER_CONTINUOUS_JOURNAL_UNKNOWN")?;
+            ensure(
+                !journal.operation_used(&v.operation) && !journal.operation_used(&a.operation),
+                "OWNER_CONTINUOUS_OPERATION_USED",
+            )?;
+        }
+        let validation = o.permission("receiver-validation", &digest)?;
+        let activation = match o.permission("receiver-activate", &digest) {
+            Ok(value) => value,
+            Err(error) => {
+                let _ = o.sink.persist_unknown();
+                return Err(error);
+            }
+        };
+        let operation = o.operation(&validation, Some(&activation))?;
+        // Every ordinary failure after begin settles the same real interval.
+        // Unwind/abort retains the existing unfinished-scope recovery fence.
+        let result = (|| {
+            let checkpoint = operation.checkpoint_handle().map_err(continuous_error)?;
+            let progress = || {
+                resource()?;
+                validation.progress().map_err(continuous_error)?;
+                activation.progress().map_err(continuous_error)?;
+                checkpoint.checkpoint()
+            };
+            progress()?;
+            let packet = Packet::decode_for_settings(raw, &self.settings)?;
+            ensure(
+                packet.header.parent == after && packet.id()? == tip,
+                "PAGE_PARENT",
+            )?;
+            validation
+                .allocation
+                .check_exact_receiver_packet(&packet, &self.settings, parent, generation)
+                .map_err(continuous_error)?;
+            o.journal
+                .lock()
+                .map_err(|_| "OWNER_CONTINUOUS_JOURNAL_UNKNOWN")?
+                .check_nonce_window(packet.header.nonce, packet.header.nonce)
+                .map_err(continuous_error)?;
+            let _scope = o.enter(
+                validation.clone(),
+                Some(activation.clone()),
+                checkpoint.clone(),
+                Binding::packet(
+                    &packet,
+                    o.view.body.identity.profile().map_err(continuous_error)?,
+                )?,
+            )?;
+            progress()?;
+            self.continuous_actual_packet_binding_with_progress(&validation, &packet, &mut || {
+                progress()
+            })?;
+            let on_progress = |_| progress();
+            let control = ExecutionControl::new(
+                &on_progress,
+                operation.worker_accounting().map_err(continuous_error)?,
+            );
+            let id = match self.check_admission_context_with_progress(
+                &packet,
+                observed_now,
+                &mut || progress(),
+            )? {
+                Some(id) => id,
+                None => {
+                    let checked =
+                        WorkCheckedPacket::verify_with_progress(packet, &mut |_| progress())?;
+                    self.admit_work_checked_with_control(checked, observed_now, &control)?
+                }
+            };
+            // Use the same original CPU/deadline and its reserved termination
+            // headroom. A second activation begin would spend another burst.
+            progress()?;
+            let termination = checkpoint.reorg_termination_checkpoint()?;
+            self.activate_observed_with_termination(
+                id,
+                observed_now,
+                &mut || progress(),
+                Some(&termination),
+            )?;
+            Ok(id)
+        })();
+        // Late metadata failure fences future work through the original sink;
+        // it cannot retract a native packet/activation already committed.
+        let _settled = operation.finish().map_err(continuous_error)?;
+        result
+    }
     fn continuous_validate(
         &mut self,
         packet: Packet,
@@ -1875,6 +2042,14 @@ impl Node {
             hex::encode(packet.header.work_task) == raw_permission.claim().native_task,
             "OWNER_CONTINUOUS_PACKET_TASK",
         )?;
+        // An exact independently signed receiver payload cannot expand the
+        // original Registry2 delegation, just as in the public receiver path.
+        // Reject before reserving an allocation or starting native work.
+        o.journal
+            .lock()
+            .map_err(|_| "OWNER_CONTINUOUS_JOURNAL_UNKNOWN")?
+            .check_nonce_window(packet.header.nonce, packet.header.nonce)
+            .map_err(continuous_error)?;
         if let Some(search) = search {
             let journal = o
                 .journal

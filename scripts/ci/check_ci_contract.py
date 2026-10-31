@@ -70,6 +70,8 @@ COST_BOUNDARY_READERS = ('    python3 scripts/ci/test_pon_w1_budget_readers.py -
                          '    python3 scripts/ci/test_run_pon_w1_native_campaign.py\n')
 CURRENT_READER_COMMANDS = (
     'python3 scripts/ci/test_pon_w1_cost_matrix_reader.py',
+    'python3 scripts/ci/test_pon_w1_reused_cost_reader_v3.py',
+    'python3 scripts/ci/test_run_w1_reused_cost_v3.py',
     'python3 scripts/ci/test_pon_public_v3_policy_read.py',
     'python3 scripts/ci/test_llm_cell_handoff_deadline.py',
 )
@@ -251,6 +253,10 @@ PROTOCOL_CONTRACT_BLOCK = '''    python3 scripts/ci/run_from_zero_host.py -- pyt
     TRNM_NATIVE_EXECUTOR="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_execute" TRNM_EXECUTION_WORKERS=8 python3 formal/pon-nakamoto-v1/test_contracts.py
     TRNM_NATIVE_MODE=release python3 formal/pon-nakamoto-v1/test_interop.py
     TRNM_NATIVE_MODE=release python3 scripts/ci/test_pon_accepted_block.py
+    cargo build --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-data-availability --bin trnm-cell
+    trnm_cell_handoff_binary="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/trnm-cell")"
+    test -x "$trnm_cell_handoff_binary"
+    TRNM_CELL_BIN="$trnm_cell_handoff_binary" python3 scripts/ci/test_llm_cell_host_handoff.py -v
 '''
 
 

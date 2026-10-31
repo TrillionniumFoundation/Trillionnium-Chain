@@ -207,6 +207,9 @@ fn fixture() -> Fixture {
     fixture_kind(1)
 }
 fn fixture_kind(next_kind: u8) -> Fixture {
+    fixture_kind_nonce_window(next_kind, 1)
+}
+fn fixture_kind_nonce_window(next_kind: u8, nonce_first: u64) -> Fixture {
     let root = tempfile::tempdir().unwrap();
     let requester = key(11);
     let source = key(12);
@@ -315,17 +318,27 @@ fn fixture_kind(next_kind: u8) -> Fixture {
         .concat();
         sign_command(&settings, 1, &transfer, 3, &[&requester])
     };
-    let next = producer
-        .make_with_registered_material(
+    // Receiver allocations remain subordinate to the original delegation's
+    // nonce window. Generate the actual full proof in a finite owned window.
+    let (a, b) =
+        trnm_crypto_primitives::qualified_work_task::derive_matrices(&model, &input).unwrap();
+    let trace = producer
+        .prepare_from_matrices(
             producer.active().unwrap().0,
             vec![next_command],
             key_id(&evaluator),
             1003,
-            4096,
-            &model,
-            &input,
+            &a,
+            &b,
         )
+        .unwrap()
+        .search_owned_window(nonce_first, 4096, &|| Ok(()))
         .unwrap();
+    assert!(!trace.stopped);
+    assert!(trace.error.is_none());
+    assert!(trace.trials.iter().all(|trial| trial.fence_passed));
+    let next = trace.packet.unwrap();
+    assert!((nonce_first..nonce_first + 4096).contains(&next.header.nonce));
     let next_id = producer.admit(&next, 1010).unwrap();
     producer.activate(next_id).unwrap();
     let next_state = producer.state_at(next_id).unwrap();
@@ -632,6 +645,399 @@ fn open(f: &Fixture, inputs: policy::Inputs) -> Node {
     )
     .unwrap()
     .0
+}
+
+fn continuous_history_fixture() -> Fixture {
+    let f = fixture();
+    assert!((1..=4096).contains(&f.next.header.nonce));
+    f
+}
+
+fn continuous_history_page(f: &Fixture) -> crate::ingress::Page {
+    let tip = hex::encode(f.next.id().unwrap());
+    crate::ingress::Page {
+        schema: "pon-native-pq-history-v6".into(),
+        network: hex::encode(f.settings.network()),
+        parameters: hex::encode(f.settings.parameters()),
+        genesis: hex::encode(f.settings.genesis()),
+        tip: tip.clone(),
+        after: hex::encode(boot(f)),
+        packets: vec![hex::encode(
+            f.next.encode_for_settings(&f.settings).unwrap(),
+        )],
+        next: tip,
+        complete: true,
+    }
+}
+
+fn continuous_receiver_operation(input: &policy::Inputs, purpose: &str) -> String {
+    input
+        .allocations
+        .iter()
+        .find(|row| row.authority.expected.claim.purpose == purpose)
+        .unwrap()
+        .authority
+        .expected
+        .claim
+        .operation
+        .clone()
+}
+
+#[test]
+fn pq_continuous_direct_receiver_exact_signature_cannot_expand_delegated_nonce_window() {
+    let f = fixture_kind_nonce_window(1, 10_001);
+    assert!(f.next.header.nonce > 10_000);
+    // This is valid native work, already admitted by the ordinary producer.
+    // The independent exact receiver signatures below also cover these bytes.
+    pon_work::verify(
+        f.next.header.challenge(),
+        f.next.header.work_task,
+        f.next.header.target,
+        &f.next.proof,
+    )
+    .unwrap();
+    let (input, _) = inputs(&f, 1, None, history::Anchor::empty(), boot(&f), 2);
+    let validation = continuous_receiver_operation(&input, "receiver-validation");
+    let mut consumer = open(&f, input);
+    let before = consumer.continuous_journal_head().unwrap();
+    let error = consumer
+        .receive_owned_continuous_packet(f.next.clone(), 1010)
+        .err()
+        .expect("exact receiver authority cannot override the delegation");
+    assert_eq!(error.to_string(), "OWNER_CONTINUOUS:NativeBinding");
+    assert_eq!(consumer.continuous_journal_head().unwrap(), before);
+    assert_eq!(consumer.active().unwrap(), (boot(&f), 2));
+    assert!(consumer.state_at(f.next.id().unwrap()).is_err());
+    assert!(consumer.continuous_scope_receipt(&validation).is_err());
+    assert!(consumer
+        .continuous_cpu_domain()
+        .unwrap()
+        .accounting_available());
+    consumer.close_continuous_checkpoint().unwrap();
+}
+
+#[test]
+fn pq_continuous_history_exact_pair_shares_one_durable_scope_and_cold_reopens() {
+    let f = continuous_history_fixture();
+    let (input, outside) = inputs(&f, 1, None, history::Anchor::empty(), boot(&f), 2);
+    let validation = continuous_receiver_operation(&input, "receiver-validation");
+    let activation = continuous_receiver_operation(&input, "receiver-activate");
+    let mut consumer = open(&f, input);
+    let original = consumer.continuous_cpu_domain().unwrap();
+    let tip = f.next.id().unwrap();
+    assert_eq!(
+        crate::ingress::receive_page(
+            &mut consumer,
+            continuous_history_page(&f),
+            tip,
+            boot(&f),
+            1010,
+        )
+        .unwrap(),
+        tip
+    );
+    assert_eq!(consumer.active().unwrap(), (tip, 3));
+    assert_eq!(consumer.state_at(tip).unwrap(), f.next_state);
+    assert!(original.shares_domain_with(&consumer.continuous_cpu_domain().unwrap()));
+    let receipt = consumer.continuous_scope_receipt(&validation).unwrap();
+    assert_eq!(
+        receipt["linked_operations"],
+        serde_json::json!([validation, activation])
+    );
+    let total = receipt["total_cpu_ns"].as_u64().unwrap();
+    assert!(total > 0);
+    assert_eq!(
+        total,
+        receipt["owner_cpu_ns"].as_u64().unwrap()
+            + receipt["scoped_worker_cpu_ns"].as_u64().unwrap()
+    );
+    assert_eq!(receipt["started"], receipt["finished"]);
+    assert_eq!(receipt["started"], receipt["known"]);
+    assert!(consumer.continuous_scope_receipt(&activation).is_err());
+    // The generic scalar History epoch is still not a continuous permission.
+    assert_eq!(
+        consumer
+            .begin_remote_history_cpu_epoch()
+            .unwrap_err()
+            .to_string(),
+        "OWNER_CONTINUOUS_HISTORY_DURABLE_REQUIRED"
+    );
+    let closed = consumer.close_continuous_checkpoint().unwrap();
+    let head = serde_json::from_value(closed["journal_head"].clone()).unwrap();
+    drop(consumer);
+    let (input, _) = inputs(&f, 2, Some(&outside), head, tip, 3);
+    let reopened = open(&f, input);
+    assert_eq!(reopened.active().unwrap(), (tip, 3));
+    assert_eq!(reopened.state_at(tip).unwrap(), f.next_state);
+    let retained = reopened.continuous_scope_receipt(&validation).unwrap();
+    assert_eq!(retained["total_cpu_ns"], receipt["total_cpu_ns"]);
+    assert_eq!(retained["linked_operations"], receipt["linked_operations"]);
+    reopened.close_continuous_checkpoint().unwrap();
+}
+
+#[test]
+fn pq_continuous_history_unselected_pages_and_shared_poller_cannot_spend_claims() {
+    let f = continuous_history_fixture();
+    let (input, _) = inputs(&f, 1, None, history::Anchor::empty(), boot(&f), 2);
+    let mut consumer = open(&f, input);
+    let before = consumer.continuous_journal_head().unwrap();
+    let tip = f.next.id().unwrap();
+    for shape in 0..5 {
+        let mut page = continuous_history_page(&f);
+        let mut after = boot(&f);
+        match shape {
+            0 => page.complete = false,
+            1 => page.packets.push(page.packets[0].clone()),
+            2 => page.packets.clear(),
+            3 => {
+                let mut other = f.next.clone();
+                other.proof[0] ^= 1;
+                page.packets[0] = hex::encode(other.encode_for_settings(&f.settings).unwrap());
+            }
+            _ => {
+                after = f.settings.genesis();
+                page.after = hex::encode(after);
+            }
+        }
+        assert!(crate::ingress::receive_page(&mut consumer, page, tip, after, 1010).is_err());
+        assert_eq!(consumer.continuous_journal_head().unwrap(), before);
+        assert_eq!(consumer.active().unwrap(), (boot(&f), 2));
+    }
+    let shared = std::sync::Mutex::new(consumer);
+    let error = crate::ingress::history_import::admit_shared_packet(
+        &shared,
+        f.next.clone(),
+        Instant::now() + Duration::from_secs(30),
+        &|| Ok(()),
+        Some(tip),
+    )
+    .unwrap_err();
+    assert_eq!(
+        error.to_string(),
+        "OWNER_CONTINUOUS_HISTORY_DURABLE_REQUIRED"
+    );
+    consumer = shared.into_inner().unwrap();
+    assert_eq!(consumer.continuous_journal_head().unwrap(), before);
+    assert!(consumer.cancel_continuous_epoch().unwrap());
+    assert!(crate::ingress::receive_page(
+        &mut consumer,
+        continuous_history_page(&f),
+        tip,
+        boot(&f),
+        1010,
+    )
+    .is_err());
+    assert_eq!(consumer.continuous_journal_head().unwrap(), before);
+    assert_eq!(consumer.active().unwrap(), (boot(&f), 2));
+    consumer.close_continuous_checkpoint().unwrap();
+}
+
+#[test]
+fn pq_continuous_history_signed_invalid_work_settles_and_cannot_replay_claim() {
+    let mut f = continuous_history_fixture();
+    // A canonical but false C preserves A/B, statement, target and ticket.
+    // It therefore reaches full W1; an exact signed claim is no work proof.
+    use trnm_crypto_primitives::pon_work;
+    let offset = 4 + 2 * pon_work::CELLS * 4;
+    let value = u32::from_le_bytes(f.next.proof[offset..offset + 4].try_into().unwrap());
+    let changed = ((u128::from(value) + 1) % pon_work::Q) as u32;
+    f.next.proof[offset..offset + 4].copy_from_slice(&changed.to_le_bytes());
+    pon_work::precheck_proof_statement(
+        f.next.header.challenge(),
+        f.next.header.work_task,
+        f.next.header.target,
+        &f.next.proof,
+    )
+    .unwrap();
+    let (input, _) = inputs(&f, 1, None, history::Anchor::empty(), boot(&f), 2);
+    let validation = continuous_receiver_operation(&input, "receiver-validation");
+    let activation = continuous_receiver_operation(&input, "receiver-activate");
+    let mut consumer = open(&f, input);
+    let tip = f.next.id().unwrap();
+    let error = crate::ingress::receive_page(
+        &mut consumer,
+        continuous_history_page(&f),
+        tip,
+        boot(&f),
+        1010,
+    )
+    .unwrap_err();
+    assert_eq!(error.to_string(), "WORK:Product");
+    assert_eq!(consumer.active().unwrap(), (boot(&f), 2));
+    assert!(consumer.state_at(tip).is_err());
+    let receipt = consumer.continuous_scope_receipt(&validation).unwrap();
+    assert_eq!(
+        receipt["linked_operations"],
+        serde_json::json!([validation, activation])
+    );
+    assert!(receipt["total_cpu_ns"].as_u64().unwrap() > 0);
+    let head = consumer.continuous_journal_head().unwrap();
+    let replay = crate::ingress::receive_page(
+        &mut consumer,
+        continuous_history_page(&f),
+        tip,
+        boot(&f),
+        1010,
+    )
+    .unwrap_err();
+    assert_eq!(replay.to_string(), "OWNER_CONTINUOUS_OPERATION_USED");
+    assert_eq!(consumer.continuous_journal_head().unwrap(), head);
+    consumer.close_continuous_checkpoint().unwrap();
+}
+
+#[test]
+fn pq_continuous_history_cancel_after_durable_start_settles_original_interval() {
+    use std::sync::atomic::{AtomicUsize, Ordering};
+    let f = continuous_history_fixture();
+    let (input, _) = inputs(&f, 1, None, history::Anchor::empty(), boot(&f), 2);
+    let validation = continuous_receiver_operation(&input, "receiver-validation");
+    let mut consumer = open(&f, input);
+    let checks = AtomicUsize::new(0);
+    let error = consumer
+        .receive_owned_continuous_history_packet(
+            &f.next.encode_for_settings(&f.settings).unwrap(),
+            f.next.id().unwrap(),
+            boot(&f),
+            1010,
+            &|| {
+                ensure(
+                    checks.fetch_add(1, Ordering::SeqCst) == 0,
+                    "PUBLIC_REQUEST_DEADLINE",
+                )
+            },
+        )
+        .unwrap_err();
+    assert_eq!(error.to_string(), "PUBLIC_REQUEST_DEADLINE");
+    assert_eq!(consumer.active().unwrap(), (boot(&f), 2));
+    assert!(consumer.continuous_scope_receipt(&validation).is_ok());
+    assert!(consumer
+        .continuous_cpu_domain()
+        .unwrap()
+        .accounting_available());
+    assert!(!f.root.path().join("journal/unavailable.json").exists());
+    consumer.close_continuous_checkpoint().unwrap();
+}
+
+#[test]
+fn pq_continuous_history_unfinished_scope_keeps_unknown_debt_on_cold_open() {
+    use std::sync::atomic::{AtomicUsize, Ordering};
+    let f = continuous_history_fixture();
+    let (input, outside) = inputs(&f, 1, None, history::Anchor::empty(), boot(&f), 2);
+    let mut consumer = open(&f, input);
+    let checks = AtomicUsize::new(0);
+    // This is an actual Rust unwind after CpuStarted/CpuLinked, not a host-kill
+    // qualification. The original DurableOperation Drop owns the unknown debt.
+    let panic = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+        consumer.receive_owned_continuous_history_packet(
+            &f.next.encode_for_settings(&f.settings).unwrap(),
+            f.next.id().unwrap(),
+            boot(&f),
+            1010,
+            &|| {
+                assert_eq!(
+                    checks.fetch_add(1, Ordering::SeqCst),
+                    0,
+                    "unfinished History"
+                );
+                Ok(())
+            },
+        )
+    }));
+    assert!(panic.is_err());
+    assert_eq!(consumer.active().unwrap(), (boot(&f), 2));
+    assert!(!consumer
+        .continuous_cpu_domain()
+        .unwrap()
+        .accounting_available());
+    assert!(f.root.path().join("journal/unavailable.json").is_file());
+    assert!(consumer.close_continuous_checkpoint().is_err());
+    let head = serde_json::from_value(consumer.continuous_journal_head().unwrap()).unwrap();
+    drop(consumer);
+    let (input, _) = inputs(&f, 2, Some(&outside), head, boot(&f), 2);
+    let reopened = Node::open_operator_continuous_checkpoint(
+        &f.root.path().join("consumer"),
+        input,
+        Instant::now() + Duration::from_secs(60),
+    );
+    assert!(reopened.is_err());
+    assert!(reopened.err().unwrap().to_string().contains("CpuUnknown"));
+}
+
+#[test]
+fn pq_continuous_history_postcommit_cancel_preserves_packet_and_recovery_hold() {
+    use std::sync::atomic::Ordering;
+    let f = continuous_history_fixture();
+    let (input, outside) = inputs(&f, 1, None, history::Anchor::empty(), boot(&f), 2);
+    let validation = continuous_receiver_operation(&input, "receiver-validation");
+    let mut consumer = open(&f, input);
+    let tip = f.next.id().unwrap();
+    let path = f.root.path().join("consumer/native.sqlite");
+    let reader = std::sync::Mutex::new(rusqlite::Connection::open(&path).unwrap());
+    let saw_committed_packet = AtomicBool::new(false);
+    let error = consumer
+        .receive_owned_continuous_history_packet(
+            &f.next.encode_for_settings(&f.settings).unwrap(),
+            tip,
+            boot(&f),
+            1010,
+            &|| {
+                // A separate real SQLite reader cannot see the insertion until
+                // the original native admission transaction has committed.
+                let committed: bool = reader
+                    .lock()
+                    .map_err(|_| "HISTORY_TEST_READER")?
+                    .query_row(
+                        "SELECT EXISTS(SELECT 1 FROM blocks WHERE id=?1)",
+                        [tip.as_slice()],
+                        |row| row.get(0),
+                    )?;
+                if committed {
+                    saw_committed_packet.store(true, Ordering::SeqCst);
+                    return Err("PUBLIC_REQUEST_DEADLINE".into());
+                }
+                Ok(())
+            },
+        )
+        .unwrap_err();
+    assert!(saw_committed_packet.load(Ordering::SeqCst));
+    assert_eq!(error.to_string(), "PUBLIC_REQUEST_DEADLINE");
+    assert_eq!(consumer.active().unwrap(), (boot(&f), 2));
+    assert_eq!(consumer.state_at(tip).unwrap(), f.next_state);
+    let receipt = consumer.continuous_scope_receipt(&validation).unwrap();
+    assert!(receipt["total_cpu_ns"].as_u64().unwrap() > 0);
+    assert_eq!(receipt["linked_operations"].as_array().unwrap().len(), 2);
+    let closed = consumer.close_continuous_checkpoint().unwrap();
+    let head = serde_json::from_value(closed["journal_head"].clone()).unwrap();
+    drop(consumer);
+    drop(reader);
+    let (input, _) = inputs(&f, 2, Some(&outside), head, boot(&f), 2);
+    let reopened = Node::open_operator_continuous_checkpoint(
+        &f.root.path().join("consumer"),
+        input,
+        Instant::now() + Duration::from_secs(60),
+    );
+    assert!(reopened.is_err());
+    assert_eq!(
+        reopened.err().unwrap().to_string(),
+        "OWNER_CONTINUOUS_RECOVERY_ADVANCE_HOLD"
+    );
+    // This slice must not turn a paid interrupted extension into automatic
+    // best-tip recovery, delete its admitted packet, or rewrite the active tip.
+    let db = rusqlite::Connection::open(path).unwrap();
+    let active: Vec<u8> = db
+        .query_row("SELECT tip FROM active WHERE singleton=1", [], |row| {
+            row.get(0)
+        })
+        .unwrap();
+    assert_eq!(active, boot(&f));
+    let retained: Vec<u8> = db
+        .query_row(
+            "SELECT packet FROM blocks WHERE id=?1",
+            [tip.as_slice()],
+            |row| row.get(0),
+        )
+        .unwrap();
+    assert_eq!(retained, f.next.encode_for_settings(&f.settings).unwrap());
 }
 
 fn open_controller(

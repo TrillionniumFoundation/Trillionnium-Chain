@@ -388,3 +388,329 @@ fn declared_oversize_is_rejected_before_body_allocation_and_survives_reopen() {
     assert_eq!(status["ingress_bytes"], 0);
     assert_eq!(status["inbound_signature_attempts"], 0);
 }
+
+#[test]
+fn classic_authenticated_session_is_rejected_for_pq_only_settings() {
+    let (pq_settings, _) = setup();
+    let client =
+        crate::ingress::DevelopmentIdentity::from_secret_hex(&hex::encode([7; 32])).unwrap();
+    let server =
+        crate::ingress::DevelopmentIdentity::from_secret_hex(&hex::encode([8; 32])).unwrap();
+    let error = crate::ingress::authenticated_session(
+        &pq_settings,
+        client.public_key(),
+        server.public_key(),
+        1,
+    )
+    .unwrap_err();
+    assert!(
+        error.to_string().contains("AUTH_CLASSICAL_FOR_PQ_PROFILE"),
+        "{error}"
+    );
+
+    // The negative gate must not disable the explicitly separate classical
+    // development mode, whose existing Ed25519 authentication stays unchanged.
+    let legacy = Settings::development(Some(super::super::now().unwrap() - 100)).unwrap();
+    assert!(crate::ingress::authenticated_session(
+        &legacy,
+        client.public_key(),
+        server.public_key(),
+        1,
+    )
+    .is_ok());
+}
+
+fn classical_identity(seed: u8) -> crate::ingress::DevelopmentIdentity {
+    crate::ingress::DevelopmentIdentity::from_secret_hex(&hex::encode([seed; 32])).unwrap()
+}
+
+fn uncontacted_peer() -> TcpListener {
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    listener.set_nonblocking(true).unwrap();
+    listener
+}
+
+fn assert_no_connection(listener: &TcpListener) {
+    match listener.accept() {
+        Err(error) if error.kind() == std::io::ErrorKind::WouldBlock => {}
+        Err(error) => panic!("unexpected listener failure: {error}"),
+        Ok(_) => panic!("classical client contacted a peer under PQ Settings"),
+    }
+}
+
+#[test]
+fn pq_profile_rejects_classical_v2_client_before_connecting() {
+    use crate::ingress::public_v2::{call_public_protected_v2, PublicPolicy};
+    let (settings, _) = setup();
+    let listener = uncontacted_peer();
+    let caller = classical_identity(7);
+    let server = classical_identity(8);
+    let error = call_public_protected_v2(
+        listener.local_addr().unwrap(),
+        &Request::Head,
+        &settings,
+        server.public_key(),
+        &caller,
+        PublicPolicy::new(8, Duration::from_millis(2000)).unwrap(),
+    )
+    .unwrap_err();
+    assert!(error.to_string().contains("AUTH_CLASSICAL_FOR_PQ_PROFILE"));
+    assert_no_connection(&listener);
+}
+
+#[test]
+fn pq_profile_rejects_classical_v3_client_before_connecting_or_work() {
+    use crate::ingress::public_v3::{
+        call_public_protected_v3_with_metrics, PublicClientStage, PublicPolicy,
+        Request as PublicRequest,
+    };
+    let (settings, _) = setup();
+    let listener = uncontacted_peer();
+    let caller = classical_identity(7);
+    let server = classical_identity(8);
+    let (reply, metrics) = call_public_protected_v3_with_metrics(
+        listener.local_addr().unwrap(),
+        &PublicRequest::Head,
+        &settings,
+        server.public_key(),
+        &caller,
+        PublicPolicy::new(8, Duration::from_millis(2000)).unwrap(),
+    );
+    assert!(reply
+        .unwrap_err()
+        .to_string()
+        .contains("AUTH_CLASSICAL_FOR_PQ_PROFILE"));
+    assert_eq!(metrics.failed_stage, Some(PublicClientStage::Construction));
+    assert_eq!(metrics.challenge_ns, 0);
+    assert_eq!(metrics.solution_search_ns, 0);
+    assert_eq!(metrics.solution_trials, 0);
+    assert!(!metrics.solution_found);
+    assert_eq!(metrics.solution_body_response_ns, 0);
+    assert_no_connection(&listener);
+}
+
+#[test]
+fn pq_profile_rejects_legacy_callers_without_network_or_replay_effects() {
+    use crate::ingress::{
+        call_authenticated, call_authenticated_protected, call_protected, AuthenticatedClient,
+    };
+    let (settings, _) = setup();
+    let listener = uncontacted_peer();
+    let address = listener.local_addr().unwrap();
+    let caller = classical_identity(7);
+    let server = classical_identity(8);
+    let client = AuthenticatedClient::new(caller, server.public_key().into(), 1).unwrap();
+    let mut nonce = 19;
+    for protected in [false, true] {
+        let result = if protected {
+            call_authenticated_protected(address, &Request::Head, &settings, &client, &mut nonce)
+        } else {
+            call_authenticated(address, &Request::Head, &settings, &client, &mut nonce)
+        };
+        assert!(result
+            .unwrap_err()
+            .to_string()
+            .contains("AUTH_CLASSICAL_FOR_PQ_PROFILE"));
+        assert_eq!(nonce, 19);
+        assert_no_connection(&listener);
+    }
+    // Head has no admission challenge, so gating only the challenge solver
+    // would still allow this anonymous legacy request to contact a peer.
+    let error = call_protected(address, &Request::Head, &settings).unwrap_err();
+    assert!(error.to_string().contains("AUTH_CLASSICAL_FOR_PQ_PROFILE"));
+    assert_no_connection(&listener);
+}
+
+#[test]
+fn pq_profile_rejects_plain_history_before_network_and_preserves_owner() {
+    let (settings, policy) = setup();
+    let directory = tempfile::tempdir().unwrap();
+    let mut node =
+        Node::open_with_pq_network(directory.path(), settings.clone(), 1, &policy).unwrap();
+    let before = node.pq_network_status(&policy).unwrap();
+    let listener = uncontacted_peer();
+    let error = crate::ingress::sync_from(
+        &mut node,
+        listener.local_addr().unwrap(),
+        settings.genesis(),
+        settings.genesis(),
+        1,
+    )
+    .unwrap_err();
+    assert!(error.to_string().contains("AUTH_CLASSICAL_FOR_PQ_PROFILE"));
+    assert_no_connection(&listener);
+    assert_eq!(node.pq_network_status(&policy).unwrap(), before);
+    drop(node);
+    let reopened = Node::open_with_pq_network(directory.path(), settings, 1, &policy).unwrap();
+    assert_eq!(reopened.pq_network_status(&policy).unwrap(), before);
+}
+
+#[test]
+fn pq_owner_rejects_classical_outbox_and_history_even_with_classical_accounts() {
+    use crate::ingress::{
+        call_authenticated_durable, call_authenticated_durable_protected,
+        pending_authenticated_request, sync_from, sync_from_authenticated,
+        sync_from_authenticated_durable, AuthenticatedClient,
+    };
+    let settings = Settings::development(Some(super::super::now().unwrap() - 100)).unwrap();
+    let policy = PqNetworkPolicy::new(
+        &settings,
+        key(71).public_spki(),
+        1,
+        [key(72).public_spki().to_vec()],
+    )
+    .unwrap();
+    let directory = tempfile::tempdir().unwrap();
+    let mut node =
+        Node::open_with_pq_network(directory.path(), settings.clone(), 1, &policy).unwrap();
+    let before = node.stats().unwrap();
+    let before_pq = node.pq_network_status(&policy).unwrap();
+    assert_eq!(before["authenticated_outbox_sessions"], 0);
+    assert_eq!(before["authenticated_outbox_pending"], 0);
+    let listener = uncontacted_peer();
+    let address = listener.local_addr().unwrap();
+    let client = AuthenticatedClient::new(
+        classical_identity(7),
+        classical_identity(8).public_key().into(),
+        1,
+    )
+    .unwrap();
+    assert!(pending_authenticated_request(&node, &client)
+        .unwrap_err()
+        .to_string()
+        .contains("PQ_NETWORK_REQUIRED"));
+    for protected in [false, true] {
+        let result = if protected {
+            call_authenticated_durable_protected(&mut node, address, &Request::Head, &client)
+        } else {
+            call_authenticated_durable(&mut node, address, &Request::Head, &client)
+        };
+        assert!(result
+            .unwrap_err()
+            .to_string()
+            .contains("PQ_NETWORK_REQUIRED"));
+        assert_no_connection(&listener);
+        assert_eq!(node.stats().unwrap(), before);
+    }
+    let mut nonce = 19;
+    for kind in ["plain", "authenticated", "durable"] {
+        let result = match kind {
+            "plain" => sync_from(
+                &mut node,
+                address,
+                settings.genesis(),
+                settings.genesis(),
+                1,
+            ),
+            "authenticated" => sync_from_authenticated(
+                &mut node,
+                address,
+                settings.genesis(),
+                settings.genesis(),
+                1,
+                &client,
+                &mut nonce,
+            ),
+            "durable" => sync_from_authenticated_durable(
+                &mut node,
+                address,
+                settings.genesis(),
+                settings.genesis(),
+                1,
+                &client,
+            ),
+            _ => unreachable!(),
+        };
+        let error = result.unwrap_err();
+        assert!(
+            error.to_string().contains("PQ_NETWORK_REQUIRED"),
+            "{kind}: {error}"
+        );
+        assert_eq!(nonce, 19);
+        assert_no_connection(&listener);
+        assert_eq!(node.stats().unwrap(), before);
+        assert_eq!(node.pq_network_status(&policy).unwrap(), before_pq);
+    }
+    drop(node);
+    let reopened = Node::open_with_pq_network(directory.path(), settings, 1, &policy).unwrap();
+    assert_eq!(reopened.stats().unwrap(), before);
+    assert_eq!(reopened.pq_network_status(&policy).unwrap(), before_pq);
+}
+
+#[test]
+fn pq_profile_rejects_valid_classical_and_anonymous_admission_challenges() {
+    use crate::ingress::{
+        admission_authority_digest, admission_digest, admission_winner, solve_admission_challenge,
+        unix_ms, AdmissionChallenge, AdmissionPolicy, ADMISSION_CHALLENGE_SCHEMA,
+    };
+    let (pq_settings, _) = setup();
+    let legacy = Settings::development(Some(super::super::now().unwrap() - 100)).unwrap();
+    let server = classical_identity(8);
+    let wire = serde_json::to_vec(&Request::Head).unwrap();
+    let policy = AdmissionPolicy::new(8, Duration::from_millis(2000)).unwrap();
+    for settings in [&pq_settings, &legacy] {
+        for signed in [false, true] {
+            let mut challenge = AdmissionChallenge {
+                schema: ADMISSION_CHALLENGE_SCHEMA.into(),
+                profile: hex::encode(policy.profile()),
+                network: hex::encode(settings.network()),
+                parameters: hex::encode(settings.parameters()),
+                genesis: hex::encode(settings.genesis()),
+                nonce: hex::encode([1; 32]),
+                request_digest: hex::encode(hash(b"native-transport-admission-wire-v1", &[&wire])),
+                bits: 8,
+                lifetime_ms: 2000,
+                expires_unix_ms: unix_ms().unwrap() + 2000,
+                server: String::new(),
+                signature: String::new(),
+            };
+            if signed {
+                challenge.server = server.public_key().into();
+                let message = admission_authority_digest(&challenge).unwrap();
+                challenge.signature = server.sign(&message).unwrap();
+                trnm_crypto_primitives::verify_hex_strict(
+                    &challenge.server,
+                    &message,
+                    &challenge.signature,
+                )
+                .unwrap();
+            }
+            let result = solve_admission_challenge(&challenge, &wire, settings);
+            if settings.app.is_pq_account_profile() {
+                assert!(result
+                    .unwrap_err()
+                    .to_string()
+                    .contains("AUTH_CLASSICAL_FOR_PQ_PROFILE"));
+            } else {
+                let (solution, trials) = result.unwrap();
+                assert_eq!(trials, solution.nonce + 1);
+                assert!(admission_winner(
+                    admission_digest(&challenge).unwrap(),
+                    solution.nonce,
+                    challenge.bits,
+                ));
+            }
+        }
+    }
+}
+
+#[test]
+fn classical_profile_keeps_legacy_protected_head_behavior() {
+    let settings = Settings::development(Some(super::super::now().unwrap() - 100)).unwrap();
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    let address = listener.local_addr().unwrap();
+    let expected = serde_json::json!({ "classical_head": true });
+    let response = serde_json::to_vec(&expected).unwrap();
+    let peer = std::thread::spawn(move || {
+        let (mut stream, _) = listener.accept().unwrap();
+        stream
+            .set_read_timeout(Some(Duration::from_secs(5)))
+            .unwrap();
+        let request = super::super::read_frame(&mut stream).unwrap();
+        assert_eq!(request, serde_json::to_vec(&Request::Head).unwrap());
+        super::super::write_frame(&mut stream, &response).unwrap();
+    });
+    let received = crate::ingress::call_protected(address, &Request::Head, &settings);
+    peer.join().unwrap();
+    assert_eq!(received.unwrap(), expected);
+}

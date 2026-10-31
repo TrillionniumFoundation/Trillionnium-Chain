@@ -37,6 +37,11 @@ PQ_SOURCE_DIRS = (
     "trillionnium/crates/trnm-mvcc-fee/tests",
     "trillionnium/crates/trnm-pon-node/src",
     "trillionnium/crates/trnm-pon-node/tests",
+    "trillionnium/crates/trnm-research-protocol/src",
+    "trillionnium/crates/trnm-research-protocol/tests",
+    # This crate currently keeps tests under src; scan the existing crate root
+    # so later integration tests cannot bypass coverage or require a fake dir.
+    "trillionnium/crates/trnm-service-settlement",
 )
 
 # This is a newly reconstructed source contract. The old, lost checker bytes
@@ -128,6 +133,67 @@ NATIVE_REQUIRED_PATHS = frozenset((
     "trillionnium/Cargo.lock",
     "docs/security/PQ_NATIVE_ACCOUNT_OWNER_V1.md",
 ))
+# These dependencies participate in the same candidate's owner boundaries even
+# when their filenames contain no PQ marker. Requiring their actual bytes does
+# not make TCD content addressing, M12 readback or a migration rehearsal a PQ
+# authorization scheme. They retain their original independently selected owners.
+CONVERGENCE_REQUIRED_PATHS = frozenset((
+    "docs/development/specs/pon/W1_ACTUAL_REUSE_OBSERVATION_V3.md",
+    "scripts/ci/run_w1_reused_cost_v3.py",
+    "scripts/ci/test_run_w1_reused_cost_v3.py",
+    "scripts/ci/test_pon_w1_reused_cost_reader_v3.py",
+    "scripts/pon_w1_cost_matrix_reader.py",
+    "scripts/pon_w1_reused_cost_reader_v3.py",
+    "trillionnium/crates/trnm-pon-node/examples/pon_w1_cost_matrix_v2.rs",
+    "trillionnium/crates/trnm-pon-node/examples/pon_w1_reused_cost_v3.rs",
+    "trillionnium/crates/trnm-pon-node/examples/support/w1_cost_producers.rs",
+    "docs/development/specs/pon/CELL_ORDINARY_HOST_HANDOFF_V2.md",
+    "scripts/ci/ci_job.sh",
+    "scripts/ci/check_ci_contract.py",
+    "scripts/ci/test_ci_contract.py",
+    "scripts/ci/test_llm_cell_host_handoff.py",
+    "scripts/ci/test_llm_cell_installed_host.py",
+    "scripts/ci/run_llm_cell_installed_host_controls.sh",
+    "scripts/llm_cell_host_handoff.py",
+    "scripts/llm_cell_installed_executable.py",
+    "scripts/run_llm_cell_native_handoff.py",
+    "docs/development/specs/pon/CELL_DEPENDENCY_CLOSURE_V1.md",
+    "docs/security/HEPTA_PQ_HANDOFF_V2_20261031.md",
+    "docs/security/PQ_AUTHORITY_SURFACE_AUDIT_20261031.md",
+    "docs/security/WHOLE_CHAIN_PQ_CLAIM_GUARD_20261031.md",
+    "scripts/ci/pq_authority_surface_scan.py",
+    "scripts/ci/test_pq_authority_surface_scan.py",
+    "scripts/ci/pq_chain_claim_guard.py",
+    "scripts/ci/test_pq_chain_claim_guard.py",
+    "formal/pon-nakamoto-v1/cell_dependency_closure.py",
+    "formal/pon-nakamoto-v1/test_cell_dependency_closure.py",
+    "formal/pon-nakamoto-v1/vectors/cell-dependency-closure-v1.json",
+    "trillionnium/crates/trnm-research-protocol/Cargo.toml",
+    "trillionnium/crates/trnm-research-protocol/src/lib.rs",
+    "trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs",
+    "trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs",
+    "trillionnium/crates/trnm-research-protocol/tests/hepta_handoff_pq.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/closure.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/closure_tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/manifest.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/network.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/release.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/release_tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/retention.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/retention/tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/bin/cell_closure/mod.rs",
+    "trillionnium/crates/trnm-data-availability/tests/cell_closure_cli.rs",
+    "trillionnium/crates/trnm-service-settlement/Cargo.toml",
+    "trillionnium/crates/trnm-service-settlement/src/lib.rs",
+    "trillionnium/crates/trnm-service-settlement/src/native_budget.rs",
+    "trillionnium/crates/trnm-service-settlement/src/native_budget/tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/funding.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/funding/tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs",
+))
+NATIVE_REQUIRED_PATHS |= CONVERGENCE_REQUIRED_PATHS
 NATIVE_FALSE = frozenset((
     "whole_native_authorization_migrated", "default_profile_migrated",
     "allow_legacy_fallback", "production_activation", "public_wan_accepted",

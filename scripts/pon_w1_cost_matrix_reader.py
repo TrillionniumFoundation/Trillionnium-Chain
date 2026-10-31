@@ -213,7 +213,7 @@ def supported(arm, name):
     return name == "continuity-maintenance-v1"
 
 
-def _trials(row, task, sample, prefix, context=None):
+def _trials(row, task, sample, prefix, context=None, challenge_at=None):
     label = f"{row['kind']}/{row['class']}/{sample}"
     trials = row["attempts"]
     require(type(trials) is list and 0 < len(trials) <= ATTEMPT_BUDGET, label + ": complete bounded trial list required")
@@ -221,7 +221,8 @@ def _trials(row, task, sample, prefix, context=None):
     for nonce, trial in enumerate(trials):
         exact(trial, ("nonce", "challenge", "trace", "ticket", "proof_sha256", "target_hit"), label + ".trial")
         require(integer(trial["nonce"], label + ".nonce") == nonce, label + ": nonconsecutive nonce")
-        expected_challenge = context if context is not None else challenge(task, sample, nonce)
+        expected_challenge = context if context is not None else (
+            challenge(task, sample, nonce) if challenge_at is None else challenge_at(nonce))
         require(hex_bytes(trial["challenge"], 32, label) == expected_challenge, label + ": challenge recipe mismatch")
         trace = hex_bytes(trial["trace"], 32, label)
         if context is not None:

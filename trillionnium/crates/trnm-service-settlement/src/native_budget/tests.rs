@@ -1330,3 +1330,77 @@ fn native_payment_readback_rechecks_exact_current_owner_and_never_changes_histor
     assert_eq!(readback.observed, current);
     assert_eq!(store.report().unwrap(), report);
 }
+
+#[test]
+fn completed_effect_readback_requires_exact_history_and_original_chain() {
+    let (directory, mut store, mut owner, policy, claim) = setup(NativeBudgetLaneV1::Storage);
+    store.reserve(&mut owner, claim.clone()).unwrap();
+    store
+        .begin_effect_in_window(&mut owner, claim.claim, [80; 32], [81; 32], 5, 20)
+        .unwrap();
+    assert!(store
+        .reobserve_completed_effect(
+            &mut owner,
+            claim.claim,
+            [80; 32],
+            [81; 32],
+            Some((5, 20)),
+            [82; 32],
+        )
+        .is_err());
+    store
+        .complete_effect(claim.claim, [80; 32], [82; 32])
+        .unwrap();
+    let report = store.report().unwrap();
+    for field in 0..5 {
+        let (mut id, mut operation, mut effect, mut window, mut receipt) =
+            (claim.claim, [80; 32], [81; 32], Some((5, 20)), [82; 32]);
+        match field {
+            0 => id[0] ^= 1,
+            1 => operation[0] ^= 1,
+            2 => effect[0] ^= 1,
+            3 => window = Some((5, 19)),
+            _ => receipt[0] ^= 1,
+        }
+        assert!(store
+            .reobserve_completed_effect(&mut owner, id, operation, effect, window, receipt)
+            .is_err());
+        assert_eq!(store.report().unwrap(), report);
+    }
+    owner.advance(21);
+    owner.rows.remove(&policy.source);
+    for field in 0..3 {
+        let mut wrong = owner.clone();
+        match field {
+            0 => wrong.anchor.network[0] ^= 1,
+            1 => wrong.anchor.parameters[0] ^= 1,
+            _ => wrong.anchor.genesis[0] ^= 1,
+        }
+        assert!(store
+            .reobserve_completed_effect(
+                &mut wrong,
+                claim.claim,
+                [80; 32],
+                [81; 32],
+                Some((5, 20)),
+                [82; 32],
+            )
+            .is_err());
+        assert_eq!(store.report().unwrap(), report);
+    }
+    drop(store);
+    let store = NativeBudgetStoreV1::open(&directory.path().join("budget.sqlite"), configuration())
+        .unwrap();
+    let observed = store
+        .reobserve_completed_effect(
+            &mut owner,
+            claim.claim,
+            [80; 32],
+            [81; 32],
+            Some((5, 20)),
+            [82; 32],
+        )
+        .unwrap();
+    assert_eq!(observed, owner.anchor);
+    assert_eq!(store.report().unwrap(), report);
+}

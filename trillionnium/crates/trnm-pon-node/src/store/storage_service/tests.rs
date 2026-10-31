@@ -30,7 +30,9 @@ fn open_node(path: &Path, backend: StateBackend) -> Node {
     )
     .unwrap();
     match backend {
-        StateBackend::PqNetworkV2 | StateBackend::PqContinuousV3 => panic!("use the independently pinned PQ network fixture"),
+        StateBackend::PqNetworkV2 | StateBackend::PqContinuousV3 => {
+            panic!("use the independently pinned PQ network fixture")
+        }
         StateBackend::Legacy => Node::open(path, settings, 1).unwrap(),
         StateBackend::AuthenticatedV1 => {
             Node::open_with_authenticated_state(path, settings, 1).unwrap()
@@ -230,7 +232,13 @@ fn native_cell_storage_escrow_replay_and_reorg_keep_physical_obligation() {
             serde_json::json!([37_000, 703_000, 0, 0])
         );
         assert!(node
-            .retire_native_cell(&mut retained, request.contract.operation, None, deadline())
+            .retire_native_cell(
+                &budgets,
+                &mut retained,
+                request.contract.operation,
+                None,
+                deadline(),
+            )
             .is_err());
         let fork = mine(&mut node, genesis, vec![]);
         mine(&mut node, fork, vec![]);
@@ -267,6 +275,206 @@ fn native_cell_storage_escrow_replay_and_reorg_keep_physical_obligation() {
             .is_err());
         assert_eq!(budgets.report().unwrap(), charged);
     }
+}
+
+#[test]
+fn native_cell_retirement_rejects_another_chain_and_reconciles_orphaned_funding() {
+    let directory = tempfile::tempdir().unwrap();
+    let mut node = open_node(&directory.path().join("node"), StateBackend::Legacy);
+    let genesis = node.settings.genesis();
+    let source = fund(&mut node, 1000);
+    let (cache, manifest, _) = material(directory.path());
+    let mut request = request(source, &manifest);
+    request.contract.retain_until_height = 2;
+    request.claim.subject = request.contract.commitment(retention_config().store_id);
+    let configuration = config(&node);
+    let journal = directory.path().join("budgets.sqlite");
+    let mut budgets = NativeBudgetStoreV1::open(&journal, configuration.clone()).unwrap();
+    let path = directory.path().join("retention");
+    let mut retained = CellRetentionStoreV1::create(&path, retention_config()).unwrap();
+    let initial = node
+        .retain_native_cell(
+            &mut budgets,
+            &mut retained,
+            &cache,
+            request.clone(),
+            deadline(),
+        )
+        .unwrap();
+    let charged = budgets.report().unwrap();
+
+    let other_settings = crate::Settings::development_with_profiles(
+        Some(2),
+        "native-public-evaluation-dev-v1",
+        continuity_v1::PROFILE,
+    )
+    .unwrap();
+    assert_ne!(other_settings.genesis(), genesis);
+    let mut other = Node::open(&directory.path().join("other-chain"), other_settings, 1).unwrap();
+    let other_genesis = other.settings.genesis();
+    let other_first = mine(&mut other, other_genesis, vec![]);
+    mine(&mut other, other_first, vec![]);
+    assert_eq!(other.stats().unwrap()["height"], 2);
+    let error = other
+        .retire_native_cell(
+            &budgets,
+            &mut retained,
+            request.contract.operation,
+            None,
+            deadline(),
+        )
+        .unwrap_err();
+    assert!(error.to_string().contains("BUDGET_NATIVE_CONTEXT"));
+    assert_eq!(
+        retained
+            .verify(request.contract.operation, deadline())
+            .unwrap(),
+        initial.target
+    );
+    assert_eq!(budgets.report().unwrap(), charged);
+    assert!(node
+        .retire_native_cell(
+            &budgets,
+            &mut retained,
+            request.contract.operation,
+            None,
+            deadline(),
+        )
+        .is_err());
+
+    // Real branch replacement removes the original task. Its absence must not
+    // require a second payment or prevent exact, completed-effect retirement.
+    let fork = mine(&mut node, genesis, vec![]);
+    mine(&mut node, fork, vec![]);
+    assert!(node
+        .native_funding_observation(source)
+        .unwrap()
+        .row
+        .is_none());
+    drop(budgets);
+    drop(retained);
+    let budgets = NativeBudgetStoreV1::open(&journal, configuration).unwrap();
+    let mut retained = CellRetentionStoreV1::open(&path, retention_config()).unwrap();
+    let retired = node
+        .retire_native_cell(
+            &budgets,
+            &mut retained,
+            request.contract.operation,
+            None,
+            deadline(),
+        )
+        .unwrap();
+    assert!(retired.retired);
+    assert_eq!(retired.initial_copy_bytes_committed, manifest.size());
+    assert_eq!(budgets.report().unwrap(), charged);
+    assert_eq!(
+        node.retire_native_cell(
+            &budgets,
+            &mut retained,
+            request.contract.operation,
+            None,
+            deadline(),
+        )
+        .unwrap(),
+        retired
+    );
+}
+
+#[test]
+fn native_cell_retirement_cannot_release_a_pending_effect_before_reconciliation() {
+    let directory = tempfile::tempdir().unwrap();
+    let mut node = open_node(
+        &directory.path().join("node"),
+        StateBackend::PermanentAccountGrowthV2,
+    );
+    let source = fund(&mut node, 1000);
+    let (cache, manifest, _) = material(directory.path());
+    let mut request = request(source, &manifest);
+    request.contract.retain_until_height = 2;
+    request.claim.subject = request.contract.commitment(retention_config().store_id);
+    let mut budgets =
+        NativeBudgetStoreV1::open(&directory.path().join("budgets.sqlite"), config(&node)).unwrap();
+    budgets
+        .open_budget(&mut node, request.policy.clone())
+        .unwrap();
+    budgets.reserve(&mut node, request.claim.clone()).unwrap();
+    budgets
+        .begin_effect_in_window(
+            &mut node,
+            request.claim.claim,
+            request.contract.operation,
+            request.claim.subject,
+            1,
+            2,
+        )
+        .unwrap();
+    let mut retained =
+        CellRetentionStoreV1::create(&directory.path().join("retention"), retention_config())
+            .unwrap();
+    retained.reserve(request.contract.clone()).unwrap();
+    let target = retained
+        .acknowledge(request.contract.operation, &cache, deadline())
+        .unwrap();
+    // Crash boundary: physical bytes exist, but their M12 completion is unknown.
+    let pending = budgets.report().unwrap();
+    assert_eq!(pending["budgets"][0]["pending_effects"], 1);
+    let parent = node.active().unwrap().0;
+    mine(&mut node, parent, vec![]);
+    let error = node
+        .retire_native_cell(
+            &budgets,
+            &mut retained,
+            request.contract.operation,
+            None,
+            deadline(),
+        )
+        .unwrap_err();
+    assert!(error
+        .to_string()
+        .contains("BUDGET_COMPLETED_EFFECT_BINDING"));
+    assert_eq!(
+        retained
+            .verify(request.contract.operation, deadline())
+            .unwrap(),
+        target
+    );
+    assert_eq!(budgets.report().unwrap(), pending);
+
+    let recovered = node
+        .retain_native_cell(
+            &mut budgets,
+            &mut retained,
+            &cache,
+            request.clone(),
+            deadline(),
+        )
+        .unwrap();
+    assert_eq!(recovered.replay, NativeBudgetReplayV1::Pending);
+    assert_eq!(
+        recovered.target.initial_copy_bytes_committed,
+        manifest.size()
+    );
+    let completed = budgets.report().unwrap();
+    assert_eq!(
+        completed["budgets"][0]["resource_charge"],
+        pending["budgets"][0]["resource_charge"]
+    );
+    assert_eq!(
+        completed["budgets"][0]["committed_units"],
+        pending["budgets"][0]["committed_units"]
+    );
+    assert!(
+        node.retire_native_cell(
+            &budgets,
+            &mut retained,
+            request.contract.operation,
+            None,
+            deadline(),
+        )
+        .unwrap()
+        .retired
+    );
+    assert_eq!(budgets.report().unwrap(), completed);
 }
 
 #[test]

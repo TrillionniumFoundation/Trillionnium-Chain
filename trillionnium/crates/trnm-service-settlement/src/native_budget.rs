@@ -985,6 +985,41 @@ impl NativeBudgetStoreV1 {
             ))
         })
     }
+
+    /// Read the current native anchor for one exact, completed local effect.
+    /// A pending intent or caller-supplied receipt cannot establish this binding.
+    /// The original source may be absent after cancellation or reorganization:
+    /// this checks owner context and retained effect history, never fresh funds,
+    /// a payment, future custody or finality. It does not change the journal.
+    pub fn reobserve_completed_effect(
+        &self,
+        owner: &mut impl NativeFundingOwnerV1,
+        claim: NativeBudgetHashV1,
+        operation: NativeBudgetHashV1,
+        effect: NativeBudgetHashV1,
+        window: Option<(u64, u64)>,
+        target_receipt: NativeBudgetHashV1,
+    ) -> NativeBudgetResultV1<NativeBudgetAnchorV1> {
+        let (mut state, _, _) = load_snapshot(&self.connection, &self.configuration)?;
+        let record = state.claim(claim)?;
+        require(
+            record.effect.as_ref()
+                == Some(&Effect {
+                    operation,
+                    effect,
+                    window,
+                    receipt: Some(target_receipt),
+                })
+                && state.operations.get(&operation) == Some(&claim),
+            "BUDGET_COMPLETED_EFFECT_BINDING",
+        )?;
+        let source = state.budget(record.specification.budget)?.policy.source;
+        let observed = owner.observe_funding(source)?;
+        require(observed.source == source, "BUDGET_NATIVE_SOURCE_BINDING")?;
+        state.observe_anchor(observed.anchor, &self.configuration)?;
+        Ok(observed.anchor)
+    }
+
     /// Actual resources come from the worker/storage owner after join/readback.
     /// Unknown measurement consumes the entire original reservation, never zero.
     pub fn record_resources(

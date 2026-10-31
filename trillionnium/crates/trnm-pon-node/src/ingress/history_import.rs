@@ -337,10 +337,37 @@ pub(super) fn receive(
     clock: u64,
     control: Control<'_>,
 ) -> Result<Hash> {
-    let settings = owner.with(&control, |node| {
+    let (settings, continuous) = owner.with(&control, |node| {
         validate_page(node.settings(), &page, tip, after)?;
-        Ok(node.settings().clone())
+        Ok((node.settings().clone(), node.is_continuous()))
     })?;
+    if continuous {
+        // The exclusive owner may use its exact signed receiver pair for one
+        // complete extension. General pages and the shared discovery poller
+        // still need their own durable History authority and remain closed.
+        ensure(
+            matches!(owner, Owner::Exclusive(_))
+                && page.complete
+                && page.packets.len() == 1
+                && page.next == hex::encode(tip),
+            "OWNER_CONTINUOUS_HISTORY_DURABLE_REQUIRED",
+        )?;
+        let text = &page.packets[0];
+        ensure(
+            text.len() <= 2_097_152
+                && text.len().is_multiple_of(2)
+                && text
+                    .bytes()
+                    .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b)),
+            "PACKET_HEX",
+        )?;
+        let raw = hex::decode(text).map_err(|_| crate::Error::from("PACKET_HEX"))?;
+        return owner.with(&control, |node| {
+            node.receive_owned_continuous_history_packet(&raw, tip, after, clock, &|| {
+                control.check()
+            })
+        });
+    }
     scoped(&mut owner, &control, |owner, cpu| {
         let (packets, next) = metered(cpu, &control, |operation| {
             let mut packets = Vec::with_capacity(page.packets.len());
