@@ -1,0 +1,75 @@
+test_middle_seal_cannot_be_labelled_last (test_check_audit_one.ReaderControls.test_middle_seal_cannot_be_labelled_last) ... FAIL
+test_other_last_seal_word_cannot_be_labelled_last (test_check_audit_one.ReaderControls.test_other_last_seal_word_cannot_be_labelled_last) ... FAIL
+test_nonparameter_digest_cannot_be_labelled_verifier_parameters (test_check_audit_one.ReaderControls.test_nonparameter_digest_cannot_be_labelled_verifier_parameters) ... FAIL
+test_partial_parameter_zeroing_cannot_be_labelled_whole_digest (test_check_audit_one.ReaderControls.test_partial_parameter_zeroing_cannot_be_labelled_whole_digest) ... FAIL
+test_declared_shape_must_match_actual_receipt (test_check_audit_one.ReaderControls.test_declared_shape_must_match_actual_receipt) ... FAIL
+test_malformed_original_receipt_cannot_gain_bound_layout (test_check_audit_one.ReaderControls.test_malformed_original_receipt_cannot_gain_bound_layout) ... FAIL
+test_receipt_journal_must_match_input (test_check_audit_one.ReaderControls.test_receipt_journal_must_match_input) ... FAIL
+
+======================================================================
+FAIL: test_middle_seal_cannot_be_labelled_last (test_check_audit_one.ReaderControls.test_middle_seal_cannot_be_labelled_last)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/pon-w1-receiver-layout-c165-20261031/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_check_audit_one.py", line 214, in test_middle_seal_cannot_be_labelled_last
+    with self.assertRaises(ValueError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_other_last_seal_word_cannot_be_labelled_last (test_check_audit_one.ReaderControls.test_other_last_seal_word_cannot_be_labelled_last)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/pon-w1-receiver-layout-c165-20261031/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_check_audit_one.py", line 219, in test_other_last_seal_word_cannot_be_labelled_last
+    with self.assertRaises(ValueError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_nonparameter_digest_cannot_be_labelled_verifier_parameters (test_check_audit_one.ReaderControls.test_nonparameter_digest_cannot_be_labelled_verifier_parameters)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/pon-w1-receiver-layout-c165-20261031/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_check_audit_one.py", line 225, in test_nonparameter_digest_cannot_be_labelled_verifier_parameters
+    with self.assertRaises(ValueError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_partial_parameter_zeroing_cannot_be_labelled_whole_digest (test_check_audit_one.ReaderControls.test_partial_parameter_zeroing_cannot_be_labelled_whole_digest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/pon-w1-receiver-layout-c165-20261031/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_check_audit_one.py", line 230, in test_partial_parameter_zeroing_cannot_be_labelled_whole_digest
+    with self.assertRaises(ValueError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_declared_shape_must_match_actual_receipt (test_check_audit_one.ReaderControls.test_declared_shape_must_match_actual_receipt)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/pon-w1-receiver-layout-c165-20261031/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_check_audit_one.py", line 235, in test_declared_shape_must_match_actual_receipt
+    with self.assertRaises(ValueError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_malformed_original_receipt_cannot_gain_bound_layout (test_check_audit_one.ReaderControls.test_malformed_original_receipt_cannot_gain_bound_layout)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/pon-w1-receiver-layout-c165-20261031/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_check_audit_one.py", line 242, in test_malformed_original_receipt_cannot_gain_bound_layout
+    with self.assertRaises(ValueError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_receipt_journal_must_match_input (test_check_audit_one.ReaderControls.test_receipt_journal_must_match_input)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/pon-w1-receiver-layout-c165-20261031/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_check_audit_one.py", line 249, in test_receipt_journal_must_match_input
+    with self.assertRaises(ValueError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.011s
+
+FAILED (failures=7)

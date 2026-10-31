@@ -1,0 +1,26 @@
+{
+  "case": "seal_length_allocation_bomb",
+  "consensus_authority": false,
+  "metadata_and_byte_bindings_pass": true,
+  "mutation_offsets_independently_reconstructed": true,
+  "original_receipt_journal_bound_to_claimed_input": true,
+  "proof_reverified_by_reader": false,
+  "proof_shape_independently_reconstructed": false,
+  "receipt_layout": {
+    "first_seal_word_100_offset": 420,
+    "first_segment_parameters_offset": 255697,
+    "journal_offset": 15862520,
+    "last_seal_word_offset": 15862034,
+    "shape": {
+      "maximum_po2": 18,
+      "padded_cycles": 16252928,
+      "segments": 62
+    }
+  },
+  "receipt_layout_independently_reconstructed": true,
+  "receiver_total_wall_ns": 5468,
+  "schema": "pon-w1-receiver-case-binding-v2",
+  "sdk_mutation_dispatch_independently_reexecuted": false,
+  "source_files_checked": 15,
+  "timings_independently_remeasured": false
+}

@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Bind one real-host case record to actual bytes/source; never reverify a STARK.
 
-This independently reconstructs claimed journals and recorded byte mutations.
-SDK seal/parameter positions and cryptographic shape are source-bound native
-observations, not independently decoded or authenticated by this reader.
+This independently reconstructs claimed journals, the bounded receipt layout,
+and the exact seal/parameter mutation positions. Seal validity, SDK dispatch,
+and timings remain source-bound native observations, not independently verified.
 """
 import argparse
 import hashlib
@@ -12,6 +12,7 @@ import re
 import struct
 
 from check_observations import bounded_raw, decode_json, require
+from receipt_layout import parse_receipt_layout
 
 ROOT = Path(__file__).resolve().parents[5]
 PREFIX = "trillionnium/crates/trnm-crypto-primitives/"
@@ -124,8 +125,12 @@ def validate(record, input_bytes, receipt_bytes, root=ROOT):
             "supplied input/receipt budgets")
     bind(record["original_input"], input_bytes, "original input")
     bind(record["original_receipt"], receipt_bytes, "original receipt")
-    original_id, _ = claimed_journal(input_bytes)
+    layout = parse_receipt_layout(receipt_bytes, CAPS)
+    original_id, original_journal = claimed_journal(input_bytes)
     require(record["original_statement_id"] == original_id, "independently bound original statement")
+    journal_start = layout["journal_offset"]
+    require(receipt_bytes[journal_start:journal_start + CAPS["journal_bytes"]] == original_journal,
+            "original receipt journal matches claimed input")
     case = record["case"]
     changed_input = apply_mutation(record["input_mutation"], input_bytes)
     changed_receipt = apply_mutation(record["receipt_mutation"], receipt_bytes,
@@ -147,13 +152,14 @@ def validate(record, input_bytes, receipt_bytes, root=ROOT):
     elif case in {"first_seal_tamper", "last_seal_tamper"}:
         require(len(changes) == 1 and changes[0]["after"] == changes[0]["before"] ^ 1, "single seal bit mutation")
         if case == "first_seal_tamper":
-            require(changes[0]["offset"] == 20 + 100 * 4, "first fixed seal word offset")
+            require(changes[0]["offset"] == layout["first_seal_word_100_offset"], "exact first seal word offset")
         else:
-            require(changes[0]["offset"] > 20 + 100 * 4, "late seal mutation position")
+            require(changes[0]["offset"] == layout["last_seal_word_offset"], "exact last seal word offset")
     elif case == "wrong_verifier_parameters":
-        require(changes and all(item["after"] == 0 for item in changes)
-                and changes[-1]["offset"] - changes[0]["offset"] <= 31,
-                "bounded parameter-digest mutation")
+        start = layout["first_segment_parameters_offset"]
+        expected_changes = [{"offset": offset, "before": receipt_bytes[offset], "after": 0}
+                            for offset in range(start, start + 32) if receipt_bytes[offset] != 0]
+        require(changes and changes == expected_changes, "exact first segment parameter-digest mutation")
     bind(record["case_input"], changed_input, "case input")
     bind(record["case_receipt"], changed_receipt, "case receipt")
     _, expected_journal = claimed_journal(changed_input)
@@ -184,6 +190,7 @@ def validate(record, input_bytes, receipt_bytes, root=ROOT):
             and 1 <= shape["segments"] <= CAPS["segments"] and 13 <= shape["maximum_po2"] <= 20
             and shape["segments"] * (1 << 13) <= shape["padded_cycles"] <= CAPS["padded_cycles"],
             "bounded declared original shape")
+    require(shape == layout["shape"], "declared original shape matches receipt bytes")
     inputs = record["source_inputs"]
     require(type(inputs) is list and len(inputs) == len(SOURCE_PATHS), "complete direct source input set")
     seen = set()
@@ -196,8 +203,12 @@ def validate(record, input_bytes, receipt_bytes, root=ROOT):
     manifest = decode_json((root / (PREFIX + "guests/w1-risc0/backend-manifest.json")).read_bytes())
     require(re.fullmatch(r"[0-9a-f]{64}", record["image_id"]) is not None
             and record["image_id"] == manifest["guest_image_id"], "pinned original image")
-    return {"schema":"pon-w1-receiver-case-binding-v1", "case":case, "metadata_and_byte_bindings_pass":True,
+    return {"schema":"pon-w1-receiver-case-binding-v2", "case":case, "metadata_and_byte_bindings_pass":True,
             "source_files_checked":len(seen), "receiver_total_wall_ns":receiver["receiver_total_wall_ns"],
+            "receipt_layout_independently_reconstructed":True,
+            "mutation_offsets_independently_reconstructed":True,
+            "original_receipt_journal_bound_to_claimed_input":True,
+            "receipt_layout":layout,
             "proof_reverified_by_reader":False, "proof_shape_independently_reconstructed":False,
             "sdk_mutation_dispatch_independently_reexecuted":False,
             "timings_independently_remeasured":False, "consensus_authority":False}
