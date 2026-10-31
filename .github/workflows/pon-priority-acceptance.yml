@@ -294,10 +294,68 @@ jobs:
           binary="$(cat "$TRNM_CI_RECEIPT_DIR/history-executable.txt")"
           sha256sum "$binary" > "$TRNM_CI_RECEIPT_DIR/history-binary.sha256"
           selector=actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal
+          # The importer mandates the one root-owned cgroup parent even for loopback.
+          # Direct CI execution fails PUBLIC_HOST_KERNEL_PARENT.
+          # Compile unchanged outside the quota, then run the original test inside.
+          export TRNM_HISTORY_SERVICE="trnm-history-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-$GITHUB_JOB-$.service"
+          provisioned=0
+          cleanup_history_parent() {
+            local result=$?
+            trap - EXIT
+            if [ "$provisioned" -eq 1 ]; then
+              sudo -n systemctl stop trnmponpublic.slice || result=1
+              sudo -n rm -f /run/systemd/system/trnmponpublic.slice || result=1
+              sudo -n systemctl daemon-reload || result=1
+            fi
+            exit "$result"
+          }
+          trap cleanup_history_parent EXIT
+          test ! -e /run/systemd/system/trnmponpublic.slice
+          test ! -L /run/systemd/system/trnmponpublic.slice
+          test ! -e /sys/fs/cgroup/trnmponpublic.slice
+          test ! -L /sys/fs/cgroup/trnmponpublic.slice
+          systemctl show --all --property=Id,LoadState,ActiveState,SubState,FragmentPath,SourcePath,DropInPaths,ControlGroup,Transient,Job trnmponpublic.slice > "$TRNM_CI_RECEIPT_DIR/history-parent-initial.txt"
+          python3 - <<'PYHOST'
+          import hashlib
+          import os
+          import sys
+          from pathlib import Path
+          sys.path.insert(0, 'scripts/ci')
+          from public_host_ci_observation import UNIT_SHA256
+          from run_from_zero_host import validate_unprovisioned_parent
+          assert hashlib.sha256(Path('config/systemd/trnmponpublic.slice').read_bytes()).hexdigest() == UNIT_SHA256
+          validate_unprovisioned_parent((Path(os.environ['TRNM_CI_RECEIPT_DIR']) / 'history-parent-initial.txt').read_text())
+          PYHOST
+          sudo -n install -o root -g root -m 0644 config/systemd/trnmponpublic.slice /run/systemd/system/trnmponpublic.slice
+          provisioned=1
+          sudo -n systemctl daemon-reload
+          sudo -n systemctl start trnmponpublic.slice
+          python3 - <<'PYHOST'
+          import os
+          import sys
+          from pathlib import Path
+          sys.path.insert(0, 'scripts/ci')
+          from public_host_ci_observation import capture, validate, write_new
+          sample = capture('long-history-parent-before', os.environ['TRNM_HISTORY_SERVICE'])
+          write_new(Path(os.environ['TRNM_CI_RECEIPT_DIR']) / 'history-parent-before.json', sample)
+          errors = validate(sample, inside=False, uid=os.getuid(), gid=os.getgid(), cwd=os.getcwd())
+          assert not errors, errors
+          PYHOST
           set +e
-          /usr/bin/time -v -o "$TRNM_CI_RECEIPT_DIR/history-resources.txt" "$binary" "$selector" --exact --ignored --show-output 2>&1 | tee "$TRNM_CI_RECEIPT_DIR/history.log"
+          sudo -n systemd-run --unit="$TRNM_HISTORY_SERVICE" --wait --pipe --collect --service-type=exec --expand-environment=no --slice=trnmponpublic.slice --uid="$(id -u)" --gid="$(id -g)" --working-directory="$GITHUB_WORKSPACE" --property=KillMode=control-group --property=TimeoutStopSec=20s --property=Delegate=no --property=NoNewPrivileges=yes --property=CapabilityBoundingSet= --setenv="TRNM_INDEX_EVIDENCE_DIRECTORY=$TRNM_INDEX_EVIDENCE_DIRECTORY" /usr/bin/time -v -o "$TRNM_CI_RECEIPT_DIR/history-resources.txt" "$binary" "$selector" --exact --ignored --show-output 2>&1 | tee "$TRNM_CI_RECEIPT_DIR/history.log"
           codes=("${PIPESTATUS[@]}")
           set -e
+          python3 - <<'PYHOST'
+          import os
+          import sys
+          from pathlib import Path
+          sys.path.insert(0, 'scripts/ci')
+          from public_host_ci_observation import capture, validate, write_new
+          sample = capture('long-history-parent-after', os.environ['TRNM_HISTORY_SERVICE'])
+          write_new(Path(os.environ['TRNM_CI_RECEIPT_DIR']) / 'history-parent-after.json', sample)
+          errors = validate(sample, inside=False, uid=os.getuid(), gid=os.getgid(), cwd=os.getcwd())
+          assert not errors, errors
+          PYHOST
           printf 'native_exit=%s\nlog_exit=%s\n' "${codes[0]}" "${codes[1]}" > "$TRNM_CI_RECEIPT_DIR/history-exit.txt"
           test "${codes[0]}" -eq 0 && test "${codes[1]}" -eq 0
           sha256sum -c "$TRNM_CI_RECEIPT_DIR/history-binary.sha256"
