@@ -165,6 +165,33 @@ class ClaimGateTests(unittest.TestCase):
         self.assertIn("unqualified_proof", self.kinds())
         self.assertFalse(module.inspect(self.root)["pq_chain_qualified"])
 
+    def test_inventory_covers_real_candidate_classical_verifiers(self):
+        # Synthetic fixtures alone could allow a removed/renamed verifier to
+        # silently disappear from coverage. Bind each marker to the real source.
+        self.assertEqual(set(module.CLASSICAL_MARKERS),
+                         set(module.CLASSICAL_BOUNDARY_ROLES))
+        for key, markers in module.CLASSICAL_MARKERS.items():
+            with self.subTest(boundary=key):
+                source = SCRIPT.parents[2] / module.PATHS[key]
+                text = source.read_text(encoding="utf-8")
+                self.assertTrue(all(marker in text for marker in markers),
+                                f"unreviewed classical verifier migration: {source}")
+                self.assertTrue(any(
+                    row["kind"] == "classical_authority"
+                    and row["path"] == module.PATHS[key]
+                    and row["boundary"] == module.CLASSICAL_BOUNDARY_ROLES[key]
+                    for row in module.inspect(self.root)["known_open_findings"]
+                ))
+
+    def test_classical_source_edits_trigger_pq_claim_workflow(self):
+        workflow = (SCRIPT.parents[2] /
+                    ".github/workflows/pq-production-claim-gate.yml").read_text(encoding="utf-8")
+        for key in module.CLASSICAL_MARKERS:
+            with self.subTest(boundary=key):
+                # Both push and pull_request path filters must contain the
+                # exact file; otherwise a verifier edit could skip this gate.
+                self.assertGreaterEqual(workflow.count("- " + module.PATHS[key]), 2)
+
     def test_classical_markers_disappearing_does_not_grant_pq(self):
         for key in module.CLASSICAL_MARKERS:
             (self.root / module.PATHS[key]).write_text("replaced", encoding="utf-8")

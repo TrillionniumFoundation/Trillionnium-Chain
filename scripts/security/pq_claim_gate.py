@@ -15,12 +15,33 @@ from pathlib import Path
 PATHS = {
     "hepta_handoff": "trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs",
     "cell_discovery": "trillionnium/crates/trnm-data-availability/src/cell/discovery.rs",
+    "transport_ingress": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+    "legacy_transfer": "trillionnium/crates/trnm-types/src/transfer.rs",
+    "research_command": "trillionnium/crates/trnm-research-protocol/src/command.rs",
+    "task_store": "trillionnium/crates/trnm-task-kernel/src/store.rs",
+    "service_settlement": "trillionnium/crates/trnm-service-settlement/src/engine.rs",
     "w1_backend": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json",
     "consensus": "config/consensus-mainline.json",
 }
 CLASSICAL_MARKERS = {
     "hepta_handoff": ("ed25519_dalek", "SignedHeptaAdmissionV1"),
     "cell_discovery": ("ed25519_dalek", "CellProviderRecordV1"),
+    "transport_ingress": ("verify_hex_strict", "fn authenticate_request("),
+    "legacy_transfer": ("ed25519_dalek", 'algo != "ed25519"', "impl TransferTx"),
+    "research_command": ("ed25519_dalek", "SignedResearchCommandV1"),
+    "task_store": ("ed25519_dalek", "verify_strict("),
+    "service_settlement": ("SIGNATURE_SCHEME_ED25519_V1", "verify_signature_entry("),
+}
+# These are code-level candidate trust boundaries, not evidence that a
+# production network currently routes through any of the paths.
+CLASSICAL_BOUNDARY_ROLES = {
+    "hepta_handoff": "hepta_artifact_admission_v1",
+    "cell_discovery": "cell_provider_advertising_v1",
+    "transport_ingress": "allowlisted_development_node_transport",
+    "legacy_transfer": "transfer_transaction_signature",
+    "research_command": "research_command_nakama_hepta_authority",
+    "task_store": "agent_market_controller_session_auth",
+    "service_settlement": "bilateral_settlement_authorization",
 }
 PRODUCTION_FLAGS = ("production_candidate", "production_consensus_activation", "public_testnet_ready", "release_ready")
 # These must remain explicit Boolean false in the pinned research-only W1 backend.
@@ -223,7 +244,10 @@ def inspect(root: Path) -> dict:
                 blockers.append({"kind": "unreadable_source", "path": rel})
                 continue
             if all(marker in source for marker in CLASSICAL_MARKERS[label]):
-                blockers.append({"kind": "classical_authority", "path": rel})
+                blockers.append({
+                    "kind": "classical_authority", "path": rel,
+                    "boundary": CLASSICAL_BOUNDARY_ROLES[label],
+                })
         elif label == "w1_backend":
             try:
                 profile = load_unique_json(file)
