@@ -2,6 +2,7 @@
 import tempfile
 from pathlib import Path
 import unittest
+from unittest.mock import patch
 from pq_authority_surface_scan import CRITICAL, AuditError, inspect
 
 
@@ -54,6 +55,30 @@ class TestPqAuthoritySurfaceScan(unittest.TestCase):
         self.assertTrue(all(len(entry['sha256']) == 64 for entry in unknown.values()))
         self.assertEqual(unknown['trillionnium/crates/new-owner/examples/wallet.rs']['classical_indicator_lines'], [1])
         self.assertEqual(unknown['trillionnium/crates/new-owner/benches/verify.rs']['pq_indicator_lines'], [1])
+
+    def test_symlinked_crate_ancestor_refuses_external_source_tree(self):
+        # The crates directory itself is ordinary, but its parent is a link.
+        # A scanner that only checks crates.is_symlink() would be redirected.
+        original = self.root / 'trillionnium'
+        isolated = self.root / 'isolation'
+        original.rename(isolated)
+        original.symlink_to(isolated, target_is_directory=True)
+        with self.assertRaisesRegex(AuditError, 'symlink crate root/ancestor'):
+            inspect(self.root)
+
+    def test_walk_error_refuses_unreadable_unknown_subdirectory(self):
+        # Run under root and other privileged CI users without relying on
+        # chmod (which root could bypass). Mimic os.walk reporting EACCES for
+        # an otherwise unreviewed folder and require a refusal, not HOLD.
+        def walk(_, *, followlinks, onerror):
+            self.assertFalse(followlinks)
+            self.assertIsNotNone(onerror)
+            yield (str(self.root / 'trillionnium' / 'crates'), [], [])
+            onerror(PermissionError(13, 'Permission denied',
+                                    str(self.root / 'trillionnium' / 'crates' / 'unknown')))
+        with patch('pq_authority_surface_scan.os.walk', side_effect=walk):
+            with self.assertRaisesRegex(AuditError, 'unreadable Rust directory'):
+                inspect(self.root)
 
     def test_non_src_symlink_and_invalid_source_fail_closed(self):
         outside = self.put('trillionnium/crates/new-owner/examples/probe.rs', 'use ed25519_dalek::Verifier;\n')

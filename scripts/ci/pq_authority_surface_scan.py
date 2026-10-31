@@ -42,11 +42,23 @@ class AuditError(ValueError):
 
 def sources(root: Path):
     base = root / 'trillionnium' / 'crates'
-    if not base.is_dir() or base.is_symlink():
-        raise AuditError('missing/symlink crate root')
+    # Every entry to the scan tree must be a real directory. Checking only
+    # `crates` leaves `trillionnium` or the supplied root free to redirect
+    # scanning outside the reviewed checkout through a symlink.
+    if any(path.is_symlink() for path in (root, root / 'trillionnium', base)):
+        raise AuditError('symlink crate root/ancestor')
+    if not base.is_dir():
+        raise AuditError('missing crate root')
     count = 0
+
+    def walk_error(error: OSError) -> None:
+        # os.walk silently ignores unreadable subdirectories without onerror.
+        # Source absence is not evidence: refuse even if all curated files were
+        # readable and the skipped subtree contained no previously known hits.
+        raise AuditError('unreadable Rust directory') from error
     # Include all crate Rust, including build.rs, examples, tests and unusual\n    # directories. A selectable binary/feature may live outside src/.\n    # os.walk does not follow symlink dirs; refuse them rather than missing scope.
-    for current, dirs, files in os.walk(base, followlinks=False):
+    for current, dirs, files in os.walk(base, followlinks=False,
+                                        onerror=walk_error):
         for dirname in dirs:
             if (Path(current) / dirname).is_symlink():
                 raise AuditError('symlink directory in scan scope')
