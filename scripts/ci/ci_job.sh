@@ -6,6 +6,7 @@ case "${1:?required job}" in
     bash scripts/project-preflight.sh --audit
     python3 scripts/ci/check_repository.py
     python3 scripts/ci/test_repository.py
+    python3 scripts/ci/test_checkout_origin.py
     python3 scripts/ci/test_invariants_registry.py
     ;;
   protocol-contract)

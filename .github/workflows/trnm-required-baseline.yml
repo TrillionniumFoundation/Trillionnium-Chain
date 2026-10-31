@@ -29,6 +29,8 @@ jobs:
           ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
           fetch-depth: 0
           persist-credentials: false
+      - name: Require canonical checkout origin for repository boundary
+        run: bash scripts/ci/ensure_checkout_origin.sh
       - name: Verify immutable source identity
         run: test "$(git rev-parse HEAD)" = "$TRNM_EXPECTED_SOURCE_SHA"
       - name: Set isolated Cargo paths after runner allocation
@@ -52,6 +54,8 @@ jobs:
           ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
           fetch-depth: 0
           persist-credentials: false
+      - name: Require canonical checkout origin for repository boundary
+        run: bash scripts/ci/ensure_checkout_origin.sh
       - name: Verify immutable source identity
         run: test "$(git rev-parse HEAD)" = "$TRNM_EXPECTED_SOURCE_SHA"
       - name: Set isolated Cargo paths after runner allocation
@@ -83,6 +87,8 @@ jobs:
           ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
           fetch-depth: 0
           persist-credentials: false
+      - name: Require canonical checkout origin for repository boundary
+        run: bash scripts/ci/ensure_checkout_origin.sh
       - name: Verify immutable source identity
         run: test "$(git rev-parse HEAD)" = "$TRNM_EXPECTED_SOURCE_SHA"
       - name: Set isolated Cargo paths after runner allocation
@@ -109,6 +115,8 @@ jobs:
           ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
           fetch-depth: 0
           persist-credentials: false
+      - name: Require canonical checkout origin for repository boundary
+        run: bash scripts/ci/ensure_checkout_origin.sh
       - name: Verify immutable source identity
         run: test "$(git rev-parse HEAD)" = "$TRNM_EXPECTED_SOURCE_SHA"
       - name: Set isolated Cargo paths after runner allocation
@@ -135,6 +143,8 @@ jobs:
           ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
           fetch-depth: 0
           persist-credentials: false
+      - name: Require canonical checkout origin for repository boundary
+        run: bash scripts/ci/ensure_checkout_origin.sh
       - name: Verify immutable source identity
         run: test "$(git rev-parse HEAD)" = "$TRNM_EXPECTED_SOURCE_SHA"
       - name: Set isolated Cargo paths after runner allocation
