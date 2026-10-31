@@ -79,6 +79,16 @@ PINNED_W1_RESEARCH_PARAMETERS = {
     "backend_claimed_conjectured_security_bits": 98,
 }
 
+# Fail closed on *new* W1 research fields as well as changes to pinned values.
+# A downstream proof/receipt reader may interpret unknown fields as active
+# policy even while the frozen research profile still says PQ128=false.
+# Any extension requires an independently reviewed, versioned profile.
+ALLOWED_W1_RESEARCH_FIELDS = (
+    frozenset(PINNED_W1_RESEARCH_PARAMETERS)
+    | frozenset(PROOF_RESEARCH_ONLY_FALSE_FLAGS)
+    | frozenset(("pq_128_security_qualified", "proof_receipt_kind"))
+)
+
 class DuplicateJSONMemberError(ValueError):
     """Refuse cross-parser ambiguous JSON, including nested duplicate members."""
     pass
@@ -166,6 +176,12 @@ def inspect(root: Path) -> dict:
                 # Reject missing, changed and type-confused security-relevant
                 # parameters before the original research profile is reused.
                 if isinstance(profile, dict):
+                    for field in sorted(set(profile) - ALLOWED_W1_RESEARCH_FIELDS):
+                        blockers.append({
+                            "kind": "unreviewed_w1_research_field",
+                            "path": rel,
+                            "field": field,
+                        })
                     for field, expected in PINNED_W1_RESEARCH_PARAMETERS.items():
                         observed = profile.get(field)
                         if type(observed) is not type(expected) or observed != expected:
@@ -239,6 +255,7 @@ def main():
         "invalid_production_flag_type", "unreviewed_pq128_proof_claim",
         "duplicate_proof_json_member", "duplicate_consensus_json_member",
         "unreviewed_w1_research_parameter_change",
+        "unreviewed_w1_research_field",
         "unreadable_w1_guest_source", "escaped_w1_guest_source",
         "w1_guest_source_digest_mismatch",
         "unsupported_proof_receipt_kind", "invalid_proof_policy_flag_type",
