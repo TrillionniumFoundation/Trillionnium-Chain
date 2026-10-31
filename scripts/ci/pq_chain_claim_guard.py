@@ -40,6 +40,9 @@ GATES = {
     'quantum_mining_fork_choice': (
         'config/pon/devnet-v1.json',
         'docs/protocol/pon-nakamoto-v1/details/WORK_COST_DAA_BOUNDARIES.md',
+        'scripts/ci/pq_quantum_daa_scenarios.py',
+        'scripts/ci/test_pq_quantum_daa_scenarios.py',
+        'docs/security/PQ_QUANTUM_DAA_SENSITIVITY_20261031.md',
     ),
     'migration_and_rollback': (
         'trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration.rs',
