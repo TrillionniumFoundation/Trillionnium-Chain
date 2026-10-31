@@ -89,6 +89,29 @@ ALLOWED_W1_RESEARCH_FIELDS = (
     | frozenset(("pq_128_security_qualified", "proof_receipt_kind"))
 )
 
+# The non-production consensus declaration is also authority-bearing metadata.
+# Preserve its known research-only keys and explicit negative assertions; a
+# newly added activation/PQ-claim alias must not bypass the four old flags.
+# This is an audit schema pin, NOT a deployed consensus or PQ certificate.
+PINNED_CONSENSUS_UNQUALIFIED_PARAMETERS = {
+    "schema": "trnm-consensus-mainline-truth-v2",
+    "development_target": "pon-nakamoto-v1",
+    "stage": "invariant-driven-native-application-candidate",
+    "runtime_implemented": False,
+    "work_profile_qualified": False,
+    "active_consensus_implementation": None,
+    "historical_consensus_sources_present": False,
+    "source_inventory": "config/portability-inventory-v1.json",
+    "experimental_contracts": "config/pon/module-contracts-v1.json",
+    "module_maturity": "config/pon/module-maturity-v1.json",
+    "invariant_contract": "config/pon/invariants-v2.json",
+}
+ALLOWED_CONSENSUS_FIELDS = (
+    frozenset(PINNED_CONSENSUS_UNQUALIFIED_PARAMETERS)
+    | frozenset(PRODUCTION_FLAGS)
+    | frozenset(("native_application_scope",))
+)
+
 class DuplicateJSONMemberError(ValueError):
     """Refuse cross-parser ambiguous JSON, including nested duplicate members."""
     pass
@@ -184,7 +207,7 @@ def inspect(root: Path) -> dict:
                         })
                     for field, expected in PINNED_W1_RESEARCH_PARAMETERS.items():
                         observed = profile.get(field)
-                        if type(observed) is not type(expected) or observed != expected:
+                        if field not in profile or type(observed) is not type(expected) or observed != expected:
                             blockers.append({
                                 "kind": "unreviewed_w1_research_parameter_change",
                                 "path": rel,
@@ -218,6 +241,26 @@ def inspect(root: Path) -> dict:
             if not isinstance(config, dict):
                 blockers.append({"kind": "invalid_consensus_profile_shape", "path": PATHS["consensus"]})
             else:
+                # Unknown fields may be interpreted as authority/activation
+                # policy by a future consumer, even with known flags false.
+                for field in sorted(set(config) - ALLOWED_CONSENSUS_FIELDS):
+                    blockers.append({
+                        "kind": "unreviewed_consensus_profile_field",
+                        "path": PATHS["consensus"], "field": field,
+                    })
+                for field, expected in PINNED_CONSENSUS_UNQUALIFIED_PARAMETERS.items():
+                    observed = config.get(field)
+                    if (field not in config or type(observed) is not type(expected)
+                            or observed != expected):
+                        blockers.append({
+                            "kind": "unreviewed_consensus_unqualified_parameter_change",
+                            "path": PATHS["consensus"], "field": field,
+                        })
+                scope = config.get("native_application_scope")
+                if type(scope) is not str or not scope:
+                    blockers.append({
+                        "kind": "invalid_consensus_scope", "path": PATHS["consensus"],
+                    })
                 production = {flag: config.get(flag) for flag in PRODUCTION_FLAGS}
                 # JSON numbers and strings must never be coerced to a boolean
                 # activation decision by some other consumer.
@@ -256,6 +299,9 @@ def main():
         "duplicate_proof_json_member", "duplicate_consensus_json_member",
         "unreviewed_w1_research_parameter_change",
         "unreviewed_w1_research_field",
+        "unreviewed_consensus_profile_field",
+        "unreviewed_consensus_unqualified_parameter_change",
+        "invalid_consensus_scope",
         "unreadable_w1_guest_source", "escaped_w1_guest_source",
         "w1_guest_source_digest_mismatch",
         "unsupported_proof_receipt_kind", "invalid_proof_policy_flag_type",
