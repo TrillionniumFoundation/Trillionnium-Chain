@@ -121,6 +121,10 @@ class TestClaimGuard(unittest.TestCase):
         (self.root / 'trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs').unlink()
         self.refused()
 
+    def test_missing_external_rollback_oracle_refused(self):
+        (self.root / 'scripts/ci/pq_external_rollback_oracle.py').unlink()
+        self.refused()
+
     def test_missing_quantum_daa_model_refused(self):
         (self.root / 'scripts/ci/pq_quantum_daa_scenarios.py').unlink()
         self.refused()
