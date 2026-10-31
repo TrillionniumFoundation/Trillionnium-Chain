@@ -47,3 +47,43 @@ native resource limits, quantum mining parity or a safe public work predicate.
 Original security obligations from the PoN specification and Issue #562
 remain open. Existing failed independent tests must not be erased, and this
 research-only control must not be used to assert work-profile qualification.
+
+## Source-bound legal structured prover reconciliation (P0 research only)
+
+This isolated child combines the distinct unmerged research experiments:
+[#606](https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/606)
+computed legitimate structured W1 witnesses, while
+[#607](https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/607)
+closed the original source-identity gap. Neither parent branch is rewritten.
+The source audit remains mandatory both **before and after** all measurements.
+
+For exactly the original zero, diagonal, and rank-one eligible matrix
+families, the secondary prover derives the true `C=A*B` by a verified
+algebraic identity but still performs fresh challenge-dependent noise
+expansion and all 512 transcript tile updates. The complete 49,188-byte
+proof must equal the original independent scalar oracle byte-for-byte and
+be accepted by the unchanged full verifier. Dense inputs have no asserted
+shortcut. The input family is checked against the exact eligible matrices;
+changing the name cannot authorize an altered input.
+
+The report retains both valid-prover CPU samples and invalid Ticket-only
+rejection costs separately. It additionally records the **actual denominators**
+`sampled_valid_proof_attempts` and `sampled_valid_devnet_winners`, plus
+`sampled_structured_proof_attempts` and
+`sampled_structured_devnet_winners`. These are *bounded experimental
+attempt counts*, not a success-probability estimate or projected TPS.
+A cheap fabricated digest may satisfy the Ticket filter but NEVER counts
+as a legal winning attempt, model improvement or verified work.
+
+Required source-precise tests cover two different challenges for each
+structured family, byte-identity, actual full-verifier acceptance,
+mislabeled input and incorrect challenge refusal, invalid Ticket-only
+rejection and source alteration hidden by Git assume-unchanged. Tests
+must run on the complete exact HEAD with required original checks; the
+presence of these test methods alone is not a PASS.
+
+**Still unqualified:** fastest adversarial valid solver, GPU/ASIC and
+precomputation, finite quantum cost, real task eligibility, the ratio
+between effective winning work and verifier cost under hostile ingress,
+W1/PQ128 security, Sybil-safe admission, ordinary Hepta activation, and
+public/production acceptance. Issue #562 A–F and #596 remain open.
