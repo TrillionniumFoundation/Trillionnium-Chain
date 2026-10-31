@@ -4,9 +4,7 @@ use crate::{pon_executor as exec, public_evaluation as evaluation};
 use exec::{BlockExecution, ExecutionControl};
 use std::sync::atomic::{AtomicUsize, Ordering};
 use trnm_crypto_primitives::{pon_work, qualified_work_task::TaskMaterial};
-#[allow(dead_code)]
-#[path = "../../../../trnm-protocol/tests/support/native_pq_task_fixture_v5.rs"]
-mod fixture;
+use super::tasks_v5_tests::fixture;
 use fixture::{Key, Witness};
 
 struct Harness {
