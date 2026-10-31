@@ -122,6 +122,16 @@ def false_field(data: dict, name: str, context: str) -> None:
 
 
 def inspect(root: Path) -> dict:
+    # Reject an alias of an otherwise plausible research checkout *before*
+    # loading any source-controlled claims. Checking only leaf symlinks lets
+    # --root=/tmp/alias (or a symlinked ancestor) silently scan another tree.
+    # Do not normalize-and-accept the alias: it must be rejected as evidence.
+    try:
+        actual_root = root.resolve(strict=True)
+    except (OSError, RuntimeError) as error:
+        raise UnsafePromotion('missing or unreadable repository root') from error
+    require(root.is_dir(), 'non-directory repository root')
+    require(root.absolute() == actual_root, 'symlinked repository root/ancestor')
     p = strict_json(root, CONFIG)
     c = strict_json(root, CORPUS)
     main = strict_json(root, CONSENSUS)
