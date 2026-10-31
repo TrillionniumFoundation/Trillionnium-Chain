@@ -17,6 +17,10 @@ The candidate snapshot is based on the exact #593 head `6ec0bc9274cce37a83642686
 | Research state authorization | `trillionnium/crates/trnm-research-protocol/src/state.rs` | `ResearchProtocolState::apply` validates `SignedResearchCommandV1` then permits Nakama/Hepta public keys via `self.authorities.authorizes` | Pin an independent PQ authority registry and version/epoch; verify all state apply/handoff callers and refuse old signed commands after PQ activation |
 | Agent market task store | `trillionnium/crates/trnm-task-kernel/src/store.rs` | Ed25519 session/controller verification | PQ owner/session binding, replay, provenance and final-use checks on actual dispatch path |
 | Bilateral settlement | `trillionnium/crates/trnm-service-settlement/src/engine.rs` | `SIGNATURE_SCHEME_ED25519_V1`, registered bilateral keys | PQ provider+consumer settlement, independent registry, failure/reorg and anti-downgrade tests |
+| Release bundle acceptance | `trillionnium/crates/trnm-release-bundle/src/lib.rs` | `ReleaseSignatureVerifierV0` supplied by host; algorithm and signer roster unspecified by trait | Pin release authority and algorithm, independent signer custody, downgrade/revocation/rollout proofs and actual release installer call graph |
+| State import and cutover | `trillionnium/crates/trnm-state-import/src/lib.rs` | Host-provided source finality, checkpoint-context and cutover-attestation verifiers | Pin PQ-authorized source finality and cutover quorum, trusted epoch/chain binding, migration reorg refusal and irreversible effect recovery |
+| Mempool signed admission | `trillionnium/crates/trnm-mempool/src/typed_admission.rs` | `SignedAdmissionHooks` and `PendingNonceAuthority` supplied by canonical transaction owner | Trace exact host hooks; verify PQ-only and hybrid-AND selection, nonce ownership, reorg, timeout, cancellation and restart without classical fallback |
+| DID and capability registry | `trillionnium/crates/trnm-types/src/interop_identity.rs` | `IdentityRegistry` compares supplied actor string with recorded DID controller; no in-method cryptographic actor proof | Verify authenticated caller mapping to independent PQ DID/controller roster, revocation and height/epoch at every capability mutation and bridge execution |
 
 **Not closed by this inventory**: production reachability and all authority callers; governance, upgrade, release and rescue ownership; original classic key custody; hybrid AND-verification transition policy; capacity under invalid ML-DSA inputs; W1 transparent prover/FRI and PQ-128 external security assessment; quantum cheapest-legal PoN attack lower bound and difficulty/chain-selection analysis; external monotonic rollback anchor with independently durable witness roster. A new version must record each owner, last classic fallback, caller and threat model with positive and adversarial evidence.
 
@@ -112,3 +116,39 @@ marker, missing/duplicated finding or altered role fails the standalone
 `pq_chain_qualified=false`. Both source paths trigger the focused workflow
 on push and PR. No runtime authority is changed and #562 Gates A–F remain
 OPEN / NO_GO until independent caller-root and acceptance evidence exists.
+
+
+## Release, migration, mempool and DID trust-root dependencies (Gate A increment)
+
+These four additional *delegated* authorization boundaries were observed on
+the frozen protected main `dd6e1c3cbeacbdc532b0679297835b3a0aac78f0`
+and rechecked against this candidate's parent #611 source. They do not
+establish production reachability or an exploitable impersonation route.
+
+- Release: `verify_release_bundle_v0` calls host-supplied
+  `ReleaseSignatureVerifierV0::verify_release_signature`; digest validation
+  does not select ML-DSA or authenticate an external release owner.
+- Migration: `verify_export_v0` calls a supplied source-finality verifier;
+  `verify_cutover_agreement_v0` calls a supplied cutover signature verifier.
+  Source-checkpoint verification is also delegated. A structurally valid
+  signed-weight record is not a post-quantum signer roster.
+- Mempool: `admit_signed` and `admit_signed_with_pending_nonce` rely on
+  host-provided signature/replay implementations. The trait's rejecting
+  default is useful but cannot attest the actual installed hook or persistent
+  nonce owner.
+- Identity: `IdentityRegistry` checks a caller-provided actor identifier
+  against DID controller strings; the host must prove that the actor was
+  authenticated and that capability/revocation/bridge effects honor the
+  independent PQ trust root.
+
+The focused gate now keeps six delegated path/role findings, including the
+original governance/plan checks. Removing or changing any pinned source
+marker or removing/duplicating its finding must fail --assert-unqualified.
+Workflow path filters cover all four paths on both push and PR.
+
+**Unclosed:** real ingress-to-host implementation trace, independent PQ key
+provisioning, versioned epoch and anti-downgrade policy, signature-size and
+failure-load limits, reorg/cold recovery, external-operator evidence. This
+is a source-bound *inventory/negative-claim* improvement, not an enabled
+signature verification policy, native test, production release or whole-chain
+PQ128 qualification. #562 Gates A-F remain NO-GO.
