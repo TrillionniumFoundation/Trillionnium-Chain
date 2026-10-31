@@ -23,7 +23,17 @@ PYTHONDONTWRITEBYTECODE=1 python3 formal/pon-nakamoto-v1/test_w1_structured_cost
 PYTHONDONTWRITEBYTECODE=1 python3 formal/pon-nakamoto-v1/experiments/w1_valid_invalid_cost_v1.py --output /new/empty/output
 ```
 
-The output path must **not exist**. The report now **requires** a clean, exact Git HEAD/tree rather than an optional\nHEAD. It validates byte-for-byte equality with every committed input source,\nincluding both transitive ledger and model-family configs actually imported by\n`contract_wire.py`; no missing-Git fallback is accepted. It repeats this\nsource check **after** the measured observations. Even a tracked mutation\nhidden by `git update-index --assume-unchanged`, an untracked checkout file,\nor a substituted symlink is refused. This hardens experiment provenance, not\nproof-cost security or independent acceptance.\n\nThe report includes SHA-256 of all seven source/config inputs, exact HEAD/tree,\nprofile, target, Python environment and the original positive/negative observations.
+The output path must **not exist**. The report now **requires** a clean, exact Git HEAD/tree rather than an optional
+HEAD. It validates byte-for-byte equality with every committed input source,
+including both transitive ledger and model-family configs actually imported by
+`contract_wire.py`; no missing-Git fallback is accepted. It repeats this
+source check **after** the measured observations. Even a tracked mutation
+hidden by `git update-index --assume-unchanged`, an untracked checkout file,
+or a substituted symlink is refused. This hardens experiment provenance, not
+proof-cost security or independent acceptance.
+
+The report includes SHA-256 of all seven source/config inputs, exact HEAD/tree,
+profile, target, Python environment and the original positive/negative observations.
 It explicitly marks fastest valid adversarial solver, lower-bound hardness,
 quantum/PQ128, public Sybil fairness and production as **false**.
 
