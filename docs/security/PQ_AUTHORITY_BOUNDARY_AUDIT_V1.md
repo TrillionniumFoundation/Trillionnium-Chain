@@ -175,3 +175,43 @@ reachable, safe, or installed in a binary. This does not replace source-to-binar
 reproducibility, quantum-work bounds, externally operated rollback anchors,
 W1 qualification, or any of #562 Gates A–F. A signature-policy or runtime
 change still requires positive and adversarial tests before deployment.
+
+## Exported relay callback and public test-signature compatibility boundary (follow-on)
+
+The audited `trillionnium/crates/trnm-types/src/lib.rs` publicly re-exports
+`RelayAuthEnvelope` and `RelayAuthVerifier` from
+`trillionnium/crates/trnm-types/src/relay.rs`. On parent #615
+`9d83890975bdf29ab4818b248e0dea9f6d516e45`, the exact exported source
+has SHA-256
+`610bba86023958c903e82e4bdff654297edf72be99bd9a5f8aee8f2f78357672`.
+The separately present `src/relay/{verifier,auth_envelope}.rs` files are not
+imported by the exported `relay.rs` module and must not be substituted for its
+actual behavior in source reviews.
+
+The exported `RelayAuthVerifier::verify` accepts a caller-supplied
+`verify_signature: impl Fn(&RelayAuthEnvelope) -> bool`. This *delegates*
+cryptographic identity and signer authorization to its actual caller. The
+public `verify_test_sig_compat` helper hashes message bytes and caller
+"key material" using SHA-256; it is explicitly a skeleton test helper, **not**
+a PQ signature verifier or proof of independent identity. The current
+`new` and `legacy_compatible` constructors on this candidate both select
+strict legacy-v0 refusal, unlike an older mainline snapshot. No default
+legacy-v0 acceptance is alleged for this candidate.
+
+New `relay_auth` **delegated-authority** inventory and original source-byte
+pin stop reviewed-role drift being silently treated as an unchanged NO_GO
+baseline. The actual consumer chain must still establish: which verifier
+closure runs in ordinary task/relay receive paths; which authenticated
+network/chain/DID/key and nonce owner provides the trusted identity; whether
+test-signer compatibility is unreachable in authority; and whether any
+migration, restart or replay chooses a legacy or classical-only fallback.
+The claim gate detects unreviewed source edits and does **not** establish
+caller reachability, authentic ML-DSA signing, protocol safety or production
+qualification.
+
+The new source path triggers the unchanged focused PQ claim workflow for
+both push and pull requests. Tests verify exact exported source, the 18th
+reviewed path/role, intact known NO_GO findings and CLI refusal of a
+marker-preserving change to legacy refusal. They do not replace original
+native x64/ARM or external-operator results. #562 A–F and #596 remain OPEN;
+whole-chain PQ128, public and production remain **NO_GO**.
