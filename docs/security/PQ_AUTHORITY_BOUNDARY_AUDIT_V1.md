@@ -14,7 +14,7 @@ The candidate snapshot is based on the exact #593 head `6ec0bc9274cce37a83642686
 | Transfer transaction | `trillionnium/crates/trnm-types/src/transfer.rs` | `TransferTx` accepts `ed25519` signature scheme and address derivation | Versioned, domain-separated PQ native transaction, nonce and reorg/rollback ownership rules |
 | Native M06 PNX1 application envelope | `trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs` | `prepare` selects PQ2/PQ1 only under their installed profile; otherwise `Envelope` is checked with classical `verify_hex_strict` | Trace selected genesis profile and all ordinary call sites; prove PQ-only selection never accepts PNX1, including restart/reorg/downgrade cases |
 | Research command | `trillionnium/crates/trnm-research-protocol/src/command.rs` | `SignedResearchCommandV1` with Ed25519 Nakama/Hepta role | Replace authority-root verification and revoke old authorization at activation epoch |
-| Research state authorization | `trillionnium/crates/trnm-research-protocol/src/state.rs` | `ResearchProtocolStateV1`-style apply validates `SignedResearchCommandV1` then permits Nakama/Hepta public keys via `self.authorities.authorizes` | Pin an independent PQ authority registry and version/epoch; verify all state apply/handoff callers and refuse old signed commands after PQ activation |
+| Research state authorization | `trillionnium/crates/trnm-research-protocol/src/state.rs` | `ResearchProtocolState::apply` validates `SignedResearchCommandV1` then permits Nakama/Hepta public keys via `self.authorities.authorizes` | Pin an independent PQ authority registry and version/epoch; verify all state apply/handoff callers and refuse old signed commands after PQ activation |
 | Agent market task store | `trillionnium/crates/trnm-task-kernel/src/store.rs` | Ed25519 session/controller verification | PQ owner/session binding, replay, provenance and final-use checks on actual dispatch path |
 | Bilateral settlement | `trillionnium/crates/trnm-service-settlement/src/engine.rs` | `SIGNATURE_SCHEME_ED25519_V1`, registered bilateral keys | PQ provider+consumer settlement, independent registry, failure/reorg and anti-downgrade tests |
 
@@ -64,7 +64,7 @@ This is a development-profile fallback, **not evidence of a PQ-mode bypass
 or an activated public listener**; qualification requires a concrete
 genesis-profile/caller trace and adversarial cross-profile execution.
 
-`ResearchProtocolStateV1`'s command apply path checks the signed
+`ResearchProtocolState::apply` checks the signed
 command and then authorizes its Nakama/Hepta signer against a stored
 classic public-key roster. Tracking `command.rs` alone was not a complete
 trust-root audit, because a separately stored authority set and its caller
