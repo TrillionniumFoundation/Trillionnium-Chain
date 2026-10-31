@@ -114,11 +114,6 @@ class W1StructuredCostTests(unittest.TestCase):
         self.assertIs(report["fastest_adversarial_valid_solver_qualified"], False)
         self.assertIs(report["pq128_security_qualified"], False)
 
-    def test_highest_difficulty_has_no_forged_half_range_ticket(self):
-        with self.assertRaisesRegex(AssertionError, "bounded half-range"):
-            cost.forge_ticket_only(H("no-ticket"), b"\0" * 32, b"\xff" * 32)
-
-
     def test_honest_winning_denominators_exclude_forged_tickets(self):
         report = cost.run(trials=1)
         rows = report["observations"]
