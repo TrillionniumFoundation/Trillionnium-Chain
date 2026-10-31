@@ -70,8 +70,13 @@ The following are not accepted by this contract:
   and original Journal initialization. The generic mixed-owner opener remains
   denied; this separate construction is not arbitrary-fork recovery, an upgrade
   of an existing namespace, or independently accepted unattended operation;
-- research archive plus PQ application, and classic CLI/public-submit automatic
-  parent recovery plus PQ application: explicit rejection is not migration;
+- research archive plus PQ application: `AuthenticatedStateArchive` rejects the
+  unsupported application profile before opening SQLite or invoking progress;
+  empty paths and existing database/WAL bytes are preserved. The retained
+  archive execution and packet binding remain classical, so this refusal does
+  not complete archive migration;
+- classic CLI/public-submit automatic parent recovery plus PQ application:
+  explicit rejection is not migration;
 - production confidentiality, PQ TLS endpoint identity, public WAN availability,
   physical rollback resistance, quantum-effective PoN hardness or proof-system
   security;

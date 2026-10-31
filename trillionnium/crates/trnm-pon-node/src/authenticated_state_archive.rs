@@ -13,6 +13,8 @@
 //! selector or production storage qualification. Logical quotas do not bound the
 //! physical database/WAL allocation, and no pruning or local-operation rollback
 //! is provided here.
+//! The retained execution and packet binding are classical. PQ application
+//! profiles are refused before opening an archive or touching existing files.
 use crate::account_archive_execution::{
     self,
     state_witness::{commitment_from_complete_state, StateCommitment, StateWitnessProgress},
@@ -35,6 +37,7 @@ const MAX_ROW_BYTES: usize = 32 * 1024 * 1024;
 
 #[derive(Debug)]
 pub enum Error {
+    UnsupportedProfile,
     Context,
     Source,
     MissingCheckpoint,
@@ -316,6 +319,12 @@ fn context(node: &Node) -> Context {
         genesis: node.settings().genesis(),
     }
 }
+fn require_supported_profile(node: &Node) -> Result<()> {
+    if node.settings().app.is_pq_account_profile() {
+        return Err(Error::UnsupportedProfile);
+    }
+    Ok(())
+}
 impl AuthenticatedStateArchive {
     pub fn open(path: &Path, node: &Node, limits: Limits) -> Result<Self> {
         Self::open_with_progress(path, node, limits, &|_| true)
@@ -329,6 +338,7 @@ impl AuthenticatedStateArchive {
         limits: Limits,
         progress: &(impl Fn(Progress) -> bool + Sync),
     ) -> Result<Self> {
+        require_supported_profile(node)?;
         check(progress, Progress::BeforeRead)?;
         let context = context(node);
         let result = Self {
@@ -356,6 +366,7 @@ impl AuthenticatedStateArchive {
         Ok(result)
     }
     fn source(&self, node: &Node) -> Result<()> {
+        require_supported_profile(node)?;
         if context(node) != self.context {
             return Err(Error::Context);
         }
