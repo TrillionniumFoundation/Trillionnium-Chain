@@ -73,12 +73,11 @@ impl PqHeptaAuthoritySetV2 {
         pins.sort_by(|a, b| a.signer_did.cmp(&b.signer_did));
         let mut entries = Vec::with_capacity(pins.len());
         for pin in pins {
-            if entries
-                .last()
-                .is_some_and(|(previous, _): &(PqHeptaAuthorityPinV2, PqNativeVerifier)| {
+            if entries.last().is_some_and(
+                |(previous, _): &(PqHeptaAuthorityPinV2, PqNativeVerifier)| {
                     previous.signer_did == pin.signer_did
-                })
-            {
+                },
+            ) {
                 // Exactly one current generation per DID. Older generations
                 // cannot be made valid by including both keys in the roster.
                 return Err(PqHeptaHandoffError::InvalidPin);
@@ -189,8 +188,9 @@ impl SignedHeptaAdmissionV2 {
         if admission.len() > u16::MAX as usize {
             return Err(PqHeptaHandoffError::MalformedWire);
         }
-        let mut wire = Vec::with_capacity(8 + 2 + self.chain_id.len() + self.signer_did.len()
-            + 32 + 8 + 2 + admission.len());
+        let mut wire = Vec::with_capacity(
+            8 + 2 + self.chain_id.len() + self.signer_did.len() + 32 + 8 + 2 + admission.len(),
+        );
         wire.extend_from_slice(WIRE_MAGIC);
         wire.extend_from_slice(&[HEPTA_PQ_HANDOFF_VERSION, ALGORITHM, 0, 0]);
         wire.push(self.chain_id.len() as u8);
@@ -254,15 +254,19 @@ impl SignedHeptaAdmissionV2 {
         let mut signer_key_id = [0; 32];
         signer_key_id.copy_from_slice(take(wire, &mut cursor, 32)?);
         let signer_generation = u64::from_be_bytes(
-            take(wire, &mut cursor, 8)?.try_into().map_err(|_| PqHeptaHandoffError::MalformedWire)?
+            take(wire, &mut cursor, 8)?
+                .try_into()
+                .map_err(|_| PqHeptaHandoffError::MalformedWire)?,
         );
         let admission_len = u16::from_be_bytes(
-            take(wire, &mut cursor, 2)?.try_into().map_err(|_| PqHeptaHandoffError::MalformedWire)?
+            take(wire, &mut cursor, 2)?
+                .try_into()
+                .map_err(|_| PqHeptaHandoffError::MalformedWire)?,
         ) as usize;
         let encoded_admission = take(wire, &mut cursor, admission_len)?;
         let mut decoder = Decoder::new(encoded_admission);
-        let admission = HeptaArtifactAdmissionV1::decode(&mut decoder)
-            .map_err(HeptaHandoffError::from)?;
+        let admission =
+            HeptaArtifactAdmissionV1::decode(&mut decoder).map_err(HeptaHandoffError::from)?;
         decoder.finish().map_err(HeptaHandoffError::from)?;
         if admission.canonical_bytes() != encoded_admission {
             return Err(PqHeptaHandoffError::MalformedWire);
@@ -272,7 +276,12 @@ impl SignedHeptaAdmissionV2 {
             return Err(PqHeptaHandoffError::MalformedWire);
         }
         let signed = Self {
-            chain_id, signer_did, signer_key_id, signer_generation, admission, signature,
+            chain_id,
+            signer_did,
+            signer_key_id,
+            signer_generation,
+            admission,
+            signature,
         };
         signed.validate_unsigned()?;
         if signed.encoded_bytes()? != wire {
@@ -287,16 +296,22 @@ fn take<'a>(
     cursor: &mut usize,
     count: usize,
 ) -> Result<&'a [u8], PqHeptaHandoffError> {
-    let end = cursor.checked_add(count).ok_or(PqHeptaHandoffError::MalformedWire)?;
-    let bytes = wire.get(*cursor..end).ok_or(PqHeptaHandoffError::MalformedWire)?;
+    let end = cursor
+        .checked_add(count)
+        .ok_or(PqHeptaHandoffError::MalformedWire)?;
+    let bytes = wire
+        .get(*cursor..end)
+        .ok_or(PqHeptaHandoffError::MalformedWire)?;
     *cursor = end;
     Ok(bytes)
 }
 
 fn valid_chain(id: &str) -> bool {
-    !id.is_empty() && id.len() <= 64 && id.bytes().all(|b| {
-        b.is_ascii_lowercase() || b.is_ascii_digit() || matches!(b, b'-' | b'_' | b'.' | b':')
-    })
+    !id.is_empty()
+        && id.len() <= 64
+        && id.bytes().all(|b| {
+            b.is_ascii_lowercase() || b.is_ascii_digit() || matches!(b, b'-' | b'_' | b'.' | b':')
+        })
 }
 
 fn valid_did(did: &str) -> bool {
