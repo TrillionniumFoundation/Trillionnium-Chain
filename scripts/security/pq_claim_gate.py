@@ -107,6 +107,13 @@ PINNED_CONSENSUS_UNQUALIFIED_PARAMETERS = {
     "module_maturity": "config/pon/module-maturity-v1.json",
     "invariant_contract": "config/pon/invariants-v2.json",
 }
+# The checked-out consensus declaration is explicitly research-only. A nonempty
+# scope is not sufficient: changing this text can turn the same false flags
+# into an apparent production assertion for a downstream parser.
+PINNED_NATIVE_APPLICATION_SCOPE = (
+    "profile-gated-native-ledger-model-evidence-and-recovery-not-publicly-qualified"
+)
+
 ALLOWED_CONSENSUS_FIELDS = (
     frozenset(PINNED_CONSENSUS_UNQUALIFIED_PARAMETERS)
     | frozenset(PRODUCTION_FLAGS)
@@ -297,6 +304,12 @@ def inspect(root: Path) -> dict:
                     blockers.append({
                         "kind": "invalid_consensus_scope", "path": PATHS["consensus"],
                     })
+                elif scope != PINNED_NATIVE_APPLICATION_SCOPE:
+                    blockers.append({
+                        "kind": "unreviewed_consensus_scope_change",
+                        "path": PATHS["consensus"],
+                        "field": "native_application_scope",
+                    })
                 production = {flag: config.get(flag) for flag in PRODUCTION_FLAGS}
                 # JSON numbers and strings must never be coerced to a boolean
                 # activation decision by some other consumer.
@@ -337,7 +350,7 @@ def main():
         "unreviewed_w1_research_field",
         "unreviewed_consensus_profile_field",
         "unreviewed_consensus_unqualified_parameter_change",
-        "invalid_consensus_scope",
+        "invalid_consensus_scope", "unreviewed_consensus_scope_change",
         "unreadable_w1_guest_source", "escaped_w1_guest_source",
         "w1_guest_source_digest_mismatch",
         "unsupported_proof_receipt_kind", "invalid_proof_policy_flag_type",
