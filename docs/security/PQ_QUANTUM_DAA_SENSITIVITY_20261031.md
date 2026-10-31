@@ -13,14 +13,16 @@ python3 scripts/ci/pq_quantum_daa_scenarios.py --epochs 4
 
 The harness compares an assumed header timestamp increment of 1 second with the nominal 10 seconds across four retarget epochs, granting each hypothetical header a matching wall clock. It checks each timestamp through \`timestamp_state\`. These two branches do **not** use the same elapsed wall time, physical mining budget, proof production, network delay or fork-choice competition, so comparing their cumulative chainwork is **not an executable attack**.
 
-| Epoch | Nominal per-header chainwork | Fast-timestamp per-header chainwork | Fast-timestamp ideal sqrt-search index |
-| --- | ---: | ---: | ---: |
-| 1 | 2 | 2 | 2 |
-| 2 | 2 | 7 | 3 |
-| 3 | 2 | 31 | 6 |
-| 4 | 2 | 123 | 12 |
+The actual reference implementation retargets at heights **16, 32, 48, 64**, using the **previous** 16 ancestor headers; the first such window includes genesis. Thus the boundary block already has the adjusted target. The numbers below represent each epoch's *last (retarget-boundary) block*, not a flat difficulty for the entire epoch.
 
-Those are integer-reference calculations under the uniform-search *proxy*, not measurements. Each column is per header at that epoch's target; the simulator also returns complete cumulative values and exact target hex strings. Because integer targets and work truncate, the result is not exactly 4x at each epoch. For a single known target, the model labels \`ceil(2^256/(target+1))\` an expected *classical trials proxy*, and \`ceil(sqrt(proxy))\` an **idealized quantum search index**. It does **not** convert the index to actual Grover iteration counts, reversible gates, logical qubits, fault-correction cycles, or quantum seconds. Existing W1 is a complete mathematical/transcript relation with amortizable setup and structured legal algorithms, not necessarily independent random-oracle trials. Consequently neither proxy bounds the actual cheapest miner.
+| Epoch / boundary height | Nominal boundary chainwork | Fast-timestamp boundary chainwork | Fast-timestamp ideal sqrt-search index | Fast-timestamp 16-block epoch chainwork |
+| --- | ---: | ---: | ---: | ---: |
+| 1 / 16 | 2 | 7 | 3 | 37 |
+| 2 / 32 | 2 | 31 | 6 | 136 |
+| 3 / 48 | 2 | 123 | 12 | 588 |
+| 4 / 64 | 2 | 485 | 23 | 2,330 |
+
+These are integer-reference calculations under the uniform-search *proxy*, not measurements. Total cumulative chainwork is 3,091 vs 128 after 64 hypothetical blocks under **different** assumed elapsed wall times; the ratio is not a demonstrated physical cost advantage or executable fork. The simulator returns exact target hex strings and complete per-epoch and cumulative values. Because integer targets and work truncate, the result is not exactly 4x at each epoch. For a single known target, the model labels \`ceil(2^256/(target+1))\` an expected *classical trials proxy*, and \`ceil(sqrt(proxy))\` an **idealized quantum search index**. It does **not** convert the index to actual Grover iteration counts, reversible gates, logical qubits, fault-correction cycles, or quantum seconds. Existing W1 is a complete mathematical/transcript relation with amortizable setup and structured legal algorithms, not necessarily independent random-oracle trials. Consequently neither proxy bounds the actual cheapest miner.
 
 ## Required real qualification (all unclosed)
 
