@@ -38,3 +38,20 @@ native resource limits, quantum mining parity or a safe public work predicate.
 Original security obligations from the PoN specification and Issue #562
 remain open. Existing failed independent tests must not be erased, and this
 research-only control must not be used to assert work-profile qualification.
+
+## Second cost candidate: algebraically structured, genuinely legal W1 proofs
+
+For the exact zero, diagonal and rank-one input families, the prover can
+derive the true output C=A×B algebraically instead of executing the generic
+W1 decoding correction. **The challenge-dependent noise and all 512
+cumulative transcript tiles still run.** The emitted 49,188-byte full proof
+must match the original scalar prover byte-for-byte on the same task/challenge,
+and it still passes the full reference verifier. The dense family retains
+its unmodified original path.
+
+The runner now reports a separate \`legal_structured_prover_cpu_ns\` sample
+and byte-identity check only for eligible families; ticket-only forged digests
+continue to be measured separately and rejected by the full oracle. CPU
+ratios are not pass thresholds, lower bounds, or estimates of GPU/ASIC/quantum
+speedups. Task provenance, cheapest *legal* miner, difficulty-adjustment attack,
+real node intake, independent witness and PQ128 remain NO_GO.
