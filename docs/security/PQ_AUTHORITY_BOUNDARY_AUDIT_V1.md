@@ -8,6 +8,8 @@ The candidate snapshot is based on the exact #593 head `6ec0bc9274cce37a83642686
 | --- | --- | --- | --- |
 | Hepta artifact handoff | `trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs` | `SignedHeptaAdmissionV1` Ed25519 | Require independently pinned V2 ML-DSA authority; refuse V1-as-PQ fallback; prove actual caller uses new gate |
 | Cell provider discovery | `trillionnium/crates/trnm-data-availability/src/cell/discovery.rs` | `CellProviderRecordV1` Ed25519 | Independently pinned PQ provider roster/lease; no classic discovery downgrade |
+| DA committee, batch author and attestations | `trillionnium/crates/trnm-data-availability/src/types.rs` | `DaCommitteeDescriptorV1`, `DaBatchAuthorV1` and strict Ed25519 verifier | Pin a versioned PQ committee/author/attestor registry and prove full retrieval/acceptance caller graph |
+| DA full-range retrieval | `trillionnium/crates/trnm-data-availability/src/retrieval.rs` | Strict Ed25519 requester and responder receipts | Bind independent PQ requester and responder authority, epoch, replay and roster freshness without V1 fallback |
 | Node authenticated ingress | `trillionnium/crates/trnm-pon-node/src/ingress.rs` | Development peer allowlist + `verify_hex_strict` from Ed25519 primitive | Record real listener and dispatch authorization; enforce independently owned PQ identities, no legacy fallback |
 | Transfer transaction | `trillionnium/crates/trnm-types/src/transfer.rs` | `TransferTx` accepts `ed25519` signature scheme and address derivation | Versioned, domain-separated PQ native transaction, nonce and reorg/rollback ownership rules |
 | Research command | `trillionnium/crates/trnm-research-protocol/src/command.rs` | `SignedResearchCommandV1` with Ed25519 Nakama/Hepta role | Replace authority-root verification and revoke old authorization at activation epoch |
@@ -30,3 +32,21 @@ Every inventory migration requires an explicit audit of actual call sites,
 algorithms, independently pinned keys, downgrade behavior and rollout epoch.
 A clean unqualified baseline continues to report `pq_chain_qualified=false`
 and exit 0; this guard does not activate production.
+
+
+## Additional unqualified boundary controls
+
+Child of #597. `types.rs` signs/validates batch authors and DA
+committee attestations using the classical `STRICT_ED25519_SCHEME_V1`;
+`retrieval.rs` verifies classical requester and responder signatures.
+Both are candidate code paths, **not evidence of production exposure**.
+The runnable inventory now tracks their source bytes, roles and PR
+workflow path changes. Neither path is silently categorized as PQ secure.
+
+The `--assert-unqualified` guard now treats only explicit
+`classical_authority` and `unqualified_proof` findings as expected
+unqualified baseline observations. **Any newly emitted finding kind is
+fatal by default**, including an accidental change of the report's
+negative PQ/authority/security assertions. Future audit work must
+explicitly review and classify a new kind before it can be ignored.
+This guard is not an externally audited PQ trust root or a runtime gate.

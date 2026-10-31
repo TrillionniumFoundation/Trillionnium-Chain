@@ -15,6 +15,8 @@ from pathlib import Path
 PATHS = {
     "hepta_handoff": "trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs",
     "cell_discovery": "trillionnium/crates/trnm-data-availability/src/cell/discovery.rs",
+    "da_auth": "trillionnium/crates/trnm-data-availability/src/types.rs",
+    "da_retrieval": "trillionnium/crates/trnm-data-availability/src/retrieval.rs",
     "transport_ingress": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
     "legacy_transfer": "trillionnium/crates/trnm-types/src/transfer.rs",
     "research_command": "trillionnium/crates/trnm-research-protocol/src/command.rs",
@@ -26,6 +28,13 @@ PATHS = {
 CLASSICAL_MARKERS = {
     "hepta_handoff": ("ed25519_dalek", "SignedHeptaAdmissionV1"),
     "cell_discovery": ("ed25519_dalek", "CellProviderRecordV1"),
+    "da_auth": ("DaCommitteeDescriptorV1", "DaBatchAuthorV1",
+                "author_key_scheme: STRICT_ED25519_SCHEME_V1",
+                "pub(crate) fn verify_strict("),
+    "da_retrieval": ("RetrievalRequesterAuthorityV1",
+                     "requester_key_scheme: STRICT_ED25519_SCHEME_V1",
+                     "responder_key_scheme: STRICT_ED25519_SCHEME_V1",
+                     "verify_strict("),
     "transport_ingress": ("verify_hex_strict", "fn authenticate_request("),
     "legacy_transfer": ("ed25519_dalek", 'algo != "ed25519"', "impl TransferTx"),
     "research_command": ("ed25519_dalek", "SignedResearchCommandV1"),
@@ -37,12 +46,22 @@ CLASSICAL_MARKERS = {
 CLASSICAL_BOUNDARY_ROLES = {
     "hepta_handoff": "hepta_artifact_admission_v1",
     "cell_discovery": "cell_provider_advertising_v1",
+    "da_auth": "data_availability_committee_batch_author_attestation_v1",
+    "da_retrieval": "data_availability_retrieval_request_and_response_v1",
     "transport_ingress": "allowlisted_development_node_transport",
     "legacy_transfer": "transfer_transaction_signature",
     "research_command": "research_command_nakama_hepta_authority",
     "task_store": "agent_market_controller_session_auth",
     "service_settlement": "bilateral_settlement_authorization",
 }
+# These two findings describe the known unqualified baseline, not successful
+# PQ migration. Every *other* finding, including new future kinds, is fatal
+# for --assert-unqualified unless explicitly reviewed and classified here.
+EXPECTED_UNQUALIFIED_FINDINGS = frozenset(("classical_authority", "unqualified_proof"))
+UNQUALIFIED_ASSERTIONS = (
+    "pq_chain_qualified", "complete_authority_inventory_reviewed",
+    "quantum_work_lower_bound_proven", "independent_cryptographic_acceptance",
+)
 PRODUCTION_FLAGS = ("production_candidate", "production_consensus_activation", "public_testnet_ready", "release_ready")
 # These must remain explicit Boolean false in the pinned research-only W1 backend.
 # Turning one on, removing it, or changing its type cannot be an implicit
@@ -365,6 +384,20 @@ def inspect(root: Path) -> dict:
         "known_open_findings": blockers,
     }
 
+def has_unreviewed_findings(report: dict) -> bool:
+    """Default-deny newly introduced audit findings or accidental PQ claims."""
+    if any(report.get(field) is not False for field in UNQUALIFIED_ASSERTIONS):
+        return True
+    findings = report.get("known_open_findings")
+    if not isinstance(findings, list):
+        return True
+    return any(
+        not isinstance(item, dict)
+        or item.get("kind") not in EXPECTED_UNQUALIFIED_FINDINGS
+        for item in findings
+    )
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[2])
@@ -373,23 +406,7 @@ def main():
     args = parser.parse_args()
     report = inspect(args.root)
     print(json.dumps(report, indent=2, sort_keys=True))
-    if args.assert_unqualified and any(item["kind"] in (
-        "missing_source", "untrusted_checkout_source_path", "unreadable_source", "unreadable_proof_profile",
-        "unreviewed_classical_authority_boundary_change",
-        "unreadable_consensus_profile", "invalid_proof_profile_shape",
-        "invalid_proof_qualification_flag_type", "invalid_consensus_profile_shape",
-        "invalid_production_flag_type", "unreviewed_pq128_proof_claim",
-        "duplicate_proof_json_member", "duplicate_consensus_json_member",
-        "unreviewed_w1_research_parameter_change",
-        "unreviewed_w1_research_field",
-        "unreviewed_consensus_profile_field",
-        "unreviewed_consensus_unqualified_parameter_change",
-        "invalid_consensus_scope", "unreviewed_consensus_scope_change",
-        "unreadable_w1_guest_source", "escaped_w1_guest_source",
-        "w1_guest_source_digest_mismatch",
-        "unsupported_proof_receipt_kind", "invalid_proof_policy_flag_type",
-        "unsafe_proof_policy_enabled",
-        "production_claim_requires_independent_pq_review") for item in report["known_open_findings"]):
+    if args.assert_unqualified and has_unreviewed_findings(report):
         raise SystemExit(2)
 
 if __name__ == "__main__":
