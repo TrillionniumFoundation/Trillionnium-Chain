@@ -66,6 +66,38 @@ class ClaimGateTests(unittest.TestCase):
                     for row in findings
                 ))
 
+    def test_m06_legacy_envelope_and_research_state_are_audited(self):
+        # These two authority decisions were outside the previous inventory.
+        # The ordinary M06 PNX1 branch authenticates with Ed25519 when neither
+        # PQ profile is enabled; the research state authorizes the validated
+        # Ed25519 command against its Nakama/Hepta public-key roster.
+        expected = {
+            "native_m06_envelope": (
+                "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+                "native_m06_pnx1_classical_signature_profile",
+            ),
+            "research_state": (
+                "trillionnium/crates/trnm-research-protocol/src/state.rs",
+                "research_state_classical_nakama_hepta_authority_set",
+            ),
+        }
+        findings = module.inspect(self.root)["known_open_findings"]
+        for key, (source_path, role) in expected.items():
+            with self.subTest(boundary=key):
+                self.assertEqual(module.PATHS[key], source_path)
+                self.assertEqual(module.CLASSICAL_BOUNDARY_ROLES[key], role)
+                checked_out = SCRIPT.parents[2] / source_path
+                body = checked_out.read_text(encoding="utf-8")
+                self.assertTrue(all(marker in body for marker in module.CLASSICAL_MARKERS[key]))
+                self.assertTrue(any(
+                    row["kind"] == "classical_authority"
+                    and row["path"] == source_path
+                    and row["boundary"] == role
+                    for row in findings
+                ))
+        # Existing source-drift and workflow-trigger tests cover every member
+        # of CLASSICAL_MARKERS, including both explicit additions.
+
     def test_future_finding_or_accidental_pq_claim_is_default_denied(self):
         from contextlib import redirect_stdout
         from io import StringIO

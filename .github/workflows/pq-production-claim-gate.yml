@@ -22,7 +22,9 @@ on:
       - trillionnium/crates/trnm-data-availability/src/retrieval.rs
       - trillionnium/crates/trnm-pon-node/src/ingress.rs
       - trillionnium/crates/trnm-types/src/transfer.rs
+      - trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs
       - trillionnium/crates/trnm-research-protocol/src/command.rs
+      - trillionnium/crates/trnm-research-protocol/src/state.rs
       - trillionnium/crates/trnm-task-kernel/src/store.rs
       - trillionnium/crates/trnm-service-settlement/src/engine.rs
       - trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/**
@@ -39,7 +41,9 @@ on:
       - trillionnium/crates/trnm-data-availability/src/retrieval.rs
       - trillionnium/crates/trnm-pon-node/src/ingress.rs
       - trillionnium/crates/trnm-types/src/transfer.rs
+      - trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs
       - trillionnium/crates/trnm-research-protocol/src/command.rs
+      - trillionnium/crates/trnm-research-protocol/src/state.rs
       - trillionnium/crates/trnm-task-kernel/src/store.rs
       - trillionnium/crates/trnm-service-settlement/src/engine.rs
       - trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/**
