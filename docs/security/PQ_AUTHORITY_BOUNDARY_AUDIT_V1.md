@@ -17,3 +17,16 @@ The candidate snapshot is based on the exact #593 head `6ec0bc9274cce37a83642686
 **Not closed by this inventory**: production reachability and all authority callers; governance, upgrade, release and rescue ownership; original classic key custody; hybrid AND-verification transition policy; capacity under invalid ML-DSA inputs; W1 transparent prover/FRI and PQ-128 external security assessment; quantum cheapest-legal PoN attack lower bound and difficulty/chain-selection analysis; external monotonic rollback anchor with independently durable witness roster. A new version must record each owner, last classic fallback, caller and threat model with positive and adversarial evidence.
 
 A test pins every candidate marker to real source bytes. If an implementation changes or disappears, update the inventory only after reviewing the effective new trust root; do not mark the chain qualified on an absent grep match.
+
+## Fail closed on unreviewed authority-source transitions
+
+The standalone `--assert-unqualified` check now rejects a missing or
+renamed classical verifier marker with
+`unreviewed_classical_authority_boundary_change` (exit 2). Previously, such
+an edit could make the known-open finding disappear while leaving the source
+path present and the CLI green. This is not proof that the old authority is
+gone, that its callers have migrated, or that a new PQ trust root is valid.
+Every inventory migration requires an explicit audit of actual call sites,
+algorithms, independently pinned keys, downgrade behavior and rollout epoch.
+A clean unqualified baseline continues to report `pq_chain_qualified=false`
+and exit 0; this guard does not activate production.

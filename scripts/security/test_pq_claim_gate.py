@@ -192,6 +192,52 @@ class ClaimGateTests(unittest.TestCase):
                 # exact file; otherwise a verifier edit could skip this gate.
                 self.assertGreaterEqual(workflow.count("- " + module.PATHS[key]), 2)
 
+    def test_unreviewed_classical_authority_changes_refuse_claim_gate(self):
+        import subprocess
+        import sys
+
+        # Previous standalone --assert-unqualified ignored a verifier path
+        # when only one of its inventory strings disappeared. It returned 0
+        # even though no replacement trust root had been audited.
+        for key, markers in module.CLASSICAL_MARKERS.items():
+            with self.subTest(boundary=key):
+                path = self.root / module.PATHS[key]
+                original = path.read_text(encoding="utf-8")
+                self.assertIn(markers[0], original)
+                changed = original.replace(markers[0], "unreviewed_auth_change", 1)
+                path.write_text(changed, encoding="utf-8")
+                try:
+                    report = module.inspect(self.root)
+                    findings = report["known_open_findings"]
+                    self.assertFalse(report["pq_chain_qualified"])
+                    self.assertFalse(report["complete_authority_inventory_reviewed"])
+                    self.assertTrue(any(
+                        row["kind"] == "unreviewed_classical_authority_boundary_change"
+                        and row["path"] == module.PATHS[key]
+                        and row["boundary"] == module.CLASSICAL_BOUNDARY_ROLES[key]
+                        for row in findings
+                    ), findings)
+                    result = subprocess.run(
+                        [sys.executable, str(SCRIPT), "--root", str(self.root),
+                         "--assert-unqualified"],
+                        capture_output=True, text=True, check=False,
+                    )
+                    self.assertEqual(result.returncode, 2, result.stdout)
+                    self.assertIn("unreviewed_classical_authority_boundary_change",
+                                  result.stdout)
+                finally:
+                    path.write_text(original, encoding="utf-8")
+
+        # Normal source still reports unqualified PQ and exits 0 so audits
+        # are not confused with an unauthorized production activation.
+        restored = subprocess.run(
+            [sys.executable, str(SCRIPT), "--root", str(self.root),
+             "--assert-unqualified"],
+            capture_output=True, text=True, check=False,
+        )
+        self.assertEqual(restored.returncode, 0, restored.stdout)
+        self.assertIn("unqualified_proof", restored.stdout)
+
     def test_classical_markers_disappearing_does_not_grant_pq(self):
         for key in module.CLASSICAL_MARKERS:
             (self.root / module.PATHS[key]).write_text("replaced", encoding="utf-8")
