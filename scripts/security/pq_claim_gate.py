@@ -30,6 +30,7 @@ PATHS = {
     "state_import": "trillionnium/crates/trnm-state-import/src/lib.rs",
     "mempool_admission": "trillionnium/crates/trnm-mempool/src/typed_admission.rs",
     "interop_identity": "trillionnium/crates/trnm-types/src/interop_identity.rs",
+    "relay_auth": "trillionnium/crates/trnm-types/src/relay.rs",
     "w1_backend": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json",
     "consensus": "config/consensus-mainline.json",
 }
@@ -110,6 +111,13 @@ DELEGATED_MARKERS = {
         "pub fn revoke_did(",
         "pub fn verify_capability(",
     ),
+    "relay_auth": (
+        "pub struct RelayAuthVerifier",
+        "pub fn for_chain(",
+        "verify_signature: impl Fn(&RelayAuthEnvelope) -> bool",
+        "if !verify_signature(env) {",
+        "pub fn verify_test_sig_compat(&self, key_material: &str) -> bool",
+    ),
 }
 DELEGATED_BOUNDARY_ROLES = {
     "governance_guard": "governance_guard_externally_authenticated_caller",
@@ -118,6 +126,7 @@ DELEGATED_BOUNDARY_ROLES = {
     "state_import": "state_migration_finality_checkpoint_and_cutover_signers",
     "mempool_admission": "mempool_canonical_signer_and_pending_nonce_authority",
     "interop_identity": "interop_did_capability_external_actor_authentication",
+    "relay_auth": "relay_callback_authentication_and_test_signature_exposure",
 }
 # SHA-256 of each reviewed *source file's raw bytes* at PR #613 HEAD
 # 298f09505bebbf1b7befcd725a1b90e04c15548b. This is a conservative
@@ -141,7 +150,9 @@ PINNED_AUTHORITY_SOURCE_SHA256 = {
     "release_bundle": "ab38e859834e899000f33e8d85b01d7a18ee779d726b6382b58498bdce071cc2",
     "state_import": "d757c67829ab64fba27743af515bc354b1752c1c80e7b2d5bc820cfa20cff970",
     "mempool_admission": "ac777c8fa3a9953343fd079a09aca43bd672d8c4c0998cb50a8f934d675e2fe4",
-    "interop_identity": "7a90dcc212b76bfb18ebcd8cd8697f1fc6d052371b9df900a714b92293ba99e9"
+    "interop_identity": "7a90dcc212b76bfb18ebcd8cd8697f1fc6d052371b9df900a714b92293ba99e9",
+    # trnm-types::relay is exported by lib.rs; hash pinned at PR #615 parent.
+    "relay_auth": "610bba86023958c903e82e4bdff654297edf72be99bd9a5f8aee8f2f78357672"
 }
 
 # These known findings describe the unqualified baseline, not successful
