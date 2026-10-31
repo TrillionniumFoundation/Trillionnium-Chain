@@ -26,6 +26,10 @@ PATHS = {
     "service_settlement": "trillionnium/crates/trnm-service-settlement/src/engine.rs",
     "governance_guard": "trillionnium/crates/trnm-governance-guard/src/lib.rs",
     "control_plane": "trillionnium/crates/trnm-control-plane/src/lib.rs",
+    "release_bundle": "trillionnium/crates/trnm-release-bundle/src/lib.rs",
+    "state_import": "trillionnium/crates/trnm-state-import/src/lib.rs",
+    "mempool_admission": "trillionnium/crates/trnm-mempool/src/typed_admission.rs",
+    "interop_identity": "trillionnium/crates/trnm-types/src/interop_identity.rs",
     "w1_backend": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json",
     "consensus": "config/consensus-mainline.json",
 }
@@ -80,10 +84,40 @@ DELEGATED_MARKERS = {
         "pub fn evaluate(", "self.signature_verifier",
         ".verify_plan_signature(plan)",
     ),
+    "release_bundle": (
+        "pub trait ReleaseSignatureVerifierV0",
+        "fn verify_release_signature(&self, bundle: &ReleaseBundleV0)",
+        "pub fn verify_release_bundle_v0<V>(",
+        ".verify_release_signature(bundle)",
+    ),
+    "state_import": (
+        "pub trait SourceFinalityVerifierV0",
+        "fn verify_finalized_export(&self, header: &FinalizedExportHeaderV0)",
+        "pub trait SourceCheckpointContextVerifierV0",
+        "pub trait CutoverSignatureVerifierV0",
+        "fn verify_attestation(&self, attestation: &CutoverAttestationV0)",
+        "pub fn verify_cutover_agreement_v0<V>(",
+    ),
+    "mempool_admission": (
+        "pub trait SignedAdmissionHooks<E: ?Sized>",
+        "fn verify_signature(",
+        "pub fn admit_signed_with_pending_nonce<E, H, A>(",
+    ),
+    "interop_identity": (
+        "pub struct IdentityRegistry",
+        "fn ensure_actor_controls_did(actor: &str, did: &DidRecord)",
+        "pub fn issue_capability(",
+        "pub fn revoke_did(",
+        "pub fn verify_capability(",
+    ),
 }
 DELEGATED_BOUNDARY_ROLES = {
     "governance_guard": "governance_guard_externally_authenticated_caller",
     "control_plane": "control_plane_injected_plan_signature_verifier",
+    "release_bundle": "release_bundle_host_injected_signature_trust_root",
+    "state_import": "state_migration_finality_checkpoint_and_cutover_signers",
+    "mempool_admission": "mempool_canonical_signer_and_pending_nonce_authority",
+    "interop_identity": "interop_did_capability_external_actor_authentication",
 }
 # These known findings describe the unqualified baseline, not successful
 # PQ migration. Every *other* finding, including new future kinds, is fatal
