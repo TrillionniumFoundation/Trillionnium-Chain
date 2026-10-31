@@ -62,12 +62,18 @@
 
 #![forbid(unsafe_code)]
 
+mod cell_swarm;
 mod codec;
 mod error;
 mod retrieval;
 mod store;
 mod types;
 
+pub use cell_swarm::{
+    CellSwarmAssemblerV0, CellSwarmDescriptorV0, CellSwarmDigestV0, CellSwarmErrorV0,
+    CellSwarmManifestV0, VerifiedCellSwarmBytesV0, MAX_CELL_SWARM_BYTES_V0,
+    MAX_CELL_SWARM_CHUNK_BYTES_V0, MAX_CELL_SWARM_CHUNKS_V0,
+};
 pub use error::{DaErrorCodeV1, DaErrorV1, DaResultV1};
 pub use retrieval::{
     DaChunkInclusionProofV1, MerkleStepV1, RetrievalProofV1, RetrievalReceiptBodyV1,
