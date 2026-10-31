@@ -1458,11 +1458,8 @@ fn signed_confirmation_phase(
                     if after == tip {
                         let final_started_ns = ns(epoch);
                         let final_cpu = ThreadCpuStamp::start();
-                        let observed = verifier.confirmation(
-                            transaction,
-                            included,
-                            ingress::now().unwrap(),
-                        );
+                        let observed =
+                            verifier.confirmation(transaction, included, ingress::now().unwrap());
                         let final_ended_ns = ns(epoch);
                         independent_final_confirmation_stage = Some(json!({
                             "confirmation_started_ns": final_started_ns,
