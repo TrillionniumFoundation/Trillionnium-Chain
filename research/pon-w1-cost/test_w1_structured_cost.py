@@ -9,7 +9,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent / "experiments"))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 import w1_valid_invalid_cost_v1 as cost
 
 from contract_wire import PARAMS, H
@@ -139,6 +139,16 @@ class W1StructuredCostTests(unittest.TestCase):
 
 
 
+    def test_research_files_do_not_extend_historical_runtime_inventory(self):
+        # Historical evidence was recorded against an exact source inventory.
+        root = Path(__file__).resolve().parents[2]
+        sys.path.insert(0, str(root / "scripts/ci"))
+        from check_evaluation_bundle_evidence import runtime
+        for relative in ("research/pon-w1-cost/w1_valid_invalid_cost_v1.py", "research/pon-w1-cost/test_w1_structured_cost.py"):
+            self.assertTrue((root / relative).is_file())
+            self.assertFalse(runtime(relative))
+        self.assertTrue(runtime("formal/pon-nakamoto-v1/work_oracle.py"))
+
 class W1SourceIdentityTests(unittest.TestCase):
     def frozen_source(self):
         temporary = tempfile.TemporaryDirectory(prefix="pon-w1-source-")
@@ -163,7 +173,7 @@ class W1SourceIdentityTests(unittest.TestCase):
             "config/pon/model-family-v1.json",
             "formal/pon-nakamoto-v1/work_oracle.py",
             "formal/pon-nakamoto-v1/contract_wire.py",
-            "formal/pon-nakamoto-v1/experiments/w1_valid_invalid_cost_v1.py",
+            "research/pon-w1-cost/w1_valid_invalid_cost_v1.py",
         })
 
     def test_exact_committed_blob_is_not_replaced_by_clean_looking_index(self):

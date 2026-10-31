@@ -19,8 +19,8 @@ eligible matrix structures (zero, diagonal, rank one, dense). For each:
 Reproduce from a checkout with original profile files intact:
 
 ```sh
-PYTHONDONTWRITEBYTECODE=1 python3 formal/pon-nakamoto-v1/test_w1_structured_cost.py
-PYTHONDONTWRITEBYTECODE=1 python3 formal/pon-nakamoto-v1/experiments/w1_valid_invalid_cost_v1.py --output /new/empty/output
+PYTHONDONTWRITEBYTECODE=1 python3 research/pon-w1-cost/test_w1_structured_cost.py
+PYTHONDONTWRITEBYTECODE=1 python3 research/pon-w1-cost/w1_valid_invalid_cost_v1.py --output /new/empty/output
 ```
 
 The output path must **not exist**. The report now **requires** a clean, exact Git HEAD/tree rather than an optional
