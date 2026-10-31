@@ -69,7 +69,9 @@ fn pq_only_account_profile_rejects_classical_public_v3_client_before_connection(
         );
         let error = result.unwrap_err();
         assert!(
-            error.to_string().contains("PUBLIC_CLASSICAL_FOR_PQ_PROFILE"),
+            error
+                .to_string()
+                .contains("PUBLIC_CLASSICAL_FOR_PQ_PROFILE"),
             "{error}"
         );
         assert_eq!(metrics.failed_stage, Some(PublicClientStage::Construction));
@@ -89,7 +91,9 @@ fn pq_only_account_profile_rejects_classical_public_v3_client_before_connection(
         None,
     );
     let error = result.unwrap_err();
-    assert!(!error.to_string().contains("PUBLIC_CLASSICAL_FOR_PQ_PROFILE"));
+    assert!(!error
+        .to_string()
+        .contains("PUBLIC_CLASSICAL_FOR_PQ_PROFILE"));
     assert_eq!(metrics.failed_stage, Some(PublicClientStage::Challenge));
 }
 
