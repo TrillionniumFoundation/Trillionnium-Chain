@@ -89,45 +89,58 @@ def simulate(config: dict, epochs: int, seconds_per_header: int) -> dict:
     initial = int(config['initial_target_hex'], 16)
     limit = int(config['pow_limit_hex'], 16)
     timestamp = config['genesis_timestamp']
-    ancestors = [timestamp]
+    # Match ledger.py target(parent) precisely: retarget BEFORE creating block
+    # 16,32,... using the PREVIOUS 16 ancestors (genesis included for 16).
+    headers = [(timestamp, initial)]
     target = initial
     cumulative_chainwork = 0
     cumulative_classical_proxy = 0
     cumulative_sqrt_index = 0
     rows = []
-    for epoch in range(epochs):
-        stamps = []
-        # Grant exactly the timestamp as a separately assumed wall clock.
-        # This checks local median/future constraints only, not feasible mining.
-        for _ in range(interval):
-            timestamp += step
-            if timestamp_state(timestamp, ancestors,
-                               timestamp, config['future_skew_seconds']) != 'admissible':
-                raise InvalidScenario('timestamp fails development median/future checks')
-            stamps.append(timestamp)
-            ancestors.append(timestamp)
+    for height in range(1, epochs * interval + 1):
+        if height % interval == 0:
+            target = retarget(headers[-1][1], headers[-interval][0],
+                              headers[-1][0], interval, spacing, limit)
+        timestamp += step
+        # Grant the header time as an assumed external clock. This checks
+        # isolated median/future constraints, NOT feasible real mining time.
+        if timestamp_state(timestamp, [h[0] for h in headers[-11:]],
+                           timestamp, config['future_skew_seconds']) != 'admissible':
+            raise InvalidScenario('timestamp fails development median/future checks')
+        headers.append((timestamp, target))
         p = target_search_proxies(target)
-        cumulative_chainwork += interval * p['chainwork']
-        cumulative_classical_proxy += interval * p['expected_classical_trials_proxy']
-        cumulative_sqrt_index += interval * p['ideal_sqrt_search_index']
-        target_next = retarget(target, stamps[0], stamps[-1], interval, spacing, limit)
-        rows.append({'epoch': epoch + 1, 'seconds_per_header_assumed': step,
-                     'first_timestamp': stamps[0], 'last_timestamp': stamps[-1],
-                     **p, 'next_target_hex': f'{target_next:064x}',
-                     'cumulative_chainwork': cumulative_chainwork,
-                     'cumulative_classical_trials_proxy': cumulative_classical_proxy,
-                     'cumulative_ideal_sqrt_search_index': cumulative_sqrt_index})
-        target = target_next
+        cumulative_chainwork += p['chainwork']
+        cumulative_classical_proxy += p['expected_classical_trials_proxy']
+        cumulative_sqrt_index += p['ideal_sqrt_search_index']
+        if height % interval == 1:
+            first_target = target
+            first_timestamp = timestamp
+            start_work = cumulative_chainwork - p['chainwork']
+        if height % interval == 0:
+            rows.append({'epoch': height // interval,
+                         'block_range': [height - interval + 1, height],
+                         'seconds_per_header_assumed': step,
+                         'first_timestamp': first_timestamp,
+                         'last_timestamp': timestamp,
+                         'start_target_hex': f'{first_target:064x}',
+                         'retarget_boundary_height': height,
+                         'boundary_target_hex': p['target_hex'],
+                         'boundary_chainwork': p['chainwork'],
+                         'boundary_ideal_sqrt_search_index': p['ideal_sqrt_search_index'],
+                         'epoch_chainwork': cumulative_chainwork - start_work,
+                         'cumulative_chainwork': cumulative_chainwork,
+                         'cumulative_classical_trials_proxy': cumulative_classical_proxy,
+                         'cumulative_ideal_sqrt_search_index': cumulative_sqrt_index})
     return {'schema': 'trnm-conditional-quantum-daa-sensitivity-v1',
             'status': 'UNQUALIFIED_HYPOTHETICAL',
             'production_activation': False, 'quantum_hardness_qualified': False,
             'notes': [
+                'Retarget applies at heights 16,32,... from prior 16 headers, including genesis at height 16.',
                 'Real W1 full-relation oracles, reversibility, uncomputation and cost NOT measured.',
                 'All timestamps use an assumed wall clock; lawful schedules are not achievable mining evidence.',
                 'Ideal sqrt index is not a quantum circuit/gate estimate or hardness lower bound.',
                 'No mined blocks, chains, fork-choice changes, attacks, or security qualifications are created.'
             ], 'epochs': rows}
-
 
 def compare_scenarios(config: dict, epochs: int) -> dict:
     fast = simulate(config, epochs, 1)
