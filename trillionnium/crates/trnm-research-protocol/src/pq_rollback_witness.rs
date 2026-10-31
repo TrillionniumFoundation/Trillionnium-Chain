@@ -166,7 +166,11 @@ impl SignedPqRecoveryWitnessV1 {
         if self.sequence <= trusted.last_external_sequence {
             return Err(PqRecoveryWitnessError::StaleSequence);
         }
-        if trusted.now_unix_s < self.issued_unix_s || trusted.now_unix_s > self.expires_unix_s {
+        // Expiry is an exclusive UNIX-second boundary: accepting a witness
+        // at now == expires would keep expired recovery authority alive for
+        // one additional second. Apply this at the shared single/quorum
+        // cheap preflight, before any ML-DSA verification.
+        if trusted.now_unix_s < self.issued_unix_s || trusted.now_unix_s >= self.expires_unix_s {
             return Err(PqRecoveryWitnessError::TimeWindow);
         }
         if self.observed != *trusted.actual_local {
