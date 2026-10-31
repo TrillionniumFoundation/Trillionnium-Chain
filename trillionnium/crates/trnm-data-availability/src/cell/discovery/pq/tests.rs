@@ -208,12 +208,15 @@ fn randomized_signatures_preserve_semantic_high_water_and_original_durable_bytes
 fn fresh_schema_commits_key_roster_and_never_rewinds_with_expiry_or_restart() {
     let tmp = tempfile::tempdir().unwrap();
     let path = tmp.path().join("directory");
+    // Fresh open seals the durable initial clock using wall_now(); choose
+    // the test's publication time afterwards so a second rollover during
+    // SQLite creation is never mistaken for an attempted database rollback.
+    let directory = CellProviderDirectoryV2::open(&path, context(), keys()).unwrap();
     let now = wall_now().unwrap().as_secs();
     let endpoint = "127.0.0.1:19001".parse().unwrap();
     let request = request([10; 32]);
     let first = record(request, endpoint, 1, now, false);
     let withdrawal = record(request, endpoint, 2, now, true);
-    let directory = CellProviderDirectoryV2::open(&path, context(), keys()).unwrap();
     for candidate in [&first, &withdrawal] {
         candidate
             .verify_at(request, now, &policy(&[endpoint]), directory.keys())
