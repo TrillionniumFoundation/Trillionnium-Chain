@@ -162,10 +162,12 @@ fn actual_mldsa_record_rejects_every_changed_field_classic_and_trailing_wire() {
 fn randomized_signatures_preserve_semantic_high_water_and_original_durable_bytes() {
     let tmp = tempfile::tempdir().unwrap();
     let path = tmp.path().join("directory");
-    let now = wall_now().unwrap().as_secs();
     let endpoint = "127.0.0.1:19001".parse().unwrap();
     let request = request([10; 32]);
     let directory = CellProviderDirectoryV2::open(&path, context(), keys()).unwrap();
+    // Fresh schema stores its current clock on open. Choose the test's live
+    // timestamp only after that atomic initialization, including a second rollover.
+    let now = wall_now().unwrap().as_secs();
     let first = record(request, endpoint, 1, now, false);
     let mut second = first.clone();
     // FIPS204 pure prefix (0,empty-context-length) with independent nonzero rnd.
@@ -208,12 +210,14 @@ fn randomized_signatures_preserve_semantic_high_water_and_original_durable_bytes
 fn fresh_schema_commits_key_roster_and_never_rewinds_with_expiry_or_restart() {
     let tmp = tempfile::tempdir().unwrap();
     let path = tmp.path().join("directory");
-    let now = wall_now().unwrap().as_secs();
     let endpoint = "127.0.0.1:19001".parse().unwrap();
     let request = request([10; 32]);
+    let directory = CellProviderDirectoryV2::open(&path, context(), keys()).unwrap();
+    // The directory initializes a durable nondecreasing wall clock. Do not
+    // construct a supposedly current record with a timestamp from before open.
+    let now = wall_now().unwrap().as_secs();
     let first = record(request, endpoint, 1, now, false);
     let withdrawal = record(request, endpoint, 2, now, true);
-    let directory = CellProviderDirectoryV2::open(&path, context(), keys()).unwrap();
     for candidate in [&first, &withdrawal] {
         candidate
             .verify_at(request, now, &policy(&[endpoint]), directory.keys())
