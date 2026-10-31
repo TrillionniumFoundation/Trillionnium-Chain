@@ -68,7 +68,10 @@ fn real_signed_overlong_pq_request_refuses_before_verification_without_budget_by
         .err()
         .expect("overlong valid-signature request must be refused");
     assert_eq!(refused.to_string(), "PQ_NETWORK_LIFETIME");
-    assert_eq!(reserved_attempts, 1, "cheap refusal must not refund attempt");
+    assert_eq!(
+        reserved_attempts, 1,
+        "cheap refusal must not refund attempt"
+    );
     let unavailable = policy
         .verify_request_metered(&overlong, now, &mut || {
             Err("PQ_NETWORK_INBOUND_VERIFICATION_LIMIT".into())
