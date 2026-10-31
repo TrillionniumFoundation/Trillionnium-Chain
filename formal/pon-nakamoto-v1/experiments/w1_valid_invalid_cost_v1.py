@@ -28,6 +28,63 @@ MAX_TRIALS = 3
 MAX_GUESSES = 512
 
 
+# These are the complete direct and configuration imports used by this
+# controlled scalar W1 runner. HEAD labels alone are not evidence of bytes.
+AUDITED_INPUTS = (
+    "config/pon/work-profile-v1.json",
+    "config/pon/devnet-v1.json",
+    "config/pon/ledger-v1.json",
+    "config/pon/model-family-v1.json",
+    "formal/pon-nakamoto-v1/work_oracle.py",
+    "formal/pon-nakamoto-v1/contract_wire.py",
+    "formal/pon-nakamoto-v1/experiments/w1_valid_invalid_cost_v1.py",
+)
+
+
+def _git_bytes(root: Path, *args: str) -> bytes:
+    """Read a bounded, explicit Git identity or committed source blob."""
+    try:
+        command = subprocess.run(
+            ["git", *args], cwd=root, stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE, timeout=15, check=False,
+        )
+    except (OSError, subprocess.TimeoutExpired) as error:
+        raise ValueError("source Git verification unavailable") from error
+    if command.returncode != 0:
+        raise ValueError("source Git verification failed")
+    return command.stdout
+
+
+def audit_source_inputs(root: Path, inputs: tuple[str, ...]) -> tuple[str, str, dict[str, str]]:
+    """Fail closed on a dirty or substituted source, even assume-unchanged.
+
+    Every file is compared byte-for-byte with its *committed* HEAD blob;
+    a clean-looking index/status is not enough. No missing Git fallback.
+    """
+    actual_root = Path(_git_bytes(root, "rev-parse", "--show-toplevel").decode().strip())
+    if actual_root.resolve() != root.resolve():
+        raise ValueError("unexpected source repository root")
+    head = _git_bytes(root, "rev-parse", "--verify", "HEAD").decode().strip()
+    tree = _git_bytes(root, "rev-parse", "--verify", "HEAD^{tree}").decode().strip()
+    if any(len(item) != 40 or any(ch not in "0123456789abcdef" for ch in item)
+           for item in (head, tree)):
+        raise ValueError("invalid source object identity")
+    if _git_bytes(root, "status", "--porcelain=v1", "--untracked-files=all"):
+        raise ValueError("source checkout not clean")
+    fingerprints = {}
+    for relative in inputs:
+        path = root / relative
+        if path.is_symlink() or not path.is_file():
+            raise ValueError(f"source is missing or redirected: {relative}")
+        current = path.read_bytes()
+        committed = _git_bytes(root, "show", f"HEAD:{relative}")
+        if current != committed:
+            raise ValueError(f"tracked source differs from HEAD: {relative}")
+        fingerprints[relative] = hashlib.sha256(current).hexdigest()
+    return head, tree, fingerprints
+
+
+
 def matrices(name: str) -> tuple[list[int], list[int]]:
     n = w1.N
     if name == "zero":
@@ -135,26 +192,18 @@ def run(trials: int = 1) -> dict:
     target = bytes.fromhex(PARAMS["initial_target_hex"])
     if len(target) != 32 or target == b"\0" * 32:
         raise ValueError("invalid devnet target")
-    inputs = [
-        "config/pon/work-profile-v1.json",
-        "config/pon/devnet-v1.json",
-        "formal/pon-nakamoto-v1/work_oracle.py",
-        "formal/pon-nakamoto-v1/contract_wire.py",
-        "formal/pon-nakamoto-v1/experiments/w1_valid_invalid_cost_v1.py",
-    ]
-    hashes = {
-        name: hashlib.sha256((ROOT / name).read_bytes()).hexdigest()
-        for name in inputs
-    }
-    git = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True,
-                         capture_output=True, check=False)
+    source_head, source_tree, hashes = audit_source_inputs(ROOT, AUDITED_INPUTS)
     observations = [
         one_case(name, trial, target)
         for name in FAMILIES for trial in range(trials)
     ]
+    after_head, after_tree, after_hashes = audit_source_inputs(ROOT, AUDITED_INPUTS)
+    if (source_head, source_tree, hashes) != (after_head, after_tree, after_hashes):
+        raise ValueError("W1 source changed during measurement")
     return {
         "schema": "w1-valid-invalid-structured-cost-v1",
-        "source_head": git.stdout.strip() if git.returncode == 0 else None,
+        "source_head": source_head,
+        "source_tree": source_tree,
         "source_sha256": hashes,
         "profile": WORK_PROFILE["id"],
         "target": target.hex(),

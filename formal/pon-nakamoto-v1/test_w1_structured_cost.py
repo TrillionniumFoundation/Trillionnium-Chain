@@ -2,7 +2,10 @@
 """Adversarial conformance tests; a sampled cost ratio is not a work theorem."""
 from __future__ import annotations
 
+import hashlib
+import subprocess
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -75,6 +78,64 @@ class W1StructuredCostTests(unittest.TestCase):
         with self.assertRaisesRegex(AssertionError, "bounded half-range"):
             cost.forge_ticket_only(H("no-ticket"), b"\0" * 32, b"\xff" * 32)
 
+
+
+
+class W1SourceIdentityTests(unittest.TestCase):
+    def frozen_source(self):
+        temporary = tempfile.TemporaryDirectory(prefix="pon-w1-source-")
+        self.addCleanup(temporary.cleanup)
+        root = Path(temporary.name)
+        subprocess.run(["git", "init", "-q"], cwd=root, check=True)
+        relative = "contract.json"
+        (root / relative).write_bytes(b'{"pinned":true}\n')
+        subprocess.run(["git", "add", relative], cwd=root, check=True)
+        subprocess.run([
+            "git", "-c", "user.name=Source Test",
+            "-c", "user.email=source-test@example.invalid",
+            "commit", "-qm", "frozen input"
+        ], cwd=root, check=True)
+        return root, relative
+
+    def test_imported_runtime_config_is_covered(self):
+        self.assertEqual(set(cost.AUDITED_INPUTS), {
+            "config/pon/work-profile-v1.json",
+            "config/pon/devnet-v1.json",
+            "config/pon/ledger-v1.json",
+            "config/pon/model-family-v1.json",
+            "formal/pon-nakamoto-v1/work_oracle.py",
+            "formal/pon-nakamoto-v1/contract_wire.py",
+            "formal/pon-nakamoto-v1/experiments/w1_valid_invalid_cost_v1.py",
+        })
+
+    def test_exact_committed_blob_is_not_replaced_by_clean_looking_index(self):
+        root, relative = self.frozen_source()
+        head, tree, hashes = cost.audit_source_inputs(root, (relative,))
+        self.assertEqual(len(head), 40)
+        self.assertEqual(len(tree), 40)
+        self.assertEqual(hashes[relative], hashlib.sha256((root / relative).read_bytes()).hexdigest())
+        (root / relative).write_bytes(b'{"pinned":false}\n')
+        # A deliberately hidden in-place modification can evade status-only audit.
+        subprocess.run(["git", "update-index", "--assume-unchanged", relative],
+                       cwd=root, check=True)
+        self.assertEqual(subprocess.run(
+            ["git", "status", "--porcelain=v1"], cwd=root, check=True,
+            capture_output=True).stdout, b"")
+        with self.assertRaisesRegex(ValueError, "tracked source differs from HEAD"):
+            cost.audit_source_inputs(root, (relative,))
+
+    def test_untracked_data_or_redirected_source_is_not_attested(self):
+        root, relative = self.frozen_source()
+        (root / "untracked.bin").write_bytes(b"unreviewed")
+        with self.assertRaisesRegex(ValueError, "source checkout not clean"):
+            cost.audit_source_inputs(root, (relative,))
+        (root / "untracked.bin").unlink()
+        (root / relative).unlink()
+        (root / relative).symlink_to("absent.json")
+        subprocess.run(["git", "update-index", "--assume-unchanged", relative],
+                       cwd=root, check=True)
+        with self.assertRaisesRegex(ValueError, "missing or redirected"):
+            cost.audit_source_inputs(root, (relative,))
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
