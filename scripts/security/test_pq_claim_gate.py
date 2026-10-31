@@ -46,6 +46,120 @@ class ClaimGateTests(unittest.TestCase):
     def kinds(self):
         return {row["kind"] for row in module.inspect(self.root)["known_open_findings"]}
 
+
+    def test_redirected_checkout_source_refused_even_with_identical_valid_bytes(self):
+        import subprocess
+        import sys
+
+        def assert_refused(key):
+            findings = module.inspect(self.root)["known_open_findings"]
+            self.assertTrue(any(
+                item["kind"] == "untrusted_checkout_source_path"
+                and item["path"] == module.PATHS[key]
+                for item in findings
+            ), findings)
+            result = subprocess.run(
+                [sys.executable, str(SCRIPT), "--root", str(self.root),
+                 "--assert-unqualified"],
+                capture_output=True, text=True, check=False,
+            )
+            self.assertEqual(result.returncode, 2, result.stdout)
+            self.assertIn("untrusted_checkout_source_path", result.stdout)
+
+        # Each policy/authority source must be a real checkout file, not a
+        # symlink redirect to byte-identical content in the same repository.
+        # The old gate accepted these redirects with exit code zero.
+        for key in module.PATHS:
+            with self.subTest(redirected_file=key):
+                source = self.root / module.PATHS[key]
+                copied = source.with_name(source.name + ".shadow")
+                original_bytes = source.read_bytes()
+                copied.write_bytes(original_bytes)
+                source.unlink()
+                source.symlink_to(copied.name)
+                try:
+                    assert_refused(key)
+                finally:
+                    source.unlink()
+                    source.write_bytes(original_bytes)
+                    copied.unlink()
+
+        # A symlinked parent directory is also a redirect even when the
+        # final config/consensus-mainline.json is a regular byte-identical file.
+        real_config = self.root / "config"
+        alternate_config = self.root / "config-checked-out"
+        real_config.rename(alternate_config)
+        real_config.symlink_to(alternate_config.name, target_is_directory=True)
+        try:
+            assert_refused("consensus")
+        finally:
+            real_config.unlink()
+            alternate_config.rename(real_config)
+
+        # Original unqualified inputs are intentionally still an exit-zero
+        # audit baseline; this fix does not promote them to PQ qualification.
+        restored = subprocess.run(
+            [sys.executable, str(SCRIPT), "--root", str(self.root),
+             "--assert-unqualified"],
+            capture_output=True, text=True, check=False,
+        )
+        self.assertEqual(restored.returncode, 0, restored.stdout)
+        self.assertIn("unqualified_proof", restored.stdout)
+
+
+    def test_frozen_w1_guest_source_rejects_byte_identical_symlink_redirect(self):
+        import subprocess
+        import sys
+
+        original = self.root / Path(module.PATHS["w1_backend"]).parent / "guest/src/main.rs"
+        original_bytes = original.read_bytes()
+        shadow = original.with_name("main.rs.shadow")
+        shadow.write_bytes(original_bytes)
+
+        def assert_cli_refuses_redirect():
+            findings = module.inspect(self.root)["known_open_findings"]
+            self.assertTrue(any(
+                row["kind"] == "escaped_w1_guest_source"
+                and row.get("source") is None
+                for row in findings
+            ), findings)
+            run = subprocess.run(
+                [sys.executable, str(SCRIPT), "--root", str(self.root),
+                 "--assert-unqualified"],
+                capture_output=True, text=True, check=False,
+            )
+            self.assertEqual(run.returncode, 2, run.stdout)
+            self.assertIn("escaped_w1_guest_source", run.stdout)
+
+        # Previously a relative symlink to same-digest bytes inside the
+        # checkout passed the source hash verifier.
+        original.unlink()
+        original.symlink_to(shadow.name)
+        try:
+            assert_cli_refuses_redirect()
+        finally:
+            original.unlink()
+            original.write_bytes(original_bytes)
+            shadow.unlink()
+
+        # The path component 'guest/src' must be a real directory too.
+        folder = original.parent
+        moved = folder.with_name("src-pinned")
+        folder.rename(moved)
+        folder.symlink_to(moved.name, target_is_directory=True)
+        try:
+            assert_cli_refuses_redirect()
+        finally:
+            folder.unlink()
+            moved.rename(folder)
+
+        restored = subprocess.run(
+            [sys.executable, str(SCRIPT), "--root", str(self.root),
+             "--assert-unqualified"],
+            capture_output=True, text=True, check=False,
+        )
+        self.assertEqual(restored.returncode, 0, restored.stdout)
+
     def test_current_classical_authority_and_proof_remain_open(self):
         self.assertIn("classical_authority", self.kinds())
         self.assertIn("unqualified_proof", self.kinds())
