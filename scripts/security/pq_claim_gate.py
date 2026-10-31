@@ -151,8 +151,8 @@ PINNED_AUTHORITY_SOURCE_SHA256 = {
     "state_import": "d757c67829ab64fba27743af515bc354b1752c1c80e7b2d5bc820cfa20cff970",
     "mempool_admission": "ac777c8fa3a9953343fd079a09aca43bd672d8c4c0998cb50a8f934d675e2fe4",
     "interop_identity": "7a90dcc212b76bfb18ebcd8cd8697f1fc6d052371b9df900a714b92293ba99e9",
-    # trnm-types::relay is exported by lib.rs; reviewed post-preflight candidate bytes.
-    "relay_auth": "50a41e5135cc5f1d1c2edd0afd1b8452180751b2e3488eb3c6af4c182a5a56c5"
+    # trnm-types::relay is exported by lib.rs; reviewed replay-before-digest candidate bytes.
+    "relay_auth": "de09a8fd0f79d430c23236346738551edc6b855bb6154e4df7fb63b857b6b943"
 }
 
 # These known findings describe the unqualified baseline, not successful
