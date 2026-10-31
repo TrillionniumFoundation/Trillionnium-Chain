@@ -201,10 +201,12 @@ impl PqNetworkPolicy {
             (1..=i64::MAX as u64).contains(&sequence),
             "PQ_NETWORK_SEQUENCE",
         )?;
-        let expected = self.expectation(peer, Direction::Request, sequence, expiry, now, payload);
-        // Reserve the original durable verification-attempt slot even on a
-        // cheap lifetime rejection; no hostile attempt gains extra capacity.
+        // Reserve the original durable attempt before deriving the payload-
+        // bound cryptographic expectation. Even a bounded invalid payload can
+        // otherwise consume hashing and allocation before the owner is charged.
+        // Preserve peer/sequence checks and all original verification limits.
         before_verification()?;
+        let expected = self.expectation(peer, Direction::Request, sequence, expiry, now, payload);
         // The live server already rejects signed expiries beyond 60 seconds,
         // but previously did so only AFTER ML-DSA and payload parsing. Refuse
         // the same impossible future interval before spending verifier CPU.
