@@ -14,6 +14,7 @@ on:
       - audit/pq-da-classical-auth-default-deny-20261030
       - audit/pq-native-m06-research-state-authority-20261030
       - audit/pq-governance-plan-delegated-authority-20261030
+      - audit/pq-release-migration-identity-roots-20261030
     paths:
       - .github/workflows/pq-production-claim-gate.yml
       - scripts/security/**
@@ -31,6 +32,10 @@ on:
       - trillionnium/crates/trnm-service-settlement/src/engine.rs
       - trillionnium/crates/trnm-governance-guard/src/lib.rs
       - trillionnium/crates/trnm-control-plane/src/lib.rs
+      - trillionnium/crates/trnm-release-bundle/src/lib.rs
+      - trillionnium/crates/trnm-state-import/src/lib.rs
+      - trillionnium/crates/trnm-mempool/src/typed_admission.rs
+      - trillionnium/crates/trnm-types/src/interop_identity.rs
       - trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/**
       - trillionnium/crates/trnm-crypto-primitives/src/pon_work/full_relation.rs
       - trillionnium/crates/trnm-crypto-primitives/src/pon_work/full_relation_tests.rs
@@ -52,6 +57,10 @@ on:
       - trillionnium/crates/trnm-service-settlement/src/engine.rs
       - trillionnium/crates/trnm-governance-guard/src/lib.rs
       - trillionnium/crates/trnm-control-plane/src/lib.rs
+      - trillionnium/crates/trnm-release-bundle/src/lib.rs
+      - trillionnium/crates/trnm-state-import/src/lib.rs
+      - trillionnium/crates/trnm-mempool/src/typed_admission.rs
+      - trillionnium/crates/trnm-types/src/interop_identity.rs
       - trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/**
       - trillionnium/crates/trnm-crypto-primitives/src/pon_work/full_relation.rs
       - trillionnium/crates/trnm-crypto-primitives/src/pon_work/full_relation_tests.rs
