@@ -1,0 +1,120 @@
+{
+  "baseline_reader_sha256": "1e65011b0d14173da05280ec769ae1850545a51bda4277fd71492fc4af8351ab",
+  "changed_source_inputs": [
+    {
+      "bytes": 13892,
+      "path": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/check_audit_one.py",
+      "sha256": "5acdaac79c026d12859d06110cb7c458fd97a401ea026d4ff50c36db983db1d6"
+    },
+    {
+      "bytes": 5441,
+      "path": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/receipt_layout.py",
+      "sha256": "0348b1337bfc6abd6ff573e02e6bbaf1739f587fed5a2585f4970c44fa168e33"
+    },
+    {
+      "bytes": 16063,
+      "path": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_check_audit_one.py",
+      "sha256": "9c838e5c074414c31b42e5cfbf9a85b80e307c448fea6780879fa873dabeee42"
+    },
+    {
+      "bytes": 12464,
+      "path": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/README.md",
+      "sha256": "9e7d65bdf264ab6a7777334feb75a6e95f92cd2003f5473fc277c1d03d798dd3"
+    },
+    {
+      "bytes": 7477,
+      "path": "evidence/pon-w1-receiver-layout-20261031/recheck.py",
+      "sha256": "2746738904f8c9c344fa55f30cee589666b66cde41bcd94b19cad8dc7dd1dd8d"
+    }
+  ],
+  "consensus_authority": false,
+  "forged_early_as_last": {
+    "actual_mutation_offset": 424,
+    "adversarial_metadata_only": true,
+    "baseline_reader_accepted": true,
+    "fixed_reader_accepted": false,
+    "fixed_reader_reason": "exact last seal word offset",
+    "host_executed_on_forged_input": false
+  },
+  "green_pass": true,
+  "green_tests_run": 26,
+  "historical_cases": [
+    {
+      "baseline_pass": true,
+      "case": "first_seal_tamper",
+      "fixed_pass": true,
+      "original_record_sha256": "a011f4bc6aa63f76b695a6d3beb46662776fa16f848a72f46454274d5f310bf7"
+    },
+    {
+      "baseline_pass": true,
+      "case": "last_seal_tamper",
+      "fixed_pass": true,
+      "original_record_sha256": "d832d9b9a81cfe5cfffc554f788a97fba5919d3d851f2f5db14ebb3a1f65856c"
+    },
+    {
+      "baseline_pass": true,
+      "case": "seal_length_allocation_bomb",
+      "fixed_pass": true,
+      "original_record_sha256": "a38fe2313a9d6db11eaab4b4d357cf2142c8dd7f0fbf63b429fc1c589dd3190b"
+    },
+    {
+      "baseline_pass": true,
+      "case": "trailing_receipt_bytes",
+      "fixed_pass": true,
+      "original_record_sha256": "cb0b2e9e2d9b3122160b0bf7f7f3aaccdb87998826f8cd41efd1ac996d1c585a"
+    },
+    {
+      "baseline_pass": true,
+      "case": "truncated_receipt",
+      "fixed_pass": true,
+      "original_record_sha256": "c7b91b054b58c592e1c93812cb74c36d963382ded0eec1a95287ec0b6b1f6f06"
+    },
+    {
+      "baseline_pass": true,
+      "case": "valid",
+      "fixed_pass": true,
+      "original_record_sha256": "a7a73344892b2261dc8fdf164c8de84a877811b8742344a8a4d2ee3a5fa6dd9b"
+    },
+    {
+      "baseline_pass": true,
+      "case": "wrong_statement_miner",
+      "fixed_pass": true,
+      "original_record_sha256": "a2768c8f9be5f748a08c92b4907d45efde106d21d4c1b184ffd1980f6a596211"
+    },
+    {
+      "baseline_pass": true,
+      "case": "wrong_verifier_parameters",
+      "fixed_pass": true,
+      "original_record_sha256": "48cd156766ba6e60a3ee891f800514890db71444e43f2528345d461d2e79cb7f"
+    }
+  ],
+  "input_sha256": "4babd290b10f7a68be27c2adf3b97448bb7bef04dba8bcb97f914acf4ac69020",
+  "layout": {
+    "first_seal_word_100_offset": 420,
+    "first_segment_parameters_offset": 255697,
+    "journal_offset": 15862520,
+    "last_seal_word_offset": 15862034,
+    "shape": {
+      "maximum_po2": 18,
+      "padded_cycles": 16252928,
+      "segments": 62
+    }
+  },
+  "new_proof_generated": false,
+  "original_record_source": "c16507147b65285ea94dead22d3b93c5db7295af",
+  "proof_reverified_by_reader": false,
+  "receipt_bytes": 15862780,
+  "receipt_sha256": "0a5336a797c51829ed25d4ec2f1a03f4f56fda4c737a230b493d4abbe96f0ec8",
+  "red_errors": 0,
+  "red_expected_failures": [
+    "test_declared_shape_must_match_actual_receipt",
+    "test_malformed_original_receipt_cannot_gain_bound_layout",
+    "test_middle_seal_cannot_be_labelled_last",
+    "test_nonparameter_digest_cannot_be_labelled_verifier_parameters",
+    "test_other_last_seal_word_cannot_be_labelled_last",
+    "test_partial_parameter_zeroing_cannot_be_labelled_whole_digest",
+    "test_receipt_journal_must_match_input"
+  ],
+  "schema": "pon-w1-receiver-layout-recheck-v1",
+  "timings_independently_remeasured": false
+}

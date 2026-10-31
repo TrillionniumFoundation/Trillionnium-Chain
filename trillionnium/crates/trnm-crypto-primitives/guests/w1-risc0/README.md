@@ -154,9 +154,22 @@ are finite observations, not cold-start or network-service guarantees.
 
 [`check_audit_one.py`](check_audit_one.py) independently binds source and input
 bytes, reproduces the claimed journal and recorded byte changes, and checks
-exact limits, types, timing accounting and the fixed expected outcome. It does
-not reverify a STARK, reconstruct SDK seal/parameter positions or remeasure
-time. Its synthetic control records cannot gain proof authority.
+exact limits, types, timing accounting and the fixed expected outcome. Its
+[`receipt_layout.py`](receipt_layout.py) reader independently parses the bounded
+Composite wire layout. The original segment count, padded cycles, maximum po2
+and outer journal must match the supplied bytes. A first-seal mutation must hit
+word 100 of the first segment; a last-seal mutation must hit the last word of
+the final segment. Parameter zeroing must change exactly the complete first
+segment parameter digest, including any bytes already zero.
+
+The `pon-w1-receiver-case-binding-v2` output distinguishes reconstructed receipt
+layout and exact mutation offsets from cryptographic proof authentication. It
+does not reverify a STARK, authenticate declared seal dimensions, reexecute SDK
+dispatch or remeasure time. Synthetic fixtures contain structurally supported
+wire layouts and arbitrary, invalid proof words; they cannot gain proof authority.
+The retained original caps and eight case names are unchanged. Earlier binding
+v1 results did not independently establish the purported late-seal position;
+v2 reads the original receipt before classifying that case.
 
 The additive [case-cost workflow](../../../../../.github/workflows/pon-w1-audit-one-research.yml)
 explicitly restores pinned compressed objects from the repository, builds and
