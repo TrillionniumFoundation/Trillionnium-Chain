@@ -32,6 +32,12 @@ class W1StructuredCostTests(unittest.TestCase):
             self.assertGreater(row["valid_full_verify_cpu_ns"], 0)
             self.assertGreater(row["invalid_full_verify_cpu_ns"], 0)
             self.assertGreater(row["ticket_only_forgery_cpu_ns"], 0)
+            if cost.numpy_runtime is None:
+                self.assertIsNone(row["numpy_legal_prover_cpu_ns"])
+                self.assertIsNone(row["numpy_legal_proof_byte_identical"])
+            else:
+                self.assertGreater(row["numpy_legal_prover_cpu_ns"], 0)
+                self.assertIs(row["numpy_legal_proof_byte_identical"], True)
         for field in (
             "fastest_adversarial_valid_solver_qualified",
             "hardness_lower_bound_proven",
@@ -80,6 +86,46 @@ class W1StructuredCostTests(unittest.TestCase):
 
 
 
+    @unittest.skipIf(cost.numpy_runtime is None, "NumPy not installed; no legal-vector measurement")
+    def test_vectorized_full_legal_proof_matches_reference_and_rejects_forgery(self):
+        from w1_numpy_valid_solver_v1 import _mul_mod
+        np = cost.numpy_runtime
+        for family in cost.FAMILIES:
+            a, b = cost.matrices(family)
+            for trial in (0, 1):
+                with self.subTest(family=family, trial=trial):
+                    challenge = H("adversarial-work-cost-v1", family.encode(),
+                                  trial.to_bytes(4, "little"))
+                    exact = cost.prove_numpy_valid(challenge, a, b)
+                    reference = w1.prove(challenge, a, b)
+                    self.assertEqual(exact, reference)
+                    self.assertEqual(len(exact), w1.PROOF_BYTES)
+                    _, actual = w1.verify(challenge, w1.task_id(a, b),
+                                          b"\\xff" * 32, exact)
+                    self.assertEqual(actual, w1.mm(a, b, w1.N, w1.N, w1.N))
+                    corrupted = exact[:-32] + bytes([exact[-32] ^ 1]) + exact[-31:]
+                    with self.assertRaisesRegex(ValueError, "TRANSCRIPT"):
+                        w1.verify(challenge, w1.task_id(a, b), b"\\xff" * 32,
+                                  corrupted)
+
+        # Two near-2**64 products overflow a naive uint64 sum, while per-term
+        # reduction is exact for the 32-bit W1 field and full 64-term product.
+        left = np.full((1, w1.N), w1.Q - 1, dtype=np.uint64)
+        right = np.full((w1.N, 1), w1.Q - 1, dtype=np.uint64)
+        self.assertEqual(int(_mul_mod(left, right)[0, 0]), w1.N)
+        self.assertNotEqual(int((left @ right)[0, 0]) % w1.Q, w1.N)
+        high = [w1.Q - 1] * w1.CELLS
+        challenge = H("high-field-vector-overflow-regression-v1")
+        self.assertEqual(cost.prove_numpy_valid(challenge, high, high),
+                         w1.prove(challenge, high, high))
+        for bad in (b"", b"0" * 31, bytearray(32)):
+            with self.assertRaises(ValueError):
+                cost.prove_numpy_valid(bad, high, high)
+        with self.assertRaises(ValueError):
+            corrupt = high[:]
+            corrupt[0] = w1.Q
+            cost.prove_numpy_valid(challenge, corrupt, high)
+
 
 class W1SourceIdentityTests(unittest.TestCase):
     def frozen_source(self):
@@ -106,6 +152,7 @@ class W1SourceIdentityTests(unittest.TestCase):
             "formal/pon-nakamoto-v1/work_oracle.py",
             "formal/pon-nakamoto-v1/contract_wire.py",
             "formal/pon-nakamoto-v1/experiments/w1_valid_invalid_cost_v1.py",
+            "formal/pon-nakamoto-v1/experiments/w1_numpy_valid_solver_v1.py",
         })
 
     def test_exact_committed_blob_is_not_replaced_by_clean_looking_index(self):
