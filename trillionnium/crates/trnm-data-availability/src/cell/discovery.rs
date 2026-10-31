@@ -496,12 +496,13 @@ pub mod pq_reply_v2 {
     /// the first ML-DSA verification. Eight PCP2 records fit the original 32KiB
     /// response ceiling (28641 bytes including the count). Not wired into
     /// ordinary transport, directory persistence, FinalUse or network custody.
-    pub fn verify_pq_provider_reply_v2(
+    fn verify_pq_provider_reply_v2_deadline(
         response: &[u8],
         expected_request: CellDiscoveryRequestV1,
         pinned_owners: &[PqPinnedProviderV2<'_>],
         now_unix_seconds: u64,
         addresses: &CellDiscoveryAddressPolicyV1,
+        deadline: Option<Instant>,
     ) -> CellResultV1<Vec<VerifiedPqDiscoveryProviderV2>> {
         expected_request.validate()?;
         addresses.validate()?;
@@ -572,6 +573,12 @@ pub mod pq_reply_v2 {
 
         let mut result = Vec::with_capacity(count);
         for (record, owner, endpoint) in pending {
+            // A cheap preflight succeeded, but ML-DSA work must never silently
+            // continue past the caller's ORIGINAL network/deadline owner.
+            // Check between signatures (not just after the whole batch).
+            if let Some(deadline) = deadline {
+                check_deadline(deadline)?;
+            }
             let expected = PqCellProviderExpectationV2 {
                 pinned_request: &request_pin,
                 trusted_ml_dsa65_public_key: owner.trusted_ml_dsa65_public_key,
@@ -588,7 +595,29 @@ pub mod pq_reply_v2 {
                 expires_unix_seconds: verified.expires_unix_seconds(),
             });
         }
+        if let Some(deadline) = deadline {
+            check_deadline(deadline)?;
+        }
         Ok(result)
+    }
+
+    /// Pure isolated verifier with no network allocation or deadline owner.
+    /// Real TCP request paths must use the private bounded variant above.
+    pub fn verify_pq_provider_reply_v2(
+        response: &[u8],
+        expected_request: CellDiscoveryRequestV1,
+        pinned_owners: &[PqPinnedProviderV2<'_>],
+        now_unix_seconds: u64,
+        addresses: &CellDiscoveryAddressPolicyV1,
+    ) -> CellResultV1<Vec<VerifiedPqDiscoveryProviderV2>> {
+        verify_pq_provider_reply_v2_deadline(
+            response,
+            expected_request,
+            pinned_owners,
+            now_unix_seconds,
+            addresses,
+            None,
+        )
     }
 
     /// One explicitly configured bootstrap, distinct PCP2 frame, original
@@ -632,12 +661,13 @@ pub mod pq_reply_v2 {
             &mut observation,
         )?;
         check_deadline(overall)?;
-        let providers = verify_pq_provider_reply_v2(
+        let providers = verify_pq_provider_reply_v2_deadline(
             &reply,
             expected_request,
             pinned_owners,
             wall_now()?.as_secs(),
             addresses,
+            Some(overall),
         )?;
         // A successful PCP2 reply verified exactly one real ML-DSA signature
         // per returned record. Do not return a misleading zero cost count.
@@ -716,12 +746,13 @@ pub mod pq_reply_v2 {
         // including subsecond time. Never restart the original budget.
         let sampled_at = Instant::now();
         let wall = wall_now()?;
-        let verified_providers = verify_pq_provider_reply_v2(
+        let verified_providers = verify_pq_provider_reply_v2_deadline(
             &response,
             expected_request,
             pinned_owners,
             wall.as_secs(),
             addresses,
+            Some(original_overall),
         )?;
         // Count the actual ML-DSA verifications in the complete fetch path,
         // just as the standalone PCP2 query reports its authentication cost.
@@ -900,6 +931,35 @@ pub mod pq_reply_v2 {
             assert_eq!(accepted[0].signer_key_id(), id);
             assert_eq!(accepted[0].sequence(), 7);
             assert_eq!(accepted[0].expires_unix_seconds(), 200);
+            // A corrupt signature must not consume ML-DSA work after the
+            // ORIGINAL caller deadline. A mere final post-verify check would
+            // return signature failure here, proving that ordering matters.
+            let mut forged = wire.clone();
+            *forged.last_mut().unwrap() ^= 1;
+            assert!(matches!(
+                verify_pq_provider_reply_v2_deadline(
+                    &reply(&[&forged]),
+                    request(),
+                    &[pin()],
+                    150,
+                    &addresses(),
+                    Some(Instant::now() - Duration::from_millis(1)),
+                ),
+                Err(CellErrorV1::Invalid("discovery absolute deadline"))
+            ));
+            assert_eq!(
+                verify_pq_provider_reply_v2_deadline(
+                    &reply(&[&wire]),
+                    request(),
+                    &[pin()],
+                    150,
+                    &addresses(),
+                    Some(Instant::now() + Duration::from_secs(30)),
+                )
+                .unwrap()
+                .len(),
+                1
+            );
             assert_eq!(
                 accepted[0].endpoint(),
                 "127.0.0.1:31415".parse::<SocketAddr>().unwrap()

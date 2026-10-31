@@ -7,6 +7,7 @@ on:
       - fix/pq-pcp2-publish-deadline-result-20261030
       - fix/pq-pcp2-roster-preflight-verified-cost-20261030
       - fix/pq-pcp2-pinned-roster-integrity-before-tcp-20261030
+      - audit/pq-pcp2-verify-deadline-checkpoints-20261030
   workflow_dispatch:
 permissions:
   contents: read
