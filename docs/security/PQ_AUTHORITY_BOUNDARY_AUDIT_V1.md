@@ -215,3 +215,31 @@ reviewed path/role, intact known NO_GO findings and CLI refusal of a
 marker-preserving change to legacy refusal. They do not replace original
 native x64/ARM or external-operator results. #562 A–F and #596 remain OPEN;
 whole-chain PQ128, public and production remain **NO_GO**.
+
+## Relay pre-signature cheap rejection (separate child of #622)
+
+The exact exported `trnm-types/src/relay.rs` on this child changes the
+receiver order: canonical/version/chain/payload checks, then time skew,
+authenticated-session sequence/replay and bounded replay-ledger capacity,
+then the **unchanged caller-provided** signature callback. Only a successful
+callback can advance the `last_seq` and `seen_nonce` maps.
+
+This prevents stale, duplicate and out-of-order packets from repeatedly
+causing an expensive *caller-chosen* signature verification. The associated
+real Rust unit test records whether the callback runs, rejects replays/gaps/
+expired timestamps without a call, refuses a forged signature and then
+accepts the correct signature at the same not-yet-consumed sequence. This
+is a **source/test change**, not a measured ML-DSA CPU or p99 improvement.
+
+The complete modified exported source is pinned by SHA-256
+`285a9468c3a62815fa77a92981a7cbf9bf7110a23c57b70cd16a6ac592211b5e`.
+The prior `610bba...` is the historical parent #622 source identity; it
+must not be treated as the current child source.
+
+Since replay and time checks now precede signature verification, a packet
+with multiple faults may report the cheap rejection first. Both fail closed.
+The verifier must still be given an independently authenticated PQ signature
+callback; `verify_test_sig_compat` remains a noncryptographic test helper
+and MUST NOT authorize deployed communication. In-memory replay tracking
+is not crash-safe or externally monotonic. #562 A/B/E/F and every remaining
+whole-chain quantum work/proof qualification gate remain OPEN.

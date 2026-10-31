@@ -16,6 +16,7 @@ on:
       - audit/pq-governance-plan-delegated-authority-20261030
       - audit/pq-release-migration-identity-roots-20261030
       - audit/pq-relay-callback-trust-root-20261030
+      - fix/pq-relay-cheap-replay-preflight-20261030
     paths:
       - .github/workflows/pq-production-claim-gate.yml
       - scripts/security/**
