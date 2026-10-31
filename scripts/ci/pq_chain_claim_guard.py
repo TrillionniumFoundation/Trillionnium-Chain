@@ -32,6 +32,9 @@ GATES = {
         'trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs',
         'trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs',
         'trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs',
+        'scripts/ci/pq_authority_surface_scan.py',
+        'scripts/ci/test_pq_authority_surface_scan.py',
+        'docs/security/PQ_AUTHORITY_SURFACE_AUDIT_20261031.md',
     ),
     'proof_pq128': (
         'trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs',
