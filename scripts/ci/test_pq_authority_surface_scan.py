@@ -66,6 +66,19 @@ class TestPqAuthoritySurfaceScan(unittest.TestCase):
         with self.assertRaisesRegex(AuditError, 'symlink crate root/ancestor'):
             inspect(self.root)
 
+    def test_checkout_ancestor_symlink_refuses_redirected_source_inventory(self):
+        # Unlike an immediate symlinked root, the final root pathname here
+        # is an ordinary directory entry under an aliased parent.
+        alias = self.root.parent / (self.root.name + '-parent-alias')
+        alias.symlink_to(self.root.parent, target_is_directory=True)
+        self.addCleanup(alias.unlink)
+        redirected = alias / self.root.name
+        self.assertFalse(redirected.is_symlink())
+        with self.assertRaisesRegex(AuditError, 'symlink crate root/ancestor'):
+            inspect(redirected)
+        self.assertEqual(inspect(self.root)['status'],
+                         'HOLD_INCOMPLETE_AUTHORITY_TRACING')
+
     def test_walk_error_refuses_unreadable_unknown_subdirectory(self):
         # Run under root and other privileged CI users without relying on
         # chmod (which root could bypass). Mimic os.walk reporting EACCES for

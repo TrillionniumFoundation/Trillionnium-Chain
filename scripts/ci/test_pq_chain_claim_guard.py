@@ -144,6 +144,33 @@ class TestClaimGuard(unittest.TestCase):
                 self.put(CONFIG, original[:-1] + b',"untrusted_probe":' + literal + b'}')
                 self.refused()
 
+    def test_symlinked_checkout_root_refused(self):
+        # The previous leaf-only check returned HOLD for this source-tree alias.
+        alias = self.root.parent / (self.root.name + '-root-alias')
+        alias.symlink_to(self.root, target_is_directory=True)
+        self.addCleanup(alias.unlink)
+        with self.assertRaisesRegex(UnsafePromotion, 'symlinked repository root/ancestor'):
+            inspect(alias)
+        # The real pinned test tree remains eligible only for the HOLD verdict.
+        self.assertEqual(inspect(self.root)['status'], 'HOLD')
+
+    def test_symlinked_checkout_ancestor_refused(self):
+        # A final checkout component can be ordinary even when its parent is
+        # a symlink. The leaf-only check also accepted this redirection.
+        ancestor = self.root.parent / (self.root.name + '-parent-alias')
+        ancestor.symlink_to(self.root.parent, target_is_directory=True)
+        self.addCleanup(ancestor.unlink)
+        nested_root = ancestor / self.root.name
+        self.assertFalse(nested_root.is_symlink())
+        with self.assertRaisesRegex(UnsafePromotion, 'symlinked repository root/ancestor'):
+            inspect(nested_root)
+
+    def test_missing_or_non_directory_checkout_root_refused(self):
+        with self.assertRaisesRegex(UnsafePromotion, 'missing or unreadable repository root'):
+            inspect(self.root / 'absent-checkout')
+        with self.assertRaisesRegex(UnsafePromotion, 'non-directory repository root'):
+            inspect(self.root / CONFIG)
+
     def test_symlink_source_refused(self):
         path = self.root / GATES['authorization'][0]
         path.unlink()

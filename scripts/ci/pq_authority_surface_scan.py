@@ -42,10 +42,16 @@ class AuditError(ValueError):
 
 def sources(root: Path):
     base = root / 'trillionnium' / 'crates'
-    # Every entry to the scan tree must be a real directory. Checking only
-    # `crates` leaves `trillionnium` or the supplied root free to redirect
-    # scanning outside the reviewed checkout through a symlink.
-    if any(path.is_symlink() for path in (root, root / 'trillionnium', base)):
+    # Checking the three immediate components is insufficient if an earlier
+    # ancestor of --root is a symlink. Reject the alias rather than silently
+    # scanning and presenting another checkout as this evidence source.
+    try:
+        actual_root = root.resolve(strict=True)
+    except (OSError, RuntimeError) as error:
+        raise AuditError('missing crate root') from error
+    if (root.absolute() != actual_root
+            or any(path.is_symlink() for path in
+                   (root, root / 'trillionnium', base))):
         raise AuditError('symlink crate root/ancestor')
     if not base.is_dir():
         raise AuditError('missing crate root')
