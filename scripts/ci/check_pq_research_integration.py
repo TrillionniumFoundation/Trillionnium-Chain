@@ -138,6 +138,9 @@ NATIVE_REQUIRED_PATHS = frozenset((
 # not make TCD content addressing, M12 readback or a migration rehearsal a PQ
 # authorization scheme. They retain their original independently selected owners.
 CONVERGENCE_REQUIRED_PATHS = frozenset((
+    "config/systemd/trnmponpublic.slice",
+    "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs",
     ".github/workflows/trnm-required-baseline.yml",
     ".github/workflows/pon-recent-batch-acceptance.yml",
     ".github/workflows/pon-branch-encoding-acceptance.yml",
