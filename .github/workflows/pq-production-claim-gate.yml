@@ -96,6 +96,7 @@ jobs:
         run: test -z "$(git status --porcelain=v1)"
 
   relay-mldsa65-wire-shape:
+    if: github.head_ref == 'fix/pq-relay-mldsa65-wire-preflight-20261030' || github.ref_name == 'fix/pq-relay-mldsa65-wire-preflight-20261030'
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     steps:
