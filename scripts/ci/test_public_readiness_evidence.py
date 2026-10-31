@@ -967,7 +967,11 @@ class NativeDurableSchemaTests(unittest.TestCase):
                     self.extract(self.replace_once(self.current,opener,changed))
 
     def test_pq_tables_cannot_be_inserted_into_legacy_literals(self):
-        for name in ('pq_network_peer_v1','pq_network_request_v1','Pq_NeTwOrK_PeEr_V1','Pq_NeTwOrK_ReQuEsT_V1'):
+        for name in ('pq_network_peer_v1','pq_network_request_v1',
+                     'pq_network_resource_v2','pq_network_peer_v2','pq_network_request_v2',
+                     'Pq_NeTwOrK_PeEr_V1','Pq_NeTwOrK_ReQuEsT_V1',
+                     'Pq_NeTwOrK_ReSoUrCe_V2','Pq_NeTwOrK_ReQuEsT_V2',
+                     'pq_network_future_owner_v99'):
             extension = 'CREATE TABLE '+name+'(id BLOB PRIMARY KEY,data BLOB NOT NULL);'
             literal = 'const DDL: &str = "'+extension+'";'
             v1 = literal+'fn open() { hash(b"native-branch-schema-v1", &[DDL.as_bytes()]); }'
@@ -1117,7 +1121,9 @@ class NativeDurableSchemaTests(unittest.TestCase):
         for decoy in ['mod historical { '+literal+' }','ignored!('+literal+');','ignored!['+literal+'];']:
             with self.subTest(decoy=decoy),self.assertRaisesRegex(ValueError,'durable schema literal DDL'):
                 self.extract(decoy+'\nuse other::DDL;\n'+opener)
-        for name in ['archive_nodes','native_state_commitments','ArChIvE_NoDeS']:
+        for name in ['archive_nodes','native_state_commitments','ArChIvE_NoDeS',
+                     'pq_network_resource_v2','pq_network_peer_v2','pq_network_request_v2',
+                     'Pq_NeTwOrK_FuTuRe_OwNeR_V99']:
             extension = 'CREATE TABLE '+name+'(id BLOB PRIMARY KEY,data BLOB NOT NULL);'
             sources = [
                 (literal.replace('CREATE TABLE exact',extension+'CREATE TABLE exact')+opener,None),
