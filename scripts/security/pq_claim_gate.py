@@ -119,6 +119,31 @@ DELEGATED_BOUNDARY_ROLES = {
     "mempool_admission": "mempool_canonical_signer_and_pending_nonce_authority",
     "interop_identity": "interop_did_capability_external_actor_authentication",
 }
+# SHA-256 of each reviewed *source file's raw bytes* at PR #613 HEAD
+# 298f09505bebbf1b7befcd725a1b90e04c15548b. This is a conservative
+# change-control freeze, NOT a signed trust root, an authentication check,
+# an installed-binary attestation, or whole-chain PQ acceptance. An edit that
+# preserves every string marker still requires independent re-review.
+PINNED_AUTHORITY_SOURCE_SHA256 = {
+    "hepta_handoff": "a162bc38f6550fe810fbd3c9832d1ff4d6a5ee8b19aa08cde68db5cb2dce8392",
+    "cell_discovery": "37964c0d88ea6a1521f106f87418b8da9ae1dd7f25926b2fc20631605767cbbf",
+    "da_auth": "9251274c47edc1ddc5fef34c0130f5341d6977681a4e07c2eab89a235c6d55f1",
+    "da_retrieval": "188930642a116a212a6badef9f359fe48970e2f311f14f31bdba4584e823019e",
+    "transport_ingress": "46a9858672b48c23552e7b421be79b757263bf3212fae5112413be7531a770eb",
+    "legacy_transfer": "b707b1f094ee4fa38dfb397877b021ed73ea5bc9d676742d952ef415804985d1",
+    "native_m06_envelope": "c2a45a80ef667fc3b63bd416e8679f0d8833fb92ccbc626dfbf54bf5bbe87c5b",
+    "research_command": "675c819160a7d8c7de56f5084bf187c576fe8365ff22da062e1c030919173ca5",
+    "research_state": "3904a1b3184a0a32bf77df4dc573579bf1cee75ae1e095361588c774af34e7c6",
+    "task_store": "9b55dc3354ab056edbd9bed34f3c5e02bd2b85ce3531efc565a84c9f653da1f7",
+    "service_settlement": "a0f54594849d850efe342765df24223df3cf859d01c6ac9eb273e4d3455efc22",
+    "governance_guard": "a4dcc15c268be8e4c690f3765837a868a145b3a59e8b0f4ff5c68c4ea769aacc",
+    "control_plane": "c1facc89f6965c95945e9b013b08b6063c37afe6dc4f41b6f0f212399e71c0a3",
+    "release_bundle": "ab38e859834e899000f33e8d85b01d7a18ee779d726b6382b58498bdce071cc2",
+    "state_import": "d757c67829ab64fba27743af515bc354b1752c1c80e7b2d5bc820cfa20cff970",
+    "mempool_admission": "ac777c8fa3a9953343fd079a09aca43bd672d8c4c0998cb50a8f934d675e2fe4",
+    "interop_identity": "7a90dcc212b76bfb18ebcd8cd8697f1fc6d052371b9df900a714b92293ba99e9"
+}
+
 # These known findings describe the unqualified baseline, not successful
 # PQ migration. Every *other* finding, including new future kinds, is fatal
 # for --assert-unqualified unless explicitly reviewed and classified here.
@@ -323,10 +348,18 @@ def inspect(root: Path) -> dict:
             continue
         if label in CLASSICAL_MARKERS:
             try:
-                source = file.read_text(encoding="utf-8")
+                source_bytes = file.read_bytes()
+                source = source_bytes.decode("utf-8")
             except (OSError, UnicodeError):
                 blockers.append({"kind": "unreadable_source", "path": rel})
                 continue
+            # Markers alone miss unrelated edits to a verifier or authority
+            # owner. Freeze the complete reviewed bytes independently.
+            if hashlib.sha256(source_bytes).hexdigest() != PINNED_AUTHORITY_SOURCE_SHA256.get(label):
+                blockers.append({
+                    "kind": "unreviewed_authority_source_digest_change",
+                    "path": rel, "boundary": CLASSICAL_BOUNDARY_ROLES[label],
+                })
             if all(marker in source for marker in CLASSICAL_MARKERS[label]):
                 blockers.append({
                     "kind": "classical_authority", "path": rel,
@@ -343,10 +376,16 @@ def inspect(root: Path) -> dict:
                 })
         elif label in DELEGATED_MARKERS:
             try:
-                source = file.read_text(encoding="utf-8")
+                source_bytes = file.read_bytes()
+                source = source_bytes.decode("utf-8")
             except (OSError, UnicodeError):
                 blockers.append({"kind": "unreadable_source", "path": rel})
                 continue
+            if hashlib.sha256(source_bytes).hexdigest() != PINNED_AUTHORITY_SOURCE_SHA256.get(label):
+                blockers.append({
+                    "kind": "unreviewed_authority_source_digest_change",
+                    "path": rel, "boundary": DELEGATED_BOUNDARY_ROLES[label],
+                })
             # An unreviewed signature-verifier replacement or caller-auth
             # refactor cannot silently erase a previously known missing root.
             kind = ("delegated_authority"
@@ -485,6 +524,9 @@ def has_unreviewed_findings(report: dict) -> bool:
     if set(CLASSICAL_MARKERS) != set(CLASSICAL_BOUNDARY_ROLES):
         return True
     if set(DELEGATED_MARKERS) != set(DELEGATED_BOUNDARY_ROLES):
+        return True
+    # No source boundary may fall out of the exact reviewed snapshot.
+    if set(PINNED_AUTHORITY_SOURCE_SHA256) != (set(CLASSICAL_MARKERS) | set(DELEGATED_MARKERS)):
         return True
     expected = {
         (PATHS[name], CLASSICAL_BOUNDARY_ROLES[name]) for name in CLASSICAL_MARKERS

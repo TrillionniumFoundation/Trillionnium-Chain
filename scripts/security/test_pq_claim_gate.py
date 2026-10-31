@@ -18,10 +18,10 @@ class ClaimGateTests(unittest.TestCase):
         for key, rel in module.PATHS.items():
             target = self.root / rel
             target.parent.mkdir(parents=True, exist_ok=True)
-            if key in module.CLASSICAL_MARKERS:
-                target.write_text(" ".join(module.CLASSICAL_MARKERS[key]), encoding="utf-8")
-            elif key in module.DELEGATED_MARKERS:
-                target.write_text(" ".join(module.DELEGATED_MARKERS[key]), encoding="utf-8")
+            if key in module.CLASSICAL_MARKERS or key in module.DELEGATED_MARKERS:
+                # Use the actual pinned checkout bytes: synthetic marker-only
+                # fixtures would bypass the exact-source SHA-256 assertion.
+                target.write_bytes((SCRIPT.parents[2] / rel).read_bytes())
             elif key == "w1_backend":
                 profile = {"pq_128_security_qualified": False,
                            "proof_receipt_kind": module.RESEARCH_PROOF_RECEIPT_KIND}
@@ -48,6 +48,73 @@ class ClaimGateTests(unittest.TestCase):
     def kinds(self):
         return {row["kind"] for row in module.inspect(self.root)["known_open_findings"]}
 
+
+
+    def test_all_reviewed_authority_source_bytes_are_sha256_pinned(self):
+        import hashlib
+
+        names = set(module.CLASSICAL_MARKERS) | set(module.DELEGATED_MARKERS)
+        self.assertEqual(set(module.PINNED_AUTHORITY_SOURCE_SHA256), names)
+        for key in sorted(names):
+            with self.subTest(source=key):
+                # Independent test of the real checked-out source, not a
+                # fabricated marker-only fixture or a self-reported claim.
+                source = (SCRIPT.parents[2] / module.PATHS[key]).read_bytes()
+                self.assertEqual(
+                    hashlib.sha256(source).hexdigest(),
+                    module.PINNED_AUTHORITY_SOURCE_SHA256[key],
+                )
+
+    def test_marker_preserving_authority_source_drift_is_default_denied(self):
+        import subprocess
+        import sys
+
+        names = set(module.CLASSICAL_MARKERS) | set(module.DELEGATED_MARKERS)
+        self.assertFalse(module.has_unreviewed_findings(module.inspect(self.root)))
+        for key in sorted(names):
+            with self.subTest(source=key):
+                path = self.root / module.PATHS[key]
+                original = path.read_bytes()
+                # A byte change that leaves every old marker untouched used
+                # to be accepted as the reviewed source. Audit it as drift.
+                path.write_bytes(original + b"\n// Unreviewed authority source edit\n")
+                try:
+                    changed = module.inspect(self.root)
+                    self.assertFalse(changed["pq_chain_qualified"])
+                    self.assertTrue(module.has_unreviewed_findings(changed))
+                    self.assertTrue(any(
+                        row["kind"] == "unreviewed_authority_source_digest_change"
+                        and row["path"] == module.PATHS[key]
+                        for row in changed["known_open_findings"]
+                    ))
+                    self.assertTrue(any(
+                        row["kind"] in ("classical_authority", "delegated_authority")
+                        and row["path"] == module.PATHS[key]
+                        for row in changed["known_open_findings"]
+                    ))
+                finally:
+                    path.write_bytes(original)
+        # Run the genuine CLI, not merely its Python helper.
+        key = "interop_identity"
+        path = self.root / module.PATHS[key]
+        original = path.read_bytes()
+        path.write_bytes(original + b"\n// Same authority markers\n")
+        try:
+            blocked = subprocess.run(
+                [sys.executable, str(SCRIPT), "--root", str(self.root),
+                 "--assert-unqualified"],
+                capture_output=True, text=True, check=False,
+            )
+            self.assertEqual(blocked.returncode, 2, blocked.stdout)
+            self.assertIn("unreviewed_authority_source_digest_change", blocked.stdout)
+        finally:
+            path.write_bytes(original)
+        restored = subprocess.run(
+            [sys.executable, str(SCRIPT), "--root", str(self.root),
+             "--assert-unqualified"],
+            capture_output=True, text=True, check=False,
+        )
+        self.assertEqual(restored.returncode, 0, restored.stdout)
 
     def test_six_delegated_authority_roots_are_explicit(self):
         # Include string-actor identity, signed admission, release, and migration
@@ -106,7 +173,7 @@ class ClaimGateTests(unittest.TestCase):
             with self.subTest(key=key):
                 path = self.root / module.PATHS[key]
                 original = path.read_text(encoding="utf-8")
-                path.write_text(original.replace(markers[0], "unreviewed-root", 1),
+                path.write_text(original.replace(markers[0], "unreviewed-root"),
                                 encoding="utf-8")
                 try:
                     changed = module.inspect(self.root)
@@ -146,7 +213,7 @@ class ClaimGateTests(unittest.TestCase):
                 original = path.read_text(encoding="utf-8")
                 last = module.DELEGATED_MARKERS[key][-1]
                 self.assertIn(last, original)
-                path.write_text(original.replace(last, "unreviewed-callsite", 1),
+                path.write_text(original.replace(last, "unreviewed-callsite"),
                                 encoding="utf-8")
                 try:
                     report = module.inspect(self.root)
@@ -497,7 +564,7 @@ class ClaimGateTests(unittest.TestCase):
                 path = self.root / module.PATHS[key]
                 original = path.read_text(encoding="utf-8")
                 self.assertIn(markers[0], original)
-                changed = original.replace(markers[0], "unreviewed_auth_change", 1)
+                changed = original.replace(markers[0], "unreviewed_auth_change")
                 path.write_text(changed, encoding="utf-8")
                 try:
                     report = module.inspect(self.root)
