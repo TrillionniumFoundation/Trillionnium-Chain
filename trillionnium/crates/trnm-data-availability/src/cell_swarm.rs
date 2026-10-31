@@ -165,7 +165,6 @@ impl CellSwarmManifestV0 {
         descriptor.content_digest = content_digest(&descriptor, content);
         descriptor.chunk_hashes = content
             .chunks(chunk_bytes as usize)
-            .enumerate()
             .map(chunk_digest)
             .collect();
         Self::checked(descriptor)
