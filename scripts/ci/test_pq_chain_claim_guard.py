@@ -117,6 +117,10 @@ class TestClaimGuard(unittest.TestCase):
         (self.root / 'trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs').unlink()
         self.refused()
 
+    def test_missing_quantum_daa_model_refused(self):
+        (self.root / 'scripts/ci/pq_quantum_daa_scenarios.py').unlink()
+        self.refused()
+
     def test_duplicate_json_keys_refused(self):
         self.put(DEVNET, b'{"production_activation":false,"production_activation":false}')
         self.refused()
