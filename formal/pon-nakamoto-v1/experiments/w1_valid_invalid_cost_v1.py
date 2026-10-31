@@ -111,6 +111,67 @@ def matrices(name: str) -> tuple[list[int], list[int]]:
     raise ValueError("unknown work family")
 
 
+# A real, eligible W1 solver can derive the true C=A*B for these structures
+# without the generic correction term. The challenge-noised transcript is
+# still constructed in full. This is an upper-cost candidate, NOT a lower bound
+# on the cheapest valid miner or a post-quantum security qualification.
+STRUCTURED_LEGAL_FAMILIES = ("zero", "diagonal", "rank-one")
+
+
+def legal_structured_product(name: str) -> list[int]:
+    if name == "zero":
+        return [0] * w1.CELLS
+    if name == "diagonal":
+        out = [0] * w1.CELLS
+        for i in range(w1.N):
+            out[i * w1.N + i] = (i + 1) * (3 * i + 1) % w1.Q
+        return out
+    if name == "rank-one":
+        inner = sum((k + 2) * (k + 3) for k in range(w1.N)) % w1.Q
+        return [(i + 1) * (j + 1) * inner % w1.Q
+                for i in range(w1.N) for j in range(w1.N)]
+    raise ValueError("unknown legal structure")
+
+
+def prove_legal_structured(
+    challenge: bytes, a: list[int], b: list[int], name: str,
+) -> bytes:
+    """Emit a full, lawful W1 proof, never a fabricated cheap ticket.
+
+    Input matrices must exactly match a known legal structural identity;
+    a family label alone cannot authorize an incorrect product. All
+    challenge-derived noise and 512 cumulative trace tiles remain included.
+    """
+    if not isinstance(challenge, bytes) or len(challenge) != 32:
+        raise ValueError("invalid challenge")
+    if name not in STRUCTURED_LEGAL_FAMILIES or (a, b) != matrices(name):
+        raise ValueError("unreviewed structured matrices")
+    product = legal_structured_product(name)
+    el, er, fl, fr = [
+        w1.expand(challenge, x, w1.N * w1.R) for x in range(4)
+    ]
+    e = w1.mm(el, er, w1.N, w1.R, w1.N)
+    f = w1.mm(fl, fr, w1.N, w1.R, w1.N)
+    aa = [(x + y) % w1.Q for x, y in zip(a, e)]
+    bb = [(x + y) % w1.Q for x, y in zip(b, f)]
+    cp = [0] * w1.CELLS
+    trace = hashlib.sha256(b"TRNM-PON-TRACE1\0" + challenge)
+    for i0 in range(0, w1.N, w1.R):
+        for j0 in range(0, w1.N, w1.R):
+            for k0 in range(0, w1.N, w1.R):
+                tile = []
+                for i in range(i0, i0 + w1.R):
+                    for j in range(j0, j0 + w1.R):
+                        pos = i * w1.N + j
+                        cp[pos] = (cp[pos] + sum(
+                            aa[i * w1.N + k] * bb[k * w1.N + j]
+                            for k in range(k0, k0 + w1.R)
+                        )) % w1.Q
+                        tile.append(cp[pos])
+                trace.update(w1.field_bytes(tile))
+    return (b"PNW1" + w1.field_bytes(a) + w1.field_bytes(b)
+            + w1.field_bytes(product) + trace.digest())
+
 def forge_ticket_only(challenge: bytes, target: bytes, legitimate_trace: bytes):
     """Find only a cheap ticket-qualified digest; it is NOT a W1 transcript."""
     for counter in range(MAX_GUESSES):
@@ -138,6 +199,20 @@ def one_case(name: str, trial: int, target: bytes) -> dict:
     start = time.process_time_ns()
     _ticket, actual_product = w1.verify(challenge, task, b"\xff" * 32, proof)
     valid_verify_ns = time.process_time_ns() - start
+
+    # Same challenge/task; do not award a fabricated digest as valid work.
+    legal_structured_cpu_ns = None
+    if name in STRUCTURED_LEGAL_FAMILIES:
+        start = time.process_time_ns()
+        legal_proof = prove_legal_structured(challenge, a, b, name)
+        legal_structured_cpu_ns = time.process_time_ns() - start
+        if legal_proof != proof or len(legal_proof) != w1.PROOF_BYTES:
+            raise AssertionError("legal structured proof differs from W1 oracle")
+        if H("ticket", challenge, legal_proof[-32:]) != H(
+            "ticket", challenge, proof[-32:]
+        ):
+            raise AssertionError("structured valid ticket differs from W1")
+
 
     # Independently check selected output coordinates instead of accepting only
     # the prover's claimed C. This does not establish a cost lower bound.
@@ -173,6 +248,9 @@ def one_case(name: str, trial: int, target: bytes) -> dict:
         "challenge": challenge.hex(),
         "ticket_qualified_invalid_digest_guesses": guesses,
         "valid_scalar_prover_cpu_ns": honest_ns,
+        "legal_structured_prover_cpu_ns": legal_structured_cpu_ns,
+        "legal_structured_proof_byte_identical": (
+            True if legal_structured_cpu_ns is not None else None),
         "valid_full_verify_cpu_ns": valid_verify_ns,
         "invalid_full_verify_cpu_ns": invalid_verify_ns,
         "ticket_only_forgery_cpu_ns": cheap_ns,
@@ -213,6 +291,16 @@ def run(trials: int = 1) -> dict:
                         "gpu_or_asic_measured": False,
                         "quantum_oracle_measured": False},
         "observations": observations,
+        # Actual valid transcript work at the frozen target: record honest
+        # eligible attempts and winner denominators; forged tickets never count.
+        "sampled_valid_proof_attempts": len(observations),
+        "sampled_valid_devnet_winners": sum(
+            x["valid_winning_ticket_at_devnet_target"] for x in observations),
+        "sampled_structured_proof_attempts": sum(
+            x["legal_structured_proof_byte_identical"] is True for x in observations),
+        "sampled_structured_devnet_winners": sum(
+            x["legal_structured_proof_byte_identical"] is True
+            and x["valid_winning_ticket_at_devnet_target"] for x in observations),
         "all_ticket_qualified_invalid_rejected":
             all(x["forged_full_replay_error"] == "TRANSCRIPT"
                 for x in observations),
