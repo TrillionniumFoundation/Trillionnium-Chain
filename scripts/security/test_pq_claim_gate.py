@@ -47,6 +47,55 @@ class ClaimGateTests(unittest.TestCase):
         return {row["kind"] for row in module.inspect(self.root)["known_open_findings"]}
 
 
+    def test_da_authority_paths_are_explicitly_in_scope(self):
+        # Both are genuine classical permission boundaries, not proof that
+        # these opt-in candidates are currently reachable in production.
+        expected = {
+            "da_auth": "data_availability_committee_batch_author_attestation_v1",
+            "da_retrieval": "data_availability_retrieval_request_and_response_v1",
+        }
+        findings = module.inspect(self.root)["known_open_findings"]
+        for key, role in expected.items():
+            with self.subTest(boundary=key):
+                self.assertEqual(module.CLASSICAL_BOUNDARY_ROLES[key], role)
+                self.assertIn(key, module.CLASSICAL_MARKERS)
+                self.assertTrue(any(
+                    row["kind"] == "classical_authority"
+                    and row["path"] == module.PATHS[key]
+                    and row["boundary"] == role
+                    for row in findings
+                ))
+
+    def test_future_finding_or_accidental_pq_claim_is_default_denied(self):
+        from contextlib import redirect_stdout
+        from io import StringIO
+        import sys
+        from unittest import mock
+
+        baseline = module.inspect(self.root)
+        self.assertFalse(module.has_unreviewed_findings(baseline))
+        for poisoned in (
+            {**baseline, "known_open_findings":
+                baseline["known_open_findings"] + [
+                    {"kind": "future_unsafe_authority_claim", "path": "new-owner"}]},
+            {**baseline, "pq_chain_qualified": True},
+            {**baseline, "quantum_work_lower_bound_proven": True},
+            {**baseline, "complete_authority_inventory_reviewed": True},
+            {**baseline, "independent_cryptographic_acceptance": True},
+            {**baseline, "known_open_findings": "invalid"},
+        ):
+            with self.subTest(report=poisoned.get("known_open_findings")):
+                self.assertTrue(module.has_unreviewed_findings(poisoned))
+                # Actually test the CLI's decision path, not only its helper.
+                with mock.patch.object(module, "inspect", return_value=poisoned):
+                    with mock.patch.object(sys, "argv", [
+                        str(SCRIPT), "--root", str(self.root), "--assert-unqualified"
+                    ]):
+                        with redirect_stdout(StringIO()):
+                            with self.assertRaises(SystemExit) as caught:
+                                module.main()
+                self.assertEqual(caught.exception.code, 2)
+
     def test_redirected_checkout_source_refused_even_with_identical_valid_bytes(self):
         import subprocess
         import sys

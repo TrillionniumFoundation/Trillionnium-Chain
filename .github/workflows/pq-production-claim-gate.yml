@@ -11,12 +11,15 @@ on:
       - audit/pq-w1-guest-source-ci-coverage-20261030
       - audit/pq-w1-closed-manifest-schema-20261030
       - audit/pq-classical-boundary-drift-refusal-20261030
+      - audit/pq-da-classical-auth-default-deny-20261030
     paths:
       - .github/workflows/pq-production-claim-gate.yml
       - scripts/security/**
       - config/consensus-mainline.json
       - trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs
       - trillionnium/crates/trnm-data-availability/src/cell/discovery.rs
+      - trillionnium/crates/trnm-data-availability/src/types.rs
+      - trillionnium/crates/trnm-data-availability/src/retrieval.rs
       - trillionnium/crates/trnm-pon-node/src/ingress.rs
       - trillionnium/crates/trnm-types/src/transfer.rs
       - trillionnium/crates/trnm-research-protocol/src/command.rs
@@ -32,6 +35,8 @@ on:
       - config/consensus-mainline.json
       - trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs
       - trillionnium/crates/trnm-data-availability/src/cell/discovery.rs
+      - trillionnium/crates/trnm-data-availability/src/types.rs
+      - trillionnium/crates/trnm-data-availability/src/retrieval.rs
       - trillionnium/crates/trnm-pon-node/src/ingress.rs
       - trillionnium/crates/trnm-types/src/transfer.rs
       - trillionnium/crates/trnm-research-protocol/src/command.rs
