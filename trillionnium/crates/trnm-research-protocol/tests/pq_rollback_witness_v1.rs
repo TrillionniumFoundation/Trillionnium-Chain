@@ -367,6 +367,43 @@ fn no_valid_quorum_from_expired_or_conflicting_signed_state() {
 }
 
 #[test]
+fn expiration_second_is_exclusive_for_single_witness_and_quorum() {
+    let sk = key();
+    let pk = sk.verifying_key().to_bytes().to_vec();
+    let signed = witness(&sk);
+    let local = head();
+    let mut expected_context = expected(&pk, &local);
+
+    // A still-live and genuinely signed witness is accepted immediately
+    // before its declared expiry, but never at that exact UNIX second.
+    expected_context.now_unix_s = 1149;
+    signed.verify_for_recovery(&expected_context).unwrap();
+    expected_context.now_unix_s = 1150;
+    assert!(matches!(
+        signed.verify_for_recovery(&expected_context),
+        Err(PqRecoveryWitnessError::TimeWindow)
+    ));
+
+    let (keys, receipts) = quorum_fixture();
+    let roster = quorum_roster(&keys);
+    let mut policy = quorum_policy(&roster, &local);
+    policy.now_unix_s = 1149;
+    assert_eq!(
+        verify_pq_recovery_quorum_v1(&receipts[..2], &policy)
+            .unwrap()
+            .verified_signers(),
+        2
+    );
+    policy.now_unix_s = 1150;
+    assert!(matches!(
+        verify_pq_recovery_quorum_v1(&receipts[..2], &policy),
+        Err(PqRecoveryQuorumErrorV1::Witness(
+            PqRecoveryWitnessError::TimeWindow
+        ))
+    ));
+}
+
+#[test]
 fn whole_batch_cheap_rejections_preempt_invalid_early_signature() {
     let (keys, receipts) = quorum_fixture();
     let local = head();
