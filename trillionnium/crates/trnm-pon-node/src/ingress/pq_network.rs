@@ -32,6 +32,9 @@ pub(crate) const MAX_INGRESS_CONNECTIONS: u64 = 64;
 pub(crate) const MAX_INGRESS_BYTES: u64 = 32 * 1024 * 1024;
 pub(crate) const MAX_INBOUND_VERIFICATIONS: u64 = 64;
 const MAX_LIFETIME_SECONDS: u64 = 60;
+// The signed frame and the outer length prefix are not part of the JSON body.
+// Refuse untransmittable inputs before computing SHA-384 or ML-DSA signatures.
+const MAX_SIGNED_PAYLOAD_BYTES: usize = MAX_WIRE - 8 - TPQ1_SIGNED_BYTES;
 const REQUEST_MAGIC: &[u8; 4] = b"PNQ2";
 const RESPONSE_MAGIC: &[u8; 4] = b"PNP2";
 // TPQ1 purpose 6 is the existing peer-authorization purpose. Directions are
@@ -316,11 +319,12 @@ fn statement(e: &PqFrameExpectation<'_>) -> Result<[u8; TPQ1_UNSIGNED_BYTES]> {
     out[128..].copy_from_slice(&payload_commitment(e.payload).map_err(crypto)?);
     Ok(out)
 }
+fn require_signed_payload_bound(length: usize) -> Result<()> {
+    ensure(length <= MAX_SIGNED_PAYLOAD_BYTES, "PQ_NETWORK_WIRE_LIMIT")
+}
 fn encode_wire(magic: &[u8; 4], frame: &[u8], payload: &[u8]) -> Result<Vec<u8>> {
-    ensure(
-        frame.len() == TPQ1_SIGNED_BYTES && payload.len() <= MAX_WIRE - 8 - TPQ1_SIGNED_BYTES,
-        "PQ_NETWORK_WIRE_LIMIT",
-    )?;
+    ensure(frame.len() == TPQ1_SIGNED_BYTES, "PQ_NETWORK_WIRE_LIMIT")?;
+    require_signed_payload_bound(payload.len())?;
     let mut out = Vec::with_capacity(8 + frame.len() + payload.len());
     out.extend_from_slice(magic);
     out.extend_from_slice(&(payload.len() as u32).to_be_bytes());
@@ -391,6 +395,9 @@ impl PqClient {
             "PQ_NETWORK_LIFETIME",
         )?;
         let payload = serde_json::to_vec(&request)?;
+        // This client must not hash/sign a body the original PNQ2 wire bound
+        // would reject after ML-DSA has already done expensive work.
+        require_signed_payload_bound(payload.len())?;
         let expected = self.policy.expectation(
             self.signer.public_key_id(),
             Direction::Request,
@@ -467,6 +474,9 @@ impl PqServer {
             value,
         };
         let payload = serde_json::to_vec(&response)?;
+        // Never sign an oversized terminal response that cannot be persisted
+        // or relayed under the same fixed native network wire limit.
+        require_signed_payload_bound(payload.len())?;
         let expected = self.policy.expectation(
             request.peer,
             Direction::Response,
