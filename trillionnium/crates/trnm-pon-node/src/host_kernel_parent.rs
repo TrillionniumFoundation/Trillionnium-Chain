@@ -124,6 +124,13 @@ mod kernel_parent {
     }
     const MAX_MEMORY_BYTES: u64 = 2 * 1024 * 1024 * 1024;
     const MAX_TASKS: u64 = 256;
+    const LIMIT_NAMES: [&str; 5] = [
+        "cpu.max",
+        "cpu.max.burst",
+        "memory.max",
+        "memory.swap.max",
+        "pids.max",
+    ];
     #[derive(Debug, Clone, Copy, PartialEq, Eq)]
     struct Limits {
         cpu_quota_us: u64,
@@ -179,6 +186,65 @@ mod kernel_parent {
         }
     }
 
+    /// Ephemeral text for the five quota rechecks that already have a 128-byte
+    /// ceiling. This owns no descriptor or previous observation. The extra byte
+    /// distinguishes an exact-limit value followed by real EOF from oversize
+    /// input; a late read error is still an error rather than a valid prefix.
+    struct BoundedKernelText {
+        bytes: [u8; 129],
+        length: usize,
+    }
+
+    impl std::ops::Deref for BoundedKernelText {
+        type Target = str;
+
+        fn deref(&self) -> &str {
+            // Only read_bounded_kernel_text constructs this private value and
+            // checks the complete UTF-8 input before exposing it.
+            std::str::from_utf8(&self.bytes[..self.length]).expect("validated bounded kernel text")
+        }
+    }
+
+    fn read_bounded_kernel_text(reader: &mut impl Read) -> io::Result<BoundedKernelText> {
+        let mut text = BoundedKernelText {
+            bytes: [0; 129],
+            length: 0,
+        };
+        loop {
+            let count = match reader.read(&mut text.bytes[text.length..]) {
+                Ok(count) => count,
+                Err(error) if error.kind() == io::ErrorKind::Interrupted => continue,
+                Err(error) => return Err(error),
+            };
+            if count == 0 {
+                std::str::from_utf8(&text.bytes[..text.length])
+                    .map_err(|error| io::Error::new(io::ErrorKind::InvalidData, error))?;
+                return Ok(text);
+            }
+            text.length += count;
+            if text.length > 128 {
+                return Err(io::Error::new(
+                    io::ErrorKind::InvalidData,
+                    "kernel text limit",
+                ));
+            }
+        }
+    }
+
+    fn read_current_bounded_limits(paths: &[PathBuf; 5]) -> Result<Limits> {
+        let read = |index: usize| -> Result<BoundedKernelText> {
+            // Reopen the current path with the current credentials on EVERY
+            // check. Only immutable path concatenation is prepared in open().
+            let mut file = fs::File::open(&paths[index])
+                .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_UNAVAILABLE"))?;
+            read_bounded_kernel_text(&mut file)
+                .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_UNAVAILABLE"))
+        };
+        // Preserve read order and error precedence: all five original reads
+        // must succeed before any limit is parsed or compared.
+        validate_limits(&read(0)?, &read(1)?, &read(2)?, &read(3)?, &read(4)?)
+    }
+
     fn numeric(text: &str, limit: u64) -> Option<u64> {
         let value = text.trim().parse::<u64>().ok()?;
         (value > 0 && value <= limit).then_some(value)
@@ -193,12 +259,15 @@ mod kernel_parent {
         swap: &str,
         pids: &str,
     ) -> Result<Limits> {
-        let parts: Vec<_> = cpu.split_ascii_whitespace().collect();
-        if parts.len() != 2 {
+        let mut parts = cpu.split_ascii_whitespace();
+        let Some((quota, period)) = parts.next().zip(parts.next()) else {
+            return Err("PUBLIC_HOST_KERNEL_LIMITS".into());
+        };
+        if parts.next().is_some() {
             return Err("PUBLIC_HOST_KERNEL_LIMITS".into());
         }
-        let quota = numeric(parts[0], 250_000).ok_or("PUBLIC_HOST_KERNEL_LIMITS")?;
-        let period = numeric(parts[1], 1_000_000).ok_or("PUBLIC_HOST_KERNEL_LIMITS")?;
+        let quota = numeric(quota, 250_000).ok_or("PUBLIC_HOST_KERNEL_LIMITS")?;
+        let period = numeric(period, 1_000_000).ok_or("PUBLIC_HOST_KERNEL_LIMITS")?;
         let memory = numeric(memory, MAX_MEMORY_BYTES).ok_or("PUBLIC_HOST_KERNEL_LIMITS")?;
         let tasks = numeric(pids, MAX_TASKS).ok_or("PUBLIC_HOST_KERNEL_LIMITS")?;
         if quota.checked_mul(4).is_none_or(|value| value > period)
@@ -293,6 +362,9 @@ mod kernel_parent {
 
     pub struct KernelBudget {
         parent: PathBuf,
+        // Immutable derived path bytes, never open descriptors, quota contents,
+        // permissions, membership or a successful resource-check verdict.
+        limit_paths: [PathBuf; 5],
         identity: (u64, u64),
         boot_id: String,
         limits: Limits,
@@ -321,24 +393,14 @@ mod kernel_parent {
                 .ok_or("PUBLIC_HOST_KERNEL_CONTEXT")?
                 .trim_start_matches('/');
             let current = own_cgroup()?;
-            if current != parent_rel && !current.starts_with(&format!("{parent_rel}/")) {
+            if current != parent_rel
+                && !current
+                    .strip_prefix(parent_rel)
+                    .is_some_and(|suffix| suffix.starts_with('/'))
+            {
                 return Err("PUBLIC_HOST_KERNEL_CONTEXT".into());
             }
-            let read = |name: &str| -> Result<String> {
-                let text = read_fresh_kernel_text(self.parent.join(name), Some(128))
-                    .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_UNAVAILABLE"))?;
-                if text.len() > 128 {
-                    return Err("PUBLIC_HOST_KERNEL_UNAVAILABLE".into());
-                }
-                Ok(text)
-            };
-            let observed = validate_limits(
-                &read("cpu.max")?,
-                &read("cpu.max.burst")?,
-                &read("memory.max")?,
-                &read("memory.swap.max")?,
-                &read("pids.max")?,
-            )?;
+            let observed = read_current_bounded_limits(&self.limit_paths)?;
             if observed != self.limits {
                 return Err("PUBLIC_HOST_KERNEL_LIMITS_CHANGED".into());
             }
@@ -368,6 +430,7 @@ mod kernel_parent {
             let budget = Self {
                 identity: (meta.dev(), meta.ino()),
                 boot_id: boot.trim().to_owned(),
+                limit_paths: LIMIT_NAMES.map(|name| parent.join(name)),
                 parent,
                 limits: Limits {
                     cpu_quota_us: 0,
@@ -376,17 +439,12 @@ mod kernel_parent {
                     tasks: 0,
                 },
             };
-            let read = |name: &str| -> Result<String> {
-                read_fresh_kernel_text(budget.parent.join(name), None)
+            let read = |index: usize| -> Result<String> {
+                // Initial parsing retains its original unbounded text grammar.
+                read_fresh_kernel_text(&budget.limit_paths[index], None)
                     .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_UNAVAILABLE"))
             };
-            let limits = validate_limits(
-                &read("cpu.max")?,
-                &read("cpu.max.burst")?,
-                &read("memory.max")?,
-                &read("memory.swap.max")?,
-                &read("pids.max")?,
-            )?;
+            let limits = validate_limits(&read(0)?, &read(1)?, &read(2)?, &read(3)?, &read(4)?)?;
             let checked = Self { limits, ..budget };
             checked.check()?;
             Ok(checked)
@@ -561,6 +619,242 @@ mod kernel_parent {
                     );
                 }
             }
+        }
+
+        fn original_limits(
+            cpu: &str,
+            burst: &str,
+            memory: &str,
+            swap: &str,
+            pids: &str,
+        ) -> Result<Limits> {
+            // Retain the pre-change allocation-based parser as an independent
+            // reference, including its token-count and numeric error order.
+            let parts: Vec<_> = cpu.split_ascii_whitespace().collect();
+            if parts.len() != 2 {
+                return Err("PUBLIC_HOST_KERNEL_LIMITS".into());
+            }
+            let quota = numeric(parts[0], 250_000).ok_or("PUBLIC_HOST_KERNEL_LIMITS")?;
+            let period = numeric(parts[1], 1_000_000).ok_or("PUBLIC_HOST_KERNEL_LIMITS")?;
+            let memory = numeric(memory, MAX_MEMORY_BYTES).ok_or("PUBLIC_HOST_KERNEL_LIMITS")?;
+            let tasks = numeric(pids, MAX_TASKS).ok_or("PUBLIC_HOST_KERNEL_LIMITS")?;
+            if quota.checked_mul(4).is_none_or(|value| value > period)
+                || burst.trim() != "0"
+                || swap.trim() != "0"
+            {
+                return Err("PUBLIC_HOST_KERNEL_LIMITS".into());
+            }
+            Ok(Limits {
+                cpu_quota_us: quota,
+                cpu_period_us: period,
+                memory_bytes: memory,
+                tasks,
+            })
+        }
+
+        fn original_current_limits(parent: &Path) -> Result<Limits> {
+            let read = |name| -> Result<String> {
+                let text = read_fresh_kernel_text(parent.join(name), Some(128))
+                    .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_UNAVAILABLE"))?;
+                if text.len() > 128 {
+                    return Err("PUBLIC_HOST_KERNEL_UNAVAILABLE".into());
+                }
+                Ok(text)
+            };
+            original_limits(
+                &read("cpu.max")?,
+                &read("cpu.max.burst")?,
+                &read("memory.max")?,
+                &read("memory.swap.max")?,
+                &read("pids.max")?,
+            )
+        }
+
+        #[test]
+        fn bounded_stack_text_preserves_original_read_frontier_and_errors() {
+            let mut inputs = vec![
+                b"25000 100000\n".to_vec(),
+                b"25000 100000\n\xff".to_vec(),
+                "\u{2003}25000\u{2003}".as_bytes().to_vec(),
+            ];
+            inputs.extend([0, 1, 127, 128, 129, 16_384].map(|n| vec![b'7'; n]));
+            for bytes in inputs {
+                for tail_error in [None, Some(io::ErrorKind::PermissionDenied)] {
+                    let mut original = ShortReader {
+                        remaining: &bytes,
+                        consumed: 0,
+                        interrupt: true,
+                        tail_error,
+                    };
+                    let mut candidate = ShortReader {
+                        remaining: &bytes,
+                        consumed: 0,
+                        interrupt: true,
+                        tail_error,
+                    };
+                    let expected =
+                        read_kernel_text(&mut original, Some(128)).map_err(|error| error.kind());
+                    let observed = read_bounded_kernel_text(&mut candidate)
+                        .map(|text| text.to_string())
+                        .map_err(|error| error.kind());
+                    assert_eq!(
+                        observed,
+                        expected,
+                        "length={}, tail={tail_error:?}",
+                        bytes.len()
+                    );
+                    assert_eq!(candidate.consumed, original.consumed);
+                    assert!(candidate.consumed <= 129);
+                }
+            }
+        }
+
+        #[test]
+        fn stack_quota_reads_preserve_fresh_paths_and_read_before_parse_errors() {
+            let directory = tempfile::tempdir().unwrap();
+            let paths = LIMIT_NAMES.map(|name| directory.path().join(name));
+            let values = ["25000 100000\n", "0\n", "268435456\n", "0\n", "32\n"];
+            let restore = || {
+                for (path, value) in paths.iter().zip(values) {
+                    fs::write(path, value).unwrap();
+                }
+            };
+            let compare = || {
+                let expected =
+                    original_current_limits(directory.path()).map_err(|error| error.to_string());
+                let observed =
+                    read_current_bounded_limits(&paths).map_err(|error| error.to_string());
+                assert_eq!(observed, expected);
+                observed
+            };
+            restore();
+            assert!(compare().is_ok());
+            // A malformed first value cannot mask an unavailable later file:
+            // the original implementation completes all reads before parsing.
+            fs::write(&paths[0], "max 100000\n").unwrap();
+            fs::remove_file(&paths[4]).unwrap();
+            assert_eq!(compare().unwrap_err(), "PUBLIC_HOST_KERNEL_UNAVAILABLE");
+            restore();
+            for path in &paths {
+                for bytes in [vec![b'7'; 129], vec![0xff], b"bad\n".to_vec()] {
+                    fs::write(path, &bytes).unwrap();
+                    assert!(compare().is_err());
+                    restore();
+                }
+                // Derived path bytes cannot retain an old file object or its
+                // value across rename/replacement, removal or changed access.
+                let retired = directory.path().join("retired");
+                fs::rename(path, &retired).unwrap();
+                fs::write(path, "1\n").unwrap();
+                compare().ok();
+                fs::remove_file(path).unwrap();
+                assert_eq!(compare().unwrap_err(), "PUBLIC_HOST_KERNEL_UNAVAILABLE");
+                fs::rename(&retired, path).unwrap();
+                fs::set_permissions(path, fs::Permissions::from_mode(0o0)).unwrap();
+                // Actual current credentials may retain DAC override. Both
+                // implementations must observe the same real kernel outcome.
+                compare().ok();
+                fs::set_permissions(path, fs::Permissions::from_mode(0o600)).unwrap();
+                restore();
+            }
+            assert!(compare().is_ok());
+        }
+
+        #[test]
+        fn allocation_free_limit_tokens_keep_original_grammar() {
+            for cpu in [
+                "",
+                "25000",
+                "25000 100000",
+                "25000 100000 1",
+                "0 100000",
+                "25001 100000",
+                "+25000 100000",
+                "25000\t100000\r\n",
+                "\u{2003}25000\u{2003} 100000",
+                "18446744073709551616 100000",
+                "1 4",
+                "250000 1000000",
+                "max 100000",
+            ] {
+                for memory in ["268435456", "0", "max", "2147483649"] {
+                    let expected = original_limits(cpu, "0", memory, "0", "32")
+                        .map_err(|error| error.to_string());
+                    let observed = validate_limits(cpu, "0", memory, "0", "32")
+                        .map_err(|error| error.to_string());
+                    assert_eq!(observed, expected, "cpu={cpu:?}, memory={memory:?}");
+                }
+            }
+        }
+
+        #[test]
+        #[ignore = "explicit real-kernel file-read cost observation; not fixed-parent qualification"]
+        fn actual_kernel_quota_read_cost_preserves_all_fresh_reads() {
+            use rustix::time::{clock_gettime_dynamic, ClockId, DynamicClockId};
+            use std::hint::black_box;
+            use std::time::Instant;
+
+            let parent = Path::new(CGROUP_ROOT);
+            let paths = LIMIT_NAMES.map(|name| parent.join(name));
+            let expected = original_current_limits(parent).map_err(|error| error.to_string());
+            // An unavailable first file would measure early refusal instead of
+            // the five complete reads this observation claims. A parsed but
+            // ineligible root-cgroup limit set is an explicit valid observation.
+            assert!(expected
+                .as_ref()
+                .err()
+                .is_none_or(|message| message == "PUBLIC_HOST_KERNEL_LIMITS"));
+            let actual_verdict = match &expected {
+                Ok(limits) => serde_json::json!({"Ok":{
+                    "cpu_quota_us":limits.cpu_quota_us,
+                    "cpu_period_us":limits.cpu_period_us,
+                    "memory_bytes":limits.memory_bytes,"tasks":limits.tasks,
+                }}),
+                Err(error) => serde_json::json!({"Err":error}),
+            };
+            assert_eq!(
+                read_current_bounded_limits(&paths).map_err(|error| error.to_string()),
+                expected
+            );
+            let cpu = || {
+                let value =
+                    clock_gettime_dynamic(DynamicClockId::Known(ClockId::ThreadCPUTime)).unwrap();
+                (value.tv_sec as u128) * 1_000_000_000 + value.tv_nsec as u128
+            };
+            let mut samples = Vec::new();
+            for round in 0..5 {
+                for candidate in if round % 2 == 0 {
+                    [false, true]
+                } else {
+                    [true, false]
+                } {
+                    let started = Instant::now();
+                    let before = cpu();
+                    for _ in 0..1000 {
+                        let observed = if candidate {
+                            read_current_bounded_limits(black_box(&paths))
+                        } else {
+                            original_current_limits(black_box(parent))
+                        }
+                        .map_err(|error| error.to_string());
+                        assert_eq!(black_box(observed), expected);
+                    }
+                    samples.push(serde_json::json!({
+                        "candidate":candidate,"round":round,"iterations":1000,
+                        "thread_cpu_ns":cpu()-before,"wall_ns":started.elapsed().as_nanos(),
+                    }));
+                }
+            }
+            println!(
+                "{}",
+                serde_json::json!({
+                    "schema":"pon-kernel-quota-read-cost-observation-v1",
+                    "scope":"five original fresh root-cgroup limit files and parsing; excludes boot, metadata, membership and native History; shared host; no fixed-parent or service qualification",
+                    "parent":parent,"fixed_parent_qualified":false,
+                    "same_actual_limit_verdict":true,"actual_limit_verdict":actual_verdict,
+                "all_five_fresh_reads_completed_each_iteration":true,"samples":samples,
+                })
+            );
         }
 
         #[test]

@@ -1,0 +1,42 @@
+{
+  "schema": "pon-history-frozen-native-binary-real-process-v1",
+  "argv": [
+    "/tmp/pon-history-target/debug/deps/trnm_pon_node-97cb6e843e34c6e7",
+    "actual_kernel_quota_read_cost_preserves_all_fresh_reads",
+    "--ignored",
+    "--nocapture"
+  ],
+  "cwd": "/tmp/pon-history-service-20261031",
+  "start_unix_ns": 1793410574297811747,
+  "elapsed_monotonic_ns": 104983606,
+  "exit_code": 0,
+  "binary_sha256_before": "51ddbf0b961f7e8f41c2b69c15b93e25440f941735ac7a03cf5406f6dee46467",
+  "binary_sha256_after": "51ddbf0b961f7e8f41c2b69c15b93e25440f941735ac7a03cf5406f6dee46467",
+  "compiled_source_file_sha256": "481efb469168c69a9c88b90355a7f8acbab32e14ba2b22d3a028e1c4bf42d14c",
+  "source_binding": "retained native binary from successful native-controls.process.json; reconstructed full source hash matches that build receipt",
+  "final_working_source_differs_only_in_benchmark_precondition_and_json_output": true,
+  "root_quota_text_before": {
+    "cpu.max": "800000 100000\n",
+    "cpu.max.burst": "0\n",
+    "memory.max": "8589934592\n",
+    "memory.swap.max": "max\n",
+    "pids.max": "max\n"
+  },
+  "root_quota_text_after": {
+    "cpu.max": "800000 100000\n",
+    "cpu.max.burst": "0\n",
+    "memory.max": "8589934592\n",
+    "memory.swap.max": "max\n",
+    "pids.max": "max\n"
+  },
+  "fixed_parent_qualified": false,
+  "measurement_scope": "five actual kernel files and limit parsing, not service qualification; compiled test does not emit its exact expected verdict",
+  "stdout": {
+    "bytes": 1478,
+    "sha256": "793ee5901df82443d49ffd1d694c78f6f41a18df2cbfd952170301ad1ea3736f"
+  },
+  "stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

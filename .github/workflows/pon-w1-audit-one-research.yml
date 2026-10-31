@@ -55,6 +55,7 @@ jobs:
           set -euo pipefail
           python3 scripts/ci/test_prepare_w1_audit_one_fixture.py -v 2>&1 | tee "$OUT/fixture-controls.log"
           python3 "$BACKEND/test_check_audit_one.py" -v 2>&1 | tee "$OUT/reader-controls.log"
+          python3 "$BACKEND/test_check_claim_audit.py" -v 2>&1 | tee "$OUT/public-claim-reader-controls.log"
       - name: Restore only the pinned durable historical fixture
         shell: bash
         run: |
@@ -96,6 +97,14 @@ jobs:
           done
           sha256sum "$OUT/verifier" > "$OUT/verifier-after.sha256"
           cmp "$OUT/verifier-before.sha256" "$OUT/verifier-after.sha256"
+      - name: Measure public-claim rejection and the unchanged full SDK fallback
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 "$BACKEND/measure_step.py" --out "$OUT" --name public-claims --timeout 180 -- "$OUT/verifier" audit-claims "$OUT/fixture/guest.bin" "$OUT/fixture/input.bin" "$OUT/fixture/receipt.bin"
+          python3 "$BACKEND/check_claim_audit.py" --record "$OUT/public-claims.stdout.log" --input "$OUT/fixture/input.bin" --receipt "$OUT/fixture/receipt.bin" > "$OUT/public-claims-readback.json"
+          sha256sum "$OUT/verifier" > "$OUT/verifier-after-public-claims.sha256"
+          cmp "$OUT/verifier-before.sha256" "$OUT/verifier-after-public-claims.sha256"
       - name: Preserve exact source result even when an earlier phase failed
         if: always()
         run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$OUT/source-after.json"

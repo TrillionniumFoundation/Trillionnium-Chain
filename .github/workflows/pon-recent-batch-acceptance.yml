@@ -76,7 +76,7 @@ jobs:
             args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
           fi
           python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$out/source.json"
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = 83bca881d2e9e84ca2004149f44a4bcffd03efa4
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = 065f56331c0309685634b6caf01fe09d2bf6988b
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/history_page.rs)" = c8569bd62a9c374b03a8ffc0ad02c64b0365eee4
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs)" = 9020f1c5cedde41c03e6cd414f7f3c134b9fa7a4
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs)" = b22fb87ded214674d81f134865c5dfa874d86b07
@@ -129,7 +129,31 @@ jobs:
         run: |
           set -euo pipefail
           cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib host_kernel_parent::kernel_parent:: -- --show-output --test-threads=1 2>&1 | tee "$OUT/host-kernel-current-reads.log"
-          grep -E '^test result: ok\. 16 passed; 0 failed; 0 ignored;' "$OUT/host-kernel-current-reads.log"
+          grep -E '^test result: ok\. 19 passed; 0 failed; 1 ignored;' "$OUT/host-kernel-current-reads.log"
+          for selector in \
+            host_kernel_parent::kernel_parent::fresh_read_tests::exact_limit_requires_real_eof_and_overlimit_read_stays_bounded \
+            host_kernel_parent::kernel_parent::fresh_read_tests::short_reads_and_interruption_preserve_unbounded_original_text \
+            host_kernel_parent::kernel_parent::fresh_read_tests::invalid_utf8_and_io_errors_never_become_a_successful_prefix \
+            host_kernel_parent::kernel_parent::fresh_read_tests::bounded_stack_text_preserves_original_read_frontier_and_errors \
+            host_kernel_parent::kernel_parent::fresh_read_tests::stack_quota_reads_preserve_fresh_paths_and_read_before_parse_errors \
+            host_kernel_parent::kernel_parent::fresh_read_tests::allocation_free_limit_tokens_keep_original_grammar \
+            host_kernel_parent::kernel_parent::fresh_read_tests::every_call_reopens_replaced_removed_and_permission_changed_paths \
+            host_kernel_parent::kernel_parent::fresh_read_tests::actual_native_thread_and_boot_reads_match_original_current_paths \
+            host_kernel_parent::kernel_parent::tests::kernel_resource_counters_require_complete_bounded_real_format \
+            host_kernel_parent::kernel_parent::tests::read_kernel_membership_from_current_os_thread_not_process_leader \
+            host_kernel_parent::kernel_parent::tests::real_linux_cgroup_v2_cpu_stat_is_parsed_without_claiming_a_quota \
+            host_kernel_parent::kernel_parent::tests::two_aggregate_samples_never_accept_cpu_counter_rewind_or_mem_task_delta \
+            host_kernel_parent::kernel_parent::tests::shipped_systemd_slice_is_the_one_fixed_finite_kernel_parent \
+            host_kernel_parent::kernel_parent::tests::fixed_parent_constant_is_exactly_the_canonical_directory_and_name \
+            host_kernel_parent::kernel_parent::tests::no_public_nonloopback_without_root_owned_kernel_parent \
+            host_kernel_parent::kernel_parent::tests::finite_cpu_memory_process_limits_and_burst_required \
+            host_kernel_parent::kernel_parent::tests::canonical_systemd_slice_name_maps_to_the_actual_root_cgroup \
+            host_kernel_parent::kernel_parent::tests::exactly_one_fixed_system_parent_name_is_eligible \
+            host_kernel_parent::kernel_parent::tests::fake_root_or_wrong_parent_never_counts_as_root_kernel_budget; do
+            test "$(grep -Fxc "test $selector ... ok" "$OUT/host-kernel-current-reads.log")" = 1
+          done
+          test "$(grep -Fxc "test host_kernel_parent::kernel_parent::fresh_read_tests::actual_kernel_quota_read_cost_preserves_all_fresh_reads ... ignored, explicit real-kernel file-read cost observation; not fixed-parent qualification" "$OUT/host-kernel-current-reads.log")" = 1
+          test "$(grep -c '^test host_kernel_parent::kernel_parent::' "$OUT/host-kernel-current-reads.log")" = 20
       - name: Require bounded ordinary record copies and complete history controls
         shell: bash
         run: |

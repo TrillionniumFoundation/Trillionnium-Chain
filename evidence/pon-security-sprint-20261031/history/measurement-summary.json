@@ -1,0 +1,27 @@
+{
+  "schema": "pon-kernel-quota-read-observation-summary-v1",
+  "derived_from": "quota-read-cost-first-binary.stdout.log.gz",
+  "sample_count_each_arm": 5,
+  "iterations_each_sample": 1000,
+  "fixed_parent_qualified": false,
+  "full_service_measured": false,
+  "old_binary_exact_limit_verdict_not_emitted": true,
+  "compiled_host_source_sha256": "481efb469168c69a9c88b90355a7f8acbab32e14ba2b22d3a028e1c4bf42d14c",
+  "thread_cpu_ns": {
+    "original_median_per_1000": 10563727,
+    "candidate_median_per_1000": 9954222,
+    "reduction_fraction": 0.0576979128673053
+  },
+  "wall_ns": {
+    "original_median_per_1000": 10646319,
+    "candidate_median_per_1000": 9956680,
+    "reduction_fraction": 0.06477722487932214
+  },
+  "candidate_slower_cpu_rounds": [
+    0
+  ],
+  "derived_from_decompressed_sha256": "793ee5901df82443d49ffd1d694c78f6f41a18df2cbfd952170301ad1ea3736f",
+  "intermediate_source_without_native_execution": "73262238a015a80fcaa51f51c0a598bb79b86aa04fffe2c407ea6bf5e3ad5469",
+  "final_source_without_native_execution": "e81f3620590bfd75e4eb5fb123d20929d326c438882923f31012a2fb30f36155",
+  "final_native_execution_performed": false
+}

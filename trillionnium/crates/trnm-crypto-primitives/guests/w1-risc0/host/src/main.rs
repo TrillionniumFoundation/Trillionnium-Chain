@@ -1,7 +1,6 @@
 //! Research-only real STARK driver. No integration with Chain admission.
 use anyhow::{anyhow, ensure, Context, Result};
 use bincode::Options;
-use risc0_binfmt::Digestible;
 use risc0_zkvm::{
     compute_image_id, Executor, ExecutorEnv, ExternalProver, InnerReceipt, Prover, ProverOpts,
     Receipt, ReceiptKind, VerifierContext,
@@ -12,8 +11,10 @@ use std::path::Path;
 use std::time::Instant;
 use trnm_w1_guest_relation::full_relation;
 
+mod audit_claims;
 mod audit_one;
 mod claimed_context;
+mod prepared_verifier;
 mod receipt_bounds;
 use receipt_bounds::{BoundaryError, MAX_RECEIPT_BYTES};
 mod phase_journal;
@@ -46,64 +47,7 @@ fn environment(input: &[u8], po2: u32) -> Result<ExecutorEnv<'_>> {
 }
 
 fn strict_verify(receipt: &Receipt, elf: &[u8], expected_journal: &[u8]) -> Result<()> {
-    require_pinned_image(elf)?;
-    // A public-output mismatch is a cheap rejection, never an authentication.
-    // Matching bytes still require the complete cryptographic check below.
-    ensure!(
-        receipt.journal.bytes == expected_journal,
-        "public journal does not match the complete bound W1 statement"
-    );
-    let composite = match &receipt.inner {
-        InnerReceipt::Composite(value) => value,
-        _ => {
-            return Err(BoundaryError::Refused(
-                "only actual transparent Composite receipts are supported",
-            )
-            .into())
-        }
-    };
-    if composite.segments.is_empty() || composite.segments.len() > receipt_bounds::MAX_SEGMENTS {
-        return Err(BoundaryError::Refused("segment count budget").into());
-    }
-    let mut padded_cycles = 0u64;
-    for segment in &composite.segments {
-        padded_cycles += receipt_bounds::check_seal(&segment.seal)?;
-        receipt_bounds::check_padded_cycles(padded_cycles)?;
-    }
-    ensure!(
-        composite.assumption_receipts.is_empty(),
-        "no unproven assumptions permitted"
-    );
-    ensure!(
-        composite
-            .segments
-            .iter()
-            .all(|segment| segment.hashfn == "poseidon2"),
-        "pinned v3.0.6 segment verifier supports only Poseidon2 commitments"
-    );
-    let context = VerifierContext::default().with_dev_mode(false);
-    let composite_parameters = context
-        .composite_verifier_parameters()
-        .context("pinned Composite verifier parameters missing")?
-        .digest::<risc0_zkvm::sha::Impl>();
-    ensure!(
-        composite.verifier_parameters == composite_parameters,
-        "Composite parameters differ from the fixed backend profile"
-    );
-    let parameters = context
-        .segment_verifier_parameters
-        .as_ref()
-        .context("pinned segment verifier parameters missing")?
-        .digest::<risc0_zkvm::sha::Impl>();
-    ensure!(
-        composite
-            .segments
-            .iter()
-            .all(|segment| segment.verifier_parameters == parameters),
-        "segment proof parameters differ from the fixed backend profile"
-    );
-    receipt.verify_with_context(&context, compute_image_id(elf)?)?;
-    Ok(())
+    prepared_verifier::PreparedVerifier::new(elf)?.verify(receipt, expected_journal)
 }
 
 fn deserialize_receipt(bytes: &[u8]) -> Result<Receipt> {
@@ -247,17 +191,18 @@ fn audit_receipt(receipt: &Receipt, elf: &[u8], input: &[u8], encoded: &[u8]) ->
     Ok(())
 }
 
-fn require_pinned_image(elf: &[u8]) -> Result<()> {
+fn require_pinned_image(elf: &[u8]) -> Result<risc0_zkvm::sha::Digest> {
     let manifest: serde_json::Value =
         serde_json::from_str(include_str!("../../backend-manifest.json"))?;
     let expected = manifest["guest_image_id"]
         .as_str()
         .context("no reviewed guest image is pinned; execution/proof acceptance is disabled")?;
+    let image = compute_image_id(elf)?;
     ensure!(
-        compute_image_id(elf)?.to_string() == expected,
+        image.to_string() == expected,
         "ELF differs from the pinned full-W1 guest image"
     );
-    Ok(())
+    Ok(image)
 }
 
 fn main() -> Result<()> {
@@ -308,7 +253,10 @@ fn run(args: &[String], journal: &mut PhaseJournal) -> Result<()> {
         println!("{{\"schema\":\"pon-w1-risc0-research-v1\",\"operation\":\"bake\",\"program_bytes\":{},\"image_id\":\"{}\",\"cryptographic_proof_verified\":false,\"consensus_authority\":false}}", program.len(), image_id);
         return Ok(());
     }
-    if matches!(args[1].as_str(), "verify" | "audit" | "audit-one") {
+    if matches!(
+        args[1].as_str(),
+        "verify" | "audit" | "audit-one" | "audit-claims"
+    ) {
         ensure!(args.len() == if args[1] == "audit-one" { 6 } else { 5 },
                 "verify/audit <elf> <fixed-input> <receipt>; audit-one additionally requires a fixed case");
         let elf = bounded_read(Path::new(&args[2]), MAX_ELF_BYTES)?;
@@ -318,6 +266,9 @@ fn run(args: &[String], journal: &mut PhaseJournal) -> Result<()> {
         // It grants no proof, work, task-eligibility or consensus authority.
         let (statement, expected_journal) = claimed_context::prepare(&input)?;
         let encoded = bounded_read(Path::new(&args[4]), MAX_RECEIPT_BYTES)?;
+        if args[1] == "audit-claims" {
+            return audit_claims::run(&elf, &input, &encoded);
+        }
         if args[1] == "audit-one" {
             return audit_one::run(&elf, &input, &encoded, &args[5]);
         }

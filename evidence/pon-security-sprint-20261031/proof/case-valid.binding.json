@@ -1,0 +1,12 @@
+{
+  "case": "valid",
+  "consensus_authority": false,
+  "metadata_and_byte_bindings_pass": true,
+  "proof_reverified_by_reader": false,
+  "proof_shape_independently_reconstructed": false,
+  "receiver_total_wall_ns": 1190050467,
+  "schema": "pon-w1-receiver-case-binding-v1",
+  "sdk_mutation_dispatch_independently_reexecuted": false,
+  "source_files_checked": 17,
+  "timings_independently_remeasured": false
+}

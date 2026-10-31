@@ -1,0 +1,22 @@
+{
+  "schema": "pon-mining-time-build-process-v1",
+  "argv": [
+    "cargo",
+    "+1.95.0",
+    "test",
+    "--locked",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--test",
+    "mining_timestamp_liveness",
+    "--no-run"
+  ],
+  "exit_code": 101,
+  "started_unix_ns": 1793409693947890105,
+  "elapsed_monotonic_ns": 266687005111,
+  "source_commit": "fdb8b2b4346d18a19db6d875a6eba0a76bd1715b",
+  "sparse_checkout": true,
+  "full_source_inventory_claimed": false
+}

@@ -1,0 +1,12 @@
+{
+  "schema": "pon-w1-owned-build-cache-cleanup-v1",
+  "removed": "/tmp/pon-proof-sprint-target",
+  "reason": "shared disk exhausted after native proof gates; immutable candidate executable and all actual logs retained",
+  "candidate_verifier_sha256": "123cb1717d23a1c685f43929909f161f70171664da5e41e85f4f9feb7e2cb3f8",
+  "native_claim_audit_and_original_controls_completed": true,
+  "host_unit_tests_executed": false,
+  "clippy_executed": false,
+  "shared_sdk_cache_removed": false,
+  "other_lane_files_removed": false,
+  "consensus_authority": false
+}

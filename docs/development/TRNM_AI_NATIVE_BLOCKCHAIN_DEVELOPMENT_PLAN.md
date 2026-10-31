@@ -7567,3 +7567,80 @@ The local repair commit is `2d74588c1b7333751bbb555ff6a038d5a1f4fe23`, based on
 the actual reviewed merge. Interrupted subsequent API writes have no success
 receipt and are not counted as remote publication or later-source CI acceptance.
 All qualification and activation limits above remain unchanged.
+
+## 2026-10-31 UTC: pure PoN liveness and bounded receiver-cost continuation
+
+The previously interrupted recovery is now published as
+`cf84391a474ee1f3ac78f4a907bd95184b816a54`, with the exact local `7da4964d`
+tree `c7609a5502641739505862f2e4cd3c1e06ce1041`. The update used a non-force
+expected-head lease on the existing PR 557 branch. A fresh complete checkout
+source guard verified all 7,561 entries and 977,895,812 tracked bytes. The PR's
+stale base metadata was refreshed to current main `dd6e1c3`; its earlier ordered
+parent failures remain failures and their guard is unchanged.
+
+This [new continuation](../../evidence/pon-security-sprint-20261031/README.md)
+retains three separately bound implementation and measurement lanes. Pure PoN
+Nakamoto fork choice, full W1 validation, required chainwork, targets, deadlines,
+quotas, complete relation, fresh trace and work identity are retained.
+
+The actual ordinary miner incorrectly waited for the immediate parent timestamp
+rather than the unchanged upper median of its first eleven ancestors. A native
+counterexample constructs old ancestors and a valid tip 60 seconds in the
+future, queues a real signed transfer, and observes the original miner perform
+zero searches or work throughout its two-second runtime. Factoring the original
+median helper and reading the actual branch afresh permits a real-wall-clock
+child. The byte-identical regression then records one search, two complete
+trials, one admitted/activated block and the included transfer, with exact-byte
+cold reopen. A genuinely future median still causes zero searches or work and
+retains the queued transfer. Existing mining, consensus and recent-ancestry
+controls and strict Clippy pass. The new target is mandatory alongside all
+original protocol-contract selectors. This does not qualify global effective
+work cost, timestamp attack profitability, permanent-growth mining or throughput.
+
+Native History's resource check now prepares only immutable quota paths, uses
+an ephemeral bounded stack buffer for the five existing 128-byte rechecks, and
+avoids token/prefix allocation. Every original current file open, EOF and UTF-8
+check, read-before-parse error order, quota/membership/identity check and callback
+remains. No successful resource or graph-validity result is cached. The first
+native source passed 19 controls and observed a small five-file thread-CPU
+reduction on a real but ineligible root cgroup. That measurement excludes boot,
+membership, metadata and native History. A later ignored-test reporting change
+adds the explicit actual verdict and refuses early-I/O timing. Its stronger
+final source, including a later test-loop Clippy correction, must not inherit
+the earlier binary's identity: subsequent local
+native rebuilds were killed before tests, with shared-memory OOM counters rising
+in the later windows. Exact final native execution and strict Clippy remain CI gates; a later strict
+Clippy attempt also received SIGKILL before completing. The integration resolved
+the full locked all-features Cargo graph without changing any manifest or lock.
+
+The separate complete-W1 research verifier now rejects necessary public-claim
+inconsistencies before SDK cryptography. Its private prepared context owns the
+pinned image and strict verifier parameters; matching claims still execute the
+original complete SDK verification. The real 15,862,780-byte Composite proof,
+original 16 mutations, eight receiver cases, 24 paired claim/context observations,
+21 native host tests, strict Clippy and formatting all pass. For three obviously
+inconsistent public-claim cases, the same-candidate reference SDK order took
+1.11–1.24 seconds versus 19.88–24.40 ms with fresh prepared state, or
+3.78–4.03 ms with only that fixed context reused. Coordinated claims and corrupt
+seals with matching claims still reached and failed the SDK at 1.17–1.55 seconds.
+These single shared-host observations do not qualify valid-proof throughput,
+cold receivers, a native admission integration or practical succinct proofs.
+
+The `cf84391a` hosted V5 producer/amortization lanes actually pass on x64 and
+ARM64; its original admission finite-service lanes fail on both. Those exact
+source results remain separate from this continuation. An observed producer or
+paired proof optimization cannot close global work-resource assumptions,
+unrestricted fresh-identity service, worst-case rejection cost, quantitative
+quantum security, independent acceptance or production activation. All remain
+OPEN. No Hashcash, stake, evaluator weight, BFT fallback or reduced relation is
+introduced.
+
+The later [exact confirmation readback](../../evidence/pon-security-sprint-20261031/integration/confirmation-lateness/README.md)
+shows the earlier x64 no-attacker round had sufficient native depth and work,
+but independent replay made the round finish at 36.571404988 seconds rather than
+within 30 seconds. The seventh import alone spans 12.985505246 seconds. The
+pressure fixture does not use the ordinary pool-miner scheduling path, so that
+confirmed timeout cannot be counted as solved by the MTP repair. The separate
+four-second from-zero confirmation error remains unlocalized without its raw
+report. Both named mining regressions are additionally retained in the focused
+exact-head workflow, preserving all its original commands and resource limits.

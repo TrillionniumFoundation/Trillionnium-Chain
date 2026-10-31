@@ -1,0 +1,23 @@
+{
+  "schema": "pon-history-second-build-resource-window-v1",
+  "observation_source": "read-only tool outputs from this actual run",
+  "during_build": {
+    "observed_unix_ns": 1793411004956111341,
+    "memory_current": 8589836288,
+    "memory_max": 8589934592,
+    "oom": 1,
+    "oom_kill": 1
+  },
+  "after_failure": {
+    "observed_unix_ns": 1793411078639036779,
+    "memory_current": 8489000960,
+    "memory_max": 8589934592,
+    "oom": 9,
+    "oom_kill": 2,
+    "disk_available_bytes": 9006641152
+  },
+  "oom_kill_delta": 1,
+  "compiler_exit": "SIGKILL; cargo exit 101",
+  "native_tests_started": false,
+  "limitation": "The interval contains an OOM kill event; these counters do not identify the killed PID. No compiler/test assertion diagnostic was emitted."
+}

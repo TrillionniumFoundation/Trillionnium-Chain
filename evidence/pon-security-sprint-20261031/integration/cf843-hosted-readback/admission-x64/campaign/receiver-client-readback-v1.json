@@ -1,0 +1,13 @@
+{
+  "client_boundary_complete": false,
+  "client_execution_profile": "pure-pon-fixed-host-client-v1",
+  "error": "regular original raw phase required",
+  "experiment": "receiver-owner-supplement",
+  "input_consistent": false,
+  "installation_authorized": false,
+  "native_actor_wait4_claimed": false,
+  "production_qualified": false,
+  "public_fairness_qualified": false,
+  "schema": "pon-pure-fixed-host-client-readback-v1",
+  "work_hardness_qualified": false
+}

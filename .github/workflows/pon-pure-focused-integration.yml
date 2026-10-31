@@ -77,6 +77,14 @@ jobs:
             cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --show-output --test-threads=1 2>&1 | tee "$OUT/native-${selector//:/_}.log"
           done
           cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test pure_pon_cli -- --show-output --test-threads=1 2>&1 | tee "$OUT/pure-cli.log"
+      - name: Require the real-wall mining counterexample and future-median control
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test mining_timestamp_liveness -- --show-output --test-threads=1 2>&1 | tee "$OUT/mining-timestamp-liveness.log"
+          grep -E '^test result: ok\. 2 passed; 0 failed; 0 ignored;' "$OUT/mining-timestamp-liveness.log"
+          for selector in valid_future_tip_does_not_suppress_real_wall_clock_successor future_median_still_waits_without_advancing_the_mining_clock; do
+            test "$(grep -Fxc "test $selector ... ok" "$OUT/mining-timestamp-liveness.log")" = 1
+          done
       - name: Require strict Clippy on all modified native owners and targets
         run: |
           set -euo pipefail

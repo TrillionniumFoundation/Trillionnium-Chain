@@ -40,12 +40,20 @@ fn sha(bytes: &[u8]) -> String {
     risc0_zkvm::sha::Impl::hash_bytes(bytes).to_string()
 }
 
-fn source_inputs() -> Value {
+pub(super) fn source_inputs() -> Value {
     const PREFIX: &str = "trillionnium/crates/trnm-crypto-primitives/";
     let inputs: &[(&str, &[u8])] = &[
         (
             "guests/w1-risc0/host/src/main.rs",
             include_bytes!("main.rs"),
+        ),
+        (
+            "guests/w1-risc0/host/src/prepared_verifier.rs",
+            include_bytes!("prepared_verifier.rs"),
+        ),
+        (
+            "guests/w1-risc0/host/src/audit_claims.rs",
+            include_bytes!("audit_claims.rs"),
         ),
         (
             "guests/w1-risc0/host/src/claimed_context.rs",

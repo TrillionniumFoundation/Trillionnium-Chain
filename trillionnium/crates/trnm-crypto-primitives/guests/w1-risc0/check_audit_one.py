@@ -18,6 +18,7 @@ PREFIX = "trillionnium/crates/trnm-crypto-primitives/"
 SOURCE_PATHS = {PREFIX + p for p in (
     "src/pon_work/full_relation.rs", "guests/w1-risc0/host/src/main.rs",
     "guests/w1-risc0/host/src/claimed_context.rs", "guests/w1-risc0/host/src/audit_one.rs",
+    "guests/w1-risc0/host/src/prepared_verifier.rs", "guests/w1-risc0/host/src/audit_claims.rs",
     "guests/w1-risc0/host/src/receipt_bounds.rs", "guests/w1-risc0/host/src/phase_journal.rs",
     "guests/w1-risc0/relation/src/lib.rs", "guests/w1-risc0/relation/src/parameters.rs",
     "guests/w1-risc0/guest/src/main.rs", "guests/w1-risc0/backend-manifest.json",

@@ -1,0 +1,15 @@
+{
+  "schema": "pon-cf843-selected-byte-verification-v1",
+  "source_head": "cf84391a474ee1f3ac78f4a907bd95184b816a54",
+  "published_archive_digests_matched": 3,
+  "stored_payload_bindings_checked": 75,
+  "selected_zip_members_byte_compared": 57,
+  "all_selected_zip_members_exact": true,
+  "lossless_decompression_verified": true,
+  "provider_decoded_log_bytes_preserved": true,
+  "native_binaries_included": false,
+  "whole_zip_archives_included": false,
+  "full_campaign_reexecuted": false,
+  "new_head_qualified": false,
+  "consensus_authority": false
+}

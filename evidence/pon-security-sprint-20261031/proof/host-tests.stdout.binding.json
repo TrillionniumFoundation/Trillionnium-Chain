@@ -1,0 +1,12 @@
+{
+  "schema": "pon-w1-raw-output-archive-v1",
+  "original_name": "host-tests.stdout.log",
+  "uncompressed_bytes": 1936,
+  "uncompressed_sha256": "7bda385254b50c4cbbcdda26f216c9ccab196328f7e490bc11f42214309f40fc",
+  "archive_name": "host-tests.stdout.log.gz",
+  "archive_bytes": 726,
+  "archive_sha256": "bd6fb4311dbc48fa0855e48872d9ad14884b615c5c602445eb3bb66b2d83df9f",
+  "encoding": "gzip",
+  "raw_observation_modified": false,
+  "consensus_authority": false
+}

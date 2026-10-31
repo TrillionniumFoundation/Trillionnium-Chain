@@ -1,0 +1,44 @@
+{
+  "schema": "pon-history-final-real-process-v1",
+  "argv": [
+    "bash",
+    "scripts/project-preflight.sh"
+  ],
+  "cwd": "/tmp/pon-history-service-20261031",
+  "start_unix_ns": 1793411356255849318,
+  "elapsed_monotonic_ns": 47520221,
+  "exit_code": 0,
+  "source_commit": "ba2172881b958feebd60aaa1643afba7206e3b9c",
+  "commit_after": "ba2172881b958feebd60aaa1643afba7206e3b9c",
+  "source_state": "frozen committed sparse checkout; full tracked-source guard not claimed",
+  "source_file": "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+  "source_sha256_before": "73262238a015a80fcaa51f51c0a598bb79b86aa04fffe2c407ea6bf5e3ad5469",
+  "source_sha256_after": "73262238a015a80fcaa51f51c0a598bb79b86aa04fffe2c407ea6bf5e3ad5469",
+  "selected_environment": {
+    "RUSTUP_HOME": "/tmp/pq-r3-rustup",
+    "CARGO_HOME": "/tmp/pq-r3-cargo",
+    "CARGO_TARGET_DIR": "/tmp/pon-history-target",
+    "CARGO_BUILD_JOBS": "1",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_PROFILE_TEST_DEBUG": "0"
+  },
+  "resource_before": {
+    "memory.current": "8420200448\n",
+    "memory.max": "8589934592\n",
+    "memory.events": "low 0\nhigh 0\nmax 6205591\noom 9\noom_kill 2\noom_group_kill 0\n"
+  },
+  "resource_after": {
+    "memory.current": "8419311616\n",
+    "memory.max": "8589934592\n",
+    "memory.events": "low 0\nhigh 0\nmax 6205591\noom 9\noom_kill 2\noom_group_kill 0\n"
+  },
+  "scope": "actual targeted native/check process; no full fixed-parent or honest-service qualification",
+  "stdout": {
+    "bytes": 169,
+    "sha256": "b493ada0f6d112904a046c73e01057e25c2d8c3aa89e2a94770374944a6b53b2"
+  },
+  "stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

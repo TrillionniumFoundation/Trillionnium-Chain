@@ -1,0 +1,55 @@
+{
+  "schema": "pon-w1-public-claim-cost-checkpoint-v1",
+  "source_base": "7da4964d02b42076996e89a78d13f68572d33be5",
+  "source_scope": "17 compiled inputs independently matched against candidate working tree; sparse checkout is not whole-tree attestation",
+  "fixture_assets": [
+    {
+      "name": "guest.bin",
+      "bytes": 291592,
+      "sha256": "b8f32cd9c1b1edbb0cde04acf9aab146b7ff1aeeeaee0188e4d6e80d077b0c0a"
+    },
+    {
+      "name": "input.bin",
+      "bytes": 49640,
+      "sha256": "4babd290b10f7a68be27c2adf3b97448bb7bef04dba8bcb97f914acf4ac69020"
+    },
+    {
+      "name": "receipt.bin",
+      "bytes": 15862780,
+      "sha256": "0a5336a797c51829ed25d4ec2f1a03f4f56fda4c737a230b493d4abbe96f0ec8"
+    }
+  ],
+  "candidate_verifier": {
+    "schema": "pon-w1-local-frozen-verifier-v1",
+    "name": "candidate-verifier",
+    "bytes": 6042000,
+    "sha256": "123cb1717d23a1c685f43929909f161f70171664da5e41e85f4f9feb7e2cb3f8",
+    "source_base": "7da4964d02b42076996e89a78d13f68572d33be5",
+    "source_state": "working-tree-candidate-with-compiled-input-bindings",
+    "whole_git_tree_attested": false,
+    "consensus_authority": false
+  },
+  "actual_controls": {
+    "production_build": "PASS",
+    "original_real_proof_audit_negative_cases": 16,
+    "original_audit_one_cases_and_readers": 8,
+    "new_paired_claim_audit_observations": 24,
+    "compiled_source_inputs_checked": 17,
+    "original_fixture_python_tests": 39,
+    "original_reader_python_tests": 15,
+    "new_claim_reader_python_tests": 8,
+    "rustfmt": "PASS",
+    "git_diff_check": "PASS",
+    "host_unit_tests": "NOT_RUN_AT_CHECKPOINT_DISK_BUDGET",
+    "strict_clippy": "NOT_RUN_AT_CHECKPOINT_DISK_BUDGET"
+  },
+  "reference_route": "same candidate executable and strict prepared profile, original SDK authentication-before-public-claim order; not an older executable measurement",
+  "exclusive_host": false,
+  "hardware_cold_observations": false,
+  "new_proof_generated": false,
+  "worst_case_rejection_cost_closed": false,
+  "minimum_work_cost_proved": false,
+  "public_ingress_qualified": false,
+  "pq_128_security_qualified": false,
+  "consensus_authority": false
+}

@@ -40,8 +40,11 @@ before its requested runtime or block limit; neither is an indefinite liveness c
 
 1. Check the monotonic runtime/stop budget and wait for the configured pause.
 2. Acquire the shared Node owner without indefinitely blocking shutdown. Read the
-   actual active parent/generation and local wall-clock seconds. If the parent
-   timestamp is not earlier than the current clock, wait for the real clock.
+   actual active parent/generation and local wall-clock seconds. Read that branch's
+   ancestry afresh and use the original upper median of at most eleven parent-first
+   timestamps, including genesis when needed. If that median is not earlier than
+   the current clock, wait for the real clock. A valid future tip alone does not
+   require waiting when its branch median already permits a real-wall successor.
 3. Reconcile and select complete retained queue groups with actual M05 admission
    and M06 execution. Bind the exact parent/generation, pool context and miner.
    Check stop/deadline after selection and again after the configured miner check;
@@ -64,6 +67,18 @@ before its requested runtime or block limit; neither is an indefinite liveness c
 7. Native `admit` completely verifies work and execution; `activate_observed`
    applies the existing branch policy using the actual wall clock. Reconcile the
    local pool against that actual branch, release the owner and emit diagnostics.
+
+The candidate timestamp remains the observed real wall time. Readiness does not
+advance it to the parent or median plus one, cache a clock approval, change the
+future-skew or difficulty rule, or replace ordinary native admission. The
+[future-tip regression](../../../../trillionnium/crates/trnm-pon-node/tests/mining_timestamp_liveness.rs)
+retains a real valid branch, signed queued transfer, complete work checks and cold
+reopen. Its [before/after evidence](../../../../evidence/pon-security-sprint-20261031/cost/README.md)
+shows the old miner performing zero searches during the configured two-second
+runtime despite a permissible wall timestamp; the fixed miner includes the
+transfer. A genuinely future median still produces zero searches and retains the
+queued transfer. This is a bounded development regression, not a public service,
+timestamp-attack profitability or throughput qualification.
 
 State preparation, final proof assembly, native admission, activation and SQLite
 commit retain nonpreemptive stages; transcript search now cooperates at checkpoints. A requested duration cannot interrupt those operations

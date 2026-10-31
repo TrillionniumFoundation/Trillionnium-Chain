@@ -1,0 +1,26 @@
+{
+  "command": [
+    "/home/runner/work/_temp/pure-admission-target/release/deps/pure_pon_pressure_v2-9834ea51138696ab",
+    "--exact",
+    "pure_pon_cold_shared_domain_fresh_caller_pressure_fixed_host_client_v1",
+    "--ignored",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "complete_success": false,
+  "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+  "elapsed_ns": 128811829671,
+  "elapsed_seconds": 128.811829671,
+  "error": null,
+  "name": "fresh-caller-pressure",
+  "outer_stage_timeout_seconds": 600,
+  "returncode": 101,
+  "stderr": "fresh-caller-pressure.stderr.log",
+  "stderr_bytes": 574,
+  "stderr_sha256": "4b84265f98f9d9ba82c9dd06dbe7dcb289984bf267548715262800419aa0273b",
+  "stderr_truncated": false,
+  "stdout": "fresh-caller-pressure.stdout.log",
+  "stdout_bytes": 303,
+  "stdout_sha256": "566511a8c1ca2bd87b03da5b11cc548b8d3fa880dea5e2a3000b8a382fcd82a6",
+  "stdout_truncated": false
+}

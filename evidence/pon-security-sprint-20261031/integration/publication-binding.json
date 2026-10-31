@@ -1,0 +1,18 @@
+{
+  "schema": "pon-security-sprint-publication-binding-v1",
+  "published_commit": "cf84391a474ee1f3ac78f4a907bd95184b816a54",
+  "published_tree": "c7609a5502641739505862f2e4cd3c1e06ce1041",
+  "previous_local_commit_with_same_tree": "7da4964d02b42076996e89a78d13f68572d33be5",
+  "parent": "00cb41115c9b3ea4a67f513a087d226390e3de0c",
+  "branch": "fix/chain-native-convergence-20261029",
+  "pr": 557,
+  "non_force_update_from": "1d11f875493f8125e36b9adceacb342df108e5e5",
+  "confirmed_remote_head": true,
+  "current_main": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+  "stale_pr_base_before_refresh": "9fedf7ecbbe07177069c030592b4e03dcffebb81",
+  "pr_base_after_same_main_refresh": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+  "prospective_merge": "7f0b951967c0304351df6e938211e9c12791da1d",
+  "guards_relaxed": false,
+  "old_event_failures_preserved": true,
+  "production_activation": false
+}

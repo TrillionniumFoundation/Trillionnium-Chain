@@ -187,3 +187,46 @@ If native N=64 W1 is already cheaper than this proof verifier, this backend does
 not meet the throughput or permissionless-ingress objective for that workload.
 The full relation, pinned guest and real proof are necessary evidence for the
 candidate, not a substitute for that cost comparison or work-hardness analysis.
+
+## Public-claim rejection before proof authentication
+
+The host's private `PreparedVerifier` derives the image from the reviewed guest
+and creates the fixed, dev-mode-disabled SDK context. Its fields are private;
+there is no constructor accepting a caller-supplied image or verifier parameters.
+It retains no receipts, seals, proof successes or miner work. Each successful
+verification still runs the complete original SDK `verify_with_context` call.
+
+Before that call, it now checks the same necessary public predicates that the
+pinned SDK checks after authentication: the aggregate claim must equal
+`ReceiptClaim::ok(pinned_image, complete_journal_digest)`; each nonfinal claim
+must have `SystemSplit` and no output; the unpruned previous post-state digest
+must match the next pre-state. These comparisons can reject a mismatched public
+statement or broken continuation. Matching unauthenticated public fields never
+prove the computation, authorize work or bypass SDK verification. All original
+receipt byte, segment, seal, dimension and assumption bounds remain.
+
+The explicit `audit-claims <guest> <input> <receipt>` experiment first verifies
+the real complete proof, then compares the original SDK check order with the
+public-claims-first order using the same fixed profile and prepared context.
+The reference route is confined to this comparison. It records fresh context
+construction and context reuse separately; fresh context does not mean cold
+hardware. Each route includes bounded decode, its actual verification frontier
+and owned-object destruction. Context setup is included in each fresh-context
+row and separately recorded once for the shared context. Whole-process cost
+must be collected separately; neither record is a public network throughput
+measurement. This comparison is not a claim that the reference route reproduces
+every instruction or the whole-process cost of an older host binary.
+
+Six fixed cases are required: the real positive, an outer journal rebound to a
+changed miner, a late broken link, a late nonfinal exit, an unchanged public
+claim with a corrupted last seal, and a coordinated public-claim forgery.
+The last two intentionally pass public checks, enter the full SDK and still
+fail. Thus this optimization does not close worst-case late-invalid proof cost,
+minimum mining work, public ingress or quantum-security questions.
+
+`check_claim_audit.py` binds the observed source set, input statement, original
+bytes, case coverage, SDK-entry flags and timing scopes. Its paired negative
+controls live in `test_check_claim_audit.py`. It does not reverify the proof,
+independently reconstruct SDK receipt mutations, authenticate the machine or
+remeasure times. The old `audit` and eight-case `audit-one` commands remain and
+retain their original positive-prerequisite and full-verifier requirements.

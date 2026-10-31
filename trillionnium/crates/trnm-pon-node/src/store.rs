@@ -3546,6 +3546,17 @@ impl Node {
         }
         Ok(out)
     }
+    pub(crate) fn mining_wall_time_ready(&self, parent: Hash, now: u64) -> Result<bool> {
+        // Read this exact branch afresh. Readiness is only a local scheduling
+        // prerequisite; ordinary admission still checks time and all work/state.
+        let times: Vec<_> = self
+            .recent(parent)?
+            .into_iter()
+            .take(11)
+            .map(|entry| entry.0)
+            .collect();
+        Ok(now > consensus::median_time_past(&times)?)
+    }
     pub fn expected_target(&self, parent: Hash) -> Result<Hash> {
         if self.state_backend == StateBackend::PermanentAccountGrowthV2 {
             return self.growth_expected_target(parent);

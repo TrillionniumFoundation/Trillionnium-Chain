@@ -9,7 +9,11 @@ fn u64_word(out: &mut Vec<u8>, value: u64) {
 }
 
 // Deliberately false, syntactically valid SDK data. Never a positive proof.
-fn skeleton(segments: usize, po2: u32, open_claim_journal: bool) -> (Vec<u8>, Vec<usize>) {
+pub(crate) fn skeleton(
+    segments: usize,
+    po2: u32,
+    open_claim_journal: bool,
+) -> (Vec<u8>, Vec<usize>) {
     let mut out = Vec::new();
     let mut variable_lengths = vec![4, 12];
     u32_word(&mut out, 0); // Composite.

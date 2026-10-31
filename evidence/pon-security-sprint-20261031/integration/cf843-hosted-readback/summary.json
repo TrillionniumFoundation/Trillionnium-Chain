@@ -1,0 +1,990 @@
+{
+  "schema": "pon-cf843-hosted-ci-readback-v1",
+  "observed_utc": "2026-10-31T01:54:54.073448+00:00",
+  "source_head": "cf84391a474ee1f3ac78f4a907bd95184b816a54",
+  "admission": [
+    {
+      "architecture": "x64",
+      "run_id": 41155114590,
+      "job_id": 124400081884,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41155114590/job/124400081884",
+      "workflow_job_conclusion": "failure",
+      "expected_head": "cf84391a474ee1f3ac78f4a907bd95184b816a54",
+      "source_before": {
+        "base": null,
+        "candidate": "cf84391a474ee1f3ac78f4a907bd95184b816a54",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "cf84391a474ee1f3ac78f4a907bd95184b816a54",
+        "tested_tree": "c7609a5502641739505862f2e4cd3c1e06ce1041",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 977895812,
+        "tracked_entries": 7561,
+        "tracked_worktree_verified": true
+      },
+      "source_after": {
+        "base": null,
+        "candidate": "cf84391a474ee1f3ac78f4a907bd95184b816a54",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "cf84391a474ee1f3ac78f4a907bd95184b816a54",
+        "tested_tree": "c7609a5502641739505862f2e4cd3c1e06ce1041",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 977895812,
+        "tracked_entries": 7561,
+        "tracked_worktree_verified": true
+      },
+      "complete_success": false,
+      "native_gates_passed": 16,
+      "native_failed_gates": [
+        {
+          "name": "pure-pressure",
+          "nonempty_test_pass": false,
+          "process_complete_success": false,
+          "qualified": false,
+          "schema": "pon-native-test-verdict-v1",
+          "terminal_summary": null
+        },
+        {
+          "name": "receiver-owner-supplement",
+          "nonempty_test_pass": false,
+          "process_complete_success": false,
+          "qualified": false,
+          "schema": "pon-native-test-verdict-v1",
+          "terminal_summary": null
+        },
+        {
+          "name": "fresh-caller-pressure",
+          "nonempty_test_pass": false,
+          "process_complete_success": false,
+          "qualified": false,
+          "schema": "pon-native-test-verdict-v1",
+          "terminal_summary": null
+        }
+      ],
+      "failed_steps": [
+        {
+          "name": "pure-pressure",
+          "returncode": 101,
+          "elapsed_seconds": 128.030856107,
+          "error": null
+        },
+        {
+          "name": "pure-pressure-reader",
+          "returncode": 1,
+          "elapsed_seconds": 4.160045518,
+          "error": null
+        },
+        {
+          "name": "receiver-owner-supplement",
+          "returncode": 101,
+          "elapsed_seconds": 129.0313043,
+          "error": null
+        },
+        {
+          "name": "receiver-client-reader",
+          "returncode": 1,
+          "elapsed_seconds": 0.093077145,
+          "error": null
+        },
+        {
+          "name": "receiver-owner-reader",
+          "returncode": 1,
+          "elapsed_seconds": 0.069293188,
+          "error": null
+        },
+        {
+          "name": "fresh-caller-pressure",
+          "returncode": 101,
+          "elapsed_seconds": 128.811829671,
+          "error": null
+        },
+        {
+          "name": "fresh-caller-reader",
+          "returncode": 1,
+          "elapsed_seconds": 4.474953357,
+          "error": null
+        }
+      ],
+      "original_pressure_qualification": {
+        "finite_qualification": false,
+        "input_consistent": true,
+        "installation_authorized": false,
+        "phases": [
+          {
+            "actors_healthy": true,
+            "actual_paid_cpu_ns": 574160089,
+            "arithmetic_fact_hits": 0,
+            "attack_calls": 0,
+            "attack_observations_without_completed_arithmetic": 0,
+            "attack_transcript_entries": 0,
+            "attack_transcripts_completed": 0,
+            "depletion_basis": "same-lock flow with original refill projection and full-sample-interval upper bound; not continuous whole-round exhaustion",
+            "depletion_samples": 0,
+            "finite_qualification": false,
+            "fixed_64_slot_churn_qualified": false,
+            "fixed_64_slot_churn_required": false,
+            "fresh_challenges_actually_published": 0,
+            "phase": "baseline",
+            "pressure_and_depletion_qualified": true,
+            "pressure_and_depletion_required": false,
+            "rounds": [
+              {
+                "actual_pressure_overlap": false,
+                "attack_calls_including_physical_tails_overlapping": 0,
+                "attack_calls_overlapping": 0,
+                "confirmed": false,
+                "new_receiver_hostile_rejections": 0,
+                "on_time_history_and_independent_verification": true,
+                "paid_depletion_inside_round": false,
+                "qualified_confirmation": false,
+                "receiver_hostile_dispatch_cpu_increase_ns": 0,
+                "round": 0,
+                "seven_submissions_inside_original_call_deadlines": true
+              }
+            ],
+            "service_qualified": false
+          },
+          {
+            "actors_healthy": true,
+            "actual_paid_cpu_ns": 5668371936,
+            "arithmetic_fact_hits": 0,
+            "attack_calls": 3662,
+            "attack_observations_without_completed_arithmetic": 3662,
+            "attack_transcript_entries": 0,
+            "attack_transcripts_completed": 0,
+            "depletion_basis": "same-lock flow with original refill projection and full-sample-interval upper bound; not continuous whole-round exhaustion",
+            "depletion_samples": 0,
+            "finite_qualification": false,
+            "fixed_64_slot_churn_qualified": false,
+            "fixed_64_slot_churn_required": false,
+            "fresh_challenges_actually_published": 0,
+            "phase": "from-zero",
+            "pressure_and_depletion_qualified": false,
+            "pressure_and_depletion_required": true,
+            "rounds": [
+              {
+                "actual_pressure_overlap": true,
+                "attack_calls_including_physical_tails_overlapping": 3544,
+                "attack_calls_overlapping": 3544,
+                "confirmed": false,
+                "new_receiver_hostile_rejections": 3521,
+                "on_time_history_and_independent_verification": true,
+                "paid_depletion_inside_round": false,
+                "qualified_confirmation": false,
+                "receiver_hostile_dispatch_cpu_increase_ns": 4947069570,
+                "round": 0,
+                "seven_submissions_inside_original_call_deadlines": true
+              }
+            ],
+            "service_qualified": false
+          },
+          {
+            "actors_healthy": true,
+            "actual_paid_cpu_ns": 7401569613,
+            "arithmetic_fact_hits": 0,
+            "attack_calls": 2497,
+            "attack_observations_without_completed_arithmetic": 23,
+            "attack_transcript_entries": 2474,
+            "attack_transcripts_completed": 2473,
+            "depletion_basis": "same-lock flow with original refill projection and full-sample-interval upper bound; not continuous whole-round exhaustion",
+            "depletion_samples": 394,
+            "finite_qualification": false,
+            "fixed_64_slot_churn_qualified": true,
+            "fixed_64_slot_churn_required": true,
+            "fresh_challenges_actually_published": 2473,
+            "phase": "correct-product-false-trace",
+            "pressure_and_depletion_qualified": false,
+            "pressure_and_depletion_required": true,
+            "rounds": [
+              {
+                "actual_pressure_overlap": true,
+                "attack_calls_including_physical_tails_overlapping": 2438,
+                "attack_calls_overlapping": 2438,
+                "confirmed": false,
+                "new_receiver_hostile_rejections": 2415,
+                "on_time_history_and_independent_verification": true,
+                "paid_depletion_inside_round": true,
+                "qualified_confirmation": false,
+                "receiver_hostile_dispatch_cpu_increase_ns": 6681400005,
+                "round": 0,
+                "seven_submissions_inside_original_call_deadlines": true
+              }
+            ],
+            "service_qualified": false
+          }
+        ],
+        "production_qualified": false,
+        "public_fairness_qualified": false,
+        "schema": "pon-pure-pressure-qualification-v3",
+        "scope": "Fixed 24-actor, two-listener, shared cold CPU epoch; 30s phases and original 2s calls. Local monotonic clocks and CPU observations, not authenticity, unlimited-Sybil fairness, WAN throughput, work hardness or installation authority.",
+        "work_hardness_qualified": false
+      },
+      "fresh_caller_metrics": [
+        {
+          "authenticated_connection_rows": 14,
+          "authenticated_distinct_attack_callers": 0,
+          "fresh_caller_coverage_qualified": true,
+          "honest_bodies_with_authenticated_acceptance": 7,
+          "honest_bodies_with_authenticated_dispatch": 7,
+          "honest_submission_attempts": 7,
+          "honest_submission_outcomes": {
+            "error": 0,
+            "ok": 7,
+            "refused": 0
+          },
+          "honest_submission_retries": 0,
+          "minimum_authenticated_distinct_attack_callers": 0,
+          "offered_distinct_attack_callers": 0,
+          "offered_honest_bodies": 7,
+          "on_time_honest_successful_calls": 7,
+          "phase": "baseline",
+          "planned_honest_bodies": 21,
+          "preauthentication_connection_rows": 0,
+          "unoffered_honest_bodies": 14,
+          "confirmed_rounds": [
+            false
+          ],
+          "on_time_history_and_independent_verification": [
+            true
+          ],
+          "service_qualified": false,
+          "pressure_and_depletion_qualified": true
+        },
+        {
+          "authenticated_connection_rows": 3651,
+          "authenticated_distinct_attack_callers": 3637,
+          "fresh_caller_coverage_qualified": true,
+          "honest_bodies_with_authenticated_acceptance": 7,
+          "honest_bodies_with_authenticated_dispatch": 7,
+          "honest_submission_attempts": 7,
+          "honest_submission_outcomes": {
+            "error": 0,
+            "ok": 7,
+            "refused": 0
+          },
+          "honest_submission_retries": 0,
+          "minimum_authenticated_distinct_attack_callers": 65,
+          "offered_distinct_attack_callers": 3660,
+          "offered_honest_bodies": 7,
+          "on_time_honest_successful_calls": 7,
+          "phase": "from-zero",
+          "planned_honest_bodies": 21,
+          "preauthentication_connection_rows": 23,
+          "unoffered_honest_bodies": 14,
+          "confirmed_rounds": [
+            false
+          ],
+          "on_time_history_and_independent_verification": [
+            true
+          ],
+          "service_qualified": false,
+          "pressure_and_depletion_qualified": false
+        },
+        {
+          "authenticated_connection_rows": 2507,
+          "authenticated_distinct_attack_callers": 2493,
+          "fresh_caller_coverage_qualified": true,
+          "honest_bodies_with_authenticated_acceptance": 7,
+          "honest_bodies_with_authenticated_dispatch": 7,
+          "honest_submission_attempts": 7,
+          "honest_submission_outcomes": {
+            "error": 0,
+            "ok": 7,
+            "refused": 0
+          },
+          "honest_submission_retries": 0,
+          "minimum_authenticated_distinct_attack_callers": 65,
+          "offered_distinct_attack_callers": 2493,
+          "offered_honest_bodies": 7,
+          "on_time_honest_successful_calls": 7,
+          "phase": "correct-product-false-trace",
+          "planned_honest_bodies": 21,
+          "preauthentication_connection_rows": 0,
+          "unoffered_honest_bodies": 14,
+          "confirmed_rounds": [
+            false
+          ],
+          "on_time_history_and_independent_verification": [
+            true
+          ],
+          "service_qualified": false,
+          "pressure_and_depletion_qualified": false
+        }
+      ],
+      "fresh_caller_input_consistent": true,
+      "fresh_caller_finite_qualification": false,
+      "receiver_owner": {
+        "input_consistent": false,
+        "error": "[Errno 2] No such file or directory: 'baseline.json'",
+        "original_campaign_qualification": false,
+        "supplemental_finite_qualification": false,
+        "actor_cpu_observation_complete": false,
+        "receiver_lifetime_cost_observed": false,
+        "receiver_descendants_quiescent_observed": false,
+        "parent_byte_bindings_verified": false,
+        "fixed_parent_provisioned": false,
+        "physical_authentication": false
+      }
+    },
+    {
+      "architecture": "arm64",
+      "run_id": 41155114590,
+      "job_id": 124400082201,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41155114590/job/124400082201",
+      "workflow_job_conclusion": "failure",
+      "expected_head": "cf84391a474ee1f3ac78f4a907bd95184b816a54",
+      "source_before": {
+        "base": null,
+        "candidate": "cf84391a474ee1f3ac78f4a907bd95184b816a54",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "cf84391a474ee1f3ac78f4a907bd95184b816a54",
+        "tested_tree": "c7609a5502641739505862f2e4cd3c1e06ce1041",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 977895812,
+        "tracked_entries": 7561,
+        "tracked_worktree_verified": true
+      },
+      "source_after": {
+        "base": null,
+        "candidate": "cf84391a474ee1f3ac78f4a907bd95184b816a54",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "cf84391a474ee1f3ac78f4a907bd95184b816a54",
+        "tested_tree": "c7609a5502641739505862f2e4cd3c1e06ce1041",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 977895812,
+        "tracked_entries": 7561,
+        "tracked_worktree_verified": true
+      },
+      "complete_success": false,
+      "native_gates_passed": 16,
+      "native_failed_gates": [
+        {
+          "name": "pure-pressure",
+          "nonempty_test_pass": false,
+          "process_complete_success": false,
+          "qualified": false,
+          "schema": "pon-native-test-verdict-v1",
+          "terminal_summary": null
+        },
+        {
+          "name": "receiver-owner-supplement",
+          "nonempty_test_pass": false,
+          "process_complete_success": false,
+          "qualified": false,
+          "schema": "pon-native-test-verdict-v1",
+          "terminal_summary": null
+        },
+        {
+          "name": "fresh-caller-pressure",
+          "nonempty_test_pass": false,
+          "process_complete_success": false,
+          "qualified": false,
+          "schema": "pon-native-test-verdict-v1",
+          "terminal_summary": null
+        }
+      ],
+      "failed_steps": [
+        {
+          "name": "pure-pressure",
+          "returncode": 101,
+          "elapsed_seconds": 110.641591378,
+          "error": null
+        },
+        {
+          "name": "pure-pressure-reader",
+          "returncode": 1,
+          "elapsed_seconds": 3.341361665,
+          "error": null
+        },
+        {
+          "name": "receiver-owner-supplement",
+          "returncode": 101,
+          "elapsed_seconds": 112.941500959,
+          "error": null
+        },
+        {
+          "name": "receiver-owner-reader",
+          "returncode": 1,
+          "elapsed_seconds": 10.707234021,
+          "error": null
+        },
+        {
+          "name": "fresh-caller-pressure",
+          "returncode": 101,
+          "elapsed_seconds": 110.401959486,
+          "error": null
+        },
+        {
+          "name": "fresh-caller-reader",
+          "returncode": 1,
+          "elapsed_seconds": 3.636328254,
+          "error": null
+        }
+      ],
+      "original_pressure_qualification": {
+        "finite_qualification": false,
+        "input_consistent": true,
+        "installation_authorized": false,
+        "phases": [
+          {
+            "actors_healthy": true,
+            "actual_paid_cpu_ns": 1034475312,
+            "arithmetic_fact_hits": 0,
+            "attack_calls": 0,
+            "attack_observations_without_completed_arithmetic": 0,
+            "attack_transcript_entries": 0,
+            "attack_transcripts_completed": 0,
+            "depletion_basis": "same-lock flow with original refill projection and full-sample-interval upper bound; not continuous whole-round exhaustion",
+            "depletion_samples": 0,
+            "finite_qualification": false,
+            "fixed_64_slot_churn_qualified": false,
+            "fixed_64_slot_churn_required": false,
+            "fresh_challenges_actually_published": 0,
+            "phase": "baseline",
+            "pressure_and_depletion_qualified": true,
+            "pressure_and_depletion_required": false,
+            "rounds": [
+              {
+                "actual_pressure_overlap": false,
+                "attack_calls_including_physical_tails_overlapping": 0,
+                "attack_calls_overlapping": 0,
+                "confirmed": true,
+                "new_receiver_hostile_rejections": 0,
+                "on_time_history_and_independent_verification": true,
+                "paid_depletion_inside_round": false,
+                "qualified_confirmation": true,
+                "receiver_hostile_dispatch_cpu_increase_ns": 0,
+                "round": 0,
+                "seven_submissions_inside_original_call_deadlines": true
+              },
+              {
+                "actual_pressure_overlap": false,
+                "attack_calls_including_physical_tails_overlapping": 0,
+                "attack_calls_overlapping": 0,
+                "confirmed": false,
+                "new_receiver_hostile_rejections": 0,
+                "on_time_history_and_independent_verification": false,
+                "paid_depletion_inside_round": false,
+                "qualified_confirmation": false,
+                "receiver_hostile_dispatch_cpu_increase_ns": 0,
+                "round": 1,
+                "seven_submissions_inside_original_call_deadlines": true
+              }
+            ],
+            "service_qualified": false
+          },
+          {
+            "actors_healthy": true,
+            "actual_paid_cpu_ns": 6881422232,
+            "arithmetic_fact_hits": 0,
+            "attack_calls": 3662,
+            "attack_observations_without_completed_arithmetic": 3662,
+            "attack_transcript_entries": 0,
+            "attack_transcripts_completed": 0,
+            "depletion_basis": "same-lock flow with original refill projection and full-sample-interval upper bound; not continuous whole-round exhaustion",
+            "depletion_samples": 0,
+            "finite_qualification": false,
+            "fixed_64_slot_churn_qualified": false,
+            "fixed_64_slot_churn_required": false,
+            "fresh_challenges_actually_published": 0,
+            "phase": "from-zero",
+            "pressure_and_depletion_qualified": false,
+            "pressure_and_depletion_required": true,
+            "rounds": [
+              {
+                "actual_pressure_overlap": true,
+                "attack_calls_including_physical_tails_overlapping": 2546,
+                "attack_calls_overlapping": 2546,
+                "confirmed": true,
+                "new_receiver_hostile_rejections": 2521,
+                "on_time_history_and_independent_verification": true,
+                "paid_depletion_inside_round": false,
+                "qualified_confirmation": true,
+                "receiver_hostile_dispatch_cpu_increase_ns": 4046276312,
+                "round": 0,
+                "seven_submissions_inside_original_call_deadlines": true
+              },
+              {
+                "actual_pressure_overlap": true,
+                "attack_calls_including_physical_tails_overlapping": 1032,
+                "attack_calls_overlapping": 1032,
+                "confirmed": false,
+                "new_receiver_hostile_rejections": 1008,
+                "on_time_history_and_independent_verification": false,
+                "paid_depletion_inside_round": false,
+                "qualified_confirmation": false,
+                "receiver_hostile_dispatch_cpu_increase_ns": 1653924504,
+                "round": 1,
+                "seven_submissions_inside_original_call_deadlines": true
+              }
+            ],
+            "service_qualified": false
+          },
+          {
+            "actors_healthy": true,
+            "actual_paid_cpu_ns": 7402589880,
+            "arithmetic_fact_hits": 0,
+            "attack_calls": 2128,
+            "attack_observations_without_completed_arithmetic": 23,
+            "attack_transcript_entries": 2105,
+            "attack_transcripts_completed": 2104,
+            "depletion_basis": "same-lock flow with original refill projection and full-sample-interval upper bound; not continuous whole-round exhaustion",
+            "depletion_samples": 402,
+            "finite_qualification": false,
+            "fixed_64_slot_churn_qualified": true,
+            "fixed_64_slot_churn_required": true,
+            "fresh_challenges_actually_published": 2104,
+            "phase": "correct-product-false-trace",
+            "pressure_and_depletion_qualified": false,
+            "pressure_and_depletion_required": true,
+            "rounds": [
+              {
+                "actual_pressure_overlap": true,
+                "attack_calls_including_physical_tails_overlapping": 1684,
+                "attack_calls_overlapping": 1684,
+                "confirmed": true,
+                "new_receiver_hostile_rejections": 1660,
+                "on_time_history_and_independent_verification": true,
+                "paid_depletion_inside_round": true,
+                "qualified_confirmation": true,
+                "receiver_hostile_dispatch_cpu_increase_ns": 5028728024,
+                "round": 0,
+                "seven_submissions_inside_original_call_deadlines": true
+              },
+              {
+                "actual_pressure_overlap": true,
+                "attack_calls_including_physical_tails_overlapping": 417,
+                "attack_calls_overlapping": 417,
+                "confirmed": false,
+                "new_receiver_hostile_rejections": 394,
+                "on_time_history_and_independent_verification": false,
+                "paid_depletion_inside_round": true,
+                "qualified_confirmation": false,
+                "receiver_hostile_dispatch_cpu_increase_ns": 1194434520,
+                "round": 1,
+                "seven_submissions_inside_original_call_deadlines": true
+              }
+            ],
+            "service_qualified": false
+          }
+        ],
+        "production_qualified": false,
+        "public_fairness_qualified": false,
+        "schema": "pon-pure-pressure-qualification-v3",
+        "scope": "Fixed 24-actor, two-listener, shared cold CPU epoch; 30s phases and original 2s calls. Local monotonic clocks and CPU observations, not authenticity, unlimited-Sybil fairness, WAN throughput, work hardness or installation authority.",
+        "work_hardness_qualified": false
+      },
+      "fresh_caller_metrics": [
+        {
+          "authenticated_connection_rows": 26,
+          "authenticated_distinct_attack_callers": 0,
+          "fresh_caller_coverage_qualified": true,
+          "honest_bodies_with_authenticated_acceptance": 14,
+          "honest_bodies_with_authenticated_dispatch": 14,
+          "honest_submission_attempts": 14,
+          "honest_submission_outcomes": {
+            "error": 0,
+            "ok": 14,
+            "refused": 0
+          },
+          "honest_submission_retries": 0,
+          "minimum_authenticated_distinct_attack_callers": 0,
+          "offered_distinct_attack_callers": 0,
+          "offered_honest_bodies": 14,
+          "on_time_honest_successful_calls": 14,
+          "phase": "baseline",
+          "planned_honest_bodies": 21,
+          "preauthentication_connection_rows": 0,
+          "unoffered_honest_bodies": 7,
+          "confirmed_rounds": [
+            true,
+            false
+          ],
+          "on_time_history_and_independent_verification": [
+            true,
+            false
+          ],
+          "service_qualified": false,
+          "pressure_and_depletion_qualified": true
+        },
+        {
+          "authenticated_connection_rows": 3653,
+          "authenticated_distinct_attack_callers": 3628,
+          "fresh_caller_coverage_qualified": true,
+          "honest_bodies_with_authenticated_acceptance": 14,
+          "honest_bodies_with_authenticated_dispatch": 14,
+          "honest_submission_attempts": 14,
+          "honest_submission_outcomes": {
+            "error": 0,
+            "ok": 14,
+            "refused": 0
+          },
+          "honest_submission_retries": 0,
+          "minimum_authenticated_distinct_attack_callers": 65,
+          "offered_distinct_attack_callers": 3650,
+          "offered_honest_bodies": 14,
+          "on_time_honest_successful_calls": 14,
+          "phase": "from-zero",
+          "planned_honest_bodies": 21,
+          "preauthentication_connection_rows": 22,
+          "unoffered_honest_bodies": 7,
+          "confirmed_rounds": [
+            true,
+            false
+          ],
+          "on_time_history_and_independent_verification": [
+            true,
+            false
+          ],
+          "service_qualified": false,
+          "pressure_and_depletion_qualified": false
+        },
+        {
+          "authenticated_connection_rows": 2224,
+          "authenticated_distinct_attack_callers": 2201,
+          "fresh_caller_coverage_qualified": true,
+          "honest_bodies_with_authenticated_acceptance": 14,
+          "honest_bodies_with_authenticated_dispatch": 14,
+          "honest_submission_attempts": 14,
+          "honest_submission_outcomes": {
+            "error": 0,
+            "ok": 14,
+            "refused": 0
+          },
+          "honest_submission_retries": 0,
+          "minimum_authenticated_distinct_attack_callers": 65,
+          "offered_distinct_attack_callers": 2202,
+          "offered_honest_bodies": 14,
+          "on_time_honest_successful_calls": 14,
+          "phase": "correct-product-false-trace",
+          "planned_honest_bodies": 21,
+          "preauthentication_connection_rows": 1,
+          "unoffered_honest_bodies": 7,
+          "confirmed_rounds": [
+            true,
+            false
+          ],
+          "on_time_history_and_independent_verification": [
+            true,
+            false
+          ],
+          "service_qualified": false,
+          "pressure_and_depletion_qualified": false
+        }
+      ],
+      "fresh_caller_input_consistent": true,
+      "fresh_caller_finite_qualification": false,
+      "receiver_owner": {
+        "input_consistent": true,
+        "error": null,
+        "original_campaign_qualification": false,
+        "supplemental_finite_qualification": false,
+        "actor_cpu_observation_complete": true,
+        "receiver_lifetime_cost_observed": true,
+        "receiver_descendants_quiescent_observed": true,
+        "parent_byte_bindings_verified": true,
+        "fixed_parent_provisioned": false,
+        "physical_authentication": false
+      }
+    }
+  ],
+  "v5": [
+    {
+      "architecture": "x64",
+      "run_id": 41155114605,
+      "job_id": 124400082329,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41155114605/job/124400082329",
+      "workflow_job_conclusion": "success",
+      "summary": {
+        "schema": "pon-legal-ticket-first-admission-summary-v5",
+        "cohorts": 144,
+        "first_admission_calls": 11772,
+        "distinct_fixture_packet_ids_across_paired_cohorts": 654
+      },
+      "capture": {
+        "schema": "pon-pure-native-capture-v1",
+        "source": {
+          "commit": "cf84391a474ee1f3ac78f4a907bd95184b816a54",
+          "tree": "c7609a5502641739505862f2e4cd3c1e06ce1041",
+          "example_sha256": "bfb8807c61dab9f0bd16a9f3bda240b4899b7a68348d5afb1984824d0155d1e5",
+          "lock_sha256": "9daaf7ce63bfcab58efc8e08ca5134bfba9c97ec7e615cd6ad80e54be30b64cb",
+          "workspace_manifest_sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+        },
+        "argv": [
+          "/home/runner/work/_temp/legal-ticket-v5-target/debug/examples/pon_legal_ticket_cost_v5"
+        ],
+        "rustc": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+        "build_profile": "cargo --profile test; repository package overrides",
+        "package_opt_levels": {
+          "trnm-pon-node": 3,
+          "trnm-crypto-primitives": 3,
+          "trnm-mvcc-fee": 1
+        },
+        "debug_info": 0,
+        "incremental": false,
+        "build_jobs": 1,
+        "binary_sha256_before": "b8b8139757e3b41de0cdcd316b1a8891a3edbfd6d9d9c7096db9a10c8161b1a1",
+        "timeout_seconds": 610,
+        "platform": "Linux-7.0.0-1017-azure-x86_64-with-glibc2.39",
+        "machine": "x86_64",
+        "exclusive_host": false,
+        "host_contention_controlled": false,
+        "production_qualified": false,
+        "hardness_proved": false,
+        "cpu.max": null,
+        "memory.max": null,
+        "exit_code": 0,
+        "timed_out": false,
+        "elapsed_ns": 127347681846,
+        "child_user_cpu_seconds": 115.29873099999999,
+        "child_system_cpu_seconds": 6.407212,
+        "child_max_rss_kib": 76828,
+        "binary_sha256_after": "b8b8139757e3b41de0cdcd316b1a8891a3edbfd6d9d9c7096db9a10c8161b1a1",
+        "stdout_bytes": 12467269,
+        "stdout_uncompressed_sha256": "e030ad6ef44d077e7778a0d6196e503b5064be912090f2282d1ae129430af33b",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stable_binary": true,
+        "stdout_within_bound": true,
+        "stdout_gzip_sha256": "923bd37bff7ec69ab83961715a0da6320d0220a895f81bf9d2b4599fd094e259",
+        "stdout_gzip_bytes": 4594168
+      },
+      "warning": "first_admission_calls are cohort calls; 654 fixture identities are reused across paired cohorts; not new global chainwork or live throughput"
+    },
+    {
+      "architecture": "arm64",
+      "run_id": 41155114605,
+      "job_id": 124400082632,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41155114605/job/124400082632",
+      "workflow_job_conclusion": "success",
+      "summary": {
+        "schema": "pon-legal-ticket-first-admission-summary-v5",
+        "cohorts": 144,
+        "first_admission_calls": 11772,
+        "distinct_fixture_packet_ids_across_paired_cohorts": 654
+      },
+      "capture": {
+        "schema": "pon-pure-native-capture-v1",
+        "source": {
+          "commit": "cf84391a474ee1f3ac78f4a907bd95184b816a54",
+          "tree": "c7609a5502641739505862f2e4cd3c1e06ce1041",
+          "example_sha256": "bfb8807c61dab9f0bd16a9f3bda240b4899b7a68348d5afb1984824d0155d1e5",
+          "lock_sha256": "9daaf7ce63bfcab58efc8e08ca5134bfba9c97ec7e615cd6ad80e54be30b64cb",
+          "workspace_manifest_sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+        },
+        "argv": [
+          "/home/runner/work/_temp/legal-ticket-v5-target/debug/examples/pon_legal_ticket_cost_v5"
+        ],
+        "rustc": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: aarch64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+        "build_profile": "cargo --profile test; repository package overrides",
+        "package_opt_levels": {
+          "trnm-pon-node": 3,
+          "trnm-crypto-primitives": 3,
+          "trnm-mvcc-fee": 1
+        },
+        "debug_info": 0,
+        "incremental": false,
+        "build_jobs": 1,
+        "binary_sha256_before": "da8807144f9d85e348911a5f54a728f3adb7c643232b42a4339df20e3e57243f",
+        "timeout_seconds": 610,
+        "platform": "Linux-7.0.0-1017-azure-aarch64-with-glibc2.39",
+        "machine": "aarch64",
+        "exclusive_host": false,
+        "host_contention_controlled": false,
+        "production_qualified": false,
+        "hardness_proved": false,
+        "cpu.max": null,
+        "memory.max": null,
+        "exit_code": 0,
+        "timed_out": false,
+        "elapsed_ns": 174268638018,
+        "child_user_cpu_seconds": 161.00764700000002,
+        "child_system_cpu_seconds": 6.353327999999999,
+        "child_max_rss_kib": 37160,
+        "binary_sha256_after": "da8807144f9d85e348911a5f54a728f3adb7c643232b42a4339df20e3e57243f",
+        "stdout_bytes": 12500435,
+        "stdout_uncompressed_sha256": "e789a9d584570818e471e7f936a872e8394feb3009d2b3987392aa7ce76ffc59",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stable_binary": true,
+        "stdout_within_bound": true,
+        "stdout_gzip_sha256": "d0dc74cd1cd8199a5e88e2d5049aaecb02ff3f6cdfeaec29ec90cb853d83f66d",
+        "stdout_gzip_bytes": 4577822
+      },
+      "warning": "first_admission_calls are cohort calls; 654 fixture identities are reused across paired cohorts; not new global chainwork or live throughput"
+    }
+  ],
+  "branch_encoding": {
+    "run_id": 41155114551,
+    "head_jobs": [
+      {
+        "job_id": 124400081815,
+        "architecture": "arm64",
+        "conclusion": "success"
+      },
+      {
+        "job_id": 124400081935,
+        "architecture": "x64",
+        "conclusion": "success"
+      }
+    ],
+    "prospective_jobs": [
+      {
+        "job_id": 124400081923,
+        "architecture": "x64",
+        "conclusion": "failure"
+      },
+      {
+        "job_id": 124400082016,
+        "architecture": "arm64",
+        "conclusion": "failure"
+      }
+    ],
+    "merge": {
+      "sha": "7f0b951967c0304351df6e938211e9c12791da1d",
+      "tree": "c7609a5502641739505862f2e4cd3c1e06ce1041",
+      "parents": [
+        "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+        "cf84391a474ee1f3ac78f4a907bd95184b816a54"
+      ],
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/7f0b951967c0304351df6e938211e9c12791da1d",
+      "message": "Merge cf84391a474ee1f3ac78f4a907bd95184b816a54 into dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+      "observed_expected_base": "9fedf7ecbbe07177069c030592b4e03dcffebb81"
+    },
+    "failure": "merge parents differ from the event base and candidate",
+    "old_failed_source_gate_promoted_to_pass": false
+  },
+  "baseline": {
+    "run_id": 41155114648,
+    "conclusion": "failure",
+    "quality": {
+      "job_id": 124400082942,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41155114648/job/124400082942",
+      "source_consistent": true,
+      "main_graph_result": "FAIL",
+      "fuzz_graph_result": "PASS",
+      "errors": [
+        {
+          "code": "unmaintained",
+          "id": "RUSTSEC-2025-0141",
+          "package": "bincode",
+          "message": "Bincode is unmaintained",
+          "versions": [
+            {
+              "name": "bincode",
+              "version": "1.3.3"
+            }
+          ]
+        },
+        {
+          "code": "unmaintained",
+          "id": "RUSTSEC-2024-0388",
+          "package": "derivative",
+          "message": "`derivative` is unmaintained; consider using an alternative",
+          "versions": [
+            {
+              "name": "derivative",
+              "version": "2.2.0"
+            }
+          ]
+        },
+        {
+          "code": "unmaintained",
+          "id": "RUSTSEC-2024-0436",
+          "package": "paste",
+          "message": "paste - no longer maintained",
+          "versions": [
+            {
+              "name": "paste",
+              "version": "1.0.15"
+            }
+          ]
+        },
+        {
+          "code": "vulnerability",
+          "id": "RUSTSEC-2025-0055",
+          "package": "tracing-subscriber",
+          "message": "Logging user input may result in poisoning logs with ANSI escape sequences",
+          "versions": [
+            {
+              "name": "tracing-subscriber",
+              "version": "0.2.25"
+            }
+          ]
+        }
+      ]
+    },
+    "runtime": {
+      "job_id": 124400083296,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41155114648/job/124400083296",
+      "failure": "cell::discovery::tests::first_manifest_read_preserves_cold_warm_status_and_exact_rejection_counts",
+      "location": "crates/trnm-data-availability/src/cell/discovery/tests.rs:407:10",
+      "reason": "Result::unwrap on Io WouldBlock (os error 11, Resource temporarily unavailable)",
+      "test_suite_passed": 136,
+      "test_suite_failed": 1,
+      "source_after_passed": true
+    },
+    "from_zero": [
+      {
+        "job_id": 124400083149,
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41155114648/job/124400083149",
+        "failure": "CONFIRMATION_TARGET",
+        "named_native_tests": 5,
+        "named_native_tests_passed": 5,
+        "finite_confirmation_reader_passed": false
+      },
+      {
+        "job_id": 124400083244,
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41155114648/job/124400083244",
+        "failure": "CONFIRMATION_TARGET",
+        "named_native_tests": 5,
+        "named_native_tests_passed": 5,
+        "finite_confirmation_reader_passed": false
+      },
+      {
+        "job_id": 124400083251,
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41155114648/job/124400083251",
+        "failure": "CONFIRMATION_TARGET",
+        "named_native_tests": 5,
+        "named_native_tests_passed": 5,
+        "finite_confirmation_reader_passed": false
+      }
+    ]
+  },
+  "downloaded_artifact_bindings": [
+    {
+      "path": "admission-x64.zip",
+      "artifact_id": 13025370402,
+      "bytes": 102532877,
+      "sha256": "4a6684abe0e9c7570d0ebf80f50b441b7b957afee42e6106bdf6dc092a5a6524",
+      "github_digest_matches": true,
+      "head_sha": "cf84391a474ee1f3ac78f4a907bd95184b816a54"
+    },
+    {
+      "path": "admission-arm64.zip",
+      "artifact_id": 13025575325,
+      "bytes": 100574785,
+      "sha256": "71bac587dc1d5f95972509afeeb9d550e10994c77f66549e44c53f6b224df113",
+      "github_digest_matches": true,
+      "head_sha": "cf84391a474ee1f3ac78f4a907bd95184b816a54"
+    },
+    {
+      "path": "quality.zip",
+      "artifact_id": 13024173284,
+      "bytes": 551340,
+      "sha256": "b826213d9ef752d438be922cd8871f66afea9b93f4590df010007e86af634f85",
+      "github_digest_matches": true,
+      "head_sha": "cf84391a474ee1f3ac78f4a907bd95184b816a54"
+    }
+  ],
+  "source_edits": false,
+  "native_compilation": false,
+  "workflow_reruns": false,
+  "remote_mutation": false,
+  "new_head_qualification": false
+}

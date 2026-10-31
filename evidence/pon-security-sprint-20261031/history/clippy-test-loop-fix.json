@@ -1,0 +1,58 @@
+{
+  "schema": "pon-history-test-only-loop-fix-v1",
+  "before_source_sha256": "73262238a015a80fcaa51f51c0a598bb79b86aa04fffe2c407ea6bf5e3ad5469",
+  "after_source_sha256": "e81f3620590bfd75e4eb5fb123d20929d326c438882923f31012a2fb30f36155",
+  "only_function_changed": "fn stack_quota_reads_preserve_fresh_paths_and_read_before_parse_errors() {",
+  "production_source_unchanged": true,
+  "reason": "strict Clippy needless_range_loop; preserve the same five paths in the same order and every original assertion",
+  "changes": [
+    {
+      "before_line": "            for index in 0..paths.len() {"
+    },
+    {
+      "after_line": "            for path in &paths {"
+    },
+    {
+      "before_line": "                    fs::write(&paths[index], &bytes).unwrap();"
+    },
+    {
+      "after_line": "                    fs::write(path, &bytes).unwrap();"
+    },
+    {
+      "before_line": "                fs::rename(&paths[index], &retired).unwrap();"
+    },
+    {
+      "before_line": "                fs::write(&paths[index], \"1\\n\").unwrap();"
+    },
+    {
+      "after_line": "                fs::rename(path, &retired).unwrap();"
+    },
+    {
+      "after_line": "                fs::write(path, \"1\\n\").unwrap();"
+    },
+    {
+      "before_line": "                fs::remove_file(&paths[index]).unwrap();"
+    },
+    {
+      "after_line": "                fs::remove_file(path).unwrap();"
+    },
+    {
+      "before_line": "                fs::rename(&retired, &paths[index]).unwrap();"
+    },
+    {
+      "before_line": "                fs::set_permissions(&paths[index], fs::Permissions::from_mode(0o0)).unwrap();"
+    },
+    {
+      "after_line": "                fs::rename(&retired, path).unwrap();"
+    },
+    {
+      "after_line": "                fs::set_permissions(path, fs::Permissions::from_mode(0o0)).unwrap();"
+    },
+    {
+      "before_line": "                fs::set_permissions(&paths[index], fs::Permissions::from_mode(0o600)).unwrap();"
+    },
+    {
+      "after_line": "                fs::set_permissions(path, fs::Permissions::from_mode(0o600)).unwrap();"
+    }
+  ]
+}

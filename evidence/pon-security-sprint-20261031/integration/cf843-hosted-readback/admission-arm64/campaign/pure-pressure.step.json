@@ -1,0 +1,26 @@
+{
+  "command": [
+    "/home/runner/work/_temp/pure-admission-target/release/deps/pure_pon_pressure_v2-7b761a0b5bc8654b",
+    "--exact",
+    "pure_pon_cold_shared_domain_pressure_fixed_host_client_v1",
+    "--ignored",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "complete_success": false,
+  "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+  "elapsed_ns": 110641591378,
+  "elapsed_seconds": 110.641591378,
+  "error": null,
+  "name": "pure-pressure",
+  "outer_stage_timeout_seconds": 600,
+  "returncode": 101,
+  "stderr": "pure-pressure.stderr.log",
+  "stderr_bytes": 561,
+  "stderr_sha256": "5e8489a7b5b4ffa27d7d77f19cf67e423dae0f2a1083aeb7813034f48d4d103b",
+  "stderr_truncated": false,
+  "stdout": "pure-pressure.stdout.log",
+  "stdout_bytes": 277,
+  "stdout_sha256": "c5211c1363d174038f818a604085e58aa47f219e1cb740f4b6db71cbd38f1f55",
+  "stdout_truncated": false
+}

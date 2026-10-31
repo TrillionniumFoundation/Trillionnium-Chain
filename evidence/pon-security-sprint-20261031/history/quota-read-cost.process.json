@@ -1,0 +1,38 @@
+{
+  "schema": "pon-history-kernel-real-process-v1",
+  "argv": [
+    "cargo",
+    "test",
+    "--profile",
+    "test",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--lib",
+    "actual_kernel_quota_read_cost_preserves_all_fresh_reads",
+    "--",
+    "--ignored",
+    "--nocapture"
+  ],
+  "cwd": "/tmp/pon-history-service-20261031",
+  "start_unix_ns": 1793410258384735191,
+  "elapsed_monotonic_ns": 223529852363,
+  "exit_code": 101,
+  "parent_commit": "7da4964d02b42076996e89a78d13f68572d33be5",
+  "source_state": "sparse working candidate",
+  "source_file": "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+  "source_sha256_before": "73262238a015a80fcaa51f51c0a598bb79b86aa04fffe2c407ea6bf5e3ad5469",
+  "source_sha256_after": "73262238a015a80fcaa51f51c0a598bb79b86aa04fffe2c407ea6bf5e3ad5469",
+  "native_tests_not_full_fixed_host_qualification": true,
+  "stdout": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr": {
+    "bytes": 2637,
+    "sha256": "efefd04463746cd3135bbc14be5edaae9ca8d3f6e26de724c0b5aefb0c4fa8e8"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "schema": "pon-w1-public-claim-cost-gates-v1",
+  "source_commit": "b0e3da2b3c9b5d60e1515af4ef908a544d1f4762",
+  "production_source_changed_after_native_proof_observations": false,
+  "native_proof_compiled_inputs_match_commit": 17,
+  "host_tests_passed": 21,
+  "host_tests_failed": 0,
+  "strict_host_relation_all_targets_clippy": "PASS",
+  "clippy_warnings_denied": true,
+  "rustfmt": "PASS",
+  "original_failure_and_cleanup_records_preserved": true,
+  "candidate_verifier_sha256": "123cb1717d23a1c685f43929909f161f70171664da5e41e85f4f9feb7e2cb3f8",
+  "initial_pending_gates_superseded": true,
+  "comparison_is_same_candidate_sdk_order": true,
+  "hardware_cold_observations": false,
+  "new_proof_generated": false,
+  "minimum_work_cost_proved": false,
+  "worst_case_rejection_cost_closed": false,
+  "public_ingress_qualified": false,
+  "pq_128_security_qualified": false,
+  "consensus_authority": false
+}

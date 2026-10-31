@@ -1,0 +1,246 @@
+{
+  "schema": "pon-security-sprint-workflow-shell-controls-v1",
+  "workflows": {
+    ".github/workflows/pon-recent-batch-acceptance.yml": "21b5073afc0677425a2ba5904173ba3d524c6dabb249dc3670e33af86f67d5b6",
+    ".github/workflows/pon-w1-audit-one-research.yml": "95d2837d1140fc0c946c0afa32261b73d4df40fdb65dfe3c36b38feb5554ac0b"
+  },
+  "bash_syntax_blocks": [
+    {
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "step": "Verify exact source, ordered actual main merge and full repository boundary",
+      "shell_syntax": "PASS"
+    },
+    {
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "step": "Execute conditional query accounting and anytime-bound counterexamples",
+      "shell_syntax": "PASS"
+    },
+    {
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "step": "Reject incomplete, ambiguous or incorrectly bound cache observations",
+      "shell_syntax": "PASS"
+    },
+    {
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "step": "Require explicit graph-resource reader and privileged directory-race controls",
+      "shell_syntax": "PASS"
+    },
+    {
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "step": "Install original pinned native compiler and lint tools",
+      "shell_syntax": "PASS"
+    },
+    {
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "step": "Check committed formatting without rewriting source",
+      "shell_syntax": "PASS"
+    },
+    {
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "step": "Require fresh kernel reads and all original host boundary controls",
+      "shell_syntax": "PASS"
+    },
+    {
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "step": "Require bounded ordinary record copies and complete history controls",
+      "shell_syntax": "PASS"
+    },
+    {
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "step": "Require authorized durable History, real cancellation and actual process crash recovery",
+      "shell_syntax": "PASS"
+    },
+    {
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "step": "Require stopped owned-process observation without fabricating missing descendants",
+      "shell_syntax": "PASS"
+    },
+    {
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "step": "Require V6 prepaid effects, actual unknown-window crash recovery and validation facts",
+      "shell_syntax": "PASS"
+    },
+    {
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "step": "Execute complete original error-boundary suite and all new controls",
+      "shell_syntax": "PASS"
+    },
+    {
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "step": "Execute all original authenticated owner controls and five snapshot regressions",
+      "shell_syntax": "PASS"
+    },
+    {
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "step": "Retain authenticated record, ancestry and cold recovery coverage",
+      "shell_syntax": "PASS"
+    },
+    {
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "step": "Require all five statement-reuse controls and complete-call observations separately",
+      "shell_syntax": "PASS"
+    },
+    {
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "step": "Require every cached block, parent, commitment and snapshot owner control",
+      "shell_syntax": "PASS"
+    },
+    {
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "step": "Require live public owner mutation, admission rollback and cold reopen controls",
+      "shell_syntax": "PASS"
+    },
+    {
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "step": "Require fixed-BLOB allocation bounds with original errors and rollback semantics",
+      "shell_syntax": "PASS"
+    },
+    {
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "step": "Reject empty nullable BLOB corruption through original native owners",
+      "shell_syntax": "PASS"
+    },
+    {
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "step": "Preserve original source-preserving migration coverage",
+      "shell_syntax": "PASS"
+    },
+    {
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "step": "Preserve pending confirmation ownership and joined shutdown on failures",
+      "shell_syntax": "PASS"
+    },
+    {
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "step": "Execute real pipeline boundaries without claiming saturation throughput",
+      "shell_syntax": "PASS"
+    },
+    {
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "step": "Require non-committing proof reads and actual nonce snapshot callers",
+      "shell_syntax": "PASS"
+    },
+    {
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "step": "Execute public TCP business confirmation under rotating false work",
+      "shell_syntax": "PASS"
+    },
+    {
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "step": "Check complete native target lint",
+      "shell_syntax": "PASS"
+    },
+    {
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "step": "Retain reproducible source and native replay executable",
+      "shell_syntax": "PASS"
+    },
+    {
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "step": "Recheck unchanged exact source and hash all native logs",
+      "shell_syntax": "PASS"
+    },
+    {
+      "workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "step": "Bind complete native cache observations to the unchanged tested source",
+      "shell_syntax": "PASS"
+    },
+    {
+      "workflow": ".github/workflows/pon-w1-audit-one-research.yml",
+      "step": "Reserve private output and bind source",
+      "shell_syntax": "PASS"
+    },
+    {
+      "workflow": ".github/workflows/pon-w1-audit-one-research.yml",
+      "step": "Exercise bounded fixture and case-reader controls",
+      "shell_syntax": "PASS"
+    },
+    {
+      "workflow": ".github/workflows/pon-w1-audit-one-research.yml",
+      "step": "Restore only the pinned durable historical fixture",
+      "shell_syntax": "PASS"
+    },
+    {
+      "workflow": ".github/workflows/pon-w1-audit-one-research.yml",
+      "step": "Install pinned native toolchain without guest tools",
+      "shell_syntax": "PASS"
+    },
+    {
+      "workflow": ".github/workflows/pon-w1-audit-one-research.yml",
+      "step": "Build and test only the exact locked host graph",
+      "shell_syntax": "PASS"
+    },
+    {
+      "workflow": ".github/workflows/pon-w1-audit-one-research.yml",
+      "step": "Retain the original complete audit on the real proof",
+      "shell_syntax": "PASS"
+    },
+    {
+      "workflow": ".github/workflows/pon-w1-audit-one-research.yml",
+      "step": "Measure the eight fixed real cases",
+      "shell_syntax": "PASS"
+    },
+    {
+      "workflow": ".github/workflows/pon-w1-audit-one-research.yml",
+      "step": "Measure public-claim rejection and the unchanged full SDK fallback",
+      "shell_syntax": "PASS"
+    },
+    {
+      "workflow": ".github/workflows/pon-w1-audit-one-research.yml",
+      "step": "Preserve exact source result even when an earlier phase failed",
+      "shell_syntax": "PASS"
+    }
+  ],
+  "kernel_roster_readback": [
+    {
+      "case": "retained-native-roster",
+      "returncode": 0,
+      "accepted": true,
+      "expected_acceptance": true
+    },
+    {
+      "case": "missing-original",
+      "returncode": 1,
+      "accepted": false,
+      "expected_acceptance": false
+    },
+    {
+      "case": "missing-new",
+      "returncode": 1,
+      "accepted": false,
+      "expected_acceptance": false
+    },
+    {
+      "case": "duplicate-original",
+      "returncode": 1,
+      "accepted": false,
+      "expected_acceptance": false
+    },
+    {
+      "case": "renamed-original",
+      "returncode": 1,
+      "accepted": false,
+      "expected_acceptance": false
+    },
+    {
+      "case": "skipped-original",
+      "returncode": 1,
+      "accepted": false,
+      "expected_acceptance": false
+    },
+    {
+      "case": "wrong-ignored",
+      "returncode": 1,
+      "accepted": false,
+      "expected_acceptance": false
+    },
+    {
+      "case": "wrong-summary",
+      "returncode": 1,
+      "accepted": false,
+      "expected_acceptance": false
+    }
+  ],
+  "retained_native_stdout_sha256": "6cf22f3fa50dd06f3f111a3f74f575c5235b4818b58c334c1894acb7f620efdb",
+  "scope": "shell syntax and postprocessing controls against retained first-binary transcript; no new native execution"
+}

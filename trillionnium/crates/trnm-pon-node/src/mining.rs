@@ -644,14 +644,10 @@ where
         report.initial_owner_wait_ns += elapsed;
         let acquired_wait = std::mem::take(&mut initial_owner_wait_ns);
         let (parent, generation) = owner.active()?;
-        // A retained future timestamp is never converted into a logical mining clock.
+        // Use the actual wall clock and the same branch median as admission.
+        // A valid future tip alone must not suppress a presently valid child.
         let now = ingress::now()?;
-        let parent_time = if owner.parent_height(parent)? == 0 {
-            owner.settings().genesis_time()
-        } else {
-            owner.packet(parent)?.header.timestamp
-        };
-        if now <= parent_time {
+        if !owner.mining_wall_time_ready(parent, now)? {
             drop(owner);
             next = Instant::now() + Duration::from_millis(25);
             continue;

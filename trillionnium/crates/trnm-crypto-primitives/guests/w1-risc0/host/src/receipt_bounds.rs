@@ -225,4 +225,4 @@ pub fn preflight(bytes: &[u8]) -> Result<BoundedShape> {
 
 #[cfg(test)]
 #[path = "receipt_bounds_tests.rs"]
-mod tests;
+pub(crate) mod tests;

@@ -547,6 +547,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/audit_claims.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/audit_claims.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/audit_one.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -572,6 +579,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/phase_journal.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/prepared_verifier.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/prepared_verifier.rs"
         )),
     ),
     (
@@ -5248,6 +5262,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/tests/mining_service_budget.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/tests/mining_timestamp_liveness.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/mining_timestamp_liveness.rs"
         )),
     ),
     (

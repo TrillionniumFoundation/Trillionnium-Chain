@@ -1,0 +1,29 @@
+{
+  "schema": "pon-history-static-real-process-v1",
+  "argv": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/ci",
+    "-p",
+    "test_ci_source_integrity.py"
+  ],
+  "cwd": "/tmp/pon-history-service-20261031",
+  "start_unix_ns": 1793410513039974074,
+  "elapsed_monotonic_ns": 2584766400,
+  "exit_code": 0,
+  "source_file": "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+  "source_sha256_before": "73262238a015a80fcaa51f51c0a598bb79b86aa04fffe2c407ea6bf5e3ad5469",
+  "source_sha256_after": "73262238a015a80fcaa51f51c0a598bb79b86aa04fffe2c407ea6bf5e3ad5469",
+  "scope": "sparse checkout; no full tracked-source identity claim",
+  "stdout": {
+    "bytes": 484,
+    "sha256": "e1b97cdaf3b4148a5891bb5ada864199826d325e9963339576051c60b724962f"
+  },
+  "stderr": {
+    "bytes": 133,
+    "sha256": "70d6e4f9a3fd6e77c9a5d7719bdcbaa297549c88a006d37a8780cdebf0048cb7"
+  }
+}

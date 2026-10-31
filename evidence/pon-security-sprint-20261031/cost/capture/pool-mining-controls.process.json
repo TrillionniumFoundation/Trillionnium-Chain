@@ -1,0 +1,63 @@
+{
+  "argv": [
+    "/tmp/pon-cost-target/debug/deps/pool_mining-2dbf03d206521b2e",
+    "--test-threads=1",
+    "--nocapture"
+  ],
+  "binary_after": {
+    "bytes": 11617720,
+    "path": "/tmp/pon-cost-target/debug/deps/pool_mining-2dbf03d206521b2e",
+    "sha256": "672c434dd4757e52ba3ff433315d5a29e15aa65b2786bc8730b60ba4fb5073ff"
+  },
+  "binary_before": {
+    "bytes": 11617720,
+    "path": "/tmp/pon-cost-target/debug/deps/pool_mining-2dbf03d206521b2e",
+    "sha256": "672c434dd4757e52ba3ff433315d5a29e15aa65b2786bc8730b60ba4fb5073ff"
+  },
+  "binary_unchanged": true,
+  "children_maxrss_kib": 14840,
+  "children_system_seconds": 0.051292,
+  "children_user_seconds": 0.323746,
+  "cpu_affinity": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "cwd": "/tmp/pon-effective-cost-20261031",
+  "elapsed_monotonic_ns": 5358216433,
+  "ended_unix_ns": 1793410848813185675,
+  "environment": {
+    "CARGO_BUILD_JOBS": null,
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CARGO_HOME": null,
+    "CARGO_INCREMENTAL": null,
+    "CARGO_PROFILE_TEST_DEBUG": null,
+    "CARGO_TARGET_DIR": null,
+    "RUSTC": null,
+    "RUSTC_WORKSPACE_WRAPPER": null,
+    "RUSTC_WRAPPER": null,
+    "RUSTFLAGS": null,
+    "RUSTUP_HOME": null
+  },
+  "exclusive_host": false,
+  "exit_code": 0,
+  "full_source_inventory_claimed": false,
+  "machine": "x86_64",
+  "nice": 0,
+  "outer_timeout_seconds": 180,
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.39",
+  "production_qualified": false,
+  "schema": "pon-mining-time-process-v1",
+  "source_commit": "298ecbaf08db571f98253e38fb6aed9c18146006",
+  "source_inputs_unchanged": true,
+  "source_tree": "054cd8338c9df2f530cdeefa3f9543b15876d75a",
+  "sparse_checkout": true,
+  "started_unix_ns": 1793410843454964886,
+  "timed_out": false
+}

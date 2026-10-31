@@ -1,0 +1,225 @@
+{
+  "schema": "pon-confirmation-lateness-readback-v1",
+  "source_commit": "cf84391a474ee1f3ac78f4a907bd95184b816a54",
+  "source_tree": "c7609a5502641739505862f2e4cd3c1e06ce1041",
+  "run_id": 41155114590,
+  "new_native_execution": false,
+  "deadline_changes": false,
+  "members": [
+    {
+      "local_path": "x64-pressure-native-baseline.json.gz",
+      "artifact_id": 13025370402,
+      "artifact_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41155114590/artifacts/13025370402",
+      "archive_bytes": 102532877,
+      "archive_sha256": "4a6684abe0e9c7570d0ebf80f50b441b7b957afee42e6106bdf6dc092a5a6524",
+      "zip_member": "campaign/pressure-native/baseline.json",
+      "member_bytes": 1943119,
+      "member_sha256": "41c3cbbdff475539265886a4b67b1129fa63687c69e4ff79abca742e71b1b650",
+      "lossless_gzip_bytes": 163568,
+      "lossless_gzip_sha256": "7678b3103e1c0ff40ca0b1798b868c36a5b9cf3909c7702a209c727c6c01eec5"
+    },
+    {
+      "local_path": "x64-fresh-caller-native-baseline.json.gz",
+      "artifact_id": 13025370402,
+      "artifact_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41155114590/artifacts/13025370402",
+      "archive_bytes": 102532877,
+      "archive_sha256": "4a6684abe0e9c7570d0ebf80f50b441b7b957afee42e6106bdf6dc092a5a6524",
+      "zip_member": "campaign/fresh-caller-native/baseline.json",
+      "member_bytes": 1943408,
+      "member_sha256": "bb80e5c498d37b8f54de1cd482461d924c63153b47b296d90af20789bfbe0db7",
+      "lossless_gzip_bytes": 163856,
+      "lossless_gzip_sha256": "de579115eda39a845af9ad5f67169d77fc91cb51e0f0b09312fb03a3eb7eadaa"
+    },
+    {
+      "local_path": "x64-pure-pressure-reader.stdout.log.gz",
+      "artifact_id": 13025370402,
+      "artifact_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41155114590/artifacts/13025370402",
+      "archive_bytes": 102532877,
+      "archive_sha256": "4a6684abe0e9c7570d0ebf80f50b441b7b957afee42e6106bdf6dc092a5a6524",
+      "zip_member": "campaign/pure-pressure-reader.stdout.log",
+      "member_bytes": 4709,
+      "member_sha256": "81f462b6371b44a68c1c9609b809e1d72f975adcd5f91a3f608156bbd0922be1",
+      "lossless_gzip_bytes": 981,
+      "lossless_gzip_sha256": "7e1d0270b3c7be0cb65142c7e8b4b425a96dd0df1d8325fe42e4b6683caf1dec"
+    },
+    {
+      "local_path": "x64-fresh-caller-reader.stdout.log.gz",
+      "artifact_id": 13025370402,
+      "artifact_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41155114590/artifacts/13025370402",
+      "archive_bytes": 102532877,
+      "archive_sha256": "4a6684abe0e9c7570d0ebf80f50b441b7b957afee42e6106bdf6dc092a5a6524",
+      "zip_member": "campaign/fresh-caller-reader.stdout.log",
+      "member_bytes": 8512,
+      "member_sha256": "6b4f3b662a5f431d29eee90a9f37a0bad905f19ca8920b03cf39902f0a907a5a",
+      "lossless_gzip_bytes": 1706,
+      "lossless_gzip_sha256": "1ddc1130c4a3789b93392113b9bb5439c64d4f70354fb13ec414d637b21dcf98"
+    },
+    {
+      "local_path": "arm64-pressure-native-baseline.json.gz",
+      "artifact_id": 13025575325,
+      "artifact_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41155114590/artifacts/13025575325",
+      "archive_bytes": 100574785,
+      "archive_sha256": "71bac587dc1d5f95972509afeeb9d550e10994c77f66549e44c53f6b224df113",
+      "zip_member": "campaign/pressure-native/baseline.json",
+      "member_bytes": 2500259,
+      "member_sha256": "5f8a73944d9f9d72bed3a5b20a1b31a74bbf43cf54898d39e001cf83bd621e39",
+      "lossless_gzip_bytes": 257339,
+      "lossless_gzip_sha256": "3077971cca9bd46bc1a644cfe9e1759909a3e8fbf4d28c9f6870f42357f7fcef"
+    },
+    {
+      "local_path": "arm64-fresh-caller-native-baseline.json.gz",
+      "artifact_id": 13025575325,
+      "artifact_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41155114590/artifacts/13025575325",
+      "archive_bytes": 100574785,
+      "archive_sha256": "71bac587dc1d5f95972509afeeb9d550e10994c77f66549e44c53f6b224df113",
+      "zip_member": "campaign/fresh-caller-native/baseline.json",
+      "member_bytes": 2502664,
+      "member_sha256": "204bdd962db9a6cc0d638807e58c0b6a49c9c842d5a942514b936b830e5d7f39",
+      "lossless_gzip_bytes": 257408,
+      "lossless_gzip_sha256": "e7d81defbd3cf6c7978d29aa4c50a2639cd5f20b23851b7ef3ccb85a428d3eae"
+    }
+  ],
+  "source_references": [
+    {
+      "path": "scripts/ci/check_pure_pon_pressure_v2.py",
+      "git_blob": "ae2e538bf45caa7fe55e3bb403befe630b0109be",
+      "sha256": "250bd0bbeacab71cb8117e7b70feb69c90e3fb35620d1798935db465b55f03d3",
+      "line_ranges": [
+        [
+          22,
+          22
+        ],
+        [
+          229,
+          247
+        ],
+        [
+          420,
+          481
+        ]
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/pure_pon_pressure_v2.rs",
+      "git_blob": "d28c21ae144ad66a930375d5521826bf5de261cd",
+      "sha256": "00f61b4123d326d91e5d5b7973ef0f71e55190838af2cb3e7ad5cf562a5d9658",
+      "line_ranges": [
+        [
+          480,
+          529
+        ],
+        [
+          1070,
+          1169
+        ]
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/support/multiprocess_history_verifier.rs",
+      "git_blob": "c21b9bda9ed8b5f0b589af4efeeb23752d2910f0",
+      "sha256": "ef86331b40b1416630bc6c517340c55797d689e7b70434b2370af34cbe24bb3b",
+      "line_ranges": [
+        [
+          630,
+          669
+        ]
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+      "git_blob": "27b39b7fb34f3b117bb0023255e6c99f62e98e34",
+      "sha256": "80191b7288ca1edcbf3b78ffa1cb4e2b2e75bf087ad7404d2ffd6485242bcbc5",
+      "line_ranges": [
+        [
+          2528,
+          2557
+        ]
+      ]
+    },
+    {
+      "path": "scripts/ci/run_from_zero_native.py",
+      "git_blob": "ad8c053699082c9631e9351bb9251a16df36c313",
+      "sha256": "697d1392656a8d4749e43e6545b1703ddcdc471fa97e326a55472f9271839c9a",
+      "line_ranges": [
+        [
+          365,
+          387
+        ],
+        [
+          443,
+          447
+        ],
+        [
+          513,
+          545
+        ]
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs",
+      "git_blob": "2e8ae6c4632c80c489480c3bb5ef91121ad0995c",
+      "sha256": "6416076f2aa9e9b69a47195a3ff0b8e9d419f33c2ef226aa0d3c655a8871dc56",
+      "line_ranges": [
+        [
+          1436,
+          1457
+        ],
+        [
+          1537,
+          1562
+        ],
+        [
+          1650,
+          1697
+        ]
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 5583,
+      "sha256": "fe23b7b456fbddae8d2a5f618d5a97192210d1fe155f6fff28e93f5cb9af0fc1"
+    },
+    {
+      "path": "arm64-fresh-caller-native-baseline.json.gz",
+      "bytes": 257408,
+      "sha256": "e7d81defbd3cf6c7978d29aa4c50a2639cd5f20b23851b7ef3ccb85a428d3eae"
+    },
+    {
+      "path": "arm64-pressure-native-baseline.json.gz",
+      "bytes": 257339,
+      "sha256": "3077971cca9bd46bc1a644cfe9e1759909a3e8fbf4d28c9f6870f42357f7fcef"
+    },
+    {
+      "path": "observations.json",
+      "bytes": 11240,
+      "sha256": "1a2751e39f3c79df3d7a45695e1bd0c92d6ad44355708530d9706a2f6fdc307d"
+    },
+    {
+      "path": "source-excerpts.txt",
+      "bytes": 29542,
+      "sha256": "e39ece134a79624a820a6725af9224951e82f4091c4d19ba06f5bc3e6d7b686c"
+    },
+    {
+      "path": "x64-fresh-caller-native-baseline.json.gz",
+      "bytes": 163856,
+      "sha256": "de579115eda39a845af9ad5f67169d77fc91cb51e0f0b09312fb03a3eb7eadaa"
+    },
+    {
+      "path": "x64-fresh-caller-reader.stdout.log.gz",
+      "bytes": 1706,
+      "sha256": "1ddc1130c4a3789b93392113b9bb5439c64d4f70354fb13ec414d637b21dcf98"
+    },
+    {
+      "path": "x64-pressure-native-baseline.json.gz",
+      "bytes": 163568,
+      "sha256": "7678b3103e1c0ff40ca0b1798b868c36a5b9cf3909c7702a209c727c6c01eec5"
+    },
+    {
+      "path": "x64-pure-pressure-reader.stdout.log.gz",
+      "bytes": 981,
+      "sha256": "7e1d0270b3c7be0cb65142c7e8b4b425a96dd0df1d8325fe42e4b6683caf1dec"
+    }
+  ]
+}

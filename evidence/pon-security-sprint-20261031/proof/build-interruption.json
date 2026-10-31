@@ -1,0 +1,9 @@
+{
+  "schema": "pon-proof-build-interruption-v1",
+  "reason": "shared disk exhausted; root requested cancellation of this proof build to preserve active other work",
+  "signal": "SIGTERM",
+  "cargo_process_groups_signalled": [],
+  "own_disposable_target_removed": "/tmp/pon-proof-sprint-target",
+  "shared_cargo_source_cache_removed": false,
+  "observed_at_unix_ns": 1793409904431463329
+}

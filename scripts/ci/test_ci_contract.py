@@ -67,6 +67,20 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
     def test_actual_lane_preserves_quorum_reference_and_retained_vector_checks(self):
         check_independent_conformance(self.script, self.lanes)
 
+    def test_mining_timestamp_liveness_target_cannot_be_omitted_or_replaced(self):
+        selector = ' --test mining_timestamp_liveness'
+        self.assertEqual(self.script.count(selector), 1)
+        changes = {
+            'missing': self.script.replace(selector, ''),
+            'duplicate': self.script.replace(selector, selector * 2),
+            'wrong target': self.script.replace(selector, ' --test pool_mining'),
+            'skip counterexample': self.script.replace(
+                selector, selector + ' -- --skip valid_future_tip_does_not_suppress_real_wall_clock_successor'),
+        }
+        for label, changed in changes.items():
+            with self.subTest(change=label), self.assertRaises(ValueError):
+                check_independent_conformance(changed, self.lanes)
+
     def test_history_source_pin_cannot_be_missing_substituted_duplicated_or_conditional(self):
         command = '      export TRNM_HISTORY_STARTUP_NO_NATIVE_SOURCE_COMMIT="$(git rev-parse HEAD)"\n'
         self.assertEqual(self.script.count(command), 1)

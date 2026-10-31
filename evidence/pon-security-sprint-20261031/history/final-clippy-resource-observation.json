@@ -1,0 +1,9 @@
+{
+  "schema": "pon-history-final-clippy-resource-observation-v1",
+  "observed_unix_ns": 1793412064887767656,
+  "memory_current": "8587907072\n",
+  "memory_max": "8589934592\n",
+  "memory_events": "low 0\nhigh 0\nmax 8345501\noom 29\noom_kill 6\noom_group_kill 0\n",
+  "process_receipt": "clippy-final-retry1.process.json",
+  "attribution": "after-failure observation only; clippy-driver stderr reports SIGKILL and no new lint diagnostic; no final strict-check success is claimed"
+}

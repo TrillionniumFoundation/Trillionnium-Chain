@@ -174,11 +174,16 @@ pub fn retarget(
 }
 
 /// `ancestors` is the locally validated parent-first window, including genesis as needed.
-pub fn check_time(candidate: u64, ancestors: &[u64], now: u64, skew: u64) -> Result<()> {
+pub(crate) fn median_time_past(ancestors: &[u64]) -> Result<u64> {
     ensure(!ancestors.is_empty(), "UNKNOWN_PARENT")?;
     let mut recent: Vec<_> = ancestors.iter().take(11).copied().collect();
     recent.sort_unstable();
-    ensure(candidate > recent[recent.len() / 2], "TIME")?;
+    Ok(recent[recent.len() / 2])
+}
+
+/// `ancestors` is the locally validated parent-first window, including genesis as needed.
+pub fn check_time(candidate: u64, ancestors: &[u64], now: u64, skew: u64) -> Result<()> {
+    ensure(candidate > median_time_past(ancestors)?, "TIME")?;
     ensure(
         candidate as u128 <= now as u128 + skew as u128,
         "TIME_DEFERRED",
@@ -345,6 +350,24 @@ mod tests {
     }
     #[test]
     fn time_deferred_is_not_consensus_invalidity() {
+        assert_eq!(
+            check_time(1, &[], 0, 0).unwrap_err().to_string(),
+            "UNKNOWN_PARENT"
+        );
+        // The upper median and its rejection precede future-skew checking.
+        assert_eq!(
+            check_time(4, &[4, 1], 0, 0).unwrap_err().to_string(),
+            "TIME"
+        );
+        check_time(5, &[4, 1], 5, 0).unwrap();
+        // Older ancestors outside the original eleven-entry window cannot
+        // change its median, even when they have extreme timestamps.
+        let ancestors = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, u64::MAX, u64::MAX];
+        assert_eq!(
+            check_time(6, &ancestors, 0, 0).unwrap_err().to_string(),
+            "TIME"
+        );
+        check_time(7, &ancestors, 7, 0).unwrap();
         assert_eq!(
             check_time(200, &[100, 101, 99], 50, 120)
                 .unwrap_err()

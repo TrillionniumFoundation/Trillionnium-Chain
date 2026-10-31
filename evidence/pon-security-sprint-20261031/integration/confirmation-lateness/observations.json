@@ -1,0 +1,353 @@
+{
+  "schema": "pon-confirmation-lateness-derived-v1",
+  "scope": "Retained hosted baselines only; no new run or post-fix qualification.",
+  "phases": [
+    {
+      "name": "x64/pressure-native",
+      "window_ns": 30000000000,
+      "errors": [],
+      "rounds": [
+        {
+          "round": 0,
+          "scheduled_ns": 1000000000,
+          "started_ns": 1000152562,
+          "ended_ns": 36571404988,
+          "confirmed_inside_pressure_window": false,
+          "native_observation": {
+            "confirmed": true,
+            "depth": 6,
+            "included_height": 5,
+            "observed_height": 11,
+            "work_delta": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c",
+            "required_work_delta": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c",
+            "policy": "installed-depth-and-required-work",
+            "reorged": false,
+            "finalized": false,
+            "execution_authority": false
+          }
+        }
+      ],
+      "submissions": [
+        {
+          "packet_index": 0,
+          "started_ns": 1000192334,
+          "ended_ns": 1094094365,
+          "deadline_ns": 3000192334,
+          "status": "ok",
+          "error": null
+        },
+        {
+          "packet_index": 1,
+          "started_ns": 1094233730,
+          "ended_ns": 1183561021,
+          "deadline_ns": 3094233730,
+          "status": "ok",
+          "error": null
+        },
+        {
+          "packet_index": 2,
+          "started_ns": 1183715864,
+          "ended_ns": 1274956474,
+          "deadline_ns": 3183715864,
+          "status": "ok",
+          "error": null
+        },
+        {
+          "packet_index": 3,
+          "started_ns": 1275102501,
+          "ended_ns": 1445275864,
+          "deadline_ns": 3275102501,
+          "status": "ok",
+          "error": null
+        },
+        {
+          "packet_index": 4,
+          "started_ns": 1445452026,
+          "ended_ns": 1779051646,
+          "deadline_ns": 3445452026,
+          "status": "ok",
+          "error": null
+        },
+        {
+          "packet_index": 5,
+          "started_ns": 1779229401,
+          "ended_ns": 2102237626,
+          "deadline_ns": 3779229401,
+          "status": "ok",
+          "error": null
+        },
+        {
+          "packet_index": 6,
+          "started_ns": 2102391708,
+          "ended_ns": 2447785492,
+          "deadline_ns": 4102391708,
+          "status": "ok",
+          "error": null
+        }
+      ],
+      "history": [
+        {
+          "started_ns": 2447944941,
+          "ended_ns": 2461219361,
+          "deadline_ns": 4447944941,
+          "status": "ok",
+          "error": null,
+          "client_import": {
+            "sequence": 0,
+            "started_ns": 2462939019,
+            "ended_ns": 6279759532,
+            "succeeded": true,
+            "error": null,
+            "process_cpu_ns": 864315231,
+            "process_wall_ns": 3816829941
+          }
+        },
+        {
+          "started_ns": 6281799445,
+          "ended_ns": 6295100552,
+          "deadline_ns": 8281799445,
+          "status": "ok",
+          "error": null,
+          "client_import": {
+            "sequence": 1,
+            "started_ns": 6297191474,
+            "ended_ns": 9682012570,
+            "succeeded": true,
+            "error": null,
+            "process_cpu_ns": 852273506,
+            "process_wall_ns": 3384830784
+          }
+        },
+        {
+          "started_ns": 9683001876,
+          "ended_ns": 9695606623,
+          "deadline_ns": 11683001876,
+          "status": "ok",
+          "error": null,
+          "client_import": {
+            "sequence": 2,
+            "started_ns": 9697371902,
+            "ended_ns": 13081655294,
+            "succeeded": true,
+            "error": null,
+            "process_cpu_ns": 849262264,
+            "process_wall_ns": 3384292730
+          }
+        },
+        {
+          "started_ns": 13082245610,
+          "ended_ns": 13094459291,
+          "deadline_ns": 15082245610,
+          "status": "ok",
+          "error": null,
+          "client_import": {
+            "sequence": 3,
+            "started_ns": 13096916723,
+            "ended_ns": 16488927015,
+            "succeeded": true,
+            "error": null,
+            "process_cpu_ns": 856665227,
+            "process_wall_ns": 3392020161
+          }
+        },
+        {
+          "started_ns": 16490218362,
+          "ended_ns": 16502085701,
+          "deadline_ns": 18490218362,
+          "status": "ok",
+          "error": null,
+          "client_import": {
+            "sequence": 4,
+            "started_ns": 16504269264,
+            "ended_ns": 19968960258,
+            "succeeded": true,
+            "error": null,
+            "process_cpu_ns": 854191155,
+            "process_wall_ns": 3464702486
+          }
+        },
+        {
+          "started_ns": 19969831407,
+          "ended_ns": 19982201088,
+          "deadline_ns": 21969831407,
+          "status": "ok",
+          "error": null,
+          "client_import": {
+            "sequence": 5,
+            "started_ns": 19984505410,
+            "ended_ns": 23372740444,
+            "succeeded": true,
+            "error": null,
+            "process_cpu_ns": 852081389,
+            "process_wall_ns": 3388259219
+          }
+        },
+        {
+          "started_ns": 23374755675,
+          "ended_ns": 23386645219,
+          "deadline_ns": 25374755675,
+          "status": "ok",
+          "error": null,
+          "client_import": {
+            "sequence": 6,
+            "started_ns": 23387974673,
+            "ended_ns": 36373479919,
+            "succeeded": true,
+            "error": null,
+            "process_cpu_ns": 3249567956,
+            "process_wall_ns": 12985519191
+          },
+          "client_confirmation": {
+            "sequence": 7,
+            "started_ns": 36376171354,
+            "ended_ns": 36570648643,
+            "succeeded": true,
+            "error": null,
+            "process_cpu_ns": 47988367,
+            "process_wall_ns": 194488299
+          }
+        }
+      ]
+    },
+    {
+      "name": "x64/fresh-caller-native",
+      "window_ns": 30000000000,
+      "errors": [],
+      "rounds": [
+        {
+          "round": 0,
+          "scheduled_ns": 1000000000,
+          "started_ns": 1001874643,
+          "ended_ns": 36770843277,
+          "confirmed_inside_pressure_window": false,
+          "native_observation": {
+            "confirmed": true,
+            "depth": 6,
+            "included_height": 5,
+            "observed_height": 11,
+            "work_delta": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c",
+            "required_work_delta": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c",
+            "policy": "installed-depth-and-required-work",
+            "reorged": false,
+            "finalized": false,
+            "execution_authority": false
+          }
+        }
+      ]
+    },
+    {
+      "name": "arm64/pressure-native",
+      "window_ns": 30000000000,
+      "errors": [],
+      "rounds": [
+        {
+          "round": 0,
+          "scheduled_ns": 1000000000,
+          "started_ns": 1000971387,
+          "ended_ns": 20449440252,
+          "confirmed_inside_pressure_window": true,
+          "native_observation": {
+            "confirmed": true,
+            "depth": 6,
+            "included_height": 5,
+            "observed_height": 11,
+            "work_delta": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c",
+            "required_work_delta": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c",
+            "policy": "installed-depth-and-required-work",
+            "reorged": false,
+            "finalized": false,
+            "execution_authority": false
+          }
+        },
+        {
+          "round": 1,
+          "scheduled_ns": 5000000000,
+          "started_ns": 20449449908,
+          "ended_ns": 30046569967,
+          "confirmed_inside_pressure_window": false,
+          "native_observation": {
+            "confirmed": null,
+            "depth": null,
+            "included_height": null,
+            "observed_height": null,
+            "work_delta": null,
+            "required_work_delta": null,
+            "policy": null,
+            "reorged": null,
+            "finalized": null,
+            "execution_authority": null
+          }
+        }
+      ]
+    },
+    {
+      "name": "arm64/fresh-caller-native",
+      "window_ns": 30000000000,
+      "errors": [],
+      "rounds": [
+        {
+          "round": 0,
+          "scheduled_ns": 1000000000,
+          "started_ns": 1000839737,
+          "ended_ns": 20475448221,
+          "confirmed_inside_pressure_window": true,
+          "native_observation": {
+            "confirmed": true,
+            "depth": 6,
+            "included_height": 5,
+            "observed_height": 11,
+            "work_delta": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c",
+            "required_work_delta": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c",
+            "policy": "installed-depth-and-required-work",
+            "reorged": false,
+            "finalized": false,
+            "execution_authority": false
+          }
+        },
+        {
+          "round": 1,
+          "scheduled_ns": 5000000000,
+          "started_ns": 20475457838,
+          "ended_ns": 30059385437,
+          "confirmed_inside_pressure_window": false,
+          "native_observation": {
+            "confirmed": null,
+            "depth": null,
+            "included_height": null,
+            "observed_height": null,
+            "work_delta": null,
+            "required_work_delta": null,
+            "policy": null,
+            "reorged": null,
+            "finalized": null,
+            "execution_authority": null
+          }
+        }
+      ]
+    }
+  ],
+  "separate_from_zero": {
+    "raw_confirmation_reports_available_in_downloaded_archives": false,
+    "failure": "CONFIRMATION_TARGET",
+    "predicate_specific_cause": "unknown: generic positive-flag failure; available logs do not identify the phase or flag",
+    "original_window_ns": 4000000000,
+    "run_id": 41155114648,
+    "provider_jobs": [
+      {
+        "job_id": 124400083149,
+        "artifact_id": 13023973626,
+        "archive_sha256": "1111edf32c99c82ae6337cf73fd816c6eabc19cfe25f40e7129f6d9c2234c251"
+      },
+      {
+        "job_id": 124400083244,
+        "artifact_id": 13024294981,
+        "archive_sha256": "92834c2bf31b3b9bbc143d52df1cc761af254b8e541d1b1998d1e829f4c05f34"
+      },
+      {
+        "job_id": 124400083251,
+        "artifact_id": 13024678937,
+        "archive_sha256": "04c161ce79ca6d1e2000ffb123f5bc7dea4e0fc9cdc4de6919e0426d5dbdad0f"
+      }
+    ]
+  }
+}

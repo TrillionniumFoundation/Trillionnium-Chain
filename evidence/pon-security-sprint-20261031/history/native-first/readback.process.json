@@ -1,0 +1,13 @@
+{
+  "schema": "pon-history-native-binary-readback-process-v1",
+  "argv": [
+    "python3",
+    "/tmp/pon-history-service-20261031/evidence/pon-security-sprint-20261031/history/verify_native_archive.py",
+    "/tmp/pon-history-service-20261031/evidence/pon-security-sprint-20261031/history/native-first/manifest.json"
+  ],
+  "start_unix_ns": 1793410918652897638,
+  "elapsed_monotonic_ns": 378882065,
+  "exit_code": 0,
+  "stdout_sha256": "b38c11f8f25d497770cc191e86810b9b0f341d0920174161b1785d6dcefe1167",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}
