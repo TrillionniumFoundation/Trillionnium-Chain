@@ -540,3 +540,45 @@ fn postverification_time_read_follows_real_signature_checks() {
     ));
     assert!(!quorum_clock_called);
 }
+
+
+#[test]
+fn different_valid_signed_quorum_expiry_times_reject_first_expired_signer() {
+    let (keys, receipts) = quorum_fixture();
+    let roster = quorum_roster(&keys);
+    let local = head();
+    let mut policy = quorum_policy(&roster, &local);
+    policy.now_unix_s = 1148;
+
+    // Sign a *real* earlier-expiring second receipt with its pinned key.
+    // Editing the timestamp of an existing signature would merely test
+    // signature failure, not the aggregate post-verification expiry rule.
+    let second_key = SigningKey::<MlDsa65>::new_from_slice(&[52; 32]).unwrap();
+    let short = SignedPqRecoveryWitnessV1::sign(
+        PqRecoveryWitnessStatementV1 {
+            chain_id: CHAIN.into(),
+            witness_did: QUORUM_DIDS[1].into(),
+            genesis: [4; 32],
+            observed: local,
+            sequence: 31,
+            challenge: [11; 32],
+            issued_unix_s: 1000,
+            expires_unix_s: 1149,
+        },
+        &second_key,
+    )
+    .unwrap();
+    let mixed = [receipts[0].clone(), short];
+    assert_eq!(
+        verify_pq_recovery_quorum_with_fresh_time_v1(&mixed, &policy, || 1148)
+            .unwrap()
+            .verified_signers(),
+        2
+    );
+    assert!(matches!(
+        verify_pq_recovery_quorum_with_fresh_time_v1(&mixed, &policy, || 1149),
+        Err(PqRecoveryQuorumErrorV1::Witness(
+            PqRecoveryWitnessError::TimeWindow
+        ))
+    ));
+}
