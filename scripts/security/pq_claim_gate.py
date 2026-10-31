@@ -166,12 +166,41 @@ def verify_frozen_w1_guest_bytes(root: Path, blockers: list) -> None:
             })
 
 
+
+def checkout_regular_source(root: Path, relative: str) -> bool:
+    """Only audit real checkout files, never a redirected policy/authority path.
+
+    A symlink to a *valid-looking* file inside the checkout is still a different
+    Git source object. Resolve the root once; reject every symbolic-link hop,
+    including parent directories, before trusting the bytes being inspected.
+    """
+    rel = Path(relative)
+    if rel.is_absolute() or not rel.parts or ".." in rel.parts:
+        return False
+    try:
+        trusted_root = root.resolve(strict=True)
+        if not trusted_root.is_dir():
+            return False
+        candidate = trusted_root
+        for component in rel.parts:
+            candidate = candidate / component
+            if candidate.is_symlink():
+                return False
+        return (candidate.is_file()
+                and candidate.resolve(strict=True).is_relative_to(trusted_root))
+    except (OSError, RuntimeError):
+        return False
+
+
 def inspect(root: Path) -> dict:
     blockers = []
     for label, rel in PATHS.items():
         file = root / rel
         if not file.is_file():
             blockers.append({"kind": "missing_source", "path": rel})
+            continue
+        if not checkout_regular_source(root, rel):
+            blockers.append({"kind": "untrusted_checkout_source_path", "path": rel})
             continue
         if label in CLASSICAL_MARKERS:
             try:
@@ -292,7 +321,7 @@ def main():
     report = inspect(args.root)
     print(json.dumps(report, indent=2, sort_keys=True))
     if args.assert_unqualified and any(item["kind"] in (
-        "missing_source", "unreadable_source", "unreadable_proof_profile",
+        "missing_source", "untrusted_checkout_source_path", "unreadable_source", "unreadable_proof_profile",
         "unreadable_consensus_profile", "invalid_proof_profile_shape",
         "invalid_proof_qualification_flag_type", "invalid_consensus_profile_shape",
         "invalid_production_flag_type", "unreviewed_pq128_proof_claim",
