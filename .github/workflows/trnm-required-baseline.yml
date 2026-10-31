@@ -30,17 +30,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - name: Require canonical checkout origin for repository boundary
-        shell: bash
-        run: |
-          set -euo pipefail
-          expected="https://github.com/TrillionniumFoundation/Trillionnium-Chain"
-          actual="$(git remote get-url origin)"
-          test "$actual" = "$expected" || {
-            echo "::error::unexpected checkout origin"
-            exit 2
-          }
-          git remote set-url origin "$expected.git"
-          test "$(git remote get-url origin)" = "$expected.git"
+        run: bash scripts/ci/ensure_checkout_origin.sh
       - name: Verify immutable source identity
         run: test "$(git rev-parse HEAD)" = "$TRNM_EXPECTED_SOURCE_SHA"
       - name: Set isolated Cargo paths after runner allocation
@@ -65,17 +55,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - name: Require canonical checkout origin for repository boundary
-        shell: bash
-        run: |
-          set -euo pipefail
-          expected="https://github.com/TrillionniumFoundation/Trillionnium-Chain"
-          actual="$(git remote get-url origin)"
-          test "$actual" = "$expected" || {
-            echo "::error::unexpected checkout origin"
-            exit 2
-          }
-          git remote set-url origin "$expected.git"
-          test "$(git remote get-url origin)" = "$expected.git"
+        run: bash scripts/ci/ensure_checkout_origin.sh
       - name: Verify immutable source identity
         run: test "$(git rev-parse HEAD)" = "$TRNM_EXPECTED_SOURCE_SHA"
       - name: Set isolated Cargo paths after runner allocation
@@ -108,17 +88,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - name: Require canonical checkout origin for repository boundary
-        shell: bash
-        run: |
-          set -euo pipefail
-          expected="https://github.com/TrillionniumFoundation/Trillionnium-Chain"
-          actual="$(git remote get-url origin)"
-          test "$actual" = "$expected" || {
-            echo "::error::unexpected checkout origin"
-            exit 2
-          }
-          git remote set-url origin "$expected.git"
-          test "$(git remote get-url origin)" = "$expected.git"
+        run: bash scripts/ci/ensure_checkout_origin.sh
       - name: Verify immutable source identity
         run: test "$(git rev-parse HEAD)" = "$TRNM_EXPECTED_SOURCE_SHA"
       - name: Set isolated Cargo paths after runner allocation
@@ -146,17 +116,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - name: Require canonical checkout origin for repository boundary
-        shell: bash
-        run: |
-          set -euo pipefail
-          expected="https://github.com/TrillionniumFoundation/Trillionnium-Chain"
-          actual="$(git remote get-url origin)"
-          test "$actual" = "$expected" || {
-            echo "::error::unexpected checkout origin"
-            exit 2
-          }
-          git remote set-url origin "$expected.git"
-          test "$(git remote get-url origin)" = "$expected.git"
+        run: bash scripts/ci/ensure_checkout_origin.sh
       - name: Verify immutable source identity
         run: test "$(git rev-parse HEAD)" = "$TRNM_EXPECTED_SOURCE_SHA"
       - name: Set isolated Cargo paths after runner allocation
@@ -184,17 +144,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - name: Require canonical checkout origin for repository boundary
-        shell: bash
-        run: |
-          set -euo pipefail
-          expected="https://github.com/TrillionniumFoundation/Trillionnium-Chain"
-          actual="$(git remote get-url origin)"
-          test "$actual" = "$expected" || {
-            echo "::error::unexpected checkout origin"
-            exit 2
-          }
-          git remote set-url origin "$expected.git"
-          test "$(git remote get-url origin)" = "$expected.git"
+        run: bash scripts/ci/ensure_checkout_origin.sh
       - name: Verify immutable source identity
         run: test "$(git rev-parse HEAD)" = "$TRNM_EXPECTED_SOURCE_SHA"
       - name: Set isolated Cargo paths after runner allocation
