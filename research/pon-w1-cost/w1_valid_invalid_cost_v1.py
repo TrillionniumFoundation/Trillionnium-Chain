@@ -17,8 +17,8 @@ import time
 from pathlib import Path
 
 HERE = Path(__file__).resolve()
-ROOT = HERE.parents[3]
-sys.path.insert(0, str(HERE.parents[1]))
+ROOT = HERE.parents[2]
+sys.path.insert(0, str(ROOT / "formal/pon-nakamoto-v1"))
 
 from contract_wire import H, PARAMS, WORK_PROFILE  # noqa: E402
 import work_oracle as w1  # noqa: E402
@@ -37,7 +37,7 @@ AUDITED_INPUTS = (
     "config/pon/model-family-v1.json",
     "formal/pon-nakamoto-v1/work_oracle.py",
     "formal/pon-nakamoto-v1/contract_wire.py",
-    "formal/pon-nakamoto-v1/experiments/w1_valid_invalid_cost_v1.py",
+    "research/pon-w1-cost/w1_valid_invalid_cost_v1.py",
 )
 
 
