@@ -202,7 +202,18 @@ impl PqNetworkPolicy {
             "PQ_NETWORK_SEQUENCE",
         )?;
         let expected = self.expectation(peer, Direction::Request, sequence, expiry, now, payload);
+        // Reserve the original durable verification-attempt slot even on a
+        // cheap lifetime rejection; no hostile attempt gains extra capacity.
         before_verification()?;
+        // The live server already rejects signed expiries beyond 60 seconds,
+        // but previously did so only AFTER ML-DSA and payload parsing. Refuse
+        // the same impossible future interval before spending verifier CPU.
+        // Expired packets retain the verifier's existing refusal semantics;
+        // retained historical validation uses its signed expiry as "now".
+        ensure(
+            expiry <= now || expiry - now <= MAX_LIFETIME_SECONDS,
+            "PQ_NETWORK_LIFETIME",
+        )?;
         let observed = verifier.verify(frame, &expected).map_err(crypto)?;
         let operation = hash(
             b"native-pq-network-operation-v2",

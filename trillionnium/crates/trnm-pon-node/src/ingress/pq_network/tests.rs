@@ -37,6 +37,70 @@ fn raw_request(address: SocketAddr, wire: &[u8]) -> Result<Vec<u8>> {
 }
 
 #[test]
+fn real_signed_overlong_pq_request_refuses_before_verification_without_budget_bypass() {
+    // This valid pinned ML-DSA signature violates only the server's original
+    // maximum horizon. Its rejection must consume the existing attempt slot
+    // yet avoid the expensive verifier, not accept a new lease or relax policy.
+    let settings = settings();
+    let policy = policy(&settings, 1);
+    let now = super::super::now().unwrap();
+    let expiry = now + MAX_LIFETIME_SECONDS + 1;
+    let peer = signer(72);
+    let payload = serde_json::to_vec(&Request::Head).unwrap();
+    let expected = policy.expectation(
+        peer.public_key_id(),
+        Direction::Request,
+        1,
+        expiry,
+        now,
+        &payload,
+    );
+    let frame = peer
+        .sign_statement(&statement(&expected).unwrap(), &expected)
+        .unwrap();
+    let overlong = encode_wire(REQUEST_MAGIC, &frame, &payload).unwrap();
+    let mut reserved_attempts = 0;
+    let refused = policy
+        .verify_request_metered(&overlong, now, &mut || {
+            reserved_attempts += 1;
+            Ok(())
+        })
+        .err()
+        .expect("overlong valid-signature request must be refused");
+    assert_eq!(refused.to_string(), "PQ_NETWORK_LIFETIME");
+    assert_eq!(
+        reserved_attempts, 1,
+        "cheap refusal must not refund attempt"
+    );
+    let unavailable = policy
+        .verify_request_metered(&overlong, now, &mut || {
+            Err("PQ_NETWORK_INBOUND_VERIFICATION_LIMIT".into())
+        })
+        .err()
+        .expect("resource-owner denial must precede lifetime screening");
+    assert_eq!(
+        unavailable.to_string(),
+        "PQ_NETWORK_INBOUND_VERIFICATION_LIMIT"
+    );
+
+    // A real correctly signed bounded request still reaches the normal
+    // verifier; this guard cannot manufacture acceptance or force fallback.
+    let client = PqClient::new(policy.clone(), signer(72)).unwrap();
+    let valid = client
+        .prepare(2, now + MAX_LIFETIME_SECONDS / 2, Request::Head)
+        .unwrap();
+    let mut valid_attempts = 0;
+    let checked = policy
+        .verify_request_metered(valid.wire(), now, &mut || {
+            valid_attempts += 1;
+            Ok(())
+        })
+        .unwrap();
+    assert_eq!(checked.sequence, 2);
+    assert_eq!(valid_attempts, 1);
+}
+
+#[test]
 fn signed_pq_client_refuses_nonloopback_destination_before_network_io() {
     // Real ML-DSA request and independently pinned keys; rejection is an
     // outbound transport boundary, not a synthetic bad-signature refusal.
