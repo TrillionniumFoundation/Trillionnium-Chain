@@ -101,11 +101,11 @@ class W1StructuredCostTests(unittest.TestCase):
                     self.assertEqual(exact, reference)
                     self.assertEqual(len(exact), w1.PROOF_BYTES)
                     _, actual = w1.verify(challenge, w1.task_id(a, b),
-                                          b"\\xff" * 32, exact)
+                                          b"\xff" * 32, exact)
                     self.assertEqual(actual, w1.mm(a, b, w1.N, w1.N, w1.N))
                     corrupted = exact[:-32] + bytes([exact[-32] ^ 1]) + exact[-31:]
                     with self.assertRaisesRegex(ValueError, "TRANSCRIPT"):
-                        w1.verify(challenge, w1.task_id(a, b), b"\\xff" * 32,
+                        w1.verify(challenge, w1.task_id(a, b), b"\xff" * 32,
                                   corrupted)
 
         # Two near-2**64 products overflow a naive uint64 sum, while per-term
