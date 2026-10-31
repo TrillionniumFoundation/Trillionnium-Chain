@@ -2494,29 +2494,6 @@ impl Node {
             snapshot,
         });
     }
-    fn execute_derived(
-        &self,
-        actual: &State,
-        parent: Hash,
-        transactions: &[Vec<u8>],
-        height: u64,
-        timestamp: u64,
-        miner: Hash,
-        workers: usize,
-    ) -> Result<trnm_mvcc_fee::pon_commitment::StagedOutput> {
-        self.execute_derived_with_progress(
-            actual,
-            ExecutionRequest {
-                timestamp: Some(timestamp),
-                transactions,
-                height,
-                miner,
-                parent_id: parent,
-                workers,
-            },
-            &|_| Ok(()),
-        )
-    }
     fn execute_derived_with_progress(
         &self,
         actual: &State,
@@ -4670,14 +4647,17 @@ impl Node {
         self.ready()?;
         let height = self.record(parent)?.height.checked_add(1).ok_or("HEIGHT")?;
         let task = pon_work::task_id(a, b).map_err(|_| Error::from("WORK_TASK"))?;
-        let executed = self.execute_derived(
+        let executed = self.execute_derived_with_progress(
             actual,
-            parent,
-            &transactions,
-            height,
-            timestamp,
-            miner,
-            self.workers,
+            ExecutionRequest {
+                timestamp: Some(timestamp),
+                transactions: &transactions,
+                height,
+                miner,
+                parent_id: parent,
+                workers: self.workers,
+            },
+            &|_| Ok(()),
         )?;
         let mut output = executed.output;
         let commitment = executed.commitment;
