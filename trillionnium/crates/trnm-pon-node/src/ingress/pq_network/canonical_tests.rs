@@ -392,10 +392,10 @@ fn declared_oversize_is_rejected_before_body_allocation_and_survives_reopen() {
 #[test]
 fn classic_authenticated_session_is_rejected_for_pq_only_settings() {
     let (pq_settings, _) = setup();
-    let client = crate::ingress::DevelopmentIdentity::from_secret_hex(&hex::encode([7; 32]))
-        .unwrap();
-    let server = crate::ingress::DevelopmentIdentity::from_secret_hex(&hex::encode([8; 32]))
-        .unwrap();
+    let client =
+        crate::ingress::DevelopmentIdentity::from_secret_hex(&hex::encode([7; 32])).unwrap();
+    let server =
+        crate::ingress::DevelopmentIdentity::from_secret_hex(&hex::encode([8; 32])).unwrap();
     let error = crate::ingress::authenticated_session(
         &pq_settings,
         client.public_key(),
