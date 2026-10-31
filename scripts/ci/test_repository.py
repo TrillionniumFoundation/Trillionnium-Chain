@@ -2,7 +2,7 @@
 """Negative boundary tests. A pass is not consensus or independent acceptance."""
 from __future__ import annotations
 import copy,json,pathlib,shutil,tempfile,unittest
-from check_repository import ROOT,Invalid,check,graph_acyclic,no_promotion,unique,check_mainline_consensus_research_claim
+from check_repository import ROOT,Invalid,check,graph_acyclic,no_promotion,unique,check_mainline_consensus_research_claim,load,contained
 
 class EvidenceBoundaryTests(unittest.TestCase):
     def test_current_claims_are_unactivated(self):
@@ -37,6 +37,30 @@ class EvidenceBoundaryTests(unittest.TestCase):
         with self.assertRaises(Invalid):no_promotion({'production_consensus_activation':0})
     def test_duplicate_json_claims(self):
         with self.assertRaises(Invalid):json.loads('{"runtime_implemented":false,"runtime_implemented":true}',object_pairs_hook=unique)
+    def test_nonfinite_json_is_not_valid_policy_data(self):
+        with tempfile.TemporaryDirectory(prefix='trnm-pq-json-') as temporary:
+            path=pathlib.Path(temporary)/'policy.json'
+            for value in ('NaN','Infinity','-Infinity'):
+                with self.subTest(value=value):
+                    path.write_text('{"quantum_security_bits":'+value+'}')
+                    with self.assertRaises(Invalid):load(path)
+    def test_policy_path_alias_is_not_trusted_even_inside_root(self):
+        with tempfile.TemporaryDirectory(prefix='trnm-pq-source-') as temporary:
+            root=pathlib.Path(temporary)
+            policy=root/'policy'
+            policy.mkdir()
+            canonical=policy/'canonical.json'
+            canonical.write_text('{"production_consensus_activation":false}')
+            alias=policy/'alias.json'
+            alias.symlink_to(canonical.name)
+            with self.assertRaises(Invalid):load(alias)
+            with self.assertRaises(Invalid):contained(root,'policy/alias.json')
+            (root/'directory-alias').symlink_to('policy',target_is_directory=True)
+            with self.assertRaises(Invalid):contained(root,'directory-alias/canonical.json')
+            self.assertEqual(contained(root,'policy/canonical.json'),canonical)
+    def test_mainline_consensus_policy_is_regular_file(self):
+        policy=contained(ROOT,'config/consensus-mainline.json')
+        self.assertIs(load(policy)['production_consensus_activation'],False)
     def test_explicit_missing_native_core(self):
         inventory=json.loads((ROOT/'config/portability-inventory-v1.json').read_text())
         self.assertFalse(inventory['runtime_implemented'])
