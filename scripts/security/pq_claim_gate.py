@@ -152,7 +152,7 @@ PINNED_AUTHORITY_SOURCE_SHA256 = {
     "mempool_admission": "ac777c8fa3a9953343fd079a09aca43bd672d8c4c0998cb50a8f934d675e2fe4",
     "interop_identity": "7a90dcc212b76bfb18ebcd8cd8697f1fc6d052371b9df900a714b92293ba99e9",
     # trnm-types::relay is exported by lib.rs; reviewed post-preflight candidate bytes.
-    "relay_auth": "285a9468c3a62815fa77a92981a7cbf9bf7110a23c57b70cd16a6ac592211b5e"
+    "relay_auth": "87312a7827d546b9470d3ec0528006def951046c68da96f5896302718cd342db"
 }
 
 # These known findings describe the unqualified baseline, not successful
