@@ -63,6 +63,7 @@
 #![forbid(unsafe_code)]
 
 mod cell_swarm;
+mod cell_swarm_xor_repair;
 mod codec;
 mod error;
 mod retrieval;
@@ -73,6 +74,10 @@ pub use cell_swarm::{
     CellSwarmAssemblerV0, CellSwarmDescriptorV0, CellSwarmDigestV0, CellSwarmErrorV0,
     CellSwarmManifestV0, VerifiedCellSwarmBytesV0, MAX_CELL_SWARM_BYTES_V0,
     MAX_CELL_SWARM_CHUNK_BYTES_V0, MAX_CELL_SWARM_CHUNKS_V0,
+};
+pub use cell_swarm_xor_repair::{
+    CellSwarmXorDescriptorV0, CellSwarmXorErrorV0, CellSwarmXorPlanV0,
+    MAX_CELL_SWARM_XOR_WIDTH_V0,
 };
 pub use error::{DaErrorCodeV1, DaErrorV1, DaResultV1};
 pub use retrieval::{
