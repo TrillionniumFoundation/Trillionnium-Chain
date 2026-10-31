@@ -505,8 +505,15 @@ impl RelayAuthVerifier {
             return Err(RelayAuthError::MissingRequiredField { field: "chain_id" });
         }
 
-        let computed_payload_hash = RelayAuthEnvelope::payload_hash_hex(&env.payload);
-        if computed_payload_hash != env.payload_hash {
+        // Reject non-canonical SHA-256 hex at fixed (64-byte) cost. This is
+        // shape validation, not payload integrity; the actual digest is
+        // checked only after cheap freshness and replay rejection.
+        if env.payload_hash.len() != 64
+            || !env
+                .payload_hash
+                .bytes()
+                .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
+        {
             return Err(RelayAuthError::PayloadHashMismatch);
         }
 
@@ -599,6 +606,15 @@ impl RelayAuthVerifier {
             || self.seen_nonce.len() >= MAX_RELAY_REPLAY_ENTRIES
         {
             return Err(RelayAuthError::ReplayStateCapacityExceeded);
+        }
+
+        // A stale or replayed packet must not force a SHA-256 pass over its
+        // up-to-2-MiB payload. Verify actual content integrity only after
+        // the cheap freshness/sequence/nonce/capacity preflight and before
+        // any (potentially more expensive) signature verification.
+        let computed_payload_hash = RelayAuthEnvelope::payload_hash_hex(&env.payload);
+        if computed_payload_hash != env.payload_hash {
+            return Err(RelayAuthError::PayloadHashMismatch);
         }
 
         // All cheap, non-mutating shape/time/replay/capacity checks above
@@ -769,6 +785,104 @@ mod tests {
             || panic!("replay must not reach trusted post-verification clock"),
         );
         assert_eq!(replay.unwrap_err().stable_code(), "SeqRegression");
+    }
+
+    #[test]
+    fn relay_auth_replay_and_expiry_skip_large_payload_hash() {
+        use std::cell::Cell;
+
+        let key = "sender-key";
+        let now = 1_730_000_000_000;
+        let mut verifier = RelayAuthVerifier::for_chain(100, "trnm-mainnet");
+        let mut first = sample_env(1, "nonce-payload-first", now, key);
+        first.payload = vec![0x42; MAX_RELAY_PAYLOAD_BYTES];
+        first.payload_hash = RelayAuthEnvelope::payload_hash_hex(&first.payload);
+        first.sig = first.sign_for_test(key);
+        verifier
+            .verify_with_fresh_time(&first, now, |e| e.verify_test_sig_compat(key), || now)
+            .unwrap();
+
+        let calls = Cell::new(0);
+        // This 2-MiB payload has a forged digest, but its old sequence must
+        // fail before hashing any of those untrusted bytes.
+        let mut replay = first.clone();
+        replay.payload[0] ^= 1;
+        let err = verifier
+            .verify_with_fresh_time(
+                &replay,
+                now,
+                |_| {
+                    calls.set(calls.get() + 1);
+                    true
+                },
+                || panic!("replay must skip post-signature time"),
+            )
+            .unwrap_err();
+        assert_eq!(err.stable_code(), "SeqRegression");
+        assert_eq!(calls.get(), 0);
+
+        // An otherwise in-order, expired packet with forged payload integrity
+        // must also be refused before both digest and signature work.
+        let mut expired = first.clone();
+        expired.seq = 2;
+        expired.nonce = "nonce-payload-expired".to_string();
+        expired.payload[0] ^= 1;
+        let err = verifier
+            .verify(&expired, now + 101, |_| {
+                calls.set(calls.get() + 1);
+                true
+            })
+            .unwrap_err();
+        assert_eq!(err.stable_code(), "TimeSkew");
+        assert_eq!(calls.get(), 0);
+
+        // Malformed digest syntax is cheap to reject without signature work.
+        let mut malformed = first.clone();
+        malformed.seq = 2;
+        malformed.nonce = "nonce-payload-malformed".to_string();
+        malformed.payload_hash = "a".repeat(63);
+        let err = verifier
+            .verify(&malformed, now, |_| {
+                calls.set(calls.get() + 1);
+                true
+            })
+            .unwrap_err();
+        assert_eq!(err.stable_code(), "PayloadHashMismatch");
+        assert_eq!(calls.get(), 0);
+
+        // A fresh and in-order request with a syntactically correct but
+        // incorrect hash still fails before any signature callback; the
+        // rejection must not consume the next sequence or nonce.
+        let mut tampered = first.clone();
+        tampered.seq = 2;
+        tampered.nonce = "nonce-payload-next".to_string();
+        tampered.payload[0] ^= 1;
+        tampered.sig = tampered.sign_for_test(key);
+        let err = verifier
+            .verify(&tampered, now, |_| {
+                calls.set(calls.get() + 1);
+                true
+            })
+            .unwrap_err();
+        assert_eq!(err.stable_code(), "PayloadHashMismatch");
+        assert_eq!(calls.get(), 0);
+
+        let mut next = first.clone();
+        next.seq = 2;
+        next.nonce = "nonce-payload-next".to_string();
+        next.sig = next.sign_for_test(key);
+        verifier
+            .verify_with_fresh_time(
+                &next,
+                now,
+                |e| {
+                    calls.set(calls.get() + 1);
+                    e.verify_test_sig_compat(key)
+                },
+                || now,
+            )
+            .unwrap();
+        assert_eq!(calls.get(), 1);
     }
 
     #[test]
