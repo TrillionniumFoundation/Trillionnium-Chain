@@ -264,3 +264,31 @@ or production activation. Whole-chain #562 A-F remain NO-GO.
 
 Exact exported relay source SHA-256 on this child: `87312a7827d546b9470d3ec0528006def951046c68da96f5896302718cd342db`.
 The #623 pin `285a9468c3a62815fa77a92981a7cbf9bf7110a23c57b70cd16a6ac592211b5e` remains only historical parent evidence.
+
+## ML-DSA-65 signature transport size (separate Gate E follow-on)
+
+The exported relay receiver formerly capped `sig` at 256 UTF-8 bytes.
+A FIPS 204 ML-DSA-65 signature is 3,309 raw bytes, which requires exactly
+6,618 lowercase hex characters. The 256-byte default rejects such a wire
+candidate **before** invoking any independently configured verifier.
+
+This isolated child adds an **opt-in, shape-only** constructor
+`for_chain_with_mldsa65_hex_wire`. It requires precisely 6,618 lowercase
+ASCII hex characters, rejects missing, shortened, overlong, upper-case and
+non-hex signatures before the signature callback, and preserves the existing
+256-byte default as well as the caller-owned clock and replay ordering.
+A dedicated Rust negative matrix exercises the ordinary receive path and
+checks that rejected bytes never reach an expensive callback or mutate
+replay state. The callback used by the unit test is synthetic, **not** a
+cryptographic ML-DSA verification or authorization.
+
+No scheme negotiation, signer provenance, real ML-DSA verification,
+PQ key pin, identity migration, hybrid-AND policy, durable monotonic replay
+anchor, production caller, true packet p95/p99 or throughput is established.
+The eventual real wire format requires independent versioning and policy;
+this candidate introduces no new signed wire version and no activation.
+Never use a callback that accepts a string only because its hex shape matches.
+
+Exact new `trnm-types/src/relay.rs` source SHA-256: `50a41e5135cc5f1d1c2edd0afd1b8452180751b2e3488eb3c6af4c182a5a56c5`.
+Parent #624 `87312a78...` is historical only. All six #562 gates
+and P0 #596 remain OPEN; whole-chain PQ128/public/production = NO_GO.

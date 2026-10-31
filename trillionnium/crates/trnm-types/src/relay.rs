@@ -151,6 +151,7 @@ impl RelayAuthEnvelope {
 pub enum RelayAuthError {
     PayloadHashMismatch,
     BadSig,
+    InvalidSignatureWireFormat,
     SeqRegression {
         last_seq: u64,
         got_seq: u64,
@@ -195,6 +196,7 @@ impl RelayAuthError {
     pub fn stable_code(&self) -> &'static str {
         match self {
             RelayAuthError::BadSig => "BadSig",
+            RelayAuthError::InvalidSignatureWireFormat => "InvalidSignatureWireFormat",
             RelayAuthError::ChainMismatch { .. } => "ChainMismatch",
             RelayAuthError::ReplayStateCapacityExceeded => "ReplayStateCapacityExceeded",
             RelayAuthError::OversizedField { .. } => "OversizedField",
@@ -220,6 +222,11 @@ impl fmt::Display for RelayAuthError {
             RelayAuthError::BadSig => {
                 write!(f, "signature verify failed (code={})", self.stable_code())
             }
+            RelayAuthError::InvalidSignatureWireFormat => write!(
+                f,
+                "signature wire shape invalid for the selected bounded profile (code={})",
+                self.stable_code()
+            ),
             RelayAuthError::ChainMismatch { expected, got } => write!(
                 f,
                 "chain mismatch: expected={} got={} (code={})",
@@ -310,11 +317,22 @@ impl std::error::Error for RelayAuthError {}
 const MAX_RELAY_REPLAY_ENTRIES: usize = 100_000;
 const MAX_RELAY_TEXT_FIELD_BYTES: usize = 256;
 const MAX_RELAY_PAYLOAD_BYTES: usize = 2 * 1024 * 1024;
+// FIPS 204 ML-DSA-65 emits 3,309 signature bytes. This profile only checks
+// lowercase hex transport shape; it does not authenticate any signature.
+const ML_DSA_65_SIGNATURE_RAW_BYTES: usize = 3_309;
+const ML_DSA_65_SIGNATURE_LOWER_HEX_LEN: usize = 2 * ML_DSA_65_SIGNATURE_RAW_BYTES;
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum RelaySignatureWireProfile {
+    LegacyBoundedText,
+    Mldsa65LowerHex,
+}
 
 pub struct RelayAuthVerifier {
     max_skew_ms: u128,
     allow_legacy_v0: bool,
     expected_chain_id: Option<String>,
+    signature_wire_profile: RelaySignatureWireProfile,
     last_seq: HashMap<(String, String, String, String), u64>,
     seen_nonce: HashSet<(String, String, String, String, String)>,
 }
@@ -334,6 +352,7 @@ impl RelayAuthVerifier {
             max_skew_ms,
             allow_legacy_v0: false,
             expected_chain_id: None,
+            signature_wire_profile: RelaySignatureWireProfile::LegacyBoundedText,
             last_seq: HashMap::new(),
             seen_nonce: HashSet::new(),
         }
@@ -345,9 +364,28 @@ impl RelayAuthVerifier {
             max_skew_ms,
             allow_legacy_v0: false,
             expected_chain_id: Some(expected_chain_id.into()),
+            signature_wire_profile: RelaySignatureWireProfile::LegacyBoundedText,
             last_seq: HashMap::new(),
             seen_nonce: HashSet::new(),
         }
+    }
+
+    /// Opt-in ML-DSA-65 lowercase-hex *wire-shape* preflight.
+    ///
+    /// The default 256-byte callback signature field cannot carry a 3,309-byte
+    /// ML-DSA-65 signature. This constructor bounds the string at exactly
+    /// 6,618 lowercase hex characters and rejects malformed shapes before
+    /// invoking the caller's (potentially expensive) signature verifier.
+    /// It provides NO cryptographic verification, PQ key pin, trust roster,
+    /// clock attestation, replay persistence or production admission. Only an
+    /// independently authenticated ML-DSA verifier may authorize effects.
+    pub fn for_chain_with_mldsa65_hex_wire(
+        max_skew_ms: u128,
+        expected_chain_id: impl Into<String>,
+    ) -> Self {
+        let mut verifier = Self::for_chain(max_skew_ms, expected_chain_id);
+        verifier.signature_wire_profile = RelaySignatureWireProfile::Mldsa65LowerHex;
+        verifier
     }
 
     /// Legacy v0 compatibility is intentionally disabled.
@@ -446,8 +484,22 @@ impl RelayAuthVerifier {
         if env.payload.len() > MAX_RELAY_PAYLOAD_BYTES {
             return Err(RelayAuthError::OversizedField { field: "payload" });
         }
-        if env.sig.len() > MAX_RELAY_TEXT_FIELD_BYTES {
-            return Err(RelayAuthError::OversizedField { field: "sig" });
+        match self.signature_wire_profile {
+            RelaySignatureWireProfile::LegacyBoundedText => {
+                if env.sig.len() > MAX_RELAY_TEXT_FIELD_BYTES {
+                    return Err(RelayAuthError::OversizedField { field: "sig" });
+                }
+            }
+            RelaySignatureWireProfile::Mldsa65LowerHex => {
+                if env.sig.len() != ML_DSA_65_SIGNATURE_LOWER_HEX_LEN
+                    || !env
+                        .sig
+                        .bytes()
+                        .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
+                {
+                    return Err(RelayAuthError::InvalidSignatureWireFormat);
+                }
+            }
         }
         if is_current && env.chain_id.contains('|') {
             return Err(RelayAuthError::MissingRequiredField { field: "chain_id" });
@@ -631,6 +683,92 @@ mod tests {
         };
         env.sig = env.sign_for_test(key);
         env
+    }
+
+    #[test]
+    fn relay_auth_mldsa65_hex_shape_is_opt_in_and_precedes_verification() {
+        use std::cell::Cell;
+
+        let now = 1_730_000_000_000;
+        let key = "sender-key";
+        let mut env = sample_env(1, "nonce-mldsa-shape", now, key);
+        env.sig = "ab".repeat(ML_DSA_65_SIGNATURE_RAW_BYTES);
+        assert_eq!(env.sig.len(), 6_618);
+
+        // The compatibility constructor stays unchanged and rejects the
+        // larger signature before invoking a caller-provided verifier.
+        let invoked = Cell::new(0);
+        let mut legacy = RelayAuthVerifier::for_chain(100, "trnm-mainnet");
+        let err = legacy
+            .verify(&env, now, |_| {
+                invoked.set(invoked.get() + 1);
+                true
+            })
+            .unwrap_err();
+        assert_eq!(err.stable_code(), "OversizedField");
+        assert_eq!(invoked.get(), 0);
+
+        let mut verifier =
+            RelayAuthVerifier::for_chain_with_mldsa65_hex_wire(100, "trnm-mainnet");
+        for invalid in [
+            String::new(),
+            "ab".repeat(ML_DSA_65_SIGNATURE_RAW_BYTES - 1),
+            "ab".repeat(ML_DSA_65_SIGNATURE_RAW_BYTES + 1),
+            "AB".repeat(ML_DSA_65_SIGNATURE_RAW_BYTES),
+            "zz".repeat(ML_DSA_65_SIGNATURE_RAW_BYTES),
+            sample_env(1, "nonce-mldsa-shape", now, key).sig,
+        ] {
+            let mut malformed = env.clone();
+            malformed.sig = invalid;
+            let err = verifier
+                .verify_with_fresh_time(
+                    &malformed,
+                    now,
+                    |_| {
+                        invoked.set(invoked.get() + 1);
+                        true
+                    },
+                    || panic!("malformed signature must skip trusted post-verification clock"),
+                )
+                .unwrap_err();
+            assert_eq!(err.stable_code(), "InvalidSignatureWireFormat");
+        }
+        assert_eq!(invoked.get(), 0);
+
+        // A correctly sized hex string is only a wire candidate. The actual
+        // authenticator can still reject it, without consuming replay state.
+        let failed_auth = verifier.verify_with_fresh_time(
+            &env,
+            now,
+            |_| {
+                invoked.set(invoked.get() + 1);
+                false
+            },
+            || panic!("failed authentication must skip post-verification clock"),
+        );
+        assert_eq!(failed_auth.unwrap_err().stable_code(), "BadSig");
+        assert_eq!(invoked.get(), 1);
+
+        // Synthetic callback verifies ordering, NOT ML-DSA cryptography.
+        verifier
+            .verify_with_fresh_time(
+                &env,
+                now,
+                |_| {
+                    invoked.set(invoked.get() + 1);
+                    true
+                },
+                || now,
+            )
+            .unwrap();
+        assert_eq!(invoked.get(), 2);
+        let replay = verifier.verify_with_fresh_time(
+            &env,
+            now,
+            |_| panic!("replay must not reach signature verification"),
+            || panic!("replay must not reach trusted post-verification clock"),
+        );
+        assert_eq!(replay.unwrap_err().stable_code(), "SeqRegression");
     }
 
     #[test]

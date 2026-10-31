@@ -18,6 +18,7 @@ on:
       - audit/pq-relay-callback-trust-root-20261030
       - fix/pq-relay-cheap-replay-preflight-20261030
       - fix/pq-relay-postverify-clock-freshness-20261030
+      - fix/pq-relay-mldsa65-wire-preflight-20261030
     paths:
       - .github/workflows/pq-production-claim-gate.yml
       - scripts/security/**
@@ -93,3 +94,22 @@ jobs:
         if: always()
         shell: bash
         run: test -z "$(git status --porcelain=v1)"
+
+  relay-mldsa65-wire-shape:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - name: Checkout exact candidate SHA
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Check exact source HEAD
+        shell: bash
+        run: test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
+      - name: Install frozen Rust toolchain
+        run: rustup toolchain install 1.95.0 --profile minimal
+      - name: Execute bounded relay signature-wire regression
+        run: cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-types relay_auth_mldsa65_hex_shape_is_opt_in_and_precedes_verification -- --test-threads=1
+      - name: Check formatting
+        run: cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check
