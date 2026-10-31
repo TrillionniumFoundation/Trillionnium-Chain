@@ -1364,6 +1364,13 @@ pub fn call_public_protected_v2_with_deadline(
     policy: PublicPolicy,
     outer_deadline: Option<Instant>,
 ) -> Result<PublicReply> {
+    // This API always signs the classical V2 wire. Refuse PQ-only account
+    // settings before generating a challenge or opening any TCP connection,
+    // matching the server's existing classical-network profile isolation.
+    ensure(
+        !settings.app.is_pq_account_profile(),
+        "PUBLIC_CLASSICAL_FOR_PQ_PROFILE",
+    )?;
     let started_call = Instant::now();
     let total_deadline = outer_deadline
         .map_or(started_call + Duration::from_millis(OVERALL_MS), |outer| {
@@ -1615,6 +1622,77 @@ mod tests {
             thread::sleep(Duration::from_millis(2));
         }
     }
+    #[test]
+    #[cfg(feature = "pq-native-openssl")]
+    fn pq_only_account_profile_refuses_classical_public_v2_before_tcp() {
+        use openssl::pkey::{KeyType, PKey};
+        use std::collections::BTreeSet;
+        use trnm_mvcc_fee::pon_executor::pq_accounts_v2::{
+            application_v6::ApplicationPolicy, GenesisAccount,
+        };
+        use trnm_protocol::pq_frame::ml_dsa_65_key_id_from_spki;
+
+        let now = super::super::now().unwrap();
+        let accounts: Vec<_> = [81u8, 82, 83]
+            .into_iter()
+            .map(|n| GenesisAccount {
+                spki: PKey::private_key_from_seed(None, KeyType::ML_DSA_65, None, &[n; 32])
+                    .unwrap()
+                    .public_key_to_der()
+                    .unwrap(),
+                balance: 1_000_000,
+            })
+            .collect();
+        let evaluators: BTreeSet<_> = accounts
+            .iter()
+            .take(2)
+            .map(|account| ml_dsa_65_key_id_from_spki(&account.spki).unwrap())
+            .collect();
+        let policy = ApplicationPolicy {
+            evaluators,
+            evaluation_profile: trnm_mvcc_fee::public_evaluation::PROFILE.into(),
+            model_profile: "linear-expert-dev-v1".into(),
+        };
+        let pq = Settings::native_pq_application_v6(&accounts, now - 100, &policy).unwrap();
+        let classical = identity(72);
+        let unused: SocketAddr = "127.0.0.1:0".parse().unwrap();
+        let v2 = PublicPolicy::new(8, Duration::from_secs(2)).unwrap();
+        for request in [
+            Request::Head,
+            Request::History {
+                tip: hex::encode(pq.genesis()),
+                after: hex::encode(pq.genesis()),
+            },
+        ] {
+            let error = call_public_protected_v2_with_deadline(
+                unused,
+                &request,
+                &pq,
+                classical.public_key(),
+                &classical,
+                v2,
+                None,
+            )
+            .unwrap_err();
+            assert_eq!(error.to_string(), "PUBLIC_CLASSICAL_FOR_PQ_PROFILE");
+        }
+        // Deliberately unopened port: the classical development client must
+        // retain its original network operation rather than mislabeling it
+        // as an invalid PQ profile.
+        let classic = Settings::development(Some(now - 100)).unwrap();
+        let error = call_public_protected_v2_with_deadline(
+            unused,
+            &Request::Head,
+            &classic,
+            classical.public_key(),
+            &classical,
+            v2,
+            None,
+        )
+        .unwrap_err();
+        assert_ne!(error.to_string(), "PUBLIC_CLASSICAL_FOR_PQ_PROFILE");
+    }
+
     #[test]
     fn v2_refuses_non_loopback_before_starting_unmetered_full_w1() {
         let directory = tempfile::tempdir().unwrap();
