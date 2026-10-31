@@ -106,6 +106,60 @@ class ClaimGateTests(unittest.TestCase):
         self.assertEqual(restored.returncode, 0, restored.stdout)
         self.assertIn("unqualified_proof", restored.stdout)
 
+
+    def test_frozen_w1_guest_source_rejects_byte_identical_symlink_redirect(self):
+        import subprocess
+        import sys
+
+        original = self.root / Path(module.PATHS["w1_backend"]).parent / "guest/src/main.rs"
+        original_bytes = original.read_bytes()
+        shadow = original.with_name("main.rs.shadow")
+        shadow.write_bytes(original_bytes)
+
+        def assert_cli_refuses_redirect():
+            findings = module.inspect(self.root)["known_open_findings"]
+            self.assertTrue(any(
+                row["kind"] == "escaped_w1_guest_source"
+                and row.get("source") is None
+                for row in findings
+            ), findings)
+            run = subprocess.run(
+                [sys.executable, str(SCRIPT), "--root", str(self.root),
+                 "--assert-unqualified"],
+                capture_output=True, text=True, check=False,
+            )
+            self.assertEqual(run.returncode, 2, run.stdout)
+            self.assertIn("escaped_w1_guest_source", run.stdout)
+
+        # Previously a relative symlink to same-digest bytes inside the
+        # checkout passed the source hash verifier.
+        original.unlink()
+        original.symlink_to(shadow.name)
+        try:
+            assert_cli_refuses_redirect()
+        finally:
+            original.unlink()
+            original.write_bytes(original_bytes)
+            shadow.unlink()
+
+        # The path component 'guest/src' must be a real directory too.
+        folder = original.parent
+        moved = folder.with_name("src-pinned")
+        folder.rename(moved)
+        folder.symlink_to(moved.name, target_is_directory=True)
+        try:
+            assert_cli_refuses_redirect()
+        finally:
+            folder.unlink()
+            moved.rename(folder)
+
+        restored = subprocess.run(
+            [sys.executable, str(SCRIPT), "--root", str(self.root),
+             "--assert-unqualified"],
+            capture_output=True, text=True, check=False,
+        )
+        self.assertEqual(restored.returncode, 0, restored.stdout)
+
     def test_current_classical_authority_and_proof_remain_open(self):
         self.assertIn("classical_authority", self.kinds())
         self.assertIn("unqualified_proof", self.kinds())
