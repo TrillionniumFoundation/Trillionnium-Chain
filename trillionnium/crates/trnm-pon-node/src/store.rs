@@ -2494,6 +2494,16 @@ impl Node {
             snapshot,
         });
     }
+    // Keep the native execution entrypoint source-visible for independent
+    // repository/evidence contract checks, but pass the already-typed request
+    // rather than re-expanding its fields into an eight-argument wrapper.
+    fn execute_derived(
+        &self,
+        actual: &State,
+        block: ExecutionRequest<'_>,
+    ) -> Result<trnm_mvcc_fee::pon_commitment::StagedOutput> {
+        self.execute_derived_with_progress(actual, block, &|_| Ok(()))
+    }
     fn execute_derived_with_progress(
         &self,
         actual: &State,
@@ -4647,7 +4657,7 @@ impl Node {
         self.ready()?;
         let height = self.record(parent)?.height.checked_add(1).ok_or("HEIGHT")?;
         let task = pon_work::task_id(a, b).map_err(|_| Error::from("WORK_TASK"))?;
-        let executed = self.execute_derived_with_progress(
+        let executed = self.execute_derived(
             actual,
             ExecutionRequest {
                 timestamp: Some(timestamp),
@@ -4657,7 +4667,6 @@ impl Node {
                 parent_id: parent,
                 workers: self.workers,
             },
-            &|_| Ok(()),
         )?;
         let mut output = executed.output;
         let commitment = executed.commitment;
