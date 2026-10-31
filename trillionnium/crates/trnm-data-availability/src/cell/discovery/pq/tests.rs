@@ -162,10 +162,12 @@ fn actual_mldsa_record_rejects_every_changed_field_classic_and_trailing_wire() {
 fn randomized_signatures_preserve_semantic_high_water_and_original_durable_bytes() {
     let tmp = tempfile::tempdir().unwrap();
     let path = tmp.path().join("directory");
-    let now = wall_now().unwrap().as_secs();
     let endpoint = "127.0.0.1:19001".parse().unwrap();
     let request = request([10; 32]);
     let directory = CellProviderDirectoryV2::open(&path, context(), keys()).unwrap();
+    // The durable clock is initialized during open; select a valid event
+    // timestamp afterward, including when initialization crosses a second.
+    let now = wall_now().unwrap().as_secs();
     let first = record(request, endpoint, 1, now, false);
     let mut second = first.clone();
     // FIPS204 pure prefix (0,empty-context-length) with independent nonzero rnd.
