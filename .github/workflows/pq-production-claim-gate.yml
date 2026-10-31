@@ -16,6 +16,11 @@ on:
       - config/consensus-mainline.json
       - trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs
       - trillionnium/crates/trnm-data-availability/src/cell/discovery.rs
+      - trillionnium/crates/trnm-pon-node/src/ingress.rs
+      - trillionnium/crates/trnm-types/src/transfer.rs
+      - trillionnium/crates/trnm-research-protocol/src/command.rs
+      - trillionnium/crates/trnm-task-kernel/src/store.rs
+      - trillionnium/crates/trnm-service-settlement/src/engine.rs
       - trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/**
       - trillionnium/crates/trnm-crypto-primitives/src/pon_work/full_relation.rs
       - trillionnium/crates/trnm-crypto-primitives/src/pon_work/full_relation_tests.rs
@@ -26,6 +31,11 @@ on:
       - config/consensus-mainline.json
       - trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs
       - trillionnium/crates/trnm-data-availability/src/cell/discovery.rs
+      - trillionnium/crates/trnm-pon-node/src/ingress.rs
+      - trillionnium/crates/trnm-types/src/transfer.rs
+      - trillionnium/crates/trnm-research-protocol/src/command.rs
+      - trillionnium/crates/trnm-task-kernel/src/store.rs
+      - trillionnium/crates/trnm-service-settlement/src/engine.rs
       - trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/**
       - trillionnium/crates/trnm-crypto-primitives/src/pon_work/full_relation.rs
       - trillionnium/crates/trnm-crypto-primitives/src/pon_work/full_relation_tests.rs
