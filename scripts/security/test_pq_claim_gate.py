@@ -26,6 +26,11 @@ class ClaimGateTests(unittest.TestCase):
                 profile.update(module.PINNED_W1_RESEARCH_PARAMETERS)
                 profile.update({flag: False for flag in module.PROOF_RESEARCH_ONLY_FALSE_FLAGS})
                 target.write_text(json.dumps(profile), encoding="utf-8")
+            elif key == "consensus":
+                profile = dict(module.PINNED_CONSENSUS_UNQUALIFIED_PARAMETERS)
+                profile["native_application_scope"] = "unit-test-research-only"
+                profile.update({f: False for f in module.PRODUCTION_FLAGS})
+                target.write_text(json.dumps(profile), encoding="utf-8")
             else:
                 target.write_text(json.dumps({f: False for f in module.PRODUCTION_FLAGS}), encoding="utf-8")
 
@@ -288,6 +293,10 @@ class ClaimGateTests(unittest.TestCase):
             refuse("work_r", True)
         with self.subTest(field="proof_fri_queries", missing=True):
             refuse("proof_fri_queries", None)
+        # Missing and explicit null were previously indistinguishable to
+        # profile.get(): omitting provenance must never pass a frozen profile.
+        with self.subTest(field="guest_relation_source_commit", missing=True):
+            refuse("guest_relation_source_commit", None)
 
         proof.write_text(json.dumps(baseline), encoding="utf-8")
         result = subprocess.run(
@@ -298,6 +307,69 @@ class ClaimGateTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout)
         self.assertIn("unqualified_proof", result.stdout)
 
+
+    def test_consensus_unknown_fields_and_research_status_changes_are_refused(self):
+        import subprocess
+        import sys
+
+        consensus = self.root / module.PATHS["consensus"]
+        baseline = json.loads(consensus.read_text(encoding="utf-8"))
+        self.assertEqual(set(baseline), module.ALLOWED_CONSENSUS_FIELDS)
+
+        def refuses(profile, kind, field=None):
+            consensus.write_text(json.dumps(profile), encoding="utf-8")
+            findings = module.inspect(self.root)["known_open_findings"]
+            self.assertTrue(any(
+                item["kind"] == kind and (field is None or item.get("field") == field)
+                for item in findings
+            ), findings)
+            result = subprocess.run(
+                [sys.executable, str(SCRIPT), "--root", str(self.root),
+                 "--assert-unqualified"], capture_output=True,
+                text=True, check=False,
+            )
+            self.assertEqual(result.returncode, 2, result.stdout)
+            self.assertIn(kind, result.stdout)
+
+        # Alias claims are not permitted just because all four known
+        # release/production switches are still explicit Boolean false.
+        for field, value in (
+            ("pq_chain_qualified", True),
+            ("pq_128_security_qualified", True),
+            ("alternate_consensus_activation", {"enabled": True}),
+        ):
+            with self.subTest(unreviewed=field):
+                refuses({**baseline, field: value},
+                        "unreviewed_consensus_profile_field", field)
+
+        for field, value in (
+            ("runtime_implemented", True),
+            ("work_profile_qualified", 1),
+            ("active_consensus_implementation", "pon-production"),
+            ("schema", "trnm-consensus-mainline-truth-v3"),
+        ):
+            with self.subTest(changed=field):
+                refuses({**baseline, field: value},
+                        "unreviewed_consensus_unqualified_parameter_change", field)
+
+        # A null-valued *required* authority declaration cannot disappear:
+        # dict.get() would otherwise conflate the absence with explicit null.
+        missing = dict(baseline)
+        del missing["active_consensus_implementation"]
+        refuses(missing, "unreviewed_consensus_unqualified_parameter_change",
+                "active_consensus_implementation")
+        missing = dict(baseline)
+        del missing["native_application_scope"]
+        refuses(missing, "invalid_consensus_scope")
+
+        consensus.write_text(json.dumps(baseline), encoding="utf-8")
+        result = subprocess.run(
+            [sys.executable, str(SCRIPT), "--root", str(self.root),
+             "--assert-unqualified"], capture_output=True,
+            text=True, check=False,
+        )
+        self.assertEqual(result.returncode, 0, result.stdout)
+        self.assertIn("unqualified_proof", result.stdout)
 
     def test_extra_w1_policy_fields_require_review_even_when_pq128_is_false(self):
         import subprocess
