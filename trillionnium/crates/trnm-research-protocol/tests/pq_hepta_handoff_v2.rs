@@ -142,3 +142,168 @@ fn bounds_schema_and_trailing_wire_fail_closed() {
         .verify_for_context(CHAIN, DID, &invalid.public_key, &owner(), 150)
         .is_err());
 }
+
+#[test]
+fn trusted_context_ingress_rejects_mismatch_before_expensive_mldsa() {
+    let sk = key();
+    let pk = sk.verifying_key().to_bytes().to_vec();
+    let admission = owner();
+    let mut forged =
+        SignedPqHeptaAdmissionV2::sign(CHAIN.into(), DID.into(), admission.clone(), &sk).unwrap();
+    forged.signature[0] ^= 1;
+    let forged_bytes = forged.canonical_bytes();
+
+    // A bad chain must be refused from independently supplied context even
+    // when the embedded self-signature is invalid. No clock callback is read.
+    let mut sampled = false;
+    let wrong_chain = SignedPqHeptaAdmissionV2::from_canonical_bytes_for_context(
+        &forged_bytes,
+        "foreign-chain",
+        DID,
+        &pk,
+        &admission,
+        150,
+        || {
+            sampled = true;
+            150
+        },
+    );
+    assert!(matches!(
+        wrong_chain,
+        Err(PqHeptaHandoffError::ContextMismatch("chain"))
+    ));
+    assert!(!sampled);
+
+    let wrong_key = SignedPqHeptaAdmissionV2::from_canonical_bytes_for_context(
+        &forged_bytes,
+        CHAIN,
+        DID,
+        &[0x99; ML_DSA_65_KEY_BYTES],
+        &admission,
+        150,
+        || 150,
+    );
+    assert!(matches!(
+        wrong_key,
+        Err(PqHeptaHandoffError::ContextMismatch("key"))
+    ));
+
+    // When cheap context matches, the forged signature is still rejected,
+    // and a trusted post-verification time read is never called on failure.
+    let mut sampled = false;
+    let invalid = SignedPqHeptaAdmissionV2::from_canonical_bytes_for_context(
+        &forged_bytes,
+        CHAIN,
+        DID,
+        &pk,
+        &admission,
+        150,
+        || {
+            sampled = true;
+            150
+        },
+    );
+    assert!(invalid.is_err());
+    assert!(!sampled);
+    assert!(SignedPqHeptaAdmissionV2::from_canonical_bytes(&forged_bytes).is_err());
+}
+
+#[test]
+fn trusted_context_ingress_rechecks_clock_after_mldsa() {
+    let sk = key();
+    let pk = sk.verifying_key().to_bytes().to_vec();
+    let admission = owner();
+    let signed =
+        SignedPqHeptaAdmissionV2::sign(CHAIN.into(), DID.into(), admission.clone(), &sk).unwrap();
+    let encoded = signed.canonical_bytes();
+
+    // V1 admission validity is inclusive at expires_at=200. Expiry at 201
+    // must be refused even when the original pre-verification read was 199.
+    let accepted = SignedPqHeptaAdmissionV2::from_canonical_bytes_for_context(
+        &encoded,
+        CHAIN,
+        DID,
+        &pk,
+        &admission,
+        199,
+        || 200,
+    )
+    .unwrap();
+    assert_eq!(accepted, signed);
+    let expired = SignedPqHeptaAdmissionV2::from_canonical_bytes_for_context(
+        &encoded,
+        CHAIN,
+        DID,
+        &pk,
+        &admission,
+        199,
+        || 201,
+    );
+    assert!(matches!(expired, Err(PqHeptaHandoffError::Admission(_))));
+
+    let backwards = signed.verify_for_context_with_fresh_time(
+        CHAIN,
+        DID,
+        &pk,
+        &admission,
+        199,
+        || 198,
+    );
+    assert!(matches!(
+        backwards,
+        Err(PqHeptaHandoffError::TimeMovedBackwards)
+    ));
+
+    // A stale initial snapshot fails before ML-DSA, and therefore does not
+    // call the fresh clock even if that callback could return a valid time.
+    let mut sampled = false;
+    let stale = SignedPqHeptaAdmissionV2::from_canonical_bytes_for_context(
+        &encoded,
+        CHAIN,
+        DID,
+        &pk,
+        &admission,
+        201,
+        || {
+            sampled = true;
+            199
+        },
+    );
+    assert!(matches!(stale, Err(PqHeptaHandoffError::Admission(_))));
+    assert!(!sampled);
+}
+
+#[test]
+fn trusted_context_ingress_keeps_canonical_wire_bounds() {
+    let sk = key();
+    let pk = sk.verifying_key().to_bytes().to_vec();
+    let admission = owner();
+    let signed =
+        SignedPqHeptaAdmissionV2::sign(CHAIN.into(), DID.into(), admission.clone(), &sk).unwrap();
+    let mut oversized = vec![0; MAX_PQ_HEPTA_ENVELOPE_BYTES + 1];
+    assert!(matches!(
+        SignedPqHeptaAdmissionV2::from_canonical_bytes_for_context(
+            &oversized,
+            CHAIN,
+            DID,
+            &pk,
+            &admission,
+            150,
+            || 150,
+        ),
+        Err(PqHeptaHandoffError::TooLarge)
+    ));
+
+    oversized = signed.canonical_bytes();
+    oversized.push(0);
+    assert!(SignedPqHeptaAdmissionV2::from_canonical_bytes_for_context(
+        &oversized,
+        CHAIN,
+        DID,
+        &pk,
+        &admission,
+        150,
+        || 150,
+    )
+    .is_err());
+}

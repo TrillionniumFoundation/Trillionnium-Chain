@@ -46,6 +46,8 @@ pub enum PqHeptaHandoffError {
     InvalidEncoding,
     #[error("trusted owner context mismatch: {0}")]
     ContextMismatch(&'static str),
+    #[error("trusted clock moved backwards during PQ handoff verification")]
+    TimeMovedBackwards,
 }
 
 impl SignedPqHeptaAdmissionV2 {
@@ -158,13 +160,76 @@ impl SignedPqHeptaAdmissionV2 {
         self.verify_self_signature()
     }
 
+    /// Re-sample a caller-trusted clock after the ML-DSA operation. An
+    /// admission that was valid before signature verification may have
+    /// expired by the time the verified result is returned. Clock rollback
+    /// must not revive it. This read-only result is still NOT FinalUse.
+    pub fn verify_for_context_with_fresh_time(
+        &self,
+        trusted_chain: &str,
+        trusted_did: &str,
+        trusted_ml_dsa65_key: &[u8],
+        trusted_admission: &HeptaArtifactAdmissionV1,
+        now_unix_s: u64,
+        after_verify_unix_s: impl FnOnce() -> u64,
+    ) -> Result<(), PqHeptaHandoffError> {
+        self.verify_for_context(
+            trusted_chain,
+            trusted_did,
+            trusted_ml_dsa65_key,
+            trusted_admission,
+            now_unix_s,
+        )?;
+        let post_verify_unix_s = after_verify_unix_s();
+        if post_verify_unix_s < now_unix_s {
+            return Err(PqHeptaHandoffError::TimeMovedBackwards);
+        }
+        trusted_admission.validate_at(post_verify_unix_s)?;
+        Ok(())
+    }
+
     pub fn canonical_bytes(&self) -> Vec<u8> {
         CanonicalCbor::canonical_bytes(self)
     }
 
-    /// Parses a self-signed statement; DO NOT grant owner authority on this
-    /// result. Call verify_for_context with real owner-selected expectations.
+    /// Backward-compatible self-signature-verified parser. This verifies the
+    /// embedded, untrusted key, but does not authenticate a Hepta owner.
+    /// Do not use this as an authority or as a cheap untrusted ingress guard.
     pub fn from_canonical_bytes(bytes: &[u8]) -> Result<Self, PqHeptaHandoffError> {
+        let item = Self::parse_untrusted_canonical_bytes(bytes)?;
+        item.verify_self_signature()?;
+        Ok(item)
+    }
+
+    /// Preferred bounded receiving path when independent Hepta Control facts
+    /// are available: cheap parse/shape/context checks BEFORE costly ML-DSA,
+    /// exactly one signature verification, and fresh-time check AFTER it.
+    /// Caller MUST recheck mutable withdrawal/operation ownership atomically
+    /// at actual use; this function does not grant any capability.
+    pub fn from_canonical_bytes_for_context(
+        bytes: &[u8],
+        trusted_chain: &str,
+        trusted_did: &str,
+        trusted_ml_dsa65_key: &[u8],
+        trusted_admission: &HeptaArtifactAdmissionV1,
+        now_unix_s: u64,
+        after_verify_unix_s: impl FnOnce() -> u64,
+    ) -> Result<Self, PqHeptaHandoffError> {
+        let item = Self::parse_untrusted_canonical_bytes(bytes)?;
+        item.verify_for_context_with_fresh_time(
+            trusted_chain,
+            trusted_did,
+            trusted_ml_dsa65_key,
+            trusted_admission,
+            now_unix_s,
+            after_verify_unix_s,
+        )?;
+        Ok(item)
+    }
+
+    /// Strict canonical decode is data only: no embedded self-signature
+    /// verification and no trust is derived from the received public key.
+    fn parse_untrusted_canonical_bytes(bytes: &[u8]) -> Result<Self, PqHeptaHandoffError> {
         if bytes.len() > MAX_PQ_HEPTA_ENVELOPE_BYTES {
             return Err(PqHeptaHandoffError::TooLarge);
         }
@@ -201,7 +266,7 @@ impl SignedPqHeptaAdmissionV2 {
         if item.canonical_bytes() != bytes {
             return Err(CanonicalDecodeError::NonCanonicalRoundTrip.into());
         }
-        item.verify_self_signature()?;
+        item.check_shape()?;
         Ok(item)
     }
 }

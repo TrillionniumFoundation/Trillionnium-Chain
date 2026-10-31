@@ -12,6 +12,19 @@ admission into verify_for_context. Neither parsing nor verification confers a
 FinalUse, install, export, payout or external-effect replay right. Validate the
 current withdrawal head and durable operation journal at the actual effect.
 
+**P0 Gate B/E receiver hardening (still research-only):** The existing
+`from_canonical_bytes` keeps its historical self-signature check on the
+untrusted embedded key; it is not an authentication decision and it may spend
+ML-DSA verification effort before the receiving owner is consulted. A new
+`from_canonical_bytes_for_context` accepts a caller-owned exact Chain/DID,
+pinned ML-DSA key and complete Hepta admission. It checks canonical bounds and
+context first, performs **one** ML-DSA verification, then samples a fresh
+caller-trusted clock and refuses backwards time or an expired admission.
+`verify_for_context_with_fresh_time` provides the post-check for an already
+decoded envelope. Neither callback time nor the admission must come from the
+untrusted peer. This does not implement independent clock ownership, atomic
+withdrawal/FinalUse fencing, host integration, or DoS capacity evidence.
+
 Limits: deterministic CBOR; 8,192-byte maximum envelope; 3,309-byte signature;
 64 MiB existing artifact bound; strict domain and version; no Ed25519 fallback.
 FIPS pure ML-DSA uses an empty FIPS context over explicitly domain-tagged bytes.
