@@ -13,7 +13,7 @@ security. The only development plan remains
 | Lane | Actual observation | Remaining boundary |
 | --- | --- | --- |
 | [Mining and effective work](cost/README.md) | The unchanged regression fails before the repair and passes afterward: a valid future tip no longer suppresses a permitted real-wall-clock child; a genuinely future median still waits. | No global cheapest-solver, timestamp-attack profitability, sustained service or throughput claim. |
-| [Native History kernel checks](history/README.md) | The first compiled source passes 19 kernel controls. Five fresh quota-file reads show a small scoped allocation-cost reduction. All production code is identical in the final source; later test-only changes retain a stronger measurement precondition and remove an unnecessary indexed loop. | Local rebuilds of that final source received SIGKILL before native tests. The exact final-source native and strict Clippy gates must run on adequately resourced CI. No fixed-parent service pass follows from the root-cgroup microbenchmark. |
+| [Native History kernel checks](history/README.md) | The first compiled source passes 19 kernel controls. Five fresh quota-file reads show a small scoped allocation-cost reduction. All production code is identical in the final source; later test-only changes retain a stronger measurement precondition and remove an unnecessary indexed loop. | Local rebuild failures remain preserved. Later ARM exact-head and ARM/x64 actual-merge CI execute the final kernel source with 19 passes and the one named manual measurement ignored; source-before/after agree. Those jobs subsequently fail an obsolete authenticated-test count before strict Clippy. Whole-workflow and finite-service gates remain open. |
 | [Complete-W1 proof receiver](proof/README.md) | Real Composite proof acceptance, the original 16 mutations, eight receiver cases, 24 paired claim observations and 21 native host tests pass. Strict Clippy and formatting pass. | Matching public claims still require full cryptographic verification. Valid and worst consistent-invalid proof costs remain roughly one second in these observations. This research verifier is not a node admission backend. |
 
 The mining baseline used local commit `c69749680d7fd8dd2334d284f0e9a6823cf38a18`;
@@ -91,3 +91,14 @@ The [confirmation timing readback](integration/confirmation-lateness/README.md)
 locates the earlier x64 baseline overrun in independent replay: native depth/work
 confirmation succeeds, but the round ends at 36.5714 seconds against 30 seconds.
 That failure is separate from the ordinary pool-miner timestamp defect.
+
+The [published-source native readback](integration/2a69-hosted-readback/README.md)
+retains both completed final-kernel observations and the workflow-count failure.
+Correcting the stale 20/22 and 56/60 rosters adds exact named requirements and
+readback controls; it does not relax native test assertions or service bounds.
+
+The [published-source W1 receiver job](integration/2a69-hosted-readback/w1-receiver-124412661337/README.md)
+also completed with all original and new controls, strict host Clippy and full
+source guards. Its independent hosted record preserves the same worst-case
+rejection boundary: matching public claims still require about 1.2 seconds of
+complete SDK verification for this historical Composite fixture.

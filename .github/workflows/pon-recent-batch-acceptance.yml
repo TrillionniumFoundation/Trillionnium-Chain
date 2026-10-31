@@ -209,7 +209,33 @@ jobs:
         run: |
           set -euo pipefail
           cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib store::native_authenticated_tests:: -- --show-output --test-threads=1 2>&1 | tee "$OUT/native-snapshots.log"
-          grep -E '^test result: ok\. 20 passed; 0 failed; 0 ignored;' "$OUT/native-snapshots.log"
+          test "$(grep -Ec '^test result: ok\. 22 passed; 0 failed; 0 ignored; 0 measured; [0-9]+ filtered out; finished in [0-9]+(\.[0-9]+)?s$' "$OUT/native-snapshots.log")" = 1
+          for selector in \
+            store::native_authenticated_tests::native_authenticated_signed_growth_branches_reopen_and_compact_queries \
+            store::native_authenticated_tests::native_authenticated_namespaces_missing_nodes_and_corrupt_records_fail_closed \
+            store::native_authenticated_tests::native_arithmetic_warm_cache_still_reads_external_tampering_and_matches_cold_errors \
+            store::native_authenticated_tests::native_reorg_final_root_reads_current_sql_after_last_step \
+            store::native_authenticated_tests::native_reorg_final_root_keeps_pq2_pq3_profile_validation \
+            store::native_authenticated_tests::native_commit_admission_suppression_rolls_back_all_rows_in_both_backends \
+            store::native_authenticated_tests::native_commit_final_event_triggers_cannot_publish_bad_state_or_rewind_pointer \
+            store::native_authenticated_tests::native_authenticated_final_write_checks_parent_and_required_nodes \
+            store::native_authenticated_tests::native_authenticated_cancellation_rolls_back_all_persistent_components \
+            store::native_authenticated_tests::native_authenticated_abort_child_before_commit \
+            store::native_authenticated_tests::native_authenticated_process_exit_before_commit_cold_recovers_without_destructors \
+            store::native_authenticated_tests::native_authenticated_signed_qualified_output_is_in_final_commitment \
+            store::native_authenticated_tests::native_successor_material_avoids_cold_readback_but_checks_all_actual_state \
+            store::native_authenticated_tests::native_inactive_page_parents_use_checked_material_without_early_activation \
+            store::native_authenticated_tests::native_inactive_parent_material_keeps_fresh_sql_state_and_cancellation_checks \
+            store::native_authenticated_tests::controlled_parent_reconstruction_preserves_cancellation_and_complete_retry \
+            store::native_authenticated_tests::controlled_final_readback_cancels_inside_transaction_without_corruption_or_partial_rows \
+            store::native_authenticated_tests::native_dense_snapshots_retain_64_and_reconstruct_pruned_history \
+            store::native_authenticated_tests::native_dense_snapshot_insert_corruption_and_delta_omission_roll_back \
+            store::native_authenticated_tests::native_dense_snapshot_pruning_suppression_preserves_atomic_limit \
+            store::native_authenticated_tests::native_dense_snapshot_cannot_hide_old_delta_damage_from_admission \
+            store::native_authenticated_tests::native_dense_snapshot_readback_cost_keeps_full_state_and_unaccelerated_reference; do
+            test "$(grep -Fxc "test $selector ... ok" "$OUT/native-snapshots.log")" = 1
+          done
+          test "$(grep -c '^test store::native_authenticated_tests::' "$OUT/native-snapshots.log")" = 22
           for test in native_dense_snapshots_retain_64_and_reconstruct_pruned_history native_dense_snapshot_insert_corruption_and_delta_omission_roll_back native_dense_snapshot_pruning_suppression_preserves_atomic_limit native_dense_snapshot_cannot_hide_old_delta_damage_from_admission native_dense_snapshot_readback_cost_keeps_full_state_and_unaccelerated_reference native_inactive_page_parents_use_checked_material_without_early_activation native_inactive_parent_material_keeps_fresh_sql_state_and_cancellation_checks; do
             selector="store::native_authenticated_tests::$test"
             cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$OUT/$test.log"
@@ -228,7 +254,71 @@ jobs:
             cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$suite" -- "${options[@]}" --show-output --test-threads=1 2>&1 | tee "$OUT/$name.log"
             grep -E '^test result: ok\. [1-9][0-9]* passed; 0 failed;' "$OUT/$name.log"
             if test "$suite" = store::native_authenticated::; then
-              grep -E '^test result: ok\. 56 passed; 0 failed; 0 ignored;' "$OUT/$name.log"
+              test "$(grep -Ec '^test result: ok\. 60 passed; 0 failed; 0 ignored; 0 measured; [0-9]+ filtered out; finished in [0-9]+(\.[0-9]+)?s$' "$OUT/$name.log")" = 1
+              for selector in \
+                store::native_authenticated::arithmetic_cache::root_arithmetic::tests::complete_commitment_keeps_account_error_order_with_root_material \
+                store::native_authenticated::arithmetic_cache::root_arithmetic::tests::opaque_tree_preserves_original_canonical_and_limit_errors \
+                store::native_authenticated::arithmetic_cache::root_arithmetic::tests::opaque_tree_recomputes_actual_additions_removals_values_and_namespace \
+                store::native_authenticated::arithmetic_cache::root_arithmetic::tests::opaque_tree_retention_caps_payload_charge_and_preserves_cold_borrow_behavior \
+                store::native_authenticated::arithmetic_cache::tests::arithmetic_cache_binds_exact_complete_bytes_context_and_has_fixed_retention \
+                store::native_authenticated::arithmetic_cache::tests::arithmetic_cache_preserves_exact_numeric_encoding_and_invalid_input_errors \
+                store::native_authenticated::arithmetic_cache::tests::complete_hits_keep_a_hot_non_genesis_slot_within_three_entries \
+                store::native_authenticated::arithmetic_cache::tests::exact_hit_under_shared_borrow_keeps_original_arithmetic_without_retention_change \
+                store::native_authenticated::arithmetic_cache::tests::full_root_reuse_compares_actual_bytes_and_keeps_original_error_order \
+                store::native_authenticated::arithmetic_cache::tests::initial_root_survives_unactivated_branch_roots_without_whole_tree_churn \
+                store::native_authenticated::arithmetic_cache::tests::pq_account_roots_keep_original_validation_on_cold_and_warm_cache \
+                store::native_authenticated::arithmetic_cache::tests::root_hits_keep_a_hot_non_genesis_slot_within_three_complete_entries \
+                store::native_authenticated::arithmetic_cache::tests::separate_root_arithmetic_entry_survives_complete_eviction_and_is_bounded \
+                store::native_authenticated::cached_owner_read_tests::cached_block_reads_do_not_hide_genesis_damage_or_rollback \
+                store::native_authenticated::cached_owner_read_tests::cached_commitment_reads_preserve_limits_missing_and_rollback \
+                store::native_authenticated::cached_owner_read_tests::cached_genesis_snapshot_is_reread_and_survives_cold_reopen \
+                store::native_authenticated::cached_owner_read_tests::cached_parent_reads_observe_changed_work_then_exact_restore \
+                store::native_authenticated::cached_owner_read_tests::warm_genesis_arithmetic_still_compares_current_sql_root_and_initial_bytes \
+                store::native_authenticated::delta_root_stream_tests::streaming_delta_root_checks_empty_batch_and_final_cancellation \
+                store::native_authenticated::delta_root_stream_tests::streaming_delta_root_keeps_order_bytes_and_absence_distinct \
+                store::native_authenticated::delta_root_stream_tests::streaming_delta_root_matches_every_small_padding_shape \
+                store::native_authenticated::delta_root_stream_tests::streaming_delta_root_matches_full_delta_boundary_without_state_admission_claim \
+                store::native_authenticated::delta_root_stream_tests::streaming_delta_root_matches_independent_python_vectors \
+                store::native_authenticated::difference_stream_tests::stream_match_cancellation_returns_no_result_and_keeps_inputs_retryable \
+                store::native_authenticated::difference_stream_tests::stream_match_refuses_missing_extra_reordered_and_changed_rows \
+                store::native_authenticated::difference_stream_tests::stream_match_uses_original_byte_rules_for_null_absence_and_signed_zero \
+                store::native_authenticated::difference_stream_tests::stream_match_visits_equal_keys_and_complete_mismatch_before_result \
+                store::native_authenticated::difference_tests::sorted_difference_full_key_walk_keeps_late_changes_and_original_state \
+                store::native_authenticated::difference_tests::sorted_difference_matches_independent_union_for_interleaved_branch_edits \
+                store::native_authenticated::difference_tests::sorted_difference_preserves_null_absence_signed_zero_and_numeric_bytes \
+                store::native_authenticated::history_arithmetic::tests::actual_packet_columns_and_parent_work_are_rechecked_after_warm_history \
+                store::native_authenticated::history_arithmetic::tests::current_record_bytes_namespace_and_long_scans_never_replace_prior_observations \
+                store::native_authenticated::history_arithmetic::tests::every_history_progress_boundary_keeps_cancellation_identity_and_retry \
+                store::native_authenticated::history_arithmetic::tests::indexed_leaf_reuse_keeps_padding_current_rows_and_typed_null_errors \
+                store::native_authenticated::history_arithmetic::tests::nested_observations_do_not_hold_a_guard_across_cancellation_or_change_errors \
+                store::native_authenticated::history_arithmetic::tests::old_delta_and_parent_record_faults_keep_original_error_order \
+                store::native_authenticated::history_arithmetic::tests::old_history_trigger_rolls_back_new_block_and_cached_codec_cannot_create_it \
+                store::native_authenticated::history_arithmetic::tests::pinned_initial_arithmetic_keeps_current_genesis_sql_and_cold_open_checks \
+                store::native_authenticated::history_arithmetic::tests::retained_charge_and_operation_capture_bounds_only_discard_acceleration \
+                store::native_authenticated::native_fixed_blob_tests::fixed_blob_projection_bounds_owned_bytes_and_preserves_sql_types \
+                store::native_authenticated::native_fixed_blob_tests::fixed_block_fields_match_original_errors_after_warm_cache_and_rollback \
+                store::native_authenticated::native_fixed_blob_tests::fixed_fields_genesis_failure_order_and_cold_reopen_keep_state \
+                store::native_authenticated::native_fixed_blob_tests::fixed_parent_work_matches_original_and_rereads_after_restore \
+                store::native_authenticated::nullable_blob_tests::nullable_delta_empty_bytes_are_not_absence_after_warm_cache \
+                store::native_authenticated::nullable_blob_tests::nullable_delta_late_failure_keeps_cancellation_and_cursor_recovery \
+                store::native_authenticated::nullable_blob_tests::nullable_delta_projection_preserves_null_empty_types_and_bounds \
+                store::native_authenticated::nullable_blob_tests::nullable_genesis_packet_empty_rejects_and_rollback_restores \
+                store::native_authenticated::nullable_blob_tests::nullable_real_insertion_empty_preimage_rejects_live_and_cold_owner \
+                store::native_authenticated::stored_delta_stream_tests::cached_delta_complete_call_observation_keeps_checks_and_results \
+                store::native_authenticated::stored_delta_stream_tests::cached_delta_cursor_is_released_after_cancellation \
+                store::native_authenticated::stored_delta_stream_tests::cached_delta_eviction_or_disabled_cache_keeps_original_results \
+                store::native_authenticated::stored_delta_stream_tests::cached_delta_failure_then_rollback_does_not_reuse_a_verdict \
+                store::native_authenticated::stored_delta_stream_tests::cached_delta_reads_rebind_and_observe_committed_mutations \
+                store::native_authenticated::stored_delta_stream_tests::retained_delta_stream_cost_preserves_all_paired_observations \
+                store::native_authenticated::stored_delta_stream_tests::stored_delta_list_cancellation_does_not_return_a_prefix \
+                store::native_authenticated::stored_delta_stream_tests::stored_root_stream_cancellation_returns_no_result_and_keeps_original_error \
+                store::native_authenticated::stored_delta_stream_tests::stored_root_stream_matches_all_original_padding_shapes_and_rows \
+                store::native_authenticated::stored_delta_stream_tests::stored_root_stream_preserves_corrupt_row_error_identity_and_order \
+                store::native_authenticated::stored_delta_stream_tests::stored_root_stream_preserves_full_delta_read_limit_and_rejects_next_row \
+                store::native_authenticated::stored_delta_stream_tests::stored_rows_bound_bytes_before_decode_and_keep_unicode_nul_and_sql_types; do
+                test "$(grep -Fxc "test $selector ... ok" "$OUT/$name.log")" = 1
+              done
+              test "$(grep -c '^test store::native_authenticated::' "$OUT/$name.log")" = 60
             fi
           done
           cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test continuity_authenticated --test authenticated_storage_cli -- --show-output --test-threads=1 2>&1 | tee "$OUT/recovery.log"

@@ -1,0 +1,895 @@
+{
+  "schema": "pon-newhead-w1-hosted-readback-v1",
+  "head": "2a69a989046489c212619dd337ee74a083f101de",
+  "tree": "e6d2e1d84e0ce7eae374fc635f79179026653545",
+  "run_id": 41159178283,
+  "job_id": 124412661337,
+  "run_attempt": 1,
+  "workflow_conclusion": "success",
+  "source_guards_match": true,
+  "native_source_inputs_checked_against_exact_git_blobs": 17,
+  "host_tests": {
+    "passed": 21,
+    "failed": 0
+  },
+  "clippy": {
+    "returncode": 0,
+    "strict_warnings": true,
+    "all_targets": true,
+    "packages": [
+      "trnm-w1-risc0-host",
+      "trnm-w1-guest-relation"
+    ]
+  },
+  "fmt": {
+    "enclosing_build_step_success": true,
+    "separate_process_record": false,
+    "workflow_command": "cargo fmt --manifest-path BACKEND/Cargo.toml --all -- --check"
+  },
+  "reader_and_fixture_controls": {
+    "fixture-controls.log.gz": {
+      "tests": 39,
+      "reported_seconds": 0.136,
+      "result": "OK"
+    },
+    "reader-controls.log.gz": {
+      "tests": 15,
+      "reported_seconds": 0.024,
+      "result": "OK"
+    },
+    "public-claim-reader-controls.log.gz": {
+      "tests": 8,
+      "reported_seconds": 0.041,
+      "result": "OK"
+    }
+  },
+  "original_audit": {
+    "consensus_authority": false,
+    "native_w1_recomputed": false,
+    "negative_cases": [
+      {
+        "case": "wrong_image",
+        "outcome": "verification_failed",
+        "reason": "claim digest does not match the expected digest c717de185bfb18d3990dd7b31e4f94a2831dd159d8e9366740ea74e4c8e14a03; expected 1d8ffc47f23ae3e2d6b37f0e3f0dab849a626536990c38d7d137f12a66bc5bca",
+        "reject_wall_ns": 1225641019,
+        "rejected": true
+      },
+      {
+        "case": "wrong_statement_miner",
+        "outcome": "verification_failed",
+        "reason": "public journal does not match the complete bound W1 statement",
+        "reject_wall_ns": 18556500,
+        "rejected": true
+      },
+      {
+        "case": "truncated_receipt",
+        "outcome": "malformed_encoding",
+        "reason": "Malformed certificate encoding: truncated field",
+        "reject_wall_ns": 18505,
+        "rejected": true
+      },
+      {
+        "case": "segment_count_allocation_bomb",
+        "outcome": "refused_not_evaluated",
+        "reason": "Refused (not evaluated): segment count budget",
+        "reject_wall_ns": 1413,
+        "rejected": true
+      },
+      {
+        "case": "seal_length_allocation_bomb",
+        "outcome": "refused_not_evaluated",
+        "reason": "Refused (not evaluated): segment seal word budget",
+        "reject_wall_ns": 1031,
+        "rejected": true
+      },
+      {
+        "case": "empty_seal_before_sdk",
+        "outcome": "malformed_encoding",
+        "reason": "Malformed certificate encoding: empty or incomplete seal header",
+        "reject_wall_ns": 741,
+        "rejected": true
+      },
+      {
+        "case": "outer_journal_allocation_bomb",
+        "outcome": "refused_not_evaluated",
+        "reason": "Refused (not evaluated): journal byte budget",
+        "reject_wall_ns": 5521,
+        "rejected": true
+      },
+      {
+        "case": "nested_assumptions_refused",
+        "outcome": "refused_not_evaluated",
+        "reason": "Refused (not evaluated): nested assumption receipts are unsupported",
+        "reject_wall_ns": 3075,
+        "rejected": true
+      },
+      {
+        "case": "seal_dimension_budget",
+        "outcome": "refused_not_evaluated",
+        "reason": "Refused (not evaluated): segment proof dimension budget",
+        "reject_wall_ns": 822,
+        "rejected": true
+      },
+      {
+        "case": "trailing_receipt_bytes",
+        "outcome": "malformed_encoding",
+        "reason": "Malformed certificate encoding: trailing certificate bytes",
+        "reject_wall_ns": 9407,
+        "rejected": true
+      },
+      {
+        "case": "first_seal_tamper",
+        "outcome": "verification_failed",
+        "reason": "verification indicates proof is invalid",
+        "reject_wall_ns": 20627600,
+        "rejected": true
+      },
+      {
+        "case": "last_seal_tamper",
+        "outcome": "verification_failed",
+        "reason": "verification indicates proof is invalid",
+        "reject_wall_ns": 1227636136,
+        "rejected": true
+      },
+      {
+        "case": "wrong_hash_profile",
+        "outcome": "verification_failed",
+        "reason": "pinned v3.0.6 segment verifier supports only Poseidon2 commitments",
+        "reject_wall_ns": 18528509,
+        "rejected": true
+      },
+      {
+        "case": "wrong_verifier_parameters",
+        "outcome": "verification_failed",
+        "reason": "segment proof parameters differ from the fixed backend profile",
+        "reject_wall_ns": 18504053,
+        "rejected": true
+      },
+      {
+        "case": "fake_receipt_refused",
+        "outcome": "refused_not_evaluated",
+        "reason": "Refused (not evaluated): only actual transparent Composite receipts are supported",
+        "reject_wall_ns": 18541262,
+        "rejected": true
+      },
+      {
+        "case": "groth16_kind_refused",
+        "outcome": "refused_not_evaluated",
+        "reason": "Refused (not evaluated): only actual transparent Composite receipts are supported",
+        "reject_wall_ns": 18446014,
+        "rejected": true
+      }
+    ],
+    "operation": "audit",
+    "public_ingress_qualified": false,
+    "real_proof_positive_control": true,
+    "schema": "pon-w1-risc0-research-v1"
+  },
+  "eight_fixed_cases": [
+    {
+      "case": "valid",
+      "accepted": true,
+      "bounded_preflight_and_sdk_decode_wall_ns": 11147091,
+      "decoded_receipt_drop_wall_ns": 11632,
+      "last_stage": "strict_verify",
+      "outcome": "verified",
+      "reason": null,
+      "receiver_total_wall_ns": 1247220653,
+      "strict_verify_wall_ns": 1236061359,
+      "reader_metadata_and_byte_bindings_pass": true,
+      "reader_source_files_checked": 17
+    },
+    {
+      "case": "first_seal_tamper",
+      "accepted": false,
+      "bounded_preflight_and_sdk_decode_wall_ns": 11091170,
+      "decoded_receipt_drop_wall_ns": 6763,
+      "last_stage": "strict_verify",
+      "outcome": "verification_failed",
+      "reason": "verification indicates proof is invalid",
+      "receiver_total_wall_ns": 31701576,
+      "strict_verify_wall_ns": 20603382,
+      "reader_metadata_and_byte_bindings_pass": true,
+      "reader_source_files_checked": 17
+    },
+    {
+      "case": "last_seal_tamper",
+      "accepted": false,
+      "bounded_preflight_and_sdk_decode_wall_ns": 11189425,
+      "decoded_receipt_drop_wall_ns": 11681,
+      "last_stage": "strict_verify",
+      "outcome": "verification_failed",
+      "reason": "verification indicates proof is invalid",
+      "receiver_total_wall_ns": 1243680009,
+      "strict_verify_wall_ns": 1232478372,
+      "reader_metadata_and_byte_bindings_pass": true,
+      "reader_source_files_checked": 17
+    },
+    {
+      "case": "wrong_verifier_parameters",
+      "accepted": false,
+      "bounded_preflight_and_sdk_decode_wall_ns": 10969903,
+      "decoded_receipt_drop_wall_ns": 6041,
+      "last_stage": "strict_verify",
+      "outcome": "verification_failed",
+      "reason": "segment proof parameters differ from the fixed backend profile",
+      "receiver_total_wall_ns": 29640575,
+      "strict_verify_wall_ns": 18664169,
+      "reader_metadata_and_byte_bindings_pass": true,
+      "reader_source_files_checked": 17
+    },
+    {
+      "case": "wrong_statement_miner",
+      "accepted": false,
+      "bounded_preflight_and_sdk_decode_wall_ns": 10959884,
+      "decoded_receipt_drop_wall_ns": 6211,
+      "last_stage": "strict_verify",
+      "outcome": "verification_failed",
+      "reason": "public journal does not match the complete bound W1 statement",
+      "receiver_total_wall_ns": 29611199,
+      "strict_verify_wall_ns": 18644763,
+      "reader_metadata_and_byte_bindings_pass": true,
+      "reader_source_files_checked": 17
+    },
+    {
+      "case": "truncated_receipt",
+      "accepted": false,
+      "bounded_preflight_and_sdk_decode_wall_ns": 15218,
+      "decoded_receipt_drop_wall_ns": null,
+      "last_stage": "bounded_preflight_or_sdk_decode",
+      "outcome": "malformed_encoding",
+      "reason": "Malformed certificate encoding: truncated field",
+      "receiver_total_wall_ns": 15279,
+      "strict_verify_wall_ns": null,
+      "reader_metadata_and_byte_bindings_pass": true,
+      "reader_source_files_checked": 17
+    },
+    {
+      "case": "trailing_receipt_bytes",
+      "accepted": false,
+      "bounded_preflight_and_sdk_decode_wall_ns": 13665,
+      "decoded_receipt_drop_wall_ns": null,
+      "last_stage": "bounded_preflight_or_sdk_decode",
+      "outcome": "malformed_encoding",
+      "reason": "Malformed certificate encoding: trailing certificate bytes",
+      "receiver_total_wall_ns": 13765,
+      "strict_verify_wall_ns": null,
+      "reader_metadata_and_byte_bindings_pass": true,
+      "reader_source_files_checked": 17
+    },
+    {
+      "case": "seal_length_allocation_bomb",
+      "accepted": false,
+      "bounded_preflight_and_sdk_decode_wall_ns": 4158,
+      "decoded_receipt_drop_wall_ns": null,
+      "last_stage": "bounded_preflight_or_sdk_decode",
+      "outcome": "refused_not_evaluated",
+      "reason": "Refused (not evaluated): segment seal word budget",
+      "receiver_total_wall_ns": 4247,
+      "strict_verify_wall_ns": null,
+      "reader_metadata_and_byte_bindings_pass": true,
+      "reader_source_files_checked": 17
+    }
+  ],
+  "public_claims": {
+    "prepared_context_setup_wall_ns": 18661698,
+    "positive_prerequisite_wall_ns": 1270173818,
+    "cases": [
+      {
+        "case": "valid",
+        "public_claims_consistent": true,
+        "observations": [
+          {
+            "accepted": true,
+            "bounded_decode_wall_ns": 11104031,
+            "context": "fresh",
+            "context_setup_wall_ns": 18568183,
+            "owned_objects_drop_wall_ns": 1945415,
+            "public_claims_entered": false,
+            "reason": null,
+            "receiver_total_wall_ns": 1255912178,
+            "route": "original_sdk_order",
+            "sdk_entered": true,
+            "verification_wall_ns": 1224293727
+          },
+          {
+            "accepted": true,
+            "bounded_decode_wall_ns": 11163502,
+            "context": "fresh",
+            "context_setup_wall_ns": 18615652,
+            "owned_objects_drop_wall_ns": 1812615,
+            "public_claims_entered": true,
+            "reason": null,
+            "receiver_total_wall_ns": 1251214832,
+            "route": "public_claims_first",
+            "sdk_entered": true,
+            "verification_wall_ns": 1219622511
+          },
+          {
+            "accepted": true,
+            "bounded_decode_wall_ns": 11245937,
+            "context": "reused",
+            "context_setup_wall_ns": null,
+            "owned_objects_drop_wall_ns": 1657325,
+            "public_claims_entered": false,
+            "reason": null,
+            "receiver_total_wall_ns": 1235533930,
+            "route": "original_sdk_order",
+            "sdk_entered": true,
+            "verification_wall_ns": 1222630117
+          },
+          {
+            "accepted": true,
+            "bounded_decode_wall_ns": 11029066,
+            "context": "reused",
+            "context_setup_wall_ns": null,
+            "owned_objects_drop_wall_ns": 1643360,
+            "public_claims_entered": true,
+            "reason": null,
+            "receiver_total_wall_ns": 1230373336,
+            "route": "public_claims_first",
+            "sdk_entered": true,
+            "verification_wall_ns": 1217700449
+          }
+        ]
+      },
+      {
+        "case": "outer_journal_rebound",
+        "public_claims_consistent": false,
+        "observations": [
+          {
+            "accepted": false,
+            "bounded_decode_wall_ns": 4219777,
+            "context": "fresh",
+            "context_setup_wall_ns": 18503662,
+            "owned_objects_drop_wall_ns": 5360,
+            "public_claims_entered": true,
+            "reason": "public aggregate claim differs from the pinned image and complete journal",
+            "receiver_total_wall_ns": 22741323,
+            "route": "public_claims_first",
+            "sdk_entered": false,
+            "verification_wall_ns": 12173
+          },
+          {
+            "accepted": false,
+            "bounded_decode_wall_ns": 4156208,
+            "context": "fresh",
+            "context_setup_wall_ns": 18478986,
+            "owned_objects_drop_wall_ns": 12153,
+            "public_claims_entered": false,
+            "reason": "claim digest does not match the expected digest c717de185bfb18d3990dd7b31e4f94a2831dd159d8e9366740ea74e4c8e14a03; expected 26830f8024481e66af11c0ba1f6223bfa91b3c6e6a524616420d365543eb1bce",
+            "receiver_total_wall_ns": 1229897494,
+            "route": "original_sdk_order",
+            "sdk_entered": true,
+            "verification_wall_ns": 1207249746
+          },
+          {
+            "accepted": false,
+            "bounded_decode_wall_ns": 4115933,
+            "context": "reused",
+            "context_setup_wall_ns": null,
+            "owned_objects_drop_wall_ns": 5080,
+            "public_claims_entered": true,
+            "reason": "public aggregate claim differs from the pinned image and complete journal",
+            "receiver_total_wall_ns": 4127454,
+            "route": "public_claims_first",
+            "sdk_entered": false,
+            "verification_wall_ns": 6222
+          },
+          {
+            "accepted": false,
+            "bounded_decode_wall_ns": 4110232,
+            "context": "reused",
+            "context_setup_wall_ns": null,
+            "owned_objects_drop_wall_ns": 10740,
+            "public_claims_entered": false,
+            "reason": "claim digest does not match the expected digest c717de185bfb18d3990dd7b31e4f94a2831dd159d8e9366740ea74e4c8e14a03; expected 26830f8024481e66af11c0ba1f6223bfa91b3c6e6a524616420d365543eb1bce",
+            "receiver_total_wall_ns": 1212708906,
+            "route": "original_sdk_order",
+            "sdk_entered": true,
+            "verification_wall_ns": 1208587472
+          }
+        ]
+      },
+      {
+        "case": "late_link_tamper",
+        "public_claims_consistent": false,
+        "observations": [
+          {
+            "accepted": false,
+            "bounded_decode_wall_ns": 4283206,
+            "context": "fresh",
+            "context_setup_wall_ns": 18537586,
+            "owned_objects_drop_wall_ns": 11602,
+            "public_claims_entered": false,
+            "reason": "claim digest does not match the expected digest dc49c4484825e5fd9e890dfd6d299a7607676cd58ace918c61d8509869f27522; expected e8c927b1c067b436e51806ded07a3bee6903325587958de0e264e2fa2db60151",
+            "receiver_total_wall_ns": 1230038227,
+            "route": "original_sdk_order",
+            "sdk_entered": true,
+            "verification_wall_ns": 1207205222
+          },
+          {
+            "accepted": false,
+            "bounded_decode_wall_ns": 4126983,
+            "context": "fresh",
+            "context_setup_wall_ns": 18600545,
+            "owned_objects_drop_wall_ns": 5801,
+            "public_claims_entered": true,
+            "reason": "public continuation states do not link",
+            "receiver_total_wall_ns": 22772482,
+            "route": "public_claims_first",
+            "sdk_entered": false,
+            "verification_wall_ns": 38853
+          },
+          {
+            "accepted": false,
+            "bounded_decode_wall_ns": 4120421,
+            "context": "reused",
+            "context_setup_wall_ns": null,
+            "owned_objects_drop_wall_ns": 9798,
+            "public_claims_entered": false,
+            "reason": "claim digest does not match the expected digest dc49c4484825e5fd9e890dfd6d299a7607676cd58ace918c61d8509869f27522; expected e8c927b1c067b436e51806ded07a3bee6903325587958de0e264e2fa2db60151",
+            "receiver_total_wall_ns": 1212029643,
+            "route": "original_sdk_order",
+            "sdk_entered": true,
+            "verification_wall_ns": 1207898923
+          },
+          {
+            "accepted": false,
+            "bounded_decode_wall_ns": 4145438,
+            "context": "reused",
+            "context_setup_wall_ns": null,
+            "owned_objects_drop_wall_ns": 4509,
+            "public_claims_entered": true,
+            "reason": "public continuation states do not link",
+            "receiver_total_wall_ns": 4188880,
+            "route": "public_claims_first",
+            "sdk_entered": false,
+            "verification_wall_ns": 38612
+          }
+        ]
+      },
+      {
+        "case": "late_nonfinal_exit",
+        "public_claims_consistent": false,
+        "observations": [
+          {
+            "accepted": false,
+            "bounded_decode_wall_ns": 4335865,
+            "context": "fresh",
+            "context_setup_wall_ns": 18525654,
+            "owned_objects_drop_wall_ns": 5690,
+            "public_claims_entered": true,
+            "reason": "public nonfinal claim is not a system split",
+            "receiver_total_wall_ns": 22905251,
+            "route": "public_claims_first",
+            "sdk_entered": false,
+            "verification_wall_ns": 37661
+          },
+          {
+            "accepted": false,
+            "bounded_decode_wall_ns": 4144466,
+            "context": "fresh",
+            "context_setup_wall_ns": 18608629,
+            "owned_objects_drop_wall_ns": 14097,
+            "public_claims_entered": false,
+            "reason": "claim digest does not match the expected digest b0448948c490cd68afcb6cb4608acd261a7367b534138c83eaea83dfa58daf67; expected c3f6047e0726f478d10b57550c404e468053f0090dc50199988a933b51e2adcf",
+            "receiver_total_wall_ns": 1211079296,
+            "route": "original_sdk_order",
+            "sdk_entered": true,
+            "verification_wall_ns": 1188311694
+          },
+          {
+            "accepted": false,
+            "bounded_decode_wall_ns": 4144144,
+            "context": "reused",
+            "context_setup_wall_ns": null,
+            "owned_objects_drop_wall_ns": 5419,
+            "public_claims_entered": true,
+            "reason": "public nonfinal claim is not a system split",
+            "receiver_total_wall_ns": 4188307,
+            "route": "public_claims_first",
+            "sdk_entered": false,
+            "verification_wall_ns": 38482
+          },
+          {
+            "accepted": false,
+            "bounded_decode_wall_ns": 4176454,
+            "context": "reused",
+            "context_setup_wall_ns": null,
+            "owned_objects_drop_wall_ns": 10991,
+            "public_claims_entered": false,
+            "reason": "claim digest does not match the expected digest b0448948c490cd68afcb6cb4608acd261a7367b534138c83eaea83dfa58daf67; expected c3f6047e0726f478d10b57550c404e468053f0090dc50199988a933b51e2adcf",
+            "receiver_total_wall_ns": 1192260674,
+            "route": "original_sdk_order",
+            "sdk_entered": true,
+            "verification_wall_ns": 1188072808
+          }
+        ]
+      },
+      {
+        "case": "matching_claims_corrupt_seal",
+        "public_claims_consistent": true,
+        "observations": [
+          {
+            "accepted": false,
+            "bounded_decode_wall_ns": 4285899,
+            "context": "fresh",
+            "context_setup_wall_ns": 18848081,
+            "owned_objects_drop_wall_ns": 22983,
+            "public_claims_entered": false,
+            "reason": "verification indicates proof is invalid",
+            "receiver_total_wall_ns": 1231243375,
+            "route": "original_sdk_order",
+            "sdk_entered": true,
+            "verification_wall_ns": 1208085570
+          },
+          {
+            "accepted": false,
+            "bounded_decode_wall_ns": 4215287,
+            "context": "fresh",
+            "context_setup_wall_ns": 18515477,
+            "owned_objects_drop_wall_ns": 12443,
+            "public_claims_entered": true,
+            "reason": "verification indicates proof is invalid",
+            "receiver_total_wall_ns": 1229120037,
+            "route": "public_claims_first",
+            "sdk_entered": true,
+            "verification_wall_ns": 1206376338
+          },
+          {
+            "accepted": false,
+            "bounded_decode_wall_ns": 4126090,
+            "context": "reused",
+            "context_setup_wall_ns": null,
+            "owned_objects_drop_wall_ns": 10680,
+            "public_claims_entered": false,
+            "reason": "verification indicates proof is invalid",
+            "receiver_total_wall_ns": 1211443091,
+            "route": "original_sdk_order",
+            "sdk_entered": true,
+            "verification_wall_ns": 1207305819
+          },
+          {
+            "accepted": false,
+            "bounded_decode_wall_ns": 4141569,
+            "context": "reused",
+            "context_setup_wall_ns": null,
+            "owned_objects_drop_wall_ns": 10469,
+            "public_claims_entered": true,
+            "reason": "verification indicates proof is invalid",
+            "receiver_total_wall_ns": 1210514180,
+            "route": "public_claims_first",
+            "sdk_entered": true,
+            "verification_wall_ns": 1206361701
+          }
+        ]
+      },
+      {
+        "case": "coordinated_public_claim_forgery",
+        "public_claims_consistent": true,
+        "observations": [
+          {
+            "accepted": false,
+            "bounded_decode_wall_ns": 4299685,
+            "context": "fresh",
+            "context_setup_wall_ns": 18625824,
+            "owned_objects_drop_wall_ns": 12403,
+            "public_claims_entered": true,
+            "reason": "claim digest does not match the expected digest dc49c4484825e5fd9e890dfd6d299a7607676cd58ace918c61d8509869f27522; expected 815d3cda716495e7f077f9cf6f0594e1bae200e42d3be04f6e59046bc5c1ca58",
+            "receiver_total_wall_ns": 1229542488,
+            "route": "public_claims_first",
+            "sdk_entered": true,
+            "verification_wall_ns": 1206604036
+          },
+          {
+            "accepted": false,
+            "bounded_decode_wall_ns": 4155414,
+            "context": "fresh",
+            "context_setup_wall_ns": 18511539,
+            "owned_objects_drop_wall_ns": 13275,
+            "public_claims_entered": false,
+            "reason": "claim digest does not match the expected digest dc49c4484825e5fd9e890dfd6d299a7607676cd58ace918c61d8509869f27522; expected 815d3cda716495e7f077f9cf6f0594e1bae200e42d3be04f6e59046bc5c1ca58",
+            "receiver_total_wall_ns": 1232147675,
+            "route": "original_sdk_order",
+            "sdk_entered": true,
+            "verification_wall_ns": 1209467026
+          },
+          {
+            "accepted": false,
+            "bounded_decode_wall_ns": 4127642,
+            "context": "reused",
+            "context_setup_wall_ns": null,
+            "owned_objects_drop_wall_ns": 11121,
+            "public_claims_entered": true,
+            "reason": "claim digest does not match the expected digest dc49c4484825e5fd9e890dfd6d299a7607676cd58ace918c61d8509869f27522; expected 815d3cda716495e7f077f9cf6f0594e1bae200e42d3be04f6e59046bc5c1ca58",
+            "receiver_total_wall_ns": 1213400190,
+            "route": "public_claims_first",
+            "sdk_entered": true,
+            "verification_wall_ns": 1209260937
+          },
+          {
+            "accepted": false,
+            "bounded_decode_wall_ns": 4169851,
+            "context": "reused",
+            "context_setup_wall_ns": null,
+            "owned_objects_drop_wall_ns": 10440,
+            "public_claims_entered": false,
+            "reason": "claim digest does not match the expected digest dc49c4484825e5fd9e890dfd6d299a7607676cd58ace918c61d8509869f27522; expected 815d3cda716495e7f077f9cf6f0594e1bae200e42d3be04f6e59046bc5c1ca58",
+            "receiver_total_wall_ns": 1211162188,
+            "route": "original_sdk_order",
+            "sdk_entered": true,
+            "verification_wall_ns": 1206980756
+          }
+        ]
+      }
+    ],
+    "reader": {
+      "consensus_authority": false,
+      "metadata_bindings_pass": true,
+      "proof_reverified_by_reader": false,
+      "schema": "pon-w1-public-claim-cost-readback-v1",
+      "sdk_mutations_independently_reconstructed": false,
+      "source_files_checked": 17,
+      "timings_independently_remeasured": false,
+      "worst_case_rejection_cost_closed": false
+    }
+  },
+  "verifier_archive_member": {
+    "zip_member": "verifier",
+    "bytes": 6053112,
+    "sha256": "9be52c6ea348052c09bc6c74504017ad34c7bcd9df9e1563f3fd1fc510afbc36",
+    "extracted": false
+  },
+  "fixture": {
+    "archive_bytes": 80366759,
+    "archive_sha256": "bae22e7fab8f5475dc396a4225292f90e582a92558fecf1710e30da0b0d76ecc",
+    "artifact_id": 12784520070,
+    "assets": {
+      "guest.bin": {
+        "bytes": 291592,
+        "sha256": "b8f32cd9c1b1edbb0cde04acf9aab146b7ff1aeeeaee0188e4d6e80d077b0c0a"
+      },
+      "input.bin": {
+        "bytes": 49640,
+        "sha256": "4babd290b10f7a68be27c2adf3b97448bb7bef04dba8bcb97f914acf4ac69020"
+      },
+      "receipt.bin": {
+        "bytes": 15862780,
+        "sha256": "0a5336a797c51829ed25d4ec2f1a03f4f56fda4c737a230b493d4abbe96f0ec8"
+      }
+    },
+    "chunks_verified": 4,
+    "compressed_bytes": 14032963,
+    "consensus_authority": false,
+    "historical_zip_verified_this_run": false,
+    "new_proof_generated": false,
+    "object_manifest_sha256": "4ade4ba17028906e74cd4ad9289a5aa2d8e9e16e9c1aee65a5ee968f22951f20",
+    "object_packaging_schema": "pon-w1-durable-gzip-objects-v2",
+    "proof_verified": false,
+    "run_id": 40608715148,
+    "schema": "pon-w1-historical-fixture-binding-v2",
+    "source": "objects",
+    "source_sha": "a54dc7355f58f40784b5a71fe7e73c4062a14951",
+    "whole_compressed_objects_verified": true
+  },
+  "processes": {
+    "case-first-seal-tamper": {
+      "returncode": 0,
+      "wall_seconds": 1.4165792250000209,
+      "timed_out": false,
+      "command": [
+        "/home/runner/work/_temp/w1-audit-one-41159178283-1/verifier",
+        "audit-one",
+        "/home/runner/work/_temp/w1-audit-one-41159178283-1/fixture/guest.bin",
+        "/home/runner/work/_temp/w1-audit-one-41159178283-1/fixture/input.bin",
+        "/home/runner/work/_temp/w1-audit-one-41159178283-1/fixture/receipt.bin",
+        "first_seal_tamper"
+      ]
+    },
+    "case-last-seal-tamper": {
+      "returncode": 0,
+      "wall_seconds": 2.6201705290000064,
+      "timed_out": false,
+      "command": [
+        "/home/runner/work/_temp/w1-audit-one-41159178283-1/verifier",
+        "audit-one",
+        "/home/runner/work/_temp/w1-audit-one-41159178283-1/fixture/guest.bin",
+        "/home/runner/work/_temp/w1-audit-one-41159178283-1/fixture/input.bin",
+        "/home/runner/work/_temp/w1-audit-one-41159178283-1/fixture/receipt.bin",
+        "last_seal_tamper"
+      ]
+    },
+    "case-seal-length-allocation-bomb": {
+      "returncode": 0,
+      "wall_seconds": 1.3676097630000186,
+      "timed_out": false,
+      "command": [
+        "/home/runner/work/_temp/w1-audit-one-41159178283-1/verifier",
+        "audit-one",
+        "/home/runner/work/_temp/w1-audit-one-41159178283-1/fixture/guest.bin",
+        "/home/runner/work/_temp/w1-audit-one-41159178283-1/fixture/input.bin",
+        "/home/runner/work/_temp/w1-audit-one-41159178283-1/fixture/receipt.bin",
+        "seal_length_allocation_bomb"
+      ]
+    },
+    "case-trailing-receipt-bytes": {
+      "returncode": 0,
+      "wall_seconds": 1.3675424879999696,
+      "timed_out": false,
+      "command": [
+        "/home/runner/work/_temp/w1-audit-one-41159178283-1/verifier",
+        "audit-one",
+        "/home/runner/work/_temp/w1-audit-one-41159178283-1/fixture/guest.bin",
+        "/home/runner/work/_temp/w1-audit-one-41159178283-1/fixture/input.bin",
+        "/home/runner/work/_temp/w1-audit-one-41159178283-1/fixture/receipt.bin",
+        "trailing_receipt_bytes"
+      ]
+    },
+    "case-truncated-receipt": {
+      "returncode": 0,
+      "wall_seconds": 1.3670590049999873,
+      "timed_out": false,
+      "command": [
+        "/home/runner/work/_temp/w1-audit-one-41159178283-1/verifier",
+        "audit-one",
+        "/home/runner/work/_temp/w1-audit-one-41159178283-1/fixture/guest.bin",
+        "/home/runner/work/_temp/w1-audit-one-41159178283-1/fixture/input.bin",
+        "/home/runner/work/_temp/w1-audit-one-41159178283-1/fixture/receipt.bin",
+        "truncated_receipt"
+      ]
+    },
+    "case-valid": {
+      "returncode": 0,
+      "wall_seconds": 2.6206744409999487,
+      "timed_out": false,
+      "command": [
+        "/home/runner/work/_temp/w1-audit-one-41159178283-1/verifier",
+        "audit-one",
+        "/home/runner/work/_temp/w1-audit-one-41159178283-1/fixture/guest.bin",
+        "/home/runner/work/_temp/w1-audit-one-41159178283-1/fixture/input.bin",
+        "/home/runner/work/_temp/w1-audit-one-41159178283-1/fixture/receipt.bin",
+        "valid"
+      ]
+    },
+    "case-wrong-statement-miner": {
+      "returncode": 0,
+      "wall_seconds": 1.3667329699999868,
+      "timed_out": false,
+      "command": [
+        "/home/runner/work/_temp/w1-audit-one-41159178283-1/verifier",
+        "audit-one",
+        "/home/runner/work/_temp/w1-audit-one-41159178283-1/fixture/guest.bin",
+        "/home/runner/work/_temp/w1-audit-one-41159178283-1/fixture/input.bin",
+        "/home/runner/work/_temp/w1-audit-one-41159178283-1/fixture/receipt.bin",
+        "wrong_statement_miner"
+      ]
+    },
+    "case-wrong-verifier-parameters": {
+      "returncode": 0,
+      "wall_seconds": 1.4174091990000193,
+      "timed_out": false,
+      "command": [
+        "/home/runner/work/_temp/w1-audit-one-41159178283-1/verifier",
+        "audit-one",
+        "/home/runner/work/_temp/w1-audit-one-41159178283-1/fixture/guest.bin",
+        "/home/runner/work/_temp/w1-audit-one-41159178283-1/fixture/input.bin",
+        "/home/runner/work/_temp/w1-audit-one-41159178283-1/fixture/receipt.bin",
+        "wrong_verifier_parameters"
+      ]
+    },
+    "fixture-restore": {
+      "returncode": 0,
+      "wall_seconds": 0.2143366009999852,
+      "timed_out": false,
+      "command": [
+        "python3",
+        "scripts/ci/prepare_w1_audit_one_fixture.py",
+        "--objects",
+        "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/evidence/pon-pure-security-20261030-rebuild/complete-w1/fixture-objects",
+        "--out",
+        "/home/runner/work/_temp/w1-audit-one-41159178283-1/fixture"
+      ]
+    },
+    "host-build": {
+      "returncode": 0,
+      "wall_seconds": 89.30438392499997,
+      "timed_out": false,
+      "command": [
+        "/home/runner/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "build",
+        "--release",
+        "--locked",
+        "--manifest-path",
+        "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/Cargo.toml",
+        "-p",
+        "trnm-w1-risc0-host"
+      ]
+    },
+    "host-clippy": {
+      "returncode": 0,
+      "wall_seconds": 41.67667226399999,
+      "timed_out": false,
+      "command": [
+        "/home/runner/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "clippy",
+        "--release",
+        "--locked",
+        "--manifest-path",
+        "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/Cargo.toml",
+        "-p",
+        "trnm-w1-risc0-host",
+        "-p",
+        "trnm-w1-guest-relation",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ]
+    },
+    "host-tests": {
+      "returncode": 0,
+      "wall_seconds": 59.519416449999994,
+      "timed_out": false,
+      "command": [
+        "/home/runner/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "test",
+        "--release",
+        "--locked",
+        "--manifest-path",
+        "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/Cargo.toml",
+        "-p",
+        "trnm-w1-risc0-host"
+      ]
+    },
+    "original-audit": {
+      "returncode": 0,
+      "wall_seconds": 3.921337023000035,
+      "timed_out": false,
+      "command": [
+        "/home/runner/work/_temp/w1-audit-one-41159178283-1/verifier",
+        "audit",
+        "/home/runner/work/_temp/w1-audit-one-41159178283-1/fixture/guest.bin",
+        "/home/runner/work/_temp/w1-audit-one-41159178283-1/fixture/input.bin",
+        "/home/runner/work/_temp/w1-audit-one-41159178283-1/fixture/receipt.bin"
+      ]
+    },
+    "public-claims": {
+      "returncode": 0,
+      "wall_seconds": 23.65958623800003,
+      "timed_out": false,
+      "command": [
+        "/home/runner/work/_temp/w1-audit-one-41159178283-1/verifier",
+        "audit-claims",
+        "/home/runner/work/_temp/w1-audit-one-41159178283-1/fixture/guest.bin",
+        "/home/runner/work/_temp/w1-audit-one-41159178283-1/fixture/input.bin",
+        "/home/runner/work/_temp/w1-audit-one-41159178283-1/fixture/receipt.bin"
+      ]
+    }
+  },
+  "timing_scope": {
+    "exclusive_host": false,
+    "prerequisite_warms_runtime": true,
+    "fresh_context_does_not_mean_cold_hardware": true,
+    "receiver_scope": "optional-context-setup/bounded-decode/strict-profile/public-claims-if-selected/full-sdk-if-reached/owned-drop",
+    "excluded_from_receiver_timing": [
+      "file-io",
+      "statement-binding",
+      "positive-prerequisite",
+      "case-construction",
+      "source-and-byte-hashes",
+      "error-formatting",
+      "json-output",
+      "process-startup"
+    ]
+  },
+  "new_proof_generated": false,
+  "proof_reverified_locally": false,
+  "native_campaign_reexecuted_locally": false,
+  "newer_head_qualified": false,
+  "minimum_work_cost_proved": false,
+  "public_ingress_qualified": false,
+  "pq_128_security_qualified": false,
+  "worst_case_rejection_cost_closed": false,
+  "consensus_authority": false
+}

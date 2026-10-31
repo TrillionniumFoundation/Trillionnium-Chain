@@ -91,3 +91,22 @@ five retained-transcript/mutation controls pass. This provides an exact-head
 execution route even when the main protocol-contract lane stops at its earlier
 from-zero service failure. Both new test names and the two-pass/zero-ignore
 summary are required; no existing gate is skipped.
+
+## Published implementation and ARM final-kernel observations
+
+The three-lane implementation is now published as `2a69a989046489c212619dd337ee74a083f101de`
+with tree `e6d2e1d84e0ce7eae374fc635f79179026653545`. Its
+[completed ARM head and ARM/x64 actual-merge observations](2a69-hosted-readback/README.md)
+execute the final kernel source: all three pass all 19 controls, with exactly the
+named manual measurement ignored and full source bytes identical before/after.
+All three next owner suites pass 22 tests but the old 20-pass grep fails. The
+workflow correction requires the complete current 22 and 60 rosters without
+changing any native assertions or limits. The later 60-test suite was not
+reached, and its static inventory/reader fixtures are not native successes.
+Subsequent strict Clippy and complete service remain independent gates.
+
+The [actual 2a69 W1 research CI success](2a69-hosted-readback/w1-receiver-124412661337/README.md)
+retains final-source strict host Clippy, 21 native tests, the historical complete
+proof and all original rejection/case controls, and the 24 new paired claim
+observations. It still measures approximately 1.2-second valid and consistent-
+invalid verification; it does not close native admission or proof economics.

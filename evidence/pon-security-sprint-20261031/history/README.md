@@ -208,3 +208,15 @@ that this small five-file observation cannot conceal costs in boot, membership,
 metadata, graph validation or kernel scheduling. If that campaign still misses
 the deadline, this patch must remain a partial improvement; its result cannot
 close the service gate.
+
+## Later published-source native readback
+
+The [2a69 hosted readback](../integration/2a69-hosted-readback/README.md) now
+retains actual final-kernel executions on ARM exact head and ARM/x64 actual ordered
+prospective merge. All three pass 19 controls, with only the specified manual cost
+measurement ignored; complete before/after source guards agree. This is a
+new native observation of the later test-source corrections, not a relabeling
+of the first local binary. The jobs subsequently fail an obsolete 20-test
+workflow count after all 22 authenticated-owner tests pass, so their later
+strict Clippy does not execute. No new whole-History timing or finite-service
+qualification follows from these component passes.

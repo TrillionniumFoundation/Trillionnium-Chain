@@ -128,3 +128,15 @@ python3 "$BACKEND/check_claim_audit.py" --record "$OUT/public-claims.stdout.log"
 This is receiver engineering for the standalone research host. It adds no main
 node integration, proof-generation practicality result, admission guarantee,
 minimum-work theorem, chainwork authority, or post-quantum security qualification.
+
+## Later hosted verification of the published implementation
+
+The [completed 2a69 W1 job](../integration/2a69-hosted-readback/w1-receiver-124412661337/README.md)
+now retains exact published-source execution independently of the local lane
+above. It passes 21 native host tests, strict release/locked Clippy, the complete
+historical proof and 16 mutations, eight cases, and 24 paired public-claim
+observations. Full source-before/after guards agree. Its own single-observation
+timings remain distinct from this earlier host's timings; claims-consistent
+invalid proofs still cost approximately 1.21–1.23 seconds to reject. The
+historical Composite fixture is unchanged, and this run does not generate a
+new proof or qualify the native node admission path.

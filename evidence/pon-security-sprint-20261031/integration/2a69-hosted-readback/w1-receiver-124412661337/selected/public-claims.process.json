@@ -1,0 +1,22 @@
+{
+  "schema": "pon-w1-actual-process-v1",
+  "command": [
+    "/home/runner/work/_temp/w1-audit-one-41159178283-1/verifier",
+    "audit-claims",
+    "/home/runner/work/_temp/w1-audit-one-41159178283-1/fixture/guest.bin",
+    "/home/runner/work/_temp/w1-audit-one-41159178283-1/fixture/input.bin",
+    "/home/runner/work/_temp/w1-audit-one-41159178283-1/fixture/receipt.bin"
+  ],
+  "started_utc": "2026-10-31T02:35:21.097569+00:00",
+  "timeout_seconds": 180,
+  "source_sha": "2a69a989046489c212619dd337ee74a083f101de",
+  "timed_out": false,
+  "consensus_authority": false,
+  "returncode": 0,
+  "wall_seconds": 23.65958623800003,
+  "user_cpu_seconds": 23.444773,
+  "system_cpu_seconds": 0.20198,
+  "max_waited_descendant_rss_kib": 69332,
+  "rss_scope": "maximum reported for the waited child family; not total cgroup peak",
+  "finished_utc": "2026-10-31T02:35:44.757187+00:00"
+}

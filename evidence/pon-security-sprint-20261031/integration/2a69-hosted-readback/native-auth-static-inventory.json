@@ -1,0 +1,122 @@
+{
+  "scope": "Read-only source test declarations; no compiler or native enumeration executed.",
+  "selector": "store::native_authenticated::",
+  "workflow_includes_ignored": true,
+  "files": [
+    {
+      "path": "src/store/native_authenticated.rs",
+      "total": 34,
+      "ignored": 1,
+      "names": [
+        "sorted_difference_preserves_null_absence_signed_zero_and_numeric_bytes",
+        "sorted_difference_matches_independent_union_for_interleaved_branch_edits",
+        "sorted_difference_full_key_walk_keeps_late_changes_and_original_state",
+        "stream_match_refuses_missing_extra_reordered_and_changed_rows",
+        "stream_match_visits_equal_keys_and_complete_mismatch_before_result",
+        "stream_match_cancellation_returns_no_result_and_keeps_inputs_retryable",
+        "stream_match_uses_original_byte_rules_for_null_absence_and_signed_zero",
+        "streaming_delta_root_matches_every_small_padding_shape",
+        "streaming_delta_root_keeps_order_bytes_and_absence_distinct",
+        "streaming_delta_root_checks_empty_batch_and_final_cancellation",
+        "streaming_delta_root_matches_full_delta_boundary_without_state_admission_claim",
+        "streaming_delta_root_matches_independent_python_vectors",
+        "cached_delta_reads_rebind_and_observe_committed_mutations",
+        "cached_delta_failure_then_rollback_does_not_reuse_a_verdict",
+        "cached_delta_cursor_is_released_after_cancellation",
+        "cached_delta_eviction_or_disabled_cache_keeps_original_results",
+        "cached_delta_complete_call_observation_keeps_checks_and_results",
+        "stored_root_stream_matches_all_original_padding_shapes_and_rows",
+        "stored_root_stream_preserves_corrupt_row_error_identity_and_order",
+        "stored_root_stream_cancellation_returns_no_result_and_keeps_original_error",
+        "stored_delta_list_cancellation_does_not_return_a_prefix",
+        "stored_root_stream_preserves_full_delta_read_limit_and_rejects_next_row",
+        "stored_rows_bound_bytes_before_decode_and_keep_unicode_nul_and_sql_types",
+        "retained_delta_stream_cost_preserves_all_paired_observations",
+        "cached_block_reads_do_not_hide_genesis_damage_or_rollback",
+        "cached_parent_reads_observe_changed_work_then_exact_restore",
+        "warm_genesis_arithmetic_still_compares_current_sql_root_and_initial_bytes",
+        "cached_commitment_reads_preserve_limits_missing_and_rollback",
+        "cached_genesis_snapshot_is_reread_and_survives_cold_reopen",
+        "nullable_delta_projection_preserves_null_empty_types_and_bounds",
+        "nullable_delta_empty_bytes_are_not_absence_after_warm_cache",
+        "nullable_delta_late_failure_keeps_cancellation_and_cursor_recovery",
+        "nullable_genesis_packet_empty_rejects_and_rollback_restores",
+        "nullable_real_insertion_empty_preimage_rejects_live_and_cold_owner"
+      ],
+      "sha256": "31e810e6e796fa570bf6b99582100e1054cd83eea22150fc6f582b168daa5ab2"
+    },
+    {
+      "path": "src/store/native_fixed_blob_tests.rs",
+      "total": 4,
+      "ignored": 0,
+      "names": [
+        "fixed_blob_projection_bounds_owned_bytes_and_preserves_sql_types",
+        "fixed_block_fields_match_original_errors_after_warm_cache_and_rollback",
+        "fixed_parent_work_matches_original_and_rereads_after_restore",
+        "fixed_fields_genesis_failure_order_and_cold_reopen_keep_state"
+      ],
+      "sha256": "4a651a3445a35fa26be8caf5a29dccbacda65fdeaafc053eed6005d8589d0aee"
+    },
+    {
+      "path": "src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs",
+      "total": 4,
+      "ignored": 0,
+      "names": [
+        "opaque_tree_recomputes_actual_additions_removals_values_and_namespace",
+        "opaque_tree_preserves_original_canonical_and_limit_errors",
+        "opaque_tree_retention_caps_payload_charge_and_preserves_cold_borrow_behavior",
+        "complete_commitment_keeps_account_error_order_with_root_material"
+      ],
+      "sha256": "9feb26d85f26da96d47aa0fae6b5529d068e22449e6b183a056f04b95e4b64e5"
+    },
+    {
+      "path": "src/store/native_authenticated/arithmetic_cache/root_arithmetic.rs",
+      "total": 0,
+      "ignored": 0,
+      "names": [],
+      "sha256": "0b7ceb53487bf18894e4b79b2ebd0bb957313e54d5e46932021ec85bd3ac655e"
+    },
+    {
+      "path": "src/store/native_authenticated/arithmetic_cache.rs",
+      "total": 9,
+      "ignored": 0,
+      "names": [
+        "pq_account_roots_keep_original_validation_on_cold_and_warm_cache",
+        "complete_hits_keep_a_hot_non_genesis_slot_within_three_entries",
+        "root_hits_keep_a_hot_non_genesis_slot_within_three_complete_entries",
+        "exact_hit_under_shared_borrow_keeps_original_arithmetic_without_retention_change",
+        "arithmetic_cache_binds_exact_complete_bytes_context_and_has_fixed_retention",
+        "arithmetic_cache_preserves_exact_numeric_encoding_and_invalid_input_errors",
+        "full_root_reuse_compares_actual_bytes_and_keeps_original_error_order",
+        "separate_root_arithmetic_entry_survives_complete_eviction_and_is_bounded",
+        "initial_root_survives_unactivated_branch_roots_without_whole_tree_churn"
+      ],
+      "sha256": "494e77d64bccf4e35e0fc382a6cd6da8c510269d77e5fcfd295bd43018074d5f"
+    },
+    {
+      "path": "src/store/native_authenticated/history_arithmetic/tests.rs",
+      "total": 9,
+      "ignored": 0,
+      "names": [
+        "current_record_bytes_namespace_and_long_scans_never_replace_prior_observations",
+        "actual_packet_columns_and_parent_work_are_rechecked_after_warm_history",
+        "old_delta_and_parent_record_faults_keep_original_error_order",
+        "every_history_progress_boundary_keeps_cancellation_identity_and_retry",
+        "pinned_initial_arithmetic_keeps_current_genesis_sql_and_cold_open_checks",
+        "indexed_leaf_reuse_keeps_padding_current_rows_and_typed_null_errors",
+        "retained_charge_and_operation_capture_bounds_only_discard_acceleration",
+        "old_history_trigger_rolls_back_new_block_and_cached_codec_cannot_create_it",
+        "nested_observations_do_not_hold_a_guard_across_cancellation_or_change_errors"
+      ],
+      "sha256": "b090d83365062d6f2e23d9263772b10e77335e5fc353a219227facc47f68d18f"
+    },
+    {
+      "path": "src/store/native_authenticated/history_arithmetic.rs",
+      "total": 0,
+      "ignored": 0,
+      "names": [],
+      "sha256": "3bb303649e989b59b1dabc50b1c9a5974bbcfd7ccfbb8295df8e6ad69ad75293"
+    }
+  ],
+  "total": 60
+}

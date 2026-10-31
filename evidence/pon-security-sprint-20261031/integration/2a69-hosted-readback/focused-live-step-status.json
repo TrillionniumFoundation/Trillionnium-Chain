@@ -1,0 +1,120 @@
+{
+  "observed_at": "2026-10-31T02:41:12.049Z",
+  "requested_head": "2a69a989046489c212619dd337ee74a083f101de",
+  "job_id": 124412661152,
+  "provider_response": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Action completed."
+      }
+    ],
+    "structuredContent": {
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Checkout the exact candidate without persistent credentials",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Pin source and isolate build and observation directories",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Install the exact native compiler and checks",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Verify actual source contracts and negative controls",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Verify locked graph and formatting",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Run retained crypto and wire tests including real PQ vectors",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7
+        },
+        {
+          "name": "Run actual public resource, bootstrap, replay and CLI controls",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8
+        },
+        {
+          "name": "Require the real-wall mining counterexample and future-median control",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        },
+        {
+          "name": "Require strict Clippy on all modified native owners and targets",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "Build all three actual campaigns before timing any",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        },
+        {
+          "name": "Retain endpoint mutations and paired finite rejection tails",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "Retain all fixed producer cohorts and failed searches",
+          "status": "in_progress",
+          "conclusion": null,
+          "number": 13
+        },
+        {
+          "name": "Retain real unique-trace attack, honest service and cold reopens",
+          "status": "pending",
+          "conclusion": null,
+          "number": 14
+        },
+        {
+          "name": "Verify final source bytes independently of command success",
+          "status": "pending",
+          "conclusion": null,
+          "number": 15
+        },
+        {
+          "name": "Preserve actual success, rejection, timeout and tool failures",
+          "status": "pending",
+          "conclusion": null,
+          "number": 16
+        },
+        {
+          "name": "Post Checkout the exact candidate without persistent credentials",
+          "status": "pending",
+          "conclusion": null,
+          "number": 32
+        }
+      ]
+    },
+    "isError": false
+  }
+}

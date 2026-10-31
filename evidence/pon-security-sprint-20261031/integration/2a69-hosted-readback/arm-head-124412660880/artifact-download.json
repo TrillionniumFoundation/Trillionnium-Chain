@@ -1,0 +1,12 @@
+{
+  "artifact_id": 13026323279,
+  "observed_at": "2026-10-31T02:36:06.932089+00:00",
+  "signed_url_retained": false,
+  "method": "bounded HTTPS GET of GitHub plugin returned artifact file URL; inherited proxy and default TLS",
+  "expected_bytes": 446073,
+  "expected_sha256": "ce7ec685deada12603037a6b050657abc7bce44d83fed09fd43743f38f220c3c",
+  "http_status": 200,
+  "actual_bytes": 446073,
+  "actual_sha256": "ce7ec685deada12603037a6b050657abc7bce44d83fed09fd43743f38f220c3c",
+  "verified": true
+}

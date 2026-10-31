@@ -7644,3 +7644,40 @@ confirmed timeout cannot be counted as solved by the MTP repair. The separate
 four-second from-zero confirmation error remains unlocalized without its raw
 report. Both named mining regressions are additionally retained in the focused
 exact-head workflow, preserving all its original commands and resource limits.
+
+### Published source and subsequent hosted roster correction
+
+The integrated implementation is published as
+`2a69a989046489c212619dd337ee74a083f101de`, tree
+`e6d2e1d84e0ce7eae374fc635f79179026653545`. Its actual ordered prospective
+merge is `2a11f30b6c2e0bc28edfa75e003381de18db7b88` on main `dd6e1c3`.
+The [new hosted readback](../../evidence/pon-security-sprint-20261031/integration/2a69-hosted-readback/README.md)
+retains completed ARM exact-head and ARM/x64 prospective-merge native observations.
+All three final kernel executions pass all 19 controls, with exactly the named manual
+measurement ignored, and both full before/after source receipts agree. This
+closes the earlier missing final-kernel native observation for those actual source/architecture pairs;
+it does not convert local SIGKILL attempts into successes or establish service.
+
+All three jobs then execute 22 authenticated-owner tests successfully and fail the
+workflow's obsolete grep for 20 passes. The correction requires each of the
+current 22 names once, an exact unique summary, and the original separately
+selected regressions. Static module review additionally identifies 60 tests
+under the next native-authenticated selector, including its existing
+`--include-ignored`, rather than the obsolete 56. All 60 names are now required.
+That latter suite was not reached by these jobs, so its inventory is not a
+claimed native execution. Twenty readback controls use the actual 22-test log
+and explicitly synthetic 60-test reader fixtures; 97 CI contract and 34 negative
+source-integrity controls pass. No Rust source, locks, original limits or
+selectors change in the roster correction. The old failed jobs remain failed;
+subsequent strict Clippy and whole-service qualifications remain separate gates.
+
+The separate [hosted W1 receiver record](../../evidence/pon-security-sprint-20261031/integration/2a69-hosted-readback/w1-receiver-124412661337/README.md)
+now verifies the published `2a69` source as well: 21 native host tests, strict
+release/locked Clippy, the real historical Composite proof and 16 original
+mutations, eight receiver cases and 24 paired public-claim observations pass.
+Both source guards and all 17 input hashes agree with the actual commit. Fresh
+prepared-state inconsistent-claim rejection is 22.74–22.91 ms, or 4.127–4.189 ms
+with only the fixed state reused, in these single warmed observations. Full SDK
+verification still rejects matching-claim corrupt proofs at 1.21–1.23 seconds.
+No new proof was generated, no native W1 node-admission path was replaced, and
+no worst-case service, global work-cost or PQ128 boundary is promoted.

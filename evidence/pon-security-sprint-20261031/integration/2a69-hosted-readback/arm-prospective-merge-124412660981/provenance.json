@@ -1,0 +1,69 @@
+{
+  "repo": "TrillionniumFoundation/Trillionnium-Chain",
+  "run_id": 41159178300,
+  "job_id": 124412660981,
+  "head_sha": "2a69a989046489c212619dd337ee74a083f101de",
+  "merge_sha": "2a11f30b6c2e0bc28edfa75e003381de18db7b88",
+  "tree": "e6d2e1d84e0ce7eae374fc635f79179026653545",
+  "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41159178300/job/124412660981",
+  "observed_at": "2026-10-31T02:30:05.629Z",
+  "artifact_meta": {
+    "id": 13025754370,
+    "name": "recent-exact-ubuntu-24.04-arm-prospective-merge-2a69a989046489c212619dd337ee74a083f101de-1",
+    "size_in_bytes": 445957,
+    "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13025754370",
+    "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13025754370/zip",
+    "expired": false,
+    "created_at": "2026-10-31T02:23:46Z",
+    "expires_at": "2026-11-30T02:23:45Z",
+    "updated_at": "2026-10-31T02:23:46Z",
+    "digest": "sha256:7c3f69607adfc90074e7dbe836056f4fe8d7a34795c889af5368cfebf9674a27",
+    "workflow_run": {
+      "id": 41159178300,
+      "repository_id": 1323087357,
+      "head_repository_id": 1323087357,
+      "head_branch": "fix/chain-native-convergence-20261029",
+      "head_sha": "2a69a989046489c212619dd337ee74a083f101de"
+    }
+  },
+  "schema": "pon-recent-ci-provenance-v1",
+  "artifact_local": "artifact.zip",
+  "artifact_bytes": 445957,
+  "artifact_sha256": "7c3f69607adfc90074e7dbe836056f4fe8d7a34795c889af5368cfebf9674a27",
+  "decoded_job_log": {
+    "stored_name": "github-job.log.gz",
+    "raw_bytes": 273729,
+    "raw_sha256": "a61780b5e4089411279622891206f8cdef1ac378578943595e7a6050b0525fcf",
+    "gzip_bytes": 46917,
+    "gzip_sha256": "a59f81150e7c25b454177a8d927d6b0e951a529981605c1b9a5426fb4d61356f"
+  },
+  "selected_archive_members": {
+    "source.json": {
+      "stored_name": "source-before.json",
+      "bytes": 511,
+      "sha256": "e013ab76235c3b3a982b59e93f74676fae651edeb0a5e88f3730a17b8429c1a4"
+    },
+    "source-after.json": {
+      "stored_name": "source-after.json",
+      "bytes": 511,
+      "sha256": "e013ab76235c3b3a982b59e93f74676fae651edeb0a5e88f3730a17b8429c1a4"
+    },
+    "host-kernel-current-reads.log": {
+      "stored_name": "host-kernel-current-reads.log.gz",
+      "raw_bytes": 11899,
+      "raw_sha256": "4e36d75652a805d3547f76b93a6205f7ffb1a52a0e3d507419afb710fcf4609d",
+      "gzip_bytes": 2571,
+      "gzip_sha256": "b53bc7e9828e64ba3807fa4efb632701e21e473fbe17b74388b0ccf89e3006fc"
+    },
+    "native-snapshots.log": {
+      "stored_name": "native-snapshots.log.gz",
+      "raw_bytes": 12202,
+      "raw_sha256": "39dc7378e5a729a59653b50d22cf1c919743b682d87bbe43f3ce7d1dad9ee405",
+      "gzip_bytes": 2954,
+      "gzip_sha256": "9f0ba5ea3f072d4fa0215aadfaf290c95960ef0f8b9d47d987e270101e7b2566"
+    }
+  },
+  "source_jsons_identical": true,
+  "remote_mutations_performed": false,
+  "local_compilation_performed": false
+}
