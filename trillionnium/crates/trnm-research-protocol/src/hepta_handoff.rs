@@ -10,9 +10,8 @@
 
 mod pq;
 pub use pq::{
-    PqHeptaAuthorityPinV2, PqHeptaAuthoritySetV2, PqHeptaHandoffError,
-    SignedHeptaAdmissionV2, HEPTA_PQ_HANDOFF_VERSION, MAX_HEPTA_PQ_AUTHORITY_PINS,
-    MAX_HEPTA_PQ_HANDOFF_BYTES,
+    PqHeptaAuthorityPinV2, PqHeptaAuthoritySetV2, PqHeptaHandoffError, SignedHeptaAdmissionV2,
+    HEPTA_PQ_HANDOFF_VERSION, MAX_HEPTA_PQ_AUTHORITY_PINS, MAX_HEPTA_PQ_HANDOFF_BYTES,
 };
 
 use crate::canonical::{CanonicalCbor, CanonicalDecodeError, Decoder, Encoder, CANONICAL_ENCODING};
