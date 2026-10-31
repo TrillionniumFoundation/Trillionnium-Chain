@@ -65,3 +65,40 @@ positions even when other positions reuse identical bytes.
 
 No DHT, live networking, erasure repair, custody, independent operator,
 ML-DSA channel, FinalUse, PQ128 qualification or activation is implemented.
+
+
+### Bounded XOR missing-chunk repair (research-only V0)
+
+The opt-in `cell_swarm_xor_repair` module adds a **separate owner-pinned
+parity plan**. A verified complete Cell may be split into stripes of 2–16
+chunks, with one XOR parity shard per stripe. Its typed plan binds the
+original immutable Cell Swarm manifest ID, stripe width, and each
+position-specific parity digest. A consumer must independently pin both
+the original manifest and the parity-plan ID. A parity hint from a peer is
+not automatically trusted, even when its bytes hash correctly.
+
+The local reconstructor verifies every supplied original chunk against
+the immutable manifest, validates every supplied parity shard against
+its pinned plan, and reconstructs **at most one** absent chunk per stripe.
+Recovered bytes must independently satisfy the original chunk digest
+and final whole-Cell digest before `VerifiedCellSwarmBytesV0` is returned.
+Two missing chunks in one stripe, corrupted parity, altered manifest,
+incorrect owner pin or source-byte poisoning fail closed. The last
+stripe supports a shortened final chunk. Width and input arrays remain
+bounded by the existing 64 MiB / 1 MiB / 1,024-chunk limits.
+
+This is elementary XOR redundancy, **not** general Reed–Solomon repair,
+a live P2P service, an independent custody receipt or proof of provider
+diversity. It does not prove long-term availability, permission to
+redistribute any model, active ML-DSA authority or Hepta FinalUse. It
+does not change consensus, work, rewards, existing DA records or production
+activation. Repair plan IDs are experimental V0 identities and require
+new independent pins after any future encoding change.
+
+Run the candidate unit tests on an exact committed Rust toolchain source:
+
+```sh
+cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-data-availability cell_swarm_xor_repair -- --nocapture
+```
+
+Full original required jobs and independent tests remain separate gates.
