@@ -1048,6 +1048,11 @@ pub(super) fn apply(
 mod tests;
 
 #[cfg(test)]
+#[allow(dead_code)]
+#[path = "../../../../trnm-protocol/tests/support/native_pq_task_fixture_v5.rs"]
+mod fixture_v5;
+
+#[cfg(test)]
 mod tasks_v4_tests;
 
 #[cfg(test)]
