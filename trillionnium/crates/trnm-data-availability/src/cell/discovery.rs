@@ -492,6 +492,24 @@ pub mod pq_reply_v2 {
         }
     }
 
+    // The initial verifier intentionally samples wall time once to cheaply
+    // preflight every PCP2 signature before ML-DSA work. A record can expire
+    // during the bounded cryptographic batch, however. Network callers must
+    // refuse a now-expired routing hint before returning it. Use full wall
+    // Duration rather than truncated UNIX seconds at the return boundary.
+    fn require_current_pq_provider_leases_v2(
+        providers: &[VerifiedPqDiscoveryProviderV2],
+        now_wall: Duration,
+    ) -> CellResultV1<()> {
+        require(
+            !providers.is_empty()
+                && providers.iter().all(|provider| {
+                    Duration::from_secs(provider.expires_unix_seconds()) > now_wall
+                }),
+            "PQ post-verify provider lease expired",
+        )
+    }
+
     /// Whole-reply fail-closed, with *all* inexpensive checks performed before
     /// the first ML-DSA verification. Eight PCP2 records fit the original 32KiB
     /// response ceiling (28641 bytes including the count). Not wired into
@@ -669,6 +687,10 @@ pub mod pq_reply_v2 {
             addresses,
             Some(overall),
         )?;
+        // The initial seconds-resolution wall sample was taken before ML-DSA.
+        // Refuse the entire authenticated set if even one lease expired while
+        // verifying; no stale provider is returned as a fresh routing hint.
+        require_current_pq_provider_leases_v2(&providers, wall_now()?)?;
         // A successful PCP2 reply verified exactly one real ML-DSA signature
         // per returned record. Do not return a misleading zero cost count.
         // Failed calls still return Err and need separate failure telemetry.
@@ -977,6 +999,49 @@ pub mod pq_reply_v2 {
             assert!(evaluate(&[]).is_err());
             assert_eq!(1 + 8 * PQ_CELL_PROVIDER_RECORD_V2_BYTES, 28641);
             assert!(8 * PQ_CELL_PROVIDER_RECORD_V2_BYTES < MAX_DISCOVERY_RESPONSE_BYTES as usize);
+        }
+
+        #[test]
+        fn post_authentication_lease_expiry_rejects_entire_pcp2_query_result() {
+            let (wire, pk, id) = signed(42);
+            let pin = PqPinnedProviderV2 {
+                signer_key_id: id,
+                trusted_ml_dsa65_public_key: &pk,
+                external_sequence_floor: 6,
+            };
+            // The signature really verified at the original wall sample 150.
+            // If verification finishes at 200, the response has become stale;
+            // the original seconds-only entry check is insufficient.
+            let verified =
+                verify_pq_provider_reply_v2(&reply(&[&wire]), request(), &[pin], 150, &addresses())
+                    .unwrap();
+            assert_eq!(verified[0].expires_unix_seconds(), 200);
+            assert!(require_current_pq_provider_leases_v2(
+                &verified,
+                Duration::from_millis(199_999),
+            )
+            .is_ok());
+            for observed in [Duration::from_secs(200), Duration::from_millis(200_001)] {
+                assert!(matches!(
+                    require_current_pq_provider_leases_v2(&verified, observed),
+                    Err(CellErrorV1::Invalid(
+                        "PQ post-verify provider lease expired"
+                    ))
+                ));
+            }
+            let mut later = verified[0].clone();
+            later.expires_unix_seconds = 300;
+            // One surviving provider cannot rescue a stale member of the
+            // authenticated whole batch or silently weaken the roster.
+            assert!(matches!(
+                require_current_pq_provider_leases_v2(
+                    &[verified[0].clone(), later],
+                    Duration::from_secs(200),
+                ),
+                Err(CellErrorV1::Invalid(
+                    "PQ post-verify provider lease expired"
+                ))
+            ));
         }
 
         #[test]
