@@ -8,6 +8,27 @@ MODULES={f'M{i:02d}' for i in range(18)}
 FORBIDDEN_NAME=re.compile(r'poco|tendermint|cometbft|hotstuff|consensus-(?:core|types|crypto|safety|signer|sim)|order-finality|core-restart',re.I)
 FORBIDDEN_SYMBOL=re.compile(r'PoCO|poco|QuorumCertificate|TimeoutVote|VotingPower|CanonicalSignIntent|ValidatorSetV[0-9]|locked_qc|high_qc|three_chain_finality')
 CLAIMS=('production_candidate','production_consensus_activation','public_testnet_ready','release_ready','runtime_implemented','work_profile_qualified')
+# This is the *current main* research-only claim, not a security certificate.
+# A new field, silent activation alias, or changed scope requires deliberate
+# versioned review rather than passing with all known booleans still false.
+FROZEN_MAINLINE_CONSENSUS_RESEARCH = {
+    "schema": "trnm-consensus-mainline-truth-v2",
+    "development_target": "pon-nakamoto-v1",
+    "stage": "invariant-driven-native-application-candidate",
+    "runtime_implemented": False,
+    "work_profile_qualified": False,
+    "active_consensus_implementation": None,
+    "historical_consensus_sources_present": False,
+    "source_inventory": "config/portability-inventory-v1.json",
+    "production_candidate": False,
+    "production_consensus_activation": False,
+    "public_testnet_ready": False,
+    "release_ready": False,
+    "experimental_contracts": "config/pon/module-contracts-v1.json",
+    "module_maturity": "config/pon/module-maturity-v1.json",
+    "invariant_contract": "config/pon/invariants-v2.json",
+    "native_application_scope": "twelve-commands-ordered-speculation-not-complete-node",
+}
 class Invalid(ValueError):pass
 def require(ok,msg):
     if not ok:raise Invalid(msg)
@@ -24,6 +45,20 @@ def no_promotion(value):
             no_promotion(item)
     elif isinstance(value,list):
         for item in value:no_promotion(item)
+def check_mainline_consensus_research_claim(profile):
+    """Refuse unknown, missing, type-confused or promoted consensus metadata.
+
+    This asserts a frozen nonproduction declaration, not any cryptographic
+    property of the real native node or its research protocol.
+    """
+    expected = FROZEN_MAINLINE_CONSENSUS_RESEARCH
+    require(isinstance(profile, dict) and set(profile) == set(expected),
+            'unreviewed consensus declaration fields')
+    for field, value in expected.items():
+        observed = profile[field]
+        require(type(observed) is type(value) and observed == value,
+                'unreviewed consensus declaration '+field)
+
 def contained(root,relative):
     path=pathlib.Path(relative)
     require(not path.is_absolute() and '..' not in path.parts,'noncanonical inventory path')
@@ -79,6 +114,7 @@ def check(root=ROOT):
     locks=tomllib.loads((root/'trillionnium/Cargo.lock').read_text())
     for package in locks['package']:require(not FORBIDDEN_NAME.search(package['name']),'retired lock package')
     truth=load(root/'config/consensus-mainline.json')
+    check_mainline_consensus_research_claim(truth)
     require(set(CLAIMS) <= set(truth), 'missing explicit runtime/readiness claim')
     no_promotion(truth)
     require(truth['active_consensus_implementation'] is None and truth['historical_consensus_sources_present'] is False,'active runtime claim')
