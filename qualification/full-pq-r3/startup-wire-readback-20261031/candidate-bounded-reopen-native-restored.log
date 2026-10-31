@@ -1,0 +1,109 @@
+   Compiling version_check v0.9.5
+   Compiling typenum v1.20.1
+   Compiling unicode-ident v1.0.24
+   Compiling cfg-if v1.0.4
+   Compiling proc-macro2 v1.0.106
+   Compiling quote v1.0.45
+   Compiling syn v2.0.117
+   Compiling generic-array v0.14.7
+   Compiling shlex v1.3.0
+   Compiling find-msvc-tools v0.1.9
+   Compiling cc v1.2.59
+   Compiling pkg-config v0.3.32
+   Compiling vcpkg v0.2.15
+   Compiling zeroize v1.8.2
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling cmov v0.5.4
+   Compiling ctutils v0.4.6
+   Compiling digest v0.10.7
+   Compiling cpufeatures v0.2.17
+   Compiling semver v1.0.27
+   Compiling rustc_version v0.4.1
+   Compiling hybrid-array v0.4.15
+   Compiling ahash v0.8.12
+   Compiling hashbrown v0.16.1
+   Compiling winnow v1.0.4
+   Compiling equivalent v1.0.2
+   Compiling bitflags v2.11.0
+   Compiling once_cell v1.21.4
+   Compiling indexmap v2.13.1
+   Compiling toml_parser v1.1.3+spec-1.1.0
+   Compiling libc v0.2.184
+   Compiling zerocopy v0.8.48
+   Compiling curve25519-dalek v4.1.3
+   Compiling sha2 v0.10.9
+   Compiling toml_datetime v1.1.1+spec-1.1.0
+   Compiling autocfg v1.5.1
+   Compiling num-traits v0.2.19
+   Compiling toml_edit v0.25.13+spec-1.1.0
+   Compiling serde_core v1.0.228
+   Compiling crypto-common v0.2.2
+   Compiling openssl-sys v0.9.117
+   Compiling libsqlite3-sys v0.30.1
+   Compiling curve25519-dalek-derive v0.1.1
+   Compiling signature v2.2.0
+   Compiling subtle v2.6.1
+   Compiling cfg_aliases v0.2.2
+   Compiling borsh v1.8.0
+   Compiling ed25519 v2.2.3
+   Compiling digest v0.11.3
+   Compiling hashbrown v0.14.5
+   Compiling proc-macro-crate v3.5.0
+   Compiling borsh-derive v1.8.0
+   Compiling hashlink v0.9.1
+   Compiling ed25519-dalek v2.2.0
+   Compiling thiserror-impl v1.0.69
+   Compiling serde_derive v1.0.228
+   Compiling keccak v0.2.2
+   Compiling smallvec v1.15.1
+   Compiling sponge-cursor v0.1.0
+   Compiling fallible-streaming-iterator v0.1.9
+   Compiling foreign-types-shared v0.1.1
+   Compiling fallible-iterator v0.3.0
+   Compiling rusqlite v0.32.1
+   Compiling openssl v0.10.81
+   Compiling foreign-types v0.3.2
+   Compiling shake v0.1.0
+   Compiling serde v1.0.228
+   Compiling thiserror v1.0.69
+   Compiling module-lattice v0.2.3
+   Compiling signature v3.0.0
+   Compiling openssl-macros v0.1.1
+   Compiling hex v0.4.3
+   Compiling trnm-protocol v0.1.0 (/workspace/scratch/469b9d76a384/pq-startup-repair/trillionnium/crates/trnm-protocol)
+   Compiling ml-dsa v0.1.1
+   Compiling zmij v1.0.21
+   Compiling anyhow v1.0.103
+   Compiling memchr v2.8.0
+   Compiling itoa v1.0.18
+   Compiling serde_json v1.0.149
+   Compiling trnm-crypto-primitives v0.1.0 (/workspace/scratch/469b9d76a384/pq-startup-repair/trillionnium/crates/trnm-crypto-primitives)
+   Compiling linux-raw-sys v0.12.1
+   Compiling rustix v1.1.4
+   Compiling getrandom v0.4.2
+   Compiling trnm-task-kernel v0.1.0 (/workspace/scratch/469b9d76a384/pq-startup-repair/trillionnium/crates/trnm-task-kernel)
+   Compiling trnm-verification-profiles v0.1.0 (/workspace/scratch/469b9d76a384/pq-startup-repair/trillionnium/crates/trnm-verification-profiles)
+   Compiling fs2 v0.4.3
+   Compiling fastrand v2.3.0
+   Compiling tempfile v3.27.0
+   Compiling trnm-data-availability v0.1.0 (/workspace/scratch/469b9d76a384/pq-startup-repair/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-mvcc-fee v0.1.0 (/workspace/scratch/469b9d76a384/pq-startup-repair/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-service-settlement v0.1.0 (/workspace/scratch/469b9d76a384/pq-startup-repair/trillionnium/crates/trnm-service-settlement)
+   Compiling trnm-transport v0.1.0 (/workspace/scratch/469b9d76a384/pq-startup-repair/trillionnium/crates/trnm-transport)
+   Compiling trnm-mempool v0.1.0 (/workspace/scratch/469b9d76a384/pq-startup-repair/trillionnium/crates/trnm-mempool)
+   Compiling trnm-pon-node v0.1.0 (/workspace/scratch/469b9d76a384/pq-startup-repair/trillionnium/crates/trnm-pon-node)
+    Finished `release` profile [optimized] target(s) in 7m 54s
+     Running unittests src/lib.rs (/tmp/chain-pq-startup-repair-target/release/deps/trnm_pon_node-a8515e07877dcc8f)
+
+running 7 tests
+test operator_pq_startup::tests::pq_continuous_atomic_renewal_reconciles_actual_task_v5_owner_and_strict_lease_edge ... ok
+test operator_pq_startup::tests::pq_continuous_original_search_owner_produces_registered_work_and_cannot_replay_allocation ... ok
+test operator_pq_startup::tests::pq_continuous_real_bootstrap_receiver_and_cold_reopen_keep_state_fees_work_and_local_revocation ... ok
+test operator_pq_startup::tests::pq_continuous_real_controller_nonempty_search_receiver_restart_and_wire_limits ... ok
+test operator_pq_startup::tests::pq_continuous_revoked_actual_task_blocks_cold_restart_without_replaying_bootstrap ... ok
+test operator_pq_startup::tests::pq_startup_invalid_work_spends_original_journal_and_refuses_automatic_retry ... ok
+test operator_pq_startup::tests::pq_startup_strict_genesis_wire_shape_and_signature_boundaries_refuse_mutations ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 803 filtered out; finished in 25.45s
+

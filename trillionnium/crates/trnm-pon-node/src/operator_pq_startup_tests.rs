@@ -305,9 +305,11 @@ fn fixture_kind(next_kind: u8) -> Fixture {
             &[&requester, &source],
         )
     } else {
+        // The inherited M06 transfer amount is little-endian; only the PQ
+        // envelope fields and memo length use big-endian encoding.
         let transfer = [
             key_id(&evaluator).as_slice(),
-            7_u64.to_be_bytes().as_slice(),
+            7_u64.to_le_bytes().as_slice(),
             0_u16.to_be_bytes().as_slice(),
         ]
         .concat();
@@ -391,6 +393,7 @@ fn binding(f: &Fixture, catalog: String) -> recipient::DeclaredBinding {
 
 struct Outside {
     budget_digest: String,
+    delegation_expires_ns: u64,
     view_digest: String,
     search: String,
 }
@@ -414,7 +417,9 @@ fn inputs_with_search(
     search_transactions: &[Vec<u8>],
 ) -> (policy::Inputs, Outside) {
     let now = crate::operator_task_policy::now_ns().unwrap();
-    let until = now + 300_000_000_000;
+    // A new view reuses the original signed budget. It cannot extend that
+    // delegation's authorization window merely because the Node restarted.
+    let until = prior.map_or(now + 300_000_000_000, |p| p.delegation_expires_ns);
     let (materials, catalog_hash) = catalog(f);
     let binding = binding(f, catalog_hash);
     let mut identity = fixtures::identity();
@@ -468,6 +473,10 @@ fn inputs_with_search(
         };
         (Some(raw), Some(authority), digest)
     };
+    let delegation_expires_ns = budget_authority
+        .as_ref()
+        .map(|authority| authority.expected.delegation.expires_ns)
+        .unwrap_or_else(|| prior.unwrap().delegation_expires_ns);
     let intent = crate::operator_mining_policy::SearchIntent {
         miner: hex::encode(key_id(&key(13))),
         timestamp: 1003,
@@ -596,10 +605,15 @@ fn inputs_with_search(
         lease_transition: None,
         known_unclean_restart: None,
     };
+    assert!(input.view_authority.expected.expires_ns <= delegation_expires_ns);
+    for allocation in &input.allocations {
+        assert!(allocation.authority.expected.expires_ns <= delegation_expires_ns);
+    }
     (
         input,
         Outside {
             budget_digest,
+            delegation_expires_ns,
             view_digest,
             search,
         },
@@ -916,7 +930,9 @@ fn pq_startup_invalid_work_spends_original_journal_and_refuses_automatic_retry()
         .unwrap();
     assert_eq!(count, 1);
     let balance: Vec<u8> = db
-        .query_row("SELECT id FROM active", [], |row| row.get(0))
+        .query_row("SELECT tip FROM active WHERE singleton=1", [], |row| {
+            row.get(0)
+        })
         .unwrap();
     assert_eq!(balance, f.settings.genesis());
     let entries = fs::read_dir(f.root.path().join("journal"))
@@ -978,15 +994,20 @@ fn pq_continuous_revoked_actual_task_blocks_cold_restart_without_replaying_boots
     let head = serde_json::from_value(closed["journal_head"].clone()).unwrap();
     drop(consumer);
     let (input, _) = inputs(&f, 2, Some(&outside), head, f.next.id().unwrap(), 3);
-    assert!(Node::open_operator_continuous_checkpoint(
+    let reopened = Node::open_operator_continuous_checkpoint(
         &f.root.path().join("consumer"),
         input,
-        Instant::now() + Duration::from_secs(60)
-    )
-    .is_err());
+        Instant::now() + Duration::from_secs(60),
+    );
+    assert!(reopened.is_err());
+    // The signed owner window is still valid. Rejection must come from the
+    // actual revoked TaskV5 state, not an unrelated fixture authorization error.
+    assert_eq!(reopened.err().unwrap().to_string(), "PQ5_TASK");
     let db = rusqlite::Connection::open(f.root.path().join("consumer/native.sqlite")).unwrap();
     let active: Vec<u8> = db
-        .query_row("SELECT id FROM active", [], |row| row.get(0))
+        .query_row("SELECT tip FROM active WHERE singleton=1", [], |row| {
+            row.get(0)
+        })
         .unwrap();
     assert_eq!(active, f.next.id().unwrap());
     assert_eq!(

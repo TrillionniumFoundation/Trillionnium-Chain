@@ -61,6 +61,8 @@ NATIVE_REQUIRED_PATHS = frozenset((
     "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/pq_identity_tests.rs",
     "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs",
     "trillionnium/crates/trnm-pon-node/src/ancestry_index.rs",
+    "trillionnium/crates/trnm-pon-node/src/authenticated_state_archive.rs",
+    "trillionnium/crates/trnm-pon-node/src/authenticated_state_archive_tests.rs",
     "trillionnium/crates/trnm-pon-node/src/peer_polling.rs",
     "trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs",
     "trillionnium/crates/trnm-pon-node/src/operator_pq_auth.rs",
