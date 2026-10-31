@@ -542,6 +542,11 @@ fn assert_custom_genesis_held_schedule_and_cpu_owner(authenticated: bool) {
     let arithmetic_before = node.authenticated_arithmetic.observation();
     let owner = Mutex::new(node);
     let end = Instant::now() + std::time::Duration::from_secs(10);
+    // Inspect the exact shared scalar-CPU epoch without mutating credit.
+    // Observations are optional diagnostics: a missing/unknown meter remains
+    // unknown, and the original dispatch/unwrap still decides acceptance.
+    let cpu_budget_before = original.observe().ok();
+    let cpu_flow_before = original.observe_actual_flow().ok().flatten();
     let dispatch_start = Instant::now();
     let attempt = crate::ingress::dispatch_shared_with_metered_w1(
         &owner,
@@ -557,6 +562,8 @@ fn assert_custom_genesis_held_schedule_and_cpu_owner(authenticated: bool) {
     // post-dispatch accounting without retrying, increasing CPU credit, or
     // using an unmetered execution path.
     let elapsed_ns = dispatch_start.elapsed().as_nanos();
+    let cpu_budget_after = original.observe().ok();
+    let cpu_flow_after = original.observe_actual_flow().ok().flatten();
     let arithmetic_after = owner.lock().unwrap().authenticated_arithmetic.observation();
     let unchanged_on_refusal = if attempt.is_err() {
         Some(owner.lock().unwrap().read_active().unwrap() == before)
@@ -573,6 +580,10 @@ fn assert_custom_genesis_held_schedule_and_cpu_owner(authenticated: bool) {
             "dispatch_elapsed_ns": elapsed_ns.to_string(),
             "original_dispatch_result": attempt.as_ref().map(|_| "ok").map_err(ToString::to_string),
             "active_state_unchanged_on_refusal": unchanged_on_refusal,
+            "cpu_budget_before": cpu_budget_before,
+            "cpu_budget_after": cpu_budget_after,
+            "actual_cpu_flow_before": cpu_flow_before,
+            "actual_cpu_flow_after": cpu_flow_after,
             "arithmetic_before": &arithmetic_before,
             "arithmetic_after": &arithmetic_after,
             "measurement_scope": "actual original metered dispatch; observation after outcome, no alternative execution, refill or altered acceptance"
