@@ -248,6 +248,15 @@ def inspect(root: Path) -> dict:
                     "kind": "classical_authority", "path": rel,
                     "boundary": CLASSICAL_BOUNDARY_ROLES[label],
                 })
+            else:
+                # An unreviewed rename/removal is NOT evidence that a classical
+                # authority has been replaced by an effective PQ trust root.
+                # Keep the boundary in the report and refuse claim-gate success.
+                blockers.append({
+                    "kind": "unreviewed_classical_authority_boundary_change",
+                    "path": rel,
+                    "boundary": CLASSICAL_BOUNDARY_ROLES[label],
+                })
         elif label == "w1_backend":
             try:
                 profile = load_unique_json(file)
@@ -366,6 +375,7 @@ def main():
     print(json.dumps(report, indent=2, sort_keys=True))
     if args.assert_unqualified and any(item["kind"] in (
         "missing_source", "untrusted_checkout_source_path", "unreadable_source", "unreadable_proof_profile",
+        "unreviewed_classical_authority_boundary_change",
         "unreadable_consensus_profile", "invalid_proof_profile_shape",
         "invalid_proof_qualification_flag_type", "invalid_consensus_profile_shape",
         "invalid_production_flag_type", "unreviewed_pq128_proof_claim",
