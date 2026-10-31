@@ -893,12 +893,14 @@ fn native_inactive_parent_material_keeps_fresh_sql_state_and_cancellation_checks
     let execute = |node: &Node, actual: &State| {
         node.execute_derived(
             actual,
-            parent,
-            &next.transactions,
-            next.header.height,
-            next.header.timestamp,
-            public(7),
-            1,
+            ExecutionRequest {
+                timestamp: Some(next.header.timestamp),
+                transactions: &next.transactions,
+                height: next.header.height,
+                miner: public(7),
+                parent_id: parent,
+                workers: 1,
+            },
         )
     };
     let expected = execute(&node, &actual).unwrap().output.root;
