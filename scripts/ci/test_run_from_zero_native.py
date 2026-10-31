@@ -239,6 +239,42 @@ def simulated_confirmation_report():
 
 
 class BinarySelectionTests(unittest.TestCase):
+    def test_format_copy_retains_out_of_line_module_and_original_bytes(self):
+        # Negative control: the old flat copy cannot resolve #[path].
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / 'source/tests/public_v3_from_zero.rs'
+            support = root / 'source/examples/support/w1_from_zero.rs'
+            source.parent.mkdir(parents=True)
+            support.parent.mkdir(parents=True)
+            source.write_text('#[path = "../examples/support/w1_from_zero.rs"]\n'
+                              'mod w1_from_zero;\n')
+            support.write_text('pub fn trial() {}\n')
+            out = root / 'observations'
+            out.mkdir()
+            flattened = out / 'formatted.rs'
+            flattened.write_bytes(source.read_bytes())
+            self.assertFalse((flattened.parent / '../examples/support/w1_from_zero.rs').is_file())
+            original_source, original_support = source.read_bytes(), support.read_bytes()
+
+            staged = driver.stage_format_copy(source, support, out)
+            self.assertEqual(staged, out / 'format-copy-source/tests/public_v3_from_zero.rs')
+            self.assertEqual(staged.read_bytes(), original_source)
+            self.assertEqual(
+                (staged.parent / '../examples/support/w1_from_zero.rs').resolve().read_bytes(),
+                original_support)
+            self.assertEqual(source.read_bytes(), original_source)
+            self.assertEqual(support.read_bytes(), original_support)
+
+    def test_missing_out_of_line_module_cannot_be_silently_substituted(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / 'test.rs'
+            source.write_text('#[path = "../examples/support/w1_from_zero.rs"]\n'
+                              'mod w1_from_zero;\n')
+            with self.assertRaises(FileNotFoundError):
+                driver.stage_format_copy(source, root / 'missing.rs', root / 'out')
+
     def test_observer_cpu_scope_keeps_historical_and_paid_envelope_distinct(self):
         legacy = dict(schema='public-v3-local-request-resource-observation-v2',
                       cpu_includes_reactor_authentication_or_response_signing=False)
@@ -332,6 +368,9 @@ class ExecutionBoundaryTests(unittest.TestCase):
             test_source = root / driver.SOURCE
             test_source.parent.mkdir(parents=True)
             test_source.write_text('// simulated source; not Rust execution\n')
+            support = root / driver.FORMAT_SUPPORT
+            support.parent.mkdir(parents=True)
+            support.write_text('// simulated Rust out-of-line module\n')
             binary = root / 'fake-binary'; binary.write_bytes(b'not a real executable')
             identity = {'commit': 'a'*40, 'tree': 'b'*40, 'test_sha256': driver.digest(test_source.read_bytes())}
             after = copy.deepcopy(identity)
