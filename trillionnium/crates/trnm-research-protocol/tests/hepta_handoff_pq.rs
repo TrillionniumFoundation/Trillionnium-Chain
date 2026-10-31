@@ -3,9 +3,9 @@ use ed25519_dalek::SigningKey;
 use trnm_crypto_primitives::pq_auth::PqNativeSigningKey;
 use trnm_protocol::pq_frame::ml_dsa_65_key_id_from_spki;
 use trnm_research_protocol::{
-    Digest32, ExternalKey, HeptaArtifactAdmissionV1, PqHeptaAuthorityPinV2,
-    PqHeptaAuthoritySetV2, PqHeptaHandoffError, SignedHeptaAdmissionV1,
-    SignedHeptaAdmissionV2, MAX_HEPTA_PQ_HANDOFF_BYTES,
+    Digest32, ExternalKey, HeptaArtifactAdmissionV1, PqHeptaAuthorityPinV2, PqHeptaAuthoritySetV2,
+    PqHeptaHandoffError, SignedHeptaAdmissionV1, SignedHeptaAdmissionV2,
+    MAX_HEPTA_PQ_HANDOFF_BYTES,
 };
 use zeroize::Zeroizing;
 
@@ -56,9 +56,7 @@ fn signer_and_pin() -> (PqNativeSigningKey, PqHeptaAuthorityPinV2) {
 }
 
 fn signed(signer: &PqNativeSigningKey) -> SignedHeptaAdmissionV2 {
-    SignedHeptaAdmissionV2::sign(
-        "trnm-pq-test".into(), DID.into(), 7, admission(), signer
-    ).unwrap()
+    SignedHeptaAdmissionV2::sign("trnm-pq-test".into(), DID.into(), 7, admission(), signer).unwrap()
 }
 
 #[test]
@@ -71,9 +69,9 @@ fn real_pq_signature_and_bounded_canonical_wire_round_trip() {
     assert_eq!(decoded, original);
     assert_eq!(decoded.encoded_bytes().unwrap(), encoded);
     let owner_pins = PqHeptaAuthoritySetV2::new(vec![pin]).unwrap();
-    decoded.verify_for_context(
-        &owner_pins, "trnm-pq-test", &admission(), NOW,
-    ).unwrap();
+    decoded
+        .verify_for_context(&owner_pins, "trnm-pq-test", &admission(), NOW)
+        .unwrap();
 }
 
 #[test]
@@ -82,9 +80,12 @@ fn no_classical_signature_or_algorithm_negotiation_is_accepted() {
     let original = signed(&signer);
     let owner_pins = PqHeptaAuthoritySetV2::new(vec![pin]).unwrap();
     let classic = SignedHeptaAdmissionV1::sign(
-        "trnm-pq-test".into(), DID.into(), admission(),
+        "trnm-pq-test".into(),
+        DID.into(),
+        admission(),
         &SigningKey::from_bytes(&[0x22; 32]),
-    ).unwrap();
+    )
+    .unwrap();
     assert!(SignedHeptaAdmissionV2::decode_untrusted(&classic.canonical_bytes()).is_err());
     let mut wire = original.encoded_bytes().unwrap();
     wire[4] = 1; // legacy version
@@ -137,7 +138,10 @@ fn pin_lifetime_generation_and_revocation_are_freshly_enforced() {
         Err(PqHeptaHandoffError::Admission(_))
     ));
     let bad_duplicate = PqHeptaAuthoritySetV2::new(vec![pin.clone(), pin.clone()]);
-    assert!(matches!(bad_duplicate, Err(PqHeptaHandoffError::InvalidPin)));
+    assert!(matches!(
+        bad_duplicate,
+        Err(PqHeptaHandoffError::InvalidPin)
+    ));
     let mut wrong_spki_id = pin;
     wrong_spki_id.key_id[0] ^= 1;
     assert!(matches!(
@@ -167,9 +171,9 @@ fn chain_and_fresh_hepta_owner_context_cannot_be_reused() {
         tampered.verify_for_context(&pins, "trnm-pq-test", &tampered.admission, NOW),
         Err(PqHeptaHandoffError::InvalidSignature)
     ));
-    assert!(original.verify_for_context(
-        &pins, "trnm-pq-test", &admission(), NOW + 61,
-    ).is_err());
+    assert!(original
+        .verify_for_context(&pins, "trnm-pq-test", &admission(), NOW + 61,)
+        .is_err());
 }
 
 #[test]
@@ -177,9 +181,10 @@ fn malformed_oversize_noncanonical_and_extra_bytes_fail_before_authorization() {
     let (signer, _pin) = signer_and_pin();
     let original = signed(&signer);
     let wire = original.encoded_bytes().unwrap();
-    assert!(SignedHeptaAdmissionV2::decode_untrusted(
-        &vec![0; MAX_HEPTA_PQ_HANDOFF_BYTES + 1],
-    ).is_err());
+    assert!(
+        SignedHeptaAdmissionV2::decode_untrusted(&vec![0; MAX_HEPTA_PQ_HANDOFF_BYTES + 1],)
+            .is_err()
+    );
     let mut trailing = wire.clone();
     trailing.push(0);
     assert!(SignedHeptaAdmissionV2::decode_untrusted(&trailing).is_err());
@@ -191,8 +196,8 @@ fn malformed_oversize_noncanonical_and_extra_bytes_fail_before_authorization() {
     assert!(SignedHeptaAdmissionV2::decode_untrusted(&impossible_len).is_err());
     assert!(SignedHeptaAdmissionV2::decode_untrusted(&wire[..wire.len() - 1]).is_err());
     let mut malformed_admission = wire;
-    let admission_start = 8 + 1 + original.chain_id.len() + 1 +
-        original.signer_did.len() + 32 + 8 + 2;
+    let admission_start =
+        8 + 1 + original.chain_id.len() + 1 + original.signer_did.len() + 32 + 8 + 2;
     malformed_admission[admission_start] ^= 0x01; // canonical array header
     assert!(SignedHeptaAdmissionV2::decode_untrusted(&malformed_admission).is_err());
 }
