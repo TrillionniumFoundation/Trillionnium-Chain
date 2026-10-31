@@ -22,6 +22,7 @@ sys.path.insert(0, str(HERE.parents[1]))
 
 from contract_wire import H, PARAMS, WORK_PROFILE  # noqa: E402
 import work_oracle as w1  # noqa: E402
+from w1_numpy_valid_solver_v1 import np as numpy_runtime, prove as prove_numpy_valid  # noqa: E402
 
 FAMILIES = ("zero", "diagonal", "rank-one", "dense")
 MAX_TRIALS = 3
@@ -38,6 +39,7 @@ AUDITED_INPUTS = (
     "formal/pon-nakamoto-v1/work_oracle.py",
     "formal/pon-nakamoto-v1/contract_wire.py",
     "formal/pon-nakamoto-v1/experiments/w1_valid_invalid_cost_v1.py",
+    "formal/pon-nakamoto-v1/experiments/w1_numpy_valid_solver_v1.py",
 )
 
 
@@ -139,6 +141,17 @@ def one_case(name: str, trial: int, target: bytes) -> dict:
     _ticket, actual_product = w1.verify(challenge, task, b"\xff" * 32, proof)
     valid_verify_ns = time.process_time_ns() - start
 
+    # A second genuinely legal CPU candidate: all 512 ordered transcript
+    # tiles and the real C=A*B, with overflow-safe vectorized field products.
+    # No NumPy installed means NO measurement, never a synthetic zero cost.
+    numpy_legal_cpu_ns = None
+    if numpy_runtime is not None:
+        start = time.process_time_ns()
+        numpy_proof = prove_numpy_valid(challenge, a, b)
+        numpy_legal_cpu_ns = time.process_time_ns() - start
+        if numpy_proof != proof:
+            raise AssertionError("vectorized legal W1 proof differs from reference")
+
     # Independently check selected output coordinates instead of accepting only
     # the prover's claimed C. This does not establish a cost lower bound.
     for i, j in ((0, 0), (0, w1.N - 1), (w1.N // 2, w1.N // 2),
@@ -174,6 +187,9 @@ def one_case(name: str, trial: int, target: bytes) -> dict:
         "ticket_qualified_invalid_digest_guesses": guesses,
         "valid_scalar_prover_cpu_ns": honest_ns,
         "valid_full_verify_cpu_ns": valid_verify_ns,
+        "numpy_legal_prover_cpu_ns": numpy_legal_cpu_ns,
+        "numpy_legal_proof_byte_identical": (
+            True if numpy_legal_cpu_ns is not None else None),
         "invalid_full_verify_cpu_ns": invalid_verify_ns,
         "ticket_only_forgery_cpu_ns": cheap_ns,
         "invalid_to_forgery_ratio_observed": invalid_verify_ns / max(1, cheap_ns),
@@ -210,6 +226,8 @@ def run(trials: int = 1) -> dict:
         "environment": {"python": platform.python_version(),
                         "platform": platform.platform(),
                         "clock": "process_time_ns",
+                        "numpy_version": (numpy_runtime.__version__
+                                          if numpy_runtime is not None else None),
                         "gpu_or_asic_measured": False,
                         "quantum_oracle_measured": False},
         "observations": observations,
