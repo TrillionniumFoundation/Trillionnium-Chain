@@ -916,7 +916,7 @@ fn pq_startup_invalid_work_spends_original_journal_and_refuses_automatic_retry()
         .unwrap();
     assert_eq!(count, 1);
     let balance: Vec<u8> = db
-        .query_row("SELECT id FROM active", [], |row| row.get(0))
+        .query_row("SELECT tip FROM active", [], |row| row.get(0))
         .unwrap();
     assert_eq!(balance, f.settings.genesis());
     let entries = fs::read_dir(f.root.path().join("journal"))
@@ -986,7 +986,7 @@ fn pq_continuous_revoked_actual_task_blocks_cold_restart_without_replaying_boots
     .is_err());
     let db = rusqlite::Connection::open(f.root.path().join("consumer/native.sqlite")).unwrap();
     let active: Vec<u8> = db
-        .query_row("SELECT id FROM active", [], |row| row.get(0))
+        .query_row("SELECT tip FROM active", [], |row| row.get(0))
         .unwrap();
     assert_eq!(active, f.next.id().unwrap());
     assert_eq!(
