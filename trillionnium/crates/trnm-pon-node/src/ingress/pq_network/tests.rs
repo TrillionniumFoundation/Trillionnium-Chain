@@ -37,6 +37,37 @@ fn raw_request(address: SocketAddr, wire: &[u8]) -> Result<Vec<u8>> {
 }
 
 #[test]
+fn signed_pq_client_refuses_nonloopback_destination_before_network_io() {
+    // Real ML-DSA request and independently pinned keys; rejection is an
+    // outbound transport boundary, not a synthetic bad-signature refusal.
+    let settings = settings();
+    let policy = policy(&settings, 1);
+    let client = PqClient::new(policy, signer(72)).unwrap();
+    let expires = super::super::now().unwrap() + 30;
+    let prepared = client.prepare(1, expires, Request::Head).unwrap();
+    for raw in [
+        "0.0.0.0:1",
+        "192.0.2.42:443",
+        "[::]:1",
+        "[2001:db8::42]:443",
+        "[::ffff:192.0.2.42]:443",
+    ] {
+        let address: SocketAddr = raw.parse().unwrap();
+        assert!(!address.ip().is_loopback(), "{raw}");
+        assert_eq!(
+            client
+                .send(address, &prepared, Duration::from_secs(1))
+                .unwrap_err()
+                .to_string(),
+            "PQ_NETWORK_LOOPBACK_ONLY",
+            "{raw}"
+        );
+    }
+    // Existing real_tcp_node_submit... exercises the retained successful
+    // loopback request/response/ledger path with the same send method.
+}
+
+#[test]
 fn real_tcp_node_submit_lost_ack_signature_randomness_and_cold_reopen() {
     let directory = tempfile::tempdir().unwrap();
     let settings = settings();
