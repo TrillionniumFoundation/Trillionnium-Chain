@@ -2,7 +2,7 @@
 
 **HOLD / NOT A COMPLETE AUTHORITY MAP / NOT A PRODUCTION-SECURITY CLAIM.**
 
-A first-pass research scan should not treat every \`Ed25519\` import as a deployed exploit, or every ML-DSA verification as an authorized effect. The [source scanner](../../scripts/ci/pq_authority_surface_scan.py) inventories Rust sources under \`trillionnium/crates/*/src\` with explicit line numbers, file SHA-256 digests, known owner hints and **unreviewed** indicators.
+A first-pass research scan should not treat every \`Ed25519\` import as a deployed exploit, or every ML-DSA verification as an authorized effect. The [source scanner](../../scripts/ci/pq_authority_surface_scan.py) inventories Rust sources under \`trillionnium/crates\` with explicit line numbers, file SHA-256 digests, known owner hints and **unreviewed** indicators.
 
 \`\`\`sh
 python3 -m unittest discover -s scripts/ci -p 'test_pq_authority_surface_scan.py' -v
@@ -30,8 +30,14 @@ These are verified source-path locations in the candidate branch lineage, not te
 ## What the scanner guarantees and does not
 
 - It fails on missing curated critical source files, symlink Rust source/directory, oversized source, invalid UTF-8 or unstable read length. New Rust signature-indicator files appear under \`unreviewed-source-hit\`, not as approved PQ routes. Fixed test fixtures include missing-path, unknown Ed25519/PQ code, symlink and size/encoding negatives.
-- It reports source hash, line numbers and both classic/PQ indicators, but cannot infer which functions grant an effect; can miss aliases, native C/Python, externally linked libraries, macro expansion, indirect verification, dynamically loaded plugins and wire-level downgrade. It includes test-only and dead code.
+- It reports source hash, line numbers and both classic/PQ indicators (including ECDSA, RSA, Schnorr and alternative PQ library hints), but cannot infer which functions grant an effect; can miss aliases, native C/Python, externally linked libraries, macro expansion, indirect verification, dynamically loaded plugins and wire-level downgrade. It includes test-only and dead code.
 - At each actual authorization sink the reviewer still must collect: selected profile; caller; message/domain; authoritative key provenance; generation/revocation; replay and state transition; crash/reorg/total-DB rollback behavior; legacy/fallback decisions; exact native tests; independently retained evidence.
 - **PQ-only release condition:** every effect-authorizing path is either PQ-authenticated with independent current trust root and test-proven transition semantics, or rejects the PQ profile before creating an effect. A classic+PQ \`OR\` policy cannot satisfy this goal. Classic+PQ \`AND\` is defensible only with a verified migration policy and both signatures bound to the same exact statement.
 
 This is a first audit artifact to make the missing inventory visible, not a claim that all entrypoints were found or all hold gates are closed. The original whole-chain [six-gate claim guard](WHOLE_CHAIN_PQ_CLAIM_GUARD_20261031.md) remains **HOLD** regardless of this scanner's result.
+
+## 2026-10-31 P0 extension — unqualified non-src Rust source coverage
+
+The initial source inventory excluded crate Rust files outside \`src\`: build scripts, examples, benches, integration tests, and nonstandard folders. These may be executable or may generate authority-related code. The scanner now reads all \`*.rs\` files under \`trillionnium/crates\` and retains the same 1 MiB-per-file and 20,000-file limits. It also recognizes additional classical and PQ indicator spellings. Adversarial fixtures exercise five distinct non-src source locations, a non-src symlink and invalid UTF-8, with explicit refusal.
+
+A successful scan still **does not** prove any input reaches a production effect sink, establish PQ-128, inspect linked C/Python/Go code or expanded macros, or qualify a trust root. Test-only hits and dead code remain unreviewed indicators. The six-domain security claim is still **HOLD / UNQUALIFIED** and production activation remains false.

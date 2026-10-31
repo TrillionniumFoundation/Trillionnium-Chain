@@ -30,8 +30,8 @@ CRITICAL = {
     'trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/application_v6.rs': 'pq-application-v6-research',
 }
 # Recognize crypto entry primitives, not generic 'signature' comments.
-CLASSIC = re.compile(r'\bed25519\b|ed25519_dalek|verify_strict\s*\(|verify_hex_strict\s*\(|SIGNATURE_SCHEME_ED25519', re.I)
-PQ = re.compile(r'\bml_dsa\b|ML_DSA_65|PqNativeVerifier|PqNativeSigningKey|verify_tpq1\s*\(', re.I)
+CLASSIC = re.compile(r'\bed25519\b|ed25519_dalek|verify_strict\s*\(|verify_hex_strict\s*\(|SIGNATURE_SCHEME_ED25519|\b(?:ecdsa|secp256k1|schnorr|bls12_381)\b|\b(?:p256|k256)::ecdsa\b|\b(?:rsa::pss|ring::signature|openssl::sign::Verifier)\b', re.I)
+PQ = re.compile(r'\bml_dsa\b|ML_DSA_65|PqNativeVerifier|PqNativeSigningKey|verify_tpq1\s*\(|\bpqcrypto_mldsa\b|\bdilithium\b|\bsphincs(?:plus)?\b|\bslh_dsa\b', re.I)
 MAX_SOURCE_BYTES = 1024 * 1024
 MAX_SOURCE_FILES = 20000
 
@@ -45,7 +45,7 @@ def sources(root: Path):
     if not base.is_dir() or base.is_symlink():
         raise AuditError('missing/symlink crate root')
     count = 0
-    # os.walk does not follow symlink dirs; refuse them rather than missing scope.
+    # Include all crate Rust, including build.rs, examples, tests and unusual\n    # directories. A selectable binary/feature may live outside src/.\n    # os.walk does not follow symlink dirs; refuse them rather than missing scope.
     for current, dirs, files in os.walk(base, followlinks=False):
         for dirname in dirs:
             if (Path(current) / dirname).is_symlink():
@@ -55,8 +55,6 @@ def sources(root: Path):
             if not filename.endswith('.rs'):
                 continue
             path = Path(current) / filename
-            if 'src' not in path.relative_to(base).parts:
-                continue
             if path.is_symlink():
                 raise AuditError('symlink source in scan scope')
             try:
@@ -110,7 +108,7 @@ def inspect(root: Path) -> dict:
             'source_files_read': files_seen,
             'reviewed_roles_mapped': len(CRITICAL),
             'unreviewed_indicator_files': sum(e['role_review_hint'] == 'unreviewed-source-hit' for e in entries),
-            'scope': 'Rust crate src files only; includes tests/unused code; does not trace runtime effects',
+            'scope': 'All Rust files beneath trillionnium/crates, including build scripts, examples, tests and nonstandard directories; no reachability or runtime-effect proof',
             'findings': entries}
 
 

@@ -36,6 +36,36 @@ class TestPqAuthoritySurfaceScan(unittest.TestCase):
         self.assertEqual(unknown['pq_indicator_lines'], [3])
         self.assertEqual(len(unknown['sha256']), 64)
 
+    def test_all_crate_rust_surfaces_and_classical_pq_aliases_visible(self):
+        fixtures = {
+            'trillionnium/crates/new-owner/build.rs': 'use ring::signature::UnparsedPublicKey;\n',
+            'trillionnium/crates/new-owner/examples/wallet.rs': 'use p256::ecdsa::VerifyingKey;\n',
+            'trillionnium/crates/new-owner/tests/delegation.rs': 'use ed25519_dalek::VerifyingKey;\n',
+            'trillionnium/crates/new-owner/benches/verify.rs': 'use pqcrypto_mldsa::mldsa65;\n',
+            'trillionnium/crates/new-owner/generated/custom.rs': 'use slh_dsa::Verifier;\n',
+        }
+        for path, code in fixtures.items():
+            self.put(path, code)
+        report = inspect(self.root)
+        unknown = {entry['path']: entry for entry in report['findings']
+                   if entry['role_review_hint'] == 'unreviewed-source-hit'}
+        self.assertEqual(set(unknown), set(fixtures))
+        self.assertEqual(report['unreviewed_indicator_files'], len(fixtures))
+        self.assertTrue(all(len(entry['sha256']) == 64 for entry in unknown.values()))
+        self.assertEqual(unknown['trillionnium/crates/new-owner/examples/wallet.rs']['classical_indicator_lines'], [1])
+        self.assertEqual(unknown['trillionnium/crates/new-owner/benches/verify.rs']['pq_indicator_lines'], [1])
+
+    def test_non_src_symlink_and_invalid_source_fail_closed(self):
+        outside = self.put('trillionnium/crates/new-owner/examples/probe.rs', 'use ed25519_dalek::Verifier;\n')
+        outside.unlink()
+        outside.symlink_to(self.root / 'not-a-real-file')
+        with self.assertRaisesRegex(AuditError, 'symlink source'):
+            inspect(self.root)
+        outside.unlink()
+        outside.write_bytes(b'\xff')
+        with self.assertRaisesRegex(AuditError, 'nonutf8 Rust source'):
+            inspect(self.root)
+
     def test_crucial_file_removed_is_not_silent_success(self):
         (self.root / next(iter(CRITICAL))).unlink()
         with self.assertRaisesRegex(AuditError, 'critical source missing'):
