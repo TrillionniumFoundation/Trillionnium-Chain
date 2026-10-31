@@ -37,7 +37,14 @@ def unique(pairs):
     for k,v in pairs:
         require(k not in d,'duplicate key '+k);d[k]=v
     return d
-def load(path):return json.loads(path.read_text(),object_pairs_hook=unique)
+def reject_nonfinite_json_constant(token):
+    # NaN/Infinity are accepted by Python's json decoder but not RFC 8259.
+    # A different policy/authority reader must not see a different document.
+    raise Invalid('nonstandard JSON numeric constant '+token)
+def load(path):
+    require(not path.is_symlink(),'aliased JSON policy source '+str(path))
+    return json.loads(path.read_text(),object_pairs_hook=unique,
+                      parse_constant=reject_nonfinite_json_constant)
 def no_promotion(value):
     if isinstance(value,dict):
         for key,item in value.items():
@@ -62,8 +69,14 @@ def check_mainline_consensus_research_claim(profile):
 def contained(root,relative):
     path=pathlib.Path(relative)
     require(not path.is_absolute() and '..' not in path.parts,'noncanonical inventory path')
+    root=root.resolve()
+    # A byte-identical in-tree symlink is still a different source/provenance.
+    # Reject it before resolve(), including symlinked ancestor directories.
+    for depth in range(1,len(path.parts)+1):
+        require(not root.joinpath(*path.parts[:depth]).is_symlink(),
+                'aliased inventory path '+relative)
     p=(root/path).resolve()
-    require(p.is_relative_to(root.resolve()) and p.is_file(),'missing/escaping file '+relative)
+    require(p.is_relative_to(root) and p.is_file(),'missing/escaping file '+relative)
     return p
 def graph_acyclic(graph):
     visiting=set();done=set()
@@ -78,7 +91,7 @@ def graph_acyclic(graph):
 def all_files(root):
     return sorted(p for p in root.rglob('*') if p.is_file() and not any(s in {'.git','target','__pycache__','.pytest_cache','node_modules'} for s in p.relative_to(root).parts))
 def check(root=ROOT):
-    inventory=load(root/'config/portability-inventory-v1.json')
+    inventory=load(contained(root,'config/portability-inventory-v1.json'))
     rows=inventory['packages'];names=[r['package'] for r in rows]
     require(len(names)==len(set(names)) and bool(names),'duplicate/empty package inventory')
     require(inventory['runtime_implemented'] is False and inventory['old_protocol_compatibility'] is False,'inventory false claim')
@@ -107,18 +120,19 @@ def check(root=ROOT):
                     if category!='dev-dependencies':normal.add(actual)
         graph[name]=deps;normal_graph[name]=normal
         for p in manifest.parent.rglob('*.rs'):
+            require(not p.is_symlink(),'aliased Rust source '+str(p.relative_to(root)))
             source_count+=1
             require(not FORBIDDEN_SYMBOL.search(p.read_text()),'retired code symbol in '+str(p.relative_to(root)))
     # Normal dependency cycles are forbidden; dev edges are still inventoried and checked.
     graph_acyclic(normal_graph)
     locks=tomllib.loads((root/'trillionnium/Cargo.lock').read_text())
     for package in locks['package']:require(not FORBIDDEN_NAME.search(package['name']),'retired lock package')
-    truth=load(root/'config/consensus-mainline.json')
+    truth=load(contained(root,'config/consensus-mainline.json'))
     check_mainline_consensus_research_claim(truth)
     require(set(CLAIMS) <= set(truth), 'missing explicit runtime/readiness claim')
     no_promotion(truth)
     require(truth['active_consensus_implementation'] is None and truth['historical_consensus_sources_present'] is False,'active runtime claim')
-    pon=load(root/'config/pon-nakamoto-v1.json');no_promotion(pon)
+    pon=load(contained(root,'config/pon-nakamoto-v1.json'));no_promotion(pon)
     require(pon['selected_development_target']=='pon-nakamoto-v1','selected target drift')
     require(pon['fork_choice']=='maximum-fully-validated-cumulative-required-work','wrong fork choice')
     for key in ['validator_voting','quality_weighted_chainwork','automatic_bft_fallback','automatic_hash_only_fallback']:require(pon[key] is False,'forbidden authority/fallback')
