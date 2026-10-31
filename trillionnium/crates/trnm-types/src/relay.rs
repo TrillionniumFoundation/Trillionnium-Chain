@@ -348,7 +348,6 @@ impl RelayAuthVerifier {
     fn verify_envelope_fields(
         &self,
         env: &RelayAuthEnvelope,
-        verify_signature: impl Fn(&RelayAuthEnvelope) -> bool,
     ) -> Result<(), RelayAuthError> {
         let is_current = env.version == RelayAuthEnvelope::SPEC_VERSION;
         let is_legacy = env.version == RelayAuthEnvelope::LEGACY_SPEC_VERSION;
@@ -447,10 +446,6 @@ impl RelayAuthVerifier {
             return Err(RelayAuthError::PayloadHashMismatch);
         }
 
-        if !verify_signature(env) {
-            return Err(RelayAuthError::BadSig);
-        }
-
         Ok(())
     }
 
@@ -460,7 +455,7 @@ impl RelayAuthVerifier {
         now_ms: u128,
         verify_signature: impl Fn(&RelayAuthEnvelope) -> bool,
     ) -> Result<(), RelayAuthError> {
-        self.verify_envelope_fields(env, verify_signature)?;
+        self.verify_envelope_fields(env)?;
 
         if env.timestamp_ms > now_ms {
             if env.timestamp_ms - now_ms > self.max_skew_ms {
@@ -527,6 +522,14 @@ impl RelayAuthVerifier {
             return Err(RelayAuthError::ReplayStateCapacityExceeded);
         }
 
+        // All cheap, non-mutating shape/time/replay/capacity checks above
+        // must precede potentially expensive caller-owned authentication.
+        // Do not commit the sequence or nonce unless the signature succeeds.
+        // This does not make the callback's trust root authentic or PQ-safe.
+        if !verify_signature(env) {
+            return Err(RelayAuthError::BadSig);
+        }
+
         self.last_seq.insert(seq_key, env.seq);
         self.seen_nonce.insert(nonce_key);
         Ok(())
@@ -583,6 +586,67 @@ mod tests {
         };
         env.sig = env.sign_for_test(key);
         env
+    }
+
+    #[test]
+    fn relay_auth_replay_and_stale_time_skip_signature_cost() {
+        use std::cell::Cell;
+
+        let key = "sender-key";
+        let now = 1_730_000_000_000;
+        let mut verifier = RelayAuthVerifier::for_chain(120_000, "trnm-mainnet");
+        let first = sample_env(1, "nonce-first", now, key);
+        verifier
+            .verify(&first, now + 50, |e| e.verify_test_sig_compat(key))
+            .unwrap();
+
+        // A replay of a previously authenticated sequence cannot cause an
+        // additional signature check, regardless of the supplied signature.
+        let invoked = Cell::new(0);
+        let err = verifier
+            .verify(&first, now + 50, |_| {
+                invoked.set(invoked.get() + 1);
+                true
+            })
+            .unwrap_err();
+        assert_eq!(err.stable_code(), "SeqRegression");
+        assert_eq!(invoked.get(), 0);
+
+        // Nonconsecutive sequence and stale timestamp must be rejected
+        // before an expensive or adversary-selected verifier callback.
+        let gap = sample_env(4, "nonce-gap", now, key);
+        let err = verifier
+            .verify(&gap, now + 50, |_| {
+                invoked.set(invoked.get() + 1);
+                true
+            })
+            .unwrap_err();
+        assert_eq!(err.stable_code(), "SeqGap");
+        assert_eq!(invoked.get(), 0);
+        let stale = sample_env(2, "nonce-stale", now, key);
+        let err = verifier
+            .verify(&stale, now + 120_001, |_| {
+                invoked.set(invoked.get() + 1);
+                true
+            })
+            .unwrap_err();
+        assert_eq!(err.stable_code(), "TimeSkew");
+        assert_eq!(invoked.get(), 0);
+
+        // No unauthenticated request may consume a sequence or nonce.
+        let mut forged = sample_env(2, "nonce-next", now, key);
+        forged.sig = "forged".into();
+        assert_eq!(
+            verifier
+                .verify(&forged, now + 50, |e| e.verify_test_sig_compat(key))
+                .unwrap_err()
+                .stable_code(),
+            "BadSig"
+        );
+        let next = sample_env(2, "nonce-next", now, key);
+        verifier
+            .verify(&next, now + 50, |e| e.verify_test_sig_compat(key))
+            .unwrap();
     }
 
     #[test]
