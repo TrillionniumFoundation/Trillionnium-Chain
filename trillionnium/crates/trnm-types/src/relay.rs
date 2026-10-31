@@ -345,10 +345,7 @@ impl RelayAuthVerifier {
         Self::strict(max_skew_ms)
     }
 
-    fn verify_envelope_fields(
-        &self,
-        env: &RelayAuthEnvelope,
-    ) -> Result<(), RelayAuthError> {
+    fn verify_envelope_fields(&self, env: &RelayAuthEnvelope) -> Result<(), RelayAuthError> {
         let is_current = env.version == RelayAuthEnvelope::SPEC_VERSION;
         let is_legacy = env.version == RelayAuthEnvelope::LEGACY_SPEC_VERSION;
         if !(is_current || (self.allow_legacy_v0 && is_legacy)) {
