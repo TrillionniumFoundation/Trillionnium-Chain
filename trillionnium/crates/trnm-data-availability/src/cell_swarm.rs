@@ -255,7 +255,7 @@ impl CellSwarmAssemblerV0 {
             return Err(CellSwarmErrorV0::InvalidChunk);
         }
         if let Some(first) = &self.slots[index] {
-            return if first == bytes {
+            return if first.as_slice() == bytes {
                 Ok(false)
             } else {
                 Err(CellSwarmErrorV0::ConflictingChunk)
