@@ -167,6 +167,10 @@ pub enum RelayAuthError {
         got_ms: u128,
         max_skew_ms: u128,
     },
+    TimeMovedBackwards {
+        before_ms: u128,
+        after_ms: u128,
+    },
     BadVersion {
         expected: String,
         got: String,
@@ -198,6 +202,7 @@ impl RelayAuthError {
             RelayAuthError::SeqRegression { .. } => "SeqRegression",
             RelayAuthError::SeqGap { .. } => "SeqGap",
             RelayAuthError::TimeSkew { .. } => "TimeSkew",
+            RelayAuthError::TimeMovedBackwards { .. } => "TimeMovedBackwards",
             RelayAuthError::PayloadHashMismatch => "PayloadHashMismatch",
             RelayAuthError::BadVersion { .. } => "BadVersion",
             RelayAuthError::UnsupportedType { .. } => "UnsupportedType",
@@ -268,6 +273,16 @@ impl fmt::Display for RelayAuthError {
                 now_ms,
                 got_ms,
                 max_skew_ms,
+                self.stable_code()
+            ),
+            RelayAuthError::TimeMovedBackwards {
+                before_ms,
+                after_ms,
+            } => write!(
+                f,
+                "trusted time moved backwards: before_ms={} after_ms={} (code={})",
+                before_ms,
+                after_ms,
                 self.stable_code()
             ),
             RelayAuthError::BadVersion { expected, got } => write!(
@@ -446,11 +461,26 @@ impl RelayAuthVerifier {
         Ok(())
     }
 
+    /// Compatibility API with only one time sample; it does not establish
+    /// freshness after a slow signature operation. Real authority-bearing
+    /// ingress must use verify_with_fresh_time and a caller-trusted clock.
     pub fn verify(
         &mut self,
         env: &RelayAuthEnvelope,
         now_ms: u128,
         verify_signature: impl Fn(&RelayAuthEnvelope) -> bool,
+    ) -> Result<(), RelayAuthError> {
+        self.verify_with_fresh_time(env, now_ms, verify_signature, || now_ms)
+    }
+
+    /// Resample the caller-trusted clock after signature verification and
+    /// before state commit. This is not a PQ trust root or durable replay log.
+    pub fn verify_with_fresh_time(
+        &mut self,
+        env: &RelayAuthEnvelope,
+        now_ms: u128,
+        verify_signature: impl Fn(&RelayAuthEnvelope) -> bool,
+        after_verify_ms: impl FnOnce() -> u128,
     ) -> Result<(), RelayAuthError> {
         self.verify_envelope_fields(env)?;
 
@@ -525,6 +555,24 @@ impl RelayAuthVerifier {
         // This does not make the callback's trust root authentic or PQ-safe.
         if !verify_signature(env) {
             return Err(RelayAuthError::BadSig);
+        }
+
+        // The initial check can expire during an expensive signature call.
+        // Neither an expired request nor a rollback in trusted time may
+        // advance this verifier's in-memory sequence or nonce.
+        let fresh_now_ms = after_verify_ms();
+        if fresh_now_ms < now_ms {
+            return Err(RelayAuthError::TimeMovedBackwards {
+                before_ms: now_ms,
+                after_ms: fresh_now_ms,
+            });
+        }
+        if env.timestamp_ms.abs_diff(fresh_now_ms) > self.max_skew_ms {
+            return Err(RelayAuthError::TimeSkew {
+                now_ms: fresh_now_ms,
+                got_ms: env.timestamp_ms,
+                max_skew_ms: self.max_skew_ms,
+            });
         }
 
         self.last_seq.insert(seq_key, env.seq);
@@ -643,6 +691,87 @@ mod tests {
         let next = sample_env(2, "nonce-next", now, key);
         verifier
             .verify(&next, now + 50, |e| e.verify_test_sig_compat(key))
+            .unwrap();
+    }
+
+    #[test]
+    fn relay_auth_postverify_clock_expiry_and_rollback_do_not_consume_nonce() {
+        use std::cell::Cell;
+
+        let key = "sender-key";
+        let now = 1_730_000_000_000;
+        let mut verifier = RelayAuthVerifier::for_chain(100, "trnm-mainnet");
+        let first = sample_env(1, "nonce-postverify", now, key);
+        let calls = Cell::new(0);
+
+        let expired = verifier.verify_with_fresh_time(
+            &first,
+            now,
+            |e| {
+                calls.set(calls.get() + 1);
+                e.verify_test_sig_compat(key)
+            },
+            || now + 101,
+        );
+        assert_eq!(expired.unwrap_err().stable_code(), "TimeSkew");
+        assert_eq!(calls.get(), 1);
+
+        let backwards = verifier.verify_with_fresh_time(
+            &first,
+            now,
+            |e| {
+                calls.set(calls.get() + 1);
+                e.verify_test_sig_compat(key)
+            },
+            || now - 1,
+        );
+        assert_eq!(
+            backwards.unwrap_err().stable_code(),
+            "TimeMovedBackwards"
+        );
+        assert_eq!(calls.get(), 2);
+
+        // Failed post-authentication freshness must not occupy the replay
+        // nonce or sequence. The exact 100-ms boundary is permitted.
+        verifier
+            .verify_with_fresh_time(
+                &first,
+                now,
+                |e| e.verify_test_sig_compat(key),
+                || now + 100,
+            )
+            .unwrap();
+        let replay = verifier.verify_with_fresh_time(
+            &first,
+            now,
+            |_| panic!("replay must skip signature callback"),
+            || panic!("replay must skip post-authentication clock"),
+        );
+        assert_eq!(replay.unwrap_err().stable_code(), "SeqRegression");
+    }
+
+    #[test]
+    fn relay_auth_bad_signature_skips_postverification_time() {
+        let key = "sender-key";
+        let now = 1_730_000_000_000;
+        let mut verifier = RelayAuthVerifier::for_chain(100, "trnm-mainnet");
+        let mut forged = sample_env(1, "nonce-bad-signature", now, key);
+        forged.sig = "bad-signature".to_string();
+        let failure = verifier.verify_with_fresh_time(
+            &forged,
+            now,
+            |e| e.verify_test_sig_compat(key),
+            || panic!("bad signature must skip post-authentication clock"),
+        );
+        assert_eq!(failure.unwrap_err().stable_code(), "BadSig");
+        let valid = sample_env(1, "nonce-bad-signature", now, key);
+        verifier
+            .verify_with_fresh_time(
+                &valid,
+                now,
+                |e| e.verify_test_sig_compat(key),
+                || now,
+            )
             .unwrap();
     }
 
