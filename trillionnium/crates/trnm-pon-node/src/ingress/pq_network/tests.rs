@@ -101,6 +101,47 @@ fn real_signed_overlong_pq_request_refuses_before_verification_without_budget_by
 }
 
 #[test]
+fn pnq2_untransmittable_request_and_response_refuse_before_signing() {
+    let settings = settings();
+    let policy = policy(&settings, 1);
+    let client = PqClient::new(policy.clone(), signer(72)).unwrap();
+    let server = PqServer::new(policy.clone(), signer(71)).unwrap();
+    let now = super::super::now().unwrap();
+    let expiry = now + 30;
+
+    // JSON wrapping adds bytes beyond the exact 2 MiB wire allowance.
+    // Previously prepare signed and hashed this impossible client frame
+    // before encode_wire returned PQ_NETWORK_WIRE_LIMIT.
+    let oversized = Request::Submit {
+        packet: "ab".repeat(MAX_WIRE / 2),
+    };
+    let error = client
+        .prepare(1, expiry, oversized)
+        .err()
+        .expect("untransmittable client request must be refused");
+    assert_eq!(error.to_string(), "PQ_NETWORK_WIRE_LIMIT");
+
+    // The original server response path also signed the impossible body
+    // before encode_wire refused it. Do not enlarge the wire budget.
+    let prepared = client.prepare(1, expiry, Request::Head).unwrap();
+    let response_error = server
+        .response(&prepared.verified, Ok(Value::String("x".repeat(MAX_WIRE))))
+        .unwrap_err();
+    assert_eq!(response_error.to_string(), "PQ_NETWORK_WIRE_LIMIT");
+
+    // Authentic, bounded signed messages keep the unchanged verifier and
+    // client response context, without a classical verifier or fallback.
+    let normal = server
+        .response(&prepared.verified, Ok(serde_json::json!({"head": "ok"})))
+        .unwrap();
+    let checked = policy
+        .verify_response(&normal, &prepared.verified, now)
+        .unwrap();
+    assert!(checked.ok);
+    assert_eq!(checked.value, serde_json::json!({"head": "ok"}));
+}
+
+#[test]
 fn signed_pq_client_refuses_nonloopback_destination_before_network_io() {
     // Real ML-DSA request and independently pinned keys; rejection is an
     // outbound transport boundary, not a synthetic bad-signature refusal.
