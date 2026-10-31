@@ -243,3 +243,24 @@ callback; `verify_test_sig_compat` remains a noncryptographic test helper
 and MUST NOT authorize deployed communication. In-memory replay tracking
 is not crash-safe or externally monotonic. #562 A/B/E/F and every remaining
 whole-chain quantum work/proof qualification gate remain OPEN.
+
+## Post-signature trusted time check (separate child of #623)
+
+A timestamp that was fresh at the first check can expire **during** an
+expensive, caller-selected signature verification. The new opt-in
+`verify_with_fresh_time` demands a caller-trusted clock reading *after*
+signature acceptance and *before* committing a nonce/sequence. This fails
+closed on post-authentication skew or backward time. Unit regressions exercise
+time expiry, exact skew boundary, backward clock, forged signatures, no
+replay-state consumption on refusal, and callback ordering.
+
+The legacy one-sample `verify` remains source-compatible but is **not** a
+post-verification freshness API. Production callers must explicitly adopt
+the new API with their trusted clock; this PR does not demonstrate such a
+caller. Its signature callback is still not proven an authentic PQ trust root;
+the in-memory replay map is not durable and the clock is not an externally
+monotonic witness. No changes to PoN, consensus, wire format, proof security
+or production activation. Whole-chain #562 A-F remain NO-GO.
+
+Exact exported relay source SHA-256 on this child: `87312a7827d546b9470d3ec0528006def951046c68da96f5896302718cd342db`.
+The #623 pin `285a9468c3a62815fa77a92981a7cbf9bf7110a23c57b70cd16a6ac592211b5e` remains only historical parent evidence.
