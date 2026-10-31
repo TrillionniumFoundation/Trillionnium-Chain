@@ -6,6 +6,7 @@ Run from the repository root:
 
     python3 scripts/ci/test_pq_chain_claim_guard.py -v
     python3 scripts/ci/pq_chain_claim_guard.py
+    python3 -m unittest discover -s scripts/ci -p 'test_pq_quantum_daa_scenarios.py' -v
 
 The guard checks actual negative authority and activation assertions in the source-controlled project boundary, mainline and devnet configuration, and the existing PQ source corpus; it checks the canonical ML-DSA research frame size and unqualified legacy transaction ceiling. It returns a deterministic **HOLD / UNQUALIFIED** report with process status 0 only when the current protected negatives are intact. Unsupported promotion, silent classical fallback, missing source, invalid or duplicate JSON fields, symlink substitution and an introduced PQ-128 W1 guest claim are refused with process status 2. A green test of this guard never means the network is PQ-safe.
 
