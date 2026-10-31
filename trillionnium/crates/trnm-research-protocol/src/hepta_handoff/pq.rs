@@ -86,7 +86,10 @@ impl PqHeptaAuthoritySetV2 {
             // trust principal. Refuse key aliases even when DIDs and signer
             // generations differ: otherwise a single compromised signing key
             // can satisfy distinct operator identities in a downstream roster.
-            if entries.iter().any(|(existing, _)| existing.key_id == pin.key_id) {
+            if entries
+                .iter()
+                .any(|(existing, _)| existing.key_id == pin.key_id)
+            {
                 return Err(PqHeptaHandoffError::InvalidPin);
             }
             let verifier = pin.validate()?;
