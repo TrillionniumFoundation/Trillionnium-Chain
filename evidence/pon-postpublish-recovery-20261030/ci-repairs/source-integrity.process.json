@@ -1,0 +1,21 @@
+{
+  "schema": "pon-followup-real-process-observation-v1",
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "scripts/ci/test_ci_source_integrity.py"
+  ],
+  "cwd": "/workspace/scratch/f4a65c4581e7/pon-security-work",
+  "start_unix_ns": 1793381427390243507,
+  "elapsed_monotonic_ns": 2602626416,
+  "exit_code": 0,
+  "source_scope": "working candidate; not a clean committed-source receipt",
+  "source_parent": "00cb41115c9b3ea4a67f513a087d226390e3de0c",
+  "stdout": {
+    "bytes": 484,
+    "sha256": "3e568ed47c2b0899fa0e01b4770de8480646e0f57413e4e7b67f92295c88cd63"
+  },
+  "stderr": {
+    "bytes": 5025,
+    "sha256": "7019998151ed941225a4c842640ef9011e9cd3751fb5e8a8de1f9be0eb99506b"
+  }
+}

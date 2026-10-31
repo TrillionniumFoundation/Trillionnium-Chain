@@ -1,0 +1,26 @@
+{
+  "schema": "pon-w1-actual-process-v1",
+  "command": [
+    "cargo",
+    "metadata",
+    "--manifest-path",
+    "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/Cargo.toml",
+    "--locked",
+    "--offline",
+    "--no-deps",
+    "--format-version",
+    "1"
+  ],
+  "started_utc": "2026-10-31T01:38:33.519999+00:00",
+  "timeout_seconds": 30,
+  "source_sha": null,
+  "timed_out": false,
+  "consensus_authority": false,
+  "returncode": 0,
+  "wall_seconds": 0.06440790299529908,
+  "user_cpu_seconds": 0.029438,
+  "system_cpu_seconds": 0.007515,
+  "max_waited_descendant_rss_kib": 27372,
+  "rss_scope": "maximum reported for the waited child family; not total cgroup peak",
+  "finished_utc": "2026-10-31T01:38:33.584452+00:00"
+}

@@ -1,0 +1,26 @@
+{
+  "command": [
+    "/home/runner/work/_temp/pure-admission-target/release/deps/pure_pon_pressure_v2-9834ea51138696ab",
+    "--exact",
+    "receiver_owner::whole_receiver_owner_pressure_fixed_host_client_v1",
+    "--ignored",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "complete_success": false,
+  "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+  "elapsed_ns": 129031304300,
+  "elapsed_seconds": 129.0313043,
+  "error": null,
+  "name": "receiver-owner-supplement",
+  "outer_stage_timeout_seconds": 600,
+  "returncode": 101,
+  "stderr": "receiver-owner-supplement.stderr.log",
+  "stderr_bytes": 1468,
+  "stderr_sha256": "9bef26cbe1d09b42e143e2d635e7e63b8048f2fc48d0f4b5c642dca0d603a882",
+  "stderr_truncated": false,
+  "stdout": "receiver-owner-supplement.stdout.log",
+  "stdout_bytes": 295,
+  "stdout_sha256": "26490823e50b35d36325b5c3f8734176c7de320aeef78ce8fe7a79dbca7d58fd",
+  "stdout_truncated": false
+}

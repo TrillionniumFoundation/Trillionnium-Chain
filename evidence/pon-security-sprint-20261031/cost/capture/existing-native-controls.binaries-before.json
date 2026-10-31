@@ -1,0 +1,21 @@
+{
+  "schema": "pon-mining-native-control-binaries-v1",
+  "source_commit": "298ecbaf08db571f98253e38fb6aed9c18146006",
+  "binaries": [
+    {
+      "path": "/tmp/pon-cost-target/debug/deps/trnm_pon_node-97cb6e843e34c6e7",
+      "bytes": 79764816,
+      "sha256": "307b3f794e905147cb2b7b3f5998bada61ac8ca1e849c2c7a1330dbbd24c18fb"
+    },
+    {
+      "path": "/tmp/pon-cost-target/debug/deps/pool_mining-2dbf03d206521b2e",
+      "bytes": 11617720,
+      "sha256": "672c434dd4757e52ba3ff433315d5a29e15aa65b2786bc8730b60ba4fb5073ff"
+    },
+    {
+      "path": "/tmp/pon-cost-target/debug/trnm-pon-node",
+      "bytes": 17426728,
+      "sha256": "bd0316f399314088eba5653064075b181596c49fe0d9e527bbf4457852f25c84"
+    }
+  ]
+}

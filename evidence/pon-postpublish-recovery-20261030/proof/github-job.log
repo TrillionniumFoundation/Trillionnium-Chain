@@ -1,0 +1,1280 @@
+﻿2026-10-30T01:55:32.4811619Z Current runner version: '2.338.0'
+2026-10-30T01:55:32.4837392Z ##[group]Runner Image Provisioner
+2026-10-30T01:55:32.4838363Z Hosted Compute Agent
+2026-10-30T01:55:32.4838961Z Version: 20261021.618
+2026-10-30T01:55:32.4839970Z Commit: 21505ad2541d5be6135ed84fc33697146cf75b8e
+2026-10-30T01:55:32.4840758Z Build Date: 2026-10-21T00:45:21Z
+2026-10-30T01:55:32.4841505Z Worker ID: {8f53f74f-7ca0-4651-b9f7-95ab9a9d6d2e}
+2026-10-30T01:55:32.4842248Z Region: centralus
+2026-10-30T01:55:32.4842801Z Cloud: Azure
+2026-10-30T01:55:32.4843391Z ##[endgroup]
+2026-10-30T01:55:32.4844957Z ##[group]Operating System
+2026-10-30T01:55:32.4845602Z Ubuntu
+2026-10-30T01:55:32.4846286Z 24.04.5
+2026-10-30T01:55:32.4846805Z LTS
+2026-10-30T01:55:32.4847407Z ##[endgroup]
+2026-10-30T01:55:32.4847982Z ##[group]Runner Image
+2026-10-30T01:55:32.4848578Z Image: ubuntu-24.04
+2026-10-30T01:55:32.4849222Z Version: 20261025.353.1
+2026-10-30T01:55:32.4850688Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-30T01:55:32.4852410Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353
+2026-10-30T01:55:32.4853377Z ##[endgroup]
+2026-10-30T01:55:32.4854579Z ##[group]GITHUB_TOKEN Permissions
+2026-10-30T01:55:32.4856730Z Contents: read
+2026-10-30T01:55:32.4857514Z Metadata: read
+2026-10-30T01:55:32.4858100Z ##[endgroup]
+2026-10-30T01:55:32.4860716Z Secret source: Actions
+2026-10-30T01:55:32.4861955Z Cache mode: write
+2026-10-30T01:55:32.4863363Z Prepare workflow directory
+2026-10-30T01:55:32.5534069Z Prepare all required actions
+2026-10-30T01:55:32.5604042Z Getting action download info
+2026-10-30T01:55:32.7999254Z Download action repository 'actions/checkout@11d5960a326750d5838078e36cf38b85af677262' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-10-30T01:55:32.9194093Z Download action repository 'actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-10-30T01:55:33.1090168Z Complete job name: exact host and real historical W1 cases (research only)
+2026-10-30T01:55:33.1982063Z ##[group]Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+2026-10-30T01:55:33.1983118Z with:
+2026-10-30T01:55:33.1983602Z   ref: 1d11f875493f8125e36b9adceacb342df108e5e5
+2026-10-30T01:55:33.1984196Z   fetch-depth: 0
+2026-10-30T01:55:33.1984655Z   persist-credentials: false
+2026-10-30T01:55:33.1985260Z   repository: TrillionniumFoundation/Trillionnium-Chain
+2026-10-30T01:55:33.1989336Z   token: ***
+2026-10-30T01:55:33.1990009Z   ssh-strict: true
+2026-10-30T01:55:33.1990453Z   ssh-user: git
+2026-10-30T01:55:33.1990927Z   clean: true
+2026-10-30T01:55:33.1991378Z   sparse-checkout-cone-mode: true
+2026-10-30T01:55:33.1991893Z   fetch-tags: false
+2026-10-30T01:55:33.1992341Z   show-progress: true
+2026-10-30T01:55:33.1992785Z   lfs: false
+2026-10-30T01:55:33.1993479Z   submodules: false
+2026-10-30T01:55:33.1994264Z   set-safe-directory: true
+2026-10-30T01:55:33.1995119Z   allow-unsafe-pr-checkout: false
+2026-10-30T01:55:33.1996117Z env:
+2026-10-30T01:55:33.1996725Z   TRNM_EXPECTED_SOURCE_SHA: 1d11f875493f8125e36b9adceacb342df108e5e5
+2026-10-30T01:55:33.1997437Z   CARGO_BUILD_JOBS: 2
+2026-10-30T01:55:33.1997891Z   CARGO_INCREMENTAL: 0
+2026-10-30T01:55:33.1998354Z   CARGO_TERM_COLOR: never
+2026-10-30T01:55:33.1998839Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-30T01:55:33.1999326Z   RUST_TEST_THREADS: 1
+2026-10-30T01:55:33.2000088Z   RAYON_NUM_THREADS: 2
+2026-10-30T01:55:33.2000562Z ##[endgroup]
+2026-10-30T01:55:33.5262351Z Syncing repository: TrillionniumFoundation/Trillionnium-Chain
+2026-10-30T01:55:33.5265180Z ##[group]Getting Git version info
+2026-10-30T01:55:33.5266467Z Working directory is '/home/runner/work/Trillionnium-Chain/Trillionnium-Chain'
+2026-10-30T01:55:33.5271315Z [command]/usr/bin/git version
+2026-10-30T01:55:33.5433782Z git version 2.56.0
+2026-10-30T01:55:33.5480614Z ##[endgroup]
+2026-10-30T01:55:33.5517953Z Temporarily overriding HOME='/home/runner/work/_temp/d71dde21-78b8-4db0-a214-51bbc0dec2a1' before making global git config changes
+2026-10-30T01:55:33.5521195Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-30T01:55:33.5532442Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Trillionnium-Chain/Trillionnium-Chain
+2026-10-30T01:55:33.5626251Z Deleting the contents of '/home/runner/work/Trillionnium-Chain/Trillionnium-Chain'
+2026-10-30T01:55:33.5628885Z ##[group]Initializing the repository
+2026-10-30T01:55:33.5631177Z [command]/usr/bin/git init /home/runner/work/Trillionnium-Chain/Trillionnium-Chain
+2026-10-30T01:55:33.5783161Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-30T01:55:33.5784396Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-30T01:55:33.5785563Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-30T01:55:33.5786423Z hint: call:
+2026-10-30T01:55:33.5786825Z hint:
+2026-10-30T01:55:33.5787350Z hint: 	git config --global init.defaultBranch <name>
+2026-10-30T01:55:33.5788040Z hint:
+2026-10-30T01:55:33.5788637Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-30T01:55:33.5789563Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-30T01:55:33.5791019Z hint:
+2026-10-30T01:55:33.5791786Z hint: 	git branch -m <name>
+2026-10-30T01:55:33.5792344Z hint:
+2026-10-30T01:55:33.5792981Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-30T01:55:33.5806368Z Initialized empty Git repository in /home/runner/work/Trillionnium-Chain/Trillionnium-Chain/.git/
+2026-10-30T01:55:33.5821075Z [command]/usr/bin/git remote add origin https://github.com/TrillionniumFoundation/Trillionnium-Chain
+2026-10-30T01:55:33.5883296Z ##[endgroup]
+2026-10-30T01:55:33.5884741Z ##[group]Disabling automatic garbage collection
+2026-10-30T01:55:33.5888031Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-30T01:55:33.5935766Z ##[endgroup]
+2026-10-30T01:55:33.5937327Z ##[group]Setting up auth
+2026-10-30T01:55:33.5949219Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-30T01:55:33.5996159Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-30T01:55:33.6446326Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-30T01:55:33.6498332Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-30T01:55:33.6743447Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-30T01:55:33.6791115Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-30T01:55:33.7055814Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-30T01:55:33.7106870Z ##[endgroup]
+2026-10-30T01:55:33.7107884Z ##[group]Fetching the repository
+2026-10-30T01:55:33.7121416Z [command]/usr/bin/git -c protocol.version=2 fetch --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/*
+2026-10-30T01:55:48.9340593Z From https://github.com/TrillionniumFoundation/Trillionnium-Chain
+2026-10-30T01:55:48.9343934Z  * [new branch]          audit/chain-506-from-zero-five-tests-20261027 -> origin/audit/chain-506-from-zero-five-tests-20261027
+2026-10-30T01:55:48.9347923Z  * [new branch]          audit/daa-asert-c-extreme-differential-20261027 -> origin/audit/daa-asert-c-extreme-differential-20261027
+2026-10-30T01:55:48.9352540Z  * [new branch]          audit/q4-observation-generation-coherence-20261027 -> origin/audit/q4-observation-generation-coherence-20261027
+2026-10-30T01:55:48.9357086Z  * [new branch]          automation/chain506-five-native-tests-20261027-1117 -> origin/automation/chain506-five-native-tests-20261027-1117
+2026-10-30T01:55:48.9361093Z  * [new branch]          chore/chain-clear-readme-20260929 -> origin/chore/chain-clear-readme-20260929
+2026-10-30T01:55:48.9363791Z  * [new branch]          chore/chain-development-overhead-20261002 -> origin/chore/chain-development-overhead-20261002
+2026-10-30T01:55:48.9367840Z  * [new branch]          chore/chain-pure-pon-model-inputs-20261027 -> origin/chore/chain-pure-pon-model-inputs-20261027
+2026-10-30T01:55:48.9371689Z  * [new branch]          chore/chain-rust-199-20261004 -> origin/chore/chain-rust-199-20261004
+2026-10-30T01:55:48.9374612Z  * [new branch]          chore/chain-work-collector-stage-20261011 -> origin/chore/chain-work-collector-stage-20261011
+2026-10-30T01:55:48.9378048Z  * [new branch]          ci/chain328-main-pair-6724ed1-20261022 -> origin/ci/chain328-main-pair-6724ed1-20261022
+2026-10-30T01:55:48.9381804Z  * [new branch]          ci/chain328-main-pair-8caf538-20261022 -> origin/ci/chain328-main-pair-8caf538-20261022
+2026-10-30T01:55:48.9385142Z  * [new branch]          ci/chain328-prospective-main-20261022 -> origin/ci/chain328-prospective-main-20261022
+2026-10-30T01:55:48.9388630Z  * [new branch]          ci/pon-architecture-source-check-20261008 -> origin/ci/pon-architecture-source-check-20261008
+2026-10-30T01:55:48.9473696Z  * [new branch]          ci/pon-baseline-source-repair-20261012 -> origin/ci/pon-baseline-source-repair-20261012
+2026-10-30T01:55:48.9478286Z  * [new branch]          ci/pon-chain316-main-target-merge-20261015 -> origin/ci/pon-chain316-main-target-merge-20261015
+2026-10-30T01:55:48.9496570Z  * [new branch]          ci/pon-five-track-native-export-20261011 -> origin/ci/pon-five-track-native-export-20261011
+2026-10-30T01:55:48.9500461Z  * [new branch]          ci/pon-five-track-source-repair-20261012-r2 -> origin/ci/pon-five-track-source-repair-20261012-r2
+2026-10-30T01:55:48.9504194Z  * [new branch]          ci/pon-fixed-blob-bounds-stage-20261010 -> origin/ci/pon-fixed-blob-bounds-stage-20261010
+2026-10-30T01:55:48.9507553Z  * [new branch]          ci/pon-fixed-blob-inventory-stage-20261010 -> origin/ci/pon-fixed-blob-inventory-stage-20261010
+2026-10-30T01:55:48.9511130Z  * [new branch]          ci/pon-local-toolchain-export-20261011 -> origin/ci/pon-local-toolchain-export-20261011
+2026-10-30T01:55:48.9514568Z  * [new branch]          ci/pon-native-growth-delivery-20261008 -> origin/ci/pon-native-growth-delivery-20261008
+2026-10-30T01:55:48.9518141Z  * [new branch]          ci/pon-native-snapshot-qualification-20261009 -> origin/ci/pon-native-snapshot-qualification-20261009
+2026-10-30T01:55:48.9522404Z  * [new branch]          ci/pon-native-workbench-20261012-r1 -> origin/ci/pon-native-workbench-20261012-r1
+2026-10-30T01:55:48.9526299Z  * [new branch]          ci/pon-packed-branch-qualification-20261009 -> origin/ci/pon-packed-branch-qualification-20261009
+2026-10-30T01:55:48.9530308Z  * [new branch]          ci/pon-pressure-window-source-20261010 -> origin/ci/pon-pressure-window-source-20261010
+2026-10-30T01:55:48.9533635Z  * [new branch]          ci/pon-priority-long-history-20261008 -> origin/ci/pon-priority-long-history-20261008
+2026-10-30T01:55:48.9536816Z  * [new branch]          ci/pon-source-bundle-20261011 -> origin/ci/pon-source-bundle-20261011
+2026-10-30T01:55:48.9540104Z  * [new branch]          codex/freeze-pon-experimental-20261014 -> origin/codex/freeze-pon-experimental-20261014
+2026-10-30T01:55:48.9543531Z  * [new branch]          codex/native-node-hardening-20261014 -> origin/codex/native-node-hardening-20261014
+2026-10-30T01:55:48.9546294Z  * [new branch]          codex/pon-safety-20261014 -> origin/codex/pon-safety-20261014
+2026-10-30T01:55:48.9549987Z  * [new branch]          dependabot/cargo/trillionnium/borsh-1.8.1 -> origin/dependabot/cargo/trillionnium/borsh-1.8.1
+2026-10-30T01:55:48.9554168Z  * [new branch]          dependabot/cargo/trillionnium/clap-4.6.7 -> origin/dependabot/cargo/trillionnium/clap-4.6.7
+2026-10-30T01:55:48.9558133Z  * [new branch]          dependabot/cargo/trillionnium/ed25519-dalek-3.0.0 -> origin/dependabot/cargo/trillionnium/ed25519-dalek-3.0.0
+2026-10-30T01:55:48.9562312Z  * [new branch]          dependabot/cargo/trillionnium/rusqlite-0.40.2 -> origin/dependabot/cargo/trillionnium/rusqlite-0.40.2
+2026-10-30T01:55:48.9566082Z  * [new branch]          dependabot/cargo/trillionnium/serde-1.0.229 -> origin/dependabot/cargo/trillionnium/serde-1.0.229
+2026-10-30T01:55:48.9569579Z  * [new branch]          dev/chain-directed-delivery-20261006 -> origin/dev/chain-directed-delivery-20261006
+2026-10-30T01:55:48.9572859Z  * [new branch]          dev/chain-exact-source-20261005 -> origin/dev/chain-exact-source-20261005
+2026-10-30T01:55:48.9576397Z  * [new branch]          dev/chain-native-delivery-20261005 -> origin/dev/chain-native-delivery-20261005
+2026-10-30T01:55:48.9579597Z  * [new branch]          dev/chain-observation-delivery-20261007 -> origin/dev/chain-observation-delivery-20261007
+2026-10-30T01:55:48.9583401Z  * [new branch]          dev/chain-readonly-build-export-20261006 -> origin/dev/chain-readonly-build-export-20261006
+2026-10-30T01:55:48.9586749Z  * [new branch]          dev/pon-five-axis-native-work-20261010 -> origin/dev/pon-five-axis-native-work-20261010
+2026-10-30T01:55:48.9590366Z  * [new branch]          dev/pon-five-axis-offline-export-20261010 -> origin/dev/pon-five-axis-offline-export-20261010
+2026-10-30T01:55:48.9593838Z  * [new branch]          dev/pon-five-axis-source-export-20261011 -> origin/dev/pon-five-axis-source-export-20261011
+2026-10-30T01:55:48.9597306Z  * [new branch]          dev/pon-snapshot-verified-delivery-20261010 -> origin/dev/pon-snapshot-verified-delivery-20261010
+2026-10-30T01:55:48.9601012Z  * [new branch]          diagnostic/pon-five-native-lab-20261009 -> origin/diagnostic/pon-five-native-lab-20261009
+2026-10-30T01:55:48.9604253Z  * [new branch]          docs/chain-audit-remediation-20261022 -> origin/docs/chain-audit-remediation-20261022
+2026-10-30T01:55:48.9607605Z  * [new branch]          docs/chain-pure-pon-readback-20261027 -> origin/docs/chain-pure-pon-readback-20261027
+2026-10-30T01:55:48.9611348Z  * [new branch]          dot/p0-p1-fixed-integrated-admission-20261027 -> origin/dot/p0-p1-fixed-integrated-admission-20261027
+2026-10-30T01:55:48.9614831Z  * [new branch]          dot/p0-p6-admission-integrated-20261026 -> origin/dot/p0-p6-admission-integrated-20261026
+2026-10-30T01:55:48.9618264Z  * [new branch]          dot/p0-p6-chain-security-integration-20261026 -> origin/dot/p0-p6-chain-security-integration-20261026
+2026-10-30T01:55:48.9622080Z  * [new branch]          dot/p0-p6-security-integration-20261026 -> origin/dot/p0-p6-security-integration-20261026
+2026-10-30T01:55:48.9625857Z  * [new branch]          dot/p1-consolidated-host-origin-20261026 -> origin/dot/p1-consolidated-host-origin-20261026
+2026-10-30T01:55:48.9629438Z  * [new branch]          dot/p1-continuous-history-durable-only-20261027 -> origin/dot/p1-continuous-history-durable-only-20261027
+2026-10-30T01:55:48.9633308Z  * [new branch]          dot/p1-history-crash-epoch-fence-20261027 -> origin/dot/p1-history-crash-epoch-fence-20261027
+2026-10-30T01:55:48.9636710Z  * [new branch]          dot/p1-history-import-original-cpu-20261025 -> origin/dot/p1-history-import-original-cpu-20261025
+2026-10-30T01:55:48.9640469Z  * [new branch]          dot/p1-history-m06-host-checkpoints-20261027 -> origin/dot/p1-history-m06-host-checkpoints-20261027
+2026-10-30T01:55:48.9644087Z  * [new branch]          dot/p1-history-m06-host-checkpoints-r2-20261027 -> origin/dot/p1-history-m06-host-checkpoints-r2-20261027
+2026-10-30T01:55:48.9647530Z  * [new branch]          dot/p1-history-page-shared-cpu-20261026 -> origin/dot/p1-history-page-shared-cpu-20261026
+2026-10-30T01:55:48.9651142Z  * [new branch]          dot/p1-history-public-proxy-metered-20261026 -> origin/dot/p1-history-public-proxy-metered-20261026
+2026-10-30T01:55:48.9654347Z  * [new branch]          dot/p1-history-replay-cpu-20261026 -> origin/dot/p1-history-replay-cpu-20261026
+2026-10-30T01:55:48.9657694Z  * [new branch]          dot/p1-history-shared-cpu-and-host-20261027 -> origin/dot/p1-history-shared-cpu-and-host-20261027
+2026-10-30T01:55:48.9661680Z  * [new branch]          dot/p1-integrated-private-history-guard-20261026 -> origin/dot/p1-integrated-private-history-guard-20261026
+2026-10-30T01:55:48.9665152Z  * [new branch]          dot/p1-integrated-w1-resource-20261026 -> origin/dot/p1-integrated-w1-resource-20261026
+2026-10-30T01:55:48.9668451Z  * [new branch]          dot/p1-loopback-public-history-guard-20261026 -> origin/dot/p1-loopback-public-history-guard-20261026
+2026-10-30T01:55:48.9672303Z  * [new branch]          dot/p1-loopback-public-sync-guard-20261026 -> origin/dot/p1-loopback-public-sync-guard-20261026
+2026-10-30T01:55:48.9675491Z  * [new branch]          dot/p1-metered-history-import-20261025 -> origin/dot/p1-metered-history-import-20261025
+2026-10-30T01:55:48.9678571Z  * [new branch]          dot/p1-metered-history-import-20261026 -> origin/dot/p1-metered-history-import-20261026
+2026-10-30T01:55:48.9682010Z  * [new branch]          dot/p1-outbound-peer-host-guard-20261026 -> origin/dot/p1-outbound-peer-host-guard-20261026
+2026-10-30T01:55:48.9685083Z  * [new branch]          dot/p1-p5-integrated-shadow-20261025 -> origin/dot/p1-p5-integrated-shadow-20261025
+2026-10-30T01:55:48.9688109Z  * [new branch]          dot/p1-peer-context-cpu-owner-20261026 -> origin/dot/p1-peer-context-cpu-owner-20261026
+2026-10-30T01:55:48.9691176Z  * [new branch]          dot/p1-peer-polling-meter-20261025 -> origin/dot/p1-peer-polling-meter-20261025
+2026-10-30T01:55:48.9694449Z  * [new branch]          dot/p1-pinned-peer-loopback-host-parent-20261027 -> origin/dot/p1-pinned-peer-loopback-host-parent-20261027
+2026-10-30T01:55:48.9697930Z  * [new branch]          dot/p1-pinned-remote-host-owner-20261026 -> origin/dot/p1-pinned-remote-host-owner-20261026
+2026-10-30T01:55:48.9701486Z  * [new branch]          dot/p1-public-sync-loopback-budget-20261027 -> origin/dot/p1-public-sync-loopback-budget-20261027
+2026-10-30T01:55:48.9705035Z  * [new branch]          dot/p1-public-sync-loopback-proxy-20261026 -> origin/dot/p1-public-sync-loopback-proxy-20261026
+2026-10-30T01:55:48.9708225Z  * [new branch]          dot/p1-remote-peer-host-owner-20261026 -> origin/dot/p1-remote-peer-host-owner-20261026
+2026-10-30T01:55:48.9711389Z  * [new branch]          dot/p1-remote-sync-host-guard-20261025 -> origin/dot/p1-remote-sync-host-guard-20261025
+2026-10-30T01:55:48.9714474Z  * [new branch]          dot/p1-sync-m06-precommit-fence-20261026 -> origin/dot/p1-sync-m06-precommit-fence-20261026
+2026-10-30T01:55:48.9717264Z  * [new branch]          dot/p1-sync-owned-cpu-20261026 -> origin/dot/p1-sync-owned-cpu-20261026
+2026-10-30T01:55:48.9719932Z  * [new branch]          dot/p1-sync-packet-fence-20261026 -> origin/dot/p1-sync-packet-fence-20261026
+2026-10-30T01:55:48.9722875Z  * [new branch]          dot/p1-sync-w1-cooperative-fence-20261026 -> origin/dot/p1-sync-w1-cooperative-fence-20261026
+2026-10-30T01:55:48.9725852Z  * [new branch]          dot/p1-unified-cost-owner-20261025 -> origin/dot/p1-unified-cost-owner-20261025
+2026-10-30T01:55:48.9729012Z  * [new branch]          dot/p1-unified-host-and-peer-meter-20261026 -> origin/dot/p1-unified-host-and-peer-meter-20261026
+2026-10-30T01:55:48.9732358Z  * [new branch]          dot/p1-w1-negative-singleflight-20261027 -> origin/dot/p1-w1-negative-singleflight-20261027
+2026-10-30T01:55:48.9735418Z  * [new branch]          dot/p2-admission-cost-verdict-20261026 -> origin/dot/p2-admission-cost-verdict-20261026
+2026-10-30T01:55:48.9738476Z  * [new branch]          dot/p2-false-work-cost-envelope-20261026 -> origin/dot/p2-false-work-cost-envelope-20261026
+2026-10-30T01:55:48.9741768Z  * [new branch]          dot/p2-native-v3-cookie-cpu-20261025 -> origin/dot/p2-native-v3-cookie-cpu-20261025
+2026-10-30T01:55:48.9744722Z  * [new branch]          dot/p2-v3-economic-feasibility-20261026 -> origin/dot/p2-v3-economic-feasibility-20261026
+2026-10-30T01:55:48.9747570Z  * [new branch]          dot/p2-w1-v3-go-cost-20261025 -> origin/dot/p2-w1-v3-go-cost-20261025
+2026-10-30T01:55:48.9750729Z  * [new branch]          dot/p3-pinned-peer-invalid-work-backoff-20261026 -> origin/dot/p3-pinned-peer-invalid-work-backoff-20261026
+2026-10-30T01:55:48.9754049Z  * [new branch]          dot/p3-w2c-durable-epoch-owner-20261026 -> origin/dot/p3-w2c-durable-epoch-owner-20261026
+2026-10-30T01:55:48.9757269Z  * [new branch]          dot/p5-single-host-epoch-exclusivity-20261026 -> origin/dot/p5-single-host-epoch-exclusivity-20261026
+2026-10-30T01:55:48.9760774Z  * [new branch]          dot/pon-admission-p1-w2c-integration-20261027 -> origin/dot/pon-admission-p1-w2c-integration-20261027
+2026-10-30T01:55:48.9763717Z  * [new branch]          dot/pon-next-p1-p3-w2c-20261025 -> origin/dot/pon-next-p1-p3-w2c-20261025
+2026-10-30T01:55:48.9766627Z  * [new branch]          dot/pon-p0-four-trace-python-syntax-20261027 -> origin/dot/pon-p0-four-trace-python-syntax-20261027
+2026-10-30T01:55:48.9770048Z  * [new branch]          dot/pon-p0-p6-evidence-failclosed-20261026 -> origin/dot/pon-p0-p6-evidence-failclosed-20261026
+2026-10-30T01:55:48.9773240Z  * [new branch]          dot/pon-p0-p6-integrated-research-20261026 -> origin/dot/pon-p0-p6-integrated-research-20261026
+2026-10-30T01:55:48.9776308Z  * [new branch]          dot/pon-p0-p6-unified-preview-20261027 -> origin/dot/pon-p0-p6-unified-preview-20261027
+2026-10-30T01:55:48.9779054Z  * [new branch]          dot/pon-p1-p2-integrated-20261025 -> origin/dot/pon-p1-p2-integrated-20261025
+2026-10-30T01:55:48.9781998Z  * [new branch]          dot/pon-p1-p5-integrated-20261025 -> origin/dot/pon-p1-p5-integrated-20261025
+2026-10-30T01:55:48.9784621Z  * [new branch]          dot/pon-p1-p5-integration-20261026 -> origin/dot/pon-p1-p5-integration-20261026
+2026-10-30T01:55:48.9787358Z  * [new branch]          dot/pon-p1-unified-host-cpu-20261027 -> origin/dot/pon-p1-unified-host-cpu-20261027
+2026-10-30T01:55:48.9790535Z  * [new branch]          dot/pon-p1-w2c-integration-20261025 -> origin/dot/pon-p1-w2c-integration-20261025
+2026-10-30T01:55:48.9793553Z  * [new branch]          dot/pon-p1-w2c-integration-preview-20261025 -> origin/dot/pon-p1-w2c-integration-preview-20261025
+2026-10-30T01:55:48.9796766Z  * [new branch]          dot/pon-p1-w2c-integration-preview-20261026 -> origin/dot/pon-p1-w2c-integration-preview-20261026
+2026-10-30T01:55:48.9800056Z  * [new branch]          dot/pon-p2-economics-integrated-20261026 -> origin/dot/pon-p2-economics-integrated-20261026
+2026-10-30T01:55:48.9803014Z  * [new branch]          dot/pon-w1-p1-w2c-integration-20261026 -> origin/dot/pon-w1-p1-w2c-integration-20261026
+2026-10-30T01:55:48.9806078Z  * [new branch]          dot/w1-four-trace-admission-research-20261025 -> origin/dot/w1-four-trace-admission-research-20261025
+2026-10-30T01:55:48.9809099Z  * [new branch]          dot/w1-p1-integrated-preview-20261027 -> origin/dot/w1-p1-integrated-preview-20261027
+2026-10-30T01:55:48.9811829Z  * [new branch]          dot/w2c-durable-consume-20261026 -> origin/dot/w2c-durable-consume-20261026
+2026-10-30T01:55:48.9814646Z  * [new branch]          dot/w2c-durable-crossprocess-spend-20261026 -> origin/dot/w2c-durable-crossprocess-spend-20261026
+2026-10-30T01:55:48.9817589Z  * [new branch]          dot/w2c-durable-epoch-fence-20261026 -> origin/dot/w2c-durable-epoch-fence-20261026
+2026-10-30T01:55:48.9821117Z  * [new branch]          dot/w2c-durable-negative-tests-repair-20261027-0758 -> origin/dot/w2c-durable-negative-tests-repair-20261027-0758
+2026-10-30T01:55:48.9824308Z  * [new branch]          dot/w2c-durable-paid-claims-20261027 -> origin/dot/w2c-durable-paid-claims-20261027
+2026-10-30T01:55:48.9826951Z  * [new branch]          dot/w2c-durable-paid-owner-20261027 -> origin/dot/w2c-durable-paid-owner-20261027
+2026-10-30T01:55:48.9829627Z  * [new branch]          dot/w2c-durable-paid-replay-20261026 -> origin/dot/w2c-durable-paid-replay-20261026
+2026-10-30T01:55:48.9832589Z  * [new branch]          dot/w2c-durable-paid-spend-20261026 -> origin/dot/w2c-durable-paid-spend-20261026
+2026-10-30T01:55:48.9835431Z  * [new branch]          dot/w2c-durable-paid-spend-20261027 -> origin/dot/w2c-durable-paid-spend-20261027
+2026-10-30T01:55:48.9837891Z  * [new branch]          dot/w2c-durable-spend-20261026 -> origin/dot/w2c-durable-spend-20261026
+2026-10-30T01:55:48.9840544Z  * [new branch]          dot/w2c-durable-spend-owner-20261026 -> origin/dot/w2c-durable-spend-owner-20261026
+2026-10-30T01:55:48.9843145Z  * [new branch]          dot/w2c-fixed-cost-policy-20261026 -> origin/dot/w2c-fixed-cost-policy-20261026
+2026-10-30T01:55:48.9845704Z  * [new branch]          dot/w2c-issuer-epoch-quota-20261025 -> origin/dot/w2c-issuer-epoch-quota-20261025
+2026-10-30T01:55:48.9848308Z  * [new branch]          dot/w2c-receiver-cost-bound-20261025 -> origin/dot/w2c-receiver-cost-bound-20261025
+2026-10-30T01:55:48.9851039Z  * [new branch]          dot/w2c-server-price-floor-20261026 -> origin/dot/w2c-server-price-floor-20261026
+2026-10-30T01:55:48.9853636Z  * [new branch]          dot/w2c-stateless-issuance-20261026 -> origin/dot/w2c-stateless-issuance-20261026
+2026-10-30T01:55:48.9856319Z  * [new branch]          dot/w2c-stateless-paid-offers-20261025 -> origin/dot/w2c-stateless-paid-offers-20261025
+2026-10-30T01:55:48.9859006Z  * [new branch]          dot/w2c-stateless-receiver-20261025 -> origin/dot/w2c-stateless-receiver-20261025
+2026-10-30T01:55:48.9862192Z  * [new branch]          dot/w2d-freivalds-cost-research-20261026 -> origin/dot/w2d-freivalds-cost-research-20261026
+2026-10-30T01:55:48.9864976Z  * [new branch]          dot/w2d-fs-prefix-full-tape-20261025 -> origin/dot/w2d-fs-prefix-full-tape-20261025
+2026-10-30T01:55:48.9867604Z  * [new branch]          dot/w2d-full-tile-freivalds-20261026 -> origin/dot/w2d-full-tile-freivalds-20261026
+2026-10-30T01:55:48.9870696Z  * [new branch]          dot/w2e-global-polynomial-research-20261026 -> origin/dot/w2e-global-polynomial-research-20261026
+2026-10-30T01:55:48.9874266Z  * [new branch]          evidence/chain-completed-w1-and-ticket-costs-20261028 -> origin/evidence/chain-completed-w1-and-ticket-costs-20261028
+2026-10-30T01:55:48.9877503Z  * [new branch]          evidence/chain-sixline-native-20261007 -> origin/evidence/chain-sixline-native-20261007
+2026-10-30T01:55:48.9880671Z  * [new branch]          evidence/owned-runtime-handoff-059fd76-20261022 -> origin/evidence/owned-runtime-handoff-059fd76-20261022
+2026-10-30T01:55:48.9883744Z  * [new branch]          evidence/pon-five-track-715a-1064-20261012 -> origin/evidence/pon-five-track-715a-1064-20261012
+2026-10-30T01:55:48.9886769Z  * [new branch]          evidence/pon-root-supplement-c61e211-20261022 -> origin/evidence/pon-root-supplement-c61e211-20261022
+2026-10-30T01:55:48.9889838Z  * [new branch]          evidence/runtime-decode-54467f9-20261022 -> origin/evidence/runtime-decode-54467f9-20261022
+2026-10-30T01:55:48.9893043Z  * [new branch]          evidence/smollm2-1p7-source9-roster-20261004-4b5fece4 -> origin/evidence/smollm2-1p7-source9-roster-20261004-4b5fece4
+2026-10-30T01:55:48.9896340Z  * [new branch]          feat/chain-exact-packet-reconcile-20261007 -> origin/feat/chain-exact-packet-reconcile-20261007
+2026-10-30T01:55:48.9899435Z  * [new branch]          feat/chain-growth-profile-lineage-v2-20261007 -> origin/feat/chain-growth-profile-lineage-v2-20261007
+2026-10-30T01:55:48.9902928Z  * [new branch]          feat/chain-growth-storage-reservation-20261008 -> origin/feat/chain-growth-storage-reservation-20261008
+2026-10-30T01:55:48.9906168Z  * [new branch]          feat/chain-hepta-packet-reconcile-v2-20261007 -> origin/feat/chain-hepta-packet-reconcile-v2-20261007
+2026-10-30T01:55:48.9909931Z  * [new branch]          feat/chain-permanent-account-growth-relation-v2-20261007 -> origin/feat/chain-permanent-account-growth-relation-v2-20261007
+2026-10-30T01:55:48.9913498Z  * [new branch]          feat/chain-signed-consumer-benefit-20261008 -> origin/feat/chain-signed-consumer-benefit-20261008
+2026-10-30T01:55:48.9916629Z  * [new branch]          feat/pon-five-axis-snapshot-delivery-20261010 -> origin/feat/pon-five-axis-snapshot-delivery-20261010
+2026-10-30T01:55:48.9920000Z  * [new branch]          feat/pon-parent-bound-evolution-20261012 -> origin/feat/pon-parent-bound-evolution-20261012
+2026-10-30T01:55:48.9923109Z  * [new branch]          feat/pon-priority-generation-sequence-20261008 -> origin/feat/pon-priority-generation-sequence-20261008
+2026-10-30T01:55:48.9926176Z  * [new branch]          feat/pon-snapshot-read-verified-20261010 -> origin/feat/pon-snapshot-read-verified-20261010
+2026-10-30T01:55:48.9929176Z  * [new branch]          feat/release-finality-state-machine-20261014 -> origin/feat/release-finality-state-machine-20261014
+2026-10-30T01:55:48.9932090Z  * [new branch]          feature/chain-full-pq-20261028-r2 -> origin/feature/chain-full-pq-20261028-r2
+2026-10-30T01:55:48.9934750Z  * [new branch]          feature/chain-pure-pon-evidence-20261027 -> origin/feature/chain-pure-pon-evidence-20261027
+2026-10-30T01:55:48.9937719Z  * [new branch]          feature/chain-pure-pon-integration-20261027 -> origin/feature/chain-pure-pon-integration-20261027
+2026-10-30T01:55:48.9941194Z  * [new branch]          feature/chain-pure-pon-measured-source-20261027 -> origin/feature/chain-pure-pon-measured-source-20261027
+2026-10-30T01:55:48.9944568Z  * [new branch]          feature/chain-pure-pon-w1-observed-source-20261027 -> origin/feature/chain-pure-pon-w1-observed-source-20261027
+2026-10-30T01:55:48.9947843Z  * [new branch]          feature/chain-pure-pon-workpackages-20261027 -> origin/feature/chain-pure-pon-workpackages-20261027
+2026-10-30T01:55:48.9951014Z  * [new branch]          feature/chain-w1-cost-research-20261025 -> origin/feature/chain-w1-cost-research-20261025
+2026-10-30T01:55:48.9953617Z  * [new branch]          fix/chain-a620-main-pair-20261025 -> origin/fix/chain-a620-main-pair-20261025
+2026-10-30T01:55:48.9956273Z  * [new branch]          fix/chain-answer-eos-research-v3-20261027 -> origin/fix/chain-answer-eos-research-v3-20261027
+2026-10-30T01:55:48.9959475Z  * [new branch]          fix/chain-atomic-cpu-refill-reserve-20261007 -> origin/fix/chain-atomic-cpu-refill-reserve-20261007
+2026-10-30T01:55:48.9962858Z  * [new branch]          fix/chain-binary-answer-observed-v2-20261029 -> origin/fix/chain-binary-answer-observed-v2-20261029
+2026-10-30T01:55:48.9965622Z  * [new branch]          fix/chain-bulk-state-tree-20261017 -> origin/fix/chain-bulk-state-tree-20261017
+2026-10-30T01:55:48.9968373Z  * [new branch]          fix/chain-capacity-cancel-work-fuzz-20261005 -> origin/fix/chain-capacity-cancel-work-fuzz-20261005
+2026-10-30T01:55:48.9972289Z  * [new branch]          fix/chain-capacity-work-continuation-20261005 -> origin/fix/chain-capacity-work-continuation-20261005
+2026-10-30T01:55:48.9975503Z  * [new branch]          fix/chain-cell-provider-observability-20261027 -> origin/fix/chain-cell-provider-observability-20261027
+2026-10-30T01:55:48.9978276Z  * [new branch]          fix/chain-ci-hardening-20261015 -> origin/fix/chain-ci-hardening-20261015
+2026-10-30T01:55:48.9981373Z  * [new branch]          fix/chain-cleanup-snapshot-stop-order-20261029 -> origin/fix/chain-cleanup-snapshot-stop-order-20261029
+2026-10-30T01:55:48.9984291Z  * [new branch]          fix/chain-clippy-growth-reservation -> origin/fix/chain-clippy-growth-reservation
+2026-10-30T01:55:48.9987020Z  * [new branch]          fix/chain-controller-main-pair-20261024 -> origin/fix/chain-controller-main-pair-20261024
+2026-10-30T01:55:48.9990495Z  * [new branch]          fix/chain-controller-owner-candidate-20261024 -> origin/fix/chain-controller-owner-candidate-20261024
+2026-10-30T01:55:48.9993635Z  * [new branch]          fix/chain-cpu-evidence-boundaries-20261006 -> origin/fix/chain-cpu-evidence-boundaries-20261006
+2026-10-30T01:55:48.9996384Z  * [new branch]          fix/chain-cpu-start-fifo-20261007 -> origin/fix/chain-cpu-start-fifo-20261007
+2026-10-30T01:55:48.9999203Z  * [new branch]          fix/chain-directed-owner-convergence-20261006 -> origin/fix/chain-directed-owner-convergence-20261006
+2026-10-30T01:55:49.0002692Z  * [new branch]          fix/chain-diverse-inventory-20261029 -> origin/fix/chain-diverse-inventory-20261029
+2026-10-30T01:55:49.0005566Z  * [new branch]          fix/chain-diverse60-neural-profile-20261029 -> origin/fix/chain-diverse60-neural-profile-20261029
+2026-10-30T01:55:49.0008412Z  * [new branch]          fix/chain-economic-security-20261015 -> origin/fix/chain-economic-security-20261015
+2026-10-30T01:55:49.0011450Z  * [new branch]          fix/chain-exit-subset-observer-20261022 -> origin/fix/chain-exit-subset-observer-20261022
+2026-10-30T01:55:49.0014429Z  * [new branch]          fix/chain-exit-worker-count-boundary-20261029 -> origin/fix/chain-exit-worker-count-boundary-20261029
+2026-10-30T01:55:49.0017517Z  * [new branch]          fix/chain-experimental-activation-20261014 -> origin/fix/chain-experimental-activation-20261014
+2026-10-30T01:55:49.0020754Z  * [new branch]          fix/chain-finality-byte-binding-20261014 -> origin/fix/chain-finality-byte-binding-20261014
+2026-10-30T01:55:49.0023531Z  * [new branch]          fix/chain-finality-profile-20261014 -> origin/fix/chain-finality-profile-20261014
+2026-10-30T01:55:49.0026196Z  * [new branch]          fix/chain-finite-rate-boundary-20261028 -> origin/fix/chain-finite-rate-boundary-20261028
+2026-10-30T01:55:49.0029083Z  * [new branch]          fix/chain-five-track-source-fence-20261011 -> origin/fix/chain-five-track-source-fence-20261011
+2026-10-30T01:55:49.0032397Z  * [new branch]          fix/chain-from-zero-execution-owner-20261006 -> origin/fix/chain-from-zero-execution-owner-20261006
+2026-10-30T01:55:49.0035189Z  * [new branch]          fix/chain-from-zero-native-20261006 -> origin/fix/chain-from-zero-native-20261006
+2026-10-30T01:55:49.0037909Z  * [new branch]          fix/chain-from-zero-native-20261006-round7 -> origin/fix/chain-from-zero-native-20261006-round7
+2026-10-30T01:55:49.0041029Z  * [new branch]          fix/chain-from-zero-native-closure-20261006 -> origin/fix/chain-from-zero-native-closure-20261006
+2026-10-30T01:55:49.0044168Z  * [new branch]          fix/chain-from-zero-service-cost-20261006 -> origin/fix/chain-from-zero-service-cost-20261006
+2026-10-30T01:55:49.0047201Z  * [new branch]          fix/chain-hepta-task-bound-objective-20261027 -> origin/fix/chain-hepta-task-bound-objective-20261027
+2026-10-30T01:55:49.0050532Z  * [new branch]          fix/chain-history-first-startup-20261028 -> origin/fix/chain-history-first-startup-20261028
+2026-10-30T01:55:49.0053550Z  * [new branch]          fix/chain-history-journal-operation-20261027 -> origin/fix/chain-history-journal-operation-20261027
+2026-10-30T01:55:49.0056410Z  * [new branch]          fix/chain-history-m06-detach-20261027 -> origin/fix/chain-history-m06-detach-20261027
+2026-10-30T01:55:49.0059309Z  * [new branch]          fix/chain-history-publication-native-20261028 -> origin/fix/chain-history-publication-native-20261028
+2026-10-30T01:55:49.0062611Z  * [new branch]          fix/chain-history-startup-seal-20261028 -> origin/fix/chain-history-startup-seal-20261028
+2026-10-30T01:55:49.0065452Z  * [new branch]          fix/chain-integrated-main-pair-20261025 -> origin/fix/chain-integrated-main-pair-20261025
+2026-10-30T01:55:49.0068555Z  * [new branch]          fix/chain-m10-durable-unpredictable-salt-20261014 -> origin/fix/chain-m10-durable-unpredictable-salt-20261014
+2026-10-30T01:55:49.0071813Z  * [new branch]          fix/chain-main-pair-189c0ae-20261023 -> origin/fix/chain-main-pair-189c0ae-20261023
+2026-10-30T01:55:49.0074392Z  * [new branch]          fix/chain-main-pair-4c8c2ee-20261026 -> origin/fix/chain-main-pair-4c8c2ee-20261026
+2026-10-30T01:55:49.0076963Z  * [new branch]          fix/chain-main-pair-53fb654-20261026 -> origin/fix/chain-main-pair-53fb654-20261026
+2026-10-30T01:55:49.0079503Z  * [new branch]          fix/chain-main-pair-873d5cb-20261023 -> origin/fix/chain-main-pair-873d5cb-20261023
+2026-10-30T01:55:49.0082193Z  * [new branch]          fix/chain-main-pair-a60f1b4-20261023 -> origin/fix/chain-main-pair-a60f1b4-20261023
+2026-10-30T01:55:49.0085055Z  * [new branch]          fix/chain-main-pair-app-shards-20261024 -> origin/fix/chain-main-pair-app-shards-20261024
+2026-10-30T01:55:49.0087740Z  * [new branch]          fix/chain-main-pair-catalog-20261023 -> origin/fix/chain-main-pair-catalog-20261023
+2026-10-30T01:55:49.0090570Z  * [new branch]          fix/chain-main-pair-concurrent-20261024 -> origin/fix/chain-main-pair-concurrent-20261024
+2026-10-30T01:55:49.0093448Z  * [new branch]          fix/chain-main-pair-source-repair-20261024 -> origin/fix/chain-main-pair-source-repair-20261024
+2026-10-30T01:55:49.0096105Z  * [new branch]          fix/chain-main-pair-tcl2-20261023 -> origin/fix/chain-main-pair-tcl2-20261023
+2026-10-30T01:55:49.0098834Z  * [new branch]          fix/chain-model-package-pinned-read-20261007 -> origin/fix/chain-model-package-pinned-read-20261007
+2026-10-30T01:55:49.0102121Z  * [new branch]          fix/chain-model-runtime-diagnostic-20261027 -> origin/fix/chain-model-runtime-diagnostic-20261027
+2026-10-30T01:55:49.0104957Z  * [new branch]          fix/chain-native-convergence-20261029 -> origin/fix/chain-native-convergence-20261029
+2026-10-30T01:55:49.0107678Z  * [new branch]          fix/chain-obligation-lifecycle-20261005 -> origin/fix/chain-obligation-lifecycle-20261005
+2026-10-30T01:55:49.0110887Z  * [new branch]          fix/chain-observation-convergence-20261007 -> origin/fix/chain-observation-convergence-20261007
+2026-10-30T01:55:49.0114006Z  * [new branch]          fix/chain-observed-neural-live-release-20261028 -> origin/fix/chain-observed-neural-live-release-20261028
+2026-10-30T01:55:49.0116863Z  * [new branch]          fix/chain-owned-validation-20261007 -> origin/fix/chain-owned-validation-20261007
+2026-10-30T01:55:49.0119369Z  * [new branch]          fix/chain-owner-boundaries-20261007 -> origin/fix/chain-owner-boundaries-20261007
+2026-10-30T01:55:49.0122058Z  * [new branch]          fix/chain-owner-hotpath-20261006 -> origin/fix/chain-owner-hotpath-20261006
+2026-10-30T01:55:49.0124870Z  * [new branch]          fix/chain-owner-hotpath-delivery-20261006 -> origin/fix/chain-owner-hotpath-delivery-20261006
+2026-10-30T01:55:49.0127682Z  * [new branch]          fix/chain-owner-hotpath-review-20261006 -> origin/fix/chain-owner-hotpath-review-20261006
+2026-10-30T01:55:49.0130393Z  * [new branch]          fix/chain-owner-transfer-20261007 -> origin/fix/chain-owner-transfer-20261007
+2026-10-30T01:55:49.0132655Z  * [new branch]          fix/chain-p0-ci-drift-20261015 -> origin/fix/chain-p0-ci-drift-20261015
+2026-10-30T01:55:49.0135308Z  * [new branch]          fix/chain-p0-mixed-campaign-receipts-20261015 -> origin/fix/chain-p0-mixed-campaign-receipts-20261015
+2026-10-30T01:55:49.0138564Z  * [new branch]          fix/chain-p0-security-liveness-convergence-20261016 -> origin/fix/chain-p0-security-liveness-convergence-20261016
+2026-10-30T01:55:49.0141814Z  * [new branch]          fix/chain-parent-binding-20261017 -> origin/fix/chain-parent-binding-20261017
+2026-10-30T01:55:49.0144425Z  * [new branch]          fix/chain-pon-capacity-progress-20261004 -> origin/fix/chain-pon-capacity-progress-20261004
+2026-10-30T01:55:49.0147293Z  * [new branch]          fix/chain-pon-contract-authority-20260929 -> origin/fix/chain-pon-contract-authority-20260929
+2026-10-30T01:55:49.0150417Z  * [new branch]          fix/chain-pon-priority-refactor-20261004 -> origin/fix/chain-pon-priority-refactor-20261004
+2026-10-30T01:55:49.0153477Z  * [new branch]          fix/chain-pon-recent-store-fingerprint-20261017 -> origin/fix/chain-pon-recent-store-fingerprint-20261017
+2026-10-30T01:55:49.0156439Z  * [new branch]          fix/chain-pon-restricted-owner-pool-v2 -> origin/fix/chain-pon-restricted-owner-pool-v2
+2026-10-30T01:55:49.0159178Z  * [new branch]          fix/chain-pon-verification-cost-20261028 -> origin/fix/chain-pon-verification-cost-20261028
+2026-10-30T01:55:49.0162273Z  * [new branch]          fix/chain-pon-w1-from-zero-cost-20261005 -> origin/fix/chain-pon-w1-from-zero-cost-20261005
+2026-10-30T01:55:49.0165112Z  * [new branch]          fix/chain-pq-claimed-nonce-20261029 -> origin/fix/chain-pq-claimed-nonce-20261029
+2026-10-30T01:55:49.0167594Z  * [new branch]          fix/chain-pq-quota-closure-20261028 -> origin/fix/chain-pq-quota-closure-20261028
+2026-10-30T01:55:49.0170590Z  * [new branch]          fix/chain-pq-recursive-source-coverage-20261027 -> origin/fix/chain-pq-recursive-source-coverage-20261027
+2026-10-30T01:55:49.0173955Z  * [new branch]          fix/chain-priority-native-acceptance-20261005 -> origin/fix/chain-priority-native-acceptance-20261005
+2026-10-30T01:55:49.0177093Z  * [new branch]          fix/chain-pure-history-lifeline-binding-20261029 -> origin/fix/chain-pure-history-lifeline-binding-20261029
+2026-10-30T01:55:49.0180433Z  * [new branch]          fix/chain-pure-history-source-pin-20261029 -> origin/fix/chain-pure-history-source-pin-20261029
+2026-10-30T01:55:49.0183304Z  * [new branch]          fix/chain-pure-pon-admission-daa-20261028 -> origin/fix/chain-pure-pon-admission-daa-20261028
+2026-10-30T01:55:49.0185960Z  * [new branch]          fix/chain-pure-pon-history-20261027 -> origin/fix/chain-pure-pon-history-20261027
+2026-10-30T01:55:49.0188578Z  * [new branch]          fix/chain-pure-pon-pq-hardening-20261027 -> origin/fix/chain-pure-pon-pq-hardening-20261027
+2026-10-30T01:55:49.0191611Z  * [new branch]          fix/chain-quantum-tail-preservation-20261029 -> origin/fix/chain-quantum-tail-preservation-20261029
+2026-10-30T01:55:49.0194265Z  * [new branch]          fix/chain-reservation-settlement -> origin/fix/chain-reservation-settlement
+2026-10-30T01:55:49.0196793Z  * [new branch]          fix/chain-retained-meter-refill-20261007 -> origin/fix/chain-retained-meter-refill-20261007
+2026-10-30T01:55:49.0199618Z  * [new branch]          fix/chain-retained-owner-candidate-20261024 -> origin/fix/chain-retained-owner-candidate-20261024
+2026-10-30T01:55:49.0202832Z  * [new branch]          fix/chain-retained-owner-main-pair-20261024 -> origin/fix/chain-retained-owner-main-pair-20261024
+2026-10-30T01:55:49.0206191Z  * [new branch]          fix/chain-retirement-preparation-candidate-20261024 -> origin/fix/chain-retirement-preparation-candidate-20261024
+2026-10-30T01:55:49.0209626Z  * [new branch]          fix/chain-retirement-preparation-main-pair-20261024 -> origin/fix/chain-retirement-preparation-main-pair-20261024
+2026-10-30T01:55:49.0212924Z  * [new branch]          fix/chain-rss-mm-detached-v5-20261027 -> origin/fix/chain-rss-mm-detached-v5-20261027
+2026-10-30T01:55:49.0215571Z  * [new branch]          fix/chain-six-line-continuation-20261007 -> origin/fix/chain-six-line-continuation-20261007
+2026-10-30T01:55:49.0218540Z  * [new branch]          fix/chain-six-workstream-ci-convergence-20261008 -> origin/fix/chain-six-workstream-ci-convergence-20261008
+2026-10-30T01:55:49.0221963Z  * [new branch]          fix/chain-six-workstream-convergence-20261008 -> origin/fix/chain-six-workstream-convergence-20261008
+2026-10-30T01:55:49.0225076Z  * [new branch]          fix/chain-six-workstream-convergence-20261008-r2 -> origin/fix/chain-six-workstream-convergence-20261008-r2
+2026-10-30T01:55:49.0228049Z  * [new branch]          fix/chain-sparse-root-quadrant-20261014 -> origin/fix/chain-sparse-root-quadrant-20261014
+2026-10-30T01:55:49.0231060Z  * [new branch]          fix/chain-state-difference-from-zero-20261006 -> origin/fix/chain-state-difference-from-zero-20261006
+2026-10-30T01:55:49.0233922Z  * [new branch]          fix/chain-streaming-delta-root-20261006 -> origin/fix/chain-streaming-delta-root-20261006
+2026-10-30T01:55:49.0236812Z  * [new branch]          fix/chain-sustained-owner-convergence-20261006 -> origin/fix/chain-sustained-owner-convergence-20261006
+2026-10-30T01:55:49.0239639Z  * [new branch]          fix/chain-tcl4-integration-20261024 -> origin/fix/chain-tcl4-integration-20261024
+2026-10-30T01:55:49.0242401Z  * [new branch]          fix/chain-tx-adapter-timeout-20261018 -> origin/fix/chain-tx-adapter-timeout-20261018
+2026-10-30T01:55:49.0245027Z  * [new branch]          fix/chain-w1-borrowed-product-20261006 -> origin/fix/chain-w1-borrowed-product-20261006
+2026-10-30T01:55:49.0247992Z  * [new branch]          fix/chain-w1-debt-native-recovery-20261017 -> origin/fix/chain-w1-debt-native-recovery-20261017
+2026-10-30T01:55:49.0251018Z  * [new branch]          fix/chain-w1-frozen-inventory-20261028 -> origin/fix/chain-w1-frozen-inventory-20261028
+2026-10-30T01:55:49.0253939Z  * [new branch]          fix/chain-w1-frozen-witness-integration-20261028 -> origin/fix/chain-w1-frozen-witness-integration-20261028
+2026-10-30T01:55:49.0256926Z  * [new branch]          fix/chain-w1-invalid-product-tcp-20261017 -> origin/fix/chain-w1-invalid-product-tcp-20261017
+2026-10-30T01:55:49.0259533Z  * [new branch]          fix/chain-w1-native-budget-20261006 -> origin/fix/chain-w1-native-budget-20261006
+2026-10-30T01:55:49.0262550Z  * [new branch]          fix/chain-w1-paired-cost-accounting-20261005 -> origin/fix/chain-w1-paired-cost-accounting-20261005
+2026-10-30T01:55:49.0265376Z  * [new branch]          fix/chain-work-collector-owner-20261011 -> origin/fix/chain-work-collector-owner-20261011
+2026-10-30T01:55:49.0268104Z  * [new branch]          fix/pon-architecture-boundaries-20261008 -> origin/fix/pon-architecture-boundaries-20261008
+2026-10-30T01:55:49.0271040Z  * [new branch]          fix/pon-authenticated-sql-reuse-20261010 -> origin/fix/pon-authenticated-sql-reuse-20261010
+2026-10-30T01:55:49.0273742Z  * [new branch]          fix/pon-bounded-history-fields-20261011 -> origin/fix/pon-bounded-history-fields-20261011
+2026-10-30T01:55:49.0276345Z  * [new branch]          fix/pon-ci-owned-group-exit-20261012 -> origin/fix/pon-ci-owned-group-exit-20261012
+2026-10-30T01:55:49.0279228Z  * [new branch]          fix/pon-current-source-fmt-gate-evidence-20261008 -> origin/fix/pon-current-source-fmt-gate-evidence-20261008
+2026-10-30T01:55:49.0282376Z  * [new branch]          fix/pon-daa-equal-work-heal-20261025 -> origin/fix/pon-daa-equal-work-heal-20261025
+2026-10-30T01:55:49.0285459Z  * [new branch]          fix/pon-five-axis-confirmation-ownership-20261010 -> origin/fix/pon-five-axis-confirmation-ownership-20261010
+2026-10-30T01:55:49.0288618Z  * [new branch]          fix/pon-five-axis-pipeline-delivery-20261010 -> origin/fix/pon-five-axis-pipeline-delivery-20261010
+2026-10-30T01:55:49.0291704Z  * [new branch]          fix/pon-five-axis-pipeline-native-20261010 -> origin/fix/pon-five-axis-pipeline-native-20261010
+2026-10-30T01:55:49.0294786Z  * [new branch]          fix/pon-five-axis-pipeline-serialization-20261010 -> origin/fix/pon-five-axis-pipeline-serialization-20261010
+2026-10-30T01:55:49.0297943Z  * [new branch]          fix/pon-five-axis-singleton-delivery-20261011 -> origin/fix/pon-five-axis-singleton-delivery-20261011
+2026-10-30T01:55:49.0301047Z  * [new branch]          fix/pon-five-priority-closure-20261009 -> origin/fix/pon-five-priority-closure-20261009
+2026-10-30T01:55:49.0303625Z  * [new branch]          fix/pon-five-track-baseline-20261012 -> origin/fix/pon-five-track-baseline-20261012
+2026-10-30T01:55:49.0306297Z  * [new branch]          fix/pon-five-track-convergence-20261012-r2 -> origin/fix/pon-five-track-convergence-20261012-r2
+2026-10-30T01:55:49.0309254Z  * [new branch]          fix/pon-five-track-darwin-convergence-20261012 -> origin/fix/pon-five-track-darwin-convergence-20261012
+2026-10-30T01:55:49.0312495Z  * [new branch]          fix/pon-five-track-observer-fixture-20261012-r2 -> origin/fix/pon-five-track-observer-fixture-20261012-r2
+2026-10-30T01:55:49.0315411Z  * [new branch]          fix/pon-five-track-source-fence-20261011 -> origin/fix/pon-five-track-source-fence-20261011
+2026-10-30T01:55:49.0318089Z  * [new branch]          fix/pon-growth-readback-fence-20261008 -> origin/fix/pon-growth-readback-fence-20261008
+2026-10-30T01:55:49.0321495Z  * [new branch]          fix/pon-historical-cost-diagnostic-convergence-20261008 -> origin/fix/pon-historical-cost-diagnostic-convergence-20261008
+2026-10-30T01:55:49.0325008Z  * [new branch]          fix/pon-history-epoch-accounting-baseline-20261015 -> origin/fix/pon-history-epoch-accounting-baseline-20261015
+2026-10-30T01:55:49.0328459Z  * [new branch]          fix/pon-lease-daa-research-schema-fence-20261026 -> origin/fix/pon-lease-daa-research-schema-fence-20261026
+2026-10-30T01:55:49.0331619Z  * [new branch]          fix/pon-m10-flush-preview-secret-20261016 -> origin/fix/pon-m10-flush-preview-secret-20261016
+2026-10-30T01:55:49.0334338Z  * [new branch]          fix/pon-m10-history-integrated-20261015 -> origin/fix/pon-m10-history-integrated-20261015
+2026-10-30T01:55:49.0337076Z  * [new branch]          fix/pon-m10-manual-private-submit-20261015 -> origin/fix/pon-m10-manual-private-submit-20261015
+2026-10-30T01:55:49.0340120Z  * [new branch]          fix/pon-m10-private-salt-stdio-20261016 -> origin/fix/pon-m10-private-salt-stdio-20261016
+2026-10-30T01:55:49.0342885Z  * [new branch]          fix/pon-native-fixed-blob-bounds-20261010 -> origin/fix/pon-native-fixed-blob-bounds-20261010
+2026-10-30T01:55:49.0345730Z  * [new branch]          fix/pon-native-fixed-blob-delivery-20261010 -> origin/fix/pon-native-fixed-blob-delivery-20261010
+2026-10-30T01:55:49.0348581Z  * [new branch]          fix/pon-nullable-blob-integrity-20261010 -> origin/fix/pon-nullable-blob-integrity-20261010
+2026-10-30T01:55:49.0351354Z  * [new branch]          fix/pon-owned-cpu-extension-20261011 -> origin/fix/pon-owned-cpu-extension-20261011
+2026-10-30T01:55:49.0354072Z  * [new branch]          fix/pon-owned-group-cleanup-945895e-20261012 -> origin/fix/pon-owned-group-cleanup-945895e-20261012
+2026-10-30T01:55:49.0356862Z  * [new branch]          fix/pon-pressure-window-native-20261010 -> origin/fix/pon-pressure-window-native-20261010
+2026-10-30T01:55:49.0359486Z  * [new branch]          fix/pon-priority-acceptance-20261008 -> origin/fix/pon-priority-acceptance-20261008
+2026-10-30T01:55:49.0362474Z  * [new branch]          fix/pon-priority-consumer-context-20261008 -> origin/fix/pon-priority-consumer-context-20261008
+2026-10-30T01:55:49.0365594Z  * [new branch]          fix/pon-q4-outbox-semantic-cold-audit-20261026 -> origin/fix/pon-q4-outbox-semantic-cold-audit-20261026
+2026-10-30T01:55:49.0368576Z  * [new branch]          fix/pon-q4-outbox-snapshot-status-20261026 -> origin/fix/pon-q4-outbox-snapshot-status-20261026
+2026-10-30T01:55:49.0371402Z  * [new branch]          fix/pon-receipt-input-owner-20261010 -> origin/fix/pon-receipt-input-owner-20261010
+2026-10-30T01:55:49.0373909Z  * [new branch]          fix/pon-reserve-suite-count-20261011 -> origin/fix/pon-reserve-suite-count-20261011
+2026-10-30T01:55:49.0376814Z  * [new branch]          fix/pon-seven-chain-observation-converged-20261008 -> origin/fix/pon-seven-chain-observation-converged-20261008
+2026-10-30T01:55:49.0380189Z  * [new branch]          fix/pon-unified-m10-history-source-20261015 -> origin/fix/pon-unified-m10-history-source-20261015
+2026-10-30T01:55:49.0382812Z  * [new branch]          fix/pon-w1-from-zero-cost-20261005 -> origin/fix/pon-w1-from-zero-cost-20261005
+2026-10-30T01:55:49.0385620Z  * [new branch]          fix/pon-work-admission-cooffered-service-20261008 -> origin/fix/pon-work-admission-cooffered-service-20261008
+2026-10-30T01:55:49.0388658Z  * [new branch]          fix/pon-worker-cli-shell-argument-20261015 -> origin/fix/pon-worker-cli-shell-argument-20261015
+2026-10-30T01:55:49.0391657Z  * [new branch]          fix/pon-worker-procfs-reaper-retry-20261016 -> origin/fix/pon-worker-procfs-reaper-retry-20261016
+2026-10-30T01:55:49.0394709Z  * [new branch]          integration/pon-architecture-convergence-20261011 -> origin/integration/pon-architecture-convergence-20261011
+2026-10-30T01:55:49.0397719Z  * [new branch]          integration/pon-cached-live-owner-20261010 -> origin/integration/pon-cached-live-owner-20261010
+2026-10-30T01:55:49.0400927Z  * [new branch]          integration/pon-five-axis-continuation-20261011 -> origin/integration/pon-five-axis-continuation-20261011
+2026-10-30T01:55:49.0403996Z  * [new branch]          integration/pon-five-axis-convergence-20261010 -> origin/integration/pon-five-axis-convergence-20261010
+2026-10-30T01:55:49.0407045Z  * [new branch]          integration/pon-five-boundaries-20261011 -> origin/integration/pon-five-boundaries-20261011
+2026-10-30T01:55:49.0409935Z  * [new branch]          integration/pon-five-exits-native-20261009 -> origin/integration/pon-five-exits-native-20261009
+2026-10-30T01:55:49.0412948Z  * [new branch]          integration/pon-five-track-qualification-20261011 -> origin/integration/pon-five-track-qualification-20261011
+2026-10-30T01:55:49.0415872Z  * [new branch]          integration/pon-owner-receipts-20261010 -> origin/integration/pon-owner-receipts-20261010
+2026-10-30T01:55:49.0418703Z  * [new branch]          integration/pon-parent-and-owned-exit-20261012 -> origin/integration/pon-parent-and-owned-exit-20261012
+2026-10-30T01:55:49.0421208Z  * [new branch]          main       -> origin/main
+2026-10-30T01:55:49.0423264Z  * [new branch]          maintenance/actions-storage-reclaim-20261022 -> origin/maintenance/actions-storage-reclaim-20261022
+2026-10-30T01:55:49.0425905Z  * [new branch]          ops/github-storage-audit-20261022 -> origin/ops/github-storage-audit-20261022
+2026-10-30T01:55:49.0428080Z  * [new branch]          ops/recover-qian-qi-20260925 -> origin/ops/recover-qian-qi-20260925
+2026-10-30T01:55:49.0430935Z  * [new branch]          perf/pon-architecture-batched-confirmation-20261011 -> origin/perf/pon-architecture-batched-confirmation-20261011
+2026-10-30T01:55:49.0434023Z  * [new branch]          perf/pon-authenticated-sql-reuse-20261009 -> origin/perf/pon-authenticated-sql-reuse-20261009
+2026-10-30T01:55:49.0436595Z  * [new branch]          perf/pon-branch-encoding-20261009 -> origin/perf/pon-branch-encoding-20261009
+2026-10-30T01:55:49.0439110Z  * [new branch]          perf/pon-branch-encoding-stage-20261009 -> origin/perf/pon-branch-encoding-stage-20261009
+2026-10-30T01:55:49.0442125Z  * [new branch]          perf/pon-canonical-branch-kernel-20261011 -> origin/perf/pon-canonical-branch-kernel-20261011
+2026-10-30T01:55:49.0445052Z  * [new branch]          perf/pon-complete-state-root-20261011 -> origin/perf/pon-complete-state-root-20261011
+2026-10-30T01:55:49.0447639Z  * [new branch]          perf/pon-exact-work-division-20261011 -> origin/perf/pon-exact-work-division-20261011
+2026-10-30T01:55:49.0450418Z  * [new branch]          perf/pon-immutable-empty-tree-20261011 -> origin/perf/pon-immutable-empty-tree-20261011
+2026-10-30T01:55:49.0453173Z  * [new branch]          perf/pon-native-bounded-snapshots-20261009 -> origin/perf/pon-native-bounded-snapshots-20261009
+2026-10-30T01:55:49.0455971Z  * [new branch]          perf/pon-recent-header-batching-20261009 -> origin/perf/pon-recent-header-batching-20261009
+2026-10-30T01:55:49.0458714Z  * [new branch]          perf/pon-v3-native-test-node-opt-20261016 -> origin/perf/pon-v3-native-test-node-opt-20261016
+2026-10-30T01:55:49.0461829Z  * [new branch]          refactor/pon-campaign-process-owner-20261011 -> origin/refactor/pon-campaign-process-owner-20261011
+2026-10-30T01:55:49.0464421Z  * [new branch]          repair/pon-history-cost-20261009 -> origin/repair/pon-history-cost-20261009
+2026-10-30T01:55:49.0467163Z  * [new branch]          research/chain-binary-answer-observed-v2-20261028 -> origin/research/chain-binary-answer-observed-v2-20261028
+2026-10-30T01:55:49.0470325Z  * [new branch]          research/chain-native-pq-renewal-v5-20261028 -> origin/research/chain-native-pq-renewal-v5-20261028
+2026-10-30T01:55:49.0474144Z  * [new branch]          research/chain-native-pq-tasks-v4-20261028 -> origin/research/chain-native-pq-tasks-v4-20261028
+2026-10-30T01:55:49.0478951Z  * [new branch]          research/chain-w1-full-cost-profile-20261029 -> origin/research/chain-w1-full-cost-profile-20261029
+2026-10-30T01:55:49.0484577Z  * [new branch]          research/chain-w1-preflight-boundaries-20261029 -> origin/research/chain-w1-preflight-boundaries-20261029
+2026-10-30T01:55:49.0490262Z  * [new branch]          research/chain-w1-receipt-loopback-20261029 -> origin/research/chain-w1-receipt-loopback-20261029
+2026-10-30T01:55:49.0495906Z  * [new branch]          research/chain-w1-transparent-succinct-20261028 -> origin/research/chain-w1-transparent-succinct-20261028
+2026-10-30T01:55:49.0500275Z  * [new branch]          research/pon-asert-c-reference-20261026 -> origin/research/pon-asert-c-reference-20261026
+2026-10-30T01:55:49.0502988Z  * [new branch]          research/pon-asert-cpp-oracle-20261026 -> origin/research/pon-asert-cpp-oracle-20261026
+2026-10-30T01:55:49.0505719Z  * [new branch]          research/pon-asert-indexed-anchor-20261026 -> origin/research/pon-asert-indexed-anchor-20261026
+2026-10-30T01:55:49.0508628Z  * [new branch]          research/pon-confirmation-risk-bound-20261026 -> origin/research/pon-confirmation-risk-bound-20261026
+2026-10-30T01:55:49.0511785Z  * [new branch]          research/pon-daa-bounded-summary-20261025 -> origin/research/pon-daa-bounded-summary-20261025
+2026-10-30T01:55:49.0514336Z  * [new branch]          research/pon-daa-c-oracle-20261026 -> origin/research/pon-daa-c-oracle-20261026
+2026-10-30T01:55:49.0517072Z  * [new branch]          research/pon-daa-confirmation-dual-gate-20261026 -> origin/research/pon-daa-confirmation-dual-gate-20261026
+2026-10-30T01:55:49.0520141Z  * [new branch]          research/pon-daa-go-error-parity-20261026 -> origin/research/pon-daa-go-error-parity-20261026
+2026-10-30T01:55:49.0522862Z  * [new branch]          research/pon-daa-go-independent-20261026 -> origin/research/pon-daa-go-independent-20261026
+2026-10-30T01:55:49.0525590Z  * [new branch]          research/pon-daa-indexed-ancestry-20261025 -> origin/research/pon-daa-indexed-ancestry-20261025
+2026-10-30T01:55:49.0528313Z  * [new branch]          research/pon-daa-indexed-shadow-20261025 -> origin/research/pon-daa-indexed-shadow-20261025
+2026-10-30T01:55:49.0531428Z  * [new branch]          research/pon-daa-timewarp-go-differential-20261026 -> origin/research/pon-daa-timewarp-go-differential-20261026
+2026-10-30T01:55:49.0534441Z  * [new branch]          research/pon-durable-fault-fences-20261026 -> origin/research/pon-durable-fault-fences-20261026
+2026-10-30T01:55:49.0537410Z  * [new branch]          research/pon-equal-work-fork-heal-20261026 -> origin/research/pon-equal-work-fork-heal-20261026
+2026-10-30T01:55:49.0540579Z  * [new branch]          research/pon-fast-retention-reentry-20261026 -> origin/research/pon-fast-retention-reentry-20261026
+2026-10-30T01:55:49.0543420Z  * [new branch]          research/pon-fork-local-asert-w1-20261026 -> origin/research/pon-fork-local-asert-w1-20261026
+2026-10-30T01:55:49.0546195Z  * [new branch]          research/pon-lease-daa-adversarial-20261027 -> origin/research/pon-lease-daa-adversarial-20261027
+2026-10-30T01:55:49.0548867Z  * [new branch]          research/pon-lease-daa-asert-20261025 -> origin/research/pon-lease-daa-asert-20261025
+2026-10-30T01:55:49.0551941Z  * [new branch]          research/pon-lease-daa-integrated-hardening-20261026 -> origin/research/pon-lease-daa-integrated-hardening-20261026
+2026-10-30T01:55:49.0555186Z  * [new branch]          research/pon-lease-daa-network-campaign-20261026 -> origin/research/pon-lease-daa-network-campaign-20261026
+2026-10-30T01:55:49.0558187Z  * [new branch]          research/pon-lease-daa-outbox-fence-20261026 -> origin/research/pon-lease-daa-outbox-fence-20261026
+2026-10-30T01:55:49.0561305Z  * [new branch]          research/pon-lease-edge-q4-immutability-20261026 -> origin/research/pon-lease-edge-q4-immutability-20261026
+2026-10-30T01:55:49.0564581Z  * [new branch]          research/pon-native-retention-signed-reentry-20261026 -> origin/research/pon-native-retention-signed-reentry-20261026
+2026-10-30T01:55:49.0567824Z  * [new branch]          research/pon-q4-daa-durable-read-bounds-20261027 -> origin/research/pon-q4-daa-durable-read-bounds-20261027
+2026-10-30T01:55:49.0571071Z  * [new branch]          research/pon-q4-dualsig-packet-recovery-20261026 -> origin/research/pon-q4-dualsig-packet-recovery-20261026
+2026-10-30T01:55:49.0574153Z  * [new branch]          research/pon-q4-full-slot-registration-20261026 -> origin/research/pon-q4-full-slot-registration-20261026
+2026-10-30T01:55:49.0577561Z  * [new branch]          research/pon-q4-observation-generation-fence-20261026 -> origin/research/pon-q4-observation-generation-fence-20261026
+2026-10-30T01:55:49.0581004Z  * [new branch]          research/pon-q4-outbox-cold-audit-20261026 -> origin/research/pon-q4-outbox-cold-audit-20261026
+2026-10-30T01:55:49.0583732Z  * [new branch]          research/pon-q4-postwrite-fence-20261026 -> origin/research/pon-q4-postwrite-fence-20261026
+2026-10-30T01:55:49.0586636Z  * [new branch]          research/pon-q4-schema-receiver-followup-20261026 -> origin/research/pon-q4-schema-receiver-followup-20261026
+2026-10-30T01:55:49.0589415Z  * [new branch]          research/pon-q4-signed-wire-20261026 -> origin/research/pon-q4-signed-wire-20261026
+2026-10-30T01:55:49.0592117Z  * [new branch]          research/pon-real-w1-fork-replay-20261026 -> origin/research/pon-real-w1-fork-replay-20261026
+2026-10-30T01:55:49.0594755Z  * [new branch]          research/pon-real-w1-lease-daa-20261026 -> origin/research/pon-real-w1-lease-daa-20261026
+2026-10-30T01:55:49.0597387Z  * [new branch]          research/pon-w1-go-scalar-audit-20261026 -> origin/research/pon-w1-go-scalar-audit-20261026
+2026-10-30T01:55:49.0600094Z  * [new branch]          research/pon-w1-prepared-cost-20261025 -> origin/research/pon-w1-prepared-cost-20261025
+2026-10-30T01:55:49.0602689Z  * [new branch]          research/pon-w1-third-verifier-20261026 -> origin/research/pon-w1-third-verifier-20261026
+2026-10-30T01:55:49.0605469Z  * [new branch]          research/pon-work-security-ideal-risk-20261026 -> origin/research/pon-work-security-ideal-risk-20261026
+2026-10-30T01:55:49.0608233Z  * [new branch]          research/pq-cell-atomic-bundle-20261027 -> origin/research/pq-cell-atomic-bundle-20261027
+2026-10-30T01:55:49.0611381Z  * [new branch]          research/pq-cell-custody-canonical-retrieval-20261026 -> origin/research/pq-cell-custody-canonical-retrieval-20261026
+2026-10-30T01:55:49.0614812Z  * [new branch]          research/pq-cell-journal-postopen-guard-20261027 -> origin/research/pq-cell-journal-postopen-guard-20261027
+2026-10-30T01:55:49.0617736Z  * [new branch]          research/pq-cell-native-openssl-20261026 -> origin/research/pq-cell-native-openssl-20261026
+2026-10-30T01:55:49.0621055Z  * [new branch]          research/pq-cell-provenance-verified-release-20261026 -> origin/research/pq-cell-provenance-verified-release-20261026
+2026-10-30T01:55:49.0624278Z  * [new branch]          research/pq-cell-release-attestations-20261026 -> origin/research/pq-cell-release-attestations-20261026
+2026-10-30T01:55:49.0627165Z  * [new branch]          research/pq-cell-swarmed-retrieval-20261026 -> origin/research/pq-cell-swarmed-retrieval-20261026
+2026-10-30T01:55:49.0630215Z  * [new branch]          research/pq-cell-temp-schema-ack-fence-20261027 -> origin/research/pq-cell-temp-schema-ack-fence-20261027
+2026-10-30T01:55:49.0633165Z  * [new branch]          research/pq-full-corpus-integration-20261027 -> origin/research/pq-full-corpus-integration-20261027
+2026-10-30T01:55:49.0636148Z  * [new branch]          research/pq-genesis-liability-handoff-20261026 -> origin/research/pq-genesis-liability-handoff-20261026
+2026-10-30T01:55:49.0639184Z  * [new branch]          research/pq-genesis-native-dual-verify-20261026 -> origin/research/pq-genesis-native-dual-verify-20261026
+2026-10-30T01:55:49.0642513Z  * [new branch]          research/pq-genesis-nonce-liability-bridge-20261026 -> origin/research/pq-genesis-nonce-liability-bridge-20261026
+2026-10-30T01:55:49.0645624Z  * [new branch]          research/pq-migration-strict-journal-20261027 -> origin/research/pq-migration-strict-journal-20261027
+2026-10-30T01:55:49.0648489Z  * [new branch]          research/pq-ml-dsa-65-conformance-20261026 -> origin/research/pq-ml-dsa-65-conformance-20261026
+2026-10-30T01:55:49.0651339Z  * [new branch]          research/pq-peer-durable-replay-20261026 -> origin/research/pq-peer-durable-replay-20261026
+2026-10-30T01:55:49.0654148Z  * [new branch]          research/pq-peer-hybrid-mtls-binding-20261026 -> origin/research/pq-peer-hybrid-mtls-binding-20261026
+2026-10-30T01:55:49.0657114Z  * [new branch]          research/pq-pql10-canonical-pem-20261027 -> origin/research/pq-pql10-canonical-pem-20261027
+2026-10-30T01:55:49.0660196Z  * [new branch]          research/pq-pql10-complete-source-pins-20261027 -> origin/research/pq-pql10-complete-source-pins-20261027
+2026-10-30T01:55:49.0663352Z  * [new branch]          research/pq-pql11-recursive-source-guard-20261027 -> origin/research/pq-pql11-recursive-source-guard-20261027
+2026-10-30T01:55:49.0666227Z  * [new branch]          research/pq-pql3-fork-recovery-20261026 -> origin/research/pq-pql3-fork-recovery-20261026
+2026-10-30T01:55:49.0669001Z  * [new branch]          research/pq-pql3-native-state-parity-20261026 -> origin/research/pq-pql3-native-state-parity-20261026
+2026-10-30T01:55:49.0672206Z  * [new branch]          research/pq-pql4-signed-external-frontier-20261026 -> origin/research/pq-pql4-signed-external-frontier-20261026
+2026-10-30T01:55:49.0675317Z  * [new branch]          research/pq-pql5-fresh-witness-quorum-20261026 -> origin/research/pq-pql5-fresh-witness-quorum-20261026
+2026-10-30T01:55:49.0678093Z  * [new branch]          research/pq-pql5-native-oracle-20261027 -> origin/research/pq-pql5-native-oracle-20261027
+2026-10-30T01:55:49.0681016Z  * [new branch]          research/pq-pql5-temp-schema-ack-fence-20261027 -> origin/research/pq-pql5-temp-schema-ack-fence-20261027
+2026-10-30T01:55:49.0684048Z  * [new branch]          research/pq-pql6-equivocation-evidence-20261027 -> origin/research/pq-pql6-equivocation-evidence-20261027
+2026-10-30T01:55:49.0687021Z  * [new branch]          research/pq-pql8-native-spki-binding-20261027 -> origin/research/pq-pql8-native-spki-binding-20261027
+2026-10-30T01:55:49.0690095Z  * [new branch]          research/pq-pql9-general-tpq1-verifier-20261027 -> origin/research/pq-pql9-general-tpq1-verifier-20261027
+2026-10-30T01:55:49.0693188Z  * [new branch]          research/pq-pql9-native-tpq1-crypto-20261027 -> origin/research/pq-pql9-native-tpq1-crypto-20261027
+2026-10-30T01:55:49.0696118Z  * [new branch]          research/pq-pqs1-whole-roster-native-20261026 -> origin/research/pq-pqs1-whole-roster-native-20261026
+2026-10-30T01:55:49.0699312Z  * [new branch]          research/pq-preserved-liability-native-import-20261026 -> origin/research/pq-preserved-liability-native-import-20261026
+2026-10-30T01:55:49.0703314Z  * [new branch]          research/pq-qtx1-fork-state-replay-20261026 -> origin/research/pq-qtx1-fork-state-replay-20261026
+2026-10-30T01:55:49.0706088Z  * [new branch]          research/pq-qtx1-native-boundary-20261026 -> origin/research/pq-qtx1-native-boundary-20261026
+2026-10-30T01:55:49.0709062Z  * [new branch]          research/pq-qtx1-native-crypto-conformance-20261026 -> origin/research/pq-qtx1-native-crypto-conformance-20261026
+2026-10-30T01:55:49.0712583Z  * [new branch]          research/q4-outbox-canonical-observation-20261026 -> origin/research/q4-outbox-canonical-observation-20261026
+2026-10-30T01:55:49.0715550Z  * [new branch]          research/q4-signed-wire-go-parity-20261026 -> origin/research/q4-signed-wire-go-parity-20261026
+2026-10-30T01:55:49.0717936Z  * [new branch]          staging/pon-sql-reuse-20261009 -> origin/staging/pon-sql-reuse-20261009
+2026-10-30T01:55:49.0720395Z  * [new branch]          test/chain-cached-owner-stage-20261009 -> origin/test/chain-cached-owner-stage-20261009
+2026-10-30T01:55:49.0722844Z  * [new branch]          test/chain-capacity-phase-20261009 -> origin/test/chain-capacity-phase-20261009
+2026-10-30T01:55:49.0725439Z  * [new branch]          test/chain-finite-nonce-stopping-ci-20261027 -> origin/test/chain-finite-nonce-stopping-ci-20261027
+2026-10-30T01:55:49.0728226Z  * [new branch]          test/chain-full-w1-quantum-oracle-20261027 -> origin/test/chain-full-w1-quantum-oracle-20261027
+2026-10-30T01:55:49.0731138Z  * [new branch]          test/chain-history-effect-v6-source-20261027 -> origin/test/chain-history-effect-v6-source-20261027
+2026-10-30T01:55:49.0734183Z  * [new branch]          test/chain-history-known-epoch-ci-20261028 -> origin/test/chain-history-known-epoch-ci-20261028
+2026-10-30T01:55:49.0737036Z  * [new branch]          test/chain-history-pair-interruption-20261029 -> origin/test/chain-history-pair-interruption-20261029
+2026-10-30T01:55:49.0740351Z  * [new branch]          test/chain-history-publication-ci-20261028 -> origin/test/chain-history-publication-ci-20261028
+2026-10-30T01:55:49.0743335Z  * [new branch]          test/chain-legal-producer-horizons-v5-20261028 -> origin/test/chain-legal-producer-horizons-v5-20261028
+2026-10-30T01:55:49.0746229Z  * [new branch]          test/chain-legal-ticket-batch-v4-ci-20261028 -> origin/test/chain-legal-ticket-batch-v4-ci-20261028
+2026-10-30T01:55:49.0748953Z  * [new branch]          test/chain-legal-ticket-cost-v3-20261027 -> origin/test/chain-legal-ticket-cost-v3-20261027
+2026-10-30T01:55:49.0751965Z  * [new branch]          test/chain-native-pq-quota-v3-ci-20261028 -> origin/test/chain-native-pq-quota-v3-ci-20261028
+2026-10-30T01:55:49.0754550Z  * [new branch]          test/chain-native-pq-source-20261027 -> origin/test/chain-native-pq-source-20261027
+2026-10-30T01:55:49.0757347Z  * [new branch]          test/chain-parent-observed-execution-v1-20261028 -> origin/test/chain-parent-observed-execution-v1-20261028
+2026-10-30T01:55:49.0760256Z  * [new branch]          test/chain-pure-history-raw-20261029 -> origin/test/chain-pure-history-raw-20261029
+2026-10-30T01:55:49.0762875Z  * [new branch]          test/chain-pure-pon-arm64-evidence-20261027 -> origin/test/chain-pure-pon-arm64-evidence-20261027
+2026-10-30T01:55:49.0765505Z  * [new branch]          test/chain-pure-pon-arm64-v2-20261027 -> origin/test/chain-pure-pon-arm64-v2-20261027
+2026-10-30T01:55:49.0768027Z  * [new branch]          test/chain-pure-pon-work-costs-20261027 -> origin/test/chain-pure-pon-work-costs-20261027
+2026-10-30T01:55:49.0770982Z  * [new branch]          test/chain-real-cpu-depletion-pressure-20261008 -> origin/test/chain-real-cpu-depletion-pressure-20261008
+2026-10-30T01:55:49.0773939Z  * [new branch]          test/chain-w1-continuation-ci-20261027 -> origin/test/chain-w1-continuation-ci-20261027
+2026-10-30T01:55:49.0776415Z  * [new branch]          test/chain-w1-segmented-run-20261027 -> origin/test/chain-w1-segmented-run-20261027
+2026-10-30T01:55:49.0778862Z  * [new branch]          test/pon-cached-owner-native-20261009 -> origin/test/pon-cached-owner-native-20261009
+2026-10-30T01:55:49.0782324Z  * [new branch]          test/pon-chain-hepta-observation-convergence-seven-20261008 -> origin/test/pon-chain-hepta-observation-convergence-seven-20261008
+2026-10-30T01:55:49.0785322Z  * [new branch]          test/pon-live-sql-owner-20261009 -> origin/test/pon-live-sql-owner-20261009
+2026-10-30T01:55:49.0787814Z  * [new branch]          tooling/pon-canonical-kernel-stage-20261011 -> origin/tooling/pon-canonical-kernel-stage-20261011
+2026-10-30T01:55:49.0791084Z  * [new branch]          tooling/pon-cpu-conservation-publication-20261011 -> origin/tooling/pon-cpu-conservation-publication-20261011
+2026-10-30T01:55:49.0794173Z  * [new branch]          tooling/pon-fixed-native-source-stage-20261011 -> origin/tooling/pon-fixed-native-source-stage-20261011
+2026-10-30T01:55:49.0796938Z  * [new branch]          tooling/pon-offline-native-kit-20261011 -> origin/tooling/pon-offline-native-kit-20261011
+2026-10-30T01:55:49.0799576Z  * [new branch]          tools/pon-audit-source-transport-20261011 -> origin/tools/pon-audit-source-transport-20261011
+2026-10-30T01:55:49.0802154Z  * [new branch]          tools/pon-exact-bundles-20261011 -> origin/tools/pon-exact-bundles-20261011
+2026-10-30T01:55:49.0804331Z  * [new branch]          tools/pon-source-export-20261011 -> origin/tools/pon-source-export-20261011
+2026-10-30T01:55:49.0806791Z  * [new branch]          work/chain-offline-build-transfer-20261006 -> origin/work/chain-offline-build-transfer-20261006
+2026-10-30T01:55:49.0809619Z  * [new branch]          work/pon-batched-confirmation-source-20261011 -> origin/work/pon-batched-confirmation-source-20261011
+2026-10-30T01:55:49.0813139Z  * [new branch]          work/pon-cpu-conservation-runtime-20261011 -> origin/work/pon-cpu-conservation-runtime-20261011
+2026-10-30T01:55:49.0815834Z  * [new branch]          work/pon-nullable-blob-staging-20261010 -> origin/work/pon-nullable-blob-staging-20261010
+2026-10-30T01:55:49.0819563Z [command]/usr/bin/git rev-parse --verify --quiet 1d11f875493f8125e36b9adceacb342df108e5e5^{object}
+2026-10-30T01:55:49.0821766Z 1d11f875493f8125e36b9adceacb342df108e5e5
+2026-10-30T01:55:49.0824792Z ##[endgroup]
+2026-10-30T01:55:49.0826115Z ##[group]Determining the checkout info
+2026-10-30T01:55:49.0827560Z ##[endgroup]
+2026-10-30T01:55:49.0828404Z [command]/usr/bin/git sparse-checkout disable
+2026-10-30T01:55:49.0831154Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-30T01:55:49.0834078Z ##[group]Checking out the ref
+2026-10-30T01:55:49.0835509Z [command]/usr/bin/git checkout --progress --force 1d11f875493f8125e36b9adceacb342df108e5e5
+2026-10-30T01:55:50.0099709Z Updating files:  44% (3315/7435)
+2026-10-30T01:55:50.1189054Z Updating files:  45% (3346/7435)
+2026-10-30T01:55:50.2844762Z Updating files:  46% (3421/7435)
+2026-10-30T01:55:50.2887943Z Updating files:  47% (3495/7435)
+2026-10-30T01:55:50.3087397Z Updating files:  48% (3569/7435)
+2026-10-30T01:55:50.3244090Z Updating files:  49% (3644/7435)
+2026-10-30T01:55:50.3637328Z Updating files:  50% (3718/7435)
+2026-10-30T01:55:50.3840577Z Updating files:  51% (3792/7435)
+2026-10-30T01:55:50.4030455Z Updating files:  52% (3867/7435)
+2026-10-30T01:55:50.4240524Z Updating files:  53% (3941/7435)
+2026-10-30T01:55:50.4277129Z Updating files:  54% (4015/7435)
+2026-10-30T01:55:50.4327784Z Updating files:  55% (4090/7435)
+2026-10-30T01:55:50.4362719Z Updating files:  56% (4164/7435)
+2026-10-30T01:55:50.4815602Z Updating files:  57% (4238/7435)
+2026-10-30T01:55:50.5166057Z Updating files:  58% (4313/7435)
+2026-10-30T01:55:50.5199760Z Updating files:  59% (4387/7435)
+2026-10-30T01:55:50.5258751Z Updating files:  60% (4461/7435)
+2026-10-30T01:55:50.5380944Z Updating files:  61% (4536/7435)
+2026-10-30T01:55:50.5417046Z Updating files:  62% (4610/7435)
+2026-10-30T01:55:50.5453336Z Updating files:  63% (4685/7435)
+2026-10-30T01:55:50.5487504Z Updating files:  64% (4759/7435)
+2026-10-30T01:55:50.5582744Z Updating files:  65% (4833/7435)
+2026-10-30T01:55:50.5636544Z Updating files:  66% (4908/7435)
+2026-10-30T01:55:50.5763997Z Updating files:  67% (4982/7435)
+2026-10-30T01:55:50.5995714Z Updating files:  68% (5056/7435)
+2026-10-30T01:55:50.6167268Z Updating files:  69% (5131/7435)
+2026-10-30T01:55:50.6198908Z Updating files:  70% (5205/7435)
+2026-10-30T01:55:50.6534501Z Updating files:  71% (5279/7435)
+2026-10-30T01:55:50.6677370Z Updating files:  72% (5354/7435)
+2026-10-30T01:55:50.6790691Z Updating files:  73% (5428/7435)
+2026-10-30T01:55:50.6964536Z Updating files:  74% (5502/7435)
+2026-10-30T01:55:50.7270135Z Updating files:  75% (5577/7435)
+2026-10-30T01:55:50.7324128Z Updating files:  76% (5651/7435)
+2026-10-30T01:55:50.7386366Z Updating files:  77% (5725/7435)
+2026-10-30T01:55:50.7446843Z Updating files:  78% (5800/7435)
+2026-10-30T01:55:50.7524563Z Updating files:  79% (5874/7435)
+2026-10-30T01:55:50.7594145Z Updating files:  80% (5948/7435)
+2026-10-30T01:55:50.7673976Z Updating files:  81% (6023/7435)
+2026-10-30T01:55:50.7749636Z Updating files:  82% (6097/7435)
+2026-10-30T01:55:50.7798604Z Updating files:  83% (6172/7435)
+2026-10-30T01:55:50.7925413Z Updating files:  84% (6246/7435)
+2026-10-30T01:55:50.8003869Z Updating files:  85% (6320/7435)
+2026-10-30T01:55:50.8051838Z Updating files:  86% (6395/7435)
+2026-10-30T01:55:50.8084711Z Updating files:  87% (6469/7435)
+2026-10-30T01:55:50.8131025Z Updating files:  88% (6543/7435)
+2026-10-30T01:55:50.8206060Z Updating files:  89% (6618/7435)
+2026-10-30T01:55:50.8316927Z Updating files:  90% (6692/7435)
+2026-10-30T01:55:50.8408494Z Updating files:  91% (6766/7435)
+2026-10-30T01:55:50.8495088Z Updating files:  92% (6841/7435)
+2026-10-30T01:55:50.8578216Z Updating files:  93% (6915/7435)
+2026-10-30T01:55:50.8635576Z Updating files:  94% (6989/7435)
+2026-10-30T01:55:50.8712355Z Updating files:  95% (7064/7435)
+2026-10-30T01:55:50.8754876Z Updating files:  96% (7138/7435)
+2026-10-30T01:55:50.8808460Z Updating files:  97% (7212/7435)
+2026-10-30T01:55:50.8847769Z Updating files:  98% (7287/7435)
+2026-10-30T01:55:50.8885651Z Updating files:  99% (7361/7435)
+2026-10-30T01:55:50.8886171Z Updating files: 100% (7435/7435)
+2026-10-30T01:55:50.8886626Z Updating files: 100% (7435/7435), done.
+2026-10-30T01:55:50.8985275Z Note: switching to '1d11f875493f8125e36b9adceacb342df108e5e5'.
+2026-10-30T01:55:50.8985848Z 
+2026-10-30T01:55:50.8986271Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-10-30T01:55:50.8986937Z changes and commit them, and you can discard any commits you make in this
+2026-10-30T01:55:50.8987571Z state without impacting any branches by switching back to a branch.
+2026-10-30T01:55:50.8988142Z 
+2026-10-30T01:55:50.8988425Z If you want to create a new branch to retain commits you create, you may
+2026-10-30T01:55:50.8988999Z do so (now or later) by using -c with the switch command. Example:
+2026-10-30T01:55:50.8989323Z 
+2026-10-30T01:55:50.8989461Z   git switch -c <new-branch-name>
+2026-10-30T01:55:50.8989689Z 
+2026-10-30T01:55:50.8990216Z Or undo this operation with:
+2026-10-30T01:55:50.8990432Z 
+2026-10-30T01:55:50.8990540Z   git switch -
+2026-10-30T01:55:50.8990698Z 
+2026-10-30T01:55:50.8990967Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-10-30T01:55:50.8991363Z 
+2026-10-30T01:55:50.8991711Z HEAD is now at 1d11f8754 fix(pon): bind fresh callers and work-cost evidence; audit complete proofs
+2026-10-30T01:55:50.9189334Z ##[endgroup]
+2026-10-30T01:55:50.9250508Z [command]/usr/bin/git log -1 --format=%H
+2026-10-30T01:55:50.9291320Z 1d11f875493f8125e36b9adceacb342df108e5e5
+2026-10-30T01:55:50.9301881Z ##[group]Removing auth
+2026-10-30T01:55:50.9307318Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-30T01:55:50.9354419Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-30T01:55:50.9613887Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-30T01:55:50.9651775Z http.https://github.com/.extraheader
+2026-10-30T01:55:50.9661781Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-10-30T01:55:50.9709255Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-30T01:55:50.9973484Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-30T01:55:51.0016490Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-30T01:55:51.0265522Z ##[endgroup]
+2026-10-30T01:55:51.0484579Z ##[group]Run set -euo pipefail
+2026-10-30T01:55:51.0484974Z [36;1mset -euo pipefail[0m
+2026-10-30T01:55:51.0485239Z [36;1mumask 077[0m
+2026-10-30T01:55:51.0485611Z [36;1mout="$RUNNER_TEMP/w1-audit-one-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"[0m
+2026-10-30T01:55:51.0486166Z [36;1mwork="$RUNNER_TEMP/w1-audit-one-build-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"[0m
+2026-10-30T01:55:51.0486582Z [36;1mmkdir "$out" "$work"[0m
+2026-10-30T01:55:51.0486908Z [36;1mprintf 'OUT=%s\nWORK=%s\n' "$out" "$work" >> "$GITHUB_ENV"[0m
+2026-10-30T01:55:51.0487571Z [36;1mprintf 'BACKEND=%s/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0\n' "$GITHUB_WORKSPACE" >> "$GITHUB_ENV"[0m
+2026-10-30T01:55:51.0488346Z [36;1mprintf 'CARGO_HOME=%s/cargo\nCARGO_TARGET_DIR=%s/host-target\n' "$work" "$work" >> "$GITHUB_ENV"[0m
+2026-10-30T01:55:51.0489149Z [36;1mpython3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$out/source-before.json"[0m
+2026-10-30T01:55:51.0490369Z [36;1mbash scripts/project-preflight.sh --audit > "$out/preflight.log" 2>&1[0m
+2026-10-30T01:55:51.0491513Z [36;1mprintf 'Historical Composite receipt; no guest or prover execution. Positive prerequisite warms each verifier process. Finite source-bound observations; no public-ingress, throughput, minimum-work or PQ128 qualification.\n' > "$out/SCOPE.txt"[0m
+2026-10-30T01:55:51.0515802Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-30T01:55:51.0516167Z env:
+2026-10-30T01:55:51.0516462Z   TRNM_EXPECTED_SOURCE_SHA: 1d11f875493f8125e36b9adceacb342df108e5e5
+2026-10-30T01:55:51.0516835Z   CARGO_BUILD_JOBS: 2
+2026-10-30T01:55:51.0517055Z   CARGO_INCREMENTAL: 0
+2026-10-30T01:55:51.0517279Z   CARGO_TERM_COLOR: never
+2026-10-30T01:55:51.0517522Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-30T01:55:51.0517762Z   RUST_TEST_THREADS: 1
+2026-10-30T01:55:51.0517991Z   RAYON_NUM_THREADS: 2
+2026-10-30T01:55:51.0518209Z ##[endgroup]
+2026-10-30T01:55:53.1479366Z {
+2026-10-30T01:55:53.1479754Z   "base": null,
+2026-10-30T01:55:53.1480398Z   "candidate": "1d11f875493f8125e36b9adceacb342df108e5e5",
+2026-10-30T01:55:53.1480895Z   "kind": "head",
+2026-10-30T01:55:53.1481122Z   "prospective_merge": null,
+2026-10-30T01:55:53.1481391Z   "schema": "trnm-ci-source-v1",
+2026-10-30T01:55:53.1481724Z   "tested_commit": "1d11f875493f8125e36b9adceacb342df108e5e5",
+2026-10-30T01:55:53.1482124Z   "tested_tree": "64b82137eebeb96b572abc62e5fce39af3593200",
+2026-10-30T01:55:53.1482482Z   "tests_executed_by_identity_check": false,
+2026-10-30T01:55:53.1482770Z   "tracked_bytes": 960706544,
+2026-10-30T01:55:53.1483014Z   "tracked_entries": 7435,
+2026-10-30T01:55:53.1483249Z   "tracked_worktree_verified": true
+2026-10-30T01:55:53.1483492Z }
+2026-10-30T01:55:53.2255814Z ##[group]Run set -euo pipefail
+2026-10-30T01:55:53.2256138Z [36;1mset -euo pipefail[0m
+2026-10-30T01:55:53.2256639Z [36;1mpython3 scripts/ci/test_prepare_w1_audit_one_fixture.py -v 2>&1 | tee "$OUT/fixture-controls.log"[0m
+2026-10-30T01:55:53.2257310Z [36;1mpython3 "$BACKEND/test_check_audit_one.py" -v 2>&1 | tee "$OUT/reader-controls.log"[0m
+2026-10-30T01:55:53.2278171Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-30T01:55:53.2278518Z env:
+2026-10-30T01:55:53.2278809Z   TRNM_EXPECTED_SOURCE_SHA: 1d11f875493f8125e36b9adceacb342df108e5e5
+2026-10-30T01:55:53.2279168Z   CARGO_BUILD_JOBS: 2
+2026-10-30T01:55:53.2279387Z   CARGO_INCREMENTAL: 0
+2026-10-30T01:55:53.2279605Z   CARGO_TERM_COLOR: never
+2026-10-30T01:55:53.2280143Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-30T01:55:53.2280394Z   RUST_TEST_THREADS: 1
+2026-10-30T01:55:53.2280600Z   RAYON_NUM_THREADS: 2
+2026-10-30T01:55:53.2280862Z   OUT: /home/runner/work/_temp/w1-audit-one-40988668868-1
+2026-10-30T01:55:53.2281282Z   WORK: /home/runner/work/_temp/w1-audit-one-build-40988668868-1
+2026-10-30T01:55:53.2281944Z   BACKEND: /home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0
+2026-10-30T01:55:53.2282631Z   CARGO_HOME: /home/runner/work/_temp/w1-audit-one-build-40988668868-1/cargo
+2026-10-30T01:55:53.2283154Z   CARGO_TARGET_DIR: /home/runner/work/_temp/w1-audit-one-build-40988668868-1/host-target
+2026-10-30T01:55:53.2283572Z ##[endgroup]
+2026-10-30T01:55:53.4237788Z test_archive_checks_each_asset_hash_after_zip_pin (__main__.FixtureControls.test_archive_checks_each_asset_hash_after_zip_pin) ... ok
+2026-10-30T01:55:53.4248667Z test_archive_does_not_overwrite_existing_output (__main__.FixtureControls.test_archive_does_not_overwrite_existing_output) ... ok
+2026-10-30T01:55:53.4256629Z test_archive_rejects_absolute_entry (__main__.FixtureControls.test_archive_rejects_absolute_entry) ... ok
+2026-10-30T01:55:53.4264956Z test_archive_rejects_duplicate_members (__main__.FixtureControls.test_archive_rejects_duplicate_members) ... ok
+2026-10-30T01:55:53.4272468Z test_archive_rejects_oversized_member_count (__main__.FixtureControls.test_archive_rejects_oversized_member_count) ... ok
+2026-10-30T01:55:53.4279183Z test_archive_rejects_symlink_file (__main__.FixtureControls.test_archive_rejects_symlink_file) ... ok
+2026-10-30T01:55:53.4287740Z test_archive_rejects_symlink_member (__main__.FixtureControls.test_archive_rejects_symlink_member) ... ok
+2026-10-30T01:55:53.4295204Z test_archive_rejects_total_expansion (__main__.FixtureControls.test_archive_rejects_total_expansion) ... ok
+2026-10-30T01:55:53.4303528Z test_archive_rejects_traversal_even_for_unselected_entry (__main__.FixtureControls.test_archive_rejects_traversal_even_for_unselected_entry) ... ok
+2026-10-30T01:55:53.4311531Z test_archive_requires_exact_root_asset (__main__.FixtureControls.test_archive_requires_exact_root_asset) ... ok
+2026-10-30T01:55:53.4317605Z test_archive_requires_whole_zip_hash (__main__.FixtureControls.test_archive_requires_whole_zip_hash) ... ok
+2026-10-30T01:55:53.4405913Z test_archive_round_trip_is_not_proof_verification (__main__.FixtureControls.test_archive_round_trip_is_not_proof_verification) ... ok
+2026-10-30T01:55:53.5224443Z test_cli_requires_exactly_one_explicit_source (__main__.FixtureControls.test_cli_requires_exactly_one_explicit_source) ... ok
+2026-10-30T01:55:53.5248537Z test_object_checks_whole_gzip_after_individually_pinned_chunks (__main__.FixtureControls.test_object_checks_whole_gzip_after_individually_pinned_chunks) ... ok
+2026-10-30T01:55:53.5264403Z test_object_chunk_order_is_part_of_exact_manifest (__main__.FixtureControls.test_object_chunk_order_is_part_of_exact_manifest) ... ok
+2026-10-30T01:55:53.5278057Z test_object_refuses_legacy_monolithic_object_as_extra_entry (__main__.FixtureControls.test_object_refuses_legacy_monolithic_object_as_extra_entry) ... ok
+2026-10-30T01:55:53.5295603Z test_object_rejects_changed_compressed_bytes (__main__.FixtureControls.test_object_rejects_changed_compressed_bytes) ... ok
+2026-10-30T01:55:53.5311966Z test_object_rejects_changed_raw_hash_after_compressed_pin (__main__.FixtureControls.test_object_rejects_changed_raw_hash_after_compressed_pin) ... ok
+2026-10-30T01:55:53.5325091Z test_object_rejects_chunk_name_traversal (__main__.FixtureControls.test_object_rejects_chunk_name_traversal) ... ok
+2026-10-30T01:55:53.5335795Z test_object_rejects_chunk_over_transport_cap (__main__.FixtureControls.test_object_rejects_chunk_over_transport_cap) ... ok
+2026-10-30T01:55:53.5348015Z test_object_rejects_directory_symlink (__main__.FixtureControls.test_object_rejects_directory_symlink) ... ok
+2026-10-30T01:55:53.5364655Z test_object_rejects_expansion_past_declared_asset (__main__.FixtureControls.test_object_rejects_expansion_past_declared_asset) ... ok
+2026-10-30T01:55:53.5377260Z test_object_rejects_extra_entry (__main__.FixtureControls.test_object_rejects_extra_entry) ... ok
+2026-10-30T01:55:53.5391063Z test_object_rejects_fifo_without_blocking (__main__.FixtureControls.test_object_rejects_fifo_without_blocking) ... ok
+2026-10-30T01:55:53.5404120Z test_object_rejects_missing_entry (__main__.FixtureControls.test_object_rejects_missing_entry) ... ok
+2026-10-30T01:55:53.5418118Z test_object_rejects_repeated_chunk_reference (__main__.FixtureControls.test_object_rejects_repeated_chunk_reference) ... ok
+2026-10-30T01:55:53.5431612Z test_object_rejects_second_member_at_exact_chunk_boundary (__main__.FixtureControls.test_object_rejects_second_member_at_exact_chunk_boundary) ... ok
+2026-10-30T01:55:53.5445166Z test_object_rejects_symlink_data (__main__.FixtureControls.test_object_rejects_symlink_data) ... ok
+2026-10-30T01:55:53.5458360Z test_object_rejects_third_chunk_even_with_consistent_byte_total (__main__.FixtureControls.test_object_rejects_third_chunk_even_with_consistent_byte_total) ... ok
+2026-10-30T01:55:53.5471826Z test_object_rejects_total_compressed_and_expanded_caps (__main__.FixtureControls.test_object_rejects_total_compressed_and_expanded_caps) ... ok
+2026-10-30T01:55:53.5485044Z test_object_rejects_trailing_byte_at_exact_chunk_boundary (__main__.FixtureControls.test_object_rejects_trailing_byte_at_exact_chunk_boundary) ... ok
+2026-10-30T01:55:53.5498159Z test_object_rejects_trailing_bytes_with_consistent_outer_hash (__main__.FixtureControls.test_object_rejects_trailing_bytes_with_consistent_outer_hash) ... ok
+2026-10-30T01:55:53.5511248Z test_object_rejects_truncated_gzip_with_consistent_outer_hash (__main__.FixtureControls.test_object_rejects_truncated_gzip_with_consistent_outer_hash) ... ok
+2026-10-30T01:55:53.5526238Z test_object_rejects_two_members_with_consistent_outer_hash (__main__.FixtureControls.test_object_rejects_two_members_with_consistent_outer_hash) ... ok
+2026-10-30T01:55:53.5538912Z test_object_rejects_whole_and_chunk_length_disagreement (__main__.FixtureControls.test_object_rejects_whole_and_chunk_length_disagreement) ... ok
+2026-10-30T01:55:53.5554462Z test_object_reordered_pinned_chunks_cannot_form_another_stream (__main__.FixtureControls.test_object_reordered_pinned_chunks_cannot_form_another_stream) ... ok
+2026-10-30T01:55:53.5571302Z test_object_requires_each_receipt_chunk (__main__.FixtureControls.test_object_requires_each_receipt_chunk) ... ok
+2026-10-30T01:55:53.5591233Z test_object_requires_exact_manifest (__main__.FixtureControls.test_object_requires_exact_manifest) ... ok
+2026-10-30T01:55:53.5630178Z test_object_round_trip_keeps_zip_check_false (__main__.FixtureControls.test_object_round_trip_keeps_zip_check_false) ... ok
+2026-10-30T01:55:53.5631060Z 
+2026-10-30T01:55:53.5631573Z ----------------------------------------------------------------------
+2026-10-30T01:55:53.5632168Z Ran 39 tests in 0.156s
+2026-10-30T01:55:53.5632394Z 
+2026-10-30T01:55:53.5632481Z OK
+2026-10-30T01:55:53.6307370Z test_actual_byte_rebinding_is_rejected (__main__.ReaderControls.test_actual_byte_rebinding_is_rejected) ... ok
+2026-10-30T01:55:53.6321012Z test_all_qualification_promotions_are_rejected (__main__.ReaderControls.test_all_qualification_promotions_are_rejected) ... ok
+2026-10-30T01:55:53.6341101Z test_caps_cannot_change_or_gain_float_aliases (__main__.ReaderControls.test_caps_cannot_change_or_gain_float_aliases) ... ok
+2026-10-30T01:55:53.6350885Z test_coordinated_input_hash_change_cannot_hide_bad_header_context (__main__.ReaderControls.test_coordinated_input_hash_change_cannot_hide_bad_header_context) ... ok
+2026-10-30T01:55:53.6359076Z test_duplicate_json_key_is_rejected (__main__.ReaderControls.test_duplicate_json_key_is_rejected) ... ok
+2026-10-30T01:55:53.6384104Z test_image_pin_and_shape_caps_remain_exact (__main__.ReaderControls.test_image_pin_and_shape_caps_remain_exact) ... ok
+2026-10-30T01:55:53.6393697Z test_matching_zero_targets_are_rejected (__main__.ReaderControls.test_matching_zero_targets_are_rejected) ... ok
+2026-10-30T01:55:53.6406447Z test_mutation_metadata_cannot_silently_change_valid_case (__main__.ReaderControls.test_mutation_metadata_cannot_silently_change_valid_case) ... ok
+2026-10-30T01:55:53.6425113Z test_receipt_outcome_cannot_be_relabelled (__main__.ReaderControls.test_receipt_outcome_cannot_be_relabelled) ... ok
+2026-10-30T01:55:53.6448188Z test_source_omission_duplicate_and_changed_hash_are_rejected (__main__.ReaderControls.test_source_omission_duplicate_and_changed_hash_are_rejected) ... ok
+2026-10-30T01:55:53.6461723Z test_statement_id_and_claimed_journal_are_independently_bound (__main__.ReaderControls.test_statement_id_and_claimed_journal_are_independently_bound) ... ok
+2026-10-30T01:55:53.6478369Z test_synthetic_metadata_pass_does_not_gain_proof_authority (__main__.ReaderControls.test_synthetic_metadata_pass_does_not_gain_proof_authority) ... ok
+2026-10-30T01:55:53.6489546Z test_timing_scope_cannot_include_unrelated_costs (__main__.ReaderControls.test_timing_scope_cannot_include_unrelated_costs) ... ok
+2026-10-30T01:55:53.6513821Z test_timings_reject_boolean_float_negative_and_missing_stages (__main__.ReaderControls.test_timings_reject_boolean_float_negative_and_missing_stages) ... ok
+2026-10-30T01:55:53.6522198Z test_wrong_record_kind_is_not_a_sample (__main__.ReaderControls.test_wrong_record_kind_is_not_a_sample) ... ok
+2026-10-30T01:55:53.6522951Z 
+2026-10-30T01:55:53.6523508Z ----------------------------------------------------------------------
+2026-10-30T01:55:53.6524111Z Ran 15 tests in 0.023s
+2026-10-30T01:55:53.6524362Z 
+2026-10-30T01:55:53.6524487Z OK
+2026-10-30T01:55:53.6629672Z ##[group]Run set -euo pipefail
+2026-10-30T01:55:53.6630352Z [36;1mset -euo pipefail[0m
+2026-10-30T01:55:53.6631403Z [36;1mpython3 "$BACKEND/measure_step.py" --out "$OUT" --name fixture-restore --timeout 30 -- python3 scripts/ci/prepare_w1_audit_one_fixture.py --objects "$GITHUB_WORKSPACE/evidence/pon-pure-security-20261030-rebuild/complete-w1/fixture-objects" --out "$OUT/fixture"[0m
+2026-10-30T01:55:53.6632591Z [36;1mcp "$OUT/fixture-restore.stdout.log" "$OUT/fixture-binding.json"[0m
+2026-10-30T01:55:53.6652523Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-30T01:55:53.6652871Z env:
+2026-10-30T01:55:53.6653167Z   TRNM_EXPECTED_SOURCE_SHA: 1d11f875493f8125e36b9adceacb342df108e5e5
+2026-10-30T01:55:53.6653538Z   CARGO_BUILD_JOBS: 2
+2026-10-30T01:55:53.6653769Z   CARGO_INCREMENTAL: 0
+2026-10-30T01:55:53.6653991Z   CARGO_TERM_COLOR: never
+2026-10-30T01:55:53.6654232Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-30T01:55:53.6654476Z   RUST_TEST_THREADS: 1
+2026-10-30T01:55:53.6654716Z   RAYON_NUM_THREADS: 2
+2026-10-30T01:55:53.6654990Z   OUT: /home/runner/work/_temp/w1-audit-one-40988668868-1
+2026-10-30T01:55:53.6655387Z   WORK: /home/runner/work/_temp/w1-audit-one-build-40988668868-1
+2026-10-30T01:55:53.6656042Z   BACKEND: /home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0
+2026-10-30T01:55:53.6656724Z   CARGO_HOME: /home/runner/work/_temp/w1-audit-one-build-40988668868-1/cargo
+2026-10-30T01:55:53.6657250Z   CARGO_TARGET_DIR: /home/runner/work/_temp/w1-audit-one-build-40988668868-1/host-target
+2026-10-30T01:55:53.6657674Z ##[endgroup]
+2026-10-30T01:55:53.9173378Z {
+2026-10-30T01:55:53.9173737Z   "schema": "pon-w1-actual-process-v1",
+2026-10-30T01:55:53.9174129Z   "command": [
+2026-10-30T01:55:53.9174382Z     "python3",
+2026-10-30T01:55:53.9174721Z     "scripts/ci/prepare_w1_audit_one_fixture.py",
+2026-10-30T01:55:53.9175107Z     "--objects",
+2026-10-30T01:55:53.9175828Z     "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/evidence/pon-pure-security-20261030-rebuild/complete-w1/fixture-objects",
+2026-10-30T01:55:53.9176609Z     "--out",
+2026-10-30T01:55:53.9176955Z     "/home/runner/work/_temp/w1-audit-one-40988668868-1/fixture"
+2026-10-30T01:55:53.9177367Z   ],
+2026-10-30T01:55:53.9177641Z   "started_utc": "2026-10-30T01:55:53.702520+00:00",
+2026-10-30T01:55:53.9178006Z   "timeout_seconds": 30,
+2026-10-30T01:55:53.9178359Z   "source_sha": "1d11f875493f8125e36b9adceacb342df108e5e5",
+2026-10-30T01:55:53.9178750Z   "timed_out": false,
+2026-10-30T01:55:53.9179029Z   "consensus_authority": false,
+2026-10-30T01:55:53.9179329Z   "returncode": 0,
+2026-10-30T01:55:53.9179591Z   "wall_seconds": 0.2143572020000022,
+2026-10-30T01:55:53.9180199Z   "user_cpu_seconds": 0.114255,
+2026-10-30T01:55:53.9180458Z   "system_cpu_seconds": 0.051663,
+2026-10-30T01:55:53.9180744Z   "max_waited_descendant_rss_kib": 63604,
+2026-10-30T01:55:53.9181161Z   "rss_scope": "maximum reported for the waited child family; not total cgroup peak",
+2026-10-30T01:55:53.9181605Z   "finished_utc": "2026-10-30T01:55:53.916900+00:00"
+2026-10-30T01:55:53.9181878Z }
+2026-10-30T01:55:53.9302392Z ##[group]Run set -euo pipefail
+2026-10-30T01:55:53.9302721Z [36;1mset -euo pipefail[0m
+2026-10-30T01:55:53.9303273Z [36;1mtimeout --signal=TERM --kill-after=5s 120s rustup toolchain install 1.95.0 --profile minimal --component rustfmt,clippy[0m
+2026-10-30T01:55:53.9303994Z [36;1mprintf 'RUSTC=%s\n' "$(rustup which --toolchain 1.95.0 rustc)" >> "$GITHUB_ENV"[0m
+2026-10-30T01:55:53.9304562Z [36;1mprintf 'NATIVE_CARGO=%s\n' "$(rustup which --toolchain 1.95.0 cargo)" >> "$GITHUB_ENV"[0m
+2026-10-30T01:55:53.9305139Z [36;1mprintf '%s\n' "$(dirname "$(rustup which --toolchain 1.95.0 rustc)")" >> "$GITHUB_PATH"[0m
+2026-10-30T01:55:53.9305632Z [36;1mrustc +1.95.0 -Vv > "$OUT/native-rustc.txt"[0m
+2026-10-30T01:55:53.9325655Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-30T01:55:53.9325993Z env:
+2026-10-30T01:55:53.9326278Z   TRNM_EXPECTED_SOURCE_SHA: 1d11f875493f8125e36b9adceacb342df108e5e5
+2026-10-30T01:55:53.9326633Z   CARGO_BUILD_JOBS: 2
+2026-10-30T01:55:53.9326886Z   CARGO_INCREMENTAL: 0
+2026-10-30T01:55:53.9327116Z   CARGO_TERM_COLOR: never
+2026-10-30T01:55:53.9327358Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-30T01:55:53.9327599Z   RUST_TEST_THREADS: 1
+2026-10-30T01:55:53.9327812Z   RAYON_NUM_THREADS: 2
+2026-10-30T01:55:53.9328076Z   OUT: /home/runner/work/_temp/w1-audit-one-40988668868-1
+2026-10-30T01:55:53.9328479Z   WORK: /home/runner/work/_temp/w1-audit-one-build-40988668868-1
+2026-10-30T01:55:53.9329137Z   BACKEND: /home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0
+2026-10-30T01:55:53.9330104Z   CARGO_HOME: /home/runner/work/_temp/w1-audit-one-build-40988668868-1/cargo
+2026-10-30T01:55:53.9330647Z   CARGO_TARGET_DIR: /home/runner/work/_temp/w1-audit-one-build-40988668868-1/host-target
+2026-10-30T01:55:53.9331060Z ##[endgroup]
+2026-10-30T01:55:54.4304869Z info: syncing channel updates for 1.95.0-x86_64-unknown-linux-gnu
+2026-10-30T01:55:54.8488010Z info: latest update on 2026-04-16 for version 1.95.0 (59807616e 2026-04-14)
+2026-10-30T01:55:54.8535508Z info: downloading 5 components
+2026-10-30T01:56:03.2404862Z 
+2026-10-30T01:56:03.2479276Z   1.95.0-x86_64-unknown-linux-gnu installed - rustc 1.95.0 (59807616e 2026-04-14)
+2026-10-30T01:56:03.2480061Z 
+2026-10-30T01:56:03.3043823Z ##[group]Run set -euo pipefail
+2026-10-30T01:56:03.3044178Z [36;1mset -euo pipefail[0m
+2026-10-30T01:56:03.3044939Z [36;1mpython3 "$BACKEND/measure_step.py" --out "$OUT" --name host-build --timeout 600 -- "$NATIVE_CARGO" build --release --locked --manifest-path "$BACKEND/Cargo.toml" -p trnm-w1-risc0-host[0m
+2026-10-30T01:56:03.3046184Z [36;1mpython3 "$BACKEND/measure_step.py" --out "$OUT" --name host-tests --timeout 180 -- "$NATIVE_CARGO" test --release --locked --manifest-path "$BACKEND/Cargo.toml" -p trnm-w1-risc0-host[0m
+2026-10-30T01:56:03.3047616Z [36;1mpython3 "$BACKEND/measure_step.py" --out "$OUT" --name host-clippy --timeout 300 -- "$NATIVE_CARGO" clippy --release --locked --manifest-path "$BACKEND/Cargo.toml" -p trnm-w1-risc0-host -p trnm-w1-guest-relation --all-targets -- -D warnings[0m
+2026-10-30T01:56:03.3049001Z [36;1m"$NATIVE_CARGO" fmt --manifest-path "$BACKEND/Cargo.toml" --all -- --check[0m
+2026-10-30T01:56:03.3049562Z [36;1mcp "$CARGO_TARGET_DIR/release/trnm-w1-risc0-host" "$OUT/verifier"[0m
+2026-10-30T01:56:03.3050641Z [36;1msha256sum "$OUT/verifier" > "$OUT/verifier-before.sha256"[0m
+2026-10-30T01:56:03.3073193Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-30T01:56:03.3073539Z env:
+2026-10-30T01:56:03.3073830Z   TRNM_EXPECTED_SOURCE_SHA: 1d11f875493f8125e36b9adceacb342df108e5e5
+2026-10-30T01:56:03.3074192Z   CARGO_BUILD_JOBS: 2
+2026-10-30T01:56:03.3074423Z   CARGO_INCREMENTAL: 0
+2026-10-30T01:56:03.3074645Z   CARGO_TERM_COLOR: never
+2026-10-30T01:56:03.3074891Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-30T01:56:03.3075133Z   RUST_TEST_THREADS: 1
+2026-10-30T01:56:03.3075343Z   RAYON_NUM_THREADS: 2
+2026-10-30T01:56:03.3075608Z   OUT: /home/runner/work/_temp/w1-audit-one-40988668868-1
+2026-10-30T01:56:03.3076008Z   WORK: /home/runner/work/_temp/w1-audit-one-build-40988668868-1
+2026-10-30T01:56:03.3076656Z   BACKEND: /home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0
+2026-10-30T01:56:03.3077343Z   CARGO_HOME: /home/runner/work/_temp/w1-audit-one-build-40988668868-1/cargo
+2026-10-30T01:56:03.3077867Z   CARGO_TARGET_DIR: /home/runner/work/_temp/w1-audit-one-build-40988668868-1/host-target
+2026-10-30T01:56:03.3078420Z   RUSTC: /home/runner/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc
+2026-10-30T01:56:03.3078966Z   NATIVE_CARGO: /home/runner/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo
+2026-10-30T01:56:03.3079551Z ##[endgroup]
+2026-10-30T01:57:33.3935367Z {
+2026-10-30T01:57:33.3936135Z   "schema": "pon-w1-actual-process-v1",
+2026-10-30T01:57:33.3936888Z   "command": [
+2026-10-30T01:57:33.3937617Z     "/home/runner/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+2026-10-30T01:57:33.3938168Z     "build",
+2026-10-30T01:57:33.3938414Z     "--release",
+2026-10-30T01:57:33.3938658Z     "--locked",
+2026-10-30T01:57:33.3938911Z     "--manifest-path",
+2026-10-30T01:57:33.3939658Z     "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/Cargo.toml",
+2026-10-30T01:57:33.3940845Z     "-p",
+2026-10-30T01:57:33.3941099Z     "trnm-w1-risc0-host"
+2026-10-30T01:57:33.3941370Z   ],
+2026-10-30T01:57:33.3941643Z   "started_utc": "2026-10-30T01:56:03.344265+00:00",
+2026-10-30T01:57:33.3942014Z   "timeout_seconds": 600,
+2026-10-30T01:57:33.3942369Z   "source_sha": "1d11f875493f8125e36b9adceacb342df108e5e5",
+2026-10-30T01:57:33.3942775Z   "timed_out": false,
+2026-10-30T01:57:33.3943055Z   "consensus_authority": false,
+2026-10-30T01:57:33.3943349Z   "returncode": 0,
+2026-10-30T01:57:33.3943609Z   "wall_seconds": 90.04879637600001,
+2026-10-30T01:57:33.3943930Z   "user_cpu_seconds": 153.337047,
+2026-10-30T01:57:33.3944250Z   "system_cpu_seconds": 18.3616,
+2026-10-30T01:57:33.3944518Z   "max_waited_descendant_rss_kib": 570224,
+2026-10-30T01:57:33.3944934Z   "rss_scope": "maximum reported for the waited child family; not total cgroup peak",
+2026-10-30T01:57:33.3945690Z   "finished_utc": "2026-10-30T01:57:33.393090+00:00"
+2026-10-30T01:57:33.3945981Z }
+2026-10-30T01:58:31.7968986Z {
+2026-10-30T01:58:31.7969441Z   "schema": "pon-w1-actual-process-v1",
+2026-10-30T01:58:31.7970173Z   "command": [
+2026-10-30T01:58:31.7970657Z     "/home/runner/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+2026-10-30T01:58:31.7971176Z     "test",
+2026-10-30T01:58:31.7971406Z     "--release",
+2026-10-30T01:58:31.7971648Z     "--locked",
+2026-10-30T01:58:31.7971931Z     "--manifest-path",
+2026-10-30T01:58:31.7972667Z     "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/Cargo.toml",
+2026-10-30T01:58:31.7973420Z     "-p",
+2026-10-30T01:58:31.7973661Z     "trnm-w1-risc0-host"
+2026-10-30T01:58:31.7973929Z   ],
+2026-10-30T01:58:31.7974204Z   "started_utc": "2026-10-30T01:57:33.432311+00:00",
+2026-10-30T01:58:31.7974575Z   "timeout_seconds": 180,
+2026-10-30T01:58:31.7974933Z   "source_sha": "1d11f875493f8125e36b9adceacb342df108e5e5",
+2026-10-30T01:58:31.7975342Z   "timed_out": false,
+2026-10-30T01:58:31.7975621Z   "consensus_authority": false,
+2026-10-30T01:58:31.7975922Z   "returncode": 0,
+2026-10-30T01:58:31.7976187Z   "wall_seconds": 58.364170895,
+2026-10-30T01:58:31.7976489Z   "user_cpu_seconds": 105.10148,
+2026-10-30T01:58:31.7976807Z   "system_cpu_seconds": 9.813061,
+2026-10-30T01:58:31.7977137Z   "max_waited_descendant_rss_kib": 572200,
+2026-10-30T01:58:31.7977656Z   "rss_scope": "maximum reported for the waited child family; not total cgroup peak",
+2026-10-30T01:58:31.7978212Z   "finished_utc": "2026-10-30T01:58:31.796506+00:00"
+2026-10-30T01:58:31.7978590Z }
+2026-10-30T01:59:13.2061575Z {
+2026-10-30T01:59:13.2061883Z   "schema": "pon-w1-actual-process-v1",
+2026-10-30T01:59:13.2062392Z   "command": [
+2026-10-30T01:59:13.2062882Z     "/home/runner/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+2026-10-30T01:59:13.2063505Z     "clippy",
+2026-10-30T01:59:13.2063734Z     "--release",
+2026-10-30T01:59:13.2063946Z     "--locked",
+2026-10-30T01:59:13.2064188Z     "--manifest-path",
+2026-10-30T01:59:13.2064801Z     "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/Cargo.toml",
+2026-10-30T01:59:13.2065461Z     "-p",
+2026-10-30T01:59:13.2065666Z     "trnm-w1-risc0-host",
+2026-10-30T01:59:13.2065897Z     "-p",
+2026-10-30T01:59:13.2066106Z     "trnm-w1-guest-relation",
+2026-10-30T01:59:13.2066357Z     "--all-targets",
+2026-10-30T01:59:13.2066845Z     "--",
+2026-10-30T01:59:13.2067027Z     "-D",
+2026-10-30T01:59:13.2067213Z     "warnings"
+2026-10-30T01:59:13.2067406Z   ],
+2026-10-30T01:59:13.2067627Z   "started_utc": "2026-10-30T01:58:31.835433+00:00",
+2026-10-30T01:59:13.2067938Z   "timeout_seconds": 300,
+2026-10-30T01:59:13.2068240Z   "source_sha": "1d11f875493f8125e36b9adceacb342df108e5e5",
+2026-10-30T01:59:13.2068572Z   "timed_out": false,
+2026-10-30T01:59:13.2068804Z   "consensus_authority": false,
+2026-10-30T01:59:13.2069055Z   "returncode": 0,
+2026-10-30T01:59:13.2069280Z   "wall_seconds": 41.37034271799999,
+2026-10-30T01:59:13.2069554Z   "user_cpu_seconds": 70.618889,
+2026-10-30T01:59:13.2070182Z   "system_cpu_seconds": 11.984854,
+2026-10-30T01:59:13.2070479Z   "max_waited_descendant_rss_kib": 447140,
+2026-10-30T01:59:13.2070923Z   "rss_scope": "maximum reported for the waited child family; not total cgroup peak",
+2026-10-30T01:59:13.2071397Z   "finished_utc": "2026-10-30T01:59:13.205798+00:00"
+2026-10-30T01:59:13.2071709Z }
+2026-10-30T01:59:13.2765452Z ##[group]Run set -euo pipefail
+2026-10-30T01:59:13.2765803Z [36;1mset -euo pipefail[0m
+2026-10-30T01:59:13.2766564Z [36;1mpython3 "$BACKEND/measure_step.py" --out "$OUT" --name original-audit --timeout 45 -- "$OUT/verifier" audit "$OUT/fixture/guest.bin" "$OUT/fixture/input.bin" "$OUT/fixture/receipt.bin"[0m
+2026-10-30T01:59:13.2786644Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-30T01:59:13.2786981Z env:
+2026-10-30T01:59:13.2787269Z   TRNM_EXPECTED_SOURCE_SHA: 1d11f875493f8125e36b9adceacb342df108e5e5
+2026-10-30T01:59:13.2787636Z   CARGO_BUILD_JOBS: 2
+2026-10-30T01:59:13.2787858Z   CARGO_INCREMENTAL: 0
+2026-10-30T01:59:13.2788080Z   CARGO_TERM_COLOR: never
+2026-10-30T01:59:13.2788322Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-30T01:59:13.2788559Z   RUST_TEST_THREADS: 1
+2026-10-30T01:59:13.2788768Z   RAYON_NUM_THREADS: 2
+2026-10-30T01:59:13.2789030Z   OUT: /home/runner/work/_temp/w1-audit-one-40988668868-1
+2026-10-30T01:59:13.2789453Z   WORK: /home/runner/work/_temp/w1-audit-one-build-40988668868-1
+2026-10-30T01:59:13.2790398Z   BACKEND: /home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0
+2026-10-30T01:59:13.2791085Z   CARGO_HOME: /home/runner/work/_temp/w1-audit-one-build-40988668868-1/cargo
+2026-10-30T01:59:13.2791614Z   CARGO_TARGET_DIR: /home/runner/work/_temp/w1-audit-one-build-40988668868-1/host-target
+2026-10-30T01:59:13.2792166Z   RUSTC: /home/runner/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc
+2026-10-30T01:59:13.2792707Z   NATIVE_CARGO: /home/runner/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo
+2026-10-30T01:59:13.2793131Z ##[endgroup]
+2026-10-30T01:59:17.2887110Z {
+2026-10-30T01:59:17.2887657Z   "schema": "pon-w1-actual-process-v1",
+2026-10-30T01:59:17.2888213Z   "command": [
+2026-10-30T01:59:17.2888819Z     "/home/runner/work/_temp/w1-audit-one-40988668868-1/verifier",
+2026-10-30T01:59:17.2889377Z     "audit",
+2026-10-30T01:59:17.2890275Z     "/home/runner/work/_temp/w1-audit-one-40988668868-1/fixture/guest.bin",
+2026-10-30T01:59:17.2891100Z     "/home/runner/work/_temp/w1-audit-one-40988668868-1/fixture/input.bin",
+2026-10-30T01:59:17.2891884Z     "/home/runner/work/_temp/w1-audit-one-40988668868-1/fixture/receipt.bin"
+2026-10-30T01:59:17.2892453Z   ],
+2026-10-30T01:59:17.2892913Z   "started_utc": "2026-10-30T01:59:13.315570+00:00",
+2026-10-30T01:59:17.2893455Z   "timeout_seconds": 45,
+2026-10-30T01:59:17.2893940Z   "source_sha": "1d11f875493f8125e36b9adceacb342df108e5e5",
+2026-10-30T01:59:17.2894487Z   "timed_out": false,
+2026-10-30T01:59:17.2894863Z   "consensus_authority": false,
+2026-10-30T01:59:17.2895275Z   "returncode": 0,
+2026-10-30T01:59:17.2895664Z   "wall_seconds": 3.9726703679999957,
+2026-10-30T01:59:17.2896115Z   "user_cpu_seconds": 3.8635919999999997,
+2026-10-30T01:59:17.2896596Z   "system_cpu_seconds": 0.07799099999999999,
+2026-10-30T01:59:17.2897104Z   "max_waited_descendant_rss_kib": 84992,
+2026-10-30T01:59:17.2897578Z   "rss_scope": "maximum reported for the waited child family; not total cgroup peak",
+2026-10-30T01:59:17.2898326Z   "finished_utc": "2026-10-30T01:59:17.288263+00:00"
+2026-10-30T01:59:17.2898643Z }
+2026-10-30T01:59:17.3027899Z ##[group]Run set -euo pipefail
+2026-10-30T01:59:17.3028469Z [36;1mset -euo pipefail[0m
+2026-10-30T01:59:17.3030078Z [36;1mfor case in valid first_seal_tamper last_seal_tamper wrong_verifier_parameters wrong_statement_miner truncated_receipt trailing_receipt_bytes seal_length_allocation_bomb; do[0m
+2026-10-30T01:59:17.3031548Z [36;1m  name="case-${case//_/-}"[0m
+2026-10-30T01:59:17.3032943Z [36;1m  python3 "$BACKEND/measure_step.py" --out "$OUT" --name "$name" --timeout 45 -- "$OUT/verifier" audit-one "$OUT/fixture/guest.bin" "$OUT/fixture/input.bin" "$OUT/fixture/receipt.bin" "$case"[0m
+2026-10-30T01:59:17.3035197Z [36;1m  python3 "$BACKEND/check_audit_one.py" --record "$OUT/$name.stdout.log" --input "$OUT/fixture/input.bin" --receipt "$OUT/fixture/receipt.bin" > "$OUT/$name.binding.json"[0m
+2026-10-30T01:59:17.3036497Z [36;1mdone[0m
+2026-10-30T01:59:17.3037020Z [36;1msha256sum "$OUT/verifier" > "$OUT/verifier-after.sha256"[0m
+2026-10-30T01:59:17.3037887Z [36;1mcmp "$OUT/verifier-before.sha256" "$OUT/verifier-after.sha256"[0m
+2026-10-30T01:59:17.3067227Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-30T01:59:17.3067812Z env:
+2026-10-30T01:59:17.3068320Z   TRNM_EXPECTED_SOURCE_SHA: 1d11f875493f8125e36b9adceacb342df108e5e5
+2026-10-30T01:59:17.3068996Z   CARGO_BUILD_JOBS: 2
+2026-10-30T01:59:17.3069395Z   CARGO_INCREMENTAL: 0
+2026-10-30T01:59:17.3070036Z   CARGO_TERM_COLOR: never
+2026-10-30T01:59:17.3070485Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-30T01:59:17.3070927Z   RUST_TEST_THREADS: 1
+2026-10-30T01:59:17.3071315Z   RAYON_NUM_THREADS: 2
+2026-10-30T01:59:17.3071799Z   OUT: /home/runner/work/_temp/w1-audit-one-40988668868-1
+2026-10-30T01:59:17.3072504Z   WORK: /home/runner/work/_temp/w1-audit-one-build-40988668868-1
+2026-10-30T01:59:17.3073698Z   BACKEND: /home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0
+2026-10-30T01:59:17.3074976Z   CARGO_HOME: /home/runner/work/_temp/w1-audit-one-build-40988668868-1/cargo
+2026-10-30T01:59:17.3075937Z   CARGO_TARGET_DIR: /home/runner/work/_temp/w1-audit-one-build-40988668868-1/host-target
+2026-10-30T01:59:17.3076999Z   RUSTC: /home/runner/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc
+2026-10-30T01:59:17.3078035Z   NATIVE_CARGO: /home/runner/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo
+2026-10-30T01:59:17.3078821Z ##[endgroup]
+2026-10-30T01:59:20.0170341Z {
+2026-10-30T01:59:20.0170888Z   "schema": "pon-w1-actual-process-v1",
+2026-10-30T01:59:20.0171305Z   "command": [
+2026-10-30T01:59:20.0171715Z     "/home/runner/work/_temp/w1-audit-one-40988668868-1/verifier",
+2026-10-30T01:59:20.0172207Z     "audit-one",
+2026-10-30T01:59:20.0172647Z     "/home/runner/work/_temp/w1-audit-one-40988668868-1/fixture/guest.bin",
+2026-10-30T01:59:20.0173312Z     "/home/runner/work/_temp/w1-audit-one-40988668868-1/fixture/input.bin",
+2026-10-30T01:59:20.0174001Z     "/home/runner/work/_temp/w1-audit-one-40988668868-1/fixture/receipt.bin",
+2026-10-30T01:59:20.0174537Z     "valid"
+2026-10-30T01:59:20.0174782Z   ],
+2026-10-30T01:59:20.0175071Z   "started_utc": "2026-10-30T01:59:17.346955+00:00",
+2026-10-30T01:59:20.0175476Z   "timeout_seconds": 45,
+2026-10-30T01:59:20.0175864Z   "source_sha": "1d11f875493f8125e36b9adceacb342df108e5e5",
+2026-10-30T01:59:20.0176302Z   "timed_out": false,
+2026-10-30T01:59:20.0176605Z   "consensus_authority": false,
+2026-10-30T01:59:20.0176935Z   "returncode": 0,
+2026-10-30T01:59:20.0177228Z   "wall_seconds": 2.669644077000015,
+2026-10-30T01:59:20.0177587Z   "user_cpu_seconds": 2.581595,
+2026-10-30T01:59:20.0177941Z   "system_cpu_seconds": 0.06498899999999999,
+2026-10-30T01:59:20.0178346Z   "max_waited_descendant_rss_kib": 53844,
+2026-10-30T01:59:20.0178921Z   "rss_scope": "maximum reported for the waited child family; not total cgroup peak",
+2026-10-30T01:59:20.0180207Z   "finished_utc": "2026-10-30T01:59:20.016643+00:00"
+2026-10-30T01:59:20.0180677Z }
+2026-10-30T01:59:21.6265529Z {
+2026-10-30T01:59:21.6266436Z   "schema": "pon-w1-actual-process-v1",
+2026-10-30T01:59:21.6267020Z   "command": [
+2026-10-30T01:59:21.6267567Z     "/home/runner/work/_temp/w1-audit-one-40988668868-1/verifier",
+2026-10-30T01:59:21.6268305Z     "audit-one",
+2026-10-30T01:59:21.6268966Z     "/home/runner/work/_temp/w1-audit-one-40988668868-1/fixture/guest.bin",
+2026-10-30T01:59:21.6270178Z     "/home/runner/work/_temp/w1-audit-one-40988668868-1/fixture/input.bin",
+2026-10-30T01:59:21.6271115Z     "/home/runner/work/_temp/w1-audit-one-40988668868-1/fixture/receipt.bin",
+2026-10-30T01:59:21.6271876Z     "first_seal_tamper"
+2026-10-30T01:59:21.6272283Z   ],
+2026-10-30T01:59:21.6272688Z   "started_utc": "2026-10-30T01:59:20.158875+00:00",
+2026-10-30T01:59:21.6273231Z   "timeout_seconds": 45,
+2026-10-30T01:59:21.6273660Z   "source_sha": "1d11f875493f8125e36b9adceacb342df108e5e5",
+2026-10-30T01:59:21.6274178Z   "timed_out": false,
+2026-10-30T01:59:21.6274514Z   "consensus_authority": false,
+2026-10-30T01:59:21.6274902Z   "returncode": 0,
+2026-10-30T01:59:21.6275248Z   "wall_seconds": 1.467255539000007,
+2026-10-30T01:59:21.6275645Z   "user_cpu_seconds": 1.368577,
+2026-10-30T01:59:21.6276021Z   "system_cpu_seconds": 0.066027,
+2026-10-30T01:59:21.6276533Z   "max_waited_descendant_rss_kib": 84792,
+2026-10-30T01:59:21.6277376Z   "rss_scope": "maximum reported for the waited child family; not total cgroup peak",
+2026-10-30T01:59:21.6278281Z   "finished_utc": "2026-10-30T01:59:21.626155+00:00"
+2026-10-30T01:59:21.6278845Z }
+2026-10-30T01:59:24.4394176Z {
+2026-10-30T01:59:24.4394662Z   "schema": "pon-w1-actual-process-v1",
+2026-10-30T01:59:24.4395233Z   "command": [
+2026-10-30T01:59:24.4395780Z     "/home/runner/work/_temp/w1-audit-one-40988668868-1/verifier",
+2026-10-30T01:59:24.4396428Z     "audit-one",
+2026-10-30T01:59:24.4397049Z     "/home/runner/work/_temp/w1-audit-one-40988668868-1/fixture/guest.bin",
+2026-10-30T01:59:24.4397974Z     "/home/runner/work/_temp/w1-audit-one-40988668868-1/fixture/input.bin",
+2026-10-30T01:59:24.4398742Z     "/home/runner/work/_temp/w1-audit-one-40988668868-1/fixture/receipt.bin",
+2026-10-30T01:59:24.4399323Z     "last_seal_tamper"
+2026-10-30T01:59:24.4399648Z   ],
+2026-10-30T01:59:24.4400231Z   "started_utc": "2026-10-30T01:59:21.769004+00:00",
+2026-10-30T01:59:24.4400683Z   "timeout_seconds": 45,
+2026-10-30T01:59:24.4401109Z   "source_sha": "1d11f875493f8125e36b9adceacb342df108e5e5",
+2026-10-30T01:59:24.4401598Z   "timed_out": false,
+2026-10-30T01:59:24.4401941Z   "consensus_authority": false,
+2026-10-30T01:59:24.4402309Z   "returncode": 0,
+2026-10-30T01:59:24.4402630Z   "wall_seconds": 2.6699425360000077,
+2026-10-30T01:59:24.4403026Z   "user_cpu_seconds": 2.577433,
+2026-10-30T01:59:24.4403430Z   "system_cpu_seconds": 0.064985,
+2026-10-30T01:59:24.4403851Z   "max_waited_descendant_rss_kib": 84648,
+2026-10-30T01:59:24.4404503Z   "rss_scope": "maximum reported for the waited child family; not total cgroup peak",
+2026-10-30T01:59:24.4405460Z   "finished_utc": "2026-10-30T01:59:24.438971+00:00"
+2026-10-30T01:59:24.4406021Z }
+2026-10-30T01:59:26.0004296Z {
+2026-10-30T01:59:26.0004735Z   "schema": "pon-w1-actual-process-v1",
+2026-10-30T01:59:26.0005228Z   "command": [
+2026-10-30T01:59:26.0005742Z     "/home/runner/work/_temp/w1-audit-one-40988668868-1/verifier",
+2026-10-30T01:59:26.0006326Z     "audit-one",
+2026-10-30T01:59:26.0006851Z     "/home/runner/work/_temp/w1-audit-one-40988668868-1/fixture/guest.bin",
+2026-10-30T01:59:26.0007656Z     "/home/runner/work/_temp/w1-audit-one-40988668868-1/fixture/input.bin",
+2026-10-30T01:59:26.0008278Z     "/home/runner/work/_temp/w1-audit-one-40988668868-1/fixture/receipt.bin",
+2026-10-30T01:59:26.0008684Z     "wrong_verifier_parameters"
+2026-10-30T01:59:26.0008920Z   ],
+2026-10-30T01:59:26.0009139Z   "started_utc": "2026-10-30T01:59:24.582536+00:00",
+2026-10-30T01:59:26.0009432Z   "timeout_seconds": 45,
+2026-10-30T01:59:26.0010284Z   "source_sha": "1d11f875493f8125e36b9adceacb342df108e5e5",
+2026-10-30T01:59:26.0010617Z   "timed_out": false,
+2026-10-30T01:59:26.0010838Z   "consensus_authority": false,
+2026-10-30T01:59:26.0011239Z   "returncode": 0,
+2026-10-30T01:59:26.0011461Z   "wall_seconds": 1.417446228000017,
+2026-10-30T01:59:26.0011718Z   "user_cpu_seconds": 1.346162,
+2026-10-30T01:59:26.0011971Z   "system_cpu_seconds": 0.06995599999999999,
+2026-10-30T01:59:26.0012258Z   "max_waited_descendant_rss_kib": 84720,
+2026-10-30T01:59:26.0012665Z   "rss_scope": "maximum reported for the waited child family; not total cgroup peak",
+2026-10-30T01:59:26.0013101Z   "finished_utc": "2026-10-30T01:59:26.000047+00:00"
+2026-10-30T01:59:26.0013373Z }
+2026-10-30T01:59:27.5614303Z {
+2026-10-30T01:59:27.5614826Z   "schema": "pon-w1-actual-process-v1",
+2026-10-30T01:59:27.5615394Z   "command": [
+2026-10-30T01:59:27.5615812Z     "/home/runner/work/_temp/w1-audit-one-40988668868-1/verifier",
+2026-10-30T01:59:27.5616302Z     "audit-one",
+2026-10-30T01:59:27.5616764Z     "/home/runner/work/_temp/w1-audit-one-40988668868-1/fixture/guest.bin",
+2026-10-30T01:59:27.5617463Z     "/home/runner/work/_temp/w1-audit-one-40988668868-1/fixture/input.bin",
+2026-10-30T01:59:27.5618178Z     "/home/runner/work/_temp/w1-audit-one-40988668868-1/fixture/receipt.bin",
+2026-10-30T01:59:27.5618721Z     "wrong_statement_miner"
+2026-10-30T01:59:27.5619041Z   ],
+2026-10-30T01:59:27.5619335Z   "started_utc": "2026-10-30T01:59:26.143758+00:00",
+2026-10-30T01:59:27.5620097Z   "timeout_seconds": 45,
+2026-10-30T01:59:27.5620530Z   "source_sha": "1d11f875493f8125e36b9adceacb342df108e5e5",
+2026-10-30T01:59:27.5620975Z   "timed_out": false,
+2026-10-30T01:59:27.5621294Z   "consensus_authority": false,
+2026-10-30T01:59:27.5621627Z   "returncode": 0,
+2026-10-30T01:59:27.5621931Z   "wall_seconds": 1.4171969639999702,
+2026-10-30T01:59:27.5622292Z   "user_cpu_seconds": 1.346407,
+2026-10-30T01:59:27.5622653Z   "system_cpu_seconds": 0.046013,
+2026-10-30T01:59:27.5623015Z   "max_waited_descendant_rss_kib": 53676,
+2026-10-30T01:59:27.5623613Z   "rss_scope": "maximum reported for the waited child family; not total cgroup peak",
+2026-10-30T01:59:27.5624231Z   "finished_utc": "2026-10-30T01:59:27.560979+00:00"
+2026-10-30T01:59:27.5624570Z }
+2026-10-30T01:59:29.0701914Z {
+2026-10-30T01:59:29.0702313Z   "schema": "pon-w1-actual-process-v1",
+2026-10-30T01:59:29.0702672Z   "command": [
+2026-10-30T01:59:29.0703025Z     "/home/runner/work/_temp/w1-audit-one-40988668868-1/verifier",
+2026-10-30T01:59:29.0703440Z     "audit-one",
+2026-10-30T01:59:29.0703811Z     "/home/runner/work/_temp/w1-audit-one-40988668868-1/fixture/guest.bin",
+2026-10-30T01:59:29.0704379Z     "/home/runner/work/_temp/w1-audit-one-40988668868-1/fixture/input.bin",
+2026-10-30T01:59:29.0704962Z     "/home/runner/work/_temp/w1-audit-one-40988668868-1/fixture/receipt.bin",
+2026-10-30T01:59:29.0705418Z     "truncated_receipt"
+2026-10-30T01:59:29.0705668Z   ],
+2026-10-30T01:59:29.0705917Z   "started_utc": "2026-10-30T01:59:27.703446+00:00",
+2026-10-30T01:59:29.0706295Z   "timeout_seconds": 45,
+2026-10-30T01:59:29.0706630Z   "source_sha": "1d11f875493f8125e36b9adceacb342df108e5e5",
+2026-10-30T01:59:29.0707019Z   "timed_out": false,
+2026-10-30T01:59:29.0707277Z   "consensus_authority": false,
+2026-10-30T01:59:29.0707562Z   "returncode": 0,
+2026-10-30T01:59:29.0707813Z   "wall_seconds": 1.3663596220000045,
+2026-10-30T01:59:29.0708122Z   "user_cpu_seconds": 1.317692,
+2026-10-30T01:59:29.0708559Z   "system_cpu_seconds": 0.04199,
+2026-10-30T01:59:29.0708868Z   "max_waited_descendant_rss_kib": 53632,
+2026-10-30T01:59:29.0709361Z   "rss_scope": "maximum reported for the waited child family; not total cgroup peak",
+2026-10-30T01:59:29.0710172Z   "finished_utc": "2026-10-30T01:59:29.069828+00:00"
+2026-10-30T01:59:29.0710509Z }
+2026-10-30T01:59:30.5889409Z {
+2026-10-30T01:59:30.5890095Z   "schema": "pon-w1-actual-process-v1",
+2026-10-30T01:59:30.5890605Z   "command": [
+2026-10-30T01:59:30.5891090Z     "/home/runner/work/_temp/w1-audit-one-40988668868-1/verifier",
+2026-10-30T01:59:30.5892019Z     "audit-one",
+2026-10-30T01:59:30.5892585Z     "/home/runner/work/_temp/w1-audit-one-40988668868-1/fixture/guest.bin",
+2026-10-30T01:59:30.5893577Z     "/home/runner/work/_temp/w1-audit-one-40988668868-1/fixture/input.bin",
+2026-10-30T01:59:30.5894171Z     "/home/runner/work/_temp/w1-audit-one-40988668868-1/fixture/receipt.bin",
+2026-10-30T01:59:30.5894642Z     "trailing_receipt_bytes"
+2026-10-30T01:59:30.5894917Z   ],
+2026-10-30T01:59:30.5895171Z   "started_utc": "2026-10-30T01:59:29.221708+00:00",
+2026-10-30T01:59:30.5895526Z   "timeout_seconds": 45,
+2026-10-30T01:59:30.5895868Z   "source_sha": "1d11f875493f8125e36b9adceacb342df108e5e5",
+2026-10-30T01:59:30.5896245Z   "timed_out": false,
+2026-10-30T01:59:30.5896510Z   "consensus_authority": false,
+2026-10-30T01:59:30.5896803Z   "returncode": 0,
+2026-10-30T01:59:30.5897060Z   "wall_seconds": 1.3668303349999746,
+2026-10-30T01:59:30.5897372Z   "user_cpu_seconds": 1.320459,
+2026-10-30T01:59:30.5897684Z   "system_cpu_seconds": 0.041013999999999995,
+2026-10-30T01:59:30.5898040Z   "max_waited_descendant_rss_kib": 53656,
+2026-10-30T01:59:30.5898538Z   "rss_scope": "maximum reported for the waited child family; not total cgroup peak",
+2026-10-30T01:59:30.5899082Z   "finished_utc": "2026-10-30T01:59:30.588561+00:00"
+2026-10-30T01:59:30.5899426Z }
+2026-10-30T01:59:32.1074888Z {
+2026-10-30T01:59:32.1075386Z   "schema": "pon-w1-actual-process-v1",
+2026-10-30T01:59:32.1075914Z   "command": [
+2026-10-30T01:59:32.1076320Z     "/home/runner/work/_temp/w1-audit-one-40988668868-1/verifier",
+2026-10-30T01:59:32.1076781Z     "audit-one",
+2026-10-30T01:59:32.1077189Z     "/home/runner/work/_temp/w1-audit-one-40988668868-1/fixture/guest.bin",
+2026-10-30T01:59:32.1077814Z     "/home/runner/work/_temp/w1-audit-one-40988668868-1/fixture/input.bin",
+2026-10-30T01:59:32.1078438Z     "/home/runner/work/_temp/w1-audit-one-40988668868-1/fixture/receipt.bin",
+2026-10-30T01:59:32.1078946Z     "seal_length_allocation_bomb"
+2026-10-30T01:59:32.1079263Z   ],
+2026-10-30T01:59:32.1079554Z   "started_utc": "2026-10-30T01:59:30.740219+00:00",
+2026-10-30T01:59:32.1080352Z   "timeout_seconds": 45,
+2026-10-30T01:59:32.1080736Z   "source_sha": "1d11f875493f8125e36b9adceacb342df108e5e5",
+2026-10-30T01:59:32.1081132Z   "timed_out": false,
+2026-10-30T01:59:32.1081404Z   "consensus_authority": false,
+2026-10-30T01:59:32.1081696Z   "returncode": 0,
+2026-10-30T01:59:32.1081947Z   "wall_seconds": 1.366862363999985,
+2026-10-30T01:59:32.1082258Z   "user_cpu_seconds": 1.307538,
+2026-10-30T01:59:32.1082553Z   "system_cpu_seconds": 0.050982,
+2026-10-30T01:59:32.1082885Z   "max_waited_descendant_rss_kib": 53556,
+2026-10-30T01:59:32.1083389Z   "rss_scope": "maximum reported for the waited child family; not total cgroup peak",
+2026-10-30T01:59:32.1083928Z   "finished_utc": "2026-10-30T01:59:32.107104+00:00"
+2026-10-30T01:59:32.1084264Z }
+2026-10-30T01:59:32.2386675Z ##[group]Run python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$OUT/source-after.json"
+2026-10-30T01:59:32.2387714Z [36;1mpython3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA" --output "$OUT/source-after.json"[0m
+2026-10-30T01:59:32.2407731Z shell: /usr/bin/bash -e {0}
+2026-10-30T01:59:32.2407993Z env:
+2026-10-30T01:59:32.2408290Z   TRNM_EXPECTED_SOURCE_SHA: 1d11f875493f8125e36b9adceacb342df108e5e5
+2026-10-30T01:59:32.2408658Z   CARGO_BUILD_JOBS: 2
+2026-10-30T01:59:32.2408886Z   CARGO_INCREMENTAL: 0
+2026-10-30T01:59:32.2409103Z   CARGO_TERM_COLOR: never
+2026-10-30T01:59:32.2409346Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-30T01:59:32.2409589Z   RUST_TEST_THREADS: 1
+2026-10-30T01:59:32.2410070Z   RAYON_NUM_THREADS: 2
+2026-10-30T01:59:32.2410350Z   OUT: /home/runner/work/_temp/w1-audit-one-40988668868-1
+2026-10-30T01:59:32.2410782Z   WORK: /home/runner/work/_temp/w1-audit-one-build-40988668868-1
+2026-10-30T01:59:32.2411433Z   BACKEND: /home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0
+2026-10-30T01:59:32.2412298Z   CARGO_HOME: /home/runner/work/_temp/w1-audit-one-build-40988668868-1/cargo
+2026-10-30T01:59:32.2412821Z   CARGO_TARGET_DIR: /home/runner/work/_temp/w1-audit-one-build-40988668868-1/host-target
+2026-10-30T01:59:32.2413371Z   RUSTC: /home/runner/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc
+2026-10-30T01:59:32.2413923Z   NATIVE_CARGO: /home/runner/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo
+2026-10-30T01:59:32.2414343Z ##[endgroup]
+2026-10-30T01:59:33.3235412Z {
+2026-10-30T01:59:33.3235781Z   "base": null,
+2026-10-30T01:59:33.3236138Z   "candidate": "1d11f875493f8125e36b9adceacb342df108e5e5",
+2026-10-30T01:59:33.3236479Z   "kind": "head",
+2026-10-30T01:59:33.3236711Z   "prospective_merge": null,
+2026-10-30T01:59:33.3236981Z   "schema": "trnm-ci-source-v1",
+2026-10-30T01:59:33.3237327Z   "tested_commit": "1d11f875493f8125e36b9adceacb342df108e5e5",
+2026-10-30T01:59:33.3237720Z   "tested_tree": "64b82137eebeb96b572abc62e5fce39af3593200",
+2026-10-30T01:59:33.3238080Z   "tests_executed_by_identity_check": false,
+2026-10-30T01:59:33.3238363Z   "tracked_bytes": 960706544,
+2026-10-30T01:59:33.3238607Z   "tracked_entries": 7435,
+2026-10-30T01:59:33.3238855Z   "tracked_worktree_verified": true
+2026-10-30T01:59:33.3239103Z }
+2026-10-30T01:59:33.3403772Z ##[group]Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+2026-10-30T01:59:33.3404199Z with:
+2026-10-30T01:59:33.3404488Z   name: w1-audit-one-1d11f875493f8125e36b9adceacb342df108e5e5-1
+2026-10-30T01:59:33.3404912Z   path: /home/runner/work/_temp/w1-audit-one-40988668868-1/
+2026-10-30T01:59:33.3405249Z   if-no-files-found: error
+2026-10-30T01:59:33.3405486Z   retention-days: 30
+2026-10-30T01:59:33.3405703Z   compression-level: 6
+2026-10-30T01:59:33.3405919Z   overwrite: false
+2026-10-30T01:59:33.3406141Z   include-hidden-files: false
+2026-10-30T01:59:33.3406371Z env:
+2026-10-30T01:59:33.3406646Z   TRNM_EXPECTED_SOURCE_SHA: 1d11f875493f8125e36b9adceacb342df108e5e5
+2026-10-30T01:59:33.3407008Z   CARGO_BUILD_JOBS: 2
+2026-10-30T01:59:33.3407219Z   CARGO_INCREMENTAL: 0
+2026-10-30T01:59:33.3407434Z   CARGO_TERM_COLOR: never
+2026-10-30T01:59:33.3407667Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-30T01:59:33.3407904Z   RUST_TEST_THREADS: 1
+2026-10-30T01:59:33.3408137Z   RAYON_NUM_THREADS: 2
+2026-10-30T01:59:33.3408401Z   OUT: /home/runner/work/_temp/w1-audit-one-40988668868-1
+2026-10-30T01:59:33.3408784Z   WORK: /home/runner/work/_temp/w1-audit-one-build-40988668868-1
+2026-10-30T01:59:33.3409433Z   BACKEND: /home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0
+2026-10-30T01:59:33.3410590Z   CARGO_HOME: /home/runner/work/_temp/w1-audit-one-build-40988668868-1/cargo
+2026-10-30T01:59:33.3411121Z   CARGO_TARGET_DIR: /home/runner/work/_temp/w1-audit-one-build-40988668868-1/host-target
+2026-10-30T01:59:33.3411680Z   RUSTC: /home/runner/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc
+2026-10-30T01:59:33.3412233Z   NATIVE_CARGO: /home/runner/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo
+2026-10-30T01:59:33.3412654Z ##[endgroup]
+2026-10-30T01:59:33.5168497Z (node:9808) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-30T01:59:33.5169405Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-30T01:59:33.5341402Z With the provided path, there will be 61 files uploaded
+2026-10-30T01:59:33.5342228Z Artifact name is valid!
+2026-10-30T01:59:33.5342623Z Root directory input is valid!
+2026-10-30T01:59:33.8755465Z Beginning upload of artifact content to blob storage
+2026-10-30T01:59:34.2179651Z (node:9808) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-10-30T01:59:34.7062002Z Uploaded bytes 8388608
+2026-10-30T01:59:34.8733328Z Uploaded bytes 15912715
+2026-10-30T01:59:34.9153798Z Finished uploading artifact content to blob storage!
+2026-10-30T01:59:34.9154660Z SHA256 digest of uploaded artifact zip is 8fc5e5d914ab2fa99b2b68388837c056fe4a347cc5636d3a12d7be3d96438131
+2026-10-30T01:59:34.9156828Z Finalizing artifact upload
+2026-10-30T01:59:35.3457180Z Artifact w1-audit-one-1d11f875493f8125e36b9adceacb342df108e5e5-1.zip successfully finalized. Artifact ID 12947349925
+2026-10-30T01:59:35.3458602Z Artifact w1-audit-one-1d11f875493f8125e36b9adceacb342df108e5e5-1 has been successfully uploaded! Final size is 15912715 bytes. Artifact ID is 12947349925
+2026-10-30T01:59:35.3464780Z Artifact download URL: https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40988668868/artifacts/12947349925
+2026-10-30T01:59:35.3750205Z Post job cleanup.
+2026-10-30T01:59:35.4669100Z [command]/usr/bin/git version
+2026-10-30T01:59:35.4701694Z git version 2.56.0
+2026-10-30T01:59:35.4772367Z Temporarily overriding HOME='/home/runner/work/_temp/00e40988-cf26-4874-92cd-4e6761ccf84a' before making global git config changes
+2026-10-30T01:59:35.4776004Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-30T01:59:35.4780019Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Trillionnium-Chain/Trillionnium-Chain
+2026-10-30T01:59:35.4822009Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-30T01:59:35.4860911Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-30T01:59:35.5138099Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-30T01:59:35.5211935Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-30T01:59:35.5480442Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-30T01:59:35.5532384Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-30T01:59:35.6001074Z Cleaning up orphan processes
+2026-10-30T01:59:35.6509381Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11d5960a326750d5838078e36cf38b85af677262, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

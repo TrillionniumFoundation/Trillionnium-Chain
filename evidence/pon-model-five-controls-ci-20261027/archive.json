@@ -1,0 +1,45 @@
+{
+  "compact_source_artifact": {
+    "id": 12726390813,
+    "zip_bytes": 260730,
+    "zip_sha256": "6c24a0ac300a23ff78c8047bea00153f9d712e23f728c36603dbf293451fbfb0"
+  },
+  "credential_pattern_scan": {
+    "matches": [],
+    "scope": "PEM private key, GitHub classic token and fine-grained token patterns only; not an exhaustive secret classifier"
+  },
+  "files": [
+    {
+      "bytes": 96774,
+      "path": "matrix-controls.tar.gz",
+      "sha256": "bf4e998778d8655a2021cbf788af198d6bb58437a5a9e2dc63de9d95ef83f9fd"
+    },
+    {
+      "bytes": 19829,
+      "path": "observations.json",
+      "sha256": "e3bb49a3176c7e7141814df1b6ae9ab4227235fd024b18586ee8b218fc2ca438"
+    },
+    {
+      "bytes": 260285,
+      "path": "raw-evidence.tar.gz",
+      "sha256": "8580b8817bebf32792afb175f5ff4f9e022c6eab6f95b10759e3d349c72e5761"
+    }
+  ],
+  "missing_checkpoint_entries": 4,
+  "noncheckpoint_inventory_entries_verified": 81,
+  "packaging_harness_attempts": [
+    {
+      "attempt": 1,
+      "error": "harness incorrectly required every tar member to be a regular file; safe directory entries encountered",
+      "experimental_result_changed": false,
+      "status": "FAILED_LOCAL_PACKAGING_ASSERTION"
+    },
+    {
+      "attempt": 2,
+      "behavior": "safe directories skipped; nonregular members and unsafe paths still refused; all81 noncheckpoint inventory entries verified",
+      "status": "PASS"
+    }
+  ],
+  "private_keys_or_user_credentials_created": false,
+  "scope": "Original compact artifact inner archive, plus actual GitHub matrix logs and independently reconstructed strict runtime unit suites."
+}

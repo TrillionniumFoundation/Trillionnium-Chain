@@ -1,0 +1,115 @@
+{
+  "archive": "material-02-raw.tar.gz",
+  "archive_bytes": 10434,
+  "archive_sha256": "4408a81da9804b8166eb69e6f4ed4c08044c3ffb5167eee71030fb97ab7b64aa",
+  "members": [
+    {
+      "path": "material-02/library-pins.json",
+      "mode": 33188,
+      "uid": 0,
+      "gid": 0,
+      "mtime_ns": 1793151214982375823,
+      "bytes": 649,
+      "kind": "file",
+      "sha256": "2d0be9a364a162331d00256b756963d49a89077132fcd6a17a1df969c342dd2e"
+    },
+    {
+      "path": "material-02/result.json",
+      "mode": 33188,
+      "uid": 0,
+      "gid": 0,
+      "mtime_ns": 1793151217069273850,
+      "bytes": 3156,
+      "kind": "file",
+      "sha256": "2cfc666f7ba35b44504cee52d11a589d7a1e6455d5c0f6253c09cbb87b3dd91e"
+    },
+    {
+      "path": "material-02/source-after.json",
+      "mode": 33188,
+      "uid": 0,
+      "gid": 0,
+      "mtime_ns": 1793151216685152115,
+      "bytes": 9525,
+      "kind": "file",
+      "sha256": "e66e01082e42e9a2fce4e8c99833f289acb8ebc00b8f097aa32c2b9ad8384095"
+    },
+    {
+      "path": "material-02/source-before.json",
+      "mode": 33188,
+      "uid": 0,
+      "gid": 0,
+      "mtime_ns": 1793151214944253707,
+      "bytes": 9525,
+      "kind": "file",
+      "sha256": "e66e01082e42e9a2fce4e8c99833f289acb8ebc00b8f097aa32c2b9ad8384095"
+    },
+    {
+      "path": "material-02/test-build",
+      "mode": 16877,
+      "uid": 0,
+      "gid": 0,
+      "mtime_ns": 1793151215921318091,
+      "bytes": 4096,
+      "kind": "directory"
+    },
+    {
+      "path": "material-02/test-build/native.log",
+      "mode": 33188,
+      "uid": 0,
+      "gid": 0,
+      "mtime_ns": 1793151215165996220,
+      "bytes": 0,
+      "kind": "file",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "material-02/test-build/terminal.json",
+      "mode": 33188,
+      "uid": 0,
+      "gid": 0,
+      "mtime_ns": 1793151215926390834,
+      "bytes": 1868,
+      "kind": "file",
+      "sha256": "b9041fe7a2c5ff43391b115dac26130d4662b42e601f4566157f5615cdd2d22a"
+    },
+    {
+      "path": "material-02/tests",
+      "mode": 16877,
+      "uid": 0,
+      "gid": 0,
+      "mtime_ns": 1793151216677288957,
+      "bytes": 4096,
+      "kind": "directory"
+    },
+    {
+      "path": "material-02/tests/native.log",
+      "mode": 33188,
+      "uid": 0,
+      "gid": 0,
+      "mtime_ns": 1793151216533294506,
+      "bytes": 817,
+      "kind": "file",
+      "sha256": "fb8a8119a78e13165c64648302da79424234f3deedd344edd8c01193db289e33"
+    },
+    {
+      "path": "material-02/tests/terminal.json",
+      "mode": 33188,
+      "uid": 0,
+      "gid": 0,
+      "mtime_ns": 1793151216681245391,
+      "bytes": 606,
+      "kind": "file",
+      "sha256": "fd6510a2ee288c3f023f303122e7409ae1cd401327bc7522d62778a0dd5aa63f"
+    },
+    {
+      "path": "material-02/third-party-cache-pins.json",
+      "mode": 33188,
+      "uid": 0,
+      "gid": 0,
+      "mtime_ns": 1793151215165996220,
+      "bytes": 9977,
+      "kind": "file",
+      "sha256": "e1b3a2adfb2a5c19adc28e4621303534b33d579eccb1bb75c569507f6fd31dfc"
+    }
+  ]
+}

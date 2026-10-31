@@ -1,0 +1,93 @@
+{
+  "schema": "prepared-v3-Python-independent-readonly-admission-review-v1",
+  "recorded_utc": "2026-10-26T12:53:05.200876+00:00",
+  "result": "NO_UNRESOLVED_BLOCKING_PYTHON_ADMISSION_FINDING",
+  "reviewed_collector_sha256": "c5e8d582d2b53411b15114c6c7fd03b618f5ce3c79ee25bc198dd372857bbc65",
+  "reviewed_test_sha256": "c1ed7e49a5ce8c86518752411bb7fa34ab786977d75a1e274821daec9c7f6733",
+  "local_HEAD": "7d061da2a6ef04ccd4fe3800e51177f48ac99c95",
+  "dirty_source_is_not_published_or_qualified": true,
+  "source_pins": {
+    "path": "source-pins.json",
+    "bytes": 8296,
+    "sha256": "945dad5ce014dfce00c6d89ffccd3beeb597c66369ea2f7e33b388108d9b37ca"
+  },
+  "finding_history": [
+    {
+      "id": "ABI-BUILD-FD-REPRESENTABILITY-001",
+      "severity": "low-parser-contract",
+      "historical_source_sha256": "e5d507c9c91b4b7000ffd9ab994f264516e539b0c55c0b90e3c3a54f1e6799df",
+      "paths_and_lines": [
+        "scripts/run_pon_native_io_component.py:220",
+        "scripts/run_pon_native_io_component.py:277"
+      ],
+      "trigger": "passed_fd=2**63 with matching actual_target/out_dir/native link strings can satisfy historical isolated numeric/string predicate",
+      "observed_by": "static source analysis, not executed",
+      "not_a_demonstrated_full_preparation_or_security_bypass": true,
+      "status": "RESOLVED_IN_REVIEWED_C5_C1",
+      "resolution": "exact int and3<=fd<=2**31-1 at both locations; co-mutated invalid FD tests",
+      "unchanged_resource_allowance": true
+    }
+  ],
+  "verified_bindings": {
+    "unique_exact_path_source_package_event": true,
+    "strict_event_fields_cfgs_two_string_env_pairs_fence_SHA": true,
+    "duplicate_and_UNQUALIFIED_env_cannot_shadow": true,
+    "same_held_target_OUT_DIR_static_lib_and_native_link": true,
+    "RawFd_i32_representation_exact_type": true,
+    "prepare_checks_before_ELF_capture": true,
+    "prepared_v3_reader_recomputes_original_Cargo_event": true,
+    "component_reader_calls_same_PreparedComponent_gate": true,
+    "strict_JSON_duplicate_key_and_nonfinite_rejection": true,
+    "nested_native_runtime_qualification_fixed_false": true
+  },
+  "unchanged_from_HEAD": [
+    "scripts/ci/check_pon_native_io_component.py",
+    "scripts/read_original_native_campaign.py",
+    "scripts/ci/check_pon_identity_churn.py",
+    "scripts/ci/test_pon_native_io_build_monitor.py",
+    "scripts/ci/test_pon_native_io_component.py",
+    "scripts/ci/test_pon_native_io_component_reader.py"
+  ],
+  "original_actual_Cargo_event": {
+    "path": "original-be785-native-abi-event.json",
+    "bytes": 984,
+    "sha256": "93f64fa06d685834485b7dc5aff3b35262e170fa3fa903ce0a7da64a5f9b2532"
+  },
+  "original_actual_Cargo_log": {
+    "path": "original-be785-build.stdout.log",
+    "bytes": 91764,
+    "sha256": "27134582021dcac39341a369934b30370e2f2e750e17f61ccf7c3bd2b6a2faa9"
+  },
+  "actual_controls_owned_by_root": {
+    "old32_receipt": {
+      "path": "root-original-evidence/actual32-mechanism-controls/receipt.json",
+      "bytes": 1732,
+      "sha256": "6ae3738c465dab83b8a3c2b3427b7caa30e188d283844bc46a6e1c799b51ec88"
+    },
+    "old32_status": "PASS-on-historical-e5-493-only",
+    "final32_receipt": {
+      "path": "root-original-evidence/actual32-final-fd-range-controls/receipt.json",
+      "bytes": 1603,
+      "sha256": "3f60d25e7e7d25b99409e660a5718fd85701181660c7ec22beb32b1b4e0a4799"
+    },
+    "final32_exit": 0,
+    "final32_OK_count": 32,
+    "final32_source_pins_match_reviewed_C5_C1": true,
+    "final32_stream_hashes_verified": true,
+    "final32_scope": "six synthetic ABI Cargo predicates plus unchanged26 Python mechanisms, not native/C++/normal-C qualification",
+    "reported_cumulative_seconds_before_publication": 14.151915323993308,
+    "tests_started_by_this_reviewer": false
+  },
+  "limits": [
+    "trusted selected source/toolchain/fresh-target owner is still required",
+    "Cargo event is not host/native/compiler attestation",
+    "SQLite runtime source-ID/native layout not measured by this Python review",
+    "normal-C/new prepared-v3/native execution/independent runtime readback NOT_RUN here",
+    "old Cargo0/ELF, root strict Clippy0 and13 tmpfs loader controls do not certify new native qualification"
+  ],
+  "source_binary_attestation": false,
+  "normal_C_or_CPP_or_prepared_v3_or_native_qualified": false,
+  "merge_ready": false,
+  "task_complete": false,
+  "source_test_build_native_or_service_actions_by_this_reviewer": false
+}

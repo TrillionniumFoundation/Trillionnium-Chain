@@ -1,0 +1,37 @@
+{
+  "schema": "pon-security-sprint-focused-workflow-controls-v1",
+  "workflow": ".github/workflows/pon-pure-focused-integration.yml",
+  "sha256": "0f886ae1defcf4231cc87322c7ed1b4d08059712e819fc13b295d53b6cce2249",
+  "all_original_steps_unchanged": true,
+  "job_budget_environment_unchanged": true,
+  "shell_blocks_checked": 13,
+  "retained_fixed_native_stdout_sha256": "bc98b3b5193acb4d84e7a19df3e2ff7ec243d6e14b87929ab9196d6916a7e013",
+  "postprocessing_cases": [
+    {
+      "case": "retained-fixed-native",
+      "exit_code": 0,
+      "accepted": true
+    },
+    {
+      "case": "missing-positive",
+      "exit_code": 1,
+      "accepted": false
+    },
+    {
+      "case": "duplicate-positive",
+      "exit_code": 1,
+      "accepted": false
+    },
+    {
+      "case": "zero-summary",
+      "exit_code": 1,
+      "accepted": false
+    },
+    {
+      "case": "ignored-positive",
+      "exit_code": 1,
+      "accepted": false
+    }
+  ],
+  "new_native_execution": false
+}

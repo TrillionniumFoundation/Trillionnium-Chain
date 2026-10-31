@@ -1,0 +1,39 @@
+{
+  "schema": "pon-history-raw-log-lossless-gzip-v1",
+  "reason": "preserve exact observed whitespace while allowing all-files source diff checks",
+  "entries": [
+    {
+      "original_name": "format-before.stdout.log",
+      "stored_name": "format-before.stdout.log.gz",
+      "original_local_commit": "ba2172881b958feebd60aaa1643afba7206e3b9c",
+      "original_git_blob": "ead83811e8a963f8feb0ea88430c314bd58f0f5d",
+      "original_bytes": 7255,
+      "original_sha256": "101745525f9143b6bed7493f810ee59169083afd1e67754fb7cb29375096d347",
+      "gzip_bytes": 1721,
+      "gzip_sha256": "2cee81cc6ac3fca6f2db0e45e14e8634e3a4c7872353e2f85ae37a9cf21cbf18",
+      "verified_decompressed_sha256": "101745525f9143b6bed7493f810ee59169083afd1e67754fb7cb29375096d347"
+    },
+    {
+      "original_name": "native-controls.stdout.log",
+      "stored_name": "native-controls.stdout.log.gz",
+      "original_local_commit": "ba2172881b958feebd60aaa1643afba7206e3b9c",
+      "original_git_blob": "abde258599e4301e4c9e34403c9e4dbd91c573d3",
+      "original_bytes": 2685,
+      "original_sha256": "6cf22f3fa50dd06f3f111a3f74f575c5235b4818b58c334c1894acb7f620efdb",
+      "gzip_bytes": 884,
+      "gzip_sha256": "b76c3847fa4c89c609016e810e826474a3ce2f288bd7087d964537d06e521373",
+      "verified_decompressed_sha256": "6cf22f3fa50dd06f3f111a3f74f575c5235b4818b58c334c1894acb7f620efdb"
+    },
+    {
+      "original_name": "quota-read-cost-first-binary.stdout.log",
+      "stored_name": "quota-read-cost-first-binary.stdout.log.gz",
+      "original_local_commit": "ba2172881b958feebd60aaa1643afba7206e3b9c",
+      "original_git_blob": "794cc8d2080d17e765be30b0deccc0062a990d78",
+      "original_bytes": 1478,
+      "original_sha256": "793ee5901df82443d49ffd1d694c78f6f41a18df2cbfd952170301ad1ea3736f",
+      "gzip_bytes": 578,
+      "gzip_sha256": "3a7b5474d9030ff597bd4de01f4f33f0a6e2cdbf385b8f3652735b9a1b1776ab",
+      "verified_decompressed_sha256": "793ee5901df82443d49ffd1d694c78f6f41a18df2cbfd952170301ad1ea3736f"
+    }
+  ]
+}

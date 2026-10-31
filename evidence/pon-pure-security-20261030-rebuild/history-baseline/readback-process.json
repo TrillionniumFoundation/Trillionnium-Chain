@@ -1,0 +1,17 @@
+{
+  "schema": "pon-history-readback-process-v1",
+  "command": [
+    "python",
+    "evidence/pon-pure-security-20261030-rebuild/history-baseline/reproduce_readback.py"
+  ],
+  "started_at_utc": "2026-10-30T01:19:35.076459+00:00",
+  "finished_at_utc": "2026-10-30T01:19:35.246714+00:00",
+  "wall_ns": 170248272,
+  "exit_code": 0,
+  "stdout_bytes": 20243,
+  "stdout_sha256": "e33ec1c11caaeb53228a6d5dbf1dd131d6ac6a3677a8baf02b66f6022f836011",
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "script_sha256": "8fb055936715a30d61d3dc8eb20639827806229002dd805b16cda5cac2c8e57c",
+  "new_native_execution": false
+}

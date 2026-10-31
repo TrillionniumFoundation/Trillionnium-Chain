@@ -1,0 +1,20 @@
+{
+  "schema": "pon-history-source-binding-v1",
+  "parent_commit": "7da4964d02b42076996e89a78d13f68572d33be5",
+  "parent_tree": "c7609a5502641739505862f2e4cd3c1e06ce1041",
+  "source_file": "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+  "base_source_sha256": "2fda284a6b263695698ce5d093385384b46c3b92ff96d0e3ccd7c7e20562dc9a",
+  "compiled_first_source_sha256": "481efb469168c69a9c88b90355a7f8acbab32e14ba2b22d3a028e1c4bf42d14c",
+  "final_source_sha256": "e81f3620590bfd75e4eb5fb123d20929d326c438882923f31012a2fb30f36155",
+  "cargo_lock_unchanged_from_parent": true,
+  "cargo_lock_sha256": "9daaf7ce63bfcab58efc8e08ca5134bfba9c97ec7e615cd6ad80e54be30b64cb",
+  "sparse_historical_evidence_excluded": true,
+  "full_tracked_worktree_identity_verified": false,
+  "final_native_verification": "pending_hosted_CI; three actual SIGKILL attempts on intermediate source and no repeated native codegen after test-only lint fix",
+  "strict_clippy": "pending_hosted_CI; intermediate needless_range_loop corrected; final exact-source retry ended in SIGKILL",
+  "pre_clippy_source_sha256": "73262238a015a80fcaa51f51c0a598bb79b86aa04fffe2c407ea6bf5e3ad5469",
+  "later_changes_confined_to_two_test_functions": true,
+  "production_code_identical_to_successful_native_build": true,
+  "final_workspace_format": "passed exact final source e81f3620590bfd75e4eb5fb123d20929d326c438882923f31012a2fb30f36155",
+  "lane_full_offline_graph": "two cache-miss failures retained; integration owns its separate full graph validation"
+}

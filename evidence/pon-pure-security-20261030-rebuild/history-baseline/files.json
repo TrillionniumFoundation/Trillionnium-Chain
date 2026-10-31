@@ -1,0 +1,176 @@
+{
+  "schema": "pon-history-baseline-files-v1",
+  "scope": "All current diagnostic deliverables except this self-manifest; original compressed bytes are separately bound by provenance.json.",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 11330,
+      "sha256": "6ae4e4a275a43812d79c35247adad2173e36816897459132f50f674cdb0e5069"
+    },
+    {
+      "path": "original/campaign/pressure-native/baseline/independent-client/job.json.gz",
+      "bytes": 193313,
+      "sha256": "71b02df3da39add38105d8fbf0e2f04adb12ba1170a90de18d8672ccb312e306"
+    },
+    {
+      "path": "original/campaign/pressure-native/baseline/independent-client/native/native.sqlite.gz",
+      "bytes": 1409567,
+      "sha256": "d44e9c1c53d5207e4a6a9ee5c855951c0e733b96726f3a92b5b1f589d4ecff97"
+    },
+    {
+      "path": "original/campaign/pressure-native/baseline/independent-client/ready.json.gz",
+      "bytes": 2905,
+      "sha256": "d5b1844e93fd88ce177045a0378058bed026461227bd72c6206c58d77093d860"
+    },
+    {
+      "path": "original/campaign/pressure-native/baseline/independent-client/report.json.gz",
+      "bytes": 3255,
+      "sha256": "afa13699cb719272212610f9404ba8a798eb02a583adcccab518377ae224de84"
+    },
+    {
+      "path": "original/campaign/pressure-native/baseline/independent-client/request-000.json.gz",
+      "bytes": 16952,
+      "sha256": "247b3a949d275380b8f5c260e6ff89003be3ed35fe86ebdaab0626e8018eecbe"
+    },
+    {
+      "path": "original/campaign/pressure-native/baseline/independent-client/request-001.json.gz",
+      "bytes": 16792,
+      "sha256": "0f757e72aa891404702266a4c3a6ae1be2bfee0bd9cff5b97b1fb3fe8ae6af7f"
+    },
+    {
+      "path": "original/campaign/pressure-native/baseline/independent-client/request-002.json.gz",
+      "bytes": 16800,
+      "sha256": "67a51036b73a406b2f30d3146c78f436c0975247b6b6973d644c8e3f362389e0"
+    },
+    {
+      "path": "original/campaign/pressure-native/baseline/independent-client/request-003.json.gz",
+      "bytes": 16791,
+      "sha256": "c054b960b31e4d4e522f169787276f54861945b050f08ab7b69ece19c532d484"
+    },
+    {
+      "path": "original/campaign/pressure-native/baseline/independent-client/request-004.json.gz",
+      "bytes": 16796,
+      "sha256": "f9c1dbbd817e9d2b5144b2487495f9a19aefde45336b978425455ddce8e3c78f"
+    },
+    {
+      "path": "original/campaign/pressure-native/baseline/independent-client/request-005.json.gz",
+      "bytes": 16796,
+      "sha256": "874bcf9d850649f402e540c36ac25a7774f03bdbf9b84555932a2513110e0afd"
+    },
+    {
+      "path": "original/campaign/pressure-native/baseline/independent-client/request-006.json.gz",
+      "bytes": 16791,
+      "sha256": "ca894cc3825e62bb4918b765982fbe9e660f1421fe6c3cb58506aadb6a5a328b"
+    },
+    {
+      "path": "original/campaign/pressure-native/baseline/independent-client/request-007.json.gz",
+      "bytes": 234,
+      "sha256": "d40642c7d0d92bac372717d7f552c8e4154439fb34b4ff27658106289e0da7c1"
+    },
+    {
+      "path": "original/campaign/pressure-native/baseline/independent-client/request-008.json.gz",
+      "bytes": 57,
+      "sha256": "49de9f11f65c282e655937f1757e392352b9af6b95e664e66cadbf379e9e1535"
+    },
+    {
+      "path": "original/campaign/pressure-native/baseline/independent-client/request-009.json.gz",
+      "bytes": 55,
+      "sha256": "85b7928ad3250516b4b6a8892ef12649a82b70518f4d0b9ecad56a7bcb609191"
+    },
+    {
+      "path": "original/campaign/pressure-native/baseline/independent-client/response-000.json.gz",
+      "bytes": 977,
+      "sha256": "1929d7fcb53d3642dc2f169e31e96a590f4f2443cea465b26534d0af28de9992"
+    },
+    {
+      "path": "original/campaign/pressure-native/baseline/independent-client/response-001.json.gz",
+      "bytes": 982,
+      "sha256": "dd953caaa2f46304bf65543d633c3749e5c76331c6889c11e40b2cf0909b4b95"
+    },
+    {
+      "path": "original/campaign/pressure-native/baseline/independent-client/response-002.json.gz",
+      "bytes": 977,
+      "sha256": "4efa021e0cb1f1105a1182458438658a01dd8cdf073c4b2b16a12366823b77bd"
+    },
+    {
+      "path": "original/campaign/pressure-native/baseline/independent-client/response-003.json.gz",
+      "bytes": 983,
+      "sha256": "8ab55e837813e0bb13c4531921da9b5187e42329e08bf81d8f6c64fb11d22b06"
+    },
+    {
+      "path": "original/campaign/pressure-native/baseline/independent-client/response-004.json.gz",
+      "bytes": 980,
+      "sha256": "86f19bdc86551ea7d8d21e351f10236b4432ad54a5470b8c66c04710c2437633"
+    },
+    {
+      "path": "original/campaign/pressure-native/baseline/independent-client/response-005.json.gz",
+      "bytes": 979,
+      "sha256": "14c1b491e66a02779420349908b0264b7e5c9ec3403c61edfb76a600f3297ffe"
+    },
+    {
+      "path": "original/campaign/pressure-native/baseline/independent-client/response-006.json.gz",
+      "bytes": 979,
+      "sha256": "6ccfb975da3827a561a808b0fafdad9f2bc3bb6aaa0e50791532c1da15b48f03"
+    },
+    {
+      "path": "original/campaign/pressure-native/baseline/independent-client/response-007.json.gz",
+      "bytes": 1322,
+      "sha256": "d1daa6e86a6abb78dd7c01e228ee5942325dcfd937d413be9c195243e1d67510"
+    },
+    {
+      "path": "original/campaign/pressure-native/baseline/independent-client/response-008.json.gz",
+      "bytes": 45817,
+      "sha256": "b3be96ba36b7807416b1ea986b7d056831ed117a295f324e71c72f73d3b53235"
+    },
+    {
+      "path": "original/campaign/pressure-native/baseline/independent-client/response-009.json.gz",
+      "bytes": 906,
+      "sha256": "7a1aa42bd63c341ade0f134ff9e99b75b8de6f525637d4fffda57c240391170d"
+    },
+    {
+      "path": "original/campaign/pressure-native/baseline.json.gz",
+      "bytes": 163989,
+      "sha256": "ab4701b81bfa008abb5cc92c866efbcaee61ee95174845bd188a19edc78eb5e5"
+    },
+    {
+      "path": "original/campaign/pressure-qualification.json.gz",
+      "bytes": 988,
+      "sha256": "dabb2198434e9da373a4e196cec104dba7bd1818da66c5524fb6dcd1fbb94e65"
+    },
+    {
+      "path": "provenance.json",
+      "bytes": 19687,
+      "sha256": "467934d2d80b15c37dff913321ca3d7a774cee3581d4cc9bdfb5b6faf3c726e7"
+    },
+    {
+      "path": "readback-process.json",
+      "bytes": 668,
+      "sha256": "a2c4041bf0934add1ecb5ecbd8efbb0393b9f201ea016b9dd3a87ddc12c727b0"
+    },
+    {
+      "path": "readback.json",
+      "bytes": 20243,
+      "sha256": "e33ec1c11caaeb53228a6d5dbf1dd131d6ac6a3677a8baf02b66f6022f836011"
+    },
+    {
+      "path": "readback.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reproduce_readback.py",
+      "bytes": 9146,
+      "sha256": "8fb055936715a30d61d3dc8eb20639827806229002dd805b16cda5cac2c8e57c"
+    },
+    {
+      "path": "successor-ci-metadata.json",
+      "bytes": 37924,
+      "sha256": "36de6a667437ddbf95fb08bf69370da812ca19ebd9567f8e6145c52c2cf18193"
+    },
+    {
+      "path": "successor-ci-terminal-excerpts.json",
+      "bytes": 89422,
+      "sha256": "2e7964b92cd6409de8ea5a64c1fb4eb5f1f378b858170daf3393715351fb14cf"
+    }
+  ]
+}

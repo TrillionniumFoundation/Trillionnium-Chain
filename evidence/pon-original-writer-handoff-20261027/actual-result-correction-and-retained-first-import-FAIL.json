@@ -1,0 +1,66 @@
+{
+  "schema": "finite-owner-handoff-actual-result-correction-v1",
+  "original_owner_result_retained_unchanged": true,
+  "original_owner_exit": 0,
+  "plan_completed": false,
+  "first_phase": {
+    "actual_exit": 1,
+    "actual": "IMPORT_FAIL before test load: baseline-source/config/pon/ledger-v1.json missing",
+    "tests_executed": 0,
+    "three_planned_assertion_counterexamples": "NOT_RUN",
+    "no_result_json": true,
+    "owner_validation_flaw": "expected exit1 alone did not distinguish expected test failure from harness import failure"
+  },
+  "second_phase": {
+    "role": "candidate-original-mock-target-RED",
+    "selectors": [
+      "OuterWriterV2Tests.test_unsupported_publish_and_terminal_failure_have_no_fallback",
+      "OuterWriterV2Tests.test_failed_first_stream_publish_keeps_observed_child_and_both_buffer_denominators"
+    ],
+    "testsRun": 2,
+    "failures": 2,
+    "errors": 0,
+    "skipped": 0,
+    "wasSuccessful": false,
+    "elapsed_seconds": 0.9719367339857854,
+    "denied_calls": [],
+    "original_prepare_native_budget_used": false,
+    "source_admission_qualified": false,
+    "prepared_qualified": false,
+    "native_qualified": false,
+    "merge_ready": false
+  },
+  "third_phase": {
+    "role": "candidate-finite-fixed",
+    "selectors": [
+      "OriginalOwnerHandoffTests",
+      "OuterWriterV2Tests.test_json_precount_cap_poison_and_independent_terminal",
+      "OuterWriterV2Tests.test_partial_overrun_and_copy_hash_failure_are_retained_and_charged",
+      "OuterWriterV2Tests.test_real_noreplace_collision_keeps_original_and_partial",
+      "OuterWriterV2Tests.test_unsupported_publish_and_terminal_failure_have_no_fallback",
+      "OuterWriterV2Tests.test_stream_reservations_and_collision_precede_any_child",
+      "OuterWriterV2Tests.test_source_validator_stdout_is_bounded_and_has_no_unowned_output",
+      "OuterWriterV2Tests.test_bad_source_stdout_or_child_exit_cannot_publish_identity_receipt",
+      "OuterWriterV2Tests.test_failed_first_stream_publish_keeps_observed_child_and_both_buffer_denominators",
+      "FullLedgerV2Tests.test_complete_descriptor_does_not_open_an_unimplemented_native_route",
+      "MechanismCounterexamples.test_finite_limits_preserve_all_original_caps_and_deny_full_ledger_claim"
+    ],
+    "testsRun": 19,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "wasSuccessful": true,
+    "elapsed_seconds": 0.31909233701298945,
+    "denied_calls": [],
+    "original_prepare_native_budget_used": false,
+    "source_admission_qualified": false,
+    "prepared_qualified": false,
+    "native_qualified": false,
+    "merge_ready": false
+  },
+  "first_tool_status_message_corrected": "initial3RED claim was premature; raw inspected immediately, parent notified; no baseline assertion result claimed",
+  "no_retry_or_new90_or_original_native_budget": true,
+  "historical_root_failures_closed": false,
+  "bootstrap_source_qualification": false,
+  "merge_ready": false
+}

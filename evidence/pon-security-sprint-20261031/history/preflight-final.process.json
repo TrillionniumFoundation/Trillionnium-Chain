@@ -1,0 +1,25 @@
+{
+  "schema": "pon-history-final-real-process-v1",
+  "argv": [
+    "bash",
+    "scripts/project-preflight.sh"
+  ],
+  "cwd": "/tmp/pon-history-service-20261031",
+  "start_unix_ns": 1793410842416656268,
+  "elapsed_monotonic_ns": 57240836,
+  "exit_code": 0,
+  "parent_commit": "7da4964d02b42076996e89a78d13f68572d33be5",
+  "source_state": "sparse working candidate",
+  "source_file": "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+  "source_sha256_before": "73262238a015a80fcaa51f51c0a598bb79b86aa04fffe2c407ea6bf5e3ad5469",
+  "source_sha256_after": "73262238a015a80fcaa51f51c0a598bb79b86aa04fffe2c407ea6bf5e3ad5469",
+  "scope": "actual targeted native/check process; no full fixed-parent or honest-service qualification",
+  "stdout": {
+    "bytes": 169,
+    "sha256": "b493ada0f6d112904a046c73e01057e25c2d8c3aa89e2a94770374944a6b53b2"
+  },
+  "stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

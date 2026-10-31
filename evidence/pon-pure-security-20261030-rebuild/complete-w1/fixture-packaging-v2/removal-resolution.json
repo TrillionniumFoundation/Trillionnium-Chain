@@ -1,0 +1,17 @@
+{
+  "schema": "pon-w1-final-object-directory-observation-v2",
+  "observed_utc": "2026-10-30T01:43:33.255856+00:00",
+  "earlier_sandbox_removals_reappeared_between_calls": true,
+  "apply_patch_could_not_read_original_binary_as_utf8": true,
+  "final_command_removed_retired_object": true,
+  "members_after_actual_restoration": [
+    "286ec10c307a80343892bbd4b63fa612ea84a5b96dd986ea1142efe0952782c5.gz.part",
+    "3110497b22927e6cd522b2af988ced45e2e83b7a5fdc539d8f9d79c9c2812a5c.gz",
+    "b2efce56e8cbc2b2987511a2f2ea9e5e8fb41c3544b7cc51160ef6a3e02861c3.gz",
+    "dfa0e6f7a5117456451fbf4e834d41b7608b868f3f0173addfc9c8b9e763665c.gz.part",
+    "manifest.json"
+  ],
+  "monolithic_object_present": false,
+  "cause_of_prior_reappearance_established": false,
+  "scope": "Actual closed-directory observation in this command. Final published Git tree, not future transient workspace state, defines delivery."
+}

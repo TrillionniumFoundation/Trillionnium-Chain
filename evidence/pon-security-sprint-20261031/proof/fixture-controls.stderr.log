@@ -1,0 +1,44 @@
+test_archive_checks_each_asset_hash_after_zip_pin (__main__.FixtureControls.test_archive_checks_each_asset_hash_after_zip_pin) ... ok
+test_archive_does_not_overwrite_existing_output (__main__.FixtureControls.test_archive_does_not_overwrite_existing_output) ... ok
+test_archive_rejects_absolute_entry (__main__.FixtureControls.test_archive_rejects_absolute_entry) ... ok
+test_archive_rejects_duplicate_members (__main__.FixtureControls.test_archive_rejects_duplicate_members) ... ok
+test_archive_rejects_oversized_member_count (__main__.FixtureControls.test_archive_rejects_oversized_member_count) ... ok
+test_archive_rejects_symlink_file (__main__.FixtureControls.test_archive_rejects_symlink_file) ... ok
+test_archive_rejects_symlink_member (__main__.FixtureControls.test_archive_rejects_symlink_member) ... ok
+test_archive_rejects_total_expansion (__main__.FixtureControls.test_archive_rejects_total_expansion) ... ok
+test_archive_rejects_traversal_even_for_unselected_entry (__main__.FixtureControls.test_archive_rejects_traversal_even_for_unselected_entry) ... ok
+test_archive_requires_exact_root_asset (__main__.FixtureControls.test_archive_requires_exact_root_asset) ... ok
+test_archive_requires_whole_zip_hash (__main__.FixtureControls.test_archive_requires_whole_zip_hash) ... ok
+test_archive_round_trip_is_not_proof_verification (__main__.FixtureControls.test_archive_round_trip_is_not_proof_verification) ... ok
+test_cli_requires_exactly_one_explicit_source (__main__.FixtureControls.test_cli_requires_exactly_one_explicit_source) ... ok
+test_object_checks_whole_gzip_after_individually_pinned_chunks (__main__.FixtureControls.test_object_checks_whole_gzip_after_individually_pinned_chunks) ... ok
+test_object_chunk_order_is_part_of_exact_manifest (__main__.FixtureControls.test_object_chunk_order_is_part_of_exact_manifest) ... ok
+test_object_refuses_legacy_monolithic_object_as_extra_entry (__main__.FixtureControls.test_object_refuses_legacy_monolithic_object_as_extra_entry) ... ok
+test_object_rejects_changed_compressed_bytes (__main__.FixtureControls.test_object_rejects_changed_compressed_bytes) ... ok
+test_object_rejects_changed_raw_hash_after_compressed_pin (__main__.FixtureControls.test_object_rejects_changed_raw_hash_after_compressed_pin) ... ok
+test_object_rejects_chunk_name_traversal (__main__.FixtureControls.test_object_rejects_chunk_name_traversal) ... ok
+test_object_rejects_chunk_over_transport_cap (__main__.FixtureControls.test_object_rejects_chunk_over_transport_cap) ... ok
+test_object_rejects_directory_symlink (__main__.FixtureControls.test_object_rejects_directory_symlink) ... ok
+test_object_rejects_expansion_past_declared_asset (__main__.FixtureControls.test_object_rejects_expansion_past_declared_asset) ... ok
+test_object_rejects_extra_entry (__main__.FixtureControls.test_object_rejects_extra_entry) ... ok
+test_object_rejects_fifo_without_blocking (__main__.FixtureControls.test_object_rejects_fifo_without_blocking) ... ok
+test_object_rejects_missing_entry (__main__.FixtureControls.test_object_rejects_missing_entry) ... ok
+test_object_rejects_repeated_chunk_reference (__main__.FixtureControls.test_object_rejects_repeated_chunk_reference) ... ok
+test_object_rejects_second_member_at_exact_chunk_boundary (__main__.FixtureControls.test_object_rejects_second_member_at_exact_chunk_boundary) ... ok
+test_object_rejects_symlink_data (__main__.FixtureControls.test_object_rejects_symlink_data) ... ok
+test_object_rejects_third_chunk_even_with_consistent_byte_total (__main__.FixtureControls.test_object_rejects_third_chunk_even_with_consistent_byte_total) ... ok
+test_object_rejects_total_compressed_and_expanded_caps (__main__.FixtureControls.test_object_rejects_total_compressed_and_expanded_caps) ... ok
+test_object_rejects_trailing_byte_at_exact_chunk_boundary (__main__.FixtureControls.test_object_rejects_trailing_byte_at_exact_chunk_boundary) ... ok
+test_object_rejects_trailing_bytes_with_consistent_outer_hash (__main__.FixtureControls.test_object_rejects_trailing_bytes_with_consistent_outer_hash) ... ok
+test_object_rejects_truncated_gzip_with_consistent_outer_hash (__main__.FixtureControls.test_object_rejects_truncated_gzip_with_consistent_outer_hash) ... ok
+test_object_rejects_two_members_with_consistent_outer_hash (__main__.FixtureControls.test_object_rejects_two_members_with_consistent_outer_hash) ... ok
+test_object_rejects_whole_and_chunk_length_disagreement (__main__.FixtureControls.test_object_rejects_whole_and_chunk_length_disagreement) ... ok
+test_object_reordered_pinned_chunks_cannot_form_another_stream (__main__.FixtureControls.test_object_reordered_pinned_chunks_cannot_form_another_stream) ... ok
+test_object_requires_each_receipt_chunk (__main__.FixtureControls.test_object_requires_each_receipt_chunk) ... ok
+test_object_requires_exact_manifest (__main__.FixtureControls.test_object_requires_exact_manifest) ... ok
+test_object_round_trip_keeps_zip_check_false (__main__.FixtureControls.test_object_round_trip_keeps_zip_check_false) ... ok
+
+----------------------------------------------------------------------
+Ran 39 tests in 0.112s
+
+OK

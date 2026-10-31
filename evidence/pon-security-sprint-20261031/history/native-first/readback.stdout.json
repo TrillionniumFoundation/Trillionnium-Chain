@@ -1,0 +1,12 @@
+{
+  "archive_bytes": 20955339,
+  "archive_sha256": "92e73b562e634291dc1845aa2cb63ab21b1e3313b7f5dca23888074fa8f07c7b",
+  "compiled_host_source_sha256": "481efb469168c69a9c88b90355a7f8acbab32e14ba2b22d3a028e1c4bf42d14c",
+  "manifest": "/tmp/pon-history-service-20261031/evidence/pon-security-sprint-20261031/history/native-first/manifest.json",
+  "native_bytes": 79809160,
+  "native_execution_performed": false,
+  "native_sha256": "51ddbf0b961f7e8f41c2b69c15b93e25440f941735ac7a03cf5406f6dee46467",
+  "output": null,
+  "pieces": 3,
+  "schema": "pon-history-native-binary-readback-v1"
+}

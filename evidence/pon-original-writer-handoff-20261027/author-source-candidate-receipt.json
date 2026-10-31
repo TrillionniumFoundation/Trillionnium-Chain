@@ -1,0 +1,97 @@
+{
+  "schema": "pn0-original-outer-owner-handoff-source-author-receipt-v1",
+  "recorded_utc": "2026-10-27T00:44:25.395486+00:00",
+  "base": "c758861fd86fcc740720501ecf956b0b5c98b3b2",
+  "patch": {
+    "path": "candidate.patch",
+    "bytes": 39648,
+    "sha256": "28d032602a5f91db1d86d1132c182d8dd3340e44a8140a54dcfe336385474bb9"
+  },
+  "owned_source": {
+    "scripts/ci/test_pon_identity_churn.py": {
+      "bytes": 100942,
+      "sha256": "e169e2bbe1f7bf0c800b13dafb0d8fc840a9b670661ce63a5d721f093df72fa5"
+    },
+    "scripts/ci/test_pon_outer_owner_handoff.py": {
+      "bytes": 10328,
+      "sha256": "ae994c481ad1b26257a1c656ff38c79e1a03fcbe94523b3486f314413a89b736"
+    },
+    "scripts/pon_identity_outer_owner.py": {
+      "bytes": 10492,
+      "sha256": "a3056497eda05cff17bdbe662b5073dea01dfbf1c87b270c6a26b3921178060b"
+    },
+    "scripts/run_pon_identity_churn.py": {
+      "bytes": 50530,
+      "sha256": "80cded15e1136d77b7276fcc0ce3405138f3d64c1d6ab5c7df18b0af55ac68aa"
+    },
+    "scripts/run_pon_native_io_component.py": {
+      "bytes": 62943,
+      "sha256": "fede3c624155313dae785f91257a81f1be5eda66d93e37c35a0c71c7742afe28"
+    },
+    "scripts/run_pon_w1_native_campaign.py": {
+      "bytes": 17227,
+      "sha256": "e6ac1fda21445f30e9ed9add70cabcac24634441533105d56330cf4a550bf2f9"
+    }
+  },
+  "mechanical_raw_owner_blocks_exact": true,
+  "same_live_original_owner_handoff_source_implemented": true,
+  "original_public_CLI_bodies_AST_exact": true,
+  "original89_test_names_and_all_assertion_AST_exact": true,
+  "only_mock_fixture_body_edits": 3,
+  "finite_validation": "FAIL_INCOMPLETE",
+  "baseline_three_new_counterexamples": "NOT_RUN: import failed before any test",
+  "original_wrong_mock_target_controls": "2 actual FAIL; retained",
+  "fixed_finite_controls": "19 actual PASS/0skip,9new+10original, notfull89",
+  "executed_controller_exit": 0,
+  "controller_exit_not_plan_success": true,
+  "executed_controller_sha256": "e0a54416310347bdc0a376d957147d23da243b3f9d6381f91863874ee1c8091f",
+  "future_count_check_controller": "future-validation-owner-with-testcount-check.py.txt; SOURCE_ONLY/NOT_RUN",
+  "actual_resources": {
+    "cpu.max": "100000 100000",
+    "memory.max": "536870912",
+    "memory.swap.max": "0",
+    "pids.max": "64",
+    "nice": 10,
+    "affinity": [
+      0
+    ],
+    "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/chain-pn0-owner-handoff-finite-20261027-001.service"
+  },
+  "actual_systemd_invocation_id": "85ee4ee15e4542de8d0062745c35ab11",
+  "actual_role_elapsed_seconds": 2.3709309880214278,
+  "all_observed_direct_children_waited": true,
+  "all_known_owned_pids_absent_after": true,
+  "actual_combined_logs_bytes": 9702,
+  "runtime_result_metadata_bytes_before_later_forensic_receipts": 130655,
+  "input_quiescence_scope": "686 declared code/fixture/driver files only, not complete config/runtime closure",
+  "original90_reopened_or_retried": false,
+  "original164_257_native_budget_used_or_reset": false,
+  "actual_native_SQL_network_build_model_CI_runs": 0,
+  "trusted_P0_T_runtime_loader_capsule_record_implemented": false,
+  "all11_cutpoints_source_admitted": false,
+  "fullguard_enabled": false,
+  "current_source_qualified": false,
+  "prepared_qualified": false,
+  "whole_route_ready": false,
+  "merge_ready": false,
+  "review_status": "INDEPENDENT_REVIEW_REQUESTED_NOT_SELF_APPROVED",
+  "root_unchanged_by_role": true,
+  "root_readback": {
+    "observed_utc": "2026-10-27T00:42:55.005746+00:00",
+    "root_head_now": "c758861fd86fcc740720501ecf956b0b5c98b3b2",
+    "root_status_now": "",
+    "fixed_scratch_head": "c758861fd86fcc740720501ecf956b0b5c98b3b2",
+    "root_changed_by_this_role": false,
+    "fixed_paths": [
+      "scripts/ci/test_pon_identity_churn.py",
+      "scripts/run_pon_identity_churn.py",
+      "scripts/run_pon_native_io_component.py",
+      "scripts/run_pon_w1_native_campaign.py",
+      "scripts/ci/test_pon_outer_owner_handoff.py",
+      "scripts/pon_identity_outer_owner.py"
+    ],
+    "patch_bytes": 39648,
+    "patch_sha256": "28d032602a5f91db1d86d1132c182d8dd3340e44a8140a54dcfe336385474bb9"
+  },
+  "no_old_failure_removed_or_relabelled_pass": true
+}

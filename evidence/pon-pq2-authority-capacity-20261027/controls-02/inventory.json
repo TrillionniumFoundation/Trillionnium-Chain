@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "python3",
+    "scripts/refresh_distributed_source_inventory.py",
+    "--check"
+  ],
+  "returncode": 1,
+  "wall_seconds": 0.16547559599712258,
+  "scope": "named source control only"
+}

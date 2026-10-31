@@ -1,0 +1,76 @@
+{
+  "files": [
+    {
+      "bytes": 7288,
+      "path": "README.md",
+      "sha256": "c40891cefcdb6d5946bda4917b6aa17f156f6a373a41736b0d97b5cd8fb0a8e9"
+    },
+    {
+      "bytes": 28003,
+      "path": "arm64-original-artifact.zip",
+      "sha256": "35bd0454c8f700e1488290ee03496bf28052e4716f6fb0218ef240c81bd73426"
+    },
+    {
+      "bytes": 18232,
+      "path": "logs/arm64-job.log.gz",
+      "sha256": "def91661f0e90424120e3f4d62fe90fa4691326126f2165bf1478f8cbf01e0ba"
+    },
+    {
+      "bytes": 32346,
+      "path": "logs/x64-job.log.gz",
+      "sha256": "b74b95b72fe55d73b36a3a0fcf5ba0d5bfb47db01d502d2b8c95a5f6c221a8b9"
+    },
+    {
+      "bytes": 1865,
+      "path": "metadata/artifacts.json",
+      "sha256": "eb30725431089e24a7456aa1f823cb99431a22cb37e3f33278f7db5953fd5df0"
+    },
+    {
+      "bytes": 5007,
+      "path": "metadata/jobs.json",
+      "sha256": "77549f3114612c41dda16ead4db7584815d6d42df14bbcee76d3de7b6a558691"
+    },
+    {
+      "bytes": 13573,
+      "path": "metadata/workflow-runs.json",
+      "sha256": "1f0a4f79cce778aa9bc5dea1d002adb56f4d3f90521efc6e5ad4a172dbc784d2"
+    },
+    {
+      "bytes": 422,
+      "path": "offline-verification.json",
+      "sha256": "c1d2bc8ea6f9b1612fecc31c50324695039f59561629c024150164225d3bebbb"
+    },
+    {
+      "bytes": 2175,
+      "path": "provenance.json",
+      "sha256": "7ff8aca0e7a1319cab8c7acfe291fb8ce076c2cf7db8791d00b10cdb15d4d846"
+    },
+    {
+      "bytes": 11962,
+      "path": "readback.py",
+      "sha256": "1ad3d5914b659ea319d7eaa8ca58df2ac4d334b87ab1fdf0b69bbb399605b1be"
+    },
+    {
+      "bytes": 421,
+      "path": "recovery-verification.json",
+      "sha256": "acbc30fc9eabe28004ee5a247b17fd14f1b258018bead909871c56b3a94c5710"
+    },
+    {
+      "bytes": 8831,
+      "path": "selection-manifest.json",
+      "sha256": "9e5dcdf32e1c080f331395d1571170e6b40efc10b349c3196f58649b8444b0f9"
+    },
+    {
+      "bytes": 31751,
+      "path": "summary.json",
+      "sha256": "917972d65ede0ed370364d39de0b70f9db58bd0b1e68113e72efc924cf4bd66e"
+    },
+    {
+      "bytes": 6337403,
+      "path": "x64-selected-original-members.zip",
+      "sha256": "12c0fdcf0dbeae25bdb648a5ff60c371ca11f549ea47745f2fa44de852ba2d97"
+    }
+  ],
+  "schema": "pon-admission-recovered-file-manifest-v1",
+  "scope": "Explicit delivered recovery files, plus this manifest. This is not the lost local snapshot. Duplicate plain logs are not delivery files; exact decoded log bytes are retained in the bound gzip objects."
+}

@@ -1,0 +1,33 @@
+{
+  "schema": "pon-ci-readback-files-v1",
+  "files": {
+    "github-job.log.gz": {
+      "bytes": 46873,
+      "sha256": "1bb7f85915ad8630b03dfdf50ba888b937d7eaa4dce56db9a5884369b132ba55"
+    },
+    "kernel-passed-roster.txt": {
+      "bytes": 2050,
+      "sha256": "606db7ee5a58c898b6373e7939aa576497ab11cfe5cd603ef7c9a579068bd0fd"
+    },
+    "native-authenticated-roster.txt": {
+      "bytes": 2339,
+      "sha256": "14fffbe0dc533c30637f377916d6262e6537480f9fc5a6227cf4ab02cf9b641b"
+    },
+    "observation.json": {
+      "bytes": 6806,
+      "sha256": "faff7e5af1acc6b24abedd92e1bbf7cf6ff32e2d95edabed2671cc954f2af14f"
+    },
+    "provenance.json": {
+      "bytes": 2122,
+      "sha256": "6e44428b1fc0729bd2902edf9c6c6a7a65835efbc374be4bec689160c6170509"
+    },
+    "source-after.stdout.json": {
+      "bytes": 511,
+      "sha256": "e013ab76235c3b3a982b59e93f74676fae651edeb0a5e88f3730a17b8429c1a4"
+    },
+    "source-before.stdout.json": {
+      "bytes": 511,
+      "sha256": "e013ab76235c3b3a982b59e93f74676fae651edeb0a5e88f3730a17b8429c1a4"
+    }
+  }
+}

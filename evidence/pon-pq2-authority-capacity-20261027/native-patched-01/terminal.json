@@ -1,0 +1,9 @@
+{
+  "returncode": 0,
+  "timeout": false,
+  "wall_seconds": 64.05868809599633,
+  "binary_sha256": "bc7124e2a5b2bd8801c9c4f4bc923d821ffc23c65b490780aa68d00ec5a11137",
+  "test_source_before_after_equal": true,
+  "all_rlibs_before_after_equal": true,
+  "scope": "actual patched full-nine native integration target linked to unchanged frozen original native PQ2 dependencies; not a new Cargo workspace or physical I/O qualification"
+}

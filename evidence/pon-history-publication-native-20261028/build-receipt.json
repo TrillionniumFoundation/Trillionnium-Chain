@@ -1,0 +1,52 @@
+{
+  "base_commit": "8d7741028eb650f0600e61fcab46ff3d14b50767",
+  "binary": "/tmp/pon-history-epoch-v1-20261028/debug/deps/trnm_pon_node-1d384016751e2606",
+  "binary_sha256": "136bbeb0b474dc9d0bcb3c254ab3bf21d47666f4fb4e04957752f69ea905729b",
+  "budget_seconds": 1800,
+  "child_ownership": "direct subprocess with new session; only owned PID/process group signalled",
+  "command": [
+    "/workspace/scratch/301262829a43/pon-build-inputs/unpacked/toolchain/bin/cargo",
+    "test",
+    "--offline",
+    "--locked",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--config",
+    "profile.test.package.trnm-pon-node.opt-level=0",
+    "-p",
+    "trnm-pon-node",
+    "--lib",
+    "--no-run",
+    "--message-format=json-render-diagnostics"
+  ],
+  "deadline_policy": "terminal-observation-must-not-exceed-budget",
+  "disk_after": {
+    "available_bytes": 660004864,
+    "free_bytes": 2394767360
+  },
+  "disk_before": {
+    "available_bytes": 749375488,
+    "free_bytes": 2484137984
+  },
+  "elapsed_seconds": 188.75750802499533,
+  "finished_unix": 1793148066.1057186,
+  "free_floor_bytes": 268435456,
+  "log_limit_bytes": 33554432,
+  "log_sha256": "e2e2f11d756bcaef42ce06193c491cda90656a48c5e4e39f839cca8ea6d55ca1",
+  "max_rss_kib": 1828404,
+  "native_returncode": 0,
+  "outcome": "EXIT_ZERO",
+  "owned_namespace_pid": 70,
+  "passed": true,
+  "reported_system_seconds": 14.472928,
+  "reported_user_seconds": 157.061213,
+  "runner_sha256": "1bd5ec0818ba0ebc8bad11e3437a488e37f4646bef3281cde98ad2b8a7ecd81a",
+  "samples_sha256": "938cc10f8aa6c0bb50ad7f39520b9065e3939e96bba54815b6e7f4eafa39bce5",
+  "schema": "history-publication-native-build-v1",
+  "source_stable": true,
+  "started_unix": 1793147877.348209,
+  "terminal_observed_elapsed_seconds": 188.75700572099595,
+  "termination_reason": null,
+  "uid": 0,
+  "wait4_status": 0
+}

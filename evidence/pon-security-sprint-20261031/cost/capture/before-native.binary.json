@@ -1,0 +1,11 @@
+{
+  "schema": "pon-mining-time-frozen-binary-v1",
+  "source_commit": "c69749680d7fd8dd2334d284f0e9a6823cf38a18",
+  "source_tree": "5321fe46bc7b0e7d589e402c92e1b403d825da93",
+  "built_path": "/tmp/pon-cost-target/debug/deps/mining_timestamp_liveness-62e218468678fc81",
+  "frozen_path": "/tmp/pon-cost-observations/before-native",
+  "bytes": 11359024,
+  "sha256": "bb3eccd67c1866bef617079310f6e5c2ea93a8ef744e09480df9e61f2b107db5",
+  "sparse_checkout": true,
+  "full_source_inventory_claimed": false
+}

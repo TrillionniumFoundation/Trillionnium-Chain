@@ -1,0 +1,16 @@
+{
+  "schema": "pon-proof-ci-recovery-readback-process-v1",
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-B",
+    "evidence/pon-postpublish-recovery-20261030/proof/readback.py"
+  ],
+  "started_utc": "2026-10-30T17:30:33.701605+00:00",
+  "finished_utc": "2026-10-30T17:30:33.866178+00:00",
+  "wall_seconds": 0.16457897899817908,
+  "returncode": 0,
+  "script_sha256_before": "3c64e983d9c9d89c9ee189e104a81e77be73f8a5d80ea9490efb0d064bf5dbb0",
+  "script_sha256_after": "3c64e983d9c9d89c9ee189e104a81e77be73f8a5d80ea9490efb0d064bf5dbb0",
+  "new_native_execution": false,
+  "proof_reverification": false
+}

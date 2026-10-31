@@ -1,0 +1,18 @@
+{
+  "utc": "2026-10-26T13:24:52.116614+00:00",
+  "base_dec7_independent_pattern_sha256": "dec7e93ef2151a240bf252a84c90d34abd603248f0fd845a0f51beb0b35fa598",
+  "new_owner_sha256": "7346dc6b6f6dd89dd3cb84289a12c2bde3a986ec24d1f3ed48c0ff00de5bc2d3",
+  "actual_prepared_sha256": "924fd7428cdf079c2b91a6cdb4af9aabd9896e732e870420a0c3b4929b61a0ac",
+  "actual_inventory_sha256": "49945617a5911c49bc402bd74f008ab9e023aa35286613de26464d5fcefba12a",
+  "source_head": "399dd82608df72c71c502b8bda0aa95898794080",
+  "source_tree": "66ceec03cd2b67ae88a5662cf75e4ba80292cd2b",
+  "absolute_Nice10_and_all_original_args_caps_unchanged": true,
+  "original180_with_cumulative175_bound": true,
+  "single_fresh_claim_only": true,
+  "independent_full_preparation_review_pending": true,
+  "not_run": true,
+  "previous_plan_path": "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/pn1-v3-clean-source-public-qualification-20261026-001/execution-owned-001/source-admission.json",
+  "previous_plan_sha256": "ae4e8b0cb5d33ff0202f2bf2db8a343acda6b99cb4a96434eee395f567993358",
+  "previous_plan_preserved": true,
+  "changed_only_final_owner_old_terminal_sha_pins": true
+}

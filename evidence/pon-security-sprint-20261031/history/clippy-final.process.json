@@ -1,0 +1,48 @@
+{
+  "schema": "pon-history-final-check-real-process-v1",
+  "argv": [
+    "cargo",
+    "clippy",
+    "--profile",
+    "test",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--lib",
+    "--tests",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "cwd": "/tmp/pon-history-service-20261031",
+  "start_unix_ns": 1793411456005718419,
+  "elapsed_monotonic_ns": 179433059930,
+  "exit_code": 101,
+  "source_commit": "ba2172881b958feebd60aaa1643afba7206e3b9c",
+  "commit_after": "ba2172881b958feebd60aaa1643afba7206e3b9c",
+  "source_file": "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+  "source_sha256_before": "73262238a015a80fcaa51f51c0a598bb79b86aa04fffe2c407ea6bf5e3ad5469",
+  "source_sha256_after": "73262238a015a80fcaa51f51c0a598bb79b86aa04fffe2c407ea6bf5e3ad5469",
+  "selected_environment": {
+    "RUSTUP_HOME": "/tmp/pq-r3-rustup",
+    "CARGO_HOME": "/tmp/pq-r3-cargo",
+    "CARGO_TARGET_DIR": "/tmp/pon-history-target",
+    "CARGO_BUILD_JOBS": "1",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_PROFILE_TEST_DEBUG": "0"
+  },
+  "memory_events_before": "low 0\nhigh 0\nmax 6401115\noom 22\noom_kill 3\noom_group_kill 0\n",
+  "memory_events_after": "low 0\nhigh 0\nmax 7089994\noom 22\noom_kill 3\noom_group_kill 0\n",
+  "scope": "sparse committed source; no full native execution or fixed-parent qualification",
+  "stdout": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr": {
+    "bytes": 3578,
+    "sha256": "ad09f29933790b5854e3940acbf8ede78c59032bb66f1027d222f0bbbe3f297e"
+  }
+}

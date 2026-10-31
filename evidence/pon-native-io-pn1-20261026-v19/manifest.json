@@ -1,0 +1,104 @@
+{
+  "schema": "pn1-v19-monitor-history-evidence-v1",
+  "recorded_utc": "2026-10-26T11:35:23.035323+00:00",
+  "original_source": "ec0acdff5717b8f584b26f30f1162bd9bf1cc888",
+  "original_prepare_result": "FAIL; actual Cargo wait -9, cause UNKNOWN",
+  "integrated_source_baseline": "53fb654b532ed8e737e0dea635a31dce3b73b3cc plus V19 and reviewed cold-release docs",
+  "integrated_controls": "26PASS only; old19 retained",
+  "additional_source_checker": "two 60-second diagnostics TIMEOUT, retained; stack showed repeated Rust selector masking, not a proven historical cause",
+  "source_compilation_or_public_prepare_execute_reader_qualified": false,
+  "task_complete": false,
+  "merge_ready": false,
+  "files": [
+    {
+      "path": "original-ec0/prepare-owner-result.json",
+      "bytes": 604,
+      "sha256": "28205f31df0b704ba637c7d312f5e1332f519fcce25aed26b66a7e4c54040ba5"
+    },
+    {
+      "path": "original-ec0/prepare-start-intent.json",
+      "bytes": 2525,
+      "sha256": "00993f9f5ce7b6cada74c3a477382b60ff61f84ce5b0590a3850096f2c5e537d"
+    },
+    {
+      "path": "original-ec0/prepare-owner.stdout.log",
+      "bytes": 472,
+      "sha256": "d3afda67a323e5164bc9a67185bb1df5c73f6ae76a1bf9b3cf2ea066db2a4762"
+    },
+    {
+      "path": "original-ec0/prepare-owner.stderr.log",
+      "bytes": 305,
+      "sha256": "e113fe119e405b43c7556c65ad019c67c911620a17b8ec0d3af0911be69bbeef"
+    },
+    {
+      "path": "original-ec0/prepared/build.stderr.log",
+      "bytes": 2677,
+      "sha256": "406e0bad13322bc7230a06de5c15aea1217ca8fdfa7a8280e967d048424b28a1"
+    },
+    {
+      "path": "original-ec0/prepared/build.stdout.log",
+      "bytes": 71071,
+      "sha256": "bb1cefa7b31259ee5e21190fb84b22b88dbfaffb56ea7f1045597e64ac3c9161"
+    },
+    {
+      "path": "original-ec0/prepared/build.step.json",
+      "bytes": 1518,
+      "sha256": "197f836d03aa2c85dcc99c19d95e695a5a8480fc80c223e6b20abce27e20fa12"
+    },
+    {
+      "path": "original-ec0/prepared/outer-terminal.json",
+      "bytes": 553,
+      "sha256": "3bd7d4b8a2ffbcf8bf3e6819f0e7eff9b4ac3c01e2f0c10c88dfda5a2178594b"
+    },
+    {
+      "path": "original-ec0/prepared/resource-before.json",
+      "bytes": 3203,
+      "sha256": "66fbabd8e4bd79a0f1753050dd6b64b302f7e9790853348bbeaa98bb9f688bc1"
+    },
+    {
+      "path": "original-ec0/prepared/source-before.json",
+      "bytes": 421,
+      "sha256": "5653db3f25a44044d5765b24fc1fb0f1d1fe6813b6c6a917add207c443636390"
+    },
+    {
+      "path": "original-ec0/prepared/source-before.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "original-ec0/prepared/source-before.stdout.log",
+      "bytes": 421,
+      "sha256": "5653db3f25a44044d5765b24fc1fb0f1d1fe6813b6c6a917add207c443636390"
+    },
+    {
+      "path": "original-ec0/prepared/source-before.step.json",
+      "bytes": 907,
+      "sha256": "f2d6c9776125edb45c0c757a90390ed623259cdd32837ee561706504c309307f"
+    },
+    {
+      "path": "integrated-controls/python26.stdout.log",
+      "bytes": 32455,
+      "sha256": "cdfe15d93ec547fe5ca9f7e1c4fe2203be445c52fe37ebcb97eba8c83d64e75a"
+    },
+    {
+      "path": "integrated-controls/python26.stderr.log",
+      "bytes": 4882,
+      "sha256": "3f041b096465361f046113e5ea148b3dfe396348ce4c95a6abd3d15f8e4fc2b7"
+    },
+    {
+      "path": "integrated-controls/chain-narrow-verification.json",
+      "bytes": 1742,
+      "sha256": "6512149a0a17b24fa8276eed073aaffd504b44cac193336b7128d4045722c46d"
+    },
+    {
+      "path": "integrated-controls/source-check-stack-diagnostic-receipt.json",
+      "bytes": 732,
+      "sha256": "0e237de2e70a2d2f989005c8010f48cf5c11b7604c8d9d487ebd9c12698e64fb"
+    },
+    {
+      "path": "integrated-controls/source-check-stack-diagnostic.stderr.log",
+      "bytes": 13091,
+      "sha256": "e67e326507b7c0dd533236eb0dcc7c1bcc4bc35be44ee488c7b7c7c51b6c3fa2"
+    }
+  ]
+}

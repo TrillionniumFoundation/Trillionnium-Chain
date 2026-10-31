@@ -1,0 +1,25 @@
+{
+  "schema": "pon-recovery-new-readback-process-v1",
+  "command": [
+    "python",
+    "/workspace/scratch/f4a65c4581e7/pon-security-work/evidence/pon-postpublish-recovery-20261030/cost/reproduce_readback.py",
+    "--repository",
+    "/workspace/scratch/f4a65c4581e7/pon-security-work",
+    "--raw-gzip",
+    "/tmp/recovery-cost/native-v5-stdout.gz",
+    "--binary-gzip",
+    "/tmp/recovery-cost/native-v5-binary.gz",
+    "--output",
+    "/tmp/recovery-cost/new-readback"
+  ],
+  "started_at_utc": "2026-10-30T17:31:23.944943+00:00",
+  "finished_at_utc": "2026-10-30T17:31:25.121088+00:00",
+  "new_process_wall_ns": 1176146520,
+  "exit_code": 0,
+  "stdout_bytes": 295,
+  "stdout_sha256": "934ea91ebeadc84cbbc44c4086b81af601a791175b7f75e64b88906845cd56b2",
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "script_sha256": "a6a83be11d70829ee53377c7ce6b65a564686a41ecec36a7a0cdc3278c88f7ad",
+  "scope": "This process was executed after recovery; it is not the lost original native capture or reader process receipt."
+}

@@ -1,0 +1,33 @@
+{
+  "schema": "trnm-p0-final-component-verification-v1",
+  "source_pin": "4b6b8a91b6dfe41fbd7f40f40b359d535c2c4251",
+  "rust": "1.95.0",
+  "research_release_tests": {
+    "passed": 102,
+    "failed": 0,
+    "ignored": 0,
+    "log": "cargo-test-release-rust195-final.log"
+  },
+  "original_locked_workspace_selected_w1_tests": {
+    "passed": 95,
+    "failed": 0,
+    "ignored": 0,
+    "filtered": 5,
+    "log": "original-workspace-m01-rust195-v1.log"
+  },
+  "python_tests": {
+    "passed": 7,
+    "log": "python-independent-tests-v3.log"
+  },
+  "strict_clippy_library_binary": "PASS fresh target; clippy-clean-library-binary-rust195.log",
+  "strict_clippy_all_targets": "FAIL unchanged pinned #498 rejection_cache.rs:114 unused assignment; absent at 5e",
+  "new_rust_files_format": "PASS",
+  "source_identity_files_checked": 59,
+  "native_pwg1_interop": "PASS native-pwg1-interop/result.json",
+  "native_correct_product_false_traces": 39,
+  "transparent_backend": "NOT_IMPLEMENTED",
+  "succinct_proof": "NOT_GENERATED",
+  "work_cost_hardness": "NOT_PROVED",
+  "node_service": "NOT_QUALIFIED",
+  "hardware_fairness": "NOT_QUALIFIED"
+}

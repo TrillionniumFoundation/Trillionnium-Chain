@@ -1,0 +1,55 @@
+{
+  "schema": "history-followup-native-attempt-v1",
+  "label": "native-attempt-01",
+  "parent": "081c04e893850a42b539d98d6ccfa659496e99ee",
+  "command": [
+    "cargo",
+    "test",
+    "--offline",
+    "--locked",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--lib",
+    "store::operator_continuous_owner::history_import::tests::",
+    "--no-run",
+    "--message-format=json-render-diagnostics"
+  ],
+  "environment": {
+    "PATH": "/workspace/scratch/301262829a43/pon-build-inputs/unpacked/toolchain/bin:/root/.codex/tmp/arg0/codex-arg0XUHZFx:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback",
+    "CARGO_HOME": "/workspace/scratch/301262829a43/pon-build-inputs/original-cargo-home",
+    "CARGO_TARGET_DIR": "/tmp/pon-history-final-20261027",
+    "CARGO_BUILD_JOBS": "1",
+    "CARGO_PROFILE_TEST_DEBUG": "0"
+  },
+  "cargo_lock_sha256": "6efe75ea2f9293e3f0d003d6896e89e795c1ef021b9e15179db4d2e37317b864",
+  "started_unix": 1793097438.000869,
+  "production_qualified": false,
+  "build_returncode": 0,
+  "source_stable_during_build": true,
+  "binary": "/workspace/scratch/301262829a43/pon-pq-impl/history-evidence/native-attempt-01/native-test-snapshot.bin",
+  "binary_sha256": "d0563b56f815b4c8d22f27540784923d7547bda1deeb96aa59b293c2c57f8567",
+  "selected_tests": [
+    "store::operator_continuous_owner::history_import::tests::signed_history_actual_child_cancellation_joins_settles_reopens_and_needs_new_signed_claim: test",
+    "store::operator_continuous_owner::history_import::tests::signed_history_constructor_rejects_unsigned_view_and_unbounded_workers_before_persistent_claim: test",
+    "store::operator_continuous_owner::history_import::tests::signed_history_internal_activation_cancel_retains_admission_and_requires_fresh_view_for_retry: test",
+    "store::operator_continuous_owner::history_import::tests::signed_history_refuses_unselected_or_malformed_input_without_free_decode_or_generic_fallback: test",
+    "store::operator_continuous_owner::history_import::tests::signed_history_single_successor_runs_two_children_and_cold_reopen_preserves_once_only_settlement: test"
+  ],
+  "run_command": [
+    "/workspace/scratch/301262829a43/pon-pq-impl/history-evidence/native-attempt-01/native-test-snapshot.bin",
+    "store::operator_continuous_owner::history_import::tests::",
+    "--test-threads=1",
+    "--nocapture"
+  ],
+  "test_returncode": 101,
+  "summary_lines": [
+    "test result: FAILED. 0 passed; 5 failed; 0 ignored; 0 measured; 724 filtered out; finished in 0.14s"
+  ],
+  "exact_five_passed": false,
+  "binary_stable_after_execution": true,
+  "source_stable": true,
+  "finished_unix": 1793098427.0258586,
+  "passed": false
+}

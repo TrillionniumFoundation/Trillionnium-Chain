@@ -1,0 +1,4 @@
+
+thread 'two_process_real_w1_prefix_and_pressure_native_io_component_v1' (2528317) panicked at crates/trnm-pon-node/tests/public_v3_identity_campaign.rs:277:10:
+same-code native I/O finite component; retain every failure and partial: Custom { kind: Other, error: BoundaryError("PRIVATE_ABI_UNSUPPORTED: loader directory must be a canonical existing directory") }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace

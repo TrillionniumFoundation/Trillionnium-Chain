@@ -1,0 +1,35 @@
+{
+  "schema": "pon-history-whitespace-scope-v1",
+  "results": [
+    {
+      "scope": "all_staged_files",
+      "argv": [
+        "git",
+        "diff",
+        "--cached",
+        "--check"
+      ],
+      "exit_code": 2,
+      "stdout": "evidence/pon-security-sprint-20261031/history/format-before.stdout.log:10: trailing whitespace.\n+ \nevidence/pon-security-sprint-20261031/history/format-before.stdout.log:139: trailing whitespace.\n+ \nevidence/pon-security-sprint-20261031/history/native-controls.stdout.log:26: new blank line at EOF.\nevidence/pon-security-sprint-20261031/history/quota-read-cost-first-binary.stdout.log:7: new blank line at EOF.\n",
+      "stderr": ""
+    },
+    {
+      "scope": "authored_source_and_evidence_excluding_verbatim_logs",
+      "argv": [
+        "git",
+        "diff",
+        "--cached",
+        "--check",
+        "--",
+        ".",
+        ":(glob,exclude)**/*.log"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "raw_logs_preserved_byte_for_byte": true,
+  "full_diff_whitespace_pass_claimed": false,
+  "explanation": "Only captured rustfmt/libtest raw output contains trailing whitespace or a final blank line; preserve original evidence hashes rather than edit observations."
+}

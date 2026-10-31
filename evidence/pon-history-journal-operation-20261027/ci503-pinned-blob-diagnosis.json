@@ -1,0 +1,41 @@
+{
+  "pins": 16,
+  "first_head_refusal": {
+    "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+    "expected": "a255e10464938ecc189bf100462c9e8e204b0247",
+    "base_498": "c35ae8def7f83a245e07532231a83483a6011118",
+    "head_503": "0941588072ec6c0e5326fa92088a934d837cf4b5",
+    "base_matches": false,
+    "head_matches": false,
+    "changed_by_503": true
+  },
+  "mismatches": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "expected": "a255e10464938ecc189bf100462c9e8e204b0247",
+      "base_498": "c35ae8def7f83a245e07532231a83483a6011118",
+      "head_503": "0941588072ec6c0e5326fa92088a934d837cf4b5",
+      "base_matches": false,
+      "head_matches": false,
+      "changed_by_503": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs",
+      "expected": "fa9b0036b9f7092831ac6d73fc50fd8fe728865e",
+      "base_498": "fa9b0036b9f7092831ac6d73fc50fd8fe728865e",
+      "head_503": "0c793a56d78de47ee6a7dc026c5d76e3f69dce27",
+      "base_matches": true,
+      "head_matches": false,
+      "changed_by_503": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs",
+      "expected": "634ff4edb04694bb3de3807c1a859b2ed358a4ed",
+      "base_498": "634ff4edb04694bb3de3807c1a859b2ed358a4ed",
+      "head_503": "410f7a6c1b571d065f4e18ddadbb5c239c35f708",
+      "base_matches": true,
+      "head_matches": false,
+      "changed_by_503": true
+    }
+  ]
+}

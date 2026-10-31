@@ -1,0 +1,83 @@
+{
+  "command": [
+    "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/pn1-V19-new-clean-source-prepare-owner-preparation-20261026-001/execution/frozen/public_v3_identity_campaign.bin",
+    "--exact",
+    "two_process_real_w1_prefix_and_pressure_native_io_component_v1",
+    "--ignored",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "complete_success": false,
+  "cwd": "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/pn1-V19-new-clean-source-qualification-source-20261026-001/ownedsource",
+  "elapsed_ns": 135290004,
+  "elapsed_seconds": 0.135290004,
+  "error": null,
+  "fd_dispatch": {
+    "actual_command": [
+      "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/pn1-V19-new-clean-source-prepare-owner-preparation-20261026-001/execution/frozen/public_v3_identity_campaign.bin",
+      "--exact",
+      "two_process_real_w1_prefix_and_pressure_native_io_component_v1",
+      "--ignored",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "actual_cwd": "/proc/self/fd/12",
+    "actual_executable": "/proc/self/fd/11",
+    "actual_raw_root": "/proc/self/fd/5/raw",
+    "component_only": true,
+    "cwd_directory_fd": 12,
+    "cwd_identity": {
+      "device": 2050,
+      "inode": 52865055
+    },
+    "domain": "trnm-pon-native-io-three-fd-component-claim-v1",
+    "executable_bytes": 10574808,
+    "executable_fd": 11,
+    "executable_identity": {
+      "device": 2050,
+      "inode": 1103189
+    },
+    "executable_sha256": "b8eb5c366b7d3acd811dd27bea8d10a689e8817b17419c15bf9488a6f6bf3d20",
+    "execution_directory_fd": 5,
+    "execution_identity": {
+      "device": 2050,
+      "inode": 55232497
+    },
+    "full_W1_4097_qualified": false,
+    "full_guard_enabled": false,
+    "independent_reader_qualified": false,
+    "inherited_fds": [
+      5,
+      11,
+      12
+    ],
+    "merge_ready": false,
+    "original_three_FD_caller_qualified": false,
+    "schema": "pon-native-io-three-fd-component-dispatch-v1",
+    "whole_writer_qualified": false
+  },
+  "name": "component",
+  "native_process_owner": {
+    "birth_ticks": 9388793,
+    "failed_spawn_streams_closed": null,
+    "failure": null,
+    "observed_ppid": 2528162,
+    "original_identity_alive_after_wait": false,
+    "pid": 2528316,
+    "python_pid": 2528162,
+    "reaped": true,
+    "schema": "pon-native-io-component-child-owner-v1",
+    "spawn_count": 1,
+    "wait_returncode": 101
+  },
+  "outer_stage_timeout_seconds": 180,
+  "returncode": 101,
+  "stderr": "component.stderr.log",
+  "stderr_bytes": 441,
+  "stderr_sha256": "7770ce582ed33853f61c166d970c270e04ddfd8cfc393a93eab21c6e214791ac",
+  "stderr_truncated": false,
+  "stdout": "component.stdout.log",
+  "stdout_bytes": 285,
+  "stdout_sha256": "ba0ec26b56a1b167259c05928e5ecfd4097fbeae24a914a0e6812dd2ffdb825c",
+  "stdout_truncated": false
+}

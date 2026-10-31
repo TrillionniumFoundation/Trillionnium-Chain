@@ -1,0 +1,39 @@
+{
+  "schema": "pon-pure-ci-failure-records-v1",
+  "files": [
+    {
+      "path": "proof-40481815506.json.gz",
+      "bytes": 15030,
+      "sha256": "0f959b1a6ac1eb49b22592a38377a22d4f3e7a0c8b3bdca50c7e04d27b94ef7d",
+      "uncompressed_json_sha256": "4081c05d965896fd51d8e04e1d2010f76248101985655de2a931231611fea460",
+      "decoded_log_utf8_sha256": "3bc10080306b7886fe66423ca2642bf8aba1f8880e6a45f1431de9f3c3a80145",
+      "decoded_log_utf8_bytes": 81877
+    },
+    {
+      "path": "focused-40480447179.json.gz",
+      "bytes": 80849,
+      "sha256": "09f23dd9775f1f009d3b47da51b356b4bd467e82616bbc079b160c876c0026a2",
+      "uncompressed_json_sha256": "295f0dbc7969a886339537bc00c77283a3c810f2607e683c79890c2d954aa24d",
+      "decoded_log_utf8_sha256": "9dc4e35cf05a4f0ce4a658ce4ab7f27ddfc4550f6da2a06ac7b7fcca7f96acef",
+      "decoded_log_utf8_bytes": 928728
+    }
+  ],
+  "observations": [
+    {
+      "source": "252179ad315fe7a10e4a18881d0649418f7a05cc",
+      "run_id": 40480447179,
+      "job_id": 122109114386,
+      "outcome": "160 public-v3 tests passed and 1 existing preface test failed because opcode 9 became the separately profiled bootstrap read. Subsequent bootstrap/PQ owner/CLI selectors and campaigns did not run.",
+      "artifact_id": 12723635106,
+      "artifact_zip_sha256": "8c61efe4d8e9c826c0a37e4155c26d273142cfcdfe4fbabf2d908fdaabfa42df"
+    },
+    {
+      "source": "b156bd5417de47b521aba92c1d27e744edfcce74",
+      "run_id": 40481815506,
+      "job_id": 122113721478,
+      "outcome": "Setup failed while reading absent cgroup-v2 memory.max. No guest build or proof attempted in this CI run. Source checks passed.",
+      "artifact_id": 12722134775,
+      "artifact_zip_sha256": "848fe9b36761586024d12b89b82625dd30f9e6fad0a5078e6863fc96e35dac37"
+    }
+  ]
+}

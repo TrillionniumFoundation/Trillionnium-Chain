@@ -1,0 +1,82 @@
+{
+  "git_head": "7da4964d02b42076996e89a78d13f68572d33be5",
+  "sparse_checkout": true,
+  "whole_tree_attested": false,
+  "files": [
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/Cargo.lock",
+      "bytes": 67902,
+      "sha256": "b3bb8518308ee9a175d878e5cafaab269be20f2bf990ec3fbb4d6e49bf110996"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/Cargo.toml",
+      "bytes": 626,
+      "sha256": "315b2227e5dc453328a4627727911ebcf4df7ada2d024dacd838d4864faf3861"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json",
+      "bytes": 2802,
+      "sha256": "bad4b221989b6ff774fa97064847c6942ff4552950ef110a4f3d604effae4e51"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/guest/Cargo.toml",
+      "bytes": 519,
+      "sha256": "c750dd4c1551df139880dda3583c6f1af27b3d01e3aadfc6a84441c06710104c"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/guest/src/main.rs",
+      "bytes": 725,
+      "sha256": "02567b1388b074138c2993bc5769692bff0d81ddc1207f2091df91dfc1d8f22e"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/Cargo.toml",
+      "bytes": 374,
+      "sha256": "6fa5e8fd94edf7fd0ad00da772a18d4b75dc4f0a9f0be458afb463fab34c4fd4"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/audit_one.rs",
+      "bytes": 11828,
+      "sha256": "0dd42e44a8c9295f276d263603c9985bfcb6c6b7391a8bc3ce9c052f5f0a2802"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/claimed_context.rs",
+      "bytes": 3932,
+      "sha256": "782161a11f96afae927f40ee9225f3e8a39a876371cb7708fc26445a7b645be8"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/main.rs",
+      "bytes": 17128,
+      "sha256": "152a2ddebcd88aabd73b852c1768c9d9f51066810d808874de9f08ea59cf0fbc"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/phase_journal.rs",
+      "bytes": 4027,
+      "sha256": "5ec868271f6d3fded1d0ab1e08a96d6647a63dadd9ee150aac46a8c7520245f2"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/receipt_bounds.rs",
+      "bytes": 8229,
+      "sha256": "e4b5bea658dc06649e0b0c69f09bf3407d4eb64b73f382aac3be2a24da8d2d37"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/receipt_bounds_tests.rs",
+      "bytes": 5160,
+      "sha256": "fb3f7c6bb4c048f18e43ec5c34adbdf44c3c24ff8470ce4c9525a32e5b374e8f"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/relation/Cargo.toml",
+      "bytes": 334,
+      "sha256": "d54c76ef1f5d5a5682ad63e1b3d9afb87b869551d113ff0718bdd0d6904faeb5"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/relation/src/lib.rs",
+      "bytes": 708,
+      "sha256": "afe2f2cb5a0605eae3b6cd643e4a7bbb09fa0b0fe4db36fd2fe1155875152fb7"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/relation/src/parameters.rs",
+      "bytes": 277,
+      "sha256": "53d9d680fe76ac57203e10c7642b5add2da07dd05f2c76d036d59cb420360428"
+    }
+  ]
+}

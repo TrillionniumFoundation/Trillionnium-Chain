@@ -1,0 +1,9 @@
+test_exact_roster_retains_all_fifteen_and_the_process_helper (test_history_effect_v6_native_runner.ExactNativeGate.test_exact_roster_retains_all_fifteen_and_the_process_helper) ... ok
+test_sampling_exception_still_kills_and_reaps_owned_child (test_history_effect_v6_native_runner.ExactNativeGate.test_sampling_exception_still_kills_and_reaps_owned_child) ... ok
+test_successful_leader_signals_owned_group_before_reaping (test_history_effect_v6_native_runner.ExactNativeGate.test_successful_leader_signals_owned_group_before_reaping) ... ok
+test_zero_partial_failed_and_multiple_summaries_never_accept (test_history_effect_v6_native_runner.ExactNativeGate.test_zero_partial_failed_and_multiple_summaries_never_accept) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.512s
+
+OK

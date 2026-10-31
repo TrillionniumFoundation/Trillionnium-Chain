@@ -1,0 +1,8 @@
+   Compiling trnm-worker-agent v0.1.0 (/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/root-chain-integration-20261026/trillionnium/crates/trnm-worker-agent)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.88s
+     Running unittests src/main.rs (/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/Chain-worker-owned-proc-fd-ESRCH-control-20261026-001/target/debug/deps/trnm_worker_agent-d5c24baf345cae69)
+
+thread 'command_runtime_exec::unix::descendant_owner::tests::vanished_owned_proc_fd_requires_a_fresh_complete_scan' (3716083) panicked at crates/trnm-worker-agent/src/command_runtime_exec.rs:344:17:
+a fresh scan is required: Err(No such process (os error 3))
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+error: test failed, to rerun pass `-p trnm-worker-agent --bin trnm-worker-agent`

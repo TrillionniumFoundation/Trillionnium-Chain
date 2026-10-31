@@ -1,0 +1,366 @@
+{
+  "cases": [
+    {
+      "accepted": true,
+      "case": "valid",
+      "observations": [
+        {
+          "accepted": true,
+          "bounded_decode_wall_ns": 11104031,
+          "context": "fresh",
+          "context_setup_wall_ns": 18568183,
+          "owned_objects_drop_wall_ns": 1945415,
+          "public_claims_entered": false,
+          "reason": null,
+          "receiver_total_wall_ns": 1255912178,
+          "route": "original_sdk_order",
+          "sdk_entered": true,
+          "verification_wall_ns": 1224293727
+        },
+        {
+          "accepted": true,
+          "bounded_decode_wall_ns": 11163502,
+          "context": "fresh",
+          "context_setup_wall_ns": 18615652,
+          "owned_objects_drop_wall_ns": 1812615,
+          "public_claims_entered": true,
+          "reason": null,
+          "receiver_total_wall_ns": 1251214832,
+          "route": "public_claims_first",
+          "sdk_entered": true,
+          "verification_wall_ns": 1219622511
+        },
+        {
+          "accepted": true,
+          "bounded_decode_wall_ns": 11245937,
+          "context": "reused",
+          "context_setup_wall_ns": null,
+          "owned_objects_drop_wall_ns": 1657325,
+          "public_claims_entered": false,
+          "reason": null,
+          "receiver_total_wall_ns": 1235533930,
+          "route": "original_sdk_order",
+          "sdk_entered": true,
+          "verification_wall_ns": 1222630117
+        },
+        {
+          "accepted": true,
+          "bounded_decode_wall_ns": 11029066,
+          "context": "reused",
+          "context_setup_wall_ns": null,
+          "owned_objects_drop_wall_ns": 1643360,
+          "public_claims_entered": true,
+          "reason": null,
+          "receiver_total_wall_ns": 1230373336,
+          "route": "public_claims_first",
+          "sdk_entered": true,
+          "verification_wall_ns": 1217700449
+        }
+      ],
+      "public_claims_consistent": true
+    },
+    {
+      "accepted": false,
+      "case": "outer_journal_rebound",
+      "observations": [
+        {
+          "accepted": false,
+          "bounded_decode_wall_ns": 4219777,
+          "context": "fresh",
+          "context_setup_wall_ns": 18503662,
+          "owned_objects_drop_wall_ns": 5360,
+          "public_claims_entered": true,
+          "reason": "public aggregate claim differs from the pinned image and complete journal",
+          "receiver_total_wall_ns": 22741323,
+          "route": "public_claims_first",
+          "sdk_entered": false,
+          "verification_wall_ns": 12173
+        },
+        {
+          "accepted": false,
+          "bounded_decode_wall_ns": 4156208,
+          "context": "fresh",
+          "context_setup_wall_ns": 18478986,
+          "owned_objects_drop_wall_ns": 12153,
+          "public_claims_entered": false,
+          "reason": "claim digest does not match the expected digest c717de185bfb18d3990dd7b31e4f94a2831dd159d8e9366740ea74e4c8e14a03; expected 26830f8024481e66af11c0ba1f6223bfa91b3c6e6a524616420d365543eb1bce",
+          "receiver_total_wall_ns": 1229897494,
+          "route": "original_sdk_order",
+          "sdk_entered": true,
+          "verification_wall_ns": 1207249746
+        },
+        {
+          "accepted": false,
+          "bounded_decode_wall_ns": 4115933,
+          "context": "reused",
+          "context_setup_wall_ns": null,
+          "owned_objects_drop_wall_ns": 5080,
+          "public_claims_entered": true,
+          "reason": "public aggregate claim differs from the pinned image and complete journal",
+          "receiver_total_wall_ns": 4127454,
+          "route": "public_claims_first",
+          "sdk_entered": false,
+          "verification_wall_ns": 6222
+        },
+        {
+          "accepted": false,
+          "bounded_decode_wall_ns": 4110232,
+          "context": "reused",
+          "context_setup_wall_ns": null,
+          "owned_objects_drop_wall_ns": 10740,
+          "public_claims_entered": false,
+          "reason": "claim digest does not match the expected digest c717de185bfb18d3990dd7b31e4f94a2831dd159d8e9366740ea74e4c8e14a03; expected 26830f8024481e66af11c0ba1f6223bfa91b3c6e6a524616420d365543eb1bce",
+          "receiver_total_wall_ns": 1212708906,
+          "route": "original_sdk_order",
+          "sdk_entered": true,
+          "verification_wall_ns": 1208587472
+        }
+      ],
+      "public_claims_consistent": false
+    },
+    {
+      "accepted": false,
+      "case": "late_link_tamper",
+      "observations": [
+        {
+          "accepted": false,
+          "bounded_decode_wall_ns": 4283206,
+          "context": "fresh",
+          "context_setup_wall_ns": 18537586,
+          "owned_objects_drop_wall_ns": 11602,
+          "public_claims_entered": false,
+          "reason": "claim digest does not match the expected digest dc49c4484825e5fd9e890dfd6d299a7607676cd58ace918c61d8509869f27522; expected e8c927b1c067b436e51806ded07a3bee6903325587958de0e264e2fa2db60151",
+          "receiver_total_wall_ns": 1230038227,
+          "route": "original_sdk_order",
+          "sdk_entered": true,
+          "verification_wall_ns": 1207205222
+        },
+        {
+          "accepted": false,
+          "bounded_decode_wall_ns": 4126983,
+          "context": "fresh",
+          "context_setup_wall_ns": 18600545,
+          "owned_objects_drop_wall_ns": 5801,
+          "public_claims_entered": true,
+          "reason": "public continuation states do not link",
+          "receiver_total_wall_ns": 22772482,
+          "route": "public_claims_first",
+          "sdk_entered": false,
+          "verification_wall_ns": 38853
+        },
+        {
+          "accepted": false,
+          "bounded_decode_wall_ns": 4120421,
+          "context": "reused",
+          "context_setup_wall_ns": null,
+          "owned_objects_drop_wall_ns": 9798,
+          "public_claims_entered": false,
+          "reason": "claim digest does not match the expected digest dc49c4484825e5fd9e890dfd6d299a7607676cd58ace918c61d8509869f27522; expected e8c927b1c067b436e51806ded07a3bee6903325587958de0e264e2fa2db60151",
+          "receiver_total_wall_ns": 1212029643,
+          "route": "original_sdk_order",
+          "sdk_entered": true,
+          "verification_wall_ns": 1207898923
+        },
+        {
+          "accepted": false,
+          "bounded_decode_wall_ns": 4145438,
+          "context": "reused",
+          "context_setup_wall_ns": null,
+          "owned_objects_drop_wall_ns": 4509,
+          "public_claims_entered": true,
+          "reason": "public continuation states do not link",
+          "receiver_total_wall_ns": 4188880,
+          "route": "public_claims_first",
+          "sdk_entered": false,
+          "verification_wall_ns": 38612
+        }
+      ],
+      "public_claims_consistent": false
+    },
+    {
+      "accepted": false,
+      "case": "late_nonfinal_exit",
+      "observations": [
+        {
+          "accepted": false,
+          "bounded_decode_wall_ns": 4335865,
+          "context": "fresh",
+          "context_setup_wall_ns": 18525654,
+          "owned_objects_drop_wall_ns": 5690,
+          "public_claims_entered": true,
+          "reason": "public nonfinal claim is not a system split",
+          "receiver_total_wall_ns": 22905251,
+          "route": "public_claims_first",
+          "sdk_entered": false,
+          "verification_wall_ns": 37661
+        },
+        {
+          "accepted": false,
+          "bounded_decode_wall_ns": 4144466,
+          "context": "fresh",
+          "context_setup_wall_ns": 18608629,
+          "owned_objects_drop_wall_ns": 14097,
+          "public_claims_entered": false,
+          "reason": "claim digest does not match the expected digest b0448948c490cd68afcb6cb4608acd261a7367b534138c83eaea83dfa58daf67; expected c3f6047e0726f478d10b57550c404e468053f0090dc50199988a933b51e2adcf",
+          "receiver_total_wall_ns": 1211079296,
+          "route": "original_sdk_order",
+          "sdk_entered": true,
+          "verification_wall_ns": 1188311694
+        },
+        {
+          "accepted": false,
+          "bounded_decode_wall_ns": 4144144,
+          "context": "reused",
+          "context_setup_wall_ns": null,
+          "owned_objects_drop_wall_ns": 5419,
+          "public_claims_entered": true,
+          "reason": "public nonfinal claim is not a system split",
+          "receiver_total_wall_ns": 4188307,
+          "route": "public_claims_first",
+          "sdk_entered": false,
+          "verification_wall_ns": 38482
+        },
+        {
+          "accepted": false,
+          "bounded_decode_wall_ns": 4176454,
+          "context": "reused",
+          "context_setup_wall_ns": null,
+          "owned_objects_drop_wall_ns": 10991,
+          "public_claims_entered": false,
+          "reason": "claim digest does not match the expected digest b0448948c490cd68afcb6cb4608acd261a7367b534138c83eaea83dfa58daf67; expected c3f6047e0726f478d10b57550c404e468053f0090dc50199988a933b51e2adcf",
+          "receiver_total_wall_ns": 1192260674,
+          "route": "original_sdk_order",
+          "sdk_entered": true,
+          "verification_wall_ns": 1188072808
+        }
+      ],
+      "public_claims_consistent": false
+    },
+    {
+      "accepted": false,
+      "case": "matching_claims_corrupt_seal",
+      "observations": [
+        {
+          "accepted": false,
+          "bounded_decode_wall_ns": 4285899,
+          "context": "fresh",
+          "context_setup_wall_ns": 18848081,
+          "owned_objects_drop_wall_ns": 22983,
+          "public_claims_entered": false,
+          "reason": "verification indicates proof is invalid",
+          "receiver_total_wall_ns": 1231243375,
+          "route": "original_sdk_order",
+          "sdk_entered": true,
+          "verification_wall_ns": 1208085570
+        },
+        {
+          "accepted": false,
+          "bounded_decode_wall_ns": 4215287,
+          "context": "fresh",
+          "context_setup_wall_ns": 18515477,
+          "owned_objects_drop_wall_ns": 12443,
+          "public_claims_entered": true,
+          "reason": "verification indicates proof is invalid",
+          "receiver_total_wall_ns": 1229120037,
+          "route": "public_claims_first",
+          "sdk_entered": true,
+          "verification_wall_ns": 1206376338
+        },
+        {
+          "accepted": false,
+          "bounded_decode_wall_ns": 4126090,
+          "context": "reused",
+          "context_setup_wall_ns": null,
+          "owned_objects_drop_wall_ns": 10680,
+          "public_claims_entered": false,
+          "reason": "verification indicates proof is invalid",
+          "receiver_total_wall_ns": 1211443091,
+          "route": "original_sdk_order",
+          "sdk_entered": true,
+          "verification_wall_ns": 1207305819
+        },
+        {
+          "accepted": false,
+          "bounded_decode_wall_ns": 4141569,
+          "context": "reused",
+          "context_setup_wall_ns": null,
+          "owned_objects_drop_wall_ns": 10469,
+          "public_claims_entered": true,
+          "reason": "verification indicates proof is invalid",
+          "receiver_total_wall_ns": 1210514180,
+          "route": "public_claims_first",
+          "sdk_entered": true,
+          "verification_wall_ns": 1206361701
+        }
+      ],
+      "public_claims_consistent": true
+    },
+    {
+      "accepted": false,
+      "case": "coordinated_public_claim_forgery",
+      "observations": [
+        {
+          "accepted": false,
+          "bounded_decode_wall_ns": 4299685,
+          "context": "fresh",
+          "context_setup_wall_ns": 18625824,
+          "owned_objects_drop_wall_ns": 12403,
+          "public_claims_entered": true,
+          "reason": "claim digest does not match the expected digest dc49c4484825e5fd9e890dfd6d299a7607676cd58ace918c61d8509869f27522; expected 815d3cda716495e7f077f9cf6f0594e1bae200e42d3be04f6e59046bc5c1ca58",
+          "receiver_total_wall_ns": 1229542488,
+          "route": "public_claims_first",
+          "sdk_entered": true,
+          "verification_wall_ns": 1206604036
+        },
+        {
+          "accepted": false,
+          "bounded_decode_wall_ns": 4155414,
+          "context": "fresh",
+          "context_setup_wall_ns": 18511539,
+          "owned_objects_drop_wall_ns": 13275,
+          "public_claims_entered": false,
+          "reason": "claim digest does not match the expected digest dc49c4484825e5fd9e890dfd6d299a7607676cd58ace918c61d8509869f27522; expected 815d3cda716495e7f077f9cf6f0594e1bae200e42d3be04f6e59046bc5c1ca58",
+          "receiver_total_wall_ns": 1232147675,
+          "route": "original_sdk_order",
+          "sdk_entered": true,
+          "verification_wall_ns": 1209467026
+        },
+        {
+          "accepted": false,
+          "bounded_decode_wall_ns": 4127642,
+          "context": "reused",
+          "context_setup_wall_ns": null,
+          "owned_objects_drop_wall_ns": 11121,
+          "public_claims_entered": true,
+          "reason": "claim digest does not match the expected digest dc49c4484825e5fd9e890dfd6d299a7607676cd58ace918c61d8509869f27522; expected 815d3cda716495e7f077f9cf6f0594e1bae200e42d3be04f6e59046bc5c1ca58",
+          "receiver_total_wall_ns": 1213400190,
+          "route": "public_claims_first",
+          "sdk_entered": true,
+          "verification_wall_ns": 1209260937
+        },
+        {
+          "accepted": false,
+          "bounded_decode_wall_ns": 4169851,
+          "context": "reused",
+          "context_setup_wall_ns": null,
+          "owned_objects_drop_wall_ns": 10440,
+          "public_claims_entered": false,
+          "reason": "claim digest does not match the expected digest dc49c4484825e5fd9e890dfd6d299a7607676cd58ace918c61d8509869f27522; expected 815d3cda716495e7f077f9cf6f0594e1bae200e42d3be04f6e59046bc5c1ca58",
+          "receiver_total_wall_ns": 1211162188,
+          "route": "original_sdk_order",
+          "sdk_entered": true,
+          "verification_wall_ns": 1206980756
+        }
+      ],
+      "public_claims_consistent": true
+    }
+  ],
+  "consensus_authority": false,
+  "metadata_bindings_pass": true,
+  "proof_reverified_by_reader": false,
+  "schema": "pon-w1-public-claim-cost-readback-v1",
+  "sdk_mutations_independently_reconstructed": false,
+  "source_files_checked": 17,
+  "timings_independently_remeasured": false,
+  "worst_case_rejection_cost_closed": false
+}

@@ -1,0 +1,46 @@
+{
+  "schema": "pon-recovered-ci-repair-files-v1",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 2345,
+      "sha256": "a2a54f8f0af51d4bed9c6d0eb952941d3cd7a46032e246a04dc761a1abfa9f9b"
+    },
+    {
+      "path": "exact-empty-readme.process.json",
+      "bytes": 792,
+      "sha256": "97f150985694467188bc0222a7327118298e99c3fc43f4854d15aaa29c586e14"
+    },
+    {
+      "path": "exact-empty-readme.stderr.log",
+      "bytes": 99,
+      "sha256": "2cbe5e637af92494fbf41d93f5b39724d78ed37fe4d7eb622e3ca4e2067b9494"
+    },
+    {
+      "path": "exact-empty-readme.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "source-integrity.process.json",
+      "bytes": 736,
+      "sha256": "a5019afee2521a4dde46a285df112daf823a4eb766c41b3a2dbb040d33f945f5"
+    },
+    {
+      "path": "source-integrity.stderr.log",
+      "bytes": 5025,
+      "sha256": "7019998151ed941225a4c842640ef9011e9cd3751fb5e8a8de1f9be0eb99506b"
+    },
+    {
+      "path": "source-integrity.stdout.log",
+      "bytes": 484,
+      "sha256": "3e568ed47c2b0899fa0e01b4770de8480646e0f57413e4e7b67f92295c88cd63"
+    },
+    {
+      "path": "workflow-static.json",
+      "bytes": 170,
+      "sha256": "adea133181a6d0d223f2251540d2b5d89cbca646371392ce6170fa147483aecf"
+    }
+  ],
+  "self_excluded": "files.json"
+}

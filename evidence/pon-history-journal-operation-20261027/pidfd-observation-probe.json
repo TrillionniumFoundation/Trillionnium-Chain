@@ -1,0 +1,7 @@
+{
+  "schema": "owned-child-pidfd-probe-v1",
+  "history_recovery_qualified": false,
+  "self_namespace_pid": 8,
+  "owned_child_namespace_pid": 9,
+  "pidfd_info": "pos:\t0\nflags:\t02000002\nmnt_id:\t4\nino:\t209546\nPid:\t207878\nNSpid:\t207878\t9\n"
+}

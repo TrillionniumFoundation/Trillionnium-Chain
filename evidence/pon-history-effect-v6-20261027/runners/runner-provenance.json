@@ -1,0 +1,10 @@
+{
+  "schema": "runner-history-v1",
+  "prior_runner": "/workspace/scratch/301262829a43/pon-pq-impl/history-v6-evidence/attempt01-02-runner-reconstruction.py",
+  "prior_runner_is_reconstructed": true,
+  "reconstruction": "Exact visible two-line roster change reverted; not claimed independently hashed before attempts01/02. Original commands, outputs and source manifests are preserved in each attempt.",
+  "prior_runner_sha256": "134f9fed2796c1d38349247669e70bd04558d5efb7a7dd5efbab289999369725",
+  "next_runner": "/workspace/scratch/301262829a43/pon-pq-impl/history-v6-evidence/run_native.py",
+  "next_runner_sha256": "1efca861fb60ceb02a787d84d19a98148e1f699b83ef89f4331ba9e36f4a06ee",
+  "next_runner_added_metadata": "Actual rustc -Vv, Python and kernel version, and the runner SHA256 are recorded before attempt03."
+}

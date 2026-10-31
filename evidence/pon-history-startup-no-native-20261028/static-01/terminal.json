@@ -1,0 +1,234 @@
+{
+  "commands": [
+    {
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "ended_ns": 1793159154610155130,
+      "name": "preflight",
+      "passed": true,
+      "raw_bytes": 177,
+      "raw_sha256": "87a5891c2c3ebca64b384a096f2c0976b1715ae77546db03177ed3bfe5222db8",
+      "returncode": 0,
+      "started_ns": 1793159154394681569,
+      "timeout_seconds": 60
+    },
+    {
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--check"
+      ],
+      "ended_ns": 1793159172018528969,
+      "name": "format",
+      "passed": true,
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "returncode": 0,
+      "started_ns": 1793159154610536724,
+      "timeout_seconds": 60
+    },
+    {
+      "actual_test_counts": [
+        4
+      ],
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_history_startup_no_native_guard.py",
+        "-v"
+      ],
+      "ended_ns": 1793159172135752421,
+      "expected_test_count": 4,
+      "name": "namespace-observer",
+      "passed": true,
+      "raw_bytes": 804,
+      "raw_sha256": "ad12ce9a33490bd858ab6903945fbcba274b0b41cc9a1da4b58c385fb75870c7",
+      "returncode": 0,
+      "started_ns": 1793159172020412652,
+      "timeout_seconds": 60
+    },
+    {
+      "actual_test_counts": [
+        4
+      ],
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_history_effect_v6_guard.py",
+        "-v"
+      ],
+      "ended_ns": 1793159172552143625,
+      "expected_test_count": 4,
+      "name": "original-process-observer",
+      "passed": true,
+      "raw_bytes": 3756,
+      "raw_sha256": "db0cd504793067d966e5cb2f4438e2da619e7daba5bd933cd43a317492268104",
+      "returncode": 0,
+      "started_ns": 1793159172136783005,
+      "timeout_seconds": 60
+    },
+    {
+      "actual_test_counts": [
+        5
+      ],
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_history_effect_v6_native_runner.py",
+        "-v"
+      ],
+      "ended_ns": 1793159173221564361,
+      "expected_test_count": 5,
+      "name": "native-runner",
+      "passed": true,
+      "raw_bytes": 1010,
+      "raw_sha256": "0e4303a2bc4ddb181f3cf002022dcff8b62c9edd6b9a9dae67afca69860ad216",
+      "returncode": 0,
+      "started_ns": 1793159172553227081,
+      "timeout_seconds": 60
+    },
+    {
+      "actual_test_counts": [
+        34
+      ],
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_ci_source_integrity.py",
+        "-v"
+      ],
+      "ended_ns": 1793159177703916332,
+      "expected_test_count": 34,
+      "name": "source-integrity",
+      "passed": true,
+      "raw_bytes": 6053,
+      "raw_sha256": "b0384970d32ad20dbeaab4cbe3c242e598316bb09430143266773d6a32904d10",
+      "returncode": 0,
+      "started_ns": 1793159173221971793,
+      "timeout_seconds": 60
+    },
+    {
+      "actual_test_counts": [
+        16
+      ],
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_project_boundary.py",
+        "-v"
+      ],
+      "ended_ns": 1793159184047735918,
+      "expected_test_count": 16,
+      "name": "project-boundary",
+      "passed": true,
+      "raw_bytes": 2633,
+      "raw_sha256": "4e1eecf352b15bc27dbbce1109c58cc26d0dc92b8a1de51561321bbe982484ba",
+      "returncode": 0,
+      "started_ns": 1793159177704609325,
+      "timeout_seconds": 60
+    },
+    {
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "ended_ns": 1793159184162990261,
+      "name": "inventory",
+      "passed": true,
+      "raw_bytes": 35,
+      "raw_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "returncode": 0,
+      "started_ns": 1793159184048215692,
+      "timeout_seconds": 60
+    },
+    {
+      "command": [
+        "cargo",
+        "metadata",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--offline",
+        "--locked",
+        "--no-deps",
+        "--format-version",
+        "1"
+      ],
+      "ended_ns": 1793159184196170729,
+      "name": "metadata",
+      "passed": true,
+      "raw_bytes": 154292,
+      "raw_sha256": "f8bb05ba7bc499f95459d80ab325fb9bab6b40b530a30f676f21a738b6564267",
+      "returncode": 0,
+      "started_ns": 1793159184163382474,
+      "timeout_seconds": 60,
+      "workspace_members": 25
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "ended_ns": 1793159184206752246,
+      "name": "diff-check",
+      "passed": true,
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "returncode": 0,
+      "started_ns": 1793159184198297782,
+      "timeout_seconds": 60
+    }
+  ],
+  "complete_parent_snapshot_attempts": 4,
+  "implementation_commit": "8c84a13f8ee64a29f93816fdc417dc726bea9b25",
+  "implementation_tree": "124b34a11726b75a6a6cb2f0e4f58525d0b634bc",
+  "local_disk_free_bytes": 85827584,
+  "native_budget_seconds": 600,
+  "native_full_22_0_1": "NOT_RUN",
+  "no_compile_reason": "Original 256 MiB floor and explicit no-large-local-build instruction; requires independent hosted exact-source execution.",
+  "node_clippy": "NOT_RUN",
+  "node_compile": "NOT_RUN",
+  "operation_allowance_ns": 4000000000,
+  "parent_commit": "b760ee01cd68362048f9f3cc5221c1ea2904f19e",
+  "passed": true,
+  "retained_local_compile_floor_bytes": 268435456,
+  "runtime_burst_ns": 2000000000,
+  "schema": "history-first-startup-static-component-terminal-v1",
+  "source_after_sha256": "1888fc8397b34d10bcf0a1c2ce433f72c5695bf367eaace9fb53979a64f4fc19",
+  "source_before_sha256": "1888fc8397b34d10bcf0a1c2ce433f72c5695bf367eaace9fb53979a64f4fc19",
+  "source_files": 1625,
+  "source_unchanged": true,
+  "whole_history_p0_closed": false
+}

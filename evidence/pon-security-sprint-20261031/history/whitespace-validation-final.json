@@ -1,0 +1,16 @@
+{
+  "schema": "pon-history-all-files-diff-check-v1",
+  "argv": [
+    "git",
+    "diff",
+    "--cached",
+    "--check",
+    "7da4964d02b42076996e89a78d13f68572d33be5"
+  ],
+  "observed_unix_ns": 1793412130929096213,
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": "",
+  "exclusions": [],
+  "scope": "all staged changes against original lane parent including complete new evidence; verbatim whitespace-bearing logs preserved losslessly in gzip"
+}

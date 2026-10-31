@@ -1,0 +1,15 @@
+[
+  {
+    "name": "fmt",
+    "command": [
+      "cargo",
+      "fmt",
+      "--all",
+      "--check",
+      "--manifest-path",
+      "trillionnium/Cargo.toml"
+    ],
+    "returncode": 1,
+    "elapsed_s": 0.07795152001199313
+  }
+]

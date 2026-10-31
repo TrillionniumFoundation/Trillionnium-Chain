@@ -1,0 +1,11 @@
+{
+  "utc": "2026-10-26T13:57:59.840598+00:00",
+  "owner_sha256": "a158046df36e901b8b0c8d8839adb69e5b720dbc79187994568190b40b7932f6",
+  "candidate_build_owner_sha256": "f05dd9145d3462f09b61628583d04ee7f5d194c581b8c39cf7e0f90624083c0e",
+  "base_owned_launcher_sha256": "7346dc6b6f6dd89dd3cb84289a12c2bde3a986ec24d1f3ed48c0ff00de5bc2d3",
+  "original_budget": "320prior+280wholeouter<=600;innerboundedbelowremaining,no native/run120 borrowing",
+  "actual_absolute_Nice10_CPU4_Memory16GiB": true,
+  "exact_owned_InvocationID_observer_and_unknown_no_stop": true,
+  "all_final_IO_in_wholeclock": true,
+  "not_run": true
+}

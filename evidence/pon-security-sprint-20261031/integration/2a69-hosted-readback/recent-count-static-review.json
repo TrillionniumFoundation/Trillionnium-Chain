@@ -1,0 +1,93 @@
+{
+  "requested_head": "2a69a989046489c212619dd337ee74a083f101de",
+  "source_scope": "Read-only source declarations and module linkage; no compilation or native --list performed.",
+  "reviewed_workflow": ".github/workflows/pon-recent-batch-acceptance.yml",
+  "counts": [
+    {
+      "scope": "Python work query bound",
+      "required": 14,
+      "source_count": 14
+    },
+    {
+      "scope": "Python cache receipt",
+      "required": 34,
+      "source_count": 34
+    },
+    {
+      "scope": "Python graph physical",
+      "required": 8,
+      "source_count": 8
+    },
+    {
+      "scope": "Python native history verifier",
+      "required": 5,
+      "source_count": 5
+    },
+    {
+      "scope": "Python History V6 guard",
+      "required": 4,
+      "source_count": 4
+    },
+    {
+      "scope": "host_kernel_parent::kernel_parent::",
+      "required_passed": 19,
+      "required_ignored": 1,
+      "evidence": "Already reported passing by separate completed hosted ARM merge job; exact raw log held by History agent."
+    },
+    {
+      "scope": "store::fixed_blob_read_tests::",
+      "required_passed": 4,
+      "source_tests": 4
+    },
+    {
+      "scope": "store::history_page::",
+      "required_passed": 4,
+      "required_ignored": 2,
+      "source_tests": 6,
+      "source_ignored": 2
+    },
+    {
+      "scope": "store::error_boundary_tests::",
+      "required_passed": 13,
+      "source_tests": 13
+    },
+    {
+      "scope": "store::native_authenticated_tests::",
+      "required_passed_before_root_fix": 20,
+      "source_tests": 22,
+      "definite_mismatch": true
+    },
+    {
+      "scope": "store::native_authenticated:: --include-ignored",
+      "required_passed_before_root_fix": 56,
+      "source_tests": 60,
+      "source_default_ignored": 1,
+      "definite_mismatch": true
+    },
+    {
+      "scope": "continuity_authenticated plus authenticated_storage_cli",
+      "required_matching_summary_passed": 7,
+      "individual_binary_source_counts": [
+        1,
+        7
+      ],
+      "scope_note": "Two libtest summaries; grep is satisfied by authenticated_storage_cli, not an aggregate eight-pass summary."
+    },
+    {
+      "scope": "continuous_pipeline example tests",
+      "required_passed": 11,
+      "source_tests": 11
+    },
+    {
+      "scope": "store::native_account_query_tests::",
+      "required_passed": 11,
+      "source_tests": 11
+    },
+    {
+      "scope": "public_v3_service_campaign",
+      "required_passed": 2,
+      "source_tests_linux": 2
+    }
+  ],
+  "remaining_scope": "Named singleton existence and nonzero-count gates are not covered by this hard-coded-count review."
+}

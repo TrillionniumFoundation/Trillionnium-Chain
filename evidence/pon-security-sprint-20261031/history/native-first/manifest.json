@@ -1,0 +1,35 @@
+{
+  "schema": "pon-history-native-binary-fragments-v1",
+  "compiled_host_source_sha256": "481efb469168c69a9c88b90355a7f8acbab32e14ba2b22d3a028e1c4bf42d14c",
+  "compiled_source_snapshot": "../compiled-host_kernel_parent.rs.txt",
+  "build_receipt": "../native-controls.process.json",
+  "measurement_receipt": "../quota-read-cost-first-binary.process.json",
+  "archive": {
+    "format": "gzip",
+    "bytes": 20955339,
+    "sha256": "92e73b562e634291dc1845aa2cb63ab21b1e3313b7f5dca23888074fa8f07c7b",
+    "original_gzip_split_without_recompression": true
+  },
+  "native": {
+    "bytes": 79809160,
+    "sha256": "51ddbf0b961f7e8f41c2b69c15b93e25440f941735ac7a03cf5406f6dee46467"
+  },
+  "piece_maximum_bytes": 7000000,
+  "pieces": [
+    {
+      "name": "native.gz.part-000",
+      "bytes": 7000000,
+      "sha256": "b92e488e473ac3679eae7a2f7c74ad85331403bc6438ffcca5c8e30bc311ab43"
+    },
+    {
+      "name": "native.gz.part-001",
+      "bytes": 7000000,
+      "sha256": "ea0d98c6af2eb18cb2cd8cdaa3e0d2ae77e7b99bb18a7e52b89fd05a19c52eb1"
+    },
+    {
+      "name": "native.gz.part-002",
+      "bytes": 6955339,
+      "sha256": "21c019092629bebb0dcb235805a3db78b8728310e6a964b37adfcee4e18ab129"
+    }
+  ]
+}

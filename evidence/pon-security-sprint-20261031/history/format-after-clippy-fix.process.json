@@ -1,0 +1,37 @@
+{
+  "schema": "pon-history-final-check-real-process-v1",
+  "argv": [
+    "cargo",
+    "fmt",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--all",
+    "--check"
+  ],
+  "cwd": "/tmp/pon-history-service-20261031",
+  "start_unix_ns": 1793411751515752517,
+  "elapsed_monotonic_ns": 20853548869,
+  "exit_code": 0,
+  "parent_commit": "ba2172881b958feebd60aaa1643afba7206e3b9c",
+  "source_state": "same production code; necessary test-only iterator lint correction over frozen checkpoint",
+  "source_file": "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+  "source_sha256_before": "e81f3620590bfd75e4eb5fb123d20929d326c438882923f31012a2fb30f36155",
+  "source_sha256_after": "e81f3620590bfd75e4eb5fb123d20929d326c438882923f31012a2fb30f36155",
+  "selected_environment": {
+    "RUSTUP_HOME": "/tmp/pq-r3-rustup",
+    "CARGO_HOME": "/tmp/pq-r3-cargo",
+    "CARGO_TARGET_DIR": "/tmp/pon-history-target",
+    "CARGO_BUILD_JOBS": "1",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_PROFILE_TEST_DEBUG": "0"
+  },
+  "scope": "actual final source formatting/check; no full native execution or fixed-parent qualification",
+  "stdout": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

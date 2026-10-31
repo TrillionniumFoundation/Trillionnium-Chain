@@ -1,0 +1,53 @@
+{
+  "all_original_ci_selector_bytes_preserved": true,
+  "base": {
+    "commit": "7da4964d02b42076996e89a78d13f68572d33be5",
+    "tree": "c7609a5502641739505862f2e4cd3c1e06ce1041"
+  },
+  "baseline": {
+    "commit": "c69749680d7fd8dd2334d284f0e9a6823cf38a18",
+    "tree": "5321fe46bc7b0e7d589e402c92e1b403d825da93"
+  },
+  "baseline_diff_paths": [
+    "trillionnium/crates/trnm-pon-node/tests/mining_timestamp_liveness.rs"
+  ],
+  "baseline_production_source_unchanged": true,
+  "consensus_arithmetic_prefix_bytes": 6043,
+  "consensus_arithmetic_prefix_sha256": "89ff23c7f1c4c36dcc7bd320569503ec651cc6934a8bb3e6abb9cec1eeb9c3b5",
+  "crypto_subtree_unchanged": true,
+  "fixed": {
+    "commit": "298ecbaf08db571f98253e38fb6aed9c18146006",
+    "tree": "054cd8338c9df2f530cdeefa3f9543b15876d75a"
+  },
+  "full_source_inventory_claimed": false,
+  "same_test_fixture_sha256": "f6de6597d1dee46b6e480dd75dc88e531f96a20610f8c9a43d8bbdb59433a620",
+  "schema": "pon-mining-time-source-comparison-v1",
+  "sparse_checkout": true,
+  "unchanged_files": [
+    {
+      "bytes": 2204,
+      "path": "trillionnium/Cargo.toml",
+      "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+    },
+    {
+      "bytes": 63924,
+      "path": "trillionnium/Cargo.lock",
+      "sha256": "9daaf7ce63bfcab58efc8e08ca5134bfba9c97ec7e615cd6ad80e54be30b64cb"
+    },
+    {
+      "bytes": 77194,
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "sha256": "3fe98bcf0945066ef8976c395fc25e8bbbfc52d6cc22ed0f26ff60d1b7076437"
+    },
+    {
+      "bytes": 28831,
+      "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+      "sha256": "b98a5beb32e9ba9f24efbf123692ffcfda83b18ff88f803e3ab03712cde599ea"
+    },
+    {
+      "bytes": 11035,
+      "path": "config/pon-nakamoto-v1.json",
+      "sha256": "906a85681c7da5108bdbd7f8187c53aa4ab797ac3a72bfb154d46c91e621b085"
+    }
+  ]
+}

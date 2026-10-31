@@ -1,0 +1,106 @@
+{
+  "recorded_utc": "2026-10-26T13:36:36.631739+00:00",
+  "schema": "pn1-native-io-checkpoint64-source-candidate-review-v1",
+  "scope": "source-only candidate under existing PN1/I02; no build/test/native run/commit/push",
+  "base_head": "399dd82608df72c71c502b8bda0aa95898794080",
+  "base_tree": "66ceec03cd2b67ae88a5662cf75e4ba80292cd2b",
+  "only_modified_source": "trillionnium/crates/trnm-pon-node/src/store.rs",
+  "source_before_sha256": "f0c272ea999dc3430bb9b6f7599ccf2c93ba88d48c83aa23b93e73db4eceb9db",
+  "source_after_sha256": "61953b312c62a5045b9ac87a4a97789a82177a0013140a2c93ccdf7332a88231",
+  "patch_bytes": 1435,
+  "patch_sha256": "1e1e12cf74bdb313d9feda51839b25b529b77d8309bc54be4202e6955dc3291f",
+  "forensic_receipt": "work/ci-follow/pn1-sqlite13-storage-forensic-readonly-20261026-001/forensic-receipt.json",
+  "forensic_receipt_sha256": "566335d7150e1b5934bdb7980e26e80a06368bde230e6b49a36222a9c6372d89",
+  "cause_confirmed": "Original honest-miner 1017 lifecycle events/1002 reserve-growth records, initial + three successful admit/activate pairs, fourth seed admit fails SQLITE13 bounded lifecycle evidence capacity; actual checksummed original WAL has no same-page repeated frame in any transaction",
+  "candidate_mechanism": "Native-IO write connection only: set/readback wal_autocheckpoint64; actual earlier PASSIVE checkpoint may permit WAL-offset reuse and reduce newly increasing high-water events. No event is dropped/combined/reset/refunded. Legacy paths and generic VFS unchanged.",
+  "original_node_page4096_assert": "trillionnium/crates/trnm-pon-node/tests/native_io_authenticated_v1.rs:405 is immutable; 64KiB page proposal rejected rather than changing it",
+  "new_stored_schema_or_signed_domain": "NONE. Connection-local autocheckpoint policy only, no DDL/schema metadata/page geometry/receipt schema/bounds/profile/caller changes; therefore no on-disk conversion or schema namespace change.",
+  "existing_and_partial_initialization": "Same existing Node initialization/recovery/owner locks/held same-lease flow. No VACUUM, forced checkpoint, truncation, new lease or repair. Session policy set after original writer WAL/FULL config; reopening receives it again.",
+  "limits": "All 1024/256 lifecycle,655360serialized bytes,3inodes,16MiB/file,48MiB/root,336MiB/domain,old deadlines/caller/CPU/AS/profile/assertions unchanged. PASSIVE is not physical WAL bound; blocked-reader or large-transaction growth still refuses under old caps.",
+  "risk": "Not sufficient proof of full4097. Main-file high-water event count, snapshot write amplification, checkpoint cost within original2s deadlines and long-reader reset starvation remain; only unchanged original actual native run can qualify finite behavior.",
+  "SQLite_primary_sources": [
+    {
+      "url": "https://www.sqlite.org/pragma.html#pragma_wal_autocheckpoint",
+      "support": "connection auto-checkpoint interval; default1000; all auto-checkpoints PASSIVE"
+    },
+    {
+      "url": "https://www.sqlite.org/wal.html",
+      "support": "checkpoint transfers WAL to main, reset can be blocked by readers; single writer"
+    },
+    {
+      "url": "https://www.sqlite.org/fileformat.html#walformat",
+      "support": "32-byte WAL header,24-byte frame header plus page; page4096 bytes in original raw, checksum verified"
+    }
+  ],
+  "unchanged_exact_pins": {
+    "trillionnium/crates/trnm-sqlite-io-boundary/src/ledger.rs": {
+      "bytes": 14272,
+      "sha256": "e9205f1493694058cea5d84053e66518d78b424957c089c72babf4f2f0412a6a",
+      "unchanged_from_399_root": true
+    },
+    "trillionnium/crates/trnm-sqlite-io-boundary/src/vfs.rs": {
+      "bytes": 49986,
+      "sha256": "d26305c2bbdae0c93bf5fea7ce697df5967847e2d254d29eb720119620387e99",
+      "unchanged_from_399_root": true
+    },
+    "trillionnium/crates/trnm-sqlite-io-boundary/src/sql.rs": {
+      "bytes": 6598,
+      "sha256": "418aa0c046cb9b281e2db808995d8ca42324361fe6a8f9412621d965a3dfadfe",
+      "unchanged_from_399_root": true
+    },
+    "trillionnium/crates/trnm-sqlite-io-boundary/tests/native_held_directory_v1.rs": {
+      "bytes": 37979,
+      "sha256": "6e746d2f9c1497cda7dddf05bf87aaf6b97403ef846eaef6dad6f8f3146cb86d",
+      "unchanged_from_399_root": true
+    },
+    "trillionnium/crates/trnm-sqlite-io-boundary/tests/native_public_api_v2.rs": {
+      "bytes": 39668,
+      "sha256": "0459a4e7184a5d2912c8e19295c354e3c46be7e612b918a9a37fbce1a3bd79b5",
+      "unchanged_from_399_root": true
+    },
+    "scripts/ci/check_pon_native_io_component.py": {
+      "bytes": 30045,
+      "sha256": "83f26a7906eee8a2b0c8f05a8a4b5537249413b6399d773e19e3373c33e8324c",
+      "unchanged_from_399_root": true
+    },
+    "scripts/ci/check_pon_identity_churn.py": {
+      "bytes": 109906,
+      "sha256": "7000380737367657292f2e7cc6f779dde8ce64eaaebf5c196de733caf9ffbe71",
+      "unchanged_from_399_root": true
+    },
+    "trillionnium/crates/trnm-pon-node/tests/native_io_authenticated_v1.rs": {
+      "bytes": 26340,
+      "sha256": "411379e845cd1b8440c35d4db8f329c166287fdf1a2911d125391c6585dc6695",
+      "unchanged_from_399_root": true
+    },
+    "trillionnium/crates/trnm-pon-node/tests/support/identity_churn_work.rs": {
+      "bytes": 12390,
+      "sha256": "278914d65929f7a56da66bf6fbe1708f252218f9335e5db8337e854e948e30f8",
+      "unchanged_from_399_root": true
+    },
+    "trillionnium/crates/trnm-pon-node/tests/support/identity_churn_native_io_v1.rs": {
+      "bytes": 11264,
+      "sha256": "97decde477d3908ed3a1aed25bcc21098bc13581575cfe8b42b31eca8ee4a0a8",
+      "unchanged_from_399_root": true
+    },
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": {
+      "bytes": 360182,
+      "sha256": "19702d375a0a5c983e2db53f783dc82afb40bb4e195cc4536e0b888ea20baf9f",
+      "unchanged_from_399_root": true
+    }
+  },
+  "diff_check_returncode": 0,
+  "build_or_test_run": false,
+  "source_fix_effectiveness_qualified": false,
+  "whole_writer_qualified": false,
+  "original_three_FD_caller_qualified": false,
+  "independent_reader_qualified": false,
+  "full_W1_4097_qualified": false,
+  "task_complete": false,
+  "merge_ready": false,
+  "line_reference_correction": {
+    "original_receipt_preserved": "implementation-receipt-original-stale-line-reference.json",
+    "original_receipt_sha256": "c3b1d79565832195c66bbc0b6c408725cebf1e0e6ced379dffb9966f94ad69d6",
+    "original_ref_413_was_stale": "actual exact399 source assertion is at405; source content/candidate unchanged"
+  }
+}

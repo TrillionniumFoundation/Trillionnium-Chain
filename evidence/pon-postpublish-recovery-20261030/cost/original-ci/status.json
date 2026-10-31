@@ -1,0 +1,169 @@
+{
+  "schema": "pon-recovered-original-v5-ci-v1",
+  "recorded_at_utc": "2026-10-30T17:33:31.480288+00:00",
+  "run_id": 40988668738,
+  "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/40988668738",
+  "commit": "1d11f875493f8125e36b9adceacb342df108e5e5",
+  "workflow_conclusion": "failure",
+  "jobs": [
+    {
+      "architecture": "aarch64",
+      "job_id": 123845534292,
+      "job_status": "completed",
+      "job_conclusion": "failure",
+      "full_decoded_log": {
+        "path": "arm-123845534292.log",
+        "bytes": 121725,
+        "sha256": "d8e68e0dbf815371a2b27ef250922347206258be8b2613c6d44a5340139da56a"
+      },
+      "hosted_source_guards_only": [
+        {
+          "decoded_log_lines_one_based": [
+            683,
+            695
+          ],
+          "receipt": {
+            "base": null,
+            "candidate": "1d11f875493f8125e36b9adceacb342df108e5e5",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "1d11f875493f8125e36b9adceacb342df108e5e5",
+            "tested_tree": "64b82137eebeb96b572abc62e5fce39af3593200",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 960706544,
+            "tracked_entries": 7435,
+            "tracked_worktree_verified": true
+          }
+        },
+        {
+          "decoded_log_lines_one_based": [
+            1037,
+            1049
+          ],
+          "receipt": {
+            "base": null,
+            "candidate": "1d11f875493f8125e36b9adceacb342df108e5e5",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "1d11f875493f8125e36b9adceacb342df108e5e5",
+            "tested_tree": "64b82137eebeb96b572abc62e5fce39af3593200",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 960706544,
+            "tracked_entries": 7435,
+            "tracked_worktree_verified": true
+          }
+        }
+      ],
+      "rust_1_95_installation": "PASS",
+      "repository_and_inventory": "PASS",
+      "python_control_groups": {
+        "source-integrity": 34,
+        "original-v3-reader": 8,
+        "original-v4-reader": 8,
+        "hardened-v5-reader": 22,
+        "paired-diagnostics": 8
+      },
+      "all_python_control_groups_passed": true,
+      "cargo_metadata_completed_before_fmt": true,
+      "cargo_metadata_success_basis": "Subsequent cargo fmt reached under set -euo pipefail; archived graph not downloaded.",
+      "formatting_failure": {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+        "line": 18,
+        "reason": "pub mod structured; must follow cfg(test) statement_boundaries declaration",
+        "decoded_log_diff_line_one_based": 1008
+      },
+      "native_controls_builds_clippy_campaigns": "SKIPPED",
+      "actual_native_output_reader": "SKIPPED",
+      "artifact": {
+        "id": 12948281470,
+        "api_reported_bytes": 72614,
+        "api_reported_digest": "sha256:2cb48322be7f7e72440e28b0a0c563a53f27dfa9cfe7e1545c4ee2014452b054",
+        "downloaded": false,
+        "digest_independently_verified": false
+      }
+    },
+    {
+      "architecture": "x86_64",
+      "job_id": 123845534535,
+      "job_status": "completed",
+      "job_conclusion": "failure",
+      "full_decoded_log": {
+        "path": "x64-123845534535.log",
+        "bytes": 121809,
+        "sha256": "6080cffebf58e0f86b82e2f19c79162115b72721d680365c72ddfb784933dde4"
+      },
+      "hosted_source_guards_only": [
+        {
+          "decoded_log_lines_one_based": [
+            685,
+            697
+          ],
+          "receipt": {
+            "base": null,
+            "candidate": "1d11f875493f8125e36b9adceacb342df108e5e5",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "1d11f875493f8125e36b9adceacb342df108e5e5",
+            "tested_tree": "64b82137eebeb96b572abc62e5fce39af3593200",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 960706544,
+            "tracked_entries": 7435,
+            "tracked_worktree_verified": true
+          }
+        },
+        {
+          "decoded_log_lines_one_based": [
+            1039,
+            1051
+          ],
+          "receipt": {
+            "base": null,
+            "candidate": "1d11f875493f8125e36b9adceacb342df108e5e5",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "1d11f875493f8125e36b9adceacb342df108e5e5",
+            "tested_tree": "64b82137eebeb96b572abc62e5fce39af3593200",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 960706544,
+            "tracked_entries": 7435,
+            "tracked_worktree_verified": true
+          }
+        }
+      ],
+      "rust_1_95_installation": "PASS",
+      "repository_and_inventory": "PASS",
+      "python_control_groups": {
+        "source-integrity": 34,
+        "original-v3-reader": 8,
+        "original-v4-reader": 8,
+        "hardened-v5-reader": 22,
+        "paired-diagnostics": 8
+      },
+      "all_python_control_groups_passed": true,
+      "cargo_metadata_completed_before_fmt": true,
+      "cargo_metadata_success_basis": "Subsequent cargo fmt reached under set -euo pipefail; archived graph not downloaded.",
+      "formatting_failure": {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+        "line": 18,
+        "reason": "pub mod structured; must follow cfg(test) statement_boundaries declaration",
+        "decoded_log_diff_line_one_based": 1010
+      },
+      "native_controls_builds_clippy_campaigns": "SKIPPED",
+      "actual_native_output_reader": "SKIPPED",
+      "artifact": {
+        "id": 12948266955,
+        "api_reported_bytes": 73049,
+        "api_reported_digest": "sha256:6bff11cc7d2da6319f5e2aac0cbbbaa7e5e3ba6ce7c27f1ecb49688b4cf6fcf6",
+        "downloaded": false,
+        "digest_independently_verified": false
+      }
+    }
+  ],
+  "hosted_source_guards_do_not_replace_lost_local_capture_guards": true,
+  "new_native_execution": false,
+  "scope": "Fresh recovery of terminal metadata and full logs for the original hosted CI attempt; both architectures stopped at formatting before native execution."
+}

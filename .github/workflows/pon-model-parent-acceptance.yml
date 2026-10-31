@@ -1,0 +1,117 @@
+name: PoN parent-bound model evidence
+on:
+  pull_request:
+    paths:
+      - formal/pon-nakamoto-v1/**
+      - config/pon/**
+      - scripts/llm_*.py
+      - scripts/test_llm_*.py
+      - scripts/ci/ci_job.sh
+      - scripts/ci/check_ci_contract.py
+      - scripts/ci/test_ci_contract.py
+      - scripts/ci/check_model_runtime_unit_log.py
+      - scripts/ci/model-runtime-cpu-requirements.txt
+      - .github/workflows/pon-model-parent-acceptance.yml
+permissions:
+  contents: read
+jobs:
+  parent-evidence:
+    name: parent evidence (${{ matrix.runner }}, ${{ matrix.source }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+        source: [head, prospective-merge]
+    env:
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+      EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
+      EXPECTED_MERGE: ${{ github.sha }}
+      SOURCE_KIND: ${{ matrix.source }}
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Bind actual source and retain original preflight
+        id: source
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/parent-evidence"
+          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
+          if [ "$SOURCE_KIND" = prospective-merge ]; then
+            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$RUNNER_TEMP/parent-evidence/source.json"
+          bash scripts/project-preflight.sh --audit
+      - name: Prepare existing model verifier dependencies
+        run: |
+          python3 -m venv "$RUNNER_TEMP/model-env"
+          "$RUNNER_TEMP/model-env/bin/python" -m pip install --disable-pip-version-check --only-binary=:all: -r formal/pon-nakamoto-v1/requirements.txt
+      - name: Execute original and strict parent-bound owners
+        shell: bash
+        run: |
+          set -euo pipefail
+          status=0
+          for spec in model_window_history model_consumer_context model_generation_sequence model_generation_sequence_context model_generation_sequence_parent; do
+            if ! "$RUNNER_TEMP/model-env/bin/python" "formal/pon-nakamoto-v1/test_${spec}.py" -v 2>&1 | tee "$RUNNER_TEMP/parent-evidence/${spec}.log"; then
+              status=1
+            fi
+          done
+          grep -E '^Ran 7 tests in ' "$RUNNER_TEMP/parent-evidence/model_generation_sequence.log" || status=1
+          grep -E '^Ran 8 tests in ' "$RUNNER_TEMP/parent-evidence/model_generation_sequence_context.log" || status=1
+          grep -E '^Ran 10 tests in ' "$RUNNER_TEMP/parent-evidence/model_generation_sequence_parent.log" || status=1
+          exit "$status"
+      - name: Prepare pinned CPU-only model unit dependencies
+        id: runtime_deps
+        if: ${{ always() && steps.source.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -c 'import platform,sys; assert sys.version_info[:2] == (3,12) and platform.system() == "Linux" and platform.machine() in {"x86_64","aarch64"}'
+          test ! -e "$RUNNER_TEMP/model-runtime-unit-env"
+          test ! -L "$RUNNER_TEMP/model-runtime-unit-env"
+          python3 -m venv "$RUNNER_TEMP/model-runtime-unit-env"
+          "$RUNNER_TEMP/model-runtime-unit-env/bin/python" -m pip --isolated install --disable-pip-version-check --no-cache-dir --only-binary=:all: --require-hashes --index-url https://pypi.org/simple --retries 0 --timeout 30 -r scripts/ci/model-runtime-cpu-requirements.txt --report "$RUNNER_TEMP/parent-evidence/model-runtime-install.json"
+          "$RUNNER_TEMP/model-runtime-unit-env/bin/python" -m pip check
+          "$RUNNER_TEMP/model-runtime-unit-env/bin/python" -m pip freeze --all > "$RUNNER_TEMP/parent-evidence/model-runtime-packages.txt"
+      - name: Execute all original small Tensor and candidate-observer controls
+        if: ${{ always() && steps.runtime_deps.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          export HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1
+          status=0
+          for spec in initial_trainable_setup_v2 runtime_candidate_observation_v1 runtime_release answer_eos_loss_v3; do
+            if ! "$RUNNER_TEMP/model-runtime-unit-env/bin/python" -B "scripts/test_llm_${spec}.py" 2>&1 | tee "$RUNNER_TEMP/parent-evidence/${spec}.log"; then
+              status=1
+            fi
+          done
+          "$RUNNER_TEMP/model-runtime-unit-env/bin/python" -B scripts/ci/check_model_runtime_unit_log.py --suite setup --log "$RUNNER_TEMP/parent-evidence/initial_trainable_setup_v2.log" > "$RUNNER_TEMP/parent-evidence/unit-setup-readback.json" || status=1
+          "$RUNNER_TEMP/model-runtime-unit-env/bin/python" -B scripts/ci/check_model_runtime_unit_log.py --suite observer --log "$RUNNER_TEMP/parent-evidence/runtime_candidate_observation_v1.log" > "$RUNNER_TEMP/parent-evidence/unit-observer-readback.json" || status=1
+          "$RUNNER_TEMP/model-runtime-unit-env/bin/python" -B scripts/ci/check_model_runtime_unit_log.py --suite runtime-release --log "$RUNNER_TEMP/parent-evidence/runtime_release.log" > "$RUNNER_TEMP/parent-evidence/unit-runtime-release-readback.json" || status=1
+          "$RUNNER_TEMP/model-runtime-unit-env/bin/python" -B scripts/ci/check_model_runtime_unit_log.py --suite answer-eos-loss-v3 --log "$RUNNER_TEMP/parent-evidence/answer_eos_loss_v3.log" > "$RUNNER_TEMP/parent-evidence/unit-answer-eos-loss-v3-readback.json" || status=1
+          exit "$status"
+      - name: Recheck source and retain replayable exact reference sources
+        if: ${{ always() && steps.source.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
+          if [ "$SOURCE_KIND" = prospective-merge ]; then
+            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$RUNNER_TEMP/parent-evidence/source-after.json"
+          cmp "$RUNNER_TEMP/parent-evidence/source.json" "$RUNNER_TEMP/parent-evidence/source-after.json"
+          git archive HEAD formal/pon-nakamoto-v1 config scripts > "$RUNNER_TEMP/parent-evidence/reference-source.tar"
+          (cd "$RUNNER_TEMP/parent-evidence" && sha256sum *.log *.json reference-source.tar > sha256sums.txt)
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: parent-evidence-${{ matrix.runner }}-${{ matrix.source }}-${{ github.event.pull_request.head.sha }}
+          path: ${{ runner.temp }}/parent-evidence
+          if-no-files-found: error

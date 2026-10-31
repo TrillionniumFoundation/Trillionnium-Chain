@@ -1,0 +1,10 @@
+{
+  "read_started_at_utc": "2026-10-30 17:31:36 UTC",
+  "read_finished_at_utc": "2026-10-30 17:31:38 UTC",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "requested_commit": "1d11f875493f8125e36b9adceacb342df108e5e5",
+  "run_id": 40988668738,
+  "artifacts_downloaded": false,
+  "artifact_digests_independently_verified": false,
+  "scope": "Fresh retrieval after the environment reset; parsed metadata and complete decoded job log strings."
+}

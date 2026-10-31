@@ -1,0 +1,67 @@
+[
+  {
+    "name": "fmt-final",
+    "command": [
+      "/tmp/hepta-finish2-tools/installed/bin/cargo-fmt",
+      "fmt",
+      "--all",
+      "--check",
+      "--manifest-path",
+      "trillionnium/Cargo.toml"
+    ],
+    "returncode": 0,
+    "elapsed_s": 16.70129968500987
+  },
+  {
+    "name": "inventory-final",
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "scripts/refresh_distributed_source_inventory.py",
+      "--check"
+    ],
+    "returncode": 0,
+    "elapsed_s": 0.09047016300610267
+  },
+  {
+    "name": "metadata-final",
+    "command": [
+      "cargo",
+      "metadata",
+      "--locked",
+      "--offline",
+      "--format-version",
+      "1",
+      "--manifest-path",
+      "trillionnium/Cargo.toml"
+    ],
+    "returncode": 0,
+    "elapsed_s": 0.16735299900756218
+  },
+  {
+    "name": "clippy-final",
+    "command": [
+      "/tmp/hepta-finish2-tools/installed/bin/cargo-clippy",
+      "clippy",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-mvcc-fee",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--lib",
+      "--test",
+      "pq2_authority_capacity",
+      "--test",
+      "pq3_quota_authority",
+      "--test",
+      "pq4_task_authority",
+      "--test",
+      "pq5_task_renewal",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "returncode": 0,
+    "elapsed_s": 16.96507001700229
+  }
+]

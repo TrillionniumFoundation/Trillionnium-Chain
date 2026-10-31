@@ -1,0 +1,24 @@
+{
+  "schema": "pon-w1-receipt-gzip-chunking-v2",
+  "reason": "13,906,979-byte gzip exceeds 16 MiB connector request limit after base64 encoding",
+  "whole_gzip_bytes": 13906979,
+  "whole_gzip_sha256": "0503d0e802eebd8ca0c5cfd5f54d66085c7dfe3f1fb4f523d568809c0a3b0056",
+  "max_chunk_bytes": 7000000,
+  "chunks": [
+    {
+      "file": "dfa0e6f7a5117456451fbf4e834d41b7608b868f3f0173addfc9c8b9e763665c.gz.part",
+      "bytes": 7000000,
+      "sha256": "dfa0e6f7a5117456451fbf4e834d41b7608b868f3f0173addfc9c8b9e763665c",
+      "repository_path": "evidence/pon-pure-security-20261030-rebuild/complete-w1/fixture-objects/dfa0e6f7a5117456451fbf4e834d41b7608b868f3f0173addfc9c8b9e763665c.gz.part"
+    },
+    {
+      "file": "286ec10c307a80343892bbd4b63fa612ea84a5b96dd986ea1142efe0952782c5.gz.part",
+      "bytes": 6906979,
+      "sha256": "286ec10c307a80343892bbd4b63fa612ea84a5b96dd986ea1142efe0952782c5",
+      "repository_path": "evidence/pon-pure-security-20261030-rebuild/complete-w1/fixture-objects/286ec10c307a80343892bbd4b63fa612ea84a5b96dd986ea1142efe0952782c5.gz.part"
+    }
+  ],
+  "new_compression_performed": false,
+  "raw_receipt_changed": false,
+  "proof_generated": false
+}

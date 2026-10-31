@@ -1,0 +1,67 @@
+[
+  {
+    "name": "guest.bin",
+    "bytes": 291592,
+    "compressed": 114576
+  },
+  {
+    "name": "input.bin",
+    "bytes": 49640,
+    "compressed": 14310
+  },
+  {
+    "name": "original/guest.bin",
+    "bytes": 291592,
+    "compressed": 114576
+  },
+  {
+    "name": "original/input.bin",
+    "bytes": 49640,
+    "compressed": 14310
+  },
+  {
+    "name": "receipt.bin",
+    "bytes": 15862780,
+    "compressed": 13904777
+  },
+  {
+    "name": "shards/0/guest.bin",
+    "bytes": 291592,
+    "compressed": 114576
+  },
+  {
+    "name": "shards/0/input.bin",
+    "bytes": 49640,
+    "compressed": 14310
+  },
+  {
+    "name": "shards/0/original/guest.bin",
+    "bytes": 291592,
+    "compressed": 114576
+  },
+  {
+    "name": "shards/0/original/input.bin",
+    "bytes": 49640,
+    "compressed": 14310
+  },
+  {
+    "name": "shards/1/guest.bin",
+    "bytes": 291592,
+    "compressed": 114576
+  },
+  {
+    "name": "shards/1/input.bin",
+    "bytes": 49640,
+    "compressed": 14310
+  },
+  {
+    "name": "shards/1/original/guest.bin",
+    "bytes": 291592,
+    "compressed": 114576
+  },
+  {
+    "name": "shards/1/original/input.bin",
+    "bytes": 49640,
+    "compressed": 14310
+  }
+]

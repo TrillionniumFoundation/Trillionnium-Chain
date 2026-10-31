@@ -1,0 +1,46 @@
+{
+  "schema": "history-raw-directory-preservation-v1",
+  "directories": [
+    {
+      "original_directory": "/workspace/scratch/bb9b841c1d43/history-next/evidence/pon-history-publication-native-20261028/native-initial",
+      "retained_directory": "/workspace/scratch/bb9b841c1d43/history-native-raw-20261028/native-initial",
+      "rename_same_inode": true,
+      "raw_bytes_rewritten": false
+    },
+    {
+      "original_directory": "/workspace/scratch/bb9b841c1d43/history-next/evidence/pon-history-publication-native-20261028/native-01",
+      "retained_directory": "/workspace/scratch/bb9b841c1d43/history-native-raw-20261028/native-01",
+      "rename_same_inode": true,
+      "raw_bytes_rewritten": false
+    },
+    {
+      "original_directory": "/workspace/scratch/bb9b841c1d43/history-next/evidence/pon-history-publication-native-20261028/native-02",
+      "retained_directory": "/workspace/scratch/bb9b841c1d43/history-native-raw-20261028/native-02",
+      "rename_same_inode": true,
+      "raw_bytes_rewritten": false
+    },
+    {
+      "original_directory": "/workspace/scratch/bb9b841c1d43/history-next/evidence/pon-history-publication-native-20261028/native-03",
+      "retained_directory": "/workspace/scratch/bb9b841c1d43/history-native-raw-20261028/native-03",
+      "rename_same_inode": true,
+      "raw_bytes_rewritten": false
+    },
+    {
+      "original_directory": "/workspace/scratch/bb9b841c1d43/history-next/evidence/pon-history-publication-native-20261028/isolated-final-synced",
+      "retained_directory": "/workspace/scratch/bb9b841c1d43/history-native-raw-20261028/isolated-final-synced",
+      "rename_same_inode": true,
+      "raw_bytes_rewritten": false
+    }
+  ],
+  "draft_outside_publication": "/workspace/scratch/bb9b841c1d43/history-native-raw-20261028/SETTLED_EPOCH_RECOVERY_V1.draft.md",
+  "non_evidence_python_caches": [
+    {
+      "original": "/workspace/scratch/bb9b841c1d43/history-next/evidence/pon-history-publication-native-20261028/__pycache__",
+      "retained": "/workspace/scratch/bb9b841c1d43/history-native-raw-20261028/python-cache-0",
+      "measured_evidence": false
+    }
+  ],
+  "archives_are_committed_complete_raw_packages": true,
+  "subsequent_original_paths_rematerialized": true,
+  "subsequent_rematerialization_note": "A later tool observation found fresh-inode copies at the original untracked paths. Published archives retain the original measured member metadata. Both copies have the original byte hashes; raw directories, earlier draft and caches are excluded explicitly from git publication."
+}

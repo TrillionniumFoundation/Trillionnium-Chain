@@ -1,0 +1,16 @@
+{
+  "command": [
+    "cargo",
+    "fmt",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--all",
+    "--check"
+  ],
+  "native_returncode": 0,
+  "tool_exec_session_id": 14957,
+  "reported_exit_code": 0,
+  "source_mutated": false,
+  "runtime_tests_executed": false,
+  "observed_unix_ns": 1793152731480055022
+}

@@ -1,0 +1,78 @@
+{
+  "schema": "retained-nine-history-native-regressions-v1",
+  "binary_sha256": "76aeb191a35b1d13702346cab6b077b392266ba3e83c477e692944ddae8d86d7",
+  "source_stable": true,
+  "binary_stable": true,
+  "distinct_native_tests": 9,
+  "cases": [
+    {
+      "name": "original-cpu-six",
+      "command": [
+        "/workspace/scratch/301262829a43/pon-pq-impl/history-evidence/native-attempt-07-nonce-and-pidfd/native-test-snapshot.bin",
+        "operator_continuous_cpu::tests::",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "returncode": 0,
+      "expected_passed": 6,
+      "log_sha256": "872844e65afde20dc79f586c0be9202a5a95353154118c721f2e85500c56c15a",
+      "summary": [
+        "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 726 filtered out; finished in 8.31s"
+      ],
+      "passed": true
+    },
+    {
+      "name": "original-history-internal-activation",
+      "command": [
+        "/workspace/scratch/301262829a43/pon-pq-impl/history-evidence/native-attempt-07-nonce-and-pidfd/native-test-snapshot.bin",
+        "ingress::history_activation_tests::complete_history_checks_resources_inside_activation_and_can_retry",
+        "--exact",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "returncode": 0,
+      "expected_passed": 1,
+      "log_sha256": "ef65277d32e07cf6af6ca603270e9428ffd74cff43e7dd725389f7e417fdef74",
+      "summary": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 731 filtered out; finished in 0.69s"
+      ],
+      "passed": true
+    },
+    {
+      "name": "original-history-unknown-crash-fence",
+      "command": [
+        "/workspace/scratch/301262829a43/pon-pq-impl/history-evidence/native-attempt-07-nonce-and-pidfd/native-test-snapshot.bin",
+        "ingress::tests::history_paid_epoch_crash_cut_refuses_new_cold_credit",
+        "--exact",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "returncode": 0,
+      "expected_passed": 1,
+      "log_sha256": "b137708d11fbf381ef0cd6582e247c7b371e9f1829684ecfb9fc02684fbeffc9",
+      "summary": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 731 filtered out; finished in 0.06s"
+      ],
+      "passed": true
+    },
+    {
+      "name": "original-history-malformed-known-close",
+      "command": [
+        "/workspace/scratch/301262829a43/pon-pq-impl/history-evidence/native-attempt-07-nonce-and-pidfd/native-test-snapshot.bin",
+        "ingress::tests::malformed_paid_history_rejection_closes_known_epoch_without_poisoning_cold_reopen",
+        "--exact",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "returncode": 0,
+      "expected_passed": 1,
+      "log_sha256": "30c10dc3f5ed0b6975decfba801060744c27782d392c666f66b04a6091ddba52",
+      "summary": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 731 filtered out; finished in 0.72s"
+      ],
+      "passed": true
+    }
+  ],
+  "production_qualified": false,
+  "passed": true
+}

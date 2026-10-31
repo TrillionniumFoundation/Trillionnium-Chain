@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "cargo",
+    "fmt",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--all"
+  ],
+  "returncode": 0,
+  "wall_seconds": 50.001188911999634,
+  "cargo_home": "/workspace/scratch/3d4ec372c488/pq-quota-cargo-home",
+  "stdout": "",
+  "stderr": ""
+}

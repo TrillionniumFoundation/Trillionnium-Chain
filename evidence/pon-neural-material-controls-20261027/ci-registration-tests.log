@@ -1,0 +1,9 @@
+test_actual_byte_and_tensor_workflow_registration (test_ci_contract.ModelV2RegistrationTests.test_actual_byte_and_tensor_workflow_registration) ... ok
+test_byte_suites_cannot_be_missing_duplicate_moved_filtered_or_swallowed (test_ci_contract.ModelV2RegistrationTests.test_byte_suites_cannot_be_missing_duplicate_moved_filtered_or_swallowed) ... ok
+test_model_workflow_old_steps_budgets_architectures_and_lock_cannot_drift (test_ci_contract.ModelV2RegistrationTests.test_model_workflow_old_steps_budgets_architectures_and_lock_cannot_drift) ... ok
+test_unit_log_requires_entire_original_roster_and_one_zero_skip_summary (test_ci_contract.ModelV2RegistrationTests.test_unit_log_requires_entire_original_roster_and_one_zero_skip_summary) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.171s
+
+OK

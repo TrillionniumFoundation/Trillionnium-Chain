@@ -1,0 +1,10 @@
+{
+  "schema": "pon-w1-local-frozen-verifier-v1",
+  "name": "candidate-verifier",
+  "bytes": 6042000,
+  "sha256": "123cb1717d23a1c685f43929909f161f70171664da5e41e85f4f9feb7e2cb3f8",
+  "source_base": "7da4964d02b42076996e89a78d13f68572d33be5",
+  "source_state": "working-tree-candidate-with-compiled-input-bindings",
+  "whole_git_tree_attested": false,
+  "consensus_authority": false
+}

@@ -1,0 +1,13 @@
+{
+  "schema": "pon-read-only-ci-artifact-download-v1",
+  "artifact_id": 13025754370,
+  "file_id": "file_0000000091b082309b307369cfe7dfd7",
+  "observed_unix_ns": 1793413838144458926,
+  "expected_bytes": 445957,
+  "expected_sha256": "7c3f69607adfc90074e7dbe836056f4fe8d7a34795c889af5368cfebf9674a27",
+  "signed_url_retained": false,
+  "verified": false,
+  "error_type": "URLError",
+  "error_code": null,
+  "error_reason": "[Errno 1] Operation not permitted"
+}

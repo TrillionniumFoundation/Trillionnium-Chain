@@ -1,0 +1,39 @@
+{
+  "schema": "pon-git-blob-connector-failures-v1",
+  "recorded_at_utc": "2026-10-30 17:32:42 UTC",
+  "scope": "Actual connector failures during this recovery; recording time is not a reconstructed request timestamp.",
+  "results": [
+    {
+      "name": "stdout",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "UnicodeDecodeError: 'utf-8' codec can't decode byte 0x8b in position 1: invalid start byte"
+          }
+        ],
+        "structuredContent": {
+          "error": "UnicodeDecodeError: 'utf-8' codec can't decode byte 0x8b in position 1: invalid start byte",
+          "error_code": "UNKNOWN"
+        },
+        "isError": true
+      }
+    },
+    {
+      "name": "binary",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "UnicodeDecodeError: 'utf-8' codec can't decode byte 0x8b in position 1: invalid start byte"
+          }
+        ],
+        "structuredContent": {
+          "error": "UnicodeDecodeError: 'utf-8' codec can't decode byte 0x8b in position 1: invalid start byte",
+          "error_code": "UNKNOWN"
+        },
+        "isError": true
+      }
+    }
+  ]
+}

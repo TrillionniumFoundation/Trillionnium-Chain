@@ -1,0 +1,32 @@
+{
+  "schema": "pon-w1-context-before-receipt-io-v1",
+  "cases": [
+    {
+      "case": "valid-context-missing-receipt",
+      "exit_code": 1,
+      "input_sha256": "4babd290b10f7a68be27c2adf3b97448bb7bef04dba8bcb97f914acf4ac69020",
+      "expected_message_observed": true
+    },
+    {
+      "case": "wrong-task",
+      "exit_code": 1,
+      "input_sha256": "90a6a08220d1f711d945ae750ee5478e09a9e5df91dbdcd11d2ca80243643171",
+      "expected_message_observed": true
+    },
+    {
+      "case": "wrong-target",
+      "exit_code": 1,
+      "input_sha256": "14bb16f0191f34da44ffa6d707d25559b27a192fa33e48e20aaddd2ca1163fa4",
+      "expected_message_observed": true
+    },
+    {
+      "case": "zero-target",
+      "exit_code": 1,
+      "input_sha256": "b96ee6ba1b7c9e07c9c7de3ff2dc76fb390a3f8e68012ccac4f6deb1ee50b31c",
+      "expected_message_observed": true
+    }
+  ],
+  "host_sha256": "9fb009fbfe142fa9ed50de713bdd3ae57eba8568457981b6c8dd0388e6bd3755",
+  "receipt_io_positive_control": true,
+  "consensus_authority": false
+}

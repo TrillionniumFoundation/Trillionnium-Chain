@@ -1,0 +1,206 @@
+{
+  "schema": "pn1-current-owner-original-VFS004-Node005-independent-review-v1",
+  "observed_utc": "2026-10-26T00:20:52.877708+00:00",
+  "verdict": "CURRENT_OWNER_FINITE_ORIGINAL_VFS_AND_AUTHENTICATED_NODE_COMPONENT_REGRESSIONS_PASS",
+  "current_owner_API_source_pins": {
+    "trillionnium/crates/trnm-sqlite-io-boundary/src/owner.rs": "5b28890080f6f07dab3437a8b4ad2ae6d0ae1e9c6622b97cfcd87c486807a89c",
+    "trillionnium/crates/trnm-sqlite-io-boundary/src/lib.rs": "44cb7289039f1c36ad60f33c7b6a5a557017a8341e63eeb885cc582b7d667cc6",
+    "trillionnium/crates/trnm-sqlite-io-boundary/src/unsupported.rs": "eb74fb9862213b4e4a27a31a6e1ac2197ec200e973ffded057a70f1c3e33e561",
+    "trillionnium/crates/trnm-sqlite-io-boundary/src/sql.rs": "38d3355f4ba2bb7d619bbd797f295dcb38e3390e59117e1346a9c914b60ba70c"
+  },
+  "VFS004": {
+    "original_execution_receipt_sha256": "9933e51530658bda8e537815caccde5f7b857ea39051eaae20922fdd082bc136",
+    "ELF_sha256": "f01e2f15a5af7376da1689e70c115108c1f210f1762a1fd3bc7c995ddeef0251",
+    "actual_native_exit": 0,
+    "actual_native_seconds": 1.428740110997751,
+    "actual_collector_seconds": 2.3476681300016935,
+    "actual_child_count": 10,
+    "child_identities": [
+      [
+        3126115,
+        "5141623"
+      ],
+      [
+        3126119,
+        "5141648"
+      ],
+      [
+        3126121,
+        "5141662"
+      ],
+      [
+        3126139,
+        "5141679"
+      ],
+      [
+        3126158,
+        "5141706"
+      ],
+      [
+        3126160,
+        "5141717"
+      ],
+      [
+        3126162,
+        "5141734"
+      ],
+      [
+        3126164,
+        "5141739"
+      ],
+      [
+        3126171,
+        "5141752"
+      ],
+      [
+        3126173,
+        "5141757"
+      ]
+    ],
+    "RootReceipt_rows": 89,
+    "healthy_rows": 86,
+    "original_expected_cap_failed_rows": [
+      {
+        "case": "real_file_cap_sticky",
+        "file": "actual-cap-first-failure.json",
+        "first_failure": "pre-growth inode length cap",
+        "sqlite_code": 13
+      },
+      {
+        "case": "real_file_cap_sticky",
+        "file": "cap-error-after-real-close.json",
+        "first_failure": "pre-growth inode length cap",
+        "sqlite_code": 13
+      },
+      {
+        "case": "real_file_cap_sticky",
+        "file": "cap-stays-latched.json",
+        "first_failure": "pre-growth inode length cap",
+        "sqlite_code": 13
+      }
+    ],
+    "actual_json_files_in_cases": 85,
+    "original_metadata_and_stream_files": 105,
+    "original_archive_files": 165,
+    "all_actual_bytes_including_final_receipts": 38270636,
+    "inventory_receipt_bytes": 70000,
+    "execution_receipt_bytes": 1851,
+    "all_source_and_witness_members_rechecked": true,
+    "block_counts_diagnostic_drift": [
+      {
+        "path": "cases/real_file_cap_sticky/root-0/native.sqlite",
+        "original": 32768,
+        "now": 32776
+      },
+      {
+        "path": "native-controls.elf",
+        "original": 36752,
+        "now": 36760
+      }
+    ],
+    "original_30_case_300_parent_3GiB_AS_16MiB_FSIZE_caps_retained": true,
+    "original_64KiB_cap_case_not_4KiB_full_profile": true,
+    "owned_cgroup_path": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a175903b28-96a-6b3.service",
+    "owned_cgroup_present_at_review": false
+  },
+  "Node005": {
+    "original_execution_receipt_sha256": "e28b2dcb9c8971a47462c68a5317dc458f4083f427acf9256cbd3edb1daf124e",
+    "ELF_sha256": "c20e32e000a53ab113670bf2fd46e9de2244f3b655d11030609298000c655e51",
+    "actual_native_exit": 0,
+    "actual_native_seconds": 1.999081097994349,
+    "actual_collector_seconds": 3.5044862809954793,
+    "actual_owned_native_process": {
+      "pid": 3129044,
+      "kernel_start_tick": "5146435",
+      "actual_image": {
+        "dev": 2050,
+        "ino": 56021248
+      },
+      "held_ELF_dev": 2050,
+      "held_ELF_ino": 56021248
+    },
+    "metadata_files": 20,
+    "RootReceipt_rows": 27,
+    "ordinary_transactions": 256,
+    "retained_real_W1_proofs_admitted": 1,
+    "new_W1_proofs_generated": 0,
+    "public_read_calls": 2,
+    "original_each_call_deadline_seconds": 2,
+    "actual_public_call_elapsed_ns": [
+      16582794,
+      27161240
+    ],
+    "public_no_retry": true,
+    "response_bytes_written": 204655,
+    "actual_service_join_attempts": 1,
+    "actual_service_join_kind": "joined_ok",
+    "same_lease_AuthenticatedV1_cold_height": 1,
+    "same_packet_tip_and_state_readback": true,
+    "actual_archive_files": 1128,
+    "all_actual_bytes_including_final_receipts": 32260026,
+    "inventory_receipt_bytes": 516413,
+    "execution_receipt_bytes": 6245,
+    "all_source_and_witness_members_rechecked": true,
+    "block_counts_diagnostic_drift": [
+      {
+        "path": "original-preparation.json",
+        "original": 5648,
+        "now": 5656
+      }
+    ],
+    "owned_cgroup_path": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a17590f52e-96a-6b9.service",
+    "owned_cgroup_present_at_review": false
+  },
+  "all_original_inventory_member_SHA_size_devino_rechecked": true,
+  "both_final_receipts_full_byte_fixedpoints_verified": true,
+  "source_tests_and_original_assertions_profiles_limits_unchanged": true,
+  "owned_operator_success_status_observed_once_each": {
+    "VFS004": {
+      "job": "1a175903b28-96a-6b3",
+      "at_unix_ms": 1792973752145,
+      "state": "succeeded",
+      "exit_code": 0,
+      "output_complete": true
+    },
+    "Node005": {
+      "job": "1a17590f52e-96a-6b9",
+      "at_unix_ms": 1792973800972,
+      "state": "succeeded",
+      "exit_code": 0,
+      "output_complete": true
+    }
+  },
+  "Node_preparation_job6b4_failure_separate_from_actual_Node005_job6b9": true,
+  "Node_preparation_failure_raw_reference_pending_exact_path_from_root": false,
+  "original_failures_retained": true,
+  "reviewer_native_build_collector_or_SQLite_execution": false,
+  "original_raw_or_live_sources_modified": false,
+  "full_writer_caller_reader_bridge_qualified": false,
+  "full_W1_4097_qualified": false,
+  "full_guard_enabled": false,
+  "W1_cost_or_hardware_or_structured_inputs_qualified": false,
+  "SQLite_WAL_reset_dependency_resolved": false,
+  "ordinary_three_round_model_upgrade_qualified": false,
+  "WAN72h_qualified": false,
+  "exact_committed_source_qualified": false,
+  "merge_ready": false,
+  "task_complete": false,
+  "Node_preparation_failure": {
+    "job": "1a1759046cf-96a-6b4",
+    "actual_owner_state": "failed",
+    "actual_owner_exit": 1,
+    "output_complete": true,
+    "stderr_bytes": 978,
+    "stdout_bytes": 0,
+    "stderr_original_path": "work/ci-follow/pn1-node-authenticated-native-io-root-control-20261025-001/native005-preparation-failure.stderr.log",
+    "stderr_sha256": "589978bf7f3edb9020f42f0ecbae9143f3e1b961a2485e30b6a8b04c2c236c44",
+    "raw_read_sha256": "897f673a3e1d35f0b45ac67e8fac7d55cb4c3057e290c08460f6afcc8fcd5405",
+    "raw_terminal_status_sha256": "48b1eb39435386949e72b33850c5869baf85990460234b5d34195bedef3ac9d0",
+    "root_precheck_counted_extra_package_binary": true,
+    "FileNotFound_on_admission_read_before_output_mkdir_or_native": true,
+    "not_reclassified_as_actual_Node005_native_failure": true,
+    "not_hidden_or_deleted_or_retried_blindly": true,
+    "actual_Node005_native_job": "1a17590f52e-96a-6b9"
+  },
+  "finalized_review_utc": "2026-10-26T00:21:24.348134+00:00"
+}

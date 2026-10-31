@@ -1,0 +1,210 @@
+{
+  "acceptance_granted": false,
+  "advisory_databases": [
+    {
+      "archive": "advisories-0-2295466c4e9df26647fd67d8fa1c705ac2fc7f81.tar.gz",
+      "commit": "2295466c4e9df26647fd67d8fa1c705ac2fc7f81",
+      "commit_time": "2026-10-30T12:12:39+01:00",
+      "origin": "https://github.com/RustSec/advisory-db",
+      "tree": "a95b9514c0f6e6af352c9c7845720fe73a964d1e"
+    }
+  ],
+  "artifact_sha256": {
+    "advisories-0-2295466c4e9df26647fd67d8fa1c705ac2fc7f81.tar.gz": "00ef852830f0270e31f391a3d6201780230166e74c83a4c765bbb5db9d83014c",
+    "archive-0.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "check-0.jsonl": "c49009bd267092a88ae0db7eb73ca386d77725467a23b30b25df5badb81535e8",
+    "check-1.jsonl": "6a976760f3782034efe9be597c035748f5d2c7a3664ac407f5199b8b94471dfa",
+    "fetch-advisories.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "fetch-crates-0.log": "ce534517bc04a3bc2a6a0d066971640d24361a1bb1ed53cd6a2f0131cfa0618b",
+    "fetch-crates-1.log": "ca8d9e830e734e5aec6bf1fe670264d2064b484016457e5de2dac4503c7ce0a9",
+    "tool-version.log": "1758f5ea93d8ad3585079f05c19358b7bb969cce1bf6c7bdab6659a8cd1ef6b8"
+  },
+  "cargo_deny_sha256": "20cf3f92d873bb262075c3b8539e65c1dc0aed9cf89946e5e292b546b491e2ff",
+  "error": "dependency policy refused one or more graphs; inspect retained diagnostics",
+  "input_sha256": {
+    "deny.toml": "c4543ba5da36d0dea6480d39e107b77efe3f4c6dfc6d86723c1c794407472954",
+    "scripts/ci/run_supply_chain.py": "3ba25e784966e4d52efe22d400ddb73657a02550a8d7ac955c2968b652d839f6",
+    "scripts/ci/tool-versions.env": "b752f1fc81cdd1b4a2ca852e30f1597b27c08af13cef9259d066dbae825d1408",
+    "tests/fuzz/Cargo.lock": "6b60a250a7e3cc139b2489fbd4f0871f723fe8ad6e8ecf6f85edd19f92e741ef",
+    "trillionnium/Cargo.lock": "9daaf7ce63bfcab58efc8e08ca5134bfba9c97ec7e615cd6ad80e54be30b64cb"
+  },
+  "observations": [
+    {
+      "command": [
+        "/home/runner/work/_temp/trnm-ci-tools/deny-0.20.2/bin/cargo-deny",
+        "--version"
+      ],
+      "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+      "elapsed_ns": 2069430055,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "cf84391a474ee1f3ac78f4a907bd95184b816a54",
+      "log": "tool-version.log",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "cargo",
+        "fetch",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml"
+      ],
+      "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+      "elapsed_ns": 5783193087,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "cf84391a474ee1f3ac78f4a907bd95184b816a54",
+      "log": "fetch-crates-0.log",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "cargo",
+        "fetch",
+        "--locked",
+        "--manifest-path",
+        "tests/fuzz/Cargo.toml"
+      ],
+      "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+      "elapsed_ns": 2225892437,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "cf84391a474ee1f3ac78f4a907bd95184b816a54",
+      "log": "fetch-crates-1.log",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "/home/runner/work/_temp/trnm-ci-tools/deny-0.20.2/bin/cargo-deny",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--config",
+        "deny.toml",
+        "--locked",
+        "fetch",
+        "db"
+      ],
+      "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+      "elapsed_ns": 2365035034,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "cf84391a474ee1f3ac78f4a907bd95184b816a54",
+      "log": "fetch-advisories.log",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "git",
+        "-C",
+        "/home/runner/work/_temp/cargo-rust-baseline-shards/advisory-dbs/advisory-db-3157b0e258782691",
+        "archive",
+        "--format=tar.gz",
+        "--output=/home/runner/work/_temp/ci-observations/supply-chain/advisories-0-2295466c4e9df26647fd67d8fa1c705ac2fc7f81.tar.gz",
+        "2295466c4e9df26647fd67d8fa1c705ac2fc7f81"
+      ],
+      "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+      "elapsed_ns": 2132687287,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "cf84391a474ee1f3ac78f4a907bd95184b816a54",
+      "log": "archive-0.log",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "/home/runner/work/_temp/trnm-ci-tools/deny-0.20.2/bin/cargo-deny",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--config",
+        "deny.toml",
+        "--all-features",
+        "--frozen",
+        "--format",
+        "json",
+        "check",
+        "advisories",
+        "licenses",
+        "bans",
+        "sources"
+      ],
+      "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+      "elapsed_ns": 2678175362,
+      "executed": true,
+      "exit_code": 1,
+      "expected_source": "cf84391a474ee1f3ac78f4a907bd95184b816a54",
+      "log": "check-0.jsonl",
+      "process_exit_code": 1,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "/home/runner/work/_temp/trnm-ci-tools/deny-0.20.2/bin/cargo-deny",
+        "--manifest-path",
+        "tests/fuzz/Cargo.toml",
+        "--config",
+        "deny.toml",
+        "--all-features",
+        "--frozen",
+        "--format",
+        "json",
+        "check",
+        "advisories",
+        "licenses",
+        "bans",
+        "sources"
+      ],
+      "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+      "elapsed_ns": 2534638178,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "cf84391a474ee1f3ac78f4a907bd95184b816a54",
+      "log": "check-1.jsonl",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    }
+  ],
+  "result": "FAIL",
+  "schema": "trnm-supply-chain-v1",
+  "source": {
+    "commit": "cf84391a474ee1f3ac78f4a907bd95184b816a54",
+    "source_state": "committed-clean",
+    "tracked_bytes": 977895812,
+    "tracked_entries": 7561,
+    "tracked_worktree_verified": true,
+    "tree": "c7609a5502641739505862f2e4cd3c1e06ce1041"
+  },
+  "source_consistent": true,
+  "source_expected": "cf84391a474ee1f3ac78f4a907bd95184b816a54",
+  "tools": {
+    "TRNM_CARGO_DENY_VERSION": "0.20.2",
+    "TRNM_CARGO_FUZZ_VERSION": "0.13.2",
+    "TRNM_FUZZ_TOOLCHAIN": "nightly-2026-10-01"
+  }
+}

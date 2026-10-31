@@ -1,0 +1,9 @@
+{
+  "schema": "pon-history-shared-resource-observation-v1",
+  "observed_unix_ns": 1793410662683258482,
+  "attribution": "snapshot after failed rustc, no before-run OOM counter exists; does not establish why SIGKILL occurred",
+  "disk_available_bytes": 438358016,
+  "memory.events": "low 0\nhigh 0\nmax 5246637\noom 1\noom_kill 1\noom_group_kill 0\n",
+  "memory.current": "8350064640\n",
+  "memory.max": "8589934592\n"
+}

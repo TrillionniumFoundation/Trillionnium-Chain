@@ -1,0 +1,12 @@
+{
+  "schema": "actual-readback-process-v1",
+  "exit_code": 0,
+  "elapsed_ns": 15424802363,
+  "child_user_cpu_seconds": 13.431512,
+  "child_system_cpu_seconds": 1.357038,
+  "child_max_rss_kib": 307904,
+  "reader_sha256_before": "d028c9095231083e91cf2befe92bb7d868d17ebf5ee6b18e6d9b780d667174b6",
+  "reader_sha256_after": "d028c9095231083e91cf2befe92bb7d868d17ebf5ee6b18e6d9b780d667174b6",
+  "new_native_experiment": false,
+  "output": "/workspace/scratch/301262829a43/pon-arm64-ci-readback/derived-001"
+}

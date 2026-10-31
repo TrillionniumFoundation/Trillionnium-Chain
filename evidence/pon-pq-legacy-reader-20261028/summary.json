@@ -1,0 +1,178 @@
+{
+  "complete_reader_methods": 74,
+  "environment": {
+    "cryptography": "50.0.2",
+    "cryptography_openssl": "OpenSSL 4.0.3 29 Sep 2026",
+    "executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "machine": "x86_64",
+    "numpy": "2.3.5",
+    "platform": "Linux-6.18.55-x86_64-with-glibc2.39",
+    "python": "3.12.14",
+    "scope": "Python evidence reader regression only"
+  },
+  "evidence_source_methods": 38,
+  "failed_initial_reader_subcases_retained": 5,
+  "frozen_local_base": "969150c1f1ad1821ee5ac3c11f0535677e9bb8e9",
+  "full_evidence_package_qualified": false,
+  "full_workspace_qualified": false,
+  "inherited_object_references_preserved": true,
+  "initial_pq_source_refusal_retained": true,
+  "local_git_inherited_objects_complete": false,
+  "missing_inherited_blob": "7f4d96ac57a7907f68f186f302da8082b215bd4e",
+  "new_recent_batch_workflow_executed": false,
+  "observations": [
+    {
+      "budget_seconds": 1800,
+      "elapsed_ns": 214882104394,
+      "exit_code": 1,
+      "passed": false,
+      "source_unchanged_during_run": true,
+      "stem": "reader-suite-01",
+      "tests_run": 67,
+      "timed_out": false,
+      "unittest_seconds": 214.6
+    },
+    {
+      "budget_seconds": 180,
+      "elapsed_ns": 18859028189,
+      "exit_code": 0,
+      "passed": true,
+      "source_unchanged_during_run": true,
+      "stem": "reader-repair-targeted-02",
+      "tests_run": 9,
+      "timed_out": false,
+      "unittest_seconds": 18.561
+    },
+    {
+      "budget_seconds": 1800,
+      "elapsed_ns": 198809567345,
+      "exit_code": 0,
+      "passed": true,
+      "source_unchanged_during_run": true,
+      "stem": "reader-suite-final",
+      "tests_run": 74,
+      "timed_out": false,
+      "unittest_seconds": 198.537
+    },
+    {
+      "budget_seconds": 120,
+      "elapsed_ns": 4643320864,
+      "exit_code": 0,
+      "passed": true,
+      "source_unchanged_during_run": true,
+      "stem": "source-negatives-final",
+      "tests_run": 34,
+      "timed_out": false,
+      "unittest_seconds": 4.438
+    },
+    {
+      "budget_seconds": 120,
+      "elapsed_ns": 2133925601,
+      "exit_code": 0,
+      "passed": true,
+      "source_unchanged_during_run": true,
+      "stem": "evidence-sources-final",
+      "tests_run": 38,
+      "timed_out": false,
+      "unittest_seconds": 1.997
+    },
+    {
+      "budget_seconds": 120,
+      "elapsed_ns": 171183679,
+      "exit_code": 1,
+      "passed": false,
+      "source_unchanged_during_run": true,
+      "stem": "ci-contract-composed",
+      "tests_run": null,
+      "timed_out": false,
+      "unittest_seconds": null
+    },
+    {
+      "budget_seconds": 120,
+      "elapsed_ns": 227685165,
+      "exit_code": 0,
+      "passed": true,
+      "source_unchanged_during_run": true,
+      "stem": "ci-contract-composed-final",
+      "tests_run": null,
+      "timed_out": false,
+      "unittest_seconds": null
+    }
+  ],
+  "original_methods_retained": 53,
+  "original_parser_false_accepts_retained": 2,
+  "p1_complete": false,
+  "parent_tree": "f90cd9f63fce5fb785061419c9cb12b57ae24873",
+  "production_activation": false,
+  "public_network_ready": false,
+  "raw_archive": {
+    "all_members_readback": true,
+    "bytes": 2094026,
+    "members": 60,
+    "path": "observations.tar.gz",
+    "sha256": "102905d011080c9935263a2559c7cfaf2fa7ecad1123c7fe2b579b24da8a90fd",
+    "tar_bytes": 6195200
+  },
+  "reader_helpers": {
+    "check_public_readiness_evidence.py": "16a4919760b350d0fc219dac52858597ea202073d3d6602dcdde28037e488bd0",
+    "pq_legacy_source_contract.py": "3e085ccf4f4a2855a10348edede86f3eebd8e0c7913da837e605fb062bd873ce",
+    "rust_source_tokens.py": "32921977673afbae29d7b6cf037605621e7770243902a0118af1cd9309e5f6c6",
+    "test_public_readiness_evidence.py": "5ecf1b152fa9f91aee5731b16223de75ad200faaf4f7cc259b0b4fbbbaa2cf11",
+    "test_rust_source_tokens.py": "0bef50998b5b7377543efa3179917c1d672bb0ee926530dcd47d337d50409807"
+  },
+  "remote_parent": "a1e40747746772d1326bb3e656aec4ba10440147",
+  "runtime_source_changed": false,
+  "schema": "pq-legacy-reader-compatibility-observations-v1",
+  "scope": "legacy evidence source reader, namespace refusal and retained failure observations",
+  "source_identity_join": {
+    "copied_hosted_archives": [
+      {
+        "crc_readback": true,
+        "members": 26,
+        "path": "evidence/pon-pq-hosted-a1e407-20261028/quota.zip",
+        "sha256": "254df2cd97f65c3db6c1a28c98056d4250df7e244b1a69228f07622ad9c0d468"
+      },
+      {
+        "crc_readback": true,
+        "members": 24,
+        "path": "evidence/pon-pq-hosted-a1e407-20261028/accounts.zip",
+        "sha256": "e41e0e18fa99e98b8e005de824baa04dd11a07ecdd7c373cc62af09463d331be"
+      }
+    ],
+    "equal_after_extras": 1541,
+    "frozen_local_base": "969150c1f1ad1821ee5ac3c11f0535677e9bb8e9",
+    "later_composition_differences": [
+      {
+        "composed_sha256": "6a3422b7a34113a5ebfbd87655f23538684c5a80c8a56b64b2f0a5056f32ca9f",
+        "observed_sha256": "e946e2582d310f7e488ec2750b73f685d3891f137fc0861385c79bef70c8dc87",
+        "path": ".github/workflows/pon-recent-batch-acceptance.yml"
+      }
+    ],
+    "p1_complete": false,
+    "parent_tree": "f90cd9f63fce5fb785061419c9cb12b57ae24873",
+    "production_activation": false,
+    "public_network_ready": false,
+    "reader_helpers": {
+      "scripts/ci/check_public_readiness_evidence.py": "16a4919760b350d0fc219dac52858597ea202073d3d6602dcdde28037e488bd0",
+      "scripts/ci/pq_legacy_source_contract.py": "3e085ccf4f4a2855a10348edede86f3eebd8e0c7913da837e605fb062bd873ce",
+      "scripts/ci/rust_source_tokens.py": "32921977673afbae29d7b6cf037605621e7770243902a0118af1cd9309e5f6c6",
+      "scripts/ci/test_public_readiness_evidence.py": "5ecf1b152fa9f91aee5731b16223de75ad200faaf4f7cc259b0b4fbbbaa2cf11",
+      "scripts/ci/test_rust_source_tokens.py": "0bef50998b5b7377543efa3179917c1d672bb0ee926530dcd47d337d50409807"
+    },
+    "reader_observation": "reader-suite-final",
+    "recorded_inputs": 1542,
+    "remote_parent": "a1e40747746772d1326bb3e656aec4ba10440147",
+    "runtime_git_diff_empty": true,
+    "runtime_inputs_count": 1170,
+    "runtime_inputs_unchanged": true,
+    "workflow_guards": {
+      "actual_new_workflow_executed": false,
+      "all_match_actual_git_blobs": true,
+      "all_retained": 16,
+      "only_these_literal_substitutions": true,
+      "reviewed_literal_updates": 4,
+      "unchanged": 12
+    }
+  },
+  "source_integrity_negative_methods": 34
+}

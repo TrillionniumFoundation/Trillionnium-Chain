@@ -1,0 +1,16 @@
+{
+  "all_original_bounds_unchanged": true,
+  "artifact": 12792335015,
+  "artifact_sha256": "b4605e41417bca17ed85e7e253642f649eb7eaeb9778153a8e60b4bb1a1297f6",
+  "fix_native_verdict": "NOT_RUN_AT_PREPARATION",
+  "job": 122625439094,
+  "original_clippy_returncode": 101,
+  "original_native_returncode": -6,
+  "original_native_wall_seconds": 427.692789821,
+  "production_qualified": false,
+  "run": 40630482334,
+  "schema": "history-538-retention-regression-observation-v1",
+  "source": "69973c229bafe9ff97c278c29f7b67ec5012c3dd",
+  "tree": "22f32e05bacd97635f3f993998056cc3722f3a46",
+  "whole_history_p0_closed": false
+}

@@ -1,0 +1,17 @@
+{
+  "recorded_utc": "2026-10-26T11:33:32.927940+00:00",
+  "purpose": "same 60s stack diagnostic after original timeout; not replacing original result",
+  "argv": [
+    "python3",
+    "-B",
+    "-c",
+    "import faulthandler,runpy,sys; sys.path.insert(0,'scripts/ci'); faulthandler.dump_traceback_later(5,repeat=True); runpy.run_path('scripts/ci/check_repository.py',run_name='__main__')"
+  ],
+  "timeout_seconds": 60,
+  "elapsed_seconds": 60.007917747003376,
+  "returncode": -9,
+  "error": "NATIVE_EXECUTOR_TIMEOUT",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "e67e326507b7c0dd533236eb0dcc7c1bcc4bc35be44ee488c7b7c7c51b6c3fa2",
+  "full_source_check_qualified": false
+}

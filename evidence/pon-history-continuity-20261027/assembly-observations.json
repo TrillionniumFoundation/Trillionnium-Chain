@@ -1,0 +1,19 @@
+{
+  "observations": [
+    {
+      "attempt": 1,
+      "result": "FileNotFoundError",
+      "reason": "sparse checkout had no evidence parent directory; no source edited before failure"
+    },
+    {
+      "attempt": 2,
+      "result": "AssertionError",
+      "reason": "assembler expected OK at end of log, but source-integrity suite prints expected negative receipts after its successful 34-test terminal"
+    },
+    {
+      "attempt": 3,
+      "result": "PASS",
+      "validation": "exact decompression/hash checks and unittest terminal with counts; no test log modified"
+    }
+  ]
+}

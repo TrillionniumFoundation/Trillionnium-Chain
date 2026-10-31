@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/pn1-V19-new-clean-source-qualification-source-20261026-001/ownedsource/scripts/run_pon_native_io_component.py", line 1118, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/pn1-V19-new-clean-source-qualification-source-20261026-001/ownedsource/scripts/run_pon_native_io_component.py", line 1096, in main
+    resources()
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/pn1-V19-new-clean-source-qualification-source-20261026-001/ownedsource/scripts/run_pon_native_io_component.py", line 115, in resources
+    validate_resources(observed, 10)
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/pn1-V19-new-clean-source-qualification-source-20261026-001/ownedsource/scripts/run_pon_w1_native_campaign.py", line 119, in validate_resources
+    require(observation['nice'] == expected_nice, 'ACTUAL_EXPECTED_NICE_REQUIRED')
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/pn1-V19-new-clean-source-qualification-source-20261026-001/ownedsource/scripts/run_pon_w1_native_campaign.py", line 51, in require
+    raise ValueError(message)
+ValueError: ACTUAL_EXPECTED_NICE_REQUIRED

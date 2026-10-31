@@ -1,0 +1,7 @@
+
+running 2 tests
+test public_task_bootstrap::tests::bootstrap_is_exact_public_genesis_material_and_never_useful_credit ... ok
+test public_task_bootstrap::tests::public_bundle_drives_original_native_mining_and_cold_replay ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 721 filtered out; finished in 0.04s
+

@@ -1,0 +1,18 @@
+{
+  "schema": "pon-history-native-source-binding-v4",
+  "binary": "/tmp/pon-history-final-20261027/debug/deps/trnm_pon_node-aa155a388a5d67f4",
+  "binary_sha256": "ce6e82f30af1a9cc7bf05ddd8ae0b7a686e73ad9c85c90290bf89956b5ebaf99",
+  "source_sha256": "2071fc0afeb06c7ecd38e0db7cebe728c4f38ce6d44e522c497e733075789220",
+  "source_stable": true,
+  "continuous_cpu_tests_passed": 6,
+  "history_exact_tests": [
+    "ingress::history_activation_tests::complete_history_checks_resources_inside_activation_and_can_retry",
+    "ingress::tests::history_paid_epoch_crash_cut_refuses_new_cold_credit",
+    "ingress::tests::malformed_paid_history_rejection_closes_known_epoch_without_poisoning_cold_reopen"
+  ],
+  "native_test_inventory": 724,
+  "all_targets_clippy": "PASS",
+  "test_debug_info": "disabled for space; original package optimization settings unchanged",
+  "scope": "actual selected component regressions, not full workspace or durable continuous History import qualification",
+  "production_qualification": false
+}

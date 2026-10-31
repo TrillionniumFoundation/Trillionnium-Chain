@@ -1,0 +1,23 @@
+test_unsupported_publish_and_terminal_failure_have_no_fallback (original_mock_target_tests.OuterWriterV2Tests.test_unsupported_publish_and_terminal_failure_have_no_fallback) ... FAIL
+test_failed_first_stream_publish_keeps_observed_child_and_both_buffer_denominators (original_mock_target_tests.OuterWriterV2Tests.test_failed_first_stream_publish_keeps_observed_child_and_both_buffer_denominators) ... FAIL
+
+======================================================================
+FAIL: test_unsupported_publish_and_terminal_failure_have_no_fallback (original_mock_target_tests.OuterWriterV2Tests.test_unsupported_publish_and_terminal_failure_have_no_fallback)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/Chain-004-trusted-owner-bootstrap-source-candidate-20261027-001/original-fixtures/test_pon_identity_churn.py", line 727, in test_unsupported_publish_and_terminal_failure_have_no_fallback
+    with self.assertRaises(OSError): owner.json('entry.json', {'actual':True})
+AssertionError: OSError not raised
+
+======================================================================
+FAIL: test_failed_first_stream_publish_keeps_observed_child_and_both_buffer_denominators (original_mock_target_tests.OuterWriterV2Tests.test_failed_first_stream_publish_keeps_observed_child_and_both_buffer_denominators)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/Chain-004-trusted-owner-bootstrap-source-candidate-20261027-001/original-fixtures/test_pon_identity_churn.py", line 835, in test_failed_first_stream_publish_keeps_observed_child_and_both_buffer_denominators
+    with patch.object(collector, 'publish_new', side_effect=inject), \
+AssertionError: OSError not raised
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.005s
+
+FAILED (failures=2)

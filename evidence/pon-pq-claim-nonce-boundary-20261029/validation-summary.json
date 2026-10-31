@@ -1,0 +1,91 @@
+{
+  "base_commit": "42ab57f1c5065d50f981cc337c417ef0ab7dc096",
+  "base_tree": "7720e95c8d362d2a4017b0cf801ef169f54862b0",
+  "status": "locally-validated-candidate-not-p1-qualification",
+  "defect": "claimed imported account nonce must exceed its anchored source nonce",
+  "red_original_runtime_returncode": 101,
+  "green_native_passed": 126,
+  "green_native_failed": 0,
+  "retained_original_ignored": 6,
+  "pq_reader_controls": 49,
+  "source_integrity_controls": 34,
+  "full_locked_cargo_graph": {
+    "packages": 173,
+    "workspace_members": 26,
+    "sha256": "887b342cae9cb33b65e50c485dd4b36e3c1c16577881fdbf05643439e56834c2"
+  },
+  "check_results": [
+    {
+      "name": "fmt-final",
+      "command": [
+        "/tmp/hepta-finish2-tools/installed/bin/cargo-fmt",
+        "fmt",
+        "--all",
+        "--check",
+        "--manifest-path",
+        "trillionnium/Cargo.toml"
+      ],
+      "returncode": 0,
+      "elapsed_s": 16.70129968500987
+    },
+    {
+      "name": "inventory-final",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.09047016300610267
+    },
+    {
+      "name": "metadata-final",
+      "command": [
+        "cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1",
+        "--manifest-path",
+        "trillionnium/Cargo.toml"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.16735299900756218
+    },
+    {
+      "name": "clippy-final",
+      "command": [
+        "/tmp/hepta-finish2-tools/installed/bin/cargo-clippy",
+        "clippy",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-mvcc-fee",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--lib",
+        "--test",
+        "pq2_authority_capacity",
+        "--test",
+        "pq3_quota_authority",
+        "--test",
+        "pq4_task_authority",
+        "--test",
+        "pq5_task_renewal",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "returncode": 0,
+      "elapsed_s": 16.96507001700229
+    }
+  ],
+  "scope_limits": [
+    "The migration checkpoint in the new unit assertion is the already documented synthetic M06 trust fixture, not a W1 proof.",
+    "This hardens inconsistent-State rejection; it does not demonstrate a forged signed transaction or physical rollback resistance.",
+    "The three original complete native Node migration tests and the full 205-test hosted suite have not run on this changed candidate.",
+    "Independent prior-PQ registry, source finality/retirement, ordinary network/operational authorization remain outside this change."
+  ],
+  "rustc": "rustc 1.96.0 (ac68faa20 2026-05-25)"
+}

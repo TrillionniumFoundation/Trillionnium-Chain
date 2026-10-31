@@ -1,0 +1,1039 @@
+{
+  "schema": "pon-history-successor-ci-metadata-readback-v1",
+  "retrieved_at_utc": "2026-10-30T01:21:05.222Z",
+  "source_commit": "540d72356a921da31dde1113537382e5c0f0c4fd",
+  "scope": "GitHub metadata and selected decoded log terminals read back from existing historical runs. No new execution, no reinterpretation of a strict failure as a successor success, and no inferred paired timing result.",
+  "query": {
+    "commit_sha": "540d72356a921da31dde1113537382e5c0f0c4fd",
+    "repo_full_name": "TrillionniumFoundation/Trillionnium-Chain"
+  },
+  "runs": [
+    {
+      "id": 40932472022,
+      "jobs": [
+        {
+          "id": 123654220247,
+          "name": "history-native",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 40932472022,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Allocate isolated output and Cargo paths",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Checkout the exact candidate",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Verify every tracked byte and original project boundary",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Install the pinned release compiler",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Reject missing or substituted mandatory tests",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Retain exact release binary and run all original 21 plus first-Startup closure",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Collect actual terminal state and unchanged source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Retain complete source, logs, process receipts and native fixtures",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9
+            },
+            {
+              "name": "Post Checkout the exact candidate",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 18
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 19
+            }
+          ]
+        },
+        {
+          "id": 123663043503,
+          "name": "history-graph-resource-v1",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 40932472022,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Allocate independent explicit v1 physical evidence",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Checkout the same exact candidate",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Obtain the unchanged original gate's actual retained executable",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Verify source and finite reader plus real directory-race controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Provision only this run's root-leased original fixed parent",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Execute all 23 physical mutations and complete ordinary continuations",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Close only this run's original root lease",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Retain exact final source and explicit physical terminal",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9
+            },
+            {
+              "name": "Preserve complete successful, failed and partial physical evidence",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10
+            },
+            {
+              "name": "Post Checkout the same exact candidate",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 20
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 21
+            }
+          ]
+        },
+        {
+          "id": 123663043507,
+          "name": "history-lifecycle",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 40932472022,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Allocate independent lifecycle lane output",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Checkout the same exact candidate",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Obtain the original gate's exact retained binary and terminal",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Verify current tracked source and independent lane contracts",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Run every fresh lifecycle recovery case under its own 900-second bound",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Retain independent lane actual terminal state",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Retain lifecycle source, logs, exact binary, closed-process receipts and native fixtures",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Post Checkout the same exact candidate",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 16
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 17
+            }
+          ]
+        },
+        {
+          "id": 123663043532,
+          "name": "history-reorg-continuation",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 40932472022,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Allocate independent reorg lane output",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Checkout the same exact candidate",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Obtain the original gate's exact retained binary and terminal",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Verify current tracked source and independent lane contracts",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Run every fresh reorg continuation case under its own 900-second bound",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Retain independent lane actual terminal state",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Retain reorg source, logs, exact binary, closed-process receipts and native fixtures",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Post Checkout the same exact candidate",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 16
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 17
+            }
+          ]
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 12925980108,
+          "name": "history-reorg-continuation-540d72356a921da31dde1113537382e5c0f0c4fd-1",
+          "size_in_bytes": 20117571,
+          "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/12925980108",
+          "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/12925980108/zip",
+          "expired": false,
+          "created_at": "2026-10-29T19:05:20Z",
+          "expires_at": "2026-11-28T19:05:18Z",
+          "updated_at": "2026-10-29T19:05:20Z",
+          "digest": "sha256:ea7cd1497d7a5d44da1a8e0ec36d2d5072346747eeed5fd9fc7d97c6f274ce01",
+          "workflow_run": {
+            "id": 40932472022,
+            "repository_id": 1323087357,
+            "head_repository_id": 1323087357,
+            "head_branch": "fix/chain-native-convergence-20261029",
+            "head_sha": "540d72356a921da31dde1113537382e5c0f0c4fd"
+          }
+        },
+        {
+          "id": 12924606756,
+          "name": "history-graph-resource-v1-540d72356a921da31dde1113537382e5c0f0c4fd-1",
+          "size_in_bytes": 16952753,
+          "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/12924606756",
+          "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/12924606756/zip",
+          "expired": false,
+          "created_at": "2026-10-29T18:54:22Z",
+          "expires_at": "2026-11-28T18:54:19Z",
+          "updated_at": "2026-10-29T18:54:22Z",
+          "digest": "sha256:b0fa1e269f5956616e8fb55556b530a38aed1c4bbe196e8581f308d143472f14",
+          "workflow_run": {
+            "id": 40932472022,
+            "repository_id": 1323087357,
+            "head_repository_id": 1323087357,
+            "head_branch": "fix/chain-native-convergence-20261029",
+            "head_sha": "540d72356a921da31dde1113537382e5c0f0c4fd"
+          }
+        },
+        {
+          "id": 12923954216,
+          "name": "history-lifecycle-540d72356a921da31dde1113537382e5c0f0c4fd-1",
+          "size_in_bytes": 18552377,
+          "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/12923954216",
+          "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/12923954216/zip",
+          "expired": false,
+          "created_at": "2026-10-29T18:58:45Z",
+          "expires_at": "2026-11-28T18:58:42Z",
+          "updated_at": "2026-10-29T18:58:45Z",
+          "digest": "sha256:c02f6b4736a354fb2406d8cc5c27af00fbceabd0c67a9809171a0488aa50e9e1",
+          "workflow_run": {
+            "id": 40932472022,
+            "repository_id": 1323087357,
+            "head_repository_id": 1323087357,
+            "head_branch": "fix/chain-native-convergence-20261029",
+            "head_sha": "540d72356a921da31dde1113537382e5c0f0c4fd"
+          }
+        },
+        {
+          "id": 12923169959,
+          "name": "history-native-540d72356a921da31dde1113537382e5c0f0c4fd-1",
+          "size_in_bytes": 21172977,
+          "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/12923169959",
+          "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/12923169959/zip",
+          "expired": false,
+          "created_at": "2026-10-29T18:53:10Z",
+          "expires_at": "2026-11-28T18:53:08Z",
+          "updated_at": "2026-10-29T18:53:10Z",
+          "digest": "sha256:f6b981bfbf1e75e907118b851fe4ebd0c32c807f7e5d46c0d96b0016125c7626",
+          "workflow_run": {
+            "id": 40932472022,
+            "repository_id": 1323087357,
+            "head_repository_id": 1323087357,
+            "head_branch": "fix/chain-native-convergence-20261029",
+            "head_sha": "540d72356a921da31dde1113537382e5c0f0c4fd"
+          }
+        }
+      ]
+    },
+    {
+      "id": 40932471976,
+      "jobs": [
+        {
+          "id": 123654215701,
+          "name": "original native campaign (history-account-graph-resource-fence-v1, x64, head, release)",
+          "status": "completed",
+          "conclusion": "failure",
+          "run_id": 40932471976,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Reserve new output and isolated Cargo directories",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Checkout the immutable candidate head",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Verify actual tracked bytes and original source boundary",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Require strict isolated-verifier report controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Require strict owner-death evidence controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Reject foreign configured parents and forged cleanup evidence",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Exercise real fresh-slice creation and exclusive cleanup before native work",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Provision the original separate fixed History parent",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9
+            },
+            {
+              "name": "Install the source-pinned compiler and fetch locked dependencies",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10
+            },
+            {
+              "name": "Prepare the exact original test runner without changing source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11
+            },
+            {
+              "name": "Run three original campaigns under verified actual limits",
+              "status": "completed",
+              "conclusion": "failure",
+              "number": 12
+            },
+            {
+              "name": "Require actual controller-death closure with the same release binary",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13
+            },
+            {
+              "name": "Close only parents bound to this run by a root-owned exclusive lease",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14
+            },
+            {
+              "name": "Preserve final source verification and all partial artifact hashes",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15
+            },
+            {
+              "name": "Upload successful, failed and partial observations",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 16
+            },
+            {
+              "name": "Post Checkout the immutable candidate head",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 32
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 33
+            }
+          ]
+        },
+        {
+          "id": 123654216078,
+          "name": "original native campaign (strict-every-native-checkpoint-v1, x64, head, release)",
+          "status": "completed",
+          "conclusion": "failure",
+          "run_id": 40932471976,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Reserve new output and isolated Cargo directories",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Checkout the immutable candidate head",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Verify actual tracked bytes and original source boundary",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Require strict isolated-verifier report controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Require strict owner-death evidence controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Reject foreign configured parents and forged cleanup evidence",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Exercise real fresh-slice creation and exclusive cleanup before native work",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Provision the original separate fixed History parent",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9
+            },
+            {
+              "name": "Install the source-pinned compiler and fetch locked dependencies",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10
+            },
+            {
+              "name": "Prepare the exact original test runner without changing source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11
+            },
+            {
+              "name": "Run three original campaigns under verified actual limits",
+              "status": "completed",
+              "conclusion": "failure",
+              "number": 12
+            },
+            {
+              "name": "Require actual controller-death closure with the same release binary",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13
+            },
+            {
+              "name": "Close only parents bound to this run by a root-owned exclusive lease",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14
+            },
+            {
+              "name": "Preserve final source verification and all partial artifact hashes",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15
+            },
+            {
+              "name": "Upload successful, failed and partial observations",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 16
+            },
+            {
+              "name": "Post Checkout the immutable candidate head",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 32
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 33
+            }
+          ]
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 12923242742,
+          "name": "pon-native-campaign-history-account-graph-resource-fence-v1-x64-head-release-540d72356a921da31dde1113537382e5c0f0c4fd-1",
+          "size_in_bytes": 67438779,
+          "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/12923242742",
+          "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/12923242742/zip",
+          "expired": false,
+          "created_at": "2026-10-29T18:46:07Z",
+          "expires_at": "2026-11-28T18:46:01Z",
+          "updated_at": "2026-10-29T18:46:07Z",
+          "digest": "sha256:f5e6d96be33acdd7a2af532dafacf9738e9cefeff80167e22eff71c189954faf",
+          "workflow_run": {
+            "id": 40932471976,
+            "repository_id": 1323087357,
+            "head_repository_id": 1323087357,
+            "head_branch": "fix/chain-native-convergence-20261029",
+            "head_sha": "540d72356a921da31dde1113537382e5c0f0c4fd"
+          }
+        },
+        {
+          "id": 12922954840,
+          "name": "pon-native-campaign-strict-every-native-checkpoint-v1-x64-head-release-540d72356a921da31dde1113537382e5c0f0c4fd-1",
+          "size_in_bytes": 53199149,
+          "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/12922954840",
+          "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/12922954840/zip",
+          "expired": false,
+          "created_at": "2026-10-29T18:47:04Z",
+          "expires_at": "2026-11-28T18:46:58Z",
+          "updated_at": "2026-10-29T18:47:04Z",
+          "digest": "sha256:ff40b0e4346a9b3180298dc4f137ce2747fa39847e2e418e10f344d9434e46ae",
+          "workflow_run": {
+            "id": 40932471976,
+            "repository_id": 1323087357,
+            "head_repository_id": 1323087357,
+            "head_branch": "fix/chain-native-convergence-20261029",
+            "head_sha": "540d72356a921da31dde1113537382e5c0f0c4fd"
+          }
+        }
+      ]
+    },
+    {
+      "id": 40932471986,
+      "jobs": [
+        {
+          "id": 123654218705,
+          "name": "pure raw History (history-account-graph-resource-fence-v1, x64, head, release)",
+          "status": "completed",
+          "conclusion": "failure",
+          "run_id": 40932471986,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Reserve new output and isolated Cargo directories",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Checkout the immutable candidate head",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Verify actual tracked bytes and original source boundary",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Require strict isolated-verifier report controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Require strict owner-death evidence controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Reject foreign configured parents and forged cleanup evidence",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Exercise real fresh-slice creation and exclusive cleanup before native work",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Provision the original separate fixed History parent",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9
+            },
+            {
+              "name": "Install the source-pinned compiler and fetch locked dependencies",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10
+            },
+            {
+              "name": "Prepare the exact original test runner without changing source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11
+            },
+            {
+              "name": "Run three original campaigns under verified actual limits",
+              "status": "completed",
+              "conclusion": "failure",
+              "number": 12
+            },
+            {
+              "name": "Require actual controller-death closure with the same release binary",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13
+            },
+            {
+              "name": "Close only parents bound to this run by a root-owned exclusive lease",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14
+            },
+            {
+              "name": "Preserve final source verification and all partial artifact hashes",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15
+            },
+            {
+              "name": "Upload successful, failed and partial observations",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 16
+            },
+            {
+              "name": "Post Checkout the immutable candidate head",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 32
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 33
+            }
+          ]
+        },
+        {
+          "id": 123654219168,
+          "name": "pure raw History (strict-every-native-checkpoint-v1, x64, head, release)",
+          "status": "completed",
+          "conclusion": "failure",
+          "run_id": 40932471986,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Reserve new output and isolated Cargo directories",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Checkout the immutable candidate head",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Verify actual tracked bytes and original source boundary",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Require strict isolated-verifier report controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Require strict owner-death evidence controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Reject foreign configured parents and forged cleanup evidence",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Exercise real fresh-slice creation and exclusive cleanup before native work",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Provision the original separate fixed History parent",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9
+            },
+            {
+              "name": "Install the source-pinned compiler and fetch locked dependencies",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10
+            },
+            {
+              "name": "Prepare the exact original test runner without changing source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11
+            },
+            {
+              "name": "Run three original campaigns under verified actual limits",
+              "status": "completed",
+              "conclusion": "failure",
+              "number": 12
+            },
+            {
+              "name": "Require actual controller-death closure with the same release binary",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13
+            },
+            {
+              "name": "Close only parents bound to this run by a root-owned exclusive lease",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14
+            },
+            {
+              "name": "Preserve final source verification and all partial artifact hashes",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15
+            },
+            {
+              "name": "Upload successful, failed and partial observations",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 16
+            },
+            {
+              "name": "Post Checkout the immutable candidate head",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 32
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 33
+            }
+          ]
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 12923722462,
+          "name": "pon-pure-history-raw-strict-every-native-checkpoint-v1-x64-head-release-540d72356a921da31dde1113537382e5c0f0c4fd-1",
+          "size_in_bytes": 52814163,
+          "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/12923722462",
+          "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/12923722462/zip",
+          "expired": false,
+          "created_at": "2026-10-29T18:50:22Z",
+          "expires_at": "2026-11-28T18:50:16Z",
+          "updated_at": "2026-10-29T18:50:22Z",
+          "digest": "sha256:b5c605bf14bd2a5703d425d09793d616dbe76e7b1e1d272252170e41a8ceab95",
+          "workflow_run": {
+            "id": 40932471986,
+            "repository_id": 1323087357,
+            "head_repository_id": 1323087357,
+            "head_branch": "fix/chain-native-convergence-20261029",
+            "head_sha": "540d72356a921da31dde1113537382e5c0f0c4fd"
+          }
+        },
+        {
+          "id": 12922584378,
+          "name": "pon-pure-history-raw-history-account-graph-resource-fence-v1-x64-head-release-540d72356a921da31dde1113537382e5c0f0c4fd-1",
+          "size_in_bytes": 76626593,
+          "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/12922584378",
+          "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/12922584378/zip",
+          "expired": false,
+          "created_at": "2026-10-29T18:46:56Z",
+          "expires_at": "2026-11-28T18:46:51Z",
+          "updated_at": "2026-10-29T18:46:56Z",
+          "digest": "sha256:87f5f7b1486b66d963c41228557f80f000d68295791012bb318321f9c1d07f50",
+          "workflow_run": {
+            "id": 40932471986,
+            "repository_id": 1323087357,
+            "head_repository_id": 1323087357,
+            "head_branch": "fix/chain-native-convergence-20261029",
+            "head_sha": "540d72356a921da31dde1113537382e5c0f0c4fd"
+          }
+        }
+      ]
+    },
+    {
+      "id": 40932471462,
+      "jobs": [
+        {
+          "id": 123654213701,
+          "name": "profile-pair-diagnostic",
+          "status": "completed",
+          "conclusion": "failure",
+          "run_id": 40932471462,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Checkout one immutable source for both profiles",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Exercise actual interruption and external-cleanup controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Execute the predeclared same-runner pair",
+              "status": "completed",
+              "conclusion": "failure",
+              "number": 4
+            },
+            {
+              "name": "Independently close only this run's root-leased parents",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Retain complete and partial pair observations",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Post Checkout one immutable source for both profiles",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13
+            }
+          ]
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 12925015587,
+          "name": "history-profile-pair-strict-then-n8-540d72356a921da31dde1113537382e5c0f0c4fd-1",
+          "size_in_bytes": 121245322,
+          "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/12925015587",
+          "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/12925015587/zip",
+          "expired": false,
+          "created_at": "2026-10-29T18:52:47Z",
+          "expires_at": "2026-11-28T18:52:34Z",
+          "updated_at": "2026-10-29T18:52:47Z",
+          "digest": "sha256:ed34bab8fb7952ec1a3e7705cac09412ba21ad25030cb5c7279cb91a15604e38",
+          "workflow_run": {
+            "id": 40932471462,
+            "repository_id": 1323087357,
+            "head_repository_id": 1323087357,
+            "head_branch": "fix/chain-native-convergence-20261029",
+            "head_sha": "540d72356a921da31dde1113537382e5c0f0c4fd"
+          }
+        }
+      ]
+    }
+  ]
+}

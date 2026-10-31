@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/ci",
+    "-p",
+    "test_ci_source_integrity.py"
+  ],
+  "returncode": 0,
+  "wall_seconds": 6.580416039003467,
+  "stdout": "{\"receipt\": \"/tmp/trnm-ci-raw-source-tufzdfi4/.git/receipt\", \"result\": \"FAIL\"}\n{\"receipt\": \"/tmp/trnm-ci-raw-source-a_x1tbi2/.git/receipt\", \"result\": \"FAIL\"}\n{\"receipt\": \"/tmp/trnm-ci-raw-source-v8twhya8/.git/receipt\", \"result\": \"FAIL\"}\n{\"receipt\": \"/tmp/trnm-ci-raw-source-hdvsc6a2/.git/receipt\", \"result\": \"FAIL\"}\n{\"receipt\": \"/tmp/trnm-ci-raw-source-nv8p4kxs/.git/receipt-PASS\", \"result\": \"PASS\"}\n{\"receipt\": \"/tmp/trnm-ci-raw-source-nv8p4kxs/.git/receipt-FAIL\", \"result\": \"FAIL\"}\n",
+  "stderr": "..................................\n----------------------------------------------------------------------\nRan 34 tests in 6.345s\n\nOK\n"
+}

@@ -1,0 +1,161 @@
+{
+  "members": [
+    {
+      "path": "controller.log",
+      "bytes": 85,
+      "sha256": "05d75ae843a01a200ba60689467c596c0d3979b9a9e74faea1d8d2e02a810d7b",
+      "crc32": 1322454209
+    },
+    {
+      "path": "preflight.log",
+      "bytes": 133,
+      "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0",
+      "crc32": 1692302564
+    },
+    {
+      "path": "reader-negatives.log",
+      "bytes": 103,
+      "sha256": "0f7e4b97443e54aca647179972594d13bb587afcbf151fab8228148587ea844a",
+      "crc32": 1697755690
+    },
+    {
+      "path": "run/cargo-graph.log",
+      "bytes": 824578,
+      "sha256": "a2d656ec031d60dc68365d69451bba8e07648ded78cab472ce6f29e68a0b5e40",
+      "crc32": 1320117002
+    },
+    {
+      "path": "run/clippy.log",
+      "bytes": 3163,
+      "sha256": "f0f260c49faee26b6b4f849dac6bca5bbf6b5228d19fcb5d42cd4c05b3b8092c",
+      "crc32": 161319324
+    },
+    {
+      "path": "run/fmt.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "crc32": 0
+    },
+    {
+      "path": "run/inventory.log",
+      "bytes": 35,
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "crc32": 1181641949
+    },
+    {
+      "path": "run/m00.log",
+      "bytes": 9446,
+      "sha256": "96957452f63e7de46ab7ac639a8af3651fccfddf0984696a66f524c92d4300dc",
+      "crc32": 900311096
+    },
+    {
+      "path": "run/m06.log",
+      "bytes": 23491,
+      "sha256": "d5beece16c94a5f5cea29df45459d2712b6b4f05be0204267b4ba1277995cf25",
+      "crc32": 1984624078
+    },
+    {
+      "path": "run/manifest.json",
+      "bytes": 36863,
+      "sha256": "216c16d100de34fd4226c9bf3ca4b6fee7f4a9a9156ba74f7c9f40075ef4665f",
+      "crc32": 487300441
+    },
+    {
+      "path": "run/native-quota-phases.json",
+      "bytes": 7373,
+      "sha256": "573ef9f634cc798e4863bb2190b37895f883fa1f3dfce00d28f83348b5e11352",
+      "crc32": 60567985
+    },
+    {
+      "path": "run/native-quota-test.bin.gz",
+      "bytes": 3818190,
+      "sha256": "b61ad79faa291d4d02656f846a9b0483773f53d02d4bfae63a7d262de1164616",
+      "crc32": 3491809846
+    },
+    {
+      "path": "run/native-quota.log",
+      "bytes": 9378,
+      "sha256": "382a495086982c2dbed958cb59227ed9957707829a357322ed7715b90ea6ac6d",
+      "crc32": 41901364
+    },
+    {
+      "path": "run/preflight.log",
+      "bytes": 133,
+      "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0",
+      "crc32": 1692302564
+    },
+    {
+      "path": "run/quota-authority.log",
+      "bytes": 1697,
+      "sha256": "d9af6cb4642fdae4aa830eefa502e8e78b50d5c15c2607780d2834a03a44dbc8",
+      "crc32": 3837926197
+    },
+    {
+      "path": "run/retained-authority-capacity.log",
+      "bytes": 789,
+      "sha256": "31096b4e7f0b577ee07cbb83d0a143cc4ec9768984d6ba8f26ca4ef9e9e08d97",
+      "crc32": 512518609
+    },
+    {
+      "path": "run/retained-pq1.log",
+      "bytes": 1621,
+      "sha256": "ea4850ea9c2662c114afdfff19f9cb697c2ce59f2d27f0bffc40183eea4f44a1",
+      "crc32": 3432512551
+    },
+    {
+      "path": "run/retained-pq2-phases.json",
+      "bytes": 86474,
+      "sha256": "a751d703adacf03e7d4f0ff371f52f73331dfac5a7ca8fe2ccf6b1c2df781743",
+      "crc32": 2224283346
+    },
+    {
+      "path": "run/retained-pq2.log",
+      "bytes": 70539,
+      "sha256": "58f1259db3940c7c06ff95e80032dc701b4dc76783e8b9f466df5d7c82135bb4",
+      "crc32": 1262457754
+    },
+    {
+      "path": "run/rustc.log",
+      "bytes": 196,
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+      "crc32": 1583442468
+    },
+    {
+      "path": "run/source-negatives.log",
+      "bytes": 5509,
+      "sha256": "b59a2e547ffb90acd5570fa0318d57dab5fe4f68732e042b1e58eab8aa9e7644",
+      "crc32": 938339560
+    },
+    {
+      "path": "rustup.log",
+      "bytes": 257,
+      "sha256": "a995ac9ba3190a30bc7cd6d200aacbd2c3436fa59b6d0b40ae303d8986e44b12",
+      "crc32": 2739862822
+    },
+    {
+      "path": "source-after.json",
+      "bytes": 421,
+      "sha256": "6e17c8be459d6547e35f46fd7fa104bf1f374bcb69ce3a15934ffd8ef124eed5",
+      "crc32": 848574155
+    },
+    {
+      "path": "source-before.json",
+      "bytes": 421,
+      "sha256": "6e17c8be459d6547e35f46fd7fa104bf1f374bcb69ce3a15934ffd8ef124eed5",
+      "crc32": 848574155
+    },
+    {
+      "path": "source-guard-after.log",
+      "bytes": 421,
+      "sha256": "6e17c8be459d6547e35f46fd7fa104bf1f374bcb69ce3a15934ffd8ef124eed5",
+      "crc32": 848574155
+    },
+    {
+      "path": "source-guard-before.log",
+      "bytes": 421,
+      "sha256": "6e17c8be459d6547e35f46fd7fa104bf1f374bcb69ce3a15934ffd8ef124eed5",
+      "crc32": 848574155
+    }
+  ],
+  "all_crc_sha256_read": true
+}

@@ -1,0 +1,63 @@
+{
+  "argv": [
+    "/tmp/pon-cost-observations/before-native",
+    "--test-threads=1",
+    "--nocapture"
+  ],
+  "binary_after": {
+    "bytes": 11359024,
+    "path": "/tmp/pon-cost-observations/before-native",
+    "sha256": "bb3eccd67c1866bef617079310f6e5c2ea93a8ef744e09480df9e61f2b107db5"
+  },
+  "binary_before": {
+    "bytes": 11359024,
+    "path": "/tmp/pon-cost-observations/before-native",
+    "sha256": "bb3eccd67c1866bef617079310f6e5c2ea93a8ef744e09480df9e61f2b107db5"
+  },
+  "binary_unchanged": true,
+  "children_maxrss_kib": 21888,
+  "children_system_seconds": 0.012656,
+  "children_user_seconds": 0.11584399999999999,
+  "cpu_affinity": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "cwd": "/tmp/pon-effective-cost-20261031",
+  "elapsed_monotonic_ns": 2323049784,
+  "ended_unix_ns": 1793410080771949644,
+  "environment": {
+    "CARGO_BUILD_JOBS": "1",
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CARGO_HOME": "/tmp/pq-r3-cargo",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_PROFILE_TEST_DEBUG": "0",
+    "CARGO_TARGET_DIR": "/tmp/pon-cost-target",
+    "RUSTC": null,
+    "RUSTC_WORKSPACE_WRAPPER": null,
+    "RUSTC_WRAPPER": null,
+    "RUSTFLAGS": null,
+    "RUSTUP_HOME": "/tmp/pq-r3-rustup"
+  },
+  "exclusive_host": false,
+  "exit_code": 101,
+  "full_source_inventory_claimed": false,
+  "machine": "x86_64",
+  "nice": 0,
+  "outer_timeout_seconds": 120,
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.39",
+  "production_qualified": false,
+  "schema": "pon-mining-time-process-v1",
+  "source_commit": "c69749680d7fd8dd2334d284f0e9a6823cf38a18",
+  "source_inputs_unchanged": true,
+  "source_tree": "5321fe46bc7b0e7d589e402c92e1b403d825da93",
+  "sparse_checkout": true,
+  "started_unix_ns": 1793410078448893831,
+  "timed_out": false
+}

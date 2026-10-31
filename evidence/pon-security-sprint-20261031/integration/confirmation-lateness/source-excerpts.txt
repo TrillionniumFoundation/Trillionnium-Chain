@@ -1,0 +1,514 @@
+FILE scripts/ci/check_pure_pon_pressure_v2.py
+COMMIT cf84391a474ee1f3ac78f4a907bd95184b816a54
+BLOB ae2e538bf45caa7fe55e3bb403befe630b0109be
+SHA256 250bd0bbeacab71cb8117e7b70feb69c90e3fb35620d1798935db465b55f03d3
+
+LINES 22-22
+22: WINDOW = 30_000_000_000
+
+LINES 229-247
+229: def call(row):
+230:     require(all(natural(row[k]) for k in ("started_ns", "ended_ns", "deadline_ns"))
+231:             and row["started_ns"] < WINDOW and row["started_ns"] <= row["ended_ns"], "call clock")
+232:     require(row["deadline_ns"] == min(WINDOW, row["started_ns"] + 2_000_000_000), "call deadline extended")
+233:     require(natural(row["metrics"]["solution_trials"]) and row["metrics"]["solution_trials"] == 0,
+234:             "Hashcash search reintroduced or noninteger trials")
+235:     require(row["thread_cpu_ns"] is None or natural(row["thread_cpu_ns"]), "client CPU observation")
+236:     require(row["status"] in ("ok", "refused", "error"), "call outcome")
+237:     if row["response"] is not None:
+238:         require(natural(row["response"]["solve_trials"]) and row["response"]["solve_trials"] == 0,
+239:                 "reply reports Hashcash or noninteger trials")
+240:         require(row["response"]["ok"] is (row["status"] == "ok"), "response/status contradiction")
+241:     raw_hex(row["body_digest"], 32)
+242:     return row["status"] == "ok" and row["ended_ns"] <= row["deadline_ns"] and row["ended_ns"] < WINDOW
+243:
+244:
+245: def attack_calls(report, business):
+246:     calls, bodies, all_packets, healthy = [], {}, set(), True
+247:     require(len(report["actors"]) == (0 if report["phase"] == "baseline" else ATTACKERS), "attacker population")
+
+LINES 420-481
+420:     require(len(report["rounds"]) <= ROUNDS, "round cap")
+421:     for index, row in enumerate(report["rounds"]):
+422:         a, b = row["started_ns"], row["ended_ns"]
+423:         require(natural(row["round"]) and natural(row["scheduled_ns"])
+424:                 and row["round"] == index and row["scheduled_ns"] == 1_000_000_000 + index * 4_000_000_000
+425:                 and natural(a) and natural(b) and row["scheduled_ns"] <= a <= b, "round schedule")
+426:         tip = business[(index + 1) * 7 - 1]["id"]
+427:         require(row["tip"] == tip and row["included_block"] == business[index * 7]["id"]
+428:                 and row["transaction"] == wire_hash(b"tx-id", business[index * 7]["transactions"][0]).hex(),
+429:                 "business confirmation identity")
+430:         value = row["observation"]
+431:         if value is not None:
+432:             require(type(value) is dict and all(type(value[k]) is bool for k in
+433:                     ("confirmed", "finalized", "execution_authority", "reorged")),
+434:                     "native observation boolean fields")
+435:             require(value["transaction"] == row["transaction"]
+436:                     and value["included_block"] == row["included_block"]
+437:                     and value["observed_tip"] == row["tip"]
+438:                     and value["network"] == business[index * 7]["header"][6:38].hex()
+439:                     and value["parameters"] == business[index * 7]["header"][38:70].hex(),
+440:                     "native observation identity/context association")
+441:             require(natural(value["included_height"]) and natural(value["observed_height"])
+442:                     and value["included_height"] == business[index * 7]["height"]
+443:                     and value["observed_height"] == business[(index + 1) * 7 - 1]["height"],
+444:                     "native observation height association")
+445:             require(not (value["confirmed"] and value["reorged"]), "contradictory native confirmation/reorg")
+446:         confirmed = (value is not None and value["confirmed"] is True and value["finalized"] is False
+447:                      and value["execution_authority"] is False and value["reorged"] is False
+448:                      and type(value["depth"]) is int
+449:                      and value["depth"] == 6 and b < WINDOW)
+450:         require(row["confirmed_inside_pressure_window"] is confirmed, "late or invented confirmation")
+451:         on_time_submissions = set(range(index * 7, (index + 1) * 7)) <= accepted_indices
+452:         history_completions = [h for h in report["history"] if
+453:                         h.get("client_confirmation", {}).get("succeeded") is True
+454:                         and h["request"]["tip"] == tip and a <= h["client_import"]["started_ns"]
+455:                         <= h["client_import"]["ended_ns"] <= h["client_confirmation"]["started_ns"]
+456:                         <= h["client_confirmation"]["ended_ns"] <= b
+457:                         and h["client_import"]["succeeded"] is True]
+458:         if confirmed:
+459:             require(bool(history_completions), "confirmation bypassed independent History replay")
+460:         verified_history = any(call(h) for h in history_completions)
+461:         before, before_cpu = snapshot_keys(row["hostile_before"], records, attack_bodies, a, b)
+462:         after, after_cpu = snapshot_keys(row["hostile_after"], records, attack_bodies, a, b)
+463:         require(before <= after and row["hostile_before"]["ended_ns"] <= row["hostile_after"]["started_ns"],
+464:                 "receiver progress reversed")
+465:         # Physical timeout/cancellation tails remain in the evidence. They are
+466:         # not extended request lifetimes for establishing attack-call overlap.
+467:         overlap = sum(c["started_ns"] < b and min(c["ended_ns"], c["deadline_ns"]) > a for c in attacks)
+468:         physical_overlap = sum(c["started_ns"] < b and c["ended_ns"] > a for c in attacks)
+469:         exhaustion = any(a <= s["started_ns"] <= s["ended_ns"] <= b and depleted(s) for s in samples)
+470:         require(natural(row["overlapping_attack_calls"]) and row["overlapping_attack_calls"] == overlap
+471:                 and row["depletion_observed_during_round"] is exhaustion, "aggregate-only overlap claim")
+472:         round_reports.append({"round": index, "confirmed": confirmed,
+473:                               "seven_submissions_inside_original_call_deadlines": on_time_submissions,
+474:                               "on_time_history_and_independent_verification": bool(verified_history),
+475:                               "qualified_confirmation": bool(confirmed and on_time_submissions and verified_history),
+476:                               "attack_calls_overlapping": overlap,
+477:                               "attack_calls_including_physical_tails_overlapping": physical_overlap,
+478:                               "new_receiver_hostile_rejections": len(after - before),
+479:                               "receiver_hostile_dispatch_cpu_increase_ns": after_cpu - before_cpu,
+480:                               "paid_depletion_inside_round": exhaustion,
+481:                               "actual_pressure_overlap": overlap > 0 and len(after - before) > 0 and after_cpu > before_cpu})
+
+FILE trillionnium/crates/trnm-pon-node/tests/pure_pon_pressure_v2.rs
+COMMIT cf84391a474ee1f3ac78f4a907bd95184b816a54
+BLOB d28c21ae144ad66a930375d5521826bf5de261cd
+SHA256 00f61b4123d326d91e5d5b7973ef0f71e55190838af2cb3e7ad5cf562a5d9658
+
+LINES 480-529
+480:                 let nonce = block * 256 + slot + 1;
+481:                 support::signed_transfer(
+482:                     settings,
+483:                     nonce,
+484:                     hash(b"pure-pressure-funded-account-v2", &[&nonce.to_le_bytes()]),
+485:                 )
+486:             })
+487:             .collect();
+488:         let packet = miner
+489:             .make_consensus_maintenance(
+490:                 miner.active().unwrap().0,
+491:                 transactions,
+492:                 development_public(0).unwrap(),
+493:                 settings.genesis_time() + (block + 1) * 10,
+494:                 4096,
+495:             )
+496:             .unwrap();
+497:         replay(&mut miner, std::slice::from_ref(&packet));
+498:         seed.push(packet);
+499:     }
+500:     let mut business = Vec::new();
+501:     for index in 0..ROUNDS * 7 {
+502:         let transactions = if index % 7 == 0 {
+503:             vec![support::signed_transfer(
+504:                 settings,
+505:                 1025 + (index / 7) as u64,
+506:                 development_public(1).unwrap(),
+507:             )]
+508:         } else {
+509:             vec![]
+510:         };
+511:         let packet = miner
+512:             .make_consensus_maintenance(
+513:                 miner.active().unwrap().0,
+514:                 transactions,
+515:                 development_public(0).unwrap(),
+516:                 settings.genesis_time() + (5 + index as u64) * 10,
+517:                 4096,
+518:             )
+519:             .unwrap();
+520:         replay(&mut miner, std::slice::from_ref(&packet));
+521:         business.push(packet);
+522:     }
+523:     support::write_new(
+524:         &root.join("preparation.json"),
+525:         &json!({"schema":pressure_schema(fresh_callers),
+526:         "seed_transfers":1024,"seed_blocks":4,"business_blocks":21,
+527:         "thread_cpu_ns":support::cpu_delta(cpu),"wall_ns":started.elapsed().as_nanos(),
+528:         "seed":seed.iter().map(|p|hex::encode(p.encode().unwrap())).collect::<Vec<_>>(),
+529:         "business":business.iter().map(|p|hex::encode(p.encode().unwrap())).collect::<Vec<_>>()}),
+
+LINES 1070-1169
+1070:     let mut submissions = Vec::new();
+1071:     let mut histories = Vec::new();
+1072:     let mut rounds = Vec::new();
+1073:     let mut errors = Vec::new();
+1074:     let mut next = 0;
+1075:     let mut after = initial.0;
+1076:     for round in 0..ROUNDS {
+1077:         let scheduled = 1_000_000_000 + round as u64 * 4_000_000_000;
+1078:         while support::monotonic() < epoch + scheduled {
+1079:             support::pause();
+1080:         }
+1081:         let started = support::monotonic().saturating_sub(epoch);
+1082:         let before = hostile_snapshot(&observers, &honest, epoch);
+1083:         let final_index = (round + 1) * 7;
+1084:         while next < final_index
+1085:             && support::monotonic() < epoch + WINDOW_NS
+1086:             && submissions.len() < 128
+1087:         {
+1088:             let Some(mut row) = support::call(
+1089:                 addresses[next % 2],
+1090:                 settings,
+1091:                 requests[next].clone(),
+1092:                 73,
+1093:                 epoch,
+1094:             ) else {
+1095:                 break;
+1096:             };
+1097:             row["packet_index"] = json!(next);
+1098:             row["listener"] = json!(next % 2);
+1099:             if support::on_time(&row) {
+1100:                 next += 1;
+1101:             }
+1102:             submissions.push(row);
+1103:         }
+1104:         let tip = business[final_index - 1].id().unwrap();
+1105:         let included = business[round * 7].id().unwrap();
+1106:         let transaction = hash(b"tx-id", &[&business[round * 7].transactions[0]]);
+1107:         let mut observation = None;
+1108:         while next == final_index
+1109:             && support::monotonic() < epoch + WINDOW_NS
+1110:             && histories.len() < 64
+1111:         {
+1112:             let request = Request::History {
+1113:                 tip: hex::encode(tip),
+1114:                 after: hex::encode(after),
+1115:             };
+1116:             let Some(mut row) =
+1117:                 support::call(addresses[round % 2], settings, request.clone(), 74, epoch)
+1118:             else {
+1119:                 break;
+1120:             };
+1121:             row["request"] = serde_json::to_value(request).unwrap();
+1122:             row["listener"] = json!(round % 2);
+1123:             if support::on_time(&row) {
+1124:                 let (imported, measurement) = verifier.import(
+1125:                     addresses[round % 2],
+1126:                     row["response"]["value"].clone(),
+1127:                     tip,
+1128:                     after,
+1129:                     support::now(),
+1130:                     epoch,
+1131:                 );
+1132:                 row["client_import"] = measurement;
+1133:                 match imported {
+1134:                     Ok(value) => after = value,
+1135:                     Err(error) => errors.push(error),
+1136:                 }
+1137:                 if after == tip {
+1138:                     let (value, measurement) =
+1139:                         verifier.confirmation(transaction, included, support::now(), epoch);
+1140:                     row["client_confirmation"] = measurement;
+1141:                     match value {
+1142:                         Ok(value) => observation = Some(value),
+1143:                         Err(error) => errors.push(error.to_string()),
+1144:                     }
+1145:                 }
+1146:             }
+1147:             histories.push(row);
+1148:             if observation.is_some() {
+1149:                 break;
+1150:             }
+1151:         }
+1152:         let after_snapshot = hostile_snapshot(&observers, &honest, epoch);
+1153:         let ended = support::monotonic().saturating_sub(epoch);
+1154:         let confirmed = observation.as_ref().is_some_and(|v| {
+1155:             v["confirmed"] == true
+1156:                 && v["finalized"] == false
+1157:                 && v["execution_authority"] == false
+1158:                 && v["depth"] == 6
+1159:         }) && ended < WINDOW_NS;
+1160:         rounds.push(json!({"round":round,"scheduled_ns":scheduled,"started_ns":started,"ended_ns":ended,
+1161:             "confirmed_inside_pressure_window":confirmed,"observation":observation,
+1162:             "transaction":hex::encode(transaction),"included_block":hex::encode(included),"tip":hex::encode(tip),
+1163:             "hostile_before":before,"hostile_after":after_snapshot}));
+1164:         if !confirmed {
+1165:             break;
+1166:         }
+1167:     }
+1168:     // The original fixed window runs to completion. Cleanup may join cancelled
+1169:     // tasks, but it never counts recovery as an on-time business confirmation.
+
+FILE trillionnium/crates/trnm-pon-node/tests/support/multiprocess_history_verifier.rs
+COMMIT cf84391a474ee1f3ac78f4a907bd95184b816a54
+BLOB c21b9bda9ed8b5f0b589af4efeeb23752d2910f0
+SHA256 ef86331b40b1416630bc6c517340c55797d689e7b70434b2370af34cbe24bb3b
+
+LINES 630-669
+630:         let request = read(&request_path);
+631:         assert_eq!(request["sequence"], sequence);
+632:         let request_sha256 = sha(&request_path);
+633:         kernel.verify().unwrap();
+634:         let call_cpu = support::cpu();
+635:         let call_started = Instant::now();
+636:         let operation = request["operation"].as_str().unwrap();
+637:         let epoch = request["epoch"].as_u64().unwrap_or(0);
+638:         let stamp = ClientOperationStamp::start(epoch);
+639:         let result: Result<Value, String> = match operation {
+640:             "import" => serde_json::from_value::<ingress::Page>(request["page"].clone())
+641:                 .map_err(|error| error.to_string())
+642:                 .and_then(|page| {
+643:                     let address: SocketAddr = request["source"].as_str().unwrap().parse().unwrap();
+644:                     let import = match resource_profile {
+645:                         ResourceProfile::Strict => ingress::receive_public_page_from,
+646:                         ResourceProfile::GraphFenceV1 => {
+647:                             ingress::receive_public_page_with_graph_resource_fence_v1
+648:                         }
+649:                     };
+650:                     import(
+651:                         &mut node,
+652:                         address,
+653:                         page,
+654:                         serde_json::from_value(request["tip"].clone()).unwrap(),
+655:                         serde_json::from_value(request["after"].clone()).unwrap(),
+656:                         request["clock"].as_u64().unwrap(),
+657:                     )
+658:                     .map(|hash| json!(hash))
+659:                     .map_err(|error| error.to_string())
+660:                 }),
+661:             "confirmation" => node
+662:                 .confirmation(
+663:                     serde_json::from_value(request["transaction"].clone()).unwrap(),
+664:                     serde_json::from_value(request["included"].clone()).unwrap(),
+665:                     request["clock"].as_u64().unwrap(),
+666:                 )
+667:                 .map(|observation| json!(observation))
+668:                 .map_err(|error| error.to_string()),
+669:             "snapshot" => node
+
+FILE trillionnium/crates/trnm-pon-node/src/ingress.rs
+COMMIT cf84391a474ee1f3ac78f4a907bd95184b816a54
+BLOB 27b39b7fb34f3b117bb0023255e6c99f62e98e34
+SHA256 80191b7288ca1edcbf3b78ffa1cb4e2b2e75bf087ad7404d2ffd6485242bcbc5
+
+LINES 2528-2557
+2528: /// W1 replay. A caller cannot bypass the guard by calling the addressless
+2529: /// parser from another crate or by supplying a fake already-verified work
+2530: /// token. Only the full native Node determines consensus validity.
+2531: pub(crate) fn receive_page_from(
+2532:     node: &mut Node,
+2533:     source: SocketAddr,
+2534:     page: Page,
+2535:     tip: Hash,
+2536:     after: Hash,
+2537:     clock: u64,
+2538: ) -> Result<Hash> {
+2539:     let host_kernel = crate::host_kernel_parent::require_for_listener(source)?;
+2540:     if let Some(kernel) = &host_kernel {
+2541:         kernel.verify()?;
+2542:     }
+2543:     let domain = node.remote_history_cpu_domain()?;
+2544:     let native = receive_page(node, &domain, page, tip, after, clock, || {
+2545:         if let Some(kernel) = &host_kernel {
+2546:             kernel.verify()?;
+2547:         }
+2548:         Ok(())
+2549:     });
+2550:     // A completed native admission cannot be undone by a post-verification
+2551:     // host fault. That fault still makes the overall synchronization fail.
+2552:     if let Some(kernel) = &host_kernel {
+2553:         kernel.verify()?;
+2554:     }
+2555:     native
+2556: }
+2557: /// Public History import is untrusted even when a local TCP proxy carries
+
+FILE scripts/ci/run_from_zero_native.py
+COMMIT cf84391a474ee1f3ac78f4a907bd95184b816a54
+BLOB ad8c053699082c9631e9351bb9251a16df36c313
+SHA256 697d1392656a8d4749e43e6545b1703ddcdc471fa97e326a55472f9271839c9a
+
+LINES 365-387
+365: def validate_confirmation_report(path: Path) -> dict:
+366:     """Recompute bounded report consistency; native owners retain all authority."""
+367:     require(path.is_file() and not path.is_symlink(), 'CONFIRMATION_REPORT_REQUIRED')
+368:     with path.open('rb') as stream:
+369:         raw = stream.read(REPORT_LIMIT + 1)
+370:     require(len(raw) <= REPORT_LIMIT, 'CONFIRMATION_REPORT_LIMIT')
+371:     doc = json_load(raw)
+372:     require(isinstance(doc, dict) and doc.get('schema') == 'public-v3-signed-confirmation-pressure-v1',
+373:             'CONFIRMATION_SCHEMA')
+374:
+375:     def number(value):
+376:         require(type(value) is int and 0 <= value < 1 << 64, 'CONFIRMATION_NUMBER')
+377:         return value
+378:
+379:     def flags(value, yes=(), no=()):
+380:         require(isinstance(value, dict), 'CONFIRMATION_OBJECT')
+381:         require(all(value.get(key) is True for key in yes), 'CONFIRMATION_TARGET')
+382:         require(all(value.get(key) is False for key in no), 'CONFIRMATION_SCOPE_PROMOTION')
+383:
+384:     def hexadecimal(value, width=None):
+385:         require(isinstance(value, str) and len(value) % 2 == 0
+386:                 and (width is None or len(value) == width * 2)
+387:                 and re.fullmatch('[0-9a-f]+', value) is not None, 'CONFIRMATION_HEX')
+
+LINES 443-447
+443:     flags(doc, yes=('finite_target_met', 'invariant_target_met', 'same_packet_sequence_in_both_runs'),
+444:           no=('public_network_ready', 'work_profile_qualified', 'production_activation',
+445:               'strongest_honest_producer_used'))
+446:     context = {key: hexadecimal(doc.get(key), 32) for key in (
+447:         'network', 'parameters', 'genesis', 'target', 'task', 'policy_id')}
+
+LINES 513-545
+513:     phases = doc.get('phases')
+514:     require(isinstance(phases, list) and len(phases) == 2, 'CONFIRMATION_PHASES')
+515:     observations = []
+516:     for index, phase in enumerate(phases):
+517:         require(isinstance(phase, dict)
+518:                 and phase.get('mode') == ('attack-free-baseline' if index == 0 else 'from-zero-pressure')
+519:                 and number(phase.get('workers')) == (0 if index == 0 else 16), 'CONFIRMATION_PHASES')
+520:         require(phase.get('target') == doc['target'] and phase.get('task') == doc['task']
+521:                 and phase.get('initial_tip') == doc['genesis'], 'CONFIRMATION_CONTEXT')
+522:         flags(phase, yes=('invariant_target_met', 'finite_business_target_met', 'no_attack_accepted',
+523:               'accounting_closed', 'full_native_state_equal', 'receiver_matches_valid_honest_prefix',
+524:               'client_confirmed_before_original_window_end', 'overlap_demonstrated'),
+525:               no=('public_network_ready', 'independent_operator_accepted', 'work_profile_qualified',
+526:                   'resource_fairness_qualified', 'production_activation'))
+527:         window = number(phase.get('requested_window_ns'))
+528:         start, end = number(phase.get('business_started_ns')), number(phase.get('confirmation_ended_ns'))
+529:         require(window == 4_000_000_000 and start < end < window
+530:                 and number(phase.get('client_confirmation_latency_ns')) == end - start,
+531:                 'CONFIRMATION_OUTSIDE_ORIGINAL_WINDOW')
+532:         require(number(phase.get('client_confirmed_transactions')) == 1, 'CONFIRMATION_BUSINESS_COUNT')
+533:         number(phase.get('independent_replay_and_confirmation_cpu_ns'))
+534:         number(phase.get('independent_replay_and_confirmation_wall_ns'))
+535:         require(phase.get('verification_errors') == [], 'CONFIRMATION_VERIFICATION_ERRORS')
+536:         confirmed = phase.get('independent_client_confirmation')
+537:         flags(confirmed, yes=('confirmed',), no=('reorged', 'finalized', 'execution_authority'))
+538:         require(all(confirmed.get(key) == doc[key] for key in ('network', 'parameters', 'genesis'))
+539:                 and confirmed.get('transaction') == transaction_id
+540:                 and confirmed.get('included_block') == metadata[0][2].hex()
+541:                 and confirmed.get('observed_tip') == metadata[-1][2].hex()
+542:                 and number(confirmed.get('included_height')) == 1
+543:                 and number(confirmed.get('observed_height')) == 7
+544:                 and number(confirmed.get('depth')) == 6, 'CONFIRMATION_NATIVE_OBSERVATION')
+545:         required = (6 * ((1 << 256) // (int.from_bytes(context['target'], 'big') + 1))).to_bytes(64, 'big')
+
+FILE trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs
+COMMIT cf84391a474ee1f3ac78f4a907bd95184b816a54
+BLOB 2e8ae6c4632c80c489480c3bb5ef91121ad0995c
+SHA256 6416076f2aa9e9b69a47195a3ff0b8e9d419f33c2ef226aa0d3c655a8871dc56
+
+LINES 1436-1457
+1436:                         match verifier.confirmation(transaction, included, ingress::now().unwrap())
+1437:                         {
+1438:                             Ok(observation) => {
+1439:                                 confirmation = Some(observation);
+1440:                                 confirmation_ended_ns = Some(ns(epoch));
+1441:                             }
+1442:                             Err(error) => verification_errors.push(error.to_string()),
+1443:                         }
+1444:                     }
+1445:                 }
+1446:                 Err(error) => verification_errors.push(error),
+1447:             }
+1448:         }
+1449:         history_calls.push(row);
+1450:         if confirmation.is_some() {
+1451:             break;
+1452:         }
+1453:     }
+1454:     let independent_replay_cpu_ns = cpu_elapsed(replay_cpu);
+1455:     let independent_replay_wall_ns = ns(replay_started);
+1456:     let completed_at_confirmation = completed.load(Ordering::Acquire);
+1457:     let client_confirmed_in_window = confirmation.as_ref().is_some_and(|observation| {
+
+LINES 1537-1562
+1537:     let observations_complete = captured.coverage_complete();
+1538:     let invariant_target_met = no_attack_accepted
+1539:         && observations_complete
+1540:         && accounting_closed
+1541:         && service_outcome["error"].is_null()
+1542:         && receiver_matches_valid_honest_prefix;
+1543:     let overlap_demonstrated = !pressured
+1544:         || (completed_before_business > 0
+1545:             && overlapping_false_calls > 0
+1546:             && completed_at_confirmation > completed_before_business);
+1547:     let finite_business_target_met =
+1548:         client_confirmed_in_window && overlap_demonstrated && verification_errors.is_empty();
+1549:     let mut report = json!({"mode": if pressured { "from-zero-pressure" } else { "attack-free-baseline" },
+1550:         "target": hex::encode(target), "task": hex::encode(packets[0].header.work_task),
+1551:         "initial_tip": hex::encode(initial.0),
+1552:         "initial_state_root": hex::encode(trnm_mvcc_fee::pon_executor::root(&initial.2).unwrap()),
+1553:         "requested_window_ns": PRESSURE_MS * 1_000_000, "workers": workers,
+1554:         "initial_meter": initial_meter, "final_meter": domain.observe().unwrap(),
+1555:         "attacks": attack_rows, "completed_false_calls_before_business": completed_before_business,
+1556:         "attacker_workers_cpu_ns": attacker_workers_cpu_ns,
+1557:         "attacker_workers_cpu_scope": "disjoint joined client threads; includes every failed negotiation, resource-ticket search, encoding and output record; excludes receiver and separately recorded from-zero setup",
+1558:         "completed_false_calls_at_confirmation": completed_at_confirmation,
+1559:         "overlapping_false_calls": overlapping_false_calls, "overlap_demonstrated": overlap_demonstrated});
+1560:     report.as_object_mut().unwrap().extend(json!({
+1561:         "honest_submissions": submissions, "honest_history": history_calls,
+1562:         "business_started_ns": business_started_ns, "confirmation_ended_ns": confirmation_ended_ns,
+
+LINES 1650-1697
+1650:         .zip(process_cpu_ns())
+1651:         .and_then(|(start, end)| end.checked_sub(start));
+1652:     let baseline = signed_confirmation_phase(
+1653:         &path.join("baseline"),
+1654:         &settings,
+1655:         &packets,
+1656:         false_wires.clone(),
+1657:         false,
+1658:     );
+1659:     let pressure = signed_confirmation_phase(
+1660:         &path.join("pressure"),
+1661:         &settings,
+1662:         &packets,
+1663:         false_wires,
+1664:         true,
+1665:     );
+1666:     let passed = baseline["invariant_target_met"] == true
+1667:         && baseline["finite_business_target_met"] == true
+1668:         && pressure["invariant_target_met"] == true
+1669:         && pressure["finite_business_target_met"] == true;
+1670:     let invariants_passed =
+1671:         baseline["invariant_target_met"] == true && pressure["invariant_target_met"] == true;
+1672:     let report = json!({"schema": "public-v3-signed-confirmation-pressure-v1",
+1673:         "network": hex::encode(settings.network()), "parameters": hex::encode(settings.parameters()),
+1674:         "genesis": hex::encode(settings.genesis()), "target": hex::encode(target), "task": hex::encode(task),
+1675:         "policy_id": hex::encode(policy().id()), "same_packet_sequence_in_both_runs": true,
+1676:         "signed_honest_packets": packets.iter().map(|packet| hex::encode(packet.encode().unwrap())).collect::<Vec<_>>(),
+1677:         "from_zero_construction": construction, "attacker_construction_cpu_ns": attacker_construction_cpu_ns,
+1678:         "attacker_construction_wall_ns": attacker_construction_wall_ns,
+1679:         "honest_chain_acquisition_wall_ns": honest_chain_acquisition_wall_ns,
+1680:         "honest_chain_process_cpu_ns": honest_chain_process_cpu_ns,
+1681:         "honest_chain_process_cpu_scope": "all threads of this test process during seven-block mining and durable acquisition, before service/traffic start; includes search/setup/execution/storage, not pure W1 cost or exclusive actor attribution",
+1682:         "honest_chain_aggregate_cpu_ns": null, "strongest_honest_producer_used": false,
+1683:         "phases": [baseline, pressure], "finite_target_met": passed, "invariant_target_met": invariants_passed,
+1684:         "test_success_scope": "native protocol/accounting invariants; finite business target is a separately retained actual outcome and cannot be inferred from cargo exit zero",
+1685:         "scope": "same-source, task, target and signed business; attack-free versus independently driven loopback attack clients; shared controller, not independent operators or a saturated WAN benchmark",
+1686:         "public_network_ready": false, "work_profile_qualified": false, "production_activation": false});
+1687:     fs::write(
+1688:         path.join("report.json"),
+1689:         serde_json::to_vec_pretty(&report).unwrap(),
+1690:     )
+1691:     .unwrap();
+1692:     println!(
+1693:         "{}",
+1694:         json!({"schema": report["schema"], "finite_target_met": passed, "report_path": path.join("report.json")})
+1695:     );
+1696:     assert!(invariants_passed, "retain signed-confirmation report; native safety/accounting failed; finite service outcomes are recorded separately");
+1697: }

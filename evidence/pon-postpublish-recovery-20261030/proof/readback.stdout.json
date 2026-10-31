@@ -1,0 +1,89 @@
+{
+  "schema": "pon-proof-ci-recovery-readback-v1",
+  "execution_commit": "1d11f875493f8125e36b9adceacb342df108e5e5",
+  "execution_tree": "64b82137eebeb96b572abc62e5fce39af3593200",
+  "run_id": 40988668868,
+  "job_id": 123845534943,
+  "artifact_id": 12947349925,
+  "conclusion": "success",
+  "original_files_checked": 57,
+  "source_before_equals_after": true,
+  "source_inputs_checked_against_published_commit": 15,
+  "process_records_checked": 13,
+  "fixture_controls": 39,
+  "reader_controls": 15,
+  "host_tests": 17,
+  "real_proof_positive": true,
+  "original_negative_controls": 16,
+  "durable_fixture_chunks_checked": 4,
+  "ci_verifier_raw_sha256": "eb79ac747509af6cf7942e26ca7ce74e3c0f74e944ae291129e8e319d8c50b43",
+  "cases": [
+    {
+      "case": "valid",
+      "accepted": true,
+      "outcome": "verified",
+      "receiver_ms": 1272.364197,
+      "positive_prerequisite_ms": 1272.343037
+    },
+    {
+      "case": "first_seal_tamper",
+      "accepted": false,
+      "outcome": "verification_failed",
+      "receiver_ms": 50.405329,
+      "positive_prerequisite_ms": 1265.442305
+    },
+    {
+      "case": "last_seal_tamper",
+      "accepted": false,
+      "outcome": "verification_failed",
+      "receiver_ms": 1256.471868,
+      "positive_prerequisite_ms": 1267.092651
+    },
+    {
+      "case": "wrong_verifier_parameters",
+      "accepted": false,
+      "outcome": "verification_failed",
+      "receiver_ms": 29.542129,
+      "positive_prerequisite_ms": 1267.893439
+    },
+    {
+      "case": "wrong_statement_miner",
+      "accepted": false,
+      "outcome": "verification_failed",
+      "receiver_ms": 28.926692,
+      "positive_prerequisite_ms": 1267.952529
+    },
+    {
+      "case": "truncated_receipt",
+      "accepted": false,
+      "outcome": "malformed_encoding",
+      "receiver_ms": 0.012643,
+      "positive_prerequisite_ms": 1265.328737
+    },
+    {
+      "case": "trailing_receipt_bytes",
+      "accepted": false,
+      "outcome": "malformed_encoding",
+      "receiver_ms": 0.012954,
+      "positive_prerequisite_ms": 1267.1708
+    },
+    {
+      "case": "seal_length_allocation_bomb",
+      "accepted": false,
+      "outcome": "refused_not_evaluated",
+      "receiver_ms": 0.003917,
+      "positive_prerequisite_ms": 1263.804635
+    }
+  ],
+  "positive_prerequisite_warms_verifier": true,
+  "receiver_scope": "bounded-preflight/sdk-decode/strict-verify/decoded-drop",
+  "new_native_execution": false,
+  "new_proof_generation": false,
+  "proof_reverified_by_readback": false,
+  "zip_digest_recomputed_by_readback": false,
+  "reproducible_build_proved": false,
+  "minimum_work_cost_proved": false,
+  "public_ingress_qualified": false,
+  "pq128_qualified": false,
+  "prior_unpublished_72_file_snapshot_recreated": false
+}

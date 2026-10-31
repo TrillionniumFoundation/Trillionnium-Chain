@@ -1,0 +1,221 @@
+{
+  "recorded_utc": "2026-10-26T13:34:01.684928+00:00",
+  "scope": "read-only forensic on exact private copy; not native qualification or product/test execution",
+  "original_sources": {
+    "native.sqlite": {
+      "bytes": 4096,
+      "sha256": "f1c1d714b195aa1795c50ed2db1795613d868a07340cbf0b1a563384fdfebdcf"
+    },
+    "native.sqlite-wal": {
+      "bytes": 2051816,
+      "sha256": "682e98a946e9bce36a7b62522f3a9aabe78adcb3d8ca72ee6bbff7c90d03652f"
+    },
+    "native.sqlite-shm": {
+      "bytes": 32768,
+      "sha256": "5aaea1dc09a02d9cd8028b10b56f988e0404c27e2f10d33b07d108d1fbd1c043"
+    }
+  },
+  "original_before_after_equal": true,
+  "copy_logical_bytes": 2088680,
+  "forensic_python_sqlite_version": "3.45.1",
+  "original_native_sqlite_version": "3.51.3",
+  "SQLite_readonly_mode": true,
+  "source_database_opened": false,
+  "WAL_page_size": 4096,
+  "WAL_complete_frames": 498,
+  "WAL_trailing_bytes": 24,
+  "all_complete_frame_checksums_and_salts_verified": true,
+  "WAL_commits": [
+    {
+      "commit_index": 0,
+      "last_frame": 39,
+      "frame_count_since_prior_commit": 39,
+      "unique_pages_in_transaction": 39,
+      "duplicate_page_frames_in_transaction": 0,
+      "database_pages": 39,
+      "WAL_committed_end_bytes": 160712
+    },
+    {
+      "commit_index": 1,
+      "last_frame": 130,
+      "frame_count_since_prior_commit": 91,
+      "unique_pages_in_transaction": 91,
+      "duplicate_page_frames_in_transaction": 0,
+      "database_pages": 117,
+      "WAL_committed_end_bytes": 535632
+    },
+    {
+      "commit_index": 2,
+      "last_frame": 150,
+      "frame_count_since_prior_commit": 20,
+      "unique_pages_in_transaction": 20,
+      "duplicate_page_frames_in_transaction": 0,
+      "database_pages": 131,
+      "WAL_committed_end_bytes": 618032
+    },
+    {
+      "commit_index": 3,
+      "last_frame": 267,
+      "frame_count_since_prior_commit": 117,
+      "unique_pages_in_transaction": 117,
+      "duplicate_page_frames_in_transaction": 0,
+      "database_pages": 224,
+      "WAL_committed_end_bytes": 1100072
+    },
+    {
+      "commit_index": 4,
+      "last_frame": 294,
+      "frame_count_since_prior_commit": 27,
+      "unique_pages_in_transaction": 27,
+      "duplicate_page_frames_in_transaction": 0,
+      "database_pages": 237,
+      "WAL_committed_end_bytes": 1211312
+    },
+    {
+      "commit_index": 5,
+      "last_frame": 432,
+      "frame_count_since_prior_commit": 138,
+      "unique_pages_in_transaction": 138,
+      "duplicate_page_frames_in_transaction": 0,
+      "database_pages": 344,
+      "WAL_committed_end_bytes": 1779872
+    },
+    {
+      "commit_index": 6,
+      "last_frame": 464,
+      "frame_count_since_prior_commit": 32,
+      "unique_pages_in_transaction": 32,
+      "duplicate_page_frames_in_transaction": 0,
+      "database_pages": 356,
+      "WAL_committed_end_bytes": 1911712
+    }
+  ],
+  "uncommitted_complete_frames": 34,
+  "uncommitted_duplicate_page_frames": 0,
+  "blocks_height_id_parent": [
+    [
+      0,
+      "E71802F181974DE1181F82F4249D1DB542714247623E889D3DFEDB263E1C2866",
+      ""
+    ],
+    [
+      1,
+      "151E847B19BABC4D68F6B915051F96D0339233F21BE208E336D39E47F012CAB9",
+      "E71802F181974DE1181F82F4249D1DB542714247623E889D3DFEDB263E1C2866"
+    ],
+    [
+      2,
+      "FCFECE35FA737492EE62C5B6A30AF812AA70E0387B9EAF36958A598ECCE03220",
+      "151E847B19BABC4D68F6B915051F96D0339233F21BE208E336D39E47F012CAB9"
+    ],
+    [
+      3,
+      "0E72B1E25882A6263E6018F5BA8DF78E5964DEECC1CA0BF2129C9D2A848841FC",
+      "FCFECE35FA737492EE62C5B6A30AF812AA70E0387B9EAF36958A598ECCE03220"
+    ]
+  ],
+  "active_height_generation": [
+    3,
+    3
+  ],
+  "lifecycle_action_counts": {
+    "reserve-open": 4,
+    "reserve-handle": 3,
+    "bind-real-inode": 4,
+    "opened": 3,
+    "reserve-growth": 1002,
+    "shm-reference": 1
+  },
+  "lifecycle_tail": [
+    {
+      "sequence": 1013,
+      "action": "reserve-growth",
+      "generation": 3,
+      "basename": "native.sqlite-wal",
+      "device": 2050,
+      "inode": 52091928,
+      "linked": true,
+      "handles": 1,
+      "pending_opens": 0,
+      "shm_references": 0,
+      "high_water_bytes": 2043552,
+      "actual_last_bytes": 2039456
+    },
+    {
+      "sequence": 1014,
+      "action": "reserve-growth",
+      "generation": 3,
+      "basename": "native.sqlite-wal",
+      "device": 2050,
+      "inode": 52091928,
+      "linked": true,
+      "handles": 1,
+      "pending_opens": 0,
+      "shm_references": 0,
+      "high_water_bytes": 2043576,
+      "actual_last_bytes": 2043552
+    },
+    {
+      "sequence": 1015,
+      "action": "reserve-growth",
+      "generation": 3,
+      "basename": "native.sqlite-wal",
+      "device": 2050,
+      "inode": 52091928,
+      "linked": true,
+      "handles": 1,
+      "pending_opens": 0,
+      "shm_references": 0,
+      "high_water_bytes": 2047672,
+      "actual_last_bytes": 2043576
+    },
+    {
+      "sequence": 1016,
+      "action": "reserve-growth",
+      "generation": 3,
+      "basename": "native.sqlite-wal",
+      "device": 2050,
+      "inode": 52091928,
+      "linked": true,
+      "handles": 1,
+      "pending_opens": 0,
+      "shm_references": 0,
+      "high_water_bytes": 2047696,
+      "actual_last_bytes": 2047672
+    },
+    {
+      "sequence": 1017,
+      "action": "reserve-growth",
+      "generation": 3,
+      "basename": "native.sqlite-wal",
+      "device": 2050,
+      "inode": 52091928,
+      "linked": true,
+      "handles": 1,
+      "pending_opens": 0,
+      "shm_references": 0,
+      "high_water_bytes": 2051792,
+      "actual_last_bytes": 2047696
+    },
+    {
+      "sequence": 1018,
+      "action": "reserve-growth",
+      "generation": 3,
+      "basename": "native.sqlite-wal",
+      "device": 2050,
+      "inode": 52091928,
+      "linked": true,
+      "handles": 1,
+      "pending_opens": 0,
+      "shm_references": 0,
+      "high_water_bytes": 2051816,
+      "actual_last_bytes": 2051792
+    }
+  ],
+  "first_failure": "bounded lifecycle evidence capacity",
+  "first_failure_sqlite_code": 13,
+  "whole_writer_qualified": false,
+  "full_W1_4097_qualified": false,
+  "task_complete": false,
+  "merge_ready": false
+}

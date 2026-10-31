@@ -1,0 +1,49 @@
+{
+  "source_commit": "99be553ea80bee137b0bcc3b67d8786348547256",
+  "source_tree": "08b3b7d9dab4b767a0629cecd0dc6855cb3232e9",
+  "scope": "diagnostic reconstruction after the atomic runner refused its post-source guard",
+  "original_runner_pass": false,
+  "original_runner_refusal": "post-check git status was nonempty after all tracked non-evidence blobs matched; old self-generated hex fixtures were observed again afterward",
+  "full_repository_source_guard_passed": false,
+  "entries": [
+    {
+      "package": "trnm_crypto_primitives",
+      "binary_name": "merged-native-86b3bead680b-trnm_crypto_primitives-f209f1487829032d",
+      "sha256": "f209f1487829032dc4681f1000bdfcf39dd5490cb5c60b8685605d42e8aa3447",
+      "bytes": 38084256,
+      "log": "merged-native-86b3bead680b-trnm_crypto_primitives-frozen-tests.log",
+      "log_sha256": "ab0852256baa94aeb0de7260315b3957defdbb23c155287eea7726abbfe8efc3",
+      "summary": "test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 108 filtered out; finished in 3.23s"
+    },
+    {
+      "package": "trnm_mvcc_fee",
+      "binary_name": "merged-native-86b3bead680b-trnm_mvcc_fee-f6c0878c06905945",
+      "sha256": "f6c0878c06905945c7783582115ead64fb53ab662426b1385e3f25fc21eba315",
+      "bytes": 59694824,
+      "log": "merged-native-86b3bead680b-trnm_mvcc_fee-frozen-tests.log",
+      "log_sha256": "08d5d840883b73e7c01ee03b55c69b4d7a5fb47dc3a7c7e10d13bddba3305d73",
+      "summary": "test result: ok. 78 passed; 0 failed; 6 ignored; 0 measured; 0 filtered out; finished in 62.28s"
+    },
+    {
+      "package": "trnm_pon_node",
+      "binary_name": "merged-native-86b3bead680b-trnm_pon_node-5f7acd6ebd1fd380",
+      "sha256": "5f7acd6ebd1fd3809c686d7486c4f9bde2d3afeb78f3bc09757c427c4118ccea",
+      "bytes": 313064568,
+      "log": "merged-native-86b3bead680b-trnm_pon_node-frozen-tests.log",
+      "log_sha256": "34db46ba11bfaca4557a3c5ef050545167289dea09cb1a09b061b0747b36d465",
+      "summary": "test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 723 filtered out; finished in 1.57s"
+    },
+    {
+      "package": "trnm_protocol",
+      "binary_name": "merged-native-86b3bead680b-trnm_protocol-e7ad354f33efec8b",
+      "sha256": "e7ad354f33efec8b5237640df36a6501ab1ed07f6be9753e99ccf0a4cb71bb8d",
+      "bytes": 16284072,
+      "log": "merged-native-86b3bead680b-trnm_protocol-frozen-tests.log",
+      "log_sha256": "3525efbd68a528cc492c40bd4ab4f2295a53b43a8f94116c026ccca390137be5",
+      "summary": "test result: ok. 39 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 41.57s"
+    }
+  ],
+  "production_activation": false,
+  "native_pq_node_integrated": false,
+  "quantum_pon_hardness_qualified": false
+}

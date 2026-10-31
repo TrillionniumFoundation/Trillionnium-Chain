@@ -1,0 +1,49 @@
+{
+  "schema": "pon-ci-readback-files-v1",
+  "files": {
+    "artifact-download.json": {
+      "bytes": 500,
+      "sha256": "b9bc025583a52c65c7a4b1116f4887eb07629b3a9c8b8e02422313214d659ab3"
+    },
+    "artifact.zip": {
+      "bytes": 446073,
+      "sha256": "ce7ec685deada12603037a6b050657abc7bce44d83fed09fd43743f38f220c3c"
+    },
+    "github-job.log.gz": {
+      "bytes": 46863,
+      "sha256": "b0a4cb8f817a1d5f5f01fbaea569b37cd93aa7a00530e6c1a993d0c59060e9a0"
+    },
+    "host-kernel-current-reads.log.gz": {
+      "bytes": 2581,
+      "sha256": "fc1b6aaa813dc0d715ce6724f33acbef5eac17b17eb85053e734ea824a3a1dfe"
+    },
+    "kernel-passed-roster.txt": {
+      "bytes": 2050,
+      "sha256": "606db7ee5a58c898b6373e7939aa576497ab11cfe5cd603ef7c9a579068bd0fd"
+    },
+    "native-authenticated-roster.txt": {
+      "bytes": 2339,
+      "sha256": "14fffbe0dc533c30637f377916d6262e6537480f9fc5a6227cf4ab02cf9b641b"
+    },
+    "native-snapshots.log.gz": {
+      "bytes": 2954,
+      "sha256": "0c05f3d1fae89b5279342f2e1c33ba52e30e3aa5f16626ae595dbf04469215a2"
+    },
+    "observation.json": {
+      "bytes": 6626,
+      "sha256": "0cadc039cd1c5c7a6401b7c8e08aefd54554c895e17d557fe4b306eb07e6514b"
+    },
+    "provenance.json": {
+      "bytes": 2979,
+      "sha256": "c67503bba6e796fe5647a9dd63ea146da14f134917e026f18ffcbf5fa39c8fa8"
+    },
+    "source-after.json": {
+      "bytes": 422,
+      "sha256": "053d61a2de0697e88d44fd4aedfb951ee66a6e6b5af1b13c8c3efab27ce03eb3"
+    },
+    "source-before.json": {
+      "bytes": 422,
+      "sha256": "053d61a2de0697e88d44fd4aedfb951ee66a6e6b5af1b13c8c3efab27ce03eb3"
+    }
+  }
+}

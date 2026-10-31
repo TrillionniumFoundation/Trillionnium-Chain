@@ -1,0 +1,21 @@
+{
+  "name": "guardian-controls",
+  "argv": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts/ci",
+    "-p",
+    "test_history_effect_v6_guard.py",
+    "-v"
+  ],
+  "returncode": 0,
+  "passed": true,
+  "elapsed_wall_seconds": 1.2334112399985315,
+  "raw_bytes": 3784,
+  "raw_sha256": "d1c12f7c92ac1a411d786b3c722cab32e49d71d86e1357b3ec27b208955d4fad",
+  "gzip_bytes": 913,
+  "gzip_sha256": "4b155fe355f1388f64a4061f4a5e8269f954fc4216e73f7fd5d7684244b94b47"
+}

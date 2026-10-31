@@ -1,0 +1,11 @@
+{
+  "utc": "2026-10-26T12:43:06.296684+00:00",
+  "source_change": "match Linux/Rust i32 file-descriptor representability, not a new RLIMIT or resource allowance",
+  "prior_source_guard_gap": "co-mutated2**63 could satisfy static event predicate; no demonstrated trusted producer or native bypass",
+  "collector_sha256": "c5e8d582d2b53411b15114c6c7fd03b618f5ce3c79ee25bc198dd372857bbc65",
+  "predicate_test_sha256": "c1ed7e49a5ce8c86518752411bb7fa34ab786977d75a1e274821daec9c7f6733",
+  "previous32_mechanism_run_retained_not_final_pin": true,
+  "old26_test_bytes_unchanged": true,
+  "namespace_shape_and_original_caps_unchanged": true,
+  "merge_ready": false
+}

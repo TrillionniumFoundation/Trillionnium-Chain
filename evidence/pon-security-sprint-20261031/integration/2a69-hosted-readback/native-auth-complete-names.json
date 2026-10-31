@@ -1,0 +1,371 @@
+{
+  "schema": "pon-native-auth-static-libtest-inventory-v1",
+  "source_commit": "2a69a989046489c212619dd337ee74a083f101de",
+  "selector": "store::native_authenticated::",
+  "include_ignored": true,
+  "expected_passed": 60,
+  "expected_ignored": 0,
+  "inventory_scope": "Current source test declarations and verified module linkage, not a native execution.",
+  "tests": [
+    {
+      "name": "store::native_authenticated::arithmetic_cache::root_arithmetic::tests::complete_commitment_keeps_account_error_order_with_root_material",
+      "file": "src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs",
+      "line": 157,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::arithmetic_cache::root_arithmetic::tests::opaque_tree_preserves_original_canonical_and_limit_errors",
+      "file": "src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs",
+      "line": 66,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::arithmetic_cache::root_arithmetic::tests::opaque_tree_recomputes_actual_additions_removals_values_and_namespace",
+      "file": "src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs",
+      "line": 19,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::arithmetic_cache::root_arithmetic::tests::opaque_tree_retention_caps_payload_charge_and_preserves_cold_borrow_behavior",
+      "file": "src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs",
+      "line": 95,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::arithmetic_cache::tests::arithmetic_cache_binds_exact_complete_bytes_context_and_has_fixed_retention",
+      "file": "src/store/native_authenticated/arithmetic_cache.rs",
+      "line": 423,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::arithmetic_cache::tests::arithmetic_cache_preserves_exact_numeric_encoding_and_invalid_input_errors",
+      "file": "src/store/native_authenticated/arithmetic_cache.rs",
+      "line": 451,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::arithmetic_cache::tests::complete_hits_keep_a_hot_non_genesis_slot_within_three_entries",
+      "file": "src/store/native_authenticated/arithmetic_cache.rs",
+      "line": 391,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::arithmetic_cache::tests::exact_hit_under_shared_borrow_keeps_original_arithmetic_without_retention_change",
+      "file": "src/store/native_authenticated/arithmetic_cache.rs",
+      "line": 401,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::arithmetic_cache::tests::full_root_reuse_compares_actual_bytes_and_keeps_original_error_order",
+      "file": "src/store/native_authenticated/arithmetic_cache.rs",
+      "line": 489,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::arithmetic_cache::tests::initial_root_survives_unactivated_branch_roots_without_whole_tree_churn",
+      "file": "src/store/native_authenticated/arithmetic_cache.rs",
+      "line": 588,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::arithmetic_cache::tests::pq_account_roots_keep_original_validation_on_cold_and_warm_cache",
+      "file": "src/store/native_authenticated/arithmetic_cache.rs",
+      "line": 295,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::arithmetic_cache::tests::root_hits_keep_a_hot_non_genesis_slot_within_three_complete_entries",
+      "file": "src/store/native_authenticated/arithmetic_cache.rs",
+      "line": 396,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::arithmetic_cache::tests::separate_root_arithmetic_entry_survives_complete_eviction_and_is_bounded",
+      "file": "src/store/native_authenticated/arithmetic_cache.rs",
+      "line": 548,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::cached_owner_read_tests::cached_block_reads_do_not_hide_genesis_damage_or_rollback",
+      "file": "src/store/native_authenticated.rs",
+      "line": 1843,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::cached_owner_read_tests::cached_commitment_reads_preserve_limits_missing_and_rollback",
+      "file": "src/store/native_authenticated.rs",
+      "line": 2003,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::cached_owner_read_tests::cached_genesis_snapshot_is_reread_and_survives_cold_reopen",
+      "file": "src/store/native_authenticated.rs",
+      "line": 2041,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::cached_owner_read_tests::cached_parent_reads_observe_changed_work_then_exact_restore",
+      "file": "src/store/native_authenticated.rs",
+      "line": 1908,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::cached_owner_read_tests::warm_genesis_arithmetic_still_compares_current_sql_root_and_initial_bytes",
+      "file": "src/store/native_authenticated.rs",
+      "line": 1950,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::delta_root_stream_tests::streaming_delta_root_checks_empty_batch_and_final_cancellation",
+      "file": "src/store/native_authenticated.rs",
+      "line": 1192,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::delta_root_stream_tests::streaming_delta_root_keeps_order_bytes_and_absence_distinct",
+      "file": "src/store/native_authenticated.rs",
+      "line": 1148,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::delta_root_stream_tests::streaming_delta_root_matches_every_small_padding_shape",
+      "file": "src/store/native_authenticated.rs",
+      "line": 1131,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::delta_root_stream_tests::streaming_delta_root_matches_full_delta_boundary_without_state_admission_claim",
+      "file": "src/store/native_authenticated.rs",
+      "line": 1226,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::delta_root_stream_tests::streaming_delta_root_matches_independent_python_vectors",
+      "file": "src/store/native_authenticated.rs",
+      "line": 1243,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::difference_stream_tests::stream_match_cancellation_returns_no_result_and_keeps_inputs_retryable",
+      "file": "src/store/native_authenticated.rs",
+      "line": 1039,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::difference_stream_tests::stream_match_refuses_missing_extra_reordered_and_changed_rows",
+      "file": "src/store/native_authenticated.rs",
+      "line": 990,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::difference_stream_tests::stream_match_uses_original_byte_rules_for_null_absence_and_signed_zero",
+      "file": "src/store/native_authenticated.rs",
+      "line": 1080,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::difference_stream_tests::stream_match_visits_equal_keys_and_complete_mismatch_before_result",
+      "file": "src/store/native_authenticated.rs",
+      "line": 1014,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::difference_tests::sorted_difference_full_key_walk_keeps_late_changes_and_original_state",
+      "file": "src/store/native_authenticated.rs",
+      "line": 956,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::difference_tests::sorted_difference_matches_independent_union_for_interleaved_branch_edits",
+      "file": "src/store/native_authenticated.rs",
+      "line": 937,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::difference_tests::sorted_difference_preserves_null_absence_signed_zero_and_numeric_bytes",
+      "file": "src/store/native_authenticated.rs",
+      "line": 906,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::history_arithmetic::tests::actual_packet_columns_and_parent_work_are_rechecked_after_warm_history",
+      "file": "src/store/native_authenticated/history_arithmetic/tests.rs",
+      "line": 170,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::history_arithmetic::tests::current_record_bytes_namespace_and_long_scans_never_replace_prior_observations",
+      "file": "src/store/native_authenticated/history_arithmetic/tests.rs",
+      "line": 63,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::history_arithmetic::tests::every_history_progress_boundary_keeps_cancellation_identity_and_retry",
+      "file": "src/store/native_authenticated/history_arithmetic/tests.rs",
+      "line": 311,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::history_arithmetic::tests::indexed_leaf_reuse_keeps_padding_current_rows_and_typed_null_errors",
+      "file": "src/store/native_authenticated/history_arithmetic/tests.rs",
+      "line": 435,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::history_arithmetic::tests::nested_observations_do_not_hold_a_guard_across_cancellation_or_change_errors",
+      "file": "src/store/native_authenticated/history_arithmetic/tests.rs",
+      "line": 603,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::history_arithmetic::tests::old_delta_and_parent_record_faults_keep_original_error_order",
+      "file": "src/store/native_authenticated/history_arithmetic/tests.rs",
+      "line": 249,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::history_arithmetic::tests::old_history_trigger_rolls_back_new_block_and_cached_codec_cannot_create_it",
+      "file": "src/store/native_authenticated/history_arithmetic/tests.rs",
+      "line": 562,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::history_arithmetic::tests::pinned_initial_arithmetic_keeps_current_genesis_sql_and_cold_open_checks",
+      "file": "src/store/native_authenticated/history_arithmetic/tests.rs",
+      "line": 355,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::history_arithmetic::tests::retained_charge_and_operation_capture_bounds_only_discard_acceleration",
+      "file": "src/store/native_authenticated/history_arithmetic/tests.rs",
+      "line": 512,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::native_fixed_blob_tests::fixed_blob_projection_bounds_owned_bytes_and_preserves_sql_types",
+      "file": "src/store/native_fixed_blob_tests.rs",
+      "line": 112,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::native_fixed_blob_tests::fixed_block_fields_match_original_errors_after_warm_cache_and_rollback",
+      "file": "src/store/native_fixed_blob_tests.rs",
+      "line": 159,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::native_fixed_blob_tests::fixed_fields_genesis_failure_order_and_cold_reopen_keep_state",
+      "file": "src/store/native_fixed_blob_tests.rs",
+      "line": 251,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::native_fixed_blob_tests::fixed_parent_work_matches_original_and_rereads_after_restore",
+      "file": "src/store/native_fixed_blob_tests.rs",
+      "line": 206,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::nullable_blob_tests::nullable_delta_empty_bytes_are_not_absence_after_warm_cache",
+      "file": "src/store/native_authenticated.rs",
+      "line": 2189,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::nullable_blob_tests::nullable_delta_late_failure_keeps_cancellation_and_cursor_recovery",
+      "file": "src/store/native_authenticated.rs",
+      "line": 2224,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::nullable_blob_tests::nullable_delta_projection_preserves_null_empty_types_and_bounds",
+      "file": "src/store/native_authenticated.rs",
+      "line": 2150,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::nullable_blob_tests::nullable_genesis_packet_empty_rejects_and_rollback_restores",
+      "file": "src/store/native_authenticated.rs",
+      "line": 2253,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::nullable_blob_tests::nullable_real_insertion_empty_preimage_rejects_live_and_cold_owner",
+      "file": "src/store/native_authenticated.rs",
+      "line": 2287,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::stored_delta_stream_tests::cached_delta_complete_call_observation_keeps_checks_and_results",
+      "file": "src/store/native_authenticated.rs",
+      "line": 1406,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::stored_delta_stream_tests::cached_delta_cursor_is_released_after_cancellation",
+      "file": "src/store/native_authenticated.rs",
+      "line": 1352,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::stored_delta_stream_tests::cached_delta_eviction_or_disabled_cache_keeps_original_results",
+      "file": "src/store/native_authenticated.rs",
+      "line": 1383,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::stored_delta_stream_tests::cached_delta_failure_then_rollback_does_not_reuse_a_verdict",
+      "file": "src/store/native_authenticated.rs",
+      "line": 1331,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::stored_delta_stream_tests::cached_delta_reads_rebind_and_observe_committed_mutations",
+      "file": "src/store/native_authenticated.rs",
+      "line": 1305,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::stored_delta_stream_tests::retained_delta_stream_cost_preserves_all_paired_observations",
+      "file": "src/store/native_authenticated.rs",
+      "line": 1761,
+      "ignored": true
+    },
+    {
+      "name": "store::native_authenticated::stored_delta_stream_tests::stored_delta_list_cancellation_does_not_return_a_prefix",
+      "file": "src/store/native_authenticated.rs",
+      "line": 1559,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::stored_delta_stream_tests::stored_root_stream_cancellation_returns_no_result_and_keeps_original_error",
+      "file": "src/store/native_authenticated.rs",
+      "line": 1522,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::stored_delta_stream_tests::stored_root_stream_matches_all_original_padding_shapes_and_rows",
+      "file": "src/store/native_authenticated.rs",
+      "line": 1487,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::stored_delta_stream_tests::stored_root_stream_preserves_corrupt_row_error_identity_and_order",
+      "file": "src/store/native_authenticated.rs",
+      "line": 1502,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::stored_delta_stream_tests::stored_root_stream_preserves_full_delta_read_limit_and_rejects_next_row",
+      "file": "src/store/native_authenticated.rs",
+      "line": 1580,
+      "ignored": false
+    },
+    {
+      "name": "store::native_authenticated::stored_delta_stream_tests::stored_rows_bound_bytes_before_decode_and_keep_unicode_nul_and_sql_types",
+      "file": "src/store/native_authenticated.rs",
+      "line": 1612,
+      "ignored": false
+    }
+  ]
+}

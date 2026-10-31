@@ -1,0 +1,151 @@
+{
+  "schema": "pon-recent-roster-readback-controls-v1",
+  "result": "PASS",
+  "scope": "actual workflow log predicates only; not native test execution",
+  "workflow_sha256": "802a978b2c6f76581d06ceaa907a9afe192af3e26c6ab71d0df59d475168d891",
+  "artifact_sha256": "7c3f69607adfc90074e7dbe836056f4fe8d7a34795c889af5368cfebf9674a27",
+  "inventory_sha256": "5de2a8f9c477fb07e49cc4338c7581409361c5dbe15d768cfdb36652fcf08382",
+  "controls": 20,
+  "observations": [
+    {
+      "count": 22,
+      "case": "complete-roster",
+      "scope": "actual ARM prospective-merge native transcript, then explicit mutations",
+      "exit_code": 0,
+      "accepted": true
+    },
+    {
+      "count": 22,
+      "case": "missing-name",
+      "scope": "actual ARM prospective-merge native transcript, then explicit mutations",
+      "exit_code": 1,
+      "accepted": false
+    },
+    {
+      "count": 22,
+      "case": "duplicate-name",
+      "scope": "actual ARM prospective-merge native transcript, then explicit mutations",
+      "exit_code": 1,
+      "accepted": false
+    },
+    {
+      "count": 22,
+      "case": "renamed-name",
+      "scope": "actual ARM prospective-merge native transcript, then explicit mutations",
+      "exit_code": 1,
+      "accepted": false
+    },
+    {
+      "count": 22,
+      "case": "ignored-name",
+      "scope": "actual ARM prospective-merge native transcript, then explicit mutations",
+      "exit_code": 1,
+      "accepted": false
+    },
+    {
+      "count": 22,
+      "case": "failed-name",
+      "scope": "actual ARM prospective-merge native transcript, then explicit mutations",
+      "exit_code": 1,
+      "accepted": false
+    },
+    {
+      "count": 22,
+      "case": "old-summary",
+      "scope": "actual ARM prospective-merge native transcript, then explicit mutations",
+      "exit_code": 1,
+      "accepted": false
+    },
+    {
+      "count": 22,
+      "case": "duplicate-summary",
+      "scope": "actual ARM prospective-merge native transcript, then explicit mutations",
+      "exit_code": 1,
+      "accepted": false
+    },
+    {
+      "count": 22,
+      "case": "failed-summary",
+      "scope": "actual ARM prospective-merge native transcript, then explicit mutations",
+      "exit_code": 1,
+      "accepted": false
+    },
+    {
+      "count": 22,
+      "case": "empty",
+      "scope": "actual ARM prospective-merge native transcript, then explicit mutations",
+      "exit_code": 1,
+      "accepted": false
+    },
+    {
+      "count": 60,
+      "case": "complete-roster",
+      "scope": "synthetic reader fixture from source inventory; no native execution",
+      "exit_code": 0,
+      "accepted": true
+    },
+    {
+      "count": 60,
+      "case": "missing-name",
+      "scope": "synthetic reader fixture from source inventory; no native execution",
+      "exit_code": 1,
+      "accepted": false
+    },
+    {
+      "count": 60,
+      "case": "duplicate-name",
+      "scope": "synthetic reader fixture from source inventory; no native execution",
+      "exit_code": 1,
+      "accepted": false
+    },
+    {
+      "count": 60,
+      "case": "renamed-name",
+      "scope": "synthetic reader fixture from source inventory; no native execution",
+      "exit_code": 1,
+      "accepted": false
+    },
+    {
+      "count": 60,
+      "case": "ignored-name",
+      "scope": "synthetic reader fixture from source inventory; no native execution",
+      "exit_code": 1,
+      "accepted": false
+    },
+    {
+      "count": 60,
+      "case": "failed-name",
+      "scope": "synthetic reader fixture from source inventory; no native execution",
+      "exit_code": 1,
+      "accepted": false
+    },
+    {
+      "count": 60,
+      "case": "old-summary",
+      "scope": "synthetic reader fixture from source inventory; no native execution",
+      "exit_code": 1,
+      "accepted": false
+    },
+    {
+      "count": 60,
+      "case": "duplicate-summary",
+      "scope": "synthetic reader fixture from source inventory; no native execution",
+      "exit_code": 1,
+      "accepted": false
+    },
+    {
+      "count": 60,
+      "case": "failed-summary",
+      "scope": "synthetic reader fixture from source inventory; no native execution",
+      "exit_code": 1,
+      "accepted": false
+    },
+    {
+      "count": 60,
+      "case": "empty",
+      "scope": "synthetic reader fixture from source inventory; no native execution",
+      "exit_code": 1,
+      "accepted": false
+    }
+  ]
+}

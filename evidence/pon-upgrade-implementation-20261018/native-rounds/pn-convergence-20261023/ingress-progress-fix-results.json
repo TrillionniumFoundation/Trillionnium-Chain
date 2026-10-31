@@ -1,0 +1,43 @@
+{
+  "parent_head": "1a8e8bf67b49e648898e9d7c0dfa50564a37dbfc",
+  "source_sha256": "5d513444d90e3f8589fee0826264d7b318dfc3e4ae2db862053a90684c149f8f",
+  "initial_unformatted_patch_fmt_check_exit": 1,
+  "commands": [
+    {
+      "selector": "ingress::tests::proof_statement_precheck_rejects_before_parent_state_or_work_and_preserves_retry",
+      "returncode": 0,
+      "seconds": 388.40460565895773,
+      "log": "/tmp/trnm-pn-convergence-20261023/evidence-root/ingress-progress-fix-0.log",
+      "log_sha256": "91bae302f77a75d5b6dd2ff0e5b3b37f8585e8fc02ffffb57436312df823f0f2"
+    },
+    {
+      "selector": "ingress::tests::public_v3_false_work_precedes_unowned_state_and_keeps_valid_retry",
+      "returncode": 0,
+      "seconds": 0.40119999600574374,
+      "log": "/tmp/trnm-pn-convergence-20261023/evidence-root/ingress-progress-fix-1.log",
+      "log_sha256": "0efcd09facc6641cff5a66240706469df136d6191936361fed5313a6d250896e"
+    },
+    {
+      "selector": "ingress::tests::context_cancellation_precedes_work_verifier_and_preserves_public_retry",
+      "returncode": 0,
+      "seconds": 0.352425393066369,
+      "log": "/tmp/trnm-pn-convergence-20261023/evidence-root/ingress-progress-fix-2.log",
+      "log_sha256": "322f44dcd5bda3e0e46edfd63a57da41f4170bbb4d99a9a236241a34872e8427"
+    },
+    {
+      "selector": "ingress::tests::existing_replay_cancel",
+      "returncode": 0,
+      "seconds": 1.238634672947228,
+      "log": "/tmp/trnm-pn-convergence-20261023/evidence-root/ingress-progress-fix-3.log",
+      "log_sha256": "66efd244c6870c9e3a8d64066383f5e154156c01c8e6947a56ef0cd1fe261676"
+    },
+    {
+      "selector": "ingress::tests::public_v3_valid_work_cannot_reuse_parent_state_across_actual_sql_tampering",
+      "returncode": 0,
+      "seconds": 0.361811661045067,
+      "log": "/tmp/trnm-pn-convergence-20261023/evidence-root/ingress-progress-fix-4.log",
+      "log_sha256": "f933c8ae9a878b3cb9a7378af7b885ce6812b6c1ec392b18f1fd046306a5fcaf"
+    }
+  ],
+  "all_requested_pass": true
+}

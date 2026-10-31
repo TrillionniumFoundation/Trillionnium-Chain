@@ -1,0 +1,32 @@
+{
+  "workspace_members": [
+    "path+file:///workspace/scratch/bb9b841c1d43/history-next/trillionnium/crates/trnm-audit-events#0.1.0",
+    "path+file:///workspace/scratch/bb9b841c1d43/history-next/trillionnium/crates/trnm-governance-guard#0.1.0",
+    "path+file:///workspace/scratch/bb9b841c1d43/history-next/trillionnium/crates/trnm-escrow-vault#0.1.0",
+    "path+file:///workspace/scratch/bb9b841c1d43/history-next/trillionnium/crates/trnm-types#0.1.0",
+    "path+file:///workspace/scratch/bb9b841c1d43/history-next/trillionnium/crates/trnm-executor#0.1.0",
+    "path+file:///workspace/scratch/bb9b841c1d43/history-next/trillionnium/crates/trnm-bench#0.1.0",
+    "path+file:///workspace/scratch/bb9b841c1d43/history-next/trillionnium/crates/trnm-mempool#0.1.0",
+    "path+file:///workspace/scratch/bb9b841c1d43/history-next/trillionnium/crates/trnm-worker-agent#0.1.0",
+    "path+file:///workspace/scratch/bb9b841c1d43/history-next/trillionnium/crates/trnm-oracle#0.1.0",
+    "path+file:///workspace/scratch/bb9b841c1d43/history-next/trillionnium/crates/trnm-research-protocol#0.1.0",
+    "path+file:///workspace/scratch/bb9b841c1d43/history-next/trillionnium/crates/trnm-protocol#0.1.0",
+    "path+file:///workspace/scratch/bb9b841c1d43/history-next/trillionnium/crates/trnm-peer-lease#0.1.0",
+    "path+file:///workspace/scratch/bb9b841c1d43/history-next/trillionnium/crates/trnm-data-availability#0.1.0",
+    "path+file:///workspace/scratch/bb9b841c1d43/history-next/trillionnium/crates/trnm-task-kernel#0.1.0",
+    "path+file:///workspace/scratch/bb9b841c1d43/history-next/trillionnium/crates/trnm-mvcc-fee#0.1.0",
+    "path+file:///workspace/scratch/bb9b841c1d43/history-next/trillionnium/crates/trnm-crypto-primitives#0.1.0",
+    "path+file:///workspace/scratch/bb9b841c1d43/history-next/trillionnium/crates/trnm-verification-profiles#0.1.0",
+    "path+file:///workspace/scratch/bb9b841c1d43/history-next/trillionnium/crates/trnm-service-settlement#0.1.0",
+    "path+file:///workspace/scratch/bb9b841c1d43/history-next/trillionnium/crates/trnm-control-plane#0.1.0",
+    "path+file:///workspace/scratch/bb9b841c1d43/history-next/trillionnium/crates/trnm-state-import#0.1.0",
+    "path+file:///workspace/scratch/bb9b841c1d43/history-next/trillionnium/crates/trnm-release-bundle#0.1.0",
+    "path+file:///workspace/scratch/bb9b841c1d43/history-next/trillionnium/crates/trnm-checkpoint-store#0.1.0",
+    "path+file:///workspace/scratch/bb9b841c1d43/history-next/trillionnium/crates/trnm-checkpoint-types#0.1.0",
+    "path+file:///workspace/scratch/bb9b841c1d43/history-next/trillionnium/crates/trnm-transport#0.1.0",
+    "path+file:///workspace/scratch/bb9b841c1d43/history-next/trillionnium/crates/trnm-pon-node#0.1.0"
+  ],
+  "resolved_package_count": 145,
+  "cargo_lock_sha256": "6efe75ea2f9293e3f0d003d6896e89e795c1ef021b9e15179db4d2e37317b864",
+  "metadata_sha256": "87b25d49db769689b104a8c5da644cf909e1ce75811ea208059875d6cf71cc50"
+}

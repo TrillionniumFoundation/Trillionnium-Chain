@@ -1,0 +1,108 @@
+name: Pure PoN complete v2 ARM64 cost research
+on:
+  pull_request:
+    paths:
+      - .github/workflows/pon-pure-cost-arm64-v2.yml
+      - trillionnium/**
+      - scripts/ci/capture_pure_pon_campaign.py
+      - scripts/ci/check_pure_pon_cost_campaign.py
+      - scripts/ci/summarize_pure_pon_cost_campaign.py
+permissions:
+  contents: read
+concurrency:
+  group: pon-pure-cost-arm64-v2-${{ github.event.pull_request.head.sha }}
+  cancel-in-progress: false
+jobs:
+  complete-arm64-grid:
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 60
+    env:
+      CI: "true"
+      CARGO_INCREMENTAL: "0"
+      CARGO_BUILD_JOBS: "1"
+      CARGO_PROFILE_DEV_DEBUG: "0"
+      CARGO_PROFILE_TEST_DEBUG: "0"
+      RUST_TEST_THREADS: "1"
+      RUSTUP_TOOLCHAIN: "1.95.0"
+      PYTHONDONTWRITEBYTECODE: "1"
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+    steps:
+      - name: Checkout exact candidate without persistent credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Bind complete source and actual architecture
+        run: |
+          set -euo pipefail
+          echo "CARGO_HOME=$RUNNER_TEMP/pon-arm64-v2-cargo" >> "$GITHUB_ENV"
+          echo "CARGO_TARGET_DIR=$RUNNER_TEMP/pon-arm64-v2-target" >> "$GITHUB_ENV"
+          echo "OUT=$RUNNER_TEMP/pon-arm64-v2-observations" >> "$GITHUB_ENV"
+          python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$EXPECTED_HEAD" --output "$RUNNER_TEMP/pon-arm64-v2-observations/source-before.json"
+          bash scripts/project-preflight.sh --audit
+          python3 - <<'PY'
+          import json, os, platform
+          from pathlib import Path
+          machine = platform.machine()
+          assert machine == 'aarch64', 'native ARM64 is required; no emulation fallback'
+          root = Path(os.environ['RUNNER_TEMP']) / 'pon-arm64-v2-observations'
+          value = dict(schema='pon-hosted-arm64-observation-v1', machine=machine,
+              platform=platform.platform(), visible_cpu_count=os.cpu_count(),
+              affinity=sorted(os.sched_getaffinity(0)), cpu_model_authenticated=False,
+              exclusive_host=False, host_contention_controlled=False,
+              gpu_measured=False, energy_measured=False, production_qualified=False)
+          for name in ('cpu.max', 'memory.max', 'cpuset.cpus.effective'):
+              path = Path('/sys/fs/cgroup') / name
+              value[name] = path.read_text().strip() if path.is_file() else None
+          (root / 'host.json').write_text(json.dumps(value, indent=2) + '\n')
+          PY
+          lscpu --json > "$RUNNER_TEMP/pon-arm64-v2-observations/lscpu.json"
+      - name: Install original compiler and check the complete source
+        run: |
+          set -euo pipefail
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt
+          python3 scripts/ci/check_repository.py 2>&1 | tee "$OUT/repository.log"
+          python3 scripts/refresh_distributed_source_inventory.py --check 2>&1 | tee "$OUT/inventory.log"
+          python3 scripts/ci/test_check_pure_pon_cost_campaign.py 2>&1 | tee "$OUT/reader-controls.log"
+          cargo +1.95.0 metadata --locked --format-version 1 --manifest-path trillionnium/Cargo.toml > "$OUT/cargo-graph.json"
+          cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee "$OUT/fmt.log"
+      - name: Build the original native producer and retain its actual executable
+        id: build
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 build --locked --profile test --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example pon_pure_cost_campaign 2>&1 | tee "$OUT/build.log"
+          cp "$CARGO_TARGET_DIR/debug/examples/pon_pure_cost_campaign" "$OUT/pon_pure_cost_campaign.arm64"
+          sha256sum "$CARGO_TARGET_DIR/debug/examples/pon_pure_cost_campaign" "$OUT/pon_pure_cost_campaign.arm64" > "$OUT/binary-before.sha256"
+      - name: Execute every original v2 cohort once and retain every failed search
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: |
+          set -euo pipefail
+          # Same grid, seed, rounds and test profile as the x64 run. The only
+          # run-plan difference is an explicit 1800-second completion ceiling.
+          # A timeout or partial grid remains a failed hardware observation.
+          python3 scripts/ci/capture_pure_pon_campaign.py --binary "$CARGO_TARGET_DIR/debug/examples/pon_pure_cost_campaign" --output "$OUT/cost" --timeout 1860 -- --searches 256 --attempts 8 --rounds 2 --seed 1 --seconds 1800
+          python3 scripts/ci/check_pure_pon_cost_campaign.py "$OUT/cost/stdout.jsonl.gz" --output "$OUT/cost/consistency.json"
+          python3 scripts/ci/summarize_pure_pon_cost_campaign.py "$OUT/cost/stdout.jsonl.gz" --output "$OUT/cost/summary.json" --csv "$OUT/cost/summary.csv"
+          python3 - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          root = Path(os.environ['OUT'])
+          capture = json.loads((root / 'cost/capture.json').read_text())
+          actual = hashlib.sha256((root / 'pon_pure_cost_campaign.arm64').read_bytes()).hexdigest()
+          assert actual == capture['binary_sha256_before'] == capture['binary_sha256_after']
+          summary = json.loads((root / 'cost/summary.json').read_text())
+          assert summary['input_cohorts'] == 4032
+          assert capture['machine'] == 'aarch64' and not capture['timed_out'] and capture['exit_code'] == 0
+          PY
+      - name: Independently recheck final source bytes even after failure
+        if: always()
+        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$EXPECTED_HEAD" --output "$RUNNER_TEMP/pon-arm64-v2-observations/source-after.json"
+      - name: Preserve actual source, binary, hardware observations and complete raw outcomes
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: pure-pon-arm64-v2-${{ github.event.pull_request.head.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/pon-arm64-v2-observations/
+          if-no-files-found: error
+          retention-days: 30

@@ -1,0 +1,122 @@
+{
+  "schema": "pon-recovered-v5-core-readback-v1",
+  "new_readback_started_at_utc": "2026-10-30T17:31:23.987237+00:00",
+  "new_readback_finished_at_utc": "2026-10-30T17:31:25.086916+00:00",
+  "new_readback_wall_ns": 1099685298,
+  "new_validate_call_wall_ns": 533375185,
+  "row_validation_result": "PASS",
+  "reader_source_commit": "1d11f875493f8125e36b9adceacb342df108e5e5",
+  "reader_source_tree": "64b82137eebeb96b572abc62e5fce39af3593200",
+  "source_input_scope": "Unchanged reader, its seven configuration files, and the two raw-record-embedded driver/lock bindings, extracted from pinned Git objects.",
+  "source_inputs": {
+    "scripts/ci/check_legal_ticket_cost_v5.py": {
+      "bytes": 25719,
+      "sha256": "a8d6c0c48e044a1835b4eedabf5362872ef163ac85e09aa7b4f7d0a3a66d5b99",
+      "git_blob_oid": "cf37915218a2fedfa5f908f1a651f0a30d93be86"
+    },
+    "trillionnium/crates/trnm-pon-node/examples/pon_legal_ticket_cost_v5.rs": {
+      "bytes": 22080,
+      "sha256": "bfb8807c61dab9f0bd16a9f3bda240b4899b7a68348d5afb1984824d0155d1e5",
+      "git_blob_oid": "28ff225798dad961f309715aa361203e42df9359"
+    },
+    "trillionnium/Cargo.lock": {
+      "bytes": 63924,
+      "sha256": "9daaf7ce63bfcab58efc8e08ca5134bfba9c97ec7e615cd6ad80e54be30b64cb",
+      "git_blob_oid": "c10c05cfbbf0e43d1c776fd86849789c133e512e"
+    },
+    "config/pon/devnet-v1.json": {
+      "bytes": 1964,
+      "sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4",
+      "git_blob_oid": "a60f403b2f0e7343aed61170ca2aef875a787790"
+    },
+    "config/pon/public-evaluation-native-v1.json": {
+      "bytes": 1098,
+      "sha256": "250bf776f46fb9255ea7aa4fd7a52296f6bbeaeb835894f34b436c089bc3632c",
+      "git_blob_oid": "cd03d4cd34cbf07007ab86d84009258b80ab4b41"
+    },
+    "config/pon/continuity-v1.json": {
+      "bytes": 1980,
+      "sha256": "6932399d708ae73c81183e67e376bd9321bf2f69bbe792a78a6b672188f34821",
+      "git_blob_oid": "1f96cd754b3d86e31e4367e887786453a9eee1d7"
+    },
+    "config/pon/qualified-task-lifecycle-v4.json": {
+      "bytes": 6207,
+      "sha256": "f3051aaa960406828c2ec905caad4150e6e215204b29653ecdb56cdecf21a2de",
+      "git_blob_oid": "337867795ca9ae9e57f0a8765f81347e1d20bf40"
+    },
+    "config/pon/work-profile-v1.json": {
+      "bytes": 1596,
+      "sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880",
+      "git_blob_oid": "54e43139d3691b62f76f9e8976e1d2a974e8524b"
+    },
+    "config/pon/ledger-v1.json": {
+      "bytes": 7793,
+      "sha256": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a",
+      "git_blob_oid": "f7d8dba05cd0267b716834d76774a7ce94a1276b"
+    },
+    "config/pon/model-family-v1.json": {
+      "bytes": 1383,
+      "sha256": "30b250db074e7fbb5776c1474371258a6110cc1742e0e9970232a799ab790ca1",
+      "git_blob_oid": "9a931f21ca86563cf7e5c6415acd20a0ced7da68"
+    }
+  },
+  "raw_identity": {
+    "compressed_bytes": 4637185,
+    "compressed_sha256": "6781436c5acfc932df0aac3d46ee1f04c9e987158d87d74f107ed542529dbe7d",
+    "git_blob_oid": "581b49bfef116c952903c6519c9f179c4cdd6214",
+    "uncompressed_bytes": 12493662,
+    "uncompressed_sha256": "7d2729358a669c56ef47c1056f1ec87b5f8b02a8cebdcf0ae6b7d65532c528fc"
+  },
+  "binary_identity": {
+    "compressed_bytes": 3574029,
+    "compressed_sha256": "b876349e5f5c3dbebeb50f4c791cfaecc72911d59276383136d1b98b46cc2c9e",
+    "git_blob_oid": "93c4e04b5cbf8c4ae180f2258f26a4af06475f68",
+    "uncompressed_bytes": 10344808,
+    "uncompressed_sha256": "e363b0c87ccca5a99567ce3fb2c4b759784ccfb724dd295b08e5fae132a3fbbe"
+  },
+  "records": 146,
+  "cohorts": 144,
+  "searches": 11844,
+  "attempts": 22590,
+  "first_admissions": 11772,
+  "misses": 10818,
+  "exhausted_searches": 72,
+  "distinct_paired_packet_ids": 654,
+  "raw_declared_native_budget_seconds": 600,
+  "raw_reported_native_terminal_status": "complete",
+  "raw_reported_native_terminal_wall_ns": 388323648870,
+  "context_binding": {
+    "schema": "pon-legal-ticket-fixed-context-v1",
+    "network": "9842a2a7d6bcae8d68f2617468764e21254b1cf9172e617e9973e9af10b5b728",
+    "parameters": "19f7b4296c8fa634c406d72ede52645f036b0ae8508e5f8be6cba71ba821540b",
+    "task": "c982eea0545c228d0bf48d6d06e623020b4031f2ba79da56cc6bdccde2c63496",
+    "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "genesis_timestamp": 1800010000,
+    "template_sha256": "a6b5eb9020a41796ccd885b6c3051a4b12585e77c35269e26dcfc7ab6a4c4204",
+    "all_recorded_nonce_challenges_recomputed": true,
+    "complete_seed_template_matches_original_native_fixture": true,
+    "required_work_per_ticket": 2,
+    "conditional_sibling_work_units_across_repeated_cohorts": 23544,
+    "repeated_sibling_observations_are_chainwork_credit": false,
+    "independent_genesis_application_replay": false,
+    "full_work_transcripts_replayed": false,
+    "native_consensus_admission_reexecuted": false
+  },
+  "core_summary_uncompressed_bytes": 372701,
+  "core_summary_uncompressed_sha256": "d9ec724206dc0bd9338c469447c40805b34ce68122ffa6a02a625da75e2af426",
+  "core_summary_is_new_derivation": true,
+  "original_full_cli_capture_verdict_reproduced": false,
+  "original_full_source_guards_recovered": false,
+  "original_capture_process_receipt_recovered": false,
+  "original_build_logs_and_depfile_recovered": false,
+  "original_reader_process_receipt_recovered": false,
+  "native_execution_commit_proved_by_raw_records": false,
+  "new_native_execution": false,
+  "recovered_binary_executed": false,
+  "binary_execution_link_proved_by_raw_records": false,
+  "scope": "Fresh validation of recovered raw rows with unchanged read_rows and validate functions. The original main CLI was not invoked because original capture metadata and full source guards are unavailable. No substitute receipts or native execution were created.",
+  "exclusive_host_claim": false,
+  "cross_source_speedup_claim": false,
+  "global_minimum_cost_claim": false,
+  "production_qualification_claim": false
+}

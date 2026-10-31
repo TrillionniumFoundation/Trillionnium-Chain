@@ -1,0 +1,235 @@
+{
+  "bytes": 6337403,
+  "file": "x64-selected-original-members.zip",
+  "members": [
+    {
+      "artifact_member": "campaign/attacker-cost-observation-v1.json",
+      "bytes": 54054,
+      "sha256": "28551e80cd9d8af075f9fe328f3a81a20d4163b4bd195c69812f6ee5c7c6fe6a"
+    },
+    {
+      "artifact_member": "campaign/binaries.json",
+      "bytes": 2523,
+      "sha256": "b81edd7c63f35f3885bfb8a3b201c699968c43ffa6ebdb05ae38622d553c83e8"
+    },
+    {
+      "artifact_member": "campaign/binary-archive-v1.json",
+      "bytes": 5092,
+      "sha256": "8f9cfca81b7a9cdda38f138f3536ab10e43e3b57734bc425b6d094c0005ddaa7"
+    },
+    {
+      "artifact_member": "campaign/fresh-caller-client-readback-v1.json",
+      "bytes": 4585,
+      "sha256": "bc49672a64ad31148fd12e1d66d7f409c144e966cbabf673630b427100021efd"
+    },
+    {
+      "artifact_member": "campaign/fresh-caller-environment.json",
+      "bytes": 412,
+      "sha256": "f4a612734b0cc9d06bbc54b08755fb8f9348a04b94cc339a52782040a7a40d70"
+    },
+    {
+      "artifact_member": "campaign/fresh-caller-native/baseline.json",
+      "bytes": 1944631,
+      "sha256": "5b09499a0ae5aafffc97aa7d0fa5359f4ccad4b9c3e27095146c6caf613bc29c"
+    },
+    {
+      "artifact_member": "campaign/fresh-caller-native/campaign.json",
+      "bytes": 907,
+      "sha256": "596edca71ab66b0285d80c0a5ad84b9268ddd33e55f1a5f8c28fdc2242d0773b"
+    },
+    {
+      "artifact_member": "campaign/fresh-caller-native/client-composition.json",
+      "bytes": 1201,
+      "sha256": "6eaa28c6c2e5751f8a17f0716f4a2630f86e0edb873bd9c0d3369443da671aac"
+    },
+    {
+      "artifact_member": "campaign/fresh-caller-native/correct-product-false-trace.json",
+      "bytes": 15778863,
+      "sha256": "b7f5e87f59cff311501484d74ec608cfe7e8f61710f39c446b6c89ec0a01634e"
+    },
+    {
+      "artifact_member": "campaign/fresh-caller-native/from-zero.json",
+      "bytes": 17885307,
+      "sha256": "afca53bed05727c8172562f3cb0b4bfa3103f746b57d8de8356d3bd34142282a"
+    },
+    {
+      "artifact_member": "campaign/fresh-caller-native/preparation.json",
+      "bytes": 2888505,
+      "sha256": "134ad5f6affcaeb16d6a26a7e322bc276120aee8e566deeccf358be40f2fc83b"
+    },
+    {
+      "artifact_member": "campaign/fresh-caller-pressure.native-verdict.json",
+      "bytes": 198,
+      "sha256": "d12a34164e6c29b78144f936b756bf4baa2b5930a20483807afb9c92671d6450"
+    },
+    {
+      "artifact_member": "campaign/fresh-caller-pressure.stderr.log",
+      "bytes": 574,
+      "sha256": "8aaa59afed24c484bfe9a1b1d41f5cf941a0b951c2098df35ae44be58ad76085"
+    },
+    {
+      "artifact_member": "campaign/fresh-caller-pressure.stdout.log",
+      "bytes": 303,
+      "sha256": "78e3e320cb41b751bf25bb4217e59fb4be6df20063e1d370ffefb4019c451901"
+    },
+    {
+      "artifact_member": "campaign/fresh-caller-pressure.step.json",
+      "bytes": 927,
+      "sha256": "452a8959694b6a28d062df2a787816b1c6a15911b6349a7a7ac918a694ee0923"
+    },
+    {
+      "artifact_member": "campaign/fresh-caller-qualification.json",
+      "bytes": 8512,
+      "sha256": "59f1707d7d0c7659a9273eab6b9c708629415edf61aebb4e92237f9228f8d044"
+    },
+    {
+      "artifact_member": "campaign/pressure-native/baseline.json",
+      "bytes": 1943360,
+      "sha256": "4102c1c3b027c1c71e9687c12925a2bec3cbb31c4bb43496ae08e2a333f9fc52"
+    },
+    {
+      "artifact_member": "campaign/pressure-native/campaign.json",
+      "bytes": 894,
+      "sha256": "917db0a9a5954339f01a0ff1d1f12c33ee45f5123199624cf33c3b37676d3808"
+    },
+    {
+      "artifact_member": "campaign/pressure-native/client-composition.json",
+      "bytes": 1180,
+      "sha256": "ccc0493a84aab0d85225bca789ac88b2193e01eb6df0763ac10a009392092d7f"
+    },
+    {
+      "artifact_member": "campaign/pressure-qualification.json",
+      "bytes": 4709,
+      "sha256": "1cf436623a2f79e2f5c58bfe11701d818a2b57d9acde4a3612e434c62dc03b22"
+    },
+    {
+      "artifact_member": "campaign/process-cost-observation-v2.json",
+      "bytes": 55280,
+      "sha256": "3754f088eb6520b862d1bf0956f9eb4feb083cdd50d7c66863d1436322ca82be"
+    },
+    {
+      "artifact_member": "campaign/pure-client-readback-v1.json",
+      "bytes": 4578,
+      "sha256": "0e8d301013691bc93bf8ef35ad82b5a7cec247c2b0e17fc3727cec3f2fc1cabc"
+    },
+    {
+      "artifact_member": "campaign/pure-pressure.native-verdict.json",
+      "bytes": 190,
+      "sha256": "7c62dc3f87ab8edd11c3c187cf957b3527bbdb10c99203e812ef1c988880dc62"
+    },
+    {
+      "artifact_member": "campaign/pure-pressure.stderr.log",
+      "bytes": 561,
+      "sha256": "af34d6fc58d6c1a097aebf76f4aceb79e04376120069844d8eac6f461e004466"
+    },
+    {
+      "artifact_member": "campaign/pure-pressure.stdout.log",
+      "bytes": 277,
+      "sha256": "b727486d1f5b21a86f0a1f55ec71281d8602d3f9c99bd9af7d03ccc1f78248f9"
+    },
+    {
+      "artifact_member": "campaign/pure-pressure.step.json",
+      "bytes": 890,
+      "sha256": "d97ae5bdf5a89f84b5f76bd21fe41efe2cf0b537607a50edbf3c9f45b5c3311e"
+    },
+    {
+      "artifact_member": "campaign/receiver-client-readback-v1.json",
+      "bytes": 463,
+      "sha256": "bf467900bd5156a4008bd7087796f8c5293637b998383043179f563efc19471f"
+    },
+    {
+      "artifact_member": "campaign/receiver-owner-native/baseline.json",
+      "bytes": 2065357,
+      "sha256": "d34bb5585c40ffd364033644a7e719b81722ce1d6c9d7059481b1b57c7e07d40"
+    },
+    {
+      "artifact_member": "campaign/receiver-owner-native/campaign.json",
+      "bytes": 1402,
+      "sha256": "114333308dc0a33654bec1d235d0550eef9c1f2f734468941d94bc07ff49663a"
+    },
+    {
+      "artifact_member": "campaign/receiver-owner-native/client-composition.json",
+      "bytes": 1139,
+      "sha256": "05b9b45a48ec2646d5ccf7c07444da536b6912ed9cd24b94051e9dd31307492b"
+    },
+    {
+      "artifact_member": "campaign/receiver-owner-native/correct-product-false-trace/receiver-report-failure-v1.json",
+      "bytes": 8780688,
+      "sha256": "714d9382f084671734b98669056c7341b6e345df8a05a6ccf1754287266d6bb5"
+    },
+    {
+      "artifact_member": "campaign/receiver-owner-observation-v2.json",
+      "bytes": 765,
+      "sha256": "55c099711e8a32b70c5a835c1e957d071cc5d2273efd1cfe00374a482dd50deb"
+    },
+    {
+      "artifact_member": "campaign/receiver-owner-supplement.native-verdict.json",
+      "bytes": 202,
+      "sha256": "9487cfbfccc6e4de99a2cbce0afc1e2c9a1cdf992b8cc8fa31156966ebbb7256"
+    },
+    {
+      "artifact_member": "campaign/receiver-owner-supplement.stderr.log",
+      "bytes": 906,
+      "sha256": "896c8f8bb142e45b8ed5ee1898f09dc502a5624a8dfddc5a21bdc52984ee7640"
+    },
+    {
+      "artifact_member": "campaign/receiver-owner-supplement.stdout.log",
+      "bytes": 295,
+      "sha256": "5fcd0bf39544cc95bf953e95b7cd3ccd80a1e1cdea1b0b8fd5be7a5e1ddde5b2"
+    },
+    {
+      "artifact_member": "campaign/receiver-owner-supplement.step.json",
+      "bytes": 935,
+      "sha256": "ed2a09845534d99da25244bda462062284323723edf459e5409e6e7b05093f77"
+    },
+    {
+      "artifact_member": "campaign/resources-after.json",
+      "bytes": 1580,
+      "sha256": "21655aebda19e97d1e000fdeb213abd644e7b07d02f44d97ae113e1aa5f5633c"
+    },
+    {
+      "artifact_member": "campaign/resources-before.json",
+      "bytes": 1554,
+      "sha256": "2c3e7617db60de6b27b8c161cdaf367336720399dff3e62b79d5afc2044e3bb4"
+    },
+    {
+      "artifact_member": "campaign/results.json",
+      "bytes": 63072,
+      "sha256": "7d85a9963b988a113920f6c459c5524aab52a9051763eb031f2ef46e8ab49c5f"
+    },
+    {
+      "artifact_member": "campaign/source-after.json",
+      "bytes": 421,
+      "sha256": "61656d62ed6d3a26fb11eeb44fc3390e0349630ccd65eff4a0077be6abdc48f2"
+    },
+    {
+      "artifact_member": "campaign/source-before.json",
+      "bytes": 421,
+      "sha256": "61656d62ed6d3a26fb11eeb44fc3390e0349630ccd65eff4a0077be6abdc48f2"
+    },
+    {
+      "artifact_member": "campaign/toolchain-observation.json",
+      "bytes": 740,
+      "sha256": "d1557b17149396e2f80765ef6f33f9afa72244539f44ceba9c30586229700cd4"
+    },
+    {
+      "artifact_member": "reader-environment-probe.json",
+      "bytes": 412,
+      "sha256": "f4a612734b0cc9d06bbc54b08755fb8f9348a04b94cc339a52782040a7a40d70"
+    },
+    {
+      "artifact_member": "source-checkout.json",
+      "bytes": 421,
+      "sha256": "61656d62ed6d3a26fb11eeb44fc3390e0349630ccd65eff4a0077be6abdc48f2"
+    },
+    {
+      "artifact_member": "source-final.json",
+      "bytes": 421,
+      "sha256": "61656d62ed6d3a26fb11eeb44fc3390e0349630ccd65eff4a0077be6abdc48f2"
+    }
+  ],
+  "original_archive_sha256": "0cba4a65b534be04492764bd6ba0b67c81712e23e154c0e1643bebc40e4e4a37",
+  "original_artifact_id": 12949190541,
+  "scope": "New explicitly selected ZIP containing exact original member bytes. It is not the complete CI artifact or the lost earlier local evidence snapshot.",
+  "sha256": "12c0fdcf0dbeae25bdb648a5ff60c371ca11f549ea47745f2fa44de852ba2d97"
+}

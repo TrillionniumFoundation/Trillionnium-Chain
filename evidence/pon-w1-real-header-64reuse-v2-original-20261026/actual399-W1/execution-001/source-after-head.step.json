@@ -1,0 +1,40 @@
+{
+  "command": [
+    "git",
+    "-c",
+    "core.hooksPath=/dev/null",
+    "-c",
+    "core.fsmonitor=false",
+    "rev-parse",
+    "HEAD"
+  ],
+  "complete_success": true,
+  "cwd": "/home/qian-qi/Documents/Codex/2026-10-25/github-trillionnium-chain-https-github-com/work/ci-follow/pn1-v3-clean-source-public-qualification-20261026-001/ownedsource",
+  "elapsed_ns": 3904481,
+  "elapsed_seconds": 0.003904481,
+  "error": null,
+  "name": "source-after-head",
+  "native_process_owner": {
+    "birth_ticks": 10090377,
+    "failed_spawn_streams_closed": null,
+    "failure": null,
+    "observed_ppid": 3189008,
+    "original_identity_alive_after_wait": false,
+    "pid": 3190291,
+    "python_pid": 3189008,
+    "reaped": true,
+    "schema": "pon-native-io-component-child-owner-v1",
+    "spawn_count": 1,
+    "wait_returncode": 0
+  },
+  "outer_stage_timeout_seconds": 10,
+  "returncode": 0,
+  "stderr": "source-after-head.stderr.log",
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_truncated": false,
+  "stdout": "source-after-head.stdout.log",
+  "stdout_bytes": 41,
+  "stdout_sha256": "fd2ca63d1143a85e20f84c4d8be6270c4ba8398109e6518ae57a8ac466743ff3",
+  "stdout_truncated": false
+}

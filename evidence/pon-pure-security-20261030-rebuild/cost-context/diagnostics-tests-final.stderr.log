@@ -1,0 +1,13 @@
+test_actual_setup_calls_are_not_a_synthetic_divisor (__main__.PairedDiagnostics.test_actual_setup_calls_are_not_a_synthetic_divisor) ... ok
+test_all_exhausted_searches_keep_cost_but_have_no_per_winner_ratio (__main__.PairedDiagnostics.test_all_exhausted_searches_keep_cost_but_have_no_per_winner_ratio) ... ok
+test_complete_fixed_grid_keeps_original_rounds_and_no_population_claim (__main__.PairedDiagnostics.test_complete_fixed_grid_keeps_original_rounds_and_no_population_claim) ... ok
+test_existing_conditional_work_share_uses_complete_outer_cpu (__main__.PairedDiagnostics.test_existing_conditional_work_share_uses_complete_outer_cpu) ... ok
+test_existing_v5_reader_validation_cannot_be_bypassed (__main__.PairedDiagnostics.test_existing_v5_reader_validation_cannot_be_bypassed) ... ok
+test_miss_before_winner_is_separate_from_exhaustion_and_still_charged (__main__.PairedDiagnostics.test_miss_before_winner_is_separate_from_exhaustion_and_still_charged) ... ok
+test_ratio_of_sums_and_sign_reversal_are_not_average_of_ratios_or_fastest_round (__main__.PairedDiagnostics.test_ratio_of_sums_and_sign_reversal_are_not_average_of_ratios_or_fastest_round) ... ok
+test_unknown_cpu_cannot_drop_one_round_or_qualify_work_share (__main__.PairedDiagnostics.test_unknown_cpu_cannot_drop_one_round_or_qualify_work_share) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 4.253s
+
+OK

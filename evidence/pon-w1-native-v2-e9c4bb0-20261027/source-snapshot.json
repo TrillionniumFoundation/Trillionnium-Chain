@@ -1,0 +1,69 @@
+{
+  "schema": "pon-w1-native-v2-source-snapshot-v1",
+  "source_commit": "e9c4bb0d3a324b1d79b7b99326512bfb707d0025",
+  "source_tree": "28bb7cb923a415ccc30ff5eaac83ffd2b99dd13f",
+  "snapshot_is_only_for_evidence_readback": true,
+  "native_owner_or_default_miner_changed": false,
+  "files": [
+    {
+      "path": "scripts/ci/check_pure_pon_cost_campaign.py",
+      "bytes": 9854,
+      "git_blob_sha1": "397ab4e10b59f264fcac4521050e90ff7bcf32d2",
+      "sha256": "596fb6becc08e3f2026801c541bf395e06133c3e2d28c780300f2b24ec09abe5"
+    },
+    {
+      "path": "scripts/ci/summarize_pure_pon_cost_campaign.py",
+      "bytes": 4839,
+      "git_blob_sha1": "bde741a9c7561b247688b584937ed7c4c17815ee",
+      "sha256": "a38bbb37d997eba07492289c4115b56e9a84f4d3366664f0dd4b4623469a441a"
+    },
+    {
+      "path": "scripts/ci/capture_pure_pon_campaign.py",
+      "bytes": 5220,
+      "git_blob_sha1": "e36272e4d63d0644ff48962cee743bc7bbf98cfc",
+      "sha256": "d8e8dac48042f982f0c0fa9073101dc6bbcfd9d890d220e0bf32a7016b00188b"
+    },
+    {
+      "path": ".github/workflows/pon-pure-focused-integration.yml",
+      "bytes": 7548,
+      "git_blob_sha1": "eda7dfb759d9d929361a8438f3394d77a3d3d714",
+      "sha256": "0862aa52d043bd574ec2160758ab0f97f4546eb336c9de585353082db392f507"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/pon_pure_cost_campaign.rs",
+      "bytes": 23593,
+      "git_blob_sha1": "934278331e2f68cc2c71b311e7ff592805164196",
+      "sha256": "203304c581a455c71bf5bee923c8d59fc9883a2f5365d399454f7b33493ce95b"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "bytes": 72099,
+      "git_blob_sha1": "942869e15f02691105a70c273f718c49cd9fee49",
+      "sha256": "c4ac87700bc4c7e29ecd3308fa8a38ed0b4ee72504aab4269cdefb1f1cb8db7c"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/low_rank_prefix.rs",
+      "bytes": 13950,
+      "git_blob_sha1": "c359642f95dc5f2fa6981fd52c775785d223effa",
+      "sha256": "83007c8d1395ba38328f4546cb88da89786c7aa5e1048f76a7568787d28732c5"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/examples/support/w1_material.rs",
+      "bytes": 7114,
+      "git_blob_sha1": "83ab348459f3e5cae409d4dcffba359ef90aaf64",
+      "sha256": "ca6196f9067ea3ac86a2d743c13de9c9cac0715e4ae652654cdd6592a6d0cf9a"
+    },
+    {
+      "path": "trillionnium/Cargo.toml",
+      "bytes": 2204,
+      "git_blob_sha1": "44df8f8d5eec880d10da42c12a903c03658cfc65",
+      "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+    },
+    {
+      "path": "trillionnium/Cargo.lock",
+      "bytes": 37959,
+      "git_blob_sha1": "7f5a6b17a1c9871ea3492ab74bb1769cabe1dbf7",
+      "sha256": "3707ed772a9fd851638dca36e5b2472ac0657de65754480c448d3078107d9ff9"
+    }
+  ]
+}

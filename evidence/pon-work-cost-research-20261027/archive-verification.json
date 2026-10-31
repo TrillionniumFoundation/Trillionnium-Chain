@@ -1,0 +1,16 @@
+{
+  "result": "PASS",
+  "manifest_sha256": "c194ccb6f843f09236e13e7329ce190b292d1e830054ab495853cf5c08c71ce9",
+  "evidence_paths": 192,
+  "unique_objects": 162,
+  "raw_evidence_bytes": 81622356,
+  "source_archive_files": 1188,
+  "source_archive_uncompressed_bytes": 13802472,
+  "restored": false,
+  "selected_build_snapshot": null,
+  "executed_code": false,
+  "timing_authenticated": false,
+  "hardness_proved": false,
+  "node_service_qualified": false,
+  "succinct_proof": false
+}

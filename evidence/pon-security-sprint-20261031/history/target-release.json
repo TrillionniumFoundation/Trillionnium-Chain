@@ -1,0 +1,16 @@
+{
+  "schema": "pon-history-owned-target-release-v1",
+  "completed_unix_ns": 1793410681716874354,
+  "deleted_owned_target": "/tmp/pon-history-target",
+  "moved_binary_before_deletion": true,
+  "native_binary_sha256": "51ddbf0b961f7e8f41c2b69c15b93e25440f941735ac7a03cf5406f6dee46467",
+  "native_binary_bytes": 79809160,
+  "compressed_retained_path": "/tmp/pon-history-retained-native.gz",
+  "compressed_bytes": 20955339,
+  "compressed_sha256": "92e73b562e634291dc1845aa2cb63ab21b1e3313b7f5dca23888074fa8f07c7b",
+  "verified_decompressed_sha256": "51ddbf0b961f7e8f41c2b69c15b93e25440f941735ac7a03cf5406f6dee46467",
+  "disk_available_before": 438390784,
+  "disk_available_after_target_removal": 672141312,
+  "disk_available_after_compression": 723656704,
+  "other_targets_touched": false
+}

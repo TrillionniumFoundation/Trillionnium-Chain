@@ -1,0 +1,11 @@
+{
+  "schema": "pon-proof-build-cleanup-followup-v1",
+  "original_build_record": "baseline-host-build.process.json",
+  "build_exit_code": 0,
+  "build_completed_before_cleanup": true,
+  "native_verification_executed_before_cleanup": false,
+  "finished_baseline_binary_retained": false,
+  "signal_actually_sent": false,
+  "disposable_target_removed_after_root_disk_priority_request": true,
+  "claims_limited_to_actual_compilation": true
+}

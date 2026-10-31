@@ -1,0 +1,40 @@
+{
+  "schema": "pon-v5-recovered-historical-artifact-v1",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "run_id": 40845715652,
+  "artifact_id": 12884798290,
+  "source_commit": "974932be6dcfe830ce1ce92d58cb10e89cb8358d",
+  "zip_bytes": 26399254,
+  "zip_sha256": "a614e74eb1795aaffe9435667316f0a1f515e89cada6d6c6753dd438307d76e7",
+  "zip_downloaded_and_verified_this_run": true,
+  "zip_retained_in_repository": false,
+  "retained_original_files": [
+    {
+      "path": "historical-v5/cost/capture.json",
+      "bytes": 2068,
+      "sha256": "f91161a9e8bf3ee7deb7e3e6d96b2b7ca462ae30be2208ea010fcf50438c0ced"
+    },
+    {
+      "path": "historical-v5/cost/stdout.jsonl.gz",
+      "bytes": 4583815,
+      "sha256": "5d82c998849859765064eb88bfbbd7327bf5e0c3a36f7a3ce612db60294383ea"
+    },
+    {
+      "path": "historical-v5/cost/summary.json",
+      "bytes": 371451,
+      "sha256": "885414ff6587546a159c2b208f91f1485da11fe4831bde38e23a4deac23b0a2c"
+    },
+    {
+      "path": "historical-v5/source-before.json",
+      "bytes": 421,
+      "sha256": "a0ebfda2bdcb0369943179ed3bd2f9bc02eae33f6041de45e9dca49c17b97e12"
+    },
+    {
+      "path": "historical-v5/source-after.json",
+      "bytes": 421,
+      "sha256": "a0ebfda2bdcb0369943179ed3bd2f9bc02eae33f6041de45e9dca49c17b97e12"
+    }
+  ],
+  "historical_native_executable_run_this_turn": false,
+  "original_template_sha256": "a6b5eb9020a41796ccd885b6c3051a4b12585e77c35269e26dcfc7ab6a4c4204"
+}

@@ -1,0 +1,27 @@
+test_all_arms_cannot_replace_complete_packet_length_with_a_short_claim (__main__.Reader.test_all_arms_cannot_replace_complete_packet_length_with_a_short_claim) ... ok
+test_all_fixed_header_fields_remain_bound_after_challenges_are_rehashed (__main__.Reader.test_all_fixed_header_fields_remain_bound_after_challenges_are_rehashed) ... ok
+test_complete_roster_distinct_horizons_and_paired_denominators (__main__.Reader.test_complete_roster_distinct_horizons_and_paired_denominators) ... ok
+test_conditional_target_work_cannot_credit_repeated_siblings_or_claim_replay (__main__.Reader.test_conditional_target_work_cannot_credit_repeated_siblings_or_claim_replay) ... ok
+test_coordinated_wrong_challenges_cannot_hide_in_agreeing_arms (__main__.Reader.test_coordinated_wrong_challenges_cannot_hide_in_agreeing_arms) ... ok
+test_coordinated_wrong_target_task_or_header_refuse (__main__.Reader.test_coordinated_wrong_target_task_or_header_refuse) ... ok
+test_cross_horizon_nonce_reuse_and_changed_stream_are_rejected (__main__.Reader.test_cross_horizon_nonce_reuse_and_changed_stream_are_rejected) ... ok
+test_duplicate_admission_and_missing_cold_bytes (__main__.Reader.test_duplicate_admission_and_missing_cold_bytes) ... ok
+test_duplicate_keys_nonfinite_json_and_boolean_horizon_are_rejected (__main__.Reader.test_duplicate_keys_nonfinite_json_and_boolean_horizon_are_rejected) ... ok
+test_exhausted_miss_challenge_is_independently_bound (__main__.Reader.test_exhausted_miss_challenge_is_independently_bound) ... ok
+test_exhausted_search_keeps_every_paired_missed_proof (__main__.Reader.test_exhausted_search_keeps_every_paired_missed_proof) ... ok
+test_false_hardware_reward_optimum_or_late_success_is_rejected (__main__.Reader.test_false_hardware_reward_optimum_or_late_success_is_rejected) ... ok
+test_missing_slow_arm_or_horizon_cannot_shrink_complete_grid (__main__.Reader.test_missing_slow_arm_or_horizon_cannot_shrink_complete_grid) ... ok
+test_omitted_setup_and_double_counted_verifier_are_rejected (__main__.Reader.test_omitted_setup_and_double_counted_verifier_are_rejected) ... ok
+test_original_native_header_and_challenge_golden (__main__.Reader.test_original_native_header_and_challenge_golden) ... ok
+test_original_ticket_predicate_and_failed_attempt_denominator (__main__.Reader.test_original_ticket_predicate_and_failed_attempt_denominator) ... ok
+test_paired_observation_allows_different_measured_clocks (__main__.Reader.test_paired_observation_allows_different_measured_clocks) ... ok
+test_setup_reuse_is_actual_and_balanced_order_is_frozen (__main__.Reader.test_setup_reuse_is_actual_and_balanced_order_is_frozen) ... ok
+test_unchanged_claimed_stream_cannot_hide_different_attempt_records (__main__.Reader.test_unchanged_claimed_stream_cannot_hide_different_attempt_records) ... ok
+test_unchanged_claimed_stream_cannot_hide_different_retained_bytes (__main__.Reader.test_unchanged_claimed_stream_cannot_hide_different_retained_bytes) ... ok
+test_unknown_cpu_stays_unknown_and_cannot_win_ranking (__main__.Reader.test_unknown_cpu_stays_unknown_and_cannot_win_ranking) ... ok
+test_unsupported_constructor_cannot_be_omitted_or_fallback (__main__.Reader.test_unsupported_constructor_cannot_be_omitted_or_fallback) ... ok
+
+----------------------------------------------------------------------
+Ran 22 tests in 12.866s
+
+OK

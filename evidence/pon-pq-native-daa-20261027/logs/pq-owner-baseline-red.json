@@ -1,0 +1,7 @@
+{
+  "scope": "actual_native_owner_source_standalone_test_root_with_locked_Cargo_rlibs",
+  "source_sha256": "eea7ab0d099dfd485491a81da4d172336a70ae98b89b85b0715e77e9736c5648",
+  "compile_exit": 0,
+  "test_exit": 101,
+  "elapsed_seconds": 4.82541276899974
+}

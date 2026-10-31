@@ -1,0 +1,34 @@
+--- compiled-host_kernel_parent.rs.txt
++++ final-host_kernel_parent.rs
+@@ -797,6 +797,21 @@
+             let parent = Path::new(CGROUP_ROOT);
+             let paths = LIMIT_NAMES.map(|name| parent.join(name));
+             let expected = original_current_limits(parent).map_err(|error| error.to_string());
++            // An unavailable first file would measure early refusal instead of
++            // the five complete reads this observation claims. A parsed but
++            // ineligible root-cgroup limit set is an explicit valid observation.
++            assert!(expected
++                .as_ref()
++                .err()
++                .is_none_or(|message| message == "PUBLIC_HOST_KERNEL_LIMITS"));
++            let actual_verdict = match &expected {
++                Ok(limits) => serde_json::json!({"Ok":{
++                    "cpu_quota_us":limits.cpu_quota_us,
++                    "cpu_period_us":limits.cpu_period_us,
++                    "memory_bytes":limits.memory_bytes,"tasks":limits.tasks,
++                }}),
++                Err(error) => serde_json::json!({"Err":error}),
++            };
+             assert_eq!(
+                 read_current_bounded_limits(&paths).map_err(|error| error.to_string()),
+                 expected
+@@ -836,7 +851,8 @@
+                     "schema":"pon-kernel-quota-read-cost-observation-v1",
+                     "scope":"five original fresh root-cgroup limit files and parsing; excludes boot, metadata, membership and native History; shared host; no fixed-parent or service qualification",
+                     "parent":parent,"fixed_parent_qualified":false,
+-                    "same_actual_limit_verdict":true,"samples":samples,
++                    "same_actual_limit_verdict":true,"actual_limit_verdict":actual_verdict,
++                "all_five_fresh_reads_completed_each_iteration":true,"samples":samples,
+                 })
+             );
+         }

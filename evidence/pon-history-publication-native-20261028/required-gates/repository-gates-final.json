@@ -1,0 +1,32 @@
+[
+  {
+    "name": "canonical-all-tracked-source-ci",
+    "source_commit": "72b7cb10e28f07343b7a0fc96072975906ceae85",
+    "command": [
+      "python3",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "72b7cb10e28f07343b7a0fc96072975906ceae85"
+    ],
+    "native_returncode": 1,
+    "passed": false,
+    "elapsed_seconds": 0.09230867300357204,
+    "log_sha256": "c3e2dac50eb2e14eb3ffcc140e37adeddca5c474e782bf817861d07456adb789",
+    "log": "canonical-all-tracked-source-ci.log"
+  },
+  {
+    "name": "canonical-repository-links-final",
+    "source_commit": "72b7cb10e28f07343b7a0fc96072975906ceae85",
+    "command": [
+      "python3",
+      "scripts/ci/check_repository.py"
+    ],
+    "native_returncode": 2,
+    "passed": false,
+    "elapsed_seconds": 0.8717969290009933,
+    "log_sha256": "e9d6779920685ac8631f9cfe3fc344fa5a64886cd36ed304305284c108a90361",
+    "log": "canonical-repository-links-final.log"
+  }
+]

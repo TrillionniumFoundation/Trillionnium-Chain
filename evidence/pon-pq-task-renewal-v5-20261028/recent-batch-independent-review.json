@@ -1,0 +1,32 @@
+{
+  "decision": "Allow only these two reviewed recent-batch source pins to advance to the listed exact blobs. Preserve all other original pins, lane counts, budgets, required tests and ignores.",
+  "files": [
+    {
+      "base_git_blob": "78ae4e606369cc60931fa2942e3fde349f4a0733",
+      "diff_sha256": "6e1c0d2dd8c75e4e846bef68d1eda414b03be22a2f2cea384c967b59cfa6b121",
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "reviewed_git_blob": "1d97b286ad3afc63f1429da97b6bef5d09e5e708",
+      "sha256": "66c1a94c2beeef05f43283b7eb8ed54d123984383a794060af510e7cf9897bc9"
+    },
+    {
+      "base_git_blob": "a2a0c2220ef7ab51539ea92e5ebe36c433840de5",
+      "diff_sha256": "076f3001b2af29771327d64d55deda6a7152ef7cdc3908e1f7942f120b7d02db",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs",
+      "reviewed_git_blob": "744718953168310c17e22e75ffa689ba611c6576",
+      "sha256": "93e0212b138f1ffe547fa8d1e9f17a4737c881a0413a2946dbfc26ff98b7e4d5"
+    }
+  ],
+  "local_base": "a1815707d29d424a8ec89d3701a7cf914572a416",
+  "observations": [
+    "store.rs adds an explicit V5 module, eligibility variant, separate DDL/schema domain, V5 eligibility and output dispatch, and V5 account validation and activation/recovery revocation hooks. Existing V4 branches remain explicit.",
+    "arithmetic_cache.rs extends its existing authenticated account-state validation to the explicit V5 profile. The arithmetic calculation and existing root computation are unchanged."
+  ],
+  "remote_equivalent_base": "1d4778507e1e99ab54cca72b7c26b6ec2ff33344",
+  "reviewed_at_utc": "2026-10-28T03:40:48.416787+00:00",
+  "schema": "npq5-shared-source-pin-review-v1",
+  "scope_limits": [
+    "Read-only independent review of these two exact diffs, not a qualification of the entire NPQ5 implementation.",
+    "No native execution, proof generation, hardware benchmark, or source mutation was performed by this review.",
+    "NPQ4 hosted success belongs to its own source and is not NPQ5 native qualification."
+  ]
+}

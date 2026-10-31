@@ -1,0 +1,15 @@
+diff --git a/252f2c96cf162f84636a4404b702a67caa4a44fe b/f9ef6b41f68b1ff8aeb29ac7fe22add687bc13db
+index 252f2c9..f9ef6b4 100644
+--- a/252f2c96cf162f84636a4404b702a67caa4a44fe
++++ b/f9ef6b41f68b1ff8aeb29ac7fe22add687bc13db
+@@ -122,8 +122,10 @@ impl ArithmeticCache {
+     /// arithmetic used by complete_root. Unlike `complete`, a miss does not run
+     /// account/conservation checks before the original state-root grammar.
+     /// Caller-owned State is serialized anew; no SQL observation is reused.
+     pub(crate) fn state_root(&self, settings: &Settings, state: &State) -> Result<Hash> {
++        trnm_mvcc_fee::pon_executor::pq_native_v1::validate_state(state, &settings.app)
++            .map_err(crate::Error::from)?;
+         let _measurement = self
+             .history
+             .observe(super::HistoryStage::PersistedStateRoot);
+         let context = [

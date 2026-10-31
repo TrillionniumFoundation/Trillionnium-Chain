@@ -1,0 +1,14 @@
+{
+  "result": "PASS",
+  "scope": "exact retained-byte equality to earlier local Python-replayed corpus; no new Python relation execution",
+  "old_raw_sha256": "5795397ad8c92219721fc5932739d5aadd29bac2cc01b14704b389d7197a207a",
+  "new_raw_sha256": "4ce6273e5800017abc0324efac5d6a6cd75587adef042617a18eaaa8d099949a",
+  "prior_readback_sha256": "956a96dc76c5926dce97aa27f4a0bedf98de9e07f8c45e004e97f7f282d11b6f",
+  "identical_unique_records": 448,
+  "new_timed_attempt_calls": 10752,
+  "new_wins": 810,
+  "new_target_misses": 9942,
+  "unsupported_rows": 147,
+  "node_task_eligibility_checked": false,
+  "global_minimum_cost_proved": false
+}

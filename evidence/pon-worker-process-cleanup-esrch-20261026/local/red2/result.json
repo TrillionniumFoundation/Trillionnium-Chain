@@ -1,0 +1,44 @@
+{
+  "mode": "red2",
+  "results": [
+    {
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "-p",
+        "trnm-worker-agent",
+        "--bin",
+        "trnm-worker-agent",
+        "vanished_owned_proc_fd_requires_a_fresh_complete_scan",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "exit_code": 101,
+      "timed_out": false,
+      "violation": null,
+      "seconds": 6.013333283000975,
+      "actual_child_reaped": true,
+      "source_sha256": "cae73cf90941cc6015a918e0b66501c9d286276c28c600ffa51af053275d0947",
+      "files": [
+        {
+          "name": "0.stdout.log",
+          "bytes": 374,
+          "sha256": "85b1ee8c3b44daade8632327efc7269796d7fee81debb34d05d6d391be472a13"
+        },
+        {
+          "name": "0.stderr.log",
+          "bytes": 934,
+          "sha256": "91a55001476aafcffbc24d0a013bd3fe56279edc92801319b2942cfe8f0674b8"
+        }
+      ]
+    }
+  ],
+  "source_sha256": "cae73cf90941cc6015a918e0b66501c9d286276c28c600ffa51af053275d0947",
+  "elapsed_local_seconds": 91.91201531600382,
+  "whole_limit_seconds": 600,
+  "native_W1_or_PN1_prepared_qualification": false,
+  "merge_ready": false,
+  "partial_failure_not_refunded": true
+}

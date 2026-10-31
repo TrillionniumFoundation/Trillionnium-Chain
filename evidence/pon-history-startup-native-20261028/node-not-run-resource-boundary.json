@@ -1,0 +1,10 @@
+{
+  "schema": "history-startup-node-local-build-not-run-v1",
+  "available_bytes": 108736512,
+  "required_available_bytes": 268435456,
+  "node_compiler_started": false,
+  "node_native_tests_started": false,
+  "clippy_started": false,
+  "reason": "Parent directed freeze for exact-source hosted compilation and full original-budget gate; local available space is below the existing stop line. No limit was lowered.",
+  "observed_unix_ns": 1793152586875187225
+}
