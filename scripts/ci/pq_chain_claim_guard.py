@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 from pathlib import Path
 import stat
 import sys
@@ -98,8 +99,18 @@ def strict_json(root: Path, relative: str) -> dict:
             require(key not in value, 'duplicate JSON field: ' + relative + ':' + key)
             value[key] = item
         return value
+    def finite_float(value: str) -> float:
+        parsed = float(value)
+        require(math.isfinite(parsed), 'nonfinite JSON number: ' + relative)
+        return parsed
+
+    def reject_nonstandard_constant(value: str) -> float:
+        raise UnsafePromotion('nonstandard JSON constant: ' + relative + ':' + value)
+
     try:
-        data = json.loads(safe_file(root, relative), object_pairs_hook=unique)
+        data = json.loads(safe_file(root, relative), object_pairs_hook=unique,
+                          parse_float=finite_float,
+                          parse_constant=reject_nonstandard_constant)
     except (ValueError, UnicodeError) as error:
         raise UnsafePromotion('invalid JSON: ' + relative) from error
     require(type(data) is dict, 'non-object JSON: ' + relative)
