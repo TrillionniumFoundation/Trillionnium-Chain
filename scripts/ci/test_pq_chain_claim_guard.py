@@ -113,6 +113,10 @@ class TestClaimGuard(unittest.TestCase):
         (self.root / GATES['proof_pq128'][0]).unlink()
         self.refused()
 
+    def test_missing_authority_surface_inventory_refused(self):
+        (self.root / 'scripts/ci/pq_authority_surface_scan.py').unlink()
+        self.refused()
+
     def test_missing_pq_hepta_verifier_refused(self):
         (self.root / 'trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs').unlink()
         self.refused()
