@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - fix/pq-hepta-handoff-mldsa-v2-20261030
+      - fix/pq-hepta-context-postverify-20261030
     paths:
       - .github/workflows/pq-hepta-handoff-v2-focused.yml
       - trillionnium/crates/trnm-research-protocol/**
