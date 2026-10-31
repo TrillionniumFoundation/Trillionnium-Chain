@@ -52,7 +52,7 @@ def prove(challenge: bytes, a: list[int], b: list[int]) -> bytes:
     aa = (a_matrix + _mul_mod(noise[0], noise[1])) % q
     bb = (b_matrix + _mul_mod(noise[2], noise[3])) % q
     cumulative = np.zeros((n, n), dtype=np.uint64)
-    trace = hashlib.sha256(b"TRNM-PON-TRACE1\\0" + challenge)
+    trace = hashlib.sha256(b"TRNM-PON-TRACE1\0" + challenge)
     for i0 in range(0, n, r):
         for j0 in range(0, n, r):
             for k0 in range(0, n, r):
