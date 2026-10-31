@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Read-only portable-source integrity. Does not certify a runnable consensus."""
 from __future__ import annotations
-import hashlib,json,pathlib,re,subprocess,sys,tomllib
+import decimal,hashlib,json,math,pathlib,re,subprocess,sys,tomllib
 from urllib.parse import unquote,urlsplit
 ROOT=pathlib.Path(__file__).resolve().parents[2]
 MODULES={f'M{i:02d}' for i in range(18)}
@@ -41,10 +41,21 @@ def reject_nonfinite_json_constant(token):
     # NaN/Infinity are accepted by Python's json decoder but not RFC 8259.
     # A different policy/authority reader must not see a different document.
     raise Invalid('nonstandard JSON numeric constant '+token)
+def parse_bounded_json_float(token):
+    # A JSON exponent such as 1e309 is syntactically valid, but Python's
+    # binary64 decoder silently turns it into infinity even with a strict
+    # parse_constant hook. Likewise 1e-99999 silently becomes zero. Refuse
+    # such cross-parser policy ambiguity without changing ordinary floats.
+    value=float(token)
+    require(math.isfinite(value),'nonfinite JSON float '+token)
+    if value == 0.0:
+        require(decimal.Decimal(token).is_zero(),'underflowed JSON float '+token)
+    return value
 def load(path):
     require(not path.is_symlink(),'aliased JSON policy source '+str(path))
     return json.loads(path.read_text(),object_pairs_hook=unique,
-                      parse_constant=reject_nonfinite_json_constant)
+                      parse_constant=reject_nonfinite_json_constant,
+                      parse_float=parse_bounded_json_float)
 def no_promotion(value):
     if isinstance(value,dict):
         for key,item in value.items():

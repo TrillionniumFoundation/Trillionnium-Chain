@@ -44,6 +44,31 @@ class EvidenceBoundaryTests(unittest.TestCase):
                 with self.subTest(value=value):
                     path.write_text('{"quantum_security_bits":'+value+'}')
                     with self.assertRaises(Invalid):load(path)
+    def test_extreme_json_exponents_are_not_policy_numbers(self):
+        with tempfile.TemporaryDirectory(prefix='trnm-pq-exponent-') as temporary:
+            path=pathlib.Path(temporary)/'policy.json'
+            # parse_constant does NOT see these syntactically valid JSON
+            # exponent tokens. They overflow to infinities or underflow to
+            # zero in binary64, changing the asserted policy value.
+            for token in ('1e309','-1e309','1e-99999','-1e-99999'):
+                with self.subTest(token=token):
+                    path.write_text('{"quantum_assumption":{"value":'+token+'}}')
+                    with self.assertRaises(Invalid):load(path)
+            # Preserve accepted ordinary finite decimals, signed zero and
+            # the smallest positive representable subnormal.
+            for token in ('1.25','1e-8','0e-99999','-0.0','5e-324'):
+                with self.subTest(token=token):
+                    path.write_text('{"risk":'+token+'}')
+                    self.assertIsInstance(load(path)['risk'],float)
+    def test_extreme_json_exponents_refused_by_repository_intake(self):
+        # The repository checks ALL JSON documents with the same strict
+        # loader; non-critical extra keys must not bypass numeric checks.
+        with tempfile.TemporaryDirectory(prefix='trnm-pq-intake-') as temporary:
+            path=pathlib.Path(temporary)/'source.json'
+            for token in ('1e309','1e-99999'):
+                with self.subTest(token=token):
+                    path.write_text('{"limits":[{"research":'+token+'}]}')
+                    with self.assertRaises(Invalid):load(path)
     def test_policy_path_alias_is_not_trusted_even_inside_root(self):
         with tempfile.TemporaryDirectory(prefix='trnm-pq-source-') as temporary:
             root=pathlib.Path(temporary)
