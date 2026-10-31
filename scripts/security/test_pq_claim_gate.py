@@ -20,6 +20,8 @@ class ClaimGateTests(unittest.TestCase):
             target.parent.mkdir(parents=True, exist_ok=True)
             if key in module.CLASSICAL_MARKERS:
                 target.write_text(" ".join(module.CLASSICAL_MARKERS[key]), encoding="utf-8")
+            elif key in module.DELEGATED_MARKERS:
+                target.write_text(" ".join(module.DELEGATED_MARKERS[key]), encoding="utf-8")
             elif key == "w1_backend":
                 profile = {"pq_128_security_qualified": False,
                            "proof_receipt_kind": module.RESEARCH_PROOF_RECEIPT_KIND}
@@ -46,6 +48,79 @@ class ClaimGateTests(unittest.TestCase):
     def kinds(self):
         return {row["kind"] for row in module.inspect(self.root)["known_open_findings"]}
 
+
+    def test_governance_and_control_delegated_roots_are_explicit(self):
+        # GovernanceGuard only compares caller strings to local role sets;
+        # LocalPlanGuard invokes a verifier supplied by the host. Neither
+        # interface alone authenticates a PQ root or proves production use.
+        expected = {
+            "governance_guard": (
+                "trillionnium/crates/trnm-governance-guard/src/lib.rs",
+                "governance_guard_externally_authenticated_caller",
+            ),
+            "control_plane": (
+                "trillionnium/crates/trnm-control-plane/src/lib.rs",
+                "control_plane_injected_plan_signature_verifier",
+            ),
+        }
+        self.assertEqual(set(module.DELEGATED_MARKERS), set(expected))
+        self.assertEqual(set(module.DELEGATED_BOUNDARY_ROLES), set(expected))
+        report = module.inspect(self.root)
+        self.assertFalse(report["pq_chain_qualified"])
+        self.assertFalse(module.has_unreviewed_findings(report))
+        for key, (path, role) in expected.items():
+            with self.subTest(key=key):
+                self.assertEqual(module.PATHS[key], path)
+                self.assertEqual(module.DELEGATED_BOUNDARY_ROLES[key], role)
+                actual = (SCRIPT.parents[2] / path).read_text(encoding="utf-8")
+                self.assertTrue(all(m in actual for m in module.DELEGATED_MARKERS[key]))
+                self.assertTrue(any(
+                    row["kind"] == "delegated_authority"
+                    and row["path"] == path and row["boundary"] == role
+                    for row in report["known_open_findings"]
+                ))
+
+    def test_delegated_identity_change_and_forged_report_fail_closed(self):
+        import subprocess
+        import sys
+
+        baseline = module.inspect(self.root)
+        findings = baseline["known_open_findings"]
+        for key, markers in module.DELEGATED_MARKERS.items():
+            with self.subTest(key=key):
+                path = self.root / module.PATHS[key]
+                original = path.read_text(encoding="utf-8")
+                path.write_text(original.replace(markers[0], "unreviewed-root", 1),
+                                encoding="utf-8")
+                try:
+                    changed = module.inspect(self.root)
+                    self.assertTrue(module.has_unreviewed_findings(changed))
+                    self.assertIn("unreviewed_delegated_authority_boundary_change",
+                                  {r["kind"] for r in changed["known_open_findings"]})
+                    result = subprocess.run(
+                        [sys.executable, str(SCRIPT), "--root", str(self.root),
+                         "--assert-unqualified"],
+                        capture_output=True, text=True, check=False)
+                    self.assertEqual(result.returncode, 2, result.stdout)
+                finally:
+                    path.write_text(original, encoding="utf-8")
+
+        for target in [r for r in findings if r["kind"] == "delegated_authority"]:
+            for altered in (
+                [r for r in findings if r is not target],
+                findings + [target],
+                [{**r, "boundary": "imposter"} if r is target else r for r in findings],
+            ):
+                self.assertTrue(module.has_unreviewed_findings({
+                    **baseline, "known_open_findings": altered,
+                }))
+        self.assertFalse(module.has_unreviewed_findings(module.inspect(self.root)))
+
+    def test_delegated_governance_sources_always_trigger_claim_gate(self):
+        definition = (SCRIPT.parents[2] /
+                      ".github/workflows/pq-production-claim-gate.yml").read_text(encoding="utf-8")
+        for key in module.DELEGATED_MARKERS:
+            self.assertGreaterEqual(definition.count("- " + module.PATHS[key]), 2)
 
     def test_da_authority_paths_are_explicitly_in_scope(self):
         # Both are genuine classical permission boundaries, not proof that

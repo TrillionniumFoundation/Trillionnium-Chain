@@ -24,6 +24,8 @@ PATHS = {
     "research_state": "trillionnium/crates/trnm-research-protocol/src/state.rs",
     "task_store": "trillionnium/crates/trnm-task-kernel/src/store.rs",
     "service_settlement": "trillionnium/crates/trnm-service-settlement/src/engine.rs",
+    "governance_guard": "trillionnium/crates/trnm-governance-guard/src/lib.rs",
+    "control_plane": "trillionnium/crates/trnm-control-plane/src/lib.rs",
     "w1_backend": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json",
     "consensus": "config/consensus-mainline.json",
 }
@@ -63,10 +65,30 @@ CLASSICAL_BOUNDARY_ROLES = {
     "task_store": "agent_market_controller_session_auth",
     "service_settlement": "bilateral_settlement_authorization",
 }
-# These two findings describe the known unqualified baseline, not successful
+# These policies delegate authentication to a caller-supplied identity or
+# verifier. They are NOT intrinsically Ed25519, PQ, or production vulnerabilities;
+# actual caller authenticity, implementation and revocation must be traced.
+DELEGATED_MARKERS = {
+    "governance_guard": (
+        "pub fn set_role(", "self.require_admin(caller)?;",
+        "pub fn execute(", "self.require_executor(caller)?;",
+        "pub fn emergency_pause(", "self.require_guardian(caller)?;",
+    ),
+    "control_plane": (
+        "pub trait PlanSignatureVerifierV0",
+        "fn verify_plan_signature(&self, plan: &OptimizationPlanV1)",
+        "pub fn evaluate(", "self.signature_verifier",
+        ".verify_plan_signature(plan)",
+    ),
+}
+DELEGATED_BOUNDARY_ROLES = {
+    "governance_guard": "governance_guard_externally_authenticated_caller",
+    "control_plane": "control_plane_injected_plan_signature_verifier",
+}
+# These known findings describe the unqualified baseline, not successful
 # PQ migration. Every *other* finding, including new future kinds, is fatal
 # for --assert-unqualified unless explicitly reviewed and classified here.
-EXPECTED_UNQUALIFIED_FINDINGS = frozenset(("classical_authority", "unqualified_proof"))
+EXPECTED_UNQUALIFIED_FINDINGS = frozenset(("classical_authority", "delegated_authority", "unqualified_proof"))
 UNQUALIFIED_ASSERTIONS = (
     "pq_chain_qualified", "complete_authority_inventory_reviewed",
     "quantum_work_lower_bound_proven", "independent_cryptographic_acceptance",
@@ -285,6 +307,21 @@ def inspect(root: Path) -> dict:
                     "path": rel,
                     "boundary": CLASSICAL_BOUNDARY_ROLES[label],
                 })
+        elif label in DELEGATED_MARKERS:
+            try:
+                source = file.read_text(encoding="utf-8")
+            except (OSError, UnicodeError):
+                blockers.append({"kind": "unreadable_source", "path": rel})
+                continue
+            # An unreviewed signature-verifier replacement or caller-auth
+            # refactor cannot silently erase a previously known missing root.
+            kind = ("delegated_authority"
+                    if all(marker in source for marker in DELEGATED_MARKERS[label])
+                    else "unreviewed_delegated_authority_boundary_change")
+            blockers.append({
+                "kind": kind, "path": rel,
+                "boundary": DELEGATED_BOUNDARY_ROLES[label],
+            })
         elif label == "w1_backend":
             try:
                 profile = load_unique_json(file)
@@ -413,10 +450,16 @@ def has_unreviewed_findings(report: dict) -> bool:
         return True
     if set(CLASSICAL_MARKERS) != set(CLASSICAL_BOUNDARY_ROLES):
         return True
+    if set(DELEGATED_MARKERS) != set(DELEGATED_BOUNDARY_ROLES):
+        return True
     expected = {
         (PATHS[name], CLASSICAL_BOUNDARY_ROLES[name]) for name in CLASSICAL_MARKERS
     }
+    expected_delegated = {
+        (PATHS[name], DELEGATED_BOUNDARY_ROLES[name]) for name in DELEGATED_MARKERS
+    }
     observed = set()
+    observed_delegated = set()
     proof_seen = False
     for item in findings:
         if not isinstance(item, dict):
@@ -430,6 +473,14 @@ def has_unreviewed_findings(report: dict) -> bool:
             if identity not in expected or identity in observed:
                 return True
             observed.add(identity)
+        elif kind == "delegated_authority":
+            path, role = item.get("path"), item.get("boundary")
+            if not isinstance(path, str) or not isinstance(role, str):
+                return True
+            identity = (path, role)
+            if identity not in expected_delegated or identity in observed_delegated:
+                return True
+            observed_delegated.add(identity)
         elif kind == "unqualified_proof":
             if item.get("path") != PATHS["w1_backend"] or proof_seen:
                 return True
@@ -437,7 +488,8 @@ def has_unreviewed_findings(report: dict) -> bool:
         else:
             # Includes unknown future findings and all broken-source reports.
             return True
-    return observed != expected or not proof_seen
+    return (observed != expected or observed_delegated != expected_delegated
+            or not proof_seen)
 
 
 def main():

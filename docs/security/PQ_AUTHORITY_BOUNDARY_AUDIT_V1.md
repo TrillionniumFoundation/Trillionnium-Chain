@@ -87,3 +87,28 @@ only on inspector-generated error messages. An independent test snapshot
 prevents simultaneously deleting one boundary from the source map and role
 map and silently reducing coverage. This validates only a conservative
 NO_GO audit report, never a cryptographic PQ authorization decision.
+
+## Delegated governance/control authorities are not PQ roots
+
+The `trnm-governance-guard` library authorizes `set_role`, `execute`
+and `emergency_pause` from a caller-provided `&str` and membership sets.
+It does **not** authenticate that string cryptographically in the library.
+The caller's trusted identity source, epoch, replay protection and actual
+entrypoints must be audited before classifying this path as safe, classical-only,
+or production reachable. This is an authentication *dependency*, not proof that
+an attacker can impersonate an actual deployed governance caller.
+
+The `trnm-control-plane` `LocalPlanGuardV0::evaluate` delegates signature
+verification through host-provided `PlanSignatureVerifierV0`. This trait does
+not prescribe ML-DSA, a pinned PQ public key, hybrid AND semantics or
+reorg-safe recovery. Determine each real host implementation, trust-root
+custody and caller reachability; the source alone neither proves nor denies
+that a particular host can implement secure PQ verification.
+
+The source-bound gate preserves these **two distinct delegated-authority
+findings**, separately from the 11 classic-crypto paths. An absent/renamed
+marker, missing/duplicated finding or altered role fails the standalone
+`--assert-unqualified` check; positive default output stays explicitly
+`pq_chain_qualified=false`. Both source paths trigger the focused workflow
+on push and PR. No runtime authority is changed and #562 Gates A–F remain
+OPEN / NO_GO until independent caller-root and acceptance evidence exists.
