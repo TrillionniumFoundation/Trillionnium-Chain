@@ -19,6 +19,7 @@ on:
       - fix/pq-relay-cheap-replay-preflight-20261030
       - fix/pq-relay-postverify-clock-freshness-20261030
       - fix/pq-relay-mldsa65-wire-preflight-20261030
+      - fix/pq-relay-replay-before-payload-digest-20261030
     paths:
       - .github/workflows/pq-production-claim-gate.yml
       - scripts/security/**
@@ -96,7 +97,11 @@ jobs:
         run: test -z "$(git status --porcelain=v1)"
 
   relay-mldsa65-wire-shape:
-    if: github.head_ref == 'fix/pq-relay-mldsa65-wire-preflight-20261030' || github.ref_name == 'fix/pq-relay-mldsa65-wire-preflight-20261030'
+    if: >
+      github.head_ref == 'fix/pq-relay-mldsa65-wire-preflight-20261030' ||
+      github.ref_name == 'fix/pq-relay-mldsa65-wire-preflight-20261030' ||
+      github.head_ref == 'fix/pq-relay-replay-before-payload-digest-20261030' ||
+      github.ref_name == 'fix/pq-relay-replay-before-payload-digest-20261030'
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     steps:
@@ -112,5 +117,8 @@ jobs:
         run: rustup toolchain install 1.95.0 --profile minimal
       - name: Execute bounded relay signature-wire regression
         run: cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-types relay_auth_mldsa65_hex_shape_is_opt_in_and_precedes_verification -- --test-threads=1
+      - name: Exercise replay-first payload SHA256 rejection regression
+        if: github.head_ref == 'fix/pq-relay-replay-before-payload-digest-20261030' || github.ref_name == 'fix/pq-relay-replay-before-payload-digest-20261030'
+        run: cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-types relay_auth_replay_and_expiry_skip_large_payload_hash -- --test-threads=1
       - name: Check formatting
         run: cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check
