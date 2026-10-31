@@ -262,7 +262,7 @@ def native_durable_schema(root):
     def legacy(ddl, domain):
         # Source binding does not authorize widening this evidence contract.
         # These tables have their own full-state/commitment/node verification.
-        require(not re.search(r'\b(?:archive_nodes|native_state_commitments|growth_states|pq_network_peer_v1|pq_network_request_v1)\b',ddl,re.I),
+        require(not re.search(r'\b(?:archive_nodes|native_state_commitments|growth_states|pq_network_[a-z0-9_]+)\b',ddl,re.I),
                 'authenticated tables in legacy durable schema')
         return ddl,domain
     code = rust_code(source)
