@@ -172,6 +172,7 @@ def simulated_confirmation_report():
                 workers.append(dict(worker=worker, calling_thread_cpu_ns=2,
                                     attempt_cap_reached=False, calls=calls))
         pages, after = [], context['genesis']
+        replay_stages = []
         for number, packet in enumerate(packets):
             value = dict(schema='pon-native-history-v1', network=context['network'],
                          parameters=context['parameters'], genesis=context['genesis'],
@@ -179,6 +180,13 @@ def simulated_confirmation_report():
                          complete=number == 6)
             pages.append(call(100+number*10, 105+number*10, response={'value': value},
                               request=dict(op='history', tip=identifiers[-1], after=after)))
+            replay_stages.append(dict(history_call_index=number,
+                history_request_ended_ns=105+number*10,
+                replay_started_ns=106+number*10, replay_ended_ns=107+number*10,
+                replay_wall_ns=1, replay_thread_cpu_ns=1,
+                prior_after=after, next_after=identifiers[number],
+                replay_accepted=True,
+                clock_scope='independent verifier caller thread; wall spans all waits, CPU only this thread'))
             after = identifiers[number]
         records = [dict(complete=True, observation_failed=False) for _ in range(15+17*index)]
         phases.append(dict(mode='attack-free-baseline' if index == 0 else 'from-zero-pressure',
@@ -190,7 +198,13 @@ def simulated_confirmation_report():
             resource_fairness_qualified=False, production_activation=False,
             requested_window_ns=4_000_000_000, business_started_ns=10, confirmation_ended_ns=1000,
             client_confirmation_latency_ns=990, client_confirmed_transactions=1,
-            independent_replay_and_confirmation_cpu_ns=1, independent_replay_and_confirmation_wall_ns=1,
+            independent_replay_and_confirmation_cpu_ns=20, independent_replay_and_confirmation_wall_ns=1000,
+            independent_history_page_replay=replay_stages,
+            independent_final_confirmation_stage=dict(
+                confirmation_started_ns=167, confirmation_ended_ns=168,
+                confirmation_wall_ns=1, confirmation_thread_cpu_ns=1,
+                observation_returned=True,
+                clock_scope='independent verifier caller thread; no consensus/host time claim'),
             verification_errors=[], independent_client_confirmation=dict(
                 confirmed=True, reorged=False, finalized=False, execution_authority=False,
                 network=context['network'], parameters=context['parameters'], genesis=context['genesis'],
@@ -765,6 +779,29 @@ class ConfirmationReportTests(unittest.TestCase):
                              ('client_confirmed_transactions', 0)]:
             with self.subTest(field=field), self.assertRaises(ValueError):
                 self.validate(lambda doc: doc['phases'][1].update({field: value}))
+
+    def test_per_page_native_replay_evidence_cannot_be_forged_or_erased(self):
+        mutations = [
+            lambda d: d['phases'][1].pop('independent_history_page_replay'),
+            lambda d: d['phases'][1]['independent_history_page_replay'].pop(),
+            lambda d: d['phases'][1]['independent_history_page_replay'][0].update(history_call_index=1),
+            lambda d: d['phases'][1]['independent_history_page_replay'][0].update(prior_after='00'*32),
+            lambda d: d['phases'][1]['independent_history_page_replay'][0].update(next_after='00'*32),
+            lambda d: d['phases'][1]['independent_history_page_replay'][0].update(replay_accepted=False),
+            lambda d: d['phases'][1]['independent_history_page_replay'][0].update(replay_started_ns=99),
+            lambda d: d['phases'][1]['independent_history_page_replay'][0].update(replay_ended_ns=99),
+            lambda d: d['phases'][1]['independent_history_page_replay'][0].update(replay_wall_ns=9),
+            lambda d: d['phases'][1]['independent_history_page_replay'][0].update(replay_thread_cpu_ns=True),
+            lambda d: d['phases'][1]['independent_history_page_replay'][0].update(clock_scope='whole host CPU'),
+            lambda d: d['phases'][1].update(independent_final_confirmation_stage=None),
+            lambda d: d['phases'][1]['independent_final_confirmation_stage'].update(confirmation_started_ns=99),
+            lambda d: d['phases'][1]['independent_final_confirmation_stage'].update(observation_returned=False),
+            lambda d: d['phases'][1]['independent_final_confirmation_stage'].update(
+                confirmation_thread_cpu_ns=1000),
+        ]
+        for edit in mutations:
+            with self.subTest(edit=edit), self.assertRaisesRegex(ValueError, 'CONFIRMATION_REPLAY'):
+                self.validate(edit)
 
     def test_independent_confirmation_cannot_change_identity_or_authority(self):
         for field, value in [('transaction', '00'*32), ('included_block', '00'*32),

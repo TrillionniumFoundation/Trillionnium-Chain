@@ -569,7 +569,10 @@ def validate_confirmation_report(path: Path) -> dict:
                 next_packet += 1
         require([row.get('height') for row in successful] == list(range(1, 8)), 'CONFIRMATION_SIGNED_SUBMISSIONS')
         imported, after = [], doc['genesis']
-        for row in histories:
+        # Independently bind optional CPU observations to the exact preserved
+        # History call and canonical next cursor, not to a report summary.
+        expected_replays = []
+        for history_call_index, row in enumerate(histories):
             on_time = call(row, window)
             require(previous_end <= row['started_ns'] <= row['ended_ns'] <= end,
                     'CONFIRMATION_BUSINESS_CHRONOLOGY')
@@ -587,11 +590,58 @@ def validate_confirmation_report(path: Path) -> dict:
                     'CONFIRMATION_HISTORY_CONTEXT')
             chunk = page.get('packets')
             require(isinstance(chunk, list) and chunk and len(chunk) <= 16, 'CONFIRMATION_HISTORY_PACKETS')
+            previous_after = after
             imported.extend(chunk)
             after = packet_metadata(chunk[-1])[2].hex()
             require(page.get('next') == after and page.get('complete') is (after == parent.hex()),
                     'CONFIRMATION_HISTORY_CONTEXT')
+            expected_replays.append((history_call_index, row['ended_ns'], previous_after, after))
         require(imported == packets and after == parent.hex(), 'CONFIRMATION_HISTORY_PACKETS')
+        stages = phase.get('independent_history_page_replay')
+        require(isinstance(stages, list) and len(stages) == len(expected_replays),
+                'CONFIRMATION_REPLAY_STAGES')
+        previous_replay_end = 0
+        measured_page_cpu = 0
+        for stage, (call_index, response_end, prior, next_after) in zip(stages, expected_replays):
+            require(isinstance(stage, dict) and number(stage.get('history_call_index')) == call_index
+                    and number(stage.get('history_request_ended_ns')) == response_end
+                    and stage.get('prior_after') == prior and stage.get('next_after') == next_after
+                    and stage.get('replay_accepted') is True,
+                    'CONFIRMATION_REPLAY_BINDING')
+            started = number(stage.get('replay_started_ns'))
+            ended = number(stage.get('replay_ended_ns'))
+            require(response_end <= started <= ended < window and previous_replay_end <= started
+                    and number(stage.get('replay_wall_ns')) == ended - started,
+                    'CONFIRMATION_REPLAY_TIMELINE')
+            if call_index + 1 < len(histories):
+                require(ended <= number(histories[call_index + 1].get('started_ns')),
+                        'CONFIRMATION_REPLAY_TIMELINE')
+            previous_replay_end = ended
+            cpu = stage.get('replay_thread_cpu_ns')
+            if cpu is not None:
+                measured_page_cpu += number(cpu)
+            require(stage.get('clock_scope') ==
+                    'independent verifier caller thread; wall spans all waits, CPU only this thread',
+                    'CONFIRMATION_REPLAY_SCOPE')
+        final = phase.get('independent_final_confirmation_stage')
+        require(isinstance(final, dict) and final.get('observation_returned') is True
+                and final.get('clock_scope') ==
+                'independent verifier caller thread; no consensus/host time claim',
+                'CONFIRMATION_REPLAY_FINAL')
+        final_start = number(final.get('confirmation_started_ns'))
+        final_end = number(final.get('confirmation_ended_ns'))
+        require(previous_replay_end <= final_start <= final_end <= end
+                and number(final.get('confirmation_wall_ns')) == final_end - final_start,
+                'CONFIRMATION_REPLAY_TIMELINE')
+        final_cpu = final.get('confirmation_thread_cpu_ns')
+        if final_cpu is not None:
+            measured_page_cpu += number(final_cpu)
+        total_replay_cpu = phase.get('independent_replay_and_confirmation_cpu_ns')
+        if total_replay_cpu is not None:
+            require(measured_page_cpu <= number(total_replay_cpu), 'CONFIRMATION_REPLAY_CPU_SCOPE')
+        require(number(phase.get('independent_replay_and_confirmation_wall_ns'))
+                >= final_end - number(stages[0].get('replay_started_ns')),
+                'CONFIRMATION_REPLAY_TIMELINE')
         workers = phase.get('attacks')
         require(isinstance(workers, list) and len(workers) == phase['workers'], 'CONFIRMATION_ATTACKS')
         attack_calls, worker_cpu = [], 0
