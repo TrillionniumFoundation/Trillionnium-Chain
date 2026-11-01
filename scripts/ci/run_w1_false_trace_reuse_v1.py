@@ -29,9 +29,14 @@ LEGAL_EXAMPLE = "pon_w1_legal_strategy_v1"
 FULL_LIMB_SELECTOR = "--false-trace-full-limb-v1"
 
 
-def legal_strategy_reader():
+def legal_strategy_reader(version="v1"):
     # The original mode retains its existing reader and complete capture schema.
     # This import occurs only when the separate legal experiment is requested.
+    if version == "v2":
+        import pon_w1_legal_strategy_reader_v2
+        return pon_w1_legal_strategy_reader_v2
+    if version != "v1":
+        raise ValueError("fixed legal strategy version required")
     import pon_w1_legal_strategy_reader_v1
     return pon_w1_legal_strategy_reader_v1
 
@@ -99,14 +104,16 @@ def main():
     parser.add_argument("--local", action="store_true")
     modes = parser.add_mutually_exclusive_group()
     modes.add_argument("--legal-strategy", action="store_true")
+    modes.add_argument("--legal-strategy-v2", action="store_true")
     modes.add_argument("--full-limb", action="store_true")
     args = parser.parse_args()
     spec = ARCHITECTURES[args.arch]
-    reader = legal_strategy_reader() if args.legal_strategy else None
-    example = LEGAL_EXAMPLE if args.legal_strategy else EXAMPLE
-    receipt = ("w1-legal-strategy-v1" if args.legal_strategy else
+    legal_version = "v2" if args.legal_strategy_v2 else "v1" if args.legal_strategy else None
+    reader = legal_strategy_reader(legal_version) if legal_version is not None else None
+    example = LEGAL_EXAMPLE if reader is not None else EXAMPLE
+    receipt = ("w1-legal-strategy-" + legal_version if reader is not None else
         "w1-full-limb-reuse-v1" if args.full_limb else "w1-false-trace-reuse-v1")
-    schema = ("trnm-w1-legal-strategy-execution-v1" if args.legal_strategy else
+    schema = ("trnm-w1-legal-strategy-execution-" + legal_version if reader is not None else
         "trnm-w1-full-limb-reuse-execution-v1" if args.full_limb else
         "trnm-w1-false-trace-reuse-execution-v1")
     flags = reader.FALSE_FLAGS if reader is not None else FALSE_FLAGS

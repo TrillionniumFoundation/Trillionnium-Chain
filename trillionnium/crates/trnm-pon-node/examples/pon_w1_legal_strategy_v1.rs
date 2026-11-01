@@ -12,9 +12,25 @@ use std::{hint::black_box, io::Write};
 use trnm_crypto_primitives::pon_work::{self, Hash, VerifiedWork, WorkError, CELLS, PROOF_BYTES};
 use w1_cost_producers::{raw, sha, Clock, Producer, Result, Timing, ARMS};
 
-const SCHEMA: &str = "pon-w1-legal-strategy-v1";
-const SELECTOR: &str = "--legal-strategy-v1";
-const SAMPLES: u64 = 2;
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+struct Profile {
+    schema: &'static str,
+    selector: &'static str,
+    samples: u64,
+    challenge_domain: &'static [u8],
+}
+const V1: Profile = Profile {
+    schema: "pon-w1-legal-strategy-v1",
+    selector: "--legal-strategy-v1",
+    samples: 2,
+    challenge_domain: b"pon-w1-legal-strategy-challenge-v1",
+};
+const V2: Profile = Profile {
+    schema: "pon-w1-legal-strategy-v2",
+    selector: "--legal-strategy-v2",
+    samples: 8,
+    challenge_domain: b"pon-w1-legal-strategy-challenge-v2",
+};
 const LIMIT: u64 = 4096;
 const HORIZONS: [usize; 3] = [1, 8, 64];
 const CLASSES: [&str; 5] = [
@@ -30,6 +46,7 @@ const VERIFIER_CASES: [&str; 2] = ["legal", "product-last"];
 const DISPATCH: [usize; 4] = [12, 7, 8, 5];
 
 struct Shard {
+    profile: Profile,
     class: String,
     target_index: usize,
     horizon: usize,
@@ -37,7 +54,7 @@ struct Shard {
 impl Shard {
     fn parse(args: &[String]) -> Result<Self> {
         if args.len() != 7
-            || args[0] != SELECTOR
+            || ![V1.selector, V2.selector].contains(&args[0].as_str())
             || args[1] != "--class"
             || args[3] != "--target-index"
             || args[5] != "--reuse-winners"
@@ -57,6 +74,7 @@ impl Shard {
             _ => return Err("LEGAL_STRATEGY_REUSE".into()),
         };
         Ok(Self {
+            profile: if args[0] == V1.selector { V1 } else { V2 },
             class: args[2].clone(),
             target_index,
             horizon,
@@ -69,11 +87,18 @@ impl Shard {
     }
 }
 
-fn challenge(task: Hash, target: Hash, sample: u64, search: usize, nonce: u64) -> Hash {
+fn challenge(
+    profile: Profile,
+    task: Hash,
+    target: Hash,
+    sample: u64,
+    search: usize,
+    nonce: u64,
+) -> Hash {
     // Horizon is deliberately absent: each reuse experiment has the SAME search
     // prefix. Different horizons are not additional independent mining samples.
     pon_work::hash(
-        b"pon-w1-legal-strategy-challenge-v1",
+        profile.challenge_domain,
         &[
             &task,
             &target,
@@ -116,6 +141,7 @@ struct Search {
     winner: Option<(Hash, Vec<u8>)>,
 }
 fn search(
+    profile: Profile,
     producer: &Producer,
     task: Hash,
     target: Hash,
@@ -128,7 +154,7 @@ fn search(
         winner: None,
     };
     for nonce in 0..limit {
-        let context = challenge(task, target, sample, index, nonce);
+        let context = challenge(profile, task, target, sample, index, nonce);
         let proof = producer
             .prove(context)
             .map_err(|error| format!("LEGAL_STRATEGY_PROVE:{error:?}"))?;
@@ -154,11 +180,11 @@ fn search(
     Ok(observed)
 }
 
-fn emit(kind: &str, mut value: Value) -> Result<()> {
+fn emit(profile: Profile, kind: &str, mut value: Value) -> Result<()> {
     let object = value
         .as_object_mut()
         .ok_or("LEGAL_STRATEGY_RECORD_OBJECT")?;
-    object.insert("schema".into(), SCHEMA.into());
+    object.insert("schema".into(), profile.schema.into());
     object.insert("kind".into(), kind.into());
     let mut stdout = std::io::stdout().lock();
     serde_json::to_writer(&mut stdout, &value)?;
@@ -233,7 +259,15 @@ fn cohort(
     let mut searches = Vec::with_capacity(shard.horizon);
     for index in 0..shard.horizon {
         let started = Clock::start();
-        let result = search(&producer, task, shard.target(), sample, index, LIMIT)?;
+        let result = search(
+            shard.profile,
+            &producer,
+            task,
+            shard.target(),
+            sample,
+            index,
+            LIMIT,
+        )?;
         searches.push(Measured {
             search: result,
             timing: started.finish(),
@@ -241,6 +275,7 @@ fn cohort(
     }
     let total = total.finish();
     emit(
+        shard.profile,
         "cohort",
         json!({"sample":sample,"strategy":STRATEGIES[strategy],"invocation_order":order,
         "setup_calls":1,"searches":shard.horizon,"probes":probes,"selected_arm":probes.last(),
@@ -259,6 +294,7 @@ fn cohort(
             "nonce":trial.nonce,"challenge":hex::encode(trial.challenge),"trace":hex::encode(trial.trace),
             "ticket":hex::encode(trial.ticket),"proof_sha256":hex::encode(trial.proof_sha256),"target_hit":trial.hit})).collect();
         emit(
+            shard.profile,
             "search",
             json!({"sample":sample,"strategy":STRATEGIES[strategy],"search_index":index,
             "setup_calls":0,"timing":measured.timing,"attempts":trials,
@@ -270,6 +306,7 @@ fn cohort(
         if let Some((context, proof)) = &observed.winner {
             if canonical[index].is_none() {
                 emit(
+                    shard.profile,
                     "candidate",
                     json!({"sample":sample,"search_index":index,
                     "challenge":hex::encode(context),"proof_hex":hex::encode(proof),"proof_sha256":sha(proof)}),
@@ -283,6 +320,7 @@ fn cohort(
             let (changed, before, after) = product_last(proof)?;
             let mutation = mutation_started.finish();
             emit(
+                shard.profile,
                 "product_mutation",
                 json!({"sample":sample,"strategy":STRATEGIES[strategy],"search_index":index,
                 "source_proof_sha256":sha(proof),"proof_sha256":sha(&changed),"offset":PROOF_BYTES-36,
@@ -304,6 +342,7 @@ fn cohort(
                     });
                     let timing = started.finish();
                     emit(
+                        shard.profile,
                         "verifier",
                         json!({"sample":sample,"strategy":STRATEGIES[strategy],"search_index":index,
                         "case":VERIFIER_CASES[case_index],"invocation_order":verification_order,
@@ -350,9 +389,10 @@ fn run() -> Result<()> {
         .map_err(|error| format!("MATERIAL:{error:?}"))?;
     let material_setup = started.finish();
     emit(
+        shard.profile,
         "campaign",
-        json!({"selector":SELECTOR,"class":shard.class,"target_index":shard.target_index,
-        "target":hex::encode(shard.target()),"reuse_winners":shard.horizon,"samples":SAMPLES,
+        json!({"selector":shard.profile.selector,"class":shard.class,"target_index":shard.target_index,
+        "target":hex::encode(shard.target()),"reuse_winners":shard.horizon,"samples":shard.profile.samples,
         "attempt_budget":LIMIT,"seed":0,"classes":CLASSES,"horizons":HORIZONS,"strategies":STRATEGIES,
         "paths":PATHS,"cases":VERIFIER_CASES,"dispatch_arms":DISPATCH.map(|index|ARMS[index]),"material_setup":material_setup,
         "clock":"thread-cpu-and-monotonic-wall-ns",
@@ -365,12 +405,13 @@ fn run() -> Result<()> {
         "production_activation":false}),
     )?;
     emit(
+        shard.profile,
         "material",
         json!({"class":material.name,"source":material.source,"task":hex::encode(task),
         "a_hex":hex::encode(raw(&material.a)),"b_hex":hex::encode(raw(&material.b))}),
     )?;
     let mut counts = Counts::default();
-    for sample in 0..SAMPLES {
+    for sample in 0..shard.profile.samples {
         let mut canonical = vec![None; shard.horizon];
         for order in 0..STRATEGIES.len() {
             cohort(
@@ -385,6 +426,7 @@ fn run() -> Result<()> {
         }
     }
     emit(
+        shard.profile,
         "end",
         json!({"cohort_count":counts.cohorts,"search_count":counts.searches,
         "candidate_count":counts.candidates,"product_mutation_count":counts.mutations,"verifier_count":counts.verifiers,"complete":true}),
@@ -401,7 +443,7 @@ mod tests {
     fn exact_shards_reject_unfrozen_targets_horizons_and_extra_arguments() {
         let make = |target: &str, horizon: &str| {
             [
-                SELECTOR,
+                V1.selector,
                 "--class",
                 "zero",
                 "--target-index",
@@ -425,6 +467,74 @@ mod tests {
         assert!(Shard::parse(&extra).is_err());
     }
     #[test]
+    fn versions_keep_exact_namespaces_and_eight_new_sample_streams() {
+        let make = |selector: &str| {
+            [
+                selector,
+                "--class",
+                "zero",
+                "--target-index",
+                "0",
+                "--reuse-winners",
+                "64",
+            ]
+            .map(str::to_owned)
+            .to_vec()
+        };
+        assert_eq!(Shard::parse(&make(V1.selector)).unwrap().profile, V1);
+        assert_eq!(Shard::parse(&make(V2.selector)).unwrap().profile, V2);
+        for selector in [
+            "--legal-strategy",
+            "--legal-strategy-v3",
+            "--legal-strategy-v02",
+        ] {
+            assert!(Shard::parse(&make(selector)).is_err());
+        }
+        assert_eq!((V1.samples, V2.samples), (2, 8));
+        let task = [19; 32];
+        let target = [127; 32];
+        let historical = pon_work::hash(
+            b"pon-w1-legal-strategy-challenge-v1",
+            &[
+                &task,
+                &target,
+                &0u64.to_le_bytes(),
+                &1u64.to_le_bytes(),
+                &3u64.to_le_bytes(),
+                &5u64.to_le_bytes(),
+            ],
+        );
+        assert_eq!(challenge(V1, task, target, 1, 3, 5), historical);
+        let mut streams = std::collections::BTreeSet::new();
+        for sample in 0..V2.samples {
+            let context = challenge(V2, task, target, sample, 3, 5);
+            assert!(streams.insert(context));
+            assert_ne!(context, challenge(V1, task, target, sample, 3, 5));
+            assert_ne!(context, challenge(V2, [20; 32], target, sample, 3, 5));
+            assert_ne!(context, challenge(V2, task, [126; 32], sample, 3, 5));
+            assert_ne!(context, challenge(V2, task, target, sample, 4, 5));
+            assert_ne!(context, challenge(V2, task, target, sample, 3, 6));
+        }
+        assert_eq!(streams.len(), 8);
+    }
+    #[test]
+    fn v2_final_sample_keeps_both_legal_producers_and_complete_negative_verification() {
+        let zero = vec![0; CELLS];
+        let task = pon_work::task_id(&zero, &zero).unwrap();
+        let (generic, _) = prepare(0, &zero, &zero).unwrap();
+        let (dispatch, _) = prepare(1, &zero, &zero).unwrap();
+        let left = search(V2, &generic, task, [255; 32], 7, 63, 3).unwrap();
+        let right = search(V2, &dispatch, task, [255; 32], 7, 63, 3).unwrap();
+        assert!(left == right);
+        let (context, proof) = left.winner.unwrap();
+        let (changed, _, _) = product_last(&proof).unwrap();
+        assert!(pon_work::verify_reference(context, task, [255; 32], &proof).is_ok());
+        assert!(matches!(
+            pon_work::verify_reference(context, task, [255; 32], &changed),
+            Err(WorkError::Product)
+        ));
+    }
+    #[test]
     fn public_dispatch_keeps_complete_bytes_and_all_misses() {
         let zero = vec![0; CELLS];
         let task = pon_work::task_id(&zero, &zero).unwrap();
@@ -435,13 +545,13 @@ mod tests {
             dispatch_probes,
             ["maintenance-limb", "blocked-zero-integer-paired"]
         );
-        let left = search(&generic, task, [0; 32], 0, 0, 3).unwrap();
-        let right = search(&dispatch, task, [0; 32], 0, 0, 3).unwrap();
+        let left = search(V1, &generic, task, [0; 32], 0, 0, 3).unwrap();
+        let right = search(V1, &dispatch, task, [0; 32], 0, 0, 3).unwrap();
         assert!(left == right);
         assert_eq!(left.attempts.len(), 3);
         assert!(left.winner.is_none());
-        let left = search(&generic, task, [255; 32], 0, 1, 3).unwrap();
-        let right = search(&dispatch, task, [255; 32], 0, 1, 3).unwrap();
+        let left = search(V1, &generic, task, [255; 32], 0, 1, 3).unwrap();
+        let right = search(V1, &dispatch, task, [255; 32], 0, 1, 3).unwrap();
         assert!(left == right);
         let (context, proof) = left.winner.unwrap();
         assert!(pon_work::verify_reference(context, task, [255; 32], &proof).is_ok());

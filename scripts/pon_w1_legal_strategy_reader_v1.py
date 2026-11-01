@@ -6,6 +6,7 @@ It does not replay W1, authenticate clocks or establish a cheapest strategy.
 """
 import argparse
 from collections import Counter
+from dataclasses import dataclass
 import hashlib
 import json
 from pathlib import Path
@@ -35,6 +36,36 @@ MUTATION_SCOPE = "clone-and-canonical-last-product-word-increment-only-excludes-
 # The largest shard may retain 4 * 64 * 4096 attempts if every search exhausts.
 # Bound the parser without excluding that complete fixed-denominator observation.
 MAX_LINE, MAX_BYTES = 8 * 1024 * 1024, 512 * 1024 * 1024
+
+
+@dataclass(frozen=True)
+class Profile:
+    schema: str
+    selector: str
+    samples: int
+    challenge_domain: bytes
+    max_bytes: int
+
+    @property
+    def shard_schema(self):
+        return self.schema.replace("-strategy-", "-strategy-shard-readback-")
+
+    @property
+    def readback_schema(self):
+        return self.schema.replace("-strategy-", "-strategy-readback-")
+
+
+V1 = Profile(SCHEMA, SELECTOR, SAMPLES, b"pon-w1-legal-strategy-challenge-v1", MAX_BYTES)
+# A separate eight-sample record envelope admits the fourfold worst-case
+# exhaustion stream. It changes no native time, attempt, CPU or service budget.
+V2 = Profile("pon-w1-legal-strategy-v2", "--legal-strategy-v2", 8,
+             b"pon-w1-legal-strategy-challenge-v2", 2 * 1024 * 1024 * 1024)
+
+
+def require_profile(profile):
+    common.require(profile in (V1, V2), "fixed legal-strategy version required")
+
+
 FIELDS = {
     "campaign": "selector class target_index target reuse_winners samples attempt_budget seed classes horizons strategies paths cases dispatch_arms material_setup clock producer_timing_scope mutation_timing_scope verifier_timing_scope cross_horizon_challenges " + " ".join(FALSE_FLAGS),
     "material": "class source task a_hex b_hex",
@@ -47,8 +78,9 @@ FIELDS = {
 }
 
 
-def challenge(task, target, sample, search, nonce):
-    return common.pon_hash(b"pon-w1-legal-strategy-challenge-v1", task, target, bytes(8),
+def challenge(task, target, sample, search, nonce, *, profile=V1):
+    require_profile(profile)
+    return common.pon_hash(profile.challenge_domain, task, target, bytes(8),
         sample.to_bytes(8, "little"), search.to_bytes(8, "little"), nonce.to_bytes(8, "little"))
 
 
@@ -81,7 +113,9 @@ def product_last(proof):
 
 
 class Records:
-    def __init__(self):
+    def __init__(self, profile=V1):
+        require_profile(profile)
+        self.profile = profile
         self.counts, self.cohorts, self.canonical = Counter(), {}, {}
         self.campaign = self.current = self.material = None
         self.ended, self.alerts = False, []
@@ -119,7 +153,7 @@ class Records:
 
     def add(self, row):
         common.require(not self.ended, "records after complete end")
-        common.require(type(row) is dict and row.get("schema") == SCHEMA, "explicit legal-strategy schema required")
+        common.require(type(row) is dict and row.get("schema") == self.profile.schema, "explicit legal-strategy schema required")
         kind = row.get("kind")
         common.require(type(kind) is str and kind in FIELDS, "unknown record kind")
         common.exact(row, {"schema", "kind", *FIELDS[kind].split()}, kind)
@@ -133,13 +167,13 @@ class Records:
         index = common.integer(row["target_index"], "target index", len(TARGETS) - 1)
         common.require(row["target"] == TARGETS[index], "fixed target required")
         common.require(type(row["reuse_winners"]) is int and row["reuse_winners"] in HORIZONS, "fixed actual reuse horizon required")
-        for key, expected in (("samples", SAMPLES), ("attempt_budget", ATTEMPT_BUDGET), ("seed", 0)):
+        for key, expected in (("samples", self.profile.samples), ("attempt_budget", ATTEMPT_BUDGET), ("seed", 0)):
             common.require(common.integer(row[key], key) == expected, "fixed parameter changed: " + key)
         for key, expected in (("classes", list(CLASSES)), ("horizons", list(HORIZONS)),
                 ("strategies", list(STRATEGIES)), ("paths", list(PATHS)), ("cases", list(CASES)),
                 ("dispatch_arms", list(DISPATCH_ARMS))):
             common.require(row[key] == expected, "frozen strategy/grid changed: " + key)
-        common.require(row["selector"] == SELECTOR and row["clock"] == "thread-cpu-and-monotonic-wall-ns"
+        common.require(row["selector"] == self.profile.selector and row["clock"] == "thread-cpu-and-monotonic-wall-ns"
             and row["producer_timing_scope"] == PRODUCER_SCOPE and row["verifier_timing_scope"] == VERIFY_SCOPE
             and row["mutation_timing_scope"] == MUTATION_SCOPE
             and row["cross_horizon_challenges"] == "same-prefix-not-independent", "scope/selector changed")
@@ -161,7 +195,7 @@ class Records:
         self.close_cohort()
         common.require(self.material is not None, "material missing")
         sample, order = divmod(self.counts["cohort"], len(STRATEGIES))
-        common.require(sample < SAMPLES and common.integer(row["sample"], "sample") == sample
+        common.require(sample < self.profile.samples and common.integer(row["sample"], "sample") == sample
             and common.integer(row["invocation_order"], "order") == order, "cohort coverage/order incomplete")
         strategy = STRATEGIES[(sample + self.campaign["target_index"] + order) % len(STRATEGIES)]
         probes = dispatch_probes(self.campaign["class"], strategy)
@@ -187,7 +221,7 @@ class Records:
         for nonce, trial in enumerate(trials):
             common.exact(trial, ("nonce", "challenge", "trace", "ticket", "proof_sha256", "target_hit"), "trial")
             common.require(common.integer(trial["nonce"], "nonce") == nonce, "nonconsecutive nonce")
-            context = challenge(task, target, current["sample"], index, nonce)
+            context = challenge(task, target, current["sample"], index, nonce, profile=self.profile)
             common.require(common.hex_bytes(trial["challenge"], 32, "challenge") == context, "challenge binding mismatch")
             trace = common.hex_bytes(trial["trace"], 32, "trace")
             proof_digest = common.sha(prefix + trace)
@@ -259,8 +293,8 @@ class Records:
 
     def add_end(self, row):
         self.close_cohort()
-        common.require(self.counts["material"] == 1 and self.counts["cohort"] == SAMPLES * len(STRATEGIES)
-            and self.counts["search"] == SAMPLES * len(STRATEGIES) * self.campaign["reuse_winners"], "shard grid incomplete")
+        common.require(self.counts["material"] == 1 and self.counts["cohort"] == self.profile.samples * len(STRATEGIES)
+            and self.counts["search"] == self.profile.samples * len(STRATEGIES) * self.campaign["reuse_winners"], "shard grid incomplete")
         for kind in ("cohort", "search", "candidate", "product_mutation", "verifier"):
             common.require(common.integer(row[kind + "_count"], kind) == self.counts[kind], "record count mismatch")
         common.require(row["complete"] is True, "complete end required")
@@ -270,7 +304,7 @@ class Records:
 def summary(records):
     result = []
     for strategy in STRATEGIES:
-        cohorts = [records.cohorts[sample, strategy] for sample in range(SAMPLES)]
+        cohorts = [records.cohorts[sample, strategy] for sample in range(records.profile.samples)]
         searches = [searched for cohort in cohorts for searched in cohort["searches"]]
         winners = sum(searched["winner"] is not None for searched in searches)
         full = {axis: sum(cohort["total"][axis] for cohort in cohorts) for axis in ("cpu_ns", "wall_ns")}
@@ -289,15 +323,15 @@ def summary(records):
     return result
 
 
-def analyze_shard(path):
-    records = Records()
+def analyze_shard(path, *, profile=V1):
+    records = Records(profile)
     digest, size, count = hashlib.sha256(), 0, 0
-    maximum_records = 3 + SAMPLES * (len(STRATEGIES) + max(HORIZONS) * (len(STRATEGIES) * (2 + len(PATHS) * len(CASES)) + 1))
+    maximum_records = 3 + profile.samples * (len(STRATEGIES) + max(HORIZONS) * (len(STRATEGIES) * (2 + len(PATHS) * len(CASES)) + 1))
     with Path(path).open("rb") as source:
         while line := source.readline(MAX_LINE + 1):
             size += len(line)
             count += 1
-            common.require(len(line) <= MAX_LINE and line.endswith(b"\n") and size <= MAX_BYTES
+            common.require(len(line) <= MAX_LINE and line.endswith(b"\n") and size <= profile.max_bytes
                 and count <= maximum_records, "bounded complete JSONL required")
             digest.update(line)
             try:
@@ -312,7 +346,7 @@ def analyze_shard(path):
         ratio = None
     fingerprints = [dict(sample=sample, search_index=index, stream_sha256=identity[0],
         attempts=identity[1], winner=identity[2]) for (sample, index), identity in sorted(records.canonical.items())]
-    return dict(schema="pon-w1-legal-strategy-shard-readback-v1", record_consistency="PASS",
+    return dict(schema=profile.shard_schema, record_consistency="PASS",
         selection=selection, input_sha256=digest.hexdigest(), input_bytes=size, record_counts=dict(records.counts),
         semantic_alerts=records.alerts, strategy_costs=rows, generic_over_frozen_dispatch_cpu=ratio,
         material_setup=records.campaign["material_setup"], search_fingerprints=fingerprints,
@@ -320,12 +354,13 @@ def analyze_shard(path):
         fastest_adversary_lower_bound=False, complete_fixed_grid=False, **FALSE_FLAGS)
 
 
-def analyze(paths):
+def analyze(paths, *, profile=V1):
+    require_profile(profile)
     expected = {(name, target, horizon) for name in CLASSES for target in range(len(TARGETS)) for horizon in HORIZONS}
     common.require(len(paths) == len(expected), "complete fixed shard grid required")
     reports, seen, fingerprints = [], set(), {}
     for path in paths:
-        report = analyze_shard(path)
+        report = analyze_shard(path, profile=profile)
         choice = report["selection"]
         key = choice["class"], choice["target_index"], choice["reuse_winners"]
         common.require(key in expected and key not in seen, "duplicate/unknown shard")
@@ -342,15 +377,16 @@ def analyze(paths):
     common.require(common.sha(policy_raw) == common.PROFILE_SHA256, "original acceptance profile changed")
     policy = common.decode(policy_raw)
     alerts = [{"selection": r["selection"], **alert} for r in reports for alert in r["semantic_alerts"]]
-    return dict(schema="pon-w1-legal-strategy-readback-v1", record_consistency="PASS", complete_fixed_grid=True,
-        semantic_alerts=alerts, shards=reports, observed_samples_per_class=SAMPLES,
+    return dict(schema=profile.readback_schema, record_consistency="PASS", complete_fixed_grid=True,
+        semantic_alerts=alerts, shards=reports, observed_samples_per_class=profile.samples,
         required_policy_samples_per_class=policy["minimum_cost_samples_per_class"],
-        policy_sample_count_satisfied=SAMPLES >= policy["minimum_cost_samples_per_class"],
+        policy_sample_count_satisfied=profile.samples >= policy["minimum_cost_samples_per_class"],
         all_policy_materials_or_targets_covered=False, cross_horizon_challenges="same-prefix-not-independent",
         unique_search_streams=len(fingerprints), fixed_strategy_selected_before_measurement=True,
         per_sample_fastest_oracle_used=False, modeled_setup_division_used=False,
         w1_transcript_replayed=False, native_execution_authenticated=False, fastest_adversary_lower_bound=False,
-        limitations=["Two samples are below the unchanged eight-sample acceptance policy.",
+        limitations=[("Two samples are below the unchanged eight-sample acceptance policy." if profile == V1 else
+            "Eight recorded sample streams meet only the unchanged sample-count minimum; execution authentication and all other qualification remain separate."),
             "This finite five-class/two-target cohort is not all selectable tasks or production difficulty.",
             "Input recognition, failed probes, preparation and every miss stay inside each measured strategy cohort.",
             "Binary trial retention and complete proof hashing are measured evidence overhead; hex/JSON, verification and retained buffer destruction are separate.",
@@ -360,12 +396,12 @@ def analyze(paths):
             "No model improvement, independent WAN service, universally cheapest algorithm or quantum cost is established."], **FALSE_FLAGS)
 
 
-def main():
+def main(*, profile=V1):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("inputs", type=Path, nargs="+")
     args = parser.parse_args()
     try:
-        report = analyze(args.inputs)
+        report = analyze(args.inputs, profile=profile)
     except (OSError, ValueError, OverflowError) as error:
         print(json.dumps(dict(record_consistency="FAIL", error=str(error), **FALSE_FLAGS), sort_keys=True))
         return 2

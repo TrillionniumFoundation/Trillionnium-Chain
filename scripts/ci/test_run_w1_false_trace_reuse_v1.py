@@ -40,7 +40,7 @@ class ExecutionBoundaryTests(unittest.TestCase):
                 config_dir.mkdir(exist_ok=True)
                 config_file.write_text(configuration)
             commands = []
-            example = runner.LEGAL_EXAMPLE if mode == "legal-strategy" else runner.EXAMPLE
+            example = runner.LEGAL_EXAMPLE if mode in ("legal-strategy", "legal-strategy-v2") else runner.EXAMPLE
             native = target / "x86_64-unknown-linux-gnu/release/examples" / example
             source = {"source_state": "committed-clean", "commit": "a" * 40}
 
@@ -66,7 +66,7 @@ class ExecutionBoundaryTests(unittest.TestCase):
                 return {"semantic_alerts": alerts or [], "synthetic_paths_seen": [path.name for path in paths]}
 
             legal_reader = SimpleNamespace(CLASSES=classes, TARGETS=("7f" + "ff" * 31, "07" + "ff" * 31),
-                HORIZONS=(1, 8, 64), SELECTOR="--legal-strategy-v1",
+                HORIZONS=(1, 8, 64), SELECTOR=("--legal-strategy-v2" if mode == "legal-strategy-v2" else "--legal-strategy-v1"),
                 FALSE_FLAGS={key: value for key, value in runner.FALSE_FLAGS.items()
                              if key != "valid_proof_acquisition_used"},
                 analyze_shard=analyze_shard, analyze=analyze_grid)
@@ -127,7 +127,8 @@ class ExecutionBoundaryTests(unittest.TestCase):
                  mock.patch.object(runner, "legal_strategy_reader", return_value=legal_reader), \
                  redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
                 code = runner.main()
-                receipts.assert_called_once_with("w1-legal-strategy-v1" if mode == "legal-strategy" else
+                receipts.assert_called_once_with("w1-legal-strategy-v2" if mode == "legal-strategy-v2" else
+                    "w1-legal-strategy-v1" if mode == "legal-strategy" else
                     "w1-full-limb-reuse-v1" if mode == "full-limb" else "w1-false-trace-reuse-v1")
                 if original_reader.called:
                     expected = {"full_limb": True} if mode == "full-limb" else {}
@@ -410,6 +411,64 @@ class ExecutionBoundaryTests(unittest.TestCase):
             "retained_binary_sha256_before", "retained_binary_sha256_after")},
             {report["artifact_sha256"][runner.LEGAL_EXAMPLE]})
 
+    def test_v2_captures_all_thirty_shards_with_original_limits_and_separate_identity(self):
+        code, report, commands = self.observe(mode="legal-strategy-v2")
+        self.assertEqual(code, 0)
+        self.assertEqual(report["schema"], "trnm-w1-legal-strategy-execution-v2")
+        self.assertEqual(commands[3][-1], runner.LEGAL_EXAMPLE)
+        self.assertEqual([row["timeout_seconds"] for row in report["observations"]],
+                         [30, 30, 30, 900] + [300] * 30)
+        self.assertEqual(len(report["planned_shards"]), 30)
+        self.assertEqual(len(report["reader"]["synthetic_paths_seen"]), 30)
+        self.assertEqual({row["result"] for row in report["shards"]}, {"PASS"})
+        for command, row in zip(commands[4:], report["shards"]):
+            selected = row["configuration"]
+            self.assertEqual(command[1:], ["--legal-strategy-v2", "--class", selected["class"],
+                "--target-index", str(selected["target_index"]),
+                "--reuse-winners", str(selected["reuse_winners"])])
+        self.assertNotIn("valid_proof_acquisition_used", report)
+        for flag in ("hardness_accepted", "work_profile_qualified", "resource_fairness_qualified",
+                     "public_service_measured", "production_activation"):
+            self.assertIs(report[flag], False)
+        self.assertEqual({report[key] for key in ("binary_sha256_before", "binary_sha256_after",
+            "retained_binary_sha256_before", "retained_binary_sha256_after")},
+            {report["artifact_sha256"][runner.LEGAL_EXAMPLE]})
+
+    def test_v2_failure_timeout_or_missing_records_never_shorten_grid(self):
+        for fields in ({"shard_exits": {0: 7}}, {"shard_exits": {29: 7}},
+                {"shard_timeouts": (14,)}, {"capture_error_shards": (0, 29)},
+                {"shard_reader_error": 29}, {"wrong_shard_selection": 0},
+                {"grid_reader_error": ValueError("synthetic incomplete eight-sample grid")},
+                {"alerts": [{"sample": 7, "outcome": "Transcript"}]}):
+            with self.subTest(fields=fields):
+                code, report, commands = self.observe(mode="legal-strategy-v2", **fields)
+                self.assertNotEqual(code, 0)
+                self.assertEqual(report["schema"], "trnm-w1-legal-strategy-execution-v2")
+                self.assertEqual(len(commands), 34)
+                self.assertEqual(len(report["shards"]), 30)
+                self.assertEqual(report["result"], "FAIL")
+
+    def test_actual_reader_loader_versions_do_not_change_v1_globals(self):
+        original = runner.legal_strategy_reader()
+        new = runner.legal_strategy_reader("v2")
+        self.assertEqual((original.SAMPLES, new.SAMPLES), (2, 8))
+        self.assertEqual((original.SELECTOR, new.SELECTOR),
+                         ("--legal-strategy-v1", "--legal-strategy-v2"))
+        self.assertIs(runner.legal_strategy_reader("v1"), original)
+        with self.assertRaisesRegex(ValueError, "fixed legal strategy version"):
+            runner.legal_strategy_reader("v3")
+
+    def test_v2_is_mutually_exclusive_with_both_existing_modes(self):
+        for other in ("--legal-strategy", "--full-limb"):
+            with mock.patch.object(sys, "argv", ["runner", "--arch", "x64", "--local",
+                    "--legal-strategy-v2", other]), mock.patch.object(runner, "receipt_root") as receipts, \
+                    mock.patch.object(runner, "capture") as capture, redirect_stderr(io.StringIO()), \
+                    self.assertRaises(SystemExit) as error:
+                runner.main()
+            self.assertEqual(error.exception.code, 2)
+            receipts.assert_not_called()
+            capture.assert_not_called()
+
     def test_legal_first_middle_or_last_native_failure_cannot_be_dropped(self):
         for index in (0, 14, 29):
             with self.subTest(index=index):
@@ -482,14 +541,14 @@ class ExecutionBoundaryTests(unittest.TestCase):
         self.assertIn("verifier disagreement", report["reader_error"])
 
     def test_separate_modes_preserve_source_binary_and_retained_copy_guards(self):
-        for mode in ("legal-strategy", "full-limb"):
+        for mode in ("legal-strategy", "legal-strategy-v2", "full-limb"):
             for fields in ({"after": {"source_state": "committed-clean", "commit": "b" * 40}},
                            {"change_binary_during_campaign": True},
                            {"change_copy_during_campaign": True}):
                 with self.subTest(mode=mode, fields=fields):
                     code, report, commands = self.observe(mode=mode, **fields)
                     self.assertNotEqual(code, 0)
-                    self.assertEqual(len(commands), 34 if mode == "legal-strategy" else 5)
+                    self.assertEqual(len(commands), 34 if mode in ("legal-strategy", "legal-strategy-v2") else 5)
                     self.assertEqual(report["result"], "FAIL")
                     if "after" in fields:
                         self.assertTrue(report["source_changed"])
@@ -497,7 +556,7 @@ class ExecutionBoundaryTests(unittest.TestCase):
                         self.assertIn("binary", report["error"])
 
     def test_separate_modes_cannot_bypass_original_early_guards(self):
-        for mode in ("legal-strategy", "full-limb"):
+        for mode in ("legal-strategy", "legal-strategy-v2", "full-limb"):
             for fields in ({"before": {"source_state": "dirty-candidate"}},
                            {"environment": {"TRNM_EXPECTED_SOURCE_SHA": "b" * 40}},
                            {"environment": {"RUSTFLAGS": "-C opt-level=0"}},
@@ -511,7 +570,7 @@ class ExecutionBoundaryTests(unittest.TestCase):
                     self.assertNotIn("reader", report)
 
     def test_separate_modes_cannot_bypass_original_elf_or_copy_guards(self):
-        for mode in ("legal-strategy", "full-limb"):
+        for mode in ("legal-strategy", "legal-strategy-v2", "full-limb"):
             for fields in ({"elf": 183}, {"copy_mismatch": True}):
                 with self.subTest(mode=mode, fields=fields):
                     code, report, commands = self.observe(mode=mode, **fields)

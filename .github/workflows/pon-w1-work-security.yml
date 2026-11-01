@@ -98,7 +98,7 @@ jobs:
           import re, sys
           text = Path(sys.argv[1]).read_text()
           rows = re.findall(r'^test result: ok\. ([0-9]+) passed; 0 failed; 0 ignored;', text, re.M)
-          if len(rows) != 1 or int(rows[0]) < 101:
+          if len(rows) != 1 or int(rows[0]) < 104:
               raise SystemExit('complete retained W1 module suite did not execute')
           PY
           cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test work_fuzz_semantics -- --test-threads=1 2>&1 | tee "$OUT/w1-fuzz-semantics.log"
@@ -148,7 +148,7 @@ jobs:
           if-no-files-found: error
           retention-days: 30
   legal-strategy:
-    name: W1 complete legal strategies (${{ matrix.arch }}, ${{ matrix.source }})
+    name: W1 complete legal strategies (${{ matrix.version }}, ${{ matrix.arch }}, ${{ matrix.source }})
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 180
     strategy:
@@ -156,6 +156,7 @@ jobs:
       matrix:
         arch: [x64, arm64]
         source: [head, prospective-merge]
+        version: [v1, v2]
         include:
           - arch: x64
             runner: ubuntu-24.04
@@ -164,6 +165,9 @@ jobs:
     env:
       TRNM_COST_RUNNER_LABEL: ${{ matrix.runner }}
       SOURCE_KIND: ${{ matrix.source }}
+      LEGAL_VERSION: ${{ matrix.version }}
+      LEGAL_CAPTURE_PREFIX: ${{ matrix.version == 'v2' && 'w1-legal-v2' || 'w1-legal' }}
+      LEGAL_ARTIFACT_PREFIX: ${{ matrix.version == 'v2' && 'w1-legal-strategy-v2' || 'w1-legal-strategy' }}
       EXPECTED_SOURCE: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
       TRNM_EXPECTED_SOURCE_SHA: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
       EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
@@ -180,7 +184,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          out="$RUNNER_TEMP/w1-legal-$SOURCE_KIND-${{ matrix.arch }}-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          out="$RUNNER_TEMP/$LEGAL_CAPTURE_PREFIX-$SOURCE_KIND-${{ matrix.arch }}-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
           mkdir "$out"
           printf 'OUT=%s\n' "$out" >> "$GITHUB_ENV"
           printf 'TRNM_CI_RECEIPT_DIR=%s\n' "$out" >> "$GITHUB_ENV"
@@ -199,6 +203,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 scripts/ci/test_pon_w1_legal_strategy_reader_v1.py 2>&1 | tee "$OUT/legal-reader-controls.log"
+          python3 scripts/ci/test_pon_w1_legal_strategy_reader_v2.py 2>&1 | tee "$OUT/legal-reader-v2-controls.log"
           python3 scripts/ci/test_run_w1_false_trace_reuse_v1.py 2>&1 | tee "$OUT/runner-controls.log"
           cargo +1.95.0 metadata --locked --manifest-path trillionnium/Cargo.toml --format-version 1 > "$OUT/cargo-graph.json"
           cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee "$OUT/format.log"
@@ -208,13 +213,18 @@ jobs:
           import re, sys
           text = Path(sys.argv[1]).read_text()
           rows = re.findall(r'^test result: ok\. ([0-9]+) passed; 0 failed; 0 ignored;', text, re.M)
-          if rows != ['6']:
-              raise SystemExit('four legal and two shared material controls did not execute')
+          if rows != ['8']:
+              raise SystemExit('four retained legal, two versioned legal and two shared material controls did not execute')
           PY
           cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example pon_w1_legal_strategy_v1 -- -D warnings 2>&1 | tee "$OUT/legal-clippy.log"
       - name: Execute all thirty original-budget legal strategy shards
         if: always() && steps.source.outcome == 'success'
-        run: env -u CARGO_INCREMENTAL python3 scripts/ci/run_w1_false_trace_reuse_v1.py --arch "${{ matrix.arch }}" --legal-strategy
+        shell: bash
+        run: |
+          set -euo pipefail
+          mode=--legal-strategy
+          if test "$LEGAL_VERSION" = v2; then mode=--legal-strategy-v2; fi
+          env -u CARGO_INCREMENTAL python3 scripts/ci/run_w1_false_trace_reuse_v1.py --arch "${{ matrix.arch }}" "$mode"
       - name: Verify measured source after execution
         if: always() && steps.source.outcome == 'success'
         shell: bash
@@ -229,8 +239,8 @@ jobs:
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: w1-legal-strategy-${{ matrix.source }}-${{ matrix.arch }}-${{ env.EXPECTED_SOURCE }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/w1-legal-${{ matrix.source }}-${{ matrix.arch }}-${{ github.run_id }}-${{ github.run_attempt }}/
+          name: ${{ env.LEGAL_ARTIFACT_PREFIX }}-${{ matrix.source }}-${{ matrix.arch }}-${{ env.EXPECTED_SOURCE }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/${{ env.LEGAL_CAPTURE_PREFIX }}-${{ matrix.source }}-${{ matrix.arch }}-${{ github.run_id }}-${{ github.run_attempt }}/
           if-no-files-found: error
           retention-days: 30
   fresh-challenge-service:

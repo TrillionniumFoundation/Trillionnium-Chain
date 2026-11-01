@@ -4383,3 +4383,49 @@ joint acceptance. Retain failures, unavailable runs, SIGKILL and unknown effects
 with their original source and meaning. PN1–PN6 exits, budgets, migration boundaries
 and the existing release/activation authority remain unchanged; no deployment or
 whole-chain PQ acceptance is granted by this checkpoint.
+
+## 2026-11-01 PoN work-security continuation: original boundaries and eight samples
+
+This continuation starts from #675 at
+`7c5caf5bce1396976808a0f504c4163fbc1aed44`, not the older default main or the
+separate #678 state/History composition. It preserves required-target chainwork,
+the complete W1 relation, all current activation holds and the original public
+service budgets. Twelve separate Header-field mutations now cover canonical
+wire bytes, challenge and block identity; these are binding regressions, not
+proof that arbitrary mutated headers satisfy branch validity.
+
+The opt-in arithmetic-fact cache uses the same complete limb arithmetic as the
+default raw verifier on cold and contended calls. Exact challenge/A/B keys,
+current cheap-check order, trace/product comparisons, cache capacity and
+cancellation publication remain unchanged. Independent Transposed comparisons
+include near-q input values, false trace, false product, exact checkpoint order,
+trace-only upgrade and cancellation without a new product fact. The default
+public/History path does not inherit an unmeasured cache benefit.
+
+The History W1 callback no longer performs a second Host read immediately
+after its original resource checkpoint. Every original native progress point
+still checks the actual Host, paid CPU and fixed deadline; original refill
+checks and crash cuts remain. The retired coarse-selector-only unit check is
+replaced with actual complete-W1 boundary counts, selected/unselected boundary
+refusals and same-account retries. Callback fault injection is not physical
+cgroup or WAN qualification, and lower duplicate counts are not a successful
+four-second six-depth confirmation.
+
+[Legal-strategy V2](specs/pon/W1_LEGAL_STRATEGY_V2.md) adds eight actual samples in
+a new schema and challenge domain. V1's original two-sample schema, selector,
+challenge domain and retained outcomes remain intact. The new collection keeps
+five task classes, two targets, three reuse horizons, all misses and exhaustion,
+the 4,096-attempt cap and original 30-shard/300-second-per-shard execution
+contract. Shared prefixes across horizons are still not independent evidence.
+Its separate 2-GiB streaming record ceiling only accommodates the new raw
+eight-sample evidence; no Node memory, CPU or business deadline is increased.
+Only actual complete captures may satisfy the finite sample-count criterion.
+All cheapest-work, hardware, quantum, honest-service and model-utility flags
+remain unqualified even if that criterion succeeds. Native records, source,
+locked graphs and binaries must retain their own execution identities.
+
+The source corpus also refreshes the exact changed native file digests and one
+pre-existing stale pin: #675's last recent-batch workflow edit changed its blob
+to `e1820626477ab613217e84d9f6805019d4657a09` while the corpus still named
+`96ef7b370deb0f1067adfdb47a77a958ac584952`. The original positive checker and
+negative source controls remain mandatory; pin agreement is not PQ acceptance.
