@@ -1,5 +1,9 @@
 # PN0–PN6 implementation convergence, 2026-10-31
 
+Current continuation: [2026-11-01 runtime/source repairs and exact execution evidence](../../evidence/pon-pn-convergence-next-20261101/README.md).
+It fixes malformed-width rejection cost, removes duplicate State encoding,
+synchronizes current source pins and preserves every strict PN acceptance hold.
+
 This directory accompanies the existing development plan. It records a source
 integration and component repairs, not a second acceptance plan. Every PN exit
 remains **HOLD** until its original conditions are met. No production network,

@@ -8,16 +8,22 @@
       "6e43cae914e3fe16b6439539dc5d00ff01952f13"
     ],
     "official_common_base": "bbc511c7942de24b75054d1b4c3e5d0e4f4a5ab3",
-    "local_runtime_overlay": "current reviewed working source; individual blobs below",
+    "local_runtime_overlay": "The 2026-11-01 working successor is not assigned its parent commit identity. Pin its exact committed source and execution receipts in the subsequent evidence record; no self-referential or inherited qualification.",
     "final_commit": null,
     "final_tree": null,
-    "lock_and_binary_manifest": null
+    "lock_and_binary_manifest": null,
+    "published_source_commit": "cea95fb44d8152a0eb1138727619fcced056f496",
+    "published_source_tree": "22df9ea34daaf960fdfe6c154f043a47c82c338c",
+    "published_pr": 559,
+    "published_review_base": "da31aff73adadda492da2642bef1f8d3d74be530",
+    "published_merge_preview": "de377ff3e566d24948f8e821ded88042ca886c1a",
+    "published_merge_tree": "22df9ea34daaf960fdfe6c154f043a47c82c338c"
   },
   "hepta_candidate": {
-    "source_commit": "39775e10083ebfb3df63a587375b4be7d493b109",
+    "source_commit": "f0f1f16898c2f9737461a28752b421fe52e65ee7",
     "pr": 4497,
     "predecessor_pr": 4491,
-    "later_overlay_or_final_commit": "b93b7c3fc58d088baad281389547264894e864ef",
+    "later_overlay_or_final_commit": null,
     "original_pair_chain_source": "c16507147b65285ea94dead22d3b93c5db7295af",
     "original_pair_chain_base": "1d11f875493f8125e36b9adceacb342df108e5e5",
     "original_pair_chain_merge": "d1b8ae970bb5e014b6feaa49030823e1d8228c90",
@@ -30,7 +36,16 @@
     "reviewed_runtime_successor_scope": "Same original startup deadline and cancellation across queue, Cell scan, FinalUse and physical load; native outcomes not asserted.",
     "reviewed_cell_image_gate_commit": "b93b7c3fc58d088baad281389547264894e864ef",
     "reviewed_cell_image_gate_tree": "2bebc6dc248af4f6f0b3b358e35295794a1f8b46",
-    "reviewed_cell_image_gate_scope": "Cell-v2 preflight refuses anonymous or non-reopenable native images before aliases/owner work; original helper dispatch and owner-v1 behavior retained. Local formatting/source checks are not native admission or ordinary sandbox-route acceptance; prior missing-dependency/TCP failures remain failures."
+    "reviewed_cell_image_gate_scope": "Cell-v2 preflight refuses anonymous or non-reopenable native images before aliases/owner work; original helper dispatch and owner-v1 behavior retained. Local formatting/source checks are not native admission or ordinary sandbox-route acceptance; prior missing-dependency/TCP failures remain failures.",
+    "initial_reviewed_source_commit": "39775e10083ebfb3df63a587375b4be7d493b109",
+    "source_tree": "81d52b6ea085a2b4e913cbea027d8198febc3046",
+    "review_base": "3a81000aae08c658276958d678874aca4db5eedd",
+    "merge_preview": "f24bb939c90ad2a5abe9eae93187fefa0a0f646c",
+    "merge_tree": "81d52b6ea085a2b4e913cbea027d8198febc3046",
+    "installed_profile_pair_chain_source": "553db1f5ea78ebcee65ea22008dc1d8e90f8ba14",
+    "installed_profile_pair_chain_tree": "49adf498e18f8454a9c080026d618c457bc394e1",
+    "installed_profile_pair_is_current_unified_chain": false,
+    "published_workflow_scope": "The main native pair still selects c165/1d11/d1b8. The separate protected-installed source-head lane selects 553db1f/tree49adf; neither is cea95fb. The 15 non-workflow H source blobs are unchanged from the prior b93 image-gate inspection."
   },
   "official_chain_divergence": {
     "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/compare/bbc511c7942de24b75054d1b4c3e5d0e4f4a5ab3...c16507147b65285ea94dead22d3b93c5db7295af",
@@ -49,8 +64,9 @@
     "Treat component behavior and intentionally rejected combinations separately; no total or aggregate overrides an unsupported combination.",
     "Do not mix ordinary cell-v2 Ed25519 FinalUse with the separate V2 ML-DSA API or the unmerged #4368 source.",
     "Later runtime edits invalidate relevant inspected blobs and need their own results; fill the final source and current native result fields before use.",
-    "Hepta 39775... remains the requested baseline; reviewed runtime successor 3ba22376... is recorded separately. Results from either head apply only to their actual tested source.",
-    "Hepta b93 image-gate source and the producer v2 sealed/v3 protected-installed profiles are recorded separately. A rejected anonymous image, a successful ELF argv probe, source hashes or a different deployment profile cannot become ordinary-host installation/task/model acceptance."
+    "Hepta 39775/3ba22376/b93 are historical source windows. The rechecked published source is f0f1f168/tree81d52b6; exact blob equality for unchanged files is source applicability only, never a new native result.",
+    "Hepta b93 image-gate source and the producer v2 sealed/v3 protected-installed profiles are recorded separately. A rejected anonymous image, a successful ELF argv probe, source hashes or a different deployment profile cannot become ordinary-host installation/task/model acceptance.",
+    "The 2026-11-01 source audit refreshes C1, C17 and H11 to the explicitly recorded published commits. PN5 physical operators/duration and PN6 governed migration/release remain external, unexecuted requirements."
   ],
   "matrix": [
     {
@@ -482,11 +498,12 @@
     "C1": {
       "repository": "chain",
       "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
-      "inspected_git_blob": "5ae4fac349f81f5187b39c31bea483af066395b5",
-      "inspected_sha256": "28da28552090900dab90a56a9287752e181d2a702c4eabe3fcdd5891ba4ee487",
-      "line_hint": 1196,
+      "inspected_git_blob": "969b53e94a22fec545477a5481189c866dc3a7f3",
+      "inspected_sha256": "1a5272401bf2dda41126aaab2c492433db0b2499737a4105722770409a62c130",
+      "line_hint": 1199,
       "symbol_or_anchor": "fn open_selected(",
-      "review_note": "Concurrent execute_derived call reshaped to ExecutionRequest; open_selected profile/refusal contract unchanged after targeted diff review."
+      "review_note": "Rechecked the exact published cea95fb source and the prior blob diff. open_selected retains its PQ/growth/continuous profile and owner refusals. The changed transaction-local post-write readback has separate execution requirements; this source reference does not qualify it.",
+      "inspected_commit": "cea95fb44d8152a0eb1138727619fcced056f496"
     },
     "C2": {
       "repository": "chain",
@@ -494,7 +511,8 @@
       "inspected_git_blob": "ede508f29d840fbd93a37a91008dfcbed3259360",
       "inspected_sha256": "89979e3299d8eb5f9a5c22e1006e2fe23bd35e3cc164091fe673fed3b1a23f6e",
       "line_hint": 51,
-      "symbol_or_anchor": "pub fn open_with_pq_network("
+      "symbol_or_anchor": "pub fn open_with_pq_network(",
+      "inspected_commit": "cea95fb44d8152a0eb1138727619fcced056f496"
     },
     "C3": {
       "repository": "chain",
@@ -502,7 +520,8 @@
       "inspected_git_blob": "94f4a4b39613b0a33f9f03114b790a5d43b6a939",
       "inspected_sha256": "775f1a26484934ba6fc1293abf347bd1c75a6921f84b385af1402b153a225374",
       "line_hint": 369,
-      "symbol_or_anchor": "fn require_classical_network_settings("
+      "symbol_or_anchor": "fn require_classical_network_settings(",
+      "inspected_commit": "cea95fb44d8152a0eb1138727619fcced056f496"
     },
     "C4": {
       "repository": "chain",
@@ -510,7 +529,8 @@
       "inspected_git_blob": "d1e736cd2ef339a20dad95627c17cf755d64c54c",
       "inspected_sha256": "c4197341c2d9a96b603e07e9bd43525c3b88ed6265d381ad223662b456925257",
       "line_hint": 13,
-      "symbol_or_anchor": "pub fn with_permanent_account_growth_v2("
+      "symbol_or_anchor": "pub fn with_permanent_account_growth_v2(",
+      "inspected_commit": "cea95fb44d8152a0eb1138727619fcced056f496"
     },
     "C5": {
       "repository": "chain",
@@ -518,7 +538,8 @@
       "inspected_git_blob": "5673080d64cfc4bce08a344dcd538d300471e880",
       "inspected_sha256": "941046fefa96e7b9dfa3f322c73d27864c0cff91c333cfe521cb1e846f6cf097",
       "line_hint": 229,
-      "symbol_or_anchor": "fn open_growth_selected("
+      "symbol_or_anchor": "fn open_growth_selected(",
+      "inspected_commit": "cea95fb44d8152a0eb1138727619fcced056f496"
     },
     "C6": {
       "repository": "chain",
@@ -526,7 +547,8 @@
       "inspected_git_blob": "760a42821a86cf57d7241b36be477a9277fdbf2d",
       "inspected_sha256": "0e52ceeeaf0b59a9677eeda4e920c4272828f9eb6fe035bc9fdfb342089bcc81",
       "line_hint": 1884,
-      "symbol_or_anchor": "pub(crate) fn receive_owned_continuous_history_packet("
+      "symbol_or_anchor": "pub(crate) fn receive_owned_continuous_history_packet(",
+      "inspected_commit": "cea95fb44d8152a0eb1138727619fcced056f496"
     },
     "C7": {
       "repository": "chain",
@@ -534,7 +556,8 @@
       "inspected_git_blob": "ca9f28a796c99844fa2c20d97165d3a93a3e6024",
       "inspected_sha256": "b44ceb2a9e435a68f7331262f01f9ae32b98cc05dc11385969b5e3278c2a1bc3",
       "line_hint": 31,
-      "symbol_or_anchor": "pub struct StartupSpec"
+      "symbol_or_anchor": "pub struct StartupSpec",
+      "inspected_commit": "cea95fb44d8152a0eb1138727619fcced056f496"
     },
     "C8": {
       "repository": "chain",
@@ -542,7 +565,8 @@
       "inspected_git_blob": "dfc16ae144ba209d7d77be7e3cd8ec5ab0c71877",
       "inspected_sha256": "fb8fedb376d60ce07ed33f81178de4f39aa3d0f7abc94a2e814b8cba46748bfc",
       "line_hint": 332,
-      "symbol_or_anchor": "pub(super) fn receive("
+      "symbol_or_anchor": "pub(super) fn receive(",
+      "inspected_commit": "cea95fb44d8152a0eb1138727619fcced056f496"
     },
     "C9": {
       "repository": "chain",
@@ -550,7 +574,8 @@
       "inspected_git_blob": "d7f588a3c7137279bccd9010c3318033a4032d12",
       "inspected_sha256": "3a863bcb72652c5f0eb0b85833595856b8f51a78e50b30fef684c0cc5a0c6ca2",
       "line_hint": 8,
-      "symbol_or_anchor": "pub const PQ_HISTORY_PROFILE"
+      "symbol_or_anchor": "pub const PQ_HISTORY_PROFILE",
+      "inspected_commit": "cea95fb44d8152a0eb1138727619fcced056f496"
     },
     "C10": {
       "repository": "chain",
@@ -558,7 +583,8 @@
       "inspected_git_blob": "b204df6a1323c9c9db1e5db687497da9c0744783",
       "inspected_sha256": "17ef7e3cbf9b2e57719a4b764b9489a68cbfa2941c891fcd7a8a7573b4cc5afc",
       "line_hint": 322,
-      "symbol_or_anchor": "fn require_supported_profile("
+      "symbol_or_anchor": "fn require_supported_profile(",
+      "inspected_commit": "cea95fb44d8152a0eb1138727619fcced056f496"
     },
     "C11": {
       "repository": "chain",
@@ -566,7 +592,8 @@
       "inspected_git_blob": "054bac05c3ef64c231e426f1c017285673a559a1",
       "inspected_sha256": "914f5dbe1ee409be10252a73d61d50c4a7af3953bb92e5489fe85feed204a89b",
       "line_hint": 14,
-      "symbol_or_anchor": "pub(super) fn fetch("
+      "symbol_or_anchor": "pub(super) fn fetch(",
+      "inspected_commit": "cea95fb44d8152a0eb1138727619fcced056f496"
     },
     "C12": {
       "repository": "chain",
@@ -574,7 +601,8 @@
       "inspected_git_blob": "3263d525a60d4543fdef3309b26d5bc1357fd6db",
       "inspected_sha256": "057c6c7f3f729649716a5bf7ca05651d5be39590a833a0268a593e62e5daa464",
       "line_hint": 391,
-      "symbol_or_anchor": "enum ReleaseAuthentication"
+      "symbol_or_anchor": "enum ReleaseAuthentication",
+      "inspected_commit": "cea95fb44d8152a0eb1138727619fcced056f496"
     },
     "C13": {
       "repository": "chain",
@@ -582,7 +610,8 @@
       "inspected_git_blob": "072edd68a39dcb69969d9e74954628d18f7d7d07",
       "inspected_sha256": "72188669d94263583b5a716748e253f3a09eca09b93f0295bfb56f29a647307d",
       "line_hint": 205,
-      "symbol_or_anchor": "pub fn verify_for_loader("
+      "symbol_or_anchor": "pub fn verify_for_loader(",
+      "inspected_commit": "cea95fb44d8152a0eb1138727619fcced056f496"
     },
     "C14": {
       "repository": "chain",
@@ -590,7 +619,8 @@
       "inspected_git_blob": "d01dd1f6faac1dfaf3c3ce03d588608c3e9169fb",
       "inspected_sha256": "8af04441d160ace37760f1e06d94e71aabdd9daf02739de75bd00f4d77e71143",
       "line_hint": 58,
-      "symbol_or_anchor": "pub fn fetch_closure_to_file("
+      "symbol_or_anchor": "pub fn fetch_closure_to_file(",
+      "inspected_commit": "cea95fb44d8152a0eb1138727619fcced056f496"
     },
     "C15": {
       "repository": "chain",
@@ -598,7 +628,8 @@
       "inspected_git_blob": "48062d074584e8b49bcf06623207fdc92aef1e50",
       "inspected_sha256": "e4efb7babaca1f12b8327e26e8171ae81b09aabd34ca3ddb75b81002ed725288",
       "line_hint": 336,
-      "symbol_or_anchor": "pub fn retire_native_cell("
+      "symbol_or_anchor": "pub fn retire_native_cell(",
+      "inspected_commit": "cea95fb44d8152a0eb1138727619fcced056f496"
     },
     "C16": {
       "repository": "chain",
@@ -606,15 +637,18 @@
       "inspected_git_blob": "2cc37bada4a6d68b9ce21d3d471006fdc3b5ffe7",
       "inspected_sha256": "a778efd8d6f0295f2e26ed2a8cbda77d7b3d120fef75d826ed98246509798782",
       "line_hint": 994,
-      "symbol_or_anchor": "pub fn reobserve_completed_effect("
+      "symbol_or_anchor": "pub fn reobserve_completed_effect(",
+      "inspected_commit": "cea95fb44d8152a0eb1138727619fcced056f496"
     },
     "C17": {
       "repository": "chain",
       "path": "trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs",
-      "inspected_git_blob": "77a624a812e160eb44b9ea453c3471c83b57e9aa",
-      "inspected_sha256": "3945f9b8ec8ccf91edfc967b50db3d0ca8fb44772476c1904451a05810b6bfbb",
-      "line_hint": 607,
-      "symbol_or_anchor": "pub fn verify_growth_rehearsal_v2("
+      "inspected_git_blob": "7f419e25cc2a40e6b490f1028d6677f49b1a1d5b",
+      "inspected_sha256": "4240264198e6fdcafef9354850182d5a33c4eba73b87be3d9fa23dc4482fcbac",
+      "line_hint": 608,
+      "symbol_or_anchor": "pub fn verify_growth_rehearsal_v2(",
+      "inspected_commit": "cea95fb44d8152a0eb1138727619fcced056f496",
+      "review_note": "Exact prior-to-cea95fb diff adds only post_write_schema: None to the archive observer Node constructor; source-preserving rehearsal and its false activation/import flags are unchanged."
     },
     "C18": {
       "repository": "chain",
@@ -622,7 +656,8 @@
       "inspected_git_blob": "80e747c9db26eae011813255f88b901b5007f6b9",
       "inspected_sha256": "90bb3278347cde99eff739499ae85f560bf654d44d3afd91b57b6a9668b92a87",
       "line_hint": 720,
-      "symbol_or_anchor": "fn pq_continuous_history_exact_pair_shares_one_durable_scope_and_cold_reopens("
+      "symbol_or_anchor": "fn pq_continuous_history_exact_pair_shares_one_durable_scope_and_cold_reopens(",
+      "inspected_commit": "cea95fb44d8152a0eb1138727619fcced056f496"
     },
     "H1": {
       "repository": "hepta",
@@ -631,8 +666,8 @@
       "inspected_sha256": "98194ff8f9879d859639c6cd2df007f0a63699fc2cd7fde4020338e5dcdb2923",
       "line_hint": 68,
       "symbol_or_anchor": "let host_format =",
-      "inspected_commit": "b93b7c3fc58d088baad281389547264894e864ef",
-      "pinned_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/b93b7c3fc58d088baad281389547264894e864ef/codex-rs/hepta-infer-worker-host/src/bin/hepta-neural-agentd.rs#L68"
+      "inspected_commit": "f0f1f16898c2f9737461a28752b421fe52e65ee7",
+      "pinned_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/f0f1f16898c2f9737461a28752b421fe52e65ee7/codex-rs/hepta-infer-worker-host/src/bin/hepta-neural-agentd.rs#L68"
     },
     "H2": {
       "repository": "hepta",
@@ -641,8 +676,8 @@
       "inspected_sha256": "86dc419d78406625a0e22b6f4bad23fa9d8347bac1453b76443a8d8d5507feac",
       "line_hint": 90,
       "symbol_or_anchor": "pub fn load_smollm_cognitive_cell_host_inputs_v2(",
-      "inspected_commit": "b93b7c3fc58d088baad281389547264894e864ef",
-      "pinned_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/b93b7c3fc58d088baad281389547264894e864ef/codex-rs/hepta-infer-worker-host/src/smollm_cognitive_process.rs#L90"
+      "inspected_commit": "f0f1f16898c2f9737461a28752b421fe52e65ee7",
+      "pinned_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/f0f1f16898c2f9737461a28752b421fe52e65ee7/codex-rs/hepta-infer-worker-host/src/smollm_cognitive_process.rs#L90"
     },
     "H3": {
       "repository": "hepta",
@@ -651,8 +686,8 @@
       "inspected_sha256": "0324ab01fc9d2f2fba1aff563816aa240e44478a7094c5dd0db3abeed623bfd9",
       "line_hint": 264,
       "symbol_or_anchor": "UnixFinalUseAuthorizer::open(",
-      "inspected_commit": "b93b7c3fc58d088baad281389547264894e864ef",
-      "pinned_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/b93b7c3fc58d088baad281389547264894e864ef/codex-rs/hepta-infer-worker-host/src/smollm_cognitive_host.rs#L264"
+      "inspected_commit": "f0f1f16898c2f9737461a28752b421fe52e65ee7",
+      "pinned_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/f0f1f16898c2f9737461a28752b421fe52e65ee7/codex-rs/hepta-infer-worker-host/src/smollm_cognitive_host.rs#L264"
     },
     "H4": {
       "repository": "hepta",
@@ -661,8 +696,8 @@
       "inspected_sha256": "ac53436ec37ce2a8c228ab184291167092f91c7f157f215f6c2dddba5937db41",
       "line_hint": 192,
       "symbol_or_anchor": "pub(crate) fn verify_controlled_cell_material_v2(",
-      "inspected_commit": "b93b7c3fc58d088baad281389547264894e864ef",
-      "pinned_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/b93b7c3fc58d088baad281389547264894e864ef/codex-rs/hepta-infer-worker-host/src/smollm_cell_material.rs#L192"
+      "inspected_commit": "f0f1f16898c2f9737461a28752b421fe52e65ee7",
+      "pinned_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/f0f1f16898c2f9737461a28752b421fe52e65ee7/codex-rs/hepta-infer-worker-host/src/smollm_cell_material.rs#L192"
     },
     "H5": {
       "repository": "hepta",
@@ -671,8 +706,8 @@
       "inspected_sha256": "ef5288e9247181ccdde90d8450d0f7fa0958b141f7918abfcd99f240c0bec913",
       "line_hint": 23,
       "symbol_or_anchor": "pub(super) fn verify(",
-      "inspected_commit": "b93b7c3fc58d088baad281389547264894e864ef",
-      "pinned_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/b93b7c3fc58d088baad281389547264894e864ef/codex-rs/hepta-infer-worker-host/src/smollm_cell_dependency.rs#L23"
+      "inspected_commit": "f0f1f16898c2f9737461a28752b421fe52e65ee7",
+      "pinned_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/f0f1f16898c2f9737461a28752b421fe52e65ee7/codex-rs/hepta-infer-worker-host/src/smollm_cell_dependency.rs#L23"
     },
     "H6": {
       "repository": "hepta",
@@ -681,8 +716,8 @@
       "inspected_sha256": "e59683305e474cc8118125d661e3a7634723ef37b2e6e6a1a9fc2abd82a14156",
       "line_hint": 72,
       "symbol_or_anchor": "pub fn open(config_path:",
-      "inspected_commit": "b93b7c3fc58d088baad281389547264894e864ef",
-      "pinned_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/b93b7c3fc58d088baad281389547264894e864ef/codex-rs/hepta-infer-worker-host/src/final_use_authorizer.rs#L72"
+      "inspected_commit": "f0f1f16898c2f9737461a28752b421fe52e65ee7",
+      "pinned_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/f0f1f16898c2f9737461a28752b421fe52e65ee7/codex-rs/hepta-infer-worker-host/src/final_use_authorizer.rs#L72"
     },
     "H7": {
       "repository": "hepta",
@@ -691,8 +726,8 @@
       "inspected_sha256": "a79db5397fa7da372fd24b400639e7fff583a32b19c3f8319eb1c39658fbb28a",
       "line_hint": 368,
       "symbol_or_anchor": "pub fn open_state_dir(",
-      "inspected_commit": "b93b7c3fc58d088baad281389547264894e864ef",
-      "pinned_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/b93b7c3fc58d088baad281389547264894e864ef/codex-rs/hepta-contracts/src/final_use.rs#L368"
+      "inspected_commit": "f0f1f16898c2f9737461a28752b421fe52e65ee7",
+      "pinned_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/f0f1f16898c2f9737461a28752b421fe52e65ee7/codex-rs/hepta-contracts/src/final_use.rs#L368"
     },
     "H8": {
       "repository": "hepta",
@@ -701,8 +736,8 @@
       "inspected_sha256": "dfb8202277b190cf9efdf063f5d3ea82ef9515a53e4fd8c6db8bc1ac730bbcd0",
       "line_hint": 33,
       "symbol_or_anchor": "pub fn open_ml_dsa65_v2(",
-      "inspected_commit": "b93b7c3fc58d088baad281389547264894e864ef",
-      "pinned_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/b93b7c3fc58d088baad281389547264894e864ef/codex-rs/hepta-infer-worker-host/src/final_use_authorizer_ml_dsa65_v2.rs#L33"
+      "inspected_commit": "f0f1f16898c2f9737461a28752b421fe52e65ee7",
+      "pinned_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/f0f1f16898c2f9737461a28752b421fe52e65ee7/codex-rs/hepta-infer-worker-host/src/final_use_authorizer_ml_dsa65_v2.rs#L33"
     },
     "H9": {
       "repository": "hepta",
@@ -711,8 +746,8 @@
       "inspected_sha256": "93c5bca1dd15be448a19e35b8b0c2f4737b383d6f6b87585db5020ae4dcb301b",
       "line_hint": 97,
       "symbol_or_anchor": "pub fn load_neural_cognitive_process_bootstrap_v1(",
-      "inspected_commit": "b93b7c3fc58d088baad281389547264894e864ef",
-      "pinned_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/b93b7c3fc58d088baad281389547264894e864ef/codex-rs/hepta-agentd/src/cognitive_neural_bootstrap.rs#L97"
+      "inspected_commit": "f0f1f16898c2f9737461a28752b421fe52e65ee7",
+      "pinned_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/f0f1f16898c2f9737461a28752b421fe52e65ee7/codex-rs/hepta-agentd/src/cognitive_neural_bootstrap.rs#L97"
     },
     "H10": {
       "repository": "hepta",
@@ -721,18 +756,19 @@
       "inspected_sha256": "8161a063506d4ec1d59dfae529835e72faea27d2950e2cc62b6b2133a2cea280",
       "line_hint": 363,
       "symbol_or_anchor": "pub fn with_evaluated_neural_cognitive_bootstrap(",
-      "inspected_commit": "b93b7c3fc58d088baad281389547264894e864ef",
-      "pinned_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/b93b7c3fc58d088baad281389547264894e864ef/codex-rs/hepta-agentd/src/config.rs#L363"
+      "inspected_commit": "f0f1f16898c2f9737461a28752b421fe52e65ee7",
+      "pinned_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/f0f1f16898c2f9737461a28752b421fe52e65ee7/codex-rs/hepta-agentd/src/config.rs#L363"
     },
     "H11": {
       "repository": "hepta",
       "path": ".github/workflows/hepta-pon-native-pair.yml",
-      "inspected_git_blob": "bbafce899ad4e946771f9f2f8fb53c49389d5f5c",
-      "inspected_sha256": "76d4644be98f2a3745a6c06554c1eff3bc4bf52889736ec9cb78777300ea9018",
+      "inspected_git_blob": "4285305d239e8615a4a03ab31e27d7c8551f543f",
+      "inspected_sha256": "b7f6c6e851cb889a8d5877b5faeb6a98d04df7db62df78846d525ef1f54c43c0",
       "line_hint": 110,
       "symbol_or_anchor": "CHAIN_SOURCE_SHA:",
-      "inspected_commit": "b93b7c3fc58d088baad281389547264894e864ef",
-      "pinned_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/b93b7c3fc58d088baad281389547264894e864ef/.github/workflows/hepta-pon-native-pair.yml#L110"
+      "inspected_commit": "f0f1f16898c2f9737461a28752b421fe52e65ee7",
+      "pinned_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/f0f1f16898c2f9737461a28752b421fe52e65ee7/.github/workflows/hepta-pon-native-pair.yml#L110",
+      "review_note": "Rechecked the published f0f1 workflow: original native pair stays c165/1d11/d1b8; the separate installed-host source-head lane pins 553db1f/tree49adf. Neither lane binds the current cea95fb candidate or its successor."
     },
     "H12": {
       "repository": "hepta",
@@ -741,8 +777,8 @@
       "inspected_sha256": "2a33f5bea040ed47b1841b6bd5a81c08f6b31ff9e350dc39493e0eb3e4d0b117",
       "line_hint": 9,
       "symbol_or_anchor": "pub(crate) struct SmolLmStartupExecutionV1",
-      "inspected_commit": "b93b7c3fc58d088baad281389547264894e864ef",
-      "pinned_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/b93b7c3fc58d088baad281389547264894e864ef/codex-rs/hepta-infer-worker-host/src/smollm_neural_startup.rs#L9"
+      "inspected_commit": "f0f1f16898c2f9737461a28752b421fe52e65ee7",
+      "pinned_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/f0f1f16898c2f9737461a28752b421fe52e65ee7/codex-rs/hepta-infer-worker-host/src/smollm_neural_startup.rs#L9"
     },
     "H13": {
       "repository": "hepta",
@@ -751,8 +787,8 @@
       "inspected_sha256": "7ba4def2c8ecde97065840a31d6094bd30d834dd7557b971b8de42bf17f20bf6",
       "line_hint": 67,
       "symbol_or_anchor": "pub(super) fn measure(",
-      "inspected_commit": "b93b7c3fc58d088baad281389547264894e864ef",
-      "pinned_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/b93b7c3fc58d088baad281389547264894e864ef/codex-rs/hepta-infer-worker-host/src/smollm_cell_wire.rs#L67"
+      "inspected_commit": "f0f1f16898c2f9737461a28752b421fe52e65ee7",
+      "pinned_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/f0f1f16898c2f9737461a28752b421fe52e65ee7/codex-rs/hepta-infer-worker-host/src/smollm_cell_wire.rs#L67"
     },
     "H14": {
       "repository": "hepta",
@@ -761,8 +797,8 @@
       "inspected_sha256": "67d00889ef6149211321dc21e86e65c838e08d936e1e88e9694ccf921369f66a",
       "line_hint": 430,
       "symbol_or_anchor": "fn start_physical(",
-      "inspected_commit": "b93b7c3fc58d088baad281389547264894e864ef",
-      "pinned_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/b93b7c3fc58d088baad281389547264894e864ef/codex-rs/hepta-infer-worker-host/src/smollm_neural_read.rs#L430"
+      "inspected_commit": "f0f1f16898c2f9737461a28752b421fe52e65ee7",
+      "pinned_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/f0f1f16898c2f9737461a28752b421fe52e65ee7/codex-rs/hepta-infer-worker-host/src/smollm_neural_read.rs#L430"
     },
     "C19": {
       "repository": "chain",
@@ -770,7 +806,8 @@
       "inspected_git_blob": "bf21fb8436f0afaf94ee9eb0002d68681a1fef03",
       "inspected_sha256": "2534091e68dc5d2325c6db2f96e1d0ec473d8fa3c7149ec84897500c29ae157e",
       "line_hint": 247,
-      "symbol_or_anchor": "def load("
+      "symbol_or_anchor": "def load(",
+      "inspected_commit": "cea95fb44d8152a0eb1138727619fcced056f496"
     },
     "C20": {
       "repository": "chain",
@@ -778,7 +815,8 @@
       "inspected_git_blob": "8647ff3d02eaf7e92a9138e736482b611ed82fa6",
       "inspected_sha256": "785a058e24fbb9afbbc46ae10f92aa5748199f5bbc06d6812c05cfd10ce54a39",
       "line_hint": 52,
-      "symbol_or_anchor": "def main()"
+      "symbol_or_anchor": "def main()",
+      "inspected_commit": "cea95fb44d8152a0eb1138727619fcced056f496"
     },
     "C21": {
       "repository": "chain",
@@ -786,7 +824,8 @@
       "inspected_git_blob": "b6625349f84de58f2168924bd57f6422f727f61a",
       "inspected_sha256": "e65dbd0c7998b25ceaf362581c42714d483ba8b29a6a9e15b5da968ae4f66231",
       "line_hint": 84,
-      "symbol_or_anchor": "def prepare("
+      "symbol_or_anchor": "def prepare(",
+      "inspected_commit": "cea95fb44d8152a0eb1138727619fcced056f496"
     },
     "H15": {
       "repository": "hepta",
@@ -795,8 +834,8 @@
       "inspected_sha256": "3ec00c8788007a5227d6aef456fb2709bb9e739c80bd913549fc3d499fd1a27c",
       "line_hint": 243,
       "symbol_or_anchor": "pub fn arg0_dispatch_or_else_with_preflight<",
-      "inspected_commit": "b93b7c3fc58d088baad281389547264894e864ef",
-      "pinned_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/b93b7c3fc58d088baad281389547264894e864ef/codex-rs/arg0/src/lib.rs#L243"
+      "inspected_commit": "f0f1f16898c2f9737461a28752b421fe52e65ee7",
+      "pinned_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/f0f1f16898c2f9737461a28752b421fe52e65ee7/codex-rs/arg0/src/lib.rs#L243"
     },
     "H16": {
       "repository": "hepta",
@@ -805,8 +844,39 @@
       "inspected_sha256": "bfce8aa44048b2441a7c02b301fe7366ae1b8b9ddd8ff8518711cd874a9e749e",
       "line_hint": 268,
       "symbol_or_anchor": "fn create_bwrap_flags_full_filesystem(",
-      "inspected_commit": "b93b7c3fc58d088baad281389547264894e864ef",
-      "pinned_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/b93b7c3fc58d088baad281389547264894e864ef/codex-rs/linux-sandbox/src/bwrap.rs#L268"
+      "inspected_commit": "f0f1f16898c2f9737461a28752b421fe52e65ee7",
+      "pinned_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/f0f1f16898c2f9737461a28752b421fe52e65ee7/codex-rs/linux-sandbox/src/bwrap.rs#L268"
+    }
+  },
+  "published_source_review": {
+    "review_date": "2026-11-01",
+    "chain_source_references": 21,
+    "hepta_source_references": 16,
+    "unchanged_blob_references": 34,
+    "refreshed_reference_ids": [
+      "C1",
+      "C17",
+      "H11"
+    ],
+    "scope": "Exact Git blob/source binding and targeted source inspection. Both observed GitHub merge previews have ordered [base, source] parents and the same source tree; no runtime or protected-main merge follows. Final working-successor source, lock/binary identities and native receipts remain separately required."
+  },
+  "external_acceptance_status": {
+    "pn5": {
+      "status": "NOT_RUN",
+      "verified_independent_administrators": null,
+      "verified_physical_duration_hours": null,
+      "scope": "This execution has no authenticated independent-operator roster, deployed WAN/fault campaign or physical-duration receipts. The existing typed/windowed arithmetic reader never grants PN5 acceptance. Its synthetic controls are not WAN observations.",
+      "required_existing_contracts": [
+        "docs/protocol/pon-nakamoto-v1/details/PERFORMANCE_ACCEPTANCE.md",
+        "docs/protocol/pon-nakamoto-v1/details/CELL_P2P_V1.md",
+        "docs/protocol/pon-nakamoto-v1/details/WAN_EVIDENCE_ACCOUNTING_V1.md"
+      ]
+    },
+    "pn6": {
+      "status": "NOT_RUN",
+      "release_binary_manifest": null,
+      "governed_activation_decision": null,
+      "scope": "Source-coverage and growth-rehearsal components do not establish all-path PQ migration, key/history transfer, rollback resistance or deployment. This execution has not migrated deployed data/keys, activated consensus or supplied the predecessor-stage evidence."
     }
   }
 }

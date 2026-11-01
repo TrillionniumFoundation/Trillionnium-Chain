@@ -3,7 +3,7 @@
 //! repeated bogus mathematical statements in the same local receiver epoch.
 use super::{
     hash, verify_with_progress, Hash, VerificationError, VerificationProgress, VerifiedWork,
-    WorkError, PROFILE,
+    WorkError, PROFILE, PROOF_BYTES,
 };
 use std::{
     sync::Mutex,
@@ -38,11 +38,17 @@ impl RejectionCache {
         })
     }
 
-    fn key(challenge: Hash, task: Hash, target: Hash, bytes: &[u8]) -> Hash {
-        hash(
+    fn key(challenge: Hash, task: Hash, target: Hash, bytes: &[u8]) -> Option<Hash> {
+        // The original verifier refuses a wrong width before reading proof
+        // bytes. An optional cache must not turn that constant-cost refusal
+        // into an unbounded hash over an attacker-controlled buffer.
+        if bytes.len() != PROOF_BYTES {
+            return None;
+        }
+        Some(hash(
             b"w1-exact-invalid-math-v1",
             &[PROFILE.as_bytes(), &challenge, &task, &target, bytes],
-        )
+        ))
     }
 
     fn hit(&self, key: Hash) -> Option<WorkError> {
@@ -77,7 +83,11 @@ impl RejectionCache {
         proof: &[u8],
         progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
     ) -> Result<VerifiedWork, VerificationError<E>> {
-        let key = Self::key(challenge, expected_task, target, proof);
+        let Some(key) = Self::key(challenge, expected_task, target, proof) else {
+            // Preserve the native error ordering and cancellation semantics;
+            // malformed lengths never consult or populate the cache.
+            return verify_with_progress(challenge, expected_task, target, proof, progress);
+        };
         if let Some(error) = self.hit(key) {
             // A cached error is only a performance hint. Callers must still be
             // able to cancel, and must have checked present branch authority.
@@ -96,6 +106,27 @@ impl RejectionCache {
 mod tests {
     use super::*;
     use crate::pon_work::{prove, task_id, CELLS, PROOF_BYTES};
+
+    #[test]
+    fn malformed_width_has_no_cache_key_and_retains_native_length_precedence() {
+        let cache = RejectionCache::new(8, Duration::from_secs(2)).unwrap();
+        let challenge = [17; 32];
+        let task = [23; 32];
+        // Simultaneously invalid version, task and target must not change the
+        // original Length verdict. A cancellation callback is never reached.
+        for length in [0, 3, PROOF_BYTES - 1, PROOF_BYTES + 1, 1_048_576] {
+            let proof = vec![255; length];
+            assert!(RejectionCache::key(challenge, task, [0; 32], &proof).is_none());
+            let result = cache.verify_with_progress(challenge, task, [0; 32], &proof, &mut |_| {
+                Err::<(), _>("must not reach cancellation")
+            });
+            assert!(matches!(
+                result,
+                Err(VerificationError::Relation(WorkError::Length))
+            ));
+        }
+        assert!(cache.slots.lock().unwrap().iter().all(Option::is_none));
+    }
 
     #[test]
     fn false_transcript_replay_is_skipped_but_real_proof_still_passes() {

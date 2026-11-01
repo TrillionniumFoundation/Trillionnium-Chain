@@ -1,0 +1,31 @@
+{
+  "scope": "AI peer code review of six current modified source/config/matrix files; not independent administrator acceptance",
+  "reviewed_worktree_files": [
+    {
+      "path": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "sha256": "611baefab215e6131bd2d6187655a581b42463f5df89ec5413040e5f52b53a02"
+    },
+    {
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "sha256": "5dae987d921a321ce26c37e20c2c8030595f4224d10d7e2c42abc53111e9080e"
+    },
+    {
+      "path": "qualification/pn-convergence-20261031/PROFILE_COMPATIBILITY.md",
+      "sha256": "83f96edc68d07a6e5b8d13554d46b53bc434d60f778b5e94af751751336d94f8"
+    },
+    {
+      "path": "qualification/pn-convergence-20261031/profile-compatibility.json",
+      "sha256": "311336db33a6868c00587c8fbe641a3a77e261cd63ed111be0209eeb3c4ca187"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs",
+      "sha256": "78dd6d0c59d8bfc8ed07bda4319ca17e79acaeab9662508d178bd92d8810fc53"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs",
+      "sha256": "21a4004783e3b2edc0d140c7a312f3da309eade957e0b64d8cc6680d215f63aa"
+    }
+  ],
+  "finding": "Hepta pinned_url predecessor references must align with current inspected_commit, especially changed H11 workflow. No further demonstrated new semantic defect in the two Rust changes.",
+  "full_locked_runtime_qualification": false
+}
