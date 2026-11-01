@@ -435,6 +435,13 @@ impl PqClient {
         // must enforce the same boundary before a signed payload reaches a
         // caller-selected remote TCP endpoint (or leaks across a public route).
         ensure(address.ip().is_loopback(), "PQ_NETWORK_LOOPBACK_ONLY")?;
+        // Preparation checked its original expiry, but caller queueing may
+        // outlive the signed lease. Refuse a stale packet before TCP; the
+        // receiving node independently checks expiry at the live boundary.
+        ensure(
+            super::now()? <= prepared.verified.expiry,
+            "PQ_NETWORK_EXPIRED_UNCONFIRMED",
+        )?;
         let end = Instant::now() + budget;
         let mut stream = TcpStream::connect_timeout(&address, budget)?;
         super::write_frame_deadline(&mut stream, prepared.wire(), end)?;
