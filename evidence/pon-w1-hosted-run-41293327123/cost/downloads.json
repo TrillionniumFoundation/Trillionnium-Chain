@@ -1,0 +1,68 @@
+{
+  "artifacts": [
+    {
+      "arch": "arm64",
+      "attempt": 1,
+      "github_digest_matched": true,
+      "head": "c041564b8a6bb0b98ca9c30e7871878427e5d9a4",
+      "id": 13078995388,
+      "manifest_result": "PASS",
+      "manifest_sha256": "7a005b36a6a8ed09143ad35966da60e2aba9128268b06dd143f4095f56a1647b",
+      "name": "w1-false-trace-head-arm64-c041564b8a6bb0b98ca9c30e7871878427e5d9a4-1",
+      "path": "/workspace/scratch/76b96c45510e/work-security-run-41293327123/cost-arm64-head.zip",
+      "sha": "58e8b7fc02635e88ed852871b7ede17c91c6f618e61568e3629053f111f57413",
+      "size": 2804162,
+      "source": "head",
+      "tested_sha": "c041564b8a6bb0b98ca9c30e7871878427e5d9a4"
+    },
+    {
+      "arch": "arm64",
+      "attempt": 1,
+      "github_digest_matched": true,
+      "head": "c041564b8a6bb0b98ca9c30e7871878427e5d9a4",
+      "id": 13078880890,
+      "manifest_result": "PASS",
+      "manifest_sha256": "ab28e6217d869a371d16465ffa474bd1433782c9eb43fa4ef8b7dc2d4721069a",
+      "name": "w1-false-trace-prospective-merge-arm64-b824293d71a346a3461705b5eb129e7b83ce2920-1",
+      "path": "/workspace/scratch/76b96c45510e/work-security-run-41293327123/cost-arm64-prospective-merge.zip",
+      "sha": "ed6fcec3d838043a38c0378a49db3c75abbdfd783eb5aeb6229d3264e5fbecb2",
+      "size": 2804097,
+      "source": "prospective-merge",
+      "tested_sha": "b824293d71a346a3461705b5eb129e7b83ce2920"
+    },
+    {
+      "arch": "x64",
+      "attempt": 1,
+      "github_digest_matched": true,
+      "head": "c041564b8a6bb0b98ca9c30e7871878427e5d9a4",
+      "id": 13078332243,
+      "manifest_result": "PASS",
+      "manifest_sha256": "c6536558ea31aa2e8b0dd4119c976a2be6b916ffdd024a7e2154311ec72f9eb1",
+      "name": "w1-false-trace-head-x64-c041564b8a6bb0b98ca9c30e7871878427e5d9a4-1",
+      "path": "/workspace/scratch/76b96c45510e/work-security-run-41293327123/cost-x64-head.zip",
+      "sha": "0a135e4b93ab146a8107f52f1d092a6fd787a3201a7e96924657ab4a9a79387d",
+      "size": 2815387,
+      "source": "head",
+      "tested_sha": "c041564b8a6bb0b98ca9c30e7871878427e5d9a4"
+    },
+    {
+      "arch": "x64",
+      "attempt": 1,
+      "github_digest_matched": true,
+      "head": "c041564b8a6bb0b98ca9c30e7871878427e5d9a4",
+      "id": 13077988184,
+      "manifest_result": "PASS",
+      "manifest_sha256": "cd8dfa3583e5b1e983ccb59c3519220cc5aae06c3ffbebda97819eae3a94c3a6",
+      "name": "w1-false-trace-prospective-merge-x64-b824293d71a346a3461705b5eb129e7b83ce2920-1",
+      "path": "/workspace/scratch/76b96c45510e/work-security-run-41293327123/cost-x64-prospective-merge.zip",
+      "sha": "46e3fa4e42c716eb0212394d7881acd06071c9a8f1d24d463e48720e55314beb",
+      "size": 2815616,
+      "source": "prospective-merge",
+      "tested_sha": "b824293d71a346a3461705b5eb129e7b83ce2920"
+    }
+  ],
+  "head": "c041564b8a6bb0b98ca9c30e7871878427e5d9a4",
+  "run_id": 41293327123,
+  "schema": "trnm-w1-hosted-artifact-downloads-v1",
+  "scope": "Four original GitHub artifact ZIP files retained byte-for-byte; no source, budgets or guard changes."
+}

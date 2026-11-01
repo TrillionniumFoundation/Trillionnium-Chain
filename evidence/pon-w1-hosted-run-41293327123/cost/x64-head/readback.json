@@ -1,0 +1,721 @@
+{
+  "actual_reuse_cohorts": [
+    {
+      "actual_candidates": 32,
+      "actual_searches": 32,
+      "actual_setup_calls": 8,
+      "attempts": 70,
+      "class": "periodic-dense-fixture",
+      "exhausted_searches": 0,
+      "full_attacker_cohort_total": {
+        "cpu_ns": 665751,
+        "wall_ns": 666698
+      },
+      "outcome_counts": {
+        "column-limb-experimental": {
+          "Transcript": 32
+        },
+        "limb": {
+          "Transcript": 32
+        },
+        "production": {
+          "Transcript": 32
+        },
+        "reference": {
+          "Transcript": 32
+        }
+      },
+      "receiver_rejection_cpu_over_full_attacker_cpu": {
+        "column-limb-experimental": 22.509941404519108,
+        "limb": 19.524406272014613,
+        "production": 23.65546878637809,
+        "reference": 25.093251080358872
+      },
+      "search": {
+        "cpu_ns": 365957,
+        "wall_ns": 363681
+      },
+      "setup": {
+        "cpu_ns": 263011,
+        "wall_ns": 262263
+      },
+      "verification": {
+        "column-limb-experimental": {
+          "cpu_ns": 14986016,
+          "wall_ns": 14984772
+        },
+        "limb": {
+          "cpu_ns": 12998393,
+          "wall_ns": 12997425
+        },
+        "production": {
+          "cpu_ns": 15748652,
+          "wall_ns": 15748182
+        },
+        "reference": {
+          "cpu_ns": 16705857,
+          "wall_ns": 16704612
+        }
+      }
+    },
+    {
+      "actual_candidates": 32,
+      "actual_searches": 32,
+      "actual_setup_calls": 8,
+      "attempts": 65,
+      "class": "full-rank-field",
+      "exhausted_searches": 0,
+      "full_attacker_cohort_total": {
+        "cpu_ns": 429282,
+        "wall_ns": 430315
+      },
+      "outcome_counts": {
+        "column-limb-experimental": {
+          "Transcript": 32
+        },
+        "limb": {
+          "Transcript": 32
+        },
+        "production": {
+          "Transcript": 32
+        },
+        "reference": {
+          "Transcript": 32
+        }
+      },
+      "receiver_rejection_cpu_over_full_attacker_cpu": {
+        "column-limb-experimental": 34.53081424331791,
+        "limb": 30.291721991604586,
+        "production": 36.818170806136756,
+        "reference": 38.46725695463588
+      },
+      "search": {
+        "cpu_ns": 141631,
+        "wall_ns": 139619
+      },
+      "setup": {
+        "cpu_ns": 252390,
+        "wall_ns": 251741
+      },
+      "verification": {
+        "column-limb-experimental": {
+          "cpu_ns": 14823457,
+          "wall_ns": 14823148
+        },
+        "limb": {
+          "cpu_ns": 13003691,
+          "wall_ns": 13002420
+        },
+        "production": {
+          "cpu_ns": 15805378,
+          "wall_ns": 15804280
+        },
+        "reference": {
+          "cpu_ns": 16513301,
+          "wall_ns": 16512469
+        }
+      }
+    },
+    {
+      "actual_candidates": 32,
+      "actual_searches": 32,
+      "actual_setup_calls": 8,
+      "attempts": 69,
+      "class": "zero",
+      "exhausted_searches": 0,
+      "full_attacker_cohort_total": {
+        "cpu_ns": 437919,
+        "wall_ns": 438862
+      },
+      "outcome_counts": {
+        "column-limb-experimental": {
+          "Transcript": 32
+        },
+        "limb": {
+          "Transcript": 32
+        },
+        "production": {
+          "Transcript": 32
+        },
+        "reference": {
+          "Transcript": 32
+        }
+      },
+      "receiver_rejection_cpu_over_full_attacker_cpu": {
+        "column-limb-experimental": 34.05198678294388,
+        "limb": 29.55414814155129,
+        "production": 36.096154768347574,
+        "reference": 37.8457888330947
+      },
+      "search": {
+        "cpu_ns": 144670,
+        "wall_ns": 142481
+      },
+      "setup": {
+        "cpu_ns": 258222,
+        "wall_ns": 257533
+      },
+      "verification": {
+        "column-limb-experimental": {
+          "cpu_ns": 14912012,
+          "wall_ns": 14910884
+        },
+        "limb": {
+          "cpu_ns": 12942323,
+          "wall_ns": 12942320
+        },
+        "production": {
+          "cpu_ns": 15807192,
+          "wall_ns": 15813614
+        },
+        "reference": {
+          "cpu_ns": 16573390,
+          "wall_ns": 16610657
+        }
+      }
+    },
+    {
+      "actual_candidates": 32,
+      "actual_searches": 32,
+      "actual_setup_calls": 8,
+      "attempts": 59,
+      "class": "identity",
+      "exhausted_searches": 0,
+      "full_attacker_cohort_total": {
+        "cpu_ns": 433619,
+        "wall_ns": 434395
+      },
+      "outcome_counts": {
+        "column-limb-experimental": {
+          "Transcript": 32
+        },
+        "limb": {
+          "Transcript": 32
+        },
+        "production": {
+          "Transcript": 32
+        },
+        "reference": {
+          "Transcript": 32
+        }
+      },
+      "receiver_rejection_cpu_over_full_attacker_cpu": {
+        "column-limb-experimental": 34.37538714862587,
+        "limb": 29.970962988245443,
+        "production": 36.34685057619708,
+        "reference": 38.38314741743328
+      },
+      "search": {
+        "cpu_ns": 152326,
+        "wall_ns": 148915
+      },
+      "setup": {
+        "cpu_ns": 246168,
+        "wall_ns": 245558
+      },
+      "verification": {
+        "column-limb-experimental": {
+          "cpu_ns": 14905821,
+          "wall_ns": 14905343
+        },
+        "limb": {
+          "cpu_ns": 12995979,
+          "wall_ns": 12995305
+        },
+        "production": {
+          "cpu_ns": 15760685,
+          "wall_ns": 15760325
+        },
+        "reference": {
+          "cpu_ns": 16643662,
+          "wall_ns": 16641633
+        }
+      }
+    },
+    {
+      "actual_candidates": 32,
+      "actual_searches": 32,
+      "actual_setup_calls": 8,
+      "attempts": 71,
+      "class": "rank-one",
+      "exhausted_searches": 0,
+      "full_attacker_cohort_total": {
+        "cpu_ns": 476600,
+        "wall_ns": 477342
+      },
+      "outcome_counts": {
+        "column-limb-experimental": {
+          "Transcript": 32
+        },
+        "limb": {
+          "Transcript": 32
+        },
+        "production": {
+          "Transcript": 32
+        },
+        "reference": {
+          "Transcript": 32
+        }
+      },
+      "receiver_rejection_cpu_over_full_attacker_cpu": {
+        "column-limb-experimental": 31.154657994125053,
+        "limb": 27.385717582878723,
+        "production": 33.20940201426773,
+        "reference": 34.80885858161981
+      },
+      "search": {
+        "cpu_ns": 189122,
+        "wall_ns": 186850
+      },
+      "setup": {
+        "cpu_ns": 250740,
+        "wall_ns": 250099
+      },
+      "verification": {
+        "column-limb-experimental": {
+          "cpu_ns": 14848310,
+          "wall_ns": 14856840
+        },
+        "limb": {
+          "cpu_ns": 13052033,
+          "wall_ns": 13051403
+        },
+        "production": {
+          "cpu_ns": 15827601,
+          "wall_ns": 15835947
+        },
+        "reference": {
+          "cpu_ns": 16589902,
+          "wall_ns": 16589534
+        }
+      }
+    },
+    {
+      "actual_candidates": 32,
+      "actual_searches": 32,
+      "actual_setup_calls": 8,
+      "attempts": 47,
+      "class": "sparse-diagonal",
+      "exhausted_searches": 0,
+      "full_attacker_cohort_total": {
+        "cpu_ns": 630514,
+        "wall_ns": 631343
+      },
+      "outcome_counts": {
+        "column-limb-experimental": {
+          "Transcript": 32
+        },
+        "limb": {
+          "Transcript": 32
+        },
+        "production": {
+          "Transcript": 32
+        },
+        "reference": {
+          "Transcript": 32
+        }
+      },
+      "receiver_rejection_cpu_over_full_attacker_cpu": {
+        "column-limb-experimental": 23.544500201422967,
+        "limb": 20.682833370868845,
+        "production": 25.068310933619237,
+        "reference": 26.124833072699417
+      },
+      "search": {
+        "cpu_ns": 348128,
+        "wall_ns": 345786
+      },
+      "setup": {
+        "cpu_ns": 246060,
+        "wall_ns": 245440
+      },
+      "verification": {
+        "column-limb-experimental": {
+          "cpu_ns": 14845137,
+          "wall_ns": 14844981
+        },
+        "limb": {
+          "cpu_ns": 13040816,
+          "wall_ns": 13040183
+        },
+        "production": {
+          "cpu_ns": 15805921,
+          "wall_ns": 15805357
+        },
+        "reference": {
+          "cpu_ns": 16472073,
+          "wall_ns": 16471897
+        }
+      }
+    },
+    {
+      "actual_candidates": 32,
+      "actual_searches": 32,
+      "actual_setup_calls": 8,
+      "attempts": 68,
+      "class": "continuity-maintenance-v1",
+      "exhausted_searches": 0,
+      "full_attacker_cohort_total": {
+        "cpu_ns": 695157,
+        "wall_ns": 696053
+      },
+      "outcome_counts": {
+        "column-limb-experimental": {
+          "Transcript": 32
+        },
+        "limb": {
+          "Transcript": 32
+        },
+        "production": {
+          "Transcript": 32
+        },
+        "reference": {
+          "Transcript": 32
+        }
+      },
+      "receiver_rejection_cpu_over_full_attacker_cpu": {
+        "column-limb-experimental": 21.386174633931617,
+        "limb": 18.731801593021434,
+        "production": 22.740116261506394,
+        "reference": 23.755881045576754
+      },
+      "search": {
+        "cpu_ns": 394112,
+        "wall_ns": 391842
+      },
+      "setup": {
+        "cpu_ns": 246279,
+        "wall_ns": 245699
+      },
+      "verification": {
+        "column-limb-experimental": {
+          "cpu_ns": 14866749,
+          "wall_ns": 14866860
+        },
+        "limb": {
+          "cpu_ns": 13021543,
+          "wall_ns": 13020746
+        },
+        "production": {
+          "cpu_ns": 15807951,
+          "wall_ns": 15807201
+        },
+        "reference": {
+          "cpu_ns": 16514067,
+          "wall_ns": 16513752
+        }
+      }
+    },
+    {
+      "actual_candidates": 32,
+      "actual_searches": 32,
+      "actual_setup_calls": 8,
+      "attempts": 72,
+      "class": "one-zero-left-rank-one",
+      "exhausted_searches": 0,
+      "full_attacker_cohort_total": {
+        "cpu_ns": 664931,
+        "wall_ns": 665625
+      },
+      "outcome_counts": {
+        "column-limb-experimental": {
+          "Transcript": 32
+        },
+        "limb": {
+          "Transcript": 32
+        },
+        "production": {
+          "Transcript": 32
+        },
+        "reference": {
+          "Transcript": 32
+        }
+      },
+      "receiver_rejection_cpu_over_full_attacker_cpu": {
+        "column-limb-experimental": 22.411090774832275,
+        "limb": 19.64673627789951,
+        "production": 23.713000296271343,
+        "reference": 24.985965461077917
+      },
+      "search": {
+        "cpu_ns": 378747,
+        "wall_ns": 377072
+      },
+      "setup": {
+        "cpu_ns": 249124,
+        "wall_ns": 248454
+      },
+      "verification": {
+        "column-limb-experimental": {
+          "cpu_ns": 14901829,
+          "wall_ns": 14910144
+        },
+        "limb": {
+          "cpu_ns": 13063724,
+          "wall_ns": 13062556
+        },
+        "production": {
+          "cpu_ns": 15767509,
+          "wall_ns": 15766791
+        },
+        "reference": {
+          "cpu_ns": 16613943,
+          "wall_ns": 16613009
+        }
+      }
+    },
+    {
+      "actual_candidates": 32,
+      "actual_searches": 32,
+      "actual_setup_calls": 8,
+      "attempts": 52,
+      "class": "one-zero-right-rank-one",
+      "exhausted_searches": 0,
+      "full_attacker_cohort_total": {
+        "cpu_ns": 667514,
+        "wall_ns": 668351
+      },
+      "outcome_counts": {
+        "column-limb-experimental": {
+          "Transcript": 32
+        },
+        "limb": {
+          "Transcript": 32
+        },
+        "production": {
+          "Transcript": 32
+        },
+        "reference": {
+          "Transcript": 32
+        }
+      },
+      "receiver_rejection_cpu_over_full_attacker_cpu": {
+        "column-limb-experimental": 22.076802883535027,
+        "limb": 19.699025039175208,
+        "production": 23.967527272836225,
+        "reference": 24.826998385052597
+      },
+      "search": {
+        "cpu_ns": 361776,
+        "wall_ns": 359883
+      },
+      "setup": {
+        "cpu_ns": 269011,
+        "wall_ns": 267971
+      },
+      "verification": {
+        "column-limb-experimental": {
+          "cpu_ns": 14736575,
+          "wall_ns": 14736216
+        },
+        "limb": {
+          "cpu_ns": 13149375,
+          "wall_ns": 13148313
+        },
+        "production": {
+          "cpu_ns": 15998660,
+          "wall_ns": 16006973
+        },
+        "reference": {
+          "cpu_ns": 16572369,
+          "wall_ns": 16572636
+        }
+      }
+    }
+  ],
+  "aggregate_receiver_cpu_over_full_attacker_cpu": {
+    "column-limb-experimental": 26.233753560621075,
+    "limb": 22.98790030829475,
+    "production": 27.900713878674146,
+    "reference": 29.247239765180826
+  },
+  "arch": "x64",
+  "artifact_id": 13078332243,
+  "binary_elf_machine": 62,
+  "binary_hash_fields": {
+    "binary_sha256_after": "f4bd781fd0b65b42814e97e5bcadbd4263cd43e5603af078de3bb241f3c3469c",
+    "binary_sha256_before": "f4bd781fd0b65b42814e97e5bcadbd4263cd43e5603af078de3bb241f3c3469c",
+    "retained_binary_sha256_after": "f4bd781fd0b65b42814e97e5bcadbd4263cd43e5603af078de3bb241f3c3469c",
+    "retained_binary_sha256_before": "f4bd781fd0b65b42814e97e5bcadbd4263cd43e5603af078de3bb241f3c3469c"
+  },
+  "binary_sha256": "f4bd781fd0b65b42814e97e5bcadbd4263cd43e5603af078de3bb241f3c3469c",
+  "build_environment_overrides": {},
+  "canonical_bytes": 29953187,
+  "canonical_records": 1811,
+  "canonical_sha256": "731a31f7e84032bd440bdf09938b412345c47224b58853f053d2cb525446a0d3",
+  "canonical_xz_bytes": 124736,
+  "canonical_xz_sha256": "1877e203ce0c9f64d760bbf1528ceb56b4e43b9f5b942b01fc6cc458b8d06143",
+  "cargo_configuration_unchanged_and_accepted": true,
+  "clock_observations_positive_complete": 1585,
+  "clock_phases": {
+    "campaign.material_setup": 1,
+    "cohort.setup": 72,
+    "cohort.total": 72,
+    "search.timing": 288,
+    "verifier.timing": 1152
+  },
+  "cpuinfo_identity": {
+    "model name": "AMD EPYC 7763 64-Core Processor"
+  },
+  "executable_retained_copy_before_after_match": true,
+  "false_qualification_flags": {
+    "hardness_accepted": false,
+    "independent_hardware_qualified": false,
+    "production_activation": false,
+    "public_network_ready": false,
+    "public_service_measured": false,
+    "resource_fairness_qualified": false,
+    "valid_proof_acquisition_used": false,
+    "work_profile_qualified": false
+  },
+  "full_attacker_cohort_cpu_ns": 5101287,
+  "fuzz_semantic_tests_passed": 6,
+  "hash_attempts": 573,
+  "job_id": 124808937574,
+  "manifest_result": "PASS",
+  "manifest_sha256": "c6536558ea31aa2e8b0dd4119c976a2be6b916ffdd024a7e2154311ec72f9eb1",
+  "minmax_class_receiver_cpu_over_full_attacker_cpu": {
+    "column-limb-experimental": {
+      "maximum": 34.53081424331791,
+      "minimum": 21.386174633931617
+    },
+    "limb": {
+      "maximum": 30.291721991604586,
+      "minimum": 18.731801593021434
+    },
+    "production": {
+      "maximum": 36.818170806136756,
+      "minimum": 22.740116261506394
+    },
+    "reference": {
+      "maximum": 38.46725695463588,
+      "minimum": 23.755881045576754
+    }
+  },
+  "native_commands": [
+    {
+      "command": [
+        "uname",
+        "-a"
+      ],
+      "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+      "elapsed_ns": 1937115,
+      "exit_code": 0,
+      "stderr": "uname.stderr",
+      "stdout": "uname.stdout",
+      "timed_out": false,
+      "timeout_seconds": 30
+    },
+    {
+      "command": [
+        "rustc",
+        "+1.95.0",
+        "-vV"
+      ],
+      "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+      "elapsed_ns": 15830208,
+      "exit_code": 0,
+      "stderr": "rustc.stderr",
+      "stdout": "rustc.stdout",
+      "timed_out": false,
+      "timeout_seconds": 30
+    },
+    {
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "--version"
+      ],
+      "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+      "elapsed_ns": 15853572,
+      "exit_code": 0,
+      "stderr": "cargo.stderr",
+      "stdout": "cargo.stdout",
+      "timed_out": false,
+      "timeout_seconds": 30
+    },
+    {
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "build",
+        "--locked",
+        "--release",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--target",
+        "x86_64-unknown-linux-gnu",
+        "-p",
+        "trnm-pon-node",
+        "--example",
+        "pon_w1_false_trace_reuse_v1"
+      ],
+      "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+      "elapsed_ns": 150980023523,
+      "exit_code": 0,
+      "stderr": "build.stderr",
+      "stdout": "build.stdout",
+      "timed_out": false,
+      "timeout_seconds": 900
+    },
+    {
+      "command": [
+        "/home/runner/work/_temp/target-w1-security/x86_64-unknown-linux-gnu/release/examples/pon_w1_false_trace_reuse_v1",
+        "--false-trace-actual-reuse-v1"
+      ],
+      "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+      "elapsed_ns": 765548652,
+      "exit_code": 0,
+      "stderr": "campaign.stderr",
+      "stdout": "campaign.stdout",
+      "timed_out": false,
+      "timeout_seconds": 300
+    }
+  ],
+  "native_outcomes": {
+    "column-limb-experimental": {
+      "Transcript": 288
+    },
+    "limb": {
+      "Transcript": 288
+    },
+    "production": {
+      "Transcript": 288
+    },
+    "reference": {
+      "Transcript": 288
+    }
+  },
+  "native_owner_artifact_hashes_checked": 12,
+  "original_zip": "cost-x64-head.zip",
+  "raw_bytes": 30021527,
+  "raw_sha256": "38a581d98f844341d3a79470b4cfe7cfb9d8fe23587f298f58af7b3f6ace21c4",
+  "raw_xz_bytes": 139168,
+  "raw_xz_sha256": "0af2a0cbb7a0d4a450c7753c50c0e2b3e0ab55346c8a301a921d758ffeea0186",
+  "reader_recomputed_equal_original": true,
+  "record_counts": {
+    "campaign": 1,
+    "candidate": 288,
+    "cohort": 72,
+    "end": 1,
+    "material": 9,
+    "search": 288,
+    "verifier": 1152
+  },
+  "semantic_alerts": [],
+  "source_before_after_expected_match": true,
+  "source_kind": "head",
+  "source_tracked_worktree_verified": true,
+  "source_tree": "11c25a7d409b6281d3f90dc56f0ebb2c1a96b305",
+  "tested_source": "c041564b8a6bb0b98ca9c30e7871878427e5d9a4",
+  "verifier_cpu_ns": {
+    "column-limb-experimental": 133825906,
+    "limb": 117267877,
+    "production": 142329549,
+    "reference": 149198564
+  },
+  "w1_module_tests_passed": 98,
+  "zip_bytes": 2815387,
+  "zip_github_digest_matched": true,
+  "zip_sha256": "0a135e4b93ab146a8107f52f1d092a6fd787a3201a7e96924657ab4a9a79387d"
+}
