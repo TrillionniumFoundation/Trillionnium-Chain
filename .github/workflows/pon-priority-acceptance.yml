@@ -238,6 +238,24 @@ jobs:
           log="$TRNM_CI_RECEIPT_DIR/packet-history-cost.log"
           cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --ignored --show-output --test-threads=1 2>&1 | tee "$log"
           python3 scripts/ci/check_required_native_test.py "$log" --test "$selector"
+      - name: Execute original large-state CPU-budget tests
+        if: ${{ !cancelled() && steps.source.outcome == 'success' && steps.toolchain.outcome == 'success' && matrix.campaign == 'state' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          status=0
+          for selector in \
+            store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner \
+            store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator; do
+            log="$TRNM_CI_RECEIPT_DIR/large-state-${selector##*::}.log"
+            if ! cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --nocapture --test-threads=1 2>&1 | tee "$log"; then
+              status=1
+            fi
+            if ! python3 scripts/ci/check_required_native_test.py "$log" --test "$selector"; then
+              status=1
+            fi
+          done
+          exit "$status"
       - name: Execute original native full-capacity test
         if: ${{ !cancelled() && steps.source.outcome == 'success' && steps.toolchain.outcome == 'success' && matrix.campaign == 'state' }}
         shell: bash
