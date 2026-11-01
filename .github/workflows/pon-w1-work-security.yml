@@ -108,7 +108,9 @@ jobs:
           cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives --lib --tests -- -D warnings 2>&1 | tee "$OUT/w1-clippy.log"
       - name: Execute complete false trace reuse campaign
         if: always() && steps.source.outcome == 'success'
-        run: python3 scripts/ci/run_w1_false_trace_reuse_v1.py --arch "${{ matrix.arch }}"
+        # This frozen release runner rejects even a workflow-wide incremental
+        # override of zero. Preserve that guard and use the default release input.
+        run: env -u CARGO_INCREMENTAL python3 scripts/ci/run_w1_false_trace_reuse_v1.py --arch "${{ matrix.arch }}"
       - name: Verify measured source after execution
         if: always() && steps.source.outcome == 'success'
         shell: bash

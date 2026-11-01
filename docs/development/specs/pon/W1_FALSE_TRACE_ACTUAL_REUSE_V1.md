@@ -127,7 +127,11 @@ campaign and five seconds for termination grace. No original budget is relaxed.
 It rejects compiler/target/release-profile overrides, observes Cargo configuration
 before and after, checks actual compiler/ELF architecture, retains source and
 binary identities before and after, and preserves original stdout/stderr and
-failure status. A source-module harness with a different Cargo graph is only
+failure status. The retained binary copy must equal the actual execution binary
+before and after the campaign; a valid execution-path hash cannot qualify a
+different archived executable. The workflow removes its inherited
+`CARGO_INCREMENTAL` override only for this invocation; the runner continues to
+reject even an explicit zero override. A source-module harness with a different Cargo graph is only
 local module validation and cannot satisfy this complete-workspace execution
 contract. Hosted x64 and ARM observations still need inspection on the exact
 same candidate source before making even an observational comparison.

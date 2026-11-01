@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "bash",
+    "-n",
+    "scripts/ci/ci_job.sh"
+  ],
+  "cwd": "/workspace/scratch/295b0f1bca6b/chain",
+  "exit_code": 0,
+  "started_utc": "2026-11-01T08:26:39.145891+00:00",
+  "wall_ns": 2773422,
+  "stdout": "guard-05.stdout",
+  "stderr": "guard-05.stderr"
+}

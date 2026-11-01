@@ -401,7 +401,7 @@ class W1ReuseV3LaneTests(unittest.TestCase):
         self.assertEqual(report['w1_actual_reuse_v3_cells'], 4)
         text = (ROOT / '.github/workflows/trnm-required-baseline.yml').read_text()
         self.assertEqual(text.count('  cross-arch-w1-reuse-v3:\n'), 1)
-        self.assertEqual(text.count('run: python3 scripts/ci/run_w1_reused_cost_v3.py'), 1)
+        self.assertEqual(text.count('run: env -u CARGO_INCREMENTAL python3 scripts/ci/run_w1_reused_cost_v3.py'), 1)
 
     def test_v3_cannot_skip_rename_rebudget_or_substitute_local_observation(self):
         from check_ci_contract import W1_REUSE_V3_JOB, check_w1_reuse_v3
@@ -414,7 +414,9 @@ class W1ReuseV3LaneTests(unittest.TestCase):
             ('--expected-base "$TRNM_EXPECTED_BASE_SHA" ', ''),
             ('--expected-merge "$TRNM_EXPECTED_SOURCE_SHA"', '--expected-merge "$TRNM_EXPECTED_CANDIDATE_SHA"'),
             ('--output "$RUNNER_TEMP/ci-observations/source-after.json"', '--output /tmp/old-source.json'),
-            ('run: python3 scripts/ci/run_w1_reused_cost_v3.py', 'run: true # python3 scripts/ci/run_w1_reused_cost_v3.py'),
+            ('run: env -u CARGO_INCREMENTAL python3 scripts/ci/run_w1_reused_cost_v3.py', 'run: true # python3 scripts/ci/run_w1_reused_cost_v3.py'),
+            ('env -u CARGO_INCREMENTAL python3', 'python3'),
+            ('env -u CARGO_INCREMENTAL python3', 'env -u CARGO_INCREMENTAL -u RUSTFLAGS python3'),
             ('run_w1_reused_cost_v3.py --arch', 'run_w1_reused_cost_v3.py --local --arch'),
             ('run: bash scripts/project-preflight.sh --audit', 'run: true # bash scripts/project-preflight.sh --audit'),
             ('      - name: Check original repository boundary before native V3 build\n        run: bash scripts/project-preflight.sh --audit\n', ''),
@@ -521,7 +523,10 @@ class CiContractTests(unittest.TestCase):
 
     def test_zero_native_execution_cannot_be_removed_skipped_or_replaced(self):
         for replacement in ['', ZERO_RUN_STEP.replace('        if: always()\n', ''),
-                            ZERO_RUN_STEP.replace('run: python3', 'run: true # python3')]:
+                            ZERO_RUN_STEP.replace('run: env -u CARGO_INCREMENTAL python3', 'run: true # python3'),
+                            ZERO_RUN_STEP.replace('env -u CARGO_INCREMENTAL python3', 'python3'),
+                            ZERO_RUN_STEP.replace('env -u CARGO_INCREMENTAL python3',
+                                                  'env -u CARGO_INCREMENTAL -u RUSTFLAGS python3')]:
             with self.subTest(replacement=replacement):
                 self.rejected('.github/workflows/trnm-required-baseline.yml', ZERO_RUN_STEP, replacement)
 
@@ -612,7 +617,10 @@ class CiContractTests(unittest.TestCase):
 
     def test_maintenance_native_execution_cannot_be_removed_skipped_or_substituted(self):
         for replacement in ['', MAINTENANCE_RUN_STEP.replace('        if: always()\n', ''),
-                            MAINTENANCE_RUN_STEP.replace('run: python3', 'run: true # python3'),
+                            MAINTENANCE_RUN_STEP.replace('run: env -u CARGO_INCREMENTAL python3', 'run: true # python3'),
+                            MAINTENANCE_RUN_STEP.replace('env -u CARGO_INCREMENTAL python3', 'python3'),
+                            MAINTENANCE_RUN_STEP.replace('env -u CARGO_INCREMENTAL python3',
+                                                         'env -u CARGO_INCREMENTAL -u RUSTFLAGS python3'),
                             MAINTENANCE_RUN_STEP.replace(' --suite maintenance-paired', ' --suite one-zero-locality')]:
             with self.subTest(replacement=replacement):
                 self.rejected('.github/workflows/trnm-required-baseline.yml', MAINTENANCE_RUN_STEP, replacement)
@@ -677,7 +685,10 @@ class CiContractTests(unittest.TestCase):
 
     def test_one_zero_native_execution_cannot_be_removed_skipped_or_replaced(self):
         for replacement in ['', ONE_ZERO_RUN_STEP.replace('        if: always()\n', ''),
-                            ONE_ZERO_RUN_STEP.replace('run: python3', 'run: true # python3'),
+                            ONE_ZERO_RUN_STEP.replace('run: env -u CARGO_INCREMENTAL python3', 'run: true # python3'),
+                            ONE_ZERO_RUN_STEP.replace('env -u CARGO_INCREMENTAL python3', 'python3'),
+                            ONE_ZERO_RUN_STEP.replace('env -u CARGO_INCREMENTAL python3',
+                                                      'env -u CARGO_INCREMENTAL -u RUSTFLAGS python3'),
                             ONE_ZERO_RUN_STEP.replace(' --suite one-zero-locality', ' --suite zero-locality')]:
             with self.subTest(replacement=replacement):
                 self.rejected('.github/workflows/trnm-required-baseline.yml', ONE_ZERO_RUN_STEP, replacement)
@@ -1173,9 +1184,13 @@ cargo() {
                       '            runner: ubuntu-24.04-arm', '            runner: ubuntu-24.04')
 
     def test_architecture_label_is_not_native_cost_execution(self):
-        self.rejected('.github/workflows/trnm-required-baseline.yml',
-                      'run: python3 scripts/ci/run_cross_arch_cost.py --arch "${{ matrix.arch }}"',
-                      'run: python3 scripts/ci/check_ci_contract.py')
+        command = 'run: env -u CARGO_INCREMENTAL python3 scripts/ci/run_cross_arch_cost.py --arch "${{ matrix.arch }}"'
+        for replacement in ('run: python3 scripts/ci/check_ci_contract.py',
+                            command.replace('env -u CARGO_INCREMENTAL python3', 'python3'),
+                            command.replace('env -u CARGO_INCREMENTAL python3',
+                                            'env -u CARGO_INCREMENTAL -u RUSTFLAGS python3')):
+            with self.subTest(replacement=replacement):
+                self.rejected('.github/workflows/trnm-required-baseline.yml', command, replacement)
 
     def test_architecture_failure_cannot_cancel_the_other_observation(self):
         self.rejected('.github/workflows/trnm-required-baseline.yml',

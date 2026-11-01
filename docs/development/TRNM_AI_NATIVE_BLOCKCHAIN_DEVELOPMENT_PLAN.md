@@ -86,6 +86,18 @@ cannot replace checked request/history timelines, actual overlap or CPU closure.
 The explicit head/merge x64/ARM64 cost lanes and x64 service lanes retain failures;
 their configuration alone does not establish executed acceptance.
 
+The [first hosted run and execution repairs](../../evidence/pon-w1-work-security-ci-followup-20261101/README.md)
+retain four actual locked-graph 98-test W1 / six-test fuzz / strict-Clippy component
+passes. Its four cost invocations fail before native measurement because of the
+inherited incremental override; the caller is repaired without relaxing the
+guard. Both original and fresh service observations fail the four-second business
+target: seven honest submissions succeed, but independent History replay exceeds
+the original deadline. All six original artifact ZIPs remain available. The
+follow-up preserves integration base `0e9eac5d2a8cdb0a6f0cc7920f84e290e0d5d0d0`,
+regenerates the two missing Rust source-inventory entries and binds the retained
+cost binary copy to the actual execution hash. New source needs its own CI;
+these failures cannot be converted into acceptance by the invocation repair.
+
 PN1 remains HOLD. Correct relation checking, fresh binding, minimum effective
 adversarial work, honest service and model utility remain separate obligations.
 There is no cost lower-bound proof, fresh-identity fairness claim, default cache

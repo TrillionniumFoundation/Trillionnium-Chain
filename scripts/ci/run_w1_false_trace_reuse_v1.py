@@ -95,14 +95,21 @@ def main():
         if report["binary_elf_machine"] != spec["elf_machine"]:
             raise ValueError("actual ELF architecture mismatch")
         report["binary_sha256_before"] = digest(binary)
-        shutil.copyfile(binary, output / EXAMPLE)
+        retained_binary = output / EXAMPLE
+        shutil.copyfile(binary, retained_binary)
+        report["retained_binary_sha256_before"] = digest(retained_binary)
+        if report["retained_binary_sha256_before"] != report["binary_sha256_before"]:
+            raise ValueError("retained binary copy differs before execution")
         checked([str(binary), SELECTOR], "campaign", COST_CAMPAIGN_TIMEOUT_SECONDS)
         report["reader"] = analyze(output / "campaign.stdout")
         if report["reader"]["semantic_alerts"]:
             raise ValueError("retained native verifier disagreement")
         report["binary_sha256_after"] = digest(binary)
+        report["retained_binary_sha256_after"] = digest(retained_binary)
         if report["binary_sha256_before"] != report["binary_sha256_after"]:
             raise ValueError("measured binary changed")
+        if report["retained_binary_sha256_after"] != report["binary_sha256_before"]:
+            raise ValueError("retained binary copy changed during execution")
         report["result"] = "PASS"
     except (OSError, ValueError, KeyError, subprocess.SubprocessError) as error:
         report["error"] = str(error)

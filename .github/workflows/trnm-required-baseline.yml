@@ -91,16 +91,16 @@ jobs:
       - name: Install matching native formatter
         run: rustup component add --toolchain 1.95.0 rustfmt
       - name: Execute native release setup and repeated-search costs
-        run: python3 scripts/ci/run_cross_arch_cost.py --arch "${{ matrix.arch }}"
+        run: env -u CARGO_INCREMENTAL python3 scripts/ci/run_cross_arch_cost.py --arch "${{ matrix.arch }}"
       - name: Execute native zero-matrix locality costs
         if: always()
-        run: python3 scripts/ci/run_cross_arch_cost.py --arch "${{ matrix.arch }}" --suite zero-locality --zero-version 2
+        run: env -u CARGO_INCREMENTAL python3 scripts/ci/run_cross_arch_cost.py --arch "${{ matrix.arch }}" --suite zero-locality --zero-version 2
       - name: Execute native one-zero rank-one locality costs
         if: always()
-        run: python3 scripts/ci/run_cross_arch_cost.py --arch "${{ matrix.arch }}" --suite one-zero-locality
+        run: env -u CARGO_INCREMENTAL python3 scripts/ci/run_cross_arch_cost.py --arch "${{ matrix.arch }}" --suite one-zero-locality
       - name: Execute native fixed maintenance producer and preparation costs
         if: always()
-        run: python3 scripts/ci/run_cross_arch_cost.py --arch "${{ matrix.arch }}" --suite maintenance-paired
+        run: env -u CARGO_INCREMENTAL python3 scripts/ci/run_cross_arch_cost.py --arch "${{ matrix.arch }}" --suite maintenance-paired
       - name: Execute native legal and late-rejection verifier costs
         if: always()
         run: python3 scripts/pon_work_rejection_report.py --run --out "$TRNM_CI_RECEIPT_DIR/work-rejection"
@@ -169,7 +169,7 @@ jobs:
       - name: Install matching native formatter
         run: rustup component add --toolchain 1.95.0 rustfmt
       - name: Execute the complete native W1 actual reuse V3 grid
-        run: python3 scripts/ci/run_w1_reused_cost_v3.py --arch "${{ matrix.arch }}"
+        run: env -u CARGO_INCREMENTAL python3 scripts/ci/run_w1_reused_cost_v3.py --arch "${{ matrix.arch }}"
       - name: Verify V3 exact source and ordered merge after execution
         if: always()
         shell: bash

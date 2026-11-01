@@ -21,6 +21,7 @@ class ExecutionBoundaryTests(unittest.TestCase):
                 compiler_release="1.95.0", compiler_host="x86_64-unknown-linux-gnu",
                 reader_error=None, alerts=None,
                 configuration=None, configuration_place="home", change_configuration=None,
+                copy_mismatch=False, change_copy_during_campaign=False,
                 local=True):
         with tempfile.TemporaryDirectory(prefix="false-reuse-v1-owner-test-") as directory:
             root = Path(directory)
@@ -53,6 +54,8 @@ class ExecutionBoundaryTests(unittest.TestCase):
                     if change_configuration is not None:
                         config_dir.mkdir(exist_ok=True)
                         config_file.write_text(change_configuration)
+                if name == "campaign" and change_copy_during_campaign:
+                    (destination / runner.EXAMPLE).write_bytes(b"changed retained binary during campaign")
                 return {"command": command, "exit_code": 1 if name == failed_command else campaign_exit if name == "campaign" else 0,
                     "timed_out": name == "campaign" and campaign_timeout, "timeout_seconds": timeout,
                     "stdout": stdout.name, "stderr": stderr.name}
@@ -63,7 +66,10 @@ class ExecutionBoundaryTests(unittest.TestCase):
                 if str(source) == "/proc/cpuinfo":
                     Path(destination).write_text("synthetic CPU identity, not hardware evidence\n")
                     return destination
-                return actual_copy(source, destination)
+                copied = actual_copy(source, destination)
+                if copy_mismatch and Path(destination) == output / runner.EXAMPLE:
+                    Path(destination).write_bytes(b"mismatched retained binary copy")
+                return copied
 
             env = {"CARGO_TARGET_DIR": str(target), "CARGO_HOME": str(cargo_home),
                    **(environment or {})}
@@ -93,8 +99,32 @@ class ExecutionBoundaryTests(unittest.TestCase):
             "--example", runner.EXAMPLE], commands)
         self.assertEqual(commands[-1][-1], "--false-trace-actual-reuse-v1")
         self.assertFalse(report["source_changed"])
+        self.assertEqual({report[key] for key in (
+            "binary_sha256_before", "binary_sha256_after",
+            "retained_binary_sha256_before", "retained_binary_sha256_after")},
+            {report["artifact_sha256"][runner.EXAMPLE]})
         for flag in runner.FALSE_FLAGS:
             self.assertIs(report[flag], False)
+
+    def test_mismatched_retained_binary_is_refused_before_campaign(self):
+        code, report, commands = self.observe(copy_mismatch=True)
+        self.assertNotEqual(code, 0)
+        self.assertEqual(len(commands), 4)
+        self.assertNotEqual(commands[-1][-1], runner.SELECTOR)
+        self.assertNotIn("reader", report)
+        self.assertNotEqual(report["retained_binary_sha256_before"], report["binary_sha256_before"])
+        self.assertEqual(report["retained_binary_sha256_before"], report["artifact_sha256"][runner.EXAMPLE])
+        self.assertIn("retained binary copy differs", report["error"])
+
+    def test_retained_binary_change_during_campaign_is_refused(self):
+        code, report, commands = self.observe(change_copy_during_campaign=True)
+        self.assertNotEqual(code, 0)
+        self.assertEqual(commands[-1][-1], runner.SELECTOR)
+        self.assertEqual(report["binary_sha256_before"], report["binary_sha256_after"])
+        self.assertEqual(report["retained_binary_sha256_before"], report["binary_sha256_before"])
+        self.assertNotEqual(report["retained_binary_sha256_after"], report["binary_sha256_before"])
+        self.assertEqual(report["retained_binary_sha256_after"], report["artifact_sha256"][runner.EXAMPLE])
+        self.assertIn("retained binary copy changed", report["error"])
 
     def test_local_mode_cannot_bypass_dirty_source(self):
         code, report, commands = self.observe(before={"source_state": "dirty-candidate"})
