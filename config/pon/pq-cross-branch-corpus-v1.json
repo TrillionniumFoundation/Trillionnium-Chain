@@ -286,7 +286,7 @@
     "trillionnium/crates/trnm-sqlite-io-boundary/unix_layout_witness.c"
   ],
   "pinned_blobs": {
-    ".github/workflows/pon-branch-encoding-acceptance.yml": "3c0aeb12ef740b61e8759d77ba10456f0164aa32",
+    ".github/workflows/pon-branch-encoding-acceptance.yml": "50936c3203f97a550d65ae422e3b660634616eb4",
     ".github/workflows/pon-recent-batch-acceptance.yml": "e1820626477ab613217e84d9f6805019d4657a09",
     ".github/workflows/trnm-required-baseline.yml": "beff089827ed0c138edb8b653026a9be7cc1f4a6",
     "config/consensus-mainline.json": "b193c404177350c5e1443104f02bb0ac114f6aeb",

@@ -4429,3 +4429,26 @@ pre-existing stale pin: #675's last recent-batch workflow edit changed its blob
 to `e1820626477ab613217e84d9f6805019d4657a09` while the corpus still named
 `96ef7b370deb0f1067adfdb47a77a958ac584952`. The original positive checker and
 negative source controls remain mandatory; pin agreement is not PQ acceptance.
+
+### Exact branch-encoding guard follow-up
+
+At `3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129`, all four branch-encoding
+lanes in run `41330488644` stopped at the old `pon_wire.rs` blob guard before
+executing the wire suite. The same step also retained the older 17-pass count.
+The reviewed new Header binding regression changes that blob from
+`6b0e3687c7c1348dec11fd5fff91b7eda884d561` to
+`46bb09a69d68318580e2856116267376489aaf78`; actual wire execution at that
+source produces 18 passed and the same one intentionally ignored observation.
+This follow-up binds the new exact blob and count and separately requires the
+new named Header test through the existing exact-execution reader. It refreshes
+the corpus pin for that workflow. Every Rust source, Cargo input, legal-cost
+runner/reader and resource/deadline predicate remains byte-identical to `3bbc`.
+
+The original four CI failures remain failures. The separate finality ARM-head
+attempt stopped at a rustup Clippy component installation conflict, and the
+original native three-run campaign executed but failed its original criteria.
+Neither is reclassified by this workflow repair. The `3bbc` four original-budget
+fresh-service scenarios likewise still fail independent six-depth confirmation
+under pressure despite seven receiver ACKs each. Cost, callback and source
+checks do not supersede those failures, and no new-source execution is inferred
+from a byte-equivalent native subset.
