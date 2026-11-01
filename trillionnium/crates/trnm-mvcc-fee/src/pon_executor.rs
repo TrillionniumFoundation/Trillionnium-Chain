@@ -229,8 +229,64 @@ fn validate_canonical(v: &Value) -> Result<()> {
     }
 }
 
+/// Check eight bytes at a time without changing serde's escape alphabet.
+/// After excluding high bits, every byte is below 128. Subtracting a repeated
+/// threshold sets a high bit iff some byte is below that threshold: the first
+/// such byte underflows, whereas no byte can borrow when all meet it. Borrow
+/// propagation can mark further bytes, but cannot create a false positive.
+/// XOR with an ASCII delimiter stays below 128, so subtracting one detects an
+/// exact quote/backslash byte by the same argument. DEL (0x7f) remains allowed.
+fn unescaped_ascii_json(bytes: &[u8]) -> bool {
+    const HIGH: u64 = 0x8080_8080_8080_8080;
+    const ONE: u64 = 0x0101_0101_0101_0101;
+    let mut chunks = bytes.chunks_exact(8);
+    for chunk in &mut chunks {
+        let mut word_bytes = [0; 8];
+        word_bytes.copy_from_slice(chunk);
+        let word = u64::from_le_bytes(word_bytes);
+        if word & HIGH != 0 {
+            return false;
+        }
+        let control = word.wrapping_sub(0x2020_2020_2020_2020);
+        let quote = (word ^ 0x2222_2222_2222_2222).wrapping_sub(ONE);
+        let backslash = (word ^ 0x5c5c_5c5c_5c5c_5c5c).wrapping_sub(ONE);
+        if (control | quote | backslash) & HIGH != 0 {
+            return false;
+        }
+    }
+    chunks
+        .remainder()
+        .iter()
+        .all(|&byte| (0x20..=0x7f).contains(&byte) && byte != b'"' && byte != b'\\')
+}
+
+fn unescaped_string(v: &Value) -> Option<&str> {
+    match v {
+        Value::String(value) if unescaped_ascii_json(value.as_bytes()) => Some(value),
+        _ => None,
+    }
+}
+
+fn append_unescaped_string(bytes: &mut Vec<u8>, value: &str) -> std::io::Result<()> {
+    use std::io::Write;
+    // Mirror serde_json 1.0.149's three Vec writes. Reserving the final size
+    // instead would change capacities used by commitment workspace accounting.
+    bytes.write_all(b"\"")?;
+    if !value.is_empty() {
+        bytes.write_all(value.as_bytes())?;
+    }
+    bytes.write_all(b"\"")
+}
+
 pub(crate) fn canonical(v: &Value) -> Result<Vec<u8>> {
     validate_canonical(v)?;
+    if let Some(value) = unescaped_string(v) {
+        // Keep the original serde_json::to_vec initial capacity as well as its
+        // write sequence; byte equivalence alone is not capacity equivalence.
+        let mut bytes = Vec::with_capacity(128);
+        append_unescaped_string(&mut bytes, value).map_err(|_| "NONCANONICAL")?;
+        return Ok(bytes);
+    }
     serde_json::to_vec(v).map_err(|_| "NONCANONICAL")
 }
 
@@ -239,6 +295,9 @@ pub(crate) fn canonical(v: &Value) -> Result<Vec<u8>> {
 pub(crate) fn canonical_into(v: &Value, bytes: &mut Vec<u8>) -> Result<()> {
     validate_canonical(v)?;
     bytes.clear();
+    if let Some(value) = unescaped_string(v) {
+        return append_unescaped_string(bytes, value).map_err(|_| "NONCANONICAL");
+    }
     serde_json::to_writer(bytes, v).map_err(|_| "NONCANONICAL")
 }
 

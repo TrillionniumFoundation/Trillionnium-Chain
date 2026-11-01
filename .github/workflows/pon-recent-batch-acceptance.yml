@@ -64,7 +64,7 @@ jobs:
             args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
           fi
           python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$out/source.json"
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = 83f998b816f4ef0999fdc567f3ab31ae0e90d019
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = 21d9f91d1535928732af3e79bab2c0aa712d094a
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/history_page.rs)" = c01ca1e0756ec8e041e628bcbdad933e338da772
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs)" = c0c492d166caf62b29df6090ab5ff697d685cd6e
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs)" = d8a84be950eda77104d91fc389166c2581e5cd88

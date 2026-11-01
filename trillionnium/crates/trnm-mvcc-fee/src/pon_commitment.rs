@@ -2620,6 +2620,46 @@ mod bounded_encoding_tests {
     }
 
     #[test]
+    fn canonical_ascii_fast_encoding_keeps_direct_serde_budget_decisions_and_charges() {
+        let state: State = [0, 1, 126, 127, 128, 129, 4080, 4094]
+            .into_iter()
+            .enumerate()
+            .map(|(index, length)| (format!("key:{index}"), json!("x".repeat(length))))
+            .collect();
+        // This oracle bypasses both canonical wrappers. Recreate it for every
+        // case: cloning a Vec would itself discard the original spare capacity.
+        let original_values = || -> CanonicalValues {
+            state
+                .iter()
+                .map(|(key, value)| (key.as_bytes().to_vec(), serde_json::to_vec(value).unwrap()))
+                .collect()
+        };
+        let original = original_values();
+        let current = charges(&original).unwrap();
+        let workspace = workspace_charge(current, current, 0).unwrap();
+        for keys in [state.len() - 1, state.len()] {
+            for payload in [current.payload - 1, current.payload, current.payload + 1] {
+                for bound in [workspace - 1, workspace, workspace + 1] {
+                    let limits = CacheLimits {
+                        max_keys: keys,
+                        max_payload_bytes: payload,
+                        max_workspace_charge_bytes: bound,
+                    };
+                    let (_, actual) = encode_for_cache(&state, limits).unwrap();
+                    assert_eq!(
+                        (actual.payload, actual.map, actual.tree, actual.nodes),
+                        (current.payload, current.map, current.tree, current.nodes)
+                    );
+                    equal(
+                        &prepare_state(&state, None, None, limits).unwrap(),
+                        &prepare_values(original_values(), None, None, limits).unwrap(),
+                    );
+                }
+            }
+        }
+    }
+
+    #[test]
     #[ignore = "explicit whole-test process RSS comparison; no Node or throughput qualification"]
     fn actual_state_fallback_encoding_cost() {
         let arm = std::env::var("TRNM_STATE_FALLBACK_ARM").unwrap();

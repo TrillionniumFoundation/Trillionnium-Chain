@@ -2,6 +2,147 @@ use super::*;
 use serde_json::json;
 use trnm_protocol::pon_wire::StateRootArithmetic;
 
+fn plain_ascii_reference(bytes: &[u8]) -> bool {
+    bytes
+        .iter()
+        .all(|&byte| byte.is_ascii() && byte >= 0x20 && byte != b'"' && byte != b'\\')
+}
+
+#[test]
+fn canonical_ascii_guard_matches_exhaustive_bytes_pairs_and_borrow_chains() {
+    // Every adjacent pair, including the boundary between two chunks. This is
+    // exhaustive over two bytes and their positions, not over all 2^64 words.
+    for length in [8, 9] {
+        for position in 0..length - 1 {
+            let mut bytes = vec![b'x'; length];
+            for pair in 0..=u16::MAX {
+                bytes[position..position + 2].copy_from_slice(&pair.to_le_bytes());
+                assert_eq!(
+                    unescaped_ascii_json(&bytes),
+                    plain_ascii_reference(&bytes),
+                    "length={length} position={position} pair={pair}"
+                );
+            }
+        }
+    }
+    // Exercise each tail length and all single-byte values, including bytes
+    // that cannot occur by themselves in UTF-8. Backgrounds 0x20, 0x23 and
+    // 0x5d exercise long borrow chains for control, quote and backslash probes.
+    for length in 0..=17 {
+        assert!(unescaped_ascii_json(&vec![b'x'; length]));
+        for fill in [b' ', b'#', b']', 0x7f] {
+            for position in 0..length {
+                let mut bytes = vec![fill; length];
+                for byte in 0..=u8::MAX {
+                    bytes[position] = byte;
+                    assert_eq!(unescaped_ascii_json(&bytes), plain_ascii_reference(&bytes));
+                }
+            }
+        }
+    }
+}
+
+fn assert_canonical_serde_bytes_and_capacity(value: &Value) {
+    let reference = serde_json::to_vec(value).unwrap();
+    let actual = canonical(value).unwrap();
+    assert_eq!(actual, reference);
+    assert_eq!(actual.capacity(), reference.capacity());
+}
+
+#[test]
+fn canonical_ascii_keeps_original_serde_bytes_and_vec_capacities() {
+    for length in [
+        0, 1, 2, 7, 8, 9, 15, 16, 17, 63, 64, 65, 126, 127, 128, 129, 255, 256, 257, 4078, 4080,
+        4094, 4095, 4096,
+    ] {
+        for fill in [b'x', b' ', 0x7f] {
+            let text = String::from_utf8(vec![fill; length]).unwrap();
+            assert_canonical_serde_bytes_and_capacity(&Value::String(text));
+        }
+    }
+    // Every ASCII byte, including every escape, at chunk and long-value edges.
+    for byte in 0..=0x7f {
+        for position in [0, 7, 8, 4079] {
+            let mut text = vec![b'x'; 4080];
+            text[position] = byte;
+            assert_canonical_serde_bytes_and_capacity(&Value::String(
+                String::from_utf8(text).unwrap(),
+            ));
+        }
+    }
+    for value in [
+        json!(null),
+        json!(false),
+        json!(i64::MIN),
+        json!(u64::MAX),
+        json!(["plain", "quote\"", "backslash\\", "\u{0000}", 0]),
+        json!({"z":"plain", "a\"":"escaped", "n":-1}),
+    ] {
+        assert_canonical_serde_bytes_and_capacity(&value);
+    }
+}
+
+#[test]
+fn canonical_ascii_into_keeps_reused_capacity_and_failed_input_untouched() {
+    let values = [
+        json!("x".repeat(4080)),
+        json!(""),
+        json!("\"\\\n\u{001f}\u{007f}"),
+        json!("x".repeat(127)),
+        json!(["nested", 1]),
+        json!("x".repeat(4094)),
+    ];
+    for initial_capacity in [0, 1, 127, 128, 129, 4096, 8192] {
+        let mut actual = Vec::with_capacity(initial_capacity);
+        let mut reference = Vec::with_capacity(initial_capacity);
+        for value in &values {
+            reference.clear();
+            serde_json::to_writer(&mut reference, value).unwrap();
+            canonical_into(value, &mut actual).unwrap();
+            assert_eq!(actual, reference);
+            assert_eq!(actual.capacity(), reference.capacity());
+        }
+        for (invalid, error) in [
+            (json!("λ"), "NONCANONICAL"),
+            (json!(0.5), "RANGE"),
+            (json!(-0.0), "RANGE"),
+            (json!(["x".repeat(4080), "λ", 0.5]), "NONCANONICAL"),
+            (json!({"a":0.5,"b":"λ"}), "RANGE"),
+            (json!({"a":"λ","b":0.5}), "NONCANONICAL"),
+        ] {
+            let before = actual.clone();
+            let capacity = actual.capacity();
+            assert_eq!(canonical(&invalid), Err(error));
+            assert_eq!(canonical_into(&invalid, &mut actual), Err(error));
+            assert_eq!(actual, before);
+            assert_eq!(actual.capacity(), capacity);
+        }
+    }
+}
+
+#[test]
+fn canonical_ascii_commitment_keeps_late_grammar_before_wire_and_cache_errors() {
+    use crate::pon_commitment::{derive_snapshot, CacheLimits, MAX_CACHE_KEYS};
+    let limits = CacheLimits {
+        max_keys: MAX_CACHE_KEYS + 1,
+        ..CacheLimits::default()
+    };
+    let mut state = State::from([("a".repeat(161), json!("x".repeat(4095)))]);
+    for (late, error) in [(json!("λ"), "NONCANONICAL"), (json!(0.5), "RANGE")] {
+        state.insert("z".into(), late);
+        assert_eq!(root(&state), Err(error));
+        assert_eq!(derive_snapshot(&state, None, limits).unwrap_err(), error);
+    }
+    state.insert("z".into(), json!("x".repeat(4080)));
+    assert_eq!(root(&state), Err("LIMIT"));
+    assert_eq!(derive_snapshot(&state, None, limits).unwrap_err(), "LIMIT");
+    state.remove(&"a".repeat(161));
+    assert_eq!(
+        derive_snapshot(&state, None, limits).unwrap_err(),
+        "COMMITMENT_CACHE_LIMIT"
+    );
+}
+
 #[test]
 fn arithmetic_root_preserves_complete_grammar_before_all_wire_limits() {
     let mut arithmetic = StateRootArithmetic::new(2 * 1024 * 1024);

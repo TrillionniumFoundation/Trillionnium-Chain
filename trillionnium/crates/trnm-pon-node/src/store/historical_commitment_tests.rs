@@ -1,5 +1,6 @@
 use super::*;
 use crate::{ErrorCode, ErrorKind};
+use rusqlite::types::Value as SqlValue;
 use serde_json::json;
 use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
 use trnm_mvcc_fee::pon_commitment::CommitmentMethod;
@@ -173,6 +174,13 @@ fn actual_foreign_snapshot_delta_and_root_damage_preserve_original_failures() {
     let directory = tempfile::tempdir().unwrap();
     let (node, ids) = chain(directory.path());
     let foreign = Connection::open(directory.path().join("native.sqlite")).unwrap();
+    for capacity in [0, 1, 16] {
+        node.db.set_prepared_statement_cache_capacity(capacity);
+        assert_foreign_history_damage(&node, &ids, &foreign);
+    }
+}
+
+fn assert_foreign_history_damage(node: &Node, ids: &[Hash], foreign: &Connection) {
     let expected = node.state_at(ids[4]).unwrap();
     let genesis_raw: Vec<u8> = foreign
         .query_row(
@@ -192,7 +200,7 @@ fn actual_foreign_snapshot_delta_and_root_damage_preserve_original_failures() {
                 params![bad, ids[0].as_slice()],
             )
             .unwrap();
-        let error = assert_original_error(&node, || node.state_at(ids[4]).map(|_| ()));
+        let error = assert_original_error(node, || node.state_at(ids[4]).map(|_| ()));
         assert!(error == "STATE_BYTES" || error.starts_with("JSON:"));
         foreign
             .execute(
@@ -212,7 +220,7 @@ fn actual_foreign_snapshot_delta_and_root_damage_preserve_original_failures() {
         )
         .unwrap();
     assert_eq!(
-        assert_original_error(&node, || node.state_at(ids[4]).map(|_| ())),
+        assert_original_error(node, || node.state_at(ids[4]).map(|_| ())),
         "ROOT"
     );
     foreign
@@ -230,7 +238,7 @@ fn actual_foreign_snapshot_delta_and_root_damage_preserve_original_failures() {
         )
         .unwrap();
     assert_eq!(
-        assert_original_error(&node, || node.state_at(ids[4]).map(|_| ())),
+        assert_original_error(node, || node.state_at(ids[4]).map(|_| ())),
         "UNDO_ROOT"
     );
     foreign
@@ -248,7 +256,7 @@ fn actual_foreign_snapshot_delta_and_root_damage_preserve_original_failures() {
                 params![bad, ids[2].as_slice(), key],
             )
             .unwrap();
-        let error = assert_original_error(&node, || node.state_at(ids[4]).map(|_| ()));
+        let error = assert_original_error(node, || node.state_at(ids[4]).map(|_| ()));
         assert!(error == "ROOT" || error.starts_with("JSON:"));
         foreign
             .execute(
@@ -267,10 +275,10 @@ fn actual_foreign_snapshot_delta_and_root_damage_preserve_original_failures() {
         )
         .unwrap();
     assert_eq!(
-        assert_original_error(&node, || node.state_at(ids[4]).map(|_| ())),
+        assert_original_error(node, || node.state_at(ids[4]).map(|_| ())),
         "ROOT"
     );
-    assert_eq!(retained_status(&node).0, 0);
+    assert_eq!(retained_status(node).0, 0);
     foreign
         .execute(
             "UPDATE blocks SET state_root=? WHERE id=?",
@@ -286,7 +294,7 @@ fn actual_foreign_snapshot_delta_and_root_damage_preserve_original_failures() {
         )
         .unwrap();
     assert_eq!(
-        assert_original_error(&node, || node.state_at(ids[4]).map(|_| ())),
+        assert_original_error(node, || node.state_at(ids[4]).map(|_| ())),
         "ROOT"
     );
     foreign
@@ -296,6 +304,267 @@ fn actual_foreign_snapshot_delta_and_root_damage_preserve_original_failures() {
         )
         .unwrap();
     assert_eq!(node.state_at(ids[4]).unwrap(), expected);
+}
+
+fn history_replay_observation(
+    node: &Node,
+    tip: Hash,
+    stop: Option<(usize, ErrorCode)>,
+) -> (Result<State>, usize) {
+    let mut calls = 0;
+    let result = node.state_at_with_progress(tip, &mut || {
+        calls += 1;
+        match stop {
+            Some((cut, code)) if calls == cut => Err(Error::new(code)),
+            _ => Ok(()),
+        }
+    });
+    (result, calls)
+}
+
+fn history_error_identity(error: &Error) -> (String, ErrorKind, bool) {
+    (error.to_string(), error.kind(), error.requires_owner_stop())
+}
+
+#[test]
+fn legacy_prepared_history_reads_observe_current_rows_writes_and_rollback() {
+    let directory = tempfile::tempdir().unwrap();
+    let (node, ids) = chain(directory.path());
+    let foreign = Connection::open(directory.path().join("native.sqlite")).unwrap();
+    let target = ids[4];
+    let active = node.read_active().unwrap();
+    let states: Vec<_> = ids[1..=4]
+        .iter()
+        .map(|id| node.state_at(*id).unwrap())
+        .collect();
+    let deltas: Vec<_> = ids[1..=4]
+        .iter()
+        .map(|id| node.delta_rows(*id).unwrap())
+        .collect();
+    let expected = &states[3];
+    let mut damaged_root = node.record(target).unwrap().root;
+    damaged_root[0] ^= 1;
+    let mut snapshot: Vec<u8> = node
+        .db
+        .query_row(
+            "SELECT state FROM snapshots WHERE block=?",
+            [ids[0].as_slice()],
+            |row| row.get(0),
+        )
+        .unwrap();
+    snapshot.push(b' ');
+    let key: String = node
+        .db
+        .query_row(
+            "SELECT key FROM deltas WHERE block=? AND before IS NOT NULL AND after IS NOT NULL ORDER BY key LIMIT 1",
+            [ids[2].as_slice()],
+            |row| row.get(0),
+        )
+        .unwrap();
+    let damage = [
+        (
+            "UPDATE blocks SET parent=? WHERE id=?",
+            vec![
+                SqlValue::Blob(ids[1].to_vec()),
+                SqlValue::Blob(target.to_vec()),
+            ],
+            "ANCESTRY_HEIGHT",
+        ),
+        (
+            "UPDATE blocks SET state_root=? WHERE id=?",
+            vec![
+                SqlValue::Blob(damaged_root.to_vec()),
+                SqlValue::Blob(target.to_vec()),
+            ],
+            "ROOT",
+        ),
+        (
+            "UPDATE snapshots SET state=? WHERE block=?",
+            vec![SqlValue::Blob(snapshot), SqlValue::Blob(ids[0].to_vec())],
+            "STATE_BYTES",
+        ),
+        (
+            "UPDATE deltas SET before=? WHERE block=? AND key=?",
+            vec![
+                SqlValue::Blob(b"null".to_vec()),
+                SqlValue::Blob(ids[2].to_vec()),
+                SqlValue::Text(key),
+            ],
+            "UNDO_ROOT",
+        ),
+    ];
+    let mut uncached_progress = None;
+    let mut uncached_failures = Vec::new();
+    for capacity in [0, 1, 16] {
+        node.db.set_prepared_statement_cache_capacity(capacity);
+        // Alternate actual ids, including snapshot misses before genesis, so
+        // a retained SQL statement must bind the current request every time.
+        for index in [4, 1, 3, 2, 4] {
+            let record = node.record(ids[index]).unwrap();
+            assert_eq!(record.parent, Some(ids[index - 1]));
+            assert_eq!(record.height, u64::try_from(index).unwrap());
+            assert_eq!(record.root, root(&states[index - 1]).unwrap());
+            assert_eq!(node.delta_rows(ids[index]).unwrap(), deltas[index - 1]);
+            assert_eq!(node.state_at(ids[index]).unwrap(), states[index - 1]);
+        }
+        let (actual, calls) = history_replay_observation(&node, target, None);
+        assert_eq!(actual.unwrap(), *expected);
+        if capacity == 0 {
+            uncached_progress = Some(calls);
+        }
+        assert_eq!(Some(calls), uncached_progress);
+        for (case, (sql, values, expected_error)) in damage.iter().enumerate() {
+            for (same_connection, writer) in [(true, &node.db), (false, &foreign)] {
+                assert_eq!(node.state_at(target).unwrap(), *expected);
+                writer.execute_batch("SAVEPOINT prepared_damage").unwrap();
+                writer
+                    .execute(sql, rusqlite::params_from_iter(values))
+                    .unwrap();
+                if same_connection {
+                    let (result, damage_calls) = history_replay_observation(&node, target, None);
+                    let failure = history_error_identity(&result.unwrap_err());
+                    assert_eq!(failure.0, *expected_error);
+                    if capacity == 0 {
+                        uncached_failures.push((failure.clone(), damage_calls));
+                    }
+                    assert_eq!(&(failure.clone(), damage_calls), &uncached_failures[case]);
+                    // The last checkpoint before real damage must still accept
+                    // the caller's error; a later cut cannot hide earlier damage.
+                    for code in [
+                        ErrorCode::PublicRequestCancelled,
+                        ErrorCode::PublicMutationCpuBudget,
+                        ErrorCode::UnknownParent,
+                    ] {
+                        for stop in [1, damage_calls, damage_calls + 1] {
+                            let (result, seen) =
+                                history_replay_observation(&node, target, Some((stop, code)));
+                            let observed = history_error_identity(&result.unwrap_err());
+                            if stop <= damage_calls {
+                                assert_eq!(observed, history_error_identity(&Error::new(code)));
+                                assert_eq!(seen, stop);
+                            } else {
+                                assert_eq!(observed, failure);
+                                assert_eq!(seen, damage_calls);
+                            }
+                        }
+                    }
+                } else {
+                    // A foreign uncommitted write is not this connection's
+                    // current committed row. A cached query must preserve that
+                    // isolation, then observe the original rows after rollback.
+                    assert_eq!(node.state_at(target).unwrap(), *expected);
+                }
+                writer
+                    .execute_batch("ROLLBACK TO prepared_damage; RELEASE prepared_damage")
+                    .unwrap();
+                assert_eq!(node.state_at(target).unwrap(), *expected);
+            }
+        }
+        assert_eq!(node.read_active().unwrap(), active);
+    }
+}
+
+#[test]
+fn legacy_prepared_history_reads_reprepare_after_schema_and_authorizer_changes() {
+    use rusqlite::hooks::{AuthAction, AuthContext, Authorization};
+
+    let directory = tempfile::tempdir().unwrap();
+    let (node, ids) = chain(directory.path());
+    let foreign = Connection::open(directory.path().join("native.sqlite")).unwrap();
+    let target = ids[4];
+    let expected = node.state_at(target).unwrap();
+    let active = node.read_active().unwrap();
+    let mut uncached_failures = Vec::new();
+    for capacity in [0, 1, 16] {
+        node.db.set_prepared_statement_cache_capacity(capacity);
+        for (case, (table, column)) in [
+            ("blocks", "state_root"),
+            ("snapshots", "state"),
+            ("deltas", "before"),
+        ]
+        .into_iter()
+        .enumerate()
+        {
+            for (same_connection, writer) in [(true, &node.db), (false, &foreign)] {
+                assert_eq!(node.state_at(target).unwrap(), expected);
+                if same_connection {
+                    writer.execute_batch("SAVEPOINT prepared_schema").unwrap();
+                }
+                writer
+                    .execute_batch(&format!(
+                        "ALTER TABLE {table} RENAME COLUMN {column} TO prepared_previous"
+                    ))
+                    .unwrap();
+                let (result, calls) = history_replay_observation(&node, target, None);
+                let error = result.unwrap_err();
+                assert!(error.to_string().starts_with("STORAGE: "));
+                assert!(error.to_string().contains(column));
+                assert!(std::error::Error::source(&error)
+                    .and_then(|source| source.downcast_ref::<rusqlite::Error>())
+                    .is_some());
+                assert_eq!(error.kind(), ErrorKind::LocalStructure);
+                assert!(error.requires_owner_stop());
+                // SQLite can discover schema expiry during prepare or step.
+                // Both must retain the original SQLite error class and cut;
+                // SQL-source diagnostic suffixes are not a validity verdict.
+                let identity = (error.kind(), error.requires_owner_stop(), calls);
+                if capacity == 0 {
+                    uncached_failures.push(identity);
+                }
+                assert_eq!(
+                    identity,
+                    uncached_failures[2 * case + usize::from(!same_connection)]
+                );
+                if same_connection {
+                    writer
+                        .execute_batch("ROLLBACK TO prepared_schema; RELEASE prepared_schema")
+                        .unwrap();
+                } else {
+                    writer
+                        .execute_batch(&format!(
+                            "ALTER TABLE {table} RENAME COLUMN prepared_previous TO {column}"
+                        ))
+                        .unwrap();
+                }
+                assert_eq!(node.state_at(target).unwrap(), expected);
+                assert_eq!(node.read_active().unwrap(), active);
+            }
+        }
+        // The current Node installs/replaces static Allow/Deny handlers. An
+        // already cached SELECT must be reauthorized when Some(handler) changes.
+        // This does not certify mutable policy behind an unchanged handler or
+        // removal of a handler that compiled SQLITE_IGNORE projections.
+        for blocked_table in ["blocks", "snapshots", "deltas"] {
+            assert_eq!(node.state_at(target).unwrap(), expected);
+            node.db
+                .authorizer(Some(move |context: AuthContext<'_>| match context.action {
+                    AuthAction::Read { table_name, .. } if table_name == blocked_table => {
+                        Authorization::Deny
+                    }
+                    _ => Authorization::Allow,
+                }))
+                .unwrap();
+            let error = node.state_at(target).unwrap_err();
+            let source = std::error::Error::source(&error)
+                .and_then(|source| source.downcast_ref::<rusqlite::Error>())
+                .unwrap();
+            assert_eq!(
+                source.sqlite_error().map(|error| error.extended_code),
+                Some(rusqlite::ffi::SQLITE_AUTH)
+            );
+            assert_eq!(error.kind(), ErrorKind::LocalStructure);
+            assert!(error.requires_owner_stop());
+            node.db
+                .authorizer(Some(|_: AuthContext<'_>| Authorization::Allow))
+                .unwrap();
+            assert_eq!(node.state_at(target).unwrap(), expected);
+            node.db
+                .authorizer(None::<fn(AuthContext<'_>) -> Authorization>)
+                .unwrap();
+            assert_eq!(node.state_at(target).unwrap(), expected);
+            assert_eq!(node.read_active().unwrap(), active);
+        }
+    }
 }
 
 #[test]

@@ -4656,6 +4656,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/src/store/reorg_readback_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/reorg_readback_tests.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/src/store/root_rejection_cache.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),

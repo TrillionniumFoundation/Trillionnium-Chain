@@ -47,8 +47,9 @@ fn readback_schema(db: &Connection) -> Result<Option<ReadbackSchema>> {
 }
 
 /// At most four named graph results inside one ordinary authenticated admission
-/// transaction: child, genesis, that verified child's parent and the actual
-/// active tip nominated by the existing Node reader. Nomination is not proof.
+/// or reorganization WRITE transaction: child, genesis, that verified child's
+/// parent and the actual active tip nominated by the existing Node reader.
+/// Nomination is not proof.
 /// This is never retained by Node, serialized, cloned or used as commit/recovery
 /// authority. Every use still loads current SQL State/records/deltas and runs
 /// the ORIGINAL complete(settings, current State) comparison before this graph
@@ -68,7 +69,7 @@ pub(in crate::store) struct PostWriteReadback<'db> {
 }
 
 impl<'db> PostWriteReadback<'db> {
-    pub(super) fn new(
+    pub(in crate::store) fn new(
         db: &'db Connection,
         settings: &Settings,
         child: Hash,
@@ -151,6 +152,17 @@ impl<'db> PostWriteReadback<'db> {
 
     pub(in crate::store) fn validate_consumed(&mut self, db: &Connection) -> Result<()> {
         self.current(db).map(|_| ())
+    }
+
+    /// A reorganization tail has no legitimate writes left. Unlike admission's
+    /// consumed-hit fence, any disabled epoch refuses this tail, including a
+    /// callback write before the first hit. Never clear or re-stamp this scope.
+    pub(in crate::store) fn require_unchanged_after_last_write(
+        &mut self,
+        db: &Connection,
+    ) -> Result<()> {
+        crate::ensure(self.current(db)?, "NATIVE_POST_WRITE_CHANGED")
+            .map_err(Error::local_integrity)
     }
 
     /// Only the original Node active reader supplies this already-read tip.
