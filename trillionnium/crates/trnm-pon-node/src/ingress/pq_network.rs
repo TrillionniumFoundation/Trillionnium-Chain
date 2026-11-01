@@ -394,6 +394,13 @@ impl PqClient {
             expires_at >= now && expires_at - now <= MAX_LIFETIME_SECONDS,
             "PQ_NETWORK_LIFETIME",
         )?;
+        // A locally supplied sequence outside the native signed-wire domain
+        // cannot pass the receiver's existing check. Reject it before JSON
+        // serialization and costly ML-DSA signing, not after creating a frame.
+        ensure(
+            (1..=i64::MAX as u64).contains(&sequence),
+            "PQ_NETWORK_SEQUENCE",
+        )?;
         let payload = serde_json::to_vec(&request)?;
         // This client must not hash/sign a body the original PNQ2 wire bound
         // would reject after ML-DSA has already done expensive work.

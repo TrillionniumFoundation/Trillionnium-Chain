@@ -37,6 +37,35 @@ fn raw_request(address: SocketAddr, wire: &[u8]) -> Result<Vec<u8>> {
 }
 
 #[test]
+fn invalid_pq_client_sequence_refuses_before_ml_dsa_signing() {
+    let settings = settings();
+    let policy = policy(&settings, 1);
+    let client = PqClient::new(policy, signer(72)).unwrap();
+    let expiry = super::super::now().unwrap() + 30;
+    for sequence in [0, i64::MAX as u64 + 1, u64::MAX] {
+        let error = client
+            .prepare(sequence, expiry, Request::Head)
+            .err()
+            .expect("unrepresentable operation sequence must refuse");
+        assert_eq!(error.to_string(), "PQ_NETWORK_SEQUENCE");
+    }
+    // The exact highest sequence accepted by the existing signed-wire owner
+    // must remain cryptographically valid, not a new arbitrary limit.
+    let valid = client
+        .prepare(i64::MAX as u64, expiry, Request::Head)
+        .unwrap();
+    assert_eq!(valid.verified.sequence, i64::MAX as u64);
+    assert_eq!(
+        client
+            .policy
+            .verify_request(valid.wire(), super::super::now().unwrap())
+            .unwrap()
+            .sequence,
+        i64::MAX as u64,
+    );
+}
+
+#[test]
 fn expired_prepared_request_refuses_before_client_tcp() {
     let settings = settings();
     let policy = policy(&settings, 1);
