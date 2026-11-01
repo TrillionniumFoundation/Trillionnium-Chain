@@ -29,6 +29,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "config/pon/binary-diverse60-training-v3.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/pon/binary-diverse60-training-v3.json"
+        )),
+    ),
+    (
         "config/pon/checkpoint-tile-task-v1.json",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -4516,6 +4523,27 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/fence_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/fence_tests.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/tests.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/src/store/native_budget.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -5528,6 +5556,111 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-service-settlement/src/types.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-sqlite-io-boundary/Cargo.toml",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-sqlite-io-boundary/Cargo.toml"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-sqlite-io-boundary/build.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-sqlite-io-boundary/build.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-sqlite-io-boundary/build_loader_paths.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-sqlite-io-boundary/build_loader_paths.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-sqlite-io-boundary/build_loader_paths_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-sqlite-io-boundary/build_loader_paths_tests.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-sqlite-io-boundary/src/ledger.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-sqlite-io-boundary/src/ledger.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-sqlite-io-boundary/src/lib.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-sqlite-io-boundary/src/lib.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-sqlite-io-boundary/src/owner.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-sqlite-io-boundary/src/owner.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-sqlite-io-boundary/src/sql.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-sqlite-io-boundary/src/sql.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-sqlite-io-boundary/src/transaction_scope.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-sqlite-io-boundary/src/transaction_scope.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-sqlite-io-boundary/src/transaction_scope_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-sqlite-io-boundary/src/transaction_scope_tests.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-sqlite-io-boundary/src/unix_abi.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-sqlite-io-boundary/src/unix_abi.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-sqlite-io-boundary/src/unsupported.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-sqlite-io-boundary/src/unsupported.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-sqlite-io-boundary/src/vfs.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-sqlite-io-boundary/src/vfs.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-sqlite-io-boundary/tests/native_held_directory_v1.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-sqlite-io-boundary/tests/native_held_directory_v1.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-sqlite-io-boundary/tests/native_public_api_v2.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-sqlite-io-boundary/tests/native_public_api_v2.rs"
         )),
     ),
     (

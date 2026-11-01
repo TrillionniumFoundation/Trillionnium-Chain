@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "scripts/ci/test_ci_execution.py"
+  ],
+  "cwd": "/workspace/scratch/295b0f1bca6b/chain",
+  "exit_code": 0,
+  "started_utc": "2026-11-01T08:26:39.629963+00:00",
+  "wall_ns": 23869210080,
+  "stdout": "ci-03.stdout",
+  "stderr": "ci-03.stderr"
+}

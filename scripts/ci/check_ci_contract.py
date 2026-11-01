@@ -23,7 +23,7 @@ SIGNED_STATE_PYTHON = '''      - name: Install isolated signed-state oracle Pyth
 '''
 ZERO_RUN_STEP = '''      - name: Execute native zero-matrix locality costs
         if: always()
-        run: python3 scripts/ci/run_cross_arch_cost.py --arch "${{ matrix.arch }}" --suite zero-locality --zero-version 2
+        run: env -u CARGO_INCREMENTAL python3 scripts/ci/run_cross_arch_cost.py --arch "${{ matrix.arch }}" --suite zero-locality --zero-version 2
 '''
 ZERO_COMPARE_STEP = '''      - name: Check zero-matrix streams and exact source identity
         if: always()
@@ -31,7 +31,7 @@ ZERO_COMPARE_STEP = '''      - name: Check zero-matrix streams and exact source 
 '''
 ONE_ZERO_RUN_STEP = '''      - name: Execute native one-zero rank-one locality costs
         if: always()
-        run: python3 scripts/ci/run_cross_arch_cost.py --arch "${{ matrix.arch }}" --suite one-zero-locality
+        run: env -u CARGO_INCREMENTAL python3 scripts/ci/run_cross_arch_cost.py --arch "${{ matrix.arch }}" --suite one-zero-locality
 '''
 ONE_ZERO_COMPARE_STEP = '''      - name: Check one-zero rank-one streams and exact source identity
         if: always()
@@ -39,7 +39,7 @@ ONE_ZERO_COMPARE_STEP = '''      - name: Check one-zero rank-one streams and exa
 '''
 MAINTENANCE_RUN_STEP = '''      - name: Execute native fixed maintenance producer and preparation costs
         if: always()
-        run: python3 scripts/ci/run_cross_arch_cost.py --arch "${{ matrix.arch }}" --suite maintenance-paired
+        run: env -u CARGO_INCREMENTAL python3 scripts/ci/run_cross_arch_cost.py --arch "${{ matrix.arch }}" --suite maintenance-paired
 '''
 MAINTENANCE_COMPARE_STEP = '''      - name: Check fixed maintenance streams and exact source identity
         if: always()
@@ -104,7 +104,7 @@ W1_REUSE_V3_JOB = r'''  cross-arch-w1-reuse-v3:
       - name: Install matching native formatter
         run: rustup component add --toolchain 1.95.0 rustfmt
       - name: Execute the complete native W1 actual reuse V3 grid
-        run: python3 scripts/ci/run_w1_reused_cost_v3.py --arch "${{ matrix.arch }}"
+        run: env -u CARGO_INCREMENTAL python3 scripts/ci/run_w1_reused_cost_v3.py --arch "${{ matrix.arch }}"
       - name: Verify V3 exact source and ordered merge after execution
         if: always()
         shell: bash
@@ -525,7 +525,7 @@ def validate(root: Path = ROOT) -> dict:
     require('      TRNM_COST_RUNNER_LABEL: ${{ matrix.runner }}\n' in costs and
             '        run: rustup toolchain install 1.95.0 --profile minimal\n' in costs,
             'observed runner label and pinned native release compiler required')
-    require('        run: python3 scripts/ci/run_cross_arch_cost.py --arch "${{ matrix.arch }}"\n' in costs,
+    require('        run: env -u CARGO_INCREMENTAL python3 scripts/ci/run_cross_arch_cost.py --arch "${{ matrix.arch }}"\n' in costs,
             'architecture names are not a substitute for native cost execution')
     require(ZERO_RUN_STEP in costs and text.count(ZERO_RUN_STEP) == 1,
             'separate zero locality native execution must run once in each existing architecture job, including after reused failure')
