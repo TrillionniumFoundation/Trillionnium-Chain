@@ -740,6 +740,9 @@ pub struct Node {
     commitment_cache: RefCell<Option<ActiveCommitment>>,
     // Bounded tree material only. Historical State still comes from all original SQL reads.
     historical_commitment_cache: RefCell<historical_commitment::HistoricalCommitments>,
+    // Fixed-size original hash/partition material for full-root fallbacks. Every
+    // State and SQL/root check remains fresh, including parents over 8 MiB.
+    commitment_root_arithmetic: pon_commitment::FullRootArithmetic,
     // Explicit opt-in only. Never persisted, exported or shared across Node owners.
     root_rejection_cache: RefCell<Option<Box<root_rejection_cache::Cache>>>,
     // Exact-input arithmetic only; never replaces an actual State/node/history
@@ -1524,6 +1527,7 @@ impl Node {
             public_history_test_snapshot: false,
             commitment_cache: RefCell::new(None),
             historical_commitment_cache: RefCell::default(),
+            commitment_root_arithmetic: pon_commitment::FullRootArithmetic::default(),
             root_rejection_cache: RefCell::new(None),
             authenticated_arithmetic: native_authenticated::ArithmeticCache::default(),
             commitment_observation: RefCell::new(None),
@@ -2481,7 +2485,13 @@ impl Node {
         let result = if growth_profile_v2::enabled(&self.settings.app) {
             pon_commitment::growth_reference_snapshot(actual, Some(expected), &self.settings.app)
         } else {
-            pon_commitment::checked_snapshot(actual, expected, prior, CacheLimits::default())
+            pon_commitment::checked_snapshot_with_arithmetic(
+                actual,
+                expected,
+                prior,
+                CacheLimits::default(),
+                &self.commitment_root_arithmetic,
+            )
         };
         match result {
             Ok(prepared) => {
@@ -2652,20 +2662,22 @@ impl Node {
             *self.commitment_observation.borrow_mut() = Some(result.commitment.observation.clone());
             return Ok((result, None));
         }
-        let (bound, observation) = pon_commitment::CheckedExecutionParent::check_and_bind(
-            actual,
-            current_root,
-            active_prior.as_ref().or(historical_prior.as_ref()),
-            CacheLimits::default(),
-        )
-        .map_err(|error| {
-            if error == "COMMITMENT_ROOT" {
-                self.invalidate_commitment();
-                Error::from("ROOT").local_integrity()
-            } else {
-                Error::from(error).local_integrity()
-            }
-        })?;
+        let (bound, observation) =
+            pon_commitment::CheckedExecutionParent::check_and_bind_with_arithmetic(
+                actual,
+                current_root,
+                active_prior.as_ref().or(historical_prior.as_ref()),
+                CacheLimits::default(),
+                &self.commitment_root_arithmetic,
+            )
+            .map_err(|error| {
+                if error == "COMMITMENT_ROOT" {
+                    self.invalidate_commitment();
+                    Error::from("ROOT").local_integrity()
+                } else {
+                    Error::from(error).local_integrity()
+                }
+            })?;
         if self.state_backend == StateBackend::AuthenticatedV1 {
             self.authenticated_arithmetic.history.parent_binding(
                 active_prior.is_some(),
@@ -2745,7 +2757,12 @@ impl Node {
         let prepared = if growth_profile_v2::enabled(&self.settings.app) {
             pon_commitment::growth_reference_snapshot(actual, None, &self.settings.app)?
         } else {
-            pon_commitment::derive_snapshot(actual, prior, CacheLimits::default())?
+            pon_commitment::derive_snapshot_with_arithmetic(
+                actual,
+                prior,
+                CacheLimits::default(),
+                &self.commitment_root_arithmetic,
+            )?
         };
         *self.commitment_observation.borrow_mut() = Some(prepared.observation.clone());
         Ok(prepared)
