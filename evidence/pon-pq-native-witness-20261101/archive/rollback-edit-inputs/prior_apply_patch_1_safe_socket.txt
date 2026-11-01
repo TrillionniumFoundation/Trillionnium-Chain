@@ -1,0 +1,127 @@
+*** Begin Patch
+*** Update File: /workspace/scratch/be76671b3e90/rollback-pq/trillionnium/crates/trnm-pon-node/Cargo.toml
+@@
+-rustix = { version = "1.1.4", features = ["fs", "process", "time"] }
++rustix = { version = "1.1.4", features = ["fs", "process", "time", "net", "event"] }
+*** Update File: /workspace/scratch/be76671b3e90/rollback-pq/trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs
+@@
+-        StateBackend::PqNetworkV2 | StateBackend::PqContinuousV3 => {
++        StateBackend::PqNetworkV2 | StateBackend::PqContinuousV3 | StateBackend::PqWitnessV3 => {
+@@
+         continuous_owner: None,
++        pq_witness: None,
+*** Update File: /workspace/scratch/be76671b3e90/rollback-pq/trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness.rs
+@@
+-    os::{
+-        fd::{AsRawFd, FromRawFd, OwnedFd},
+-        unix::{ffi::OsStrExt, net::UnixStream},
+-    },
++    os::unix::net::UnixStream,
+@@
+     ) -> Result<Self> {
++        ensure(cfg!(target_os = "linux"), "PQ_WITNESS_PLATFORM")?;
+         ensure(
+@@
+-fn connect(path: &Path, deadline: Instant) -> Result<UnixStream> {
+-    let bytes = path.as_os_str().as_bytes();
+-    let mut address: libc::sockaddr_un = unsafe { std::mem::zeroed() };
+-    ensure(
+-        !bytes.contains(&0) && bytes.len() < address.sun_path.len(),
+-        "PQ_WITNESS_ENDPOINT",
+-    )?;
+-    address.sun_family = libc::AF_UNIX as libc::sa_family_t;
+-    for (out, byte) in address.sun_path.iter_mut().zip(bytes) {
+-        *out = *byte as libc::c_char;
+-    }
+-    // The descriptor is owned immediately after creation; all failure paths close it.
+-    let raw = unsafe {
+-        libc::socket(
+-            libc::AF_UNIX,
+-            libc::SOCK_STREAM | libc::SOCK_NONBLOCK | libc::SOCK_CLOEXEC,
+-            0,
+-        )
+-    };
+-    ensure(raw >= 0, "PQ_WITNESS_CONNECT")?;
+-    let fd = unsafe { OwnedFd::from_raw_fd(raw) };
+-    let connected = unsafe {
+-        libc::connect(
+-            fd.as_raw_fd(),
+-            &address as *const _ as *const libc::sockaddr,
+-            std::mem::size_of_val(&address) as libc::socklen_t,
+-        )
+-    };
+-    if connected != 0 {
+-        let error = std::io::Error::last_os_error();
+-        // AF_UNIX backlog EAGAIN is refused immediately; never a blocking retry.
+-        ensure(
+-            error.raw_os_error() == Some(libc::EINPROGRESS),
+-            "PQ_WITNESS_CONNECT",
+-        )?;
+-        let mut poll = libc::pollfd {
+-            fd: fd.as_raw_fd(),
+-            events: libc::POLLOUT,
+-            revents: 0,
+-        };
+-        let timeout = remaining(deadline)?.as_millis().min(i32::MAX as u128) as i32;
+-        ensure(
+-            unsafe { libc::poll(&mut poll, 1, timeout) } > 0,
+-            "PQ_WITNESS_CONNECT",
+-        )?;
+-        let mut error = 0i32;
+-        let mut width = std::mem::size_of_val(&error) as libc::socklen_t;
+-        ensure(
+-            unsafe {
+-                libc::getsockopt(
+-                    fd.as_raw_fd(),
+-                    libc::SOL_SOCKET,
+-                    libc::SO_ERROR,
+-                    &mut error as *mut _ as *mut libc::c_void,
+-                    &mut width,
+-                )
+-            } == 0
+-                && error == 0,
+-            "PQ_WITNESS_CONNECT",
+-        )?;
+-    }
++#[cfg(target_os = "linux")]
++fn connect(path: &Path, deadline: Instant) -> Result<UnixStream> {
++    use rustix::{
++        event::{poll, PollFd, PollFlags, Timespec},
++        io::Errno,
++        net::{self, AddressFamily, SocketAddrUnix, SocketFlags, SocketType},
++    };
++
++    remaining(deadline)?;
++    let address = SocketAddrUnix::new(path).map_err(|_| "PQ_WITNESS_ENDPOINT")?;
++    // rustix returns an owned descriptor. No raw descriptor or unsafe escape is
++    // needed, and every refusal closes the socket through normal ownership.
++    let fd = net::socket_with(
++        AddressFamily::UNIX,
++        SocketType::STREAM,
++        SocketFlags::NONBLOCK | SocketFlags::CLOEXEC,
++        None,
++    )?;
++    match net::connect(&fd, &address) {
++        Ok(()) => {}
++        Err(Errno::INPROGRESS) => {
++            let timeout = Timespec::try_from(remaining(deadline)?)?;
++            let mut events = [PollFd::new(&fd, PollFlags::OUT)];
++            ensure(
++                poll(&mut events, Some(&timeout))? > 0
++                    && events[0].revents().contains(PollFlags::OUT),
++                "PQ_WITNESS_CONNECT",
++            )?;
++            net::sockopt::socket_error(&fd)??;
++        }
++        // AF_UNIX backlog EAGAIN and interrupted operations are refused
++        // immediately. Neither starts an unbounded blocking connect or retry.
++        Err(_) => return Err("PQ_WITNESS_CONNECT".into()),
++    }
+@@
+     Ok(stream)
+ }
++#[cfg(not(target_os = "linux"))]
++fn connect(_path: &Path, _deadline: Instant) -> Result<UnixStream> {
++    Err("PQ_WITNESS_PLATFORM".into())
++}
+*** End Patch

@@ -1,0 +1,153 @@
+{
+  "schema": "evidence-only-pq-network-recovery-v1",
+  "recovery_status": "EXACT_ARCHIVES_PARTIALLY_RECOVERED_NATIVE_IMPLEMENTATION_UNAVAILABLE",
+  "preservation_rule": "Original bytes and original statements are archived unchanged. Present loss and qualification boundaries are stated here rather than edited into historical documents.",
+  "current_limitations": {
+    "complete_native_implementation_sources_recovered": false,
+    "native_code_delivered_by_this_recovery": false,
+    "final_sealed_build_completed": false,
+    "original_large_state_budget_test_completed": false,
+    "original_history_budget_test_completed": false,
+    "whole_chain_pq_qualified": false,
+    "production_activation": false,
+    "new_builds_or_tests_executed_during_recovery": false,
+    "limitation_source": "Integrator report of environment reset and incomplete final sealed build/original budget tests; recovered historical receipts retain their earlier identities."
+  },
+  "exact_original_archives": [
+    {
+      "file": "WHOLE_CHAIN_PQ_ACCEPTANCE_TARGET_20261101.archived.md",
+      "original_path": "docs/security/WHOLE_CHAIN_PQ_ACCEPTANCE_TARGET_20261101.md",
+      "bytes": 13951,
+      "sha256": "fe2396088be9174d74d62c659ca65e1f62918c563271065d98f7befce8ab2c3e",
+      "original_sha256": "fe2396088be9174d74d62c659ca65e1f62918c563271065d98f7befce8ab2c3e",
+      "original_sha256_matches": true,
+      "complete_original_bytes_recovered": true,
+      "recovery_source": "Visible complete historical tool text; bytes validated against a pre-reset SHA256",
+      "old_scope": "Historical 199-line target. Its implementation-delivery wording predates the environment loss; preserved unchanged as an archive, not an active current delivery statement.",
+      "current_delivery_role": "ARCHIVE_ONLY"
+    },
+    {
+      "file": "witness-native-final-first.json",
+      "original_path": "network-pq/witness-native-final-first.json",
+      "bytes": 6531,
+      "sha256": "c7dbdba46e04e061e9570c96b4a4d6617f5fc540c548b1d357d208dcc755ab3e",
+      "original_sha256": "c7dbdba46e04e061e9570c96b4a4d6617f5fc540c548b1d357d208dcc755ab3e",
+      "original_sha256_matches": true,
+      "complete_original_bytes_recovered": true,
+      "recovery_source": "Visible complete historical tool text; bytes validated against a pre-reset SHA256",
+      "old_scope": "Original first 25-control execution receipt for binary 15832259...; not the later corrected or final sealed binary. Original raw log and implementation source are not restored by this receipt.",
+      "current_delivery_role": "ARCHIVE_ONLY"
+    },
+    {
+      "file": "ROLLBACK_INDEPENDENT_REVIEW.archived.md",
+      "original_path": "network-pq/ROLLBACK_INDEPENDENT_REVIEW.md",
+      "bytes": 12721,
+      "sha256": "3f501bbba224a4e32ab0a05452f874614ea52bd97af161137d0c74322b64e10a",
+      "original_sha256": "3f501bbba224a4e32ab0a05452f874614ea52bd97af161137d0c74322b64e10a",
+      "original_sha256_matches": true,
+      "complete_original_bytes_recovered": true,
+      "recovery_source": "Visible complete historical tool text; bytes validated against a pre-reset SHA256",
+      "old_scope": "Latest recovered internal review describing earlier 15832259... and 30564a06... binary executions. It does not establish present source availability or completion of the later sealed build.",
+      "current_delivery_role": "ARCHIVE_ONLY"
+    },
+    {
+      "file": "ROLLBACK_INDEPENDENT_REVIEW-first.archived.md",
+      "original_path": "network-pq/ROLLBACK_INDEPENDENT_REVIEW.md (earlier revision)",
+      "bytes": 10522,
+      "sha256": "a1d7a21074bfe16ddf00448c7783ff302988db384b72c14113fe79e4af320f40",
+      "original_sha256": "a1d7a21074bfe16ddf00448c7783ff302988db384b72c14113fe79e4af320f40",
+      "original_sha256_matches": true,
+      "complete_original_bytes_recovered": true,
+      "recovery_source": "Visible complete historical tool text; bytes validated against a pre-reset SHA256",
+      "old_scope": "Earlier exact review revision tied to the first 25-control execution; retained separately from its later update.",
+      "current_delivery_role": "ARCHIVE_ONLY"
+    },
+    {
+      "file": "BUILD_INPUT_READONLY_REVIEW_20261101.archived.md",
+      "original_path": "network-pq/BUILD_INPUT_READONLY_REVIEW_20261101.md",
+      "bytes": 6231,
+      "sha256": "1257e5807cce4fa0903678e9de63917d4fcae5187063242281b66fcd9c402b16",
+      "original_sha256": "1257e5807cce4fa0903678e9de63917d4fcae5187063242281b66fcd9c402b16",
+      "original_sha256_matches": true,
+      "complete_original_bytes_recovered": true,
+      "recovery_source": "Visible complete historical tool text; bytes validated against a pre-reset SHA256",
+      "old_scope": "Read-only pre-final-build input review. Recommendations and observed dep-info are historical; no completed final sealed rebuild is implied.",
+      "current_delivery_role": "ARCHIVE_ONLY"
+    },
+    {
+      "file": "trnm-pon-node-Cargo.archived.toml",
+      "original_path": "trillionnium/crates/trnm-pon-node/Cargo.toml",
+      "bytes": 1568,
+      "sha256": "70b3e902c1c57fffdd3b4e74563dd65643c0a48b4d313da60180f032ea211191",
+      "original_sha256": "70b3e902c1c57fffdd3b4e74563dd65643c0a48b4d313da60180f032ea211191",
+      "original_sha256_matches": true,
+      "complete_original_bytes_recovered": true,
+      "recovery_source": "Visible complete historical tool text; bytes validated against a pre-reset SHA256",
+      "old_scope": "One exact previously executed Cargo manifest, including rustix net/event. This isolated build file is not recovery or delivery of the missing native implementation.",
+      "current_delivery_role": "ARCHIVE_ONLY"
+    }
+  ],
+  "exact_original_archive_bytes": 51524,
+  "recovery_containers": [
+    {
+      "file": "recovered-stored-historical-blobs.json",
+      "bytes": 672072,
+      "sha256": "f443851a37ab3b2ecb5a281d6a25a205246d48d72a98513a2ba3da38b00d2c2d",
+      "original_whole_file_sha256": null,
+      "original_whole_file_match": "NOT_APPLICABLE_NEW_RECOVERY_CONTAINER",
+      "scope": "Container/index created during recovery from existing functions.store original texts. Each original content blob is separately verified against its original Git object SHA; no new native source."
+    },
+    {
+      "file": "stored-historical-blobs-verified.json",
+      "bytes": 10146,
+      "sha256": "b548977593a93d5e7b446fab60a687badef9a4e9fcd3e52bb92e50d06378e43e",
+      "original_whole_file_sha256": null,
+      "original_whole_file_match": "NOT_APPLICABLE_NEW_RECOVERY_CONTAINER",
+      "scope": "Container/index created during recovery from existing functions.store original texts. Each original content blob is separately verified against its original Git object SHA; no new native source."
+    }
+  ],
+  "stored_historical_blobs": {
+    "count": 37,
+    "original_bytes": 623252,
+    "all_original_git_blob_sha1_match": true,
+    "baseline": "0e9eac5d2a8cdb0a6f0cc7920f84e290e0d5d0d0",
+    "scope": "Previously existing public repository historical evidence. Not the unpublished PNQ2/witness changes."
+  },
+  "known_missing_exact_artifacts": [
+    {
+      "original": "network-pq/pnq2-live-boundary.patch",
+      "sha256": "76701e8343c10cb49711fdbd02e33c78a0abd168f898b8841edb15bcd099d81a",
+      "available": "DIGEST_ONLY_NO_EXACT_PAYLOAD"
+    },
+    {
+      "original": "network-pq/pnq2-witness-deadline-integration.patch",
+      "sha256": "fd73184d219eb144c8edcb86b42101934446bd17dd1608e0104490d89cb3596c",
+      "available": "DIGEST_ONLY_NO_EXACT_PAYLOAD"
+    },
+    {
+      "original": "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness.rs and its tests plus final native owner/ingress changes",
+      "available": "NO_COMPLETE_EXACT_SOURCE_PAYLOAD_IN_KNOWN_STORE_KEYS_OR_VISIBLE_FULL_TOOL_TEXT"
+    },
+    {
+      "original": "network-pq/witness-native-final-first.log",
+      "sha256": "cda16e0936842abc8217ed48764666fd176620af33c1dc9075299f69a06a952c",
+      "available": "DIGEST_AND_RECEIPT_ONLY_NO_FULL_RAW_LOG_RECONSTRUCTION"
+    },
+    {
+      "original": "network-pq/witness-native-corrected-final.json",
+      "sha256": "f2feccee5da0677992ec55c51564fbcf000b514dc7309f2877d2b399d47cc8f4",
+      "available": "DIGEST_AND_SELECTED_TOOL_SUMMARY_ONLY_NO_COMPLETE_EXACT_RECEIPT"
+    },
+    {
+      "original": "network-pq/witness-native-corrected-final.log",
+      "sha256": "57c26b4be3dfa5ca10d11b3e60cdad6245e930d84c2fc061906fe7e33bde4e65",
+      "available": "DIGEST_AND_TOOL_RESULT_ONLY_NO_FULL_RAW_LOG_RECONSTRUCTION"
+    },
+    {
+      "original": "network-pq/ROLLBACK_INDEPENDENT_REVIEW.json",
+      "sha256": "0b097cbd0a17fdc3d4e7d1dfff4e6f846c656d1739cd4bd13d59ac00b74a647a",
+      "available": "DIGEST_AND_PARTIAL_FIELDS_ONLY; FULL_MARKDOWN_REVIEW_RECOVERED_SEPARATELY"
+    }
+  ],
+  "unchanged_archival_links": "Relative links and old absolute paths inside archives intentionally retain original bytes and may not resolve in the recovery directory. They are provenance, not fabricated current files."
+}

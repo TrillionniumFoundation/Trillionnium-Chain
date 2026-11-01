@@ -1,0 +1,42 @@
+{
+  "schema": "chain-pq-documentation-source-checks-v1",
+  "scope": "Documentation/archive branch only; existing negative source checks, not native runtime or system security acceptance.",
+  "baseline": "0e9eac5d2a8cdb0a6f0cc7920f84e290e0d5d0d0",
+  "runtime_sources_changed": false,
+  "results": [
+    {
+      "command": [
+        "python3",
+        "scripts/ci/test_pq_chain_claim_guard.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.17108594300043478,
+      "log": "test_pq_chain_claim_guard.log.txt",
+      "log_sha256": "13b3968ffffc51bbf26b0acc8ac94b65f261f87f643f6fbef782bba600cc3d88"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/test_pq_research_integration.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 10.448512708999715,
+      "log": "test_pq_research_integration.log.txt",
+      "log_sha256": "58927f2a84bb58b89100b9ae8591771115ca1ceef86f632718334dbfc053719b"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/test_pq_authority_surface_scan.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.0853633900001114,
+      "log": "test_pq_authority_surface_scan.log.txt",
+      "log_sha256": "0bbacf28d78b4af9acb71b4c292995a202a69f4a29f3c5b162e4dfe1ac4c23d5"
+    }
+  ],
+  "all_selected_source_checks_passed": true
+}
