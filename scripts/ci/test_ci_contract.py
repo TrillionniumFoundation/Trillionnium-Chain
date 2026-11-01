@@ -401,7 +401,7 @@ class W1ReuseV3LaneTests(unittest.TestCase):
         self.assertEqual(report['w1_actual_reuse_v3_cells'], 4)
         text = (ROOT / '.github/workflows/trnm-required-baseline.yml').read_text()
         self.assertEqual(text.count('  cross-arch-w1-reuse-v3:\n'), 1)
-        self.assertEqual(text.count('run: python3 scripts/ci/run_w1_reused_cost_v3.py'), 1)
+        self.assertEqual(text.count('run: env -u CARGO_INCREMENTAL python3 scripts/ci/run_w1_reused_cost_v3.py'), 1)
 
     def test_v3_cannot_skip_rename_rebudget_or_substitute_local_observation(self):
         from check_ci_contract import W1_REUSE_V3_JOB, check_w1_reuse_v3
@@ -414,7 +414,8 @@ class W1ReuseV3LaneTests(unittest.TestCase):
             ('--expected-base "$TRNM_EXPECTED_BASE_SHA" ', ''),
             ('--expected-merge "$TRNM_EXPECTED_SOURCE_SHA"', '--expected-merge "$TRNM_EXPECTED_CANDIDATE_SHA"'),
             ('--output "$RUNNER_TEMP/ci-observations/source-after.json"', '--output /tmp/old-source.json'),
-            ('run: python3 scripts/ci/run_w1_reused_cost_v3.py', 'run: true # python3 scripts/ci/run_w1_reused_cost_v3.py'),
+            ('run: env -u CARGO_INCREMENTAL python3 scripts/ci/run_w1_reused_cost_v3.py', 'run: true # env -u CARGO_INCREMENTAL python3 scripts/ci/run_w1_reused_cost_v3.py'),
+            ('run: env -u CARGO_INCREMENTAL python3 scripts/ci/run_w1_reused_cost_v3.py', 'run: python3 scripts/ci/run_w1_reused_cost_v3.py'),
             ('run_w1_reused_cost_v3.py --arch', 'run_w1_reused_cost_v3.py --local --arch'),
             ('run: bash scripts/project-preflight.sh --audit', 'run: true # bash scripts/project-preflight.sh --audit'),
             ('      - name: Check original repository boundary before native V3 build\n        run: bash scripts/project-preflight.sh --audit\n', ''),
