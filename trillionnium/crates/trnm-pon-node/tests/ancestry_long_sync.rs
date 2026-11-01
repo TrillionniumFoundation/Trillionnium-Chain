@@ -226,13 +226,31 @@ fn run(directory: &Path) -> Result<serde_json::Value> {
     let server_pin = identity(111).public_key().to_owned();
     let policy = PublicPolicy::new(8, Duration::from_secs(2))?;
     let worker = thread::spawn(move || {
-        public_v2::serve_public_protected_v2(
+        let service_started = Instant::now();
+        let stop_when_exited = signal.clone();
+        let service_result = public_v2::serve_public_protected_v2(
             listener,
             node,
             Duration::from_secs(1800),
             signal,
             PublicServer::new(identity(111), policy).unwrap(),
-        )
+        );
+        // Retain the original finite lifetime and all RPC/proof budgets.
+        // An observed refusal alone cannot distinguish a timed server exit
+        // from a transport failure unless the real server exit is recorded.
+        println!(
+            "{}",
+            json!({
+                "schema": "native-ancestry-public-server-exit-evidence-v1",
+                "configured_lifetime_seconds": 1800,
+                "service_elapsed_ns": service_started.elapsed().as_nanos(),
+                "stop_requested_when_exited": stop_when_exited.load(Ordering::SeqCst),
+                "server_result": service_result.as_ref().map(|_| "ok").map_err(ToString::to_string),
+                "scope": "actual native loopback server; observation only, not a readiness or qualification verdict",
+                "production_activation": false
+            })
+        );
+        service_result
     });
     let sync_result = (|| -> Result<(u64, u64, u64)> {
         let mut confirmer = Node::open(&directory.join("confirmer"), settings.clone(), 2)?;
@@ -310,6 +328,18 @@ fn run(directory: &Path) -> Result<serde_json::Value> {
         }
         Ok((count, trials, solve_ns))
     })();
+    // Preserve the failing independent-replay error before requesting the
+    // original server shutdown. No test assertion or acceptance is weakened.
+    println!(
+        "{}",
+        json!({
+            "schema": "native-ancestry-independent-sync-exit-evidence-v1",
+            "elapsed_ns": started.elapsed().as_nanos(),
+            "sync_error": sync_result.as_ref().err().map(ToString::to_string),
+            "scope": "observed signed full-history replay, not a qualification verdict",
+            "production_activation": false
+        })
+    );
     stop.store(true, Ordering::SeqCst);
     let metrics = worker.join().map_err(|_| "SERVER_JOIN")??;
     let (confirmed, solve_trials, solve_ns) = sync_result?;
