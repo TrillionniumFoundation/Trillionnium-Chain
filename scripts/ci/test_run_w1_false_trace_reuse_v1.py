@@ -8,6 +8,7 @@ import os
 from pathlib import Path
 import sys
 import tempfile
+from types import SimpleNamespace
 import unittest
 from unittest import mock
 
@@ -22,7 +23,9 @@ class ExecutionBoundaryTests(unittest.TestCase):
                 reader_error=None, alerts=None,
                 configuration=None, configuration_place="home", change_configuration=None,
                 copy_mismatch=False, change_copy_during_campaign=False,
-                local=True):
+                change_binary_during_campaign=False, mode=None, shard_exits=None,
+                shard_timeouts=(), capture_error_shards=(), shard_reader_error=None,
+                wrong_shard_selection=None, grid_reader_error=None, local=True):
         with tempfile.TemporaryDirectory(prefix="false-reuse-v1-owner-test-") as directory:
             root = Path(directory)
             output, target = root / "receipt", root / "target"
@@ -37,8 +40,36 @@ class ExecutionBoundaryTests(unittest.TestCase):
                 config_dir.mkdir(exist_ok=True)
                 config_file.write_text(configuration)
             commands = []
-            native = target / "x86_64-unknown-linux-gnu/release/examples" / runner.EXAMPLE
+            example = runner.LEGAL_EXAMPLE if mode == "legal-strategy" else runner.EXAMPLE
+            native = target / "x86_64-unknown-linux-gnu/release/examples" / example
             source = {"source_state": "committed-clean", "commit": "a" * 40}
+
+            classes = ("full-rank-field", "zero", "continuity-maintenance-v1",
+                "one-zero-left-rank-one", "one-zero-right-rank-one")
+            selections = [{"class": name, "target_index": target, "reuse_winners": horizon}
+                for name in classes for target in (0, 1) for horizon in (1, 8, 64)]
+
+            def analyze_shard(path):
+                index = int(path.stem.split("-")[-1])
+                if index == shard_reader_error:
+                    raise ValueError("synthetic malformed shard records")
+                selection = dict(selections[index])
+                if index == wrong_shard_selection:
+                    selection["reuse_winners"] = 999
+                return {"selection": selection, "semantic_alerts": alerts or []}
+
+            def analyze_grid(paths):
+                self.assertEqual([path.name for path in paths],
+                    [f"campaign-{index:02d}.stdout" for index in range(30)])
+                if grid_reader_error is not None:
+                    raise grid_reader_error
+                return {"semantic_alerts": alerts or [], "synthetic_paths_seen": [path.name for path in paths]}
+
+            legal_reader = SimpleNamespace(CLASSES=classes, TARGETS=("7f" + "ff" * 31, "07" + "ff" * 31),
+                HORIZONS=(1, 8, 64), SELECTOR="--legal-strategy-v1",
+                FALSE_FLAGS={key: value for key, value in runner.FALSE_FLAGS.items()
+                             if key != "valid_proof_acquisition_used"},
+                analyze_shard=analyze_shard, analyze=analyze_grid)
 
             def capture(command, destination, name, *, timeout, cwd):
                 self.assertEqual(cwd, checkout)
@@ -46,6 +77,8 @@ class ExecutionBoundaryTests(unittest.TestCase):
                 stdout, stderr = destination / (name + ".stdout"), destination / (name + ".stderr")
                 stdout.write_text("synthetic boundary fixture\n")
                 stderr.write_text("")
+                campaign = name == "campaign" or name.startswith("campaign-")
+                index = int(name.split("-")[-1]) if name.startswith("campaign-") else None
                 if name == "rustc":
                     stdout.write_text("rustc\nrelease: " + compiler_release + "\nhost: " + compiler_host + "\n")
                 if name == "build":
@@ -54,10 +87,16 @@ class ExecutionBoundaryTests(unittest.TestCase):
                     if change_configuration is not None:
                         config_dir.mkdir(exist_ok=True)
                         config_file.write_text(change_configuration)
-                if name == "campaign" and change_copy_during_campaign:
-                    (destination / runner.EXAMPLE).write_bytes(b"changed retained binary during campaign")
-                return {"command": command, "exit_code": 1 if name == failed_command else campaign_exit if name == "campaign" else 0,
-                    "timed_out": name == "campaign" and campaign_timeout, "timeout_seconds": timeout,
+                if campaign and change_copy_during_campaign:
+                    (destination / example).write_bytes(b"changed retained binary during campaign")
+                if campaign and change_binary_during_campaign:
+                    native.write_bytes(b"changed executed binary during campaign")
+                if index is not None and index in capture_error_shards:
+                    raise OSError("synthetic capture failure after opening raw logs")
+                exit_code = (1 if name == failed_command else
+                    (shard_exits or {}).get(index, campaign_exit) if campaign else 0)
+                return {"command": command, "exit_code": exit_code,
+                    "timed_out": campaign and (campaign_timeout or index in shard_timeouts), "timeout_seconds": timeout,
                     "stdout": stdout.name, "stderr": stderr.name}
 
             actual_copy = runner.shutil.copyfile
@@ -67,15 +106,16 @@ class ExecutionBoundaryTests(unittest.TestCase):
                     Path(destination).write_text("synthetic CPU identity, not hardware evidence\n")
                     return destination
                 copied = actual_copy(source, destination)
-                if copy_mismatch and Path(destination) == output / runner.EXAMPLE:
+                if copy_mismatch and Path(destination) == output / example:
                     Path(destination).write_bytes(b"mismatched retained binary copy")
                 return copied
 
             env = {"CARGO_TARGET_DIR": str(target), "CARGO_HOME": str(cargo_home),
                    **(environment or {})}
             with mock.patch.dict(os.environ, env, clear=True), \
-                 mock.patch.object(sys, "argv", ["runner", "--arch", "x64"] + (["--local"] if local else [])), \
-                 mock.patch.object(runner, "receipt_root", return_value=output), \
+                 mock.patch.object(sys, "argv", ["runner", "--arch", "x64"] + (["--local"] if local else [])
+                     + (["--" + mode] if mode is not None else [])), \
+                 mock.patch.object(runner, "receipt_root", return_value=output) as receipts, \
                  mock.patch.object(runner, "ROOT", checkout), \
                  mock.patch.object(runner, "source", side_effect=[before or source, after or source]), \
                  mock.patch.object(runner.platform, "system", return_value="Linux"), \
@@ -83,9 +123,15 @@ class ExecutionBoundaryTests(unittest.TestCase):
                  mock.patch.object(runner, "capture", side_effect=capture), \
                  mock.patch.object(runner.shutil, "copyfile", side_effect=copy), \
                  mock.patch.object(runner, "analyze", side_effect=reader_error,
-                    return_value={"semantic_alerts": alerts or []}), \
+                    return_value={"semantic_alerts": alerts or []}) as original_reader, \
+                 mock.patch.object(runner, "legal_strategy_reader", return_value=legal_reader), \
                  redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
                 code = runner.main()
+                receipts.assert_called_once_with("w1-legal-strategy-v1" if mode == "legal-strategy" else
+                    "w1-full-limb-reuse-v1" if mode == "full-limb" else "w1-false-trace-reuse-v1")
+                if original_reader.called:
+                    expected = {"full_limb": True} if mode == "full-limb" else {}
+                    self.assertEqual(original_reader.call_args.kwargs, expected)
             return code, json.loads((output / "manifest.json").read_text()), commands
 
     def test_explicit_original_release_command_and_selector_are_retained(self):
@@ -329,6 +375,161 @@ class ExecutionBoundaryTests(unittest.TestCase):
         self.assertNotEqual(code, 0)
         self.assertEqual(commands, [])
         self.assertIn("hosted runner context", report["error"])
+
+    def test_full_limb_mode_keeps_original_binary_but_uses_separate_explicit_contract(self):
+        code, report, commands = self.observe(mode="full-limb")
+        self.assertEqual(code, 0)
+        self.assertEqual(report["schema"], "trnm-w1-full-limb-reuse-execution-v1")
+        self.assertEqual(commands[-2][-1], runner.EXAMPLE)
+        self.assertEqual(commands[-1][-1], "--false-trace-full-limb-v1")
+        self.assertEqual([item["timeout_seconds"] for item in report["observations"]],
+                         [30, 30, 30, 900, 300])
+        for flag in runner.FALSE_FLAGS:
+            self.assertIs(report[flag], False)
+
+    def test_legal_mode_captures_all_thirty_fixed_shards_and_complete_grid(self):
+        code, report, commands = self.observe(mode="legal-strategy")
+        self.assertEqual(code, 0)
+        self.assertEqual(report["schema"], "trnm-w1-legal-strategy-execution-v1")
+        self.assertEqual(commands[3][-1], runner.LEGAL_EXAMPLE)
+        self.assertEqual(len(report["shards"]), 30)
+        self.assertEqual(len(report["observations"]), 34)
+        self.assertEqual(len(report["reader"]["synthetic_paths_seen"]), 30)
+        self.assertNotIn("valid_proof_acquisition_used", report)
+        self.assertEqual({row["result"] for row in report["shards"]}, {"PASS"})
+        for index, (command, row) in enumerate(zip(commands[4:], report["shards"])):
+            selection = row["configuration"]
+            self.assertEqual(command[1:], ["--legal-strategy-v1", "--class", selection["class"],
+                "--target-index", str(selection["target_index"]),
+                "--reuse-winners", str(selection["reuse_winners"])])
+            self.assertEqual(row["observation"]["timeout_seconds"], 300)
+            for extension in ("stdout", "stderr"):
+                self.assertIn(f"campaign-{index:02d}.{extension}", report["artifact_sha256"])
+        self.assertEqual({report[key] for key in (
+            "binary_sha256_before", "binary_sha256_after",
+            "retained_binary_sha256_before", "retained_binary_sha256_after")},
+            {report["artifact_sha256"][runner.LEGAL_EXAMPLE]})
+
+    def test_legal_first_middle_or_last_native_failure_cannot_be_dropped(self):
+        for index in (0, 14, 29):
+            with self.subTest(index=index):
+                code, report, commands = self.observe(mode="legal-strategy", shard_exits={index: 7})
+                self.assertNotEqual(code, 0)
+                self.assertEqual(len(commands), 34)
+                self.assertEqual(len(report["shards"]), 30)
+                self.assertEqual([i for i, row in enumerate(report["shards"]) if row["result"] == "FAIL"], [index])
+                self.assertEqual(report["shards"][index]["observation"]["exit_code"], 7)
+                self.assertEqual(len(report["reader"]["synthetic_paths_seen"]), 30)
+                self.assertEqual(report["binary_sha256_after"], report["binary_sha256_before"])
+                self.assertIn("complete-grid checks failed", report["error"])
+
+    def test_all_thirty_failed_native_shards_remain_failed_even_if_reader_returns_consistency(self):
+        code, report, commands = self.observe(mode="legal-strategy", campaign_exit=1)
+        self.assertNotEqual(code, 0)
+        self.assertEqual(len(commands), 34)
+        self.assertEqual(len(report["shards"]), 30)
+        self.assertEqual({row["result"] for row in report["shards"]}, {"FAIL"})
+        self.assertEqual({row["observation"]["exit_code"] for row in report["shards"]}, {1})
+        self.assertEqual(len(report["reader"]["synthetic_paths_seen"]), 30)
+
+    def test_legal_last_timeout_at_zero_exit_is_not_a_successful_prefix(self):
+        code, report, commands = self.observe(mode="legal-strategy", shard_timeouts=(29,))
+        self.assertNotEqual(code, 0)
+        self.assertEqual(len(commands), 34)
+        self.assertEqual(report["shards"][-1]["result"], "FAIL")
+        self.assertEqual(report["shards"][-1]["observation"]["exit_code"], 0)
+        self.assertTrue(report["shards"][-1]["observation"]["timed_out"])
+        self.assertEqual(report["shards"][-1]["observation"]["timeout_seconds"], 300)
+
+    def test_legal_capture_error_retains_logs_without_fabricating_an_exit_and_continues(self):
+        code, report, commands = self.observe(mode="legal-strategy", capture_error_shards=(0, 29))
+        self.assertNotEqual(code, 0)
+        self.assertEqual(len(commands), 34)
+        self.assertEqual(len(report["shards"]), 30)
+        self.assertEqual(len(report["observations"]), 32)
+        for index in (0, 29):
+            row = report["shards"][index]
+            self.assertEqual(row["result"], "FAIL")
+            self.assertIn("capture_error", row)
+            self.assertNotIn("observation", row)
+            self.assertIn(f"campaign-{index:02d}.stdout", report["artifact_sha256"])
+            self.assertIn(f"campaign-{index:02d}.stderr", report["artifact_sha256"])
+
+    def test_legal_incomplete_or_mislabeled_shard_records_cannot_pass_after_all_commands(self):
+        for fields in ({"shard_reader_error": 0}, {"shard_reader_error": 29},
+                       {"wrong_shard_selection": 0}, {"wrong_shard_selection": 29}):
+            with self.subTest(fields=fields):
+                code, report, commands = self.observe(mode="legal-strategy", **fields)
+                self.assertNotEqual(code, 0)
+                self.assertEqual(len(commands), 34)
+                self.assertEqual(len(report["shards"]), 30)
+                self.assertEqual(sum(row["result"] == "FAIL" for row in report["shards"]), 1)
+
+    def test_legal_complete_grid_reader_failure_overrides_individual_shard_success(self):
+        code, report, commands = self.observe(mode="legal-strategy",
+            grid_reader_error=ValueError("synthetic duplicate or incomplete full grid"))
+        self.assertNotEqual(code, 0)
+        self.assertEqual(len(commands), 34)
+        self.assertEqual({row["result"] for row in report["shards"]}, {"PASS"})
+        self.assertIn("incomplete full grid", report["reader_error"])
+        self.assertNotIn("reader", report)
+
+    def test_legal_native_verifier_disagreement_remains_an_explicit_failure(self):
+        code, report, _ = self.observe(mode="legal-strategy", alerts=[{"outcome": "Transcript"}])
+        self.assertNotEqual(code, 0)
+        self.assertEqual(len(report["shards"]), 30)
+        self.assertEqual(report["reader"]["semantic_alerts"], [{"outcome": "Transcript"}])
+        self.assertIn("verifier disagreement", report["reader_error"])
+
+    def test_separate_modes_preserve_source_binary_and_retained_copy_guards(self):
+        for mode in ("legal-strategy", "full-limb"):
+            for fields in ({"after": {"source_state": "committed-clean", "commit": "b" * 40}},
+                           {"change_binary_during_campaign": True},
+                           {"change_copy_during_campaign": True}):
+                with self.subTest(mode=mode, fields=fields):
+                    code, report, commands = self.observe(mode=mode, **fields)
+                    self.assertNotEqual(code, 0)
+                    self.assertEqual(len(commands), 34 if mode == "legal-strategy" else 5)
+                    self.assertEqual(report["result"], "FAIL")
+                    if "after" in fields:
+                        self.assertTrue(report["source_changed"])
+                    else:
+                        self.assertIn("binary", report["error"])
+
+    def test_separate_modes_cannot_bypass_original_early_guards(self):
+        for mode in ("legal-strategy", "full-limb"):
+            for fields in ({"before": {"source_state": "dirty-candidate"}},
+                           {"environment": {"TRNM_EXPECTED_SOURCE_SHA": "b" * 40}},
+                           {"environment": {"RUSTFLAGS": "-C opt-level=0"}},
+                           {"configuration": '[build]\nrustc-wrapper="/synthetic/wrapper"\n'},
+                           {"local": False}, {"machine": "aarch64"}):
+                with self.subTest(mode=mode, fields=fields):
+                    code, report, commands = self.observe(mode=mode, **fields)
+                    self.assertNotEqual(code, 0)
+                    self.assertEqual(commands, [])
+                    self.assertNotIn("shards", report)
+                    self.assertNotIn("reader", report)
+
+    def test_separate_modes_cannot_bypass_original_elf_or_copy_guards(self):
+        for mode in ("legal-strategy", "full-limb"):
+            for fields in ({"elf": 183}, {"copy_mismatch": True}):
+                with self.subTest(mode=mode, fields=fields):
+                    code, report, commands = self.observe(mode=mode, **fields)
+                    self.assertNotEqual(code, 0)
+                    self.assertEqual(len(commands), 4)
+                    self.assertNotIn("shards", report)
+                    self.assertNotIn("reader", report)
+
+    def test_separate_modes_are_mutually_exclusive_before_any_receipt_or_command(self):
+        with mock.patch.object(sys, "argv", ["runner", "--arch", "x64", "--local",
+                                             "--legal-strategy", "--full-limb"]), \
+             mock.patch.object(runner, "receipt_root") as receipts, \
+             mock.patch.object(runner, "capture") as capture, \
+             redirect_stderr(io.StringIO()), self.assertRaises(SystemExit) as error:
+            runner.main()
+        self.assertEqual(error.exception.code, 2)
+        receipts.assert_not_called()
+        capture.assert_not_called()
 
 
 if __name__ == "__main__":

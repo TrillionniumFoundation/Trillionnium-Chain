@@ -451,6 +451,41 @@ pub fn verify_limb_with_progress<E>(
     )
 }
 
+/// Explicit full-replay candidate using bounded u64 limb sums for every
+/// matrix multiplication, including noise and product corrections. It keeps
+/// the default, transcript-only limb and scalar reference paths unchanged.
+pub fn verify_full_limb(
+    challenge: Hash,
+    expected_task: Hash,
+    target: Hash,
+    bytes: &[u8],
+) -> Result<VerifiedWork, WorkError> {
+    relation_only(verify_full_limb_with_progress(
+        challenge,
+        expected_task,
+        target,
+        bytes,
+        &mut no_cancellation,
+    ))
+}
+
+pub fn verify_full_limb_with_progress<E>(
+    challenge: Hash,
+    expected_task: Hash,
+    target: Hash,
+    bytes: &[u8],
+    progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
+) -> Result<VerifiedWork, VerificationError<E>> {
+    verify_with_kernel(
+        challenge,
+        expected_task,
+        target,
+        bytes,
+        progress,
+        VerificationKernel::FullLimb,
+    )
+}
+
 /// Explicit complete-replay comparison with eight independent column accumulators.
 /// The original default and scalar reference remain available unchanged. This
 /// changes memory access and exact integer accumulation, never the work relation.
@@ -527,6 +562,7 @@ enum VerificationKernel {
     Transposed,
     LimbTranscript,
     ColumnLimbTranscript,
+    FullLimb,
 }
 
 struct CheckedProofInputs {
@@ -559,6 +595,7 @@ fn checked_proof_inputs(
         VerificationKernel::ScalarReference => 3 * CELLS,
         VerificationKernel::Transposed
         | VerificationKernel::LimbTranscript
+        | VerificationKernel::FullLimb
         | VerificationKernel::ColumnLimbTranscript => 2 * CELLS,
     };
     let matrices: Vec<u32> = bytes[4..4 + decoded_cells * 4]
@@ -572,6 +609,7 @@ fn checked_proof_inputs(
         VerificationKernel::ScalarReference => validate(claimed)?,
         VerificationKernel::Transposed
         | VerificationKernel::LimbTranscript
+        | VerificationKernel::FullLimb
         | VerificationKernel::ColumnLimbTranscript => {
             // C's field check still precedes A/B, task, ticket and callbacks.
             // No unaligned cast, host-endian assumption or reduced field value.
@@ -588,6 +626,7 @@ fn checked_proof_inputs(
         VerificationKernel::ScalarReference => task_id(a, b)?,
         VerificationKernel::Transposed
         | VerificationKernel::LimbTranscript
+        | VerificationKernel::FullLimb
         | VerificationKernel::ColumnLimbTranscript => {
             validate(a)?;
             validate(b)?;
@@ -650,7 +689,14 @@ fn verify_with_kernel<E>(
             evaluate_transposed_with_progress::<true, E>(challenge, a, b, progress)?
         }
         VerificationKernel::ColumnLimbTranscript => {
-            evaluate_transcript_kernel_with_progress::<false, true, E>(challenge, a, b, progress)?
+            evaluate_transcript_kernel_with_progress::<false, true, false, E>(
+                challenge, a, b, progress,
+            )?
+        }
+        VerificationKernel::FullLimb => {
+            evaluate_transcript_kernel_with_progress::<true, false, true, E>(
+                challenge, a, b, progress,
+            )?
         }
     };
     // PNW1 submits only a final digest: every transcript update is still replayed.
@@ -665,12 +711,16 @@ fn verify_with_kernel<E>(
         | VerificationKernel::ColumnLimbTranscript => {
             finish_transposed_with_progress(a, evaluated, progress)
         }
+        VerificationKernel::FullLimb => {
+            finish_transposed_kernel_with_progress::<true, E>(a, evaluated, progress)
+        }
     }
     .map_err(VerificationError::Cancelled)?;
     let matches_claim = match kernel {
         VerificationKernel::ScalarReference => product == claimed,
         VerificationKernel::Transposed
         | VerificationKernel::LimbTranscript
+        | VerificationKernel::FullLimb
         | VerificationKernel::ColumnLimbTranscript => product
             .iter()
             .flat_map(|word| word.to_le_bytes())
@@ -715,6 +765,17 @@ fn transposed_mul_with_progress<E>(
     cols: usize,
     progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
 ) -> Result<Vec<u32>, E> {
+    transposed_mul_kernel_with_progress::<false, E>(a, b, rows, inner, cols, progress)
+}
+
+fn transposed_mul_kernel_with_progress<const LIMB: bool, E>(
+    a: &[u32],
+    b: &[u32],
+    rows: usize,
+    inner: usize,
+    cols: usize,
+    progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
+) -> Result<Vec<u32>, E> {
     debug_assert!(inner <= N);
     let mut transposed = vec![0; b.len()];
     for k in 0..inner {
@@ -726,11 +787,19 @@ fn transposed_mul_with_progress<E>(
     for i in 0..rows {
         progress(VerificationProgress::MatrixRow { row: i })?;
         for j in 0..cols {
-            let mut sum = 0_u128;
-            for k in 0..inner {
-                sum += u128::from(a[i * inner + k]) * u128::from(transposed[j * inner + k]);
-            }
-            out[i * cols + j] = producer_reduce(sum);
+            out[i * cols + j] = if LIMB {
+                maintenance_limb::dot_bounded(
+                    &a[i * inner..(i + 1) * inner],
+                    &transposed[j * inner..(j + 1) * inner],
+                    0,
+                )
+            } else {
+                let mut sum = 0_u128;
+                for k in 0..inner {
+                    sum += u128::from(a[i * inner + k]) * u128::from(transposed[j * inner + k]);
+                }
+                producer_reduce(sum)
+            };
         }
     }
     Ok(out)
@@ -745,12 +814,15 @@ fn evaluate_transposed_with_progress<const LIMB_TRANSCRIPT: bool, E>(
     b: &[u32],
     progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
 ) -> Result<TranscriptEvaluation, VerificationError<E>> {
-    evaluate_transcript_kernel_with_progress::<LIMB_TRANSCRIPT, false, E>(challenge, a, b, progress)
+    evaluate_transcript_kernel_with_progress::<LIMB_TRANSCRIPT, false, false, E>(
+        challenge, a, b, progress,
+    )
 }
 
 fn evaluate_transcript_kernel_with_progress<
     const LIMB_TRANSCRIPT: bool,
     const COLUMN_LIMB: bool,
+    const FULL_LIMB: bool,
     E,
 >(
     challenge: Hash,
@@ -766,9 +838,9 @@ fn evaluate_transcript_kernel_with_progress<
     let er = expand_with_progress(challenge, 1, R * N, progress)?;
     let fl = expand_with_progress(challenge, 2, N * R, progress)?;
     let fr = expand_with_progress(challenge, 3, R * N, progress)?;
-    let e = transposed_mul_with_progress(&el, &er, N, R, N, progress)
+    let e = transposed_mul_kernel_with_progress::<FULL_LIMB, E>(&el, &er, N, R, N, progress)
         .map_err(VerificationError::Cancelled)?;
-    let f = transposed_mul_with_progress(&fl, &fr, N, R, N, progress)
+    let f = transposed_mul_kernel_with_progress::<FULL_LIMB, E>(&fl, &fr, N, R, N, progress)
         .map_err(VerificationError::Cancelled)?;
     let ap: Vec<u32> = a
         .iter()
@@ -908,13 +980,24 @@ fn finish_transposed_with_progress<E>(
     evaluated: TranscriptEvaluation,
     progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
 ) -> Result<Vec<u32>, E> {
+    finish_transposed_kernel_with_progress::<false, E>(a, evaluated, progress)
+}
+
+fn finish_transposed_kernel_with_progress<const LIMB: bool, E>(
+    a: &[u32],
+    evaluated: TranscriptEvaluation,
+    progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
+) -> Result<Vec<u32>, E> {
     progress(VerificationProgress::BeforeProduct)?;
     #[cfg(test)]
     PRODUCT_RECONSTRUCTIONS.with(|count| count.set(count.get() + 1));
-    let left = transposed_mul_with_progress(a, &evaluated.fl, N, N, R, progress)?;
-    let correction1 = transposed_mul_with_progress(&left, &evaluated.fr, N, R, N, progress)?;
-    let right = transposed_mul_with_progress(&evaluated.er, &evaluated.bp, R, N, N, progress)?;
-    let correction2 = transposed_mul_with_progress(&evaluated.el, &right, N, R, N, progress)?;
+    let left = transposed_mul_kernel_with_progress::<LIMB, E>(a, &evaluated.fl, N, N, R, progress)?;
+    let correction1 =
+        transposed_mul_kernel_with_progress::<LIMB, E>(&left, &evaluated.fr, N, R, N, progress)?;
+    let right =
+        transposed_mul_kernel_with_progress::<LIMB, E>(&evaluated.er, &evaluated.bp, R, N, N, progress)?;
+    let correction2 =
+        transposed_mul_kernel_with_progress::<LIMB, E>(&evaluated.el, &right, N, R, N, progress)?;
     Ok(evaluated
         .cp
         .iter()
@@ -1167,6 +1250,7 @@ mod tests {
             VerificationKernel::Transposed,
             VerificationKernel::LimbTranscript,
             VerificationKernel::ColumnLimbTranscript,
+            VerificationKernel::FullLimb,
         ];
         for cell in [0, CELLS / 2, CELLS - 1] {
             let offset = 4 + 2 * CELLS * 4 + cell * 4;
@@ -1230,6 +1314,7 @@ mod tests {
             VerificationKernel::Transposed,
             VerificationKernel::LimbTranscript,
             VerificationKernel::ColumnLimbTranscript,
+            VerificationKernel::FullLimb,
         ] {
             let mut calls = 0;
             let result = verify_with_kernel(
@@ -1314,6 +1399,7 @@ mod tests {
             VerificationKernel::Transposed,
             VerificationKernel::LimbTranscript,
             VerificationKernel::ColumnLimbTranscript,
+            VerificationKernel::FullLimb,
         ] {
             PRODUCT_RECONSTRUCTIONS.with(|count| count.set(0));
             let mut tiles = 0;
@@ -1371,6 +1457,7 @@ mod tests {
                     VerificationKernel::Transposed,
                     VerificationKernel::LimbTranscript,
                     VerificationKernel::ColumnLimbTranscript,
+                    VerificationKernel::FullLimb,
                 ] {
                     let mut calls = 0;
                     let result = verify_with_kernel(
@@ -1451,6 +1538,10 @@ mod tests {
         for (c, t, target, bytes) in cases {
             assert_eq!(
                 checked_value(verify_column_limb(c, t, target, &bytes)),
+                checked_value(verify_reference(c, t, target, &bytes))
+            );
+            assert_eq!(
+                checked_value(verify_full_limb(c, t, target, &bytes)),
                 checked_value(verify_reference(c, t, target, &bytes))
             );
             assert_eq!(
@@ -1582,6 +1673,134 @@ mod tests {
     }
 
     #[test]
+    fn full_limb_matrix_products_match_reference_for_all_w1_shapes() {
+        for (rows, inner, cols) in [(N, R, N), (N, N, R), (R, N, N)] {
+            for maximum in [false, true] {
+                let a: Vec<_> = (0..rows * inner)
+                    .map(|i| {
+                        if maximum {
+                            Q as u32 - 1
+                        } else {
+                            [0, 1, Q as u32 - 1, 1 << 31, 31][i % 5]
+                        }
+                    })
+                    .collect();
+                let b: Vec<_> = (0..inner * cols)
+                    .map(|i| {
+                        if maximum {
+                            Q as u32 - 1
+                        } else {
+                            [Q as u32 - 2, 0, 17, 1 << 16][i % 4]
+                        }
+                    })
+                    .collect();
+                let mut expected_points = Vec::new();
+                let expected = mul_with_progress(&a, &b, rows, inner, cols, &mut |point| {
+                    expected_points.push(point);
+                    Ok::<_, usize>(())
+                })
+                .unwrap();
+                let mut actual_points = Vec::new();
+                let actual = transposed_mul_kernel_with_progress::<true, usize>(
+                    &a,
+                    &b,
+                    rows,
+                    inner,
+                    cols,
+                    &mut |point| {
+                        actual_points.push(point);
+                        Ok(())
+                    },
+                )
+                .unwrap();
+                assert_eq!(actual, expected);
+                assert_eq!(actual_points, expected_points);
+                for cut in 0..rows {
+                    let mut observed = Vec::new();
+                    let result = transposed_mul_kernel_with_progress::<true, usize>(
+                        &a,
+                        &b,
+                        rows,
+                        inner,
+                        cols,
+                        &mut |point| {
+                            observed.push(point);
+                            if observed.len() - 1 == cut {
+                                Err(cut)
+                            } else {
+                                Ok(())
+                            }
+                        },
+                    );
+                    assert_eq!(result, Err(cut));
+                    assert_eq!(observed, expected_points[..=cut]);
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn full_limb_preserves_every_cancellation_boundary_and_retry_isolation() {
+        let (a, b) = matrices();
+        let challenge = [41; 32];
+        let task = task_id(&a, &b).unwrap();
+        let proof = prove(challenge, &a, &b).unwrap();
+        let mut expected_points = Vec::new();
+        let expected = verify_reference_with_progress(
+            challenge,
+            task,
+            [255; 32],
+            &proof,
+            &mut |point| {
+                expected_points.push(point);
+                Ok::<_, usize>(())
+            },
+        )
+        .unwrap();
+        let mut actual_points = Vec::new();
+        let actual = verify_full_limb_with_progress(
+            challenge,
+            task,
+            [255; 32],
+            &proof,
+            &mut |point| {
+                actual_points.push(point);
+                Ok::<_, usize>(())
+            },
+        )
+        .unwrap();
+        assert_eq!(checked_value(Ok(actual)), checked_value(Ok(expected)));
+        assert_eq!(actual_points, expected_points);
+        for cut in 0..expected_points.len() {
+            let mut observed = Vec::new();
+            let result = verify_full_limb_with_progress(
+                challenge,
+                task,
+                [255; 32],
+                &proof,
+                &mut |point| {
+                    observed.push(point);
+                    if observed.len() - 1 == cut {
+                        Err(cut)
+                    } else {
+                        Ok(())
+                    }
+                },
+            );
+            assert!(matches!(result, Err(VerificationError::Cancelled(value)) if value == cut));
+            assert_eq!(observed, expected_points[..=cut]);
+        }
+        let other_challenge = [42; 32];
+        let other = prove(other_challenge, &a, &b).unwrap();
+        for (selected, bytes) in [(other_challenge, &other), (challenge, &proof)] {
+            assert_eq!(
+                checked_value(verify_full_limb(selected, task, [255; 32], bytes)),
+                checked_value(verify_reference(selected, task, [255; 32], bytes))
+            );
+        }
+    }
+
+    #[test]
     fn column_limb_each_prefix_matches_independent_scalar_with_strided_extremes() {
         // Exercise all carries and asymmetric row/column indexing. These are
         // raw arithmetic controls, not alternate externally supplied noise.
@@ -1664,10 +1883,18 @@ mod tests {
                     checked_value(verify_column_limb(challenge, task, [255; 32], &proof)),
                     expected
                 );
+                assert_eq!(
+                    checked_value(verify_full_limb(challenge, task, [255; 32], &proof)),
+                    expected
+                );
                 let mut other = challenge;
                 other[31] ^= 1;
                 assert_eq!(
                     verify_column_limb(other, task, [255; 32], &proof).unwrap_err(),
+                    WorkError::Transcript
+                );
+                assert_eq!(
+                    verify_full_limb(other, task, [255; 32], &proof).unwrap_err(),
                     WorkError::Transcript
                 );
             }
@@ -2047,6 +2274,7 @@ mod tests {
             VerificationKernel::Transposed,
             VerificationKernel::LimbTranscript,
             VerificationKernel::ColumnLimbTranscript,
+            VerificationKernel::FullLimb,
         ] {
             for (target, expected_error) in
                 [([0; 32], WorkError::Target), ([255; 32], WorkError::Field)]

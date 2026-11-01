@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Explicit false-trace reuse observation; preserve original V2/V3/default gates.
+"""Explicit W1 observations; preserve original V2/V3/default false-trace gates.
 
 Reuse the original native cost command owner, compiler contract and time limits.
 Local mode never satisfies hosted cross-architecture or work-hardness acceptance.
@@ -25,17 +25,94 @@ sys.path.insert(0, str(ROOT / "scripts"))
 from pon_w1_false_trace_reuse_reader_v1 import FALSE_FLAGS, SELECTOR, analyze
 
 EXAMPLE = "pon_w1_false_trace_reuse_v1"
+LEGAL_EXAMPLE = "pon_w1_legal_strategy_v1"
+FULL_LIMB_SELECTOR = "--false-trace-full-limb-v1"
+
+
+def legal_strategy_reader():
+    # The original mode retains its existing reader and complete capture schema.
+    # This import occurs only when the separate legal experiment is requested.
+    import pon_w1_legal_strategy_reader_v1
+    return pon_w1_legal_strategy_reader_v1
+
+
+def legal_campaign(binary, output, observations, report, reader):
+    """Retain every fixed shard and the complete-grid verdict, including failures."""
+    planned = [{"class": name, "target_index": target_index, "reuse_winners": horizon}
+        for name in reader.CLASSES for target_index in range(len(reader.TARGETS))
+        for horizon in reader.HORIZONS]
+    if len(planned) != 30:
+        raise ValueError("original legal strategy grid requires exactly 30 shards")
+    report["planned_shards"] = planned
+    report["shards"] = []
+    paths, failed = [], False
+    for index, configuration in enumerate(planned):
+        name = f"campaign-{index:02d}"
+        path = output / (name + ".stdout")
+        paths.append(path)
+        command = [str(binary), reader.SELECTOR, "--class", configuration["class"],
+            "--target-index", str(configuration["target_index"]),
+            "--reuse-winners", str(configuration["reuse_winners"])]
+        shard = {"configuration": configuration, "result": "FAIL"}
+        errors = []
+        try:
+            observed = capture(command, output, name, timeout=COST_CAMPAIGN_TIMEOUT_SECONDS, cwd=ROOT)
+            observations.append(observed)
+            shard["observation"] = observed
+            if observed["exit_code"] != 0 or observed["timed_out"]:
+                errors.append("native shard failed or timed out; original stdout/stderr retained")
+        except (OSError, ValueError, subprocess.SubprocessError) as error:
+            # No process exit/timing is invented if capture itself could not
+            # observe one. The remaining fixed shards are still attempted.
+            shard["capture_error"] = str(error)
+            errors.append("native shard capture failed")
+        try:
+            shard["reader"] = reader.analyze_shard(path)
+            if shard["reader"]["selection"] != configuration:
+                raise ValueError("retained shard selection differs from exact native command")
+            if shard["reader"]["semantic_alerts"]:
+                raise ValueError("retained native verifier disagreement")
+        except (OSError, ValueError, KeyError, TypeError, IndexError) as error:
+            shard["reader_error"] = str(error)
+            errors.append("native shard records failed independent reader")
+        if errors:
+            shard["errors"] = errors
+            failed = True
+        else:
+            shard["result"] = "PASS"
+        report["shards"].append(shard)
+    try:
+        # Recheck all thirty original paths together. A prefix of successful
+        # shards, duplicate configurations or a missing last shard cannot pass.
+        report["reader"] = reader.analyze(paths)
+        if report["reader"]["semantic_alerts"]:
+            raise ValueError("retained native verifier disagreement")
+    except (OSError, ValueError, KeyError, TypeError, IndexError) as error:
+        report["reader_error"] = str(error)
+        failed = True
+    return failed
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--arch", choices=sorted(ARCHITECTURES), required=True)
     parser.add_argument("--local", action="store_true")
+    modes = parser.add_mutually_exclusive_group()
+    modes.add_argument("--legal-strategy", action="store_true")
+    modes.add_argument("--full-limb", action="store_true")
     args = parser.parse_args()
     spec = ARCHITECTURES[args.arch]
-    output = receipt_root("w1-false-trace-reuse-v1")
+    reader = legal_strategy_reader() if args.legal_strategy else None
+    example = LEGAL_EXAMPLE if args.legal_strategy else EXAMPLE
+    receipt = ("w1-legal-strategy-v1" if args.legal_strategy else
+        "w1-full-limb-reuse-v1" if args.full_limb else "w1-false-trace-reuse-v1")
+    schema = ("trnm-w1-legal-strategy-execution-v1" if args.legal_strategy else
+        "trnm-w1-full-limb-reuse-execution-v1" if args.full_limb else
+        "trnm-w1-false-trace-reuse-execution-v1")
+    flags = reader.FALSE_FLAGS if reader is not None else FALSE_FLAGS
+    output = receipt_root(receipt)
     observations = []
-    report = {"schema": "trnm-w1-false-trace-reuse-execution-v1", "result": "FAIL",
+    report = {"schema": schema, "result": "FAIL",
         "execution_context": "local-native-preflight" if args.local else "github-hosted",
         "expected_source_commit": None,
         "architecture": args.arch, "build_profile": "release", "compiler_channel": "1.95.0",
@@ -45,7 +122,7 @@ def main():
         "runner_context": {key: os.environ.get(key) for key in (
             "GITHUB_RUN_ID", "GITHUB_RUN_ATTEMPT", "GITHUB_JOB", "GITHUB_REPOSITORY",
             "GITHUB_EVENT_NAME", "RUNNER_ARCH", "RUNNER_OS", "RUNNER_NAME", "ImageOS", "ImageVersion",
-            "TRNM_COST_RUNNER_LABEL")}, **FALSE_FLAGS}
+            "TRNM_COST_RUNNER_LABEL")}, **flags}
 
     def checked(command, name, timeout=COST_IDENTITY_TIMEOUT_SECONDS):
         result = capture(command, output, name, timeout=timeout, cwd=ROOT)
@@ -89,27 +166,35 @@ def main():
         shutil.copyfile("/proc/cpuinfo", output / "cpuinfo.txt")
         checked(["cargo", "+1.95.0", "build", "--locked", "--release", "--manifest-path",
             "trillionnium/Cargo.toml", "--target", spec["target"], "-p", "trnm-pon-node",
-            "--example", EXAMPLE], "build", COST_BUILD_TIMEOUT_SECONDS)
-        binary = Path(os.environ["CARGO_TARGET_DIR"]) / spec["target"] / "release/examples" / EXAMPLE
+            "--example", example], "build", COST_BUILD_TIMEOUT_SECONDS)
+        binary = Path(os.environ["CARGO_TARGET_DIR"]) / spec["target"] / "release/examples" / example
         report["binary_elf_machine"] = elf_machine(binary)
         if report["binary_elf_machine"] != spec["elf_machine"]:
             raise ValueError("actual ELF architecture mismatch")
         report["binary_sha256_before"] = digest(binary)
-        retained_binary = output / EXAMPLE
+        retained_binary = output / example
         shutil.copyfile(binary, retained_binary)
         report["retained_binary_sha256_before"] = digest(retained_binary)
         if report["retained_binary_sha256_before"] != report["binary_sha256_before"]:
             raise ValueError("retained binary copy differs before execution")
-        checked([str(binary), SELECTOR], "campaign", COST_CAMPAIGN_TIMEOUT_SECONDS)
-        report["reader"] = analyze(output / "campaign.stdout")
-        if report["reader"]["semantic_alerts"]:
-            raise ValueError("retained native verifier disagreement")
+        failed = False
+        if reader is not None:
+            failed = legal_campaign(binary, output, observations, report, reader)
+        else:
+            selector = FULL_LIMB_SELECTOR if args.full_limb else SELECTOR
+            checked([str(binary), selector], "campaign", COST_CAMPAIGN_TIMEOUT_SECONDS)
+            report["reader"] = (analyze(output / "campaign.stdout", full_limb=True)
+                if args.full_limb else analyze(output / "campaign.stdout"))
+            if report["reader"]["semantic_alerts"]:
+                raise ValueError("retained native verifier disagreement")
         report["binary_sha256_after"] = digest(binary)
         report["retained_binary_sha256_after"] = digest(retained_binary)
         if report["binary_sha256_before"] != report["binary_sha256_after"]:
             raise ValueError("measured binary changed")
         if report["retained_binary_sha256_after"] != report["binary_sha256_before"]:
             raise ValueError("retained binary copy changed during execution")
+        if failed:
+            raise ValueError("one or more fixed legal shards or complete-grid checks failed")
         report["result"] = "PASS"
     except (OSError, ValueError, KeyError, subprocess.SubprocessError) as error:
         report["error"] = str(error)

@@ -52,6 +52,31 @@ release requires their own real evidence, not completion of the retired PoCO roa
 
 ### Reconstruction and upgrade order
 
+#### W1 complete arithmetic and legal strategy continuation — 2026-11-01
+
+Continue the actual work-security candidate `c041564b8a6bb0b98ca9c30e7871878427e5d9a4`
+from PR #675. Its hosted four-second service failures remain failed. An explicit
+full-limb verifier now covers all bounded matrix products, with the scalar and
+previous production paths retained for complete-relation, output, error-order
+and cancellation comparison. Default admission is unchanged pending native
+valid-work, late-product and false-trace cost observations.
+
+The [frozen legal strategy experiment](specs/pon/W1_LEGAL_STRATEGY_V1.md) charges
+actual structural recognition, preparation, every failed attempt and complete
+searches at 1/8/64 reuse horizons and two targets. The five-class, two-sample grid
+is a finite experiment below the existing eight-sample acceptance requirement.
+The separate full-limb comparison keeps the original false-trace experiment
+available byte-for-byte in its default schema and records a distinct five-path
+schema only when explicitly selected. Neither experiment supplies a physical
+cost lower bound or changes the original four-second business requirement.
+
+The [query-work analysis](../protocol/pon-nakamoto-v1/details/WORK_COST_DAA_BOUNDARIES.md)
+now includes the exact target-dependent expected credit factor. The two targets
+in the new experiment both have factor one; the general rounding example does
+not assert attainable target manipulation or a new consensus security threshold.
+All work-hardness, public service, independent hardware, quantum, model utility
+and production acceptance flags remain unqualified until their own evidence.
+
 #### W1 rejection economics and fresh challenges — 2026-11-01
 
 The [W1 work-security continuation](../../evidence/pon-w1-work-security-20261101/README.md)

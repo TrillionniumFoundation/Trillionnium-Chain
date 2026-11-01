@@ -6,6 +6,8 @@ on:
       - tests/fuzz/**
       - scripts/ci/**
       - scripts/pon_w1_*.py
+      - formal/pon-nakamoto-v1/work_query_bound.py
+      - formal/pon-nakamoto-v1/test_work_query_bound.py
       - config/**
       - .cargo/**
       - rust-toolchain.toml
@@ -77,6 +79,7 @@ jobs:
           set -euo pipefail
           python3 scripts/ci/test_pon_w1_false_trace_reuse_reader_v1.py 2>&1 | tee "$OUT/reader-controls.log"
           python3 scripts/ci/test_run_w1_false_trace_reuse_v1.py 2>&1 | tee "$OUT/runner-controls.log"
+          python3 formal/pon-nakamoto-v1/test_work_query_bound.py 2>&1 | tee "$OUT/query-work-controls.log"
       - name: Verify actual locked graph and formatting
         shell: bash
         run: |
@@ -93,7 +96,7 @@ jobs:
           import re, sys
           text = Path(sys.argv[1]).read_text()
           rows = re.findall(r'^test result: ok\. ([0-9]+) passed; 0 failed; 0 ignored;', text, re.M)
-          if len(rows) != 1 or int(rows[0]) < 98:
+          if len(rows) != 1 or int(rows[0]) < 101:
               raise SystemExit('complete retained W1 module suite did not execute')
           PY
           cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test work_fuzz_semantics -- --test-threads=1 2>&1 | tee "$OUT/w1-fuzz-semantics.log"
@@ -111,6 +114,9 @@ jobs:
         # This frozen release runner rejects even a workflow-wide incremental
         # override of zero. Preserve that guard and use the default release input.
         run: env -u CARGO_INCREMENTAL python3 scripts/ci/run_w1_false_trace_reuse_v1.py --arch "${{ matrix.arch }}"
+      - name: Execute additional complete full-limb comparison
+        if: always() && steps.source.outcome == 'success'
+        run: env -u CARGO_INCREMENTAL python3 scripts/ci/run_w1_false_trace_reuse_v1.py --arch "${{ matrix.arch }}" --full-limb
       - name: Verify measured source after execution
         if: always() && steps.source.outcome == 'success'
         shell: bash
@@ -127,6 +133,83 @@ jobs:
         with:
           name: w1-false-trace-${{ matrix.source }}-${{ matrix.arch }}-${{ env.EXPECTED_SOURCE }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/w1-security-${{ matrix.source }}-${{ matrix.arch }}-${{ github.run_id }}-${{ github.run_attempt }}/
+          if-no-files-found: error
+          retention-days: 30
+  legal-strategy:
+    name: W1 complete legal strategies (${{ matrix.arch }}, ${{ matrix.source }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [x64, arm64]
+        source: [head, prospective-merge]
+        include:
+          - arch: x64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+    env:
+      TRNM_COST_RUNNER_LABEL: ${{ matrix.runner }}
+      SOURCE_KIND: ${{ matrix.source }}
+      EXPECTED_SOURCE: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+      TRNM_EXPECTED_SOURCE_SHA: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+      EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
+    steps:
+      - name: Checkout exact measured source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.EXPECTED_SOURCE }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Reserve observations and verify ordered source identity
+        id: source
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/w1-legal-$SOURCE_KIND-${{ matrix.arch }}-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir "$out"
+          printf 'OUT=%s\n' "$out" >> "$GITHUB_ENV"
+          printf 'TRNM_CI_RECEIPT_DIR=%s\n' "$out" >> "$GITHUB_ENV"
+          printf 'CARGO_HOME=%s/cargo-w1-legal\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          printf 'CARGO_TARGET_DIR=%s/target-w1-legal\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$out/source-before.json"
+          bash scripts/project-preflight.sh --audit 2>&1 | tee "$out/preflight.log"
+      - name: Install exact original compiler and tools
+        run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+      - name: Verify complete legal-cost readers and native controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/test_pon_w1_legal_strategy_reader_v1.py 2>&1 | tee "$OUT/legal-reader-controls.log"
+          python3 scripts/ci/test_run_w1_false_trace_reuse_v1.py 2>&1 | tee "$OUT/runner-controls.log"
+          cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee "$OUT/format.log"
+          cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example pon_w1_legal_strategy_v1 -- --test-threads=1 2>&1 | tee "$OUT/legal-native-controls.log"
+          cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example pon_w1_legal_strategy_v1 -- -D warnings 2>&1 | tee "$OUT/legal-clippy.log"
+      - name: Execute all thirty original-budget legal strategy shards
+        if: always() && steps.source.outcome == 'success'
+        run: env -u CARGO_INCREMENTAL python3 scripts/ci/run_w1_false_trace_reuse_v1.py --arch "${{ matrix.arch }}" --legal-strategy
+      - name: Verify measured source after execution
+        if: always() && steps.source.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$OUT/source-after.json"
+      - name: Retain costs, binaries and all failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: w1-legal-strategy-${{ matrix.source }}-${{ matrix.arch }}-${{ env.EXPECTED_SOURCE }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/w1-legal-${{ matrix.source }}-${{ matrix.arch }}-${{ github.run_id }}-${{ github.run_attempt }}/
           if-no-files-found: error
           retention-days: 30
   fresh-challenge-service:

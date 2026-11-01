@@ -4,6 +4,8 @@ from itertools import product
 from work_query_bound import (
     parameters, expected_first_query_credit, union_bound,
     step_envelope, fixed_query_tail,
+    strict_credit_lower_bound, conditional_mean_work_share,
+    equal_mean_work_share, sufficient_mean_work_share,
 )
 
 
@@ -24,6 +26,88 @@ class TicketBoundTests(unittest.TestCase):
             self.assertEqual(parameters(target), (modulus, work))
             self.assertEqual(expected_first_query_credit(target), 1)
         self.assertLess(expected_first_query_credit(modulus // 2), 1)
+
+    def test_strict_rounding_bound_exhausts_every_small_legal_target_and_limit(self):
+        for bits in range(2, 9):
+            modulus = 1 << bits
+            for limit in range(1, modulus):
+                lower = strict_credit_lower_bound(limit, bits)
+                for target in range(1, limit + 1):
+                    # Independent oracle outcome enumeration is equivalent to
+                    # d winning outcomes, each credited the integer weight.
+                    weight = modulus // (target + 1)
+                    actual = Fraction((target + 1) * weight, modulus)
+                    self.assertGreater(actual, lower)
+                    self.assertLessEqual(actual, 1)
+
+    def test_current_pow_limit_has_nearly_three_halves_efficiency_ratio(self):
+        modulus = 1 << 256
+        limit, low_efficiency_target = modulus // 2 - 1, modulus // 3
+        honest = Fraction(2 * (modulus // 3 + 1), modulus)
+        self.assertEqual(parameters(low_efficiency_target)[1], 2)
+        self.assertEqual(expected_first_query_credit(low_efficiency_target), honest)
+        self.assertEqual(expected_first_query_credit(limit), 1)
+        self.assertEqual(strict_credit_lower_bound(limit), Fraction(2, 3))
+        self.assertLess(1 / honest, Fraction(3, 2))
+        self.assertLess(Fraction(3, 2) - 1 / honest, Fraction(5, modulus))
+
+    def test_equal_target_rate_model_recovers_existing_formula(self):
+        for q in (Fraction(0), Fraction(1, 4), Fraction(2, 5), Fraction(1)):
+            for advantage in (Fraction(1, 2), Fraction(1), Fraction(3)):
+                for target in (1, 2, (1 << 255) - 1):
+                    expected = q * advantage / (1 - q + q * advantage)
+                    self.assertEqual(conditional_mean_work_share(q, advantage, target, target), expected)
+                    self.assertEqual(equal_mean_work_share(advantage, target, target), 1 / (1 + advantage))
+
+    def test_distinct_target_example_is_not_a_fifty_percent_resource_test(self):
+        modulus = 1 << 256
+        attack_target, honest_target = modulus // 2 - 1, modulus // 3
+        share = conditional_mean_work_share(Fraction(9, 20), Fraction(1), attack_target, honest_target)
+        self.assertGreater(share, Fraction(1, 2))
+        self.assertLess(share, Fraction(27, 49))
+        threshold = equal_mean_work_share(Fraction(1), attack_target, honest_target)
+        self.assertGreater(threshold, Fraction(2, 5))
+        self.assertLess(threshold, Fraction(41, 100))
+        self.assertEqual(conditional_mean_work_share(threshold, Fraction(1), attack_target, honest_target),
+                         Fraction(1, 2))
+
+    def test_already_credit_adjusted_advantage_must_not_count_efficiency_twice(self):
+        q, attempt_advantage = Fraction(2, 7), Fraction(5, 3)
+        attack_target, honest_target = 7, 5
+        credit_advantage = (attempt_advantage * expected_first_query_credit(attack_target, 4)
+                            / expected_first_query_credit(honest_target, 4))
+        expected = q * credit_advantage / (1 - q + q * credit_advantage)
+        self.assertEqual(conditional_mean_work_share(q, attempt_advantage, attack_target, honest_target, 4),
+                         expected)
+
+    def test_sufficient_mean_work_bound_is_not_a_necessary_condition(self):
+        for bits in range(2, 8):
+            limit = (1 << bits) // 2 - 1
+            for advantage in (Fraction(1, 2), Fraction(1), Fraction(3)):
+                q_bound = sufficient_mean_work_share(advantage, limit, bits)
+                self.assertEqual(q_bound, Fraction(2) / (2 + 3 * advantage))
+                for attack_target in range(1, limit + 1):
+                    for honest_target in range(1, limit + 1):
+                        self.assertLess(conditional_mean_work_share(q_bound, advantage,
+                                                                   attack_target, honest_target, bits),
+                                        Fraction(1, 2))
+        # A share above 2/5 can still yield lower mean work at matching targets.
+        self.assertLess(conditional_mean_work_share(Fraction(9, 20), Fraction(1), 7, 7, 4),
+                        Fraction(1, 2))
+
+    def test_rounding_rate_model_rejects_nonexact_and_invalid_inputs(self):
+        for q in (True, 0.25, Fraction(-1), Fraction(5, 4)):
+            with self.assertRaises(ValueError):
+                conditional_mean_work_share(q, Fraction(1), 1, 1)
+        for s in (True, 1.0, Fraction(0), Fraction(-1)):
+            for call in (lambda: conditional_mean_work_share(Fraction(1, 4), s, 1, 1),
+                         lambda: equal_mean_work_share(s, 1, 1),
+                         lambda: sufficient_mean_work_share(s, 7, 4)):
+                with self.assertRaises(ValueError):
+                    call()
+        for limit, bits in ((0, 256), (16, 4), (7, True), (True, 4)):
+            with self.assertRaises(ValueError):
+                strict_credit_lower_bound(limit, bits)
 
     def test_adaptive_target_chosen_before_second_query(self):
         modulus, total = 8, 0

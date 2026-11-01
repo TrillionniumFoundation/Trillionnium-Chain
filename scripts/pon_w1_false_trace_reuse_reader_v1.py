@@ -19,6 +19,9 @@ SELECTOR = "--false-trace-actual-reuse-v1"
 SAMPLES, SEARCHES, ATTEMPT_BUDGET = 8, 4, 4096
 CLASSES, TARGET = common.CLASSES, common.TARGET
 PATHS = ("production", "reference", "limb", "column-limb-experimental")
+FULL_LIMB_SCHEMA = "pon-w1-false-trace-full-limb-v1"
+FULL_LIMB_SELECTOR = "--false-trace-full-limb-v1"
+FULL_LIMB_PATHS = PATHS + ("full-limb-experimental",)
 MAX_LINE, MAX_BYTES = 8 * 1024 * 1024, 192 * 1024 * 1024
 COHORTS = len(CLASSES) * SAMPLES
 SEARCH_COUNT = COHORTS * SEARCHES
@@ -54,7 +57,12 @@ def measured(value, label):
 
 
 class Records:
-    def __init__(self):
+    def __init__(self, *, full_limb=False):
+        common.require(type(full_limb) is bool, "explicit comparison mode must be boolean")
+        self.schema = FULL_LIMB_SCHEMA if full_limb else SCHEMA
+        self.selector = FULL_LIMB_SELECTOR if full_limb else SELECTOR
+        self.paths = FULL_LIMB_PATHS if full_limb else PATHS
+        self.max_records = 2 + len(CLASSES) + COHORTS + SEARCH_COUNT * (2 + len(self.paths))
         self.counts = Counter()
         self.materials, self.cohorts = {}, {}
         self.current, self.campaign, self.ended = None, None, False
@@ -87,7 +95,7 @@ class Records:
         won = search["status"] == "target-hit-unverified"
         common.require((search["candidate"] is not None) == won,
                        "complete forged winner bytes missing or fictitious candidate")
-        common.require(len(search["verifiers"]) == (len(PATHS) if won else 0),
+        common.require(len(search["verifiers"]) == (len(self.paths) if won else 0),
                        "full native verifier coverage incomplete")
 
     def close_current(self):
@@ -102,7 +110,7 @@ class Records:
 
     def add(self, row):
         common.require(not self.ended, "records after complete end")
-        common.require(type(row) is dict and row.get("schema") == SCHEMA, "explicit false-reuse V1 schema required")
+        common.require(type(row) is dict and row.get("schema") == self.schema, "explicit false-reuse V1 schema required")
         kind = row.get("kind")
         common.require(type(kind) is str and kind in FIELDS, "unknown record kind")
         common.exact(row, {"schema", "kind", *FIELDS[kind].split()}, kind)
@@ -115,7 +123,7 @@ class Records:
         for key, value in (("samples", SAMPLES), ("searches_per_setup", SEARCHES),
                            ("attempt_budget", ATTEMPT_BUDGET), ("seed", 0)):
             common.require(common.integer(row[key], key) == value, "fixed campaign parameter changed: " + key)
-        common.require(row["selector"] == SELECTOR and row["paths"] == list(PATHS)
+        common.require(row["selector"] == self.selector and row["paths"] == list(self.paths)
                        and row["classes"] == list(CLASSES) and row["target"] == TARGET,
                        "fixed selector/verifier/material/target grid changed")
         common.require(row["clock"] == "thread-cpu-and-monotonic-wall-ns"
@@ -193,10 +201,10 @@ class Records:
         search = self.last_search(row)
         common.require(search["candidate"] is not None, "verifier requires complete forged bytes")
         order = len(search["verifiers"])
-        common.require(order < len(PATHS) and common.integer(row["invocation_order"], "order") == order,
+        common.require(order < len(self.paths) and common.integer(row["invocation_order"], "order") == order,
                        "verifier order/coverage mismatch")
         _, sample = self.current["key"]
-        expected = PATHS[(sample + search["index"] + order) % len(PATHS)]
+        expected = self.paths[(sample + search["index"] + order) % len(self.paths)]
         common.require(row["path"] == expected and row["challenge"] == search["context"].hex()
                        and row["proof_sha256"] == search["candidate"], "verifier identity/rotation mismatch")
         common.require(type(row["outcome"]) is str and row["outcome"] in (
@@ -217,7 +225,7 @@ class Records:
                            "complete count mismatch: " + kind)
         common.require(row["complete"] is True and self.counts["candidate"] > 0,
                        "nonzero completed native rejection observation required")
-        common.require(self.counts["verifier"] == self.counts["candidate"] * len(PATHS),
+        common.require(self.counts["verifier"] == self.counts["candidate"] * len(self.paths),
                        "full native verifier grid incomplete")
         self.ended = True
 
@@ -229,7 +237,7 @@ def summary(records):
         searches = [search for cohort in cohorts for search in cohort["searches"]]
         wins = sum(search["status"] == "target-hit-unverified" for search in searches)
         totals = {axis: sum(cohort["total"][axis] for cohort in cohorts) for axis in ("cpu_ns", "wall_ns")}
-        verifiers = {path: [v for search in searches for v in search["verifiers"] if v["path"] == path] for path in PATHS}
+        verifiers = {path: [v for search in searches for v in search["verifiers"] if v["path"] == path] for path in records.paths}
         verification = {path: {axis: sum(v["timing"][axis] for v in values) for axis in totals}
                         for path, values in verifiers.items()}
         rows.append({"class": name, "actual_setup_calls": len(cohorts), "actual_searches": len(searches),
@@ -246,10 +254,10 @@ def summary(records):
     return rows
 
 
-def analyze(path):
+def analyze(path, *, full_limb=False):
     path = Path(path)
     common.require(path.is_file() and not path.is_symlink(), "regular retained JSONL required")
-    records, digest, size, number = Records(), hashlib.sha256(), 0, 0
+    records, digest, size, number = Records(full_limb=full_limb), hashlib.sha256(), 0, 0
     with path.open("rb") as source:
         while True:
             line = source.readline(MAX_LINE + 1)
@@ -258,14 +266,14 @@ def analyze(path):
             size += len(line)
             number += 1
             common.require(len(line) <= MAX_LINE and line.endswith(b"\n") and size <= MAX_BYTES
-                           and number <= MAX_RECORDS, "bounded complete JSONL required")
+                           and number <= records.max_records, "bounded complete JSONL required")
             digest.update(line)
             try:
                 records.add(common.decode(line))
             except (ValueError, UnicodeError, RecursionError) as error:
                 raise ValueError(f"line {number}: {error}") from error
     common.require(records.ended, "missing complete end record")
-    return {"schema": "pon-w1-false-trace-reuse-observation-report-v1", "record_consistency": "PASS",
+    return {"schema": "pon-w1-full-limb-reuse-observation-report-v1" if full_limb else "pon-w1-false-trace-reuse-observation-report-v1", "record_consistency": "PASS",
         "input_sha256": digest.hexdigest(), "input_bytes": size, "record_counts": dict(records.counts),
         "semantic_alerts": records.alerts, "actual_reuse_cohorts": summary(records),
         "modeled_setup_division_used": False, "complete_attack_bytes_reconstructed": True,
@@ -279,15 +287,16 @@ def analyze(path):
             "Hash midstate reuse, different horizons and adversarial implementations/hardware may cost less.",
             "Microbenchmark challenges do not certify live parent/lease/beneficiary binding or public admission.",
             "No service queues, signed transport, storage, network fanout or model utility are measured.",
-            "Experimental column-limb observations do not change the default production verifier."], **FALSE_FLAGS}
+            "Experimental column-limb and full-limb observations do not change the default production verifier."], **FALSE_FLAGS}
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("input", type=Path)
+    parser.add_argument("--full-limb", action="store_true")
     args = parser.parse_args()
     try:
-        report = analyze(args.input)
+        report = analyze(args.input, full_limb=args.full_limb)
     except (OSError, ValueError, OverflowError) as error:
         print(json.dumps({"record_consistency": "FAIL", "error": str(error), **FALSE_FLAGS}, sort_keys=True))
         return 2

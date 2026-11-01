@@ -26,10 +26,15 @@ def row(kind, **fields):
     return {"schema": reader.SCHEMA, "kind": kind, **fields}
 
 
-def fixture():
-    records = [row("campaign", selector=reader.SELECTOR, samples=reader.SAMPLES,
+def fixture(full_limb=False):
+    paths = reader.FULL_LIMB_PATHS if full_limb else reader.PATHS
+    schema = reader.FULL_LIMB_SCHEMA if full_limb else reader.SCHEMA
+    selector = reader.FULL_LIMB_SELECTOR if full_limb else reader.SELECTOR
+    def row(kind, **fields):
+        return {"schema": schema, "kind": kind, **fields}
+    records = [row("campaign", selector=selector, samples=reader.SAMPLES,
         searches_per_setup=reader.SEARCHES, attempt_budget=reader.ATTEMPT_BUDGET, seed=0,
-        target=reader.TARGET, paths=list(reader.PATHS), classes=list(reader.CLASSES),
+        target=reader.TARGET, paths=list(paths), classes=list(reader.CLASSES),
         clock="thread-cpu-and-monotonic-wall-ns", material_setup=stamp(1000),
         setup_reuse=reader.SETUP_SCOPE, attacker_timing_scope=reader.ATTACK_SCOPE,
         verifier_timing_scope=reader.VERIFY_SCOPE, **reader.FALSE_FLAGS)]
@@ -66,8 +71,8 @@ def fixture():
                     winner={"challenge": context.hex(), "proof_sha256": common.sha(proof)})
                 add("candidate", **fields, search_index=search, challenge=context.hex(),
                     proof_hex=proof.hex(), proof_sha256=common.sha(proof))
-                for order in range(len(reader.PATHS)):
-                    path = reader.PATHS[(sample + search + order) % len(reader.PATHS)]
+                for order in range(len(paths)):
+                    path = paths[(sample + search + order) % len(paths)]
                     add("verifier", **fields, search_index=search, path=path, invocation_order=order,
                         challenge=context.hex(), proof_sha256=common.sha(proof), outcome="Transcript", timing=stamp(200))
     records.append(row("end", **{kind + "_count": value for kind, value in counts.items()}, complete=True))
@@ -241,6 +246,47 @@ class FalseTraceReuseReaderTests(unittest.TestCase):
         records = self.records()
         records.append(copy.deepcopy(records[-1]))
         self.fails(records, "after complete end|bounded complete")
+
+
+class FullLimbComparisonReaderTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.original = fixture(full_limb=True)
+
+    def analyze(self, records, **kwargs):
+        with tempfile.TemporaryDirectory(prefix="full-limb-reader-") as directory:
+            path = Path(directory) / "synthetic.jsonl"
+            path.write_text("".join(json.dumps(row, separators=(",", ":")) + "\n" for row in records))
+            return reader.analyze(path, **kwargs)
+
+    def test_explicit_new_mode_retains_all_five_paths(self):
+        report = self.analyze(self.original, full_limb=True)
+        self.assertEqual(report["record_counts"]["verifier"], 1440)
+        self.assertEqual(report["semantic_alerts"], [])
+        self.assertEqual(report["schema"], "pon-w1-full-limb-reuse-observation-report-v1")
+        self.assertIs(report["production_activation"], False)
+        for cohort in report["actual_reuse_cohorts"]:
+            self.assertEqual(set(cohort["verification"]), set(reader.FULL_LIMB_PATHS))
+
+    def test_old_reader_and_new_reader_cannot_relabel_each_other(self):
+        with self.assertRaisesRegex(ValueError, "schema"):
+            self.analyze(self.original)
+        with self.assertRaisesRegex(ValueError, "schema"):
+            self.analyze(fixture(), full_limb=True)
+        with self.assertRaisesRegex(ValueError, "boolean"):
+            self.analyze(self.original, full_limb=1)
+
+    def test_missing_full_limb_or_disagreement_cannot_pass(self):
+        records = copy.deepcopy(self.original)
+        index = next(i for i, row in enumerate(records) if row.get("path") == "full-limb-experimental")
+        omitted = records.pop(index)
+        with self.assertRaises(ValueError):
+            self.analyze(records, full_limb=True)
+        records.insert(index, omitted)
+        records[index]["outcome"] = "Accepted"
+        report = self.analyze(records, full_limb=True)
+        self.assertEqual(len(report["semantic_alerts"]), 1)
+        self.assertIsNone(report["actual_reuse_cohorts"][0]["receiver_rejection_cpu_over_full_attacker_cpu"]["full-limb-experimental"])
 
 
 if __name__ == "__main__":
