@@ -1261,6 +1261,26 @@ fn signed_confirmation_phase(
     false_wires: Arc<Vec<Option<String>>>,
     pressured: bool,
 ) -> Value {
+    // The original observation retains its exact sixteen-packet replay stream.
+    // A separately named diagnostic can supply fresh challenges without
+    // changing this test's packets, budgets, deadlines or acceptance criteria.
+    let prepare: ConfirmationAttackBuilder = Arc::new(move |worker, attempt| {
+        let index = (attempt * PRESSURE_WORKERS + worker) % false_wires.len();
+        (index, false_wires[index].clone(), None)
+    });
+    signed_confirmation_phase_with_builder(path, settings, packets, prepare, pressured)
+}
+
+type ConfirmationAttackBuilder =
+    Arc<dyn Fn(usize, usize) -> (usize, Option<String>, Option<Value>) + Send + Sync>;
+
+fn signed_confirmation_phase_with_builder(
+    path: &std::path::Path,
+    settings: &Settings,
+    packets: &[Packet],
+    prepare: ConfirmationAttackBuilder,
+    pressured: bool,
+) -> Value {
     fs::create_dir(path).unwrap();
     let mut verifier = Node::open(&path.join("independent-client"), settings.clone(), 1).unwrap();
     let mut receiver = Node::open(&path.join("receiver"), settings.clone(), 1).unwrap();
@@ -1316,10 +1336,10 @@ fn signed_confirmation_phase(
     let end = epoch + Duration::from_millis(PRESSURE_MS);
     let mut attacks = Vec::new();
     for worker in 0..workers {
-        let (client, barrier, wires, completed) = (
+        let (client, barrier, prepare, completed) = (
             client.clone(),
             barrier.clone(),
-            false_wires.clone(),
+            prepare.clone(),
             completed.clone(),
         );
         attacks.push(thread::spawn(move || {
@@ -1330,23 +1350,26 @@ fn signed_confirmation_phase(
                 if Instant::now() >= end {
                     break;
                 }
-                let index = (attempt * workers + worker) % wires.len();
-                if let Some(packet) = &wires[index] {
-                    rows.push(compact_pressure_call(
+                let (index, packet, construction) = prepare(worker, attempt);
+                let mut row = if let Some(packet) = packet {
+                    let row = compact_pressure_call(
                         client.call_before(
                             "confirmation_from_zero",
                             80 + ((attempt + worker * 37) % 150) as u8,
-                            Request::Submit {
-                                packet: packet.clone(),
-                            },
+                            Request::Submit { packet },
                             Some(end),
                         ),
                         Some(index),
-                    ));
+                    );
                     completed.fetch_add(1, Ordering::AcqRel);
+                    row
                 } else {
-                    rows.push(json!({"status": "not_submitted_exhausted", "packet_index": index}));
+                    json!({"status": "not_submitted_exhausted", "packet_index": index})
+                };
+                if let Some(construction) = construction {
+                    row["from_zero_construction"] = construction;
                 }
+                rows.push(row);
             }
             json!({"worker": worker, "calling_thread_cpu_ns": cpu_elapsed(cpu),
                 "attempt_cap_reached": rows.len() == PRESSURE_CALLS_PER_WORKER, "calls": rows})
@@ -1398,6 +1421,10 @@ fn signed_confirmation_phase(
     let included = packets[0].id().unwrap();
     let transaction = hash(b"tx-id", &[&packets[0].transactions[0]]);
     let mut history_calls = Vec::new();
+    // One actual independent-client replay interval for each successful
+    // on-time History response. Failed network calls remain in history_calls.
+    let mut independent_history_page_replay = Vec::new();
+    let mut independent_final_confirmation_stage = None;
     let mut confirmation = None;
     let mut verification_errors = Vec::new();
     let replay_started = Instant::now();
@@ -1415,6 +1442,8 @@ fn signed_confirmation_phase(
             Some(end),
         );
         if row["status"] == "ok" && row["returned_after_window"] == false {
+            let replay_started_ns = ns(epoch);
+            let page_cpu = ThreadCpuStamp::start();
             let imported =
                 serde_json::from_value::<ingress::Page>(row["response"]["value"].clone())
                     .map_err(|error| error.to_string())
@@ -1430,12 +1459,40 @@ fn signed_confirmation_phase(
                         )
                         .map_err(|error| error.to_string())
                     });
+            let replay_ended_ns = ns(epoch);
+            // Capture the actual calling-thread CPU once. Wall intervals may
+            // overlap other threads; these two totals must not be summed.
+            let replay_thread_cpu_ns = cpu_elapsed(page_cpu);
+            independent_history_page_replay.push(json!({
+                "history_call_index": history_calls.len(),
+                "history_request_ended_ns": row["ended_ns"].clone(),
+                "replay_started_ns": replay_started_ns,
+                "replay_ended_ns": replay_ended_ns,
+                "replay_wall_ns": replay_ended_ns - replay_started_ns,
+                "replay_thread_cpu_ns": replay_thread_cpu_ns,
+                "prior_after": hex::encode(after),
+                "next_after": imported.as_ref().ok().map(hex::encode),
+                "replay_accepted": imported.is_ok(),
+                "clock_scope": "independent verifier caller thread; wall spans all waits, CPU only this thread",
+            }));
             match imported {
                 Ok(next) => {
                     after = next;
                     if after == tip {
-                        match verifier.confirmation(transaction, included, ingress::now().unwrap())
-                        {
+                        let final_started_ns = ns(epoch);
+                        let final_cpu = ThreadCpuStamp::start();
+                        let observed =
+                            verifier.confirmation(transaction, included, ingress::now().unwrap());
+                        let final_ended_ns = ns(epoch);
+                        independent_final_confirmation_stage = Some(json!({
+                            "confirmation_started_ns": final_started_ns,
+                            "confirmation_ended_ns": final_ended_ns,
+                            "confirmation_wall_ns": final_ended_ns - final_started_ns,
+                            "confirmation_thread_cpu_ns": cpu_elapsed(final_cpu),
+                            "observation_returned": observed.is_ok(),
+                            "clock_scope": "independent verifier caller thread; no consensus/host time claim",
+                        }));
+                        match observed {
                             Ok(observation) => {
                                 confirmation = Some(observation);
                                 confirmation_ended_ns = Some(ns(epoch));
@@ -1566,6 +1623,8 @@ fn signed_confirmation_phase(
         "client_confirmed_before_original_window_end": client_confirmed_in_window,
         "independent_replay_and_confirmation_cpu_ns": independent_replay_cpu_ns,
         "independent_replay_and_confirmation_wall_ns": independent_replay_wall_ns,
+        "independent_history_page_replay": independent_history_page_replay,
+        "independent_final_confirmation_stage": independent_final_confirmation_stage,
         "verification_errors": verification_errors, "honest_heads": read_rows,
         "honest_head_successes_in_window": read_successes, "maximum_honest_head_gap_ns": maximum_honest_head_gap_ns,
         "reader_cpu_ns": reader_cpu_ns, "service": service_outcome, "observations": captured,
@@ -1579,6 +1638,9 @@ fn signed_confirmation_phase(
         .as_object().unwrap().clone());
     report
 }
+
+#[path = "public_v3_from_zero/fresh_challenge.rs"]
+mod fresh_challenge;
 
 #[test]
 fn from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline(

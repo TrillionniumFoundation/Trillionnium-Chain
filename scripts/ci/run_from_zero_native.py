@@ -28,6 +28,7 @@ sys.path.insert(0, str(ROOT / 'formal/pon-nakamoto-v1'))
 from contract_wire import H, header_decode, tx_decode
 TARGET = 'public_v3_from_zero'
 SOURCE = 'trillionnium/crates/trnm-pon-node/tests/' + TARGET + '.rs'
+FORMAT_SUPPORT = 'trillionnium/crates/trnm-pon-node/examples/support/w1_from_zero.rs'
 TESTS = (
     'caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct',
     'from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection',
@@ -67,6 +68,25 @@ def select_binary(lines: list[str]) -> Path:
                 paths.append(path.resolve())
     require(len(paths) == 1, 'EXACT_NEW_NATIVE_TEST_BINARY_REQUIRED')
     return paths[0]
+
+
+
+def stage_format_copy(test_source: Path, support_source: Path, out: Path) -> Path:
+    """Preserve the original #[path] module layout in a disposable rustfmt copy.
+
+    Flattening the test into out/formatted.rs loses ../examples/support and
+    gives rustfmt a false missing-module error. This is only diagnostic:
+    cargo fmt --check and all real native acceptance gates are unchanged.
+    """
+    root = out / 'format-copy-source'
+    tests = root / 'tests'
+    support = root / 'examples' / 'support'
+    tests.mkdir(parents=True, exist_ok=True)
+    support.mkdir(parents=True, exist_ok=True)
+    staged = tests / test_source.name
+    shutil.copyfile(test_source, staged)
+    shutil.copyfile(support_source, support / support_source.name)
+    return staged
 
 
 # Bounded report consistency, not a second W1/state oracle or public qualification.
@@ -367,32 +387,30 @@ def validate_sustained_report(path: Path) -> dict:
             'scope': 'retained local report consistency; no independent work/state oracle, saturation or fairness qualification'}
 
 
-def validate_confirmation_report(path: Path) -> dict:
-    """Recompute bounded report consistency; native owners retain all authority."""
-    require(path.is_file() and not path.is_symlink(), 'CONFIRMATION_REPORT_REQUIRED')
-    with path.open('rb') as stream:
-        raw = stream.read(REPORT_LIMIT + 1)
-    require(len(raw) <= REPORT_LIMIT, 'CONFIRMATION_REPORT_LIMIT')
-    doc = json_load(raw)
-    require(isinstance(doc, dict) and doc.get('schema') == 'public-v3-signed-confirmation-pressure-v1',
-            'CONFIRMATION_SCHEMA')
+class ConfirmationReportChecks:
+    """Shared unchanged wire, timing and scalar report predicates."""
 
+    @staticmethod
     def number(value):
         require(type(value) is int and 0 <= value < 1 << 64, 'CONFIRMATION_NUMBER')
         return value
 
+    @staticmethod
     def flags(value, yes=(), no=()):
         require(isinstance(value, dict), 'CONFIRMATION_OBJECT')
         require(all(value.get(key) is True for key in yes), 'CONFIRMATION_TARGET')
         require(all(value.get(key) is False for key in no), 'CONFIRMATION_SCOPE_PROMOTION')
 
+    @staticmethod
     def hexadecimal(value, width=None):
         require(isinstance(value, str) and len(value) % 2 == 0
                 and (width is None or len(value) == width * 2)
                 and re.fullmatch('[0-9a-f]+', value) is not None, 'CONFIRMATION_HEX')
         return bytes.fromhex(value)
 
+    @staticmethod
     def packet_metadata(value):
+        hexadecimal = ConfirmationReportChecks.hexadecimal
         data = hexadecimal(value)
         require(318 + 2 + 49188 <= len(data) <= 1048576, 'CONFIRMATION_PACKET_LIMIT')
         header = header_decode(data[:318])
@@ -415,7 +433,9 @@ def validate_confirmation_report(path: Path) -> dict:
                 'CONFIRMATION_TASK_BINDING')
         return header, transactions, H('block', data[:318], proof[-32:])
 
+    @staticmethod
     def call(value, window):
+        number = ConfirmationReportChecks.number
         require(isinstance(value, dict) and value.get('status') in ('ok', 'refused', 'error'),
                 'CONFIRMATION_CALL')
         start, end = number(value.get('started_ns')), number(value.get('ended_ns'))
@@ -432,7 +452,10 @@ def validate_confirmation_report(path: Path) -> dict:
         return value['status'] == 'ok' and value['returned_after_deadline'] is False \
             and value['returned_after_window'] is False and end < window
 
+    @staticmethod
     def compact_request(value, request, packet_index):
+        number = ConfirmationReportChecks.number
+        hexadecimal = ConfirmationReportChecks.hexadecimal
         # compact_pressure_call serializes the request after converting it to a
         # serde_json Value, whose default object map sorts keys. This is the
         # recorded-request domain, not the transport response body digest.
@@ -445,76 +468,23 @@ def validate_confirmation_report(path: Path) -> dict:
                 and hexadecimal(value.get('recorded_request_digest'), 32)
                 == H('pressure-recorded-request-v1', encoded), 'CONFIRMATION_REQUEST_BINDING')
 
-    flags(doc, yes=('finite_target_met', 'invariant_target_met', 'same_packet_sequence_in_both_runs'),
-          no=('public_network_ready', 'work_profile_qualified', 'production_activation',
-              'strongest_honest_producer_used'))
-    context = {key: hexadecimal(doc.get(key), 32) for key in (
-        'network', 'parameters', 'genesis', 'target', 'task', 'policy_id')}
-    require(context['target'] != bytes(32), 'CONFIRMATION_CONTEXT')
-    require(doc.get('honest_chain_aggregate_cpu_ns', 'missing') is None, 'CONFIRMATION_SCOPE_PROMOTION')
-    number(doc.get('honest_chain_acquisition_wall_ns'))
-    number(doc.get('attacker_construction_cpu_ns'))
-    number(doc.get('attacker_construction_wall_ns'))
-    # Optional successor reports separately measure whole-process acquisition.
-    if 'honest_chain_process_cpu_ns' in doc:
-        if doc['honest_chain_process_cpu_ns'] is not None:
-            number(doc['honest_chain_process_cpu_ns'])
-        require(isinstance(doc.get('honest_chain_process_cpu_scope'), str)
-                and 0 < len(doc['honest_chain_process_cpu_scope']) <= 2048, 'CONFIRMATION_CPU_SCOPE')
-    packets = doc.get('signed_honest_packets')
-    require(isinstance(packets, list) and len(packets) == 7, 'CONFIRMATION_PACKET_SEQUENCE')
-    metadata = [packet_metadata(packet) for packet in packets]
-    parent = context['genesis']
-    for height, (header, transactions, block_id) in enumerate(metadata, 1):
-        require(header['network'] == context['network'] and header['parameters'] == context['parameters']
-                and header['target'] == context['target'] and header['work_task'] == context['task'],
-                'CONFIRMATION_CONTEXT')
-        require(header['height'] == height and header['parent'] == parent
-                and len(transactions) == (1 if height == 1 else 0), 'CONFIRMATION_PACKET_SEQUENCE')
-        parent = block_id
+
+def validate_confirmation_phases(doc, context, packets, metadata, resolve_attack):
+    """Original full phase checks shared by retained and fresh attack sources.
+
+    The caller validates its construction namespace and resolves each exact
+    attack packet; all business, timing, overlap, CPU and observer checks
+    below remain common. This is consistency, not a native State oracle.
+    """
+    number = ConfirmationReportChecks.number
+    flags = ConfirmationReportChecks.flags
+    hexadecimal = ConfirmationReportChecks.hexadecimal
+    packet_metadata = ConfirmationReportChecks.packet_metadata
+    call = ConfirmationReportChecks.call
+    compact_request = ConfirmationReportChecks.compact_request
+
+    parent = metadata[-1][2]
     transaction_id = H('tx-id', metadata[0][1][0]).hex()
-    constructions = doc.get('from_zero_construction')
-    require(isinstance(constructions, list) and len(constructions) == 16, 'CONFIRMATION_CONSTRUCTIONS')
-    for construction in constructions:
-        require(isinstance(construction, dict) and construction.get('status') in (
-            'target_hit_unverified', 'exhausted'), 'CONFIRMATION_CONSTRUCTIONS')
-        header_bytes = hexadecimal(construction.get('header'), 318)
-        header = header_decode(header_bytes)
-        require(header['target'] == context['target'] and header['work_task'] == context['task']
-                and header['network'] == context['network'] and header['parameters'] == context['parameters'],
-                'CONFIRMATION_CONTEXT')
-        require(header['height'] == 1 and header['parent'] == context['genesis'],
-                'CONFIRMATION_CONSTRUCTIONS')
-        challenge = H('challenge', header_bytes)
-        require(hexadecimal(construction.get('challenge'), 32) == challenge
-                and number(construction.get('attempt_budget')) == 4096
-                and number(construction.get('setup_calls')) == 1, 'CONFIRMATION_CONSTRUCTIONS')
-        attempts = construction.get('attempts')
-        require(isinstance(attempts, list) and 0 < len(attempts) <= 4096,
-                'CONFIRMATION_CONSTRUCTIONS')
-        for ordinal, attempt in enumerate(attempts):
-            require(isinstance(attempt, dict) and number(attempt.get('nonce')) == ordinal,
-                    'CONFIRMATION_CONSTRUCTIONS')
-            trace = H('public-v3-from-zero-v1', challenge, struct.pack('<Q', ordinal))
-            ticket = H('ticket', challenge, trace)
-            require(hexadecimal(attempt.get('trace'), 32) == trace
-                    and hexadecimal(attempt.get('ticket'), 32) == ticket
-                    and attempt.get('target_hit') is (ticket <= context['target']),
-                    'CONFIRMATION_CONSTRUCTIONS')
-        hit = construction['status'] == 'target_hit_unverified'
-        require(not any(attempt['target_hit'] for attempt in attempts[:-1])
-                and attempts[-1]['target_hit'] is hit, 'CONFIRMATION_CONSTRUCTIONS')
-        if hit:
-            require(number(construction.get('winner_nonce')) == len(attempts) - 1,
-                    'CONFIRMATION_CONSTRUCTIONS')
-            packet_header, transactions, _ = packet_metadata(construction.get('packet'))
-            require(packet_header == header and not transactions
-                    and hexadecimal(construction['packet'])[-32:]
-                    == hexadecimal(attempts[-1]['trace'], 32), 'CONFIRMATION_CONSTRUCTION_PACKET')
-        else:
-            require(construction.get('packet', 'missing') is None
-                    and construction.get('winner_nonce', 'missing') is None
-                    and len(attempts) == 4096, 'CONFIRMATION_CONSTRUCTIONS')
     phases = doc.get('phases')
     require(isinstance(phases, list) and len(phases) == 2, 'CONFIRMATION_PHASES')
     observations = []
@@ -569,7 +539,10 @@ def validate_confirmation_report(path: Path) -> dict:
                 next_packet += 1
         require([row.get('height') for row in successful] == list(range(1, 8)), 'CONFIRMATION_SIGNED_SUBMISSIONS')
         imported, after = [], doc['genesis']
-        for row in histories:
+        # Independently bind optional CPU observations to the exact preserved
+        # History call and canonical next cursor, not to a report summary.
+        expected_replays = []
+        for history_call_index, row in enumerate(histories):
             on_time = call(row, window)
             require(previous_end <= row['started_ns'] <= row['ended_ns'] <= end,
                     'CONFIRMATION_BUSINESS_CHRONOLOGY')
@@ -587,11 +560,58 @@ def validate_confirmation_report(path: Path) -> dict:
                     'CONFIRMATION_HISTORY_CONTEXT')
             chunk = page.get('packets')
             require(isinstance(chunk, list) and chunk and len(chunk) <= 16, 'CONFIRMATION_HISTORY_PACKETS')
+            previous_after = after
             imported.extend(chunk)
             after = packet_metadata(chunk[-1])[2].hex()
             require(page.get('next') == after and page.get('complete') is (after == parent.hex()),
                     'CONFIRMATION_HISTORY_CONTEXT')
+            expected_replays.append((history_call_index, row['ended_ns'], previous_after, after))
         require(imported == packets and after == parent.hex(), 'CONFIRMATION_HISTORY_PACKETS')
+        stages = phase.get('independent_history_page_replay')
+        require(isinstance(stages, list) and len(stages) == len(expected_replays),
+                'CONFIRMATION_REPLAY_STAGES')
+        previous_replay_end = 0
+        measured_page_cpu = 0
+        for stage, (call_index, response_end, prior, next_after) in zip(stages, expected_replays):
+            require(isinstance(stage, dict) and number(stage.get('history_call_index')) == call_index
+                    and number(stage.get('history_request_ended_ns')) == response_end
+                    and stage.get('prior_after') == prior and stage.get('next_after') == next_after
+                    and stage.get('replay_accepted') is True,
+                    'CONFIRMATION_REPLAY_BINDING')
+            started = number(stage.get('replay_started_ns'))
+            ended = number(stage.get('replay_ended_ns'))
+            require(response_end <= started <= ended < window and previous_replay_end <= started
+                    and number(stage.get('replay_wall_ns')) == ended - started,
+                    'CONFIRMATION_REPLAY_TIMELINE')
+            if call_index + 1 < len(histories):
+                require(ended <= number(histories[call_index + 1].get('started_ns')),
+                        'CONFIRMATION_REPLAY_TIMELINE')
+            previous_replay_end = ended
+            cpu = stage.get('replay_thread_cpu_ns')
+            if cpu is not None:
+                measured_page_cpu += number(cpu)
+            require(stage.get('clock_scope') ==
+                    'independent verifier caller thread; wall spans all waits, CPU only this thread',
+                    'CONFIRMATION_REPLAY_SCOPE')
+        final = phase.get('independent_final_confirmation_stage')
+        require(isinstance(final, dict) and final.get('observation_returned') is True
+                and final.get('clock_scope') ==
+                'independent verifier caller thread; no consensus/host time claim',
+                'CONFIRMATION_REPLAY_FINAL')
+        final_start = number(final.get('confirmation_started_ns'))
+        final_end = number(final.get('confirmation_ended_ns'))
+        require(previous_replay_end <= final_start <= final_end <= end
+                and number(final.get('confirmation_wall_ns')) == final_end - final_start,
+                'CONFIRMATION_REPLAY_TIMELINE')
+        final_cpu = final.get('confirmation_thread_cpu_ns')
+        if final_cpu is not None:
+            measured_page_cpu += number(final_cpu)
+        total_replay_cpu = phase.get('independent_replay_and_confirmation_cpu_ns')
+        if total_replay_cpu is not None:
+            require(measured_page_cpu <= number(total_replay_cpu), 'CONFIRMATION_REPLAY_CPU_SCOPE')
+        require(number(phase.get('independent_replay_and_confirmation_wall_ns'))
+                >= final_end - number(stages[0].get('replay_started_ns')),
+                'CONFIRMATION_REPLAY_TIMELINE')
         workers = phase.get('attacks')
         require(isinstance(workers, list) and len(workers) == phase['workers'], 'CONFIRMATION_ATTACKS')
         attack_calls, worker_cpu = [], 0
@@ -603,11 +623,9 @@ def validate_confirmation_report(path: Path) -> dict:
             rows = worker.get('calls')
             require(isinstance(rows, list) and len(rows) < 1024, 'CONFIRMATION_ATTACKS')
             previous_end = 0
-            for row in rows:
+            for attempt_index, row in enumerate(rows):
                 require(isinstance(row, dict), 'CONFIRMATION_ATTACKS')
-                packet_index = number(row.get('packet_index'))
-                require(packet_index == worker_index, 'CONFIRMATION_REQUEST_BINDING')
-                construction = constructions[packet_index]
+                construction, packet_index = resolve_attack(worker_index, attempt_index, row)
                 if row.get('status') == 'not_submitted_exhausted':
                     require(construction['status'] == 'exhausted', 'CONFIRMATION_CONSTRUCTIONS')
                     continue
@@ -680,6 +698,102 @@ def validate_confirmation_report(path: Path) -> dict:
                 'CONFIRMATION_OBSERVATION_COMPLETENESS')
         observations.append({'mode': phase['mode'], 'latency_ns': end - start,
                              'attacks': len(attack_calls), 'overlapping_false_calls': overlapping})
+    return observations
+
+
+def validate_confirmation_report(path: Path) -> dict:
+    """Recompute bounded report consistency; native owners retain all authority."""
+    require(path.is_file() and not path.is_symlink(), 'CONFIRMATION_REPORT_REQUIRED')
+    with path.open('rb') as stream:
+        raw = stream.read(REPORT_LIMIT + 1)
+    require(len(raw) <= REPORT_LIMIT, 'CONFIRMATION_REPORT_LIMIT')
+    doc = json_load(raw)
+    require(isinstance(doc, dict) and doc.get('schema') == 'public-v3-signed-confirmation-pressure-v1',
+            'CONFIRMATION_SCHEMA')
+
+    number = ConfirmationReportChecks.number
+    flags = ConfirmationReportChecks.flags
+    hexadecimal = ConfirmationReportChecks.hexadecimal
+    packet_metadata = ConfirmationReportChecks.packet_metadata
+    call = ConfirmationReportChecks.call
+    compact_request = ConfirmationReportChecks.compact_request
+
+    flags(doc, yes=('finite_target_met', 'invariant_target_met', 'same_packet_sequence_in_both_runs'),
+          no=('public_network_ready', 'work_profile_qualified', 'production_activation',
+              'strongest_honest_producer_used'))
+    context = {key: hexadecimal(doc.get(key), 32) for key in (
+        'network', 'parameters', 'genesis', 'target', 'task', 'policy_id')}
+    require(context['target'] != bytes(32), 'CONFIRMATION_CONTEXT')
+    require(doc.get('honest_chain_aggregate_cpu_ns', 'missing') is None, 'CONFIRMATION_SCOPE_PROMOTION')
+    number(doc.get('honest_chain_acquisition_wall_ns'))
+    number(doc.get('attacker_construction_cpu_ns'))
+    number(doc.get('attacker_construction_wall_ns'))
+    # Optional successor reports separately measure whole-process acquisition.
+    if 'honest_chain_process_cpu_ns' in doc:
+        if doc['honest_chain_process_cpu_ns'] is not None:
+            number(doc['honest_chain_process_cpu_ns'])
+        require(isinstance(doc.get('honest_chain_process_cpu_scope'), str)
+                and 0 < len(doc['honest_chain_process_cpu_scope']) <= 2048, 'CONFIRMATION_CPU_SCOPE')
+    packets = doc.get('signed_honest_packets')
+    require(isinstance(packets, list) and len(packets) == 7, 'CONFIRMATION_PACKET_SEQUENCE')
+    metadata = [packet_metadata(packet) for packet in packets]
+    parent = context['genesis']
+    for height, (header, transactions, block_id) in enumerate(metadata, 1):
+        require(header['network'] == context['network'] and header['parameters'] == context['parameters']
+                and header['target'] == context['target'] and header['work_task'] == context['task'],
+                'CONFIRMATION_CONTEXT')
+        require(header['height'] == height and header['parent'] == parent
+                and len(transactions) == (1 if height == 1 else 0), 'CONFIRMATION_PACKET_SEQUENCE')
+        parent = block_id
+    transaction_id = H('tx-id', metadata[0][1][0]).hex()
+    constructions = doc.get('from_zero_construction')
+    require(isinstance(constructions, list) and len(constructions) == 16, 'CONFIRMATION_CONSTRUCTIONS')
+    for construction in constructions:
+        require(isinstance(construction, dict) and construction.get('status') in (
+            'target_hit_unverified', 'exhausted'), 'CONFIRMATION_CONSTRUCTIONS')
+        header_bytes = hexadecimal(construction.get('header'), 318)
+        header = header_decode(header_bytes)
+        require(header['target'] == context['target'] and header['work_task'] == context['task']
+                and header['network'] == context['network'] and header['parameters'] == context['parameters'],
+                'CONFIRMATION_CONTEXT')
+        require(header['height'] == 1 and header['parent'] == context['genesis'],
+                'CONFIRMATION_CONSTRUCTIONS')
+        challenge = H('challenge', header_bytes)
+        require(hexadecimal(construction.get('challenge'), 32) == challenge
+                and number(construction.get('attempt_budget')) == 4096
+                and number(construction.get('setup_calls')) == 1, 'CONFIRMATION_CONSTRUCTIONS')
+        attempts = construction.get('attempts')
+        require(isinstance(attempts, list) and 0 < len(attempts) <= 4096,
+                'CONFIRMATION_CONSTRUCTIONS')
+        for ordinal, attempt in enumerate(attempts):
+            require(isinstance(attempt, dict) and number(attempt.get('nonce')) == ordinal,
+                    'CONFIRMATION_CONSTRUCTIONS')
+            trace = H('public-v3-from-zero-v1', challenge, struct.pack('<Q', ordinal))
+            ticket = H('ticket', challenge, trace)
+            require(hexadecimal(attempt.get('trace'), 32) == trace
+                    and hexadecimal(attempt.get('ticket'), 32) == ticket
+                    and attempt.get('target_hit') is (ticket <= context['target']),
+                    'CONFIRMATION_CONSTRUCTIONS')
+        hit = construction['status'] == 'target_hit_unverified'
+        require(not any(attempt['target_hit'] for attempt in attempts[:-1])
+                and attempts[-1]['target_hit'] is hit, 'CONFIRMATION_CONSTRUCTIONS')
+        if hit:
+            require(number(construction.get('winner_nonce')) == len(attempts) - 1,
+                    'CONFIRMATION_CONSTRUCTIONS')
+            packet_header, transactions, _ = packet_metadata(construction.get('packet'))
+            require(packet_header == header and not transactions
+                    and hexadecimal(construction['packet'])[-32:]
+                    == hexadecimal(attempts[-1]['trace'], 32), 'CONFIRMATION_CONSTRUCTION_PACKET')
+        else:
+            require(construction.get('packet', 'missing') is None
+                    and construction.get('winner_nonce', 'missing') is None
+                    and len(attempts) == 4096, 'CONFIRMATION_CONSTRUCTIONS')
+    def resolve_attack(worker_index, _attempt_index, row):
+        packet_index = number(row.get('packet_index'))
+        require(packet_index == worker_index, 'CONFIRMATION_REQUEST_BINDING')
+        return constructions[packet_index], packet_index
+
+    observations = validate_confirmation_phases(doc, context, packets, metadata, resolve_attack)
     result = {'sha256': digest(raw), 'schema': doc['schema'], 'phases': observations,
               'finite_target_met': True, 'scope': 'bounded native report consistency; no independent work/state oracle, WAN, fairness or scientific acceptance'}
     if 'honest_chain_process_cpu_ns' in doc:
@@ -697,6 +811,173 @@ def save_manifest(out: Path, result: dict) -> None:
     os.replace(temporary, out / 'manifest.json')
 
 
+def summarize_confirmation_report(path: Path) -> dict:
+    """Describe both passing and failing original reports; never confer authority.
+
+    ACK and page response counts have separate denominators from the one signed
+    business transaction. Missing confirmation is unknown, not a measured zero.
+    Successful latency samples exclude failed/late calls; incomplete business
+    keeps its denominator and the lower bound supported by actual timestamps.
+    """
+    require(path.is_file() and not path.is_symlink(), 'CONFIRMATION_REPORT_REQUIRED')
+    with path.open('rb') as stream:
+        raw = stream.read(REPORT_LIMIT + 1)
+    require(len(raw) <= REPORT_LIMIT, 'CONFIRMATION_REPORT_LIMIT')
+    doc = json_load(raw)
+    require(isinstance(doc, dict)
+            and doc.get('schema') == 'public-v3-signed-confirmation-pressure-v1',
+            'CONFIRMATION_SCHEMA')
+    phases = doc.get('phases')
+    require(isinstance(phases, list) and len(phases) == 2, 'CONFIRMATION_PHASES')
+
+    def number(value):
+        require(type(value) is int and 0 <= value < 1 << 64, 'CONFIRMATION_NUMBER')
+        return value
+
+    def distribution(values, missing=0):
+        values = sorted(values)
+        n = len(values)
+        # A small sample's maximum must not masquerade as p95/p99. These
+        # minimum ranks match the public-readiness reader's tail resolution;
+        # they do not establish independence or population confidence. Count
+        # successful, failed/late and missing-CPU samples separately below.
+        minimum = {50: 2, 95: 20, 99: 100}
+        return {'samples': n, 'missing_samples': missing,
+                'min_ns': values[0] if n else None,
+                'max_ns': values[-1] if n else None,
+                'minimum_samples': {f'p{percent}': count for percent, count in minimum.items()},
+                'method': 'nearest-rank; descriptive only; p50 needs 2, p95 20, p99 100 samples; '
+                          'independence and confidence are not established',
+                **{f'p{percent}_ns': values[(n * percent + 99) // 100 - 1]
+                   if n >= required else None for percent, required in minimum.items()}}
+
+    output = []
+    for index, phase in enumerate(phases):
+        require(isinstance(phase, dict)
+                and phase.get('mode') == ('attack-free-baseline' if index == 0 else 'from-zero-pressure')
+                and number(phase.get('workers')) == 16 * index, 'CONFIRMATION_PHASES')
+        window = number(phase.get('requested_window_ns'))
+        start = number(phase.get('business_started_ns'))
+        require(window == 4_000_000_000 and start < window, 'CONFIRMATION_OUTSIDE_ORIGINAL_WINDOW')
+        observed_ends = []
+
+        def calls(rows, maximum):
+            require(isinstance(rows, list) and len(rows) <= maximum, 'CONFIRMATION_CALLS_REQUIRED')
+            success, terminal, cpu, missing_cpu = [], [], [], 0
+            for row in rows:
+                require(isinstance(row, dict), 'CONFIRMATION_CALLS_REQUIRED')
+                begin, end = number(row.get('started_ns')), number(row.get('ended_ns'))
+                duration = number(row.get('elapsed_wall_ns'))
+                # Original caller samples elapsed after its end timestamp.
+                require(begin <= end and duration >= end - begin, 'CONFIRMATION_CALL_TIME')
+                require(type(row.get('returned_after_window')) is bool
+                        and type(row.get('returned_after_deadline')) is bool,
+                        'CONFIRMATION_CALL_TIME')
+                observed_ends.append(end)
+                on_time = (row.get('status') == 'ok' and not row['returned_after_window']
+                           and not row['returned_after_deadline'] and end < window)
+                if on_time:
+                    success.append(duration)
+                else:
+                    terminal.append(duration)
+                value = row.get('client_thread_cpu_ns')
+                if value is None:
+                    missing_cpu += 1
+                else:
+                    cpu.append(number(value))
+            return {'attempts': len(rows), 'successful_in_original_window': len(success),
+                    'failed_or_late': len(terminal),
+                    'successful_latency': distribution(success),
+                    'failed_or_late_terminal_duration': distribution(terminal),
+                    'calling_thread_cpu': distribution(cpu, missing_cpu)}
+
+        submits = calls(phase.get('honest_submissions'), 64)
+        histories = calls(phase.get('honest_history'), 16)
+        heads = calls(phase.get('honest_heads'), 256)
+        replays = phase.get('independent_history_page_replay')
+        replay_summary = None
+        if replays is not None:
+            require(isinstance(replays, list) and len(replays) <= 16, 'CONFIRMATION_REPLAY_STAGES')
+            walls, failures, cpus, missing_cpu = [], [], [], 0
+            for row in replays:
+                require(isinstance(row, dict) and type(row.get('replay_accepted')) is bool,
+                        'CONFIRMATION_REPLAY_STAGES')
+                begin, end = number(row.get('replay_started_ns')), number(row.get('replay_ended_ns'))
+                wall = number(row.get('replay_wall_ns'))
+                require(begin <= end and wall == end - begin, 'CONFIRMATION_REPLAY_STAGES')
+                observed_ends.append(end)
+                (walls if row['replay_accepted'] and end < window else failures).append(wall)
+                value = row.get('replay_thread_cpu_ns')
+                if value is None:
+                    missing_cpu += 1
+                else:
+                    cpus.append(number(value))
+            replay_summary = {'attempts': len(replays), 'accepted_in_original_window': len(walls),
+                              'failed_or_late': len(failures),
+                              'accepted_wall': distribution(walls),
+                              'failed_or_late_wall': distribution(failures),
+                              'calling_thread_cpu': distribution(cpus, missing_cpu),
+                              'known_calling_thread_cpu_sum_ns': sum(cpus),
+                              'cpu_scope': 'caller thread only; excludes separately owned worker CPU'}
+
+        count = phase.get('client_confirmed_transactions')
+        latency = None
+        if count is not None:
+            require(number(count) <= 1, 'CONFIRMATION_BUSINESS_COUNT')
+        if count == 1:
+            end = number(phase.get('confirmation_ended_ns'))
+            latency = number(phase.get('client_confirmation_latency_ns'))
+            native = phase.get('independent_client_confirmation')
+            require(start < end < window and latency == end - start
+                    and phase.get('client_confirmed_before_original_window_end') is True
+                    and isinstance(native, dict) and native.get('confirmed') is True
+                    and native.get('finalized') is False and native.get('execution_authority') is False
+                    and number(native.get('depth')) == 6, 'CONFIRMATION_NATIVE_OBSERVATION')
+            observed_ends.append(end)
+        elif count == 0:
+            require(phase.get('client_confirmed_before_original_window_end') is False,
+                    'CONFIRMATION_BUSINESS_COUNT')
+        # The lower bound is conservative: only real recorded event timestamps
+        # establish observation coverage, not the configured window by itself.
+        observed_until = min(window, max(observed_ends, default=start))
+        output.append({
+            'mode': phase['mode'], 'workers': phase['workers'], 'window_ns': window,
+            'business': {'required_signed_transactions': 1,
+                         'reported_independently_confirmed_in_window': count,
+                         'unconfirmed': 1 - count if count is not None else None,
+                         'unknown': int(count is None),
+                         'independent_confirmed_transactions_per_window_second':
+                             count * 1_000_000_000 / window if count is not None else None,
+                         'observed_success_latency_ns': latency,
+                         'successful_latency': distribution([] if latency is None else [latency]),
+                         'unconfirmed_latency_lower_bound_ns':
+                             max(0, observed_until - start) if count == 0 else None,
+                         'lower_bound_reaches_original_window_end':
+                             observed_until == window if count == 0 else None,
+                         'reported_finite_business_target_met': phase.get('finite_business_target_met')},
+            'signed_submit_ack': {**submits,
+                                  'acknowledgements_per_window_second':
+                                      submits['successful_in_original_window'] * 1_000_000_000 / window},
+            'history_response': histories, 'independent_page_replay': replay_summary,
+            'head_response': heads, 'verification_errors': phase.get('verification_errors'),
+            'service_totals': phase.get('service', {}).get('metrics'),
+            'service_totals_scope': 'whole service including shutdown; not per-request p99 or in-window proof/s',
+        })
+    error = None
+    try:
+        accepted = validate_confirmation_report(path)
+        require(accepted['sha256'] == digest(raw), 'CONFIRMATION_REPORT_CHANGED')
+    except (OSError, ValueError, TypeError, KeyError) as failure:
+        error = str(failure)
+    return {'schema': 'trnm-original-confirmation-observation-v1', 'sha256': digest(raw),
+            'original_gate_validated': error is None, 'original_gate_validation_error': error,
+            'simulated_control': doc.get('simulated_control') is True,
+            'phases': output, 'network_capacity_qualified': False,
+            'tail_latency_qualified': False, 'production_activation': False,
+            'scope': 'same original finite offer, 1 signed transaction per 4s phase; not saturated chain TPS; '
+                     'reported native observations only, no independent proof/state oracle'}
+
+
 def run(out: Path) -> dict:
     out = out.resolve()
     require(not out.is_relative_to(ROOT), 'OUTPUT_MUST_BE_OUTSIDE_CHECKOUT')
@@ -707,7 +988,8 @@ def run(out: Path) -> dict:
               'format_passed': False, 'runs': [], 'failures': [],
               'independent_wan_accepted': False, 'work_hardness_accepted': False,
               'production_activation': False, 'passed': False, 'execution_finished': False,
-              'service_report': None, 'sustained_report': None, 'confirmation_report': None}
+              'service_report': None, 'sustained_report': None, 'confirmation_report': None,
+              'confirmation_observation': None}
     previous_output = os.environ.get('TRNM_PUBLIC_V3_FROM_ZERO_DIR')
     previous_confirmation_output = os.environ.get('TRNM_PUBLIC_V3_CONFIRMATION_DIR')
     previous_cwd = Path.cwd()
@@ -720,10 +1002,12 @@ def run(out: Path) -> dict:
         result['cargo'] = subprocess.check_output(['cargo', '-V'], text=True, timeout=30).strip()
         result['build_env'] = {key: os.environ.get(key) for key in (
             'CARGO_BUILD_JOBS', 'CARGO_TARGET_DIR', 'RUSTFLAGS', 'CARGO_ENCODED_RUSTFLAGS')}
-        # A copy gives a reproducible formatting repair without changing checkout.
-        shutil.copyfile(ROOT / SOURCE, out / 'formatted.rs')
+        # Stage the actual relative #[path] module before formatting the copy.
+        # The original checkout and authoritative cargo fmt --check stay untouched.
+        format_source = stage_format_copy(ROOT / SOURCE, ROOT / FORMAT_SUPPORT, out)
         result['format_copy'] = run_child(
-            ['rustfmt', '--edition', '2021', str(out / 'formatted.rs')], out / 'format-copy', 60)
+            ['rustfmt', '--edition', '2021', str(format_source)], out / 'format-copy', 60)
+        shutil.copyfile(format_source, out / 'formatted.rs')
         require(result['format_copy']['timed_out'] is False, 'NATIVE_TIMEOUT_STOPS_CAMPAIGN')
         result['format'] = run_child(
             ['cargo', 'fmt', '--manifest-path', 'trillionnium/Cargo.toml', '--all', '--', '--check'],
@@ -772,6 +1056,11 @@ def run(out: Path) -> dict:
             os.environ.pop('TRNM_PUBLIC_V3_CONFIRMATION_DIR', None)
         else:
             os.environ['TRNM_PUBLIC_V3_CONFIRMATION_DIR'] = previous_confirmation_output
+        if (out / 'confirmation/report.json').exists():
+            try:
+                result['confirmation_observation'] = summarize_confirmation_report(out / 'confirmation/report.json')
+            except (OSError, ValueError, TypeError, KeyError) as error:
+                result['failures'].append('CONFIRMATION_OBSERVATION: ' + str(error))
         try:
             result['source_after'] = source_identity()
         except (OSError, ValueError, TypeError, KeyError, subprocess.SubprocessError) as error:
@@ -790,6 +1079,9 @@ def run(out: Path) -> dict:
             if result['confirmation_report'] is not None:
                 require(digest((out / 'confirmation/report.json').read_bytes()) == result['confirmation_report']['sha256'],
                         'CONFIRMATION_REPORT_CHANGED')
+            if result['confirmation_observation'] is not None:
+                require(digest((out / 'confirmation/report.json').read_bytes())
+                        == result['confirmation_observation']['sha256'], 'CONFIRMATION_OBSERVATION_CHANGED')
             result['files'] = {p.relative_to(out).as_posix(): digest(p.read_bytes())
                                for p in sorted(out.rglob('*'))
                                if p.is_file() and p != out / 'manifest.json'}
@@ -813,7 +1105,15 @@ def run(out: Path) -> dict:
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--out', type=Path, required=True)
-    receipt = run(parser.parse_args().out)
+    action = parser.add_mutually_exclusive_group(required=True)
+    action.add_argument('--out', type=Path)
+    action.add_argument('--summarize-confirmation', type=Path,
+                        help='read an original raw report, retaining business failures and missing samples')
+    args = parser.parse_args()
+    if args.summarize_confirmation is not None:
+        observation = summarize_confirmation_report(args.summarize_confirmation)
+        print(json.dumps(observation, indent=2, sort_keys=True))
+        raise SystemExit(0 if observation['original_gate_validated'] else 1)
+    receipt = run(args.out)
     print(json.dumps({'passed': receipt['passed'], 'failures': receipt['failures']}))
     raise SystemExit(0 if receipt['passed'] else 1)

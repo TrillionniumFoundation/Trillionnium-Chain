@@ -197,6 +197,82 @@ equal availability and no unmodeled network or hardware advantage. Neither
 integer ratios and labels these outputs as assumptions. It excludes invalid
 from-zero target hits from both valid-work numerators.
 
+### Exact target rounding in the resource-to-work conversion
+
+The preceding same-target condition is necessary to cancel the expected credit
+per attempt. The existing consensus weight remains unchanged. With
+`M = 2^256`, `d = T + 1`, and `w = floor(M / d)`, a complete legal attempt with
+an ideal uniform ticket has **expected credited work**
+
+`eta(T) = d * floor(M / d) / M`.
+
+The exact expected number of attempts until a hit is `M / d`; the integer
+weight is its floor. Thus `eta(T) <= 1`, with equality only when `d` divides
+`M`. It is not valid to assume equality for every target. This is an accounting
+effect even under the equal-attempt-cost assumption; it is separate from the
+unproved cost of W1's cheapest legal strategy.
+
+Let every considered target satisfy `1 <= T <= P`, and put
+`k = floor(M / (P + 1))`. For every such target,
+
+`k / (k + 1) < eta(T) <= 1`.
+
+Indeed, `w <= M / d < w + 1`, hence `d > M / (w + 1)` and
+`eta(T) > w / (w + 1) >= k / (k + 1)`. The current development
+`pow_limit = M / 2 - 1` has `k = 2`, giving `2/3 < eta <= 1`. The two
+following bounded targets illustrate why the difference is material at this
+deliberately easy development difficulty:
+
+| Arithmetic target | Credited weight | Exact expected work per complete legal attempt |
+| --- | ---: | --- |
+| `T_A = M / 2 - 1` | 2 | `1` |
+| `T_H = floor(M / 3)` | 2 | `2 * (floor(M / 3) + 1) / M`, slightly above `2/3` |
+
+This is a **conditional arithmetic comparison**, not a pair of demonstrated
+attacker/honest native branches. The native DAA derives targets from each
+branch's actual ancestors. An attacker cannot choose an arbitrary target after
+seeing a ticket, and a real strategy must pay for any required transitions,
+withholding, failed attempts and propagation. Neither this table nor the
+algebra shows that those two targets can be sustained by a profitable attack.
+
+For a constant-rate comparison, define `q` as the attacker's fraction of one
+additive resource, and `s` as its **complete legal attempt rate per resource
+unit** relative to the honest rate. At fixed targets the ratio of expected
+credited-work rates is
+
+`q_effective = q * s * eta_A / (q * s * eta_A + (1 - q) * eta_H)`.
+
+The equal-mean-work resource fraction is
+`q_star = eta_H / (s * eta_A + eta_H)`. At equal targets this recovers exactly
+the original `1 / (1 + s)` expression. If `s` was already defined as the ratio
+of **credited-work rates** per resource unit, it already contains `eta_A / eta_H`;
+multiplying by the efficiency ratio again would double-count the adjustment.
+Actual finite cost measurements must distinguish attempts, target hits and
+fully valid credited wins, including their original setup/reuse denominators.
+
+Under the two table targets and equal complete attempt costs, a hypothetical
+resource fraction `q = 9/20` produces a mean-work fraction slightly below
+`27/49` (about 55.10%), although it is below half of the resource. This does
+not establish an attack, a network share or a rollback probability. Using
+only the target bound, `q < k / (k + (k + 1) * s)` is a sufficient condition
+for honest expected work to exceed attacker expected work in this restricted
+model. For `k=2, s=1` it is `q<2/5`. It is **not a necessary condition**:
+equal targets with `s=1` still give honest mean-work dominance for every
+`q<1/2`. Neither mean-work inequality proves common prefix, chain quality,
+honest service or confirmation security.
+
+At harder minimum weight `k`, the possible rounding-efficiency ratio is
+strictly below `(k+1)/k`; the quantitative allowance therefore shrinks with
+difficulty. The result is implemented with exact rational arithmetic in the
+existing [`work_query_bound.py`](../../../../formal/pon-nakamoto-v1/work_query_bound.py)
+model. Its [tests](../../../../formal/pon-nakamoto-v1/test_work_query_bound.py)
+exhaust small legal targets and limits, check the full-width example, recover
+the original same-target formula, and reject nonexact inputs. The existing
+adaptive-query, delegation, optional-stop and anytime upper bounds remain.
+These Python checks do not execute Rust admission or certify an adversarial
+cost lower bound. No target, weight, proof, confirmation or activation rule
+changes as a result of this analysis.
+
 | Adversary capability | Relevant authority and cost | Remaining qualification |
 | --- | --- | --- |
 | Faster legal structure, product reuse or hardware | Full verifier validity and target-derived cumulative work remain required; compare complete fixed producer strategies | Lowest valid cost over all selectable tasks, realistic reuse horizons, accelerators and task-selection incentives |

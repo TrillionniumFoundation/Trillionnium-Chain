@@ -129,6 +129,9 @@ fn opaque_tree_retention_caps_payload_charge_and_preserves_cold_borrow_behavior(
             offered.payload_bytes() > MAX_PAYLOAD_BYTES
                 || offered.retained_charge_bytes() + ENTRY_CHARGE > MAX_RETAINED_CHARGE_BYTES
         );
+        // Canonical material retains the original refusal/eviction behavior.
+        // The separate partition-material case is exercised below.
+        cache.offer(&settings, Some(&initial));
         let before = cache.counters.get();
         cache.offer(&settings, Some(&offered));
         assert!(cache.material.borrow().is_none());
@@ -152,6 +155,91 @@ fn opaque_tree_retention_caps_payload_charge_and_preserves_cold_borrow_behavior(
     cache.offer(&settings, None);
     assert!(cache.material.borrow().is_none());
     equal(&cache, &settings, &settings.initial);
+}
+
+#[test]
+fn refused_offers_preserve_only_same_context_complete_input_partition_arithmetic() {
+    let settings = settings();
+    let cache = RootArithmetic::default();
+    let mut state: State = (0..600)
+        .map(|n| (format!("large-partition-{n:04}"), json!("x".repeat(4094))))
+        .collect();
+    let oversized = snapshot(&state);
+    assert!(oversized.payload_bytes() > MAX_PAYLOAD_BYTES);
+    equal(&cache, &settings, &state);
+
+    for offer in [None, Some(&oversized)] {
+        let before = cache.counters.get();
+        let retained_before = cache.material.borrow().as_ref().unwrap().charged;
+        cache.offer(&settings, offer);
+        let retained = cache.material.borrow();
+        let material = retained.as_ref().unwrap();
+        assert!(matches!(&material.source, MaterialSource::Partitions(_)));
+        assert_eq!(material.charged, retained_before);
+        assert!(material.payload_bytes() <= MAX_PAYLOAD_BYTES);
+        assert!(material.charged <= MAX_RETAINED_CHARGE_BYTES);
+        drop(retained);
+        equal(&cache, &settings, &state);
+        let after = cache.counters.get();
+        assert_eq!(
+            after.offers_preserved_partitions,
+            before.offers_preserved_partitions + 1
+        );
+        assert_eq!(after.cold_roots, before.cold_roots);
+        assert_eq!(
+            after.partition_roots_computed,
+            before.partition_roots_computed
+        );
+        assert_eq!(
+            after.partition_inputs_hashed,
+            before.partition_inputs_hashed + state.len() as u64
+        );
+        assert!(after.partition_roots_reused > before.partition_roots_reused);
+    }
+
+    // A refused offer never promises an unchanged State. All changed, removed
+    // and added actual rows still determine the independent original root.
+    let initial_root = pon_executor::root(&state).unwrap();
+    state.insert("large-partition-0001".into(), json!("y".repeat(4094)));
+    cache.offer(&settings, None);
+    equal(&cache, &settings, &state);
+    assert_ne!(pon_executor::root(&state).unwrap(), initial_root);
+    state.remove("large-partition-0002");
+    equal(&cache, &settings, &state);
+    state.insert("new-current-row".into(), json!([1, 2, 3]));
+    equal(&cache, &settings, &state);
+
+    // Preserve complete grammar before wire-limit order even after retention.
+    let oversized_key = "a".repeat(161);
+    state.insert(oversized_key.clone(), json!(0));
+    state.insert("zz-invalid-number".into(), json!(-0.0));
+    cache.offer(&settings, None);
+    assert_eq!(pon_executor::root(&state), Err("RANGE"));
+    equal(&cache, &settings, &state);
+    state.remove("zz-invalid-number");
+    assert_eq!(pon_executor::root(&state), Err("LIMIT"));
+    equal(&cache, &settings, &state);
+    state.remove(&oversized_key);
+    equal(&cache, &settings, &state);
+
+    // Context changes invalidate the optional entry even for absent offers.
+    for component in 0..3 {
+        let mut foreign = settings.clone();
+        match component {
+            0 => foreign.app.network[0] ^= 1,
+            1 => foreign.app.parameters[0] ^= 1,
+            _ => foreign.genesis[0] ^= 1,
+        }
+        let before = cache.counters.get();
+        cache.offer(&foreign, None);
+        assert!(cache.material.borrow().is_none());
+        equal(&cache, &foreign, &state);
+        assert_eq!(cache.counters.get().cold_roots, before.cold_roots + 1);
+        assert_eq!(
+            cache.counters.get().offers_preserved_partitions,
+            before.offers_preserved_partitions
+        );
+    }
 }
 
 #[test]

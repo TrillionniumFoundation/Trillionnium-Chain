@@ -469,6 +469,76 @@ mod tests {
         b.push(0);
         assert_eq!(Header::decode(&b).unwrap_err(), WireError::Length);
     }
+
+    #[test]
+    fn every_header_field_binds_its_wire_bytes_challenge_and_block_identity() {
+        let original = Header {
+            network: [1; 32],
+            parameters: [2; 32],
+            parent: [3; 32],
+            height: 1,
+            timestamp: 1_800_000_010,
+            target: [15; 32],
+            miner: [4; 32],
+            transactions: [5; 32],
+            state: [6; 32],
+            receipts: [7; 32],
+            work_task: [8; 32],
+            nonce: 9,
+        };
+        let wire = original.encode();
+        let trace = [41; 32];
+        let challenge = original.challenge();
+        let block = original.block_id(trace);
+        assert_eq!(wire.len(), 318);
+        assert_eq!(&wire[..6], b"PNH1\x01\x00");
+        assert_ne!(challenge, block);
+
+        // Independent PNH1 wire offsets: touch the LAST byte of every hash
+        // and the high byte of every little-endian number. This detects a
+        // missing/truncated field, a reordered field or a changed byte order.
+        type Mutation = (&'static str, usize, fn(&mut Header));
+        let mutations: [Mutation; 12] = [
+            ("network", 37, |h| h.network[31] ^= 0x80),
+            ("parameters", 69, |h| h.parameters[31] ^= 0x80),
+            ("parent", 101, |h| h.parent[31] ^= 0x80),
+            ("height", 109, |h| h.height ^= 1_u64 << 63),
+            ("timestamp", 117, |h| h.timestamp ^= 1_u64 << 63),
+            ("target", 149, |h| h.target[31] ^= 0x80),
+            ("miner", 181, |h| h.miner[31] ^= 0x80),
+            ("transactions", 213, |h| h.transactions[31] ^= 0x80),
+            ("state", 245, |h| h.state[31] ^= 0x80),
+            ("receipts", 277, |h| h.receipts[31] ^= 0x80),
+            ("work_task", 309, |h| h.work_task[31] ^= 0x80),
+            ("nonce", 317, |h| h.nonce ^= 1_u64 << 63),
+        ];
+        let mut challenges = std::collections::BTreeSet::from([challenge]);
+        let mut blocks = std::collections::BTreeSet::from([block]);
+        for (name, offset, mutate) in mutations {
+            let mut changed = original.clone();
+            mutate(&mut changed);
+            let mut expected = wire.clone();
+            expected[offset] ^= 0x80;
+            let encoded = changed.encode();
+            assert_eq!(encoded, expected, "wire field: {name}");
+            assert_eq!(&encoded[..6], b"PNH1\x01\x00", "domain: {name}");
+            assert_eq!(Header::decode(&encoded).unwrap(), changed, "{name}");
+            assert!(challenges.insert(changed.challenge()), "challenge: {name}");
+            assert!(blocks.insert(changed.block_id(trace)), "block: {name}");
+        }
+
+        // These are encoding/hash-binding cases, not branch-validity claims
+        // for the mutated heights, timestamps or targets. A changed wire
+        // namespace must be rejected rather than interpreted under PNH1 v1.
+        for offset in 0..6 {
+            let mut changed_domain = wire.clone();
+            changed_domain[offset] ^= 0x80;
+            assert_eq!(Header::decode(&changed_domain), Err(WireError::Version));
+        }
+        let mut changed_trace = trace;
+        changed_trace[31] ^= 0x80;
+        assert_ne!(original.block_id(changed_trace), block);
+    }
     #[test]
     fn every_tx_tag_has_an_exact_payload() {
         for (tag, n) in [

@@ -52,6 +52,101 @@ release requires their own real evidence, not completion of the retired PoCO roa
 
 ### Reconstruction and upgrade order
 
+#### W1 complete arithmetic and legal strategy continuation — 2026-11-01
+
+Continue the actual work-security candidate `c041564b8a6bb0b98ca9c30e7871878427e5d9a4`
+from PR #675. Its hosted four-second service failures remain failed. An explicit
+full-limb verifier now covers all bounded matrix products, with the scalar and
+previous transposed paths retained for complete-relation, output, error-order
+and cancellation comparison. The first candidate's hosted run
+[`41297071118`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41297071118)
+completed all four legal-strategy and eight false-trace captures. Exact-source
+readback finds full-limb faster than the then-default transposed implementation
+in every measured legal, Product-last and Transcript cohort. The Intel legal
+capture nevertheless favors the existing limb path by about 3.8%; full-limb is
+not a universal optimum. Formatting failed before the module/lint step in that
+run, and both original-resource service jobs failed independently.
+
+The draft default now selects full-limb on that scoped performance evidence;
+the old implementation remains explicit through `verify_transposed` and its
+progress counterpart. Original experiment labels naming transposed call those
+explicit entrypoints. This implementation substitution changes no relation,
+challenge, proof bytes, fork weight, admission limits or activation flag. The
+new source requires its own full native checks and unchanged service campaign;
+the selection measurements are not evidence that the new source passed them.
+
+The complete public-input dispatcher was slower in aggregate on every measured
+lane, so it remains an experimental producer. Full-limb false-trace refusal still
+costs 18.0006–25.9285 times the recorded attacker cohort CPU across class/lane
+aggregates. Neither the current primitive economics nor public service qualifies.
+
+The [frozen legal strategy experiment](specs/pon/W1_LEGAL_STRATEGY_V1.md) charges
+actual structural recognition, preparation, every failed attempt and complete
+searches at 1/8/64 reuse horizons and two targets. The five-class, two-sample grid
+is a finite experiment below the existing eight-sample acceptance requirement.
+The separate full-limb comparison keeps the original false-trace experiment
+available byte-for-byte in its default schema and records a distinct five-path
+schema only when explicitly selected. Neither experiment supplies a physical
+cost lower bound or changes the original four-second business requirement.
+
+The [query-work analysis](../protocol/pon-nakamoto-v1/details/WORK_COST_DAA_BOUNDARIES.md)
+now includes the exact target-dependent expected credit factor. The two targets
+in the new experiment both have factor one; the general rounding example does
+not assert attainable target manipulation or a new consensus security threshold.
+All work-hardness, public service, independent hardware, quantum, model utility
+and production acceptance flags remain unqualified until their own evidence.
+
+#### W1 rejection economics and fresh challenges — 2026-11-01
+
+The [W1 work-security continuation](../../evidence/pon-w1-work-security-20261101/README.md)
+adds a real prefix-reusing false-trace producer, complete raw cost accounting and
+an explicitly selected fresh-challenge service observation. The original local
+observations start from `cea95fb44d8152a0eb1138727619fcced056f496`; its W1
+and required-work arithmetic blobs equal those in the separately reviewed
+`605af09da34ca72665f822200a2f3e75573e6052` source. Other source differences are not
+silently composed or claimed as tested.
+
+The continuation now preserves the existing integration candidate's concurrent
+`acd8f79f2dcc22ecdee1d1a5fd88d619d06f37c9` malformed-width rejection and State
+encoding repairs. Its stricter existing source/test-count metadata is retained.
+The earlier local cost records keep their actual pre-integration source identities;
+they do not become whole-source execution evidence merely by moving this branch.
+
+The [new cost contract](specs/pon/W1_FALSE_TRACE_ACTUAL_REUSE_V1.md) retains 72
+actual prefix setups, 288 independent searches, every hash miss and complete
+winning proof. Four verifier paths observe all candidates. The added column-limb
+kernel preserves exact arithmetic, bytes and cancellation; local measurements
+did not justify replacing the existing default or the faster existing limb
+research path. Distinct local module-harness graphs, including transitive-version
+differences from the original lockfile, remain explicit. None constitutes the
+original workspace or dual-architecture qualification.
+
+The separate service successor reuses the original Host and CPU owner, four-second
+window, sixteen workers and six-depth independent confirmation. Each attempted
+submission constructs a new header challenge; successful service also requires
+an observed full `WORK:Transcript` refusal. It retains the original repeated-packet
+test and runs fresh traffic even after that original test fails. Reader booleans
+cannot replace checked request/history timelines, actual overlap or CPU closure.
+The explicit head/merge x64/ARM64 cost lanes and x64 service lanes retain failures;
+their configuration alone does not establish executed acceptance.
+
+The [first hosted run and execution repairs](../../evidence/pon-w1-work-security-ci-followup-20261101/README.md)
+retain four actual locked-graph 98-test W1 / six-test fuzz / strict-Clippy component
+passes. Its four cost invocations fail before native measurement because of the
+inherited incremental override; the caller is repaired without relaxing the
+guard. Both original and fresh service observations fail the four-second business
+target: seven honest submissions succeed, but independent History replay exceeds
+the original deadline. All six original artifact ZIPs remain available. The
+follow-up preserves integration base `0e9eac5d2a8cdb0a6f0cc7920f84e290e0d5d0d0`,
+regenerates the two missing Rust source-inventory entries and binds the retained
+cost binary copy to the actual execution hash. New source needs its own CI;
+these failures cannot be converted into acceptance by the invocation repair.
+
+PN1 remains HOLD. Correct relation checking, fresh binding, minimum effective
+adversarial work, honest service and model utility remain separate obligations.
+There is no cost lower-bound proof, fresh-identity fairness claim, default cache
+activation, consensus-weight change or production activation in this continuation.
+
 #### Pure PoN work-package execution — 2026-10-27
 
 The isolated History owner reconstruction continuation is recorded in
@@ -4288,3 +4383,85 @@ joint acceptance. Retain failures, unavailable runs, SIGKILL and unknown effects
 with their original source and meaning. PN1–PN6 exits, budgets, migration boundaries
 and the existing release/activation authority remain unchanged; no deployment or
 whole-chain PQ acceptance is granted by this checkpoint.
+
+## 2026-11-01 PoN work-security continuation: original boundaries and eight samples
+
+This continuation starts from #675 at
+`7c5caf5bce1396976808a0f504c4163fbc1aed44`, not the older default main or the
+separate #678 state/History composition. It preserves required-target chainwork,
+the complete W1 relation, all current activation holds and the original public
+service budgets. Twelve separate Header-field mutations now cover canonical
+wire bytes, challenge and block identity; these are binding regressions, not
+proof that arbitrary mutated headers satisfy branch validity.
+
+The opt-in arithmetic-fact cache uses the same complete limb arithmetic as the
+default raw verifier on cold and contended calls. Exact challenge/A/B keys,
+current cheap-check order, trace/product comparisons, cache capacity and
+cancellation publication remain unchanged. Independent Transposed comparisons
+include near-q input values, false trace, false product, exact checkpoint order,
+trace-only upgrade and cancellation without a new product fact. The default
+public/History path does not inherit an unmeasured cache benefit.
+
+The History W1 callback no longer performs a second Host read immediately
+after its original resource checkpoint. Every original native progress point
+still checks the actual Host, paid CPU and fixed deadline; original refill
+checks and crash cuts remain. The retired coarse-selector-only unit check is
+replaced with actual complete-W1 boundary counts, selected/unselected boundary
+refusals and same-account retries. Callback fault injection is not physical
+cgroup or WAN qualification, and lower duplicate counts are not a successful
+four-second six-depth confirmation.
+
+[Legal-strategy V2](specs/pon/W1_LEGAL_STRATEGY_V2.md) adds eight actual samples in
+a new schema and challenge domain. V1's original two-sample schema, selector,
+challenge domain and retained outcomes remain intact. The new collection keeps
+five task classes, two targets, three reuse horizons, all misses and exhaustion,
+the 4,096-attempt cap and original 30-shard/300-second-per-shard execution
+contract. Shared prefixes across horizons are still not independent evidence.
+Its separate 2-GiB streaming record ceiling only accommodates the new raw
+eight-sample evidence; no Node memory, CPU or business deadline is increased.
+Only actual complete captures may satisfy the finite sample-count criterion.
+All cheapest-work, hardware, quantum, honest-service and model-utility flags
+remain unqualified even if that criterion succeeds. Native records, source,
+locked graphs and binaries must retain their own execution identities.
+
+The source corpus also refreshes the exact changed native file digests and one
+pre-existing stale pin: #675's last recent-batch workflow edit changed its blob
+to `e1820626477ab613217e84d9f6805019d4657a09` while the corpus still named
+`96ef7b370deb0f1067adfdb47a77a958ac584952`. The original positive checker and
+negative source controls remain mandatory; pin agreement is not PQ acceptance.
+
+
+## 2026-11-01 combined PN convergence continuation
+
+The continuation combines published work-security source `7c5caf5bce1396976808a0f504c4163fbc1aed44`,
+system-service source `5606a97104f9cd3243befc2921ccace3fae2c369`, and the frozen
+work-security follow-up `3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129` through actual
+Git merges. The Hepta integration preserves both Cell/original-owner work from
+`a6c58700d23efd575d2803637aa7d9203d27e7bf` and native PQ policy work from
+`0f7c63418a7eec6cff5e4348e8cdc733850f8386`; that combined product still needs its
+own native execution and final source-pair receipt.
+
+The new bounded full-root arithmetic retains at most 2 MiB of mathematical
+material, hashes all actual current key/value bytes, and never caches a validity
+verdict or grants CPU credit. Both normal and migration Node constructors start
+with an empty cache. Fresh Host context reads retain every required observation
+and use a same-file fallback for long kernel records. The upstream History
+change preserves actual W1 boundary checks while removing an adjacent duplicate.
+
+Four new M06 full-root controls actually passed with test opt-level 1 and both
+debug/overflow checks enabled. This is mathematical/component evidence only.
+Two constructor compile failures were corrected and retained. A subsequent
+Node test-profile code-generation attempt ended in SIGKILL under shared-host
+pressure; no Node 2-second result is inferred from the M06 pass or an old release
+binary. The CPU workflow now executes original test and supplementary release
+profiles separately on x64/ARM head/actual-merge, checks the real Node and M06
+artifact profiles, and keeps all four original cases and their limits.
+
+The full 11-member real Cell closure was cold-retrieved in 14.9046 seconds under
+the original 35-second transfer limit using the separately recorded `7c5caf`
+Cell binary. The original command still refused unverified consumption. This
+closes that retrieval observation only; original-owner installation, ordinary
+next-task execution, admissibility and measured learning benefit are separate.
+Legal no-update remains valid. No local reservation becomes external funding,
+no synthetic or single-administrator run becomes independent WAN acceptance,
+and no deployment or PQ activation is authorized by this continuation.

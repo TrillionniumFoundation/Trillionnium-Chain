@@ -18,7 +18,8 @@ coordinate provenance, full LLM execution or marginal-contribution acceptance.
 
 Let n=64, r=8 and q=4,294,967,291. Every field element is a canonical little-endian u32
 strictly below q. No floats, NaN, signed zero, decimal aliases or approximate equality
-are accepted. Products and sums use u128 in Rust, exact integers in the Python oracle.
+are accepted. The Rust reference uses u128 and the Python oracle uses exact integers;
+the draft default uses the equivalent bounded u64 limb accumulation described below.
 A sum has at most 64 products before reduction; its maximum fits u128. Matrix indexing
 is row-major. Decoding rejects before multiplication if length, magic or element range
 is invalid.
@@ -223,8 +224,10 @@ Boundary and deterministic-sample tests compare against exact `% q`; extreme-fie
 zero, structured and sparse proofs compare complete bytes with the original verifier.
 This is an arithmetic equivalence argument, not a theorem of work-cost hardness.
 
-The production `verify`/`verify_with_progress` now also use transposed operands, exact
-two-fold reduction and one 256-byte SHA update per tile accumulation. They still expand
+The draft production entrypoints `verify`/`verify_with_progress` now use full-limb
+arithmetic for all bounded matrix products, with one 256-byte SHA update per tile
+accumulation. The previous transposed-u128 implementation remains explicitly callable
+as `verify_transposed`/`verify_transposed_with_progress`. Both still expand
 every noise word, replay every cumulative cell, reconstruct the product and compare it
 exactly. The original noise/row/tile progress sequence, cheap-rejection precedence,
 transcript-before-product rejection and final cancellation boundary are preserved.

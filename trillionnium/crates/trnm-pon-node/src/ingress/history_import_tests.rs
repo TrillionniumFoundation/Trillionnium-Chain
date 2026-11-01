@@ -64,6 +64,206 @@ fn fixture() -> (tempfile::TempDir, Settings, Node, Packet, u64) {
     (directory, settings, node, packet, clock)
 }
 
+fn native_work_boundaries(
+    packet: &Packet,
+) -> Vec<trnm_crypto_primitives::pon_work::VerificationProgress> {
+    let mut boundaries = Vec::new();
+    WorkCheckedPacket::verify_with_progress(packet.clone(), &mut |point| {
+        boundaries.push(point);
+        Ok(())
+    })
+    .unwrap();
+    boundaries
+}
+
+#[test]
+fn history_w1_checks_host_once_at_every_real_progress_boundary() {
+    use trnm_crypto_primitives::pon_work::VerificationProgress;
+    let (_directory, _settings, _node, packet, _clock) = fixture();
+    // The reference is the actual full verifier's callbacks, not a hand-built
+    // selector sequence or a claim that this fixture changed a real cgroup.
+    let boundaries = native_work_boundaries(&packet);
+    assert_eq!(
+        boundaries.first(),
+        Some(&VerificationProgress::BeforeReplay)
+    );
+    assert_eq!(
+        boundaries.last(),
+        Some(&VerificationProgress::BeforeVerifiedWork)
+    );
+    assert_eq!(
+        boundaries
+            .iter()
+            .filter(|point| matches!(point, VerificationProgress::TranscriptTile { .. }))
+            .count(),
+        512
+    );
+    assert!(boundaries
+        .iter()
+        .any(|point| matches!(point, VerificationProgress::Noise { .. })));
+    assert!(boundaries
+        .iter()
+        .any(|point| matches!(point, VerificationProgress::MatrixRow { .. })));
+    assert!(boundaries.contains(&VerificationProgress::BeforeProduct));
+    for owns_node_mutex in [false, true] {
+        let cpu = public_v3::ServiceMutationCpuDomain::standalone();
+        let operation = cpu.begin().unwrap();
+        let deadline = Instant::now() + Duration::from_secs(10);
+        operation.bind_history_request(deadline).unwrap();
+        let calls = AtomicUsize::new(0);
+        let resource = || {
+            calls.fetch_add(1, Ordering::SeqCst);
+            Ok(())
+        };
+        let result = verify_history_work(
+            packet.clone(),
+            &operation.checkpoint_handle(),
+            owns_node_mutex,
+            &Control {
+                deadline,
+                resource: &resource,
+            },
+        );
+        let receipt = operation.finish();
+        assert!(result.is_ok());
+        assert_eq!(
+            calls.load(Ordering::SeqCst),
+            boundaries.len(),
+            "every actual boundary checks the Host once without a refill wait"
+        );
+        assert!(receipt.total_cpu_ns.is_some_and(|paid| paid > 0));
+        assert!(!receipt.accounting_unavailable && !receipt.live_refused);
+        assert_eq!(cpu.observe().unwrap().in_flight, 0);
+    }
+}
+
+#[test]
+fn history_w1_host_change_at_selected_and_unselected_boundaries_refuses_and_retries() {
+    use trnm_crypto_primitives::pon_work::VerificationProgress;
+    let (_directory, _settings, _node, packet, _clock) = fixture();
+    let boundaries = native_work_boundaries(&packet);
+    let noise = boundaries
+        .iter()
+        .position(|point| matches!(point, VerificationProgress::Noise { .. }))
+        .unwrap();
+    let row = boundaries
+        .iter()
+        .position(|point| matches!(point, VerificationProgress::MatrixRow { .. }))
+        .unwrap();
+    let tile = boundaries
+        .iter()
+        .position(|point| matches!(point, VerificationProgress::TranscriptTile { .. }))
+        .unwrap();
+    let product = boundaries
+        .iter()
+        .position(|point| *point == VerificationProgress::BeforeProduct)
+        .unwrap();
+    // Cover original selected boundaries AND immediately following boundaries
+    // omitted by the removed coarse selector. The actual resource check must
+    // still occur before the next piece of native work at each of these points.
+    let cuts = [
+        0,
+        noise,
+        noise + 1,
+        row,
+        row + 1,
+        tile,
+        tile + 1,
+        product,
+        boundaries.len() - 1,
+    ];
+    for owns_node_mutex in [false, true] {
+        for index in cuts {
+            let cpu = public_v3::ServiceMutationCpuDomain::standalone();
+            let deadline = Instant::now() + Duration::from_secs(10);
+            let operation = cpu.begin().unwrap();
+            operation.bind_history_request(deadline).unwrap();
+            let calls = AtomicUsize::new(0);
+            let resource = || {
+                let current = calls.fetch_add(1, Ordering::SeqCst);
+                ensure(current < index, "PUBLIC_HOST_KERNEL_LIMITS_CHANGED")
+            };
+            let result = verify_history_work(
+                packet.clone(),
+                &operation.checkpoint_handle(),
+                owns_node_mutex,
+                &Control {
+                    deadline,
+                    resource: &resource,
+                },
+            );
+            let receipt = operation.finish();
+            assert_eq!(
+                result.err().unwrap().to_string(),
+                "PUBLIC_HOST_KERNEL_LIMITS_CHANGED"
+            );
+            assert_eq!(calls.load(Ordering::SeqCst), index + 1);
+            assert!(!receipt.accounting_unavailable);
+            assert_eq!(cpu.observe().unwrap().in_flight, 0);
+
+            // A local resource failure is neither a false mathematical claim
+            // nor a cached negative. Retry the identical proof on the same
+            // original CPU domain, settling both real paid operations.
+            let retry = cpu.begin().unwrap();
+            retry.bind_history_request(deadline).unwrap();
+            let accepted = verify_history_work(
+                packet.clone(),
+                &retry.checkpoint_handle(),
+                owns_node_mutex,
+                &Control {
+                    deadline,
+                    resource: &|| Ok(()),
+                },
+            );
+            let retry_receipt = retry.finish();
+            assert!(accepted.is_ok());
+            assert!(!retry_receipt.accounting_unavailable);
+            assert_eq!(cpu.observe().unwrap().in_flight, 0);
+        }
+    }
+}
+
+#[test]
+fn history_w1_original_deadline_precedes_resource_and_complete_work() {
+    let (_directory, _settings, _node, packet, _clock) = fixture();
+    let cpu = public_v3::ServiceMutationCpuDomain::standalone();
+    let operation = cpu.begin().unwrap();
+    let deadline = Instant::now();
+    assert_eq!(
+        operation
+            .bind_history_request(deadline)
+            .unwrap_err()
+            .to_string(),
+        "PUBLIC_REQUEST_DEADLINE"
+    );
+    let calls = AtomicUsize::new(0);
+    let resource = || {
+        calls.fetch_add(1, Ordering::SeqCst);
+        Err(crate::Error::from("PUBLIC_HOST_KERNEL_LIMITS_CHANGED"))
+    };
+    // The real caller refuses the expired binding above. Also check the
+    // extracted verifier's own first boundary: even an unbound operation
+    // cannot bypass that deadline or reach the Host/CPU callback here.
+    let result = verify_history_work(
+        packet,
+        &operation.checkpoint_handle(),
+        false,
+        &Control {
+            deadline,
+            resource: &resource,
+        },
+    );
+    let receipt = operation.finish();
+    assert_eq!(result.err().unwrap().to_string(), "PUBLIC_REQUEST_DEADLINE");
+    assert_eq!(calls.load(Ordering::SeqCst), 0);
+    assert!(!receipt.accounting_unavailable);
+    assert_eq!(cpu.observe().unwrap().in_flight, 0);
+    assert_eq!(
+        cpu.observe_completion_work().unwrap().retained_identities,
+        0
+    );
+}
+
 #[test]
 fn pinned_completion_requires_existing_owner_and_expired_completion_cannot_mint_one() {
     let (_directory, settings, node, packet, _clock) = fixture();

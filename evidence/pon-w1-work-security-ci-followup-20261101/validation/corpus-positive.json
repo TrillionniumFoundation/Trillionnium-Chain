@@ -1,0 +1,12 @@
+{
+  "name": "corpus-positive",
+  "command": [
+    "python3",
+    "scripts/ci/check_pq_research_integration.py"
+  ],
+  "exit_code": 1,
+  "started_unix_ns": 1793524915871300581,
+  "ended_unix_ns": 1793524915935060956,
+  "stdout_bytes": 0,
+  "stderr_bytes": 78
+}

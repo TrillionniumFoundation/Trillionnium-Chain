@@ -1,0 +1,390 @@
+#!/usr/bin/env python3
+"""Synthetic refusal controls; never native service evidence or Host provisioning."""
+from __future__ import annotations
+
+import copy
+import json
+import os
+from pathlib import Path
+import struct
+import tempfile
+import unittest
+from unittest.mock import patch
+
+import run_from_zero_host as host
+import run_w1_fresh_service_v1 as fresh
+from contract_wire import header_encode
+from test_run_from_zero_native import simulated_confirmation_report
+
+
+def synthetic_fresh_report():
+    doc = simulated_confirmation_report()
+    a = b''.join(struct.pack('<I', i % 31) for i in range(4096))
+    b = b''.join(struct.pack('<I', (i * 7) % 37) for i in range(4096))
+    task = fresh.native.H('task', a, b)
+    proof = b'PNW1' + a + b + bytes(16384 + 32)
+    replacements = {doc['task']: task.hex()}
+    parent = bytes.fromhex(doc['genesis'])
+    for encoded in doc['signed_honest_packets']:
+        old = bytes.fromhex(encoded)
+        header = fresh.native.header_decode(old[:318])
+        old_id = fresh.native.H('block', old[:318], old[-32:])
+        header.update(parent=parent, work_task=task)
+        raw_header = header_encode(header)
+        packet = raw_header + old[318:-49188] + proof
+        parent = fresh.native.H('block', raw_header, proof[-32:])
+        replacements[old_id.hex()] = parent.hex()
+        replacements[encoded] = packet.hex()
+
+    def replace(value):
+        if isinstance(value, dict):
+            return {key: replace(item) for key, item in value.items()}
+        if isinstance(value, list):
+            return [replace(item) for item in value]
+        return replacements.get(value, value) if isinstance(value, str) else value
+
+    doc = replace(doc)
+    # Replacing packet bytes also changes the already compacted request digest.
+    for phase in doc['phases']:
+        for row in phase['honest_submissions']:
+            request = json.dumps({'op': 'submit', 'packet': doc['signed_honest_packets'][row['packet_index']]},
+                                 sort_keys=True, separators=(',', ':')).encode()
+            row.update(recorded_request_bytes=len(request),
+                       recorded_request_digest=fresh.native.H('pressure-recorded-request-v1', request).hex())
+    doc.update(schema=fresh.FRESH_SCHEMA, requested_window_ns=4_000_000_000,
+               attack_workers=16, per_worker_attempt_cap=1024,
+               same_signed_business_packets=True, negative_cache_enabled=False,
+               resource_fairness_qualified=False, shared_material_setup_cpu_ns=1,
+               attacker_setup_and_workers_cpu_ns=321)
+    del doc['from_zero_construction']
+    count = 0
+    for worker in doc['phases'][1]['attacks']:
+        worker['calling_thread_cpu_ns'] = 20
+        for attempt, row in enumerate(worker['calls']):
+            index = attempt * 16 + worker['worker']
+            header = fresh.native.header_decode(bytes.fromhex(doc['signed_honest_packets'][0])[:318])
+            header.update(nonce=200_000 + index, state=bytes(32), receipts=bytes(32))
+            encoded = header_encode(header)
+            challenge = fresh.native.H('challenge', encoded)
+            trials = []
+            for ordinal in range(4096):
+                trace = fresh.native.H('public-v3-from-zero-v1', challenge, struct.pack('<Q', ordinal))
+                ticket = fresh.native.H('ticket', challenge, trace)
+                hit = ticket <= bytes.fromhex(doc['target'])
+                trials.append(dict(nonce=ordinal, trace=trace.hex(), ticket=ticket.hex(), target_hit=hit))
+                if hit:
+                    break
+            assert trials[-1]['target_hit']
+            packet = encoded + bytes(2) + proof[:-32] + trace
+            request = json.dumps({'op': 'submit', 'packet': packet.hex()},
+                                 sort_keys=True, separators=(',', ':')).encode()
+            row.update(packet_index=index, recorded_request_bytes=len(request),
+                       response={'value': {'error': 'WORK:Transcript'}},
+                       recorded_request_digest=fresh.native.H('pressure-recorded-request-v1', request).hex(),
+                       from_zero_construction=dict(header=encoded.hex(), challenge=challenge.hex(),
+                           attempt_budget=4096, setup_calls=1, attempts=trials,
+                           winner_nonce=len(trials) - 1, status='target_hit_unverified',
+                           packet_digest=fresh.native.H('fresh-challenge-attack-packet-v1', packet).hex(),
+                           attacker_cpu_ns=3, setup_cpu_ns=1, search_cpu_ns=1, packet_encoding_cpu_ns=1))
+            count += 1
+    doc['phases'][1]['attacker_workers_cpu_ns'] = 320
+    doc['construction_coverage'] = dict(constructed=count, unique_challenges=count,
+        unique_packet_indices=count, submitted=count, exhausted=0,
+        full_transcript_rejections=count,
+        all_context_bindings_and_challenges_unique=True, all_nested_cpu_measurements_known=True,
+        nested_from_zero_construction_cpu_ns=count * 3)
+    return doc
+
+
+def process():
+    return dict(executed=True, exit_code=0, process_exit_code=0, timed_out=False,
+                source_verified=True, expected_source='a' * 40)
+
+
+def passing_log(selector):
+    return (f'running 1 test\ntest {selector} ... ok\n'
+            'test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s\n')
+
+
+class FreshRefusalControls(unittest.TestCase):
+    def validate_doc(self, doc):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'report.json'
+            path.write_text(json.dumps(doc))
+            return fresh.validate_fresh_report(path)
+
+    def test_missing_business_history_or_observer_cannot_hide_behind_positive_summary(self):
+        original = synthetic_fresh_report()
+        for name in ('honest_submissions', 'honest_history', 'observations'):
+            bad = copy.deepcopy(original)
+            for phase in bad['phases']:
+                del phase[name]
+            with self.subTest(name=name), self.assertRaises(ValueError):
+                self.validate_doc(bad)
+
+    def test_attack_outside_window_with_self_consistent_call_clocks_cannot_claim_overlap(self):
+        bad = synthetic_fresh_report()
+        phase = bad['phases'][1]
+        phase.update(completed_false_calls_before_business=0,
+                     completed_false_calls_at_confirmation=0, overlapping_false_calls=0)
+        for worker in phase['attacks']:
+            for attempt, row in enumerate(worker['calls']):
+                row.update(started_ns=5_000_000_000 + attempt * 1_000_000_000,
+                           ended_ns=6_000_000_000 + attempt * 1_000_000_000,
+                           elapsed_wall_ns=1_000_000_000, returned_after_window=True)
+        with self.assertRaisesRegex(ValueError, 'CONFIRMATION_NO_OVERLAP'):
+            self.validate_doc(bad)
+
+    def test_disjoint_phase_and_per_worker_cpu_cannot_be_hidden_by_global_totals(self):
+        original = synthetic_fresh_report()
+        too_large = copy.deepcopy(original)
+        for worker in too_large['phases'][1]['attacks']:
+            for row in worker['calls']:
+                row['from_zero_construction']['setup_cpu_ns'] = 1_000_000_000
+        with self.assertRaisesRegex(ValueError, 'CONSTRUCTION_CPU_CONTAINMENT'):
+            self.validate_doc(too_large)
+        wrong_owner = copy.deepcopy(original)
+        workers = wrong_owner['phases'][1]['attacks']
+        workers[0]['calling_thread_cpu_ns'] = 5  # Two constructions cost 6.
+        workers[1]['calling_thread_cpu_ns'] = 35  # Aggregate remains 320.
+        with self.assertRaisesRegex(ValueError, 'WORKER_CPU_CONTAINMENT'):
+            self.validate_doc(wrong_owner)
+        # Exact containment is a legitimate boundary, not missing overhead.
+        boundary = copy.deepcopy(original)
+        workers = boundary['phases'][1]['attacks']
+        workers[0]['calling_thread_cpu_ns'] = 8  # Two constructions and two calls.
+        workers[1]['calling_thread_cpu_ns'] = 32
+        self.assertEqual(self.validate_doc(boundary)['unique_challenges'], 17)
+        hidden_call = copy.deepcopy(original)
+        hidden_call['phases'][1]['attacks'][0]['calls'][0]['client_thread_cpu_ns'] = 1_000_000_000
+        with self.assertRaisesRegex(ValueError, 'WORKER_CPU_CONTAINMENT'):
+            self.validate_doc(hidden_call)
+
+    def test_hosted_expected_source_is_required_canonical_and_equal(self):
+        for expected in (None, '', 'A' * 40, 'a' * 39, 'b' * 40):
+            env = {'GITHUB_ACTIONS': 'true'}
+            if expected is not None:
+                env['TRNM_EXPECTED_SOURCE_SHA'] = expected
+            with self.subTest(expected=expected), patch.dict(os.environ, env, clear=True):
+                with self.assertRaises(ValueError):
+                    fresh.expected_source('a' * 40)
+        with patch.dict(os.environ, {'GITHUB_ACTIONS': 'true',
+                                    'TRNM_EXPECTED_SOURCE_SHA': 'a' * 40}, clear=True):
+            self.assertEqual(fresh.expected_source('a' * 40), 'a' * 40)
+
+    def test_consistent_wrong_head_cannot_build_under_workflow_expectation(self):
+        with tempfile.TemporaryDirectory() as directory, \
+                patch.dict(os.environ, {'GITHUB_ACTIONS': 'true',
+                                        'TRNM_EXPECTED_SOURCE_SHA': 'a' * 40}), \
+                patch.object(fresh.native, 'source_identity', return_value={'commit': 'b' * 40}), \
+                patch.object(fresh.ci, 'run') as observed:
+            result = fresh.run(Path(directory) / 'wrong-head')
+            self.assertFalse(result['passed'])
+            self.assertEqual(result['source_before'], result['source_after'])
+            observed.assert_not_called()
+            self.assertIn('FRESH_EXPECTED_SOURCE_MISMATCH', result['failures'])
+
+    def test_changed_workflow_expectation_cannot_pass_after_two_consistent_executions(self):
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            binary = base / 'synthetic-never-executed-native'
+            binary.write_bytes(b'synthetic-only; mocked process owner')
+
+            def observed(command, log, **kwargs):
+                self.assertEqual(kwargs['expected_source'], 'a' * 40)
+                if command[0] != str(binary):
+                    log.write_text('synthetic build control\n')
+                    return process()
+                name = command[1]
+                log.write_text(passing_log(name))
+                folder = Path(kwargs['env']['TRNM_PUBLIC_V3_CONFIRMATION_DIR' if name == fresh.ORIGINAL
+                                           else 'TRNM_PUBLIC_V3_FRESH_CONFIRMATION_DIR'])
+                folder.mkdir()
+                fixture = simulated_confirmation_report() if name == fresh.ORIGINAL else synthetic_fresh_report()
+                (folder / 'report.json').write_text(json.dumps(fixture))
+                if name == fresh.FRESH:
+                    os.environ['TRNM_EXPECTED_SOURCE_SHA'] = 'b' * 40
+                return process()
+
+            with patch.dict(os.environ, {'GITHUB_ACTIONS': 'true', 'TRNM_EXPECTED_SOURCE_SHA': 'a' * 40}), \
+                    patch.object(fresh.native, 'source_identity', return_value={'commit': 'a' * 40}), \
+                    patch.object(fresh.native, 'select_binary', return_value=binary), \
+                    patch.object(fresh.ci, 'run', side_effect=observed):
+                result = fresh.run(base / 'changed-expectation')
+            self.assertTrue(result['all_named_tests_passed'])
+            self.assertFalse(result['passed'])
+            self.assertIn('FRESH_EXPECTED_SOURCE_MISMATCH', result['failures'])
+
+    def test_business_history_observer_and_attempt_cap_keep_original_phase_rules(self):
+        changes = [
+            lambda x: x['phases'][1]['honest_submissions'][0].update(recorded_request_digest='00' * 32),
+            lambda x: x['phases'][1]['honest_history'][0]['response']['value'].update(next='00' * 32),
+            lambda x: x['phases'][1]['observations'].update(records_not_retained=1),
+            lambda x: x['phases'][1]['observations']['records'][0].update(complete=False),
+            lambda x: x['phases'][1]['service']['metrics'].update(work_failed=25),
+            lambda x: x['phases'][1]['attacks'][0].update(attempt_cap_reached=True),
+        ]
+        for index, change in enumerate(changes):
+            bad = synthetic_fresh_report()
+            change(bad)
+            with self.subTest(index=index), self.assertRaises(ValueError):
+                self.validate_doc(bad)
+
+    def test_original_nonzero_is_retained_and_fresh_still_executes_without_aggregate_success(self):
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            binary = base / 'synthetic-never-executed-native'
+            binary.write_bytes(b'synthetic-only; mocked process owner')
+            out = base / 'observations'
+            calls = []
+
+            def observed(command, log, **kwargs):
+                calls.append(command)
+                self.assertEqual(kwargs['expected_source'], 'a' * 40)
+                result = process()
+                if command[0] == str(binary):
+                    name = command[1]
+                    log.write_text(passing_log(name))
+                    env = kwargs['env']
+                    folder = Path(env['TRNM_PUBLIC_V3_CONFIRMATION_DIR' if name == fresh.ORIGINAL
+                                      else 'TRNM_PUBLIC_V3_FRESH_CONFIRMATION_DIR'])
+                    folder.mkdir()
+                    if name == fresh.ORIGINAL:
+                        result.update(exit_code=1, process_exit_code=1)
+                        (folder / 'report.json').write_text('{"simulated_failure":true}')
+                    else:
+                        (folder / 'report.json').write_text(json.dumps(synthetic_fresh_report()))
+                else:
+                    log.write_text('synthetic build control; never compiled\n')
+                return result
+
+            with patch.dict(os.environ, {'GITHUB_ACTIONS': 'true', 'TRNM_EXPECTED_SOURCE_SHA': 'a' * 40}), \
+                    patch.object(fresh.native, 'source_identity', return_value={'commit': 'a' * 40}), \
+                    patch.object(fresh.native, 'select_binary', return_value=binary), \
+                    patch.object(fresh.ci, 'run', side_effect=observed):
+                result = fresh.run(out)
+            self.assertEqual([row['name'] for row in result['runs']], list(fresh.SELECTORS))
+            self.assertEqual([row['passed'] for row in result['runs']], [False, True])
+            self.assertFalse(result['passed'])
+            self.assertFalse(result['all_named_tests_passed'])
+            self.assertTrue(result['execution_finished'])
+            self.assertEqual(len(calls), 3)
+            self.assertIn('original/report.json', result['files'])
+            self.assertIn('fresh/report.json', result['files'])
+            self.assertIn('--ignored', calls[2])
+
+    def test_fresh_consistency_control_and_budget_context_cpu_mutations(self):
+        original = synthetic_fresh_report()
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'report.json'
+            path.write_text(json.dumps(original))
+            self.assertEqual(fresh.validate_fresh_report(path)['unique_challenges'], 17)
+            changes = [
+                lambda x: x.update(requested_window_ns=5_000_000_000),
+                lambda x: x.update(attack_workers=15),
+                lambda x: x.update(negative_cache_enabled=True),
+                lambda x: x.update(finite_target_met=False),
+                lambda x: x.update(attacker_setup_and_workers_cpu_ns=322),
+                lambda x: x['phases'][1].update(confirmation_ended_ns=4_000_000_000),
+                lambda x: x['phases'][1]['independent_client_confirmation'].update(observed_tip='ff' * 32),
+                lambda x: x['phases'][1]['attacks'][0]['calls'][1].update(packet_index=0),
+                lambda x: x['phases'][1]['attacks'][0]['calls'][0].update(status='ok'),
+                lambda x: x['phases'][1]['attacks'][0]['calls'][0]['from_zero_construction'].update(search_cpu_ns=None),
+                lambda x: x['phases'][1]['attacks'][0]['calls'][0]['from_zero_construction']['attempts'][0].update(trace='00' * 32),
+                lambda x: x.update(schema='public-v3-signed-confirmation-pressure-v1'),
+                lambda x: [row.update(response={'value': {'error': 'PUBLIC_MUTATION_CPU_BUDGET'}})
+                           for worker in x['phases'][1]['attacks'] for row in worker['calls']],
+            ]
+            for index, change in enumerate(changes):
+                bad = copy.deepcopy(original)
+                change(bad)
+                path.write_text(json.dumps(bad))
+                with self.subTest(index=index), self.assertRaises(ValueError):
+                    fresh.validate_fresh_report(path)
+
+    def test_unexecuted_nonzero_timeout_unknown_source_zero_test_and_missing_report_refused(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            log, report = root / 'test.log', root / 'missing.json'
+            log.write_text(passing_log(fresh.FRESH))
+            for change in (dict(executed=False), dict(exit_code=1), dict(process_exit_code=1),
+                           dict(timed_out=True), dict(source_verified=False)):
+                bad = process()
+                bad.update(change)
+                with self.subTest(change=change), self.assertRaisesRegex(ValueError, 'PROCESS_REQUIRED'):
+                    fresh.validate_execution(bad, log, fresh.FRESH, report)
+            log.write_text('running 0 tests\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s\n')
+            with self.assertRaises(ValueError):
+                fresh.validate_execution(process(), log, fresh.FRESH, report)
+            log.write_text(passing_log(fresh.FRESH))
+            with self.assertRaisesRegex(ValueError, 'REPORT_REQUIRED'):
+                fresh.validate_execution(process(), log, fresh.FRESH, report)
+            with self.assertRaisesRegex(ValueError, 'EXACT_SELECTOR'):
+                fresh.validate_execution(process(), log, 'unreviewed_test', report)
+
+    def test_host_allows_only_two_exact_runners_and_external_output(self):
+        valid = ['python3', 'scripts/ci/run_w1_fresh_service_v1.py', '--out', '/tmp/fresh-output']
+        self.assertEqual(host.validate_command(valid), Path(valid[-1]))
+        for bad in (valid + ['--skip'], [*valid[:1], 'scripts/ci/unknown.py', *valid[2:]],
+                    [*valid[:3], str(host.ROOT / 'output')], [*valid[:3], 'relative'],
+                    [*valid[:2], '--other', valid[-1]]):
+            with self.subTest(bad=bad), self.assertRaises(ValueError):
+                host.validate_command(bad)
+
+    def test_successor_binding_keeps_schema_selectors_source_binary_and_budgets(self):
+        with tempfile.TemporaryDirectory() as directory:
+            out = Path(directory)
+            binary = out / fresh.native.TARGET
+            binary.write_bytes(b'synthetic-non-executable-binding-control')
+            identity = {'commit': 'a' * 40}
+            digest = fresh.native.digest(binary.read_bytes())
+            prepared = dict(completed=True, source_before=identity, source_after=identity,
+                            binary_sha256=digest)
+            verified = dict(named_execution={'test': 'synthetic'}, report={'sha256': 'synthetic'})
+            rows = []
+            for index, name in enumerate(fresh.SELECTORS):
+                folder = 'original' if index == 0 else 'fresh'
+                log = out / (folder + '.log')
+                log.write_text(passing_log(name))
+                rows.append(dict(name=name, process=process(), passed=True,
+                    log_sha256=fresh.native.digest(log.read_bytes()),
+                    report_path=folder + '/report.json', **verified))
+            original = dict(schema=fresh.SCHEMA, source_before=identity, source_after=identity,
+                source_expected='a' * 40,
+                binary_sha256_before=digest, binary_sha256_after=digest,
+                requested_window_ns=4_000_000_000, attack_workers=16, passed=True,
+                all_named_tests_passed=True, execution_finished=True, source_recompiled=True,
+                failures=[], runs=rows)
+            path = out / 'manifest.json'
+            with patch.object(fresh, 'validate_execution', return_value=verified), \
+                    patch.dict(os.environ, {'TRNM_EXPECTED_SOURCE_SHA': 'a' * 40}):
+                path.write_text(json.dumps(original))
+                self.assertEqual(host.bind_prepared_fresh_execution(prepared, out)['exact_selectors'], list(fresh.SELECTORS))
+                changes = [lambda x: x.update(schema='trnm-from-zero-native-execution-v3'),
+                    lambda x: x.update(attack_workers=15),
+                    lambda x: x.update(requested_window_ns=4_000_000_001),
+                    lambda x: x.update(source_after={'commit': 'b' * 40}),
+                    lambda x: x.update(binary_sha256_after='f' * 64),
+                    lambda x: x.update(source_expected='b' * 40),
+                    lambda x: x['runs'].pop(),
+                    lambda x: x['runs'][1].update(name=fresh.ORIGINAL),
+                    lambda x: x['runs'][1]['process'].update(expected_source='b' * 40)]
+                for index, change in enumerate(changes):
+                    bad = copy.deepcopy(original)
+                    change(bad)
+                    path.write_text(json.dumps(bad))
+                    with self.subTest(index=index), self.assertRaises(ValueError):
+                        host.bind_prepared_fresh_execution(prepared, out)
+                path.write_text(json.dumps(original))
+                with patch.dict(os.environ, {}, clear=True), self.assertRaisesRegex(
+                        ValueError, 'FRESH_EXPECTED_SOURCE_REQUIRED'):
+                    host.bind_prepared_fresh_execution(prepared, out)
+                with patch.dict(os.environ, {'TRNM_EXPECTED_SOURCE_SHA': 'b' * 40}), \
+                        self.assertRaisesRegex(ValueError, 'FRESH_EXPECTED_SOURCE_MISMATCH'):
+                    host.bind_prepared_fresh_execution(prepared, out)
+                with self.assertRaisesRegex(ValueError, 'ORIGINAL_NATIVE_MANIFEST_SCHEMA'):
+                    host.bind_prepared_execution(prepared, out)
+
+
+if __name__ == '__main__':
+    unittest.main()

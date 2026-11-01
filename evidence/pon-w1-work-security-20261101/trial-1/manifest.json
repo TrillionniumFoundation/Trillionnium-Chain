@@ -1,0 +1,694 @@
+{
+  "binary_after": "0eab111d3918b7b30e228d3982b501d61e03dc65e2240d611517bfa214ab8617",
+  "binary_before": "0eab111d3918b7b30e228d3982b501d61e03dc65e2240d611517bfa214ab8617",
+  "binary_changed": false,
+  "compiler": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+  "cpu_affinity": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "cpu_model": "AMD EPYC 9V74 80-Core Processor",
+  "hardness_accepted": false,
+  "harness_lock_sha256": "2b43c3281e939be185b4689582b8b7bbc6322ee4303d653fec69d9572b8ee6aa",
+  "harness_manifest_sha256": "70f99152712f99065609c5fa6286059356c9fda713d34549c2e855e9e5a9c40a",
+  "kernel": "6.18.57",
+  "logical_cpu_count": 9,
+  "machine": "x86_64",
+  "observation": {
+    "command": [
+      "/workspace/scratch/76b96c45510e/w1-cost-harness/target/release/examples/pon_w1_false_trace_reuse_v1",
+      "--false-trace-actual-reuse-v1"
+    ],
+    "cwd": "/workspace/scratch/76b96c45510e/trillionnium-chain",
+    "elapsed_ns": 1407210381,
+    "exit_code": 0,
+    "stderr": "campaign.stderr",
+    "stdout": "campaign.stdout",
+    "timed_out": false,
+    "timeout_seconds": 300
+  },
+  "original_workspace_graph_verified": false,
+  "production_activation": false,
+  "public_service_measured": false,
+  "reader": {
+    "actual_reuse_cohorts": [
+      {
+        "actual_candidates": 32,
+        "actual_searches": 32,
+        "actual_setup_calls": 8,
+        "attempts": 70,
+        "class": "periodic-dense-fixture",
+        "exhausted_searches": 0,
+        "full_attacker_cohort_total": {
+          "cpu_ns": 583446,
+          "wall_ns": 585439
+        },
+        "outcome_counts": {
+          "column-limb-experimental": {
+            "Transcript": 32
+          },
+          "limb": {
+            "Transcript": 32
+          },
+          "production": {
+            "Transcript": 32
+          },
+          "reference": {
+            "Transcript": 32
+          }
+        },
+        "receiver_rejection_cpu_over_full_attacker_cpu": {
+          "column-limb-experimental": 26.662566887081237,
+          "limb": 23.38366875426346,
+          "production": 28.620050527383853,
+          "reference": 30.348505260126903
+        },
+        "search": {
+          "cpu_ns": 289814,
+          "wall_ns": 290231
+        },
+        "setup": {
+          "cpu_ns": 272184,
+          "wall_ns": 271252
+        },
+        "verification": {
+          "column-limb-experimental": {
+            "cpu_ns": 15556168,
+            "wall_ns": 32201968
+          },
+          "limb": {
+            "cpu_ns": 13643108,
+            "wall_ns": 26338373
+          },
+          "production": {
+            "cpu_ns": 16698254,
+            "wall_ns": 23938540
+          },
+          "reference": {
+            "cpu_ns": 17706714,
+            "wall_ns": 29218324
+          }
+        }
+      },
+      {
+        "actual_candidates": 32,
+        "actual_searches": 32,
+        "actual_setup_calls": 8,
+        "attempts": 65,
+        "class": "full-rank-field",
+        "exhausted_searches": 0,
+        "full_attacker_cohort_total": {
+          "cpu_ns": 504958,
+          "wall_ns": 506589
+        },
+        "outcome_counts": {
+          "column-limb-experimental": {
+            "Transcript": 32
+          },
+          "limb": {
+            "Transcript": 32
+          },
+          "production": {
+            "Transcript": 32
+          },
+          "reference": {
+            "Transcript": 32
+          }
+        },
+        "receiver_rejection_cpu_over_full_attacker_cpu": {
+          "column-limb-experimental": 31.300266556822546,
+          "limb": 28.10856942557599,
+          "production": 33.89655377278903,
+          "reference": 38.54468688484983
+        },
+        "search": {
+          "cpu_ns": 161759,
+          "wall_ns": 161322
+        },
+        "setup": {
+          "cpu_ns": 320705,
+          "wall_ns": 319744
+        },
+        "verification": {
+          "column-limb-experimental": {
+            "cpu_ns": 15805320,
+            "wall_ns": 19783859
+          },
+          "limb": {
+            "cpu_ns": 14193647,
+            "wall_ns": 20118732
+          },
+          "production": {
+            "cpu_ns": 17116336,
+            "wall_ns": 17091203
+          },
+          "reference": {
+            "cpu_ns": 19463448,
+            "wall_ns": 26740608
+          }
+        }
+      },
+      {
+        "actual_candidates": 32,
+        "actual_searches": 32,
+        "actual_setup_calls": 8,
+        "attempts": 69,
+        "class": "zero",
+        "exhausted_searches": 0,
+        "full_attacker_cohort_total": {
+          "cpu_ns": 436428,
+          "wall_ns": 438132
+        },
+        "outcome_counts": {
+          "column-limb-experimental": {
+            "Transcript": 32
+          },
+          "limb": {
+            "Transcript": 32
+          },
+          "production": {
+            "Transcript": 32
+          },
+          "reference": {
+            "Transcript": 32
+          }
+        },
+        "receiver_rejection_cpu_over_full_attacker_cpu": {
+          "column-limb-experimental": 36.56345376556958,
+          "limb": 30.950399607724528,
+          "production": 39.83058603022721,
+          "reference": 43.45355705866718
+        },
+        "search": {
+          "cpu_ns": 162190,
+          "wall_ns": 162631
+        },
+        "setup": {
+          "cpu_ns": 257792,
+          "wall_ns": 257371
+        },
+        "verification": {
+          "column-limb-experimental": {
+            "cpu_ns": 15957315,
+            "wall_ns": 39190055
+          },
+          "limb": {
+            "cpu_ns": 13507621,
+            "wall_ns": 13501250
+          },
+          "production": {
+            "cpu_ns": 17383183,
+            "wall_ns": 29028468
+          },
+          "reference": {
+            "cpu_ns": 18964349,
+            "wall_ns": 44000242
+          }
+        }
+      },
+      {
+        "actual_candidates": 32,
+        "actual_searches": 32,
+        "actual_setup_calls": 8,
+        "attempts": 59,
+        "class": "identity",
+        "exhausted_searches": 0,
+        "full_attacker_cohort_total": {
+          "cpu_ns": 464841,
+          "wall_ns": 471041
+        },
+        "outcome_counts": {
+          "column-limb-experimental": {
+            "Transcript": 32
+          },
+          "limb": {
+            "Transcript": 32
+          },
+          "production": {
+            "Transcript": 32
+          },
+          "reference": {
+            "Transcript": 32
+          }
+        },
+        "receiver_rejection_cpu_over_full_attacker_cpu": {
+          "column-limb-experimental": 35.23341744811667,
+          "limb": 30.754386983936442,
+          "production": 38.755083996463306,
+          "reference": 40.12628404120979
+        },
+        "search": {
+          "cpu_ns": 167969,
+          "wall_ns": 167836
+        },
+        "setup": {
+          "cpu_ns": 280157,
+          "wall_ns": 284299
+        },
+        "verification": {
+          "column-limb-experimental": {
+            "cpu_ns": 16377937,
+            "wall_ns": 21591065
+          },
+          "limb": {
+            "cpu_ns": 14295900,
+            "wall_ns": 18060679
+          },
+          "production": {
+            "cpu_ns": 18014952,
+            "wall_ns": 40239801
+          },
+          "reference": {
+            "cpu_ns": 18652342,
+            "wall_ns": 35231724
+          }
+        }
+      },
+      {
+        "actual_candidates": 32,
+        "actual_searches": 32,
+        "actual_setup_calls": 8,
+        "attempts": 71,
+        "class": "rank-one",
+        "exhausted_searches": 0,
+        "full_attacker_cohort_total": {
+          "cpu_ns": 443799,
+          "wall_ns": 446511
+        },
+        "outcome_counts": {
+          "column-limb-experimental": {
+            "Transcript": 32
+          },
+          "limb": {
+            "Transcript": 32
+          },
+          "production": {
+            "Transcript": 32
+          },
+          "reference": {
+            "Transcript": 32
+          }
+        },
+        "receiver_rejection_cpu_over_full_attacker_cpu": {
+          "column-limb-experimental": 28.734172451943333,
+          "limb": 26.670878032622877,
+          "production": 31.899587425839176,
+          "reference": 31.441974857987514
+        },
+        "search": {
+          "cpu_ns": 180004,
+          "wall_ns": 181599
+        },
+        "setup": {
+          "cpu_ns": 247447,
+          "wall_ns": 246786
+        },
+        "verification": {
+          "column-limb-experimental": {
+            "cpu_ns": 12752197,
+            "wall_ns": 18971036
+          },
+          "limb": {
+            "cpu_ns": 11836509,
+            "wall_ns": 13270294
+          },
+          "production": {
+            "cpu_ns": 14157005,
+            "wall_ns": 42520376
+          },
+          "reference": {
+            "cpu_ns": 13953917,
+            "wall_ns": 14141316
+          }
+        }
+      },
+      {
+        "actual_candidates": 32,
+        "actual_searches": 32,
+        "actual_setup_calls": 8,
+        "attempts": 47,
+        "class": "sparse-diagonal",
+        "exhausted_searches": 0,
+        "full_attacker_cohort_total": {
+          "cpu_ns": 817534,
+          "wall_ns": 1188242
+        },
+        "outcome_counts": {
+          "column-limb-experimental": {
+            "Transcript": 32
+          },
+          "limb": {
+            "Transcript": 32
+          },
+          "production": {
+            "Transcript": 32
+          },
+          "reference": {
+            "Transcript": 32
+          }
+        },
+        "receiver_rejection_cpu_over_full_attacker_cpu": {
+          "column-limb-experimental": 23.292636147242806,
+          "limb": 20.53459061029878,
+          "production": 25.265804235664817,
+          "reference": 26.614984820203198
+        },
+        "search": {
+          "cpu_ns": 428564,
+          "wall_ns": 794236
+        },
+        "setup": {
+          "cpu_ns": 325503,
+          "wall_ns": 324151
+        },
+        "verification": {
+          "column-limb-experimental": {
+            "cpu_ns": 19042522,
+            "wall_ns": 21421109
+          },
+          "limb": {
+            "cpu_ns": 16787726,
+            "wall_ns": 18350501
+          },
+          "production": {
+            "cpu_ns": 20655654,
+            "wall_ns": 22516022
+          },
+          "reference": {
+            "cpu_ns": 21758655,
+            "wall_ns": 24618198
+          }
+        }
+      },
+      {
+        "actual_candidates": 32,
+        "actual_searches": 32,
+        "actual_setup_calls": 8,
+        "attempts": 68,
+        "class": "continuity-maintenance-v1",
+        "exhausted_searches": 0,
+        "full_attacker_cohort_total": {
+          "cpu_ns": 697595,
+          "wall_ns": 763803
+        },
+        "outcome_counts": {
+          "column-limb-experimental": {
+            "Transcript": 32
+          },
+          "limb": {
+            "Transcript": 32
+          },
+          "production": {
+            "Transcript": 32
+          },
+          "reference": {
+            "Transcript": 32
+          }
+        },
+        "receiver_rejection_cpu_over_full_attacker_cpu": {
+          "column-limb-experimental": 25.36762448125345,
+          "limb": 22.609709071882683,
+          "production": 27.68776869100266,
+          "reference": 30.44505909589375
+        },
+        "search": {
+          "cpu_ns": 380023,
+          "wall_ns": 443129
+        },
+        "setup": {
+          "cpu_ns": 304821,
+          "wall_ns": 304332
+        },
+        "verification": {
+          "column-limb-experimental": {
+            "cpu_ns": 17696328,
+            "wall_ns": 19626128
+          },
+          "limb": {
+            "cpu_ns": 15772420,
+            "wall_ns": 16911632
+          },
+          "production": {
+            "cpu_ns": 19314849,
+            "wall_ns": 22461794
+          },
+          "reference": {
+            "cpu_ns": 21238321,
+            "wall_ns": 24363180
+          }
+        }
+      },
+      {
+        "actual_candidates": 32,
+        "actual_searches": 32,
+        "actual_setup_calls": 8,
+        "attempts": 72,
+        "class": "one-zero-left-rank-one",
+        "exhausted_searches": 0,
+        "full_attacker_cohort_total": {
+          "cpu_ns": 1157709,
+          "wall_ns": 1251886
+        },
+        "outcome_counts": {
+          "column-limb-experimental": {
+            "Transcript": 32
+          },
+          "limb": {
+            "Transcript": 32
+          },
+          "production": {
+            "Transcript": 32
+          },
+          "reference": {
+            "Transcript": 32
+          }
+        },
+        "receiver_rejection_cpu_over_full_attacker_cpu": {
+          "column-limb-experimental": 15.794184894476937,
+          "limb": 13.693639766124303,
+          "production": 15.2792281998326,
+          "reference": 15.868722623733598
+        },
+        "search": {
+          "cpu_ns": 733639,
+          "wall_ns": 775379
+        },
+        "setup": {
+          "cpu_ns": 408426,
+          "wall_ns": 407686
+        },
+        "verification": {
+          "column-limb-experimental": {
+            "cpu_ns": 18285070,
+            "wall_ns": 18696109
+          },
+          "limb": {
+            "cpu_ns": 15853250,
+            "wall_ns": 16520952
+          },
+          "production": {
+            "cpu_ns": 17688900,
+            "wall_ns": 20200569
+          },
+          "reference": {
+            "cpu_ns": 18371363,
+            "wall_ns": 24397815
+          }
+        }
+      },
+      {
+        "actual_candidates": 32,
+        "actual_searches": 32,
+        "actual_setup_calls": 8,
+        "attempts": 52,
+        "class": "one-zero-right-rank-one",
+        "exhausted_searches": 0,
+        "full_attacker_cohort_total": {
+          "cpu_ns": 577437,
+          "wall_ns": 578257
+        },
+        "outcome_counts": {
+          "column-limb-experimental": {
+            "Transcript": 32
+          },
+          "limb": {
+            "Transcript": 32
+          },
+          "production": {
+            "Transcript": 32
+          },
+          "reference": {
+            "Transcript": 32
+          }
+        },
+        "receiver_rejection_cpu_over_full_attacker_cpu": {
+          "column-limb-experimental": 25.638767519227205,
+          "limb": 21.99964325112523,
+          "production": 27.686185679130364,
+          "reference": 28.6796325832948
+        },
+        "search": {
+          "cpu_ns": 269728,
+          "wall_ns": 268427
+        },
+        "setup": {
+          "cpu_ns": 296148,
+          "wall_ns": 295667
+        },
+        "verification": {
+          "column-limb-experimental": {
+            "cpu_ns": 14804773,
+            "wall_ns": 15380132
+          },
+          "limb": {
+            "cpu_ns": 12703408,
+            "wall_ns": 12873159
+          },
+          "production": {
+            "cpu_ns": 15987028,
+            "wall_ns": 21957996
+          },
+          "reference": {
+            "cpu_ns": 16560681,
+            "wall_ns": 17231519
+          }
+        }
+      }
+    ],
+    "complete_attack_bytes_reconstructed": true,
+    "fastest_adversary_lower_bound": false,
+    "fresh_measurement": false,
+    "hardness_accepted": false,
+    "independent_hardware_qualified": false,
+    "independent_verification": false,
+    "input_bytes": 30021605,
+    "input_sha256": "3b8152c2da20b94dec200afa283ab0eb576d84fa6b8597aa0964e3eb209c50bb",
+    "limitations": [
+      "Native source, execution, clocks and verdicts need separate provenance.",
+      "These are actual four-search cohorts, with setup, misses and winning-buffer clone charged in full.",
+      "Trial hex/retention overhead is included but is not a necessary cost of a network attacker.",
+      "Hash midstate reuse, different horizons and adversarial implementations/hardware may cost less.",
+      "Microbenchmark challenges do not certify live parent/lease/beneficiary binding or public admission.",
+      "No service queues, signed transport, storage, network fanout or model utility are measured.",
+      "Experimental column-limb observations do not change the default production verifier."
+    ],
+    "modeled_setup_division_used": false,
+    "production_activation": false,
+    "public_attack_amplification_measured": false,
+    "public_network_ready": false,
+    "public_service_measured": false,
+    "record_consistency": "PASS",
+    "record_counts": {
+      "campaign": 1,
+      "candidate": 288,
+      "cohort": 72,
+      "end": 1,
+      "material": 9,
+      "search": 288,
+      "verifier": 1152
+    },
+    "resource_fairness_qualified": false,
+    "schema": "pon-w1-false-trace-reuse-observation-report-v1",
+    "semantic_alerts": [],
+    "source_applicability_verified": false,
+    "valid_proof_acquisition_used": false,
+    "w1_transcript_replayed": false,
+    "work_profile_qualified": false
+  },
+  "repository_baseline": "cea95fb44d8152a0eb1138727619fcced056f496",
+  "result": "PASS",
+  "schema": "trnm-w1-false-trace-module-only-local-observation-v1",
+  "scope": "exact-source-module-harness-with-separate-cargo-graph-not-original-workspace",
+  "source_after": {
+    "trillionnium/crates/trnm-crypto-primitives/examples/support/w1_material.rs": "ca6196f9067ea3ac86a2d743c13de9c9cac0715e4ae652654cdd6592a6d0cf9a",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": "91d7ccb4ea0ac710e0e207a765779b1f02fddb703be92cf1cb7df1c300632798",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts.rs": "66efd9327f84dab70dfc01365478ea0e3d3a8a196cb958301884432549d2d65f",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/churn_controls.rs": "d8e2d55c858925a749c97ea39d1c8935ef7767ae01436189d0e2fb587076e8c5",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/controls.rs": "2c9e2729840963054f47185d22381f8c3ab66a8948c57e2eae0b7087d5964322",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/tests.rs": "f93b72aa1b5dec2b991de6586214f274a7797f8a347d0444125101f0e52cee2f",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_one_zero.rs": "214552a72056e7b0a87e90f0e094cb2668a54de18bcf82e3eddc1896ab0b0031",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero.rs": "be1b375808d0923e3f938f1c4d23475a16bfe43bf665cb464d79d1dc9ef85f8f",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero_paired.rs": "0c9c4ddb772292efd0cf92dc174e8b2353b1e0f16f36df484a5e16b280316a0f",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/facts.rs": "996c3bf296b5116612ef4906241eb24aa0cfdbb992951aebc6703246eb9eab1b",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/facts/tests.rs": "f4588488ad2c96b9143f1383ad67a54f9022b7aeab6a3434fa91d8d0b8e6d481",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/integer_paired.rs": "fae34d70af6ac6fc61fb0e2e6f022df1548a333aaacd91eb83597e0174f41101",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_limb.rs": "500ef68601e2c27c735498312608eabe63d497643ee7803895eaefb9658bdde4",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_periodic.rs": "5fd27cac9ddad5c87a4623f25d2a97f488d16d8542d9402f59f621db33dfb9ac",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_prefix.rs": "a88ab5bccbc7085fd0c4823e574a6dfe48b18c9d5d70493b817b97cf0a106899",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/paired_product.rs": "3facd5578e8f57b88722e2c3c9c7a19b3d6c3427f9dad22648a13254656a9bab",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs": "bb0bf3efca1b8c959045f1c0cf9b24fd38c1ee356dece9029e8832303d298e59",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/structured.rs": "a0535365dc141d15d6e22242352f554d5ada6d31a02cd627f2eb92135704556c",
+    "trillionnium/crates/trnm-pon-node/examples/pon_w1_false_trace_reuse_v1.rs": "8caba498365709777e6320c4ccc5f1e13a08ac450855de306b17b5844bff5135",
+    "trillionnium/crates/trnm-pon-node/examples/support/w1_cost_producers.rs": "329f9d9a3cd0d55963c56c74600188f4a7fd8f263dcfb2555bc36cb6f75065e0",
+    "trillionnium/crates/trnm-pon-node/examples/support/w1_from_zero.rs": "65a20cbd8ffdf5e4873b5c97768988dacc01369a0b584abd416c368709246b6a",
+    "trillionnium/crates/trnm-protocol/src/integer_evolution_v3.rs": "b16311bcbff7af586641931e1980e6886df6543fc6700251c3b44ec8a9adc305",
+    "trillionnium/crates/trnm-protocol/src/integer_factor_v2.rs": "2300d2683378211e4e6d9e1720a6869eb2f1d30d35666f810cb6876613dccc38",
+    "trillionnium/crates/trnm-protocol/src/lib.rs": "8a3bfa28c1bad54ca097386402038f5c692840d3dbbaff0a0d2705bb0df8e328",
+    "trillionnium/crates/trnm-protocol/src/pon_growth.rs": "37b8c818e6dd7341b25cd3c1e66a8b5fe0aecca2c60201272a9a2551db147d5f",
+    "trillionnium/crates/trnm-protocol/src/pon_state.rs": "96af0abf3ced5c462c16c1daceb657cc86eb8bf9e4e48b6af4cd666926dfa9bb",
+    "trillionnium/crates/trnm-protocol/src/pon_state_bulk_tests.rs": "c3e16e156883125f5b7e6f601a5bd8abff7ba7139457220d1cde5299ce800f89",
+    "trillionnium/crates/trnm-protocol/src/pon_wire.rs": "eb8e3b1147357655693d40aa8eef6edb082f3f228f89a2af80fe76d2621cafe8",
+    "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs": "cbca5d410346709b5768b51938ca5de05f9d59189e76ef30365cd533f32e314c",
+    "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic/tests.rs": "5491472cdfe9df1f66c13a4c9965e4c21f7c25ac1d713b0edf29960708b25f6b",
+    "trillionnium/crates/trnm-protocol/src/pq_frame.rs": "e1d95756a2aad8b45349a92ef2bf834e204f456ec717177b6bac94bc1508fecd",
+    "trillionnium/crates/trnm-protocol/src/pq_native_accounts_v2.rs": "97590751be4683e965c99d6f67f48ad2a97e9aad96c64b47267ff1cdef8b7b62",
+    "trillionnium/crates/trnm-protocol/src/pq_native_accounts_v2/tests.rs": "29c450985b2151b22a67e4863ea042cfdccc87bc4aba7646e43d1a5bb19aefdb",
+    "trillionnium/crates/trnm-protocol/src/pq_transaction.rs": "1e5bb25a4d538374bd68b7409c32b7d6aa8e675e3ea172f9a708f36bd6e1c3e3",
+    "trillionnium/crates/trnm-protocol/src/qualified_work_task.rs": "429d696b9d8438efc8e17733555a4f4913e6d19a96c86b2af411a85ab863ffc5",
+    "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v2.rs": "a1ea641665dc38f8e4dc88d4d2c86358f0b8daa64ee56984e8ba36cd93cf5bd8",
+    "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v3.rs": "312a344ce187b3e942b29e0675915600c85c4f8db72b25ae04e8dc5ae1188069",
+    "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v4.rs": "e84890971bb6416e56913fdac1c735a8437e0e67770e1076530cdf5e7f2b41b8",
+    "trillionnium/crates/trnm-protocol/src/qualified_work_task/pq_lifecycle_v4.rs": "aeb3429701913abe20cdead6a33b022548214a1796a48f40fdb85a953a903719",
+    "trillionnium/crates/trnm-protocol/src/qualified_work_task/pq_lifecycle_v5.rs": "002de1ce7bcfafa1c6d3dc540666311e8c8a2a973374f5c0f6a096c34ae643b4"
+  },
+  "source_before": {
+    "trillionnium/crates/trnm-crypto-primitives/examples/support/w1_material.rs": "ca6196f9067ea3ac86a2d743c13de9c9cac0715e4ae652654cdd6592a6d0cf9a",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": "91d7ccb4ea0ac710e0e207a765779b1f02fddb703be92cf1cb7df1c300632798",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts.rs": "66efd9327f84dab70dfc01365478ea0e3d3a8a196cb958301884432549d2d65f",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/churn_controls.rs": "d8e2d55c858925a749c97ea39d1c8935ef7767ae01436189d0e2fb587076e8c5",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/controls.rs": "2c9e2729840963054f47185d22381f8c3ab66a8948c57e2eae0b7087d5964322",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/tests.rs": "f93b72aa1b5dec2b991de6586214f274a7797f8a347d0444125101f0e52cee2f",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_one_zero.rs": "214552a72056e7b0a87e90f0e094cb2668a54de18bcf82e3eddc1896ab0b0031",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero.rs": "be1b375808d0923e3f938f1c4d23475a16bfe43bf665cb464d79d1dc9ef85f8f",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero_paired.rs": "0c9c4ddb772292efd0cf92dc174e8b2353b1e0f16f36df484a5e16b280316a0f",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/facts.rs": "996c3bf296b5116612ef4906241eb24aa0cfdbb992951aebc6703246eb9eab1b",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/facts/tests.rs": "f4588488ad2c96b9143f1383ad67a54f9022b7aeab6a3434fa91d8d0b8e6d481",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/integer_paired.rs": "fae34d70af6ac6fc61fb0e2e6f022df1548a333aaacd91eb83597e0174f41101",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_limb.rs": "500ef68601e2c27c735498312608eabe63d497643ee7803895eaefb9658bdde4",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_periodic.rs": "5fd27cac9ddad5c87a4623f25d2a97f488d16d8542d9402f59f621db33dfb9ac",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_prefix.rs": "a88ab5bccbc7085fd0c4823e574a6dfe48b18c9d5d70493b817b97cf0a106899",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/paired_product.rs": "3facd5578e8f57b88722e2c3c9c7a19b3d6c3427f9dad22648a13254656a9bab",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs": "bb0bf3efca1b8c959045f1c0cf9b24fd38c1ee356dece9029e8832303d298e59",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/structured.rs": "a0535365dc141d15d6e22242352f554d5ada6d31a02cd627f2eb92135704556c",
+    "trillionnium/crates/trnm-pon-node/examples/pon_w1_false_trace_reuse_v1.rs": "8caba498365709777e6320c4ccc5f1e13a08ac450855de306b17b5844bff5135",
+    "trillionnium/crates/trnm-pon-node/examples/support/w1_cost_producers.rs": "329f9d9a3cd0d55963c56c74600188f4a7fd8f263dcfb2555bc36cb6f75065e0",
+    "trillionnium/crates/trnm-pon-node/examples/support/w1_from_zero.rs": "65a20cbd8ffdf5e4873b5c97768988dacc01369a0b584abd416c368709246b6a",
+    "trillionnium/crates/trnm-protocol/src/integer_evolution_v3.rs": "b16311bcbff7af586641931e1980e6886df6543fc6700251c3b44ec8a9adc305",
+    "trillionnium/crates/trnm-protocol/src/integer_factor_v2.rs": "2300d2683378211e4e6d9e1720a6869eb2f1d30d35666f810cb6876613dccc38",
+    "trillionnium/crates/trnm-protocol/src/lib.rs": "8a3bfa28c1bad54ca097386402038f5c692840d3dbbaff0a0d2705bb0df8e328",
+    "trillionnium/crates/trnm-protocol/src/pon_growth.rs": "37b8c818e6dd7341b25cd3c1e66a8b5fe0aecca2c60201272a9a2551db147d5f",
+    "trillionnium/crates/trnm-protocol/src/pon_state.rs": "96af0abf3ced5c462c16c1daceb657cc86eb8bf9e4e48b6af4cd666926dfa9bb",
+    "trillionnium/crates/trnm-protocol/src/pon_state_bulk_tests.rs": "c3e16e156883125f5b7e6f601a5bd8abff7ba7139457220d1cde5299ce800f89",
+    "trillionnium/crates/trnm-protocol/src/pon_wire.rs": "eb8e3b1147357655693d40aa8eef6edb082f3f228f89a2af80fe76d2621cafe8",
+    "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs": "cbca5d410346709b5768b51938ca5de05f9d59189e76ef30365cd533f32e314c",
+    "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic/tests.rs": "5491472cdfe9df1f66c13a4c9965e4c21f7c25ac1d713b0edf29960708b25f6b",
+    "trillionnium/crates/trnm-protocol/src/pq_frame.rs": "e1d95756a2aad8b45349a92ef2bf834e204f456ec717177b6bac94bc1508fecd",
+    "trillionnium/crates/trnm-protocol/src/pq_native_accounts_v2.rs": "97590751be4683e965c99d6f67f48ad2a97e9aad96c64b47267ff1cdef8b7b62",
+    "trillionnium/crates/trnm-protocol/src/pq_native_accounts_v2/tests.rs": "29c450985b2151b22a67e4863ea042cfdccc87bc4aba7646e43d1a5bb19aefdb",
+    "trillionnium/crates/trnm-protocol/src/pq_transaction.rs": "1e5bb25a4d538374bd68b7409c32b7d6aa8e675e3ea172f9a708f36bd6e1c3e3",
+    "trillionnium/crates/trnm-protocol/src/qualified_work_task.rs": "429d696b9d8438efc8e17733555a4f4913e6d19a96c86b2af411a85ab863ffc5",
+    "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v2.rs": "a1ea641665dc38f8e4dc88d4d2c86358f0b8daa64ee56984e8ba36cd93cf5bd8",
+    "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v3.rs": "312a344ce187b3e942b29e0675915600c85c4f8db72b25ae04e8dc5ae1188069",
+    "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v4.rs": "e84890971bb6416e56913fdac1c735a8437e0e67770e1076530cdf5e7f2b41b8",
+    "trillionnium/crates/trnm-protocol/src/qualified_work_task/pq_lifecycle_v4.rs": "aeb3429701913abe20cdead6a33b022548214a1796a48f40fdb85a953a903719",
+    "trillionnium/crates/trnm-protocol/src/qualified_work_task/pq_lifecycle_v5.rs": "002de1ce7bcfafa1c6d3dc540666311e8c8a2a973374f5c0f6a096c34ae643b4"
+  },
+  "source_changed": false
+}

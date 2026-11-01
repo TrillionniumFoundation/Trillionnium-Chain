@@ -1,0 +1,11 @@
+[package]
+name = "trnm-protocol"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+hex = "=0.4.3"
+serde = { version = "=1.0.228", features = ["derive"] }
+sha2 = "=0.10.9"
+thiserror = "=1.0.69"

@@ -95,7 +95,7 @@ mod kernel_parent {
         (value > 0 && value <= limit).then_some(value)
     }
 
-    // The maximum CPU bandwidth is strictly <= 250,000 ns per second per
+    // The maximum CPU bandwidth is <= 250,000,000 ns per second per
     // entire host parent. Explicit finite ceilings only; never accept "max".
     fn validate_limits(
         cpu: &str,
@@ -104,12 +104,14 @@ mod kernel_parent {
         swap: &str,
         pids: &str,
     ) -> Result<Limits> {
-        let parts: Vec<_> = cpu.split_ascii_whitespace().collect();
-        if parts.len() != 2 {
+        let mut parts = cpu.split_ascii_whitespace();
+        let quota = parts.next().ok_or("PUBLIC_HOST_KERNEL_LIMITS")?;
+        let period = parts.next().ok_or("PUBLIC_HOST_KERNEL_LIMITS")?;
+        if parts.next().is_some() {
             return Err("PUBLIC_HOST_KERNEL_LIMITS".into());
         }
-        let quota = numeric(parts[0], 250_000).ok_or("PUBLIC_HOST_KERNEL_LIMITS")?;
-        let period = numeric(parts[1], 1_000_000).ok_or("PUBLIC_HOST_KERNEL_LIMITS")?;
+        let quota = numeric(quota, 250_000).ok_or("PUBLIC_HOST_KERNEL_LIMITS")?;
+        let period = numeric(period, 1_000_000).ok_or("PUBLIC_HOST_KERNEL_LIMITS")?;
         let memory = numeric(memory, MAX_MEMORY_BYTES).ok_or("PUBLIC_HOST_KERNEL_LIMITS")?;
         let tasks = numeric(pids, MAX_TASKS).ok_or("PUBLIC_HOST_KERNEL_LIMITS")?;
         if quota.checked_mul(4).is_none_or(|value| value > period)
@@ -161,26 +163,82 @@ mod kernel_parent {
         read_limit_text(&mut file, bytes)
     }
 
-    fn read_limits(parent: &Path) -> Result<Limits> {
+    fn limit_paths(parent: &Path) -> [PathBuf; 5] {
+        [
+            "cpu.max",
+            "cpu.max.burst",
+            "memory.max",
+            "memory.swap.max",
+            "pids.max",
+        ]
+        .map(|name| parent.join(name))
+    }
+
+    fn read_limits(paths: &[PathBuf; 5]) -> Result<Limits> {
         let [cpu, burst, memory, swap, pids] = &mut [[0; MAX_LIMIT_BYTES + 1]; 5];
         // Preserve the original read order and parse only AFTER all five
         // complete reads, including the original I/O-before-parse error order.
         validate_limits(
-            read_limit(&parent.join("cpu.max"), cpu)?,
-            read_limit(&parent.join("cpu.max.burst"), burst)?,
-            read_limit(&parent.join("memory.max"), memory)?,
-            read_limit(&parent.join("memory.swap.max"), swap)?,
-            read_limit(&parent.join("pids.max"), pids)?,
+            read_limit(&paths[0], cpu)?,
+            read_limit(&paths[1], burst)?,
+            read_limit(&paths[2], memory)?,
+            read_limit(&paths[3], swap)?,
+            read_limit(&paths[4], pids)?,
         )
     }
 
-    fn own_cgroup() -> Result<String> {
+    fn context_text<T>(
+        reader: &mut impl Read,
+        inspect: impl FnOnce(&str) -> Result<T>,
+    ) -> Result<T> {
+        let unavailable = || crate::Error::from("PUBLIC_HOST_KERNEL_CONTEXT");
+        // Both normal proc files fit on the stack. A long cgroup path still
+        // uses the original complete-text semantics: this is not a new limit.
+        let mut bytes = [0; 512];
+        let mut used = 0;
+        loop {
+            let count = match reader.read(&mut bytes[used..]) {
+                Ok(count) => count,
+                Err(error) if error.kind() == io::ErrorKind::Interrupted => continue,
+                Err(_) => return Err(unavailable()),
+            };
+            if count == 0 {
+                return inspect(std::str::from_utf8(&bytes[..used]).map_err(|_| unavailable())?);
+            }
+            used += count;
+            if used == bytes.len() {
+                let mut complete = bytes.to_vec();
+                reader
+                    .read_to_end(&mut complete)
+                    .map_err(|_| unavailable())?;
+                return inspect(std::str::from_utf8(&complete).map_err(|_| unavailable())?);
+            }
+        }
+    }
+
+    fn with_context_text<T>(
+        path: impl AsRef<Path>,
+        inspect: impl FnOnce(&str) -> Result<T>,
+    ) -> Result<T> {
+        // Reopen on every observation. Unlike read_to_string this needs no
+        // file-size metadata or String allocation for the ordinary proc text.
+        // Neither a descriptor nor a prior context verdict survives the call.
+        let mut file =
+            fs::File::open(path).map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_CONTEXT"))?;
+        context_text(&mut file, inspect)
+    }
+
+    fn in_parent_cgroup(parent: &str) -> Result<bool> {
         // A process may have independently placed native worker threads in a
         // cgroup-v2 threaded subtree. /proc/self identifies the thread-group
         // leader and cannot attest the actual calling worker's CPU cgroup.
         // The kernel's /proc/thread-self resolves to the current TID.
-        let text = fs::read_to_string("/proc/thread-self/cgroup")
-            .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_CONTEXT"))?;
+        with_context_text("/proc/thread-self/cgroup", |text| {
+            cgroup_within_parent(text, parent)
+        })
+    }
+
+    fn cgroup_within_parent(text: &str, parent: &str) -> Result<bool> {
         let mut entries = text.lines();
         let only = entries.next().ok_or("PUBLIC_HOST_KERNEL_CONTEXT")?;
         if entries.next().is_some() {
@@ -196,7 +254,10 @@ mod kernel_parent {
         {
             return Err("PUBLIC_HOST_KERNEL_CONTEXT".into());
         }
-        Ok(relative.to_owned())
+        Ok(relative == parent
+            || relative
+                .strip_prefix(parent)
+                .is_some_and(|suffix| suffix.starts_with('/')))
     }
 
     /// Accept additional future kernel cpu.stat keys, but never fabricate the
@@ -252,17 +313,21 @@ mod kernel_parent {
 
     pub struct KernelBudget {
         parent: PathBuf,
+        // Immutable names only. Every check still opens all five actual paths
+        // afresh; no descriptor, contents or resource verdict is retained.
+        limit_paths: [PathBuf; 5],
         identity: (u64, u64),
         boot_id: String,
         limits: Limits,
     }
     impl KernelBudget {
         fn check(&self) -> Result<()> {
-            let now_boot = fs::read_to_string("/proc/sys/kernel/random/boot_id")
-                .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_CONTEXT"))?;
-            if now_boot.trim() != self.boot_id {
-                return Err("PUBLIC_HOST_KERNEL_REPLACED".into());
-            }
+            with_context_text("/proc/sys/kernel/random/boot_id", |now_boot| {
+                if now_boot.trim() != self.boot_id {
+                    return Err("PUBLIC_HOST_KERNEL_REPLACED".into());
+                }
+                Ok(())
+            })?;
             let meta = fs::symlink_metadata(&self.parent)
                 .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_REPLACED"))?;
             if !meta.file_type().is_dir()
@@ -279,11 +344,10 @@ mod kernel_parent {
                 .to_str()
                 .ok_or("PUBLIC_HOST_KERNEL_CONTEXT")?
                 .trim_start_matches('/');
-            let current = own_cgroup()?;
-            if current != parent_rel && !current.starts_with(&format!("{parent_rel}/")) {
+            if !in_parent_cgroup(parent_rel)? {
                 return Err("PUBLIC_HOST_KERNEL_CONTEXT".into());
             }
-            let observed = read_limits(&self.parent)?;
+            let observed = read_limits(&self.limit_paths)?;
             if observed != self.limits {
                 return Err("PUBLIC_HOST_KERNEL_LIMITS_CHANGED".into());
             }
@@ -308,11 +372,13 @@ mod kernel_parent {
             if !meta.is_dir() || meta.uid() != 0 || meta.permissions().mode() & 0o022 != 0 {
                 return Err("PUBLIC_HOST_KERNEL_PARENT".into());
             }
-            let boot = fs::read_to_string("/proc/sys/kernel/random/boot_id")
-                .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_CONTEXT"))?;
+            let boot_id = with_context_text("/proc/sys/kernel/random/boot_id", |boot| {
+                Ok(boot.trim().to_owned())
+            })?;
             let budget = Self {
                 identity: (meta.dev(), meta.ino()),
-                boot_id: boot.trim().to_owned(),
+                boot_id,
+                limit_paths: limit_paths(&parent),
                 parent,
                 limits: Limits {
                     cpu_quota_us: 0,
@@ -400,6 +466,86 @@ mod kernel_parent {
             fn read(&mut self, _: &mut [u8]) -> io::Result<usize> {
                 Err(self.0.into())
             }
+        }
+
+        #[test]
+        fn context_reader_retains_complete_text_through_short_reads_and_fallback() {
+            for length in [0, 1, 510, 511, 512, 513, 4096] {
+                let input = format!("{}λ", " ".repeat(length));
+                let mut reader = ShortReads {
+                    remaining: input.as_bytes(),
+                    interrupts: input.len() + 1,
+                    calls: 0,
+                    eof_seen: false,
+                };
+                let observed = context_text(&mut reader, |text| {
+                    assert_eq!(text, input);
+                    Ok(text.len())
+                })
+                .unwrap();
+                assert_eq!(observed, input.len());
+                assert!(reader.eof_seen);
+                assert_eq!(reader.interrupts, 0);
+                assert_eq!(reader.calls, 2 * (input.len() + 1));
+            }
+        }
+
+        #[test]
+        fn context_reader_rejects_invalid_suffix_and_read_error_before_inspection() {
+            for length in [0, 36, 511, 512, 513, 4096] {
+                let mut input = vec![b' '; length];
+                input.push(0xff);
+                let mut reader = ShortReads {
+                    remaining: &input,
+                    interrupts: 0,
+                    calls: 0,
+                    eof_seen: false,
+                };
+                let error = context_text(&mut reader, |_| -> Result<()> {
+                    panic!("invalid UTF-8 must never reach context inspection")
+                })
+                .unwrap_err();
+                assert_eq!(error.to_string(), "PUBLIC_HOST_KERNEL_CONTEXT");
+                assert!(reader.eof_seen);
+            }
+            for length in [0, 36, 512, 4096] {
+                let prefix = io::Cursor::new(vec![b' '; length]);
+                let mut reader = prefix.chain(ReadError(io::ErrorKind::Other));
+                let error = context_text(&mut reader, |_| -> Result<()> {
+                    panic!("a readable prefix does not establish complete context")
+                })
+                .unwrap_err();
+                assert_eq!(error.to_string(), "PUBLIC_HOST_KERNEL_CONTEXT");
+            }
+        }
+
+        #[test]
+        fn context_reader_reopens_actual_path_and_preserves_inspection_errors() {
+            let dir = tempfile::tempdir().unwrap();
+            let path = dir.path().join("context");
+            fs::write(&path, b"first\n").unwrap();
+            let read = || with_context_text(&path, |text| Ok(text.to_owned()));
+            assert_eq!(read().unwrap(), "first\n");
+            // Retaining an old descriptor would keep observing the first inode.
+            let old = fs::File::open(&path).unwrap();
+            let replacement = dir.path().join("replacement");
+            fs::write(&replacement, b"second\n").unwrap();
+            fs::rename(&replacement, &path).unwrap();
+            assert_eq!(read().unwrap(), "second\n");
+            assert_eq!(
+                with_context_text(&path, |_| -> Result<()> {
+                    Err("PUBLIC_HOST_KERNEL_REPLACED".into())
+                })
+                .unwrap_err()
+                .to_string(),
+                "PUBLIC_HOST_KERNEL_REPLACED"
+            );
+            fs::remove_file(&path).unwrap();
+            assert_eq!(
+                read().unwrap_err().to_string(),
+                "PUBLIC_HOST_KERNEL_CONTEXT"
+            );
+            drop(old);
         }
 
         #[test]
@@ -518,6 +664,9 @@ mod kernel_parent {
         #[test]
         fn limit_reader_keeps_all_five_reads_before_validation_and_observes_changes() {
             let dir = tempfile::tempdir().unwrap();
+            // Reuse the exact immutable names across rewrites and removals.
+            // This must never reuse the previous file or successful read.
+            let paths = limit_paths(dir.path());
             let values = [
                 ("cpu.max", "25000 100000\n"),
                 ("cpu.max.burst", "0\n"),
@@ -528,7 +677,7 @@ mod kernel_parent {
             for (name, value) in values {
                 fs::write(dir.path().join(name), value).unwrap();
             }
-            let initial = read_limits(dir.path()).unwrap();
+            let initial = read_limits(&paths).unwrap();
             assert_eq!(
                 initial,
                 validate_limits("25000 100000\n", "0\n", "268435456\n", "0\n", "32\n").unwrap()
@@ -538,27 +687,27 @@ mod kernel_parent {
                 let mut padded = value.as_bytes().to_vec();
                 padded.resize(MAX_LIMIT_BYTES, b' ');
                 fs::write(&path, &padded).unwrap();
-                assert_eq!(read_limits(dir.path()).unwrap(), initial);
+                assert_eq!(read_limits(&paths).unwrap(), initial);
                 padded.push(b' ');
                 fs::write(&path, &padded).unwrap();
                 assert_eq!(
-                    read_limits(dir.path()).unwrap_err().to_string(),
+                    read_limits(&paths).unwrap_err().to_string(),
                     "PUBLIC_HOST_KERNEL_UNAVAILABLE"
                 );
                 fs::write(&path, value).unwrap();
             }
             fs::write(dir.path().join("cpu.max"), b"10000 100000\n").unwrap();
-            assert_ne!(read_limits(dir.path()).unwrap(), initial);
+            assert_ne!(read_limits(&paths).unwrap(), initial);
             fs::write(dir.path().join("cpu.max"), b"malformed").unwrap();
             fs::remove_file(dir.path().join("pids.max")).unwrap();
             assert_eq!(
-                read_limits(dir.path()).unwrap_err().to_string(),
+                read_limits(&paths).unwrap_err().to_string(),
                 "PUBLIC_HOST_KERNEL_UNAVAILABLE",
                 "late I/O failure still precedes parsing an early malformed value"
             );
             fs::write(dir.path().join("pids.max"), b"32\n").unwrap();
             assert_eq!(
-                read_limits(dir.path()).unwrap_err().to_string(),
+                read_limits(&paths).unwrap_err().to_string(),
                 "PUBLIC_HOST_KERNEL_LIMITS"
             );
         }
@@ -607,6 +756,39 @@ mod kernel_parent {
             join.join().unwrap();
         }
         #[test]
+        fn membership_borrows_current_complete_text_and_keeps_path_boundaries() {
+            let parent = "trnmponpublic.slice";
+            for text in [
+                "0::/trnmponpublic.slice\n",
+                "0::/trnmponpublic.slice/child.service\n",
+            ] {
+                assert!(cgroup_within_parent(text, parent).unwrap());
+            }
+            for text in [
+                "0::/trnmponpublic.slice-other/child.service\n",
+                "0::/other/trnmponpublic.slice\n",
+                "0::/other.slice/child.service\n",
+            ] {
+                assert!(!cgroup_within_parent(text, parent).unwrap());
+            }
+            for text in [
+                "",
+                "0::/\n",
+                "0::/trnmponpublic.slice/\n",
+                "0::/trnmponpublic.slice//child\n",
+                "0::/trnmponpublic.slice/../child\n",
+                "0::/trnmponpublic.slice/./child\n",
+                "1::/trnmponpublic.slice\n",
+                "0::/trnmponpublic.slice\n0::/other.slice\n",
+            ] {
+                assert_eq!(
+                    cgroup_within_parent(text, parent).unwrap_err().to_string(),
+                    "PUBLIC_HOST_KERNEL_CONTEXT",
+                    "{text:?}",
+                );
+            }
+        }
+        #[test]
         fn real_linux_cgroup_v2_cpu_stat_is_parsed_without_claiming_a_quota() {
             let real = fs::read_to_string("/sys/fs/cgroup/cpu.stat").unwrap();
             // Root cgroup has no required memory.current or pids.current on
@@ -615,7 +797,9 @@ mod kernel_parent {
             assert!(parsed.cpu_usage_usec > 0);
             // Zero nr_periods is expected if the root has no CPU bandwidth cap.
             // Never infer quota enforcement from a successfully parsed sample.
-            println!("ACTUAL_KERNEL_CPU_STAT_PARSE_OK real_cpu_usage_positive=true quota_qualified=false");
+            println!(
+                "ACTUAL_KERNEL_CPU_STAT_PARSE_OK real_cpu_usage_positive=true quota_qualified=false"
+            );
         }
 
         #[test]

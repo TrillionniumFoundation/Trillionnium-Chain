@@ -37,6 +37,190 @@ fn raw_request(address: SocketAddr, wire: &[u8]) -> Result<Vec<u8>> {
 }
 
 #[test]
+fn invalid_pq_client_sequence_refuses_before_ml_dsa_signing() {
+    let settings = settings();
+    let policy = policy(&settings, 1);
+    let client = PqClient::new(policy, signer(72)).unwrap();
+    let expiry = super::super::now().unwrap() + 30;
+    for sequence in [0, i64::MAX as u64 + 1, u64::MAX] {
+        // PreparedPqRequest deliberately exposes no Debug. Match explicitly
+        // instead of requiring a Debug-bearing success just for expect_err.
+        let error = match client.prepare(sequence, expiry, Request::Head) {
+            Err(error) => error,
+            Ok(_) => panic!("unrepresentable operation sequence must refuse"),
+        };
+        assert_eq!(error.to_string(), "PQ_NETWORK_SEQUENCE");
+    }
+    // The exact highest sequence accepted by the existing signed-wire owner
+    // must remain cryptographically valid, not a new arbitrary limit.
+    let valid = client
+        .prepare(i64::MAX as u64, expiry, Request::Head)
+        .unwrap();
+    assert_eq!(valid.verified.sequence, i64::MAX as u64);
+    assert_eq!(
+        client
+            .policy
+            .verify_request(valid.wire(), super::super::now().unwrap())
+            .unwrap()
+            .sequence,
+        i64::MAX as u64,
+    );
+}
+
+#[test]
+fn expired_prepared_request_refuses_before_client_tcp() {
+    let settings = settings();
+    let policy = policy(&settings, 1);
+    let client = PqClient::new(policy, signer(72)).unwrap();
+    let now = super::super::now().unwrap();
+    let mut prepared = client.prepare(1, now + 30, Request::Head).unwrap();
+    // Model queue delay by reducing the *local* expiry to the past. No
+    // authority is created and no signature is accepted from this mutation.
+    prepared.verified.expiry = now.checked_sub(1).unwrap();
+    let disconnected = SocketAddr::from(([127, 0, 0, 1], 0));
+    let error = client
+        .send(disconnected, &prepared, Duration::from_secs(1))
+        .expect_err("stale request must fail before TCP connection");
+    assert_eq!(error.to_string(), "PQ_NETWORK_EXPIRED_UNCONFIRMED");
+}
+
+#[test]
+fn real_signed_overlong_pq_request_refuses_before_verification_without_budget_bypass() {
+    // This valid pinned ML-DSA signature violates only the server's original
+    // maximum horizon. Its rejection must consume the existing attempt slot
+    // yet avoid the expensive verifier, not accept a new lease or relax policy.
+    let settings = settings();
+    let policy = policy(&settings, 1);
+    let now = super::super::now().unwrap();
+    let expiry = now + MAX_LIFETIME_SECONDS + 1;
+    let peer = signer(72);
+    let payload = serde_json::to_vec(&Request::Head).unwrap();
+    let expected = policy.expectation(
+        peer.public_key_id(),
+        Direction::Request,
+        1,
+        expiry,
+        now,
+        &payload,
+    );
+    let frame = peer
+        .sign_statement(&statement(&expected).unwrap(), &expected)
+        .unwrap();
+    let overlong = encode_wire(REQUEST_MAGIC, &frame, &payload).unwrap();
+    let mut reserved_attempts = 0;
+    let refused = policy
+        .verify_request_metered(&overlong, now, &mut || {
+            reserved_attempts += 1;
+            Ok(())
+        })
+        .err()
+        .expect("overlong valid-signature request must be refused");
+    assert_eq!(refused.to_string(), "PQ_NETWORK_LIFETIME");
+    assert_eq!(
+        reserved_attempts, 1,
+        "cheap refusal must not refund attempt"
+    );
+    let unavailable = policy
+        .verify_request_metered(&overlong, now, &mut || {
+            Err("PQ_NETWORK_INBOUND_VERIFICATION_LIMIT".into())
+        })
+        .err()
+        .expect("resource-owner denial must precede lifetime screening");
+    assert_eq!(
+        unavailable.to_string(),
+        "PQ_NETWORK_INBOUND_VERIFICATION_LIMIT"
+    );
+
+    // A real correctly signed bounded request still reaches the normal
+    // verifier; this guard cannot manufacture acceptance or force fallback.
+    let client = PqClient::new(policy.clone(), signer(72)).unwrap();
+    let valid = client
+        .prepare(2, now + MAX_LIFETIME_SECONDS / 2, Request::Head)
+        .unwrap();
+    let mut valid_attempts = 0;
+    let checked = policy
+        .verify_request_metered(valid.wire(), now, &mut || {
+            valid_attempts += 1;
+            Ok(())
+        })
+        .unwrap();
+    assert_eq!(checked.sequence, 2);
+    assert_eq!(valid_attempts, 1);
+}
+
+#[test]
+fn pnq2_untransmittable_request_and_response_refuse_before_signing() {
+    let settings = settings();
+    let policy = policy(&settings, 1);
+    let client = PqClient::new(policy.clone(), signer(72)).unwrap();
+    let server = PqServer::new(policy.clone(), signer(71)).unwrap();
+    let now = super::super::now().unwrap();
+    let expiry = now + 30;
+
+    // JSON wrapping adds bytes beyond the exact 2 MiB wire allowance.
+    // Previously prepare signed and hashed this impossible client frame
+    // before encode_wire returned PQ_NETWORK_WIRE_LIMIT.
+    let oversized = Request::Submit {
+        packet: "ab".repeat(MAX_WIRE / 2),
+    };
+    let error = client
+        .prepare(1, expiry, oversized)
+        .err()
+        .expect("untransmittable client request must be refused");
+    assert_eq!(error.to_string(), "PQ_NETWORK_WIRE_LIMIT");
+
+    // The original server response path also signed the impossible body
+    // before encode_wire refused it. Do not enlarge the wire budget.
+    let prepared = client.prepare(1, expiry, Request::Head).unwrap();
+    let response_error = server
+        .response(&prepared.verified, Ok(Value::String("x".repeat(MAX_WIRE))))
+        .unwrap_err();
+    assert_eq!(response_error.to_string(), "PQ_NETWORK_WIRE_LIMIT");
+
+    // Authentic, bounded signed messages keep the unchanged verifier and
+    // client response context, without a classical verifier or fallback.
+    let normal = server
+        .response(&prepared.verified, Ok(serde_json::json!({"head": "ok"})))
+        .unwrap();
+    let checked = policy
+        .verify_response(&normal, &prepared.verified, now)
+        .unwrap();
+    assert!(checked.ok);
+    assert_eq!(checked.value, serde_json::json!({"head": "ok"}));
+}
+
+#[test]
+fn signed_pq_client_refuses_nonloopback_destination_before_network_io() {
+    // Real ML-DSA request and independently pinned keys; rejection is an
+    // outbound transport boundary, not a synthetic bad-signature refusal.
+    let settings = settings();
+    let policy = policy(&settings, 1);
+    let client = PqClient::new(policy, signer(72)).unwrap();
+    let expires = super::super::now().unwrap() + 30;
+    let prepared = client.prepare(1, expires, Request::Head).unwrap();
+    for raw in [
+        "0.0.0.0:1",
+        "192.0.2.42:443",
+        "[::]:1",
+        "[2001:db8::42]:443",
+        "[::ffff:192.0.2.42]:443",
+    ] {
+        let address: SocketAddr = raw.parse().unwrap();
+        assert!(!address.ip().is_loopback(), "{raw}");
+        assert_eq!(
+            client
+                .send(address, &prepared, Duration::from_secs(1))
+                .unwrap_err()
+                .to_string(),
+            "PQ_NETWORK_LOOPBACK_ONLY",
+            "{raw}"
+        );
+    }
+    // Existing real_tcp_node_submit... exercises the retained successful
+    // loopback request/response/ledger path with the same send method.
+}
+
+#[test]
 fn real_tcp_node_submit_lost_ack_signature_randomness_and_cold_reopen() {
     let directory = tempfile::tempdir().unwrap();
     let settings = settings();
