@@ -287,7 +287,7 @@ def analyze(path, *, full_limb=False):
             "Hash midstate reuse, different horizons and adversarial implementations/hardware may cost less.",
             "Microbenchmark challenges do not certify live parent/lease/beneficiary binding or public admission.",
             "No service queues, signed transport, storage, network fanout or model utility are measured.",
-            "Experimental column-limb and full-limb observations do not change the default production verifier."], **FALSE_FLAGS}
+            ("Experimental column-limb and full-limb observations do not change the default production verifier." if full_limb else "Experimental column-limb observations do not change the default production verifier.")], **FALSE_FLAGS}
 
 
 def main():

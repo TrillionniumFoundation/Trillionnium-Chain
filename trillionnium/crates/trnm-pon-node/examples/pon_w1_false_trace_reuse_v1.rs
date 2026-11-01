@@ -36,7 +36,11 @@ struct Campaign {
     selector: &'static str,
     paths: &'static [&'static str],
 }
-const ORIGINAL: Campaign = Campaign { schema: SCHEMA, selector: SELECTOR, paths: &PATHS };
+const ORIGINAL: Campaign = Campaign {
+    schema: SCHEMA,
+    selector: SELECTOR,
+    paths: &PATHS,
+};
 const FULL_LIMB: Campaign = Campaign {
     schema: "pon-w1-false-trace-full-limb-v1",
     selector: "--false-trace-full-limb-v1",
@@ -145,7 +149,8 @@ fn cohort(
         });
     }
     let total = total.finish();
-    emit(campaign,
+    emit(
+        campaign,
         json!({"kind":"cohort","class":material.name,"sample":sample,
         "task":hex::encode(task),"target":hex::encode(target()),"setup_calls":1,
         "searches":SEARCHES,"setup":setup,"total":total}),
@@ -153,7 +158,8 @@ fn cohort(
     counts.cohorts += 1;
     for (search, measured) in searches.into_iter().enumerate() {
         let searched = measured.result;
-        emit(campaign,
+        emit(
+            campaign,
             json!({"kind":"search","class":material.name,"sample":sample,
             "search_index":search,"task":hex::encode(task),"target":hex::encode(target()),
             "setup_calls":0,"timing":measured.timing,
@@ -163,7 +169,8 @@ fn cohort(
         )?;
         counts.searches += 1;
         if let Some(winner) = searched.winner {
-            emit(campaign,
+            emit(
+                campaign,
                 json!({"kind":"candidate","class":material.name,"sample":sample,
                 "search_index":search,"task":hex::encode(task),"target":hex::encode(target()),
                 "challenge":hex::encode(winner.challenge),"proof_hex":hex::encode(&winner.proof),
@@ -185,12 +192,15 @@ fn cohort(
                         target(),
                         &winner.proof,
                     ),
-                    _ => pon_work::verify_full_limb(winner.challenge, task, target(), &winner.proof),
+                    _ => {
+                        pon_work::verify_full_limb(winner.challenge, task, target(), &winner.proof)
+                    }
                 });
                 let timing = started.finish();
                 let outcome = verdict(native, &winner.proof);
                 // Preserve unexpected outcomes; the reader reports them.
-                emit(campaign,
+                emit(
+                    campaign,
                     json!({"kind":"verifier","class":material.name,"sample":sample,
                     "search_index":search,"task":hex::encode(task),"target":hex::encode(target()),
                     "path":campaign.paths[index],"invocation_order":order,
@@ -230,7 +240,8 @@ fn run() -> Result<()> {
         },
     ]);
     let material_setup = started.finish();
-    emit(campaign,
+    emit(
+        campaign,
         json!({"kind":"campaign","selector":campaign.selector,"samples":SAMPLES,
         "searches_per_setup":SEARCHES,"attempt_budget":LIMIT,"seed":0,
         "target":hex::encode(target()),"paths":campaign.paths,"classes":materials.iter().map(|m|m.name).collect::<Vec<_>>(),
@@ -247,7 +258,8 @@ fn run() -> Result<()> {
     for material in &materials {
         let task = pon_work::task_id(&material.a, &material.b)
             .map_err(|error| format!("FALSE_REUSE_MATERIAL:{error:?}"))?;
-        emit(campaign,
+        emit(
+            campaign,
             json!({"kind":"material","class":material.name,"source":material.source,
             "task":hex::encode(task),"a_hex":hex::encode(raw(&material.a)),"b_hex":hex::encode(raw(&material.b))}),
         )?;
@@ -255,7 +267,8 @@ fn run() -> Result<()> {
             cohort(material, task, sample, &mut counts, campaign)?;
         }
     }
-    emit(campaign,
+    emit(
+        campaign,
         json!({"kind":"end","material_count":materials.len(),"cohort_count":counts.cohorts,
         "search_count":counts.searches,"candidate_count":counts.candidates,
         "verifier_count":counts.verifiers,"complete":true}),

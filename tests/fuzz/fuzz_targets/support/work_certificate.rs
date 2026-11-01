@@ -82,7 +82,9 @@ fn observe(
             bytes,
             &mut progress,
         ),
-        4 => pon_work::verify_full_limb_with_progress(challenge, task, target, bytes, &mut progress),
+        4 => {
+            pon_work::verify_full_limb_with_progress(challenge, task, target, bytes, &mut progress)
+        }
         _ => unreachable!("five explicit verification kernels"),
     }
     .map(|work| Success {

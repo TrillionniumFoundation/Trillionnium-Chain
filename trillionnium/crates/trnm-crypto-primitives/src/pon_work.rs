@@ -994,8 +994,14 @@ fn finish_transposed_kernel_with_progress<const LIMB: bool, E>(
     let left = transposed_mul_kernel_with_progress::<LIMB, E>(a, &evaluated.fl, N, N, R, progress)?;
     let correction1 =
         transposed_mul_kernel_with_progress::<LIMB, E>(&left, &evaluated.fr, N, R, N, progress)?;
-    let right =
-        transposed_mul_kernel_with_progress::<LIMB, E>(&evaluated.er, &evaluated.bp, R, N, N, progress)?;
+    let right = transposed_mul_kernel_with_progress::<LIMB, E>(
+        &evaluated.er,
+        &evaluated.bp,
+        R,
+        N,
+        N,
+        progress,
+    )?;
     let correction2 =
         transposed_mul_kernel_with_progress::<LIMB, E>(&evaluated.el, &right, N, R, N, progress)?;
     Ok(evaluated
@@ -1746,47 +1752,32 @@ mod tests {
         let task = task_id(&a, &b).unwrap();
         let proof = prove(challenge, &a, &b).unwrap();
         let mut expected_points = Vec::new();
-        let expected = verify_reference_with_progress(
-            challenge,
-            task,
-            [255; 32],
-            &proof,
-            &mut |point| {
+        let expected =
+            verify_reference_with_progress(challenge, task, [255; 32], &proof, &mut |point| {
                 expected_points.push(point);
                 Ok::<_, usize>(())
-            },
-        )
-        .unwrap();
+            })
+            .unwrap();
         let mut actual_points = Vec::new();
-        let actual = verify_full_limb_with_progress(
-            challenge,
-            task,
-            [255; 32],
-            &proof,
-            &mut |point| {
+        let actual =
+            verify_full_limb_with_progress(challenge, task, [255; 32], &proof, &mut |point| {
                 actual_points.push(point);
                 Ok::<_, usize>(())
-            },
-        )
-        .unwrap();
+            })
+            .unwrap();
         assert_eq!(checked_value(Ok(actual)), checked_value(Ok(expected)));
         assert_eq!(actual_points, expected_points);
         for cut in 0..expected_points.len() {
             let mut observed = Vec::new();
-            let result = verify_full_limb_with_progress(
-                challenge,
-                task,
-                [255; 32],
-                &proof,
-                &mut |point| {
+            let result =
+                verify_full_limb_with_progress(challenge, task, [255; 32], &proof, &mut |point| {
                     observed.push(point);
                     if observed.len() - 1 == cut {
                         Err(cut)
                     } else {
                         Ok(())
                     }
-                },
-            );
+                });
             assert!(matches!(result, Err(VerificationError::Cancelled(value)) if value == cut));
             assert_eq!(observed, expected_points[..=cut]);
         }
