@@ -1,0 +1,629 @@
+{
+  "schema": "pon-cache-diagnostic-build-v1",
+  "baseline_commit": "7c5caf5bce1396976808a0f504c4163fbc1aed44",
+  "baseline_tree": "fef6125b338e5697896c0a32d0488458d8d93244",
+  "workspace_lock_sha256": "fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69",
+  "compiler": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+  "compiler_elf_sha256": "bff349e72704ff70bc08a234a3847338e797065bbedde5e556808bc87b7bf7c6",
+  "cargo_elf_sha256": "841072d1d92f9e841d9ba5b0814182a0adf064acf4527cd120967b7bc49dcb66",
+  "compile_profile": "unmodified Cargo default release",
+  "compiler_overrides": [],
+  "same_harness_main_sha256": "3615b7470653f503c9f0c7cf14a4310bf845790066ac54af0dbbf1e23f5d1bbc",
+  "same_manifest_sha256": "9980f8577db5b0059e42a3bc3e53578f37525eea35df5c12e4905d2435e498fc",
+  "qualification": {
+    "selected_source_diagnostic_only": true,
+    "whole_workspace": false,
+    "fixed_host": false,
+    "attacker_cost": false,
+    "service": false
+  },
+  "variants": {
+    "baseline": {
+      "harness": "/tmp/pon-cache-benchmark-baseline",
+      "target": "/tmp/pon-cache-benchmark-baseline/target",
+      "elf": "/tmp/pon-cache-benchmark-baseline/target/release/pon-cache-benchmark",
+      "elf_bytes": 654576,
+      "elf_sha256": "a3867b20d9cffb12b42bda09470a4daafdcf0608cc74efe8a1fadec6c51bc681",
+      "lock_sha256": "2e04cdc62e48b6b0f95bb1d60406580be704d3b0a08a6bbc7d7036115f74c8e3",
+      "registry_packages": [
+        [
+          "bitflags",
+          "2.11.0",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "843867be96c8daad0d758b57df9392b6d8d271134fce549de6ce169ff98a92af"
+        ],
+        [
+          "block-buffer",
+          "0.10.4",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "3078c7629b62d3f0439517fa394996acacc5cbc91c5a20d8c658e77abd503a71"
+        ],
+        [
+          "cfg-if",
+          "1.0.4",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "9330f8b2ff13f34540b44e946ef35111825727b38d33286ef986142615121801"
+        ],
+        [
+          "cpufeatures",
+          "0.2.17",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "59ed5838eebb26a2bb2e58f6d5b5316989ae9d08bab10e0e6d103e656d1b0280"
+        ],
+        [
+          "crypto-common",
+          "0.1.7",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "78c8292055d1c1df0cce5d180393dc8cce0abec0a7102adb6c7b1eef6016d60a"
+        ],
+        [
+          "digest",
+          "0.10.7",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "9ed9a281f7bc9b7576e61468ba615a66a5c8cfdff42420a70aa82701a3b1e292"
+        ],
+        [
+          "errno",
+          "0.3.14",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
+        ],
+        [
+          "generic-array",
+          "0.14.7",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "85649ca51fd72272d7821adaf274ad91c288277713d9c18820d8499a7ff69e9a"
+        ],
+        [
+          "hex",
+          "0.4.3",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70"
+        ],
+        [
+          "itoa",
+          "1.0.18",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
+        ],
+        [
+          "libc",
+          "0.2.184",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "48f5d2a454e16a5ea0f4ced81bd44e4cfc7bd3a507b61887c99fd3538b28e4af"
+        ],
+        [
+          "linux-raw-sys",
+          "0.12.1",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "32a66949e030da00e8c7d4434b251670a91556f4144941d37452769c25d58a53"
+        ],
+        [
+          "memchr",
+          "2.8.0",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "f8ca58f447f06ed17d5fc4043ce1b10dd205e060fb3ce5b979b8ed8e59ff3f79"
+        ],
+        [
+          "proc-macro2",
+          "1.0.106",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "8fd00f0bb2e90d81d1044c2b32617f68fcb9fa3bb7640c23e9c748e53fb30934"
+        ],
+        [
+          "quote",
+          "1.0.45",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "41f2619966050689382d2b44f664f4bc593e129785a36d6ee376ddf37259b924"
+        ],
+        [
+          "rustix",
+          "1.1.4",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "b6fe4565b9518b83ef4f91bb47ce29620ca828bd32cb7e408f0062e9930ba190"
+        ],
+        [
+          "serde",
+          "1.0.228",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "9a8e94ea7f378bd32cbbd37198a4a91436180c5bb472411e48b5ec2e2124ae9e"
+        ],
+        [
+          "serde_core",
+          "1.0.228",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "41d385c7d4ca58e59fc732af25c3983b67ac852c1a25000afe1175de458b67ad"
+        ],
+        [
+          "serde_derive",
+          "1.0.228",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "d540f220d3187173da220f885ab66608367b6574e925011a9353e4badda91d79"
+        ],
+        [
+          "serde_json",
+          "1.0.149",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "83fc039473c5595ace860d8c4fafa220ff474b3fc6bfdb4293327f1a37e94d86"
+        ],
+        [
+          "sha2",
+          "0.10.9",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "a7507d819769d01a365ab707794a4084392c824f54a7a6a7862f8c3d0892b283"
+        ],
+        [
+          "syn",
+          "2.0.117",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "e665b8803e7b1d2a727f4023456bbbbe74da67099c585258af0ad9c5013b9b99"
+        ],
+        [
+          "typenum",
+          "1.20.1",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "b6f5e870be6c3b371b77fe0ee0bafb859fa4964b4404c27de1d380043c4dda20"
+        ],
+        [
+          "unicode-ident",
+          "1.0.24",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "e6e4313cd5fcd3dad5cafa179702e2b244f760991f45397d14d4ebf38247da75"
+        ],
+        [
+          "version_check",
+          "0.9.5",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a"
+        ],
+        [
+          "windows-link",
+          "0.2.1",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "f0805222e57f7521d6a62e36fa9163bc891acd422f971defe97d64e70d0a4fe5"
+        ],
+        [
+          "windows-sys",
+          "0.61.2",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "ae137229bcbd6cdf0f7b80a31df61766145077ddf49416a728b02cb3921ff3fc"
+        ],
+        [
+          "zmij",
+          "1.0.21",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "b8848ee67ecc8aedbaf3e4122217aff892639231befc6a1b58d29fff4c2cabaa"
+        ]
+      ],
+      "all_registry_pins_match_workspace": true,
+      "sources": [
+        {
+          "repository_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+          "harness_path": "src/pon_work.rs",
+          "bytes": 92345,
+          "sha256": "4d2d858f0b156aac24d0c73ee4cccba06b85b2a4d927b5cf64bd0522dedeb17b",
+          "git_blob_sha1": "5b9dd609f2a77e77670f4082a47d82645b4d3871"
+        },
+        {
+          "repository_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts.rs",
+          "harness_path": "src/pon_work/arithmetic_facts.rs",
+          "bytes": 12382,
+          "sha256": "66efd9327f84dab70dfc01365478ea0e3d3a8a196cb958301884432549d2d65f",
+          "git_blob_sha1": "bd1093a73728a537a6f96c6a8a0b1701e3b72815"
+        },
+        {
+          "repository_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/churn_controls.rs",
+          "harness_path": "src/pon_work/arithmetic_facts/churn_controls.rs",
+          "bytes": 5124,
+          "sha256": "d8e2d55c858925a749c97ea39d1c8935ef7767ae01436189d0e2fb587076e8c5",
+          "git_blob_sha1": "effe3147d6b1c65e23ec5617b0fe1b814c02b7f8"
+        },
+        {
+          "repository_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/controls.rs",
+          "harness_path": "src/pon_work/arithmetic_facts/controls.rs",
+          "bytes": 18238,
+          "sha256": "2c9e2729840963054f47185d22381f8c3ab66a8948c57e2eae0b7087d5964322",
+          "git_blob_sha1": "f3c07fa83137df5f6f662f92db27f1d6d4149a69"
+        },
+        {
+          "repository_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/tests.rs",
+          "harness_path": "src/pon_work/arithmetic_facts/tests.rs",
+          "bytes": 4167,
+          "sha256": "f93b72aa1b5dec2b991de6586214f274a7797f8a347d0444125101f0e52cee2f",
+          "git_blob_sha1": "81c1c73fe5b0e113ff8e2e7010527ead723ae5fb"
+        },
+        {
+          "repository_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_one_zero.rs",
+          "harness_path": "src/pon_work/blocked_one_zero.rs",
+          "bytes": 16879,
+          "sha256": "214552a72056e7b0a87e90f0e094cb2668a54de18bcf82e3eddc1896ab0b0031",
+          "git_blob_sha1": "d95d20caba662c884241a51cb045cfa17fa03983"
+        },
+        {
+          "repository_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero.rs",
+          "harness_path": "src/pon_work/blocked_zero.rs",
+          "bytes": 10436,
+          "sha256": "be1b375808d0923e3f938f1c4d23475a16bfe43bf665cb464d79d1dc9ef85f8f",
+          "git_blob_sha1": "0ae9356516dd4201b086fc4323296db57fbea219"
+        },
+        {
+          "repository_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero_paired.rs",
+          "harness_path": "src/pon_work/blocked_zero_paired.rs",
+          "bytes": 22281,
+          "sha256": "0c9c4ddb772292efd0cf92dc174e8b2353b1e0f16f36df484a5e16b280316a0f",
+          "git_blob_sha1": "ee09310b8600ab7dee99e5ec230b8421b68227ee"
+        },
+        {
+          "repository_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/facts.rs",
+          "harness_path": "src/pon_work/facts.rs",
+          "bytes": 8100,
+          "sha256": "996c3bf296b5116612ef4906241eb24aa0cfdbb992951aebc6703246eb9eab1b",
+          "git_blob_sha1": "2e92d9d41e5ff24c27c10b7b7acdb70ad259e5e5"
+        },
+        {
+          "repository_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/facts/tests.rs",
+          "harness_path": "src/pon_work/facts/tests.rs",
+          "bytes": 12679,
+          "sha256": "f4588488ad2c96b9143f1383ad67a54f9022b7aeab6a3434fa91d8d0b8e6d481",
+          "git_blob_sha1": "d15dfe9b69e831be9cca3d33050e78db72ce73b3"
+        },
+        {
+          "repository_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/integer_paired.rs",
+          "harness_path": "src/pon_work/integer_paired.rs",
+          "bytes": 5033,
+          "sha256": "fae34d70af6ac6fc61fb0e2e6f022df1548a333aaacd91eb83597e0174f41101",
+          "git_blob_sha1": "ed132de30fb271c0cb56662cf2cbef053abfb69f"
+        },
+        {
+          "repository_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_limb.rs",
+          "harness_path": "src/pon_work/maintenance_limb.rs",
+          "bytes": 20390,
+          "sha256": "4dcb3b9280005cd022cb99c30752525406463d963419608b1532a7092198891d",
+          "git_blob_sha1": "bbdcbe216eea36f0aa79d1bd7320ede197c66130"
+        },
+        {
+          "repository_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_periodic.rs",
+          "harness_path": "src/pon_work/maintenance_periodic.rs",
+          "bytes": 12611,
+          "sha256": "5fd27cac9ddad5c87a4623f25d2a97f488d16d8542d9402f59f621db33dfb9ac",
+          "git_blob_sha1": "e33309316b5eed3fc8e9ceb3b816f81cb7485d95"
+        },
+        {
+          "repository_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_prefix.rs",
+          "harness_path": "src/pon_work/maintenance_prefix.rs",
+          "bytes": 26429,
+          "sha256": "a88ab5bccbc7085fd0c4823e574a6dfe48b18c9d5d70493b817b97cf0a106899",
+          "git_blob_sha1": "69f2ffbc96d5fce17c262d0f1165812448cf18e4"
+        },
+        {
+          "repository_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/paired_product.rs",
+          "harness_path": "src/pon_work/paired_product.rs",
+          "bytes": 15194,
+          "sha256": "3facd5578e8f57b88722e2c3c9c7a19b3d6c3427f9dad22648a13254656a9bab",
+          "git_blob_sha1": "0b03945c58b0d90ad1b073487374351e3a9020e7"
+        },
+        {
+          "repository_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs",
+          "harness_path": "src/pon_work/rejection_cache.rs",
+          "bytes": 10007,
+          "sha256": "78dd6d0c59d8bfc8ed07bda4319ca17e79acaeab9662508d178bd92d8810fc53",
+          "git_blob_sha1": "1fa88899d0b88501252e2d7f8f6b6f0f891cf87a"
+        },
+        {
+          "repository_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/structured.rs",
+          "harness_path": "src/pon_work/structured.rs",
+          "bytes": 22800,
+          "sha256": "a0535365dc141d15d6e22242352f554d5ada6d31a02cd627f2eb92135704556c",
+          "git_blob_sha1": "1358d5f5a2df7f593ecfde0382357961631b6a8f"
+        }
+      ]
+    },
+    "candidate": {
+      "harness": "/tmp/pon-cache-benchmark-candidate",
+      "target": "/tmp/pon-cache-benchmark-candidate/target",
+      "elf": "/tmp/pon-cache-benchmark-candidate/target/release/pon-cache-benchmark",
+      "elf_bytes": 653472,
+      "elf_sha256": "76ab0bec8a443c6014f077980d4e12a5a664a8929487310e77cd810f32722a50",
+      "lock_sha256": "2e04cdc62e48b6b0f95bb1d60406580be704d3b0a08a6bbc7d7036115f74c8e3",
+      "registry_packages": [
+        [
+          "bitflags",
+          "2.11.0",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "843867be96c8daad0d758b57df9392b6d8d271134fce549de6ce169ff98a92af"
+        ],
+        [
+          "block-buffer",
+          "0.10.4",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "3078c7629b62d3f0439517fa394996acacc5cbc91c5a20d8c658e77abd503a71"
+        ],
+        [
+          "cfg-if",
+          "1.0.4",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "9330f8b2ff13f34540b44e946ef35111825727b38d33286ef986142615121801"
+        ],
+        [
+          "cpufeatures",
+          "0.2.17",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "59ed5838eebb26a2bb2e58f6d5b5316989ae9d08bab10e0e6d103e656d1b0280"
+        ],
+        [
+          "crypto-common",
+          "0.1.7",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "78c8292055d1c1df0cce5d180393dc8cce0abec0a7102adb6c7b1eef6016d60a"
+        ],
+        [
+          "digest",
+          "0.10.7",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "9ed9a281f7bc9b7576e61468ba615a66a5c8cfdff42420a70aa82701a3b1e292"
+        ],
+        [
+          "errno",
+          "0.3.14",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
+        ],
+        [
+          "generic-array",
+          "0.14.7",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "85649ca51fd72272d7821adaf274ad91c288277713d9c18820d8499a7ff69e9a"
+        ],
+        [
+          "hex",
+          "0.4.3",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70"
+        ],
+        [
+          "itoa",
+          "1.0.18",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
+        ],
+        [
+          "libc",
+          "0.2.184",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "48f5d2a454e16a5ea0f4ced81bd44e4cfc7bd3a507b61887c99fd3538b28e4af"
+        ],
+        [
+          "linux-raw-sys",
+          "0.12.1",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "32a66949e030da00e8c7d4434b251670a91556f4144941d37452769c25d58a53"
+        ],
+        [
+          "memchr",
+          "2.8.0",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "f8ca58f447f06ed17d5fc4043ce1b10dd205e060fb3ce5b979b8ed8e59ff3f79"
+        ],
+        [
+          "proc-macro2",
+          "1.0.106",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "8fd00f0bb2e90d81d1044c2b32617f68fcb9fa3bb7640c23e9c748e53fb30934"
+        ],
+        [
+          "quote",
+          "1.0.45",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "41f2619966050689382d2b44f664f4bc593e129785a36d6ee376ddf37259b924"
+        ],
+        [
+          "rustix",
+          "1.1.4",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "b6fe4565b9518b83ef4f91bb47ce29620ca828bd32cb7e408f0062e9930ba190"
+        ],
+        [
+          "serde",
+          "1.0.228",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "9a8e94ea7f378bd32cbbd37198a4a91436180c5bb472411e48b5ec2e2124ae9e"
+        ],
+        [
+          "serde_core",
+          "1.0.228",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "41d385c7d4ca58e59fc732af25c3983b67ac852c1a25000afe1175de458b67ad"
+        ],
+        [
+          "serde_derive",
+          "1.0.228",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "d540f220d3187173da220f885ab66608367b6574e925011a9353e4badda91d79"
+        ],
+        [
+          "serde_json",
+          "1.0.149",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "83fc039473c5595ace860d8c4fafa220ff474b3fc6bfdb4293327f1a37e94d86"
+        ],
+        [
+          "sha2",
+          "0.10.9",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "a7507d819769d01a365ab707794a4084392c824f54a7a6a7862f8c3d0892b283"
+        ],
+        [
+          "syn",
+          "2.0.117",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "e665b8803e7b1d2a727f4023456bbbbe74da67099c585258af0ad9c5013b9b99"
+        ],
+        [
+          "typenum",
+          "1.20.1",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "b6f5e870be6c3b371b77fe0ee0bafb859fa4964b4404c27de1d380043c4dda20"
+        ],
+        [
+          "unicode-ident",
+          "1.0.24",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "e6e4313cd5fcd3dad5cafa179702e2b244f760991f45397d14d4ebf38247da75"
+        ],
+        [
+          "version_check",
+          "0.9.5",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a"
+        ],
+        [
+          "windows-link",
+          "0.2.1",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "f0805222e57f7521d6a62e36fa9163bc891acd422f971defe97d64e70d0a4fe5"
+        ],
+        [
+          "windows-sys",
+          "0.61.2",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "ae137229bcbd6cdf0f7b80a31df61766145077ddf49416a728b02cb3921ff3fc"
+        ],
+        [
+          "zmij",
+          "1.0.21",
+          "registry+https://github.com/rust-lang/crates.io-index",
+          "b8848ee67ecc8aedbaf3e4122217aff892639231befc6a1b58d29fff4c2cabaa"
+        ]
+      ],
+      "all_registry_pins_match_workspace": true,
+      "sources": [
+        {
+          "repository_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+          "harness_path": "src/pon_work.rs",
+          "bytes": 92345,
+          "sha256": "4d2d858f0b156aac24d0c73ee4cccba06b85b2a4d927b5cf64bd0522dedeb17b",
+          "git_blob_sha1": "5b9dd609f2a77e77670f4082a47d82645b4d3871"
+        },
+        {
+          "repository_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts.rs",
+          "harness_path": "src/pon_work/arithmetic_facts.rs",
+          "bytes": 12577,
+          "sha256": "e7d060f44e95c57415f3507f69462086719b4df8fb0eecf3f2628931dd575481",
+          "git_blob_sha1": "4e48178c6a0b9281c932b9a51be7fa7e2097df4f"
+        },
+        {
+          "repository_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/churn_controls.rs",
+          "harness_path": "src/pon_work/arithmetic_facts/churn_controls.rs",
+          "bytes": 5124,
+          "sha256": "d8e2d55c858925a749c97ea39d1c8935ef7767ae01436189d0e2fb587076e8c5",
+          "git_blob_sha1": "effe3147d6b1c65e23ec5617b0fe1b814c02b7f8"
+        },
+        {
+          "repository_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/controls.rs",
+          "harness_path": "src/pon_work/arithmetic_facts/controls.rs",
+          "bytes": 18238,
+          "sha256": "2c9e2729840963054f47185d22381f8c3ab66a8948c57e2eae0b7087d5964322",
+          "git_blob_sha1": "f3c07fa83137df5f6f662f92db27f1d6d4149a69"
+        },
+        {
+          "repository_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/tests.rs",
+          "harness_path": "src/pon_work/arithmetic_facts/tests.rs",
+          "bytes": 4167,
+          "sha256": "f93b72aa1b5dec2b991de6586214f274a7797f8a347d0444125101f0e52cee2f",
+          "git_blob_sha1": "81c1c73fe5b0e113ff8e2e7010527ead723ae5fb"
+        },
+        {
+          "repository_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_one_zero.rs",
+          "harness_path": "src/pon_work/blocked_one_zero.rs",
+          "bytes": 16879,
+          "sha256": "214552a72056e7b0a87e90f0e094cb2668a54de18bcf82e3eddc1896ab0b0031",
+          "git_blob_sha1": "d95d20caba662c884241a51cb045cfa17fa03983"
+        },
+        {
+          "repository_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero.rs",
+          "harness_path": "src/pon_work/blocked_zero.rs",
+          "bytes": 10436,
+          "sha256": "be1b375808d0923e3f938f1c4d23475a16bfe43bf665cb464d79d1dc9ef85f8f",
+          "git_blob_sha1": "0ae9356516dd4201b086fc4323296db57fbea219"
+        },
+        {
+          "repository_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero_paired.rs",
+          "harness_path": "src/pon_work/blocked_zero_paired.rs",
+          "bytes": 22281,
+          "sha256": "0c9c4ddb772292efd0cf92dc174e8b2353b1e0f16f36df484a5e16b280316a0f",
+          "git_blob_sha1": "ee09310b8600ab7dee99e5ec230b8421b68227ee"
+        },
+        {
+          "repository_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/facts.rs",
+          "harness_path": "src/pon_work/facts.rs",
+          "bytes": 8100,
+          "sha256": "996c3bf296b5116612ef4906241eb24aa0cfdbb992951aebc6703246eb9eab1b",
+          "git_blob_sha1": "2e92d9d41e5ff24c27c10b7b7acdb70ad259e5e5"
+        },
+        {
+          "repository_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/facts/tests.rs",
+          "harness_path": "src/pon_work/facts/tests.rs",
+          "bytes": 12679,
+          "sha256": "f4588488ad2c96b9143f1383ad67a54f9022b7aeab6a3434fa91d8d0b8e6d481",
+          "git_blob_sha1": "d15dfe9b69e831be9cca3d33050e78db72ce73b3"
+        },
+        {
+          "repository_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/integer_paired.rs",
+          "harness_path": "src/pon_work/integer_paired.rs",
+          "bytes": 5033,
+          "sha256": "fae34d70af6ac6fc61fb0e2e6f022df1548a333aaacd91eb83597e0174f41101",
+          "git_blob_sha1": "ed132de30fb271c0cb56662cf2cbef053abfb69f"
+        },
+        {
+          "repository_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_limb.rs",
+          "harness_path": "src/pon_work/maintenance_limb.rs",
+          "bytes": 20390,
+          "sha256": "4dcb3b9280005cd022cb99c30752525406463d963419608b1532a7092198891d",
+          "git_blob_sha1": "bbdcbe216eea36f0aa79d1bd7320ede197c66130"
+        },
+        {
+          "repository_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_periodic.rs",
+          "harness_path": "src/pon_work/maintenance_periodic.rs",
+          "bytes": 12611,
+          "sha256": "5fd27cac9ddad5c87a4623f25d2a97f488d16d8542d9402f59f621db33dfb9ac",
+          "git_blob_sha1": "e33309316b5eed3fc8e9ceb3b816f81cb7485d95"
+        },
+        {
+          "repository_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_prefix.rs",
+          "harness_path": "src/pon_work/maintenance_prefix.rs",
+          "bytes": 26429,
+          "sha256": "a88ab5bccbc7085fd0c4823e574a6dfe48b18c9d5d70493b817b97cf0a106899",
+          "git_blob_sha1": "69f2ffbc96d5fce17c262d0f1165812448cf18e4"
+        },
+        {
+          "repository_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/paired_product.rs",
+          "harness_path": "src/pon_work/paired_product.rs",
+          "bytes": 15194,
+          "sha256": "3facd5578e8f57b88722e2c3c9c7a19b3d6c3427f9dad22648a13254656a9bab",
+          "git_blob_sha1": "0b03945c58b0d90ad1b073487374351e3a9020e7"
+        },
+        {
+          "repository_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs",
+          "harness_path": "src/pon_work/rejection_cache.rs",
+          "bytes": 10007,
+          "sha256": "78dd6d0c59d8bfc8ed07bda4319ca17e79acaeab9662508d178bd92d8810fc53",
+          "git_blob_sha1": "1fa88899d0b88501252e2d7f8f6b6f0f891cf87a"
+        },
+        {
+          "repository_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/structured.rs",
+          "harness_path": "src/pon_work/structured.rs",
+          "bytes": 22800,
+          "sha256": "a0535365dc141d15d6e22242352f554d5ada6d31a02cd627f2eb92135704556c",
+          "git_blob_sha1": "1358d5f5a2df7f593ecfde0382357961631b6a8f"
+        },
+        {
+          "repository_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/full_limb_controls.rs",
+          "harness_path": "src/pon_work/arithmetic_facts/full_limb_controls.rs",
+          "bytes": 5552,
+          "sha256": "d64e6f573a53b9c87174fe422f5181d0b43b55b1af68bcddfdc6210f98cc5ecf",
+          "git_blob_sha1": "be5b07a22899a5ddc14f3c2fa6a63c1e68547968"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "command": [
+    "cargo",
+    "clippy",
+    "--locked",
+    "--offline",
+    "-p",
+    "trnm-crypto-primitives",
+    "-p",
+    "trnm-protocol",
+    "-p",
+    "trnm-pon-node",
+    "--all-targets",
+    "--all-features",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "source": "3bbc0288d6b7b6ed7f2bf0ee70d99b3b14236129",
+  "provider_env_file": "/tmp/trnm-pon-pq-provider-20261101.crzprwdr/github.env"
+}
