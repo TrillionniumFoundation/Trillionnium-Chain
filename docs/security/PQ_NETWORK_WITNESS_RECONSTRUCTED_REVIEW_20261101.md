@@ -67,7 +67,7 @@ records to the exact final candidate.
 | Returning early on cancellation could discard the outcome of work already performed. | Finish retains its completion path. The final live check can suppress a late successful reply after the actual outcome was persisted. |
 | Preparing/signing a witness request could time out before any transport call yet permanently poison the client. | Request preparation, signing and the final pre-send deadline check are outside the uncertainty latch. The latch begins when transport exchange is entered. |
 | The guarded-store wrapper could undo that distinction by latching every Current error. | Current's error propagates without an unconditional second latch. Local checkpoint, authenticated predecessor or protected-root integrity failures still latch. |
-| Per-operation socket timeouts could be renewed by slow progress. | Partial read/write loops reset socket timeouts only to the remaining absolute interval. A complete received CAS receipt is retained for authentication, even if late. |
+| The initial socket-timeout argument was disproved by an actual slow-write failure: one progressing blocking write overran its original deadline. | The follow-up uses per-call nonblocking recv/send with the same absolute deadline and bounded would-block retry waits. Descriptor flags and socket timeout settings are unchanged. Complete received CAS evidence remains available for authenticated late reconciliation. |
 | A valid matching CAS receipt could be discarded after verification crossed the deadline. | The authenticated matching checkpoint is returned as known success. The guarded local transaction commits before reporting a late live-use error. Missing or unauthenticated results remain uncertain. |
 | Retirement could commit and then miss publishing the in-memory epoch because a late callback returned an error. | The epoch is invalidated on either commit outcome before propagating the result. The accompanying store test checks status, highest sequence and epoch. |
 | A pathname replacement could separate the locked descriptor from the database path. | Existing opens do not create missing files; descriptor/path and parent identities are retained and checked, with no-follow and ownership restrictions. This is a source-reviewed boundary, not a malicious-kernel guarantee. |
@@ -81,8 +81,9 @@ The six core tests exercise post-sign pre-send cancellation with zero exchanges
 and subsequent success on the same client; extra SQLite schema objects and
 oversized SQL rejection; the same signing keys under a different binding
 generation; matching late CAS success; and separate slow-drip read/write
-controls. The signing cut is inside the actual request path. These test names
-and source exist, but no runtime pass is asserted by this source-review record.
+controls. The signing cut is inside the actual request path. At the initial review stage, these names and source existed without current
+execution evidence. Actual results and the write counterexample are recorded
+in the final section below.
 
 The store tests additionally cover old complete Node snapshots, lost CAS
 replies, local commit failure, stale signed replies, explicit guarded opening,
@@ -168,3 +169,21 @@ and treats search success in an idealized way; a later variant respects bounded
 difficulty changes. Their result motivates review of difficulty and fork
 selection. It is not an implementation of Trillionnium W1, a demonstration
 against this chain, or a quantum-cost lower bound for its concrete work.
+
+## Actual combined native result and I/O follow-up
+
+The earlier component hashes above identify the reconstructed source before this
+follow-up. Actual local commit `444ae3ed6d3951396dc421e7b26548191962ef9f`
+(tree `b4d4cca6da8244cf9c7d479eca0974559f4a1005`, identical to remote
+`d2fabdd3757b89db84763d632aeedfe84f9fce4f`) ran all 37 meaningful controls:
+36 passed and `slow_drip_write_obeys_one_absolute_deadline` failed. The 40 ms
+budget, 8 MiB payload and 500 ms assertion were not relaxed. Complete raw
+[source and execution records](../../evidence/pon-pq-system-continuation-20261101/README.md)
+preserve this counterexample and the positive store/process effects.
+
+Two internal source reviews checked the follow-up against the actual locked
+Rustix 1.1.4 API: per-call DONTWAIT avoids changes shared by cloned descriptors,
+EINTR/EAGAIN do not renew time, and complete-read/late-CAS and uncertain-write
+semantics remain in place. Only the Node-local net feature is added; no package
+version, lockfile, optimization, debug/overflow or business budget is changed.
+This source review does not certify the new native execution.

@@ -92,3 +92,62 @@ actual combined files. The original sole-plan entry was retained.
 The subsequent candidate must be built and executed independently. Neither
 this merge nor a source-integrity pass turns the failed build into native
 acceptance; all original service budgets and six whole-chain gates remain open.
+
+## First actual combined execution: 36 / 37, one real I/O failure
+
+Local source `444ae3ed6d3951396dc421e7b26548191962ef9f` has the exact
+`b4d4cca6da8244cf9c7d479eca0974559f4a1005` tree published as `d2fabdd3757b89db84763d632aeedfe84f9fce4f`.
+Its one-compiler-job build completed under the original Rust 1.95.0 profile,
+locked versions and provider. The actual Node test artifact has opt-level 3,
+debug assertions and overflow checks enabled; features are `default` and
+`pq-native-openssl`. Its SHA-256
+`dc7555f7d02631ff73db0d1d4011eaf2df1d9ce636f6271782922ea78ee972d8`
+was unchanged before and after all selected executions.
+
+All 37 meaningful selectors ran independently with permitted local sockets:
+**36 passed, 1 failed, no child harness counted**. Every command's source-before
+equals source-after. The five original network controls passed. All 25 guarded
+store controls and the actual NPQ6 transfer / separate witness-process cold
+restart passed. The six witness-core controls had five passes and one failure.
+
+The sole failure was
+`pq_rollback_witness::tests::slow_drip_write_obeys_one_absolute_deadline`: an
+8 MiB write with the original 40 ms absolute budget did not return within the
+unchanged 500 ms assertion while the peer continued draining slowly. Its native
+exit is 101 and named-reader exit is 1. The raw log SHA-256 is
+`70e6071cd53b1ed9ba11817a1319f79f5ecec3a6a3f31678bbb2076a6a4de99e`.
+Remaining-interval socket timeouts did not prevent a single progressing blocking
+write from overrunning the absolute deadline. That earlier implementation is
+not accepted as bounded I/O.
+
+The [member manifest](initial-native/manifest.json) indexes the complete original
+command logs, source receipts, exact-name reader outputs, compiler artifact,
+summary and a Git bundle retaining the local source identity. Their
+[lossless archive](initial-native/records.tar.gz.base64) is a deterministic
+tar/gzip/base64 representation; no raw log was trimmed or changed. Run
+[restore.py](initial-native/restore.py) with a new output directory to validate
+the archive and every restored file's size and SHA-256 before writing it.
+The executable itself is not embedded; its actual compiler record and measured
+before/after digest are retained.
+
+The follow-up replaces blocking socket calls with per-call `MSG_DONTWAIT`
+receive/send and repeats the same absolute deadline on every retry. It enables
+only the existing `rustix` dependency's `net` feature in the Node crate: this
+changes the feature graph, while versions, lockfile, compiler profiles and
+business budgets remain fixed. Socket descriptor mode and timeout options are
+not mutated. Complete received CAS evidence is still reconciled before a late
+live-use refusal; sent-but-uncertain errors still invalidate authority. The
+40 ms budget, 8 MiB load and 500 ms assertion remain unchanged. Fresh native
+validation of this new source is required.
+
+Two separate discovered integration issues are also corrected: the public
+readiness source reader now recognizes the exact V4 namespace without accepting
+V4 state as legacy readiness evidence; its original 51 and four added tests
+passed in the isolated repair. The M06 callback test serializes its own
+`try_lock` probes under its existing trace mutex, so concurrent probes cannot
+produce their own false lock-retention failure. The real lock assertion and
+execution/cancellation/reference comparisons remain in place.
+
+The CI uploads completed native-control records before the retained full Node
+suite, making a failed control inspectable while longer regressions continue.
+The complete original suite and strict Clippy remain required.

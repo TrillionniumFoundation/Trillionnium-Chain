@@ -328,8 +328,12 @@ fn arithmetic_parent_keeps_execution_results_cancellation_and_unlocked_callbacks
                 let run = |parent: &CheckedExecutionParent<'_>| {
                     let trace = Mutex::new(Vec::new());
                     let result = parent.execute_with_progress(request(), &cfg, &|point| {
+                        // Parallel callbacks must not contend with the probe's own
+                        // temporary arithmetic guard. Production lock retention
+                        // still makes the unchanged try_lock assertion fail.
+                        let mut trace = trace.lock().unwrap();
                         assert!(arithmetic.0.try_lock().is_ok());
-                        trace.lock().unwrap().push(point);
+                        trace.push(point);
                         if point == stop {
                             Err("cancel-original-checkpoint")
                         } else {

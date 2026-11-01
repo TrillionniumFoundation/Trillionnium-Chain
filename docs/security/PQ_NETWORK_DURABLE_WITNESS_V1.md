@@ -117,7 +117,10 @@ length, magic, binding, challenge, canonical signature and checkpoint fields.
 A previously captured signed reply cannot satisfy a new challenge.
 
 `ConnectedWitnessTransport` uses a caller-established Unix stream. The caller
-owns connection establishment and its bound. Reads and writes recompute the
+owns connection establishment and its bound. Per-call `MSG_DONTWAIT` receive
+and send operations leave descriptor flags and socket timeout options unchanged.
+Would-block retries yield for at most the lesser of one millisecond and the
+remaining budget. Reads and writes recompute the
 remaining time before every partial I/O operation and retry, using one absolute
 deadline. A byte arriving periodically cannot renew that deadline. Each client
 exchange is capped at 250 ms and, for live ingress operations, additionally at
@@ -233,3 +236,11 @@ These controls must run against the current source with the pinned native
 provider and required CI source identity. They do not replace original capacity,
 large-state, History, WAN, quantum work/difficulty, migration or complete Hepta
 acceptance gates, and they do not license a whole-chain PQ claim.
+
+The native slow-write control disproved the earlier blocking implementation's
+remaining-interval socket-timeout argument: a progressing 8 MiB write exceeded
+its 40 ms budget and the unchanged 500 ms stop assertion. The corrected adapter
+uses the existing pinned `rustix` 1.1.4 package with its Node-local `net` feature.
+That feature-graph change is explicit; package versions, Cargo.lock, compiler
+profiles, protocol bytes and original test/runtime budgets are unchanged. The
+original read/write controls must pass on the corrected exact source.

@@ -176,6 +176,46 @@ impl StateBackend {
 '''
 
 
+# Preserved V2/V3 mapping from the real 64cb26b53ed82be14049000387040ba119f00e1e
+# store source (Git blob 83f998b), independent of deleting V4 from current source.
+PQ_V2_V3_BACKEND = '''
+enum StateBackend {
+    Legacy,
+    AuthenticatedV1,
+    PermanentAccountGrowthV2,
+    PqNetworkV2,
+    PqContinuousV3,
+}
+impl StateBackend {
+    fn ddl(self) -> String {
+        match self {
+            Self::Legacy => ddl(),
+            Self::AuthenticatedV1 => format!("{}{}", ddl(), native_authenticated::DDL),
+            Self::PermanentAccountGrowthV2 => format!("{}{}", ddl(), growth::DDL),
+            Self::PqNetworkV2 | Self::PqContinuousV3 => format!("{}{}", ddl(), pq_network::DDL),
+        }
+    }
+    fn selected_schema_id(self, settings: &Settings) -> Hash {
+        if growth_profile_v2::enabled(&settings.app) {
+            hash(b"native-growth-reference-branch-schema-v2", &[self.ddl().as_bytes()],)
+        } else {
+            self.schema_id()
+        }
+    }
+    fn schema_id(self) -> Hash {
+        let domain: &[u8] = match self {
+            Self::Legacy => b"native-branch-schema-v2",
+            Self::AuthenticatedV1 => b"native-authenticated-branch-schema-v1",
+            Self::PermanentAccountGrowthV2 => b"native-permanent-account-growth-schema-v2",
+            Self::PqNetworkV2 => b"native-pq-network-owner-schema-v2",
+            Self::PqContinuousV3 => b"native-pq-continuous-owner-schema-v3",
+        };
+        hash(domain, &[self.ddl().as_bytes()])
+    }
+}
+'''
+
+
 class SourceAndArtifactTests(unittest.TestCase):
     def setUp(self):
         self.temporary = tempfile.TemporaryDirectory()
@@ -719,6 +759,33 @@ class DurableStoreTests(unittest.TestCase):
                 self.summary['ledger_disk_bytes'] = sum(path.stat().st_size for path in self.folder.rglob('*') if path.is_file())
                 self.verify()
 
+    def test_witness_namespace_and_checkpoint_do_not_qualify_legacy_evidence(self):
+        ddl,domain = check.native_durable_schema(check.ROOT)
+        extension = ('CREATE TABLE pq_witness_checkpoint_v1(singleton INTEGER PRIMARY KEY CHECK(singleton=1),'
+                     'sequence INTEGER NOT NULL CHECK(sequence>0),root BLOB NOT NULL CHECK(length(root)=64));')
+        original = self.H(domain,ddl.encode())
+        foreign = 'native-pq-network-witness-schema-v4'
+        # Relabelling the ordinary database with the new domain cannot upgrade
+        # the dump to external-witness or whole-owner evidence.
+        with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
+            database.execute("UPDATE metadata SET value=? WHERE key='schema'",
+                             (self.H(foreign,ddl.encode()),))
+        with self.assertRaisesRegex(ValueError,'durable metadata/context'): self.verify()
+        for schema in (original,self.H(domain,(ddl+extension).encode()),
+                       self.H(foreign,(ddl+extension).encode())):
+            with self.subTest(schema=schema.hex()):
+                with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
+                    database.executescript(extension)
+                    database.execute('INSERT INTO pq_witness_checkpoint_v1 VALUES(1,1,?)',(bytes(64),))
+                    database.execute("UPDATE metadata SET value=? WHERE key='schema'",(schema,))
+                self.summary['ledger_disk_bytes'] = sum(path.stat().st_size for path in self.folder.rglob('*') if path.is_file())
+                with self.assertRaisesRegex(ValueError,'durable schema additions/omissions/changes'): self.verify()
+                with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
+                    database.execute('DROP TABLE pq_witness_checkpoint_v1')
+                    database.execute("UPDATE metadata SET value=? WHERE key='schema'",(original,))
+                self.summary['ledger_disk_bytes'] = sum(path.stat().st_size for path in self.folder.rglob('*') if path.is_file())
+                self.verify()
+
     def test_resealed_wrong_half_link_is_not_accepted_as_derived_structure(self):
         block,previous,height = self.blocks[1]
         with sqlite3.connect(self.folder/'validator/native.sqlite') as database:
@@ -783,6 +850,13 @@ class NativeDurableSchemaTests(unittest.TestCase):
 
     def historical_pq_backend(self):
         source = self.historical_backend().replace(PRE_PQ_BACKEND,PQ_V1_BACKEND)
+        for owner in ('continuous_owner','None'):
+            source = self.replace_once(source,'continuous: '+owner+',',
+                                       'continuous: '+owner+', pq_network: None,')
+        return source
+
+    def historical_canonical_backend(self):
+        source = self.historical_backend().replace(PRE_PQ_BACKEND,PQ_V2_V3_BACKEND)
         for owner in ('continuous_owner','None'):
             source = self.replace_once(source,'continuous: '+owner+',',
                                        'continuous: '+owner+', pq_network: None,')
@@ -998,6 +1072,62 @@ class NativeDurableSchemaTests(unittest.TestCase):
             with self.subTest(label=label),self.assertRaisesRegex(ValueError,'durable backend'):
                 self.extract(self.replace_once(self.current,before,after))
 
+    def test_preserved_canonical_backend_and_noncode_witness_mentions_remain_exact(self):
+        source = self.historical_canonical_backend()
+        expected = self.extract(self.historical_backend())
+        self.assertEqual(self.extract(source),expected)
+        for noncode in ('\n// PqWitnessV4 pq_witness pq_rollback_witness\n',
+                        '\nconst NOTE: &str = "PqWitnessV4 pq_witness pq_rollback_witness";\n',
+                        '\nconst NOTE: &str = r##"PqWitnessV4 pq_witness pq_rollback_witness"##;\n'):
+            with self.subTest(noncode=noncode):
+                self.assertEqual(self.extract(source+noncode),expected)
+        # Code-level witnesses must select the complete V4 contract; a partial
+        # removal cannot quietly fall back to the preserved V2/V3 mapping.
+        for added in ('\nfn retain(_: PqWitnessV4) {}\n', '\nmod pq_rollback_witness {}\n',
+                      '\nstruct Owners { pq_witness: Option<WitnessClient> }\n'):
+            with self.subTest(added=added),self.assertRaisesRegex(ValueError,'durable backend variants'):
+                self.extract(source+added)
+        with self.assertRaisesRegex(ValueError,'durable backend mixed PQ generations'):
+            self.extract(self.historical_pq_backend()+'\nfn retain(_: PqWitnessV4) {}\n')
+
+    def test_witness_v4_mapping_is_exact_and_only_legacy_schema_is_exported(self):
+        ddl,domain = self.extract(self.current)
+        self.assertEqual(domain,'native-branch-schema-v2')
+        self.assertEqual(len(ddl.encode()),5404)
+        self.assertNotRegex(ddl,r'pq_network_|pq_witness_|archive_nodes|native_state_commitments|growth_states')
+        witness = 'b"native-pq-network-witness-schema-v4"'
+        composition = 'format!("{}{}{}", ddl(), pq_network::DDL, pq_rollback_witness::DDL)'
+        for replacement in ('native-pq-network-owner-schema-v2','native-pq-continuous-owner-schema-v3',
+                            'native-branch-schema-v2','native-pq-network-witness-schema-v3',
+                            'native-pq-network-witness- schema-v4'):
+            with self.subTest(domain=replacement),self.assertRaisesRegex(ValueError,'durable backend domain PqWitnessV4'):
+                self.extract(self.replace_once(self.current,witness,'b"'+replacement+'"'))
+        for replacement in ('format!("{}{}", ddl(), pq_network::DDL)',
+                            'format!("{}{}{}", ddl(), pq_rollback_witness::DDL, pq_network::DDL)',
+                            'format!("{}{}{}", ddl(), pq_network::DDL, growth::DDL)',
+                            'format!("{}{}", ddl(), pq_network::DDL, pq_rollback_witness::DDL)',
+                            'format!("{} {}{}", ddl(), pq_network::DDL, pq_rollback_witness::DDL)',
+                            'ddl()'):
+            with self.subTest(composition=replacement),self.assertRaisesRegex(ValueError,'durable backend composition'):
+                self.extract(self.replace_once(self.current,composition,replacement))
+        for arm in ('    PqWitnessV4,',
+                    'Self::PqWitnessV4 => {\n                '+composition+'\n            }',
+                    'Self::PqWitnessV4 => '+witness+','):
+            for replacement in ('', '#[cfg(feature = "pq-native-openssl")]\n'+arm, '#[cfg(test)]\n'+arm):
+                with self.subTest(arm=arm,replacement=replacement),self.assertRaisesRegex(ValueError,'durable backend'):
+                    self.extract(self.replace_once(self.current,arm,replacement))
+
+    def test_witness_owner_cannot_enter_ordinary_openers(self):
+        for name,end_marker in [('open_inner','    fn open_selected('),
+                                 ('open_with_authenticated_state_and_fault','    /// Explicit local operator policy')]:
+            start = self.current.index('fn '+name+'(')
+            end = self.current.index(end_marker,start)
+            opener = self.current[start:end]
+            for replacement in ('', 'pq_witness: other_owner,', 'pq_witness: Some(client),'):
+                with self.subTest(opener=name,replacement=replacement),self.assertRaisesRegex(ValueError,'durable backend opener'):
+                    changed = self.replace_once(opener,'pq_witness: None,',replacement)
+                    self.extract(self.replace_once(self.current,opener,changed))
+
     def test_canonical_continuous_namespace_and_always_compiled_mapping_are_exact(self):
         domain = 'b"native-pq-continuous-owner-schema-v3"'
         for replacement in ('native-pq-network-owner-schema-v2','native-pq-network-owner-schema-v1',
@@ -1046,7 +1176,8 @@ class NativeDurableSchemaTests(unittest.TestCase):
         for name in ('pq_network_peer_v1','pq_network_request_v1','Pq_NeTwOrK_PeEr_V1','Pq_NeTwOrK_ReQuEsT_V1',
                      'pq_network_resource_v2','pq_network_peer_v2','pq_network_request_v2',
                      'Pq_NeTwOrK_ReSoUrCe_V2','Pq_NeTwOrK_ReQuEsT_V2',
-                     'pq_network_future_owner_v99','pq_network_unreviewed_extension'):
+                     'pq_network_future_owner_v99','pq_network_unreviewed_extension',
+                     'pq_witness_checkpoint_v1','Pq_WiTnEsS_ChEcKpOiNt_V1','pq_witness_future_v99'):
             extension = 'CREATE TABLE '+name+'(id BLOB PRIMARY KEY,data BLOB NOT NULL);'
             literal = 'const DDL: &str = "'+extension+'";'
             v1 = literal+'fn open() { hash(b"native-branch-schema-v1", &[DDL.as_bytes()]); }'

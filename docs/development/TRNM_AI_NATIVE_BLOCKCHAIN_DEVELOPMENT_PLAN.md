@@ -4316,3 +4316,12 @@ unchanged source, raw failure and zero native executions are retained. The
 combined current source requires new native evidence. Hepta's checkpoint
 serialization follow-up keeps actual stale-witness rejection and healthy
 recovery under the existing owner lock. These changes do not close PN0–PN6.
+
+The first combined native run executed all 37 meaningful controls: 36 passed,
+with the slow-drip write retaining a real absolute-deadline failure. Replace
+that blocking call with per-call nonblocking I/O; preserve the original 40 ms,
+8 MiB and 500 ms control. The existing Rustix package gains only Node-local
+net functionality, with locked versions and original profiles/budgets intact.
+Synchronize the exact public-readiness V4 source contract, retain legacy-only
+evidence semantics, and serialize the M06 test's own concurrent lock probes.
+Record fresh source/feature identities and native outcomes; PN0–PN6 stay HOLD.

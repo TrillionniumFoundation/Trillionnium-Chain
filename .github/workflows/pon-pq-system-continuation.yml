@@ -115,6 +115,14 @@ jobs:
             fi
           done < "$PQ_OUT/required-tests.tsv"
           test "$failed" = 0
+      - name: Preserve native control records before the complete regression
+        if: ${{ !cancelled() && steps.pq_build.outcome == 'success' }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: pq-system-controls-${{ matrix.runner }}-${{ matrix.source }}-${{ github.event.pull_request.head.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/pq-system-records/
+          if-no-files-found: error
+          retention-days: 14
       - name: Preserve the complete original Node library regression suite
         if: ${{ !cancelled() && steps.pq_build.outcome == 'success' }}
         shell: bash

@@ -50,6 +50,14 @@ and an in-flight SQLite operation are not advertised as immediately preemptible.
 If a business effect has completed, its real result must still be persisted;
 withholding a late success response does not undo the effect.
 
+The first exact combined execution passed 36 of 37 meaningful controls. Its
+slow-write failure showed why socket timeouts alone did not bound one
+progressing blocking call. The follow-up uses per-call nonblocking I/O with the
+unchanged deadline and counterexample. It adds the Node-local net feature to
+the existing locked Rustix package, explicitly changing the feature graph while
+retaining versions, lockfile, compiler profiles and all business budgets. New
+source requires new native results; the old failure remains preserved.
+
 ## External witness correction and limits
 
 The explicit `PqWitnessV4` namespace adds a native service/client and SQLite CAS

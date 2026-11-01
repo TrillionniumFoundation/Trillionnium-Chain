@@ -6,10 +6,13 @@
 use crate::{ensure, Error, Result};
 use fs2::FileExt;
 use rusqlite::{params, Connection, OpenFlags, TransactionBehavior};
+use rustix::net::{RecvFlags, SendFlags};
 use sha2::{Digest, Sha512};
+#[cfg(test)]
+use std::io::Write;
 use std::{
     fs::{self, File, OpenOptions},
-    io::{Read, Write},
+    io::Read,
     os::unix::{
         fs::{MetadataExt, OpenOptionsExt},
         net::UnixStream,
@@ -129,11 +132,19 @@ fn message(domain: &[u8], body: &[u8]) -> Vec<u8> {
 }
 fn read_until(stream: &mut UnixStream, mut output: &mut [u8], until: Instant) -> Result<()> {
     while !output.is_empty() {
-        stream.set_read_timeout(Some(deadline(until)?))?;
-        match stream.read(output) {
-            Ok(0) => return Err("PQ_WITNESS_EOF".into()),
-            Ok(n) => output = &mut output[n..],
+        deadline(until)?;
+        // Per-call nonblocking I/O does not change O_NONBLOCK on this stream
+        // or any try_clone alias. A socket timeout alone is not an absolute
+        // limit for a syscall that continues making partial progress.
+        match rustix::net::recv(&*stream, &mut *output, RecvFlags::DONTWAIT)
+            .map_err(std::io::Error::from)
+        {
+            Ok((0, _)) => return Err("PQ_WITNESS_EOF".into()),
+            Ok((n, _)) => output = &mut output[n..],
             Err(e) if e.kind() == std::io::ErrorKind::Interrupted => {}
+            Err(e) if e.kind() == std::io::ErrorKind::WouldBlock => {
+                std::thread::sleep(deadline(until)?.min(Duration::from_millis(1)));
+            }
             Err(e) => return Err(e.into()),
         }
         // Preserve a complete receipt for authenticated late-CAS reconciliation.
@@ -144,12 +155,18 @@ fn read_until(stream: &mut UnixStream, mut output: &mut [u8], until: Instant) ->
     Ok(())
 }
 fn write_until(stream: &mut UnixStream, mut input: &[u8], until: Instant) -> Result<()> {
+    let flags = SendFlags::DONTWAIT;
+    #[cfg(not(any(target_vendor = "apple", target_os = "redox", target_os = "vita")))]
+    let flags = flags | SendFlags::NOSIGNAL;
     while !input.is_empty() {
-        stream.set_write_timeout(Some(deadline(until)?))?;
-        match stream.write(input) {
+        deadline(until)?;
+        match rustix::net::send(&*stream, input, flags).map_err(std::io::Error::from) {
             Ok(0) => return Err("PQ_WITNESS_WRITE_ZERO".into()),
             Ok(n) => input = &input[n..],
             Err(e) if e.kind() == std::io::ErrorKind::Interrupted => {}
+            Err(e) if e.kind() == std::io::ErrorKind::WouldBlock => {
+                std::thread::sleep(deadline(until)?.min(Duration::from_millis(1)));
+            }
             Err(e) => return Err(e.into()),
         }
         deadline(until)?;
