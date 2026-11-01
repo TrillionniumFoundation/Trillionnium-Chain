@@ -15,9 +15,9 @@ use crate::pon_executor::{
 };
 use std::cmp::Ordering;
 use std::collections::BTreeMap;
-use std::sync::Arc;
+use std::sync::{Arc, Mutex};
 use trnm_protocol::pon_state::{Change, StateTree};
-use trnm_protocol::pon_wire::{state_root, Hash};
+use trnm_protocol::pon_wire::{state_root, Hash, StateRootArithmetic};
 
 type CanonicalValues = BTreeMap<Vec<u8>, Vec<u8>>;
 pub const MAX_CACHE_KEYS: usize = 65536;
@@ -28,6 +28,39 @@ const MAP_ENTRY_CHARGE: usize = 1024;
 const COMPRESSED_NODE_CHARGE: usize = 256;
 const CHANGE_ENTRY_CHARGE: usize = 256;
 const EMPTY_TABLE_CHARGE: usize = 257 * 32;
+
+/// Optional original sparse-tree arithmetic for a full-root fallback. Every use
+/// still encodes and hashes the complete actual State; no root, partial update
+/// or validity verdict can be installed. The fixed retention bound is separate
+/// from canonical snapshot/workspace limits and is not a process RSS promise.
+pub struct FullRootArithmetic(Mutex<StateRootArithmetic>);
+
+const MAX_FULL_ROOT_ARITHMETIC_BYTES: usize = 2 * 1024 * 1024;
+
+impl Default for FullRootArithmetic {
+    fn default() -> Self {
+        Self(Mutex::new(StateRootArithmetic::new(
+            MAX_FULL_ROOT_ARITHMETIC_BYTES,
+        )))
+    }
+}
+
+impl FullRootArithmetic {
+    fn root(&self, state: &State) -> Result<Hash> {
+        // The guard covers only pure arithmetic, never SQL, worker joins or a
+        // caller's progress/Host check. Contention and poison keep the original
+        // full-root path; optional material cannot introduce a new refusal.
+        let Ok(mut arithmetic) = self.0.try_lock() else {
+            return pon_executor::root(state);
+        };
+        match pon_executor::root_with_arithmetic(state, &mut arithmetic) {
+            Ok(root) => Ok(root),
+            // Preserve the independent original grammar and exact error on any
+            // arithmetic failure. No cancellation callback is caught here.
+            Err(_) => pon_executor::root(state),
+        }
+    }
+}
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct CacheLimits {
@@ -410,6 +443,16 @@ fn prepare_state(
     actual_before: Option<&CanonicalValues>,
     limits: CacheLimits,
 ) -> Result<PreparedCommitment> {
+    prepare_state_with_arithmetic(state, prior, actual_before, limits, None)
+}
+
+fn prepare_state_with_arithmetic(
+    state: &State,
+    prior: Option<&CheckedCommitment>,
+    actual_before: Option<&CanonicalValues>,
+    limits: CacheLimits,
+    arithmetic: Option<&FullRootArithmetic>,
+) -> Result<PreparedCommitment> {
     let (values, current) = encode_for_cache(state, limits)?;
     limits.validate()?;
     if let Some(values) = values {
@@ -442,7 +485,10 @@ fn prepare_state(
     )
     .ok_or("COMMITMENT_CHARGE")?;
     mark_stage("budget-selected");
-    let root = pon_executor::root(state)?;
+    let root = match arithmetic {
+        Some(arithmetic) => arithmetic.root(state),
+        None => pon_executor::root(state),
+    }?;
     mark_stage("full-root-completed");
     mark_stage("changes-allocation");
     let mut changes = Vec::with_capacity(difference.count);
@@ -703,7 +749,36 @@ pub fn checked_snapshot(
     prior: Option<&CheckedCommitment>,
     limits: CacheLimits,
 ) -> Result<PreparedCommitment> {
-    let prepared = derive_snapshot(actual_state, prior, limits)?;
+    checked_snapshot_with_optional_arithmetic(actual_state, expected_root, prior, limits, None)
+}
+
+/// The same complete-input binding with optional bounded original root
+/// arithmetic. A fresh expected root is still compared after all original
+/// grammar, limit and resource decisions; material supplies no authority.
+pub fn checked_snapshot_with_arithmetic(
+    actual_state: &State,
+    expected_root: Hash,
+    prior: Option<&CheckedCommitment>,
+    limits: CacheLimits,
+    arithmetic: &FullRootArithmetic,
+) -> Result<PreparedCommitment> {
+    checked_snapshot_with_optional_arithmetic(
+        actual_state,
+        expected_root,
+        prior,
+        limits,
+        Some(arithmetic),
+    )
+}
+
+fn checked_snapshot_with_optional_arithmetic(
+    actual_state: &State,
+    expected_root: Hash,
+    prior: Option<&CheckedCommitment>,
+    limits: CacheLimits,
+    arithmetic: Option<&FullRootArithmetic>,
+) -> Result<PreparedCommitment> {
+    let prepared = prepare_state_with_arithmetic(actual_state, prior, None, limits, arithmetic)?;
     if prepared.root != expected_root {
         return Err("COMMITMENT_ROOT");
     }
@@ -718,6 +793,17 @@ pub fn derive_snapshot(
     limits: CacheLimits,
 ) -> Result<PreparedCommitment> {
     prepare_state(actual_state, prior, None, limits)
+}
+
+/// Compute from complete actual successor values with the same bounded
+/// mathematical fallback. This creates no admitted State or parent binding.
+pub fn derive_snapshot_with_arithmetic(
+    actual_state: &State,
+    prior: Option<&CheckedCommitment>,
+    limits: CacheLimits,
+    arithmetic: &FullRootArithmetic,
+) -> Result<PreparedCommitment> {
+    prepare_state_with_arithmetic(actual_state, prior, None, limits, Some(arithmetic))
 }
 /// Pure full-rule execution. Never advances or mutates the supplied snapshot.
 /// A canonical byte/root mismatch is rejected before transaction execution;
@@ -801,6 +887,7 @@ pub struct CheckedExecutionParent<'a> {
     actual: Arc<CanonicalValues>,
     predecessor: Option<CheckedCommitment>,
     limits: CacheLimits,
+    arithmetic: Option<&'a FullRootArithmetic>,
 }
 impl<'a> CheckedExecutionParent<'a> {
     /// Check complete actual state against its admitted root and bind that same
@@ -815,7 +902,48 @@ impl<'a> CheckedExecutionParent<'a> {
         prior: Option<&CheckedCommitment>,
         limits: CacheLimits,
     ) -> Result<(Self, CommitmentObservation)> {
-        let prepared = checked_snapshot(actual_parent, expected_parent_root, prior, limits)?;
+        Self::check_and_bind_with_optional_arithmetic(
+            actual_parent,
+            expected_parent_root,
+            prior,
+            limits,
+            None,
+        )
+    }
+
+    /// Preserve the original binding and immutable State borrow while sharing
+    /// only bounded root arithmetic with this operation's successor. No lock or
+    /// precomputed root crosses a caller checkpoint.
+    pub fn check_and_bind_with_arithmetic(
+        actual_parent: &'a State,
+        expected_parent_root: Hash,
+        prior: Option<&CheckedCommitment>,
+        limits: CacheLimits,
+        arithmetic: &'a FullRootArithmetic,
+    ) -> Result<(Self, CommitmentObservation)> {
+        Self::check_and_bind_with_optional_arithmetic(
+            actual_parent,
+            expected_parent_root,
+            prior,
+            limits,
+            Some(arithmetic),
+        )
+    }
+
+    fn check_and_bind_with_optional_arithmetic(
+        actual_parent: &'a State,
+        expected_parent_root: Hash,
+        prior: Option<&CheckedCommitment>,
+        limits: CacheLimits,
+        arithmetic: Option<&'a FullRootArithmetic>,
+    ) -> Result<(Self, CommitmentObservation)> {
+        let prepared = checked_snapshot_with_optional_arithmetic(
+            actual_parent,
+            expected_parent_root,
+            prior,
+            limits,
+            arithmetic,
+        )?;
         let actual = match &prepared.snapshot {
             Some(snapshot) => Arc::clone(&snapshot.values),
             // Execution's delta calculation still needs the canonical parent.
@@ -829,6 +957,7 @@ impl<'a> CheckedExecutionParent<'a> {
                 actual,
                 predecessor: prepared.snapshot,
                 limits,
+                arithmetic,
             },
             prepared.observation,
         ))
@@ -861,6 +990,7 @@ impl<'a> CheckedExecutionParent<'a> {
             actual,
             predecessor: predecessor.cloned(),
             limits,
+            arithmetic: None,
         })
     }
 
@@ -913,11 +1043,12 @@ impl<'a> CheckedExecutionParent<'a> {
             },
             config,
             |_, after| {
-                let prepared = prepare_state(
+                let prepared = prepare_state_with_arithmetic(
                     after,
                     self.predecessor.as_ref(),
                     Some(&self.actual),
                     self.limits,
+                    self.arithmetic,
                 )?;
                 let root = prepared.root;
                 staged = Some(prepared);
@@ -980,11 +1111,12 @@ impl CheckedTransactionPrefix<'_> {
         let output = self.execution.execute_with_commitment_and_control(
             transactions,
             |after| {
-                let prepared = prepare_state(
+                let prepared = prepare_state_with_arithmetic(
                     after,
                     self.parent.predecessor.as_ref(),
                     Some(&self.parent.actual),
                     self.parent.limits,
+                    self.parent.arithmetic,
                 )?;
                 let root = prepared.root;
                 staged = Some(prepared);
@@ -1000,11 +1132,14 @@ impl CheckedTransactionPrefix<'_> {
 }
 
 #[cfg(test)]
+mod full_root_arithmetic_tests;
+
+#[cfg(test)]
 mod tests {
     use super::*;
     use serde_json::json;
 
-    fn preview_fixture() -> (State, Config, Vec<Vec<u8>>) {
+    pub(super) fn preview_fixture() -> (State, Config, Vec<Vec<u8>>) {
         use trnm_crypto_primitives::{public_key_hex, sign_hex, signing_key_from_hex};
         use trnm_protocol::pon_wire::Envelope;
         let cfg = Config::installed().unwrap();
@@ -1148,6 +1283,7 @@ mod tests {
             actual: Arc::new(actual),
             predecessor: Some(snapshot.clone()),
             limits,
+            arithmetic: None,
         })
     }
 

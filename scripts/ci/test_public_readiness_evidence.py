@@ -830,11 +830,13 @@ class NativeDurableSchemaTests(unittest.TestCase):
             with self.subTest(removed=removed),self.assertRaisesRegex(ValueError,'durable backend'):
                 self.extract(changed,index)
         for added in ('\nmod pq_network {}\n', '\nfn retain(_: PqNetworkV1) {}\n',
+                      '\nfn retain(_: PqNetworkV2) {}\n',
                       '\nstruct Owners { pq_network: Option<Vec<u8>> }\n'):
             with self.subTest(added=added),self.assertRaisesRegex(ValueError,'durable backend variants'):
                 self.extract(source+added,index)
         for before,after in [
             ('PermanentAccountGrowthV2,\n}', 'PermanentAccountGrowthV2,\n'+variant+'\n}'),
+            ('PermanentAccountGrowthV2,\n}', 'PermanentAccountGrowthV2,\n    PqNetworkV2,\n    PqContinuousV3,\n}'),
             ('Self::Legacy => ddl(),','Self::Legacy => ddl(),\n'+ddl),
             ('continuous: continuous_owner,','continuous: continuous_owner, pq_network: None,'),
         ]:
@@ -987,6 +989,8 @@ class NativeDurableSchemaTests(unittest.TestCase):
             ('pq-reversed',arm,prefix+' => format!("{}{}", pq_network::DDL, ddl()),'),
             ('pq-format',arm,prefix+' => format!("{} {}", ddl(), pq_network::DDL),'),
             ('pq-format-arity',arm,prefix+' => format!("{}", ddl(), pq_network::DDL),'),
+            ('pq-only-v2',arm,'Self::PqNetworkV2 => format!("{}{}", ddl(), pq_network::DDL),'),
+            ('pq-v1',arm,'Self::PqNetworkV1 => format!("{}{}", ddl(), pq_network::DDL),'),
             ('pq-wildcard',arm,'_ => format!("{}{}", ddl(), pq_network::DDL),'),
             ('legacy-pq','Self::Legacy => ddl(),','Self::Legacy => format!("{}{}", ddl(), pq_network::DDL),'),
         ]
@@ -997,14 +1001,17 @@ class NativeDurableSchemaTests(unittest.TestCase):
     def test_canonical_continuous_namespace_and_always_compiled_mapping_are_exact(self):
         domain = 'b"native-pq-continuous-owner-schema-v3"'
         for replacement in ('native-pq-network-owner-schema-v2','native-pq-network-owner-schema-v1',
-                            'native-branch-schema-v2','native-pq-continuous-owner- schema-v3'):
+                            'native-branch-schema-v2','native-authenticated-branch-schema-v1',
+                            'native-permanent-account-growth-schema-v2',
+                            'native-pq-continuous-owner-schema-unknown','native-pq-continuous-owner- schema-v3'):
             with self.subTest(domain=replacement),self.assertRaisesRegex(ValueError,'durable backend domain'):
                 self.extract(self.replace_once(self.current,domain,'b"'+replacement+'"'))
         for arm in ('    PqNetworkV2,','    PqContinuousV3,',
                     'Self::PqNetworkV2 | Self::PqContinuousV3 => format!("{}{}", ddl(), pq_network::DDL),',
                     'Self::PqNetworkV2 => b"native-pq-network-owner-schema-v2",',
                     'Self::PqContinuousV3 => b"native-pq-continuous-owner-schema-v3",'):
-            for guard in ('#[cfg(feature = "pq-native-openssl")]','#[cfg(test)]'):
+            for guard in ('#[cfg(feature = "pq-native-openssl")]',
+                          '#[cfg(feature = "unknown-feature")]','#[cfg(test)]'):
                 with self.subTest(arm=arm,guard=guard),self.assertRaisesRegex(ValueError,'durable backend'):
                     self.extract(self.replace_once(self.current,arm,guard+'\n'+arm))
 
@@ -1038,7 +1045,8 @@ class NativeDurableSchemaTests(unittest.TestCase):
     def test_pq_tables_cannot_be_inserted_into_legacy_literals(self):
         for name in ('pq_network_peer_v1','pq_network_request_v1','Pq_NeTwOrK_PeEr_V1','Pq_NeTwOrK_ReQuEsT_V1',
                      'pq_network_resource_v2','pq_network_peer_v2','pq_network_request_v2',
-                     'Pq_NeTwOrK_ReSoUrCe_V2','pq_network_unreviewed_extension'):
+                     'Pq_NeTwOrK_ReSoUrCe_V2','Pq_NeTwOrK_ReQuEsT_V2',
+                     'pq_network_future_owner_v99','pq_network_unreviewed_extension'):
             extension = 'CREATE TABLE '+name+'(id BLOB PRIMARY KEY,data BLOB NOT NULL);'
             literal = 'const DDL: &str = "'+extension+'";'
             v1 = literal+'fn open() { hash(b"native-branch-schema-v1", &[DDL.as_bytes()]); }'
@@ -1188,7 +1196,9 @@ class NativeDurableSchemaTests(unittest.TestCase):
         for decoy in ['mod historical { '+literal+' }','ignored!('+literal+');','ignored!['+literal+'];']:
             with self.subTest(decoy=decoy),self.assertRaisesRegex(ValueError,'durable schema literal DDL'):
                 self.extract(decoy+'\nuse other::DDL;\n'+opener)
-        for name in ['archive_nodes','native_state_commitments','ArChIvE_NoDeS']:
+        for name in ['archive_nodes','native_state_commitments','ArChIvE_NoDeS',
+                     'pq_network_resource_v2','pq_network_peer_v2','pq_network_request_v2',
+                     'Pq_NeTwOrK_FuTuRe_OwNeR_V99']:
             extension = 'CREATE TABLE '+name+'(id BLOB PRIMARY KEY,data BLOB NOT NULL);'
             sources = [
                 (literal.replace('CREATE TABLE exact',extension+'CREATE TABLE exact')+opener,None),

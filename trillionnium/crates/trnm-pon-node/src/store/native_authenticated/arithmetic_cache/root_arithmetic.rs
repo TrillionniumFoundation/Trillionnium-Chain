@@ -46,6 +46,7 @@ struct Counters {
     offers: u64,
     offers_retained: u64,
     offers_absent_or_refused: u64,
+    offers_preserved_partitions: u64,
     offers_borrow_conflicts: u64,
     complete_hits: u64,
     complete_computations: u64,
@@ -88,31 +89,45 @@ impl RootArithmetic {
 
     /// Bound a clone of opaque mathematical material, not an admission permit.
     /// Arc contents are charged in full even when another owner already holds
-    /// them. Refusal discards the old optional entry instead of enlarging a pool.
+    /// them. A refused canonical offer discards the old canonical entry. It may
+    /// keep the sole same-context original-hash partition entry: every later
+    /// calculation still encodes and hashes all actual rows before comparison.
+    /// An absent M06 snapshot is not evidence that this pure arithmetic is stale.
     pub(super) fn offer(&self, settings: &Settings, snapshot: Option<&CheckedCommitment>) {
         self.count(|c| c.offers = c.offers.saturating_add(1));
+        let context = [
+            settings.network(),
+            settings.parameters(),
+            settings.genesis(),
+        ];
         let next = snapshot.and_then(|snapshot| {
             let charged = snapshot.retained_charge_bytes().checked_add(ENTRY_CHARGE)?;
             (snapshot.payload_bytes() <= MAX_PAYLOAD_BYTES && charged <= MAX_RETAINED_CHARGE_BYTES)
                 .then(|| Material {
-                    context: [
-                        settings.network(),
-                        settings.parameters(),
-                        settings.genesis(),
-                    ],
+                    context,
                     source: MaterialSource::Canonical(snapshot.clone()),
                     charged,
                 })
         });
         if let Ok(mut material) = self.material.try_borrow_mut() {
+            let preserve_partitions = next.is_none()
+                && material.as_ref().is_some_and(|prior| {
+                    prior.context == context
+                        && matches!(&prior.source, MaterialSource::Partitions(_))
+                });
             self.count(|c| {
                 if next.is_some() {
                     c.offers_retained = c.offers_retained.saturating_add(1);
                 } else {
                     c.offers_absent_or_refused = c.offers_absent_or_refused.saturating_add(1);
                 }
+                if preserve_partitions {
+                    c.offers_preserved_partitions = c.offers_preserved_partitions.saturating_add(1);
+                }
             });
-            *material = next;
+            if !preserve_partitions {
+                *material = next;
+            }
         } else {
             self.count(|c| c.offers_borrow_conflicts = c.offers_borrow_conflicts.saturating_add(1));
         }

@@ -96,6 +96,79 @@ fn historical_material_reuses_arithmetic_after_complete_replay_and_reopens() {
 }
 
 #[test]
+fn legacy_inactive_execution_reuses_only_checked_arithmetic_and_keeps_cancellation() {
+    use std::sync::atomic::{AtomicUsize, Ordering};
+
+    let directory = tempfile::tempdir().unwrap();
+    let (node, ids) = chain(directory.path());
+    assert_eq!(node.state_backend, StateBackend::Legacy);
+    let parent = ids[4];
+    assert_ne!(parent, node.active().unwrap().0);
+    let actual = node.state_at(parent).unwrap();
+    let txs = vec![transfer(&node.settings, 5)];
+    let request = || ExecutionRequest {
+        timestamp: Some(55),
+        transactions: &txs,
+        height: 5,
+        miner: development_public(3).unwrap(),
+        parent_id: parent,
+        workers: 2,
+    };
+    // Cancel at the unchanged second binding checkpoint. This observes the
+    // actual M06 caller's binding method before successor calculation replaces
+    // its diagnostic; no work or durable step is fabricated for measurement.
+    for warm in [false, true] {
+        node.historical_commitment_cache.borrow_mut().clear();
+        if warm {
+            assert_eq!(node.state_at(parent).unwrap(), actual);
+        }
+        let bindings = AtomicUsize::new(0);
+        let error = node
+            .execute_derived_with_progress(&actual, request(), &|point| {
+                if point == ExecutionProgress::BeforeParentBinding
+                    && bindings.fetch_add(1, Ordering::SeqCst) == 1
+                {
+                    return Err(Error::new(ErrorCode::PublicRequestCancelled));
+                }
+                Ok(())
+            })
+            .err()
+            .unwrap();
+        assert!(error.is(ErrorCode::PublicRequestCancelled));
+        assert_eq!(bindings.load(Ordering::SeqCst), 2);
+        let binding = node.derived_commitment_status().last.unwrap();
+        assert_eq!(
+            binding.method,
+            if warm {
+                CommitmentMethod::CheckedApply
+            } else {
+                CommitmentMethod::RebuiltTree
+            }
+        );
+        if warm {
+            assert_eq!(binding.changed_keys, 0);
+        }
+    }
+    node.historical_commitment_cache.borrow_mut().clear();
+    let cold = node.execute_derived(&actual, request()).unwrap();
+    node.state_at(parent).unwrap();
+    let warm = node.execute_derived(&actual, request()).unwrap();
+    assert_eq!(warm.output.state, cold.output.state);
+    assert_eq!(warm.output.root, cold.output.root);
+    assert_eq!(warm.output.receipts, cold.output.receipts);
+    // A matching stored locator/root never certifies the supplied State.
+    let mut changed = actual.clone();
+    changed.insert("unexpected-content".into(), json!(99));
+    assert_eq!(
+        node.execute_derived(&changed, request())
+            .err()
+            .unwrap()
+            .to_string(),
+        "ROOT"
+    );
+}
+
+#[test]
 fn actual_foreign_snapshot_delta_and_root_damage_preserve_original_failures() {
     let directory = tempfile::tempdir().unwrap();
     let (node, ids) = chain(directory.path());
