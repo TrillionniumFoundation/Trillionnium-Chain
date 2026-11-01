@@ -235,6 +235,7 @@ fn run(directory: &Path) -> Result<serde_json::Value> {
             signal,
             PublicServer::new(identity(111), policy).unwrap(),
         );
+        let server_error = service_result.as_ref().err().map(ToString::to_string);
         // Retain the original finite lifetime and all RPC/proof budgets.
         // An observed refusal alone cannot distinguish a timed server exit
         // from a transport failure unless the real server exit is recorded.
@@ -245,7 +246,8 @@ fn run(directory: &Path) -> Result<serde_json::Value> {
                 "configured_lifetime_seconds": 1800,
                 "service_elapsed_ns": service_started.elapsed().as_nanos(),
                 "stop_requested_when_exited": stop_when_exited.load(Ordering::SeqCst),
-                "server_result": service_result.as_ref().map(|_| "ok").map_err(ToString::to_string),
+                "server_exit_ok": service_result.is_ok(),
+                "server_exit_error": server_error,
                 "scope": "actual native loopback server; observation only, not a readiness or qualification verdict",
                 "production_activation": false
             })
