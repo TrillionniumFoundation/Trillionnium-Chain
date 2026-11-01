@@ -183,6 +183,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "config/pon/pq-system-required-tests-v1.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/pon/pq-system-required-tests-v1.json"
+        )),
+    ),
+    (
         "config/pon/public-evaluation-model-evolution-v5.json",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -3781,6 +3788,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/live_admission_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/ingress/pq_network/live_admission_tests.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/local_control_origin_tests.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -4229,6 +4243,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/tests.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/src/public_submit.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -4618,6 +4646,27 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/src/store/pq_network.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/tests.rs"
         )),
     ),
     (

@@ -20,7 +20,7 @@ The guard checks actual negative authority and activation assertions in the sour
 | Authorization | NPQ6 account/task and PNQ2 transport are separate; Hepta V1 is Ed25519 and the new [ML-DSA V2 research verifier](HEPTA_PQ_HANDOFF_V2_20261031.md) is not wired to all Hepta owners or FinalUse; Cell provider discovery V2 is ML-DSA. | Trace every authority-producing entry, including governance, release and recovery, to a current externally pinned PQ trust root; reject cross-profile downgrade and revoked generations on real effect paths. |
 | Proof PQ-128 | No production-qualified W1 security parameter proof in the active candidate. | Freeze exact relation, verifier, guest/compiler hashes, commitment/FRI/Fiat–Shamir settings, recursion and security model; obtain independent quantum-soundness argument and worst-invalid-input cost. Groth16/fake receipts cannot satisfy PQ-128. |
 | Quantum mining and fork choice | Current cumulative-work/DAA incentives have no full adversarial quantum lower bound. | Test cheapest valid complete W1, data loads, reversible oracle/uncompute, challenge amortization, Grover advantage, retarget/timestamp manipulation, reorganization and propagation on equal attack budgets. |
-| Migration and rollback | Classical ownership transition and local durable ledgers do not automatically resist total database rollback. The [external monotonic witness reference](PQ_EXTERNAL_ROLLBACK_WITNESS_REFERENCE_20261031.md) demonstrates rejection of a fully consistent old database, but has no native or trusted remote deployment. | Bind early PQ ownership, historic liabilities, old nonce floors, cross-reorg recovery, external monotonic anchor and independent cold-restart adversarial tests. |
+| Migration and rollback | Classical ownership transition and local durable ledgers do not automatically resist total database rollback. The [research reference](PQ_EXTERNAL_ROLLBACK_WITNESS_REFERENCE_20261031.md) and the explicit [native PNQ2 witness component](PQ_NETWORK_DURABLE_WITNESS_V1.md) have separate evidence. The native component covers three PNQ2 tables under an independent-witness-state assumption; it does not cover all Node/Hepta state or provide a trusted deployed remote service. | Bind early PQ ownership, historic liabilities, old nonce floors, all effect-bearing state, cross-reorg recovery, an independently administered monotonic anchor and independent cold-restart adversarial tests. |
 | Capacity and invalid input | Research TPQ1 signature frame is 3487 bytes; original devnet maximum transaction remains 2048 bytes. | Full native NPQ6 block and mempool capacity, invalid-signature CPU cost, wire/relay amplification, p95/p99, RSS and recovery under fixed hardware/traffic constraints. |
 | Independent end-to-end | Existing exact negative assertions exclude production, WAN, entire PQ node, quantum hardness, rollback and Hepta FinalUse claims. | At-head source/lockfile evidence, independent crypto review, reproducible deployment, WAN/fault benchmarks, economic attacks and authorized activation process. |
 
@@ -41,3 +41,13 @@ coverage additions to the existing six gates, not a new release policy. The
 actual blob identities and rejects omitted dependencies; this guard independently
 refuses missing owner paths and unsupported promotion. Neither executes a model
 loader, verifies external custody, proves a monetary effect, or closes PN6.
+
+## Native witness and live admission continuation
+
+The [2026-11-01 continuation](PQ_SYSTEM_CONTINUATION_20261101.md) adds explicit
+source dependencies for the native witness service, its transactional PNQ2
+integration, and live-admission regression controls. Missing implementation or
+test modules are refused by the claim guard; their presence does not qualify
+their runtime behavior. Actual positive effects, refusal, cold reopen and failure
+records remain separate from the source/claim checks. All six gate states remain
+UNQUALIFIED and every existing negative activation assertion is preserved.

@@ -64,9 +64,9 @@ jobs:
             args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
           fi
           python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$out/source.json"
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = 841f6ed48dbdab9461b9517fed47c958c3ee107f
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = d8a8206aa23dec0db8628c7d81877bcd21413d74
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/history_page.rs)" = c01ca1e0756ec8e041e628bcbdad933e338da772
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs)" = c0c492d166caf62b29df6090ab5ff697d685cd6e
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs)" = aa6c50f60f631574b341632be63d6cf20f40a8d1
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs)" = d8a84be950eda77104d91fc389166c2581e5cd88
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_fixed_blob_tests.rs)" = cecb8a984c02ffca7590e69c4392223ea748b40f
           test "$(git hash-object trillionnium/crates/trnm-pon-node/tests/authenticated_storage_cli.rs)" = 7301aeb3033913f080b23767bfca52a2bf76d45b

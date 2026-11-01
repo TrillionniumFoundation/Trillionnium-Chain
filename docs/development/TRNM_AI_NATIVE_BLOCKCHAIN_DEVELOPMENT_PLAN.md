@@ -4288,3 +4288,23 @@ joint acceptance. Retain failures, unavailable runs, SIGKILL and unknown effects
 with their original source and meaning. PN1–PN6 exits, budgets, migration boundaries
 and the existing release/activation authority remain unchanged; no deployment or
 whole-chain PQ acceptance is granted by this checkpoint.
+
+### 2026-11-01 native PQ admission, policy renewal and external witness continuation
+
+Continue the existing PN0–PN6 work from Chain #678 at
+`5606a97104f9cd3243befc2921ccace3fae2c369`. The
+[security continuation record](../security/PQ_SYSTEM_CONTINUATION_20261101.md)
+binds the native live-admission correction, explicit three-table PNQ2 witness
+namespace and Hepta #4558 policy-bound renewal to their separate evidence. The
+[command records](../../evidence/pon-pq-system-continuation-20261101/README.md)
+must identify actual source, original compiler/lockfiles, real positive effects,
+negative cases and recovery. Reconstructed unpublished source is re-executed;
+lost historical test records do not qualify it.
+
+PN0 and all six whole-chain PQ gates remain HOLD. The witness does not cover all
+Node or Hepta state, is not deployed WAN trust and does not complete uncertain
+commit recovery. Ordinary Cell/FinalUse composition, versioned PQ RunStart and
+ObjectiveStart, migration of historic ownership/liabilities, proof security,
+quantum W1/DAA/fork choice, original capacity and independent sustained joint
+acceptance remain required. Existing budgets and activation authority are
+unchanged. This is an entry in the sole plan, not a new release lane.
