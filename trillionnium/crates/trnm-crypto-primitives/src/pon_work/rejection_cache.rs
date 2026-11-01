@@ -1,6 +1,8 @@
 //! Optional exact W1 mathematical rejection cache. No acceptance/authority cache.
 //! A fresh forged trace still incurs full W1 replay; this protects ONLY exact
 //! repeated bogus mathematical statements in the same local receiver epoch.
+//! Contended or poisoned cache locks never delay the caller: lookup misses and
+//! publication is skipped while the original verifier retains its checkpoints.
 use super::{
     hash, verify_with_progress, Hash, VerificationError, VerificationProgress, VerifiedWork,
     WorkError, PROFILE, PROOF_BYTES,
@@ -52,7 +54,9 @@ impl RejectionCache {
     }
 
     fn hit(&self, key: Hash) -> Option<WorkError> {
-        let entries = self.slots.lock().ok()?;
+        // Optional reuse must not wait outside the caller's cancellation and
+        // deadline checkpoints. Contention, like poison, is a cache miss.
+        let entries = self.slots.try_lock().ok()?;
         let i = u64::from_le_bytes(key[..8].try_into().ok()?) as usize % entries.len();
         entries[i]
             .filter(|entry| entry.key == key && Instant::now() < entry.expires)
@@ -63,8 +67,9 @@ impl RejectionCache {
         if !matches!(error, WorkError::Transcript | WorkError::Product) {
             return;
         }
-        // Poisoning disables cache reuse, never mathematical verification.
-        if let Ok(mut entries) = self.slots.lock() {
+        // Losing optional publication to contention or poison never delays or
+        // changes the already completed mathematical refusal.
+        if let Ok(mut entries) = self.slots.try_lock() {
             let i = (u64::from_le_bytes(key[..8].try_into().expect("32-byte key")) as usize)
                 % entries.len();
             entries[i] = Some(InvalidFact {
@@ -106,6 +111,213 @@ impl RejectionCache {
 mod tests {
     use super::*;
     use crate::pon_work::{prove, task_id, CELLS, PROOF_BYTES};
+    use std::{sync::mpsc, thread};
+
+    type WorkSummary = (Hash, Hash, Hash, Vec<u32>);
+    type Observation = (
+        Result<WorkSummary, VerificationError<&'static str>>,
+        Vec<VerificationProgress>,
+    );
+
+    fn while_slots_locked<T: Send>(
+        cache: &RejectionCache,
+        operation: impl FnOnce() -> T + Send,
+    ) -> T {
+        thread::scope(|scope| {
+            let held = cache.slots.lock().unwrap();
+            let (finished, completion) = mpsc::channel();
+            let worker = scope.spawn(move || {
+                let result = operation();
+                finished.send(()).unwrap();
+                result
+            });
+            // Always release the lock before joining or asserting. A regression
+            // to blocking cache access fails rather than stranding a worker.
+            let completed_while_locked = completion.recv_timeout(Duration::from_secs(10));
+            drop(held);
+            let result = worker.join().unwrap();
+            assert!(
+                completed_while_locked.is_ok(),
+                "optional rejection-cache access waited for the held slots lock"
+            );
+            result
+        })
+    }
+
+    fn observed(
+        cache: Option<&RejectionCache>,
+        challenge: Hash,
+        task: Hash,
+        proof: &[u8],
+        cancel: Option<VerificationProgress>,
+    ) -> Observation {
+        let mut points = Vec::new();
+        let mut progress = |point| {
+            points.push(point);
+            if Some(point) == cancel {
+                Err("CALLER_CANCELLED")
+            } else {
+                Ok(())
+            }
+        };
+        let result = match cache {
+            Some(cache) => {
+                cache.verify_with_progress(challenge, task, [255; 32], proof, &mut progress)
+            }
+            None => verify_with_progress(challenge, task, [255; 32], proof, &mut progress),
+        };
+        (
+            result.map(|work| {
+                (
+                    work.challenge(),
+                    work.task(),
+                    work.ticket(),
+                    work.product().to_vec(),
+                )
+            }),
+            points,
+        )
+    }
+
+    #[test]
+    fn contended_lookup_and_publication_keep_complete_native_replay() {
+        let cache = RejectionCache::new(8, Duration::from_secs(30)).unwrap();
+        let zeros = vec![0; CELLS];
+        let task = task_id(&zeros, &zeros).unwrap();
+        let challenge = [39; 32];
+        let valid = prove(challenge, &zeros, &zeros).unwrap();
+        let mut warm_false = valid.clone();
+        warm_false[PROOF_BYTES - 1] ^= 1;
+        let mut cold_false = valid.clone();
+        cold_false[PROOF_BYTES - 2] ^= 1;
+        let mut false_product = valid.clone();
+        false_product[4 + 2 * CELLS * 4] = 1;
+        assert!(matches!(
+            observed(Some(&cache), challenge, task, &warm_false, None).0,
+            Err(VerificationError::Relation(WorkError::Transcript))
+        ));
+        while_slots_locked(&cache, || {
+            for proof in [&warm_false, &cold_false, &false_product, &valid] {
+                let expected = observed(None, challenge, task, proof, None);
+                let actual = observed(Some(&cache), challenge, task, proof, None);
+                assert_eq!(actual, expected);
+                assert_eq!(
+                    actual
+                        .1
+                        .iter()
+                        .filter(|point| matches!(
+                            point,
+                            VerificationProgress::TranscriptTile { .. }
+                        ))
+                        .count(),
+                    512,
+                    "even the previously cached false claim needs complete replay on contention"
+                );
+            }
+        });
+        let key = RejectionCache::key(challenge, task, [255; 32], &cold_false).unwrap();
+        assert!(
+            cache.hit(key).is_none(),
+            "contended publication must be skipped"
+        );
+        // The original warm fact was neither invalidated nor replaced by a
+        // contended caller; after release only its exact retransmission skips.
+        let warm = observed(Some(&cache), challenge, task, &warm_false, None);
+        assert_eq!(warm.1, vec![VerificationProgress::BeforeReplay]);
+        assert!(matches!(
+            warm.0,
+            Err(VerificationError::Relation(WorkError::Transcript))
+        ));
+    }
+
+    #[test]
+    fn contended_cache_retains_caller_cancellation_and_cheap_errors() {
+        let cache = RejectionCache::new(8, Duration::from_secs(30)).unwrap();
+        let zeros = vec![0; CELLS];
+        let task = task_id(&zeros, &zeros).unwrap();
+        let challenge = [40; 32];
+        let valid = prove(challenge, &zeros, &zeros).unwrap();
+        while_slots_locked(&cache, || {
+            for point in [
+                VerificationProgress::BeforeReplay,
+                VerificationProgress::TranscriptTile {
+                    row: 7,
+                    column: 7,
+                    inner: 7,
+                },
+                VerificationProgress::BeforeProduct,
+                VerificationProgress::BeforeVerifiedWork,
+            ] {
+                let expected = observed(None, challenge, task, &valid, Some(point));
+                let actual = observed(Some(&cache), challenge, task, &valid, Some(point));
+                assert_eq!(actual, expected);
+                assert_eq!(
+                    actual.0,
+                    Err(VerificationError::Cancelled("CALLER_CANCELLED"))
+                );
+            }
+            let mut bad_version = valid.clone();
+            bad_version[0] = b'X';
+            for proof in [&valid[..PROOF_BYTES - 1], bad_version.as_slice()] {
+                let expected = observed(
+                    None,
+                    challenge,
+                    task,
+                    proof,
+                    Some(VerificationProgress::BeforeReplay),
+                );
+                let actual = observed(
+                    Some(&cache),
+                    challenge,
+                    task,
+                    proof,
+                    Some(VerificationProgress::BeforeReplay),
+                );
+                assert_eq!(actual, expected);
+                assert!(actual.1.is_empty(), "cheap errors precede callbacks");
+            }
+        });
+        assert!(cache.slots.lock().unwrap().iter().all(Option::is_none));
+    }
+
+    #[test]
+    fn poisoned_cache_keeps_native_math_and_caller_cancellation() {
+        let cache = RejectionCache::new(8, Duration::from_secs(30)).unwrap();
+        let poisoned = thread::scope(|scope| {
+            scope
+                .spawn(|| {
+                    let _held = cache.slots.lock().unwrap();
+                    panic!("intentional rejection-cache poison control");
+                })
+                .join()
+        });
+        assert!(poisoned.is_err());
+        assert!(cache.slots.is_poisoned());
+        let zeros = vec![0; CELLS];
+        let task = task_id(&zeros, &zeros).unwrap();
+        let challenge = [41; 32];
+        let valid = prove(challenge, &zeros, &zeros).unwrap();
+        let mut false_trace = valid.clone();
+        false_trace[PROOF_BYTES - 1] ^= 1;
+        for proof in [&false_trace, &valid] {
+            assert_eq!(
+                observed(Some(&cache), challenge, task, proof, None),
+                observed(None, challenge, task, proof, None)
+            );
+        }
+        assert_eq!(
+            observed(
+                Some(&cache),
+                challenge,
+                task,
+                &valid,
+                Some(VerificationProgress::BeforeReplay),
+            )
+            .0,
+            Err(VerificationError::Cancelled("CALLER_CANCELLED"))
+        );
+        assert!(cache.slots.is_poisoned());
+    }
 
     #[test]
     fn malformed_width_has_no_cache_key_and_retains_native_length_precedence() {

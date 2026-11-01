@@ -211,6 +211,22 @@ observed, so this experiment cannot certify that separate long-proof behavior.
 
 ## Remaining public-admission and economic limits
 
+### Optional cache scheduling
+
+The exact mathematical rejection cache uses nonblocking lookup and publication.
+Lock contention or poison disables optional reuse for that call; it never waits
+for the cache owner outside native cancellation checkpoints. A cache miss still
+executes complete W1 verification. Skipping publication cannot change the result
+of an already completed refusal. Only exact Transcript/Product refusals may be
+reused, with the original bounded lifetime, full proof key and current caller
+authority checks. The cache remains opt-in and supplies no fresh-trace cost
+bound, public-service fairness, or permission to omit native verification.
+
+The kernel-parent checker still reopens and reads all five current limit files
+at every original check. CPU-token parsing and slash-delimited membership avoid
+temporary heap allocations while retaining the original grammar and error order.
+These allocation reductions are not measured confirmation or throughput gains.
+
 The [r10 shared intake implementation](PUBLIC_POOL_INTAKE_V3.md) retains 64
 original shared slots and marks the oldest eligible unpaid input for cancellation
 only under full-pool pressure after at least 250 ms without actual input. The
