@@ -43,10 +43,12 @@ fn invalid_pq_client_sequence_refuses_before_ml_dsa_signing() {
     let client = PqClient::new(policy, signer(72)).unwrap();
     let expiry = super::super::now().unwrap() + 30;
     for sequence in [0, i64::MAX as u64 + 1, u64::MAX] {
-        let error = client
-            .prepare(sequence, expiry, Request::Head)
-            .err()
-            .expect("unrepresentable operation sequence must refuse");
+        // PreparedPqRequest deliberately exposes no Debug. Match explicitly
+        // instead of requiring a Debug-bearing success just for expect_err.
+        let error = match client.prepare(sequence, expiry, Request::Head) {
+            Err(error) => error,
+            Ok(_) => panic!("unrepresentable operation sequence must refuse"),
+        };
         assert_eq!(error.to_string(), "PQ_NETWORK_SEQUENCE");
     }
     // The exact highest sequence accepted by the existing signed-wire owner
@@ -78,8 +80,7 @@ fn expired_prepared_request_refuses_before_client_tcp() {
     let disconnected = SocketAddr::from(([127, 0, 0, 1], 0));
     let error = client
         .send(disconnected, &prepared, Duration::from_secs(1))
-        .err()
-        .expect("stale request must fail before TCP connection");
+        .expect_err("stale request must fail before TCP connection");
     assert_eq!(error.to_string(), "PQ_NETWORK_EXPIRED_UNCONFIRMED");
 }
 
