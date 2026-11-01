@@ -104,7 +104,7 @@ W1_REUSE_V3_JOB = r'''  cross-arch-w1-reuse-v3:
       - name: Install matching native formatter
         run: rustup component add --toolchain 1.95.0 rustfmt
       - name: Execute the complete native W1 actual reuse V3 grid
-        run: python3 scripts/ci/run_w1_reused_cost_v3.py --arch "${{ matrix.arch }}"
+        run: env -u CARGO_INCREMENTAL python3 scripts/ci/run_w1_reused_cost_v3.py --arch "${{ matrix.arch }}"
       - name: Verify V3 exact source and ordered merge after execution
         if: always()
         shell: bash
