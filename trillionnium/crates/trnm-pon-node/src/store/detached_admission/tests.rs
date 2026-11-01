@@ -565,16 +565,20 @@ fn assert_custom_genesis_held_schedule_and_cpu_owner(authenticated: bool) {
     let cpu_budget_after = original.observe().ok();
     let cpu_flow_after = original.observe_actual_flow().ok().flatten();
     let arithmetic_after = owner.lock().unwrap().authenticated_arithmetic.observation();
-    let unchanged_on_refusal = if attempt.is_err() {
-        // Even a damaged readback must not hide the original typed CPU
-        // refusal. Unknown is null, never treated as a verified equality.
-        owner
-            .lock()
-            .ok()
-            .and_then(|node| node.read_active().ok())
-            .map(|actual| actual == before)
+    let (unchanged_on_refusal, refusal_readback_error) = if attempt.is_err() {
+        // A null equality in the old observation concealed whether the
+        // reason was a poisoned owner lock or a real native readback error.
+        // Keep the original failure, but retain the exact failed read path
+        // rather than treating an unavailable integrity check as success.
+        match owner.lock() {
+            Ok(node) => match node.read_active() {
+                Ok(actual) => (Some(actual == before), None),
+                Err(error) => (None, Some(error.to_string())),
+            },
+            Err(_) => (None, Some("OWNER_LOCK_POISONED".to_owned())),
+        }
     } else {
-        None
+        (None, None)
     };
     println!(
         "{}",
@@ -586,6 +590,7 @@ fn assert_custom_genesis_held_schedule_and_cpu_owner(authenticated: bool) {
             "dispatch_elapsed_ns": elapsed_ns.to_string(),
             "original_dispatch_result": attempt.as_ref().map(|_| "ok").map_err(ToString::to_string),
             "active_state_unchanged_on_refusal": unchanged_on_refusal,
+            "refusal_readback_error": refusal_readback_error,
             "cpu_budget_before": cpu_budget_before,
             "cpu_budget_after": cpu_budget_after,
             "actual_cpu_flow_before": cpu_flow_before,
@@ -595,13 +600,16 @@ fn assert_custom_genesis_held_schedule_and_cpu_owner(authenticated: bool) {
             "measurement_scope": "actual original metered dispatch; observation after outcome, no alternative execution, refill or altered acceptance"
         })
     );
-    // This remains the original strict business gate: a budget refusal is
-    // still an actual failing native test, not a qualified success.
-    let result = attempt.unwrap();
+    // Stage comparisons are evidence on both success AND refusal. The former
+    // placement after the strict unwrap suppressed the expensive-stage record
+    // precisely on the original production-blocking CPU-budget failure.
     println!(
         "{}",
         serde_json::json!({"schema":"native-large-parent-arithmetic-stages-v1", "authenticated_backend":authenticated, "before":arithmetic_before, "after":arithmetic_after, "measurement_scope":"existing stage counters sampled outside the original paid CPU operation; no budget or schedule changes"})
     );
+    // This remains the original strict business gate: a budget refusal is
+    // still an actual failing native test, not a qualified success.
+    let result = attempt.unwrap();
     println!(
         "{}",
         serde_json::json!({"schema":"native-large-parent-schedule-parity-v1", "authenticated_backend":authenticated, "genesis_fixture":"2100 explicitly seeded 4080-byte string cells; original native validator and one signed admitted seed block; not default-genesis historical growth", "genesis":hex::encode(settings.genesis()), "genesis_state_root":hex::encode(initial_root), "admitted_parent":hex::encode(parent), "complete_key_utf8_and_canonical_value_bytes":actual_payload, "early_capacity_observed_lower_bound_bytes":observed_payload_bytes, "original_cpu_receipt":result.cpu, "native_result":result.native.as_ref().map(|_|"ok").map_err(ToString::to_string), "host_qualified":false, "budget_depletion_demonstrated":false, "all_honest_service_qualified":false})
