@@ -37,6 +37,24 @@ fn raw_request(address: SocketAddr, wire: &[u8]) -> Result<Vec<u8>> {
 }
 
 #[test]
+fn expired_prepared_request_refuses_before_client_tcp() {
+    let settings = settings();
+    let policy = policy(&settings, 1);
+    let client = PqClient::new(policy, signer(72)).unwrap();
+    let now = super::super::now().unwrap();
+    let mut prepared = client.prepare(1, now + 30, Request::Head).unwrap();
+    // Model queue delay by reducing the *local* expiry to the past. No
+    // authority is created and no signature is accepted from this mutation.
+    prepared.verified.expiry = now.checked_sub(1).unwrap();
+    let disconnected = SocketAddr::from(([127, 0, 0, 1], 0));
+    let error = client
+        .send(disconnected, &prepared, Duration::from_secs(1))
+        .err()
+        .expect("stale request must fail before TCP connection");
+    assert_eq!(error.to_string(), "PQ_NETWORK_EXPIRED_UNCONFIRMED");
+}
+
+#[test]
 fn real_signed_overlong_pq_request_refuses_before_verification_without_budget_bypass() {
     // This valid pinned ML-DSA signature violates only the server's original
     // maximum horizon. Its rejection must consume the existing attempt slot
