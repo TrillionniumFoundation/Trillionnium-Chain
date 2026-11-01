@@ -1,0 +1,36 @@
+{
+  "schema": "pon-ci-binding-repair-log-archive-v1",
+  "run_id": 41299973392,
+  "archives": [
+    {
+      "archive": "workflow-job-logs.tar.xz",
+      "bytes": 107212,
+      "sha256": "7b27f1d52cd3afe0ba21d42925f7b7455922b8da1a44d2c4803289996566a1a0",
+      "members": [
+        {
+          "path": "ci-monitor/job-124828700840.log",
+          "bytes": 385951,
+          "sha256": "6256f3f317f0221d3e79d59a342c69f95b93604cce82eccc6fb4b95f5b08aa32"
+        },
+        {
+          "path": "ci-monitor/job-124828701002.log",
+          "bytes": 383789,
+          "sha256": "99d21c0b54673bcce8fb546ed5085a6ba3e467c391997c7639186322b3153eba"
+        },
+        {
+          "path": "ci-monitor/job-124828701046.log",
+          "bytes": 384798,
+          "sha256": "93ae7ad6bdd6e855fba5776edfab6e4194a7667faa3deeed9837a32447a0647b"
+        },
+        {
+          "path": "ci-monitor/job-124828701149.log",
+          "bytes": 388832,
+          "sha256": "eb8b0d44265056f89104962d684d3507bcf3259ce235a2418ad7d79b01f1a121"
+        }
+      ]
+    }
+  ],
+  "original_artifact_containers_included": false,
+  "original_artifact_contents_included": false,
+  "scope": "Complete successful workflow logs and API metadata; no raw-artifact retention claim for this separate CI workflow."
+}
