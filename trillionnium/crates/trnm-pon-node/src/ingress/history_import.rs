@@ -3,8 +3,8 @@
 //! and bounded M06 execution. The original owner checks the private execution
 //! artifact and retains the original transaction/readback publication fences.
 use super::{
-    ensure, hex_packet_for_settings, history_kernel_work_checkpoint, now, public_v3, Hash, Node,
-    Packet, Page, Result, Settings, WorkCheckedPacket, MAX_FRAME,
+    ensure, hex_packet_for_settings, now, public_v3, Hash, Node, Packet, Page, Result, Settings,
+    WorkCheckedPacket, MAX_FRAME,
 };
 use std::{
     sync::{Mutex, TryLockError},
@@ -197,6 +197,36 @@ fn validate_page(settings: &Settings, page: &Page, tip: Hash, after: Hash) -> Re
     Ok(())
 }
 
+fn verify_history_work(
+    packet: Packet,
+    progress: &public_v3::ServiceMutationCpuCheckpoint,
+    owns_node_mutex: bool,
+    control: &Control<'_>,
+) -> Result<WorkCheckedPacket> {
+    WorkCheckedPacket::verify_with_progress(packet, &mut |point| {
+        control.alive()?;
+        // This checks the actual Host once at EVERY native W1 boundary and
+        // again throughout any original refill wait. A second Host read here
+        // used to follow selected boundaries without intervening native work.
+        // Only that duplicate is removed; no boundary or resource verdict is
+        // skipped, cached, weakened or promoted to mathematical invalidity.
+        progress.history_checkpoint(owns_node_mutex, &|| control.check())?;
+        if matches!(
+            point,
+            trnm_crypto_primitives::pon_work::VerificationProgress::TranscriptTile {
+                row: 4,
+                column: 0,
+                inner: 0,
+            }
+        ) {
+            // Noise/matrix preparation and half the real transcript have
+            // already executed. This is not a pre-verification mock cut.
+            cut("w1");
+        }
+        Ok(())
+    })
+}
+
 fn admit_packet(
     owner: &mut Owner<'_>,
     cpu: &public_v3::ServiceMutationCpuDomain,
@@ -235,26 +265,7 @@ fn admit_packet(
                 .transpose()?;
             return Ok((id, false, active));
         }
-        let checked = WorkCheckedPacket::verify_with_progress(packet, &mut |point| {
-            control.alive()?;
-            progress.history_checkpoint(owns_node_mutex, &|| control.check())?;
-            if history_kernel_work_checkpoint(point) {
-                (control.resource)()?;
-            }
-            if matches!(
-                point,
-                trnm_crypto_primitives::pon_work::VerificationProgress::TranscriptTile {
-                    row: 4,
-                    column: 0,
-                    inner: 0,
-                }
-            ) {
-                // Noise/matrix preparation and half the real transcript have
-                // already executed. This is not a pre-verification mock cut.
-                cut("w1");
-            }
-            Ok(())
-        })?;
+        let checked = verify_history_work(packet, &progress, owns_node_mutex, control)?;
         operation.history_work_verified_for_settings(&checked, &settings)?;
         // Promotion changes only scheduling for this complete, unique W1.
         // Shared owners retain nonwaiting checkpoints while holding Node;

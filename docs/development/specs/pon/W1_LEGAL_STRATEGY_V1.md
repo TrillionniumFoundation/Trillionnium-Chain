@@ -115,3 +115,10 @@ partial observation. Full grid consistency still leaves two-sample coverage,
 unmeasured task families and targets, accelerators, task-selection/funding,
 physical energy, quantum costs and live service qualification open. All
 qualification and activation flags remain false.
+
+## Separately versioned eight-sample continuation
+
+[V2](W1_LEGAL_STRATEGY_V2.md) adds eight newly executed sample streams under an
+explicit new selector, schema and challenge domain. The V1 two-sample invocation,
+reader and historical observations retain their original meaning. V2 does not
+relabel these records or change the original time/CPU/service acceptance limits.

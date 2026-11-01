@@ -937,6 +937,29 @@ unchanged. This selection provides no speedup claim for those separate paths.
 The complete later source still needs native semantic, cancellation, strict
 lint and unchanged service-gate execution before its result can be reported.
 
+### Arithmetic-fact cold replay follow-up (2026-11-01)
+
+The subsequent candidate aligns `ArithmeticFactCache` cold and contended
+replays with the default FullLimb verifier, including noise, every transcript
+update and product corrections. The preceding measured source's cache used
+Transposed; its historical measurements retain that implementation identity.
+Cache keys, capacity, current proof/task/target checks, progress boundaries,
+publication and cancellation rules are unchanged. Near-field-limit fixtures
+compare accepted values, both late errors and every progress boundary against
+the retained explicit Transposed implementation. Trace-only upgrades still
+require complete product reconstruction; a cancelled upgrade retains only
+the already completed trace and grants no new product or verified work.
+
+This is an opt-in cache implementation change. The default History importer
+already uses the ordinary FullLimb verifier without this cache. A separate
+History change removes a second immediately adjacent Host check at selected
+W1 boundaries, while keeping the actual Host/CPU/deadline check at every native
+progress point and during the original refill waits. Neither change alone
+qualifies four-second independent confirmation, fresh-identity fairness or
+cheapest legal work. The independent
+[eight-sample legal-strategy V2](../../../development/specs/pon/W1_LEGAL_STRATEGY_V2.md)
+retains V1's two-sample evidence and all original runtime budgets.
+
 ## Explicit late-rejection cost diagnostic
 
 [`pon_rejection_cost`](../../../../trillionnium/crates/trnm-crypto-primitives/examples/pon_rejection_cost.rs)

@@ -15,6 +15,8 @@
 //! arithmetic reuse separately from a fresh transcript replay. Contended cache
 //! locks cause real, fully accounted raw arithmetic; no cache wait or helper work
 //! thread is created. Poison is a local unavailability error, never valid work.
+//! Cold and contended replays use the same full-limb arithmetic as the default
+//! raw verifier. This changes no cache key, claim check or progress boundary.
 use super::*;
 use std::mem::size_of;
 use std::sync::{Mutex, TryLockError};
@@ -149,13 +151,8 @@ impl ArithmeticFactCache {
         *observation = ArithmeticObservation::default();
         // Current grammar, fields, task and target precede all cache access and
         // callbacks, exactly as in the retained original production verifier.
-        let checked = checked_proof_inputs(
-            challenge,
-            task,
-            target,
-            bytes,
-            VerificationKernel::Transposed,
-        )?;
+        let checked =
+            checked_proof_inputs(challenge, task, target, bytes, VerificationKernel::FullLimb)?;
         let inputs: &[u8; INPUT_BYTES] = bytes[4..4 + INPUT_BYTES]
             .try_into()
             .map_err(|_| FactError::Relation(WorkError::Length))?;
@@ -188,7 +185,9 @@ impl ArithmeticFactCache {
         }
         let (a, b) = checked.matrices.split_at(CELLS);
         observation.transcript_entered = true;
-        let evaluated = evaluate_transposed_with_progress::<false, E>(challenge, a, b, progress)?;
+        let evaluated = evaluate_transcript_kernel_with_progress::<true, false, true, E>(
+            challenge, a, b, progress,
+        )?;
         observation.transcript_completed = true;
         let trace = evaluated.trace;
         if trace.as_slice() != trace_claim {
@@ -204,7 +203,7 @@ impl ArithmeticFactCache {
             return Err(FactError::Relation(WorkError::Transcript));
         }
         observation.product_entered = true;
-        let product = finish_transposed_with_progress(a, evaluated, progress)
+        let product = finish_transposed_kernel_with_progress::<true, E>(a, evaluated, progress)
             .map_err(FactError::Cancelled)?;
         observation.product_completed = true;
         let matches = matches_product(&product, claimed_bytes);
@@ -327,5 +326,7 @@ fn matches_product(product: &[u32], claimed_bytes: &[u8]) -> bool {
 mod churn_controls;
 #[cfg(test)]
 mod controls;
+#[cfg(test)]
+mod full_limb_controls;
 #[cfg(test)]
 mod tests;

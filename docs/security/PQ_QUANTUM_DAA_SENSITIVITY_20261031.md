@@ -2,16 +2,16 @@
 
 **Status: HOLD / no production activation / not quantum-resistance evidence.**
 
-The repository's existing [development reference arithmetic](../../formal/pon-nakamoto-v1/reference.py) defines work as \`floor(2^256/(target+1))\`, a 16-block retarget with an approximately 4-fold bounded change, and 11-ancestor median-time / future deferral. This new sensitivity exercise imports those exact reference functions and the current [devnet configuration](../../config/pon/devnet-v1.json); it does not edit consensus.
+The repository's existing [development reference arithmetic](../../formal/pon-nakamoto-v1/reference.py) defines work as `floor(2^256/(target+1))`, a 16-block retarget with an approximately 4-fold bounded change, and 11-ancestor median-time / future deferral. This new sensitivity exercise imports those exact reference functions and the current [devnet configuration](../../config/pon/devnet-v1.json); it does not edit consensus.
 
 Run on a full checkout:
 
-\`\`\`sh
+```sh
 python3 -m unittest discover -s scripts/ci -p 'test_pq_quantum_daa_scenarios.py' -v
 python3 scripts/ci/pq_quantum_daa_scenarios.py --epochs 4
-\`\`\`
+```
 
-The harness compares an assumed header timestamp increment of 1 second with the nominal 10 seconds across four retarget epochs, granting each hypothetical header a matching wall clock. It checks each timestamp through \`timestamp_state\`. These two branches do **not** use the same elapsed wall time, physical mining budget, proof production, network delay or fork-choice competition, so comparing their cumulative chainwork is **not an executable attack**.
+The harness compares an assumed header timestamp increment of 1 second with the nominal 10 seconds across four retarget epochs, granting each hypothetical header a matching wall clock. It checks each timestamp through `timestamp_state`. These two branches do **not** use the same elapsed wall time, physical mining budget, proof production, network delay or fork-choice competition, so comparing their cumulative chainwork is **not an executable attack**.
 
 The actual reference implementation retargets at heights **16, 32, 48, 64**, using the **previous** 16 ancestor headers; the first such window includes genesis. Thus the boundary block already has the adjusted target. The numbers below represent each epoch's *last (retarget-boundary) block*, not a flat difficulty for the entire epoch.
 
@@ -22,7 +22,7 @@ The actual reference implementation retargets at heights **16, 32, 48, 64**, usi
 | 3 / 48 | 2 | 123 | 12 | 588 |
 | 4 / 64 | 2 | 485 | 23 | 2,330 |
 
-These are integer-reference calculations under the uniform-search *proxy*, not measurements. Total cumulative chainwork is 3,091 vs 128 after 64 hypothetical blocks under **different** assumed elapsed wall times; the ratio is not a demonstrated physical cost advantage or executable fork. The simulator returns exact target hex strings and complete per-epoch and cumulative values. Because integer targets and work truncate, the result is not exactly 4x at each epoch. For a single known target, the model labels \`ceil(2^256/(target+1))\` an expected *classical trials proxy*, and \`ceil(sqrt(proxy))\` an **idealized quantum search index**. It does **not** convert the index to actual Grover iteration counts, reversible gates, logical qubits, fault-correction cycles, or quantum seconds. Existing W1 is a complete mathematical/transcript relation with amortizable setup and structured legal algorithms, not necessarily independent random-oracle trials. Consequently neither proxy bounds the actual cheapest miner.
+These are integer-reference calculations under the uniform-search *proxy*, not measurements. Total cumulative chainwork is 3,091 vs 128 after 64 hypothetical blocks under **different** assumed elapsed wall times; the ratio is not a demonstrated physical cost advantage or executable fork. The simulator returns exact target hex strings and complete per-epoch and cumulative values. Because integer targets and work truncate, the result is not exactly 4x at each epoch. For a single known target, the model labels `ceil(2^256/(target+1))` an expected *classical trials proxy*, and `ceil(sqrt(proxy))` an **idealized quantum search index**. It does **not** convert the index to actual Grover iteration counts, reversible gates, logical qubits, fault-correction cycles, or quantum seconds. Existing W1 is a complete mathematical/transcript relation with amortizable setup and structured legal algorithms, not necessarily independent random-oracle trials. Consequently neither proxy bounds the actual cheapest miner.
 
 ## Required real qualification (all unclosed)
 
@@ -35,3 +35,21 @@ These are integer-reference calculations under the uniform-search *proxy*, not m
 These scenarios are explicitly conditional on the quantum miner / difficulty-manipulation observation of Bailey and Sattath (2024). They do not assume that observation automatically transfers to the complete Trillionnium W1 work relation.
 
 No ML-DSA signature, STARK proof, quantum cost model, nor this script alone can authorize PQ-128, claim the chain is quantum-resistant, or set any production flag.
+
+## Primary-source boundary check (2026-11-01)
+
+The [Bailey–Sattath v2 paper](https://arxiv.org/abs/2403.08023v2) analyzes a
+conditional PoW/Grover difficulty-credit mismatch. It does not implement this
+repository's W1 relation. Applying its attack here still requires a complete
+W1 oracle and a feasible equal-resource fork schedule under the actual DAA.
+
+[Amy et al.](https://arxiv.org/abs/1603.09383) explicitly account for circuit depth
+and logical-qubit cycles in a particular surface-code hash-preimage construction.
+[Jaques et al.](https://arxiv.org/abs/1910.01700v1) provide complete AES/LowMC
+oracles with executable resource estimation under depth constraints. These works
+support counting construction, uncomputation, depth and width separately from
+black-box queries. Their algorithm-specific numbers are not W1 costs.
+
+This source review supplies no reversible W1 circuit, logical/physical resource
+measurement, or quantum runtime. The existing search index stays a conditional
+proxy; the quantum-cost and work-qualification gates remain open.

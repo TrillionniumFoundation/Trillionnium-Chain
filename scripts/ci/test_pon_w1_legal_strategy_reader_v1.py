@@ -23,7 +23,13 @@ def row(kind, **fields):
     return dict(schema=reader.SCHEMA, kind=kind, **fields)
 
 
-def fixture(name="zero", target_index=0, horizon=1, salt=0, exhausted=None):
+def fixture(name="zero", target_index=0, horizon=1, salt=0, exhausted=None, *, reader_api=reader):
+    # Explicit fixture dependency; never switch a reader module's global profile.
+    reader = reader_api
+
+    def row(kind, **fields):
+        return dict(schema=reader.SCHEMA, kind=kind, **fields)
+
     target = bytes.fromhex(reader.TARGETS[target_index])
     a, b, task, prefix = common.material(name)
     rows = [row("campaign", selector=reader.SELECTOR, **{"class": name}, target_index=target_index,

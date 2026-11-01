@@ -73,7 +73,15 @@ jobs:
       - name: Build original native pipeline without changing runtime
         run: |
           set -euo pipefail
-          rustup toolchain install 1.95.0 --profile minimal
+          # A runner image may contain a partially installed toolchain whose
+          # component metadata conflicts with cargo-clippy. Use fresh storage
+          # for this job; keep the same pinned compiler for every native step.
+          finality_rustup_home="$(mktemp -d "$RUNNER_TEMP/release-finality-rustup.XXXXXX")"
+          export RUSTUP_HOME="$finality_rustup_home"
+          printf 'RUSTUP_HOME=%s\n' "$RUSTUP_HOME" >> "$GITHUB_ENV"
+          printf '%s\n' "$RUSTUP_HOME" > "$RUNNER_TEMP/release-finality/rustup-home.txt"
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+          rustup component list --toolchain 1.95.0 --installed > "$RUNNER_TEMP/release-finality/compiler-components.txt"
           cargo +1.95.0 build --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example continuous_pipeline
           sha256sum trillionnium/target/release/examples/continuous_pipeline > "$RUNNER_TEMP/release-finality/native-binary.sha256"
           rustc +1.95.0 --version > "$RUNNER_TEMP/release-finality/compiler.txt"
