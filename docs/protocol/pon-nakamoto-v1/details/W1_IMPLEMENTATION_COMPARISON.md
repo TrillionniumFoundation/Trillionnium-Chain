@@ -812,18 +812,21 @@ All existing acceptance and activation flags remain false.
 ## Verifier boundary
 
 [`pon_work.rs`](../../../../trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs)
-retains the independent scalar reference and the default transposed verifier, plus
-two explicit transcript-arithmetic research comparisons:
+retains five exact arithmetic implementations through six public verifier entries.
+The draft native default selects the complete limb implementation; the previous
+transposed baseline remains explicitly callable:
 
 | Entry | Arithmetic and transcript | Use |
 |---|---|---|
-| `verify` / `verify_with_progress` | Transposed right operands, exact reduction for q=2^32-5, 256-byte tile hash updates | Ordinary native W1 verification |
+| `verify` / `verify_with_progress` | Bounded `u64` limb sums for all noise, transcript and product-correction multiplications; transposed right operands and 256-byte tile hash updates | Draft native W1 default; no production activation |
+| `verify_full_limb` / `verify_full_limb_with_progress` | The same complete limb kernel selected by the default entry | Explicit implementation identity; not an independent algorithm from the current default |
+| `verify_transposed` / `verify_transposed_with_progress` | Previous transposed kernel, exact reduction of `u128` dot-product sums for q=2^32-5, 256-byte tile hash updates | Retained historical baseline and differential verification |
 | `verify_reference` / `verify_reference_with_progress` | Original row-major scalar products, u128 remainder, per-cell hash updates | Explicit reference and differential verification |
 | `verify_limb` / `verify_limb_with_progress` | The same transposed replay and corrections; each eight-product transcript accumulation uses bounded `u64` low/high sums | Explicit research comparison; never selected by the default entry |
 | `verify_column_limb` / `verify_column_limb_with_progress` | Eight independent column accumulators read contiguous original B' rows; bounded `u64` low/high sums preserve every prefix without transposing B' | Explicit research comparison; never selected by the default entry |
 | `evaluate` / `prove` | Original complete scalar generation | Reference producer |
 
-All four verifier paths share the existing admission procedure; the arithmetic
+All six public verifier entries share the existing admission procedure; the arithmetic
 choice does not create another verifier framework. They perform the same grammar
 and task checks before replay and emit
 the same ordered `VerificationProgress` observations: before replay, each noise hash,
@@ -838,12 +841,13 @@ if the implementation takes less time. Full recomputation remains full recomputa
 
 The original Rust scalar arithmetic and Python oracle provide independent arithmetic
 implementations within the same development authorship. Their agreement is not an
-external security assessment. Extreme-field/product/grammar cases compare all four Rust
-paths; a complete success records equal observation sequences, and representative cuts
+external security assessment. Extreme-field/product/grammar cases compare all five Rust
+kernels, including the default and explicit transposed entries; a complete success
+records equal observation sequences, and representative cuts
 through every noise/matrix/tile/product stage compare cancelled outcomes. Existing
 wire, task, challenge and Python byte-parity tests remain applicable.
 
-The limb comparison changes only the eight-product accumulation inside each
+The transcript-only limb comparison changes only the eight-product accumulation inside each
 `bi,bj,bk` transcript tile. It retains the noise products, transpositions, tile order,
 per-cell little-endian words, hash updates and product corrections. The compile-time
 arithmetic choice leaves every observation in its original position. The shared
@@ -854,11 +858,26 @@ maintenance material structure. Its proof is the `L<9B`, `H<8B`, `S<49B`,
 
 The complete verifier still performs **458,752 scalar multiplications**: 65,536
 for the two noise products, 262,144 for the full transcript, and 131,072 for the four
-product-correction multiplications. Only the accumulation method of the middle
-262,144 products changes. This is separate from the prepared producer's 327,680
+product-correction multiplications. In the transcript-only comparison, only the
+accumulation method of the middle 262,144 products changes. The complete limb
+kernel changes the accumulation of all 458,752 products, without removing any
+of them. This is separate from the prepared producer's 327,680
 per-challenge multiplication count. There is no multiplication-count reduction or
 new claim that the work is irreducible. The measured winner between kernels remains
-an empirical question; adding this entry does not switch the default verifier.
+an empirical question; selecting the complete limb default does not establish
+that it is the fastest implementation.
+
+For the complete limb kernel, each noise or correction dot product has
+`1<=m<=64` canonical operands. Write each product as `lo+B*hi`, with `B=2^32` and
+`q=B-5`, and include any canonical prior in the low sum. Then `L<(m+1)B`,
+`H<mB`, and `S=L+5H<(6m+1)B<=385B<2^41`. Its final fold is at most
+`B-1+5*384=B+1919<2q`, so one conditional subtraction gives the exact
+canonical field value. Every multiplication and accumulator fits `u64`.
+The helper's empty-dot control returns the canonical prior unchanged.
+The transcript retains the existing eight-term bound. Tests compare all dot
+lengths through 64, maximal operands and carries with independent `u128`
+remainder; complete W1 matrix shapes and every full-limb cancellation point
+retain their original outputs and observation order.
 
 The column-limb comparison applies the same `L<9B`, `H<8B`, `S<49B`,
 `F<B+240<2q` reduction independently to each of eight output columns. It removes
@@ -866,16 +885,57 @@ only that path's 16 KiB B' transpose; the complete `bi,bj,bk,i,j` transcript ord
 32,768 little-endian words, 512 tile callbacks and exact product corrections
 remain. Differential tests include two operands equal to q-1, asymmetric rows
 and columns, every prefix and the original full success/error/cancellation
-observations. The shared coverage-guided fuzz oracle includes all four paths.
+observations. The shared coverage-guided fuzz oracle includes all six public
+entries, preserving explicit transposed coverage after the default changes.
 
 The [actual false-trace prefix-reuse experiment](../../../development/specs/pon/W1_FALSE_TRACE_ACTUAL_REUSE_V1.md)
 and [retained local observations](../../../../evidence/pon-w1-work-security-20261101/README.md)
-compare these four paths separately from the original three-path late-rejection
+originally compared those four paths separately from the original three-path late-rejection
 schema below. Two exact-source-module experiments retain their distinct Cargo
 graphs and original raw streams. The new column path did not outperform the
-already available limb path on this host. It remains experimental; neither a
-default switch, cross-architecture qualification nor elimination of expensive
-rejection follows from these observations.
+already available limb path on that host. That historical observation does not
+support selecting the column kernel, cross-architecture qualification or the
+elimination of expensive rejection.
+
+### Draft default selection and preserved measurement identities
+
+The later complete-workspace observations in
+[Actions run 41297071118](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41297071118)
+compared the complete limb candidate against the then-default transposed path
+on native x64 and ARM64, for both head `8d9a7015cadd39780c4a047b5a36e0fd4d5f494b`
+and that run's merge commit `bc2ed69f8aa9c53b07a57efbd88342d3234c1a87`.
+Across all four source/architecture lanes, aggregate complete-limb CPU was lower
+for legal acceptance, late `Product` rejection and false-trace `Transcript`
+rejection. These finite comparisons support this draft implementation choice.
+They are observations on the named earlier sources, not an execution of this
+later default-switch source or a claim that the whole workflow passed.
+
+The unfavorable result against the existing transcript-only limb path is retained:
+on the x64 head legal/Product comparison, complete-limb CPU was about 3.8% higher.
+The complete limb path is therefore not uniformly fastest among retained kernels.
+Its per-material receiver rejection CPU divided by the complete measured attacker
+cohort CPU was still approximately 18–26 across those four false-trace lanes;
+the corresponding whole-lane ratios were approximately 19.2–22.0.
+The denominators include actual setup and all attempts in the recorded capture
+intervals. They are not the cheapest possible attack, network amplification,
+resource-fairness acceptance or a proof of work-cost hardness. The original
+service budgets and acceptance gates remain unchanged.
+
+`production` in source-bound comparison schemas continues to mean the ordinary
+`verify` entry for the measured source. On this later source, `production` and
+`full-limb-experimental` reach the same arithmetic kernel through different public
+entries. Retaining both labels preserves the schemas and prior captures; it
+does not provide two independent algorithms. Earlier observations keep their
+original source identities and implementation meanings.
+
+The older `pon-work-rejection-cost-v1` schema instead fixes
+`production-transposed` to `verify_transposed` and its progress variant. Its
+labels, field names, reader and ratios retain the historical transposed
+baseline; that label no longer denotes the current default. Prepared producer
+selection and the opt-in arithmetic-fact cache's explicit transposed replay are
+unchanged. This selection provides no speedup claim for those separate paths.
+The complete later source still needs native semantic, cancellation, strict
+lint and unchanged service-gate execution before its result can be reported.
 
 ## Explicit late-rejection cost diagnostic
 
@@ -884,6 +944,9 @@ emits the separate `pon-work-rejection-cost-v1` schema. It supplements the exist
 producer comparisons and preserves `pon-structured-cost-v3` unchanged. The new
 experiment records the actual `WorkError` enum returned by each timed invocation;
 an `is_err()` boolean or an inference from source order is not a rejection label.
+Its `production-transposed` path is explicitly bound to the retained transposed
+API, independently of the draft native default. The schema and reader keep
+their original labels and denominator meanings.
 
 ### Inputs, acquisition and two mutation costs
 
@@ -1293,7 +1356,7 @@ requires the entire successful relation.
 
 A native asymmetric-byte regression covers first/middle/last noncanonical elements
 in each matrix, swapped A/B slices and complete successful products. Existing
-three-kernel semantic and raw fuzz paths continue to exercise the parser, late
+all-kernel semantic and raw fuzz paths continue to exercise the parser, late
 rejection and progress boundaries. Two removed temporary buffers are an allocation
 improvement, not a claimed wall-time speedup, verifier complexity reduction, cheaper
 valid proof relation or evidence of mining hardness. Exact-source cost observations

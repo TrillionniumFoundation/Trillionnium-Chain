@@ -53,8 +53,11 @@ buffers, native verification and output I/O are outside that interval. Common
 public material construction is recorded separately and never silently charged
 once per winner or omitted from the report's scope description.
 
-Every winning proof is verified through four complete kernels: production,
-independent scalar reference, limb and experimental full-limb. Call order rotates
+Every winning proof is verified through four complete entrypoints: production,
+independent scalar reference, limb and experimental full-limb. `production` means
+the exact measured source's default: after the draft full-limb switch, production
+and explicit full-limb use the same arithmetic and are not independent kernels.
+Archived transposed-default captures retain their original meaning. Call order rotates
 by sample, strategy invocation and search. Returned challenge, task, ticket and
 full product must match the exact statement. The reader preserves unexpected
 outcomes as semantic alerts and suppresses corresponding cost ratios.

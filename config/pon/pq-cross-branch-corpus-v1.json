@@ -479,7 +479,7 @@
     "trillionnium/crates/trnm-crypto-primitives/examples/pq_message_oracle.rs": "a3d2be3d0269dc563a63d0e1c11f69a748d13a3d",
     "trillionnium/crates/trnm-crypto-primitives/src/lib.rs": "adf1a1dc4b4a6c9f33a5e2f57f76cea28d9ce28a",
     "trillionnium/crates/trnm-crypto-primitives/src/owned_ed25519.rs": "d8276ef060cc609e86ed768ed07fb360af140cf3",
-    "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": "8abba291b1cd9ec014f1daffa006f388217598d2",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": "5b9dd609f2a77e77670f4082a47d82645b4d3871",
     "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs": "38412856c827d6c9f400ee9f9dd5519824235564",
     "trillionnium/crates/trnm-crypto-primitives/src/pq_auth/tests.rs": "d4593600a406f752c6c986369311cf47bf08a1f6",
     "trillionnium/crates/trnm-crypto-primitives/src/qualified_work_task/pq_lifecycle_v4.rs": "d02452015c6842281a413da8eb85849f682585ef",

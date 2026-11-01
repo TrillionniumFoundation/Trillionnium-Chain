@@ -1,7 +1,8 @@
 //! Separate complete maintenance producer using bounded split-limb accumulation.
 //! The number of scalar products and the complete W1 relation are unchanged.
-//! This arithmetic experiment is not selected by the native producer or default verifier.
-//! Its bounded dot product is shared with the explicit verifier research comparison.
+//! The maintenance producer remains explicitly selected, not the native producer default.
+//! Its bounded dot products are shared with the default full-limb verifier and explicit
+//! arithmetic comparisons; producer selection and verifier selection are independent.
 use super::{
     expand_with_progress, maintenance_periodic::MaintenancePeriodicPreparedTask, Hash,
     PreparedGenerationError, PreparedGenerationProgress, PreparedTask, VerificationError,
@@ -33,11 +34,12 @@ pub(super) fn dot8(left: &[u32], right: &[u32], prior: u32) -> u32 {
     }
 }
 
-// The full verifier also has 64-term correction products. For m<=64,
+// The full verifier also has 64-term correction products. For 1<=m<=64,
 // B=2^32 and canonical inputs, L<(m+1)B, H<mB and S=L+5H<(6m+1)B.
 // Thus S<385B<2^41 and F=(S mod B)+5 floor(S/B)<B+1920<2q.
 // All products and sums fit u64, and one subtraction produces the exact
-// canonical remainder. This helper retains the existing dot8 implementation
+// canonical remainder. For m=0 it returns the canonical prior unchanged.
+// This helper retains the existing dot8 implementation
 // as the independently measured transcript-only comparison.
 #[inline]
 pub(super) fn dot_bounded(left: &[u32], right: &[u32], prior: u32) -> u32 {

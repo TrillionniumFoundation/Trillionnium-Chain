@@ -57,9 +57,28 @@ release requires their own real evidence, not completion of the retired PoCO roa
 Continue the actual work-security candidate `c041564b8a6bb0b98ca9c30e7871878427e5d9a4`
 from PR #675. Its hosted four-second service failures remain failed. An explicit
 full-limb verifier now covers all bounded matrix products, with the scalar and
-previous production paths retained for complete-relation, output, error-order
-and cancellation comparison. Default admission is unchanged pending native
-valid-work, late-product and false-trace cost observations.
+previous transposed paths retained for complete-relation, output, error-order
+and cancellation comparison. The first candidate's hosted run
+[`41297071118`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41297071118)
+completed all four legal-strategy and eight false-trace captures. Exact-source
+readback finds full-limb faster than the then-default transposed implementation
+in every measured legal, Product-last and Transcript cohort. The Intel legal
+capture nevertheless favors the existing limb path by about 3.8%; full-limb is
+not a universal optimum. Formatting failed before the module/lint step in that
+run, and both original-resource service jobs failed independently.
+
+The draft default now selects full-limb on that scoped performance evidence;
+the old implementation remains explicit through `verify_transposed` and its
+progress counterpart. Original experiment labels naming transposed call those
+explicit entrypoints. This implementation substitution changes no relation,
+challenge, proof bytes, fork weight, admission limits or activation flag. The
+new source requires its own full native checks and unchanged service campaign;
+the selection measurements are not evidence that the new source passed them.
+
+The complete public-input dispatcher was slower in aggregate on every measured
+lane, so it remains an experimental producer. Full-limb false-trace refusal still
+costs 18.0006–25.9285 times the recorded attacker cohort CPU across class/lane
+aggregates. Neither the current primitive economics nor public service qualifies.
 
 The [frozen legal strategy experiment](specs/pon/W1_LEGAL_STRATEGY_V1.md) charges
 actual structural recognition, preparation, every failed attempt and complete

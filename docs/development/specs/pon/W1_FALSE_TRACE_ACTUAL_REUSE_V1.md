@@ -3,8 +3,11 @@
 This is an explicit adversarial cost observation under the existing development
 plan. The original V2 cost matrix, V3 legal-producer reuse campaign, acceptance
 profile, difficulty, task eligibility and receiver budgets remain unchanged.
-The default production verifier remains unchanged. A smaller observed CPU cost
-is not an adversarial lower bound, a proof of work hardness or release approval.
+The `production` label selects the measured source's current default entrypoint;
+it is not a frozen arithmetic implementation. The draft default now selects
+full-limb, while archived runs keep their original source and transposed-default
+meaning. A smaller observed CPU cost is not an adversarial lower bound, a proof
+of work hardness or release approval.
 
 ## Missing comparison addressed
 
@@ -44,6 +47,14 @@ The fixed grid contains 72 real prefix preparations and 288 independent
 searches. If every fixed search finds a ticket, it contains 288 complete
 candidates and 1,152 full native verification calls. There is no cache warmup,
 verified-work cache, sampled transcript or shortened relation check.
+
+The separate `--false-trace-full-limb-v1` selector adds the explicit full-limb
+entrypoint under its own five-path schema. After the draft default switches,
+`production` and `full-limb-experimental` exercise the same arithmetic through
+separate public entrypoints; these are not two independent algorithms. Historical
+records are never relabeled. The original `pon_rejection_cost` experiment's
+`production-transposed` label instead calls the retained explicit transposed
+entrypoint, preserving that older experiment's implementation identity.
 
 ## Cost boundaries
 

@@ -1,5 +1,7 @@
 //! Same-target late rejection measurements with explicit acquisition and reuse costs.
 //! This diagnostic does not qualify worst-case cost, hardness or a default kernel change.
+//! The v1 label production-transposed retains the historical transposed baseline;
+//! it is explicitly selected even when ordinary verification uses another kernel.
 use sha2::{Digest, Sha256};
 use std::{hint::black_box, time::Instant};
 use trnm_crypto_primitives::pon_work::*;
@@ -74,7 +76,7 @@ fn verifier(
     proof: &[u8],
 ) -> Result<VerifiedWork, WorkError> {
     match kernel {
-        0 => verify(challenge, task, target, proof),
+        0 => verify_transposed(challenge, task, target, proof),
         1 => verify_reference(challenge, task, target, proof),
         2 => verify_limb(challenge, task, target, proof),
         _ => unreachable!("fixed verifier kernel"),
@@ -374,7 +376,7 @@ fn probe(
         Ok::<(), std::convert::Infallible>(())
     };
     let result = match kernel {
-        0 => verify_with_progress(challenge, task, target, proof, &mut observe),
+        0 => verify_transposed_with_progress(challenge, task, target, proof, &mut observe),
         1 => verify_reference_with_progress(challenge, task, target, proof, &mut observe),
         2 => verify_limb_with_progress(challenge, task, target, proof, &mut observe),
         _ => unreachable!("fixed probe kernel"),

@@ -382,6 +382,8 @@ pub fn prove(challenge: Hash, a: &[u32], b: &[u32]) -> Result<Vec<u8>, WorkError
     out.extend_from_slice(&trace);
     Ok(out)
 }
+/// Draft native default using exact bounded limb sums for the complete relation.
+/// This implementation selection does not qualify work hardness or public service.
 pub fn verify(
     challenge: Hash,
     expected_task: Hash,
@@ -396,10 +398,45 @@ pub fn verify(
         &mut no_cancellation,
     ))
 }
-/// Full PNW1 replay with caller-local cooperative cancellation.
+/// Full PNW1 replay with bounded limb arithmetic and caller-local cancellation.
 /// A callback error drops all intermediates; only complete success creates VerifiedWork.
 /// Checkpoints bound arithmetic between observations, not physical CPU time or preemption.
 pub fn verify_with_progress<E>(
+    challenge: Hash,
+    expected_task: Hash,
+    target: Hash,
+    bytes: &[u8],
+    progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
+) -> Result<VerifiedWork, VerificationError<E>> {
+    verify_with_kernel(
+        challenge,
+        expected_task,
+        target,
+        bytes,
+        progress,
+        VerificationKernel::FullLimb,
+    )
+}
+
+/// Retained transposed baseline using exact reduction of u128 dot-product sums.
+/// Explicit selection keeps historical measurements independent of the default.
+pub fn verify_transposed(
+    challenge: Hash,
+    expected_task: Hash,
+    target: Hash,
+    bytes: &[u8],
+) -> Result<VerifiedWork, WorkError> {
+    relation_only(verify_transposed_with_progress(
+        challenge,
+        expected_task,
+        target,
+        bytes,
+        &mut no_cancellation,
+    ))
+}
+
+/// Retained transposed replay with the same ordered cancellation checkpoints.
+pub fn verify_transposed_with_progress<E>(
     challenge: Hash,
     expected_task: Hash,
     target: Hash,
@@ -416,7 +453,7 @@ pub fn verify_with_progress<E>(
     )
 }
 
-/// Explicit arithmetic research comparison; the default verifier is unchanged.
+/// Explicit transcript-only arithmetic research comparison.
 /// Replays the identical relation and observation sequence, replacing only each
 /// eight-product transcript accumulation with exact bounded u64 limb sums.
 pub fn verify_limb(
@@ -452,8 +489,8 @@ pub fn verify_limb_with_progress<E>(
 }
 
 /// Explicit full-replay candidate using bounded u64 limb sums for every
-/// matrix multiplication, including noise and product corrections. It keeps
-/// the default, transcript-only limb and scalar reference paths unchanged.
+/// matrix multiplication, including noise and product corrections. The default
+/// currently selects this same kernel; this entry keeps its explicit identity.
 pub fn verify_full_limb(
     challenge: Hash,
     expected_task: Hash,
@@ -487,7 +524,7 @@ pub fn verify_full_limb_with_progress<E>(
 }
 
 /// Explicit complete-replay comparison with eight independent column accumulators.
-/// The original default and scalar reference remain available unchanged. This
+/// The retained transposed and scalar reference paths remain unchanged. This
 /// changes memory access and exact integer accumulation, never the work relation.
 pub fn verify_column_limb(
     challenge: Hash,
@@ -739,8 +776,9 @@ fn verify_with_kernel<E>(
 }
 
 // q = 2^32 - 5. A transcript sum is below 2^70; two folds followed by
-// one subtraction are exact. The prepared producer and production verifier use
-// this arithmetic; the separately retained scalar reference uses u128 remainder.
+// one subtraction are exact. The prepared producer and retained transposed dots
+// use this arithmetic, as do field additions in the limb paths. The separately
+// retained scalar reference uses u128 remainder.
 fn producer_reduce(x: u128) -> u32 {
     debug_assert!(x < (1_u128 << 70));
     let first = (x as u32 as u64) + 5 * ((x >> 32) as u64);
@@ -1543,6 +1581,10 @@ mod tests {
         cases.push((challenge, [0; 32], [0; 32], wrong_magic));
         for (c, t, target, bytes) in cases {
             assert_eq!(
+                checked_value(verify_transposed(c, t, target, &bytes)),
+                checked_value(verify_reference(c, t, target, &bytes))
+            );
+            assert_eq!(
                 checked_value(verify_column_limb(c, t, target, &bytes)),
                 checked_value(verify_reference(c, t, target, &bytes))
             );
@@ -1582,6 +1624,15 @@ mod tests {
             .unwrap();
         assert_eq!(fast_points, scalar_points);
         assert_eq!(fast.product(), scalar.product());
+        let mut transposed_points = Vec::new();
+        let transposed =
+            verify_transposed_with_progress(challenge, task, [255; 32], &proof, &mut |point| {
+                transposed_points.push(point);
+                Ok::<(), usize>(())
+            })
+            .unwrap();
+        assert_eq!(transposed_points, scalar_points);
+        assert_eq!(transposed.product(), scalar.product());
         let mut limb_points = Vec::new();
         let limb = verify_limb_with_progress(challenge, task, [255; 32], &proof, &mut |point| {
             limb_points.push(point);
@@ -1647,6 +1698,20 @@ mod tests {
             assert_eq!(observed, cut + 1);
             assert_eq!(fast_error, VerificationError::Cancelled(cut));
             assert_eq!(fast_error, scalar_error);
+            observed = 0;
+            let transposed_error =
+                verify_transposed_with_progress(challenge, task, [255; 32], &proof, &mut |_| {
+                    let current = observed;
+                    observed += 1;
+                    if current == cut {
+                        Err(cut)
+                    } else {
+                        Ok(())
+                    }
+                })
+                .unwrap_err();
+            assert_eq!(observed, cut + 1);
+            assert_eq!(transposed_error, scalar_error);
             observed = 0;
             let limb_error =
                 verify_limb_with_progress(challenge, task, [255; 32], &proof, &mut |_| {
@@ -1871,6 +1936,14 @@ mod tests {
                 let proof = prove(challenge, &a, &b).unwrap();
                 let expected = checked_value(verify_reference(challenge, task, [255; 32], &proof));
                 assert_eq!(
+                    checked_value(verify(challenge, task, [255; 32], &proof)),
+                    expected
+                );
+                assert_eq!(
+                    checked_value(verify_transposed(challenge, task, [255; 32], &proof)),
+                    expected
+                );
+                assert_eq!(
                     checked_value(verify_column_limb(challenge, task, [255; 32], &proof)),
                     expected
                 );
@@ -1880,6 +1953,14 @@ mod tests {
                 );
                 let mut other = challenge;
                 other[31] ^= 1;
+                assert_eq!(
+                    verify(other, task, [255; 32], &proof).unwrap_err(),
+                    WorkError::Transcript
+                );
+                assert_eq!(
+                    verify_transposed(other, task, [255; 32], &proof).unwrap_err(),
+                    WorkError::Transcript
+                );
                 assert_eq!(
                     verify_column_limb(other, task, [255; 32], &proof).unwrap_err(),
                     WorkError::Transcript
