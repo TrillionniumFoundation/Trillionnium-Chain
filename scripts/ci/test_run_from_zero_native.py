@@ -172,6 +172,7 @@ def simulated_confirmation_report():
                 workers.append(dict(worker=worker, calling_thread_cpu_ns=2,
                                     attempt_cap_reached=False, calls=calls))
         pages, after = [], context['genesis']
+        replay_stages = []
         for number, packet in enumerate(packets):
             value = dict(schema='pon-native-history-v1', network=context['network'],
                          parameters=context['parameters'], genesis=context['genesis'],
@@ -179,6 +180,13 @@ def simulated_confirmation_report():
                          complete=number == 6)
             pages.append(call(100+number*10, 105+number*10, response={'value': value},
                               request=dict(op='history', tip=identifiers[-1], after=after)))
+            replay_stages.append(dict(history_call_index=number,
+                history_request_ended_ns=105+number*10,
+                replay_started_ns=106+number*10, replay_ended_ns=107+number*10,
+                replay_wall_ns=1, replay_thread_cpu_ns=1,
+                prior_after=after, next_after=identifiers[number],
+                replay_accepted=True,
+                clock_scope='independent verifier caller thread; wall spans all waits, CPU only this thread'))
             after = identifiers[number]
         records = [dict(complete=True, observation_failed=False) for _ in range(15+17*index)]
         phases.append(dict(mode='attack-free-baseline' if index == 0 else 'from-zero-pressure',
@@ -190,7 +198,13 @@ def simulated_confirmation_report():
             resource_fairness_qualified=False, production_activation=False,
             requested_window_ns=4_000_000_000, business_started_ns=10, confirmation_ended_ns=1000,
             client_confirmation_latency_ns=990, client_confirmed_transactions=1,
-            independent_replay_and_confirmation_cpu_ns=1, independent_replay_and_confirmation_wall_ns=1,
+            independent_replay_and_confirmation_cpu_ns=20, independent_replay_and_confirmation_wall_ns=1000,
+            independent_history_page_replay=replay_stages,
+            independent_final_confirmation_stage=dict(
+                confirmation_started_ns=167, confirmation_ended_ns=168,
+                confirmation_wall_ns=1, confirmation_thread_cpu_ns=1,
+                observation_returned=True,
+                clock_scope='independent verifier caller thread; no consensus/host time claim'),
             verification_errors=[], independent_client_confirmation=dict(
                 confirmed=True, reorged=False, finalized=False, execution_authority=False,
                 network=context['network'], parameters=context['parameters'], genesis=context['genesis'],
@@ -225,6 +239,42 @@ def simulated_confirmation_report():
 
 
 class BinarySelectionTests(unittest.TestCase):
+    def test_format_copy_retains_out_of_line_module_and_original_bytes(self):
+        # Negative control: the old flat copy cannot resolve #[path].
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / 'source/tests/public_v3_from_zero.rs'
+            support = root / 'source/examples/support/w1_from_zero.rs'
+            source.parent.mkdir(parents=True)
+            support.parent.mkdir(parents=True)
+            source.write_text('#[path = "../examples/support/w1_from_zero.rs"]\n'
+                              'mod w1_from_zero;\n')
+            support.write_text('pub fn trial() {}\n')
+            out = root / 'observations'
+            out.mkdir()
+            flattened = out / 'formatted.rs'
+            flattened.write_bytes(source.read_bytes())
+            self.assertFalse((flattened.parent / '../examples/support/w1_from_zero.rs').is_file())
+            original_source, original_support = source.read_bytes(), support.read_bytes()
+
+            staged = driver.stage_format_copy(source, support, out)
+            self.assertEqual(staged, out / 'format-copy-source/tests/public_v3_from_zero.rs')
+            self.assertEqual(staged.read_bytes(), original_source)
+            self.assertEqual(
+                (staged.parent / '../examples/support/w1_from_zero.rs').resolve().read_bytes(),
+                original_support)
+            self.assertEqual(source.read_bytes(), original_source)
+            self.assertEqual(support.read_bytes(), original_support)
+
+    def test_missing_out_of_line_module_cannot_be_silently_substituted(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / 'test.rs'
+            source.write_text('#[path = "../examples/support/w1_from_zero.rs"]\n'
+                              'mod w1_from_zero;\n')
+            with self.assertRaises(FileNotFoundError):
+                driver.stage_format_copy(source, root / 'missing.rs', root / 'out')
+
     def test_observer_cpu_scope_keeps_historical_and_paid_envelope_distinct(self):
         legacy = dict(schema='public-v3-local-request-resource-observation-v2',
                       cpu_includes_reactor_authentication_or_response_signing=False)
@@ -318,6 +368,9 @@ class ExecutionBoundaryTests(unittest.TestCase):
             test_source = root / driver.SOURCE
             test_source.parent.mkdir(parents=True)
             test_source.write_text('// simulated source; not Rust execution\n')
+            support = root / driver.FORMAT_SUPPORT
+            support.parent.mkdir(parents=True)
+            support.write_text('// simulated Rust out-of-line module\n')
             binary = root / 'fake-binary'; binary.write_bytes(b'not a real executable')
             identity = {'commit': 'a'*40, 'tree': 'b'*40, 'test_sha256': driver.digest(test_source.read_bytes())}
             after = copy.deepcopy(identity)
@@ -464,6 +517,9 @@ class ExecutionBoundaryTests(unittest.TestCase):
         self.assertTrue(result['all_named_tests_passed'])
         self.assertFalse(result['passed'])
         self.assertIn('CONFIRMATION_TARGET', result['failures'])
+        self.assertIsNotNone(result['confirmation_observation'])
+        self.assertFalse(result['confirmation_observation']['original_gate_validated'])
+        self.assertFalse(result['confirmation_observation']['network_capacity_qualified'])
 
     def test_confirmation_report_mutation_after_validation_cannot_pass(self):
         result, _ = self.exercise(confirmation_drift=True)
@@ -736,6 +792,172 @@ class ExecutionBoundaryTests(unittest.TestCase):
             elapsed_wall_ns=0), 'SUSTAINED_CALL_TIME')
 
 
+class ConfirmationObservationTests(unittest.TestCase):
+    def summarize(self, edit=lambda doc: None):
+        document = simulated_confirmation_report()
+        edit(document)
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'report.json'
+            path.write_text(json.dumps(document))
+            return driver.summarize_confirmation_report(path)
+
+    @staticmethod
+    def fail_pressure(doc):
+        doc['finite_target_met'] = False
+        phase = doc['phases'][1]
+        phase.update(client_confirmed_transactions=0, confirmation_ended_ns=None,
+                     client_confirmation_latency_ns=None, independent_client_confirmation=None,
+                     client_confirmed_before_original_window_end=False,
+                     finite_business_target_met=False, full_native_state_equal=False,
+                     independent_final_confirmation_stage=None,
+                     verification_errors=['PUBLIC_REQUEST_DEADLINE'])
+        phase['independent_history_page_replay'] = [dict(
+            history_call_index=0, replay_started_ns=105, replay_ended_ns=4_000_000_001,
+            replay_wall_ns=4_000_000_001-105, replay_thread_cpu_ns=None, replay_accepted=False)]
+
+    def test_ack_count_and_confirmation_denominator_are_separate(self):
+        result = self.summarize()
+        self.assertTrue(result['simulated_control'])
+        self.assertTrue(result['original_gate_validated'])
+        self.assertFalse(result['tail_latency_qualified'])
+        self.assertFalse(result['network_capacity_qualified'])
+        for phase in result['phases']:
+            self.assertEqual(phase['signed_submit_ack']['successful_in_original_window'], 7)
+            self.assertEqual(phase['signed_submit_ack']['acknowledgements_per_window_second'], 1.75)
+            business = phase['business']
+            self.assertEqual(business['required_signed_transactions'], 1)
+            self.assertEqual(business['reported_independently_confirmed_in_window'], 1)
+            self.assertEqual(business['independent_confirmed_transactions_per_window_second'], .25)
+            self.assertEqual(business['observed_success_latency_ns'], 990)
+            self.assertEqual(business['successful_latency']['samples'], 1)
+            for quantile in ('p50_ns', 'p95_ns', 'p99_ns'):
+                self.assertIsNone(business['successful_latency'][quantile])
+
+    def test_failed_business_retains_denominator_and_censor_bound_without_fake_latency(self):
+        result = self.summarize(self.fail_pressure)
+        self.assertFalse(result['original_gate_validated'])
+        self.assertEqual(result['original_gate_validation_error'], 'CONFIRMATION_TARGET')
+        phase = result['phases'][1]
+        business = phase['business']
+        self.assertEqual(phase['signed_submit_ack']['successful_in_original_window'], 7)
+        self.assertEqual(business['reported_independently_confirmed_in_window'], 0)
+        self.assertEqual(business['unconfirmed'], 1)
+        self.assertEqual(business['unknown'], 0)
+        self.assertEqual(business['independent_confirmed_transactions_per_window_second'], 0)
+        self.assertEqual(business['unconfirmed_latency_lower_bound_ns'], 4_000_000_000-10)
+        self.assertTrue(business['lower_bound_reaches_original_window_end'])
+        self.assertIsNone(business['observed_success_latency_ns'])
+        self.assertEqual(business['successful_latency']['samples'], 0)
+        replay = phase['independent_page_replay']
+        self.assertEqual(replay['failed_or_late'], 1)
+        self.assertEqual(replay['accepted_in_original_window'], 0)
+        self.assertEqual(replay['calling_thread_cpu']['missing_samples'], 1)
+
+    def test_missing_confirmation_is_unknown_instead_of_zero(self):
+        def edit(doc):
+            self.fail_pressure(doc)
+            del doc['phases'][1]['client_confirmed_transactions']
+        business = self.summarize(edit)['phases'][1]['business']
+        self.assertIsNone(business['reported_independently_confirmed_in_window'])
+        self.assertIsNone(business['unconfirmed'])
+        self.assertIsNone(business['independent_confirmed_transactions_per_window_second'])
+        self.assertIsNone(business['unconfirmed_latency_lower_bound_ns'])
+        self.assertEqual(business['unknown'], 1)
+
+    def test_failed_and_late_calls_cannot_pollute_success_latency(self):
+        def edit(doc):
+            phase = doc['phases'][1]
+            failed = dict(phase['honest_submissions'][0], status='error', started_ns=1,
+                          ended_ns=3_000_000_001, elapsed_wall_ns=3_000_000_000,
+                          returned_after_deadline=True, client_thread_cpu_ns=None)
+            phase['honest_submissions'].append(failed)
+        rows = self.summarize(edit)['phases'][1]['signed_submit_ack']
+        self.assertEqual(rows['attempts'], 8)
+        self.assertEqual(rows['successful_in_original_window'], 7)
+        self.assertEqual(rows['failed_or_late'], 1)
+        self.assertEqual(rows['successful_latency']['max_ns'], 5)
+        self.assertIsNone(rows['successful_latency']['p95_ns'])
+        self.assertIsNone(rows['successful_latency']['p99_ns'])
+        self.assertIsNone(rows['failed_or_late_terminal_duration']['p99_ns'])
+        self.assertEqual(rows['calling_thread_cpu']['missing_samples'], 1)
+
+    def test_configured_deadline_alone_does_not_invent_observation_coverage(self):
+        def edit(doc):
+            self.fail_pressure(doc)
+            doc['phases'][1]['independent_history_page_replay'] = []
+        business = self.summarize(edit)['phases'][1]['business']
+        self.assertFalse(business['lower_bound_reaches_original_window_end'])
+        self.assertEqual(business['unconfirmed_latency_lower_bound_ns'], 165-10)
+
+    def test_original_caller_elapsed_samples_can_follow_the_end_stamp(self):
+        result = self.summarize(lambda doc: doc['phases'][0]['honest_submissions'][0].update(
+            elapsed_wall_ns=8))
+        distribution = result['phases'][0]['signed_submit_ack']['successful_latency']
+        self.assertEqual(distribution['max_ns'], 8)
+        self.assertIsNone(distribution['p95_ns'])
+        self.assertIsNone(distribution['p99_ns'])
+
+    def test_tail_quantiles_require_their_own_observed_sample_resolution(self):
+        for count in (0, 1, 2, 19, 20, 99, 100):
+            def edit(doc):
+                phase = doc['phases'][0]
+                row = phase['honest_heads'][0]
+                phase['honest_heads'] = [dict(row, started_ns=10, ended_ns=10+value,
+                                            elapsed_wall_ns=value, client_thread_cpu_ns=value)
+                                        for value in range(1, count+1)]
+            with self.subTest(samples=count):
+                result = self.summarize(edit)
+                rows = result['phases'][0]['head_response']
+                for field in ('successful_latency', 'calling_thread_cpu'):
+                    distribution = rows[field]
+                    self.assertEqual(distribution['samples'], count)
+                    self.assertEqual(distribution['min_ns'], 1 if count else None)
+                    self.assertEqual(distribution['max_ns'], count if count else None)
+                    self.assertEqual(distribution['minimum_samples'],
+                                     {'p50': 2, 'p95': 20, 'p99': 100})
+                    for percent, minimum in ((50, 2), (95, 20), (99, 100)):
+                        expected = (count * percent + 99) // 100 if count >= minimum else None
+                        self.assertEqual(distribution[f'p{percent}_ns'], expected)
+                # Descriptive ranks never change the business-offer denominator
+                # or confer a native tail-latency/network-capacity qualification.
+                self.assertEqual(result['phases'][0]['business']['required_signed_transactions'], 1)
+                self.assertFalse(result['tail_latency_qualified'])
+                self.assertFalse(result['network_capacity_qualified'])
+
+    def test_failed_or_missing_samples_cannot_unlock_successful_latency_tails(self):
+        def edit(doc):
+            phase = doc['phases'][0]
+            row = phase['honest_heads'][0]
+            phase['honest_heads'] = [dict(row, started_ns=10, ended_ns=10+value,
+                                        elapsed_wall_ns=value,
+                                        client_thread_cpu_ns=None if value == 100 else value,
+                                        status='ok' if value <= 19 else 'error')
+                                    for value in range(1, 101)]
+        rows = self.summarize(edit)['phases'][0]['head_response']
+        self.assertEqual(rows['attempts'], 100)
+        self.assertEqual(rows['successful_in_original_window'], 19)
+        self.assertEqual(rows['failed_or_late'], 81)
+        self.assertIsNone(rows['successful_latency']['p95_ns'])
+        self.assertIsNone(rows['successful_latency']['p99_ns'])
+        self.assertEqual(rows['failed_or_late_terminal_duration']['p95_ns'], 96)
+        self.assertIsNone(rows['failed_or_late_terminal_duration']['p99_ns'])
+        self.assertEqual(rows['calling_thread_cpu']['missing_samples'], 1)
+        self.assertEqual(rows['calling_thread_cpu']['samples'], 99)
+        self.assertIsNone(rows['calling_thread_cpu']['p99_ns'])
+
+    def test_malformed_metrics_and_changed_original_window_are_not_summarized(self):
+        edits = [
+            lambda doc: doc['phases'][1].update(client_confirmed_transactions=True),
+            lambda doc: doc['phases'][1].update(requested_window_ns=8_000_000_000),
+            lambda doc: doc['phases'][1]['honest_submissions'][0].update(client_thread_cpu_ns=True),
+            lambda doc: doc['phases'][1]['honest_submissions'][0].update(elapsed_wall_ns=1),
+            lambda doc: doc.update(schema='pon-native-pq-history-v6'),
+        ]
+        for edit in edits:
+            with self.subTest(edit=edit), self.assertRaises(ValueError):
+                self.summarize(edit)
+
+
 class ConfirmationReportTests(unittest.TestCase):
     def validate(self, edit=lambda doc: None):
         document = simulated_confirmation_report()
@@ -765,6 +987,33 @@ class ConfirmationReportTests(unittest.TestCase):
                              ('client_confirmed_transactions', 0)]:
             with self.subTest(field=field), self.assertRaises(ValueError):
                 self.validate(lambda doc: doc['phases'][1].update({field: value}))
+
+    def test_per_page_native_replay_evidence_cannot_be_forged_or_erased(self):
+        mutations = [
+            lambda d: d['phases'][1].pop('independent_history_page_replay'),
+            lambda d: d['phases'][1]['independent_history_page_replay'].pop(),
+            lambda d: d['phases'][1]['independent_history_page_replay'][0].update(history_call_index=1),
+            lambda d: d['phases'][1]['independent_history_page_replay'][0].update(prior_after='00'*32),
+            lambda d: d['phases'][1]['independent_history_page_replay'][0].update(next_after='00'*32),
+            lambda d: d['phases'][1]['independent_history_page_replay'][0].update(replay_accepted=False),
+            lambda d: d['phases'][1]['independent_history_page_replay'][0].update(replay_started_ns=99),
+            lambda d: d['phases'][1]['independent_history_page_replay'][0].update(replay_ended_ns=99),
+            lambda d: d['phases'][1]['independent_history_page_replay'][0].update(replay_wall_ns=9),
+            lambda d: d['phases'][1]['independent_history_page_replay'][0].update(clock_scope='whole host CPU'),
+            lambda d: d['phases'][1].update(independent_final_confirmation_stage=None),
+            lambda d: d['phases'][1]['independent_final_confirmation_stage'].update(confirmation_started_ns=99),
+            lambda d: d['phases'][1]['independent_final_confirmation_stage'].update(observation_returned=False),
+            lambda d: d['phases'][1]['independent_final_confirmation_stage'].update(
+                confirmation_thread_cpu_ns=1000),
+        ]
+        for edit in mutations:
+            with self.subTest(edit=edit), self.assertRaisesRegex(ValueError, 'CONFIRMATION_REPLAY'):
+                self.validate(edit)
+        # A boolean is rejected by the shared numeric grammar before the
+        # stage-specific consistency check; retain that exact early refusal.
+        with self.assertRaisesRegex(ValueError, '^CONFIRMATION_NUMBER$'):
+            self.validate(lambda d: d['phases'][1]['independent_history_page_replay'][0].update(
+                replay_thread_cpu_ns=True))
 
     def test_independent_confirmation_cannot_change_identity_or_authority(self):
         for field, value in [('transaction', '00'*32), ('included_block', '00'*32),

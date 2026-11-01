@@ -64,7 +64,7 @@ jobs:
             args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
           fi
           python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$out/source.json"
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = 969b53e94a22fec545477a5481189c866dc3a7f3
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = 841f6ed48dbdab9461b9517fed47c958c3ee107f
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/history_page.rs)" = c01ca1e0756ec8e041e628bcbdad933e338da772
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs)" = c0c492d166caf62b29df6090ab5ff697d685cd6e
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs)" = d8a84be950eda77104d91fc389166c2581e5cd88
@@ -73,9 +73,9 @@ jobs:
           test "$(git hash-object formal/pon-nakamoto-v1/work_query_bound.py)" = 2d568879899da290c7bec8add6eb2746554897d6
           test "$(git hash-object formal/pon-nakamoto-v1/test_work_query_bound.py)" = 2161dd7d25b605b9e67f05bee5aa20038cf4469d
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/native_account_query_tests.rs)" = c8567475a36cf449d9fd2b33363a545fbd4704ab
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs)" = c4bb9dbf6854f06b61089aaa01ff918804fbdad0
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic.rs)" = c57097ef243a9476498221e44549dfd9f66e09cc
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs)" = 64f2193a7a9da5c7876c97fd11c2e2d09b03cc9d
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs)" = b75d92560ba797854bc8e59be9a1f35efe1b8cc6
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic.rs)" = 2ce748ff0c884060b104cff6d62e924f75332925
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs)" = f460c9fa2e57506ce5f82fd579f7d013bbc8e215
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs)" = 5bbb4469977972020ae5c0f324239ee56dfaf888
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs)" = ac0a694a02610bf494abdd5ee708a6f5c03adf49
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/tests.rs)" = 13ecdb3e45ef78e5abcc34f4bf30af0312dd2f11
@@ -160,20 +160,19 @@ jobs:
             cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$suite" -- "${options[@]}" --show-output --test-threads=1 2>&1 | tee "$OUT/$name.log"
             grep -E '^test result: ok\. [1-9][0-9]* passed; 0 failed;' "$OUT/$name.log"
             if test "$suite" = store::native_authenticated::; then
-              grep -E '^test result: ok\. 73 passed; 0 failed; 0 ignored;' "$OUT/$name.log"
-              # Read the same invocation once: retain all 58 existing controls
-              # and the 15 transaction-local post-write controls in this source.
-              python3 - "$OUT/$name.log" <<'PY'
+              grep -E '^test result: ok\. 75 passed; 0 failed; 0 ignored;' "$OUT/$name.log"
+              # Inspect this invocation once; retain all existing executions.
+              python3 - "$OUT/$name.log" <<'PYLOG'
           import re, sys
           from pathlib import Path
           lines = Path(sys.argv[1]).read_text().splitlines()
           names = [m[1] for line in lines if (m := re.fullmatch(r'test (store::native_authenticated::[A-Za-z0-9_:]+) \.\.\. ok', line))]
           summaries = [line for line in lines if line.startswith('test result:')]
           post_write = [name for name in names if name.startswith('store::native_authenticated::post_write_readback::tests::')]
-          if (len(names) != 73 or len(set(names)) != 73 or len(post_write) != 15
-                  or len(summaries) != 1 or not summaries[0].startswith('test result: ok. 73 passed; 0 failed; 0 ignored;')):
-              raise SystemExit('current authenticated module requires 58 retained and 15 post-write executions in one log')
-          PY
+          if (len(names) != 75 or len(set(names)) != 75 or len(post_write) != 15
+                  or len(summaries) != 1 or not summaries[0].startswith('test result: ok. 75 passed; 0 failed; 0 ignored;')):
+              raise SystemExit('current authenticated module requires 60 retained and 15 post-write executions in one log')
+          PYLOG
             fi
           done
           cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test continuity_authenticated --test authenticated_storage_cli -- --show-output --test-threads=1 2>&1 | tee "$OUT/recovery.log"

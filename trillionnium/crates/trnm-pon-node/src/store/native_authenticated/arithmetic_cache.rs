@@ -257,6 +257,20 @@ impl Write for BoundedBytes {
     }
 }
 fn bounded_bytes(state: &State) -> Option<Vec<u8>> {
+    // JSON cannot shorten a key or a string's UTF-8 bytes. This inexpensive
+    // lower bound rejects only inputs that cannot fit the existing cache cap,
+    // before allocating/encoding a doomed 4 MiB prefix on every large-State
+    // readback. Escaping, nested values and all other overhead still go through
+    // the original bounded encoder below. This is not a State validity check.
+    let mut lower_bound = 0usize;
+    for (key, value) in state {
+        lower_bound = lower_bound
+            .checked_add(key.len())?
+            .checked_add(value.as_str().map_or(0, str::len))?;
+        if lower_bound > MAX_COMPLETE_BYTES {
+            return None;
+        }
+    }
     let mut bytes = BoundedBytes(Vec::new());
     serde_json::to_writer(&mut bytes, state).ok()?;
     Some(bytes.0)
@@ -266,6 +280,29 @@ fn bounded_bytes(state: &State) -> Option<Vec<u8>> {
 mod tests {
     use super::*;
     use serde_json::json;
+
+    #[test]
+    fn bounded_complete_input_keeps_exact_limit_for_escaped_and_nested_values() {
+        for value in [
+            json!("x".repeat(MAX_COMPLETE_BYTES - 7)),
+            json!("x".repeat(MAX_COMPLETE_BYTES - 6)),
+            json!("\n".repeat(MAX_COMPLETE_BYTES / 2)),
+            json!("é".repeat(MAX_COMPLETE_BYTES / 2)),
+            json!(["x".repeat(MAX_COMPLETE_BYTES - 9)]),
+            json!(["x".repeat(MAX_COMPLETE_BYTES - 8)]),
+            json!(0),
+            json!(-0.0),
+        ] {
+            let state = State::from([(String::new(), value)]);
+            let original = serde_json::to_vec(&state).unwrap();
+            let observed = bounded_bytes(&state);
+            if original.len() <= MAX_COMPLETE_BYTES {
+                assert_eq!(observed.as_deref(), Some(original.as_slice()));
+            } else {
+                assert!(observed.is_none());
+            }
+        }
+    }
 
     #[test]
     fn arithmetic_cache_binds_exact_complete_bytes_context_and_has_fixed_retention() {

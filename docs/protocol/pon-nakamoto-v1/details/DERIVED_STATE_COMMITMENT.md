@@ -224,6 +224,11 @@ genesis/snapshot, record, delta before/after, continuity, progress/cancellation,
 eligibility and final writer-held readback remains in its original order. No old
 State, record, authorization or successful verdict can satisfy those checks.
 Legacy snapshot cadence and all signed domains and stored schemas are unchanged.
+The ordinary Legacy and AuthenticatedV1 History execution paths may select this
+same bounded material for an inactive parent after `state_at` has reconstructed
+it. Both still read the current SQL parent root, bind the complete supplied State
+with `check_and_bind`, and execute both original parent-binding cancellation
+checkpoints. This does not enable that selection for PQ or growth backends.
 The last calculation's `changed_keys` is relative to the selected arithmetic
 material; zero does not establish that SQL or complete-State work was skipped.
 Original same-condition workload measurements must establish any whole-operation

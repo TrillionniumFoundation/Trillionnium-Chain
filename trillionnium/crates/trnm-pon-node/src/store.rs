@@ -2529,6 +2529,9 @@ impl Node {
             snapshot,
         });
     }
+    // Keep the native execution entrypoint source-visible for independent
+    // repository/evidence contract checks, but pass the already-typed request
+    // rather than re-expanding its fields into an eight-argument wrapper.
     fn execute_derived(
         &self,
         actual: &State,
@@ -2619,8 +2622,15 @@ impl Node {
         // The fresh SQL root above is only an index: check_and_bind still
         // canonically compares every actual State key/value and verifies its
         // computed root. An incoming header root or stored validity is no answer.
-        let historical_prior = (self.state_backend == StateBackend::AuthenticatedV1
-            && active_prior.is_none())
+        // The ordinary Legacy History receiver uses the same complete replay
+        // and opaque checked arithmetic. It must not rebuild an already read
+        // inactive parent's tree solely because its storage backend differs.
+        // This selects calculation material only; all actual State bytes and
+        // the freshly read root still enter check_and_bind below.
+        let historical_prior = (matches!(
+            self.state_backend,
+            StateBackend::Legacy | StateBackend::AuthenticatedV1
+        ) && active_prior.is_none())
         .then(|| {
             self.historical_commitment_cache
                 .try_borrow()
