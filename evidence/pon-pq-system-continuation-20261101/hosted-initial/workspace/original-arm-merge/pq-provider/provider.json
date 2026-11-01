@@ -1,0 +1,57 @@
+{
+  "backend_exported": true,
+  "build_directory": "/home/runner/work/_temp/trnm-pq-provider-3.5.9.ZMEJMEIo",
+  "cli_executable": "/home/runner/work/_temp/trnm-pq-provider-3.5.9.ZMEJMEIo/install/bin/openssl",
+  "cli_sha256": "8cb704fefe5b68ded8984be4bc18d01fce7c944235664b8772c07e67e48040d8",
+  "cli_version_output": "OpenSSL 3.5.9 29 Sep 2026 (Library: OpenSSL 3.5.9 29 Sep 2026)",
+  "elapsed_wall_seconds": 98,
+  "exit_code": 0,
+  "github_actions_reported": true,
+  "independent_cryptographic_implementation_claim": false,
+  "install_prefix": "/home/runner/work/_temp/trnm-pq-provider-3.5.9.ZMEJMEIo/install",
+  "last_stage": "complete",
+  "ml_dsa_65_sign_verify_and_wrong_message_rejection": true,
+  "native_backend_inputs": [
+    {
+      "bytes": 8413232,
+      "path": "/home/runner/work/_temp/trnm-pq-provider-3.5.9.ZMEJMEIo/install/bin/openssl",
+      "sha256": "8cb704fefe5b68ded8984be4bc18d01fce7c944235664b8772c07e67e48040d8"
+    },
+    {
+      "bytes": 3449,
+      "path": "/home/runner/work/_temp/trnm-pq-provider-3.5.9.ZMEJMEIo/install/include/openssl/opensslv.h",
+      "sha256": "9647fc99758cf83e3bcf11ae310894fd4911ad62bff22d8213a614df89cfedda"
+    },
+    {
+      "bytes": 4730,
+      "path": "/home/runner/work/_temp/trnm-pq-provider-3.5.9.ZMEJMEIo/install/include/openssl/configuration.h",
+      "sha256": "16acc6eaf90d57223e4f7bd001ebb2754314533e14f5323284d2fb2d0a73ed25"
+    },
+    {
+      "bytes": 12367100,
+      "path": "/home/runner/work/_temp/trnm-pq-provider-3.5.9.ZMEJMEIo/install/lib/libcrypto.a",
+      "sha256": "d52611179023bb83271473afa50c185b3e1ab070a56020593f5b2be15f3099de"
+    },
+    {
+      "bytes": 2193346,
+      "path": "/home/runner/work/_temp/trnm-pq-provider-3.5.9.ZMEJMEIo/install/lib/libssl.a",
+      "sha256": "19b274b42ef1f5df768cf89753f16bdb8513e319359708849477e775b9b9b6ac"
+    }
+  ],
+  "native_rust_pq_tests_run_by_preparation": false,
+  "openssl_conf": "/dev/null",
+  "openssl_modules": "/home/runner/work/_temp/trnm-pq-provider-3.5.9.ZMEJMEIo/install/lib/ossl-modules",
+  "preparation_script_sha256": "ccdcf7e8bb9871607c73adc78624a607b616c227b7fe581b96c48761a3805bfa",
+  "production_activation": false,
+  "result": "PREPARED_AND_SMOKE_VERIFIED",
+  "runner_environment_reported": "github-hosted",
+  "schema": "trnm-ci-pq-provider-v3",
+  "source_archive_sha256_expected": "603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a",
+  "source_digest_verified": true,
+  "source_transport": "download",
+  "source_url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+  "static_build": true,
+  "upstream_full_tests_run": false,
+  "version": "3.5.9",
+  "whole_chain_quantum_security_qualified": false
+}
