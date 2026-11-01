@@ -1,0 +1,97 @@
+# Read-only node libtest build-input review — 2026-11-01
+
+## Conclusion
+
+The proposed stable-document/stable-corpus approach removes the identified evidence
+self-reference. Before the final build, add **two omitted repository inputs** to
+the sealed manifest. The proposed 1,082 Rust/Cargo inputs plus the distributed
+inventory plus all 39 config JSON files form a 1,130-path union; the minimum
+repository build-input union observed here is **1,132 paths**, including the two
+files below. This is an existing-source/dep-info review, not a new build result.
+
+No production/test source, configuration, tool, budget or repository documentation
+was edited during this review. No build or native test was started.
+
+## Confirmed omissions
+
+| Input | Actual consumer | Finding |
+| --- | --- | --- |
+| `config/systemd/trnmponpublic.slice` | `trnm-pon-node/src/host_kernel_parent.rs` uses `include_str!` in a native unit test. | Present in the actual node libtest rustc dep-info, absent from the proposed union. JSON-only config capture misses it. |
+| `trillionnium/crates/trnm-sqlite-io-boundary/unix_layout_witness.c` | The local dependency's `build.rs` passes it to `cc::Build`, producing the linked layout-witness archive. | Listed in actual Cargo build output as `rerun-if-changed`; absent from Rust/Cargo-only and distributed-inventory capture. |
+
+The existing executed libtest dep-info
+`target/debug/deps/trnm_pon_node-a11dedc82f17cb42.d` resolves to 1,131 unique
+repository files and no direct repository-external source/include paths.
+Its SHA-256 at review was
+`a842c117aa1b5382f58918451b545fe744b40083b65a6c4815e3e1e70296f6dd`.
+The systemd slice is its only path missing from the 1,130-path union.
+The recent Clippy libtest dep-info independently reports the same 1,131-path set.
+The C source is a dependency-build input and therefore is not expected in the
+top-level node rustc dep-info.
+
+## Evidence-update boundary
+
+The distributed source inventory contains 1,130 entries: 1,054 Rust files,
+27 TOML files, one lockfile and 48 JSON files. Its bytes include the complete
+`config/pon/pq-cross-branch-corpus-v1.json`, not just paths from that JSON.
+Any later corpus metadata or pin change therefore changes the libtest input.
+
+At this review, the corpus has 363 pinned blobs. It does not pin itself or any
+file in the new `evidence/pon-pq-native-witness-20261101/` package. The witness
+contract and acceptance-target document refer to that package through stable
+manifest links. Neither the distributed inventory nor the node dep-info directly
+embeds that manifest. The old corrected binary/source hashes were absent from
+the current pinned-document search after the integrator's edits.
+
+There are 17 pinned historical evidence files from earlier packages. Those must
+remain unchanged along with the 363 pins. A final result update confined to the
+new, unembedded evidence package need not change the libtest. Do not refresh the
+corpus, pinned documents, generated inventory or embedded JSON to add a final
+binary digest, source digest, commit claim, count or phase after sealing.
+
+## Compile-time environment and external generated inputs
+
+- `TRNM_DISTRIBUTED_SOURCE_COMMIT` and `TRNM_DISTRIBUTED_SOURCE_TREE` are used by
+  `option_env!` in the node libtest. Actual executed dep-info records both unset.
+  Preserve that state or explicitly record a different pre-build value. Setting
+  either to a later publication commit would create a different build input.
+- `CARGO_MANIFEST_DIR` is also compiled in. Keep the source/build location and
+  the recorded target, profile, feature set, compiler and linker environment
+  fixed. The inspected test fingerprint selects `default,pq-native-openssl`
+  and empty Rust flags; this is a snapshot, not a universal reproducibility claim.
+- The SQLite boundary build derives cfg/env constants from the real toolchain,
+  loader paths, native C tools and pinned registry SQLite sources. Its observed
+  qualified output publishes the expected layout fence. Preserve the existing
+  build receipt and qualified outcome; a different environment can instead embed
+  an unqualified reason and change behavior.
+- Registry dependencies do have generated Rust outside the repository:
+  `libsqlite3-sys` consumes `OUT_DIR/bindgen.rs`; `serde` and `serde_core` consume
+  their `OUT_DIR/private.rs`. These were observed in dependency rustc dep-info.
+  Their generators belong to locked dependencies; no path from these observed
+  inputs to the new evidence package was found.
+- The observed OpenSSL dependency output links **static** `ssl` and `crypto`
+  from the prepared 3.5.9 installation and consumes its headers. Those archives,
+  headers, registry sources and compiler/system libraries are outside a
+  repository-only seal. Preserve their identities/environment in build provenance;
+  the OpenSSL CLI digest alone does not identify both linked static archives.
+
+## Scope distinctions and final recommendation
+
+Three other omissions appeared only in separate dependency **unit-test** dep-info:
+the Cell closure vector JSON, native growth reference JSON and PQ public-key DER.
+Their fingerprint kinds are `test-lib` for data availability, MVCC and protocol;
+they are not additional inputs to the inspected node libtest. Include them if
+the seal is later described as covering those separate test executables too.
+
+The examined local dependency graph has eleven crates and only the SQLite boundary
+has a repository build script. No other local generated Rust source, direct
+outside-repository include, or direct inclusion of the new evidence package was
+found for this node libtest. Runtime `git rev-parse`, current-executable hashing
+and runtime filesystem reads are observations, not hidden compile-time inclusions.
+
+Proceed with the integrator's freeze after adding the slice and C source, keeping
+all corpus/pinned-document bytes fixed. Preserve the actual final rustc dep-info
+and compare its normalized repository inputs with the sealed set, alongside the
+already planned before/after hashes and exact-binary tests. Publish final results
+only in the unembedded evidence package. This closes the identified metadata loop;
+it does not claim a hermetic or independently reproducible whole toolchain.

@@ -1,0 +1,54 @@
+# Independent implementation-agent review: native PNQ2 rollback witness
+
+**Decision: source remediation reviewed; the selected native witness suite passed on its first execution (25 passed, 0 failed, 0 ignored).**
+
+Review date: 2026-11-01 UTC. This is a separate implementation-agent code review. It is not an external cryptographic audit, a deployment acceptance, or a whole-chain quantum-security proof. All ten reported findings have corresponding source remediations reviewed. No additional critical/high defect was identified within this scope; that statement is not a proof of defect absence.
+
+The companion JSON contains the ordered original patches, current integrated source file hashes, original counterexamples, source closures, test selectors and remaining scope limits. The current source snapshot is `chain-pq`, including the integrator's RW-10 correction. The final integrator-supplied binary was executed by this reviewer with real local Unix/TCP sockets. All 25 selected test functions were announced and passed, including the OpenSSL randomized-signature control. Source inventory and runtime counts are recorded separately in the JSON.
+
+## Findings and source closures
+
+| ID | Original severity | Defect | Reviewed source correction |
+| --- | --- | --- | --- |
+| RW-01 | critical | One-step Finish replay can confirm an absent native Submit effect | Submit completion records now retain a SHA-512 actual-effect footprint. Recovery compares the original retained request wire and real packet, active tip/generation and verified KV root under one IMMEDIATE transaction. It refuses absent effects and does not synthesize admission/activation. |
+| RW-02 | high | Exhausted ingress performs uncharged expensive witness work | charge_pq_ingress reads the three original local counters and applies checked refusal-only capacity tests before witness hashing/RPC. Permitted mutations still require fresh witness validation, in-transaction predecessor validation and original SQL predicates. |
+| RW-03 | high | Fresh witness check outside SQLite mutation transaction permits a corrupted prestate to be anchored | All five protected mutations call verify_before_mutation after BEGIN IMMEDIATE and before the first mutation SQL; this recomputes the actual predecessor root. Recovery also rechecks its predecessor under its IMMEDIATE transaction. |
+| RW-04 | medium | Randomized re-signature breaks a valid Finish recovery | Effect binding hashes the first durable pending wire selected by exact peer, sequence, operation and pending status, rather than a retry signature. The original operation identity and final retained request/response signature audit remain in place. |
+| RW-05 | medium | Malformed Submit loses the original terminal refusal and stalls the sequence | Only the original packet decoder failure can select RejectedBeforeDecode; the actual signed failure must match that original refusal or the explicit original expired-unconfirmed outcome. State/readback errors do not enter this branch. |
+| RW-06 | high | Unavailable witness latch is checked after a full protected-table scan | The unavailable latch is checked before check_pq_witness scans protected tables. Integrity failure latches the client; fresh attempts cannot bypass it through the ordinary protected mutation path. |
+| RW-07 | critical | Business effect footprint remains outside the SQLite write lock | Both normal Finish capture and one-step recovery verification now run after Transaction::new_unchecked starts a real IMMEDIATE transaction on the same Node connection. Pointer identity/autocommit checks guard the effect helper; the write lock is held through CAS and local commit. |
+| RW-08 | high | Classic task observation inside the footprint rejects valid nonempty PQ Submit | Footprint reading no longer calls the classic task-observation decoder. It calls the original profile-selected Node::packet, exact packet encoding, record reader and read_active validation of actual KV. A successful Submit response must match the stored block and actual active tip/generation. |
+| RW-09 | medium | Pure local pre-CAS cancellation latches the whole witness client | commit_with_progress records whether an Advance was attempted. A proven local progress cancellation before any Advance rolls back the SQL transaction without latching unavailable. Attempted/uncertain Advance failures retain the latch. |
+| RW-10 | critical | Cached and pending replay authorization bypasses in-transaction prestate and revocation checks | Client records the exact latest fully authenticated external head only after complete reply validation. In-transaction checkpoint must equal both its sequence and root. Retire, Revoke including idempotent return, and Begin including pending/Cached branches validate the predecessor and read all permission-bearing conditions under IMMEDIATE. Begin rereads highest/revoked after retirement, holds the guard through Cached/Execute return, and reuses it for insertion. Consistent old rows plus checkpoint cannot pass against the in-memory authenticated head. One-step recovery retains its explicit exact-previous-to-head exception and second fresh head check. |
+
+## Critical replay-admission correction
+
+The reviewed RW-10 fix closes three distinct cases: a revoked row changed during Current, a changed row restored before later root verification while a stale authorization read survives, and an internally consistent old checkpoint plus all protected rows restored after Current. The current client stores the complete authenticated external sequence/root in memory; transaction-local predecessor validation must match it. Every permission-bearing read for existing pending/Cached requests, retirement and revocation occurs under the same IMMEDIATE transaction. New insertion reuses its admission transaction. Two authored regression functions cover six pending/completed scenarios and assert that no new native packet or active-state effect is created. Both functions executed and passed in the first native witness suite.
+
+The original one-step recovery contract remains separate: local checkpoint must equal the exact signed predecessor, replay must produce the exact successor root, actual Submit effect must survive and be read under the same write transaction, and a second Current must confirm the same head. It does not incorrectly require the predecessor to equal the successor before recovery.
+
+## Compile-integration review
+
+The earlier forbidden raw socket operations were replaced by the locked rustix safe owned-descriptor APIs. Connect remains nonblocking; poll uses only the original deadline remainder; backlog saturation/interruption refuses without an unbounded retry. Construction is explicitly Linux-only. Backend initializer and exhaustive-match fixes explicitly reject unsupported backend use; they add no legacy fallback. The integrator owns complete build/source-freeze provenance; this reviewer records the exact supplied binary and selected native runtime receipt below.
+
+## Deadline and completion contract
+
+Per root, charge/begin use the original absolute request deadline; Finish preserves original noncancellable result persistence with its separately bounded exchanges. ACK still uses the original socket deadline; finalization tail cost must be accounted separately.
+
+## Explicit scope boundaries
+
+- Only pq_network_resource_v2, pq_network_peer_v2 and pq_network_request_v2 are checkpointed. An equal protected checkpoint does not authenticate all account, History, journal, CURRENT, FinalUse or Cell state.
+- The witness fixture fsyncs/renames a state file outside the Node directory, but starts authoritative State as None. It does not test witness-process cold reload, power failure, separate administration or deployed independence.
+- The new SHA-512 application commitments and checkpoint root do not change inherited 32-byte policy/context/operation identifiers or supply a universal quantum-cost proof for those uses.
+- Five-MiB witness frames and bounded protected-table scans do not establish hard preemption inside cryptographic or SQLite calls, sustained WAN service or original service-budget acceptance.
+- A pure local pre-CAS callback refusal can recover in the same Node. Witness authentication/transport uncertainty remains fail-closed and requires a fresh client/reopen; this does not qualify broad outage recovery availability.
+- More-than-one-step rollback, same-generation configuration rollback, service reset and cross-host fork safety depend on the externally protected binding and a correctly durable independent CAS service; no production service is supplied.
+- The original operation-identity digest remains a protocol assumption. Complete retained-wire hashing in Finish prevents signature-retry mismatch but is not a redesign of all replay identifiers.
+- Account migration, W1 quantum work cost, retarget/chain-selection safety, compressed-proof quantum soundness, WAN traffic, end-to-end capacity and whole-chain security remain unqualified.
+- A fresh Current reply is an observation, not a distributed lease. Cross-operator cloned-credential concurrency and linearization remain outside this native single-owner qualification.
+
+## Native execution and remaining qualification
+
+The selected witness suite passed on its first execution: 25 passed, 0 failed, 0 ignored, 0 measured, 858 filtered out; elapsed wall time 31.226918663 seconds. No source changes or reruns were performed. The nonempty NPQ6 transfer, failed-Finish recovery, missing-effect old-directory refusal, both new pending/Cached race controls and the OpenSSL randomized-signature control all ran. Live-admission and other PNQ2 selectors remain the integrator's separate executions and are not double-counted here. This passed local suite does not establish witness-process crash reload, independent administration, original large-state/History budgets, hostile WAN service, account migration or whole-chain security.
+
+Runtime receipt: `network-pq/witness-native-final-first.json` (SHA-256 `c7dbdba46e04e061e9570c96b4a4d6617f5fc540c548b1d357d208dcc755ab3e`). Complete combined log: `network-pq/witness-native-final-first.log` (SHA-256 `cda16e0936842abc8217ed48764666fd176620af33c1dc9075299f69a06a952c`). The supplied binary SHA-256 was `1583225945e532144f382f51839f2eee3a1ec80309b2082b0b62ce5dbb566eea` before and after execution. Six observed frozen source files also matched before/after; this is a scoped check, not a replacement for the integrator's full source-freeze manifest.

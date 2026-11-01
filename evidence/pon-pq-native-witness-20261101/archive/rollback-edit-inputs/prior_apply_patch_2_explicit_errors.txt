@@ -1,0 +1,26 @@
+*** Begin Patch
+*** Update File: /workspace/scratch/be76671b3e90/rollback-pq/trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness.rs
+@@
+         SocketFlags::NONBLOCK | SocketFlags::CLOEXEC,
+         None,
+-    )?;
++    )
++    .map_err(std::io::Error::from)?;
+@@
+-            let timeout = Timespec::try_from(remaining(deadline)?)?;
++            let timeout = Timespec::try_from(remaining(deadline)?)
++                .map_err(|_| "PQ_WITNESS_TIMEOUT")?;
+@@
+-                poll(&mut events, Some(&timeout))? > 0
++                poll(&mut events, Some(&timeout)).map_err(std::io::Error::from)? > 0
+@@
+-            net::sockopt::socket_error(&fd)??;
++            net::sockopt::socket_error(&fd)
++                .map_err(std::io::Error::from)?
++                .map_err(std::io::Error::from)?;
+*** Update File: /workspace/scratch/be76671b3e90/rollback-pq/trillionnium/crates/trnm-pon-node/src/store/pq_network.rs
+@@
+-    pub(crate) fn begin_pq_network_request(
++    #[cfg(test)]
++    pub(crate) fn begin_pq_network_request(
+*** End Patch

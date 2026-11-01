@@ -1,0 +1,59 @@
+*** Begin Patch
+*** Update File: /workspace/scratch/be76671b3e90/rollback-pq/trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs
+@@
+-        StateBackend::PqNetworkV2 | StateBackend::PqContinuousV3 => {
++        StateBackend::PqNetworkV2 | StateBackend::PqContinuousV3 | StateBackend::PqWitnessV3 => {
+*** Update File: /workspace/scratch/be76671b3e90/rollback-pq/trillionnium/crates/trnm-pon-node/src/store/storage_service/tests.rs
+@@
+-        StateBackend::PqNetworkV2 | StateBackend::PqContinuousV3 => {
++        StateBackend::PqNetworkV2 | StateBackend::PqContinuousV3 | StateBackend::PqWitnessV3 => {
+*** Update File: /workspace/scratch/be76671b3e90/rollback-pq/trillionnium/crates/trnm-pon-node/src/store/funding/tests.rs
+@@
+-        StateBackend::PqNetworkV2 | StateBackend::PqContinuousV3 => {
++        StateBackend::PqNetworkV2 | StateBackend::PqContinuousV3 | StateBackend::PqWitnessV3 => {
+*** Update File: /workspace/scratch/be76671b3e90/rollback-pq/trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/tests.rs
+@@
+ fn native_witness_cannot_anchor_success_response_after_submit_effect_was_lost() {
+@@
+     );
+ }
++
++#[cfg(target_os = "linux")]
++#[test]
++fn native_witness_saturated_unix_backlog_refuses_with_original_deadline() {
++    use rustix::net::{self, AddressFamily, SocketAddrUnix, SocketFlags, SocketType};
++    use std::sync::mpsc;
++
++    let temporary = tempfile::tempdir().unwrap();
++    let path = temporary.path().join("backlog.sock");
++    let socket = net::socket_with(
++        AddressFamily::UNIX,
++        SocketType::STREAM,
++        SocketFlags::CLOEXEC,
++        None,
++    )
++    .unwrap();
++    net::bind(&socket, &SocketAddrUnix::new(&path).unwrap()).unwrap();
++    net::listen(&socket, 0).unwrap();
++    let listener = UnixListener::from(socket);
++    // Linux's zero backlog still admits one queued connection. No server
++    // accepts it, so the next nonblocking connect must refuse with EAGAIN.
++    let _queued = connect(&path, Instant::now() + Duration::from_secs(2)).unwrap();
++    let (done, completion) = mpsc::channel();
++    let watchdog = thread::spawn(move || {
++        // A regression to a blocking connect must fail this test rather than
++        // hang the entire native suite. The original queued connection makes
++        // this accept nonblocking once the watchdog fires.
++        if completion.recv_timeout(Duration::from_secs(1)).is_err() {
++            let _ = listener.accept().unwrap();
++        }
++    });
++    let start = Instant::now();
++    let result = connect(&path, start + Duration::from_millis(100));
++    let elapsed = start.elapsed();
++    let _ = done.send(());
++    watchdog.join().unwrap();
++    assert!(result.is_err());
++    assert!(elapsed < Duration::from_millis(500), "{elapsed:?}");
++}
+*** End Patch
