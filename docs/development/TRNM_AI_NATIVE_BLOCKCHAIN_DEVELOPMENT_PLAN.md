@@ -4308,3 +4308,11 @@ ObjectiveStart, migration of historic ownership/liabilities, proof security,
 quantum W1/DAA/fork choice, original capacity and independent sustained joint
 acceptance remain required. Existing budgets and activation authority are
 unchanged. This is an entry in the sole plan, not a new release lane.
+
+The continuation also composes #678's later `64cb26b5` full-root arithmetic
+changes without dropping either constructor field or original workspace CPU
+controls. The initial `ed31b019` local build was terminated by SIGKILL; its
+unchanged source, raw failure and zero native executions are retained. The
+combined current source requires new native evidence. Hepta's checkpoint
+serialization follow-up keeps actual stale-witness rejection and healthy
+recovery under the existing owner lock. These changes do not close PN0–PN6.

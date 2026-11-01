@@ -56,3 +56,39 @@ are behavior failures; none is a socket sandbox denial. Full
 The failed baseline is expected evidence of the defect, not a successful gate.
 The fixed combined candidate must independently pass these same controls and
 its actual external-witness tests before component success can be recorded.
+
+## Initial candidate build: failure retained
+
+The first combined native build used local commit
+`ed31b019525963456e0e84eb5f0862ef6ee0186a`, tree
+`f5cdc9a1c46ef01a722ab472e89a2a7b80ca17aa`. Published commit
+[`82a576f111f686ffaa5e4eff015bf6b83bb7cec2`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/82a576f111f686ffaa5e4eff015bf6b83bb7cec2)
+has exactly that tree. The [raw local commit object](initial-source-build/green-build-source.commit)
+retains the precise locally tested identity without inventing a GitHub commit.
+
+The original locked/offline Rust 1.95.0, all-features Node library build exited
+101 after 311.128 seconds. Rustc received SIGKILL; the environment's shared
+8 GiB cgroup was at its memory limit, and its OOM-kill count changed from 5 to 6.
+Those counters are shared observations, not a per-process kernel attribution.
+The complete [build log](initial-source-build/green-build.log),
+[before/after source receipt](initial-source-build/green-build.json),
+[resource/failure observation](initial-source-build/green-build-failure-observation.json)
+and [file index](initial-source-build-members.json) are retained. Source-before
+equals source-after. This invocation produced no candidate test executable and
+executed **zero** native controls. A build attempt named `green-build` is not a
+GREEN result.
+
+## Concurrent upstream composition
+
+After the initial source was frozen, #678 advanced to
+`64cb26b53ed82be14049000387040ba119f00e1e`, tree
+`1eccfeefc4f68f3b82e721ba08b9a80248e2860e`. Both real upstream commits were
+reconstructed from authenticated Git data and verified by object SHA. The
+combined source preserves both branches' constructor fields, the bounded
+full-root arithmetic work, its original test controls and workspace CPU workflow,
+and all new PQ controls. Overlapping source pins were recomputed from the
+actual combined files. The original sole-plan entry was retained.
+
+The subsequent candidate must be built and executed independently. Neither
+this merge nor a source-integrity pass turns the failed build into native
+acceptance; all original service budgets and six whole-chain gates remain open.

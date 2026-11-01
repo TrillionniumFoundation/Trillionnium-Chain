@@ -478,6 +478,109 @@ fn authenticated_large_parent_original_schedule_supplementary_denominator() {
     assert_custom_genesis_held_schedule_and_cpu_owner(true);
 }
 
+#[test]
+fn large_parent_root_arithmetic_keeps_current_sql_and_original_read_checkpoints() {
+    for authenticated in [false, true] {
+        let directory = tempfile::tempdir().unwrap();
+        let mut settings = Settings::development(Some(1)).unwrap();
+        for index in 0..2100 {
+            settings.initial.insert(
+                format!("fixture-large-parent:{index:04}"),
+                json_value("x".repeat(4080)),
+            );
+        }
+        let initial_root = settings.state_root(&settings.initial).unwrap();
+        settings.genesis = hash(
+            b"genesis",
+            &[
+                &settings.network(),
+                &settings.parameters(),
+                &initial_root,
+                &settings.genesis_time().to_le_bytes(),
+            ],
+        );
+        let node = open(directory.path(), &settings, authenticated);
+        let original = node.read_active().unwrap();
+        assert!(
+            node.derived_commitment_status()
+                .last
+                .unwrap()
+                .actual_payload_bytes
+                > MAX_SNAPSHOT_PAYLOAD
+        );
+        assert_eq!(node.read_active().unwrap(), original);
+        let slot = node.slot().unwrap();
+
+        // A current same-length canonical cell must still change the calculated
+        // root after the full-root arithmetic entry has been warmed.
+        node.db
+            .execute_batch("SAVEPOINT changed_actual_state")
+            .unwrap();
+        node.db
+            .execute(
+                "UPDATE kv SET value=? WHERE slot=? AND key='fixture-large-parent:2099'",
+                params![canonical(&json_value("y".repeat(4080))).unwrap(), slot],
+            )
+            .unwrap();
+        let error = node.read_active().unwrap_err();
+        assert_eq!(error.to_string(), "ROOT");
+        assert!(error.requires_owner_stop());
+        node.db
+            .execute_batch("ROLLBACK TO changed_actual_state; RELEASE changed_actual_state")
+            .unwrap();
+        assert_eq!(node.read_active().unwrap(), original);
+
+        // Current SQL type/canonical-byte checks still run before any root
+        // arithmetic; an exact repair can use mathematical material again.
+        node.db
+            .execute_batch("SAVEPOINT malformed_actual_cell")
+            .unwrap();
+        node.db
+            .execute(
+                "UPDATE kv SET value='null' WHERE slot=? AND key='fixture-large-parent:2099'",
+                [slot],
+            )
+            .unwrap();
+        assert!(node.read_active().unwrap_err().requires_owner_stop());
+        node.db
+            .execute_batch("ROLLBACK TO malformed_actual_cell; RELEASE malformed_actual_cell")
+            .unwrap();
+        assert_eq!(node.read_active().unwrap(), original);
+
+        let mut checkpoints = 0usize;
+        assert_eq!(
+            node.read_active_with_progress(&mut || {
+                checkpoints += 1;
+                Ok(())
+            })
+            .unwrap(),
+            original
+        );
+        // Include a row-scan checkpoint and the final boundary, not just the
+        // entry callback. The callback identity must survive unchanged.
+        assert!(checkpoints > 10);
+        for stop in [1, 4, checkpoints] {
+            let mut calls = 0usize;
+            let error = node
+                .read_active_with_progress(&mut || {
+                    calls += 1;
+                    ensure(calls != stop, "original-large-state-read-cancel")
+                })
+                .unwrap_err();
+            assert_eq!(error.to_string(), "original-large-state-read-cancel");
+            assert_eq!(calls, stop);
+            assert_eq!(node.read_active().unwrap(), original);
+        }
+        drop(node);
+        assert_eq!(
+            open(directory.path(), &settings, authenticated)
+                .read_active()
+                .unwrap(),
+            original
+        );
+    }
+}
+
 fn assert_custom_genesis_held_schedule_and_cpu_owner(authenticated: bool) {
     // Explicit independent test genesis, NOT a claimed history grown from the
     // installed default genesis. All original limits and assertions are shared.

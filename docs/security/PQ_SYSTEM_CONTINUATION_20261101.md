@@ -7,7 +7,12 @@ It does not activate a profile or change release authority.
 
 ## Source and evidence boundary
 
-The Chain input is [#678 at 5606a971](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/5606a97104f9cd3243befc2921ccace3fae2c369).
+The original Chain input is [#678 at 5606a971](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/5606a97104f9cd3243befc2921ccace3fae2c369).
+The current composition also retains the concurrent [64cb26b5 upstream](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/64cb26b53ed82be14049000387040ba119f00e1e), including its bounded full-root arithmetic work,
+original controls and separate workspace CPU workflow. Both Node constructor
+fields and all upstream changes are retained; source pins identify the actual
+combined bytes. The first local build on the earlier source received SIGKILL
+and executed no native tests. Its full failure record remains in the evidence.
 The paired Hepta policy fix is [#4558](https://github.com/TrillionniumFoundation/hepta-private-ci/pull/4558),
 initially based on #4552 at `0f7c63418a7eec6cff5e4348e8cdc733850f8386`.
 Neither input is the default main branch. Separate candidate passes cannot be
@@ -17,7 +22,8 @@ A scratch cleanup removed the earlier unpublished Chain working files and raw
 records. The native work was reconstructed from retained edits and is a new
 candidate. Earlier compilation, Clippy and partial test observations are not
 current acceptance evidence. The preserved Hepta publication payload was saved
-without alteration; its native Rust 1.96 execution is separately required.
+without alteration; subsequent Hepta checkpoint corrections and native Rust
+1.96 execution are separately bound to their own exact source.
 
 Current command records belong in the
 [continuation evidence](../../evidence/pon-pq-system-continuation-20261101/README.md).
@@ -79,13 +85,20 @@ revocation cannot be bypassed by a stale snapshot or the unbound renewal API onc
 the owner-policy floor exists. The transaction is the policy linearization point;
 revocation after commit and before a remote effect remains a separate problem.
 
+The final Hepta follow-up also serializes ordinary replay-checkpoint sync with
+trust refresh under the existing owner mutex. A real ARM product failure exposed
+two callers reading the same external predecessor before one advanced it. The
+new deterministic concurrency control requires both valid callers to complete,
+rejects a genuinely old witness and then restores signed service after exact
+witness repair. It does not weaken rollback checks or extend test timeouts.
+
 Normal Cell V2 startup from #4497 and PQ profile validation from #4552 still need
 one combined source tree and real qualification-to-CURRENT-to-load/read/unload
 tests. RunStart and ObjectiveStart require versioned producers, authenticators,
 both normal and conflict journal encodings, decoders, revocation and an external
 freshness owner. Rejecting the current classical format is necessary but is not
 the successful PQ business path. The precise pinned dependencies are recorded in
-[Hepta's migration analysis](https://github.com/TrillionniumFoundation/hepta-private-ci/blob/69797ad95bd019f422df73281da1827e2e289d6d/qualification/pq-policy-renewal-20261101/MIGRATION_DEPENDENCIES.md).
+[Hepta's migration analysis](https://github.com/TrillionniumFoundation/hepta-private-ci/blob/cd3c1b860f2b0f05c24bfb8d4b5da6ba7f99704a/qualification/pq-policy-renewal-20261101/MIGRATION_DEPENDENCIES.md).
 
 ## All six qualification gates remain open
 
