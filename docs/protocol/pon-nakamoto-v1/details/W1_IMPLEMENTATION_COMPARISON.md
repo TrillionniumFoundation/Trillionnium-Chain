@@ -813,16 +813,17 @@ All existing acceptance and activation flags remain false.
 
 [`pon_work.rs`](../../../../trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs)
 retains the independent scalar reference and the default transposed verifier, plus
-an explicit transcript-arithmetic research comparison:
+two explicit transcript-arithmetic research comparisons:
 
 | Entry | Arithmetic and transcript | Use |
 |---|---|---|
 | `verify` / `verify_with_progress` | Transposed right operands, exact reduction for q=2^32-5, 256-byte tile hash updates | Ordinary native W1 verification |
 | `verify_reference` / `verify_reference_with_progress` | Original row-major scalar products, u128 remainder, per-cell hash updates | Explicit reference and differential verification |
 | `verify_limb` / `verify_limb_with_progress` | The same transposed replay and corrections; each eight-product transcript accumulation uses bounded `u64` low/high sums | Explicit research comparison; never selected by the default entry |
+| `verify_column_limb` / `verify_column_limb_with_progress` | Eight independent column accumulators read contiguous original B' rows; bounded `u64` low/high sums preserve every prefix without transposing B' | Explicit research comparison; never selected by the default entry |
 | `evaluate` / `prove` | Original complete scalar generation | Reference producer |
 
-All three verifier paths share the existing admission procedure; the arithmetic
+All four verifier paths share the existing admission procedure; the arithmetic
 choice does not create another verifier framework. They perform the same grammar
 and task checks before replay and emit
 the same ordered `VerificationProgress` observations: before replay, each noise hash,
@@ -837,7 +838,7 @@ if the implementation takes less time. Full recomputation remains full recomputa
 
 The original Rust scalar arithmetic and Python oracle provide independent arithmetic
 implementations within the same development authorship. Their agreement is not an
-external security assessment. Extreme-field/product/grammar cases compare all three Rust
+external security assessment. Extreme-field/product/grammar cases compare all four Rust
 paths; a complete success records equal observation sequences, and representative cuts
 through every noise/matrix/tile/product stage compare cancelled outcomes. Existing
 wire, task, challenge and Python byte-parity tests remain applicable.
@@ -858,6 +859,23 @@ product-correction multiplications. Only the accumulation method of the middle
 per-challenge multiplication count. There is no multiplication-count reduction or
 new claim that the work is irreducible. The measured winner between kernels remains
 an empirical question; adding this entry does not switch the default verifier.
+
+The column-limb comparison applies the same `L<9B`, `H<8B`, `S<49B`,
+`F<B+240<2q` reduction independently to each of eight output columns. It removes
+only that path's 16 KiB B' transpose; the complete `bi,bj,bk,i,j` transcript order,
+32,768 little-endian words, 512 tile callbacks and exact product corrections
+remain. Differential tests include two operands equal to q-1, asymmetric rows
+and columns, every prefix and the original full success/error/cancellation
+observations. The shared coverage-guided fuzz oracle includes all four paths.
+
+The [actual false-trace prefix-reuse experiment](../../../development/specs/pon/W1_FALSE_TRACE_ACTUAL_REUSE_V1.md)
+and [retained local observations](../../../../evidence/pon-w1-work-security-20261101/README.md)
+compare these four paths separately from the original three-path late-rejection
+schema below. Two exact-source-module experiments retain their distinct Cargo
+graphs and original raw streams. The new column path did not outperform the
+already available limb path on this host. It remains experimental; neither a
+default switch, cross-architecture qualification nor elimination of expensive
+rejection follows from these observations.
 
 ## Explicit late-rejection cost diagnostic
 

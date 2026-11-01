@@ -69,8 +69,9 @@ def validate_unprovisioned_parent(raw: str) -> dict[str, str]:
 
 
 def validate_command(command: list[str]) -> Path:
-    require(len(command) == 4 and command[:3] == [
-        'python3', 'scripts/ci/run_from_zero_native.py', '--out'], 'ORIGINAL_ARGV_REQUIRED')
+    require(len(command) == 4 and command[:3] in ([
+        'python3', 'scripts/ci/run_from_zero_native.py', '--out'], [
+        'python3', 'scripts/ci/run_w1_fresh_service_v1.py', '--out']), 'ORIGINAL_ARGV_REQUIRED')
     out = Path(command[3])
     require(out.is_absolute() and not out.resolve().is_relative_to(ROOT),
             'OUTPUT_MUST_BE_OUTSIDE_CHECKOUT')
@@ -165,6 +166,55 @@ def bind_prepared_execution(prepared: dict, output: Path) -> dict:
             'source_commit': prepared['source_before']['commit'],
             'binary_sha256': prepared['binary_sha256'],
             'original_runner_repeated_source_build': True,
+            'runtime_limits_or_deadlines_changed': False}
+
+
+def bind_prepared_fresh_execution(prepared: dict, output: Path) -> dict:
+    """Separate exact successor; never substitute its two tests for the old five."""
+    import run_w1_fresh_service_v1 as fresh
+    expected = os.environ.get('TRNM_EXPECTED_SOURCE_SHA')
+    require(type(expected) is str and re.fullmatch('[0-9a-f]{40}', expected) is not None,
+            'FRESH_EXPECTED_SOURCE_REQUIRED')
+    require(prepared.get('completed') is True, 'NATIVE_PREPARATION_INCOMPLETE')
+    path = output / 'manifest.json'
+    require(path.is_file() and not path.is_symlink(), 'FRESH_NATIVE_MANIFEST_REQUIRED')
+    with path.open('rb') as stream:
+        raw = stream.read(native.REPORT_LIMIT + 1)
+    require(len(raw) <= native.REPORT_LIMIT, 'FRESH_NATIVE_MANIFEST_BOUND')
+    result = native.json_load(raw)
+    require(result.get('schema') == fresh.SCHEMA, 'FRESH_NATIVE_MANIFEST_SCHEMA')
+    require(result.get('source_expected') == expected
+            and prepared['source_before']['commit'] == expected,
+            'FRESH_EXPECTED_SOURCE_MISMATCH')
+    require(prepared['source_before'] == prepared['source_after']
+            == result['source_before'] == result['source_after'],
+            'PREPARATION_AND_EXECUTION_SOURCE_MISMATCH')
+    require(prepared['binary_sha256'] == result['binary_sha256_before']
+            == result['binary_sha256_after']
+            == native.digest((output / native.TARGET).read_bytes()),
+            'PREPARATION_AND_EXECUTION_BINARY_MISMATCH')
+    require(result.get('requested_window_ns') == 4_000_000_000
+            and result.get('attack_workers') == 16
+            and result.get('passed') is True and result.get('all_named_tests_passed') is True
+            and result.get('execution_finished') is True and result.get('source_recompiled') is True
+            and result.get('failures') == []
+            and [row['name'] for row in result['runs']] == list(fresh.SELECTORS),
+            'FRESH_NATIVE_ACCEPTANCE_REQUIRED')
+    for index, row in enumerate(result['runs']):
+        name = 'original' if index == 0 else 'fresh'
+        require(row.get('passed') is True and row.get('report_path') == name + '/report.json'
+                and row['process'].get('expected_source') == result['source_before']['commit'],
+                'FRESH_EXACT_EXECUTION_BINDING')
+        log = output / (name + '.log')
+        require(row.get('log_sha256') == native.digest(log.read_bytes()), 'FRESH_LOG_CHANGED')
+        verified = fresh.validate_execution(row['process'], log, row['name'],
+                                            output / row['report_path'])
+        require(verified['named_execution'] == row.get('named_execution')
+                and verified['report'] == row.get('report'), 'FRESH_REPORT_BINDING')
+    return {'schema': 'trnm-ci-fresh-native-build-execution-binding-v1',
+            'manifest_sha256': native.digest(raw), 'source_commit': prepared['source_before']['commit'],
+            'binary_sha256': prepared['binary_sha256'], 'exact_selectors': list(fresh.SELECTORS),
+            'original_five_test_runner_replaced': False,
             'runtime_limits_or_deadlines_changed': False}
 
 
@@ -292,7 +342,9 @@ def outer(command: list[str]) -> int:
                     'PROVISIONED_CHILD_CONTEXT_CHANGED:' + name)
         result['passed'] = result['systemd_run_exit'] == 0 and child['native_child_exit'] == 0
         if result['passed']:
-            result['preparation_execution_binding'] = bind_prepared_execution(
+            binder = (bind_prepared_fresh_execution if command[1]
+                      == 'scripts/ci/run_w1_fresh_service_v1.py' else bind_prepared_execution)
+            result['preparation_execution_binding'] = binder(
                 result['preparation'], output)
     except HostSignal as error:
         result['failure'] = 'SIGNAL_' + str(error.number)

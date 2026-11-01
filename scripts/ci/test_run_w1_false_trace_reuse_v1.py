@@ -1,0 +1,305 @@
+#!/usr/bin/env python3
+"""Synthetic command-owner boundary tests; no native execution or cost evidence."""
+
+from contextlib import redirect_stdout, redirect_stderr
+import io
+import json
+import os
+from pathlib import Path
+import sys
+import tempfile
+import unittest
+from unittest import mock
+
+sys.dont_write_bytecode = True
+import run_w1_false_trace_reuse_v1 as runner
+
+
+class ExecutionBoundaryTests(unittest.TestCase):
+    def observe(self, *, before=None, after=None, environment=None, machine="x86_64",
+                elf=62, campaign_exit=0, campaign_timeout=False, failed_command=None,
+                compiler_release="1.95.0", compiler_host="x86_64-unknown-linux-gnu",
+                reader_error=None, alerts=None,
+                configuration=None, configuration_place="home", change_configuration=None,
+                local=True):
+        with tempfile.TemporaryDirectory(prefix="false-reuse-v1-owner-test-") as directory:
+            root = Path(directory)
+            output, target = root / "receipt", root / "target"
+            output.mkdir()
+            checkout, cargo_home = root / "checkout", root / "cargo-home"
+            checkout.mkdir()
+            cargo_home.mkdir()
+            config_dir = {"home": cargo_home, "checkout": checkout / ".cargo",
+                          "ancestor": root / ".cargo"}[configuration_place]
+            config_file = config_dir / "config.toml"
+            if configuration is not None:
+                config_dir.mkdir(exist_ok=True)
+                config_file.write_text(configuration)
+            commands = []
+            native = target / "x86_64-unknown-linux-gnu/release/examples" / runner.EXAMPLE
+            source = {"source_state": "committed-clean", "commit": "a" * 40}
+
+            def capture(command, destination, name, *, timeout, cwd):
+                self.assertEqual(cwd, checkout)
+                commands.append(command)
+                stdout, stderr = destination / (name + ".stdout"), destination / (name + ".stderr")
+                stdout.write_text("synthetic boundary fixture\n")
+                stderr.write_text("")
+                if name == "rustc":
+                    stdout.write_text("rustc\nrelease: " + compiler_release + "\nhost: " + compiler_host + "\n")
+                if name == "build":
+                    native.parent.mkdir(parents=True)
+                    native.write_bytes(b"\x7fELF\x02\x01" + bytes(12) + elf.to_bytes(2, "little"))
+                    if change_configuration is not None:
+                        config_dir.mkdir(exist_ok=True)
+                        config_file.write_text(change_configuration)
+                return {"command": command, "exit_code": 1 if name == failed_command else campaign_exit if name == "campaign" else 0,
+                    "timed_out": name == "campaign" and campaign_timeout, "timeout_seconds": timeout,
+                    "stdout": stdout.name, "stderr": stderr.name}
+
+            actual_copy = runner.shutil.copyfile
+
+            def copy(source, destination):
+                if str(source) == "/proc/cpuinfo":
+                    Path(destination).write_text("synthetic CPU identity, not hardware evidence\n")
+                    return destination
+                return actual_copy(source, destination)
+
+            env = {"CARGO_TARGET_DIR": str(target), "CARGO_HOME": str(cargo_home),
+                   **(environment or {})}
+            with mock.patch.dict(os.environ, env, clear=True), \
+                 mock.patch.object(sys, "argv", ["runner", "--arch", "x64"] + (["--local"] if local else [])), \
+                 mock.patch.object(runner, "receipt_root", return_value=output), \
+                 mock.patch.object(runner, "ROOT", checkout), \
+                 mock.patch.object(runner, "source", side_effect=[before or source, after or source]), \
+                 mock.patch.object(runner.platform, "system", return_value="Linux"), \
+                 mock.patch.object(runner.platform, "machine", return_value=machine), \
+                 mock.patch.object(runner, "capture", side_effect=capture), \
+                 mock.patch.object(runner.shutil, "copyfile", side_effect=copy), \
+                 mock.patch.object(runner, "analyze", side_effect=reader_error,
+                    return_value={"semantic_alerts": alerts or []}), \
+                 redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
+                code = runner.main()
+            return code, json.loads((output / "manifest.json").read_text()), commands
+
+    def test_explicit_original_release_command_and_selector_are_retained(self):
+        code, report, commands = self.observe()
+        self.assertEqual(code, 0)
+        self.assertEqual(report["execution_context"], "local-native-preflight")
+        self.assertEqual(report["schema"], "trnm-w1-false-trace-reuse-execution-v1")
+        self.assertTrue(report["default_release_configuration_checked"])
+        self.assertIn(["cargo", "+1.95.0", "build", "--locked", "--release", "--manifest-path",
+            "trillionnium/Cargo.toml", "--target", "x86_64-unknown-linux-gnu", "-p", "trnm-pon-node",
+            "--example", runner.EXAMPLE], commands)
+        self.assertEqual(commands[-1][-1], "--false-trace-actual-reuse-v1")
+        self.assertFalse(report["source_changed"])
+        for flag in runner.FALSE_FLAGS:
+            self.assertIs(report[flag], False)
+
+    def test_local_mode_cannot_bypass_dirty_source(self):
+        code, report, commands = self.observe(before={"source_state": "dirty-candidate"})
+        self.assertNotEqual(code, 0)
+        self.assertEqual(commands, [])
+        self.assertIn("committed source", report["error"])
+
+    def test_test_build_codegen_override_cannot_be_promoted_to_release(self):
+        code, report, commands = self.observe(environment={"CARGO_PROFILE_RELEASE_CODEGEN_UNITS": "64"})
+        self.assertNotEqual(code, 0)
+        self.assertEqual(commands, [])
+        self.assertIn("forbids overrides", report["error"])
+
+    def test_requested_architecture_cannot_replace_observed_machine(self):
+        code, _, commands = self.observe(machine="aarch64")
+        self.assertNotEqual(code, 0)
+        self.assertEqual(commands, [])
+
+    def test_wrong_elf_is_refused_before_campaign(self):
+        code, report, commands = self.observe(elf=183)
+        self.assertNotEqual(code, 0)
+        self.assertEqual(len(commands), 4)
+        self.assertIn("ELF architecture", report["error"])
+
+    def test_nonzero_native_campaign_is_retained(self):
+        code, report, _ = self.observe(campaign_exit=1)
+        self.assertNotEqual(code, 0)
+        self.assertEqual(report["observations"][-1]["exit_code"], 1)
+
+    def test_zero_or_incomplete_reader_observation_cannot_pass(self):
+        code, report, _ = self.observe(reader_error=ValueError("fixed 4-path/9-class false-trace reuse grid incomplete"))
+        self.assertNotEqual(code, 0)
+        self.assertIn("grid incomplete", report["error"])
+
+    def test_source_change_after_complete_run_still_fails(self):
+        code, report, _ = self.observe(after={"source_state": "committed-clean", "commit": "b" * 40})
+        self.assertNotEqual(code, 0)
+        self.assertTrue(report["source_changed"])
+
+    def test_native_disagreement_cannot_pass_execution_owner(self):
+        code, report, _ = self.observe(alerts=[{"outcome": "Product"}])
+        self.assertNotEqual(code, 0)
+        self.assertEqual(report["reader"]["semantic_alerts"], [{"outcome": "Product"}])
+
+    def test_cargo_aliases_cannot_hide_compiler_flags_or_wrappers_from_rustc_probe(self):
+        for name, value in {
+            "CARGO_BUILD_RUSTFLAGS": "-C opt-level=0",
+            "CARGO_BUILD_RUSTC": "/synthetic/compiler",
+            "CARGO_BUILD_RUSTC_WRAPPER": "/synthetic/wrapper",
+            "CARGO_BUILD_RUSTC_WORKSPACE_WRAPPER": "/synthetic/workspace-wrapper",
+            "CARGO_INCREMENTAL": "1", "CARGO_BUILD_INCREMENTAL": "true",
+            "CARGO_BUILD_TARGET": "aarch64-unknown-linux-gnu",
+        }.items():
+            with self.subTest(name=name):
+                code, report, commands = self.observe(environment={name: value})
+                self.assertNotEqual(code, 0)
+                self.assertEqual(commands, [])
+                self.assertEqual(report["build_environment_overrides"], {name: value})
+                self.assertFalse(report["default_release_configuration_checked"])
+
+    def test_worktree_ancestor_and_cargo_home_codegen_configuration_are_refused(self):
+        for place in ("home", "checkout", "ancestor"):
+            with self.subTest(place=place):
+                code, report, commands = self.observe(configuration_place=place,
+                    configuration='[build]\nrustflags = ["-C", "opt-level=0"]\n')
+                self.assertNotEqual(code, 0)
+                self.assertEqual(commands, [])
+                self.assertTrue(report["cargo_configuration_before"]["violations"])
+                self.assertFalse(report["default_release_configuration_checked"])
+
+    def test_release_profile_target_env_and_include_are_not_unrecorded_inputs(self):
+        for configuration in (
+            '[profile.release]\nopt-level = 0\n',
+            '[target.x86_64-unknown-linux-gnu]\nrustflags = ["--cfg", "unchecked"]\n',
+            '[env]\nRUSTC_BOOTSTRAP = "1"\n',
+            'include = ["unobserved.toml"]\n',
+            '[build]\nrustc-wrapper = "/synthetic/wrapper"\n',
+        ):
+            with self.subTest(configuration=configuration):
+                code, report, commands = self.observe(configuration=configuration)
+                self.assertNotEqual(code, 0)
+                self.assertEqual(commands, [])
+                self.assertIn("configuration", report["error"])
+
+    def test_verified_vendor_cache_and_job_settings_remain_usable_and_hashed(self):
+        configuration = ('[source.crates-io]\nreplace-with = "verified-vendor"\n'
+            '[source.verified-vendor]\ndirectory = "/verified/vendor"\n'
+            '[build]\njobs = 2\n[net]\noffline = true\n')
+        code, report, _ = self.observe(configuration=configuration,
+                                      environment={"CARGO_BUILD_JOBS": "2"})
+        self.assertEqual(code, 0)
+        self.assertEqual(report["build_environment_overrides"], {})
+        self.assertTrue(report["default_release_configuration_checked"])
+        present = [row for row in report["cargo_configuration_before"]["files"]
+                   if row["state"] == "regular"]
+        self.assertEqual(len(present), 1)
+        self.assertEqual(present[0]["bytes"], len(configuration))
+        self.assertEqual(report["cargo_configuration_before"], report["cargo_configuration_after"])
+
+    def test_changed_neutral_configuration_still_invalidates_the_original_input_epoch(self):
+        code, report, _ = self.observe(configuration='[build]\njobs = 2\n',
+                                      change_configuration='[build]\njobs = 3\n')
+        self.assertNotEqual(code, 0)
+        self.assertTrue(report["cargo_configuration_changed"])
+        self.assertFalse(report["default_release_configuration_checked"])
+        self.assertIn("changed", report["cargo_configuration_error"])
+
+    def test_new_configuration_after_start_cannot_escape_absent_path_inventory(self):
+        code, report, _ = self.observe(change_configuration='[build]\njobs = 2\n')
+        self.assertNotEqual(code, 0)
+        self.assertTrue(report["cargo_configuration_changed"])
+
+    def test_invalid_configuration_never_copies_credentials_into_the_receipt(self):
+        secret = "synthetic-credential-do-not-retain"
+        code, report, commands = self.observe(configuration='[registry]\ntoken = "' + secret)
+        self.assertNotEqual(code, 0)
+        self.assertEqual(commands, [])
+        self.assertNotIn(secret, json.dumps(report))
+
+
+    def test_zero_exit_timed_out_campaign_is_still_a_failed_observation(self):
+        code, report, _ = self.observe(campaign_timeout=True)
+        self.assertNotEqual(code, 0)
+        self.assertEqual(report["observations"][-1]["exit_code"], 0)
+        self.assertTrue(report["observations"][-1]["timed_out"])
+        self.assertNotIn("reader", report)
+
+    def test_original_timeout_contract_is_not_enlarged_for_the_new_campaign(self):
+        code, report, _ = self.observe()
+        self.assertEqual(code, 0)
+        self.assertEqual([item["timeout_seconds"] for item in report["observations"]],
+                         [30, 30, 30, 900, 300])
+
+    def test_compiler_claimed_version_and_host_must_match_the_original_contract(self):
+        for fields in ({"compiler_release": "1.94.0"}, {"compiler_host": "aarch64-unknown-linux-gnu"}):
+            with self.subTest(fields=fields):
+                code, report, commands = self.observe(**fields)
+                self.assertNotEqual(code, 0)
+                self.assertEqual(len(commands), 3)
+                self.assertIn("actual compiler", report["error"])
+
+    def test_identity_and_build_failure_cannot_be_relabelled_as_campaign_success(self):
+        for command in ("uname", "rustc", "cargo", "build"):
+            with self.subTest(command=command):
+                code, report, commands = self.observe(failed_command=command)
+                self.assertNotEqual(code, 0)
+                self.assertEqual(report["observations"][-1]["exit_code"], 1)
+                self.assertNotIn("reader", report)
+                self.assertNotEqual(commands[-1][-1], runner.SELECTOR)
+
+    def test_source_observation_failure_after_run_still_fails(self):
+        code, report, _ = self.observe(after=ValueError("source bytes unavailable"))
+        self.assertNotEqual(code, 0)
+        self.assertTrue(report["source_changed"])
+        self.assertEqual(report["source_after"], {"error": "source bytes unavailable"})
+
+    def test_hosted_run_requires_explicit_expected_source_before_native_commands(self):
+        code, report, commands = self.observe(local=False)
+        self.assertNotEqual(code, 0)
+        self.assertEqual(commands, [])
+        self.assertIn("requires explicit TRNM_EXPECTED_SOURCE_SHA", report["error"])
+        self.assertIsNone(report["expected_source_commit"])
+
+    def test_supplied_expected_source_must_be_canonical_even_in_local_mode(self):
+        for expected in ("", "a" * 39, "a" * 41, "A" * 40, "g" * 40, " " + "a" * 40):
+            with self.subTest(expected=expected):
+                code, report, commands = self.observe(environment={"TRNM_EXPECTED_SOURCE_SHA": expected})
+                self.assertNotEqual(code, 0)
+                self.assertEqual(commands, [])
+                self.assertIn("40 lowercase hexadecimal", report["error"])
+                self.assertIsNone(report["expected_source_commit"])
+
+    def test_clean_other_commit_cannot_replace_explicit_expected_source(self):
+        for local in (True, False):
+            with self.subTest(local=local):
+                code, report, commands = self.observe(local=local,
+                    environment={"TRNM_EXPECTED_SOURCE_SHA": "b" * 40})
+                self.assertNotEqual(code, 0)
+                self.assertEqual(commands, [])
+                self.assertIn("does not match explicit expected source", report["error"])
+                self.assertEqual(report["expected_source_commit"], "b" * 40)
+
+    def test_local_expected_source_is_optional_but_supplied_match_is_retained(self):
+        for expected in (None, "a" * 40):
+            with self.subTest(expected=expected):
+                code, report, _ = self.observe(environment={} if expected is None else
+                    {"TRNM_EXPECTED_SOURCE_SHA": expected})
+                self.assertEqual(code, 0)
+                self.assertEqual(report["expected_source_commit"], expected)
+
+    def test_hosted_expected_source_match_still_requires_real_hosted_context(self):
+        spec = runner.ARCHITECTURES["x64"]
+        code, report, _ = self.observe(local=False, environment={
+            "TRNM_EXPECTED_SOURCE_SHA": "a" * 40,
+            "TRNM_COST_RUNNER_LABEL": spec["runner"], "RUNNER_ARCH": spec["runner_arch"],
+            "GITHUB_ACTIONS": "true", "GITHUB_RUN_ID": "1", "GITHUB_RUN_ATTEMPT": "1"})
+        self.assertEqual(code, 0)
+        self.assertEqual(report["execution_context"], "github-hosted")
+        self.assertEqual(report["expected_source_commit"], "a" * 40)
+        code, report, commands = self.observe(local=False,
+            environment={"TRNM_EXPECTED_SOURCE_SHA": "a" * 40})
+        self.assertNotEqual(code, 0)
+        self.assertEqual(commands, [])
+        self.assertIn("hosted runner context", report["error"])
+
+
+if __name__ == "__main__":
+    unittest.main()

@@ -75,7 +75,14 @@ fn observe(
             pon_work::verify_reference_with_progress(challenge, task, target, bytes, &mut progress)
         }
         2 => pon_work::verify_limb_with_progress(challenge, task, target, bytes, &mut progress),
-        _ => unreachable!("three explicit verification kernels"),
+        3 => pon_work::verify_column_limb_with_progress(
+            challenge,
+            task,
+            target,
+            bytes,
+            &mut progress,
+        ),
+        _ => unreachable!("four explicit verification kernels"),
     }
     .map(|work| Success {
         challenge: work.challenge(),
@@ -94,7 +101,7 @@ fn check_statement(
     cancellation: Cancellation,
 ) -> Observation {
     let reference = observe(1, challenge, task, target, bytes, cancellation);
-    for kernel in [0, 2] {
+    for kernel in [0, 2, 3] {
         let actual = observe(kernel, challenge, task, target, bytes, cancellation);
         assert_eq!(
             actual, reference,

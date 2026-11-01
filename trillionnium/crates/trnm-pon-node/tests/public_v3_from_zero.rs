@@ -1261,6 +1261,26 @@ fn signed_confirmation_phase(
     false_wires: Arc<Vec<Option<String>>>,
     pressured: bool,
 ) -> Value {
+    // The original observation retains its exact sixteen-packet replay stream.
+    // A separately named diagnostic can supply fresh challenges without
+    // changing this test's packets, budgets, deadlines or acceptance criteria.
+    let prepare: ConfirmationAttackBuilder = Arc::new(move |worker, attempt| {
+        let index = (attempt * PRESSURE_WORKERS + worker) % false_wires.len();
+        (index, false_wires[index].clone(), None)
+    });
+    signed_confirmation_phase_with_builder(path, settings, packets, prepare, pressured)
+}
+
+type ConfirmationAttackBuilder =
+    Arc<dyn Fn(usize, usize) -> (usize, Option<String>, Option<Value>) + Send + Sync>;
+
+fn signed_confirmation_phase_with_builder(
+    path: &std::path::Path,
+    settings: &Settings,
+    packets: &[Packet],
+    prepare: ConfirmationAttackBuilder,
+    pressured: bool,
+) -> Value {
     fs::create_dir(path).unwrap();
     let mut verifier = Node::open(&path.join("independent-client"), settings.clone(), 1).unwrap();
     let mut receiver = Node::open(&path.join("receiver"), settings.clone(), 1).unwrap();
@@ -1316,10 +1336,10 @@ fn signed_confirmation_phase(
     let end = epoch + Duration::from_millis(PRESSURE_MS);
     let mut attacks = Vec::new();
     for worker in 0..workers {
-        let (client, barrier, wires, completed) = (
+        let (client, barrier, prepare, completed) = (
             client.clone(),
             barrier.clone(),
-            false_wires.clone(),
+            prepare.clone(),
             completed.clone(),
         );
         attacks.push(thread::spawn(move || {
@@ -1330,23 +1350,26 @@ fn signed_confirmation_phase(
                 if Instant::now() >= end {
                     break;
                 }
-                let index = (attempt * workers + worker) % wires.len();
-                if let Some(packet) = &wires[index] {
-                    rows.push(compact_pressure_call(
+                let (index, packet, construction) = prepare(worker, attempt);
+                let mut row = if let Some(packet) = packet {
+                    let row = compact_pressure_call(
                         client.call_before(
                             "confirmation_from_zero",
                             80 + ((attempt + worker * 37) % 150) as u8,
-                            Request::Submit {
-                                packet: packet.clone(),
-                            },
+                            Request::Submit { packet },
                             Some(end),
                         ),
                         Some(index),
-                    ));
+                    );
                     completed.fetch_add(1, Ordering::AcqRel);
+                    row
                 } else {
-                    rows.push(json!({"status": "not_submitted_exhausted", "packet_index": index}));
+                    json!({"status": "not_submitted_exhausted", "packet_index": index})
+                };
+                if let Some(construction) = construction {
+                    row["from_zero_construction"] = construction;
                 }
+                rows.push(row);
             }
             json!({"worker": worker, "calling_thread_cpu_ns": cpu_elapsed(cpu),
                 "attempt_cap_reached": rows.len() == PRESSURE_CALLS_PER_WORKER, "calls": rows})
@@ -1579,6 +1602,9 @@ fn signed_confirmation_phase(
         .as_object().unwrap().clone());
     report
 }
+
+#[path = "public_v3_from_zero/fresh_challenge.rs"]
+mod fresh_challenge;
 
 #[test]
 fn from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline(

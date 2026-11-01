@@ -52,6 +52,45 @@ release requires their own real evidence, not completion of the retired PoCO roa
 
 ### Reconstruction and upgrade order
 
+#### W1 rejection economics and fresh challenges — 2026-11-01
+
+The [W1 work-security continuation](../../evidence/pon-w1-work-security-20261101/README.md)
+adds a real prefix-reusing false-trace producer, complete raw cost accounting and
+an explicitly selected fresh-challenge service observation. The original local
+observations start from `cea95fb44d8152a0eb1138727619fcced056f496`; its W1
+and required-work arithmetic blobs equal those in the separately reviewed
+`605af09da34ca72665f822200a2f3e75573e6052` source. Other source differences are not
+silently composed or claimed as tested.
+
+The continuation now preserves the existing integration candidate's concurrent
+`acd8f79f2dcc22ecdee1d1a5fd88d619d06f37c9` malformed-width rejection and State
+encoding repairs. Its stricter existing source/test-count metadata is retained.
+The earlier local cost records keep their actual pre-integration source identities;
+they do not become whole-source execution evidence merely by moving this branch.
+
+The [new cost contract](specs/pon/W1_FALSE_TRACE_ACTUAL_REUSE_V1.md) retains 72
+actual prefix setups, 288 independent searches, every hash miss and complete
+winning proof. Four verifier paths observe all candidates. The added column-limb
+kernel preserves exact arithmetic, bytes and cancellation; local measurements
+did not justify replacing the existing default or the faster existing limb
+research path. Distinct local module-harness graphs, including transitive-version
+differences from the original lockfile, remain explicit. None constitutes the
+original workspace or dual-architecture qualification.
+
+The separate service successor reuses the original Host and CPU owner, four-second
+window, sixteen workers and six-depth independent confirmation. Each attempted
+submission constructs a new header challenge; successful service also requires
+an observed full `WORK:Transcript` refusal. It retains the original repeated-packet
+test and runs fresh traffic even after that original test fails. Reader booleans
+cannot replace checked request/history timelines, actual overlap or CPU closure.
+The explicit head/merge x64/ARM64 cost lanes and x64 service lanes retain failures;
+their configuration alone does not establish executed acceptance.
+
+PN1 remains HOLD. Correct relation checking, fresh binding, minimum effective
+adversarial work, honest service and model utility remain separate obligations.
+There is no cost lower-bound proof, fresh-identity fairness claim, default cache
+activation, consensus-weight change or production activation in this continuation.
+
 #### Pure PoN work-package execution — 2026-10-27
 
 The isolated History owner reconstruction continuation is recorded in

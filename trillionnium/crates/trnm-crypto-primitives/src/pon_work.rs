@@ -451,6 +451,41 @@ pub fn verify_limb_with_progress<E>(
     )
 }
 
+/// Explicit complete-replay comparison with eight independent column accumulators.
+/// The original default and scalar reference remain available unchanged. This
+/// changes memory access and exact integer accumulation, never the work relation.
+pub fn verify_column_limb(
+    challenge: Hash,
+    expected_task: Hash,
+    target: Hash,
+    bytes: &[u8],
+) -> Result<VerifiedWork, WorkError> {
+    relation_only(verify_column_limb_with_progress(
+        challenge,
+        expected_task,
+        target,
+        bytes,
+        &mut no_cancellation,
+    ))
+}
+
+pub fn verify_column_limb_with_progress<E>(
+    challenge: Hash,
+    expected_task: Hash,
+    target: Hash,
+    bytes: &[u8],
+    progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
+) -> Result<VerifiedWork, VerificationError<E>> {
+    verify_with_kernel(
+        challenge,
+        expected_task,
+        target,
+        bytes,
+        progress,
+        VerificationKernel::ColumnLimbTranscript,
+    )
+}
+
 /// Retained scalar verifier for differential checks and explicitly named cost baselines.
 /// This follows the same admission grammar but uses the original u128 remainder,
 /// row-major multiplication and per-cell transcript updates for the full relation.
@@ -491,6 +526,7 @@ enum VerificationKernel {
     ScalarReference,
     Transposed,
     LimbTranscript,
+    ColumnLimbTranscript,
 }
 
 struct CheckedProofInputs {
@@ -521,7 +557,9 @@ fn checked_proof_inputs(
     // fixed-width wire bytes after the entire original relation has succeeded.
     let decoded_cells = match kernel {
         VerificationKernel::ScalarReference => 3 * CELLS,
-        VerificationKernel::Transposed | VerificationKernel::LimbTranscript => 2 * CELLS,
+        VerificationKernel::Transposed
+        | VerificationKernel::LimbTranscript
+        | VerificationKernel::ColumnLimbTranscript => 2 * CELLS,
     };
     let matrices: Vec<u32> = bytes[4..4 + decoded_cells * 4]
         .chunks_exact(4)
@@ -532,7 +570,9 @@ fn checked_proof_inputs(
     let claimed_bytes = &bytes[4 + 2 * CELLS * 4..4 + 3 * CELLS * 4];
     match kernel {
         VerificationKernel::ScalarReference => validate(claimed)?,
-        VerificationKernel::Transposed | VerificationKernel::LimbTranscript => {
+        VerificationKernel::Transposed
+        | VerificationKernel::LimbTranscript
+        | VerificationKernel::ColumnLimbTranscript => {
             // C's field check still precedes A/B, task, ticket and callbacks.
             // No unaligned cast, host-endian assumption or reduced field value.
             if claimed_bytes
@@ -546,7 +586,9 @@ fn checked_proof_inputs(
     let actual_task = match kernel {
         // Retain the scalar reference's independent field re-encoding.
         VerificationKernel::ScalarReference => task_id(a, b)?,
-        VerificationKernel::Transposed | VerificationKernel::LimbTranscript => {
+        VerificationKernel::Transposed
+        | VerificationKernel::LimbTranscript
+        | VerificationKernel::ColumnLimbTranscript => {
             validate(a)?;
             validate(b)?;
             // The fixed grammar above decoded these exact little-endian words.
@@ -607,6 +649,9 @@ fn verify_with_kernel<E>(
         VerificationKernel::LimbTranscript => {
             evaluate_transposed_with_progress::<true, E>(challenge, a, b, progress)?
         }
+        VerificationKernel::ColumnLimbTranscript => {
+            evaluate_transcript_kernel_with_progress::<false, true, E>(challenge, a, b, progress)?
+        }
     };
     // PNW1 submits only a final digest: every transcript update is still replayed.
     // A mismatch skips product corrections; a matching digest is not yet VerifiedWork.
@@ -615,14 +660,18 @@ fn verify_with_kernel<E>(
     }
     let product = match kernel {
         VerificationKernel::ScalarReference => finish_product_with_progress(a, evaluated, progress),
-        VerificationKernel::Transposed | VerificationKernel::LimbTranscript => {
+        VerificationKernel::Transposed
+        | VerificationKernel::LimbTranscript
+        | VerificationKernel::ColumnLimbTranscript => {
             finish_transposed_with_progress(a, evaluated, progress)
         }
     }
     .map_err(VerificationError::Cancelled)?;
     let matches_claim = match kernel {
         VerificationKernel::ScalarReference => product == claimed,
-        VerificationKernel::Transposed | VerificationKernel::LimbTranscript => product
+        VerificationKernel::Transposed
+        | VerificationKernel::LimbTranscript
+        | VerificationKernel::ColumnLimbTranscript => product
             .iter()
             .flat_map(|word| word.to_le_bytes())
             .eq(claimed_bytes.iter().copied()),
@@ -696,6 +745,19 @@ fn evaluate_transposed_with_progress<const LIMB_TRANSCRIPT: bool, E>(
     b: &[u32],
     progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
 ) -> Result<TranscriptEvaluation, VerificationError<E>> {
+    evaluate_transcript_kernel_with_progress::<LIMB_TRANSCRIPT, false, E>(challenge, a, b, progress)
+}
+
+fn evaluate_transcript_kernel_with_progress<
+    const LIMB_TRANSCRIPT: bool,
+    const COLUMN_LIMB: bool,
+    E,
+>(
+    challenge: Hash,
+    a: &[u32],
+    b: &[u32],
+    progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
+) -> Result<TranscriptEvaluation, VerificationError<E>> {
     #[cfg(test)]
     ARITHMETIC_TRANSCRIPT_REPLAYS.with(|count| count.set(count.get() + 1));
     validate(a)?;
@@ -718,10 +780,18 @@ fn evaluate_transposed_with_progress<const LIMB_TRANSCRIPT: bool, E>(
         .zip(f)
         .map(|(x, y)| producer_reduce(u128::from(*x) + u128::from(y)))
         .collect();
-    let mut bt = vec![0u32; CELLS];
-    for k in 0..N {
-        for j in 0..N {
-            bt[j * N + k] = bp[k * N + j];
+    // The column kernel reads the original contiguous B' rows. The other
+    // kernels retain their original transpose and exact arithmetic path.
+    let mut bt = if COLUMN_LIMB {
+        Vec::new()
+    } else {
+        vec![0u32; CELLS]
+    };
+    if !COLUMN_LIMB {
+        for k in 0..N {
+            for j in 0..N {
+                bt[j * N + k] = bp[k * N + j];
+            }
         }
     }
     let mut cp = vec![0u32; CELLS];
@@ -740,6 +810,21 @@ fn evaluate_transposed_with_progress<const LIMB_TRANSCRIPT: bool, E>(
                 })
                 .map_err(VerificationError::Cancelled)?;
                 for i in 0..R {
+                    if COLUMN_LIMB {
+                        let left = (bi * R + i) * N + bk * R;
+                        let right = bk * R * N + bj * R;
+                        let row = column_limb_row(
+                            &ap[left..left + R],
+                            &bp[right..right + (R - 1) * N + R],
+                            &cells[i * R..(i + 1) * R],
+                        );
+                        cells[i * R..(i + 1) * R].copy_from_slice(&row);
+                        for (j, value) in row.iter().enumerate() {
+                            let pos = i * R + j;
+                            bytes[pos * 4..pos * 4 + 4].copy_from_slice(&value.to_le_bytes());
+                        }
+                        continue;
+                    }
                     for j in 0..R {
                         let pos = i * R + j;
                         cells[pos] = if LIMB_TRANSCRIPT {
@@ -780,6 +865,41 @@ fn evaluate_transposed_with_progress<const LIMB_TRANSCRIPT: bool, E>(
         fr,
         bp,
         trace,
+    })
+}
+
+// Eight independent columns keep the right-hand row contiguous. LLVM may
+// vectorize these portable integer operations; no SIMD capability is required.
+// For each column, p=lo+2^32*hi and 2^32=5 (mod q). Including prior,
+// low<9*2^32, high<8*2^32, sum=low+5*high<49*2^32. Its fold is
+// <2^32+240<2q, so one subtraction is exact. No u64 sum can overflow.
+#[inline]
+fn column_limb_row(left: &[u32], right: &[u32], prior: &[u32]) -> [u32; R] {
+    debug_assert_eq!(left.len(), R);
+    debug_assert_eq!(right.len(), (R - 1) * N + R);
+    debug_assert_eq!(prior.len(), R);
+    let mut low = [0u64; R];
+    let mut high = [0u64; R];
+    for j in 0..R {
+        low[j] = u64::from(prior[j]);
+    }
+    for k in 0..R {
+        let row = &right[k * N..k * N + R];
+        let value = u64::from(left[k]);
+        for j in 0..R {
+            let product = value * u64::from(row[j]);
+            low[j] += u64::from(product as u32);
+            high[j] += product >> 32;
+        }
+    }
+    std::array::from_fn(|j| {
+        let sum = low[j] + 5 * high[j];
+        let folded = u64::from(sum as u32) + 5 * (sum >> 32);
+        if folded >= Q as u64 {
+            (folded - Q as u64) as u32
+        } else {
+            folded as u32
+        }
     })
 }
 
@@ -1046,6 +1166,7 @@ mod tests {
             VerificationKernel::ScalarReference,
             VerificationKernel::Transposed,
             VerificationKernel::LimbTranscript,
+            VerificationKernel::ColumnLimbTranscript,
         ];
         for cell in [0, CELLS / 2, CELLS - 1] {
             let offset = 4 + 2 * CELLS * 4 + cell * 4;
@@ -1108,6 +1229,7 @@ mod tests {
             VerificationKernel::ScalarReference,
             VerificationKernel::Transposed,
             VerificationKernel::LimbTranscript,
+            VerificationKernel::ColumnLimbTranscript,
         ] {
             let mut calls = 0;
             let result = verify_with_kernel(
@@ -1191,6 +1313,7 @@ mod tests {
             VerificationKernel::ScalarReference,
             VerificationKernel::Transposed,
             VerificationKernel::LimbTranscript,
+            VerificationKernel::ColumnLimbTranscript,
         ] {
             PRODUCT_RECONSTRUCTIONS.with(|count| count.set(0));
             let mut tiles = 0;
@@ -1247,6 +1370,7 @@ mod tests {
                     VerificationKernel::ScalarReference,
                     VerificationKernel::Transposed,
                     VerificationKernel::LimbTranscript,
+                    VerificationKernel::ColumnLimbTranscript,
                 ] {
                     let mut calls = 0;
                     let result = verify_with_kernel(
@@ -1326,6 +1450,10 @@ mod tests {
         cases.push((challenge, [0; 32], [0; 32], wrong_magic));
         for (c, t, target, bytes) in cases {
             assert_eq!(
+                checked_value(verify_column_limb(c, t, target, &bytes)),
+                checked_value(verify_reference(c, t, target, &bytes))
+            );
+            assert_eq!(
                 checked_value(verify_limb(c, t, target, &bytes)),
                 checked_value(verify_reference(c, t, target, &bytes))
             );
@@ -1365,6 +1493,15 @@ mod tests {
         .unwrap();
         assert_eq!(limb_points, scalar_points);
         assert_eq!(limb.product(), scalar.product());
+        let mut column_points = Vec::new();
+        let column =
+            verify_column_limb_with_progress(challenge, task, [255; 32], &proof, &mut |point| {
+                column_points.push(point);
+                Ok::<(), usize>(())
+            })
+            .unwrap();
+        assert_eq!(column_points, scalar_points);
+        assert_eq!(column.product(), scalar.product());
         let cuts: Vec<_> = scalar_points
             .iter()
             .enumerate()
@@ -1427,8 +1564,116 @@ mod tests {
                 .unwrap_err();
             assert_eq!(observed, cut + 1);
             assert_eq!(limb_error, scalar_error);
+            observed = 0;
+            let column_error =
+                verify_column_limb_with_progress(challenge, task, [255; 32], &proof, &mut |_| {
+                    let current = observed;
+                    observed += 1;
+                    if current == cut {
+                        Err(cut)
+                    } else {
+                        Ok(())
+                    }
+                })
+                .unwrap_err();
+            assert_eq!(observed, cut + 1);
+            assert_eq!(column_error, scalar_error);
         }
     }
+
+    #[test]
+    fn column_limb_each_prefix_matches_independent_scalar_with_strided_extremes() {
+        // Exercise all carries and asymmetric row/column indexing. These are
+        // raw arithmetic controls, not alternate externally supplied noise.
+        let values = [0, 1, 2, 1 << 16, 1 << 31, Q as u32 - 2, Q as u32 - 1];
+        for case in 0..values.len() + 2 {
+            let a: Vec<u32> = (0..CELLS)
+                .map(|index| {
+                    if case < values.len() {
+                        values[case]
+                    } else if case == values.len() {
+                        values[(index * 13 + index / N) % values.len()]
+                    } else {
+                        ((index as u128 * 2_654_435_761 + 17) % Q) as u32
+                    }
+                })
+                .collect();
+            let b: Vec<u32> = (0..CELLS)
+                .map(|index| {
+                    if case < values.len() {
+                        values[case]
+                    } else if case == values.len() {
+                        values[(index * 17 + index / N + 1) % values.len()]
+                    } else {
+                        ((index as u128 * 4_294_967_279 + 65_537) % Q) as u32
+                    }
+                })
+                .collect();
+            for row in 0..N {
+                for bj in 0..N / R {
+                    let prior = values[(row + bj) % values.len()];
+                    let mut actual = [prior; R];
+                    for bk in 0..N / R {
+                        let left = row * N + bk * R;
+                        let right = bk * R * N + bj * R;
+                        actual = column_limb_row(
+                            &a[left..left + R],
+                            &b[right..right + (R - 1) * N + R],
+                            &actual,
+                        );
+                        for (j, value) in actual.iter().enumerate() {
+                            let sum = u128::from(prior)
+                                + (0..(bk + 1) * R)
+                                    .map(|k| {
+                                        u128::from(a[row * N + k])
+                                            * u128::from(b[k * N + bj * R + j])
+                                    })
+                                    .sum::<u128>();
+                            assert_eq!(u128::from(*value), sum % Q);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn column_limb_full_proofs_keep_exact_statement_and_challenge_binding() {
+        for class in 0..4 {
+            let a: Vec<_> = (0..CELLS)
+                .map(|i| match class {
+                    0 => 0,
+                    1 => u32::from(i / N == i % N),
+                    2 => ((i / N + 1) * (i % N + 3)) as u32,
+                    _ => (Q - 1 - (i % 257) as u128) as u32,
+                })
+                .collect();
+            let b: Vec<_> = (0..CELLS)
+                .map(|i| match class {
+                    0 => 0,
+                    1 => u32::from(i / N == (i % N + 1) % N),
+                    2 => ((i / N + 5) * (i % N + 2)) as u32,
+                    _ => ((i as u128 * 65_537 + 258) % Q) as u32,
+                })
+                .collect();
+            let task = task_id(&a, &b).unwrap();
+            for challenge in [[0; 32], [255; 32], [79; 32]] {
+                let proof = prove(challenge, &a, &b).unwrap();
+                let expected = checked_value(verify_reference(challenge, task, [255; 32], &proof));
+                assert_eq!(
+                    checked_value(verify_column_limb(challenge, task, [255; 32], &proof)),
+                    expected
+                );
+                let mut other = challenge;
+                other[31] ^= 1;
+                assert_eq!(
+                    verify_column_limb(other, task, [255; 32], &proof).unwrap_err(),
+                    WorkError::Transcript
+                );
+            }
+        }
+    }
+
     #[test]
     fn producer_reduction_matches_remainder_at_boundaries_and_deterministic_samples() {
         let limit = 1_u128 << 70;
@@ -1801,6 +2046,7 @@ mod tests {
             VerificationKernel::ScalarReference,
             VerificationKernel::Transposed,
             VerificationKernel::LimbTranscript,
+            VerificationKernel::ColumnLimbTranscript,
         ] {
             for (target, expected_error) in
                 [([0; 32], WorkError::Target), ([255; 32], WorkError::Field)]
